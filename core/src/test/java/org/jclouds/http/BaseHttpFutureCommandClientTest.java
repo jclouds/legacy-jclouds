@@ -111,7 +111,6 @@ public abstract class BaseHttpFutureCommandClientTest {
 	injector = Guice.createInjector(new AbstractModule() {
 	    @Override
 	    protected void configure() {
-
 		Names.bindProperties(binder(), properties);
 	    }
 	}, new HttpCommandsModule(), createClientModule(),
