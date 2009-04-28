@@ -76,8 +76,9 @@ public class JavaUrlHttpFutureCommandClient implements HttpFutureCommandClient {
 	    for (HttpRequestFilter filter : getRequestFilters()) {
 		filter.filter(request);
 	    }
-	    logger.trace("%1s - submitting request %2s", target, request);
+	    logger.trace("%1s - converting request %2s", target, request);
 	    connection = openJavaConnection(request);
+	    logger.trace("%1s - submitting request %2s", target, connection);
 	    HttpResponse response = getResponse(connection);
 	    logger.trace("%1s - received response %2s", target, response);
 
@@ -100,7 +101,8 @@ public class JavaUrlHttpFutureCommandClient implements HttpFutureCommandClient {
 	    }
 	    operation.setException(e);
 	} finally {
-            // DO NOT disconnect, as it will also close the unconsumed outputStream from above.
+	    // DO NOT disconnect, as it will also close the unconsumed
+	    // outputStream from above.
 	    // connection.disconnect();
 	}
     }
@@ -135,9 +137,9 @@ public class JavaUrlHttpFutureCommandClient implements HttpFutureCommandClient {
 	    for (String value : request.getHeaders().get(header))
 		connection.setRequestProperty(header, value);
 	}
-	connection.setRequestProperty(HttpConstants.CONTENT_TYPE, request
-		.getContentType());
 	if (request.getContent() != null) {
+	    connection.setRequestProperty(HttpConstants.CONTENT_TYPE, request
+		    .getContentType());
 	    OutputStream out = connection.getOutputStream();
 	    try {
 		if (request.getContent() instanceof String) {
