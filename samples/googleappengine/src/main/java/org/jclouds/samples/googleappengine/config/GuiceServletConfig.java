@@ -36,13 +36,21 @@ import org.apache.commons.io.IOUtils;
 import org.jclouds.http.commands.config.HttpCommandsModule;
 import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
 import org.jclouds.lifecycle.Closer;
+import org.jclouds.samples.googleappengine.GetServlet;
 import org.jclouds.samples.googleappengine.JCloudsServlet;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.Properties;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Formatter;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 public class GuiceServletConfig extends GuiceServletContextListener {
     @Inject
@@ -50,7 +58,30 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 
     ServletContext context;
 
+    private static final Handler HANDLER = new ConsoleHandler() {
+	{
+	    setLevel(Level.ALL);
+	    setFormatter(new Formatter() {
 
+		@Override
+		public String format(LogRecord record) {
+		    return String.format("[%tT %-7s] [%-7s] [%s]: %s %s\n",
+			    new Date(record.getMillis()), record.getLevel(),
+			    Thread.currentThread().getName(), record
+				    .getLoggerName(), record.getMessage(),
+			    record.getThrown() == null ? "" : record
+				    .getThrown());
+		}
+	    });
+	}
+    };
+
+    static {
+	Logger guiceLogger = Logger.getLogger("org.jclouds");
+	guiceLogger.addHandler(HANDLER);
+	guiceLogger.setLevel(Level.ALL);
+    }
+    
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         this.context = servletContextEvent.getServletContext();
@@ -84,7 +115,8 @@ public class GuiceServletConfig extends GuiceServletContextListener {
                 , new ServletModule() {
                     @Override
                     protected void configureServlets() {
-                        serve("/*").with(JCloudsServlet.class);
+                        serve("*.jclouds").with(JCloudsServlet.class);
+                        serve("*.url").with(GetServlet.class);
                         requestInjection(this);
                     }
                 });
