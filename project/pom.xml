@@ -89,23 +89,17 @@
 
     <repositories>
         <repository>
-            <id>jclouds</id>
+            <id>jclouds-googlecode</id>
             <url>http://jclouds.googlecode.com/svn/trunk/repo</url>
         </repository>
     </repositories>
 
     <distributionManagement>
-        <repository>
-            <id>mc-release</id>
-            <name>Alternate Maven repository of releases</name>
-            <url>dav:https://mc-repo.googlecode.com/svn/maven2/releases</url>
+       <repository>
+           <uniqueVersion>false</uniqueVersion>
+           <id>jclouds-googlecode-deploy</id>
+           <url>svn:https://jclouds.googlecode.com/svn/trunk/repo</url>
         </repository>
-        <snapshotRepository>
-            <id>mc-snapshot</id>
-            <name>Alternate Maven repository of snapshots</name>
-            <url>dav:https://mc-repo.googlecode.com/svn/maven2/snapshots</url>
-            <uniqueVersion>false</uniqueVersion>
-        </snapshotRepository>
         <site>
             <id>website</id>
             <name>website</name>
@@ -243,6 +237,13 @@
               </executions>
             </plugin>
         </plugins>
+        <extensions>
+            <extension>
+                <groupId>org.jvnet.wagon-svn</groupId>
+                <artifactId>wagon-svn</artifactId>
+                <version>1.9</version>
+            </extension>
+        </extensions>
     </build>
 
     <reporting>
