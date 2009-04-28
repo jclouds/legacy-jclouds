@@ -23,55 +23,52 @@
  */
 package org.jclouds.samples.googleappengine.functest;
 
-import java.io.FileOutputStream;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
-import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import com.google.appengine.tools.KickStart;
-
+/**
+ * Starts up the Google App Engine for Java Development environment and deploys
+ * an application which tests S3.
+ * 
+ * @author Adrian Cole
+ * 
+ */
 @Test(groups = "integration", enabled = true, sequential = true, testName = "functionalTests")
-public class GoogleAppEngineTest {
+public class GoogleAppEngineTest extends BaseGoogleAppEngineTest {
 
-    Thread server;
-    URL url;
+    private static final String sysAWSAccessKeyId = System
+	    .getProperty("jclouds.aws.accesskeyid");
+    private static final String sysAWSSecretAccessKey = System
+	    .getProperty("jclouds.aws.secretaccesskey");
 
     @BeforeTest
-    @Parameters( { "warfile", "devappserver.address", "devappserver.port" })
+    @Parameters( { "warfile", "devappserver.address", "devappserver.port",
+	    "jclouds.aws.accesskeyid", "jclouds.aws.secretaccesskey" })
     public void startDevAppServer(final String warfile, final String address,
-	    final String port) throws Exception {
-	url = new URL(String.format("http://%1s:%2s", address, port));
+	    final String port, @Optional String AWSAccessKeyId,
+	    @Optional String AWSSecretAccessKey) throws Exception {
+	AWSAccessKeyId = AWSAccessKeyId != null ? AWSAccessKeyId
+		: sysAWSAccessKeyId;
+	AWSSecretAccessKey = AWSSecretAccessKey != null ? AWSSecretAccessKey
+		: sysAWSSecretAccessKey;
+
+	checkNotNull(AWSAccessKeyId, "AWSAccessKeyId");
+	checkNotNull(AWSSecretAccessKey, "AWSSecretAccessKey");
+
 	Properties props = new Properties();
-	props.put("jclouds.http.address", address);
-	props.put("jclouds.http.port", port + "");
-	props.put("jclouds.http.secure", "false");
-	props.store(new FileOutputStream(String.format(
-		"%1s/WEB-INF/jclouds.properties", warfile)), "test");
-	this.server = new Thread(new Runnable() {
-	    public void run() {
-		KickStart
-			.main(new String[] {
-				"com.google.appengine.tools.development.DevAppServerMain",
-				"--disable_update_check", "-a", address, "-p",
-				port, warfile });
-
-	    }
-
-	});
-	server.start();
-	Thread.sleep(7 * 1000);
-    }
-
-    @AfterTest
-    public void stopDevAppServer() throws Exception {
-	server.stop();
+	props.put("jclouds.aws.accesskeyid", AWSAccessKeyId);
+	props.put("jclouds.aws.secretaccesskey", AWSSecretAccessKey);
+	writePropertiesAndStartServer(address, port, warfile, props);
     }
 
     @Test
@@ -82,21 +79,11 @@ public class GoogleAppEngineTest {
     }
 
     @Test(invocationCount = 50, enabled = true, threadPoolSize = 10)
-    public void testGuiceUrlServed() throws InterruptedException, IOException {
-	Thread.sleep(10000);
-	URL gurl = new URL(url, "/guice/fetch.url?uri=" + url.toExternalForm());
-	InputStream i = gurl.openStream();
-	String string = IOUtils.toString(i);
-	assert string.indexOf("Hello World!") >= 0 : string;
-    }
-
-    @Test(invocationCount = 50, enabled = true, threadPoolSize = 10)
     public void testGuiceJCloudsServed() throws InterruptedException,
 	    IOException {
-	Thread.sleep(10000);
-	URL gurl = new URL(url, "/guice/fetch.jclouds?uri=/");
+	URL gurl = new URL(url, "/guice/listbuckets.s3");
 	InputStream i = gurl.openStream();
 	String string = IOUtils.toString(i);
-	assert string.indexOf("Hello World!") >= 0 : string;
+	assert string.indexOf("List") >= 0 : string;
     }
 }

@@ -44,6 +44,8 @@
       <appengine.home>/Users/adriancole/Desktop/appengine-java-sdk-1.2.0</appengine.home>
       <devappserver.address>localhost</devappserver.address>
       <devappserver.port>8088</devappserver.port>
+      <jclouds.aws.accesskeyid></jclouds.aws.accesskeyid>
+      <jclouds.aws.secretaccesskey></jclouds.aws.secretaccesskey>
     </properties>
 
     <repositories>
@@ -63,7 +65,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-core</artifactId>
+            <artifactId>jclouds-s3</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -143,6 +145,14 @@
                         <configuration>
                             <testClassesDirectory>target/test-classes</testClassesDirectory>
                             <systemProperties>
+                                <property>
+                                    <name>jclouds.aws.accesskeyid</name>
+                                    <value>${jclouds.aws.accesskeyid}</value>
+                                </property>
+                                <property>
+                                    <name>jclouds.aws.secretaccesskey</name>
+                                    <value>${jclouds.aws.secretaccesskey}</value>
+                                </property>
                                 <property>
                                     <name>appengine.home</name>
                                     <value>${appengine.home}</value>

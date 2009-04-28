@@ -23,48 +23,51 @@
  */
 package org.jclouds.samples.googleappengine;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.Provider;
-import org.jclouds.http.HttpFutureCommandClient;
-import org.jclouds.http.commands.CommandFactory;
-import org.jclouds.http.commands.GetString;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.List;
-import java.util.concurrent.AbstractExecutorService;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
+
+import org.jclouds.aws.s3.S3Connection;
+import org.jclouds.aws.s3.domain.S3Bucket;
+
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 /**
- * // TODO: Adrian: Document this!
- *
+ * Shows an example of how to use @{link S3Connection} injected with Guice.
+ * 
  * @author Adrian Cole
  */
 @Singleton
 public class JCloudsServlet extends HttpServlet {
     @Inject
-    HttpFutureCommandClient client;
-    @Inject
-    CommandFactory factory;
+    S3Connection client;
 
     @Override
-    protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
-        GetString get = factory.createGetString(httpServletRequest.getParameter("uri"));
-        client.submit(get);
-        Writer writer = httpServletResponse.getWriter();
-        try {
-            writer.write(get.get().trim());
-        } catch (Exception e) {
-            throw new ServletException(e);
-        }
-        writer.flush();
-        writer.close();
+    protected void doGet(HttpServletRequest httpServletRequest,
+	    HttpServletResponse httpServletResponse) throws ServletException,
+	    IOException {
+	Writer writer = httpServletResponse.getWriter();
+	try {
+	    List<S3Bucket> myBuckets = client.getBuckets().get(10,
+		    TimeUnit.SECONDS);
+	    writer.write("List:\n");
+	    for (S3Bucket bucket : myBuckets) {
+		writer
+			.write(String.format("    Name: %1s%n", bucket
+				.getName()));
+	    }
+	} catch (Exception e) {
+	    throw new ServletException(e);
+	}
+	writer.flush();
+	writer.close();
     }
 
 }

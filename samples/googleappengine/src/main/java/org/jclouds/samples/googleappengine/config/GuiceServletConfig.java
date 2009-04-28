@@ -21,114 +21,89 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.samples.googleappengine.config; /**
- * // TODO: Adrian: Document this!
- * @author Adrian Cole
- */
+package org.jclouds.samples.googleappengine.config;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
+
+import org.apache.commons.io.IOUtils;
+import org.jclouds.aws.s3.S3ConnectionFactory;
+import org.jclouds.aws.s3.S3ConnectionModule;
+import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
+import org.jclouds.lifecycle.Closer;
+import org.jclouds.samples.googleappengine.JCloudsServlet;
+
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.name.Names;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
-import org.apache.commons.io.IOUtils;
-import org.jclouds.http.commands.config.HttpCommandsModule;
-import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
-import org.jclouds.lifecycle.Closer;
-import org.jclouds.samples.googleappengine.GetServlet;
-import org.jclouds.samples.googleappengine.JCloudsServlet;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Date;
-import java.util.Properties;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Formatter;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
-
+/**
+ * Setup Logging and create Injector for use in testing S3.
+ * 
+ * @author Adrian Cole
+ * 
+ */
 public class GuiceServletConfig extends GuiceServletContextListener {
     @Inject
     Closer closer;
 
     ServletContext context;
 
-    private static final Handler HANDLER = new ConsoleHandler() {
-	{
-	    setLevel(Level.ALL);
-	    setFormatter(new Formatter() {
-
-		@Override
-		public String format(LogRecord record) {
-		    return String.format("[%tT %-7s] [%-7s] [%s]: %s %s\n",
-			    new Date(record.getMillis()), record.getLevel(),
-			    Thread.currentThread().getName(), record
-				    .getLoggerName(), record.getMessage(),
-			    record.getThrown() == null ? "" : record
-				    .getThrown());
-		}
-	    });
-	}
-    };
-
-    static {
-	Logger guiceLogger = Logger.getLogger("org.jclouds");
-	guiceLogger.addHandler(HANDLER);
-	guiceLogger.setLevel(Level.ALL);
-    }
-    
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-        this.context = servletContextEvent.getServletContext();
-        super.contextInitialized(servletContextEvent);    // TODO: Adrian: Customise this generated block
+	this.context = servletContextEvent.getServletContext();
+	super.contextInitialized(servletContextEvent);
     }
 
     @Override
     protected Injector getInjector() {
-        return Guice.createInjector(
-                new HttpCommandsModule() {
-                    @Override
-                    protected void configure() {
-                        super.configure();
-                        Properties props = new Properties();
-                        InputStream input = null;
-                        try {
-                            input = context.getResourceAsStream("/WEB-INF/jclouds.properties");
-                            if (input != null)
-                                props.load(input);
-                            else
-                                throw new RuntimeException("not found in classloader");
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        } finally {
-                            IOUtils.closeQuietly(input);
-                        }
-                        Names.bindProperties(binder(), props);
-                        install(new JavaUrlHttpFutureCommandClientModule());
-                    }
-                }
-                , new ServletModule() {
-                    @Override
-                    protected void configureServlets() {
-                        serve("*.jclouds").with(JCloudsServlet.class);
-                        serve("*.url").with(GetServlet.class);
-                        requestInjection(this);
-                    }
-                });
+	return Guice.createInjector(
+		new AbstractModule() {
+		    @Override
+		    protected void configure() {
+			Properties props = new Properties();
+			InputStream input = null;
+			try {
+			    input = context
+				    .getResourceAsStream("/WEB-INF/jclouds.properties");
+			    if (input != null)
+				props.load(input);
+			    else
+				throw new RuntimeException(
+					"not found in classloader");
+			} catch (IOException e) {
+			    throw new RuntimeException(e);
+			} finally {
+			    IOUtils.closeQuietly(input);
+			}
+			props.putAll(S3ConnectionFactory.DEFAULT_PROPERTIES);
+			Names.bindProperties(binder(), props);
+		    }
+		}, new JavaUrlHttpFutureCommandClientModule(),
+		new S3ConnectionModule(), new ServletModule() {
+		    @Override
+		    protected void configureServlets() {
+			serve("*.s3").with(JCloudsServlet.class);
+			requestInjection(this);
+		    }
+		});
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
-        try {
-            closer.close();
-        } catch (Exception e) {
-            e.printStackTrace();  // TODO: Adrian: Customise this generated block
-        }
-        super.contextDestroyed(servletContextEvent);    // TODO: Adrian: Customise this generated block
+	try {
+	    closer.close();
+	} catch (Exception e) {
+	    e.printStackTrace();
+	}
+	super.contextDestroyed(servletContextEvent);
     }
 }
