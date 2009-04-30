@@ -23,6 +23,8 @@
  */
 package org.jclouds.aws.s3.commands;
 
+import static org.testng.Assert.assertEquals;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -52,7 +54,7 @@ import com.google.inject.name.Names;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", sequential= true, testName = "s3.S3ParserTest")
+@Test(groups = "unit", sequential = true, testName = "s3.S3ParserTest")
 public class S3ParserTest extends PerformanceTest {
     Injector injector = null;
     S3CommandFactory commandFactory = null;
@@ -70,7 +72,7 @@ public class S3ParserTest extends PerformanceTest {
 	    }
 	});
 	commandFactory = injector.getInstance(S3CommandFactory.class);
-        assert commandFactory != null;
+	assert commandFactory != null;
     }
 
     @AfterMethod
@@ -148,7 +150,7 @@ public class S3ParserTest extends PerformanceTest {
 	assert object.getLastModified().equals(expected) : String
 		.format("expected %1s, but got %1s", expected, object
 			.getLastModified());
-	assert object.getETag().equals("\"9d7bb64e8e18ee34eec06dd2cf37b766\"");
+	assertEquals(object.getETag(), "9d7bb64e8e18ee34eec06dd2cf37b766");
 	assert object.getSize() == 136;
 	S3Owner owner = new S3Owner();
 	owner

@@ -34,6 +34,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.jclouds.aws.s3.S3Constants;
 import org.jclouds.aws.s3.S3IntegrationTest;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.testng.annotations.AfterTest;
@@ -79,7 +80,7 @@ public abstract class BasePerformance extends S3IntegrationTest {
 
     @Override
     @BeforeTest
-    @Parameters( { "jclouds.aws.accesskeyid", "jclouds.aws.secretaccesskey" })
+    @Parameters( { S3Constants.PROPERTY_AWS_ACCESSKEYID, S3Constants.PROPERTY_AWS_SECRETACCESSKEY })
     protected void setUpClient(@Optional String AWSAccessKeyId,
 	    @Optional String AWSSecretAccessKey) throws Exception {
 	super.setUpClient(AWSAccessKeyId, AWSSecretAccessKey);

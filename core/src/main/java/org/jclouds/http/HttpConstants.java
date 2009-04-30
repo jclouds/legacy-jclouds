@@ -25,10 +25,10 @@ package org.jclouds.http;
 
 /**
  * // TODO: Adrian: Document this!
- *
+ * 
  * @author Adrian Cole
  */
-public class HttpConstants {
+public interface HttpConstants {
     public static final String CONTENT_LENGTH = "Content-Length";
     public static final String CONTENT_TYPE = "Content-Type";
     public static final String HOST = "Host";
@@ -36,4 +36,7 @@ public class HttpConstants {
     public static final String BINARY = "application/octet-stream";
     public static final String PLAIN = "text/plain";
     public static final String TRANSFER_ENCODING = "Transfer-Encoding";
+    public static final String PROPERTY_HTTP_SECURE = "jclouds.http.secure";
+    public static final String PROPERTY_HTTP_PORT = "jclouds.http.port";
+    public static final String PROPERTY_HTTP_ADDRESS = "jclouds.http.address";
 }

@@ -45,6 +45,7 @@ import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.*;
 import org.jclouds.command.pool.FutureCommandConnectionRetry;
+import org.jclouds.command.pool.PoolConstants;
 import org.jclouds.command.pool.config.FutureCommandConnectionPoolClientModule;
 import org.jclouds.http.httpnio.pool.HttpNioFutureCommandConnectionHandle;
 import org.jclouds.http.httpnio.pool.HttpNioFutureCommandConnectionPool;
@@ -114,7 +115,7 @@ public abstract class BaseHttpNioConnectionPoolClientModule extends FutureComman
     }
 
     @Override
-    public BlockingQueue<NHttpConnection> provideAvailablePool(@Named("jclouds.pool.max_connections") int max) throws Exception {
+    public BlockingQueue<NHttpConnection> provideAvailablePool(@Named(PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS) int max) throws Exception {
         return new ArrayBlockingQueue<NHttpConnection>(max, true);
     }
 
@@ -125,7 +126,7 @@ public abstract class BaseHttpNioConnectionPoolClientModule extends FutureComman
 
     @Provides
     @Singleton
-    public DefaultConnectingIOReactor provideDefaultConnectingIOReactor(@Named("jclouds.http.pool.io_worker_threads") int ioWorkerThreads, HttpParams params) throws IOReactorException {
+    public DefaultConnectingIOReactor provideDefaultConnectingIOReactor(@Named(PoolConstants.PROPERTY_POOL_IO_WORKER_THREADS) int ioWorkerThreads, HttpParams params) throws IOReactorException {
         return new DefaultConnectingIOReactor(ioWorkerThreads, params);
     }
 

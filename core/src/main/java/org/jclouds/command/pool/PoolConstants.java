@@ -21,14 +21,17 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.command;
+package org.jclouds.command.pool;
 
 /**
  * // TODO: Adrian: Document this!
  * 
  * @author Adrian Cole
  */
-public interface FutureCommandClient {
-    @SuppressWarnings("unchecked")
-    <O extends FutureCommand> void submit(O operation);
+public interface PoolConstants {
+    public static final String PROPERTY_POOL_MAX_CONNECTIONS = "jclouds.pool.max_connections";
+    public static final String PROPERTY_POOL_IO_WORKER_THREADS = "jclouds.http.pool.io_worker_threads";
+    public static final String PROPERTY_POOL_REQUEST_INVOKER_THREADS = "jclouds.http.pool.request_invoker_threads";
+    public static final String PROPERTY_POOL_MAX_SESSION_FAILURES = "jclouds.http.pool.max_session_failures";
+    public static final String PROPERTY_POOL_MAX_CONNECTION_REUSE = "jclouds.http.pool.max_connection_reuse";
 }

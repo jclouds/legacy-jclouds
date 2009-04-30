@@ -31,6 +31,7 @@ import java.net.URL;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
+import org.jclouds.aws.s3.S3Constants;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
@@ -47,13 +48,14 @@ import org.testng.annotations.Test;
 public class GoogleAppEngineTest extends BaseGoogleAppEngineTest {
 
     private static final String sysAWSAccessKeyId = System
-	    .getProperty("jclouds.aws.accesskeyid");
+	    .getProperty(S3Constants.PROPERTY_AWS_ACCESSKEYID);
     private static final String sysAWSSecretAccessKey = System
-	    .getProperty("jclouds.aws.secretaccesskey");
+	    .getProperty(S3Constants.PROPERTY_AWS_SECRETACCESSKEY);
 
     @BeforeTest
     @Parameters( { "warfile", "devappserver.address", "devappserver.port",
-	    "jclouds.aws.accesskeyid", "jclouds.aws.secretaccesskey" })
+	    S3Constants.PROPERTY_AWS_ACCESSKEYID,
+	    S3Constants.PROPERTY_AWS_SECRETACCESSKEY })
     public void startDevAppServer(final String warfile, final String address,
 	    final String port, @Optional String AWSAccessKeyId,
 	    @Optional String AWSSecretAccessKey) throws Exception {
@@ -66,8 +68,8 @@ public class GoogleAppEngineTest extends BaseGoogleAppEngineTest {
 	checkNotNull(AWSSecretAccessKey, "AWSSecretAccessKey");
 
 	Properties props = new Properties();
-	props.put("jclouds.aws.accesskeyid", AWSAccessKeyId);
-	props.put("jclouds.aws.secretaccesskey", AWSSecretAccessKey);
+	props.put(S3Constants.PROPERTY_AWS_ACCESSKEYID, AWSAccessKeyId);
+	props.put(S3Constants.PROPERTY_AWS_SECRETACCESSKEY, AWSSecretAccessKey);
 	writePropertiesAndStartServer(address, port, warfile, props);
     }
 

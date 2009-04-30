@@ -23,15 +23,16 @@
  */
 package org.jclouds.http;
 
-import com.google.inject.Inject;
+import java.util.List;
+
 import org.jclouds.command.FutureCommand;
 import org.jclouds.command.FutureCommandClient;
 
-import java.util.List;
+import com.google.inject.Inject;
 
 /**
  * // TODO: Adrian: Document this!
- *
+ * 
  * @author Adrian Cole
  */
 public interface HttpFutureCommandClient extends FutureCommandClient {
@@ -41,6 +42,4 @@ public interface HttpFutureCommandClient extends FutureCommandClient {
     void setRequestFilters(List<HttpRequestFilter> requestFilters);
 
     <O extends FutureCommand> void submit(O operation);
-
-    void close();
 }

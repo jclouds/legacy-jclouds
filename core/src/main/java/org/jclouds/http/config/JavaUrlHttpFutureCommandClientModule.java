@@ -23,36 +23,41 @@
  */
 package org.jclouds.http.config;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.Scopes;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
-import org.jclouds.http.HttpFutureCommandClient;
-import org.jclouds.http.JavaUrlHttpFutureCommandClient;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.jclouds.http.HttpConstants;
+import org.jclouds.http.HttpFutureCommandClient;
+import org.jclouds.http.JavaUrlHttpFutureCommandClient;
+
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
+
 /**
- * // TODO: Adrian: Document this!
- *
+ * Configures {@link JavaUrlHttpFutureCommandClient}.
+ * 
  * @author Adrian Cole
  */
 public class JavaUrlHttpFutureCommandClientModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        //note this is not threadsafe, so it cannot be singleton
-        bind(HttpFutureCommandClient.class).to(JavaUrlHttpFutureCommandClient.class);
+	// note this is not threadsafe, so it cannot be singleton
+	bind(HttpFutureCommandClient.class).to(
+		JavaUrlHttpFutureCommandClient.class);
     }
 
     @Singleton
     @Provides
-    protected URL provideAddress(@Named("jclouds.http.address") String address, @Named("jclouds.http.port") int port, @Named("jclouds.http.secure") boolean isSecure) throws MalformedURLException {
+    protected URL provideAddress(
+	    @Named(HttpConstants.PROPERTY_HTTP_ADDRESS) String address,
+	    @Named(HttpConstants.PROPERTY_HTTP_PORT) int port,
+	    @Named(HttpConstants.PROPERTY_HTTP_SECURE) boolean isSecure)
+	    throws MalformedURLException {
 
-        return new URL(isSecure ? "https" : "http", address, port, "/");
+	return new URL(isSecure ? "https" : "http", address, port, "/");
     }
-
 
 }

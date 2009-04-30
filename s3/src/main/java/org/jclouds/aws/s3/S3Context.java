@@ -21,14 +21,29 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.command;
+package org.jclouds.aws.s3;
 
-/**
- * // TODO: Adrian: Document this!
- * 
- * @author Adrian Cole
- */
-public interface FutureCommandClient {
-    @SuppressWarnings("unchecked")
-    <O extends FutureCommand> void submit(O operation);
+import org.jclouds.aws.s3.domain.S3Bucket;
+
+public interface S3Context {
+
+    /**
+     * @return a connection to S3
+     */
+    S3Connection getConnection();
+
+    /**
+     * Creates a <code>Map<String,InputStream</code> view of the specified
+     * bucket.
+     * 
+     * @param bucket
+     * @return
+     */
+    S3ObjectMap createMapView(S3Bucket bucket);
+
+    /**
+     * Closes all connections to S3.
+     */
+    void close();
+
 }

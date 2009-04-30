@@ -61,7 +61,7 @@ public class HttpNioUtils {
 	    String contentType, long length) {
 	if (content instanceof InputStream) {
 	    InputStream inputStream = (InputStream) content;
-	    if (length <= 0)
+	    if (length == -1)
 		throw new IllegalArgumentException(
 			"you must specify size when content is an InputStream");
 	    InputStreamEntity entity = new InputStreamEntity(inputStream,

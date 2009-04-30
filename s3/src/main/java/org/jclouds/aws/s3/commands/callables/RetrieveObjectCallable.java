@@ -67,7 +67,10 @@ public class RetrieveObjectCallable extends
 	    object.setLastModified(dateParser
 		    .dateTimeFromHeaderFormat(getResponse()
 			    .getFirstHeaderOrNull("Last-Modified")));
-	    object.setETag(getResponse().getFirstHeaderOrNull("ETag"));
+	    String eTag = getResponse().getFirstHeaderOrNull("ETag");
+	    if (eTag != null) {
+		object.setETag(eTag.replaceAll("\"", ""));
+	    }
 	    object.setContentType(getResponse().getFirstHeaderOrNull(
 		    "Content-Type"));
 	    object.setSize(Long.parseLong(getResponse().getFirstHeaderOrNull(

@@ -44,7 +44,6 @@
         <module>extensions/s3nio</module>
         <module>s3</module>
         <module>s3/perftest</module>
-        <module>samples/googleappengine</module>
     </modules>
     <build>
        <plugins>

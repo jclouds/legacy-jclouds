@@ -23,6 +23,14 @@
  */
 package org.jclouds.aws.s3;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+
+import org.bouncycastle.crypto.digests.MD5Digest;
 import org.bouncycastle.crypto.digests.SHA1Digest;
 import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.params.KeyParameter;
@@ -30,38 +38,89 @@ import org.bouncycastle.util.encoders.Base64;
 import org.jclouds.Utils;
 import org.jclouds.aws.s3.domain.S3Object;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-
 public class S3Utils extends Utils {
 
+    static final byte[] HEX_CHAR_TABLE = { (byte) '0', (byte) '1', (byte) '2',
+	    (byte) '3', (byte) '4', (byte) '5', (byte) '6', (byte) '7',
+	    (byte) '8', (byte) '9', (byte) 'a', (byte) 'b', (byte) 'c',
+	    (byte) 'd', (byte) 'e', (byte) 'f' };
 
-    public static String digest(String toEncode, byte[] key) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException {
-        HMac hmac = new HMac(new SHA1Digest());
-        byte[] resBuf = new byte[hmac.getMacSize()];
-        byte[] plainBytes = toEncode.getBytes();
-        byte[] keyBytes = key;
-        hmac.init(new KeyParameter(keyBytes));
-        hmac.update(plainBytes, 0, plainBytes.length);
-        hmac.doFinal(resBuf, 0);
-        return new String(Base64.encode(resBuf));
+    public static String getHexString(byte[] raw)
+	    throws UnsupportedEncodingException {
+	byte[] hex = new byte[2 * raw.length];
+	int index = 0;
+
+	for (byte b : raw) {
+	    int v = b & 0xFF;
+	    hex[index++] = HEX_CHAR_TABLE[v >>> 4];
+	    hex[index++] = HEX_CHAR_TABLE[v & 0xF];
+	}
+	return new String(hex, "ASCII");
     }
 
+    public static String hmacSha1Base64(String toEncode, byte[] key)
+	    throws NoSuchAlgorithmException, NoSuchProviderException,
+	    InvalidKeyException {
+	HMac hmac = new HMac(new SHA1Digest());
+	byte[] resBuf = new byte[hmac.getMacSize()];
+	byte[] plainBytes = toEncode.getBytes();
+	byte[] keyBytes = key;
+	hmac.init(new KeyParameter(keyBytes));
+	hmac.update(plainBytes, 0, plainBytes.length);
+	hmac.doFinal(resBuf, 0);
+	return new String(Base64.encode(resBuf));
+    }
 
-    public static String getContentAsStringAndClose(S3Object object) throws IOException {
-        Object o = object.getContent();
+    public static String md5Hex(byte [] toEncode)
+	    throws NoSuchAlgorithmException, NoSuchProviderException,
+	    InvalidKeyException, UnsupportedEncodingException {
+	byte[] resBuf = md5(toEncode);
+	return getHexString(resBuf);
+    }
 
-        if (o instanceof InputStream) {
-            String returnVal = toStringAndClose((InputStream) o);
-            if (object.getContentType().indexOf("xml") >= 0) {
+    public static String md5Base64(byte [] toEncode)
+	    throws NoSuchAlgorithmException, NoSuchProviderException,
+	    InvalidKeyException {
+	byte[] resBuf = md5(toEncode);
+	return new String(Base64.encode(resBuf));
+    }
 
-            }
-            return returnVal;
-        } else {
-            throw new IllegalArgumentException("Object type not supported: " + o.getClass().getName());
-        }
+    public static byte[] md5(byte[] plainBytes) {
+	MD5Digest md5 = new MD5Digest();
+	byte[] resBuf = new byte[md5.getDigestSize()];
+	md5.update(plainBytes, 0, plainBytes.length);
+	md5.doFinal(resBuf, 0);
+	return resBuf;
+    }
+
+    public static byte[] md5(InputStream toEncode) throws IOException {
+	MD5Digest md5 = new MD5Digest();
+	byte[] resBuf = new byte[md5.getDigestSize()];
+	byte[] buffer = new byte[1024];
+	int numRead = -1;
+	do {
+	    numRead = toEncode.read(buffer);
+	    if (numRead > 0) {
+		md5.update(buffer, 0, numRead);
+	    }
+	} while (numRead != -1);
+	md5.doFinal(resBuf, 0);
+	return resBuf;
+    }
+
+    public static String getContentAsStringAndClose(S3Object object)
+	    throws IOException {
+	Object o = object.getContent();
+
+	if (o instanceof InputStream) {
+	    String returnVal = toStringAndClose((InputStream) o);
+	    if (object.getContentType().indexOf("xml") >= 0) {
+
+	    }
+	    return returnVal;
+	} else {
+	    throw new IllegalArgumentException("Object type not supported: "
+		    + o.getClass().getName());
+	}
     }
 }

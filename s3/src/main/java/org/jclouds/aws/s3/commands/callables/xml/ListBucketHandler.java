@@ -68,7 +68,7 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<S3Bucket> {
         } else if (qName.equals("LastModified")) {
             currentObject.setLastModified(dateParser.dateTimeFromXMLFormat(currentText.toString()));
         } else if (qName.equals("ETag")) {
-            currentObject.setETag(currentText.toString());
+            currentObject.setETag(currentText.toString().replaceAll("\"", ""));
         } else if (qName.equals("Size")) {
             currentObject.setSize(Long.parseLong(currentText.toString()));
         } else if (qName.equals("Owner")) {

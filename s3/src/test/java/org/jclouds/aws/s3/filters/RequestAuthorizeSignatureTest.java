@@ -27,6 +27,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.name.Names;
 import org.jclouds.aws.s3.DateService;
+import org.jclouds.aws.s3.S3Constants;
 import org.testng.annotations.Test;
 
 
@@ -40,8 +41,8 @@ public class RequestAuthorizeSignatureTest {
         filter = Guice.createInjector(new AbstractModule() {
 
             protected void configure() {
-                bindConstant().annotatedWith(Names.named("jclouds.aws.accesskeyid")).to("foo");
-                bindConstant().annotatedWith(Names.named("jclouds.aws.secretaccesskey")).to("bar");
+                bindConstant().annotatedWith(Names.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to("foo");
+                bindConstant().annotatedWith(Names.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY)).to("bar");
                 bind(DateService.class);
 
             }

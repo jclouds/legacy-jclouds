@@ -25,6 +25,7 @@ package org.jclouds.http;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -84,31 +85,36 @@ public class JavaUrlHttpFutureCommandClient implements HttpFutureCommandClient {
 
 	    operation.getResponseFuture().setResponse(response);
 	    operation.getResponseFuture().run();
+	} catch (FileNotFoundException e) {
+	    HttpResponse response = new HttpResponse();
+	    response.setStatusCode(404);
+	    operation.getResponseFuture().setResponse(response);
+	    operation.getResponseFuture().run();
 	} catch (Exception e) {
 	    if (connection != null) {
-		InputStream errorStream = connection.getErrorStream();
-		if (errorStream != null) {
-		    try {
-			String errorMessage = Utils.toStringAndClose(connection
-				.getErrorStream());
-			logger.error(e,
-				"error encountered during the exception: %1s",
-				errorMessage);
-		    } catch (IOException e1) {
+		StringBuilder errors = new StringBuilder();
+		try {
+		    for (InputStream in : new InputStream[] {
+			    connection.getErrorStream(),
+			    connection.getInputStream() }) {
+			if (in != null) {
+			    errors.append(Utils.toStringAndClose(in)).append(
+				    "\n");
+			}
 		    }
+		    logger.error(e,
+			    "error encountered during the exception: %1s",
+			    errors.toString());
+		} catch (IOException e2) {
 		}
-
 	    }
 	    operation.setException(e);
 	} finally {
 	    // DO NOT disconnect, as it will also close the unconsumed
 	    // outputStream from above.
-	    // connection.disconnect();
+	    if (request.getMethod().equals("HEAD"))
+		connection.disconnect();
 	}
-    }
-
-    public void close() {
-	// Nothing to stop;
     }
 
     private HttpResponse getResponse(HttpURLConnection connection)
@@ -121,9 +127,11 @@ public class JavaUrlHttpFutureCommandClient implements HttpFutureCommandClient {
 	}
 
 	response.setMessage(connection.getResponseMessage());
-	response.setContent(connection.getInputStream());
-	response.setContentType(connection
-		.getHeaderField(HttpConstants.CONTENT_TYPE));
+	if (!connection.getRequestMethod().equals("HEAD")) {
+	    response.setContent(connection.getInputStream());
+	    response.setContentType(connection
+		    .getHeaderField(HttpConstants.CONTENT_TYPE));
+	}
 	return response;
     }
 

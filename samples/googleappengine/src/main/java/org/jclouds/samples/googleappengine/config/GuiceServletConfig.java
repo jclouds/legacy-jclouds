@@ -31,8 +31,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.aws.s3.S3ConnectionFactory;
-import org.jclouds.aws.s3.S3ConnectionModule;
+import org.jclouds.aws.s3.S3ContextFactory;
+import org.jclouds.aws.s3.config.S3ContextModule;
 import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.samples.googleappengine.JCloudsServlet;
@@ -84,11 +84,11 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 			} finally {
 			    IOUtils.closeQuietly(input);
 			}
-			props.putAll(S3ConnectionFactory.DEFAULT_PROPERTIES);
+			props.putAll(S3ContextFactory.DEFAULT_PROPERTIES);
 			Names.bindProperties(binder(), props);
 		    }
 		}, new JavaUrlHttpFutureCommandClientModule(),
-		new S3ConnectionModule(), new ServletModule() {
+		new S3ContextModule(), new ServletModule() {
 		    @Override
 		    protected void configureServlets() {
 			serve("*.s3").with(JCloudsServlet.class);

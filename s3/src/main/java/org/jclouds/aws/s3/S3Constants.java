@@ -23,13 +23,16 @@
  */
 package org.jclouds.aws.s3;
 
+import org.jclouds.command.pool.PoolConstants;
 import org.jclouds.http.HttpConstants;
 
 /**
  * // TODO: Adrian: Document this!
- *
+ * 
  * @author Adrian Cole
  */
-public class S3Constants extends HttpConstants {
+public interface S3Constants extends HttpConstants, PoolConstants {
     public static final String AUTH = "Authorization";
+    public static final String PROPERTY_AWS_SECRETACCESSKEY = "jclouds.aws.secretaccesskey";
+    public static final String PROPERTY_AWS_ACCESSKEYID = "jclouds.aws.accesskeyid";
 }

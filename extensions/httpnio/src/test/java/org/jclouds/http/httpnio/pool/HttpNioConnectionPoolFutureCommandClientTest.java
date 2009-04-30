@@ -24,6 +24,8 @@
 package org.jclouds.http.httpnio.pool;
 
 import com.google.inject.Module;
+
+import org.jclouds.command.pool.PoolConstants;
 import org.jclouds.http.BaseHttpFutureCommandClientTest;
 import org.jclouds.http.httpnio.config.HttpNioConnectionPoolClientModule;
 import org.testng.annotations.Test;
@@ -32,21 +34,27 @@ import java.util.Properties;
 
 /**
  * // TODO: Adrian: Document this!
- *
+ * 
  * @author Adrian Cole
  */
 @Test
-public class HttpNioConnectionPoolFutureCommandClientTest extends BaseHttpFutureCommandClientTest {
+public class HttpNioConnectionPoolFutureCommandClientTest extends
+	BaseHttpFutureCommandClientTest {
 
     protected void addConnectionProperties(Properties properties) {
-        properties.setProperty("jclouds.http.pool.max_connection_reuse", "75");
-        properties.setProperty("jclouds.http.pool.max_session_failures", "2");
-        properties.setProperty("jclouds.http.pool.request_invoker_threads", "1");
-        properties.setProperty("jclouds.http.pool.io_worker_threads", "2");
-        properties.setProperty("jclouds.pool.max_connections", "12");
+	properties.setProperty(
+		PoolConstants.PROPERTY_POOL_MAX_CONNECTION_REUSE, "75");
+	properties.setProperty(
+		PoolConstants.PROPERTY_POOL_MAX_SESSION_FAILURES, "2");
+	properties.setProperty(
+		PoolConstants.PROPERTY_POOL_REQUEST_INVOKER_THREADS, "1");
+	properties.setProperty(PoolConstants.PROPERTY_POOL_IO_WORKER_THREADS,
+		"2");
+	properties.setProperty(PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS,
+		"12");
     }
 
     protected Module createClientModule() {
-        return new HttpNioConnectionPoolClientModule();
+	return new HttpNioConnectionPoolClientModule();
     }
 }

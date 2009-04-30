@@ -23,49 +23,52 @@
  */
 package org.jclouds.http.httpnio.config;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.Scopes;
-import com.google.inject.Singleton;
-import com.google.inject.TypeLiteral;
-import com.google.inject.name.Named;
+import java.net.InetSocketAddress;
 
 import org.apache.http.nio.NHttpConnection;
 import org.jclouds.command.pool.FutureCommandConnectionRetry;
+import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpFutureCommandClient;
 import org.jclouds.http.httpnio.config.internal.NonSSLHttpNioConnectionPoolClientModule;
 import org.jclouds.http.httpnio.config.internal.SSLHttpNioConnectionPoolClientModule;
 import org.jclouds.http.httpnio.pool.HttpNioConnectionPoolClient;
 import org.jclouds.http.httpnio.pool.HttpNioFutureCommandConnectionRetry;
 
-import java.net.InetSocketAddress;
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
+import com.google.inject.name.Named;
 
 /**
- * // TODO: Adrian: Document this!
- *
+ * Configures {@link HttpNioConnectionPoolClient}
+ * 
  * @author Adrian Cole
  */
 public class HttpNioConnectionPoolClientModule extends AbstractModule {
 
-    @Named("jclouds.http.secure")
+    @Named(HttpConstants.PROPERTY_HTTP_SECURE)
     boolean isSecure;
 
     @Override
     protected void configure() {
-        requestInjection(this);
-        //TODO test...
-        if (isSecure)
-            install(new SSLHttpNioConnectionPoolClientModule());
-        else
-            install(new NonSSLHttpNioConnectionPoolClientModule());
-        bind(new TypeLiteral<FutureCommandConnectionRetry<NHttpConnection>>(){}).to(HttpNioFutureCommandConnectionRetry.class);
-        bind(HttpFutureCommandClient.class).to(HttpNioConnectionPoolClient.class);
+	requestInjection(this);
+	if (isSecure)
+	    install(new SSLHttpNioConnectionPoolClientModule());
+	else
+	    install(new NonSSLHttpNioConnectionPoolClientModule());
+	bind(new TypeLiteral<FutureCommandConnectionRetry<NHttpConnection>>() {
+	}).to(HttpNioFutureCommandConnectionRetry.class);
+	bind(HttpFutureCommandClient.class).to(
+		HttpNioConnectionPoolClient.class);
     }
 
     @Singleton
     @Provides
-    protected InetSocketAddress provideAddress(@Named("jclouds.http.address") String address, @Named("jclouds.http.port") int port) {
-        return new InetSocketAddress(address, port);
+    protected InetSocketAddress provideAddress(
+	    @Named(HttpConstants.PROPERTY_HTTP_ADDRESS) String address,
+	    @Named(HttpConstants.PROPERTY_HTTP_PORT) int port) {
+	return new InetSocketAddress(address, port);
     }
 
 }

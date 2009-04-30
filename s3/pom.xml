@@ -67,6 +67,11 @@
             <artifactId>bcprov-jdk15</artifactId>
             <version>140</version>
         </dependency>
+        <dependency>
+            <groupId>eu.medsea.mimeutil</groupId>
+            <artifactId>mime-util</artifactId>
+            <version>1.3</version>
+        </dependency> 
     </dependencies>
     <build>
         <plugins>

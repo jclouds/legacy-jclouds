@@ -27,6 +27,7 @@ import com.google.inject.*;
 import com.google.inject.name.Named;
 import org.jclouds.command.FutureCommand;
 import org.jclouds.lifecycle.config.LifeCycleModule;
+import org.jclouds.command.pool.PoolConstants;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -50,8 +51,7 @@ public abstract class FutureCommandConnectionPoolClientModule<C> extends Abstrac
 
     @Provides
     @Singleton
-    public abstract BlockingQueue<C> provideAvailablePool(@Named("jclouds.pool.max_connections") int max) throws Exception;
-
+    public abstract BlockingQueue<C> provideAvailablePool(@Named(PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS) int max) throws Exception;
     /**
      * controls production and destruction of real connections.
      * <p/>
@@ -64,7 +64,7 @@ public abstract class FutureCommandConnectionPoolClientModule<C> extends Abstrac
      */
     @Provides
     @Singleton
-    public Semaphore provideTotalConnectionSemaphore(@Named("jclouds.pool.max_connections") int max) throws Exception {
+    public Semaphore provideTotalConnectionSemaphore(@Named(PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS) int max) throws Exception {
         return new Semaphore(max, true);
     }
 }

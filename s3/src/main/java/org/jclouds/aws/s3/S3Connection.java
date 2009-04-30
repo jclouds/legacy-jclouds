@@ -23,20 +23,18 @@
  */
 package org.jclouds.aws.s3;
 
-import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.aws.s3.domain.S3Bucket;
-
-import java.io.IOException;
-import java.io.Closeable;
 import java.util.List;
 import java.util.concurrent.Future;
+
+import org.jclouds.aws.s3.domain.S3Bucket;
+import org.jclouds.aws.s3.domain.S3Object;
 
 /**
  * // TODO: Adrian: Document this!
  *
  * @author Adrian Cole
  */
-public interface S3Connection extends Closeable {
+public interface S3Connection {
     Future<S3Object> getObject(S3Bucket s3Bucket, String key);
 
     Future<S3Object> headObject(S3Bucket s3Bucket, String key);
@@ -56,6 +54,4 @@ public interface S3Connection extends Closeable {
     Future<S3Bucket> getBucket(S3Bucket s3Bucket);
 
     Future<List<S3Bucket>> getBuckets();
-
-    public void close() throws IOException;
 }

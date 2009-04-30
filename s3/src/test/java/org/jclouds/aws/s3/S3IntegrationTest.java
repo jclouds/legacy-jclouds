@@ -41,6 +41,7 @@ import java.util.logging.Logger;
 
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.http.HttpConstants;
 import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
@@ -48,7 +49,6 @@ import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import com.google.inject.Injector;
 import com.google.inject.Module;
 
 @Test(sequential = true)
@@ -90,44 +90,45 @@ public class S3IntegrationTest {
 	    + "/adriancole.s3.amazons3test.filetestsforadrian/file</StringToSign><AWSAccessKeyId>0101100101001001</AWSAccessKeyId></Error>";
     String amazonHadAnError = "<Error><Code>InternalError</Code><Message>We encountered an internal error. Please try again.</Message><RequestId>EF6FA7A639CAFF15</RequestId><HostId>tBkX23mIeq2riHsNw2YShupMlZ9+iy3V/uN+lRhqCR4qHTE07ujFeyAUPTowvuH/</HostId></Error>";
     protected S3Connection client;
-    Injector i = null;
+    protected S3Context context = null;
 
     protected String bucketPrefix = System.getProperty("user.name") + "."
 	    + this.getClass().getName();
 
     private static final String sysAWSAccessKeyId = System
-	    .getProperty("jclouds.aws.accesskeyid");
+	    .getProperty(S3Constants.PROPERTY_AWS_ACCESSKEYID);
     private static final String sysAWSSecretAccessKey = System
-	    .getProperty("jclouds.aws.secretaccesskey");
+	    .getProperty(S3Constants.PROPERTY_AWS_SECRETACCESSKEY);
 
     @BeforeTest
-    @Parameters( { "jclouds.aws.accesskeyid", "jclouds.aws.secretaccesskey" })
+    @Parameters( { S3Constants.PROPERTY_AWS_ACCESSKEYID,
+	    S3Constants.PROPERTY_AWS_SECRETACCESSKEY })
     protected void setUpClient(@Optional String AWSAccessKeyId,
 	    @Optional String AWSSecretAccessKey) throws Exception {
-	i = createInject(AWSAccessKeyId != null ? AWSAccessKeyId
+	context = createS3Context(AWSAccessKeyId != null ? AWSAccessKeyId
 		: sysAWSAccessKeyId,
 		AWSSecretAccessKey != null ? AWSSecretAccessKey
 			: sysAWSSecretAccessKey);
-	client = i.getInstance(LiveS3Connection.class);
+	client = context.getConnection();
 	deleteEverything();
     }
 
-    protected Injector createInject(String AWSAccessKeyId,
+    protected S3Context createS3Context(String AWSAccessKeyId,
 	    String AWSSecretAccessKey) {
-	return S3ConnectionFactory.getInjector(buildS3Properties(
+	return S3ContextFactory.createS3Context(buildS3Properties(
 		AWSAccessKeyId, AWSSecretAccessKey), createHttpModule());
     }
 
     protected Properties buildS3Properties(String AWSAccessKeyId,
 	    String AWSSecretAccessKey) {
 	Properties properties = new Properties(
-		S3ConnectionFactory.DEFAULT_PROPERTIES);
-	properties.setProperty("jclouds.aws.accesskeyid", checkNotNull(
-		AWSAccessKeyId, "AWSAccessKeyId"));
-	properties.setProperty("jclouds.aws.secretaccesskey", checkNotNull(
-		AWSSecretAccessKey, "AWSSecretAccessKey"));
-	properties.setProperty("jclouds.http.secure", "false");
-	properties.setProperty("jclouds.http.port", "80");
+		S3ContextFactory.DEFAULT_PROPERTIES);
+	properties.setProperty(S3Constants.PROPERTY_AWS_ACCESSKEYID,
+		checkNotNull(AWSAccessKeyId, "AWSAccessKeyId"));
+	properties.setProperty(S3Constants.PROPERTY_AWS_SECRETACCESSKEY,
+		checkNotNull(AWSSecretAccessKey, "AWSSecretAccessKey"));
+	properties.setProperty(HttpConstants.PROPERTY_HTTP_SECURE, "false");
+	properties.setProperty(HttpConstants.PROPERTY_HTTP_PORT, "80");
 	return properties;
     }
 
@@ -163,8 +164,8 @@ public class S3IntegrationTest {
     @AfterTest
     protected void tearDownClient() throws Exception {
 	deleteEverything();
-	client.close();
-	i = null;
+	context.close();
+	context = null;
     }
 
 }

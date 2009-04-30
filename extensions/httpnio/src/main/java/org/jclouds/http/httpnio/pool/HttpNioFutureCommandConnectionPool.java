@@ -23,8 +23,13 @@
  */
 package org.jclouds.http.httpnio.pool;
 
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.http.HttpException;
 import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor;
 import org.apache.http.nio.NHttpConnection;
@@ -38,21 +43,18 @@ import org.jclouds.Logger;
 import org.jclouds.command.FutureCommand;
 import org.jclouds.command.pool.FutureCommandConnectionPool;
 import org.jclouds.command.pool.FutureCommandConnectionRetry;
+import org.jclouds.command.pool.PoolConstants;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
-
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 /**
- * // TODO: Adrian: Document this!
- *
+ * Connection Pool for HTTP requests that utilizes Apache HTTPNio
+ * 
  * @author Adrian Cole
  */
-public class HttpNioFutureCommandConnectionPool extends FutureCommandConnectionPool<NHttpConnection> implements EventListener {
+public class HttpNioFutureCommandConnectionPool extends
+	FutureCommandConnectionPool<NHttpConnection> implements EventListener {
 
     private final NHttpClientConnectionPoolSessionRequestCallback sessionCallback;
     private final DefaultConnectingIOReactor ioReactor;
@@ -61,153 +63,182 @@ public class HttpNioFutureCommandConnectionPool extends FutureCommandConnectionP
     private final int maxSessionFailures;
 
     @Inject
-    public HttpNioFutureCommandConnectionPool(java.util.logging.Logger logger, ExecutorService executor, Semaphore allConnections, BlockingQueue<NHttpConnection> available, AsyncNHttpClientHandler clientHandler, DefaultConnectingIOReactor ioReactor, IOEventDispatch dispatch, FutureCommandConnectionHandleFactory requestHandleFactory, InetSocketAddress target, FutureCommandConnectionRetry<NHttpConnection> futureCommandConnectionRetry, @Named("jclouds.http.pool.max_connection_reuse") int maxConnectionReuse, @Named("jclouds.http.pool.max_session_failures") int maxSessionFailures) {
-        super(new Logger(logger), executor, futureCommandConnectionRetry, allConnections, requestHandleFactory, maxConnectionReuse, available);
-        this.ioReactor = ioReactor;
-        this.dispatch = dispatch;
-        this.target = target;
-        this.maxSessionFailures = maxSessionFailures;
-        this.sessionCallback = new NHttpClientConnectionPoolSessionRequestCallback();
-        clientHandler.setEventListener(this);
+    public HttpNioFutureCommandConnectionPool(
+	    java.util.logging.Logger logger,
+	    ExecutorService executor,
+	    Semaphore allConnections,
+	    BlockingQueue<NHttpConnection> available,
+	    AsyncNHttpClientHandler clientHandler,
+	    DefaultConnectingIOReactor ioReactor,
+	    IOEventDispatch dispatch,
+	    FutureCommandConnectionHandleFactory requestHandleFactory,
+	    InetSocketAddress target,
+	    FutureCommandConnectionRetry<NHttpConnection> futureCommandConnectionRetry,
+	    @Named(PoolConstants.PROPERTY_POOL_MAX_CONNECTION_REUSE) int maxConnectionReuse,
+	    @Named(PoolConstants.PROPERTY_POOL_MAX_SESSION_FAILURES) int maxSessionFailures) {
+	super(new Logger(logger), executor, futureCommandConnectionRetry,
+		allConnections, requestHandleFactory, maxConnectionReuse,
+		available);
+	this.ioReactor = ioReactor;
+	this.dispatch = dispatch;
+	this.target = target;
+	this.maxSessionFailures = maxSessionFailures;
+	this.sessionCallback = new NHttpClientConnectionPoolSessionRequestCallback();
+	clientHandler.setEventListener(this);
     }
 
     @Override
     public void start() {
-        synchronized (this.statusLock) {
-            if (this.status.compareTo(Status.INACTIVE) == 0) {
-                executor.execute(new Runnable() {
-                    public void run() {
-                        try {
-                            ioReactor.execute(dispatch);
-                        } catch (IOException e) {
-                            exception = e;
-                            logger.error(e, "Error dispatching %1s", dispatch);
-                            status = Status.SHUTDOWN_REQUEST;
-                        }
-                    }
-                });
-            }
-            super.start();
-        }
+	synchronized (this.statusLock) {
+	    if (this.status.compareTo(Status.INACTIVE) == 0) {
+		executor.execute(new Runnable() {
+		    public void run() {
+			try {
+			    ioReactor.execute(dispatch);
+			} catch (IOException e) {
+			    exception = e;
+			    logger.error(e, "Error dispatching %1s", dispatch);
+			    status = Status.SHUTDOWN_REQUEST;
+			}
+		    }
+		});
+	    }
+	    super.start();
+	}
     }
 
     public void shutdownReactor(long waitMs) {
-        try {
-            this.ioReactor.shutdown(waitMs);
-        } catch (IOException e) {
-            logger.error(e, "Error shutting down reactor");
-        }
+	try {
+	    this.ioReactor.shutdown(waitMs);
+	} catch (IOException e) {
+	    logger.error(e, "Error shutting down reactor");
+	}
     }
 
-
     public boolean connectionValid(NHttpConnection conn) {
-        return conn.isOpen() && !conn.isStale() && conn.getMetrics().getRequestCount() < maxConnectionReuse;
+	return conn.isOpen() && !conn.isStale()
+		&& conn.getMetrics().getRequestCount() < maxConnectionReuse;
     }
 
     protected void doWork() throws Exception {
-        createNewConnection();
+	createNewConnection();
     }
 
     @Override
     protected void doShutdown() {
-        // Give the I/O reactor 10 sec to shut down
-        shutdownReactor(10000);
+	// Give the I/O reactor 10 sec to shut down
+	shutdownReactor(10000);
     }
 
     protected void createNewConnection() throws InterruptedException {
-        boolean acquired = allConnections.tryAcquire(1, TimeUnit.SECONDS);
-        if (acquired) {
-            if (shouldDoWork()) {
-                logger.debug("%1s - opening new connection", target);
-                ioReactor.connect(target, null, null, sessionCallback);
-            } else {
-                allConnections.release();
-            }
-        }
+	boolean acquired = allConnections.tryAcquire(1, TimeUnit.SECONDS);
+	if (acquired) {
+	    if (shouldDoWork()) {
+		logger.debug("%1s - opening new connection", target);
+		ioReactor.connect(target, null, null, sessionCallback);
+	    } else {
+		allConnections.release();
+	    }
+	}
     }
 
     @Override
     protected boolean shouldDoWork() {
-        return super.shouldDoWork() && ioReactor.getStatus().equals(IOReactorStatus.ACTIVE);
+	return super.shouldDoWork()
+		&& ioReactor.getStatus().equals(IOReactorStatus.ACTIVE);
     }
 
-    class NHttpClientConnectionPoolSessionRequestCallback implements SessionRequestCallback {
+    class NHttpClientConnectionPoolSessionRequestCallback implements
+	    SessionRequestCallback {
 
-        public void completed(SessionRequest request) {
-            logger.trace("%1s - %2s - operation complete", request, request.getAttachment());
-        }
+	public void completed(SessionRequest request) {
+	    logger.trace("%1s - %2s - operation complete", request, request
+		    .getAttachment());
+	}
 
-        public void cancelled(SessionRequest request) {
-            logger.info("%1s - %2s - operation cancelled", request, request.getAttachment());
-            releaseConnectionAndCancelResponse(request);
-        }
+	public void cancelled(SessionRequest request) {
+	    logger.info("%1s - %2s - operation cancelled", request, request
+		    .getAttachment());
+	    releaseConnectionAndCancelResponse(request);
+	}
 
-        private void releaseConnectionAndCancelResponse(SessionRequest request) {
-            allConnections.release();
-            FutureCommand frequest = (FutureCommand) request.getAttachment();
-            if (frequest != null) {
-                frequest.cancel(true);
-            }
-        }
+	private void releaseConnectionAndCancelResponse(SessionRequest request) {
+	    allConnections.release();
+	    FutureCommand<?, ?, ?> frequest = (FutureCommand<?, ?, ?>) request
+		    .getAttachment();
+	    if (frequest != null) {
+		frequest.cancel(true);
+	    }
+	}
 
-        private void releaseConnectionAndSetResponseException(SessionRequest request, Exception e) {
-            allConnections.release();
-            FutureCommand frequest = (FutureCommand) request.getAttachment();
-            if (frequest != null) {
-                frequest.setException(e);
-            }
-        }
+	private void releaseConnectionAndSetResponseException(
+		SessionRequest request, Exception e) {
+	    allConnections.release();
+	    FutureCommand<?, ?, ?> frequest = (FutureCommand<?, ?, ?>) request
+		    .getAttachment();
+	    if (frequest != null) {
+		frequest.setException(e);
+	    }
+	}
 
-        public void failed(SessionRequest request) {
-            int count = currentSessionFailures.getAndIncrement();
-            logger.error(request.getException(), "%1s - %2s - operation failed", request, request.getAttachment());
-            releaseConnectionAndSetResponseException(request, request.getException());
-            if (count >= maxSessionFailures) {
-                exception = request.getException();
-            }
+	public void failed(SessionRequest request) {
+	    int count = currentSessionFailures.getAndIncrement();
+	    logger.error(request.getException(),
+		    "%1s - %2s - operation failed", request, request
+			    .getAttachment());
+	    releaseConnectionAndSetResponseException(request, request
+		    .getException());
+	    if (count >= maxSessionFailures) {
+		exception = request.getException();
+	    }
 
-        }
+	}
 
-        public void timeout(SessionRequest request) {
-            logger.warn("%1s - %2s - operation timed out", request, request.getAttachment());
-            releaseConnectionAndCancelResponse(request);
-        }
+	public void timeout(SessionRequest request) {
+	    logger.warn("%1s - %2s - operation timed out", request, request
+		    .getAttachment());
+	    releaseConnectionAndCancelResponse(request);
+	}
 
     }
-
 
     public void connectionOpen(NHttpConnection conn) {
-        conn.setSocketTimeout(0);
-        available.offer(conn);
-        logger.trace("%1s - %2d - open", conn, conn.hashCode());
+	conn.setSocketTimeout(0);
+	available.offer(conn);
+	logger.trace("%1s - %2d - open", conn, conn.hashCode());
     }
 
-
     public void connectionTimeout(NHttpConnection conn) {
-        logger.warn("%1s - %2d - timeout  %2d", conn, conn.hashCode(), conn.getSocketTimeout());
-        allConnections.release();
-        futureCommandConnectionRetry.shutdownConnectionAndRetryOperation(conn);
+	logger.warn("%1s - %2d - timeout  %2d", conn, conn.hashCode(), conn
+		.getSocketTimeout());
+	allConnections.release();
+	futureCommandConnectionRetry.shutdownConnectionAndRetryOperation(conn);
     }
 
     public void connectionClosed(NHttpConnection conn) {
-        allConnections.release();
-        logger.trace("%1s - %2d - closed", conn, conn.hashCode());
+	allConnections.release();
+	logger.trace("%1s - %2d - closed", conn, conn.hashCode());
     }
 
     public void fatalIOException(IOException ex, NHttpConnection conn) {
-        exception = ex;
-        logger.error(ex, "%1s - %2d - %3s - pool error", conn, conn.hashCode(), target);
-        futureCommandConnectionRetry.shutdownConnectionAndRetryOperation(conn);
+	exception = ex;
+	logger.error(ex, "%1s - %2d - %3s - pool error", conn, conn.hashCode(),
+		target);
+	futureCommandConnectionRetry.shutdownConnectionAndRetryOperation(conn);
     }
 
     public void fatalProtocolException(HttpException ex, NHttpConnection conn) {
-        exception = ex;
-        logger.error(ex, "%1s - %2d - %3s - http error", conn, conn.hashCode(), target);
-        fatalException(ex, conn);
+	exception = ex;
+	logger.error(ex, "%1s - %2d - %3s - http error", conn, conn.hashCode(),
+		target);
+	fatalException(ex, conn);
     }
 
-    public static interface FutureCommandConnectionHandleFactory extends FutureCommandConnectionPool.FutureCommandConnectionHandleFactory<NHttpConnection> {
-        HttpNioFutureCommandConnectionHandle create(FutureCommand command, NHttpConnection conn);
+    public static interface FutureCommandConnectionHandleFactory
+	    extends
+	    FutureCommandConnectionPool.FutureCommandConnectionHandleFactory<NHttpConnection> {
+	HttpNioFutureCommandConnectionHandle create(FutureCommand command,
+		NHttpConnection conn);
     }
 
 }

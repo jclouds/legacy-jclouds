@@ -21,12 +21,12 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3;
+package org.jclouds.aws.s3.internal;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Future;
 
+import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.commands.CopyObject;
 import org.jclouds.aws.s3.commands.DeleteBucket;
 import org.jclouds.aws.s3.commands.DeleteObject;
@@ -127,9 +127,4 @@ public class LiveS3Connection implements S3Connection {
 	client.submit(listRequest);
 	return listRequest;
     }
-
-    public void close() throws IOException {
-	client.close();
-    }
-
 }

@@ -40,6 +40,7 @@ import org.jclouds.http.commands.GetString;
 import org.jclouds.http.commands.Head;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 import org.jclouds.http.commands.config.HttpCommandsModule;
+import org.jclouds.lifecycle.Closer;
 import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Request;
 import org.mortbay.jetty.Server;
@@ -69,6 +70,7 @@ public abstract class BaseHttpFutureCommandClientTest {
     protected CommandFactory factory;
     protected HttpFutureCommandClient client;
     protected Injector injector;
+    private Closer closer;
 
     @BeforeClass
     @Parameters( { "test-jetty-port" })
@@ -95,9 +97,9 @@ public abstract class BaseHttpFutureCommandClientTest {
 	server.setHandler(handler);
 	server.start();
 	final Properties properties = new Properties();
-	properties.put("jclouds.http.address", "localhost");
-	properties.put("jclouds.http.port", testPort + "");
-	properties.put("jclouds.http.secure", "false");
+	properties.put(HttpConstants.PROPERTY_HTTP_ADDRESS, "localhost");
+	properties.put(HttpConstants.PROPERTY_HTTP_PORT, testPort + "");
+	properties.put(HttpConstants.PROPERTY_HTTP_SECURE, "false");
 	addConnectionProperties(properties);
 	final List<HttpRequestFilter> filters = new ArrayList<HttpRequestFilter>(
 		1);
@@ -123,6 +125,7 @@ public abstract class BaseHttpFutureCommandClientTest {
 		});
 	factory = injector.getInstance(CommandFactory.class);
 	client = injector.getInstance(HttpFutureCommandClient.class);
+	closer = injector.getInstance(Closer.class);
 	assert client != null;
     }
 
@@ -132,7 +135,7 @@ public abstract class BaseHttpFutureCommandClientTest {
 
     @AfterClass
     public void tearDownJetty() throws Exception {
-	client.close();
+	closer.close();
 	server.stop();
     }
 

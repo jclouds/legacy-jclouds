@@ -28,6 +28,7 @@ import org.jclouds.aws.PerformanceTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -51,7 +52,7 @@ public class S3UtilsTest extends PerformanceTest {
 	    String base64Digest) throws NoSuchProviderException,
 	    NoSuchAlgorithmException, InvalidKeyException {
 	for (int i = 0; i < 10000; i++)
-	    testBouncyCastleDigest(key, message, base64Digest);
+	    testBouncyCastleHmacSha1Base64(key, message, base64Digest);
     }
 
     @Test(dataProvider = "hmacsha1")
@@ -64,13 +65,24 @@ public class S3UtilsTest extends PerformanceTest {
 	for (int i = 0; i < 10000; i++)
 	    completer.submit(new Callable<Boolean>() {
 		public Boolean call() throws Exception {
-		    testBouncyCastleDigest(key, message, base64Digest);
+		    testBouncyCastleHmacSha1Base64(key, message, base64Digest);
 		    return true;
 		}
 	    });
 	for (int i = 0; i < 10000; i++)
 	    assert completer.take().get();
     }
+    
+    @DataProvider(name = "md5")
+    public Object[][] createMD5Data() {
+	return base64MD5MessageDigest;
+    }
+    public final static Object[][] base64MD5MessageDigest = {
+	    { "apple", "1f3870be274f6c49b3e31a0c6728957f" },
+	    { "bear", "893b56e3cfe153fb770a120b83bac20c" },
+	    { "candy", "c48ba993d35c3abe0380f91738fe2a34" },
+	    { "dogma", "95eb470e4faee302e9cd3063b1923dab" },
+	    { "emma", "00a809937eddc44521da9521269e75c6" } };
 
     public final static Object[][] base64KeyMessageDigest = {
 	    { Base64.decode("CwsLCwsLCwsLCwsLCwsLCwsLCws="), "Hi There",
@@ -96,11 +108,19 @@ public class S3UtilsTest extends PerformanceTest {
     }
 
     @Test(dataProvider = "hmacsha1")
-    public void testBouncyCastleDigest(byte[] key, String message,
+    public void testBouncyCastleHmacSha1Base64(byte[] key, String message,
 	    String base64Digest) throws NoSuchProviderException,
 	    NoSuchAlgorithmException, InvalidKeyException {
-	String b64 = S3Utils.digest(message, key);
+	String b64 = S3Utils.hmacSha1Base64(message, key);
 	assertEquals(b64, base64Digest);
+    }
+    
+    @Test(dataProvider = "md5")
+    public void testBouncyCastleMD5Digest(String message,
+	    String base64Digest) throws NoSuchProviderException,
+	    NoSuchAlgorithmException, InvalidKeyException, UnsupportedEncodingException {
+	String b64 = S3Utils.md5Hex(message.getBytes());
+	assertEquals(base64Digest,b64);
     }
 
 }

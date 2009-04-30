@@ -23,138 +23,32 @@
  */
 package org.jclouds.aws.s3;
 
-import com.google.inject.Inject;
-import org.jclouds.Logger;
-import org.jclouds.aws.s3.domain.S3Object;
+import java.io.File;
+import java.io.InputStream;
+import java.util.Map;
+import java.util.Set;
+
 import org.jclouds.aws.s3.domain.S3Bucket;
+import org.jclouds.aws.s3.domain.S3Object;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.Future;
+public interface S3ObjectMap extends Map<String, InputStream> {
 
-/**
- * // TODO: Adrian: Document this!
- *
- * @author Adrian Cole
- */
-public class S3ObjectMap implements ConcurrentMap<String, Object> {
-    private Logger logger;
-    private S3Connection connection;
-    private S3Bucket bucket;
-    private S3Utils utils;
+    InputStream putString(String key, String value);
 
-    @Inject
-    public S3ObjectMap(java.util.logging.Logger logger, S3Connection connection, S3Bucket bucket, S3Utils utils) {
-        this.logger = new Logger(logger);
-        this.connection = connection;
-        this.bucket = bucket;
-        this.utils = utils;
-    }
+    InputStream putFile(String key, File value);
 
+    InputStream putBytes(String key, byte[] value);
+    
+    void putAllStrings(Map<? extends String, ? extends String> map);
 
-    public Object putIfAbsent(String s, Object o) {
-        return null;  // TODO: Adrian: Customise this generated block
-    }
+    void putAllBytes(Map<? extends String, ? extends byte[]> map);
 
-    public boolean remove(Object o, Object o1) {
-        return false;  // TODO: Adrian: Customise this generated block
-    }
+    void putAllFiles(Map<? extends String, ? extends File> map);
 
-    public boolean replace(String s, Object o, Object o1) {
-        return false;  // TODO: Adrian: Customise this generated block
-    }
+    InputStream put(S3Object object);
+    
+    void putAll(Set<S3Object> objects);
 
-    public Object replace(String s, Object o) {
-        return null;  // TODO: Adrian: Customise this generated block
-    }
+    S3Bucket getBucket();
 
-    public int size() {
-        try {
-            bucket = connection.getBucket(bucket).get();
-            return bucket.getContents().size();
-        } catch (Exception e) {
-            S3Utils.<S3RuntimeException>rethrowIfRuntimeOrSameType(e);
-            throw new S3RuntimeException("Error clearing bucket" + bucket, e);
-        }
-    }
-
-    public boolean isEmpty() {
-        return false;  // TODO: Adrian: Customise this generated block
-    }
-
-    public boolean containsKey(Object o) {
-        return false;  // TODO: Adrian: Customise this generated block
-    }
-
-    public boolean containsValue(Object o) {
-        return false;  // TODO: Adrian: Customise this generated block
-    }
-
-    public Object get(Object o) {
-        try {
-            return connection.getObject(bucket, o.toString()).get();
-        } catch (Exception e) {
-            S3Utils.<S3RuntimeException>rethrowIfRuntimeOrSameType(e);
-            throw new S3RuntimeException(String.format("Error geting object %1s:%2s", bucket, o), e);
-        }
-    }
-
-    public Object put(String s, Object o) {
-        S3Object object = new S3Object();
-        try {
-            object.setKey(s);
-            object.setContent(o);
-            return connection.addObject(bucket, object).get();
-        } catch (Exception e) {
-            S3Utils.<S3RuntimeException>rethrowIfRuntimeOrSameType(e);
-            throw new S3RuntimeException(String.format("Error adding object %1s:%2s", bucket, object), e);
-        }
-    }
-
-    public Object remove(Object o) {
-        return null;  // TODO: Adrian: Customise this generated block
-    }
-
-    public void putAll(Map<? extends String, ? extends Object> map) {
-        // TODO: Adrian: Customise this generated block
-    }
-
-    private class S3RuntimeException extends RuntimeException {
-        public S3RuntimeException(String s) {
-            super(s);    // TODO: Adrian: Customise this generated block
-        }
-
-        public S3RuntimeException(String s, Throwable throwable) {
-            super(s, throwable);    // TODO: Adrian: Customise this generated block
-        }
-    }
-
-    public void clear() {
-        try {
-            bucket = connection.getBucket(bucket).get();
-            List<Future<Boolean>> deletes = new ArrayList<Future<Boolean>>();
-            for (S3Object object : bucket.getContents()) {
-                deletes.add(connection.deleteObject(bucket, object.getKey()));
-            }
-            for (Future<Boolean> isdeleted : deletes)
-                if (!isdeleted.get()) {
-                    throw new S3RuntimeException("failed to delete entry");
-                }
-        } catch (Exception e) {
-            S3Utils.<S3RuntimeException>rethrowIfRuntimeOrSameType(e);
-            throw new S3RuntimeException("Error clearing bucket" + bucket, e);
-        }
-    }
-
-    public Set<String> keySet() {
-        return null;  // TODO: Adrian: Customise this generated block
-    }
-
-    public Collection<Object> values() {
-        return null;  // TODO: Adrian: Customise this generated block
-    }
-
-    public Set<Entry<String, Object>> entrySet() {
-        return null;  // TODO: Adrian: Customise this generated block
-    }
 }

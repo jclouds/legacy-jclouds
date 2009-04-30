@@ -99,8 +99,8 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
 
     @Inject
     public RequestAuthorizeSignature(
-	    @Named("jclouds.aws.accesskeyid") String accessKey,
-	    @Named("jclouds.aws.secretaccesskey") String secretKey,
+	    @Named(S3Constants.PROPERTY_AWS_ACCESSKEYID) String accessKey,
+	    @Named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY) String secretKey,
 	    DateService dateService) {
 	this.accessKey = accessKey;
 	this.secretKey = secretKey;
@@ -142,7 +142,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
 	toSign.append(request.getUri());
 	String signature;
 	try {
-	    signature = S3Utils.digest(toSign.toString(), secretKey.getBytes());
+	    signature = S3Utils.hmacSha1Base64(toSign.toString(), secretKey.getBytes());
 	} catch (Exception e) {
 	    throw new HttpException("error signing request", e);
 	}

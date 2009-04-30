@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 
+import org.jclouds.aws.s3.S3Constants;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
@@ -46,7 +47,7 @@ public class AmazonPerformance extends BasePerformance {
 
     @Override
     @BeforeTest
-    @Parameters( { "jclouds.aws.accesskeyid", "jclouds.aws.secretaccesskey" })
+    @Parameters( { S3Constants.PROPERTY_AWS_ACCESSKEYID, S3Constants.PROPERTY_AWS_SECRETACCESSKEY })
     protected void setUpClient(@Optional String AWSAccessKeyId, @Optional String AWSSecretAccessKey) throws Exception {
 	super.setUpClient(AWSAccessKeyId, AWSSecretAccessKey);
 	amzClient = new AWSAuthConnection(AWSAccessKeyId, AWSSecretAccessKey,
