@@ -40,7 +40,8 @@ import com.google.inject.name.Names;
 import static org.jclouds.aws.s3.S3Constants.*;
 
 /**
- * // TODO: Adrian: Document return getConnection!
+ * Creates {@link S3Context} or {@link Injector} instances based on the most
+ * commonly requested arguments.
  * 
  * @author Adrian Cole
  */
@@ -63,16 +64,22 @@ public class S3ContextFactory {
 	DEFAULT_PROPERTIES.setProperty(PROPERTY_POOL_MAX_CONNECTIONS, "12");
     }
 
-    public static S3Context createS3Context(String awsAccessKeyId,
+    public static Injector createInjector(String awsAccessKeyId,
 	    String awsSecretAccessKey, Module... modules) {
 	Properties properties = new Properties(DEFAULT_PROPERTIES);
 	properties.setProperty(PROPERTY_AWS_ACCESSKEYID, awsAccessKeyId);
 	properties
 		.setProperty(PROPERTY_AWS_SECRETACCESSKEY, awsSecretAccessKey);
-	return createS3Context(properties, modules);
+	return createInjector(properties, modules);
     }
 
     public static S3Context createS3Context(String awsAccessKeyId,
+	    String awsSecretAccessKey, Module... modules) {
+	return createInjector(awsAccessKeyId, awsSecretAccessKey, modules)
+		.getInstance(S3Context.class);
+    }
+
+    public static Injector createInjector(String awsAccessKeyId,
 	    String awsSecretAccessKey, boolean isSecure, Module... modules) {
 	Properties properties = new Properties(DEFAULT_PROPERTIES);
 	properties.setProperty(PROPERTY_AWS_ACCESSKEYID, awsAccessKeyId);
@@ -82,10 +89,16 @@ public class S3ContextFactory {
 		.setProperty(PROPERTY_HTTP_SECURE, Boolean.toString(isSecure));
 	if (!isSecure)
 	    properties.setProperty(PROPERTY_HTTP_PORT, "80");
-	return createS3Context(properties, modules);
+	return createInjector(properties, modules);
     }
 
     public static S3Context createS3Context(String awsAccessKeyId,
+	    String awsSecretAccessKey, boolean isSecure, Module... modules) {
+	return createInjector(awsAccessKeyId, awsSecretAccessKey, isSecure,
+		modules).getInstance(S3Context.class);
+    }
+
+    public static Injector createInjector(String awsAccessKeyId,
 	    String awsSecretAccessKey, boolean isSecure, String server,
 	    Module... modules) {
 	Properties properties = new Properties(DEFAULT_PROPERTIES);
@@ -97,10 +110,24 @@ public class S3ContextFactory {
 	properties.setProperty(PROPERTY_HTTP_ADDRESS, server);
 	if (!isSecure)
 	    properties.setProperty(PROPERTY_HTTP_PORT, "80");
-	return createS3Context(properties, modules);
+	return createInjector(properties, modules);
     }
 
     public static S3Context createS3Context(String awsAccessKeyId,
+	    String awsSecretAccessKey, boolean isSecure, String server,
+	    Module... modules) {
+	return createInjector(awsAccessKeyId, awsSecretAccessKey, isSecure,
+		server, modules).getInstance(S3Context.class);
+    }
+
+    public static S3Context createS3Context(String awsAccessKeyId,
+	    String awsSecretAccessKey, boolean isSecure, String server,
+	    int port, Module... modules) {
+	return createInjector(awsAccessKeyId, awsSecretAccessKey, isSecure,
+		server, port, modules).getInstance(S3Context.class);
+    }
+
+    public static Injector createInjector(String awsAccessKeyId,
 	    String awsSecretAccessKey, boolean isSecure, String server,
 	    int port, Module... modules) {
 	Properties properties = new Properties(DEFAULT_PROPERTIES);
@@ -111,12 +138,12 @@ public class S3ContextFactory {
 		.setProperty(PROPERTY_HTTP_SECURE, Boolean.toString(isSecure));
 	properties.setProperty(PROPERTY_HTTP_ADDRESS, server);
 	properties.setProperty(PROPERTY_HTTP_PORT, port + "");
-	return createS3Context(properties, modules);
+	return createInjector(properties, modules);
     }
 
     public static S3Context createS3Context(Properties properties,
 	    Module... modules) {
-	return getInjector(properties, modules).getInstance(S3Context.class);
+	return createInjector(properties, modules).getInstance(S3Context.class);
     }
 
     /**
@@ -131,7 +158,7 @@ public class S3ContextFactory {
      *            - modules that must bind {@link HttpFutureCommandClient} if
      *            specified
      * */
-    public static Injector getInjector(final Properties properties,
+    public static Injector createInjector(final Properties properties,
 	    Module... httpModules) {
 	final List<? extends Module> modules = httpModules.length != 0 ? Arrays
 		.asList(httpModules) : Collections
