@@ -65,8 +65,20 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-gae</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>jclouds-s3</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-s3</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+            <type>test-jar</type>
         </dependency>
         <dependency>
             <groupId>com.google.code.guice</groupId>
@@ -120,8 +132,8 @@
 
         <dependency>
             <groupId>com.google.appengine</groupId>
-            <artifactId>tools-api</artifactId>
-            <version>1.2</version>
+            <artifactId>appengine-tools-api</artifactId>
+            <version>1.2.0</version>
             <scope>system</scope>
             <systemPath>${appengine.home}/lib/appengine-tools-api.jar</systemPath>
         </dependency>

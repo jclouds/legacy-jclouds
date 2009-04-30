@@ -27,21 +27,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 
 import org.apache.commons.io.IOUtils;
+import org.jclouds.aws.s3.S3Constants;
+import org.jclouds.aws.s3.S3Context;
 import org.jclouds.aws.s3.S3ContextFactory;
-import org.jclouds.aws.s3.config.S3ContextModule;
+import org.jclouds.gae.config.URLFetchServiceClientModule;
 import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
-import org.jclouds.lifecycle.Closer;
 import org.jclouds.samples.googleappengine.JCloudsServlet;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.name.Names;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
 
@@ -53,42 +50,40 @@ import com.google.inject.servlet.ServletModule;
  */
 public class GuiceServletConfig extends GuiceServletContextListener {
     @Inject
-    Closer closer;
-
-    ServletContext context;
+    S3Context context;
+    String accessKeyId;
+    String secretAccessKey;
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-	this.context = servletContextEvent.getServletContext();
+	Properties props = loadJCloudsProperties(servletContextEvent);
+	this.accessKeyId = props
+		.getProperty(S3Constants.PROPERTY_AWS_ACCESSKEYID);
+	this.secretAccessKey = props
+		.getProperty(S3Constants.PROPERTY_AWS_SECRETACCESSKEY);
 	super.contextInitialized(servletContextEvent);
+    }
+
+    private Properties loadJCloudsProperties(
+	    ServletContextEvent servletContextEvent) {
+	InputStream input = servletContextEvent.getServletContext()
+		.getResourceAsStream("/WEB-INF/jclouds.properties");
+	Properties props = new Properties();
+	try {
+	    props.load(input);
+	} catch (IOException e) {
+	    throw new RuntimeException(e);
+	} finally {
+	    IOUtils.closeQuietly(input);
+	}
+	return props;
     }
 
     @Override
     protected Injector getInjector() {
-	return Guice.createInjector(
-		new AbstractModule() {
-		    @Override
-		    protected void configure() {
-			Properties props = new Properties();
-			InputStream input = null;
-			try {
-			    input = context
-				    .getResourceAsStream("/WEB-INF/jclouds.properties");
-			    if (input != null)
-				props.load(input);
-			    else
-				throw new RuntimeException(
-					"not found in classloader");
-			} catch (IOException e) {
-			    throw new RuntimeException(e);
-			} finally {
-			    IOUtils.closeQuietly(input);
-			}
-			props.putAll(S3ContextFactory.DEFAULT_PROPERTIES);
-			Names.bindProperties(binder(), props);
-		    }
-		}, new JavaUrlHttpFutureCommandClientModule(),
-		new S3ContextModule(), new ServletModule() {
+	return S3ContextFactory.createInjector(accessKeyId, secretAccessKey,
+		false, new URLFetchServiceClientModule(),
+		new ServletModule() {
 		    @Override
 		    protected void configureServlets() {
 			serve("*.s3").with(JCloudsServlet.class);
@@ -99,11 +94,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
-	try {
-	    closer.close();
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
+	context.close();
 	super.contextDestroyed(servletContextEvent);
     }
 }

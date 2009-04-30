@@ -24,8 +24,10 @@
 package org.jclouds.samples.googleappengine;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Writer;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletException;
@@ -33,7 +35,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jclouds.aws.s3.S3Connection;
+import org.jclouds.aws.s3.S3Context;
 import org.jclouds.aws.s3.domain.S3Bucket;
 
 import com.google.inject.Inject;
@@ -47,7 +49,7 @@ import com.google.inject.Singleton;
 @Singleton
 public class JCloudsServlet extends HttpServlet {
     @Inject
-    S3Connection client;
+    S3Context context;
 
     @Override
     protected void doGet(HttpServletRequest httpServletRequest,
@@ -55,13 +57,12 @@ public class JCloudsServlet extends HttpServlet {
 	    IOException {
 	Writer writer = httpServletResponse.getWriter();
 	try {
-	    List<S3Bucket> myBuckets = client.getBuckets().get(10,
-		    TimeUnit.SECONDS);
+	    List<S3Bucket> myBuckets = context.getConnection().getBuckets()
+		    .get(10, TimeUnit.SECONDS);
 	    writer.write("List:\n");
 	    for (S3Bucket bucket : myBuckets) {
-		writer
-			.write(String.format("    Name: %1s%n", bucket
-				.getName()));
+		writer.write(String.format("  %1s: %2s entries%n", bucket
+			.getName(), context.createMapView(bucket).size()));
 	    }
 	} catch (Exception e) {
 	    throw new ServletException(e);

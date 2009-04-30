@@ -28,44 +28,41 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
-        <artifactId>jclouds-project</artifactId>
         <groupId>org.jclouds</groupId>
+        <artifactId>jclouds-project</artifactId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>project/pom.xml</relativePath>
+        <relativePath>../project/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>jclouds-multi</artifactId>
-    <packaging>pom</packaging>
-    <name>JClouds</name>
-    <modules>
-        <module>project</module>        
-        <module>core</module>
-        <module>extensions/httpnio</module>
-        <module>extensions/s3nio</module>
-        <module>gae</module>
-        <module>s3</module>
-        <module>s3/perftest</module>
-    </modules>
-    <build>
-       <plugins>
-            <plugin>
-                <groupId>com.google.code.maven-license-plugin</groupId>
-                <artifactId>maven-license-plugin</artifactId>
-                <version>1.4.0</version>
-                <configuration>
-                    <header>project/src/etc/header.txt</header>
-                    <aggregate>true</aggregate>
-                    <excludes>
-                        <!-- amazon files have their own license  -->
-                        <exclude>**/src/main/java/com/amazon/**</exclude>
-                        <exclude>**/S3Driver.java</exclude>
-                    </excludes>
-                    <properties>
-                        <year>${project.inceptionYear}</year>
-                        <email>adriancole@jclouds.org</email>
-                    </properties>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <groupId>org.jclouds</groupId>
+    <artifactId>jclouds-gae</artifactId>
+    <name>Google App Engine Components</name>
+    <packaging>jar</packaging>
+    <description>Google App Engine Components</description>
+
+    <scm>
+        <connection>scm:svn:http://jclouds.googlecode.com/svn/trunk/gae</connection>
+        <developerConnection>scm:svn:https://jclouds.googlecode.com/svn/trunk/gae</developerConnection>
+        <url>http://jclouds.googlecode.com/svn/trunk/gae</url>
+    </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.google.appengine</groupId>
+            <artifactId>appengine-api</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-core</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 </project>
