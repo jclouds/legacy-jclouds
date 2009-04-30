@@ -140,6 +140,8 @@ public class JavaUrlHttpFutureCommandClient implements HttpFutureCommandClient {
 	URL url = new URL(target, request.getUri());
 	HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 	connection.setDoOutput(true);
+	connection.setAllowUserInteraction(false);
+	connection.setInstanceFollowRedirects(false);
 	connection.setRequestMethod(request.getMethod());
 	for (String header : request.getHeaders().keySet()) {
 	    for (String value : request.getHeaders().get(header))
