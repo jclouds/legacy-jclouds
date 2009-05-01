@@ -55,8 +55,7 @@ public class StubS3Connection implements S3Connection {
 			.get(s3Bucket);
 		if (!realContents.containsKey(key))
 		    return S3Object.NOT_FOUND;
-		S3Object object = new S3Object();
-		object.setKey(key);
+		S3Object object = new S3Object(key);
 		object.setContent(realContents.get(key));
 		return object;
 	    }
@@ -158,8 +157,7 @@ public class StubS3Connection implements S3Connection {
 			.get(s3Bucket);
 		if (realContents != null) {
 		    for (String key : realContents.keySet()) {
-			S3Object object = new S3Object();
-			object.setKey(key);
+			S3Object object = new S3Object(key);
 			object.setContent(realContents.get(key));
 			contents.add(object);
 		    }

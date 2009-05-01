@@ -50,7 +50,6 @@ import com.google.inject.Provider;
  * 
  * @author Adrian Cole
  */
-@Test(sequential = true, timeOut = 2 * 60 * 1000, groups = "performance")
 public abstract class BasePerformance extends S3IntegrationTest {
     protected static int LOOP_COUNT = 100;
 
@@ -80,14 +79,13 @@ public abstract class BasePerformance extends S3IntegrationTest {
 
     @Override
     @BeforeTest
-    @Parameters( { S3Constants.PROPERTY_AWS_ACCESSKEYID, S3Constants.PROPERTY_AWS_SECRETACCESSKEY })
+    @Parameters( { S3Constants.PROPERTY_AWS_ACCESSKEYID,
+	    S3Constants.PROPERTY_AWS_SECRETACCESSKEY })
     protected void setUpClient(@Optional String AWSAccessKeyId,
 	    @Optional String AWSSecretAccessKey) throws Exception {
 	super.setUpClient(AWSAccessKeyId, AWSSecretAccessKey);
-	S3Bucket s3Bucket = new S3Bucket();
 	for (String bucket : BUCKETS) {
-	    s3Bucket.setName(bucket);
-	    client.createBucketIfNotExists(s3Bucket).get();
+	    client.createBucketIfNotExists(new S3Bucket(bucket)).get();
 	}
     }
 

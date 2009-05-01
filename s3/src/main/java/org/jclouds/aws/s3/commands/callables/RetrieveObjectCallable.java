@@ -28,7 +28,6 @@ import java.io.IOException;
 import org.jclouds.Logger;
 import org.jclouds.Utils;
 import org.jclouds.aws.s3.DateService;
-import org.jclouds.aws.s3.S3Utils;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpFutureCommand;
@@ -43,13 +42,12 @@ import com.google.inject.Inject;
 public class RetrieveObjectCallable extends
 	HttpFutureCommand.ResponseCallable<S3Object> {
     private final DateService dateParser;
-    private final S3Utils utils;
+    private String key;
 
     @Inject
     public RetrieveObjectCallable(java.util.logging.Logger logger,
-	    DateService dateParser, S3Utils utils) {
+	    DateService dateParser) {
 	super(new Logger(logger));
-	this.utils = utils;
 	this.dateParser = dateParser;
     }
 
@@ -59,7 +57,7 @@ public class RetrieveObjectCallable extends
      */
     public S3Object call() throws HttpException {
 	if (getResponse().getStatusCode() == 200) {
-	    S3Object object = new S3Object();
+	    S3Object object = new S3Object(key);
 	    String md5Header = getResponse().getFirstHeaderOrNull(
 		    "x-amz-meta-object-md5");
 	    if (md5Header != null)
@@ -92,5 +90,13 @@ public class RetrieveObjectCallable extends
 	    throw new HttpException("Error parsing object " + getResponse()
 		    + " reason: " + reason);
 	}
+    }
+
+    public void setKey(String key) {
+	this.key = key;
+    }
+
+    public String getKey() {
+	return key;
     }
 }

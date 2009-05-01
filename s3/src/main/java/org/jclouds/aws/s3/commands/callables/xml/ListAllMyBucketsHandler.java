@@ -35,10 +35,11 @@ import java.util.List;
 
 /**
  * // TODO: Adrian: Document this!
- *
+ * 
  * @author Adrian Cole
  */
-public class ListAllMyBucketsHandler extends ParseSax.HandlerWithResult<List<S3Bucket>> {
+public class ListAllMyBucketsHandler extends
+	ParseSax.HandlerWithResult<List<S3Bucket>> {
 
     private List<S3Bucket> buckets = new ArrayList<S3Bucket>();
     private S3Bucket currentS3Bucket;
@@ -49,40 +50,41 @@ public class ListAllMyBucketsHandler extends ParseSax.HandlerWithResult<List<S3B
 
     @Inject
     public ListAllMyBucketsHandler(DateService dateParser) {
-        this.dateParser = dateParser;
+	this.dateParser = dateParser;
     }
 
     public List<S3Bucket> getResult() {
-        return buckets;
+	return buckets;
     }
 
-    public void startElement(String uri, String name, String qName, Attributes attrs) {
-        if (qName.equals("Bucket")) {
-            currentS3Bucket = new S3Bucket();
-            currentS3Bucket.setHasData(false);
-            currentS3Bucket.setComplete(false);
-        } else if (qName.equals("Owner")) {
-            currentOwner = new S3Owner();
-        }
+    public void startElement(String uri, String name, String qName,
+	    Attributes attrs) {
+	if (qName.equals("Bucket")) {
+	} else if (qName.equals("Owner")) {
+	    currentOwner = new S3Owner();
+	}
     }
 
     public void endElement(String uri, String name, String qName) {
-        if (qName.equals("ID")) { //owner stuff
-            currentOwner.setId(currentText.toString());
-        } else if (qName.equals("DisplayName")) {
-            currentOwner.setDisplayName(currentText.toString());
-        } else if (qName.equals("Bucket")) {
-            currentS3Bucket.setCanonicalUser(currentOwner);
-            buckets.add(currentS3Bucket);
-        } else if (qName.equals("Name")) {
-            currentS3Bucket.setName(currentText.toString());
-        } else if (qName.equals("CreationDate")) {
-            currentS3Bucket.setCreationDate(dateParser.dateTimeFromXMLFormat(currentText.toString()));
-        }
-        currentText = new StringBuilder();
+	if (qName.equals("ID")) { // owner stuff
+	    currentOwner.setId(currentText.toString());
+	} else if (qName.equals("DisplayName")) {
+	    currentOwner.setDisplayName(currentText.toString());
+	} else if (qName.equals("Bucket")) {
+	    currentS3Bucket.setCanonicalUser(currentOwner);
+	    buckets.add(currentS3Bucket);
+	} else if (qName.equals("Name")) {
+	    currentS3Bucket = new S3Bucket(currentText.toString());
+	    currentS3Bucket.setHasData(false);
+	    currentS3Bucket.setComplete(false);
+	} else if (qName.equals("CreationDate")) {
+	    currentS3Bucket.setCreationDate(dateParser
+		    .dateTimeFromXMLFormat(currentText.toString()));
+	}
+	currentText = new StringBuilder();
     }
 
     public void characters(char ch[], int start, int length) {
-        currentText.append(ch, start, length);
+	currentText.append(ch, start, length);
     }
 }

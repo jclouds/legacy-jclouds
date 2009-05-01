@@ -34,11 +34,13 @@ import java.util.concurrent.ExecutorCompletionService;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.PerformanceTest;
+import org.jclouds.aws.s3.commands.callables.xml.ListBucketHandler;
 import org.jclouds.aws.s3.commands.config.S3CommandsModule;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.S3Owner;
 import org.jclouds.http.HttpException;
+import org.jclouds.http.commands.callables.xml.ParseSax;
 import org.joda.time.DateTime;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -68,6 +70,8 @@ public class S3ParserTest extends PerformanceTest {
 	    protected void configure() {
 		bindConstant().annotatedWith(
 			Names.named("jclouds.http.address")).to("localhost");
+		// bindConstant().annotatedWith(
+		// Names.named("jclouds.http.sax.debug")).to(true);
 		super.configure();
 	    }
 	});
@@ -161,8 +165,10 @@ public class S3ParserTest extends PerformanceTest {
     }
 
     private S3Bucket runParseListBucketResult() throws HttpException {
-	return commandFactory.createListBucketParser().parse(
-		IOUtils.toInputStream(listBucketResult));
+	ParseSax<S3Bucket> parser = commandFactory.createListBucketParser();
+	ListBucketHandler handler = (ListBucketHandler) parser.getHandler();
+	handler.setBucket(new S3Bucket("adrianjbosstest"));
+	return parser.parse(IOUtils.toInputStream(listBucketResult));
     }
 
     @Test

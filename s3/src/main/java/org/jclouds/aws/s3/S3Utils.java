@@ -45,7 +45,7 @@ public class S3Utils extends Utils {
 	    (byte) '8', (byte) '9', (byte) 'a', (byte) 'b', (byte) 'c',
 	    (byte) 'd', (byte) 'e', (byte) 'f' };
 
-    public static String getHexString(byte[] raw)
+    public static String toHexString(byte[] raw)
 	    throws UnsupportedEncodingException {
 	byte[] hex = new byte[2 * raw.length];
 	int index = 0;
@@ -56,6 +56,15 @@ public class S3Utils extends Utils {
 	    hex[index++] = HEX_CHAR_TABLE[v & 0xF];
 	}
 	return new String(hex, "ASCII");
+    }
+
+    public static byte[] fromHexString(String hex) {
+	byte[] bytes = new byte[hex.length() / 2];
+	for (int i = 0; i < bytes.length; i++) {
+	    bytes[i] = (byte) Integer.parseInt(hex.substring(2 * i, 2 * i + 2),
+		    16);
+	}
+	return bytes;
     }
 
     public static String hmacSha1Base64(String toEncode, byte[] key)
@@ -71,14 +80,14 @@ public class S3Utils extends Utils {
 	return new String(Base64.encode(resBuf));
     }
 
-    public static String md5Hex(byte [] toEncode)
+    public static String md5Hex(byte[] toEncode)
 	    throws NoSuchAlgorithmException, NoSuchProviderException,
 	    InvalidKeyException, UnsupportedEncodingException {
 	byte[] resBuf = md5(toEncode);
-	return getHexString(resBuf);
+	return toHexString(resBuf);
     }
 
-    public static String md5Base64(byte [] toEncode)
+    public static String md5Base64(byte[] toEncode)
 	    throws NoSuchAlgorithmException, NoSuchProviderException,
 	    InvalidKeyException {
 	byte[] resBuf = md5(toEncode);

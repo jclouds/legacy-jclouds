@@ -37,7 +37,7 @@ import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 
-import static junit.framework.Assert.*;
+import static org.testng.Assert.*;
 
 /**
  * This tests the performance of Digest commands.

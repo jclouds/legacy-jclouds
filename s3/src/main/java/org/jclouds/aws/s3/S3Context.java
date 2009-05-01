@@ -33,13 +33,21 @@ public interface S3Context {
     S3Connection getConnection();
 
     /**
-     * Creates a <code>Map<String,InputStream</code> view of the specified
+     * Creates a <code>Map<String,InputStream></code> view of the specified
      * bucket.
      * 
      * @param bucket
      * @return
      */
-    S3ObjectMap createMapView(S3Bucket bucket);
+    S3InputStreamMap createS3InputStreamMap(S3Bucket bucket);
+
+    /**
+     * Creates a <code>Map<String,S3Object></code> view of the specified bucket.
+     * 
+     * @param bucket
+     * @return
+     */
+    S3ObjectMap createS3ObjectMap(S3Bucket bucket);
 
     /**
      * Closes all connections to S3.

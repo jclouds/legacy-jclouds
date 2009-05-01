@@ -34,7 +34,6 @@ import org.jclouds.aws.s3.S3Constants;
 import org.jclouds.aws.s3.S3Context;
 import org.jclouds.aws.s3.S3ContextFactory;
 import org.jclouds.gae.config.URLFetchServiceClientModule;
-import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
 import org.jclouds.samples.googleappengine.JCloudsServlet;
 
 import com.google.inject.Inject;
@@ -76,6 +75,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 	} finally {
 	    IOUtils.closeQuietly(input);
 	}
+	props.setProperty("jclouds.http.sax.debug", "true");
 	return props;
     }
 

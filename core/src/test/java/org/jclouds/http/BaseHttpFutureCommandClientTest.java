@@ -139,7 +139,7 @@ public abstract class BaseHttpFutureCommandClientTest {
 	server.stop();
     }
 
-    @Test(invocationCount = 500, timeOut = 1000)
+    @Test(invocationCount = 500, timeOut = 1500)
     void testRequestFilter() throws MalformedURLException, ExecutionException,
 	    InterruptedException {
 	GetString get = factory.createGetString("/");
@@ -149,7 +149,7 @@ public abstract class BaseHttpFutureCommandClientTest {
 		"expected: [%1s], but got [%2s]", "test", get.get());
     }
 
-    @Test(invocationCount = 500, timeOut = 1000)
+    @Test(invocationCount = 500, timeOut = 1500)
     void testGetStringWithHeader() throws MalformedURLException,
 	    ExecutionException, InterruptedException {
 	GetString get = factory.createGetString("/");
@@ -159,7 +159,7 @@ public abstract class BaseHttpFutureCommandClientTest {
 		"expected: [%1s], but got [%2s]", "test", get.get());
     }
 
-    @Test(invocationCount = 500, timeOut = 1000)
+    @Test(invocationCount = 500, timeOut = 1500)
     void testGetString() throws MalformedURLException, ExecutionException,
 	    InterruptedException {
 	GetString get = factory.createGetString("/");
@@ -169,7 +169,7 @@ public abstract class BaseHttpFutureCommandClientTest {
 		"expected: [%1s], but got [%2s]", XML, get.get());
     }
 
-    @Test(invocationCount = 500, timeOut = 1000)
+    @Test(invocationCount = 500, timeOut = 1500)
     void testHead() throws MalformedURLException, ExecutionException,
 	    InterruptedException {
 	Head head = factory.createHead("/");
@@ -178,7 +178,7 @@ public abstract class BaseHttpFutureCommandClientTest {
 	assert head.get();
     }
 
-    @Test(invocationCount = 500, timeOut = 1000)
+    @Test(invocationCount = 500, timeOut = 1500)
     void testGetAndParseSax() throws MalformedURLException, ExecutionException,
 	    InterruptedException {
 	GetAndParseSax getAndParseSax = factory.createGetAndParseSax("/",

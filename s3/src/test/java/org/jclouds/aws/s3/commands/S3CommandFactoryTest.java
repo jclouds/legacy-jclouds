@@ -72,30 +72,30 @@ public class S3CommandFactoryTest {
 
     @Test
     void testCreateCopyObject() {
-	assert commandFactory.createCopyObject(createMock(S3Bucket.class),
-		createMock(S3Object.class), createMock(S3Bucket.class),
-		createMock(S3Object.class)) != null;
+	assert commandFactory.createCopyObject(new S3Bucket("sourceBucket"),
+		new S3Object("sourceObject"), new S3Bucket("destBucket"),
+		new S3Object("destObject")) != null;
     }
 
     @Test
     void testCreateDeleteBucket() {
-	assert commandFactory.createDeleteBucket(createMock(S3Bucket.class)) != null;
+	assert commandFactory.createDeleteBucket(new S3Bucket("test")) != null;
     }
 
     @Test
     void testCreateDeleteObject() {
-	assert commandFactory.createDeleteObject(createMock(S3Bucket.class),
+	assert commandFactory.createDeleteObject(new S3Bucket("test"),
 		"blah") != null;
     }
 
     @Test
     void testCreateHeadBucket() {
-	assert commandFactory.createHeadBucket(createMock(S3Bucket.class)) != null;
+	assert commandFactory.createHeadBucket(new S3Bucket("test")) != null;
     }
 
     @Test
     void testCreatePutBucket() {
-	assert commandFactory.createPutBucket(createMock(S3Bucket.class)) != null;
+	assert commandFactory.createPutBucket(new S3Bucket("test")) != null;
     }
 
     @Test
@@ -108,13 +108,13 @@ public class S3CommandFactoryTest {
 
 	replay(object);
 
-	assert commandFactory.createPutObject(createMock(S3Bucket.class),
+	assert commandFactory.createPutObject(new S3Bucket("test"),
 		object) != null;
     }
 
     @Test
     void testCreateRetrieveObject() {
-	assert commandFactory.createRetrieveObject(createMock(S3Bucket.class),
+	assert commandFactory.createRetrieveObject(new S3Bucket("test"),
 		"blah", false) != null;
     }
 
@@ -135,7 +135,7 @@ public class S3CommandFactoryTest {
 
     @Test
     void testCreateListBucket() {
-	assert commandFactory.createListBucket(createMock(S3Bucket.class)) != null;
+	assert commandFactory.createListBucket(new S3Bucket("test")) != null;
     }
 
 }

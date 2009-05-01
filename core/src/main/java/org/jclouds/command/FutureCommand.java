@@ -24,113 +24,118 @@
 package org.jclouds.command;
 
 import java.util.concurrent.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * // TODO: Adrian: Document this!
- *
+ * 
  * @author Adrian Cole
  */
 public class FutureCommand<Q, R, T> implements Future<T> {
 
-    private Q request;
-    private ResponseRunnableFuture<R, T> responseRunnableFuture;
+    private final Q request;
+    private final ResponseRunnableFuture<R, T> responseRunnableFuture;
     private volatile int failureCount;
 
     public int incrementFailureCount() {
-        return ++failureCount;
+	return ++failureCount;
     }
 
     public int getFailureCount() {
-        return failureCount;
+	return failureCount;
     }
 
     public FutureCommand(Q request, ResponseCallable<R, T> responseCallable) {
-        this.request = request;
-        this.responseRunnableFuture = new ResponseRunnableFutureTask<R, T>(responseCallable);
+	this.request = checkNotNull(request, "request");
+	this.responseRunnableFuture = new ResponseRunnableFutureTask<R, T>(
+		checkNotNull(responseCallable, "responseCallable"));
     }
 
     public Q getRequest() {
-        return request;
+	return request;
     }
 
     public ResponseRunnableFuture<R, T> getResponseFuture() {
-        return responseRunnableFuture;
+	return responseRunnableFuture;
     }
 
     public void setException(Exception e) {
-        responseRunnableFuture.setException(e);
+	responseRunnableFuture.setException(e);
     }
 
     public boolean cancel(boolean b) {
-        return responseRunnableFuture.cancel(b);
+	return responseRunnableFuture.cancel(b);
     }
 
     public boolean isCancelled() {
-        return responseRunnableFuture.isCancelled();
+	return responseRunnableFuture.isCancelled();
     }
 
     public boolean isDone() {
-        return responseRunnableFuture.isDone();
+	return responseRunnableFuture.isDone();
     }
 
     public T get() throws InterruptedException, ExecutionException {
-        return responseRunnableFuture.get();
+	return responseRunnableFuture.get();
     }
 
-    public T get(long l, TimeUnit timeUnit) throws InterruptedException, ExecutionException, TimeoutException {
-        return responseRunnableFuture.get(l, timeUnit);
+    public T get(long l, TimeUnit timeUnit) throws InterruptedException,
+	    ExecutionException, TimeoutException {
+	return responseRunnableFuture.get(l, timeUnit);
     }
 
     /**
      * // TODO: Adrian: Document this!
-     *
+     * 
      * @author Adrian Cole
      */
-    public static class ResponseRunnableFutureTask<R, T> extends FutureTask<T> implements ResponseRunnableFuture<R, T> {
-        private final ResponseCallable<R, T> tCallable;
+    public static class ResponseRunnableFutureTask<R, T> extends FutureTask<T>
+	    implements ResponseRunnableFuture<R, T> {
+	private final ResponseCallable<R, T> tCallable;
 
-        public ResponseRunnableFutureTask(ResponseCallable<R, T> tCallable) {
-            super(tCallable);
-            this.tCallable = tCallable;
-        }
+	public ResponseRunnableFutureTask(ResponseCallable<R, T> tCallable) {
+	    super(tCallable);
+	    this.tCallable = tCallable;
+	}
 
-        @Override
-        public String toString() {
-            return "ApacheHttpResponseFuture{" +
-                    "tCallable=" + tCallable +
-                    '}';
-        }
+	@Override
+	public String toString() {
+	    return "ResponseRunnableFutureTask{" + "tCallable=" + tCallable
+		    + '}';
+	}
 
-        public R getResponse() {
-            return tCallable.getResponse();
-        }
+	public R getResponse() {
+	    return tCallable.getResponse();
+	}
 
-        public void setResponse(R response) {
-            tCallable.setResponse(response);
-        }
+	public void setResponse(R response) {
+	    tCallable.setResponse(response);
+	}
 
-        /**
-         * opening this to public so that other errors can be associated with the request, for example i/o errors.
-         *
-         * @param throwable
-         */
-        @Override
-        public void setException(Throwable throwable) {
-            super.setException(throwable);
-        }
+	/**
+	 * opening this to public so that other errors can be associated with
+	 * the request, for example i/o errors.
+	 * 
+	 * @param throwable
+	 */
+	@Override
+	public void setException(Throwable throwable) {
+	    super.setException(throwable);
+	}
 
     }
 
-    public interface ResponseRunnableFuture<R, T> extends Response<R>, Runnable, Future<T> {
-        public void setException(Throwable throwable);
+    public interface ResponseRunnableFuture<R, T> extends Response<R>,
+	    Runnable, Future<T> {
+	public void setException(Throwable throwable);
     }
 
     public interface ResponseCallable<R, T> extends Response<R>, Callable<T> {
     }
 
     public interface Response<R> {
-        public R getResponse();
+	public R getResponse();
 
-        public void setResponse(R response);
+	public void setResponse(R response);
     }
 }

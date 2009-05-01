@@ -25,7 +25,7 @@ package org.jclouds.aws.s3.domain;
 
 import java.io.File;
 
-import junit.framework.Assert;
+import static org.testng.Assert.*;
 
 import org.jclouds.aws.s3.domain.S3Object;
 import org.testng.annotations.Test;
@@ -34,10 +34,11 @@ import org.testng.annotations.Test;
 public class S3ObjectTest {
 
     @Test
-    void testSetNoContentType(){
-	S3Object object = new S3Object();
+    void testSetNoContentType() {
+	S3Object object = new S3Object("test");
 	File file = new File("hello.txt");
 	object.setContent(file);
-	Assert.assertEquals(object.getContentType(), S3Object.UNKNOWN_MIME_TYPE);
+	assertEquals(object.getContentType(),
+			S3Object.UNKNOWN_MIME_TYPE);
     }
 }

@@ -23,38 +23,54 @@
  */
 package org.jclouds.http;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.jclouds.command.FutureCommand;
 import org.jclouds.Logger;
 
 /**
  * // TODO: Adrian: Document this!
- *
+ * 
  * @author Adrian Cole
  */
-public class HttpFutureCommand<T> extends FutureCommand<HttpRequest, HttpResponse, T> {
-    public HttpFutureCommand(String method, String uri, ResponseCallable<T> responseCallable) {
-        super(new HttpRequest(method, uri), responseCallable);
+public class HttpFutureCommand<T> extends
+	FutureCommand<HttpRequest, HttpResponse, T> {
+    public HttpFutureCommand(String method, String uri,
+	    ResponseCallable<T> responseCallable) {
+	super(new HttpRequest(checkNotNull(method, "method"), checkNotNull(uri,
+		"uri")), responseCallable);
+    }
+
+    protected void addHostHeader(String host) {
+	getRequest().getHeaders().put("Host", host);
+    }
+
+    @Override
+    public String toString() {
+	return this.getClass().getName() + "{" + "request=" + this.getRequest()
+		+ "," + "responseFuture=" + this.getResponseFuture() + '}';
     }
 
     /**
      * // TODO: Adrian: Document this!
-     *
+     * 
      * @author Adrian Cole
      */
-    public abstract static class ResponseCallable<T> implements FutureCommand.ResponseCallable<HttpResponse, T> {
-        protected final Logger logger;
-        private HttpResponse response;
+    public abstract static class ResponseCallable<T> implements
+	    FutureCommand.ResponseCallable<HttpResponse, T> {
+	protected final Logger logger;
+	private HttpResponse response;
 
-        public ResponseCallable(Logger logger) {
-            this.logger = logger;
-        }
+	public ResponseCallable(Logger logger) {
+	    this.logger = logger;
+	}
 
-        public HttpResponse getResponse() {
-            return response;
-        }
+	public HttpResponse getResponse() {
+	    return response;
+	}
 
-        public void setResponse(HttpResponse response) {
-            this.response = response;
-        }
+	public void setResponse(HttpResponse response) {
+	    this.response = response;
+	}
     }
 }

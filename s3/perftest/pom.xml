@@ -53,6 +53,12 @@
     <packaging>jar</packaging>
 
     <description>Performance test verses Amazon samples implementation</description>
+
+    <properties>
+        <jclouds.aws.accesskeyid></jclouds.aws.accesskeyid>
+        <jclouds.aws.secretaccesskey></jclouds.aws.secretaccesskey>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -93,5 +99,26 @@
             <url>http://jets3t.s3.amazonaws.com/maven2</url>
         </repository>
     </repositories>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemProperties>
+                        <property>
+                            <name>jclouds.aws.accesskeyid</name>
+                            <value>${jclouds.aws.accesskeyid}</value>
+                        </property>
+                        <property>
+                            <name>jclouds.aws.secretaccesskey</name>
+                            <value>${jclouds.aws.secretaccesskey}</value>
+                        </property>
+                    </systemProperties>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

@@ -23,34 +23,30 @@
  */
 package org.jclouds.aws.s3.commands;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.jclouds.aws.s3.commands.callables.PutObjectCallable;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.http.HttpFutureCommand;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 
-public class PutObject extends HttpFutureCommand<String> {
+public class PutObject extends S3FutureCommand<String> {
 
     @Inject
     public PutObject(@Named("jclouds.http.address") String amazonHost,
 	    PutObjectCallable callable, @Assisted S3Bucket s3Bucket,
 	    @Assisted S3Object object) {
-	super("PUT", "/" + object.getKey(), callable);
-	getRequest().getHeaders().put("Host",
-		s3Bucket.getName() + "." + amazonHost);
-	if (object.getContentType() == null) {
-	    throw new IllegalArgumentException(
-		    "PUT requests need content type set");
-	}
-	Object o = object.getContent();
-	if (o == null) {
-	    throw new IllegalArgumentException("PUT requests need object");
-	}
-	getRequest().setContent(o);
-	getRequest().setContentType(object.getContentType());
+	super("PUT", "/" + checkNotNull(object.getKey()), callable, amazonHost,
+		s3Bucket);
+	getRequest().setContent(
+		checkNotNull(object.getContent(), "object.getContent()"));
+	getRequest()
+		.setContentType(
+			checkNotNull(object.getContentType(),
+				"object.getContentType()"));
 	getRequest().setContentLength(object.getSize());
     }
 

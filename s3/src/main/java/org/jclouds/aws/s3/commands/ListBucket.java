@@ -23,22 +23,22 @@
  */
 package org.jclouds.aws.s3.commands;
 
+import org.jclouds.aws.s3.commands.callables.xml.ListBucketHandler;
 import org.jclouds.aws.s3.domain.S3Bucket;
-import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+
 import com.google.inject.name.Named;
 
-public class ListBucket extends HttpFutureCommand<S3Bucket> {
+public class ListBucket extends S3FutureCommand<S3Bucket> {
 
     @Inject
     public ListBucket(@Named("jclouds.http.address") String amazonHost,
 	    ParseSax<S3Bucket> callable, @Assisted S3Bucket s3Bucket) {
-	super("GET", "/", callable);
-	getRequest().getHeaders().put("Host",
-		s3Bucket.getName() + "." + amazonHost);
+	super("GET", "/", callable, amazonHost, s3Bucket);
+	ListBucketHandler handler = (ListBucketHandler) callable.getHandler();
+	handler.setBucket(s3Bucket);
     }
-
 }

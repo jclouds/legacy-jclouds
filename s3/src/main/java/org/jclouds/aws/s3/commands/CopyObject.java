@@ -23,23 +23,31 @@
  */
 package org.jclouds.aws.s3.commands;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.jclouds.aws.s3.commands.callables.CopyObjectCallable;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.http.HttpFutureCommand;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 
-public class CopyObject extends HttpFutureCommand<Boolean> {
+public class CopyObject extends S3FutureCommand<Boolean> {
 
     @Inject
-    public CopyObject(@Named("jclouds.http.address") String amazonHost, CopyObjectCallable callable, @Assisted("sourceBucket") S3Bucket sourceBucket, @Assisted("sourceObject") S3Object sourceObject, @Assisted("destinationBucket") S3Bucket destinationBucket, @Assisted("destinationObject")  S3Object destinationObject) {
-        super("PUT", "/" + destinationObject.getKey(), callable);
-        getRequest().getHeaders().put("Host",
-		destinationBucket.getName() + "." + amazonHost);
-        getRequest().getHeaders().put("x-amz-copy-source", String.format("/%1s/%2s", sourceBucket.getName(), sourceObject.getKey()));
+    public CopyObject(@Named("jclouds.http.address") String amazonHost,
+	    CopyObjectCallable callable,
+	    @Assisted("sourceBucket") S3Bucket sourceBucket,
+	    @Assisted("sourceObject") S3Object sourceObject,
+	    @Assisted("destinationBucket") S3Bucket destinationBucket,
+	    @Assisted("destinationObject") S3Object destinationObject) {
+	super("PUT", "/" + checkNotNull(destinationObject.getKey(),"destinationObject.getKey()"), callable,
+		amazonHost, destinationBucket);
+	getRequest().getHeaders().put(
+		"x-amz-copy-source",
+		String.format("/%1s/%2s", checkNotNull(sourceBucket.getName(),
+			"sourceBucket.getName()"), checkNotNull(sourceObject
+			.getKey(), "sourceObject.getKey()")));
     }
-
 }

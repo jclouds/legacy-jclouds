@@ -23,22 +23,21 @@
  */
 package org.jclouds.aws.s3.commands;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.jclouds.aws.s3.commands.callables.DeleteCallable;
 import org.jclouds.aws.s3.domain.S3Bucket;
-import org.jclouds.http.HttpFutureCommand;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 
-public class DeleteObject extends HttpFutureCommand<Boolean> {
+public class DeleteObject extends S3FutureCommand<Boolean> {
 
     @Inject
     public DeleteObject(@Named("jclouds.http.address") String amazonHost,
 	    DeleteCallable callable, @Assisted S3Bucket s3Bucket,
 	    @Assisted String key) {
-	super("DELETE", "/" + key, callable);
-	getRequest().getHeaders().put("Host",
-		s3Bucket.getName() + "." + amazonHost);
+	super("DELETE", "/" + checkNotNull(key), callable, amazonHost, s3Bucket);
     }
 }

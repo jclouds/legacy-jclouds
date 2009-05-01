@@ -26,19 +26,17 @@ package org.jclouds.aws.s3.commands;
 import java.util.List;
 
 import org.jclouds.aws.s3.domain.S3Bucket;
-import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
-public class ListAllMyBuckets extends HttpFutureCommand<List<S3Bucket>> {
+public class ListAllMyBuckets extends S3FutureCommand<List<S3Bucket>> {
 
     @Inject
     public ListAllMyBuckets(@Named("jclouds.http.address") String amazonHost,
 	    ParseSax<List<S3Bucket>> callable) {
-	super("GET", "/", callable);
-	getRequest().getHeaders().put("Host", amazonHost);
+	super("GET", "/", callable, amazonHost);
     }
 
 }

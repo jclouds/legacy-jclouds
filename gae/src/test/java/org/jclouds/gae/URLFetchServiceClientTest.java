@@ -23,7 +23,7 @@
  */
 package org.jclouds.gae;
 
-import static junit.framework.Assert.assertEquals;
+import static org.testng.Assert.*;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.createNiceMock;

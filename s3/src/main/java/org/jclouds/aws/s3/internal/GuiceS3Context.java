@@ -28,6 +28,7 @@ import java.io.IOException;
 import org.jclouds.Logger;
 import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.S3Context;
+import org.jclouds.aws.s3.S3InputStreamMap;
 import org.jclouds.aws.s3.S3ObjectMap;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.lifecycle.Closer;
@@ -45,16 +46,23 @@ public class GuiceS3Context implements S3Context {
 	S3ObjectMap createMapView(S3Bucket bucket);
     }
 
+    public interface S3InputStreamMapFactory {
+	S3InputStreamMap createMapView(S3Bucket bucket);
+    }
+
     private final Logger logger;
     private final Injector injector;
+    private final S3InputStreamMapFactory s3InputStreamMapFactory;
     private final S3ObjectMapFactory s3ObjectMapFactory;
     private final Closer closer;
 
     @Inject
     private GuiceS3Context(java.util.logging.Logger logger, Injector injector,
-	    Closer closer, S3ObjectMapFactory s3ObjectMapFactory) {
+	    Closer closer, S3ObjectMapFactory s3ObjectMapFactory,
+	    S3InputStreamMapFactory s3InputStreamMapFactory) {
 	this.logger = new Logger(logger);
 	this.injector = injector;
+	this.s3InputStreamMapFactory = s3InputStreamMapFactory;
 	this.s3ObjectMapFactory = s3ObjectMapFactory;
 	this.closer = closer;
     }
@@ -69,7 +77,15 @@ public class GuiceS3Context implements S3Context {
     /**
      * {@inheritDoc}
      */
-    public S3ObjectMap createMapView(S3Bucket bucket) {
+    public S3InputStreamMap createS3InputStreamMap(S3Bucket bucket) {
+	getConnection().createBucketIfNotExists(bucket);
+	return s3InputStreamMapFactory.createMapView(bucket);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public S3ObjectMap createS3ObjectMap(S3Bucket bucket) {
 	getConnection().createBucketIfNotExists(bucket);
 	return s3ObjectMapFactory.createMapView(bucket);
     }

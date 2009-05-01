@@ -24,10 +24,8 @@
 package org.jclouds.samples.googleappengine;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Writer;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletException;
@@ -48,6 +46,8 @@ import com.google.inject.Singleton;
  */
 @Singleton
 public class JCloudsServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
     @Inject
     S3Context context;
 
@@ -62,7 +62,8 @@ public class JCloudsServlet extends HttpServlet {
 	    writer.write("List:\n");
 	    for (S3Bucket bucket : myBuckets) {
 		writer.write(String.format("  %1s: %2s entries%n", bucket
-			.getName(), context.createMapView(bucket).size()));
+			.getName(), context.createS3InputStreamMap(bucket)
+			.size()));
 	    }
 	} catch (Exception e) {
 	    throw new ServletException(e);

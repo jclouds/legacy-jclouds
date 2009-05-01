@@ -25,19 +25,16 @@ package org.jclouds.aws.s3.commands;
 
 import org.jclouds.aws.s3.commands.callables.DeleteBucketCallable;
 import org.jclouds.aws.s3.domain.S3Bucket;
-import org.jclouds.http.HttpFutureCommand;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 
-public class DeleteBucket extends HttpFutureCommand<Boolean> {
+public class DeleteBucket extends S3FutureCommand<Boolean> {
 
     @Inject
     public DeleteBucket(@Named("jclouds.http.address") String amazonHost,
 	    DeleteBucketCallable callable, @Assisted S3Bucket s3Bucket) {
-	super("DELETE", "/", callable);
-	getRequest().getHeaders().put("Host",
-		s3Bucket.getName() + "." + amazonHost);
+	super("DELETE", "/", callable, amazonHost, s3Bucket);
     }
 }

@@ -23,18 +23,31 @@
  */
 package org.jclouds.aws.s3.commands;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.jclouds.aws.s3.domain.S3Bucket;
-import org.jclouds.http.commands.callables.ReturnTrueIf200;
+import org.jclouds.http.HttpFutureCommand;
 
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-import com.google.inject.name.Named;
+public class S3FutureCommand<T> extends HttpFutureCommand<T> {
 
-public class HeadBucket extends S3FutureCommand<Boolean> {
-
-    @Inject
-    public HeadBucket(@Named("jclouds.http.address") String amazonHost,
-	    ReturnTrueIf200 callable, @Assisted S3Bucket s3Bucket) {
-	super("HEAD", "/", callable, amazonHost, s3Bucket);
+    public S3FutureCommand(String method, String uri,
+	    ResponseCallable<T> responseCallable, String amazonHost,
+	    S3Bucket s3Bucket) {
+	super(method, uri, responseCallable);
+	addHostHeader(checkNotNull(amazonHost, "amazonHost"), checkNotNull(
+		s3Bucket, "s3Bucket"));
     }
+
+    public S3FutureCommand(String method, String uri,
+	    ResponseCallable<T> responseCallable, String amazonHost) {
+	super(method, uri, responseCallable);
+	addHostHeader(checkNotNull(amazonHost, "amazonHost"));
+    }
+
+    protected void addHostHeader(String amazonHost, S3Bucket s3Bucket) {
+	String host = checkNotNull(s3Bucket.getName(), "s3Bucket.getName()")
+		+ "." + amazonHost;
+	addHostHeader(host);
+    }
+
 }

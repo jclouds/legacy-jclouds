@@ -54,10 +54,9 @@ public abstract class BaseJCloudsPerformance extends BasePerformance {
     @Override
     protected boolean putByteArray(String bucket, String key, byte[] data,
 	    String contentType) throws Exception {
-	S3Bucket s3Bucket = new S3Bucket();
-	s3Bucket.setName(bucket);
-	org.jclouds.aws.s3.domain.S3Object object = new org.jclouds.aws.s3.domain.S3Object();
-	object.setKey(key);
+	S3Bucket s3Bucket = new S3Bucket(bucket);
+	org.jclouds.aws.s3.domain.S3Object object = new org.jclouds.aws.s3.domain.S3Object(
+		key);
 	object.setContentType(contentType);
 	object.setContent(data);
 	return client.addObject(s3Bucket, object).get() != null;
@@ -66,10 +65,9 @@ public abstract class BaseJCloudsPerformance extends BasePerformance {
     @Override
     protected boolean putFile(String bucket, String key, File data,
 	    String contentType) throws Exception {
-	S3Bucket s3Bucket = new S3Bucket();
-	s3Bucket.setName(bucket);
-	org.jclouds.aws.s3.domain.S3Object object = new org.jclouds.aws.s3.domain.S3Object();
-	object.setKey(key);
+	S3Bucket s3Bucket = new S3Bucket(bucket);
+	org.jclouds.aws.s3.domain.S3Object object = new org.jclouds.aws.s3.domain.S3Object(
+		key);
 	object.setContentType(contentType);
 	object.setContent(data);
 	return client.addObject(s3Bucket, object).get() != null;
@@ -78,10 +76,9 @@ public abstract class BaseJCloudsPerformance extends BasePerformance {
     @Override
     protected boolean putInputStream(String bucket, String key,
 	    InputStream data, String contentType) throws Exception {
-	S3Bucket s3Bucket = new S3Bucket();
-	s3Bucket.setName(bucket);
-	org.jclouds.aws.s3.domain.S3Object object = new org.jclouds.aws.s3.domain.S3Object();
-	object.setKey(key);
+	S3Bucket s3Bucket = new S3Bucket(bucket);
+	org.jclouds.aws.s3.domain.S3Object object = new org.jclouds.aws.s3.domain.S3Object(
+		key);
 	object.setContentType(contentType);
 	object.setContent(data);
 	object.setSize(data.available());
@@ -91,10 +88,9 @@ public abstract class BaseJCloudsPerformance extends BasePerformance {
     @Override
     protected boolean putString(String bucket, String key, String data,
 	    String contentType) throws Exception {
-	S3Bucket s3Bucket = new S3Bucket();
-	s3Bucket.setName(bucket);
-	org.jclouds.aws.s3.domain.S3Object object = new org.jclouds.aws.s3.domain.S3Object();
-	object.setKey(key);
+	S3Bucket s3Bucket = new S3Bucket(bucket);
+	org.jclouds.aws.s3.domain.S3Object object = new org.jclouds.aws.s3.domain.S3Object(
+		key);
 	object.setContentType(contentType);
 	object.setContent(data);
 	return client.addObject(s3Bucket, object).get() != null;

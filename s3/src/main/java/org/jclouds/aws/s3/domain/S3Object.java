@@ -24,6 +24,7 @@
 package org.jclouds.aws.s3.domain;
 
 import org.joda.time.DateTime;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * // TODO: Adrian: Document this!
@@ -31,11 +32,11 @@ import org.joda.time.DateTime;
  * @author Adrian Cole
  */
 public class S3Object {
-    public static final S3Object NOT_FOUND = new S3Object();
+    public static final S3Object NOT_FOUND = new S3Object("NOT_FOUND");
 
     public static final String UNKNOWN_MIME_TYPE = "application/x-unknown-mime-type";
 
-    private String key;
+    private final String key;
     private DateTime lastModified;
     private String eTag;
     private long size = -1;
@@ -47,12 +48,12 @@ public class S3Object {
     private String server;
     private Object content;
 
-    public String getKey() {
-	return key;
+    public S3Object(String key) {
+	this.key = checkNotNull(key);
     }
 
-    public void setKey(String key) {
-	this.key = key;
+    public String getKey() {
+	return key;
     }
 
     public DateTime getLastModified() {

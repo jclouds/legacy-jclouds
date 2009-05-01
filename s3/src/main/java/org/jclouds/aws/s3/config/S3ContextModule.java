@@ -33,6 +33,7 @@ import org.jclouds.aws.s3.filters.RemoveTransferEncodingHeader;
 import org.jclouds.aws.s3.filters.RequestAuthorizeSignature;
 import org.jclouds.aws.s3.internal.GuiceS3Context;
 import org.jclouds.aws.s3.internal.LiveS3Connection;
+import org.jclouds.aws.s3.internal.LiveS3InputStreamMap;
 import org.jclouds.aws.s3.internal.LiveS3ObjectMap;
 import org.jclouds.aws.s3.internal.GuiceS3Context.S3ObjectMapFactory;
 import org.jclouds.http.HttpRequestFilter;
@@ -59,6 +60,10 @@ public class S3ContextModule extends AbstractModule {
 		FactoryProvider.newFactory(
 			GuiceS3Context.S3ObjectMapFactory.class,
 			LiveS3ObjectMap.class));
+	bind(GuiceS3Context.S3InputStreamMapFactory.class).toProvider(
+		FactoryProvider.newFactory(
+			GuiceS3Context.S3InputStreamMapFactory.class,
+			LiveS3InputStreamMap.class));
 	bind(S3Context.class).to(GuiceS3Context.class);
     }
 

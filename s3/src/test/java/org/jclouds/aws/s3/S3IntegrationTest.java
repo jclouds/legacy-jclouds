@@ -129,6 +129,7 @@ public class S3IntegrationTest {
 		checkNotNull(AWSSecretAccessKey, "AWSSecretAccessKey"));
 	properties.setProperty(HttpConstants.PROPERTY_HTTP_SECURE, "false");
 	properties.setProperty(HttpConstants.PROPERTY_HTTP_PORT, "80");
+//	properties.setProperty("jclouds.http.sax.debug", "true");
 	return properties;
     }
 
@@ -163,7 +164,7 @@ public class S3IntegrationTest {
 
     @AfterTest
     protected void tearDownClient() throws Exception {
-	deleteEverything();
+//	deleteEverything();
 	context.close();
 	context = null;
     }

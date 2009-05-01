@@ -47,16 +47,13 @@ public class AmazonS3Test extends S3IntegrationTest {
     }
 
     S3Object getObject() throws Exception {
-	S3Bucket s3Bucket = new S3Bucket();
-	s3Bucket.setName(bucketPrefix + "adrianjbosstest");
+	S3Bucket s3Bucket = new S3Bucket(bucketPrefix + "adrianjbosstest");
 	return client.getObject(s3Bucket, "3366").get();
     }
 
     String putFileObject() throws Exception {
-	S3Bucket s3Bucket = new S3Bucket();
-	s3Bucket.setName(bucketPrefix + "adrianjbosstest");
-	S3Object object = new S3Object();
-	object.setKey("meat");
+	S3Bucket s3Bucket = new S3Bucket(bucketPrefix + "adrianjbosstest");
+	S3Object object = new S3Object("meat");
 	object.setContentType("text/xml");
 	object.setContent(new File("pom.xml"));
 	return client.addObject(s3Bucket, object).get();
@@ -77,49 +74,55 @@ public class AmazonS3Test extends S3IntegrationTest {
     @Test(dataProvider = "putTests")
     void testPutObject(String key, String type, Object content,
 	    Object realObject) throws Exception {
-	S3Bucket s3Bucket = new S3Bucket();
-	s3Bucket.setName(bucketPrefix + "filetestsforadrian");
+	S3Bucket s3Bucket = new S3Bucket(bucketPrefix + "filetestsforadrian");
 	client.createBucketIfNotExists(s3Bucket).get();
-	S3Object object = new S3Object();
-
-	object.setKey(key);
+	context.createS3ObjectMap(s3Bucket).clear();
+	assertEquals(client.getBucket(s3Bucket).get().getContents().size(), 0);
+	S3Object object = new S3Object(key);
 	object.setContentType(type);
 	object.setContent(content);
 	assertNotNull(client.addObject(s3Bucket, object).get());
 	object = client.getObject(s3Bucket, object.getKey()).get();
 	returnedString = S3Utils.getContentAsStringAndClose(object);
 	assertEquals(returnedString, realObject);
-
+	assertEquals(client.getBucket(s3Bucket).get().getContents().size(), 1);
     }
 
     @Test
     void testCopyObject() throws Exception {
 	String realObject = IOUtils.toString(new FileInputStream("pom.xml"));
 
-	S3Bucket sourceBucket = new S3Bucket();
-	sourceBucket.setName(bucketPrefix + "copysource");
+	S3Bucket sourceBucket = new S3Bucket(bucketPrefix + "copysource");
 	client.createBucketIfNotExists(sourceBucket).get();
+	assertEquals(client.getBucket(sourceBucket).get().getContents().size(),
+		0);
 
-	S3Object sourceObject = new S3Object();
-	sourceObject.setKey("file");
+	S3Object sourceObject = new S3Object("file");
 	sourceObject.setContentType("text/xml");
 	sourceObject.setContent(new File("pom.xml"));
 
 	client.addObject(sourceBucket, sourceObject).get();
+	assertEquals(client.getBucket(sourceBucket).get().getContents().size(),
+		1);
+
 	sourceObject = client.getObject(sourceBucket, sourceObject.getKey())
 		.get();
 	assertEquals(S3Utils.getContentAsStringAndClose(sourceObject),
 		realObject);
 
-	S3Bucket destinationBucket = new S3Bucket();
-	destinationBucket.setName(bucketPrefix + "copydestination");
+	S3Bucket destinationBucket = new S3Bucket(bucketPrefix
+		+ "copydestination");
 	client.createBucketIfNotExists(destinationBucket).get();
+	assertEquals(client.getBucket(destinationBucket).get().getContents()
+		.size(), 0);
 
-	S3Object destinationObject = new S3Object();
-	destinationObject.setKey(sourceObject.getKey());
+	S3Object destinationObject = new S3Object(sourceObject.getKey());
 
 	client.copyObject(sourceBucket, sourceObject, destinationBucket,
 		destinationObject).get();
+	assertEquals(client.getBucket(destinationBucket).get().getContents()
+		.size(), 1);
+
 	destinationObject = client.getObject(destinationBucket,
 		destinationObject.getKey()).get();
 
@@ -129,38 +132,32 @@ public class AmazonS3Test extends S3IntegrationTest {
     }
 
     S3Object headObject() throws Exception {
-	S3Bucket s3Bucket = new S3Bucket();
-	s3Bucket.setName(bucketPrefix + "adrianjbosstest");
+	S3Bucket s3Bucket = new S3Bucket(bucketPrefix + "adrianjbosstest");
 	return client.headObject(s3Bucket, "3366").get();
     }
 
     Boolean bucketExists() throws Exception {
-	S3Bucket s3Bucket = new S3Bucket();
-	s3Bucket.setName(bucketPrefix + "adrianjbosstest");
+	S3Bucket s3Bucket = new S3Bucket(bucketPrefix + "adrianjbosstest");
 	return client.bucketExists(s3Bucket).get();
     }
 
     Boolean deleteBucket() throws Exception {
-	S3Bucket s3Bucket = new S3Bucket();
-	s3Bucket.setName(bucketPrefix + "adrianjbosstest");
+	S3Bucket s3Bucket = new S3Bucket(bucketPrefix + "adrianjbosstest");
 	return client.deleteBucket(s3Bucket).get();
     }
 
     Boolean deleteObject() throws Exception {
-	S3Bucket s3Bucket = new S3Bucket();
-	s3Bucket.setName(bucketPrefix + "adrianjbosstest");
+	S3Bucket s3Bucket = new S3Bucket(bucketPrefix + "adrianjbosstest");
 	return client.deleteObject(s3Bucket, "3366").get();
     }
 
     Boolean createBucketIfNotExists() throws Exception {
-	S3Bucket s3Bucket = new S3Bucket();
-	s3Bucket.setName(bucketPrefix + "adrianjbosstest");
+	S3Bucket s3Bucket = new S3Bucket(bucketPrefix + "adrianjbosstest");
 	return client.createBucketIfNotExists(s3Bucket).get();
     }
 
     S3Bucket getBucket() throws Exception {
-	S3Bucket s3Bucket = new S3Bucket();
-	s3Bucket.setName(bucketPrefix + "adrianjbosstest");
+	S3Bucket s3Bucket = new S3Bucket(bucketPrefix + "adrianjbosstest");
 	return client.getBucket(s3Bucket).get();
     }
 

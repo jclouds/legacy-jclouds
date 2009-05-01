@@ -23,44 +23,24 @@
  */
 package org.jclouds.aws.s3.commands;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.aws.s3.commands.callables.RetrieveObjectCallable;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.http.HttpFutureCommand;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 
-public class RetrieveObject extends HttpFutureCommand<S3Object> {
-    private String key;
+public class RetrieveObject extends S3FutureCommand<S3Object> {
 
     @Inject
     public RetrieveObject(@Named("jclouds.http.address") String amazonHost,
 	    RetrieveObjectCallable callable, @Assisted S3Bucket s3Bucket,
 	    @Assisted String key, @Assisted boolean getContent) {
-	super(getContent ? "GET" : "HEAD", "/" + key, callable);
-	this.key = key;
-	getRequest().getHeaders().put("Host",
-		s3Bucket.getName() + "." + amazonHost);
-    }
-
-    @Override
-    public S3Object get() throws InterruptedException, ExecutionException {
-	S3Object object = super.get();
-	object.setKey(key);
-	return object;
-    }
-
-    @Override
-    public S3Object get(long l, TimeUnit timeUnit) throws InterruptedException,
-	    ExecutionException, TimeoutException {
-	S3Object object = super.get(l, timeUnit);
-	object.setKey(key);
-	return object;
+	super(getContent ? "GET" : "HEAD", "/" + checkNotNull(key), callable,
+		amazonHost, s3Bucket);
+	callable.setKey(key);
     }
 }

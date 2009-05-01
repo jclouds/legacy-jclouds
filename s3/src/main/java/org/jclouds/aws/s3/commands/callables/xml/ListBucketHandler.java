@@ -23,76 +23,91 @@
  */
 package org.jclouds.aws.s3.commands.callables.xml;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.jclouds.aws.s3.DateService;
-import com.google.inject.Inject;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.S3Owner;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+
+import com.google.inject.Inject;
 
 /**
  * // TODO: Adrian: Document this!
- *
+ * 
  * @author Adrian Cole
  */
 public class ListBucketHandler extends ParseSax.HandlerWithResult<S3Bucket> {
 
     public S3Bucket getResult() {
-        return s3Bucket;
+	return s3Bucket;
     }
 
-    private S3Bucket s3Bucket = new S3Bucket();
+    public void setBucket(S3Bucket s3Bucket) {
+	this.s3Bucket = s3Bucket;
+    }
+
+    private S3Bucket s3Bucket;
     private S3Object currentObject;
     private S3Owner currentOwner;
     private StringBuilder currentText = new StringBuilder();
     @Inject
     private DateService dateParser;
 
-    public void startElement(String uri, String name, String qName, Attributes attrs) {
-        if (qName.equals("Contents")) {
-            currentObject = new S3Object();
-        } else if (qName.equals("Owner")) {
-            currentOwner = new S3Owner();
-        }
+    @Override
+    public void startDocument() throws SAXException {
+	checkNotNull(s3Bucket, "s3Bucket");
+	s3Bucket.getContents().clear();
+	super.startDocument();
+    }
+
+    public void startElement(String uri, String name, String qName,
+	    Attributes attrs) {
+	if (qName.equals("Contents")) {
+	} else if (qName.equals("Owner")) {
+	    currentOwner = new S3Owner();
+	}
     }
 
     public void endElement(String uri, String name, String qName) {
 
-        if (qName.equals("ID")) { //owner stuff
-            currentOwner.setId(currentText.toString());
-        } else if (qName.equals("DisplayName")) {
-            currentOwner.setDisplayName(currentText.toString());
-        } else if (qName.equals("Key")) { //content stuff
-            currentObject.setKey(currentText.toString());
-        } else if (qName.equals("LastModified")) {
-            currentObject.setLastModified(dateParser.dateTimeFromXMLFormat(currentText.toString()));
-        } else if (qName.equals("ETag")) {
-            currentObject.setETag(currentText.toString().replaceAll("\"", ""));
-        } else if (qName.equals("Size")) {
-            currentObject.setSize(Long.parseLong(currentText.toString()));
-        } else if (qName.equals("Owner")) {
-            currentObject.setOwner(currentOwner);
-        } else if (qName.equals("StorageClass")) {
-            currentObject.setStorageClass(currentText.toString());
-        } else if (qName.equals("Contents")) {
-            s3Bucket.getContents().add(currentObject);
-        } else if (qName.equals("Name")) {//bucket stuff last, as least likely
-            s3Bucket.setName(currentText.toString());
-//         } else if (qName.equals("Prefix")) {
-//            // no-op
-//         } else if (qName.equals("Marker")) {
-//            // no-op
-//         } else if (qName.equals("MaxKeys")) {
-//            // no-op
-        } else if (qName.equals("IsTruncated")) {
-            boolean isTruncated = Boolean.parseBoolean(currentText.toString());
-            s3Bucket.setComplete(!isTruncated);
-        }
-        currentText = new StringBuilder();
+	if (qName.equals("ID")) { // owner stuff
+	    currentOwner.setId(currentText.toString());
+	} else if (qName.equals("DisplayName")) {
+	    currentOwner.setDisplayName(currentText.toString());
+	} else if (qName.equals("Key")) { // content stuff
+	    currentObject = new S3Object(currentText.toString());
+	} else if (qName.equals("LastModified")) {
+	    currentObject.setLastModified(dateParser
+		    .dateTimeFromXMLFormat(currentText.toString()));
+	} else if (qName.equals("ETag")) {
+	    currentObject.setETag(currentText.toString().replaceAll("\"", ""));
+	} else if (qName.equals("Size")) {
+	    currentObject.setSize(Long.parseLong(currentText.toString()));
+	} else if (qName.equals("Owner")) {
+	    currentObject.setOwner(currentOwner);
+	} else if (qName.equals("StorageClass")) {
+	    currentObject.setStorageClass(currentText.toString());
+	} else if (qName.equals("Contents")) {
+	    s3Bucket.getContents().add(currentObject);
+	} else if (qName.equals("Name")) {// bucket stuff last, as least likely
+	    // } else if (qName.equals("Prefix")) {
+	    // // no-op
+	    // } else if (qName.equals("Marker")) {
+	    // // no-op
+	    // } else if (qName.equals("MaxKeys")) {
+	    // // no-op
+	} else if (qName.equals("IsTruncated")) {
+	    boolean isTruncated = Boolean.parseBoolean(currentText.toString());
+	    s3Bucket.setComplete(!isTruncated);
+	}
+	currentText = new StringBuilder();
     }
 
     public void characters(char ch[], int start, int length) {
-        currentText.append(ch, start, length);
+	currentText.append(ch, start, length);
     }
 }
