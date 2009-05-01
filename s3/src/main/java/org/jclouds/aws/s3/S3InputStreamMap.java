@@ -23,10 +23,21 @@
  */
 package org.jclouds.aws.s3;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.Map;
 
-import org.jclouds.aws.s3.domain.S3Object;
+public interface S3InputStreamMap extends Map<String, InputStream>, S3Map {
+    InputStream putString(String key, String value);
 
-public interface S3ObjectMap extends Map<String, S3Object>, S3Map {
+    InputStream putFile(String key, File value);
+
+    InputStream putBytes(String key, byte[] value);
+
+    void putAllStrings(Map<? extends String, ? extends String> map);
+
+    void putAllBytes(Map<? extends String, ? extends byte[]> map);
+
+    void putAllFiles(Map<? extends String, ? extends File> map);
 
 }

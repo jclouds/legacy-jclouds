@@ -23,10 +23,10 @@
  */
 package org.jclouds.aws.s3;
 
-import java.util.Map;
+import org.jclouds.aws.s3.domain.S3Bucket;
 
-import org.jclouds.aws.s3.domain.S3Object;
+public interface S3Map {
 
-public interface S3ObjectMap extends Map<String, S3Object>, S3Map {
+    S3Bucket getBucket();
 
 }

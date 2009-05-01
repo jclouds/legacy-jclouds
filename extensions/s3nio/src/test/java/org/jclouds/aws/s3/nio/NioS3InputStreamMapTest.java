@@ -25,7 +25,7 @@ package org.jclouds.aws.s3.nio;
 
 import java.util.Properties;
 
-import org.jclouds.aws.s3.S3ObjectMapTest;
+import org.jclouds.aws.s3.S3InputStreamMapTest;
 import org.jclouds.aws.s3.nio.config.S3HttpNioConnectionPoolClientModule;
 import org.testng.annotations.Test;
 
@@ -36,9 +36,9 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", sequential = true, testName = "s3.NioS3ObjectMapTest")
-public class NioS3ObjectMapTest extends S3ObjectMapTest {
-
+@Test(groups = "unit", sequential = true, testName = "s3.NioS3InputStreamMapTest")
+public class NioS3InputStreamMapTest extends S3InputStreamMapTest {
+    
     @Override
     protected Properties buildS3Properties(String AWSAccessKeyId,
 	    String AWSSecretAccessKey) {
