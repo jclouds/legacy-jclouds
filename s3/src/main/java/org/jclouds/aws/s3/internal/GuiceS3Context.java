@@ -77,7 +77,7 @@ public class GuiceS3Context implements S3Context {
     /**
      * {@inheritDoc}
      */
-    public S3InputStreamMap createS3InputStreamMap(S3Bucket bucket) {
+    public S3InputStreamMap createInputStreamMap(S3Bucket bucket) {
 	getConnection().createBucketIfNotExists(bucket);
 	return s3InputStreamMapFactory.createMapView(bucket);
     }

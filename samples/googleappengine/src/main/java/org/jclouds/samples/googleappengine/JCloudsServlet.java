@@ -62,7 +62,7 @@ public class JCloudsServlet extends HttpServlet {
 	    writer.write("List:\n");
 	    for (S3Bucket bucket : myBuckets) {
 		writer.write(String.format("  %1s: %2s entries%n", bucket
-			.getName(), context.createS3InputStreamMap(bucket)
+			.getName(), context.createInputStreamMap(bucket)
 			.size()));
 	    }
 	} catch (Exception e) {

@@ -51,7 +51,7 @@ public class S3InputStreamMapTest extends BaseS3MapTest<InputStream> {
     @SuppressWarnings("unchecked")
     protected BaseS3Map<InputStream> createMap(S3Context context,
 	    S3Bucket bucket) {
-	map = context.createS3InputStreamMap(bucket);
+	map = context.createInputStreamMap(bucket);
 	return (BaseS3Map<InputStream>) map;
     }
 

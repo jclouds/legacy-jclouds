@@ -39,7 +39,7 @@ public interface S3Context {
      * @param bucket
      * @return
      */
-    S3InputStreamMap createS3InputStreamMap(S3Bucket bucket);
+    S3InputStreamMap createInputStreamMap(S3Bucket bucket);
 
     /**
      * Creates a <code>Map<String,S3Object></code> view of the specified bucket.
