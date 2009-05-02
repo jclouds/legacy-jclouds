@@ -46,7 +46,7 @@ public class Logger {
             logger.fine(String.format(message, args));
     }
 
-    private boolean isDebugEnabled() {
+    public boolean isDebugEnabled() {
         return logger.isLoggable(Level.FINE);
     }
 

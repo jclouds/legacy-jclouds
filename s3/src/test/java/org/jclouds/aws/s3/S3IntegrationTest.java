@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
@@ -53,29 +54,32 @@ import com.google.inject.Module;
 
 @Test(sequential = true)
 public class S3IntegrationTest {
+    @BeforeTest
+    void enableDebug() {
+	if (debugEnabled()) {
+	    Handler HANDLER = new ConsoleHandler() {
+		{
+		    setLevel(Level.ALL);
+		    setFormatter(new Formatter() {
 
-    private static final Handler HANDLER = new ConsoleHandler() {
-	{
-	    setLevel(Level.ALL);
-	    setFormatter(new Formatter() {
-
-		@Override
-		public String format(LogRecord record) {
-		    return String.format("[%tT %-7s] [%-7s] [%s]: %s %s\n",
-			    new Date(record.getMillis()), record.getLevel(),
-			    Thread.currentThread().getName(), record
-				    .getLoggerName(), record.getMessage(),
-			    record.getThrown() == null ? "" : record
-				    .getThrown());
+			@Override
+			public String format(LogRecord record) {
+			    return String.format(
+				    "[%tT %-7s] [%-7s] [%s]: %s %s\n",
+				    new Date(record.getMillis()), record
+					    .getLevel(), Thread.currentThread()
+					    .getName(), record.getLoggerName(),
+				    record.getMessage(),
+				    record.getThrown() == null ? "" : record
+					    .getThrown());
+			}
+		    });
 		}
-	    });
+	    };
+	    Logger guiceLogger = Logger.getLogger("org.jclouds");
+	    guiceLogger.addHandler(HANDLER);
+	    guiceLogger.setLevel(Level.ALL);
 	}
-    };
-
-    static {
-	Logger guiceLogger = Logger.getLogger("org.jclouds");
-	guiceLogger.addHandler(HANDLER);
-	guiceLogger.setLevel(Level.ALL);
     }
 
     String badRequestWhenSourceIsDestBucketOnCopy400 = "<Error><Code>InvalidRequest</Code><Message>The Source and Destination may not be the same when the MetadataDirective is Copy.</Message><RequestId>54C77CAF4D42474B</RequestId><HostId>SJecknEUUUx88/65VAKbCdKSOCkpuVTeu7ZG9in9x9NTNglGnoxdbALCfS4k/DUZ</HostId></Error>";
@@ -113,6 +117,10 @@ public class S3IntegrationTest {
 	deleteEverything();
     }
 
+    protected boolean debugEnabled() {
+	return true;
+    }
+
     protected S3Context createS3Context(String AWSAccessKeyId,
 	    String AWSSecretAccessKey) {
 	return S3ContextFactory.createS3Context(buildS3Properties(
@@ -129,7 +137,7 @@ public class S3IntegrationTest {
 		checkNotNull(AWSSecretAccessKey, "AWSSecretAccessKey"));
 	properties.setProperty(HttpConstants.PROPERTY_HTTP_SECURE, "false");
 	properties.setProperty(HttpConstants.PROPERTY_HTTP_PORT, "80");
-//	properties.setProperty("jclouds.http.sax.debug", "true");
+	// properties.setProperty("jclouds.http.sax.debug", "true");
 	return properties;
     }
 
@@ -139,21 +147,22 @@ public class S3IntegrationTest {
 
     protected void deleteEverything() throws Exception {
 	try {
-	    List<S3Bucket> buckets = client.getBuckets().get();
+	    List<S3Bucket> buckets = client.getBuckets().get(10,
+		    TimeUnit.SECONDS);
 	    List<Future<Boolean>> results = new ArrayList<Future<Boolean>>();
 	    for (S3Bucket bucket : buckets) {
 		if (bucket.getName().startsWith(bucketPrefix.toLowerCase())) {
-		    bucket = client.getBucket(bucket).get();
+		    bucket = client.getBucket(bucket).get(10, TimeUnit.SECONDS);
 		    for (S3Object object : bucket.getContents()) {
 			results.add(client
 				.deleteObject(bucket, object.getKey()));
 		    }
 		    Iterator<Future<Boolean>> iterator = results.iterator();
 		    while (iterator.hasNext()) {
-			iterator.next().get();
+			iterator.next().get(10, TimeUnit.SECONDS);
 			iterator.remove();
 		    }
-		    client.deleteBucket(bucket).get();
+		    client.deleteBucket(bucket).get(10, TimeUnit.SECONDS);
 		}
 
 	    }
@@ -164,7 +173,7 @@ public class S3IntegrationTest {
 
     @AfterTest
     protected void tearDownClient() throws Exception {
-//	deleteEverything();
+	// deleteEverything();
 	context.close();
 	context = null;
     }

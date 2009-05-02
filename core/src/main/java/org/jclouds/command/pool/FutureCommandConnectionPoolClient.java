@@ -65,14 +65,13 @@ public class FutureCommandConnectionPoolClient<C> extends BaseLifeCycle
 
     @Override
     protected void doShutdown() {
-	if (exception == null
-		&& futureCommandConnectionPool.getException() != null)
-	    exception = futureCommandConnectionPool.getException();
+	exception.compareAndSet(null, futureCommandConnectionPool
+		.getException());
 	while (!commandQueue.isEmpty()) {
 	    FutureCommand command = commandQueue.remove();
 	    if (command != null) {
-		if (exception != null)
-		    command.setException(exception);
+		if (exception.get() != null)
+		    command.setException(exception.get());
 		else
 		    command.cancel(true);
 	    }

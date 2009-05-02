@@ -91,25 +91,25 @@ public class FutureCommand<Q, R, T> implements Future<T> {
      */
     public static class ResponseRunnableFutureTask<R, T> extends FutureTask<T>
 	    implements ResponseRunnableFuture<R, T> {
-	private final ResponseCallable<R, T> tCallable;
+	private final ResponseCallable<R, T> callable;
 
 	public ResponseRunnableFutureTask(ResponseCallable<R, T> tCallable) {
 	    super(tCallable);
-	    this.tCallable = tCallable;
+	    this.callable = tCallable;
 	}
 
 	@Override
 	public String toString() {
-	    return "ResponseRunnableFutureTask{" + "tCallable=" + tCallable
+	    return getClass().getSimpleName()+"{" + "tCallable=" + callable
 		    + '}';
 	}
 
 	public R getResponse() {
-	    return tCallable.getResponse();
+	    return callable.getResponse();
 	}
 
 	public void setResponse(R response) {
-	    tCallable.setResponse(response);
+	    callable.setResponse(response);
 	}
 
 	/**

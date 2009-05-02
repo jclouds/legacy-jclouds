@@ -50,23 +50,23 @@ public class Jets3tPerformance extends BasePerformance {
     }
 
     @Override
-    protected void testPutStringSerial() throws Exception {
+    public void testPutStringSerial() throws Exception {
 	throw new UnsupportedOperationException();
     }
 
     @Override
-    protected void testPutStringParallel() throws InterruptedException,
+    public void testPutStringParallel() throws InterruptedException,
 	    ExecutionException {
 	throw new UnsupportedOperationException();
     }
 
     @Override
-    protected void testPutBytesSerial() throws Exception {
+    public void testPutBytesSerial() throws Exception {
 	throw new UnsupportedOperationException();
     }
 
     @Override
-    protected void testPutBytesParallel() throws InterruptedException,
+    public void testPutBytesParallel() throws InterruptedException,
 	    ExecutionException {
 	throw new UnsupportedOperationException();
     }

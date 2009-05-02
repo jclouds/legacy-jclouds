@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -141,46 +143,49 @@ public abstract class BaseHttpFutureCommandClientTest {
 
     @Test(invocationCount = 500, timeOut = 1500)
     void testRequestFilter() throws MalformedURLException, ExecutionException,
-	    InterruptedException {
+	    InterruptedException, TimeoutException {
 	GetString get = factory.createGetString("/");
 	get.getRequest().getHeaders().put("filterme", "filterme");
 	client.submit(get);
-	assert get.get().trim().equals("test") : String.format(
-		"expected: [%1s], but got [%2s]", "test", get.get());
+	assert get.get(10, TimeUnit.SECONDS).trim().equals("test") : String
+		.format("expected: [%1s], but got [%2s]", "test", get.get(10,
+			TimeUnit.SECONDS));
     }
 
     @Test(invocationCount = 500, timeOut = 1500)
     void testGetStringWithHeader() throws MalformedURLException,
-	    ExecutionException, InterruptedException {
+	    ExecutionException, InterruptedException, TimeoutException {
 	GetString get = factory.createGetString("/");
 	get.getRequest().getHeaders().put("test", "test");
 	client.submit(get);
-	assert get.get().trim().equals("test") : String.format(
-		"expected: [%1s], but got [%2s]", "test", get.get());
+	assert get.get(10, TimeUnit.SECONDS).trim().equals("test") : String
+		.format("expected: [%1s], but got [%2s]", "test", get.get(10,
+			TimeUnit.SECONDS));
     }
 
     @Test(invocationCount = 500, timeOut = 1500)
     void testGetString() throws MalformedURLException, ExecutionException,
-	    InterruptedException {
+	    InterruptedException, TimeoutException {
 	GetString get = factory.createGetString("/");
 	assert get != null;
 	client.submit(get);
-	assert get.get().trim().equals(XML) : String.format(
-		"expected: [%1s], but got [%2s]", XML, get.get());
+	assert get.get(10, TimeUnit.SECONDS).trim().equals(XML) : String
+		.format("expected: [%1s], but got [%2s]", XML, get.get(10,
+			TimeUnit.SECONDS));
     }
 
     @Test(invocationCount = 500, timeOut = 1500)
     void testHead() throws MalformedURLException, ExecutionException,
-	    InterruptedException {
+	    InterruptedException, TimeoutException {
 	Head head = factory.createHead("/");
 	assert head != null;
 	client.submit(head);
-	assert head.get();
+	assert head.get(10, TimeUnit.SECONDS);
     }
 
     @Test(invocationCount = 500, timeOut = 1500)
     void testGetAndParseSax() throws MalformedURLException, ExecutionException,
-	    InterruptedException {
+	    InterruptedException, TimeoutException {
 	GetAndParseSax getAndParseSax = factory.createGetAndParseSax("/",
 		new ParseSax.HandlerWithResult<String>() {
 		    @Override
@@ -207,6 +212,6 @@ public abstract class BaseHttpFutureCommandClientTest {
 		});
 	assert getAndParseSax != null;
 	client.submit(getAndParseSax);
-	assert getAndParseSax.get().equals("whoppers");
+	assert getAndParseSax.get(10, TimeUnit.SECONDS).equals("whoppers");
     }
 }

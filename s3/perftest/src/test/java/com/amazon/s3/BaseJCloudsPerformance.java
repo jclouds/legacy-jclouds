@@ -25,6 +25,7 @@ package com.amazon.s3;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.concurrent.TimeUnit;
 
 import org.jclouds.aws.s3.domain.S3Bucket;
 
@@ -46,7 +47,8 @@ public abstract class BaseJCloudsPerformance extends BasePerformance {
     // object.setContentType("application/octetstream");
     // //object.setContent("this is a test");
     // object.setContent(test);
-    // return clientProvider.getObject(s3Bucket, object.getKey()).get() !=
+    // return clientProvider.getObject(s3Bucket,
+    // object.getKey()).get(120,TimeUnit.SECONDS) !=
     // org.jclouds.aws.s3.domain.S3Object.NOT_FOUND;
 
     // }
@@ -59,7 +61,7 @@ public abstract class BaseJCloudsPerformance extends BasePerformance {
 		key);
 	object.setContentType(contentType);
 	object.setContent(data);
-	return client.addObject(s3Bucket, object).get() != null;
+	return client.addObject(s3Bucket, object).get(120, TimeUnit.SECONDS) != null;
     }
 
     @Override
@@ -70,7 +72,7 @@ public abstract class BaseJCloudsPerformance extends BasePerformance {
 		key);
 	object.setContentType(contentType);
 	object.setContent(data);
-	return client.addObject(s3Bucket, object).get() != null;
+	return client.addObject(s3Bucket, object).get(120, TimeUnit.SECONDS) != null;
     }
 
     @Override
@@ -82,7 +84,7 @@ public abstract class BaseJCloudsPerformance extends BasePerformance {
 	object.setContentType(contentType);
 	object.setContent(data);
 	object.setSize(data.available());
-	return client.addObject(s3Bucket, object).get() != null;
+	return client.addObject(s3Bucket, object).get(120, TimeUnit.SECONDS) != null;
     }
 
     @Override
@@ -93,6 +95,6 @@ public abstract class BaseJCloudsPerformance extends BasePerformance {
 		key);
 	object.setContentType(contentType);
 	object.setContent(data);
-	return client.addObject(s3Bucket, object).get() != null;
+	return client.addObject(s3Bucket, object).get(120, TimeUnit.SECONDS) != null;
     }
 }

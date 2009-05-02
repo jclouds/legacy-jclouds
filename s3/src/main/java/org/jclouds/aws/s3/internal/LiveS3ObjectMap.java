@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.jclouds.Utils;
 import org.jclouds.aws.s3.S3Connection;
@@ -87,7 +88,8 @@ public class LiveS3ObjectMap extends BaseS3Map<S3Object> implements S3ObjectMap 
 
     public S3Object get(Object key) {
 	try {
-	    return connection.getObject(bucket, key.toString()).get();
+	    return connection.getObject(bucket, key.toString()).get(
+		    requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
 	} catch (Exception e) {
 	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
 	    throw new S3RuntimeException(String.format(
@@ -98,7 +100,8 @@ public class LiveS3ObjectMap extends BaseS3Map<S3Object> implements S3ObjectMap 
     public S3Object put(String key, S3Object value) {
 	S3Object returnVal = get(key);
 	try {
-	    connection.addObject(bucket, value).get();
+	    connection.addObject(bucket, value).get(requestTimeoutMilliseconds,
+		    TimeUnit.MILLISECONDS);
 	} catch (Exception e) {
 	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
 	    throw new S3RuntimeException(String.format(
@@ -114,7 +117,8 @@ public class LiveS3ObjectMap extends BaseS3Map<S3Object> implements S3ObjectMap 
 		puts.add(connection.addObject(bucket, object));
 	    }
 	    for (Future<String> put : puts)
-		put.get();// this will throw an exception if there was a problem
+		// this will throw an exception if there was a problem
+		put.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
 	} catch (Exception e) {
 	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
 	    throw new S3RuntimeException("Error putting into bucket" + bucket,
@@ -125,7 +129,8 @@ public class LiveS3ObjectMap extends BaseS3Map<S3Object> implements S3ObjectMap 
     public S3Object remove(Object key) {
 	S3Object old = get(key);
 	try {
-	    connection.deleteObject(bucket, key.toString()).get();
+	    connection.deleteObject(bucket, key.toString()).get(
+		    requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
 	} catch (Exception e) {
 	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
 	    throw new S3RuntimeException(String.format(

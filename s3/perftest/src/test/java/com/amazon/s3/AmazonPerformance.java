@@ -55,34 +55,34 @@ public class AmazonPerformance extends BasePerformance {
     }
 
     @Override
-    protected void testPutFileSerial() throws Exception {
+    public void testPutFileSerial() throws Exception {
 	throw new UnsupportedOperationException();
     }
 
     @Override
-    protected void testPutFileParallel() throws InterruptedException,
+    public void testPutFileParallel() throws InterruptedException,
 	    ExecutionException {
 	throw new UnsupportedOperationException();
     }
 
     @Override
-    protected void testPutInputStreamSerial() throws Exception {
+    public void testPutInputStreamSerial() throws Exception {
 	throw new UnsupportedOperationException();
     }
 
     @Override
-    protected void testPutInputStreamParallel() throws InterruptedException,
+    public void testPutInputStreamParallel() throws InterruptedException,
 	    ExecutionException {
 	throw new UnsupportedOperationException();
     }
 
     @Override
-    protected void testPutStringSerial() throws Exception {
+    public void testPutStringSerial() throws Exception {
 	throw new UnsupportedOperationException();
     }
 
     @Override
-    protected void testPutStringParallel() throws InterruptedException,
+    public void testPutStringParallel() throws InterruptedException,
 	    ExecutionException {
 	throw new UnsupportedOperationException();
     }

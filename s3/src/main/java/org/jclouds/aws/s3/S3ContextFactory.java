@@ -23,6 +23,18 @@
  */
 package org.jclouds.aws.s3;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.aws.s3.S3Constants.PROPERTY_AWS_ACCESSKEYID;
+import static org.jclouds.aws.s3.S3Constants.PROPERTY_AWS_SECRETACCESSKEY;
+import static org.jclouds.command.pool.PoolConstants.PROPERTY_POOL_IO_WORKER_THREADS;
+import static org.jclouds.command.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS;
+import static org.jclouds.command.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTION_REUSE;
+import static org.jclouds.command.pool.PoolConstants.PROPERTY_POOL_MAX_SESSION_FAILURES;
+import static org.jclouds.command.pool.PoolConstants.PROPERTY_POOL_REQUEST_INVOKER_THREADS;
+import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_ADDRESS;
+import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_PORT;
+import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_SECURE;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -37,7 +49,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.name.Names;
-import static org.jclouds.aws.s3.S3Constants.*;
+
 
 /**
  * Creates {@link S3Context} or {@link Injector} instances based on the most
@@ -166,7 +178,7 @@ public class S3ContextFactory {
 	return Guice.createInjector(new AbstractModule() {
 	    @Override
 	    protected void configure() {
-		Names.bindProperties(binder(), properties);
+		Names.bindProperties(binder(), checkNotNull(properties,"properties"));
 		for (Module module : modules)
 		    install(module);
 	    }

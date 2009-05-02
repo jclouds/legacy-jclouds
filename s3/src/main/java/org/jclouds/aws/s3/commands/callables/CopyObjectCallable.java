@@ -62,7 +62,8 @@ public class CopyObjectCallable extends
 	    if (content != null) {
 		try {
 		    response = Utils.toStringAndClose(content);
-		    System.err.println("Copy response: " + response);
+		    // TODO parse response of format: <CopyObjectResult
+		    // xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><LastModified>2009-05-02T18:29:48.000Z</LastModified><ETag>&quot;29f1a7935898965c45f756e5f936fad2&quot;</ETag></CopyObjectResult>
 		} catch (IOException e) {
 		    logger.error(e, "error consuming content");
 		}

@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.Utils;
@@ -68,7 +69,8 @@ public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
     public InputStream get(Object o) {
 	try {
 	    return (InputStream) (connection.getObject(bucket, o.toString())
-		    .get()).getContent();
+		    .get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS))
+		    .getContent();
 	} catch (Exception e) {
 	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
 	    throw new S3RuntimeException(String.format(
@@ -84,7 +86,8 @@ public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
     public InputStream remove(Object o) {
 	InputStream old = get(o);
 	try {
-	    connection.deleteObject(bucket, o.toString()).get();
+	    connection.deleteObject(bucket, o.toString()).get(
+		    requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
 	} catch (Exception e) {
 	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
 	    throw new S3RuntimeException(String.format(
@@ -151,7 +154,8 @@ public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
 	    InputStream returnVal = containsKey(s) ? get(s) : null;
 	    object.setContent(o);
 	    setSizeIfContentIsInputStream(object);
-	    connection.addObject(bucket, object).get();
+	    connection.addObject(bucket, object).get(
+		    requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
 	    return returnVal;
 	} catch (Exception e) {
 	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
@@ -191,7 +195,8 @@ public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
 		puts.add(connection.addObject(bucket, object));
 	    }
 	    for (Future<String> put : puts)
-		put.get();// this will throw an exception if there was a problem
+		// this will throw an exception if there was a problem
+		put.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
 	} catch (Exception e) {
 	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
 	    throw new S3RuntimeException("Error putting into bucket" + bucket,

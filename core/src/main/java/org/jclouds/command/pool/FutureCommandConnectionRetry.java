@@ -23,12 +23,12 @@
  */
 package org.jclouds.command.pool;
 
-import org.jclouds.Logger;
-import org.jclouds.command.FutureCommand;
-
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import org.jclouds.Logger;
+import org.jclouds.command.FutureCommand;
 
 /**
  * // TODO: Adrian: Document this!
@@ -50,17 +50,19 @@ public abstract class FutureCommandConnectionRetry<C> {
 
     public abstract FutureCommandConnectionHandle<C> getHandleFromConnection(C connection);
 
-    public void shutdownConnectionAndRetryOperation(C connection) {
+    public boolean shutdownConnectionAndRetryOperation(C connection) {
         FutureCommandConnectionHandle<C> handle = getHandleFromConnection(connection);
         if (handle != null) {
             try {
                 logger.info("%1s - shutting down connection", connection);
                 handle.shutdownConnection();
                 incrementErrorCountAndRetry(handle.getOperation());
+                return true;
             } catch (IOException e) {
                 logger.error(e, "%1s - error shutting down connection", connection);
             }
         }
+        return false;
     }
 
     public void incrementErrorCountAndRetry(FutureCommand command) {

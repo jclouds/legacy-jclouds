@@ -37,9 +37,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.jclouds.Utils;
 import org.jclouds.aws.s3.S3Connection;
+import org.jclouds.aws.s3.S3Constants;
 import org.jclouds.aws.s3.S3Map;
 import org.jclouds.aws.s3.S3Utils;
 import org.jclouds.aws.s3.domain.S3Bucket;
@@ -47,11 +50,19 @@ import org.jclouds.aws.s3.domain.S3Object;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import com.google.inject.name.Named;
 
 public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
 
     protected final S3Connection connection;
     protected final S3Bucket bucket;
+
+    /**
+     * maximum duration of an S3 Request
+     */
+    @Inject(optional = true)
+    @Named(S3Constants.PROPERTY_AWS_MAP_TIMEOUT)
+    protected long requestTimeoutMilliseconds = 10000;
 
     @Inject
     public BaseS3Map(S3Connection connection, @Assisted S3Bucket bucket) {
@@ -72,7 +83,7 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
     }
 
     protected boolean containsETag(String eTagOfValue)
-	    throws InterruptedException, ExecutionException {
+	    throws InterruptedException, ExecutionException, TimeoutException {
 	for (S3Object object : refreshBucket().getContents()) {
 	    if (object.getETag().equals(eTagOfValue))
 		return true;
@@ -81,7 +92,8 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
     }
 
     protected byte[] getMd5(Object value) throws IOException,
-	    FileNotFoundException, InterruptedException, ExecutionException {
+	    FileNotFoundException, InterruptedException, ExecutionException,
+	    TimeoutException {
 	byte[] md5;
 
 	if (value instanceof InputStream) {
@@ -94,7 +106,8 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
 	    md5 = S3Utils.md5(new FileInputStream((File) value));
 	} else if (value instanceof S3Object) {
 	    S3Object object = (S3Object) value;
-	    object = connection.headObject(bucket, object.getKey()).get();
+	    object = connection.headObject(bucket, object.getKey()).get(
+		    requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
 	    if (S3Object.NOT_FOUND.equals(object))
 		throw new FileNotFoundException("not found: " + object.getKey());
 	    md5 = S3Utils.fromHexString(object.getETag());
@@ -114,7 +127,8 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
 	for (Future<S3Object> futureObject : futureObjects) {
 	    S3Object object = null;
 	    try {
-		object = futureObject.get();
+		object = futureObject.get(requestTimeoutMilliseconds,
+			TimeUnit.MILLISECONDS);
 	    } catch (Exception e) {
 		Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
 		throw new S3RuntimeException(String.format(
@@ -164,7 +178,8 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
 		deletes.add(connection.deleteObject(bucket, key));
 	    }
 	    for (Future<Boolean> isdeleted : deletes)
-		if (!isdeleted.get()) {
+		if (!isdeleted.get(requestTimeoutMilliseconds,
+			TimeUnit.MILLISECONDS)) {
 		    throw new S3RuntimeException("failed to delete entry");
 		}
 	} catch (Exception e) {
@@ -174,8 +189,9 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
     }
 
     protected S3Bucket refreshBucket() throws InterruptedException,
-	    ExecutionException {
-	S3Bucket currentBucket = connection.getBucket(bucket).get();
+	    ExecutionException, TimeoutException {
+	S3Bucket currentBucket = connection.getBucket(bucket).get(
+		requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
 	if (currentBucket == S3Bucket.NOT_FOUND)
 	    throw new S3RuntimeException("bucket not found: "
 		    + bucket.getName());
@@ -198,7 +214,8 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
 
     public boolean containsKey(Object key) {
 	try {
-	    return connection.headObject(bucket, key.toString()).get() != S3Object.NOT_FOUND;
+	    return connection.headObject(bucket, key.toString()).get(
+		    requestTimeoutMilliseconds, TimeUnit.MILLISECONDS) != S3Object.NOT_FOUND;
 	} catch (Exception e) {
 	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
 	    throw new S3RuntimeException(String.format(

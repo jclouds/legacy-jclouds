@@ -33,6 +33,8 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.s3.domain.S3Bucket;
@@ -68,7 +70,8 @@ public abstract class BaseS3MapTest<T> extends S3IntegrationTest {
     @BeforeMethod
     @Parameters( { "basedir" })
     protected void setUpTempDir(String basedir) throws InterruptedException,
-	    ExecutionException, FileNotFoundException, IOException {
+	    ExecutionException, FileNotFoundException, IOException,
+	    TimeoutException {
 	tmpDirectory = basedir + File.separator + "target" + File.separator
 		+ "testFiles" + File.separator + getClass().getSimpleName();
 	new File(tmpDirectory).mkdirs();
@@ -88,7 +91,7 @@ public abstract class BaseS3MapTest<T> extends S3IntegrationTest {
 			.toInputStream("dogma"), "five", IOUtils
 			.toInputStream("emma"));
 	bucket = new S3Bucket(bucketPrefix + ".mimi");
-	client.createBucketIfNotExists(bucket).get();
+	client.createBucketIfNotExists(bucket).get(10, TimeUnit.SECONDS);
 	map = createMap(context, bucket);
 	map.clear();
     }
@@ -105,11 +108,11 @@ public abstract class BaseS3MapTest<T> extends S3IntegrationTest {
     @Test
     public void testClear() {
 	map.clear();
-	assertEquals(map.size(),0);
+	assertEquals(map.size(), 0);
 	putString("one", "apple");
-	assertEquals(map.size(),1);
+	assertEquals(map.size(), 1);
 	map.clear();
-	assertEquals(map.size(),0);
+	assertEquals(map.size(), 0);
     }
 
     @Test()

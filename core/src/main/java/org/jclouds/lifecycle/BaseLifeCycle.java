@@ -28,6 +28,7 @@ import org.jclouds.Logger;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * // TODO: Adrian: Document this!
@@ -40,7 +41,7 @@ public abstract class BaseLifeCycle implements Runnable, LifeCycle {
     protected final BaseLifeCycle[] dependencies;
     protected final Object statusLock;
     protected volatile Status status;
-    protected Exception exception;
+    protected AtomicReference<Exception> exception = new AtomicReference<Exception>();
 
     public BaseLifeCycle(Logger logger, ExecutorService executor, BaseLifeCycle... dependencies) {
         this.logger = logger;
@@ -61,7 +62,7 @@ public abstract class BaseLifeCycle implements Runnable, LifeCycle {
             }
         } catch (Exception e) {
             logger.error(e, "Exception doing work");
-            this.exception = e;
+            exception.set(e);
         }
         this.status = Status.SHUTTING_DOWN;
         doShutdown();
@@ -79,7 +80,7 @@ public abstract class BaseLifeCycle implements Runnable, LifeCycle {
         } catch (IllegalStateException e) {
             return false;
         }
-        return status.equals(Status.ACTIVE) && exception == null;
+        return status.equals(Status.ACTIVE) && exception.get() == null;
     }
 
     @PostConstruct
@@ -117,7 +118,7 @@ public abstract class BaseLifeCycle implements Runnable, LifeCycle {
     }
 
     public Exception getException() {
-        return this.exception;
+        return this.exception.get();
     }
 
     protected void awaitShutdown(long timeout) throws InterruptedException {

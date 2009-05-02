@@ -32,6 +32,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jclouds.aws.s3.S3Constants;
@@ -51,6 +53,10 @@ import com.google.inject.Provider;
  * @author Adrian Cole
  */
 public abstract class BasePerformance extends S3IntegrationTest {
+    protected boolean debugEnabled() {
+	return false;
+    }
+
     protected static int LOOP_COUNT = 100;
 
     protected ExecutorService exec;
@@ -85,7 +91,8 @@ public abstract class BasePerformance extends S3IntegrationTest {
 	    @Optional String AWSSecretAccessKey) throws Exception {
 	super.setUpClient(AWSAccessKeyId, AWSSecretAccessKey);
 	for (String bucket : BUCKETS) {
-	    client.createBucketIfNotExists(new S3Bucket(bucket)).get();
+	    client.createBucketIfNotExists(new S3Bucket(bucket)).get(10,
+		    TimeUnit.SECONDS);
 	}
     }
 
@@ -96,46 +103,46 @@ public abstract class BasePerformance extends S3IntegrationTest {
     }
 
     @Test(enabled = true)
-    protected void testPutBytesSerial() throws Exception {
+    public void testPutBytesSerial() throws Exception {
 	doSerial(putBytesCallable, LOOP_COUNT / 10);
     }
 
     @Test(enabled = true)
-    protected void testPutBytesParallel() throws InterruptedException,
-	    ExecutionException {
+    public void testPutBytesParallel() throws InterruptedException,
+	    ExecutionException, TimeoutException {
 	doParallel(putBytesCallable, LOOP_COUNT);
     }
 
     @Test(enabled = true)
-    protected void testPutFileSerial() throws Exception {
+    public void testPutFileSerial() throws Exception {
 	doSerial(putFileCallable, LOOP_COUNT / 10);
     }
 
     @Test(enabled = true)
-    protected void testPutFileParallel() throws InterruptedException,
-	    ExecutionException {
+    public void testPutFileParallel() throws InterruptedException,
+	    ExecutionException, TimeoutException {
 	doParallel(putFileCallable, LOOP_COUNT);
     }
 
     @Test(enabled = true)
-    protected void testPutInputStreamSerial() throws Exception {
+    public void testPutInputStreamSerial() throws Exception {
 	doSerial(putInputStreamCallable, LOOP_COUNT / 10);
     }
 
     @Test(enabled = true)
-    protected void testPutInputStreamParallel() throws InterruptedException,
-	    ExecutionException {
+    public void testPutInputStreamParallel() throws InterruptedException,
+	    ExecutionException, TimeoutException {
 	doParallel(putInputStreamCallable, LOOP_COUNT);
     }
 
     @Test(enabled = true)
-    protected void testPutStringSerial() throws Exception {
+    public void testPutStringSerial() throws Exception {
 	doSerial(putStringCallable, LOOP_COUNT / 10);
     }
 
     @Test(enabled = true)
-    protected void testPutStringParallel() throws InterruptedException,
-	    ExecutionException {
+    public void testPutStringParallel() throws InterruptedException,
+	    ExecutionException, TimeoutException {
 	doParallel(putStringCallable, LOOP_COUNT);
     }
 
@@ -146,11 +153,11 @@ public abstract class BasePerformance extends S3IntegrationTest {
     }
 
     private void doParallel(Provider<Callable<Boolean>> provider, int loopCount)
-	    throws InterruptedException, ExecutionException {
+	    throws InterruptedException, ExecutionException, TimeoutException {
 	for (int i = 0; i < loopCount; i++)
 	    completer.submit(provider.get());
 	for (int i = 0; i < loopCount; i++)
-	    assert completer.take().get();
+	    assert completer.take().get(10, TimeUnit.SECONDS);
     }
 
     class PutBytesCallable implements Provider<Callable<Boolean>> {
@@ -241,17 +248,20 @@ public abstract class BasePerformance extends S3IntegrationTest {
     // }
     //
     // public Boolean call() throws Exception {
-    // bucket = clientProvider.get().getBucket(bucket).get();
+    // bucket =
+    // clientProvider.get(10,TimeUnit.SECONDS).getBucket(bucket).get(10,TimeUnit.SECONDS);
     // List<Future<Boolean>> deletes = new ArrayList<Future<Boolean>>();
     // for (org.jclouds.aws.s3.domain.S3Object object : bucket
     // .getContents()) {
-    // deletes.add(clientProvider.get().deleteObject(bucket,
+    // deletes.add(clientProvider.get(10,TimeUnit.SECONDS).deleteObject(bucket,
     // object.getKey()));
     // }
     // for (Future<Boolean> isdeleted : deletes)
-    // assert isdeleted.get() : String.format("failed to delete %1s",
+    // assert isdeleted.get(10,TimeUnit.SECONDS) :
+    // String.format("failed to delete %1s",
     // isdeleted);
-    // return clientProvider.get().deleteBucket(bucket).get();
+    // return
+    // clientProvider.get(10,TimeUnit.SECONDS).deleteBucket(bucket).get(10,TimeUnit.SECONDS);
     // }
     // }
 }
