@@ -27,6 +27,8 @@ import java.util.Calendar;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.Utils;
+import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.S3Context;
 import org.jclouds.aws.s3.S3ContextFactory;
 import org.jets3t.service.S3ObjectsChunk;
@@ -51,8 +53,20 @@ public class JCloudsS3Service extends S3Service {
     private static final long serialVersionUID = 1L;
 
     private final S3Context context;
+    private final S3Connection connection;
+
     private final long requestTimeoutMilliseconds = 10000;
 
+    /**
+     * Initializes a JClouds context to S3.
+     * 
+     * @param awsCredentials
+     *            - credentials to access S3
+     * @param modules
+     *            - Module that configures a FutureHttpClient, if not specified,
+     *            default is URLFetchServiceClientModule
+     * @throws S3ServiceException
+     */
     protected JCloudsS3Service(AWSCredentials awsCredentials, Module... modules)
 	    throws S3ServiceException {
 	super(awsCredentials);
@@ -60,6 +74,7 @@ public class JCloudsS3Service extends S3Service {
 	    modules = new Module[] { new org.jclouds.gae.config.URLFetchServiceClientModule() };
 	context = S3ContextFactory.createS3Context(awsCredentials
 		.getAccessKey(), awsCredentials.getSecretKey(), modules);
+	connection = context.getConnection();
     }
 
     @Override
@@ -86,24 +101,44 @@ public class JCloudsS3Service extends S3Service {
 	throw new UnsupportedOperationException();
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * @see S3Connection#deleteBucket(org.jclouds.aws.s3.domain.S3Bucket)
+     */
     @Override
     protected void deleteBucketImpl(String bucketName)
 	    throws S3ServiceException {
 	try {
-	    context.getConnection().deleteBucket(
+	    connection.deleteBucket(
 		    new org.jclouds.aws.s3.domain.S3Bucket(bucketName)).get(
 		    requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
 	} catch (Exception e) {
+	    Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
 	    throw new S3ServiceException(
 		    "error deleting bucket: " + bucketName, e);
 	}
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * @see S3Connection#deleteObject(org.jclouds.aws.s3.domain.S3Bucket,
+     *      String)
+     */
     @Override
     protected void deleteObjectImpl(String bucketName, String objectKey)
 	    throws S3ServiceException {
-	// TODO Unimplemented
-	throw new UnsupportedOperationException();
+	try {
+	    connection.deleteObject(
+		    new org.jclouds.aws.s3.domain.S3Bucket(bucketName),
+		    objectKey).get(requestTimeoutMilliseconds,
+		    TimeUnit.MILLISECONDS);
+	} catch (Exception e) {
+	    Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
+	    throw new S3ServiceException(String.format(
+		    "error deleting object: %1s:%2s", bucketName, objectKey), e);
+	}
     }
 
     @Override

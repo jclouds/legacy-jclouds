@@ -23,6 +23,7 @@
  */
 package org.jclouds.aws.s3.jets3t;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
 import java.util.concurrent.ExecutionException;
@@ -31,6 +32,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.aws.s3.S3Context;
 import org.jclouds.aws.s3.S3IntegrationTest;
+import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
 import org.jets3t.service.S3Service;
 import org.jets3t.service.S3ServiceException;
 import org.jets3t.service.model.S3Bucket;
@@ -50,18 +52,32 @@ public class JCloudsS3ServiceTest extends S3IntegrationTest {
     S3Service service;
 
     @Override
+    protected boolean debugEnabled() {
+	return true;
+    }
+
+    /**
+     * overridden only to get access to the amazon credentials used for jets3t
+     * initialization.
+     */
+    @Override
     protected S3Context createS3Context(String AWSAccessKeyId,
 	    String AWSSecretAccessKey) {
 	credentials = new AWSCredentials(AWSAccessKeyId, AWSSecretAccessKey);
 	return super.createS3Context(AWSAccessKeyId, AWSSecretAccessKey);
     }
 
+    /**
+     * initialize a new JCloudsS3Service, but passing
+     * JavaUrlHttpFutureCommandClientModule(), as it is easier to debug in unit
+     * tests.
+     * 
+     * @throws S3ServiceException
+     */
     @BeforeMethod
     public void testJCloudsS3Service() throws S3ServiceException {
-	service = new JCloudsS3Service(
-		credentials,
-		new org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule());
-
+	service = new JCloudsS3Service(credentials,
+		new JavaUrlHttpFutureCommandClientModule());
     }
 
     @Test
@@ -82,17 +98,48 @@ public class JCloudsS3ServiceTest extends S3IntegrationTest {
     @Test
     public void testDeleteBucketImplString() throws S3ServiceException,
 	    InterruptedException, ExecutionException, TimeoutException {
-	String name = bucketPrefix + ".testDeleteBucketImplString";
-	org.jclouds.aws.s3.domain.S3Bucket jcloudsBucket = new org.jclouds.aws.s3.domain.S3Bucket(
-		name);
-	client.createBucketIfNotExists(jcloudsBucket).get(10, TimeUnit.SECONDS);
-	service.deleteBucket(new S3Bucket(name));
+	String bucketName = bucketPrefix + ".testDeleteBucketImplString";
+	org.jclouds.aws.s3.domain.S3Bucket jcloudsBucket = createBucket(bucketName);
+
+	service.deleteBucket(new S3Bucket(bucketName));
+
 	assert !client.bucketExists(jcloudsBucket).get(10, TimeUnit.SECONDS);
     }
 
+    private org.jclouds.aws.s3.domain.S3Bucket createBucket(String bucketName)
+	    throws InterruptedException, ExecutionException, TimeoutException {
+	org.jclouds.aws.s3.domain.S3Bucket jcloudsBucket = new org.jclouds.aws.s3.domain.S3Bucket(
+		bucketName);
+	client.createBucketIfNotExists(jcloudsBucket).get(10, TimeUnit.SECONDS);
+	return jcloudsBucket;
+    }
+
     @Test
-    public void testDeleteObjectImplStringString() {
-	fail("Not yet implemented");
+    public void testDeleteObjectImplStringString() throws InterruptedException,
+	    ExecutionException, TimeoutException, S3ServiceException {
+	String bucketName = bucketPrefix + ".testDeleteObjectImplStringString";
+	String objectKey = "key";
+	String objectValue = "test";
+
+	org.jclouds.aws.s3.domain.S3Bucket jcloudsBucket = addNewObject(
+		bucketName, objectKey, objectValue);
+
+	service.deleteObject(bucketName, objectKey);
+
+	assertEquals(client.headObject(jcloudsBucket, objectKey).get(10,
+		TimeUnit.SECONDS), org.jclouds.aws.s3.domain.S3Object.NOT_FOUND);
+    }
+
+    private org.jclouds.aws.s3.domain.S3Bucket addNewObject(String name,
+	    String objectKey, String objectValue) throws InterruptedException,
+	    ExecutionException, TimeoutException {
+	org.jclouds.aws.s3.domain.S3Bucket jcloudsBucket = createBucket(name);
+	org.jclouds.aws.s3.domain.S3Object jcloudsObject = new org.jclouds.aws.s3.domain.S3Object(
+		objectKey);
+	jcloudsObject.setContent(objectValue);
+	client.addObject(jcloudsBucket, jcloudsObject)
+		.get(10, TimeUnit.SECONDS);
+	return jcloudsBucket;
     }
 
     @Test
