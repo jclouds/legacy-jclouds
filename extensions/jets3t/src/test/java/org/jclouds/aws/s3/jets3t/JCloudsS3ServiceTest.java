@@ -26,6 +26,8 @@ package org.jclouds.aws.s3.jets3t;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.fail;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -183,8 +185,29 @@ public class JCloudsS3ServiceTest extends S3IntegrationTest {
     }
 
     @Test
-    public void testListAllBucketsImpl() {
-	fail("Not yet implemented");
+    public void testListAllBucketsImpl() 
+    	throws InterruptedException, ExecutionException, TimeoutException, S3ServiceException {
+    // Ensure there is at least 1 bucket in S3 account to list and compare.
+	String bucketName = bucketPrefix + ".testListAllBucketsImplString";
+	org.jclouds.aws.s3.domain.S3Bucket jcloudsBucket = createBucket(bucketName);
+	
+	S3Bucket[] jsBuckets = service.listAllBuckets();
+	
+	List<org.jclouds.aws.s3.domain.S3Bucket> jcBuckets = client.getBuckets().get(10, TimeUnit.SECONDS);
+
+	assert jsBuckets.length == jcBuckets.size();
+	
+	Iterator<org.jclouds.aws.s3.domain.S3Bucket> jcBucketsIter = jcBuckets.iterator();
+	for (S3Bucket jsBucket: jsBuckets) {
+		assert jcBucketsIter.hasNext();		
+		
+		org.jclouds.aws.s3.domain.S3Bucket jcBucket = jcBucketsIter.next();
+		assert jsBucket.getName().equals(jcBucket.getName());
+		assert jsBucket.getOwner().getId().equals(jcBucket.getCanonicalUser().getId());
+		assert jsBucket.getOwner().getDisplayName().equals(jcBucket.getCanonicalUser().getDisplayName());
+	}
+	
+	client.deleteBucket(jcloudsBucket);
     }
 
     @Test
