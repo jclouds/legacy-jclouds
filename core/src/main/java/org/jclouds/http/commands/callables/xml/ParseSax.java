@@ -23,12 +23,11 @@
  */
 package org.jclouds.http.commands.callables.xml;
 
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-import com.google.inject.name.Named;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.Logger;
 import org.jclouds.Utils;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpFutureCommand;
@@ -36,9 +35,10 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
-import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.InputStream;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.name.Named;
 
 /**
  * This object will parse the body of an HttpResponse and return the result of
@@ -55,9 +55,8 @@ public class ParseSax<T> extends HttpFutureCommand.ResponseCallable<T> {
     private boolean suckFirst = false;
 
     @Inject
-    public ParseSax(java.util.logging.Logger logger, XMLReader parser,
-	    @Assisted HandlerWithResult<T> handler) {
-	super(new Logger(checkNotNull(logger, "logger")));
+    public ParseSax(XMLReader parser, @Assisted HandlerWithResult<T> handler) {
+	super();
 	this.parser = checkNotNull(parser, "parser");
 	this.handler = checkNotNull(handler, "handler");
     }

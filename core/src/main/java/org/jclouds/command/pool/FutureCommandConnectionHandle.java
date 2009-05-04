@@ -23,17 +23,20 @@
  */
 package org.jclouds.command.pool;
 
-import com.google.inject.assistedinject.Assisted;
-import org.jclouds.Logger;
-import org.jclouds.command.FutureCommand;
-
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Semaphore;
 
+import javax.annotation.Resource;
+
+import org.jclouds.command.FutureCommand;
+import org.jclouds.logging.Logger;
+
+import com.google.inject.assistedinject.Assisted;
+
 /**
  * // TODO: Adrian: Document this!
- *
+ * 
  * @author Adrian Cole
  */
 public abstract class FutureCommandConnectionHandle<C> {
@@ -43,62 +46,65 @@ public abstract class FutureCommandConnectionHandle<C> {
     protected C conn;
     @SuppressWarnings("unchecked")
     protected FutureCommand operation;
-    protected final Logger logger;
+    @Resource
+    protected Logger logger = Logger.NULL;
 
     @SuppressWarnings("unchecked")
-    public FutureCommandConnectionHandle(java.util.logging.Logger logger, Semaphore maxConnections, @Assisted FutureCommand operation, @Assisted C conn, BlockingQueue<C> available) throws InterruptedException {
-        this.maxConnections = maxConnections;
-        this.operation = operation;
-        this.conn = conn;
-        this.available = available;
-        this.logger = new Logger(logger);
-        this.completed = new Semaphore(1);
-        completed.acquire();
+    public FutureCommandConnectionHandle(Semaphore maxConnections,
+	    @Assisted FutureCommand operation, @Assisted C conn,
+	    BlockingQueue<C> available) throws InterruptedException {
+	this.maxConnections = maxConnections;
+	this.operation = operation;
+	this.conn = conn;
+	this.available = available;
+	this.completed = new Semaphore(1);
+	completed.acquire();
     }
 
     @SuppressWarnings("unchecked")
     public FutureCommand getOperation() {
-        return operation;
+	return operation;
     }
 
     public abstract void startConnection();
 
     public boolean isCompleted() {
-        return (completed.availablePermits() == 1);
+	return (completed.availablePermits() == 1);
     }
 
     public void release() throws InterruptedException {
-        if (isCompleted()) {
-            return;
-        }
-        logger.trace("%1s - %2d - releasing to pool", conn, conn.hashCode());
-        available.put(conn);
-        conn = null;
-        operation = null;
-        completed.release();
+	if (isCompleted()) {
+	    return;
+	}
+	logger.trace("%1s - %2d - releasing to pool", conn, conn.hashCode());
+	available.put(conn);
+	conn = null;
+	operation = null;
+	completed.release();
     }
 
     public void cancel() throws IOException {
-        if (isCompleted()) {
-            return;
-        }
-        if (conn != null) {
-            logger.trace("%1s - %2d - cancelled; shutting down connection", conn, conn.hashCode());
-            try {
-                shutdownConnection();
-            } finally {
-                conn = null;
-                operation = null;
-                maxConnections.release();
-            }
-        }
-        completed.release();
+	if (isCompleted()) {
+	    return;
+	}
+	if (conn != null) {
+	    logger.trace("%1s - %2d - cancelled; shutting down connection",
+		    conn, conn.hashCode());
+	    try {
+		shutdownConnection();
+	    } finally {
+		conn = null;
+		operation = null;
+		maxConnections.release();
+	    }
+	}
+	completed.release();
     }
 
     public abstract void shutdownConnection() throws IOException;
 
     public void waitFor() throws InterruptedException {
-        completed.acquire();
-        completed.release();
+	completed.acquire();
+	completed.release();
     }
 }

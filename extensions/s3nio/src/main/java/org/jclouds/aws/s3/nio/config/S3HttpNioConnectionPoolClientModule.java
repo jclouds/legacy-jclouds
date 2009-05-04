@@ -23,25 +23,29 @@
  */
 package org.jclouds.aws.s3.nio.config;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Scopes;
-import com.google.inject.util.Modules;
 import org.apache.http.nio.protocol.NHttpRequestExecutionHandler;
 import org.jclouds.aws.s3.nio.S3HttpNioFutureCommandExecutionHandler;
+import org.jclouds.http.config.HttpFutureCommandClientModule;
 import org.jclouds.http.httpnio.config.HttpNioConnectionPoolClientModule;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.util.Modules;
+
 /**
- * This installs a {@link HttpNioConnectionPoolClientModule}, but overrides it binding {@link S3HttpNioFutureCommandExecutionHandler}.
- *
+ * This installs a {@link HttpNioConnectionPoolClientModule}, but overrides it
+ * binding {@link S3HttpNioFutureCommandExecutionHandler}.
+ * 
  * @author Adrian Cole
  */
+@HttpFutureCommandClientModule
 public class S3HttpNioConnectionPoolClientModule extends AbstractModule {
     protected void configure() {
-        install(Modules.override(new HttpNioConnectionPoolClientModule()).with(new AbstractModule() {
-            protected void configure() {
-                bind(NHttpRequestExecutionHandler.class).to(S3HttpNioFutureCommandExecutionHandler.class);
-            }
-        }));
+	install(Modules.override(new HttpNioConnectionPoolClientModule()).with(
+		new AbstractModule() {
+		    protected void configure() {
+			bind(NHttpRequestExecutionHandler.class).to(
+				S3HttpNioFutureCommandExecutionHandler.class);
+		    }
+		}));
     }
 }
-

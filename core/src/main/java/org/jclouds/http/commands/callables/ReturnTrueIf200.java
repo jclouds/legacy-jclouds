@@ -23,30 +23,31 @@
  */
 package org.jclouds.http.commands.callables;
 
-import com.google.inject.Inject;
-import org.jclouds.Logger;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpFutureCommand;
 
+import com.google.inject.Inject;
+
 /**
  * // TODO: Adrian: Document this!
- *
+ * 
  * @author Adrian Cole
  */
-public class ReturnTrueIf200 extends HttpFutureCommand.ResponseCallable<Boolean> {
+public class ReturnTrueIf200 extends
+	HttpFutureCommand.ResponseCallable<Boolean> {
 
     @Inject
-    public ReturnTrueIf200(java.util.logging.Logger logger) {
-        super(new Logger(logger));
+    public ReturnTrueIf200() {
+	super();
     }
 
     public Boolean call() throws HttpException {
-        if (getResponse().getStatusCode() == 200) {
-            return true;
-        } else if (getResponse().getStatusCode() == 404) {
-            return false;
-        } else {
-            throw new HttpException("Error checking bucket " + getResponse());
-        }
+	if (getResponse().getStatusCode() == 200) {
+	    return true;
+	} else if (getResponse().getStatusCode() == 404) {
+	    return false;
+	} else {
+	    throw new HttpException("Error checking bucket " + getResponse());
+	}
     }
 }

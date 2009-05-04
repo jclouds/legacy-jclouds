@@ -23,44 +23,40 @@
  */
 package org.jclouds.http.commands;
 
-import static org.easymock.classextension.EasyMock.createMock;
 import org.jclouds.http.commands.callables.ReturnStringIf200;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.util.logging.Logger;
-
 /**
  * // TODO: Adrian: Document this!
- *
+ * 
  * @author Adrian Cole
  */
 @Test
 public class GetStringTest {
     private static final String GOOD_PATH = "/index.html";
 
-
     private GetString get = null;
     private ReturnStringIf200 callable = null;
 
     @BeforeMethod
     void setUp() {
-        callable = new ReturnStringIf200(createMock(Logger.class));
-        get = new GetString(callable, GOOD_PATH);
-        
+	callable = new ReturnStringIf200();
+	get = new GetString(callable, GOOD_PATH);
+
     }
 
     @AfterMethod
     void tearDown() {
-        get = null;
-        callable = null;
+	get = null;
+	callable = null;
     }
 
     @Test
     public void testConstructor() {
-        assert get.getResponseFuture() != null;
-        assert get.getRequest().getUri().equals(GOOD_PATH);
-        assert get.getRequest().getMethod().equals("GET");
+	assert get.getResponseFuture() != null;
+	assert get.getRequest().getUri().equals(GOOD_PATH);
+	assert get.getRequest().getMethod().equals("GET");
     }
 }

@@ -23,64 +23,68 @@
  */
 package org.jclouds.aws.s3.nio;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpEntity;
-import org.apache.http.nio.entity.NStringEntity;
-import org.apache.http.entity.InputStreamEntity;
-import org.jclouds.http.httpnio.pool.HttpNioFutureCommandConnectionRetry;
-import org.jclouds.http.httpnio.pool.HttpNioFutureCommandExecutionHandler;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.ExecutorService;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.nio.entity.NStringEntity;
+import org.jclouds.http.httpnio.pool.HttpNioFutureCommandConnectionRetry;
+import org.jclouds.http.httpnio.pool.HttpNioFutureCommandExecutionHandler;
+
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 /**
  * // TODO: Adrian: Document this!
- *
+ * 
  * @author Adrian Cole
  */
 @Singleton
-public class S3HttpNioFutureCommandExecutionHandler extends HttpNioFutureCommandExecutionHandler {
+public class S3HttpNioFutureCommandExecutionHandler extends
+	HttpNioFutureCommandExecutionHandler {
 
     @Inject
-    public S3HttpNioFutureCommandExecutionHandler(java.util.logging.Logger logger, ConsumingNHttpEntityFactory entityFactory, ExecutorService executor, HttpNioFutureCommandConnectionRetry futureOperationRetry) {
-        super(logger, entityFactory, executor, futureOperationRetry);
+    public S3HttpNioFutureCommandExecutionHandler(
+	    ConsumingNHttpEntityFactory entityFactory,
+	    ExecutorService executor,
+	    HttpNioFutureCommandConnectionRetry futureOperationRetry) {
+	super(entityFactory, executor, futureOperationRetry);
     }
 
     @Override
     protected boolean isRetryable(HttpResponse response) throws IOException {
-        if (super.isRetryable(response))
-            return true;
-        int code = response.getStatusLine().getStatusCode();
-        if (code == 409) {
-            return true;
-        } else if (code == 400) {
-            if (response.getEntity() != null) {
-                InputStream input = response.getEntity().getContent();
-                if (input != null) {
-                    String reason = null;
-                    try {
-                        reason = IOUtils.toString(input);
-                    } finally {
-                        IOUtils.closeQuietly(input);
-                    }
-                    if (reason != null) {
-                        try {
-                            if (reason.indexOf("RequestTime") >= 0) return true;
-                        } finally {
-                            IOUtils.closeQuietly(input);
-                            response.setEntity(new NStringEntity(reason));
-                        }
-                    }
+	if (super.isRetryable(response))
+	    return true;
+	int code = response.getStatusLine().getStatusCode();
+	if (code == 409) {
+	    return true;
+	} else if (code == 400) {
+	    if (response.getEntity() != null) {
+		InputStream input = response.getEntity().getContent();
+		if (input != null) {
+		    String reason = null;
+		    try {
+			reason = IOUtils.toString(input);
+		    } finally {
+			IOUtils.closeQuietly(input);
+		    }
+		    if (reason != null) {
+			try {
+			    if (reason.indexOf("RequestTime") >= 0)
+				return true;
+			} finally {
+			    IOUtils.closeQuietly(input);
+			    response.setEntity(new NStringEntity(reason));
+			}
+		    }
 
-                }
+		}
 
-            }
-        }
-        return false;
+	    }
+	}
+	return false;
     }
 
 }

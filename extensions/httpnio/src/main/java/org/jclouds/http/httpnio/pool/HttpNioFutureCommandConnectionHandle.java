@@ -23,38 +23,42 @@
  */
 package org.jclouds.http.httpnio.pool;
 
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-import org.apache.http.nio.NHttpConnection;
-import org.jclouds.command.FutureCommand;
-import org.jclouds.command.pool.FutureCommandConnectionHandle;
-
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Semaphore;
 
+import org.apache.http.nio.NHttpConnection;
+import org.jclouds.command.FutureCommand;
+import org.jclouds.command.pool.FutureCommandConnectionHandle;
+
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+
 /**
  * // TODO: Adrian: Document this!
- *
+ * 
  * @author Adrian Cole
  */
-public class HttpNioFutureCommandConnectionHandle extends FutureCommandConnectionHandle<NHttpConnection> {
+public class HttpNioFutureCommandConnectionHandle extends
+	FutureCommandConnectionHandle<NHttpConnection> {
 
     @Inject
-    public HttpNioFutureCommandConnectionHandle(java.util.logging.Logger logger, BlockingQueue<NHttpConnection> available, Semaphore maxConnections, @Assisted NHttpConnection conn, @Assisted FutureCommand operation) throws InterruptedException {
-        super(logger, maxConnections, operation, conn, available);
+    public HttpNioFutureCommandConnectionHandle(
+	    BlockingQueue<NHttpConnection> available, Semaphore maxConnections,
+	    @Assisted NHttpConnection conn, @Assisted FutureCommand operation)
+	    throws InterruptedException {
+	super(maxConnections, operation, conn, available);
 
     }
 
     public void startConnection() {
-        conn.getContext().setAttribute("operation", operation);
-        logger.trace("invoking %1s on connection %2s", operation, conn);
-        conn.requestOutput();
+	conn.getContext().setAttribute("operation", operation);
+	logger.trace("invoking %1s on connection %2s", operation, conn);
+	conn.requestOutput();
     }
 
     public void shutdownConnection() throws IOException {
-        conn.shutdown();
+	conn.shutdown();
     }
 
 }
-

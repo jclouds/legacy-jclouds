@@ -23,11 +23,11 @@
  */
 package org.jclouds.gae;
 
-import static org.testng.Assert.*;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.createNiceMock;
 import static org.easymock.classextension.EasyMock.replay;
+import static org.testng.Assert.assertEquals;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -64,8 +64,7 @@ public class URLFetchServiceClientTest {
     @BeforeTest
     void setupClient() throws MalformedURLException {
 	url = new URL("http://localhost:80");
-	client = new URLFetchServiceClient(
-		createNiceMock(java.util.logging.Logger.class), url,
+	client = new URLFetchServiceClient(url,
 		createNiceMock(URLFetchService.class));
     }
 

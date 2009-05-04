@@ -40,6 +40,7 @@ import com.google.inject.name.Named;
  * 
  * @author Adrian Cole
  */
+@HttpFutureCommandClientModule
 public class JavaUrlHttpFutureCommandClientModule extends AbstractModule {
 
     @Override

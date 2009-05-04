@@ -35,21 +35,25 @@ import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_ADDRESS;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_PORT;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_SECURE;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
 import org.jclouds.aws.s3.config.S3ContextModule;
-import org.jclouds.http.HttpFutureCommandClient;
+import org.jclouds.http.config.HttpFutureCommandClientModule;
 import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
+import org.jclouds.logging.config.LoggingModule;
+import org.jclouds.logging.jdk.config.JDKLoggingModule;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.name.Names;
-
 
 /**
  * Creates {@link S3Context} or {@link Injector} instances based on the most
@@ -160,28 +164,49 @@ public class S3ContextFactory {
 
     /**
      * Bind the given properties and install the list of modules. If no modules
-     * are specified, install the default
+     * are specified, install the default {@link JDKLoggingModule}
      * {@link JavaUrlHttpFutureCommandClientModule}
      * 
      * @param properties
      *            - contains constants used by jclouds
      *            {@link #DEFAULT_PROPERTIES}
-     * @param httpModules
-     *            - modules that must bind {@link HttpFutureCommandClient} if
-     *            specified
-     * */
+     * @param configModules
+     *            - alternative configuration modules
+     */
     public static Injector createInjector(final Properties properties,
-	    Module... httpModules) {
-	final List<? extends Module> modules = httpModules.length != 0 ? Arrays
-		.asList(httpModules) : Collections
-		.singletonList(new JavaUrlHttpFutureCommandClientModule());
+	    Module... configModules) {
+	final List<Module> modules = Lists.newArrayList(configModules);
+
+	addLoggingModuleIfNotPresent(modules);
+
+	addHttpModuleIfNotPresent(modules);
+
 	return Guice.createInjector(new AbstractModule() {
 	    @Override
 	    protected void configure() {
-		Names.bindProperties(binder(), checkNotNull(properties,"properties"));
+		Names.bindProperties(binder(), checkNotNull(properties,
+			"properties"));
 		for (Module module : modules)
 		    install(module);
 	    }
 	}, new S3ContextModule());
+    }
+
+    @VisibleForTesting
+    static void addHttpModuleIfNotPresent(final List<Module> modules) {
+	if (!Iterables.any(modules, new Predicate<Module>() {
+	    public boolean apply(Module input) {
+		return input.getClass().isAnnotationPresent(
+			HttpFutureCommandClientModule.class);
+	    }
+
+	}))
+	    modules.add(new JavaUrlHttpFutureCommandClientModule());
+    }
+
+    @VisibleForTesting
+    static void addLoggingModuleIfNotPresent(final List<Module> modules) {
+	if (!Iterables.any(modules, Predicates.instanceOf(LoggingModule.class)))
+	    modules.add(new JDKLoggingModule());
     }
 }

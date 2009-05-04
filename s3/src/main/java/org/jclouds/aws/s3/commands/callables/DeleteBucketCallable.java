@@ -23,42 +23,34 @@
  */
 package org.jclouds.aws.s3.commands.callables;
 
-import com.google.inject.Inject;
+import java.io.IOException;
+
 import org.jclouds.aws.s3.S3Utils;
 import org.jclouds.http.HttpException;
 
-import java.io.IOException;
-
 /**
  * // TODO: Adrian: Document this!
- *
+ * 
  * @author Adrian Cole
  */
 public class DeleteBucketCallable extends DeleteCallable {
 
-    private final S3Utils s3Utils;
-
-    @Inject
-    public DeleteBucketCallable(java.util.logging.Logger logger, S3Utils s3Utils) {
-        super(logger);
-        this.s3Utils = s3Utils;
-    }
-
     public Boolean call() throws HttpException {
-        if (getResponse().getStatusCode() == 404) {
-            return true;
-        } else if (getResponse().getStatusCode() == 409) {
-            try {
-                String reason = s3Utils.toStringAndClose(getResponse().getContent());
-                if (reason.indexOf("BucketNotEmpty") >= 0)
-                    return false;
-                else
-                    throw new HttpException("Error deleting bucket.\n" + reason);
-            } catch (IOException e) {
-                throw new HttpException("Error deleting bucket", e);
-            }
-        } else {
-            return super.call();
-        }
+	if (getResponse().getStatusCode() == 404) {
+	    return true;
+	} else if (getResponse().getStatusCode() == 409) {
+	    try {
+		String reason = S3Utils.toStringAndClose(getResponse()
+			.getContent());
+		if (reason.indexOf("BucketNotEmpty") >= 0)
+		    return false;
+		else
+		    throw new HttpException("Error deleting bucket.\n" + reason);
+	    } catch (IOException e) {
+		throw new HttpException("Error deleting bucket", e);
+	    }
+	} else {
+	    return super.call();
+	}
     }
 }

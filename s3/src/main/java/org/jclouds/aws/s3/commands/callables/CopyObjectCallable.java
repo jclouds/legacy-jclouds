@@ -26,7 +26,6 @@ package org.jclouds.aws.s3.commands.callables;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jclouds.Logger;
 import org.jclouds.Utils;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpFutureCommand;
@@ -42,8 +41,8 @@ public class CopyObjectCallable extends
 	HttpFutureCommand.ResponseCallable<Boolean> {
 
     @Inject
-    public CopyObjectCallable(java.util.logging.Logger logger) {
-	super(new Logger(logger));
+    public CopyObjectCallable() {
+	super();
     }
 
     public Boolean call() throws HttpException {
@@ -57,7 +56,7 @@ public class CopyObjectCallable extends
 	    }
 	    throw new HttpException("Error copying source " + reason);
 	} else if (getResponse().getStatusCode() == 200) {
-	    String response = null;
+	    String response;
 	    InputStream content = getResponse().getContent();
 	    if (content != null) {
 		try {

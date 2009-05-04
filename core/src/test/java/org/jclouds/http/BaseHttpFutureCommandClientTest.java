@@ -43,6 +43,7 @@ import org.jclouds.http.commands.Head;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 import org.jclouds.http.commands.config.HttpCommandsModule;
 import org.jclouds.lifecycle.Closer;
+import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Request;
 import org.mortbay.jetty.Server;
@@ -117,8 +118,8 @@ public abstract class BaseHttpFutureCommandClientTest {
 	    protected void configure() {
 		Names.bindProperties(binder(), properties);
 	    }
-	}, new HttpCommandsModule(), createClientModule(),
-		new AbstractModule() {
+	}, new JDKLoggingModule(), new HttpCommandsModule(),
+		createClientModule(), new AbstractModule() {
 		    @Override
 		    protected void configure() {
 			bind(new TypeLiteral<List<HttpRequestFilter>>() {

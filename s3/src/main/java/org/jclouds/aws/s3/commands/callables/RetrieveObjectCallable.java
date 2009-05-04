@@ -25,7 +25,6 @@ package org.jclouds.aws.s3.commands.callables;
 
 import java.io.IOException;
 
-import org.jclouds.Logger;
 import org.jclouds.Utils;
 import org.jclouds.aws.s3.DateService;
 import org.jclouds.aws.s3.domain.S3Object;
@@ -45,9 +44,7 @@ public class RetrieveObjectCallable extends
     private String key;
 
     @Inject
-    public RetrieveObjectCallable(java.util.logging.Logger logger,
-	    DateService dateParser) {
-	super(new Logger(logger));
+    public RetrieveObjectCallable(DateService dateParser) {
 	this.dateParser = dateParser;
     }
 

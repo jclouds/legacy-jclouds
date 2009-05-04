@@ -39,7 +39,6 @@ import org.apache.http.nio.reactor.IOEventDispatch;
 import org.apache.http.nio.reactor.IOReactorStatus;
 import org.apache.http.nio.reactor.SessionRequest;
 import org.apache.http.nio.reactor.SessionRequestCallback;
-import org.jclouds.Logger;
 import org.jclouds.command.FutureCommand;
 import org.jclouds.command.pool.FutureCommandConnectionPool;
 import org.jclouds.command.pool.FutureCommandConnectionRetry;
@@ -64,7 +63,6 @@ public class HttpNioFutureCommandConnectionPool extends
 
     @Inject
     public HttpNioFutureCommandConnectionPool(
-	    java.util.logging.Logger logger,
 	    ExecutorService executor,
 	    Semaphore allConnections,
 	    BlockingQueue<NHttpConnection> available,
@@ -76,9 +74,8 @@ public class HttpNioFutureCommandConnectionPool extends
 	    FutureCommandConnectionRetry<NHttpConnection> futureCommandConnectionRetry,
 	    @Named(PoolConstants.PROPERTY_POOL_MAX_CONNECTION_REUSE) int maxConnectionReuse,
 	    @Named(PoolConstants.PROPERTY_POOL_MAX_SESSION_FAILURES) int maxSessionFailures) {
-	super(new Logger(logger), executor, futureCommandConnectionRetry,
-		allConnections, requestHandleFactory, maxConnectionReuse,
-		available);
+	super(executor, futureCommandConnectionRetry, allConnections,
+		requestHandleFactory, maxConnectionReuse, available);
 	this.ioReactor = ioReactor;
 	this.dispatch = dispatch;
 	this.target = target;

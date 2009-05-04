@@ -23,51 +23,54 @@
  */
 package org.jclouds.lifecycle;
 
-import org.jclouds.Logger;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicReference;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
+
+import org.jclouds.logging.Logger;
+
 /**
  * // TODO: Adrian: Document this!
- *
+ * 
  * @author Adrian Cole
  */
 public abstract class BaseLifeCycle implements Runnable, LifeCycle {
-    protected final Logger logger;
+    @Resource
+    protected Logger logger = Logger.NULL;
     protected final ExecutorService executor;
     protected final BaseLifeCycle[] dependencies;
     protected final Object statusLock;
     protected volatile Status status;
     protected AtomicReference<Exception> exception = new AtomicReference<Exception>();
 
-    public BaseLifeCycle(Logger logger, ExecutorService executor, BaseLifeCycle... dependencies) {
-        this.logger = logger;
-        this.executor = executor;
-        this.dependencies = dependencies;
-        this.statusLock = new Object();
-        this.status = Status.INACTIVE;
+    public BaseLifeCycle(ExecutorService executor,
+	    BaseLifeCycle... dependencies) {
+	this.executor = executor;
+	this.dependencies = dependencies;
+	this.statusLock = new Object();
+	this.status = Status.INACTIVE;
     }
 
     public Status getStatus() {
-        return status;
+	return status;
     }
 
     public void run() {
-        try {
-            while (shouldDoWork()) {
-                doWork();
-            }
-        } catch (Exception e) {
-            logger.error(e, "Exception doing work");
-            exception.set(e);
-        }
-        this.status = Status.SHUTTING_DOWN;
-        doShutdown();
-        this.status = Status.SHUT_DOWN;
-        logger.info("%1s", this);
+	try {
+	    while (shouldDoWork()) {
+		doWork();
+	    }
+	} catch (Exception e) {
+	    logger.error(e, "Exception doing work");
+	    exception.set(e);
+	}
+	this.status = Status.SHUTTING_DOWN;
+	doShutdown();
+	this.status = Status.SHUT_DOWN;
+	logger.info("%1s", this);
     }
 
     protected abstract void doWork() throws Exception;
@@ -75,94 +78,97 @@ public abstract class BaseLifeCycle implements Runnable, LifeCycle {
     protected abstract void doShutdown();
 
     protected boolean shouldDoWork() {
-        try {
-            exceptionIfDepedenciesNotActive();
-        } catch (IllegalStateException e) {
-            return false;
-        }
-        return status.equals(Status.ACTIVE) && exception.get() == null;
+	try {
+	    exceptionIfDepedenciesNotActive();
+	} catch (IllegalStateException e) {
+	    return false;
+	}
+	return status.equals(Status.ACTIVE) && exception.get() == null;
     }
 
     @PostConstruct
     public void start() {
-        logger.info("starting %1s", this);
-        synchronized (this.statusLock) {
-            if (this.status.compareTo(Status.SHUTDOWN_REQUEST) >= 0) {
-                doShutdown();
-                this.status = Status.SHUT_DOWN;
-                this.statusLock.notifyAll();
-                return;
-            }
-            if (this.status.compareTo(Status.ACTIVE) == 0) {
-                this.statusLock.notifyAll();
-                return;
-            }
+	logger.info("starting %1s", this);
+	synchronized (this.statusLock) {
+	    if (this.status.compareTo(Status.SHUTDOWN_REQUEST) >= 0) {
+		doShutdown();
+		this.status = Status.SHUT_DOWN;
+		this.statusLock.notifyAll();
+		return;
+	    }
+	    if (this.status.compareTo(Status.ACTIVE) == 0) {
+		this.statusLock.notifyAll();
+		return;
+	    }
 
-            if (this.status.compareTo(Status.INACTIVE) != 0) {
-                throw new IllegalStateException("Illegal state: " + this.status);
-            }
+	    if (this.status.compareTo(Status.INACTIVE) != 0) {
+		throw new IllegalStateException("Illegal state: " + this.status);
+	    }
 
-            exceptionIfDepedenciesNotActive();
+	    exceptionIfDepedenciesNotActive();
 
-            this.status = Status.ACTIVE;
-        }
-        executor.execute(this);
+	    this.status = Status.ACTIVE;
+	}
+	executor.execute(this);
     }
 
     protected void exceptionIfDepedenciesNotActive() {
-        for (BaseLifeCycle dependency : dependencies) {
-            if (dependency.status.compareTo(Status.ACTIVE) != 0) {
-                throw new IllegalStateException(String.format("Illegal state: %1s for component: %2s", dependency.status, dependency));
-            }
-        }
+	for (BaseLifeCycle dependency : dependencies) {
+	    if (dependency.status.compareTo(Status.ACTIVE) != 0) {
+		throw new IllegalStateException(String.format(
+			"Illegal state: %1s for component: %2s",
+			dependency.status, dependency));
+	    }
+	}
     }
 
     public Exception getException() {
-        return this.exception.get();
+	return this.exception.get();
     }
 
     protected void awaitShutdown(long timeout) throws InterruptedException {
-        awaitStatus(Status.SHUT_DOWN, timeout);
+	awaitStatus(Status.SHUT_DOWN, timeout);
     }
 
-    protected void awaitStatus(Status intended, long timeout) throws InterruptedException {
-        synchronized (this.statusLock) {
-            long deadline = System.currentTimeMillis() + timeout;
-            long remaining = timeout;
-            while (this.status != intended) {
-                this.statusLock.wait(remaining);
-                if (timeout > 0) {
-                    remaining = deadline - System.currentTimeMillis();
-                    if (remaining <= 0) {
-                        break;
-                    }
-                }
-            }
-        }
+    protected void awaitStatus(Status intended, long timeout)
+	    throws InterruptedException {
+	synchronized (this.statusLock) {
+	    long deadline = System.currentTimeMillis() + timeout;
+	    long remaining = timeout;
+	    while (this.status != intended) {
+		this.statusLock.wait(remaining);
+		if (timeout > 0) {
+		    remaining = deadline - System.currentTimeMillis();
+		    if (remaining <= 0) {
+			break;
+		    }
+		}
+	    }
+	}
     }
 
     @PreDestroy
     public void shutdown() {
-        shutdown(2000);
+	shutdown(2000);
     }
 
     public void shutdown(long waitMs) {
-        synchronized (this.statusLock) {
-            if (this.status.compareTo(Status.ACTIVE) > 0) {
-                return;
-            }
-            this.status = Status.SHUTDOWN_REQUEST;
-            try {
-                awaitShutdown(waitMs);
-            } catch (InterruptedException ignore) {
-            }
-        }
+	synchronized (this.statusLock) {
+	    if (this.status.compareTo(Status.ACTIVE) > 0) {
+		return;
+	    }
+	    this.status = Status.SHUTDOWN_REQUEST;
+	    try {
+		awaitShutdown(waitMs);
+	    } catch (InterruptedException ignore) {
+	    }
+	}
     }
 
     protected void exceptionIfNotActive() {
-        if (!status.equals(Status.ACTIVE))
-            throw new IllegalStateException(String.format("not active: %1s", this));
+	if (!status.equals(Status.ACTIVE))
+	    throw new IllegalStateException(String.format("not active: %1s",
+		    this));
     }
-
 
 }

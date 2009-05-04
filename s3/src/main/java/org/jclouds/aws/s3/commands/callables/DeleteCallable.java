@@ -23,28 +23,21 @@
  */
 package org.jclouds.aws.s3.commands.callables;
 
-import com.google.inject.Inject;
-import org.jclouds.Logger;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpFutureCommand;
 
 /**
  * // TODO: Adrian: Document this!
- *
+ * 
  * @author Adrian Cole
  */
 public class DeleteCallable extends HttpFutureCommand.ResponseCallable<Boolean> {
 
-    @Inject
-    public DeleteCallable(java.util.logging.Logger logger) {
-        super(new Logger(logger));
-    }
-
     public Boolean call() throws HttpException {
-        if (getResponse().getStatusCode() == 204) {
-            return true;
-        } else {
-            throw new HttpException("Error deleting bucket " + getResponse());
-        }
+	if (getResponse().getStatusCode() == 204) {
+	    return true;
+	} else {
+	    throw new HttpException("Error deleting bucket " + getResponse());
+	}
     }
 }

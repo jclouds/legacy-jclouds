@@ -23,30 +23,24 @@
  */
 package org.jclouds.aws.s3.commands.callables;
 
-import com.google.inject.Inject;
-import org.jclouds.Logger;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpFutureCommand;
 
 /**
  * // TODO: Adrian: Document this!
- *
+ * 
  * @author Adrian Cole
  */
-public class PutBucketCallable extends HttpFutureCommand.ResponseCallable<Boolean> {
-
-    @Inject
-    public PutBucketCallable(java.util.logging.Logger logger) {
-        super(new Logger(logger));
-    }
+public class PutBucketCallable extends
+	HttpFutureCommand.ResponseCallable<Boolean> {
 
     public Boolean call() throws HttpException {
-        if (getResponse().getStatusCode() == 200) {
-            return true;
-        } else if (getResponse().getStatusCode() == 404) {
-            return false;
-        } else {
-            throw new HttpException("Error checking bucket " + getResponse());
-        }
+	if (getResponse().getStatusCode() == 200) {
+	    return true;
+	} else if (getResponse().getStatusCode() == 404) {
+	    return false;
+	} else {
+	    throw new HttpException("Error checking bucket " + getResponse());
+	}
     }
 }

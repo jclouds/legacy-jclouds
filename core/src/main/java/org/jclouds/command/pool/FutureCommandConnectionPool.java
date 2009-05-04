@@ -23,14 +23,18 @@
  */
 package org.jclouds.command.pool;
 
-import com.google.inject.Provides;
-import com.google.inject.name.Named;
-import org.jclouds.Logger;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.jclouds.command.FutureCommand;
 import org.jclouds.lifecycle.BaseLifeCycle;
 
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import com.google.inject.Provides;
+import com.google.inject.name.Named;
 
 /**
  * // TODO: Adrian: Document this!
@@ -47,14 +51,13 @@ public abstract class FutureCommandConnectionPool<C> extends BaseLifeCycle {
     protected volatile boolean hitBottom = false;
 
     public FutureCommandConnectionPool(
-	    Logger logger,
 	    ExecutorService executor,
 	    FutureCommandConnectionRetry<C> futureCommandConnectionRetry,
 	    Semaphore allConnections,
 	    FutureCommandConnectionHandleFactory<C> futureCommandConnectionHandleFactory,
 	    @Named("maxConnectionReuse") int maxConnectionReuse,
 	    BlockingQueue<C> available, BaseLifeCycle... dependencies) {
-	super(logger, executor, dependencies);
+	super(executor, dependencies);
 	this.futureCommandConnectionRetry = futureCommandConnectionRetry;
 	this.allConnections = allConnections;
 	this.futureCommandConnectionHandleFactory = futureCommandConnectionHandleFactory;

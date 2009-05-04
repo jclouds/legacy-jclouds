@@ -28,7 +28,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.Logger;
 import org.jclouds.Utils;
 import org.jclouds.command.FutureCommand;
 import org.jclouds.command.FutureCommandClient;
@@ -47,11 +46,10 @@ public class FutureCommandConnectionPoolClient<C> extends BaseLifeCycle
     private final BlockingQueue<FutureCommand> commandQueue;
 
     @Inject
-    public FutureCommandConnectionPoolClient(java.util.logging.Logger logger,
-	    ExecutorService executor,
+    public FutureCommandConnectionPoolClient(ExecutorService executor,
 	    FutureCommandConnectionPool<C> futureCommandConnectionPool,
 	    BlockingQueue<FutureCommand> commandQueue) {
-	super(new Logger(logger), executor, futureCommandConnectionPool);
+	super(executor, futureCommandConnectionPool);
 	this.futureCommandConnectionPool = futureCommandConnectionPool;
 	this.commandQueue = commandQueue;
     }

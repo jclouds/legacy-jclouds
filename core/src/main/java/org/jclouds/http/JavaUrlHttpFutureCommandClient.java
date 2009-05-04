@@ -36,10 +36,12 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.io.IOUtils;
-import org.jclouds.Logger;
 import org.jclouds.Utils;
 import org.jclouds.command.FutureCommand;
+import org.jclouds.logging.Logger;
 
 import com.google.inject.Inject;
 
@@ -51,7 +53,8 @@ import com.google.inject.Inject;
 public class JavaUrlHttpFutureCommandClient implements HttpFutureCommandClient {
     private URL target;
     private List<HttpRequestFilter> requestFilters = Collections.emptyList();
-    private Logger logger;
+    @Resource
+    private Logger logger = Logger.NULL;
 
     public List<HttpRequestFilter> getRequestFilters() {
 	return requestFilters;
@@ -63,11 +66,9 @@ public class JavaUrlHttpFutureCommandClient implements HttpFutureCommandClient {
     }
 
     @Inject
-    public JavaUrlHttpFutureCommandClient(java.util.logging.Logger logger,
-	    URL target) throws MalformedURLException {
-	this.logger = new Logger(logger);
+    public JavaUrlHttpFutureCommandClient(URL target)
+	    throws MalformedURLException {
 	this.target = target;
-	this.logger.info("configured to connect to target: %1s", target);
     }
 
     public <O extends FutureCommand> void submit(O operation) {

@@ -23,38 +23,45 @@
  */
 package org.jclouds.http.httpnio.pool;
 
-import com.google.inject.Inject;
-import org.apache.http.nio.NHttpConnection;
-import org.jclouds.command.FutureCommand;
-import org.jclouds.Logger;
-import org.jclouds.command.pool.FutureCommandConnectionRetry;
-import org.jclouds.command.pool.FutureCommandConnectionHandle;
-import org.jclouds.http.httpnio.pool.HttpNioFutureCommandConnectionHandle;
-
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class HttpNioFutureCommandConnectionRetry extends FutureCommandConnectionRetry<NHttpConnection> {
+import org.apache.http.nio.NHttpConnection;
+import org.jclouds.command.FutureCommand;
+import org.jclouds.command.pool.FutureCommandConnectionHandle;
+import org.jclouds.command.pool.FutureCommandConnectionRetry;
+
+import com.google.inject.Inject;
+
+public class HttpNioFutureCommandConnectionRetry extends
+	FutureCommandConnectionRetry<NHttpConnection> {
 
     @Inject
-    public HttpNioFutureCommandConnectionRetry(java.util.logging.Logger logger, BlockingQueue<FutureCommand> commandQueue, AtomicInteger errors) {
-        super(new Logger(logger), commandQueue, errors);
+    public HttpNioFutureCommandConnectionRetry(
+	    BlockingQueue<FutureCommand> commandQueue, AtomicInteger errors) {
+	super(commandQueue, errors);
     }
 
     @Override
-    public void associateHandleWithConnection(FutureCommandConnectionHandle<NHttpConnection> handle, NHttpConnection connection) {
-        connection.getContext().setAttribute("operation-handle", handle);
-    }
-    
-    @Override
-    public HttpNioFutureCommandConnectionHandle getHandleFromConnection(NHttpConnection connection) {
-        return (HttpNioFutureCommandConnectionHandle) connection.getContext().getAttribute("operation-handle");
+    public void associateHandleWithConnection(
+	    FutureCommandConnectionHandle<NHttpConnection> handle,
+	    NHttpConnection connection) {
+	connection.getContext().setAttribute("operation-handle", handle);
     }
 
-//    @Override
-//    public void incrementErrorCountAndRetry(FutureCommand operation) {
-//        ((HttpEntityEnclosingRequest) operation.getRequest()).removeHeaders(HTTP.CONTENT_LEN);
-//        ((HttpEntityEnclosingRequest) operation.getRequest()).removeHeaders(HTTP.DATE_HEADER);
-//        super.incrementErrorCountAndRetry(operation);
-//    }
+    @Override
+    public HttpNioFutureCommandConnectionHandle getHandleFromConnection(
+	    NHttpConnection connection) {
+	return (HttpNioFutureCommandConnectionHandle) connection.getContext()
+		.getAttribute("operation-handle");
+    }
+
+    // @Override
+    // public void incrementErrorCountAndRetry(FutureCommand operation) {
+    // ((HttpEntityEnclosingRequest)
+    // operation.getRequest()).removeHeaders(HTTP.CONTENT_LEN);
+    // ((HttpEntityEnclosingRequest)
+    // operation.getRequest()).removeHeaders(HTTP.DATE_HEADER);
+    // super.incrementErrorCountAndRetry(operation);
+    // }
 }

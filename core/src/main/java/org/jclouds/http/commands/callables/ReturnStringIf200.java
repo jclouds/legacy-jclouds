@@ -23,45 +23,49 @@
  */
 package org.jclouds.http.commands.callables;
 
-import com.google.inject.Inject;
-import org.jclouds.Logger;
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.jclouds.Utils;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpFutureCommand;
 
-import java.io.IOException;
-import java.io.InputStream;
+import com.google.inject.Inject;
 
 /**
  * // TODO: Adrian: Document this!
- *
+ * 
  * @author Adrian Cole
  */
-public class ReturnStringIf200 extends HttpFutureCommand.ResponseCallable<String> {
+public class ReturnStringIf200 extends
+	HttpFutureCommand.ResponseCallable<String> {
 
     @Inject
-    public ReturnStringIf200(java.util.logging.Logger logger) {
-        super(new Logger(logger));
+    public ReturnStringIf200() {
+	super();
     }
 
-
     public String call() throws HttpException {
-        int code = getResponse().getStatusCode();
-        if (code >= 400 && code < 500) {
-            throw new HttpException(String.format("Content not found - %1s", getResponse()));
-        } else if (code == 200) {
-            InputStream entity = getResponse().getContent();
-            if (entity == null)
-                throw new HttpException("no content");
-            String toReturn = null;
-            try {
-                toReturn = Utils.toStringAndClose(entity);
-            } catch (IOException e) {
-                throw new HttpException(String.format("Couldn't receive response %1s, entity: %2s ", getResponse(), toReturn), e);
-            }
-            return toReturn;
-        } else {
-            throw new HttpException(String.format("Unhandled status code  - %1s", getResponse()));
-        }
+	int code = getResponse().getStatusCode();
+	if (code >= 400 && code < 500) {
+	    throw new HttpException(String.format("Content not found - %1s",
+		    getResponse()));
+	} else if (code == 200) {
+	    InputStream entity = getResponse().getContent();
+	    if (entity == null)
+		throw new HttpException("no content");
+	    String toReturn = null;
+	    try {
+		toReturn = Utils.toStringAndClose(entity);
+	    } catch (IOException e) {
+		throw new HttpException(String.format(
+			"Couldn't receive response %1s, entity: %2s ",
+			getResponse(), toReturn), e);
+	    }
+	    return toReturn;
+	} else {
+	    throw new HttpException(String.format(
+		    "Unhandled status code  - %1s", getResponse()));
+	}
     }
 }

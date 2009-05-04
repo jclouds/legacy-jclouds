@@ -25,8 +25,10 @@ package org.jclouds.http;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import javax.annotation.Resource;
+
 import org.jclouds.command.FutureCommand;
-import org.jclouds.Logger;
+import org.jclouds.logging.Logger;
 
 /**
  * // TODO: Adrian: Document this!
@@ -58,12 +60,10 @@ public class HttpFutureCommand<T> extends
      */
     public abstract static class ResponseCallable<T> implements
 	    FutureCommand.ResponseCallable<HttpResponse, T> {
-	protected final Logger logger;
-	private HttpResponse response;
+	@Resource
+	protected Logger logger = Logger.NULL;
 
-	public ResponseCallable(Logger logger) {
-	    this.logger = logger;
-	}
+	private HttpResponse response;
 
 	public HttpResponse getResponse() {
 	    return response;

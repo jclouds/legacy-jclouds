@@ -25,13 +25,15 @@ package org.jclouds.aws.s3.internal;
 
 import java.io.IOException;
 
-import org.jclouds.Logger;
+import javax.annotation.Resource;
+
 import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.S3Context;
 import org.jclouds.aws.s3.S3InputStreamMap;
 import org.jclouds.aws.s3.S3ObjectMap;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.lifecycle.Closer;
+import org.jclouds.logging.Logger;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -50,17 +52,17 @@ public class GuiceS3Context implements S3Context {
 	S3InputStreamMap createMapView(S3Bucket bucket);
     }
 
-    private final Logger logger;
+    @Resource
+    private Logger logger = Logger.NULL;
     private final Injector injector;
     private final S3InputStreamMapFactory s3InputStreamMapFactory;
     private final S3ObjectMapFactory s3ObjectMapFactory;
     private final Closer closer;
 
     @Inject
-    private GuiceS3Context(java.util.logging.Logger logger, Injector injector,
-	    Closer closer, S3ObjectMapFactory s3ObjectMapFactory,
+    private GuiceS3Context(Injector injector, Closer closer,
+	    S3ObjectMapFactory s3ObjectMapFactory,
 	    S3InputStreamMapFactory s3InputStreamMapFactory) {
-	this.logger = new Logger(logger);
 	this.injector = injector;
 	this.s3InputStreamMapFactory = s3InputStreamMapFactory;
 	this.s3ObjectMapFactory = s3ObjectMapFactory;

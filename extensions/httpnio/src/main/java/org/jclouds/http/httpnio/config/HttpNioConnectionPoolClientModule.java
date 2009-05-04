@@ -29,6 +29,7 @@ import org.apache.http.nio.NHttpConnection;
 import org.jclouds.command.pool.FutureCommandConnectionRetry;
 import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpFutureCommandClient;
+import org.jclouds.http.config.HttpFutureCommandClientModule;
 import org.jclouds.http.httpnio.config.internal.NonSSLHttpNioConnectionPoolClientModule;
 import org.jclouds.http.httpnio.config.internal.SSLHttpNioConnectionPoolClientModule;
 import org.jclouds.http.httpnio.pool.HttpNioConnectionPoolClient;
@@ -45,6 +46,7 @@ import com.google.inject.name.Named;
  * 
  * @author Adrian Cole
  */
+@HttpFutureCommandClientModule
 public class HttpNioConnectionPoolClientModule extends AbstractModule {
 
     @Named(HttpConstants.PROPERTY_HTTP_SECURE)

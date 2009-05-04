@@ -32,7 +32,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
-import java.util.logging.Logger;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpFutureCommand;
@@ -48,7 +47,7 @@ public class CopyObjectCallableTest {
 
     @BeforeMethod
     void setUp() {
-	callable = new CopyObjectCallable(createMock(Logger.class));
+	callable = new CopyObjectCallable();
     }
 
     @AfterMethod

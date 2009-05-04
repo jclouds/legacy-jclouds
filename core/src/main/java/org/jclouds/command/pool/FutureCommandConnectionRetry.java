@@ -27,47 +27,53 @@ import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.jclouds.Logger;
+import javax.annotation.Resource;
+
 import org.jclouds.command.FutureCommand;
+import org.jclouds.logging.Logger;
 
 /**
  * // TODO: Adrian: Document this!
- *
+ * 
  * @author Adrian Cole
  */
 public abstract class FutureCommandConnectionRetry<C> {
     protected final BlockingQueue<FutureCommand> commandQueue;
     protected final AtomicInteger errors;
-    protected final Logger logger;
+    @Resource
+    protected Logger logger = Logger.NULL;
 
-    public FutureCommandConnectionRetry(Logger logger, BlockingQueue<FutureCommand> commandQueue, AtomicInteger errors) {
-        this.logger = logger;
-        this.commandQueue = commandQueue;
-        this.errors = errors;
+    public FutureCommandConnectionRetry(
+	    BlockingQueue<FutureCommand> commandQueue, AtomicInteger errors) {
+	this.commandQueue = commandQueue;
+	this.errors = errors;
     }
 
-    public abstract void associateHandleWithConnection(FutureCommandConnectionHandle<C> handle, C connection);
+    public abstract void associateHandleWithConnection(
+	    FutureCommandConnectionHandle<C> handle, C connection);
 
-    public abstract FutureCommandConnectionHandle<C> getHandleFromConnection(C connection);
+    public abstract FutureCommandConnectionHandle<C> getHandleFromConnection(
+	    C connection);
 
     public boolean shutdownConnectionAndRetryOperation(C connection) {
-        FutureCommandConnectionHandle<C> handle = getHandleFromConnection(connection);
-        if (handle != null) {
-            try {
-                logger.info("%1s - shutting down connection", connection);
-                handle.shutdownConnection();
-                incrementErrorCountAndRetry(handle.getOperation());
-                return true;
-            } catch (IOException e) {
-                logger.error(e, "%1s - error shutting down connection", connection);
-            }
-        }
-        return false;
+	FutureCommandConnectionHandle<C> handle = getHandleFromConnection(connection);
+	if (handle != null) {
+	    try {
+		logger.info("%1s - shutting down connection", connection);
+		handle.shutdownConnection();
+		incrementErrorCountAndRetry(handle.getOperation());
+		return true;
+	    } catch (IOException e) {
+		logger.error(e, "%1s - error shutting down connection",
+			connection);
+	    }
+	}
+	return false;
     }
 
     public void incrementErrorCountAndRetry(FutureCommand command) {
-        errors.getAndIncrement();
-        logger.info("resubmitting command %1s", command);
-        commandQueue.add(command);
+	errors.getAndIncrement();
+	logger.info("resubmitting command %1s", command);
+	commandQueue.add(command);
     }
 }

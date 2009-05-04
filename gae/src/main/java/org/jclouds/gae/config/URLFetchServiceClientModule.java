@@ -29,6 +29,7 @@ import java.net.URL;
 import org.jclouds.gae.URLFetchServiceClient;
 import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpFutureCommandClient;
+import org.jclouds.http.config.HttpFutureCommandClientModule;
 
 import com.google.appengine.api.urlfetch.URLFetchService;
 import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
@@ -42,6 +43,7 @@ import com.google.inject.name.Named;
  * 
  * @author Adrian Cole
  */
+@HttpFutureCommandClientModule
 public class URLFetchServiceClientModule extends AbstractModule {
 
     @Override

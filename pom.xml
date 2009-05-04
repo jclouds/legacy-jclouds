@@ -42,6 +42,7 @@
         <module>core</module>
         <module>extensions/httpnio</module>
         <module>extensions/s3nio</module>
+        <module>extensions/log4j</module>
         <module>gae</module>
         <module>s3</module>
     </modules>

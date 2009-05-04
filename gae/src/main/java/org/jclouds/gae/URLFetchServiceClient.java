@@ -35,14 +35,16 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.io.IOUtils;
-import org.jclouds.Logger;
 import org.jclouds.command.FutureCommand;
 import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpFutureCommandClient;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.logging.Logger;
 
 import com.google.appengine.api.urlfetch.HTTPHeader;
 import com.google.appengine.api.urlfetch.HTTPMethod;
@@ -60,7 +62,8 @@ import com.google.inject.Inject;
 public class URLFetchServiceClient implements HttpFutureCommandClient {
     private final URL target;
     private List<HttpRequestFilter> requestFilters = Collections.emptyList();
-    private final Logger logger;
+    @Resource
+    private Logger logger = Logger.NULL;
     private final URLFetchService urlFetchService;
 
     public List<HttpRequestFilter> getRequestFilters() {
@@ -73,10 +76,9 @@ public class URLFetchServiceClient implements HttpFutureCommandClient {
     }
 
     @Inject
-    public URLFetchServiceClient(java.util.logging.Logger logger, URL target,
-	    URLFetchService urlFetchService) throws MalformedURLException {
+    public URLFetchServiceClient(URL target, URLFetchService urlFetchService)
+	    throws MalformedURLException {
 	this.urlFetchService = urlFetchService;
-	this.logger = new Logger(logger);
 	this.target = target;
 	this.logger.info("configured to connect to target: %1s", target);
     }
