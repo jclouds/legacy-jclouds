@@ -23,6 +23,8 @@
  */
 package org.jclouds.aws.s3;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -119,6 +121,8 @@ public class S3Utils extends Utils {
 
     public static String getContentAsStringAndClose(S3Object object)
 	    throws IOException {
+	checkNotNull(object, "s3Object");
+	checkNotNull(object.getContent(), "s3Object.content");
 	Object o = object.getContent();
 
 	if (o instanceof InputStream) {

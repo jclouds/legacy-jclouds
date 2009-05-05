@@ -29,6 +29,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.http.HttpException;
 import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor;
@@ -254,9 +255,10 @@ public class HttpNioFutureCommandConnectionPool extends
     }
 
     public void connectionTimeout(NHttpConnection conn) {
-	logger.warn("%1s - %2d - timeout  %2d", conn, conn.hashCode(), conn
-		.getSocketTimeout());
-	resubmitCommand(conn);
+	String message = String.format("%1s - %2d - timeout  %2d", conn, conn
+		.hashCode(), conn.getSocketTimeout());
+	logger.warn(message);
+	resubmitIfRequestIsReplayable(conn, new TimeoutException(message));
     }
 
     public void connectionClosed(NHttpConnection conn) {
@@ -266,7 +268,7 @@ public class HttpNioFutureCommandConnectionPool extends
     public void fatalIOException(IOException ex, NHttpConnection conn) {
 	logger.error(ex, "%3s-%1d{%2s} - io error", conn, conn.hashCode(),
 		target);
-	resubmitCommand(conn);
+	resubmitIfRequestIsReplayable(conn, ex);
     }
 
     public void fatalProtocolException(HttpException ex, NHttpConnection conn) {
@@ -280,6 +282,11 @@ public class HttpNioFutureCommandConnectionPool extends
 	    FutureCommandConnectionPool.FutureCommandConnectionHandleFactory<NHttpConnection, HttpFutureCommand<?>> {
 	HttpNioFutureCommandConnectionHandle create(
 		HttpFutureCommand<?> command, NHttpConnection conn);
+    }
+
+    @Override
+    protected boolean isReplayable(HttpFutureCommand<?> command) {
+	return command.getRequest().isReplayable();
     }
 
 }

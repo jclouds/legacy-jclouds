@@ -84,7 +84,7 @@ public class URLFetchServiceClient implements HttpFutureCommandClient {
     }
 
     public void submit(HttpFutureCommand<?> operation) {
-	HttpRequest request = (HttpRequest) operation.getRequest();
+	HttpRequest request = operation.getRequest();
 	HTTPResponse gaeResponse = null;
 	try {
 	    for (HttpRequestFilter filter : getRequestFilters()) {
@@ -106,6 +106,33 @@ public class URLFetchServiceClient implements HttpFutureCommandClient {
 	    }
 	    operation.setException(e);
 	}
+    }
+
+    /**
+     * byte [] content is replayable and the only content type supportable by
+     * GAE. As such, we convert the original request content to a byte array.
+     */
+    @VisibleForTesting
+    void changeRequestContentToBytes(HttpRequest request) throws IOException {
+	Object content = request.getContent();
+	if (content == null || content instanceof byte[]) {
+	    return;
+	} else if (content instanceof String) {
+	    String string = (String) content;
+	    request.setContent(string.getBytes());
+	} else if (content instanceof InputStream || content instanceof File) {
+	    InputStream i = content instanceof InputStream ? (InputStream) content
+		    : new FileInputStream((File) content);
+	    try {
+		request.setContent(IOUtils.toByteArray(i));
+	    } finally {
+		IOUtils.closeQuietly(i);
+	    }
+	} else {
+	    throw new UnsupportedOperationException("Content not supported "
+		    + content.getClass());
+	}
+
     }
 
     @VisibleForTesting
@@ -135,25 +162,10 @@ public class URLFetchServiceClient implements HttpFutureCommandClient {
 		gaeRequest.addHeader(new HTTPHeader(header, value));
 	}
 	if (request.getContent() != null) {
+	    changeRequestContentToBytes(request);
 	    gaeRequest.addHeader(new HTTPHeader(HttpConstants.CONTENT_TYPE,
 		    request.getContentType()));
-	    if (request.getContent() instanceof String) {
-		String string = (String) request.getContent();
-		gaeRequest.setPayload(string.getBytes());
-	    } else if (request.getContent() instanceof InputStream) {
-		gaeRequest.setPayload(IOUtils.toByteArray((InputStream) request
-			.getContent()));
-	    } else if (request.getContent() instanceof File) {
-		gaeRequest.setPayload(IOUtils.toByteArray(new FileInputStream(
-			(File) request.getContent())));
-	    } else if (request.getContent() instanceof byte[]) {
-		gaeRequest.setPayload((byte[]) request.getContent());
-	    } else {
-		throw new UnsupportedOperationException(
-			"Content not supported "
-				+ request.getContent().getClass());
-	    }
-
+	    gaeRequest.setPayload((byte[]) request.getContent());
 	}
 	return gaeRequest;
     }

@@ -101,9 +101,13 @@ public class HttpNioFutureCommandExecutionHandler implements
 		    processResponse(response, command);
 		} else {
 		    if (isRetryable(response)) {
-			commandQueue.add(command);
+			attemptReplay(command);
 		    } else {
-			commandFailed(command);
+			String message = String
+				.format(
+					"response is not retryable: %1s;  Command: %2s failed",
+					response.getStatusLine(), command);
+			command.setException(new IOException(message));
 		    }
 		}
 	    } finally {
@@ -113,6 +117,15 @@ public class HttpNioFutureCommandExecutionHandler implements
 	    throw new IllegalStateException(String.format(
 		    "No command-handle associated with command %1s", context));
 	}
+    }
+
+    protected void attemptReplay(HttpFutureCommand<?> command) {
+	if (command.getRequest().isReplayable())
+	    commandQueue.add(command);
+	else
+	    command.setException(new IOException(String.format(
+		    "%1s: command failed and request is not replayable: %2s",
+		    command, command.getRequest())));
     }
 
     protected boolean isRetryable(HttpResponse response) throws IOException {
@@ -127,13 +140,6 @@ public class HttpNioFutureCommandExecutionHandler implements
 	} catch (InterruptedException e) {
 	    logger.error(e, "Interrupted releasing handle %1s", handle);
 	}
-    }
-
-    protected void commandFailed(HttpFutureCommand<?> command)
-	    throws IOException {
-	String message = String.format("command failed: %1s", command);
-	logger.error(message);
-	command.getResponseFuture().setException(new IOException(message));
     }
 
     protected void processResponse(HttpResponse apacheResponse,
