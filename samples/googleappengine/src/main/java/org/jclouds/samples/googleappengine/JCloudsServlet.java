@@ -55,15 +55,16 @@ public class JCloudsServlet extends HttpServlet {
     protected void doGet(HttpServletRequest httpServletRequest,
 	    HttpServletResponse httpServletResponse) throws ServletException,
 	    IOException {
+	httpServletResponse.setContentType("text/plain");
 	Writer writer = httpServletResponse.getWriter();
 	try {
 	    List<S3Bucket> myBuckets = context.getConnection().getBuckets()
 		    .get(10, TimeUnit.SECONDS);
 	    writer.write("List:\n");
 	    for (S3Bucket bucket : myBuckets) {
-		writer.write(String.format("  %1s: %2s entries%n", bucket
-			.getName(), context.createInputStreamMap(bucket)
-			.size()));
+		writer.write(String
+			.format("  %1s: %2s entries%n", bucket.getName(),
+				context.createInputStreamMap(bucket).size()));
 	    }
 	} catch (Exception e) {
 	    throw new ServletException(e);
