@@ -34,7 +34,7 @@
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>jclouds-samples-googleappengine</artifactId>
+    <artifactId>jclouds-gae-s3-example</artifactId>
     <packaging>war</packaging>
     <name>JClouds Sample for Google App Engine</name>
     <description>JClouds Sample for Google App Engine</description>

@@ -49,8 +49,8 @@ import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Request;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.handler.AbstractHandler;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -77,7 +77,7 @@ public abstract class BaseHttpFutureCommandClientTest {
     protected Injector injector;
     private Closer closer;
 
-    @BeforeClass
+    @BeforeTest
     @Parameters( { "test-jetty-port" })
     public void setUpJetty(@Optional("8123") final int testPort)
 	    throws Exception {
@@ -152,14 +152,14 @@ public abstract class BaseHttpFutureCommandClientTest {
 
     protected abstract Module createClientModule();
 
-    @AfterClass
+    @AfterTest
     public void tearDownJetty() throws Exception {
 	closer.close();
 	server.stop();
     }
 
     @Test(invocationCount = 500, timeOut = 1500)
-    void testRequestFilter() throws MalformedURLException, ExecutionException,
+    public void testRequestFilter() throws MalformedURLException, ExecutionException,
 	    InterruptedException, TimeoutException {
 	GetString get = factory.createGetString("/");
 	get.getRequest().getHeaders().put("filterme", "filterme");
@@ -170,7 +170,7 @@ public abstract class BaseHttpFutureCommandClientTest {
     }
 
     @Test(invocationCount = 500, timeOut = 1500)
-    void testGetStringWithHeader() throws MalformedURLException,
+    public void testGetStringWithHeader() throws MalformedURLException,
 	    ExecutionException, InterruptedException, TimeoutException {
 	GetString get = factory.createGetString("/");
 	get.getRequest().getHeaders().put("test", "test");
@@ -181,7 +181,7 @@ public abstract class BaseHttpFutureCommandClientTest {
     }
 
     @Test(invocationCount = 500, timeOut = 1500)
-    void testGetString() throws MalformedURLException, ExecutionException,
+    public void testGetString() throws MalformedURLException, ExecutionException,
 	    InterruptedException, TimeoutException {
 	GetString get = factory.createGetString("/");
 	assert get != null;
@@ -192,7 +192,7 @@ public abstract class BaseHttpFutureCommandClientTest {
     }
 
     @Test(invocationCount = 500, timeOut = 1500)
-    void testHead() throws MalformedURLException, ExecutionException,
+    public void testHead() throws MalformedURLException, ExecutionException,
 	    InterruptedException, TimeoutException {
 	Head head = factory.createHead("/");
 	assert head != null;
@@ -201,7 +201,7 @@ public abstract class BaseHttpFutureCommandClientTest {
     }
 
     @Test(invocationCount = 500, timeOut = 1500)
-    void testGetAndParseSax() throws MalformedURLException, ExecutionException,
+    public void testGetAndParseSax() throws MalformedURLException, ExecutionException,
 	    InterruptedException, TimeoutException {
 	GetAndParseSax<?> getAndParseSax = factory.createGetAndParseSax("/",
 		new ParseSax.HandlerWithResult<String>() {

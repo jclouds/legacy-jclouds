@@ -28,7 +28,7 @@
         "http://java.sun.com/dtd/web-app_2_3.dtd">
 
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5">
-    <display-name>Archetype Created Web Application</display-name>
+    <display-name>jclouds-s3-example</display-name>
 
     <!-- Servlets -->
     <filter>

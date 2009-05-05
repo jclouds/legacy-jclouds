@@ -90,12 +90,24 @@ public class URLFetchServiceClient implements HttpFutureCommandClient {
 	    for (HttpRequestFilter filter : getRequestFilters()) {
 		filter.filter(request);
 	    }
-	    logger.trace("%1s - converting request %2s", target, request);
-	    HTTPRequest gaeRequest = convert(request);
-	    logger.trace("%1s - submitting request %2s", target, gaeRequest);
-	    gaeResponse = this.urlFetchService.fetch(gaeRequest);
-	    logger.trace("%1s - received response %2s", target, gaeResponse);
-	    HttpResponse response = convert(gaeResponse);
+	    HttpResponse response = null;
+	    for (;;) {
+		logger.trace("%1s - converting request %2s", target, request);
+		HTTPRequest gaeRequest = convert(request);
+		logger
+			.trace("%1s - submitting request %2s", target,
+				gaeRequest);
+		gaeResponse = this.urlFetchService.fetch(gaeRequest);
+		logger
+			.trace("%1s - received response %2s", target,
+				gaeResponse);
+		response = convert(gaeResponse);
+		if (response.getStatusCode() >= 500) {
+		    continue;
+		}
+		break;
+
+	    }
 	    operation.getResponseFuture().setResponse(response);
 	    operation.getResponseFuture().run();
 	} catch (Exception e) {

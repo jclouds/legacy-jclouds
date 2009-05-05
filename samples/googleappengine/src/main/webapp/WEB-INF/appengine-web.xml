@@ -25,6 +25,6 @@
 
 -->
 <appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
-  <application>application-id</application>
+  <application>jclouds-s3-example</application>
   <version>1</version>
 </appengine-web-app>
