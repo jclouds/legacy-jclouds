@@ -31,6 +31,7 @@ import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -81,6 +82,8 @@ public abstract class BaseHttpFutureCommandClientTest {
     public void setUpJetty(@Optional("8123") final int testPort)
 	    throws Exception {
 	Handler handler = new AbstractHandler() {
+	    private AtomicInteger cycle = new AtomicInteger(0);
+
 	    public void handle(String target, HttpServletRequest request,
 		    HttpServletResponse response, int dispatch)
 		    throws IOException, ServletException {
@@ -89,11 +92,23 @@ public abstract class BaseHttpFutureCommandClientTest {
 		    response.setStatus(HttpServletResponse.SC_OK);
 		    response.getWriter().println("test");
 		} else {
+		    if (failEveryTenRequests(request, response))
+			return;
 		    response.setContentType("text/xml");
 		    response.setStatus(HttpServletResponse.SC_OK);
 		    response.getWriter().println(XML);
 		}
 		((Request) request).setHandled(true);
+	    }
+
+	    private boolean failEveryTenRequests(HttpServletRequest request,
+		    HttpServletResponse response) throws IOException {
+		if (cycle.incrementAndGet() % 10 == 0) {
+		    response.sendError(500);
+		    ((Request) request).setHandled(true);
+		    return true;
+		}
+		return false;
 	    }
 	};
 

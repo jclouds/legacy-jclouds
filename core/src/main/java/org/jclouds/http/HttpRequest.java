@@ -25,7 +25,12 @@ package org.jclouds.http;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.io.InputStream;
 import java.util.Collection;
+
+import javax.annotation.Resource;
+
+import org.jclouds.logging.Logger;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -43,6 +48,9 @@ public class HttpRequest {
     Object content;
     String contentType;
     long contentLength = -1;
+
+    @Resource
+    protected Logger logger = Logger.NULL;
 
     public HttpRequest(String method, String uri) {
 	this.method = checkNotNull(method, "method");
@@ -87,6 +95,15 @@ public class HttpRequest {
 	this.headers = headers;
     }
 
+    public boolean isReplayable() {
+	Object content = getContent();
+	if (content != null && content instanceof InputStream) {
+	    logger.warn("%1s: InputStreams are not replayable", toString());
+	    return false;
+	}
+	return true;
+    }
+
     public Object getContent() {
 	return content;
     }
@@ -110,7 +127,7 @@ public class HttpRequest {
     public void setContentLength(long contentLength) {
 	this.contentLength = contentLength;
     }
-    
+
     public String getFirstHeaderOrNull(String string) {
 	Collection<String> values = headers.get(string);
 	return (values != null && values.size() >= 1) ? values.iterator()

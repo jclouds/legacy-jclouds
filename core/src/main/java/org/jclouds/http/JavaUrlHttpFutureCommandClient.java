@@ -70,26 +70,47 @@ public class JavaUrlHttpFutureCommandClient implements HttpFutureCommandClient {
 	this.target = target;
     }
 
-    public void submit(HttpFutureCommand<?> operation) {
-	HttpRequest request = (HttpRequest) operation.getRequest();
+    public void submit(HttpFutureCommand<?> command) {
+	HttpRequest request = (HttpRequest) command.getRequest();
 	HttpURLConnection connection = null;
 	try {
 	    for (HttpRequestFilter filter : getRequestFilters()) {
 		filter.filter(request);
 	    }
-	    logger.trace("%1s - converting request %2s", target, request);
-	    connection = openJavaConnection(request);
-	    logger.trace("%1s - submitting request %2s", target, connection);
-	    HttpResponse response = getResponse(connection);
-	    logger.trace("%1s - received response %2s", target, response);
-
-	    operation.getResponseFuture().setResponse(response);
-	    operation.getResponseFuture().run();
+	    HttpResponse response = null;
+	    for (;;) {
+		try {
+		    logger.trace("%1s - converting request %2s", target,
+			    request);
+		    connection = openJavaConnection(request);
+		    logger.trace("%1s - submitting request %2s", target,
+			    connection);
+		    response = getResponse(connection);
+		    logger.trace("%1s - received response %2s", target,
+			    response);
+		    if (request.isReplayable()
+			    && response.getStatusCode() >= 500) {
+			logger.info("resubmitting command: %1s", command);
+			continue;
+		    }
+		    break;
+		} catch (IOException e) {
+		    if (request.isReplayable()
+			    && e.getMessage().indexOf(
+				    "Server returned HTTP response code: 5") >= 0) {
+			logger.info("resubmitting command: %1s", command);
+			continue;
+		    }
+		    throw e;
+		}
+	    }
+	    command.getResponseFuture().setResponse(response);
+	    command.getResponseFuture().run();
 	} catch (FileNotFoundException e) {
 	    HttpResponse response = new HttpResponse();
 	    response.setStatusCode(404);
-	    operation.getResponseFuture().setResponse(response);
-	    operation.getResponseFuture().run();
+	    command.getResponseFuture().setResponse(response);
+	    command.getResponseFuture().run();
 	} catch (Exception e) {
 	    if (connection != null) {
 		StringBuilder errors = new StringBuilder();
@@ -108,7 +129,7 @@ public class JavaUrlHttpFutureCommandClient implements HttpFutureCommandClient {
 		} catch (IOException e2) {
 		}
 	    }
-	    operation.setException(e);
+	    command.setException(e);
 	} finally {
 	    // DO NOT disconnect, as it will also close the unconsumed
 	    // outputStream from above.

@@ -37,6 +37,7 @@ import org.jclouds.logging.Logger;
  */
 public class HttpFutureCommand<T> extends
 	FutureCommand<HttpRequest, HttpResponse, T> {
+
     public HttpFutureCommand(String method, String uri,
 	    ResponseCallable<T> responseCallable) {
 	super(new HttpRequest(checkNotNull(method, "method"), checkNotNull(uri,
@@ -73,4 +74,5 @@ public class HttpFutureCommand<T> extends
 	    this.response = response;
 	}
     }
+
 }

@@ -100,7 +100,7 @@ public class FutureCommand<Q, R, T> implements Future<T> {
 
 	@Override
 	public String toString() {
-	    return getClass().getSimpleName()+"{" + "tCallable=" + callable
+	    return getClass().getSimpleName() + "{" + "tCallable=" + callable
 		    + '}';
 	}
 
@@ -138,4 +138,5 @@ public class FutureCommand<Q, R, T> implements Future<T> {
 
 	public void setResponse(R response);
     }
+
 }

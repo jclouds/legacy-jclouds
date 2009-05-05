@@ -126,13 +126,19 @@ public abstract class FutureCommandConnectionPool<C, O extends FutureCommand<?, 
 	return handle;
     }
 
-    protected void resubmitCommand(C connection) {
+    protected void resubmitIfRequestIsReplayable(C connection, Exception e) {
 	O command = getCommandFromConnection(connection);
 	if (command != null) {
-	    logger.info("resubmitting command: %1s", command);
-	    commandQueue.add(command);
+	    if (isReplayable(command)) {
+		logger.info("resubmitting command: %1s", command);
+		commandQueue.add(command);
+	    } else {
+		command.setException(e);
+	    }
 	}
     }
+
+    protected abstract boolean isReplayable(O command);
 
     O getCommandFromConnection(C connection) {
 	FutureCommandConnectionHandle<C, O> handle = getHandleFromConnection(connection);
