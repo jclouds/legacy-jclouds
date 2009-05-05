@@ -40,9 +40,10 @@ import org.apache.http.nio.reactor.IOReactorStatus;
 import org.apache.http.nio.reactor.SessionRequest;
 import org.apache.http.nio.reactor.SessionRequestCallback;
 import org.jclouds.command.FutureCommand;
+import org.jclouds.command.pool.FutureCommandConnectionHandle;
 import org.jclouds.command.pool.FutureCommandConnectionPool;
-import org.jclouds.command.pool.FutureCommandConnectionRetry;
 import org.jclouds.command.pool.PoolConstants;
+import org.jclouds.http.HttpFutureCommand;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -53,7 +54,8 @@ import com.google.inject.name.Named;
  * @author Adrian Cole
  */
 public class HttpNioFutureCommandConnectionPool extends
-	FutureCommandConnectionPool<NHttpConnection> implements EventListener {
+	FutureCommandConnectionPool<NHttpConnection, HttpFutureCommand<?>>
+	implements EventListener {
 
     private final NHttpClientConnectionPoolSessionRequestCallback sessionCallback;
     private final DefaultConnectingIOReactor ioReactor;
@@ -65,17 +67,17 @@ public class HttpNioFutureCommandConnectionPool extends
     public HttpNioFutureCommandConnectionPool(
 	    ExecutorService executor,
 	    Semaphore allConnections,
+	    BlockingQueue<HttpFutureCommand<?>> commandQueue,
 	    BlockingQueue<NHttpConnection> available,
 	    AsyncNHttpClientHandler clientHandler,
 	    DefaultConnectingIOReactor ioReactor,
 	    IOEventDispatch dispatch,
 	    FutureCommandConnectionHandleFactory requestHandleFactory,
 	    InetSocketAddress target,
-	    FutureCommandConnectionRetry<NHttpConnection> futureCommandConnectionRetry,
 	    @Named(PoolConstants.PROPERTY_POOL_MAX_CONNECTION_REUSE) int maxConnectionReuse,
 	    @Named(PoolConstants.PROPERTY_POOL_MAX_SESSION_FAILURES) int maxSessionFailures) {
-	super(executor, futureCommandConnectionRetry, allConnections,
-		requestHandleFactory, maxConnectionReuse, available);
+	super(executor, allConnections, commandQueue, requestHandleFactory,
+		maxConnectionReuse, available);
 	this.ioReactor = ioReactor;
 	this.dispatch = dispatch;
 	this.target = target;
@@ -160,6 +162,20 @@ public class HttpNioFutureCommandConnectionPool extends
 	}
     }
 
+    @Override
+    protected void associateHandleWithConnection(
+	    FutureCommandConnectionHandle<NHttpConnection, HttpFutureCommand<?>> handle,
+	    NHttpConnection connection) {
+	connection.getContext().setAttribute("command-handle", handle);
+    }
+
+    @Override
+    protected HttpNioFutureCommandConnectionHandle getHandleFromConnection(
+	    NHttpConnection connection) {
+	return (HttpNioFutureCommandConnectionHandle) connection.getContext()
+		.getAttribute("command-handle");
+    }
+
     class NHttpClientConnectionPoolSessionRequestCallback implements
 	    SessionRequestCallback {
 
@@ -191,7 +207,7 @@ public class HttpNioFutureCommandConnectionPool extends
 	private void releaseConnectionAndSetResponseException(
 		SessionRequest request, Exception e) {
 	    allConnections.release();
-	    FutureCommand<?, ?, ?> frequest = (FutureCommand<?, ?, ?>) request
+	    HttpFutureCommand<?> frequest = (HttpFutureCommand<?>) request
 		    .getAttachment();
 	    if (frequest != null) {
 		logger.error(e,
@@ -240,7 +256,7 @@ public class HttpNioFutureCommandConnectionPool extends
     public void connectionTimeout(NHttpConnection conn) {
 	logger.warn("%1s - %2d - timeout  %2d", conn, conn.hashCode(), conn
 		.getSocketTimeout());
-	futureCommandConnectionRetry.shutdownConnectionAndRetryOperation(conn);
+	resubmitCommand(conn);
     }
 
     public void connectionClosed(NHttpConnection conn) {
@@ -248,32 +264,22 @@ public class HttpNioFutureCommandConnectionPool extends
     }
 
     public void fatalIOException(IOException ex, NHttpConnection conn) {
-	exception.set(ex);
 	logger.error(ex, "%3s-%1d{%2s} - io error", conn, conn.hashCode(),
 		target);
-	if (!futureCommandConnectionRetry
-		.shutdownConnectionAndRetryOperation(conn))
-	    try {
-		conn.shutdown();
-	    } catch (IOException e) {
-		logger.error(e,
-			"%3s-%1d{%2s} - error shutting down connection", conn,
-			conn.hashCode(), target);
-	    }
+	resubmitCommand(conn);
     }
 
     public void fatalProtocolException(HttpException ex, NHttpConnection conn) {
-	exception.set(ex);
 	logger.error(ex, "%3s-%1d{%2s} - http error", conn, conn.hashCode(),
 		target);
-	fatalException(ex, conn);
+	setExceptionOnCommand(conn, ex);
     }
 
     public static interface FutureCommandConnectionHandleFactory
 	    extends
-	    FutureCommandConnectionPool.FutureCommandConnectionHandleFactory<NHttpConnection> {
-	HttpNioFutureCommandConnectionHandle create(FutureCommand command,
-		NHttpConnection conn);
+	    FutureCommandConnectionPool.FutureCommandConnectionHandleFactory<NHttpConnection, HttpFutureCommand<?>> {
+	HttpNioFutureCommandConnectionHandle create(
+		HttpFutureCommand<?> command, NHttpConnection conn);
     }
 
 }

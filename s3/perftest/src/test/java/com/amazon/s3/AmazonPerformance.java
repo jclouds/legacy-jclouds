@@ -26,6 +26,7 @@ package com.amazon.s3;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
@@ -47,8 +48,10 @@ public class AmazonPerformance extends BasePerformance {
 
     @Override
     @BeforeTest
-    @Parameters( { S3Constants.PROPERTY_AWS_ACCESSKEYID, S3Constants.PROPERTY_AWS_SECRETACCESSKEY })
-    protected void setUpClient(@Optional String AWSAccessKeyId, @Optional String AWSSecretAccessKey) throws Exception {
+    @Parameters( { S3Constants.PROPERTY_AWS_ACCESSKEYID,
+	    S3Constants.PROPERTY_AWS_SECRETACCESSKEY })
+    protected void setUpClient(@Optional String AWSAccessKeyId,
+	    @Optional String AWSSecretAccessKey) throws Exception {
 	super.setUpClient(AWSAccessKeyId, AWSSecretAccessKey);
 	amzClient = new AWSAuthConnection(AWSAccessKeyId, AWSSecretAccessKey,
 		false);
@@ -91,7 +94,7 @@ public class AmazonPerformance extends BasePerformance {
     protected boolean putByteArray(String bucket, String key, byte[] data,
 	    String contentType) throws Exception {
 	com.amazon.s3.S3Object object = new com.amazon.s3.S3Object(data, null);
-	Map headers = new TreeMap();
+	Map<String, List<String>> headers = new TreeMap<String, List<String>>();
 	headers
 		.put("Content-Type", Arrays
 			.asList(new String[] { contentType }));

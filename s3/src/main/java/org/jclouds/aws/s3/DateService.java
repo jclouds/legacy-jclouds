@@ -29,21 +29,20 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 public class DateService {
-    private DateTimeFormatter headerDateFormat = DateTimeFormat.forPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'");
-    private DateTimeFormatter dataDateFormat = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-
+    private DateTimeFormatter headerDateFormat = DateTimeFormat
+	    .forPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'");
 
     public DateTime dateTimeFromXMLFormat(String toParse) {
-        //return dataDateFormat.parseDateTime(toParse);
-        return new DateTime(toParse);
+	// the format is natively parseable from the DateTime constructor
+	return new DateTime(toParse);
     }
 
     public DateTime dateTimeFromHeaderFormat(String toParse) {
-        return headerDateFormat.parseDateTime(toParse);
+	return headerDateFormat.parseDateTime(toParse);
     }
 
     public String timestampAsHeaderString() {
-        return headerDateFormat.print(new DateTime(DateTimeZone.UTC));
+	return headerDateFormat.print(new DateTime(DateTimeZone.UTC));
     }
 
 }

@@ -82,6 +82,7 @@ public class S3IntegrationTest {
 	}
     }
 
+    String errorFromAmazonIfYouDontRemoveTransferEncodingHeader = "<Error><Code>NotImplemented</Code><Message>A header you provided implies functionality that is not implemented</Message><Header>Transfer-Encoding</Header><RequestId>7C59925D75D15561</RequestId><HostId>fbskVU51OZJg2yZS/wNIxoE2PmCf0ZqFd0iH6Vrzw0uKG3KmokswBytL/Bfp/GWb</HostId></Error>";
     String badRequestWhenSourceIsDestBucketOnCopy400 = "<Error><Code>InvalidRequest</Code><Message>The Source and Destination may not be the same when the MetadataDirective is Copy.</Message><RequestId>54C77CAF4D42474B</RequestId><HostId>SJecknEUUUx88/65VAKbCdKSOCkpuVTeu7ZG9in9x9NTNglGnoxdbALCfS4k/DUZ</HostId></Error>";
     String noSuchSourceKeyOrBucketOnCopy404 = "<Error><Code>NoSuchKey</Code><Message>The specified key does not exist.</Message><Key>null</Key><RequestId>9CCDF1DACA78B36F</RequestId><HostId>63cqk9YsTFBVfBfks840JVGsepPEdQM42mU+r7HN35sF4Nk5xAcWDEUPaQpK2eFU</HostId></Error>";
     String noSuchDestinationBucketOnCopy404 = "<Error><Code>NoSuchBucket</Code><Message>The specified bucket does not exist</Message><BucketName>copydestination</BucketName><RequestId>4F0CF319C5535975</RequestId><HostId>hdZyHOm7VK+JI2UCdye3d6TVkKhRBIoWflldXVDTKbgipYlamy8HgPBzHrUAVQNJ</HostId></Error>";

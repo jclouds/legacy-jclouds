@@ -41,41 +41,38 @@ import com.google.inject.name.Named;
  * 
  * @author Adrian Cole
  */
-public abstract class FutureCommandConnectionPool<C> extends BaseLifeCycle {
+public abstract class FutureCommandConnectionPool<C, O extends FutureCommand<?, ?, ?>>
+	extends BaseLifeCycle {
     protected final Semaphore allConnections;
     protected final BlockingQueue<C> available;
-    protected final FutureCommandConnectionHandleFactory<C> futureCommandConnectionHandleFactory;
+    protected final BlockingQueue<O> commandQueue;
+    protected final FutureCommandConnectionHandleFactory<C, O> futureCommandConnectionHandleFactory;
     protected final int maxConnectionReuse;
     protected final AtomicInteger currentSessionFailures = new AtomicInteger(0);
-    protected final FutureCommandConnectionRetry<C> futureCommandConnectionRetry;
     protected volatile boolean hitBottom = false;
 
     public FutureCommandConnectionPool(
 	    ExecutorService executor,
-	    FutureCommandConnectionRetry<C> futureCommandConnectionRetry,
 	    Semaphore allConnections,
-	    FutureCommandConnectionHandleFactory<C> futureCommandConnectionHandleFactory,
+	    BlockingQueue<O> commandQueue,
+	    FutureCommandConnectionHandleFactory<C, O> futureCommandConnectionHandleFactory,
 	    @Named("maxConnectionReuse") int maxConnectionReuse,
 	    BlockingQueue<C> available, BaseLifeCycle... dependencies) {
 	super(executor, dependencies);
-	this.futureCommandConnectionRetry = futureCommandConnectionRetry;
 	this.allConnections = allConnections;
+	this.commandQueue = commandQueue;
 	this.futureCommandConnectionHandleFactory = futureCommandConnectionHandleFactory;
 	this.maxConnectionReuse = maxConnectionReuse;
 	this.available = available;
     }
 
-    @SuppressWarnings("unchecked")
     protected void setResponseException(Exception ex, C conn) {
-	FutureCommand command = futureCommandConnectionRetry
-		.getHandleFromConnection(conn).getOperation();
+	O command = getHandleFromConnection(conn).getCommand();
 	command.getResponseFuture().setException(ex);
     }
 
-    @SuppressWarnings("unchecked")
     protected void cancel(C conn) {
-	FutureCommand command = futureCommandConnectionRetry
-		.getHandleFromConnection(conn).getOperation();
+	O command = getHandleFromConnection(conn).getCommand();
 	command.cancel(true);
     }
 
@@ -119,22 +116,49 @@ public abstract class FutureCommandConnectionPool<C> extends BaseLifeCycle {
 
     protected abstract boolean connectionValid(C conn);
 
-    public FutureCommandConnectionHandle<C> getHandle(
-	    FutureCommand<?, ?, ?> command) throws InterruptedException,
-	    TimeoutException {
+    public FutureCommandConnectionHandle<C, O> getHandle(O command)
+	    throws InterruptedException, TimeoutException {
 	exceptionIfNotActive();
 	C conn = getConnection();
-	FutureCommandConnectionHandle<C> handle = futureCommandConnectionHandleFactory
+	FutureCommandConnectionHandle<C, O> handle = futureCommandConnectionHandleFactory
 		.create(command, conn);
-	futureCommandConnectionRetry
-		.associateHandleWithConnection(handle, conn);
+	associateHandleWithConnection(handle, conn);
 	return handle;
     }
 
+    protected void resubmitCommand(C connection) {
+	O command = getCommandFromConnection(connection);
+	if (command != null) {
+	    logger.info("resubmitting command: %1s", command);
+	    commandQueue.add(command);
+	}
+    }
+
+    O getCommandFromConnection(C connection) {
+	FutureCommandConnectionHandle<C, O> handle = getHandleFromConnection(connection);
+	if (handle != null && handle.getCommand() != null) {
+	    return handle.getCommand();
+	}
+	return null;
+    }
+
+    protected void setExceptionOnCommand(C connection, Exception e) {
+	FutureCommand<?, ?, ?> command = getCommandFromConnection(connection);
+	if (command != null) {
+	    logger.warn(e, "exception in command: %1s", command);
+	    command.setException(e);
+	}
+    }
+
+    protected abstract void associateHandleWithConnection(
+	    FutureCommandConnectionHandle<C, O> handle, C connection);
+
+    protected abstract FutureCommandConnectionHandle<C, O> getHandleFromConnection(
+	    C connection);
+
     protected abstract void createNewConnection() throws InterruptedException;
 
-    public interface FutureCommandConnectionHandleFactory<C> {
-	@SuppressWarnings("unchecked")
-	FutureCommandConnectionHandle<C> create(FutureCommand command, C conn);
+    public interface FutureCommandConnectionHandleFactory<C, O extends FutureCommand<?, ?, ?>> {
+	FutureCommandConnectionHandle<C, O> create(O command, C conn);
     }
 }

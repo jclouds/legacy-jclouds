@@ -25,19 +25,22 @@ package org.jclouds.http;
 
 /**
  * // TODO: Adrian: Document this!
- *
+ * 
  * @author Adrian Cole
  */
 public class HttpException extends Exception {
+
+    private static final long serialVersionUID = 1L;
+
     public HttpException(String s) {
-        super(s);    // TODO: Adrian: Customise this generated block
+	super(s);
     }
 
     public HttpException(String s, Throwable throwable) {
-        super(s, throwable);    // TODO: Adrian: Customise this generated block
+	super(s, throwable);
     }
 
     public HttpException(Throwable throwable) {
-        super(throwable);    // TODO: Adrian: Customise this generated block
+	super(throwable);
     }
 }

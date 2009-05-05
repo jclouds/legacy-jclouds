@@ -28,8 +28,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Semaphore;
 
 import org.apache.http.nio.NHttpConnection;
-import org.jclouds.command.FutureCommand;
 import org.jclouds.command.pool.FutureCommandConnectionHandle;
+import org.jclouds.http.HttpFutureCommand;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
@@ -40,20 +40,20 @@ import com.google.inject.assistedinject.Assisted;
  * @author Adrian Cole
  */
 public class HttpNioFutureCommandConnectionHandle extends
-	FutureCommandConnectionHandle<NHttpConnection> {
+	FutureCommandConnectionHandle<NHttpConnection, HttpFutureCommand<?>> {
 
     @Inject
     public HttpNioFutureCommandConnectionHandle(
 	    BlockingQueue<NHttpConnection> available, Semaphore maxConnections,
-	    @Assisted NHttpConnection conn, @Assisted FutureCommand operation)
-	    throws InterruptedException {
-	super(maxConnections, operation, conn, available);
+	    @Assisted NHttpConnection conn,
+	    @Assisted HttpFutureCommand<?> command) throws InterruptedException {
+	super(maxConnections, command, conn, available);
 
     }
 
     public void startConnection() {
-	conn.getContext().setAttribute("operation", operation);
-	logger.trace("invoking %1s on connection %2s", operation, conn);
+	conn.getContext().setAttribute("command", command);
+	logger.trace("invoking %1s on connection %2s", command, conn);
 	conn.requestOutput();
     }
 

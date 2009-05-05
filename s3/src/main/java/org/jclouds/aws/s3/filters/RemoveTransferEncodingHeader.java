@@ -31,7 +31,6 @@ import org.jclouds.http.HttpRequestFilter;
  * @author Adrian Cole
  */
 public class RemoveTransferEncodingHeader implements HttpRequestFilter {
-    private final static String errorFromAmazonIfYouDontRemove = "<Error><Code>NotImplemented</Code><Message>A header you provided implies functionality that is not implemented</Message><Header>Transfer-Encoding</Header><RequestId>7C59925D75D15561</RequestId><HostId>fbskVU51OZJg2yZS/wNIxoE2PmCf0ZqFd0iH6Vrzw0uKG3KmokswBytL/Bfp/GWb</HostId></Error>";
 
     public void filter(org.jclouds.http.HttpRequest request)
 	    throws org.jclouds.http.HttpException {

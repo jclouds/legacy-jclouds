@@ -66,6 +66,7 @@ public abstract class BaseGoogleAppEngineTest {
 	Thread.sleep(7 * 1000);
     }
 
+    @SuppressWarnings("deprecation")
     @AfterTest
     public void stopDevAppServer() throws Exception {
 	server.stop();

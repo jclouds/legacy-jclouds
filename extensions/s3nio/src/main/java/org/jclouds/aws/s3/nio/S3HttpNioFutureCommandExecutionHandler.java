@@ -25,12 +25,13 @@ package org.jclouds.aws.s3.nio;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.nio.entity.NStringEntity;
-import org.jclouds.http.httpnio.pool.HttpNioFutureCommandConnectionRetry;
+import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.httpnio.pool.HttpNioFutureCommandExecutionHandler;
 
 import com.google.inject.Inject;
@@ -49,8 +50,8 @@ public class S3HttpNioFutureCommandExecutionHandler extends
     public S3HttpNioFutureCommandExecutionHandler(
 	    ConsumingNHttpEntityFactory entityFactory,
 	    ExecutorService executor,
-	    HttpNioFutureCommandConnectionRetry futureOperationRetry) {
-	super(entityFactory, executor, futureOperationRetry);
+	    BlockingQueue<HttpFutureCommand<?>> commandQueue) {
+	super(entityFactory, executor, commandQueue);
     }
 
     @Override

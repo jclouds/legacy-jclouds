@@ -28,7 +28,6 @@ package org.jclouds.command;
  * 
  * @author Adrian Cole
  */
-public interface FutureCommandClient {
-    @SuppressWarnings("unchecked")
-    <O extends FutureCommand> void submit(O operation);
+public interface FutureCommandClient<O extends FutureCommand<?, ?, ?>> {
+    void submit(O operation);
 }

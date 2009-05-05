@@ -24,6 +24,7 @@
 package org.jclouds.http.httpnio.pool;
 
 import java.io.IOException;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 
 import javax.annotation.Resource;
@@ -31,12 +32,9 @@ import javax.annotation.Resource;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpResponse;
-import org.apache.http.nio.NHttpClientConnection;
 import org.apache.http.nio.entity.ConsumingNHttpEntity;
 import org.apache.http.nio.protocol.NHttpRequestExecutionHandler;
-import org.apache.http.protocol.ExecutionContext;
 import org.apache.http.protocol.HttpContext;
-import org.jclouds.command.FutureCommand;
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.httpnio.HttpNioUtils;
@@ -55,7 +53,7 @@ public class HttpNioFutureCommandExecutionHandler implements
     @Resource
     protected Logger logger = Logger.NULL;
     private final ConsumingNHttpEntityFactory entityFactory;
-    private final HttpNioFutureCommandConnectionRetry futureOperationRetry;
+    private final BlockingQueue<HttpFutureCommand<?>> commandQueue;
 
     public interface ConsumingNHttpEntityFactory {
 	public ConsumingNHttpEntity create(HttpEntity httpEntity);
@@ -65,21 +63,20 @@ public class HttpNioFutureCommandExecutionHandler implements
     public HttpNioFutureCommandExecutionHandler(
 	    ConsumingNHttpEntityFactory entityFactory,
 	    ExecutorService executor,
-	    HttpNioFutureCommandConnectionRetry futureOperationRetry) {
+	    BlockingQueue<HttpFutureCommand<?>> commandQueue) {
 	this.executor = executor;
 	this.entityFactory = entityFactory;
-	this.futureOperationRetry = futureOperationRetry;
+	this.commandQueue = commandQueue;
     }
 
     public void initalizeContext(HttpContext context, Object attachment) {
     }
 
     public HttpEntityEnclosingRequest submitRequest(HttpContext context) {
-	HttpFutureCommand operation = (HttpFutureCommand) context
-		.removeAttribute("operation");
-	if (operation != null) {
-	    // TODO determine why type is lost
-	    HttpRequest object = (HttpRequest) operation.getRequest();
+	HttpFutureCommand<?> command = (HttpFutureCommand<?>) context
+		.removeAttribute("command");
+	if (command != null) {
+	    HttpRequest object = command.getRequest();
 	    return HttpNioUtils.convertToApacheRequest(object);
 	}
 	return null;
@@ -94,21 +91,19 @@ public class HttpNioFutureCommandExecutionHandler implements
     public void handleResponse(HttpResponse response, HttpContext context)
 	    throws IOException {
 	HttpNioFutureCommandConnectionHandle handle = (HttpNioFutureCommandConnectionHandle) context
-		.removeAttribute("operation-handle");
+		.removeAttribute("command-handle");
 	if (handle != null) {
 	    try {
-		FutureCommand command = handle.getOperation();
+		HttpFutureCommand<?> command = handle.getCommand();
 		int code = response.getStatusLine().getStatusCode();
 		// normal codes for rest commands
 		if ((code >= 200 && code < 300) || code == 404) {
 		    processResponse(response, command);
 		} else {
 		    if (isRetryable(response)) {
-			futureOperationRetry
-				.shutdownConnectionAndRetryOperation((NHttpClientConnection) context
-					.getAttribute(ExecutionContext.HTTP_CONNECTION));
+			commandQueue.add(command);
 		    } else {
-			operationFailed(command);
+			commandFailed(command);
 		    }
 		}
 	    } finally {
@@ -116,8 +111,7 @@ public class HttpNioFutureCommandExecutionHandler implements
 	    }
 	} else {
 	    throw new IllegalStateException(String.format(
-		    "No operation-handle associated with operation %1s",
-		    context));
+		    "No command-handle associated with command %1s", context));
 	}
     }
 
@@ -135,14 +129,15 @@ public class HttpNioFutureCommandExecutionHandler implements
 	}
     }
 
-    protected void operationFailed(FutureCommand command) throws IOException {
+    protected void commandFailed(HttpFutureCommand<?> command)
+	    throws IOException {
 	String message = String.format("command failed: %1s", command);
 	logger.error(message);
 	command.getResponseFuture().setException(new IOException(message));
     }
 
     protected void processResponse(HttpResponse apacheResponse,
-	    FutureCommand command) throws IOException {
+	    HttpFutureCommand<?> command) throws IOException {
 	org.jclouds.http.HttpResponse response = HttpNioUtils
 		.convertToJavaCloudsResponse(apacheResponse);
 	command.getResponseFuture().setResponse(response);
@@ -153,7 +148,7 @@ public class HttpNioFutureCommandExecutionHandler implements
 
     public void finalizeContext(HttpContext context) {
 	HttpNioFutureCommandConnectionHandle handle = (HttpNioFutureCommandConnectionHandle) context
-		.removeAttribute("operation-handle");
+		.removeAttribute("command-handle");
 	if (handle != null) {
 	    try {
 		handle.cancel();

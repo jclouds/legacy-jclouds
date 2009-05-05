@@ -38,8 +38,8 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.command.FutureCommand;
 import org.jclouds.http.HttpConstants;
+import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpFutureCommandClient;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
@@ -83,7 +83,7 @@ public class URLFetchServiceClient implements HttpFutureCommandClient {
 	this.logger.info("configured to connect to target: %1s", target);
     }
 
-    public <O extends FutureCommand> void submit(O operation) {
+    public void submit(HttpFutureCommand<?> operation) {
 	HttpRequest request = (HttpRequest) operation.getRequest();
 	HTTPResponse gaeResponse = null;
 	try {

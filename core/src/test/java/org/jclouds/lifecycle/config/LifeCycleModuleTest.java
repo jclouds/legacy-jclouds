@@ -23,20 +23,13 @@
  */
 package org.jclouds.lifecycle.config;
 
-import static com.google.inject.matcher.Matchers.*;
-import static org.testng.Assert.assertEquals;
-
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
 
 import org.jclouds.lifecycle.Closer;
-import org.jclouds.logging.Logger;
-import org.jclouds.logging.config.BindLoggersAnnotatedWithResource;
-import org.jclouds.logging.jdk.JDKLogger;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;

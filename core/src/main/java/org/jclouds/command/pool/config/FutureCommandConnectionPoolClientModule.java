@@ -23,48 +23,51 @@
  */
 package org.jclouds.command.pool.config;
 
-import com.google.inject.*;
-import com.google.inject.name.Named;
-import org.jclouds.command.FutureCommand;
-import org.jclouds.lifecycle.config.LifeCycleModule;
-import org.jclouds.command.pool.PoolConstants;
-
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.jclouds.command.pool.PoolConstants;
+import org.jclouds.lifecycle.config.LifeCycleModule;
+
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
+
 /**
  * // TODO: Adrian: Document this!
- *
+ * 
  * @author Adrian Cole
  */
-public abstract class FutureCommandConnectionPoolClientModule<C> extends AbstractModule {
+public abstract class FutureCommandConnectionPoolClientModule<C> extends
+	AbstractModule {
     protected void configure() {
-        install(new LifeCycleModule());
-        bind(AtomicInteger.class).toInstance(new AtomicInteger());// max errors
-        bind(new TypeLiteral<BlockingQueue<FutureCommand>>() {
-        }).to(new TypeLiteral<LinkedBlockingQueue<FutureCommand>>() {
-        }).in(Scopes.SINGLETON);
+	install(new LifeCycleModule());
+	bind(AtomicInteger.class).toInstance(new AtomicInteger());// max errors
     }
-
 
     @Provides
     @Singleton
-    public abstract BlockingQueue<C> provideAvailablePool(@Named(PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS) int max) throws Exception;
+    public abstract BlockingQueue<C> provideAvailablePool(
+	    @Named(PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS) int max)
+	    throws Exception;
+
     /**
      * controls production and destruction of real connections.
      * <p/>
-     * aquire before a new connection is created
-     * release after an error has occurred
-     *
+     * aquire before a new connection is created release after an error has
+     * occurred
+     * 
      * @param max
      * @return
      * @throws Exception
      */
     @Provides
     @Singleton
-    public Semaphore provideTotalConnectionSemaphore(@Named(PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS) int max) throws Exception {
-        return new Semaphore(max, true);
+    public Semaphore provideTotalConnectionSemaphore(
+	    @Named(PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS) int max)
+	    throws Exception {
+	return new Semaphore(max, true);
     }
 }

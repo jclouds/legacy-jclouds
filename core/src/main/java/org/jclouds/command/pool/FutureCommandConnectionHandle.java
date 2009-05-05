@@ -39,31 +39,28 @@ import com.google.inject.assistedinject.Assisted;
  * 
  * @author Adrian Cole
  */
-public abstract class FutureCommandConnectionHandle<C> {
+public abstract class FutureCommandConnectionHandle<C, O extends FutureCommand<?, ?, ?>> {
     protected final BlockingQueue<C> available;
     protected final Semaphore maxConnections;
     protected final Semaphore completed;
     protected C conn;
-    @SuppressWarnings("unchecked")
-    protected FutureCommand operation;
+    protected O command;
     @Resource
     protected Logger logger = Logger.NULL;
 
-    @SuppressWarnings("unchecked")
     public FutureCommandConnectionHandle(Semaphore maxConnections,
-	    @Assisted FutureCommand operation, @Assisted C conn,
-	    BlockingQueue<C> available) throws InterruptedException {
+	    @Assisted O command, @Assisted C conn, BlockingQueue<C> available)
+	    throws InterruptedException {
 	this.maxConnections = maxConnections;
-	this.operation = operation;
+	this.command = command;
 	this.conn = conn;
 	this.available = available;
 	this.completed = new Semaphore(1);
 	completed.acquire();
     }
 
-    @SuppressWarnings("unchecked")
-    public FutureCommand getOperation() {
-	return operation;
+    public O getCommand() {
+	return command;
     }
 
     public abstract void startConnection();
@@ -79,7 +76,7 @@ public abstract class FutureCommandConnectionHandle<C> {
 	logger.trace("%1s - %2d - releasing to pool", conn, conn.hashCode());
 	available.put(conn);
 	conn = null;
-	operation = null;
+	command = null;
 	completed.release();
     }
 
@@ -94,7 +91,7 @@ public abstract class FutureCommandConnectionHandle<C> {
 		shutdownConnection();
 	    } finally {
 		conn = null;
-		operation = null;
+		command = null;
 		maxConnections.release();
 	    }
 	}

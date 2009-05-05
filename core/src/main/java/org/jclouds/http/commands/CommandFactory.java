@@ -41,6 +41,7 @@ public class CommandFactory {
 	ParseSax<?> create(ParseSax.HandlerWithResult<?> handler);
     }
 
+    @SuppressWarnings("unchecked")
     public GetAndParseSax<?> createGetAndParseSax(String uri,
 	    ParseSax.HandlerWithResult<?> handler) {
 	return new GetAndParseSax(uri, parseSaxFactory.create(handler));

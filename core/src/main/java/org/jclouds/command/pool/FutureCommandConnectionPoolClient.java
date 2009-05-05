@@ -40,15 +40,15 @@ import com.google.inject.Inject;
  * 
  * @author Adrian Cole
  */
-public class FutureCommandConnectionPoolClient<C> extends BaseLifeCycle
-	implements FutureCommandClient {
-    private final FutureCommandConnectionPool<C> futureCommandConnectionPool;
-    private final BlockingQueue<FutureCommand> commandQueue;
+public class FutureCommandConnectionPoolClient<C, O extends FutureCommand<?, ?, ?>>
+	extends BaseLifeCycle implements FutureCommandClient<O> {
+    private final FutureCommandConnectionPool<C, O> futureCommandConnectionPool;
+    private final BlockingQueue<O> commandQueue;
 
     @Inject
     public FutureCommandConnectionPoolClient(ExecutorService executor,
-	    FutureCommandConnectionPool<C> futureCommandConnectionPool,
-	    BlockingQueue<FutureCommand> commandQueue) {
+	    FutureCommandConnectionPool<C, O> futureCommandConnectionPool,
+	    BlockingQueue<O> commandQueue) {
 	super(executor, futureCommandConnectionPool);
 	this.futureCommandConnectionPool = futureCommandConnectionPool;
 	this.commandQueue = commandQueue;
@@ -66,7 +66,8 @@ public class FutureCommandConnectionPoolClient<C> extends BaseLifeCycle
 	exception.compareAndSet(null, futureCommandConnectionPool
 		.getException());
 	while (!commandQueue.isEmpty()) {
-	    FutureCommand command = commandQueue.remove();
+	    FutureCommand<?, ?, ?> command = (FutureCommand<?, ?, ?>) commandQueue
+		    .remove();
 	    if (command != null) {
 		if (exception.get() != null)
 		    command.setException(exception.get());
@@ -78,7 +79,7 @@ public class FutureCommandConnectionPoolClient<C> extends BaseLifeCycle
 
     @Override
     protected void doWork() throws InterruptedException {
-	FutureCommand command = commandQueue.poll(1, TimeUnit.SECONDS);
+	O command = commandQueue.poll(1, TimeUnit.SECONDS);
 	if (command != null) {
 	    try {
 		invoke(command);
@@ -89,37 +90,37 @@ public class FutureCommandConnectionPoolClient<C> extends BaseLifeCycle
 	}
     }
 
-    public <O extends FutureCommand> void submit(O operation) {
+    public void submit(O command) {
 	exceptionIfNotActive();
-	commandQueue.add(operation);
+	commandQueue.add(command);
     }
 
-    protected <O extends FutureCommand> void invoke(O operation) {
+    protected void invoke(O command) {
 	exceptionIfNotActive();
-	FutureCommandConnectionHandle<C> connectionHandle = null;
+	FutureCommandConnectionHandle<C, O> connectionHandle = null;
 	try {
-	    connectionHandle = futureCommandConnectionPool.getHandle(operation);
+	    connectionHandle = futureCommandConnectionPool.getHandle(command);
 	} catch (InterruptedException e) {
 	    logger
 		    .warn(
 			    e,
-			    "Interrupted getting a connection for operation %1s; retrying",
-			    operation);
-	    commandQueue.add(operation);
+			    "Interrupted getting a connection for command %1s; retrying",
+			    command);
+	    commandQueue.add(command);
 	    return;
 	} catch (TimeoutException e) {
 	    logger.warn(e,
-		    "Timeout getting a connection for operation %1s; retrying",
-		    operation);
-	    commandQueue.add(operation);
+		    "Timeout getting a connection for command %1s; retrying",
+		    command);
+	    commandQueue.add(command);
 	    return;
 	}
 
 	if (connectionHandle == null) {
 	    logger.error(
-		    "Failed to obtain connection for operation %1s; retrying",
-		    operation);
-	    commandQueue.add(operation);
+		    "Failed to obtain connection for command %1s; retrying",
+		    command);
+	    commandQueue.add(command);
 	    return;
 	}
 	connectionHandle.startConnection();

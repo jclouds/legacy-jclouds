@@ -25,20 +25,16 @@ package org.jclouds.http.httpnio.config;
 
 import java.net.InetSocketAddress;
 
-import org.apache.http.nio.NHttpConnection;
-import org.jclouds.command.pool.FutureCommandConnectionRetry;
 import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpFutureCommandClient;
 import org.jclouds.http.config.HttpFutureCommandClientModule;
 import org.jclouds.http.httpnio.config.internal.NonSSLHttpNioConnectionPoolClientModule;
 import org.jclouds.http.httpnio.config.internal.SSLHttpNioConnectionPoolClientModule;
 import org.jclouds.http.httpnio.pool.HttpNioConnectionPoolClient;
-import org.jclouds.http.httpnio.pool.HttpNioFutureCommandConnectionRetry;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.google.inject.TypeLiteral;
 import com.google.inject.name.Named;
 
 /**
@@ -59,8 +55,6 @@ public class HttpNioConnectionPoolClientModule extends AbstractModule {
 	    install(new SSLHttpNioConnectionPoolClientModule());
 	else
 	    install(new NonSSLHttpNioConnectionPoolClientModule());
-	bind(new TypeLiteral<FutureCommandConnectionRetry<NHttpConnection>>() {
-	}).to(HttpNioFutureCommandConnectionRetry.class);
 	bind(HttpFutureCommandClient.class).to(
 		HttpNioConnectionPoolClient.class);
     }

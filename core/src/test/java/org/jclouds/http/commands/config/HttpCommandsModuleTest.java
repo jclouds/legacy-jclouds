@@ -23,46 +23,48 @@
  */
 package org.jclouds.http.commands.config;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.commands.CommandFactory;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 import org.testng.annotations.Test;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
 /**
  * // TODO: Adrian: Document this!
- *
+ * 
  * @author Adrian Cole
  */
 @Test
 public class HttpCommandsModuleTest {
 
     public void testGetString() {
-        Injector i = Guice.createInjector(new HttpCommandsModule());
-        CommandFactory factory = i.getInstance(CommandFactory.class);
-        HttpFutureCommand get = factory.createGetString("/index.html");
-        assert get != null;
-        assert get.getResponseFuture() != null;
+	Injector i = Guice.createInjector(new HttpCommandsModule());
+	CommandFactory factory = i.getInstance(CommandFactory.class);
+	HttpFutureCommand<String> get = factory.createGetString("/index.html");
+	assert get != null;
+	assert get.getResponseFuture() != null;
     }
 
     public void testHead() {
-        Injector i = Guice.createInjector(new HttpCommandsModule());
-        CommandFactory factory = i.getInstance(CommandFactory.class);
-        HttpFutureCommand Head = factory.createHead("/index.html");
-        assert Head != null;
-        assert Head.getResponseFuture() != null;
+	Injector i = Guice.createInjector(new HttpCommandsModule());
+	CommandFactory factory = i.getInstance(CommandFactory.class);
+	HttpFutureCommand<Boolean> Head = factory.createHead("/index.html");
+	assert Head != null;
+	assert Head.getResponseFuture() != null;
     }
 
     public void testGetAndParseXml() {
-        Injector i = Guice.createInjector(new HttpCommandsModule());
-        CommandFactory factory = i.getInstance(CommandFactory.class);
-        HttpFutureCommand GetAndParseXml = factory.createGetAndParseSax("/index.html", new ParseSax.HandlerWithResult<String>(){
-            public String getResult() {
-                return "hello";
-            }
-        });
-        assert GetAndParseXml != null;
-        assert GetAndParseXml.getResponseFuture() != null;
+	Injector i = Guice.createInjector(new HttpCommandsModule());
+	CommandFactory factory = i.getInstance(CommandFactory.class);
+	HttpFutureCommand<?> GetAndParseXml = factory.createGetAndParseSax(
+		"/index.html", new ParseSax.HandlerWithResult<String>() {
+		    public String getResult() {
+			return "hello";
+		    }
+		});
+	assert GetAndParseXml != null;
+	assert GetAndParseXml.getResponseFuture() != null;
     }
 }

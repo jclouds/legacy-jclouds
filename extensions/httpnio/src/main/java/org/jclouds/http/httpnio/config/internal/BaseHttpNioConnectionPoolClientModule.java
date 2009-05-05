@@ -25,6 +25,7 @@ package org.jclouds.http.httpnio.config.internal;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.HttpEntity;
@@ -48,12 +49,11 @@ import org.apache.http.protocol.RequestContent;
 import org.apache.http.protocol.RequestExpectContinue;
 import org.apache.http.protocol.RequestTargetHost;
 import org.apache.http.protocol.RequestUserAgent;
-import org.jclouds.command.pool.FutureCommandConnectionRetry;
 import org.jclouds.command.pool.PoolConstants;
 import org.jclouds.command.pool.config.FutureCommandConnectionPoolClientModule;
+import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.httpnio.pool.HttpNioFutureCommandConnectionHandle;
 import org.jclouds.http.httpnio.pool.HttpNioFutureCommandConnectionPool;
-import org.jclouds.http.httpnio.pool.HttpNioFutureCommandConnectionRetry;
 import org.jclouds.http.httpnio.pool.HttpNioFutureCommandExecutionHandler;
 
 import com.google.inject.Inject;
@@ -112,6 +112,9 @@ public abstract class BaseHttpNioConnectionPoolClientModule extends
 
     protected void configure() {
 	super.configure();
+	bind(new TypeLiteral<BlockingQueue<HttpFutureCommand<?>>>() {
+	}).to(new TypeLiteral<LinkedBlockingQueue<HttpFutureCommand<?>>>() {
+	}).in(Scopes.SINGLETON);
 	bind(
 		HttpNioFutureCommandExecutionHandler.ConsumingNHttpEntityFactory.class)
 		.toProvider(
@@ -126,8 +129,6 @@ public abstract class BaseHttpNioConnectionPoolClientModule extends
 	bind(ConnectionReuseStrategy.class).to(
 		DefaultConnectionReuseStrategy.class).in(Scopes.SINGLETON);
 	bind(ByteBufferAllocator.class).to(HeapByteBufferAllocator.class);
-	bind(FutureCommandConnectionRetry.class).to(
-		HttpNioFutureCommandConnectionRetry.class);
 	bind(
 		HttpNioFutureCommandConnectionPool.FutureCommandConnectionHandleFactory.class)
 		.toProvider(

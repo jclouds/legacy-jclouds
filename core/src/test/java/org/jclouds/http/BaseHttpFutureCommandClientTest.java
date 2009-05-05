@@ -57,6 +57,7 @@ import org.testng.annotations.Test;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
@@ -126,7 +127,7 @@ public abstract class BaseHttpFutureCommandClientTest {
 			}).toInstance(filters);
 		    }
 		});
-	factory = injector.getInstance(CommandFactory.class);
+	factory = injector.getInstance(Key.get(CommandFactory.class));
 	client = injector.getInstance(HttpFutureCommandClient.class);
 	closer = injector.getInstance(Closer.class);
 	assert client != null;
@@ -187,7 +188,7 @@ public abstract class BaseHttpFutureCommandClientTest {
     @Test(invocationCount = 500, timeOut = 1500)
     void testGetAndParseSax() throws MalformedURLException, ExecutionException,
 	    InterruptedException, TimeoutException {
-	GetAndParseSax getAndParseSax = factory.createGetAndParseSax("/",
+	GetAndParseSax<?> getAndParseSax = factory.createGetAndParseSax("/",
 		new ParseSax.HandlerWithResult<String>() {
 		    @Override
 		    public String getResult() {

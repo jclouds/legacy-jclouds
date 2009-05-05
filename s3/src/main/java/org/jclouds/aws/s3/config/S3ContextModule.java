@@ -35,7 +35,6 @@ import org.jclouds.aws.s3.internal.GuiceS3Context;
 import org.jclouds.aws.s3.internal.LiveS3Connection;
 import org.jclouds.aws.s3.internal.LiveS3InputStreamMap;
 import org.jclouds.aws.s3.internal.LiveS3ObjectMap;
-import org.jclouds.aws.s3.internal.GuiceS3Context.S3ObjectMapFactory;
 import org.jclouds.http.HttpRequestFilter;
 
 import com.google.inject.AbstractModule;

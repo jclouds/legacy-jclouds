@@ -23,11 +23,11 @@
  */
 package org.jclouds;
 
-import org.apache.commons.io.IOUtils;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.ExecutionException;
+
+import org.apache.commons.io.IOUtils;
 
 /**
  * // TODO: Adrian: Document this!
@@ -37,6 +37,7 @@ import java.util.concurrent.ExecutionException;
 public class Utils {
 
 
+    @SuppressWarnings("unchecked")
     public static <E extends Exception> void rethrowIfRuntimeOrSameType(Exception e) throws E {
         if (e instanceof ExecutionException) {
             Throwable nested = e.getCause();

@@ -97,6 +97,7 @@ public class S3ParserTest extends org.jclouds.aws.s3.commands.S3ParserTest {
 	    assert completer.take().get();
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testAmazonCanParseListAllMyBuckets() throws IOException {
 	ListAllMyBucketsResponse response = runAmazonParseListAllMyBuckets();

@@ -40,7 +40,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.Utils;
-import org.jclouds.command.FutureCommand;
 import org.jclouds.logging.Logger;
 
 import com.google.inject.Inject;
@@ -71,7 +70,7 @@ public class JavaUrlHttpFutureCommandClient implements HttpFutureCommandClient {
 	this.target = target;
     }
 
-    public <O extends FutureCommand> void submit(O operation) {
+    public void submit(HttpFutureCommand<?> operation) {
 	HttpRequest request = (HttpRequest) operation.getRequest();
 	HttpURLConnection connection = null;
 	try {

@@ -56,11 +56,10 @@ public class CopyObjectCallable extends
 	    }
 	    throw new HttpException("Error copying source " + reason);
 	} else if (getResponse().getStatusCode() == 200) {
-	    String response;
 	    InputStream content = getResponse().getContent();
 	    if (content != null) {
 		try {
-		    response = Utils.toStringAndClose(content);
+		    Utils.toStringAndClose(content);
 		    // TODO parse response of format: <CopyObjectResult
 		    // xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><LastModified>2009-05-02T18:29:48.000Z</LastModified><ETag>&quot;29f1a7935898965c45f756e5f936fad2&quot;</ETag></CopyObjectResult>
 		} catch (IOException e) {

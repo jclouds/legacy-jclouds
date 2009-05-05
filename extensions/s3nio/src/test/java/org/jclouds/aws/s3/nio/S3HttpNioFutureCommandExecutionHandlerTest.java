@@ -30,6 +30,7 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
 import java.io.IOException;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.commons.io.IOUtils;
@@ -37,7 +38,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.nio.entity.NStringEntity;
-import org.jclouds.http.httpnio.pool.HttpNioFutureCommandConnectionRetry;
+import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.httpnio.pool.HttpNioFutureCommandExecutionHandler;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -58,7 +59,7 @@ public class S3HttpNioFutureCommandExecutionHandlerTest {
 	handler = new S3HttpNioFutureCommandExecutionHandler(
 		createMock(HttpNioFutureCommandExecutionHandler.ConsumingNHttpEntityFactory.class),
 		createMock(ExecutorService.class),
-		createMock(HttpNioFutureCommandConnectionRetry.class));
+		new ArrayBlockingQueue<HttpFutureCommand<?>>(1));
 	response = createMock(HttpResponse.class);
 	statusline = createMock(StatusLine.class);
 	expect(response.getStatusLine()).andReturn(statusline).atLeastOnce();
