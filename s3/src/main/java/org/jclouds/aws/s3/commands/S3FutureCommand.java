@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -25,17 +25,16 @@ package org.jclouds.aws.s3.commands;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.http.HttpFutureCommand;
 
 public class S3FutureCommand<T> extends HttpFutureCommand<T> {
 
     public S3FutureCommand(String method, String uri,
 	    ResponseCallable<T> responseCallable, String amazonHost,
-	    S3Bucket s3Bucket) {
+	    String bucketName) {
 	super(method, uri, responseCallable);
 	addHostHeader(checkNotNull(amazonHost, "amazonHost"), checkNotNull(
-		s3Bucket, "s3Bucket"));
+		bucketName, "bucketName"));
     }
 
     public S3FutureCommand(String method, String uri,
@@ -44,10 +43,10 @@ public class S3FutureCommand<T> extends HttpFutureCommand<T> {
 	addHostHeader(checkNotNull(amazonHost, "amazonHost"));
     }
 
-    protected void addHostHeader(String amazonHost, S3Bucket s3Bucket) {
-	String host = checkNotNull(s3Bucket.getName(), "s3Bucket.getName()")
-		+ "." + amazonHost;
-	addHostHeader(host);
+    protected void addHostHeader(String amazonHost, String bucketName) {
+	String host = checkNotNull(bucketName, "s3Bucket.getName()") + "."
+		+ amazonHost;
+	addHostHeader(host.toLowerCase());
     }
 
 }

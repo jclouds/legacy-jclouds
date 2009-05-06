@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -25,29 +25,32 @@ package org.jclouds.aws.s3.commands;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.aws.s3.commands.callables.CopyObjectCallable;
-import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.s3.xml.CopyObjectHandler;
+import org.jclouds.http.commands.callables.xml.ParseSax;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 
-public class CopyObject extends S3FutureCommand<Boolean> {
+public class CopyObject extends S3FutureCommand<S3Object.MetaData> {
 
     @Inject
     public CopyObject(@Named("jclouds.http.address") String amazonHost,
-	    CopyObjectCallable callable,
-	    @Assisted("sourceBucket") S3Bucket sourceBucket,
-	    @Assisted("sourceObject") S3Object sourceObject,
-	    @Assisted("destinationBucket") S3Bucket destinationBucket,
-	    @Assisted("destinationObject") S3Object destinationObject) {
-	super("PUT", "/" + checkNotNull(destinationObject.getKey(),"destinationObject.getKey()"), callable,
-		amazonHost, destinationBucket);
+	    ParseSax<S3Object.MetaData> callable,
+	    @Assisted("sourceBucket") String sourceBucket,
+	    @Assisted("sourceObject") String sourceObject,
+	    @Assisted("destinationBucket") String destinationBucket,
+	    @Assisted("destinationObject") String destinationObject) {
+	super("PUT",
+		"/" + checkNotNull(destinationObject, "destinationObject"),
+		callable, amazonHost, destinationBucket);
+	CopyObjectHandler handler = (CopyObjectHandler) callable.getHandler();
+	handler.setKey(destinationObject);
 	getRequest().getHeaders().put(
 		"x-amz-copy-source",
-		String.format("/%1s/%2s", checkNotNull(sourceBucket.getName(),
-			"sourceBucket.getName()"), checkNotNull(sourceObject
-			.getKey(), "sourceObject.getKey()")));
+		String.format("/%1s/%2s", checkNotNull(sourceBucket,
+			"sourceBucket").toLowerCase(), checkNotNull(
+			sourceObject, "sourceObject")));
     }
 }

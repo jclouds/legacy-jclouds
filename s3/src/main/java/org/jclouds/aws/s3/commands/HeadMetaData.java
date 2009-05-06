@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -26,7 +26,6 @@ package org.jclouds.aws.s3.commands;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.aws.s3.commands.callables.HeadMetaDataCallable;
-import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
 
 import com.google.inject.Inject;
@@ -44,9 +43,9 @@ public class HeadMetaData extends S3FutureCommand<S3Object.MetaData> {
 
     @Inject
     public HeadMetaData(@Named("jclouds.http.address") String amazonHost,
-	    HeadMetaDataCallable callable, @Assisted S3Bucket s3Bucket,
-	    @Assisted String key) {
-	super("HEAD", "/" + checkNotNull(key), callable, amazonHost, s3Bucket);
+	    HeadMetaDataCallable callable,
+	    @Assisted("bucketName") String bucket, @Assisted("key") String key) {
+	super("HEAD", "/" + checkNotNull(key), callable, amazonHost, bucket);
 	callable.setKey(key);
     }
 }

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,7 +23,6 @@
  */
 package org.jclouds.aws.s3.commands;
 
-import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.http.commands.callables.ReturnTrueIf200;
 
 import com.google.inject.Inject;
@@ -34,7 +33,7 @@ public class BucketExists extends S3FutureCommand<Boolean> {
 
     @Inject
     public BucketExists(@Named("jclouds.http.address") String amazonHost,
-	    ReturnTrueIf200 callable, @Assisted S3Bucket s3Bucket) {
+	    ReturnTrueIf200 callable, @Assisted String s3Bucket) {
 	super("HEAD", "/", callable, amazonHost, s3Bucket);
     }
 }

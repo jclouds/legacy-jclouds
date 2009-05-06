@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -21,24 +21,26 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.commands;
+package org.jclouds.aws.s3.config;
 
-import org.jclouds.aws.s3.commands.callables.xml.ListBucketHandler;
-import org.jclouds.aws.s3.domain.S3Bucket;
-import org.jclouds.http.commands.callables.xml.ParseSax;
+import org.jclouds.aws.s3.internal.S3JavaUrlHttpFutureCommandClient;
+import org.jclouds.http.HttpFutureCommandClient;
+import org.jclouds.http.config.HttpFutureCommandClientModule;
+import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
 
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
+/**
+ * Configures {@link S3JavaUrlHttpFutureCommandClient}.
+ * 
+ * @author Adrian Cole
+ */
+@HttpFutureCommandClientModule
+public class S3JavaUrlHttpFutureCommandClientModule extends
+	JavaUrlHttpFutureCommandClientModule {
 
-import com.google.inject.name.Named;
-
-public class ListBucket extends S3FutureCommand<S3Bucket> {
-
-    @Inject
-    public ListBucket(@Named("jclouds.http.address") String amazonHost,
-	    ParseSax<S3Bucket> callable, @Assisted S3Bucket s3Bucket) {
-	super("GET", "/", callable, amazonHost, s3Bucket);
-	ListBucketHandler handler = (ListBucketHandler) callable.getHandler();
-	handler.setBucket(s3Bucket);
+    @Override
+    protected void bindClient() {
+	// note this is not threadsafe, so it cannot be singleton
+	bind(HttpFutureCommandClient.class).to(
+		S3JavaUrlHttpFutureCommandClient.class);
     }
 }

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -25,10 +25,15 @@ package org.jclouds.aws.s3.commands;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import org.jclouds.aws.s3.S3ResponseException;
 import org.jclouds.aws.s3.commands.callables.GetObjectCallable;
-import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
@@ -44,9 +49,41 @@ public class GetObject extends S3FutureCommand<S3Object> {
 
     @Inject
     public GetObject(@Named("jclouds.http.address") String amazonHost,
-	    GetObjectCallable callable, @Assisted S3Bucket s3Bucket,
-	    @Assisted String key) {
+	    GetObjectCallable callable,
+	    @Assisted("bucketName") String s3Bucket, @Assisted("key") String key) {
 	super("GET", "/" + checkNotNull(key), callable, amazonHost, s3Bucket);
 	callable.setKey(key);
+    }
+
+    @Override
+    public S3Object get() throws InterruptedException, ExecutionException {
+	try {
+	    return super.get();
+	} catch (ExecutionException e) {
+	    return attemptNotFound(e);
+	}
+    }
+
+    @VisibleForTesting
+    S3Object attemptNotFound(ExecutionException e)
+	    throws ExecutionException {
+	if (e.getCause() != null && e.getCause() instanceof S3ResponseException) {
+	    S3ResponseException responseException = (S3ResponseException) e
+		    .getCause();
+	    if ("NoSuchKey".equals(responseException.getError().getCode())) {
+		return S3Object.NOT_FOUND;
+	    }
+	}
+	throw e;
+    }
+
+    @Override
+    public S3Object get(long l, TimeUnit timeUnit) throws InterruptedException,
+	    ExecutionException, TimeoutException {
+	try {
+	    return super.get(l, timeUnit);
+	} catch (ExecutionException e) {
+	    return attemptNotFound(e);
+	}
     }
 }

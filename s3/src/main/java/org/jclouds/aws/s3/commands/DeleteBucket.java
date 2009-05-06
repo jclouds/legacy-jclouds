@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -24,7 +24,6 @@
 package org.jclouds.aws.s3.commands;
 
 import org.jclouds.aws.s3.commands.callables.DeleteBucketCallable;
-import org.jclouds.aws.s3.domain.S3Bucket;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
@@ -34,7 +33,7 @@ public class DeleteBucket extends S3FutureCommand<Boolean> {
 
     @Inject
     public DeleteBucket(@Named("jclouds.http.address") String amazonHost,
-	    DeleteBucketCallable callable, @Assisted S3Bucket s3Bucket) {
+	    DeleteBucketCallable callable, @Assisted String s3Bucket) {
 	super("DELETE", "/", callable, amazonHost, s3Bucket);
     }
 }

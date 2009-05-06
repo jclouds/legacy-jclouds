@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -34,8 +34,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.jclouds.aws.s3.commands.options.CreateBucketOptions;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.s3.domain.S3Bucket.MetaData;
 
 /**
  * // TODO: Adrian: Document this!
@@ -43,9 +45,9 @@ import org.jclouds.aws.s3.domain.S3Object;
  * @author Adrian Cole
  */
 public class StubS3Connection implements S3Connection {
-    private static Map<S3Bucket, Map<String, Object>> bucketToContents = new ConcurrentHashMap<S3Bucket, Map<String, Object>>();
+    private static Map<String, Map<String, Object>> bucketToContents = new ConcurrentHashMap<String, Map<String, Object>>();
 
-    public Future<S3Object> getObject(final S3Bucket s3Bucket, final String key) {
+    public Future<S3Object> getObject(final String s3Bucket, final String key) {
 	return new FutureBase<S3Object>() {
 	    public S3Object get() throws InterruptedException,
 		    ExecutionException {
@@ -62,7 +64,7 @@ public class StubS3Connection implements S3Connection {
 	};
     }
 
-    public Future<S3Object.MetaData> getObjectMetaData(final S3Bucket s3Bucket,
+    public Future<S3Object.MetaData> getObjectMetaData(final String s3Bucket,
 	    final String key) {
 	return new FutureBase<S3Object.MetaData>() {
 	    public S3Object.MetaData get() throws InterruptedException,
@@ -79,8 +81,7 @@ public class StubS3Connection implements S3Connection {
 	};
     }
 
-    public Future<Boolean> deleteObject(final S3Bucket s3Bucket,
-	    final String key) {
+    public Future<Boolean> deleteObject(final String s3Bucket, final String key) {
 	return new FutureBase<Boolean>() {
 	    public Boolean get() throws InterruptedException,
 		    ExecutionException {
@@ -92,13 +93,12 @@ public class StubS3Connection implements S3Connection {
 	};
     }
 
-    public Future<String> addObject(final S3Bucket s3Bucket,
-	    final S3Object object) {
+    public Future<String> addObject(final String s3Bucket, final S3Object object) {
 	return new FutureBase<String>() {
 	    public String get() throws InterruptedException, ExecutionException {
 		if (!bucketToContents.containsKey(s3Bucket)) {
 		    throw new ExecutionException(new RuntimeException(
-			    "bucket not found: " + s3Bucket.getName()));
+			    "bucket not found: " + s3Bucket));
 		}
 		bucketToContents.get(s3Bucket).put(object.getKey(),
 			object.getClass());
@@ -107,7 +107,7 @@ public class StubS3Connection implements S3Connection {
 	};
     }
 
-    public Future<Boolean> createBucketIfNotExists(final S3Bucket s3Bucket) {
+    public Future<Boolean> createBucketIfNotExists(final String s3Bucket) {
 	return new FutureBase<Boolean>() {
 	    public Boolean get() throws InterruptedException,
 		    ExecutionException {
@@ -120,7 +120,7 @@ public class StubS3Connection implements S3Connection {
 	};
     }
 
-    public Future<Boolean> deleteBucket(final S3Bucket s3Bucket) {
+    public Future<Boolean> deleteBucketIfNotEmpty(final String s3Bucket) {
 	return new FutureBase<Boolean>() {
 	    public Boolean get() throws InterruptedException,
 		    ExecutionException {
@@ -133,26 +133,25 @@ public class StubS3Connection implements S3Connection {
 	};
     }
 
-    public Future<Boolean> copyObject(final S3Bucket sourceBucket,
-	    final S3Object sourceObject, final S3Bucket destinationBucket,
-	    final S3Object destinationObject) {
-	return new FutureBase<Boolean>() {
-	    public Boolean get() throws InterruptedException,
+    public Future<S3Object.MetaData> copyObject(final String sourceBucket,
+	    final String sourceObject, final String destinationBucket,
+	    final String destinationObject) {
+	return new FutureBase<S3Object.MetaData>() {
+	    public S3Object.MetaData get() throws InterruptedException,
 		    ExecutionException {
 		Map<String, Object> source = bucketToContents.get(sourceBucket);
 		Map<String, Object> dest = bucketToContents
 			.get(destinationBucket);
-		if (source.containsKey(sourceObject.getKey())) {
-		    dest.put(destinationObject.getKey(), source
-			    .get(sourceObject.getKey()));
-		    return true;
+		if (source.containsKey(sourceObject)) {
+		    dest.put(destinationObject, source.get(sourceObject));
+		    return new S3Object.MetaData(destinationObject);
 		}
-		return false;
+		return S3Object.MetaData.NOT_FOUND;
 	    }
 	};
     }
 
-    public Future<Boolean> bucketExists(final S3Bucket s3Bucket) {
+    public Future<Boolean> bucketExists(final String s3Bucket) {
 	return new FutureBase<Boolean>() {
 	    public Boolean get() throws InterruptedException,
 		    ExecutionException {
@@ -161,7 +160,7 @@ public class StubS3Connection implements S3Connection {
 	};
     }
 
-    public Future<S3Bucket> getBucket(final S3Bucket s3Bucket) {
+    public Future<S3Bucket> getBucket(final String s3Bucket) {
 	return new FutureBase<S3Bucket>() {
 	    public S3Bucket get() throws InterruptedException,
 		    ExecutionException {
@@ -174,21 +173,13 @@ public class StubS3Connection implements S3Connection {
 			contents.add(metaData);
 		    }
 		}
-		s3Bucket.setContents(contents);
-		return s3Bucket;
+		S3Bucket returnVal = new S3Bucket(s3Bucket);
+		returnVal.setContents(contents);
+		return returnVal;
 	    }
 	}
 
 	;
-    }
-
-    public Future<List<S3Bucket>> getBuckets() {
-	return new FutureBase<List<S3Bucket>>() {
-	    public List<S3Bucket> get() throws InterruptedException,
-		    ExecutionException {
-		return new ArrayList<S3Bucket>(bucketToContents.keySet());
-	    }
-	};
     }
 
     private abstract class FutureBase<V> implements Future<V> {
@@ -208,6 +199,23 @@ public class StubS3Connection implements S3Connection {
 		ExecutionException, TimeoutException {
 	    return get();
 	}
+    }
+
+    public Future<List<MetaData>> getMetaDataOfOwnedBuckets() {
+	return new FutureBase<List<S3Bucket.MetaData>>() {
+	    public List<S3Bucket.MetaData> get() throws InterruptedException,
+		    ExecutionException {
+		List<S3Bucket.MetaData> list = new ArrayList<S3Bucket.MetaData>();
+		for (String name : bucketToContents.keySet())
+		    list.add(new S3Bucket.MetaData(name));
+		return list;
+	    }
+	};
+    }
+
+    public Future<Boolean> createBucketIfNotExists(String name,
+	    CreateBucketOptions options) {
+	throw new UnsupportedOperationException("todo");
     }
 
 }

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -26,7 +26,6 @@ package org.jclouds.aws.s3.commands;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.aws.s3.commands.callables.PutObjectCallable;
-import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
 
 import com.google.inject.Inject;
@@ -37,7 +36,7 @@ public class PutObject extends S3FutureCommand<String> {
 
     @Inject
     public PutObject(@Named("jclouds.http.address") String amazonHost,
-	    PutObjectCallable callable, @Assisted S3Bucket s3Bucket,
+	    PutObjectCallable callable, @Assisted String s3Bucket,
 	    @Assisted S3Object object) {
 	super("PUT", "/" + checkNotNull(object.getKey()), callable, amazonHost,
 		s3Bucket);

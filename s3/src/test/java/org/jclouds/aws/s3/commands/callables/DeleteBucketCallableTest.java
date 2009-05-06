@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -34,6 +34,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.io.IOUtils;
+import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.AfterMethod;
@@ -41,13 +42,13 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 @Test
-public class CopyObjectCallableTest {
+public class DeleteBucketCallableTest {
 
     private HttpFutureCommand.ResponseCallable<Boolean> callable = null;
 
     @BeforeMethod
     void setUp() {
-	callable = new CopyObjectCallable();
+	callable = new DeleteBucketCallable();
     }
 
     @AfterMethod
@@ -55,27 +56,21 @@ public class CopyObjectCallableTest {
 	callable = null;
     }
 
-    @Test
-    public void testExceptionWhenNoContentOn200() throws ExecutionException,
-	    InterruptedException, TimeoutException, IOException {
+    @Test(expectedExceptions = HttpException.class)
+    public void testExceptionWhenNoContentOn409() throws Exception {
 	HttpResponse response = createMock(HttpResponse.class);
-	expect(response.getStatusCode()).andReturn(200).atLeastOnce();
+	expect(response.getStatusCode()).andReturn(409).atLeastOnce();
 	expect(response.getContent()).andReturn(null);
 	replay(response);
 	callable.setResponse(response);
-	try {
-	    callable.call();
-	} catch (Exception e) {
-	    assert e.getMessage().equals("no content");
-	}
-	verify(response);
+	callable.call();
     }
 
     @Test
-    public void testExceptionWhenIOExceptionOn200() throws ExecutionException,
+    public void testExceptionWhenIOExceptionOn409() throws ExecutionException,
 	    InterruptedException, TimeoutException, IOException {
 	HttpResponse response = createMock(HttpResponse.class);
-	expect(response.getStatusCode()).andReturn(200).atLeastOnce();
+	expect(response.getStatusCode()).andReturn(409).atLeastOnce();
 	RuntimeException exception = new RuntimeException("bad");
 	expect(response.getContent()).andThrow(exception);
 	replay(response);
@@ -89,10 +84,21 @@ public class CopyObjectCallableTest {
     }
 
     @Test
+    public void testFalseWhenBucketNotEmptyOn409() throws Exception {
+	HttpResponse response = createMock(HttpResponse.class);
+	expect(response.getStatusCode()).andReturn(409).atLeastOnce();
+	expect(response.getContent()).andReturn(
+		IOUtils.toInputStream("BucketNotEmpty")).atLeastOnce();
+	replay(response);
+	callable.setResponse(response);
+	assert !callable.call().booleanValue();
+	verify(response);
+    }
+
+    @Test
     public void testResponseOk() throws Exception {
 	HttpResponse response = createMock(HttpResponse.class);
-	expect(response.getStatusCode()).andReturn(200).atLeastOnce();
-	expect(response.getContent()).andReturn(IOUtils.toInputStream("hello"));
+	expect(response.getStatusCode()).andReturn(204).atLeastOnce();
 	replay(response);
 	callable.setResponse(response);
 	assertEquals(callable.call(), new Boolean(true));

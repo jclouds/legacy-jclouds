@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.commands.callables.xml;
+package org.jclouds.aws.s3.xml;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,15 +35,15 @@ import org.xml.sax.Attributes;
 import com.google.inject.Inject;
 
 /**
- * // TODO: Adrian: Document this!
+ * Parses the response from Amazon S3 GET Service command.
  * 
  * @author Adrian Cole
  */
 public class ListAllMyBucketsHandler extends
-	ParseSax.HandlerWithResult<List<S3Bucket>> {
+	ParseSax.HandlerWithResult<List<S3Bucket.MetaData>> {
 
-    private List<S3Bucket> buckets = new ArrayList<S3Bucket>();
-    private S3Bucket currentS3Bucket;
+    private List<S3Bucket.MetaData> buckets = new ArrayList<S3Bucket.MetaData>();
+    private S3Bucket.MetaData currentS3Bucket;
     private S3Owner currentOwner;
     private StringBuilder currentText = new StringBuilder();
 
@@ -54,7 +54,7 @@ public class ListAllMyBucketsHandler extends
 	this.dateParser = dateParser;
     }
 
-    public List<S3Bucket> getResult() {
+    public List<S3Bucket.MetaData> getResult() {
 	return buckets;
     }
 
@@ -72,14 +72,13 @@ public class ListAllMyBucketsHandler extends
 	} else if (qName.equals("DisplayName")) {
 	    currentOwner.setDisplayName(currentText.toString());
 	} else if (qName.equals("Bucket")) {
-	    currentS3Bucket.getMetaData().setCanonicalUser(currentOwner);
+	    currentS3Bucket.setCanonicalUser(currentOwner);
 	    buckets.add(currentS3Bucket);
 	} else if (qName.equals("Name")) {
-	    currentS3Bucket = new S3Bucket(currentText.toString());
-	    currentS3Bucket.setComplete(false);
+	    currentS3Bucket = new S3Bucket.MetaData(currentText.toString());
 	} else if (qName.equals("CreationDate")) {
-	    currentS3Bucket.getMetaData().setCreationDate(
-		    dateParser.dateTimeFromXMLFormat(currentText.toString()));
+	    currentS3Bucket.setCreationDate(dateParser
+		    .dateTimeFromXMLFormat(currentText.toString()));
 	}
 	currentText = new StringBuilder();
     }

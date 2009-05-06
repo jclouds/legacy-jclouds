@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -26,8 +26,6 @@ package com.amazon.s3;
 import java.io.File;
 import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
-
-import org.jclouds.aws.s3.domain.S3Bucket;
 
 /**
  * // TODO: Adrian: Document this!
@@ -56,45 +54,41 @@ public abstract class BaseJCloudsPerformance extends BasePerformance {
     @Override
     protected boolean putByteArray(String bucket, String key, byte[] data,
 	    String contentType) throws Exception {
-	S3Bucket s3Bucket = new S3Bucket(bucket);
 	org.jclouds.aws.s3.domain.S3Object object = new org.jclouds.aws.s3.domain.S3Object(
 		key);
 	object.getMetaData().setContentType(contentType);
 	object.setData(data);
-	return client.addObject(s3Bucket, object).get(120, TimeUnit.SECONDS) != null;
+	return client.addObject(bucket, object).get(120, TimeUnit.SECONDS) != null;
     }
 
     @Override
     protected boolean putFile(String bucket, String key, File data,
 	    String contentType) throws Exception {
-	S3Bucket s3Bucket = new S3Bucket(bucket);
 	org.jclouds.aws.s3.domain.S3Object object = new org.jclouds.aws.s3.domain.S3Object(
 		key);
 	object.getMetaData().setContentType(contentType);
 	object.setData(data);
-	return client.addObject(s3Bucket, object).get(120, TimeUnit.SECONDS) != null;
+	return client.addObject(bucket, object).get(120, TimeUnit.SECONDS) != null;
     }
 
     @Override
     protected boolean putInputStream(String bucket, String key,
 	    InputStream data, String contentType) throws Exception {
-	S3Bucket s3Bucket = new S3Bucket(bucket);
 	org.jclouds.aws.s3.domain.S3Object object = new org.jclouds.aws.s3.domain.S3Object(
 		key);
 	object.getMetaData().setContentType(contentType);
 	object.setData(data);
 	object.getMetaData().setSize(data.available());
-	return client.addObject(s3Bucket, object).get(120, TimeUnit.SECONDS) != null;
+	return client.addObject(bucket, object).get(120, TimeUnit.SECONDS) != null;
     }
 
     @Override
     protected boolean putString(String bucket, String key, String data,
 	    String contentType) throws Exception {
-	S3Bucket s3Bucket = new S3Bucket(bucket);
 	org.jclouds.aws.s3.domain.S3Object object = new org.jclouds.aws.s3.domain.S3Object(
 		key);
 	object.getMetaData().setContentType(contentType);
 	object.setData(data);
-	return client.addObject(s3Bucket, object).get(120, TimeUnit.SECONDS) != null;
+	return client.addObject(bucket, object).get(120, TimeUnit.SECONDS) != null;
     }
 }

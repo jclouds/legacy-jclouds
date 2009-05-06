@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,17 +23,11 @@
  */
 package org.jclouds.aws.s3.commands;
 
-import java.util.List;
-
-import org.jclouds.aws.s3.commands.callables.xml.ListAllMyBucketsHandler;
-import org.jclouds.aws.s3.commands.callables.xml.ListBucketHandler;
-import org.jclouds.aws.s3.domain.S3Bucket;
+import org.jclouds.aws.s3.commands.options.CreateBucketOptions;
 import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.http.commands.callables.xml.ParseSax;
+import org.jclouds.aws.s3.xml.S3ParserFactory;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 
@@ -43,137 +37,120 @@ import com.google.inject.name.Named;
  * @author Adrian Cole
  */
 public class S3CommandFactory {
-
     @Inject
-    private CopyObjectFactory copyObjectFactory;
-
-    public static interface CopyObjectFactory {
-	CopyObject create(@Assisted("sourceBucket") S3Bucket sourceBucket,
-		@Assisted("sourceObject") S3Object sourceObject,
-		@Assisted("destinationBucket") S3Bucket destinationBucket,
-		@Assisted("destinationObject") S3Object destinationObject);
-    }
-
-    public CopyObject createCopyObject(S3Bucket sourceBucket,
-	    S3Object sourceObject, S3Bucket destinationBucket,
-	    S3Object destinationObject) {
-	return copyObjectFactory.create(sourceBucket, sourceObject,
-		destinationBucket, destinationObject);
-    }
+    private S3ParserFactory parserFactory;
 
     @Inject
     private DeleteBucketFactory deleteBucketFactory;
 
     public static interface DeleteBucketFactory {
-	DeleteBucket create(S3Bucket s3Bucket);
+	DeleteBucket create(String bucket);
     }
 
-    public DeleteBucket createDeleteBucket(S3Bucket s3Bucket) {
-	return deleteBucketFactory.create(s3Bucket);
+    public DeleteBucket createDeleteBucket(String bucket) {
+	return deleteBucketFactory.create(bucket);
     }
 
     @Inject
     private DeleteObjectFactory deleteObjectFactory;
 
     public static interface DeleteObjectFactory {
-	DeleteObject create(S3Bucket s3Bucket, String key);
+	DeleteObject create(@Assisted("bucketName") String bucket,
+		@Assisted("key") String key);
     }
 
-    public DeleteObject createDeleteObject(S3Bucket s3Bucket, String key) {
-	return deleteObjectFactory.create(s3Bucket, key);
+    public DeleteObject createDeleteObject(String bucket, String key) {
+	return deleteObjectFactory.create(bucket, key);
     }
 
     @Inject
     private BucketExistsFactory headBucketFactory;
 
     public static interface BucketExistsFactory {
-	BucketExists create(S3Bucket s3Bucket);
+	BucketExists create(String bucket);
     }
 
-    public BucketExists createHeadBucket(S3Bucket s3Bucket) {
-	return headBucketFactory.create(s3Bucket);
+    public BucketExists createHeadBucket(String bucket) {
+	return headBucketFactory.create(bucket);
     }
 
     @Inject
     private PutBucketFactory putBucketFactory;
 
     public static interface PutBucketFactory {
-	PutBucket create(S3Bucket s3Bucket);
+	PutBucket create(String bucket);
     }
 
-    public PutBucket createPutBucket(S3Bucket s3Bucket) {
-	return putBucketFactory.create(s3Bucket);
+    public PutBucket createPutBucket(String bucket) {
+	return putBucketFactory.create(bucket);
+    }
+
+    @Inject
+    private PutBucketFactoryOptions putBucketFactoryOptions;
+
+    public static interface PutBucketFactoryOptions {
+	PutBucket create(String bucket, CreateBucketOptions options);
+    }
+
+    public PutBucket createPutBucket(String bucket, CreateBucketOptions options) {
+	return putBucketFactoryOptions.create(bucket, options);
     }
 
     @Inject
     private PutObjectFactory putObjectFactory;
 
     public static interface PutObjectFactory {
-	PutObject create(S3Bucket s3Bucket, S3Object object);
+	PutObject create(String bucket, S3Object object);
     }
 
-    public PutObject createPutObject(S3Bucket s3Bucket, S3Object s3Object) {
-	return putObjectFactory.create(s3Bucket, s3Object);
+    public PutObject createPutObject(String bucket, S3Object s3Object) {
+	return putObjectFactory.create(bucket, s3Object);
     }
 
     @Inject
     private GetObjectFactory getObjectFactory;
 
     public static interface GetObjectFactory {
-	GetObject create(S3Bucket s3Bucket, String key);
+	GetObject create(@Assisted("bucketName") String bucket,
+		@Assisted("key") String key);
     }
 
-    public GetObject createGetObject(S3Bucket s3Bucket, String key) {
-	return getObjectFactory.create(s3Bucket, key);
+    public GetObject createGetObject(String bucket, String key) {
+	return getObjectFactory.create(bucket, key);
     }
 
     @Inject
     private HeadMetaDataFactory headMetaDataFactory;
 
     public static interface HeadMetaDataFactory {
-	HeadMetaData create(S3Bucket s3Bucket, String key);
+	HeadMetaData create(@Assisted("bucketName") String bucket,
+		@Assisted("key") String key);
     }
 
-    public HeadMetaData createHeadMetaData(S3Bucket s3Bucket, String key) {
-	return headMetaDataFactory.create(s3Bucket, key);
+    public HeadMetaData createHeadMetaData(String bucket, String key) {
+	return headMetaDataFactory.create(bucket, key);
     }
 
     @Inject
     @Named("jclouds.http.address")
     String amazonHost;
 
-    @Inject
-    private GenericParseFactory<List<S3Bucket>> parseListAllMyBucketsFactory;
-
-    public static interface GenericParseFactory<T> {
-	ParseSax<T> create(ParseSax.HandlerWithResult<T> handler);
+    public GetMetaDataForOwnedBuckets createGetMetaDataForOwnedBuckets() {
+	return new GetMetaDataForOwnedBuckets(amazonHost, parserFactory
+		.createListBucketsParser());
     }
 
-    @Inject
-    Provider<ListAllMyBucketsHandler> ListAllMyBucketsHandlerprovider;
-
-    @VisibleForTesting
-    public ParseSax<List<S3Bucket>> createListBucketsParser() {
-	return parseListAllMyBucketsFactory
-		.create(ListAllMyBucketsHandlerprovider.get());
+    public GetBucket createGetBucket(String bucket) {
+	return new GetBucket(amazonHost,
+		parserFactory.createListBucketParser(), bucket);
     }
 
-    public ListAllMyBuckets createListAllMyBuckets() {
-	return new ListAllMyBuckets(amazonHost, createListBucketsParser());
+    public CopyObject createCopyObject(String sourceBucket,
+	    String sourceObject, String destinationBucket,
+	    String destinationObject) {
+	return new CopyObject(amazonHost, parserFactory
+		.createCopyObjectParser(), sourceBucket, sourceObject,
+		destinationBucket, destinationObject);
     }
 
-    @Inject
-    private GenericParseFactory<S3Bucket> parseListBucketFactory;
-
-    @Inject
-    Provider<ListBucketHandler> ListBucketHandlerprovider;
-
-    @VisibleForTesting
-    public ParseSax<S3Bucket> createListBucketParser() {
-	return parseListBucketFactory.create(ListBucketHandlerprovider.get());
-    }
-
-    public ListBucket createListBucket(S3Bucket bucket) {
-	return new ListBucket(amazonHost, createListBucketParser(), bucket);
-    }
 }

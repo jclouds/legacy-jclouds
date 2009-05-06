@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -58,13 +58,13 @@ public class JCloudsServlet extends HttpServlet {
 	httpServletResponse.setContentType("text/plain");
 	Writer writer = httpServletResponse.getWriter();
 	try {
-	    List<S3Bucket> myBuckets = context.getConnection().getBuckets()
-		    .get(10, TimeUnit.SECONDS);
+	    List<S3Bucket.MetaData> myBuckets = context.getConnection()
+		    .getMetaDataOfOwnedBuckets().get(10, TimeUnit.SECONDS);
 	    writer.write("List:\n");
-	    for (S3Bucket bucket : myBuckets) {
-		writer.write(String
-			.format("  %1s: %2s entries%n", bucket.getName(),
-				context.createInputStreamMap(bucket).size()));
+	    for (S3Bucket.MetaData bucket : myBuckets) {
+		writer.write(String.format("  %1s: %2s entries%n", bucket
+			.getName(), context.createInputStreamMap(
+			bucket.getName()).size()));
 	    }
 	} catch (Exception e) {
 	    throw new ServletException(e);
@@ -72,5 +72,4 @@ public class JCloudsServlet extends HttpServlet {
 	writer.flush();
 	writer.close();
     }
-
 }

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -43,21 +43,21 @@ public class AmazonS3Test extends S3IntegrationTest {
 
     private String returnedString;
 
-    List<S3Bucket> listAllMyBuckets() throws Exception {
-	return client.getBuckets().get(10, TimeUnit.SECONDS);
+    List<S3Bucket.MetaData> listAllMyBuckets() throws Exception {
+	return client.getMetaDataOfOwnedBuckets().get(10, TimeUnit.SECONDS);
     }
 
     S3Object getObject() throws Exception {
-	S3Bucket s3Bucket = new S3Bucket(bucketPrefix + "adrianjbosstest");
-	return client.getObject(s3Bucket, "3366").get(10, TimeUnit.SECONDS);
+	return client.getObject(bucketPrefix + "adrianjbosstest", "3366").get(
+		10, TimeUnit.SECONDS);
     }
 
     String putFileObject() throws Exception {
-	S3Bucket s3Bucket = new S3Bucket(bucketPrefix + "adrianjbosstest");
 	S3Object object = new S3Object("meat");
 	object.getMetaData().setContentType("text/xml");
 	object.setData(new File("pom.xml"));
-	return client.addObject(s3Bucket, object).get(10, TimeUnit.SECONDS);
+	return client.addObject(bucketPrefix + "adrianjbosstest", object).get(
+		10, TimeUnit.SECONDS);
     }
 
     @DataProvider(name = "putTests")
@@ -75,7 +75,7 @@ public class AmazonS3Test extends S3IntegrationTest {
     @Test(dataProvider = "putTests")
     void testPutObject(String key, String type, Object content,
 	    Object realObject) throws Exception {
-	S3Bucket s3Bucket = new S3Bucket(bucketPrefix + "filetestsforadrian");
+	String s3Bucket = bucketPrefix + "filetestsforadrian";
 	client.createBucketIfNotExists(s3Bucket).get(10, TimeUnit.SECONDS);
 	context.createS3ObjectMap(s3Bucket).clear();
 	assertEquals(client.getBucket(s3Bucket).get(10, TimeUnit.SECONDS)
@@ -97,7 +97,7 @@ public class AmazonS3Test extends S3IntegrationTest {
     void testCopyObject() throws Exception {
 	String realObject = IOUtils.toString(new FileInputStream("pom.xml"));
 
-	S3Bucket sourceBucket = new S3Bucket(bucketPrefix + "copysource");
+	String sourceBucket = bucketPrefix + "copysource";
 	client.createBucketIfNotExists(sourceBucket).get(10, TimeUnit.SECONDS);
 	assertEquals(client.getBucket(sourceBucket).get(10, TimeUnit.SECONDS)
 		.getContents().size(), 0);
@@ -115,57 +115,56 @@ public class AmazonS3Test extends S3IntegrationTest {
 	assertEquals(S3Utils.getContentAsStringAndClose(sourceObject),
 		realObject);
 
-	S3Bucket destinationBucket = new S3Bucket(bucketPrefix
-		+ "copydestination");
+	String destinationBucket = bucketPrefix + "copydestination";
 	client.createBucketIfNotExists(destinationBucket).get(10,
 		TimeUnit.SECONDS);
 	assertEquals(client.getBucket(destinationBucket).get(10,
 		TimeUnit.SECONDS).getContents().size(), 0);
 
-	S3Object destinationObject = new S3Object(sourceObject.getKey());
-
-	client.copyObject(sourceBucket, sourceObject, destinationBucket,
-		destinationObject).get(10, TimeUnit.SECONDS);
+	client.copyObject(sourceBucket, sourceObject.getKey(),
+		destinationBucket, sourceObject.getKey()).get(10,
+		TimeUnit.SECONDS);
 	assertEquals(client.getBucket(destinationBucket).get(10,
 		TimeUnit.SECONDS).getContents().size(), 1);
+	// todo compare etag
 
-	destinationObject = client.getObject(destinationBucket,
-		destinationObject.getKey()).get(10, TimeUnit.SECONDS);
-
+	S3Object destinationObject = client.getObject(destinationBucket,
+		sourceObject.getKey()).get(10, TimeUnit.SECONDS);
 	assertEquals(S3Utils.getContentAsStringAndClose(destinationObject),
 		realObject);
 
     }
 
     S3Object.MetaData headObject() throws Exception {
-	S3Bucket s3Bucket = new S3Bucket(bucketPrefix + "adrianjbosstest");
+	String s3Bucket = bucketPrefix + "adrianjbosstest";
 	return client.getObjectMetaData(s3Bucket, "3366").get(10,
 		TimeUnit.SECONDS);
     }
 
     Boolean bucketExists() throws Exception {
-	S3Bucket s3Bucket = new S3Bucket(bucketPrefix + "adrianjbosstest");
+	String s3Bucket = bucketPrefix + "adrianjbosstest";
 	return client.bucketExists(s3Bucket).get(10, TimeUnit.SECONDS);
     }
 
     Boolean deleteBucket() throws Exception {
-	S3Bucket s3Bucket = new S3Bucket(bucketPrefix + "adrianjbosstest");
-	return client.deleteBucket(s3Bucket).get(10, TimeUnit.SECONDS);
+	String s3Bucket = bucketPrefix + "adrianjbosstest";
+	return client.deleteBucketIfNotEmpty(s3Bucket)
+		.get(10, TimeUnit.SECONDS);
     }
 
     Boolean deleteObject() throws Exception {
-	S3Bucket s3Bucket = new S3Bucket(bucketPrefix + "adrianjbosstest");
+	String s3Bucket = bucketPrefix + "adrianjbosstest";
 	return client.deleteObject(s3Bucket, "3366").get(10, TimeUnit.SECONDS);
     }
 
     Boolean createBucketIfNotExists() throws Exception {
-	S3Bucket s3Bucket = new S3Bucket(bucketPrefix + "adrianjbosstest");
+	String s3Bucket = bucketPrefix + "adrianjbosstest";
 	return client.createBucketIfNotExists(s3Bucket).get(10,
 		TimeUnit.SECONDS);
     }
 
     S3Bucket getBucket() throws Exception {
-	S3Bucket s3Bucket = new S3Bucket(bucketPrefix + "adrianjbosstest");
+	String s3Bucket = bucketPrefix + "adrianjbosstest";
 	return client.getBucket(s3Bucket).get(10, TimeUnit.SECONDS);
     }
 

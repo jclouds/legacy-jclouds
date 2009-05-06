@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -45,6 +45,10 @@ public class JavaUrlHttpFutureCommandClientModule extends AbstractModule {
 
     @Override
     protected void configure() {
+	bindClient();
+    }
+
+    protected void bindClient() {
 	// note this is not threadsafe, so it cannot be singleton
 	bind(HttpFutureCommandClient.class).to(
 		JavaUrlHttpFutureCommandClient.class);

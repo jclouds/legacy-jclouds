@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -21,11 +21,12 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.commands.callables.xml;
+package org.jclouds.aws.s3.xml;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.aws.s3.DateService;
+import org.jclouds.aws.s3.S3Utils;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.S3Owner;
@@ -46,8 +47,8 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<S3Bucket> {
 	return s3Bucket;
     }
 
-    public void setBucket(S3Bucket s3Bucket) {
-	this.s3Bucket = s3Bucket;
+    public void setBucketName(String bucketName) {
+	this.s3Bucket = new S3Bucket(bucketName);
     }
 
     private S3Bucket s3Bucket;
@@ -85,8 +86,8 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<S3Bucket> {
 	    currentObjectMetaData.setLastModified(dateParser
 		    .dateTimeFromXMLFormat(currentText.toString()));
 	} else if (qName.equals("ETag")) {
-	    currentObjectMetaData.setETag(currentText.toString().replaceAll(
-		    "\"", ""));
+	    currentObjectMetaData.setMd5(S3Utils.fromHexString(currentText
+		    .toString().replaceAll("\"", "")));
 	} else if (qName.equals("Size")) {
 	    currentObjectMetaData.setSize(Long
 		    .parseLong(currentText.toString()));

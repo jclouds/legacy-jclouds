@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -31,7 +31,6 @@ import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.S3Context;
 import org.jclouds.aws.s3.S3InputStreamMap;
 import org.jclouds.aws.s3.S3ObjectMap;
-import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.Logger;
 
@@ -45,11 +44,11 @@ import com.google.inject.Injector;
  */
 public class GuiceS3Context implements S3Context {
     public interface S3ObjectMapFactory {
-	S3ObjectMap createMapView(S3Bucket bucket);
+	S3ObjectMap createMapView(String bucket);
     }
 
     public interface S3InputStreamMapFactory {
-	S3InputStreamMap createMapView(S3Bucket bucket);
+	S3InputStreamMap createMapView(String bucket);
     }
 
     @Resource
@@ -79,7 +78,7 @@ public class GuiceS3Context implements S3Context {
     /**
      * {@inheritDoc}
      */
-    public S3InputStreamMap createInputStreamMap(S3Bucket bucket) {
+    public S3InputStreamMap createInputStreamMap(String bucket) {
 	getConnection().createBucketIfNotExists(bucket);
 	return s3InputStreamMapFactory.createMapView(bucket);
     }
@@ -87,7 +86,7 @@ public class GuiceS3Context implements S3Context {
     /**
      * {@inheritDoc}
      */
-    public S3ObjectMap createS3ObjectMap(S3Bucket bucket) {
+    public S3ObjectMap createS3ObjectMap(String bucket) {
 	getConnection().createBucketIfNotExists(bucket);
 	return s3ObjectMapFactory.createMapView(bucket);
     }

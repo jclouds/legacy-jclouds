@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -21,22 +21,37 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.commands;
+package org.jclouds.aws.s3;
 
-import java.util.List;
+import org.jclouds.aws.s3.domain.S3Error;
+import org.jclouds.http.HttpResponse;
 
-import org.jclouds.aws.s3.domain.S3Bucket;
-import org.jclouds.http.commands.callables.xml.ParseSax;
+public class S3ResponseException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
 
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+    private S3Error error;
 
-public class ListAllMyBuckets extends S3FutureCommand<List<S3Bucket>> {
+    private HttpResponse response;
 
-    @Inject
-    public ListAllMyBuckets(@Named("jclouds.http.address") String amazonHost,
-	    ParseSax<List<S3Bucket>> callable) {
-	super("GET", "/", callable, amazonHost);
+    public S3ResponseException(S3Error error, HttpResponse response) {
+	super(error.toString());
+	this.setError(error);
+	this.setResponse(response);
     }
 
+    public void setError(S3Error error) {
+	this.error = error;
+    }
+
+    public S3Error getError() {
+	return error;
+    }
+
+    public void setResponse(HttpResponse response) {
+	this.response = response;
+    }
+
+    public HttpResponse getResponse() {
+	return response;
+    }
 }

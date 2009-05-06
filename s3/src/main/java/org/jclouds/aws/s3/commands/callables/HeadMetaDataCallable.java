@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -27,6 +27,7 @@ import java.io.IOException;
 
 import org.jclouds.Utils;
 import org.jclouds.aws.s3.DateService;
+import org.jclouds.aws.s3.S3Utils;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpFutureCommand;
@@ -58,22 +59,23 @@ public class HeadMetaDataCallable extends
 	    S3Object.MetaData metaData = new S3Object.MetaData(key);
 	    String md5Header = getResponse().getFirstHeaderOrNull(
 		    "x-amz-meta-object-md5");
-	    if (md5Header != null)
-		metaData.setContentMD5(md5Header);
-	    metaData.setLastModified(
-		    dateParser.dateTimeFromHeaderFormat(getResponse()
+	    if (md5Header != null) {
+		metaData.setMd5(S3Utils.fromHexString(md5Header));
+	    }
+
+	    metaData.setLastModified(dateParser
+		    .dateTimeFromHeaderFormat(getResponse()
 			    .getFirstHeaderOrNull("Last-Modified")));
 	    String eTag = getResponse().getFirstHeaderOrNull("ETag");
 	    if (eTag != null) {
-		metaData.setETag(eTag.replaceAll("\"", ""));
+		metaData.setMd5(S3Utils
+			.fromHexString(eTag.replaceAll("\"", "")));
 	    }
-	    metaData.setContentType(
-		    getResponse().getFirstHeaderOrNull("Content-Type"));
-	    metaData.setSize(
-		    Long.parseLong(getResponse().getFirstHeaderOrNull(
-			    "Content-Length")));
-	    metaData.setServer(
-		    getResponse().getFirstHeaderOrNull("Server"));
+	    metaData.setContentType(getResponse().getFirstHeaderOrNull(
+		    "Content-Type"));
+	    metaData.setSize(Long.parseLong(getResponse().getFirstHeaderOrNull(
+		    "Content-Length")));
+	    metaData.setServer(getResponse().getFirstHeaderOrNull("Server"));
 	    return metaData;
 	} else if (getResponse().getStatusCode() == 404) {
 	    return S3Object.MetaData.NOT_FOUND;

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -28,8 +28,9 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 
 import org.jclouds.aws.s3.commands.config.S3CommandsModule;
-import org.jclouds.aws.s3.domain.S3Bucket;
+import org.jclouds.aws.s3.commands.options.CreateBucketOptions;
 import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.s3.domain.S3Bucket.MetaData.LocationConstraint;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -71,29 +72,35 @@ public class S3CommandFactoryTest {
 
     @Test
     void testCreateCopyObject() {
-	assert commandFactory.createCopyObject(new S3Bucket("sourceBucket"),
-		new S3Object("sourceObject"), new S3Bucket("destBucket"),
-		new S3Object("destObject")) != null;
+	assert commandFactory.createCopyObject("sourceBucket", "sourceObject",
+		"destBucket", "destObject") != null;
     }
 
     @Test
     void testCreateDeleteBucket() {
-	assert commandFactory.createDeleteBucket(new S3Bucket("test")) != null;
+	assert commandFactory.createDeleteBucket("test") != null;
     }
 
     @Test
     void testCreateDeleteObject() {
-	assert commandFactory.createDeleteObject(new S3Bucket("test"), "blah") != null;
+	assert commandFactory.createDeleteObject("test", "blah") != null;
     }
 
     @Test
     void testCreateHeadBucket() {
-	assert commandFactory.createHeadBucket(new S3Bucket("test")) != null;
+	assert commandFactory.createHeadBucket("test") != null;
     }
 
     @Test
     void testCreatePutBucket() {
-	assert commandFactory.createPutBucket(new S3Bucket("test")) != null;
+	assert commandFactory.createPutBucket("test") != null;
+    }
+
+    @Test
+    void testCreatePutBucketOptions() {
+	assert commandFactory.createPutBucket("test",
+		CreateBucketOptions.Builder
+			.locationConstraint(LocationConstraint.EU)) != null;
     }
 
     @Test
@@ -107,37 +114,27 @@ public class S3CommandFactoryTest {
 
 	replay(metaData);
 
-	assert commandFactory.createPutObject(new S3Bucket("test"), object) != null;
+	assert commandFactory.createPutObject("test", object) != null;
     }
 
     @Test
     void testCreateGetObject() {
-	assert commandFactory.createGetObject(new S3Bucket("test"), "blah") != null;
+	assert commandFactory.createGetObject("test", "blah") != null;
     }
 
     @Test
     void testCreateHeadMetaData() {
-	assert commandFactory.createHeadMetaData(new S3Bucket("test"), "blah") != null;
-    }
-
-    @Test
-    void testCreateListBucketsParser() {
-	assert commandFactory.createListBucketsParser() != null;
+	assert commandFactory.createHeadMetaData("test", "blah") != null;
     }
 
     @Test
     void testCreateListAllMyBuckets() {
-	assert commandFactory.createListAllMyBuckets() != null;
-    }
-
-    @Test
-    void testCreateListBucketParser() {
-	assert commandFactory.createListBucketParser() != null;
+	assert commandFactory.createGetMetaDataForOwnedBuckets() != null;
     }
 
     @Test
     void testCreateListBucket() {
-	assert commandFactory.createListBucket(new S3Bucket("test")) != null;
+	assert commandFactory.createGetBucket("test") != null;
     }
 
 }

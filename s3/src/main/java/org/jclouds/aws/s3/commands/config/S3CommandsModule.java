@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,10 +23,7 @@
  */
 package org.jclouds.aws.s3.commands.config;
 
-import java.util.List;
-
 import org.jclouds.aws.s3.commands.BucketExists;
-import org.jclouds.aws.s3.commands.CopyObject;
 import org.jclouds.aws.s3.commands.DeleteBucket;
 import org.jclouds.aws.s3.commands.DeleteObject;
 import org.jclouds.aws.s3.commands.GetObject;
@@ -34,30 +31,20 @@ import org.jclouds.aws.s3.commands.HeadMetaData;
 import org.jclouds.aws.s3.commands.PutBucket;
 import org.jclouds.aws.s3.commands.PutObject;
 import org.jclouds.aws.s3.commands.S3CommandFactory;
-import org.jclouds.aws.s3.commands.callables.xml.ListAllMyBucketsHandler;
-import org.jclouds.aws.s3.commands.callables.xml.ListBucketHandler;
-import org.jclouds.aws.s3.domain.S3Bucket;
-import org.jclouds.http.commands.callables.xml.ParseSax;
-import org.jclouds.http.commands.callables.xml.config.SaxModule;
+import org.jclouds.aws.s3.xml.config.S3ParserModule;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryProvider;
 
 /**
- * // TODO: Adrian: Document this!
+ * Creates the factories needed to produce S3 commands
  * 
  * @author Adrian Cole
  */
 public class S3CommandsModule extends AbstractModule {
     @Override
     protected void configure() {
-	install(new SaxModule());
-
-	bind(S3CommandFactory.CopyObjectFactory.class).toProvider(
-		FactoryProvider.newFactory(
-			S3CommandFactory.CopyObjectFactory.class,
-			CopyObject.class));
+	install(new S3ParserModule());
 
 	bind(S3CommandFactory.DeleteBucketFactory.class).toProvider(
 		FactoryProvider.newFactory(
@@ -74,30 +61,14 @@ public class S3CommandsModule extends AbstractModule {
 			S3CommandFactory.BucketExistsFactory.class,
 			BucketExists.class));
 
-	final TypeLiteral<S3CommandFactory.GenericParseFactory<List<S3Bucket>>> listBucketsTypeLiteral = new TypeLiteral<S3CommandFactory.GenericParseFactory<List<S3Bucket>>>() {
-	};
-	final TypeLiteral<S3CommandFactory.GenericParseFactory<S3Bucket>> bucketTypeLiteral = new TypeLiteral<S3CommandFactory.GenericParseFactory<S3Bucket>>() {
-	};
-
-	bind(listBucketsTypeLiteral).toProvider(
-		FactoryProvider.newFactory(listBucketsTypeLiteral,
-			new TypeLiteral<ParseSax<List<S3Bucket>>>() {
-			}));
-
-	bind(bucketTypeLiteral).toProvider(
-		FactoryProvider.newFactory(bucketTypeLiteral,
-			new TypeLiteral<ParseSax<S3Bucket>>() {
-			}));
-
-	bind(new TypeLiteral<ParseSax.HandlerWithResult<List<S3Bucket>>>() {
-	}).to(ListAllMyBucketsHandler.class);
-
-	bind(new TypeLiteral<ParseSax.HandlerWithResult<S3Bucket>>() {
-	}).to(ListBucketHandler.class);
-
 	bind(S3CommandFactory.PutBucketFactory.class).toProvider(
 		FactoryProvider.newFactory(
 			S3CommandFactory.PutBucketFactory.class,
+			PutBucket.class));
+
+	bind(S3CommandFactory.PutBucketFactoryOptions.class).toProvider(
+		FactoryProvider.newFactory(
+			S3CommandFactory.PutBucketFactoryOptions.class,
 			PutBucket.class));
 
 	bind(S3CommandFactory.PutObjectFactory.class).toProvider(

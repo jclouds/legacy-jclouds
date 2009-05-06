@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -35,7 +35,6 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.Utils;
 import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.S3ObjectMap;
-import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
 
 import com.google.inject.Inject;
@@ -49,7 +48,7 @@ import com.google.inject.assistedinject.Assisted;
 public class LiveS3ObjectMap extends BaseS3Map<S3Object> implements S3ObjectMap {
 
     @Inject
-    public LiveS3ObjectMap(S3Connection connection, @Assisted S3Bucket bucket) {
+    public LiveS3ObjectMap(S3Connection connection, @Assisted String bucket) {
 	super(connection, bucket);
     }
 

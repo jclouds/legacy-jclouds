@@ -1,5 +1,5 @@
 
-Copyright (C) ${year} Adrian Cole <adriancole@jclouds.org>
+Copyright (C) ${year} Adrian Cole <adrian@jclouds.org>
 
 ====================================================================
 Licensed to the Apache Software Foundation (ASF) under one

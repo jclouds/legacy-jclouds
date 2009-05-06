@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -40,6 +40,10 @@ public class DeleteBucketCallable extends DeleteCallable {
 	    return true;
 	} else if (getResponse().getStatusCode() == 409) {
 	    try {
+		if (getResponse().getContent() == null) {
+		    throw new HttpException(
+			    "cannot determine error as there is no content");
+		}
 		String reason = S3Utils.toStringAndClose(getResponse()
 			.getContent());
 		if (reason.indexOf("BucketNotEmpty") >= 0)

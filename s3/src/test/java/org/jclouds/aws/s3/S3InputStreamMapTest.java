@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -35,7 +35,6 @@ import java.util.Map.Entry;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.Utils;
-import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.internal.BaseS3Map;
 import org.testng.annotations.Test;
 
@@ -49,8 +48,7 @@ public class S3InputStreamMapTest extends BaseS3MapTest<InputStream> {
     S3InputStreamMap map = null;
 
     @SuppressWarnings("unchecked")
-    protected BaseS3Map<InputStream> createMap(S3Context context,
-	    S3Bucket bucket) {
+    protected BaseS3Map<InputStream> createMap(S3Context context, String bucket) {
 	map = context.createInputStreamMap(bucket);
 	return (BaseS3Map<InputStream>) map;
     }
@@ -171,7 +169,7 @@ public class S3InputStreamMapTest extends BaseS3MapTest<InputStream> {
 	    throws IOException {
 	assert old == null;
 	assertEquals(Utils.toStringAndClose(map.get("one")), "apple");
-	assertEquals(map.size(), 1); 
+	assertEquals(map.size(), 1);
     }
 
     void getOneReturnsBearAndOldValueIsApple(InputStream oldValue)

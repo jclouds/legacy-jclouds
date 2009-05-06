@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -26,6 +26,7 @@ package org.jclouds.aws.s3.commands;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
@@ -34,11 +35,14 @@ import java.util.concurrent.ExecutorCompletionService;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.PerformanceTest;
-import org.jclouds.aws.s3.commands.callables.xml.ListBucketHandler;
-import org.jclouds.aws.s3.commands.config.S3CommandsModule;
+import org.jclouds.aws.s3.S3Utils;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.S3Owner;
+import org.jclouds.aws.s3.xml.CopyObjectHandler;
+import org.jclouds.aws.s3.xml.ListBucketHandler;
+import org.jclouds.aws.s3.xml.S3ParserFactory;
+import org.jclouds.aws.s3.xml.config.S3ParserModule;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 import org.joda.time.DateTime;
@@ -49,39 +53,30 @@ import org.xml.sax.SAXException;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.name.Names;
 
 /**
- * // TODO: Adrian: Document this!
+ * Tests parsing of S3 responses
  * 
  * @author Adrian Cole
  */
 @Test(groups = "unit", sequential = true, testName = "s3.S3ParserTest")
 public class S3ParserTest extends PerformanceTest {
     Injector injector = null;
-    S3CommandFactory commandFactory = null;
 
-    public static final String listAllMyBucketsResult = "<ListAllMyBucketsResult xmlns=\"http://s3.amazonaws.com/doc/callables/\"><Owner ><ID>e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0</ID></Owner><Buckets><Bucket><Name>adrianjbosstest</Name><CreationDate>2009-03-12T02:00:07.000Z</CreationDate></Bucket><Bucket><Name>adrianjbosstest2</Name><CreationDate>2009-03-12T02:00:09.000Z</CreationDate></Bucket></Buckets></ListAllMyBucketsResult>";
+    public static final String listAllMyBucketsResultOn200 = "<ListAllMyBucketsResult xmlns=\"http://s3.amazonaws.com/doc/callables/\"><Owner ><ID>e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0</ID></Owner><Buckets><Bucket><Name>adrianjbosstest</Name><CreationDate>2009-03-12T02:00:07.000Z</CreationDate></Bucket><Bucket><Name>adrianjbosstest2</Name><CreationDate>2009-03-12T02:00:09.000Z</CreationDate></Bucket></Buckets></ListAllMyBucketsResult>";
+
+    S3ParserFactory parserFactory = null;
 
     @BeforeMethod
     protected void setUpInjector() {
-	injector = Guice.createInjector(new S3CommandsModule() {
-	    @Override
-	    protected void configure() {
-		bindConstant().annotatedWith(
-			Names.named("jclouds.http.address")).to("localhost");
-		// bindConstant().annotatedWith(
-		// Names.named("jclouds.http.sax.debug")).to(true);
-		super.configure();
-	    }
-	});
-	commandFactory = injector.getInstance(S3CommandFactory.class);
-	assert commandFactory != null;
+	injector = Guice.createInjector(new S3ParserModule());
+	parserFactory = injector.getInstance(S3ParserFactory.class);
+	assert parserFactory != null;
     }
 
     @AfterMethod
     protected void tearDownInjector() {
-	commandFactory = null;
+	parserFactory = null;
 	injector = null;
     }
 
@@ -91,20 +86,21 @@ public class S3ParserTest extends PerformanceTest {
 	    runParseListAllMyBuckets();
     }
 
-    private List<S3Bucket> runParseListAllMyBuckets() throws HttpException {
-	return commandFactory.createListBucketsParser().parse(
-		IOUtils.toInputStream(listAllMyBucketsResult));
+    private List<S3Bucket.MetaData> runParseListAllMyBuckets()
+	    throws HttpException {
+	return parserFactory.createListBucketsParser().parse(
+		IOUtils.toInputStream(listAllMyBucketsResultOn200));
     }
 
     @Test
     void testParseListAllMyBucketsParallelResponseTime()
 	    throws InterruptedException, ExecutionException {
-	CompletionService<List<S3Bucket>> completer = new ExecutorCompletionService<List<S3Bucket>>(
+	CompletionService<List<S3Bucket.MetaData>> completer = new ExecutorCompletionService<List<S3Bucket.MetaData>>(
 		exec);
 	for (int i = 0; i < LOOP_COUNT; i++)
-	    completer.submit(new Callable<List<S3Bucket>>() {
-		public List<S3Bucket> call() throws IOException, SAXException,
-			HttpException {
+	    completer.submit(new Callable<List<S3Bucket.MetaData>>() {
+		public List<S3Bucket.MetaData> call() throws IOException,
+			SAXException, HttpException {
 		    return runParseListAllMyBuckets();
 		}
 	    });
@@ -114,33 +110,29 @@ public class S3ParserTest extends PerformanceTest {
 
     @Test
     public void testCanParseListAllMyBuckets() throws HttpException {
-	List<S3Bucket> s3Buckets = runParseListAllMyBuckets();
-	S3Bucket bucket1 = s3Buckets.get(0);
+	List<S3Bucket.MetaData> s3Buckets = runParseListAllMyBuckets();
+	S3Bucket.MetaData bucket1 = s3Buckets.get(0);
 	assert bucket1.getName().equals("adrianjbosstest");
 	DateTime expectedDate1 = new DateTime("2009-03-12T02:00:07.000Z");
-	DateTime date1 = bucket1.getMetaData().getCreationDate();
+	DateTime date1 = bucket1.getCreationDate();
 	assert date1.equals(expectedDate1);
-	S3Bucket bucket2 = s3Buckets.get(1);
+	S3Bucket.MetaData bucket2 = s3Buckets.get(1);
 	assert bucket2.getName().equals("adrianjbosstest2");
 	DateTime expectedDate2 = new DateTime("2009-03-12T02:00:09.000Z");
-	DateTime date2 = bucket2.getMetaData().getCreationDate();
+	DateTime date2 = bucket2.getCreationDate();
 	assert date2.equals(expectedDate2);
 	assert s3Buckets.size() == 2;
 	S3Owner owner = new S3Owner();
 	owner
 		.setId("e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0");
-	assert bucket1.getMetaData().getCanonicalUser().equals(owner);
-	assert bucket2.getMetaData().getCanonicalUser().equals(owner);
-	assert !bucket1.isComplete();
-	assert !bucket2.isComplete();
-	assert bucket1.getContents().size() == 0;
-	assert bucket2.getContents().size() == 0;
-
+	assert bucket1.getCanonicalUser().equals(owner);
+	assert bucket2.getCanonicalUser().equals(owner);
     }
 
     public static final String listBucketResult = "<ListBucketHandler xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Name>adrianjbosstest</Name><Prefix></Prefix><Marker></Marker><MaxKeys>1000</MaxKeys><IsTruncated>false</IsTruncated><Contents><Key>3366</Key><LastModified>2009-03-12T02:00:13.000Z</LastModified><ETag>&quot;9d7bb64e8e18ee34eec06dd2cf37b766&quot;</ETag><Size>136</Size><Owner><ID>e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0</ID><DisplayName>ferncam</DisplayName></Owner><StorageClass>STANDARD</StorageClass></Contents></ListBucketHandler>";
 
-    public void testCanParseListBucketResult() throws HttpException {
+    public void testCanParseListBucketResult() throws HttpException,
+	    UnsupportedEncodingException {
 	S3Bucket bucket = runParseListBucketResult();
 	assert bucket.isComplete();
 	assert bucket.getName().equals("adrianjbosstest");
@@ -151,7 +143,8 @@ public class S3ParserTest extends PerformanceTest {
 	assert object.getLastModified().equals(expected) : String
 		.format("expected %1s, but got %1s", expected, object
 			.getLastModified());
-	assertEquals(object.getETag(), "9d7bb64e8e18ee34eec06dd2cf37b766");
+	assertEquals(S3Utils.toHexString(object.getMd5()),
+		"9d7bb64e8e18ee34eec06dd2cf37b766");
 	assert object.getSize() == 136;
 	S3Owner owner = new S3Owner();
 	owner
@@ -162,10 +155,30 @@ public class S3ParserTest extends PerformanceTest {
     }
 
     private S3Bucket runParseListBucketResult() throws HttpException {
-	ParseSax<S3Bucket> parser = commandFactory.createListBucketParser();
+	ParseSax<S3Bucket> parser = parserFactory.createListBucketParser();
 	ListBucketHandler handler = (ListBucketHandler) parser.getHandler();
-	handler.setBucket(new S3Bucket("adrianjbosstest"));
+	handler.setBucketName("adrianjbosstest");
 	return parser.parse(IOUtils.toInputStream(listBucketResult));
+    }
+
+    public static final String successfulCopyObject200 = "<CopyObjectResult xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><LastModified>2009-03-19T13:23:27.000Z</LastModified><ETag>\"92836a3ea45a6984d1b4d23a747d46bb\"</ETag></CopyObjectResult>";
+
+    private S3Object.MetaData runParseCopyObjectResult() throws HttpException {
+	ParseSax<S3Object.MetaData> parser = parserFactory
+		.createCopyObjectParser();
+	CopyObjectHandler handler = (CopyObjectHandler) parser.getHandler();
+	handler.setKey("adrianjbosstest");
+	return parser.parse(IOUtils.toInputStream(successfulCopyObject200));
+    }
+
+    public void testCanParseCopyObjectResult() throws HttpException,
+	    UnsupportedEncodingException {
+	S3Object.MetaData metadata = runParseCopyObjectResult();
+	DateTime expected = new DateTime("2009-03-19T13:23:27.000Z");
+	assertEquals(metadata.getLastModified(), expected);
+	assertEquals(S3Utils.toHexString(metadata.getMd5()),
+		"92836a3ea45a6984d1b4d23a747d46bb");
+	assertEquals(metadata.getKey(), "adrianjbosstest");
     }
 
     @Test

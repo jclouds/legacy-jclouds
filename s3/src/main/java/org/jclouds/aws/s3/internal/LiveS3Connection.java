@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -31,30 +31,34 @@ import org.jclouds.aws.s3.commands.BucketExists;
 import org.jclouds.aws.s3.commands.CopyObject;
 import org.jclouds.aws.s3.commands.DeleteBucket;
 import org.jclouds.aws.s3.commands.DeleteObject;
+import org.jclouds.aws.s3.commands.GetBucket;
+import org.jclouds.aws.s3.commands.GetMetaDataForOwnedBuckets;
 import org.jclouds.aws.s3.commands.GetObject;
 import org.jclouds.aws.s3.commands.HeadMetaData;
-import org.jclouds.aws.s3.commands.ListAllMyBuckets;
-import org.jclouds.aws.s3.commands.ListBucket;
 import org.jclouds.aws.s3.commands.PutBucket;
 import org.jclouds.aws.s3.commands.PutObject;
 import org.jclouds.aws.s3.commands.S3CommandFactory;
+import org.jclouds.aws.s3.commands.options.CreateBucketOptions;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.s3.domain.S3Bucket.MetaData;
 import org.jclouds.http.HttpFutureCommandClient;
 
 import com.google.inject.Inject;
 
 /**
- * Non-blocking interface to Amazon S3.
+ * {@inheritDoc} Uses {@link HttpFutureCommandClient} to invoke the REST API of
+ * S3.
  * 
+ * @see http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?
  * @author Adrian Cole
  */
 public class LiveS3Connection implements S3Connection {
 
-    /**
-     * not all clients are threadsafe, but this connection needs to be.
-     */
     private final HttpFutureCommandClient client;
+    /**
+     * creates command objects that can be submitted to the client
+     */
     private final S3CommandFactory factory;
 
     @Inject
@@ -64,66 +68,127 @@ public class LiveS3Connection implements S3Connection {
 	this.factory = factory;
     }
 
-    public Future<S3Object> getObject(S3Bucket s3Bucket, String key) {
+    /**
+     * {@inheritDoc}
+     * 
+     * @see GetObject
+     */
+    public Future<S3Object> getObject(String s3Bucket, String key) {
 	GetObject getObject = factory.createGetObject(s3Bucket, key);
 	client.submit(getObject);
 	return getObject;
     }
 
-    public Future<S3Object.MetaData> getObjectMetaData(S3Bucket s3Bucket,
+    /**
+     * {@inheritDoc}
+     * 
+     * @see HeadMetaData
+     */
+    public Future<S3Object.MetaData> getObjectMetaData(String s3Bucket,
 	    String key) {
 	HeadMetaData headMetaData = factory.createHeadMetaData(s3Bucket, key);
 	client.submit(headMetaData);
 	return headMetaData;
     }
 
-    public Future<Boolean> deleteObject(S3Bucket s3Bucket, String key) {
+    /**
+     * {@inheritDoc}
+     * 
+     * @see DeleteObject
+     */
+    public Future<Boolean> deleteObject(String s3Bucket, String key) {
 	DeleteObject deleteObject = factory.createDeleteObject(s3Bucket, key);
 	client.submit(deleteObject);
 	return deleteObject;
     }
 
-    public Future<String> addObject(S3Bucket s3Bucket, S3Object object) {
+    /**
+     * {@inheritDoc}
+     * 
+     * @see PutObject
+     */
+    public Future<String> addObject(String s3Bucket, S3Object object) {
 	PutObject putObject = factory.createPutObject(s3Bucket, object);
 	client.submit(putObject);
 	return putObject;
     }
 
-    public Future<Boolean> createBucketIfNotExists(S3Bucket s3Bucket) {
+    /**
+     * {@inheritDoc}
+     * 
+     * @see PutBucket
+     */
+    public Future<Boolean> createBucketIfNotExists(String s3Bucket) {
 	PutBucket putBucket = factory.createPutBucket(s3Bucket);
 	client.submit(putBucket);
 	return putBucket;
     }
 
-    public Future<Boolean> deleteBucket(S3Bucket s3Bucket) {
+    /**
+     * {@inheritDoc}
+     * 
+     * @see PutBucket
+     */
+    public Future<Boolean> createBucketIfNotExists(String s3Bucket,
+	    CreateBucketOptions options) {
+	PutBucket putBucket = factory.createPutBucket(s3Bucket, options);
+	client.submit(putBucket);
+	return putBucket;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see DeleteBucket
+     */
+    public Future<Boolean> deleteBucketIfNotEmpty(String s3Bucket) {
 	DeleteBucket deleteBucket = factory.createDeleteBucket(s3Bucket);
 	client.submit(deleteBucket);
 	return deleteBucket;
     }
 
-    public Future<Boolean> copyObject(S3Bucket sourceBucket,
-	    S3Object sourceObject, S3Bucket destinationBucket,
-	    S3Object destinationObject) {
+    /**
+     * {@inheritDoc}
+     * 
+     * @see CopyObject
+     */
+    public Future<S3Object.MetaData> copyObject(String sourceBucket,
+	    String sourceObject, String destinationBucket,
+	    String destinationObject) {
 	CopyObject copy = factory.createCopyObject(sourceBucket, sourceObject,
 		destinationBucket, destinationObject);
 	client.submit(copy);
 	return copy;
     }
 
-    public Future<Boolean> bucketExists(S3Bucket s3Bucket) {
+    /**
+     * {@inheritDoc}
+     * 
+     * @see BucketExists
+     */
+    public Future<Boolean> bucketExists(String s3Bucket) {
 	BucketExists headRequestObject = factory.createHeadBucket(s3Bucket);
 	client.submit(headRequestObject);
 	return headRequestObject;
     }
 
-    public Future<S3Bucket> getBucket(S3Bucket s3Bucket) {
-	ListBucket listRequest = factory.createListBucket(s3Bucket);
-	client.submit(listRequest);
-	return listRequest;
+    /**
+     * {@inheritDoc}
+     * 
+     * @see GetBucket
+     */
+    public Future<S3Bucket> getBucket(String s3Bucket) {
+	GetBucket getBucket = factory.createGetBucket(s3Bucket);
+	client.submit(getBucket);
+	return getBucket;
     }
 
-    public Future<List<S3Bucket>> getBuckets() {
-	ListAllMyBuckets listRequest = factory.createListAllMyBuckets();
+    /**
+     * {@inheritDoc}
+     */
+    public Future<List<MetaData>> getMetaDataOfOwnedBuckets() {
+	GetMetaDataForOwnedBuckets listRequest = factory
+		.createGetMetaDataForOwnedBuckets();
 	client.submit(listRequest);
 	return listRequest;
     }

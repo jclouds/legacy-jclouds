@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -24,17 +24,22 @@
 package org.jclouds.aws.s3.commands;
 
 import org.jclouds.aws.s3.commands.callables.PutBucketCallable;
-import org.jclouds.aws.s3.domain.S3Bucket;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 
+/**
+ * Create and name your own bucket in which to store your objects.
+ * 
+ * @author Adrian Cole
+ * 
+ */
 public class PutBucket extends S3FutureCommand<Boolean> {
 
     @Inject
     public PutBucket(@Named("jclouds.http.address") String amazonHost,
-	    PutBucketCallable callable, @Assisted S3Bucket s3Bucket) {
+	    PutBucketCallable callable, @Assisted String s3Bucket) {
 	super("PUT", "/", callable, amazonHost, s3Bucket);
     }
 

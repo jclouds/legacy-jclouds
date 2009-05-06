@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -41,7 +41,6 @@ import org.apache.commons.io.IOUtils;
 import org.jclouds.Utils;
 import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.S3InputStreamMap;
-import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
 
 import com.google.inject.Inject;
@@ -56,8 +55,7 @@ public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
 	S3InputStreamMap {
 
     @Inject
-    public LiveS3InputStreamMap(S3Connection connection,
-	    @Assisted S3Bucket bucket) {
+    public LiveS3InputStreamMap(S3Connection connection, @Assisted String bucket) {
 	super(connection, bucket);
     }
 
@@ -207,8 +205,7 @@ public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
     private void setSizeIfContentIsInputStream(S3Object object)
 	    throws IOException {
 	if (object.getData() instanceof InputStream) {
-	    byte[] buffer = IOUtils.toByteArray((InputStream) object
-		    .getData());
+	    byte[] buffer = IOUtils.toByteArray((InputStream) object.getData());
 	    object.getMetaData().setSize(buffer.length);
 	    object.setData(new ByteArrayInputStream(buffer));
 	}

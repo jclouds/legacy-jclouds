@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -27,8 +27,8 @@ import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpFutureCommand;
 
 /**
- * // TODO: Adrian: Document this!
- * 
+ * Returns true, if the bucket was created.
+ *  
  * @author Adrian Cole
  */
 public class PutBucketCallable extends

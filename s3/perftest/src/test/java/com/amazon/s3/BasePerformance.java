@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -38,7 +38,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jclouds.aws.s3.S3Constants;
 import org.jclouds.aws.s3.S3IntegrationTest;
-import org.jclouds.aws.s3.domain.S3Bucket;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
@@ -91,8 +90,7 @@ public abstract class BasePerformance extends S3IntegrationTest {
 	    @Optional String AWSSecretAccessKey) throws Exception {
 	super.setUpClient(AWSAccessKeyId, AWSSecretAccessKey);
 	for (String bucket : BUCKETS) {
-	    client.createBucketIfNotExists(new S3Bucket(bucket)).get(10,
-		    TimeUnit.SECONDS);
+	    client.createBucketIfNotExists(bucket).get(10, TimeUnit.SECONDS);
 	}
     }
 

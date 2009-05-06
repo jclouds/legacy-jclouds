@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -37,7 +37,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.internal.BaseS3Map;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -48,8 +47,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 public abstract class BaseS3MapTest<T> extends S3IntegrationTest {
-
-    private S3Bucket bucket;
 
     public abstract void testPutAll();
 
@@ -66,6 +63,7 @@ public abstract class BaseS3MapTest<T> extends S3IntegrationTest {
     protected Map<String, InputStream> fiveInputs;
     protected Map<String, File> fiveFiles;
     String tmpDirectory;
+    private String bucket;
 
     @BeforeMethod
     @Parameters( { "basedir" })
@@ -90,19 +88,18 @@ public abstract class BaseS3MapTest<T> extends S3IntegrationTest {
 			.toInputStream("candy"), "four", IOUtils
 			.toInputStream("dogma"), "five", IOUtils
 			.toInputStream("emma"));
-	bucket = new S3Bucket(bucketPrefix + ".mimi");
+	bucket = (bucketPrefix + ".mimi").toLowerCase();
 	client.createBucketIfNotExists(bucket).get(10, TimeUnit.SECONDS);
 	map = createMap(context, bucket);
 	map.clear();
     }
 
-    protected abstract BaseS3Map<T> createMap(S3Context context, S3Bucket bucket);
+    protected abstract BaseS3Map<T> createMap(S3Context context, String bucket);
 
     @AfterMethod
     public void tearDown() {
 	map.clear();
 	map = null;
-	bucket = null;
     }
 
     @Test
@@ -153,7 +150,7 @@ public abstract class BaseS3MapTest<T> extends S3IntegrationTest {
 
     @Test()
     public void testGetBucket() {
-	assertEquals(map.getBucket().getName(), bucket.getName());
+	assertEquals(map.getBucket().getName(), bucket);
     }
 
 }

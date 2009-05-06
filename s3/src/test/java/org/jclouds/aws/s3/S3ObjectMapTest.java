@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -35,7 +35,6 @@ import java.util.TreeSet;
 import java.util.Map.Entry;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.internal.BaseS3Map;
 import org.testng.annotations.Test;
@@ -50,7 +49,7 @@ public class S3ObjectMapTest extends BaseS3MapTest<S3Object> {
     S3ObjectMap map = null;
 
     @SuppressWarnings("unchecked")
-    protected BaseS3Map<S3Object> createMap(S3Context context, S3Bucket bucket) {
+    protected BaseS3Map<S3Object> createMap(S3Context context, String bucket) {
 	map = context.createS3ObjectMap(bucket);
 	return (BaseS3Map<S3Object>) map;
     }

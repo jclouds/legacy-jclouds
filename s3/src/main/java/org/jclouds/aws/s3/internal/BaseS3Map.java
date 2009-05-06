@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -31,6 +31,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +56,7 @@ import com.google.inject.name.Named;
 public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
 
     protected final S3Connection connection;
-    protected final S3Bucket bucket;
+    protected final String bucket;
 
     /**
      * maximum duration of an S3 Request
@@ -65,7 +66,7 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
     protected long requestTimeoutMilliseconds = 10000;
 
     @Inject
-    public BaseS3Map(S3Connection connection, @Assisted S3Bucket bucket) {
+    public BaseS3Map(S3Connection connection, @Assisted String bucket) {
 	this.connection = checkNotNull(connection, "connection");
 	this.bucket = checkNotNull(bucket, "bucket");
     }
@@ -82,10 +83,10 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
 	}
     }
 
-    protected boolean containsETag(String eTagOfValue)
-	    throws InterruptedException, ExecutionException, TimeoutException {
+    protected boolean containsMd5(byte[] md5) throws InterruptedException,
+	    ExecutionException, TimeoutException {
 	for (S3Object.MetaData metaData : refreshBucket().getContents()) {
-	    if (metaData.getETag().equals(eTagOfValue))
+	    if (Arrays.equals(md5, metaData.getMd5()))
 		return true;
 	}
 	return false;
@@ -110,7 +111,7 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
 		    requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
 	    if (S3Object.NOT_FOUND.equals(object))
 		throw new FileNotFoundException("not found: " + object.getKey());
-	    md5 = S3Utils.fromHexString(object.getMetaData().getETag());
+	    md5 = object.getMetaData().getMd5();
 	} else {
 	    throw new IllegalArgumentException("unsupported value type: "
 		    + value.getClass());
@@ -149,8 +150,7 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
 
 	try {
 	    byte[] md5 = getMd5(value);
-	    String eTagOfValue = S3Utils.toHexString(md5);
-	    return containsETag(eTagOfValue);
+	    return containsMd5(md5);
 	} catch (Exception e) {
 	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
 	    throw new S3RuntimeException(String.format(
@@ -193,8 +193,7 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
 	S3Bucket currentBucket = connection.getBucket(bucket).get(
 		requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
 	if (currentBucket == S3Bucket.NOT_FOUND)
-	    throw new S3RuntimeException("bucket not found: "
-		    + bucket.getName());
+	    throw new S3RuntimeException("bucket not found: " + bucket);
 	else
 	    return currentBucket;
     }
@@ -228,7 +227,11 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
     }
 
     public S3Bucket getBucket() {
-	return bucket;
+	try {
+	    return refreshBucket();
+	} catch (Exception e) {
+	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
+	    throw new S3RuntimeException("Error getting bucket" + bucket, e);
+	}
     }
-
 }

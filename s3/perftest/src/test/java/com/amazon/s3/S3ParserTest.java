@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -118,7 +118,7 @@ public class S3ParserTest extends org.jclouds.aws.s3.commands.S3ParserTest {
     private ListAllMyBucketsResponse runAmazonParseListAllMyBuckets()
 	    throws IOException {
 	ListAllMyBucketsResponse response = new ListAllMyBucketsResponse(
-		new MockHttpURLConnection(listAllMyBucketsResult));
+		new MockHttpURLConnection(listAllMyBucketsResultOn200));
 	return response;
     }
 

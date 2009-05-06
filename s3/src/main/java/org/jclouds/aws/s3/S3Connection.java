@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -26,33 +26,111 @@ package org.jclouds.aws.s3;
 import java.util.List;
 import java.util.concurrent.Future;
 
+import org.jclouds.aws.s3.commands.options.CreateBucketOptions;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
 
 /**
- * // TODO: Adrian: Document this!
+ * Provides access to S3 via their REST API.
+ * 
+ * All commands return a Future of the result from S3. Any exceptions incurred
+ * during processing will be wrapped in an {@link ExecutionException} as
+ * documented in {@link Future#get()}.
  * 
  * @author Adrian Cole
  */
 public interface S3Connection {
-    Future<S3Object> getObject(S3Bucket s3Bucket, String key);
 
-    Future<S3Object.MetaData> getObjectMetaData(S3Bucket s3Bucket, String key);
+    /**
+     * Retrieves the object and metadata associated with the key.
+     * 
+     * @param bucketName
+     *            namespace of the object you are retrieving
+     * 
+     * @param key
+     *            unique key in the s3Bucket identifying the object
+     * @return fully populated S3Object containing data stored in S3
+     */
+    Future<S3Object> getObject(String bucketName, String key);
 
-    Future<Boolean> deleteObject(S3Bucket s3Bucket, String key);
+    /**
+     * Retrieves the metadata of the object associated with the key.
+     * 
+     * @param bucketName
+     *            namespace of the metadata you are retrieving
+     * 
+     * @param key
+     *            unique key in the s3Bucket identifying the object
+     * @return metadata associated with the key
+     */
+    Future<S3Object.MetaData> getObjectMetaData(String bucketName, String key);
 
-    Future<String> addObject(S3Bucket s3Bucket, S3Object object);
+    /**
+     * Removes the object and metadata associated with the key.
+     * 
+     * @param bucketName
+     *            namespace of the object you are deleting
+     * @param key
+     *            unique key in the s3Bucket identifying the object
+     * @return true if deleted
+     */
+    Future<Boolean> deleteObject(String bucketName, String key);
 
-    Future<Boolean> createBucketIfNotExists(S3Bucket s3Bucket);
+    /**
+     * Store data by creating or overwriting an object.
+     * 
+     * @param bucketName
+     *            namespace of the object you are storing
+     * @param object
+     *            contains the data and metadata to create or overwrite
+     * @return ETAG which is a hex MD5 hash of the content uploaded
+     */
+    Future<String> addObject(String bucketName, S3Object object);
 
-    Future<Boolean> deleteBucket(S3Bucket s3Bucket);
+    /**
+     * Create and name your own bucket in which to store your objects.
+     * 
+     * @return true, if the bucket was created
+     */
+    Future<Boolean> createBucketIfNotExists(String name);
 
-    Future<Boolean> copyObject(S3Bucket sourceBucket, S3Object sourceObject,
-	    S3Bucket destinationBucket, S3Object destinationObject);
+    /**
+     * Create and name your own bucket in which to store your objects.
+     * 
+     * @param options
+     *            for creating your bucket
+     * @return true, if the bucket was created
+     * @see CreateBucketOptions
+     */
+    Future<Boolean> createBucketIfNotExists(String name,
+	    CreateBucketOptions options);
 
-    Future<Boolean> bucketExists(S3Bucket s3Bucket);
+    /**
+     * Deletes the bucket, if it is empty.
+     * 
+     * @param s3Bucket
+     *            what to delete
+     * @return false, if the bucket was not empty and therefore not deleted
+     */
+    Future<Boolean> deleteBucketIfNotEmpty(String s3Bucket);
 
-    Future<S3Bucket> getBucket(S3Bucket s3Bucket);
+    /**
+     * Copies one object to another bucket
+     * 
+     * @return metaData populated with lastModified and etag of the new object
+     */
+    Future<S3Object.MetaData> copyObject(String sourceBucket,
+	    String sourceObject, String destinationBucket,
+	    String destinationObject);
 
-    Future<List<S3Bucket>> getBuckets();
+    Future<Boolean> bucketExists(String name);
+
+    /**
+     * 
+     * @param s3Bucket
+     * @return
+     */
+    Future<S3Bucket> getBucket(String name);
+
+    Future<List<S3Bucket.MetaData>> getMetaDataOfOwnedBuckets();
 }

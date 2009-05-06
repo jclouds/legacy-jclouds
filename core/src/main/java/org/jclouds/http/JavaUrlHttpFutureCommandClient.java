@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,9 +23,10 @@
  */
 package org.jclouds.http;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -39,7 +40,6 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.Utils;
 import org.jclouds.logging.Logger;
 
 import com.google.inject.Inject;
@@ -53,7 +53,7 @@ public class JavaUrlHttpFutureCommandClient implements HttpFutureCommandClient {
     private URL target;
     private List<HttpRequestFilter> requestFilters = Collections.emptyList();
     @Resource
-    private Logger logger = Logger.NULL;
+    protected Logger logger = Logger.NULL;
 
     public List<HttpRequestFilter> getRequestFilters() {
 	return requestFilters;
@@ -71,7 +71,7 @@ public class JavaUrlHttpFutureCommandClient implements HttpFutureCommandClient {
     }
 
     public void submit(HttpFutureCommand<?> command) {
-	HttpRequest request = (HttpRequest) command.getRequest();
+	HttpRequest request = command.getRequest();
 	HttpURLConnection connection = null;
 	try {
 	    for (HttpRequestFilter filter : getRequestFilters()) {
@@ -79,56 +79,23 @@ public class JavaUrlHttpFutureCommandClient implements HttpFutureCommandClient {
 	    }
 	    HttpResponse response = null;
 	    for (;;) {
-		try {
-		    logger.trace("%1s - converting request %2s", target,
-			    request);
-		    connection = openJavaConnection(request);
-		    logger.trace("%1s - submitting request %2s", target,
-			    connection);
-		    response = getResponse(connection);
-		    logger.trace("%1s - received response %2s", target,
-			    response);
-		    if (request.isReplayable()
-			    && response.getStatusCode() >= 500) {
-			logger.info("resubmitting command: %1s", command);
-			continue;
-		    }
-		    break;
-		} catch (IOException e) {
-		    if (request.isReplayable()
-			    && e.getMessage().indexOf(
-				    "Server returned HTTP response code: 5") >= 0) {
-			logger.info("resubmitting command: %1s", command);
-			continue;
-		    }
-		    throw e;
+		logger.trace("%1s - converting request %2s", target, request);
+		connection = openJavaConnection(request);
+		logger
+			.trace("%1s - submitting request %2s", target,
+				connection);
+		response = getResponse(connection);
+		logger.trace("%1s - received response %2s", target, response);
+		if (command.getRequest().isReplayable()
+			&& response.getStatusCode() >= 500) {
+		    logger.info("resubmitting command: %1s", command);
+		    continue;
 		}
+		break;
 	    }
-	    command.getResponseFuture().setResponse(response);
-	    command.getResponseFuture().run();
-	} catch (FileNotFoundException e) {
-	    HttpResponse response = new HttpResponse();
-	    response.setStatusCode(404);
 	    command.getResponseFuture().setResponse(response);
 	    command.getResponseFuture().run();
 	} catch (Exception e) {
-	    if (connection != null) {
-		StringBuilder errors = new StringBuilder();
-		try {
-		    for (InputStream in : new InputStream[] {
-			    connection.getErrorStream(),
-			    connection.getInputStream() }) {
-			if (in != null) {
-			    errors.append(Utils.toStringAndClose(in)).append(
-				    "\n");
-			}
-		    }
-		    logger.error(e,
-			    "error encountered during the exception: %1s",
-			    errors.toString());
-		} catch (IOException e2) {
-		}
-	    }
 	    command.setException(e);
 	} finally {
 	    // DO NOT disconnect, as it will also close the unconsumed
@@ -138,9 +105,20 @@ public class JavaUrlHttpFutureCommandClient implements HttpFutureCommandClient {
 	}
     }
 
-    private HttpResponse getResponse(HttpURLConnection connection)
+    protected HttpResponse getResponse(HttpURLConnection connection)
 	    throws IOException {
 	HttpResponse response = new HttpResponse();
+	InputStream in;
+	try {
+	    in = connection.getInputStream();
+	} catch (IOException e) {
+	    in = connection.getErrorStream();
+	}
+	if (in != null) {
+	    response.setContent(in);
+	    response.setContentType(connection
+		    .getHeaderField(HttpConstants.CONTENT_TYPE));
+	}
 	response.setStatusCode(connection.getResponseCode());
 	for (String header : connection.getHeaderFields().keySet()) {
 	    response.getHeaders().putAll(header,
@@ -148,15 +126,10 @@ public class JavaUrlHttpFutureCommandClient implements HttpFutureCommandClient {
 	}
 
 	response.setMessage(connection.getResponseMessage());
-	if (!connection.getRequestMethod().equals("HEAD")) {
-	    response.setContent(connection.getInputStream());
-	    response.setContentType(connection
-		    .getHeaderField(HttpConstants.CONTENT_TYPE));
-	}
 	return response;
     }
 
-    private HttpURLConnection openJavaConnection(HttpRequest request)
+    protected HttpURLConnection openJavaConnection(HttpRequest request)
 	    throws IOException {
 	URL url = new URL(target, request.getUri());
 	HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -169,8 +142,9 @@ public class JavaUrlHttpFutureCommandClient implements HttpFutureCommandClient {
 		connection.setRequestProperty(header, value);
 	}
 	if (request.getContent() != null) {
-	    connection.setRequestProperty(HttpConstants.CONTENT_TYPE, request
-		    .getContentType());
+	    connection.setRequestProperty(HttpConstants.CONTENT_TYPE,
+		    checkNotNull(request.getContentType(),
+			    "request.getContentType()"));
 	    OutputStream out = connection.getOutputStream();
 	    try {
 		if (request.getContent() instanceof String) {

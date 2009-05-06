@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,7 +23,6 @@
  */
 package org.jclouds.aws.s3;
 
-import org.jclouds.aws.s3.domain.S3Bucket;
 
 public interface S3Context {
 
@@ -39,7 +38,7 @@ public interface S3Context {
      * @param bucket
      * @return
      */
-    S3InputStreamMap createInputStreamMap(S3Bucket bucket);
+    S3InputStreamMap createInputStreamMap(String bucket);
 
     /**
      * Creates a <code>Map<String,S3Object></code> view of the specified bucket.
@@ -47,7 +46,7 @@ public interface S3Context {
      * @param bucket
      * @return
      */
-    S3ObjectMap createS3ObjectMap(S3Bucket bucket);
+    S3ObjectMap createS3ObjectMap(String bucket);
 
     /**
      * Closes all connections to S3.

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -110,14 +110,13 @@ public class JCloudsS3Service extends S3Service {
     /**
      * {@inheritDoc}
      * 
-     * @see S3Connection#deleteBucket(org.jclouds.aws.s3.domain.S3Bucket)
+     * @see S3Connection#deleteBucketIfNotEmpty(org.jclouds.aws.s3.domain.S3Bucket)
      */
     @Override
     protected void deleteBucketImpl(String bucketName)
 	    throws S3ServiceException {
 	try {
-	    connection.deleteBucket(
-		    new org.jclouds.aws.s3.domain.S3Bucket(bucketName)).get(
+	    connection.deleteBucketIfNotEmpty(bucketName).get(
 		    requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
 	} catch (Exception e) {
 	    Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
@@ -136,10 +135,8 @@ public class JCloudsS3Service extends S3Service {
     protected void deleteObjectImpl(String bucketName, String objectKey)
 	    throws S3ServiceException {
 	try {
-	    connection.deleteObject(
-		    new org.jclouds.aws.s3.domain.S3Bucket(bucketName),
-		    objectKey).get(requestTimeoutMilliseconds,
-		    TimeUnit.MILLISECONDS);
+	    connection.deleteObject(bucketName, objectKey).get(
+		    requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
 	} catch (Exception e) {
 	    Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
 	    throw new S3ServiceException(String.format(
@@ -210,17 +207,17 @@ public class JCloudsS3Service extends S3Service {
     @Override
     protected S3Bucket[] listAllBucketsImpl() throws S3ServiceException {
 	try {
-	    List<org.jclouds.aws.s3.domain.S3Bucket> jcBucketList = connection
-		    .getBuckets().get(requestTimeoutMilliseconds,
-			    TimeUnit.MILLISECONDS);
+	    List<org.jclouds.aws.s3.domain.S3Bucket.MetaData> jcBucketList = connection
+		    .getMetaDataOfOwnedBuckets().get(
+			    requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
 
 	    ArrayList<org.jets3t.service.model.S3Bucket> jsBucketList = new ArrayList<org.jets3t.service.model.S3Bucket>();
-	    for (org.jclouds.aws.s3.domain.S3Bucket jcBucket : jcBucketList) {
+	    for (org.jclouds.aws.s3.domain.S3Bucket.MetaData jcBucket : jcBucketList) {
 		org.jets3t.service.model.S3Bucket jsBucket = new org.jets3t.service.model.S3Bucket(
 			jcBucket.getName());
 		jsBucket.setOwner(new org.jets3t.service.model.S3Owner(jcBucket
-			.getMetaData().getCanonicalUser().getId(), jcBucket
-			.getMetaData().getCanonicalUser().getDisplayName()));
+			.getCanonicalUser().getId(), jcBucket
+			.getCanonicalUser().getDisplayName()));
 		jsBucketList.add(jsBucket);
 	    }
 	    return (org.jets3t.service.model.S3Bucket[]) jsBucketList
