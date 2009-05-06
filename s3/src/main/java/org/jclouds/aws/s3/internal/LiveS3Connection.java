@@ -141,7 +141,7 @@ public class LiveS3Connection implements S3Connection {
      * 
      * @see DeleteBucket
      */
-    public Future<Boolean> deleteBucketIfNotEmpty(String s3Bucket) {
+    public Future<Boolean> deleteBucketIfEmpty(String s3Bucket) {
 	DeleteBucket deleteBucket = factory.createDeleteBucket(s3Bucket);
 	client.submit(deleteBucket);
 	return deleteBucket;

@@ -202,7 +202,7 @@ public class JCloudsS3ServiceTest extends S3IntegrationTest {
 		    jcBucket.getCanonicalUser().getDisplayName());
 	}
 
-	client.deleteBucketIfNotEmpty(bucketName);
+	client.deleteBucketIfEmpty(bucketName);
     }
 
     @Test

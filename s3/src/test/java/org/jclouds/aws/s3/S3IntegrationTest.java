@@ -152,7 +152,7 @@ public class S3IntegrationTest {
 			iterator.next().get(10, TimeUnit.SECONDS);
 			iterator.remove();
 		    }
-		    client.deleteBucketIfNotEmpty(metaDatum.getName()).get(10,
+		    client.deleteBucketIfEmpty(metaDatum.getName()).get(10,
 			    TimeUnit.SECONDS);
 		}
 

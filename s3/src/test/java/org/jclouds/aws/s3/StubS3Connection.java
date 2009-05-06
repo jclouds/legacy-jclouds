@@ -120,7 +120,7 @@ public class StubS3Connection implements S3Connection {
 	};
     }
 
-    public Future<Boolean> deleteBucketIfNotEmpty(final String s3Bucket) {
+    public Future<Boolean> deleteBucketIfEmpty(final String s3Bucket) {
 	return new FutureBase<Boolean>() {
 	    public Boolean get() throws InterruptedException,
 		    ExecutionException {

@@ -112,7 +112,7 @@ public interface S3Connection {
      *            what to delete
      * @return false, if the bucket was not empty and therefore not deleted
      */
-    Future<Boolean> deleteBucketIfNotEmpty(String s3Bucket);
+    Future<Boolean> deleteBucketIfEmpty(String s3Bucket);
 
     /**
      * Copies one object to another bucket

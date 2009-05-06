@@ -148,7 +148,7 @@ public class AmazonS3Test extends S3IntegrationTest {
 
     Boolean deleteBucket() throws Exception {
 	String s3Bucket = bucketPrefix + "adrianjbosstest";
-	return client.deleteBucketIfNotEmpty(s3Bucket)
+	return client.deleteBucketIfEmpty(s3Bucket)
 		.get(10, TimeUnit.SECONDS);
     }
 

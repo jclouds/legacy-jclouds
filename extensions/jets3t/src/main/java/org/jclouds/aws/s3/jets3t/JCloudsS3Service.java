@@ -110,13 +110,13 @@ public class JCloudsS3Service extends S3Service {
     /**
      * {@inheritDoc}
      * 
-     * @see S3Connection#deleteBucketIfNotEmpty(org.jclouds.aws.s3.domain.S3Bucket)
+     * @see S3Connection#deleteBucketIfEmpty(org.jclouds.aws.s3.domain.S3Bucket)
      */
     @Override
     protected void deleteBucketImpl(String bucketName)
 	    throws S3ServiceException {
 	try {
-	    connection.deleteBucketIfNotEmpty(bucketName).get(
+	    connection.deleteBucketIfEmpty(bucketName).get(
 		    requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
 	} catch (Exception e) {
 	    Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
