@@ -122,12 +122,12 @@ public class S3Utils extends Utils {
     public static String getContentAsStringAndClose(S3Object object)
 	    throws IOException {
 	checkNotNull(object, "s3Object");
-	checkNotNull(object.getContent(), "s3Object.content");
-	Object o = object.getContent();
+	checkNotNull(object.getData(), "s3Object.content");
+	Object o = object.getData();
 
 	if (o instanceof InputStream) {
 	    String returnVal = toStringAndClose((InputStream) o);
-	    if (object.getContentType().indexOf("xml") >= 0) {
+	    if (object.getMetaData().getContentType().indexOf("xml") >= 0) {
 
 	    }
 	    return returnVal;

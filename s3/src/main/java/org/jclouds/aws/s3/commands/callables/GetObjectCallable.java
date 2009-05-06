@@ -26,7 +26,6 @@ package org.jclouds.aws.s3.commands.callables;
 import java.io.IOException;
 
 import org.jclouds.Utils;
-import org.jclouds.aws.s3.DateService;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpFutureCommand;
@@ -38,14 +37,14 @@ import com.google.inject.Inject;
  * 
  * @author Adrian Cole
  */
-public class RetrieveObjectCallable extends
+public class GetObjectCallable extends
 	HttpFutureCommand.ResponseCallable<S3Object> {
-    private final DateService dateParser;
+    private final HeadMetaDataCallable metaDataParser;
     private String key;
 
     @Inject
-    public RetrieveObjectCallable(DateService dateParser) {
-	this.dateParser = dateParser;
+    public GetObjectCallable(HeadMetaDataCallable metaDataParser) {
+	this.metaDataParser = metaDataParser;
     }
 
     /**
@@ -53,30 +52,12 @@ public class RetrieveObjectCallable extends
      * @throws org.jclouds.http.HttpException
      */
     public S3Object call() throws HttpException {
-	if (getResponse().getStatusCode() == 200) {
-	    S3Object object = new S3Object(key);
-	    String md5Header = getResponse().getFirstHeaderOrNull(
-		    "x-amz-meta-object-md5");
-	    if (md5Header != null)
-		object.setContentMD5(md5Header);
-	    object.setLastModified(dateParser
-		    .dateTimeFromHeaderFormat(getResponse()
-			    .getFirstHeaderOrNull("Last-Modified")));
-	    String eTag = getResponse().getFirstHeaderOrNull("ETag");
-	    if (eTag != null) {
-		object.setETag(eTag.replaceAll("\"", ""));
-	    }
-	    object.setContentType(getResponse().getFirstHeaderOrNull(
-		    "Content-Type"));
-	    object.setSize(Long.parseLong(getResponse().getFirstHeaderOrNull(
-		    "Content-Length")));
-	    object.setServer(getResponse().getFirstHeaderOrNull("Server"));
-	    if (getResponse().getContent() != null) {
-		object.setContent(getResponse().getContent());
-	    }
-	    return object;
-	} else if (getResponse().getStatusCode() == 404) {
+	metaDataParser.setResponse(getResponse());
+	S3Object.MetaData metaData = metaDataParser.call();
+	if (metaData == S3Object.MetaData.NOT_FOUND)
 	    return S3Object.NOT_FOUND;
+	if (getResponse().getContent() != null) {
+	    return new S3Object(metaData,getResponse().getContent());
 	} else {
 	    String reason = null;
 	    try {
@@ -84,16 +65,13 @@ public class RetrieveObjectCallable extends
 	    } catch (IOException e) {
 		logger.error(e, "error parsing reason");
 	    }
-	    throw new HttpException("Error parsing object " + getResponse()
-		    + " reason: " + reason);
+	    throw new HttpException("No content retrieving object " + key + ":"
+		    + getResponse() + " reason: " + reason);
 	}
     }
 
     public void setKey(String key) {
-	this.key = key;
+	this.metaDataParser.setKey(key);
     }
 
-    public String getKey() {
-	return key;
-    }
 }

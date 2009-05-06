@@ -31,13 +31,13 @@ import org.jclouds.aws.s3.domain.S3Object;
 
 /**
  * // TODO: Adrian: Document this!
- *
+ * 
  * @author Adrian Cole
  */
 public interface S3Connection {
     Future<S3Object> getObject(S3Bucket s3Bucket, String key);
 
-    Future<S3Object> headObject(S3Bucket s3Bucket, String key);
+    Future<S3Object.MetaData> getObjectMetaData(S3Bucket s3Bucket, String key);
 
     Future<Boolean> deleteObject(S3Bucket s3Bucket, String key);
 
@@ -47,7 +47,8 @@ public interface S3Connection {
 
     Future<Boolean> deleteBucket(S3Bucket s3Bucket);
 
-    Future<Boolean> copyObject(S3Bucket sourceBucket, S3Object sourceObject, S3Bucket destinationBucket, S3Object destinationObject);
+    Future<Boolean> copyObject(S3Bucket sourceBucket, S3Object sourceObject,
+	    S3Bucket destinationBucket, S3Object destinationObject);
 
     Future<Boolean> bucketExists(S3Bucket s3Bucket);
 

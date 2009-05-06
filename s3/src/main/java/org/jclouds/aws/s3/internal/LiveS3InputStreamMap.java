@@ -70,7 +70,7 @@ public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
 	try {
 	    return (InputStream) (connection.getObject(bucket, o.toString())
 		    .get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS))
-		    .getContent();
+		    .getData();
 	} catch (Exception e) {
 	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
 	    throw new S3RuntimeException(String.format(
@@ -105,7 +105,7 @@ public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
 	Collection<InputStream> values = new LinkedList<InputStream>();
 	Set<S3Object> objects = getAllObjects();
 	for (S3Object object : objects) {
-	    values.add((InputStream) object.getContent());
+	    values.add((InputStream) object.getData());
 	}
 	return values;
     }
@@ -152,7 +152,7 @@ public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
 	S3Object object = new S3Object(s);
 	try {
 	    InputStream returnVal = containsKey(s) ? get(s) : null;
-	    object.setContent(o);
+	    object.setData(o);
 	    setSizeIfContentIsInputStream(object);
 	    connection.addObject(bucket, object).get(
 		    requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
@@ -190,7 +190,7 @@ public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
 	    List<Future<String>> puts = new ArrayList<Future<String>>();
 	    for (String key : map.keySet()) {
 		S3Object object = new S3Object(key);
-		object.setContent(map.get(key));
+		object.setData(map.get(key));
 		setSizeIfContentIsInputStream(object);
 		puts.add(connection.addObject(bucket, object));
 	    }
@@ -206,11 +206,11 @@ public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
 
     private void setSizeIfContentIsInputStream(S3Object object)
 	    throws IOException {
-	if (object.getContent() instanceof InputStream) {
+	if (object.getData() instanceof InputStream) {
 	    byte[] buffer = IOUtils.toByteArray((InputStream) object
-		    .getContent());
-	    object.setSize(buffer.length);
-	    object.setContent(new ByteArrayInputStream(buffer));
+		    .getData());
+	    object.getMetaData().setSize(buffer.length);
+	    object.setData(new ByteArrayInputStream(buffer));
 	}
     }
 

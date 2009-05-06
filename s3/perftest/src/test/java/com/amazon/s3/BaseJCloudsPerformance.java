@@ -45,8 +45,8 @@ public abstract class BaseJCloudsPerformance extends BasePerformance {
     // object.setKey(id + "");
     // //object.setContentType("text/plain");
     // object.setContentType("application/octetstream");
-    // //object.setContent("this is a test");
-    // object.setContent(test);
+    // //object.setData("this is a test");
+    // object.setData(test);
     // return clientProvider.getObject(s3Bucket,
     // object.getKey()).get(120,TimeUnit.SECONDS) !=
     // org.jclouds.aws.s3.domain.S3Object.NOT_FOUND;
@@ -59,8 +59,8 @@ public abstract class BaseJCloudsPerformance extends BasePerformance {
 	S3Bucket s3Bucket = new S3Bucket(bucket);
 	org.jclouds.aws.s3.domain.S3Object object = new org.jclouds.aws.s3.domain.S3Object(
 		key);
-	object.setContentType(contentType);
-	object.setContent(data);
+	object.getMetaData().setContentType(contentType);
+	object.setData(data);
 	return client.addObject(s3Bucket, object).get(120, TimeUnit.SECONDS) != null;
     }
 
@@ -70,8 +70,8 @@ public abstract class BaseJCloudsPerformance extends BasePerformance {
 	S3Bucket s3Bucket = new S3Bucket(bucket);
 	org.jclouds.aws.s3.domain.S3Object object = new org.jclouds.aws.s3.domain.S3Object(
 		key);
-	object.setContentType(contentType);
-	object.setContent(data);
+	object.getMetaData().setContentType(contentType);
+	object.setData(data);
 	return client.addObject(s3Bucket, object).get(120, TimeUnit.SECONDS) != null;
     }
 
@@ -81,9 +81,9 @@ public abstract class BaseJCloudsPerformance extends BasePerformance {
 	S3Bucket s3Bucket = new S3Bucket(bucket);
 	org.jclouds.aws.s3.domain.S3Object object = new org.jclouds.aws.s3.domain.S3Object(
 		key);
-	object.setContentType(contentType);
-	object.setContent(data);
-	object.setSize(data.available());
+	object.getMetaData().setContentType(contentType);
+	object.setData(data);
+	object.getMetaData().setSize(data.available());
 	return client.addObject(s3Bucket, object).get(120, TimeUnit.SECONDS) != null;
     }
 
@@ -93,8 +93,8 @@ public abstract class BaseJCloudsPerformance extends BasePerformance {
 	S3Bucket s3Bucket = new S3Bucket(bucket);
 	org.jclouds.aws.s3.domain.S3Object object = new org.jclouds.aws.s3.domain.S3Object(
 		key);
-	object.setContentType(contentType);
-	object.setContent(data);
+	object.getMetaData().setContentType(contentType);
+	object.setData(data);
 	return client.addObject(s3Bucket, object).get(120, TimeUnit.SECONDS) != null;
     }
 }

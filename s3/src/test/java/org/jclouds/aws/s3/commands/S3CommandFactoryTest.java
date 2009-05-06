@@ -39,7 +39,6 @@ import com.google.inject.Injector;
 import com.google.inject.name.Names;
 
 /**
- * // TODO: Adrian: Document this!
  * 
  * @author Adrian Cole
  */
@@ -84,8 +83,7 @@ public class S3CommandFactoryTest {
 
     @Test
     void testCreateDeleteObject() {
-	assert commandFactory.createDeleteObject(new S3Bucket("test"),
-		"blah") != null;
+	assert commandFactory.createDeleteObject(new S3Bucket("test"), "blah") != null;
     }
 
     @Test
@@ -100,22 +98,26 @@ public class S3CommandFactoryTest {
 
     @Test
     void testCreatePutObject() {
-	S3Object object = createMock(S3Object.class);
-	expect(object.getKey()).andReturn("rawr");
-	expect(object.getContentType()).andReturn("text/xml").atLeastOnce();
-	expect(object.getContent()).andReturn("<a></a>");
-	expect(object.getSize()).andReturn(4L);
+	S3Object.MetaData metaData = createMock(S3Object.MetaData.class);
+	S3Object object = new S3Object(metaData);
+	object.setData("<a></a>");
+	expect(metaData.getKey()).andReturn("rawr");
+	expect(metaData.getContentType()).andReturn("text/xml").atLeastOnce();
+	expect(metaData.getSize()).andReturn(4L);
 
-	replay(object);
+	replay(metaData);
 
-	assert commandFactory.createPutObject(new S3Bucket("test"),
-		object) != null;
+	assert commandFactory.createPutObject(new S3Bucket("test"), object) != null;
     }
 
     @Test
-    void testCreateRetrieveObject() {
-	assert commandFactory.createRetrieveObject(new S3Bucket("test"),
-		"blah", false) != null;
+    void testCreateGetObject() {
+	assert commandFactory.createGetObject(new S3Bucket("test"), "blah") != null;
+    }
+
+    @Test
+    void testCreateHeadMetaData() {
+	assert commandFactory.createHeadMetaData(new S3Bucket("test"), "blah") != null;
     }
 
     @Test

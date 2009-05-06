@@ -23,30 +23,18 @@
  */
 package org.jclouds.aws.s3.commands;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import org.jclouds.aws.s3.commands.callables.PutObjectCallable;
 import org.jclouds.aws.s3.domain.S3Bucket;
-import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.http.commands.callables.ReturnTrueIf200;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 
-public class PutObject extends S3FutureCommand<String> {
+public class BucketExists extends S3FutureCommand<Boolean> {
 
     @Inject
-    public PutObject(@Named("jclouds.http.address") String amazonHost,
-	    PutObjectCallable callable, @Assisted S3Bucket s3Bucket,
-	    @Assisted S3Object object) {
-	super("PUT", "/" + checkNotNull(object.getKey()), callable, amazonHost,
-		s3Bucket);
-	getRequest().setContent(
-		checkNotNull(object.getData(), "object.getContent()"));
-	getRequest().setContentType(
-		checkNotNull(object.getMetaData().getContentType(),
-			"object.metaData.contentType()"));
-	getRequest().setContentLength(object.getMetaData().getSize());
+    public BucketExists(@Named("jclouds.http.address") String amazonHost,
+	    ReturnTrueIf200 callable, @Assisted S3Bucket s3Bucket) {
+	super("HEAD", "/", callable, amazonHost, s3Bucket);
     }
-
 }

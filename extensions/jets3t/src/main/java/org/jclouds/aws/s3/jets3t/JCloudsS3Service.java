@@ -219,8 +219,8 @@ public class JCloudsS3Service extends S3Service {
 		org.jets3t.service.model.S3Bucket jsBucket = new org.jets3t.service.model.S3Bucket(
 			jcBucket.getName());
 		jsBucket.setOwner(new org.jets3t.service.model.S3Owner(jcBucket
-			.getCanonicalUser().getId(), jcBucket
-			.getCanonicalUser().getDisplayName()));
+			.getMetaData().getCanonicalUser().getId(), jcBucket
+			.getMetaData().getCanonicalUser().getDisplayName()));
 		jsBucketList.add(jsBucket);
 	    }
 	    return (org.jets3t.service.model.S3Bucket[]) jsBucketList

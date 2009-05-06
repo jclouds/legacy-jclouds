@@ -23,15 +23,16 @@
  */
 package org.jclouds.aws.s3.commands.callables.xml;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jclouds.aws.s3.DateService;
-import com.google.inject.Inject;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Owner;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 import org.xml.sax.Attributes;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.inject.Inject;
 
 /**
  * // TODO: Adrian: Document this!
@@ -71,15 +72,14 @@ public class ListAllMyBucketsHandler extends
 	} else if (qName.equals("DisplayName")) {
 	    currentOwner.setDisplayName(currentText.toString());
 	} else if (qName.equals("Bucket")) {
-	    currentS3Bucket.setCanonicalUser(currentOwner);
+	    currentS3Bucket.getMetaData().setCanonicalUser(currentOwner);
 	    buckets.add(currentS3Bucket);
 	} else if (qName.equals("Name")) {
 	    currentS3Bucket = new S3Bucket(currentText.toString());
-	    currentS3Bucket.setHasData(false);
 	    currentS3Bucket.setComplete(false);
 	} else if (qName.equals("CreationDate")) {
-	    currentS3Bucket.setCreationDate(dateParser
-		    .dateTimeFromXMLFormat(currentText.toString()));
+	    currentS3Bucket.getMetaData().setCreationDate(
+		    dateParser.dateTimeFromXMLFormat(currentText.toString()));
 	}
 	currentText = new StringBuilder();
     }

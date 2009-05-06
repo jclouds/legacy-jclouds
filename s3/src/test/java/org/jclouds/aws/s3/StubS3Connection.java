@@ -56,14 +56,27 @@ public class StubS3Connection implements S3Connection {
 		if (!realContents.containsKey(key))
 		    return S3Object.NOT_FOUND;
 		S3Object object = new S3Object(key);
-		object.setContent(realContents.get(key));
+		object.setData(realContents.get(key));
 		return object;
 	    }
 	};
     }
 
-    public Future<S3Object> headObject(S3Bucket s3Bucket, String key) {
-	return getObject(s3Bucket, key);
+    public Future<S3Object.MetaData> getObjectMetaData(final S3Bucket s3Bucket,
+	    final String key) {
+	return new FutureBase<S3Object.MetaData>() {
+	    public S3Object.MetaData get() throws InterruptedException,
+		    ExecutionException {
+		if (!bucketToContents.containsKey(s3Bucket))
+		    return S3Object.MetaData.NOT_FOUND;
+		Map<String, Object> realContents = bucketToContents
+			.get(s3Bucket);
+		if (!realContents.containsKey(key))
+		    return S3Object.MetaData.NOT_FOUND;
+		S3Object.MetaData metaData = new S3Object.MetaData(key);
+		return metaData;
+	    }
+	};
     }
 
     public Future<Boolean> deleteObject(final S3Bucket s3Bucket,
@@ -152,14 +165,13 @@ public class StubS3Connection implements S3Connection {
 	return new FutureBase<S3Bucket>() {
 	    public S3Bucket get() throws InterruptedException,
 		    ExecutionException {
-		Set<S3Object> contents = new HashSet<S3Object>();
+		Set<S3Object.MetaData> contents = new HashSet<S3Object.MetaData>();
 		Map<String, Object> realContents = bucketToContents
 			.get(s3Bucket);
 		if (realContents != null) {
 		    for (String key : realContents.keySet()) {
-			S3Object object = new S3Object(key);
-			object.setContent(realContents.get(key));
-			contents.add(object);
+			S3Object.MetaData metaData = new S3Object.MetaData(key);
+			contents.add(metaData);
 		    }
 		}
 		s3Bucket.setContents(contents);

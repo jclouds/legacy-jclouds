@@ -37,8 +37,8 @@ public class S3ObjectTest {
     void testSetNoContentType() {
 	S3Object object = new S3Object("test");
 	File file = new File("hello.txt");
-	object.setContent(file);
-	assertEquals(object.getContentType(),
-			S3Object.UNKNOWN_MIME_TYPE);
+	object.setData(file);
+	assertEquals(object.getMetaData().getContentType(),
+		S3Object.MetaData.UNKNOWN_MIME_TYPE);
     }
 }

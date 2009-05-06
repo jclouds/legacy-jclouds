@@ -91,7 +91,7 @@ public class S3ObjectMapTest extends BaseS3MapTest<S3Object> {
 	    assertEquals(S3Utils.getContentAsStringAndClose(entry.getValue()),
 		    fiveStrings.get(entry.getKey()));
 	    S3Object value = entry.getValue();
-	    value.setContent("");
+	    value.setData("");
 	    entry.setValue(value);
 	}
 	assertEquals(map.size(), 5);
@@ -104,7 +104,7 @@ public class S3ObjectMapTest extends BaseS3MapTest<S3Object> {
     public void testContains() {
 	putString("one", "apple");
 	S3Object object = new S3Object("one");
-	object.setContent("apple");
+	object.setData("apple");
 	assert map.containsValue(object);
     }
 
@@ -125,12 +125,12 @@ public class S3ObjectMapTest extends BaseS3MapTest<S3Object> {
     @Test
     public void testPut() throws IOException {
 	S3Object object = new S3Object("one");
-	object.setContent(IOUtils.toInputStream("apple"));
-	object.setSize("apple".getBytes().length);
+	object.setData(IOUtils.toInputStream("apple"));
+	object.getMetaData().setSize("apple".getBytes().length);
 	S3Object old = map.put(object.getKey(), object);
 	getOneReturnsAppleAndOldValueIsNull(old);
-	object.setContent(IOUtils.toInputStream("bear"));
-	object.setSize("bear".getBytes().length);
+	object.setData(IOUtils.toInputStream("bear"));
+	object.getMetaData().setSize("bear".getBytes().length);
 	S3Object apple = map.put(object.getKey(), object);
 	getOneReturnsBearAndOldValueIsApple(apple);
     }
@@ -140,8 +140,8 @@ public class S3ObjectMapTest extends BaseS3MapTest<S3Object> {
 	Map<String, S3Object> newMap = new HashMap<String, S3Object>();
 	for (String key : fiveInputs.keySet()) {
 	    S3Object object = new S3Object(key);
-	    object.setContent(fiveInputs.get(key));
-	    object.setSize(fiveBytes.get(key).length);
+	    object.setData(fiveInputs.get(key));
+	    object.getMetaData().setSize(fiveBytes.get(key).length);
 	    newMap.put(key, object);
 	}
 	map.putAll(newMap);
@@ -154,7 +154,7 @@ public class S3ObjectMapTest extends BaseS3MapTest<S3Object> {
     @Override
     protected void putString(String key, String value) {
 	S3Object object = new S3Object(key);
-	object.setContent(value);
+	object.setData(value);
 	map.put(key, object);
     }
 
@@ -162,7 +162,7 @@ public class S3ObjectMapTest extends BaseS3MapTest<S3Object> {
 	Map<String, S3Object> newMap = new HashMap<String, S3Object>();
 	for (Map.Entry<String, String> entry : fiveStrings.entrySet()) {
 	    S3Object object = new S3Object(entry.getKey());
-	    object.setContent(entry.getValue());
+	    object.setData(entry.getValue());
 	    newMap.put(entry.getKey(), object);
 	}
 	map.putAll(newMap);

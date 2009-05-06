@@ -51,7 +51,7 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<S3Bucket> {
     }
 
     private S3Bucket s3Bucket;
-    private S3Object currentObject;
+    private S3Object.MetaData currentObjectMetaData;
     private S3Owner currentOwner;
     private StringBuilder currentText = new StringBuilder();
     @Inject
@@ -79,20 +79,23 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<S3Bucket> {
 	} else if (qName.equals("DisplayName")) {
 	    currentOwner.setDisplayName(currentText.toString());
 	} else if (qName.equals("Key")) { // content stuff
-	    currentObject = new S3Object(currentText.toString());
+	    currentObjectMetaData = new S3Object.MetaData(currentText
+		    .toString());
 	} else if (qName.equals("LastModified")) {
-	    currentObject.setLastModified(dateParser
+	    currentObjectMetaData.setLastModified(dateParser
 		    .dateTimeFromXMLFormat(currentText.toString()));
 	} else if (qName.equals("ETag")) {
-	    currentObject.setETag(currentText.toString().replaceAll("\"", ""));
+	    currentObjectMetaData.setETag(currentText.toString().replaceAll(
+		    "\"", ""));
 	} else if (qName.equals("Size")) {
-	    currentObject.setSize(Long.parseLong(currentText.toString()));
+	    currentObjectMetaData.setSize(Long
+		    .parseLong(currentText.toString()));
 	} else if (qName.equals("Owner")) {
-	    currentObject.setOwner(currentOwner);
+	    currentObjectMetaData.setOwner(currentOwner);
 	} else if (qName.equals("StorageClass")) {
-	    currentObject.setStorageClass(currentText.toString());
+	    currentObjectMetaData.setStorageClass(currentText.toString());
 	} else if (qName.equals("Contents")) {
-	    s3Bucket.getContents().add(currentObject);
+	    s3Bucket.getContents().add(currentObjectMetaData);
 	} else if (qName.equals("Name")) {// bucket stuff last, as least likely
 	    // } else if (qName.equals("Prefix")) {
 	    // // no-op

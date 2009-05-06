@@ -118,23 +118,21 @@ public class S3ParserTest extends PerformanceTest {
 	S3Bucket bucket1 = s3Buckets.get(0);
 	assert bucket1.getName().equals("adrianjbosstest");
 	DateTime expectedDate1 = new DateTime("2009-03-12T02:00:07.000Z");
-	DateTime date1 = bucket1.getCreationDate();
+	DateTime date1 = bucket1.getMetaData().getCreationDate();
 	assert date1.equals(expectedDate1);
 	S3Bucket bucket2 = s3Buckets.get(1);
 	assert bucket2.getName().equals("adrianjbosstest2");
 	DateTime expectedDate2 = new DateTime("2009-03-12T02:00:09.000Z");
-	DateTime date2 = bucket2.getCreationDate();
+	DateTime date2 = bucket2.getMetaData().getCreationDate();
 	assert date2.equals(expectedDate2);
 	assert s3Buckets.size() == 2;
 	S3Owner owner = new S3Owner();
 	owner
 		.setId("e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0");
-	assert bucket1.getCanonicalUser().equals(owner);
-	assert bucket2.getCanonicalUser().equals(owner);
+	assert bucket1.getMetaData().getCanonicalUser().equals(owner);
+	assert bucket2.getMetaData().getCanonicalUser().equals(owner);
 	assert !bucket1.isComplete();
 	assert !bucket2.isComplete();
-	assert !bucket1.isHasData();
-	assert !bucket2.isHasData();
 	assert bucket1.getContents().size() == 0;
 	assert bucket2.getContents().size() == 0;
 
@@ -146,9 +144,8 @@ public class S3ParserTest extends PerformanceTest {
 	S3Bucket bucket = runParseListBucketResult();
 	assert bucket.isComplete();
 	assert bucket.getName().equals("adrianjbosstest");
-	assert !bucket.isHasData();
 	assert bucket.getContents().size() == 1;
-	S3Object object = bucket.getContents().iterator().next();
+	S3Object.MetaData object = bucket.getContents().iterator().next();
 	assert object.getKey().equals("3366");
 	DateTime expected = new DateTime("2009-03-12T02:00:13.000Z");
 	assert object.getLastModified().equals(expected) : String

@@ -128,7 +128,7 @@ public class JCloudsS3ServiceTest extends S3IntegrationTest {
 
 	service.deleteObject(bucketName, objectKey);
 
-	assertEquals(client.headObject(jcloudsBucket, objectKey).get(10,
+	assertEquals(client.getObjectMetaData(jcloudsBucket, objectKey).get(10,
 		TimeUnit.SECONDS), org.jclouds.aws.s3.domain.S3Object.NOT_FOUND);
     }
 
@@ -138,7 +138,7 @@ public class JCloudsS3ServiceTest extends S3IntegrationTest {
 	org.jclouds.aws.s3.domain.S3Bucket jcloudsBucket = createBucket(name);
 	org.jclouds.aws.s3.domain.S3Object jcloudsObject = new org.jclouds.aws.s3.domain.S3Object(
 		objectKey);
-	jcloudsObject.setContent(objectValue);
+	jcloudsObject.setData(objectValue);
 	client.addObject(jcloudsBucket, jcloudsObject)
 		.get(10, TimeUnit.SECONDS);
 	return jcloudsBucket;
@@ -185,28 +185,32 @@ public class JCloudsS3ServiceTest extends S3IntegrationTest {
     }
 
     @Test
-    public void testListAllBucketsImpl() 
-    	throws InterruptedException, ExecutionException, TimeoutException, S3ServiceException {
-    // Ensure there is at least 1 bucket in S3 account to list and compare.
+    public void testListAllBucketsImpl() throws InterruptedException,
+	    ExecutionException, TimeoutException, S3ServiceException {
+	// Ensure there is at least 1 bucket in S3 account to list and compare.
 	String bucketName = bucketPrefix + ".testListAllBucketsImplString";
 	org.jclouds.aws.s3.domain.S3Bucket jcloudsBucket = createBucket(bucketName);
-	
+
 	S3Bucket[] jsBuckets = service.listAllBuckets();
-	
-	List<org.jclouds.aws.s3.domain.S3Bucket> jcBuckets = client.getBuckets().get(10, TimeUnit.SECONDS);
+
+	List<org.jclouds.aws.s3.domain.S3Bucket> jcBuckets = client
+		.getBuckets().get(10, TimeUnit.SECONDS);
 
 	assert jsBuckets.length == jcBuckets.size();
-	
-	Iterator<org.jclouds.aws.s3.domain.S3Bucket> jcBucketsIter = jcBuckets.iterator();
-	for (S3Bucket jsBucket: jsBuckets) {
-		assert jcBucketsIter.hasNext();		
-		
-		org.jclouds.aws.s3.domain.S3Bucket jcBucket = jcBucketsIter.next();
-		assert jsBucket.getName().equals(jcBucket.getName());
-		assert jsBucket.getOwner().getId().equals(jcBucket.getCanonicalUser().getId());
-		assert jsBucket.getOwner().getDisplayName().equals(jcBucket.getCanonicalUser().getDisplayName());
+
+	Iterator<org.jclouds.aws.s3.domain.S3Bucket> jcBucketsIter = jcBuckets
+		.iterator();
+	for (S3Bucket jsBucket : jsBuckets) {
+	    assert jcBucketsIter.hasNext();
+
+	    org.jclouds.aws.s3.domain.S3Bucket jcBucket = jcBucketsIter.next();
+	    assert jsBucket.getName().equals(jcBucket.getName());
+	    assert jsBucket.getOwner().getId().equals(
+		    jcBucket.getMetaData().getCanonicalUser().getId());
+	    assert jsBucket.getOwner().getDisplayName().equals(
+		    jcBucket.getMetaData().getCanonicalUser().getDisplayName());
 	}
-	
+
 	client.deleteBucket(jcloudsBucket);
     }
 

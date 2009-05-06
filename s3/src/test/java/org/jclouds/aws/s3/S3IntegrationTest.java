@@ -154,9 +154,9 @@ public class S3IntegrationTest {
 	    for (S3Bucket bucket : buckets) {
 		if (bucket.getName().startsWith(bucketPrefix.toLowerCase())) {
 		    bucket = client.getBucket(bucket).get(10, TimeUnit.SECONDS);
-		    for (S3Object object : bucket.getContents()) {
+		    for (S3Object.MetaData metaData : bucket.getContents()) {
 			results.add(client
-				.deleteObject(bucket, object.getKey()));
+				.deleteObject(bucket, metaData.getKey()));
 		    }
 		    Iterator<Future<Boolean>> iterator = results.iterator();
 		    while (iterator.hasNext()) {

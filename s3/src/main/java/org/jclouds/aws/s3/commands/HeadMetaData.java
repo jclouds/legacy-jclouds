@@ -25,7 +25,7 @@ package org.jclouds.aws.s3.commands;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.aws.s3.commands.callables.RetrieveObjectCallable;
+import org.jclouds.aws.s3.commands.callables.HeadMetaDataCallable;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
 
@@ -33,14 +33,20 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 
-public class RetrieveObject extends S3FutureCommand<S3Object> {
+/**
+ * Retrieves the metadata associated with the Key or
+ * {@link S3Object.MetaData#NOT_FOUND} if not available;
+ * 
+ * @author Adrian Cole
+ * 
+ */
+public class HeadMetaData extends S3FutureCommand<S3Object.MetaData> {
 
     @Inject
-    public RetrieveObject(@Named("jclouds.http.address") String amazonHost,
-	    RetrieveObjectCallable callable, @Assisted S3Bucket s3Bucket,
-	    @Assisted String key, @Assisted boolean getContent) {
-	super(getContent ? "GET" : "HEAD", "/" + checkNotNull(key), callable,
-		amazonHost, s3Bucket);
+    public HeadMetaData(@Named("jclouds.http.address") String amazonHost,
+	    HeadMetaDataCallable callable, @Assisted S3Bucket s3Bucket,
+	    @Assisted String key) {
+	super("HEAD", "/" + checkNotNull(key), callable, amazonHost, s3Bucket);
 	callable.setKey(key);
     }
 }

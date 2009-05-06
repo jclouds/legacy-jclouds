@@ -25,13 +25,14 @@ package org.jclouds.aws.s3.commands.config;
 
 import java.util.List;
 
+import org.jclouds.aws.s3.commands.BucketExists;
 import org.jclouds.aws.s3.commands.CopyObject;
 import org.jclouds.aws.s3.commands.DeleteBucket;
 import org.jclouds.aws.s3.commands.DeleteObject;
-import org.jclouds.aws.s3.commands.HeadBucket;
+import org.jclouds.aws.s3.commands.GetObject;
+import org.jclouds.aws.s3.commands.HeadMetaData;
 import org.jclouds.aws.s3.commands.PutBucket;
 import org.jclouds.aws.s3.commands.PutObject;
-import org.jclouds.aws.s3.commands.RetrieveObject;
 import org.jclouds.aws.s3.commands.S3CommandFactory;
 import org.jclouds.aws.s3.commands.callables.xml.ListAllMyBucketsHandler;
 import org.jclouds.aws.s3.commands.callables.xml.ListBucketHandler;
@@ -68,10 +69,10 @@ public class S3CommandsModule extends AbstractModule {
 			S3CommandFactory.DeleteObjectFactory.class,
 			DeleteObject.class));
 
-	bind(S3CommandFactory.HeadBucketFactory.class).toProvider(
+	bind(S3CommandFactory.BucketExistsFactory.class).toProvider(
 		FactoryProvider.newFactory(
-			S3CommandFactory.HeadBucketFactory.class,
-			HeadBucket.class));
+			S3CommandFactory.BucketExistsFactory.class,
+			BucketExists.class));
 
 	final TypeLiteral<S3CommandFactory.GenericParseFactory<List<S3Bucket>>> listBucketsTypeLiteral = new TypeLiteral<S3CommandFactory.GenericParseFactory<List<S3Bucket>>>() {
 	};
@@ -104,10 +105,15 @@ public class S3CommandsModule extends AbstractModule {
 			S3CommandFactory.PutObjectFactory.class,
 			PutObject.class));
 
-	bind(S3CommandFactory.RetrieveObjectFactory.class).toProvider(
+	bind(S3CommandFactory.GetObjectFactory.class).toProvider(
 		FactoryProvider.newFactory(
-			S3CommandFactory.RetrieveObjectFactory.class,
-			RetrieveObject.class));
+			S3CommandFactory.GetObjectFactory.class,
+			GetObject.class));
+
+	bind(S3CommandFactory.HeadMetaDataFactory.class).toProvider(
+		FactoryProvider.newFactory(
+			S3CommandFactory.HeadMetaDataFactory.class,
+			HeadMetaData.class));
 
     }
 

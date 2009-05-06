@@ -73,7 +73,7 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
     public int size() {
 	try {
 	    S3Bucket bucket = refreshBucket();
-	    Set<S3Object> contents = bucket.getContents();
+	    Set<S3Object.MetaData> contents = bucket.getContents();
 	    return contents.size();
 	} catch (Exception e) {
 	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
@@ -84,8 +84,8 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
 
     protected boolean containsETag(String eTagOfValue)
 	    throws InterruptedException, ExecutionException, TimeoutException {
-	for (S3Object object : refreshBucket().getContents()) {
-	    if (object.getETag().equals(eTagOfValue))
+	for (S3Object.MetaData metaData : refreshBucket().getContents()) {
+	    if (metaData.getETag().equals(eTagOfValue))
 		return true;
 	}
 	return false;
@@ -106,11 +106,11 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
 	    md5 = S3Utils.md5(new FileInputStream((File) value));
 	} else if (value instanceof S3Object) {
 	    S3Object object = (S3Object) value;
-	    object = connection.headObject(bucket, object.getKey()).get(
+	    object = connection.getObject(bucket, object.getKey()).get(
 		    requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
 	    if (S3Object.NOT_FOUND.equals(object))
 		throw new FileNotFoundException("not found: " + object.getKey());
-	    md5 = S3Utils.fromHexString(object.getETag());
+	    md5 = S3Utils.fromHexString(object.getMetaData().getETag());
 	} else {
 	    throw new IllegalArgumentException("unsupported value type: "
 		    + value.getClass());
@@ -202,7 +202,7 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
     public Set<String> keySet() {
 	try {
 	    Set<String> keys = new HashSet<String>();
-	    for (S3Object object : refreshBucket().getContents())
+	    for (S3Object.MetaData object : refreshBucket().getContents())
 		keys.add(object.getKey());
 	    return keys;
 	} catch (Exception e) {
@@ -214,8 +214,8 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
 
     public boolean containsKey(Object key) {
 	try {
-	    return connection.headObject(bucket, key.toString()).get(
-		    requestTimeoutMilliseconds, TimeUnit.MILLISECONDS) != S3Object.NOT_FOUND;
+	    return connection.getObjectMetaData(bucket, key.toString()).get(
+		    requestTimeoutMilliseconds, TimeUnit.MILLISECONDS) != S3Object.MetaData.NOT_FOUND;
 	} catch (Exception e) {
 	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
 	    throw new S3RuntimeException(String.format(

@@ -23,18 +23,30 @@
  */
 package org.jclouds.aws.s3.commands;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import org.jclouds.aws.s3.commands.callables.GetObjectCallable;
 import org.jclouds.aws.s3.domain.S3Bucket;
-import org.jclouds.http.commands.callables.ReturnTrueIf200;
+import org.jclouds.aws.s3.domain.S3Object;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 
-public class HeadBucket extends S3FutureCommand<Boolean> {
+/**
+ * Retrieves the S3Object associated with the Key or {@link S3Object#NOT_FOUND}
+ * if not available;
+ * 
+ * @author Adrian Cole
+ * 
+ */
+public class GetObject extends S3FutureCommand<S3Object> {
 
     @Inject
-    public HeadBucket(@Named("jclouds.http.address") String amazonHost,
-	    ReturnTrueIf200 callable, @Assisted S3Bucket s3Bucket) {
-	super("HEAD", "/", callable, amazonHost, s3Bucket);
+    public GetObject(@Named("jclouds.http.address") String amazonHost,
+	    GetObjectCallable callable, @Assisted S3Bucket s3Bucket,
+	    @Assisted String key) {
+	super("GET", "/" + checkNotNull(key), callable, amazonHost, s3Bucket);
+	callable.setKey(key);
     }
 }

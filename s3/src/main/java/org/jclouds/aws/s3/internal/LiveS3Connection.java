@@ -27,15 +27,16 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 import org.jclouds.aws.s3.S3Connection;
+import org.jclouds.aws.s3.commands.BucketExists;
 import org.jclouds.aws.s3.commands.CopyObject;
 import org.jclouds.aws.s3.commands.DeleteBucket;
 import org.jclouds.aws.s3.commands.DeleteObject;
-import org.jclouds.aws.s3.commands.HeadBucket;
+import org.jclouds.aws.s3.commands.GetObject;
+import org.jclouds.aws.s3.commands.HeadMetaData;
 import org.jclouds.aws.s3.commands.ListAllMyBuckets;
 import org.jclouds.aws.s3.commands.ListBucket;
 import org.jclouds.aws.s3.commands.PutBucket;
 import org.jclouds.aws.s3.commands.PutObject;
-import org.jclouds.aws.s3.commands.RetrieveObject;
 import org.jclouds.aws.s3.commands.S3CommandFactory;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
@@ -64,17 +65,16 @@ public class LiveS3Connection implements S3Connection {
     }
 
     public Future<S3Object> getObject(S3Bucket s3Bucket, String key) {
-	RetrieveObject getRequestObject = factory.createRetrieveObject(
-		s3Bucket, key, true);
-	client.submit(getRequestObject);
-	return getRequestObject;
+	GetObject getObject = factory.createGetObject(s3Bucket, key);
+	client.submit(getObject);
+	return getObject;
     }
 
-    public Future<S3Object> headObject(S3Bucket s3Bucket, String key) {
-	RetrieveObject getRequestObject = factory.createRetrieveObject(
-		s3Bucket, key, false);
-	client.submit(getRequestObject);
-	return getRequestObject;
+    public Future<S3Object.MetaData> getObjectMetaData(S3Bucket s3Bucket,
+	    String key) {
+	HeadMetaData headMetaData = factory.createHeadMetaData(s3Bucket, key);
+	client.submit(headMetaData);
+	return headMetaData;
     }
 
     public Future<Boolean> deleteObject(S3Bucket s3Bucket, String key) {
@@ -111,7 +111,7 @@ public class LiveS3Connection implements S3Connection {
     }
 
     public Future<Boolean> bucketExists(S3Bucket s3Bucket) {
-	HeadBucket headRequestObject = factory.createHeadBucket(s3Bucket);
+	BucketExists headRequestObject = factory.createHeadBucket(s3Bucket);
 	client.submit(headRequestObject);
 	return headRequestObject;
     }
