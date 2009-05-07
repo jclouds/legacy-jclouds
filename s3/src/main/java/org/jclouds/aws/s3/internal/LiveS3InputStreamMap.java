@@ -115,10 +115,9 @@ public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
      */
     public Set<Map.Entry<String, InputStream>> entrySet() {
 	Set<Map.Entry<String, InputStream>> entrySet = new HashSet<Map.Entry<String, InputStream>>();
-	for (String key : keySet()) {
-	    InputStream input = get(key);
-	    if (input != null)
-		entrySet.add(new Entry(key, input));
+	for (S3Object object : getAllObjects()) {
+	    entrySet.add(new Entry(object.getKey(), (InputStream) object
+		    .getData()));
 	}
 	return entrySet;
     }
