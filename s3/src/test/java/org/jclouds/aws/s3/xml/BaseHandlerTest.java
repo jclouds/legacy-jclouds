@@ -21,34 +21,35 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.commands;
+package org.jclouds.aws.s3.xml;
 
-import org.jclouds.aws.s3.commands.options.GetBucketOptions;
-import org.jclouds.aws.s3.domain.S3Bucket;
-import org.jclouds.aws.s3.xml.ListBucketHandler;
-import org.jclouds.http.commands.callables.xml.ParseSax;
+import org.jclouds.aws.s3.xml.config.S3ParserModule;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
-import com.google.inject.name.Named;
+public class BaseHandlerTest {
 
-public class GetBucket extends S3FutureCommand<S3Bucket> {
+    protected S3ParserFactory parserFactory = null;
+    private Injector injector;
 
-    @Inject
-    public GetBucket(@Named("jclouds.http.address") String amazonHost,
-	    ParseSax<S3Bucket> bucketParser, @Assisted String bucket) {
-	this(amazonHost, bucketParser, bucket, new GetBucketOptions());
+    public BaseHandlerTest() {
+	super();
     }
 
-    @Inject
-    public GetBucket(@Named("jclouds.http.address") String amazonHost,
-	    ParseSax<S3Bucket> bucketParser, @Assisted String bucket,
-	    @Assisted GetBucketOptions options) {
-	super("GET", "/" + options.toQueryString(), bucketParser, amazonHost,
-		bucket);
-	ListBucketHandler handler = (ListBucketHandler) bucketParser
-		.getHandler();
-	handler.setBucketName(bucket);
+    @BeforeMethod
+    protected void setUpInjector() {
+        injector = Guice.createInjector(new S3ParserModule());
+        parserFactory = injector.getInstance(S3ParserFactory.class);
+        assert parserFactory != null;
     }
+
+    @AfterMethod
+    protected void tearDownInjector() {
+        parserFactory = null;
+        injector = null;
+    }
+
 }

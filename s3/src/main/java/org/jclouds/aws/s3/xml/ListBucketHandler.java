@@ -57,11 +57,13 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<S3Bucket> {
     private StringBuilder currentText = new StringBuilder();
     @Inject
     private DateService dateParser;
+    private boolean inCommonPrefixes;
 
     @Override
     public void startDocument() throws SAXException {
 	checkNotNull(s3Bucket, "s3Bucket");
 	s3Bucket.getContents().clear();
+	s3Bucket.getCommonPrefixes().clear();
 	super.startDocument();
     }
 
@@ -70,6 +72,8 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<S3Bucket> {
 	if (qName.equals("Contents")) {
 	} else if (qName.equals("Owner")) {
 	    currentOwner = new S3Owner();
+	} else if (qName.equals("CommonPrefixes")) {
+	    inCommonPrefixes = true;
 	}
     }
 
@@ -98,12 +102,20 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<S3Bucket> {
 	} else if (qName.equals("Contents")) {
 	    s3Bucket.getContents().add(currentObjectMetaData);
 	} else if (qName.equals("Name")) {// bucket stuff last, as least likely
-	    // } else if (qName.equals("Prefix")) {
-	    // // no-op
-	    // } else if (qName.equals("Marker")) {
-	    // // no-op
-	    // } else if (qName.equals("MaxKeys")) {
-	    // // no-op
+	} else if (qName.equals("Prefix")) {
+	    String prefix = currentText.toString().trim();
+	    if (inCommonPrefixes)
+		s3Bucket.getCommonPrefixes().add(prefix);
+	    else
+		s3Bucket.setPrefix(prefix);
+	} else if (qName.equals("Delimiter")) {
+	    if (!currentText.toString().equals(""))
+		s3Bucket.setDelimiter(currentText.toString().trim());
+	} else if (qName.equals("Marker")) {
+	    if (!currentText.toString().equals(""))
+		s3Bucket.setMarker(currentText.toString());
+	} else if (qName.equals("MaxKeys")) {
+	    s3Bucket.setMaxKeys(Long.parseLong(currentText.toString()));
 	} else if (qName.equals("IsTruncated")) {
 	    boolean isTruncated = Boolean.parseBoolean(currentText.toString());
 	    s3Bucket.setComplete(!isTruncated);

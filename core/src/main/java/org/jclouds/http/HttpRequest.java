@@ -42,8 +42,8 @@ import com.google.common.collect.Multimap;
  */
 public class HttpRequest {
 
-    String method;
-    String uri;
+    private final String method;
+    private final String uri;
     Multimap<String, String> headers = HashMultimap.create();
     Object content;
     String contentType;
@@ -75,16 +75,8 @@ public class HttpRequest {
 	return method;
     }
 
-    public void setMethod(String method) {
-	this.method = method;
-    }
-
     public String getUri() {
 	return uri;
-    }
-
-    public void setUri(String uri) {
-	this.uri = uri;
     }
 
     public Multimap<String, String> getHeaders() {

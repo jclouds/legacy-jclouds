@@ -26,6 +26,7 @@ package org.jclouds.aws.s3;
 import java.util.List;
 import java.util.concurrent.Future;
 
+import org.jclouds.aws.s3.commands.options.GetBucketOptions;
 import org.jclouds.aws.s3.commands.options.PutBucketOptions;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
@@ -131,6 +132,8 @@ public interface S3Connection {
      * @return
      */
     Future<S3Bucket> getBucket(String name);
+
+    Future<S3Bucket> getBucket(String name, GetBucketOptions options);
 
     Future<List<S3Bucket.MetaData>> getMetaDataOfOwnedBuckets();
 }

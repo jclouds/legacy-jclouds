@@ -64,7 +64,7 @@ public class S3ParserTest extends PerformanceTest {
     Injector injector = null;
 
     public static final String listAllMyBucketsResultOn200 = "<ListAllMyBucketsResult xmlns=\"http://s3.amazonaws.com/doc/callables/\"><Owner ><ID>e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0</ID></Owner><Buckets><Bucket><Name>adrianjbosstest</Name><CreationDate>2009-03-12T02:00:07.000Z</CreationDate></Bucket><Bucket><Name>adrianjbosstest2</Name><CreationDate>2009-03-12T02:00:09.000Z</CreationDate></Bucket></Buckets></ListAllMyBucketsResult>";
-
+    
     S3ParserFactory parserFactory = null;
 
     @BeforeMethod

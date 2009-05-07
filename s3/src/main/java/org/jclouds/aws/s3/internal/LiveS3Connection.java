@@ -38,6 +38,7 @@ import org.jclouds.aws.s3.commands.HeadMetaData;
 import org.jclouds.aws.s3.commands.PutBucket;
 import org.jclouds.aws.s3.commands.PutObject;
 import org.jclouds.aws.s3.commands.S3CommandFactory;
+import org.jclouds.aws.s3.commands.options.GetBucketOptions;
 import org.jclouds.aws.s3.commands.options.PutBucketOptions;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
@@ -179,6 +180,17 @@ public class LiveS3Connection implements S3Connection {
      */
     public Future<S3Bucket> getBucket(String s3Bucket) {
 	GetBucket getBucket = factory.createGetBucket(s3Bucket);
+	client.submit(getBucket);
+	return getBucket;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see GetBucket
+     */
+    public Future<S3Bucket> getBucket(String s3Bucket, GetBucketOptions options) {
+	GetBucket getBucket = factory.createGetBucket(s3Bucket, options);
 	client.submit(getBucket);
 	return getBucket;
     }

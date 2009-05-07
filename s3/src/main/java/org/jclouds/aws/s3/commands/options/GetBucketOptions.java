@@ -26,6 +26,8 @@ package org.jclouds.aws.s3.commands.options;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -72,16 +74,21 @@ public class GetBucketOptions {
 		    builder.append("&");
 	    }
 	}
-	return builder.toString();
+	String returnVal =  builder.toString();
+	return returnVal;
     }
 
     /**
      * Limits the response to keys which begin with the indicated prefix. You
      * can use prefixes to separate a bucket into different sets of keys in a
      * way similar to how a file system uses folders.
+     * 
+     * @throws UnsupportedEncodingException
      */
-    public GetBucketOptions prefix(String prefix) {
-	options.put("prefix", checkNotNull(prefix, "prefix"));
+    public GetBucketOptions prefix(String prefix)
+	    throws UnsupportedEncodingException {
+	options.put("prefix", URLEncoder.encode(checkNotNull(prefix, "prefix"),
+		"UTF-8"));
 	return this;
     }
 
@@ -97,9 +104,13 @@ public class GetBucketOptions {
      * include keys that occur lexicographically after marker. This is
      * convenient for pagination: To get the next page of results use the last
      * key of the current page as the marker.
+     * 
+     * @throws UnsupportedEncodingException
      */
-    public GetBucketOptions marker(String marker) {
-	options.put("marker", checkNotNull(marker, "marker"));
+    public GetBucketOptions marker(String marker)
+	    throws UnsupportedEncodingException {
+	options.put("marker", URLEncoder.encode(checkNotNull(marker, "marker"),
+		"UTF-8"));
 	return this;
     }
 
@@ -132,9 +143,13 @@ public class GetBucketOptions {
      * occurrence of the delimiter to be rolled up into a single result element
      * in the CommonPrefixes collection. These rolled-up keys are not returned
      * elsewhere in the response.
+     * 
+     * @throws UnsupportedEncodingException
      */
-    public GetBucketOptions delimiter(String delimiter) {
-	options.put("delimiter", checkNotNull(delimiter, "delimiter"));
+    public GetBucketOptions delimiter(String delimiter)
+	    throws UnsupportedEncodingException {
+	options.put("delimiter", URLEncoder.encode(checkNotNull(delimiter,
+		"delimiter"), "UTF-8"));
 	return this;
     }
 
@@ -148,17 +163,21 @@ public class GetBucketOptions {
     public static class Builder {
 
 	/**
+	 * @throws UnsupportedEncodingException
 	 * @see GetBucketOptions#prefix
 	 */
-	public static GetBucketOptions prefix(String prefix) {
+	public static GetBucketOptions prefix(String prefix)
+		throws UnsupportedEncodingException {
 	    GetBucketOptions options = new GetBucketOptions();
 	    return options.prefix(prefix);
 	}
 
 	/**
+	 * @throws UnsupportedEncodingException
 	 * @see GetBucketOptions#marker
 	 */
-	public static GetBucketOptions marker(String marker) {
+	public static GetBucketOptions marker(String marker)
+		throws UnsupportedEncodingException {
 	    GetBucketOptions options = new GetBucketOptions();
 	    return options.marker(marker);
 	}
@@ -172,9 +191,11 @@ public class GetBucketOptions {
 	}
 
 	/**
+	 * @throws UnsupportedEncodingException
 	 * @see GetBucketOptions#delimiter
 	 */
-	public static GetBucketOptions delimiter(String delimiter) {
+	public static GetBucketOptions delimiter(String delimiter)
+		throws UnsupportedEncodingException {
 	    GetBucketOptions options = new GetBucketOptions();
 	    return options.delimiter(delimiter);
 	}

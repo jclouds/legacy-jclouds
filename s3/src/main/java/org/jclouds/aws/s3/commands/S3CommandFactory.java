@@ -23,6 +23,7 @@
  */
 package org.jclouds.aws.s3.commands;
 
+import org.jclouds.aws.s3.commands.options.GetBucketOptions;
 import org.jclouds.aws.s3.commands.options.PutBucketOptions;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.xml.S3ParserFactory;
@@ -144,7 +145,12 @@ public class S3CommandFactory {
 	return new GetBucket(amazonHost,
 		parserFactory.createListBucketParser(), bucket);
     }
-
+    
+    public GetBucket createGetBucket(String bucket, GetBucketOptions options) {
+	return new GetBucket(amazonHost,
+		parserFactory.createListBucketParser(), bucket, options);
+    }
+    
     public CopyObject createCopyObject(String sourceBucket,
 	    String sourceObject, String destinationBucket,
 	    String destinationObject) {
@@ -152,5 +158,7 @@ public class S3CommandFactory {
 		.createCopyObjectParser(), sourceBucket, sourceObject,
 		destinationBucket, destinationObject);
     }
+
+
 
 }

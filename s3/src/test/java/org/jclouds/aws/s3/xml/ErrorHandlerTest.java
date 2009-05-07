@@ -27,34 +27,13 @@ import static org.testng.Assert.*;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.s3.domain.S3Error;
-import org.jclouds.aws.s3.xml.config.S3ParserModule;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.commands.callables.xml.ParseSax;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 
 @Test
-public class ErrorHandlerTest {
-    private S3ParserFactory parserFactory = null;
-    private Injector injector;
-
-    @BeforeMethod
-    protected void setUpInjector() {
-	injector = Guice.createInjector(new S3ParserModule());
-	parserFactory = injector.getInstance(S3ParserFactory.class);
-	assert parserFactory != null;
-    }
-
-    @AfterMethod
-    protected void tearDownInjector() {
-	parserFactory = null;
-	injector = null;
-    }
-
+public class ErrorHandlerTest extends BaseHandlerTest {
     public static final String errorFromAmazonIfYouDontRemoveTransferEncodingHeader = "<Error><Code>NotImplemented</Code><Message>A header you provided implies functionality that is not implemented</Message><Header>Transfer-Encoding</Header><RequestId>7C59925D75D15561</RequestId><HostId>fbskVU51OZJg2yZS/wNIxoE2PmCf0ZqFd0iH6Vrzw0uKG3KmokswBytL/Bfp/GWb</HostId></Error>";
 
     @Test
