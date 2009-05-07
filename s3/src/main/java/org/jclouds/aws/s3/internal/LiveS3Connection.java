@@ -38,7 +38,7 @@ import org.jclouds.aws.s3.commands.HeadMetaData;
 import org.jclouds.aws.s3.commands.PutBucket;
 import org.jclouds.aws.s3.commands.PutObject;
 import org.jclouds.aws.s3.commands.S3CommandFactory;
-import org.jclouds.aws.s3.commands.options.CreateBucketOptions;
+import org.jclouds.aws.s3.commands.options.PutBucketOptions;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.S3Bucket.MetaData;
@@ -130,7 +130,7 @@ public class LiveS3Connection implements S3Connection {
      * @see PutBucket
      */
     public Future<Boolean> createBucketIfNotExists(String s3Bucket,
-	    CreateBucketOptions options) {
+	    PutBucketOptions options) {
 	PutBucket putBucket = factory.createPutBucket(s3Bucket, options);
 	client.submit(putBucket);
 	return putBucket;

@@ -28,7 +28,7 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 
 import org.jclouds.aws.s3.commands.config.S3CommandsModule;
-import org.jclouds.aws.s3.commands.options.CreateBucketOptions;
+import org.jclouds.aws.s3.commands.options.PutBucketOptions;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.S3Bucket.MetaData.LocationConstraint;
 import org.testng.annotations.AfterMethod;
@@ -98,9 +98,8 @@ public class S3CommandFactoryTest {
 
     @Test
     void testCreatePutBucketOptions() {
-	assert commandFactory.createPutBucket("test",
-		CreateBucketOptions.Builder
-			.locationConstraint(LocationConstraint.EU)) != null;
+	assert commandFactory.createPutBucket("test", PutBucketOptions.Builder
+		.locationConstraint(LocationConstraint.EU)) != null;
     }
 
     @Test

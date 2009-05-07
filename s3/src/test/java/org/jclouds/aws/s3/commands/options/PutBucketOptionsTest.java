@@ -23,31 +23,36 @@
  */
 package org.jclouds.aws.s3.commands.options;
 
-import static org.jclouds.aws.s3.commands.options.CreateBucketOptions.Builder.locationConstraint;
+import static org.jclouds.aws.s3.commands.options.PutBucketOptions.Builder.locationConstraint;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
 import org.jclouds.aws.s3.domain.S3Bucket.MetaData.LocationConstraint;
 import org.testng.annotations.Test;
 
-public class CreateBucketOptionsTest {
+/**
+ * Tests possible uses of GetBucketOptions and GetBucketOptions.Builder.*
+ * 
+ * @author Adrian Cole
+ */
+public class PutBucketOptionsTest {
 
     @Test
     public void testLocationConstraint() {
-	CreateBucketOptions options = new CreateBucketOptions();
+	PutBucketOptions options = new PutBucketOptions();
 	options.locationConstraint(LocationConstraint.EU);
 	assertEquals(options.getLocationConstraint(), LocationConstraint.EU);
     }
 
     @Test
     public void testNullLocationConstraint() {
-	CreateBucketOptions options = new CreateBucketOptions();
+	PutBucketOptions options = new PutBucketOptions();
 	assertNull(options.getLocationConstraint());
     }
 
     @Test
     public void testLocationConstraintStatic() {
-	CreateBucketOptions options = locationConstraint(LocationConstraint.EU);
+	PutBucketOptions options = locationConstraint(LocationConstraint.EU);
 	assertEquals(options.getLocationConstraint(), LocationConstraint.EU);
     }
 

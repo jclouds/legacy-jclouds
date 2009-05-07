@@ -42,7 +42,10 @@ public class DateService {
     }
 
     public String timestampAsHeaderString() {
-	return headerDateFormat.print(new DateTime(DateTimeZone.UTC));
+	return toHeaderString(new DateTime());
     }
 
+    public String toHeaderString(DateTime date) {
+	return headerDateFormat.print(date.withZone(DateTimeZone.UTC));
+    }
 }

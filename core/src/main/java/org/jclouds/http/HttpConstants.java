@@ -31,6 +31,7 @@ package org.jclouds.http;
 public interface HttpConstants {
     public static final String CONTENT_LENGTH = "Content-Length";
     public static final String CONTENT_TYPE = "Content-Type";
+    public static final String CONTENT_MD5 = "Content-MD5";
     public static final String HOST = "Host";
     public static final String DATE = "Date";
     public static final String BINARY = "application/octet-stream";

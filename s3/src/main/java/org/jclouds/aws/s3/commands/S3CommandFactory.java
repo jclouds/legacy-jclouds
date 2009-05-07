@@ -23,7 +23,7 @@
  */
 package org.jclouds.aws.s3.commands;
 
-import org.jclouds.aws.s3.commands.options.CreateBucketOptions;
+import org.jclouds.aws.s3.commands.options.PutBucketOptions;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.xml.S3ParserFactory;
 
@@ -89,10 +89,10 @@ public class S3CommandFactory {
     private PutBucketFactoryOptions putBucketFactoryOptions;
 
     public static interface PutBucketFactoryOptions {
-	PutBucket create(String bucket, CreateBucketOptions options);
+	PutBucket create(String bucket, PutBucketOptions options);
     }
 
-    public PutBucket createPutBucket(String bucket, CreateBucketOptions options) {
+    public PutBucket createPutBucket(String bucket, PutBucketOptions options) {
 	return putBucketFactoryOptions.create(bucket, options);
     }
 

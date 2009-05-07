@@ -23,6 +23,7 @@
  */
 package org.jclouds.aws.s3.commands;
 
+import static org.jclouds.aws.s3.commands.options.GetBucketOptions.Builder.maxKeys;
 import org.jclouds.http.commands.callables.ReturnTrueIf200;
 
 import com.google.inject.Inject;
@@ -34,6 +35,7 @@ public class BucketExists extends S3FutureCommand<Boolean> {
     @Inject
     public BucketExists(@Named("jclouds.http.address") String amazonHost,
 	    ReturnTrueIf200 callable, @Assisted String s3Bucket) {
-	super("HEAD", "/", callable, amazonHost, s3Bucket);
+	super("HEAD", "/" + maxKeys(0).toQueryString(), callable, amazonHost,
+		s3Bucket);
     }
 }

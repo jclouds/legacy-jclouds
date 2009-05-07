@@ -34,7 +34,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.aws.s3.commands.options.CreateBucketOptions;
+import org.jclouds.aws.s3.commands.options.PutBucketOptions;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.S3Bucket.MetaData;
@@ -214,7 +214,7 @@ public class StubS3Connection implements S3Connection {
     }
 
     public Future<Boolean> createBucketIfNotExists(String name,
-	    CreateBucketOptions options) {
+	    PutBucketOptions options) {
 	throw new UnsupportedOperationException("todo");
     }
 

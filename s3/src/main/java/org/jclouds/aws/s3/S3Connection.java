@@ -26,7 +26,7 @@ package org.jclouds.aws.s3;
 import java.util.List;
 import java.util.concurrent.Future;
 
-import org.jclouds.aws.s3.commands.options.CreateBucketOptions;
+import org.jclouds.aws.s3.commands.options.PutBucketOptions;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
 
@@ -100,10 +100,10 @@ public interface S3Connection {
      * @param options
      *            for creating your bucket
      * @return true, if the bucket was created
-     * @see CreateBucketOptions
+     * @see PutBucketOptions
      */
     Future<Boolean> createBucketIfNotExists(String name,
-	    CreateBucketOptions options);
+	    PutBucketOptions options);
 
     /**
      * Deletes the bucket, if it is empty.

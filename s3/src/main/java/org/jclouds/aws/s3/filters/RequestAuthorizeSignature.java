@@ -43,7 +43,8 @@ import com.google.inject.name.Named;
 
 public class RequestAuthorizeSignature implements HttpRequestFilter {
     private static final String[] firstHeadersToSign = new String[] {
-	    "Content-MD5", "Content-Type", "Date" };
+	    HttpConstants.CONTENT_MD5, HttpConstants.CONTENT_TYPE,
+	    HttpConstants.DATE };
 
     private final String accessKey;
     private final String secretKey;
@@ -110,20 +111,57 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
 
     public void filter(HttpRequest request) throws HttpException {
 	// re-sign the request
-	request.getHeaders().removeAll(S3Constants.AUTH);
-	request.getHeaders().removeAll(HttpConstants.CONTENT_TYPE);
+	removeOldHeaders(request);
+
+	addContentTypeHeader(request);
+	addDateHeader(request);
 
 	StringBuilder toSign = new StringBuilder();
+	appendMethod(request, toSign);
+	appendHttpHeaders(request, toSign);
+	appendAmzHeaders(request, toSign);
+	appendBucketName(request, toSign);
+	appendUriPath(request, toSign);
+
+	addAuthHeader(request, toSign);
+    }
+
+    private void removeOldHeaders(HttpRequest request) {
+	request.getHeaders().removeAll(S3Constants.AUTH);
+	request.getHeaders().removeAll(HttpConstants.CONTENT_TYPE);
+	request.getHeaders().removeAll(HttpConstants.DATE);
+    }
+
+    private void addAuthHeader(HttpRequest request, StringBuilder toSign)
+	    throws HttpException {
+	String signature;
+	try {
+	    signature = S3Utils.hmacSha1Base64(toSign.toString(), secretKey
+		    .getBytes());
+	} catch (Exception e) {
+	    throw new HttpException("error signing request", e);
+	}
+	request.getHeaders().put(S3Constants.AUTH,
+		"AWS " + accessKey + ":" + signature);
+    }
+
+    private void addContentTypeHeader(HttpRequest request) {
 	if (request.getContent() != null && request.getContentType() != null) {
 	    request.getHeaders().put(HttpConstants.CONTENT_TYPE,
 		    request.getContentType());
 	}
+    }
+
+    private void appendMethod(HttpRequest request, StringBuilder toSign) {
 	toSign.append(request.getMethod()).append("\n");
+    }
+
+    private void addDateHeader(HttpRequest request) {
 	request.getHeaders().put(HttpConstants.DATE,
 		dateService.timestampAsHeaderString());
-	for (String header : firstHeadersToSign)
-	    toSign.append(
-		    valueOrEmpty(request.getHeaders().get(header))).append("\n");
+    }
+
+    private void appendAmzHeaders(HttpRequest request, StringBuilder toSign) {
 	for (String header : request.getHeaders().keySet()) {
 	    if (header.startsWith("x-amz-")) {
 		toSign.append(header).append(":");
@@ -133,21 +171,28 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
 		toSign.append("\n");
 	    }
 	}
-	// to do amazon headers
+    }
+
+    private void appendHttpHeaders(HttpRequest request, StringBuilder toSign) {
+	for (String header : firstHeadersToSign)
+	    toSign.append(valueOrEmpty(request.getHeaders().get(header)))
+		    .append("\n");
+    }
+
+    private void appendBucketName(HttpRequest request, StringBuilder toSign) {
 	String hostHeader = request.getHeaders().get(HttpConstants.HOST)
 		.iterator().next();
 	if (hostHeader.endsWith(".s3.amazonaws.com"))
 	    toSign.append("/").append(
 		    hostHeader.substring(0, hostHeader.length() - 17));
-	toSign.append(request.getUri());
-	String signature;
-	try {
-	    signature = S3Utils.hmacSha1Base64(toSign.toString(), secretKey.getBytes());
-	} catch (Exception e) {
-	    throw new HttpException("error signing request", e);
-	}
-	request.getHeaders().put("Authorization",
-		"AWS " + accessKey + ":" + signature);
+    }
+
+    private void appendUriPath(HttpRequest request, StringBuilder toSign) {
+	int queryIndex = request.getUri().indexOf('?');
+	if (queryIndex >= 0)
+	    toSign.append(request.getUri().substring(0, queryIndex));
+	else
+	    toSign.append(request.getUri());
     }
 
     private String valueOrEmpty(Collection<String> collection) {

@@ -141,15 +141,19 @@ public class AmazonS3Test extends S3IntegrationTest {
 		TimeUnit.SECONDS);
     }
 
-    Boolean bucketExists() throws Exception {
-	String s3Bucket = bucketPrefix + "adrianjbosstest";
-	return client.bucketExists(s3Bucket).get(10, TimeUnit.SECONDS);
+    @Test
+    void bucketExists() throws Exception {
+	String s3Bucket = bucketPrefix + "needstoexist";
+        assert !client.bucketExists(s3Bucket).get(10, TimeUnit.SECONDS);
+	assert client.createBucketIfNotExists(s3Bucket).get(10,
+		TimeUnit.SECONDS);
+	assert client.bucketExists(s3Bucket).get(10, TimeUnit.SECONDS);
+
     }
 
     Boolean deleteBucket() throws Exception {
 	String s3Bucket = bucketPrefix + "adrianjbosstest";
-	return client.deleteBucketIfEmpty(s3Bucket)
-		.get(10, TimeUnit.SECONDS);
+	return client.deleteBucketIfEmpty(s3Bucket).get(10, TimeUnit.SECONDS);
     }
 
     Boolean deleteObject() throws Exception {

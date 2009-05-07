@@ -29,11 +29,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Contains options supported in the REST API for the PUT bucket operation.
- * <p/>
- * Example usage:
+ * <h2>Usage</h2>
+ * The recommended way to instantiate a PutBucketOptions object is to statically import PutBucketOptions.Builder.* and invoke a static creation method followed by an instance mutator (if needed):
  * <p/>
  * <code>
- * import static org.jclouds.aws.s3.commands.options.CreateBucketOptions.Builder.*
+ * import static org.jclouds.aws.s3.commands.options.PutBucketOptions.Builder.*
  * import static org.jclouds.aws.s3.domain.S3Bucket.MetaData.LocationConstraint.*;
  * import org.jclouds.aws.s3.S3Connection;
  * 
@@ -41,25 +41,38 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Future<Boolean> createdInEu = connection.createBucketIfNotExists("bucketName",locationConstraint(EU));
  * <code>
  * 
+ * Description of parameters taken from {@link http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTBucketPUT.html}
+ * 
  * @author Adrian Cole
  * 
  */
-public class CreateBucketOptions {
+public class PutBucketOptions {
     private LocationConstraint constraint;
 
-    public CreateBucketOptions locationConstraint(LocationConstraint constraint) {
+    /**
+     * Depending on your latency and legal requirements, you can specify a
+     * location constraint that will affect where your data physically resides.
+     * You can currently specify a Europe (EU) location constraint.
+     */
+    public PutBucketOptions locationConstraint(LocationConstraint constraint) {
 	this.constraint = checkNotNull(constraint, "constraint");
 	return this;
     }
 
+    /**
+     * @see PutBucketOptions#locationConstraint(LocationConstraint)
+     */
     public LocationConstraint getLocationConstraint() {
 	return constraint;
     }
 
     public static class Builder {
-	public static CreateBucketOptions locationConstraint(
+	/**
+	 * @see PutBucketOptions#locationConstraint(LocationConstraint)
+	 */
+	public static PutBucketOptions locationConstraint(
 		LocationConstraint constraint) {
-	    CreateBucketOptions options = new CreateBucketOptions();
+	    PutBucketOptions options = new PutBucketOptions();
 	    return options.locationConstraint(constraint);
 	}
     }
