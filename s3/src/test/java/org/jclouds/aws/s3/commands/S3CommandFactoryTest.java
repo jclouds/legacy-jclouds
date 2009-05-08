@@ -28,9 +28,13 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 
 import org.jclouds.aws.s3.commands.config.S3CommandsModule;
+import org.jclouds.aws.s3.commands.options.CopyObjectOptions;
+import org.jclouds.aws.s3.commands.options.GetObjectOptions;
+import org.jclouds.aws.s3.commands.options.ListBucketOptions;
 import org.jclouds.aws.s3.commands.options.PutBucketOptions;
+import org.jclouds.aws.s3.commands.options.PutObjectOptions;
 import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.aws.s3.domain.S3Bucket.MetaData.LocationConstraint;
+import org.jclouds.aws.s3.domain.S3Bucket.Metadata.LocationConstraint;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -73,7 +77,13 @@ public class S3CommandFactoryTest {
     @Test
     void testCreateCopyObject() {
 	assert commandFactory.createCopyObject("sourceBucket", "sourceObject",
-		"destBucket", "destObject") != null;
+		"destBucket", "destObject", CopyObjectOptions.NONE) != null;
+    }
+
+    @Test
+    void testCreateCopyObjectOptions() {
+	assert commandFactory.createCopyObject("sourceBucket", "sourceObject",
+		"destBucket", "destObject", new CopyObjectOptions()) != null;
     }
 
     @Test
@@ -93,18 +103,18 @@ public class S3CommandFactoryTest {
 
     @Test
     void testCreatePutBucket() {
-	assert commandFactory.createPutBucket("test") != null;
+	assert commandFactory.createPutBucket("test", PutBucketOptions.NONE) != null;
     }
 
     @Test
     void testCreatePutBucketOptions() {
 	assert commandFactory.createPutBucket("test", PutBucketOptions.Builder
-		.locationConstraint(LocationConstraint.EU)) != null;
+		.createIn(LocationConstraint.EU)) != null;
     }
 
     @Test
     void testCreatePutObject() {
-	S3Object.MetaData metaData = createMock(S3Object.MetaData.class);
+	S3Object.Metadata metaData = createMock(S3Object.Metadata.class);
 	S3Object object = new S3Object(metaData);
 	object.setData("<a></a>");
 	expect(metaData.getKey()).andReturn("rawr");
@@ -113,12 +123,14 @@ public class S3CommandFactoryTest {
 
 	replay(metaData);
 
-	assert commandFactory.createPutObject("test", object) != null;
+	assert commandFactory.createPutObject("test", object,
+		PutObjectOptions.NONE) != null;
     }
 
     @Test
     void testCreateGetObject() {
-	assert commandFactory.createGetObject("test", "blah") != null;
+	assert commandFactory.createGetObject("test", "blah",
+		GetObjectOptions.NONE) != null;
     }
 
     @Test
@@ -133,7 +145,7 @@ public class S3CommandFactoryTest {
 
     @Test
     void testCreateListBucket() {
-	assert commandFactory.createGetBucket("test") != null;
+	assert commandFactory.createListBucket("test", ListBucketOptions.NONE) != null;
     }
 
 }

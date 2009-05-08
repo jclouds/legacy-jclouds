@@ -90,7 +90,7 @@ public abstract class BasePerformance extends S3IntegrationTest {
 	    @Optional String AWSSecretAccessKey) throws Exception {
 	super.setUpClient(AWSAccessKeyId, AWSSecretAccessKey);
 	for (String bucket : BUCKETS) {
-	    client.createBucketIfNotExists(bucket).get(10, TimeUnit.SECONDS);
+	    client.putBucketIfNotExists(bucket).get(10, TimeUnit.SECONDS);
 	}
     }
 

@@ -21,25 +21,37 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.domain;
+package org.jclouds.aws.s3.commands;
 
-import java.io.File;
+import java.util.concurrent.TimeUnit;
 
-import static org.testng.Assert.*;
-
-import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.http.ContentTypes;
+import org.jclouds.aws.s3.S3IntegrationTest;
 import org.testng.annotations.Test;
 
-@Test
-public class S3ObjectTest {
+/**
+ * Tests integrated functionality of all bucketExists commands.
+ * <p/>
+ * Each test uses a different bucket name, so it should be perfectly fine to run
+ * in parallel.
+ * 
+ * @author Adrian Cole
+ * 
+ */
+@Test(groups = "integration", testName = "s3.BucketExistsIntegrationTest")
+public class BucketExistsIntegrationTest extends S3IntegrationTest {
 
-    @Test
-    void testSetNoContentType() {
-	S3Object object = new S3Object("test");
-	File file = new File("hello.txt");
-	object.setData(file);
-	assertEquals(object.getMetaData().getContentType(),
-		ContentTypes.UNKNOWN_MIME_TYPE);
+    @Test()
+    void bucketDoesntExist() throws Exception {
+	String bucketName = bucketPrefix + "shouldntexist";
+	assert !client.bucketExists(bucketName).get(10, TimeUnit.SECONDS);
+    }
+
+    @Test()
+    void bucketExists() throws Exception {
+	String bucketName = bucketPrefix + "needstoexist";
+	assert client.putBucketIfNotExists(bucketName).get(10,
+		TimeUnit.SECONDS);
+	assert client.bucketExists(bucketName).get(10, TimeUnit.SECONDS);
+
     }
 }

@@ -38,11 +38,11 @@ import com.google.inject.name.Named;
  * @author Adrian Cole
  * 
  */
-public class GetMetaDataForOwnedBuckets extends S3FutureCommand<List<S3Bucket.MetaData>> {
+public class GetMetaDataForOwnedBuckets extends S3FutureCommand<List<S3Bucket.Metadata>> {
 
     @Inject
     public GetMetaDataForOwnedBuckets(@Named("jclouds.http.address") String amazonHost,
-	    ParseSax<List<S3Bucket.MetaData>> callable) {
+	    ParseSax<List<S3Bucket.Metadata>> callable) {
 	super("GET", "/", callable, amazonHost);
     }
 

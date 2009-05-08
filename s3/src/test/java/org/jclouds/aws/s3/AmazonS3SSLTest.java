@@ -33,7 +33,7 @@ import java.util.Properties;
  * @author Adrian Cole
  */
 @Test(groups = "unit", sequential = true, testName = "s3.AmazonS3SSLTest")
-public class AmazonS3SSLTest extends AmazonS3Test {
+public class AmazonS3SSLTest extends S3ConnectionTest {
     @Override
     protected Properties buildS3Properties(String AWSAccessKeyId, String AWSSecretAccessKey) {
         Properties properties = super.buildS3Properties(AWSAccessKeyId, AWSSecretAccessKey);

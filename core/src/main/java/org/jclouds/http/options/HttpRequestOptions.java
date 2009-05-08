@@ -21,25 +21,31 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.domain;
+package org.jclouds.http.options;
 
-import java.io.File;
+import com.google.common.collect.Multimap;
 
-import static org.testng.Assert.*;
+/**
+ * Builds options that override or append to HttpRequests.
+ * 
+ * @author Adrian Cole
+ * 
+ */
+public interface HttpRequestOptions {
 
-import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.http.ContentTypes;
-import org.testng.annotations.Test;
+    /**
+     * Builds headers representing options.
+     * 
+     * @return object that may contain headers.
+     */
+    Multimap<String, String> buildRequestHeaders();
 
-@Test
-public class S3ObjectTest {
+    /**
+     * Builds a query string, ex. ?marker=toast
+     * 
+     * @return an http query string representing these options, or empty string
+     *         if none are present.
+     */
+    String buildQueryString();
 
-    @Test
-    void testSetNoContentType() {
-	S3Object object = new S3Object("test");
-	File file = new File("hello.txt");
-	object.setData(file);
-	assertEquals(object.getMetaData().getContentType(),
-		ContentTypes.UNKNOWN_MIME_TYPE);
-    }
 }

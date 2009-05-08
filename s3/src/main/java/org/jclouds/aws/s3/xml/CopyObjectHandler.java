@@ -36,18 +36,18 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 public class CopyObjectHandler extends
-	ParseSax.HandlerWithResult<S3Object.MetaData> {
+	ParseSax.HandlerWithResult<S3Object.Metadata> {
 
-    private S3Object.MetaData metaData;
+    private S3Object.Metadata metaData;
     private StringBuilder currentText = new StringBuilder();
     @Inject
     private DateService dateParser;
 
     public void setKey(String key) {
-	metaData = new S3Object.MetaData(key);
+	metaData = new S3Object.Metadata(key);
     }
 
-    public S3Object.MetaData getResult() {
+    public S3Object.Metadata getResult() {
 	return metaData;
     }
 

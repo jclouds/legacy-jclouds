@@ -113,7 +113,8 @@ public class ParseSax<T> extends HttpFutureCommand.ResponseCallable<T> {
     }
 
     /**
-     * // TODO: Adrian: Document this!
+     * Handler that produces a useable domain object accessible after parsing
+     * completes.
      * 
      * @author Adrian Cole
      */

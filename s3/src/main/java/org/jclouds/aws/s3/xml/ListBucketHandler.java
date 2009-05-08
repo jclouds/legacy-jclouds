@@ -52,7 +52,7 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<S3Bucket> {
     }
 
     private S3Bucket s3Bucket;
-    private S3Object.MetaData currentObjectMetaData;
+    private S3Object.Metadata currentObjectMetaData;
     private S3Owner currentOwner;
     private StringBuilder currentText = new StringBuilder();
     @Inject
@@ -84,7 +84,7 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<S3Bucket> {
 	} else if (qName.equals("DisplayName")) {
 	    currentOwner.setDisplayName(currentText.toString());
 	} else if (qName.equals("Key")) { // content stuff
-	    currentObjectMetaData = new S3Object.MetaData(currentText
+	    currentObjectMetaData = new S3Object.Metadata(currentText
 		    .toString());
 	} else if (qName.equals("LastModified")) {
 	    currentObjectMetaData.setLastModified(dateParser

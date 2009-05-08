@@ -32,8 +32,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.jclouds.aws.s3.DateService;
 import org.jclouds.aws.s3.S3Constants;
 import org.jclouds.aws.s3.S3Utils;
-import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpException;
+import org.jclouds.http.HttpHeaders;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.joda.time.DateTime;
@@ -43,8 +43,8 @@ import com.google.inject.name.Named;
 
 public class RequestAuthorizeSignature implements HttpRequestFilter {
     private static final String[] firstHeadersToSign = new String[] {
-	    HttpConstants.CONTENT_MD5, HttpConstants.CONTENT_TYPE,
-	    HttpConstants.DATE };
+	    HttpHeaders.CONTENT_MD5, HttpHeaders.CONTENT_TYPE,
+	    HttpHeaders.DATE };
 
     private final String accessKey;
     private final String secretKey;
@@ -113,7 +113,6 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
 	// re-sign the request
 	removeOldHeaders(request);
 
-	addContentTypeHeader(request);
 	addDateHeader(request);
 
 	StringBuilder toSign = new StringBuilder();
@@ -127,9 +126,9 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
     }
 
     private void removeOldHeaders(HttpRequest request) {
-	request.getHeaders().removeAll(S3Constants.AUTH);
-	request.getHeaders().removeAll(HttpConstants.CONTENT_TYPE);
-	request.getHeaders().removeAll(HttpConstants.DATE);
+	request.getHeaders().removeAll(S3Constants.AUTHORIZATION);
+	request.getHeaders().removeAll(HttpHeaders.CONTENT_TYPE);
+	request.getHeaders().removeAll(HttpHeaders.DATE);
     }
 
     private void addAuthHeader(HttpRequest request, StringBuilder toSign)
@@ -141,15 +140,8 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
 	} catch (Exception e) {
 	    throw new HttpException("error signing request", e);
 	}
-	request.getHeaders().put(S3Constants.AUTH,
+	request.getHeaders().put(S3Constants.AUTHORIZATION,
 		"AWS " + accessKey + ":" + signature);
-    }
-
-    private void addContentTypeHeader(HttpRequest request) {
-	if (request.getContent() != null && request.getContentType() != null) {
-	    request.getHeaders().put(HttpConstants.CONTENT_TYPE,
-		    request.getContentType());
-	}
     }
 
     private void appendMethod(HttpRequest request, StringBuilder toSign) {
@@ -157,7 +149,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
     }
 
     private void addDateHeader(HttpRequest request) {
-	request.getHeaders().put(HttpConstants.DATE,
+	request.getHeaders().put(HttpHeaders.DATE,
 		dateService.timestampAsHeaderString());
     }
 
@@ -180,7 +172,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
     }
 
     private void appendBucketName(HttpRequest request, StringBuilder toSign) {
-	String hostHeader = request.getHeaders().get(HttpConstants.HOST)
+	String hostHeader = request.getHeaders().get(HttpHeaders.HOST)
 		.iterator().next();
 	if (hostHeader.endsWith(".s3.amazonaws.com"))
 	    toSign.append("/").append(

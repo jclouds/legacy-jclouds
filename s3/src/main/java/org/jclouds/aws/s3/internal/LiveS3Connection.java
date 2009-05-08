@@ -31,18 +31,21 @@ import org.jclouds.aws.s3.commands.BucketExists;
 import org.jclouds.aws.s3.commands.CopyObject;
 import org.jclouds.aws.s3.commands.DeleteBucket;
 import org.jclouds.aws.s3.commands.DeleteObject;
-import org.jclouds.aws.s3.commands.GetBucket;
 import org.jclouds.aws.s3.commands.GetMetaDataForOwnedBuckets;
 import org.jclouds.aws.s3.commands.GetObject;
 import org.jclouds.aws.s3.commands.HeadMetaData;
+import org.jclouds.aws.s3.commands.ListBucket;
 import org.jclouds.aws.s3.commands.PutBucket;
 import org.jclouds.aws.s3.commands.PutObject;
 import org.jclouds.aws.s3.commands.S3CommandFactory;
-import org.jclouds.aws.s3.commands.options.GetBucketOptions;
+import org.jclouds.aws.s3.commands.options.CopyObjectOptions;
+import org.jclouds.aws.s3.commands.options.GetObjectOptions;
+import org.jclouds.aws.s3.commands.options.ListBucketOptions;
 import org.jclouds.aws.s3.commands.options.PutBucketOptions;
+import org.jclouds.aws.s3.commands.options.PutObjectOptions;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.aws.s3.domain.S3Bucket.MetaData;
+import org.jclouds.aws.s3.domain.S3Bucket.Metadata;
 import org.jclouds.http.HttpFutureCommandClient;
 
 import com.google.inject.Inject;
@@ -75,7 +78,17 @@ public class LiveS3Connection implements S3Connection {
      * @see GetObject
      */
     public Future<S3Object> getObject(String s3Bucket, String key) {
-	GetObject getObject = factory.createGetObject(s3Bucket, key);
+	return getObject(s3Bucket, key, GetObjectOptions.NONE);
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see GetObject
+     */
+    public Future<S3Object> getObject(String s3Bucket, String key,
+	    GetObjectOptions options) {
+	GetObject getObject = factory.createGetObject(s3Bucket, key, options);
 	client.submit(getObject);
 	return getObject;
     }
@@ -85,8 +98,7 @@ public class LiveS3Connection implements S3Connection {
      * 
      * @see HeadMetaData
      */
-    public Future<S3Object.MetaData> getObjectMetaData(String s3Bucket,
-	    String key) {
+    public Future<S3Object.Metadata> headObject(String s3Bucket, String key) {
 	HeadMetaData headMetaData = factory.createHeadMetaData(s3Bucket, key);
 	client.submit(headMetaData);
 	return headMetaData;
@@ -108,8 +120,19 @@ public class LiveS3Connection implements S3Connection {
      * 
      * @see PutObject
      */
-    public Future<String> addObject(String s3Bucket, S3Object object) {
-	PutObject putObject = factory.createPutObject(s3Bucket, object);
+    public Future<byte[]> putObject(String s3Bucket, S3Object object) {
+	return putObject(s3Bucket, object, PutObjectOptions.NONE);
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see PutObject
+     */
+    public Future<byte[]> putObject(String bucketName, S3Object object,
+	    PutObjectOptions options) {
+	PutObject putObject = factory.createPutObject(bucketName, object,
+		options);
 	client.submit(putObject);
 	return putObject;
     }
@@ -119,10 +142,8 @@ public class LiveS3Connection implements S3Connection {
      * 
      * @see PutBucket
      */
-    public Future<Boolean> createBucketIfNotExists(String s3Bucket) {
-	PutBucket putBucket = factory.createPutBucket(s3Bucket);
-	client.submit(putBucket);
-	return putBucket;
+    public Future<Boolean> putBucketIfNotExists(String s3Bucket) {
+	return putBucketIfNotExists(s3Bucket, PutBucketOptions.NONE);
     }
 
     /**
@@ -130,7 +151,7 @@ public class LiveS3Connection implements S3Connection {
      * 
      * @see PutBucket
      */
-    public Future<Boolean> createBucketIfNotExists(String s3Bucket,
+    public Future<Boolean> putBucketIfNotExists(String s3Bucket,
 	    PutBucketOptions options) {
 	PutBucket putBucket = factory.createPutBucket(s3Bucket, options);
 	client.submit(putBucket);
@@ -153,11 +174,23 @@ public class LiveS3Connection implements S3Connection {
      * 
      * @see CopyObject
      */
-    public Future<S3Object.MetaData> copyObject(String sourceBucket,
+    public Future<S3Object.Metadata> copyObject(String sourceBucket,
 	    String sourceObject, String destinationBucket,
 	    String destinationObject) {
+	return copyObject(sourceBucket, sourceObject, destinationBucket,
+		destinationObject, new CopyObjectOptions());
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see CopyObject
+     */
+    public Future<S3Object.Metadata> copyObject(String sourceBucket,
+	    String sourceObject, String destinationBucket,
+	    String destinationObject, CopyObjectOptions options) {
 	CopyObject copy = factory.createCopyObject(sourceBucket, sourceObject,
-		destinationBucket, destinationObject);
+		destinationBucket, destinationObject, options);
 	client.submit(copy);
 	return copy;
     }
@@ -176,10 +209,20 @@ public class LiveS3Connection implements S3Connection {
     /**
      * {@inheritDoc}
      * 
-     * @see GetBucket
+     * @see ListBucket
      */
-    public Future<S3Bucket> getBucket(String s3Bucket) {
-	GetBucket getBucket = factory.createGetBucket(s3Bucket);
+    public Future<S3Bucket> listBucket(String s3Bucket) {
+	return listBucket(s3Bucket, ListBucketOptions.NONE);
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see ListBucket
+     */
+    public Future<S3Bucket> listBucket(String s3Bucket,
+	    ListBucketOptions options) {
+	ListBucket getBucket = factory.createListBucket(s3Bucket, options);
 	client.submit(getBucket);
 	return getBucket;
     }
@@ -187,21 +230,13 @@ public class LiveS3Connection implements S3Connection {
     /**
      * {@inheritDoc}
      * 
-     * @see GetBucket
+     * @see GetMetaDataForOwnedBuckets
      */
-    public Future<S3Bucket> getBucket(String s3Bucket, GetBucketOptions options) {
-	GetBucket getBucket = factory.createGetBucket(s3Bucket, options);
-	client.submit(getBucket);
-	return getBucket;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public Future<List<MetaData>> getMetaDataOfOwnedBuckets() {
+    public Future<List<Metadata>> getOwnedBuckets() {
 	GetMetaDataForOwnedBuckets listRequest = factory
 		.createGetMetaDataForOwnedBuckets();
 	client.submit(listRequest);
 	return listRequest;
     }
+
 }

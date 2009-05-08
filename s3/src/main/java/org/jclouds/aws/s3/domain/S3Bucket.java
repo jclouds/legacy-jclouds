@@ -75,7 +75,7 @@ public class S3Bucket {
 	return result;
     }
 
-    public static class MetaData {
+    public static class Metadata {
 	@Override
 	public String toString() {
 	    final StringBuilder sb = new StringBuilder();
@@ -83,7 +83,6 @@ public class S3Bucket {
 	    sb.append("{name='").append(name).append('\'');
 	    sb.append(", creationDate=").append(creationDate);
 	    sb.append(", canonicalUser=").append(canonicalUser);
-	    sb.append(", locationConstraint=").append(locationConstraint);
 	    sb.append('}');
 	    return sb.toString();
 	}
@@ -92,10 +91,10 @@ public class S3Bucket {
 	public boolean equals(Object o) {
 	    if (this == o)
 		return true;
-	    if (!(o instanceof MetaData))
+	    if (!(o instanceof Metadata))
 		return false;
 
-	    MetaData metaData = (MetaData) o;
+	    Metadata metaData = (Metadata) o;
 
 	    if (canonicalUser != null ? !canonicalUser
 		    .equals(metaData.canonicalUser)
@@ -104,8 +103,6 @@ public class S3Bucket {
 	    if (creationDate != null ? !creationDate
 		    .equals(metaData.creationDate)
 		    : metaData.creationDate != null)
-		return false;
-	    if (locationConstraint != metaData.locationConstraint)
 		return false;
 	    if (!name.equals(metaData.name))
 		return false;
@@ -120,10 +117,6 @@ public class S3Bucket {
 		    + (creationDate != null ? creationDate.hashCode() : 0);
 	    result = 31 * result
 		    + (canonicalUser != null ? canonicalUser.hashCode() : 0);
-	    result = 31
-		    * result
-		    + (locationConstraint != null ? locationConstraint
-			    .hashCode() : 0);
 	    return result;
 	}
 
@@ -134,9 +127,8 @@ public class S3Bucket {
 	private final String name;
 	private DateTime creationDate;
 	private S3Owner canonicalUser;
-	private LocationConstraint locationConstraint;
 
-	public MetaData(String name) {
+	public Metadata(String name) {
 	    this.name = checkNotNull(name, "name").toLowerCase();
 	}
 
@@ -160,44 +152,37 @@ public class S3Bucket {
 	    this.canonicalUser = canonicalUser;
 	}
 
-	public LocationConstraint getLocationConstraint() {
-	    return locationConstraint;
-	}
-
-	public void setLocationConstraint(LocationConstraint locationConstraint) {
-	    this.locationConstraint = locationConstraint;
-	}
     }
 
     public static final S3Bucket NOT_FOUND = new S3Bucket("NOT_FOUND");
 
-    private Set<S3Object.MetaData> objects = new HashSet<S3Object.MetaData>();
+    private Set<S3Object.Metadata> objects = new HashSet<S3Object.Metadata>();
     private Set<String> commonPrefixes = new HashSet<String>();
     private String prefix;
     private String marker;
     private String delimiter;
     private long maxKeys;
-    private final MetaData metaData;
+    private final Metadata metaData;
 
     private boolean isComplete;
 
     public S3Bucket(String name) {
-	this.metaData = new MetaData(name);
+	this.metaData = new Metadata(name);
     }
 
     public String getName() {
 	return this.metaData.getName();
     }
 
-    public S3Bucket(MetaData metaData) {
+    public S3Bucket(Metadata metaData) {
 	this.metaData = checkNotNull(metaData, "metaData");
     }
 
-    public Set<S3Object.MetaData> getContents() {
+    public Set<S3Object.Metadata> getContents() {
 	return objects;
     }
 
-    public void setContents(Set<S3Object.MetaData> objects) {
+    public void setContents(Set<S3Object.Metadata> objects) {
 	this.objects = objects;
     }
 
@@ -209,7 +194,7 @@ public class S3Bucket {
 	isComplete = complete;
     }
 
-    public MetaData getMetaData() {
+    public Metadata getMetaData() {
 	return metaData;
     }
 

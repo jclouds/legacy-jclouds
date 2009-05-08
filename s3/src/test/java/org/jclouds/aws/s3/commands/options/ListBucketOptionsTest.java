@@ -24,49 +24,47 @@
 package org.jclouds.aws.s3.commands.options;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.aws.s3.commands.options.GetBucketOptions.Builder.delimiter;
-import static org.jclouds.aws.s3.commands.options.GetBucketOptions.Builder.marker;
-import static org.jclouds.aws.s3.commands.options.GetBucketOptions.Builder.maxKeys;
-import static org.jclouds.aws.s3.commands.options.GetBucketOptions.Builder.prefix;
+import static org.jclouds.aws.s3.commands.options.ListBucketOptions.Builder.*;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
 import java.io.UnsupportedEncodingException;
 
+import org.jclouds.http.options.HttpRequestOptions;
 import org.testng.annotations.Test;
 
 /**
- * Tests possible uses of GetBucketOptions and GetBucketOptions.Builder.*
+ * Tests possible uses of ListBucketOptions and ListBucketOptions.Builder.*
  * 
  * @author Adrian Cole
  */
-public class GetBucketOptionsTest {
+public class ListBucketOptionsTest {
 
     @Test
     public void testPrefix() throws UnsupportedEncodingException {
-	GetBucketOptions options = new GetBucketOptions();
-	options.prefix("test");
+	ListBucketOptions options = new ListBucketOptions();
+	options.withPrefix("test");
 	assertEquals(options.getPrefix(), "test");
     }
 
     @Test
     public void testNoOptionsQueryString() {
-	GetBucketOptions options = new GetBucketOptions();
-	assertEquals(options.toQueryString(), "");
+	HttpRequestOptions options = new ListBucketOptions();
+	assertEquals(options.buildQueryString(), "");
     }
 
     @Test
     public void testOneOptionQueryString() throws UnsupportedEncodingException {
-	GetBucketOptions options = new GetBucketOptions();
-	options.prefix("test");
-	assertEquals(options.toQueryString(), "?prefix=test");
+	ListBucketOptions options = new ListBucketOptions();
+	options.withPrefix("test");
+	assertEquals(options.buildQueryString(), "?prefix=test");
     }
 
     @Test
     public void testTwoOptionQueryString() throws UnsupportedEncodingException {
-	GetBucketOptions options = new GetBucketOptions();
-	options.prefix("test").maxKeys(1);
-	String query = options.toQueryString();
+	ListBucketOptions options = new ListBucketOptions();
+	options.withPrefix("test").maxResults(1);
+	String query = options.buildQueryString();
 	checkQuery(query);
 	checkQuery(checkNotNull(query));
 
@@ -83,9 +81,9 @@ public class GetBucketOptionsTest {
     @Test
     public void testPrefixAndDelimiterUrlEncodingQueryString()
 	    throws UnsupportedEncodingException {
-	GetBucketOptions options = new GetBucketOptions();
-	options.prefix("/test").delimiter("/");
-	String query = options.toQueryString();
+	ListBucketOptions options = new ListBucketOptions();
+	options.withPrefix("/test").setDelimiter("/");
+	String query = options.buildQueryString();
 	checkEncodedQuery(query);
 	checkEncodedQuery(checkNotNull(query));
 
@@ -101,85 +99,85 @@ public class GetBucketOptionsTest {
 
     @Test
     public void testNullPrefix() {
-	GetBucketOptions options = new GetBucketOptions();
+	ListBucketOptions options = new ListBucketOptions();
 	assertNull(options.getPrefix());
     }
 
     @Test
     public void testPrefixStatic() throws UnsupportedEncodingException {
-	GetBucketOptions options = prefix("test");
+	ListBucketOptions options = withPrefix("test");
 	assertEquals(options.getPrefix(), "test");
     }
 
     @Test(expectedExceptions = NullPointerException.class)
     public void testPrefixNPE() throws UnsupportedEncodingException {
-	prefix(null);
+	withPrefix(null);
     }
 
     @Test
     public void testMarker() throws UnsupportedEncodingException {
-	GetBucketOptions options = new GetBucketOptions();
-	options.marker("test");
+	ListBucketOptions options = new ListBucketOptions();
+	options.afterMarker("test");
 	assertEquals(options.getMarker(), "test");
     }
 
     @Test
     public void testNullMarker() {
-	GetBucketOptions options = new GetBucketOptions();
+	ListBucketOptions options = new ListBucketOptions();
 	assertNull(options.getMarker());
     }
 
     @Test
     public void testMarkerStatic() throws UnsupportedEncodingException {
-	GetBucketOptions options = marker("test");
+	ListBucketOptions options = afterMarker("test");
 	assertEquals(options.getMarker(), "test");
     }
 
     @Test(expectedExceptions = NullPointerException.class)
     public void testMarkerNPE() throws UnsupportedEncodingException {
-	marker(null);
+	afterMarker(null);
     }
 
     @Test
     public void testMaxKeys() {
-	GetBucketOptions options = new GetBucketOptions();
-	options.maxKeys(1000);
+	ListBucketOptions options = new ListBucketOptions();
+	options.maxResults(1000);
 	assertEquals(options.getMaxKeys(), "1000");
     }
 
     @Test
     public void testNullMaxKeys() {
-	GetBucketOptions options = new GetBucketOptions();
+	ListBucketOptions options = new ListBucketOptions();
 	assertNull(options.getMaxKeys());
     }
 
     @Test
     public void testMaxKeysStatic() {
-	GetBucketOptions options = maxKeys(1000);
+	ListBucketOptions options = maxResults(1000);
 	assertEquals(options.getMaxKeys(), "1000");
     }
 
     @Test(expectedExceptions = IllegalStateException.class)
     public void testMaxKeysNegative() {
-	maxKeys(-1);
+	maxResults(-1);
     }
 
     @Test
     public void testDelimiter() throws UnsupportedEncodingException {
-	GetBucketOptions options = new GetBucketOptions();
-	options.delimiter("test");
+	ListBucketOptions options = new ListBucketOptions();
+	options.setDelimiter("test");
 	assertEquals(options.getDelimiter(), "test");
     }
 
     @Test
     public void testNullDelimiter() {
-	GetBucketOptions options = new GetBucketOptions();
+	ListBucketOptions options = new ListBucketOptions();
 	assertNull(options.getDelimiter());
     }
 
     @Test
     public void testDelimiterStatic() throws UnsupportedEncodingException {
-	GetBucketOptions options = delimiter("test");
+	ListBucketOptions options = delimiter("test");
 	assertEquals(options.getDelimiter(), "test");
     }
 

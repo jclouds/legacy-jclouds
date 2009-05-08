@@ -28,10 +28,9 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
+
+import org.jclouds.http.options.BaseHttpRequestOptions;
+
 
 /**
  * Contains options supported in the REST API for the GET bucket operation. <h2>
@@ -43,7 +42,7 @@ import java.util.Map.Entry;
  * import static org.jclouds.aws.s3.commands.options.GetBucketOptions.Builder.*
  * 
  * S3Connection connection = // get connection
- * Future<S3Bucket> bucket = connection.getBucket("bucketName",prefix("/home/users").maxKeys(1000));
+ * Future<S3Bucket> bucket = connection.listBucket("bucketName",withPrefix("home/users").maxKeys(1000));
  * <code>
  * 
  * Description of parameters taken from {@link http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTBucketGET.html}
@@ -52,31 +51,8 @@ import java.util.Map.Entry;
  * 
  * 
  */
-public class GetBucketOptions {
-    private Map<String, String> options = new HashMap<String, String>();
-
-    /**
-     * Builds a query string, ex. ?marker=toast
-     * 
-     * @return an http query string representing these options, or empty string
-     *         if none are present.
-     */
-    public String toQueryString() {
-	StringBuilder builder = new StringBuilder("");
-	if (options.size() > 0) {
-	    builder.append("?");
-	    for (Iterator<Entry<String, String>> i = options.entrySet()
-		    .iterator(); i.hasNext();) {
-		Entry<String, String> entry = i.next();
-		builder.append(entry.getKey()).append("=").append(
-			entry.getValue());
-		if (i.hasNext())
-		    builder.append("&");
-	    }
-	}
-	String returnVal =  builder.toString();
-	return returnVal;
-    }
+public class ListBucketOptions extends BaseHttpRequestOptions {
+    public static final ListBucketOptions NONE = new ListBucketOptions();
 
     /**
      * Limits the response to keys which begin with the indicated prefix. You
@@ -85,7 +61,7 @@ public class GetBucketOptions {
      * 
      * @throws UnsupportedEncodingException
      */
-    public GetBucketOptions prefix(String prefix)
+    public ListBucketOptions withPrefix(String prefix)
 	    throws UnsupportedEncodingException {
 	options.put("prefix", URLEncoder.encode(checkNotNull(prefix, "prefix"),
 		"UTF-8"));
@@ -93,7 +69,7 @@ public class GetBucketOptions {
     }
 
     /**
-     * @see GetBucketOptions#prefix(String)
+     * @see ListBucketOptions#prefix(String)
      */
     public String getPrefix() {
 	return options.get("prefix");
@@ -107,7 +83,7 @@ public class GetBucketOptions {
      * 
      * @throws UnsupportedEncodingException
      */
-    public GetBucketOptions marker(String marker)
+    public ListBucketOptions afterMarker(String marker)
 	    throws UnsupportedEncodingException {
 	options.put("marker", URLEncoder.encode(checkNotNull(marker, "marker"),
 		"UTF-8"));
@@ -115,7 +91,7 @@ public class GetBucketOptions {
     }
 
     /**
-     * @see GetBucketOptions#marker(String)
+     * @see ListBucketOptions#marker(String)
      */
     public String getMarker() {
 	return options.get("marker");
@@ -125,14 +101,14 @@ public class GetBucketOptions {
      * The maximum number of keys you'd like to see in the response body. The
      * server might return fewer than this many keys, but will not return more.
      */
-    public GetBucketOptions maxKeys(long maxKeys) {
+    public ListBucketOptions maxResults(long maxKeys) {
 	checkState(maxKeys >= 0, "maxKeys must be >= 0");
 	options.put("max-keys", Long.toString(maxKeys));
 	return this;
     }
 
     /**
-     * @see GetBucketOptions#maxKeys(String)
+     * @see ListBucketOptions#maxKeys(String)
      */
     public String getMaxKeys() {
 	return options.get("max-keys");
@@ -146,7 +122,7 @@ public class GetBucketOptions {
      * 
      * @throws UnsupportedEncodingException
      */
-    public GetBucketOptions delimiter(String delimiter)
+    public ListBucketOptions setDelimiter(String delimiter)
 	    throws UnsupportedEncodingException {
 	options.put("delimiter", URLEncoder.encode(checkNotNull(delimiter,
 		"delimiter"), "UTF-8"));
@@ -154,7 +130,7 @@ public class GetBucketOptions {
     }
 
     /**
-     * @see GetBucketOptions#delimiter(String)
+     * @see ListBucketOptions#setDelimiter(String)
      */
     public String getDelimiter() {
 	return options.get("delimiter");
@@ -164,40 +140,40 @@ public class GetBucketOptions {
 
 	/**
 	 * @throws UnsupportedEncodingException
-	 * @see GetBucketOptions#prefix
+	 * @see ListBucketOptions#withPrefix
 	 */
-	public static GetBucketOptions prefix(String prefix)
+	public static ListBucketOptions withPrefix(String prefix)
 		throws UnsupportedEncodingException {
-	    GetBucketOptions options = new GetBucketOptions();
-	    return options.prefix(prefix);
+	    ListBucketOptions options = new ListBucketOptions();
+	    return options.withPrefix(prefix);
 	}
 
 	/**
 	 * @throws UnsupportedEncodingException
-	 * @see GetBucketOptions#marker
+	 * @see ListBucketOptions#afterMarker
 	 */
-	public static GetBucketOptions marker(String marker)
+	public static ListBucketOptions afterMarker(String marker)
 		throws UnsupportedEncodingException {
-	    GetBucketOptions options = new GetBucketOptions();
-	    return options.marker(marker);
+	    ListBucketOptions options = new ListBucketOptions();
+	    return options.afterMarker(marker);
 	}
 
 	/**
-	 * @see GetBucketOptions#maxKeys
+	 * @see ListBucketOptions#maxResults
 	 */
-	public static GetBucketOptions maxKeys(long maxKeys) {
-	    GetBucketOptions options = new GetBucketOptions();
-	    return options.maxKeys(maxKeys);
+	public static ListBucketOptions maxResults(long maxKeys) {
+	    ListBucketOptions options = new ListBucketOptions();
+	    return options.maxResults(maxKeys);
 	}
 
 	/**
 	 * @throws UnsupportedEncodingException
-	 * @see GetBucketOptions#delimiter
+	 * @see ListBucketOptions#delimiter
 	 */
-	public static GetBucketOptions delimiter(String delimiter)
+	public static ListBucketOptions delimiter(String delimiter)
 		throws UnsupportedEncodingException {
-	    GetBucketOptions options = new GetBucketOptions();
-	    return options.delimiter(delimiter);
+	    ListBucketOptions options = new ListBucketOptions();
+	    return options.setDelimiter(delimiter);
 	}
 
     }

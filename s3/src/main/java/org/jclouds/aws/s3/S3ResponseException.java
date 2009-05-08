@@ -24,16 +24,16 @@
 package org.jclouds.aws.s3;
 
 import org.jclouds.aws.s3.domain.S3Error;
-import org.jclouds.http.HttpResponse;
+import org.jclouds.http.HttpMessage;
 
 public class S3ResponseException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     private S3Error error;
 
-    private HttpResponse response;
+    private HttpMessage response;
 
-    public S3ResponseException(S3Error error, HttpResponse response) {
+    public S3ResponseException(S3Error error, HttpMessage response) {
 	super(error.toString());
 	this.setError(error);
 	this.setResponse(response);
@@ -47,11 +47,11 @@ public class S3ResponseException extends RuntimeException {
 	return error;
     }
 
-    public void setResponse(HttpResponse response) {
+    public void setResponse(HttpMessage response) {
 	this.response = response;
     }
 
-    public HttpResponse getResponse() {
+    public HttpMessage getResponse() {
 	return response;
     }
 }

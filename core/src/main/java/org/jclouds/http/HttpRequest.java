@@ -26,28 +26,22 @@ package org.jclouds.http;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.InputStream;
-import java.util.Collection;
 
 import javax.annotation.Resource;
 
 import org.jclouds.logging.Logger;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-
 /**
- * // TODO: Adrian: Document this!
+ * Represents a request that can be executed within
+ * {@link HttpFutureCommandClient}
  * 
  * @author Adrian Cole
  */
-public class HttpRequest {
+public class HttpRequest extends HttpMessage {
 
     private final String method;
     private final String uri;
-    Multimap<String, String> headers = HashMultimap.create();
-    Object content;
-    String contentType;
-    long contentLength = -1;
+    Object payload;
 
     @Resource
     protected Logger logger = Logger.NULL;
@@ -64,9 +58,7 @@ public class HttpRequest {
 	sb.append("{method='").append(method).append('\'');
 	sb.append(", uri='").append(uri).append('\'');
 	sb.append(", headers=").append(headers);
-	sb.append(", content set=").append(content != null);
-	sb.append(", contentType='").append(contentType).append('\'');
-	sb.append(", contentLength=").append(contentLength);
+	sb.append(", payload set=").append(payload != null);
 	sb.append('}');
 	return sb.toString();
     }
@@ -79,16 +71,8 @@ public class HttpRequest {
 	return uri;
     }
 
-    public Multimap<String, String> getHeaders() {
-	return headers;
-    }
-
-    public void setHeaders(Multimap<String, String> headers) {
-	this.headers = headers;
-    }
-
     public boolean isReplayable() {
-	Object content = getContent();
+	Object content = getPayload();
 	if (content != null && content instanceof InputStream) {
 	    logger.warn("%1s: InputStreams are not replayable", toString());
 	    return false;
@@ -96,33 +80,12 @@ public class HttpRequest {
 	return true;
     }
 
-    public Object getContent() {
-	return content;
+    public Object getPayload() {
+	return payload;
     }
 
-    public void setContent(Object content) {
-	this.content = content;
+    public void setPayload(Object content) {
+	this.payload = content;
     }
 
-    public String getContentType() {
-	return contentType;
-    }
-
-    public void setContentType(String contentType) {
-	this.contentType = contentType;
-    }
-
-    public long getContentLength() {
-	return contentLength;
-    }
-
-    public void setContentLength(long contentLength) {
-	this.contentLength = contentLength;
-    }
-
-    public String getFirstHeaderOrNull(String string) {
-	Collection<String> values = headers.get(string);
-	return (values != null && values.size() >= 1) ? values.iterator()
-		.next() : null;
-    }
 }

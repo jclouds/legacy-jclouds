@@ -23,8 +23,6 @@
  */
 package org.jclouds.http;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -116,8 +114,6 @@ public class JavaUrlHttpFutureCommandClient implements HttpFutureCommandClient {
 	}
 	if (in != null) {
 	    response.setContent(in);
-	    response.setContentType(connection
-		    .getHeaderField(HttpConstants.CONTENT_TYPE));
 	}
 	response.setStatusCode(connection.getResponseCode());
 	for (String header : connection.getHeaderFields().keySet()) {
@@ -135,33 +131,30 @@ public class JavaUrlHttpFutureCommandClient implements HttpFutureCommandClient {
 	HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 	connection.setDoOutput(true);
 	connection.setAllowUserInteraction(false);
-	connection.setInstanceFollowRedirects(false);
+	connection.setInstanceFollowRedirects(true);
 	connection.setRequestMethod(request.getMethod());
 	for (String header : request.getHeaders().keySet()) {
 	    for (String value : request.getHeaders().get(header))
 		connection.setRequestProperty(header, value);
 	}
-	if (request.getContent() != null) {
-	    connection.setRequestProperty(HttpConstants.CONTENT_TYPE,
-		    checkNotNull(request.getContentType(),
-			    "request.getContentType()"));
+	if (request.getPayload() != null) {
 	    OutputStream out = connection.getOutputStream();
 	    try {
-		if (request.getContent() instanceof String) {
+		if (request.getPayload() instanceof String) {
 		    OutputStreamWriter writer = new OutputStreamWriter(out);
-		    writer.write((String) request.getContent());
+		    writer.write((String) request.getPayload());
 		    writer.close();
-		} else if (request.getContent() instanceof InputStream) {
-		    IOUtils.copy((InputStream) request.getContent(), out);
-		} else if (request.getContent() instanceof File) {
+		} else if (request.getPayload() instanceof InputStream) {
+		    IOUtils.copy((InputStream) request.getPayload(), out);
+		} else if (request.getPayload() instanceof File) {
 		    IOUtils.copy(new FileInputStream((File) request
-			    .getContent()), out);
-		} else if (request.getContent() instanceof byte[]) {
-		    IOUtils.write((byte[]) request.getContent(), out);
+			    .getPayload()), out);
+		} else if (request.getPayload() instanceof byte[]) {
+		    IOUtils.write((byte[]) request.getPayload(), out);
 		} else {
 		    throw new UnsupportedOperationException(
 			    "Content not supported "
-				    + request.getContent().getClass());
+				    + request.getPayload().getClass());
 		}
 	    } finally {
 		IOUtils.closeQuietly(out);

@@ -89,7 +89,7 @@ public abstract class BaseS3MapTest<T> extends S3IntegrationTest {
 			.toInputStream("dogma"), "five", IOUtils
 			.toInputStream("emma"));
 	bucket = (bucketPrefix + ".mimi").toLowerCase();
-	client.createBucketIfNotExists(bucket).get(10, TimeUnit.SECONDS);
+	client.putBucketIfNotExists(bucket).get(10, TimeUnit.SECONDS);
 	map = createMap(context, bucket);
 	map.clear();
     }

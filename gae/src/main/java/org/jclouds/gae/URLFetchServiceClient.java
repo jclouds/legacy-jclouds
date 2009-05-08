@@ -38,7 +38,6 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpFutureCommandClient;
 import org.jclouds.http.HttpRequest;
@@ -126,17 +125,17 @@ public class URLFetchServiceClient implements HttpFutureCommandClient {
      */
     @VisibleForTesting
     void changeRequestContentToBytes(HttpRequest request) throws IOException {
-	Object content = request.getContent();
+	Object content = request.getPayload();
 	if (content == null || content instanceof byte[]) {
 	    return;
 	} else if (content instanceof String) {
 	    String string = (String) content;
-	    request.setContent(string.getBytes());
+	    request.setPayload(string.getBytes());
 	} else if (content instanceof InputStream || content instanceof File) {
 	    InputStream i = content instanceof InputStream ? (InputStream) content
 		    : new FileInputStream((File) content);
 	    try {
-		request.setContent(IOUtils.toByteArray(i));
+		request.setPayload(IOUtils.toByteArray(i));
 	    } finally {
 		IOUtils.closeQuietly(i);
 	    }
@@ -157,8 +156,6 @@ public class URLFetchServiceClient implements HttpFutureCommandClient {
 	if (gaeResponse.getContent() != null) {
 	    response.setContent(new ByteArrayInputStream(gaeResponse
 		    .getContent()));
-	    response.setContentType(response
-		    .getFirstHeaderOrNull(HttpConstants.CONTENT_TYPE));
 	}
 	return response;
     }
@@ -167,17 +164,14 @@ public class URLFetchServiceClient implements HttpFutureCommandClient {
     HTTPRequest convert(HttpRequest request) throws IOException {
 	URL url = new URL(target, request.getUri());
 	HTTPRequest gaeRequest = new HTTPRequest(url, HTTPMethod
-		.valueOf(request.getMethod()), disallowTruncate()
-		.doNotFollowRedirects());
+		.valueOf(request.getMethod()), disallowTruncate());
 	for (String header : request.getHeaders().keySet()) {
 	    for (String value : request.getHeaders().get(header))
 		gaeRequest.addHeader(new HTTPHeader(header, value));
 	}
-	if (request.getContent() != null) {
+	if (request.getPayload() != null) {
 	    changeRequestContentToBytes(request);
-	    gaeRequest.addHeader(new HTTPHeader(HttpConstants.CONTENT_TYPE,
-		    request.getContentType()));
-	    gaeRequest.setPayload((byte[]) request.getContent());
+	    gaeRequest.setPayload((byte[]) request.getPayload());
 	}
 	return gaeRequest;
     }

@@ -21,25 +21,12 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.domain;
+package org.jclouds.http;
 
-import java.io.File;
+public interface ContentTypes {
 
-import static org.testng.Assert.*;
+    public static final String BINARY = "application/octet-stream";
+    public static final String PLAIN = "text/plain";
+    public static final String UNKNOWN_MIME_TYPE = "application/x-unknown-mime-type";
 
-import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.http.ContentTypes;
-import org.testng.annotations.Test;
-
-@Test
-public class S3ObjectTest {
-
-    @Test
-    void testSetNoContentType() {
-	S3Object object = new S3Object("test");
-	File file = new File("hello.txt");
-	object.setData(file);
-	assertEquals(object.getMetaData().getContentType(),
-		ContentTypes.UNKNOWN_MIME_TYPE);
-    }
 }

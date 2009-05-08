@@ -35,16 +35,21 @@ import org.jclouds.http.HttpFutureCommand;
  * @author Adrian Cole
  */
 public class PutObjectCallable extends
-	HttpFutureCommand.ResponseCallable<String> {
+	HttpFutureCommand.ResponseCallable<byte []> {
 
-    public String call() throws HttpException {
+    public byte [] call() throws HttpException {
 	if (getResponse().getStatusCode() == 200) {
 	    try {
 		getResponse().getContent().close();
 	    } catch (IOException e) {
 		logger.error(e, "error consuming content");
 	    }
-	    return getResponse().getHeaders().get("ETag").iterator().next();
+	    String eTag = getResponse().getFirstHeaderOrNull("ETag");
+	    if (eTag != null) {
+		return S3Utils
+			.fromHexString(eTag.replaceAll("\"", ""));
+	    }
+	    throw new HttpException("did not receive ETag");
 	} else {
 	    try {
 		String reason = S3Utils.toStringAndClose(getResponse()

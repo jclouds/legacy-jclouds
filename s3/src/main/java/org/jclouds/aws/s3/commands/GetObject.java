@@ -31,6 +31,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.aws.s3.S3ResponseException;
 import org.jclouds.aws.s3.commands.callables.GetObjectCallable;
+import org.jclouds.aws.s3.commands.options.GetObjectOptions;
 import org.jclouds.aws.s3.domain.S3Object;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -50,8 +51,10 @@ public class GetObject extends S3FutureCommand<S3Object> {
     @Inject
     public GetObject(@Named("jclouds.http.address") String amazonHost,
 	    GetObjectCallable callable,
-	    @Assisted("bucketName") String s3Bucket, @Assisted("key") String key) {
+	    @Assisted("bucketName") String s3Bucket,
+	    @Assisted("key") String key, @Assisted GetObjectOptions options) {
 	super("GET", "/" + checkNotNull(key), callable, amazonHost, s3Bucket);
+	this.getRequest().getHeaders().putAll(options.buildRequestHeaders());
 	callable.setKey(key);
     }
 
@@ -65,8 +68,7 @@ public class GetObject extends S3FutureCommand<S3Object> {
     }
 
     @VisibleForTesting
-    S3Object attemptNotFound(ExecutionException e)
-	    throws ExecutionException {
+    S3Object attemptNotFound(ExecutionException e) throws ExecutionException {
 	if (e.getCause() != null && e.getCause() instanceof S3ResponseException) {
 	    S3ResponseException responseException = (S3ResponseException) e
 		    .getCause();

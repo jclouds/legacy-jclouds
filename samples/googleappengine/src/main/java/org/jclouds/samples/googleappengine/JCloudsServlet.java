@@ -58,10 +58,10 @@ public class JCloudsServlet extends HttpServlet {
 	httpServletResponse.setContentType("text/plain");
 	Writer writer = httpServletResponse.getWriter();
 	try {
-	    List<S3Bucket.MetaData> myBuckets = context.getConnection()
-		    .getMetaDataOfOwnedBuckets().get(10, TimeUnit.SECONDS);
+	    List<S3Bucket.Metadata> myBuckets = context.getConnection()
+		    .getOwnedBuckets().get(10, TimeUnit.SECONDS);
 	    writer.write("List:\n");
-	    for (S3Bucket.MetaData bucket : myBuckets) {
+	    for (S3Bucket.Metadata bucket : myBuckets) {
 		writer.write(String.format("  %1s: %2s entries%n", bucket
 			.getName(), context.createInputStreamMap(
 			bucket.getName()).size()));

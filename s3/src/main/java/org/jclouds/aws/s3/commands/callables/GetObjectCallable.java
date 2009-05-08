@@ -53,11 +53,11 @@ public class GetObjectCallable extends
      */
     public S3Object call() throws HttpException {
 	metaDataParser.setResponse(getResponse());
-	S3Object.MetaData metaData = metaDataParser.call();
-	if (metaData == S3Object.MetaData.NOT_FOUND)
+	S3Object.Metadata metaData = metaDataParser.call();
+	if (metaData == S3Object.Metadata.NOT_FOUND)
 	    return S3Object.NOT_FOUND;
 	if (getResponse().getContent() != null) {
-	    return new S3Object(metaData,getResponse().getContent());
+	    return new S3Object(metaData, getResponse().getContent());
 	} else {
 	    String reason = null;
 	    try {

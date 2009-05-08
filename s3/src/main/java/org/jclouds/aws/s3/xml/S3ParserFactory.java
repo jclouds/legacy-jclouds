@@ -42,7 +42,7 @@ import com.google.inject.Provider;
 public class S3ParserFactory {
 
     @Inject
-    private GenericParseFactory<List<S3Bucket.MetaData>> parseListAllMyBucketsFactory;
+    private GenericParseFactory<List<S3Bucket.Metadata>> parseListAllMyBucketsFactory;
 
     public static interface GenericParseFactory<T> {
 	ParseSax<T> create(ParseSax.HandlerWithResult<T> handler);
@@ -52,7 +52,7 @@ public class S3ParserFactory {
     Provider<ListAllMyBucketsHandler> ListAllMyBucketsHandlerprovider;
 
     @VisibleForTesting
-    public ParseSax<List<S3Bucket.MetaData>> createListBucketsParser() {
+    public ParseSax<List<S3Bucket.Metadata>> createListBucketsParser() {
 	return parseListAllMyBucketsFactory
 		.create(ListAllMyBucketsHandlerprovider.get());
     }
@@ -69,13 +69,13 @@ public class S3ParserFactory {
     }
 
     @Inject
-    private GenericParseFactory<S3Object.MetaData> parseCopyObjectFactory;
+    private GenericParseFactory<S3Object.Metadata> parseCopyObjectFactory;
 
     @Inject
     Provider<CopyObjectHandler> copyObjectHandlerProvider;
 
     @VisibleForTesting
-    public ParseSax<S3Object.MetaData> createCopyObjectParser() {
+    public ParseSax<S3Object.Metadata> createCopyObjectParser() {
 	return parseCopyObjectFactory.create(copyObjectHandlerProvider.get());
     }
 

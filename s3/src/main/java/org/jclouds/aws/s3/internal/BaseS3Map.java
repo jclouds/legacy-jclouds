@@ -74,7 +74,7 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
     public int size() {
 	try {
 	    S3Bucket bucket = refreshBucket();
-	    Set<S3Object.MetaData> contents = bucket.getContents();
+	    Set<S3Object.Metadata> contents = bucket.getContents();
 	    return contents.size();
 	} catch (Exception e) {
 	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
@@ -85,7 +85,7 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
 
     protected boolean containsMd5(byte[] md5) throws InterruptedException,
 	    ExecutionException, TimeoutException {
-	for (S3Object.MetaData metaData : refreshBucket().getContents()) {
+	for (S3Object.Metadata metaData : refreshBucket().getContents()) {
 	    if (Arrays.equals(md5, metaData.getMd5()))
 		return true;
 	}
@@ -190,7 +190,7 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
 
     protected S3Bucket refreshBucket() throws InterruptedException,
 	    ExecutionException, TimeoutException {
-	S3Bucket currentBucket = connection.getBucket(bucket).get(
+	S3Bucket currentBucket = connection.listBucket(bucket).get(
 		requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
 	if (currentBucket == S3Bucket.NOT_FOUND)
 	    throw new S3RuntimeException("bucket not found: " + bucket);
@@ -201,7 +201,7 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
     public Set<String> keySet() {
 	try {
 	    Set<String> keys = new HashSet<String>();
-	    for (S3Object.MetaData object : refreshBucket().getContents())
+	    for (S3Object.Metadata object : refreshBucket().getContents())
 		keys.add(object.getKey());
 	    return keys;
 	} catch (Exception e) {
@@ -213,8 +213,8 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
 
     public boolean containsKey(Object key) {
 	try {
-	    return connection.getObjectMetaData(bucket, key.toString()).get(
-		    requestTimeoutMilliseconds, TimeUnit.MILLISECONDS) != S3Object.MetaData.NOT_FOUND;
+	    return connection.headObject(bucket, key.toString()).get(
+		    requestTimeoutMilliseconds, TimeUnit.MILLISECONDS) != S3Object.Metadata.NOT_FOUND;
 	} catch (Exception e) {
 	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
 	    throw new S3RuntimeException(String.format(

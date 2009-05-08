@@ -58,7 +58,7 @@ public abstract class BaseJCloudsPerformance extends BasePerformance {
 		key);
 	object.getMetaData().setContentType(contentType);
 	object.setData(data);
-	return client.addObject(bucket, object).get(120, TimeUnit.SECONDS) != null;
+	return client.putObject(bucket, object).get(120, TimeUnit.SECONDS) != null;
     }
 
     @Override
@@ -68,7 +68,7 @@ public abstract class BaseJCloudsPerformance extends BasePerformance {
 		key);
 	object.getMetaData().setContentType(contentType);
 	object.setData(data);
-	return client.addObject(bucket, object).get(120, TimeUnit.SECONDS) != null;
+	return client.putObject(bucket, object).get(120, TimeUnit.SECONDS) != null;
     }
 
     @Override
@@ -79,7 +79,7 @@ public abstract class BaseJCloudsPerformance extends BasePerformance {
 	object.getMetaData().setContentType(contentType);
 	object.setData(data);
 	object.getMetaData().setSize(data.available());
-	return client.addObject(bucket, object).get(120, TimeUnit.SECONDS) != null;
+	return client.putObject(bucket, object).get(120, TimeUnit.SECONDS) != null;
     }
 
     @Override
@@ -89,6 +89,6 @@ public abstract class BaseJCloudsPerformance extends BasePerformance {
 		key);
 	object.getMetaData().setContentType(contentType);
 	object.setData(data);
-	return client.addObject(bucket, object).get(120, TimeUnit.SECONDS) != null;
+	return client.putObject(bucket, object).get(120, TimeUnit.SECONDS) != null;
     }
 }

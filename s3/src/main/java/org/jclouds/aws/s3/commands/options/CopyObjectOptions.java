@@ -31,9 +31,11 @@ import java.io.UnsupportedEncodingException;
 
 import org.jclouds.aws.s3.DateService;
 import org.jclouds.aws.s3.S3Utils;
+import org.jclouds.http.options.BaseHttpRequestOptions;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 /**
@@ -56,7 +58,7 @@ import com.google.common.collect.Multimap;
  * Future<S3Object.MetaData> object = connection.copyObject("sourceBucket", "objectName",
  *                                                          "destinationBucket", "destinationName",
  *                                                           overrideMetadataWith(meta).
- *                                                           ifUnmodifiedSince(new DateTime().minusDays(1))
+ *                                                           ifSourceModifiedSince(new DateTime().minusDays(1))
  *                                                          );
  * <code>
  * 
@@ -66,13 +68,11 @@ import com.google.common.collect.Multimap;
  * 
  * 
  */
-public class CopyObjectOptions {
+public class CopyObjectOptions extends BaseHttpRequestOptions {
     private final static DateService dateService = new DateService();
 
-    private String ifModifiedSince;
-    private String ifUnmodifiedSince;
-    private String ifMatch;
-    private String ifNoneMatch;
+    public static final CopyObjectOptions NONE = new CopyObjectOptions();
+
     private Multimap<String, String> metadata;
 
     /**
@@ -88,7 +88,7 @@ public class CopyObjectOptions {
      * @see CopyObjectOptions#ifSourceModifiedSince(DateTime)
      */
     public String getIfModifiedSince() {
-	return ifModifiedSince;
+	return getFirstHeaderOrNull("x-amz-copy-source-if-modified-since");
     }
 
     /**
@@ -105,7 +105,7 @@ public class CopyObjectOptions {
      * @see CopyObjectOptions#ifSourceUnmodifiedSince(DateTime)
      */
     public String getIfUnmodifiedSince() {
-	return ifUnmodifiedSince;
+	return getFirstHeaderOrNull("x-amz-copy-source-if-unmodified-since");
     }
 
     /**
@@ -120,7 +120,7 @@ public class CopyObjectOptions {
      * @see CopyObjectOptions#ifSourceMd5Matches(String)
      */
     public String getIfMatch() {
-	return ifMatch;
+	return getFirstHeaderOrNull("x-amz-copy-source-if-match");
     }
 
     /**
@@ -135,7 +135,7 @@ public class CopyObjectOptions {
      * @see CopyObjectOptions#ifSourceMd5DoesntMatch(String)
      */
     public String getIfNoneMatch() {
-	return ifNoneMatch;
+	return getFirstHeaderOrNull("x-amz-copy-source-if-none-match");
     }
 
     /**
@@ -156,12 +156,13 @@ public class CopyObjectOptions {
      * {@link #ifSourceUnmodifiedSince(DateTime)}
      */
     public CopyObjectOptions ifSourceModifiedSince(DateTime ifModifiedSince) {
-	checkState(ifMatch == null,
+	checkState(getIfMatch() == null,
 		"ifMd5Matches() is not compatible with ifModifiedSince()");
-	checkState(ifUnmodifiedSince == null,
+	checkState(getIfUnmodifiedSince() == null,
 		"ifUnmodifiedSince() is not compatible with ifModifiedSince()");
-	this.ifModifiedSince = dateService.toHeaderString(checkNotNull(
-		ifModifiedSince, "ifModifiedSince"));
+	replaceHeader("x-amz-copy-source-if-modified-since",
+		dateService.toHeaderString(checkNotNull(ifModifiedSince,
+			"ifModifiedSince")));
 	return this;
     }
 
@@ -172,12 +173,13 @@ public class CopyObjectOptions {
      * {@link #ifSourceModifiedSince(DateTime)}
      */
     public CopyObjectOptions ifSourceUnmodifiedSince(DateTime ifUnmodifiedSince) {
-	checkState(ifNoneMatch == null,
+	checkState(getIfNoneMatch() == null,
 		"ifMd5DoesntMatch() is not compatible with ifUnmodifiedSince()");
-	checkState(ifModifiedSince == null,
+	checkState(getIfModifiedSince() == null,
 		"ifModifiedSince() is not compatible with ifUnmodifiedSince()");
-	this.ifUnmodifiedSince = dateService.toHeaderString(checkNotNull(
-		ifUnmodifiedSince, "ifUnmodifiedSince"));
+	replaceHeader("x-amz-copy-source-if-unmodified-since", dateService
+		.toHeaderString(checkNotNull(ifUnmodifiedSince,
+			"ifUnmodifiedSince")));
 	return this;
     }
 
@@ -195,12 +197,12 @@ public class CopyObjectOptions {
      */
     public CopyObjectOptions ifSourceMd5Matches(byte[] md5)
 	    throws UnsupportedEncodingException {
-	checkState(ifNoneMatch == null,
+	checkState(getIfNoneMatch() == null,
 		"ifMd5DoesntMatch() is not compatible with ifMd5Matches()");
-	checkState(ifModifiedSince == null,
+	checkState(getIfModifiedSince() == null,
 		"ifModifiedSince() is not compatible with ifMd5Matches()");
-	this.ifMatch = String.format("\"%1s\"", S3Utils
-		.toHexString(checkNotNull(md5, "md5")));
+	replaceHeader("x-amz-copy-source-if-match", String.format("\"%1s\"",
+		S3Utils.toHexString(checkNotNull(md5, "md5"))));
 	return this;
     }
 
@@ -218,14 +220,24 @@ public class CopyObjectOptions {
      */
     public CopyObjectOptions ifSourceMd5DoesntMatch(byte[] md5)
 	    throws UnsupportedEncodingException {
-	checkState(ifMatch == null,
+	checkState(getIfMatch() == null,
 		"ifMd5Matches() is not compatible with ifMd5DoesntMatch()");
 	Preconditions
-		.checkState(ifUnmodifiedSince == null,
+		.checkState(getIfUnmodifiedSince() == null,
 			"ifUnmodifiedSince() is not compatible with ifMd5DoesntMatch()");
-	this.ifNoneMatch = String.format("\"%1s\"", S3Utils
-		.toHexString(checkNotNull(md5, "ifMd5DoesntMatch")));
+	replaceHeader("x-amz-copy-source-if-none-match", String.format(
+		"\"%1s\"", S3Utils.toHexString(checkNotNull(md5,
+			"ifMd5DoesntMatch"))));
 	return this;
+    }
+
+    @Override
+    public Multimap<String, String> buildRequestHeaders() {
+	Multimap<String, String> returnVal = HashMultimap.create();
+	returnVal.putAll(headers);
+	if (metadata != null)
+	    returnVal.putAll(metadata);
+	return returnVal;
     }
 
     /**

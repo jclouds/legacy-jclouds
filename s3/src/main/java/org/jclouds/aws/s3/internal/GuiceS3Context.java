@@ -79,7 +79,7 @@ public class GuiceS3Context implements S3Context {
      * {@inheritDoc}
      */
     public S3InputStreamMap createInputStreamMap(String bucket) {
-	getConnection().createBucketIfNotExists(bucket);
+	getConnection().putBucketIfNotExists(bucket);
 	return s3InputStreamMapFactory.createMapView(bucket);
     }
 
@@ -87,7 +87,7 @@ public class GuiceS3Context implements S3Context {
      * {@inheritDoc}
      */
     public S3ObjectMap createS3ObjectMap(String bucket) {
-	getConnection().createBucketIfNotExists(bucket);
+	getConnection().putBucketIfNotExists(bucket);
 	return s3ObjectMapFactory.createMapView(bucket);
     }
 

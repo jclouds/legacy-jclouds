@@ -29,7 +29,9 @@ import static com.google.common.base.Preconditions.checkState;
 import java.io.UnsupportedEncodingException;
 
 import org.jclouds.aws.s3.DateService;
+import org.jclouds.aws.s3.S3Headers;
 import org.jclouds.aws.s3.S3Utils;
+import org.jclouds.http.options.BaseHttpRequestOptions;
 import org.joda.time.DateTime;
 
 /**
@@ -53,14 +55,9 @@ import org.joda.time.DateTime;
  * 
  * 
  */
-public class GetObjectOptions {
+public class GetObjectOptions extends BaseHttpRequestOptions {
     private final static DateService dateService = new DateService();
-
-    private String range;
-    private String ifModifiedSince;
-    private String ifUnmodifiedSince;
-    private String ifMatch;
-    private String ifNoneMatch;
+    public static final GetObjectOptions NONE = new GetObjectOptions();
 
     /**
      * Only download the specified range of the object.
@@ -68,7 +65,9 @@ public class GetObjectOptions {
     public GetObjectOptions range(long start, long end) {
 	checkState(start >= 0, "start must be >= 0");
 	checkState(end >= 0, "end must be >= 0");
-	this.range = String.format("bytes=%1d-%2d", start, end);
+	headers
+		.put(S3Headers.RANGE, String
+			.format("bytes=%1d-%2d", start, end));
 	return this;
     }
 
@@ -79,7 +78,7 @@ public class GetObjectOptions {
      * @see GetObjectOptions#range(long, long)
      */
     public String getRange() {
-	return range;
+	return this.getFirstHeaderOrNull(S3Headers.RANGE);
     }
 
     /**
@@ -89,12 +88,13 @@ public class GetObjectOptions {
      * {@link #ifUnmodifiedSince(DateTime)}
      */
     public GetObjectOptions ifModifiedSince(DateTime ifModifiedSince) {
-	checkState(ifMatch == null,
+	checkState(getIfMatch() == null,
 		"ifMd5Matches() is not compatible with ifModifiedSince()");
-	checkState(ifUnmodifiedSince == null,
+	checkState(getIfUnmodifiedSince() == null,
 		"ifUnmodifiedSince() is not compatible with ifModifiedSince()");
-	this.ifModifiedSince = dateService.toHeaderString(checkNotNull(
-		ifModifiedSince, "ifModifiedSince"));
+	this.headers.put(S3Headers.OBJECT_IF_MODIFIED_SINCE,
+		dateService.toHeaderString(checkNotNull(ifModifiedSince,
+			"ifModifiedSince")));
 	return this;
     }
 
@@ -107,7 +107,7 @@ public class GetObjectOptions {
      * @see GetObjectOptions#ifModifiedSince(DateTime)
      */
     public String getIfModifiedSince() {
-	return ifModifiedSince;
+	return this.getFirstHeaderOrNull(S3Headers.OBJECT_IF_MODIFIED_SINCE);
     }
 
     /**
@@ -117,12 +117,13 @@ public class GetObjectOptions {
      * {@link #ifModifiedSince(DateTime)}
      */
     public GetObjectOptions ifUnmodifiedSince(DateTime ifUnmodifiedSince) {
-	checkState(ifNoneMatch == null,
+	checkState(getIfNoneMatch() == null,
 		"ifMd5DoesntMatch() is not compatible with ifUnmodifiedSince()");
-	checkState(ifModifiedSince == null,
+	checkState(getIfModifiedSince() == null,
 		"ifModifiedSince() is not compatible with ifUnmodifiedSince()");
-	this.ifUnmodifiedSince = dateService.toHeaderString(checkNotNull(
-		ifUnmodifiedSince, "ifUnmodifiedSince"));
+	this.headers.put(S3Headers.OBJECT_IF_UNMODIFIED_SINCE, dateService
+		.toHeaderString(checkNotNull(ifUnmodifiedSince,
+			"ifUnmodifiedSince")));
 	return this;
     }
 
@@ -135,7 +136,7 @@ public class GetObjectOptions {
      * @see GetObjectOptions#ifUnmodifiedSince(DateTime)
      */
     public String getIfUnmodifiedSince() {
-	return ifUnmodifiedSince;
+	return this.getFirstHeaderOrNull(S3Headers.OBJECT_IF_UNMODIFIED_SINCE);
     }
 
     /**
@@ -152,12 +153,12 @@ public class GetObjectOptions {
      */
     public GetObjectOptions ifMd5Matches(byte[] md5)
 	    throws UnsupportedEncodingException {
-	checkState(ifNoneMatch == null,
+	checkState(getIfNoneMatch() == null,
 		"ifMd5DoesntMatch() is not compatible with ifMd5Matches()");
-	checkState(ifModifiedSince == null,
+	checkState(getIfModifiedSince() == null,
 		"ifModifiedSince() is not compatible with ifMd5Matches()");
-	this.ifMatch = String.format("\"%1s\"", S3Utils
-		.toHexString(checkNotNull(md5, "md5")));
+	this.headers.put(S3Headers.OBJECT_IF_MATCH, String.format("\"%1s\"",
+		S3Utils.toHexString(checkNotNull(md5, "md5"))));
 	return this;
     }
 
@@ -170,7 +171,7 @@ public class GetObjectOptions {
      * @see GetObjectOptions#ifMd5Matches(String)
      */
     public String getIfMatch() {
-	return ifMatch;
+	return this.getFirstHeaderOrNull(S3Headers.OBJECT_IF_MATCH);
     }
 
     /**
@@ -187,12 +188,13 @@ public class GetObjectOptions {
      */
     public GetObjectOptions ifMd5DoesntMatch(byte[] md5)
 	    throws UnsupportedEncodingException {
-	checkState(ifMatch == null,
+	checkState(getIfMatch() == null,
 		"ifMd5Matches() is not compatible with ifMd5DoesntMatch()");
-	checkState(ifUnmodifiedSince == null,
+	checkState(getIfUnmodifiedSince() == null,
 		"ifUnmodifiedSince() is not compatible with ifMd5DoesntMatch()");
-	this.ifNoneMatch = String.format("\"%1s\"", S3Utils
-		.toHexString(checkNotNull(md5, "ifMd5DoesntMatch")));
+	this.headers.put(S3Headers.OBJECT_IF_NONE_MATCH, String.format(
+		"\"%1s\"", S3Utils.toHexString(checkNotNull(md5,
+			"ifMd5DoesntMatch"))));
 	return this;
     }
 
@@ -205,7 +207,7 @@ public class GetObjectOptions {
      * @see GetObjectOptions#ifMd5DoesntMatch(String)
      */
     public String getIfNoneMatch() {
-	return ifNoneMatch;
+	return this.getFirstHeaderOrNull(S3Headers.OBJECT_IF_NONE_MATCH);
     }
 
     public static class Builder {

@@ -25,6 +25,7 @@ package org.jclouds.aws.s3.commands;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.jclouds.aws.s3.commands.options.CopyObjectOptions;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.xml.CopyObjectHandler;
 import org.jclouds.http.commands.callables.xml.ParseSax;
@@ -33,15 +34,16 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 
-public class CopyObject extends S3FutureCommand<S3Object.MetaData> {
+public class CopyObject extends S3FutureCommand<S3Object.Metadata> {
 
     @Inject
     public CopyObject(@Named("jclouds.http.address") String amazonHost,
-	    ParseSax<S3Object.MetaData> callable,
+	    ParseSax<S3Object.Metadata> callable,
 	    @Assisted("sourceBucket") String sourceBucket,
 	    @Assisted("sourceObject") String sourceObject,
 	    @Assisted("destinationBucket") String destinationBucket,
-	    @Assisted("destinationObject") String destinationObject) {
+	    @Assisted("destinationObject") String destinationObject,
+	    @Assisted CopyObjectOptions options) {
 	super("PUT",
 		"/" + checkNotNull(destinationObject, "destinationObject"),
 		callable, amazonHost, destinationBucket);
@@ -52,5 +54,6 @@ public class CopyObject extends S3FutureCommand<S3Object.MetaData> {
 		String.format("/%1s/%2s", checkNotNull(sourceBucket,
 			"sourceBucket").toLowerCase(), checkNotNull(
 			sourceObject, "sourceObject")));
+	getRequest().getHeaders().putAll(options.buildRequestHeaders());
     }
 }

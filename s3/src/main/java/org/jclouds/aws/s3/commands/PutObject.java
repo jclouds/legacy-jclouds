@@ -25,27 +25,55 @@ package org.jclouds.aws.s3.commands;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.jclouds.aws.s3.S3Utils;
 import org.jclouds.aws.s3.commands.callables.PutObjectCallable;
+import org.jclouds.aws.s3.commands.options.PutObjectOptions;
 import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.http.HttpHeaders;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 
-public class PutObject extends S3FutureCommand<String> {
+public class PutObject extends S3FutureCommand<byte[]> {
 
     @Inject
     public PutObject(@Named("jclouds.http.address") String amazonHost,
 	    PutObjectCallable callable, @Assisted String s3Bucket,
-	    @Assisted S3Object object) {
+	    @Assisted S3Object object, @Assisted PutObjectOptions options) {
 	super("PUT", "/" + checkNotNull(object.getKey()), callable, amazonHost,
 		s3Bucket);
-	getRequest().setContent(
+	getRequest().setPayload(
 		checkNotNull(object.getData(), "object.getContent()"));
-	getRequest().setContentType(
+
+	getRequest().getHeaders().put(
+		HttpHeaders.CONTENT_TYPE,
 		checkNotNull(object.getMetaData().getContentType(),
 			"object.metaData.contentType()"));
-	getRequest().setContentLength(object.getMetaData().getSize());
+	getRequest().getHeaders().put(HttpHeaders.CONTENT_LENGTH,
+		object.getMetaData().getSize() + "");
+
+	if (object.getMetaData().getCacheControl() != null) {
+	    getRequest().getHeaders().put(HttpHeaders.CACHE_CONTROL,
+		    object.getMetaData().getCacheControl());
+	}
+	if (object.getMetaData().getContentDisposition() != null) {
+	    getRequest().getHeaders().put(HttpHeaders.CONTENT_DISPOSITION,
+		    object.getMetaData().getContentDisposition());
+	}
+	if (object.getMetaData().getContentEncoding() != null) {
+	    getRequest().getHeaders().put(HttpHeaders.CONTENT_ENCODING,
+		    object.getMetaData().getContentEncoding());
+	}
+
+	if (object.getMetaData().getMd5() != null)
+	    getRequest().getHeaders().put(HttpHeaders.CONTENT_MD5,
+		    S3Utils.toBase64String(object.getMetaData().getMd5()));
+
+	getRequest().getHeaders()
+		.putAll(object.getMetaData().getUserMetadata());
+	getRequest().getHeaders().putAll(options.buildRequestHeaders());
+
     }
 
 }

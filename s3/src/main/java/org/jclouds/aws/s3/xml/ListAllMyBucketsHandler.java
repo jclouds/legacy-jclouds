@@ -40,10 +40,10 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 public class ListAllMyBucketsHandler extends
-	ParseSax.HandlerWithResult<List<S3Bucket.MetaData>> {
+	ParseSax.HandlerWithResult<List<S3Bucket.Metadata>> {
 
-    private List<S3Bucket.MetaData> buckets = new ArrayList<S3Bucket.MetaData>();
-    private S3Bucket.MetaData currentS3Bucket;
+    private List<S3Bucket.Metadata> buckets = new ArrayList<S3Bucket.Metadata>();
+    private S3Bucket.Metadata currentS3Bucket;
     private S3Owner currentOwner;
     private StringBuilder currentText = new StringBuilder();
 
@@ -54,7 +54,7 @@ public class ListAllMyBucketsHandler extends
 	this.dateParser = dateParser;
     }
 
-    public List<S3Bucket.MetaData> getResult() {
+    public List<S3Bucket.Metadata> getResult() {
 	return buckets;
     }
 
@@ -75,7 +75,7 @@ public class ListAllMyBucketsHandler extends
 	    currentS3Bucket.setCanonicalUser(currentOwner);
 	    buckets.add(currentS3Bucket);
 	} else if (qName.equals("Name")) {
-	    currentS3Bucket = new S3Bucket.MetaData(currentText.toString());
+	    currentS3Bucket = new S3Bucket.Metadata(currentText.toString());
 	} else if (qName.equals("CreationDate")) {
 	    currentS3Bucket.setCreationDate(dateParser
 		    .dateTimeFromXMLFormat(currentText.toString()));

@@ -24,22 +24,17 @@
 package org.jclouds.http;
 
 import java.io.InputStream;
-import java.util.Collection;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 
 /**
- * // TODO: Adrian: Document this!
+ * Represents a response produced from {@link HttpFutureCommandClient}
  * 
  * @author Adrian Cole
  */
-public class HttpResponse {
-    int statusCode;
-    Multimap<String, String> headers = HashMultimap.create();
-    String message;
-    InputStream content;
-    String contentType;
+public class HttpResponse extends HttpMessage {
+    private int statusCode;
+    private String message;
+    private InputStream content;
 
     @Override
     public String toString() {
@@ -49,7 +44,6 @@ public class HttpResponse {
 	sb.append(", headers=").append(headers);
 	sb.append(", message='").append(message).append('\'');
 	sb.append(", content set=").append(content != null);
-	sb.append(", contentType='").append(contentType).append('\'');
 	sb.append('}');
 	return sb.toString();
     }
@@ -60,14 +54,6 @@ public class HttpResponse {
 
     public void setStatusCode(int statusCode) {
 	this.statusCode = statusCode;
-    }
-
-    public Multimap<String, String> getHeaders() {
-	return headers;
-    }
-
-    public void setHeaders(Multimap<String, String> headers) {
-	this.headers = headers;
     }
 
     public String getMessage() {
@@ -84,19 +70,5 @@ public class HttpResponse {
 
     public void setContent(InputStream content) {
 	this.content = content;
-    }
-
-    public String getContentType() {
-	return contentType;
-    }
-
-    public void setContentType(String contentType) {
-	this.contentType = contentType;
-    }
-
-    public String getFirstHeaderOrNull(String string) {
-	Collection<String> values = headers.get(string);
-	return (values != null && values.size() >= 1) ? values.iterator()
-		.next() : null;
     }
 }

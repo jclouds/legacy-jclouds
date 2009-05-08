@@ -107,7 +107,7 @@ public class JCloudsS3ServiceTest extends S3IntegrationTest {
 
     private void createBucket(String bucketName) throws InterruptedException,
 	    ExecutionException, TimeoutException {
-	client.createBucketIfNotExists(bucketName).get(10, TimeUnit.SECONDS);
+	client.putBucketIfNotExists(bucketName).get(10, TimeUnit.SECONDS);
     }
 
     @Test
@@ -121,7 +121,7 @@ public class JCloudsS3ServiceTest extends S3IntegrationTest {
 
 	service.deleteObject(bucketName, objectKey);
 
-	assertEquals(client.getObjectMetaData(bucketName, objectKey).get(10,
+	assertEquals(client.headObject(bucketName, objectKey).get(10,
 		TimeUnit.SECONDS), org.jclouds.aws.s3.domain.S3Object.NOT_FOUND);
     }
 
@@ -131,7 +131,7 @@ public class JCloudsS3ServiceTest extends S3IntegrationTest {
 	org.jclouds.aws.s3.domain.S3Object jcloudsObject = new org.jclouds.aws.s3.domain.S3Object(
 		objectKey);
 	jcloudsObject.setData(objectValue);
-	client.addObject(name, jcloudsObject).get(10, TimeUnit.SECONDS);
+	client.putObject(name, jcloudsObject).get(10, TimeUnit.SECONDS);
     }
 
     @Test
@@ -183,17 +183,17 @@ public class JCloudsS3ServiceTest extends S3IntegrationTest {
 
 	S3Bucket[] jsBuckets = service.listAllBuckets();
 
-	List<org.jclouds.aws.s3.domain.S3Bucket.MetaData> jcBuckets = client
-		.getMetaDataOfOwnedBuckets().get(10, TimeUnit.SECONDS);
+	List<org.jclouds.aws.s3.domain.S3Bucket.Metadata> jcBuckets = client
+		.getOwnedBuckets().get(10, TimeUnit.SECONDS);
 
 	assert jsBuckets.length == jcBuckets.size();
 
-	Iterator<org.jclouds.aws.s3.domain.S3Bucket.MetaData> jcBucketsIter = jcBuckets
+	Iterator<org.jclouds.aws.s3.domain.S3Bucket.Metadata> jcBucketsIter = jcBuckets
 		.iterator();
 	for (S3Bucket jsBucket : jsBuckets) {
 	    assert jcBucketsIter.hasNext();
 
-	    org.jclouds.aws.s3.domain.S3Bucket.MetaData jcBucket = jcBucketsIter
+	    org.jclouds.aws.s3.domain.S3Bucket.Metadata jcBucket = jcBucketsIter
 		    .next();
 	    assert jsBucket.getName().equals(jcBucket.getName());
 	    assert jsBucket.getOwner().getId().equals(

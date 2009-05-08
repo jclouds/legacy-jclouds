@@ -23,32 +23,48 @@
  */
 package org.jclouds.aws.s3.commands;
 
-import org.jclouds.aws.s3.commands.options.GetBucketOptions;
-import org.jclouds.aws.s3.domain.S3Bucket;
-import org.jclouds.aws.s3.xml.ListBucketHandler;
-import org.jclouds.http.commands.callables.xml.ParseSax;
+import org.jclouds.aws.s3.S3IntegrationTest;
+import org.testng.annotations.Test;
 
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
+/**
+ * Tests integrated functionality of all GetObject commands.
+ * <p/>
+ * Each test uses a different bucket name, so it should be perfectly fine to run
+ * in parallel.
+ * 
+ * @author Adrian Cole
+ * 
+ */
+@Test(groups = "integration", testName = "s3.GetObjectIntegrationTest")
+public class GetObjectIntegrationTest extends S3IntegrationTest {
 
-import com.google.inject.name.Named;
-
-public class GetBucket extends S3FutureCommand<S3Bucket> {
-
-    @Inject
-    public GetBucket(@Named("jclouds.http.address") String amazonHost,
-	    ParseSax<S3Bucket> bucketParser, @Assisted String bucket) {
-	this(amazonHost, bucketParser, bucket, new GetBucketOptions());
+    @Test
+    void testGetIfModifiedSince() {
+	// TODO
     }
 
-    @Inject
-    public GetBucket(@Named("jclouds.http.address") String amazonHost,
-	    ParseSax<S3Bucket> bucketParser, @Assisted String bucket,
-	    @Assisted GetBucketOptions options) {
-	super("GET", "/" + options.toQueryString(), bucketParser, amazonHost,
-		bucket);
-	ListBucketHandler handler = (ListBucketHandler) bucketParser
-		.getHandler();
-	handler.setBucketName(bucket);
+    @Test
+    void testGetIfUnmodifiedSince() {
+	// TODO
+    }
+
+    @Test
+    void testGetIfMatch() {
+	// TODO
+    }
+
+    @Test
+    void testGetIfNoneMatch() {
+	// TODO
+    }
+
+    @Test
+    void testGetWithMetadata() {
+	// TODO
+    }
+
+    @Test
+    void testGetRange() {
+	// TODO
     }
 }

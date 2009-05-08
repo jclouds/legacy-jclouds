@@ -28,15 +28,7 @@ package org.jclouds.http;
  * 
  * @author Adrian Cole
  */
-public interface HttpConstants {
-    public static final String CONTENT_LENGTH = "Content-Length";
-    public static final String CONTENT_TYPE = "Content-Type";
-    public static final String CONTENT_MD5 = "Content-MD5";
-    public static final String HOST = "Host";
-    public static final String DATE = "Date";
-    public static final String BINARY = "application/octet-stream";
-    public static final String PLAIN = "text/plain";
-    public static final String TRANSFER_ENCODING = "Transfer-Encoding";
+public interface HttpConstants extends HttpHeaders, ContentTypes {
     public static final String PROPERTY_HTTP_SECURE = "jclouds.http.secure";
     public static final String PROPERTY_HTTP_PORT = "jclouds.http.port";
     public static final String PROPERTY_HTTP_ADDRESS = "jclouds.http.address";

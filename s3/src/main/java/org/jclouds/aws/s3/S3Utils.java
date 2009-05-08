@@ -79,7 +79,7 @@ public class S3Utils extends Utils {
 	hmac.init(new KeyParameter(keyBytes));
 	hmac.update(plainBytes, 0, plainBytes.length);
 	hmac.doFinal(resBuf, 0);
-	return new String(Base64.encode(resBuf));
+	return toBase64String(resBuf);
     }
 
     public static String md5Hex(byte[] toEncode)
@@ -93,6 +93,10 @@ public class S3Utils extends Utils {
 	    throws NoSuchAlgorithmException, NoSuchProviderException,
 	    InvalidKeyException {
 	byte[] resBuf = md5(toEncode);
+	return toBase64String(resBuf);
+    }
+
+    public static String toBase64String(byte[] resBuf) {
 	return new String(Base64.encode(resBuf));
     }
 

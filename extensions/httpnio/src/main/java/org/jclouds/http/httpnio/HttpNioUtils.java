@@ -36,6 +36,7 @@ import org.apache.http.message.BasicHttpEntityEnclosingRequest;
 import org.apache.http.nio.entity.NByteArrayEntity;
 import org.apache.http.nio.entity.NFileEntity;
 import org.apache.http.nio.entity.NStringEntity;
+import org.jclouds.http.HttpHeaders;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 
@@ -48,10 +49,15 @@ public class HttpNioUtils {
 	    for (String value : object.getHeaders().get(header))
 		apacheRequest.addHeader(header, value);
 	}
-	Object content = object.getContent();
+	Object content = object.getPayload();
 	if (content != null) {
-	    addEntityForContent(apacheRequest, content,
-		    object.getContentType(), object.getContentLength());
+	    addEntityForContent(
+		    apacheRequest,
+		    content,
+		    object.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE),
+		    Long
+			    .parseLong(object
+				    .getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH)));
 	}
 	return apacheRequest;
     }

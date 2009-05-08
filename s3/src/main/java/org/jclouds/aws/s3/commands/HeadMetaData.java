@@ -34,12 +34,12 @@ import com.google.inject.name.Named;
 
 /**
  * Retrieves the metadata associated with the Key or
- * {@link S3Object.MetaData#NOT_FOUND} if not available;
+ * {@link S3Object.Metadata#NOT_FOUND} if not available;
  * 
  * @author Adrian Cole
  * 
  */
-public class HeadMetaData extends S3FutureCommand<S3Object.MetaData> {
+public class HeadMetaData extends S3FutureCommand<S3Object.Metadata> {
 
     @Inject
     public HeadMetaData(@Named("jclouds.http.address") String amazonHost,

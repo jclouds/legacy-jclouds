@@ -152,7 +152,7 @@ public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
 	    InputStream returnVal = containsKey(s) ? get(s) : null;
 	    object.setData(o);
 	    setSizeIfContentIsInputStream(object);
-	    connection.addObject(bucket, object).get(
+	    connection.putObject(bucket, object).get(
 		    requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
 	    return returnVal;
 	} catch (Exception e) {
@@ -185,14 +185,14 @@ public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
 
     private void putAllInternal(Map<? extends String, ? extends Object> map) {
 	try {
-	    List<Future<String>> puts = new ArrayList<Future<String>>();
+	    List<Future<byte[]>> puts = new ArrayList<Future<byte[]>>();
 	    for (String key : map.keySet()) {
 		S3Object object = new S3Object(key);
 		object.setData(map.get(key));
 		setSizeIfContentIsInputStream(object);
-		puts.add(connection.addObject(bucket, object));
+		puts.add(connection.putObject(bucket, object));
 	    }
-	    for (Future<String> put : puts)
+	    for (Future<byte[]> put : puts)
 		// this will throw an exception if there was a problem
 		put.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
 	} catch (Exception e) {

@@ -30,6 +30,7 @@ import static org.jclouds.aws.s3.commands.options.CopyObjectOptions.Builder.ifSo
 import static org.jclouds.aws.s3.commands.options.CopyObjectOptions.Builder.overrideMetadataWith;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 import java.io.UnsupportedEncodingException;
 
@@ -284,5 +285,26 @@ public class CopyObjectOptionsTest {
     public void testMd5DoesntMatchAfterMd5Matches()
 	    throws UnsupportedEncodingException {
 	ifSourceMd5Matches(testBytes).ifSourceMd5DoesntMatch(testBytes);
+    }
+
+    @Test
+    void testBuildRequestHeadersWhenMetadataNull()
+	    throws UnsupportedEncodingException {
+	assert new CopyObjectOptions().buildRequestHeaders() != null;
+    }
+
+    @Test
+    void testBuildRequestHeaders() throws UnsupportedEncodingException {
+
+	Multimap<String, String> headers = ifSourceModifiedSince(now)
+		.ifSourceMd5DoesntMatch(testBytes).overrideMetadataWith(
+			goodMeta).buildRequestHeaders();
+	assertEquals(headers.get("x-amz-copy-source-if-modified-since")
+		.iterator().next(), new DateService().toHeaderString(now));
+	assertEquals(headers.get("x-amz-copy-source-if-none-match").iterator()
+		.next(), "\"" + S3Utils.toHexString(testBytes) + "\"");
+	for (String value : goodMeta.values())
+	    assertTrue(headers.containsValue(value));
+
     }
 }

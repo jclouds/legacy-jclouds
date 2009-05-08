@@ -86,7 +86,7 @@ public class S3ParserTest extends PerformanceTest {
 	    runParseListAllMyBuckets();
     }
 
-    private List<S3Bucket.MetaData> runParseListAllMyBuckets()
+    private List<S3Bucket.Metadata> runParseListAllMyBuckets()
 	    throws HttpException {
 	return parserFactory.createListBucketsParser().parse(
 		IOUtils.toInputStream(listAllMyBucketsResultOn200));
@@ -95,11 +95,11 @@ public class S3ParserTest extends PerformanceTest {
     @Test
     void testParseListAllMyBucketsParallelResponseTime()
 	    throws InterruptedException, ExecutionException {
-	CompletionService<List<S3Bucket.MetaData>> completer = new ExecutorCompletionService<List<S3Bucket.MetaData>>(
+	CompletionService<List<S3Bucket.Metadata>> completer = new ExecutorCompletionService<List<S3Bucket.Metadata>>(
 		exec);
 	for (int i = 0; i < LOOP_COUNT; i++)
-	    completer.submit(new Callable<List<S3Bucket.MetaData>>() {
-		public List<S3Bucket.MetaData> call() throws IOException,
+	    completer.submit(new Callable<List<S3Bucket.Metadata>>() {
+		public List<S3Bucket.Metadata> call() throws IOException,
 			SAXException, HttpException {
 		    return runParseListAllMyBuckets();
 		}
@@ -110,13 +110,13 @@ public class S3ParserTest extends PerformanceTest {
 
     @Test
     public void testCanParseListAllMyBuckets() throws HttpException {
-	List<S3Bucket.MetaData> s3Buckets = runParseListAllMyBuckets();
-	S3Bucket.MetaData bucket1 = s3Buckets.get(0);
+	List<S3Bucket.Metadata> s3Buckets = runParseListAllMyBuckets();
+	S3Bucket.Metadata bucket1 = s3Buckets.get(0);
 	assert bucket1.getName().equals("adrianjbosstest");
 	DateTime expectedDate1 = new DateTime("2009-03-12T02:00:07.000Z");
 	DateTime date1 = bucket1.getCreationDate();
 	assert date1.equals(expectedDate1);
-	S3Bucket.MetaData bucket2 = s3Buckets.get(1);
+	S3Bucket.Metadata bucket2 = s3Buckets.get(1);
 	assert bucket2.getName().equals("adrianjbosstest2");
 	DateTime expectedDate2 = new DateTime("2009-03-12T02:00:09.000Z");
 	DateTime date2 = bucket2.getCreationDate();
@@ -137,7 +137,7 @@ public class S3ParserTest extends PerformanceTest {
 	assert bucket.isComplete();
 	assert bucket.getName().equals("adrianjbosstest");
 	assert bucket.getContents().size() == 1;
-	S3Object.MetaData object = bucket.getContents().iterator().next();
+	S3Object.Metadata object = bucket.getContents().iterator().next();
 	assert object.getKey().equals("3366");
 	DateTime expected = new DateTime("2009-03-12T02:00:13.000Z");
 	assert object.getLastModified().equals(expected) : String
@@ -163,8 +163,8 @@ public class S3ParserTest extends PerformanceTest {
 
     public static final String successfulCopyObject200 = "<CopyObjectResult xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><LastModified>2009-03-19T13:23:27.000Z</LastModified><ETag>\"92836a3ea45a6984d1b4d23a747d46bb\"</ETag></CopyObjectResult>";
 
-    private S3Object.MetaData runParseCopyObjectResult() throws HttpException {
-	ParseSax<S3Object.MetaData> parser = parserFactory
+    private S3Object.Metadata runParseCopyObjectResult() throws HttpException {
+	ParseSax<S3Object.Metadata> parser = parserFactory
 		.createCopyObjectParser();
 	CopyObjectHandler handler = (CopyObjectHandler) parser.getHandler();
 	handler.setKey("adrianjbosstest");
@@ -173,7 +173,7 @@ public class S3ParserTest extends PerformanceTest {
 
     public void testCanParseCopyObjectResult() throws HttpException,
 	    UnsupportedEncodingException {
-	S3Object.MetaData metadata = runParseCopyObjectResult();
+	S3Object.Metadata metadata = runParseCopyObjectResult();
 	DateTime expected = new DateTime("2009-03-19T13:23:27.000Z");
 	assertEquals(metadata.getLastModified(), expected);
 	assertEquals(S3Utils.toHexString(metadata.getMd5()),

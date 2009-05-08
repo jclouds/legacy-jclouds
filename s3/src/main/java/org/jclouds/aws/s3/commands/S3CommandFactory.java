@@ -23,8 +23,11 @@
  */
 package org.jclouds.aws.s3.commands;
 
-import org.jclouds.aws.s3.commands.options.GetBucketOptions;
+import org.jclouds.aws.s3.commands.options.CopyObjectOptions;
+import org.jclouds.aws.s3.commands.options.GetObjectOptions;
+import org.jclouds.aws.s3.commands.options.ListBucketOptions;
 import org.jclouds.aws.s3.commands.options.PutBucketOptions;
+import org.jclouds.aws.s3.commands.options.PutObjectOptions;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.xml.S3ParserFactory;
 
@@ -76,20 +79,9 @@ public class S3CommandFactory {
     }
 
     @Inject
-    private PutBucketFactory putBucketFactory;
+    private PutBucketFactory putBucketFactoryOptions;
 
     public static interface PutBucketFactory {
-	PutBucket create(String bucket);
-    }
-
-    public PutBucket createPutBucket(String bucket) {
-	return putBucketFactory.create(bucket);
-    }
-
-    @Inject
-    private PutBucketFactoryOptions putBucketFactoryOptions;
-
-    public static interface PutBucketFactoryOptions {
 	PutBucket create(String bucket, PutBucketOptions options);
     }
 
@@ -101,11 +93,13 @@ public class S3CommandFactory {
     private PutObjectFactory putObjectFactory;
 
     public static interface PutObjectFactory {
-	PutObject create(String bucket, S3Object object);
+	PutObject create(String bucket, S3Object object,
+		PutObjectOptions options);
     }
 
-    public PutObject createPutObject(String bucket, S3Object s3Object) {
-	return putObjectFactory.create(bucket, s3Object);
+    public PutObject createPutObject(String bucket, S3Object s3Object,
+	    PutObjectOptions options) {
+	return putObjectFactory.create(bucket, s3Object, options);
     }
 
     @Inject
@@ -113,11 +107,12 @@ public class S3CommandFactory {
 
     public static interface GetObjectFactory {
 	GetObject create(@Assisted("bucketName") String bucket,
-		@Assisted("key") String key);
+		@Assisted("key") String key, GetObjectOptions options);
     }
 
-    public GetObject createGetObject(String bucket, String key) {
-	return getObjectFactory.create(bucket, key);
+    public GetObject createGetObject(String bucket, String key,
+	    GetObjectOptions options) {
+	return getObjectFactory.create(bucket, key, options);
     }
 
     @Inject
@@ -141,24 +136,17 @@ public class S3CommandFactory {
 		.createListBucketsParser());
     }
 
-    public GetBucket createGetBucket(String bucket) {
-	return new GetBucket(amazonHost,
-		parserFactory.createListBucketParser(), bucket);
+    public ListBucket createListBucket(String bucket, ListBucketOptions options) {
+	return new ListBucket(amazonHost, parserFactory
+		.createListBucketParser(), bucket, options);
     }
-    
-    public GetBucket createGetBucket(String bucket, GetBucketOptions options) {
-	return new GetBucket(amazonHost,
-		parserFactory.createListBucketParser(), bucket, options);
-    }
-    
+
     public CopyObject createCopyObject(String sourceBucket,
 	    String sourceObject, String destinationBucket,
-	    String destinationObject) {
+	    String destinationObject, CopyObjectOptions options) {
 	return new CopyObject(amazonHost, parserFactory
 		.createCopyObjectParser(), sourceBucket, sourceObject,
-		destinationBucket, destinationObject);
+		destinationBucket, destinationObject, options);
     }
-
-
 
 }

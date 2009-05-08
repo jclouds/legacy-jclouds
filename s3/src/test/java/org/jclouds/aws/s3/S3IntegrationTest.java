@@ -24,15 +24,19 @@
 package org.jclouds.aws.s3;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.testng.Assert.assertEquals;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
@@ -52,8 +56,44 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Module;
 
-@Test(sequential = true)
+@Test
 public class S3IntegrationTest {
+
+    protected void createBucketAndEnsureEmpty(String sourceBucket)
+	    throws InterruptedException, ExecutionException, TimeoutException {
+	client.putBucketIfNotExists(sourceBucket).get(10, TimeUnit.SECONDS);
+	assertEquals(client.listBucket(sourceBucket).get(10, TimeUnit.SECONDS)
+		.getContents().size(), 0);
+    }
+
+    protected static final String TEST_STRING = "<apples><apple name=\"fuji\" /></apples>";
+
+    protected void addObjectToBucket(String sourceBucket, String key)
+	    throws InterruptedException, ExecutionException, TimeoutException,
+	    IOException {
+	S3Object sourceObject = new S3Object(key);
+	sourceObject.getMetaData().setContentType("text/xml");
+	sourceObject.setData(TEST_STRING);
+	addObjectToBucket(sourceBucket, sourceObject);
+    }
+
+    protected void addObjectToBucket(String sourceBucket, S3Object object)
+	    throws InterruptedException, ExecutionException, TimeoutException,
+	    IOException {
+	;
+	client.putObject(sourceBucket, object).get(10, TimeUnit.SECONDS);
+    }
+
+    protected S3Object validateContent(String sourceBucket, String key) throws InterruptedException, ExecutionException,
+	    TimeoutException, IOException {
+	assertEquals(client.listBucket(sourceBucket).get(10, TimeUnit.SECONDS)
+		.getContents().size(), 1);
+	S3Object newObject = client.getObject(sourceBucket, key).get(10,
+		TimeUnit.SECONDS);
+	assertEquals(S3Utils.getContentAsStringAndClose(newObject), TEST_STRING);
+	return newObject;
+    }
+
     @BeforeTest
     void enableDebug() {
 	if (debugEnabled()) {
@@ -86,7 +126,7 @@ public class S3IntegrationTest {
     protected S3Context context = null;
 
     protected String bucketPrefix = System.getProperty("user.name") + "."
-	    + this.getClass().getName();
+	    + this.getClass().getSimpleName();
 
     private static final String sysAWSAccessKeyId = System
 	    .getProperty(S3Constants.PROPERTY_AWS_ACCESSKEYID);
@@ -136,14 +176,14 @@ public class S3IntegrationTest {
 
     protected void deleteEverything() throws Exception {
 	try {
-	    List<S3Bucket.MetaData> metaData = client
-		    .getMetaDataOfOwnedBuckets().get(10, TimeUnit.SECONDS);
+	    List<S3Bucket.Metadata> metaData = client
+		    .getOwnedBuckets().get(10, TimeUnit.SECONDS);
 	    List<Future<Boolean>> results = new ArrayList<Future<Boolean>>();
-	    for (S3Bucket.MetaData metaDatum : metaData) {
+	    for (S3Bucket.Metadata metaDatum : metaData) {
 		if (metaDatum.getName().startsWith(bucketPrefix.toLowerCase())) {
-		    S3Bucket bucket = client.getBucket(metaDatum.getName())
+		    S3Bucket bucket = client.listBucket(metaDatum.getName())
 			    .get(10, TimeUnit.SECONDS);
-		    for (S3Object.MetaData objectMeta : bucket.getContents()) {
+		    for (S3Object.Metadata objectMeta : bucket.getContents()) {
 			results.add(client.deleteObject(metaDatum.getName(),
 				objectMeta.getKey()));
 		    }

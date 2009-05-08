@@ -66,11 +66,6 @@ public class S3CommandsModule extends AbstractModule {
 			S3CommandFactory.PutBucketFactory.class,
 			PutBucket.class));
 
-	bind(S3CommandFactory.PutBucketFactoryOptions.class).toProvider(
-		FactoryProvider.newFactory(
-			S3CommandFactory.PutBucketFactoryOptions.class,
-			PutBucket.class));
-
 	bind(S3CommandFactory.PutObjectFactory.class).toProvider(
 		FactoryProvider.newFactory(
 			S3CommandFactory.PutObjectFactory.class,

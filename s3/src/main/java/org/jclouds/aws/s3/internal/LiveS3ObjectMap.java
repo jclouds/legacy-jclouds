@@ -99,7 +99,7 @@ public class LiveS3ObjectMap extends BaseS3Map<S3Object> implements S3ObjectMap 
     public S3Object put(String key, S3Object value) {
 	S3Object returnVal = get(key);
 	try {
-	    connection.addObject(bucket, value).get(requestTimeoutMilliseconds,
+	    connection.putObject(bucket, value).get(requestTimeoutMilliseconds,
 		    TimeUnit.MILLISECONDS);
 	} catch (Exception e) {
 	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
@@ -111,11 +111,11 @@ public class LiveS3ObjectMap extends BaseS3Map<S3Object> implements S3ObjectMap 
 
     public void putAll(Map<? extends String, ? extends S3Object> map) {
 	try {
-	    List<Future<String>> puts = new ArrayList<Future<String>>();
+	    List<Future<byte[]>> puts = new ArrayList<Future<byte[]>>();
 	    for (S3Object object : map.values()) {
-		puts.add(connection.addObject(bucket, object));
+		puts.add(connection.putObject(bucket, object));
 	    }
-	    for (Future<String> put : puts)
+	    for (Future<byte[]> put : puts)
 		// this will throw an exception if there was a problem
 		put.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
 	} catch (Exception e) {

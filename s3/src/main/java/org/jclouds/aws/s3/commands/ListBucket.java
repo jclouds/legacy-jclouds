@@ -21,25 +21,27 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.domain;
+package org.jclouds.aws.s3.commands;
 
-import java.io.File;
+import org.jclouds.aws.s3.commands.options.ListBucketOptions;
+import org.jclouds.aws.s3.domain.S3Bucket;
+import org.jclouds.aws.s3.xml.ListBucketHandler;
+import org.jclouds.http.commands.callables.xml.ParseSax;
 
-import static org.testng.Assert.*;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.name.Named;
 
-import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.http.ContentTypes;
-import org.testng.annotations.Test;
+public class ListBucket extends S3FutureCommand<S3Bucket> {
 
-@Test
-public class S3ObjectTest {
-
-    @Test
-    void testSetNoContentType() {
-	S3Object object = new S3Object("test");
-	File file = new File("hello.txt");
-	object.setData(file);
-	assertEquals(object.getMetaData().getContentType(),
-		ContentTypes.UNKNOWN_MIME_TYPE);
+    @Inject
+    public ListBucket(@Named("jclouds.http.address") String amazonHost,
+	    ParseSax<S3Bucket> bucketParser, @Assisted String bucket,
+	    @Assisted ListBucketOptions options) {
+	super("GET", "/" + options.buildQueryString(), bucketParser,
+		amazonHost, bucket);
+	ListBucketHandler handler = (ListBucketHandler) bucketParser
+		.getHandler();
+	handler.setBucketName(bucket);
     }
 }

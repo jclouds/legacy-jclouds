@@ -24,10 +24,14 @@
 package org.jclouds.aws.s3;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import org.jclouds.aws.s3.commands.options.GetBucketOptions;
+import org.jclouds.aws.s3.commands.options.CopyObjectOptions;
+import org.jclouds.aws.s3.commands.options.GetObjectOptions;
+import org.jclouds.aws.s3.commands.options.ListBucketOptions;
 import org.jclouds.aws.s3.commands.options.PutBucketOptions;
+import org.jclouds.aws.s3.commands.options.PutObjectOptions;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
 
@@ -55,6 +59,21 @@ public interface S3Connection {
     Future<S3Object> getObject(String bucketName, String key);
 
     /**
+     * Retrieves the object and metadata associated with the key.
+     * 
+     * @param bucketName
+     *            namespace of the object you are retrieving
+     * 
+     * @param key
+     *            unique key in the s3Bucket identifying the object
+     * @param options
+     *            options for retrieving the object
+     * @return fully populated S3Object containing data stored in S3
+     */
+    Future<S3Object> getObject(String bucketName, String key,
+	    GetObjectOptions options);
+
+    /**
      * Retrieves the metadata of the object associated with the key.
      * 
      * @param bucketName
@@ -64,7 +83,7 @@ public interface S3Connection {
      *            unique key in the s3Bucket identifying the object
      * @return metadata associated with the key
      */
-    Future<S3Object.MetaData> getObjectMetaData(String bucketName, String key);
+    Future<S3Object.Metadata> headObject(String bucketName, String key);
 
     /**
      * Removes the object and metadata associated with the key.
@@ -84,16 +103,30 @@ public interface S3Connection {
      *            namespace of the object you are storing
      * @param object
      *            contains the data and metadata to create or overwrite
-     * @return ETAG which is a hex MD5 hash of the content uploaded
+     * @return MD5 hash of the content uploaded
      */
-    Future<String> addObject(String bucketName, S3Object object);
+    Future<byte[]> putObject(String bucketName, S3Object object);
+
+    /**
+     * Store data by creating or overwriting an object.
+     * 
+     * @param bucketName
+     *            namespace of the object you are storing
+     * @param object
+     *            contains the data and metadata to create or overwrite
+     * @param options
+     *            options for creating the object
+     * @return MD5 hash of the content uploaded
+     */
+    Future<byte[]> putObject(String bucketName, S3Object object,
+	    PutObjectOptions options);
 
     /**
      * Create and name your own bucket in which to store your objects.
      * 
      * @return true, if the bucket was created
      */
-    Future<Boolean> createBucketIfNotExists(String name);
+    Future<Boolean> putBucketIfNotExists(String name);
 
     /**
      * Create and name your own bucket in which to store your objects.
@@ -103,8 +136,7 @@ public interface S3Connection {
      * @return true, if the bucket was created
      * @see PutBucketOptions
      */
-    Future<Boolean> createBucketIfNotExists(String name,
-	    PutBucketOptions options);
+    Future<Boolean> putBucketIfNotExists(String name, PutBucketOptions options);
 
     /**
      * Deletes the bucket, if it is empty.
@@ -120,9 +152,19 @@ public interface S3Connection {
      * 
      * @return metaData populated with lastModified and etag of the new object
      */
-    Future<S3Object.MetaData> copyObject(String sourceBucket,
+    Future<S3Object.Metadata> copyObject(String sourceBucket,
 	    String sourceObject, String destinationBucket,
 	    String destinationObject);
+
+    /**
+     * Copies one object to another bucket using the specifid options
+     * 
+     * @return metaData populated with lastModified and etag of the new object
+     * @see CopyObjectOptions
+     */
+    Future<S3Object.Metadata> copyObject(String sourceBucket,
+	    String sourceObject, String destinationBucket,
+	    String destinationObject, CopyObjectOptions options);
 
     Future<Boolean> bucketExists(String name);
 
@@ -131,9 +173,9 @@ public interface S3Connection {
      * @param s3Bucket
      * @return
      */
-    Future<S3Bucket> getBucket(String name);
+    Future<S3Bucket> listBucket(String name);
 
-    Future<S3Bucket> getBucket(String name, GetBucketOptions options);
+    Future<S3Bucket> listBucket(String name, ListBucketOptions options);
 
-    Future<List<S3Bucket.MetaData>> getMetaDataOfOwnedBuckets();
+    Future<List<S3Bucket.Metadata>> getOwnedBuckets();
 }

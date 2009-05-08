@@ -21,25 +21,33 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.domain;
+package org.jclouds.http;
 
-import java.io.File;
+import java.util.Collection;
 
-import static org.testng.Assert.*;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
-import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.http.ContentTypes;
-import org.testng.annotations.Test;
+public class HttpMessage {
 
-@Test
-public class S3ObjectTest {
+    protected Multimap<String, String> headers = HashMultimap.create();
 
-    @Test
-    void testSetNoContentType() {
-	S3Object object = new S3Object("test");
-	File file = new File("hello.txt");
-	object.setData(file);
-	assertEquals(object.getMetaData().getContentType(),
-		ContentTypes.UNKNOWN_MIME_TYPE);
+    public HttpMessage() {
+	super();
     }
+
+    public Multimap<String, String> getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(Multimap<String, String> headers) {
+        this.headers = headers;
+    }
+
+    public String getFirstHeaderOrNull(String string) {
+        Collection<String> values = headers.get(string);
+        return (values != null && values.size() >= 1) ? values.iterator()
+        	.next() : null;
+    }
+
 }

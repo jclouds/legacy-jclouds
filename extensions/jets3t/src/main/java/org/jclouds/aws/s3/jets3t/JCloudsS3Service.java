@@ -207,12 +207,12 @@ public class JCloudsS3Service extends S3Service {
     @Override
     protected S3Bucket[] listAllBucketsImpl() throws S3ServiceException {
 	try {
-	    List<org.jclouds.aws.s3.domain.S3Bucket.MetaData> jcBucketList = connection
-		    .getMetaDataOfOwnedBuckets().get(
+	    List<org.jclouds.aws.s3.domain.S3Bucket.Metadata> jcBucketList = connection
+		    .getOwnedBuckets().get(
 			    requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
 
 	    ArrayList<org.jets3t.service.model.S3Bucket> jsBucketList = new ArrayList<org.jets3t.service.model.S3Bucket>();
-	    for (org.jclouds.aws.s3.domain.S3Bucket.MetaData jcBucket : jcBucketList) {
+	    for (org.jclouds.aws.s3.domain.S3Bucket.Metadata jcBucket : jcBucketList) {
 		org.jets3t.service.model.S3Bucket jsBucket = new org.jets3t.service.model.S3Bucket(
 			jcBucket.getName());
 		jsBucket.setOwner(new org.jets3t.service.model.S3Owner(jcBucket

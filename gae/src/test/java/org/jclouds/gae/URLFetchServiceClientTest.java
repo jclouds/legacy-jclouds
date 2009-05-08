@@ -39,7 +39,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.http.HttpConstants;
+import org.jclouds.http.HttpHeaders;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
@@ -73,7 +73,7 @@ public class URLFetchServiceClientTest {
 	HTTPResponse gaeResponse = createMock(HTTPResponse.class);
 	expect(gaeResponse.getResponseCode()).andReturn(200);
 	List<HTTPHeader> headers = new ArrayList<HTTPHeader>();
-	headers.add(new HTTPHeader(HttpConstants.CONTENT_TYPE, "text/xml"));
+	headers.add(new HTTPHeader(HttpHeaders.CONTENT_TYPE, "text/xml"));
 	expect(gaeResponse.getHeaders()).andReturn(headers);
 	expect(gaeResponse.getContent()).andReturn(null).atLeastOnce();
 	replay(gaeResponse);
@@ -81,7 +81,7 @@ public class URLFetchServiceClientTest {
 	assertEquals(response.getStatusCode(), 200);
 	assertEquals(response.getContent(), null);
 	assertEquals(response.getHeaders().size(), 1);
-	assertEquals(response.getFirstHeaderOrNull(HttpConstants.CONTENT_TYPE),
+	assertEquals(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE),
 		"text/xml");
     }
 
@@ -90,7 +90,7 @@ public class URLFetchServiceClientTest {
 	HTTPResponse gaeResponse = createMock(HTTPResponse.class);
 	expect(gaeResponse.getResponseCode()).andReturn(200);
 	List<HTTPHeader> headers = new ArrayList<HTTPHeader>();
-	headers.add(new HTTPHeader(HttpConstants.CONTENT_TYPE, "text/xml"));
+	headers.add(new HTTPHeader(HttpHeaders.CONTENT_TYPE, "text/xml"));
 	expect(gaeResponse.getHeaders()).andReturn(headers);
 	expect(gaeResponse.getContent()).andReturn("hello".getBytes())
 		.atLeastOnce();
@@ -99,7 +99,7 @@ public class URLFetchServiceClientTest {
 	assertEquals(response.getStatusCode(), 200);
 	assertEquals(IOUtils.toString(response.getContent()), "hello");
 	assertEquals(response.getHeaders().size(), 1);
-	assertEquals(response.getFirstHeaderOrNull(HttpConstants.CONTENT_TYPE),
+	assertEquals(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE),
 		"text/xml");
     }
 
@@ -137,28 +137,28 @@ public class URLFetchServiceClientTest {
     @Test
     void testConvertRequestStringContent() throws IOException {
 	HttpRequest request = new HttpRequest("GET", "foo");
-	request.setContent("hoot!");
+	request.setPayload("hoot!");
 	testHoot(request);
     }
 
     @Test
     void testConvertRequestInputStreamContent() throws IOException {
 	HttpRequest request = new HttpRequest("GET", "foo");
-	request.setContent(IOUtils.toInputStream("hoot!"));
+	request.setPayload(IOUtils.toInputStream("hoot!"));
 	testHoot(request);
     }
 
     @Test
     void testConvertRequestBytesContent() throws IOException {
 	HttpRequest request = new HttpRequest("GET", "foo");
-	request.setContent("hoot!".getBytes());
+	request.setPayload("hoot!".getBytes());
 	testHoot(request);
     }
 
     @Test(expectedExceptions = UnsupportedOperationException.class)
     void testConvertRequestBadContent() throws IOException {
 	HttpRequest request = new HttpRequest("GET", "foo");
-	request.setContent(new Date());
+	request.setPayload(new Date());
 	client.convert(request);
 
     }
@@ -179,15 +179,15 @@ public class URLFetchServiceClientTest {
 	file.getParentFile().mkdirs();
 	IOUtils.write("hoot!", new FileOutputStream(file));
 	HttpRequest request = new HttpRequest("GET", "foo");
-	request.setContent(file);
+	request.setPayload(file);
 	testHoot(request);
     }
 
     private void testHoot(HttpRequest request) throws IOException {
-	request.setContentType("text/plain");
+	request.getHeaders().put(HttpHeaders.CONTENT_TYPE,"text/plain");
 	HTTPRequest gaeRequest = client.convert(request);
 	assertEquals(gaeRequest.getHeaders().get(0).getName(),
-		HttpConstants.CONTENT_TYPE);
+		HttpHeaders.CONTENT_TYPE);
 	assertEquals(gaeRequest.getHeaders().get(0).getValue(), "text/plain");
 	assertEquals(new String(gaeRequest.getPayload()), "hoot!");
     }
