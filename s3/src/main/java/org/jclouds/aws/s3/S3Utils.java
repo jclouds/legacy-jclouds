@@ -107,7 +107,7 @@ public class S3Utils extends Utils {
 	md5.doFinal(resBuf, 0);
 	return resBuf;
     }
-
+    
     public static byte[] md5(InputStream toEncode) throws IOException {
 	MD5Digest md5 = new MD5Digest();
 	byte[] resBuf = new byte[md5.getDigestSize()];

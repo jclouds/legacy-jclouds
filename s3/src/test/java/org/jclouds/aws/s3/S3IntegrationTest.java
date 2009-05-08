@@ -204,7 +204,7 @@ public class S3IntegrationTest {
 
     @AfterTest
     protected void tearDownClient() throws Exception {
-	// deleteEverything();
+	deleteEverything();
 	context.close();
 	context = null;
     }

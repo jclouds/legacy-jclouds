@@ -39,6 +39,8 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.name.Names;
@@ -120,6 +122,13 @@ public class S3CommandFactoryTest {
 	expect(metaData.getKey()).andReturn("rawr");
 	expect(metaData.getContentType()).andReturn("text/xml").atLeastOnce();
 	expect(metaData.getSize()).andReturn(4L);
+	expect(metaData.getCacheControl()).andReturn("no-cache").atLeastOnce();
+	expect(metaData.getContentDisposition()).andReturn("disposition").atLeastOnce();
+	expect(metaData.getContentEncoding()).andReturn("encoding").atLeastOnce();
+	expect(metaData.getMd5()).andReturn("encoding".getBytes()).atLeastOnce();
+	Multimap<String,String> userMdata = HashMultimap.create();
+	expect(metaData.getUserMetadata()).andReturn(userMdata).atLeastOnce();
+
 
 	replay(metaData);
 

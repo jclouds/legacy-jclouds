@@ -91,6 +91,7 @@ public class S3ObjectMapTest extends BaseS3MapTest<S3Object> {
 		    fiveStrings.get(entry.getKey()));
 	    S3Object value = entry.getValue();
 	    value.setData("");
+	    value.generateMd5();
 	    entry.setValue(value);
 	}
 	assertEquals(map.size(), 5);

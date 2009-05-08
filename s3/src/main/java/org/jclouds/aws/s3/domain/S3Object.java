@@ -25,9 +25,16 @@ package org.jclouds.aws.s3.domain;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 
+import org.apache.commons.io.IOUtils;
+import org.jclouds.aws.s3.S3Utils;
 import org.jclouds.http.ContentTypes;
 import org.joda.time.DateTime;
 
@@ -65,20 +72,20 @@ public class S3Object {
 
     public static class Metadata {
 	public static final Metadata NOT_FOUND = new Metadata("NOT_FOUND");
-	
+
 	// parsed during list, head, or get
 	private final String key;
 	private byte[] md5;
 	private long size = -1;
-	
+
 	// only parsed during head or get
 	private Multimap<String, String> userMetadata = HashMultimap.create();
 	private DateTime lastModified;
-	private String contentType = ContentTypes.UNKNOWN_MIME_TYPE;
+	private String dataType = ContentTypes.UNKNOWN_MIME_TYPE;
 	private String cacheControl;
-	private String contentDisposition;
-	private String contentEncoding;
-	
+	private String dataDisposition;
+	private String dataEncoding;
+
 	// only parsed on list
 	private S3Owner owner = null;
 	private String storageClass = null;
@@ -99,7 +106,7 @@ public class S3Object {
 		    getMd5() == null ? "null" : Arrays.asList(getMd5())
 			    .toString());
 	    sb.append(", size=").append(size);
-	    sb.append(", contentType='").append(contentType).append('\'');
+	    sb.append(", dataType='").append(dataType).append('\'');
 	    sb.append('}');
 	    return sb.toString();
 	}
@@ -115,8 +122,8 @@ public class S3Object {
 
 	    if (size != metaData.size)
 		return false;
-	    if (contentType != null ? !contentType.equals(metaData.contentType)
-		    : metaData.contentType != null)
+	    if (dataType != null ? !dataType.equals(metaData.dataType)
+		    : metaData.dataType != null)
 		return false;
 	    if (!key.equals(metaData.key))
 		return false;
@@ -137,8 +144,7 @@ public class S3Object {
 	    result = 31 * result
 		    + (getMd5() != null ? Arrays.hashCode(getMd5()) : 0);
 	    result = 31 * result + (int) (size ^ (size >>> 32));
-	    result = 31 * result
-		    + (contentType != null ? contentType.hashCode() : 0);
+	    result = 31 * result + (dataType != null ? dataType.hashCode() : 0);
 	    return result;
 	}
 
@@ -163,11 +169,11 @@ public class S3Object {
 	}
 
 	public String getContentType() {
-	    return contentType;
+	    return dataType;
 	}
 
-	public void setContentType(String contentType) {
-	    this.contentType = contentType;
+	public void setContentType(String dataType) {
+	    this.dataType = dataType;
 	}
 
 	public void setMd5(byte[] md5) {
@@ -210,20 +216,20 @@ public class S3Object {
 	    return cacheControl;
 	}
 
-	public void setContentDisposition(String contentDisposition) {
-	    this.contentDisposition = contentDisposition;
+	public void setContentDisposition(String dataDisposition) {
+	    this.dataDisposition = dataDisposition;
 	}
 
 	public String getContentDisposition() {
-	    return contentDisposition;
+	    return dataDisposition;
 	}
 
-	public void setContentEncoding(String contentEncoding) {
-	    this.contentEncoding = contentEncoding;
+	public void setContentEncoding(String dataEncoding) {
+	    this.dataEncoding = dataEncoding;
 	}
 
 	public String getContentEncoding() {
-	    return contentEncoding;
+	    return dataEncoding;
 	}
     }
 
@@ -233,6 +239,43 @@ public class S3Object {
 
     public void setData(Object data) {
 	this.data = data;
+    }
+
+    /**
+     * converts String or InputStreams to byte [] type before generating an md5;
+     * 
+     * @throws IOException
+     */
+    public void generateMd5() throws IOException {
+	checkState(data != null,
+		"data must be set before calling generateMd5()");
+	byte[] md5;
+	if (data == null || data instanceof byte[]) {
+	    md5 = S3Utils.md5((byte[]) data);
+	} else if (data instanceof String) {
+	    this.data = ((String) data).getBytes();
+	    md5 = S3Utils.md5((byte[]) data);
+	} else if (data instanceof File) {
+	    InputStream i = new FileInputStream((File) data);
+	    try {
+		md5 = S3Utils.md5(i);
+	    } finally {
+		IOUtils.closeQuietly(i);
+	    }
+	} else if (data instanceof InputStream) {
+	    InputStream i = (InputStream) data;
+	    try {
+		this.data = (IOUtils.toByteArray(i));
+		md5 = S3Utils.md5(i);
+	    } finally {
+		IOUtils.closeQuietly(i);
+
+	    }
+	} else {
+	    throw new UnsupportedOperationException("Content not supported "
+		    + data.getClass());
+	}
+	getMetaData().setMd5(md5);
     }
 
     public Object getData() {
