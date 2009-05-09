@@ -126,7 +126,8 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
 			"Error getting value from bucket %1s:%2s", bucket,
 			object != null ? object.getKey() : "unknown"), e);
 	    }
-	    objects.add(object);
+	    if (object != S3Object.NOT_FOUND)
+		objects.add(object);
 	}
 	return objects;
     }
