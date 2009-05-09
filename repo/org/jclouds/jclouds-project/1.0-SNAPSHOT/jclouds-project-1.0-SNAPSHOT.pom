@@ -4,7 +4,7 @@
    $Revision$
    $Date$
 
-   Copyright (C) 2009 Adrian Cole <adriancole@jclouds.org>
+   Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
 
    ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one
@@ -120,7 +120,7 @@
         <developer>
             <name>Adrian Cole</name>
             <id>ferncam1</id>
-            <email>adriancole -at- jclouds.org</email>
+            <email>adrian -at- jclouds.org</email>
             <organization>jclouds</organization>
             <roles>
                 <role>Java Developer</role>
