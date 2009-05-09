@@ -35,8 +35,13 @@ import org.apache.http.HttpResponse;
 import org.apache.http.nio.entity.ConsumingNHttpEntity;
 import org.apache.http.nio.protocol.NHttpRequestExecutionHandler;
 import org.apache.http.protocol.HttpContext;
+import org.jclouds.http.CloseContentAndSetExceptionHandler;
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponseHandler;
+import org.jclouds.http.annotation.ClientErrorHandler;
+import org.jclouds.http.annotation.RedirectHandler;
+import org.jclouds.http.annotation.ServerErrorHandler;
 import org.jclouds.http.httpnio.HttpNioUtils;
 import org.jclouds.logging.Logger;
 
@@ -54,6 +59,18 @@ public class HttpNioFutureCommandExecutionHandler implements
     protected Logger logger = Logger.NULL;
     private final ConsumingNHttpEntityFactory entityFactory;
     private final BlockingQueue<HttpFutureCommand<?>> commandQueue;
+
+    @RedirectHandler
+    @Inject(optional = true)
+    private HttpResponseHandler redirectHandler = new CloseContentAndSetExceptionHandler();
+
+    @ClientErrorHandler
+    @Inject(optional = true)
+    private HttpResponseHandler clientErrorHandler = new CloseContentAndSetExceptionHandler();
+
+    @ServerErrorHandler
+    @Inject(optional = true)
+    private HttpResponseHandler serverErrorHandler = new CloseContentAndSetExceptionHandler();
 
     public interface ConsumingNHttpEntityFactory {
 	public ConsumingNHttpEntity create(HttpEntity httpEntity);
@@ -88,27 +105,29 @@ public class HttpNioFutureCommandExecutionHandler implements
 	return entityFactory.create(response.getEntity());
     }
 
-    public void handleResponse(HttpResponse response, HttpContext context)
+    public void handleResponse(HttpResponse apacheResponse, HttpContext context)
 	    throws IOException {
 	HttpNioFutureCommandConnectionHandle handle = (HttpNioFutureCommandConnectionHandle) context
 		.removeAttribute("command-handle");
 	if (handle != null) {
 	    try {
 		HttpFutureCommand<?> command = handle.getCommand();
-		int code = response.getStatusLine().getStatusCode();
-		// normal codes for rest commands
-		if ((code >= 200 && code < 300) || code == 404) {
-		    processResponse(response, command);
-		} else {
-		    if (isRetryable(response)) {
-			attemptReplay(command);
+		org.jclouds.http.HttpResponse response = HttpNioUtils
+			.convertToJavaCloudsResponse(apacheResponse);
+
+		int code = response.getStatusCode();
+		if (code >= 500) {
+		    if (isRetryable(command)) {
+			commandQueue.add(command);
 		    } else {
-			String message = String
-				.format(
-					"response is not retryable: %1s;  Command: %2s failed",
-					response.getStatusLine(), command);
-			command.setException(new IOException(message));
+			this.serverErrorHandler.handle(command, response);
 		    }
+		} else if (code >= 400 && code < 500) {
+		    this.clientErrorHandler.handle(command, response);
+		} else if (code >= 300 && code < 400) {
+		    this.redirectHandler.handle(command, response);
+		} else {
+		    processResponse(response, command);
 		}
 	    } finally {
 		releaseConnectionToPool(handle);
@@ -119,18 +138,12 @@ public class HttpNioFutureCommandExecutionHandler implements
 	}
     }
 
-    protected void attemptReplay(HttpFutureCommand<?> command) {
-	if (command.getRequest().isReplayable())
-	    commandQueue.add(command);
-	else
-	    command.setException(new IOException(String.format(
-		    "%1s: command failed and request is not replayable: %2s",
-		    command, command.getRequest())));
-    }
-
-    protected boolean isRetryable(HttpResponse response) throws IOException {
-	int code = response.getStatusLine().getStatusCode();
-	return code == 500 || code == 503;
+    protected boolean isRetryable(HttpFutureCommand<?> command) {
+	if (command.getRequest().isReplayable()) {
+	    logger.info("resubmitting command: %1s", command);
+	    return true;
+	}
+	return false;
     }
 
     protected void releaseConnectionToPool(
@@ -142,10 +155,8 @@ public class HttpNioFutureCommandExecutionHandler implements
 	}
     }
 
-    protected void processResponse(HttpResponse apacheResponse,
+    protected void processResponse(org.jclouds.http.HttpResponse response,
 	    HttpFutureCommand<?> command) throws IOException {
-	org.jclouds.http.HttpResponse response = HttpNioUtils
-		.convertToJavaCloudsResponse(apacheResponse);
 	command.getResponseFuture().setResponse(response);
 	logger.trace("submitting response task %1s", command
 		.getResponseFuture());

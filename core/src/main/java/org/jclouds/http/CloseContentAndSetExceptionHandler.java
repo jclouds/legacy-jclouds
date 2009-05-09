@@ -21,45 +21,22 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.commands.callables;
+package org.jclouds.http;
 
 import java.io.IOException;
 
-import org.jclouds.aws.s3.S3Utils;
-import org.jclouds.http.HttpException;
-import org.jclouds.http.HttpFutureCommand;
+import org.apache.commons.io.IOUtils;
 
 /**
- * // TODO: Adrian: Document this!
  * 
  * @author Adrian Cole
  */
-public class PutObjectCallable extends
-	HttpFutureCommand.ResponseCallable<byte []> {
+public class CloseContentAndSetExceptionHandler implements HttpResponseHandler {
 
-    public byte [] call() throws HttpException {
-	if (getResponse().getStatusCode() == 200) {
-	    try {
-		getResponse().getContent().close();
-	    } catch (IOException e) {
-		logger.error(e, "error consuming content");
-	    }
-	    String eTag = getResponse().getFirstHeaderOrNull("ETag");
-	    if (eTag != null) {
-		return S3Utils
-			.fromHexString(eTag.replaceAll("\"", ""));
-	    }
-	    throw new HttpException("did not receive ETag");
-	} else {
-	    try {
-		String reason = S3Utils.toStringAndClose(getResponse()
-			.getContent());
-		throw new HttpException(getResponse().getStatusCode()
-			+ ": Problem uploading content.\n" + reason);
-	    } catch (IOException e) {
-		throw new HttpException(getResponse().getStatusCode()
-			+ ": Problem uploading content", e);
-	    }
-	}
+    public void handle(HttpFutureCommand<?> command, HttpResponse response) {
+	String message = String.format("Command: %2s failed; response: %1s",
+		response, command);
+	command.setException(new IOException(message));
+	IOUtils.closeQuietly(response.getContent());
     }
 }

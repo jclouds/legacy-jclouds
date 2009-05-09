@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.aws.s3.S3ResponseException;
-import org.jclouds.aws.s3.commands.callables.GetObjectCallable;
+import org.jclouds.aws.s3.commands.callables.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.aws.s3.commands.options.GetObjectOptions;
 import org.jclouds.aws.s3.domain.S3Object;
 
@@ -50,7 +50,7 @@ public class GetObject extends S3FutureCommand<S3Object> {
 
     @Inject
     public GetObject(@Named("jclouds.http.address") String amazonHost,
-	    GetObjectCallable callable,
+	    ParseObjectFromHeadersAndHttpContent callable,
 	    @Assisted("bucketName") String s3Bucket,
 	    @Assisted("key") String key, @Assisted GetObjectOptions options) {
 	super("GET", "/" + checkNotNull(key), callable, amazonHost, s3Bucket);

@@ -27,6 +27,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.io.IOUtils;
 import org.jclouds.command.FutureCommand;
 import org.jclouds.logging.Logger;
 
@@ -63,6 +64,14 @@ public class HttpFutureCommand<T> extends
 	    FutureCommand.ResponseCallable<HttpResponse, T> {
 	@Resource
 	protected Logger logger = Logger.NULL;
+
+	public void checkCode() {
+	    int code = getResponse().getStatusCode();
+	    if (code >= 300){
+		IOUtils.closeQuietly(getResponse().getContent());
+		throw new IllegalStateException("incorrect code for this operation: "+getResponse());
+	    }
+	}
 
 	private HttpResponse response;
 

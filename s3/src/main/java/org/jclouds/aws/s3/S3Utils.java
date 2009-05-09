@@ -23,8 +23,10 @@
  */
 package org.jclouds.aws.s3;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -32,6 +34,8 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.bouncycastle.crypto.digests.MD5Digest;
 import org.bouncycastle.crypto.digests.SHA1Digest;
 import org.bouncycastle.crypto.macs.HMac;
@@ -58,6 +62,39 @@ public class S3Utils extends Utils {
 	    hex[index++] = HEX_CHAR_TABLE[v & 0xF];
 	}
 	return new String(hex, "ASCII");
+    }
+
+    public static long calculateSize(Object data) {
+	long size = -1;
+	if (data instanceof byte[]) {
+	    size = ((byte[]) data).length;
+	} else if (data instanceof String) {
+	    size = ((String) data).length();
+	} else if (data instanceof File) {
+	    size = ((File) data).length();
+	}
+	return size;
+    }
+
+    /**
+     * 
+     * @throws IOException
+     */
+    public static byte[] md5(Object data) throws IOException {
+	checkNotNull(data, "data must be set before calling generateMd5()");
+	byte[] md5 = null;
+	if (data == null || data instanceof byte[]) {
+	    md5 = S3Utils.md5((byte[]) data);
+	} else if (data instanceof String) {
+	    md5 = S3Utils.md5(((String) data).getBytes());
+	} else if (data instanceof File) {
+	    md5 = S3Utils.md5(((File) data));
+	} else {
+	    throw new UnsupportedOperationException("Content not supported "
+		    + data.getClass());
+	}
+	return md5;
+
     }
 
     public static byte[] fromHexString(String hex) {
@@ -107,20 +144,63 @@ public class S3Utils extends Utils {
 	md5.doFinal(resBuf, 0);
 	return resBuf;
     }
-    
-    public static byte[] md5(InputStream toEncode) throws IOException {
+
+    public static byte[] md5(File toEncode) throws IOException {
 	MD5Digest md5 = new MD5Digest();
 	byte[] resBuf = new byte[md5.getDigestSize()];
 	byte[] buffer = new byte[1024];
 	int numRead = -1;
-	do {
-	    numRead = toEncode.read(buffer);
-	    if (numRead > 0) {
-		md5.update(buffer, 0, numRead);
-	    }
-	} while (numRead != -1);
+	InputStream i = new FileInputStream(toEncode);
+	try {
+	    do {
+		numRead = i.read(buffer);
+		if (numRead > 0) {
+		    md5.update(buffer, 0, numRead);
+		}
+	    } while (numRead != -1);
+	} finally {
+	    IOUtils.closeQuietly(i);
+	}
 	md5.doFinal(resBuf, 0);
 	return resBuf;
+    }
+
+    public static Md5InputStreamResult generateMd5Result(InputStream toEncode)
+	    throws IOException {
+	MD5Digest md5 = new MD5Digest();
+	byte[] resBuf = new byte[md5.getDigestSize()];
+	byte[] buffer = new byte[1024];
+	ByteArrayOutputStream out = new ByteArrayOutputStream();
+	long length = 0;
+	int numRead = -1;
+	try {
+	    do {
+		numRead = toEncode.read(buffer);
+		if (numRead > 0) {
+		    length += numRead;
+		    md5.update(buffer, 0, numRead);
+		    out.write(buffer, 0, numRead);
+		}
+	    } while (numRead != -1);
+	} finally {
+	    IOUtils.closeQuietly(toEncode);
+	}
+	md5.doFinal(resBuf, 0);
+	return new Md5InputStreamResult(out.toByteArray(), resBuf, length);
+    }
+
+    public static class Md5InputStreamResult {
+	public final byte[] data;
+	public final byte[] md5;
+	public final long length;
+
+	Md5InputStreamResult(byte[] data, byte[] md5, long length) {
+	    this.data = checkNotNull(data, "data");
+	    this.md5 = checkNotNull(md5, "md5");
+	    checkArgument(length >= 0, "length cannot me negative");
+	    this.length = length;
+	}
+
     }
 
     public static String getContentAsStringAndClose(S3Object object)

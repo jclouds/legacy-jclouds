@@ -45,19 +45,25 @@ public class HttpNioUtils {
 	    HttpRequest object) {
 	BasicHttpEntityEnclosingRequest apacheRequest = new BasicHttpEntityEnclosingRequest(
 		object.getMethod(), object.getUri(), HttpVersion.HTTP_1_1);
+
+	Object content = object.getPayload();
+
+	// Since we may remove headers, ensure they are added to the apache
+	// request after this block
+	if (content != null) {
+	    long contentLength = Long.parseLong(object
+		    .getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH));
+	    object.getHeaders().removeAll(HttpHeaders.CONTENT_LENGTH);
+	    String contentType = object
+		    .getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE);
+	    object.getHeaders().removeAll(HttpHeaders.CONTENT_TYPE);
+	    addEntityForContent(apacheRequest, content, contentType,
+		    contentLength);
+	}
+
 	for (String header : object.getHeaders().keySet()) {
 	    for (String value : object.getHeaders().get(header))
 		apacheRequest.addHeader(header, value);
-	}
-	Object content = object.getPayload();
-	if (content != null) {
-	    addEntityForContent(
-		    apacheRequest,
-		    content,
-		    object.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE),
-		    Long
-			    .parseLong(object
-				    .getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH)));
 	}
 	return apacheRequest;
     }

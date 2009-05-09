@@ -39,8 +39,8 @@ import java.util.List;
 import java.util.Properties;
 
 import org.jclouds.aws.s3.config.S3ContextModule;
-import org.jclouds.aws.s3.config.S3JavaUrlHttpFutureCommandClientModule;
 import org.jclouds.http.config.HttpFutureCommandClientModule;
+import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
 import org.jclouds.logging.config.LoggingModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 
@@ -165,7 +165,7 @@ public class S3ContextFactory {
     /**
      * Bind the given properties and install the list of modules. If no modules
      * are specified, install the default {@link JDKLoggingModule}
-     * {@link S3JavaUrlHttpFutureCommandClientModule}
+     * {@link JavaUrlHttpFutureCommandClientModule}
      * 
      * @param properties
      *            - contains constants used by jclouds
@@ -201,7 +201,7 @@ public class S3ContextFactory {
 	    }
 
 	}))
-	    modules.add(new S3JavaUrlHttpFutureCommandClientModule());
+	    modules.add(new JavaUrlHttpFutureCommandClientModule());
     }
 
     @VisibleForTesting

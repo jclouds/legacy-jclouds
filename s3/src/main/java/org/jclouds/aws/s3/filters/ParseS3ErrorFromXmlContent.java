@@ -21,40 +21,42 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.internal;
+package org.jclouds.aws.s3.filters;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.s3.S3ResponseException;
 import org.jclouds.aws.s3.domain.S3Error;
 import org.jclouds.aws.s3.xml.S3ParserFactory;
 import org.jclouds.http.HttpException;
+import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.JavaUrlHttpFutureCommandClient;
+import org.jclouds.http.HttpResponseHandler;
+import org.jclouds.logging.Logger;
 
 import com.google.inject.Inject;
 
-public class S3JavaUrlHttpFutureCommandClient extends
-	JavaUrlHttpFutureCommandClient {
+/**
+ * This will parse and set an appropriate exception on the command object.
+ * 
+ * @author Adrian Cole
+ * 
+ */
+public class ParseS3ErrorFromXmlContent implements HttpResponseHandler {
+    @Resource
+    protected Logger logger = Logger.NULL;
 
-    private S3ParserFactory parserFactory;
+    private final S3ParserFactory parserFactory;
 
     @Inject
-    public S3JavaUrlHttpFutureCommandClient(S3ParserFactory parserFactory,
-	    URL target) throws MalformedURLException {
-	super(target);
+    public ParseS3ErrorFromXmlContent(S3ParserFactory parserFactory) {
 	this.parserFactory = parserFactory;
     }
 
-    @Override
-    protected HttpResponse getResponse(HttpURLConnection connection)
-	    throws IOException {
-	HttpResponse response = super.getResponse(connection);
+    public void handle(HttpFutureCommand<?> command, HttpResponse response) {
 	int code = response.getStatusCode();
 	if (code >= 300) {
 	    InputStream errorStream = response.getContent();
@@ -62,16 +64,20 @@ public class S3JavaUrlHttpFutureCommandClient extends
 		try {
 		    S3Error error = parserFactory.createErrorParser().parse(
 			    errorStream);
-		    logger.error("received the following error from s3: %1s",
+		    logger.trace("received the following error from s3: %1s",
 			    error);
-		    throw new S3ResponseException(error, response);
+		    command.setException(new S3ResponseException(command,
+			    response, error));
 		} catch (HttpException he) {
-		    logger.error(he, "error parsing response");
+		    logger.error(he, "error parsing response %1s", response);
 		} finally {
 		    IOUtils.closeQuietly(errorStream);
 		}
+	    } else {
+		command
+			.setException(new S3ResponseException(command, response));
 	    }
 	}
-	return response;
     }
+
 }

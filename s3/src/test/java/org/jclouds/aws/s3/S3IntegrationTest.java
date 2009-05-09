@@ -44,10 +44,10 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-import org.jclouds.aws.s3.config.S3JavaUrlHttpFutureCommandClientModule;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.http.HttpConstants;
+import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
@@ -90,6 +90,7 @@ public class S3IntegrationTest {
 		.getContents().size(), 1);
 	S3Object newObject = client.getObject(sourceBucket, key).get(10,
 		TimeUnit.SECONDS);
+	assert newObject != S3Object.NOT_FOUND;
 	assertEquals(S3Utils.getContentAsStringAndClose(newObject), TEST_STRING);
 	return newObject;
     }
@@ -147,7 +148,7 @@ public class S3IntegrationTest {
     }
 
     protected boolean debugEnabled() {
-	return true;
+	return false;
     }
 
     protected S3Context createS3Context(String AWSAccessKeyId,
@@ -171,7 +172,7 @@ public class S3IntegrationTest {
     }
 
     protected Module createHttpModule() {
-	return new S3JavaUrlHttpFutureCommandClientModule();
+	return new JavaUrlHttpFutureCommandClientModule();
     }
 
     protected void deleteEverything() throws Exception {

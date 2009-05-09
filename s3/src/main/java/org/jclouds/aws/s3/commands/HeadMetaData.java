@@ -25,9 +25,15 @@ package org.jclouds.aws.s3.commands;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.aws.s3.commands.callables.HeadMetaDataCallable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import org.jclouds.aws.s3.S3ResponseException;
+import org.jclouds.aws.s3.commands.callables.ParseMetadataFromHeaders;
 import org.jclouds.aws.s3.domain.S3Object;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
@@ -43,9 +49,42 @@ public class HeadMetaData extends S3FutureCommand<S3Object.Metadata> {
 
     @Inject
     public HeadMetaData(@Named("jclouds.http.address") String amazonHost,
-	    HeadMetaDataCallable callable,
+	    ParseMetadataFromHeaders callable,
 	    @Assisted("bucketName") String bucket, @Assisted("key") String key) {
 	super("HEAD", "/" + checkNotNull(key), callable, amazonHost, bucket);
 	callable.setKey(key);
+    }
+
+    @Override
+    public S3Object.Metadata get() throws InterruptedException,
+	    ExecutionException {
+	try {
+	    return super.get();
+	} catch (ExecutionException e) {
+	    return attemptNotFound(e);
+	}
+    }
+
+    @VisibleForTesting
+    S3Object.Metadata attemptNotFound(ExecutionException e)
+	    throws ExecutionException {
+	if (e.getCause() != null && e.getCause() instanceof S3ResponseException) {
+	    S3ResponseException responseException = (S3ResponseException) e
+		    .getCause();
+	    if (responseException.getResponse().getStatusCode() == 404) {
+		return S3Object.Metadata.NOT_FOUND;
+	    }
+	}
+	throw e;
+    }
+
+    @Override
+    public S3Object.Metadata get(long l, TimeUnit timeUnit)
+	    throws InterruptedException, ExecutionException, TimeoutException {
+	try {
+	    return super.get(l, timeUnit);
+	} catch (ExecutionException e) {
+	    return attemptNotFound(e);
+	}
     }
 }

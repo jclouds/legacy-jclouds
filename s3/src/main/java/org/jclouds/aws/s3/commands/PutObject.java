@@ -23,10 +23,10 @@
  */
 package org.jclouds.aws.s3.commands;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
 
 import org.jclouds.aws.s3.S3Utils;
-import org.jclouds.aws.s3.commands.callables.PutObjectCallable;
+import org.jclouds.aws.s3.commands.callables.ParseMd5FromETagHeader;
 import org.jclouds.aws.s3.commands.options.PutObjectOptions;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.http.HttpHeaders;
@@ -39,10 +39,12 @@ public class PutObject extends S3FutureCommand<byte[]> {
 
     @Inject
     public PutObject(@Named("jclouds.http.address") String amazonHost,
-	    PutObjectCallable callable, @Assisted String s3Bucket,
+	    ParseMd5FromETagHeader callable, @Assisted String s3Bucket,
 	    @Assisted S3Object object, @Assisted PutObjectOptions options) {
 	super("PUT", "/" + checkNotNull(object.getKey()), callable, amazonHost,
 		s3Bucket);
+	checkArgument(object.getMetaData().getSize() >=0,"size must be set");
+	
 	getRequest().setPayload(
 		checkNotNull(object.getData(), "object.getContent()"));
 
@@ -50,6 +52,7 @@ public class PutObject extends S3FutureCommand<byte[]> {
 		HttpHeaders.CONTENT_TYPE,
 		checkNotNull(object.getMetaData().getContentType(),
 			"object.metaData.contentType()"));
+
 	getRequest().getHeaders().put(HttpHeaders.CONTENT_LENGTH,
 		object.getMetaData().getSize() + "");
 
@@ -75,5 +78,4 @@ public class PutObject extends S3FutureCommand<byte[]> {
 	getRequest().getHeaders().putAll(options.buildRequestHeaders());
 
     }
-
 }

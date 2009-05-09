@@ -74,7 +74,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-s3nio</artifactId>
+            <artifactId>jclouds-httpnio</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

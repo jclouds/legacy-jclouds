@@ -51,6 +51,7 @@ import com.google.inject.Provider;
  * 
  * @author Adrian Cole
  */
+@Test
 public abstract class BasePerformance extends S3IntegrationTest {
     protected boolean debugEnabled() {
 	return false;

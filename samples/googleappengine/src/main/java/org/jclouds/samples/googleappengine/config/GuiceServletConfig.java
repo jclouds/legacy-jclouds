@@ -75,7 +75,6 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 	} finally {
 	    IOUtils.closeQuietly(input);
 	}
-	props.setProperty("jclouds.http.sax.debug", "true");
 	return props;
     }
 

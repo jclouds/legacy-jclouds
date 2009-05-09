@@ -30,5 +30,4 @@ package org.jclouds.http;
  */
 public interface HttpRequestFilter {
     void filter(HttpRequest request) throws HttpException;
-
 }

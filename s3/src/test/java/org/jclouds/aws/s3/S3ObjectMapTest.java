@@ -126,11 +126,11 @@ public class S3ObjectMapTest extends BaseS3MapTest<S3Object> {
     public void testPut() throws IOException {
 	S3Object object = new S3Object("one");
 	object.setData(IOUtils.toInputStream("apple"));
-	object.getMetaData().setSize("apple".getBytes().length);
+	object.generateMd5();
 	S3Object old = map.put(object.getKey(), object);
 	getOneReturnsAppleAndOldValueIsNull(old);
 	object.setData(IOUtils.toInputStream("bear"));
-	object.getMetaData().setSize("bear".getBytes().length);
+	object.generateMd5();
 	S3Object apple = map.put(object.getKey(), object);
 	getOneReturnsBearAndOldValueIsApple(apple);
     }

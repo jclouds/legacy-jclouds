@@ -24,19 +24,33 @@
 package org.jclouds.aws.s3;
 
 import org.jclouds.aws.s3.domain.S3Error;
-import org.jclouds.http.HttpMessage;
+import org.jclouds.http.HttpFutureCommand;
+import org.jclouds.http.HttpResponse;
 
 public class S3ResponseException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
+    private final HttpFutureCommand<?> command;
+    private final HttpResponse response;
     private S3Error error;
 
-    private HttpMessage response;
-
-    public S3ResponseException(S3Error error, HttpMessage response) {
-	super(error.toString());
+    public S3ResponseException(HttpFutureCommand<?> command,
+	    HttpResponse response, S3Error error) {
+	super(String.format(
+		"command: %1s failed with response: %2s; error from s3: %3s",
+		command, response, error));
+	this.command = command;
+	this.response = response;
 	this.setError(error);
-	this.setResponse(response);
+
+    }
+
+    public S3ResponseException(HttpFutureCommand<?> command,
+	    HttpResponse response) {
+	super(String.format("command: %1s failed with response: %2s", command,
+		response));
+	this.command = command;
+	this.response = response;
     }
 
     public void setError(S3Error error) {
@@ -47,11 +61,12 @@ public class S3ResponseException extends RuntimeException {
 	return error;
     }
 
-    public void setResponse(HttpMessage response) {
-	this.response = response;
+    public HttpFutureCommand<?> getCommand() {
+	return command;
     }
 
-    public HttpMessage getResponse() {
+    public HttpResponse getResponse() {
 	return response;
     }
+
 }

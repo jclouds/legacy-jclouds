@@ -25,11 +25,8 @@ package org.jclouds.aws.s3.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -45,7 +42,6 @@ import org.jclouds.Utils;
 import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.S3Constants;
 import org.jclouds.aws.s3.S3Map;
-import org.jclouds.aws.s3.S3Utils;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
 
@@ -62,7 +58,7 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
      * maximum duration of an S3 Request
      */
     @Inject(optional = true)
-    @Named(S3Constants.PROPERTY_AWS_MAP_TIMEOUT)
+    @Named(S3Constants.PROPERTY_S3_MAP_TIMEOUT)
     protected long requestTimeoutMilliseconds = 10000;
 
     @Inject
@@ -71,6 +67,13 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
 	this.bucket = checkNotNull(bucket, "bucket");
     }
 
+    /**
+     * {@inheritDoc}
+     * <p/>
+     * This returns the number of keys in the {@link S3Bucket}
+     * 
+     * @see S3Bucket#getContents()
+     */
     public int size() {
 	try {
 	    S3Bucket bucket = refreshBucket();
@@ -95,28 +98,15 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
     protected byte[] getMd5(Object value) throws IOException,
 	    FileNotFoundException, InterruptedException, ExecutionException,
 	    TimeoutException {
-	byte[] md5;
-
-	if (value instanceof InputStream) {
-	    md5 = S3Utils.md5((InputStream) value);
-	} else if (value instanceof byte[]) {
-	    md5 = S3Utils.md5((byte[]) value);
-	} else if (value instanceof String) {
-	    md5 = S3Utils.md5(((String) value).getBytes());
-	} else if (value instanceof File) {
-	    md5 = S3Utils.md5(new FileInputStream((File) value));
-	} else if (value instanceof S3Object) {
-	    S3Object object = (S3Object) value;
-	    object = connection.getObject(bucket, object.getKey()).get(
-		    requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
-	    if (S3Object.NOT_FOUND.equals(object))
-		throw new FileNotFoundException("not found: " + object.getKey());
-	    md5 = object.getMetaData().getMd5();
+	S3Object object = null;
+	if (value instanceof S3Object) {
+	    object = (S3Object) value;
 	} else {
-	    throw new IllegalArgumentException("unsupported value type: "
-		    + value.getClass());
+	    object = new S3Object("dummy", value);
 	}
-	return md5;
+	if (object.getMetaData().getMd5() == null)
+	    object.generateMd5();
+	return object.getMetaData().getMd5();
     }
 
     protected Set<S3Object> getAllObjects() {
@@ -141,13 +131,14 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
 	return objects;
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * {@inheritDoc}
      * 
-     * @see org.jclouds.aws.s3.S3ObjectMapi#containsValue(java.lang.Object)
+     * Note that if value is an instance of InputStream, it will be read and
+     * closed following this method. To reuse data from InputStreams, pass
+     * {@link InputStream}s inside {@link S3Object}s
      */
     public boolean containsValue(Object value) {
-
 	try {
 	    byte[] md5 = getMd5(value);
 	    return containsMd5(md5);

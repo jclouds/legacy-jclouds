@@ -21,33 +21,24 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.http.commands.callables;
+package org.jclouds.http.annotation;
 
-import org.jclouds.http.HttpException;
-import org.jclouds.http.HttpFutureCommand;
-
-import com.google.inject.Inject;
+import com.google.inject.BindingAnnotation;
+import java.lang.annotation.Target;
+import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
 
 /**
- * // TODO: Adrian: Document this!
+ * Implies that the object can address {@link HttpResponse}s that contain status
+ * code 4xx.
  * 
  * @author Adrian Cole
  */
-public class ReturnTrueIf200 extends
-	HttpFutureCommand.ResponseCallable<Boolean> {
-
-    @Inject
-    public ReturnTrueIf200() {
-	super();
-    }
-
-    public Boolean call() throws HttpException {
-	if (getResponse().getStatusCode() == 200) {
-	    return true;
-	} else if (getResponse().getStatusCode() == 404) {
-	    return false;
-	} else {
-	    throw new HttpException("Error checking bucket " + getResponse());
-	}
-    }
+@BindingAnnotation
+@Target( { FIELD, PARAMETER, METHOD })
+@Retention(RUNTIME)
+public @interface ClientErrorHandler {
 }

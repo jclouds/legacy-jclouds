@@ -35,6 +35,6 @@ public interface S3Constants extends HttpConstants, PoolConstants, S3Headers {
 
     public static final String PROPERTY_AWS_SECRETACCESSKEY = "jclouds.aws.secretaccesskey";
     public static final String PROPERTY_AWS_ACCESSKEYID = "jclouds.aws.accesskeyid";
-    public static final String PROPERTY_AWS_MAP_TIMEOUT = "jclouds.aws.map.timeout";
+    public static final String PROPERTY_S3_MAP_TIMEOUT = "jclouds.s3.map.timeout";
 
 }

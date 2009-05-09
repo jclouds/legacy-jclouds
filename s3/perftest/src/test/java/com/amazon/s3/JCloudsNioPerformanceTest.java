@@ -21,41 +21,33 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.nio;
+package com.amazon.s3;
+
 
 import java.util.Properties;
 
-import org.jclouds.aws.s3.S3InputStreamMapTest;
-import org.jclouds.aws.s3.nio.config.S3HttpNioConnectionPoolClientModule;
+import org.jclouds.http.httpnio.config.HttpNioConnectionPoolClientModule;
 import org.testng.annotations.Test;
 
 import com.google.inject.Module;
 
-/**
- * // TODO: Adrian: Document this!
- * 
- * @author Adrian Cole
- */
-@Test(groups = "unit", sequential = true, testName = "s3.NioS3InputStreamMapTest")
-public class NioS3InputStreamMapTest extends S3InputStreamMapTest {
-    
+@Test(sequential=true, testName = "s3.JCloudsNioPerformance")
+public class JCloudsNioPerformanceTest extends BaseJCloudsPerformance {
+
     @Override
     protected Properties buildS3Properties(String AWSAccessKeyId,
 	    String AWSSecretAccessKey) {
-	Properties properties = super.buildS3Properties(AWSAccessKeyId,
-		AWSSecretAccessKey);
-	properties.setProperty("jclouds.http.pool.max_connection_reuse", "75");
-	properties.setProperty("jclouds.http.pool.max_session_failures", "2");
-	properties
-		.setProperty("jclouds.http.pool.request_invoker_threads", "1");
-	properties.setProperty("jclouds.http.pool.io_worker_threads", "2");
-	properties.setProperty("jclouds.pool.max_connections", "12");
-	return properties;
+	Properties properties =  super.buildS3Properties(AWSAccessKeyId, AWSSecretAccessKey);
+        properties.setProperty("jclouds.http.pool.max_connection_reuse", "75");
+        properties.setProperty("jclouds.http.pool.max_session_failures", "2");
+        properties.setProperty("jclouds.http.pool.request_invoker_threads", "1");
+        properties.setProperty("jclouds.http.pool.io_worker_threads", "2");
+        properties.setProperty("jclouds.pool.max_connections", "12");
+        return properties;
     }
 
     @Override
     protected Module createHttpModule() {
-	return new S3HttpNioConnectionPoolClientModule();
+        return new HttpNioConnectionPoolClientModule();
     }
-
 }

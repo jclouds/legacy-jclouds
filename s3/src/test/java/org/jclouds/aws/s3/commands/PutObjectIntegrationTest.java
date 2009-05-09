@@ -30,6 +30,7 @@ import static org.testng.Assert.assertNotNull;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
@@ -77,6 +78,9 @@ public class PutObjectIntegrationTest extends S3IntegrationTest {
 	S3Object object = new S3Object(key);
 	object.getMetaData().setContentType(type);
 	object.setData(content);
+	if (content instanceof InputStream) {
+	    object.generateMd5();
+	}
 	assertNotNull(client.putObject(bucketName, object).get(10,
 		TimeUnit.SECONDS));
 	object = client.getObject(bucketName, object.getKey()).get(10,
@@ -105,19 +109,19 @@ public class PutObjectIntegrationTest extends S3IntegrationTest {
 	object.getMetaData().setMd5(S3Utils.md5(TEST_STRING.getBytes()));
 
 	addObjectToBucket(bucketName, object);
-	object = validateContent(bucketName, key);
+	S3Object newObject = validateContent(bucketName, key);
 
 	// TODO.. why does this come back as binary/octetstring
-	assertEquals(object.getMetaData().getContentType(),
+	assertEquals(newObject.getMetaData().getContentType(),
 		"binary/octet-stream");
-	assertEquals(object.getMetaData().getContentEncoding(), "x-compress");
-	assertEquals(object.getMetaData().getContentDisposition(),
+	assertEquals(newObject.getMetaData().getContentEncoding(), "x-compress");
+	assertEquals(newObject.getMetaData().getContentDisposition(),
 		"attachment; filename=hello.txt");
-	assertEquals(object.getMetaData().getCacheControl(), "no-cache");
-	assertEquals(object.getMetaData().getSize(), TEST_STRING.length());
-	assertEquals(object.getMetaData().getUserMetadata().values().iterator()
-		.next(), "powderpuff");
-	assertEquals(object.getMetaData().getMd5(), S3Utils.md5(TEST_STRING
+	assertEquals(newObject.getMetaData().getCacheControl(), "no-cache");
+	assertEquals(newObject.getMetaData().getSize(), TEST_STRING.length());
+	assertEquals(newObject.getMetaData().getUserMetadata().values()
+		.iterator().next(), "powderpuff");
+	assertEquals(newObject.getMetaData().getMd5(), S3Utils.md5(TEST_STRING
 		.getBytes()));
     }
 

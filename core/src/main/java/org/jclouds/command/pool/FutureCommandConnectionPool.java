@@ -89,10 +89,10 @@ public abstract class FutureCommandConnectionPool<C, O extends FutureCommand<?, 
 		.debug(
 			"%1s - attempting to acquire connection; %d currently available",
 			this, available.size());
-	C conn = available.poll(1, TimeUnit.SECONDS);
+	C conn = available.poll(5, TimeUnit.SECONDS);
 	if (conn == null)
 	    throw new TimeoutException(
-		    "could not obtain a pooled connection within 1 seconds");
+		    "could not obtain a pooled connection within 5 seconds");
 
 	logger.trace("%1s - %2d - aquired", conn, conn.hashCode());
 	if (connectionValid(conn)) {

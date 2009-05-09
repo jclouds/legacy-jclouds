@@ -21,12 +21,30 @@
  * under the License.
  * ====================================================================
  */
-package com.amazon.s3;
+package org.jclouds.aws.s3.commands.callables;
 
+import org.apache.commons.io.IOUtils;
+import org.jclouds.aws.s3.S3Headers;
+import org.jclouds.aws.s3.S3Utils;
+import org.jclouds.http.HttpException;
+import org.jclouds.http.HttpFutureCommand;
 
-import org.testng.annotations.Test;
+/**
+ * Parses an MD5 checksum from the header {@link S3Headers#ETAG}.
+ * 
+ * @author Adrian Cole
+ */
+public class ParseMd5FromETagHeader extends
+	HttpFutureCommand.ResponseCallable<byte[]> {
 
-@Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "s3.JCloudsPerformance", groups = "performance")
-public class JCloudsPerformance extends BaseJCloudsPerformance {
+    public byte[] call() throws HttpException {
+	checkCode();
+	IOUtils.closeQuietly(getResponse().getContent());
 
+	String eTag = getResponse().getFirstHeaderOrNull(S3Headers.ETAG);
+	if (eTag != null) {
+	    return S3Utils.fromHexString(eTag.replaceAll("\"", ""));
+	}
+	throw new HttpException("did not receive ETag");
+    }
 }

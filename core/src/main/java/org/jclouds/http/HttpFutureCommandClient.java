@@ -23,22 +23,13 @@
  */
 package org.jclouds.http;
 
-import java.util.List;
-
 import org.jclouds.command.FutureCommandClient;
-
-import com.google.inject.Inject;
 
 /**
  * // TODO: Adrian: Document this!
  * 
  * @author Adrian Cole
  */
-public interface HttpFutureCommandClient
-	extends FutureCommandClient<HttpFutureCommand<?>> {
-    List<HttpRequestFilter> getRequestFilters();
-
-    @Inject
-    void setRequestFilters(List<HttpRequestFilter> requestFilters);
-
+public interface HttpFutureCommandClient extends
+	FutureCommandClient<HttpFutureCommand<?>> {
 }

@@ -25,7 +25,7 @@ package org.jclouds.aws.s3.commands;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.aws.s3.commands.callables.DeleteCallable;
+import org.jclouds.http.commands.callables.ReturnTrueIf2xx;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
@@ -35,7 +35,7 @@ public class DeleteObject extends S3FutureCommand<Boolean> {
 
     @Inject
     public DeleteObject(@Named("jclouds.http.address") String amazonHost,
-	    DeleteCallable callable, @Assisted("bucketName") String bucket,
+	    ReturnTrueIf2xx callable, @Assisted("bucketName") String bucket,
 	    @Assisted("key") String key) {
 	super("DELETE", "/" + checkNotNull(key), callable, amazonHost, bucket);
     }

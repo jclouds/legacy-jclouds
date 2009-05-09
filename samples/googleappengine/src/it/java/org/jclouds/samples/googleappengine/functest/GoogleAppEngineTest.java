@@ -80,8 +80,17 @@ public class GoogleAppEngineTest extends BaseGoogleAppEngineTest {
 	assert string.indexOf("Hello World!") >= 0 : string;
     }
 
-    @Test(invocationCount = 50, enabled = true, threadPoolSize = 10)
-    public void testGuiceJCloudsServed() throws InterruptedException,
+    @Test(invocationCount = 5, enabled = true)
+    public void testGuiceJCloudsSerial() throws InterruptedException,
+	    IOException {
+	URL gurl = new URL(url, "/guice/listbuckets.s3");
+	InputStream i = gurl.openStream();
+	String string = IOUtils.toString(i);
+	assert string.indexOf("List") >= 0 : string;
+    }
+
+    @Test(invocationCount = 50, enabled = false, threadPoolSize = 10)
+    public void testGuiceJCloudsParallel() throws InterruptedException,
 	    IOException {
 	URL gurl = new URL(url, "/guice/listbuckets.s3");
 	InputStream i = gurl.openStream();

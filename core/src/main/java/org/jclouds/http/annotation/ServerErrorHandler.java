@@ -21,26 +21,24 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.config;
+package org.jclouds.http.annotation;
 
-import org.jclouds.aws.s3.internal.S3JavaUrlHttpFutureCommandClient;
-import org.jclouds.http.HttpFutureCommandClient;
-import org.jclouds.http.config.HttpFutureCommandClientModule;
-import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
+import com.google.inject.BindingAnnotation;
+import java.lang.annotation.Target;
+import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
 
 /**
- * Configures {@link S3JavaUrlHttpFutureCommandClient}.
+ * Implies that the object can address {@link HttpResponse}s that contain status
+ * code 5xx.
  * 
  * @author Adrian Cole
  */
-@HttpFutureCommandClientModule
-public class S3JavaUrlHttpFutureCommandClientModule extends
-	JavaUrlHttpFutureCommandClientModule {
-
-    @Override
-    protected void bindClient() {
-	// note this is not threadsafe, so it cannot be singleton
-	bind(HttpFutureCommandClient.class).to(
-		S3JavaUrlHttpFutureCommandClient.class);
-    }
+@BindingAnnotation
+@Target( { FIELD, PARAMETER, METHOD })
+@Retention(RUNTIME)
+public @interface ServerErrorHandler {
 }

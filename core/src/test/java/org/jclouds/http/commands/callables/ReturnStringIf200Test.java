@@ -58,7 +58,7 @@ public class ReturnStringIf200Test {
     public void testExceptionWhenNoContentOn200() throws ExecutionException,
 	    InterruptedException, TimeoutException, IOException {
 	HttpResponse response = createMock(HttpResponse.class);
-	expect(response.getStatusCode()).andReturn(200);
+	expect(response.getStatusCode()).andReturn(200).atLeastOnce();
 	expect(response.getContent()).andReturn(null);
 	replay(response);
 	callable.setResponse(response);
@@ -74,7 +74,7 @@ public class ReturnStringIf200Test {
     public void testExceptionWhenIOExceptionOn200() throws ExecutionException,
 	    InterruptedException, TimeoutException, IOException {
 	HttpResponse response = createMock(HttpResponse.class);
-	expect(response.getStatusCode()).andReturn(200);
+	expect(response.getStatusCode()).andReturn(200).atLeastOnce();
 	RuntimeException exception = new RuntimeException("bad");
 	expect(response.getContent()).andThrow(exception);
 	replay(response);
@@ -90,7 +90,7 @@ public class ReturnStringIf200Test {
     @Test
     public void testResponseOk() throws Exception {
 	HttpResponse response = createMock(HttpResponse.class);
-	expect(response.getStatusCode()).andReturn(200);
+	expect(response.getStatusCode()).andReturn(200).atLeastOnce();
 	expect(response.getContent()).andReturn(IOUtils.toInputStream("hello"));
 	replay(response);
 	callable.setResponse(response);

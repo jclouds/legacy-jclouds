@@ -32,51 +32,33 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.logging.Logger;
 
 import com.google.inject.Inject;
 
 /**
- * // TODO: Adrian: Document this!
+ * Basic implementation of a {@link HttpFutureCommandClient}.
  * 
  * @author Adrian Cole
  */
-public class JavaUrlHttpFutureCommandClient implements HttpFutureCommandClient {
-    private URL target;
-    private List<HttpRequestFilter> requestFilters = Collections.emptyList();
-    @Resource
-    protected Logger logger = Logger.NULL;
-
-    public List<HttpRequestFilter> getRequestFilters() {
-	return requestFilters;
-    }
-
-    @Inject(optional = true)
-    public void setRequestFilters(List<HttpRequestFilter> requestFilters) {
-	this.requestFilters = requestFilters;
-    }
+public class JavaUrlHttpFutureCommandClient extends BaseHttpFutureCommandClient {
 
     @Inject
     public JavaUrlHttpFutureCommandClient(URL target)
 	    throws MalformedURLException {
-	this.target = target;
+	super(target);
     }
 
     public void submit(HttpFutureCommand<?> command) {
 	HttpRequest request = command.getRequest();
 	HttpURLConnection connection = null;
 	try {
-	    for (HttpRequestFilter filter : getRequestFilters()) {
-		filter.filter(request);
-	    }
 	    HttpResponse response = null;
 	    for (;;) {
+		for (HttpRequestFilter filter : requestFilters) {
+		    filter.filter(request);
+		}
 		logger.trace("%1s - converting request %2s", target, request);
 		connection = openJavaConnection(request);
 		logger
@@ -84,15 +66,11 @@ public class JavaUrlHttpFutureCommandClient implements HttpFutureCommandClient {
 				connection);
 		response = getResponse(connection);
 		logger.trace("%1s - received response %2s", target, response);
-		if (command.getRequest().isReplayable()
-			&& response.getStatusCode() >= 500) {
-		    logger.info("resubmitting command: %1s", command);
+		if (isRetryable(command, response))
 		    continue;
-		}
 		break;
 	    }
-	    command.getResponseFuture().setResponse(response);
-	    command.getResponseFuture().run();
+	    handleResponse(command, response);
 	} catch (Exception e) {
 	    command.setException(e);
 	} finally {

@@ -21,31 +21,24 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.nio.config;
+package org.jclouds.http.annotation;
 
-import org.apache.http.nio.protocol.NHttpRequestExecutionHandler;
-import org.jclouds.aws.s3.nio.S3HttpNioFutureCommandExecutionHandler;
-import org.jclouds.http.config.HttpFutureCommandClientModule;
-import org.jclouds.http.httpnio.config.HttpNioConnectionPoolClientModule;
-
-import com.google.inject.AbstractModule;
-import com.google.inject.util.Modules;
+import com.google.inject.BindingAnnotation;
+import java.lang.annotation.Target;
+import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
 
 /**
- * This installs a {@link HttpNioConnectionPoolClientModule}, but overrides it
- * binding {@link S3HttpNioFutureCommandExecutionHandler}.
+ * Implies that the object can address {@link HttpResponse}s that contain status
+ * code 3xx.
  * 
  * @author Adrian Cole
  */
-@HttpFutureCommandClientModule
-public class S3HttpNioConnectionPoolClientModule extends AbstractModule {
-    protected void configure() {
-	install(Modules.override(new HttpNioConnectionPoolClientModule()).with(
-		new AbstractModule() {
-		    protected void configure() {
-			bind(NHttpRequestExecutionHandler.class).to(
-				S3HttpNioFutureCommandExecutionHandler.class);
-		    }
-		}));
-    }
+@BindingAnnotation
+@Target( { FIELD, PARAMETER, METHOD })
+@Retention(RUNTIME)
+public @interface RedirectHandler {
 }

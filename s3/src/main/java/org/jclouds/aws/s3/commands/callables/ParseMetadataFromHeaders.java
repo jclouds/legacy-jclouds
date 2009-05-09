@@ -23,10 +23,8 @@
  */
 package org.jclouds.aws.s3.commands.callables;
 
-import java.io.IOException;
 import java.util.Map.Entry;
 
-import org.jclouds.Utils;
 import org.jclouds.aws.s3.DateService;
 import org.jclouds.aws.s3.S3Headers;
 import org.jclouds.aws.s3.S3Utils;
@@ -38,58 +36,65 @@ import org.jclouds.http.HttpHeaders;
 import com.google.inject.Inject;
 
 /**
- * This parses @{link {@link S3Object.Metadata} from http headers or returns
- * {@link S3Object.Metadata#NOT_FOUND} on 404.
+ * This parses @{link {@link S3Object.Metadata} from http headers.
  * 
  * @author Adrian Cole
  */
-public class HeadMetaDataCallable extends
+public class ParseMetadataFromHeaders extends
 	HttpFutureCommand.ResponseCallable<S3Object.Metadata> {
     private final DateService dateParser;
     private String key;
 
     @Inject
-    public HeadMetaDataCallable(DateService dateParser) {
+    public ParseMetadataFromHeaders(DateService dateParser) {
 	this.dateParser = dateParser;
     }
 
     /**
-     * @return S3Content.NOT_FOUND, if not found.
-     * @throws org.jclouds.http.HttpException
+     * parses the http response headers to create a new
+     * {@link S3Object.MetaData} object.
      */
     public S3Object.Metadata call() throws HttpException {
-	if (getResponse().getStatusCode() == 200) {
-	    S3Object.Metadata metaData = new S3Object.Metadata(key);
+	checkCode();
+	
+	S3Object.Metadata metaData = new S3Object.Metadata(key);
 
-	    extractUserMetadata(metaData);
-	    addMd5(metaData);
+	extractUserMetadata(metaData);
+	addMd5(metaData);
 
-	    metaData.setLastModified(dateParser
-		    .dateTimeFromHeaderFormat(getResponse()
-			    .getFirstHeaderOrNull(HttpHeaders.LAST_MODIFIED)));
-	    metaData.setContentType(getResponse().getFirstHeaderOrNull(
-		    HttpHeaders.CONTENT_TYPE));
-	    metaData.setSize(Long.parseLong(getResponse().getFirstHeaderOrNull(
-		    HttpHeaders.CONTENT_LENGTH)));
-	    metaData.setCacheControl(getResponse().getFirstHeaderOrNull(
-		    HttpHeaders.CACHE_CONTROL));
-	    metaData.setContentDisposition(getResponse().getFirstHeaderOrNull(
-		    HttpHeaders.CONTENT_DISPOSITION));
-	    metaData.setContentEncoding(getResponse().getFirstHeaderOrNull(
-		    HttpHeaders.CONTENT_ENCODING));
-	    return metaData;
-	} else if (getResponse().getStatusCode() == 404) {
-	    return S3Object.Metadata.NOT_FOUND;
-	} else {
-	    String reason = null;
-	    try {
-		reason = Utils.toStringAndClose(getResponse().getContent());
-	    } catch (IOException e) {
-		logger.error(e, "error parsing reason");
-	    }
-	    throw new HttpException("Error parsing object " + getResponse()
-		    + " reason: " + reason);
-	}
+	parseLastModifiedOrThrowException(metaData);
+	setContentTypeOrThrowException(metaData);
+
+	metaData.setCacheControl(getResponse().getFirstHeaderOrNull(
+		HttpHeaders.CACHE_CONTROL));
+	metaData.setContentDisposition(getResponse().getFirstHeaderOrNull(
+		HttpHeaders.CONTENT_DISPOSITION));
+	metaData.setContentEncoding(getResponse().getFirstHeaderOrNull(
+		HttpHeaders.CONTENT_ENCODING));
+	return metaData;
+
+    }
+
+    private void setContentTypeOrThrowException(S3Object.Metadata metaData)
+	    throws HttpException {
+	String contentType = getResponse().getFirstHeaderOrNull(
+		HttpHeaders.CONTENT_TYPE);
+	if (contentType == null)
+	    throw new HttpException(HttpHeaders.CONTENT_TYPE
+		    + " not found in headers");
+	else
+	    metaData.setContentType(contentType);
+    }
+
+    private void parseLastModifiedOrThrowException(S3Object.Metadata metaData)
+	    throws HttpException {
+	String lastModified = getResponse().getFirstHeaderOrNull(
+		HttpHeaders.LAST_MODIFIED);
+	metaData.setLastModified(dateParser
+		.dateTimeFromHeaderFormat(lastModified));
+	if (metaData.getLastModified() == null)
+	    throw new HttpException("could not parse: "
+		    + HttpHeaders.LAST_MODIFIED + ": " + lastModified);
     }
 
     private void addMd5(S3Object.Metadata metaData) {

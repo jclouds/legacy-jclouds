@@ -26,22 +26,33 @@ package org.jclouds.aws.s3.config;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.S3Context;
 import org.jclouds.aws.s3.commands.config.S3CommandsModule;
+import org.jclouds.aws.s3.filters.ParseS3ErrorFromXmlContent;
 import org.jclouds.aws.s3.filters.RemoveTransferEncodingHeader;
 import org.jclouds.aws.s3.filters.RequestAuthorizeSignature;
 import org.jclouds.aws.s3.internal.GuiceS3Context;
 import org.jclouds.aws.s3.internal.LiveS3Connection;
 import org.jclouds.aws.s3.internal.LiveS3InputStreamMap;
 import org.jclouds.aws.s3.internal.LiveS3ObjectMap;
+import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpRequestFilter;
+import org.jclouds.http.HttpResponseHandler;
+import org.jclouds.http.annotation.ClientErrorHandler;
+import org.jclouds.http.annotation.RedirectHandler;
+import org.jclouds.http.annotation.ServerErrorHandler;
+import org.jclouds.logging.Logger;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.Singleton;
 import com.google.inject.assistedinject.FactoryProvider;
+import com.google.inject.name.Named;
 
 /**
  * // TODO: Adrian: Document this!
@@ -49,6 +60,18 @@ import com.google.inject.assistedinject.FactoryProvider;
  * @author Adrian Cole
  */
 public class S3ContextModule extends AbstractModule {
+    @Resource
+    protected Logger logger = Logger.NULL;
+
+    @Inject
+    @Named(HttpConstants.PROPERTY_HTTP_ADDRESS)
+    String address;
+    @Inject
+    @Named(HttpConstants.PROPERTY_HTTP_PORT)
+    int port;
+    @Inject
+    @Named(HttpConstants.PROPERTY_HTTP_SECURE)
+    boolean isSecure;
 
     @Override
     protected void configure() {
@@ -64,6 +87,15 @@ public class S3ContextModule extends AbstractModule {
 			GuiceS3Context.S3InputStreamMapFactory.class,
 			LiveS3InputStreamMap.class));
 	bind(S3Context.class).to(GuiceS3Context.class);
+	bind(HttpResponseHandler.class).annotatedWith(RedirectHandler.class)
+		.to(ParseS3ErrorFromXmlContent.class).in(Scopes.SINGLETON);
+	bind(HttpResponseHandler.class).annotatedWith(ClientErrorHandler.class)
+		.to(ParseS3ErrorFromXmlContent.class).in(Scopes.SINGLETON);
+	bind(HttpResponseHandler.class).annotatedWith(ServerErrorHandler.class)
+		.to(ParseS3ErrorFromXmlContent.class).in(Scopes.SINGLETON);
+	requestInjection(this);
+	logger.info("S3 Context = %1s://%2s:%3s",
+		(isSecure ? "https" : "http"), address, port);
     }
 
     @Provides
@@ -76,4 +108,5 @@ public class S3ContextModule extends AbstractModule {
 	filters.add(requestAuthorizeSignature);
 	return filters;
     }
+
 }

@@ -26,7 +26,7 @@ package org.jclouds.http.commands;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import org.jclouds.http.HttpFutureCommand;
-import org.jclouds.http.commands.callables.ReturnTrueIf200;
+import org.jclouds.http.commands.callables.ReturnTrueIf2xx;
 
 /**
  * // TODO: Adrian: Document this!
@@ -36,7 +36,7 @@ import org.jclouds.http.commands.callables.ReturnTrueIf200;
 public class Head extends HttpFutureCommand<Boolean> {
 
     @Inject
-    public Head(ReturnTrueIf200 callable, @Assisted String uri) {
+    public Head(ReturnTrueIf2xx callable, @Assisted String uri) {
         super("HEAD", uri, callable);
     }
 }

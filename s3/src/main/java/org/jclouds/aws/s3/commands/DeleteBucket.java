@@ -23,8 +23,14 @@
  */
 package org.jclouds.aws.s3.commands;
 
-import org.jclouds.aws.s3.commands.callables.DeleteBucketCallable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
+import org.jclouds.aws.s3.S3ResponseException;
+import org.jclouds.http.commands.callables.ReturnTrueIf2xx;
+
+import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
@@ -33,7 +39,41 @@ public class DeleteBucket extends S3FutureCommand<Boolean> {
 
     @Inject
     public DeleteBucket(@Named("jclouds.http.address") String amazonHost,
-	    DeleteBucketCallable callable, @Assisted String s3Bucket) {
+	    ReturnTrueIf2xx callable, @Assisted String s3Bucket) {
 	super("DELETE", "/", callable, amazonHost, s3Bucket);
+    }
+
+    @Override
+    public Boolean get() throws InterruptedException, ExecutionException {
+	try {
+	    return super.get();
+	} catch (ExecutionException e) {
+	    return attemptNotFound(e);
+	}
+    }
+
+    @VisibleForTesting
+    Boolean attemptNotFound(ExecutionException e) throws ExecutionException {
+	if (e.getCause() != null && e.getCause() instanceof S3ResponseException) {
+	    S3ResponseException responseException = (S3ResponseException) e
+		    .getCause();
+	    if (responseException.getResponse().getStatusCode() == 404) {
+		return true;
+	    } else if ("BucketNotEmpty".equals(responseException.getError()
+		    .getCode())) {
+		return false;
+	    }
+	}
+	throw e;
+    }
+
+    @Override
+    public Boolean get(long l, TimeUnit timeUnit) throws InterruptedException,
+	    ExecutionException, TimeoutException {
+	try {
+	    return super.get(l, timeUnit);
+	} catch (ExecutionException e) {
+	    return attemptNotFound(e);
+	}
     }
 }

@@ -24,8 +24,6 @@
 package org.jclouds.aws.s3.filters;
 
 import java.util.Collection;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -36,20 +34,17 @@ import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpHeaders;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
-import org.joda.time.DateTime;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 public class RequestAuthorizeSignature implements HttpRequestFilter {
     private static final String[] firstHeadersToSign = new String[] {
-	    HttpHeaders.CONTENT_MD5, HttpHeaders.CONTENT_TYPE,
-	    HttpHeaders.DATE };
+	    HttpHeaders.CONTENT_MD5, HttpHeaders.CONTENT_TYPE, HttpHeaders.DATE };
 
     private final String accessKey;
     private final String secretKey;
     private final DateService dateService;
-    private Map<String, DateTime> dateCache = new ConcurrentHashMap<String, DateTime>();
 
     public static final long BILLION = 1000000000;
     private final AtomicReference<String> timeStamp;
@@ -78,24 +73,6 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
     public String timestampAsHeaderString() {
 	updateIfTimeOut();
 	return timeStamp.get();
-    }
-
-    public DateTime dateTimeFromXMLFormat(String toParse) {
-	DateTime time = dateCache.get(toParse);
-	if (time == null) {
-	    time = dateService.dateTimeFromXMLFormat(toParse);
-	    dateCache.put(toParse, time);
-	}
-	return time;
-    }
-
-    public DateTime dateTimeFromHeaderFormat(String toParse) {
-	DateTime time = dateCache.get(toParse);
-	if (time == null) {
-	    time = dateService.dateTimeFromHeaderFormat(toParse);
-	    dateCache.put(toParse, time);
-	}
-	return time;
     }
 
     @Inject
@@ -149,8 +126,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
     }
 
     private void addDateHeader(HttpRequest request) {
-	request.getHeaders().put(HttpHeaders.DATE,
-		dateService.timestampAsHeaderString());
+	request.getHeaders().put(HttpHeaders.DATE, timestampAsHeaderString());
     }
 
     private void appendAmzHeaders(HttpRequest request, StringBuilder toSign) {

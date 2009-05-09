@@ -32,18 +32,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.io.IOUtils;
+import org.jclouds.http.BaseHttpFutureCommandClient;
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpFutureCommandClient;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.logging.Logger;
 
 import com.google.appengine.api.urlfetch.HTTPHeader;
 import com.google.appengine.api.urlfetch.HTTPMethod;
@@ -58,65 +55,59 @@ import com.google.inject.Inject;
  * 
  * @author Adrian Cole
  */
-public class URLFetchServiceClient implements HttpFutureCommandClient {
-    private final URL target;
-    private List<HttpRequestFilter> requestFilters = Collections.emptyList();
-    @Resource
-    private Logger logger = Logger.NULL;
+public class URLFetchServiceClient extends BaseHttpFutureCommandClient {
     private final URLFetchService urlFetchService;
-
-    public List<HttpRequestFilter> getRequestFilters() {
-	return requestFilters;
-    }
-
-    @Inject(optional = true)
-    public void setRequestFilters(List<HttpRequestFilter> requestFilters) {
-	this.requestFilters = requestFilters;
-    }
 
     @Inject
     public URLFetchServiceClient(URL target, URLFetchService urlFetchService)
 	    throws MalformedURLException {
+	super(target);
 	this.urlFetchService = urlFetchService;
-	this.target = target;
-	this.logger.info("configured to connect to target: %1s", target);
     }
 
-    public void submit(HttpFutureCommand<?> operation) {
-	HttpRequest request = operation.getRequest();
+    public void submit(HttpFutureCommand<?> command) {
+	HttpRequest request = command.getRequest();
 	HTTPResponse gaeResponse = null;
 	try {
-	    for (HttpRequestFilter filter : getRequestFilters()) {
+	    for (HttpRequestFilter filter : requestFilters) {
 		filter.filter(request);
 	    }
 	    HttpResponse response = null;
 	    for (;;) {
 		logger.trace("%1s - converting request %2s", target, request);
 		HTTPRequest gaeRequest = convert(request);
-		logger
-			.trace("%1s - submitting request %2s", target,
-				gaeRequest);
+		if (logger.isTraceEnabled())
+		    logger.trace("%1s - submitting request %2s, headers: %3s",
+			    target, gaeRequest.getURL(),
+			    headersAsString(gaeRequest.getHeaders()));
 		gaeResponse = this.urlFetchService.fetch(gaeRequest);
-		logger
-			.trace("%1s - received response %2s", target,
-				gaeResponse);
+		if (logger.isTraceEnabled())
+		    logger.trace(
+			    "%1s - received response code %2s, headers: %3s",
+			    target, gaeResponse.getResponseCode(),
+			    headersAsString(gaeResponse.getHeaders()));
 		response = convert(gaeResponse);
-		if (response.getStatusCode() >= 500) {
+		if (isRetryable(command, response))
 		    continue;
-		}
 		break;
-
 	    }
-	    operation.getResponseFuture().setResponse(response);
-	    operation.getResponseFuture().run();
+	    handleResponse(command, response);
 	} catch (Exception e) {
 	    if (gaeResponse != null && gaeResponse.getContent() != null) {
 		logger.error(e,
 			"error encountered during the execution: %1s%n%2s",
 			gaeResponse, new String(gaeResponse.getContent()));
 	    }
-	    operation.setException(e);
+	    command.setException(e);
 	}
+    }
+
+    String headersAsString(List<HTTPHeader> headers) {
+	StringBuilder builder = new StringBuilder("");
+	for (HTTPHeader header : headers)
+	    builder.append("[").append(header.getName()).append("=").append(
+		    header.getValue()).append("],");
+	return builder.toString();
     }
 
     /**

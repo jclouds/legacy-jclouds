@@ -46,11 +46,8 @@ public class ReturnStringIf200 extends
     }
 
     public String call() throws HttpException {
-	int code = getResponse().getStatusCode();
-	if (code >= 400 && code < 500) {
-	    throw new HttpException(String.format("Content not found - %1s",
-		    getResponse()));
-	} else if (code == 200) {
+	checkCode();
+	if (getResponse().getStatusCode() == 200) {
 	    InputStream entity = getResponse().getContent();
 	    if (entity == null)
 		throw new HttpException("no content");

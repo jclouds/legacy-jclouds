@@ -68,7 +68,7 @@ import com.google.inject.name.Names;
  * 
  * @author Adrian Cole
  */
-@Test(threadPoolSize = 100)
+@Test(threadPoolSize = 10)
 public abstract class BaseHttpFutureCommandClientTest {
     protected static final String XML = "<foo><bar>whoppers</bar></foo>";
     protected Server server = null;
@@ -158,9 +158,9 @@ public abstract class BaseHttpFutureCommandClientTest {
 	server.stop();
     }
 
-    @Test(invocationCount = 500, timeOut = 1500)
-    public void testRequestFilter() throws MalformedURLException, ExecutionException,
-	    InterruptedException, TimeoutException {
+    @Test(invocationCount = 50, timeOut = 1500)
+    public void testRequestFilter() throws MalformedURLException,
+	    ExecutionException, InterruptedException, TimeoutException {
 	GetString get = factory.createGetString("/");
 	get.getRequest().getHeaders().put("filterme", "filterme");
 	client.submit(get);
@@ -169,7 +169,7 @@ public abstract class BaseHttpFutureCommandClientTest {
 			TimeUnit.SECONDS));
     }
 
-    @Test(invocationCount = 500, timeOut = 1500)
+    @Test(invocationCount = 50, timeOut = 1500)
     public void testGetStringWithHeader() throws MalformedURLException,
 	    ExecutionException, InterruptedException, TimeoutException {
 	GetString get = factory.createGetString("/");
@@ -180,9 +180,9 @@ public abstract class BaseHttpFutureCommandClientTest {
 			TimeUnit.SECONDS));
     }
 
-    @Test(invocationCount = 500, timeOut = 1500)
-    public void testGetString() throws MalformedURLException, ExecutionException,
-	    InterruptedException, TimeoutException {
+    @Test(invocationCount = 50, timeOut = 1500)
+    public void testGetString() throws MalformedURLException,
+	    ExecutionException, InterruptedException, TimeoutException {
 	GetString get = factory.createGetString("/");
 	assert get != null;
 	client.submit(get);
@@ -191,7 +191,7 @@ public abstract class BaseHttpFutureCommandClientTest {
 			TimeUnit.SECONDS));
     }
 
-    @Test(invocationCount = 500, timeOut = 1500)
+    @Test(invocationCount = 50, timeOut = 1500)
     public void testHead() throws MalformedURLException, ExecutionException,
 	    InterruptedException, TimeoutException {
 	Head head = factory.createHead("/");
@@ -200,9 +200,9 @@ public abstract class BaseHttpFutureCommandClientTest {
 	assert head.get(10, TimeUnit.SECONDS);
     }
 
-    @Test(invocationCount = 500, timeOut = 1500)
-    public void testGetAndParseSax() throws MalformedURLException, ExecutionException,
-	    InterruptedException, TimeoutException {
+    @Test(invocationCount = 50, timeOut = 1500)
+    public void testGetAndParseSax() throws MalformedURLException,
+	    ExecutionException, InterruptedException, TimeoutException {
 	GetAndParseSax<?> getAndParseSax = factory.createGetAndParseSax("/",
 		new ParseSax.HandlerWithResult<String>() {
 		    @Override

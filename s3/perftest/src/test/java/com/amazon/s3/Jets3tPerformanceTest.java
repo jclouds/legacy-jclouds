@@ -25,16 +25,11 @@ package com.amazon.s3;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 
-import org.jclouds.aws.s3.S3Constants;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
+import org.jets3t.service.S3Service;
+import org.jets3t.service.impl.rest.httpclient.RestS3Service;
+import org.jets3t.service.security.AWSCredentials;
 import org.testng.annotations.Test;
 
 /**
@@ -42,76 +37,85 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "s3.AmazonPerformance", groups = "performance")
-public class AmazonPerformance extends BasePerformance {
-    private AWSAuthConnection amzClient;
+@Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "s3.Jets3tPerformance")
+public class Jets3tPerformanceTest extends BasePerformance {
+    private S3Service jetClient;
 
     @Override
-    @BeforeTest
-    @Parameters( { S3Constants.PROPERTY_AWS_ACCESSKEYID,
-	    S3Constants.PROPERTY_AWS_SECRETACCESSKEY })
-    protected void setUpClient(@Optional String AWSAccessKeyId,
-	    @Optional String AWSSecretAccessKey) throws Exception {
+    protected void setUpClient(String AWSAccessKeyId, String AWSSecretAccessKey)
+	    throws Exception {
 	super.setUpClient(AWSAccessKeyId, AWSSecretAccessKey);
-	amzClient = new AWSAuthConnection(AWSAccessKeyId, AWSSecretAccessKey,
-		false);
+	jetClient = new RestS3Service(new AWSCredentials(AWSAccessKeyId,
+		AWSSecretAccessKey));
     }
 
     @Override
-    public void testPutFileSerial() throws Exception {
-	throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void testPutFileParallel() throws InterruptedException,
-	    ExecutionException {
-	throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void testPutInputStreamSerial() throws Exception {
-	throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void testPutInputStreamParallel() throws InterruptedException,
-	    ExecutionException {
-	throw new UnsupportedOperationException();
-    }
-
-    @Override
+    @Test(enabled=false)
     public void testPutStringSerial() throws Exception {
 	throw new UnsupportedOperationException();
     }
 
     @Override
+    @Test(enabled=false)
     public void testPutStringParallel() throws InterruptedException,
 	    ExecutionException {
 	throw new UnsupportedOperationException();
     }
 
     @Override
+    @Test(enabled=false)
+    public void testPutBytesSerial() throws Exception {
+	throw new UnsupportedOperationException();
+    }
+
+    @Override
+    @Test(enabled=false)
+    public void testPutBytesParallel() throws InterruptedException,
+	    ExecutionException {
+	throw new UnsupportedOperationException();
+    }
+
+    @Override
+    @Test(enabled=false)
+    public void testPutInputStreamParallel() throws InterruptedException,
+	    ExecutionException {
+	throw new UnsupportedOperationException();
+    }
+    @Override
+    @Test(enabled=false)
+    public void testPutFileParallel() throws InterruptedException,
+	    ExecutionException {
+	throw new UnsupportedOperationException();
+    }
+    
+    @Override
+    @Test(enabled=false)
     protected boolean putByteArray(String bucket, String key, byte[] data,
 	    String contentType) throws Exception {
-	com.amazon.s3.S3Object object = new com.amazon.s3.S3Object(data, null);
-	Map<String, List<String>> headers = new TreeMap<String, List<String>>();
-	headers
-		.put("Content-Type", Arrays
-			.asList(new String[] { contentType }));
-	return amzClient.put(bucket, key, object, headers).connection
-		.getResponseMessage() != null;
+	throw new UnsupportedOperationException();
+
     }
 
     @Override
     protected boolean putFile(String bucket, String key, File data,
 	    String contentType) throws Exception {
-	throw new UnsupportedOperationException();
+	org.jets3t.service.model.S3Object object = new org.jets3t.service.model.S3Object(
+		key);
+	object.setContentType(contentType);
+	object.setDataInputFile(data);
+	object.setContentLength(data.length());
+	return jetClient.putObject(bucket, object) != null;
     }
 
     @Override
     protected boolean putInputStream(String bucket, String key,
 	    InputStream data, String contentType) throws Exception {
-	throw new UnsupportedOperationException();
+	org.jets3t.service.model.S3Object object = new org.jets3t.service.model.S3Object(
+		key);
+	object.setContentType(contentType);
+	object.setDataInputStream(data);
+	object.setContentLength(data.available());
+	return jetClient.putObject(bucket, object) != null;
     }
 
     @Override

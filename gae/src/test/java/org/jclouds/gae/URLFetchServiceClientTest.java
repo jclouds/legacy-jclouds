@@ -41,7 +41,6 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpHeaders;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Parameters;
@@ -161,15 +160,6 @@ public class URLFetchServiceClientTest {
 	request.setPayload(new Date());
 	client.convert(request);
 
-    }
-
-    @Test
-    void testRequestFilters() {
-	List<HttpRequestFilter> filters = new ArrayList<HttpRequestFilter>();
-	filters.add(createNiceMock(HttpRequestFilter.class));
-	assertEquals(client.getRequestFilters().size(), 0);
-	client.setRequestFilters(filters);
-	assertEquals(client.getRequestFilters(), filters);
     }
 
     @Test

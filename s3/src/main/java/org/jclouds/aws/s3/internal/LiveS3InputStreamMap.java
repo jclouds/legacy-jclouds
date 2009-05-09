@@ -23,9 +23,7 @@
  */
 package org.jclouds.aws.s3.internal;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,7 +35,6 @@ import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.Utils;
 import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.S3InputStreamMap;
@@ -151,7 +148,7 @@ public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
 	try {
 	    InputStream returnVal = containsKey(s) ? get(s) : null;
 	    object.setData(o);
-	    setSizeIfContentIsInputStream(object);
+	    object.generateMd5();
 	    connection.putObject(bucket, object).get(
 		    requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
 	    return returnVal;
@@ -189,7 +186,7 @@ public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
 	    for (String key : map.keySet()) {
 		S3Object object = new S3Object(key);
 		object.setData(map.get(key));
-		setSizeIfContentIsInputStream(object);
+		object.generateMd5();
 		puts.add(connection.putObject(bucket, object));
 	    }
 	    for (Future<byte[]> put : puts)
@@ -199,15 +196,6 @@ public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
 	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
 	    throw new S3RuntimeException("Error putting into bucket" + bucket,
 		    e);
-	}
-    }
-
-    private void setSizeIfContentIsInputStream(S3Object object)
-	    throws IOException {
-	if (object.getData() instanceof InputStream) {
-	    byte[] buffer = IOUtils.toByteArray((InputStream) object.getData());
-	    object.getMetaData().setSize(buffer.length);
-	    object.setData(new ByteArrayInputStream(buffer));
 	}
     }
 

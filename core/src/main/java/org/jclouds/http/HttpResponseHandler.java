@@ -21,23 +21,18 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.commands.callables;
-
-import org.jclouds.http.HttpException;
-import org.jclouds.http.HttpFutureCommand;
+package org.jclouds.http;
 
 /**
  * // TODO: Adrian: Document this!
  * 
  * @author Adrian Cole
  */
-public class DeleteCallable extends HttpFutureCommand.ResponseCallable<Boolean> {
-
-    public Boolean call() throws HttpException {
-	if (getResponse().getStatusCode() == 204) {
-	    return true;
-	} else {
-	    throw new HttpException("Error deleting bucket " + getResponse());
+public interface HttpResponseHandler {
+    public static final HttpResponseHandler NOOP = new HttpResponseHandler() {
+	public void handle(HttpFutureCommand<?> command, HttpResponse response) {
 	}
-    }
+    };
+
+    void handle(HttpFutureCommand<?> command, HttpResponse response);
 }

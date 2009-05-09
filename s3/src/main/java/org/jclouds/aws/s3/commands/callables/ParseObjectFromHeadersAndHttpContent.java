@@ -23,51 +23,55 @@
  */
 package org.jclouds.aws.s3.commands.callables;
 
-import java.io.IOException;
-
-import org.jclouds.Utils;
 import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.s3.domain.S3Object.Metadata;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpFutureCommand;
+import org.jclouds.http.HttpHeaders;
 
 import com.google.inject.Inject;
 
 /**
- * // TODO: Adrian: Document this!
+ * Parses response headers and creates a new S3Object from them and the http
+ * content.
  * 
  * @author Adrian Cole
  */
-public class GetObjectCallable extends
+public class ParseObjectFromHeadersAndHttpContent extends
 	HttpFutureCommand.ResponseCallable<S3Object> {
-    private final HeadMetaDataCallable metaDataParser;
-    private String key;
+    private final ParseMetadataFromHeaders metaDataParser;
 
     @Inject
-    public GetObjectCallable(HeadMetaDataCallable metaDataParser) {
+    public ParseObjectFromHeadersAndHttpContent(ParseMetadataFromHeaders metaDataParser) {
 	this.metaDataParser = metaDataParser;
     }
 
     /**
-     * @return S3Content.NOT_FOUND, if not found.
+     * First, calls {@link ParseMetadataFromHeaders}.
+     * 
+     * Then, sets the object size based on the Content-Length header and adds
+     * the content to the {@link S3Object} result.
+     * 
      * @throws org.jclouds.http.HttpException
      */
     public S3Object call() throws HttpException {
+	checkCode();
 	metaDataParser.setResponse(getResponse());
 	S3Object.Metadata metaData = metaDataParser.call();
-	if (metaData == S3Object.Metadata.NOT_FOUND)
-	    return S3Object.NOT_FOUND;
-	if (getResponse().getContent() != null) {
-	    return new S3Object(metaData, getResponse().getContent());
-	} else {
-	    String reason = null;
-	    try {
-		reason = Utils.toStringAndClose(getResponse().getContent());
-	    } catch (IOException e) {
-		logger.error(e, "error parsing reason");
-	    }
-	    throw new HttpException("No content retrieving object " + key + ":"
-		    + getResponse() + " reason: " + reason);
-	}
+
+	parseContentLengthOrThrowException(metaData);
+	return new S3Object(metaData, getResponse().getContent());
+    }
+
+    private void parseContentLengthOrThrowException(Metadata metaData)
+	    throws HttpException {
+	String contentLength = getResponse().getFirstHeaderOrNull(
+		HttpHeaders.CONTENT_LENGTH);
+	if (contentLength == null)
+	    throw new HttpException(HttpHeaders.CONTENT_LENGTH
+		    + " header not present in headers: "
+		    + getResponse().getHeaders());
+	metaData.setSize(Long.parseLong(contentLength));
     }
 
     public void setKey(String key) {

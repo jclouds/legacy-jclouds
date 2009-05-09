@@ -118,19 +118,21 @@ public class S3CommandFactoryTest {
     void testCreatePutObject() {
 	S3Object.Metadata metaData = createMock(S3Object.Metadata.class);
 	S3Object object = new S3Object(metaData);
-	object.setData("<a></a>");
+	expect(metaData.getSize()).andReturn(4L).atLeastOnce();
 	expect(metaData.getKey()).andReturn("rawr");
 	expect(metaData.getContentType()).andReturn("text/xml").atLeastOnce();
-	expect(metaData.getSize()).andReturn(4L);
 	expect(metaData.getCacheControl()).andReturn("no-cache").atLeastOnce();
-	expect(metaData.getContentDisposition()).andReturn("disposition").atLeastOnce();
-	expect(metaData.getContentEncoding()).andReturn("encoding").atLeastOnce();
-	expect(metaData.getMd5()).andReturn("encoding".getBytes()).atLeastOnce();
-	Multimap<String,String> userMdata = HashMultimap.create();
+	expect(metaData.getContentDisposition()).andReturn("disposition")
+		.atLeastOnce();
+	expect(metaData.getContentEncoding()).andReturn("encoding")
+		.atLeastOnce();
+	expect(metaData.getMd5()).andReturn("encoding".getBytes())
+		.atLeastOnce();
+	Multimap<String, String> userMdata = HashMultimap.create();
 	expect(metaData.getUserMetadata()).andReturn(userMdata).atLeastOnce();
 
-
 	replay(metaData);
+	object.setData("<a></a>");
 
 	assert commandFactory.createPutObject("test", object,
 		PutObjectOptions.NONE) != null;

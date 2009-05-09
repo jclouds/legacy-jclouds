@@ -42,7 +42,7 @@ import java.util.concurrent.ExecutorCompletionService;
  * 
  * @author Adrian Cole
  */
-@Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "s3.S3ParserTest", groups = "performance")
+@Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "s3.S3ParserTest")
 public class S3ParserTest extends org.jclouds.aws.s3.commands.S3ParserTest {
 
     class MockHttpURLConnection extends HttpURLConnection {
