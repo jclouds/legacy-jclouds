@@ -176,14 +176,13 @@ public abstract class BasePerformance extends S3IntegrationTest {
 
     class PutFileCallable implements Provider<Callable<Boolean>> {
 	final AtomicInteger key = new AtomicInteger(0);
-	protected File file = new File(
-		"/Users/adriancole/Desktop/charles_ca_certificate.zip");
+	protected File file = new File("pom.xml");
 
 	public Callable<Boolean> get() {
 	    return new Callable<Boolean>() {
 		public Boolean call() throws Exception {
 		    return putFile(BUCKET_FILE, key.getAndIncrement() + "",
-			    file, "application/zip");
+			    file, "text/xml");
 		}
 	    };
 
