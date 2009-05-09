@@ -54,12 +54,12 @@
         <dependency>
             <groupId>com.google.code.guice</groupId>
             <artifactId>guice</artifactId>
-            <version>2.0-r937</version>
+            <version>2.0-r943</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.guice</groupId>
             <artifactId>guice-assistedinject</artifactId>
-            <version>2.0-r937</version>
+            <version>2.0-r943</version>
         </dependency>
         <dependency>
             <groupId>com.google.collections</groupId>
