@@ -33,11 +33,11 @@ import org.jets3t.service.security.AWSCredentials;
 import org.testng.annotations.Test;
 
 /**
- * // TODO: Adrian: Document this!
+ * Runs operations that jets3t is capable of performing.
  * 
  * @author Adrian Cole
  */
-@Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "s3.Jets3tPerformance")
+@Test(enabled = false, sequential = true, timeOut = 2 * 60 * 1000, testName = "s3.Jets3tPerformance")
 public class Jets3tPerformanceTest extends BasePerformance {
     private S3Service jetClient;
 
@@ -50,46 +50,47 @@ public class Jets3tPerformanceTest extends BasePerformance {
     }
 
     @Override
-    @Test(enabled=false)
+    @Test(enabled = false)
     public void testPutStringSerial() throws Exception {
 	throw new UnsupportedOperationException();
     }
 
     @Override
-    @Test(enabled=false)
+    @Test(enabled = false)
     public void testPutStringParallel() throws InterruptedException,
 	    ExecutionException {
 	throw new UnsupportedOperationException();
     }
 
     @Override
-    @Test(enabled=false)
+    @Test(enabled = false)
     public void testPutBytesSerial() throws Exception {
 	throw new UnsupportedOperationException();
     }
 
     @Override
-    @Test(enabled=false)
+    @Test(enabled = false)
     public void testPutBytesParallel() throws InterruptedException,
 	    ExecutionException {
 	throw new UnsupportedOperationException();
     }
 
     @Override
-    @Test(enabled=false)
+    @Test(enabled = false)
     public void testPutInputStreamParallel() throws InterruptedException,
 	    ExecutionException {
 	throw new UnsupportedOperationException();
     }
+
     @Override
-    @Test(enabled=false)
+    @Test(enabled = false)
     public void testPutFileParallel() throws InterruptedException,
 	    ExecutionException {
 	throw new UnsupportedOperationException();
     }
-    
+
     @Override
-    @Test(enabled=false)
+    @Test(enabled = false)
     protected boolean putByteArray(String bucket, String key, byte[] data,
 	    String contentType) throws Exception {
 	throw new UnsupportedOperationException();

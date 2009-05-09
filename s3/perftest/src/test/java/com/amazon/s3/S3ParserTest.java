@@ -38,7 +38,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 
 /**
- * // TODO: Adrian: Document this!
+ * Compares performance of xml parsing apis.
  * 
  * @author Adrian Cole
  */

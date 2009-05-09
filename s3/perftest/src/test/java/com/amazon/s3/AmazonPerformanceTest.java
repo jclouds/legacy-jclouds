@@ -38,11 +38,11 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 /**
- * // TODO: Adrian: Document this!
+ * Runs operations that amazon s3 sample code is capable of performing.
  * 
  * @author Adrian Cole
  */
-@Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "s3.AmazonPerformance")
+@Test(enabled = false, sequential = true, timeOut = 2 * 60 * 1000, testName = "s3.AmazonPerformance")
 public class AmazonPerformanceTest extends BasePerformance {
     private AWSAuthConnection amzClient;
 

@@ -39,6 +39,11 @@ import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 
+/**
+ * Compares performance of date operations
+ * 
+ * @author Adrian Cole
+ */
 @Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "s3.DateTest")
 public class DateServiceTest extends PerformanceTest {
     Injector i = Guice.createInjector();

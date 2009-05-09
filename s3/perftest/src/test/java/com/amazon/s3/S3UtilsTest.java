@@ -33,6 +33,12 @@ import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 
+/**
+ * Compares performance of encryption operations.
+ * 
+ * @author Adrian Cole
+ *
+ */
 @Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "s3.S3UtilsTest")
 public class S3UtilsTest extends org.jclouds.aws.s3.S3UtilsTest {
 
