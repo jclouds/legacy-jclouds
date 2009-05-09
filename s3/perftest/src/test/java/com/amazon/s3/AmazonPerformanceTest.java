@@ -42,7 +42,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(enabled = false, sequential = true, timeOut = 2 * 60 * 1000, testName = "s3.AmazonPerformance")
+@Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "s3.AmazonPerformance")
 public class AmazonPerformanceTest extends BasePerformance {
     private AWSAuthConnection amzClient;
 

@@ -37,7 +37,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(enabled = false, sequential = true, timeOut = 2 * 60 * 1000, testName = "s3.Jets3tPerformance")
+@Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "s3.Jets3tPerformance")
 public class Jets3tPerformanceTest extends BasePerformance {
     private S3Service jetClient;
 
@@ -55,12 +55,6 @@ public class Jets3tPerformanceTest extends BasePerformance {
 	throw new UnsupportedOperationException();
     }
 
-    @Override
-    @Test(enabled = false)
-    public void testPutStringParallel() throws InterruptedException,
-	    ExecutionException {
-	throw new UnsupportedOperationException();
-    }
 
     @Override
     @Test(enabled = false)
@@ -68,6 +62,13 @@ public class Jets3tPerformanceTest extends BasePerformance {
 	throw new UnsupportedOperationException();
     }
 
+    @Override
+    @Test(enabled = false)
+    public void testPutStringParallel() throws InterruptedException,
+	    ExecutionException {
+	throw new UnsupportedOperationException();
+    }
+    
     @Override
     @Test(enabled = false)
     public void testPutBytesParallel() throws InterruptedException,

@@ -23,9 +23,14 @@
  */
 package com.amazon.s3;
 
-
 import org.testng.annotations.Test;
 
+/**
+ * Tests the default JClouds client.
+ * 
+ * @author Adrian Cole
+ * 
+ */
 @Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "s3.JCloudsPerformance")
 public class JCloudsPerformanceTest extends BaseJCloudsPerformance {
 

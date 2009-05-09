@@ -116,6 +116,11 @@
                             <value>${jclouds.aws.secretaccesskey}</value>
                         </property>
                     </systemProperties>
+                    <excludes>
+                        <exclude>**/Jets3tPerformanceTest.java</exclude>
+                        <exclude>**/AmazonPerformanceTest.java</exclude>
+                        <exclude>**/S3UtilsTest.java</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
         </plugins>
