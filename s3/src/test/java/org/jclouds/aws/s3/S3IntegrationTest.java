@@ -84,8 +84,9 @@ public class S3IntegrationTest {
 	client.putObject(sourceBucket, object).get(10, TimeUnit.SECONDS);
     }
 
-    protected S3Object validateContent(String sourceBucket, String key) throws InterruptedException, ExecutionException,
-	    TimeoutException, IOException {
+    protected S3Object validateContent(String sourceBucket, String key)
+	    throws InterruptedException, ExecutionException, TimeoutException,
+	    IOException {
 	assertEquals(client.listBucket(sourceBucket).get(10, TimeUnit.SECONDS)
 		.getContents().size(), 1);
 	S3Object newObject = client.getObject(sourceBucket, key).get(10,
@@ -126,8 +127,8 @@ public class S3IntegrationTest {
     protected S3Connection client;
     protected S3Context context = null;
 
-    protected String bucketPrefix = System.getProperty("user.name") + "."
-	    + this.getClass().getSimpleName();
+    protected String bucketPrefix = (System.getProperty("user.name") + "." + this
+	    .getClass().getSimpleName()).toLowerCase();
 
     private static final String sysAWSAccessKeyId = System
 	    .getProperty(S3Constants.PROPERTY_AWS_ACCESSKEYID);
@@ -177,8 +178,8 @@ public class S3IntegrationTest {
 
     protected void deleteEverything() throws Exception {
 	try {
-	    List<S3Bucket.Metadata> metaData = client
-		    .getOwnedBuckets().get(10, TimeUnit.SECONDS);
+	    List<S3Bucket.Metadata> metaData = client.getOwnedBuckets().get(10,
+		    TimeUnit.SECONDS);
 	    List<Future<Boolean>> results = new ArrayList<Future<Boolean>>();
 	    for (S3Bucket.Metadata metaDatum : metaData) {
 		if (metaDatum.getName().startsWith(bucketPrefix.toLowerCase())) {

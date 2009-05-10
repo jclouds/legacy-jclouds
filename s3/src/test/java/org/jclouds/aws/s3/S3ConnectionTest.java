@@ -27,46 +27,24 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.aws.s3.domain.S3Bucket;
-import org.jclouds.aws.s3.domain.S3Object;
 import org.testng.annotations.Test;
 
-@Test(groups = "unit", testName = "s3.AmazonS3Test")
+/**
+ * Tests connection by listing all the buckets and their size
+ * 
+ * @author Adrian Cole
+ * 
+ */
+@Test(groups = "unit", testName = "s3.S3ConnectionTest")
 public class S3ConnectionTest extends S3IntegrationTest {
 
     @Test
     void testListBuckets() throws Exception {
-	listAllMyBuckets();
-    }
-
-    List<S3Bucket.Metadata> listAllMyBuckets() throws Exception {
-	return client.getOwnedBuckets().get(10, TimeUnit.SECONDS);
-    }
-
-    S3Object getObject() throws Exception {
-	return client.getObject(bucketPrefix + "adrianjbosstest", "3366").get(
-		10, TimeUnit.SECONDS);
-    }
-
-    S3Object.Metadata headObject() throws Exception {
-	String bucketName = bucketPrefix + "adrianjbosstest";
-	return client.headObject(bucketName, "3366").get(10,
+	List<S3Bucket.Metadata> myBuckets = client.getOwnedBuckets().get(10,
 		TimeUnit.SECONDS);
-    }
-
-    Boolean deleteBucket() throws Exception {
-	String bucketName = bucketPrefix + "adrianjbosstest";
-	return client.deleteBucketIfEmpty(bucketName).get(10, TimeUnit.SECONDS);
-    }
-
-    Boolean deleteObject() throws Exception {
-	String bucketName = bucketPrefix + "adrianjbosstest";
-	return client.deleteObject(bucketName, "3366")
-		.get(10, TimeUnit.SECONDS);
-    }
-
-    S3Bucket getBucket() throws Exception {
-	String bucketName = bucketPrefix + "adrianjbosstest";
-	return client.listBucket(bucketName).get(10, TimeUnit.SECONDS);
+	for (S3Bucket.Metadata bucket : myBuckets) {
+	    context.createInputStreamMap(bucket.getName()).size();
+	}
     }
 
 }

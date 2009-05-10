@@ -23,11 +23,17 @@
  */
 package org.jclouds.aws.s3.commands;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import org.jclouds.aws.s3.S3ResponseException;
 import org.jclouds.aws.s3.commands.options.ListBucketOptions;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.xml.ListBucketHandler;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
@@ -43,5 +49,36 @@ public class ListBucket extends S3FutureCommand<S3Bucket> {
 	ListBucketHandler handler = (ListBucketHandler) bucketParser
 		.getHandler();
 	handler.setBucketName(bucket);
+    }
+
+    @Override
+    public S3Bucket get() throws InterruptedException, ExecutionException {
+	try {
+	    return super.get();
+	} catch (ExecutionException e) {
+	    return attemptNotFound(e);
+	}
+    }
+
+    @VisibleForTesting
+    S3Bucket attemptNotFound(ExecutionException e) throws ExecutionException {
+	if (e.getCause() != null && e.getCause() instanceof S3ResponseException) {
+	    S3ResponseException responseException = (S3ResponseException) e
+		    .getCause();
+	    if ("NoSuchBucket".equals(responseException.getError().getCode())) {
+		return S3Bucket.NOT_FOUND;
+	    }
+	}
+	throw e;
+    }
+
+    @Override
+    public S3Bucket get(long l, TimeUnit timeUnit) throws InterruptedException,
+	    ExecutionException, TimeoutException {
+	try {
+	    return super.get(l, timeUnit);
+	} catch (ExecutionException e) {
+	    return attemptNotFound(e);
+	}
     }
 }

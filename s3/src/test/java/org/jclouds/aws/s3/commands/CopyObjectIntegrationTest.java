@@ -57,13 +57,13 @@ import com.google.common.collect.Multimap;
  */
 @Test(groups = "integration", testName = "s3.CopyObjectIntegrationTest")
 public class CopyObjectIntegrationTest extends S3IntegrationTest {
+    String sourceKey = "apples";
+    String destinationKey = "pears";
 
     @Test()
     void testCopyObject() throws Exception {
-	String sourceBucket = bucketPrefix + "testCopyObject";
-	String sourceKey = "apples";
-	String destinationBucket = bucketPrefix + "testCopyObjectDestination";
-	String destinationKey = "pears";
+	String sourceBucket = bucketPrefix + "testcopyobject";
+	String destinationBucket = sourceBucket + "dest";
 
 	setupSourceBucket(sourceBucket, sourceKey);
 
@@ -92,11 +92,8 @@ public class CopyObjectIntegrationTest extends S3IntegrationTest {
     @Test
     void testCopyIfModifiedSince() throws InterruptedException,
 	    ExecutionException, TimeoutException, IOException {
-	String sourceBucket = bucketPrefix + "testCopyIfModifiedSince";
-	String sourceKey = "apples";
-	String destinationBucket = bucketPrefix
-		+ "testCopyIfModifiedSinceDestination";
-	String destinationKey = "pears";
+	String sourceBucket = bucketPrefix + "tcims";
+	String destinationBucket = sourceBucket + "dest";
 
 	DateTime before = new DateTime();
 	setupSourceBucket(sourceBucket, sourceKey);
@@ -121,11 +118,8 @@ public class CopyObjectIntegrationTest extends S3IntegrationTest {
     @Test
     void testCopyIfUnmodifiedSince() throws InterruptedException,
 	    ExecutionException, TimeoutException, IOException {
-	String sourceBucket = bucketPrefix + "testCopyIfUnmodifiedSince";
-	String sourceKey = "apples";
-	String destinationBucket = bucketPrefix
-		+ "testCopyIfUnmodifiedSinceDestination";
-	String destinationKey = "pears";
+	String sourceBucket = bucketPrefix + "tcius";
+	String destinationBucket = sourceBucket + "dest";
 
 	DateTime before = new DateTime();
 	setupSourceBucket(sourceBucket, sourceKey);
@@ -150,13 +144,11 @@ public class CopyObjectIntegrationTest extends S3IntegrationTest {
     @Test
     void testCopyIfMatch() throws InterruptedException, ExecutionException,
 	    TimeoutException, IOException {
-	String sourceBucket = bucketPrefix + "testCopyIfMatch";
-	String sourceKey = "apples";
+	String sourceBucket = bucketPrefix + "tcim";
 	byte[] realMd5 = S3Utils.md5(TEST_STRING);
 	byte[] badMd5 = S3Utils.md5("alf");
 
-	String destinationBucket = bucketPrefix + "testCopyIfMatchDestination";
-	String destinationKey = "pears";
+	String destinationBucket = sourceBucket + "dest";
 
 	setupSourceBucket(sourceBucket, sourceKey);
 
@@ -179,14 +171,11 @@ public class CopyObjectIntegrationTest extends S3IntegrationTest {
     @Test
     void testCopyIfNoneMatch() throws IOException, InterruptedException,
 	    ExecutionException, TimeoutException {
-	String sourceBucket = bucketPrefix + "testCopyIfNoneMatch";
-	String sourceKey = "apples";
+	String sourceBucket = bucketPrefix + "tcinm";
 	byte[] realMd5 = S3Utils.md5(TEST_STRING);
 	byte[] badMd5 = S3Utils.md5("alf");
 
-	String destinationBucket = bucketPrefix
-		+ "testCopyIfNoneMatchDestination";
-	String destinationKey = "pears";
+	String destinationBucket = sourceBucket + "dest";
 
 	setupSourceBucket(sourceBucket, sourceKey);
 
@@ -209,11 +198,8 @@ public class CopyObjectIntegrationTest extends S3IntegrationTest {
     @Test
     void testCopyWithMetadata() throws InterruptedException,
 	    ExecutionException, TimeoutException, IOException {
-	String sourceBucket = bucketPrefix + "testCopyWithMetadata";
-	String sourceKey = "apples";
-	String destinationBucket = bucketPrefix
-		+ "testCopyWithMetadataDestination";
-	String destinationKey = "pears";
+	String sourceBucket = bucketPrefix + "tcwm";
+	String destinationBucket = sourceBucket + "dest";
 
 	setupSourceBucket(sourceBucket, sourceKey);
 

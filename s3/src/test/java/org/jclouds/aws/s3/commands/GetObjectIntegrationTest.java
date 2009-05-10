@@ -23,6 +23,10 @@
  */
 package org.jclouds.aws.s3.commands;
 
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+
 import org.jclouds.aws.s3.S3IntegrationTest;
 import org.testng.annotations.Test;
 
@@ -39,8 +43,20 @@ import org.testng.annotations.Test;
 public class GetObjectIntegrationTest extends S3IntegrationTest {
 
     @Test
-    void testGetIfModifiedSince() {
-	// TODO
+    void testGetIfModifiedSince() throws InterruptedException, ExecutionException, TimeoutException, IOException {
+	String bucket = bucketPrefix + "testGetIfModifiedSince".toLowerCase();
+	String key = "apples";
+
+	setUpBucket(bucket, key);
+
+    }
+
+    private void setUpBucket(String sourceBucket, String sourceKey)
+	    throws InterruptedException, ExecutionException, TimeoutException,
+	    IOException {
+	createBucketAndEnsureEmpty(sourceBucket);
+	addObjectToBucket(sourceBucket, sourceKey);
+	validateContent(sourceBucket, sourceKey);
     }
 
     @Test

@@ -23,6 +23,7 @@
  */
 package org.jclouds.aws.s3.commands;
 
+import org.jclouds.aws.s3.S3Utils;
 import org.jclouds.aws.s3.commands.options.PutBucketOptions;
 import org.jclouds.http.HttpHeaders;
 import org.jclouds.http.commands.callables.ReturnTrueIf2xx;
@@ -41,9 +42,10 @@ public class PutBucket extends S3FutureCommand<Boolean> {
 
     @Inject
     public PutBucket(@Named("jclouds.http.address") String amazonHost,
-	    ReturnTrueIf2xx callable, @Assisted String s3Bucket,
+	    ReturnTrueIf2xx callable, @Assisted String bucketName,
 	    @Assisted PutBucketOptions options) {
-	super("PUT", "/", callable, amazonHost, s3Bucket);
+	super("PUT", "/", callable, amazonHost, S3Utils
+		.validateBucketName(bucketName));
 	getRequest().getHeaders().putAll(options.buildRequestHeaders());
 	String payload = options.buildPayload();
 	if (payload != null) {
@@ -52,5 +54,4 @@ public class PutBucket extends S3FutureCommand<Boolean> {
 		    payload.getBytes().length + "");
 	}
     }
-
 }

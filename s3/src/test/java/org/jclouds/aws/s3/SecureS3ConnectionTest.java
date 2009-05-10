@@ -28,18 +28,20 @@ import org.testng.annotations.Test;
 import java.util.Properties;
 
 /**
- * // TODO: Adrian: Document this!
- *
+ * This performs the same test as {@link S3ConnectionTest}, except using SSL.
+ * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", sequential = true, testName = "s3.AmazonS3SSLTest")
-public class AmazonS3SSLTest extends S3ConnectionTest {
+@Test(groups = "unit", testName = "s3.SecureS3ConnectionTest")
+public class SecureS3ConnectionTest extends S3ConnectionTest {
     @Override
-    protected Properties buildS3Properties(String AWSAccessKeyId, String AWSSecretAccessKey) {
-        Properties properties = super.buildS3Properties(AWSAccessKeyId, AWSSecretAccessKey);
-        properties.setProperty("jclouds.http.secure", Boolean.toString(true));
+    protected Properties buildS3Properties(String AWSAccessKeyId,
+	    String AWSSecretAccessKey) {
+	Properties properties = super.buildS3Properties(AWSAccessKeyId,
+		AWSSecretAccessKey);
+	properties.setProperty("jclouds.http.secure", Boolean.toString(true));
 	properties.setProperty("jclouds.http.port", "443");
-        return properties;
+	return properties;
     }
 
 }

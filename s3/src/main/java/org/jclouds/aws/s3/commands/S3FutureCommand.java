@@ -43,10 +43,9 @@ public class S3FutureCommand<T> extends HttpFutureCommand<T> {
 	addHostHeader(checkNotNull(amazonHost, "amazonHost"));
     }
 
+   
     protected void addHostHeader(String amazonHost, String bucketName) {
-	String host = checkNotNull(bucketName, "s3Bucket.getName()") + "."
-		+ amazonHost;
-	addHostHeader(host.toLowerCase());
+	addHostHeader(checkNotNull(bucketName) + "." + amazonHost);
     }
-
+  
 }

@@ -78,14 +78,14 @@ public class S3CommandFactoryTest {
 
     @Test
     void testCreateCopyObject() {
-	assert commandFactory.createCopyObject("sourceBucket", "sourceObject",
-		"destBucket", "destObject", CopyObjectOptions.NONE) != null;
+	assert commandFactory.createCopyObject("sourcebucket", "sourceObject",
+		"destbucket", "destObject", CopyObjectOptions.NONE) != null;
     }
 
     @Test
     void testCreateCopyObjectOptions() {
-	assert commandFactory.createCopyObject("sourceBucket", "sourceObject",
-		"destBucket", "destObject", new CopyObjectOptions()) != null;
+	assert commandFactory.createCopyObject("sourcebucket", "sourceObject",
+		"destbucket", "destObject", new CopyObjectOptions()) != null;
     }
 
     @Test

@@ -23,7 +23,8 @@
  */
 package org.jclouds.aws.s3;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,6 +34,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -45,6 +47,24 @@ import org.jclouds.Utils;
 import org.jclouds.aws.s3.domain.S3Object;
 
 public class S3Utils extends Utils {
+
+    private static final Pattern IP_PATTERN = Pattern
+	    .compile("b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).)"
+		    + "{3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)b");
+
+    public static String validateBucketName(String bucketName) {
+	checkNotNull(bucketName, "bucketName");
+	checkArgument(bucketName.matches("^[a-z0-9].*"),
+		"bucket name must start with a number or letter");
+	checkArgument(
+		bucketName.matches("^[-_.a-z0-9]+"),
+		"bucket name can only contain lowercase letters, numbers, periods (.), underscores (_), and dashes (-)");
+	checkArgument(bucketName.length() > 2 && bucketName.length() < 256,
+		"bucket name must be between 3 and 255 characters long");
+	checkArgument(!IP_PATTERN.matcher(bucketName).matches(),
+		"bucket name cannot be ip address style");
+	return bucketName;
+    }
 
     static final byte[] HEX_CHAR_TABLE = { (byte) '0', (byte) '1', (byte) '2',
 	    (byte) '3', (byte) '4', (byte) '5', (byte) '6', (byte) '7',

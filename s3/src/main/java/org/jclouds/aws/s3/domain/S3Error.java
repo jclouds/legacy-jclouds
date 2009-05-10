@@ -32,6 +32,7 @@ public class S3Error {
     private String header;
     private String signatureProvided;
     private String stringToSign;
+    private String stringSigned;
     private String stringToSignBytes;
 
     @Override
@@ -47,6 +48,7 @@ public class S3Error {
 	sb.append(", signatureProvided='").append(signatureProvided).append(
 		'\'');
 	sb.append(", stringToSign='").append(stringToSign).append('\'');
+	sb.append(", stringSigned='").append(getStringSigned()).append('\'');
 	sb.append(", stringToSignBytes='").append(stringToSignBytes).append(
 		'\'');
 	sb.append('}');
@@ -123,5 +125,13 @@ public class S3Error {
 
     public String getHeader() {
 	return header;
+    }
+
+    public void setStringSigned(String stringSigned) {
+	this.stringSigned = stringSigned;
+    }
+
+    public String getStringSigned() {
+	return stringSigned;
     }
 }

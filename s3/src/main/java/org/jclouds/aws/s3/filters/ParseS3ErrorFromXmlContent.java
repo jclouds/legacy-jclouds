@@ -64,6 +64,9 @@ public class ParseS3ErrorFromXmlContent implements HttpResponseHandler {
 		try {
 		    S3Error error = parserFactory.createErrorParser().parse(
 			    errorStream);
+		    if ("SignatureDoesNotMatch".equals(error.getCode()))
+			error.setStringSigned(RequestAuthorizeSignature
+				.createStringToSign(command.getRequest()));
 		    logger.trace("received the following error from s3: %1s",
 			    error);
 		    command.setException(new S3ResponseException(command,

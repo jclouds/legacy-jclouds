@@ -24,10 +24,11 @@
 package org.jclouds.aws.s3.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import org.joda.time.DateTime;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import org.joda.time.DateTime;
 
 /**
  * A container that provides namespace, access control and aggregation of
@@ -129,7 +130,7 @@ public class S3Bucket {
 	private S3Owner canonicalUser;
 
 	public Metadata(String name) {
-	    this.name = checkNotNull(name, "name").toLowerCase();
+	    this.name = checkNotNull(name, "name");
 	}
 
 	public String getName() {

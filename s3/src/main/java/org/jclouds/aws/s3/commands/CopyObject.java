@@ -52,7 +52,7 @@ public class CopyObject extends S3FutureCommand<S3Object.Metadata> {
 	getRequest().getHeaders().put(
 		"x-amz-copy-source",
 		String.format("/%1s/%2s", checkNotNull(sourceBucket,
-			"sourceBucket").toLowerCase(), checkNotNull(
+			"sourceBucket"), checkNotNull(
 			sourceObject, "sourceObject")));
 	getRequest().getHeaders().putAll(options.buildRequestHeaders());
     }
