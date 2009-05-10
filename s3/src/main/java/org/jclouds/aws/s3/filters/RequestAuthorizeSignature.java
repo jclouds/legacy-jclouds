@@ -24,6 +24,8 @@
 package org.jclouds.aws.s3.filters;
 
 import java.util.Collection;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -130,11 +132,12 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
     }
 
     private void appendAmzHeaders(HttpRequest request, StringBuilder toSign) {
-	for (String header : request.getHeaders().keySet()) {
+	Set<String> headers = new TreeSet<String>(request.getHeaders().keySet());
+	for (String header : headers) {
 	    if (header.startsWith("x-amz-")) {
 		toSign.append(header).append(":");
 		for (String value : request.getHeaders().get(header))
-		    toSign.append(value.replaceAll("\r?\n", " ")).append(",");
+		    toSign.append(value.replaceAll("\r?\n", "")).append(",");
 		toSign.deleteCharAt(toSign.lastIndexOf(","));
 		toSign.append("\n");
 	    }

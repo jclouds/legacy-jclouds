@@ -28,6 +28,12 @@ import java.util.Collection;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
+/**
+ * Provides base functionality of HTTP requests and responses.
+ * 
+ * @author Adrian Cole
+ *
+ */
 public class HttpMessage {
 
     protected Multimap<String, String> headers = HashMultimap.create();

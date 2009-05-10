@@ -235,8 +235,10 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
     public Multimap<String, String> buildRequestHeaders() {
 	Multimap<String, String> returnVal = HashMultimap.create();
 	returnVal.putAll(headers);
-	if (metadata != null)
+	if (metadata != null) {
 	    returnVal.putAll(metadata);
+	    returnVal.put("x-amz-metadata-directive", "REPLACE");
+	}
 	return returnVal;
     }
 
@@ -250,7 +252,6 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
 	    checkArgument(header.startsWith("x-amz-meta-"),
 		    "Metadata keys must start with x-amz-meta-");
 	}
-	metadata.put("x-amz-copy-source-if-unmodified-since", "REPLACE");
 	this.metadata = metadata;
 	return this;
     }
