@@ -28,9 +28,10 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
 
-import org.jclouds.aws.s3.S3Headers;
 import org.jclouds.aws.s3.domain.acl.CannedAccessPolicy;
+import org.jclouds.aws.s3.reference.S3Headers;
 import org.testng.annotations.Test;
+
 
 import com.google.common.collect.Multimap;
 

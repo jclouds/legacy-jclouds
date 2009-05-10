@@ -97,7 +97,7 @@ public class HttpNioFutureCommandConnectionPool extends
 			    ioReactor.execute(dispatch);
 			} catch (IOException e) {
 			    exception.set(e);
-			    logger.error(e, "Error dispatching %1s", dispatch);
+			    logger.error(e, "Error dispatching %1$s", dispatch);
 			    status = Status.SHUTDOWN_REQUEST;
 			}
 		    }
@@ -125,7 +125,7 @@ public class HttpNioFutureCommandConnectionPool extends
     public void shutdownConnection(NHttpConnection conn) {
 	if (conn.getMetrics().getRequestCount() >= maxConnectionReuse)
 	    logger.debug(
-		    "%1s - %2d - closing connection due to overuse %1s/%2s",
+		    "%1$s - %2$d - closing connection due to overuse %1$s/%2$s",
 		    conn, conn.hashCode(), conn.getMetrics().getRequestCount(),
 		    maxConnectionReuse);
 	if (conn.getStatus() == NHttpConnection.ACTIVE) {
@@ -155,7 +155,7 @@ public class HttpNioFutureCommandConnectionPool extends
 	boolean acquired = allConnections.tryAcquire(1, TimeUnit.SECONDS);
 	if (acquired) {
 	    if (shouldDoWork()) {
-		logger.debug("%1s - opening new connection", target);
+		logger.debug("%1$s - opening new connection", target);
 		ioReactor.connect(target, null, null, sessionCallback);
 	    } else {
 		allConnections.release();
@@ -181,13 +181,13 @@ public class HttpNioFutureCommandConnectionPool extends
 	    SessionRequestCallback {
 
 	public void completed(SessionRequest request) {
-	    logger.trace("%1s->%2s[%3s] - SessionRequest complete", request
+	    logger.trace("%1$s->%2$s[%3$s] - SessionRequest complete", request
 		    .getLocalAddress(), request.getRemoteAddress(), request
 		    .getAttachment());
 	}
 
 	public void cancelled(SessionRequest request) {
-	    logger.trace("%1s->%2s[%3s] - SessionRequest cancelled", request
+	    logger.trace("%1$s->%2$s[%3$s] - SessionRequest cancelled", request
 		    .getLocalAddress(), request.getRemoteAddress(), request
 		    .getAttachment());
 	    releaseConnectionAndCancelResponse(request);
@@ -198,7 +198,7 @@ public class HttpNioFutureCommandConnectionPool extends
 	    FutureCommand<?, ?, ?> frequest = (FutureCommand<?, ?, ?>) request
 		    .getAttachment();
 	    if (frequest != null) {
-		logger.error("%1s->%2s[%3s] - Cancelling FutureCommand",
+		logger.error("%1$s->%2$s[%3$s] - Cancelling FutureCommand",
 			request.getLocalAddress(), request.getRemoteAddress(),
 			frequest);
 		frequest.cancel(true);
@@ -212,7 +212,7 @@ public class HttpNioFutureCommandConnectionPool extends
 		    .getAttachment();
 	    if (frequest != null) {
 		logger.error(e,
-			"%1s->%2s[%3s] - Setting Exception on FutureCommand",
+			"%1$s->%2$s[%3$s] - Setting Exception on FutureCommand",
 			request.getLocalAddress(), request.getRemoteAddress(),
 			frequest);
 		frequest.setException(e);
@@ -221,7 +221,7 @@ public class HttpNioFutureCommandConnectionPool extends
 
 	public void failed(SessionRequest request) {
 	    int count = currentSessionFailures.getAndIncrement();
-	    logger.warn("%1s->%2s[%3s] - SessionRequest failed", request
+	    logger.warn("%1$s->%2$s[%3$s] - SessionRequest failed", request
 		    .getLocalAddress(), request.getRemoteAddress(), request
 		    .getAttachment());
 	    releaseConnectionAndSetResponseException(request, request
@@ -230,7 +230,7 @@ public class HttpNioFutureCommandConnectionPool extends
 		logger
 			.error(
 				request.getException(),
-				"%1s->%2s[%3s] - SessionRequest failures: %4s, Disabling pool for %5s",
+				"%1$s->%2$s[%3$s] - SessionRequest failures: %4$s, Disabling pool for %5$s",
 				request.getLocalAddress(), request
 					.getRemoteAddress(),
 				maxSessionFailures, target);
@@ -240,7 +240,7 @@ public class HttpNioFutureCommandConnectionPool extends
 	}
 
 	public void timeout(SessionRequest request) {
-	    logger.warn("%1s->%2s[%3s] - SessionRequest timeout", request
+	    logger.warn("%1$s->%2$s[%3$s] - SessionRequest timeout", request
 		    .getLocalAddress(), request.getRemoteAddress(), request
 		    .getAttachment());
 	    releaseConnectionAndCancelResponse(request);
@@ -251,28 +251,28 @@ public class HttpNioFutureCommandConnectionPool extends
     public void connectionOpen(NHttpConnection conn) {
 	conn.setSocketTimeout(0);
 	available.offer(conn);
-	logger.trace("%1s - %2d - open", conn, conn.hashCode());
+	logger.trace("%1$s - %2$d - open", conn, conn.hashCode());
     }
 
     public void connectionTimeout(NHttpConnection conn) {
-	String message = String.format("%1s - %2d - timeout  %2d", conn, conn
+	String message = String.format("%1$s - %2$d - timeout  %2$d", conn, conn
 		.hashCode(), conn.getSocketTimeout());
 	logger.warn(message);
 	resubmitIfRequestIsReplayable(conn, new TimeoutException(message));
     }
 
     public void connectionClosed(NHttpConnection conn) {
-	logger.trace("%1s - %2d - closed", conn, conn.hashCode());
+	logger.trace("%1$s - %2$d - closed", conn, conn.hashCode());
     }
 
     public void fatalIOException(IOException ex, NHttpConnection conn) {
-	logger.error(ex, "%3s-%1d{%2s} - io error", conn, conn.hashCode(),
+	logger.error(ex, "%3$s-%1$d{%2$s} - io error", conn, conn.hashCode(),
 		target);
 	resubmitIfRequestIsReplayable(conn, ex);
     }
 
     public void fatalProtocolException(HttpException ex, NHttpConnection conn) {
-	logger.error(ex, "%3s-%1d{%2s} - http error", conn, conn.hashCode(),
+	logger.error(ex, "%3$s-%1$d{%2$s} - http error", conn, conn.hashCode(),
 		target);
 	setExceptionOnCommand(conn, ex);
     }

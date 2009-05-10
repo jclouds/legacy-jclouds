@@ -27,7 +27,20 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Map;
 
-public interface S3InputStreamMap extends Map<String, InputStream>, S3Map {
+/**
+ * Map view of an {@link S3Bucket}. Provides additional methods for inserting
+ * common object types.
+ * 
+ * <h2>Note</h2> All <code>put</code> operations will invoke
+ * {@link S3Object#generateMd5}. By extension, {@link #put(String, InputStream)}
+ * will result in the InputStream being converted to a byte array. For this
+ * reason, do not use {@link #put(String, InputStream)} to store files. Use
+ * {@link #putFile(String, File)} or {@link S3ObjectMap} instead.
+ * 
+ * @author Adrian Cole
+ * 
+ */
+public interface S3InputStreamMap extends S3Map<String, InputStream> {
     InputStream putString(String key, String value);
 
     InputStream putFile(String key, File value);

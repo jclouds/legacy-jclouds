@@ -59,13 +59,13 @@ public class JavaUrlHttpFutureCommandClient extends BaseHttpFutureCommandClient 
 		for (HttpRequestFilter filter : requestFilters) {
 		    filter.filter(request);
 		}
-		logger.trace("%1s - converting request %2s", target, request);
+		logger.trace("%1$s - converting request %2$s", target, request);
 		connection = openJavaConnection(request);
 		logger
-			.trace("%1s - submitting request %2s", target,
+			.trace("%1$s - submitting request %2$s", target,
 				connection);
 		response = getResponse(connection);
-		logger.trace("%1s - received response %2s", target, response);
+		logger.trace("%1$s - received response %2$s", target, response);
 		if (isRetryable(command, response))
 		    continue;
 		break;

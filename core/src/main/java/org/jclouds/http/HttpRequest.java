@@ -74,7 +74,7 @@ public class HttpRequest extends HttpMessage {
     public boolean isReplayable() {
 	Object content = getPayload();
 	if (content != null && content instanceof InputStream) {
-	    logger.warn("%1s: InputStreams are not replayable", toString());
+	    logger.warn("%1$s: InputStreams are not replayable", toString());
 	    return false;
 	}
 	return true;

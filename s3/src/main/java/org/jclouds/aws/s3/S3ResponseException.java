@@ -26,31 +26,50 @@ package org.jclouds.aws.s3;
 import org.jclouds.aws.s3.domain.S3Error;
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.HttpResponseException;
 
-public class S3ResponseException extends RuntimeException {
+/**
+ * Encapsulates an S3 Error from Amazon.
+ * 
+ * @see http
+ *      ://docs.amazonwebservices.com/AmazonS3/2006-03-01/UsingRESTError.html
+ * @see S3Error
+ * @see ParseS3ErrorFromXmlContent
+ * @author Adrian Cole
+ * 
+ */
+public class S3ResponseException extends HttpResponseException {
+
     private static final long serialVersionUID = 1L;
 
-    private final HttpFutureCommand<?> command;
-    private final HttpResponse response;
-    private S3Error error;
+    private S3Error error = new S3Error();
 
     public S3ResponseException(HttpFutureCommand<?> command,
 	    HttpResponse response, S3Error error) {
-	super(String.format(
-		"command: %1s failed with response: %2s; error from s3: %3s",
-		command, response, error));
-	this.command = command;
-	this.response = response;
+	super(error.toString(), command, response);
 	this.setError(error);
 
     }
 
     public S3ResponseException(HttpFutureCommand<?> command,
-	    HttpResponse response) {
-	super(String.format("command: %1s failed with response: %2s", command,
-		response));
-	this.command = command;
-	this.response = response;
+	    HttpResponse response, S3Error error, Throwable cause) {
+	super(error.toString(), command, response, cause);
+	this.setError(error);
+
+    }
+
+    public S3ResponseException(String message, HttpFutureCommand<?> command,
+	    HttpResponse response, S3Error error) {
+	super(message, command, response);
+	this.setError(error);
+
+    }
+
+    public S3ResponseException(String message, HttpFutureCommand<?> command,
+	    HttpResponse response, S3Error error, Throwable cause) {
+	super(message, command, response, cause);
+	this.setError(error);
+
     }
 
     public void setError(S3Error error) {
@@ -59,14 +78,6 @@ public class S3ResponseException extends RuntimeException {
 
     public S3Error getError() {
 	return error;
-    }
-
-    public HttpFutureCommand<?> getCommand() {
-	return command;
-    }
-
-    public HttpResponse getResponse() {
-	return response;
     }
 
 }

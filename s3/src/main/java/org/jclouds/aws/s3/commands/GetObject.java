@@ -43,8 +43,28 @@ import com.google.inject.name.Named;
  * Retrieves the S3Object associated with the Key or {@link S3Object#NOT_FOUND}
  * if not available;
  * 
- * @author Adrian Cole
+ * <p/>
+ * To use GET, you must have READ access to the object. If READ access is
+ * granted to the anonymous user, you can request the object without an
+ * authorization header.
+ * <p />
+ * <p/>
+ * This command allows you to specify {@link GetObjectOptions} to control
+ * delivery of content.
  * 
+ * <h2>Note</h2> If you specify any of the below options, you will receive
+ * partial content:
+ * <ul>
+ * <li>{@link GetObjectOptions#range}</li>
+ * <li>{@link GetObjectOptions#startAt}</li>
+ * <li>{@link GetObjectOptions#tail}</li>
+ * </ul>
+ * 
+ * @see GetObjectOptions
+ * @see http 
+ *      ://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTObjectGET
+ *      .html
+ * @author Adrian Cole
  */
 public class GetObject extends S3FutureCommand<S3Object> {
 

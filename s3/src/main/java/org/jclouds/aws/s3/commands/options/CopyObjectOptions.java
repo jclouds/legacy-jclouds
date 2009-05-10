@@ -29,8 +29,10 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.io.UnsupportedEncodingException;
 
-import org.jclouds.aws.s3.DateService;
-import org.jclouds.aws.s3.S3Utils;
+import org.jclouds.aws.s3.domain.acl.CannedAccessPolicy;
+import org.jclouds.aws.s3.reference.S3Headers;
+import org.jclouds.aws.s3.util.DateService;
+import org.jclouds.aws.s3.util.S3Utils;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 import org.joda.time.DateTime;
 
@@ -55,7 +57,7 @@ import com.google.common.collect.Multimap;
  * 
  * // this will copy the object, provided it wasn't modified since yesterday.
  * // it will not use metadata from the source, and instead use what we pass in.
- * Future<S3Object.MetaData> object = connection.copyObject("sourceBucket", "objectName",
+ * Future<S3Object.Metadata> object = connection.copyObject("sourceBucket", "objectName",
  *                                                          "destinationBucket", "destinationName",
  *                                                           overrideMetadataWith(meta).
  *                                                           ifSourceModifiedSince(new DateTime().minusDays(1))
@@ -75,6 +77,27 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
 
     private Multimap<String, String> metadata;
 
+    private CannedAccessPolicy acl = CannedAccessPolicy.PRIVATE;
+
+    /**
+     * Override the default ACL (private) with the specified one.
+     * 
+     * @see CannedAccessPolicy
+     */
+    public CopyObjectOptions overrideAcl(CannedAccessPolicy acl) {
+	this.acl = checkNotNull(acl, "acl");
+	if (!acl.equals(CannedAccessPolicy.PRIVATE))
+	    this.replaceHeader(S3Headers.CANNED_ACL, acl.toString());
+	return this;
+    }
+
+    /**
+     * @see CopyObjectOptions#overrideAcl(CannedAccessPolicy)
+     */
+    public CannedAccessPolicy getAcl() {
+	return acl;
+    }
+    
     /**
      * For use in the header x-amz-copy-source-if-unmodified-since
      * <p />
@@ -201,7 +224,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
 		"ifMd5DoesntMatch() is not compatible with ifMd5Matches()");
 	checkState(getIfModifiedSince() == null,
 		"ifModifiedSince() is not compatible with ifMd5Matches()");
-	replaceHeader("x-amz-copy-source-if-match", String.format("\"%1s\"",
+	replaceHeader("x-amz-copy-source-if-match", String.format("\"%1$s\"",
 		S3Utils.toHexString(checkNotNull(md5, "md5"))));
 	return this;
     }
@@ -226,7 +249,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
 		.checkState(getIfUnmodifiedSince() == null,
 			"ifUnmodifiedSince() is not compatible with ifMd5DoesntMatch()");
 	replaceHeader("x-amz-copy-source-if-none-match", String.format(
-		"\"%1s\"", S3Utils.toHexString(checkNotNull(md5,
+		"\"%1$s\"", S3Utils.toHexString(checkNotNull(md5,
 			"ifMd5DoesntMatch"))));
 	return this;
     }
@@ -257,7 +280,14 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
     }
 
     public static class Builder {
-
+	/**
+	 * @see CopyObjectOptions#overrideAcl(CannedAccessPolicy)
+	 */
+	public static CopyObjectOptions overrideAcl(CannedAccessPolicy acl) {
+	    CopyObjectOptions options = new CopyObjectOptions();
+	    return options.overrideAcl(acl);
+	}
+	
 	/**
 	 * @see CopyObjectOptions#getIfModifiedSince()
 	 */

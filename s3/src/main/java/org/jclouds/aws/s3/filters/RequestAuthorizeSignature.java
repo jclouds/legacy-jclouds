@@ -29,13 +29,14 @@ import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.jclouds.aws.s3.DateService;
-import org.jclouds.aws.s3.S3Constants;
-import org.jclouds.aws.s3.S3Utils;
+import org.jclouds.aws.s3.reference.S3Constants;
+import org.jclouds.aws.s3.util.DateService;
+import org.jclouds.aws.s3.util.S3Utils;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpHeaders;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
+
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;

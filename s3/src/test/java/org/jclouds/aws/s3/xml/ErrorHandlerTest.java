@@ -23,14 +23,13 @@
  */
 package org.jclouds.aws.s3.xml;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.s3.domain.S3Error;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 import org.testng.annotations.Test;
-
 
 @Test
 public class ErrorHandlerTest extends BaseHandlerTest {
@@ -46,9 +45,9 @@ public class ErrorHandlerTest extends BaseHandlerTest {
 	assertEquals(error.getCode(), "NotImplemented");
 	assertEquals(error.getMessage(),
 		"A header you provided implies functionality that is not implemented");
-	assertEquals(error.getHeader(), "Transfer-Encoding");
+	assertEquals(error.getDetails().get("Header"), "Transfer-Encoding");
 	assertEquals(error.getRequestId(), "7C59925D75D15561");
-	assertEquals(error.getHostId(),
+	assertEquals(error.getDetails().get("HostId"),
 		"fbskVU51OZJg2yZS/wNIxoE2PmCf0ZqFd0iH6Vrzw0uKG3KmokswBytL/Bfp/GWb");
     }
 

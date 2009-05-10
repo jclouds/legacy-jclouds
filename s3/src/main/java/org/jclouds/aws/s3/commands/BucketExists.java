@@ -29,7 +29,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.aws.s3.S3ResponseException;
+import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.commands.callables.ReturnTrueIf2xx;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -37,6 +37,12 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 
+/**
+ * Issues a HEAD command to determine if the bucket exists or not.
+ * 
+ * @author Adrian Cole
+ * 
+ */
 public class BucketExists extends S3FutureCommand<Boolean> {
 
     @Inject
@@ -57,8 +63,9 @@ public class BucketExists extends S3FutureCommand<Boolean> {
 
     @VisibleForTesting
     Boolean attemptNotFound(ExecutionException e) throws ExecutionException {
-	if (e.getCause() != null && e.getCause() instanceof S3ResponseException) {
-	    S3ResponseException responseException = (S3ResponseException) e
+	if (e.getCause() != null
+		&& e.getCause() instanceof HttpResponseException) {
+	    HttpResponseException responseException = (HttpResponseException) e
 		    .getCause();
 	    if (responseException.getResponse().getStatusCode() == 404) {
 		return false;

@@ -73,7 +73,7 @@ public abstract class FutureCommandConnectionHandle<C, O extends FutureCommand<?
 	if (isCompleted()) {
 	    return;
 	}
-	logger.trace("%1s - %2d - releasing to pool", conn, conn.hashCode());
+	logger.trace("%1$s - %2$d - releasing to pool", conn, conn.hashCode());
 	available.put(conn);
 	conn = null;
 	command = null;
@@ -85,7 +85,7 @@ public abstract class FutureCommandConnectionHandle<C, O extends FutureCommand<?
 	    return;
 	}
 	if (conn != null) {
-	    logger.trace("%1s - %2d - cancelled; shutting down connection",
+	    logger.trace("%1$s - %2$d - cancelled; shutting down connection",
 		    conn, conn.hashCode());
 	    try {
 		shutdownConnection();

@@ -46,37 +46,23 @@ import com.google.inject.assistedinject.FactoryProvider;
  * @author Adrian Cole
  */
 public class S3ParserModule extends AbstractModule {
+    private final TypeLiteral<S3ParserFactory.GenericParseFactory<List<S3Bucket.Metadata>>> listBucketsTypeLiteral = new TypeLiteral<S3ParserFactory.GenericParseFactory<List<S3Bucket.Metadata>>>() {
+    };
+    private final TypeLiteral<S3ParserFactory.GenericParseFactory<S3Bucket>> bucketTypeLiteral = new TypeLiteral<S3ParserFactory.GenericParseFactory<S3Bucket>>() {
+    };
+    private final TypeLiteral<S3ParserFactory.GenericParseFactory<S3Object.Metadata>> objectMetadataTypeLiteral = new TypeLiteral<S3ParserFactory.GenericParseFactory<S3Object.Metadata>>() {
+    };
+    private final TypeLiteral<S3ParserFactory.GenericParseFactory<S3Error>> errorTypeLiteral = new TypeLiteral<S3ParserFactory.GenericParseFactory<S3Error>>() {
+    };
+
     @Override
     protected void configure() {
 	install(new SaxModule());
+	bindCallablesThatReturnParseResults();
+	bindParserImplementationsToReturnTypes();
+    }
 
-	final TypeLiteral<S3ParserFactory.GenericParseFactory<List<S3Bucket.Metadata>>> listBucketsTypeLiteral = new TypeLiteral<S3ParserFactory.GenericParseFactory<List<S3Bucket.Metadata>>>() {
-	};
-	final TypeLiteral<S3ParserFactory.GenericParseFactory<S3Bucket>> bucketTypeLiteral = new TypeLiteral<S3ParserFactory.GenericParseFactory<S3Bucket>>() {
-	};
-	final TypeLiteral<S3ParserFactory.GenericParseFactory<S3Object.Metadata>> objectMetaDataTypeLiteral = new TypeLiteral<S3ParserFactory.GenericParseFactory<S3Object.Metadata>>() {
-	};
-	final TypeLiteral<S3ParserFactory.GenericParseFactory<S3Error>> errorTypeLiteral = new TypeLiteral<S3ParserFactory.GenericParseFactory<S3Error>>() {
-	};
-
-	bind(listBucketsTypeLiteral).toProvider(
-		FactoryProvider.newFactory(listBucketsTypeLiteral,
-			new TypeLiteral<ParseSax<List<S3Bucket.Metadata>>>() {
-			}));
-	bind(bucketTypeLiteral).toProvider(
-		FactoryProvider.newFactory(bucketTypeLiteral,
-			new TypeLiteral<ParseSax<S3Bucket>>() {
-			}));
-	bind(objectMetaDataTypeLiteral).toProvider(
-		FactoryProvider.newFactory(objectMetaDataTypeLiteral,
-			new TypeLiteral<ParseSax<S3Object.Metadata>>() {
-			}));
-	bind(errorTypeLiteral).toProvider(
-		FactoryProvider.newFactory(errorTypeLiteral,
-			new TypeLiteral<ParseSax<S3Error>>() {
-			}));
-
-	// Bind the implementations of handlers to the interfaces they implement
+    private void bindParserImplementationsToReturnTypes() {
 	bind(
 		new TypeLiteral<ParseSax.HandlerWithResult<List<S3Bucket.Metadata>>>() {
 		}).to(ListAllMyBucketsHandler.class);
@@ -86,6 +72,25 @@ public class S3ParserModule extends AbstractModule {
 	}).to(CopyObjectHandler.class);
 	bind(new TypeLiteral<ParseSax.HandlerWithResult<S3Error>>() {
 	}).to(ErrorHandler.class);
+    }
+
+    private void bindCallablesThatReturnParseResults() {
+	bind(listBucketsTypeLiteral).toProvider(
+		FactoryProvider.newFactory(listBucketsTypeLiteral,
+			new TypeLiteral<ParseSax<List<S3Bucket.Metadata>>>() {
+			}));
+	bind(bucketTypeLiteral).toProvider(
+		FactoryProvider.newFactory(bucketTypeLiteral,
+			new TypeLiteral<ParseSax<S3Bucket>>() {
+			}));
+	bind(objectMetadataTypeLiteral).toProvider(
+		FactoryProvider.newFactory(objectMetadataTypeLiteral,
+			new TypeLiteral<ParseSax<S3Object.Metadata>>() {
+			}));
+	bind(errorTypeLiteral).toProvider(
+		FactoryProvider.newFactory(errorTypeLiteral,
+			new TypeLiteral<ParseSax<S3Error>>() {
+			}));
     }
 
 }

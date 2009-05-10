@@ -23,17 +23,25 @@
  */
 package org.jclouds.aws.s3.domain;
 
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * When an Amazon S3 request is in error, the client receives an error response.
+ * 
+ * @see http
+ *      ://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?ErrorResponse
+ *      .html
+ * @author Adrian Cole
+ * 
+ */
 public class S3Error {
     private String code;
     private String message;
-    private String resource;
     private String requestId;
-    private String hostId;
-    private String header;
-    private String signatureProvided;
-    private String stringToSign;
+    private String requestToken;
+    private Map<String, String> details = new HashMap<String, String>();
     private String stringSigned;
-    private String stringToSignBytes;
 
     @Override
     public String toString() {
@@ -41,17 +49,12 @@ public class S3Error {
 	sb.append("S3Error");
 	sb.append("{code='").append(code).append('\'');
 	sb.append(", message='").append(message).append('\'');
-	sb.append(", resource='").append(resource).append('\'');
 	sb.append(", requestId='").append(requestId).append('\'');
-	sb.append(", hostId='").append(hostId).append('\'');
-	sb.append(", header='").append(header).append('\'');
-	sb.append(", signatureProvided='").append(signatureProvided).append(
-		'\'');
-	sb.append(", stringToSign='").append(stringToSign).append('\'');
-	sb.append(", stringSigned='").append(getStringSigned()).append('\'');
-	sb.append(", stringToSignBytes='").append(stringToSignBytes).append(
-		'\'');
-	sb.append('}');
+	sb.append(", requestToken='").append(requestToken).append('\'');
+	if (stringSigned != null)
+	    sb.append(", stringSigned='").append(stringSigned).append('\'');
+	sb.append(", context='").append(details.toString()).append('\'')
+		.append('}');
 	return sb.toString();
     }
 
@@ -59,6 +62,13 @@ public class S3Error {
 	this.code = code;
     }
 
+    /**
+     * The error code is a string that uniquely identifies an error condition.
+     * It is meant to be read and understood by programs that detect and handle
+     * errors by type
+     * 
+     * @see http://docs.amazonwebservices.com/AmazonS3/2006-03-01/ErrorCode.html
+     */
     public String getCode() {
 	return code;
     }
@@ -67,71 +77,58 @@ public class S3Error {
 	this.message = message;
     }
 
+    /**
+     * The error message contains a generic description of the error condition
+     * in English.
+     * 
+     * @see http 
+     *      ://docs.amazonwebservices.com/AmazonS3/2006-03-01/ErrorMessage.html
+     */
     public String getMessage() {
 	return message;
-    }
-
-    public void setResource(String resource) {
-	this.resource = resource;
-    }
-
-    public String getResource() {
-	return resource;
     }
 
     public void setRequestId(String requestId) {
 	this.requestId = requestId;
     }
 
+    /**
+     * * A unique ID assigned to each request by the system. In the unlikely
+     * event that you have problems with Amazon S3, Amazon can use this to help
+     * troubleshoot the problem.
+     * 
+     */
     public String getRequestId() {
 	return requestId;
-    }
-
-    public void setHostId(String hostId) {
-	this.hostId = hostId;
-    }
-
-    public String getHostId() {
-	return hostId;
-    }
-
-    public void setSignatureProvided(String signatureProvided) {
-	this.signatureProvided = signatureProvided;
-    }
-
-    public String getSignatureProvided() {
-	return signatureProvided;
-    }
-
-    public void setStringToSign(String stringToSign) {
-	this.stringToSign = stringToSign;
-    }
-
-    public String getStringToSign() {
-	return stringToSign;
-    }
-
-    public void setStringToSignBytes(String stringToSignBytes) {
-	this.stringToSignBytes = stringToSignBytes;
-    }
-
-    public String getStringToSignBytes() {
-	return stringToSignBytes;
-    }
-
-    public void setHeader(String header) {
-	this.header = header;
-    }
-
-    public String getHeader() {
-	return header;
     }
 
     public void setStringSigned(String stringSigned) {
 	this.stringSigned = stringSigned;
     }
 
+    /**
+     * @return what jclouds signed before sending the request.
+     */
     public String getStringSigned() {
 	return stringSigned;
+    }
+
+    public void setDetails(Map<String, String> context) {
+	this.details = context;
+    }
+
+    /**
+     * @return additional details surrounding the error.
+     */
+    public Map<String, String> getDetails() {
+	return details;
+    }
+
+    public void setRequestToken(String requestToken) {
+	this.requestToken = requestToken;
+    }
+
+    public String getRequestToken() {
+	return requestToken;
     }
 }

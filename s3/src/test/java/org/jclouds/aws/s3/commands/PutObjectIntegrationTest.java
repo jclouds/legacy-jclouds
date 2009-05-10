@@ -35,14 +35,15 @@ import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.aws.s3.S3Headers;
 import org.jclouds.aws.s3.S3IntegrationTest;
-import org.jclouds.aws.s3.S3Utils;
 import static org.jclouds.aws.s3.commands.options.PutObjectOptions.Builder.*;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.acl.CannedAccessPolicy;
+import org.jclouds.aws.s3.reference.S3Headers;
+import org.jclouds.aws.s3.util.S3Utils;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
 
 /**
  * Tests integrated functionality of all PutObject commands.
@@ -70,13 +71,13 @@ public class PutObjectIntegrationTest extends S3IntegrationTest {
     @Test(dataProvider = "putTests")
     void testPutObject(String key, String type, Object content,
 	    Object realObject) throws Exception {
-	String bucketName = bucketPrefix + "filetestsforadrian";
+	String bucketName = bucketPrefix + "tpo";
 	client.putBucketIfNotExists(bucketName).get(10, TimeUnit.SECONDS);
 	context.createS3ObjectMap(bucketName).clear();
 	assertEquals(client.listBucket(bucketName).get(10, TimeUnit.SECONDS)
 		.getContents().size(), 0);
 	S3Object object = new S3Object(key);
-	object.getMetaData().setContentType(type);
+	object.getMetadata().setContentType(type);
 	object.setData(content);
 	if (content instanceof InputStream) {
 	    object.generateMd5();
@@ -92,42 +93,42 @@ public class PutObjectIntegrationTest extends S3IntegrationTest {
     }
 
     @Test
-    void testMetaData() throws Exception {
-	String bucketName = bucketPrefix + "header";
+    void testMetadata() throws Exception {
+	String bucketName = bucketPrefix + "tmd";
 	createBucketAndEnsureEmpty(bucketName);
 	String key = "hello";
 
 	S3Object object = new S3Object(key, TEST_STRING);
-	object.getMetaData().setCacheControl("no-cache");
-	object.getMetaData().setContentType("text/plain");
-	object.getMetaData().setContentEncoding("x-compress");
-	object.getMetaData().setSize(TEST_STRING.length());
-	object.getMetaData().setContentDisposition(
+	object.getMetadata().setCacheControl("no-cache");
+	object.getMetadata().setContentType("text/plain");
+	object.getMetadata().setContentEncoding("x-compress");
+	object.getMetadata().setSize(TEST_STRING.length());
+	object.getMetadata().setContentDisposition(
 		"attachment; filename=hello.txt");
-	object.getMetaData().getUserMetadata().put(
+	object.getMetadata().getUserMetadata().put(
 		S3Headers.USER_METADATA_PREFIX + "adrian", "powderpuff");
-	object.getMetaData().setMd5(S3Utils.md5(TEST_STRING.getBytes()));
+	object.getMetadata().setMd5(S3Utils.md5(TEST_STRING.getBytes()));
 
 	addObjectToBucket(bucketName, object);
 	S3Object newObject = validateContent(bucketName, key);
 
 	// TODO.. why does this come back as binary/octetstring
-	assertEquals(newObject.getMetaData().getContentType(),
+	assertEquals(newObject.getMetadata().getContentType(),
 		"binary/octet-stream");
-	assertEquals(newObject.getMetaData().getContentEncoding(), "x-compress");
-	assertEquals(newObject.getMetaData().getContentDisposition(),
+	assertEquals(newObject.getMetadata().getContentEncoding(), "x-compress");
+	assertEquals(newObject.getMetadata().getContentDisposition(),
 		"attachment; filename=hello.txt");
-	assertEquals(newObject.getMetaData().getCacheControl(), "no-cache");
-	assertEquals(newObject.getMetaData().getSize(), TEST_STRING.length());
-	assertEquals(newObject.getMetaData().getUserMetadata().values()
+	assertEquals(newObject.getMetadata().getCacheControl(), "no-cache");
+	assertEquals(newObject.getMetadata().getSize(), TEST_STRING.length());
+	assertEquals(newObject.getMetadata().getUserMetadata().values()
 		.iterator().next(), "powderpuff");
-	assertEquals(newObject.getMetaData().getMd5(), S3Utils.md5(TEST_STRING
+	assertEquals(newObject.getMetadata().getMd5(), S3Utils.md5(TEST_STRING
 		.getBytes()));
     }
 
     @Test()
     void testCannedAccessPolicyPublic() throws Exception {
-	String bucketName = bucketPrefix + "aclpublic";
+	String bucketName = bucketPrefix + "tcapp";
 	createBucketAndEnsureEmpty(bucketName);
 	String key = "hello";
 
@@ -138,7 +139,7 @@ public class PutObjectIntegrationTest extends S3IntegrationTest {
 
 	withAcl(CannedAccessPolicy.PUBLIC_READ)).get(10, TimeUnit.SECONDS);
 
-	URL url = new URL(String.format("http://%1s.s3.amazonaws.com/%1s",
+	URL url = new URL(String.format("http://%1$s.s3.amazonaws.com/%2$s",
 		bucketName, key));
 	S3Utils.toStringAndClose(url.openStream());
 

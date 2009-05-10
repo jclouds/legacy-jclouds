@@ -21,20 +21,27 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3;
+package org.jclouds.aws.s3.reference;
 
-import org.jclouds.command.pool.PoolConstants;
-import org.jclouds.http.HttpConstants;
+import org.jclouds.http.HttpHeaders;
 
-/**
- * // TODO: Adrian: Document this!
- * 
- * @author Adrian Cole
- */
-public interface S3Constants extends HttpConstants, PoolConstants, S3Headers {
+public interface S3Headers extends HttpHeaders{
 
-    public static final String PROPERTY_AWS_SECRETACCESSKEY = "jclouds.aws.secretaccesskey";
-    public static final String PROPERTY_AWS_ACCESSKEYID = "jclouds.aws.accesskeyid";
-    public static final String PROPERTY_S3_MAP_TIMEOUT = "jclouds.s3.map.timeout";
+    /**
+     * The canned ACL to apply to the object. Options include private,
+     * public-read, public-read-write, and authenticated-read. For more
+     * information, see REST Access Control Policy.
+     */
+    public static final String CANNED_ACL = "x-amz-acl";
+    /**
+     * Any header starting with this prefix is considered user metadata. It will
+     * be stored with the object and returned when you retrieve the object. The
+     * total size of the HTTP request, not including the body, must be less than
+     * 8 KB.
+     */
+    public static final String USER_METADATA_PREFIX = "x-amz-meta-";
+    public static final String AMZ_MD5 = "x-amz-meta-object-md5";
+    public static final String REQUEST_ID = "x-amz-request-id";
+    public static final String REQUEST_TOKEN = "x-amz-id-2";
 
 }

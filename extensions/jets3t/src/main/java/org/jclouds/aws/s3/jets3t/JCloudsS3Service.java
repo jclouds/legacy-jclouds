@@ -140,7 +140,8 @@ public class JCloudsS3Service extends S3Service {
 	} catch (Exception e) {
 	    Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
 	    throw new S3ServiceException(String.format(
-		    "error deleting object: %1s:%2s", bucketName, objectKey), e);
+		    "error deleting object: %1$s:%2$s", bucketName, objectKey),
+		    e);
 	}
     }
 
@@ -208,16 +209,16 @@ public class JCloudsS3Service extends S3Service {
     protected S3Bucket[] listAllBucketsImpl() throws S3ServiceException {
 	try {
 	    List<org.jclouds.aws.s3.domain.S3Bucket.Metadata> jcBucketList = connection
-		    .getOwnedBuckets().get(
-			    requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
+		    .listOwnedBuckets().get(requestTimeoutMilliseconds,
+			    TimeUnit.MILLISECONDS);
 
 	    ArrayList<org.jets3t.service.model.S3Bucket> jsBucketList = new ArrayList<org.jets3t.service.model.S3Bucket>();
 	    for (org.jclouds.aws.s3.domain.S3Bucket.Metadata jcBucket : jcBucketList) {
 		org.jets3t.service.model.S3Bucket jsBucket = new org.jets3t.service.model.S3Bucket(
 			jcBucket.getName());
 		jsBucket.setOwner(new org.jets3t.service.model.S3Owner(jcBucket
-			.getCanonicalUser().getId(), jcBucket
-			.getCanonicalUser().getDisplayName()));
+			.getOwner().getId(), jcBucket.getOwner()
+			.getDisplayName()));
 		jsBucketList.add(jsBucket);
 	    }
 	    return (org.jets3t.service.model.S3Bucket[]) jsBucketList

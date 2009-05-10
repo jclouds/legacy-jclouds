@@ -29,6 +29,9 @@ import org.jclouds.http.commands.callables.xml.ParseSax;
 /**
  * Parses the error from the Amazon S3 REST API.
  * 
+ * @see http
+ *      ://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?UsingRESTError
+ *      .html
  * @author Adrian Cole
  */
 public class ErrorHandler extends ParseSax.HandlerWithResult<S3Error> {
@@ -46,20 +49,10 @@ public class ErrorHandler extends ParseSax.HandlerWithResult<S3Error> {
 	    error.setCode(currentText.toString());
 	} else if (qName.equals("Message")) {
 	    error.setMessage(currentText.toString());
-	} else if (qName.equals("Resource")) {
-	    error.setResource(currentText.toString());
 	} else if (qName.equals("RequestId")) {
 	    error.setRequestId(currentText.toString());
-	} else if (qName.equals("HostId")) {
-	    error.setHostId(currentText.toString());
-	} else if (qName.equals("Header")) {
-	    error.setHeader(currentText.toString());
-	} else if (qName.equals("SignatureProvided")) {
-	    error.setSignatureProvided(currentText.toString());
-	} else if (qName.equals("StringToSign")) {
-	    error.setStringToSign(currentText.toString());
-	} else if (qName.equals("StringToSignBytes")) {
-	    error.setStringToSignBytes(currentText.toString());
+	} else if (!qName.equals("Error")) {
+	    error.getDetails().put(qName, currentText.toString());
 	}
 	currentText = new StringBuilder();
     }

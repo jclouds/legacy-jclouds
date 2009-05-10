@@ -25,8 +25,9 @@ package org.jclouds.aws.s3.config;
 
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.aws.s3.S3Constants;
 import org.jclouds.aws.s3.filters.ParseS3ErrorFromXmlContent;
+import org.jclouds.aws.s3.reference.S3Constants;
+import org.jclouds.http.CloseContentAndSetExceptionHandler;
 import org.jclouds.http.HttpResponseHandler;
 import org.jclouds.http.annotation.ClientErrorHandler;
 import org.jclouds.http.annotation.RedirectHandler;
@@ -35,6 +36,7 @@ import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
 
 import com.google.inject.Guice;
 import com.google.inject.Inject;
@@ -118,7 +120,7 @@ public class S3ContextModuleTest {
 	RedirectHandlerTest error = injector
 		.getInstance(RedirectHandlerTest.class);
 	assertEquals(error.errorHandler.getClass(),
-		ParseS3ErrorFromXmlContent.class);
+		CloseContentAndSetExceptionHandler.class);
     }
 
 }

@@ -21,50 +21,20 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.domain;
+package org.jclouds.aws.s3.reference;
+
+import org.jclouds.command.pool.PoolConstants;
+import org.jclouds.http.HttpConstants;
 
 /**
  * // TODO: Adrian: Document this!
- *
+ * 
  * @author Adrian Cole
  */
-public class S3Owner {
-    private String id;
-    private String displayName;
+public interface S3Constants extends HttpConstants, PoolConstants, S3Headers {
 
-    public String getId() {
-        return id;
-    }
+    public static final String PROPERTY_AWS_SECRETACCESSKEY = "jclouds.aws.secretaccesskey";
+    public static final String PROPERTY_AWS_ACCESSKEYID = "jclouds.aws.accesskeyid";
+    public static final String PROPERTY_S3_MAP_TIMEOUT = "jclouds.s3.map.timeout";
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof S3Owner)) return false;
-
-        S3Owner s3Owner = (S3Owner) o;
-
-        if (displayName != null ? !displayName.equals(s3Owner.displayName) : s3Owner.displayName != null) return false;
-        if (!id.equals(s3Owner.id)) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id.hashCode();
-        result = 31 * result + (displayName != null ? displayName.hashCode() : 0);
-        return result;
-    }
 }

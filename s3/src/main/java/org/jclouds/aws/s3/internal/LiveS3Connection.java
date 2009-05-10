@@ -31,9 +31,9 @@ import org.jclouds.aws.s3.commands.BucketExists;
 import org.jclouds.aws.s3.commands.CopyObject;
 import org.jclouds.aws.s3.commands.DeleteBucket;
 import org.jclouds.aws.s3.commands.DeleteObject;
-import org.jclouds.aws.s3.commands.GetMetaDataForOwnedBuckets;
+import org.jclouds.aws.s3.commands.ListOwnedBuckets;
 import org.jclouds.aws.s3.commands.GetObject;
-import org.jclouds.aws.s3.commands.HeadMetaData;
+import org.jclouds.aws.s3.commands.HeadObject;
 import org.jclouds.aws.s3.commands.ListBucket;
 import org.jclouds.aws.s3.commands.PutBucket;
 import org.jclouds.aws.s3.commands.PutObject;
@@ -96,12 +96,12 @@ public class LiveS3Connection implements S3Connection {
     /**
      * {@inheritDoc}
      * 
-     * @see HeadMetaData
+     * @see HeadObject
      */
     public Future<S3Object.Metadata> headObject(String s3Bucket, String key) {
-	HeadMetaData headMetaData = factory.createHeadMetaData(s3Bucket, key);
-	client.submit(headMetaData);
-	return headMetaData;
+	HeadObject headMetadata = factory.createHeadMetadata(s3Bucket, key);
+	client.submit(headMetadata);
+	return headMetadata;
     }
 
     /**
@@ -230,11 +230,11 @@ public class LiveS3Connection implements S3Connection {
     /**
      * {@inheritDoc}
      * 
-     * @see GetMetaDataForOwnedBuckets
+     * @see ListOwnedBuckets
      */
-    public Future<List<Metadata>> getOwnedBuckets() {
-	GetMetaDataForOwnedBuckets listRequest = factory
-		.createGetMetaDataForOwnedBuckets();
+    public Future<List<Metadata>> listOwnedBuckets() {
+	ListOwnedBuckets listRequest = factory
+		.createGetMetadataForOwnedBuckets();
 	client.submit(listRequest);
 	return listRequest;
     }

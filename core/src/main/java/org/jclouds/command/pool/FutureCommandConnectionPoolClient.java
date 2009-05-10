@@ -104,13 +104,13 @@ public class FutureCommandConnectionPoolClient<C, O extends FutureCommand<?, ?, 
 	    logger
 		    .warn(
 			    e,
-			    "Interrupted getting a connection for command %1s; retrying",
+			    "Interrupted getting a connection for command %1$s; retrying",
 			    command);
 	    commandQueue.add(command);
 	    return;
 	} catch (TimeoutException e) {
 	    logger.warn(e,
-		    "Timeout getting a connection for command %1s; retrying",
+		    "Timeout getting a connection for command %1$s; retrying",
 		    command);
 	    commandQueue.add(command);
 	    return;
@@ -118,7 +118,7 @@ public class FutureCommandConnectionPoolClient<C, O extends FutureCommand<?, ?, 
 
 	if (connectionHandle == null) {
 	    logger.error(
-		    "Failed to obtain connection for command %1s; retrying",
+		    "Failed to obtain connection for command %1$s; retrying",
 		    command);
 	    commandQueue.add(command);
 	    return;

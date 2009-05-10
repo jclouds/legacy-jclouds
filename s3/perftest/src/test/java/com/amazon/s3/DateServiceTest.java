@@ -26,7 +26,7 @@ package com.amazon.s3;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import org.jclouds.aws.PerformanceTest;
-import org.jclouds.aws.s3.DateService;
+import org.jclouds.aws.s3.util.DateService;
 import org.joda.time.DateTime;
 import org.testng.annotations.Test;
 

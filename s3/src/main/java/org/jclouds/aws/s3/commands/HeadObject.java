@@ -29,9 +29,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.aws.s3.S3ResponseException;
 import org.jclouds.aws.s3.commands.callables.ParseMetadataFromHeaders;
 import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.http.HttpResponseException;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
@@ -40,15 +40,25 @@ import com.google.inject.name.Named;
 
 /**
  * Retrieves the metadata associated with the Key or
- * {@link S3Object.Metadata#NOT_FOUND} if not available;
+ * {@link S3Object.Metadata#NOT_FOUND} if not available.
  * 
+ * <p/>
+ * The HEAD operation is used to retrieve information about a specific object or
+ * object size, without actually fetching the object itself. This is useful if
+ * you're only interested in the object metadata, and don't want to waste
+ * bandwidth on the object data.
+ * 
+ * @see GetObject
+ * @see http 
+ *      ://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTObjectHEAD
+ *      .html
  * @author Adrian Cole
  * 
  */
-public class HeadMetaData extends S3FutureCommand<S3Object.Metadata> {
+public class HeadObject extends S3FutureCommand<S3Object.Metadata> {
 
     @Inject
-    public HeadMetaData(@Named("jclouds.http.address") String amazonHost,
+    public HeadObject(@Named("jclouds.http.address") String amazonHost,
 	    ParseMetadataFromHeaders callable,
 	    @Assisted("bucketName") String bucket, @Assisted("key") String key) {
 	super("HEAD", "/" + checkNotNull(key), callable, amazonHost, bucket);
@@ -68,8 +78,9 @@ public class HeadMetaData extends S3FutureCommand<S3Object.Metadata> {
     @VisibleForTesting
     S3Object.Metadata attemptNotFound(ExecutionException e)
 	    throws ExecutionException {
-	if (e.getCause() != null && e.getCause() instanceof S3ResponseException) {
-	    S3ResponseException responseException = (S3ResponseException) e
+	if (e.getCause() != null
+		&& e.getCause() instanceof HttpResponseException) {
+	    HttpResponseException responseException = (HttpResponseException) e
 		    .getCause();
 	    if (responseException.getResponse().getStatusCode() == 404) {
 		return S3Object.Metadata.NOT_FOUND;

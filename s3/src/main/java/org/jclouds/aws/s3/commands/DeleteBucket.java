@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.aws.s3.S3ResponseException;
+import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.commands.callables.ReturnTrueIf2xx;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -35,6 +36,17 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 
+/**
+ * The DELETE request operation deletes the bucket named in the URI. All objects
+ * in the bucket must be deleted before the bucket itself can be deleted.
+ * <p />
+ * Only the owner of a bucket can delete it, regardless of the bucket's access
+ * control policy.
+ * 
+ * @see http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?
+ *      RESTBucketDELETE.html
+ * @author Adrian Cole
+ */
 public class DeleteBucket extends S3FutureCommand<Boolean> {
 
     @Inject
@@ -54,7 +66,8 @@ public class DeleteBucket extends S3FutureCommand<Boolean> {
 
     @VisibleForTesting
     Boolean attemptNotFound(ExecutionException e) throws ExecutionException {
-	if (e.getCause() != null && e.getCause() instanceof S3ResponseException) {
+	if (e.getCause() != null
+		&& e.getCause() instanceof HttpResponseException) {
 	    S3ResponseException responseException = (S3ResponseException) e
 		    .getCause();
 	    if (responseException.getResponse().getStatusCode() == 404) {

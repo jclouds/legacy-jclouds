@@ -23,10 +23,19 @@
  */
 package org.jclouds.aws.s3;
 
-import java.util.Map;
-
+import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
 
-public interface S3ObjectMap extends Map<String, S3Object>, S3Map {
+/**
+ * Map view of an {@link S3Bucket}.
+ * 
+ * <p/>
+ * This allows you to acces the underlying {@link S3Object} so that you can
+ * manually set metadata such as length, content-type, or md5 hash.
+ * 
+ * @author Adrian Cole
+ * 
+ */
+public interface S3ObjectMap extends S3Map<String, S3Object> {
 
 }

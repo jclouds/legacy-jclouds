@@ -23,18 +23,36 @@
  */
 package org.jclouds.aws.s3.commands;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.aws.s3.S3Utils;
 import org.jclouds.aws.s3.commands.callables.ParseMd5FromETagHeader;
 import org.jclouds.aws.s3.commands.options.PutObjectOptions;
 import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.s3.util.S3Utils;
 import org.jclouds.http.HttpHeaders;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 
+/**
+ * Store data by creating or overwriting an object.
+ * 
+ * <p/>
+ * This returns a byte[] of the md5 hash of what Amazon S3 received
+ * <p />
+ * <p/>
+ * This command allows you to specify {@link PutObjectOptions} to control
+ * delivery of content.
+ * 
+ * 
+ * @see PutObjectOptions
+ * @see http 
+ *      ://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTObjectPUT
+ *      .html
+ * @author Adrian Cole
+ */
 public class PutObject extends S3FutureCommand<byte[]> {
 
     @Inject
@@ -43,38 +61,38 @@ public class PutObject extends S3FutureCommand<byte[]> {
 	    @Assisted S3Object object, @Assisted PutObjectOptions options) {
 	super("PUT", "/" + checkNotNull(object.getKey()), callable, amazonHost,
 		s3Bucket);
-	checkArgument(object.getMetaData().getSize() >=0,"size must be set");
-	
+	checkArgument(object.getMetadata().getSize() >= 0, "size must be set");
+
 	getRequest().setPayload(
 		checkNotNull(object.getData(), "object.getContent()"));
 
 	getRequest().getHeaders().put(
 		HttpHeaders.CONTENT_TYPE,
-		checkNotNull(object.getMetaData().getContentType(),
-			"object.metaData.contentType()"));
+		checkNotNull(object.getMetadata().getContentType(),
+			"object.metadata.contentType()"));
 
 	getRequest().getHeaders().put(HttpHeaders.CONTENT_LENGTH,
-		object.getMetaData().getSize() + "");
+		object.getMetadata().getSize() + "");
 
-	if (object.getMetaData().getCacheControl() != null) {
+	if (object.getMetadata().getCacheControl() != null) {
 	    getRequest().getHeaders().put(HttpHeaders.CACHE_CONTROL,
-		    object.getMetaData().getCacheControl());
+		    object.getMetadata().getCacheControl());
 	}
-	if (object.getMetaData().getContentDisposition() != null) {
+	if (object.getMetadata().getContentDisposition() != null) {
 	    getRequest().getHeaders().put(HttpHeaders.CONTENT_DISPOSITION,
-		    object.getMetaData().getContentDisposition());
+		    object.getMetadata().getContentDisposition());
 	}
-	if (object.getMetaData().getContentEncoding() != null) {
+	if (object.getMetadata().getContentEncoding() != null) {
 	    getRequest().getHeaders().put(HttpHeaders.CONTENT_ENCODING,
-		    object.getMetaData().getContentEncoding());
+		    object.getMetadata().getContentEncoding());
 	}
 
-	if (object.getMetaData().getMd5() != null)
+	if (object.getMetadata().getMd5() != null)
 	    getRequest().getHeaders().put(HttpHeaders.CONTENT_MD5,
-		    S3Utils.toBase64String(object.getMetaData().getMd5()));
+		    S3Utils.toBase64String(object.getMetadata().getMd5()));
 
 	getRequest().getHeaders()
-		.putAll(object.getMetaData().getUserMetadata());
+		.putAll(object.getMetadata().getUserMetadata());
 	getRequest().getHeaders().putAll(options.buildRequestHeaders());
 
     }

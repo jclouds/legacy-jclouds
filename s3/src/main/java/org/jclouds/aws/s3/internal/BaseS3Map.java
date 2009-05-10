@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -40,16 +39,16 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.Utils;
 import org.jclouds.aws.s3.S3Connection;
-import org.jclouds.aws.s3.S3Constants;
 import org.jclouds.aws.s3.S3Map;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.s3.reference.S3Constants;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 
-public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
+public abstract class BaseS3Map<V> implements S3Map<String, V> {
 
     protected final S3Connection connection;
     protected final String bucket;
@@ -88,8 +87,8 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
 
     protected boolean containsMd5(byte[] md5) throws InterruptedException,
 	    ExecutionException, TimeoutException {
-	for (S3Object.Metadata metaData : refreshBucket().getContents()) {
-	    if (Arrays.equals(md5, metaData.getMd5()))
+	for (S3Object.Metadata metadata : refreshBucket().getContents()) {
+	    if (Arrays.equals(md5, metadata.getMd5()))
 		return true;
 	}
 	return false;
@@ -104,9 +103,9 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
 	} else {
 	    object = new S3Object("dummy", value);
 	}
-	if (object.getMetaData().getMd5() == null)
+	if (object.getMetadata().getMd5() == null)
 	    object.generateMd5();
-	return object.getMetaData().getMd5();
+	return object.getMetadata().getMd5();
     }
 
     protected Set<S3Object> getAllObjects() {
@@ -123,7 +122,7 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
 	    } catch (Exception e) {
 		Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
 		throw new S3RuntimeException(String.format(
-			"Error getting value from bucket %1s:%2s", bucket,
+			"Error getting value from bucket %1$s:%2$s", bucket,
 			object != null ? object.getKey() : "unknown"), e);
 	    }
 	    if (object != S3Object.NOT_FOUND)
@@ -146,7 +145,7 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
 	} catch (Exception e) {
 	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
 	    throw new S3RuntimeException(String.format(
-		    "Error searching for ETAG of value: [%2s] in bucket:%1s",
+		    "Error searching for ETAG of value: [%2$s] in bucket:%1$s",
 		    bucket, value), e);
 	}
     }
@@ -210,7 +209,7 @@ public abstract class BaseS3Map<T> implements Map<String, T>, S3Map {
 	} catch (Exception e) {
 	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
 	    throw new S3RuntimeException(String.format(
-		    "Error searching for %1s:%2s", bucket, key), e);
+		    "Error searching for %1$s:%2$s", bucket, key), e);
 	}
     }
 

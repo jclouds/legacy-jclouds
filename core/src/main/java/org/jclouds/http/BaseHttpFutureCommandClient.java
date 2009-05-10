@@ -64,7 +64,7 @@ public abstract class BaseHttpFutureCommandClient  implements HttpFutureCommandC
 	    HttpResponse response) {
 	int code = response.getStatusCode();
 	if (command.getRequest().isReplayable() && code >= 500) {
-	    logger.info("resubmitting command: %1s", command);
+	    logger.info("resubmitting command: %1$s", command);
 	    return true;
 	}
 	return false;

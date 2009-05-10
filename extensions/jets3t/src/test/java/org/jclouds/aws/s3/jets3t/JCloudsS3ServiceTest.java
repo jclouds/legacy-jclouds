@@ -184,7 +184,7 @@ public class JCloudsS3ServiceTest extends S3IntegrationTest {
 	S3Bucket[] jsBuckets = service.listAllBuckets();
 
 	List<org.jclouds.aws.s3.domain.S3Bucket.Metadata> jcBuckets = client
-		.getOwnedBuckets().get(10, TimeUnit.SECONDS);
+		.listOwnedBuckets().get(10, TimeUnit.SECONDS);
 
 	assert jsBuckets.length == jcBuckets.size();
 
@@ -197,9 +197,9 @@ public class JCloudsS3ServiceTest extends S3IntegrationTest {
 		    .next();
 	    assert jsBucket.getName().equals(jcBucket.getName());
 	    assert jsBucket.getOwner().getId().equals(
-		    jcBucket.getCanonicalUser().getId());
+		    jcBucket.getOwner().getId());
 	    assert jsBucket.getOwner().getDisplayName().equals(
-		    jcBucket.getCanonicalUser().getDisplayName());
+		    jcBucket.getOwner().getDisplayName());
 	}
 
 	client.deleteBucketIfEmpty(bucketName);

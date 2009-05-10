@@ -116,23 +116,23 @@ public class S3CommandFactory {
     }
 
     @Inject
-    private HeadMetaDataFactory headMetaDataFactory;
+    private HeadMetadataFactory headMetadataFactory;
 
-    public static interface HeadMetaDataFactory {
-	HeadMetaData create(@Assisted("bucketName") String bucket,
+    public static interface HeadMetadataFactory {
+	HeadObject create(@Assisted("bucketName") String bucket,
 		@Assisted("key") String key);
     }
 
-    public HeadMetaData createHeadMetaData(String bucket, String key) {
-	return headMetaDataFactory.create(bucket, key);
+    public HeadObject createHeadMetadata(String bucket, String key) {
+	return headMetadataFactory.create(bucket, key);
     }
 
     @Inject
     @Named("jclouds.http.address")
     String amazonHost;
 
-    public GetMetaDataForOwnedBuckets createGetMetaDataForOwnedBuckets() {
-	return new GetMetaDataForOwnedBuckets(amazonHost, parserFactory
+    public ListOwnedBuckets createGetMetadataForOwnedBuckets() {
+	return new ListOwnedBuckets(amazonHost, parserFactory
 		.createListBucketsParser());
     }
 

@@ -25,10 +25,11 @@ package org.jclouds.aws.s3.commands.callables;
 
 import java.util.Map.Entry;
 
-import org.jclouds.aws.s3.DateService;
-import org.jclouds.aws.s3.S3Headers;
-import org.jclouds.aws.s3.S3Utils;
 import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.s3.domain.S3Object.Metadata;
+import org.jclouds.aws.s3.reference.S3Headers;
+import org.jclouds.aws.s3.util.DateService;
+import org.jclouds.aws.s3.util.S3Utils;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpHeaders;
@@ -52,30 +53,36 @@ public class ParseMetadataFromHeaders extends
 
     /**
      * parses the http response headers to create a new
-     * {@link S3Object.MetaData} object.
+     * {@link S3Object.Metadata} object.
      */
     public S3Object.Metadata call() throws HttpException {
 	checkCode();
-	
-	S3Object.Metadata metaData = new S3Object.Metadata(key);
 
-	extractUserMetadata(metaData);
-	addMd5(metaData);
+	S3Object.Metadata metadata = new S3Object.Metadata(key);
+	addAllHeadersTo(metadata);
 
-	parseLastModifiedOrThrowException(metaData);
-	setContentTypeOrThrowException(metaData);
+	addUserMetadataTo(metadata);
+	addMd5To(metadata);
 
-	metaData.setCacheControl(getResponse().getFirstHeaderOrNull(
+	parseLastModifiedOrThrowException(metadata);
+	setContentTypeOrThrowException(metadata);
+	setContentLengthOrThrowException(metadata);
+
+	metadata.setCacheControl(getResponse().getFirstHeaderOrNull(
 		HttpHeaders.CACHE_CONTROL));
-	metaData.setContentDisposition(getResponse().getFirstHeaderOrNull(
+	metadata.setContentDisposition(getResponse().getFirstHeaderOrNull(
 		HttpHeaders.CONTENT_DISPOSITION));
-	metaData.setContentEncoding(getResponse().getFirstHeaderOrNull(
+	metadata.setContentEncoding(getResponse().getFirstHeaderOrNull(
 		HttpHeaders.CONTENT_ENCODING));
-	return metaData;
+	return metadata;
 
     }
 
-    private void setContentTypeOrThrowException(S3Object.Metadata metaData)
+    private void addAllHeadersTo(Metadata metadata) {
+	metadata.getAllHeaders().putAll(getResponse().getHeaders());
+    }
+
+    private void setContentTypeOrThrowException(S3Object.Metadata metadata)
 	    throws HttpException {
 	String contentType = getResponse().getFirstHeaderOrNull(
 		HttpHeaders.CONTENT_TYPE);
@@ -83,39 +90,50 @@ public class ParseMetadataFromHeaders extends
 	    throw new HttpException(HttpHeaders.CONTENT_TYPE
 		    + " not found in headers");
 	else
-	    metaData.setContentType(contentType);
+	    metadata.setContentType(contentType);
     }
 
-    private void parseLastModifiedOrThrowException(S3Object.Metadata metaData)
+    private void setContentLengthOrThrowException(S3Object.Metadata metadata)
+	    throws HttpException {
+	String contentLength = getResponse().getFirstHeaderOrNull(
+		HttpHeaders.CONTENT_LENGTH);
+	if (contentLength == null)
+	    throw new HttpException(HttpHeaders.CONTENT_LENGTH
+		    + " not found in headers");
+	else
+	    metadata.setSize(Long.parseLong(contentLength));
+    }
+
+    private void parseLastModifiedOrThrowException(S3Object.Metadata metadata)
 	    throws HttpException {
 	String lastModified = getResponse().getFirstHeaderOrNull(
 		HttpHeaders.LAST_MODIFIED);
-	metaData.setLastModified(dateParser
+	metadata.setLastModified(dateParser
 		.dateTimeFromHeaderFormat(lastModified));
-	if (metaData.getLastModified() == null)
+	if (metadata.getLastModified() == null)
 	    throw new HttpException("could not parse: "
 		    + HttpHeaders.LAST_MODIFIED + ": " + lastModified);
     }
 
-    private void addMd5(S3Object.Metadata metaData) {
+    private void addMd5To(S3Object.Metadata metadata) {
 	String md5Header = getResponse()
 		.getFirstHeaderOrNull(S3Headers.AMZ_MD5);
 	if (md5Header != null) {
-	    metaData.setMd5(S3Utils.fromHexString(md5Header));
+	    metadata.setMd5(S3Utils.fromHexString(md5Header));
 	}
 	String eTag = getResponse().getFirstHeaderOrNull(S3Headers.ETAG);
-	if (metaData.getMd5() == null && eTag != null) {
-	    metaData.setMd5(S3Utils.fromHexString(eTag.replaceAll("\"", "")));
+	if (metadata.getMd5() == null && eTag != null) {
+	    metadata.setMd5(S3Utils.fromHexString(eTag.replaceAll("\"", "")));
 	}
     }
 
-    private void extractUserMetadata(S3Object.Metadata metaData) {
+    private void addUserMetadataTo(S3Object.Metadata metadata) {
 	for (Entry<String, String> header : getResponse().getHeaders()
 		.entries()) {
 	    if (header.getKey() != null
 		    && header.getKey().startsWith(
 			    S3Headers.USER_METADATA_PREFIX))
-		metaData.getUserMetadata().put(header.getKey(),
+		metadata.getUserMetadata().put(header.getKey(),
 			header.getValue());
 	}
     }

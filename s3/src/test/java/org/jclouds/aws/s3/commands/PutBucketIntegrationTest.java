@@ -31,9 +31,9 @@ import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.aws.s3.S3IntegrationTest;
-import org.jclouds.aws.s3.S3Utils;
 import org.jclouds.aws.s3.domain.S3Bucket.Metadata.LocationConstraint;
 import org.jclouds.aws.s3.domain.acl.CannedAccessPolicy;
+import org.jclouds.aws.s3.util.S3Utils;
 import org.testng.annotations.Test;
 
 /**
@@ -55,7 +55,7 @@ public class PutBucketIntegrationTest extends S3IntegrationTest {
 	client.putBucketIfNotExists(bucketName,
 		withBucketAcl(CannedAccessPolicy.PUBLIC_READ)).get(10,
 		TimeUnit.SECONDS);
-	URL url = new URL(String.format("http://%1s.s3.amazonaws.com",
+	URL url = new URL(String.format("http://%1$s.s3.amazonaws.com",
 		bucketName));
 	S3Utils.toStringAndClose(url.openStream());
     }
@@ -65,7 +65,7 @@ public class PutBucketIntegrationTest extends S3IntegrationTest {
 	String bucketName = bucketPrefix + "private";
 
 	client.putBucketIfNotExists(bucketName).get(10, TimeUnit.SECONDS);
-	URL url = new URL(String.format("http://%1s.s3.amazonaws.com",
+	URL url = new URL(String.format("http://%1$s.s3.amazonaws.com",
 		bucketName));
 	S3Utils.toStringAndClose(url.openStream());
     }
@@ -79,7 +79,7 @@ public class PutBucketIntegrationTest extends S3IntegrationTest {
 			CannedAccessPolicy.PUBLIC_READ)).get(10,
 		TimeUnit.SECONDS);
 
-	URL url = new URL(String.format("http://%1s.s3.amazonaws.com",
+	URL url = new URL(String.format("http://%1$s.s3.amazonaws.com",
 		bucketName));
 	S3Utils.toStringAndClose(url.openStream());
     }

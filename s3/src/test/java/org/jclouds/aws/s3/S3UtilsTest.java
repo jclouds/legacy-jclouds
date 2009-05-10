@@ -25,6 +25,7 @@ package org.jclouds.aws.s3;
 
 import org.bouncycastle.util.encoders.Base64;
 import org.jclouds.aws.PerformanceTest;
+import org.jclouds.aws.s3.util.S3Utils;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 

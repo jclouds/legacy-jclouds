@@ -69,7 +69,7 @@ public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
 	} catch (Exception e) {
 	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
 	    throw new S3RuntimeException(String.format(
-		    "Error geting object %1s:%2s", bucket, o), e);
+		    "Error geting object %1$s:%2$s", bucket, o), e);
 	}
     }
 
@@ -86,7 +86,7 @@ public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
 	} catch (Exception e) {
 	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
 	    throw new S3RuntimeException(String.format(
-		    "Error removing object %1s:%2s", bucket, o), e);
+		    "Error removing object %1$s:%2$s", bucket, o), e);
 	}
 	return old;
     }
@@ -155,7 +155,7 @@ public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
 	} catch (Exception e) {
 	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
 	    throw new S3RuntimeException(String.format(
-		    "Error adding object %1s:%2s", bucket, object), e);
+		    "Error adding object %1$s:%2$s", bucket, object), e);
 	}
     }
 

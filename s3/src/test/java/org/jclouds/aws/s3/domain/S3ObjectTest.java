@@ -39,7 +39,7 @@ public class S3ObjectTest {
 	S3Object object = new S3Object("test");
 	File file = new File("hello.txt");
 	object.setData(file);
-	assertEquals(object.getMetaData().getContentType(),
+	assertEquals(object.getMetadata().getContentType(),
 		ContentTypes.UNKNOWN_MIME_TYPE);
     }
 }

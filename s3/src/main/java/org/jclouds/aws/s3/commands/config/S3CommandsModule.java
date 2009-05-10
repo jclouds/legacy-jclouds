@@ -27,7 +27,7 @@ import org.jclouds.aws.s3.commands.BucketExists;
 import org.jclouds.aws.s3.commands.DeleteBucket;
 import org.jclouds.aws.s3.commands.DeleteObject;
 import org.jclouds.aws.s3.commands.GetObject;
-import org.jclouds.aws.s3.commands.HeadMetaData;
+import org.jclouds.aws.s3.commands.HeadObject;
 import org.jclouds.aws.s3.commands.PutBucket;
 import org.jclouds.aws.s3.commands.PutObject;
 import org.jclouds.aws.s3.commands.S3CommandFactory;
@@ -76,10 +76,10 @@ public class S3CommandsModule extends AbstractModule {
 			S3CommandFactory.GetObjectFactory.class,
 			GetObject.class));
 
-	bind(S3CommandFactory.HeadMetaDataFactory.class).toProvider(
+	bind(S3CommandFactory.HeadMetadataFactory.class).toProvider(
 		FactoryProvider.newFactory(
-			S3CommandFactory.HeadMetaDataFactory.class,
-			HeadMetaData.class));
+			S3CommandFactory.HeadMetadataFactory.class,
+			HeadObject.class));
 
     }
 

@@ -35,13 +35,16 @@ import com.google.inject.name.Named;
  * Returns a list of all of the buckets owned by the authenticated sender of the
  * request.
  * 
+ * @see http
+ *      ://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTServiceGET
+ *      .html
  * @author Adrian Cole
  * 
  */
-public class GetMetaDataForOwnedBuckets extends S3FutureCommand<List<S3Bucket.Metadata>> {
+public class ListOwnedBuckets extends S3FutureCommand<List<S3Bucket.Metadata>> {
 
     @Inject
-    public GetMetaDataForOwnedBuckets(@Named("jclouds.http.address") String amazonHost,
+    public ListOwnedBuckets(@Named("jclouds.http.address") String amazonHost,
 	    ParseSax<List<S3Bucket.Metadata>> callable) {
 	super("GET", "/", callable, amazonHost);
     }

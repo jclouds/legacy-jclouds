@@ -30,12 +30,13 @@ import javax.annotation.Resource;
 import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.s3.S3ResponseException;
 import org.jclouds.aws.s3.domain.S3Error;
+import org.jclouds.aws.s3.reference.S3Headers;
 import org.jclouds.aws.s3.xml.S3ParserFactory;
-import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseHandler;
 import org.jclouds.logging.Logger;
+
 
 import com.google.inject.Inject;
 
@@ -57,29 +58,26 @@ public class ParseS3ErrorFromXmlContent implements HttpResponseHandler {
     }
 
     public void handle(HttpFutureCommand<?> command, HttpResponse response) {
-	int code = response.getStatusCode();
-	if (code >= 300) {
-	    InputStream errorStream = response.getContent();
+	S3Error error = new S3Error();
+	error.setRequestId(response.getFirstHeaderOrNull(S3Headers.REQUEST_ID));
+	error.setRequestToken(response
+		.getFirstHeaderOrNull(S3Headers.REQUEST_TOKEN));
+	InputStream errorStream = response.getContent();
+	try {
 	    if (errorStream != null) {
-		try {
-		    S3Error error = parserFactory.createErrorParser().parse(
-			    errorStream);
-		    if ("SignatureDoesNotMatch".equals(error.getCode()))
-			error.setStringSigned(RequestAuthorizeSignature
-				.createStringToSign(command.getRequest()));
-		    logger.trace("received the following error from s3: %1s",
-			    error);
-		    command.setException(new S3ResponseException(command,
-			    response, error));
-		} catch (HttpException he) {
-		    logger.error(he, "error parsing response %1s", response);
-		} finally {
-		    IOUtils.closeQuietly(errorStream);
-		}
-	    } else {
-		command
-			.setException(new S3ResponseException(command, response));
+		error = parserFactory.createErrorParser().parse(errorStream);
+		if ("SignatureDoesNotMatch".equals(error.getCode()))
+		    error.setStringSigned(RequestAuthorizeSignature
+			    .createStringToSign(command.getRequest()));
+		error.setRequestToken(response
+			.getFirstHeaderOrNull(S3Headers.REQUEST_TOKEN));
 	    }
+	} catch (Exception e) {
+	    logger.warn(e, "error parsing XML reponse: %1$s", response);
+	} finally {
+	    command.setException(new S3ResponseException(command, response,
+		    error));
+	    IOUtils.closeQuietly(errorStream);
 	}
     }
 

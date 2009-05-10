@@ -79,8 +79,8 @@ public class StubS3Connection implements S3Connection {
 			.get(s3Bucket);
 		if (!realContents.containsKey(key))
 		    return S3Object.Metadata.NOT_FOUND;
-		S3Object.Metadata metaData = new S3Object.Metadata(key);
-		return metaData;
+		S3Object.Metadata metadata = new S3Object.Metadata(key);
+		return metadata;
 	    }
 	};
     }
@@ -173,8 +173,8 @@ public class StubS3Connection implements S3Connection {
 			.get(s3Bucket);
 		if (realContents != null) {
 		    for (String key : realContents.keySet()) {
-			S3Object.Metadata metaData = new S3Object.Metadata(key);
-			contents.add(metaData);
+			S3Object.Metadata metadata = new S3Object.Metadata(key);
+			contents.add(metadata);
 		    }
 		}
 		S3Bucket returnVal = new S3Bucket(s3Bucket);
@@ -205,7 +205,7 @@ public class StubS3Connection implements S3Connection {
 	}
     }
 
-    public Future<List<Metadata>> getOwnedBuckets() {
+    public Future<List<Metadata>> listOwnedBuckets() {
 	return new FutureBase<List<S3Bucket.Metadata>>() {
 	    public List<S3Bucket.Metadata> get() throws InterruptedException,
 		    ExecutionException {

@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3;
+package org.jclouds.aws.s3.util;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;

@@ -23,9 +23,9 @@
  */
 package org.jclouds.aws.s3.xml;
 
-import org.jclouds.aws.s3.DateService;
-import org.jclouds.aws.s3.S3Utils;
 import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.s3.util.DateService;
+import org.jclouds.aws.s3.util.S3Utils;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 
 import com.google.inject.Inject;
@@ -38,25 +38,25 @@ import com.google.inject.Inject;
 public class CopyObjectHandler extends
 	ParseSax.HandlerWithResult<S3Object.Metadata> {
 
-    private S3Object.Metadata metaData;
+    private S3Object.Metadata metadata;
     private StringBuilder currentText = new StringBuilder();
     @Inject
     private DateService dateParser;
 
     public void setKey(String key) {
-	metaData = new S3Object.Metadata(key);
+	metadata = new S3Object.Metadata(key);
     }
 
     public S3Object.Metadata getResult() {
-	return metaData;
+	return metadata;
     }
 
     public void endElement(String uri, String name, String qName) {
 	if (qName.equals("ETag")) {
-	    metaData.setMd5(S3Utils.fromHexString(currentText.toString()
+	    metadata.setMd5(S3Utils.fromHexString(currentText.toString()
 		    .replaceAll("\"", "")));
 	} else if (qName.equals("LastModified")) {
-	    metaData.setLastModified(dateParser
+	    metadata.setLastModified(dateParser
 		    .dateTimeFromXMLFormat(currentText.toString()));
 	}
 	currentText = new StringBuilder();

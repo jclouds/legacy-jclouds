@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3;
+package org.jclouds.aws.s3.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -231,7 +231,7 @@ public class S3Utils extends Utils {
 
 	if (o instanceof InputStream) {
 	    String returnVal = toStringAndClose((InputStream) o);
-	    if (object.getMetaData().getContentType().indexOf("xml") >= 0) {
+	    if (object.getMetadata().getContentType().indexOf("xml") >= 0) {
 
 	    }
 	    return returnVal;

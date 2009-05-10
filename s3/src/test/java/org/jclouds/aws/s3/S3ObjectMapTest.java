@@ -37,6 +37,7 @@ import java.util.Map.Entry;
 import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.internal.BaseS3Map;
+import org.jclouds.aws.s3.util.S3Utils;
 import org.testng.annotations.Test;
 
 /**
@@ -141,7 +142,7 @@ public class S3ObjectMapTest extends BaseS3MapTest<S3Object> {
 	for (String key : fiveInputs.keySet()) {
 	    S3Object object = new S3Object(key);
 	    object.setData(fiveInputs.get(key));
-	    object.getMetaData().setSize(fiveBytes.get(key).length);
+	    object.getMetadata().setSize(fiveBytes.get(key).length);
 	    newMap.put(key, object);
 	}
 	map.putAll(newMap);

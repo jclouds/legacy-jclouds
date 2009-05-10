@@ -83,23 +83,23 @@ public abstract class FutureCommandConnectionPool<C, O extends FutureCommand<?, 
 	    hitBottom = available.size() == 0
 		    && allConnections.availablePermits() == 0;
 	    if (hitBottom)
-		logger.warn("%1s - saturated connection pool", this);
+		logger.warn("%1$s - saturated connection pool", this);
 	}
 	logger
 		.debug(
-			"%1s - attempting to acquire connection; %d currently available",
+			"%1$s - attempting to acquire connection; %d currently available",
 			this, available.size());
 	C conn = available.poll(5, TimeUnit.SECONDS);
 	if (conn == null)
 	    throw new TimeoutException(
 		    "could not obtain a pooled connection within 5 seconds");
 
-	logger.trace("%1s - %2d - aquired", conn, conn.hashCode());
+	logger.trace("%1$s - %2$d - aquired", conn, conn.hashCode());
 	if (connectionValid(conn)) {
-	    logger.debug("%1s - %2d - reusing", conn, conn.hashCode());
+	    logger.debug("%1$s - %2$d - reusing", conn, conn.hashCode());
 	    return conn;
 	} else {
-	    logger.debug("%1s - %2d - unusable", conn, conn.hashCode());
+	    logger.debug("%1$s - %2$d - unusable", conn, conn.hashCode());
 	    shutdownConnection(conn);
 	    allConnections.release();
 	    return getConnection();
@@ -130,7 +130,7 @@ public abstract class FutureCommandConnectionPool<C, O extends FutureCommand<?, 
 	O command = getCommandFromConnection(connection);
 	if (command != null) {
 	    if (isReplayable(command)) {
-		logger.info("resubmitting command: %1s", command);
+		logger.info("resubmitting command: %1$s", command);
 		commandQueue.add(command);
 	    } else {
 		command.setException(e);
@@ -151,7 +151,7 @@ public abstract class FutureCommandConnectionPool<C, O extends FutureCommand<?, 
     protected void setExceptionOnCommand(C connection, Exception e) {
 	FutureCommand<?, ?, ?> command = getCommandFromConnection(connection);
 	if (command != null) {
-	    logger.warn(e, "exception in command: %1s", command);
+	    logger.warn(e, "exception in command: %1$s", command);
 	    command.setException(e);
 	}
     }

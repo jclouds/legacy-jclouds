@@ -24,11 +24,11 @@
 package org.jclouds.aws.s3.commands.callables;
 
 import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.aws.s3.domain.S3Object.Metadata;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpHeaders;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 
 /**
@@ -39,11 +39,12 @@ import com.google.inject.Inject;
  */
 public class ParseObjectFromHeadersAndHttpContent extends
 	HttpFutureCommand.ResponseCallable<S3Object> {
-    private final ParseMetadataFromHeaders metaDataParser;
+    private final ParseMetadataFromHeaders metadataParser;
 
     @Inject
-    public ParseObjectFromHeadersAndHttpContent(ParseMetadataFromHeaders metaDataParser) {
-	this.metaDataParser = metaDataParser;
+    public ParseObjectFromHeadersAndHttpContent(
+	    ParseMetadataFromHeaders metadataParser) {
+	this.metadataParser = metadataParser;
     }
 
     /**
@@ -56,26 +57,38 @@ public class ParseObjectFromHeadersAndHttpContent extends
      */
     public S3Object call() throws HttpException {
 	checkCode();
-	metaDataParser.setResponse(getResponse());
-	S3Object.Metadata metaData = metaDataParser.call();
-
-	parseContentLengthOrThrowException(metaData);
-	return new S3Object(metaData, getResponse().getContent());
+	metadataParser.setResponse(getResponse());
+	S3Object.Metadata metadata = metadataParser.call();
+	S3Object object = new S3Object(metadata, getResponse().getContent());
+	parseContentLengthOrThrowException(object);
+	return object;
     }
 
-    private void parseContentLengthOrThrowException(Metadata metaData)
+    @VisibleForTesting
+    void parseContentLengthOrThrowException(S3Object object)
 	    throws HttpException {
 	String contentLength = getResponse().getFirstHeaderOrNull(
 		HttpHeaders.CONTENT_LENGTH);
+	String contentRange = getResponse().getFirstHeaderOrNull(
+		HttpHeaders.CONTENT_RANGE);
 	if (contentLength == null)
 	    throw new HttpException(HttpHeaders.CONTENT_LENGTH
 		    + " header not present in headers: "
 		    + getResponse().getHeaders());
-	metaData.setSize(Long.parseLong(contentLength));
+	object.setContentLength(Long.parseLong(contentLength));
+
+	if (contentRange == null) {
+	    object.getMetadata().setSize(object.getContentLength());
+	} else {
+	    object.setContentRange(contentRange);
+	    object.getMetadata().setSize(
+		    Long.parseLong(contentRange.substring(contentRange
+			    .lastIndexOf('/')+1)));
+	}
     }
 
     public void setKey(String key) {
-	this.metaDataParser.setKey(key);
+	this.metadataParser.setKey(key);
     }
 
 }

@@ -134,13 +134,13 @@ public class HttpNioFutureCommandExecutionHandler implements
 	    }
 	} else {
 	    throw new IllegalStateException(String.format(
-		    "No command-handle associated with command %1s", context));
+		    "No command-handle associated with command %1$s", context));
 	}
     }
 
     protected boolean isRetryable(HttpFutureCommand<?> command) {
 	if (command.getRequest().isReplayable()) {
-	    logger.info("resubmitting command: %1s", command);
+	    logger.info("resubmitting command: %1$s", command);
 	    return true;
 	}
 	return false;
@@ -151,14 +151,14 @@ public class HttpNioFutureCommandExecutionHandler implements
 	try {
 	    handle.release();
 	} catch (InterruptedException e) {
-	    logger.error(e, "Interrupted releasing handle %1s", handle);
+	    logger.error(e, "Interrupted releasing handle %1$s", handle);
 	}
     }
 
     protected void processResponse(org.jclouds.http.HttpResponse response,
 	    HttpFutureCommand<?> command) throws IOException {
 	command.getResponseFuture().setResponse(response);
-	logger.trace("submitting response task %1s", command
+	logger.trace("submitting response task %1$s", command
 		.getResponseFuture());
 	executor.submit(command.getResponseFuture());
     }
@@ -170,7 +170,7 @@ public class HttpNioFutureCommandExecutionHandler implements
 	    try {
 		handle.cancel();
 	    } catch (Exception e) {
-		logger.error(e, "Error cancelling handle %1s", handle);
+		logger.error(e, "Error cancelling handle %1$s", handle);
 	    }
 	}
     }

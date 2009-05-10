@@ -46,6 +46,8 @@ import java.util.logging.Logger;
 
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.s3.reference.S3Constants;
+import org.jclouds.aws.s3.util.S3Utils;
 import org.jclouds.http.HttpConstants;
 import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
 import org.testng.annotations.AfterTest;
@@ -54,10 +56,15 @@ import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
+
 import com.google.inject.Module;
 
 @Test
 public class S3IntegrationTest {
+    protected static final String TEST_STRING = "<apples><apple name=\"fuji\" /></apples>";
+
+    protected byte[] goodMd5;
+    protected byte[] badMd5;
 
     protected void createBucketAndEnsureEmpty(String sourceBucket)
 	    throws InterruptedException, ExecutionException, TimeoutException {
@@ -66,13 +73,11 @@ public class S3IntegrationTest {
 		.getContents().size(), 0);
     }
 
-    protected static final String TEST_STRING = "<apples><apple name=\"fuji\" /></apples>";
-
     protected void addObjectToBucket(String sourceBucket, String key)
 	    throws InterruptedException, ExecutionException, TimeoutException,
 	    IOException {
 	S3Object sourceObject = new S3Object(key);
-	sourceObject.getMetaData().setContentType("text/xml");
+	sourceObject.getMetadata().setContentType("text/xml");
 	sourceObject.setData(TEST_STRING);
 	addObjectToBucket(sourceBucket, sourceObject);
     }
@@ -146,6 +151,8 @@ public class S3IntegrationTest {
 			: sysAWSSecretAccessKey);
 	client = context.getConnection();
 	deleteEverything();
+	goodMd5 = S3Utils.md5(TEST_STRING);
+	badMd5 = S3Utils.md5("alf");
     }
 
     protected boolean debugEnabled() {
@@ -168,7 +175,6 @@ public class S3IntegrationTest {
 		checkNotNull(AWSSecretAccessKey, "AWSSecretAccessKey"));
 	properties.setProperty(HttpConstants.PROPERTY_HTTP_SECURE, "false");
 	properties.setProperty(HttpConstants.PROPERTY_HTTP_PORT, "80");
-	// properties.setProperty("jclouds.http.sax.debug", "true");
 	return properties;
     }
 
@@ -178,10 +184,10 @@ public class S3IntegrationTest {
 
     protected void deleteEverything() throws Exception {
 	try {
-	    List<S3Bucket.Metadata> metaData = client.getOwnedBuckets().get(10,
+	    List<S3Bucket.Metadata> metadata = client.listOwnedBuckets().get(10,
 		    TimeUnit.SECONDS);
 	    List<Future<Boolean>> results = new ArrayList<Future<Boolean>>();
-	    for (S3Bucket.Metadata metaDatum : metaData) {
+	    for (S3Bucket.Metadata metaDatum : metadata) {
 		if (metaDatum.getName().startsWith(bucketPrefix.toLowerCase())) {
 		    S3Bucket bucket = client.listBucket(metaDatum.getName())
 			    .get(10, TimeUnit.SECONDS);

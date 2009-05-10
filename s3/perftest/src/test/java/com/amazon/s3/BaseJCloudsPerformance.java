@@ -56,7 +56,7 @@ public abstract class BaseJCloudsPerformance extends BasePerformance {
 	    String contentType) throws Exception {
 	org.jclouds.aws.s3.domain.S3Object object = new org.jclouds.aws.s3.domain.S3Object(
 		key);
-	object.getMetaData().setContentType(contentType);
+	object.getMetadata().setContentType(contentType);
 	object.setData(data);
 	return client.putObject(bucket, object).get(120, TimeUnit.SECONDS) != null;
     }
@@ -66,7 +66,7 @@ public abstract class BaseJCloudsPerformance extends BasePerformance {
 	    String contentType) throws Exception {
 	org.jclouds.aws.s3.domain.S3Object object = new org.jclouds.aws.s3.domain.S3Object(
 		key);
-	object.getMetaData().setContentType(contentType);
+	object.getMetadata().setContentType(contentType);
 	object.setData(data);
 	return client.putObject(bucket, object).get(120, TimeUnit.SECONDS) != null;
     }
@@ -76,9 +76,9 @@ public abstract class BaseJCloudsPerformance extends BasePerformance {
 	    InputStream data, String contentType) throws Exception {
 	org.jclouds.aws.s3.domain.S3Object object = new org.jclouds.aws.s3.domain.S3Object(
 		key);
-	object.getMetaData().setContentType(contentType);
+	object.getMetadata().setContentType(contentType);
 	object.setData(data);
-	object.getMetaData().setSize(data.available());
+	object.getMetadata().setSize(data.available());
 	return client.putObject(bucket, object).get(120, TimeUnit.SECONDS) != null;
     }
 
@@ -87,7 +87,7 @@ public abstract class BaseJCloudsPerformance extends BasePerformance {
 	    String contentType) throws Exception {
 	org.jclouds.aws.s3.domain.S3Object object = new org.jclouds.aws.s3.domain.S3Object(
 		key);
-	object.getMetaData().setContentType(contentType);
+	object.getMetadata().setContentType(contentType);
 	object.setData(data);
 	return client.putObject(bucket, object).get(120, TimeUnit.SECONDS) != null;
     }

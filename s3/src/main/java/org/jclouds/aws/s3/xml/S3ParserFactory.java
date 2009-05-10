@@ -35,7 +35,9 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 /**
- * Creates Parsers needed to interpret S3 Server responses
+ * Creates Parsers needed to interpret S3 Server messages. This class uses guice
+ * assisted inject, which mandates the creation of many single-method
+ * interfaces. These interfaces are not intended for public api.
  * 
  * @author Adrian Cole
  */
@@ -44,6 +46,7 @@ public class S3ParserFactory {
     @Inject
     private GenericParseFactory<List<S3Bucket.Metadata>> parseListAllMyBucketsFactory;
 
+    @VisibleForTesting
     public static interface GenericParseFactory<T> {
 	ParseSax<T> create(ParseSax.HandlerWithResult<T> handler);
     }
@@ -51,7 +54,9 @@ public class S3ParserFactory {
     @Inject
     Provider<ListAllMyBucketsHandler> ListAllMyBucketsHandlerprovider;
 
-    @VisibleForTesting
+    /**
+     * @return a parser used to handle {@link ListOwnedBuckets} responses
+     */
     public ParseSax<List<S3Bucket.Metadata>> createListBucketsParser() {
 	return parseListAllMyBucketsFactory
 		.create(ListAllMyBucketsHandlerprovider.get());
@@ -63,7 +68,9 @@ public class S3ParserFactory {
     @Inject
     Provider<ListBucketHandler> ListBucketHandlerprovider;
 
-    @VisibleForTesting
+    /**
+     * @return a parser used to handle {@link ListBucket} responses
+     */
     public ParseSax<S3Bucket> createListBucketParser() {
 	return parseListBucketFactory.create(ListBucketHandlerprovider.get());
     }
@@ -74,7 +81,9 @@ public class S3ParserFactory {
     @Inject
     Provider<CopyObjectHandler> copyObjectHandlerProvider;
 
-    @VisibleForTesting
+    /**
+     * @return a parser used to handle {@link CopyObject} responses
+     */
     public ParseSax<S3Object.Metadata> createCopyObjectParser() {
 	return parseCopyObjectFactory.create(copyObjectHandlerProvider.get());
     }
@@ -85,6 +94,9 @@ public class S3ParserFactory {
     @Inject
     Provider<ErrorHandler> errorHandlerProvider;
 
+    /**
+     * @return a parser used to handle error conditions.
+     */
     public ParseSax<S3Error> createErrorParser() {
 	return parseErrorFactory.create(errorHandlerProvider.get());
     }

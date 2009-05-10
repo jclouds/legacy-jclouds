@@ -23,10 +23,23 @@
  */
 package org.jclouds.aws.s3;
 
+import java.util.Map;
+
 import org.jclouds.aws.s3.domain.S3Bucket;
 
-public interface S3Map {
+/**
+ * All Map views of {@link S3Bucket}s provide means to access the underlying S3
+ * object.
+ * 
+ * @author Adrian Cole
+ * 
+ */
+public interface S3Map<K, V> extends Map<K, V> {
 
+    /**
+     * 
+     * @return s3 bucket listing that this map represents
+     */
     S3Bucket getBucket();
 
 }

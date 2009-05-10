@@ -36,13 +36,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.jclouds.aws.s3.S3Constants;
 import org.jclouds.aws.s3.S3IntegrationTest;
+import org.jclouds.aws.s3.reference.S3Constants;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+
 
 import com.google.inject.Provider;
 
@@ -256,7 +257,7 @@ public abstract class BasePerformance extends S3IntegrationTest {
     // }
     // for (Future<Boolean> isdeleted : deletes)
     // assert isdeleted.get(10,TimeUnit.SECONDS) :
-    // String.format("failed to delete %1s",
+    // String.format("failed to delete %1$ss",
     // isdeleted);
     // return
     // clientProvider.get(10,TimeUnit.SECONDS).deleteBucket(bucket).get(10,TimeUnit.SECONDS);

@@ -23,10 +23,11 @@
  */
 package org.jclouds.aws.s3.commands.options;
 
-import org.jclouds.aws.s3.S3Headers;
 import org.jclouds.aws.s3.domain.S3Bucket.Metadata.LocationConstraint;
 import org.jclouds.aws.s3.domain.acl.CannedAccessPolicy;
+import org.jclouds.aws.s3.reference.S3Headers;
 import org.jclouds.http.options.BaseHttpRequestOptions;
+
 
 import static com.google.common.base.Preconditions.*;
 
@@ -38,7 +39,7 @@ import static com.google.common.base.Preconditions.*;
  * <p/>
  * <code>
  * import static org.jclouds.aws.s3.commands.options.PutBucketOptions.Builder.*
- * import static org.jclouds.aws.s3.domain.S3Bucket.MetaData.LocationConstraint.*;
+ * import static org.jclouds.aws.s3.domain.S3Bucket.Metadata.LocationConstraint.*;
  * import org.jclouds.aws.s3.S3Connection;
  * 
  * S3Connection connection = // get connection
@@ -64,7 +65,7 @@ public class PutBucketOptions extends BaseHttpRequestOptions {
 	this.constraint = checkNotNull(constraint, "constraint");
 	this.payload = String
 		.format(
-			"<CreateBucketConfiguration><LocationConstraint>%1s</LocationConstraint></CreateBucketConfiguration>",
+			"<CreateBucketConfiguration><LocationConstraint>%1$s</LocationConstraint></CreateBucketConfiguration>",
 			constraint.toString());
 	return this;
     }

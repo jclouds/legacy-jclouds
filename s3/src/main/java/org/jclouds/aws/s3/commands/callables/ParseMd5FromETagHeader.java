@@ -24,10 +24,11 @@
 package org.jclouds.aws.s3.commands.callables;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.aws.s3.S3Headers;
-import org.jclouds.aws.s3.S3Utils;
+import org.jclouds.aws.s3.reference.S3Headers;
+import org.jclouds.aws.s3.util.S3Utils;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpFutureCommand;
+
 
 /**
  * Parses an MD5 checksum from the header {@link S3Headers#ETAG}.

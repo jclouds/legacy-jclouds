@@ -78,5 +78,12 @@ public interface HttpHeaders {
     public static final String TRANSFER_ENCODING = "Transfer-Encoding";
     public static final String LAST_MODIFIED = "Last-Modified";
     public static final String SERVER = "Server";
+    public static final String ETAG = "ETag";
+    public static final String RANGE = "Range";
+    public static final String IF_MODIFIED_SINCE = "If-Modified-Since";
+    public static final String IF_UNMODIFIED_SINCE = "If-Unmodified-Since";
+    public static final String IF_MATCH = "If-Match";
+    public static final String IF_NONE_MATCH = "If-None-Match";
+    public static final String CONTENT_RANGE = "Content-Range";
 
 }

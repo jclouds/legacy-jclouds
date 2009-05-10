@@ -42,7 +42,7 @@ public class S3Bucket {
     public String toString() {
 	final StringBuilder sb = new StringBuilder();
 	sb.append("S3Bucket");
-	sb.append("{metaData=").append(metaData);
+	sb.append("{metadata=").append(metadata);
 	sb.append(", isComplete=").append(isComplete);
 	sb.append('}');
 	return sb.toString();
@@ -59,7 +59,7 @@ public class S3Bucket {
 
 	if (isComplete != s3Bucket.isComplete)
 	    return false;
-	if (!metaData.equals(s3Bucket.metaData))
+	if (!metadata.equals(s3Bucket.metadata))
 	    return false;
 	if (objects != null ? !objects.equals(s3Bucket.objects)
 		: s3Bucket.objects != null)
@@ -71,7 +71,7 @@ public class S3Bucket {
     @Override
     public int hashCode() {
 	int result = objects != null ? objects.hashCode() : 0;
-	result = 31 * result + metaData.hashCode();
+	result = 31 * result + metadata.hashCode();
 	result = 31 * result + (isComplete ? 1 : 0);
 	return result;
     }
@@ -80,7 +80,7 @@ public class S3Bucket {
 	@Override
 	public String toString() {
 	    final StringBuilder sb = new StringBuilder();
-	    sb.append("MetaData");
+	    sb.append("Metadata");
 	    sb.append("{name='").append(name).append('\'');
 	    sb.append(", creationDate=").append(creationDate);
 	    sb.append(", canonicalUser=").append(canonicalUser);
@@ -95,17 +95,12 @@ public class S3Bucket {
 	    if (!(o instanceof Metadata))
 		return false;
 
-	    Metadata metaData = (Metadata) o;
-
+	    Metadata metadata = (Metadata) o;
 	    if (canonicalUser != null ? !canonicalUser
-		    .equals(metaData.canonicalUser)
-		    : metaData.canonicalUser != null)
+		    .equals(metadata.canonicalUser)
+		    : metadata.canonicalUser != null)
 		return false;
-	    if (creationDate != null ? !creationDate
-		    .equals(metaData.creationDate)
-		    : metaData.creationDate != null)
-		return false;
-	    if (!name.equals(metaData.name))
+	    if (!name.equals(metadata.name))
 		return false;
 
 	    return true;
@@ -114,8 +109,6 @@ public class S3Bucket {
 	@Override
 	public int hashCode() {
 	    int result = name.hashCode();
-	    result = 31 * result
-		    + (creationDate != null ? creationDate.hashCode() : 0);
 	    result = 31 * result
 		    + (canonicalUser != null ? canonicalUser.hashCode() : 0);
 	    return result;
@@ -127,7 +120,7 @@ public class S3Bucket {
 
 	private final String name;
 	private DateTime creationDate;
-	private S3Owner canonicalUser;
+	private CanonicalUser canonicalUser;
 
 	public Metadata(String name) {
 	    this.name = checkNotNull(name, "name");
@@ -145,11 +138,17 @@ public class S3Bucket {
 	    this.creationDate = creationDate;
 	}
 
-	public S3Owner getCanonicalUser() {
+	/**
+	 * Every bucket and object in Amazon S3 has an owner, the user that
+	 * created the bucket or object. The owner of a bucket or object cannot
+	 * be changed. However, if the object is overwritten by another user
+	 * (deleted and rewritten), the new object will have a new owner.
+	 */
+	public CanonicalUser getOwner() {
 	    return canonicalUser;
 	}
 
-	public void setCanonicalUser(S3Owner canonicalUser) {
+	public void setOwner(CanonicalUser canonicalUser) {
 	    this.canonicalUser = canonicalUser;
 	}
 
@@ -163,20 +162,20 @@ public class S3Bucket {
     private String marker;
     private String delimiter;
     private long maxKeys;
-    private final Metadata metaData;
+    private final Metadata metadata;
 
     private boolean isComplete;
 
     public S3Bucket(String name) {
-	this.metaData = new Metadata(name);
+	this.metadata = new Metadata(name);
     }
 
     public String getName() {
-	return this.metaData.getName();
+	return this.metadata.getName();
     }
 
-    public S3Bucket(Metadata metaData) {
-	this.metaData = checkNotNull(metaData, "metaData");
+    public S3Bucket(Metadata metadata) {
+	this.metadata = checkNotNull(metadata, "metadata");
     }
 
     public Set<S3Object.Metadata> getContents() {
@@ -195,8 +194,8 @@ public class S3Bucket {
 	isComplete = complete;
     }
 
-    public Metadata getMetaData() {
-	return metaData;
+    public Metadata getMetadata() {
+	return metadata;
     }
 
     public void setCommonPrefixes(Set<String> commonPrefixes) {

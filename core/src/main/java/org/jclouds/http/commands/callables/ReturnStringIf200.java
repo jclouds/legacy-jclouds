@@ -56,13 +56,13 @@ public class ReturnStringIf200 extends
 		toReturn = Utils.toStringAndClose(entity);
 	    } catch (IOException e) {
 		throw new HttpException(String.format(
-			"Couldn't receive response %1s, entity: %2s ",
+			"Couldn't receive response %1$s, entity: %2$s ",
 			getResponse(), toReturn), e);
 	    }
 	    return toReturn;
 	} else {
 	    throw new HttpException(String.format(
-		    "Unhandled status code  - %1s", getResponse()));
+		    "Unhandled status code  - %1$s", getResponse()));
 	}
     }
 }

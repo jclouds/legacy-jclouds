@@ -70,7 +70,7 @@ public abstract class BaseLifeCycle implements Runnable, LifeCycle {
 	this.status = Status.SHUTTING_DOWN;
 	doShutdown();
 	this.status = Status.SHUT_DOWN;
-	logger.info("%1s", this);
+	logger.info("%1$s", this);
     }
 
     protected abstract void doWork() throws Exception;
@@ -88,7 +88,7 @@ public abstract class BaseLifeCycle implements Runnable, LifeCycle {
 
     @PostConstruct
     public void start() {
-	logger.info("starting %1s", this);
+	logger.info("starting %1$s", this);
 	synchronized (this.statusLock) {
 	    if (this.status.compareTo(Status.SHUTDOWN_REQUEST) >= 0) {
 		doShutdown();
@@ -116,7 +116,7 @@ public abstract class BaseLifeCycle implements Runnable, LifeCycle {
 	for (BaseLifeCycle dependency : dependencies) {
 	    if (dependency.status.compareTo(Status.ACTIVE) != 0) {
 		throw new IllegalStateException(String.format(
-			"Illegal state: %1s for component: %2s",
+			"Illegal state: %1$s for component: %2$s",
 			dependency.status, dependency));
 	    }
 	}
@@ -167,7 +167,7 @@ public abstract class BaseLifeCycle implements Runnable, LifeCycle {
 
     protected void exceptionIfNotActive() {
 	if (!status.equals(Status.ACTIVE))
-	    throw new IllegalStateException(String.format("not active: %1s",
+	    throw new IllegalStateException(String.format("not active: %1$s",
 		    this));
     }
 

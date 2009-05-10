@@ -31,11 +31,12 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 
-import org.jclouds.aws.s3.S3Constants;
+import org.jclouds.aws.s3.reference.S3Constants;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+
 
 /**
  * Runs operations that amazon s3 sample code is capable of performing.

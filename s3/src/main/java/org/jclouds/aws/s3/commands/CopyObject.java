@@ -34,6 +34,25 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 
+/**
+ * The copy operation creates a copy of an object that is already storedin
+ * Amazon S3.
+ * <p/>
+ * When copying an object, you can preserve all metadata (default) or
+ * {@link CopyObjectOptions#overrideMetadataWith(com.google.common.collect.Multimap)
+ * specify new metadata}. However, the ACL is not preserved and is set to
+ * private for the user making the request. To override the default ACL setting,
+ * {@link CopyObjectOptions#overrideAcl(org.jclouds.aws.s3.domain.acl.CannedAccessPolicy)
+ * specify a new ACL} when generating a copy request.
+ * 
+ * @see http
+ *      ://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTObjectCOPY
+ *      .html
+ * @see CopyObjectOptions
+ * @see CannedAccessPolicy
+ * @author Adrian Cole
+ * 
+ */
 public class CopyObject extends S3FutureCommand<S3Object.Metadata> {
 
     @Inject
@@ -51,9 +70,9 @@ public class CopyObject extends S3FutureCommand<S3Object.Metadata> {
 	handler.setKey(destinationObject);
 	getRequest().getHeaders().put(
 		"x-amz-copy-source",
-		String.format("/%1s/%2s", checkNotNull(sourceBucket,
-			"sourceBucket"), checkNotNull(
-			sourceObject, "sourceObject")));
+		String.format("/%1$s/%2$s", checkNotNull(sourceBucket,
+			"sourceBucket"), checkNotNull(sourceObject,
+			"sourceObject")));
 	getRequest().getHeaders().putAll(options.buildRequestHeaders());
     }
 }

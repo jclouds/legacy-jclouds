@@ -25,82 +25,79 @@ package org.jclouds.aws.s3.xml;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.aws.s3.DateService;
-import org.jclouds.aws.s3.S3Utils;
+import org.jclouds.aws.s3.domain.CanonicalUser;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.aws.s3.domain.S3Owner;
+import org.jclouds.aws.s3.util.DateService;
+import org.jclouds.aws.s3.util.S3Utils;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 
 import com.google.inject.Inject;
 
 /**
- * // TODO: Adrian: Document this!
+ * Parses the following XML document:
+ * <p/>
+ * ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01"
  * 
+ * @see http 
+ *      ://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTBucketGET
+ *      .html
  * @author Adrian Cole
  */
 public class ListBucketHandler extends ParseSax.HandlerWithResult<S3Bucket> {
+    private S3Bucket s3Bucket;
+    private S3Object.Metadata currentObjectMetadata;
+    private CanonicalUser currentOwner;
+    private StringBuilder currentText = new StringBuilder();
+
+    private final DateService dateParser;
+
+    @Inject
+    public ListBucketHandler(DateService dateParser) {
+	this.dateParser = dateParser;
+    }
 
     public S3Bucket getResult() {
 	return s3Bucket;
     }
 
     public void setBucketName(String bucketName) {
-	this.s3Bucket = new S3Bucket(bucketName);
+	this.s3Bucket = new S3Bucket(checkNotNull(bucketName, "bucketName"));
     }
 
-    private S3Bucket s3Bucket;
-    private S3Object.Metadata currentObjectMetaData;
-    private S3Owner currentOwner;
-    private StringBuilder currentText = new StringBuilder();
-    @Inject
-    private DateService dateParser;
     private boolean inCommonPrefixes;
-
-    @Override
-    public void startDocument() throws SAXException {
-	checkNotNull(s3Bucket, "s3Bucket");
-	s3Bucket.getContents().clear();
-	s3Bucket.getCommonPrefixes().clear();
-	super.startDocument();
-    }
 
     public void startElement(String uri, String name, String qName,
 	    Attributes attrs) {
-	if (qName.equals("Contents")) {
-	} else if (qName.equals("Owner")) {
-	    currentOwner = new S3Owner();
-	} else if (qName.equals("CommonPrefixes")) {
+	if (qName.equals("CommonPrefixes")) {
 	    inCommonPrefixes = true;
 	}
     }
 
     public void endElement(String uri, String name, String qName) {
-
-	if (qName.equals("ID")) { // owner stuff
-	    currentOwner.setId(currentText.toString());
+	if (qName.equals("ID")) {
+	    currentOwner = new CanonicalUser(currentText.toString());
 	} else if (qName.equals("DisplayName")) {
 	    currentOwner.setDisplayName(currentText.toString());
 	} else if (qName.equals("Key")) { // content stuff
-	    currentObjectMetaData = new S3Object.Metadata(currentText
+	    currentObjectMetadata = new S3Object.Metadata(currentText
 		    .toString());
 	} else if (qName.equals("LastModified")) {
-	    currentObjectMetaData.setLastModified(dateParser
+	    currentObjectMetadata.setLastModified(dateParser
 		    .dateTimeFromXMLFormat(currentText.toString()));
 	} else if (qName.equals("ETag")) {
-	    currentObjectMetaData.setMd5(S3Utils.fromHexString(currentText
+	    currentObjectMetadata.setMd5(S3Utils.fromHexString(currentText
 		    .toString().replaceAll("\"", "")));
 	} else if (qName.equals("Size")) {
-	    currentObjectMetaData.setSize(Long
+	    currentObjectMetadata.setSize(Long
 		    .parseLong(currentText.toString()));
 	} else if (qName.equals("Owner")) {
-	    currentObjectMetaData.setOwner(currentOwner);
+	    currentObjectMetadata.setOwner(currentOwner);
 	} else if (qName.equals("StorageClass")) {
-	    currentObjectMetaData.setStorageClass(currentText.toString());
+	    currentObjectMetadata.setStorageClass(currentText.toString());
 	} else if (qName.equals("Contents")) {
-	    s3Bucket.getContents().add(currentObjectMetaData);
+	    s3Bucket.getContents().add(currentObjectMetadata);
 	} else if (qName.equals("Name")) {// bucket stuff last, as least likely
 	} else if (qName.equals("Prefix")) {
 	    String prefix = currentText.toString().trim();

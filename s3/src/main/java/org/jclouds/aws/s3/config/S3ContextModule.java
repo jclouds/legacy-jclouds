@@ -38,6 +38,7 @@ import org.jclouds.aws.s3.internal.GuiceS3Context;
 import org.jclouds.aws.s3.internal.LiveS3Connection;
 import org.jclouds.aws.s3.internal.LiveS3InputStreamMap;
 import org.jclouds.aws.s3.internal.LiveS3ObjectMap;
+import org.jclouds.http.CloseContentAndSetExceptionHandler;
 import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponseHandler;
@@ -88,13 +89,14 @@ public class S3ContextModule extends AbstractModule {
 			LiveS3InputStreamMap.class));
 	bind(S3Context.class).to(GuiceS3Context.class);
 	bind(HttpResponseHandler.class).annotatedWith(RedirectHandler.class)
-		.to(ParseS3ErrorFromXmlContent.class).in(Scopes.SINGLETON);
+		.to(CloseContentAndSetExceptionHandler.class).in(
+			Scopes.SINGLETON);
 	bind(HttpResponseHandler.class).annotatedWith(ClientErrorHandler.class)
 		.to(ParseS3ErrorFromXmlContent.class).in(Scopes.SINGLETON);
 	bind(HttpResponseHandler.class).annotatedWith(ServerErrorHandler.class)
 		.to(ParseS3ErrorFromXmlContent.class).in(Scopes.SINGLETON);
 	requestInjection(this);
-	logger.info("S3 Context = %1s://%2s:%3s",
+	logger.info("S3 Context = %1$s://%2$s:%3$s",
 		(isSecure ? "https" : "http"), address, port);
     }
 

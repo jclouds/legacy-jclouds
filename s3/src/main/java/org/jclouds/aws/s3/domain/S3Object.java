@@ -31,8 +31,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import org.jclouds.aws.s3.S3Utils;
-import org.jclouds.aws.s3.S3Utils.Md5InputStreamResult;
+import org.jclouds.aws.s3.util.S3Utils;
+import org.jclouds.aws.s3.util.S3Utils.Md5InputStreamResult;
 import org.jclouds.http.ContentTypes;
 import org.joda.time.DateTime;
 
@@ -48,18 +48,20 @@ public class S3Object {
     public static final S3Object NOT_FOUND = new S3Object(Metadata.NOT_FOUND);
 
     private Object data;
-    private Metadata metaData;
+    private Metadata metadata;
+    private long contentLength = -1;
+    private String contentRange;
 
     public S3Object(String key) {
 	this(new Metadata(key));
     }
 
-    public S3Object(Metadata metaData) {
-	this.metaData = metaData;
+    public S3Object(Metadata metadata) {
+	this.metadata = metadata;
     }
 
-    public S3Object(Metadata metaData, Object data) {
-	this(metaData);
+    public S3Object(Metadata metadata, Object data) {
+	this(metadata);
 	setData(data);
     }
 
@@ -77,6 +79,7 @@ public class S3Object {
 	private volatile long size = -1;
 
 	// only parsed during head or get
+	private Multimap<String, String> allHeaders = HashMultimap.create();
 	private Multimap<String, String> userMetadata = HashMultimap.create();
 	private DateTime lastModified;
 	private String dataType = ContentTypes.UNKNOWN_MIME_TYPE;
@@ -85,7 +88,7 @@ public class S3Object {
 	private String dataEncoding;
 
 	// only parsed on list
-	private S3Owner owner = null;
+	private CanonicalUser owner = null;
 	private String storageClass = null;
 
 	public Metadata(String key) {
@@ -97,7 +100,7 @@ public class S3Object {
 	@Override
 	public String toString() {
 	    final StringBuilder sb = new StringBuilder();
-	    sb.append("MetaData");
+	    sb.append("Metadata");
 	    sb.append("{key='").append(key).append('\'');
 	    sb.append(", lastModified=").append(lastModified);
 	    sb.append(", md5=").append(
@@ -116,20 +119,20 @@ public class S3Object {
 	    if (!(o instanceof Metadata))
 		return false;
 
-	    Metadata metaData = (Metadata) o;
+	    Metadata metadata = (Metadata) o;
 
-	    if (size != metaData.size)
+	    if (size != metadata.size)
 		return false;
-	    if (dataType != null ? !dataType.equals(metaData.dataType)
-		    : metaData.dataType != null)
+	    if (dataType != null ? !dataType.equals(metadata.dataType)
+		    : metadata.dataType != null)
 		return false;
-	    if (!key.equals(metaData.key))
+	    if (!key.equals(metadata.key))
 		return false;
 	    if (lastModified != null ? !lastModified
-		    .equals(metaData.lastModified)
-		    : metaData.lastModified != null)
+		    .equals(metadata.lastModified)
+		    : metadata.lastModified != null)
 		return false;
-	    if (!Arrays.equals(getMd5(), metaData.getMd5()))
+	    if (!Arrays.equals(getMd5(), metadata.getMd5()))
 		return false;
 	    return true;
 	}
@@ -190,11 +193,17 @@ public class S3Object {
 	    return userMetadata;
 	}
 
-	public void setOwner(S3Owner owner) {
+	public void setOwner(CanonicalUser owner) {
 	    this.owner = owner;
 	}
 
-	public S3Owner getOwner() {
+	/**
+	 * Every bucket and object in Amazon S3 has an owner, the user that
+	 * created the bucket or object. The owner of a bucket or object cannot
+	 * be changed. However, if the object is overwritten by another user
+	 * (deleted and rewritten), the new object will have a new owner.
+	 */
+	public CanonicalUser getOwner() {
 	    return owner;
 	}
 
@@ -229,16 +238,24 @@ public class S3Object {
 	public String getContentEncoding() {
 	    return dataEncoding;
 	}
+
+	public void setAllHeaders(Multimap<String, String> allHeaders) {
+	    this.allHeaders = allHeaders;
+	}
+
+	public Multimap<String, String> getAllHeaders() {
+	    return allHeaders;
+	}
     }
 
     public String getKey() {
-	return metaData.getKey();
+	return metadata.getKey();
     }
 
     public void setData(Object data) {
 	this.data = checkNotNull(data, "data");
-	if (getMetaData().getSize() == -1)
-	    this.getMetaData().setSize(S3Utils.calculateSize(data));
+	if (getMetadata().getSize() == -1)
+	    this.getMetadata().setSize(S3Utils.calculateSize(data));
     }
 
     public void generateMd5() throws IOException {
@@ -246,11 +263,11 @@ public class S3Object {
 	if (data instanceof InputStream) {
 	    Md5InputStreamResult result = S3Utils
 		    .generateMd5Result((InputStream) data);
-	    getMetaData().setSize(result.length);
-	    getMetaData().setMd5(result.md5);
+	    getMetadata().setSize(result.length);
+	    getMetadata().setMd5(result.md5);
 	    setData(result.data);
 	} else {
-	    getMetaData().setMd5(S3Utils.md5(data));
+	    getMetadata().setMd5(S3Utils.md5(data));
 	}
     }
 
@@ -258,19 +275,19 @@ public class S3Object {
 	return data;
     }
 
-    public void setMetaData(Metadata metaData) {
-	this.metaData = metaData;
+    public void setMetadata(Metadata metadata) {
+	this.metadata = metadata;
     }
 
-    public Metadata getMetaData() {
-	return metaData;
+    public Metadata getMetadata() {
+	return metadata;
     }
 
     @Override
     public String toString() {
 	final StringBuilder sb = new StringBuilder();
 	sb.append("S3Object");
-	sb.append("{metaData=").append(metaData);
+	sb.append("{metadata=").append(metadata);
 	sb.append('}');
 	return sb.toString();
     }
@@ -286,7 +303,7 @@ public class S3Object {
 
 	if (data != null ? !data.equals(s3Object.data) : s3Object.data != null)
 	    return false;
-	if (!metaData.equals(s3Object.metaData))
+	if (!metadata.equals(s3Object.metadata))
 	    return false;
 
 	return true;
@@ -295,8 +312,24 @@ public class S3Object {
     @Override
     public int hashCode() {
 	int result = data != null ? data.hashCode() : 0;
-	result = 31 * result + metaData.hashCode();
+	result = 31 * result + metadata.hashCode();
 	return result;
+    }
+
+    public void setContentLength(long contentLength) {
+	this.contentLength = contentLength;
+    }
+
+    public long getContentLength() {
+	return contentLength;
+    }
+
+    public void setContentRange(String contentRange) {
+	this.contentRange = contentRange;
+    }
+
+    public String getContentRange() {
+	return contentRange;
     }
 
 }

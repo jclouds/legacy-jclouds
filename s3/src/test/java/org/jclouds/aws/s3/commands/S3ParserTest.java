@@ -35,10 +35,10 @@ import java.util.concurrent.ExecutorCompletionService;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.PerformanceTest;
-import org.jclouds.aws.s3.S3Utils;
+import org.jclouds.aws.s3.domain.CanonicalUser;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.aws.s3.domain.S3Owner;
+import org.jclouds.aws.s3.util.S3Utils;
 import org.jclouds.aws.s3.xml.CopyObjectHandler;
 import org.jclouds.aws.s3.xml.ListBucketHandler;
 import org.jclouds.aws.s3.xml.S3ParserFactory;
@@ -64,7 +64,7 @@ public class S3ParserTest extends PerformanceTest {
     Injector injector = null;
 
     public static final String listAllMyBucketsResultOn200 = "<ListAllMyBucketsResult xmlns=\"http://s3.amazonaws.com/doc/callables/\"><Owner ><ID>e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0</ID></Owner><Buckets><Bucket><Name>adrianjbosstest</Name><CreationDate>2009-03-12T02:00:07.000Z</CreationDate></Bucket><Bucket><Name>adrianjbosstest2</Name><CreationDate>2009-03-12T02:00:09.000Z</CreationDate></Bucket></Buckets></ListAllMyBucketsResult>";
-    
+
     S3ParserFactory parserFactory = null;
 
     @BeforeMethod
@@ -122,11 +122,10 @@ public class S3ParserTest extends PerformanceTest {
 	DateTime date2 = bucket2.getCreationDate();
 	assert date2.equals(expectedDate2);
 	assert s3Buckets.size() == 2;
-	S3Owner owner = new S3Owner();
-	owner
-		.setId("e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0");
-	assert bucket1.getCanonicalUser().equals(owner);
-	assert bucket2.getCanonicalUser().equals(owner);
+	CanonicalUser owner = new CanonicalUser(
+		"e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0");
+	assert bucket1.getOwner().equals(owner);
+	assert bucket2.getOwner().equals(owner);
     }
 
     public static final String listBucketResult = "<ListBucketHandler xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Name>adrianjbosstest</Name><Prefix></Prefix><Marker></Marker><MaxKeys>1000</MaxKeys><IsTruncated>false</IsTruncated><Contents><Key>3366</Key><LastModified>2009-03-12T02:00:13.000Z</LastModified><ETag>&quot;9d7bb64e8e18ee34eec06dd2cf37b766&quot;</ETag><Size>136</Size><Owner><ID>e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0</ID><DisplayName>ferncam</DisplayName></Owner><StorageClass>STANDARD</StorageClass></Contents></ListBucketHandler>";
@@ -140,15 +139,14 @@ public class S3ParserTest extends PerformanceTest {
 	S3Object.Metadata object = bucket.getContents().iterator().next();
 	assert object.getKey().equals("3366");
 	DateTime expected = new DateTime("2009-03-12T02:00:13.000Z");
-	assert object.getLastModified().equals(expected) : String
-		.format("expected %1s, but got %1s", expected, object
+	assert object.getLastModified().equals(expected) : String.format(
+		"expected %1$s, but got %1$s", expected, object
 			.getLastModified());
 	assertEquals(S3Utils.toHexString(object.getMd5()),
 		"9d7bb64e8e18ee34eec06dd2cf37b766");
 	assert object.getSize() == 136;
-	S3Owner owner = new S3Owner();
-	owner
-		.setId("e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0");
+	CanonicalUser owner = new CanonicalUser(
+		"e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0");
 	owner.setDisplayName("ferncam");
 	assert object.getOwner().equals(owner);
 	assert object.getStorageClass().equals("STANDARD");

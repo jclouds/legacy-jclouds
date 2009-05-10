@@ -23,10 +23,24 @@
  */
 package org.jclouds.aws.s3;
 
-
+/**
+ * Represents an authenticated context to S3.
+ * 
+ * <h2>Note</h2> Please issue {@link #close()} when you are finished with this
+ * context in order to release resources.
+ * 
+ * 
+ * @see S3Connection
+ * @see S3InputStreamMap
+ * @see S3ObjectMap
+ * @author Adrian Cole
+ * 
+ */
 public interface S3Context {
 
     /**
+     * low-level api to S3. Threadsafe implementations will return a singleton.
+     * 
      * @return a connection to S3
      */
     S3Connection getConnection();

@@ -21,30 +21,46 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3;
+package org.jclouds.aws.s3.commands;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.aws.s3.S3IntegrationTest;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.testng.annotations.Test;
 
 /**
- * Tests connection by listing all the buckets and their size
+ * Tests integrated functionality of all listOwnedBucket commands.
+ * <p/>
+ * Each test uses a different bucket name, so it should be perfectly fine to run
+ * in parallel.
  * 
  * @author Adrian Cole
  * 
  */
-@Test(groups = "unit", testName = "s3.S3ConnectionTest")
-public class S3ConnectionTest extends S3IntegrationTest {
+@Test(groups = "integration", testName = "s3.ListOwnedBucketsIntegrationTest")
+public class ListOwnedBucketsIntegrationTest extends S3IntegrationTest {
 
-    @Test
-    void testListBuckets() throws Exception {
-	List<S3Bucket.Metadata> myBuckets = client.listOwnedBuckets().get(10,
+    @Test()
+    void bucketDoesntExist() throws Exception {
+	String bucketName = bucketPrefix + "shouldntexist";
+	List<S3Bucket.Metadata> list = client.listOwnedBuckets().get(10,
 		TimeUnit.SECONDS);
-	for (S3Bucket.Metadata bucket : myBuckets) {
-	    context.createInputStreamMap(bucket.getName()).size();
-	}
+	assert !list.contains(new S3Bucket(bucketName));
     }
 
+    @Test()
+    void bucketExists() throws Exception {
+	String bucketName = bucketPrefix + "needstoexist";
+	assert client.putBucketIfNotExists(bucketName)
+		.get(10, TimeUnit.SECONDS);
+	List<S3Bucket.Metadata> list = client.listOwnedBuckets().get(10,
+		TimeUnit.SECONDS);
+	S3Bucket.Metadata firstBucket = list.get(0);
+	S3Bucket.Metadata toMatch = new S3Bucket.Metadata(bucketName);
+	toMatch.setOwner(firstBucket.getOwner());
+
+	assert list.contains(toMatch);
+    }
 }

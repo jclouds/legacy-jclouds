@@ -23,8 +23,8 @@
  */
 package org.jclouds.aws.s3.commands;
 
-import org.jclouds.aws.s3.S3Utils;
 import org.jclouds.aws.s3.commands.options.PutBucketOptions;
+import org.jclouds.aws.s3.util.S3Utils;
 import org.jclouds.http.HttpHeaders;
 import org.jclouds.http.commands.callables.ReturnTrueIf2xx;
 
@@ -34,7 +34,16 @@ import com.google.inject.name.Named;
 
 /**
  * Create and name your own bucket in which to store your objects.
+ * <p/>
+ * The PUT request operation with a bucket URI creates a new bucket. Depending
+ * on your latency and legal requirements, you can specify a location constraint
+ * that will affect where your data physically resides. You can currently
+ * specify a Europe (EU) location constraint via {@link PutBucketOptions}.
  * 
+ * @see PutBucketOptions
+ * @see http
+ *      ://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTBucketPUT
+ *      .html
  * @author Adrian Cole
  * 
  */

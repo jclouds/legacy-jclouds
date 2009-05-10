@@ -53,7 +53,7 @@ public class HttpNioFutureCommandConnectionHandle extends
 
     public void startConnection() {
 	conn.getContext().setAttribute("command", command);
-	logger.trace("invoking %1s on connection %2s", command, conn);
+	logger.trace("invoking %1$s on connection %2$s", command, conn);
 	conn.requestOutput();
     }
 

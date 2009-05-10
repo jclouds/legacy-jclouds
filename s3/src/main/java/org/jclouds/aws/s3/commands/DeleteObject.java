@@ -31,6 +31,14 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 
+/**
+ * The DELETE request operation removes the specified object from Amazon S3.
+ * Once deleted, there is no method to restore or undelete an object.
+ * 
+ * @see http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?
+ *      RESTObjectDELETE.html
+ * @author Adrian Cole
+ */
 public class DeleteObject extends S3FutureCommand<Boolean> {
 
     @Inject

@@ -42,63 +42,79 @@ import org.jclouds.aws.s3.domain.S3Object;
  * during processing will be wrapped in an {@link ExecutionException} as
  * documented in {@link Future#get()}.
  * 
+ * @see http://docs.amazonwebservices.com/AmazonS3/2006-03-01/RESTAPI.html
+ * 
  * @author Adrian Cole
  */
 public interface S3Connection {
 
     /**
-     * Retrieves the object and metadata associated with the key.
+     * Retrieve a complete <code>S3Object</code>.
      * 
+     * @see GetObject
      * @param bucketName
      *            namespace of the object you are retrieving
      * 
      * @param key
      *            unique key in the s3Bucket identifying the object
-     * @return fully populated S3Object containing data stored in S3
+     * @return Future reference to a fully populated S3Object including data
+     *         stored in S3 or {@link S3Object#NOT_FOUND} if not present.
      */
     Future<S3Object> getObject(String bucketName, String key);
 
     /**
-     * Retrieves the object and metadata associated with the key.
+     * Like {@link #getObject(String, String)} except you can use
+     * {@link GetObjectOptions} to control delivery.
      * 
-     * @param bucketName
-     *            namespace of the object you are retrieving
+     * @see #getObject(String, String)
+     * @see GetObjectOptions
+     * @return S3Object containing data relevant to the
+     *         <code>options</options> specified or {@link S3Object#NOT_FOUND} if not present.
      * 
-     * @param key
-     *            unique key in the s3Bucket identifying the object
-     * @param options
-     *            options for retrieving the object
-     * @return fully populated S3Object containing data stored in S3
+     * @throws HttpResponseException
+     *             if the conditions requested set were not satisfied by the
+     *             object on the server.
      */
     Future<S3Object> getObject(String bucketName, String key,
 	    GetObjectOptions options);
 
     /**
-     * Retrieves the metadata of the object associated with the key.
+     * Retrieves the {@link S3Object.Metadata metadata} of the object associated
+     * with the key.
      * 
+     * @see HeadObject
      * @param bucketName
      *            namespace of the metadata you are retrieving
      * 
      * @param key
      *            unique key in the s3Bucket identifying the object
-     * @return metadata associated with the key
+     * @return metadata associated with the key or
+     *         {@link S3Object.Metadata#NOT_FOUND} if not present;
      */
     Future<S3Object.Metadata> headObject(String bucketName, String key);
 
     /**
      * Removes the object and metadata associated with the key.
      * 
+     * @see DeleteObject
      * @param bucketName
      *            namespace of the object you are deleting
      * @param key
      *            unique key in the s3Bucket identifying the object
      * @return true if deleted
+     * @throws HttpResponseException
+     *             if the bucket is not available
      */
     Future<Boolean> deleteObject(String bucketName, String key);
 
     /**
      * Store data by creating or overwriting an object.
+     * <p/>
+     * This method will store the object with the default <code>private</code>
+     * acl.
      * 
+     * @see CannedAccessPolicy#PRIVATE
+     * @see PutObject
      * @param bucketName
      *            namespace of the object you are storing
      * @param object
@@ -108,15 +124,19 @@ public interface S3Connection {
     Future<byte[]> putObject(String bucketName, S3Object object);
 
     /**
-     * Store data by creating or overwriting an object.
+     * Like {@link #putObject(String, S3Object)} except you can use
+     * {@link CopyObjectOptions} to specify an alternate
+     * {@link CannedAccessPolicy acl}, override
+     * {@link S3Object.Metadata#getUserMetadata() userMetadata}, or specify
+     * conditions for copying the object.
      * 
-     * @param bucketName
-     *            namespace of the object you are storing
-     * @param object
-     *            contains the data and metadata to create or overwrite
+     * @see S3Connection#putObject(String, S3Object)
+     * @see PutObjectOptions
      * @param options
      *            options for creating the object
-     * @return MD5 hash of the content uploaded
+     * @throws HttpResponseException
+     *             if the conditions requested set are not satisfied by the
+     *             object on the server.
      */
     Future<byte[]> putObject(String bucketName, S3Object object,
 	    PutObjectOptions options);
@@ -124,23 +144,25 @@ public interface S3Connection {
     /**
      * Create and name your own bucket in which to store your objects.
      * 
-     * @return true, if the bucket was created
+     * @see PutBucket
+     * @return true, if the bucket was created or already exists
      */
     Future<Boolean> putBucketIfNotExists(String name);
 
     /**
-     * Create and name your own bucket in which to store your objects.
+     * Like {@link #putBucketIfNotExists(String)} except that you can use
+     * {@link PutBucketOptions} to create the bucket in EU. Create and name your
      * 
+     * @see PutBucketOptions
      * @param options
      *            for creating your bucket
-     * @return true, if the bucket was created
-     * @see PutBucketOptions
      */
     Future<Boolean> putBucketIfNotExists(String name, PutBucketOptions options);
 
     /**
      * Deletes the bucket, if it is empty.
      * 
+     * @see DeleteBucket
      * @param s3Bucket
      *            what to delete
      * @return false, if the bucket was not empty and therefore not deleted
@@ -148,34 +170,68 @@ public interface S3Connection {
     Future<Boolean> deleteBucketIfEmpty(String s3Bucket);
 
     /**
-     * Copies one object to another bucket
+     * Copies one object to another bucket, retaining UserMetadata from the
+     * source. The destination will have a private acl.
      * 
-     * @return metaData populated with lastModified and etag of the new object
+     * @see CopyObject
+     * @return metadata populated with lastModified and md5 of the new object
      */
     Future<S3Object.Metadata> copyObject(String sourceBucket,
 	    String sourceObject, String destinationBucket,
 	    String destinationObject);
 
     /**
-     * Copies one object to another bucket using the specifid options
+     * Like {@link #putObject(String, S3Object)} except you can use
+     * {@link PutObjectOptions} to specify an alternate
+     * {@link CannedAccessPolicy acl}.
      * 
-     * @return metaData populated with lastModified and etag of the new object
-     * @see CopyObjectOptions
+     * @see S3Connection#putObject(String, S3Object)
+     * @see PutObjectOptions
+     * @param options
+     *            options for creating the object
+     * @throws HttpResponseException
+     *             if the conditions requested set are not satisfied by the
+     *             object on the server.
      */
     Future<S3Object.Metadata> copyObject(String sourceBucket,
 	    String sourceObject, String destinationBucket,
 	    String destinationObject, CopyObjectOptions options);
 
+    /**
+     * @see HeadBucket
+     */
     Future<Boolean> bucketExists(String name);
 
     /**
+     * Retrieve a complete <code>S3Bucket</code> listing.
      * 
-     * @param s3Bucket
-     * @return
+     * @see ListBucket
+     * @param bucketName
+     *            namespace of the objects you wish to list
+     * 
+     * @return Future reference to a fully populated S3Bucket including metadata
+     *         of the S3Objects it contains or {@link S3Bucket#NOT_FOUND} if not
+     *         present.
      */
-    Future<S3Bucket> listBucket(String name);
+    Future<S3Bucket> listBucket(String bucketName);
 
+    /**
+     * Like {@link #listBucket(String)} except you can use
+     * {@link ListObjectOptions} to control the amount of S3Objects to return.
+     * 
+     * @see #listBucket(String)
+     * @see ListBucketOptions
+     * @return S3Bucket containing a subset of {@link S3Object.Metadata}
+     *         depending on
+     *         <code>options</options> specified or {@link S3Bucket#NOT_FOUND} if not present.
+     * 
+     */
     Future<S3Bucket> listBucket(String name, ListBucketOptions options);
 
-    Future<List<S3Bucket.Metadata>> getOwnedBuckets();
+    /**
+     * @see ListOwnedBuckets
+     * @return list of all of the buckets owned by the authenticated sender of
+     *         the request.
+     */
+    Future<List<S3Bucket.Metadata>> listOwnedBuckets();
 }

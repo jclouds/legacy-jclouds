@@ -25,7 +25,7 @@ package org.jclouds.http;
 
 import java.io.IOException;
 
-import org.apache.commons.io.IOUtils;
+import org.jclouds.Utils;
 
 /**
  * 
@@ -34,9 +34,13 @@ import org.apache.commons.io.IOUtils;
 public class CloseContentAndSetExceptionHandler implements HttpResponseHandler {
 
     public void handle(HttpFutureCommand<?> command, HttpResponse response) {
-	String message = String.format("Command: %2s failed; response: %1s",
-		response, command);
-	command.setException(new IOException(message));
-	IOUtils.closeQuietly(response.getContent());
+	String content;
+	try {
+	    content = Utils.toStringAndClose(response.getContent());
+	    command.setException(new HttpResponseException(command, response,
+		    content));
+	} catch (IOException e) {
+	    command.setException(new HttpResponseException(command, response));
+	}
     }
 }

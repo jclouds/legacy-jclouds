@@ -27,6 +27,7 @@ import static org.jclouds.aws.s3.commands.options.CopyObjectOptions.Builder.ifSo
 import static org.jclouds.aws.s3.commands.options.CopyObjectOptions.Builder.ifSourceMd5Matches;
 import static org.jclouds.aws.s3.commands.options.CopyObjectOptions.Builder.ifSourceModifiedSince;
 import static org.jclouds.aws.s3.commands.options.CopyObjectOptions.Builder.ifSourceUnmodifiedSince;
+import static org.jclouds.aws.s3.commands.options.CopyObjectOptions.Builder.overrideAcl;
 import static org.jclouds.aws.s3.commands.options.CopyObjectOptions.Builder.overrideMetadataWith;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
@@ -34,8 +35,10 @@ import static org.testng.Assert.assertTrue;
 
 import java.io.UnsupportedEncodingException;
 
-import org.jclouds.aws.s3.DateService;
-import org.jclouds.aws.s3.S3Utils;
+import org.jclouds.aws.s3.domain.acl.CannedAccessPolicy;
+import org.jclouds.aws.s3.reference.S3Headers;
+import org.jclouds.aws.s3.util.DateService;
+import org.jclouds.aws.s3.util.S3Utils;
 import org.joda.time.DateTime;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -310,5 +313,27 @@ public class CopyObjectOptionsTest {
 	for (String value : goodMeta.values())
 	    assertTrue(headers.containsValue(value));
 
+    }
+    
+
+    @Test
+    public void testAclDefault() {
+	CopyObjectOptions options = new CopyObjectOptions();
+	assertEquals(options.getAcl(), CannedAccessPolicy.PRIVATE);
+    }
+
+    @Test
+    public void testAclStatic() {
+	CopyObjectOptions options = overrideAcl(CannedAccessPolicy.AUTHENTICATED_READ);
+	assertEquals(options.getAcl(), CannedAccessPolicy.AUTHENTICATED_READ);
+    }
+
+    @Test
+    void testBuildRequestHeadersACL() throws UnsupportedEncodingException {
+
+	Multimap<String, String> headers = overrideAcl(
+		CannedAccessPolicy.AUTHENTICATED_READ).buildRequestHeaders();
+	assertEquals(headers.get(S3Headers.CANNED_ACL).iterator().next(),
+		CannedAccessPolicy.AUTHENTICATED_READ.toString());
     }
 }

@@ -26,17 +26,21 @@ package org.jclouds.aws.s3.xml;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jclouds.aws.s3.DateService;
+import org.jclouds.aws.s3.domain.CanonicalUser;
 import org.jclouds.aws.s3.domain.S3Bucket;
-import org.jclouds.aws.s3.domain.S3Owner;
+import org.jclouds.aws.s3.util.DateService;
 import org.jclouds.http.commands.callables.xml.ParseSax;
-import org.xml.sax.Attributes;
 
 import com.google.inject.Inject;
 
 /**
- * Parses the response from Amazon S3 GET Service command.
+ * Parses the following XML document:
+ * <p/>
+ * ListAllMyBucketsResult xmlns="http://doc.s3.amazonaws.com/2006-03-01"
  * 
+ * @see http 
+ *      ://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTServiceGET
+ *      .html
  * @author Adrian Cole
  */
 public class ListAllMyBucketsHandler extends
@@ -44,7 +48,7 @@ public class ListAllMyBucketsHandler extends
 
     private List<S3Bucket.Metadata> buckets = new ArrayList<S3Bucket.Metadata>();
     private S3Bucket.Metadata currentS3Bucket;
-    private S3Owner currentOwner;
+    private CanonicalUser currentOwner;
     private StringBuilder currentText = new StringBuilder();
 
     private final DateService dateParser;
@@ -58,21 +62,13 @@ public class ListAllMyBucketsHandler extends
 	return buckets;
     }
 
-    public void startElement(String uri, String name, String qName,
-	    Attributes attrs) {
-	if (qName.equals("Bucket")) {
-	} else if (qName.equals("Owner")) {
-	    currentOwner = new S3Owner();
-	}
-    }
-
     public void endElement(String uri, String name, String qName) {
 	if (qName.equals("ID")) { // owner stuff
-	    currentOwner.setId(currentText.toString());
+	    currentOwner = new CanonicalUser(currentText.toString());
 	} else if (qName.equals("DisplayName")) {
 	    currentOwner.setDisplayName(currentText.toString());
 	} else if (qName.equals("Bucket")) {
-	    currentS3Bucket.setCanonicalUser(currentOwner);
+	    currentS3Bucket.setOwner(currentOwner);
 	    buckets.add(currentS3Bucket);
 	} else if (qName.equals("Name")) {
 	    currentS3Bucket = new S3Bucket.Metadata(currentText.toString());

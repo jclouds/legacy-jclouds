@@ -27,21 +27,25 @@ import static org.jclouds.aws.s3.commands.options.CopyObjectOptions.Builder.ifSo
 import static org.jclouds.aws.s3.commands.options.CopyObjectOptions.Builder.ifSourceMd5Matches;
 import static org.jclouds.aws.s3.commands.options.CopyObjectOptions.Builder.ifSourceModifiedSince;
 import static org.jclouds.aws.s3.commands.options.CopyObjectOptions.Builder.ifSourceUnmodifiedSince;
+import static org.jclouds.aws.s3.commands.options.CopyObjectOptions.Builder.overrideAcl;
 import static org.jclouds.aws.s3.commands.options.CopyObjectOptions.Builder.overrideMetadataWith;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.aws.s3.S3Headers;
 import org.jclouds.aws.s3.S3IntegrationTest;
-import org.jclouds.aws.s3.S3ResponseException;
-import org.jclouds.aws.s3.S3Utils;
 import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.s3.domain.acl.CannedAccessPolicy;
+import org.jclouds.aws.s3.reference.S3Headers;
+import org.jclouds.aws.s3.util.S3Utils;
+import org.jclouds.http.HttpResponseException;
 import org.joda.time.DateTime;
 import org.testng.annotations.Test;
+
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -60,6 +64,25 @@ public class CopyObjectIntegrationTest extends S3IntegrationTest {
     String sourceKey = "apples";
     String destinationKey = "pears";
 
+
+    @Test()
+    void testCannedAccessPolicyPublic() throws Exception {
+	String sourceBucket = bucketPrefix + "tcapp";
+	String destinationBucket = sourceBucket + "dest";
+
+	setupSourceBucket(sourceBucket, sourceKey);
+
+	createBucketAndEnsureEmpty(destinationBucket);
+	client.copyObject(sourceBucket, sourceKey, destinationBucket,
+		destinationKey,overrideAcl(CannedAccessPolicy.PUBLIC_READ)).get(10, TimeUnit.SECONDS);
+
+	validateContent(destinationBucket, destinationKey);
+
+	URL url = new URL(String.format("http://%1$s.s3.amazonaws.com/%2$s",
+		destinationBucket, destinationKey));
+	S3Utils.toStringAndClose(url.openStream());
+
+    }
     @Test()
     void testCopyObject() throws Exception {
 	String sourceBucket = bucketPrefix + "testcopyobject";
@@ -110,7 +133,7 @@ public class CopyObjectIntegrationTest extends S3IntegrationTest {
 		    destinationKey, ifSourceModifiedSince(after)).get(10,
 		    TimeUnit.SECONDS);
 	} catch (ExecutionException e) {
-	    S3ResponseException ex = (S3ResponseException) e.getCause();
+	    HttpResponseException ex = (HttpResponseException) e.getCause();
 	    assertEquals(ex.getResponse().getStatusCode(), 412);
 	}
     }
@@ -136,7 +159,7 @@ public class CopyObjectIntegrationTest extends S3IntegrationTest {
 		    destinationKey, ifSourceModifiedSince(before)).get(10,
 		    TimeUnit.SECONDS);
 	} catch (ExecutionException e) {
-	    S3ResponseException ex = (S3ResponseException) e.getCause();
+	    HttpResponseException ex = (HttpResponseException) e.getCause();
 	    assertEquals(ex.getResponse().getStatusCode(), 412);
 	}
     }
@@ -145,8 +168,6 @@ public class CopyObjectIntegrationTest extends S3IntegrationTest {
     void testCopyIfMatch() throws InterruptedException, ExecutionException,
 	    TimeoutException, IOException {
 	String sourceBucket = bucketPrefix + "tcim";
-	byte[] realMd5 = S3Utils.md5(TEST_STRING);
-	byte[] badMd5 = S3Utils.md5("alf");
 
 	String destinationBucket = sourceBucket + "dest";
 
@@ -154,7 +175,7 @@ public class CopyObjectIntegrationTest extends S3IntegrationTest {
 
 	createBucketAndEnsureEmpty(destinationBucket);
 	client.copyObject(sourceBucket, sourceKey, destinationBucket,
-		destinationKey, ifSourceMd5Matches(realMd5)).get(10,
+		destinationKey, ifSourceMd5Matches(goodMd5)).get(10,
 		TimeUnit.SECONDS);
 	validateContent(destinationBucket, destinationKey);
 
@@ -163,7 +184,7 @@ public class CopyObjectIntegrationTest extends S3IntegrationTest {
 		    destinationKey, ifSourceMd5Matches(badMd5)).get(10,
 		    TimeUnit.SECONDS);
 	} catch (ExecutionException e) {
-	    S3ResponseException ex = (S3ResponseException) e.getCause();
+	    HttpResponseException ex = (HttpResponseException) e.getCause();
 	    assertEquals(ex.getResponse().getStatusCode(), 412);
 	}
     }
@@ -172,8 +193,6 @@ public class CopyObjectIntegrationTest extends S3IntegrationTest {
     void testCopyIfNoneMatch() throws IOException, InterruptedException,
 	    ExecutionException, TimeoutException {
 	String sourceBucket = bucketPrefix + "tcinm";
-	byte[] realMd5 = S3Utils.md5(TEST_STRING);
-	byte[] badMd5 = S3Utils.md5("alf");
 
 	String destinationBucket = sourceBucket + "dest";
 
@@ -187,10 +206,10 @@ public class CopyObjectIntegrationTest extends S3IntegrationTest {
 
 	try {
 	    client.copyObject(sourceBucket, sourceKey, destinationBucket,
-		    destinationKey, ifSourceMd5DoesntMatch(realMd5)).get(10,
+		    destinationKey, ifSourceMd5DoesntMatch(goodMd5)).get(10,
 		    TimeUnit.SECONDS);
 	} catch (ExecutionException e) {
-	    S3ResponseException ex = (S3ResponseException) e.getCause();
+	    HttpResponseException ex = (HttpResponseException) e.getCause();
 	    assertEquals(ex.getResponse().getStatusCode(), 412);
 	}
     }

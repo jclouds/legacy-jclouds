@@ -165,7 +165,7 @@ public abstract class BaseHttpFutureCommandClientTest {
 	get.getRequest().getHeaders().put("filterme", "filterme");
 	client.submit(get);
 	assert get.get(10, TimeUnit.SECONDS).trim().equals("test") : String
-		.format("expected: [%1s], but got [%2s]", "test", get.get(10,
+		.format("expected: [%1$s], but got [%2$s]", "test", get.get(10,
 			TimeUnit.SECONDS));
     }
 
@@ -176,7 +176,7 @@ public abstract class BaseHttpFutureCommandClientTest {
 	get.getRequest().getHeaders().put("test", "test");
 	client.submit(get);
 	assert get.get(10, TimeUnit.SECONDS).trim().equals("test") : String
-		.format("expected: [%1s], but got [%2s]", "test", get.get(10,
+		.format("expected: [%1$s], but got [%2$s]", "test", get.get(10,
 			TimeUnit.SECONDS));
     }
 
@@ -187,7 +187,7 @@ public abstract class BaseHttpFutureCommandClientTest {
 	assert get != null;
 	client.submit(get);
 	assert get.get(10, TimeUnit.SECONDS).trim().equals(XML) : String
-		.format("expected: [%1s], but got [%2s]", XML, get.get(10,
+		.format("expected: [%1$s], but got [%2$s]", XML, get.get(10,
 			TimeUnit.SECONDS));
     }
 

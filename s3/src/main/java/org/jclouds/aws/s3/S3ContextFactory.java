@@ -24,8 +24,8 @@
 package org.jclouds.aws.s3;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.aws.s3.S3Constants.PROPERTY_AWS_ACCESSKEYID;
-import static org.jclouds.aws.s3.S3Constants.PROPERTY_AWS_SECRETACCESSKEY;
+import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_AWS_ACCESSKEYID;
+import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_AWS_SECRETACCESSKEY;
 import static org.jclouds.command.pool.PoolConstants.PROPERTY_POOL_IO_WORKER_THREADS;
 import static org.jclouds.command.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS;
 import static org.jclouds.command.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTION_REUSE;
@@ -58,7 +58,17 @@ import com.google.inject.name.Names;
 /**
  * Creates {@link S3Context} or {@link Injector} instances based on the most
  * commonly requested arguments.
+ * <p/>
+ * Note that Threadsafe objects will be bound as singletons to the Injector or
+ * Context provided.
  * 
+ * <p/>
+ * If no <code>Module</code>s are specified, the default
+ * {@link JDKLoggingModule logging} and
+ * {@link JavaUrlHttpFutureCommandClientModule http transports} will be
+ * installed.
+ * 
+ * @see S3Context
  * @author Adrian Cole
  */
 public class S3ContextFactory {

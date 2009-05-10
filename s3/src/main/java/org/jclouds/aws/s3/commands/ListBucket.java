@@ -31,6 +31,7 @@ import org.jclouds.aws.s3.S3ResponseException;
 import org.jclouds.aws.s3.commands.options.ListBucketOptions;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.xml.ListBucketHandler;
+import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -38,6 +39,21 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 
+/**
+ * A GET request operation using a bucket URI lists information about the
+ * objects in the bucket.
+ * <p />
+ * To list the keys of a bucket, you must have READ access to the bucket.
+ * <p/>
+ * List output is controllable via {@link ListBucketOptions}
+ * 
+ * @see ListBucketOptions
+ * @see http 
+ *      ://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTBucketGET
+ *      .html
+ * @author Adrian Cole
+ * 
+ */
 public class ListBucket extends S3FutureCommand<S3Bucket> {
 
     @Inject
@@ -62,7 +78,8 @@ public class ListBucket extends S3FutureCommand<S3Bucket> {
 
     @VisibleForTesting
     S3Bucket attemptNotFound(ExecutionException e) throws ExecutionException {
-	if (e.getCause() != null && e.getCause() instanceof S3ResponseException) {
+	if (e.getCause() != null
+		&& e.getCause() instanceof HttpResponseException) {
 	    S3ResponseException responseException = (S3ResponseException) e
 		    .getCause();
 	    if ("NoSuchBucket".equals(responseException.getError().getCode())) {

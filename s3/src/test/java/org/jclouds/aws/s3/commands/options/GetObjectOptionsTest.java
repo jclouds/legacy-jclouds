@@ -23,6 +23,8 @@
  */
 package org.jclouds.aws.s3.commands.options;
 
+import static org.jclouds.aws.s3.commands.options.GetObjectOptions.Builder.startAt;
+import static org.jclouds.aws.s3.commands.options.GetObjectOptions.Builder.tail;
 import static org.jclouds.aws.s3.commands.options.GetObjectOptions.Builder.ifMd5DoesntMatch;
 import static org.jclouds.aws.s3.commands.options.GetObjectOptions.Builder.ifMd5Matches;
 import static org.jclouds.aws.s3.commands.options.GetObjectOptions.Builder.ifModifiedSince;
@@ -33,8 +35,8 @@ import static org.testng.Assert.assertNull;
 
 import java.io.UnsupportedEncodingException;
 
-import org.jclouds.aws.s3.DateService;
-import org.jclouds.aws.s3.S3Utils;
+import org.jclouds.aws.s3.util.DateService;
+import org.jclouds.aws.s3.util.S3Utils;
 import org.joda.time.DateTime;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -129,6 +131,58 @@ public class GetObjectOptionsTest {
     }
 
     @Test
+    public void testRangeZeroToFive() {
+	GetObjectOptions options = new GetObjectOptions();
+	options.range(0, 5);
+	assertEquals(options.getRange(), "bytes=0-5");
+    }
+
+    @Test
+    public void testTail() {
+	GetObjectOptions options = new GetObjectOptions();
+	options.tail(100);
+	assertEquals(options.getRange(), "bytes=-100");
+    }
+
+    @Test
+    public void testTailStatic() {
+	GetObjectOptions options = tail(100);
+	assertEquals(options.getRange(), "bytes=-100");
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testTailFail() {
+	GetObjectOptions options = new GetObjectOptions();
+	options.tail(0);
+    }
+
+    @Test
+    public void testStartAt() {
+	GetObjectOptions options = new GetObjectOptions();
+	options.startAt(100);
+	assertEquals(options.getRange(), "bytes=100-");
+    }
+
+    @Test
+    public void testStartAtStatic() {
+	GetObjectOptions options = startAt(100);
+	assertEquals(options.getRange(), "bytes=100-");
+    }
+
+    @Test(expectedExceptions = IllegalArgumentException.class)
+    public void testStartAtFail() {
+	GetObjectOptions options = new GetObjectOptions();
+	options.startAt(-1);
+    }
+
+    @Test
+    public void testRangeZeroToFiveAnd10through100() {
+	GetObjectOptions options = new GetObjectOptions();
+	options.range(0, 5).range(10, 100);
+	assertEquals(options.getRange(), "bytes=0-5,10-100");
+    }
+
+    @Test
     public void testNullRange() {
 	GetObjectOptions options = new GetObjectOptions();
 	assertNull(options.getRange());
@@ -140,17 +194,17 @@ public class GetObjectOptionsTest {
 	bytes1to1024(options);
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void testRangeNegative1() {
 	range(-1, 0);
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void testRangeNegative2() {
 	range(0, -1);
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void testRangeNegative() {
 	range(-1, -1);
     }
@@ -209,7 +263,7 @@ public class GetObjectOptionsTest {
 	assertEquals(match, expected);
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void testIfUnmodifiedAfterModified() {
 	ifModifiedSince(now).ifUnmodifiedSince(now);
 
@@ -221,19 +275,19 @@ public class GetObjectOptionsTest {
 
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void testIfUnmodifiedAfterMd5DoesntMatch()
 	    throws UnsupportedEncodingException {
 	ifMd5DoesntMatch(testBytes).ifUnmodifiedSince(now);
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void testIfModifiedAfterUnmodified() {
 	ifUnmodifiedSince(now).ifModifiedSince(now);
 
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void testIfModifiedAfterMd5Matches()
 	    throws UnsupportedEncodingException {
 	ifMd5Matches(testBytes).ifModifiedSince(now);
@@ -245,7 +299,7 @@ public class GetObjectOptionsTest {
 	ifMd5DoesntMatch(testBytes).ifModifiedSince(now);
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void testMd5MatchesAfterIfModified()
 	    throws UnsupportedEncodingException {
 	ifModifiedSince(now).ifMd5Matches(testBytes);
@@ -258,7 +312,7 @@ public class GetObjectOptionsTest {
 
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void testMd5MatchesAfterMd5DoesntMatch()
 	    throws UnsupportedEncodingException {
 	ifMd5DoesntMatch(testBytes).ifMd5Matches(testBytes);
@@ -270,14 +324,14 @@ public class GetObjectOptionsTest {
 
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void testMd5DoesntMatchAfterIfUnmodified()
 	    throws UnsupportedEncodingException {
 	ifUnmodifiedSince(now).ifMd5DoesntMatch(testBytes);
 
     }
 
-    @Test(expectedExceptions = IllegalStateException.class)
+    @Test(expectedExceptions = IllegalArgumentException.class)
     public void testMd5DoesntMatchAfterMd5Matches()
 	    throws UnsupportedEncodingException {
 	ifMd5Matches(testBytes).ifMd5DoesntMatch(testBytes);

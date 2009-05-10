@@ -116,22 +116,22 @@ public class S3CommandFactoryTest {
 
     @Test
     void testCreatePutObject() {
-	S3Object.Metadata metaData = createMock(S3Object.Metadata.class);
-	S3Object object = new S3Object(metaData);
-	expect(metaData.getSize()).andReturn(4L).atLeastOnce();
-	expect(metaData.getKey()).andReturn("rawr");
-	expect(metaData.getContentType()).andReturn("text/xml").atLeastOnce();
-	expect(metaData.getCacheControl()).andReturn("no-cache").atLeastOnce();
-	expect(metaData.getContentDisposition()).andReturn("disposition")
+	S3Object.Metadata metadata = createMock(S3Object.Metadata.class);
+	S3Object object = new S3Object(metadata);
+	expect(metadata.getSize()).andReturn(4L).atLeastOnce();
+	expect(metadata.getKey()).andReturn("rawr");
+	expect(metadata.getContentType()).andReturn("text/xml").atLeastOnce();
+	expect(metadata.getCacheControl()).andReturn("no-cache").atLeastOnce();
+	expect(metadata.getContentDisposition()).andReturn("disposition")
 		.atLeastOnce();
-	expect(metaData.getContentEncoding()).andReturn("encoding")
+	expect(metadata.getContentEncoding()).andReturn("encoding")
 		.atLeastOnce();
-	expect(metaData.getMd5()).andReturn("encoding".getBytes())
+	expect(metadata.getMd5()).andReturn("encoding".getBytes())
 		.atLeastOnce();
 	Multimap<String, String> userMdata = HashMultimap.create();
-	expect(metaData.getUserMetadata()).andReturn(userMdata).atLeastOnce();
+	expect(metadata.getUserMetadata()).andReturn(userMdata).atLeastOnce();
 
-	replay(metaData);
+	replay(metadata);
 	object.setData("<a></a>");
 
 	assert commandFactory.createPutObject("test", object,
@@ -145,13 +145,13 @@ public class S3CommandFactoryTest {
     }
 
     @Test
-    void testCreateHeadMetaData() {
-	assert commandFactory.createHeadMetaData("test", "blah") != null;
+    void testCreateHeadMetadata() {
+	assert commandFactory.createHeadMetadata("test", "blah") != null;
     }
 
     @Test
     void testCreateListAllMyBuckets() {
-	assert commandFactory.createGetMetaDataForOwnedBuckets() != null;
+	assert commandFactory.createGetMetadataForOwnedBuckets() != null;
     }
 
     @Test

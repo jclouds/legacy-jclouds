@@ -24,15 +24,19 @@
 package org.jclouds.aws.s3.commands.options;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
-
+import static com.google.common.base.Preconditions.checkArgument;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.jclouds.aws.s3.DateService;
-import org.jclouds.aws.s3.S3Headers;
-import org.jclouds.aws.s3.S3Utils;
+import org.jclouds.aws.s3.util.DateService;
+import org.jclouds.aws.s3.util.S3Utils;
+import org.jclouds.http.HttpHeaders;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 import org.joda.time.DateTime;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.Multimap;
 
 /**
  * Contains options supported in the REST API for the GET object operation. <h2>
@@ -58,16 +62,42 @@ import org.joda.time.DateTime;
 public class GetObjectOptions extends BaseHttpRequestOptions {
     private final static DateService dateService = new DateService();
     public static final GetObjectOptions NONE = new GetObjectOptions();
+    private final List<String> ranges = new ArrayList<String>();
+
+    @Override
+    public Multimap<String, String> buildRequestHeaders() {
+	Multimap<String, String> headers = super.buildRequestHeaders();
+	String range = getRange();
+	if (range != null)
+	    headers.put(HttpHeaders.RANGE, this.getRange());
+	return headers;
+    }
 
     /**
-     * Only download the specified range of the object.
+     * download the specified range of the object.
      */
     public GetObjectOptions range(long start, long end) {
-	checkState(start >= 0, "start must be >= 0");
-	checkState(end >= 0, "end must be >= 0");
-	headers
-		.put(S3Headers.RANGE, String
-			.format("bytes=%1d-%2d", start, end));
+	checkArgument(start >= 0, "start must be >= 0");
+	checkArgument(end >= 0, "end must be >= 0");
+	ranges.add(String.format("%d-%d", start, end));
+	return this;
+    }
+
+    /**
+     * download the object offset at <code>start</code>
+     */
+    public GetObjectOptions startAt(long start) {
+	checkArgument(start >= 0, "start must be >= 0");
+	ranges.add(String.format("%d-", start));
+	return this;
+    }
+
+    /**
+     * download the last <code>count</code> bytes of the object
+     */
+    public GetObjectOptions tail(long count) {
+	checkArgument(count > 0, "count must be > 0");
+	ranges.add(String.format("-%d", count));
 	return this;
     }
 
@@ -78,7 +108,8 @@ public class GetObjectOptions extends BaseHttpRequestOptions {
      * @see GetObjectOptions#range(long, long)
      */
     public String getRange() {
-	return this.getFirstHeaderOrNull(S3Headers.RANGE);
+	return (ranges.size() > 0) ? String.format("bytes=%s", Joiner.on(",")
+		.join(ranges)) : null;
     }
 
     /**
@@ -88,11 +119,11 @@ public class GetObjectOptions extends BaseHttpRequestOptions {
      * {@link #ifUnmodifiedSince(DateTime)}
      */
     public GetObjectOptions ifModifiedSince(DateTime ifModifiedSince) {
-	checkState(getIfMatch() == null,
+	checkArgument(getIfMatch() == null,
 		"ifMd5Matches() is not compatible with ifModifiedSince()");
-	checkState(getIfUnmodifiedSince() == null,
+	checkArgument(getIfUnmodifiedSince() == null,
 		"ifUnmodifiedSince() is not compatible with ifModifiedSince()");
-	this.headers.put(S3Headers.OBJECT_IF_MODIFIED_SINCE,
+	this.headers.put(HttpHeaders.IF_MODIFIED_SINCE,
 		dateService.toHeaderString(checkNotNull(ifModifiedSince,
 			"ifModifiedSince")));
 	return this;
@@ -107,7 +138,7 @@ public class GetObjectOptions extends BaseHttpRequestOptions {
      * @see GetObjectOptions#ifModifiedSince(DateTime)
      */
     public String getIfModifiedSince() {
-	return this.getFirstHeaderOrNull(S3Headers.OBJECT_IF_MODIFIED_SINCE);
+	return this.getFirstHeaderOrNull(HttpHeaders.IF_MODIFIED_SINCE);
     }
 
     /**
@@ -117,11 +148,11 @@ public class GetObjectOptions extends BaseHttpRequestOptions {
      * {@link #ifModifiedSince(DateTime)}
      */
     public GetObjectOptions ifUnmodifiedSince(DateTime ifUnmodifiedSince) {
-	checkState(getIfNoneMatch() == null,
+	checkArgument(getIfNoneMatch() == null,
 		"ifMd5DoesntMatch() is not compatible with ifUnmodifiedSince()");
-	checkState(getIfModifiedSince() == null,
+	checkArgument(getIfModifiedSince() == null,
 		"ifModifiedSince() is not compatible with ifUnmodifiedSince()");
-	this.headers.put(S3Headers.OBJECT_IF_UNMODIFIED_SINCE, dateService
+	this.headers.put(HttpHeaders.IF_UNMODIFIED_SINCE, dateService
 		.toHeaderString(checkNotNull(ifUnmodifiedSince,
 			"ifUnmodifiedSince")));
 	return this;
@@ -136,7 +167,7 @@ public class GetObjectOptions extends BaseHttpRequestOptions {
      * @see GetObjectOptions#ifUnmodifiedSince(DateTime)
      */
     public String getIfUnmodifiedSince() {
-	return this.getFirstHeaderOrNull(S3Headers.OBJECT_IF_UNMODIFIED_SINCE);
+	return this.getFirstHeaderOrNull(HttpHeaders.IF_UNMODIFIED_SINCE);
     }
 
     /**
@@ -153,11 +184,11 @@ public class GetObjectOptions extends BaseHttpRequestOptions {
      */
     public GetObjectOptions ifMd5Matches(byte[] md5)
 	    throws UnsupportedEncodingException {
-	checkState(getIfNoneMatch() == null,
+	checkArgument(getIfNoneMatch() == null,
 		"ifMd5DoesntMatch() is not compatible with ifMd5Matches()");
-	checkState(getIfModifiedSince() == null,
+	checkArgument(getIfModifiedSince() == null,
 		"ifModifiedSince() is not compatible with ifMd5Matches()");
-	this.headers.put(S3Headers.OBJECT_IF_MATCH, String.format("\"%1s\"",
+	this.headers.put(HttpHeaders.IF_MATCH, String.format("\"%1$s\"",
 		S3Utils.toHexString(checkNotNull(md5, "md5"))));
 	return this;
     }
@@ -171,7 +202,7 @@ public class GetObjectOptions extends BaseHttpRequestOptions {
      * @see GetObjectOptions#ifMd5Matches(String)
      */
     public String getIfMatch() {
-	return this.getFirstHeaderOrNull(S3Headers.OBJECT_IF_MATCH);
+	return this.getFirstHeaderOrNull(HttpHeaders.IF_MATCH);
     }
 
     /**
@@ -188,13 +219,12 @@ public class GetObjectOptions extends BaseHttpRequestOptions {
      */
     public GetObjectOptions ifMd5DoesntMatch(byte[] md5)
 	    throws UnsupportedEncodingException {
-	checkState(getIfMatch() == null,
+	checkArgument(getIfMatch() == null,
 		"ifMd5Matches() is not compatible with ifMd5DoesntMatch()");
-	checkState(getIfUnmodifiedSince() == null,
+	checkArgument(getIfUnmodifiedSince() == null,
 		"ifUnmodifiedSince() is not compatible with ifMd5DoesntMatch()");
-	this.headers.put(S3Headers.OBJECT_IF_NONE_MATCH, String.format(
-		"\"%1s\"", S3Utils.toHexString(checkNotNull(md5,
-			"ifMd5DoesntMatch"))));
+	this.headers.put(HttpHeaders.IF_NONE_MATCH, String.format("\"%1$s\"",
+		S3Utils.toHexString(checkNotNull(md5, "ifMd5DoesntMatch"))));
 	return this;
     }
 
@@ -207,7 +237,8 @@ public class GetObjectOptions extends BaseHttpRequestOptions {
      * @see GetObjectOptions#ifMd5DoesntMatch(String)
      */
     public String getIfNoneMatch() {
-	return this.getFirstHeaderOrNull(S3Headers.OBJECT_IF_NONE_MATCH);
+	return this
+		.getFirstHeaderOrNull(org.jclouds.http.HttpHeaders.IF_NONE_MATCH);
     }
 
     public static class Builder {
@@ -219,7 +250,23 @@ public class GetObjectOptions extends BaseHttpRequestOptions {
 	    GetObjectOptions options = new GetObjectOptions();
 	    return options.range(start, end);
 	}
+	
+	/**
+	 * @see GetObjectOptions#startAt(long)
+	 */
+	public static GetObjectOptions startAt(long start) {
+	    GetObjectOptions options = new GetObjectOptions();
+	    return options.startAt(start);
+	}
 
+	/**
+	 * @see GetObjectOptions#tail(long)
+	 */
+	public static GetObjectOptions tail(long count) {
+	    GetObjectOptions options = new GetObjectOptions();
+	    return options.tail(count);
+	}
+	
 	/**
 	 * @see GetObjectOptions#getIfModifiedSince()
 	 */

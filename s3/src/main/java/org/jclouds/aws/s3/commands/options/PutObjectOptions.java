@@ -23,9 +23,10 @@
  */
 package org.jclouds.aws.s3.commands.options;
 
-import org.jclouds.aws.s3.S3Headers;
 import org.jclouds.aws.s3.domain.acl.CannedAccessPolicy;
+import org.jclouds.aws.s3.reference.S3Headers;
 import org.jclouds.http.options.BaseHttpRequestOptions;
+
 
 import static com.google.common.base.Preconditions.*;
 
