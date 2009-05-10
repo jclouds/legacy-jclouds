@@ -42,7 +42,7 @@
         <module>core</module>
         <module>extensions/httpnio</module>
         <module>extensions/log4j</module>
-        <module>gae</module>
+        <module>extensions/gae</module>
         <module>s3</module>
     </modules>
     <build>
