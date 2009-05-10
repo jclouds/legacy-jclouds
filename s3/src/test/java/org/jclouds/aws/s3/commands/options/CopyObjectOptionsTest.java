@@ -92,10 +92,14 @@ public class CopyObjectOptionsTest {
     private void assertGoodMeta(CopyObjectOptions options) {
 	assert options != null;
 	assert options.getMetadata() != null;
-	assertEquals(options.getMetadata().size(), 2);
-	assertEquals(options.getMetadata().get(
-		"x-amz-copy-source-if-unmodified-since").iterator().next(),
+	Multimap<String,String> headers = options.buildRequestHeaders();
+	assertEquals(headers.size(), 2);
+	assertEquals(headers.get(
+		"x-amz-metadata-directive").iterator().next(),
 		"REPLACE");
+	assertEquals(options.getMetadata().size(), 1);
+	assertEquals(headers.get("x-amz-meta-adrian").iterator()
+		.next(), "foo");
 	assertEquals(options.getMetadata().get("x-amz-meta-adrian").iterator()
 		.next(), "foo");
     }
