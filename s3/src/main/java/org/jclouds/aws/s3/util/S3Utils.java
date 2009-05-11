@@ -43,9 +43,16 @@ import org.bouncycastle.crypto.digests.SHA1Digest;
 import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.util.encoders.Base64;
-import org.jclouds.Utils;
 import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.util.Utils;
 
+/**
+ * Encryption, Hashing, and IO Utilities needed to sign and verify S3 requests
+ * and responses.
+ * 
+ * @author Adrian Cole
+ * 
+ */
 public class S3Utils extends Utils {
 
     private static final Pattern IP_PATTERN = Pattern

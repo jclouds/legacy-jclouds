@@ -36,7 +36,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>jclouds-multi</artifactId>
     <packaging>pom</packaging>
-    <name>JClouds</name>
+    <name>jclouds</name>
     <modules>
         <module>project</module>        
         <module>core</module>
@@ -47,13 +47,43 @@
     </modules>
     <build>
        <plugins>
+           <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-javadoc-plugin</artifactId>
+              <configuration>
+                 <links>
+                    <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
+                    <link>http://java.sun.com/javaee/5/docs/api/</link>
+                 </links>
+                 <footer><![CDATA[
+                     <!-- Google Analytics -->
+<script type='text/javascript'>
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type='text/javascript'>
+try {
+var pageTracker = _gat._getTracker("UA-8638379-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+                     ]]></footer>
+              </configuration>
+              <executions>
+                 <execution>
+                    <id>javadoc</id>
+                    <phase>package</phase>
+                    <goals>
+                       <goal>aggregate</goal>
+                       </goals>
+                    </execution>
+                </executions>
+           </plugin>
             <plugin>
                 <groupId>com.google.code.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>
                 <version>1.4.0</version>
                 <configuration>
                     <header>project/src/etc/header.txt</header>
-                    <aggregate>true</aggregate>
                     <excludes>
                         <!-- amazon files have their own license  -->
                         <exclude>**/src/main/java/com/amazon/**</exclude>

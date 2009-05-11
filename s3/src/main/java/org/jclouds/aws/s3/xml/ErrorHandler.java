@@ -29,9 +29,8 @@ import org.jclouds.http.commands.callables.xml.ParseSax;
 /**
  * Parses the error from the Amazon S3 REST API.
  * 
- * @see http
- *      ://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?UsingRESTError
- *      .html
+ * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?UsingRESTError.html"
+ *      />
  * @author Adrian Cole
  */
 public class ErrorHandler extends ParseSax.HandlerWithResult<S3Error> {

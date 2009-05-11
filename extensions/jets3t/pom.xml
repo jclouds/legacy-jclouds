@@ -36,7 +36,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-jets3t</artifactId>
-    <name>JetS3t plug-in implemented by JClouds</name>
+    <name>jclouds JetS3t Adapter</name>
     <packaging>jar</packaging>
     <description>JetS3t plug-in implemented by JClouds</description>
 

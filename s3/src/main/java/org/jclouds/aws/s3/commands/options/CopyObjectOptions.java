@@ -64,8 +64,8 @@ import com.google.common.collect.Multimap;
  *                                                          );
  * <code>
  * 
- * Description of parameters taken from {@link http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTObjectCOPY.html}
- * 
+ * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTObjectCOPY.html?"
+ *      />
  * @author Adrian Cole
  * 
  * 
@@ -97,7 +97,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
     public CannedAccessPolicy getAcl() {
 	return acl;
     }
-    
+
     /**
      * For use in the header x-amz-copy-source-if-unmodified-since
      * <p />
@@ -107,7 +107,8 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
      * This header can be used with x-amz-copy-source-if-match, but cannot be
      * used with other conditional copy headers.
      * 
-     * @return valid HTTP date (go to http://rfc.net/rfc2616.html#s3.3).
+     * @see <a href="http://rfc.net/rfc2616.html?s3.3"/>
+     * @return valid HTTP date
      * @see CopyObjectOptions#ifSourceModifiedSince(DateTime)
      */
     public String getIfModifiedSince() {
@@ -123,8 +124,8 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
      * This header can be used with x-amz-copy-source-if-none-match, but cannot
      * be used with other conditional copy headers.
      * 
-     * @return valid HTTP date (go to http://rfc.net/rfc2616.html#s3.3).
-     * 
+     * @see <a href="http://rfc.net/rfc2616.html?s3.3"/>
+     * @return valid HTTP date
      * @see CopyObjectOptions#ifSourceUnmodifiedSince(DateTime)
      */
     public String getIfUnmodifiedSince() {
@@ -140,7 +141,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
      * This header can be used with x-amz-copy-source-if-unmodified-since, but
      * cannot be used with other conditional copy headers.
      * 
-     * @see CopyObjectOptions#ifSourceMd5Matches(String)
+     * @see CopyObjectOptions#ifSourceMd5Matches(byte[])
      */
     public String getIfMatch() {
 	return getFirstHeaderOrNull("x-amz-copy-source-if-match");
@@ -155,7 +156,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
      * This header can be used with x-amz-copy-source-if-modified-since, but
      * cannot be used with other conditional copy headers.
      * 
-     * @see CopyObjectOptions#ifSourceMd5DoesntMatch(String)
+     * @see CopyObjectOptions#ifSourceMd5DoesntMatch(byte[])
      */
     public String getIfNoneMatch() {
 	return getFirstHeaderOrNull("x-amz-copy-source-if-none-match");
@@ -287,7 +288,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
 	    CopyObjectOptions options = new CopyObjectOptions();
 	    return options.overrideAcl(acl);
 	}
-	
+
 	/**
 	 * @see CopyObjectOptions#getIfModifiedSince()
 	 */

@@ -37,10 +37,18 @@ import org.jclouds.http.HttpHeaders;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 
-
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+/**
+ * Signs the S3 request. This will update timestamps at most once per second.
+ * 
+ * @see <a href=
+ *      "http://docs.amazonwebservices.com/AmazonS3/latest/RESTAuthentication.html"
+ *      />
+ * @author Adrian Cole
+ * 
+ */
 public class RequestAuthorizeSignature implements HttpRequestFilter {
     private static final String[] firstHeadersToSign = new String[] {
 	    HttpHeaders.CONTENT_MD5, HttpHeaders.CONTENT_TYPE, HttpHeaders.DATE };
@@ -51,7 +59,8 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
 
     public static final long BILLION = 1000000000;
     private final AtomicReference<String> timeStamp;
-    private AtomicLong trigger = new AtomicLong(System.nanoTime() + 1 * BILLION);
+    private final AtomicLong trigger = new AtomicLong(System.nanoTime() + 1
+	    * BILLION);
 
     /**
      * Start the time update service. Amazon clocks need to be within 900
@@ -60,10 +69,12 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
      * slow, synchronized command.
      */
     synchronized void updateIfTimeOut() {
+
 	if (trigger.get() - System.nanoTime() <= 0) {
 	    timeStamp.set(createNewStamp());
+	    trigger.set(System.nanoTime() + 1 * BILLION);
 	}
-	trigger.set(System.nanoTime() + 1 * BILLION);
+
     }
 
     // this is a hotspot when submitted concurrently, so be lazy.
@@ -120,8 +131,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
 	    throws HttpException {
 	String signature;
 	try {
-	    signature = S3Utils.hmacSha1Base64(toSign, secretKey
-		    .getBytes());
+	    signature = S3Utils.hmacSha1Base64(toSign, secretKey.getBytes());
 	} catch (Exception e) {
 	    throw new HttpException("error signing request", e);
 	}
@@ -137,7 +147,8 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
 	request.getHeaders().put(HttpHeaders.DATE, timestampAsHeaderString());
     }
 
-    private static void appendAmzHeaders(HttpRequest request, StringBuilder toSign) {
+    private static void appendAmzHeaders(HttpRequest request,
+	    StringBuilder toSign) {
 	Set<String> headers = new TreeSet<String>(request.getHeaders().keySet());
 	for (String header : headers) {
 	    if (header.startsWith("x-amz-")) {
@@ -150,13 +161,15 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
 	}
     }
 
-    private static void appendHttpHeaders(HttpRequest request, StringBuilder toSign) {
+    private static void appendHttpHeaders(HttpRequest request,
+	    StringBuilder toSign) {
 	for (String header : firstHeadersToSign)
 	    toSign.append(valueOrEmpty(request.getHeaders().get(header)))
 		    .append("\n");
     }
 
-    private static void appendBucketName(HttpRequest request, StringBuilder toSign) {
+    private static void appendBucketName(HttpRequest request,
+	    StringBuilder toSign) {
 	String hostHeader = request.getHeaders().get(HttpHeaders.HOST)
 		.iterator().next();
 	if (hostHeader.endsWith(".s3.amazonaws.com"))

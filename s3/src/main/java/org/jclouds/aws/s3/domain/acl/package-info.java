@@ -21,26 +21,9 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.http;
-
-import java.io.IOException;
-
-import org.jclouds.Utils;
-
 /**
- * 
+ * This package contains components that represent authorization state.
+ * @see <a href="http://docs.amazonwebservices.com/AmazonS3/latest/RESTAccessPolicy.html" />
  * @author Adrian Cole
  */
-public class CloseContentAndSetExceptionHandler implements HttpResponseHandler {
-
-    public void handle(HttpFutureCommand<?> command, HttpResponse response) {
-	String content;
-	try {
-	    content = Utils.toStringAndClose(response.getContent());
-	    command.setException(new HttpResponseException(command, response,
-		    content));
-	} catch (IOException e) {
-	    command.setException(new HttpResponseException(command, response));
-	}
-    }
-}
+package org.jclouds.aws.s3.domain.acl;

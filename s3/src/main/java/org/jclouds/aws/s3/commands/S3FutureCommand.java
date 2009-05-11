@@ -27,6 +27,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.http.HttpFutureCommand;
 
+/**
+ * Conditionally adds the amazon host header to requests.
+ * 
+ * @author Adrian Cole
+ * 
+ * @param <T>
+ */
 public class S3FutureCommand<T> extends HttpFutureCommand<T> {
 
     public S3FutureCommand(String method, String uri,
@@ -43,9 +50,8 @@ public class S3FutureCommand<T> extends HttpFutureCommand<T> {
 	addHostHeader(checkNotNull(amazonHost, "amazonHost"));
     }
 
-   
     protected void addHostHeader(String amazonHost, String bucketName) {
 	addHostHeader(checkNotNull(bucketName) + "." + amazonHost);
     }
-  
+
 }

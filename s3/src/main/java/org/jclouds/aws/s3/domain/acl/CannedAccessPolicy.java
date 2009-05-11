@@ -38,8 +38,8 @@ package org.jclouds.aws.s3.domain.acl;
  * object, the object already exists with some other pre-existing access control
  * policy).
  * 
- * @see http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?
- *      RESTAccessPolicy.html
+ * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?
+ *      RESTAccessPolicy.html" />
  * @author Adrian Cole
  * 
  */

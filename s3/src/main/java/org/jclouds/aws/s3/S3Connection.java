@@ -42,7 +42,7 @@ import org.jclouds.aws.s3.domain.S3Object;
  * during processing will be wrapped in an {@link ExecutionException} as
  * documented in {@link Future#get()}.
  * 
- * @see http://docs.amazonwebservices.com/AmazonS3/2006-03-01/RESTAPI.html
+ * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/RESTAPI.html" />
  * 
  * @author Adrian Cole
  */

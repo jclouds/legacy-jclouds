@@ -40,9 +40,8 @@ import com.google.inject.Inject;
  * <p/>
  * ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01"
  * 
- * @see http 
- *      ://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTBucketGET
- *      .html
+ * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTBucketGET.html"
+ *      />
  * @author Adrian Cole
  */
 public class ListBucketHandler extends ParseSax.HandlerWithResult<S3Bucket> {

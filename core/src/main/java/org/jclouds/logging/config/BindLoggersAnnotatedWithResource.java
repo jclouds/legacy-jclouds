@@ -39,7 +39,6 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
-import com.google.inject.Module;
 import com.google.inject.ProvisionException;
 import com.google.inject.TypeLiteral;
 import com.google.inject.spi.InjectionListener;
@@ -47,14 +46,14 @@ import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 
 /**
- * TypeListener that will bind {@link Logger} to members annotated with
- * {@link Resource}
+ * TypeListener that will bind {@link org.jclouds.logging.Logger} to members annotated with
+ * {@link javax.annotation.Resource}
  * 
  * This class is a TypeListener so that it can create a logger whose category is
  * the same as the name of the injected instance's class.
  * 
  * Note that this occurs post-object construction through
- * {@link Module#bindListener}.
+ * {@link com.google.inject.Binder#bindListener}.
  * 
  * Here's an example usage:
  *  <pre>

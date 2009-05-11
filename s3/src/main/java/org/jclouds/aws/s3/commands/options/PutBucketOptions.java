@@ -28,7 +28,6 @@ import org.jclouds.aws.s3.domain.acl.CannedAccessPolicy;
 import org.jclouds.aws.s3.reference.S3Headers;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 
-
 import static com.google.common.base.Preconditions.*;
 
 /**
@@ -46,7 +45,8 @@ import static com.google.common.base.Preconditions.*;
  * Future<Boolean> createdInEu = connection.putBucketIfNotExists("bucketName",createIn(EU));
  * <code>
  * 
- * Description of parameters taken from {@link http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTBucketPUT.html}
+ * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTBucketPUT.html?"
+ *      />
  * 
  * @author Adrian Cole
  * 

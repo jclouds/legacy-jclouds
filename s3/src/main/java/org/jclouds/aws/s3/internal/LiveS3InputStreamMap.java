@@ -35,17 +35,22 @@ import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.Utils;
 import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.S3InputStreamMap;
 import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.util.Utils;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
 /**
- * Map representation of a live connection to S3.
+ * Map representation of a live connection to S3. All put operations will result
+ * in Md5 calculation. If this is not desired, use {@link LiveS3ObjectMap}
+ * instead.
  * 
+ * @see S3Connection
+ * @see BaseS3Map
  * @author Adrian Cole
  */
 public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
@@ -56,10 +61,10 @@ public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
 	super(connection, bucket);
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * {@inheritDoc}
      * 
-     * @see org.jclouds.aws.s3.S3ObjectMapi#get(java.lang.Object)
+     * @see S3Connection#getObject(String, String)
      */
     public InputStream get(Object o) {
 	try {
@@ -73,10 +78,10 @@ public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
 	}
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * {@inheritDoc}
      * 
-     * @see org.jclouds.aws.s3.S3ObjectMapi#remove(java.lang.Object)
+     * @see S3Connection#deleteObject(String, String)
      */
     public InputStream remove(Object o) {
 	InputStream old = get(o);
@@ -91,10 +96,10 @@ public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
 	return old;
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * {@inheritDoc}
      * 
-     * @see org.jclouds.aws.s3.S3ObjectMapi#values()
+     * @see #getAllObjects()
      */
     public Collection<InputStream> values() {
 	Collection<InputStream> values = new LinkedList<InputStream>();
@@ -105,10 +110,10 @@ public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
 	return values;
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * {@inheritDoc}
      * 
-     * @see org.jclouds.aws.s3.S3ObjectMapi#entrySet()
+     * @see #getAllObjects()
      */
     public Set<Map.Entry<String, InputStream>> entrySet() {
 	Set<Map.Entry<String, InputStream>> entrySet = new HashSet<Map.Entry<String, InputStream>>();
@@ -119,6 +124,9 @@ public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
 	return entrySet;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public class Entry implements java.util.Map.Entry<String, InputStream> {
 
 	private InputStream value;
@@ -137,50 +145,62 @@ public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
 	    return value;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see LiveS3InputStreamMap#put(String, InputStream)
+	 */
 	public InputStream setValue(InputStream value) {
 	    return put(key, value);
 	}
 
     }
 
-    private InputStream putInternal(String s, Object o) {
-	S3Object object = new S3Object(s);
-	try {
-	    InputStream returnVal = containsKey(s) ? get(s) : null;
-	    object.setData(o);
-	    object.generateMd5();
-	    connection.putObject(bucket, object).get(
-		    requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
-	    return returnVal;
-	} catch (Exception e) {
-	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
-	    throw new S3RuntimeException(String.format(
-		    "Error adding object %1$s:%2$s", bucket, object), e);
-	}
-    }
-
-    /*
-     * (non-Javadoc)
+    /**
+     * {@inheritDoc}
      * 
-     * @see org.jclouds.aws.s3.S3ObjectMap#putAll(java.util.Map)
+     * @see #putAllInternal(Map)
      */
     public void putAll(Map<? extends String, ? extends InputStream> map) {
 	putAllInternal(map);
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * @see #putAllInternal(Map)
+     */
     public void putAllBytes(Map<? extends String, ? extends byte[]> map) {
 	putAllInternal(map);
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * @see #putAllInternal(Map)
+     */
     public void putAllFiles(Map<? extends String, ? extends File> map) {
 	putAllInternal(map);
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * @see #putAllInternal(Map)
+     */
     public void putAllStrings(Map<? extends String, ? extends String> map) {
 	putAllInternal(map);
     }
 
-    private void putAllInternal(Map<? extends String, ? extends Object> map) {
+    /**
+     * submits requests to add all objects and collects the results later. All
+     * values will have md5 calculated first. As a side-effect of this, the
+     * content will be copied into a byte [].
+     * 
+     * @see S3Connection#putObject(String, S3Object)
+     */
+    @VisibleForTesting
+    void putAllInternal(Map<? extends String, ? extends Object> map) {
 	try {
 	    List<Future<byte[]>> puts = new ArrayList<Future<byte[]>>();
 	    for (String key : map.keySet()) {
@@ -199,43 +219,64 @@ public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
 	}
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * {@inheritDoc}
      * 
-     * @see org.jclouds.aws.s3.S3ObjectMap#putString(java.lang.String,
-     * java.lang.String)
+     * @see #putInternal(String, Object)
      */
     public InputStream putString(String key, String value) {
 	return putInternal(key, value);
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * {@inheritDoc}
      * 
-     * @see org.jclouds.aws.s3.S3ObjectMap#putFile(java.lang.String,
-     * java.io.File)
+     * @see #putInternal(String, Object)
      */
     public InputStream putFile(String key, File value) {
 	return putInternal(key, value);
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * {@inheritDoc}
      * 
-     * @see org.jclouds.aws.s3.S3ObjectMap#putBytes(java.lang.String, byte[])
+     * @see #putInternal(String, Object)
      */
     public InputStream putBytes(String key, byte[] value) {
 	return putInternal(key, value);
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * {@inheritDoc}
      * 
-     * @see org.jclouds.aws.s3.S3ObjectMap#put(java.lang.String,
-     * java.io.InputStream)
+     * @see #putInternal(String, Object)
      */
     public InputStream put(String key, InputStream value) {
 	return putInternal(key, value);
+    }
+
+    /**
+     * 
+     * calculates md5 before adding the object to s3. As a side-effect of this,
+     * the content will be copied into a byte []. *
+     * 
+     * @see S3Connection#putObject(String, S3Object)
+     */
+    @VisibleForTesting
+    InputStream putInternal(String s, Object o) {
+	S3Object object = new S3Object(s);
+	try {
+	    InputStream returnVal = containsKey(s) ? get(s) : null;
+	    object.setData(o);
+	    object.generateMd5();
+	    connection.putObject(bucket, object).get(
+		    requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
+	    return returnVal;
+	} catch (Exception e) {
+	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
+	    throw new S3RuntimeException(String.format(
+		    "Error adding object %1$s:%2$s", bucket, object), e);
+	}
     }
 
 }

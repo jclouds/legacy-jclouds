@@ -34,8 +34,8 @@ import java.util.TreeSet;
 import java.util.Map.Entry;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.Utils;
 import org.jclouds.aws.s3.internal.BaseS3Map;
+import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
 /**

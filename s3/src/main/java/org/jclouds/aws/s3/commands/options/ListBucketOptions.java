@@ -31,7 +31,6 @@ import java.net.URLEncoder;
 
 import org.jclouds.http.options.BaseHttpRequestOptions;
 
-
 /**
  * Contains options supported in the REST API for the GET bucket operation. <h2>
  * Usage</h2> The recommended way to instantiate a GetBucketOptions object is to
@@ -45,7 +44,8 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
  * Future<S3Bucket> bucket = connection.listBucket("bucketName",withPrefix("home/users").maxKeys(1000));
  * <code>
  * 
- * Description of parameters taken from {@link http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTBucketGET.html}
+ * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTBucketGET.html?"
+ *      />
  * 
  * @author Adrian Cole
  * 
@@ -69,7 +69,7 @@ public class ListBucketOptions extends BaseHttpRequestOptions {
     }
 
     /**
-     * @see ListBucketOptions#prefix(String)
+     * @see ListBucketOptions#withPrefix(String)
      */
     public String getPrefix() {
 	return options.get("prefix");
@@ -91,7 +91,7 @@ public class ListBucketOptions extends BaseHttpRequestOptions {
     }
 
     /**
-     * @see ListBucketOptions#marker(String)
+     * @see ListBucketOptions#afterMarker(String)
      */
     public String getMarker() {
 	return options.get("marker");
@@ -108,7 +108,7 @@ public class ListBucketOptions extends BaseHttpRequestOptions {
     }
 
     /**
-     * @see ListBucketOptions#maxKeys(String)
+     * @see ListBucketOptions#maxResults(long)
      */
     public String getMaxKeys() {
 	return options.get("max-keys");
@@ -140,7 +140,7 @@ public class ListBucketOptions extends BaseHttpRequestOptions {
 
 	/**
 	 * @throws UnsupportedEncodingException
-	 * @see ListBucketOptions#withPrefix
+	 * @see ListBucketOptions#withPrefix(String)
 	 */
 	public static ListBucketOptions withPrefix(String prefix)
 		throws UnsupportedEncodingException {
@@ -150,7 +150,7 @@ public class ListBucketOptions extends BaseHttpRequestOptions {
 
 	/**
 	 * @throws UnsupportedEncodingException
-	 * @see ListBucketOptions#afterMarker
+	 * @see ListBucketOptions#afterMarker(String)
 	 */
 	public static ListBucketOptions afterMarker(String marker)
 		throws UnsupportedEncodingException {
@@ -159,7 +159,7 @@ public class ListBucketOptions extends BaseHttpRequestOptions {
 	}
 
 	/**
-	 * @see ListBucketOptions#maxResults
+	 * @see ListBucketOptions#maxResults(long)
 	 */
 	public static ListBucketOptions maxResults(long maxKeys) {
 	    ListBucketOptions options = new ListBucketOptions();
@@ -168,7 +168,7 @@ public class ListBucketOptions extends BaseHttpRequestOptions {
 
 	/**
 	 * @throws UnsupportedEncodingException
-	 * @see ListBucketOptions#delimiter
+	 * @see ListBucketOptions#delimiter(String)
 	 */
 	public static ListBucketOptions delimiter(String delimiter)
 		throws UnsupportedEncodingException {

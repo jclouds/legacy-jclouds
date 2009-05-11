@@ -36,9 +36,9 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-s3</artifactId>
-    <name>Amazon S3 Components Core</name>
+    <name>jclouds Amazon S3 Components Core</name>
     <packaging>jar</packaging>
-    <description>Core components to access Amazon S3</description>
+    <description>jclouds Core components to access Amazon S3</description>
 
     <scm>
         <connection>scm:svn:http://jclouds.googlecode.com/svn/trunk/s3</connection>

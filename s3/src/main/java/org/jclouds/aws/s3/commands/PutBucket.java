@@ -41,9 +41,8 @@ import com.google.inject.name.Named;
  * specify a Europe (EU) location constraint via {@link PutBucketOptions}.
  * 
  * @see PutBucketOptions
- * @see http
- *      ://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTBucketPUT
- *      .html
+ * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTBucketPUT.html"
+ *      />
  * @author Adrian Cole
  * 
  */

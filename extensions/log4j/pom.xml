@@ -35,9 +35,9 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>jclouds-log4j</artifactId>
-    <name>jclouds log4j logging module</name>
+    <name>jclouds Log4J Logging Module</name>
     <packaging>jar</packaging>
-    <description>Log4J logging module</description>
+    <description>jclouds Log4J Logging Module</description>
 
     <scm>
         <connection>scm:svn:http://jclouds.googlecode.com/svn/trunk/extensions/log4j</connection>

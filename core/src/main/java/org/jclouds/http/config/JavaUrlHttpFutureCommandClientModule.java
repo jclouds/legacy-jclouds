@@ -28,7 +28,7 @@ import java.net.URL;
 
 import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpFutureCommandClient;
-import org.jclouds.http.JavaUrlHttpFutureCommandClient;
+import org.jclouds.http.internal.JavaUrlHttpFutureCommandClient;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;

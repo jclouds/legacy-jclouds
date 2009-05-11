@@ -31,9 +31,9 @@
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
     <packaging>pom</packaging>
-    <name>jclouds</name>
-    <url>http://code.google.com/p/jclouds</url>
-    <description>Concurrent API for Amazon Web Services</description>
+    <name>jclouds Project</name>
+    <url>http://www.jclouds.org</url>
+    <description>jclouds: Concurrent API for Cloud Services</description>
     <inceptionYear>2009</inceptionYear>
     <version>1.0-SNAPSHOT</version>
 
@@ -157,6 +157,51 @@
 
     <build>
         <plugins>
+         <!-- Make sure we generate src jars too -->
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <inherited>true</inherited>
+            <executions>
+               <execution>
+                  <id>attach-sources</id>
+                  <goals>
+                     <goal>jar</goal>
+                  </goals>
+               </execution>
+            </executions>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+               <execution>
+                  <id>javadoc</id>
+                  <phase>package</phase>
+                  <goals>
+                     <goal>jar</goal>
+                  </goals>
+                  <configuration>
+                     <links>
+                        <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
+                        <link>http://java.sun.com/javaee/5/docs/api/</link>
+                     </links>
+                     <footer><![CDATA[
+                     <!-- Google Analytics -->
+<script type='text/javascript'>
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type='text/javascript'>
+try {
+var pageTracker = _gat._getTracker("UA-8638379-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+                     ]]></footer>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>

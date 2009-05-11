@@ -40,6 +40,6 @@ public class S3ObjectTest {
 	File file = new File("hello.txt");
 	object.setData(file);
 	assertEquals(object.getMetadata().getContentType(),
-		ContentTypes.UNKNOWN_MIME_TYPE);
+		ContentTypes.BINARY);
     }
 }

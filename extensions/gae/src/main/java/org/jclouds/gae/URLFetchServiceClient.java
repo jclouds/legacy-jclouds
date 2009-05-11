@@ -35,12 +35,12 @@ import java.net.URL;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.http.BaseHttpFutureCommandClient;
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpFutureCommandClient;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.internal.BaseHttpFutureCommandClient;
 
 import com.google.appengine.api.urlfetch.HTTPHeader;
 import com.google.appengine.api.urlfetch.HTTPMethod;
@@ -77,15 +77,17 @@ public class URLFetchServiceClient extends BaseHttpFutureCommandClient {
 		logger.trace("%1$s - converting request %2$s", target, request);
 		HTTPRequest gaeRequest = convert(request);
 		if (logger.isTraceEnabled())
-		    logger.trace("%1$s - submitting request %2$s, headers: %3$s",
+		    logger.trace(
+			    "%1$s - submitting request %2$s, headers: %3$s",
 			    target, gaeRequest.getURL(),
 			    headersAsString(gaeRequest.getHeaders()));
 		gaeResponse = this.urlFetchService.fetch(gaeRequest);
 		if (logger.isTraceEnabled())
-		    logger.trace(
-			    "%1$s - received response code %2$s, headers: %3$s",
-			    target, gaeResponse.getResponseCode(),
-			    headersAsString(gaeResponse.getHeaders()));
+		    logger
+			    .trace(
+				    "%1$s - received response code %2$s, headers: %3$s",
+				    target, gaeResponse.getResponseCode(),
+				    headersAsString(gaeResponse.getHeaders()));
 		response = convert(gaeResponse);
 		if (isRetryable(command, response))
 		    continue;

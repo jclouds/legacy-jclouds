@@ -29,9 +29,7 @@ import java.util.Map;
 /**
  * When an Amazon S3 request is in error, the client receives an error response.
  * 
- * @see http
- *      ://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?ErrorResponse
- *      .html
+ * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?ErrorResponse.html" />
  * @author Adrian Cole
  * 
  */
@@ -67,7 +65,7 @@ public class S3Error {
      * It is meant to be read and understood by programs that detect and handle
      * errors by type
      * 
-     * @see http://docs.amazonwebservices.com/AmazonS3/2006-03-01/ErrorCode.html
+     * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/ErrorCode.html" />
      */
     public String getCode() {
 	return code;
@@ -81,8 +79,7 @@ public class S3Error {
      * The error message contains a generic description of the error condition
      * in English.
      * 
-     * @see http 
-     *      ://docs.amazonwebservices.com/AmazonS3/2006-03-01/ErrorMessage.html
+     * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/ErrorMessage.html" />
      */
     public String getMessage() {
 	return message;

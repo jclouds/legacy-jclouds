@@ -43,8 +43,8 @@ import com.google.inject.name.Named;
  * Only the owner of a bucket can delete it, regardless of the bucket's access
  * control policy.
  * 
- * @see http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?
- *      RESTBucketDELETE.html
+ * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTBucketDELETE.html"
+ *      />
  * @author Adrian Cole
  */
 public class DeleteBucket extends S3FutureCommand<Boolean> {

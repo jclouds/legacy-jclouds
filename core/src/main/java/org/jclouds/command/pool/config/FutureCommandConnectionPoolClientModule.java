@@ -36,7 +36,6 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 
 /**
- * // TODO: Adrian: Document this!
  * 
  * @author Adrian Cole
  */
@@ -60,7 +59,6 @@ public abstract class FutureCommandConnectionPoolClientModule<C> extends
      * occurred
      * 
      * @param max
-     * @return
      * @throws Exception
      */
     @Provides

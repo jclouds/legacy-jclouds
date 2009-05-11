@@ -25,7 +25,15 @@ package org.jclouds.aws.s3.reference;
 
 import org.jclouds.http.HttpHeaders;
 
-public interface S3Headers extends HttpHeaders{
+/**
+ * Additional headers specified by Amazon S3 REST API.
+ * 
+ * @see <a href="http://docs.amazonwebservices.com/AmazonS3/latest/index.html?RESTAuthentication.html"
+ *      />
+ * @author Adrian Cole
+ * 
+ */
+public interface S3Headers extends HttpHeaders {
 
     /**
      * The canned ACL to apply to the object. Options include private,

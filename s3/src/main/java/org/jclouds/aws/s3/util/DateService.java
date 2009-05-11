@@ -28,6 +28,12 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+/**
+ * Parses dates found in XML responses and HTTP response headers.
+ * 
+ * @author Adrian Cole
+ * 
+ */
 public class DateService {
     private DateTimeFormatter headerDateFormat = DateTimeFormat
 	    .forPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'");

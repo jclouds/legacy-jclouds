@@ -30,8 +30,8 @@ package org.jclouds.aws.s3.domain;
  * object will have a new owner.
  * <p/>
  * 
- * @see http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?
- *      RESTAccessPolicy.html
+ * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?
+ *      RESTAccessPolicy.html" />
  * @author Adrian Cole
  */
 public class CanonicalUser {
@@ -52,10 +52,18 @@ public class CanonicalUser {
 	return sb.toString();
     }
 
+    /**
+     * To locate the CanonicalUser ID for a user, the user must perform the
+     * {@link org.jclouds.aws.s3.S3Connection#listBucket(String)} and retrieve
+     * {@link S3Bucket.Metadata#getOwner()}
+     */
     public String getId() {
 	return id;
     }
 
+    /**
+     * read-only as is maintained by Amazon.
+     */
     public String getDisplayName() {
 	return displayName;
     }

@@ -36,7 +36,7 @@ import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 
 /**
- * // TODO: Adrian: Document this!
+ * Assembles the command objects for S3.
  * 
  * @author Adrian Cole
  */

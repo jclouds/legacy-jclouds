@@ -32,7 +32,7 @@ import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
 
 /**
- * Implies that the object can address {@link HttpResponse}s that contain status
+ * Implies that the object can address {@link org.jclouds.http.HttpResponse}s that contain status
  * code 3xx.
  * 
  * @author Adrian Cole

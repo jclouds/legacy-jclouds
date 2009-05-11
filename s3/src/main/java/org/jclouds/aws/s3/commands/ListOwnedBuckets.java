@@ -35,9 +35,8 @@ import com.google.inject.name.Named;
  * Returns a list of all of the buckets owned by the authenticated sender of the
  * request.
  * 
- * @see http
- *      ://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTServiceGET
- *      .html
+ * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTServiceGET.html"
+ *      />
  * @author Adrian Cole
  * 
  */

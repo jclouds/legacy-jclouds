@@ -56,12 +56,11 @@ import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-
 import com.google.inject.Module;
 
 @Test
 public class S3IntegrationTest {
-    protected static final String TEST_STRING = "<apples><apple name=\"fuji\" /></apples>";
+    protected static final String TEST_STRING = "<apples><apple name=\"fuji\"></apple> </apples>";
 
     protected byte[] goodMd5;
     protected byte[] badMd5;
@@ -184,8 +183,8 @@ public class S3IntegrationTest {
 
     protected void deleteEverything() throws Exception {
 	try {
-	    List<S3Bucket.Metadata> metadata = client.listOwnedBuckets().get(10,
-		    TimeUnit.SECONDS);
+	    List<S3Bucket.Metadata> metadata = client.listOwnedBuckets().get(
+		    10, TimeUnit.SECONDS);
 	    List<Future<Boolean>> results = new ArrayList<Future<Boolean>>();
 	    for (S3Bucket.Metadata metaDatum : metadata) {
 		if (metaDatum.getName().startsWith(bucketPrefix.toLowerCase())) {

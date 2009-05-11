@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.http;
+package org.jclouds.http.internal;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,6 +34,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.commons.io.IOUtils;
+import org.jclouds.http.HttpFutureCommand;
+import org.jclouds.http.HttpFutureCommandClient;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpRequestFilter;
+import org.jclouds.http.HttpResponse;
 
 import com.google.inject.Inject;
 

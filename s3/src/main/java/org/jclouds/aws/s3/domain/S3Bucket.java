@@ -34,8 +34,30 @@ import org.joda.time.DateTime;
  * A container that provides namespace, access control and aggregation of
  * {@link S3Object}s
  * 
+ * <p/>
+ * Every object stored in Amazon S3 is contained in a bucket. Buckets partition
+ * the namespace of objects stored in Amazon S3 at the top level. Within a
+ * bucket, you can use any names for your objects, but bucket names must be
+ * unique across all of Amazon S3.
+ * 
+ * Buckets are similar to Internet domain names. Just as Amazon is the only
+ * owner of the domain name Amazon.com, only one person or organization can own
+ * a bucket within Amazon S3. Once you create a uniquely named bucket in Amazon
+ * S3, you can organize and name the objects within the bucket in any way you
+ * like and the bucket will remain yours for as long as you like and as long as
+ * you have the Amazon S3 account.
+ * 
+ * The similarities between buckets and domain names is not a coincidence—there
+ * is a direct mapping between Amazon S3 buckets and subdomains of
+ * s3.amazonaws.com. Objects stored in Amazon S3 are addressable using the REST
+ * API under the domain bucketname.s3.amazonaws.com. For example, if the object
+ * homepage.html?is stored in the Amazon S3 bucket mybucket its address would be
+ * http://mybucket.s3.amazonaws.com/homepage.html?
+ * 
  * @author Adrian Cole
- * @see http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html
+ * @see <a
+ *      href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html"
+ *      />
  */
 public class S3Bucket {
     @Override
@@ -76,6 +98,12 @@ public class S3Bucket {
 	return result;
     }
 
+    /**
+     * System metadata of the S3Bucket
+     * 
+     * @author Adrian Cole
+     * 
+     */
     public static class Metadata {
 	@Override
 	public String toString() {
@@ -114,6 +142,15 @@ public class S3Bucket {
 	    return result;
 	}
 
+	/**
+	 * Location constraint of the bucket.
+	 * 
+	 * @see <a href=
+	 *      "http://docs.amazonwebservices.com/AmazonS3/latest/RESTBucketLocationGET.html"
+	 *      />
+	 * @author Adrian Cole
+	 * 
+	 */
 	public static enum LocationConstraint {
 	    EU
 	}
@@ -122,10 +159,26 @@ public class S3Bucket {
 	private DateTime creationDate;
 	private CanonicalUser canonicalUser;
 
+	/**
+	 * @see #getName()
+	 */
 	public Metadata(String name) {
 	    this.name = checkNotNull(name, "name");
 	}
 
+	/**
+	 * To comply with Amazon S3 requirements, bucket names must:
+	 * 
+	 * Contain lowercase letters, numbers, periods (.), underscores (_), and
+	 * dashes (-)
+	 * 
+	 * Start with a number or letter
+	 * 
+	 * Be between 3 and 255 characters long
+	 * 
+	 * Not be in an IP address style (e.g., "192.168.5.4")
+	 * 
+	 */
 	public String getName() {
 	    return name;
 	}
@@ -178,6 +231,9 @@ public class S3Bucket {
 	this.metadata = checkNotNull(metadata, "metadata");
     }
 
+    /**
+     * @see org.jclouds.aws.s3.S3Connection#listBucket(String)
+     */
     public Set<S3Object.Metadata> getContents() {
 	return objects;
     }
@@ -186,6 +242,9 @@ public class S3Bucket {
 	this.objects = objects;
     }
 
+    /**
+     * @return true, if the list contains all objects.
+     */
     public boolean isComplete() {
 	return isComplete;
     }
@@ -202,6 +261,21 @@ public class S3Bucket {
 	this.commonPrefixes = commonPrefixes;
     }
 
+    /**
+     * Example:
+     * <p />
+     * if the following keys are in the bucket
+     * 
+     * a/1/a<br/>
+     * a/1/b<br/>
+     * a/2/a<br/>
+     * a/2/b<br/>
+     * <p />
+     * and prefix is set to <code>a/</code> and delimiter is set to
+     * <code>/</code> then commonprefixes would return 1,2
+     * 
+     * @see org.jclouds.aws.s3.commands.options.ListBucketOptions#getPrefix()
+     */
     public Set<String> getCommonPrefixes() {
 	return commonPrefixes;
     }
@@ -210,6 +284,11 @@ public class S3Bucket {
 	this.prefix = prefix;
     }
 
+    /**
+     * return keys that start with this.
+     * 
+     * @see org.jclouds.aws.s3.commands.options.ListBucketOptions#getPrefix()
+     */
     public String getPrefix() {
 	return prefix;
     }
@@ -218,6 +297,10 @@ public class S3Bucket {
 	this.maxKeys = maxKeys;
     }
 
+    /**
+     * @return maximum results of the bucket.
+     * @see org.jclouds.aws.s3.commands.options.ListBucketOptions#getMaxKeys()
+     */
     public long getMaxKeys() {
 	return maxKeys;
     }
@@ -226,6 +309,12 @@ public class S3Bucket {
 	this.marker = marker;
     }
 
+    /**
+     * when set, bucket contains results whose keys are lexigraphically after
+     * marker.
+     * 
+     * @see org.jclouds.aws.s3.commands.options.ListBucketOptions#getMarker()
+     */
     public String getMarker() {
 	return marker;
     }
@@ -234,6 +323,16 @@ public class S3Bucket {
 	this.delimiter = delimiter;
     }
 
+    /**
+     * when set, bucket results will not contain keys that have text following
+     * this delimiter.
+     * <p/>
+     * note that delimiter has no effect on prefix. prefix can contain the
+     * delimiter many times, or not at all. delimiter only restricts after the
+     * prefix.
+     * 
+     * @see org.jclouds.aws.s3.commands.options.ListBucketOptions#getMarker()
+     */
     public String getDelimiter() {
 	return delimiter;
     }

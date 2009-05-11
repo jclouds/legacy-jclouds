@@ -35,14 +35,14 @@ import org.apache.http.HttpResponse;
 import org.apache.http.nio.entity.ConsumingNHttpEntity;
 import org.apache.http.nio.protocol.NHttpRequestExecutionHandler;
 import org.apache.http.protocol.HttpContext;
-import org.jclouds.http.CloseContentAndSetExceptionHandler;
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponseHandler;
 import org.jclouds.http.annotation.ClientErrorHandler;
 import org.jclouds.http.annotation.RedirectHandler;
 import org.jclouds.http.annotation.ServerErrorHandler;
-import org.jclouds.http.httpnio.HttpNioUtils;
+import org.jclouds.http.handlers.CloseContentAndSetExceptionHandler;
+import org.jclouds.http.httpnio.util.HttpNioUtils;
 import org.jclouds.logging.Logger;
 
 import com.google.inject.Inject;

@@ -37,8 +37,9 @@ import org.jclouds.http.HttpHeaders;
 import com.google.inject.Inject;
 
 /**
- * This parses @{link {@link S3Object.Metadata} from http headers.
+ * This parses @{link {@link org.jclouds.aws.s3.domain.S3Object.Metadata} from HTTP headers.
  * 
+ * @see <a href="http://docs.amazonwebservices.com/AmazonS3/latest/RESTObjectGET.html" />
  * @author Adrian Cole
  */
 public class ParseMetadataFromHeaders extends
@@ -53,7 +54,7 @@ public class ParseMetadataFromHeaders extends
 
     /**
      * parses the http response headers to create a new
-     * {@link S3Object.Metadata} object.
+     * {@link org.jclouds.aws.s3.domain.S3Object.Metadata} object.
      */
     public S3Object.Metadata call() throws HttpException {
 	checkCode();

@@ -37,17 +37,28 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.Utils;
 import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.S3Map;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.reference.S3Constants;
+import org.jclouds.util.Utils;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 
+/**
+ * Implements core Map functionality with an {@link S3Connection}
+ * <p/>
+ * All commands will wait a maximum of ${jclouds.s3.map.timeout} milliseconds to
+ * complete before throwing an exception.
+ * 
+ * @author Adrian Cole
+ * 
+ * @param <V>
+ *            value of the map
+ */
 public abstract class BaseS3Map<V> implements S3Map<String, V> {
 
     protected final S3Connection connection;
@@ -108,6 +119,11 @@ public abstract class BaseS3Map<V> implements S3Map<String, V> {
 	return object.getMetadata().getMd5();
     }
 
+    /**
+     * attempts asynchronous gets on all objects.
+     * 
+     * @see S3Connection#getObject(String, String)
+     */
     protected Set<S3Object> getAllObjects() {
 	Set<S3Object> objects = new HashSet<S3Object>();
 	Set<Future<S3Object>> futureObjects = new HashSet<Future<S3Object>>();

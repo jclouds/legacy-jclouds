@@ -27,30 +27,30 @@ public interface HttpHeaders {
 
     /**
      * Can be used to specify caching behavior along the request/reply chain. Go
-     * to http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.9.
+     * to http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html?sec14.9.
      */
     public static final String CACHE_CONTROL = "Cache-Control";
     /**
      * Specifies presentational information for the object. Go to
-     * http://www.w3.org/Protocols/rfc2616/rfc2616-sec19.html#sec19.5.1.
+     * http://www.w3.org/Protocols/rfc2616/rfc2616-sec19.html?sec19.5.1.
      */
     public static final String CONTENT_DISPOSITION = "Content-Disposition";
     /**
      * Specifies what content encodings have been applied to the object and thus
      * what decoding mechanisms must be applied in order to obtain the
      * media-type referenced by the Content-Type header field. Go to
-     * http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.11.
+     * http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html?sec14.11.
      */
     public static final String CONTENT_ENCODING = "Content-Encoding";
     /**
      * The size of the object, in bytes. This is required. Go to
-     * http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.13.
+     * http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html?sec14.13.
      */
     public static final String CONTENT_LENGTH = "Content-Length";
     /**
      * A standard MIME type describing the format of the contents. If none is
      * provided, the default is binary/octet-stream. Go to
-     * http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17.
+     * http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html?sec14.17.
      */
     public static final String CONTENT_TYPE = "Content-Type";
     /**
@@ -70,7 +70,7 @@ public interface HttpHeaders {
      * 
      * Authorization = "Authorization" ":" credentials
      * 
-     * @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html
+     * @see <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html" />
      */
     public static final String AUTHORIZATION = "Authorization";
     public static final String HOST = "Host";

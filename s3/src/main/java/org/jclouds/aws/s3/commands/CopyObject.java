@@ -45,11 +45,9 @@ import com.google.inject.name.Named;
  * {@link CopyObjectOptions#overrideAcl(org.jclouds.aws.s3.domain.acl.CannedAccessPolicy)
  * specify a new ACL} when generating a copy request.
  * 
- * @see http
- *      ://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTObjectCOPY
- *      .html
+ * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTObjectCOPY.html" />
  * @see CopyObjectOptions
- * @see CannedAccessPolicy
+ * @see org.jclouds.aws.s3.domain.acl.CannedAccessPolicy
  * @author Adrian Cole
  * 
  */

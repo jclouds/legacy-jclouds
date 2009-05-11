@@ -21,19 +21,8 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.filters;
-
-import org.jclouds.http.HttpRequestFilter;
-
 /**
- * // TODO: Adrian: Document this!
- * 
+ * This package contains implementation classes for the jclouds-s3 public api
  * @author Adrian Cole
  */
-public class RemoveTransferEncodingHeader implements HttpRequestFilter {
-
-    public void filter(org.jclouds.http.HttpRequest request)
-	    throws org.jclouds.http.HttpException {
-	request.getHeaders().removeAll("Transfer-Encoding");
-    }
-}
+package org.jclouds.aws.s3.internal;

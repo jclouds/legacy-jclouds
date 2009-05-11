@@ -48,9 +48,8 @@ import com.google.inject.name.Named;
  * List output is controllable via {@link ListBucketOptions}
  * 
  * @see ListBucketOptions
- * @see http 
- *      ://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTBucketGET
- *      .html
+ * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTBucketGET.html"
+ *      />
  * @author Adrian Cole
  * 
  */

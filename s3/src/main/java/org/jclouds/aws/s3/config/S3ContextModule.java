@@ -31,20 +31,19 @@ import javax.annotation.Resource;
 import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.S3Context;
 import org.jclouds.aws.s3.commands.config.S3CommandsModule;
-import org.jclouds.aws.s3.filters.ParseS3ErrorFromXmlContent;
-import org.jclouds.aws.s3.filters.RemoveTransferEncodingHeader;
 import org.jclouds.aws.s3.filters.RequestAuthorizeSignature;
+import org.jclouds.aws.s3.handlers.ParseS3ErrorFromXmlContent;
 import org.jclouds.aws.s3.internal.GuiceS3Context;
 import org.jclouds.aws.s3.internal.LiveS3Connection;
 import org.jclouds.aws.s3.internal.LiveS3InputStreamMap;
 import org.jclouds.aws.s3.internal.LiveS3ObjectMap;
-import org.jclouds.http.CloseContentAndSetExceptionHandler;
 import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponseHandler;
 import org.jclouds.http.annotation.ClientErrorHandler;
 import org.jclouds.http.annotation.RedirectHandler;
 import org.jclouds.http.annotation.ServerErrorHandler;
+import org.jclouds.http.handlers.CloseContentAndSetExceptionHandler;
 import org.jclouds.logging.Logger;
 
 import com.google.inject.AbstractModule;
@@ -56,7 +55,7 @@ import com.google.inject.assistedinject.FactoryProvider;
 import com.google.inject.name.Named;
 
 /**
- * // TODO: Adrian: Document this!
+ * Configures the S3 connection, including logging and http transport.
  * 
  * @author Adrian Cole
  */
@@ -96,17 +95,15 @@ public class S3ContextModule extends AbstractModule {
 	bind(HttpResponseHandler.class).annotatedWith(ServerErrorHandler.class)
 		.to(ParseS3ErrorFromXmlContent.class).in(Scopes.SINGLETON);
 	requestInjection(this);
-	logger.info("S3 Context = %1$s://%2$s:%3$s",
-		(isSecure ? "https" : "http"), address, port);
+	logger.info("S3 Context = %1$s://%2$s:%3$s", (isSecure ? "https"
+		: "http"), address, port);
     }
 
     @Provides
     @Singleton
     List<HttpRequestFilter> provideRequestFilters(
-	    RemoveTransferEncodingHeader removTransferEncodingHeader,
 	    RequestAuthorizeSignature requestAuthorizeSignature) {
 	List<HttpRequestFilter> filters = new ArrayList<HttpRequestFilter>();
-	filters.add(removTransferEncodingHeader);
 	filters.add(requestAuthorizeSignature);
 	return filters;
     }

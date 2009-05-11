@@ -40,7 +40,7 @@ import com.google.inject.name.Named;
 
 /**
  * Retrieves the metadata associated with the Key or
- * {@link S3Object.Metadata#NOT_FOUND} if not available.
+ * {@link org.jclouds.aws.s3.domain.S3Object.Metadata#NOT_FOUND} if not available.
  * 
  * <p/>
  * The HEAD operation is used to retrieve information about a specific object or
@@ -49,9 +49,8 @@ import com.google.inject.name.Named;
  * bandwidth on the object data.
  * 
  * @see GetObject
- * @see http 
- *      ://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTObjectHEAD
- *      .html
+ * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTObjectHEAD.html"
+ *      />
  * @author Adrian Cole
  * 
  */

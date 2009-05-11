@@ -26,9 +26,9 @@ package org.jclouds.http.commands.callables;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.jclouds.Utils;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpFutureCommand;
+import org.jclouds.util.Utils;
 
 import com.google.inject.Inject;
 

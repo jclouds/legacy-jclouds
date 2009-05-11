@@ -38,9 +38,8 @@ import com.google.inject.Inject;
  * <p/>
  * ListAllMyBucketsResult xmlns="http://doc.s3.amazonaws.com/2006-03-01"
  * 
- * @see http 
- *      ://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTServiceGET
- *      .html
+ * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTServiceGET.html"
+ *      />
  * @author Adrian Cole
  */
 public class ListAllMyBucketsHandler extends

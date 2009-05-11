@@ -31,8 +31,7 @@ import org.jclouds.http.HttpResponseException;
 /**
  * Encapsulates an S3 Error from Amazon.
  * 
- * @see http
- *      ://docs.amazonwebservices.com/AmazonS3/2006-03-01/UsingRESTError.html
+ * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/UsingRESTError.html" />
  * @see S3Error
  * @see ParseS3ErrorFromXmlContent
  * @author Adrian Cole

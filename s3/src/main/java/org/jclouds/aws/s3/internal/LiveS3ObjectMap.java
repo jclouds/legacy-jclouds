@@ -32,16 +32,19 @@ import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.Utils;
 import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.S3ObjectMap;
 import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.util.Utils;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
 /**
  * Map representation of a live connection to S3.
+ * 
+ * @see S3Connection
+ * @see BaseS3Map
  * 
  * @author Adrian Cole
  */
@@ -52,6 +55,11 @@ public class LiveS3ObjectMap extends BaseS3Map<S3Object> implements S3ObjectMap 
 	super(connection, bucket);
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * @see #values()
+     */
     public Set<java.util.Map.Entry<String, S3Object>> entrySet() {
 	Set<Map.Entry<String, S3Object>> entrySet = new HashSet<Map.Entry<String, S3Object>>();
 	for (S3Object value : values()) {
@@ -79,12 +87,22 @@ public class LiveS3ObjectMap extends BaseS3Map<S3Object> implements S3ObjectMap 
 	    return value;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see LiveS3ObjectMap#put(String, S3Object)
+	 */
 	public S3Object setValue(S3Object value) {
 	    return put(key, value);
 	}
 
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * @see S3Connection#getObject(String, String)
+     */
     public S3Object get(Object key) {
 	try {
 	    return connection.getObject(bucket, key.toString()).get(
@@ -96,6 +114,11 @@ public class LiveS3ObjectMap extends BaseS3Map<S3Object> implements S3ObjectMap 
 	}
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * @see S3Connection#putObject(String, S3Object)
+     */
     public S3Object put(String key, S3Object value) {
 	S3Object returnVal = get(key);
 	try {
@@ -103,12 +126,18 @@ public class LiveS3ObjectMap extends BaseS3Map<S3Object> implements S3ObjectMap 
 		    TimeUnit.MILLISECONDS);
 	} catch (Exception e) {
 	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
-	    throw new S3RuntimeException(String.format(
-		    "Error putting object %1$s:%2$s%n%1$s", bucket, key, value), e);
+	    throw new S3RuntimeException(
+		    String.format("Error putting object %1$s:%2$s%n%1$s",
+			    bucket, key, value), e);
 	}
 	return returnVal;
     }
 
+    /**
+     * {@inheritDoc} attempts to put all objects asynchronously.
+     * 
+     * @see S3Connection#putObject(String, S3Object)
+     */
     public void putAll(Map<? extends String, ? extends S3Object> map) {
 	try {
 	    List<Future<byte[]>> puts = new ArrayList<Future<byte[]>>();
@@ -125,6 +154,11 @@ public class LiveS3ObjectMap extends BaseS3Map<S3Object> implements S3ObjectMap 
 	}
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * @see S3Connection#deleteObject(String, String)
+     */
     public S3Object remove(Object key) {
 	S3Object old = get(key);
 	try {
@@ -138,6 +172,11 @@ public class LiveS3ObjectMap extends BaseS3Map<S3Object> implements S3ObjectMap 
 	return old;
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * @see #getAllObjects()
+     */
     public Collection<S3Object> values() {
 	return getAllObjects();
     }

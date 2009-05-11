@@ -25,14 +25,14 @@ package org.jclouds.aws.s3.config;
 
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.aws.s3.filters.ParseS3ErrorFromXmlContent;
+import org.jclouds.aws.s3.handlers.ParseS3ErrorFromXmlContent;
 import org.jclouds.aws.s3.reference.S3Constants;
-import org.jclouds.http.CloseContentAndSetExceptionHandler;
 import org.jclouds.http.HttpResponseHandler;
 import org.jclouds.http.annotation.ClientErrorHandler;
 import org.jclouds.http.annotation.RedirectHandler;
 import org.jclouds.http.annotation.ServerErrorHandler;
 import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
+import org.jclouds.http.handlers.CloseContentAndSetExceptionHandler;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

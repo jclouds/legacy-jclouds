@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.http.httpnio;
+package org.jclouds.http.httpnio.util;
 
 import java.io.File;
 import java.io.IOException;

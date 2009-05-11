@@ -27,7 +27,7 @@ import org.jclouds.command.pool.PoolConstants;
 import org.jclouds.http.HttpConstants;
 
 /**
- * // TODO: Adrian: Document this!
+ * Configuration properties and constants used in S3 connections.
  * 
  * @author Adrian Cole
  */
@@ -35,6 +35,10 @@ public interface S3Constants extends HttpConstants, PoolConstants, S3Headers {
 
     public static final String PROPERTY_AWS_SECRETACCESSKEY = "jclouds.aws.secretaccesskey";
     public static final String PROPERTY_AWS_ACCESSKEYID = "jclouds.aws.accesskeyid";
+    /**
+     * longest time a single Map operation can take before throwing an
+     * exception.
+     */
     public static final String PROPERTY_S3_MAP_TIMEOUT = "jclouds.s3.map.timeout";
 
 }

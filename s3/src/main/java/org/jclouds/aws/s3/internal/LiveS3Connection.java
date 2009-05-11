@@ -51,10 +51,11 @@ import org.jclouds.http.HttpFutureCommandClient;
 import com.google.inject.Inject;
 
 /**
- * {@inheritDoc} Uses {@link HttpFutureCommandClient} to invoke the REST API of
- * S3.
+ * Uses {@link HttpFutureCommandClient} to invoke the REST API of S3.
  * 
- * @see http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?
+ * @see <a
+ *      href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?"
+ *      />
  * @author Adrian Cole
  */
 public class LiveS3Connection implements S3Connection {

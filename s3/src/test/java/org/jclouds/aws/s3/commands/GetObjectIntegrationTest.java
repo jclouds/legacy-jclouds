@@ -1,6 +1,6 @@
 /**
  *
- * Getright (C) 2009 Adrian Cole <adrian@jclouds.org>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one

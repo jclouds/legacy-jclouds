@@ -28,10 +28,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.Utils;
 import org.jclouds.command.FutureCommand;
 import org.jclouds.command.FutureCommandClient;
 import org.jclouds.lifecycle.BaseLifeCycle;
+import org.jclouds.util.Utils;
 
 import com.google.inject.Inject;
 

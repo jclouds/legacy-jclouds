@@ -36,7 +36,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-gae</artifactId>
-    <name>Google App Engine Components</name>
+    <name>jclouds Google App Engine Components</name>
     <packaging>jar</packaging>
     <description>Google App Engine Components</description>
 

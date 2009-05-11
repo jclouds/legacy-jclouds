@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.http;
+package org.jclouds.http.internal;
 
 import java.net.URL;
 import java.util.Collections;
@@ -29,9 +29,15 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.jclouds.http.HttpFutureCommand;
+import org.jclouds.http.HttpFutureCommandClient;
+import org.jclouds.http.HttpRequestFilter;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.HttpResponseHandler;
 import org.jclouds.http.annotation.ClientErrorHandler;
 import org.jclouds.http.annotation.RedirectHandler;
 import org.jclouds.http.annotation.ServerErrorHandler;
+import org.jclouds.http.handlers.CloseContentAndSetExceptionHandler;
 import org.jclouds.logging.Logger;
 
 import com.google.inject.Inject;

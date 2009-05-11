@@ -21,48 +21,30 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds;
+package org.jclouds.http.handlers;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.concurrent.ExecutionException;
 
-import org.apache.commons.io.IOUtils;
+import org.jclouds.http.HttpFutureCommand;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.HttpResponseException;
+import org.jclouds.http.HttpResponseHandler;
+import org.jclouds.util.Utils;
 
 /**
- * // TODO: Adrian: Document this!
- *
+ * 
  * @author Adrian Cole
  */
-public class Utils {
+public class CloseContentAndSetExceptionHandler implements HttpResponseHandler {
 
-
-    @SuppressWarnings("unchecked")
-    public static <E extends Exception> void rethrowIfRuntimeOrSameType(Exception e) throws E {
-        if (e instanceof ExecutionException) {
-            Throwable nested = e.getCause();
-            if (nested instanceof Error)
-                throw (Error) nested;
-            e = (Exception) nested;
-        }
-
-        if (e instanceof RuntimeException) {
-            throw (RuntimeException) e;
-        } else {
-            try {
-                throw (E) e;
-            } catch (ClassCastException throwAway) {
-                // using cce as there's no way to do instanceof E in current java
-            }
-        }
+    public void handle(HttpFutureCommand<?> command, HttpResponse response) {
+	String content;
+	try {
+	    content = Utils.toStringAndClose(response.getContent());
+	    command.setException(new HttpResponseException(command, response,
+		    content));
+	} catch (IOException e) {
+	    command.setException(new HttpResponseException(command, response));
+	}
     }
-
-    public static String toStringAndClose(InputStream input) throws IOException {
-        try {
-            return IOUtils.toString(input);
-        } finally {
-            IOUtils.closeQuietly(input);
-        }
-    }
-
 }

@@ -32,8 +32,8 @@ import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
 
 /**
- * Implies that the object can address {@link HttpResponse}s that contain status
- * code 4xx.
+ * Implies that the object can address {@link org.jclouds.http.HttpResponse}s
+ * that contain status code 4xx.
  * 
  * @author Adrian Cole
  */

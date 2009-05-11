@@ -53,8 +53,8 @@ import com.google.common.collect.Multimap;
  * Future<S3Object> object = connection.getObject("bucket","objectName",range(0,1024).ifUnmodifiedSince(new DateTime().minusDays(1)));
  * <code>
  * 
- * Description of parameters taken from {@link http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTObjectGET.html}
- * 
+ * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTObjectGET.html?"
+ *      />
  * @author Adrian Cole
  * 
  * 
@@ -199,7 +199,7 @@ public class GetObjectOptions extends BaseHttpRequestOptions {
      * Return the object only if its entity tag (ETag) is the same as the md5
      * specified, otherwise return a 412 (precondition failed).
      * 
-     * @see GetObjectOptions#ifMd5Matches(String)
+     * @see GetObjectOptions#ifMd5Matches(byte[])
      */
     public String getIfMatch() {
 	return this.getFirstHeaderOrNull(HttpHeaders.IF_MATCH);
@@ -234,7 +234,7 @@ public class GetObjectOptions extends BaseHttpRequestOptions {
      * Return the object only if its entity tag (ETag) is different from the one
      * specified, otherwise return a 304 (not modified).
      * 
-     * @see GetObjectOptions#ifMd5DoesntMatch(String)
+     * @see GetObjectOptions#ifMd5DoesntMatch(byte[])
      */
     public String getIfNoneMatch() {
 	return this
@@ -250,7 +250,7 @@ public class GetObjectOptions extends BaseHttpRequestOptions {
 	    GetObjectOptions options = new GetObjectOptions();
 	    return options.range(start, end);
 	}
-	
+
 	/**
 	 * @see GetObjectOptions#startAt(long)
 	 */
@@ -266,7 +266,7 @@ public class GetObjectOptions extends BaseHttpRequestOptions {
 	    GetObjectOptions options = new GetObjectOptions();
 	    return options.tail(count);
 	}
-	
+
 	/**
 	 * @see GetObjectOptions#getIfModifiedSince()
 	 */

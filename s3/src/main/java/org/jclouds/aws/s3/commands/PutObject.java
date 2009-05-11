@@ -48,9 +48,8 @@ import com.google.inject.name.Named;
  * 
  * 
  * @see PutObjectOptions
- * @see http 
- *      ://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTObjectPUT
- *      .html
+ * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTObjectPUT.html"
+ *      />
  * @author Adrian Cole
  */
 public class PutObject extends S3FutureCommand<byte[]> {

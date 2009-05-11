@@ -32,9 +32,10 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 
 /**
- * Parses response headers and creates a new S3Object from them and the http
+ * Parses response headers and creates a new S3Object from them and the HTTP
  * content.
  * 
+ * @see ParseMetadataFromHeaders
  * @author Adrian Cole
  */
 public class ParseObjectFromHeadersAndHttpContent extends
@@ -83,7 +84,7 @@ public class ParseObjectFromHeadersAndHttpContent extends
 	    object.setContentRange(contentRange);
 	    object.getMetadata().setSize(
 		    Long.parseLong(contentRange.substring(contentRange
-			    .lastIndexOf('/')+1)));
+			    .lastIndexOf('/') + 1)));
 	}
     }
 

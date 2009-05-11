@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
+import org.jclouds.aws.s3.commands.options.GetObjectOptions;
 import org.jclouds.aws.s3.util.S3Utils;
 import org.jclouds.aws.s3.util.S3Utils.Md5InputStreamResult;
 import org.jclouds.http.ContentTypes;
@@ -40,8 +41,13 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 /**
- * // TODO: Adrian: Document this!
+ * Amazon S3 is designed to store objects. Objects are stored in
+ * {@link S3Bucket buckets} and consist of a {@link S3Object#getValue() value},
+ * a {@link S3Object#getKey key}, {@link S3Object.Metadata#getUserMetadata()
+ * metadata}, and an access control policy.
  * 
+ * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?UsingObjects.html"
+ *      />
  * @author Adrian Cole
  */
 public class S3Object {
@@ -70,6 +76,15 @@ public class S3Object {
 	setData(data);
     }
 
+    /**
+     * System and user Metadata for the {@link S3Object}.
+     * 
+     * @see <a href=
+     *      "http://docs.amazonwebservices.com/AmazonS3/2006-03-01/UsingMetadata.html"
+     *      />
+     * @author Adrian Cole
+     * 
+     */
     public static class Metadata {
 	public static final Metadata NOT_FOUND = new Metadata("NOT_FOUND");
 
@@ -82,7 +97,7 @@ public class S3Object {
 	private Multimap<String, String> allHeaders = HashMultimap.create();
 	private Multimap<String, String> userMetadata = HashMultimap.create();
 	private DateTime lastModified;
-	private String dataType = ContentTypes.UNKNOWN_MIME_TYPE;
+	private String dataType = ContentTypes.BINARY;
 	private String cacheControl;
 	private String dataDisposition;
 	private String dataEncoding;
@@ -91,6 +106,10 @@ public class S3Object {
 	private CanonicalUser owner = null;
 	private String storageClass = null;
 
+	/**
+	 * @see #getKey()
+	 * @param key
+	 */
 	public Metadata(String key) {
 	    checkNotNull(key, "key");
 	    checkArgument(!key.startsWith("/"), "keys cannot start with /");
@@ -149,6 +168,16 @@ public class S3Object {
 	    return result;
 	}
 
+	/**
+	 * The key is the handle that you assign to an object that allows you
+	 * retrieve it later. A key is a sequence of Unicode characters whose
+	 * UTF-8 encoding is at most 1024 bytes long. Each object in a bucket
+	 * must have a unique key.
+	 * 
+	 * @see <a href=
+	 *      "http://docs.amazonwebservices.com/AmazonS3/2006-03-01/UsingKeys.html"
+	 *      />
+	 */
 	public String getKey() {
 	    return key;
 	}
@@ -161,6 +190,15 @@ public class S3Object {
 	    this.lastModified = lastModified;
 	}
 
+	/**
+	 * The size of the object, in bytes.
+	 * 
+	 * @see <a href=
+	 *      "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html?sec14.13."
+	 *      />
+	 * 
+	 * @return
+	 */
 	public long getSize() {
 	    return size;
 	}
@@ -169,6 +207,16 @@ public class S3Object {
 	    this.size = size;
 	}
 
+	/**
+	 * A standard MIME type describing the format of the contents. If none
+	 * is provided, the default is binary/octet-stream.
+	 * 
+	 * @see <a href=
+	 *      "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html?sec14.17."
+	 *      />
+	 * 
+	 * @return
+	 */
 	public String getContentType() {
 	    return dataType;
 	}
@@ -181,6 +229,9 @@ public class S3Object {
 	    this.md5 = md5;
 	}
 
+	/**
+	 * @return the md5 value stored in the Etag header returned by S3.
+	 */
 	public byte[] getMd5() {
 	    return md5;
 	}
@@ -189,6 +240,14 @@ public class S3Object {
 	    this.userMetadata = userMetadata;
 	}
 
+	/**
+	 * 
+	 * Any header starting with <code>x-amz-meta-</code> is considered user
+	 * metadata. It will be stored with the object and returned when you
+	 * retrieve the object. The total size of the HTTP request, not
+	 * including the body, must be less than 8 KB.
+	 * 
+	 */
 	public Multimap<String, String> getUserMetadata() {
 	    return userMetadata;
 	}
@@ -211,6 +270,9 @@ public class S3Object {
 	    this.storageClass = storageClass;
 	}
 
+	/**
+	 * Currently defaults to 'STANDARD' and not used.
+	 */
 	public String getStorageClass() {
 	    return storageClass;
 	}
@@ -219,6 +281,12 @@ public class S3Object {
 	    this.cacheControl = cacheControl;
 	}
 
+	/**
+	 * Can be used to specify caching behavior along the request/reply
+	 * chain.
+	 * 
+	 * @link http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html?sec14.9.
+	 */
 	public String getCacheControl() {
 	    return cacheControl;
 	}
@@ -227,6 +295,11 @@ public class S3Object {
 	    this.dataDisposition = dataDisposition;
 	}
 
+	/**
+	 * Specifies presentational information for the object.
+	 * 
+	 * @see <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec19.html?sec19.5.1."/>
+	 */
 	public String getContentDisposition() {
 	    return dataDisposition;
 	}
@@ -235,6 +308,15 @@ public class S3Object {
 	    this.dataEncoding = dataEncoding;
 	}
 
+	/**
+	 * Specifies what content encodings have been applied to the object and
+	 * thus what decoding mechanisms must be applied in order to obtain the
+	 * media-type referenced by the Content-Type header field.
+	 * 
+	 * @see <a href=
+	 *      "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html?sec14.11"
+	 *      />
+	 */
 	public String getContentEncoding() {
 	    return dataEncoding;
 	}
@@ -243,21 +325,46 @@ public class S3Object {
 	    this.allHeaders = allHeaders;
 	}
 
+	/**
+	 * 
+	 * @return all http response headers associated with this S3Object
+	 */
 	public Multimap<String, String> getAllHeaders() {
 	    return allHeaders;
 	}
     }
 
+    /**
+     * @see Metadata#getKey()
+     */
     public String getKey() {
 	return metadata.getKey();
     }
 
+    /**
+     * Sets payload for the request or the content from the response. If size
+     * isn't set, this will attempt to discover it.
+     * 
+     * @param data
+     *            typically InputStream for downloads, or File, byte [], String,
+     *            or InputStream for uploads.
+     */
     public void setData(Object data) {
 	this.data = checkNotNull(data, "data");
 	if (getMetadata().getSize() == -1)
 	    this.getMetadata().setSize(S3Utils.calculateSize(data));
     }
 
+    /**
+     * generate an MD5 Hash for the current data.
+     * 
+     * <h2>Note</h2>
+     * <p/>
+     * If this is an InputStream, it will be converted to a byte array first.
+     * 
+     * @throws IOException
+     *             if there is a problem generating the hash.
+     */
     public void generateMd5() throws IOException {
 	checkState(data != null, "data");
 	if (data instanceof InputStream) {
@@ -271,6 +378,11 @@ public class S3Object {
 	}
     }
 
+    /**
+     * 
+     * @return InputStream, if downloading, or whatever was set during
+     *         {@link #setData(Object)}
+     */
     public Object getData() {
 	return data;
     }
@@ -279,6 +391,10 @@ public class S3Object {
 	this.metadata = metadata;
     }
 
+    /**
+     * 
+     * @return System and User metadata relevant to this object.
+     */
     public Metadata getMetadata() {
 	return metadata;
     }
@@ -320,6 +436,20 @@ public class S3Object {
 	this.contentLength = contentLength;
     }
 
+    /**
+     * Returns the total size of the downloaded object, or the chunk that's
+     * available.
+     * <p/>
+     * Chunking is only used when
+     * {@link org.jclouds.aws.s3.S3Connection#getObject(String, String, org.jclouds.aws.s3.commands.options.GetObjectOptions) }
+     * is called with options like tail, range, or startAt.
+     * 
+     * @see org.jclouds.http.HttpHeaders#CONTENT_LENGTH
+     * @see GetObjectOptions
+     * @return the length in bytes that can be be obtained from
+     *         {@link #getData()}
+     * 
+     */
     public long getContentLength() {
 	return contentLength;
     }
@@ -328,6 +458,13 @@ public class S3Object {
 	this.contentRange = contentRange;
     }
 
+    /**
+     * If this is not-null, {@link #getContentLength() } will the size of chunk
+     * of the S3Object available via {@link #getData()}
+     * 
+     * @see org.jclouds.http.HttpHeaders#CONTENT_RANGE
+     * @see GetObjectOptions
+     */
     public String getContentRange() {
 	return contentRange;
     }

@@ -28,9 +28,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.Utils;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpFutureCommand;
+import org.jclouds.util.Utils;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;

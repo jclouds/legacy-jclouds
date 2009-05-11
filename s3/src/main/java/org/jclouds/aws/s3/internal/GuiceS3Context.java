@@ -38,8 +38,9 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 /**
- * // TODO: Adrian: Document return getConnection!
+ * Uses a Guice Injector to configure the objects served by S3Context methods.
  * 
+ * @see Injector
  * @author Adrian Cole
  */
 public class GuiceS3Context implements S3Context {
@@ -93,6 +94,8 @@ public class GuiceS3Context implements S3Context {
 
     /**
      * {@inheritDoc}
+     * 
+     * @see Closer
      */
     public void close() {
 	try {

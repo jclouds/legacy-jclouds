@@ -29,10 +29,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.Utils;
 import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.S3Context;
 import org.jclouds.aws.s3.S3ContextFactory;
+import org.jclouds.util.Utils;
 import org.jets3t.service.S3ObjectsChunk;
 import org.jets3t.service.S3Service;
 import org.jets3t.service.S3ServiceException;

@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.filters;
+package org.jclouds.aws.s3.handlers;
 
 import java.io.InputStream;
 
@@ -30,6 +30,7 @@ import javax.annotation.Resource;
 import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.s3.S3ResponseException;
 import org.jclouds.aws.s3.domain.S3Error;
+import org.jclouds.aws.s3.filters.RequestAuthorizeSignature;
 import org.jclouds.aws.s3.reference.S3Headers;
 import org.jclouds.aws.s3.xml.S3ParserFactory;
 import org.jclouds.http.HttpFutureCommand;
@@ -43,6 +44,7 @@ import com.google.inject.Inject;
 /**
  * This will parse and set an appropriate exception on the command object.
  * 
+ * @see S3Error
  * @author Adrian Cole
  * 
  */

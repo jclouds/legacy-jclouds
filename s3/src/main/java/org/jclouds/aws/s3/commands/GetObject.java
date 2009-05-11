@@ -61,9 +61,7 @@ import com.google.inject.name.Named;
  * </ul>
  * 
  * @see GetObjectOptions
- * @see http 
- *      ://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTObjectGET
- *      .html
+ * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTObjectGET.html" />
  * @author Adrian Cole
  */
 public class GetObject extends S3FutureCommand<S3Object> {
