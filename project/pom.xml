@@ -98,7 +98,7 @@
        <repository>
            <uniqueVersion>false</uniqueVersion>
            <id>jclouds-googlecode-deploy</id>
-           <url>svn:https://jclouds.googlecode.com/svn/trunk/repo</url>
+           <url>svn:https://jclouds.googlecode.com/svn/repo</url>
         </repository>
         <site>
             <id>website</id>
