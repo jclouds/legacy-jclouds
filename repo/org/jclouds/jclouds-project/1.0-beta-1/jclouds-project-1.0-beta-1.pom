@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   $HeadURL$
+   $Revision$
+   $Date$
+
+   Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
+
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0.html 
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+   ====================================================================
+ -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.jclouds</groupId>
+    <artifactId>jclouds-project</artifactId>
+    <packaging>pom</packaging>
+    <name>jclouds Project</name>
+    <url>http://www.jclouds.org</url>
+    <description>jclouds: Concurrent API for Cloud Services</description>
+    <inceptionYear>2009</inceptionYear>
+    <version>1.0-beta-1</version>
+
+    <licenses>
+        <license>
+            <name>Apache License</name>
+            <url>LICENSE.txt</url>
+        </license>
+    </licenses>
+
+    <organization>
+        <name>jclouds</name>
+        <url>http://www.jclouds.org/</url>
+    </organization>
+
+    <issueManagement>
+        <system>Google Code</system>
+        <url>http://code.google.com/p/jclouds/issues</url>
+    </issueManagement>
+
+    <mailingLists>
+        <mailingList>
+            <name>Contributors</name>
+            <subscribe>
+                http://groups.google.com/group/jclouds-contributors
+            </subscribe>
+            <unsubscribe>
+                http://groups.google.com/group/jclouds-contributors
+            </unsubscribe>
+            <post>jclouds-contributors@googlegroups.com</post>
+            <archive>
+                http://groups.google.com/group/jclouds-contributors
+            </archive>
+        </mailingList>
+        <mailingList>
+            <name>SVN Commits</name>
+            <subscribe>
+                http://groups.google.com/group/jclouds-commits
+            </subscribe>
+            <unsubscribe>
+                http://groups.google.com/group/jclouds-commits
+            </unsubscribe>
+            <post>jclouds-commits@googlegroups.com</post>
+            <archive>http://groups.google.com/group/jclouds-commits</archive>
+        </mailingList>
+    </mailingLists>
+
+    <scm>
+        <connection>scm:svn:http://jclouds.googlecode.com/svn/tags/jclouds-1.0-beta-1</connection>
+        <developerConnection>scm:svn:https://jclouds.googlecode.com/svn/tags/jclouds-1.0-beta-1</developerConnection>
+        <url>http://jclouds.googlecode.com/svn/tags/jclouds-1.0-beta-1</url>
+    </scm>
+
+    <repositories>
+        <repository>
+            <id>jclouds-googlecode</id>
+            <url>http://jclouds.googlecode.com/svn/repo</url>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+       <repository>
+           <uniqueVersion>false</uniqueVersion>
+           <id>jclouds-googlecode-deploy</id>
+           <url>svn:https://jclouds.googlecode.com/svn/trunk/repo</url>
+        </repository>
+        <site>
+            <id>website</id>
+            <name>website</name>
+            <url>file://${basedir}/target/dist/site/jclouds-testing/</url>
+        </site>
+    </distributionManagement>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>central</id>
+            <url>http://repo1.maven.org/maven2</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <developers>
+        <developer>
+            <name>Adrian Cole</name>
+            <id>ferncam1</id>
+            <email>adrian -at- jclouds.org</email>
+            <organization>jclouds</organization>
+            <roles>
+                <role>Java Developer</role>
+                <role>PMC</role>
+            </roles>
+            <url>http://www.jclouds.org</url>
+            <timezone>+0</timezone>
+        </developer>
+    </developers>
+
+    <properties>
+        <parent-basedir>${basedir}</parent-basedir>
+        <maven.compile.source>1.5</maven.compile.source>
+        <maven.compile.target>1.5</maven.compile.target>
+        <maven.compile.optimize>true</maven.compile.optimize>
+        <maven.compile.deprecation>true</maven.compile.deprecation>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>5.9</version>
+            <scope>test</scope>
+            <classifier>jdk15</classifier>
+        </dependency>
+        <dependency>
+          <groupId>org.easymock</groupId>
+          <artifactId>easymockclassextension</artifactId>
+          <version>2.4</version>
+          <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+         <!-- Make sure we generate src jars too -->
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <inherited>true</inherited>
+            <executions>
+               <execution>
+                  <id>attach-sources</id>
+                  <goals>
+                     <goal>jar</goal>
+                  </goals>
+               </execution>
+            </executions>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+               <execution>
+                  <id>javadoc</id>
+                  <phase>package</phase>
+                  <goals>
+                     <goal>jar</goal>
+                  </goals>
+                  <configuration>
+                     <links>
+                        <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
+                        <link>http://java.sun.com/javaee/5/docs/api/</link>
+                     </links>
+                     <footer><![CDATA[
+                     <!-- Google Analytics -->
+<script type='text/javascript'>
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type='text/javascript'>
+try {
+var pageTracker = _gat._getTracker("UA-8638379-1");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+                     ]]></footer>
+                  </configuration>
+               </execution>
+            </executions>
+         </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-banned-dependencies</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <bannedDependencies>
+                                    <excludes>
+                                        <exclude>:maven-depedency-plugin</exclude>
+                                    </excludes>
+                                </bannedDependencies>
+                            </rules>
+                            <fail>true</fail>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${maven.compile.source}</source>
+                    <target>${maven.compile.target}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                  <execution>
+                    <goals>
+                      <goal>test-jar</goal>
+                    </goals>
+                  </execution>
+                </executions>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Specification-Title>jclouds ${pom.name}</Specification-Title>
+                            <Specification-Vendor>jclouds</Specification-Vendor>
+                            <Implementation-Vendor>jclouds</Implementation-Vendor>
+                            <Implementation-Vendor-Id>org.jclouds.aws.s3</Implementation-Vendor-Id>
+                            <Implementation-Version>${pom.version}</Implementation-Version>
+                            <X-Compile-Source-JDK>${maven.compile.source}</X-Compile-Source-JDK>
+                            <X-Compile-Target-JDK>${maven.compile.target}</X-Compile-Target-JDK>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+            </plugin>
+            <!-- enforce java 1.5 and maven 2.1.0 -->
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-enforcer-plugin</artifactId>
+              <executions>
+                <execution>
+                  <id>enforce-java</id>
+                  <goals>
+                    <goal>enforce</goal>
+                  </goals>
+                  <configuration>
+                    <rules>
+                      <requireJavaVersion>
+                        <version>[1.5,)</version>
+                      </requireJavaVersion>
+                      <requireMavenVersion>
+                        <version>[2.1.0,)</version>
+                      </requireMavenVersion>
+                    </rules>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
+        </plugins>
+        <extensions>
+            <extension>
+                <groupId>org.jvnet.wagon-svn</groupId>
+                <artifactId>wagon-svn</artifactId>
+                <version>1.9</version>
+            </extension>
+        </extensions>
+    </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>cpd</report>
+                            <report>findbugs</report>
+                            <report>issue-tracking</report>
+                            <report>mail-lists</report>
+                            <report>pmd</report>
+                            <report>rat-report</report>
+                            <report>source-repository</report>
+                            <report>surefire-report</report>
+                            <report>maven-emma-plugin</report>
+                            <report>team-list</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>emma-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>surefire-report-maven-plugin</artifactId>
+                <inherited>true</inherited>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>rat-maven-plugin</artifactId>
+                <inherited>true</inherited>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <configuration>
+                    <targetJdk>${maven.compile.source}</targetJdk>
+                </configuration>
+                <inherited>true</inherited>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <configuration>
+                    <xmlOutput>true</xmlOutput>
+                </configuration>
+                <inherited>true</inherited>
+            </plugin>
+        </plugins>
+    </reporting>
+
+</project>
