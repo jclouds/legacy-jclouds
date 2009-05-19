@@ -127,7 +127,7 @@ public class LiveS3ObjectMap extends BaseS3Map<S3Object> implements S3ObjectMap 
 	} catch (Exception e) {
 	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
 	    throw new S3RuntimeException(
-		    String.format("Error putting object %1$s:%2$s%n%1$s",
+		    String.format("Error putting object %1$s:%2$s%n%3$s",
 			    bucket, key, value), e);
 	}
 	return returnVal;
@@ -149,7 +149,7 @@ public class LiveS3ObjectMap extends BaseS3Map<S3Object> implements S3ObjectMap 
 		put.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
 	} catch (Exception e) {
 	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
-	    throw new S3RuntimeException("Error putting into bucket" + bucket,
+	    throw new S3RuntimeException("Error putting into bucketName" + bucket,
 		    e);
 	}
     }

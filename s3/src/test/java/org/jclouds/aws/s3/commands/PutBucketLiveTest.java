@@ -23,64 +23,65 @@
  */
 package org.jclouds.aws.s3.commands;
 
+import org.jclouds.aws.s3.S3IntegrationTest;
 import static org.jclouds.aws.s3.commands.options.PutBucketOptions.Builder.createIn;
 import static org.jclouds.aws.s3.commands.options.PutBucketOptions.Builder.withBucketAcl;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.aws.s3.S3IntegrationTest;
 import org.jclouds.aws.s3.domain.S3Bucket.Metadata.LocationConstraint;
 import org.jclouds.aws.s3.domain.acl.CannedAccessPolicy;
 import org.jclouds.aws.s3.util.S3Utils;
 import org.testng.annotations.Test;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Tests integrated functionality of all PutBucket commands.
  * <p/>
  * Each test uses a different bucket name, so it should be perfectly fine to run
  * in parallel.
- * 
+ *
  * @author Adrian Cole
- * 
  */
-@Test(groups = "integration", testName = "s3.PutBucketIntegrationTest")
-public class PutBucketIntegrationTest extends S3IntegrationTest {
+@Test(testName = "s3.PutBucketLiveTest")
+public class PutBucketLiveTest extends S3IntegrationTest {
 
-    @Test()
+    /**
+     * overriding bucketName as we are changing access permissions
+     */
+    @Test(groups = {"live"})
     void testPublicReadAccessPolicy() throws Exception {
-	String bucketName = bucketPrefix + "public";
+        String bucketName = bucketPrefix + "public";
 
-	client.putBucketIfNotExists(bucketName,
-		withBucketAcl(CannedAccessPolicy.PUBLIC_READ)).get(10,
-		TimeUnit.SECONDS);
-	URL url = new URL(String.format("http://%1$s.s3.amazonaws.com",
-		bucketName));
-	S3Utils.toStringAndClose(url.openStream());
+        client.putBucketIfNotExists(bucketName,
+                withBucketAcl(CannedAccessPolicy.PUBLIC_READ)).get(10,
+                TimeUnit.SECONDS);
+        URL url = new URL(String.format("http://%1$s.s3.amazonaws.com",
+                bucketName));
+        S3Utils.toStringAndClose(url.openStream());
     }
 
-    @Test(expectedExceptions = IOException.class)
+    @Test(expectedExceptions = IOException.class, groups = {"live"})
     void testDefaultAccessPolicy() throws Exception {
-	String bucketName = bucketPrefix + "private";
-
-	client.putBucketIfNotExists(bucketName).get(10, TimeUnit.SECONDS);
-	URL url = new URL(String.format("http://%1$s.s3.amazonaws.com",
-		bucketName));
-	S3Utils.toStringAndClose(url.openStream());
+        URL url = new URL(String.format("http://%1$s.s3.amazonaws.com",
+                bucketName));
+        S3Utils.toStringAndClose(url.openStream());
     }
 
-    @Test()
+    /**
+     * overriding bucketName as we are changing location
+     */
+    @Test(groups = "live")
     void testEu() throws Exception {
-	String bucketName = (bucketPrefix + "wow").toLowerCase();
-	client.putBucketIfNotExists(
-		bucketName,
-		createIn(LocationConstraint.EU).withBucketAcl(
-			CannedAccessPolicy.PUBLIC_READ)).get(10,
-		TimeUnit.SECONDS);
+        String bucketName = (bucketPrefix + "wow").toLowerCase();
+        client.putBucketIfNotExists(
+                bucketName,
+                createIn(LocationConstraint.EU).withBucketAcl(
+                        CannedAccessPolicy.PUBLIC_READ)).get(10,
+                TimeUnit.SECONDS);
 
-	URL url = new URL(String.format("http://%1$s.s3.amazonaws.com",
-		bucketName));
-	S3Utils.toStringAndClose(url.openStream());
+        URL url = new URL(String.format("http://%1$s.s3.amazonaws.com",
+                bucketName));
+        S3Utils.toStringAndClose(url.openStream());
     }
 }

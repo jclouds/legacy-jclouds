@@ -23,10 +23,8 @@
  */
 package org.jclouds.aws.s3.internal;
 
-import java.io.IOException;
-
-import javax.annotation.Resource;
-
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.S3Context;
 import org.jclouds.aws.s3.S3InputStreamMap;
@@ -34,22 +32,22 @@ import org.jclouds.aws.s3.S3ObjectMap;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.Logger;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
+import javax.annotation.Resource;
+import java.io.IOException;
 
 /**
  * Uses a Guice Injector to configure the objects served by S3Context methods.
- * 
- * @see Injector
+ *
  * @author Adrian Cole
+ * @see Injector
  */
 public class GuiceS3Context implements S3Context {
     public interface S3ObjectMapFactory {
-	S3ObjectMap createMapView(String bucket);
+        S3ObjectMap createMapView(String bucket);
     }
 
     public interface S3InputStreamMapFactory {
-	S3InputStreamMap createMapView(String bucket);
+        S3InputStreamMap createMapView(String bucket);
     }
 
     @Resource
@@ -61,48 +59,48 @@ public class GuiceS3Context implements S3Context {
 
     @Inject
     private GuiceS3Context(Injector injector, Closer closer,
-	    S3ObjectMapFactory s3ObjectMapFactory,
-	    S3InputStreamMapFactory s3InputStreamMapFactory) {
-	this.injector = injector;
-	this.s3InputStreamMapFactory = s3InputStreamMapFactory;
-	this.s3ObjectMapFactory = s3ObjectMapFactory;
-	this.closer = closer;
+                           S3ObjectMapFactory s3ObjectMapFactory,
+                           S3InputStreamMapFactory s3InputStreamMapFactory) {
+        this.injector = injector;
+        this.s3InputStreamMapFactory = s3InputStreamMapFactory;
+        this.s3ObjectMapFactory = s3ObjectMapFactory;
+        this.closer = closer;
     }
 
     /**
      * {@inheritDoc}
      */
     public S3Connection getConnection() {
-	return injector.getInstance(S3Connection.class);
+        return injector.getInstance(S3Connection.class);
     }
 
     /**
      * {@inheritDoc}
      */
     public S3InputStreamMap createInputStreamMap(String bucket) {
-	getConnection().putBucketIfNotExists(bucket);
-	return s3InputStreamMapFactory.createMapView(bucket);
+        getConnection().putBucketIfNotExists(bucket);
+        return s3InputStreamMapFactory.createMapView(bucket);
     }
 
     /**
      * {@inheritDoc}
      */
     public S3ObjectMap createS3ObjectMap(String bucket) {
-	getConnection().putBucketIfNotExists(bucket);
-	return s3ObjectMapFactory.createMapView(bucket);
+        getConnection().putBucketIfNotExists(bucket);
+        return s3ObjectMapFactory.createMapView(bucket);
     }
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see Closer
      */
     public void close() {
-	try {
-	    closer.close();
-	} catch (IOException e) {
-	    logger.error(e, "error closing content");
-	}
+        try {
+            closer.close();
+        } catch (IOException e) {
+            logger.error(e, "error closing content");
+        }
     }
 
 }

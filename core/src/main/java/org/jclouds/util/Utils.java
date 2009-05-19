@@ -37,6 +37,12 @@ import org.apache.commons.io.IOUtils;
 public class Utils {
 
 
+    /**
+     * 
+     * @param <E> Exception type you'd like rethrown
+     * @param e Exception you are inspecting
+     * @throws E
+     */
     @SuppressWarnings("unchecked")
     public static <E extends Exception> void rethrowIfRuntimeOrSameType(Exception e) throws E {
         if (e instanceof ExecutionException) {

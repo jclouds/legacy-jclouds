@@ -23,12 +23,7 @@
  */
 package org.jclouds.http.httpnio.pool;
 
-import java.io.IOException;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-
-import javax.annotation.Resource;
-
+import com.google.inject.Inject;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpResponse;
@@ -45,15 +40,18 @@ import org.jclouds.http.handlers.CloseContentAndSetExceptionHandler;
 import org.jclouds.http.httpnio.util.HttpNioUtils;
 import org.jclouds.logging.Logger;
 
-import com.google.inject.Inject;
+import javax.annotation.Resource;
+import java.io.IOException;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
 
 /**
  * // TODO: Adrian: Document this!
- * 
+ *
  * @author Adrian Cole
  */
 public class HttpNioFutureCommandExecutionHandler implements
-	NHttpRequestExecutionHandler {
+        NHttpRequestExecutionHandler {
     private final ExecutorService executor;
     @Resource
     protected Logger logger = Logger.NULL;
@@ -73,105 +71,105 @@ public class HttpNioFutureCommandExecutionHandler implements
     private HttpResponseHandler serverErrorHandler = new CloseContentAndSetExceptionHandler();
 
     public interface ConsumingNHttpEntityFactory {
-	public ConsumingNHttpEntity create(HttpEntity httpEntity);
+        public ConsumingNHttpEntity create(HttpEntity httpEntity);
     }
 
     @Inject
     public HttpNioFutureCommandExecutionHandler(
-	    ConsumingNHttpEntityFactory entityFactory,
-	    ExecutorService executor,
-	    BlockingQueue<HttpFutureCommand<?>> commandQueue) {
-	this.executor = executor;
-	this.entityFactory = entityFactory;
-	this.commandQueue = commandQueue;
+            ConsumingNHttpEntityFactory entityFactory,
+            ExecutorService executor,
+            BlockingQueue<HttpFutureCommand<?>> commandQueue) {
+        this.executor = executor;
+        this.entityFactory = entityFactory;
+        this.commandQueue = commandQueue;
     }
 
     public void initalizeContext(HttpContext context, Object attachment) {
     }
 
     public HttpEntityEnclosingRequest submitRequest(HttpContext context) {
-	HttpFutureCommand<?> command = (HttpFutureCommand<?>) context
-		.removeAttribute("command");
-	if (command != null) {
-	    HttpRequest object = command.getRequest();
-	    return HttpNioUtils.convertToApacheRequest(object);
-	}
-	return null;
+        HttpFutureCommand<?> command = (HttpFutureCommand<?>) context
+                .removeAttribute("command");
+        if (command != null) {
+            HttpRequest object = command.getRequest();
+            return HttpNioUtils.convertToApacheRequest(object);
+        }
+        return null;
 
     }
 
     public ConsumingNHttpEntity responseEntity(HttpResponse response,
-	    HttpContext context) throws IOException {
-	return entityFactory.create(response.getEntity());
+                                               HttpContext context) throws IOException {
+        return entityFactory.create(response.getEntity());
     }
 
     public void handleResponse(HttpResponse apacheResponse, HttpContext context)
-	    throws IOException {
-	HttpNioFutureCommandConnectionHandle handle = (HttpNioFutureCommandConnectionHandle) context
-		.removeAttribute("command-handle");
-	if (handle != null) {
-	    try {
-		HttpFutureCommand<?> command = handle.getCommand();
-		org.jclouds.http.HttpResponse response = HttpNioUtils
-			.convertToJavaCloudsResponse(apacheResponse);
+            throws IOException {
+        HttpNioFutureCommandConnectionHandle handle = (HttpNioFutureCommandConnectionHandle) context
+                .removeAttribute("command-handle");
+        if (handle != null) {
+            try {
+                HttpFutureCommand<?> command = handle.getCommand();
+                org.jclouds.http.HttpResponse response = HttpNioUtils
+                        .convertToJavaCloudsResponse(apacheResponse);
 
-		int code = response.getStatusCode();
-		if (code >= 500) {
-		    if (isRetryable(command)) {
-			commandQueue.add(command);
-		    } else {
-			this.serverErrorHandler.handle(command, response);
-		    }
-		} else if (code >= 400 && code < 500) {
-		    this.clientErrorHandler.handle(command, response);
-		} else if (code >= 300 && code < 400) {
-		    this.redirectHandler.handle(command, response);
-		} else {
-		    processResponse(response, command);
-		}
-	    } finally {
-		releaseConnectionToPool(handle);
-	    }
-	} else {
-	    throw new IllegalStateException(String.format(
-		    "No command-handle associated with command %1$s", context));
-	}
+                int code = response.getStatusCode();
+                if (code >= 500) {
+                    if (isRetryable(command)) {
+                        commandQueue.add(command);
+                    } else {
+                        this.serverErrorHandler.handle(command, response);
+                    }
+                } else if (code >= 400 && code < 500) {
+                    this.clientErrorHandler.handle(command, response);
+                } else if (code >= 300 && code < 400) {
+                    this.redirectHandler.handle(command, response);
+                } else {
+                    processResponse(response, command);
+                }
+            } finally {
+                releaseConnectionToPool(handle);
+            }
+        } else {
+            throw new IllegalStateException(String.format(
+                    "No command-handle associated with command %1$s", context));
+        }
     }
 
     protected boolean isRetryable(HttpFutureCommand<?> command) {
-	if (command.getRequest().isReplayable()) {
-	    logger.info("resubmitting command: %1$s", command);
-	    return true;
-	}
-	return false;
+        if (command.getRequest().isReplayable()) {
+            logger.debug("resubmitting command: %1$s", command);
+            return true;
+        }
+        return false;
     }
 
     protected void releaseConnectionToPool(
-	    HttpNioFutureCommandConnectionHandle handle) {
-	try {
-	    handle.release();
-	} catch (InterruptedException e) {
-	    logger.error(e, "Interrupted releasing handle %1$s", handle);
-	}
+            HttpNioFutureCommandConnectionHandle handle) {
+        try {
+            handle.release();
+        } catch (InterruptedException e) {
+            logger.error(e, "Interrupted releasing handle %1$s", handle);
+        }
     }
 
     protected void processResponse(org.jclouds.http.HttpResponse response,
-	    HttpFutureCommand<?> command) throws IOException {
-	command.getResponseFuture().setResponse(response);
-	logger.trace("submitting response task %1$s", command
-		.getResponseFuture());
-	executor.submit(command.getResponseFuture());
+                                   HttpFutureCommand<?> command) throws IOException {
+        command.getResponseFuture().setResponse(response);
+        logger.trace("submitting response task %1$s", command
+                .getResponseFuture());
+        executor.submit(command.getResponseFuture());
     }
 
     public void finalizeContext(HttpContext context) {
-	HttpNioFutureCommandConnectionHandle handle = (HttpNioFutureCommandConnectionHandle) context
-		.removeAttribute("command-handle");
-	if (handle != null) {
-	    try {
-		handle.cancel();
-	    } catch (Exception e) {
-		logger.error(e, "Error cancelling handle %1$s", handle);
-	    }
-	}
+        HttpNioFutureCommandConnectionHandle handle = (HttpNioFutureCommandConnectionHandle) context
+                .removeAttribute("command-handle");
+        if (handle != null) {
+            try {
+                handle.cancel();
+            } catch (Exception e) {
+                logger.error(e, "Error cancelling handle %1$s", handle);
+            }
+        }
     }
 }

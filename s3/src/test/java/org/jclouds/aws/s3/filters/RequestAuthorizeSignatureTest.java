@@ -26,14 +26,12 @@ package org.jclouds.aws.s3.filters;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.name.Names;
-
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.aws.s3.util.DateService;
 import org.testng.annotations.Test;
 
 
-
-@Test(groups = "unit", sequential = true, testName = "s3.RequestAuthorizeSignatureTest")
+@Test(groups = "unit", testName = "s3.RequestAuthorizeSignatureTest")
 public class RequestAuthorizeSignatureTest {
 
     RequestAuthorizeSignature filter = null;

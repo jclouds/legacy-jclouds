@@ -23,23 +23,21 @@
  */
 package org.jclouds.aws.s3.domain;
 
-import java.io.File;
-
-import static org.testng.Assert.*;
-
-import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.http.ContentTypes;
+import static org.testng.Assert.assertEquals;
 import org.testng.annotations.Test;
 
-@Test
+import java.io.File;
+
+@Test(groups = "unit", testName = "s3.S3ObjectTest")
 public class S3ObjectTest {
 
     @Test
     void testSetNoContentType() {
-	S3Object object = new S3Object("test");
-	File file = new File("hello.txt");
-	object.setData(file);
-	assertEquals(object.getMetadata().getContentType(),
-		ContentTypes.BINARY);
+        S3Object object = new S3Object("test");
+        File file = new File("hello.txt");
+        object.setData(file);
+        assertEquals(object.getMetadata().getContentType(),
+                ContentTypes.BINARY);
     }
 }

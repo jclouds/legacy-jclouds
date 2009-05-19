@@ -23,129 +23,126 @@
  */
 package org.jclouds.logging.config;
 
-import static com.google.inject.matcher.Matchers.any;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
-
-import java.lang.reflect.Field;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
-import org.jclouds.logging.Logger;
-import org.jclouds.logging.config.BindLoggersAnnotatedWithResource.AssignLoggerToField;
-import org.jclouds.logging.config.BindLoggersAnnotatedWithResource.LoggerFieldsAnnotatedWithResource;
-import org.jclouds.logging.jdk.JDKLogger;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import static com.google.inject.matcher.Matchers.any;
+import static org.easymock.classextension.EasyMock.createMock;
+import org.jclouds.logging.Logger;
+import org.jclouds.logging.config.BindLoggersAnnotatedWithResource.AssignLoggerToField;
+import org.jclouds.logging.config.BindLoggersAnnotatedWithResource.LoggerFieldsAnnotatedWithResource;
+import org.jclouds.logging.jdk.JDKLogger;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
+import javax.annotation.Resource;
+import java.lang.reflect.Field;
+import java.util.Set;
+
+@Test
 public class BindLoggersAnnotatedWithResourceTest {
 
     private BindLoggersAnnotatedWithResource blawr;
 
     public static class A {
-	@Resource
-	private Logger logger = Logger.NULL;
+        @Resource
+        private Logger logger = Logger.NULL;
     }
 
     public static class B {
-	@Resource
-	private Logger logger = Logger.NULL;
+        @Resource
+        private Logger logger = Logger.NULL;
     }
 
     @BeforeMethod
     void createBlawr() {
-	blawr = new BindLoggersAnnotatedWithResource(
-		new JDKLogger.JDKLoggerFactory());
+        blawr = new BindLoggersAnnotatedWithResource(
+                new JDKLogger.JDKLoggerFactory());
     }
 
     @Test
     void testHear() {
-	Injector i = Guice.createInjector(new AbstractModule() {
+        Injector i = Guice.createInjector(new AbstractModule() {
 
-	    @Override
-	    protected void configure() {
-		bindListener(any(), blawr);
-	    }
+            @Override
+            protected void configure() {
+                bindListener(any(), blawr);
+            }
 
-	});
-	assertEquals(i.getInstance(A.class).logger.getCategory(), getClass()
-		.getName()
-		+ "$A");
-	assertEquals(i.getInstance(B.class).logger.getCategory(), getClass()
-		.getName()
-		+ "$B");
+        });
+        assertEquals(i.getInstance(A.class).logger.getCategory(), getClass()
+                .getName()
+                + "$A");
+        assertEquals(i.getInstance(B.class).logger.getCategory(), getClass()
+                .getName()
+                + "$B");
 
     }
 
     @Test
     public void testAssignLoggerToField() throws SecurityException,
-	    NoSuchFieldException, IllegalArgumentException,
-	    IllegalAccessException {
-	Logger logger = createMock(Logger.class);
-	A a = new A();
-	Field field = A.class.getDeclaredField("logger");
-	AssignLoggerToField<A> assigner = new AssignLoggerToField<A>(logger,
-		field);
-	assigner.afterInjection(a);
-	assert field.get(a).equals(logger);
+            NoSuchFieldException, IllegalArgumentException,
+            IllegalAccessException {
+        Logger logger = createMock(Logger.class);
+        A a = new A();
+        Field field = A.class.getDeclaredField("logger");
+        AssignLoggerToField<A> assigner = new AssignLoggerToField<A>(logger,
+                field);
+        assigner.afterInjection(a);
+        assert field.get(a).equals(logger);
     }
 
     @Test
     public void testLoggerFieldsAnnotatedWithResource()
-	    throws SecurityException, NoSuchFieldException {
-	LoggerFieldsAnnotatedWithResource function = new LoggerFieldsAnnotatedWithResource();
-	assertEquals(function.apply(A.class.getDeclaredField("logger")),
-		A.class.getDeclaredField("logger"));
+            throws SecurityException, NoSuchFieldException {
+        LoggerFieldsAnnotatedWithResource predicate = new LoggerFieldsAnnotatedWithResource();
+        assert predicate.apply(A.class.getDeclaredField("logger"));
     }
 
     public static class C {
-	@SuppressWarnings("unused")
-	@Inject
-	private Logger logger = Logger.NULL;
+        @SuppressWarnings("unused")
+        @Inject
+        private Logger logger = Logger.NULL;
     }
 
     @Test
     public void testLoggerFieldsAnnotatedWithInjectReturnsNull()
-	    throws SecurityException, NoSuchFieldException {
-	LoggerFieldsAnnotatedWithResource function = new LoggerFieldsAnnotatedWithResource();
-	assertNull(function.apply(C.class.getDeclaredField("logger")));
+            throws SecurityException, NoSuchFieldException {
+        LoggerFieldsAnnotatedWithResource predicate = new LoggerFieldsAnnotatedWithResource();
+        assert ! predicate.apply(C.class.getDeclaredField("logger"));
     }
 
     public static class D {
-	@SuppressWarnings("unused")
-	@Resource
-	private Logger logger = Logger.NULL;
+        @SuppressWarnings("unused")
+        @Resource
+        private Logger logger = Logger.NULL;
 
-	@SuppressWarnings("unused")
-	@Resource
-	private Logger blogger;
+        @SuppressWarnings("unused")
+        @Resource
+        private Logger blogger;
 
     }
 
     @Test
     public void testGetLoggerFieldsAnnotatedWithResourceNoLogger() {
-	Set<Field> fields = blawr.getLoggerFieldsAnnotatedWithResource(this
-		.getClass());
-	assertEquals(fields.size(), 0);
+        Set<Field> fields = blawr.getLoggerFieldsAnnotatedWithResource(this
+                .getClass());
+        assertEquals(fields.size(), 0);
     }
 
     @Test
     public void testGetLoggerFieldsAnnotatedWithResourceOneLogger() {
-	Set<Field> fields = blawr.getLoggerFieldsAnnotatedWithResource(A.class);
-	assertEquals(fields.size(), 1);
+        Set<Field> fields = blawr.getLoggerFieldsAnnotatedWithResource(A.class);
+        assertEquals(fields.size(), 1);
     }
 
     @Test
     public void testGetLoggerFieldsAnnotatedWithResourceTwoLoggers() {
-	Set<Field> fields = blawr.getLoggerFieldsAnnotatedWithResource(D.class);
-	assertEquals(fields.size(), 2);
+        Set<Field> fields = blawr.getLoggerFieldsAnnotatedWithResource(D.class);
+        assertEquals(fields.size(), 2);
     }
 
 }

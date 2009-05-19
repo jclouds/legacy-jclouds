@@ -23,19 +23,17 @@
  */
 package org.jclouds.aws.s3.xml;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import org.jclouds.aws.s3.xml.config.S3ParserModule;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-
 /**
- * 
  * @author Adrian Cole
  */
-@Test
+@Test(groups = "unit", testName = "s3.S3ParserFactoryTest")
 public class S3ParserFactoryTest {
 
     Injector injector = null;
@@ -43,34 +41,34 @@ public class S3ParserFactoryTest {
 
     @BeforeMethod
     void setUpInjector() {
-	injector = Guice.createInjector(new S3ParserModule());
-	parserFactory = injector.getInstance(S3ParserFactory.class);
+        injector = Guice.createInjector(new S3ParserModule());
+        parserFactory = injector.getInstance(S3ParserFactory.class);
     }
 
     @AfterMethod
     void tearDownInjector() {
-	parserFactory = null;
-	injector = null;
+        parserFactory = null;
+        injector = null;
     }
 
     @Test
     void testCreateListBucketsParser() {
-	assert parserFactory.createListBucketsParser() != null;
+        assert parserFactory.createListBucketsParser() != null;
     }
 
     @Test
     void testCreateListBucketParser() {
-	assert parserFactory.createListBucketParser() != null;
+        assert parserFactory.createListBucketParser() != null;
     }
 
     @Test
     void testCreateCopyObjectParser() {
-	assert parserFactory.createCopyObjectParser() != null;
+        assert parserFactory.createCopyObjectParser() != null;
     }
 
     @Test
     void testCreateErrorParser() {
-	assert parserFactory.createErrorParser() != null;
+        assert parserFactory.createErrorParser() != null;
     }
 
 }

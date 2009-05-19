@@ -23,79 +23,77 @@
  */
 package org.jclouds.aws.s3.commands.options;
 
+import com.google.common.collect.Multimap;
 import static org.jclouds.aws.s3.commands.options.PutBucketOptions.Builder.createIn;
 import static org.jclouds.aws.s3.commands.options.PutBucketOptions.Builder.withBucketAcl;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
-
-import java.io.UnsupportedEncodingException;
-
 import org.jclouds.aws.s3.domain.S3Bucket.Metadata.LocationConstraint;
 import org.jclouds.aws.s3.domain.acl.CannedAccessPolicy;
 import org.jclouds.aws.s3.reference.S3Headers;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 import org.testng.annotations.Test;
 
-
-import com.google.common.collect.Multimap;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Tests possible uses of PutBucketOptions and PutBucketOptions.Builder.*
- * 
+ *
  * @author Adrian Cole
  */
+@Test(groups = "unit", testName = "s3.PutBucketOptionsTest")
 public class PutBucketOptionsTest {
 
     @Test
     public void testLocationConstraint() {
-	PutBucketOptions options = new PutBucketOptions();
-	options.createIn(LocationConstraint.EU);
-	assertEquals(options.getLocationConstraint(), LocationConstraint.EU);
+        PutBucketOptions options = new PutBucketOptions();
+        options.createIn(LocationConstraint.EU);
+        assertEquals(options.getLocationConstraint(), LocationConstraint.EU);
     }
 
     @Test
     public void testPayload() {
-	PutBucketOptions options = new PutBucketOptions();
-	options.createIn(LocationConstraint.EU);
-	assertEquals(
-		options.buildPayload(),
-		"<CreateBucketConfiguration><LocationConstraint>EU</LocationConstraint></CreateBucketConfiguration>");
+        PutBucketOptions options = new PutBucketOptions();
+        options.createIn(LocationConstraint.EU);
+        assertEquals(
+                options.buildPayload(),
+                "<CreateBucketConfiguration><LocationConstraint>EU</LocationConstraint></CreateBucketConfiguration>");
     }
 
     @Test
     public void testNullLocationConstraint() {
-	PutBucketOptions options = new PutBucketOptions();
-	assertNull(options.getLocationConstraint());
+        PutBucketOptions options = new PutBucketOptions();
+        assertNull(options.getLocationConstraint());
     }
 
     @Test
     public void testLocationConstraintStatic() {
-	PutBucketOptions options = createIn(LocationConstraint.EU);
-	assertEquals(options.getLocationConstraint(), LocationConstraint.EU);
+        PutBucketOptions options = createIn(LocationConstraint.EU);
+        assertEquals(options.getLocationConstraint(), LocationConstraint.EU);
     }
 
     @Test(expectedExceptions = NullPointerException.class)
     public void testNPE() {
-	createIn(null);
+        createIn(null);
     }
 
     @Test
     public void testAclDefault() {
-	PutBucketOptions options = new PutBucketOptions();
-	assertEquals(options.getAcl(), CannedAccessPolicy.PRIVATE);
+        PutBucketOptions options = new PutBucketOptions();
+        assertEquals(options.getAcl(), CannedAccessPolicy.PRIVATE);
     }
 
     @Test
     public void testAclStatic() {
-	PutBucketOptions options = withBucketAcl(CannedAccessPolicy.AUTHENTICATED_READ);
-	assertEquals(options.getAcl(), CannedAccessPolicy.AUTHENTICATED_READ);
+        PutBucketOptions options = withBucketAcl(CannedAccessPolicy.AUTHENTICATED_READ);
+        assertEquals(options.getAcl(), CannedAccessPolicy.AUTHENTICATED_READ);
     }
 
     @Test
     void testBuildRequestHeaders() throws UnsupportedEncodingException {
 
-	Multimap<String, String> headers = withBucketAcl(
-		CannedAccessPolicy.AUTHENTICATED_READ).buildRequestHeaders();
-	assertEquals(headers.get(S3Headers.CANNED_ACL).iterator().next(),
-		CannedAccessPolicy.AUTHENTICATED_READ.toString());
+        Multimap<String, String> headers = withBucketAcl(
+                CannedAccessPolicy.AUTHENTICATED_READ).buildRequestHeaders();
+        assertEquals(headers.get(S3Headers.CANNED_ACL).iterator().next(),
+                CannedAccessPolicy.AUTHENTICATED_READ.toString());
     }
 }

@@ -23,42 +23,40 @@
  */
 package org.jclouds.aws.s3.commands;
 
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.aws.s3.S3IntegrationTest;
 import org.testng.annotations.Test;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Tests integrated functionality of all deleteBucket commands.
  * <p/>
  * Each test uses a different bucket name, so it should be perfectly fine to run
  * in parallel.
- * 
+ *
  * @author Adrian Cole
- * 
  */
-@Test(groups = "integration", testName = "s3.DeleteBucketIntegrationTest")
+@Test(groups = {"integration", "live"}, testName = "s3.DeleteBucketIntegrationTest")
 public class DeleteBucketIntegrationTest extends S3IntegrationTest {
 
-    @Test()
+    @Test
+    /**
+     * this method overrides bucketName to ensure it isn't found
+     */
     void deleteBucketIfEmptyNotFound() throws Exception {
-	String bucketName = bucketPrefix + "dbienf";
-	assert client.deleteBucketIfEmpty(bucketName).get(10, TimeUnit.SECONDS);
+        String bucketName = bucketPrefix + "dbienf";
+        assert client.deleteBucketIfEmpty(bucketName).get(10, TimeUnit.SECONDS);
     }
-    
+
     @Test()
     void deleteBucketIfEmptyButHasContents() throws Exception {
-	String bucketName = bucketPrefix + "dbiebhc";
-	createBucketAndEnsureEmpty(bucketName);
-	addObjectToBucket(bucketName,"test");
-	assert !client.deleteBucketIfEmpty(bucketName).get(10, TimeUnit.SECONDS);
+        addObjectToBucket(bucketName, "test");
+        assert !client.deleteBucketIfEmpty(bucketName).get(10, TimeUnit.SECONDS);
     }
-    
+
     @Test()
     void deleteBucketIfEmpty() throws Exception {
-	String bucketName = bucketPrefix + "dbie";
-	createBucketAndEnsureEmpty(bucketName);
-	assert client.deleteBucketIfEmpty(bucketName).get(10, TimeUnit.SECONDS);
-	assert !client.bucketExists(bucketName).get(10, TimeUnit.SECONDS);
+        assert client.deleteBucketIfEmpty(bucketName).get(10, TimeUnit.SECONDS);
+        assert !client.bucketExists(bucketName).get(10, TimeUnit.SECONDS);
     }
 }

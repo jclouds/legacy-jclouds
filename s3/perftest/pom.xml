@@ -80,8 +80,7 @@
         <dependency>
             <groupId>net.java.dev.jets3t</groupId>
             <artifactId>jets3t</artifactId>
-            <version>0.7.0</version>
-            <optional>true</optional>
+            <version>0.7.1</version>
         </dependency>
     </dependencies>
 

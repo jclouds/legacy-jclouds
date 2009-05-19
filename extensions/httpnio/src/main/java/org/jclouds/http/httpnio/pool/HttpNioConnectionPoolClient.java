@@ -23,64 +23,59 @@
  */
 package org.jclouds.http.httpnio.pool;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import org.apache.http.nio.NHttpConnection;
+import org.jclouds.command.pool.FutureCommandConnectionPoolClient;
+import org.jclouds.http.*;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 
-import org.apache.http.nio.NHttpConnection;
-import org.jclouds.command.pool.FutureCommandConnectionPoolClient;
-import org.jclouds.http.HttpException;
-import org.jclouds.http.HttpFutureCommand;
-import org.jclouds.http.HttpFutureCommandClient;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpRequestFilter;
-
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-
 /**
  * // TODO: Adrian: Document this!
- * 
+ *
  * @author Adrian Cole
  */
 @Singleton
 public class HttpNioConnectionPoolClient
-	extends
-	FutureCommandConnectionPoolClient<NHttpConnection, HttpFutureCommand<?>>
-	implements HttpFutureCommandClient {
+        extends
+        FutureCommandConnectionPoolClient<NHttpConnection, HttpFutureCommand<?>>
+        implements HttpFutureCommandClient {
     private List<HttpRequestFilter> requestFilters = Collections.emptyList();
 
     public List<HttpRequestFilter> getRequestFilters() {
-	return requestFilters;
+        return requestFilters;
     }
 
     @Inject(optional = true)
     public void setRequestFilters(List<HttpRequestFilter> requestFilters) {
-	this.requestFilters = requestFilters;
+        this.requestFilters = requestFilters;
     }
 
     @Override
     protected void invoke(HttpFutureCommand<?> command) {
-	HttpRequest request = (HttpRequest) command.getRequest();
-	try {
-	    for (HttpRequestFilter filter : getRequestFilters()) {
-		filter.filter(request);
-	    }
-	    super.invoke(command);
-	} catch (HttpException e) {
-	    command.setException(e);
-	}
+        HttpRequest request = (HttpRequest) command.getRequest();
+        try {
+            for (HttpRequestFilter filter : getRequestFilters()) {
+                filter.filter(request);
+            }
+            super.invoke(command);
+        } catch (HttpException e) {
+            command.setException(e);
+        }
     }
 
     @Inject
     public HttpNioConnectionPoolClient(
-	    ExecutorService executor,
-	    HttpNioFutureCommandConnectionPool httpFutureCommandConnectionHandleNHttpConnectionNioFutureCommandConnectionPool,
-	    BlockingQueue<HttpFutureCommand<?>> commandQueue) {
-	super(
-		executor,
-		httpFutureCommandConnectionHandleNHttpConnectionNioFutureCommandConnectionPool,
-		commandQueue);
+            ExecutorService executor,
+            HttpNioFutureCommandConnectionPool httpFutureCommandConnectionHandleNHttpConnectionNioFutureCommandConnectionPool,
+            BlockingQueue<HttpFutureCommand<?>> commandQueue) {
+        super(
+                executor,
+                httpFutureCommandConnectionHandleNHttpConnectionNioFutureCommandConnectionPool,
+                commandQueue);
     }
 }

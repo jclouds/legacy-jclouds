@@ -24,35 +24,21 @@
 package org.jclouds.gae;
 
 import static com.google.appengine.api.urlfetch.FetchOptions.Builder.disallowTruncate;
+import com.google.appengine.api.urlfetch.*;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.inject.Inject;
+import org.apache.commons.io.IOUtils;
+import org.jclouds.http.*;
+import org.jclouds.http.internal.BaseHttpFutureCommandClient;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
-import org.jclouds.http.HttpFutureCommand;
-import org.jclouds.http.HttpFutureCommandClient;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpRequestFilter;
-import org.jclouds.http.HttpResponse;
-import org.jclouds.http.internal.BaseHttpFutureCommandClient;
-
-import com.google.appengine.api.urlfetch.HTTPHeader;
-import com.google.appengine.api.urlfetch.HTTPMethod;
-import com.google.appengine.api.urlfetch.HTTPRequest;
-import com.google.appengine.api.urlfetch.HTTPResponse;
-import com.google.appengine.api.urlfetch.URLFetchService;
-import com.google.common.annotations.VisibleForTesting;
-import com.google.inject.Inject;
-
 /**
  * Google App Engine version of {@link HttpFutureCommandClient}
- * 
+ *
  * @author Adrian Cole
  */
 public class URLFetchServiceClient extends BaseHttpFutureCommandClient {
@@ -60,56 +46,56 @@ public class URLFetchServiceClient extends BaseHttpFutureCommandClient {
 
     @Inject
     public URLFetchServiceClient(URL target, URLFetchService urlFetchService)
-	    throws MalformedURLException {
-	super(target);
-	this.urlFetchService = urlFetchService;
+            throws MalformedURLException {
+        super(target);
+        this.urlFetchService = urlFetchService;
     }
 
     public void submit(HttpFutureCommand<?> command) {
-	HttpRequest request = command.getRequest();
-	HTTPResponse gaeResponse = null;
-	try {
-	    for (HttpRequestFilter filter : requestFilters) {
-		filter.filter(request);
-	    }
-	    HttpResponse response = null;
-	    for (;;) {
-		logger.trace("%1$s - converting request %2$s", target, request);
-		HTTPRequest gaeRequest = convert(request);
-		if (logger.isTraceEnabled())
-		    logger.trace(
-			    "%1$s - submitting request %2$s, headers: %3$s",
-			    target, gaeRequest.getURL(),
-			    headersAsString(gaeRequest.getHeaders()));
-		gaeResponse = this.urlFetchService.fetch(gaeRequest);
-		if (logger.isTraceEnabled())
-		    logger
-			    .trace(
-				    "%1$s - received response code %2$s, headers: %3$s",
-				    target, gaeResponse.getResponseCode(),
-				    headersAsString(gaeResponse.getHeaders()));
-		response = convert(gaeResponse);
-		if (isRetryable(command, response))
-		    continue;
-		break;
-	    }
-	    handleResponse(command, response);
-	} catch (Exception e) {
-	    if (gaeResponse != null && gaeResponse.getContent() != null) {
-		logger.error(e,
-			"error encountered during the execution: %1$s%n%2$s",
-			gaeResponse, new String(gaeResponse.getContent()));
-	    }
-	    command.setException(e);
-	}
+        HttpRequest request = command.getRequest();
+        HTTPResponse gaeResponse = null;
+        try {
+            for (HttpRequestFilter filter : requestFilters) {
+                filter.filter(request);
+            }
+            HttpResponse response = null;
+            for (; ;) {
+                logger.trace("%1$s - converting request %2$s", target, request);
+                HTTPRequest gaeRequest = convert(request);
+                if (logger.isTraceEnabled())
+                    logger.trace(
+                            "%1$s - submitting request %2$s, headers: %3$s",
+                            target, gaeRequest.getURL(),
+                            headersAsString(gaeRequest.getHeaders()));
+                gaeResponse = this.urlFetchService.fetch(gaeRequest);
+                if (logger.isTraceEnabled())
+                    logger
+                            .trace(
+                                    "%1$s - received response code %2$s, headers: %3$s",
+                                    target, gaeResponse.getResponseCode(),
+                                    headersAsString(gaeResponse.getHeaders()));
+                response = convert(gaeResponse);
+                if (isRetryable(command, response))
+                    continue;
+                break;
+            }
+            handleResponse(command, response);
+        } catch (Exception e) {
+            if (gaeResponse != null && gaeResponse.getContent() != null) {
+                logger.error(e,
+                        "error encountered during the execution: %1$s%n%2$s",
+                        gaeResponse, new String(gaeResponse.getContent()));
+            }
+            command.setException(e);
+        }
     }
 
     String headersAsString(List<HTTPHeader> headers) {
-	StringBuilder builder = new StringBuilder("");
-	for (HTTPHeader header : headers)
-	    builder.append("[").append(header.getName()).append("=").append(
-		    header.getValue()).append("],");
-	return builder.toString();
+        StringBuilder builder = new StringBuilder("");
+        for (HTTPHeader header : headers)
+            builder.append("[").append(header.getName()).append("=").append(
+                    header.getValue()).append("],");
+        return builder.toString();
     }
 
     /**
@@ -118,54 +104,54 @@ public class URLFetchServiceClient extends BaseHttpFutureCommandClient {
      */
     @VisibleForTesting
     void changeRequestContentToBytes(HttpRequest request) throws IOException {
-	Object content = request.getPayload();
-	if (content == null || content instanceof byte[]) {
-	    return;
-	} else if (content instanceof String) {
-	    String string = (String) content;
-	    request.setPayload(string.getBytes());
-	} else if (content instanceof InputStream || content instanceof File) {
-	    InputStream i = content instanceof InputStream ? (InputStream) content
-		    : new FileInputStream((File) content);
-	    try {
-		request.setPayload(IOUtils.toByteArray(i));
-	    } finally {
-		IOUtils.closeQuietly(i);
-	    }
-	} else {
-	    throw new UnsupportedOperationException("Content not supported "
-		    + content.getClass());
-	}
+        Object content = request.getPayload();
+        if (content == null || content instanceof byte[]) {
+            return;
+        } else if (content instanceof String) {
+            String string = (String) content;
+            request.setPayload(string.getBytes());
+        } else if (content instanceof InputStream || content instanceof File) {
+            InputStream i = content instanceof InputStream ? (InputStream) content
+                    : new FileInputStream((File) content);
+            try {
+                request.setPayload(IOUtils.toByteArray(i));
+            } finally {
+                IOUtils.closeQuietly(i);
+            }
+        } else {
+            throw new UnsupportedOperationException("Content not supported "
+                    + content.getClass());
+        }
 
     }
 
     @VisibleForTesting
     HttpResponse convert(HTTPResponse gaeResponse) {
-	HttpResponse response = new HttpResponse();
-	response.setStatusCode(gaeResponse.getResponseCode());
-	for (HTTPHeader header : gaeResponse.getHeaders()) {
-	    response.getHeaders().put(header.getName(), header.getValue());
-	}
-	if (gaeResponse.getContent() != null) {
-	    response.setContent(new ByteArrayInputStream(gaeResponse
-		    .getContent()));
-	}
-	return response;
+        HttpResponse response = new HttpResponse();
+        response.setStatusCode(gaeResponse.getResponseCode());
+        for (HTTPHeader header : gaeResponse.getHeaders()) {
+            response.getHeaders().put(header.getName(), header.getValue());
+        }
+        if (gaeResponse.getContent() != null) {
+            response.setContent(new ByteArrayInputStream(gaeResponse
+                    .getContent()));
+        }
+        return response;
     }
 
     @VisibleForTesting
     HTTPRequest convert(HttpRequest request) throws IOException {
-	URL url = new URL(target, request.getUri());
-	HTTPRequest gaeRequest = new HTTPRequest(url, HTTPMethod
-		.valueOf(request.getMethod()), disallowTruncate());
-	for (String header : request.getHeaders().keySet()) {
-	    for (String value : request.getHeaders().get(header))
-		gaeRequest.addHeader(new HTTPHeader(header, value));
-	}
-	if (request.getPayload() != null) {
-	    changeRequestContentToBytes(request);
-	    gaeRequest.setPayload((byte[]) request.getPayload());
-	}
-	return gaeRequest;
+        URL url = new URL(target, request.getUri());
+        HTTPRequest gaeRequest = new HTTPRequest(url, HTTPMethod
+                .valueOf(request.getMethod()), disallowTruncate());
+        for (String header : request.getHeaders().keySet()) {
+            for (String value : request.getHeaders().get(header))
+                gaeRequest.addHeader(new HTTPHeader(header, value));
+        }
+        if (request.getPayload() != null) {
+            changeRequestContentToBytes(request);
+            gaeRequest.setPayload((byte[]) request.getPayload());
+        }
+        return gaeRequest;
     }
 }

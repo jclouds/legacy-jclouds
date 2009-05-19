@@ -182,6 +182,7 @@
                      <goal>jar</goal>
                   </goals>
                   <configuration>
+                     <quiet>true</quiet>
                      <links>
                         <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
                         <link>http://java.sun.com/javaee/5/docs/api/</link>

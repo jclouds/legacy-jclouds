@@ -35,7 +35,7 @@ import java.util.concurrent.Executors;
  *
  * @author Adrian Cole
  */
-@Test(groups = "unit", sequential = true, testName = "s3.PerformanceTest")
+@Test(groups = "performance", sequential = true, testName = "s3.PerformanceTest")
 public class PerformanceTest {
     protected static int LOOP_COUNT = 1000;
     protected ExecutorService exec;

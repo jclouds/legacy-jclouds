@@ -23,32 +23,26 @@
  */
 package org.jclouds.http.internal;
 
-import java.net.URL;
-import java.util.Collections;
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.jclouds.http.HttpFutureCommand;
-import org.jclouds.http.HttpFutureCommandClient;
-import org.jclouds.http.HttpRequestFilter;
-import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpResponseHandler;
+import com.google.inject.Inject;
+import org.jclouds.http.*;
 import org.jclouds.http.annotation.ClientErrorHandler;
 import org.jclouds.http.annotation.RedirectHandler;
 import org.jclouds.http.annotation.ServerErrorHandler;
 import org.jclouds.http.handlers.CloseContentAndSetExceptionHandler;
 import org.jclouds.logging.Logger;
 
-import com.google.inject.Inject;
+import javax.annotation.Resource;
+import java.net.URL;
+import java.util.Collections;
+import java.util.List;
 
-public abstract class BaseHttpFutureCommandClient  implements HttpFutureCommandClient {
+public abstract class BaseHttpFutureCommandClient implements HttpFutureCommandClient {
 
     protected final URL target;
-    
+
     @Resource
     protected Logger logger = Logger.NULL;
-    
+
     @Inject(optional = true)
     protected List<HttpRequestFilter> requestFilters = Collections.emptyList();
     @RedirectHandler
@@ -63,30 +57,30 @@ public abstract class BaseHttpFutureCommandClient  implements HttpFutureCommandC
 
     @Inject
     public BaseHttpFutureCommandClient(URL target) {
-	this.target = target;
+        this.target = target;
     }
-    
+
     protected boolean isRetryable(HttpFutureCommand<?> command,
-	    HttpResponse response) {
-	int code = response.getStatusCode();
-	if (command.getRequest().isReplayable() && code >= 500) {
-	    logger.info("resubmitting command: %1$s", command);
-	    return true;
-	}
-	return false;
+                                  HttpResponse response) {
+        int code = response.getStatusCode();
+        if (command.getRequest().isReplayable() && code >= 500) {
+            logger.debug("resubmitting command: %1$s", command);
+            return true;
+        }
+        return false;
     }
-    
+
     protected void handleResponse(HttpFutureCommand<?> command, HttpResponse response) {
         int code = response.getStatusCode();
         if (code >= 500) {
-        this.serverErrorHandler.handle(command, response);
+            this.serverErrorHandler.handle(command, response);
         } else if (code >= 400 && code < 500) {
-        this.clientErrorHandler.handle(command, response);
+            this.clientErrorHandler.handle(command, response);
         } else if (code >= 300 && code < 400) {
-        this.redirectHandler.handle(command, response);
+            this.redirectHandler.handle(command, response);
         } else {
-        command.getResponseFuture().setResponse(response);
-        command.getResponseFuture().run();
+            command.getResponseFuture().setResponse(response);
+            command.getResponseFuture().run();
         }
     }
 

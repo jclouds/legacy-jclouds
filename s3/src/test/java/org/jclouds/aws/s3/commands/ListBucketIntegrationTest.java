@@ -23,116 +23,112 @@
  */
 package org.jclouds.aws.s3.commands;
 
-import static org.jclouds.aws.s3.commands.options.ListBucketOptions.Builder.delimiter;
-import static org.jclouds.aws.s3.commands.options.ListBucketOptions.Builder.afterMarker;
-import static org.jclouds.aws.s3.commands.options.ListBucketOptions.Builder.withPrefix;
-import static org.jclouds.aws.s3.commands.options.ListBucketOptions.Builder.maxResults;
-
+import org.jclouds.aws.s3.S3IntegrationTest;
+import static org.jclouds.aws.s3.commands.options.ListBucketOptions.Builder.*;
+import org.jclouds.aws.s3.domain.S3Bucket;
+import org.jclouds.aws.s3.domain.S3Object;
 import static org.testng.Assert.assertEquals;
+import org.testng.annotations.Test;
 
 import java.io.UnsupportedEncodingException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.aws.s3.S3IntegrationTest;
-import org.jclouds.aws.s3.domain.S3Bucket;
-import org.jclouds.aws.s3.domain.S3Object;
-import org.testng.annotations.Test;
-
 /**
  * Tests integrated functionality of all getBucket commands.
  * <p/>
  * Each test uses a different bucket name, so it should be perfectly fine to run
  * in parallel.
- * 
+ *
  * @author Adrian Cole
- * 
  */
-@Test(groups = "integration", testName = "s3.ListBucketIntegrationTest")
+@Test(groups = {"integration", "live"}, testName = "s3.ListBucketIntegrationTest")
 public class ListBucketIntegrationTest extends S3IntegrationTest {
 
     @Test()
     void testListBucketDelimiter() throws InterruptedException,
-	    ExecutionException, TimeoutException, UnsupportedEncodingException {
-	String bucketName = bucketPrefix + "delimiter";
-	assert client.putBucketIfNotExists(bucketName).get(10,
-		TimeUnit.SECONDS);
-	String prefix = "apps";
-	addTenObjectsUnderPrefix(bucketName, prefix);
-	add15UnderRoot(bucketName);
-	S3Bucket bucket = client.listBucket(bucketName, delimiter("/")).get(10,
-		TimeUnit.SECONDS);
-	assertEquals(bucket.getDelimiter(), "/");
-	assertEquals(bucket.getContents().size(), 15);
-	assertEquals(bucket.getCommonPrefixes().size(), 1);
+            ExecutionException, TimeoutException, UnsupportedEncodingException {
+        String prefix = "apps";
+        addTenObjectsUnderPrefix(bucketName, prefix);
+        add15UnderRoot(bucketName);
+        S3Bucket bucket = client.listBucket(bucketName, delimiter("/")).get(10,
+                TimeUnit.SECONDS);
+        assertEquals(bucket.getDelimiter(), "/");
+        assert !bucket.isTruncated();
+        assertEquals(bucket.getContents().size(), 15);
+        assertEquals(bucket.getCommonPrefixes().size(), 1);
     }
 
     private void addAlphabetUnderRoot(String bucketName)
-	    throws InterruptedException, ExecutionException, TimeoutException {
-	for (char letter = 'a'; letter <= 'z'; letter++) {
-	    client.putObject(bucketName,
-		    new S3Object(letter + "", letter + "content")).get(10,
-		    TimeUnit.SECONDS);
-	}
+            throws InterruptedException, ExecutionException, TimeoutException {
+        for (char letter = 'a'; letter <= 'z'; letter++) {
+            client.putObject(bucketName,
+                    new S3Object(letter + "", letter + "content")).get(10,
+                    TimeUnit.SECONDS);
+        }
     }
 
     @Test
     void testListBucketMarker() throws InterruptedException,
-	    ExecutionException, TimeoutException, UnsupportedEncodingException {
-	String bucketName = bucketPrefix + "marker";
-	assert client.putBucketIfNotExists(bucketName).get(10,
-		TimeUnit.SECONDS);
-	addAlphabetUnderRoot(bucketName);
-	S3Bucket bucket = client.listBucket(bucketName, afterMarker("y")).get(
-		10, TimeUnit.SECONDS);
-	assertEquals(bucket.getMarker(), "y");
-	assertEquals(bucket.getContents().size(), 1);
+            ExecutionException, TimeoutException, UnsupportedEncodingException {
+        addAlphabetUnderRoot(bucketName);
+        S3Bucket bucket = client.listBucket(bucketName, afterMarker("y")).get(
+                10, TimeUnit.SECONDS);
+        assertEquals(bucket.getMarker(), "y");
+        assert !bucket.isTruncated();
+        assertEquals(bucket.getContents().size(), 1);
     }
 
     @Test
     void testListBucketMaxResults() throws InterruptedException,
-	    ExecutionException, TimeoutException, UnsupportedEncodingException {
-	String bucketName = bucketPrefix + "max";
-	assert client.putBucketIfNotExists(bucketName).get(10,
-		TimeUnit.SECONDS);
-	addAlphabetUnderRoot(bucketName);
-	S3Bucket bucket = client.listBucket(bucketName, maxResults(5)).get(10,
-		TimeUnit.SECONDS);
-	assertEquals(bucket.getMaxKeys(), 5);
-	assertEquals(bucket.getContents().size(), 5);
+            ExecutionException, TimeoutException, UnsupportedEncodingException {
+        addAlphabetUnderRoot(bucketName);
+        S3Bucket bucket = client.listBucket(bucketName, maxResults(5)).get(10,
+                TimeUnit.SECONDS);
+        assertEquals(bucket.getMaxKeys(), 5);
+        assert bucket.isTruncated();
+        assertEquals(bucket.getContents().size(), 5);
     }
 
     @Test()
     void testListBucketPrefix() throws InterruptedException,
-	    ExecutionException, TimeoutException, UnsupportedEncodingException {
-	String bucketName = bucketPrefix + "prefix";
-	assert client.putBucketIfNotExists(bucketName).get(10,
-		TimeUnit.SECONDS);
-	String prefix = "apps";
-	addTenObjectsUnderPrefix(bucketName, prefix);
-	add15UnderRoot(bucketName);
+            ExecutionException, TimeoutException, UnsupportedEncodingException {
+        String prefix = "apps";
+        addTenObjectsUnderPrefix(bucketName, prefix);
+        add15UnderRoot(bucketName);
 
-	S3Bucket bucket = client.listBucket(bucketName, withPrefix("apps/"))
-		.get(10, TimeUnit.SECONDS);
-	assertEquals(bucket.getContents().size(), 10);
-	assertEquals(bucket.getPrefix(), "apps/");
+        S3Bucket bucket = client.listBucket(bucketName, withPrefix("apps/"))
+                .get(10, TimeUnit.SECONDS);
+        assert !bucket.isTruncated();
+        assertEquals(bucket.getContents().size(), 10);
+        assertEquals(bucket.getPrefix(), "apps/");
 
+    }
+
+    @Test()
+    void testListBucket() throws InterruptedException,
+            ExecutionException, TimeoutException, UnsupportedEncodingException {
+        String prefix = "apps";
+        addTenObjectsUnderPrefix(bucketName, prefix);
+        S3Bucket bucket = client.listBucket(bucketName)
+                .get(10, TimeUnit.SECONDS);
+        assertEquals(bucket.getContents().size(), 10);
     }
 
     private void add15UnderRoot(String bucketName) throws InterruptedException,
-	    ExecutionException, TimeoutException {
-	for (int i = 0; i < 15; i++)
-	    client.putObject(bucketName, new S3Object(i + "", i + "content"))
-		    .get(10, TimeUnit.SECONDS);
+            ExecutionException, TimeoutException {
+        for (int i = 0; i < 15; i++)
+            client.putObject(bucketName, new S3Object(i + "", i + "content"))
+                    .get(10, TimeUnit.SECONDS);
     }
 
     private void addTenObjectsUnderPrefix(String bucketName, String prefix)
-	    throws InterruptedException, ExecutionException, TimeoutException {
-	for (int i = 0; i < 10; i++)
-	    client.putObject(bucketName,
-		    new S3Object(prefix + "/" + i, i + "content")).get(10,
-		    TimeUnit.SECONDS);
+            throws InterruptedException, ExecutionException, TimeoutException {
+        for (int i = 0; i < 10; i++)
+            client.putObject(bucketName,
+                    new S3Object(prefix + "/" + i, i + "content")).get(10,
+                    TimeUnit.SECONDS);
     }
 
 }

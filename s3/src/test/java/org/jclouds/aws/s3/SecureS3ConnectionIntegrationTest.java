@@ -23,28 +23,25 @@
  */
 package org.jclouds.aws.s3;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.aws.s3.domain.S3Bucket;
 import org.testng.annotations.Test;
 
-/**
- * Tests connection by listing all the buckets and their size
- * 
- * @author Adrian Cole
- * 
- */
-@Test(groups = "unit", testName = "s3.S3ConnectionTest")
-public class S3ConnectionTest extends S3IntegrationTest {
+import java.util.Properties;
 
-    @Test
-    void testListBuckets() throws Exception {
-	List<S3Bucket.Metadata> myBuckets = client.listOwnedBuckets().get(10,
-		TimeUnit.SECONDS);
-	for (S3Bucket.Metadata bucket : myBuckets) {
-	    context.createInputStreamMap(bucket.getName()).size();
-	}
+/**
+ * This performs the same test as {@link S3ConnectionIntegrationTest}, except using SSL.
+ *
+ * @author Adrian Cole
+ */
+@Test(groups = {"live"}, testName = "s3.SecureS3ConnectionIntegrationTest")
+public class SecureS3ConnectionIntegrationTest extends S3ConnectionIntegrationTest {
+    @Override
+    protected Properties buildS3Properties(String AWSAccessKeyId,
+                                           String AWSSecretAccessKey) {
+        Properties properties = super.buildS3Properties(AWSAccessKeyId,
+                AWSSecretAccessKey);
+        properties.setProperty("jclouds.http.secure", Boolean.toString(true));
+        properties.setProperty("jclouds.http.port", "443");
+        return properties;
     }
 
 }
