@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * // TODO: Adrian: Document this!
- * 
+ *
  * @author Adrian Cole
  */
 public abstract class BaseJCloudsPerformance extends BasePerformance {
@@ -53,42 +53,42 @@ public abstract class BaseJCloudsPerformance extends BasePerformance {
 
     @Override
     protected boolean putByteArray(String bucket, String key, byte[] data,
-	    String contentType) throws Exception {
-	org.jclouds.aws.s3.domain.S3Object object = new org.jclouds.aws.s3.domain.S3Object(
-		key);
-	object.getMetadata().setContentType(contentType);
-	object.setData(data);
-	return client.putObject(bucket, object).get(120, TimeUnit.SECONDS) != null;
+                                   String contentType) throws Exception {
+        org.jclouds.aws.s3.domain.S3Object object = new org.jclouds.aws.s3.domain.S3Object(
+                key);
+        object.getMetadata().setContentType(contentType);
+        object.setData(data);
+        return client.putObject(bucket, object).get(120, TimeUnit.SECONDS) != null;
     }
 
     @Override
     protected boolean putFile(String bucket, String key, File data,
-	    String contentType) throws Exception {
-	org.jclouds.aws.s3.domain.S3Object object = new org.jclouds.aws.s3.domain.S3Object(
-		key);
-	object.getMetadata().setContentType(contentType);
-	object.setData(data);
-	return client.putObject(bucket, object).get(120, TimeUnit.SECONDS) != null;
+                              String contentType) throws Exception {
+        org.jclouds.aws.s3.domain.S3Object object = new org.jclouds.aws.s3.domain.S3Object(
+                key);
+        object.getMetadata().setContentType(contentType);
+        object.setData(data);
+        return client.putObject(bucket, object).get(120, TimeUnit.SECONDS) != null;
     }
 
     @Override
     protected boolean putInputStream(String bucket, String key,
-	    InputStream data, String contentType) throws Exception {
-	org.jclouds.aws.s3.domain.S3Object object = new org.jclouds.aws.s3.domain.S3Object(
-		key);
-	object.getMetadata().setContentType(contentType);
-	object.setData(data);
-	object.getMetadata().setSize(data.available());
-	return client.putObject(bucket, object).get(120, TimeUnit.SECONDS) != null;
+                                     InputStream data, String contentType) throws Exception {
+        org.jclouds.aws.s3.domain.S3Object object = new org.jclouds.aws.s3.domain.S3Object(
+                key);
+        object.getMetadata().setContentType(contentType);
+        object.setData(data);
+        object.getMetadata().setSize(data.available());
+        return client.putObject(bucket, object).get(120, TimeUnit.SECONDS) != null;
     }
 
     @Override
     protected boolean putString(String bucket, String key, String data,
-	    String contentType) throws Exception {
-	org.jclouds.aws.s3.domain.S3Object object = new org.jclouds.aws.s3.domain.S3Object(
-		key);
-	object.getMetadata().setContentType(contentType);
-	object.setData(data);
-	return client.putObject(bucket, object).get(120, TimeUnit.SECONDS) != null;
+                                String contentType) throws Exception {
+        org.jclouds.aws.s3.domain.S3Object object = new org.jclouds.aws.s3.domain.S3Object(
+                key);
+        object.getMetadata().setContentType(contentType);
+        object.setData(data);
+        return client.putObject(bucket, object).get(120, TimeUnit.SECONDS) != null;
     }
 }
