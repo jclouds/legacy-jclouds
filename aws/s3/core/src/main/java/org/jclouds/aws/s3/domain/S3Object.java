@@ -216,14 +216,21 @@ public class S3Object {
         }
 
         public void setMd5(byte[] md5) {
-            this.md5 = Arrays.copyOf(md5, md5.length);
+        	this.md5 = new byte[md5.length];
+            System.arraycopy(md5, 0, this.md5, 0, md5.length);
         }
 
         /**
          * @return the md5 value stored in the Etag header returned by S3.
          */
         public byte[] getMd5() {
-            return (md5 == null) ? null : Arrays.copyOf(md5, md5.length);
+        	if (md5 != null) {
+            	byte[] retval = new byte[md5.length];
+                System.arraycopy(this.md5, 0, retval, 0, md5.length);
+                return retval;
+        	} else {
+        		return null;
+        	}
         }
 
         public void setUserMetadata(Multimap<String, String> userMetadata) {

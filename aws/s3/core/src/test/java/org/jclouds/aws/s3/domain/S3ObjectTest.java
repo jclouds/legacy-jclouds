@@ -25,6 +25,7 @@ package org.jclouds.aws.s3.domain;
 
 import org.jclouds.http.ContentTypes;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotSame;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -40,4 +41,14 @@ public class S3ObjectTest {
         assertEquals(object.getMetadata().getContentType(),
                 ContentTypes.BINARY);
     }
+    
+    @Test
+    void testMd5CopyingNotReference() {
+    	byte[] md5 = new byte[12];
+        S3Object object = new S3Object("test");
+    	object.getMetadata().setMd5(md5);
+    	byte[] returnedMd5 = object.getMetadata().getMd5();
+    	assertNotSame(md5, returnedMd5);
+    }
+    
 }
