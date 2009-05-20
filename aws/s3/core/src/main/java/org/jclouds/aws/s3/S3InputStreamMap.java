@@ -28,17 +28,16 @@ import java.io.InputStream;
 import java.util.Map;
 
 /**
- * Map view of an {@link S3Bucket}. Provides additional methods for inserting
+ * Map view of an {@link org.jclouds.aws.s3.domain.S3Bucket}. Provides additional methods for inserting
  * common object types.
- * 
+ * <p/>
  * <h2>Note</h2> All <code>put</code> operations will invoke
- * {@link S3Object#generateMd5}. By extension, {@link #put(String, InputStream)}
+ * {@link org.jclouds.aws.s3.domain.S3Object#generateMd5}. By extension, {@link #put(Object, Object)}
  * will result in the InputStream being converted to a byte array. For this
- * reason, do not use {@link #put(String, InputStream)} to store files. Use
+ * reason, do not use {@link #put(Object, Object)} to store files. Use
  * {@link #putFile(String, File)} or {@link S3ObjectMap} instead.
- * 
+ *
  * @author Adrian Cole
- * 
  */
 public interface S3InputStreamMap extends S3Map<String, InputStream> {
     InputStream putString(String key, String value);

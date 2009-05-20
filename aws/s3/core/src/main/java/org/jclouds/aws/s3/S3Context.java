@@ -50,7 +50,6 @@ public interface S3Context {
      * bucket.
      * 
      * @param bucket
-     * @return
      */
     S3InputStreamMap createInputStreamMap(String bucket);
 
@@ -58,7 +57,6 @@ public interface S3Context {
      * Creates a <code>Map<String,S3Object></code> view of the specified bucket.
      * 
      * @param bucket
-     * @return
      */
     S3ObjectMap createS3ObjectMap(String bucket);
 

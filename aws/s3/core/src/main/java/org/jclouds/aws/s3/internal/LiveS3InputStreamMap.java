@@ -23,260 +23,249 @@
  */
 package org.jclouds.aws.s3.internal;
 
-import java.io.File;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-
+import com.google.common.annotations.VisibleForTesting;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.S3InputStreamMap;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.util.Utils;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
+import java.io.File;
+import java.io.InputStream;
+import java.util.*;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Map representation of a live connection to S3. All put operations will result
  * in Md5 calculation. If this is not desired, use {@link LiveS3ObjectMap}
  * instead.
- * 
+ *
+ * @author Adrian Cole
  * @see S3Connection
  * @see BaseS3Map
- * @author Adrian Cole
  */
 public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
-	S3InputStreamMap {
+        S3InputStreamMap {
 
     @Inject
     public LiveS3InputStreamMap(S3Connection connection, @Assisted String bucket) {
-	super(connection, bucket);
+        super(connection, bucket);
     }
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see S3Connection#getObject(String, String)
      */
     public InputStream get(Object o) {
-	try {
-	    return (InputStream) (connection.getObject(bucket, o.toString())
-		    .get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS))
-		    .getData();
-	} catch (Exception e) {
-	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
-	    throw new S3RuntimeException(String.format(
-		    "Error geting object %1$s:%2$s", bucket, o), e);
-	}
+        try {
+            return (InputStream) (connection.getObject(bucket, o.toString())
+                    .get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS))
+                    .getData();
+        } catch (Exception e) {
+            Utils.<S3RuntimeException>rethrowIfRuntimeOrSameType(e);
+            throw new S3RuntimeException(String.format(
+                    "Error geting object %1$s:%2$s", bucket, o), e);
+        }
     }
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see S3Connection#deleteObject(String, String)
      */
     public InputStream remove(Object o) {
-	InputStream old = get(o);
-	try {
-	    connection.deleteObject(bucket, o.toString()).get(
-		    requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
-	} catch (Exception e) {
-	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
-	    throw new S3RuntimeException(String.format(
-		    "Error removing object %1$s:%2$s", bucket, o), e);
-	}
-	return old;
+        InputStream old = get(o);
+        try {
+            connection.deleteObject(bucket, o.toString()).get(
+                    requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
+        } catch (Exception e) {
+            Utils.<S3RuntimeException>rethrowIfRuntimeOrSameType(e);
+            throw new S3RuntimeException(String.format(
+                    "Error removing object %1$s:%2$s", bucket, o), e);
+        }
+        return old;
     }
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see #getAllObjects()
      */
     public Collection<InputStream> values() {
-	Collection<InputStream> values = new LinkedList<InputStream>();
-	Set<S3Object> objects = getAllObjects();
-	for (S3Object object : objects) {
-	    values.add((InputStream) object.getData());
-	}
-	return values;
+        Collection<InputStream> values = new LinkedList<InputStream>();
+        Set<S3Object> objects = getAllObjects();
+        for (S3Object object : objects) {
+            values.add((InputStream) object.getData());
+        }
+        return values;
     }
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see #getAllObjects()
      */
     public Set<Map.Entry<String, InputStream>> entrySet() {
-	Set<Map.Entry<String, InputStream>> entrySet = new HashSet<Map.Entry<String, InputStream>>();
-	for (S3Object object : getAllObjects()) {
-	    entrySet.add(new Entry(object.getKey(), (InputStream) object
-		    .getData()));
-	}
-	return entrySet;
+        Set<Map.Entry<String, InputStream>> entrySet = new HashSet<Map.Entry<String, InputStream>>();
+        for (S3Object object : getAllObjects()) {
+            entrySet.add(new Entry(object.getKey(), (InputStream) object
+                    .getData()));
+        }
+        return entrySet;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public class Entry implements java.util.Map.Entry<String, InputStream> {
 
-	private InputStream value;
-	private String key;
+        private InputStream value;
+        private String key;
 
-	Entry(String key, InputStream value) {
-	    this.key = key;
-	    this.value = value;
-	}
+        Entry(String key, InputStream value) {
+            this.key = key;
+            this.value = value;
+        }
 
-	public String getKey() {
-	    return key;
-	}
+        public String getKey() {
+            return key;
+        }
 
-	public InputStream getValue() {
-	    return value;
-	}
+        public InputStream getValue() {
+            return value;
+        }
 
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see LiveS3InputStreamMap#put(String, InputStream)
-	 */
-	public InputStream setValue(InputStream value) {
-	    return put(key, value);
-	}
+        /**
+         * {@inheritDoc}
+         *
+         * @see LiveS3InputStreamMap#put(String, InputStream)
+         */
+        public InputStream setValue(InputStream value) {
+            return put(key, value);
+        }
 
     }
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see #putAllInternal(Map)
      */
     public void putAll(Map<? extends String, ? extends InputStream> map) {
-	putAllInternal(map);
+        putAllInternal(map);
     }
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see #putAllInternal(Map)
      */
     public void putAllBytes(Map<? extends String, ? extends byte[]> map) {
-	putAllInternal(map);
+        putAllInternal(map);
     }
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see #putAllInternal(Map)
      */
     public void putAllFiles(Map<? extends String, ? extends File> map) {
-	putAllInternal(map);
+        putAllInternal(map);
     }
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see #putAllInternal(Map)
      */
     public void putAllStrings(Map<? extends String, ? extends String> map) {
-	putAllInternal(map);
+        putAllInternal(map);
     }
 
     /**
      * submits requests to add all objects and collects the results later. All
      * values will have md5 calculated first. As a side-effect of this, the
      * content will be copied into a byte [].
-     * 
+     *
      * @see S3Connection#putObject(String, S3Object)
      */
     @VisibleForTesting
     void putAllInternal(Map<? extends String, ? extends Object> map) {
-	try {
-	    List<Future<byte[]>> puts = new ArrayList<Future<byte[]>>();
-	    for (String key : map.keySet()) {
-		S3Object object = new S3Object(key);
-		object.setData(map.get(key));
-		object.generateMd5();
-		puts.add(connection.putObject(bucket, object));
-	    }
-	    for (Future<byte[]> put : puts)
-		// this will throw an exception if there was a problem
-		put.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
-	} catch (Exception e) {
-	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
-	    throw new S3RuntimeException("Error putting into bucket" + bucket,
-		    e);
-	}
+        try {
+            List<Future<byte[]>> puts = new ArrayList<Future<byte[]>>();
+            for (Map.Entry<? extends String, ? extends Object> entry : map.entrySet()) {
+                S3Object object = new S3Object(entry.getKey());
+                object.setData(entry.getValue());
+                object.generateMd5();
+                puts.add(connection.putObject(bucket, object));
+            }
+            for (Future<byte[]> put : puts)
+                // this will throw an exception if there was a problem
+                put.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
+        } catch (Exception e) {
+            Utils.<S3RuntimeException>rethrowIfRuntimeOrSameType(e);
+            throw new S3RuntimeException("Error putting into bucketName" + bucket,
+                    e);
+        }
     }
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see #putInternal(String, Object)
      */
     public InputStream putString(String key, String value) {
-	return putInternal(key, value);
+        return putInternal(key, value);
     }
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see #putInternal(String, Object)
      */
     public InputStream putFile(String key, File value) {
-	return putInternal(key, value);
+        return putInternal(key, value);
     }
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see #putInternal(String, Object)
      */
     public InputStream putBytes(String key, byte[] value) {
-	return putInternal(key, value);
+        return putInternal(key, value);
     }
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see #putInternal(String, Object)
      */
     public InputStream put(String key, InputStream value) {
-	return putInternal(key, value);
+        return putInternal(key, value);
     }
 
     /**
-     * 
      * calculates md5 before adding the object to s3. As a side-effect of this,
      * the content will be copied into a byte []. *
-     * 
+     *
      * @see S3Connection#putObject(String, S3Object)
      */
     @VisibleForTesting
     InputStream putInternal(String s, Object o) {
-	S3Object object = new S3Object(s);
-	try {
-	    InputStream returnVal = containsKey(s) ? get(s) : null;
-	    object.setData(o);
-	    object.generateMd5();
-	    connection.putObject(bucket, object).get(
-		    requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
-	    return returnVal;
-	} catch (Exception e) {
-	    Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
-	    throw new S3RuntimeException(String.format(
-		    "Error adding object %1$s:%2$s", bucket, object), e);
-	}
+        S3Object object = new S3Object(s);
+        try {
+            InputStream returnVal = containsKey(s) ? get(s) : null;
+            object.setData(o);
+            object.generateMd5();
+            connection.putObject(bucket, object).get(
+                    requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
+            return returnVal;
+        } catch (Exception e) {
+            Utils.<S3RuntimeException>rethrowIfRuntimeOrSameType(e);
+            throw new S3RuntimeException(String.format(
+                    "Error adding object %1$s:%2$s", bucket, object), e);
+        }
     }
 
 }

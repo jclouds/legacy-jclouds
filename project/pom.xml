@@ -95,10 +95,10 @@
     </repositories>
 
     <distributionManagement>
-       <repository>
-           <uniqueVersion>false</uniqueVersion>
-           <id>jclouds-googlecode-deploy</id>
-           <url>svn:https://jclouds.googlecode.com/svn/repo</url>
+        <repository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>jclouds-googlecode-deploy</id>
+            <url>svn:https://jclouds.googlecode.com/svn/repo</url>
         </repository>
         <site>
             <id>website</id>
@@ -148,46 +148,82 @@
             <classifier>jdk15</classifier>
         </dependency>
         <dependency>
-          <groupId>org.easymock</groupId>
-          <artifactId>easymockclassextension</artifactId>
-          <version>2.4</version>
-          <scope>test</scope>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymockclassextension</artifactId>
+            <version>2.4</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
     <build>
+
         <plugins>
-         <!-- Make sure we generate src jars too -->
-         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-source-plugin</artifactId>
-            <inherited>true</inherited>
-            <executions>
-               <execution>
-                  <id>attach-sources</id>
-                  <goals>
-                     <goal>jar</goal>
-                  </goals>
-               </execution>
-            </executions>
-         </plugin>
-         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <executions>
-               <execution>
-                  <id>javadoc</id>
-                  <phase>package</phase>
-                  <goals>
-                     <goal>jar</goal>
-                  </goals>
-                  <configuration>
-                     <quiet>true</quiet>
-                     <links>
-                        <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
-                        <link>http://java.sun.com/javaee/5/docs/api/</link>
-                     </links>
-                     <footer><![CDATA[
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>integration</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <!-- note that the groups/excluded groups don't work due to some problem
+                        in surefire or testng. instead, we have to exclude via file path
+                           <groups>integration</groups>
+                           <excludedGroups>unit,performance,live</excludedGroups> -->
+                            <excludes>
+                                <exclude>**/*LiveTest.java</exclude>
+                            </excludes>
+                            <includes>
+                                <include>**/*IntegrationTest.java</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- note that the groups/excluded groups don't work due to some problem
+                          in surefire or testng. instead, we have to exclude via file path
+                     <groups>unit,performance</groups>
+                                     <excludedGroups>integration,live</excludedGroups> -->
+                    <excludes>
+                        <exclude>**/*IntegrationTest.java</exclude>
+                        <exclude>**/*LiveTest.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <!-- Make sure we generate src jars too -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <inherited>true</inherited>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>javadoc</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <quiet>true</quiet>
+                            <links>
+                                <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
+                                <link>http://java.sun.com/javaee/5/docs/api/</link>
+                            </links>
+                            <footer><![CDATA[
                      <!-- Google Analytics -->
 <script type='text/javascript'>
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
@@ -199,10 +235,10 @@ var pageTracker = _gat._getTracker("UA-8638379-1");
 pageTracker._trackPageview();
 } catch(err) {}</script>
                      ]]></footer>
-                  </configuration>
-               </execution>
-            </executions>
-         </plugin>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
@@ -235,11 +271,11 @@ pageTracker._trackPageview();
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>
-                  <execution>
-                    <goals>
-                      <goal>test-jar</goal>
-                    </goals>
-                  </execution>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
                 </executions>
                 <configuration>
                     <archive>
@@ -261,26 +297,26 @@ pageTracker._trackPageview();
             </plugin>
             <!-- enforce java 1.5 and maven 2.1.0 -->
             <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-enforcer-plugin</artifactId>
-              <executions>
-                <execution>
-                  <id>enforce-java</id>
-                  <goals>
-                    <goal>enforce</goal>
-                  </goals>
-                  <configuration>
-                    <rules>
-                      <requireJavaVersion>
-                        <version>[1.5,)</version>
-                      </requireJavaVersion>
-                      <requireMavenVersion>
-                        <version>[2.1.0,)</version>
-                      </requireMavenVersion>
-                    </rules>
-                  </configuration>
-                </execution>
-              </executions>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-java</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>[1.5,)</version>
+                                </requireJavaVersion>
+                                <requireMavenVersion>
+                                    <version>[2.1.0,)</version>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
         <extensions>

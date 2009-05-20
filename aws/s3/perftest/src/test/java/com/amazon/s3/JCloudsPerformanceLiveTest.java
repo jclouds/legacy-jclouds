@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  * 
  */
-@Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "s3.JCloudsPerformance")
-public class JCloudsPerformanceTest extends BaseJCloudsPerformance {
+@Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "s3.JCloudsPerformanceLiveTest", groups = {"live"})
+public class JCloudsPerformanceLiveTest extends BaseJCloudsPerformance {
 
 }

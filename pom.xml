@@ -38,25 +38,23 @@
     <packaging>pom</packaging>
     <name>jclouds</name>
     <modules>
-        <module>project</module>        
+        <module>project</module>
         <module>core</module>
-        <module>extensions/httpnio</module>
-        <module>extensions/log4j</module>
-        <module>extensions/gae</module>
-        <module>s3</module>
+        <module>extensions</module>
+        <module>aws</module>
     </modules>
     <build>
-       <plugins>
-           <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-javadoc-plugin</artifactId>
-              <configuration>
-                 <quiet>true</quiet>
-                 <links>
-                    <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
-                    <link>http://java.sun.com/javaee/5/docs/api/</link>
-                 </links>
-                 <footer><![CDATA[
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <quiet>true</quiet>
+                    <links>
+                        <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
+                        <link>http://java.sun.com/javaee/5/docs/api/</link>
+                    </links>
+                    <footer><![CDATA[
                      <!-- Google Analytics -->
 <script type='text/javascript'>
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
@@ -68,17 +66,17 @@ var pageTracker = _gat._getTracker("UA-8638379-1");
 pageTracker._trackPageview();
 } catch(err) {}</script>
                      ]]></footer>
-              </configuration>
-              <executions>
-                 <execution>
-                    <id>javadoc</id>
-                    <phase>package</phase>
-                    <goals>
-                       <goal>aggregate</goal>
-                       </goals>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>javadoc</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>aggregate</goal>
+                        </goals>
                     </execution>
                 </executions>
-           </plugin>
+            </plugin>
             <plugin>
                 <groupId>com.google.code.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>

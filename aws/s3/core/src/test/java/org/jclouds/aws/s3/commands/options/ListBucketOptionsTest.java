@@ -82,7 +82,7 @@ public class ListBucketOptionsTest {
     public void testPrefixAndDelimiterUrlEncodingQueryString()
 	    throws UnsupportedEncodingException {
 	ListBucketOptions options = new ListBucketOptions();
-	options.withPrefix("/test").setDelimiter("/");
+	options.withPrefix("/test").delimiter("/");
 	String query = options.buildQueryString();
 	checkEncodedQuery(query);
 	checkEncodedQuery(checkNotNull(query));
@@ -165,7 +165,7 @@ public class ListBucketOptionsTest {
     @Test
     public void testDelimiter() throws UnsupportedEncodingException {
 	ListBucketOptions options = new ListBucketOptions();
-	options.setDelimiter("test");
+	options.delimiter("test");
 	assertEquals(options.getDelimiter(), "test");
     }
 

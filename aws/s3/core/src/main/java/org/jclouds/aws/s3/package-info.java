@@ -22,8 +22,8 @@
  * ====================================================================
  */
 /**
- * This package contains an Amazon S3 client implemented by {@link HttpFutureCommand} commands.
- * 
+ * This package contains an Amazon S3 client implemented by {@link org.jclouds.http.HttpFutureCommandClient} commands.
+ *
  * @see <a href="http://aws.amazon.com/s3"/>
  * @author Adrian Cole
  */

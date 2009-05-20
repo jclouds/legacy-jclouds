@@ -24,34 +24,45 @@
 package org.jclouds.aws.s3.commands;
 
 import org.jclouds.aws.s3.S3IntegrationTest;
+import static org.jclouds.aws.s3.commands.options.CopyObjectOptions.Builder.overrideAcl;
+import org.jclouds.aws.s3.domain.acl.CannedAccessPolicy;
+import org.jclouds.aws.s3.util.S3Utils;
 import org.testng.annotations.Test;
-import org.testng.annotations.BeforeMethod;
 
+import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Tests integrated functionality of all bucketExists commands.
+ * Tests integrated functionality of all copyObject commands.
  * <p/>
  * Each test uses a different bucket name, so it should be perfectly fine to run
  * in parallel.
  *
  * @author Adrian Cole
  */
-@Test(groups = {"integration", "live"}, testName = "s3.BucketExistsIntegrationTest")
-public class BucketExistsIntegrationTest extends S3IntegrationTest {
+@Test(testName = "s3.CopyObjectLiveTest")
+public class CopyObjectLiveTest extends S3IntegrationTest {
+    String sourceKey = "apples";
+    String destinationKey = "pears";
 
-    @Test
-    void bucketDoesntExist() throws Exception {
-        String bucketName= bucketPrefix+"be";
-        assert !client.bucketExists(bucketName).get(10, TimeUnit.SECONDS);
+
+    @Test(groups = "live")
+    void testCannedAccessPolicyPublic() throws Exception {
+        String destinationBucket = bucketName + "dest";
+
+        addObjectToBucket(bucketName, sourceKey);
+        validateContent(bucketName, sourceKey);
+
+        createBucketAndEnsureEmpty(destinationBucket);
+        client.copyObject(bucketName, sourceKey, destinationBucket,
+                destinationKey, overrideAcl(CannedAccessPolicy.PUBLIC_READ)).get(10, TimeUnit.SECONDS);
+
+        validateContent(destinationBucket, destinationKey);
+
+        URL url = new URL(String.format("http://%1$s.s3.amazonaws.com/%2$s",
+                destinationBucket, destinationKey));
+        S3Utils.toStringAndClose(url.openStream());
+
     }
 
-    @Test
-    void bucketExists() throws Exception {
-        String bucketName= bucketPrefix+"bde";
-        assert client.putBucketIfNotExists(bucketName).get(10,
-                TimeUnit.SECONDS);
-        assert client.bucketExists(bucketName).get(10, TimeUnit.SECONDS);
-
-    }
 }

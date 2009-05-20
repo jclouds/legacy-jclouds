@@ -23,22 +23,21 @@
  */
 package org.jclouds.aws.s3.xml;
 
-import java.util.List;
-
+import com.google.common.annotations.VisibleForTesting;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Error;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.inject.Inject;
-import com.google.inject.Provider;
+import java.util.List;
 
 /**
  * Creates Parsers needed to interpret S3 Server messages. This class uses guice
  * assisted inject, which mandates the creation of many single-method
  * interfaces. These interfaces are not intended for public api.
- * 
+ *
  * @author Adrian Cole
  */
 public class S3ParserFactory {
@@ -48,18 +47,18 @@ public class S3ParserFactory {
 
     @VisibleForTesting
     public static interface GenericParseFactory<T> {
-	ParseSax<T> create(ParseSax.HandlerWithResult<T> handler);
+        ParseSax<T> create(ParseSax.HandlerWithResult<T> handler);
     }
 
     @Inject
     Provider<ListAllMyBucketsHandler> ListAllMyBucketsHandlerprovider;
 
     /**
-     * @return a parser used to handle {@link ListOwnedBuckets} responses
+     * @return a parser used to handle {@link org.jclouds.aws.s3.commands.ListOwnedBuckets} responses
      */
     public ParseSax<List<S3Bucket.Metadata>> createListBucketsParser() {
-	return parseListAllMyBucketsFactory
-		.create(ListAllMyBucketsHandlerprovider.get());
+        return parseListAllMyBucketsFactory
+                .create(ListAllMyBucketsHandlerprovider.get());
     }
 
     @Inject
@@ -69,10 +68,10 @@ public class S3ParserFactory {
     Provider<ListBucketHandler> ListBucketHandlerprovider;
 
     /**
-     * @return a parser used to handle {@link ListBucket} responses
+     * @return a parser used to handle {@link org.jclouds.aws.s3.commands.ListBucket} responses
      */
     public ParseSax<S3Bucket> createListBucketParser() {
-	return parseListBucketFactory.create(ListBucketHandlerprovider.get());
+        return parseListBucketFactory.create(ListBucketHandlerprovider.get());
     }
 
     @Inject
@@ -82,10 +81,10 @@ public class S3ParserFactory {
     Provider<CopyObjectHandler> copyObjectHandlerProvider;
 
     /**
-     * @return a parser used to handle {@link CopyObject} responses
+     * @return a parser used to handle {@link org.jclouds.aws.s3.commands.CopyObject} responses
      */
     public ParseSax<S3Object.Metadata> createCopyObjectParser() {
-	return parseCopyObjectFactory.create(copyObjectHandlerProvider.get());
+        return parseCopyObjectFactory.create(copyObjectHandlerProvider.get());
     }
 
     @Inject
@@ -98,7 +97,7 @@ public class S3ParserFactory {
      * @return a parser used to handle error conditions.
      */
     public ParseSax<S3Error> createErrorParser() {
-	return parseErrorFactory.create(errorHandlerProvider.get());
+        return parseErrorFactory.create(errorHandlerProvider.get());
     }
 
 }

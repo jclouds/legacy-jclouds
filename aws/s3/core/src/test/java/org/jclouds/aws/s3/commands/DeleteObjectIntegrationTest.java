@@ -23,56 +23,55 @@
  */
 package org.jclouds.aws.s3.commands;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.aws.s3.S3IntegrationTest;
 import org.jclouds.aws.s3.S3ResponseException;
 import org.jclouds.aws.s3.domain.S3Object;
-import org.testng.annotations.Test;
 import static org.testng.Assert.assertEquals;
+import org.testng.annotations.Test;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Tests integrated functionality of all deleteObject commands.
  * <p/>
  * Each test uses a different bucket name, so it should be perfectly fine to run
  * in parallel.
- * 
+ *
  * @author Adrian Cole
- * 
  */
-@Test(groups = "integration", testName = "s3.DeleteObjectIntegrationTest")
+@Test(groups = {"integration", "live"}, testName = "s3.DeleteObjectIntegrationTest")
 public class DeleteObjectIntegrationTest extends S3IntegrationTest {
 
     @Test()
     void deleteObjectNotFound() throws Exception {
-	String bucketName = bucketPrefix + "donf";
-	createBucketAndEnsureEmpty(bucketName);
-	addObjectToBucket(bucketName, "test");
-	assert client.deleteObject(bucketName, "test")
-		.get(10, TimeUnit.SECONDS);
+        String bucketName = bucketPrefix + "donf";
+        createBucketAndEnsureEmpty(bucketName);
+        addObjectToBucket(bucketName, "test");
+        assert client.deleteObject(bucketName, "test")
+                .get(10, TimeUnit.SECONDS);
     }
 
     @Test
     void deleteObjectNoBucket() throws Exception {
-	String bucketName = bucketPrefix + "donb";
-	try {
-	    client.deleteObject(bucketName, "test").get(10, TimeUnit.SECONDS);
-	} catch (ExecutionException e) {
-	    assert e.getCause() instanceof S3ResponseException;
-	    assertEquals(((S3ResponseException) e.getCause()).getResponse()
-		    .getStatusCode(), 404);
-	}
+        String bucketName = bucketPrefix + "donb";
+        try {
+            client.deleteObject(bucketName, "test").get(10, TimeUnit.SECONDS);
+        } catch (ExecutionException e) {
+            assert e.getCause() instanceof S3ResponseException;
+            assertEquals(((S3ResponseException) e.getCause()).getResponse()
+                    .getStatusCode(), 404);
+        }
     }
 
     @Test()
     void deleteObject() throws Exception {
-	String bucketName = bucketPrefix + "do";
-	createBucketAndEnsureEmpty(bucketName);
-	addObjectToBucket(bucketName, "test");
-	assert client.deleteObject(bucketName, "test")
-		.get(10, TimeUnit.SECONDS);
-	assert client.headObject(bucketName, "test").get(10, TimeUnit.SECONDS) == S3Object.Metadata.NOT_FOUND;
+        String bucketName = bucketPrefix + "do";
+        createBucketAndEnsureEmpty(bucketName);
+        addObjectToBucket(bucketName, "test");
+        assert client.deleteObject(bucketName, "test")
+                .get(10, TimeUnit.SECONDS);
+        assert client.headObject(bucketName, "test").get(10, TimeUnit.SECONDS) == S3Object.Metadata.NOT_FOUND;
 
     }
 }

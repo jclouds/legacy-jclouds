@@ -23,12 +23,11 @@
  */
 package org.jclouds.aws.s3.xml;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import org.jclouds.aws.s3.xml.config.S3ParserModule;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
-
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 
 public class BaseHandlerTest {
 
@@ -36,7 +35,7 @@ public class BaseHandlerTest {
     private Injector injector;
 
     public BaseHandlerTest() {
-	super();
+        super();
     }
 
     @BeforeMethod

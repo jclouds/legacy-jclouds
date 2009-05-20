@@ -24,20 +24,19 @@
 package com.amazon.s3;
 
 
-import java.util.Properties;
-
+import com.google.inject.Module;
 import org.jclouds.http.httpnio.config.HttpNioConnectionPoolClientModule;
 import org.testng.annotations.Test;
 
-import com.google.inject.Module;
+import java.util.Properties;
 
-@Test(sequential=true, testName = "s3.JCloudsNioPerformance")
-public class JCloudsNioPerformanceTest extends BaseJCloudsPerformance {
+@Test(sequential = true, testName = "s3.JCloudsNioPerformanceLiveTest", groups = {"live"})
+public class JCloudsNioPerformanceLiveTest extends BaseJCloudsPerformance {
 
     @Override
     protected Properties buildS3Properties(String AWSAccessKeyId,
-	    String AWSSecretAccessKey) {
-	Properties properties =  super.buildS3Properties(AWSAccessKeyId, AWSSecretAccessKey);
+                                           String AWSSecretAccessKey) {
+        Properties properties = super.buildS3Properties(AWSAccessKeyId, AWSSecretAccessKey);
         properties.setProperty("jclouds.http.pool.max_connection_reuse", "75");
         properties.setProperty("jclouds.http.pool.max_session_failures", "2");
         properties.setProperty("jclouds.http.pool.request_invoker_threads", "1");
