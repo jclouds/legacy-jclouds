@@ -28,41 +28,25 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
+        <artifactId>jclouds-project</artifactId>
         <groupId>org.jclouds</groupId>
-        <artifactId>jclouds-extensions-project</artifactId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath>../project/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jclouds</groupId>
-    <artifactId>jclouds-gae</artifactId>
-    <name>jclouds Google App Engine Components</name>
-    <packaging>jar</packaging>
-    <description>Google App Engine Components</description>
-
-    <scm>
-        <connection>scm:svn:http://jclouds.googlecode.com/svn/trunk/extensions/gae</connection>
-        <developerConnection>scm:svn:https://jclouds.googlecode.com/svn/trunk/extensions/gae</developerConnection>
-        <url>http://jclouds.googlecode.com/svn/trunk/extensions/gae</url>
-    </scm>
-
+    <artifactId>jclouds-extensions-project</artifactId>
+    <packaging>pom</packaging>
+    <name>jclouds extensions project</name>
+    <modules>
+        <module>gae</module>
+        <module>httpnio</module>
+        <module>log4j</module>
+    </modules>
     <dependencies>
         <dependency>
-            <groupId>com.google.appengine</groupId>
-            <artifactId>appengine-api</artifactId>
-            <version>1.2.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.appengine</groupId>
-            <artifactId>appengine-api-stubs</artifactId>
-            <version>1.2.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.google.appengine</groupId>
-            <artifactId>appengine-local-runtime</artifactId>
-            <version>1.2.0</version>
-            <scope>test</scope>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-core</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -70,19 +54,7 @@
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.mortbay.jetty</groupId>
-                    <artifactId>jetty</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-servlet_2.5_spec</artifactId>
-            <version>1.2</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
 
+    </dependencies>
 </project>
