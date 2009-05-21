@@ -48,20 +48,6 @@
         <jclouds.aws.secretaccesskey></jclouds.aws.secretaccesskey>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>guice-snapshot</id>
-            <url>http://guice-maven.googlecode.com/svn/trunk</url>
-        </repository>
-    </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>Main Maven Repo</id>
-            <url>http://repo1.maven.org/maven2/</url>
-        </pluginRepository>
-    </pluginRepositories>
-
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -71,7 +57,7 @@
         <dependency>
             <groupId>com.google.code.guice</groupId>
             <artifactId>guice-servlet</artifactId>
-            <version>2.0-r943</version>
+            <version>2.0</version>
         </dependency>
         <dependency>
             <artifactId>standard</artifactId>
