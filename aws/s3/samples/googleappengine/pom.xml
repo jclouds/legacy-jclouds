@@ -41,11 +41,9 @@
 
     <properties>
         <!-- note you must set the property ${appengine.home} to a valid extraction of appengine-java-sdk -->
-        <appengine.home>/Users/adriancole/Desktop/appengine-java-sdk-1.2.0</appengine.home>
+        <appengine.home>/Users/adriancole/Desktop/appengine-java-sdk-1.2.1</appengine.home>
         <devappserver.address>localhost</devappserver.address>
         <devappserver.port>8088</devappserver.port>
-        <jclouds.aws.accesskeyid></jclouds.aws.accesskeyid>
-        <jclouds.aws.secretaccesskey></jclouds.aws.secretaccesskey>
     </properties>
 
     <dependencies>
@@ -95,7 +93,7 @@
         <dependency>
             <groupId>com.google.appengine</groupId>
             <artifactId>appengine-tools-api</artifactId>
-            <version>1.2.0</version>
+            <version>1.2.1</version>
             <scope>system</scope>
             <systemPath>${appengine.home}/lib/appengine-tools-api.jar</systemPath>
         </dependency>
@@ -103,12 +101,10 @@
     </dependencies>
     <build>
         <finalName>${project.artifactId}</finalName>
-        <testSourceDirectory>src/it/java</testSourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.4.3</version>
                 <executions>
                     <execution>
                         <id>integration</id>
@@ -117,16 +113,7 @@
                             <goal>test</goal>
                         </goals>
                         <configuration>
-                            <testClassesDirectory>target/test-classes</testClassesDirectory>
                             <systemProperties>
-                                <property>
-                                    <name>jclouds.aws.accesskeyid</name>
-                                    <value>${jclouds.aws.accesskeyid}</value>
-                                </property>
-                                <property>
-                                    <name>jclouds.aws.secretaccesskey</name>
-                                    <value>${jclouds.aws.secretaccesskey}</value>
-                                </property>
                                 <property>
                                     <name>appengine.home</name>
                                     <value>${appengine.home}</value>
@@ -157,12 +144,58 @@
                         </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <!-- fool default surefire execution in 'test' to not find any test classes -->
-                    <testClassesDirectory>target/classes</testClassesDirectory>
-                </configuration>
             </plugin>
         </plugins>
-
     </build>
+
+    <profiles>
+        <profile>
+            <id>live</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>integration</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <systemProperties>
+                                        <property>
+                                            <name>jclouds.aws.accesskeyid</name>
+                                            <value>${jclouds.aws.accesskeyid}</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.aws.secretaccesskey</name>
+                                            <value>${jclouds.aws.secretaccesskey}</value>
+                                        </property>
+                                <property>
+                                    <name>appengine.home</name>
+                                    <value>${appengine.home}</value>
+                                </property>
+                                <property>
+                                    <name>devappserver.address</name>
+                                    <value>${devappserver.address}</value>
+                                </property>
+                                <property>
+                                    <name>devappserver.port</name>
+                                    <value>${devappserver.port}</value>
+                                </property>
+                                <property>
+                                    <name>warfile</name>
+                                    <value>${project.build.directory}/${project.artifactId}</value>
+                                </property>
+                                    </systemProperties>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

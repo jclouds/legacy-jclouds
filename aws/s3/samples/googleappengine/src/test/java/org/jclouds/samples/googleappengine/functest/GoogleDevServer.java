@@ -23,53 +23,48 @@
  */
 package org.jclouds.samples.googleappengine.functest;
 
-import java.io.FileNotFoundException;
+import com.google.appengine.tools.KickStart;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
+import java.io.File;
 import java.util.Properties;
-
-import org.testng.annotations.AfterTest;
-
-import com.google.appengine.tools.KickStart;
 
 /**
  * Basic functionality to start a local google app engine instance.
- * 
+ *
  * @author Adrian Cole
- * 
  */
-public abstract class BaseGoogleAppEngineTest {
+public class GoogleDevServer {
 
     Thread server;
-    URL url;
 
-    protected void writePropertiesAndStartServer(final String address,
-	    final String port, final String warfile, Properties props)
-	    throws IOException, FileNotFoundException, InterruptedException {
-	url = new URL(String.format("http://%1$s:%2$s", address, port));
+    public void writePropertiesAndStartServer(final String address,
+                                              final String port, final String warfile, Properties props)
+            throws IOException, InterruptedException {
+        String filename = String.format(
+                "%1$s/WEB-INF/jclouds.properties", warfile);
+        System.err.println("file: " + filename);
+        props.store(new FileOutputStream(filename), "test");
+        assert new File(filename).exists();
+        this.server = new Thread(new Runnable() {
+            public void run() {
+                KickStart
+                        .main(new String[]{
+                                "com.google.appengine.tools.development.DevAppServerMain",
+                                "--disable_update_check", "-a", address, "-p",
+                                port, warfile});
 
-	props.store(new FileOutputStream(String.format(
-		"%1$s/WEB-INF/jclouds.properties", warfile)), "test");
-	this.server = new Thread(new Runnable() {
-	    public void run() {
-		KickStart
-			.main(new String[] {
-				"com.google.appengine.tools.development.DevAppServerMain",
-				"--disable_update_check", "-a", address, "-p",
-				port, warfile });
+            }
 
-	    }
-
-	});
-	server.start();
-	Thread.sleep(7 * 1000);
+        });
+        server.start();
+        Thread.sleep(10 * 1000);
     }
 
     @SuppressWarnings("deprecation")
-    @AfterTest
-    public void stopDevAppServer() throws Exception {
-	server.stop();
+    public void stop() throws Exception {
+        server.stop();
     }
 
 }

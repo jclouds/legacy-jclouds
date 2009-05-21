@@ -43,4 +43,108 @@
         <module>extensions</module>
         <module>samples</module>
     </modules>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.4.3</version>
+                <executions>
+                    <execution>
+                        <id>integration</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <!-- note that the groups/excluded groups don't work due to some problem
+                        in surefire or testng. instead, we have to exclude via file path
+                           <groups>integration</groups>
+                           <excludedGroups>unit,performance,live</excludedGroups> -->
+                            <excludes>
+                                <exclude>**/*LiveTest.java</exclude>
+                            </excludes>
+                            <includes>
+                                <include>**/*IntegrationTest.java</include>
+                            </includes>
+                            <systemProperties>
+                                <property>
+                                    <name>jclouds.s3.httpstream.url</name>
+                                    <value>${jclouds.s3.httpstream.url}</value>
+                                </property>
+                                <property>
+                                    <name>jclouds.s3.httpstream.md5</name>
+                                    <value>${jclouds.s3.httpstream.md5}</value>
+                                </property>
+                            </systemProperties>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- note that the groups/excluded groups don't work due to some problem
+                         in surefire or testng. instead, we have to exclude via file path
+                    <groups>unit,performance</groups>
+                    <excludedGroups>integration,live</excludedGroups> -->
+                    <excludes>
+                        <exclude>**/*IntegrationTest.java</exclude>
+                        <exclude>**/*LiveTest.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <profiles>
+        <profile>
+            <id>live</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>2.4.3</version>
+                        <executions>
+                            <execution>
+                                <id>integration</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <!-- note that the groups/excluded groups don't work due to some problem
+                                in surefire or testng. instead, we have to exclude via file path
+                                   <groups>live,integration</groups>
+                                   <excludedGroups>unit,performance</excludedGroups> -->
+                                    <excludes>
+                                        <exclude>none</exclude>
+                                    </excludes>
+                                    <includes>
+                                        <include>**/*IntegrationTest.java</include>
+                                        <include>**/*LiveTest.java</include>
+                                    </includes>
+                                    <systemProperties>
+                                        <property>
+                                            <name>jclouds.aws.accesskeyid</name>
+                                            <value>${jclouds.aws.accesskeyid}</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.aws.secretaccesskey</name>
+                                            <value>${jclouds.aws.secretaccesskey}</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.s3.httpstream.url</name>
+                                            <value>${jclouds.s3.httpstream.url}</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.s3.httpstream.md5</name>
+                                            <value>${jclouds.s3.httpstream.md5}</value>
+                                        </property>
+                                    </systemProperties>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
