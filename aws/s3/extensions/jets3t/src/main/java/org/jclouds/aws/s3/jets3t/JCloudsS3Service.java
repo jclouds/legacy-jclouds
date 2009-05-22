@@ -23,10 +23,15 @@
  */
 package org.jclouds.aws.s3.jets3t;
 
-import com.google.inject.Module;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.S3Context;
 import org.jclouds.aws.s3.S3ContextFactory;
+import org.jclouds.aws.s3.commands.options.GetObjectOptions;
 import org.jclouds.util.Utils;
 import org.jets3t.service.S3ObjectsChunk;
 import org.jets3t.service.S3Service;
@@ -38,11 +43,7 @@ import org.jets3t.service.model.S3Object;
 import org.jets3t.service.model.S3Owner;
 import org.jets3t.service.security.AWSCredentials;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import com.google.inject.Module;
 
 /**
  * A JetS3t S3Service implemented by JClouds
@@ -76,7 +77,7 @@ public class JCloudsS3Service extends S3Service {
     }
 
     @Override
-    public int checkBucketStatus(String bucketName) throws S3ServiceException {
+    public int checkBucketStatus(final String bucketName) throws S3ServiceException {
         // TODO Unimplemented
         throw new UnsupportedOperationException();
     }
@@ -98,9 +99,23 @@ public class JCloudsS3Service extends S3Service {
 
     @Override
     protected S3Bucket createBucketImpl(String bucketName, String location,
-                                        AccessControlList acl) throws S3ServiceException {
-        // TODO Unimplemented
-        throw new UnsupportedOperationException();
+        AccessControlList acl) throws S3ServiceException 
+    {
+    	if (location != null)
+            throw new UnsupportedOperationException("Bucket location is not yet supported");
+    	if (acl != null)
+            throw new UnsupportedOperationException("Bucket ACL is not yet supported");
+    	
+        try {
+	    	if (connection.putBucketIfNotExists(bucketName).get()) {
+	    		// Bucket created.
+	    	}
+        } catch (Exception e) {
+            Utils.<S3ServiceException>rethrowIfRuntimeOrSameType(e);
+            throw new S3ServiceException(
+                    "error creating bucket: " + bucketName, e);
+        }
+		return new S3Bucket(bucketName);
     }
 
     /**
@@ -135,8 +150,7 @@ public class JCloudsS3Service extends S3Service {
         } catch (Exception e) {
             Utils.<S3ServiceException>rethrowIfRuntimeOrSameType(e);
             throw new S3ServiceException(String.format(
-                    "error deleting object: %1$s:%2$s", bucketName, objectKey),
-                    e);
+                "error deleting object: %1$s:%2$s", bucketName, objectKey), e);
         }
     }
 
@@ -172,18 +186,43 @@ public class JCloudsS3Service extends S3Service {
     protected S3Object getObjectDetailsImpl(String bucketName,
                                             String objectKey, Calendar ifModifiedSince,
                                             Calendar ifUnmodifiedSince, String[] ifMatchTags,
-                                            String[] ifNoneMatchTags) throws S3ServiceException {
-        // TODO Unimplemented
-        throw new UnsupportedOperationException();
+                                            String[] ifNoneMatchTags) throws S3ServiceException 
+    {
+        try {        	
+        	if (ifModifiedSince != null)
+                throw new IllegalArgumentException("ifModifiedSince");
+        	if (ifUnmodifiedSince != null)
+                throw new IllegalArgumentException("ifUnmodifiedSince");
+        	if (ifMatchTags != null)
+                throw new IllegalArgumentException("ifMatchTags");
+        	if (ifNoneMatchTags != null)
+                throw new IllegalArgumentException("ifNoneMatchTags");
+        	
+        	return Util.convertObjectHead(
+    			connection.headObject(bucketName, objectKey).get());
+        } catch (Exception e) {
+            Utils.<S3ServiceException>rethrowIfRuntimeOrSameType(e);
+            throw new S3ServiceException(String.format(
+                "error retrieving object head: %1$s:%2$s", bucketName, objectKey), e);
+        }
     }
 
     @Override
     protected S3Object getObjectImpl(String bucketName, String objectKey,
                                      Calendar ifModifiedSince, Calendar ifUnmodifiedSince,
                                      String[] ifMatchTags, String[] ifNoneMatchTags,
-                                     Long byteRangeStart, Long byteRangeEnd) throws S3ServiceException {
-        // TODO Unimplemented
-        throw new UnsupportedOperationException();
+                                     Long byteRangeStart, Long byteRangeEnd) throws S3ServiceException 
+     {
+        try {
+        	GetObjectOptions options = Util.convertOptions(
+        			ifModifiedSince, ifUnmodifiedSince, ifMatchTags, ifNoneMatchTags);
+        	return Util.convertObject(
+    			connection.getObject(bucketName, objectKey, options).get());
+        } catch (Exception e) {
+            Utils.<S3ServiceException>rethrowIfRuntimeOrSameType(e);
+            throw new S3ServiceException(String.format(
+                "error retrieving object: %1$s:%2$s", bucketName, objectKey), e);
+        }
     }
 
     @Override
@@ -206,19 +245,7 @@ public class JCloudsS3Service extends S3Service {
             List<org.jclouds.aws.s3.domain.S3Bucket.Metadata> jcBucketList = connection
                     .listOwnedBuckets().get(requestTimeoutMilliseconds,
                             TimeUnit.MILLISECONDS);
-
-            ArrayList<org.jets3t.service.model.S3Bucket> jsBucketList = new ArrayList<org.jets3t.service.model.S3Bucket>();
-            for (org.jclouds.aws.s3.domain.S3Bucket.Metadata jcBucket : jcBucketList) {
-                org.jets3t.service.model.S3Bucket jsBucket = new org.jets3t.service.model.S3Bucket(
-                        jcBucket.getName());
-                jsBucket.setOwner(new org.jets3t.service.model.S3Owner(jcBucket
-                        .getOwner().getId(), jcBucket.getOwner()
-                        .getDisplayName()));
-                jsBucketList.add(jsBucket);
-            }
-            return (org.jets3t.service.model.S3Bucket[]) jsBucketList
-                    .toArray(new org.jets3t.service.model.S3Bucket[jsBucketList
-                            .size()]);
+            return Util.convertBuckets(jcBucketList);
         } catch (Exception e) {
             Utils.<S3ServiceException>rethrowIfRuntimeOrSameType(e);
             throw new S3ServiceException("error listing buckets", e);
