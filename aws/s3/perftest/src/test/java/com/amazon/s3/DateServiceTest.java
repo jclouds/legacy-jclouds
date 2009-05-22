@@ -41,9 +41,12 @@ import org.testng.annotations.Test;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 /* 
  * TODO: Scrap any non-DateService references (eg Joda & Amazon) if/when
- * we confirm that using the Java primitives is better/faster.
+ * we confirm that the DateService is fast enough.
  */
 
 /**
@@ -122,7 +125,7 @@ public class DateServiceTest extends PerformanceTest {
     	InterruptedException 
     {
     	DateTime dsDate = dateService.iso8601DateParse(testData[0].iso8601DateString);
-        assert testData[0].date.equals(dsDate.toDate());
+        assertEquals(dsDate.toDate(), testData[0].date);
     }
 
     @Test
@@ -130,7 +133,7 @@ public class DateServiceTest extends PerformanceTest {
     	InterruptedException 
     {
     	DateTime dsDate = dateService.rfc822DateParse(testData[0].rfc822DateString);
-        assert testData[0].date.equals(dsDate.toDate());
+    	assertEquals(dsDate.toDate(), testData[0].date);
     }
 
     @Test
@@ -138,7 +141,7 @@ public class DateServiceTest extends PerformanceTest {
     	InterruptedException 
     {
     	String dsString = dateService.iso8601DateFormat(testData[0].date);
-        assert testData[0].iso8601DateString.equals(dsString);
+    	assertEquals(dsString, testData[0].iso8601DateString);
     }
 
     @Test
@@ -146,7 +149,7 @@ public class DateServiceTest extends PerformanceTest {
     	InterruptedException 
     {    	
     	String dsString = dateService.rfc822DateFormat(testData[0].date);
-        assert testData[0].rfc822DateString.equals(dsString);
+    	assertEquals(dsString, testData[0].rfc822DateString);
     }
 
     @Test
@@ -180,13 +183,13 @@ public class DateServiceTest extends PerformanceTest {
     		 *  Comment-in the assert below to test thread safety.
     		 *  Comment it out to test performance
     		 */
-    		assert myData.iso8601DateString.equals(dsString);
+    		assertEquals(dsString, myData.iso8601DateString);
     		return true;
         }
         });
     }
     for (int i = 0; i < LOOP_COUNT; i++)
-        assert completer.take().get();
+    	assertTrue(completer.take().get());
     printElapsedClockTime("testFormatIso8601DateInParallel");
     }
 
@@ -204,7 +207,7 @@ public class DateServiceTest extends PerformanceTest {
         }
         });
     for (int i = 0; i < LOOP_COUNT; i++)
-        assert completer.take().get();
+    	assertTrue(completer.take().get());
     printElapsedClockTime("testFormatAmazonDateInParallel");
     }
 
@@ -219,13 +222,13 @@ public class DateServiceTest extends PerformanceTest {
         completer.submit(new Callable<Boolean>() {
         public Boolean call() {
         	String jodaString = toHeaderString(new DateTime(myData.date));
-    		assert myData.rfc822DateString.equals(jodaString);
+        	assertEquals(jodaString, myData.rfc822DateString);
             return true;
         }
         });
     }
     for (int i = 0; i < LOOP_COUNT; i++)
-        assert completer.take().get();
+    	assertTrue(completer.take().get());
     printElapsedClockTime("testFormatJodaDateInParallel");
     }
 
@@ -254,13 +257,13 @@ public class DateServiceTest extends PerformanceTest {
         public Boolean call() throws ExecutionException,
             InterruptedException {
         	DateTime dsDate = dateService.iso8601DateParse(myData.iso8601DateString);
-            assert myData.date.equals(dsDate.toDate());                	
+        	assertEquals(dsDate.toDate(), myData.date);                	
 			return true;
         }
         });
     }
     for (int i = 0; i < LOOP_COUNT; i++)
-        assert completer.take().get();
+    	assertTrue(completer.take().get());
     printElapsedClockTime("testParseIso8601DateInParallel");
     }
 
@@ -278,7 +281,7 @@ public class DateServiceTest extends PerformanceTest {
         }
         });
     for (int i = 0; i < LOOP_COUNT; i++)
-        assert completer.take().get();
+    	assertTrue(completer.take().get());
     printElapsedClockTime("testParseAmazonDateInParallel");
     }
 
@@ -293,13 +296,13 @@ public class DateServiceTest extends PerformanceTest {
         completer.submit(new Callable<Boolean>() {
         public Boolean call() {
         	Date jodaDate = jodaParseIso8601(myData.iso8601DateString).toDate();            
-            assert myData.date.equals(jodaDate);
+        	assertEquals(jodaDate, myData.date);
             return true;
         }
         });
     }
     for (int i = 0; i < LOOP_COUNT; i++)
-        assert completer.take().get();
+    	assertTrue(completer.take().get());
     printElapsedClockTime("testParseJodaDateInParallel");
     }
 
