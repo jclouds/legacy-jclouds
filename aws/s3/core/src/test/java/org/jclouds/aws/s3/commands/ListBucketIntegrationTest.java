@@ -77,7 +77,7 @@ public class ListBucketIntegrationTest extends S3IntegrationTest {
                 10, TimeUnit.SECONDS);
         assertEquals(bucket.getMarker(), "y");
         assert !bucket.isTruncated();
-        assertEquals(bucket.getContents().size(), 2);
+        assertEquals(bucket.getContents().size(), 1);
     }
 
     @Test
