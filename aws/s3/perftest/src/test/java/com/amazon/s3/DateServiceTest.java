@@ -24,6 +24,7 @@
 package com.amazon.s3;
 
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
@@ -87,7 +88,7 @@ public class DateServiceTest extends PerformanceTest {
     
     // Joda items for performance comparisons
     private DateTimeFormatter headerDateFormat = DateTimeFormat
-    	.forPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'");
+    	.forPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'").withLocale(Locale.US);
 
     private DateTime jodaParseIso8601(String toParse) {
     	return new DateTime(toParse);
