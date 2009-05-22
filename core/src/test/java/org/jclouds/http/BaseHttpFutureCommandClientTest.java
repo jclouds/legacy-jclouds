@@ -158,7 +158,7 @@ public abstract class BaseHttpFutureCommandClientTest {
 	server.stop();
     }
 
-    @Test(invocationCount = 50, timeOut = 1500)
+    @Test(invocationCount = 50, timeOut = 3000)
     public void testRequestFilter() throws MalformedURLException,
 	    ExecutionException, InterruptedException, TimeoutException {
 	GetString get = factory.createGetString("/");
@@ -169,7 +169,7 @@ public abstract class BaseHttpFutureCommandClientTest {
 			TimeUnit.SECONDS));
     }
 
-    @Test(invocationCount = 50, timeOut = 1500)
+    @Test(invocationCount = 50, timeOut = 3000)
     public void testGetStringWithHeader() throws MalformedURLException,
 	    ExecutionException, InterruptedException, TimeoutException {
 	GetString get = factory.createGetString("/");
@@ -180,7 +180,7 @@ public abstract class BaseHttpFutureCommandClientTest {
 			TimeUnit.SECONDS));
     }
 
-    @Test(invocationCount = 50, timeOut = 1500)
+    @Test(invocationCount = 50, timeOut = 3000)
     public void testGetString() throws MalformedURLException,
 	    ExecutionException, InterruptedException, TimeoutException {
 	GetString get = factory.createGetString("/");
@@ -191,7 +191,7 @@ public abstract class BaseHttpFutureCommandClientTest {
 			TimeUnit.SECONDS));
     }
 
-    @Test(invocationCount = 50, timeOut = 1500)
+    @Test(invocationCount = 50, timeOut = 3000)
     public void testHead() throws MalformedURLException, ExecutionException,
 	    InterruptedException, TimeoutException {
 	Head head = factory.createHead("/");
@@ -200,7 +200,7 @@ public abstract class BaseHttpFutureCommandClientTest {
 	assert head.get(10, TimeUnit.SECONDS);
     }
 
-    @Test(invocationCount = 50, timeOut = 1500)
+    @Test(invocationCount = 50, timeOut = 3000)
     public void testGetAndParseSax() throws MalformedURLException,
 	    ExecutionException, InterruptedException, TimeoutException {
 	GetAndParseSax<?> getAndParseSax = factory.createGetAndParseSax("/",
