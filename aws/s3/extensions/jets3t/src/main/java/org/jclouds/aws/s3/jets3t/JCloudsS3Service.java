@@ -288,4 +288,11 @@ public class JCloudsS3Service extends S3Service {
 
    }
 
+   protected org.jets3t.service.model.S3Owner getAccountOwnerImpl()
+            throws org.jets3t.service.S3ServiceException {
+      // TODO Unimplemented
+      throw new UnsupportedOperationException();
+
+   }
+
 }
