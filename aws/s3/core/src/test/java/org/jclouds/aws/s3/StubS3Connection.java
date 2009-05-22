@@ -279,10 +279,22 @@ public class StubS3Connection implements S3Connection {
                 S3Bucket returnVal = new S3Bucket(name);
 
                 if (options.getMarker() != null) {
-                    contents = contents.tailSet(new S3Object.Metadata(URLDecoder.decode(options.getMarker())));
+                	final String marker;
+					try {
+						marker = URLDecoder.decode(options.getMarker(), "UTF-8");
+					} catch (UnsupportedEncodingException e) {
+						throw new IllegalArgumentException(e);
+					}		
+					S3Object.Metadata lastMarkerMetadata = 
+						Iterables.find(contents, new Predicate<S3Object.Metadata>() {
+							public boolean apply(S3Object.Metadata metadata) {
+								return metadata.getKey().equals(marker);
+							}						
+						});
+                    contents = contents.tailSet(lastMarkerMetadata);
                     // amazon spec means after the marker, not including it.
-                    contents.remove(new S3Object.Metadata(options.getMarker()));
-                    returnVal.setMarker(URLDecoder.decode(options.getMarker()));
+                    contents.remove(lastMarkerMetadata);
+                    returnVal.setMarker(marker);
                 }
 
 
