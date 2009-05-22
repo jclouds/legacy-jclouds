@@ -35,6 +35,7 @@ import org.jets3t.service.acl.AccessControlList;
 import org.jets3t.service.model.S3Bucket;
 import org.jets3t.service.model.S3BucketLoggingStatus;
 import org.jets3t.service.model.S3Object;
+import org.jets3t.service.model.S3Owner;
 import org.jets3t.service.security.AWSCredentials;
 
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ import java.util.concurrent.TimeUnit;
  * A JetS3t S3Service implemented by JClouds
  *
  * @author Adrian Cole
+ * @author James Murty
  */
 public class JCloudsS3Service extends S3Service {
 
@@ -277,5 +279,11 @@ public class JCloudsS3Service extends S3Service {
         throw new UnsupportedOperationException();
 
     }
+
+	@Override
+	protected S3Owner getAccountOwnerImpl() throws S3ServiceException {
+        // TODO Unimplemented
+        throw new UnsupportedOperationException();
+	}
 
 }
