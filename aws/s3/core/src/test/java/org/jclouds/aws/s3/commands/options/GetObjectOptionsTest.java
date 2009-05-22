@@ -49,7 +49,7 @@ public class GetObjectOptionsTest {
     @BeforeTest
     void setUp() {
         now = new DateTime();
-        nowExpected = new DateService().toHeaderString(now);
+        nowExpected = new DateService().rfc822DateFormat(now);
         testBytes = new byte[]{0, 1, 2, 3, 4, 5, 6, 7};
     }
 

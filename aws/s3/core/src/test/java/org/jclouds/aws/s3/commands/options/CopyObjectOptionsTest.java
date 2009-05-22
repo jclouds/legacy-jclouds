@@ -59,7 +59,7 @@ public class CopyObjectOptionsTest {
         badMeta.put("x-google-meta-adrian", "foo");
 
         now = new DateTime();
-        nowExpected = new DateService().toHeaderString(now);
+        nowExpected = new DateService().rfc822DateFormat(now);
         testBytes = new byte[]{0, 1, 2, 3, 4, 5, 6, 7};
     }
 
@@ -299,7 +299,7 @@ public class CopyObjectOptionsTest {
                 .ifSourceMd5DoesntMatch(testBytes).overrideMetadataWith(
                         goodMeta).buildRequestHeaders();
         assertEquals(headers.get("x-amz-copy-source-if-modified-since")
-                .iterator().next(), new DateService().toHeaderString(now));
+                .iterator().next(), new DateService().rfc822DateFormat(now));
         assertEquals(headers.get("x-amz-copy-source-if-none-match").iterator()
                 .next(), "\"" + S3Utils.toHexString(testBytes) + "\"");
         for (String value : goodMeta.values())

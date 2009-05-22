@@ -23,35 +23,103 @@
  */
 package org.jclouds.aws.s3.util;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.SimpleTimeZone;
+
+import net.jcip.annotations.GuardedBy;
+import net.jcip.annotations.ThreadSafe;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 /**
- * Parses dates found in XML responses and HTTP response headers.
+ * Parses and formats the ISO8601 and RFC822 date formats found in 
+ * XML responses and HTTP response headers.
+ * <p>
+ * Either {@link SimpleDateFormat} or {@link DateTimeFormatter}
+ * classes are used internally, depending on which version gives
+ * the best performance. 
  * 
  * @author Adrian Cole
- * 
+ * @author James Murty
  */
-public class DateService {
-    private DateTimeFormatter headerDateFormat = DateTimeFormat
-	    .forPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'");
+@ThreadSafe
+public class DateService {    
+    /*
+     * Use default Java Date/SimpleDateFormat classes for date 
+     * manipulation, but be *very* careful to guard against
+     * the lack of thread safety.
+     */
+    
+    @GuardedBy("this")
+    private static final SimpleDateFormat iso8601SimpleDateFormat = 
+    	new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
 
-    public DateTime dateTimeFromXMLFormat(String toParse) {
-	// the format is natively parseable from the DateTime constructor
-	return new DateTime(toParse);
+    @GuardedBy("this")
+	private static final SimpleDateFormat rfc822SimpleDateFormat = 
+		new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
+    
+    private static final DateTimeFormatter iso8601DateTimeFormatter = 
+    	DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    		.withLocale(Locale.US).withZone(DateTimeZone.forID("GMT"));    
+
+    private static final DateTimeFormatter rfc822DateTimeFormatter = 
+    	DateTimeFormat.forPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'")    
+    		.withLocale(Locale.US).withZone(DateTimeZone.forID("GMT"));    
+
+	static {
+	    iso8601SimpleDateFormat.setTimeZone(new SimpleTimeZone(0, "GMT"));
+	    rfc822SimpleDateFormat.setTimeZone(new SimpleTimeZone(0, "GMT"));
+	}
+	
+
+	public final String rfc822DateFormat(DateTime dateTime) {
+    	return rfc822DateTimeFormatter.print(dateTime);
     }
 
-    public DateTime dateTimeFromHeaderFormat(String toParse) {
-	return headerDateFormat.parseDateTime(toParse);
+	public final String rfc822DateFormat(Date date) {
+    	return rfc822DateFormat(new DateTime(date));
     }
 
-    public String timestampAsHeaderString() {
-	return toHeaderString(new DateTime());
+    public final String rfc822DateFormat() {
+    	return rfc822DateFormat(new DateTime());
+    }
+    
+    public final DateTime rfc822DateParse(String toParse) { 
+    	synchronized (rfc822SimpleDateFormat) {
+    		try {
+				return new DateTime(rfc822SimpleDateFormat.parse(toParse));
+			} catch (ParseException e) {
+				return null;
+			}
+    	}
     }
 
-    public String toHeaderString(DateTime date) {
-	return headerDateFormat.print(date.withZone(DateTimeZone.UTC));
+	public final String iso8601DateFormat(DateTime dateTime) {
+    	return iso8601DateTimeFormatter.print(dateTime);
     }
+
+	public final String iso8601DateFormat(Date date) {
+    	return iso8601DateFormat(new DateTime(date));
+    }
+
+    public final String iso8601DateFormat() {
+    	return iso8601DateFormat(new DateTime());
+    }
+
+    public final DateTime iso8601DateParse(String toParse) { 
+		synchronized (iso8601SimpleDateFormat) {
+			try {
+				return new DateTime(iso8601SimpleDateFormat.parse(toParse));
+			} catch (ParseException e) {
+				return null;
+			}
+		}
+	}
+
 }

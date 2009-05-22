@@ -348,13 +348,13 @@ public class StubS3Connection implements S3Connection {
                             throwResponseException(412);
                     }
                     if (options.getIfModifiedSince() != null) {
-                        DateTime modifiedSince = dateService.dateTimeFromHeaderFormat(options.getIfModifiedSince());
+                        DateTime modifiedSince = dateService.rfc822DateParse(options.getIfModifiedSince());
                         if (modifiedSince.isAfter(object.getMetadata().getLastModified()))
                             throw new ExecutionException(new RuntimeException("after"));
 
                     }
                     if (options.getIfUnmodifiedSince() != null) {
-                        DateTime unmodifiedSince = dateService.dateTimeFromHeaderFormat(options.getIfUnmodifiedSince());
+                        DateTime unmodifiedSince = dateService.rfc822DateParse(options.getIfUnmodifiedSince());
                         if (unmodifiedSince.isAfter(object.getMetadata().getLastModified()))
                             throw new ExecutionException(new RuntimeException("after"));
                     }
@@ -435,13 +435,13 @@ public class StubS3Connection implements S3Connection {
                         throwResponseException(304);
                 }
                 if (options.getIfModifiedSince() != null) {
-                    DateTime modifiedSince = dateService.dateTimeFromHeaderFormat(options.getIfModifiedSince());
+                    DateTime modifiedSince = dateService.rfc822DateParse(options.getIfModifiedSince());
                     if (modifiedSince.isAfter(object.getMetadata().getLastModified()))
                         throw new ExecutionException(new RuntimeException("after"));
 
                 }
                 if (options.getIfUnmodifiedSince() != null) {
-                    DateTime unmodifiedSince = dateService.dateTimeFromHeaderFormat(options.getIfUnmodifiedSince());
+                    DateTime unmodifiedSince = dateService.rfc822DateParse(options.getIfUnmodifiedSince());
                     if (unmodifiedSince.isAfter(object.getMetadata().getLastModified()))
                         throw new ExecutionException(new RuntimeException("after"));
                 }

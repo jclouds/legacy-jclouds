@@ -81,7 +81,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
     // amazon is ok with up to 15 minutes off their time, so let's
     // be as lazy as possible.
     String createNewStamp() {
-	return dateService.timestampAsHeaderString();
+	return dateService.rfc822DateFormat();
     }
 
     public String timestampAsHeaderString() {

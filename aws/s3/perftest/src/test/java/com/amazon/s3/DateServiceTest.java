@@ -23,161 +23,283 @@
  */
 package com.amazon.s3;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import org.jclouds.aws.PerformanceTest;
-import org.jclouds.aws.s3.util.DateService;
-import org.joda.time.DateTime;
-import org.testng.annotations.Test;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.SimpleTimeZone;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 
+import org.jclouds.aws.PerformanceTest;
+import org.jclouds.aws.s3.util.DateService;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.testng.annotations.Test;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
+/* 
+ * TODO: Scrap any non-DateService references (eg Joda & Amazon) if/when
+ * we confirm that using the Java primitives is better/faster.
+ */
+
 /**
  * Compares performance of date operations
  * 
  * @author Adrian Cole
+ * @author James Murty
  */
 @Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "s3.DateTest")
 public class DateServiceTest extends PerformanceTest {
     Injector i = Guice.createInjector();
 
-    DateService utils = i.getInstance(DateService.class);
-    SimpleDateFormat dateParser;
+    DateService dateService = i.getInstance(DateService.class);
+
+    private TestData[] testData;
+    class TestData {
+        public final String iso8601DateString;
+        public final String rfc822DateString;
+        public final Date date;
+    	
+        TestData(String iso8601, String rfc822, Date date) {
+        	this.iso8601DateString = iso8601;
+        	this.rfc822DateString = rfc822;
+        	this.date = date;
+        }
+    }
+        
+    private long startTime;
+    
 
     public DateServiceTest() {
-	this.dateParser = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-	this.dateParser.setTimeZone(new SimpleTimeZone(0, "GMT"));
+        // Constant time test values, each TestData item must contain matching times!
+    	testData = new TestData[] {
+    		new TestData("2009-03-12T02:00:07.000Z", "Thu, 12 Mar 2009 02:00:07 GMT", new Date(1236823207000l)),    	
+    		new TestData("2009-03-14T04:00:07.000Z", "Sat, 14 Mar 2009 04:00:07 GMT", new Date(1237003207000l)),
+    		new TestData("2009-03-16T06:00:07.000Z", "Mon, 16 Mar 2009 06:00:07 GMT", new Date(1237183207000l)),    	
+    		new TestData("2009-03-18T08:00:07.000Z", "Wed, 18 Mar 2009 08:00:07 GMT", new Date(1237363207000l)),    	
+    		new TestData("2009-03-20T10:00:07.000Z", "Fri, 20 Mar 2009 10:00:07 GMT", new Date(1237543207000l))    	
+    	};
+    }
+    
+    
+    // Joda items for performance comparisons
+    private DateTimeFormatter headerDateFormat = DateTimeFormat
+    	.forPattern("EEE, dd MMM yyyy HH:mm:ss 'GMT'");
+
+    private DateTime jodaParseIso8601(String toParse) {
+    	return new DateTime(toParse);
     }
 
-    Date amazonDateFromString(String toParse) throws ParseException {
-	return this.dateParser.parse(toParse);
+    private DateTime jodaParseRfc822(String toParse) {
+    	return headerDateFormat.parseDateTime(toParse);
     }
 
-    private static String toParse = "2009-03-12T02:00:07.000Z";
+    private String timestampAsHeaderString() {
+    	return toHeaderString(new DateTime());
+    }
 
+    private String toHeaderString(DateTime date) {
+    	return headerDateFormat.print(date.withZone(DateTimeZone.UTC));
+    }
+
+    
+    private void startClock() {
+    	startTime = System.currentTimeMillis();
+    }
+    
+    private void printElapsedClockTime(String testName) {
+    	System.out.println(testName + " took " + 
+			(System.currentTimeMillis() - startTime) + "ms for "
+			+ LOOP_COUNT+ " loops");    	
+    }
+    
     @Test
-    public void testParseDateSameAsAmazon() throws ParseException,
-	    ExecutionException, InterruptedException {
-	Date java = dateParser.parse(toParse);
-	DateTime joda = utils.dateTimeFromXMLFormat(toParse);
-	assert java.equals(joda.toDate());
-    }
-
-    @Test
-    public void testTimeStampDateSameAsAmazon() throws ExecutionException,
-	    InterruptedException {
-	String java = AWSAuthConnection.httpDate();
-	String joda = utils.timestampAsHeaderString();
-	assert java.equals(joda);
-    }
-
-    @Test
-    public void testToHeaderString() throws ExecutionException,
-	    InterruptedException {
-	String joda1 = utils.toHeaderString(new DateTime());
-	String joda = utils.timestampAsHeaderString();
-	assert joda1.equals(joda);
-    }
-
-    @Test
-    void testTimeStampSerialResponseTime() throws ExecutionException,
-	    InterruptedException {
-	for (int i = 0; i < LOOP_COUNT; i++)
-	    utils.timestampAsHeaderString();
-    }
-
-    @Test
-    void testAmazonTimeStampSerialResponseTime() {
-	for (int i = 0; i < LOOP_COUNT; i++)
-	    AWSAuthConnection.httpDate();
-    }
-
-    @Test
-    void testTimeStampParallelResponseTime() throws InterruptedException,
-	    ExecutionException {
-	CompletionService<Boolean> completer = new ExecutorCompletionService<Boolean>(
-		exec);
-	for (int i = 0; i < LOOP_COUNT; i++)
-	    completer.submit(new Callable<Boolean>() {
-		public Boolean call() throws ExecutionException,
-			InterruptedException {
-		    utils.timestampAsHeaderString();
-		    return true;
-		}
-	    });
-	for (int i = 0; i < LOOP_COUNT; i++)
-	    assert completer.take().get();
+    public void testIso8601DateParse() throws ExecutionException, 
+    	InterruptedException 
+    {
+    	DateTime dsDate = dateService.iso8601DateParse(testData[0].iso8601DateString);
+        assert testData[0].date.equals(dsDate.toDate());
     }
 
     @Test
-    void testAmazonTimeStampParallelResponseTime() throws InterruptedException,
-	    ExecutionException {
-	CompletionService<Boolean> completer = new ExecutorCompletionService<Boolean>(
-		exec);
-	for (int i = 0; i < LOOP_COUNT; i++)
-	    completer.submit(new Callable<Boolean>() {
-		public Boolean call() {
-		    AWSAuthConnection.httpDate();
-		    return true;
-		}
-	    });
-	for (int i = 0; i < LOOP_COUNT; i++)
-	    assert completer.take().get();
+    public void testRfc822DateParse() throws ExecutionException, 
+    	InterruptedException 
+    {
+    	DateTime dsDate = dateService.rfc822DateParse(testData[0].rfc822DateString);
+        assert testData[0].date.equals(dsDate.toDate());
     }
 
     @Test
-    void testParseDateSerialResponseTime() throws ExecutionException,
-	    InterruptedException {
-	for (int i = 0; i < LOOP_COUNT; i++)
-	    utils.dateTimeFromXMLFormat(toParse);
+    public void testIso8601DateFormat() throws ExecutionException, 
+    	InterruptedException 
+    {
+    	String dsString = dateService.iso8601DateFormat(testData[0].date);
+        assert testData[0].iso8601DateString.equals(dsString);
+    }
+
+    @Test
+    public void testRfc822DateFormat() throws ExecutionException, 
+    	InterruptedException 
+    {    	
+    	String dsString = dateService.rfc822DateFormat(testData[0].date);
+        assert testData[0].rfc822DateString.equals(dsString);
+    }
+
+    @Test
+    void testIso8601DateFormatResponseTime() throws ExecutionException,
+        InterruptedException {
+    for (int i = 0; i < LOOP_COUNT; i++)
+    	dateService.iso8601DateFormat();
+    }
+
+    @Test
+    void testRfc822DateFormatResponseTime() throws ExecutionException,
+        InterruptedException {
+    for (int i = 0; i < LOOP_COUNT; i++)
+    	dateService.rfc822DateFormat();
+    }
+    
+    @Test
+    void testFormatIso8601DateInParallel() throws InterruptedException,
+        ExecutionException {
+    CompletionService<Boolean> completer = new ExecutorCompletionService<Boolean>(
+        exec);
+    startClock();    
+    for (int i = 0; i < LOOP_COUNT; i++) {
+    	final TestData myData = testData[i % testData.length];
+        completer.submit(new Callable<Boolean>() {
+        public Boolean call() throws ExecutionException,
+            InterruptedException 
+        {
+    		String dsString = dateService.iso8601DateFormat(myData.date);
+    		/*
+    		 *  Comment-in the assert below to test thread safety.
+    		 *  Comment it out to test performance
+    		 */
+    		assert myData.iso8601DateString.equals(dsString);
+    		return true;
+        }
+        });
+    }
+    for (int i = 0; i < LOOP_COUNT; i++)
+        assert completer.take().get();
+    printElapsedClockTime("testFormatIso8601DateInParallel");
+    }
+
+    @Test
+    void testFormatAmazonDateInParallel() throws InterruptedException,
+        ExecutionException {
+    CompletionService<Boolean> completer = new ExecutorCompletionService<Boolean>(
+        exec);
+    startClock();    
+    for (int i = 0; i < LOOP_COUNT; i++)
+        completer.submit(new Callable<Boolean>() {
+        public Boolean call() {
+            AWSAuthConnection.httpDate();
+            return true;
+        }
+        });
+    for (int i = 0; i < LOOP_COUNT; i++)
+        assert completer.take().get();
+    printElapsedClockTime("testFormatAmazonDateInParallel");
+    }
+
+    @Test
+    void testFormatJodaDateInParallel() throws InterruptedException,
+        ExecutionException {
+    CompletionService<Boolean> completer = new ExecutorCompletionService<Boolean>(
+        exec);
+    startClock();    
+    for (int i = 0; i < LOOP_COUNT; i++) {
+    	final TestData myData = testData[i % testData.length];
+        completer.submit(new Callable<Boolean>() {
+        public Boolean call() {
+        	String jodaString = toHeaderString(new DateTime(myData.date));
+    		assert myData.rfc822DateString.equals(jodaString);
+            return true;
+        }
+        });
+    }
+    for (int i = 0; i < LOOP_COUNT; i++)
+        assert completer.take().get();
+    printElapsedClockTime("testFormatJodaDateInParallel");
+    }
+
+    @Test
+    void testIso8601ParseDateSerialResponseTime() throws ExecutionException,
+        InterruptedException {
+    for (int i = 0; i < LOOP_COUNT; i++)
+    	dateService.iso8601DateParse(testData[0].iso8601DateString);
     }
 
     @Test
     void testAmazonParseDateSerialResponseTime() {
-	for (int i = 0; i < LOOP_COUNT; i++)
-	    AWSAuthConnection.httpDate();
+    for (int i = 0; i < LOOP_COUNT; i++)
+        AWSAuthConnection.httpDate();
     }
 
     @Test
-    void testParseDateParallelResponseTime() throws InterruptedException,
-	    ExecutionException {
-	CompletionService<Boolean> completer = new ExecutorCompletionService<Boolean>(
-		exec);
-
-	for (int i = 0; i < LOOP_COUNT; i++)
-	    completer.submit(new Callable<Boolean>() {
-		public Boolean call() throws ExecutionException,
-			InterruptedException {
-		    utils.dateTimeFromXMLFormat(toParse);
-		    return true;
-		}
-	    });
-	for (int i = 0; i < LOOP_COUNT; i++)
-	    assert completer.take().get();
+    void testParseIso8601DateInParallel() throws InterruptedException,
+        ExecutionException {
+    CompletionService<Boolean> completer = new ExecutorCompletionService<Boolean>(
+        exec);
+    startClock();
+    for (int i = 0; i < LOOP_COUNT; i++) {
+    	final TestData myData = testData[i % testData.length];
+        completer.submit(new Callable<Boolean>() {
+        public Boolean call() throws ExecutionException,
+            InterruptedException {
+        	DateTime dsDate = dateService.iso8601DateParse(myData.iso8601DateString);
+            assert myData.date.equals(dsDate.toDate());                	
+			return true;
+        }
+        });
+    }
+    for (int i = 0; i < LOOP_COUNT; i++)
+        assert completer.take().get();
+    printElapsedClockTime("testParseIso8601DateInParallel");
     }
 
     @Test
-    void testAmazonParseDateParallelResponseTime() throws InterruptedException,
-	    ExecutionException {
-	CompletionService<Boolean> completer = new ExecutorCompletionService<Boolean>(
-		exec);
+    void testParseAmazonDateInParallel() throws InterruptedException,
+        ExecutionException {
+    CompletionService<Boolean> completer = new ExecutorCompletionService<Boolean>(
+        exec);
+    startClock();
+    for (int i = 0; i < LOOP_COUNT; i++)
+        completer.submit(new Callable<Boolean>() {
+        public Boolean call() {
+            AWSAuthConnection.httpDate();
+            return true;
+        }
+        });
+    for (int i = 0; i < LOOP_COUNT; i++)
+        assert completer.take().get();
+    printElapsedClockTime("testParseAmazonDateInParallel");
+    }
 
-	for (int i = 0; i < LOOP_COUNT; i++)
-	    completer.submit(new Callable<Boolean>() {
-		public Boolean call() {
-		    AWSAuthConnection.httpDate();
-		    return true;
-		}
-	    });
-	for (int i = 0; i < LOOP_COUNT; i++)
-	    assert completer.take().get();
+    @Test
+    void testParseJodaDateInParallel() throws InterruptedException,
+        ExecutionException {
+    CompletionService<Boolean> completer = new ExecutorCompletionService<Boolean>(
+        exec);
+    startClock();
+    for (int i = 0; i < LOOP_COUNT; i++) {
+    	final TestData myData = testData[i % testData.length];
+        completer.submit(new Callable<Boolean>() {
+        public Boolean call() {
+        	Date jodaDate = jodaParseIso8601(myData.iso8601DateString).toDate();            
+            assert myData.date.equals(jodaDate);
+            return true;
+        }
+        });
+    }
+    for (int i = 0; i < LOOP_COUNT; i++)
+        assert completer.take().get();
+    printElapsedClockTime("testParseJodaDateInParallel");
     }
 
 }

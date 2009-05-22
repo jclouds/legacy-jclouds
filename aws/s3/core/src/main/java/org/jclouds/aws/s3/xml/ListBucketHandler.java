@@ -82,7 +82,7 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<S3Bucket> {
                     .toString());
         } else if (qName.equals("LastModified")) {
             currentObjectMetadata.setLastModified(dateParser
-                    .dateTimeFromXMLFormat(currentText.toString()));
+                    .iso8601DateParse(currentText.toString()));
         } else if (qName.equals("ETag")) {
             currentObjectMetadata.setMd5(S3Utils.fromHexString(currentText
                     .toString().replaceAll("\"", "")));

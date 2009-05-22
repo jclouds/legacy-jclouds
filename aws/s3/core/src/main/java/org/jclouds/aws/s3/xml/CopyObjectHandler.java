@@ -62,7 +62,7 @@ public class CopyObjectHandler extends
 		    .replaceAll("\"", "")));
 	} else if (qName.equals("LastModified")) {
 	    metadata.setLastModified(dateParser
-		    .dateTimeFromXMLFormat(currentText.toString()));
+		    .iso8601DateParse(currentText.toString()));
 	}
 	currentText = new StringBuilder();
     }

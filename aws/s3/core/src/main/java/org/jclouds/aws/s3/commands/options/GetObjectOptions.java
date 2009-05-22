@@ -124,7 +124,7 @@ public class GetObjectOptions extends BaseHttpRequestOptions {
 	checkArgument(getIfUnmodifiedSince() == null,
 		"ifUnmodifiedSince() is not compatible with ifModifiedSince()");
 	this.headers.put(HttpHeaders.IF_MODIFIED_SINCE,
-		dateService.toHeaderString(checkNotNull(ifModifiedSince,
+		dateService.rfc822DateFormat(checkNotNull(ifModifiedSince,
 			"ifModifiedSince")));
 	return this;
     }
@@ -153,7 +153,7 @@ public class GetObjectOptions extends BaseHttpRequestOptions {
 	checkArgument(getIfModifiedSince() == null,
 		"ifModifiedSince() is not compatible with ifUnmodifiedSince()");
 	this.headers.put(HttpHeaders.IF_UNMODIFIED_SINCE, dateService
-		.toHeaderString(checkNotNull(ifUnmodifiedSince,
+		.rfc822DateFormat(checkNotNull(ifUnmodifiedSince,
 			"ifUnmodifiedSince")));
 	return this;
     }

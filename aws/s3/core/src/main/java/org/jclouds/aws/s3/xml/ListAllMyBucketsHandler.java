@@ -73,7 +73,7 @@ public class ListAllMyBucketsHandler extends
 	    currentS3Bucket = new S3Bucket.Metadata(currentText.toString());
 	} else if (qName.equals("CreationDate")) {
 	    currentS3Bucket.setCreationDate(dateParser
-		    .dateTimeFromXMLFormat(currentText.toString()));
+		    .iso8601DateParse(currentText.toString()));
 	}
 	currentText = new StringBuilder();
     }

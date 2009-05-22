@@ -110,7 +110,7 @@ public class ParseMetadataFromHeaders extends
 	String lastModified = getResponse().getFirstHeaderOrNull(
 		HttpHeaders.LAST_MODIFIED);
 	metadata.setLastModified(dateParser
-		.dateTimeFromHeaderFormat(lastModified));
+		.rfc822DateParse(lastModified));
 	if (metadata.getLastModified() == null)
 	    throw new HttpException("could not parse: "
 		    + HttpHeaders.LAST_MODIFIED + ": " + lastModified);

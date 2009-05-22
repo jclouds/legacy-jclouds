@@ -179,7 +179,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
         checkState(getIfUnmodifiedSince() == null,
                 "ifUnmodifiedSince() is not compatible with ifModifiedSince()");
         replaceHeader("x-amz-copy-source-if-modified-since",
-                dateService.toHeaderString(checkNotNull(ifModifiedSince,
+                dateService.rfc822DateFormat(checkNotNull(ifModifiedSince,
                         "ifModifiedSince")));
         return this;
     }
@@ -196,7 +196,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
         checkState(getIfModifiedSince() == null,
                 "ifModifiedSince() is not compatible with ifUnmodifiedSince()");
         replaceHeader("x-amz-copy-source-if-unmodified-since", dateService
-                .toHeaderString(checkNotNull(ifUnmodifiedSince,
+                .rfc822DateFormat(checkNotNull(ifUnmodifiedSince,
                 "ifUnmodifiedSince")));
         return this;
     }
