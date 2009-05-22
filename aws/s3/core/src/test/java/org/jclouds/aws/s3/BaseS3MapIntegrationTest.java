@@ -51,8 +51,13 @@ public abstract class BaseS3MapIntegrationTest<T> extends S3IntegrationTest {
     protected BaseS3Map<T> map;
     protected Map<String, String> fiveStrings = ImmutableMap.of("one", "apple",
             "two", "bear", "three", "candy", "four", "dogma", "five", "emma");
-    protected Map<String, byte[]> fiveBytes = ImmutableMap.of("one", "apple"
-            .getBytes(), "two", "bear".getBytes(), "three", "candy".getBytes(),
+    
+    // IMPORTANT: Java 5 struggles to correctly infer types in some cases which affects 
+    // this ImmutableMap. The explicit typing works around the issue. Java 6 seems to cope.
+    // http://groups.google.com/group/google-collections-users/browse_thread/thread/df70c482c93a25d8
+    protected Map<String, byte[]> fiveBytes = ImmutableMap.<String, byte[]>of(
+    		"one", "apple".getBytes(),  // Explicit cast necessary for Java 5  
+    		"two", "bear".getBytes(), "three", "candy".getBytes(),
             "four", "dogma".getBytes(), "five", "emma".getBytes());
     protected Map<String, InputStream> fiveInputs;
     protected Map<String, File> fiveFiles;
