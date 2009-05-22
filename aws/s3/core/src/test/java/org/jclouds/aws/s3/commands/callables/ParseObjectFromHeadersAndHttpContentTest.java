@@ -23,16 +23,19 @@
  */
 package org.jclouds.aws.s3.commands.callables;
 
+import static org.easymock.EasyMock.expect;
+import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.replay;
+import static org.testng.Assert.assertEquals;
+
 import org.apache.commons.io.IOUtils;
-import static org.easymock.classextension.EasyMock.*;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.S3Object.Metadata;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpHeaders;
 import org.jclouds.http.HttpResponse;
-import static org.testng.Assert.assertEquals;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 /**
@@ -43,13 +46,13 @@ public class ParseObjectFromHeadersAndHttpContentTest {
     ParseObjectFromHeadersAndHttpContent callable;
     ParseMetadataFromHeaders metadataParser;
 
-    @BeforeMethod
+    @BeforeTest
     void setUp() {
         metadataParser = createMock(ParseMetadataFromHeaders.class);
         callable = new ParseObjectFromHeadersAndHttpContent(metadataParser);
     }
 
-    @AfterMethod
+    @AfterTest
     void tearDown() {
         callable = null;
     }

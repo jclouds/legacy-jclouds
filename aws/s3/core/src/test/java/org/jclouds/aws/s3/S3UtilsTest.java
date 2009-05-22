@@ -44,7 +44,7 @@ import java.util.concurrent.ExecutorCompletionService;
  *
  * @author Adrian Cole
  */
-@Test(groups = "performance", sequential = true, testName = "s3.PerformanceTest")
+@Test(groups = "performance", sequential = true, testName = "s3.S3UtilsTest")
 public class S3UtilsTest extends PerformanceTest {
 
     @Test(dataProvider = "hmacsha1")

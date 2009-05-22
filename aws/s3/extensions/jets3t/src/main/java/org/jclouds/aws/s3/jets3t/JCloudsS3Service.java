@@ -40,277 +40,252 @@ import org.jets3t.service.acl.AccessControlList;
 import org.jets3t.service.model.S3Bucket;
 import org.jets3t.service.model.S3BucketLoggingStatus;
 import org.jets3t.service.model.S3Object;
-import org.jets3t.service.model.S3Owner;
 import org.jets3t.service.security.AWSCredentials;
 
 import com.google.inject.Module;
 
 /**
  * A JetS3t S3Service implemented by JClouds
- *
+ * 
  * @author Adrian Cole
  * @author James Murty
  */
 public class JCloudsS3Service extends S3Service {
 
-    private static final long serialVersionUID = 1L;
+   private static final long serialVersionUID = 1L;
 
-    private final S3Context context;
-    private final S3Connection connection;
+   private final S3Context context;
+   private final S3Connection connection;
 
-    private final long requestTimeoutMilliseconds = 10000;
+   private final long requestTimeoutMilliseconds = 10000;
 
-    /**
-     * Initializes a JClouds context to S3.
-     *
-     * @param awsCredentials - credentials to access S3
-     * @param modules        - Module that configures a FutureHttpClient, if not specified,
-     *                       default is URLFetchServiceClientModule
-     * @throws S3ServiceException
-     */
-    protected JCloudsS3Service(AWSCredentials awsCredentials, Module... modules)
+   /**
+    * Initializes a JClouds context to S3.
+    * 
+    * @param awsCredentials
+    *           - credentials to access S3
+    * @param modules
+    *           - Module that configures a FutureHttpClient, if not specified, default is
+    *           URLFetchServiceClientModule
+    * @throws S3ServiceException
+    */
+   protected JCloudsS3Service(AWSCredentials awsCredentials, Module... modules)
             throws S3ServiceException {
-        super(awsCredentials);
-        context = S3ContextFactory.createS3Context(awsCredentials
-                .getAccessKey(), awsCredentials.getSecretKey(), modules);
-        connection = context.getConnection();
-    }
+      super(awsCredentials);
+      context = S3ContextFactory.createS3Context(awsCredentials.getAccessKey(), awsCredentials
+               .getSecretKey(), modules);
+      connection = context.getConnection();
+   }
 
-    @Override
-    public int checkBucketStatus(final String bucketName) throws S3ServiceException {
-        // TODO Unimplemented
-        throw new UnsupportedOperationException();
-    }
+   @Override
+   public int checkBucketStatus(final String bucketName) throws S3ServiceException {
+      // TODO Unimplemented
+      throw new UnsupportedOperationException();
+   }
 
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    protected Map copyObjectImpl(String sourceBucketName,
-                                 String sourceObjectKey, String destinationBucketName,
-                                 String destinationObjectKey, AccessControlList acl,
-                                 Map destinationMetadata, Calendar ifModifiedSince,
-                                 Calendar ifUnmodifiedSince, String[] ifMatchTags,
-                                 String[] ifNoneMatchTags) throws S3ServiceException {
-        // TODO Unimplemented
-        throw new UnsupportedOperationException();
-    }
+   /**
+    * {@inheritDoc}
+    */
+   @SuppressWarnings("unchecked")
+   @Override
+   protected Map copyObjectImpl(String sourceBucketName, String sourceObjectKey,
+            String destinationBucketName, String destinationObjectKey, AccessControlList acl,
+            Map destinationMetadata, Calendar ifModifiedSince, Calendar ifUnmodifiedSince,
+            String[] ifMatchTags, String[] ifNoneMatchTags) throws S3ServiceException {
+      // TODO Unimplemented
+      throw new UnsupportedOperationException();
+   }
 
-    @Override
-    protected S3Bucket createBucketImpl(String bucketName, String location,
-        AccessControlList acl) throws S3ServiceException 
-    {
-    	if (location != null)
-            throw new UnsupportedOperationException("Bucket location is not yet supported");
-    	if (acl != null)
-            throw new UnsupportedOperationException("Bucket ACL is not yet supported");
-    	
-        try {
-	    	if (connection.putBucketIfNotExists(bucketName).get()) {
-	    		// Bucket created.
-	    	}
-        } catch (Exception e) {
-            Utils.<S3ServiceException>rethrowIfRuntimeOrSameType(e);
-            throw new S3ServiceException(
-                    "error creating bucket: " + bucketName, e);
-        }
-		return new S3Bucket(bucketName);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @see S3Connection#deleteBucketIfEmpty(String)
-     */
-    @Override
-    protected void deleteBucketImpl(String bucketName)
+   @Override
+   protected S3Bucket createBucketImpl(String bucketName, String location, AccessControlList acl)
             throws S3ServiceException {
-        try {
-            connection.deleteBucketIfEmpty(bucketName).get(
-                    requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
-        } catch (Exception e) {
-            Utils.<S3ServiceException>rethrowIfRuntimeOrSameType(e);
-            throw new S3ServiceException(
-                    "error deleting bucket: " + bucketName, e);
-        }
-    }
+      if (location != null)
+         throw new UnsupportedOperationException("Bucket location is not yet supported");
+      if (acl != null)
+         throw new UnsupportedOperationException("Bucket ACL is not yet supported");
 
-    /**
-     * {@inheritDoc}
-     *
-     * @see S3Connection#deleteObject(String, String)
-     */
-    @Override
-    protected void deleteObjectImpl(String bucketName, String objectKey)
+      try {
+         if (connection.putBucketIfNotExists(bucketName).get()) {
+            // Bucket created.
+         }
+      } catch (Exception e) {
+         Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
+         throw new S3ServiceException("error creating bucket: " + bucketName, e);
+      }
+      return new S3Bucket(bucketName);
+   }
+
+   /**
+    * {@inheritDoc}
+    * 
+    * @see S3Connection#deleteBucketIfEmpty(String)
+    */
+   @Override
+   protected void deleteBucketImpl(String bucketName) throws S3ServiceException {
+      try {
+         connection.deleteBucketIfEmpty(bucketName).get(requestTimeoutMilliseconds,
+                  TimeUnit.MILLISECONDS);
+      } catch (Exception e) {
+         Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
+         throw new S3ServiceException("error deleting bucket: " + bucketName, e);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    * 
+    * @see S3Connection#deleteObject(String, String)
+    */
+   @Override
+   protected void deleteObjectImpl(String bucketName, String objectKey) throws S3ServiceException {
+      try {
+         connection.deleteObject(bucketName, objectKey).get(requestTimeoutMilliseconds,
+                  TimeUnit.MILLISECONDS);
+      } catch (Exception e) {
+         Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
+         throw new S3ServiceException(String.format("error deleting object: %1$s:%2$s", bucketName,
+                  objectKey), e);
+      }
+   }
+
+   @Override
+   protected AccessControlList getBucketAclImpl(String bucketName) throws S3ServiceException {
+      // TODO Unimplemented
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   protected String getBucketLocationImpl(String bucketName) throws S3ServiceException {
+      // TODO Unimplemented
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   protected S3BucketLoggingStatus getBucketLoggingStatusImpl(String bucketName)
             throws S3ServiceException {
-        try {
-            connection.deleteObject(bucketName, objectKey).get(
-                    requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
-        } catch (Exception e) {
-            Utils.<S3ServiceException>rethrowIfRuntimeOrSameType(e);
-            throw new S3ServiceException(String.format(
-                "error deleting object: %1$s:%2$s", bucketName, objectKey), e);
-        }
-    }
+      // TODO Unimplemented
+      throw new UnsupportedOperationException();
+   }
 
-    @Override
-    protected AccessControlList getBucketAclImpl(String bucketName)
+   @Override
+   protected AccessControlList getObjectAclImpl(String bucketName, String objectKey)
             throws S3ServiceException {
-        // TODO Unimplemented
-        throw new UnsupportedOperationException();
-    }
+      // TODO Unimplemented
+      throw new UnsupportedOperationException();
+   }
 
-    @Override
-    protected String getBucketLocationImpl(String bucketName)
+   @Override
+   protected S3Object getObjectDetailsImpl(String bucketName, String objectKey,
+            Calendar ifModifiedSince, Calendar ifUnmodifiedSince, String[] ifMatchTags,
+            String[] ifNoneMatchTags) throws S3ServiceException {
+      try {
+         if (ifModifiedSince != null)
+            throw new IllegalArgumentException("ifModifiedSince");
+         if (ifUnmodifiedSince != null)
+            throw new IllegalArgumentException("ifUnmodifiedSince");
+         if (ifMatchTags != null)
+            throw new IllegalArgumentException("ifMatchTags");
+         if (ifNoneMatchTags != null)
+            throw new IllegalArgumentException("ifNoneMatchTags");
+
+         return Util.convertObjectHead(connection.headObject(bucketName, objectKey).get());
+      } catch (Exception e) {
+         Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
+         throw new S3ServiceException(String.format("error retrieving object head: %1$s:%2$s",
+                  bucketName, objectKey), e);
+      }
+   }
+
+   @Override
+   protected S3Object getObjectImpl(String bucketName, String objectKey, Calendar ifModifiedSince,
+            Calendar ifUnmodifiedSince, String[] ifMatchTags, String[] ifNoneMatchTags,
+            Long byteRangeStart, Long byteRangeEnd) throws S3ServiceException {
+      try {
+         GetObjectOptions options = Util.convertOptions(ifModifiedSince, ifUnmodifiedSince,
+                  ifMatchTags, ifNoneMatchTags);
+         return Util.convertObject(connection.getObject(bucketName, objectKey, options).get());
+      } catch (Exception e) {
+         Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
+         throw new S3ServiceException(String.format("error retrieving object: %1$s:%2$s",
+                  bucketName, objectKey), e);
+      }
+   }
+
+   @Override
+   public boolean isBucketAccessible(String bucketName) throws S3ServiceException {
+      // TODO Unimplemented
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   protected boolean isRequesterPaysBucketImpl(String bucketName) throws S3ServiceException {
+      // TODO Unimplemented
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   protected S3Bucket[] listAllBucketsImpl() throws S3ServiceException {
+      try {
+         List<org.jclouds.aws.s3.domain.S3Bucket.Metadata> jcBucketList = connection
+                  .listOwnedBuckets().get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
+         return Util.convertBuckets(jcBucketList);
+      } catch (Exception e) {
+         Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
+         throw new S3ServiceException("error listing buckets", e);
+      }
+   }
+
+   @Override
+   protected S3ObjectsChunk listObjectsChunkedImpl(String bucketName, String prefix,
+            String delimiter, long maxListingLength, String priorLastKey, boolean completeListing)
             throws S3ServiceException {
-        // TODO Unimplemented
-        throw new UnsupportedOperationException();
-    }
+      // TODO Unimplemented
+      throw new UnsupportedOperationException();
+   }
 
-    @Override
-    protected S3BucketLoggingStatus getBucketLoggingStatusImpl(String bucketName)
+   @Override
+   protected S3Object[] listObjectsImpl(String bucketName, String prefix, String delimiter,
+            long maxListingLength) throws S3ServiceException {
+      // TODO Unimplemented
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   protected void putBucketAclImpl(String bucketName, AccessControlList acl)
             throws S3ServiceException {
-        // TODO Unimplemented
-        throw new UnsupportedOperationException();
-    }
+      // TODO Unimplemented
+      throw new UnsupportedOperationException();
 
-    @Override
-    protected AccessControlList getObjectAclImpl(String bucketName,
-                                                 String objectKey) throws S3ServiceException {
-        // TODO Unimplemented
-        throw new UnsupportedOperationException();
-    }
+   }
 
-    @Override
-    protected S3Object getObjectDetailsImpl(String bucketName,
-                                            String objectKey, Calendar ifModifiedSince,
-                                            Calendar ifUnmodifiedSince, String[] ifMatchTags,
-                                            String[] ifNoneMatchTags) throws S3ServiceException 
-    {
-        try {        	
-        	if (ifModifiedSince != null)
-                throw new IllegalArgumentException("ifModifiedSince");
-        	if (ifUnmodifiedSince != null)
-                throw new IllegalArgumentException("ifUnmodifiedSince");
-        	if (ifMatchTags != null)
-                throw new IllegalArgumentException("ifMatchTags");
-        	if (ifNoneMatchTags != null)
-                throw new IllegalArgumentException("ifNoneMatchTags");
-        	
-        	return Util.convertObjectHead(
-    			connection.headObject(bucketName, objectKey).get());
-        } catch (Exception e) {
-            Utils.<S3ServiceException>rethrowIfRuntimeOrSameType(e);
-            throw new S3ServiceException(String.format(
-                "error retrieving object head: %1$s:%2$s", bucketName, objectKey), e);
-        }
-    }
-
-    @Override
-    protected S3Object getObjectImpl(String bucketName, String objectKey,
-                                     Calendar ifModifiedSince, Calendar ifUnmodifiedSince,
-                                     String[] ifMatchTags, String[] ifNoneMatchTags,
-                                     Long byteRangeStart, Long byteRangeEnd) throws S3ServiceException 
-     {
-        try {
-        	GetObjectOptions options = Util.convertOptions(
-        			ifModifiedSince, ifUnmodifiedSince, ifMatchTags, ifNoneMatchTags);
-        	return Util.convertObject(
-    			connection.getObject(bucketName, objectKey, options).get());
-        } catch (Exception e) {
-            Utils.<S3ServiceException>rethrowIfRuntimeOrSameType(e);
-            throw new S3ServiceException(String.format(
-                "error retrieving object: %1$s:%2$s", bucketName, objectKey), e);
-        }
-    }
-
-    @Override
-    public boolean isBucketAccessible(String bucketName)
+   @Override
+   protected void putObjectAclImpl(String bucketName, String objectKey, AccessControlList acl)
             throws S3ServiceException {
-        // TODO Unimplemented
-        throw new UnsupportedOperationException();
-    }
+      // TODO Unimplemented
+      throw new UnsupportedOperationException();
 
-    @Override
-    protected boolean isRequesterPaysBucketImpl(String bucketName)
+   }
+
+   @Override
+   protected S3Object putObjectImpl(String bucketName, S3Object object) throws S3ServiceException {
+      // TODO Unimplemented
+      return null;
+   }
+
+   @Override
+   protected void setBucketLoggingStatusImpl(String bucketName, S3BucketLoggingStatus status)
             throws S3ServiceException {
-        // TODO Unimplemented
-        throw new UnsupportedOperationException();
-    }
+      // TODO Unimplemented
+      throw new UnsupportedOperationException();
 
-    @Override
-    protected S3Bucket[] listAllBucketsImpl() throws S3ServiceException {
-        try {
-            List<org.jclouds.aws.s3.domain.S3Bucket.Metadata> jcBucketList = connection
-                    .listOwnedBuckets().get(requestTimeoutMilliseconds,
-                            TimeUnit.MILLISECONDS);
-            return Util.convertBuckets(jcBucketList);
-        } catch (Exception e) {
-            Utils.<S3ServiceException>rethrowIfRuntimeOrSameType(e);
-            throw new S3ServiceException("error listing buckets", e);
-        }
-    }
+   }
 
-    @Override
-    protected S3ObjectsChunk listObjectsChunkedImpl(String bucketName,
-                                                    String prefix, String delimiter, long maxListingLength,
-                                                    String priorLastKey, boolean completeListing)
+   @Override
+   protected void setRequesterPaysBucketImpl(String bucketName, boolean requesterPays)
             throws S3ServiceException {
-        // TODO Unimplemented
-        throw new UnsupportedOperationException();
-    }
+      // TODO Unimplemented
+      throw new UnsupportedOperationException();
 
-    @Override
-    protected S3Object[] listObjectsImpl(String bucketName, String prefix,
-                                         String delimiter, long maxListingLength) throws S3ServiceException {
-        // TODO Unimplemented
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    protected void putBucketAclImpl(String bucketName, AccessControlList acl)
-            throws S3ServiceException {
-        // TODO Unimplemented
-        throw new UnsupportedOperationException();
-
-    }
-
-    @Override
-    protected void putObjectAclImpl(String bucketName, String objectKey,
-                                    AccessControlList acl) throws S3ServiceException {
-        // TODO Unimplemented
-        throw new UnsupportedOperationException();
-
-    }
-
-    @Override
-    protected S3Object putObjectImpl(String bucketName, S3Object object)
-            throws S3ServiceException {
-        // TODO Unimplemented
-        return null;
-    }
-
-    @Override
-    protected void setBucketLoggingStatusImpl(String bucketName,
-                                              S3BucketLoggingStatus status) throws S3ServiceException {
-        // TODO Unimplemented
-        throw new UnsupportedOperationException();
-
-    }
-
-    @Override
-    protected void setRequesterPaysBucketImpl(String bucketName,
-                                              boolean requesterPays) throws S3ServiceException {
-        // TODO Unimplemented
-        throw new UnsupportedOperationException();
-
-    }
-
-	@Override
-	protected S3Owner getAccountOwnerImpl() throws S3ServiceException {
-        // TODO Unimplemented
-        throw new UnsupportedOperationException();
-	}
+   }
 
 }

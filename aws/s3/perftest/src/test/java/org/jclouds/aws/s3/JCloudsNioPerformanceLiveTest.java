@@ -21,14 +21,14 @@
  * under the License.
  * ====================================================================
  */
-package com.amazon.s3;
+package org.jclouds.aws.s3;
 
+import java.util.Properties;
 
-import com.google.inject.Module;
 import org.jclouds.http.httpnio.config.HttpNioConnectionPoolClientModule;
 import org.testng.annotations.Test;
 
-import java.util.Properties;
+import com.google.inject.Module;
 
 @Test(sequential = true, testName = "s3.JCloudsNioPerformanceLiveTest", groups = {"live"})
 public class JCloudsNioPerformanceLiveTest extends BaseJCloudsPerformance {

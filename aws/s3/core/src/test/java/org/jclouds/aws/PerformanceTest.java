@@ -23,31 +23,31 @@
  */
 package org.jclouds.aws;
 
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
 /**
  * // TODO: Adrian: Document this!
- *
+ * 
  * @author Adrian Cole
  */
-@Test(groups = "performance", sequential = true, testName = "s3.PerformanceTest")
+@Test(groups = "performance")
 public class PerformanceTest {
-    protected static int LOOP_COUNT = 1000;
-    protected ExecutorService exec;
+   protected static int LOOP_COUNT = 1000;
+   protected ExecutorService exec;
 
-    @BeforeMethod
-    public void setupExecutorService() {
-        exec = Executors.newCachedThreadPool();
-    }
+   @BeforeTest
+   public void setupExecutorService() {
+      exec = Executors.newCachedThreadPool();
+   }
 
-    @AfterMethod
-    public void teardownExecutorService() {
-        exec.shutdownNow();
-        exec = null;
-    }
+   @AfterTest
+   public void teardownExecutorService() {
+      exec.shutdownNow();
+      exec = null;
+   }
 }

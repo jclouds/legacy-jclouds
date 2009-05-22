@@ -24,71 +24,62 @@
 package org.jclouds.aws.s3;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import org.jclouds.aws.s3.domain.S3Bucket;
-import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.aws.s3.util.S3Utils;
 import static org.testng.Assert.assertEquals;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
-import org.testng.annotations.Test;
 
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.s3.util.S3Utils;
+import org.testng.annotations.Optional;
+import org.testng.annotations.Parameters;
+import org.testng.annotations.Test;
 
 /**
  * Tests connection by listing all the buckets and their size
- *
+ * 
  * @author Adrian Cole
  */
 @Test(testName = "s3.S3ConnectionIntegrationTest")
 public class S3ConnectionIntegrationTest extends S3IntegrationTest {
 
-    @Test(groups = {"integration"})
-    void testListBuckets() throws Exception {
-        List<S3Bucket.Metadata> myBuckets = client.listOwnedBuckets().get(10,
-                TimeUnit.SECONDS);
-        for (S3Bucket.Metadata bucket : myBuckets) {
-            context.createInputStreamMap(bucket.getName()).size();
-        }
-    }
+   @Test(groups = { "integration" })
+   void testListBuckets() throws Exception {
+      client.listOwnedBuckets().get(10, TimeUnit.SECONDS);
+   }
 
-    private static final String sysHttpStreamUrl = System
-            .getProperty("jclouds.s3.httpstream.url");
-    private static final String sysHttpStreamMd5 = System
-            .getProperty("jclouds.s3.httpstream.md5");
+   private static final String sysHttpStreamUrl = System.getProperty("jclouds.s3.httpstream.url");
+   private static final String sysHttpStreamMd5 = System.getProperty("jclouds.s3.httpstream.md5");
 
-    @Test(groups = {"integration"})
-    @Parameters({"jclouds.s3.httpstream.url", "jclouds.s3.httpstream.md5"})
-    public void testCopyUrl(@Optional String httpStreamUrl,
-                            @Optional String httpStreamMd5) throws Exception {
-        httpStreamUrl = checkNotNull(httpStreamUrl != null ? httpStreamUrl
-                : sysHttpStreamUrl, "httpStreamUrl");
+   @Test(groups = { "integration" })
+   @Parameters( { "jclouds.s3.httpstream.url", "jclouds.s3.httpstream.md5" })
+   public void testCopyUrl(@Optional String httpStreamUrl, @Optional String httpStreamMd5)
+            throws Exception {
+      httpStreamUrl = checkNotNull(httpStreamUrl != null ? httpStreamUrl : sysHttpStreamUrl,
+               "httpStreamUrl");
 
-        httpStreamMd5 = checkNotNull(httpStreamMd5 != null ? httpStreamMd5
-                : sysHttpStreamMd5, "httpStreamMd5");
+      httpStreamMd5 = checkNotNull(httpStreamMd5 != null ? httpStreamMd5 : sysHttpStreamMd5,
+               "httpStreamMd5");
 
-        String bucketName = bucketPrefix + "tcu";
-        createBucketAndEnsureEmpty(bucketName);
-        String key = "hello";
+      String bucketName = bucketPrefix + "tcu";
+      createBucketAndEnsureEmpty(bucketName);
+      String key = "hello";
 
-        URL url = new URL(httpStreamUrl);
-        byte[] md5 = S3Utils
-                .fromHexString(httpStreamMd5);
+      URL url = new URL(httpStreamUrl);
+      byte[] md5 = S3Utils.fromHexString(httpStreamMd5);
 
-        URLConnection connection = url.openConnection();
-        int length = connection.getContentLength();
-        InputStream input = connection.getInputStream();
+      URLConnection connection = url.openConnection();
+      int length = connection.getContentLength();
+      InputStream input = connection.getInputStream();
 
-        S3Object object = new S3Object(key, input);
-        object.setContentLength(length);
-        object.getMetadata().setMd5(md5);
-        object.getMetadata().setSize(length);
+      S3Object object = new S3Object(key, input);
+      object.setContentLength(length);
+      object.getMetadata().setMd5(md5);
+      object.getMetadata().setSize(length);
 
-        byte[] newMd5 = client.putObject(bucketName, object).get(30,
-                TimeUnit.SECONDS);
-        assertEquals(newMd5, md5);
-    }
+      byte[] newMd5 = client.putObject(bucketName, object).get(30, TimeUnit.SECONDS);
+      assertEquals(newMd5, md5);
+   }
 }

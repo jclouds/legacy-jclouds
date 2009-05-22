@@ -33,12 +33,15 @@ import org.jclouds.http.HttpConstants;
  */
 public interface S3Constants extends HttpConstants, PoolConstants, S3Headers {
 
-    public static final String PROPERTY_AWS_SECRETACCESSKEY = "jclouds.aws.secretaccesskey";
-    public static final String PROPERTY_AWS_ACCESSKEYID = "jclouds.aws.accesskeyid";
-    /**
-     * longest time a single Map operation can take before throwing an
-     * exception.
-     */
-    public static final String PROPERTY_S3_MAP_TIMEOUT = "jclouds.s3.map.timeout";
+   public static final String PROPERTY_AWS_SECRETACCESSKEY = "jclouds.aws.secretaccesskey";
+   public static final String PROPERTY_AWS_ACCESSKEYID = "jclouds.aws.accesskeyid";
+   /**
+    * longest time a single Map operation can take before throwing an exception.
+    */
+   public static final String PROPERTY_S3_MAP_TIMEOUT = "jclouds.s3.map.timeout";
+   /**
+    * time to pause before retrying a transient failure
+    */
+   public static final String PROPERTY_S3_MAP_RETRY = "jclouds.s3.map.retry";
 
 }

@@ -169,7 +169,9 @@
                             <goal>test</goal>
                         </goals>
                         <configuration>
-                            <!-- note that the groups/excluded groups don't work due to some problem
+                           <parallel>tests</parallel>
+                           <threadCount>5</threadCount>
+                           <!-- note that the groups/excluded groups don't work due to some problem
                         in surefire or testng. instead, we have to exclude via file path
                            <groups>integration</groups>
                            <excludedGroups>unit,performance,live</excludedGroups> -->
@@ -183,14 +185,22 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <parallel>methods</parallel>
+                    <threadCount>5</threadCount>
                     <!-- note that the groups/excluded groups don't work due to some problem
                           in surefire or testng. instead, we have to exclude via file path
-                     <groups>unit,performance</groups>
-                                     <excludedGroups>integration,live</excludedGroups> -->
+                    <groups>unit,performance</groups>
+                    <excludedGroups>integration,live</excludedGroups> -->
                     <excludes>
                         <exclude>**/*IntegrationTest.java</exclude>
                         <exclude>**/*LiveTest.java</exclude>
                     </excludes>
+                    <properties>
+                       <property>
+                          <name>listener</name>
+                          <value>org.jclouds.test.testng.UnitTestStatusListener</value>
+                       </property>
+                   </properties>
                 </configuration>
             </plugin>
             <!-- Make sure we generate src jars too -->

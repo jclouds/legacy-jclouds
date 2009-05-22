@@ -23,12 +23,13 @@
  */
 package org.jclouds.aws.s3.xml;
 
+import org.jclouds.aws.s3.xml.config.S3ParserModule;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
+
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import org.jclouds.aws.s3.xml.config.S3ParserModule;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
@@ -36,39 +37,39 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "s3.S3ParserFactoryTest")
 public class S3ParserFactoryTest {
 
-    Injector injector = null;
-    S3ParserFactory parserFactory = null;
+   Injector injector = null;
+   S3ParserFactory parserFactory = null;
 
-    @BeforeMethod
-    void setUpInjector() {
-        injector = Guice.createInjector(new S3ParserModule());
-        parserFactory = injector.getInstance(S3ParserFactory.class);
-    }
+   @BeforeTest
+   void setUpInjector() {
+      injector = Guice.createInjector(new S3ParserModule());
+      parserFactory = injector.getInstance(S3ParserFactory.class);
+   }
 
-    @AfterMethod
-    void tearDownInjector() {
-        parserFactory = null;
-        injector = null;
-    }
+   @AfterTest
+   void tearDownInjector() {
+      parserFactory = null;
+      injector = null;
+   }
 
-    @Test
-    void testCreateListBucketsParser() {
-        assert parserFactory.createListBucketsParser() != null;
-    }
+   @Test
+   void testCreateListBucketsParser() {
+      assert parserFactory.createListBucketsParser() != null;
+   }
 
-    @Test
-    void testCreateListBucketParser() {
-        assert parserFactory.createListBucketParser() != null;
-    }
+   @Test
+   void testCreateListBucketParser() {
+      assert parserFactory.createListBucketParser() != null;
+   }
 
-    @Test
-    void testCreateCopyObjectParser() {
-        assert parserFactory.createCopyObjectParser() != null;
-    }
+   @Test
+   void testCreateCopyObjectParser() {
+      assert parserFactory.createCopyObjectParser() != null;
+   }
 
-    @Test
-    void testCreateErrorParser() {
-        assert parserFactory.createErrorParser() != null;
-    }
+   @Test
+   void testCreateErrorParser() {
+      assert parserFactory.createErrorParser() != null;
+   }
 
 }

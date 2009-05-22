@@ -21,8 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package com.amazon.s3;
-
+package org.jclouds.aws.s3;
 import org.testng.annotations.Test;
 
 /**
