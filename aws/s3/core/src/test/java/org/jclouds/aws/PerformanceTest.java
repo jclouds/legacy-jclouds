@@ -23,6 +23,12 @@
  */
 package org.jclouds.aws;
 
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -38,6 +44,7 @@ import org.testng.annotations.Test;
 @Test(groups = "performance")
 public class PerformanceTest {
    protected static int LOOP_COUNT = 1000;
+   protected static int THREAD_COUNT = 1000;
    protected ExecutorService exec;
 
    @BeforeTest
@@ -50,4 +57,78 @@ public class PerformanceTest {
       exec.shutdownNow();
       exec = null;
    }
+   
+   /**
+    * Executes a list of Runnable tasks in {@link #THREAD_COUNT}
+    * simultaneous threads, and outputs the timing results. 
+    * <p>
+    * This method is careful to time only the actual task execution 
+    * time, not the overhead of creating and queuing the tasks.
+    * We also use CountDownLatches to ensure that all tasks start
+    * at the same time, so concurrency is fully tested without
+    * ramp-up or ramp-down times.
+    * <p>
+    * This code is heavily based on Listing 5.11 in 
+    * "Java Concurrency in Practice" by Brian Goetz et al,
+    * Addison-Wesley Professional.
+    * 
+    * @see {@link DateServiceTest} for example usage.
+    * 
+    * @param performanceTestName
+    * @param tasks
+    * @throws InterruptedException
+    * @throws ExecutionException
+    * @throws Throwable
+    */
+   protected void executeMultiThreadedPerformanceTest(String performanceTestName, List<Runnable> tasks) 
+   	  throws InterruptedException, ExecutionException, Throwable
+   {
+      CompletionService<Throwable> completer = new ExecutorCompletionService<Throwable>(exec);
+      final CountDownLatch startGate = new CountDownLatch(1);
+      final CountDownLatch endGate = new CountDownLatch(THREAD_COUNT);
+            
+      for (int i = 0; i < THREAD_COUNT; i++) {
+    	 final Runnable task = tasks.get(i % tasks.size());
+    	 // Wrap task so we can count down endGate.
+         completer.submit(new Callable<Throwable>() {
+             public Throwable call() {
+            	try { 
+                   startGate.await();  // Wait to start simultaneously
+            	   task.run();
+                   return null;
+            	} catch (Throwable t) {
+            	   return t;
+            	} finally {
+            	   endGate.countDown();  // Notify that I've finished
+            	}
+             }
+          });
+      }      
+      
+      // Only time the execution time for all tasks, not start/stop times.
+      long startTime = System.nanoTime();
+      startGate.countDown();  // Trigger start of all tasks
+      endGate.await();
+      long endTime = System.nanoTime() - startTime;
+
+      // Check for assertion failures
+	  Throwable t;
+      for (int i = 0; i < THREAD_COUNT; i++) {
+    	  t = completer.take().get();
+    	  if (t != null) {
+    		  throw t;
+    	  }
+      }      
+      if (performanceTestName != null) {
+	      System.out.printf("TIMING: Multi-threaded %s took %.3fms for %d threads\n", 
+		     performanceTestName, ((double)endTime / 1000000), THREAD_COUNT);
+      }
+   }
+
+   protected void executeMultiThreadedCorrectnessTest(List<Runnable> tasks) 
+	  throws InterruptedException, ExecutionException, Throwable
+   {
+	   executeMultiThreadedPerformanceTest(null, tasks);
+   }
+
 }

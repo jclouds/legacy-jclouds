@@ -37,6 +37,8 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import com.google.common.annotations.VisibleForTesting;
+
 /**
  * Parses and formats the ISO8601 and RFC822 date formats found in 
  * XML responses and HTTP response headers.
@@ -112,7 +114,7 @@ public class DateService {
     	return iso8601DateFormat(new DateTime());
     }
 
-    public final DateTime iso8601DateParse(String toParse) { 
+    public final DateTime iso8601DateParse(String toParse) {
 		synchronized (iso8601SimpleDateFormat) {
 			try {
 				return new DateTime(iso8601SimpleDateFormat.parse(toParse));
@@ -121,5 +123,23 @@ public class DateService {
 			}
 		}
 	}
+
+    /*
+     * Alternative implementations of Format and Parse -- used to
+     * test relative speeds.
+     * TODO: Remove methods below once sufficient performance testing is complete. 
+     */
+    
+    @VisibleForTesting
+    public final DateTime jodaIso8601DateParse(String toParse) {
+    	return new DateTime(toParse);
+    }
+
+    @VisibleForTesting
+	public final String sdfIso8601DateFormat(DateTime dateTime) {
+		synchronized (iso8601SimpleDateFormat) {
+			return iso8601SimpleDateFormat.format(dateTime.toDate());
+		}
+    }
 
 }
