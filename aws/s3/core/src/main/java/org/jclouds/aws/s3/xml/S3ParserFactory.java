@@ -23,81 +23,81 @@
  */
 package org.jclouds.aws.s3.xml;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.inject.Inject;
-import com.google.inject.Provider;
+import java.util.List;
+
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Error;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 
-import java.util.List;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 /**
- * Creates Parsers needed to interpret S3 Server messages. This class uses guice
- * assisted inject, which mandates the creation of many single-method
- * interfaces. These interfaces are not intended for public api.
- *
+ * Creates Parsers needed to interpret S3 Server messages. This class uses guice assisted inject,
+ * which mandates the creation of many single-method interfaces. These interfaces are not intended
+ * for public api.
+ * 
  * @author Adrian Cole
  */
 public class S3ParserFactory {
 
-    @Inject
-    private GenericParseFactory<List<S3Bucket.Metadata>> parseListAllMyBucketsFactory;
+   @Inject
+   private GenericParseFactory<List<S3Bucket.Metadata>> parseListAllMyBucketsFactory;
 
-    @VisibleForTesting
-    public static interface GenericParseFactory<T> {
-        ParseSax<T> create(ParseSax.HandlerWithResult<T> handler);
-    }
+   @VisibleForTesting
+   public static interface GenericParseFactory<T> {
+      ParseSax<T> create(ParseSax.HandlerWithResult<T> handler);
+   }
 
-    @Inject
-    Provider<ListAllMyBucketsHandler> ListAllMyBucketsHandlerprovider;
+   @Inject
+   Provider<ListAllMyBucketsHandler> ListAllMyBucketsHandlerprovider;
 
-    /**
-     * @return a parser used to handle {@link org.jclouds.aws.s3.commands.ListOwnedBuckets} responses
-     */
-    public ParseSax<List<S3Bucket.Metadata>> createListBucketsParser() {
-        return parseListAllMyBucketsFactory
-                .create(ListAllMyBucketsHandlerprovider.get());
-    }
+   /**
+    * @return a parser used to handle {@link org.jclouds.aws.s3.commands.ListOwnedBuckets} responses
+    */
+   public ParseSax<List<S3Bucket.Metadata>> createListBucketsParser() {
+      return parseListAllMyBucketsFactory.create(ListAllMyBucketsHandlerprovider.get());
+   }
 
-    @Inject
-    private GenericParseFactory<S3Bucket> parseListBucketFactory;
+   @Inject
+   private GenericParseFactory<S3Bucket> parseListBucketFactory;
 
-    @Inject
-    Provider<ListBucketHandler> ListBucketHandlerprovider;
+   @Inject
+   Provider<ListBucketHandler> ListBucketHandlerprovider;
 
-    /**
-     * @return a parser used to handle {@link org.jclouds.aws.s3.commands.ListBucket} responses
-     */
-    public ParseSax<S3Bucket> createListBucketParser() {
-        return parseListBucketFactory.create(ListBucketHandlerprovider.get());
-    }
+   /**
+    * @return a parser used to handle {@link org.jclouds.aws.s3.commands.ListBucket} responses
+    */
+   public ParseSax<S3Bucket> createListBucketParser() {
+      return parseListBucketFactory.create(ListBucketHandlerprovider.get());
+   }
 
-    @Inject
-    private GenericParseFactory<S3Object.Metadata> parseCopyObjectFactory;
+   @Inject
+   private GenericParseFactory<S3Object.Metadata> parseCopyObjectFactory;
 
-    @Inject
-    Provider<CopyObjectHandler> copyObjectHandlerProvider;
+   @Inject
+   Provider<CopyObjectHandler> copyObjectHandlerProvider;
 
-    /**
-     * @return a parser used to handle {@link org.jclouds.aws.s3.commands.CopyObject} responses
-     */
-    public ParseSax<S3Object.Metadata> createCopyObjectParser() {
-        return parseCopyObjectFactory.create(copyObjectHandlerProvider.get());
-    }
+   /**
+    * @return a parser used to handle {@link org.jclouds.aws.s3.commands.CopyObject} responses
+    */
+   public ParseSax<S3Object.Metadata> createCopyObjectParser() {
+      return parseCopyObjectFactory.create(copyObjectHandlerProvider.get());
+   }
 
-    @Inject
-    private GenericParseFactory<S3Error> parseErrorFactory;
+   @Inject
+   private GenericParseFactory<S3Error> parseErrorFactory;
 
-    @Inject
-    Provider<ErrorHandler> errorHandlerProvider;
+   @Inject
+   Provider<ErrorHandler> errorHandlerProvider;
 
-    /**
-     * @return a parser used to handle error conditions.
-     */
-    public ParseSax<S3Error> createErrorParser() {
-        return parseErrorFactory.create(errorHandlerProvider.get());
-    }
+   /**
+    * @return a parser used to handle error conditions.
+    */
+   public ParseSax<S3Error> createErrorParser() {
+      return parseErrorFactory.create(errorHandlerProvider.get());
+   }
 
 }

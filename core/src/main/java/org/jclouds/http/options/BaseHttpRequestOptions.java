@@ -24,9 +24,9 @@
 package org.jclouds.http.options;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.Map.Entry;
 
 import com.google.common.collect.HashMultimap;
@@ -40,50 +40,47 @@ import com.google.common.collect.Multimap;
  */
 public class BaseHttpRequestOptions implements HttpRequestOptions {
 
-    protected Map<String, String> options = new HashMap<String, String>();
-    protected Multimap<String, String> headers = HashMultimap.create();
-    protected String payload;
+   protected SortedMap<String, String> parameters = new TreeMap<String, String>();
+   protected Multimap<String, String> headers = HashMultimap.create();
+   protected String payload;
 
-    public String buildPayload() {
-	return payload;
-    }
+   public String buildPayload() {
+      return payload;
+   }
 
-    protected String getFirstHeaderOrNull(String string) {
-	Collection<String> values = headers.get(string);
-	return (values != null && values.size() >= 1) ? values.iterator()
-		.next() : null;
-    }
+   protected String getFirstHeaderOrNull(String string) {
+      Collection<String> values = headers.get(string);
+      return (values != null && values.size() >= 1) ? values.iterator().next() : null;
+   }
 
-    protected void replaceHeader(String key, String value) {
-	headers.removeAll(key);
-	headers.put(key, value);
-    }
+   protected void replaceHeader(String key, String value) {
+      headers.removeAll(key);
+      headers.put(key, value);
+   }
 
-    /**
-     * {@inheritDoc}
-     */
-    public Multimap<String, String> buildRequestHeaders() {
-	return headers;
-    }
+   /**
+    * {@inheritDoc}
+    */
+   public Multimap<String, String> buildRequestHeaders() {
+      return headers;
+   }
 
-    /**
-     * {@inheritDoc}
-     */
-    public String buildQueryString() {
-	StringBuilder builder = new StringBuilder("");
-	if (options.size() > 0) {
-	    builder.append("?");
-	    for (Iterator<Entry<String, String>> i = options.entrySet()
-		    .iterator(); i.hasNext();) {
-		Entry<String, String> entry = i.next();
-		builder.append(entry.getKey()).append("=").append(
-			entry.getValue());
-		if (i.hasNext())
-		    builder.append("&");
-	    }
-	}
-	String returnVal = builder.toString();
-	return returnVal;
-    }
+   /**
+    * {@inheritDoc}
+    */
+   public String buildQueryString() {
+      StringBuilder builder = new StringBuilder("");
+      if (parameters.size() > 0) {
+         builder.append("?");
+         for (Iterator<Entry<String, String>> i = parameters.entrySet().iterator(); i.hasNext();) {
+            Entry<String, String> entry = i.next();
+            builder.append(entry.getKey()).append("=").append(entry.getValue());
+            if (i.hasNext())
+               builder.append("&");
+         }
+      }
+      String returnVal = builder.toString();
+      return returnVal;
+   }
 
 }

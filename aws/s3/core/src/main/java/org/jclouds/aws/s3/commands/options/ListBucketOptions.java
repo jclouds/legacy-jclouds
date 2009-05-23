@@ -59,7 +59,7 @@ public class ListBucketOptions extends BaseHttpRequestOptions {
      */
     public ListBucketOptions withPrefix(String prefix)
             throws UnsupportedEncodingException {
-        options.put("prefix", URLEncoder.encode(checkNotNull(prefix, "prefix"),
+        parameters.put("prefix", URLEncoder.encode(checkNotNull(prefix, "prefix"),
                 "UTF-8"));
         return this;
     }
@@ -68,7 +68,7 @@ public class ListBucketOptions extends BaseHttpRequestOptions {
      * @see ListBucketOptions#withPrefix(String)
      */
     public String getPrefix() {
-        return options.get("prefix");
+        return parameters.get("prefix");
     }
 
     /**
@@ -81,7 +81,7 @@ public class ListBucketOptions extends BaseHttpRequestOptions {
      */
     public ListBucketOptions afterMarker(String marker)
             throws UnsupportedEncodingException {
-        options.put("marker", URLEncoder.encode(checkNotNull(marker, "marker"),
+        parameters.put("marker", URLEncoder.encode(checkNotNull(marker, "marker"),
                 "UTF-8"));
         return this;
     }
@@ -90,7 +90,7 @@ public class ListBucketOptions extends BaseHttpRequestOptions {
      * @see ListBucketOptions#afterMarker(String)
      */
     public String getMarker() {
-        return options.get("marker");
+        return parameters.get("marker");
     }
 
     /**
@@ -99,7 +99,7 @@ public class ListBucketOptions extends BaseHttpRequestOptions {
      */
     public ListBucketOptions maxResults(long maxKeys) {
         checkState(maxKeys >= 0, "maxKeys must be >= 0");
-        options.put("max-keys", Long.toString(maxKeys));
+        parameters.put("max-keys", Long.toString(maxKeys));
         return this;
     }
 
@@ -107,7 +107,7 @@ public class ListBucketOptions extends BaseHttpRequestOptions {
      * @see ListBucketOptions#maxResults(long)
      */
     public String getMaxKeys() {
-        return options.get("max-keys");
+        return parameters.get("max-keys");
     }
 
     /**
@@ -120,7 +120,7 @@ public class ListBucketOptions extends BaseHttpRequestOptions {
      */
     public ListBucketOptions delimiter(String delimiter)
             throws UnsupportedEncodingException {
-        options.put("delimiter", URLEncoder.encode(checkNotNull(delimiter,
+        parameters.put("delimiter", URLEncoder.encode(checkNotNull(delimiter,
                 "delimiter"), "UTF-8"));
         return this;
     }
@@ -129,7 +129,7 @@ public class ListBucketOptions extends BaseHttpRequestOptions {
      * @see ListBucketOptions#delimiter(String)
      */
     public String getDelimiter() {
-        return options.get("delimiter");
+        return parameters.get("delimiter");
     }
 
     public static class Builder {

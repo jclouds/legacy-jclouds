@@ -29,34 +29,35 @@ import org.jclouds.http.commands.callables.xml.ParseSax;
 /**
  * Parses the error from the Amazon S3 REST API.
  * 
- * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?UsingRESTError.html"
+ * @see <a
+ *      href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?UsingRESTError.html"
  *      />
  * @author Adrian Cole
  */
 public class ErrorHandler extends ParseSax.HandlerWithResult<S3Error> {
 
-    private S3Error error = new S3Error();
-    private StringBuilder currentText = new StringBuilder();
+   private S3Error error = new S3Error();
+   private StringBuilder currentText = new StringBuilder();
 
-    public S3Error getResult() {
-	return error;
-    }
+   public S3Error getResult() {
+      return error;
+   }
 
-    public void endElement(String uri, String name, String qName) {
+   public void endElement(String uri, String name, String qName) {
 
-	if (qName.equals("Code")) {
-	    error.setCode(currentText.toString());
-	} else if (qName.equals("Message")) {
-	    error.setMessage(currentText.toString());
-	} else if (qName.equals("RequestId")) {
-	    error.setRequestId(currentText.toString());
-	} else if (!qName.equals("Error")) {
-	    error.getDetails().put(qName, currentText.toString());
-	}
-	currentText = new StringBuilder();
-    }
+      if (qName.equals("Code")) {
+         error.setCode(currentText.toString());
+      } else if (qName.equals("Message")) {
+         error.setMessage(currentText.toString());
+      } else if (qName.equals("RequestId")) {
+         error.setRequestId(currentText.toString());
+      } else if (!qName.equals("Error")) {
+         error.getDetails().put(qName, currentText.toString());
+      }
+      currentText = new StringBuilder();
+   }
 
-    public void characters(char ch[], int start, int length) {
-	currentText.append(ch, start, length);
-    }
+   public void characters(char ch[], int start, int length) {
+      currentText.append(ch, start, length);
+   }
 }

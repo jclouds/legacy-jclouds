@@ -28,7 +28,7 @@ import java.util.List;
 
 import org.jclouds.aws.s3.domain.CanonicalUser;
 import org.jclouds.aws.s3.domain.S3Bucket;
-import org.jclouds.aws.s3.util.DateService;
+import org.jclouds.aws.util.DateService;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 
 import com.google.inject.Inject;
@@ -38,47 +38,46 @@ import com.google.inject.Inject;
  * <p/>
  * ListAllMyBucketsResult xmlns="http://doc.s3.amazonaws.com/2006-03-01"
  * 
- * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTServiceGET.html"
+ * @see <a
+ *      href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTServiceGET.html"
  *      />
  * @author Adrian Cole
  */
-public class ListAllMyBucketsHandler extends
-	ParseSax.HandlerWithResult<List<S3Bucket.Metadata>> {
+public class ListAllMyBucketsHandler extends ParseSax.HandlerWithResult<List<S3Bucket.Metadata>> {
 
-    private List<S3Bucket.Metadata> buckets = new ArrayList<S3Bucket.Metadata>();
-    private S3Bucket.Metadata currentS3Bucket;
-    private CanonicalUser currentOwner;
-    private StringBuilder currentText = new StringBuilder();
+   private List<S3Bucket.Metadata> buckets = new ArrayList<S3Bucket.Metadata>();
+   private S3Bucket.Metadata currentS3Bucket;
+   private CanonicalUser currentOwner;
+   private StringBuilder currentText = new StringBuilder();
 
-    private final DateService dateParser;
+   private final DateService dateParser;
 
-    @Inject
-    public ListAllMyBucketsHandler(DateService dateParser) {
-	this.dateParser = dateParser;
-    }
+   @Inject
+   public ListAllMyBucketsHandler(DateService dateParser) {
+      this.dateParser = dateParser;
+   }
 
-    public List<S3Bucket.Metadata> getResult() {
-	return buckets;
-    }
+   public List<S3Bucket.Metadata> getResult() {
+      return buckets;
+   }
 
-    public void endElement(String uri, String name, String qName) {
-	if (qName.equals("ID")) { // owner stuff
-	    currentOwner = new CanonicalUser(currentText.toString());
-	} else if (qName.equals("DisplayName")) {
-	    currentOwner.setDisplayName(currentText.toString());
-	} else if (qName.equals("Bucket")) {
-	    currentS3Bucket.setOwner(currentOwner);
-	    buckets.add(currentS3Bucket);
-	} else if (qName.equals("Name")) {
-	    currentS3Bucket = new S3Bucket.Metadata(currentText.toString());
-	} else if (qName.equals("CreationDate")) {
-	    currentS3Bucket.setCreationDate(dateParser
-		    .iso8601DateParse(currentText.toString()));
-	}
-	currentText = new StringBuilder();
-    }
+   public void endElement(String uri, String name, String qName) {
+      if (qName.equals("ID")) { // owner stuff
+         currentOwner = new CanonicalUser(currentText.toString());
+      } else if (qName.equals("DisplayName")) {
+         currentOwner.setDisplayName(currentText.toString());
+      } else if (qName.equals("Bucket")) {
+         currentS3Bucket.setOwner(currentOwner);
+         buckets.add(currentS3Bucket);
+      } else if (qName.equals("Name")) {
+         currentS3Bucket = new S3Bucket.Metadata(currentText.toString());
+      } else if (qName.equals("CreationDate")) {
+         currentS3Bucket.setCreationDate(dateParser.iso8601DateParse(currentText.toString()));
+      }
+      currentText = new StringBuilder();
+   }
 
-    public void characters(char ch[], int start, int length) {
-	currentText.append(ch, start, length);
-    }
+   public void characters(char ch[], int start, int length) {
+      currentText.append(ch, start, length);
+   }
 }

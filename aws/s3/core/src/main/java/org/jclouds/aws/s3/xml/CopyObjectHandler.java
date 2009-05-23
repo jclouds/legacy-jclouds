@@ -24,8 +24,8 @@
 package org.jclouds.aws.s3.xml;
 
 import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.aws.s3.util.DateService;
 import org.jclouds.aws.s3.util.S3Utils;
+import org.jclouds.aws.util.DateService;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 
 import com.google.inject.Inject;
@@ -35,39 +35,34 @@ import com.google.inject.Inject;
  * <p/>
  * CopyObjectResult is the document we expect to parse.
  * 
- * @see <a href=
- *      "http://docs.amazonwebservices.com/AmazonS3/2006-03-01/RESTObjectCOPY.html"
- *      />
+ * @see <a href= "http://docs.amazonwebservices.com/AmazonS3/2006-03-01/RESTObjectCOPY.html" />
  * @author Adrian Cole
  */
-public class CopyObjectHandler extends
-	ParseSax.HandlerWithResult<S3Object.Metadata> {
+public class CopyObjectHandler extends ParseSax.HandlerWithResult<S3Object.Metadata> {
 
-    private S3Object.Metadata metadata;
-    private StringBuilder currentText = new StringBuilder();
-    @Inject
-    private DateService dateParser;
+   private S3Object.Metadata metadata;
+   private StringBuilder currentText = new StringBuilder();
+   @Inject
+   private DateService dateParser;
 
-    public void setKey(String key) {
-	metadata = new S3Object.Metadata(key);
-    }
+   public void setKey(String key) {
+      metadata = new S3Object.Metadata(key);
+   }
 
-    public S3Object.Metadata getResult() {
-	return metadata;
-    }
+   public S3Object.Metadata getResult() {
+      return metadata;
+   }
 
-    public void endElement(String uri, String name, String qName) {
-	if (qName.equals("ETag")) {
-	    metadata.setMd5(S3Utils.fromHexString(currentText.toString()
-		    .replaceAll("\"", "")));
-	} else if (qName.equals("LastModified")) {
-	    metadata.setLastModified(dateParser
-		    .iso8601DateParse(currentText.toString()));
-	}
-	currentText = new StringBuilder();
-    }
+   public void endElement(String uri, String name, String qName) {
+      if (qName.equals("ETag")) {
+         metadata.setMd5(S3Utils.fromHexString(currentText.toString().replaceAll("\"", "")));
+      } else if (qName.equals("LastModified")) {
+         metadata.setLastModified(dateParser.iso8601DateParse(currentText.toString()));
+      }
+      currentText = new StringBuilder();
+   }
 
-    public void characters(char ch[], int start, int length) {
-	currentText.append(ch, start, length);
-    }
+   public void characters(char ch[], int start, int length) {
+      currentText.append(ch, start, length);
+   }
 }

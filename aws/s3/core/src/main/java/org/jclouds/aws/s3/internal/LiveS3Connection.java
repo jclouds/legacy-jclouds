@@ -53,191 +53,180 @@ import com.google.inject.Inject;
 /**
  * Uses {@link HttpFutureCommandClient} to invoke the REST API of S3.
  * 
- * @see <a
- *      href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?"
- *      />
+ * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?" />
  * @author Adrian Cole
  */
 public class LiveS3Connection implements S3Connection {
 
-    private final HttpFutureCommandClient client;
-    /**
-     * creates command objects that can be submitted to the client
-     */
-    private final S3CommandFactory factory;
+   private final HttpFutureCommandClient client;
+   /**
+    * creates command objects that can be submitted to the client
+    */
+   private final S3CommandFactory factory;
 
-    @Inject
-    public LiveS3Connection(HttpFutureCommandClient client,
-	    S3CommandFactory factory) {
-	this.client = client;
-	this.factory = factory;
-    }
+   @Inject
+   public LiveS3Connection(HttpFutureCommandClient client, S3CommandFactory factory) {
+      this.client = client;
+      this.factory = factory;
+   }
 
-    /**
-     * {@inheritDoc}
-     * 
-     * @see GetObject
-     */
-    public Future<S3Object> getObject(String s3Bucket, String key) {
-	return getObject(s3Bucket, key, GetObjectOptions.NONE);
-    }
+   /**
+    * {@inheritDoc}
+    * 
+    * @see GetObject
+    */
+   public Future<S3Object> getObject(String s3Bucket, String key) {
+      return getObject(s3Bucket, key, GetObjectOptions.NONE);
+   }
 
-    /**
-     * {@inheritDoc}
-     * 
-     * @see GetObject
-     */
-    public Future<S3Object> getObject(String s3Bucket, String key,
-	    GetObjectOptions options) {
-	GetObject getObject = factory.createGetObject(s3Bucket, key, options);
-	client.submit(getObject);
-	return getObject;
-    }
+   /**
+    * {@inheritDoc}
+    * 
+    * @see GetObject
+    */
+   public Future<S3Object> getObject(String s3Bucket, String key, GetObjectOptions options) {
+      GetObject getObject = factory.createGetObject(s3Bucket, key, options);
+      client.submit(getObject);
+      return getObject;
+   }
 
-    /**
-     * {@inheritDoc}
-     * 
-     * @see HeadObject
-     */
-    public Future<S3Object.Metadata> headObject(String s3Bucket, String key) {
-	HeadObject headMetadata = factory.createHeadMetadata(s3Bucket, key);
-	client.submit(headMetadata);
-	return headMetadata;
-    }
+   /**
+    * {@inheritDoc}
+    * 
+    * @see HeadObject
+    */
+   public Future<S3Object.Metadata> headObject(String s3Bucket, String key) {
+      HeadObject headMetadata = factory.createHeadMetadata(s3Bucket, key);
+      client.submit(headMetadata);
+      return headMetadata;
+   }
 
-    /**
-     * {@inheritDoc}
-     * 
-     * @see DeleteObject
-     */
-    public Future<Boolean> deleteObject(String s3Bucket, String key) {
-	DeleteObject deleteObject = factory.createDeleteObject(s3Bucket, key);
-	client.submit(deleteObject);
-	return deleteObject;
-    }
+   /**
+    * {@inheritDoc}
+    * 
+    * @see DeleteObject
+    */
+   public Future<Boolean> deleteObject(String s3Bucket, String key) {
+      DeleteObject deleteObject = factory.createDeleteObject(s3Bucket, key);
+      client.submit(deleteObject);
+      return deleteObject;
+   }
 
-    /**
-     * {@inheritDoc}
-     * 
-     * @see PutObject
-     */
-    public Future<byte[]> putObject(String s3Bucket, S3Object object) {
-	return putObject(s3Bucket, object, PutObjectOptions.NONE);
-    }
+   /**
+    * {@inheritDoc}
+    * 
+    * @see PutObject
+    */
+   public Future<byte[]> putObject(String s3Bucket, S3Object object) {
+      return putObject(s3Bucket, object, PutObjectOptions.NONE);
+   }
 
-    /**
-     * {@inheritDoc}
-     * 
-     * @see PutObject
-     */
-    public Future<byte[]> putObject(String bucketName, S3Object object,
-	    PutObjectOptions options) {
-	PutObject putObject = factory.createPutObject(bucketName, object,
-		options);
-	client.submit(putObject);
-	return putObject;
-    }
+   /**
+    * {@inheritDoc}
+    * 
+    * @see PutObject
+    */
+   public Future<byte[]> putObject(String bucketName, S3Object object, PutObjectOptions options) {
+      PutObject putObject = factory.createPutObject(bucketName, object, options);
+      client.submit(putObject);
+      return putObject;
+   }
 
-    /**
-     * {@inheritDoc}
-     * 
-     * @see PutBucket
-     */
-    public Future<Boolean> putBucketIfNotExists(String s3Bucket) {
-	return putBucketIfNotExists(s3Bucket, PutBucketOptions.NONE);
-    }
+   /**
+    * {@inheritDoc}
+    * 
+    * @see PutBucket
+    */
+   public Future<Boolean> putBucketIfNotExists(String s3Bucket) {
+      return putBucketIfNotExists(s3Bucket, PutBucketOptions.NONE);
+   }
 
-    /**
-     * {@inheritDoc}
-     * 
-     * @see PutBucket
-     */
-    public Future<Boolean> putBucketIfNotExists(String s3Bucket,
-	    PutBucketOptions options) {
-	PutBucket putBucket = factory.createPutBucket(s3Bucket, options);
-	client.submit(putBucket);
-	return putBucket;
-    }
+   /**
+    * {@inheritDoc}
+    * 
+    * @see PutBucket
+    */
+   public Future<Boolean> putBucketIfNotExists(String s3Bucket, PutBucketOptions options) {
+      PutBucket putBucket = factory.createPutBucket(s3Bucket, options);
+      client.submit(putBucket);
+      return putBucket;
+   }
 
-    /**
-     * {@inheritDoc}
-     * 
-     * @see DeleteBucket
-     */
-    public Future<Boolean> deleteBucketIfEmpty(String s3Bucket) {
-	DeleteBucket deleteBucket = factory.createDeleteBucket(s3Bucket);
-	client.submit(deleteBucket);
-	return deleteBucket;
-    }
+   /**
+    * {@inheritDoc}
+    * 
+    * @see DeleteBucket
+    */
+   public Future<Boolean> deleteBucketIfEmpty(String s3Bucket) {
+      DeleteBucket deleteBucket = factory.createDeleteBucket(s3Bucket);
+      client.submit(deleteBucket);
+      return deleteBucket;
+   }
 
-    /**
-     * {@inheritDoc}
-     * 
-     * @see CopyObject
-     */
-    public Future<S3Object.Metadata> copyObject(String sourceBucket,
-	    String sourceObject, String destinationBucket,
-	    String destinationObject) {
-	return copyObject(sourceBucket, sourceObject, destinationBucket,
-		destinationObject, new CopyObjectOptions());
-    }
+   /**
+    * {@inheritDoc}
+    * 
+    * @see CopyObject
+    */
+   public Future<S3Object.Metadata> copyObject(String sourceBucket, String sourceObject,
+            String destinationBucket, String destinationObject) {
+      return copyObject(sourceBucket, sourceObject, destinationBucket, destinationObject,
+               new CopyObjectOptions());
+   }
 
-    /**
-     * {@inheritDoc}
-     * 
-     * @see CopyObject
-     */
-    public Future<S3Object.Metadata> copyObject(String sourceBucket,
-	    String sourceObject, String destinationBucket,
-	    String destinationObject, CopyObjectOptions options) {
-	CopyObject copy = factory.createCopyObject(sourceBucket, sourceObject,
-		destinationBucket, destinationObject, options);
-	client.submit(copy);
-	return copy;
-    }
+   /**
+    * {@inheritDoc}
+    * 
+    * @see CopyObject
+    */
+   public Future<S3Object.Metadata> copyObject(String sourceBucket, String sourceObject,
+            String destinationBucket, String destinationObject, CopyObjectOptions options) {
+      CopyObject copy = factory.createCopyObject(sourceBucket, sourceObject, destinationBucket,
+               destinationObject, options);
+      client.submit(copy);
+      return copy;
+   }
 
-    /**
-     * {@inheritDoc}
-     * 
-     * @see BucketExists
-     */
-    public Future<Boolean> bucketExists(String s3Bucket) {
-	BucketExists headRequestObject = factory.createHeadBucket(s3Bucket);
-	client.submit(headRequestObject);
-	return headRequestObject;
-    }
+   /**
+    * {@inheritDoc}
+    * 
+    * @see BucketExists
+    */
+   public Future<Boolean> bucketExists(String s3Bucket) {
+      BucketExists headRequestObject = factory.createHeadBucket(s3Bucket);
+      client.submit(headRequestObject);
+      return headRequestObject;
+   }
 
-    /**
-     * {@inheritDoc}
-     * 
-     * @see ListBucket
-     */
-    public Future<S3Bucket> listBucket(String s3Bucket) {
-	return listBucket(s3Bucket, ListBucketOptions.NONE);
-    }
+   /**
+    * {@inheritDoc}
+    * 
+    * @see ListBucket
+    */
+   public Future<S3Bucket> listBucket(String s3Bucket) {
+      return listBucket(s3Bucket, ListBucketOptions.NONE);
+   }
 
-    /**
-     * {@inheritDoc}
-     * 
-     * @see ListBucket
-     */
-    public Future<S3Bucket> listBucket(String s3Bucket,
-	    ListBucketOptions options) {
-	ListBucket getBucket = factory.createListBucket(s3Bucket, options);
-	client.submit(getBucket);
-	return getBucket;
-    }
+   /**
+    * {@inheritDoc}
+    * 
+    * @see ListBucket
+    */
+   public Future<S3Bucket> listBucket(String s3Bucket, ListBucketOptions options) {
+      ListBucket getBucket = factory.createListBucket(s3Bucket, options);
+      client.submit(getBucket);
+      return getBucket;
+   }
 
-    /**
-     * {@inheritDoc}
-     * 
-     * @see ListOwnedBuckets
-     */
-    public Future<List<Metadata>> listOwnedBuckets() {
-	ListOwnedBuckets listRequest = factory
-		.createGetMetadataForOwnedBuckets();
-	client.submit(listRequest);
-	return listRequest;
-    }
+   /**
+    * {@inheritDoc}
+    * 
+    * @see ListOwnedBuckets
+    */
+   public Future<List<Metadata>> listOwnedBuckets() {
+      ListOwnedBuckets listRequest = factory.createGetMetadataForOwnedBuckets();
+      client.submit(listRequest);
+      return listRequest;
+   }
 
 }

@@ -23,40 +23,41 @@
  */
 package org.jclouds.aws.s3.filters;
 
+import org.jclouds.aws.s3.reference.S3Constants;
+import org.jclouds.aws.util.DateService;
+import org.testng.annotations.Test;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.name.Names;
-import org.jclouds.aws.s3.reference.S3Constants;
-import org.jclouds.aws.s3.util.DateService;
-import org.testng.annotations.Test;
-
 
 @Test(groups = "unit", testName = "s3.RequestAuthorizeSignatureTest")
 public class RequestAuthorizeSignatureTest {
 
-    RequestAuthorizeSignature filter = null;
+   RequestAuthorizeSignature filter = null;
 
-    @Test
-    void testUpdatesOnlyOncePerSecond() throws NoSuchMethodException, InterruptedException {
-        filter = Guice.createInjector(new AbstractModule() {
+   @Test
+   void testUpdatesOnlyOncePerSecond() throws NoSuchMethodException, InterruptedException {
+      filter = Guice.createInjector(new AbstractModule() {
 
-            protected void configure() {
-                bindConstant().annotatedWith(Names.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to("foo");
-                bindConstant().annotatedWith(Names.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY)).to("bar");
-                bind(DateService.class);
+         protected void configure() {
+            bindConstant().annotatedWith(Names.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to(
+                     "foo");
+            bindConstant().annotatedWith(Names.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY)).to(
+                     "bar");
+            bind(DateService.class);
 
-            }
-        }).getInstance(RequestAuthorizeSignature.class);
-//        filter.createNewStamp();
-        String timeStamp = filter.timestampAsHeaderString();
-//        replay(filter);
-        for (int i = 0; i < 10; i++)
-            filter.updateIfTimeOut();
-        assert timeStamp.equals(filter.timestampAsHeaderString());
-        Thread.sleep(1000);
-        assert !timeStamp.equals(filter.timestampAsHeaderString());
-//        verify(filter);
-    }
-
+         }
+      }).getInstance(RequestAuthorizeSignature.class);
+      // filter.createNewStamp();
+      String timeStamp = filter.timestampAsHeaderString();
+      // replay(filter);
+      for (int i = 0; i < 10; i++)
+         filter.updateIfTimeOut();
+      assert timeStamp.equals(filter.timestampAsHeaderString());
+      Thread.sleep(1000);
+      assert !timeStamp.equals(filter.timestampAsHeaderString());
+      // verify(filter);
+   }
 
 }

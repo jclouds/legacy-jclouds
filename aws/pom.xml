@@ -38,6 +38,7 @@
     <packaging>pom</packaging>
     <name>jclouds aws project</name>
     <modules>
+        <module>core</module>
         <module>s3</module>
     </modules>
     <properties>
@@ -57,7 +58,6 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
     <profiles>
         <profile>
