@@ -25,9 +25,10 @@ package org.jclouds.aws.s3.xml;
 
 import java.util.List;
 
+import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.s3.domain.S3Bucket;
-import org.jclouds.aws.s3.domain.S3Error;
 import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.xml.ErrorHandler;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -88,7 +89,7 @@ public class S3ParserFactory {
    }
 
    @Inject
-   private GenericParseFactory<S3Error> parseErrorFactory;
+   private GenericParseFactory<AWSError> parseErrorFactory;
 
    @Inject
    Provider<ErrorHandler> errorHandlerProvider;
@@ -96,7 +97,7 @@ public class S3ParserFactory {
    /**
     * @return a parser used to handle error conditions.
     */
-   public ParseSax<S3Error> createErrorParser() {
+   public ParseSax<AWSError> createErrorParser() {
       return parseErrorFactory.create(errorHandlerProvider.get());
    }
 

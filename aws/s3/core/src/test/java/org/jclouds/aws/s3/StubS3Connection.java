@@ -304,34 +304,43 @@ public class StubS3Connection implements S3Connection {
                contents.remove(lastMarkerMetadata);
                returnVal.setMarker(marker);
             }
+            try {
 
-            if (options.getPrefix() != null) {
-               contents = Sets.newTreeSet(Iterables.filter(contents,
-                        new Predicate<S3Object.Metadata>() {
+               if (options.getPrefix() != null) {
+                  contents = Sets.newTreeSet(Iterables.filter(contents,
+                           new Predicate<S3Object.Metadata>() {
+                              public boolean apply(S3Object.Metadata o) {
+                                 try {
+                                    return (o != null && o.getKey().startsWith(
+                                             URLDecoder.decode(options.getPrefix(), "UTF-8")));
+                                 } catch (UnsupportedEncodingException e) {
+                                    throw new RuntimeException(e);
+                                 }
+                              }
+                           }));
+                  returnVal.setPrefix(URLDecoder.decode(options.getPrefix(), "UTF-8"));
+               }
 
-                           public boolean apply(S3Object.Metadata o) {
-                              return (o != null && o.getKey().startsWith(
-                                       URLDecoder.decode(options.getPrefix())));
-                           }
-                        }));
-               returnVal.setPrefix(URLDecoder.decode(options.getPrefix()));
+               if (options.getDelimiter() != null) {
+                  Iterable<String> iterable = Iterables.transform(contents, new CommonPrefixes(
+                           options.getPrefix() != null ? URLDecoder.decode(options.getPrefix(),
+                                    "UTF-8") : null, URLDecoder.decode(options.getDelimiter(),
+                                    "UTF-8")));
+                  Set<String> commonPrefixes = iterable != null ? Sets.newTreeSet(iterable)
+                           : new HashSet<String>();
+                  commonPrefixes.remove(CommonPrefixes.NO_PREFIX);
+
+                  contents = Sets.newTreeSet(Iterables.filter(contents, new DelimiterFilter(options
+                           .getPrefix() != null ? URLDecoder.decode(options.getPrefix(), "UTF-8")
+                           : null, URLDecoder.decode(options.getDelimiter(), "UTF-8"))));
+
+                  returnVal.setCommonPrefixes(commonPrefixes);
+                  returnVal.setDelimiter(URLDecoder.decode(options.getDelimiter(), "UTF-8"));
+               }
+            } catch (UnsupportedEncodingException e) {
+               throw new RuntimeException(e);
             }
 
-            if (options.getDelimiter() != null) {
-               Iterable<String> iterable = Iterables.transform(contents, new CommonPrefixes(options
-                        .getPrefix() != null ? URLDecoder.decode(options.getPrefix()) : null,
-                        URLDecoder.decode(options.getDelimiter())));
-               Set<String> commonPrefixes = iterable != null ? Sets.newTreeSet(iterable)
-                        : new HashSet<String>();
-               commonPrefixes.remove(CommonPrefixes.NO_PREFIX);
-
-               contents = Sets.newTreeSet(Iterables.filter(contents, new DelimiterFilter(options
-                        .getPrefix() != null ? URLDecoder.decode(options.getPrefix()) : null,
-                        URLDecoder.decode(options.getDelimiter()))));
-
-               returnVal.setCommonPrefixes(commonPrefixes);
-               returnVal.setDelimiter(URLDecoder.decode(options.getDelimiter()));
-            }
             if (options.getMaxKeys() != null) {
                contents = firstSliceOfSize(contents, Integer.parseInt(options.getMaxKeys()));
                returnVal.setMaxKeys(Integer.parseInt(options.getMaxKeys()));
@@ -344,7 +353,8 @@ public class StubS3Connection implements S3Connection {
       };
    }
 
-   public static <T extends Comparable> SortedSet<T> firstSliceOfSize(Iterable<T> elements, int size) {
+   public static <T extends Comparable<?>> SortedSet<T> firstSliceOfSize(Iterable<T> elements,
+            int size) {
       List<List<T>> slices = Lists.partition(Lists.newArrayList(elements), size);
       return Sets.newTreeSet(slices.get(0));
    }

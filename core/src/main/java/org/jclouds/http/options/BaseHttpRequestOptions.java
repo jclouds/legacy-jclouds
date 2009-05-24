@@ -23,6 +23,10 @@
  */
 package org.jclouds.http.options;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.SortedMap;
@@ -56,6 +60,14 @@ public class BaseHttpRequestOptions implements HttpRequestOptions {
    protected void replaceHeader(String key, String value) {
       headers.removeAll(key);
       headers.put(key, value);
+   }
+
+   protected void encodeAndReplaceParameter(String parameter, String value) {
+      try {
+         parameters.put(parameter, URLEncoder.encode(checkNotNull(value, parameter), "UTF-8"));
+      } catch (UnsupportedEncodingException e) {
+         throw new IllegalArgumentException("bad encoding on " + parameter + ": " + value, e);
+      }
    }
 
    /**

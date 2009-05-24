@@ -85,7 +85,6 @@
 		<url>http://jclouds.googlecode.com/svn/trunk/s3core/perftest</url>
 	</scm>
 	<build>
-
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

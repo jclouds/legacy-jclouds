@@ -24,7 +24,7 @@
 package org.jclouds.aws.s3.xml;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.aws.s3.domain.S3Error;
+import org.jclouds.aws.domain.AWSError;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 import static org.testng.Assert.assertEquals;
@@ -37,8 +37,8 @@ public class ErrorHandlerTest extends BaseHandlerTest {
     @Test
     public void testErrorFromAmazonIfYouDontRemoveTransferEncodingHeader()
             throws HttpException {
-        ParseSax<S3Error> parser = parserFactory.createErrorParser();
-        S3Error error = parser
+        ParseSax<AWSError> parser = parserFactory.createErrorParser();
+        AWSError error = parser
                 .parse(IOUtils
                         .toInputStream(errorFromAmazonIfYouDontRemoveTransferEncodingHeader));
         assertEquals(error.getCode(), "NotImplemented");

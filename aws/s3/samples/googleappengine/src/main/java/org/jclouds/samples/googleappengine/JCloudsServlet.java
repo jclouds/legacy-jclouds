@@ -23,66 +23,78 @@
  */
 package org.jclouds.samples.googleappengine;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import org.jclouds.aws.s3.S3Context;
-import org.jclouds.aws.s3.S3ResponseException;
-import org.jclouds.aws.s3.domain.S3Bucket;
-import org.jclouds.logging.Logger;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+
+import org.jclouds.aws.s3.S3Context;
+import org.jclouds.aws.s3.AWSResponseException;
+import org.jclouds.aws.s3.domain.S3Bucket;
+import org.jclouds.logging.Logger;
+
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 /**
  * Shows an example of how to use @{link S3Connection} injected with Guice.
- *
+ * 
  * @author Adrian Cole
  */
 @Singleton
 public class JCloudsServlet extends HttpServlet {
-    private static final long serialVersionUID = 1L;
+   private static final long serialVersionUID = 1L;
 
-    @Inject
-    S3Context context;
+   private final static String className;
 
-    @Resource
-    protected Logger logger = Logger.NULL;
+   /**
+    * Tests google's behaviour in static context
+    */
+   static {
+      StackTraceElement[] sTrace = new Exception().getStackTrace();
+      // sTrace[0] will be always there
+      className = sTrace[0].getClassName();
+   }
 
-    @Override
-    protected void doGet(HttpServletRequest httpServletRequest,
-                         HttpServletResponse httpServletResponse) throws ServletException,
-            IOException {
-        httpServletResponse.setContentType("text/plain");
-        Writer writer = httpServletResponse.getWriter();
-        try {
-            List<S3Bucket.Metadata> myBuckets = context.getConnection()
-                    .listOwnedBuckets().get(10, TimeUnit.SECONDS);
-            writer.write("List:\n");
-            for (S3Bucket.Metadata bucket : myBuckets) {
-                writer.write(String.format("  %1$s", bucket));
-                try {
-                    writer.write(String.format(": %1$s entries%n", context
-                            .createInputStreamMap(bucket.getName()).size()));
-                } catch (S3ResponseException e) {
-                    String message = String.format(
-                            ": unable to list entries due to: %1$s%n", e
-                                    .getError().getCode());
-                    writer.write(message);
-                    logger.warn(e, "message");
-                }
+   @Inject
+   S3Context context;
 
+   @Resource
+   protected Logger logger = Logger.NULL;
+
+   @Override
+   protected void doGet(HttpServletRequest httpServletRequest,
+            HttpServletResponse httpServletResponse) throws ServletException, IOException {
+      httpServletResponse.setContentType("text/plain");
+      Writer writer = httpServletResponse.getWriter();
+      writer.write(className + "\n");
+      try {
+         List<S3Bucket.Metadata> myBuckets = context.getConnection().listOwnedBuckets().get(10,
+                  TimeUnit.SECONDS);
+         writer.write("List:\n");
+         for (S3Bucket.Metadata bucket : myBuckets) {
+            writer.write(String.format("  %1$s", bucket));
+            try {
+               writer.write(String.format(": %1$s entries%n", context.createInputStreamMap(
+                        bucket.getName()).size()));
+            } catch (AWSResponseException e) {
+               String message = String.format(": unable to list entries due to: %1$s%n", e
+                        .getError().getCode());
+               writer.write(message);
+               logger.warn(e, "message");
             }
-        } catch (Exception e) {
-            throw new ServletException(e);
-        }
-        writer.flush();
-        writer.close();
-    }
+
+         }
+      } catch (Exception e) {
+         throw new ServletException(e);
+      }
+      writer.flush();
+      writer.close();
+   }
 }

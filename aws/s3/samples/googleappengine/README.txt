@@ -21,9 +21,9 @@
     under the License.
     ====================================================================
 ====
-This samples uses the Google App Engine for Java SDK located at http://googleappengine.googlecode.com/files/appengine-java-sdk-1.2.0.zip
+This samples uses the Google App Engine for Java SDK located at http://googleappengine.googlecode.com/files/appengine-java-sdk-1.2.1.zip
 
-Please unzip the above file and modify your maven settings.xml like below before attempting to run 'mvn install'
+Please unzip the above file and modify your maven settings.xml like below before attempting to run 'mvn -Plive install'
 
     <profile>
       <id>appengine</id>
@@ -31,7 +31,7 @@ Please unzip the above file and modify your maven settings.xml like below before
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
-        <appengine.home>/path/to/appengine-java-sdk-1.2.0</appengine.home>
+        <appengine.home>/path/to/appengine-java-sdk-1.2.1</appengine.home>
       </properties>
     </profile>
 

@@ -30,7 +30,7 @@ import javax.annotation.Resource;
 
 import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.filters.RequestAuthorizeSignature;
-import org.jclouds.aws.s3.handlers.ParseS3ErrorFromXmlContent;
+import org.jclouds.aws.s3.handlers.ParseAWSErrorFromXmlContent;
 import org.jclouds.aws.s3.internal.LiveS3Connection;
 import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpRequestFilter;
@@ -74,9 +74,9 @@ public class LiveS3ConnectionModule extends AbstractModule {
       bind(HttpResponseHandler.class).annotatedWith(RedirectHandler.class).to(
                CloseContentAndSetExceptionHandler.class).in(Scopes.SINGLETON);
       bind(HttpResponseHandler.class).annotatedWith(ClientErrorHandler.class).to(
-               ParseS3ErrorFromXmlContent.class).in(Scopes.SINGLETON);
+               ParseAWSErrorFromXmlContent.class).in(Scopes.SINGLETON);
       bind(HttpResponseHandler.class).annotatedWith(ServerErrorHandler.class).to(
-               ParseS3ErrorFromXmlContent.class).in(Scopes.SINGLETON);
+               ParseAWSErrorFromXmlContent.class).in(Scopes.SINGLETON);
       requestInjection(this);
       logger.info("S3 Context = %1$s://%2$s:%3$s", (isSecure ? "https" : "http"), address, port);
    }

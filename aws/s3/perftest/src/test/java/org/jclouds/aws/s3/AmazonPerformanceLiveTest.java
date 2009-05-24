@@ -23,6 +23,8 @@
  */
 package org.jclouds.aws.s3;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.File;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -32,8 +34,8 @@ import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 
 import org.jclouds.aws.s3.reference.S3Constants;
-import org.testng.ITestContext;
-import org.testng.annotations.BeforeTest;
+import org.jets3t.service.S3ServiceException;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -49,13 +51,14 @@ import com.amazon.s3.AWSAuthConnection;
 public class AmazonPerformanceLiveTest extends BasePerformance {
    private AWSAuthConnection amzClient;
 
-   @Override
-   @BeforeTest
+   @BeforeClass(inheritGroups = false, groups = { "live" })
    @Parameters( { S3Constants.PROPERTY_AWS_ACCESSKEYID, S3Constants.PROPERTY_AWS_SECRETACCESSKEY })
-   protected void setUpCredentials(@Optional String AWSAccessKeyId,
-            @Optional String AWSSecretAccessKey, ITestContext context) throws Exception {
-      super.setUpCredentials(AWSAccessKeyId, AWSSecretAccessKey, context);
-      amzClient = new AWSAuthConnection(AWSAccessKeyId, AWSSecretAccessKey, false);
+   public void setUpJetS3t(@Optional String AWSAccessKeyId, @Optional String AWSSecretAccessKey)
+            throws S3ServiceException {
+      AWSAccessKeyId = AWSAccessKeyId != null ? AWSAccessKeyId : sysAWSAccessKeyId;
+      AWSSecretAccessKey = AWSSecretAccessKey != null ? AWSSecretAccessKey : sysAWSSecretAccessKey;
+      amzClient = new AWSAuthConnection(checkNotNull(AWSAccessKeyId, "AWSAccessKeyId"),
+               checkNotNull(AWSSecretAccessKey, "AWSSecretAccessKey"), false);
    }
 
    @Override

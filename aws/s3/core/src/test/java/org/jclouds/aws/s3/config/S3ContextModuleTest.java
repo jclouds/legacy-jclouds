@@ -27,7 +27,7 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.name.Names;
-import org.jclouds.aws.s3.handlers.ParseS3ErrorFromXmlContent;
+import org.jclouds.aws.s3.handlers.ParseAWSErrorFromXmlContent;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.http.HttpResponseHandler;
 import org.jclouds.http.annotation.ClientErrorHandler;
@@ -46,77 +46,57 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "s3.S3ContextModuleTest")
 public class S3ContextModuleTest {
 
-    Injector injector = null;
+   Injector createInjector() {
+      return Guice.createInjector(new LiveS3ConnectionModule(), new S3ContextModule() {
+         @Override
+         protected void configure() {
+            bindConstant().annotatedWith(Names.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to(
+                     "localhost");
+            bindConstant().annotatedWith(Names.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY)).to(
+                     "localhost");
+            bindConstant().annotatedWith(Names.named(S3Constants.PROPERTY_HTTP_ADDRESS)).to(
+                     "localhost");
+            bindConstant().annotatedWith(Names.named(S3Constants.PROPERTY_HTTP_PORT)).to("1000");
+            bindConstant().annotatedWith(Names.named(S3Constants.PROPERTY_HTTP_SECURE)).to("false");
+            super.configure();
+         }
+      }, new JavaUrlHttpFutureCommandClientModule());
+   }
 
-    @BeforeMethod
-    void setUpInjector() {
-        injector = Guice.createInjector(new LiveS3ConnectionModule(), new S3ContextModule() {
-            @Override
-            protected void configure() {
-                bindConstant().annotatedWith(
-                        Names.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to(
-                        "localhost");
-                bindConstant().annotatedWith(
-                        Names.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY))
-                        .to("localhost");
-                bindConstant().annotatedWith(
-                        Names.named(S3Constants.PROPERTY_HTTP_ADDRESS)).to(
-                        "localhost");
-                bindConstant().annotatedWith(
-                        Names.named(S3Constants.PROPERTY_HTTP_PORT)).to("1000");
-                bindConstant().annotatedWith(
-                        Names.named(S3Constants.PROPERTY_HTTP_SECURE)).to(
-                        "false");
-                super.configure();
-            }
-        }, new JavaUrlHttpFutureCommandClientModule());
-    }
+   private static class ClientErrorHandlerTest {
+      @Inject
+      @ClientErrorHandler
+      HttpResponseHandler errorHandler;
+   }
 
-    @AfterMethod
-    void tearDownInjector() {
-        injector = null;
-    }
+   @Test
+   void testClientErrorHandler() {
+      ClientErrorHandlerTest error = createInjector().getInstance(ClientErrorHandlerTest.class);
+      assertEquals(error.errorHandler.getClass(), ParseAWSErrorFromXmlContent.class);
+   }
 
-    private static class ClientErrorHandlerTest {
-        @Inject
-        @ClientErrorHandler
-        HttpResponseHandler errorHandler;
-    }
+   private static class ServerErrorHandlerTest {
+      @Inject
+      @ServerErrorHandler
+      HttpResponseHandler errorHandler;
+   }
 
-    @Test
-    void testClientErrorHandler() {
-        ClientErrorHandlerTest error = injector
-                .getInstance(ClientErrorHandlerTest.class);
-        assertEquals(error.errorHandler.getClass(),
-                ParseS3ErrorFromXmlContent.class);
-    }
+   @Test
+   void testServerErrorHandler() {
+      ServerErrorHandlerTest error = createInjector().getInstance(ServerErrorHandlerTest.class);
+      assertEquals(error.errorHandler.getClass(), ParseAWSErrorFromXmlContent.class);
+   }
 
-    private static class ServerErrorHandlerTest {
-        @Inject
-        @ServerErrorHandler
-        HttpResponseHandler errorHandler;
-    }
+   private static class RedirectHandlerTest {
+      @Inject
+      @RedirectHandler
+      HttpResponseHandler errorHandler;
+   }
 
-    @Test
-    void testServerErrorHandler() {
-        ServerErrorHandlerTest error = injector
-                .getInstance(ServerErrorHandlerTest.class);
-        assertEquals(error.errorHandler.getClass(),
-                ParseS3ErrorFromXmlContent.class);
-    }
-
-    private static class RedirectHandlerTest {
-        @Inject
-        @RedirectHandler
-        HttpResponseHandler errorHandler;
-    }
-
-    @Test
-    void testRedirectHandler() {
-        RedirectHandlerTest error = injector
-                .getInstance(RedirectHandlerTest.class);
-        assertEquals(error.errorHandler.getClass(),
-                CloseContentAndSetExceptionHandler.class);
-    }
+   @Test
+   void testRedirectHandler() {
+      RedirectHandlerTest error = createInjector().getInstance(RedirectHandlerTest.class);
+      assertEquals(error.errorHandler.getClass(), CloseContentAndSetExceptionHandler.class);
+   }
 
 }

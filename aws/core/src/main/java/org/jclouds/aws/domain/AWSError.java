@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.domain;
+package org.jclouds.aws.domain;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +33,7 @@ import java.util.Map;
  * @author Adrian Cole
  * 
  */
-public class S3Error {
+public class AWSError {
     private String code;
     private String message;
     private String requestId;

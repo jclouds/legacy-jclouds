@@ -130,9 +130,9 @@ public class S3IntegrationTest {
    protected String bucketPrefix = (System.getProperty("user.name") + "." + this.getClass()
             .getSimpleName()).toLowerCase();
 
-   private static final String sysAWSAccessKeyId = System
+   protected static final String sysAWSAccessKeyId = System
             .getProperty(S3Constants.PROPERTY_AWS_ACCESSKEYID);
-   private static final String sysAWSSecretAccessKey = System
+   protected static final String sysAWSSecretAccessKey = System
             .getProperty(S3Constants.PROPERTY_AWS_SECRETACCESSKEY);
 
    @BeforeClass(inheritGroups = false, groups = { "integration", "live" })

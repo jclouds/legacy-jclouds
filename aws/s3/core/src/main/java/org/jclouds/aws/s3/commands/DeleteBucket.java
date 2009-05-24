@@ -27,7 +27,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.aws.s3.S3ResponseException;
+import org.jclouds.aws.AWSResponseException;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.commands.callables.ReturnTrueIf2xx;
 
@@ -68,7 +68,7 @@ public class DeleteBucket extends S3FutureCommand<Boolean> {
     Boolean attemptNotFound(ExecutionException e) throws ExecutionException {
 	if (e.getCause() != null
 		&& e.getCause() instanceof HttpResponseException) {
-	    S3ResponseException responseException = (S3ResponseException) e
+	    AWSResponseException responseException = (AWSResponseException) e
 		    .getCause();
 	    if (responseException.getResponse().getStatusCode() == 404) {
 		return true;

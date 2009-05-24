@@ -82,6 +82,7 @@ public class BaseS3MapTest {
 
    }
 
+   @SuppressWarnings("unchecked")
    public void testIfNotFoundRetryOtherwiseAddToSet() throws InterruptedException,
             ExecutionException, TimeoutException {
       BaseS3Map<String> map = new MockBaseS3Map();
@@ -101,6 +102,7 @@ public class BaseS3MapTest {
       assert !objects.contains(S3Object.NOT_FOUND);
    }
 
+   @SuppressWarnings("unchecked")
    public void testIfNotFoundRetryOtherwiseAddToSetButNeverGetsIt() throws InterruptedException,
             ExecutionException, TimeoutException {
       BaseS3Map<String> map = new MockBaseS3Map();

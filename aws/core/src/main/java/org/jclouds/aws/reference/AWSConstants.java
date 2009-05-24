@@ -21,34 +21,19 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.commands;
+package org.jclouds.aws.reference;
 
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.aws.s3.S3IntegrationTest;
-import org.testng.annotations.Test;
+import org.jclouds.command.pool.PoolConstants;
+import org.jclouds.http.HttpConstants;
 
 /**
- * Tests integrated functionality of all bucketExists commands.
- * <p/>
- * Each test uses a different bucket name, so it should be perfectly fine to run in parallel.
+ * Configuration properties and constants used in AWS connections.
  * 
  * @author Adrian Cole
  */
-@Test(groups = { "integration", "live" }, testName = "s3.BucketExistsIntegrationTest")
-public class BucketExistsIntegrationTest extends S3IntegrationTest {
+public interface AWSConstants extends HttpConstants, PoolConstants {
 
-   @Test
-   void bucketDoesntExist() throws Exception {
-      String bucketName = bucketPrefix + "be";
-      assert !client.bucketExists(bucketName).get(10, TimeUnit.SECONDS);
-   }
+   public static final String PROPERTY_AWS_SECRETACCESSKEY = "jclouds.aws.secretaccesskey";
+   public static final String PROPERTY_AWS_ACCESSKEYID = "jclouds.aws.accesskeyid";
 
-   @Test
-   void bucketExists() throws Exception {
-      String bucketName = bucketPrefix + "bde";
-      assert client.putBucketIfNotExists(bucketName).get(10, TimeUnit.SECONDS);
-      assert client.bucketExists(bucketName).get(10, TimeUnit.SECONDS);
-
-   }
 }

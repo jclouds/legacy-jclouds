@@ -11,8 +11,10 @@ import java.security.NoSuchProviderException;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
+import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.digests.MD5Digest;
 import org.bouncycastle.crypto.digests.SHA1Digest;
+import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.util.encoders.Base64;
@@ -52,9 +54,14 @@ public class AWSUtils extends Utils {
       return bytes;
    }
 
-   public static String hmacSha1Base64(String toEncode, byte[] key)
+   public static String hmacSha256Base64(String toEncode, byte[] key)
             throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException {
-      HMac hmac = new HMac(new SHA1Digest());
+      Digest digest = new SHA256Digest();
+      return hmacBase64(toEncode, key, digest);
+   }
+
+   private static String hmacBase64(String toEncode, byte[] key, Digest digest) {
+      HMac hmac = new HMac(digest);
       byte[] resBuf = new byte[hmac.getMacSize()];
       byte[] plainBytes = toEncode.getBytes();
       byte[] keyBytes = key;
@@ -62,6 +69,12 @@ public class AWSUtils extends Utils {
       hmac.update(plainBytes, 0, plainBytes.length);
       hmac.doFinal(resBuf, 0);
       return toBase64String(resBuf);
+   }
+
+   public static String hmacSha1Base64(String toEncode, byte[] key)
+            throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException {
+      Digest digest = new SHA1Digest();
+      return hmacBase64(toEncode, key, digest);
    }
 
    public static String md5Hex(byte[] toEncode) throws NoSuchAlgorithmException,
