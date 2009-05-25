@@ -24,13 +24,13 @@
 #   Parse EC2
 #
 #   Builds an object tree used to create a REST service for the current EC2 api.
-#    
+#
 #   Prerequisites:
 #     * download and install http://search.cpan.org/~petek/HTML-Tree/
 #        1. download and extract the archive
 #        2. cd to that location
-#        3. perl MakeFile.PL   
-#        4. sudo make install   
+#        3. perl MakeFile.PL
+#        4. sudo make install
 #
 #   Usage:
 #     * execute the script with no arguments.  If you've downloaded the content locally, adjust refUrl and parse
@@ -63,6 +63,7 @@ sub parse_file {
 }
 
 sub parse {
+
     # return parse_file(shift);
     return parse_url(shift);
 }
@@ -127,17 +128,16 @@ sub build_commands {
             };
             $command = build_command($command);
             push @commands, $command;
-            push @out,
-              {
-                name     => $packageName,
-                commands => [@commands],
-              };
-
         }
-
+        push @out,
+          {
+            name     => $packageName,
+            commands => [@commands],
+          };
     }
     $tree->eof;
     $tree->delete;
+
     return @out;
 }
 
@@ -167,9 +167,9 @@ sub build_command {
         'id',   "ApiReference-query-$$command{simpleName}-Request"
       )->look_up( '_tag', 'div', 'class', 'section' )
       ->look_down( '_tag', 'tbody' );
-	my @{parameterRows};
-	if ( defined( $reqParamTBody) ) {
-        @{parameterRows} = ${reqParamTBody}->look_down( '_tag', 'tr' );    
+    my @{parameterRows};
+    if ( defined($reqParamTBody) ) {
+        @{parameterRows} = ${reqParamTBody}->look_down( '_tag', 'tr' );
     }
 
     my @optionalParameters;
@@ -200,7 +200,7 @@ sub build_command {
         }
     }
     $$command{options}->{parameters} = [@optionalParameters];
-    $command->{parameters} = [@requiredParameters];
+    $$command{parameters} = [@requiredParameters];
 
     my ${responseExampleDiv} =
       $tree->look_down( '_tag', 'h3', 'id',
@@ -218,6 +218,7 @@ sub build_command {
     }
     $tree->eof;
     $tree->delete;
+
     # print_command($command);
     return $command;
 }
@@ -250,7 +251,7 @@ sub build_response {
         push @fields, {%field};
     }
 
-    $command->{response}->{fields} = [@fields];
+    $$command{response}->{fields} = [@fields];
     $tree->delete;
     return $command;
 }
