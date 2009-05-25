@@ -23,22 +23,25 @@
  */
 package org.jclouds.aws.s3.config;
 
+import static org.testng.Assert.assertEquals;
+
+import org.jclouds.aws.s3.handlers.ParseAWSErrorFromXmlContent;
+import org.jclouds.aws.s3.reference.S3Constants;
+import org.jclouds.http.HttpResponseHandler;
+import org.jclouds.http.HttpRetryHandler;
+import org.jclouds.http.annotation.ClientErrorHandler;
+import org.jclouds.http.annotation.RedirectHandler;
+import org.jclouds.http.annotation.RetryHandler;
+import org.jclouds.http.annotation.ServerErrorHandler;
+import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
+import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
+import org.jclouds.http.handlers.CloseContentAndSetExceptionHandler;
+import org.testng.annotations.Test;
+
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.name.Names;
-import org.jclouds.aws.s3.handlers.ParseAWSErrorFromXmlContent;
-import org.jclouds.aws.s3.reference.S3Constants;
-import org.jclouds.http.HttpResponseHandler;
-import org.jclouds.http.annotation.ClientErrorHandler;
-import org.jclouds.http.annotation.RedirectHandler;
-import org.jclouds.http.annotation.ServerErrorHandler;
-import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
-import org.jclouds.http.handlers.CloseContentAndSetExceptionHandler;
-import static org.testng.Assert.assertEquals;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
@@ -58,6 +61,7 @@ public class S3ContextModuleTest {
                      "localhost");
             bindConstant().annotatedWith(Names.named(S3Constants.PROPERTY_HTTP_PORT)).to("1000");
             bindConstant().annotatedWith(Names.named(S3Constants.PROPERTY_HTTP_SECURE)).to("false");
+            bindConstant().annotatedWith(Names.named(S3Constants.PROPERTY_HTTP_MAX_RETRIES)).to("5");
             super.configure();
          }
       }, new JavaUrlHttpFutureCommandClientModule());
@@ -97,6 +101,18 @@ public class S3ContextModuleTest {
    void testRedirectHandler() {
       RedirectHandlerTest error = createInjector().getInstance(RedirectHandlerTest.class);
       assertEquals(error.errorHandler.getClass(), CloseContentAndSetExceptionHandler.class);
+   }
+
+   private static class RetryHandlerTest {
+      @Inject
+      @RetryHandler
+      HttpRetryHandler retryHandler;
+   }
+
+   @Test
+   void testRetryHandler() {
+      RetryHandlerTest handler = createInjector().getInstance(RetryHandlerTest.class);
+      assertEquals(handler.retryHandler.getClass(), BackoffLimitedRetryHandler.class);
    }
 
 }

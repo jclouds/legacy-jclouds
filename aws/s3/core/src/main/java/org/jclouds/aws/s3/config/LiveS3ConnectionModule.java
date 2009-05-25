@@ -35,9 +35,12 @@ import org.jclouds.aws.s3.internal.LiveS3Connection;
 import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponseHandler;
+import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.annotation.ClientErrorHandler;
 import org.jclouds.http.annotation.RedirectHandler;
+import org.jclouds.http.annotation.RetryHandler;
 import org.jclouds.http.annotation.ServerErrorHandler;
+import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.http.handlers.CloseContentAndSetExceptionHandler;
 import org.jclouds.logging.Logger;
 
@@ -77,6 +80,8 @@ public class LiveS3ConnectionModule extends AbstractModule {
                ParseAWSErrorFromXmlContent.class).in(Scopes.SINGLETON);
       bind(HttpResponseHandler.class).annotatedWith(ServerErrorHandler.class).to(
                ParseAWSErrorFromXmlContent.class).in(Scopes.SINGLETON);
+      bind(HttpRetryHandler.class).annotatedWith(RetryHandler.class).to(
+               BackoffLimitedRetryHandler.class).in(Scopes.SINGLETON);
       requestInjection(this);
       logger.info("S3 Context = %1$s://%2$s:%3$s", (isSecure ? "https" : "http"), address, port);
    }

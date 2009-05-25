@@ -71,7 +71,7 @@ public class JavaUrlHttpFutureCommandClient extends BaseHttpFutureCommandClient 
 				connection);
 		response = getResponse(connection);
 		logger.trace("%1$s - received response %2$s", target, response);
-		if (isRetryable(command, response))
+		if (response.getStatusCode() >= 500 && httpRetryHandler.retryRequest(command, response))
 		    continue;
 		break;
 	    }

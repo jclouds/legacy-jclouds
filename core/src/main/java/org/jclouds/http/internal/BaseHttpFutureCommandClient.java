@@ -27,7 +27,9 @@ import com.google.inject.Inject;
 import org.jclouds.http.*;
 import org.jclouds.http.annotation.ClientErrorHandler;
 import org.jclouds.http.annotation.RedirectHandler;
+import org.jclouds.http.annotation.RetryHandler;
 import org.jclouds.http.annotation.ServerErrorHandler;
+import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.http.handlers.CloseContentAndSetExceptionHandler;
 import org.jclouds.logging.Logger;
 
@@ -54,20 +56,14 @@ public abstract class BaseHttpFutureCommandClient implements HttpFutureCommandCl
     @ServerErrorHandler
     @Inject(optional = true)
     protected HttpResponseHandler serverErrorHandler = new CloseContentAndSetExceptionHandler();
+    
+    @RetryHandler
+    @Inject(optional = true)
+    protected HttpRetryHandler httpRetryHandler = new BackoffLimitedRetryHandler(5);   
 
     @Inject
     public BaseHttpFutureCommandClient(URL target) {
         this.target = target;
-    }
-
-    protected boolean isRetryable(HttpFutureCommand<?> command,
-                                  HttpResponse response) {
-        int code = response.getStatusCode();
-        if (command.getRequest().isReplayable() && code >= 500) {
-            logger.debug("resubmitting command: %1$s", command);
-            return true;
-        }
-        return false;
     }
 
     protected void handleResponse(HttpFutureCommand<?> command, HttpResponse response) {

@@ -34,6 +34,7 @@ import static org.jclouds.command.pool.PoolConstants.PROPERTY_POOL_REQUEST_INVOK
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_ADDRESS;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_PORT;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_SECURE;
+import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_RETRIES;
 
 import java.util.List;
 import java.util.Properties;
@@ -79,6 +80,7 @@ public class S3ContextFactory {
       DEFAULT_PROPERTIES.setProperty(PROPERTY_HTTP_ADDRESS, "s3.amazonaws.com");
       DEFAULT_PROPERTIES.setProperty(PROPERTY_HTTP_PORT, "443");
       DEFAULT_PROPERTIES.setProperty(PROPERTY_HTTP_SECURE, "true");
+      DEFAULT_PROPERTIES.setProperty(PROPERTY_HTTP_MAX_RETRIES, "5");
       DEFAULT_PROPERTIES.setProperty(PROPERTY_POOL_MAX_CONNECTION_REUSE, "75");
       DEFAULT_PROPERTIES.setProperty(PROPERTY_POOL_MAX_SESSION_FAILURES, "2");
       DEFAULT_PROPERTIES.setProperty(PROPERTY_POOL_REQUEST_INVOKER_THREADS, "1");

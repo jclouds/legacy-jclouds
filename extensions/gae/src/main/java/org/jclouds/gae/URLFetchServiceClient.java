@@ -75,7 +75,8 @@ public class URLFetchServiceClient extends BaseHttpFutureCommandClient {
                                     target, gaeResponse.getResponseCode(),
                                     headersAsString(gaeResponse.getHeaders()));
                 response = convert(gaeResponse);
-                if (isRetryable(command, response))
+                int statusCode = response.getStatusCode();
+                if (statusCode >= 500 && httpRetryHandler.retryRequest(command, response))
                     continue;
                 break;
             }

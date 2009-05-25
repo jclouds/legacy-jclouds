@@ -32,4 +32,5 @@ public interface HttpConstants extends HttpHeaders, ContentTypes {
     public static final String PROPERTY_HTTP_SECURE = "jclouds.http.secure";
     public static final String PROPERTY_HTTP_PORT = "jclouds.http.port";
     public static final String PROPERTY_HTTP_ADDRESS = "jclouds.http.address";
+    public static final String PROPERTY_HTTP_MAX_RETRIES = "jclouds.http.max-retries";
 }

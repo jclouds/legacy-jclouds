@@ -23,7 +23,12 @@
  */
 package org.jclouds.http.httpnio.pool;
 
-import com.google.inject.Inject;
+import java.io.IOException;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+
+import javax.annotation.Resource;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpResponse;
@@ -33,17 +38,17 @@ import org.apache.http.protocol.HttpContext;
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponseHandler;
+import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.annotation.ClientErrorHandler;
 import org.jclouds.http.annotation.RedirectHandler;
+import org.jclouds.http.annotation.RetryHandler;
 import org.jclouds.http.annotation.ServerErrorHandler;
+import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.http.handlers.CloseContentAndSetExceptionHandler;
 import org.jclouds.http.httpnio.util.HttpNioUtils;
 import org.jclouds.logging.Logger;
 
-import javax.annotation.Resource;
-import java.io.IOException;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
+import com.google.inject.Inject;
 
 /**
  * // TODO: Adrian: Document this!
@@ -69,6 +74,10 @@ public class HttpNioFutureCommandExecutionHandler implements
     @ServerErrorHandler
     @Inject(optional = true)
     private HttpResponseHandler serverErrorHandler = new CloseContentAndSetExceptionHandler();
+
+    @RetryHandler
+    @Inject(optional = true)
+    protected HttpRetryHandler httpRetryHandler = new BackoffLimitedRetryHandler(5);   
 
     public interface ConsumingNHttpEntityFactory {
         public ConsumingNHttpEntity create(HttpEntity httpEntity);
@@ -115,11 +124,17 @@ public class HttpNioFutureCommandExecutionHandler implements
 
                 int code = response.getStatusCode();
                 if (code >= 500) {
-                    if (isRetryable(command)) {
-                        commandQueue.add(command);
-                    } else {
-                        this.serverErrorHandler.handle(command, response);
-                    }
+                   boolean retryRequest = false;
+                   try {
+                	   retryRequest = httpRetryHandler.retryRequest(command, response);
+                   } catch (InterruptedException ie) {
+                      // TODO: Add interrupt exception to command and abort? 
+                   }
+                   if (retryRequest) {
+                      commandQueue.add(command);
+                   } else {
+                      this.serverErrorHandler.handle(command, response);
+                   }
                 } else if (code >= 400 && code < 500) {
                     this.clientErrorHandler.handle(command, response);
                 } else if (code >= 300 && code < 400) {
@@ -134,14 +149,6 @@ public class HttpNioFutureCommandExecutionHandler implements
             throw new IllegalStateException(String.format(
                     "No command-handle associated with command %1$s", context));
         }
-    }
-
-    protected boolean isRetryable(HttpFutureCommand<?> command) {
-        if (command.getRequest().isReplayable()) {
-            logger.debug("resubmitting command: %1$s", command);
-            return true;
-        }
-        return false;
     }
 
     protected void releaseConnectionToPool(
