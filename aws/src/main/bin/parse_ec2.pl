@@ -162,11 +162,15 @@ sub build_command {
       ->look_up( '_tag', 'div', 'class', 'section' );
     $$command{options}->{example} = ${requestExampleDiv}->as_HTML();
 
-    my @{parameterRows} = $tree->look_down(
+    my ${reqParamTBody} = $tree->look_down(
         '_tag', 'h2',
         'id',   "ApiReference-query-$$command{simpleName}-Request"
       )->look_up( '_tag', 'div', 'class', 'section' )
-      ->look_down( '_tag', 'tbody' )->look_down( '_tag', 'tr' );
+      ->look_down( '_tag', 'tbody' );
+	my @{parameterRows};
+	if ( defined( $reqParamTBody) ) {
+        @{parameterRows} = ${reqParamTBody}->look_down( '_tag', 'tr' );    
+    }
 
     my @optionalParameters;
     my @requiredParameters;
@@ -214,7 +218,7 @@ sub build_command {
     }
     $tree->eof;
     $tree->delete;
-    print_command($command);
+    # print_command($command);
     return $command;
 }
 
