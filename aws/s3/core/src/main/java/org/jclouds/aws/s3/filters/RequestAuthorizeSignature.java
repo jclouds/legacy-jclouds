@@ -118,7 +118,6 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
 
    private void removeOldHeaders(HttpRequest request) {
       request.getHeaders().removeAll(S3Constants.AUTHORIZATION);
-      request.getHeaders().removeAll(HttpHeaders.CONTENT_TYPE);
       request.getHeaders().removeAll(HttpHeaders.DATE);
    }
 
