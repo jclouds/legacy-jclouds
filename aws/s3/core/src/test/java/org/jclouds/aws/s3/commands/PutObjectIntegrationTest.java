@@ -97,8 +97,7 @@ public class PutObjectIntegrationTest extends S3IntegrationTest {
       addObjectToBucket(bucketName, object);
       S3Object newObject = validateContent(bucketName, key);
 
-      // TODO.. why does this come back as binary/octetstring
-      assertEquals(newObject.getMetadata().getContentType(), "binary/octet-stream");
+      assertEquals(newObject.getMetadata().getContentType(), "text/plain");
       assertEquals(newObject.getMetadata().getContentEncoding(), "x-compress");
       assertEquals(newObject.getMetadata().getContentDisposition(),
                "attachment; filename=hello.txt");

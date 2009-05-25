@@ -427,7 +427,7 @@ public class StubS3Connection implements S3Connection {
          byte[] data = toByteArray(object.getData());
          final byte[] md5 = S3Utils.md5(data);
          newMd.setMd5(md5);
-         newMd.setContentType("binary/octet-stream");
+         newMd.setContentType(object.getMetadata().getContentType());
          if (options.getAcl() != null)
             keyToAcl.put(bucketName + object, options.getAcl());
          bucketToContents.get(bucketName).put(object.getKey(), new S3Object(newMd, data));
