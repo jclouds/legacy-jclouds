@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
+ * Copyright (C) 2009 James Murty <jamurty@gmail.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -82,12 +82,18 @@ public class BackoffLimitedRetryHandler implements HttpRetryHandler {
                      retryCountLimit, command);
          return false;
       } else {
-         long delayMs = (long) (50L * Math.pow(command.getFailureCount(), 2));
-         logger.debug("Retry %1$d/%2$d after server error, delaying for %3$d ms: %4$s", 
-        		      command.getFailureCount(), retryCountLimit, delayMs, command);
-         Thread.sleep(delayMs);
-         return true;
+        imposeBackoffExponentialDelay(command.getFailureCount(), command.toString());
+        return true;
       }
+   }
+   
+   public void imposeBackoffExponentialDelay(int failureCound, String commandDescription) 
+      throws InterruptedException 
+   {
+      long delayMs = (long) (50L * Math.pow(failureCound, 2));
+      logger.debug("Retry %1$d/%2$d after server error, delaying for %3$d ms: %4$s", 
+                   failureCound, retryCountLimit, delayMs, commandDescription);
+      Thread.sleep(delayMs);
    }
 
 }
