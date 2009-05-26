@@ -26,7 +26,12 @@
 #   Builds an object tree used to create a REST service for the current EC2 api.
 #
 #   Prerequisites:
-#     * download and install http://search.cpan.org/~petek/HTML-Tree/
+#     * install HTML-Tree (http://search.cpan.org/~petek/HTML-Tree/)
+#        1. download and extract the archive
+#        2. cd to that location
+#        3. perl MakeFile.PL
+#        4. sudo make install
+#     * install JSON (http://search.cpan.org/~makamaka/JSON-2.14/lib/JSON.pm)
 #        1. download and extract the archive
 #        2. cd to that location
 #        3. perl MakeFile.PL
@@ -43,10 +48,11 @@ use strict;
 use HTML::TreeBuilder 2.97;
 use LWP::UserAgent;
 use Data::Dumper;
+use JSON;
 
-#my $refUrl = "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference";
+my $refUrl = "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference";
+# my $refUrl           = "/tmp/scrape";
 
-my $refUrl           = "/tmp/scrape";
 my $appUrl           = "${refUrl}/OperationList-query.html";
 my $global_package   = "org.jclouds.aws.ec2";
 my $commands_package = $global_package . ".commands";
@@ -67,9 +73,9 @@ sub parse_file {
 
 sub parse {
 
-    return parse_file(shift);
+    # return parse_file(shift);
 
-    #return parse_url(shift);
+    return parse_url(shift);
 }
 
 sub parse_java_type {
@@ -598,10 +604,13 @@ EOF
 # start app!
 my $app = build_app($appUrl);
 
-gen_bean_code_for_domain($domain);
-gen_bean_code_for_response($app);
-gen_bean_code_for_command($app);
+my $app_json = to_json($app, {utf8 => 1, pretty => 1});
+print $app_json
 
-print_domain_code($domain);
-print_response_code($app);
-print_command_code($app);
+# gen_bean_code_for_domain($domain);
+# gen_bean_code_for_response($app);
+# gen_bean_code_for_command($app);
+# 
+# print_domain_code($domain);
+# print_response_code($app);
+# print_command_code($app);
