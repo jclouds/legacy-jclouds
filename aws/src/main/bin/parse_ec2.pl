@@ -36,7 +36,7 @@
 #     * execute the script with no arguments.  If you've downloaded the content locally, adjust refUrl and parse
 #
 #   Tips:  use $tree->dump to view the current html tree and print Dumper($object) to see a reference
-#
+#          this code is formatted with PerlTidy
 #   Author: Adrian Cole
 ####
 use strict;
@@ -44,15 +44,18 @@ use HTML::TreeBuilder 2.97;
 use LWP::UserAgent;
 use Data::Dumper;
 
-my $refUrl = "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference";
+#my $refUrl = "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference";
 
-#my $refUrl           = "/tmp/scrape";
+my $refUrl           = "/tmp/scrape";
 my $appUrl           = "${refUrl}/OperationList-query.html";
 my $global_package   = "org.jclouds.aws.ec2";
 my $commands_package = $global_package . ".commands";
 my $response_package = $commands_package . ".response";
 my $options_package  = $commands_package . ".options";
+my $domain_package   = $global_package . ".domain";
 my $xml_package      = $global_package . ".xml";
+
+my $domain = {};
 
 sub parse_file {
     my $file = $_[0] || die "What File?";
@@ -64,8 +67,60 @@ sub parse_file {
 
 sub parse {
 
-    # return parse_file(shift);
-    return parse_url(shift);
+    return parse_file(shift);
+
+    #return parse_url(shift);
+}
+
+sub parse_java_type {
+    $_ = shift;
+    s/xsd:string/String/;
+    s/xsd:boolean/boolean/;
+    s/Integer/int/;
+    s/xsd:Int/int/;
+    s/xsd:dateTime/DateTime/;
+    if (/Type/) {
+        my $awsType  = $_;
+        my $javaType = get_java_name($awsType);
+        if ( !/Response/ ) {
+            $domain->{$awsType} = {
+                awsType   => $awsType,
+                javaType  => $javaType,
+                package   => $domain_package,
+                className => $domain_package . "." . $javaType,
+                see => ["${refUrl}/ApiReference-ItemType-${awsType}.html"],
+                fields =>
+                  build_fields("${refUrl}/ApiReference-ItemType-$awsType.html")
+            };
+        }
+        $_ = $javaType;
+    }
+
+    return $_;
+}
+
+sub get_java_name {
+    $_ = shift;
+    if (/sSetType/) {
+        s/sSetType//;
+        return "Set<$_>";
+    }
+    if (/sSetItemType/) {
+        s/sSetItemType//;
+    }
+    if (/sItemType/) {
+        s/sItemType//;
+    }
+    if (/sSet/) {
+        s/sSet//;
+    }
+    if (/Set/) {
+        s/Set//;
+    }
+    if (/Type/) {
+        s/Type//;
+    }
+    return $_;
 }
 
 sub parse_url {
@@ -86,9 +141,6 @@ sub parse_url {
 
 sub build_commands {
     my $tree = parse( $_[0] );
-
-    #$tree->dump;
-
     my @out;
     foreach my $link (
         ( $tree->look_down( '_tag', 'div', 'class', 'itemizedlist' ) ) )
@@ -100,72 +152,96 @@ sub build_commands {
         my @commands;
 
         foreach my $class ( $link->look_down( '_tag', 'a' ) ) {
-            my $simpleName = $class->attr('title');
-            my $command    = {
-                simpleName => $simpleName,
-                className  => $commands_package . $simpleName,
-                see      => ["${refUrl}/ApiReference-query-${simpleName}.html"],
-                response => {
-                    simpleName => $simpleName . "Response",
-                    className  => $response_package . $simpleName . "Response",
-                    see        => [
-"${refUrl}/ApiReference-ItemType-${simpleName}Response.html"
+            my $awsType = $class->attr('title');
+            my $command = {
+                awsType   => $awsType,
+                package   => $commands_package . ".$packageName",
+                className => $commands_package . ".$packageName." . $awsType,
+                see       => ["${refUrl}/ApiReference-query-${awsType}.html"],
+                response  => {
+                    javaType  => $awsType . "Response",
+                    awsType   => $awsType . "Response",
+                    package   => $response_package . ".$packageName",
+                    className => $response_package
+                      . ".$packageName."
+                      . $awsType
+                      . "Response",
+                    see => [
+"${refUrl}/ApiReference-ItemType-${awsType}Response.html"
                     ]
                 },
                 options => {
-                    simpleName => $simpleName . "Options",
-                    className  => $options_package . $simpleName . "Options",
-                    see =>
-                      ["${refUrl}/ApiReference-ItemType-${simpleName}.html"]
+                    awsType   => $awsType . "Options",
+                    package   => $options_package . ".$packageName",
+                    className => $options_package
+                      . ".$packageName."
+                      . $awsType
+                      . "Options",
+                    see => ["${refUrl}/ApiReference-ItemType-${awsType}.html"]
                 },
                 handler => {
-                    simpleName => $simpleName . "Handler",
-                    className  => $xml_package . $simpleName . "Handler",
-                    see        => [
-"${refUrl}/ApiReference-ItemType-${simpleName}Response.html"
+                    awsType   => $awsType . "Handler",
+                    package   => $xml_package . ".$packageName",
+                    className => $xml_package
+                      . ".$packageName."
+                      . $awsType
+                      . "Handler",
+                    see => [
+"${refUrl}/ApiReference-ItemType-${awsType}Response.html"
                     ]
                 }
             };
             $command = build_command($command);
+
+            # do not build options when there are none!
+            if ( $#{ $$command{options}->{parameters} } == -1 ) {
+                delete $$command{options};
+            }
+
+            # clear parameters for commands who don't require them
+            if ( $#{ $$command{parameters} } == -1 ) {
+                delete $$command{parameters};
+            }
             push @commands, $command;
         }
         push @out,
           {
             name     => $packageName,
-            commands => [@commands],
+            commands => \@commands,
           };
     }
     $tree->eof;
     $tree->delete;
 
-    return @out;
+    return \@out;
 }
 
 sub build_app {
     my $url      = shift;
-    my @packages = build_commands($url);
+    my $packages = build_commands($url);
     return {
         see      => [$url],
-        packages => [@packages]
+        packages => $packages
     };
 }
 
 sub build_command {
     my $command = $_[0];
-    print "parsing $$command{see}[0]...\n";
+
+    #print "parsing $$command{see}[0]...\n";
     my $tree = parse( $$command{see}[0] );
 
     #$tree->dump;
     my ${requestExampleDiv} =
       $tree->look_down( '_tag', 'h3', 'id',
-        "ApiReference-query-$$command{simpleName}-Example-Request-1" )
+        "ApiReference-query-$$command{awsType}-Example-Request-1" )
       ->look_up( '_tag', 'div', 'class', 'section' );
     $$command{options}->{example} = ${requestExampleDiv}->as_HTML();
 
-    my ${reqParamTBody} = $tree->look_down(
-        '_tag', 'h2',
-        'id',   "ApiReference-query-$$command{simpleName}-Request"
-      )->look_up( '_tag', 'div', 'class', 'section' )
+    my ${reqParamTBody} =
+      $tree->look_down( '_tag', 'h2', 'id',
+        "ApiReference-query-$$command{awsType}-Request" )
+      ->look_up( '_tag', 'div', 'class', 'section' )
       ->look_down( '_tag', 'tbody' );
     my @{parameterRows};
     if ( defined($reqParamTBody) ) {
@@ -186,25 +262,26 @@ sub build_command {
                 $param{param} = $_;
             }
             elsif (s/Type: //) {
-                $param{type} = $_;
+                $param{type}     = $_;
+                $param{javaType} = parse_java_type($_);
             }
             else {
                 $param{desc} = $_;
             }
         }
         if ( ${row}[2]->as_text() =~ /No/ ) {
-            push @optionalParameters, {%param};
+            push @optionalParameters, \%param;
         }
         else {
-            push @requiredParameters, {%param};
+            push @requiredParameters, \%param;
         }
     }
-    $$command{options}->{parameters} = [@optionalParameters];
-    $$command{parameters} = [@requiredParameters];
+    $$command{options}->{parameters} = \@optionalParameters;
+    $$command{parameters} = \@requiredParameters;
 
     my ${responseExampleDiv} =
       $tree->look_down( '_tag', 'h3', 'id',
-        "ApiReference-query-$$command{simpleName}-Example-Response-1" )
+        "ApiReference-query-$$command{awsType}-Example-Response-1" )
       ->look_up( '_tag', 'div', 'class', 'section' );
     $$command{handler}->{example} = ${responseExampleDiv}->as_HTML();
 
@@ -225,14 +302,35 @@ sub build_command {
 
 sub build_response {
     my $command = $_[0];
-    my $tree    = parse( $$command{response}->{see}[0] );
+    $$command{response}->{fields} =
+      build_fields( $$command{response}->{see}[0] );
+    remove_request_ids( $$command{response} );
+    return $command;
+}
 
-    #$tree->dump;
+# request id is not a domain concern
+sub remove_request_ids {
+    my $response = shift;
+    my @fields   = @{ ${response}->{fields} };
+    for ( 0 .. $#fields ) {
+        if ( $fields[$_]->{name} eq "requestId" ) {
+            splice( @{ ${response}->{fields} }, $_, 1 );
+        }
+    }
+}
+
+sub build_fields {
+
+    #print "parsing $_[0]\n";
+    my $tree = parse( $_[0] );
+
     $tree->eof;
     my @{fields};
 
-    my @{fieldRows} =
-      ${tree}->look_down( '_tag', 'tbody' )->look_down( '_tag', 'tr' );
+    my @{fieldRows} = my $body = ${tree}->look_down( '_tag', 'tbody' );
+    return [] unless defined $body;    #TODO
+
+    @{fieldRows} = $body->look_down( '_tag', 'tr' );
 
     foreach ( @{fieldRows} ) {
         my @row = $_->look_down( '_tag', 'td' );
@@ -242,38 +340,268 @@ sub build_response {
         foreach ( @{data} ) {
             $_ = $_->as_text();
             if (s/Type: //) {
-                $field{type} = $_;
+                $field{type}     = $_;
+                $field{javaType} = parse_java_type($_);
             }
             else {
                 $field{desc} = $_;
             }
         }
-        push @fields, {%field};
+        push @fields, \%field;
     }
 
-    $$command{response}->{fields} = [@fields];
     $tree->delete;
-    return $command;
+    return \@fields;
 }
 
-sub print_command {
-    my $classRef = shift;
-    print "     $$classRef{simpleName}\n";
-    print Dumper($_) . "\n" foreach ( @{ $classRef->{parameters} } );
-}
+sub gen_java_code {
+    my $app = shift;
 
-sub print_app {
-    my $app = build_app($appUrl);
-    print Dumper($app);
+    #print Dumper($app);
 
     my @packages = @{ $$app{packages} };
 
     foreach my $packageRef (@packages) {
-        my @commands = @{ $$packageRef{commands} };
-        print_command foreach (@commands);
+        print "$packageRef->{name}\n";
+
+        #print Dumper($packageRef);
+        my @commands = @{ $packageRef->{commands} };
+        foreach my $command (@commands) {
+            print_command($command);
+        }
     }
 }
 
-# start app!
-print_app();
+sub print_domain_code {
+    my $domain = shift;
+    while ( my ( $awsType, $classDef ) = each %$domain ) {
+        print "$classDef->{code}\n\n";
+    }
+}
 
+sub print_response_code {
+    my $app      = shift;
+    my @packages = @{ $$app{packages} };
+    foreach my $packageRef (@packages) {
+        my @commands = @{ $packageRef->{commands} };
+        foreach my $command (@commands) {
+            print "$command->{response}->{code}\n\n"
+              if defined $command->{response}->{code};
+        }
+    }
+}
+
+sub print_command_code {
+    my $app      = shift;
+    my @packages = @{ $$app{packages} };
+    foreach my $packageRef (@packages) {
+        my @commands = @{ $packageRef->{commands} };
+        foreach my $command (@commands) {
+            print "$command->{code}\n\n"
+              if defined $command->{code};
+        }
+    }
+}
+
+sub gen_bean_code_for_response {
+    my $app      = shift;
+    my @packages = @{ $$app{packages} };
+
+    foreach my $packageRef (@packages) {
+        my @commands = @{ $packageRef->{commands} };
+        foreach my $command (@commands) {
+            my $fieldCount = scalar @{ $command->{response}->{fields} };
+
+            # convert to native java type
+            if ( $fieldCount == 1 ) {
+                $command->{response}->{javaType} =
+                  ${ $command->{response}->{fields} }[0]->{javaType};
+            }
+            else {
+                gen_bean_code( $command->{response} );
+            }
+        }
+    }
+}
+
+sub gen_bean_code_for_domain {
+    my $hierarchy = shift;
+    while ( my ( $awsType, $classDef ) = each %$hierarchy ) {
+        gen_bean_code($classDef);
+    }
+    return $hierarchy;
+}
+
+sub gen_bean_code_for_command {
+    my $app      = shift;
+    my @packages = @{ $$app{packages} };
+
+    foreach my $packageRef (@packages) {
+        my @commands = @{ $packageRef->{commands} };
+        foreach my $command (@commands) {
+            gen_command($command);
+        }
+    }
+}
+
+# inserts code into the class definitions
+sub gen_command {
+    my $classDef        = shift;
+    my $responsePackage = $${classDef}{response}->{package};
+    my $optionsImport;
+    $optionsImport = "import " . $${classDef}{options}->{package} . ".*"
+      if defined $${classDef}{options};
+
+    my ${code} = <<EOF;
+package $classDef->{package};
+import ${domain_package}.*;
+import ${responsePackage}.*;
+${optionsImport}
+import org.jclouds.http.commands.callables.xml.ParseSax;
+
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import org.jclouds.http.HttpFutureCommand;
+
+/**
+ *
+EOF
+    foreach my $see ( @{ $classDef->{see} } ) {
+        if ( $see =~ /html/ ) {
+            $see = "<a href='$see' />";
+        }
+        ${code} = ${code} . <<EOF;
+ * \@see $see 
+EOF
+
+    }
+
+# TODO change optons to be default of Base... instead of doing this in render logic.
+    my $optionsParameter =
+      "\@Assisted BaseEC2RequestOptions<EC2RequestOptions> options";
+    $optionsParameter =
+      "\@Assisted " . $classDef->{options}->{awsType} . " options"
+      if defined $classDef->{options}->{awsType};
+
+    ${code} = ${code} . <<EOF;
+ * \@author Adrian Cole 
+ */
+public class $classDef->{javaType} extends HttpFutureCommand<$classDef->{response}->{javaType}> {
+   \@Inject
+   public $classDef->{javaType}(\@Named(AWSConstants.PROPERTY_AWS_ACCESSKEYID) String awsAccessKeyId, 
+                                \@Named(AWSConstants.PROPERTY_AWS_SECRETACCESSKEY) String awsSecretAccessKey, 
+                                ParseSax<$classDef->{response}->{javaType}> callable, ${optionsParameter}
+EOF
+
+    my $optionString;
+    my $args;
+
+    # print fields
+    foreach my $field ( @{ $classDef->{parameters} } ) {
+        my ${name} = $field->{name};
+        $name = lcfirst($name);
+        my $uname = ucfirst($name);
+
+        $args         .= "\@Assisted $field->{javaType} ${name}, ";
+        $optionString .= ".with${uname}(${uname})";
+    }
+
+    ${code} = ${code} . <<EOF;
+                   ${args}) {
+	  super("GET", "/" + options.buildQueryString()${optionString}.signWith(awsAccessKeyId,awsSecretAccessKey), callable);
+   }
+
+} 
+EOF
+    $classDef->{code} = $code;
+
+}
+
+# inserts code into the class definitions
+sub gen_bean_code {
+    my $classDef = shift;
+    my ${code} = <<EOF;
+package $classDef->{package};
+EOF
+    if ( "$classDef->{package}" ne "${domain_package}" ) {
+        ${code} = ${code} . <<EOF;
+       
+import ${domain_package}.*;
+EOF
+    }
+    ${code} = ${code} . <<EOF;
+
+/**
+ *
+EOF
+    foreach my $see ( @{ $classDef->{see} } ) {
+        if ( $see =~ /html/ ) {
+            $see = "<a href='$see' />";
+        }
+        ${code} = ${code} . <<EOF;
+ * \@see $see 
+EOF
+
+    }
+    ${code} = ${code} . <<EOF;
+ * \@author Adrian Cole 
+ */
+public class $classDef->{javaType} {
+
+EOF
+
+    # print fields
+    foreach my $field ( @{ $classDef->{fields} } ) {
+        my ${name} = $field->{name};
+        $name = lcfirst($name);
+        ${code} = ${code} . <<EOF;
+   /**
+    *
+    * $field->{desc} 
+    * /
+   private $field->{javaType} ${name};
+   
+EOF
+
+    }
+
+    # print get/set
+    foreach my $field ( @{ $classDef->{fields} } ) {
+        my ${name} = $field->{name};
+        $name = lcfirst($name);
+        my $uname = ucfirst($name);
+
+        ${code} = ${code} . <<EOF;
+   /**
+    *
+    * \@return $field->{desc} 
+    * /
+   public $field->{javaType} get${uname}(){
+      return this.${name};
+   }
+
+   /**
+    *
+    * \@param $name $field->{desc} 
+    * /
+   public void set${uname}($field->{javaType} $name){
+      this.${name} = ${name};
+   }
+  
+EOF
+    }
+    ${code} = ${code} . "}";
+    $classDef->{code} = $code;
+
+}
+
+# start app!
+my $app = build_app($appUrl);
+
+gen_bean_code_for_domain($domain);
+gen_bean_code_for_response($app);
+gen_bean_code_for_command($app);
+
+print_domain_code($domain);
+print_response_code($app);
+print_command_code($app);
