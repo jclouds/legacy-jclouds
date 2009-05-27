@@ -23,37 +23,25 @@
  */
 package org.jclouds.aws.codegen.model;
 
-import java.util.List;
-
 /**
  * 
  * @author James Murty
  */
-public class Command extends BaseBean {
-	private List<Parameter> parameters;
-	private Options options;
-	private Handler handler;
-	private Response response;
-	private List<String> see;
-	
-	public List<Parameter> getParameters() {
-		return parameters;
+public abstract class BaseBean {
+	private String className;
+	private String packageName;
+	private String awsType;
+
+	public String getClassName() {
+		return className;
 	}
 	
-	public Options getOptions() {
-		return options;
+	public String getPackageName() {
+		return packageName;
 	}
 
-	public Handler getHandler() {
-		return handler;
+	public String getAwsType() {
+		return awsType;
 	}
-	
-	public Response getResponse() {
-		return response;
-	}
-	
-	public List<String> getSee() {
-		return see;
-	}
-		
+
 }

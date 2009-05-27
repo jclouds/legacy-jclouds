@@ -29,31 +29,20 @@ import java.util.List;
  * 
  * @author James Murty
  */
-public class Command extends BaseBean {
+public class Options extends BaseBean {
 	private List<Parameter> parameters;
-	private Options options;
-	private Handler handler;
-	private Response response;
+	private String example;
 	private List<String> see;
 	
 	public List<Parameter> getParameters() {
 		return parameters;
 	}
 	
-	public Options getOptions() {
-		return options;
+	public String getExample() {
+		return example;
 	}
-
-	public Handler getHandler() {
-		return handler;
-	}
-	
-	public Response getResponse() {
-		return response;
-	}
-	
 	public List<String> getSee() {
 		return see;
 	}
-		
+	
 }
