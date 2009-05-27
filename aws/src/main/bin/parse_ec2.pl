@@ -92,7 +92,7 @@ sub parse_java_type {
             $domain->{$awsType} = {
                 awsType   => $awsType,
                 javaType  => $javaType,
-                package   => $domain_package,
+                packageName   => $domain_package,
                 className => $domain_package . "." . $javaType,
                 see => ["${refUrl}/ApiReference-ItemType-${awsType}.html"],
                 fields =>
@@ -161,13 +161,13 @@ sub build_commands {
             my $awsType = $class->attr('title');
             my $command = {
                 awsType   => $awsType,
-                package   => $commands_package . ".$packageName",
+                packageName   => $commands_package . ".$packageName",
                 className => $commands_package . ".$packageName." . $awsType,
                 see       => ["${refUrl}/ApiReference-query-${awsType}.html"],
                 response  => {
                     javaType  => $awsType . "Response",
                     awsType   => $awsType . "Response",
-                    package   => $response_package . ".$packageName",
+                    packageName   => $response_package . ".$packageName",
                     className => $response_package
                       . ".$packageName."
                       . $awsType
@@ -178,7 +178,7 @@ sub build_commands {
                 },
                 options => {
                     awsType   => $awsType . "Options",
-                    package   => $options_package . ".$packageName",
+                    packageName   => $options_package . ".$packageName",
                     className => $options_package
                       . ".$packageName."
                       . $awsType
@@ -187,7 +187,7 @@ sub build_commands {
                 },
                 handler => {
                     awsType   => $awsType . "Handler",
-                    package   => $xml_package . ".$packageName",
+                    packageName   => $xml_package . ".$packageName",
                     className => $xml_package
                       . ".$packageName."
                       . $awsType
@@ -453,13 +453,13 @@ sub gen_bean_code_for_command {
 # inserts code into the class definitions
 sub gen_command {
     my $classDef        = shift;
-    my $responsePackage = $${classDef}{response}->{package};
+    my $responsePackage = $${classDef}{response}->{packageName};
     my $optionsImport;
-    $optionsImport = "import " . $${classDef}{options}->{package} . ".*"
+    $optionsImport = "import " . $${classDef}{options}->{packageName} . ".*"
       if defined $${classDef}{options};
 
     my ${code} = <<EOF;
-package $classDef->{package};
+package $classDef->{packageName};
 import ${domain_package}.*;
 import ${responsePackage}.*;
 ${optionsImport}
@@ -527,9 +527,9 @@ EOF
 sub gen_bean_code {
     my $classDef = shift;
     my ${code} = <<EOF;
-package $classDef->{package};
+package $classDef->{packageName};
 EOF
-    if ( "$classDef->{package}" ne "${domain_package}" ) {
+    if ( "$classDef->{packageName}" ne "${domain_package}" ) {
         ${code} = ${code} . <<EOF;
        
 import ${domain_package}.*;
