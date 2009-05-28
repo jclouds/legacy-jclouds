@@ -1,6 +1,6 @@
 ====
 
-    Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
+    Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
 
     ====================================================================
     Licensed to the Apache Software Foundation (ASF) under one

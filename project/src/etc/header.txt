@@ -1,5 +1,5 @@
 
-Copyright (C) ${year} Adrian Cole <adrian@jclouds.org>
+Copyright (C) ${year} Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
 
 ====================================================================
 Licensed to the Apache Software Foundation (ASF) under one

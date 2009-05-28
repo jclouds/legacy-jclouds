@@ -82,6 +82,7 @@ pageTracker._trackPageview();
                 <artifactId>maven-license-plugin</artifactId>
                 <version>1.4.0</version>
                 <configuration>
+                    <aggregate>true</aggregate>
                     <header>project/src/etc/header.txt</header>
                     <excludes>
                         <!-- amazon files have their own license  -->
