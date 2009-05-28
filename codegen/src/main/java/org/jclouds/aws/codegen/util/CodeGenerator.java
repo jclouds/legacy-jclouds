@@ -37,7 +37,6 @@ import org.jclouds.aws.codegen.model.Command;
 import org.jclouds.aws.codegen.model.Model;
 import org.jclouds.aws.codegen.model.Package;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 
@@ -176,7 +175,6 @@ public class CodeGenerator {
 	 * @throws IOException
 	 * @throws TemplateException
 	 */
-	@VisibleForTesting
 	public void applyTemplate(String templateFileName, Map<String, Object> objectMap, Writer writer) 
 		throws IOException, TemplateException 
 	{
