@@ -23,8 +23,6 @@
  */
 package org.jclouds.aws.s3;
 
-import java.util.Properties;
-
 import org.jclouds.http.httpnio.config.HttpNioConnectionPoolClientModule;
 import org.testng.annotations.Test;
 
@@ -34,15 +32,14 @@ import com.google.inject.Module;
 public class JCloudsNioPerformanceLiveTest extends BaseJCloudsPerformance {
 
     @Override
-    protected Properties buildS3Properties(String AWSAccessKeyId,
+    protected S3ContextFactory buildS3ContextFactory(String AWSAccessKeyId,
                                            String AWSSecretAccessKey) {
-        Properties properties = super.buildS3Properties(AWSAccessKeyId, AWSSecretAccessKey);
-        properties.setProperty("jclouds.http.pool.max_connection_reuse", "75");
-        properties.setProperty("jclouds.http.pool.max_session_failures", "2");
-        properties.setProperty("jclouds.http.pool.request_invoker_threads", "1");
-        properties.setProperty("jclouds.http.pool.io_worker_threads", "2");
-        properties.setProperty("jclouds.pool.max_connections", "12");
-        return properties;
+        return super.buildS3ContextFactory(AWSAccessKeyId, AWSSecretAccessKey)
+                  .withPoolMaxConnectionReuse(75)
+                  .withPoolMaxSessionFailures(2)
+                  .withPoolRequestInvokerThreads(1)
+                  .withPoolIoWorkerThreads(2)
+                  .withPoolMaxConnections(12);
     }
 
     @Override

@@ -166,15 +166,16 @@ public class S3IntegrationTest {
    }
 
    protected void createStubS3Context() {
-      Properties props = new Properties();
-      props.setProperty(S3Constants.PROPERTY_HTTP_ADDRESS, "stub");
-      context = S3ContextFactory.createS3Context(props, new StubS3ConnectionModule());
+      context = S3ContextFactory.createContext("stub", "stub")
+                  .withHttpAddress("stub")
+                  .withModule(new StubS3ConnectionModule())
+                  .build();
    }
 
    protected void createLiveS3Context(String AWSAccessKeyId, String AWSSecretAccessKey) {
-      context = S3ContextFactory.createS3Context(buildS3Properties(checkNotNull(AWSAccessKeyId,
-               "AWSAccessKeyId"), checkNotNull(AWSSecretAccessKey, "AWSSecretAccessKey")),
-               createHttpModule());
+      context = buildS3ContextFactory(AWSAccessKeyId, AWSSecretAccessKey)
+                .withModule(createHttpModule())
+               .build();
    }
 
    @BeforeMethod(dependsOnMethods = "deleteBucket", groups = { "integration", "live" })
@@ -195,15 +196,10 @@ public class S3IntegrationTest {
       return false;
    }
 
-   protected Properties buildS3Properties(String AWSAccessKeyId, String AWSSecretAccessKey) {
-      Properties properties = new Properties(S3ContextFactory.DEFAULT_PROPERTIES);
-      properties.setProperty(S3Constants.PROPERTY_AWS_ACCESSKEYID, checkNotNull(AWSAccessKeyId,
-               "AWSAccessKeyId"));
-      properties.setProperty(S3Constants.PROPERTY_AWS_SECRETACCESSKEY, checkNotNull(
-               AWSSecretAccessKey, "AWSSecretAccessKey"));
-      properties.setProperty(HttpConstants.PROPERTY_HTTP_SECURE, "false");
-      properties.setProperty(HttpConstants.PROPERTY_HTTP_PORT, "80");
-      return properties;
+   protected S3ContextFactory buildS3ContextFactory(String AWSAccessKeyId, String AWSSecretAccessKey) {
+      return S3ContextFactory.createContext(AWSAccessKeyId, AWSSecretAccessKey)
+               .withHttpSecure(false)
+               .withHttpPort(80);
    }
 
    protected Module createHttpModule() {

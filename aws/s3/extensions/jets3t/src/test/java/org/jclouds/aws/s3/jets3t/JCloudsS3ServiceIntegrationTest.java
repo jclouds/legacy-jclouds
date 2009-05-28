@@ -103,6 +103,8 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
     	throws S3ServiceException, InterruptedException, ExecutionException 
 	{
         String bucketName = bucketPrefix + ".testCreateBucketImplStringStringAccessControlList";
+        bucketName = bucketName.toLowerCase();
+        
         S3Bucket bucket = service.createBucket(new S3Bucket(bucketName));
         assertEquals(bucket.getName(), bucketName);
         assertTrue(client.bucketExists(bucketName).get());
@@ -114,6 +116,9 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
     public void testDeleteBucketImplString() throws S3ServiceException,
             InterruptedException, ExecutionException, TimeoutException {
         String bucketName = bucketPrefix + ".testDeleteBucketImplString";
+        bucketName = bucketName.toLowerCase();
+        
+        
         service.deleteBucket(bucketName);
         assert !client.bucketExists(bucketName).get(10, TimeUnit.SECONDS);
     }
@@ -130,6 +135,8 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
         String objectKey = "key";
         String objectValue = "test";
 
+        bucketName = bucketName.toLowerCase();
+        
         addNewObject(bucketName, objectKey, objectValue);
 
         service.deleteObject(bucketName, objectKey);
@@ -186,7 +193,9 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
         String bucketName = bucketPrefix + ".testGetObjectDetailsImplStringStringCalendarCalendarStringArrayStringArray";
         String objectKey = "key";
         String objectValue = "test";
-
+        
+        bucketName = bucketName.toLowerCase();
+        
         addNewObject(bucketName, objectKey, objectValue);
 
         S3Object objectDetails = service.getObjectDetails(new S3Bucket(bucketName), objectKey);
@@ -208,6 +217,8 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
         String objectKey = "key";
         String objectValue = "test";
 
+        bucketName = bucketName.toLowerCase();
+        
         addNewObject(bucketName, objectKey, objectValue);
 
         S3Object object = service.getObject(new S3Bucket(bucketName), objectKey);
@@ -239,6 +250,8 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
             ExecutionException, TimeoutException, S3ServiceException {
         // Ensure there is at least 1 bucket in S3 account to list and compare.
         String bucketName = bucketPrefix + ".testListAllBucketsImplString";
+        bucketName = bucketName.toLowerCase();
+        
         createBucket(bucketName);
 
         S3Bucket[] jsBuckets = service.listAllBuckets();

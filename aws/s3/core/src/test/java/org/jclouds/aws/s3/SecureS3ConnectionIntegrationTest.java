@@ -25,8 +25,6 @@ package org.jclouds.aws.s3;
 
 import org.testng.annotations.Test;
 
-import java.util.Properties;
-
 /**
  * This performs the same test as {@link S3ConnectionIntegrationTest}, except using SSL.
  *
@@ -35,13 +33,11 @@ import java.util.Properties;
 @Test(groups = {"live"}, testName = "s3.SecureS3ConnectionIntegrationTest")
 public class SecureS3ConnectionIntegrationTest extends S3ConnectionIntegrationTest {
     @Override
-    protected Properties buildS3Properties(String AWSAccessKeyId,
+    protected S3ContextFactory buildS3ContextFactory(String AWSAccessKeyId,
                                            String AWSSecretAccessKey) {
-        Properties properties = super.buildS3Properties(AWSAccessKeyId,
-                AWSSecretAccessKey);
-        properties.setProperty("jclouds.http.secure", Boolean.toString(true));
-        properties.setProperty("jclouds.http.port", "443");
-        return properties;
+        return S3ContextFactory.createContext(AWSAccessKeyId, AWSSecretAccessKey)
+                 .withHttpSecure(true)
+                 .withHttpPort(443);
     }
 
 }
