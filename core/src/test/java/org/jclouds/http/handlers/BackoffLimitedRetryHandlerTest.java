@@ -41,35 +41,37 @@ public class BackoffLimitedRetryHandlerTest {
    
    @Test
    void testExponentialBackoffDelay() throws InterruptedException {
+     long acceptableDelay = 25;  // Delay to forgive if tests run long.
+      
      long startTime = System.currentTimeMillis();
      handler.imposeBackoffExponentialDelay(1, "TEST FAILURE: 1");
      long elapsedTime = System.currentTimeMillis() - startTime;
      assertTrue(elapsedTime >= 50);
-     assertTrue(elapsedTime < 60);
+     assertTrue(elapsedTime < 50 + acceptableDelay);
 
      startTime = System.currentTimeMillis();
      handler.imposeBackoffExponentialDelay(2, "TEST FAILURE: 2");
      elapsedTime = System.currentTimeMillis() - startTime;
      assertTrue(elapsedTime >= 200);
-     assertTrue(elapsedTime < 210);
+     assertTrue(elapsedTime < 200 + acceptableDelay);
 
      startTime = System.currentTimeMillis();
      handler.imposeBackoffExponentialDelay(3, "TEST FAILURE: 3");
      elapsedTime = System.currentTimeMillis() - startTime;
      assertTrue(elapsedTime >= 450);
-     assertTrue(elapsedTime < 460);
+     assertTrue(elapsedTime < 450 + acceptableDelay);
 
      startTime = System.currentTimeMillis();
      handler.imposeBackoffExponentialDelay(4, "TEST FAILURE: 4");
      elapsedTime = System.currentTimeMillis() - startTime;
      assertTrue(elapsedTime >= 800);
-     assertTrue(elapsedTime < 810);
+     assertTrue(elapsedTime < 800 + acceptableDelay);
 
      startTime = System.currentTimeMillis();
      handler.imposeBackoffExponentialDelay(5, "TEST FAILURE: 5");
      elapsedTime = System.currentTimeMillis() - startTime;
      assertTrue(elapsedTime >= 1250);
-     assertTrue(elapsedTime < 1260);
+     assertTrue(elapsedTime < 1250 + acceptableDelay);
    }
    
    @Test
