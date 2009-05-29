@@ -35,6 +35,7 @@ import org.jclouds.aws.s3.S3Context;
 import org.jclouds.aws.s3.S3ContextFactory;
 import org.jclouds.aws.s3.commands.options.GetObjectOptions;
 import org.jclouds.aws.s3.commands.options.ListBucketOptions;
+import org.jclouds.aws.s3.commands.options.PutObjectOptions;
 import org.jclouds.util.Utils;
 import org.jets3t.service.S3ObjectsChunk;
 import org.jets3t.service.S3Service;
@@ -304,9 +305,17 @@ public class JCloudsS3Service extends S3Service {
    }
 
    @Override
-   protected S3Object putObjectImpl(String bucketName, S3Object object) throws S3ServiceException {
-      // TODO Unimplemented
-      return null;
+   protected S3Object putObjectImpl(String bucketName, S3Object jsObject) throws S3ServiceException {
+      try {         
+         PutObjectOptions options = Util.convertPutObjectOptions(jsObject.getAcl());
+         org.jclouds.aws.s3.domain.S3Object jcObject = Util.convertObject(jsObject);
+         byte md5[] = connection.putObject(bucketName, jcObject, options)
+            .get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
+         return jsObject;
+      } catch (Exception e) {
+         Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
+         throw new S3ServiceException("error putting object", e);         
+      }
    }
 
    @Override

@@ -31,6 +31,7 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -41,15 +42,19 @@ import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.s3.S3IntegrationTest;
 import org.jclouds.aws.s3.config.StubS3ConnectionModule;
 import org.jclouds.aws.s3.reference.S3Constants;
+import org.jclouds.http.ContentTypes;
 import org.jets3t.service.S3ObjectsChunk;
 import org.jets3t.service.S3Service;
 import org.jets3t.service.S3ServiceException;
+import org.jets3t.service.acl.AccessControlList;
 import org.jets3t.service.model.S3Bucket;
 import org.jets3t.service.model.S3Object;
 import org.jets3t.service.security.AWSCredentials;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Iterables;
 
 /**
  * Tests to cover JCloudsS3Service
@@ -95,16 +100,6 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
                 new JCloudsS3Service(new AWSCredentials("foo", "bar"), new StubS3ConnectionModule());
     }
 
-    @Test(enabled = false)
-    public void testCheckBucketStatusString() {
-        fail("Not yet implemented");
-    }
-
-    @Test(enabled = false)
-    public void testCopyObjectImplStringStringStringStringAccessControlListMapCalendarCalendarStringArrayStringArray() {
-        fail("Not yet implemented");
-    }
-
     @Test
     public void testCreateBucketImpl() 
     	throws S3ServiceException, InterruptedException, ExecutionException 
@@ -141,26 +136,6 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
         assertEquals(
     		client.headObject(commonTestingBucketName, objectKey).get(10, TimeUnit.SECONDS), 
     		org.jclouds.aws.s3.domain.S3Object.Metadata.NOT_FOUND);
-    }
-
-    @Test(enabled = false)
-    public void testGetBucketAclImplString() {
-        fail("Not yet implemented");
-    }
-
-    @Test(enabled = false)
-    public void testGetBucketLocationImplString() {
-        fail("Not yet implemented");
-    }
-
-    @Test(enabled = false)
-    public void testGetBucketLoggingStatusImplString() {
-        fail("Not yet implemented");
-    }
-
-    @Test(enabled = false)
-    public void testGetObjectAclImplStringString() {
-        fail("Not yet implemented");
     }
 
     @Test(dependsOnMethods = "testCreateBucketImpl")
@@ -216,16 +191,6 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
         // TODO: Test conditional gets
         
         emptyBucket(commonTestingBucketName);
-    }
-
-    @Test(enabled = false)
-    public void testIsBucketAccessibleString() {
-        fail("Not yet implemented");
-    }
-
-    @Test(enabled = false)
-    public void testIsRequesterPaysBucketImplString() {
-        fail("Not yet implemented");
     }
 
     @Test(dependsOnMethods = "testCreateBucketImpl")
@@ -369,28 +334,133 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
        emptyBucket(commonTestingBucketName);
     }
     
+    @Test(dependsOnMethods = "testCreateBucketImpl")
+    public void testPutObjectImpl() throws S3ServiceException, InterruptedException, 
+          ExecutionException, TimeoutException, NoSuchAlgorithmException, IOException 
+    {
+       String objectKey = "putObject";
+       
+       S3Object requestObject, jsResultObject;
+       org.jclouds.aws.s3.domain.S3Object jcObject;
+       
+       // Upload empty object
+       requestObject = new S3Object(objectKey);
+       jsResultObject = service.putObject(new S3Bucket(commonTestingBucketName), requestObject);
+       jcObject = client.getObject(commonTestingBucketName, objectKey).get(10, TimeUnit.SECONDS);
+       assertEquals(jcObject.getKey(), objectKey);
+       assertEquals(jcObject.getMetadata().getSize(), 0);
+       assertEquals(jcObject.getMetadata().getContentType(), ContentTypes.BINARY);
+       assertEquals(jsResultObject.getKey(), requestObject.getKey());
+       assertEquals(jsResultObject.getContentLength(), 0);
+       assertEquals(jsResultObject.getContentType(), ContentTypes.BINARY);
+
+       // Upload unicode-named object
+       requestObject = new S3Object("üníçòdé-object");
+       jsResultObject = service.putObject(new S3Bucket(commonTestingBucketName), requestObject);
+       jcObject = client.getObject(commonTestingBucketName, requestObject.getKey())
+             .get(10, TimeUnit.SECONDS);
+       assertEquals(jcObject.getKey(), requestObject.getKey());
+       assertEquals(jcObject.getMetadata().getSize(), 0);
+       assertEquals(jcObject.getMetadata().getContentType(), ContentTypes.BINARY);
+       assertEquals(jsResultObject.getKey(), requestObject.getKey());
+       assertEquals(jsResultObject.getContentLength(), 0);
+       assertEquals(jsResultObject.getContentType(), ContentTypes.BINARY);
+
+       // Upload string object
+       String data = "This is my üníçòdé data";
+       requestObject = new S3Object(objectKey, data);
+       jsResultObject = service.putObject(new S3Bucket(commonTestingBucketName), requestObject);
+       jcObject = client.getObject(commonTestingBucketName, objectKey).get(10, TimeUnit.SECONDS);
+       assertEquals(jcObject.getMetadata().getSize(), data.getBytes("UTF-8").length);
+       assertTrue(jcObject.getMetadata().getContentType().startsWith("text/plain"));
+       assertEquals(jsResultObject.getContentLength(), data.getBytes("UTF-8").length);
+       assertTrue(jsResultObject.getContentType().startsWith("text/plain"));
+
+       // Upload object with metadata
+       requestObject = new S3Object(objectKey);
+       requestObject.addMetadata(S3Constants.USER_METADATA_PREFIX + "my-metadata-1", "value-1");
+       jsResultObject = service.putObject(new S3Bucket(commonTestingBucketName), requestObject);
+       jcObject = client.getObject(commonTestingBucketName, objectKey).get(10, TimeUnit.SECONDS);
+       assertEquals(Iterables.getLast(jcObject.getMetadata().getUserMetadata()
+             .get(S3Constants.USER_METADATA_PREFIX + "my-metadata-1")), "value-1");
+       assertEquals(
+             jsResultObject.getMetadata(S3Constants.USER_METADATA_PREFIX + "my-metadata-1"), 
+             "value-1");
+
+       // Upload object with public-read ACL
+       requestObject = new S3Object(objectKey);
+       requestObject.setAcl(AccessControlList.REST_CANNED_PUBLIC_READ);
+       jsResultObject = service.putObject(new S3Bucket(commonTestingBucketName), requestObject);
+       jcObject = client.getObject(commonTestingBucketName, objectKey).get(10, TimeUnit.SECONDS);
+       // TODO: No way yet to get/lookup ACL from jClouds object
+       // assertEquals(jcObject.getAcl(), CannedAccessPolicy.PUBLIC_READ);
+       assertEquals(jsResultObject.getAcl(), AccessControlList.REST_CANNED_PUBLIC_READ);
+
+       // TODO : Any way to test a URL lookup that works for live and stub testing?
+       // URL publicUrl = new URL(
+       //    "http://" + commonTestingBucketName + ".s3.amazonaws.com:80/" + requestObject.getKey());
+       // assertEquals(((HttpURLConnection) publicUrl.openConnection()).getResponseCode(), 200);
+              
+       emptyBucket(commonTestingBucketName);
+    }
+
     @Test(enabled = false)
-    public void testPutBucketAclImplStringAccessControlList() {
+    public void testCopyObjectImpl() {
         fail("Not yet implemented");
     }
 
     @Test(enabled = false)
-    public void testPutObjectAclImplStringStringAccessControlList() {
+    public void testCheckBucketStatus() {
         fail("Not yet implemented");
     }
 
     @Test(enabled = false)
-    public void testPutObjectImplStringS3Object() {
+    public void testGetBucketAclImpl() {
         fail("Not yet implemented");
     }
 
     @Test(enabled = false)
-    public void testSetBucketLoggingStatusImplStringS3BucketLoggingStatus() {
+    public void testGetBucketLocationImpl() {
         fail("Not yet implemented");
     }
 
     @Test(enabled = false)
-    public void testSetRequesterPaysBucketImplStringBoolean() {
+    public void testGetBucketLoggingStatus() {
+        fail("Not yet implemented");
+    }
+
+    @Test(enabled = false)
+    public void testGetObjectAclImpl() {
+        fail("Not yet implemented");
+    }
+
+    @Test(enabled = false)
+    public void testPutBucketAclImpl() {
+        fail("Not yet implemented");
+    }
+
+    @Test(enabled = false)
+    public void testPutObjectAclImpl() {
+        fail("Not yet implemented");
+    }
+
+    @Test(enabled = false)
+    public void testSetBucketLoggingStatusImpl() {
+        fail("Not yet implemented");
+    }
+
+    @Test(enabled = false)
+    public void testSetRequesterPaysBucketImpl() {
+        fail("Not yet implemented");
+    }
+
+    @Test(enabled = false)
+    public void testIsBucketAccessible() {
+        fail("Not yet implemented");
+    }
+
+    @Test(enabled = false)
+    public void testIsRequesterPaysBucketImpl() {
         fail("Not yet implemented");
     }
 
