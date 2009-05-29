@@ -86,7 +86,7 @@ public class AWSUtils extends Utils {
    private static String hmacBase64(String toEncode, byte[] key, Digest digest) {
       HMac hmac = new HMac(digest);
       byte[] resBuf = new byte[hmac.getMacSize()];
-      byte[] plainBytes = toEncode.getBytes();
+      byte[] plainBytes = Utils.encodeString(toEncode); 
       byte[] keyBytes = key;
       hmac.init(new KeyParameter(keyBytes));
       hmac.update(plainBytes, 0, plainBytes.length);
@@ -142,5 +142,5 @@ public class AWSUtils extends Utils {
 
    public static String toBase64String(byte[] resBuf) {
       return new String(Base64.encode(resBuf));
-   }
+   }   
 }

@@ -25,9 +25,13 @@ package org.jclouds.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.concurrent.ExecutionException;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.io.IOUtils;
+import org.jclouds.logging.Logger;
 
 /**
  * // TODO: Adrian: Document this!
@@ -35,7 +39,10 @@ import org.apache.commons.io.IOUtils;
  * @author Adrian Cole
  */
 public class Utils {
+   public static final String UTF8_ENCODING = "UTF-8";
 
+   @Resource
+   protected static Logger logger = Logger.NULL;
 
     /**
      * 
@@ -71,4 +78,71 @@ public class Utils {
         }
     }
 
+    /**
+     * Encode the given string with the given encoding, if possible.
+     * If the encoding fails with {@link UnsupportedEncodingException}, 
+     * log a warning and fall back to the system's default encoding.
+     * 
+     * @see {@link String#getBytes(String)}
+     * @see {@link String#getBytes()} - used as fall-back.
+     * 
+     * @param str
+     * @param encoding
+     * @return
+     */
+    public static byte[] encodeString(String str, String encoding) {
+       try {
+          return str.getBytes(encoding);
+       } catch (UnsupportedEncodingException e) {
+          logger.warn(e, "Failed to encode string to bytes with encoding " + encoding
+                + ". Falling back to system's default encoding");
+          return str.getBytes();
+       }
+    }
+    
+    /**
+     * Encode the given string with the UTF-8 encoding, the sane default.
+     * In the very unlikely event the encoding fails with 
+     * {@link UnsupportedEncodingException}, log a warning and fall back 
+     * to the system's default encoding.
+     * 
+     * @param str
+     * @return
+     */
+    public static byte[] encodeString(String str) {
+       return encodeString(str, UTF8_ENCODING);
+    }
+    
+    /**
+     * Decode the given string with the given encoding, if possible.
+     * If the decoding fails with {@link UnsupportedEncodingException},
+     * log a warning and fall back to the system's default encoding.
+     *
+     * @param bytes
+     * @param encoding
+     * @return
+     */
+    public static String decodeString(byte[] bytes, String encoding) {
+       try {
+         return new String(bytes, encoding);
+      } catch (UnsupportedEncodingException e) {
+         logger.warn(e, "Failed to decode bytes to string with encoding " + encoding
+               + ". Falling back to system's default encoding");
+         return new String(bytes);
+      }
+    }
+
+    /**
+     * Decode the given string with the UTF-8 encoding, the sane default.
+     * In the very unlikely event the encoding fails with 
+     * {@link UnsupportedEncodingException}, log a warning and fall back 
+     * to the system's default encoding.
+     * 
+     * @param str
+     * @return
+     */
+    public static String decodeString(byte[] bytes) {
+       return decodeString(bytes, UTF8_ENCODING);
+    }
+    
 }

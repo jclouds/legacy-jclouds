@@ -26,6 +26,8 @@ package org.jclouds.http;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import javax.annotation.Resource;
 
@@ -48,7 +50,7 @@ public class HttpRequest extends HttpMessage {
 
     public HttpRequest(String method, String uri) {
 	this.method = checkNotNull(method, "method");
-	this.uri = checkNotNull(uri, "uri");
+	this.uri = encodeUri(checkNotNull(uri, "uri"));
     }
 
     @Override
@@ -87,5 +89,34 @@ public class HttpRequest extends HttpMessage {
     public void setPayload(Object content) {
 	this.payload = content;
     }
+    
+    /**
+     * Encode a path portion of a URI using the UTF-8 encoding, but leave slash '/' 
+     * characters and any parameters (anything after the first '?') unencoded.
+     * If encoding with UTF-8 fails, the method falls back to using the 
+     * system's default encoding.
+     * 
+     * @param uri
+     * @return
+     */
+   protected String encodeUri(String uri) {
+      String path, params = "";
+
+      int offset;
+      if ((offset = uri.indexOf('?')) >= 0) {
+         path = uri.substring(0, offset);
+         params = uri.substring(offset);
+      } else {
+         path = uri;
+      }
+      
+      String encodedUri;
+      try {
+         encodedUri = URLEncoder.encode(path, "UTF-8");
+      } catch (UnsupportedEncodingException e) {
+         encodedUri = URLEncoder.encode(path);
+      }
+      return encodedUri.replace("%2F", "/") + params;
+   }
 
 }
