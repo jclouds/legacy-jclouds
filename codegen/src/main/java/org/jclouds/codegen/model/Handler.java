@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.codegen.model;
+package org.jclouds.codegen.model;
 
 import java.util.List;
 
@@ -29,15 +29,16 @@ import java.util.List;
  * 
  * @author James Murty
  */
-public class Model {
-	private List<Package> packages;
-	
-	@Override
-	public String toString() {
-		return packages.toString();
+public class Handler extends BaseBean {
+	private String example;
+	private List<String> see;
+		
+	public String getExample() {
+		return example;
 	}
-	
-	public List<Package> getPackages() {
-		return packages;
+		
+	public List<String> getSee() {
+		return see;
 	}
+
 }

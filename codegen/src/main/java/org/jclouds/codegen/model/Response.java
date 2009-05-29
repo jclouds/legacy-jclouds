@@ -21,37 +21,29 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.codegen.model;
+package org.jclouds.codegen.model;
+
+import java.util.List;
 
 /**
  * 
  * @author James Murty
  */
-public class Parameter {
-	private String name;
-	private String type;
+public class Response extends BaseBean {
+	private List<ResponseField> fields;
 	private String javaType;
-	private String param;
-	private String desc;
+	private List<String> see;
 	
-	public String getName() {
-		return name;
-	}
-	
-	public String getType() {
-		return type;
+	public List<ResponseField> getFields() {
+		return fields;
 	}
 	
 	public String getJavaType() {
 		return javaType;
 	}
 	
-	public String getParam() {
-		return param;
-	}
-	
-	public String getDesc() {
-		return desc;
-	}
+	public List<String> getSee() {
+		return see;
+	}		
 	
 }

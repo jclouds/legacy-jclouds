@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.codegen.util;
+package org.jclouds.codegen.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -32,10 +32,10 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jclouds.aws.codegen.model.BaseBean;
-import org.jclouds.aws.codegen.model.Command;
-import org.jclouds.aws.codegen.model.Model;
-import org.jclouds.aws.codegen.model.Package;
+import org.jclouds.codegen.model.BaseBean;
+import org.jclouds.codegen.model.Command;
+import org.jclouds.codegen.model.Model;
+import org.jclouds.codegen.model.Package;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;

@@ -21,27 +21,32 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.codegen.model;
+package org.jclouds.codegen.model;
 
 /**
  * 
  * @author James Murty
  */
-public abstract class BaseBean {
-	private String className;
-	private String packageName;
-	private String awsType;
-
-	public String getClassName() {
-		return className;
+public class ResponseField {
+	private String desc;
+	private String name;
+	private String type;
+	private String javaType;
+	
+	public String getDesc() {
+		return desc;
 	}
 	
-	public String getPackageName() {
-		return packageName;
+	public String getName() {
+		return name;
 	}
-
-	public String getAwsType() {
-		return awsType;
+	
+	public String getType() {
+		return type;
 	}
-
+	
+	public String getJavaType() {
+		return javaType;
+	}
+		
 }

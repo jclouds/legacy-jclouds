@@ -21,39 +21,37 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.codegen.model;
-
-import java.util.List;
+package org.jclouds.codegen.model;
 
 /**
  * 
  * @author James Murty
  */
-public class Command extends BaseBean {
-	private List<Parameter> parameters;
-	private Options options;
-	private Handler handler;
-	private Response response;
-	private List<String> see;
+public class Parameter {
+	private String name;
+	private String type;
+	private String javaType;
+	private String param;
+	private String desc;
 	
-	public List<Parameter> getParameters() {
-		return parameters;
-	}
-	
-	public Options getOptions() {
-		return options;
-	}
-
-	public Handler getHandler() {
-		return handler;
+	public String getName() {
+		return name;
 	}
 	
-	public Response getResponse() {
-		return response;
+	public String getType() {
+		return type;
 	}
 	
-	public List<String> getSee() {
-		return see;
+	public String getJavaType() {
+		return javaType;
 	}
-		
+	
+	public String getParam() {
+		return param;
+	}
+	
+	public String getDesc() {
+		return desc;
+	}
+	
 }

@@ -21,29 +21,27 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.codegen.model;
-
-import java.util.List;
+package org.jclouds.codegen.model;
 
 /**
  * 
  * @author James Murty
  */
-public class Package {
-	private String name;
-	private List<Command> commands;
+public abstract class BaseBean {
+	private String className;
+	private String packageName;
+	private String awsType;
 
-	@Override
-	public String toString() {
-		return String.format("{'name':'%1$s', 'commands':%2$s", name, commands);
+	public String getClassName() {
+		return className;
 	}
-
-	public String getName() {
-		return name;
-	}
-
-	public List<Command> getCommands() {
-		return commands;
-	}	
 	
+	public String getPackageName() {
+		return packageName;
+	}
+
+	public String getAwsType() {
+		return awsType;
+	}
+
 }

@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.codegen.model;
+package org.jclouds.codegen.model;
 
 import java.util.List;
 
@@ -29,20 +29,21 @@ import java.util.List;
  * 
  * @author James Murty
  */
-public class Options extends BaseBean {
-	private List<Parameter> parameters;
-	private String example;
-	private List<String> see;
-	
-	public List<Parameter> getParameters() {
-		return parameters;
+public class Package {
+	private String name;
+	private List<Command> commands;
+
+	@Override
+	public String toString() {
+		return String.format("{'name':'%1$s', 'commands':%2$s", name, commands);
 	}
-	
-	public String getExample() {
-		return example;
+
+	public String getName() {
+		return name;
 	}
-	public List<String> getSee() {
-		return see;
-	}
+
+	public List<Command> getCommands() {
+		return commands;
+	}	
 	
 }
