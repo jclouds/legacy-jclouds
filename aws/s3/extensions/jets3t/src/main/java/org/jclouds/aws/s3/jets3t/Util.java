@@ -27,15 +27,21 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.jclouds.aws.s3.commands.options.GetObjectOptions;
 import org.jclouds.aws.s3.commands.options.ListBucketOptions;
+import org.jclouds.aws.s3.reference.S3Constants;
+import org.jclouds.aws.util.DateService;
 import org.jets3t.service.model.S3Bucket;
 import org.jets3t.service.model.S3Object;
 import org.jets3t.service.model.S3Owner;
 import org.joda.time.DateTime;
+
+import com.google.common.collect.Iterables;
 
 /**
  * Convert between jCloud and JetS3t objects.
@@ -79,8 +85,30 @@ public class Util {
                 new S3Owner(
             		jcObjectMD.getOwner().getId(), 
             		jcObjectMD.getOwner().getDisplayName()));
+        }        
+        DateService dateService = new DateService();
+
+        for (Entry<String, Collection<String>> entry : 
+              jcObjectMD.getAllHeaders().asMap().entrySet()) 
+        { 
+           String key = entry.getKey();
+           if (key != null) {  // TODO: Why is there a null-keyed item in the map?
+              Object value = Iterables.get(entry.getValue(), 0);
+              
+              // Work around JetS3t bug when adding date items as Strings
+              if (S3Object.METADATA_HEADER_LAST_MODIFIED_DATE.equals(key)) {
+                 value = dateService.rfc822DateParse(value.toString()).toDate();
+              } else if (S3Object.METADATA_HEADER_DATE.equals(key)) {
+                 value = dateService.rfc822DateParse(value.toString()).toDate();
+              }
+              
+              if (key.startsWith(S3Constants.USER_METADATA_PREFIX)) {
+                 key = key.substring(S3Constants.USER_METADATA_PREFIX.length());
+              }
+              
+              jsObject.addMetadata(key, value);
+           }
         }
-        jsObject.addAllMetadata(jcObjectMD.getAllHeaders().asMap()); // TODO: Check this
         return jsObject;
     }
 

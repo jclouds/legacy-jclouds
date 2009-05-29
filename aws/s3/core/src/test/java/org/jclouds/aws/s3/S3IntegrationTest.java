@@ -23,7 +23,6 @@
  */
 package org.jclouds.aws.s3;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -32,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -50,7 +48,6 @@ import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.aws.s3.util.S3Utils;
-import org.jclouds.http.HttpConstants;
 import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
@@ -219,9 +216,18 @@ public class S3IntegrationTest {
          throw e;
       }
    }
-
-   private void deleteBucket(String name) throws InterruptedException, ExecutionException,
-            TimeoutException {
+   
+   /**
+    * Remove any objects in a bucket, leaving it empty.
+    * 
+    * @param name
+    * @throws InterruptedException
+    * @throws ExecutionException
+    * @throws TimeoutException
+    */
+   protected void emptyBucket(String name) throws InterruptedException, ExecutionException,
+         TimeoutException 
+   {
       if (client.bucketExists(name).get(10, TimeUnit.SECONDS)) {
          List<Future<Boolean>> results = new ArrayList<Future<Boolean>>();
 
@@ -234,6 +240,22 @@ public class S3IntegrationTest {
             iterator.next().get(10, TimeUnit.SECONDS);
             iterator.remove();
          }
+      }
+   }
+
+   /**
+    * Empty and delete a bucket.
+    * 
+    * @param name
+    * @throws InterruptedException
+    * @throws ExecutionException
+    * @throws TimeoutException
+    */
+   private void deleteBucket(String name) throws InterruptedException, ExecutionException,
+            TimeoutException 
+   {
+      if (client.bucketExists(name).get(10, TimeUnit.SECONDS)) {
+         emptyBucket(name);
          client.deleteBucketIfEmpty(name).get(10, TimeUnit.SECONDS);
       }
    }

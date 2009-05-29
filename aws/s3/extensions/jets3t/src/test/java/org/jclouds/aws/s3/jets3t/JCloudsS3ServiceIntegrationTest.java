@@ -24,6 +24,7 @@
 package org.jclouds.aws.s3.jets3t;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
@@ -39,28 +40,32 @@ import java.util.concurrent.TimeoutException;
 import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.s3.S3IntegrationTest;
 import org.jclouds.aws.s3.config.StubS3ConnectionModule;
+import org.jclouds.aws.s3.reference.S3Constants;
 import org.jets3t.service.S3ObjectsChunk;
 import org.jets3t.service.S3Service;
 import org.jets3t.service.S3ServiceException;
 import org.jets3t.service.model.S3Bucket;
 import org.jets3t.service.model.S3Object;
-import org.jets3t.service.multithread.CreateObjectsEvent;
 import org.jets3t.service.security.AWSCredentials;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 
 /**
  * Tests to cover JCloudsS3Service
  *
+ * @author James Murty
  * @author Adrian Cole
  */
 @Test(groups = {"integration", "live"}, testName = "s3.JCloudsS3ServiceIntegrationTest")
 public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
     AWSCredentials credentials;
     S3Service service;
+    String commonTestingBucketName;
+    
+    public JCloudsS3ServiceIntegrationTest() {
+       this.commonTestingBucketName = bucketPrefix + ".JCloudsS3ServiceIntegrationTest".toLowerCase();       
+    }
 
     @Override
     protected boolean debugEnabled() {
@@ -101,74 +106,41 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
     }
 
     @Test
-    public void testCreateBucketImplStringStringAccessControlList() 
+    public void testCreateBucketImpl() 
     	throws S3ServiceException, InterruptedException, ExecutionException 
 	{
-        String bucketName = bucketPrefix + ".testCreateBucketImplStringStringAccessControlList";
-        bucketName = bucketName.toLowerCase();
-        
-        S3Bucket bucket = service.createBucket(new S3Bucket(bucketName));
-        assertEquals(bucket.getName(), bucketName);
-        assertTrue(client.bucketExists(bucketName).get());
-        
-        client.deleteBucketIfEmpty(bucketName);
+        S3Bucket bucket = service.createBucket(new S3Bucket(commonTestingBucketName));
+        assertEquals(bucket.getName(), commonTestingBucketName);
+        assertTrue(client.bucketExists(commonTestingBucketName).get());
     }
-
+    
     @Test
-    public void testDeleteBucketImplString() throws S3ServiceException,
-            InterruptedException, ExecutionException, TimeoutException {
-        String bucketName = bucketPrefix + ".testDeleteBucketImplString";
-        bucketName = bucketName.toLowerCase();
-        
-        
-        service.deleteBucket(bucketName);
-        assert !client.bucketExists(bucketName).get(10, TimeUnit.SECONDS);
+    @AfterSuite
+    public void testDeleteBucketImpl() throws S3ServiceException,
+            InterruptedException, ExecutionException, TimeoutException 
+    {
+       emptyBucket(commonTestingBucketName);
+       
+       service.deleteBucket(commonTestingBucketName);
+       assertFalse(client.bucketExists(commonTestingBucketName).get(10, TimeUnit.SECONDS));
     }
 
-    private void createBucket(String bucketName) throws InterruptedException,
-            ExecutionException, TimeoutException {
-        client.putBucketIfNotExists(bucketName).get(10, TimeUnit.SECONDS);
-    }
-
-    @Test
-    public void testDeleteObjectImplStringString() throws InterruptedException,
-            ExecutionException, TimeoutException, S3ServiceException {
-        String bucketName = bucketPrefix + ".testDeleteObjectImplStringString";
-        String objectKey = "key";
+    @Test(dependsOnMethods = "testCreateBucketImpl")
+    public void testDeleteObjectImpl() throws InterruptedException,
+            ExecutionException, TimeoutException, S3ServiceException, IOException 
+    {
+        String objectKey = "key-testDeleteObjectImpl";
         String objectValue = "test";
 
-        bucketName = bucketName.toLowerCase();
-        
-        addNewObject(bucketName, objectKey, objectValue);
+        org.jclouds.aws.s3.domain.S3Object s3Object = 
+           new org.jclouds.aws.s3.domain.S3Object(objectKey, objectValue);
+        addObjectToBucket(commonTestingBucketName, s3Object);
 
-        service.deleteObject(bucketName, objectKey);
+        service.deleteObject(commonTestingBucketName, objectKey);
 
         assertEquals(
-    		client.headObject(bucketName, objectKey).get(10, TimeUnit.SECONDS), 
+    		client.headObject(commonTestingBucketName, objectKey).get(10, TimeUnit.SECONDS), 
     		org.jclouds.aws.s3.domain.S3Object.Metadata.NOT_FOUND);
-
-        client.deleteBucketIfEmpty(bucketName);
-    }
-
-    private void addNewObject(String name, String objectKey, String objectValue)
-            throws InterruptedException, ExecutionException, TimeoutException {
-        createBucket(name);
-        org.jclouds.aws.s3.domain.S3Object jcloudsObject = new org.jclouds.aws.s3.domain.S3Object(
-                objectKey);
-        jcloudsObject.setData(objectValue);
-        Multimap<String, String> userMetadata = HashMultimap.create();
-        userMetadata.put("metadata-name", "metadata-value");
-        jcloudsObject.getMetadata().setUserMetadata(userMetadata);
-        client.putObject(name, jcloudsObject).get(10, TimeUnit.SECONDS);
-        
-		org.jclouds.aws.s3.domain.S3Object createdObject = 
-    		client.getObject(name, jcloudsObject.getKey()).get(10, TimeUnit.SECONDS);
-		assertTrue(createdObject != org.jclouds.aws.s3.domain.S3Object.NOT_FOUND,
-			"object should exist but doesn't");
-		assertEquals(createdObject.getMetadata().getKey(), objectKey, "object misnamed");
-
-      client.deleteObject(name, objectKey);
-      client.deleteBucketIfEmpty(name);
     }
 
     @Test(enabled = false)
@@ -191,53 +163,59 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
         fail("Not yet implemented");
     }
 
-    @Test
+    @Test(dependsOnMethods = "testCreateBucketImpl")
     public void testGetObjectDetailsImpl() 
-    	throws InterruptedException, ExecutionException, TimeoutException, S3ServiceException 
+    	throws InterruptedException, ExecutionException, TimeoutException, 
+    	S3ServiceException, IOException 
 	{
-        String bucketName = bucketPrefix + ".testGetObjectDetailsImplStringStringCalendarCalendarStringArrayStringArray";
-        String objectKey = "key";
+        String objectKey = "key-testGetObjectDetailsImpl";
         String objectValue = "test";
+        String metadataName = "metadata-name-1";
+        String metadataValue = "metadata-value-1";
         
-        bucketName = bucketName.toLowerCase();
-        
-        addNewObject(bucketName, objectKey, objectValue);
+        org.jclouds.aws.s3.domain.S3Object s3Object = 
+           new org.jclouds.aws.s3.domain.S3Object(objectKey, objectValue);
+        s3Object.getMetadata().getUserMetadata().put(
+              S3Constants.USER_METADATA_PREFIX + metadataName, metadataValue);
+        addObjectToBucket(commonTestingBucketName, s3Object);
 
-        S3Object objectDetails = service.getObjectDetails(new S3Bucket(bucketName), objectKey);
+        S3Object objectDetails = service.getObjectDetails(
+              new S3Bucket(commonTestingBucketName), objectKey);
 
         assertEquals(objectDetails.getKey(), objectKey);
-        assertEquals(objectDetails.getContentLength(), 0);
+        assertEquals(objectDetails.getContentLength(), 4);
         assertNull(objectDetails.getDataInputStream());
-        // assertEquals(objectDetails.getMetadata("metadata-name"), "metadata-value");  // TODO
+        assertEquals(objectDetails.getMetadata(metadataName), metadataValue);
         		
-        client.deleteObject(bucketName, objectKey);
-        client.deleteBucketIfEmpty(bucketName);
+        emptyBucket(commonTestingBucketName);
     }
 
-    @Test
+    @Test(dependsOnMethods = "testCreateBucketImpl")
     public void testGetObjectImpl() 
     	throws InterruptedException, ExecutionException, TimeoutException, S3ServiceException, IOException 
 	{
-        String bucketName = bucketPrefix + ".testGetObjectImplStringStringCalendarCalendarStringArrayStringArrayLongLong";
-        String objectKey = "key";
+        String objectKey = "key-testGetObjectImpl";
         String objectValue = "test";
+        String metadataName = "metadata-name-2";
+        String metadataValue = "metadata-value-2";
 
-        bucketName = bucketName.toLowerCase();
-        
-        addNewObject(bucketName, objectKey, objectValue);
+        org.jclouds.aws.s3.domain.S3Object s3Object = 
+           new org.jclouds.aws.s3.domain.S3Object(objectKey, objectValue);
+        s3Object.getMetadata().getUserMetadata().put(
+              S3Constants.USER_METADATA_PREFIX + metadataName, metadataValue);
+        addObjectToBucket(commonTestingBucketName, s3Object);
 
-        S3Object object = service.getObject(new S3Bucket(bucketName), objectKey);
+        S3Object object = service.getObject(new S3Bucket(commonTestingBucketName), objectKey);
         
         assertEquals(object.getKey(), objectKey);
         assertNotNull(object.getDataInputStream());
         assertEquals(IOUtils.toString(object.getDataInputStream()), objectValue);
-        // assertEquals(object.getContentLength(), objectKey.length());  // TODO
-        // assertEquals(objectDetails.getMetadata("metadata-name"), "metadata-value");  // TODO
+        assertEquals(object.getContentLength(), objectValue.length());
+        assertEquals(object.getMetadata(metadataName), metadataValue);
         		
         // TODO: Test conditional gets
         
-        client.deleteObject(bucketName, objectKey);
-        client.deleteBucketIfEmpty(bucketName);
+        emptyBucket(commonTestingBucketName);
     }
 
     @Test(enabled = false)
@@ -250,15 +228,10 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
         fail("Not yet implemented");
     }
 
-    @Test
+    @Test(dependsOnMethods = "testCreateBucketImpl")
     public void testListAllBucketsImpl() throws InterruptedException,
             ExecutionException, TimeoutException, S3ServiceException {
         // Ensure there is at least 1 bucket in S3 account to list and compare.
-        String bucketName = bucketPrefix + ".testListAllBucketsImplString";
-        bucketName = bucketName.toLowerCase();
-        
-        createBucket(bucketName);
-
         S3Bucket[] jsBuckets = service.listAllBuckets();
 
         List<org.jclouds.aws.s3.domain.S3Bucket.Metadata> jcBuckets = client
@@ -275,26 +248,21 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
                     .next();
             assert jsBucket.getName().equals(jcBucket.getName());
         }
-
-        client.deleteBucketIfEmpty(bucketName);
     }
 
-    @Test
+    @Test(dependsOnMethods = "testCreateBucketImpl")
     public void testListObjectsChunkedImpl() throws InterruptedException, ExecutionException, 
           TimeoutException, IOException, S3ServiceException 
     {
-       String bucketName = bucketPrefix + ".testListAllBucketsImplString".toLowerCase();
-       createBucket(bucketName);
-       
-       addObjectToBucket(bucketName, "item1/subobject2");
-       addObjectToBucket(bucketName, "item2");
-       addObjectToBucket(bucketName, "object1");
-       addObjectToBucket(bucketName, "object2/subobject1");
+       addObjectToBucket(commonTestingBucketName, "item1/subobject2");
+       addObjectToBucket(commonTestingBucketName, "item2");
+       addObjectToBucket(commonTestingBucketName, "object1");
+       addObjectToBucket(commonTestingBucketName, "object2/subobject1");
        
        S3ObjectsChunk chunk;
        
        // Normal complete listing
-       chunk = service.listObjectsChunked(bucketName, null, null, 1000, null, true);
+       chunk = service.listObjectsChunked(commonTestingBucketName, null, null, 1000, null, true);
        assertEquals(chunk.getObjects().length, 4);
        assertEquals(chunk.getCommonPrefixes().length, 0);
        assertNull(chunk.getDelimiter());
@@ -302,7 +270,7 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
        assertNull(chunk.getPriorLastKey());
        
        // Partial listing
-       chunk = service.listObjectsChunked(bucketName, null, null, 2, null, false);
+       chunk = service.listObjectsChunked(commonTestingBucketName, null, null, 2, null, false);
        assertEquals(chunk.getObjects().length, 2);
        assertEquals(chunk.getCommonPrefixes().length, 0);
        assertNull(chunk.getDelimiter());
@@ -310,7 +278,7 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
        assertEquals(chunk.getPriorLastKey(), "item2");
 
        // Complete listing, in two chunks
-       chunk = service.listObjectsChunked(bucketName, null, null, 2, null, true);
+       chunk = service.listObjectsChunked(commonTestingBucketName, null, null, 2, null, true);
        assertEquals(chunk.getObjects().length, 4);
        assertEquals(chunk.getCommonPrefixes().length, 0);
        assertNull(chunk.getDelimiter());
@@ -318,7 +286,8 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
        assertNull(chunk.getPriorLastKey());
 
        // Partial listing with marker
-       chunk = service.listObjectsChunked(bucketName, null, null, 1000, "item1/subobject2", true);
+       chunk = service.listObjectsChunked(commonTestingBucketName, null, null, 1000, 
+             "item1/subobject2", true);
        assertEquals(chunk.getObjects().length, 3);
        assertEquals(chunk.getCommonPrefixes().length, 0);
        assertNull(chunk.getDelimiter());
@@ -326,7 +295,8 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
        assertNull(chunk.getPriorLastKey());
 
        // Partial listing with marker
-       chunk = service.listObjectsChunked(bucketName, null, null, 1000, "object1", true);
+       chunk = service.listObjectsChunked(commonTestingBucketName, null, null, 1000, 
+             "object1", true);
        assertEquals(chunk.getObjects().length, 1);
        assertEquals(chunk.getCommonPrefixes().length, 0);
        assertNull(chunk.getDelimiter());
@@ -334,7 +304,7 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
        assertNull(chunk.getPriorLastKey());
 
        // Prefix test
-       chunk = service.listObjectsChunked(bucketName, "item", null, 1000, null, true);
+       chunk = service.listObjectsChunked(commonTestingBucketName, "item", null, 1000, null, true);
        assertEquals(chunk.getObjects().length, 2);
        assertEquals(chunk.getCommonPrefixes().length, 0);
        assertNull(chunk.getDelimiter());
@@ -342,7 +312,7 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
        assertNull(chunk.getPriorLastKey());
 
        // Delimiter test
-       chunk = service.listObjectsChunked(bucketName, null, "/", 1000, null, true);
+       chunk = service.listObjectsChunked(commonTestingBucketName, null, "/", 1000, null, true);
        assertEquals(chunk.getObjects().length, 2);
        assertEquals(chunk.getCommonPrefixes().length, 2);
        assertEquals(chunk.getDelimiter(), "/");
@@ -350,64 +320,53 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
        assertNull(chunk.getPriorLastKey());
 
        // Prefix & delimiter test
-       chunk = service.listObjectsChunked(bucketName, "item", "/", 1000, null, true);
+       chunk = service.listObjectsChunked(commonTestingBucketName, "item", "/", 1000, null, true);
        assertEquals(chunk.getObjects().length, 1);
        assertEquals(chunk.getCommonPrefixes().length, 1);
        assertEquals(chunk.getDelimiter(), "/");
        assertEquals(chunk.getPrefix(), "item");
        assertNull(chunk.getPriorLastKey());
 
-       client.deleteObject(bucketName, "item1/subobject2");
-       client.deleteObject(bucketName, "item2");
-       client.deleteObject(bucketName, "object1");
-       client.deleteObject(bucketName, "object2/subobject1");
-       client.deleteBucketIfEmpty(bucketName);
+       emptyBucket(commonTestingBucketName);
     }
 
-    @Test
+    @Test(dependsOnMethods = "testCreateBucketImpl")
     public void testListObjectsImpl() throws InterruptedException, ExecutionException, 
           TimeoutException, IOException, S3ServiceException 
     {
-       String bucketName = bucketPrefix + ".testListAllBucketsImplString".toLowerCase();
-       createBucket(bucketName);
-       
-       addObjectToBucket(bucketName, "item1/subobject2");
-       addObjectToBucket(bucketName, "item2");
-       addObjectToBucket(bucketName, "object1");
-       addObjectToBucket(bucketName, "object2/subobject1");
+       addObjectToBucket(commonTestingBucketName, "item1/subobject2");
+       addObjectToBucket(commonTestingBucketName, "item2");
+       addObjectToBucket(commonTestingBucketName, "object1");
+       addObjectToBucket(commonTestingBucketName, "object2/subobject1");
        
        S3Object[] objects;
        
        // Normal complete listing
-       objects = service.listObjects(bucketName, null, null, 1000);
+       objects = service.listObjects(commonTestingBucketName, null, null, 1000);
        assertEquals(objects.length, 4);
        
        // Complete listing, in two chunks
-       objects = service.listObjects(bucketName, null, null, 2);
+       objects = service.listObjects(commonTestingBucketName, null, null, 2);
        assertEquals(objects.length, 4);
        assertEquals(objects[0].getKey(), "item1/subobject2");
        assertEquals(objects[3].getKey(), "object2/subobject1");
 
        // Prefix test
-       objects = service.listObjects(bucketName, "item", null, 1000);
+       objects = service.listObjects(commonTestingBucketName, "item", null, 1000);
        assertEquals(objects.length, 2);
 
        // Delimiter test
-       objects = service.listObjects(bucketName, null, "/", 1000);
+       objects = service.listObjects(commonTestingBucketName, null, "/", 1000);
        assertEquals(objects.length, 2);
        assertEquals(objects[0].getKey(), "item2");
        assertEquals(objects[1].getKey(), "object1");
 
        // Prefix & delimiter test
-       objects = service.listObjects(bucketName, "item", "/", 1000);
+       objects = service.listObjects(commonTestingBucketName, "item", "/", 1000);
        assertEquals(objects.length, 1);
        assertEquals(objects[0].getKey(), "item2");
 
-       client.deleteObject(bucketName, "item1/subobject2");
-       client.deleteObject(bucketName, "item2");
-       client.deleteObject(bucketName, "object1");
-       client.deleteObject(bucketName, "object2/subobject1");
-       client.deleteBucketIfEmpty(bucketName);
+       emptyBucket(commonTestingBucketName);
     }
     
     @Test(enabled = false)
