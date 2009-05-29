@@ -26,8 +26,9 @@ package org.jclouds.aws.s3.domain;
 import static com.google.common.base.Preconditions.checkNotNull;
 import org.joda.time.DateTime;
 
-import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * A container that provides namespace, access control and aggregation of
@@ -205,8 +206,8 @@ public class S3Bucket {
 
     public static final S3Bucket NOT_FOUND = new S3Bucket("NOT_FOUND");
 
-    private Set<S3Object.Metadata> objects = new HashSet<S3Object.Metadata>();
-    private Set<String> commonPrefixes = new HashSet<String>();
+    private SortedSet<S3Object.Metadata> objects = new TreeSet<S3Object.Metadata>();
+    private SortedSet<String> commonPrefixes = new TreeSet<String>();
     private String prefix;
     private String marker;
     private String delimiter;
@@ -230,11 +231,11 @@ public class S3Bucket {
     /**
      * @see org.jclouds.aws.s3.S3Connection#listBucket(String)
      */
-    public Set<S3Object.Metadata> getContents() {
+    public SortedSet<S3Object.Metadata> getContents() {
         return objects;
     }
 
-    public void setContents(Set<S3Object.Metadata> objects) {
+    public void setContents(SortedSet<S3Object.Metadata> objects) {
         this.objects = objects;
     }
 
@@ -253,7 +254,7 @@ public class S3Bucket {
         return metadata;
     }
 
-    public void setCommonPrefixes(Set<String> commonPrefixes) {
+    public void setCommonPrefixes(SortedSet<String> commonPrefixes) {
         this.commonPrefixes = commonPrefixes;
     }
 
@@ -272,7 +273,7 @@ public class S3Bucket {
      *
      * @see org.jclouds.aws.s3.commands.options.ListBucketOptions#getPrefix()
      */
-    public Set<String> getCommonPrefixes() {
+    public SortedSet<String> getCommonPrefixes() {
         return commonPrefixes;
     }
 
