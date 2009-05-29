@@ -34,12 +34,11 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -60,6 +59,7 @@ import org.jclouds.aws.s3.domain.S3Bucket.Metadata;
 import org.jclouds.aws.s3.domain.acl.CannedAccessPolicy;
 import org.jclouds.aws.s3.util.S3Utils;
 import org.jclouds.aws.util.DateService;
+import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.joda.time.DateTime;
@@ -441,11 +441,22 @@ public class StubS3Connection implements S3Connection {
          if (options.getAcl() != null)
             keyToAcl.put(bucketName + object, options.getAcl());
          bucketToContents.get(bucketName).put(object.getKey(), new S3Object(newMd, data));
+         
+         // Set HTTP headers to match metadata
+         newMd.getAllHeaders().put(HttpConstants.LAST_MODIFIED, 
+               dateService.rfc822DateFormat(newMd.getLastModified()));
+         newMd.getAllHeaders().put(HttpConstants.CONTENT_MD5, S3Utils.toHexString(md5));
+         newMd.getAllHeaders().put(HttpConstants.CONTENT_TYPE, newMd.getContentType());
+         newMd.getAllHeaders().put(HttpConstants.CONTENT_LENGTH, newMd.getSize() + "");
+         for (Entry<String, String> userMD : newMd.getUserMetadata().entries()) {
+            newMd.getAllHeaders().put(userMD.getKey(), userMD.getValue());                       
+         }
+
          return new FutureBase<byte[]>() {
             public byte[] get() throws InterruptedException, ExecutionException {
                return md5;
             }
-         };
+         };         
       } catch (IOException e) {
          throw new RuntimeException(e);
       }
