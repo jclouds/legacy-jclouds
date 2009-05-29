@@ -23,6 +23,8 @@
  */
 package org.jclouds.aws.s3.jets3t;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +34,7 @@ import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.S3Context;
 import org.jclouds.aws.s3.S3ContextFactory;
 import org.jclouds.aws.s3.commands.options.GetObjectOptions;
+import org.jclouds.aws.s3.commands.options.ListBucketOptions;
 import org.jclouds.util.Utils;
 import org.jets3t.service.S3ObjectsChunk;
 import org.jets3t.service.S3Service;
@@ -201,8 +204,8 @@ public class JCloudsS3Service extends S3Service {
             Calendar ifUnmodifiedSince, String[] ifMatchTags, String[] ifNoneMatchTags,
             Long byteRangeStart, Long byteRangeEnd) throws S3ServiceException {
       try {
-         GetObjectOptions options = Util.convertOptions(ifModifiedSince, ifUnmodifiedSince,
-                  ifMatchTags, ifNoneMatchTags);
+         GetObjectOptions options = Util.convertGetObjectOptions(ifModifiedSince, 
+               ifUnmodifiedSince, ifMatchTags, ifNoneMatchTags);
          return Util.convertObject(connection.getObject(bucketName, objectKey, options).get());
       } catch (Exception e) {
          Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
@@ -239,15 +242,49 @@ public class JCloudsS3Service extends S3Service {
    protected S3ObjectsChunk listObjectsChunkedImpl(String bucketName, String prefix,
             String delimiter, long maxListingLength, String priorLastKey, boolean completeListing)
             throws S3ServiceException {
-      // TODO Unimplemented
-      throw new UnsupportedOperationException();
+      try {         
+         List<S3Object> jsObjects = new ArrayList<S3Object>();
+         List<String> commonPrefixes = new ArrayList<String>();
+         org.jclouds.aws.s3.domain.S3Bucket jcBucket = null;
+         do {            
+            ListBucketOptions options = Util.convertListObjectOptions(prefix, priorLastKey, 
+                  delimiter, maxListingLength);
+            
+            jcBucket = connection.listBucket(bucketName, options)
+                  .get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
+
+            jsObjects.addAll(Arrays.asList(Util.convertObjectHeads(jcBucket.getContents())));
+            commonPrefixes.addAll(jcBucket.getCommonPrefixes());
+            if (jcBucket.isTruncated()) {
+               priorLastKey = jsObjects.get(jsObjects.size() - 1).getKey();
+            } else {
+               priorLastKey = null;
+            }
+         } while (completeListing && jcBucket.isTruncated());  // Build entire listing if requested
+
+         return new S3ObjectsChunk(
+               prefix,  // Return the supplied prefix, not the one in the S3 response.
+               jcBucket.getDelimiter(),
+               (S3Object[]) jsObjects.toArray(new S3Object[jsObjects.size()]),
+               (String[]) commonPrefixes.toArray(new String[commonPrefixes.size()]),
+               priorLastKey);
+      } catch (Exception e) {
+         Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
+         throw new S3ServiceException("error listing objects in bucket " + bucketName, e);         
+      }
    }
 
    @Override
    protected S3Object[] listObjectsImpl(String bucketName, String prefix, String delimiter,
-            long maxListingLength) throws S3ServiceException {
-      // TODO Unimplemented
-      throw new UnsupportedOperationException();
+            long maxListingLength) throws S3ServiceException 
+   {
+      try {
+         return listObjectsChunked(bucketName, prefix, delimiter, maxListingLength, null, true)
+            .getObjects();
+      } catch (Exception e) {
+         Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
+         throw new S3ServiceException("error listing objects in bucket " + bucketName, e);         
+      }
    }
 
    @Override

@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -326,8 +327,8 @@ public class StubS3Connection implements S3Connection {
                            options.getPrefix() != null ? URLDecoder.decode(options.getPrefix(),
                                     "UTF-8") : null, URLDecoder.decode(options.getDelimiter(),
                                     "UTF-8")));
-                  Set<String> commonPrefixes = iterable != null ? Sets.newTreeSet(iterable)
-                           : new HashSet<String>();
+                  SortedSet<String> commonPrefixes = iterable != null ? Sets.newTreeSet(iterable)
+                           : new TreeSet<String>();
                   commonPrefixes.remove(CommonPrefixes.NO_PREFIX);
 
                   contents = Sets.newTreeSet(Iterables.filter(contents, new DelimiterFilter(options
@@ -342,9 +343,18 @@ public class StubS3Connection implements S3Connection {
             }
 
             if (options.getMaxKeys() != null) {
-               contents = firstSliceOfSize(contents, Integer.parseInt(options.getMaxKeys()));
+               SortedSet<S3Object.Metadata> contentsSlice = firstSliceOfSize(
+                     contents, Integer.parseInt(options.getMaxKeys()));
                returnVal.setMaxKeys(Integer.parseInt(options.getMaxKeys()));
-               returnVal.setTruncated(true);
+               if (!contentsSlice.contains(contents.last())) {
+                  // Partial listing
+                  returnVal.setTruncated(true);
+                  returnVal.setMarker(contentsSlice.last().getKey());
+               } else {
+                  returnVal.setTruncated(false);                  
+                  returnVal.setMarker(null);
+               }
+               contents = contentsSlice;
             }
 
             returnVal.setContents(contents);

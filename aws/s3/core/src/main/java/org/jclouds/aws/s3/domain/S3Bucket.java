@@ -26,7 +26,6 @@ package org.jclouds.aws.s3.domain;
 import static com.google.common.base.Preconditions.checkNotNull;
 import org.joda.time.DateTime;
 
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 

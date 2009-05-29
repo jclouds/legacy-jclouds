@@ -39,10 +39,12 @@ import java.util.concurrent.TimeoutException;
 import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.s3.S3IntegrationTest;
 import org.jclouds.aws.s3.config.StubS3ConnectionModule;
+import org.jets3t.service.S3ObjectsChunk;
 import org.jets3t.service.S3Service;
 import org.jets3t.service.S3ServiceException;
 import org.jets3t.service.model.S3Bucket;
 import org.jets3t.service.model.S3Object;
+import org.jets3t.service.multithread.CreateObjectsEvent;
 import org.jets3t.service.security.AWSCredentials;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -164,6 +166,9 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
 		assertTrue(createdObject != org.jclouds.aws.s3.domain.S3Object.NOT_FOUND,
 			"object should exist but doesn't");
 		assertEquals(createdObject.getMetadata().getKey(), objectKey, "object misnamed");
+
+      client.deleteObject(name, objectKey);
+      client.deleteBucketIfEmpty(name);
     }
 
     @Test(enabled = false)
@@ -187,7 +192,7 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
     }
 
     @Test
-    public void testGetObjectDetailsImplStringStringCalendarCalendarStringArrayStringArray() 
+    public void testGetObjectDetailsImpl() 
     	throws InterruptedException, ExecutionException, TimeoutException, S3ServiceException 
 	{
         String bucketName = bucketPrefix + ".testGetObjectDetailsImplStringStringCalendarCalendarStringArrayStringArray";
@@ -210,7 +215,7 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
     }
 
     @Test
-    public void testGetObjectImplStringStringCalendarCalendarStringArrayStringArrayLongLong() 
+    public void testGetObjectImpl() 
     	throws InterruptedException, ExecutionException, TimeoutException, S3ServiceException, IOException 
 	{
         String bucketName = bucketPrefix + ".testGetObjectImplStringStringCalendarCalendarStringArrayStringArrayLongLong";
@@ -274,16 +279,137 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
         client.deleteBucketIfEmpty(bucketName);
     }
 
-    @Test(enabled = false)
-    public void testListObjectsChunkedImplStringStringStringLongStringBoolean() {
-        fail("Not yet implemented");
+    @Test
+    public void testListObjectsChunkedImpl() throws InterruptedException, ExecutionException, 
+          TimeoutException, IOException, S3ServiceException 
+    {
+       String bucketName = bucketPrefix + ".testListAllBucketsImplString".toLowerCase();
+       createBucket(bucketName);
+       
+       addObjectToBucket(bucketName, "item1/subobject2");
+       addObjectToBucket(bucketName, "item2");
+       addObjectToBucket(bucketName, "object1");
+       addObjectToBucket(bucketName, "object2/subobject1");
+       
+       S3ObjectsChunk chunk;
+       
+       // Normal complete listing
+       chunk = service.listObjectsChunked(bucketName, null, null, 1000, null, true);
+       assertEquals(chunk.getObjects().length, 4);
+       assertEquals(chunk.getCommonPrefixes().length, 0);
+       assertNull(chunk.getDelimiter());
+       assertNull(chunk.getPrefix());
+       assertNull(chunk.getPriorLastKey());
+       
+       // Partial listing
+       chunk = service.listObjectsChunked(bucketName, null, null, 2, null, false);
+       assertEquals(chunk.getObjects().length, 2);
+       assertEquals(chunk.getCommonPrefixes().length, 0);
+       assertNull(chunk.getDelimiter());
+       assertNull(chunk.getPrefix());
+       assertEquals(chunk.getPriorLastKey(), "item2");
+
+       // Complete listing, in two chunks
+       chunk = service.listObjectsChunked(bucketName, null, null, 2, null, true);
+       assertEquals(chunk.getObjects().length, 4);
+       assertEquals(chunk.getCommonPrefixes().length, 0);
+       assertNull(chunk.getDelimiter());
+       assertNull(chunk.getPrefix());
+       assertNull(chunk.getPriorLastKey());
+
+       // Partial listing with marker
+       chunk = service.listObjectsChunked(bucketName, null, null, 1000, "item1/subobject2", true);
+       assertEquals(chunk.getObjects().length, 3);
+       assertEquals(chunk.getCommonPrefixes().length, 0);
+       assertNull(chunk.getDelimiter());
+       assertNull(chunk.getPrefix());
+       assertNull(chunk.getPriorLastKey());
+
+       // Partial listing with marker
+       chunk = service.listObjectsChunked(bucketName, null, null, 1000, "object1", true);
+       assertEquals(chunk.getObjects().length, 1);
+       assertEquals(chunk.getCommonPrefixes().length, 0);
+       assertNull(chunk.getDelimiter());
+       assertNull(chunk.getPrefix());
+       assertNull(chunk.getPriorLastKey());
+
+       // Prefix test
+       chunk = service.listObjectsChunked(bucketName, "item", null, 1000, null, true);
+       assertEquals(chunk.getObjects().length, 2);
+       assertEquals(chunk.getCommonPrefixes().length, 0);
+       assertNull(chunk.getDelimiter());
+       assertEquals(chunk.getPrefix(), "item");
+       assertNull(chunk.getPriorLastKey());
+
+       // Delimiter test
+       chunk = service.listObjectsChunked(bucketName, null, "/", 1000, null, true);
+       assertEquals(chunk.getObjects().length, 2);
+       assertEquals(chunk.getCommonPrefixes().length, 2);
+       assertEquals(chunk.getDelimiter(), "/");
+       assertNull(chunk.getPrefix());
+       assertNull(chunk.getPriorLastKey());
+
+       // Prefix & delimiter test
+       chunk = service.listObjectsChunked(bucketName, "item", "/", 1000, null, true);
+       assertEquals(chunk.getObjects().length, 1);
+       assertEquals(chunk.getCommonPrefixes().length, 1);
+       assertEquals(chunk.getDelimiter(), "/");
+       assertEquals(chunk.getPrefix(), "item");
+       assertNull(chunk.getPriorLastKey());
+
+       client.deleteObject(bucketName, "item1/subobject2");
+       client.deleteObject(bucketName, "item2");
+       client.deleteObject(bucketName, "object1");
+       client.deleteObject(bucketName, "object2/subobject1");
+       client.deleteBucketIfEmpty(bucketName);
     }
 
-    @Test(enabled = false)
-    public void testListObjectsImplStringStringStringLong() {
-        fail("Not yet implemented");
-    }
+    @Test
+    public void testListObjectsImpl() throws InterruptedException, ExecutionException, 
+          TimeoutException, IOException, S3ServiceException 
+    {
+       String bucketName = bucketPrefix + ".testListAllBucketsImplString".toLowerCase();
+       createBucket(bucketName);
+       
+       addObjectToBucket(bucketName, "item1/subobject2");
+       addObjectToBucket(bucketName, "item2");
+       addObjectToBucket(bucketName, "object1");
+       addObjectToBucket(bucketName, "object2/subobject1");
+       
+       S3Object[] objects;
+       
+       // Normal complete listing
+       objects = service.listObjects(bucketName, null, null, 1000);
+       assertEquals(objects.length, 4);
+       
+       // Complete listing, in two chunks
+       objects = service.listObjects(bucketName, null, null, 2);
+       assertEquals(objects.length, 4);
+       assertEquals(objects[0].getKey(), "item1/subobject2");
+       assertEquals(objects[3].getKey(), "object2/subobject1");
 
+       // Prefix test
+       objects = service.listObjects(bucketName, "item", null, 1000);
+       assertEquals(objects.length, 2);
+
+       // Delimiter test
+       objects = service.listObjects(bucketName, null, "/", 1000);
+       assertEquals(objects.length, 2);
+       assertEquals(objects[0].getKey(), "item2");
+       assertEquals(objects[1].getKey(), "object1");
+
+       // Prefix & delimiter test
+       objects = service.listObjects(bucketName, "item", "/", 1000);
+       assertEquals(objects.length, 1);
+       assertEquals(objects[0].getKey(), "item2");
+
+       client.deleteObject(bucketName, "item1/subobject2");
+       client.deleteObject(bucketName, "item2");
+       client.deleteObject(bucketName, "object1");
+       client.deleteObject(bucketName, "object2/subobject1");
+       client.deleteBucketIfEmpty(bucketName);
+    }
+    
     @Test(enabled = false)
     public void testPutBucketAclImplStringAccessControlList() {
         fail("Not yet implemented");

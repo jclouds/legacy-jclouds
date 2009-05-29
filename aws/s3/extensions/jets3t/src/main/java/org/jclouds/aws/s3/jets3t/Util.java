@@ -28,8 +28,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Set;
 
 import org.jclouds.aws.s3.commands.options.GetObjectOptions;
+import org.jclouds.aws.s3.commands.options.ListBucketOptions;
 import org.jets3t.service.model.S3Bucket;
 import org.jets3t.service.model.S3Object;
 import org.jets3t.service.model.S3Owner;
@@ -61,6 +63,15 @@ public class Util {
         return (S3Bucket[]) jsBuckets.toArray(new S3Bucket[jsBuckets.size()]);
     }
     
+    public static S3Object[] convertObjectHeads(Set<org.jclouds.aws.s3.domain.S3Object.Metadata> 
+          jcObjectMDs) {
+       List<S3Object> jsObjects = new ArrayList<S3Object>(jcObjectMDs.size());
+       for (org.jclouds.aws.s3.domain.S3Object.Metadata jcObjectMD: jcObjectMDs) {
+          jsObjects.add(convertObjectHead(jcObjectMD));
+       }
+       return (S3Object[]) jsObjects.toArray(new S3Object[jsObjects.size()]);       
+    }
+    
     public static S3Object convertObjectHead(org.jclouds.aws.s3.domain.S3Object.Metadata jcObjectMD) {
         S3Object jsObject = new S3Object(jcObjectMD.getKey());
         if (jcObjectMD.getOwner() != null) {
@@ -89,22 +100,45 @@ public class Util {
         return (S3Object[]) jsObjects.toArray(new S3Object[jsObjects.size()]);
     }
     
-    public static GetObjectOptions convertOptions(Calendar ifModifiedSince,
+    public static GetObjectOptions convertGetObjectOptions(Calendar ifModifiedSince,
         Calendar ifUnmodifiedSince, String[] ifMatchTags, String[] ifNoneMatchTags) 
     	throws UnsupportedEncodingException 
     {
     	GetObjectOptions options = new GetObjectOptions();
-    	if (ifModifiedSince != null) 
+    	if (ifModifiedSince != null) { 
     		options.ifModifiedSince(new DateTime(ifModifiedSince));
-    	if (ifUnmodifiedSince != null)
+    	}
+    	if (ifUnmodifiedSince != null) {
     		options.ifUnmodifiedSince(new DateTime(ifUnmodifiedSince));
+    	}
     	// TODO: options.ifMd5Matches should accept multiple match tags
-    	if (ifMatchTags != null && ifMatchTags.length > 0)
+    	if (ifMatchTags != null && ifMatchTags.length > 0) {
     		options.ifMd5Matches(ifMatchTags[0].getBytes());
+    	}
     	// TODO: options.ifMd5DoesntMatch should accept multiple match tags
-    	if (ifNoneMatchTags != null && ifNoneMatchTags.length > 0)
+    	if (ifNoneMatchTags != null && ifNoneMatchTags.length > 0) {
     		options.ifMd5DoesntMatch(ifNoneMatchTags[0].getBytes());
+    	}
     	return options;
+    }
+    
+    public static ListBucketOptions convertListObjectOptions(String prefix, String marker, 
+          String delimiter, Long maxKeys) throws UnsupportedEncodingException 
+    {
+       ListBucketOptions options = new ListBucketOptions();
+       if (prefix != null) {
+          options.withPrefix(prefix);
+       }
+       if (marker != null) {
+          options.afterMarker(marker);
+       }
+       if (maxKeys != null) {
+          options.maxResults(maxKeys);
+       }
+       if (delimiter != null) {
+          options.delimiter(delimiter);
+       }
+       return options;
     }
 
 }
