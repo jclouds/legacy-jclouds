@@ -23,27 +23,6 @@
 # ====================================================================
 #
 ####
-#
-#    Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
-#
-#    ====================================================================
-#    Licensed to the Apache Software Foundation (ASF) under one
-#    or more contributor license agreements.  See the NOTICE file
-#    distributed with this work for additional information
-#    regarding copyright ownership.  The ASF licenses this file
-#    to you under the Apache License, Version 2.0 (the
-#    "License"); you may not use this file except in compliance
-#    with the License.  You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-#    Unless required by applicable law or agreed to in writing,
-#    software distributed under the License is distributed on an
-#    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-#    KIND, either express or implied.  See the License for the
-#    specific language governing permissions and limitations
-#    under the License.
-####
 #   Parse EC2
 #
 #   Builds an object tree used to create a REST service for the current EC2 api.
@@ -73,8 +52,9 @@ use LWP::UserAgent;
 use Data::Dumper;
 use JSON;
 
-my $refUrl = "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference";
-# my $refUrl           = "/tmp/scrape";
+# my $refUrl = "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference";
+
+my $refUrl           = "/tmp/scrape";
 
 my $appUrl           = "${refUrl}/OperationList-query.html";
 my $global_package   = "org.jclouds.aws.ec2";
@@ -96,9 +76,9 @@ sub parse_file {
 
 sub parse {
 
-    # return parse_file(shift);
+    return parse_file(shift);
 
-    return parse_url(shift);
+    #return parse_url(shift);
 }
 
 sub parse_java_type {
@@ -113,10 +93,10 @@ sub parse_java_type {
         my $javaType = get_java_name($awsType);
         if ( !/Response/ ) {
             $domain->{$awsType} = {
-                awsType   => $awsType,
-                javaType  => $javaType,
-                packageName   => $domain_package,
-                className => $domain_package . "." . $javaType,
+                awsType     => $awsType,
+                javaType    => $javaType,
+                packageName => $domain_package,
+                className   => $domain_package . "." . $javaType,
                 see => ["${refUrl}/ApiReference-ItemType-${awsType}.html"],
                 fields =>
                   build_fields("${refUrl}/ApiReference-ItemType-$awsType.html")
@@ -183,15 +163,15 @@ sub build_commands {
         foreach my $class ( $link->look_down( '_tag', 'a' ) ) {
             my $awsType = $class->attr('title');
             my $command = {
-                awsType   => $awsType,
-                packageName   => $commands_package . ".$packageName",
-                className => $commands_package . ".$packageName." . $awsType,
-                see       => ["${refUrl}/ApiReference-query-${awsType}.html"],
-                response  => {
-                    javaType  => $awsType . "Response",
-                    awsType   => $awsType . "Response",
-                    packageName   => $response_package . ".$packageName",
-                    className => $response_package
+                awsType     => $awsType,
+                packageName => $commands_package . ".$packageName",
+                className   => $commands_package . ".$packageName." . $awsType,
+                see         => ["${refUrl}/ApiReference-query-${awsType}.html"],
+                response    => {
+                    javaType    => $awsType . "Response",
+                    awsType     => $awsType . "Response",
+                    packageName => $response_package . ".$packageName",
+                    className   => $response_package
                       . ".$packageName."
                       . $awsType
                       . "Response",
@@ -200,18 +180,19 @@ sub build_commands {
                     ]
                 },
                 options => {
-                    awsType   => $awsType . "Options",
-                    packageName   => $options_package . ".$packageName",
-                    className => $options_package
+                    javaType    => $awsType . "Options",
+                    awsType     => $awsType . "Options",
+                    packageName => $options_package . ".$packageName",
+                    className   => $options_package
                       . ".$packageName."
                       . $awsType
                       . "Options",
                     see => ["${refUrl}/ApiReference-ItemType-${awsType}.html"]
                 },
                 handler => {
-                    awsType   => $awsType . "Handler",
-                    packageName   => $xml_package . ".$packageName",
-                    className => $xml_package
+                    awsType     => $awsType . "Handler",
+                    packageName => $xml_package . ".$packageName",
+                    className   => $xml_package
                       . ".$packageName."
                       . $awsType
                       . "Handler",
@@ -224,7 +205,12 @@ sub build_commands {
 
             # do not build options when there are none!
             if ( $#{ $$command{options}->{parameters} } == -1 ) {
-                delete $$command{options};
+                $$command{options}->{javaType} =
+                  "BaseEC2RequestOptions<EC2RequestOptions>";
+                $$command{options}->{packageName} = $options_package;
+                $$command{options}->{className}   = $options_package . "."
+                  . "BaseEC2RequestOptions<EC2RequestOptions>";
+                $$command{options}->{see} = [];
             }
 
             # clear parameters for commands who don't require them
@@ -241,16 +227,39 @@ sub build_commands {
     }
     $tree->eof;
     $tree->delete;
+    foreach my $packageRef (@out) {
+        my @commands = @{ $packageRef->{commands} };
+        foreach my $command (@commands) {
+            my $fieldCount = scalar @{ $command->{response}->{fields} };
 
+            # convert to native java type
+            if ( $fieldCount == 1 ) {
+                $command->{response}->{javaType} =
+                  ${ $command->{response}->{fields} }[0]->{javaType};
+            }
+        }
+    }
     return \@out;
 }
 
 sub build_app {
     my $url      = shift;
     my $packages = build_commands($url);
+    while ( my ( $awsType, $classDef ) = each %$domain ) {
+        my $fieldCount = scalar @{ $classDef->{fields} };
+        if ( $fieldCount == 1 ) {
+            if ( $classDef->{fields}->[0]->{"name"} eq "item" ) {
+                delete $domain->{$awsType};
+            }
+        }
+        if ( $classDef->{javaType} =~ /^Set/ ) {
+            delete $domain->{$awsType};
+        }
+    }
     return {
         see      => [$url],
-        packages => $packages
+        packages => $packages,
+        domain   => $domain
     };
 }
 
@@ -440,13 +449,7 @@ sub gen_bean_code_for_response {
         my @commands = @{ $packageRef->{commands} };
         foreach my $command (@commands) {
             my $fieldCount = scalar @{ $command->{response}->{fields} };
-
-            # convert to native java type
-            if ( $fieldCount == 1 ) {
-                $command->{response}->{javaType} =
-                  ${ $command->{response}->{fields} }[0]->{javaType};
-            }
-            else {
+            if ( $fieldCount != 1 ) {
                 gen_bean_code( $command->{response} );
             }
         }
@@ -505,12 +508,8 @@ EOF
 
     }
 
-# TODO change optons to be default of Base... instead of doing this in render logic.
     my $optionsParameter =
-      "\@Assisted BaseEC2RequestOptions<EC2RequestOptions> options";
-    $optionsParameter =
-      "\@Assisted " . $classDef->{options}->{awsType} . " options"
-      if defined $classDef->{options}->{awsType};
+      "\@Assisted " . $classDef->{options}->{javaType} . " options";
 
     ${code} = ${code} . <<EOF;
  * \@author Adrian Cole 
@@ -627,13 +626,13 @@ EOF
 # start app!
 my $app = build_app($appUrl);
 
-my $app_json = to_json($app, {utf8 => 1, pretty => 1});
+my $app_json = to_json( $app, { utf8 => 1, pretty => 1 } );
 print $app_json
 
-# gen_bean_code_for_domain($domain);
-# gen_bean_code_for_response($app);
-# gen_bean_code_for_command($app);
-# 
-# print_domain_code($domain);
-# print_response_code($app);
-# print_command_code($app);
+  # gen_bean_code_for_domain($domain);
+  # gen_bean_code_for_response($app);
+  # gen_bean_code_for_command($app);
+  #
+  # print_domain_code($domain);
+  # print_response_code($app);
+  # print_command_code($app);

@@ -4,31 +4,14 @@
          "name" : "amazondevpay",
          "commands" : [
             {
-               "parameters" : [
-                  {
-                     "desc" : "The product code to confirm.",
-                     "name" : "ProductCode",
-                     "type" : "String",
-                     "param" : "None",
-                     "javaType" : "String"
-                  },
-                  {
-                     "desc" : "The instance to confirm.",
-                     "name" : "InstanceId",
-                     "type" : "String",
-                     "param" : "None",
-                     "javaType" : "String"
-                  }
-               ],
-               "className" : "org.jclouds.aws.ec2.commands.amazondevpay.ConfirmProductInstance",
-               "handler" : {
-                  "className" : "org.jclouds.aws.ec2.xml.amazondevpay.ConfirmProductInstanceHandler",
-                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-ConfirmProductInstance-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;ConfirmProductInstanceResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n  &lt;ownerId&gt;254933287430&lt;/ownerId&gt;\n&lt;/ConfirmProductInstanceResponse&gt;</pre></div>\n",
-                  "awsType" : "ConfirmProductInstanceHandler",
-                  "packageName" : "org.jclouds.aws.ec2.xml.amazondevpay",
-                  "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-ConfirmProductInstanceResponse.html"
-                  ]
+               "options" : {
+                  "className" : "org.jclouds.aws.ec2.commands.options.BaseEC2RequestOptions<EC2RequestOptions>",
+                  "parameters" : [],
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-ConfirmProductInstance-Example-Request-1\">Example Request</h3></div></div></div><p>This example describes the confirms the product code is associated with the instance.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=ConfirmProductInstance&amp;ProductCode=774F4FF8&amp;InstanceId=i-10a64379&amp;AuthParams</pre></div>\n",
+                  "awsType" : "ConfirmProductInstanceOptions",
+                  "javaType" : "BaseEC2RequestOptions<EC2RequestOptions>",
+                  "packageName" : "org.jclouds.aws.ec2.commands.options",
+                  "see" : []
                },
                "response" : {
                   "className" : "org.jclouds.aws.ec2.commands.response.amazondevpay.ConfirmProductInstanceResponse",
@@ -50,16 +33,42 @@
                   "javaType" : "ConfirmProductInstanceResponse",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.amazondevpay",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-ConfirmProductInstanceResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-ConfirmProductInstanceResponse.html"
                   ]
                },
                "awsType" : "ConfirmProductInstance",
                "packageName" : "org.jclouds.aws.ec2.commands.amazondevpay",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ConfirmProductInstance.html",
+                  "/tmp/scrape/ApiReference-query-ConfirmProductInstance.html",
                   "DescribeInstances",
                   "RunInstances"
-               ]
+               ],
+               "className" : "org.jclouds.aws.ec2.commands.amazondevpay.ConfirmProductInstance",
+               "parameters" : [
+                  {
+                     "desc" : "The product code to confirm.",
+                     "name" : "ProductCode",
+                     "type" : "String",
+                     "param" : "None",
+                     "javaType" : "String"
+                  },
+                  {
+                     "desc" : "The instance to confirm.",
+                     "name" : "InstanceId",
+                     "type" : "String",
+                     "param" : "None",
+                     "javaType" : "String"
+                  }
+               ],
+               "handler" : {
+                  "className" : "org.jclouds.aws.ec2.xml.amazondevpay.ConfirmProductInstanceHandler",
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-ConfirmProductInstance-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;ConfirmProductInstanceResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n  &lt;ownerId&gt;254933287430&lt;/ownerId&gt;\n&lt;/ConfirmProductInstanceResponse&gt;</pre></div>\n",
+                  "awsType" : "ConfirmProductInstanceHandler",
+                  "packageName" : "org.jclouds.aws.ec2.xml.amazondevpay",
+                  "see" : [
+                     "/tmp/scrape/ApiReference-ItemType-ConfirmProductInstanceResponse.html"
+                  ]
+               }
             }
          ]
       },
@@ -67,6 +76,39 @@
          "name" : "amis",
          "commands" : [
             {
+               "options" : {
+                  "className" : "org.jclouds.aws.ec2.commands.options.BaseEC2RequestOptions<EC2RequestOptions>",
+                  "parameters" : [],
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DeregisterImage-Example-Request-1\">Example Request</h3></div></div></div><p>This example deregisters the <code class=\"code\">ami-4fa54026</code> AMI.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DeregisterImage&amp;ImageId=ami-4fa54026&amp;AuthParams</pre></div>\n",
+                  "awsType" : "DeregisterImageOptions",
+                  "javaType" : "BaseEC2RequestOptions<EC2RequestOptions>",
+                  "packageName" : "org.jclouds.aws.ec2.commands.options",
+                  "see" : []
+               },
+               "response" : {
+                  "className" : "org.jclouds.aws.ec2.commands.response.amis.DeregisterImageResponse",
+                  "fields" : [
+                     {
+                        "desc" : " Returns true if deregistration succeeded; otherwise false.",
+                        "name" : "return",
+                        "type" : "xsd:boolean",
+                        "javaType" : "boolean"
+                     }
+                  ],
+                  "awsType" : "DeregisterImageResponse",
+                  "javaType" : "boolean",
+                  "packageName" : "org.jclouds.aws.ec2.commands.response.amis",
+                  "see" : [
+                     "/tmp/scrape/ApiReference-ItemType-DeregisterImageResponse.html"
+                  ]
+               },
+               "awsType" : "DeregisterImage",
+               "packageName" : "org.jclouds.aws.ec2.commands.amis",
+               "see" : [
+                  "/tmp/scrape/ApiReference-query-DeregisterImage.html",
+                  "RegisterImage",
+                  "DescribeImages"
+               ],
                "parameters" : [
                   {
                      "desc" : "Unique ID of the AMI which was assigned during registration. To register an AMI, use RegisterImage. To view the AMI IDs of AMIs that belong to your account. use DescribeImages.",
@@ -83,35 +125,75 @@
                   "awsType" : "DeregisterImageHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.amis",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DeregisterImageResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DeregisterImageResponse.html"
                   ]
-               },
-               "response" : {
-                  "className" : "org.jclouds.aws.ec2.commands.response.amis.DeregisterImageResponse",
-                  "fields" : [
-                     {
-                        "desc" : " Returns true if deregistration succeeded; otherwise false.",
-                        "name" : "return",
-                        "type" : "xsd:boolean",
-                        "javaType" : "boolean"
-                     }
-                  ],
-                  "awsType" : "DeregisterImageResponse",
-                  "javaType" : "DeregisterImageResponse",
-                  "packageName" : "org.jclouds.aws.ec2.commands.response.amis",
-                  "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DeregisterImageResponse.html"
-                  ]
-               },
-               "awsType" : "DeregisterImage",
-               "packageName" : "org.jclouds.aws.ec2.commands.amis",
-               "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DeregisterImage.html",
-                  "RegisterImage",
-                  "DescribeImages"
-               ]
+               }
             },
             {
+               "options" : {
+                  "className" : "org.jclouds.aws.ec2.commands.options.BaseEC2RequestOptions<EC2RequestOptions>",
+                  "parameters" : [],
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeImageAttribute-Example-Request-1\">Example Request</h3></div></div></div><p>This example lists the launch permissions for the ami-61a54008 AMI<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeImageAttribute&amp;ImageId=ami-2bb65342&amp;Attribute=launchPermission&amp;AuthParams</pre></div>\n",
+                  "awsType" : "DescribeImageAttributeOptions",
+                  "javaType" : "BaseEC2RequestOptions<EC2RequestOptions>",
+                  "packageName" : "org.jclouds.aws.ec2.commands.options",
+                  "see" : []
+               },
+               "response" : {
+                  "className" : "org.jclouds.aws.ec2.commands.response.amis.DescribeImageAttributeResponse",
+                  "fields" : [
+                     {
+                        "desc" : "Block device mapping set.",
+                        "name" : "blockDeviceMapping",
+                        "type" : "BlockDeviceMappingType",
+                        "javaType" : "BlockDeviceMapping"
+                     },
+                     {
+                        "desc" : "The ID of the AMI.",
+                        "name" : "imageId",
+                        "type" : "xsd:string",
+                        "javaType" : "String"
+                     },
+                     {
+                        "desc" : "Kernel set.",
+                        "name" : "kernel",
+                        "type" : "NullableAttributeValueType",
+                        "javaType" : "NullableAttributeValue"
+                     },
+                     {
+                        "desc" : "Launch permissions set.",
+                        "name" : "launchPermission",
+                        "type" : "LaunchPermissionListType",
+                        "javaType" : "LaunchPermissionList"
+                     },
+                     {
+                        "desc" : "Product codes set.",
+                        "name" : "productCodes",
+                        "type" : "ProductCodeListType",
+                        "javaType" : "ProductCodeList"
+                     },
+                     {
+                        "desc" : "RAM disk set.",
+                        "name" : "ramdisk",
+                        "type" : "NullableAttributeValueType",
+                        "javaType" : "NullableAttributeValue"
+                     }
+                  ],
+                  "awsType" : "DescribeImageAttributeResponse",
+                  "javaType" : "DescribeImageAttributeResponse",
+                  "packageName" : "org.jclouds.aws.ec2.commands.response.amis",
+                  "see" : [
+                     "/tmp/scrape/ApiReference-ItemType-DescribeImageAttributeResponse.html"
+                  ]
+               },
+               "awsType" : "DescribeImageAttribute",
+               "packageName" : "org.jclouds.aws.ec2.commands.amis",
+               "see" : [
+                  "/tmp/scrape/ApiReference-query-DescribeImageAttribute.html",
+                  "DescribeImages",
+                  "ModifyImageAttribute",
+                  "ResetImageAttribute"
+               ],
                "parameters" : [
                   {
                      "desc" : "The ID of the AMI for which an attribute will be described.",
@@ -170,76 +252,11 @@
                   "awsType" : "DescribeImageAttributeHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.amis",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeImageAttributeResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeImageAttributeResponse.html"
                   ]
-               },
-               "response" : {
-                  "className" : "org.jclouds.aws.ec2.commands.response.amis.DescribeImageAttributeResponse",
-                  "fields" : [
-                     {
-                        "desc" : "Block device mapping set.",
-                        "name" : "blockDeviceMapping",
-                        "type" : "BlockDeviceMappingType",
-                        "javaType" : "BlockDeviceMapping"
-                     },
-                     {
-                        "desc" : "The ID of the AMI.",
-                        "name" : "imageId",
-                        "type" : "xsd:string",
-                        "javaType" : "String"
-                     },
-                     {
-                        "desc" : "Kernel set.",
-                        "name" : "kernel",
-                        "type" : "NullableAttributeValueType",
-                        "javaType" : "NullableAttributeValue"
-                     },
-                     {
-                        "desc" : "Launch permissions set.",
-                        "name" : "launchPermission",
-                        "type" : "LaunchPermissionListType",
-                        "javaType" : "LaunchPermissionList"
-                     },
-                     {
-                        "desc" : "Product codes set.",
-                        "name" : "productCodes",
-                        "type" : "ProductCodeListType",
-                        "javaType" : "ProductCodeList"
-                     },
-                     {
-                        "desc" : "RAM disk set.",
-                        "name" : "ramdisk",
-                        "type" : "NullableAttributeValueType",
-                        "javaType" : "NullableAttributeValue"
-                     }
-                  ],
-                  "awsType" : "DescribeImageAttributeResponse",
-                  "javaType" : "DescribeImageAttributeResponse",
-                  "packageName" : "org.jclouds.aws.ec2.commands.response.amis",
-                  "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeImageAttributeResponse.html"
-                  ]
-               },
-               "awsType" : "DescribeImageAttribute",
-               "packageName" : "org.jclouds.aws.ec2.commands.amis",
-               "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeImageAttribute.html",
-                  "DescribeImages",
-                  "ModifyImageAttribute",
-                  "ResetImageAttribute"
-               ]
+               }
             },
             {
-               "className" : "org.jclouds.aws.ec2.commands.amis.DescribeImages",
-               "handler" : {
-                  "className" : "org.jclouds.aws.ec2.xml.amis.DescribeImagesHandler",
-                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeImages-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeImagesResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;imagesSet&gt;\n    &lt;item&gt;\n      &lt;imageId&gt;ami-be3adfd7&lt;/imageId&gt;\n      &lt;imageLocation&gt;ec2-public-images/fedora-8-i386-base-v1.04.manifest.xml\n      &lt;/imageLocation&gt;\n      &lt;imageState&gt;available&lt;/imageState&gt;\n      &lt;imageOwnerId&gt;206029621532&lt;/imageOwnerId&gt;\n      &lt;isPublic&gt;false&lt;/isPublic&gt;\n      &lt;architecture&gt;i386&lt;/architecture&gt;\n      &lt;imageType&gt;machine&lt;/imageType&gt;\n      &lt;kernelId&gt;aki-4438dd2d&lt;/kernelId&gt;\n      &lt;ramdiskId&gt;ari-4538dd2c&lt;/ramdiskId&gt;\n    &lt;/item&gt;\n  &lt;/imagesSet&gt;\n&lt;/DescribeImagesResponse&gt;</pre></div>\n",
-                  "awsType" : "DescribeImagesHandler",
-                  "packageName" : "org.jclouds.aws.ec2.xml.amis",
-                  "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeImagesResponse.html"
-                  ]
-               },
                "options" : {
                   "className" : "org.jclouds.aws.ec2.commands.options.amis.DescribeImagesOptions",
                   "parameters" : [
@@ -267,9 +284,10 @@
                   ],
                   "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeImages-Example-Request-1\">Example Request</h3></div></div></div><p>This example describes the ami-be3adfd7 AMI.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeImages&amp;ImageId.1=ami-be3adfd7&amp;AuthParams</pre></div>\n",
                   "awsType" : "DescribeImagesOptions",
+                  "javaType" : "DescribeImagesOptions",
                   "packageName" : "org.jclouds.aws.ec2.commands.options.amis",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeImages.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeImages.html"
                   ]
                },
                "response" : {
@@ -283,21 +301,64 @@
                      }
                   ],
                   "awsType" : "DescribeImagesResponse",
-                  "javaType" : "DescribeImagesResponse",
+                  "javaType" : "DescribeImagesResponseInfo",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.amis",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeImagesResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeImagesResponse.html"
                   ]
                },
                "awsType" : "DescribeImages",
                "packageName" : "org.jclouds.aws.ec2.commands.amis",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeImages.html",
+                  "/tmp/scrape/ApiReference-query-DescribeImages.html",
                   "DescribeInstances",
                   "DescribeImageAttribute"
-               ]
+               ],
+               "className" : "org.jclouds.aws.ec2.commands.amis.DescribeImages",
+               "handler" : {
+                  "className" : "org.jclouds.aws.ec2.xml.amis.DescribeImagesHandler",
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeImages-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeImagesResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;imagesSet&gt;\n    &lt;item&gt;\n      &lt;imageId&gt;ami-be3adfd7&lt;/imageId&gt;\n      &lt;imageLocation&gt;ec2-public-images/fedora-8-i386-base-v1.04.manifest.xml\n      &lt;/imageLocation&gt;\n      &lt;imageState&gt;available&lt;/imageState&gt;\n      &lt;imageOwnerId&gt;206029621532&lt;/imageOwnerId&gt;\n      &lt;isPublic&gt;false&lt;/isPublic&gt;\n      &lt;architecture&gt;i386&lt;/architecture&gt;\n      &lt;imageType&gt;machine&lt;/imageType&gt;\n      &lt;kernelId&gt;aki-4438dd2d&lt;/kernelId&gt;\n      &lt;ramdiskId&gt;ari-4538dd2c&lt;/ramdiskId&gt;\n    &lt;/item&gt;\n  &lt;/imagesSet&gt;\n&lt;/DescribeImagesResponse&gt;</pre></div>\n",
+                  "awsType" : "DescribeImagesHandler",
+                  "packageName" : "org.jclouds.aws.ec2.xml.amis",
+                  "see" : [
+                     "/tmp/scrape/ApiReference-ItemType-DescribeImagesResponse.html"
+                  ]
+               }
             },
             {
+               "options" : {
+                  "className" : "org.jclouds.aws.ec2.commands.options.BaseEC2RequestOptions<EC2RequestOptions>",
+                  "parameters" : [],
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-ModifyImageAttribute-Example-Request-1\">Example Request</h3></div></div></div><p>This example makes this a public AMI and grants specific permissions to a user.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=ModifyImageAttribute&amp;ImageId=ami-61a54008&amp;Attribute=launchPermission&amp;OperationType=add&amp;Group.1=all &amp;UserId.1=495219933132&amp;AuthParams</pre></div>\n",
+                  "awsType" : "ModifyImageAttributeOptions",
+                  "javaType" : "BaseEC2RequestOptions<EC2RequestOptions>",
+                  "packageName" : "org.jclouds.aws.ec2.commands.options",
+                  "see" : []
+               },
+               "response" : {
+                  "className" : "org.jclouds.aws.ec2.commands.response.amis.ModifyImageAttributeResponse",
+                  "fields" : [
+                     {
+                        "desc" : " Returns true if successful; otherwise false.",
+                        "name" : "return",
+                        "type" : "xsd:boolean",
+                        "javaType" : "boolean"
+                     }
+                  ],
+                  "awsType" : "ModifyImageAttributeResponse",
+                  "javaType" : "boolean",
+                  "packageName" : "org.jclouds.aws.ec2.commands.response.amis",
+                  "see" : [
+                     "/tmp/scrape/ApiReference-ItemType-ModifyImageAttributeResponse.html"
+                  ]
+               },
+               "awsType" : "ModifyImageAttribute",
+               "packageName" : "org.jclouds.aws.ec2.commands.amis",
+               "see" : [
+                  "/tmp/scrape/ApiReference-query-ModifyImageAttribute.html",
+                  "ResetImageAttribute",
+                  "DescribeImageAttribute"
+               ],
                "parameters" : [
                   {
                      "desc" : "The AMI ID.",
@@ -349,33 +410,9 @@
                   "awsType" : "ModifyImageAttributeHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.amis",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-ModifyImageAttributeResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-ModifyImageAttributeResponse.html"
                   ]
-               },
-               "response" : {
-                  "className" : "org.jclouds.aws.ec2.commands.response.amis.ModifyImageAttributeResponse",
-                  "fields" : [
-                     {
-                        "desc" : " Returns true if successful; otherwise false.",
-                        "name" : "return",
-                        "type" : "xsd:boolean",
-                        "javaType" : "boolean"
-                     }
-                  ],
-                  "awsType" : "ModifyImageAttributeResponse",
-                  "javaType" : "ModifyImageAttributeResponse",
-                  "packageName" : "org.jclouds.aws.ec2.commands.response.amis",
-                  "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-ModifyImageAttributeResponse.html"
-                  ]
-               },
-               "awsType" : "ModifyImageAttribute",
-               "packageName" : "org.jclouds.aws.ec2.commands.amis",
-               "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifyImageAttribute.html",
-                  "ResetImageAttribute",
-                  "DescribeImageAttribute"
-               ]
+               }
             }
          ]
       },
@@ -383,16 +420,6 @@
          "name" : "availabilityzonesandregions",
          "commands" : [
             {
-               "className" : "org.jclouds.aws.ec2.commands.availabilityzonesandregions.DescribeAvailabilityZones",
-               "handler" : {
-                  "className" : "org.jclouds.aws.ec2.xml.availabilityzonesandregions.DescribeAvailabilityZonesHandler",
-                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeAvailabilityZones-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeAvailabilityZonesResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;availabilityZoneInfo&gt;\n    &lt;item&gt;\n      &lt;zoneName&gt;us-east-1a&lt;/zoneName&gt;\n      &lt;zoneState&gt;available&lt;/zoneState&gt;\n    &lt;/item&gt;\n    &lt;item&gt;\n      &lt;zoneName&gt;us-east-1b&lt;/zoneName&gt;\n      &lt;zoneState&gt;available&lt;/zoneState&gt;\n    &lt;/item&gt;\n    &lt;item&gt;\n      &lt;zoneName&gt;us-east-1c&lt;/zoneName&gt;\n      &lt;zoneState&gt;available&lt;/zoneState&gt;\n    &lt;/item&gt;\n  &lt;/availabilityZoneInfo&gt;\n&lt;/DescribeAvailabilityZonesResponse&gt;</pre></div>\n",
-                  "awsType" : "DescribeAvailabilityZonesHandler",
-                  "packageName" : "org.jclouds.aws.ec2.xml.availabilityzonesandregions",
-                  "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeAvailabilityZonesResponse.html"
-                  ]
-               },
                "options" : {
                   "className" : "org.jclouds.aws.ec2.commands.options.availabilityzonesandregions.DescribeAvailabilityZonesOptions",
                   "parameters" : [
@@ -406,9 +433,10 @@
                   ],
                   "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeAvailabilityZones-Example-Request-1\">Example Request</h3></div></div></div><p>This example displays information about Availability Zones that are available to the account.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeAvailabilityZones&amp;ZoneName.0=us-east-1a&amp;ZoneName.1=us-east-1b&amp;ZoneName.1=us-east-1c&amp;AuthParams</pre></div>\n",
                   "awsType" : "DescribeAvailabilityZonesOptions",
+                  "javaType" : "DescribeAvailabilityZonesOptions",
                   "packageName" : "org.jclouds.aws.ec2.commands.options.availabilityzonesandregions",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeAvailabilityZones.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeAvailabilityZones.html"
                   ]
                },
                "response" : {
@@ -422,31 +450,31 @@
                      }
                   ],
                   "awsType" : "DescribeAvailabilityZonesResponse",
-                  "javaType" : "DescribeAvailabilityZonesResponse",
+                  "javaType" : "AvailabilityZone",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.availabilityzonesandregions",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeAvailabilityZonesResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeAvailabilityZonesResponse.html"
                   ]
                },
                "awsType" : "DescribeAvailabilityZones",
                "packageName" : "org.jclouds.aws.ec2.commands.availabilityzonesandregions",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeAvailabilityZones.html",
+                  "/tmp/scrape/ApiReference-query-DescribeAvailabilityZones.html",
                   "RunInstances",
                   "DescribeRegions"
-               ]
-            },
-            {
-               "className" : "org.jclouds.aws.ec2.commands.availabilityzonesandregions.DescribeRegions",
+               ],
+               "className" : "org.jclouds.aws.ec2.commands.availabilityzonesandregions.DescribeAvailabilityZones",
                "handler" : {
-                  "className" : "org.jclouds.aws.ec2.xml.availabilityzonesandregions.DescribeRegionsHandler",
-                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeRegions-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeRegionsResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;regionInfo&gt;\n    &lt;item&gt;\n      &lt;regionName&gt;us-east-1&lt;/regionName&gt;\n      &lt;regionEndpoint&gt;us-east-1.ec2.amazonaws.com&lt;/regionEndpoint&gt;\n    &lt;/item&gt;\n    &lt;item&gt;\n      &lt;regionName&gt;eu-west-1&lt;/regionName&gt;\n      &lt;regionUrl&gt;eu-west-1.ec2.amazonaws.com&lt;/regionUrl&gt;\n    &lt;/item&gt;\n  &lt;/regionInfo&gt;\n&lt;/DescribeRegionsResponse&gt;</pre></div>\n",
-                  "awsType" : "DescribeRegionsHandler",
+                  "className" : "org.jclouds.aws.ec2.xml.availabilityzonesandregions.DescribeAvailabilityZonesHandler",
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeAvailabilityZones-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeAvailabilityZonesResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;availabilityZoneInfo&gt;\n    &lt;item&gt;\n      &lt;zoneName&gt;us-east-1a&lt;/zoneName&gt;\n      &lt;zoneState&gt;available&lt;/zoneState&gt;\n    &lt;/item&gt;\n    &lt;item&gt;\n      &lt;zoneName&gt;us-east-1b&lt;/zoneName&gt;\n      &lt;zoneState&gt;available&lt;/zoneState&gt;\n    &lt;/item&gt;\n    &lt;item&gt;\n      &lt;zoneName&gt;us-east-1c&lt;/zoneName&gt;\n      &lt;zoneState&gt;available&lt;/zoneState&gt;\n    &lt;/item&gt;\n  &lt;/availabilityZoneInfo&gt;\n&lt;/DescribeAvailabilityZonesResponse&gt;</pre></div>\n",
+                  "awsType" : "DescribeAvailabilityZonesHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.availabilityzonesandregions",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeRegionsResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeAvailabilityZonesResponse.html"
                   ]
-               },
+               }
+            },
+            {
                "options" : {
                   "className" : "org.jclouds.aws.ec2.commands.options.availabilityzonesandregions.DescribeRegionsOptions",
                   "parameters" : [
@@ -460,9 +488,10 @@
                   ],
                   "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeRegions-Example-Request-1\">Example Request</h3></div></div></div><p>This example displays regions that are available to the account.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeRegions&amp;RegionName.0=us-east-1&amp;RegionName.1=eu-west-1&amp;AuthParams</pre></div>\n",
                   "awsType" : "DescribeRegionsOptions",
+                  "javaType" : "DescribeRegionsOptions",
                   "packageName" : "org.jclouds.aws.ec2.commands.options.availabilityzonesandregions",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeRegions.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeRegions.html"
                   ]
                },
                "response" : {
@@ -476,19 +505,29 @@
                      }
                   ],
                   "awsType" : "DescribeRegionsResponse",
-                  "javaType" : "DescribeRegionsResponse",
+                  "javaType" : "Region",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.availabilityzonesandregions",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeRegionsResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeRegionsResponse.html"
                   ]
                },
                "awsType" : "DescribeRegions",
                "packageName" : "org.jclouds.aws.ec2.commands.availabilityzonesandregions",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeRegions.html",
+                  "/tmp/scrape/ApiReference-query-DescribeRegions.html",
                   "DescribeAvailabilityZones",
                   "RunInstances"
-               ]
+               ],
+               "className" : "org.jclouds.aws.ec2.commands.availabilityzonesandregions.DescribeRegions",
+               "handler" : {
+                  "className" : "org.jclouds.aws.ec2.xml.availabilityzonesandregions.DescribeRegionsHandler",
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeRegions-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeRegionsResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;regionInfo&gt;\n    &lt;item&gt;\n      &lt;regionName&gt;us-east-1&lt;/regionName&gt;\n      &lt;regionEndpoint&gt;us-east-1.ec2.amazonaws.com&lt;/regionEndpoint&gt;\n    &lt;/item&gt;\n    &lt;item&gt;\n      &lt;regionName&gt;eu-west-1&lt;/regionName&gt;\n      &lt;regionUrl&gt;eu-west-1.ec2.amazonaws.com&lt;/regionUrl&gt;\n    &lt;/item&gt;\n  &lt;/regionInfo&gt;\n&lt;/DescribeRegionsResponse&gt;</pre></div>\n",
+                  "awsType" : "DescribeRegionsHandler",
+                  "packageName" : "org.jclouds.aws.ec2.xml.availabilityzonesandregions",
+                  "see" : [
+                     "/tmp/scrape/ApiReference-ItemType-DescribeRegionsResponse.html"
+                  ]
+               }
             }
          ]
       },
@@ -496,38 +535,14 @@
          "name" : "elasticblockstore",
          "commands" : [
             {
-               "parameters" : [
-                  {
-                     "desc" : "The ID of the Amazon EBS volume. The volume and instance must be within the same Availability Zone and the instance must be running.",
-                     "name" : "VolumeId",
-                     "type" : "String",
-                     "param" : "None",
-                     "javaType" : "String"
-                  },
-                  {
-                     "desc" : "The ID of the instance to which the volume attaches. The volume and instance must be within the same Availability Zone and the instance must be running.",
-                     "name" : "InstanceId",
-                     "type" : "String",
-                     "param" : "None",
-                     "javaType" : "String"
-                  },
-                  {
-                     "desc" : "Specifies how the device is exposed to the instance (e.g., /dev/sdh).",
-                     "name" : "Device",
-                     "type" : "String",
-                     "param" : "None",
-                     "javaType" : "String"
-                  }
-               ],
-               "className" : "org.jclouds.aws.ec2.commands.elasticblockstore.AttachVolume",
-               "handler" : {
-                  "className" : "org.jclouds.aws.ec2.xml.elasticblockstore.AttachVolumeHandler",
-                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-AttachVolume-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;AttachVolumeResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;volumeId&gt;vol-4d826724&lt;/volumeId&gt;\n  &lt;instanceId&gt;i-6058a509&lt;/instanceId&gt;\n  &lt;device&gt;/dev/sdh&lt;/device&gt;\n  &lt;status&gt;attaching&lt;/status&gt;\n  &lt;attachTime&gt;2008-05-07T11:51:50.000Z&lt;/attachTime&gt;\n&lt;/AttachVolumeResponse&gt;</pre></div>\n",
-                  "awsType" : "AttachVolumeHandler",
-                  "packageName" : "org.jclouds.aws.ec2.xml.elasticblockstore",
-                  "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-AttachVolumeResponse.html"
-                  ]
+               "options" : {
+                  "className" : "org.jclouds.aws.ec2.commands.options.BaseEC2RequestOptions<EC2RequestOptions>",
+                  "parameters" : [],
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-AttachVolume-Example-Request-1\">Example Request</h3></div></div></div><p>This example attaches volume <code class=\"code\">vol-4d826724</code> to instance <code class=\"code\">i-6058a509</code> and exposes it as <code class=\"code\">/dev/sdh</code>. For information on standard storage locations, go to the <a class=\"ulink\" href=\"http://docs.amazonwebservices.com/AWSEC2/2009-04-04/DeveloperGuide/\" target=\"_blank\">Amazon Elastic Compute Cloud Developer Guide</a>.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=AttachVolume&amp;VolumeId=vol-4d826724\n&amp;InstanceId=i-6058a509\n&amp;Device=/dev/sdh&amp;AuthParams</pre></div>\n",
+                  "awsType" : "AttachVolumeOptions",
+                  "javaType" : "BaseEC2RequestOptions<EC2RequestOptions>",
+                  "packageName" : "org.jclouds.aws.ec2.commands.options",
+                  "see" : []
                },
                "response" : {
                   "className" : "org.jclouds.aws.ec2.commands.response.elasticblockstore.AttachVolumeResponse",
@@ -567,38 +582,61 @@
                   "javaType" : "AttachVolumeResponse",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.elasticblockstore",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-AttachVolumeResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-AttachVolumeResponse.html"
                   ]
                },
                "awsType" : "AttachVolume",
                "packageName" : "org.jclouds.aws.ec2.commands.elasticblockstore",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-AttachVolume.html",
+                  "/tmp/scrape/ApiReference-query-AttachVolume.html",
                   "CreateVolume",
                   "DeleteVolume",
                   "DescribeVolumes",
                   "DetachVolume"
-               ]
-            },
-            {
+               ],
                "parameters" : [
                   {
-                     "desc" : "The ID of the Amazon EBS volume to take a snapshot of.",
+                     "desc" : "The ID of the Amazon EBS volume. The volume and instance must be within the same Availability Zone and the instance must be running.",
                      "name" : "VolumeId",
+                     "type" : "String",
+                     "param" : "None",
+                     "javaType" : "String"
+                  },
+                  {
+                     "desc" : "The ID of the instance to which the volume attaches. The volume and instance must be within the same Availability Zone and the instance must be running.",
+                     "name" : "InstanceId",
+                     "type" : "String",
+                     "param" : "None",
+                     "javaType" : "String"
+                  },
+                  {
+                     "desc" : "Specifies how the device is exposed to the instance (e.g., /dev/sdh).",
+                     "name" : "Device",
                      "type" : "String",
                      "param" : "None",
                      "javaType" : "String"
                   }
                ],
-               "className" : "org.jclouds.aws.ec2.commands.elasticblockstore.CreateSnapshot",
+               "className" : "org.jclouds.aws.ec2.commands.elasticblockstore.AttachVolume",
                "handler" : {
-                  "className" : "org.jclouds.aws.ec2.xml.elasticblockstore.CreateSnapshotHandler",
-                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-CreateSnapshot-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;CreateSnapshotResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;snapshotId&gt;snap-78a54011&lt;/snapshotId&gt;\n  &lt;volumeId&gt;vol-4d826724&lt;/volumeId&gt;\n  &lt;status&gt;pending&lt;/status&gt;\n  &lt;startTime&gt;2008-05-07T12:51:50.000Z&lt;/startTime&gt;\n  &lt;progress&gt;60%&lt;/progress&gt;\n&lt;/CreateSnapshotResponse&gt;</pre></div>\n",
-                  "awsType" : "CreateSnapshotHandler",
+                  "className" : "org.jclouds.aws.ec2.xml.elasticblockstore.AttachVolumeHandler",
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-AttachVolume-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;AttachVolumeResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;volumeId&gt;vol-4d826724&lt;/volumeId&gt;\n  &lt;instanceId&gt;i-6058a509&lt;/instanceId&gt;\n  &lt;device&gt;/dev/sdh&lt;/device&gt;\n  &lt;status&gt;attaching&lt;/status&gt;\n  &lt;attachTime&gt;2008-05-07T11:51:50.000Z&lt;/attachTime&gt;\n&lt;/AttachVolumeResponse&gt;</pre></div>\n",
+                  "awsType" : "AttachVolumeHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.elasticblockstore",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-CreateSnapshotResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-AttachVolumeResponse.html"
                   ]
+               }
+            },
+            {
+               "options" : {
+                  "className" : "org.jclouds.aws.ec2.commands.options.BaseEC2RequestOptions<EC2RequestOptions>",
+                  "parameters" : [],
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-CreateSnapshot-Example-Request-1\">Example Request</h3></div></div></div><p>This example creates a snapshot of volume <code class=\"code\">vol-4d826724</code>.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=CreateSnapshot&amp;VolumeId=vol-4d826724&amp;AuthParams</pre></div>\n",
+                  "awsType" : "CreateSnapshotOptions",
+                  "javaType" : "BaseEC2RequestOptions<EC2RequestOptions>",
+                  "packageName" : "org.jclouds.aws.ec2.commands.options",
+                  "see" : []
                },
                "response" : {
                   "className" : "org.jclouds.aws.ec2.commands.response.elasticblockstore.CreateSnapshotResponse",
@@ -638,50 +676,45 @@
                   "javaType" : "CreateSnapshotResponse",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.elasticblockstore",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-CreateSnapshotResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-CreateSnapshotResponse.html"
                   ]
                },
                "awsType" : "CreateSnapshot",
                "packageName" : "org.jclouds.aws.ec2.commands.elasticblockstore",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateSnapshot.html",
+                  "/tmp/scrape/ApiReference-query-CreateSnapshot.html",
                   "DeleteSnapshot",
                   "DescribeSnapshots"
-               ]
-            },
-            {
+               ],
                "parameters" : [
                   {
-                     "desc" : "Valid Values: 1 -1024",
-                     "name" : "Size",
-                     "type" : "String",
-                     "param" : "None",
-                     "javaType" : "String"
-                  },
-                  {
-                     "desc" : "The snapshot from which to create the new volume.",
-                     "name" : "SnapshotId",
-                     "type" : "String",
-                     "param" : "None",
-                     "javaType" : "String"
-                  },
-                  {
-                     "desc" : "The Availability Zone in which to create the new volume.",
-                     "name" : "AvailabilityZone",
+                     "desc" : "The ID of the Amazon EBS volume to take a snapshot of.",
+                     "name" : "VolumeId",
                      "type" : "String",
                      "param" : "None",
                      "javaType" : "String"
                   }
                ],
-               "className" : "org.jclouds.aws.ec2.commands.elasticblockstore.CreateVolume",
+               "className" : "org.jclouds.aws.ec2.commands.elasticblockstore.CreateSnapshot",
                "handler" : {
-                  "className" : "org.jclouds.aws.ec2.xml.elasticblockstore.CreateVolumeHandler",
-                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-CreateVolume-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;CreateVolumeResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;volumeId&gt;vol-4d826724&lt;/volumeId&gt;\n  &lt;size&gt;800&lt;/size&gt;\n  &lt;status&gt;creating&lt;/status&gt;\n  &lt;createTime&gt;2008-05-07T11:51:50.000Z&lt;/createTime&gt;\n  &lt;availabilityZone&gt;us-east-1a&lt;/availabilityZone&gt;\n  &lt;snapshotId&gt;&lt;/snapshotId&gt;\n&lt;/CreateVolumeResponse&gt;</pre></div>\n",
-                  "awsType" : "CreateVolumeHandler",
+                  "className" : "org.jclouds.aws.ec2.xml.elasticblockstore.CreateSnapshotHandler",
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-CreateSnapshot-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;CreateSnapshotResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;snapshotId&gt;snap-78a54011&lt;/snapshotId&gt;\n  &lt;volumeId&gt;vol-4d826724&lt;/volumeId&gt;\n  &lt;status&gt;pending&lt;/status&gt;\n  &lt;startTime&gt;2008-05-07T12:51:50.000Z&lt;/startTime&gt;\n  &lt;progress&gt;60%&lt;/progress&gt;\n&lt;/CreateSnapshotResponse&gt;</pre></div>\n",
+                  "awsType" : "CreateSnapshotHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.elasticblockstore",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-CreateVolumeResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-CreateSnapshotResponse.html"
                   ]
+               }
+            },
+            {
+               "options" : {
+                  "className" : "org.jclouds.aws.ec2.commands.options.BaseEC2RequestOptions<EC2RequestOptions>",
+                  "parameters" : [],
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-CreateVolume-Example-Request-1\">Example Request</h3></div></div></div><p>This example creates a new 800 GiB volume in Availability Zone <code class=\"code\">us-east-1a</code>.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=CreateVolume&amp;Size=800&amp;AvailabilityZone=us-east-1a&amp;AuthParams</pre></div>\n",
+                  "awsType" : "CreateVolumeOptions",
+                  "javaType" : "BaseEC2RequestOptions<EC2RequestOptions>",
+                  "packageName" : "org.jclouds.aws.ec2.commands.options",
+                  "see" : []
                },
                "response" : {
                   "className" : "org.jclouds.aws.ec2.commands.response.elasticblockstore.CreateVolumeResponse",
@@ -727,21 +760,87 @@
                   "javaType" : "CreateVolumeResponse",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.elasticblockstore",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-CreateVolumeResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-CreateVolumeResponse.html"
                   ]
                },
                "awsType" : "CreateVolume",
                "packageName" : "org.jclouds.aws.ec2.commands.elasticblockstore",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateVolume.html",
+                  "/tmp/scrape/ApiReference-query-CreateVolume.html",
                   "DeleteVolume",
                   "DescribeVolumes",
                   "AttachVolume",
                   "DetachVolume",
                   "DescribeAvailabilityZones"
-               ]
+               ],
+               "parameters" : [
+                  {
+                     "desc" : "Valid Values: 1 -1024",
+                     "name" : "Size",
+                     "type" : "String",
+                     "param" : "None",
+                     "javaType" : "String"
+                  },
+                  {
+                     "desc" : "The snapshot from which to create the new volume.",
+                     "name" : "SnapshotId",
+                     "type" : "String",
+                     "param" : "None",
+                     "javaType" : "String"
+                  },
+                  {
+                     "desc" : "The Availability Zone in which to create the new volume.",
+                     "name" : "AvailabilityZone",
+                     "type" : "String",
+                     "param" : "None",
+                     "javaType" : "String"
+                  }
+               ],
+               "className" : "org.jclouds.aws.ec2.commands.elasticblockstore.CreateVolume",
+               "handler" : {
+                  "className" : "org.jclouds.aws.ec2.xml.elasticblockstore.CreateVolumeHandler",
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-CreateVolume-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;CreateVolumeResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;volumeId&gt;vol-4d826724&lt;/volumeId&gt;\n  &lt;size&gt;800&lt;/size&gt;\n  &lt;status&gt;creating&lt;/status&gt;\n  &lt;createTime&gt;2008-05-07T11:51:50.000Z&lt;/createTime&gt;\n  &lt;availabilityZone&gt;us-east-1a&lt;/availabilityZone&gt;\n  &lt;snapshotId&gt;&lt;/snapshotId&gt;\n&lt;/CreateVolumeResponse&gt;</pre></div>\n",
+                  "awsType" : "CreateVolumeHandler",
+                  "packageName" : "org.jclouds.aws.ec2.xml.elasticblockstore",
+                  "see" : [
+                     "/tmp/scrape/ApiReference-ItemType-CreateVolumeResponse.html"
+                  ]
+               }
             },
             {
+               "options" : {
+                  "className" : "org.jclouds.aws.ec2.commands.options.BaseEC2RequestOptions<EC2RequestOptions>",
+                  "parameters" : [],
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DeleteSnapshot-Example-Request-1\">Example Request</h3></div></div></div><p>This example deletes snapshot <code class=\"code\">snap-78a54011</code>.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DeleteSnapshot&amp;SnapshotId.1=snap-78a54011&amp;AuthParams</pre></div>\n",
+                  "awsType" : "DeleteSnapshotOptions",
+                  "javaType" : "BaseEC2RequestOptions<EC2RequestOptions>",
+                  "packageName" : "org.jclouds.aws.ec2.commands.options",
+                  "see" : []
+               },
+               "response" : {
+                  "className" : "org.jclouds.aws.ec2.commands.response.elasticblockstore.DeleteSnapshotResponse",
+                  "fields" : [
+                     {
+                        "desc" : " Returns true if deletion succeeded; otherwise false.",
+                        "name" : "return",
+                        "type" : "xsd:boolean",
+                        "javaType" : "boolean"
+                     }
+                  ],
+                  "awsType" : "DeleteSnapshotResponse",
+                  "javaType" : "boolean",
+                  "packageName" : "org.jclouds.aws.ec2.commands.response.elasticblockstore",
+                  "see" : [
+                     "/tmp/scrape/ApiReference-ItemType-DeleteSnapshotResponse.html"
+                  ]
+               },
+               "awsType" : "DeleteSnapshot",
+               "packageName" : "org.jclouds.aws.ec2.commands.elasticblockstore",
+               "see" : [
+                  "/tmp/scrape/ApiReference-query-DeleteSnapshot.html",
+                  "CreateSnapshot",
+                  "DescribeSnapshots"
+               ],
                "parameters" : [
                   {
                      "desc" : "The ID of the Amazon EBS snapshot to delete.",
@@ -758,11 +857,22 @@
                   "awsType" : "DeleteSnapshotHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.elasticblockstore",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DeleteSnapshotResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DeleteSnapshotResponse.html"
                   ]
+               }
+            },
+            {
+               "options" : {
+                  "className" : "org.jclouds.aws.ec2.commands.options.BaseEC2RequestOptions<EC2RequestOptions>",
+                  "parameters" : [],
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DeleteVolume-Example-Request-1\">Example Request</h3></div></div></div><p>This example deletes volume <code class=\"code\">vol-4282672b</code>.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DeleteVolume&amp;VolumeId=vol-4282672b&amp;AuthParams</pre></div>\n",
+                  "awsType" : "DeleteVolumeOptions",
+                  "javaType" : "BaseEC2RequestOptions<EC2RequestOptions>",
+                  "packageName" : "org.jclouds.aws.ec2.commands.options",
+                  "see" : []
                },
                "response" : {
-                  "className" : "org.jclouds.aws.ec2.commands.response.elasticblockstore.DeleteSnapshotResponse",
+                  "className" : "org.jclouds.aws.ec2.commands.response.elasticblockstore.DeleteVolumeResponse",
                   "fields" : [
                      {
                         "desc" : " Returns true if deletion succeeded; otherwise false.",
@@ -771,22 +881,22 @@
                         "javaType" : "boolean"
                      }
                   ],
-                  "awsType" : "DeleteSnapshotResponse",
-                  "javaType" : "DeleteSnapshotResponse",
+                  "awsType" : "DeleteVolumeResponse",
+                  "javaType" : "boolean",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.elasticblockstore",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DeleteSnapshotResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DeleteVolumeResponse.html"
                   ]
                },
-               "awsType" : "DeleteSnapshot",
+               "awsType" : "DeleteVolume",
                "packageName" : "org.jclouds.aws.ec2.commands.elasticblockstore",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DeleteSnapshot.html",
-                  "CreateSnapshot",
-                  "DescribeSnapshots"
-               ]
-            },
-            {
+                  "/tmp/scrape/ApiReference-query-DeleteVolume.html",
+                  "CreateVolume",
+                  "DescribeVolumes",
+                  "AttachVolume",
+                  "DetachVolume"
+               ],
                "parameters" : [
                   {
                      "desc" : "The ID of the volume to delete.",
@@ -803,47 +913,11 @@
                   "awsType" : "DeleteVolumeHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.elasticblockstore",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DeleteVolumeResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DeleteVolumeResponse.html"
                   ]
-               },
-               "response" : {
-                  "className" : "org.jclouds.aws.ec2.commands.response.elasticblockstore.DeleteVolumeResponse",
-                  "fields" : [
-                     {
-                        "desc" : " Returns true if deletion succeeded; otherwise false.",
-                        "name" : "return",
-                        "type" : "xsd:boolean",
-                        "javaType" : "boolean"
-                     }
-                  ],
-                  "awsType" : "DeleteVolumeResponse",
-                  "javaType" : "DeleteVolumeResponse",
-                  "packageName" : "org.jclouds.aws.ec2.commands.response.elasticblockstore",
-                  "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DeleteVolumeResponse.html"
-                  ]
-               },
-               "awsType" : "DeleteVolume",
-               "packageName" : "org.jclouds.aws.ec2.commands.elasticblockstore",
-               "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DeleteVolume.html",
-                  "CreateVolume",
-                  "DescribeVolumes",
-                  "AttachVolume",
-                  "DetachVolume"
-               ]
+               }
             },
             {
-               "className" : "org.jclouds.aws.ec2.commands.elasticblockstore.DescribeSnapshots",
-               "handler" : {
-                  "className" : "org.jclouds.aws.ec2.xml.elasticblockstore.DescribeSnapshotsHandler",
-                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeSnapshots-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeSnapshotsResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;snapshotSet&gt;\n    &lt;item&gt;\n      &lt;snapshotId&gt;snap-78a54011&lt;/snapshotId&gt;\n      &lt;volumeId&gt;vol-4d826724&lt;/volumeId&gt;\n      &lt;status&gt;pending&lt;/status&gt;\n      &lt;startTime&gt;2008-05-07T12:51:50.000Z&lt;/startTime&gt;\n      &lt;progress&gt;80%&lt;/progress&gt;\n    &lt;/item&gt;\n  &lt;/snapshotSet&gt;\n&lt;/DescribeSnapshotsResponse&gt;</pre></div>\n",
-                  "awsType" : "DescribeSnapshotsHandler",
-                  "packageName" : "org.jclouds.aws.ec2.xml.elasticblockstore",
-                  "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeSnapshotsResponse.html"
-                  ]
-               },
                "options" : {
                   "className" : "org.jclouds.aws.ec2.commands.options.elasticblockstore.DescribeSnapshotsOptions",
                   "parameters" : [
@@ -857,9 +931,10 @@
                   ],
                   "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeSnapshots-Example-Request-1\">Example Request</h3></div></div></div><p>This example describes snapshot <code class=\"code\">snap-78a54011</code>.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeSnapshots&amp;SnapshotId=snap-78a54011&amp;AuthParams</pre></div>\n",
                   "awsType" : "DescribeSnapshotsOptions",
+                  "javaType" : "DescribeSnapshotsOptions",
                   "packageName" : "org.jclouds.aws.ec2.commands.options.elasticblockstore",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeSnapshots.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeSnapshots.html"
                   ]
                },
                "response" : {
@@ -873,31 +948,31 @@
                      }
                   ],
                   "awsType" : "DescribeSnapshotsResponse",
-                  "javaType" : "DescribeSnapshotsResponse",
+                  "javaType" : "DescribeSnapshotResponse",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.elasticblockstore",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeSnapshotsResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeSnapshotsResponse.html"
                   ]
                },
                "awsType" : "DescribeSnapshots",
                "packageName" : "org.jclouds.aws.ec2.commands.elasticblockstore",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeSnapshots.html",
+                  "/tmp/scrape/ApiReference-query-DescribeSnapshots.html",
                   "CreateSnapshot",
                   "DeleteSnapshot"
-               ]
-            },
-            {
-               "className" : "org.jclouds.aws.ec2.commands.elasticblockstore.DescribeVolumes",
+               ],
+               "className" : "org.jclouds.aws.ec2.commands.elasticblockstore.DescribeSnapshots",
                "handler" : {
-                  "className" : "org.jclouds.aws.ec2.xml.elasticblockstore.DescribeVolumesHandler",
-                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeVolumes-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeVolumesResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n&lt;volumeSet&gt;\n  &lt;item&gt;\n    &lt;volumeId&gt;vol-4282672b&lt;/volumeId&gt;\n    &lt;size&gt;800&lt;/size&gt;\n    &lt;snapshotId/&gt;\n    &lt;availabilityZone&gt;us-east-1a&lt;/availabilityZone&gt;\n    &lt;status&gt;in-use&lt;/status&gt;\n    &lt;createTime&gt;2008-05-07T11:51:50.000Z&lt;/createTime&gt;\n    &lt;attachmentSet&gt;\n      &lt;item&gt;\n        &lt;volumeId&gt;vol-4282672b&lt;/volumeId&gt;\n        &lt;instanceId&gt;i-6058a509&lt;/instanceId&gt;\n        &lt;device&gt;/dev/sdh&lt;/device&gt;\n        &lt;status&gt;attached&lt;/status&gt;\n        &lt;attachTime&gt;2008-05-07T12:51:50.000Z&lt;/attachTime&gt;\n      &lt;/item&gt;\n    &lt;/attachmentSet&gt;\n  &lt;/item&gt;\n&lt;/DescribeVolumesResponse&gt;</pre></div>\n",
-                  "awsType" : "DescribeVolumesHandler",
+                  "className" : "org.jclouds.aws.ec2.xml.elasticblockstore.DescribeSnapshotsHandler",
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeSnapshots-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeSnapshotsResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;snapshotSet&gt;\n    &lt;item&gt;\n      &lt;snapshotId&gt;snap-78a54011&lt;/snapshotId&gt;\n      &lt;volumeId&gt;vol-4d826724&lt;/volumeId&gt;\n      &lt;status&gt;pending&lt;/status&gt;\n      &lt;startTime&gt;2008-05-07T12:51:50.000Z&lt;/startTime&gt;\n      &lt;progress&gt;80%&lt;/progress&gt;\n    &lt;/item&gt;\n  &lt;/snapshotSet&gt;\n&lt;/DescribeSnapshotsResponse&gt;</pre></div>\n",
+                  "awsType" : "DescribeSnapshotsHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.elasticblockstore",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeVolumesResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeSnapshotsResponse.html"
                   ]
-               },
+               }
+            },
+            {
                "options" : {
                   "className" : "org.jclouds.aws.ec2.commands.options.elasticblockstore.DescribeVolumesOptions",
                   "parameters" : [
@@ -911,9 +986,10 @@
                   ],
                   "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeVolumes-Example-Request-1\">Example Request</h3></div></div></div><p>This example describes all volumes associated with your account.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeVolumes&amp;AuthParams</pre></div>\n",
                   "awsType" : "DescribeVolumesOptions",
+                  "javaType" : "DescribeVolumesOptions",
                   "packageName" : "org.jclouds.aws.ec2.commands.options.elasticblockstore",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeVolumes.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeVolumes.html"
                   ]
                },
                "response" : {
@@ -927,19 +1003,29 @@
                      }
                   ],
                   "awsType" : "DescribeVolumesResponse",
-                  "javaType" : "DescribeVolumesResponse",
+                  "javaType" : "DescribeVolumeResponse",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.elasticblockstore",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeVolumesResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeVolumesResponse.html"
                   ]
                },
                "awsType" : "DescribeVolumes",
                "packageName" : "org.jclouds.aws.ec2.commands.elasticblockstore",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeVolumes.html",
+                  "/tmp/scrape/ApiReference-query-DescribeVolumes.html",
                   "CreateSnapshot",
                   "DeleteSnapshot"
-               ]
+               ],
+               "className" : "org.jclouds.aws.ec2.commands.elasticblockstore.DescribeVolumes",
+               "handler" : {
+                  "className" : "org.jclouds.aws.ec2.xml.elasticblockstore.DescribeVolumesHandler",
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeVolumes-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeVolumesResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n&lt;volumeSet&gt;\n  &lt;item&gt;\n    &lt;volumeId&gt;vol-4282672b&lt;/volumeId&gt;\n    &lt;size&gt;800&lt;/size&gt;\n    &lt;snapshotId/&gt;\n    &lt;availabilityZone&gt;us-east-1a&lt;/availabilityZone&gt;\n    &lt;status&gt;in-use&lt;/status&gt;\n    &lt;createTime&gt;2008-05-07T11:51:50.000Z&lt;/createTime&gt;\n    &lt;attachmentSet&gt;\n      &lt;item&gt;\n        &lt;volumeId&gt;vol-4282672b&lt;/volumeId&gt;\n        &lt;instanceId&gt;i-6058a509&lt;/instanceId&gt;\n        &lt;device&gt;/dev/sdh&lt;/device&gt;\n        &lt;status&gt;attached&lt;/status&gt;\n        &lt;attachTime&gt;2008-05-07T12:51:50.000Z&lt;/attachTime&gt;\n      &lt;/item&gt;\n    &lt;/attachmentSet&gt;\n  &lt;/item&gt;\n&lt;/DescribeVolumesResponse&gt;</pre></div>\n",
+                  "awsType" : "DescribeVolumesHandler",
+                  "packageName" : "org.jclouds.aws.ec2.xml.elasticblockstore",
+                  "see" : [
+                     "/tmp/scrape/ApiReference-ItemType-DescribeVolumesResponse.html"
+                  ]
+               }
             },
             {
                "options" : {
@@ -969,9 +1055,10 @@
                   ],
                   "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DetachVolume-Example-Request-1\">Example Request</h3></div></div></div><p>This example detaches volume <code class=\"code\">vol-4d826724</code>.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DetachVolume&amp;VolumeId=vol-4d826724\n&amp;InstanceId=i-6058a509&amp;AuthParams</pre></div>\n",
                   "awsType" : "DetachVolumeOptions",
+                  "javaType" : "DetachVolumeOptions",
                   "packageName" : "org.jclouds.aws.ec2.commands.options.elasticblockstore",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DetachVolume.html"
+                     "/tmp/scrape/ApiReference-ItemType-DetachVolume.html"
                   ]
                },
                "response" : {
@@ -1012,19 +1099,18 @@
                   "javaType" : "DetachVolumeResponse",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.elasticblockstore",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DetachVolumeResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DetachVolumeResponse.html"
                   ]
                },
                "awsType" : "DetachVolume",
                "packageName" : "org.jclouds.aws.ec2.commands.elasticblockstore",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DetachVolume.html",
+                  "/tmp/scrape/ApiReference-query-DetachVolume.html",
                   "CreateVolume",
                   "DeleteVolume",
                   "DescribeVolumes",
                   "AttachVolume"
                ],
-               "className" : "org.jclouds.aws.ec2.commands.elasticblockstore.DetachVolume",
                "parameters" : [
                   {
                      "desc" : "The ID of the volume.",
@@ -1034,13 +1120,14 @@
                      "javaType" : "String"
                   }
                ],
+               "className" : "org.jclouds.aws.ec2.commands.elasticblockstore.DetachVolume",
                "handler" : {
                   "className" : "org.jclouds.aws.ec2.xml.elasticblockstore.DetachVolumeHandler",
                   "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DetachVolume-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DetachVolumeResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;volumeId&gt;vol-4d826724&lt;/volumeId&gt;\n  &lt;instanceId&gt;i-6058a509&lt;/instanceId&gt;\n  &lt;device&gt;/dev/sdh&lt;/device&gt;\n  &lt;status&gt;detaching&lt;/status&gt;\n  &lt;attachTime&gt;2008-05-08T11:51:50.000Z&lt;/attachTime&gt;\n&lt;/DetachVolumeResponse&gt;</pre></div>\n",
                   "awsType" : "DetachVolumeHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.elasticblockstore",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DetachVolumeResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DetachVolumeResponse.html"
                   ]
                }
             }
@@ -1050,6 +1137,15 @@
          "name" : "elasticipaddresses",
          "commands" : [
             {
+               "options" : {
+                  "className" : "org.jclouds.aws.ec2.commands.options.BaseEC2RequestOptions<EC2RequestOptions>",
+                  "parameters" : [],
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-AllocateAddress-Example-Request-1\">Example Request</h3></div></div></div><p>This example returns an elastic IP address for use with the account.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=AllocateAddress&amp;AuthParams</pre></div>\n",
+                  "awsType" : "AllocateAddressOptions",
+                  "javaType" : "BaseEC2RequestOptions<EC2RequestOptions>",
+                  "packageName" : "org.jclouds.aws.ec2.commands.options",
+                  "see" : []
+               },
                "response" : {
                   "className" : "org.jclouds.aws.ec2.commands.response.elasticipaddresses.AllocateAddressResponse",
                   "fields" : [
@@ -1060,16 +1156,16 @@
                      }
                   ],
                   "awsType" : "AllocateAddressResponse",
-                  "javaType" : "AllocateAddressResponse",
+                  "javaType" : "String",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.elasticipaddresses",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-AllocateAddressResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-AllocateAddressResponse.html"
                   ]
                },
                "awsType" : "AllocateAddress",
                "packageName" : "org.jclouds.aws.ec2.commands.elasticipaddresses",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-AllocateAddress.html",
+                  "/tmp/scrape/ApiReference-query-AllocateAddress.html",
                   "DescribeAddresses",
                   "ReleaseAddress",
                   "AssociateAddress",
@@ -1082,11 +1178,20 @@
                   "awsType" : "AllocateAddressHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.elasticipaddresses",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-AllocateAddressResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-AllocateAddressResponse.html"
                   ]
                }
             },
             {
+               "options" : {
+                  "className" : "org.jclouds.aws.ec2.commands.options.BaseEC2RequestOptions<EC2RequestOptions>",
+                  "parameters" : [],
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-AssociateAddress-Example-Request-1\">Example Request</h3></div></div></div><p>This example associates an IP address with an instance.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=AssociateAddress\n\t\t\t\t\t\t&amp;InstanceId=i-2ea64347\n\t\t\t\t\t\t&amp;PublicIp=67.202.55.255\n\t\t\t\t\t\t&amp;AuthParams</pre></div>\n",
+                  "awsType" : "AssociateAddressOptions",
+                  "javaType" : "BaseEC2RequestOptions<EC2RequestOptions>",
+                  "packageName" : "org.jclouds.aws.ec2.commands.options",
+                  "see" : []
+               },
                "response" : {
                   "className" : "org.jclouds.aws.ec2.commands.response.elasticipaddresses.AssociateAddressResponse",
                   "fields" : [
@@ -1107,13 +1212,13 @@
                   "javaType" : "AssociateAddressResponse",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.elasticipaddresses",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-AssociateAddressResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-AssociateAddressResponse.html"
                   ]
                },
                "awsType" : "AssociateAddress",
                "packageName" : "org.jclouds.aws.ec2.commands.elasticipaddresses",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-AssociateAddress.html",
+                  "/tmp/scrape/ApiReference-query-AssociateAddress.html",
                   "AllocateAddress",
                   "DescribeAddresses",
                   "ReleaseAddress",
@@ -1142,7 +1247,7 @@
                   "awsType" : "AssociateAddressHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.elasticipaddresses",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-AssociateAddressResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-AssociateAddressResponse.html"
                   ]
                }
             },
@@ -1160,9 +1265,10 @@
                   ],
                   "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeAddresses-Example-Request-1\">Example Request</h3></div></div></div><p>This example describes elastic IP addresses assigned to the account. Amazon EC2 returns 67.202.55.255 which is assigned to instance i-f15ebb98 and 67.202.55.233 which is not assigned to an instance.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeAddresses&amp;PublicIp.1=67.202.55.255\n&amp;PublicIp.1=67.202.55.233&amp;AuthParams</pre></div>\n",
                   "awsType" : "DescribeAddressesOptions",
+                  "javaType" : "DescribeAddressesOptions",
                   "packageName" : "org.jclouds.aws.ec2.commands.options.elasticipaddresses",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeAddresses.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeAddresses.html"
                   ]
                },
                "response" : {
@@ -1175,16 +1281,16 @@
                      }
                   ],
                   "awsType" : "DescribeAddressesResponse",
-                  "javaType" : "DescribeAddressesResponse",
+                  "javaType" : "DescribeAddressesResponseInfo",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.elasticipaddresses",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeAddressesResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeAddressesResponse.html"
                   ]
                },
                "awsType" : "DescribeAddresses",
                "packageName" : "org.jclouds.aws.ec2.commands.elasticipaddresses",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeAddresses.html",
+                  "/tmp/scrape/ApiReference-query-DescribeAddresses.html",
                   "AllocateAddress",
                   "ReleaseAddress"
                ],
@@ -1195,11 +1301,20 @@
                   "awsType" : "DescribeAddressesHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.elasticipaddresses",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeAddressesResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeAddressesResponse.html"
                   ]
                }
             },
             {
+               "options" : {
+                  "className" : "org.jclouds.aws.ec2.commands.options.BaseEC2RequestOptions<EC2RequestOptions>",
+                  "parameters" : [],
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DisassociateAddress-Example-Request-1\">Example Request</h3></div></div></div><p>This example disassociates the <code class=\"code\">67.202.55.255</code> IP address from the instance to which it is assigned.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DisassociateAddress&amp;PublicIp=67.202.55.255&amp;AuthParams</pre></div>\n",
+                  "awsType" : "DisassociateAddressOptions",
+                  "javaType" : "BaseEC2RequestOptions<EC2RequestOptions>",
+                  "packageName" : "org.jclouds.aws.ec2.commands.options",
+                  "see" : []
+               },
                "response" : {
                   "className" : "org.jclouds.aws.ec2.commands.response.elasticipaddresses.DisassociateAddressResponse",
                   "fields" : [
@@ -1211,16 +1326,16 @@
                      }
                   ],
                   "awsType" : "DisassociateAddressResponse",
-                  "javaType" : "DisassociateAddressResponse",
+                  "javaType" : "boolean",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.elasticipaddresses",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DisassociateAddressResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DisassociateAddressResponse.html"
                   ]
                },
                "awsType" : "DisassociateAddress",
                "packageName" : "org.jclouds.aws.ec2.commands.elasticipaddresses",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DisassociateAddress.html",
+                  "/tmp/scrape/ApiReference-query-DisassociateAddress.html",
                   "AllocateAddress",
                   "DescribeAddresses",
                   "ReleaseAddress",
@@ -1242,11 +1357,20 @@
                   "awsType" : "DisassociateAddressHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.elasticipaddresses",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DisassociateAddressResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DisassociateAddressResponse.html"
                   ]
                }
             },
             {
+               "options" : {
+                  "className" : "org.jclouds.aws.ec2.commands.options.BaseEC2RequestOptions<EC2RequestOptions>",
+                  "parameters" : [],
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-ReleaseAddress-Example-Request-1\">Example Request</h3></div></div></div><p>This example releases an elastic IP address associated with the account.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=ReleaseAddress&amp;PublicIp=67.202.55.255&amp;AuthParams</pre></div>\n",
+                  "awsType" : "ReleaseAddressOptions",
+                  "javaType" : "BaseEC2RequestOptions<EC2RequestOptions>",
+                  "packageName" : "org.jclouds.aws.ec2.commands.options",
+                  "see" : []
+               },
                "response" : {
                   "className" : "org.jclouds.aws.ec2.commands.response.elasticipaddresses.ReleaseAddressResponse",
                   "fields" : [
@@ -1258,16 +1382,16 @@
                      }
                   ],
                   "awsType" : "ReleaseAddressResponse",
-                  "javaType" : "ReleaseAddressResponse",
+                  "javaType" : "boolean",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.elasticipaddresses",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-ReleaseAddressResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-ReleaseAddressResponse.html"
                   ]
                },
                "awsType" : "ReleaseAddress",
                "packageName" : "org.jclouds.aws.ec2.commands.elasticipaddresses",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ReleaseAddress.html",
+                  "/tmp/scrape/ApiReference-query-ReleaseAddress.html",
                   "AllocateAddress",
                   "DescribeAddresses",
                   "AssociateAddress",
@@ -1289,7 +1413,7 @@
                   "awsType" : "ReleaseAddressHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.elasticipaddresses",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-ReleaseAddressResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-ReleaseAddressResponse.html"
                   ]
                }
             }
@@ -1299,6 +1423,15 @@
          "name" : "general",
          "commands" : [
             {
+               "options" : {
+                  "className" : "org.jclouds.aws.ec2.commands.options.BaseEC2RequestOptions<EC2RequestOptions>",
+                  "parameters" : [],
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-GetConsoleOutput-Example-Request-1\">Example Request</h3></div></div></div><p>This example retrieves the console output for the <code class=\"code\">i-10a64379</code> Linux and UNIX instance.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=GetConsoleOutput&amp;InstanceId=i-10a64379&amp;AuthParams</pre></div>\n",
+                  "awsType" : "GetConsoleOutputOptions",
+                  "javaType" : "BaseEC2RequestOptions<EC2RequestOptions>",
+                  "packageName" : "org.jclouds.aws.ec2.commands.options",
+                  "see" : []
+               },
                "response" : {
                   "className" : "org.jclouds.aws.ec2.commands.response.general.GetConsoleOutputResponse",
                   "fields" : [
@@ -1325,13 +1458,13 @@
                   "javaType" : "GetConsoleOutputResponse",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.general",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-GetConsoleOutputResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-GetConsoleOutputResponse.html"
                   ]
                },
                "awsType" : "GetConsoleOutput",
                "packageName" : "org.jclouds.aws.ec2.commands.general",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-GetConsoleOutput.html",
+                  "/tmp/scrape/ApiReference-query-GetConsoleOutput.html",
                   "RunInstances"
                ],
                "parameters" : [
@@ -1350,7 +1483,7 @@
                   "awsType" : "GetConsoleOutputHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.general",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-GetConsoleOutputResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-GetConsoleOutputResponse.html"
                   ]
                }
             }
@@ -1360,6 +1493,15 @@
          "name" : "images",
          "commands" : [
             {
+               "options" : {
+                  "className" : "org.jclouds.aws.ec2.commands.options.BaseEC2RequestOptions<EC2RequestOptions>",
+                  "parameters" : [],
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-RegisterImage-Example-Request-1\">Example Request</h3></div></div></div><p>This example registers the AMI specified in the <code class=\"code\">image.manifest.xml</code> manifest file.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=RegisterImage&amp;ImageLocation=mybucket-myimage.manifest.xml&amp;AuthParams</pre></div>\n",
+                  "awsType" : "RegisterImageOptions",
+                  "javaType" : "BaseEC2RequestOptions<EC2RequestOptions>",
+                  "packageName" : "org.jclouds.aws.ec2.commands.options",
+                  "see" : []
+               },
                "response" : {
                   "className" : "org.jclouds.aws.ec2.commands.response.images.RegisterImageResponse",
                   "fields" : [
@@ -1371,16 +1513,16 @@
                      }
                   ],
                   "awsType" : "RegisterImageResponse",
-                  "javaType" : "RegisterImageResponse",
+                  "javaType" : "String",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.images",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-RegisterImageResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-RegisterImageResponse.html"
                   ]
                },
                "awsType" : "RegisterImage",
                "packageName" : "org.jclouds.aws.ec2.commands.images",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-RegisterImage.html",
+                  "/tmp/scrape/ApiReference-query-RegisterImage.html",
                   "DescribeImages",
                   "DeregisterImage"
                ],
@@ -1400,11 +1542,20 @@
                   "awsType" : "RegisterImageHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.images",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-RegisterImageResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-RegisterImageResponse.html"
                   ]
                }
             },
             {
+               "options" : {
+                  "className" : "org.jclouds.aws.ec2.commands.options.BaseEC2RequestOptions<EC2RequestOptions>",
+                  "parameters" : [],
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-ResetImageAttribute-Example-Request-1\">Example Request</h3></div></div></div><p>This example resets the <code class=\"code\">launchPermission</code> attribute.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=ResetImageAttribute&amp;ImageId=ami-61a54008&amp;Attribute=launchPermission&amp;AuthParams</pre></div>\n",
+                  "awsType" : "ResetImageAttributeOptions",
+                  "javaType" : "BaseEC2RequestOptions<EC2RequestOptions>",
+                  "packageName" : "org.jclouds.aws.ec2.commands.options",
+                  "see" : []
+               },
                "response" : {
                   "className" : "org.jclouds.aws.ec2.commands.response.images.ResetImageAttributeResponse",
                   "fields" : [
@@ -1416,16 +1567,16 @@
                      }
                   ],
                   "awsType" : "ResetImageAttributeResponse",
-                  "javaType" : "ResetImageAttributeResponse",
+                  "javaType" : "String",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.images",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-ResetImageAttributeResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-ResetImageAttributeResponse.html"
                   ]
                },
                "awsType" : "ResetImageAttribute",
                "packageName" : "org.jclouds.aws.ec2.commands.images",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ResetImageAttribute.html",
+                  "/tmp/scrape/ApiReference-query-ResetImageAttribute.html",
                   "ModifyImageAttribute",
                   "DescribeImageAttribute"
                ],
@@ -1445,7 +1596,7 @@
                   "awsType" : "ResetImageAttributeHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.images",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-ResetImageAttributeResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-ResetImageAttributeResponse.html"
                   ]
                }
             }
@@ -1468,9 +1619,10 @@
                   ],
                   "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeInstances-Example-Request-1\">Example Request</h3></div></div></div><p>This example describes the current state of the instances owned by this user.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeInstances&amp;AuthParams</pre></div>\n",
                   "awsType" : "DescribeInstancesOptions",
+                  "javaType" : "DescribeInstancesOptions",
                   "packageName" : "org.jclouds.aws.ec2.commands.options.instances",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeInstances.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeInstances.html"
                   ]
                },
                "response" : {
@@ -1484,16 +1636,16 @@
                      }
                   ],
                   "awsType" : "DescribeInstancesResponse",
-                  "javaType" : "DescribeInstancesResponse",
+                  "javaType" : "Reservation",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.instances",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeInstancesResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeInstancesResponse.html"
                   ]
                },
                "awsType" : "DescribeInstances",
                "packageName" : "org.jclouds.aws.ec2.commands.instances",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeInstances.html",
+                  "/tmp/scrape/ApiReference-query-DescribeInstances.html",
                   "RunInstances",
                   "TerminateInstances"
                ],
@@ -1504,11 +1656,20 @@
                   "awsType" : "DescribeInstancesHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.instances",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeInstancesResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeInstancesResponse.html"
                   ]
                }
             },
             {
+               "options" : {
+                  "className" : "org.jclouds.aws.ec2.commands.options.BaseEC2RequestOptions<EC2RequestOptions>",
+                  "parameters" : [],
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-RebootInstances-Example-Request-1\">Example Request</h3></div></div></div><p>This example reboots an instance.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=RebootInstances&amp;AuthParams</pre></div>\n",
+                  "awsType" : "RebootInstancesOptions",
+                  "javaType" : "BaseEC2RequestOptions<EC2RequestOptions>",
+                  "packageName" : "org.jclouds.aws.ec2.commands.options",
+                  "see" : []
+               },
                "response" : {
                   "className" : "org.jclouds.aws.ec2.commands.response.instances.RebootInstancesResponse",
                   "fields" : [
@@ -1520,16 +1681,16 @@
                      }
                   ],
                   "awsType" : "RebootInstancesResponse",
-                  "javaType" : "RebootInstancesResponse",
+                  "javaType" : "boolean",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.instances",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-RebootInstancesResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-RebootInstancesResponse.html"
                   ]
                },
                "awsType" : "RebootInstances",
                "packageName" : "org.jclouds.aws.ec2.commands.instances",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-RebootInstances.html",
+                  "/tmp/scrape/ApiReference-query-RebootInstances.html",
                   "RunInstances"
                ],
                "parameters" : [
@@ -1548,7 +1709,7 @@
                   "awsType" : "RebootInstancesHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.instances",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-RebootInstancesResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-RebootInstancesResponse.html"
                   ]
                }
             },
@@ -1636,9 +1797,10 @@
                   ],
                   "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-RunInstances-Example-Request-1\">Example Request</h3></div></div></div><p>This example launches three instances of the <code class=\"code\">ami-60a54009</code> AMI.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=RunInstances&amp;ImageId=ami-60a54009&amp;MaxCount=3&amp;MinCount=1&amp;Placement.AvailabilityZone=us-east-1a&amp;Monitoring.Enabled=true&amp;AuthParams</pre></div>\n",
                   "awsType" : "RunInstancesOptions",
+                  "javaType" : "RunInstancesOptions",
                   "packageName" : "org.jclouds.aws.ec2.commands.options.instances",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-RunInstances.html"
+                     "/tmp/scrape/ApiReference-ItemType-RunInstances.html"
                   ]
                },
                "response" : {
@@ -1679,13 +1841,13 @@
                   "javaType" : "RunInstancesResponse",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.instances",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-RunInstancesResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-RunInstancesResponse.html"
                   ]
                },
                "awsType" : "RunInstances",
                "packageName" : "org.jclouds.aws.ec2.commands.instances",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-RunInstances.html",
+                  "/tmp/scrape/ApiReference-query-RunInstances.html",
                   "DescribeInstances",
                   "TerminateInstances",
                   "AuthorizeSecurityGroupIngress",
@@ -1738,11 +1900,20 @@
                   "awsType" : "RunInstancesHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.instances",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-RunInstancesResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-RunInstancesResponse.html"
                   ]
                }
             },
             {
+               "options" : {
+                  "className" : "org.jclouds.aws.ec2.commands.options.BaseEC2RequestOptions<EC2RequestOptions>",
+                  "parameters" : [],
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-TerminateInstances-Example-Request-1\">Example Request</h3></div></div></div><p>This example terminates the <code class=\"code\">i-3ea74257</code> instance.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=TerminateInstances&amp;InstanceId.1=i-3ea74257&amp;AuthParams</pre></div>\n",
+                  "awsType" : "TerminateInstancesOptions",
+                  "javaType" : "BaseEC2RequestOptions<EC2RequestOptions>",
+                  "packageName" : "org.jclouds.aws.ec2.commands.options",
+                  "see" : []
+               },
                "response" : {
                   "className" : "org.jclouds.aws.ec2.commands.response.instances.TerminateInstancesResponse",
                   "fields" : [
@@ -1754,16 +1925,16 @@
                      }
                   ],
                   "awsType" : "TerminateInstancesResponse",
-                  "javaType" : "TerminateInstancesResponse",
+                  "javaType" : "TerminateInstancesResponseInfo",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.instances",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-TerminateInstancesResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-TerminateInstancesResponse.html"
                   ]
                },
                "awsType" : "TerminateInstances",
                "packageName" : "org.jclouds.aws.ec2.commands.instances",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-TerminateInstances.html",
+                  "/tmp/scrape/ApiReference-query-TerminateInstances.html",
                   "DescribeInstances"
                ],
                "parameters" : [
@@ -1782,7 +1953,7 @@
                   "awsType" : "TerminateInstancesHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.instances",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-TerminateInstancesResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-TerminateInstancesResponse.html"
                   ]
                }
             }
@@ -1792,6 +1963,15 @@
          "name" : "keypairs",
          "commands" : [
             {
+               "options" : {
+                  "className" : "org.jclouds.aws.ec2.commands.options.BaseEC2RequestOptions<EC2RequestOptions>",
+                  "parameters" : [],
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-CreateKeyPair-Example-Request-1\">Example Request</h3></div></div></div><p>This example creates a key pair named gsg-keypair.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=CreateKeyPair&amp;KeyName=gsg-keypair.&amp;AuthParams</pre></div>\n",
+                  "awsType" : "CreateKeyPairOptions",
+                  "javaType" : "BaseEC2RequestOptions<EC2RequestOptions>",
+                  "packageName" : "org.jclouds.aws.ec2.commands.options",
+                  "see" : []
+               },
                "response" : {
                   "className" : "org.jclouds.aws.ec2.commands.response.keypairs.CreateKeyPairResponse",
                   "fields" : [
@@ -1818,13 +1998,13 @@
                   "javaType" : "CreateKeyPairResponse",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.keypairs",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-CreateKeyPairResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-CreateKeyPairResponse.html"
                   ]
                },
                "awsType" : "CreateKeyPair",
                "packageName" : "org.jclouds.aws.ec2.commands.keypairs",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateKeyPair.html",
+                  "/tmp/scrape/ApiReference-query-CreateKeyPair.html",
                   "RunInstances",
                   "DescribeKeyPairs",
                   "DeleteKeyPair"
@@ -1845,11 +2025,20 @@
                   "awsType" : "CreateKeyPairHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.keypairs",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-CreateKeyPairResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-CreateKeyPairResponse.html"
                   ]
                }
             },
             {
+               "options" : {
+                  "className" : "org.jclouds.aws.ec2.commands.options.BaseEC2RequestOptions<EC2RequestOptions>",
+                  "parameters" : [],
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DeleteKeyPair-Example-Request-1\">Example Request</h3></div></div></div><p>This example deletes the <code class=\"code\">gsg-keypair</code> key pair.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DeleteKeyPair&amp;KeyName=gsg-keypair&amp;AuthParams</pre></div>\n",
+                  "awsType" : "DeleteKeyPairOptions",
+                  "javaType" : "BaseEC2RequestOptions<EC2RequestOptions>",
+                  "packageName" : "org.jclouds.aws.ec2.commands.options",
+                  "see" : []
+               },
                "response" : {
                   "className" : "org.jclouds.aws.ec2.commands.response.keypairs.DeleteKeyPairResponse",
                   "fields" : [
@@ -1861,16 +2050,16 @@
                      }
                   ],
                   "awsType" : "DeleteKeyPairResponse",
-                  "javaType" : "DeleteKeyPairResponse",
+                  "javaType" : "boolean",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.keypairs",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DeleteKeyPairResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DeleteKeyPairResponse.html"
                   ]
                },
                "awsType" : "DeleteKeyPair",
                "packageName" : "org.jclouds.aws.ec2.commands.keypairs",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DeleteKeyPair.html",
+                  "/tmp/scrape/ApiReference-query-DeleteKeyPair.html",
                   "CreateKeyPair",
                   "DescribeKeyPairs"
                ],
@@ -1890,7 +2079,7 @@
                   "awsType" : "DeleteKeyPairHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.keypairs",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DeleteKeyPairResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DeleteKeyPairResponse.html"
                   ]
                }
             },
@@ -1908,9 +2097,10 @@
                   ],
                   "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeKeyPairs-Example-Request-1\">Example Request</h3></div></div></div><p>This example describes the state of the <code class=\"code\">gsg-keypair</code> key.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeKeyPairs&amp;KeyName.1=gsg-keypair&amp;AuthParams</pre></div>\n",
                   "awsType" : "DescribeKeyPairsOptions",
+                  "javaType" : "DescribeKeyPairsOptions",
                   "packageName" : "org.jclouds.aws.ec2.commands.options.keypairs",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeKeyPairs.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeKeyPairs.html"
                   ]
                },
                "response" : {
@@ -1924,16 +2114,16 @@
                      }
                   ],
                   "awsType" : "DescribeKeyPairsResponse",
-                  "javaType" : "DescribeKeyPairsResponse",
+                  "javaType" : "DescribeKeyPairsResponseInfo",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.keypairs",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeKeyPairsResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeKeyPairsResponse.html"
                   ]
                },
                "awsType" : "DescribeKeyPairs",
                "packageName" : "org.jclouds.aws.ec2.commands.keypairs",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeKeyPairs.html",
+                  "/tmp/scrape/ApiReference-query-DescribeKeyPairs.html",
                   "DescribeAvailabilityZones",
                   "RunInstances"
                ],
@@ -1944,7 +2134,7 @@
                   "awsType" : "DescribeKeyPairsHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.keypairs",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeKeyPairsResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeKeyPairsResponse.html"
                   ]
                }
             }
@@ -1954,6 +2144,15 @@
          "name" : "monitoring",
          "commands" : [
             {
+               "options" : {
+                  "className" : "org.jclouds.aws.ec2.commands.options.BaseEC2RequestOptions<EC2RequestOptions>",
+                  "parameters" : [],
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-MonitorInstances-Example-Request-1\">Example Request</h3></div></div></div><p>This example enables monitoring for i-43a4412a and i-23a3397d.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=MonitorInstances&amp;InstanceId.1=i-43a4412a&amp;InstanceId.2=i-23a3397d&amp;AuthParams</pre></div>\n",
+                  "awsType" : "MonitorInstancesOptions",
+                  "javaType" : "BaseEC2RequestOptions<EC2RequestOptions>",
+                  "packageName" : "org.jclouds.aws.ec2.commands.options",
+                  "see" : []
+               },
                "response" : {
                   "className" : "org.jclouds.aws.ec2.commands.response.monitoring.MonitorInstancesResponse",
                   "fields" : [
@@ -1968,13 +2167,13 @@
                   "javaType" : "MonitorInstancesResponse",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.monitoring",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-MonitorInstancesResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-MonitorInstancesResponse.html"
                   ]
                },
                "awsType" : "MonitorInstances",
                "packageName" : "org.jclouds.aws.ec2.commands.monitoring",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-MonitorInstances.html",
+                  "/tmp/scrape/ApiReference-query-MonitorInstances.html",
                   "UnmonitorInstances",
                   "RunInstances"
                ],
@@ -1994,11 +2193,20 @@
                   "awsType" : "MonitorInstancesHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.monitoring",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-MonitorInstancesResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-MonitorInstancesResponse.html"
                   ]
                }
             },
             {
+               "options" : {
+                  "className" : "org.jclouds.aws.ec2.commands.options.BaseEC2RequestOptions<EC2RequestOptions>",
+                  "parameters" : [],
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-UnmonitorInstances-Example-Request-1\">Example Request</h3></div></div></div><p>This example disables monitoring for i-43a4412a and i-23a3397d.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=UnmonitorInstances&amp;InstanceId.1=i-43a4412a&amp;InstanceId.2=i-23a3397d&amp;AuthParams</pre></div>\n",
+                  "awsType" : "UnmonitorInstancesOptions",
+                  "javaType" : "BaseEC2RequestOptions<EC2RequestOptions>",
+                  "packageName" : "org.jclouds.aws.ec2.commands.options",
+                  "see" : []
+               },
                "response" : {
                   "className" : "org.jclouds.aws.ec2.commands.response.monitoring.UnmonitorInstancesResponse",
                   "fields" : [
@@ -2010,16 +2218,16 @@
                      }
                   ],
                   "awsType" : "UnmonitorInstancesResponse",
-                  "javaType" : "UnmonitorInstancesResponse",
+                  "javaType" : "MonitorInstancesResponse",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.monitoring",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-UnmonitorInstancesResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-UnmonitorInstancesResponse.html"
                   ]
                },
                "awsType" : "UnmonitorInstances",
                "packageName" : "org.jclouds.aws.ec2.commands.monitoring",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-UnmonitorInstances.html",
+                  "/tmp/scrape/ApiReference-query-UnmonitorInstances.html",
                   "MonitorInstances",
                   "RunInstances"
                ],
@@ -2039,7 +2247,7 @@
                   "awsType" : "UnmonitorInstancesHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.monitoring",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-UnmonitorInstancesResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-UnmonitorInstancesResponse.html"
                   ]
                }
             }
@@ -2062,9 +2270,10 @@
                   ],
                   "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeReservedInstances-Example-Request-1\">Example Request</h3></div></div></div><p>This example describes Reserved Instances owned by the account.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeReservedInstances&amp;AuthParams</pre></div>\n",
                   "awsType" : "DescribeReservedInstancesOptions",
+                  "javaType" : "DescribeReservedInstancesOptions",
                   "packageName" : "org.jclouds.aws.ec2.commands.options.reservedinstances",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeReservedInstances.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeReservedInstances.html"
                   ]
                },
                "response" : {
@@ -2081,13 +2290,13 @@
                   "javaType" : "DescribeReservedInstancesResponse",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.reservedinstances",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeReservedInstancesResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeReservedInstancesResponse.html"
                   ]
                },
                "awsType" : "DescribeReservedInstances",
                "packageName" : "org.jclouds.aws.ec2.commands.reservedinstances",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeReservedInstances.html",
+                  "/tmp/scrape/ApiReference-query-DescribeReservedInstances.html",
                   "PurchaseReservedInstancesOffering",
                   "DescribeReservedInstancesOfferings"
                ],
@@ -2098,7 +2307,7 @@
                   "awsType" : "DescribeReservedInstancesHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.reservedinstances",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeReservedInstancesResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeReservedInstancesResponse.html"
                   ]
                }
             },
@@ -2137,9 +2346,10 @@
                   ],
                   "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeReservedInstancesOfferings-Example-Request-1\">Example Request</h3></div></div></div><p>This example describes available Reserved Instance offerings.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeReservedInstancesOfferings&amp;AuthParams</pre></div>\n",
                   "awsType" : "DescribeReservedInstancesOfferingsOptions",
+                  "javaType" : "DescribeReservedInstancesOfferingsOptions",
                   "packageName" : "org.jclouds.aws.ec2.commands.options.reservedinstances",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeReservedInstancesOfferings.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeReservedInstancesOfferings.html"
                   ]
                },
                "response" : {
@@ -2156,13 +2366,13 @@
                   "javaType" : "DescribeReservedInstancesOfferingsResponse",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.reservedinstances",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeReservedInstancesOfferingsResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeReservedInstancesOfferingsResponse.html"
                   ]
                },
                "awsType" : "DescribeReservedInstancesOfferings",
                "packageName" : "org.jclouds.aws.ec2.commands.reservedinstances",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeReservedInstancesOfferings.html",
+                  "/tmp/scrape/ApiReference-query-DescribeReservedInstancesOfferings.html",
                   "PurchaseReservedInstancesOffering",
                   "DescribeReservedInstances"
                ],
@@ -2173,7 +2383,7 @@
                   "awsType" : "DescribeReservedInstancesOfferingsHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.reservedinstances",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeReservedInstancesOfferingsResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeReservedInstancesOfferingsResponse.html"
                   ]
                }
             },
@@ -2191,9 +2401,10 @@
                   ],
                   "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-PurchaseReservedInstancesOffering-Example-Request-1\">Example Request</h3></div></div></div><p>This example purchases Reserved Instances.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=PurchaseReservedInstancesOffering&amp;OfferingId.1=offering-12345678&amp;instanceCount.1=2&amp;AuthParams</pre></div>\n",
                   "awsType" : "PurchaseReservedInstancesOfferingOptions",
+                  "javaType" : "PurchaseReservedInstancesOfferingOptions",
                   "packageName" : "org.jclouds.aws.ec2.commands.options.reservedinstances",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-PurchaseReservedInstancesOffering.html"
+                     "/tmp/scrape/ApiReference-ItemType-PurchaseReservedInstancesOffering.html"
                   ]
                },
                "response" : {
@@ -2207,16 +2418,16 @@
                      }
                   ],
                   "awsType" : "PurchaseReservedInstancesOfferingResponse",
-                  "javaType" : "PurchaseReservedInstancesOfferingResponse",
+                  "javaType" : "String",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.reservedinstances",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-PurchaseReservedInstancesOfferingResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-PurchaseReservedInstancesOfferingResponse.html"
                   ]
                },
                "awsType" : "PurchaseReservedInstancesOffering",
                "packageName" : "org.jclouds.aws.ec2.commands.reservedinstances",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-PurchaseReservedInstancesOffering.html",
+                  "/tmp/scrape/ApiReference-query-PurchaseReservedInstancesOffering.html",
                   "DescribeReservedInstancesOfferings",
                   "DescribeReservedInstances"
                ],
@@ -2236,7 +2447,7 @@
                   "awsType" : "PurchaseReservedInstancesOfferingHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.reservedinstances",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-PurchaseReservedInstancesOfferingResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-PurchaseReservedInstancesOfferingResponse.html"
                   ]
                }
             }
@@ -2246,6 +2457,15 @@
          "name" : "securitygroups",
          "commands" : [
             {
+               "options" : {
+                  "className" : "org.jclouds.aws.ec2.commands.options.BaseEC2RequestOptions<EC2RequestOptions>",
+                  "parameters" : [],
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-AuthorizeSecurityGroupIngress-Example-Request-1\">Example Request</h3></div></div></div><p>This example grants TCP port 80 access from the 205.192.0.0/16 address range to the <code class=\"code\">websrv</code> security group.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=AuthorizeSecurityGroupIngress&amp;GroupName=websrv\n&amp;IpProtocol=tcp\n&amp;FromPort=80\n&amp;ToPort=80\n&amp;CidrIp=205.192.0.0/16\n&amp;AuthParams</pre></div>\n",
+                  "awsType" : "AuthorizeSecurityGroupIngressOptions",
+                  "javaType" : "BaseEC2RequestOptions<EC2RequestOptions>",
+                  "packageName" : "org.jclouds.aws.ec2.commands.options",
+                  "see" : []
+               },
                "response" : {
                   "className" : "org.jclouds.aws.ec2.commands.response.securitygroups.AuthorizeSecurityGroupIngressResponse",
                   "fields" : [
@@ -2257,16 +2477,16 @@
                      }
                   ],
                   "awsType" : "AuthorizeSecurityGroupIngressResponse",
-                  "javaType" : "AuthorizeSecurityGroupIngressResponse",
+                  "javaType" : "boolean",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.securitygroups",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-AuthorizeSecurityGroupIngressResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-AuthorizeSecurityGroupIngressResponse.html"
                   ]
                },
                "awsType" : "AuthorizeSecurityGroupIngress",
                "packageName" : "org.jclouds.aws.ec2.commands.securitygroups",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-AuthorizeSecurityGroupIngress.html",
+                  "/tmp/scrape/ApiReference-query-AuthorizeSecurityGroupIngress.html",
                   "CreateSecurityGroup",
                   "DescribeSecurityGroups",
                   "RevokeSecurityGroupIngress",
@@ -2337,11 +2557,20 @@
                   "awsType" : "AuthorizeSecurityGroupIngressHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.securitygroups",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-AuthorizeSecurityGroupIngressResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-AuthorizeSecurityGroupIngressResponse.html"
                   ]
                }
             },
             {
+               "options" : {
+                  "className" : "org.jclouds.aws.ec2.commands.options.BaseEC2RequestOptions<EC2RequestOptions>",
+                  "parameters" : [],
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-CreateSecurityGroup-Example-Request-1\">Example Request</h3></div></div></div><p>This example creates the <code class=\"code\">websrv</code> security group.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=CreateSecurityGroup&amp;GroupName=websrv&amp;GroupDescription=&#39;Web Servers&#39;&amp;AuthParams</pre></div>\n",
+                  "awsType" : "CreateSecurityGroupOptions",
+                  "javaType" : "BaseEC2RequestOptions<EC2RequestOptions>",
+                  "packageName" : "org.jclouds.aws.ec2.commands.options",
+                  "see" : []
+               },
                "response" : {
                   "className" : "org.jclouds.aws.ec2.commands.response.securitygroups.CreateSecurityGroupResponse",
                   "fields" : [
@@ -2353,16 +2582,16 @@
                      }
                   ],
                   "awsType" : "CreateSecurityGroupResponse",
-                  "javaType" : "CreateSecurityGroupResponse",
+                  "javaType" : "boolean",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.securitygroups",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-CreateSecurityGroupResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-CreateSecurityGroupResponse.html"
                   ]
                },
                "awsType" : "CreateSecurityGroup",
                "packageName" : "org.jclouds.aws.ec2.commands.securitygroups",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateSecurityGroup.html",
+                  "/tmp/scrape/ApiReference-query-CreateSecurityGroup.html",
                   "RunInstances",
                   "DescribeSecurityGroups",
                   "AuthorizeSecurityGroupIngress",
@@ -2392,11 +2621,20 @@
                   "awsType" : "CreateSecurityGroupHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.securitygroups",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-CreateSecurityGroupResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-CreateSecurityGroupResponse.html"
                   ]
                }
             },
             {
+               "options" : {
+                  "className" : "org.jclouds.aws.ec2.commands.options.BaseEC2RequestOptions<EC2RequestOptions>",
+                  "parameters" : [],
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DeleteSecurityGroup-Example-Request-1\">Example Request</h3></div></div></div><p>This example deletes the <code class=\"code\">websrv</code> security group.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DeleteSecurityGroup&amp;GroupName=websrv&amp;AuthParams</pre></div>\n",
+                  "awsType" : "DeleteSecurityGroupOptions",
+                  "javaType" : "BaseEC2RequestOptions<EC2RequestOptions>",
+                  "packageName" : "org.jclouds.aws.ec2.commands.options",
+                  "see" : []
+               },
                "response" : {
                   "className" : "org.jclouds.aws.ec2.commands.response.securitygroups.DeleteSecurityGroupResponse",
                   "fields" : [
@@ -2408,16 +2646,16 @@
                      }
                   ],
                   "awsType" : "DeleteSecurityGroupResponse",
-                  "javaType" : "DeleteSecurityGroupResponse",
+                  "javaType" : "boolean",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.securitygroups",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DeleteSecurityGroupResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DeleteSecurityGroupResponse.html"
                   ]
                },
                "awsType" : "DeleteSecurityGroup",
                "packageName" : "org.jclouds.aws.ec2.commands.securitygroups",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DeleteSecurityGroup.html",
+                  "/tmp/scrape/ApiReference-query-DeleteSecurityGroup.html",
                   "CreateSecurityGroup",
                   "DescribeSecurityGroups",
                   "AuthorizeSecurityGroupIngress",
@@ -2439,7 +2677,7 @@
                   "awsType" : "DeleteSecurityGroupHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.securitygroups",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DeleteSecurityGroupResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DeleteSecurityGroupResponse.html"
                   ]
                }
             },
@@ -2457,9 +2695,10 @@
                   ],
                   "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeSecurityGroups-Example-Request-1\">Example Request</h3></div></div></div><p>This example returns information about two security groups that are configured for the account.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeSecurityGroups&amp;GroupName.1=WebServers&amp;GroupName.2=RangedPortsBySource&amp;AuthParams</pre></div>\n",
                   "awsType" : "DescribeSecurityGroupsOptions",
+                  "javaType" : "DescribeSecurityGroupsOptions",
                   "packageName" : "org.jclouds.aws.ec2.commands.options.securitygroups",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeSecurityGroups.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeSecurityGroups.html"
                   ]
                },
                "response" : {
@@ -2473,16 +2712,16 @@
                      }
                   ],
                   "awsType" : "DescribeSecurityGroupsResponse",
-                  "javaType" : "DescribeSecurityGroupsResponse",
+                  "javaType" : "SecurityGroup",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.securitygroups",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeSecurityGroupsResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeSecurityGroupsResponse.html"
                   ]
                },
                "awsType" : "DescribeSecurityGroups",
                "packageName" : "org.jclouds.aws.ec2.commands.securitygroups",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeSecurityGroups.html",
+                  "/tmp/scrape/ApiReference-query-DescribeSecurityGroups.html",
                   "CreateSecurityGroup",
                   "AuthorizeSecurityGroupIngress",
                   "RevokeSecurityGroupIngress",
@@ -2495,11 +2734,20 @@
                   "awsType" : "DescribeSecurityGroupsHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.securitygroups",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeSecurityGroupsResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeSecurityGroupsResponse.html"
                   ]
                }
             },
             {
+               "options" : {
+                  "className" : "org.jclouds.aws.ec2.commands.options.BaseEC2RequestOptions<EC2RequestOptions>",
+                  "parameters" : [],
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-RevokeSecurityGroupIngress-Example-Request-1\">Example Request</h3></div></div></div><p>This example revokes TCP port 80 access from the 205.192.0.0/16 address range for the <code class=\"code\">websrv</code> security group.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=RevokeSecurityGroupIngress&amp;IpProtocol=tcp&amp;FromPort=80&amp;ToPort=80&amp;CidrIp=205.192.0.0/16\n&amp;AuthParams</pre></div>\n",
+                  "awsType" : "RevokeSecurityGroupIngressOptions",
+                  "javaType" : "BaseEC2RequestOptions<EC2RequestOptions>",
+                  "packageName" : "org.jclouds.aws.ec2.commands.options",
+                  "see" : []
+               },
                "response" : {
                   "className" : "org.jclouds.aws.ec2.commands.response.securitygroups.RevokeSecurityGroupIngressResponse",
                   "fields" : [
@@ -2511,16 +2759,16 @@
                      }
                   ],
                   "awsType" : "RevokeSecurityGroupIngressResponse",
-                  "javaType" : "RevokeSecurityGroupIngressResponse",
+                  "javaType" : "boolean",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.securitygroups",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-RevokeSecurityGroupIngressResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-RevokeSecurityGroupIngressResponse.html"
                   ]
                },
                "awsType" : "RevokeSecurityGroupIngress",
                "packageName" : "org.jclouds.aws.ec2.commands.securitygroups",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-RevokeSecurityGroupIngress.html",
+                  "/tmp/scrape/ApiReference-query-RevokeSecurityGroupIngress.html",
                   "CreateSecurityGroup",
                   "DescribeSecurityGroups",
                   "AuthorizeSecurityGroupIngress",
@@ -2591,7 +2839,7 @@
                   "awsType" : "RevokeSecurityGroupIngressHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.securitygroups",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-RevokeSecurityGroupIngressResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-RevokeSecurityGroupIngressResponse.html"
                   ]
                }
             }
@@ -2601,6 +2849,15 @@
          "name" : "windows",
          "commands" : [
             {
+               "options" : {
+                  "className" : "org.jclouds.aws.ec2.commands.options.BaseEC2RequestOptions<EC2RequestOptions>",
+                  "parameters" : [],
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-BundleInstance-Example-Request-1\">Example Request</h3></div></div></div><p>This example bundles the <code class=\"code\">i-e468cd8d</code> instance.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=BundleInstance&amp;InstanceId=-i-e468cd8d\n&amp;Storage.S3.AWSAccessKeyId=10QMXFEV71ZS32XQFTR2\n&amp;Storage.S3.Bucket=my-bucket\n&amp;Storage.S3.Prefix=winami\n&amp;Storage.S3.UploadPolicy=eyJleHBpcmF0aW9uIjogIjIwMDgtMDgtMzBUMDg6NDk6MDlaIiwiY29uZGl0aW9ucyI6IFt7ImJ1Y2tldCI6ICJteS1idWNrZXQifSxbInN0YXJ0cy13aXRoIiwgIiRrZXkiLCAibXktbmV3LWltYWdlIl1dfQ%3D%3D\n&amp;Storage.S3.UploadPolicySignature=w6BZu2oxGsiiLZnoBmQSErotuMA%3D\n&amp;AuthParams</pre></div>\n",
+                  "awsType" : "BundleInstanceOptions",
+                  "javaType" : "BaseEC2RequestOptions<EC2RequestOptions>",
+                  "packageName" : "org.jclouds.aws.ec2.commands.options",
+                  "see" : []
+               },
                "response" : {
                   "className" : "org.jclouds.aws.ec2.commands.response.windows.BundleInstanceResponse",
                   "fields" : [
@@ -2612,16 +2869,16 @@
                      }
                   ],
                   "awsType" : "BundleInstanceResponse",
-                  "javaType" : "BundleInstanceResponse",
+                  "javaType" : "BundleInstanceTask",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.windows",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-BundleInstanceResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-BundleInstanceResponse.html"
                   ]
                },
                "awsType" : "BundleInstance",
                "packageName" : "org.jclouds.aws.ec2.commands.windows",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-BundleInstance.html",
+                  "/tmp/scrape/ApiReference-query-BundleInstance.html",
                   "CancelBundleTask",
                   "DescribeBundleTasks"
                ],
@@ -2676,11 +2933,20 @@
                   "awsType" : "BundleInstanceHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.windows",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-BundleInstanceResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-BundleInstanceResponse.html"
                   ]
                }
             },
             {
+               "options" : {
+                  "className" : "org.jclouds.aws.ec2.commands.options.BaseEC2RequestOptions<EC2RequestOptions>",
+                  "parameters" : [],
+                  "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-CancelBundleTask-Example-Request-1\">Example Request</h3></div></div></div><p>This example cancels the <code class=\"code\">bun-cla322b9</code> bundle task.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=CancelBundleTask&amp;BundleId=bun-cla322b9&amp;AuthParams</pre></div>\n",
+                  "awsType" : "CancelBundleTaskOptions",
+                  "javaType" : "BaseEC2RequestOptions<EC2RequestOptions>",
+                  "packageName" : "org.jclouds.aws.ec2.commands.options",
+                  "see" : []
+               },
                "response" : {
                   "className" : "org.jclouds.aws.ec2.commands.response.windows.CancelBundleTaskResponse",
                   "fields" : [
@@ -2692,16 +2958,16 @@
                      }
                   ],
                   "awsType" : "CancelBundleTaskResponse",
-                  "javaType" : "CancelBundleTaskResponse",
+                  "javaType" : "BundleInstanceTask",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.windows",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-CancelBundleTaskResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-CancelBundleTaskResponse.html"
                   ]
                },
                "awsType" : "CancelBundleTask",
                "packageName" : "org.jclouds.aws.ec2.commands.windows",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CancelBundleTask.html",
+                  "/tmp/scrape/ApiReference-query-CancelBundleTask.html",
                   "BundleInstance",
                   "DescribeBundleTasks"
                ],
@@ -2721,7 +2987,7 @@
                   "awsType" : "CancelBundleTaskHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.windows",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-CancelBundleTaskResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-CancelBundleTaskResponse.html"
                   ]
                }
             },
@@ -2739,9 +3005,10 @@
                   ],
                   "example" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeBundleTasks-Example-Request-1\">Example Request</h3></div></div></div><p>This example describes the status of the <code class=\"code\">bun-57a5403e</code> bundle task.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeBundleTasks&amp;bundleId.0=bun-c1a540a8&amp;AuthParams</pre></div>\n",
                   "awsType" : "DescribeBundleTasksOptions",
+                  "javaType" : "DescribeBundleTasksOptions",
                   "packageName" : "org.jclouds.aws.ec2.commands.options.windows",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeBundleTasks.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeBundleTasks.html"
                   ]
                },
                "response" : {
@@ -2755,16 +3022,16 @@
                      }
                   ],
                   "awsType" : "DescribeBundleTasksResponse",
-                  "javaType" : "DescribeBundleTasksResponse",
+                  "javaType" : "Set<BundleInstanceTask>",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.windows",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeBundleTasksResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeBundleTasksResponse.html"
                   ]
                },
                "awsType" : "DescribeBundleTasks",
                "packageName" : "org.jclouds.aws.ec2.commands.windows",
                "see" : [
-                  "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeBundleTasks.html",
+                  "/tmp/scrape/ApiReference-query-DescribeBundleTasks.html",
                   "BundleInstance",
                   "CancelBundleTask"
                ],
@@ -2775,14 +3042,612 @@
                   "awsType" : "DescribeBundleTasksHandler",
                   "packageName" : "org.jclouds.aws.ec2.xml.windows",
                   "see" : [
-                     "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeBundleTasksResponse.html"
+                     "/tmp/scrape/ApiReference-ItemType-DescribeBundleTasksResponse.html"
                   ]
                }
             }
          ]
       }
    ],
+   "domain" : {
+      "ProductCodesSetItemType" : {
+         "awsType" : "ProductCodesSetItemType",
+         "packageName" : "org.jclouds.aws.ec2.domain",
+         "see" : [
+            "/tmp/scrape/ApiReference-ItemType-ProductCodesSetItemType.html"
+         ],
+         "className" : "org.jclouds.aws.ec2.domain.ProductCode",
+         "fields" : [
+            {
+               "desc" : "Product code.",
+               "name" : "productCode",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            }
+         ],
+         "javaType" : "ProductCode"
+      },
+      "UserIdGroupPairType" : {
+         "awsType" : "UserIdGroupPairType",
+         "packageName" : "org.jclouds.aws.ec2.domain",
+         "see" : [
+            "/tmp/scrape/ApiReference-ItemType-UserIdGroupPairType.html"
+         ],
+         "className" : "org.jclouds.aws.ec2.domain.UserIdGroupPair",
+         "fields" : [
+            {
+               "desc" : "Name of the security group.",
+               "name" : "groupName ",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "AWS User ID of an account.",
+               "name" : "userId",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            }
+         ],
+         "javaType" : "UserIdGroupPair"
+      },
+      "ProductCodeItemType" : {
+         "awsType" : "ProductCodeItemType",
+         "packageName" : "org.jclouds.aws.ec2.domain",
+         "see" : [
+            "/tmp/scrape/ApiReference-ItemType-ProductCodeItemType.html"
+         ],
+         "className" : "org.jclouds.aws.ec2.domain.ProductCodeItem",
+         "fields" : [
+            {
+               "name" : "productCode",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            }
+         ],
+         "javaType" : "ProductCodeItem"
+      },
+      "BundleInstanceS3StorageType" : {
+         "awsType" : "BundleInstanceS3StorageType",
+         "packageName" : "org.jclouds.aws.ec2.domain",
+         "see" : [
+            "/tmp/scrape/ApiReference-ItemType-BundleInstanceS3StorageType.html"
+         ],
+         "className" : "org.jclouds.aws.ec2.domain.BundleInstanceS3Storage",
+         "fields" : [
+            {
+               "desc" : "The Access Key ID of the owner of the Amazon S3 bucket.",
+               "name" : "awsAccessKeyId",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : " The bucket in which to store the AMI. You can specify a bucket that you already own or a new bucket that Amazon EC2 creates on your behalf. If you specify a bucket that belongs to someone else, Amazon EC2 returns an error.",
+               "name" : "bucket",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "Specifies the beginning of the file name of the AMI.",
+               "name" : "prefix",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : " The bucket in which to store the AMI. You can specify a bucket that you already own or a new bucket that Amazon EC2 creates on your behalf. If you specify a bucket that belongs to someone else, Amazon EC2 returns an error.",
+               "name" : "secret-access-key",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "An Amazon S3 upload policy that gives Amazon EC2 permission to upload items into Amazon S3 on the user's behalf. For more information on bundling in Windows, go to the Amazon Elastic Compute Cloud Developer Guide and Amazon Elastic Compute Cloud Getting Started Guide.",
+               "name" : "uploadPolicy",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : " The signature of the Base64 encoded JSON document.",
+               "name" : "uploadPolicySignature",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            }
+         ],
+         "javaType" : "BundleInstanceS3Storage"
+      },
+      "BundleInstanceTaskErrorType" : {
+         "awsType" : "BundleInstanceTaskErrorType",
+         "packageName" : "org.jclouds.aws.ec2.domain",
+         "see" : [
+            "/tmp/scrape/ApiReference-ItemType-BundleInstanceTaskErrorType.html"
+         ],
+         "className" : "org.jclouds.aws.ec2.domain.BundleInstanceTaskError",
+         "fields" : [
+            {
+               "desc" : "Error code.",
+               "name" : "code",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "Error message.",
+               "name" : "message",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            }
+         ],
+         "javaType" : "BundleInstanceTaskError"
+      },
+      "IpPermissionType" : {
+         "awsType" : "IpPermissionType",
+         "packageName" : "org.jclouds.aws.ec2.domain",
+         "see" : [
+            "/tmp/scrape/ApiReference-ItemType-IpPermissionType.html"
+         ],
+         "className" : "org.jclouds.aws.ec2.domain.IpPermission",
+         "fields" : [
+            {
+               "desc" : "Start of port range for the TCP and UDP protocols, or an ICMP type number. An ICMP type number of -1 indicates a wildcard (i.e., any ICMP type number).",
+               "name" : "fromPort",
+               "type" : "xsd:Int",
+               "javaType" : "int"
+            },
+            {
+               "desc" : "List of security group and user ID pairs.",
+               "name" : "groups",
+               "type" : "UserIdGroupPairSetType",
+               "javaType" : "UserIdGroupPair"
+            },
+            {
+               "desc" : "For the ICMP protocol, the ICMP type and code must be specified. This must be specified in the format type:code where both are integers. Type, code, or both can be specified as -1, which is a wildcard.",
+               "name" : "icmpPort",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "IP protocol.",
+               "name" : "ipProtocol",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "IP ranges.",
+               "name" : "ipRanges",
+               "type" : "IpRangeSetType",
+               "javaType" : "IpRange"
+            },
+            {
+               "desc" : "For the TCP or UDP protocols, this specifies the range of ports to allow.",
+               "name" : "portRange",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "End of port range for the TCP and UDP protocols, or an ICMP code. An ICMP code of -1 indicates a wildcard (i.e., any ICMP code).",
+               "name" : "toPort",
+               "type" : "xsd:Int",
+               "javaType" : "int"
+            }
+         ],
+         "javaType" : "IpPermission"
+      },
+      "RunningInstancesItemType" : {
+         "awsType" : "RunningInstancesItemType",
+         "packageName" : "org.jclouds.aws.ec2.domain",
+         "see" : [
+            "/tmp/scrape/ApiReference-ItemType-RunningInstancesItemType.html"
+         ],
+         "className" : "org.jclouds.aws.ec2.domain.RunningInstance",
+         "fields" : [
+            {
+               "desc" : " The AMI launch index, which can be used to find this instance within the launch group. For more information, go to the Metadata section of the Amazon Elastic Compute Cloud Developer Guide.",
+               "name" : "amiLaunchIndex",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "The public DNS name assigned to the instance. This DNS name is contactable from outside the Amazon EC2 network. This element remains empty until the instance enters a running state. ",
+               "name" : "dnsName",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "Image ID of the AMI used to launch the instance.",
+               "name" : "imageId",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "Unique ID of the instance launched.",
+               "name" : "instanceId",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "terminated: the instance terminated",
+               "name" : "instanceState",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "The instance type. For more information on instance types, go to the Amazon Elastic Compute Cloud Developer Guide.",
+               "name" : "instanceType",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "Optional. Kernel associated with this instance.",
+               "name" : "kernelId",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : " If this instance was launched with an associated key pair, this displays the key pair name.",
+               "name" : "keyName",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "The time the instance launched.",
+               "name" : "launchTime",
+               "type" : "xsd:dateTime",
+               "javaType" : "DateTime"
+            },
+            {
+               "desc" : "Specifies whether monitoring is enabled for the instance.",
+               "name" : "monitoring",
+               "type" : "InstanceMonitoringStateType",
+               "javaType" : "InstanceMonitoringState"
+            },
+            {
+               "desc" : "The location where the instance launched.",
+               "name" : "placement",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "Platform of the instance (e.g., Windows).",
+               "name" : "platform",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "The private DNS name assigned to the instance. This DNS name can only be used inside the Amazon EC2 network. This element remains empty until the instance enters a running state. ",
+               "name" : "privateDnsName",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : " Product codes attached to this instance.",
+               "name" : "productCodes",
+               "type" : "ProductCodesSetType",
+               "javaType" : "Set<ProductCode>"
+            },
+            {
+               "desc" : "Optional. RAM disk associated with this instance.",
+               "name" : "ramdiskId",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "Reason for the most recent state transition. This might be an empty string.",
+               "name" : "reason",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            }
+         ],
+         "javaType" : "RunningInstance"
+      },
+      "LaunchPermissionItemType" : {
+         "awsType" : "LaunchPermissionItemType",
+         "packageName" : "org.jclouds.aws.ec2.domain",
+         "see" : [
+            "/tmp/scrape/ApiReference-ItemType-LaunchPermissionItemType.html"
+         ],
+         "className" : "org.jclouds.aws.ec2.domain.LaunchPermissionItem",
+         "fields" : [
+            {
+               "name" : "group",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "name" : "userId",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            }
+         ],
+         "javaType" : "LaunchPermissionItem"
+      },
+      "BundleInstanceTaskStorageType" : {
+         "awsType" : "BundleInstanceTaskStorageType",
+         "packageName" : "org.jclouds.aws.ec2.domain",
+         "see" : [
+            "/tmp/scrape/ApiReference-ItemType-BundleInstanceTaskStorageType.html"
+         ],
+         "className" : "org.jclouds.aws.ec2.domain.BundleInstanceTaskStorage",
+         "fields" : [
+            {
+               "desc" : "Amazon S3 storage location.",
+               "name" : "S3",
+               "type" : "BundleInstanceS3StorageType",
+               "javaType" : "BundleInstanceS3Storage"
+            }
+         ],
+         "javaType" : "BundleInstanceTaskStorage"
+      },
+      "RegionItemType" : {
+         "awsType" : "RegionItemType",
+         "packageName" : "org.jclouds.aws.ec2.domain",
+         "see" : [
+            "/tmp/scrape/ApiReference-ItemType-RegionItemType.html"
+         ],
+         "className" : "org.jclouds.aws.ec2.domain.RegionItem",
+         "fields" : [
+            {
+               "desc" : "Region service endpoint.",
+               "name" : "regionEndpoint",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "Name of the region.",
+               "name" : "regionName",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            }
+         ],
+         "javaType" : "RegionItem"
+      },
+      "InstanceMonitoringStateType" : {
+         "awsType" : "InstanceMonitoringStateType",
+         "packageName" : "org.jclouds.aws.ec2.domain",
+         "see" : [
+            "/tmp/scrape/ApiReference-ItemType-InstanceMonitoringStateType.html"
+         ],
+         "className" : "org.jclouds.aws.ec2.domain.InstanceMonitoringState",
+         "fields" : [
+            {
+               "desc" : "State of monitoring for the instance.",
+               "name" : "state",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            }
+         ],
+         "javaType" : "InstanceMonitoringState"
+      },
+      "BlockDeviceMappingItemType" : {
+         "awsType" : "BlockDeviceMappingItemType",
+         "packageName" : "org.jclouds.aws.ec2.domain",
+         "see" : [
+            "/tmp/scrape/ApiReference-ItemType-BlockDeviceMappingItemType.html"
+         ],
+         "className" : "org.jclouds.aws.ec2.domain.BlockDeviceMappingItem",
+         "fields" : [
+            {
+               "desc" : "The device name (e.g., /dev/sdh).",
+               "name" : "deviceName",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "The virtual name.",
+               "name" : "virtualName",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            }
+         ],
+         "javaType" : "BlockDeviceMappingItem"
+      },
+      "ReservationInfoType" : {
+         "awsType" : "ReservationInfoType",
+         "packageName" : "org.jclouds.aws.ec2.domain",
+         "see" : [
+            "/tmp/scrape/ApiReference-ItemType-ReservationInfoType.html"
+         ],
+         "className" : "org.jclouds.aws.ec2.domain.ReservationInfo",
+         "fields" : [
+            {
+               "desc" : "Group set. ",
+               "name" : "groupSet",
+               "type" : "GroupSetType",
+               "javaType" : "Group"
+            },
+            {
+               "desc" : "Instance set. ",
+               "name" : "instancesSet",
+               "type" : "RunningInstancesSetType",
+               "javaType" : "Set<RunningInstance>"
+            },
+            {
+               "desc" : "AWS Access Key ID of the user who owns the reservation. ",
+               "name" : "ownerId",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "Unique ID of the reservation.",
+               "name" : "reservationId",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            }
+         ],
+         "javaType" : "ReservationInfo"
+      },
+      "BundleInstanceTaskType" : {
+         "awsType" : "BundleInstanceTaskType",
+         "packageName" : "org.jclouds.aws.ec2.domain",
+         "see" : [
+            "/tmp/scrape/ApiReference-ItemType-BundleInstanceTaskType.html"
+         ],
+         "className" : "org.jclouds.aws.ec2.domain.BundleInstanceTask",
+         "fields" : [
+            {
+               "desc" : "Identifier for this task.",
+               "name" : "bundleId",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "If the task fails, a description of the error.",
+               "name" : "error",
+               "type" : "BundleInstanceTaskErrorType",
+               "javaType" : "BundleInstanceTaskError"
+            },
+            {
+               "desc" : "Instance associated with this bundle task.",
+               "name" : "instanceId",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "A percentage description of the progress of the task, such as 20%.",
+               "name" : "progress",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "The time this task started.",
+               "name" : "startTime",
+               "type" : "xsd:dateTime",
+               "javaType" : "DateTime"
+            },
+            {
+               "desc" : "The state of the task.",
+               "name" : "state",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "Amazon S3 storage locations.",
+               "name" : "storage",
+               "type" : "BundleInstanceTaskStorageType",
+               "javaType" : "BundleInstanceTaskStorage"
+            },
+            {
+               "desc" : "The time of the most recent update for the task.",
+               "name" : "updateTime",
+               "type" : "xsd:dateTime",
+               "javaType" : "DateTime"
+            }
+         ],
+         "javaType" : "BundleInstanceTask"
+      },
+      "IpRangeItemType" : {
+         "awsType" : "IpRangeItemType",
+         "packageName" : "org.jclouds.aws.ec2.domain",
+         "see" : [
+            "/tmp/scrape/ApiReference-ItemType-IpRangeItemType.html"
+         ],
+         "className" : "org.jclouds.aws.ec2.domain.IpRangeItem",
+         "fields" : [
+            {
+               "desc" : "CIDR range.",
+               "name" : "cidrIp ",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            }
+         ],
+         "javaType" : "IpRangeItem"
+      },
+      "GroupItemType" : {
+         "awsType" : "GroupItemType",
+         "packageName" : "org.jclouds.aws.ec2.domain",
+         "see" : [
+            "/tmp/scrape/ApiReference-ItemType-GroupItemType.html"
+         ],
+         "className" : "org.jclouds.aws.ec2.domain.GroupItem",
+         "fields" : [
+            {
+               "desc" : "Name of the security group.",
+               "name" : "groupId",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            }
+         ],
+         "javaType" : "GroupItem"
+      },
+      "AvailabilityZoneItemType" : {
+         "awsType" : "AvailabilityZoneItemType",
+         "packageName" : "org.jclouds.aws.ec2.domain",
+         "see" : [
+            "/tmp/scrape/ApiReference-ItemType-AvailabilityZoneItemType.html"
+         ],
+         "className" : "org.jclouds.aws.ec2.domain.AvailabilityZoneItem",
+         "fields" : [
+            {
+               "desc" : "Name of the region.",
+               "name" : "regionName",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "Name of the Availability Zone.",
+               "name" : "zoneName",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "State of the Availability Zone.",
+               "name" : "zoneState",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            }
+         ],
+         "javaType" : "AvailabilityZoneItem"
+      },
+      "SecurityGroupItemType" : {
+         "awsType" : "SecurityGroupItemType",
+         "packageName" : "org.jclouds.aws.ec2.domain",
+         "see" : [
+            "/tmp/scrape/ApiReference-ItemType-SecurityGroupItemType.html"
+         ],
+         "className" : "org.jclouds.aws.ec2.domain.SecurityGroupItem",
+         "fields" : [
+            {
+               "desc" : "Description of the security group.",
+               "name" : "groupDescription",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "Name of the security group.",
+               "name" : "groupName",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "Set of IP permissions associated with the security group.",
+               "name" : "ipPermissions",
+               "type" : "IpPermissionSetType",
+               "javaType" : "IpPermission"
+            },
+            {
+               "desc" : "AWS Access Key ID of the owner of the security group.",
+               "name" : "ownerId",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            }
+         ],
+         "javaType" : "SecurityGroupItem"
+      },
+      "NullableAttributeValueType" : {
+         "awsType" : "NullableAttributeValueType",
+         "packageName" : "org.jclouds.aws.ec2.domain",
+         "see" : [
+            "/tmp/scrape/ApiReference-ItemType-NullableAttributeValueType.html"
+         ],
+         "className" : "org.jclouds.aws.ec2.domain.NullableAttributeValue",
+         "fields" : [
+            {
+               "desc" : "ID of the kernel or RAM disk.",
+               "name" : "value",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            }
+         ],
+         "javaType" : "NullableAttributeValue"
+      }
+   },
    "see" : [
-      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/OperationList-query.html"
+      "/tmp/scrape/OperationList-query.html"
    ]
 }

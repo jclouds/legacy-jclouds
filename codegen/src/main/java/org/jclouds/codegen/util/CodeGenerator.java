@@ -36,6 +36,7 @@ import org.jclouds.codegen.model.BaseBean;
 import org.jclouds.codegen.model.Command;
 import org.jclouds.codegen.model.Model;
 import org.jclouds.codegen.model.Package;
+import org.jclouds.codegen.model.Value;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
@@ -63,6 +64,7 @@ import freemarker.template.TemplateException;
 public class CodeGenerator {
    public final static String COMMAND_TEMPLATE_FILENAME = "Command.ftl";
    public final static String BEAN_TEMPLATE_FILENAME = "Bean.ftl";
+   public final static String VALUE_TEMPLATE_FILENAME = "Value.ftl";
 
    private final File targetDirectory;
    private final String rootPackageName;
@@ -111,7 +113,9 @@ public class CodeGenerator {
             if (command.getHandler() != null) {
                generateClassFile(command.getHandler(), BEAN_TEMPLATE_FILENAME);
             }
-            if (command.getOptions() != null) {
+            if (command.getOptions() != null
+                     && command.getOptions().getClassName().indexOf(
+                              "BaseEC2RequestOptions<EC2RequestOptions>") == -1) {
                generateClassFile(command.getOptions(), BEAN_TEMPLATE_FILENAME);
             }
             if (command.getResponse() != null) {
@@ -119,6 +123,10 @@ public class CodeGenerator {
             }
          }
       }
+      for (Value value : model.getDomain().values()) {
+         generateClassFile(value, VALUE_TEMPLATE_FILENAME);
+      }
+
    }
 
    /**
