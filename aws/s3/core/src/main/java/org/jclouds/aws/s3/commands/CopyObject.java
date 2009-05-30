@@ -29,6 +29,7 @@ import org.jclouds.aws.s3.commands.options.CopyObjectOptions;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.xml.CopyObjectHandler;
 import org.jclouds.http.commands.callables.xml.ParseSax;
+import org.jclouds.util.Utils;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
@@ -45,7 +46,8 @@ import com.google.inject.name.Named;
  * {@link CopyObjectOptions#overrideAcl(org.jclouds.aws.s3.domain.acl.CannedAccessPolicy)
  * specify a new ACL} when generating a copy request.
  * 
- * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTObjectCOPY.html" />
+ * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTObjectCOPY.html"
+ *      />
  * @see CopyObjectOptions
  * @see org.jclouds.aws.s3.domain.acl.CannedAccessPolicy
  * @author Adrian Cole
@@ -53,24 +55,24 @@ import com.google.inject.name.Named;
  */
 public class CopyObject extends S3FutureCommand<S3Object.Metadata> {
 
-    @Inject
-    public CopyObject(@Named("jclouds.http.address") String amazonHost,
-	    ParseSax<S3Object.Metadata> callable,
-	    @Assisted("sourceBucket") String sourceBucket,
-	    @Assisted("sourceObject") String sourceObject,
-	    @Assisted("destinationBucket") String destinationBucket,
-	    @Assisted("destinationObject") String destinationObject,
-	    @Assisted CopyObjectOptions options) {
-	super("PUT",
-		"/" + checkNotNull(destinationObject, "destinationObject"),
-		callable, amazonHost, destinationBucket);
-	CopyObjectHandler handler = (CopyObjectHandler) callable.getHandler();
-	handler.setKey(destinationObject);
-	getRequest().getHeaders().put(
-		"x-amz-copy-source",
-		String.format("/%1$s/%2$s", checkNotNull(sourceBucket,
-			"sourceBucket"), checkNotNull(sourceObject,
-			"sourceObject")));
-	getRequest().getHeaders().putAll(options.buildRequestHeaders());
-    }
+   @Inject
+   public CopyObject(@Named("jclouds.http.address") String amazonHost,
+         ParseSax<S3Object.Metadata> callable, @Assisted("sourceBucket") String sourceBucket,
+         @Assisted("sourceObject") String sourceObject,
+         @Assisted("destinationBucket") String destinationBucket,
+         @Assisted("destinationObject") String destinationObject,
+         @Assisted CopyObjectOptions options) 
+   {
+      super("PUT", 
+            "/" + checkNotNull(destinationObject, "destinationObject"),
+            callable, amazonHost, destinationBucket);
+      CopyObjectHandler handler = (CopyObjectHandler) callable.getHandler();
+      handler.setKey(destinationObject);
+      getRequest().getHeaders().put(
+            "x-amz-copy-source",
+            String.format("/%1$s/%2$s", 
+                  checkNotNull(sourceBucket, "sourceBucket"), 
+                  Utils.encodeUriPath(checkNotNull(sourceObject, "sourceObject"))));
+      getRequest().getHeaders().putAll(options.buildRequestHeaders());
+   }
 }
