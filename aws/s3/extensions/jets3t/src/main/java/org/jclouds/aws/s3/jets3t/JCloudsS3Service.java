@@ -311,6 +311,7 @@ public class JCloudsS3Service extends S3Service {
          org.jclouds.aws.s3.domain.S3Object jcObject = Util.convertObject(jsObject);
          byte md5[] = connection.putObject(bucketName, jcObject, options)
             .get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
+         jsObject.setMd5Hash(md5);
          return jsObject;
       } catch (Exception e) {
          Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);

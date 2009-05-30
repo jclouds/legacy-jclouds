@@ -30,6 +30,7 @@ import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
@@ -42,6 +43,7 @@ import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.s3.S3IntegrationTest;
 import org.jclouds.aws.s3.config.StubS3ConnectionModule;
 import org.jclouds.aws.s3.reference.S3Constants;
+import org.jclouds.aws.s3.util.S3Utils;
 import org.jclouds.http.ContentTypes;
 import org.jets3t.service.S3ObjectsChunk;
 import org.jets3t.service.S3Service;
@@ -400,7 +402,17 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
        // URL publicUrl = new URL(
        //    "http://" + commonTestingBucketName + ".s3.amazonaws.com:80/" + requestObject.getKey());
        // assertEquals(((HttpURLConnection) publicUrl.openConnection()).getResponseCode(), 200);
-              
+
+       // Upload object and check MD5
+       requestObject = new S3Object(objectKey);
+       data = "Here is some d‡tˆ for you";
+       requestObject.setDataInputStream(new ByteArrayInputStream(data.getBytes("UTF-8")));
+       jsResultObject = service.putObject(new S3Bucket(commonTestingBucketName), requestObject);
+       jcObject = client.getObject(commonTestingBucketName, objectKey).get(10, TimeUnit.SECONDS);       
+       assertTrue(jsResultObject.verifyData(data.getBytes("UTF-8")));
+       assertEquals(jsResultObject.getMd5HashAsHex(),
+             S3Utils.toHexString(jcObject.getMetadata().getMd5()));
+
        emptyBucket(commonTestingBucketName);
     }
 
