@@ -30,9 +30,11 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.jclouds.aws.s3.commands.options.CopyObjectOptions;
 import org.jclouds.aws.s3.commands.options.GetObjectOptions;
 import org.jclouds.aws.s3.commands.options.ListBucketOptions;
 import org.jclouds.aws.s3.commands.options.PutObjectOptions;
@@ -42,6 +44,7 @@ import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.aws.s3.util.S3Utils;
 import org.jclouds.aws.util.DateService;
 import org.jclouds.http.ContentTypes;
+import org.jclouds.util.Utils;
 import org.jets3t.service.S3ServiceException;
 import org.jets3t.service.acl.AccessControlList;
 import org.jets3t.service.model.S3Bucket;
@@ -50,7 +53,9 @@ import org.jets3t.service.model.S3Owner;
 import org.jets3t.service.utils.RestUtils;
 import org.joda.time.DateTime;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Multimap;
 
 /**
  * Convert between jCloud and JetS3t objects.
@@ -137,6 +142,7 @@ public class Util {
         return (S3Object[]) jsObjects.toArray(new S3Object[jsObjects.size()]);
     }
     
+    @SuppressWarnings("unchecked")
     public static org.jclouds.aws.s3.domain.S3Object convertObject(S3Object jsObject) 
        throws S3ServiceException 
     {
@@ -205,11 +211,11 @@ public class Util {
     	}
     	// TODO: options.ifMd5Matches should accept multiple match tags
     	if (ifMatchTags != null && ifMatchTags.length > 0) {
-    		options.ifMd5Matches(ifMatchTags[0].getBytes());
+    		options.ifMd5Matches(Utils.encodeString(ifMatchTags[0]));
     	}
     	// TODO: options.ifMd5DoesntMatch should accept multiple match tags
     	if (ifNoneMatchTags != null && ifNoneMatchTags.length > 0) {
-    		options.ifMd5DoesntMatch(ifNoneMatchTags[0].getBytes());
+    		options.ifMd5DoesntMatch(Utils.encodeString(ifNoneMatchTags[0]));
     	}
     	return options;
     }
@@ -233,16 +239,62 @@ public class Util {
        return options;
     }
     
+    public static CannedAccessPolicy convertAcl(AccessControlList acl) {
+       if (acl  == null) {
+          return null;
+       } else if (acl == AccessControlList.REST_CANNED_AUTHENTICATED_READ) {
+          return CannedAccessPolicy.AUTHENTICATED_READ;          
+       } else if (acl == AccessControlList.REST_CANNED_PRIVATE) {
+          return CannedAccessPolicy.PRIVATE;          
+       } else if (acl == AccessControlList.REST_CANNED_PUBLIC_READ) {
+          return CannedAccessPolicy.PUBLIC_READ;          
+       } else if (acl == AccessControlList.REST_CANNED_PUBLIC_READ_WRITE) {
+          return CannedAccessPolicy.PUBLIC_READ_WRITE;          
+       } 
+       throw new IllegalArgumentException(
+             "Only 'canned' AccessControlList options are supported: " + acl);
+    }
+    
     public static PutObjectOptions convertPutObjectOptions(AccessControlList acl) {
        PutObjectOptions options = new PutObjectOptions();
-       if (acl == AccessControlList.REST_CANNED_AUTHENTICATED_READ) {
-          options.withAcl(CannedAccessPolicy.AUTHENTICATED_READ);          
-       } else if (acl == AccessControlList.REST_CANNED_PRIVATE) {
-          options.withAcl(CannedAccessPolicy.PRIVATE);          
-       } else if (acl == AccessControlList.REST_CANNED_PUBLIC_READ) {
-          options.withAcl(CannedAccessPolicy.PUBLIC_READ);          
-       } else if (acl == AccessControlList.REST_CANNED_PUBLIC_READ_WRITE) {
-          options.withAcl(CannedAccessPolicy.PUBLIC_READ_WRITE);          
+       if (acl != null) {
+          options.withAcl(convertAcl(acl));
+       }
+       return options;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static CopyObjectOptions convertCopyObjectOptions(AccessControlList acl,
+          Map destinationMetadata, Calendar ifModifiedSince, Calendar ifUnmodifiedSince,
+          String[] ifMatchTags, String[] ifNoneMatchTags) throws UnsupportedEncodingException 
+    {
+       CopyObjectOptions options = new CopyObjectOptions();
+       if (acl != null) {
+          options.overrideAcl(convertAcl(acl));          
+       }
+       if (ifModifiedSince != null) {
+          options.ifSourceModifiedSince(new DateTime(ifModifiedSince));
+       }
+       if (ifUnmodifiedSince != null) {
+          options.ifSourceUnmodifiedSince(new DateTime(ifUnmodifiedSince));
+       }
+       // TODO: options.ifMd5Matches should accept multiple match tags
+       if (ifMatchTags != null && ifMatchTags.length > 0) {
+          options.ifSourceMd5Matches(Utils.encodeString(ifMatchTags[0]));
+       }
+       // TODO: options.ifMd5DoesntMatch should accept multiple match tags
+       if (ifNoneMatchTags != null && ifNoneMatchTags.length > 0) {
+          options.ifSourceMd5DoesntMatch(Utils.encodeString(ifNoneMatchTags[0]));
+       }       
+       if (destinationMetadata != null) {
+          Multimap<String, String> newMetadata = HashMultimap.create();
+          for (Object maybeUserMetadataObj : destinationMetadata.entrySet()) 
+          {
+             String name = ((Entry<String, String>) maybeUserMetadataObj).getKey();
+             String value = ((Entry<String, String>) maybeUserMetadataObj).getValue();
+             newMetadata.put(name, value);
+          }
+          options.overrideMetadataWith(newMetadata);
        }
        return options;
     }

@@ -26,6 +26,7 @@ package org.jclouds.aws.s3.jets3t;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -33,9 +34,11 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.S3Context;
 import org.jclouds.aws.s3.S3ContextFactory;
+import org.jclouds.aws.s3.commands.options.CopyObjectOptions;
 import org.jclouds.aws.s3.commands.options.GetObjectOptions;
 import org.jclouds.aws.s3.commands.options.ListBucketOptions;
 import org.jclouds.aws.s3.commands.options.PutObjectOptions;
+import org.jclouds.aws.s3.util.S3Utils;
 import org.jclouds.util.Utils;
 import org.jets3t.service.S3ObjectsChunk;
 import org.jets3t.service.S3Service;
@@ -95,9 +98,26 @@ public class JCloudsS3Service extends S3Service {
    protected Map copyObjectImpl(String sourceBucketName, String sourceObjectKey,
             String destinationBucketName, String destinationObjectKey, AccessControlList acl,
             Map destinationMetadata, Calendar ifModifiedSince, Calendar ifUnmodifiedSince,
-            String[] ifMatchTags, String[] ifNoneMatchTags) throws S3ServiceException {
-      // TODO Unimplemented
-      throw new UnsupportedOperationException();
+            String[] ifMatchTags, String[] ifNoneMatchTags) throws S3ServiceException 
+   {
+      try {
+         CopyObjectOptions options = Util.convertCopyObjectOptions(acl,
+               destinationMetadata, ifModifiedSince, ifUnmodifiedSince,
+               ifMatchTags, ifNoneMatchTags);
+         org.jclouds.aws.s3.domain.S3Object.Metadata jcObjectMetadata = 
+               connection.copyObject(sourceBucketName, sourceObjectKey, 
+                     destinationBucketName, destinationObjectKey, options)
+                     .get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
+         
+         Map map = new HashMap();
+         // Result fields returned when copy is successful.
+         map.put("Last-Modified", jcObjectMetadata.getLastModified().toDate());
+         map.put("ETag", S3Utils.toHexString(jcObjectMetadata.getMd5()));
+         return map;
+      } catch (Exception e) {
+         Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
+         throw new S3ServiceException("error copying object", e);
+      }
    }
 
    @Override
@@ -109,7 +129,8 @@ public class JCloudsS3Service extends S3Service {
          throw new UnsupportedOperationException("Bucket ACL is not yet supported");
 
       try {
-         if (connection.putBucketIfNotExists(bucketName).get()) {
+         if (connection.putBucketIfNotExists(bucketName)
+               .get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS)) {
             // Bucket created.
          }
       } catch (Exception e) {

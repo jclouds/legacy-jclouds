@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -57,6 +58,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
 
 /**
  * Tests to cover JCloudsS3Service
@@ -416,9 +418,64 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
        emptyBucket(commonTestingBucketName);
     }
 
-    @Test(enabled = false)
-    public void testCopyObjectImpl() {
-        fail("Not yet implemented");
+    @Test(dependsOnMethods = "testCreateBucketImpl")
+    @SuppressWarnings("unchecked")
+    public void testCopyObjectImpl() throws InterruptedException, ExecutionException, 
+          TimeoutException, IOException, S3ServiceException 
+    {
+       String data = "This is my data";
+       String sourceObjectKey = "öriginalObject";         // Notice the use of non-ASCII
+       String destinationObjectKey = "déstinationObject"; // characters here.
+       String metadataName = "metadata-name";
+       String sourceMetadataValue = "souce-metadata-value";
+       String destinationMetadataValue = "destination-metadata-value";
+       
+       org.jclouds.aws.s3.domain.S3Object sourceObject = 
+          new org.jclouds.aws.s3.domain.S3Object(sourceObjectKey, data);
+       sourceObject.getMetadata().getUserMetadata().put(
+             S3Constants.USER_METADATA_PREFIX + metadataName, sourceMetadataValue);
+       addObjectToBucket(commonTestingBucketName, sourceObject);
+
+       S3Object destinationObject;
+       Map copyResult;
+       org.jclouds.aws.s3.domain.S3Object jcDestinationObject;
+       
+       // Copy with metadata and ACL retained
+       destinationObject = new S3Object(destinationObjectKey);
+       copyResult = service.copyObject(commonTestingBucketName, sourceObjectKey, 
+             commonTestingBucketName, destinationObject, false);
+       jcDestinationObject = client.getObject(commonTestingBucketName, destinationObject.getKey())
+             .get(10, TimeUnit.SECONDS);
+       assertEquals(jcDestinationObject.getKey(), destinationObjectKey);
+       assertEquals(Iterators.getLast(jcDestinationObject.getMetadata().getUserMetadata().get(
+             S3Constants.USER_METADATA_PREFIX + metadataName).iterator()), sourceMetadataValue);
+       assertEquals(copyResult.get("ETag"), 
+             S3Utils.toHexString(jcDestinationObject.getMetadata().getMd5()));
+       // TODO: Test destination ACL is unchanged (ie private)
+       
+       // Copy with metadata replaced
+       destinationObject = new S3Object(destinationObjectKey);
+       destinationObject.addMetadata(S3Constants.USER_METADATA_PREFIX + metadataName, 
+             destinationMetadataValue);
+       copyResult = service.copyObject(commonTestingBucketName, sourceObjectKey, 
+             commonTestingBucketName, destinationObject, true);
+       jcDestinationObject = client.getObject(commonTestingBucketName, destinationObject.getKey())
+             .get(10, TimeUnit.SECONDS);
+       assertEquals(Iterators.getLast(jcDestinationObject.getMetadata().getUserMetadata().get(
+             S3Constants.USER_METADATA_PREFIX + metadataName).iterator()), 
+             destinationMetadataValue);
+       // TODO: Test destination ACL is unchanged (ie private)
+              
+       // Copy with ACL modified
+       destinationObject = new S3Object(destinationObjectKey);
+       destinationObject.setAcl(AccessControlList.REST_CANNED_PUBLIC_READ);
+       copyResult = service.copyObject(commonTestingBucketName, sourceObjectKey, 
+             commonTestingBucketName, destinationObject, false);
+       jcDestinationObject = client.getObject(commonTestingBucketName, destinationObject.getKey())
+             .get(10, TimeUnit.SECONDS);
+       // TODO: Test destination ACL is changed (ie public-read)
+
+       emptyBucket(commonTestingBucketName);
     }
 
     @Test(enabled = false)
