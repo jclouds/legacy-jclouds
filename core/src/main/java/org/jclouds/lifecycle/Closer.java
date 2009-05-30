@@ -30,21 +30,21 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * // TODO: Adrian: Document this!
- *
+ * This will close objects in the reverse order that they were added.
+ * 
  * @author Adrian Cole
  */
 public class Closer implements Closeable {
-    List<Closeable> methodsToClose = new ArrayList<Closeable>();
+   List<Closeable> methodsToClose = new ArrayList<Closeable>();
 
-    public void addToClose(Closeable toClose) {
-        methodsToClose.add(toClose);
-    }
+   public void addToClose(Closeable toClose) {
+      methodsToClose.add(toClose);
+   }
 
-    public void close() throws IOException {
-        Collections.reverse(methodsToClose);
-        for (Closeable toClose : methodsToClose) {
-            toClose.close();
-        }
-    }
+   public void close() throws IOException {
+      Collections.reverse(methodsToClose);
+      for (Closeable toClose : methodsToClose) {
+         toClose.close();
+      }
+   }
 }

@@ -48,82 +48,85 @@ import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 
 /**
- * // TODO: Adrian: Document this!
+ * This associates java lifecycle annotations with guice hooks. For example, we invoke
+ * {@link PostConstruct} after injection, and Associate {@link PostDestroy} with a global
+ * {@link Closer} object.
  * 
  * @author Adrian Cole
  */
 public class LifeCycleModule extends AbstractModule {
 
-    protected void configure() {
-	final ExecutorService executor = Executors.newCachedThreadPool();
-	bind(ExecutorService.class).toInstance(executor);
-	Closer closer = new Closer();
-	closer.addToClose(new Closeable() {
-	    public void close() throws IOException {
-		executor.shutdownNow();
-	    }
-	});
-	bind(Closer.class).toInstance(closer);
-	bindPostInjectionInvoke(closer);
-    }
+   protected void configure() {
+      final ExecutorService executor = Executors.newCachedThreadPool();
+      bind(ExecutorService.class).toInstance(executor);
+      Closer closer = new Closer();
+      closer.addToClose(new Closeable() {
+         public void close() throws IOException {
+            executor.shutdownNow();
+         }
+      });
+      bind(Closer.class).toInstance(closer);
+      bindPostInjectionInvoke(closer);
+   }
 
-    protected void bindPostInjectionInvoke(final Closer closer) {
-	bindListener(any(), new TypeListener() {
-	    public <I> void hear(TypeLiteral<I> injectableType,
-		    TypeEncounter<I> encounter) {
-		Set<Method> methods = new HashSet<Method>();
-		Class<? super I> type = injectableType.getRawType();
-		while (type != null) {
-		    methods.addAll(Arrays.asList(type.getDeclaredMethods()));
-		    type = type.getSuperclass();
-		}
-		for (final Method method : methods) {
-		    PostConstruct postConstruct = method
-			    .getAnnotation(PostConstruct.class);
-		    if (postConstruct != null) {
-			encounter.register(new InjectionListener<I>() {
-			    public void afterInjection(I injectee) {
-				try {
-				    method.invoke(injectee);
-				} catch (InvocationTargetException ie) {
-				    Throwable e = ie.getTargetException();
-				    throw new ProvisionException(
-					    e.getMessage(), e);
-				} catch (IllegalAccessException e) {
-				    throw new ProvisionException(
-					    e.getMessage(), e);
-				}
-			    }
-			});
-		    }
+   protected void bindPostInjectionInvoke(final Closer closer) {
+      bindListener(any(), new TypeListener() {
+         public <I> void hear(TypeLiteral<I> injectableType, TypeEncounter<I> encounter) {
+            Set<Method> methods = new HashSet<Method>();
+            Class<? super I> type = injectableType.getRawType();
+            while (type != null) {
+               methods.addAll(Arrays.asList(type.getDeclaredMethods()));
+               type = type.getSuperclass();
+            }
+            for (final Method method : methods) {
+               invokePostConstructMethodAfterInjection(encounter, method);
+               associatePreDestroyWithCloser(closer, encounter, method);
+            }
+         }
 
-		    PreDestroy preDestroy = method
-			    .getAnnotation(PreDestroy.class);
-		    if (preDestroy != null) {
-			encounter.register(new InjectionListener<I>() {
-			    public void afterInjection(final I injectee) {
-				closer.addToClose(new Closeable() {
-				    public void close() throws IOException {
-					try {
-					    method.invoke(injectee);
-					} catch (InvocationTargetException ie) {
-					    Throwable e = ie
-						    .getTargetException();
-					    throw new IOException(e
-						    .getMessage());
-					} catch (IllegalAccessException e) {
-					    throw new IOException(e
-						    .getMessage());
-					}
-				    }
-				});
+         private <I> void associatePreDestroyWithCloser(final Closer closer,
+                  TypeEncounter<I> encounter, final Method method) {
+            PreDestroy preDestroy = method.getAnnotation(PreDestroy.class);
+            if (preDestroy != null) {
+               encounter.register(new InjectionListener<I>() {
+                  public void afterInjection(final I injectee) {
+                     closer.addToClose(new Closeable() {
+                        public void close() throws IOException {
+                           try {
+                              method.invoke(injectee);
+                           } catch (InvocationTargetException ie) {
+                              Throwable e = ie.getTargetException();
+                              throw new IOException(e.getMessage());
+                           } catch (IllegalAccessException e) {
+                              throw new IOException(e.getMessage());
+                           }
+                        }
+                     });
 
-			    }
-			});
-		    }
-		}
-	    }
-	});
-    }
+                  }
+               });
+            }
+         }
+
+         private <I> void invokePostConstructMethodAfterInjection(TypeEncounter<I> encounter,
+                  final Method method) {
+            PostConstruct postConstruct = method.getAnnotation(PostConstruct.class);
+            if (postConstruct != null) {
+               encounter.register(new InjectionListener<I>() {
+                  public void afterInjection(I injectee) {
+                     try {
+                        method.invoke(injectee);
+                     } catch (InvocationTargetException ie) {
+                        Throwable e = ie.getTargetException();
+                        throw new ProvisionException(e.getMessage(), e);
+                     } catch (IllegalAccessException e) {
+                        throw new ProvisionException(e.getMessage(), e);
+                     }
+                  }
+               });
+            }
+         }
+      });
+   }
 
 }

@@ -28,7 +28,8 @@ import org.jclouds.http.commands.callables.xml.ParseSax;
 import com.google.inject.Inject;
 
 /**
- * // TODO: Adrian: Document this!
+ * temporary factory until guice can do multi-type assisted inject
+ * @see <a href="http://code.google.com/p/google-guice/issues/detail?id=346" />
  * 
  * @author Adrian Cole
  */
