@@ -65,6 +65,7 @@ public class CodeGenerator {
    public final static String COMMAND_TEMPLATE_FILENAME = "Command.ftl";
    public final static String BEAN_TEMPLATE_FILENAME = "Bean.ftl";
    public final static String VALUE_TEMPLATE_FILENAME = "Value.ftl";
+   public final static String RESPONSE_TEMPLATE_FILENAME = "Response.ftl";
 
    private final File targetDirectory;
    private final String rootPackageName;
@@ -119,7 +120,7 @@ public class CodeGenerator {
                generateClassFile(command.getOptions(), BEAN_TEMPLATE_FILENAME);
             }
             if (command.getResponse() != null) {
-               generateClassFile(command.getResponse(), BEAN_TEMPLATE_FILENAME);
+               generateClassFile(command.getResponse(), RESPONSE_TEMPLATE_FILENAME);
             }
          }
       }

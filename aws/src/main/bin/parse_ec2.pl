@@ -52,9 +52,9 @@ use LWP::UserAgent;
 use Data::Dumper;
 use JSON;
 
-# my $refUrl = "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference";
+my $refUrl = "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference";
 
-my $refUrl           = "/tmp/scrape";
+# my $refUrl           = "/tmp/scrape";
 
 my $appUrl           = "${refUrl}/OperationList-query.html";
 my $global_package   = "org.jclouds.aws.ec2";
@@ -76,9 +76,8 @@ sub parse_file {
 
 sub parse {
 
-    return parse_file(shift);
-
-    #return parse_url(shift);
+    #return parse_file(shift);
+    return parse_url(shift);
 }
 
 sub parse_java_type {
@@ -392,247 +391,8 @@ sub build_fields {
     return \@fields;
 }
 
-sub gen_java_code {
-    my $app = shift;
-
-    #print Dumper($app);
-
-    my @packages = @{ $$app{packages} };
-
-    foreach my $packageRef (@packages) {
-        print "$packageRef->{name}\n";
-
-        #print Dumper($packageRef);
-        my @commands = @{ $packageRef->{commands} };
-        foreach my $command (@commands) {
-            print_command($command);
-        }
-    }
-}
-
-sub print_domain_code {
-    my $domain = shift;
-    while ( my ( $awsType, $classDef ) = each %$domain ) {
-        print "$classDef->{code}\n\n";
-    }
-}
-
-sub print_response_code {
-    my $app      = shift;
-    my @packages = @{ $$app{packages} };
-    foreach my $packageRef (@packages) {
-        my @commands = @{ $packageRef->{commands} };
-        foreach my $command (@commands) {
-            print "$command->{response}->{code}\n\n"
-              if defined $command->{response}->{code};
-        }
-    }
-}
-
-sub print_command_code {
-    my $app      = shift;
-    my @packages = @{ $$app{packages} };
-    foreach my $packageRef (@packages) {
-        my @commands = @{ $packageRef->{commands} };
-        foreach my $command (@commands) {
-            print "$command->{code}\n\n"
-              if defined $command->{code};
-        }
-    }
-}
-
-sub gen_bean_code_for_response {
-    my $app      = shift;
-    my @packages = @{ $$app{packages} };
-
-    foreach my $packageRef (@packages) {
-        my @commands = @{ $packageRef->{commands} };
-        foreach my $command (@commands) {
-            my $fieldCount = scalar @{ $command->{response}->{fields} };
-            if ( $fieldCount != 1 ) {
-                gen_bean_code( $command->{response} );
-            }
-        }
-    }
-}
-
-sub gen_bean_code_for_domain {
-    my $hierarchy = shift;
-    while ( my ( $awsType, $classDef ) = each %$hierarchy ) {
-        gen_bean_code($classDef);
-    }
-    return $hierarchy;
-}
-
-sub gen_bean_code_for_command {
-    my $app      = shift;
-    my @packages = @{ $$app{packages} };
-
-    foreach my $packageRef (@packages) {
-        my @commands = @{ $packageRef->{commands} };
-        foreach my $command (@commands) {
-            gen_command($command);
-        }
-    }
-}
-
-# inserts code into the class definitions
-sub gen_command {
-    my $classDef        = shift;
-    my $responsePackage = $${classDef}{response}->{packageName};
-    my $optionsImport;
-    $optionsImport = "import " . $${classDef}{options}->{packageName} . ".*"
-      if defined $${classDef}{options};
-
-    my ${code} = <<EOF;
-package $classDef->{packageName};
-import ${domain_package}.*;
-import ${responsePackage}.*;
-${optionsImport}
-import org.jclouds.http.commands.callables.xml.ParseSax;
-
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-import org.jclouds.http.HttpFutureCommand;
-
-/**
- *
-EOF
-    foreach my $see ( @{ $classDef->{see} } ) {
-        if ( $see =~ /html/ ) {
-            $see = "<a href='$see' />";
-        }
-        ${code} = ${code} . <<EOF;
- * \@see $see 
-EOF
-
-    }
-
-    my $optionsParameter =
-      "\@Assisted " . $classDef->{options}->{javaType} . " options";
-
-    ${code} = ${code} . <<EOF;
- * \@author Adrian Cole 
- */
-public class $classDef->{javaType} extends HttpFutureCommand<$classDef->{response}->{javaType}> {
-   \@Inject
-   public $classDef->{javaType}(\@Named(AWSConstants.PROPERTY_AWS_ACCESSKEYID) String awsAccessKeyId, 
-                                \@Named(AWSConstants.PROPERTY_AWS_SECRETACCESSKEY) String awsSecretAccessKey, 
-                                ParseSax<$classDef->{response}->{javaType}> callable, ${optionsParameter}
-EOF
-
-    my $optionString;
-    my $args;
-
-    # print fields
-    foreach my $field ( @{ $classDef->{parameters} } ) {
-        my ${name} = $field->{name};
-        $name = lcfirst($name);
-        my $uname = ucfirst($name);
-
-        $args         .= "\@Assisted $field->{javaType} ${name}, ";
-        $optionString .= ".with${uname}(${uname})";
-    }
-
-    ${code} = ${code} . <<EOF;
-                   ${args}) {
-	  super("GET", "/" + options.buildQueryString()${optionString}.signWith(awsAccessKeyId,awsSecretAccessKey), callable);
-   }
-
-} 
-EOF
-    $classDef->{code} = $code;
-
-}
-
-# inserts code into the class definitions
-sub gen_bean_code {
-    my $classDef = shift;
-    my ${code} = <<EOF;
-package $classDef->{packageName};
-EOF
-    if ( "$classDef->{packageName}" ne "${domain_package}" ) {
-        ${code} = ${code} . <<EOF;
-       
-import ${domain_package}.*;
-EOF
-    }
-    ${code} = ${code} . <<EOF;
-
-/**
- *
-EOF
-    foreach my $see ( @{ $classDef->{see} } ) {
-        if ( $see =~ /html/ ) {
-            $see = "<a href='$see' />";
-        }
-        ${code} = ${code} . <<EOF;
- * \@see $see 
-EOF
-
-    }
-    ${code} = ${code} . <<EOF;
- * \@author Adrian Cole 
- */
-public class $classDef->{javaType} {
-
-EOF
-
-    # print fields
-    foreach my $field ( @{ $classDef->{fields} } ) {
-        my ${name} = $field->{name};
-        $name = lcfirst($name);
-        ${code} = ${code} . <<EOF;
-   /**
-    *
-    * $field->{desc} 
-    * /
-   private $field->{javaType} ${name};
-   
-EOF
-
-    }
-
-    # print get/set
-    foreach my $field ( @{ $classDef->{fields} } ) {
-        my ${name} = $field->{name};
-        $name = lcfirst($name);
-        my $uname = ucfirst($name);
-
-        ${code} = ${code} . <<EOF;
-   /**
-    *
-    * \@return $field->{desc} 
-    * /
-   public $field->{javaType} get${uname}(){
-      return this.${name};
-   }
-
-   /**
-    *
-    * \@param $name $field->{desc} 
-    * /
-   public void set${uname}($field->{javaType} $name){
-      this.${name} = ${name};
-   }
-  
-EOF
-    }
-    ${code} = ${code} . "}";
-    $classDef->{code} = $code;
-
-}
-
 # start app!
 my $app = build_app($appUrl);
 
 my $app_json = to_json( $app, { utf8 => 1, pretty => 1 } );
 print $app_json
-
-  # gen_bean_code_for_domain($domain);
-  # gen_bean_code_for_response($app);
-  # gen_bean_code_for_command($app);
-  #
-  # print_domain_code($domain);
-  # print_response_code($app);
-  # print_command_code($app);
