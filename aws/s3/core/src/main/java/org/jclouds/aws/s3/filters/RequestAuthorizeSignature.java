@@ -164,11 +164,34 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
    }
 
    private static void appendUriPath(HttpRequest request, StringBuilder toSign) {
+      // Remove parameters from URI, because most must not be included in the signed URI...
+      String paramsString = null;
       int queryIndex = request.getUri().indexOf('?');
-      if (queryIndex >= 0)
+      if (queryIndex >= 0) {
          toSign.append(request.getUri().substring(0, queryIndex));
-      else
+         paramsString = request.getUri().substring(queryIndex + 1);
+      } else {
          toSign.append(request.getUri());
+      }
+      
+      // ...however, there are a few exceptions that must be included in the signed URI.
+      if (paramsString != null) {
+         StringBuilder paramsToSign = new StringBuilder("?");
+         
+         String[] params = paramsString.split("&");
+         for (String param : params) {
+            String[] paramNameAndValue = param.split("=");
+            
+            if ("acl".equals(paramNameAndValue[0])) {
+               paramsToSign.append("acl");
+            }
+            // TODO: Other special cases not yet handled: torrent, logging, location, requestPayment
+         }
+         
+         if (paramsToSign.length() > 1) {
+            toSign.append(paramsToSign);
+         }
+      }
    }
 
    private static String valueOrEmpty(Collection<String> collection) {

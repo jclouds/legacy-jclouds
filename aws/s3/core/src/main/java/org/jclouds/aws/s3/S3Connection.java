@@ -24,6 +24,7 @@
 package org.jclouds.aws.s3;
 
 import org.jclouds.aws.s3.commands.options.*;
+import org.jclouds.aws.s3.domain.AccessControlList;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
 
@@ -211,4 +212,18 @@ public interface S3Connection {
      * @see org.jclouds.aws.s3.commands.ListOwnedBuckets
      */
     Future<List<S3Bucket.Metadata>> listOwnedBuckets();
+
+    /**
+     * @return access permissions of the bucket
+     * 
+     * @see org.jclouds.aws.s3.commands.GetAccessControlList
+     */
+    Future<AccessControlList> getBucketACL(String bucket);
+
+    /**
+     * @return access permissions of the object
+     * 
+     * @see org.jclouds.aws.s3.commands.GetAccessControlList
+     */
+    Future<AccessControlList> getObjectACL(String bucket, String objectKey);
 }

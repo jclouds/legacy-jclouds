@@ -26,6 +26,7 @@ package org.jclouds.aws.s3.xml;
 import java.util.List;
 
 import org.jclouds.aws.domain.AWSError;
+import org.jclouds.aws.s3.domain.AccessControlList;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.xml.ErrorHandler;
@@ -99,6 +100,19 @@ public class S3ParserFactory {
     */
    public ParseSax<AWSError> createErrorParser() {
       return parseErrorFactory.create(errorHandlerProvider.get());
+   }
+
+   @Inject
+   private GenericParseFactory<AccessControlList> parseAccessControlListFactory;
+
+   @Inject
+   Provider<AccessControlListHandler> accessControlListHandlerProvider;
+
+   /**
+    * @return a parser used to handle {@link org.jclouds.aws.s3.commands.GetAccessControlList} responses
+    */
+   public ParseSax<AccessControlList> createAccessControlListParser() {
+      return parseAccessControlListFactory.create(accessControlListHandlerProvider.get());
    }
 
 }

@@ -140,4 +140,14 @@ public class S3CommandFactory {
                sourceObject, destinationBucket, destinationObject, options);
    }
 
+   public GetAccessControlList createGetBucketACL(String bucket) {
+      return new GetAccessControlList(
+            amazonHost, parserFactory.createAccessControlListParser(), bucket);
+   }
+
+   public GetAccessControlList createGetObjectACL(String bucket, String objectKey) {
+      return new GetAccessControlList(
+            amazonHost, parserFactory.createAccessControlListParser(), bucket, objectKey);
+   }
+
 }

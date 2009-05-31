@@ -31,6 +31,7 @@ import org.jclouds.aws.s3.commands.BucketExists;
 import org.jclouds.aws.s3.commands.CopyObject;
 import org.jclouds.aws.s3.commands.DeleteBucket;
 import org.jclouds.aws.s3.commands.DeleteObject;
+import org.jclouds.aws.s3.commands.GetAccessControlList;
 import org.jclouds.aws.s3.commands.ListOwnedBuckets;
 import org.jclouds.aws.s3.commands.GetObject;
 import org.jclouds.aws.s3.commands.HeadObject;
@@ -43,6 +44,7 @@ import org.jclouds.aws.s3.commands.options.GetObjectOptions;
 import org.jclouds.aws.s3.commands.options.ListBucketOptions;
 import org.jclouds.aws.s3.commands.options.PutBucketOptions;
 import org.jclouds.aws.s3.commands.options.PutObjectOptions;
+import org.jclouds.aws.s3.domain.AccessControlList;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.S3Bucket.Metadata;
@@ -227,6 +229,28 @@ public class LiveS3Connection implements S3Connection {
       ListOwnedBuckets listRequest = factory.createGetMetadataForOwnedBuckets();
       client.submit(listRequest);
       return listRequest;
+   }
+
+   /**
+    * {@inheritDoc}
+    * 
+    * @see GetAccessControlList
+    */
+   public Future<AccessControlList> getBucketACL(String bucket) {
+      GetAccessControlList getBucketACLRequest = factory.createGetBucketACL(bucket);
+      client.submit(getBucketACLRequest);
+      return getBucketACLRequest;
+   }
+
+   /**
+    * {@inheritDoc}
+    * 
+    * @see GetAccessControlList
+    */
+   public Future<AccessControlList> getObjectACL(String bucket, String objectKey) {
+      GetAccessControlList getObjectACLRequest = factory.createGetObjectACL(bucket, objectKey);
+      client.submit(getObjectACLRequest);
+      return getObjectACLRequest;
    }
 
 }

@@ -53,6 +53,7 @@ import org.jclouds.aws.s3.commands.options.GetObjectOptions;
 import org.jclouds.aws.s3.commands.options.ListBucketOptions;
 import org.jclouds.aws.s3.commands.options.PutBucketOptions;
 import org.jclouds.aws.s3.commands.options.PutObjectOptions;
+import org.jclouds.aws.s3.domain.AccessControlList;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.S3Bucket.Metadata;
@@ -80,6 +81,8 @@ public class StubS3Connection implements S3Connection {
    private static Map<String, Map<String, S3Object>> bucketToContents = new ConcurrentHashMap<String, Map<String, S3Object>>();
    private static Map<String, Metadata.LocationConstraint> bucketToLocation = new ConcurrentHashMap<String, Metadata.LocationConstraint>();
    private static Map<String, CannedAccessPolicy> keyToAcl = new ConcurrentHashMap<String, CannedAccessPolicy>();
+
+   public static final String DEFAULT_OWNER_ID = "abc123";
 
    /**
     * @throws java.io.IOException
@@ -439,7 +442,7 @@ public class StubS3Connection implements S3Connection {
          newMd.setMd5(md5);
          newMd.setContentType(object.getMetadata().getContentType());
          if (options.getAcl() != null)
-            keyToAcl.put(bucketName + object, options.getAcl());
+            keyToAcl.put(bucketName + "/" + object.getKey(), options.getAcl());
          bucketToContents.get(bucketName).put(object.getKey(), new S3Object(newMd, data));
          
          // Set HTTP headers to match metadata
@@ -529,6 +532,34 @@ public class StubS3Connection implements S3Connection {
             returnVal.setData(new ByteArrayInputStream((byte[]) returnVal.getData()));
             return returnVal;
          }
+      };
+   }
+
+   public Future<AccessControlList> getBucketACL(final String bucket) {
+      return new FutureBase<AccessControlList>() {
+         public AccessControlList get() throws InterruptedException, ExecutionException {
+            CannedAccessPolicy cannedAP = keyToAcl.get(bucket);
+            if (cannedAP == null) {
+               // Default to private access policy
+               cannedAP = CannedAccessPolicy.PRIVATE;
+            } 
+            
+            return AccessControlList.fromCannedAccessPolicy(cannedAP, DEFAULT_OWNER_ID);
+         }         
+      };
+   }
+
+   public Future<AccessControlList> getObjectACL(final String bucket, final String objectKey) {
+      return new FutureBase<AccessControlList>() {
+         public AccessControlList get() throws InterruptedException, ExecutionException {
+            CannedAccessPolicy cannedAP = keyToAcl.get(bucket + "/" + objectKey);            
+            if (cannedAP == null) {
+               // Default to private access policy
+               cannedAP = CannedAccessPolicy.PRIVATE;
+            } 
+            
+            return AccessControlList.fromCannedAccessPolicy(cannedAP, DEFAULT_OWNER_ID);
+         }         
       };
    }
 
