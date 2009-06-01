@@ -27,15 +27,20 @@
 package ${bean.packageName};
 
 import ${rootPackageName}.domain.*;
-import ${rootPackageName}.response.*;
+[#if bean.response??]
+import ${bean.response.packageName}.*;
+[/#if]
 [#if bean.options??]
 import ${bean.options.packageName}.*;
 [/#if]
+import org.jclouds.aws.reference.AWSConstants;
 
 import org.jclouds.http.commands.callables.xml.ParseSax;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import com.google.inject.name.Named;
+
 import org.jclouds.http.HttpFutureCommand;
 
 /**
@@ -55,21 +60,20 @@ public class ${shortClassName} extends HttpFutureCommand<${RT}> {
    public ${shortClassName}(@Named(AWSConstants.PROPERTY_AWS_ACCESSKEYID) String awsAccessKeyId, 
              @Named(AWSConstants.PROPERTY_AWS_SECRETACCESSKEY) String awsSecretAccessKey, 
              ParseSax<${RT}> callable, 
-[#if bean.options?? && bean.options.awsType??]
-             @Assisted ${bean.options.awsType} options,
+[#if bean.options.javaType?? ]
+             @Assisted ${bean.options.javaType} options,
 [#else]
              @Assisted BaseEC2RequestOptions<EC2RequestOptions> options,
 [/#if]
 [#list bean.parameters![] as param]
              @Assisted ${param.javaType} ${param.name?uncap_first}[#rt]
 [#if param_has_next],[#else])[/#if]
-[/#list]
-{
-   super("GET", 
-      "/" + options.buildQueryString()
+[/#list] {
+      super("GET", 
+         "/" + options
 [#list bean.parameters![] as param]
-         .with${param.name?cap_first}(${param.name?uncap_first})
+            .with${param.name?cap_first}(${param.name?uncap_first})
 [/#list]
-         .signWith(awsAccessKeyId,awsSecretAccessKey), 
-      callable);
+            .signWith(awsAccessKeyId,awsSecretAccessKey).buildQueryString(), callable);
+   }
 }

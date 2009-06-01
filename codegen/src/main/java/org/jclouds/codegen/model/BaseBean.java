@@ -31,7 +31,12 @@ public abstract class BaseBean {
 	private String className;
 	private String packageName;
 	private String awsType;
-
+      private String javaType;
+      
+      public String getJavaType() {
+            return javaType;
+      }
+      
 	public String getClassName() {
 		return className;
 	}

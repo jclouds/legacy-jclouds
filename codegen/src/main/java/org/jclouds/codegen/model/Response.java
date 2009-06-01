@@ -31,16 +31,12 @@ import java.util.List;
  */
 public class Response extends BaseBean {
 	private List<ResponseField> fields;
-	private String javaType;
 	private List<String> see;
 	
 	public List<ResponseField> getFields() {
 		return fields;
 	}
-	
-	public String getJavaType() {
-		return javaType;
-	}
+
 	
 	public List<String> getSee() {
 		return see;

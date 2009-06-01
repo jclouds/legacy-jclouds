@@ -64,6 +64,7 @@ import freemarker.template.TemplateException;
 public class CodeGenerator {
    public final static String COMMAND_TEMPLATE_FILENAME = "Command.ftl";
    public final static String BEAN_TEMPLATE_FILENAME = "Bean.ftl";
+   public final static String OPTIONS_TEMPLATE_FILENAME = "Options.ftl";
    public final static String VALUE_TEMPLATE_FILENAME = "Value.ftl";
    public final static String RESPONSE_TEMPLATE_FILENAME = "Response.ftl";
 
@@ -117,7 +118,7 @@ public class CodeGenerator {
             if (command.getOptions() != null
                      && command.getOptions().getClassName().indexOf(
                               "BaseEC2RequestOptions<EC2RequestOptions>") == -1) {
-               generateClassFile(command.getOptions(), BEAN_TEMPLATE_FILENAME);
+               generateClassFile(command.getOptions(), OPTIONS_TEMPLATE_FILENAME);
             }
             if (command.getResponse() != null) {
                generateClassFile(command.getResponse(), RESPONSE_TEMPLATE_FILENAME);

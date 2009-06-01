@@ -83,9 +83,8 @@ sub parse {
 sub parse_java_type {
     $_ = shift;
     s/xsd:string/String/;
-    s/xsd:boolean/boolean/;
-    s/Integer/int/;
-    s/xsd:Int/int/;
+    s/xsd:boolean/Boolean/;
+    s/xsd:Int/Integer/;
     s/xsd:dateTime/DateTime/;
     if (/Type/) {
         my $awsType  = $_;
@@ -127,6 +126,9 @@ sub get_java_name {
     }
     if (/Type/) {
         s/Type//;
+    }
+    if (/Item/) {
+        s/Item//;
     }
     return $_;
 }
@@ -285,7 +287,7 @@ sub build_command {
         @{parameterRows} = ${reqParamTBody}->look_down( '_tag', 'tr' );
     }
 
-    my @optionalParameters;
+    my @optionParameters;
     my @requiredParameters;
 
     foreach my $parameterRow ( @{parameterRows} ) {
@@ -307,13 +309,14 @@ sub build_command {
             }
         }
         if ( ${row}[2]->as_text() =~ /No/ ) {
-            push @optionalParameters, \%param;
+            push @optionParameters, \%param;
         }
         else {
+            push @optionParameters, \%param;
             push @requiredParameters, \%param;
         }
     }
-    $$command{options}->{parameters} = \@optionalParameters;
+    $$command{options}->{parameters} = \@optionParameters;
     $$command{parameters} = \@requiredParameters;
 
     my ${responseExampleDiv} =

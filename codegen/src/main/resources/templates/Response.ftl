@@ -27,8 +27,10 @@
 package ${bean.packageName};
 
 [#if bean.packageName != rootPackageName]
-import ${rootPackageName}.*;
+import ${rootPackageName}.domain.*;
 [/#if]
+import org.joda.time.DateTime;
+
 
 /**
  *

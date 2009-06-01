@@ -48,7 +48,7 @@ public class ${shortClassName} {
    /**
     *
     * ${field.desc} 
-    * /
+    */
    private ${field.javaType} ${field.name?uncap_first};
 
 [/#list]
@@ -60,7 +60,7 @@ public class ${shortClassName} {
    /**
     *
     * @return ${field.desc} 
-    * /
+    */
    public ${field.javaType} get${upperName}(){
       return this.${lowerName};
    }
@@ -69,7 +69,7 @@ public class ${shortClassName} {
     *
     * @param ${lowerName} 
     * ${field.desc} 
-    * /
+    */
    public void set${upperName}(${field.javaType} ${lowerName}) {
       this.${lowerName} = ${lowerName};
    }

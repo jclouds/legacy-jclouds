@@ -29,41 +29,73 @@ package ${bean.packageName};
 [#if bean.packageName != rootPackageName]
 import ${rootPackageName}.*;
 [/#if]
-import org.joda.time.DateTime;
 
+import org.jclouds.aws.ec2.commands.options.BaseEC2RequestOptions;
 
 /**
- *
+ * <p/>
+ * <code>
+ * ${bean.example}
+ * </code> 
 [#list bean.see as see]
 [#if see?contains(".html")]
- * @see <a href='${see}' />
+ * @see <a href='${see}'> ${shortClassName}</a>
 [#else]
  * @see ${see}
 [/#if]
 [/#list]
  * @author Generated 
  */
-public class ${shortClassName} {
+public class ${shortClassName} extends
+         BaseEC2RequestOptions<${shortClassName}> {
 
-[#-- Print fields --]
-[#list bean.fields![] as field]
 
-   private ${field.javaType} ${field.name?uncap_first};
+   public static final ${shortClassName} NONE = new ${shortClassName}();
 
-[/#list]
+   static {
+      realClass = ${shortClassName}.class;
+   }
 
-[#-- Print get/set --]
-[#list bean.fields![] as field]
+   @Override
+   public String getAction() {
+      return "${shortClassName}".replaceAll("Options","");
+   }
+
+[#list bean.parameters![] as field]
 [#assign lowerName = field.name?uncap_first]
 [#assign upperName = field.name?cap_first]
 
-   public ${field.javaType} get${upperName}(){
-      return this.${lowerName};
+   /**
+    * @see ${shortClassName}#with${upperName}(String)
+    */
+   public String get${upperName}() {
+      return parameters.get("${lowerName}");
    }
 
-   public void set${upperName}(${field.javaType} ${lowerName}) {
-      this.${lowerName} = ${lowerName};
+   /**
+    * TODO: document this bad boy
+    * 
+    */
+   public ${shortClassName} with${upperName}(String ${lowerName}) {
+      encodeAndReplaceParameter("${lowerName}", ${lowerName});
+      return this;
    }
-
 [/#list]
+
+
+   public static class Builder {
+
+[#list bean.parameters![] as field]
+[#assign lowerName = field.name?uncap_first]
+[#assign upperName = field.name?cap_first]
+      /**
+       * @see ${shortClassName}#withId(String)
+       */
+      public static ${shortClassName} with${upperName}(String ${lowerName}) {
+         ${shortClassName} options = new ${shortClassName}();
+         return options.with${upperName}(${lowerName});
+      }
+      
+[/#list]
+   }
 }
