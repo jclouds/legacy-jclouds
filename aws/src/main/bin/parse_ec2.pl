@@ -86,10 +86,10 @@ sub parse_java_type {
     s/xsd:boolean/Boolean/;
     s/xsd:Int/Integer/;
     s/xsd:dateTime/DateTime/;
-    if (/Type/) {
+    if (/Type/ || /Item/) {
         my $awsType  = $_;
         my $javaType = get_java_name($awsType);
-        if ( !/Response/ ) {
+        #if ( !/Response/ || /ResponseInfoType/ || $javaType =~ /Set/ ) {
             $domain->{$awsType} = {
                 awsType     => $awsType,
                 javaType    => $javaType,
@@ -99,7 +99,7 @@ sub parse_java_type {
                 fields =>
                   build_fields("${refUrl}/ApiReference-ItemType-$awsType.html")
             };
-        }
+        #}
         $_ = $javaType;
     }
 
@@ -112,8 +112,15 @@ sub get_java_name {
         s/sSetType//;
         return "Set<$_>";
     }
+    if (/sResponseInfoType/){
+        s/sResponseInfoType//;
+        return "Set<$_>";
+    }
     if (/sSetItemType/) {
         s/sSetItemType//;
+    }
+    if (/sResponseItemType/){
+        s/sResponseItemType//;
     }
     if (/sItemType/) {
         s/sItemType//;

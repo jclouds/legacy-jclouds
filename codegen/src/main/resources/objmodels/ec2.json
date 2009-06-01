@@ -376,11 +376,11 @@
                         "desc" : "Image set.",
                         "name" : "imagesSet",
                         "type" : "DescribeImagesResponseInfoType",
-                        "javaType" : "DescribeImagesResponseInfo"
+                        "javaType" : "Set<DescribeImage>"
                      }
                   ],
                   "awsType" : "DescribeImagesResponse",
-                  "javaType" : "DescribeImagesResponseInfo",
+                  "javaType" : "Set<DescribeImage>",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.amis",
                   "see" : [
                      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeImagesResponse.html"
@@ -1503,11 +1503,11 @@
                      {
                         "name" : "addressesSet",
                         "type" : "DescribeAddressesResponseInfoType",
-                        "javaType" : "DescribeAddressesResponseInfo"
+                        "javaType" : "Set<DescribeAddresse>"
                      }
                   ],
                   "awsType" : "DescribeAddressesResponse",
-                  "javaType" : "DescribeAddressesResponseInfo",
+                  "javaType" : "Set<DescribeAddresse>",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.elasticipaddresses",
                   "see" : [
                      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeAddressesResponse.html"
@@ -2252,11 +2252,11 @@
                         "desc" : "Instances set.",
                         "name" : "instancesSet",
                         "type" : "TerminateInstancesResponseInfoType",
-                        "javaType" : "TerminateInstancesResponseInfo"
+                        "javaType" : "Set<TerminateInstance>"
                      }
                   ],
                   "awsType" : "TerminateInstancesResponse",
-                  "javaType" : "TerminateInstancesResponseInfo",
+                  "javaType" : "Set<TerminateInstance>",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.instances",
                   "see" : [
                      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-TerminateInstancesResponse.html"
@@ -2461,11 +2461,11 @@
                         "desc" : "Information for a key pair.",
                         "name" : "keySet",
                         "type" : "DescribeKeyPairsResponseInfoType",
-                        "javaType" : "DescribeKeyPairsResponseInfo"
+                        "javaType" : "Set<DescribeKeyPair>"
                      }
                   ],
                   "awsType" : "DescribeKeyPairsResponse",
-                  "javaType" : "DescribeKeyPairsResponseInfo",
+                  "javaType" : "Set<DescribeKeyPair>",
                   "packageName" : "org.jclouds.aws.ec2.commands.response.keypairs",
                   "see" : [
                      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeKeyPairsResponse.html"
@@ -3628,6 +3628,73 @@
       }
    ],
    "domain" : {
+      "DescribeKeyPairsResponseItemType" : {
+         "awsType" : "DescribeKeyPairsResponseItemType",
+         "packageName" : "org.jclouds.aws.ec2.domain",
+         "see" : [
+            "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeKeyPairsResponseItemType.html"
+         ],
+         "className" : "org.jclouds.aws.ec2.domain.DescribeKeyPair",
+         "fields" : [
+            {
+               "desc" : "A SHA-1 digest of the DER encoded private key.",
+               "name" : "keyFingerprint",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "The key pair name provided in the original request.",
+               "name" : "keyName",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            }
+         ],
+         "javaType" : "DescribeKeyPair"
+      },
+      "DescribeAddressesResponseItemType" : {
+         "awsType" : "DescribeAddressesResponseItemType",
+         "packageName" : "org.jclouds.aws.ec2.domain",
+         "see" : [
+            "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeAddressesResponseItemType.html"
+         ],
+         "className" : "org.jclouds.aws.ec2.domain.DescribeAddresse",
+         "fields" : [
+            {
+               "name" : "instanceId",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "name" : "publicIp",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            }
+         ],
+         "javaType" : "DescribeAddresse"
+      },
+      "InstanceStateType" : {
+         "awsType" : "InstanceStateType",
+         "packageName" : "org.jclouds.aws.ec2.domain",
+         "see" : [
+            "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-InstanceStateType.html"
+         ],
+         "className" : "org.jclouds.aws.ec2.domain.InstanceState",
+         "fields" : [
+            {
+               "desc" : "48: terminated",
+               "name" : "code",
+               "type" : "xsd:Int",
+               "javaType" : "Integer"
+            },
+            {
+               "desc" : "terminated: the instance terminated",
+               "name" : "name",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            }
+         ],
+         "javaType" : "InstanceState"
+      },
       "ProductCodesSetItemType" : {
          "awsType" : "ProductCodesSetItemType",
          "packageName" : "org.jclouds.aws.ec2.domain",
@@ -3638,6 +3705,139 @@
          "fields" : [
             {
                "desc" : "Product code.",
+               "name" : "productCode",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            }
+         ],
+         "javaType" : "ProductCode"
+      },
+      "MonitorInstancesResponseSetItemType" : {
+         "awsType" : "MonitorInstancesResponseSetItemType",
+         "packageName" : "org.jclouds.aws.ec2.domain",
+         "see" : [
+            "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-MonitorInstancesResponseSetItemType.html"
+         ],
+         "className" : "org.jclouds.aws.ec2.domain.MonitorInstancesResponse",
+         "fields" : [
+            {
+               "desc" : "Instance ID.",
+               "name" : "instanceId",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "Monitoring information.",
+               "name" : "monitoring",
+               "type" : "InstanceMonitoringStateType",
+               "javaType" : "InstanceMonitoringState"
+            }
+         ],
+         "javaType" : "MonitorInstancesResponse"
+      },
+      "DescribeReservedInstancesOfferingsResponseSetItemType" : {
+         "awsType" : "DescribeReservedInstancesOfferingsResponseSetItemType",
+         "packageName" : "org.jclouds.aws.ec2.domain",
+         "see" : [
+            "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeReservedInstancesOfferingsResponseSetItemType.html"
+         ],
+         "className" : "org.jclouds.aws.ec2.domain.DescribeReservedInstancesOfferingsResponse",
+         "fields" : [
+            {
+               "desc" : "The Availability Zone in which the Reserved Instance can be used.",
+               "name" : "availabilityZone",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "The duration of the Reserved Instance, in seconds.",
+               "name" : "duration",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "The purchase price of the Reserved Instance.",
+               "name" : "fixedPrice",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "The instance type on which the Reserved Instance can be used.",
+               "name" : "instanceType",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "The Reserved Instance description.",
+               "name" : "productDescription",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "The ID of the Reserved Instance offering.",
+               "name" : "reservedInstancesOfferingId",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "The usage price of the Reserved Instance, per hour.",
+               "name" : "usagePrice",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            }
+         ],
+         "javaType" : "DescribeReservedInstancesOfferingsResponse"
+      },
+      "AttachmentSetItemResponseType" : {
+         "awsType" : "AttachmentSetItemResponseType",
+         "packageName" : "org.jclouds.aws.ec2.domain",
+         "see" : [
+            "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-AttachmentSetItemResponseType.html"
+         ],
+         "className" : "org.jclouds.aws.ec2.domain.AttachmentResponse",
+         "fields" : [
+            {
+               "desc" : "Time stamp when the association was created.",
+               "name" : "attachTime",
+               "type" : "xsd:dateTime",
+               "javaType" : "DateTime"
+            },
+            {
+               "desc" : "Specifies how the device is exposed to the instance (e.g., /dev/sdh).",
+               "name" : "device",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "The ID of the instance.",
+               "name" : "instanceId",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "Attachment state.",
+               "name" : "status",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "The ID of the volume.",
+               "name" : "volumeId",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            }
+         ],
+         "javaType" : "AttachmentResponse"
+      },
+      "ProductCodeItemType" : {
+         "awsType" : "ProductCodeItemType",
+         "packageName" : "org.jclouds.aws.ec2.domain",
+         "see" : [
+            "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-ProductCodeItemType.html"
+         ],
+         "className" : "org.jclouds.aws.ec2.domain.ProductCode",
+         "fields" : [
+            {
                "name" : "productCode",
                "type" : "xsd:string",
                "javaType" : "String"
@@ -3667,22 +3867,6 @@
             }
          ],
          "javaType" : "UserIdGroupPair"
-      },
-      "ProductCodeItemType" : {
-         "awsType" : "ProductCodeItemType",
-         "packageName" : "org.jclouds.aws.ec2.domain",
-         "see" : [
-            "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-ProductCodeItemType.html"
-         ],
-         "className" : "org.jclouds.aws.ec2.domain.ProductCode",
-         "fields" : [
-            {
-               "name" : "productCode",
-               "type" : "xsd:string",
-               "javaType" : "String"
-            }
-         ],
-         "javaType" : "ProductCode"
       },
       "BundleInstanceS3StorageType" : {
          "awsType" : "BundleInstanceS3StorageType",
@@ -3753,6 +3937,59 @@
             }
          ],
          "javaType" : "BundleInstanceTaskError"
+      },
+      "DescribeVolumesSetItemResponseType" : {
+         "awsType" : "DescribeVolumesSetItemResponseType",
+         "packageName" : "org.jclouds.aws.ec2.domain",
+         "see" : [
+            "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeVolumesSetItemResponseType.html"
+         ],
+         "className" : "org.jclouds.aws.ec2.domain.DescribeVolumeResponse",
+         "fields" : [
+            {
+               "desc" : "Attachment set.",
+               "name" : "attachmentSet",
+               "type" : "AttachmentSetResponseType",
+               "javaType" : "AttachmentResponse"
+            },
+            {
+               "desc" : "Availability Zone in which the volume was created.",
+               "name" : "availabilityZone",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "Time stamp when volume creation was initiated.",
+               "name" : "createTime",
+               "type" : "xsd:dateTime",
+               "javaType" : "DateTime"
+            },
+            {
+               "desc" : "The size of the volume, in GiBs.",
+               "name" : "size",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "Snapshot from which the volume was created (optional).",
+               "name" : "snapshotId",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "Volume state (e.g., creating, available)",
+               "name" : "status",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "The ID of the volume.",
+               "name" : "volumeId",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            }
+         ],
+         "javaType" : "DescribeVolumeResponse"
       },
       "IpPermissionType" : {
          "awsType" : "IpPermissionType",
@@ -3914,6 +4151,47 @@
          ],
          "javaType" : "RunningInstance"
       },
+      "DescribeSnapshotsSetItemResponseType" : {
+         "awsType" : "DescribeSnapshotsSetItemResponseType",
+         "packageName" : "org.jclouds.aws.ec2.domain",
+         "see" : [
+            "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeSnapshotsSetItemResponseType.html"
+         ],
+         "className" : "org.jclouds.aws.ec2.domain.DescribeSnapshotResponse",
+         "fields" : [
+            {
+               "desc" : "The progress of the snapshot, in percentage.",
+               "name" : "progress",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "The ID of the snapshot.",
+               "name" : "snapshotId",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "Time stamp when the snapshot was initiated.",
+               "name" : "startTime",
+               "type" : "xsd:dateTime",
+               "javaType" : "DateTime"
+            },
+            {
+               "desc" : "Snapshot state (e.g., pending, completed).",
+               "name" : "status",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "The ID of the volume.",
+               "name" : "volumeId",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            }
+         ],
+         "javaType" : "DescribeSnapshotResponse"
+      },
       "LaunchPermissionItemType" : {
          "awsType" : "LaunchPermissionItemType",
          "packageName" : "org.jclouds.aws.ec2.domain",
@@ -3975,22 +4253,82 @@
          ],
          "javaType" : "Region"
       },
-      "InstanceMonitoringStateType" : {
-         "awsType" : "InstanceMonitoringStateType",
+      "DescribeImagesResponseItemType" : {
+         "awsType" : "DescribeImagesResponseItemType",
          "packageName" : "org.jclouds.aws.ec2.domain",
          "see" : [
-            "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-InstanceMonitoringStateType.html"
+            "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeImagesResponseItemType.html"
          ],
-         "className" : "org.jclouds.aws.ec2.domain.InstanceMonitoringState",
+         "className" : "org.jclouds.aws.ec2.domain.DescribeImage",
          "fields" : [
             {
-               "desc" : "State of monitoring for the instance.",
-               "name" : "state",
+               "desc" : "The architecture of the image (i386 or x86_64).",
+               "name" : "architecture",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "The ID of the AMI.",
+               "name" : "imageId",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "The location of the AMI.",
+               "name" : "imageLocation",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "AWS Access Key ID of the image owner. ",
+               "name" : "imageOwnerId",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "If the operation returns deregistered, the image is deregistered and no longer available for launching. ",
+               "name" : "imageState",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "The type of image (machine, kernel, or ramdisk).",
+               "name" : "imageType",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "Returns true if this image has public launch permissions. Returns false if it only has implicit and explicit launch permissions. ",
+               "name" : "isPublic",
+               "type" : "xsd:boolean",
+               "javaType" : "Boolean"
+            },
+            {
+               "desc" : "The kernel associated with the image, if any. Only applicable for machine images.",
+               "name" : "kernelId",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "The operating platform of the instance.",
+               "name" : "platform",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "Product codes of the AMI. ",
+               "name" : "productCodes",
+               "type" : "ProductCodesSetType",
+               "javaType" : "Set<ProductCode>"
+            },
+            {
+               "desc" : "The RAM disk associated with the image, if any. Only applicable for machine images.",
+               "name" : "ramdiskId",
                "type" : "xsd:string",
                "javaType" : "String"
             }
          ],
-         "javaType" : "InstanceMonitoringState"
+         "javaType" : "DescribeImage"
       },
       "BlockDeviceMappingItemType" : {
          "awsType" : "BlockDeviceMappingItemType",
@@ -4014,6 +4352,23 @@
             }
          ],
          "javaType" : "BlockDeviceMapping"
+      },
+      "InstanceMonitoringStateType" : {
+         "awsType" : "InstanceMonitoringStateType",
+         "packageName" : "org.jclouds.aws.ec2.domain",
+         "see" : [
+            "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-InstanceMonitoringStateType.html"
+         ],
+         "className" : "org.jclouds.aws.ec2.domain.InstanceMonitoringState",
+         "fields" : [
+            {
+               "desc" : "State of monitoring for the instance.",
+               "name" : "state",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            }
+         ],
+         "javaType" : "InstanceMonitoringState"
       },
       "ReservationInfoType" : {
          "awsType" : "ReservationInfoType",
@@ -4049,6 +4404,23 @@
             }
          ],
          "javaType" : "ReservationInfo"
+      },
+      "IpRangeItemType" : {
+         "awsType" : "IpRangeItemType",
+         "packageName" : "org.jclouds.aws.ec2.domain",
+         "see" : [
+            "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-IpRangeItemType.html"
+         ],
+         "className" : "org.jclouds.aws.ec2.domain.IpRange",
+         "fields" : [
+            {
+               "desc" : "CIDR range.",
+               "name" : "cidrIp ",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            }
+         ],
+         "javaType" : "IpRange"
       },
       "BundleInstanceTaskType" : {
          "awsType" : "BundleInstanceTaskType",
@@ -4109,22 +4481,34 @@
          ],
          "javaType" : "BundleInstanceTask"
       },
-      "IpRangeItemType" : {
-         "awsType" : "IpRangeItemType",
+      "TerminateInstancesResponseItemType" : {
+         "awsType" : "TerminateInstancesResponseItemType",
          "packageName" : "org.jclouds.aws.ec2.domain",
          "see" : [
-            "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-IpRangeItemType.html"
+            "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-TerminateInstancesResponseItemType.html"
          ],
-         "className" : "org.jclouds.aws.ec2.domain.IpRange",
+         "className" : "org.jclouds.aws.ec2.domain.TerminateInstance",
          "fields" : [
             {
-               "desc" : "CIDR range.",
-               "name" : "cidrIp ",
+               "desc" : "Instance ID.",
+               "name" : "instanceId",
                "type" : "xsd:string",
                "javaType" : "String"
+            },
+            {
+               "desc" : "Previous state.",
+               "name" : "previousState",
+               "type" : "InstanceStateType",
+               "javaType" : "InstanceState"
+            },
+            {
+               "desc" : "Shutdown state.",
+               "name" : "shutdownState",
+               "type" : "InstanceStateType",
+               "javaType" : "InstanceState"
             }
          ],
-         "javaType" : "IpRange"
+         "javaType" : "TerminateInstance"
       },
       "GroupItemType" : {
          "awsType" : "GroupItemType",
@@ -4142,6 +4526,77 @@
             }
          ],
          "javaType" : "Group"
+      },
+      "DescribeReservedInstancesResponseSetItemType" : {
+         "awsType" : "DescribeReservedInstancesResponseSetItemType",
+         "packageName" : "org.jclouds.aws.ec2.domain",
+         "see" : [
+            "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-DescribeReservedInstancesResponseSetItemType.html"
+         ],
+         "className" : "org.jclouds.aws.ec2.domain.DescribeReservedInstancesResponse",
+         "fields" : [
+            {
+               "desc" : "The Availability Zone in which the Reserved Instance can be used.",
+               "name" : "availabilityZone",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "The duration of the Reserved Instance, in seconds.",
+               "name" : "duration",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "The purchase price of the Reserved Instance.",
+               "name" : "fixedPrice",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "The number of Reserved Instances purchased.",
+               "name" : "instanceCount",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "The instance type on which the Reserved Instance can be used.",
+               "name" : "instanceType",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "The Reserved Instance description.",
+               "name" : "productDescription",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "The ID of the Reserved Instance.",
+               "name" : "reservedInstancesId",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "The date and time the Reserved Instance started.",
+               "name" : "start",
+               "type" : "xsd:dateTime",
+               "javaType" : "DateTime"
+            },
+            {
+               "desc" : "The state of the Reserved Instance purchase.",
+               "name" : "state",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            },
+            {
+               "desc" : "The usage price of the Reserved Instance, per hour.",
+               "name" : "usagePrice",
+               "type" : "xsd:string",
+               "javaType" : "String"
+            }
+         ],
+         "javaType" : "DescribeReservedInstancesResponse"
       },
       "AvailabilityZoneItemType" : {
          "awsType" : "AvailabilityZoneItemType",
