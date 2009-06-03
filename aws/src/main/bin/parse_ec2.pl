@@ -54,15 +54,9 @@ use JSON;
 
 my $refUrl = "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference";
 
-# my $refUrl           = "/tmp/scrape";
+#my $refUrl = "/tmp/scrape";
 
-my $appUrl           = "${refUrl}/OperationList-query.html";
-my $global_package   = "org.jclouds.aws.ec2";
-my $commands_package = $global_package . ".commands";
-my $response_package = $commands_package . ".response";
-my $options_package  = $commands_package . ".options";
-my $domain_package   = $global_package . ".domain";
-my $xml_package      = $global_package . ".xml";
+my $appUrl = "${refUrl}/OperationList-query.html";
 
 my $domain = {};
 
@@ -75,69 +69,17 @@ sub parse_file {
 }
 
 sub parse {
-
     #return parse_file(shift);
+
     return parse_url(shift);
 }
 
-sub parse_java_type {
+sub get_subtypes {
     $_ = shift;
-    s/xsd:string/String/;
-    s/xsd:boolean/Boolean/;
-    s/xsd:Int/Integer/;
-    s/xsd:dateTime/DateTime/;
-    if (/Type/ || /Item/) {
-        my $awsType  = $_;
-        my $javaType = get_java_name($awsType);
-        #if ( !/Response/ || /ResponseInfoType/ || $javaType =~ /Set/ ) {
-            $domain->{$awsType} = {
-                awsType     => $awsType,
-                javaType    => $javaType,
-                packageName => $domain_package,
-                className   => $domain_package . "." . $javaType,
-                see => ["${refUrl}/ApiReference-ItemType-${awsType}.html"],
-                fields =>
-                  build_fields("${refUrl}/ApiReference-ItemType-$awsType.html")
-            };
-        #}
-        $_ = $javaType;
+    if ( /^[A-Z]/ && $_ ne 'String' && $_ ne 'Integer' && $_ ne 'Boolean' ) {
+        my $type = $_;
+        $domain->{$type} = build_bean($type);
     }
-
-    return $_;
-}
-
-sub get_java_name {
-    $_ = shift;
-    if (/sSetType/) {
-        s/sSetType//;
-        return "Set<$_>";
-    }
-    if (/sResponseInfoType/){
-        s/sResponseInfoType//;
-        return "Set<$_>";
-    }
-    if (/sSetItemType/) {
-        s/sSetItemType//;
-    }
-    if (/sResponseItemType/){
-        s/sResponseItemType//;
-    }
-    if (/sItemType/) {
-        s/sItemType//;
-    }
-    if (/sSet/) {
-        s/sSet//;
-    }
-    if (/Set/) {
-        s/Set//;
-    }
-    if (/Type/) {
-        s/Type//;
-    }
-    if (/Item/) {
-        s/Item//;
-    }
-    return $_;
 }
 
 sub parse_url {
@@ -156,253 +98,220 @@ sub parse_url {
     return $tree;
 }
 
-sub build_commands {
+sub build_queries {
     my $tree = parse( $_[0] );
     my @out;
     foreach my $link (
         ( $tree->look_down( '_tag', 'div', 'class', 'itemizedlist' ) ) )
     {
-        my $package = $link->look_down( '_tag', 'b' );
-        $_ = $package->as_text;
-        s/ //g;
-        my $packageName = lc();
-        my @commands;
+        my $category = $link->look_down( '_tag', 'b' )->as_text();
 
+        my $queries;
         foreach my $class ( $link->look_down( '_tag', 'a' ) ) {
-            my $awsType = $class->attr('title');
-            my $command = {
-                awsType     => $awsType,
-                packageName => $commands_package . ".$packageName",
-                className   => $commands_package . ".$packageName." . $awsType,
-                see         => ["${refUrl}/ApiReference-query-${awsType}.html"],
-                response    => {
-                    javaType    => $awsType . "Response",
-                    awsType     => $awsType . "Response",
-                    packageName => $response_package . ".$packageName",
-                    className   => $response_package
-                      . ".$packageName."
-                      . $awsType
-                      . "Response",
-                    see => [
-"${refUrl}/ApiReference-ItemType-${awsType}Response.html"
-                    ]
-                },
-                options => {
-                    javaType    => $awsType . "Options",
-                    awsType     => $awsType . "Options",
-                    packageName => $options_package . ".$packageName",
-                    className   => $options_package
-                      . ".$packageName."
-                      . $awsType
-                      . "Options",
-                    see => ["${refUrl}/ApiReference-ItemType-${awsType}.html"]
-                },
-                handler => {
-                    awsType     => $awsType . "Handler",
-                    packageName => $xml_package . ".$packageName",
-                    className   => $xml_package
-                      . ".$packageName."
-                      . $awsType
-                      . "Handler",
-                    see => [
-"${refUrl}/ApiReference-ItemType-${awsType}Response.html"
-                    ]
-                }
-            };
-            $command = build_command($command);
+            my $type  = $class->attr('title');
+            my $query = build_query($type);
 
-            # do not build options when there are none!
-            if ( $#{ $$command{options}->{parameters} } == -1 ) {
-                $$command{options}->{javaType} =
-                  "BaseEC2RequestOptions<EC2RequestOptions>";
-                $$command{options}->{packageName} = $options_package;
-                $$command{options}->{className}   = $options_package . "."
-                  . "BaseEC2RequestOptions<EC2RequestOptions>";
-                $$command{options}->{see} = [];
-            }
+            # add a domain object for the response type
+            $domain->{ $type . "Response" } =
+              build_bean( $type . "Response", "Response" );
 
-            # clear parameters for commands who don't require them
-            if ( $#{ $$command{parameters} } == -1 ) {
-                delete $$command{parameters};
-            }
-            push @commands, $command;
+            $query->{responseType} = $type . "Response";
+
+            $queries->{$type} = $query;
         }
+
         push @out,
           {
-            name     => $packageName,
-            commands => \@commands,
+            name    => $category,
+            queries => $queries,
           };
     }
     $tree->eof;
     $tree->delete;
-    foreach my $packageRef (@out) {
-        my @commands = @{ $packageRef->{commands} };
-        foreach my $command (@commands) {
-            my $fieldCount = scalar @{ $command->{response}->{fields} };
-
-            # convert to native java type
-            if ( $fieldCount == 1 ) {
-                $command->{response}->{javaType} =
-                  ${ $command->{response}->{fields} }[0]->{javaType};
-            }
-        }
-    }
     return \@out;
 }
 
 sub build_app {
-    my $url      = shift;
-    my $packages = build_commands($url);
-    while ( my ( $awsType, $classDef ) = each %$domain ) {
-        my $fieldCount = scalar @{ $classDef->{fields} };
-        if ( $fieldCount == 1 ) {
-            if ( $classDef->{fields}->[0]->{"name"} eq "item" ) {
-                delete $domain->{$awsType};
-            }
-        }
-        if ( $classDef->{javaType} =~ /^Set/ ) {
-            delete $domain->{$awsType};
-        }
-    }
+    my $url        = shift;
+    my $categories = build_queries($url);
     return {
-        see      => [$url],
-        packages => $packages,
-        domain   => $domain
+        see        => [$url],
+        categories => $categories,
+        domain     => $domain
     };
 }
 
-sub build_command {
-    my $command = $_[0];
-
-    #print "parsing $$command{see}[0]...\n";
-    my $tree = parse( $$command{see}[0] );
-
-    #$tree->dump;
-    my ${requestExampleDiv} =
-      $tree->look_down( '_tag', 'h3', 'id',
-        "ApiReference-query-$$command{awsType}-Example-Request-1" )
-      ->look_up( '_tag', 'div', 'class', 'section' );
-    $$command{options}->{example} = ${requestExampleDiv}->as_HTML();
-
-    my ${reqParamTBody} =
-      $tree->look_down( '_tag', 'h2', 'id',
-        "ApiReference-query-$$command{awsType}-Request" )
-      ->look_up( '_tag', 'div', 'class', 'section' )
-      ->look_down( '_tag', 'tbody' );
-    my @{parameterRows};
-    if ( defined($reqParamTBody) ) {
-        @{parameterRows} = ${reqParamTBody}->look_down( '_tag', 'tr' );
-    }
-
-    my @optionParameters;
-    my @requiredParameters;
-
-    foreach my $parameterRow ( @{parameterRows} ) {
-        my @{row} = $parameterRow->look_down( '_tag', 'td' );
-        my %param;
-        $param{name} = ${row}[0]->as_text();
-        my @{data} = ${row}[1]->look_down( '_tag', 'p' );
-        foreach ( @{data} ) {
-            $_ = $_->as_text();
-            if (s/Default: //) {
-                $param{param} = $_;
-            }
-            elsif (s/Type: //) {
-                $param{type}     = $_;
-                $param{javaType} = parse_java_type($_);
-            }
-            else {
-                $param{desc} = $_;
-            }
-        }
-        if ( ${row}[2]->as_text() =~ /No/ ) {
-            push @optionParameters, \%param;
-        }
-        else {
-            push @optionParameters, \%param;
-            push @requiredParameters, \%param;
-        }
-    }
-    $$command{options}->{parameters} = \@optionParameters;
-    $$command{parameters} = \@requiredParameters;
-
-    my ${responseExampleDiv} =
-      $tree->look_down( '_tag', 'h3', 'id',
-        "ApiReference-query-$$command{awsType}-Example-Response-1" )
-      ->look_up( '_tag', 'div', 'class', 'section' );
-    $$command{handler}->{example} = ${responseExampleDiv}->as_HTML();
-
-    $command = build_response($command);
+sub build_query {
+    my $type  = shift;
+    my $query = build_bean( $type, "Request" );
+    my $tree = parse(${ $query->{see} }[0]);
 
     my @{seeAlsoA} =
       $tree->look_down( '_tag', 'div', 'class', 'itemizedlist' )
       ->look_down( '_tag', 'a' );
+
     foreach ( @{seeAlsoA} ) {
-        push @{ $command->{see} }, $_->as_text();
+        push @{ $query->{see} }, $_->as_text();
     }
+
     $tree->eof;
     $tree->delete;
 
-    # print_command($command);
-    return $command;
-}
-
-sub build_response {
-    my $command = $_[0];
-    $$command{response}->{fields} =
-      build_fields( $$command{response}->{see}[0] );
-    remove_request_ids( $$command{response} );
-    return $command;
-}
-
-# request id is not a domain concern
-sub remove_request_ids {
-    my $response = shift;
-    my @fields   = @{ ${response}->{fields} };
-    for ( 0 .. $#fields ) {
-        if ( $fields[$_]->{name} eq "requestId" ) {
-            splice( @{ ${response}->{fields} }, $_, 1 );
-        }
-    }
+    return $query;
 }
 
 sub build_fields {
+    my @{fieldRows} = @_;
+    my @params;
+    foreach my $fieldRow ( @{fieldRows} ) {
+        my @{row} = $fieldRow->look_down( '_tag', 'td' );
+        my %param;
+        $param{name} = ${row}[0]->as_text();
+        my $enumDiv =
+          ${row}[1]->look_down( '_tag', 'div', "class", "itemizedlist" );
+        if ( defined $enumDiv ) {
+            my $enum;
+            my @enumEntries = $enumDiv->look_down( '_tag', 'p' );
+            foreach my $enumEntry (@enumEntries) {
+                $enumEntry = $enumEntry->as_text();
+                my ( $code, $state ) = split( /: /, $enumEntry );
+                chomp($code);
+                chomp($state);
+                $enum->{$code} = $state;
+            }
+            $param{enum} = $enum;
+            $param{desc} = ${row}[1]->look_down( '_tag', 'p' )->as_text();
+        }
+        else {
+            my @{data} = ${row}[1]->look_down( '_tag', 'p' );
+            foreach ( @{data} ) {
+                $_ = $_->as_text();
+                if (s/Default: //) {
+                    $param{default} = $_;
+                }
+                elsif (s/Type: //) {
+                    $param{type} = $_;
+                    get_subtypes($_);
+                }
+                elsif (s/Ancestor: //) {
+                    $param{ancestor} = $_;
+                }
+                elsif (s/Children: //) {
+                    $param{children} = $_;
+                }
+                elsif (s/Constraints: //) {
+                    $param{constraints} = $_;
+                    if (m/.*default: ([0-9]+)/) {
+                        $param{default} = $1;
+                    }
+                }
+                elsif (s/Valid Values: //) {
+                    if (/\|/) {
+                        my @valid_values = split(' \| ');
+                        $param{valid_values} = \@valid_values;
+                    }
+                    elsif (/([0-9]+) ?\-([0-9]+)/) {
+                        $param{valid_values} = "$1-$2";
+                    }
+                }
+                else {
+                    $param{desc} = $_;
+                }
+            }
+        }
 
-    #print "parsing $_[0]\n";
-    my $tree = parse( $_[0] );
+        if ( defined ${row}[2] && ${row}[2]->as_text() =~ /No/ ) {
+            $param{optional} = 'true';
+        }
+        else {
+            $param{optional} = 'false';
+        }
+        push @params, \%param;
+    }
+    return \@params;
+}
 
+sub build_bean {
+    my $type  = shift;
+    my $class = shift;
+    my $bean  = { type => $type, };
+
+    my $see = "${refUrl}/ApiReference-ItemType-${type}.html";
+    if ( defined $class ) {
+        $_ = $type;
+        if ( $class =~ /Response/ ) {
+
+            # responses are related to the query.  In this case, we must take
+            # off the suffix Response to get the correct metadata url.
+            s/$class//;
+        }
+        else {
+            # if we are the query object, then there is a different master url.
+            $see = "${refUrl}/ApiReference-query-${type}.html";
+        }
+        my $query = "${refUrl}/ApiReference-query-${_}.html";
+        push @{ $bean->{see} }, $query;
+        my $tree = parse($query);
+
+        if ( !defined $tree ) {
+            print "could not parse tree $_[0]\n";
+            return {};
+        }
+        my $id = "ApiReference-query-${_}-Example-${class}-1";
+        my ${requestExampleDiv} =
+          $tree->look_down( '_tag', 'h3', 'id', "$id" )
+          ->look_up( '_tag', 'div', 'class', 'section' );
+        $bean->{example_html} = ${requestExampleDiv}->as_HTML();
+        $bean->{example_code} =
+          ${requestExampleDiv}
+          ->look_down( '_tag', 'pre', 'class', 'programlisting' )->as_text();
+        $tree->eof;
+        $tree->delete;
+
+    }
+    push @{ $bean->{see} }, $see unless defined $bean->{see};
+
+    my $tree = parse($see);
+
+    if ( !defined $tree ) {
+        print "could not parse tree $_[0]\n";
+        return {};
+    }
+
+    #    $tree->dump();
     $tree->eof;
-    my @{fields};
+    my $id = "ApiReference-ItemType-${type}-Ancestors";
+    my ${ancestorH2} = $tree->look_down( '_tag', 'h2', 'id', "$id" );
+    my ${ancestorDiv} =
+      ${ancestorH2}->look_up( '_tag', 'div', 'class', 'section' )
+      if defined ${ancestorH2};
+    my ${ancestorLink} =
+      ${ancestorDiv}->look_down( '_tag', 'a', 'class', 'xref' )
+      if defined ${ancestorDiv};
+    if ( defined ${ancestorLink} ) {
+        $bean->{ancestor} = ${ancestorLink}->as_text();
+    }
+    else {
+        $bean->{ancestor} = "None";
+    }
 
     my @{fieldRows} = my $body = ${tree}->look_down( '_tag', 'tbody' );
-    return [] unless defined $body;    #TODO
+
+    if ( !defined $body ) {
+        print "could not parse body $_[0]\n";
+        return [];
+    }
 
     @{fieldRows} = $body->look_down( '_tag', 'tr' );
 
-    foreach ( @{fieldRows} ) {
-        my @row = $_->look_down( '_tag', 'td' );
-        my %field;
-        $field{name} = ${row}[0]->as_text();
-        my @{data} = ${row}[1]->look_down( '_tag', 'p' );
-        foreach ( @{data} ) {
-            $_ = $_->as_text();
-            if (s/Type: //) {
-                $field{type}     = $_;
-                $field{javaType} = parse_java_type($_);
-            }
-            else {
-                $field{desc} = $_;
-            }
-        }
-        push @fields, \%field;
-    }
-
+    my $fields = build_fields( @{fieldRows} );
     $tree->delete;
-    return \@fields;
+    $bean->{fields} = $fields;
+    return $bean;
+
 }
 
 # start app!
 my $app = build_app($appUrl);
-
 my $app_json = to_json( $app, { utf8 => 1, pretty => 1 } );
 print $app_json
