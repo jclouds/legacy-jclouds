@@ -29,6 +29,8 @@ package ${bean.packageName};
 [#if bean.packageName != rootPackageName]
 import ${rootPackageName}.*;
 [/#if]
+import java.util.Set;
+import java.util.List;
 
 import org.jclouds.aws.ec2.commands.options.BaseEC2RequestOptions;
 
@@ -62,8 +64,8 @@ public class ${shortClassName} extends
    }
 
 [#list bean.parameters![] as field]
-[#assign lowerName = field.name?uncap_first]
-[#assign upperName = field.name?cap_first]
+[#assign lowerName = field.javaName?uncap_first]
+[#assign upperName = field.javaName?cap_first]
 
    /**
     * @see ${shortClassName}#with${upperName}(String)
@@ -86,8 +88,8 @@ public class ${shortClassName} extends
    public static class Builder {
 
 [#list bean.parameters![] as field]
-[#assign lowerName = field.name?uncap_first]
-[#assign upperName = field.name?cap_first]
+[#assign lowerName = field.javaName?uncap_first]
+[#assign upperName = field.javaName?cap_first]
       /**
        * @see ${shortClassName}#withId(String)
        */

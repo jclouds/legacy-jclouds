@@ -28,30 +28,39 @@ package org.jclouds.codegen.model;
  * @author James Murty
  */
 public class Parameter {
-	private String name;
-	private String type;
-	private String javaType;
-	private String param;
-	private String desc;
-	
-	public String getName() {
-		return name;
-	}
-	
-	public String getType() {
-		return type;
-	}
-	
-	public String getJavaType() {
-		return javaType;
-	}
-	
-	public String getParam() {
-		return param;
-	}
-	
-	public String getDesc() {
-		return desc;
-	}
-	
+   private String javaName;
+   private String name;
+   private String type;
+   private String javaType;
+   private String param;
+   private String desc;
+
+   public String getName() {
+      return name;
+   }
+
+   public String getType() {
+      return type;
+   }
+
+   public String getJavaType() {
+      return javaType;
+   }
+
+   public String getParam() {
+      return param;
+   }
+
+   public String getDesc() {
+      return desc;
+   }
+
+   public void setJavaName(String javaName) {
+      this.javaName = javaName;
+   }
+
+   public String getJavaName() {
+      return javaName;
+   }
+
 }

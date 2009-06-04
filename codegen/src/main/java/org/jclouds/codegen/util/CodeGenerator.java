@@ -120,7 +120,8 @@ public class CodeGenerator {
                               "BaseEC2RequestOptions<EC2RequestOptions>") == -1) {
                generateClassFile(command.getOptions(), OPTIONS_TEMPLATE_FILENAME);
             }
-            if (command.getResponse() != null) {
+            if (command.getResponse() != null
+                     && !command.getResponse().getJavaType().equals("Boolean")) {
                generateClassFile(command.getResponse(), RESPONSE_TEMPLATE_FILENAME);
             }
          }

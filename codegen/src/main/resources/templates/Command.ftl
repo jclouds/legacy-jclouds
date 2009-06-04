@@ -34,6 +34,8 @@ import ${bean.response.packageName}.*;
 import ${bean.options.packageName}.*;
 [/#if]
 import org.jclouds.aws.reference.AWSConstants;
+import java.util.Set;
+import java.util.List;
 
 import org.jclouds.http.commands.callables.xml.ParseSax;
 
@@ -61,18 +63,17 @@ public class ${shortClassName} extends HttpFutureCommand<${RT}> {
              @Named(AWSConstants.PROPERTY_AWS_SECRETACCESSKEY) String awsSecretAccessKey, 
              ParseSax<${RT}> callable, 
 [#if bean.options.javaType?? ]
-             @Assisted ${bean.options.javaType} options,
+             @Assisted ${bean.options.javaType} options
 [#else]
-             @Assisted BaseEC2RequestOptions<EC2RequestOptions> options,
+             @Assisted BaseEC2RequestOptions<EC2RequestOptions> options
 [/#if]
 [#list bean.parameters![] as param]
-             @Assisted ${param.javaType} ${param.name?uncap_first}[#rt]
-[#if param_has_next],[#else])[/#if]
-[/#list] {
+             ,@Assisted ${param.javaType} ${param.javaName?uncap_first}[#rt]
+[/#list]) {
       super("GET", 
          "/" + options
 [#list bean.parameters![] as param]
-            .with${param.name?cap_first}(${param.name?uncap_first})
+            .with${param.javaName?cap_first}(${param.javaName?uncap_first})
 [/#list]
             .signWith(awsAccessKeyId,awsSecretAccessKey).buildQueryString(), callable);
    }

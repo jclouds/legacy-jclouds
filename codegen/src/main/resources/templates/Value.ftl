@@ -30,7 +30,8 @@ package ${bean.packageName};
 import ${rootPackageName}.*;
 [/#if]
 import org.joda.time.DateTime;
-
+import java.util.Set;
+import java.util.List;
 
 /**
  *
@@ -48,14 +49,14 @@ public class ${shortClassName} {
 [#-- Print fields --]
 [#list bean.fields![] as field]
 
-   private ${field.javaType} ${field.name?uncap_first};
+   private ${field.javaType} ${field.javaName?uncap_first};
 
 [/#list]
 
 [#-- Print get/set --]
 [#list bean.fields![] as field]
-[#assign lowerName = field.name?uncap_first]
-[#assign upperName = field.name?cap_first]
+[#assign lowerName = field.javaName?uncap_first]
+[#assign upperName = field.javaName?cap_first]
 
    public ${field.javaType} get${upperName}(){
       return this.${lowerName};

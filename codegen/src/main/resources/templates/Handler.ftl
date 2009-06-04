@@ -29,6 +29,8 @@ package ${bean.packageName};
 [#if bean.packageName != rootPackageName]
 import ${rootPackageName}.*;
 [/#if]
+import java.util.Set;
+import java.util.List;
 
 /**
  *
@@ -49,14 +51,14 @@ public class ${shortClassName} {
     *
     * ${field.desc} 
     */
-   private ${field.javaType} ${field.name?uncap_first};
+   private ${field.javaType} ${field.javaName?uncap_first};
 
 [/#list]
 
 [#-- Print get/set --]
 [#list bean.parameters![] as field]
-[#assign lowerName = field.name?uncap_first]
-[#assign upperName = field.name?cap_first]
+[#assign lowerName = field.javaName?uncap_first]
+[#assign upperName = field.javaName?cap_first]
    /**
     *
     * @return ${field.desc} 

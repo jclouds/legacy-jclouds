@@ -21,41 +21,59 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.codegen.model;
+package org.jclouds.codegen.ec2.model;
+
+import java.util.Set;
 
 /**
  * 
- * @author James Murty
+ * @author Adrian Cole
  */
-public abstract class BaseBean {
-	private String className;
-	private String packageName;
-	private String awsType;
-      private String javaType;
-      private String javaName;
+public class BaseBean {
 
-      public String getJavaType() {
-            return javaType;
-      }
-      
-	public String getClassName() {
-		return className;
-	}
-	
-	public String getPackageName() {
-		return packageName;
-	}
+   private String type;
+   private String ancestor;
+   private Set<String> see;
+   private String exampleCode;
+   private Set<BeanField> fields;
 
-	public String getAwsType() {
-		return awsType;
-	}
-
-   public void setJavaName(String javaName) {
-      this.javaName = javaName;
+   public void setType(String type) {
+      this.type = type;
    }
 
-   public String getJavaName() {
-      return javaName;
+   public String getType() {
+      return type;
    }
 
+   public void setAncestor(String ancestor) {
+      this.ancestor = ancestor;
+   }
+
+   public String getAncestor() {
+      return ancestor;
+   }
+
+   public void setSee(Set<String> see) {
+      this.see = see;
+   }
+
+   public Set<String> getSee() {
+      return see;
+   }
+
+   public void setExampleCode(String exampleCode) {
+      this.exampleCode = exampleCode;
+   }
+
+   public String getExampleCode() {
+      return exampleCode;
+   }
+
+   public void setFields(Set<BeanField> fields) {
+      this.fields = fields;
+   }
+
+   public Set<BeanField> getFields() {
+      return fields;
+   }
 }

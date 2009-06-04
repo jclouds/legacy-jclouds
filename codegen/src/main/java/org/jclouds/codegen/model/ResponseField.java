@@ -28,25 +28,34 @@ package org.jclouds.codegen.model;
  * @author James Murty
  */
 public class ResponseField {
-	private String desc;
-	private String name;
-	private String type;
-	private String javaType;
-	
-	public String getDesc() {
-		return desc;
-	}
-	
-	public String getName() {
-		return name;
-	}
-	
-	public String getType() {
-		return type;
-	}
-	
-	public String getJavaType() {
-		return javaType;
-	}
-		
+   private String javaName;
+   private String desc;
+   private String name;
+   private String type;
+   private String javaType;
+
+   public String getDesc() {
+      return desc;
+   }
+
+   public String getName() {
+      return name;
+   }
+
+   public String getType() {
+      return type;
+   }
+
+   public String getJavaType() {
+      return javaType;
+   }
+
+   public void setJavaName(String javaName) {
+      this.javaName = javaName;
+   }
+
+   public String getJavaName() {
+      return javaName;
+   }
+
 }
