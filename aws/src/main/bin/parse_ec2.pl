@@ -69,6 +69,7 @@ sub parse_file {
 }
 
 sub parse {
+
     #return parse_file(shift);
 
     return parse_url(shift);
@@ -144,7 +145,7 @@ sub build_app {
 sub build_query {
     my $type  = shift;
     my $query = build_bean( $type, "Request" );
-    my $tree = parse(${ $query->{see} }[0]);
+    my $tree  = parse( ${ $query->{see} }[0] );
 
     my @{seeAlsoA} =
       $tree->look_down( '_tag', 'div', 'class', 'itemizedlist' )
@@ -208,10 +209,14 @@ sub build_fields {
                 elsif (s/Valid Values: //) {
                     if (/\|/) {
                         my @valid_values = split(' \| ');
-                        $param{valid_values} = \@valid_values;
+                        my $enum;
+                        foreach my $value (@valid_values) {
+                            $enum->{$value} = $value;
+                        }
+                        $param{enum} = $enum;
                     }
                     elsif (/([0-9]+) ?\-([0-9]+)/) {
-                        $param{valid_values} = "$1-$2";
+                        $param{constraints} = "$1-$2";
                     }
                 }
                 else {
@@ -246,6 +251,7 @@ sub build_bean {
             s/$class//;
         }
         else {
+
             # if we are the query object, then there is a different master url.
             $see = "${refUrl}/ApiReference-query-${type}.html";
         }
