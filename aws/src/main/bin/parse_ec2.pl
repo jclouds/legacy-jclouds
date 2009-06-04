@@ -180,7 +180,7 @@ sub build_fields {
                 chomp($state);
                 $enum->{$code} = $state;
             }
-            $param{enum} = $enum;
+            $param{valueMap} = $enum;
             $param{desc} = ${row}[1]->look_down( '_tag', 'p' )->as_text();
         }
         else {
@@ -188,7 +188,7 @@ sub build_fields {
             foreach ( @{data} ) {
                 $_ = $_->as_text();
                 if (s/Default: //) {
-                    $param{default} = $_;
+                    $param{defaultValue} = $_;
                 }
                 elsif (s/Type: //) {
                     $param{type} = $_;
@@ -203,7 +203,7 @@ sub build_fields {
                 elsif (s/Constraints: //) {
                     $param{constraints} = $_;
                     if (m/.*default: ([0-9]+)/) {
-                        $param{default} = $1;
+                        $param{defaultValue} = $1;
                     }
                 }
                 elsif (s/Valid Values: //) {
@@ -213,7 +213,7 @@ sub build_fields {
                         foreach my $value (@valid_values) {
                             $enum->{$value} = $value;
                         }
-                        $param{enum} = $enum;
+                        $param{valueMap} = $enum;
                     }
                     elsif (/([0-9]+) ?\-([0-9]+)/) {
                         $param{constraints} = "$1-$2";
@@ -267,8 +267,8 @@ sub build_bean {
         my ${requestExampleDiv} =
           $tree->look_down( '_tag', 'h3', 'id', "$id" )
           ->look_up( '_tag', 'div', 'class', 'section' );
-        $bean->{example_html} = ${requestExampleDiv}->as_HTML();
-        $bean->{example_code} =
+        $bean->{exampleHTML} = ${requestExampleDiv}->as_HTML();
+        $bean->{exampleCode} =
           ${requestExampleDiv}
           ->look_down( '_tag', 'pre', 'class', 'programlisting' )->as_text();
         $tree->eof;
