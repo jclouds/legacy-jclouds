@@ -34,8 +34,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.s3.S3Context;
-import org.jclouds.aws.s3.AWSResponseException;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.logging.Logger;
 

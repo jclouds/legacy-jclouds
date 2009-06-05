@@ -114,6 +114,10 @@
                 <enabled>false</enabled>
             </snapshots>
         </pluginRepository>
+        <pluginRepository>
+            <id>jclouds-googlecode</id>
+            <url>http://jclouds.googlecode.com/svn/repo</url>
+        </pluginRepository>
     </pluginRepositories>
 
     <developers>
