@@ -112,7 +112,7 @@
 							<goal>replace</goal>
 						</goals>
 						<configuration>
-							<file>src/main/webapp/WEB-INF/appengine-web.xml</file>
+							<file>target/${project.artifactId}/WEB-INF/appengine-web.xml</file>
 							<token>@APPLICATION@</token>
 							<value>${appengine.applicationid}</value>
 						</configuration>
