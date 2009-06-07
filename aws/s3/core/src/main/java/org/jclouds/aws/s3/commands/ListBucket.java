@@ -37,7 +37,6 @@ import org.jclouds.http.commands.callables.xml.ParseSax;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.google.inject.name.Named;
 
 /**
  * A GET request operation using a bucket URI lists information about the objects in the bucket.
@@ -56,10 +55,9 @@ import com.google.inject.name.Named;
 public class ListBucket extends S3FutureCommand<S3Bucket> {
 
    @Inject
-   public ListBucket(@Named("jclouds.http.address") String amazonHost,
-            ParseSax<S3Bucket> bucketParser, @Assisted String bucket,
+   public ListBucket(ParseSax<S3Bucket> bucketParser, @Assisted String bucket,
             @Assisted ListBucketOptions options) {
-      super("GET", "/" + options.buildQueryString(), bucketParser, amazonHost, bucket);
+      super("GET", "/" + options.buildQueryString(), bucketParser, bucket);
       ListBucketHandler handler = (ListBucketHandler) bucketParser.getHandler();
       handler.setBucketName(bucket);
    }

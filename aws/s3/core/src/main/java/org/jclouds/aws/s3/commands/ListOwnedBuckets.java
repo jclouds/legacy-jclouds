@@ -29,23 +29,21 @@ import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 /**
- * Returns a list of all of the buckets owned by the authenticated sender of the
- * request.
+ * Returns a list of all of the buckets owned by the authenticated sender of the request.
  * 
- * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTServiceGET.html"
+ * @see <a
+ *      href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTServiceGET.html"
  *      />
  * @author Adrian Cole
  * 
  */
 public class ListOwnedBuckets extends S3FutureCommand<List<S3Bucket.Metadata>> {
 
-    @Inject
-    public ListOwnedBuckets(@Named("jclouds.http.address") String amazonHost,
-	    ParseSax<List<S3Bucket.Metadata>> callable) {
-	super("GET", "/", callable, amazonHost);
-    }
+   @Inject
+   public ListOwnedBuckets(ParseSax<List<S3Bucket.Metadata>> callable) {
+      super("GET", "/", callable);
+   }
 
 }

@@ -158,9 +158,10 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
    }
 
    private static void appendBucketName(HttpRequest request, StringBuilder toSign) {
-      String hostHeader = request.getHeaders().get(HttpHeaders.HOST).iterator().next();
-      if (hostHeader.endsWith(".s3.amazonaws.com"))
+      String hostHeader = request.getFirstHeaderOrNull(HttpHeaders.HOST);
+      if (hostHeader != null && hostHeader.endsWith(".s3.amazonaws.com")) {
          toSign.append("/").append(hostHeader.substring(0, hostHeader.length() - 17));
+      }
    }
 
    private static void appendUriPath(HttpRequest request, StringBuilder toSign) {
@@ -173,21 +174,21 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
       } else {
          toSign.append(request.getUri());
       }
-      
+
       // ...however, there are a few exceptions that must be included in the signed URI.
       if (paramsString != null) {
          StringBuilder paramsToSign = new StringBuilder("?");
-         
+
          String[] params = paramsString.split("&");
          for (String param : params) {
             String[] paramNameAndValue = param.split("=");
-            
+
             if ("acl".equals(paramNameAndValue[0])) {
                paramsToSign.append("acl");
             }
             // TODO: Other special cases not yet handled: torrent, logging, location, requestPayment
          }
-         
+
          if (paramsToSign.length() > 1) {
             toSign.append(paramsToSign);
          }

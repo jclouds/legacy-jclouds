@@ -33,7 +33,6 @@ import org.jclouds.aws.s3.xml.S3ParserFactory;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.google.inject.name.Named;
 
 /**
  * Assembles the command objects for S3.
@@ -122,32 +121,29 @@ public class S3CommandFactory {
       return headMetadataFactory.create(bucket, key);
    }
 
-   @Inject
-   @Named("jclouds.http.address")
-   String amazonHost;
 
    public ListOwnedBuckets createGetMetadataForOwnedBuckets() {
-      return new ListOwnedBuckets(amazonHost, parserFactory.createListBucketsParser());
+      return new ListOwnedBuckets(parserFactory.createListBucketsParser());
    }
 
    public ListBucket createListBucket(String bucket, ListBucketOptions options) {
-      return new ListBucket(amazonHost, parserFactory.createListBucketParser(), bucket, options);
+      return new ListBucket(parserFactory.createListBucketParser(), bucket, options);
    }
 
    public CopyObject createCopyObject(String sourceBucket, String sourceObject,
             String destinationBucket, String destinationObject, CopyObjectOptions options) {
-      return new CopyObject(amazonHost, parserFactory.createCopyObjectParser(), sourceBucket,
+      return new CopyObject(parserFactory.createCopyObjectParser(), sourceBucket,
                sourceObject, destinationBucket, destinationObject, options);
    }
 
    public GetAccessControlList createGetBucketACL(String bucket) {
       return new GetAccessControlList(
-            amazonHost, parserFactory.createAccessControlListParser(), bucket);
+            parserFactory.createAccessControlListParser(), bucket);
    }
 
    public GetAccessControlList createGetObjectACL(String bucket, String objectKey) {
       return new GetAccessControlList(
-            amazonHost, parserFactory.createAccessControlListParser(), bucket, objectKey);
+            parserFactory.createAccessControlListParser(), bucket, objectKey);
    }
 
 }

@@ -30,36 +30,35 @@ import org.jclouds.http.commands.callables.ReturnTrueIf2xx;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.google.inject.name.Named;
 
 /**
  * Create and name your own bucket in which to store your objects.
  * <p/>
- * The PUT request operation with a bucket URI creates a new bucket. Depending
- * on your latency and legal requirements, you can specify a location constraint
- * that will affect where your data physically resides. You can currently
- * specify a Europe (EU) location constraint via {@link PutBucketOptions}.
+ * The PUT request operation with a bucket URI creates a new bucket. Depending on your latency and
+ * legal requirements, you can specify a location constraint that will affect where your data
+ * physically resides. You can currently specify a Europe (EU) location constraint via
+ * {@link PutBucketOptions}.
  * 
  * @see PutBucketOptions
- * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTBucketPUT.html"
+ * @see <a
+ *      href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTBucketPUT.html"
  *      />
  * @author Adrian Cole
  * 
  */
 public class PutBucket extends S3FutureCommand<Boolean> {
 
-    @Inject
-    public PutBucket(@Named("jclouds.http.address") String amazonHost,
-	    ReturnTrueIf2xx callable, @Assisted String bucketName,
-	    @Assisted PutBucketOptions options) {
-	super("PUT", "/", callable, amazonHost, S3Utils
-		.validateBucketName(bucketName));
-	getRequest().getHeaders().putAll(options.buildRequestHeaders());
-	String payload = options.buildPayload();
-	if (payload != null) {
-	    getRequest().setPayload(payload);
-	    getRequest().getHeaders().put(HttpHeaders.CONTENT_LENGTH,
-		    payload.getBytes().length + "");
-	}
-    }
+   @Inject
+   public PutBucket(ReturnTrueIf2xx callable, @Assisted String bucketName,
+            @Assisted PutBucketOptions options) {
+      super("PUT", "/", callable, S3Utils.validateBucketName(bucketName));
+      getRequest().getHeaders().putAll(options.buildRequestHeaders());
+      String payload = options.buildPayload();
+      if (payload != null) {
+         getRequest().setPayload(payload);
+         getRequest().getHeaders().put(HttpHeaders.CONTENT_LENGTH, payload.getBytes().length + "");
+      } else {
+         getRequest().getHeaders().put(HttpHeaders.CONTENT_LENGTH, "0");
+      }
+   }
 }

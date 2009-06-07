@@ -37,7 +37,6 @@ import org.jclouds.aws.s3.domain.S3Object;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.google.inject.name.Named;
 
 /**
  * Retrieves the S3Object associated with the Key or {@link S3Object#NOT_FOUND} if not available;
@@ -65,10 +64,10 @@ import com.google.inject.name.Named;
 public class GetObject extends S3FutureCommand<S3Object> {
 
    @Inject
-   public GetObject(@Named("jclouds.http.address") String amazonHost,
-            ParseObjectFromHeadersAndHttpContent callable, @Assisted("bucketName") String s3Bucket,
-            @Assisted("key") String key, @Assisted GetObjectOptions options) {
-      super("GET", "/" + checkNotNull(key), callable, amazonHost, s3Bucket);
+   public GetObject(ParseObjectFromHeadersAndHttpContent callable,
+            @Assisted("bucketName") String s3Bucket, @Assisted("key") String key,
+            @Assisted GetObjectOptions options) {
+      super("GET", "/" + checkNotNull(key), callable, s3Bucket);
       this.getRequest().getHeaders().putAll(options.buildRequestHeaders());
       callable.setKey(key);
    }

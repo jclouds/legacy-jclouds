@@ -35,7 +35,6 @@ import org.jclouds.http.commands.callables.xml.ParseSax;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.google.inject.name.Named;
 
 /**
  * A GET request operation directed at an object or bucket URI with the "acl" parameter retrieves
@@ -49,20 +48,15 @@ import com.google.inject.name.Named;
 public class GetAccessControlList extends S3FutureCommand<AccessControlList> {
 
    @Inject
-   public GetAccessControlList(@Named("jclouds.http.address") String amazonHost,
-            ParseSax<AccessControlList> accessControlListParser, 
-            @Assisted("bucketName") String bucket) 
-   {
-      super("GET", "/?acl", accessControlListParser, amazonHost, bucket);
+   public GetAccessControlList(ParseSax<AccessControlList> accessControlListParser,
+            @Assisted("bucketName") String bucket) {
+      super("GET", "/?acl", accessControlListParser, bucket);
    }
 
    @Inject
-   public GetAccessControlList(@Named("jclouds.http.address") String amazonHost,
-            ParseSax<AccessControlList> accessControlListParser, 
-            @Assisted("bucketName") String bucket,
-            @Assisted("objectKey") String objectKey) 
-   {
-      super("GET", "/" + objectKey + "?acl", accessControlListParser, amazonHost, bucket);
+   public GetAccessControlList(ParseSax<AccessControlList> accessControlListParser,
+            @Assisted("bucketName") String bucket, @Assisted("objectKey") String objectKey) {
+      super("GET", "/" + objectKey + "?acl", accessControlListParser, bucket);
    }
 
    @Override
@@ -79,8 +73,7 @@ public class GetAccessControlList extends S3FutureCommand<AccessControlList> {
       if (e.getCause() != null && e.getCause() instanceof HttpResponseException) {
          AWSResponseException responseException = (AWSResponseException) e.getCause();
          if ("NoSuchBucket".equals(responseException.getError().getCode())
-            || "NoSuchObject".equals(responseException.getError().getCode())) 
-         {
+                  || "NoSuchObject".equals(responseException.getError().getCode())) {
             return AccessControlList.NOT_FOUND;
          }
       }
@@ -88,8 +81,8 @@ public class GetAccessControlList extends S3FutureCommand<AccessControlList> {
    }
 
    @Override
-   public AccessControlList get(long l, TimeUnit timeUnit) throws InterruptedException, ExecutionException,
-            TimeoutException {
+   public AccessControlList get(long l, TimeUnit timeUnit) throws InterruptedException,
+            ExecutionException, TimeoutException {
       try {
          return super.get(l, timeUnit);
       } catch (ExecutionException e) {
