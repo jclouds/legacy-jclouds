@@ -50,6 +50,7 @@ import com.google.appengine.api.urlfetch.HTTPResponse;
 import com.google.appengine.api.urlfetch.URLFetchService;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 /**
  * Google App Engine version of {@link HttpFutureCommandClient}
@@ -58,12 +59,17 @@ import com.google.inject.Inject;
  */
 public class URLFetchServiceClient extends BaseHttpFutureCommandClient {
    private final URLFetchService urlFetchService;
+   private final int port;
+   private final boolean isSecure;
 
    @Inject
-   public URLFetchServiceClient(URL target, URLFetchService urlFetchService)
-            throws MalformedURLException {
+   public URLFetchServiceClient(@Named(HttpConstants.PROPERTY_HTTP_PORT) int port,
+            @Named(HttpConstants.PROPERTY_HTTP_SECURE) boolean isSecure, URL target,
+            URLFetchService urlFetchService) throws MalformedURLException {
       super(target);
       this.urlFetchService = urlFetchService;
+      this.port = port;
+      this.isSecure = isSecure;
    }
 
    public void submit(HttpFutureCommand<?> command) {
@@ -73,13 +79,6 @@ public class URLFetchServiceClient extends BaseHttpFutureCommandClient {
       try {
          for (HttpRequestFilter filter : requestFilters) {
             filter.filter(request);
-         }
-         String hostHeader = request.getFirstHeaderOrNull(HttpConstants.HOST);
-         if (hostHeader != null) {
-            logger
-                     .warn(
-                              "Note that as of GAE SDK version 1.2.1, host headers are stripped.  you passed %1$s",
-                              hostHeader);
          }
          HttpResponse response = null;
          for (;;) {
@@ -157,12 +156,25 @@ public class URLFetchServiceClient extends BaseHttpFutureCommandClient {
 
    @VisibleForTesting
    HTTPRequest convert(HttpRequest request) throws IOException {
-      URL url = new URL(target, request.getUri());
+      String hostHeader = request.getFirstHeaderOrNull(HttpConstants.HOST);
+      URL url;
+      // As host headers are not supported in GAE/J v1.2.1, we'll change the
+      // hostname of the destination to the same value as the host header
+      if (hostHeader != null) {
+         url = new URL(new URL(isSecure ? "https" : "http", hostHeader, port, "/"), request
+                  .getUri());
+      } else {
+         url = new URL(target, request.getUri());
+      }
       HTTPRequest gaeRequest = new HTTPRequest(url, HTTPMethod.valueOf(request.getMethod()),
                disallowTruncate().doNotFollowRedirects());
       for (String header : request.getHeaders().keySet()) {
-         for (String value : request.getHeaders().get(header))
-            gaeRequest.addHeader(new HTTPHeader(header, value));
+         // GAE/J v1.2.1 re-writes the host header, so we'll skip it.
+         if (!header.equals(HttpConstants.HOST)) {
+            for (String value : request.getHeaders().get(header)) {
+               gaeRequest.addHeader(new HTTPHeader(header, value));
+            }
+         }
       }
       if (request.getPayload() != null) {
          changeRequestContentToBytes(request);

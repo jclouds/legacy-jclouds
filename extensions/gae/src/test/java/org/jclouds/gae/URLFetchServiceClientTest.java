@@ -63,7 +63,7 @@ public class URLFetchServiceClientTest {
    @BeforeTest
    void setupClient() throws MalformedURLException {
       url = new URL("http://localhost:80");
-      client = new URLFetchServiceClient(url, createNiceMock(URLFetchService.class));
+      client = new URLFetchServiceClient(80, false, url, createNiceMock(URLFetchService.class));
    }
 
    @Test
