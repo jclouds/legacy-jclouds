@@ -102,22 +102,17 @@
 		<finalName>${project.artifactId}</finalName>
 		<plugins>
 			<plugin>
-				<groupId>bakersoftware</groupId>
-				<artifactId>maven-replacer-plugin</artifactId>
-				<version>0.0.9</version>
-				<executions>
-					<execution>
-						<phase>compile</phase>
-						<goals>
-							<goal>replace</goal>
-						</goals>
-						<configuration>
-							<file>target/${project.artifactId}/WEB-INF/appengine-web.xml</file>
-							<token>@APPLICATION@</token>
-							<value>${appengine.applicationid}</value>
-						</configuration>
-					</execution>
-				</executions>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<webResources>
+						<resource>
+							<directory>src/main/appengine</directory>
+							<targetPath>WEB-INF/</targetPath>
+							<filtering>true</filtering>
+						</resource>
+					</webResources>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
