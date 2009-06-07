@@ -55,7 +55,8 @@ public abstract class BasePerformance extends S3IntegrationTest {
       return false;
    }
 
-   protected static int LOOP_COUNT = 100;
+   protected int timeoutSeconds = 10;
+   protected int loopCount = 100;
 
    protected ExecutorService exec;
 
@@ -75,46 +76,46 @@ public abstract class BasePerformance extends S3IntegrationTest {
 
    @Test(enabled = true)
    public void testPutBytesSerial() throws Exception {
-      doSerial(new PutBytesCallable(this.bucketName), LOOP_COUNT / 10);
+      doSerial(new PutBytesCallable(this.bucketName), loopCount / 10);
    }
 
    @Test(enabled = true)
    public void testPutBytesParallel() throws InterruptedException, ExecutionException,
             TimeoutException {
-      doParallel(new PutBytesCallable(this.bucketName), LOOP_COUNT);
+      doParallel(new PutBytesCallable(this.bucketName), loopCount);
    }
 
    @Test(enabled = true)
    public void testPutFileSerial() throws Exception {
-      doSerial(new PutFileCallable(this.bucketName), LOOP_COUNT / 10);
+      doSerial(new PutFileCallable(this.bucketName), loopCount / 10);
    }
 
    @Test(enabled = true)
    public void testPutFileParallel() throws InterruptedException, ExecutionException,
             TimeoutException {
-      doParallel(new PutFileCallable(this.bucketName), LOOP_COUNT);
+      doParallel(new PutFileCallable(this.bucketName), loopCount);
    }
 
    @Test(enabled = true)
    public void testPutInputStreamSerial() throws Exception {
-      doSerial(new PutInputStreamCallable(this.bucketName), LOOP_COUNT / 10);
+      doSerial(new PutInputStreamCallable(this.bucketName), loopCount / 10);
    }
 
    @Test(enabled = true)
    public void testPutInputStreamParallel() throws InterruptedException, ExecutionException,
             TimeoutException {
-      doParallel(new PutInputStreamCallable(this.bucketName), LOOP_COUNT);
+      doParallel(new PutInputStreamCallable(this.bucketName), loopCount);
    }
 
    @Test(enabled = true)
    public void testPutStringSerial() throws Exception {
-      doSerial(new PutStringCallable(this.bucketName), LOOP_COUNT / 10);
+      doSerial(new PutStringCallable(this.bucketName), loopCount / 10);
    }
 
    @Test(enabled = true)
    public void testPutStringParallel() throws InterruptedException, ExecutionException,
             TimeoutException {
-      doParallel(new PutStringCallable(this.bucketName), LOOP_COUNT);
+      doParallel(new PutStringCallable(this.bucketName), loopCount);
    }
 
    private void doSerial(Provider<Callable<Boolean>> provider, int loopCount) throws Exception,
@@ -128,7 +129,7 @@ public abstract class BasePerformance extends S3IntegrationTest {
       for (int i = 0; i < loopCount; i++)
          completer.submit(provider.get());
       for (int i = 0; i < loopCount; i++)
-         assert completer.take().get(10, TimeUnit.SECONDS);
+         assert completer.take().get(timeoutSeconds, TimeUnit.SECONDS);
    }
 
    class PutBytesCallable implements Provider<Callable<Boolean>> {

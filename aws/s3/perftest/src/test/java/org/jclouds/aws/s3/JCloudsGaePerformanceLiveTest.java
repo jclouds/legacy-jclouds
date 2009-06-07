@@ -117,6 +117,8 @@ public class JCloudsGaePerformanceLiveTest extends BaseJCloudsPerformance {
 
    @Override
    protected Module createHttpModule() {
+      // otherwise, we'll get timeout errors
+      loopCount = 10;
       return new URLFetchServiceClientModule();
    }
 }
