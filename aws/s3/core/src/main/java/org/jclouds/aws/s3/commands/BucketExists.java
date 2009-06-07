@@ -35,6 +35,7 @@ import org.jclouds.http.commands.callables.ReturnTrueIf2xx;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import com.google.inject.name.Named;
 
 /**
  * Issues a HEAD command to determine if the bucket exists or not.
@@ -44,38 +45,42 @@ import com.google.inject.assistedinject.Assisted;
  */
 public class BucketExists extends S3FutureCommand<Boolean> {
 
-   @Inject
-   public BucketExists(ReturnTrueIf2xx callable, @Assisted String s3Bucket) {
-      super("HEAD", "/" + maxResults(0).buildQueryString(), callable, s3Bucket);
-   }
+    @Inject
+    public BucketExists(@Named("jclouds.http.address") String amazonHost,
+	    ReturnTrueIf2xx callable, @Assisted String s3Bucket) {
+	super("HEAD", "/" + maxResults(0).buildQueryString(), callable,
+		amazonHost, s3Bucket);
+    }
 
-   @Override
-   public Boolean get() throws InterruptedException, ExecutionException {
-      try {
-         return super.get();
-      } catch (ExecutionException e) {
-         return attemptNotFound(e);
-      }
-   }
+    @Override
+    public Boolean get() throws InterruptedException, ExecutionException {
+	try {
+	    return super.get();
+	} catch (ExecutionException e) {
+	    return attemptNotFound(e);
+	}
+    }
 
-   @VisibleForTesting
-   Boolean attemptNotFound(ExecutionException e) throws ExecutionException {
-      if (e.getCause() != null && e.getCause() instanceof HttpResponseException) {
-         HttpResponseException responseException = (HttpResponseException) e.getCause();
-         if (responseException.getResponse().getStatusCode() == 404) {
-            return false;
-         }
-      }
-      throw e;
-   }
+    @VisibleForTesting
+    Boolean attemptNotFound(ExecutionException e) throws ExecutionException {
+	if (e.getCause() != null
+		&& e.getCause() instanceof HttpResponseException) {
+	    HttpResponseException responseException = (HttpResponseException) e
+		    .getCause();
+	    if (responseException.getResponse().getStatusCode() == 404) {
+		return false;
+	    }
+	}
+	throw e;
+    }
 
-   @Override
-   public Boolean get(long l, TimeUnit timeUnit) throws InterruptedException, ExecutionException,
-            TimeoutException {
-      try {
-         return super.get(l, timeUnit);
-      } catch (ExecutionException e) {
-         return attemptNotFound(e);
-      }
-   }
+    @Override
+    public Boolean get(long l, TimeUnit timeUnit) throws InterruptedException,
+	    ExecutionException, TimeoutException {
+	try {
+	    return super.get(l, timeUnit);
+	} catch (ExecutionException e) {
+	    return attemptNotFound(e);
+	}
+    }
 }

@@ -31,11 +31,13 @@ import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.s3.commands.options.ListBucketOptions;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.xml.ListBucketHandler;
+import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import com.google.inject.name.Named;
 
 /**
  * A GET request operation using a bucket URI lists information about the objects in the bucket.
@@ -54,9 +56,10 @@ import com.google.inject.assistedinject.Assisted;
 public class ListBucket extends S3FutureCommand<S3Bucket> {
 
    @Inject
-   public ListBucket(ParseSax<S3Bucket> bucketParser, @Assisted String bucket,
+   public ListBucket(@Named("jclouds.http.address") String amazonHost,
+            ParseSax<S3Bucket> bucketParser, @Assisted String bucket,
             @Assisted ListBucketOptions options) {
-      super("GET", "/" + options.buildQueryString(), bucketParser, bucket);
+      super("GET", "/" + options.buildQueryString(), bucketParser, amazonHost, bucket);
       ListBucketHandler handler = (ListBucketHandler) bucketParser.getHandler();
       handler.setBucketName(bucket);
    }
@@ -72,7 +75,7 @@ public class ListBucket extends S3FutureCommand<S3Bucket> {
 
    @VisibleForTesting
    S3Bucket attemptNotFound(ExecutionException e) throws ExecutionException {
-      if (e.getCause() != null && e.getCause() instanceof AWSResponseException) {
+      if (e.getCause() != null && e.getCause() instanceof HttpResponseException) {
          AWSResponseException responseException = (AWSResponseException) e.getCause();
          if ("NoSuchBucket".equals(responseException.getError().getCode())) {
             return S3Bucket.NOT_FOUND;

@@ -34,6 +34,7 @@ import org.jclouds.http.HttpHeaders;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import com.google.inject.name.Named;
 
 /**
  * Store data by creating or overwriting an object.
@@ -42,53 +43,56 @@ import com.google.inject.assistedinject.Assisted;
  * This returns a byte[] of the md5 hash of what Amazon S3 received
  * <p />
  * <p/>
- * This command allows you to specify {@link PutObjectOptions} to control delivery of content.
+ * This command allows you to specify {@link PutObjectOptions} to control
+ * delivery of content.
  * 
  * 
  * @see PutObjectOptions
- * @see <a
- *      href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTObjectPUT.html"
+ * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTObjectPUT.html"
  *      />
  * @author Adrian Cole
  */
 public class PutObject extends S3FutureCommand<byte[]> {
 
-   @Inject
-   public PutObject(ParseMd5FromETagHeader callable, @Assisted String s3Bucket,
-            @Assisted S3Object object, @Assisted PutObjectOptions options) {
-      super("PUT", "/" + checkNotNull(object.getKey()), callable, s3Bucket);
-      checkArgument(object.getMetadata().getSize() >= 0, "size must be set");
+    @Inject
+    public PutObject(@Named("jclouds.http.address") String amazonHost,
+	    ParseMd5FromETagHeader callable, @Assisted String s3Bucket,
+	    @Assisted S3Object object, @Assisted PutObjectOptions options) {
+	super("PUT", "/" + checkNotNull(object.getKey()), callable, amazonHost,
+		s3Bucket);
+	checkArgument(object.getMetadata().getSize() >= 0, "size must be set");
 
-      getRequest().setPayload(checkNotNull(object.getData(), "object.getContent()"));
+	getRequest().setPayload(
+		checkNotNull(object.getData(), "object.getContent()"));
 
-      getRequest().getHeaders()
-               .put(
-                        HttpHeaders.CONTENT_TYPE,
-                        checkNotNull(object.getMetadata().getContentType(),
-                                 "object.metadata.contentType()"));
+	getRequest().getHeaders().put(
+		HttpHeaders.CONTENT_TYPE,
+		checkNotNull(object.getMetadata().getContentType(),
+			"object.metadata.contentType()"));
 
-      getRequest().getHeaders()
-               .put(HttpHeaders.CONTENT_LENGTH, object.getMetadata().getSize() + "");
+	getRequest().getHeaders().put(HttpHeaders.CONTENT_LENGTH,
+		object.getMetadata().getSize() + "");
 
-      if (object.getMetadata().getCacheControl() != null) {
-         getRequest().getHeaders().put(HttpHeaders.CACHE_CONTROL,
-                  object.getMetadata().getCacheControl());
-      }
-      if (object.getMetadata().getContentDisposition() != null) {
-         getRequest().getHeaders().put(HttpHeaders.CONTENT_DISPOSITION,
-                  object.getMetadata().getContentDisposition());
-      }
-      if (object.getMetadata().getContentEncoding() != null) {
-         getRequest().getHeaders().put(HttpHeaders.CONTENT_ENCODING,
-                  object.getMetadata().getContentEncoding());
-      }
+	if (object.getMetadata().getCacheControl() != null) {
+	    getRequest().getHeaders().put(HttpHeaders.CACHE_CONTROL,
+		    object.getMetadata().getCacheControl());
+	}
+	if (object.getMetadata().getContentDisposition() != null) {
+	    getRequest().getHeaders().put(HttpHeaders.CONTENT_DISPOSITION,
+		    object.getMetadata().getContentDisposition());
+	}
+	if (object.getMetadata().getContentEncoding() != null) {
+	    getRequest().getHeaders().put(HttpHeaders.CONTENT_ENCODING,
+		    object.getMetadata().getContentEncoding());
+	}
 
-      if (object.getMetadata().getMd5() != null)
-         getRequest().getHeaders().put(HttpHeaders.CONTENT_MD5,
-                  S3Utils.toBase64String(object.getMetadata().getMd5()));
+	if (object.getMetadata().getMd5() != null)
+	    getRequest().getHeaders().put(HttpHeaders.CONTENT_MD5,
+		    S3Utils.toBase64String(object.getMetadata().getMd5()));
 
-      getRequest().getHeaders().putAll(object.getMetadata().getUserMetadata());
-      getRequest().getHeaders().putAll(options.buildRequestHeaders());
+	getRequest().getHeaders()
+		.putAll(object.getMetadata().getUserMetadata());
+	getRequest().getHeaders().putAll(options.buildRequestHeaders());
 
-   }
+    }
 }

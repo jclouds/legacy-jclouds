@@ -37,13 +37,19 @@ import org.jclouds.http.HttpFutureCommand;
 public class S3FutureCommand<T> extends HttpFutureCommand<T> {
 
    public S3FutureCommand(String method, String uri, ResponseCallable<T> responseCallable,
-            String bucketName) {
-      super(method, String.format("/%1$s%2$s", checkNotNull(bucketName, "bucketName"),
-               checkNotNull(uri, "uri")), responseCallable);
+            String amazonHost, String bucketName) {
+      super(method, uri, responseCallable);
+      addHostHeader(checkNotNull(amazonHost, "amazonHost"), checkNotNull(bucketName, "bucketName"));
    }
 
-   public S3FutureCommand(String method, String uri, ResponseCallable<T> responseCallable) {
+   public S3FutureCommand(String method, String uri, ResponseCallable<T> responseCallable,
+            String amazonHost) {
       super(method, uri, responseCallable);
+      addHostHeader(checkNotNull(amazonHost, "amazonHost"));
+   }
+
+   protected void addHostHeader(String amazonHost, String bucketName) {
+      addHostHeader(checkNotNull(bucketName) + "." + amazonHost);
    }
 
 }

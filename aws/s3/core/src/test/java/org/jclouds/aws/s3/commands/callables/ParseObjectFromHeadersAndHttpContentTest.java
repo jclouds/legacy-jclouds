@@ -41,13 +41,12 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "unit", testName = "s3.ParseObjectFromHeadersAndHttpContentTest")
 public class ParseObjectFromHeadersAndHttpContentTest {
-   ParseObjectFromHeadersAndHttpContent callable;
-   ParseMetadataFromHeaders metadataParser;
 
    @Test(expectedExceptions = IllegalStateException.class)
    public void testCall() throws HttpException {
-      metadataParser = createMock(ParseMetadataFromHeaders.class);
-      callable = new ParseObjectFromHeadersAndHttpContent(metadataParser);
+      ParseMetadataFromHeaders metadataParser = createMock(ParseMetadataFromHeaders.class);
+      ParseObjectFromHeadersAndHttpContent callable = new ParseObjectFromHeadersAndHttpContent(
+               metadataParser);
       HttpResponse response = createMock(HttpResponse.class);
       expect(response.getStatusCode()).andReturn(409).atLeastOnce();
       expect(response.getContent()).andReturn(null);
@@ -58,8 +57,9 @@ public class ParseObjectFromHeadersAndHttpContentTest {
 
    @Test
    public void testParseContentLengthWhenContentRangeSet() throws HttpException {
-      metadataParser = createMock(ParseMetadataFromHeaders.class);
-      callable = new ParseObjectFromHeadersAndHttpContent(metadataParser);
+      ParseMetadataFromHeaders metadataParser = createMock(ParseMetadataFromHeaders.class);
+      ParseObjectFromHeadersAndHttpContent callable = new ParseObjectFromHeadersAndHttpContent(
+               metadataParser);
       HttpResponse response = createMock(HttpResponse.class);
       metadataParser.setResponse(response);
       Metadata meta = createMock(Metadata.class);
