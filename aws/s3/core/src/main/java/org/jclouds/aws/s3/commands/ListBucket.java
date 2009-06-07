@@ -31,7 +31,6 @@ import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.s3.commands.options.ListBucketOptions;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.xml.ListBucketHandler;
-import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -73,7 +72,7 @@ public class ListBucket extends S3FutureCommand<S3Bucket> {
 
    @VisibleForTesting
    S3Bucket attemptNotFound(ExecutionException e) throws ExecutionException {
-      if (e.getCause() != null && e.getCause() instanceof HttpResponseException) {
+      if (e.getCause() != null && e.getCause() instanceof AWSResponseException) {
          AWSResponseException responseException = (AWSResponseException) e.getCause();
          if ("NoSuchBucket".equals(responseException.getError().getCode())) {
             return S3Bucket.NOT_FOUND;
