@@ -57,129 +57,123 @@ import com.google.appengine.api.urlfetch.URLFetchService;
  */
 @Test
 public class URLFetchServiceClientTest {
-    URLFetchServiceClient client;
-    URL url;
+   URLFetchServiceClient client;
+   URL url;
 
-    @BeforeTest
-    void setupClient() throws MalformedURLException {
-	url = new URL("http://localhost:80");
-	client = new URLFetchServiceClient(url,
-		createNiceMock(URLFetchService.class));
-    }
+   @BeforeTest
+   void setupClient() throws MalformedURLException {
+      url = new URL("http://localhost:80");
+      client = new URLFetchServiceClient(url, createNiceMock(URLFetchService.class));
+   }
 
-    @Test
-    void testConvertWithHeaders() {
-	HTTPResponse gaeResponse = createMock(HTTPResponse.class);
-	expect(gaeResponse.getResponseCode()).andReturn(200);
-	List<HTTPHeader> headers = new ArrayList<HTTPHeader>();
-	headers.add(new HTTPHeader(HttpHeaders.CONTENT_TYPE, "text/xml"));
-	expect(gaeResponse.getHeaders()).andReturn(headers);
-	expect(gaeResponse.getContent()).andReturn(null).atLeastOnce();
-	replay(gaeResponse);
-	HttpResponse response = client.convert(gaeResponse);
-	assertEquals(response.getStatusCode(), 200);
-	assertEquals(response.getContent(), null);
-	assertEquals(response.getHeaders().size(), 1);
-	assertEquals(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE),
-		"text/xml");
-    }
+   @Test
+   void testConvertWithHeaders() {
+      HTTPResponse gaeResponse = createMock(HTTPResponse.class);
+      expect(gaeResponse.getResponseCode()).andReturn(200);
+      List<HTTPHeader> headers = new ArrayList<HTTPHeader>();
+      headers.add(new HTTPHeader(HttpHeaders.CONTENT_TYPE, "text/xml"));
+      expect(gaeResponse.getHeaders()).andReturn(headers);
+      expect(gaeResponse.getContent()).andReturn(null).atLeastOnce();
+      replay(gaeResponse);
+      HttpResponse response = client.convert(gaeResponse);
+      assertEquals(response.getStatusCode(), 200);
+      assertEquals(response.getContent(), null);
+      assertEquals(response.getHeaders().size(), 1);
+      assertEquals(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE), "text/xml");
+   }
 
-    @Test
-    void testConvertWithContent() throws IOException {
-	HTTPResponse gaeResponse = createMock(HTTPResponse.class);
-	expect(gaeResponse.getResponseCode()).andReturn(200);
-	List<HTTPHeader> headers = new ArrayList<HTTPHeader>();
-	headers.add(new HTTPHeader(HttpHeaders.CONTENT_TYPE, "text/xml"));
-	expect(gaeResponse.getHeaders()).andReturn(headers);
-	expect(gaeResponse.getContent()).andReturn("hello".getBytes())
-		.atLeastOnce();
-	replay(gaeResponse);
-	HttpResponse response = client.convert(gaeResponse);
-	assertEquals(response.getStatusCode(), 200);
-	assertEquals(IOUtils.toString(response.getContent()), "hello");
-	assertEquals(response.getHeaders().size(), 1);
-	assertEquals(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE),
-		"text/xml");
-    }
+   @Test
+   void testConvertWithContent() throws IOException {
+      HTTPResponse gaeResponse = createMock(HTTPResponse.class);
+      expect(gaeResponse.getResponseCode()).andReturn(200);
+      List<HTTPHeader> headers = new ArrayList<HTTPHeader>();
+      headers.add(new HTTPHeader(HttpHeaders.CONTENT_TYPE, "text/xml"));
+      expect(gaeResponse.getHeaders()).andReturn(headers);
+      expect(gaeResponse.getContent()).andReturn("hello".getBytes()).atLeastOnce();
+      replay(gaeResponse);
+      HttpResponse response = client.convert(gaeResponse);
+      assertEquals(response.getStatusCode(), 200);
+      assertEquals(IOUtils.toString(response.getContent()), "hello");
+      assertEquals(response.getHeaders().size(), 1);
+      assertEquals(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE), "text/xml");
+   }
 
-    @Test
-    void testConvertRequestGetsTargetAndUri() throws IOException {
-	HttpRequest request = new HttpRequest("GET", "foo");
-	HTTPRequest gaeRequest = client.convert(request);
-	assertEquals(gaeRequest.getURL().getPath(), "/foo");
-    }
+   @Test
+   void testConvertRequestGetsTargetAndUri() throws IOException {
+      HttpRequest request = new HttpRequest("GET", "foo");
+      HTTPRequest gaeRequest = client.convert(request);
+      assertEquals(gaeRequest.getURL().getPath(), "/foo");
+   }
 
-    @Test
-    void testConvertRequestSetsFetchOptions() throws IOException {
-	HttpRequest request = new HttpRequest("GET", "foo");
-	HTTPRequest gaeRequest = client.convert(request);
-	assert gaeRequest.getFetchOptions() != null;
-    }
+   @Test
+   void testConvertRequestSetsFetchOptions() throws IOException {
+      HttpRequest request = new HttpRequest("GET", "foo");
+      HTTPRequest gaeRequest = client.convert(request);
+      assert gaeRequest.getFetchOptions() != null;
+   }
 
-    @Test
-    void testConvertRequestSetsHeaders() throws IOException {
-	HttpRequest request = new HttpRequest("GET", "foo");
-	request.getHeaders().put("foo", "bar");
-	HTTPRequest gaeRequest = client.convert(request);
-	assertEquals(gaeRequest.getHeaders().get(0).getName(), "foo");
-	assertEquals(gaeRequest.getHeaders().get(0).getValue(), "bar");
-    }
+   @Test
+   void testConvertRequestSetsHeaders() throws IOException {
+      HttpRequest request = new HttpRequest("GET", "foo");
+      request.getHeaders().put("foo", "bar");
+      HTTPRequest gaeRequest = client.convert(request);
+      assertEquals(gaeRequest.getHeaders().get(0).getName(), "foo");
+      assertEquals(gaeRequest.getHeaders().get(0).getValue(), "bar");
+   }
 
-    @Test
-    void testConvertRequestNoContent() throws IOException {
-	HttpRequest request = new HttpRequest("GET", "foo");
-	HTTPRequest gaeRequest = client.convert(request);
-	assert gaeRequest.getPayload() == null;
-	assertEquals(gaeRequest.getHeaders().size(), 0);
-    }
+   @Test
+   void testConvertRequestNoContent() throws IOException {
+      HttpRequest request = new HttpRequest("GET", "foo");
+      HTTPRequest gaeRequest = client.convert(request);
+      assert gaeRequest.getPayload() == null;
+      assertEquals(gaeRequest.getHeaders().size(), 0);
+   }
 
-    @Test
-    void testConvertRequestStringContent() throws IOException {
-	HttpRequest request = new HttpRequest("GET", "foo");
-	request.setPayload("hoot!");
-	testHoot(request);
-    }
+   @Test
+   void testConvertRequestStringContent() throws IOException {
+      HttpRequest request = new HttpRequest("GET", "foo");
+      request.setPayload("hoot!");
+      testHoot(request);
+   }
 
-    @Test
-    void testConvertRequestInputStreamContent() throws IOException {
-	HttpRequest request = new HttpRequest("GET", "foo");
-	request.setPayload(IOUtils.toInputStream("hoot!"));
-	testHoot(request);
-    }
+   @Test
+   void testConvertRequestInputStreamContent() throws IOException {
+      HttpRequest request = new HttpRequest("GET", "foo");
+      request.setPayload(IOUtils.toInputStream("hoot!"));
+      testHoot(request);
+   }
 
-    @Test
-    void testConvertRequestBytesContent() throws IOException {
-	HttpRequest request = new HttpRequest("GET", "foo");
-	request.setPayload("hoot!".getBytes());
-	testHoot(request);
-    }
+   @Test
+   void testConvertRequestBytesContent() throws IOException {
+      HttpRequest request = new HttpRequest("GET", "foo");
+      request.setPayload("hoot!".getBytes());
+      testHoot(request);
+   }
 
-    @Test(expectedExceptions = UnsupportedOperationException.class)
-    void testConvertRequestBadContent() throws IOException {
-	HttpRequest request = new HttpRequest("GET", "foo");
-	request.setPayload(new Date());
-	client.convert(request);
+   @Test(expectedExceptions = UnsupportedOperationException.class)
+   void testConvertRequestBadContent() throws IOException {
+      HttpRequest request = new HttpRequest("GET", "foo");
+      request.setPayload(new Date());
+      client.convert(request);
 
-    }
+   }
 
-    @Test
-    @Parameters("basedir")
-    void testConvertRequestFileContent(String basedir) throws IOException {
-	File file = new File(basedir, "target/testfiles/hoot");
-	file.getParentFile().mkdirs();
-	IOUtils.write("hoot!", new FileOutputStream(file));
-	HttpRequest request = new HttpRequest("GET", "foo");
-	request.setPayload(file);
-	testHoot(request);
-    }
+   @Test
+   @Parameters("basedir")
+   void testConvertRequestFileContent(String basedir) throws IOException {
+      File file = new File(basedir, "target/testfiles/hoot");
+      file.getParentFile().mkdirs();
+      IOUtils.write("hoot!", new FileOutputStream(file));
+      HttpRequest request = new HttpRequest("GET", "foo");
+      request.setPayload(file);
+      testHoot(request);
+   }
 
-    private void testHoot(HttpRequest request) throws IOException {
-	request.getHeaders().put(HttpHeaders.CONTENT_TYPE,"text/plain");
-	HTTPRequest gaeRequest = client.convert(request);
-	assertEquals(gaeRequest.getHeaders().get(0).getName(),
-		HttpHeaders.CONTENT_TYPE);
-	assertEquals(gaeRequest.getHeaders().get(0).getValue(), "text/plain");
-	assertEquals(new String(gaeRequest.getPayload()), "hoot!");
-    }
-
+   private void testHoot(HttpRequest request) throws IOException {
+      request.getHeaders().put(HttpHeaders.CONTENT_TYPE, "text/plain");
+      HTTPRequest gaeRequest = client.convert(request);
+      assertEquals(gaeRequest.getHeaders().get(0).getName(), HttpHeaders.CONTENT_TYPE);
+      assertEquals(gaeRequest.getHeaders().get(0).getValue(), "text/plain");
+      assertEquals(new String(gaeRequest.getPayload()), "hoot!");
+   }
 }
