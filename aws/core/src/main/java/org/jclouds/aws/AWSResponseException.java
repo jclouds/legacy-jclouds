@@ -44,14 +44,16 @@ public class AWSResponseException extends HttpResponseException {
    private AWSError error = new AWSError();
 
    public AWSResponseException(HttpFutureCommand<?> command, HttpResponse response, AWSError error) {
-      super(error.toString(), command, response);
+      super(String.format("command %1$s failed with error: %2$s", command.toString(), error
+               .toString()), command, response);
       this.setError(error);
 
    }
 
    public AWSResponseException(HttpFutureCommand<?> command, HttpResponse response, AWSError error,
             Throwable cause) {
-      super(error.toString(), command, response, cause);
+      super(String.format("command %1$s failed with error: %2$s", command.toString(), error
+               .toString()), command, response, cause);
       this.setError(error);
 
    }
