@@ -37,56 +37,53 @@ import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 
 /**
- * The DELETE request operation deletes the bucket named in the URI. All objects
- * in the bucket must be deleted before the bucket itself can be deleted.
+ * The DELETE request operation deletes the bucket named in the URI. All objects in the bucket must
+ * be deleted before the bucket itself can be deleted.
  * <p />
- * Only the owner of a bucket can delete it, regardless of the bucket's access
- * control policy.
+ * Only the owner of a bucket can delete it, regardless of the bucket's access control policy.
  * 
- * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTBucketDELETE.html"
+ * @see <a
+ *      href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTBucketDELETE.html"
  *      />
  * @author Adrian Cole
  */
 public class DeleteBucket extends S3FutureCommand<Boolean> {
 
-    @Inject
-    public DeleteBucket(@Named("jclouds.http.address") String amazonHost,
-	    ReturnTrueIf2xx callable, @Assisted String s3Bucket) {
-	super("DELETE", "/", callable, amazonHost, s3Bucket);
-    }
+   @Inject
+   public DeleteBucket(@Named("jclouds.http.address") String amazonHost, ReturnTrueIf2xx callable,
+            @Assisted String s3Bucket) {
+      super("DELETE", "/", callable, amazonHost, s3Bucket);
+   }
 
-    @Override
-    public Boolean get() throws InterruptedException, ExecutionException {
-	try {
-	    return super.get();
-	} catch (ExecutionException e) {
-	    return attemptNotFound(e);
-	}
-    }
+   @Override
+   public Boolean get() throws InterruptedException, ExecutionException {
+      try {
+         return super.get();
+      } catch (ExecutionException e) {
+         return attemptNotFound(e);
+      }
+   }
 
-    @VisibleForTesting
-    Boolean attemptNotFound(ExecutionException e) throws ExecutionException {
-	if (e.getCause() != null
-		&& e.getCause() instanceof HttpResponseException) {
-	    AWSResponseException responseException = (AWSResponseException) e
-		    .getCause();
-	    if (responseException.getResponse().getStatusCode() == 404) {
-		return true;
-	    } else if ("BucketNotEmpty".equals(responseException.getError()
-		    .getCode())) {
-		return false;
-	    }
-	}
-	throw e;
-    }
+   @VisibleForTesting
+   Boolean attemptNotFound(ExecutionException e) throws ExecutionException {
+      if (e.getCause() != null && e.getCause() instanceof AWSResponseException) {
+         AWSResponseException responseException = (AWSResponseException) e.getCause();
+         if (responseException.getResponse().getStatusCode() == 404) {
+            return true;
+         } else if ("BucketNotEmpty".equals(responseException.getError().getCode())) {
+            return false;
+         }
+      }
+      throw e;
+   }
 
-    @Override
-    public Boolean get(long l, TimeUnit timeUnit) throws InterruptedException,
-	    ExecutionException, TimeoutException {
-	try {
-	    return super.get(l, timeUnit);
-	} catch (ExecutionException e) {
-	    return attemptNotFound(e);
-	}
-    }
+   @Override
+   public Boolean get(long l, TimeUnit timeUnit) throws InterruptedException, ExecutionException,
+            TimeoutException {
+      try {
+         return super.get(l, timeUnit);
+      } catch (ExecutionException e) {
+         return attemptNotFound(e);
+      }
+   }
 }

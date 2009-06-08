@@ -50,18 +50,15 @@ public class GetAccessControlList extends S3FutureCommand<AccessControlList> {
 
    @Inject
    public GetAccessControlList(@Named("jclouds.http.address") String amazonHost,
-            ParseSax<AccessControlList> accessControlListParser, 
-            @Assisted("bucketName") String bucket) 
-   {
+            ParseSax<AccessControlList> accessControlListParser,
+            @Assisted("bucketName") String bucket) {
       super("GET", "/?acl", accessControlListParser, amazonHost, bucket);
    }
 
    @Inject
    public GetAccessControlList(@Named("jclouds.http.address") String amazonHost,
-            ParseSax<AccessControlList> accessControlListParser, 
-            @Assisted("bucketName") String bucket,
-            @Assisted("objectKey") String objectKey) 
-   {
+            ParseSax<AccessControlList> accessControlListParser,
+            @Assisted("bucketName") String bucket, @Assisted("objectKey") String objectKey) {
       super("GET", "/" + objectKey + "?acl", accessControlListParser, amazonHost, bucket);
    }
 
@@ -76,11 +73,10 @@ public class GetAccessControlList extends S3FutureCommand<AccessControlList> {
 
    @VisibleForTesting
    AccessControlList attemptNotFound(ExecutionException e) throws ExecutionException {
-      if (e.getCause() != null && e.getCause() instanceof HttpResponseException) {
+      if (e.getCause() != null && e.getCause() instanceof AWSResponseException) {
          AWSResponseException responseException = (AWSResponseException) e.getCause();
          if ("NoSuchBucket".equals(responseException.getError().getCode())
-            || "NoSuchObject".equals(responseException.getError().getCode())) 
-         {
+                  || "NoSuchObject".equals(responseException.getError().getCode())) {
             return AccessControlList.NOT_FOUND;
          }
       }
@@ -88,8 +84,8 @@ public class GetAccessControlList extends S3FutureCommand<AccessControlList> {
    }
 
    @Override
-   public AccessControlList get(long l, TimeUnit timeUnit) throws InterruptedException, ExecutionException,
-            TimeoutException {
+   public AccessControlList get(long l, TimeUnit timeUnit) throws InterruptedException,
+            ExecutionException, TimeoutException {
       try {
          return super.get(l, timeUnit);
       } catch (ExecutionException e) {
