@@ -34,6 +34,7 @@
 <display:table name="buckets">
 	<display:column property="name" title="Bucket" />
 	<display:column property="size" title="Size" />
+    <display:column property="status" title="Status" />	
 </display:table>
 </body>
 </html>

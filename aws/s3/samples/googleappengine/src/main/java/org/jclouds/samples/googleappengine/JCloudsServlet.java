@@ -68,17 +68,59 @@ public class JCloudsServlet extends HttpServlet {
    @Resource
    protected Logger logger = Logger.NULL;
 
+   public static class BucketResult {
+      private String name;
+      private String size = "unknown";
+      private String status = "ok";
+
+      public void setName(String name) {
+         this.name = name;
+      }
+
+      public String getName() {
+         return name;
+      }
+
+      public void setSize(String size) {
+         this.size = size;
+      }
+
+      public String getSize() {
+         return size;
+      }
+
+      public void setStatus(String status) {
+         this.status = status;
+      }
+
+      public String getStatus() {
+         return status;
+      }
+   }
+
    @Override
    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
       try {
          List<S3Bucket.Metadata> myBucketMetadata = context.getConnection().listOwnedBuckets().get(
                   25, TimeUnit.SECONDS);
-         List<S3Bucket> myBuckets = new ArrayList<S3Bucket>();
+         List<BucketResult> myBuckets = new ArrayList<BucketResult>();
          for (S3Bucket.Metadata metadata : myBucketMetadata) {
-            S3Bucket bucket = context.getConnection().listBucket(metadata.getName()).get(10,
-                     TimeUnit.SECONDS);
-            myBuckets.add(bucket);
+            BucketResult result = new BucketResult();
+            result.setName(metadata.getName());
+            try {
+               S3Bucket bucket = context.getConnection().listBucket(metadata.getName()).get(10,
+                        TimeUnit.SECONDS);
+               if (bucket == S3Bucket.NOT_FOUND) {
+                  result.setStatus("not found");
+               } else {
+                  result.setSize(bucket.getSize() + "");
+               }
+            } catch (Exception e) {
+               logger.error(e, "Error listing bucket %1$s", result.getName());
+               result.setStatus(e.getMessage());
+            }
+            myBuckets.add(result);
          }
          request.setAttribute("buckets", myBuckets);
          request.setAttribute("className", className);
@@ -86,6 +128,7 @@ public class JCloudsServlet extends HttpServlet {
          RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextJSP);
          dispatcher.forward(request, response);
       } catch (Exception e) {
+         logger.error(e, "Error listing buckets");
          throw new ServletException(e);
       }
    }
