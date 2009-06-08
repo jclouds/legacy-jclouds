@@ -23,32 +23,29 @@
  */
 package org.jclouds.aws.s3.xml;
 
+import org.jclouds.aws.s3.xml.config.S3ParserModule;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
+
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import org.jclouds.aws.s3.xml.config.S3ParserModule;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
 
 public class BaseHandlerTest {
 
-    protected S3ParserFactory parserFactory = null;
-    private Injector injector;
+   protected S3ParserFactory parserFactory = null;
+   private Injector injector;
 
-    public BaseHandlerTest() {
-        super();
-    }
+   @BeforeTest
+   protected void setUpInjector() {
+      injector = Guice.createInjector(new S3ParserModule());
+      parserFactory = injector.getInstance(S3ParserFactory.class);
+      assert parserFactory != null;
+   }
 
-    @BeforeMethod
-    protected void setUpInjector() {
-        injector = Guice.createInjector(new S3ParserModule());
-        parserFactory = injector.getInstance(S3ParserFactory.class);
-        assert parserFactory != null;
-    }
-
-    @AfterMethod
-    protected void tearDownInjector() {
-        parserFactory = null;
-        injector = null;
-    }
+   @AfterTest
+   protected void tearDownInjector() {
+      parserFactory = null;
+      injector = null;
+   }
 
 }

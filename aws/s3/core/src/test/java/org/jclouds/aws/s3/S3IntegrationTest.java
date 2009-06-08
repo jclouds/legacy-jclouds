@@ -163,16 +163,13 @@ public class S3IntegrationTest {
    }
 
    protected void createStubS3Context() {
-      context = S3ContextFactory.createContext("stub", "stub")
-                  .withHttpAddress("stub")
-                  .withModule(new StubS3ConnectionModule())
-                  .build();
+      context = S3ContextFactory.createContext("stub", "stub").withHttpAddress("stub").withModule(
+               new StubS3ConnectionModule()).build();
    }
 
    protected void createLiveS3Context(String AWSAccessKeyId, String AWSSecretAccessKey) {
-      context = buildS3ContextFactory(AWSAccessKeyId, AWSSecretAccessKey)
-                .withModule(createHttpModule())
-               .build();
+      context = buildS3ContextFactory(AWSAccessKeyId, AWSSecretAccessKey).withModule(
+               createHttpModule()).build();
    }
 
    @BeforeMethod(dependsOnMethods = "deleteBucket", groups = { "integration", "live" })
@@ -194,9 +191,8 @@ public class S3IntegrationTest {
    }
 
    protected S3ContextFactory buildS3ContextFactory(String AWSAccessKeyId, String AWSSecretAccessKey) {
-      return S3ContextFactory.createContext(AWSAccessKeyId, AWSSecretAccessKey)
-               .withHttpSecure(false)
-               .withHttpPort(80);
+      return S3ContextFactory.createContext(AWSAccessKeyId, AWSSecretAccessKey).withHttpSecure(
+               false).withHttpPort(80);
    }
 
    protected Module createHttpModule() {
@@ -216,7 +212,7 @@ public class S3IntegrationTest {
          throw e;
       }
    }
-   
+
    /**
     * Remove any objects in a bucket, leaving it empty.
     * 
@@ -226,8 +222,7 @@ public class S3IntegrationTest {
     * @throws TimeoutException
     */
    protected void emptyBucket(String name) throws InterruptedException, ExecutionException,
-         TimeoutException 
-   {
+            TimeoutException {
       if (client.bucketExists(name).get(10, TimeUnit.SECONDS)) {
          List<Future<Boolean>> results = new ArrayList<Future<Boolean>>();
 
@@ -251,9 +246,8 @@ public class S3IntegrationTest {
     * @throws ExecutionException
     * @throws TimeoutException
     */
-   private void deleteBucket(String name) throws InterruptedException, ExecutionException,
-            TimeoutException 
-   {
+   protected void deleteBucket(String name) throws InterruptedException, ExecutionException,
+            TimeoutException {
       if (client.bucketExists(name).get(10, TimeUnit.SECONDS)) {
          emptyBucket(name);
          client.deleteBucketIfEmpty(name).get(10, TimeUnit.SECONDS);

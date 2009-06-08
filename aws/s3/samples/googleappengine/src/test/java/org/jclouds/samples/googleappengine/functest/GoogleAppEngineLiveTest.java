@@ -81,7 +81,7 @@ public class GoogleAppEngineLiveTest {
     public void shouldPass() throws InterruptedException, IOException {
         InputStream i = url.openStream();
         String string = IOUtils.toString(i);
-        assert string.indexOf("Hello World!") >= 0 : string;
+        assert string.indexOf("Welcome") >= 0 : string;
     }
 
     @Test(invocationCount = 5, enabled = true)

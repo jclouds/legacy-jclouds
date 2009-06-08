@@ -23,14 +23,17 @@
     ====================================================================
 
 --%>
+<%@ page buffer="20kb"%>
+<%@ taglib uri="http://displaytag.sf.net" prefix="display"%>
 <html>
 <head>
 <title>jclouds: anyweight cloudware for java</title>
 </head>
 <body>
-<h2>Welcome!</h2>
-Click
-<a href="/guice/listbuckets.s3">here</a>
-to list my buckets.
+<h2>Bucket List</h2>
+<display:table name="buckets">
+	<display:column property="name" title="Bucket" />
+	<display:column property="size" title="Size" />
+</display:table>
 </body>
 </html>

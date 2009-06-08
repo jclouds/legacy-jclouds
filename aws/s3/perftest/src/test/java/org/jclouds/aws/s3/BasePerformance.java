@@ -23,6 +23,8 @@
  */
 package org.jclouds.aws.s3;
 
+import static org.jclouds.aws.s3.commands.options.PutBucketOptions.Builder.createIn;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
@@ -36,7 +38,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.jclouds.aws.s3.S3IntegrationTest;
+import org.jclouds.aws.s3.domain.S3Bucket.Metadata.LocationConstraint;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -61,17 +63,37 @@ public abstract class BasePerformance extends S3IntegrationTest {
    protected ExecutorService exec;
 
    protected CompletionService<Boolean> completer;
+   protected String bucketNameEU;
 
    @BeforeTest
-   protected void setUpCallables() {
+   protected void setUpCallables() throws InterruptedException, ExecutionException,
+            TimeoutException {
       exec = Executors.newCachedThreadPool();
       completer = new ExecutorCompletionService<Boolean>(exec);
+      bucketNameEU = (bucketPrefix).toLowerCase() + ".eu";
    }
 
    @AfterTest
    protected void tearDownExecutor() throws Exception {
+      if (bucketNameEU != null)
+         deleteBucket(bucketNameEU);
       exec.shutdownNow();
       exec = null;
+   }
+
+   @Test(enabled = true)
+   public void testPutBytesSerialEU() throws Exception {
+      client.putBucketIfNotExists(bucketNameEU, createIn(LocationConstraint.EU)).get(10,
+               TimeUnit.SECONDS);
+      doSerial(new PutBytesCallable(this.bucketNameEU), loopCount / 10);
+   }
+
+   @Test(enabled = true)
+   public void testPutBytesParallelEU() throws InterruptedException, ExecutionException,
+            TimeoutException {
+      client.putBucketIfNotExists(bucketNameEU, createIn(LocationConstraint.EU)).get(10,
+               TimeUnit.SECONDS);
+      doParallel(new PutBytesCallable(this.bucketNameEU), loopCount);
    }
 
    @Test(enabled = true)
@@ -139,7 +161,7 @@ public abstract class BasePerformance extends S3IntegrationTest {
 
       public PutBytesCallable(String bucketName) {
          this.bucketName = bucketName;
-      }     
+      }
 
       public Callable<Boolean> get() {
          return new Callable<Boolean>() {
