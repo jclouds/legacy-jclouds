@@ -23,20 +23,21 @@
  */
 package org.jclouds.aws.s3;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Module;
+import static org.testng.Assert.assertEquals;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jclouds.aws.s3.config.LiveS3ConnectionModule;
 import org.jclouds.http.config.HttpFutureCommandClientModule;
 import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
 import org.jclouds.logging.config.LoggingModule;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import static org.testng.Assert.assertEquals;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import com.google.inject.AbstractModule;
+import com.google.inject.Module;
 
 /**
  * Tests behavior of modules configured in S3ContextFactory
@@ -147,8 +148,6 @@ public class S3ContextFactoryTest {
       factory.withPoolMaxConnectionReuse(poolMaxConnectionReuse);
       factory.withPoolMaxConnections(poolMaxConnections);
       factory.withPoolMaxSessionFailures(poolMaxSessionFailures);
-      factory.withPoolRequestInvokerThreads(poolRequestInvokerThreads);
-      Properties properties = factory.getProperties();
-      
+      factory.withPoolRequestInvokerThreads(poolRequestInvokerThreads);      
    }
 }
