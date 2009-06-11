@@ -24,21 +24,34 @@
 package org.jclouds.codegen.model;
 
 import java.util.List;
+import java.util.Map;
 
 /**
- * 
+ * @author Adrian Cole
  * @author James Murty
  */
-public class Handler extends BaseBean {
-	private String example;
-	private List<String> see;
-		
-	public String getExample() {
-		return example;
-	}
-		
-	public List<String> getSee() {
-		return see;
-	}
+public class API {
+   private List<Package> packages;
+   private Map<String, DomainType> domain;
 
+   @Override
+   public String toString() {
+      return getPackages().toString();
+   }
+
+   public void setPackages(List<Package> packages) {
+      this.packages = packages;
+   }
+
+   public List<Package> getPackages() {
+      return packages;
+   }
+
+   public void setDomain(Map<String, DomainType> domain) {
+      this.domain = domain;
+   }
+
+   public Map<String, DomainType> getDomain() {
+      return domain;
+   }
 }

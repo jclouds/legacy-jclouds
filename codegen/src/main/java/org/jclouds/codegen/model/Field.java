@@ -23,31 +23,78 @@
  */
 package org.jclouds.codegen.model;
 
+import java.util.Map;
+
 /**
  * 
- * @author James Murty
+ * @author Adrian Cole
  */
-public class ResponseField {
-   private String javaName;
+public class Field {
+
+   private String constraints;
+   private String defaultValue;
    private String desc;
    private String name;
+   private String javaName;
+   private boolean optional = true;
    private String type;
    private String javaType;
+   private Map<String, String> valueMap;
+
+   public void setConstraints(String constraints) {
+      this.constraints = constraints;
+   }
+
+   public String getConstraints() {
+      return constraints;
+   }
+
+   public void setDefaultValue(String defaultValue) {
+      this.defaultValue = defaultValue;
+   }
+
+   public String getDefaultValue() {
+      return defaultValue;
+   }
+
+   public void setDesc(String desc) {
+      this.desc = desc;
+   }
 
    public String getDesc() {
       return desc;
+   }
+
+   public void setValueMap(Map<String, String> valueMap) {
+      this.valueMap = valueMap;
+   }
+
+   public Map<String, String> getValueMap() {
+      return valueMap;
+   }
+
+   public void setName(String name) {
+      this.name = name;
    }
 
    public String getName() {
       return name;
    }
 
-   public String getType() {
-      return type;
+   public void setOptional(boolean optional) {
+      this.optional = optional;
    }
 
-   public String getJavaType() {
-      return javaType;
+   public boolean getOptional() {
+      return optional;
+   }
+
+   public void setType(String type) {
+      this.type = type;
+   }
+
+   public String getType() {
+      return type;
    }
 
    public void setJavaName(String javaName) {
@@ -56,6 +103,14 @@ public class ResponseField {
 
    public String getJavaName() {
       return javaName;
+   }
+
+   public void setJavaType(String javaType) {
+      this.javaType = javaType;
+   }
+
+   public String getJavaType() {
+      return javaType;
    }
 
 }

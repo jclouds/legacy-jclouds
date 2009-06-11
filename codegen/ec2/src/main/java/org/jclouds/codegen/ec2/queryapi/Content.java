@@ -21,46 +21,78 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.codegen.model;
+package org.jclouds.codegen.ec2.queryapi;
+
+import java.util.Map;
 
 /**
  * 
- * @author James Murty
+ * @author Adrian Cole
  */
-public class Parameter {
-   private String javaName;
-   private String name;
-   private String type;
-   private String javaType;
-   private String param;
+public class Content {
+
+   private String constraints;
+   private String defaultValue;
    private String desc;
+   private Map<String, String> valueMap;
+   private String name;
+   private String optional;
+   private String type;
 
-   public String getName() {
-      return name;
+   public void setConstraints(String constraints) {
+      this.constraints = constraints;
    }
 
-   public String getType() {
-      return type;
+   public String getConstraints() {
+      return constraints;
    }
 
-   public String getJavaType() {
-      return javaType;
+   public void setDefaultValue(String defaultValue) {
+      this.defaultValue = defaultValue;
    }
 
-   public String getParam() {
-      return param;
+   public String getDefaultValue() {
+      return defaultValue;
+   }
+
+   public void setDesc(String desc) {
+      this.desc = desc;
    }
 
    public String getDesc() {
       return desc;
    }
 
-   public void setJavaName(String javaName) {
-      this.javaName = javaName;
+   public void setValueMap(Map<String, String> valueMap) {
+      this.valueMap = valueMap;
    }
 
-   public String getJavaName() {
-      return javaName;
+   public Map<String, String> getValueMap() {
+      return valueMap;
+   }
+
+   public void setName(String name) {
+      this.name = name;
+   }
+
+   public String getName() {
+      return name;
+   }
+
+   public void setOptional(String optional) {
+      this.optional = optional;
+   }
+
+   public String getOptional() {
+      return optional;
+   }
+
+   public void setType(String type) {
+      this.type = type;
+   }
+
+   public String getType() {
+      return type;
    }
 
 }

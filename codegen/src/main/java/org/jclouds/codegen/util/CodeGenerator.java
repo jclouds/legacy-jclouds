@@ -32,11 +32,11 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jclouds.codegen.model.BaseBean;
+import org.jclouds.codegen.model.API;
 import org.jclouds.codegen.model.Command;
-import org.jclouds.codegen.model.Model;
+import org.jclouds.codegen.model.DomainType;
 import org.jclouds.codegen.model.Package;
-import org.jclouds.codegen.model.Value;
+import org.jclouds.codegen.model.Type;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
@@ -89,10 +89,10 @@ public class CodeGenerator {
     * @throws JsonParseException
     * @throws FileNotFoundException
     */
-   public Model parseModelFromJSON(File objectModelFile) throws JsonParseException,
+   public API parseModelFromJSON(File objectModelFile) throws JsonParseException,
             FileNotFoundException {
       Gson gson = new Gson();
-      return gson.fromJson(new FileReader(objectModelFile), Model.class);
+      return gson.fromJson(new FileReader(objectModelFile), API.class);
    }
 
    /**
@@ -106,7 +106,7 @@ public class CodeGenerator {
     */
    public void generateCode(File objectModelFile) throws JsonParseException, IOException,
             TemplateException {
-      Model model = parseModelFromJSON(objectModelFile);
+      API model = parseModelFromJSON(objectModelFile);
 
       for (Package pkg : model.getPackages()) {
          for (Command command : pkg.getCommands()) {
@@ -116,17 +116,17 @@ public class CodeGenerator {
                generateClassFile(command.getHandler(), BEAN_TEMPLATE_FILENAME);
             }
             if (command.getOptions() != null
-                     && command.getOptions().getClassName().indexOf(
+                     && command.getOptions().getJavaName().indexOf(
                               "BaseEC2RequestOptions<EC2RequestOptions>") == -1) {
                generateClassFile(command.getOptions(), OPTIONS_TEMPLATE_FILENAME);
             }
             if (command.getResponse() != null
-                     && !command.getResponse().getJavaType().equals("Boolean")) {
+                     && !command.getResponse().getJavaName().equals("Boolean")) {
                generateClassFile(command.getResponse(), RESPONSE_TEMPLATE_FILENAME);
             }
          }
       }
-      for (Value value : model.getDomain().values()) {
+      for (DomainType value : model.getDomain().values()) {
          generateClassFile(value, VALUE_TEMPLATE_FILENAME);
       }
 
@@ -141,10 +141,10 @@ public class CodeGenerator {
     * @throws IOException
     * @throws TemplateException
     */
-   public void generateClassFile(BaseBean bean, String templateFileName) throws IOException,
+   public void generateClassFile(Type bean, String templateFileName) throws IOException,
             TemplateException {
-      String shortClassName = bean.getClassName().substring(
-               bean.getClassName().lastIndexOf('.') + 1);
+      String shortClassName = bean.getJavaName().substring(
+               bean.getJavaName().lastIndexOf('.') + 1);
 
       Map<String, Object> objectMap = new HashMap<String, Object>();
       objectMap.put("bean", bean);

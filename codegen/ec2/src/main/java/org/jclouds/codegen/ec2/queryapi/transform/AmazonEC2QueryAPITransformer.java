@@ -21,41 +21,28 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.codegen.model;
+package org.jclouds.codegen.ec2.queryapi.transform;
+
+import org.jclouds.codegen.ec2.queryapi.AmazonEC2QueryAPI;
+import org.jclouds.codegen.model.API;
 
 /**
+ * Converts object models representing AWS API beans into Java classes.
+ * <p>
+ * This implementation is designed to perform the following steps:
+ * <ul>
+ * <li>Parse the JSON object representation produced by the <tt>parse_ec2.pl</tt> perl script</li>
+ * <li>Convert the JSON into Java object models (@see org.jclouds.aws.codegen.models)</li>
  * 
- * @author James Murty
+ * @author Adrian Cole
  */
-public abstract class BaseBean {
-	private String className;
-	private String packageName;
-	private String awsType;
-      private String javaType;
-      private String javaName;
+public class AmazonEC2QueryAPITransformer {
 
-      public String getJavaType() {
-            return javaType;
-      }
+   public API transform(AmazonEC2QueryAPI amazonAPI) {
+      API api = new API();
       
-	public String getClassName() {
-		return className;
-	}
-	
-	public String getPackageName() {
-		return packageName;
-	}
-
-	public String getAwsType() {
-		return awsType;
-	}
-
-   public void setJavaName(String javaName) {
-      this.javaName = javaName;
+      return api;
    }
-
-   public String getJavaName() {
-      return javaName;
-   }
-
+   
+ 
 }

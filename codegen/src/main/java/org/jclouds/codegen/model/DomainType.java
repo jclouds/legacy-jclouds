@@ -23,26 +23,17 @@
  */
 package org.jclouds.codegen.model;
 
-import java.util.List;
 
-/**
- * 
- * @author James Murty
- */
-public class Options extends BaseBean {
-	private List<Parameter> parameters;
-	private String example;
-	private List<String> see;
-	
-	public List<Parameter> getParameters() {
-		return parameters;
-	}
-	
-	public String getExample() {
-		return example;
-	}
-	public List<String> getSee() {
-		return see;
-	}
-	
+public class DomainType extends Type {
+
+   private String ancestor;
+
+   public void setAncestor(String ancestor) {
+      this.ancestor = ancestor;
+   }
+
+   public String getAncestor() {
+      return ancestor;
+   }
+
 }

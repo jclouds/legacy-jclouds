@@ -21,32 +21,42 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.codegen.model;
+package org.jclouds.codegen.ec2.queryapi;
+
+import java.util.Map;
 
 /**
  * 
- * @author James Murty
+ * @author Adrian Cole
  */
-public class ValueField {
-	private String desc;
-	private String name;
-	private String type;
-	private String javaType;
-	
-	public String getDesc() {
-		return desc;
-	}
-	
-	public String getName() {
-		return name;
-	}
-	
-	public String getType() {
-		return type;
-	}
-	
-	public String getJavaType() {
-		return javaType;
-	}
-		
+public class Category {
+   private Map<String, Query> queries;
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("Category");
+        sb.append("{queries=").append(queries);
+        sb.append(", name='").append(name).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
+
+    private String name;
+
+   public void setQueries(Map<String, Query> categories) {
+      this.queries = categories;
+   }
+
+   public Map<String, Query> getQueries() {
+      return queries;
+   }
+
+   public void setName(String name) {
+      this.name = name;
+   }
+
+   public String getName() {
+      return name;
+   }
 }

@@ -21,29 +21,42 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.codegen.model;
+package org.jclouds.codegen.ec2.queryapi;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 
- * @author James Murty
+ * @author Adrian Cole
  */
-public class Model {
-   private List<Package> packages;
-   private Map<String, Value> domain;
+public class AmazonEC2QueryAPI {
+   private Map<String, Category> categories;
+   private Map<String, DataType> dataTypes;
+   private Set<String> see;
 
-   @Override
-   public String toString() {
-      return packages.toString();
+   public void setCategories(Map<String, Category> categories) {
+      this.categories = categories;
    }
 
-   public List<Package> getPackages() {
-      return packages;
+   public Map<String, Category> getCategories() {
+      return categories;
    }
 
-   public Map<String, Value> getDomain() {
-      return domain;
+   public void setDataTypes(Map<String, DataType> dataTypes) {
+      this.dataTypes = dataTypes;
    }
+
+   public Map<String, DataType> getDataTypes() {
+      return dataTypes;
+   }
+
+   public void setSee(Set<String> see) {
+      this.see = see;
+   }
+
+   public Set<String> getSee() {
+      return see;
+   }
+
 }

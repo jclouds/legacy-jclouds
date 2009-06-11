@@ -23,37 +23,45 @@
  */
 package org.jclouds.codegen.model;
 
-import java.util.List;
-
 /**
- * 
+ * @author Adrian Cole
  * @author James Murty
  */
-public class Command extends BaseBean {
-	private List<Parameter> parameters;
-	private Options options;
-	private Handler handler;
-	private Response response;
-	private List<String> see;
-	
-	public List<Parameter> getParameters() {
-		return parameters;
-	}
-	
-	public Options getOptions() {
-		return options;
-	}
+public class Command extends TopLevelType {
+   private TopLevelType options;
+   private TopLevelType handler;
+   private DomainType response;
+   private String description;
 
-	public Handler getHandler() {
-		return handler;
-	}
-	
-	public Response getResponse() {
-		return response;
-	}
-	
-	public List<String> getSee() {
-		return see;
-	}
-		
+   public void setDescription(String description) {
+      this.description = description;
+   }
+
+   public String getDescription() {
+      return description;
+   }
+
+   public void setOptions(TopLevelType options) {
+      this.options = options;
+   }
+
+   public TopLevelType getOptions() {
+      return options;
+   }
+
+   public void setHandler(TopLevelType handler) {
+      this.handler = handler;
+   }
+
+   public TopLevelType getHandler() {
+      return handler;
+   }
+
+   public void setResponse(DomainType response) {
+      this.response = response;
+   }
+
+   public DomainType getResponse() {
+      return response;
+   }
 }

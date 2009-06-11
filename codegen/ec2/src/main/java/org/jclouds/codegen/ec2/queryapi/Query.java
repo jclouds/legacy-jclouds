@@ -21,25 +21,31 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.codegen.model;
+package org.jclouds.codegen.ec2.queryapi;
 
-import java.util.List;
 
 /**
  * 
- * @author James Murty
+ * @author Adrian Cole
  */
-public class Response extends BaseBean {
-	private List<ResponseField> fields;
-	private List<String> see;
-	
-	public List<ResponseField> getFields() {
-		return fields;
-	}
+public class Query extends DataType {
 
-	
-	public List<String> getSee() {
-		return see;
-	}		
-	
+   private String responseType;
+   private String description;
+   
+   public void setResponseType(String responseType) {
+      this.responseType = responseType;
+   }
+
+   public String getResponseType() {
+      return responseType;
+   }
+
+   public void setDescription(String description) {
+      this.description = description;
+   }
+
+   public String getDescription() {
+      return description;
+   }
 }

@@ -23,27 +23,35 @@
  */
 package org.jclouds.codegen.model;
 
-import java.util.List;
 
-/**
- * 
- * @author James Murty
- */
-public class Value extends BaseBean {
-	private List<ResponseField> fields;
-	private String javaType;
-	private List<String> see;
-	
-	public List<ResponseField> getFields() {
-		return fields;
-	}
-	
-	public String getJavaType() {
-		return javaType;
-	}
-	
-	public List<String> getSee() {
-		return see;
-	}		
-	
+public class TopLevelType extends Type {
+
+   private String ancestor;
+   private String exampleCode;
+   private String exampleHTML;
+
+   public void setAncestor(String ancestor) {
+      this.ancestor = ancestor;
+   }
+
+   public String getAncestor() {
+      return ancestor;
+   }
+
+   public void setExampleCode(String exampleCode) {
+      this.exampleCode = exampleCode;
+   }
+
+   public String getExampleCode() {
+      return exampleCode;
+   }
+
+   public void setExampleHTML(String exampleHTML) {
+      this.exampleHTML = exampleHTML;
+   }
+
+   public String getExampleHTML() {
+      return exampleHTML;
+   }
+
 }
