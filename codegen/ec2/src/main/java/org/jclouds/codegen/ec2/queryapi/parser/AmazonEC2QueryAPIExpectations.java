@@ -225,11 +225,11 @@ public class AmazonEC2QueryAPIExpectations {
                      ImmutableSet.of("Group.n", "UserId.n", "ImageId", "ProductCode.n", "Group.n",
                               "UserId.n")).put(
                      "DescribeImageAttribute",
-                     ImmutableSet.of("ProductCodes", "ImageId", "Platform", "BlockDeviceMapping",
-                              "LaunchPermission", "Ramdisk", "Kernel")).put("DescribeImages",
+                     ImmutableSet.of("Attribute=productCodes", "ImageId", "Attribute=platform", "Attribute=blockDeviceMapping",
+                              "Attribute=launchPermission", "Attribute=ramdisk", "Attribute=kernel")).put("DescribeImages",
                      ImmutableSet.of("explicit", "public", "implicit")).put(
                      "DescribeAvailabilityZones", ImmutableSet.of("ZoneName")).put(
-                     "DescribeRegions", ImmutableSet.of("Region.n")).put("DeleteVolume",
+                     "DescribeRegions", ImmutableSet.of("RegionName.n")).put("DeleteVolume",
                      ImmutableSet.of("VolumeId")).put("DescribeSnapshots",
                      ImmutableSet.of("SnapshotId.n")).put("DescribeVolumes",
                      ImmutableSet.of("VolumeId")).put("DetachVolume",
