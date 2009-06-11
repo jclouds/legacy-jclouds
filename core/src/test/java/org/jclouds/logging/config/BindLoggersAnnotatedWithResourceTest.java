@@ -23,24 +23,26 @@
  */
 package org.jclouds.logging.config;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import static com.google.inject.matcher.Matchers.any;
 import static org.easymock.classextension.EasyMock.createMock;
+import static org.testng.Assert.assertEquals;
+
+import java.lang.reflect.Field;
+import java.util.Set;
+
+import javax.annotation.Resource;
+
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.config.BindLoggersAnnotatedWithResource.AssignLoggerToField;
 import org.jclouds.logging.config.BindLoggersAnnotatedWithResource.LoggerFieldsAnnotatedWithResource;
 import org.jclouds.logging.jdk.JDKLogger;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import javax.annotation.Resource;
-import java.lang.reflect.Field;
-import java.util.Set;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 @Test
 public class BindLoggersAnnotatedWithResourceTest {
