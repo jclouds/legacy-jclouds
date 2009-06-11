@@ -179,6 +179,8 @@ public class URLFetchServiceClient extends BaseHttpFutureCommandClient {
       if (request.getPayload() != null) {
          changeRequestContentToBytes(request);
          gaeRequest.setPayload((byte[]) request.getPayload());
+      } else {
+         gaeRequest.addHeader(new HTTPHeader(HttpConstants.CONTENT_LENGTH, "0"));
       }
       return gaeRequest;
    }

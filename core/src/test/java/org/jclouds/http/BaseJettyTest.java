@@ -55,101 +55,108 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 
 public abstract class BaseJettyTest {
-	protected static final String XML = "<foo><bar>whoppers</bar></foo>";
-	protected Server server = null;
-	protected CommandFactory factory;
-	protected HttpFutureCommandClient client;
-	protected Injector injector;
-	private Closer closer;
-	private AtomicInteger cycle = new AtomicInteger(0);
+   protected static final String XML = "<foo><bar>whoppers</bar></foo>";
+   protected Server server = null;
+   protected CommandFactory factory;
+   protected HttpFutureCommandClient client;
+   protected Injector injector;
+   private Closer closer;
+   private AtomicInteger cycle = new AtomicInteger(0);
 
-	@BeforeTest
-	@Parameters( { "test-jetty-port" })
-	public void setUpJetty(@Optional("8123") final int testPort)
-			throws Exception {
-		Handler handler = new AbstractHandler() {
+   @BeforeTest
+   @Parameters( { "test-jetty-port" })
+   public void setUpJetty(@Optional("8123") final int testPort) throws Exception {
+      Handler handler = new AbstractHandler() {
 
-			public void handle(String target, HttpServletRequest request,
-					HttpServletResponse response, int dispatch)
-					throws IOException, ServletException {
-				if (request.getHeader("test") != null) {
-					response.setContentType("text/plain");
-					response.setStatus(HttpServletResponse.SC_OK);
-					response.getWriter().println("test");
-				} else {
-					if (failOnRequest(request, response))
-						return;
-					response.setContentType("text/xml");
-					response.setStatus(HttpServletResponse.SC_OK);
-					response.getWriter().println(XML);
-				}
-				((Request) request).setHandled(true);
-			}
-		};
+         public void handle(String target, HttpServletRequest request,
+                  HttpServletResponse response, int dispatch) throws IOException, ServletException {
+            failIfNoContentLength(request, response);
+            if (request.getHeader("test") != null) {
+               response.setContentType("text/plain");
+               response.setStatus(HttpServletResponse.SC_OK);
+               response.getWriter().println("test");
+            } else {
+               if (failOnRequest(request, response))
+                  return;
+               response.setContentType("text/xml");
+               response.setStatus(HttpServletResponse.SC_OK);
+               response.getWriter().println(XML);
+            }
+            ((Request) request).setHandled(true);
+         }
+      };
 
-		server = new Server(testPort);
-		server.setHandler(handler);
-		server.start();
-		final Properties properties = new Properties();
-		properties.put(HttpConstants.PROPERTY_HTTP_ADDRESS, "localhost");
-		properties.put(HttpConstants.PROPERTY_HTTP_PORT, testPort + "");
-		properties.put(HttpConstants.PROPERTY_HTTP_SECURE, "false");
-		addConnectionProperties(properties);
-		final List<HttpRequestFilter> filters = new ArrayList<HttpRequestFilter>(
-				1);
-		filters.add(new HttpRequestFilter() {
-			public void filter(HttpRequest request) throws HttpException {
-				if (request.getHeaders().containsKey("filterme")) {
-					request.getHeaders().put("test", "test");
-				}
-			}
-		});
-		injector = Guice.createInjector(new AbstractModule() {
-			@Override
-			protected void configure() {
-				Names.bindProperties(binder(), properties);
-			}
-		}, new JDKLoggingModule(), new HttpCommandsModule(),
-				createClientModule(), new AbstractModule() {
-					@Override
-					protected void configure() {
-						bind(new TypeLiteral<List<HttpRequestFilter>>() {
-						}).toInstance(filters);
-					}
-				});
-		factory = injector.getInstance(Key.get(CommandFactory.class));
-		client = injector.getInstance(HttpFutureCommandClient.class);
-		closer = injector.getInstance(Closer.class);
-		assert client != null;
-	}
-	
-	@AfterTest
-	public void tearDownJetty() throws Exception {
-		closer.close();
-		server.stop();
-	}
-	
+      server = new Server(testPort);
+      server.setHandler(handler);
+      server.start();
+      final Properties properties = new Properties();
+      properties.put(HttpConstants.PROPERTY_HTTP_ADDRESS, "localhost");
+      properties.put(HttpConstants.PROPERTY_HTTP_PORT, testPort + "");
+      properties.put(HttpConstants.PROPERTY_HTTP_SECURE, "false");
+      addConnectionProperties(properties);
+      final List<HttpRequestFilter> filters = new ArrayList<HttpRequestFilter>(1);
+      filters.add(new HttpRequestFilter() {
+         public void filter(HttpRequest request) throws HttpException {
+            if (request.getHeaders().containsKey("filterme")) {
+               request.getHeaders().put("test", "test");
+            }
+         }
+      });
+      injector = Guice.createInjector(new AbstractModule() {
+         @Override
+         protected void configure() {
+            Names.bindProperties(binder(), properties);
+         }
+      }, new JDKLoggingModule(), new HttpCommandsModule(), createClientModule(),
+               new AbstractModule() {
+                  @Override
+                  protected void configure() {
+                     bind(new TypeLiteral<List<HttpRequestFilter>>() {
+                     }).toInstance(filters);
+                  }
+               });
+      factory = injector.getInstance(Key.get(CommandFactory.class));
+      client = injector.getInstance(HttpFutureCommandClient.class);
+      closer = injector.getInstance(Closer.class);
+      assert client != null;
+   }
 
-	protected abstract void addConnectionProperties(Properties props);
+   @AfterTest
+   public void tearDownJetty() throws Exception {
+      closer.close();
+      server.stop();
+   }
 
-	protected abstract Module createClientModule();
-	
-	/**
-	 * Fails every 10 requests.
-	 *  
-	 * @param request
-	 * @param response
-	 * @return
-	 * @throws IOException
-	 */
-	protected boolean failOnRequest(HttpServletRequest request,
-			HttpServletResponse response) throws IOException {
-		if (cycle.incrementAndGet() % 10 == 0) {
-			response.sendError(500);
-			((Request) request).setHandled(true);
-			return true;
-		}
-		return false;
-	}
-	
+   protected abstract void addConnectionProperties(Properties props);
+
+   protected abstract Module createClientModule();
+
+   /**
+    * Fails every 10 requests.
+    * 
+    * @param request
+    * @param response
+    * @return
+    * @throws IOException
+    */
+   protected boolean failOnRequest(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+      if (cycle.incrementAndGet() % 10 == 0) {
+         response.sendError(500);
+         ((Request) request).setHandled(true);
+         return true;
+      }
+      return false;
+   }
+
+   protected boolean failIfNoContentLength(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+      if (request.getHeader(HttpConstants.CONTENT_LENGTH) == null) {
+         response.sendError(500);
+         ((Request) request).setHandled(true);
+         return true;
+      }
+      return false;
+   }
+
 }

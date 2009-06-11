@@ -34,6 +34,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.commons.io.IOUtils;
+import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpFutureCommandClient;
 import org.jclouds.http.HttpRequest;
@@ -49,101 +50,95 @@ import com.google.inject.Inject;
  */
 public class JavaUrlHttpFutureCommandClient extends BaseHttpFutureCommandClient {
 
-    @Inject
-    public JavaUrlHttpFutureCommandClient(URL target)
-	    throws MalformedURLException {
-	super(target);
-    }
+   @Inject
+   public JavaUrlHttpFutureCommandClient(URL target) throws MalformedURLException {
+      super(target);
+   }
 
-    public void submit(HttpFutureCommand<?> command) {
-	HttpRequest request = command.getRequest();
-	HttpURLConnection connection = null;
-	try {
-	    HttpResponse response = null;
-	    for (;;) {
-		for (HttpRequestFilter filter : requestFilters) {
-		    filter.filter(request);
-		}
-		logger.trace("%1$s - converting request %2$s", target, request);
-		connection = openJavaConnection(request);
-		logger
-			.trace("%1$s - submitting request %2$s", target,
-				connection);
-		response = getResponse(connection);
-		logger.trace("%1$s - received response %2$s", target, response);
-		if (response.getStatusCode() >= 500 && httpRetryHandler.retryRequest(command, response))
-		    continue;
-		break;
-	    }
-	    handleResponse(command, response);
-	} catch (Exception e) {
-	    command.setException(e);
-	} finally {
-	    // DO NOT disconnect, as it will also close the unconsumed
-	    // outputStream from above.
-	    if (request.getMethod().equals("HEAD"))
-		connection.disconnect();
-	}
-    }
+   public void submit(HttpFutureCommand<?> command) {
+      HttpRequest request = command.getRequest();
+      HttpURLConnection connection = null;
+      try {
+         HttpResponse response = null;
+         for (;;) {
+            for (HttpRequestFilter filter : requestFilters) {
+               filter.filter(request);
+            }
+            logger.trace("%1$s - converting request %2$s", target, request);
+            connection = openJavaConnection(request);
+            logger.trace("%1$s - submitting request %2$s", target, connection);
+            response = getResponse(connection);
+            logger.trace("%1$s - received response %2$s", target, response);
+            if (response.getStatusCode() >= 500 && httpRetryHandler.retryRequest(command, response))
+               continue;
+            break;
+         }
+         handleResponse(command, response);
+      } catch (Exception e) {
+         command.setException(e);
+      } finally {
+         // DO NOT disconnect, as it will also close the unconsumed
+         // outputStream from above.
+         if (request.getMethod().equals("HEAD"))
+            connection.disconnect();
+      }
+   }
 
-    protected HttpResponse getResponse(HttpURLConnection connection)
-	    throws IOException {
-	HttpResponse response = new HttpResponse();
-	InputStream in;
-	try {
-	    in = connection.getInputStream();
-	} catch (IOException e) {
-	    in = connection.getErrorStream();
-	}
-	if (in != null) {
-	    response.setContent(in);
-	}
-	response.setStatusCode(connection.getResponseCode());
-	for (String header : connection.getHeaderFields().keySet()) {
-	    response.getHeaders().putAll(header,
-		    connection.getHeaderFields().get(header));
-	}
+   protected HttpResponse getResponse(HttpURLConnection connection) throws IOException {
+      HttpResponse response = new HttpResponse();
+      InputStream in;
+      try {
+         in = connection.getInputStream();
+      } catch (IOException e) {
+         in = connection.getErrorStream();
+      }
+      if (in != null) {
+         response.setContent(in);
+      }
+      response.setStatusCode(connection.getResponseCode());
+      for (String header : connection.getHeaderFields().keySet()) {
+         response.getHeaders().putAll(header, connection.getHeaderFields().get(header));
+      }
 
-	response.setMessage(connection.getResponseMessage());
-	return response;
-    }
+      response.setMessage(connection.getResponseMessage());
+      return response;
+   }
 
-    protected HttpURLConnection openJavaConnection(HttpRequest request)
-	    throws IOException {
-	URL url = new URL(target, request.getUri());
-	HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-	connection.setDoOutput(true);
-	connection.setAllowUserInteraction(false);
-	connection.setInstanceFollowRedirects(true);
-	connection.setRequestMethod(request.getMethod());
-	for (String header : request.getHeaders().keySet()) {
-	    for (String value : request.getHeaders().get(header))
-		connection.setRequestProperty(header, value);
-	}
-	if (request.getPayload() != null) {
-	    OutputStream out = connection.getOutputStream();
-	    try {
-		if (request.getPayload() instanceof String) {
-		    OutputStreamWriter writer = new OutputStreamWriter(out);
-		    writer.write((String) request.getPayload());
-		    writer.close();
-		} else if (request.getPayload() instanceof InputStream) {
-		    IOUtils.copy((InputStream) request.getPayload(), out);
-		} else if (request.getPayload() instanceof File) {
-		    IOUtils.copy(new FileInputStream((File) request
-			    .getPayload()), out);
-		} else if (request.getPayload() instanceof byte[]) {
-		    IOUtils.write((byte[]) request.getPayload(), out);
-		} else {
-		    throw new UnsupportedOperationException(
-			    "Content not supported "
-				    + request.getPayload().getClass());
-		}
-	    } finally {
-		IOUtils.closeQuietly(out);
-	    }
+   protected HttpURLConnection openJavaConnection(HttpRequest request) throws IOException {
+      URL url = new URL(target, request.getUri());
+      HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+      connection.setDoOutput(true);
+      connection.setAllowUserInteraction(false);
+      connection.setInstanceFollowRedirects(true);
+      connection.setRequestMethod(request.getMethod());
+      for (String header : request.getHeaders().keySet()) {
+         for (String value : request.getHeaders().get(header))
+            connection.setRequestProperty(header, value);
+      }
+      if (request.getPayload() != null) {
+         OutputStream out = connection.getOutputStream();
+         try {
+            if (request.getPayload() instanceof String) {
+               OutputStreamWriter writer = new OutputStreamWriter(out);
+               writer.write((String) request.getPayload());
+               writer.close();
+            } else if (request.getPayload() instanceof InputStream) {
+               IOUtils.copy((InputStream) request.getPayload(), out);
+            } else if (request.getPayload() instanceof File) {
+               IOUtils.copy(new FileInputStream((File) request.getPayload()), out);
+            } else if (request.getPayload() instanceof byte[]) {
+               IOUtils.write((byte[]) request.getPayload(), out);
+            } else {
+               throw new UnsupportedOperationException("Content not supported "
+                        + request.getPayload().getClass());
+            }
+         } finally {
+            IOUtils.closeQuietly(out);
+         }
 
-	}
-	return connection;
-    }
+      } else {
+         connection.setRequestProperty(HttpConstants.CONTENT_LENGTH, "0");
+      }
+      return connection;
+   }
 }

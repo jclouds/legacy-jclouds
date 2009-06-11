@@ -126,7 +126,7 @@ public class URLFetchServiceClientTest {
       HttpRequest request = new HttpRequest("GET", "foo");
       HTTPRequest gaeRequest = client.convert(request);
       assert gaeRequest.getPayload() == null;
-      assertEquals(gaeRequest.getHeaders().size(), 0);
+      assertEquals(gaeRequest.getHeaders().size(), 1);//content length
    }
 
    @Test
