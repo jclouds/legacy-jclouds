@@ -23,6 +23,7 @@
  */
 package org.jclouds.codegen.ec2.queryapi;
 
+import java.util.List;
 import java.util.Set;
 
 public class DataType {
@@ -30,8 +31,8 @@ public class DataType {
    private String type;
    private String ancestor;
    private Set<String> see;
-   private String exampleCode;
-   private String exampleHTML;
+   private List<String> exampleCode;
+   private List<String> exampleHTML;
    private Set<Content> contents;
 
    public DataType() {
@@ -62,14 +63,6 @@ public class DataType {
       return see;
    }
 
-   public void setExampleCode(String exampleCode) {
-      this.exampleCode = exampleCode;
-   }
-
-   public String getExampleCode() {
-      return exampleCode;
-   }
-
    public void setContents(Set<Content> contents) {
       this.contents = contents;
    }
@@ -78,11 +71,19 @@ public class DataType {
       return contents;
    }
 
-   public void setExampleHTML(String exampleHTML) {
+   public void setExampleCode(List<String> exampleCode) {
+      this.exampleCode = exampleCode;
+   }
+
+   public List<String> getExampleCode() {
+      return exampleCode;
+   }
+
+   public void setExampleHTML(List<String> exampleHTML) {
       this.exampleHTML = exampleHTML;
    }
 
-   public String getExampleHTML() {
+   public List<String> getExampleHTML() {
       return exampleHTML;
    }
 

@@ -4,8 +4,12 @@
          "name" : "Instances",
          "queries" : {
             "TerminateInstances" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=TerminateInstances&InstanceId.1=i-3ea74257&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-TerminateInstances-Example-Request-1\">Example Request</h3></div></div></div><p>This example terminates the <code class=\"code\">i-3ea74257</code> instance.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=TerminateInstances&amp;InstanceId.1=i-3ea74257&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=TerminateInstances&InstanceId.1=i-3ea74257&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-TerminateInstances-Example-Request-1\">Example Request</h3></div></div></div><p>This example terminates the <code class=\"code\">i-3ea74257</code> instance.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=TerminateInstances&amp;InstanceId.1=i-3ea74257&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "Instance ID to terminate.",
@@ -24,8 +28,12 @@
                "responseType" : "TerminateInstancesResponse"
             },
             "DescribeInstances" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=DescribeInstances&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeInstances-Example-Request-1\">Example Request</h3></div></div></div><p>This example describes the current state of the instances owned by this user.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeInstances&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=DescribeInstances&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeInstances-Example-Request-1\">Example Request</h3></div></div></div><p>This example describes the current state of the instances owned by this user.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeInstances&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "Instance IDs to describe.",
@@ -45,8 +53,12 @@
                "responseType" : "DescribeInstancesResponse"
             },
             "RunInstances" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=RunInstances&ImageId=ami-60a54009&MaxCount=3&MinCount=1&Placement.AvailabilityZone=us-east-1a&Monitoring.Enabled=true&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-RunInstances-Example-Request-1\">Example Request</h3></div></div></div><p>This example launches three instances of the <code class=\"code\">ami-60a54009</code> AMI.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=RunInstances&amp;ImageId=ami-60a54009&amp;MaxCount=3&amp;MinCount=1&amp;Placement.AvailabilityZone=us-east-1a&amp;Monitoring.Enabled=true&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=RunInstances&ImageId=ami-60a54009&MaxCount=3&MinCount=1&Placement.AvailabilityZone=us-east-1a&Monitoring.Enabled=true&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-RunInstances-Example-Request-1\">Example Request</h3></div></div></div><p>This example launches three instances of the <code class=\"code\">ami-60a54009</code> AMI.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=RunInstances&amp;ImageId=ami-60a54009&amp;MaxCount=3&amp;MinCount=1&amp;Placement.AvailabilityZone=us-east-1a&amp;Monitoring.Enabled=true&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "Unique ID of a machine image, returned by a call to ",
@@ -185,8 +197,12 @@
                "responseType" : "RunInstancesResponse"
             },
             "RebootInstances" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=RebootInstances&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-RebootInstances-Example-Request-1\">Example Request</h3></div></div></div><p>This example reboots an instance.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=RebootInstances&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=RebootInstances&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-RebootInstances-Example-Request-1\">Example Request</h3></div></div></div><p>This example reboots an instance.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=RebootInstances&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "One or more instance IDs.",
@@ -210,8 +226,12 @@
          "name" : "AMIs",
          "queries" : {
             "DeregisterImage" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=DeregisterImage&ImageId=ami-4fa54026&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DeregisterImage-Example-Request-1\">Example Request</h3></div></div></div><p>This example deregisters the <code class=\"code\">ami-4fa54026</code> AMI.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DeregisterImage&amp;ImageId=ami-4fa54026&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=DeregisterImage&ImageId=ami-4fa54026&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DeregisterImage-Example-Request-1\">Example Request</h3></div></div></div><p>This example deregisters the <code class=\"code\">ami-4fa54026</code> AMI.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DeregisterImage&amp;ImageId=ami-4fa54026&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "Unique ID of the AMI which was assigned during registration. To register an AMI, use ",
@@ -231,8 +251,14 @@
                "responseType" : "DeregisterImageResponse"
             },
             "ModifyImageAttribute" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=ModifyImageAttribute&ImageId=ami-61a54008&Attribute=launchPermission&OperationType=add&Group.1=all &UserId.1=495219933132&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-ModifyImageAttribute-Example-Request-1\">Example Request</h3></div></div></div><p>This example makes this a public AMI and grants specific permissions to a user.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=ModifyImageAttribute&amp;ImageId=ami-61a54008&amp;Attribute=launchPermission&amp;OperationType=add&amp;Group.1=all &amp;UserId.1=495219933132&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=ModifyImageAttribute&ImageId=ami-61a54008&Attribute=launchPermission&OperationType=add&Group.1=all &UserId.1=495219933132&AuthParams",
+                  "https://ec2.amazonaws.com/?Action=ModifyImageAttribute?Action=ModifyImageAttribute&ImageId=ami-61a54008&Attribute=productCodes&ProductCode.1=774F4FF8&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-ModifyImageAttribute-Example-Request-1\">Example Request</h3></div></div></div><p>This example makes this a public AMI and grants specific permissions to a user.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=ModifyImageAttribute&amp;ImageId=ami-61a54008&amp;Attribute=launchPermission&amp;OperationType=add&amp;Group.1=all &amp;UserId.1=495219933132&amp;AuthParams</pre></div>\n",
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-ModifyImageAttribute-Example-Request-2\">Example Request</h3></div></div></div><p>The following example adds the <code class=\"code\">774F4FF8</code> product code to the <code class=\"code\">ami-2bb65342</code> AMI:<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=ModifyImageAttribute?Action=ModifyImageAttribute&amp;ImageId=ami-61a54008&amp;Attribute=productCodes&amp;ProductCode.1=774F4FF8&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "The AMI ID.",
@@ -287,8 +313,14 @@
                "responseType" : "ModifyImageAttributeResponse"
             },
             "DescribeImageAttribute" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=DescribeImageAttribute&ImageId=ami-2bb65342&Attribute=launchPermission&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeImageAttribute-Example-Request-1\">Example Request</h3></div></div></div><p>This example lists the launch permissions for the ami-61a54008 AMI<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeImageAttribute&amp;ImageId=ami-2bb65342&amp;Attribute=launchPermission&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=DescribeImageAttribute&ImageId=ami-2bb65342&Attribute=launchPermission&AuthParams",
+                  "https://ec2.amazonaws.com/?Action=DescribeImageAttribute&ImageId=ami-2bb65342&Attribute=productCodes&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeImageAttribute-Example-Request-1\">Example Request</h3></div></div></div><p>This example lists the launch permissions for the ami-61a54008 AMI<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeImageAttribute&amp;ImageId=ami-2bb65342&amp;Attribute=launchPermission&amp;AuthParams</pre></div>\n",
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeImageAttribute-Example-Request-2\">Example Request</h3></div></div></div><p>This example lists the product code for the ami-2bb65342AMI.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeImageAttribute&amp;ImageId=ami-2bb65342&amp;Attribute=productCodes&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "The ID of the AMI for which an attribute will be described.",
@@ -323,8 +355,12 @@
                "responseType" : "DescribeImageAttributeResponse"
             },
             "DescribeImages" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=DescribeImages&ImageId.1=ami-be3adfd7&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeImages-Example-Request-1\">Example Request</h3></div></div></div><p>This example describes the ami-be3adfd7 AMI.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeImages&amp;ImageId.1=ami-be3adfd7&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=DescribeImages&ImageId.1=ami-be3adfd7&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeImages-Example-Request-1\">Example Request</h3></div></div></div><p>This example describes the ami-be3adfd7 AMI.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeImages&amp;ImageId.1=ami-be3adfd7&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "name" : "public",
@@ -354,8 +390,12 @@
          "name" : "Monitoring",
          "queries" : {
             "MonitorInstances" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=MonitorInstances&InstanceId.1=i-43a4412a&InstanceId.2=i-23a3397d&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-MonitorInstances-Example-Request-1\">Example Request</h3></div></div></div><p>This example enables monitoring for i-43a4412a and i-23a3397d.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=MonitorInstances&amp;InstanceId.1=i-43a4412a&amp;InstanceId.2=i-23a3397d&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=MonitorInstances&InstanceId.1=i-43a4412a&InstanceId.2=i-23a3397d&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-MonitorInstances-Example-Request-1\">Example Request</h3></div></div></div><p>This example enables monitoring for i-43a4412a and i-23a3397d.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=MonitorInstances&amp;InstanceId.1=i-43a4412a&amp;InstanceId.2=i-23a3397d&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "Instance ID.",
@@ -375,8 +415,12 @@
                "responseType" : "MonitorInstancesResponse"
             },
             "UnmonitorInstances" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=UnmonitorInstances&InstanceId.1=i-43a4412a&InstanceId.2=i-23a3397d&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-UnmonitorInstances-Example-Request-1\">Example Request</h3></div></div></div><p>This example disables monitoring for i-43a4412a and i-23a3397d.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=UnmonitorInstances&amp;InstanceId.1=i-43a4412a&amp;InstanceId.2=i-23a3397d&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=UnmonitorInstances&InstanceId.1=i-43a4412a&InstanceId.2=i-23a3397d&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-UnmonitorInstances-Example-Request-1\">Example Request</h3></div></div></div><p>This example disables monitoring for i-43a4412a and i-23a3397d.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=UnmonitorInstances&amp;InstanceId.1=i-43a4412a&amp;InstanceId.2=i-23a3397d&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "Instance ID.",
@@ -401,8 +445,12 @@
          "name" : "Security Groups",
          "queries" : {
             "DescribeSecurityGroups" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=DescribeSecurityGroups&GroupName.1=WebServers&GroupName.2=RangedPortsBySource&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeSecurityGroups-Example-Request-1\">Example Request</h3></div></div></div><p>This example returns information about two security groups that are configured for the account.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeSecurityGroups&amp;GroupName.1=WebServers&amp;GroupName.2=RangedPortsBySource&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=DescribeSecurityGroups&GroupName.1=WebServers&GroupName.2=RangedPortsBySource&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeSecurityGroups-Example-Request-1\">Example Request</h3></div></div></div><p>This example returns information about two security groups that are configured for the account.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeSecurityGroups&amp;GroupName.1=WebServers&amp;GroupName.2=RangedPortsBySource&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "Name of the security group.",
@@ -424,8 +472,12 @@
                "responseType" : "DescribeSecurityGroupsResponse"
             },
             "AuthorizeSecurityGroupIngress" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=AuthorizeSecurityGroupIngress&GroupName=websrv\n&IpProtocol=tcp\n&FromPort=80\n&ToPort=80\n&CidrIp=205.192.0.0/16\n&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-AuthorizeSecurityGroupIngress-Example-Request-1\">Example Request</h3></div></div></div><p>This example grants TCP port 80 access from the 205.192.0.0/16 address range to the <code class=\"code\">websrv</code> security group.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=AuthorizeSecurityGroupIngress&amp;GroupName=websrv\n&amp;IpProtocol=tcp\n&amp;FromPort=80\n&amp;ToPort=80\n&amp;CidrIp=205.192.0.0/16\n&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=AuthorizeSecurityGroupIngress&GroupName=websrv\n&IpProtocol=tcp\n&FromPort=80\n&ToPort=80\n&CidrIp=205.192.0.0/16\n&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-AuthorizeSecurityGroupIngress-Example-Request-1\">Example Request</h3></div></div></div><p>This example grants TCP port 80 access from the 205.192.0.0/16 address range to the <code class=\"code\">websrv</code> security group.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=AuthorizeSecurityGroupIngress&amp;GroupName=websrv\n&amp;IpProtocol=tcp\n&amp;FromPort=80\n&amp;ToPort=80\n&amp;CidrIp=205.192.0.0/16\n&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "AWS Access Key ID.",
@@ -502,8 +554,12 @@
                "responseType" : "AuthorizeSecurityGroupIngressResponse"
             },
             "CreateSecurityGroup" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=CreateSecurityGroup&GroupName=websrv&GroupDescription='Web Servers'&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-CreateSecurityGroup-Example-Request-1\">Example Request</h3></div></div></div><p>This example creates the <code class=\"code\">websrv</code> security group.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=CreateSecurityGroup&amp;GroupName=websrv&amp;GroupDescription=&#39;Web Servers&#39;&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=CreateSecurityGroup&GroupName=websrv&GroupDescription='Web Servers'&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-CreateSecurityGroup-Example-Request-1\">Example Request</h3></div></div></div><p>This example creates the <code class=\"code\">websrv</code> security group.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=CreateSecurityGroup&amp;GroupName=websrv&amp;GroupDescription=&#39;Web Servers&#39;&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "constraints" : "Accepts alphanumeric characters, spaces, dashes, and underscores.",
@@ -535,8 +591,12 @@
                "responseType" : "CreateSecurityGroupResponse"
             },
             "DeleteSecurityGroup" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=DeleteSecurityGroup&GroupName=websrv&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DeleteSecurityGroup-Example-Request-1\">Example Request</h3></div></div></div><p>This example deletes the <code class=\"code\">websrv</code> security group.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DeleteSecurityGroup&amp;GroupName=websrv&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=DeleteSecurityGroup&GroupName=websrv&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DeleteSecurityGroup-Example-Request-1\">Example Request</h3></div></div></div><p>This example deletes the <code class=\"code\">websrv</code> security group.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DeleteSecurityGroup&amp;GroupName=websrv&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "Name of the security group to delete.",
@@ -558,8 +618,12 @@
                "responseType" : "DeleteSecurityGroupResponse"
             },
             "RevokeSecurityGroupIngress" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=RevokeSecurityGroupIngress&IpProtocol=tcp&FromPort=80&ToPort=80&CidrIp=205.192.0.0/16\n&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-RevokeSecurityGroupIngress-Example-Request-1\">Example Request</h3></div></div></div><p>This example revokes TCP port 80 access from the 205.192.0.0/16 address range for the <code class=\"code\">websrv</code> security group.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=RevokeSecurityGroupIngress&amp;IpProtocol=tcp&amp;FromPort=80&amp;ToPort=80&amp;CidrIp=205.192.0.0/16\n&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=RevokeSecurityGroupIngress&IpProtocol=tcp&FromPort=80&ToPort=80&CidrIp=205.192.0.0/16\n&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-RevokeSecurityGroupIngress-Example-Request-1\">Example Request</h3></div></div></div><p>This example revokes TCP port 80 access from the 205.192.0.0/16 address range for the <code class=\"code\">websrv</code> security group.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=RevokeSecurityGroupIngress&amp;IpProtocol=tcp&amp;FromPort=80&amp;ToPort=80&amp;CidrIp=205.192.0.0/16\n&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "AWS Access Key ID.",
@@ -641,8 +705,12 @@
          "name" : "Images",
          "queries" : {
             "ResetImageAttribute" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=ResetImageAttribute&ImageId=ami-61a54008&Attribute=launchPermission&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-ResetImageAttribute-Example-Request-1\">Example Request</h3></div></div></div><p>This example resets the <code class=\"code\">launchPermission</code> attribute.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=ResetImageAttribute&amp;ImageId=ami-61a54008&amp;Attribute=launchPermission&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=ResetImageAttribute&ImageId=ami-61a54008&Attribute=launchPermission&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-ResetImageAttribute-Example-Request-1\">Example Request</h3></div></div></div><p>This example resets the <code class=\"code\">launchPermission</code> attribute.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=ResetImageAttribute&amp;ImageId=ami-61a54008&amp;Attribute=launchPermission&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "ID of the AMI on which the attribute will be reset.",
@@ -662,8 +730,12 @@
                "responseType" : "ResetImageAttributeResponse"
             },
             "RegisterImage" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=RegisterImage&ImageLocation=mybucket-myimage.manifest.xml&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-RegisterImage-Example-Request-1\">Example Request</h3></div></div></div><p>This example registers the AMI specified in the <code class=\"code\">image.manifest.xml</code> manifest file.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=RegisterImage&amp;ImageLocation=mybucket-myimage.manifest.xml&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=RegisterImage&ImageLocation=mybucket-myimage.manifest.xml&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-RegisterImage-Example-Request-1\">Example Request</h3></div></div></div><p>This example registers the AMI specified in the <code class=\"code\">image.manifest.xml</code> manifest file.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=RegisterImage&amp;ImageLocation=mybucket-myimage.manifest.xml&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "Full path to your AMI manifest in Amazon S3 storage.",
@@ -688,8 +760,12 @@
          "name" : "Availability Zones and Regions",
          "queries" : {
             "DescribeAvailabilityZones" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=DescribeAvailabilityZones&ZoneName.0=us-east-1a&ZoneName.1=us-east-1b&ZoneName.2=us-east-1c&ZoneName.3=us-east-1d&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeAvailabilityZones-Example-Request-1\">Example Request</h3></div></div></div><p>This example displays information about Availability Zones that are available to the account.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeAvailabilityZones&amp;ZoneName.0=us-east-1a&amp;ZoneName.1=us-east-1b&amp;ZoneName.2=us-east-1c&amp;ZoneName.3=us-east-1d&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=DescribeAvailabilityZones&ZoneName.0=us-east-1a&ZoneName.1=us-east-1b&ZoneName.2=us-east-1c&ZoneName.3=us-east-1d&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeAvailabilityZones-Example-Request-1\">Example Request</h3></div></div></div><p>This example displays information about Availability Zones that are available to the account.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeAvailabilityZones&amp;ZoneName.0=us-east-1a&amp;ZoneName.1=us-east-1b&amp;ZoneName.2=us-east-1c&amp;ZoneName.3=us-east-1d&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "Availability Zone name.",
@@ -709,8 +785,12 @@
                "responseType" : "DescribeAvailabilityZonesResponse"
             },
             "DescribeRegions" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=DescribeRegions&RegionName.0=us-east-1&RegionName.1=eu-west-1&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeRegions-Example-Request-1\">Example Request</h3></div></div></div><p>This example displays regions that are available to the account.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeRegions&amp;RegionName.0=us-east-1&amp;RegionName.1=eu-west-1&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=DescribeRegions&RegionName.0=us-east-1&RegionName.1=eu-west-1&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeRegions-Example-Request-1\">Example Request</h3></div></div></div><p>This example displays regions that are available to the account.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeRegions&amp;RegionName.0=us-east-1&amp;RegionName.1=eu-west-1&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "Name of a region.",
@@ -735,8 +815,12 @@
          "name" : "Windows",
          "queries" : {
             "CancelBundleTask" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=CancelBundleTask&BundleId=bun-cla322b9&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-CancelBundleTask-Example-Request-1\">Example Request</h3></div></div></div><p>This example cancels the <code class=\"code\">bun-cla322b9</code> bundle task.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=CancelBundleTask&amp;BundleId=bun-cla322b9&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=CancelBundleTask&BundleId=bun-cla322b9&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-CancelBundleTask-Example-Request-1\">Example Request</h3></div></div></div><p>This example cancels the <code class=\"code\">bun-cla322b9</code> bundle task.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=CancelBundleTask&amp;BundleId=bun-cla322b9&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "The ID of the bundle task to cancel.",
@@ -756,8 +840,12 @@
                "responseType" : "CancelBundleTaskResponse"
             },
             "DescribeBundleTasks" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=DescribeBundleTasks&bundleId.0=bun-c1a540a8&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeBundleTasks-Example-Request-1\">Example Request</h3></div></div></div><p>This example describes the status of the <code class=\"code\">bun-57a5403e</code> bundle task.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeBundleTasks&amp;bundleId.0=bun-c1a540a8&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=DescribeBundleTasks&bundleId.0=bun-c1a540a8&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeBundleTasks-Example-Request-1\">Example Request</h3></div></div></div><p>This example describes the status of the <code class=\"code\">bun-57a5403e</code> bundle task.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeBundleTasks&amp;bundleId.0=bun-c1a540a8&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "The ID of the bundle task to describe.",
@@ -777,8 +865,12 @@
                "responseType" : "DescribeBundleTasksResponse"
             },
             "BundleInstance" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=BundleInstance&InstanceId=-i-e468cd8d\n&Storage.S3.AWSAccessKeyId=10QMXFEV71ZS32XQFTR2\n&Storage.S3.Bucket=my-bucket\n&Storage.S3.Prefix=winami\n&Storage.S3.UploadPolicy=eyJleHBpcmF0aW9uIjogIjIwMDgtMDgtMzBUMDg6NDk6MDlaIiwiY29uZGl0aW9ucyI6IFt7ImJ1Y2tldCI6ICJteS1idWNrZXQifSxbInN0YXJ0cy13aXRoIiwgIiRrZXkiLCAibXktbmV3LWltYWdlIl1dfQ%3D%3D\n&Storage.S3.UploadPolicySignature=w6BZu2oxGsiiLZnoBmQSErotuMA%3D\n&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-BundleInstance-Example-Request-1\">Example Request</h3></div></div></div><p>This example bundles the <code class=\"code\">i-e468cd8d</code> instance.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=BundleInstance&amp;InstanceId=-i-e468cd8d\n&amp;Storage.S3.AWSAccessKeyId=10QMXFEV71ZS32XQFTR2\n&amp;Storage.S3.Bucket=my-bucket\n&amp;Storage.S3.Prefix=winami\n&amp;Storage.S3.UploadPolicy=eyJleHBpcmF0aW9uIjogIjIwMDgtMDgtMzBUMDg6NDk6MDlaIiwiY29uZGl0aW9ucyI6IFt7ImJ1Y2tldCI6ICJteS1idWNrZXQifSxbInN0YXJ0cy13aXRoIiwgIiRrZXkiLCAibXktbmV3LWltYWdlIl1dfQ%3D%3D\n&amp;Storage.S3.UploadPolicySignature=w6BZu2oxGsiiLZnoBmQSErotuMA%3D\n&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=BundleInstance&InstanceId=-i-e468cd8d\n&Storage.S3.AWSAccessKeyId=10QMXFEV71ZS32XQFTR2\n&Storage.S3.Bucket=my-bucket\n&Storage.S3.Prefix=winami\n&Storage.S3.UploadPolicy=eyJleHBpcmF0aW9uIjogIjIwMDgtMDgtMzBUMDg6NDk6MDlaIiwiY29uZGl0aW9ucyI6IFt7ImJ1Y2tldCI6ICJteS1idWNrZXQifSxbInN0YXJ0cy13aXRoIiwgIiRrZXkiLCAibXktbmV3LWltYWdlIl1dfQ%3D%3D\n&Storage.S3.UploadPolicySignature=w6BZu2oxGsiiLZnoBmQSErotuMA%3D\n&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-BundleInstance-Example-Request-1\">Example Request</h3></div></div></div><p>This example bundles the <code class=\"code\">i-e468cd8d</code> instance.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=BundleInstance&amp;InstanceId=-i-e468cd8d\n&amp;Storage.S3.AWSAccessKeyId=10QMXFEV71ZS32XQFTR2\n&amp;Storage.S3.Bucket=my-bucket\n&amp;Storage.S3.Prefix=winami\n&amp;Storage.S3.UploadPolicy=eyJleHBpcmF0aW9uIjogIjIwMDgtMDgtMzBUMDg6NDk6MDlaIiwiY29uZGl0aW9ucyI6IFt7ImJ1Y2tldCI6ICJteS1idWNrZXQifSxbInN0YXJ0cy13aXRoIiwgIiRrZXkiLCAibXktbmV3LWltYWdlIl1dfQ%3D%3D\n&amp;Storage.S3.UploadPolicySignature=w6BZu2oxGsiiLZnoBmQSErotuMA%3D\n&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "The ID of the instance to bundle.",
@@ -838,8 +930,12 @@
          "name" : "Amazon DevPay",
          "queries" : {
             "ConfirmProductInstance" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=ConfirmProductInstance&ProductCode=774F4FF8&InstanceId=i-10a64379&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-ConfirmProductInstance-Example-Request-1\">Example Request</h3></div></div></div><p>This example describes the confirms the product code is associated with the instance.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=ConfirmProductInstance&amp;ProductCode=774F4FF8&amp;InstanceId=i-10a64379&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=ConfirmProductInstance&ProductCode=774F4FF8&InstanceId=i-10a64379&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-ConfirmProductInstance-Example-Request-1\">Example Request</h3></div></div></div><p>This example describes the confirms the product code is associated with the instance.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=ConfirmProductInstance&amp;ProductCode=774F4FF8&amp;InstanceId=i-10a64379&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "The product code to confirm.",
@@ -871,8 +967,12 @@
          "name" : "General",
          "queries" : {
             "GetConsoleOutput" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=GetConsoleOutput&InstanceId=i-10a64379&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-GetConsoleOutput-Example-Request-1\">Example Request</h3></div></div></div><p>This example retrieves the console output for the <code class=\"code\">i-10a64379</code> Linux and UNIX instance.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=GetConsoleOutput&amp;InstanceId=i-10a64379&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=GetConsoleOutput&InstanceId=i-10a64379&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-GetConsoleOutput-Example-Request-1\">Example Request</h3></div></div></div><p>This example retrieves the console output for the <code class=\"code\">i-10a64379</code> Linux and UNIX instance.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=GetConsoleOutput&amp;InstanceId=i-10a64379&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "ID of the instance for which you want console output.",
@@ -896,8 +996,12 @@
          "name" : "Reserved Instances",
          "queries" : {
             "DescribeReservedInstances" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=DescribeReservedInstances&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeReservedInstances-Example-Request-1\">Example Request</h3></div></div></div><p>This example describes Reserved Instances owned by the account.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeReservedInstances&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=DescribeReservedInstances&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeReservedInstances-Example-Request-1\">Example Request</h3></div></div></div><p>This example describes Reserved Instances owned by the account.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeReservedInstances&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "IDs of the Reserved Instance to describe.",
@@ -917,8 +1021,12 @@
                "responseType" : "DescribeReservedInstancesResponse"
             },
             "DescribeReservedInstancesOfferings" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=DescribeReservedInstancesOfferings&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeReservedInstancesOfferings-Example-Request-1\">Example Request</h3></div></div></div><p>This example describes available Reserved Instance offerings.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeReservedInstancesOfferings&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=DescribeReservedInstancesOfferings&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeReservedInstancesOfferings-Example-Request-1\">Example Request</h3></div></div></div><p>This example describes available Reserved Instance offerings.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeReservedInstancesOfferings&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "ID of the Reserved Instances to describe.",
@@ -959,8 +1067,12 @@
                "responseType" : "DescribeReservedInstancesOfferingsResponse"
             },
             "PurchaseReservedInstancesOffering" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=PurchaseReservedInstancesOffering&OfferingId.1=offering-12345678&instanceCount.1=2&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-PurchaseReservedInstancesOffering-Example-Request-1\">Example Request</h3></div></div></div><p>This example purchases Reserved Instances.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=PurchaseReservedInstancesOffering&amp;OfferingId.1=offering-12345678&amp;instanceCount.1=2&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=PurchaseReservedInstancesOffering&OfferingId.1=offering-12345678&instanceCount.1=2&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-PurchaseReservedInstancesOffering-Example-Request-1\">Example Request</h3></div></div></div><p>This example purchases Reserved Instances.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=PurchaseReservedInstancesOffering&amp;OfferingId.1=offering-12345678&amp;instanceCount.1=2&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "The offering ID of the Reserved Instance to purchase.",
@@ -992,8 +1104,12 @@
          "name" : "Key Pairs",
          "queries" : {
             "DescribeKeyPairs" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=DescribeKeyPairs&KeyName.1=gsg-keypair&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeKeyPairs-Example-Request-1\">Example Request</h3></div></div></div><p>This example describes the state of the <code class=\"code\">gsg-keypair</code> key.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeKeyPairs&amp;KeyName.1=gsg-keypair&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=DescribeKeyPairs&KeyName.1=gsg-keypair&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeKeyPairs-Example-Request-1\">Example Request</h3></div></div></div><p>This example describes the state of the <code class=\"code\">gsg-keypair</code> key.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeKeyPairs&amp;KeyName.1=gsg-keypair&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "Key pair to describe.",
@@ -1013,8 +1129,12 @@
                "responseType" : "DescribeKeyPairsResponse"
             },
             "CreateKeyPair" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=CreateKeyPair&KeyName=gsg-keypair.&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-CreateKeyPair-Example-Request-1\">Example Request</h3></div></div></div><p>This example creates a key pair named gsg-keypair.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=CreateKeyPair&amp;KeyName=gsg-keypair.&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=CreateKeyPair&KeyName=gsg-keypair.&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-CreateKeyPair-Example-Request-1\">Example Request</h3></div></div></div><p>This example creates a key pair named gsg-keypair.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=CreateKeyPair&amp;KeyName=gsg-keypair.&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "constraints" : "Accepts alphanumeric characters, spaces, dashes, and underscores.",
@@ -1036,8 +1156,12 @@
                "responseType" : "CreateKeyPairResponse"
             },
             "DeleteKeyPair" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=DeleteKeyPair&KeyName=gsg-keypair&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DeleteKeyPair-Example-Request-1\">Example Request</h3></div></div></div><p>This example deletes the <code class=\"code\">gsg-keypair</code> key pair.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DeleteKeyPair&amp;KeyName=gsg-keypair&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=DeleteKeyPair&KeyName=gsg-keypair&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DeleteKeyPair-Example-Request-1\">Example Request</h3></div></div></div><p>This example deletes the <code class=\"code\">gsg-keypair</code> key pair.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DeleteKeyPair&amp;KeyName=gsg-keypair&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "Name of the key pair to delete.",
@@ -1062,8 +1186,12 @@
          "name" : "Elastic IP Addresses",
          "queries" : {
             "AllocateAddress" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=AllocateAddress&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-AllocateAddress-Example-Request-1\">Example Request</h3></div></div></div><p>This example returns an elastic IP address for use with the account.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=AllocateAddress&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=AllocateAddress&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-AllocateAddress-Example-Request-1\">Example Request</h3></div></div></div><p>This example returns an elastic IP address for use with the account.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=AllocateAddress&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "Children: requestId, publicIp",
@@ -1096,8 +1224,12 @@
                "responseType" : "AllocateAddressResponse"
             },
             "DisassociateAddress" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=DisassociateAddress&PublicIp=67.202.55.255&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DisassociateAddress-Example-Request-1\">Example Request</h3></div></div></div><p>This example disassociates the <code class=\"code\">67.202.55.255</code> IP address from the instance to which it is assigned.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DisassociateAddress&amp;PublicIp=67.202.55.255&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=DisassociateAddress&PublicIp=67.202.55.255&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DisassociateAddress-Example-Request-1\">Example Request</h3></div></div></div><p>This example disassociates the <code class=\"code\">67.202.55.255</code> IP address from the instance to which it is assigned.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DisassociateAddress&amp;PublicIp=67.202.55.255&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "IP address that you are disassociating from the instance.",
@@ -1119,8 +1251,12 @@
                "responseType" : "DisassociateAddressResponse"
             },
             "ReleaseAddress" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=ReleaseAddress&PublicIp=67.202.55.255&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-ReleaseAddress-Example-Request-1\">Example Request</h3></div></div></div><p>This example releases an elastic IP address associated with the account.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=ReleaseAddress&amp;PublicIp=67.202.55.255&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=ReleaseAddress&PublicIp=67.202.55.255&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-ReleaseAddress-Example-Request-1\">Example Request</h3></div></div></div><p>This example releases an elastic IP address associated with the account.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=ReleaseAddress&amp;PublicIp=67.202.55.255&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "The IP address that you are releasing from your account.",
@@ -1142,8 +1278,12 @@
                "responseType" : "ReleaseAddressResponse"
             },
             "AssociateAddress" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=AssociateAddress\n\t\t\t\t\t\t&InstanceId=i-2ea64347\n\t\t\t\t\t\t&PublicIp=67.202.55.255\n\t\t\t\t\t\t&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-AssociateAddress-Example-Request-1\">Example Request</h3></div></div></div><p>This example associates an IP address with an instance.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=AssociateAddress\n\t\t\t\t\t\t&amp;InstanceId=i-2ea64347\n\t\t\t\t\t\t&amp;PublicIp=67.202.55.255\n\t\t\t\t\t\t&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=AssociateAddress\n\t\t\t\t\t\t&InstanceId=i-2ea64347\n\t\t\t\t\t\t&PublicIp=67.202.55.255\n\t\t\t\t\t\t&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-AssociateAddress-Example-Request-1\">Example Request</h3></div></div></div><p>This example associates an IP address with an instance.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=AssociateAddress\n\t\t\t\t\t\t&amp;InstanceId=i-2ea64347\n\t\t\t\t\t\t&amp;PublicIp=67.202.55.255\n\t\t\t\t\t\t&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "The instance to associate with the IP address.",
@@ -1172,8 +1312,12 @@
                "responseType" : "AssociateAddressResponse"
             },
             "DescribeAddresses" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=DescribeAddresses&PublicIp.1=67.202.55.255\n&PublicIp.1=67.202.55.233&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeAddresses-Example-Request-1\">Example Request</h3></div></div></div><p>This example describes elastic IP addresses assigned to the account. Amazon EC2 returns 67.202.55.255 which is assigned to instance i-f15ebb98 and 67.202.55.233 which is not assigned to an instance.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeAddresses&amp;PublicIp.1=67.202.55.255\n&amp;PublicIp.1=67.202.55.233&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=DescribeAddresses&PublicIp.1=67.202.55.255\n&PublicIp.1=67.202.55.233&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeAddresses-Example-Request-1\">Example Request</h3></div></div></div><p>This example describes elastic IP addresses assigned to the account. Amazon EC2 returns 67.202.55.255 which is assigned to instance i-f15ebb98 and 67.202.55.233 which is not assigned to an instance.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeAddresses&amp;PublicIp.1=67.202.55.255\n&amp;PublicIp.1=67.202.55.233&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "Elastic IP address to describe.",
@@ -1198,8 +1342,12 @@
          "name" : "Elastic Block Store",
          "queries" : {
             "DeleteVolume" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=DeleteVolume&VolumeId=vol-4282672b&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DeleteVolume-Example-Request-1\">Example Request</h3></div></div></div><p>This example deletes volume <code class=\"code\">vol-4282672b</code>.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DeleteVolume&amp;VolumeId=vol-4282672b&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=DeleteVolume&VolumeId=vol-4282672b&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DeleteVolume-Example-Request-1\">Example Request</h3></div></div></div><p>This example deletes volume <code class=\"code\">vol-4282672b</code>.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DeleteVolume&amp;VolumeId=vol-4282672b&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "The ID of the volume to delete. The volume remains in the ",
@@ -1221,8 +1369,12 @@
                "responseType" : "DeleteVolumeResponse"
             },
             "DescribeSnapshots" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=DescribeSnapshots&SnapshotId=snap-78a54011&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeSnapshots-Example-Request-1\">Example Request</h3></div></div></div><p>This example describes snapshot <code class=\"code\">snap-78a54011</code>.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeSnapshots&amp;SnapshotId=snap-78a54011&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=DescribeSnapshots&SnapshotId=snap-78a54011&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeSnapshots-Example-Request-1\">Example Request</h3></div></div></div><p>This example describes snapshot <code class=\"code\">snap-78a54011</code>.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeSnapshots&amp;SnapshotId=snap-78a54011&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "The ID of the Amazon EBS snapshot.",
@@ -1242,8 +1394,12 @@
                "responseType" : "DescribeSnapshotsResponse"
             },
             "DescribeVolumes" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=DescribeVolumes&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeVolumes-Example-Request-1\">Example Request</h3></div></div></div><p>This example describes all volumes associated with your account.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeVolumes&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=DescribeVolumes&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeVolumes-Example-Request-1\">Example Request</h3></div></div></div><p>This example describes all volumes associated with your account.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeVolumes&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "The ID of the volume to list.",
@@ -1263,8 +1419,12 @@
                "responseType" : "DescribeVolumesResponse"
             },
             "DetachVolume" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=DetachVolume&VolumeId=vol-4d826724\n&InstanceId=i-6058a509&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DetachVolume-Example-Request-1\">Example Request</h3></div></div></div><p>This example detaches volume <code class=\"code\">vol-4d826724</code>.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DetachVolume&amp;VolumeId=vol-4d826724\n&amp;InstanceId=i-6058a509&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=DetachVolume&VolumeId=vol-4d826724\n&InstanceId=i-6058a509&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DetachVolume-Example-Request-1\">Example Request</h3></div></div></div><p>This example detaches volume <code class=\"code\">vol-4d826724</code>.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DetachVolume&amp;VolumeId=vol-4d826724\n&amp;InstanceId=i-6058a509&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "The ID of the volume.",
@@ -1307,8 +1467,12 @@
                "responseType" : "DetachVolumeResponse"
             },
             "AttachVolume" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=AttachVolume&VolumeId=vol-4d826724\n&InstanceId=i-6058a509\n&Device=/dev/sdh&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-AttachVolume-Example-Request-1\">Example Request</h3></div></div></div><p>This example attaches volume <code class=\"code\">vol-4d826724</code> to instance <code class=\"code\">i-6058a509</code> and exposes it as <code class=\"code\">/dev/sdh</code>. For information on standard storage locations, go to the <a class=\"ulink\" href=\"http://docs.amazonwebservices.com/AWSEC2/2009-04-04/DeveloperGuide/\" target=\"_blank\">Amazon Elastic Compute Cloud Developer Guide</a>.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=AttachVolume&amp;VolumeId=vol-4d826724\n&amp;InstanceId=i-6058a509\n&amp;Device=/dev/sdh&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=AttachVolume&VolumeId=vol-4d826724\n&InstanceId=i-6058a509\n&Device=/dev/sdh&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-AttachVolume-Example-Request-1\">Example Request</h3></div></div></div><p>This example attaches volume <code class=\"code\">vol-4d826724</code> to instance <code class=\"code\">i-6058a509</code> and exposes it as <code class=\"code\">/dev/sdh</code>. For information on standard storage locations, go to the <a class=\"ulink\" href=\"http://docs.amazonwebservices.com/AWSEC2/2009-04-04/DeveloperGuide/\" target=\"_blank\">Amazon Elastic Compute Cloud Developer Guide</a>.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=AttachVolume&amp;VolumeId=vol-4d826724\n&amp;InstanceId=i-6058a509\n&amp;Device=/dev/sdh&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "The ID of the Amazon EBS volume. The volume and instance must be within the same Availability Zone and the instance must be running.",
@@ -1344,8 +1508,12 @@
                "responseType" : "AttachVolumeResponse"
             },
             "CreateSnapshot" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=CreateSnapshot&VolumeId=vol-4d826724&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-CreateSnapshot-Example-Request-1\">Example Request</h3></div></div></div><p>This example creates a snapshot of volume <code class=\"code\">vol-4d826724</code>.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=CreateSnapshot&amp;VolumeId=vol-4d826724&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=CreateSnapshot&VolumeId=vol-4d826724&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-CreateSnapshot-Example-Request-1\">Example Request</h3></div></div></div><p>This example creates a snapshot of volume <code class=\"code\">vol-4d826724</code>.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=CreateSnapshot&amp;VolumeId=vol-4d826724&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "The ID of the Amazon EBS volume to take a snapshot of.",
@@ -1365,8 +1533,12 @@
                "responseType" : "CreateSnapshotResponse"
             },
             "CreateVolume" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=CreateVolume&Size=800&AvailabilityZone=us-east-1a&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-CreateVolume-Example-Request-1\">Example Request</h3></div></div></div><p>This example creates a new 800 GiB volume in Availability Zone <code class=\"code\">us-east-1a</code>.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=CreateVolume&amp;Size=800&amp;AvailabilityZone=us-east-1a&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=CreateVolume&Size=800&AvailabilityZone=us-east-1a&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-CreateVolume-Example-Request-1\">Example Request</h3></div></div></div><p>This example creates a new 800 GiB volume in Availability Zone <code class=\"code\">us-east-1a</code>.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=CreateVolume&amp;Size=800&amp;AvailabilityZone=us-east-1a&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "constraints" : "1-1024",
@@ -1404,8 +1576,12 @@
                "responseType" : "CreateVolumeResponse"
             },
             "DeleteSnapshot" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=DeleteSnapshot&SnapshotId.1=snap-78a54011&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DeleteSnapshot-Example-Request-1\">Example Request</h3></div></div></div><p>This example deletes snapshot <code class=\"code\">snap-78a54011</code>.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DeleteSnapshot&amp;SnapshotId.1=snap-78a54011&amp;AuthParams</pre></div>\n",
+               "exampleCode" : [
+                  "https://ec2.amazonaws.com/?Action=DeleteSnapshot&SnapshotId.1=snap-78a54011&AuthParams"
+               ],
+               "exampleHTML" : [
+                  "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DeleteSnapshot-Example-Request-1\">Example Request</h3></div></div></div><p>This example deletes snapshot <code class=\"code\">snap-78a54011</code>.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DeleteSnapshot&amp;SnapshotId.1=snap-78a54011&amp;AuthParams</pre></div>\n"
+               ],
                "contents" : [
                   {
                      "desc" : "The ID of the Amazon EBS snapshot to delete.",
@@ -1444,8 +1620,12 @@
          ]
       },
       "DeleteKeyPairResponse" : {
-         "exampleCode" : "<DeleteKeyPairResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <return>true</return>\n</DeleteKeyPairResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DeleteKeyPair-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DeleteKeyPairResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n&lt;/DeleteKeyPairResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<DeleteKeyPairResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <return>true</return>\n</DeleteKeyPairResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DeleteKeyPair-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DeleteKeyPairResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n&lt;/DeleteKeyPairResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "The ID of the request.",
@@ -1481,8 +1661,12 @@
          ]
       },
       "AuthorizeSecurityGroupIngressResponse" : {
-         "exampleCode" : "<AuthorizeSecurityGroupIngressResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <return>true</return>\n</AuthorizeSecurityGroupIngressResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-AuthorizeSecurityGroupIngress-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;AuthorizeSecurityGroupIngressResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n&lt;/AuthorizeSecurityGroupIngressResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<AuthorizeSecurityGroupIngressResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <return>true</return>\n</AuthorizeSecurityGroupIngressResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-AuthorizeSecurityGroupIngress-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;AuthorizeSecurityGroupIngressResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n&lt;/AuthorizeSecurityGroupIngressResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "The ID of the request.",
@@ -1557,8 +1741,12 @@
          ]
       },
       "DescribeReservedInstancesResponse" : {
-         "exampleCode" : "<DescribeReservedInstancesResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <reservedInstancesSet>\n    <item>\n      <reservedInstancesId>4b2293b4-5813-4cc8-9ce3-1957fc1dcfc8</reservedInstancesId>\n      <instanceType>m1.small</instanceType>\n      <availabilityZone>us-east-1a</availabilityZone>\n      <duration>12</duration>\n      <usagePrice>0.00</usagePrice>\n      <fixedPrice>0.00</fixedPrice>\n      <instanceCount>19</instanceCount>\n      <productDescription>m1.small offering in us-east-1a</productDescription>\n      <state>Active</state>\n    </item>\n  </reservedInstancesSet>\n\t\t\t\t\t\t</DescribeReservedInstancesResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeReservedInstances-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeReservedInstancesResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;reservedInstancesSet&gt;\n    &lt;item&gt;\n      &lt;reservedInstancesId&gt;4b2293b4-5813-4cc8-9ce3-1957fc1dcfc8&lt;/reservedInstancesId&gt;\n      &lt;instanceType&gt;m1.small&lt;/instanceType&gt;\n      &lt;availabilityZone&gt;us-east-1a&lt;/availabilityZone&gt;\n      &lt;duration&gt;12&lt;/duration&gt;\n      &lt;usagePrice&gt;0.00&lt;/usagePrice&gt;\n      &lt;fixedPrice&gt;0.00&lt;/fixedPrice&gt;\n      &lt;instanceCount&gt;19&lt;/instanceCount&gt;\n      &lt;productDescription&gt;m1.small offering in us-east-1a&lt;/productDescription&gt;\n      &lt;state&gt;Active&lt;/state&gt;\n    &lt;/item&gt;\n  &lt;/reservedInstancesSet&gt;\n\t\t\t\t\t\t&lt;/DescribeReservedInstancesResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<DescribeReservedInstancesResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <reservedInstancesSet>\n    <item>\n      <reservedInstancesId>4b2293b4-5813-4cc8-9ce3-1957fc1dcfc8</reservedInstancesId>\n      <instanceType>m1.small</instanceType>\n      <availabilityZone>us-east-1a</availabilityZone>\n      <duration>12</duration>\n      <usagePrice>0.00</usagePrice>\n      <fixedPrice>0.00</fixedPrice>\n      <instanceCount>19</instanceCount>\n      <productDescription>m1.small offering in us-east-1a</productDescription>\n      <state>Active</state>\n    </item>\n  </reservedInstancesSet>\n\t\t\t\t\t\t</DescribeReservedInstancesResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeReservedInstances-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeReservedInstancesResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;reservedInstancesSet&gt;\n    &lt;item&gt;\n      &lt;reservedInstancesId&gt;4b2293b4-5813-4cc8-9ce3-1957fc1dcfc8&lt;/reservedInstancesId&gt;\n      &lt;instanceType&gt;m1.small&lt;/instanceType&gt;\n      &lt;availabilityZone&gt;us-east-1a&lt;/availabilityZone&gt;\n      &lt;duration&gt;12&lt;/duration&gt;\n      &lt;usagePrice&gt;0.00&lt;/usagePrice&gt;\n      &lt;fixedPrice&gt;0.00&lt;/fixedPrice&gt;\n      &lt;instanceCount&gt;19&lt;/instanceCount&gt;\n      &lt;productDescription&gt;m1.small offering in us-east-1a&lt;/productDescription&gt;\n      &lt;state&gt;Active&lt;/state&gt;\n    &lt;/item&gt;\n  &lt;/reservedInstancesSet&gt;\n\t\t\t\t\t\t&lt;/DescribeReservedInstancesResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "The ID of the request.",
@@ -1795,8 +1983,12 @@
          ]
       },
       "DescribeReservedInstancesOfferingsResponse" : {
-         "exampleCode" : "<DescribeReservedInstancesOfferingsResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <reservedInstancesOfferingsSet>\n    <item>\n      <reservedInstancesOfferingId>4b2293b4-5813-4cc8-9ce3-1957fc1dcfc8</reservedInstancesOfferingId>\n      <instanceType>m1.small</instanceType>\n      <availabilityZone>us-east-1a</availabilityZone>\n      <duration>12</duration>\n      <fixedPrice>0.00</fixedPrice>\n      <usagePrice>0.00</usagePrice>\n      <productDescription>m1.small offering in us-east-1a</productDescription>\n    </item>\n  </reservedInstancesOfferingsSet>\n\t\t\t\t\t\t</DescribeReservedInstancesOfferingsResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeReservedInstancesOfferings-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeReservedInstancesOfferingsResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;reservedInstancesOfferingsSet&gt;\n    &lt;item&gt;\n      &lt;reservedInstancesOfferingId&gt;4b2293b4-5813-4cc8-9ce3-1957fc1dcfc8&lt;/reservedInstancesOfferingId&gt;\n      &lt;instanceType&gt;m1.small&lt;/instanceType&gt;\n      &lt;availabilityZone&gt;us-east-1a&lt;/availabilityZone&gt;\n      &lt;duration&gt;12&lt;/duration&gt;\n      &lt;fixedPrice&gt;0.00&lt;/fixedPrice&gt;\n      &lt;usagePrice&gt;0.00&lt;/usagePrice&gt;\n      &lt;productDescription&gt;m1.small offering in us-east-1a&lt;/productDescription&gt;\n    &lt;/item&gt;\n  &lt;/reservedInstancesOfferingsSet&gt;\n\t\t\t\t\t\t&lt;/DescribeReservedInstancesOfferingsResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<DescribeReservedInstancesOfferingsResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <reservedInstancesOfferingsSet>\n    <item>\n      <reservedInstancesOfferingId>4b2293b4-5813-4cc8-9ce3-1957fc1dcfc8</reservedInstancesOfferingId>\n      <instanceType>m1.small</instanceType>\n      <availabilityZone>us-east-1a</availabilityZone>\n      <duration>12</duration>\n      <fixedPrice>0.00</fixedPrice>\n      <usagePrice>0.00</usagePrice>\n      <productDescription>m1.small offering in us-east-1a</productDescription>\n    </item>\n  </reservedInstancesOfferingsSet>\n\t\t\t\t\t\t</DescribeReservedInstancesOfferingsResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeReservedInstancesOfferings-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeReservedInstancesOfferingsResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;reservedInstancesOfferingsSet&gt;\n    &lt;item&gt;\n      &lt;reservedInstancesOfferingId&gt;4b2293b4-5813-4cc8-9ce3-1957fc1dcfc8&lt;/reservedInstancesOfferingId&gt;\n      &lt;instanceType&gt;m1.small&lt;/instanceType&gt;\n      &lt;availabilityZone&gt;us-east-1a&lt;/availabilityZone&gt;\n      &lt;duration&gt;12&lt;/duration&gt;\n      &lt;fixedPrice&gt;0.00&lt;/fixedPrice&gt;\n      &lt;usagePrice&gt;0.00&lt;/usagePrice&gt;\n      &lt;productDescription&gt;m1.small offering in us-east-1a&lt;/productDescription&gt;\n    &lt;/item&gt;\n  &lt;/reservedInstancesOfferingsSet&gt;\n\t\t\t\t\t\t&lt;/DescribeReservedInstancesOfferingsResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "The ID of the request.",
@@ -1832,8 +2024,12 @@
          ]
       },
       "ResetImageAttributeResponse" : {
-         "exampleCode" : "<ResetImageAttributeResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <return>true</return>\n</ResetImageAttributeResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-ResetImageAttribute-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;ResetImageAttributeResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n&lt;/ResetImageAttributeResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<ResetImageAttributeResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <return>true</return>\n</ResetImageAttributeResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-ResetImageAttribute-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;ResetImageAttributeResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n&lt;/ResetImageAttributeResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "Unique ID of the newly registered machine image.",
@@ -1869,8 +2065,12 @@
          ]
       },
       "RevokeSecurityGroupIngressResponse" : {
-         "exampleCode" : "<RevokeSecurityGroupIngressResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <return>true</return>\n</RevokeSecurityGroupIngressResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-RevokeSecurityGroupIngress-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;RevokeSecurityGroupIngressResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n&lt;/RevokeSecurityGroupIngressResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<RevokeSecurityGroupIngressResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <return>true</return>\n</RevokeSecurityGroupIngressResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-RevokeSecurityGroupIngress-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;RevokeSecurityGroupIngressResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n&lt;/RevokeSecurityGroupIngressResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "The ID of the request.",
@@ -1924,8 +2124,12 @@
          ]
       },
       "RebootInstancesResponse" : {
-         "exampleCode" : "<RebootInstancesResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <return>true</return>\n</RebootInstancesResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-RebootInstances-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;RebootInstancesResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n&lt;/RebootInstancesResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<RebootInstancesResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <return>true</return>\n</RebootInstancesResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-RebootInstances-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;RebootInstancesResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n&lt;/RebootInstancesResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "The ID of the request.",
@@ -2003,8 +2207,12 @@
          ]
       },
       "CreateSecurityGroupResponse" : {
-         "exampleCode" : "<CreateSecurityGroupResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <return>true</return>\n</CreateSecurityGroupResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-CreateSecurityGroup-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;CreateSecurityGroupResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n&lt;/CreateSecurityGroupResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<CreateSecurityGroupResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <return>true</return>\n</CreateSecurityGroupResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-CreateSecurityGroup-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;CreateSecurityGroupResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n&lt;/CreateSecurityGroupResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "The ID of the request.",
@@ -2025,8 +2233,12 @@
          ]
       },
       "ReleaseAddressResponse" : {
-         "exampleCode" : "<ReleaseAddressResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <return>true</return>\n</ReleaseAddressResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-ReleaseAddress-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;ReleaseAddressResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n&lt;/ReleaseAddressResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<ReleaseAddressResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <return>true</return>\n</ReleaseAddressResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-ReleaseAddress-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;ReleaseAddressResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n&lt;/ReleaseAddressResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "The ID of the request.",
@@ -2095,8 +2307,12 @@
          ]
       },
       "DescribeSnapshotsResponse" : {
-         "exampleCode" : "<DescribeSnapshotsResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <snapshotSet>\n    <item>\n      <snapshotId>snap-78a54011</snapshotId>\n      <volumeId>vol-4d826724</volumeId>\n      <status>pending</status>\n      <startTime>2008-05-07T12:51:50.000Z</startTime>\n      <progress>80%</progress>\n    </item>\n  </snapshotSet>\n</DescribeSnapshotsResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeSnapshots-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeSnapshotsResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;snapshotSet&gt;\n    &lt;item&gt;\n      &lt;snapshotId&gt;snap-78a54011&lt;/snapshotId&gt;\n      &lt;volumeId&gt;vol-4d826724&lt;/volumeId&gt;\n      &lt;status&gt;pending&lt;/status&gt;\n      &lt;startTime&gt;2008-05-07T12:51:50.000Z&lt;/startTime&gt;\n      &lt;progress&gt;80%&lt;/progress&gt;\n    &lt;/item&gt;\n  &lt;/snapshotSet&gt;\n&lt;/DescribeSnapshotsResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<DescribeSnapshotsResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <snapshotSet>\n    <item>\n      <snapshotId>snap-78a54011</snapshotId>\n      <volumeId>vol-4d826724</volumeId>\n      <status>pending</status>\n      <startTime>2008-05-07T12:51:50.000Z</startTime>\n      <progress>80%</progress>\n    </item>\n  </snapshotSet>\n</DescribeSnapshotsResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeSnapshots-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeSnapshotsResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;snapshotSet&gt;\n    &lt;item&gt;\n      &lt;snapshotId&gt;snap-78a54011&lt;/snapshotId&gt;\n      &lt;volumeId&gt;vol-4d826724&lt;/volumeId&gt;\n      &lt;status&gt;pending&lt;/status&gt;\n      &lt;startTime&gt;2008-05-07T12:51:50.000Z&lt;/startTime&gt;\n      &lt;progress&gt;80%&lt;/progress&gt;\n    &lt;/item&gt;\n  &lt;/snapshotSet&gt;\n&lt;/DescribeSnapshotsResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "The ID of the request.",
@@ -2117,8 +2333,12 @@
          ]
       },
       "BundleInstanceResponse" : {
-         "exampleCode" : "<BundleInstanceResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <requestId>bun-c1a540a8</requestId>\n  <bundleInstanceTask>\n      <instanceId>i-12345678</instanceId>\n      <bundleId>bun-c1a540a8</bundleId>\n      <state>bundling</state>\n      <startTime>2008-10-07T11:41:50.000Z</startTime>\n      <updateTime>2008-10-07T11:51:50.000Z</updateTime>\n      <progress>70%</progress>\n      <storage>\n        <S3>\n          <bucket>my-bucket</bucket>\n          <prefix>winami</prefix>\n        </S3>\n      </storage>\n  </bundleInstanceTask>\n</BundleInstanceResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-BundleInstance-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;BundleInstanceResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;requestId&gt;bun-c1a540a8&lt;/requestId&gt;\n  &lt;bundleInstanceTask&gt;\n      &lt;instanceId&gt;i-12345678&lt;/instanceId&gt;\n      &lt;bundleId&gt;bun-c1a540a8&lt;/bundleId&gt;\n      &lt;state&gt;bundling&lt;/state&gt;\n      &lt;startTime&gt;2008-10-07T11:41:50.000Z&lt;/startTime&gt;\n      &lt;updateTime&gt;2008-10-07T11:51:50.000Z&lt;/updateTime&gt;\n      &lt;progress&gt;70%&lt;/progress&gt;\n      &lt;storage&gt;\n        &lt;S3&gt;\n          &lt;bucket&gt;my-bucket&lt;/bucket&gt;\n          &lt;prefix&gt;winami&lt;/prefix&gt;\n        &lt;/S3&gt;\n      &lt;/storage&gt;\n  &lt;/bundleInstanceTask&gt;\n&lt;/BundleInstanceResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<BundleInstanceResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <requestId>bun-c1a540a8</requestId>\n  <bundleInstanceTask>\n      <instanceId>i-12345678</instanceId>\n      <bundleId>bun-c1a540a8</bundleId>\n      <state>bundling</state>\n      <startTime>2008-10-07T11:41:50.000Z</startTime>\n      <updateTime>2008-10-07T11:51:50.000Z</updateTime>\n      <progress>70%</progress>\n      <storage>\n        <S3>\n          <bucket>my-bucket</bucket>\n          <prefix>winami</prefix>\n        </S3>\n      </storage>\n  </bundleInstanceTask>\n</BundleInstanceResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-BundleInstance-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;BundleInstanceResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;requestId&gt;bun-c1a540a8&lt;/requestId&gt;\n  &lt;bundleInstanceTask&gt;\n      &lt;instanceId&gt;i-12345678&lt;/instanceId&gt;\n      &lt;bundleId&gt;bun-c1a540a8&lt;/bundleId&gt;\n      &lt;state&gt;bundling&lt;/state&gt;\n      &lt;startTime&gt;2008-10-07T11:41:50.000Z&lt;/startTime&gt;\n      &lt;updateTime&gt;2008-10-07T11:51:50.000Z&lt;/updateTime&gt;\n      &lt;progress&gt;70%&lt;/progress&gt;\n      &lt;storage&gt;\n        &lt;S3&gt;\n          &lt;bucket&gt;my-bucket&lt;/bucket&gt;\n          &lt;prefix&gt;winami&lt;/prefix&gt;\n        &lt;/S3&gt;\n      &lt;/storage&gt;\n  &lt;/bundleInstanceTask&gt;\n&lt;/BundleInstanceResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "Bundle task.",
@@ -2196,8 +2416,12 @@
          ]
       },
       "MonitorInstancesResponse" : {
-         "exampleCode" : "<MonitorInstancesResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n    <instancesSet>\n      <item>\n        <instanceId>i-43a4412a</instanceId>\n        <monitoring>\n          <state>pending</state>\n        </monitoring>\n    </item>\n    <item>\n      <instanceId>i-23a3397d</instanceId>\n        <monitoring>\n          <state>pending</state>\n        </monitoring>\n      </item>\n    </instancesSet>\n</MonitorInstancesResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-MonitorInstances-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;MonitorInstancesResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n    &lt;instancesSet&gt;\n      &lt;item&gt;\n        &lt;instanceId&gt;i-43a4412a&lt;/instanceId&gt;\n        &lt;monitoring&gt;\n          &lt;state&gt;pending&lt;/state&gt;\n        &lt;/monitoring&gt;\n    &lt;/item&gt;\n    &lt;item&gt;\n      &lt;instanceId&gt;i-23a3397d&lt;/instanceId&gt;\n        &lt;monitoring&gt;\n          &lt;state&gt;pending&lt;/state&gt;\n        &lt;/monitoring&gt;\n      &lt;/item&gt;\n    &lt;/instancesSet&gt;\n&lt;/MonitorInstancesResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<MonitorInstancesResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n    <instancesSet>\n      <item>\n        <instanceId>i-43a4412a</instanceId>\n        <monitoring>\n          <state>pending</state>\n        </monitoring>\n    </item>\n    <item>\n      <instanceId>i-23a3397d</instanceId>\n        <monitoring>\n          <state>pending</state>\n        </monitoring>\n      </item>\n    </instancesSet>\n</MonitorInstancesResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-MonitorInstances-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;MonitorInstancesResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n    &lt;instancesSet&gt;\n      &lt;item&gt;\n        &lt;instanceId&gt;i-43a4412a&lt;/instanceId&gt;\n        &lt;monitoring&gt;\n          &lt;state&gt;pending&lt;/state&gt;\n        &lt;/monitoring&gt;\n    &lt;/item&gt;\n    &lt;item&gt;\n      &lt;instanceId&gt;i-23a3397d&lt;/instanceId&gt;\n        &lt;monitoring&gt;\n          &lt;state&gt;pending&lt;/state&gt;\n        &lt;/monitoring&gt;\n      &lt;/item&gt;\n    &lt;/instancesSet&gt;\n&lt;/MonitorInstancesResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "Monitor instance response set.",
@@ -2218,8 +2442,12 @@
          ]
       },
       "DescribeImagesResponse" : {
-         "exampleCode" : "<DescribeImagesResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <imagesSet>\n    <item>\n      <imageId>ami-be3adfd7</imageId>\n      <imageLocation>ec2-public-images/fedora-8-i386-base-v1.04.manifest.xml\n      </imageLocation>\n      <imageState>available</imageState>\n      <imageOwnerId>206029621532</imageOwnerId>\n      <isPublic>false</isPublic>\n      <architecture>i386</architecture>\n      <imageType>machine</imageType>\n      <kernelId>aki-4438dd2d</kernelId>\n      <ramdiskId>ari-4538dd2c</ramdiskId>\n    </item>\n  </imagesSet>\n</DescribeImagesResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeImages-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeImagesResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;imagesSet&gt;\n    &lt;item&gt;\n      &lt;imageId&gt;ami-be3adfd7&lt;/imageId&gt;\n      &lt;imageLocation&gt;ec2-public-images/fedora-8-i386-base-v1.04.manifest.xml\n      &lt;/imageLocation&gt;\n      &lt;imageState&gt;available&lt;/imageState&gt;\n      &lt;imageOwnerId&gt;206029621532&lt;/imageOwnerId&gt;\n      &lt;isPublic&gt;false&lt;/isPublic&gt;\n      &lt;architecture&gt;i386&lt;/architecture&gt;\n      &lt;imageType&gt;machine&lt;/imageType&gt;\n      &lt;kernelId&gt;aki-4438dd2d&lt;/kernelId&gt;\n      &lt;ramdiskId&gt;ari-4538dd2c&lt;/ramdiskId&gt;\n    &lt;/item&gt;\n  &lt;/imagesSet&gt;\n&lt;/DescribeImagesResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<DescribeImagesResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <imagesSet>\n    <item>\n      <imageId>ami-be3adfd7</imageId>\n      <imageLocation>ec2-public-images/fedora-8-i386-base-v1.04.manifest.xml\n      </imageLocation>\n      <imageState>available</imageState>\n      <imageOwnerId>206029621532</imageOwnerId>\n      <isPublic>false</isPublic>\n      <architecture>i386</architecture>\n      <imageType>machine</imageType>\n      <kernelId>aki-4438dd2d</kernelId>\n      <ramdiskId>ari-4538dd2c</ramdiskId>\n    </item>\n  </imagesSet>\n</DescribeImagesResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeImages-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeImagesResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;imagesSet&gt;\n    &lt;item&gt;\n      &lt;imageId&gt;ami-be3adfd7&lt;/imageId&gt;\n      &lt;imageLocation&gt;ec2-public-images/fedora-8-i386-base-v1.04.manifest.xml\n      &lt;/imageLocation&gt;\n      &lt;imageState&gt;available&lt;/imageState&gt;\n      &lt;imageOwnerId&gt;206029621532&lt;/imageOwnerId&gt;\n      &lt;isPublic&gt;false&lt;/isPublic&gt;\n      &lt;architecture&gt;i386&lt;/architecture&gt;\n      &lt;imageType&gt;machine&lt;/imageType&gt;\n      &lt;kernelId&gt;aki-4438dd2d&lt;/kernelId&gt;\n      &lt;ramdiskId&gt;ari-4538dd2c&lt;/ramdiskId&gt;\n    &lt;/item&gt;\n  &lt;/imagesSet&gt;\n&lt;/DescribeImagesResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "Image set.",
@@ -2297,8 +2525,12 @@
          ]
       },
       "UnmonitorInstancesResponse" : {
-         "exampleCode" : "<UnmonitorInstancesResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n    <instancesSet>\n\t  <item>\n\t    <instanceId> i-43a4412a</instanceId>\n\t    <monitoring>\n\t      <state>pending</state>\n\t    </monitoring>\n\t  </item>\n\t  <item>\n\t    <instanceId>i-23a3397d</instanceId>\n\t    <monitoring>\n\t      <state>pending</state>\n\t    </monitoring>\n\t  </item>\n    </instancesSet>\n</UnmonitorInstancesResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-UnmonitorInstances-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;UnmonitorInstancesResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n    &lt;instancesSet&gt;\n\t  &lt;item&gt;\n\t    &lt;instanceId&gt; i-43a4412a&lt;/instanceId&gt;\n\t    &lt;monitoring&gt;\n\t      &lt;state&gt;pending&lt;/state&gt;\n\t    &lt;/monitoring&gt;\n\t  &lt;/item&gt;\n\t  &lt;item&gt;\n\t    &lt;instanceId&gt;i-23a3397d&lt;/instanceId&gt;\n\t    &lt;monitoring&gt;\n\t      &lt;state&gt;pending&lt;/state&gt;\n\t    &lt;/monitoring&gt;\n\t  &lt;/item&gt;\n    &lt;/instancesSet&gt;\n&lt;/UnmonitorInstancesResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<UnmonitorInstancesResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n    <instancesSet>\n\t  <item>\n\t    <instanceId> i-43a4412a</instanceId>\n\t    <monitoring>\n\t      <state>pending</state>\n\t    </monitoring>\n\t  </item>\n\t  <item>\n\t    <instanceId>i-23a3397d</instanceId>\n\t    <monitoring>\n\t      <state>pending</state>\n\t    </monitoring>\n\t  </item>\n    </instancesSet>\n</UnmonitorInstancesResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-UnmonitorInstances-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;UnmonitorInstancesResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n    &lt;instancesSet&gt;\n\t  &lt;item&gt;\n\t    &lt;instanceId&gt; i-43a4412a&lt;/instanceId&gt;\n\t    &lt;monitoring&gt;\n\t      &lt;state&gt;pending&lt;/state&gt;\n\t    &lt;/monitoring&gt;\n\t  &lt;/item&gt;\n\t  &lt;item&gt;\n\t    &lt;instanceId&gt;i-23a3397d&lt;/instanceId&gt;\n\t    &lt;monitoring&gt;\n\t      &lt;state&gt;pending&lt;/state&gt;\n\t    &lt;/monitoring&gt;\n\t  &lt;/item&gt;\n    &lt;/instancesSet&gt;\n&lt;/UnmonitorInstancesResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "Monitor instance response set.",
@@ -2385,8 +2617,12 @@
          ]
       },
       "DeleteSecurityGroupResponse" : {
-         "exampleCode" : "<DeleteSecurityGroupResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <return>true</return>\n</DeleteSecurityGroupResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DeleteSecurityGroup-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DeleteSecurityGroupResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n&lt;/DeleteSecurityGroupResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<DeleteSecurityGroupResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <return>true</return>\n</DeleteSecurityGroupResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DeleteSecurityGroup-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DeleteSecurityGroupResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n&lt;/DeleteSecurityGroupResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "The ID of the request.",
@@ -2407,8 +2643,12 @@
          ]
       },
       "RunInstancesResponse" : {
-         "exampleCode" : "<RunInstancesResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <reservationId>r-47a5402e</reservationId>\n  <ownerId>AIDADH4IGTRXXKCD</ownerId>\n  <groupSet>\n    <item>\n      <groupId>default</groupId>\n    </item>\n  </groupSet>\n  <instancesSet>\n    <item>\n      <instanceId>i-2ba64342</instanceId>\n      <imageId>ami-60a54009</imageId>\n      <instanceState>\n        <code>0</code>\n        <name>pending</name>\n      </instanceState>\n      <privateDnsName></privateDnsName>\n      <dnsName></dnsName>\n      <keyName>example-key-name</keyName>\n      <amiLaunchIndex>0</amiLaunchIndex>\n      <instanceType>m1.small</instanceType>\n      <launchTime>2007-08-07T11:51:50.000Z</launchTime>\n      <placement>\n        <availabilityZone>us-east-1b</availabilityZone>\n      </placement>\n      <monitoring>\n        <enabled>true</enabled>\n      </monitoring>\n\n    </item>\n    <item>\n      <instanceId>i-2bc64242</instanceId>\n      <imageId>ami-60a54009</imageId>\n      <instanceState>\n        <code>0</code>\n        <name>pending</name>\n      </instanceState>\n      <privateDnsName></privateDnsName>\n      <dnsName></dnsName>\n      <keyName>example-key-name</keyName>\n      <amiLaunchIndex>1</amiLaunchIndex>\n      <instanceType>m1.small</instanceType>\n      <launchTime>2007-08-07T11:51:50.000Z</launchTime>\n      <placement>\n\t\t  <availabilityZone>us-east-1b</availabilityZone>\n      </placement>\n      <monitoring>\n        <enabled>true</enabled>\n      </monitoring>\n    </item>\n    <item>\n      <instanceId>i-2be64332</instanceId>\n      <imageId>ami-60a54009</imageId>\n      <instanceState>\n        <code>0</code>\n        <name>pending</name>\n      </instanceState>\n      <privateDnsName></privateDnsName>\n      <dnsName></dnsName>\n      <keyName>example-key-name</keyName>\n      <amiLaunchIndex>2</amiLaunchIndex>\n      <instanceType>m1.small</instanceType>\n      <launchTime>2007-08-07T11:51:50.000Z</launchTime>\n      <placement>\n\t\t  <availabilityZone>us-east-1b</availabilityZone>\n      </placement>\n      <monitoring>\n        <enabled>true</enabled>\n      </monitoring>\n    </item>\n  </instancesSet>\n</RunInstancesResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-RunInstances-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;RunInstancesResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;reservationId&gt;r-47a5402e&lt;/reservationId&gt;\n  &lt;ownerId&gt;AIDADH4IGTRXXKCD&lt;/ownerId&gt;\n  &lt;groupSet&gt;\n    &lt;item&gt;\n      &lt;groupId&gt;default&lt;/groupId&gt;\n    &lt;/item&gt;\n  &lt;/groupSet&gt;\n  &lt;instancesSet&gt;\n    &lt;item&gt;\n      &lt;instanceId&gt;i-2ba64342&lt;/instanceId&gt;\n      &lt;imageId&gt;ami-60a54009&lt;/imageId&gt;\n      &lt;instanceState&gt;\n        &lt;code&gt;0&lt;/code&gt;\n        &lt;name&gt;pending&lt;/name&gt;\n      &lt;/instanceState&gt;\n      &lt;privateDnsName&gt;&lt;/privateDnsName&gt;\n      &lt;dnsName&gt;&lt;/dnsName&gt;\n      &lt;keyName&gt;example-key-name&lt;/keyName&gt;\n      &lt;amiLaunchIndex&gt;0&lt;/amiLaunchIndex&gt;\n      &lt;instanceType&gt;m1.small&lt;/instanceType&gt;\n      &lt;launchTime&gt;2007-08-07T11:51:50.000Z&lt;/launchTime&gt;\n      &lt;placement&gt;\n        &lt;availabilityZone&gt;us-east-1b&lt;/availabilityZone&gt;\n      &lt;/placement&gt;\n      &lt;monitoring&gt;\n        &lt;enabled&gt;true&lt;/enabled&gt;\n      &lt;/monitoring&gt;\n\n    &lt;/item&gt;\n    &lt;item&gt;\n      &lt;instanceId&gt;i-2bc64242&lt;/instanceId&gt;\n      &lt;imageId&gt;ami-60a54009&lt;/imageId&gt;\n      &lt;instanceState&gt;\n        &lt;code&gt;0&lt;/code&gt;\n        &lt;name&gt;pending&lt;/name&gt;\n      &lt;/instanceState&gt;\n      &lt;privateDnsName&gt;&lt;/privateDnsName&gt;\n      &lt;dnsName&gt;&lt;/dnsName&gt;\n      &lt;keyName&gt;example-key-name&lt;/keyName&gt;\n      &lt;amiLaunchIndex&gt;1&lt;/amiLaunchIndex&gt;\n      &lt;instanceType&gt;m1.small&lt;/instanceType&gt;\n      &lt;launchTime&gt;2007-08-07T11:51:50.000Z&lt;/launchTime&gt;\n      &lt;placement&gt;\n\t\t  &lt;availabilityZone&gt;us-east-1b&lt;/availabilityZone&gt;\n      &lt;/placement&gt;\n      &lt;monitoring&gt;\n        &lt;enabled&gt;true&lt;/enabled&gt;\n      &lt;/monitoring&gt;\n    &lt;/item&gt;\n    &lt;item&gt;\n      &lt;instanceId&gt;i-2be64332&lt;/instanceId&gt;\n      &lt;imageId&gt;ami-60a54009&lt;/imageId&gt;\n      &lt;instanceState&gt;\n        &lt;code&gt;0&lt;/code&gt;\n        &lt;name&gt;pending&lt;/name&gt;\n      &lt;/instanceState&gt;\n      &lt;privateDnsName&gt;&lt;/privateDnsName&gt;\n      &lt;dnsName&gt;&lt;/dnsName&gt;\n      &lt;keyName&gt;example-key-name&lt;/keyName&gt;\n      &lt;amiLaunchIndex&gt;2&lt;/amiLaunchIndex&gt;\n      &lt;instanceType&gt;m1.small&lt;/instanceType&gt;\n      &lt;launchTime&gt;2007-08-07T11:51:50.000Z&lt;/launchTime&gt;\n      &lt;placement&gt;\n\t\t  &lt;availabilityZone&gt;us-east-1b&lt;/availabilityZone&gt;\n      &lt;/placement&gt;\n      &lt;monitoring&gt;\n        &lt;enabled&gt;true&lt;/enabled&gt;\n      &lt;/monitoring&gt;\n    &lt;/item&gt;\n  &lt;/instancesSet&gt;\n&lt;/RunInstancesResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<RunInstancesResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <reservationId>r-47a5402e</reservationId>\n  <ownerId>AIDADH4IGTRXXKCD</ownerId>\n  <groupSet>\n    <item>\n      <groupId>default</groupId>\n    </item>\n  </groupSet>\n  <instancesSet>\n    <item>\n      <instanceId>i-2ba64342</instanceId>\n      <imageId>ami-60a54009</imageId>\n      <instanceState>\n        <code>0</code>\n        <name>pending</name>\n      </instanceState>\n      <privateDnsName></privateDnsName>\n      <dnsName></dnsName>\n      <keyName>example-key-name</keyName>\n      <amiLaunchIndex>0</amiLaunchIndex>\n      <instanceType>m1.small</instanceType>\n      <launchTime>2007-08-07T11:51:50.000Z</launchTime>\n      <placement>\n        <availabilityZone>us-east-1b</availabilityZone>\n      </placement>\n      <monitoring>\n        <enabled>true</enabled>\n      </monitoring>\n\n    </item>\n    <item>\n      <instanceId>i-2bc64242</instanceId>\n      <imageId>ami-60a54009</imageId>\n      <instanceState>\n        <code>0</code>\n        <name>pending</name>\n      </instanceState>\n      <privateDnsName></privateDnsName>\n      <dnsName></dnsName>\n      <keyName>example-key-name</keyName>\n      <amiLaunchIndex>1</amiLaunchIndex>\n      <instanceType>m1.small</instanceType>\n      <launchTime>2007-08-07T11:51:50.000Z</launchTime>\n      <placement>\n\t\t  <availabilityZone>us-east-1b</availabilityZone>\n      </placement>\n      <monitoring>\n        <enabled>true</enabled>\n      </monitoring>\n    </item>\n    <item>\n      <instanceId>i-2be64332</instanceId>\n      <imageId>ami-60a54009</imageId>\n      <instanceState>\n        <code>0</code>\n        <name>pending</name>\n      </instanceState>\n      <privateDnsName></privateDnsName>\n      <dnsName></dnsName>\n      <keyName>example-key-name</keyName>\n      <amiLaunchIndex>2</amiLaunchIndex>\n      <instanceType>m1.small</instanceType>\n      <launchTime>2007-08-07T11:51:50.000Z</launchTime>\n      <placement>\n\t\t  <availabilityZone>us-east-1b</availabilityZone>\n      </placement>\n      <monitoring>\n        <enabled>true</enabled>\n      </monitoring>\n    </item>\n  </instancesSet>\n</RunInstancesResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-RunInstances-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;RunInstancesResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;reservationId&gt;r-47a5402e&lt;/reservationId&gt;\n  &lt;ownerId&gt;AIDADH4IGTRXXKCD&lt;/ownerId&gt;\n  &lt;groupSet&gt;\n    &lt;item&gt;\n      &lt;groupId&gt;default&lt;/groupId&gt;\n    &lt;/item&gt;\n  &lt;/groupSet&gt;\n  &lt;instancesSet&gt;\n    &lt;item&gt;\n      &lt;instanceId&gt;i-2ba64342&lt;/instanceId&gt;\n      &lt;imageId&gt;ami-60a54009&lt;/imageId&gt;\n      &lt;instanceState&gt;\n        &lt;code&gt;0&lt;/code&gt;\n        &lt;name&gt;pending&lt;/name&gt;\n      &lt;/instanceState&gt;\n      &lt;privateDnsName&gt;&lt;/privateDnsName&gt;\n      &lt;dnsName&gt;&lt;/dnsName&gt;\n      &lt;keyName&gt;example-key-name&lt;/keyName&gt;\n      &lt;amiLaunchIndex&gt;0&lt;/amiLaunchIndex&gt;\n      &lt;instanceType&gt;m1.small&lt;/instanceType&gt;\n      &lt;launchTime&gt;2007-08-07T11:51:50.000Z&lt;/launchTime&gt;\n      &lt;placement&gt;\n        &lt;availabilityZone&gt;us-east-1b&lt;/availabilityZone&gt;\n      &lt;/placement&gt;\n      &lt;monitoring&gt;\n        &lt;enabled&gt;true&lt;/enabled&gt;\n      &lt;/monitoring&gt;\n\n    &lt;/item&gt;\n    &lt;item&gt;\n      &lt;instanceId&gt;i-2bc64242&lt;/instanceId&gt;\n      &lt;imageId&gt;ami-60a54009&lt;/imageId&gt;\n      &lt;instanceState&gt;\n        &lt;code&gt;0&lt;/code&gt;\n        &lt;name&gt;pending&lt;/name&gt;\n      &lt;/instanceState&gt;\n      &lt;privateDnsName&gt;&lt;/privateDnsName&gt;\n      &lt;dnsName&gt;&lt;/dnsName&gt;\n      &lt;keyName&gt;example-key-name&lt;/keyName&gt;\n      &lt;amiLaunchIndex&gt;1&lt;/amiLaunchIndex&gt;\n      &lt;instanceType&gt;m1.small&lt;/instanceType&gt;\n      &lt;launchTime&gt;2007-08-07T11:51:50.000Z&lt;/launchTime&gt;\n      &lt;placement&gt;\n\t\t  &lt;availabilityZone&gt;us-east-1b&lt;/availabilityZone&gt;\n      &lt;/placement&gt;\n      &lt;monitoring&gt;\n        &lt;enabled&gt;true&lt;/enabled&gt;\n      &lt;/monitoring&gt;\n    &lt;/item&gt;\n    &lt;item&gt;\n      &lt;instanceId&gt;i-2be64332&lt;/instanceId&gt;\n      &lt;imageId&gt;ami-60a54009&lt;/imageId&gt;\n      &lt;instanceState&gt;\n        &lt;code&gt;0&lt;/code&gt;\n        &lt;name&gt;pending&lt;/name&gt;\n      &lt;/instanceState&gt;\n      &lt;privateDnsName&gt;&lt;/privateDnsName&gt;\n      &lt;dnsName&gt;&lt;/dnsName&gt;\n      &lt;keyName&gt;example-key-name&lt;/keyName&gt;\n      &lt;amiLaunchIndex&gt;2&lt;/amiLaunchIndex&gt;\n      &lt;instanceType&gt;m1.small&lt;/instanceType&gt;\n      &lt;launchTime&gt;2007-08-07T11:51:50.000Z&lt;/launchTime&gt;\n      &lt;placement&gt;\n\t\t  &lt;availabilityZone&gt;us-east-1b&lt;/availabilityZone&gt;\n      &lt;/placement&gt;\n      &lt;monitoring&gt;\n        &lt;enabled&gt;true&lt;/enabled&gt;\n      &lt;/monitoring&gt;\n    &lt;/item&gt;\n  &lt;/instancesSet&gt;\n&lt;/RunInstancesResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "Group set. ",
@@ -2453,8 +2693,12 @@
          ]
       },
       "DeregisterImageResponse" : {
-         "exampleCode" : "<DeregisterImageResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <return>true</return>\n</DeregisterImageResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DeregisterImage-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DeregisterImageResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n&lt;/DeregisterImageResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<DeregisterImageResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <return>true</return>\n</DeregisterImageResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DeregisterImage-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DeregisterImageResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n&lt;/DeregisterImageResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "The ID of the request.",
@@ -2475,8 +2719,12 @@
          ]
       },
       "TerminateInstancesResponse" : {
-         "exampleCode" : "<TerminateInstancesResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <instancesSet>\n    <item>\n      <instanceId>i-3ea74257</instanceId>\n      <shutdownState>\n        <code>32</code>\n        <name>shutting-down</name>\n      </shutdownState>\n      <previousState>\n        <code>16</code>\n        <name>running</name>\n      </previousState>\n    </item>\n  </instancesSet>\n</TerminateInstancesResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-TerminateInstances-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;TerminateInstancesResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;instancesSet&gt;\n    &lt;item&gt;\n      &lt;instanceId&gt;i-3ea74257&lt;/instanceId&gt;\n      &lt;shutdownState&gt;\n        &lt;code&gt;32&lt;/code&gt;\n        &lt;name&gt;shutting-down&lt;/name&gt;\n      &lt;/shutdownState&gt;\n      &lt;previousState&gt;\n        &lt;code&gt;16&lt;/code&gt;\n        &lt;name&gt;running&lt;/name&gt;\n      &lt;/previousState&gt;\n    &lt;/item&gt;\n  &lt;/instancesSet&gt;\n&lt;/TerminateInstancesResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<TerminateInstancesResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <instancesSet>\n    <item>\n      <instanceId>i-3ea74257</instanceId>\n      <shutdownState>\n        <code>32</code>\n        <name>shutting-down</name>\n      </shutdownState>\n      <previousState>\n        <code>16</code>\n        <name>running</name>\n      </previousState>\n    </item>\n  </instancesSet>\n</TerminateInstancesResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-TerminateInstances-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;TerminateInstancesResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;instancesSet&gt;\n    &lt;item&gt;\n      &lt;instanceId&gt;i-3ea74257&lt;/instanceId&gt;\n      &lt;shutdownState&gt;\n        &lt;code&gt;32&lt;/code&gt;\n        &lt;name&gt;shutting-down&lt;/name&gt;\n      &lt;/shutdownState&gt;\n      &lt;previousState&gt;\n        &lt;code&gt;16&lt;/code&gt;\n        &lt;name&gt;running&lt;/name&gt;\n      &lt;/previousState&gt;\n    &lt;/item&gt;\n  &lt;/instancesSet&gt;\n&lt;/TerminateInstancesResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "Instances set.",
@@ -2584,8 +2832,12 @@
          ]
       },
       "ConfirmProductInstanceResponse" : {
-         "exampleCode" : "<ConfirmProductInstanceResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <return>true</return>\n  <ownerId>254933287430</ownerId>\n</ConfirmProductInstanceResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-ConfirmProductInstance-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;ConfirmProductInstanceResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n  &lt;ownerId&gt;254933287430&lt;/ownerId&gt;\n&lt;/ConfirmProductInstanceResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<ConfirmProductInstanceResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <return>true</return>\n  <ownerId>254933287430</ownerId>\n</ConfirmProductInstanceResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-ConfirmProductInstance-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;ConfirmProductInstanceResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n  &lt;ownerId&gt;254933287430&lt;/ownerId&gt;\n&lt;/ConfirmProductInstanceResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "The instance owner's account ID. Only present if the product code is attached to the instance.",
@@ -2612,8 +2864,12 @@
          ]
       },
       "CreateKeyPairResponse" : {
-         "exampleCode" : "<CreateKeyPairResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <keyName>gsg-keypair</keyName>\n  <keyFingerprint>1f:51:ae:28:bf:89:e9:d8:1f:25:5d:37:2d:7d:b8:ca:9f:f5:f1:6f</keyFingerprint>\n  <keyMaterial>-----BEGIN RSA PRIVATE KEY-----\nMIIEoQIBAAKCAQBuLFg5ujHrtm1jnutSuoO8Xe56LlT+HM8v/xkaa39EstM3/aFxTHgElQiJLChp\nHungXQ29VTc8rc1bW0lkdi23OH5eqkMHGhvEwqa0HWASUMll4o3o/IX+0f2UcPoKCOVUR+jx71Sg\n5AU52EQfanIn3ZQ8lFW7Edp5a3q4DhjGlUKToHVbicL5E+g45zfB95wIyywWZfeW/UUF3LpGZyq/\nebIUlq1qTbHkLbCC2r7RTn8vpQWp47BGVYGtGSBMpTRP5hnbzzuqj3itkiLHjU39S2sJCJ0TrJx5\ni8BygR4s3mHKBj8l+ePQxG1kGbF6R4yg6sECmXn17MRQVXODNHZbAgMBAAECggEAY1tsiUsIwDl5\n91CXirkYGuVfLyLflXenxfI50mDFms/mumTqloHO7tr0oriHDR5K7wMcY/YY5YkcXNo7mvUVD1pM\nZNUJs7rw9gZRTrf7LylaJ58kOcyajw8TsC4e4LPbFaHwS1d6K8rXh64o6WgW4SrsB6ICmr1kGQI7\n3wcfgt5ecIu4TZf0OE9IHjn+2eRlsrjBdeORi7KiUNC/pAG23I6MdDOFEQRcCSigCj+4/mciFUSA\nSWS4dMbrpb9FNSIcf9dcLxVM7/6KxgJNfZc9XWzUw77Jg8x92Zd0fVhHOux5IZC+UvSKWB4dyfcI\ntE8C3p9bbU9VGyY5vLCAiIb4qQKBgQDLiO24GXrIkswF32YtBBMuVgLGCwU9h9HlO9mKAc2m8Cm1\njUE5IpzRjTedc9I2qiIMUTwtgnw42auSCzbUeYMURPtDqyQ7p6AjMujp9EPemcSVOK9vXYL0Ptco\nxW9MC0dtV6iPkCN7gOqiZXPRKaFbWADp16p8UAIvS/a5XXk5jwKBgQCKkpHi2EISh1uRkhxljyWC\niDCiK6JBRsMvpLbc0v5dKwP5alo1fmdR5PJaV2qvZSj5CYNpMAy1/EDNTY5OSIJU+0KFmQbyhsbm\nrdLNLDL4+TcnT7c62/aH01ohYaf/VCbRhtLlBfqGoQc7+sAc8vmKkesnF7CqCEKDyF/dhrxYdQKB\ngC0iZzzNAapayz1+JcVTwwEid6j9JqNXbBc+Z2YwMi+T0Fv/P/hwkX/ypeOXnIUcw0Ih/YtGBVAC\nDQbsz7LcY1HqXiHKYNWNvXgwwO+oiChjxvEkSdsTTIfnK4VSCvU9BxDbQHjdiNDJbL6oar92UN7V\nrBYvChJZF7LvUH4YmVpHAoGAbZ2X7XvoeEO+uZ58/BGKOIGHByHBDiXtzMhdJr15HTYjxK7OgTZm\ngK+8zp4L9IbvLGDMJO8vft32XPEWuvI8twCzFH+CsWLQADZMZKSsBasOZ/h1FwhdMgCMcY+Qlzd4\nJZKjTSu3i7vhvx6RzdSedXEMNTZWN4qlIx3kR5aHcukCgYA9T+Zrvm1F0seQPbLknn7EqhXIjBaT\nP8TTvW/6bdPi23ExzxZn7KOdrfclYRph1LHMpAONv/x2xALIf91UB+v5ohy1oDoasL0gij1houRe\n2ERKKdwz0ZL9SWq6VTdhr/5G994CK72fy5WhyERbDjUIdHaK3M849JJuf8cSrvSb4g==\n-----END RSA PRIVATE KEY-----</keyMaterial>\n</CreateKeyPairResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-CreateKeyPair-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;CreateKeyPairResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;keyName&gt;gsg-keypair&lt;/keyName&gt;\n  &lt;keyFingerprint&gt;1f:51:ae:28:bf:89:e9:d8:1f:25:5d:37:2d:7d:b8:ca:9f:f5:f1:6f&lt;/keyFingerprint&gt;\n  &lt;keyMaterial&gt;-----BEGIN RSA PRIVATE KEY-----\nMIIEoQIBAAKCAQBuLFg5ujHrtm1jnutSuoO8Xe56LlT+HM8v/xkaa39EstM3/aFxTHgElQiJLChp\nHungXQ29VTc8rc1bW0lkdi23OH5eqkMHGhvEwqa0HWASUMll4o3o/IX+0f2UcPoKCOVUR+jx71Sg\n5AU52EQfanIn3ZQ8lFW7Edp5a3q4DhjGlUKToHVbicL5E+g45zfB95wIyywWZfeW/UUF3LpGZyq/\nebIUlq1qTbHkLbCC2r7RTn8vpQWp47BGVYGtGSBMpTRP5hnbzzuqj3itkiLHjU39S2sJCJ0TrJx5\ni8BygR4s3mHKBj8l+ePQxG1kGbF6R4yg6sECmXn17MRQVXODNHZbAgMBAAECggEAY1tsiUsIwDl5\n91CXirkYGuVfLyLflXenxfI50mDFms/mumTqloHO7tr0oriHDR5K7wMcY/YY5YkcXNo7mvUVD1pM\nZNUJs7rw9gZRTrf7LylaJ58kOcyajw8TsC4e4LPbFaHwS1d6K8rXh64o6WgW4SrsB6ICmr1kGQI7\n3wcfgt5ecIu4TZf0OE9IHjn+2eRlsrjBdeORi7KiUNC/pAG23I6MdDOFEQRcCSigCj+4/mciFUSA\nSWS4dMbrpb9FNSIcf9dcLxVM7/6KxgJNfZc9XWzUw77Jg8x92Zd0fVhHOux5IZC+UvSKWB4dyfcI\ntE8C3p9bbU9VGyY5vLCAiIb4qQKBgQDLiO24GXrIkswF32YtBBMuVgLGCwU9h9HlO9mKAc2m8Cm1\njUE5IpzRjTedc9I2qiIMUTwtgnw42auSCzbUeYMURPtDqyQ7p6AjMujp9EPemcSVOK9vXYL0Ptco\nxW9MC0dtV6iPkCN7gOqiZXPRKaFbWADp16p8UAIvS/a5XXk5jwKBgQCKkpHi2EISh1uRkhxljyWC\niDCiK6JBRsMvpLbc0v5dKwP5alo1fmdR5PJaV2qvZSj5CYNpMAy1/EDNTY5OSIJU+0KFmQbyhsbm\nrdLNLDL4+TcnT7c62/aH01ohYaf/VCbRhtLlBfqGoQc7+sAc8vmKkesnF7CqCEKDyF/dhrxYdQKB\ngC0iZzzNAapayz1+JcVTwwEid6j9JqNXbBc+Z2YwMi+T0Fv/P/hwkX/ypeOXnIUcw0Ih/YtGBVAC\nDQbsz7LcY1HqXiHKYNWNvXgwwO+oiChjxvEkSdsTTIfnK4VSCvU9BxDbQHjdiNDJbL6oar92UN7V\nrBYvChJZF7LvUH4YmVpHAoGAbZ2X7XvoeEO+uZ58/BGKOIGHByHBDiXtzMhdJr15HTYjxK7OgTZm\ngK+8zp4L9IbvLGDMJO8vft32XPEWuvI8twCzFH+CsWLQADZMZKSsBasOZ/h1FwhdMgCMcY+Qlzd4\nJZKjTSu3i7vhvx6RzdSedXEMNTZWN4qlIx3kR5aHcukCgYA9T+Zrvm1F0seQPbLknn7EqhXIjBaT\nP8TTvW/6bdPi23ExzxZn7KOdrfclYRph1LHMpAONv/x2xALIf91UB+v5ohy1oDoasL0gij1houRe\n2ERKKdwz0ZL9SWq6VTdhr/5G994CK72fy5WhyERbDjUIdHaK3M849JJuf8cSrvSb4g==\n-----END RSA PRIVATE KEY-----&lt;/keyMaterial&gt;\n&lt;/CreateKeyPairResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<CreateKeyPairResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <keyName>gsg-keypair</keyName>\n  <keyFingerprint>1f:51:ae:28:bf:89:e9:d8:1f:25:5d:37:2d:7d:b8:ca:9f:f5:f1:6f</keyFingerprint>\n  <keyMaterial>-----BEGIN RSA PRIVATE KEY-----\nMIIEoQIBAAKCAQBuLFg5ujHrtm1jnutSuoO8Xe56LlT+HM8v/xkaa39EstM3/aFxTHgElQiJLChp\nHungXQ29VTc8rc1bW0lkdi23OH5eqkMHGhvEwqa0HWASUMll4o3o/IX+0f2UcPoKCOVUR+jx71Sg\n5AU52EQfanIn3ZQ8lFW7Edp5a3q4DhjGlUKToHVbicL5E+g45zfB95wIyywWZfeW/UUF3LpGZyq/\nebIUlq1qTbHkLbCC2r7RTn8vpQWp47BGVYGtGSBMpTRP5hnbzzuqj3itkiLHjU39S2sJCJ0TrJx5\ni8BygR4s3mHKBj8l+ePQxG1kGbF6R4yg6sECmXn17MRQVXODNHZbAgMBAAECggEAY1tsiUsIwDl5\n91CXirkYGuVfLyLflXenxfI50mDFms/mumTqloHO7tr0oriHDR5K7wMcY/YY5YkcXNo7mvUVD1pM\nZNUJs7rw9gZRTrf7LylaJ58kOcyajw8TsC4e4LPbFaHwS1d6K8rXh64o6WgW4SrsB6ICmr1kGQI7\n3wcfgt5ecIu4TZf0OE9IHjn+2eRlsrjBdeORi7KiUNC/pAG23I6MdDOFEQRcCSigCj+4/mciFUSA\nSWS4dMbrpb9FNSIcf9dcLxVM7/6KxgJNfZc9XWzUw77Jg8x92Zd0fVhHOux5IZC+UvSKWB4dyfcI\ntE8C3p9bbU9VGyY5vLCAiIb4qQKBgQDLiO24GXrIkswF32YtBBMuVgLGCwU9h9HlO9mKAc2m8Cm1\njUE5IpzRjTedc9I2qiIMUTwtgnw42auSCzbUeYMURPtDqyQ7p6AjMujp9EPemcSVOK9vXYL0Ptco\nxW9MC0dtV6iPkCN7gOqiZXPRKaFbWADp16p8UAIvS/a5XXk5jwKBgQCKkpHi2EISh1uRkhxljyWC\niDCiK6JBRsMvpLbc0v5dKwP5alo1fmdR5PJaV2qvZSj5CYNpMAy1/EDNTY5OSIJU+0KFmQbyhsbm\nrdLNLDL4+TcnT7c62/aH01ohYaf/VCbRhtLlBfqGoQc7+sAc8vmKkesnF7CqCEKDyF/dhrxYdQKB\ngC0iZzzNAapayz1+JcVTwwEid6j9JqNXbBc+Z2YwMi+T0Fv/P/hwkX/ypeOXnIUcw0Ih/YtGBVAC\nDQbsz7LcY1HqXiHKYNWNvXgwwO+oiChjxvEkSdsTTIfnK4VSCvU9BxDbQHjdiNDJbL6oar92UN7V\nrBYvChJZF7LvUH4YmVpHAoGAbZ2X7XvoeEO+uZ58/BGKOIGHByHBDiXtzMhdJr15HTYjxK7OgTZm\ngK+8zp4L9IbvLGDMJO8vft32XPEWuvI8twCzFH+CsWLQADZMZKSsBasOZ/h1FwhdMgCMcY+Qlzd4\nJZKjTSu3i7vhvx6RzdSedXEMNTZWN4qlIx3kR5aHcukCgYA9T+Zrvm1F0seQPbLknn7EqhXIjBaT\nP8TTvW/6bdPi23ExzxZn7KOdrfclYRph1LHMpAONv/x2xALIf91UB+v5ohy1oDoasL0gij1houRe\n2ERKKdwz0ZL9SWq6VTdhr/5G994CK72fy5WhyERbDjUIdHaK3M849JJuf8cSrvSb4g==\n-----END RSA PRIVATE KEY-----</keyMaterial>\n</CreateKeyPairResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-CreateKeyPair-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;CreateKeyPairResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;keyName&gt;gsg-keypair&lt;/keyName&gt;\n  &lt;keyFingerprint&gt;1f:51:ae:28:bf:89:e9:d8:1f:25:5d:37:2d:7d:b8:ca:9f:f5:f1:6f&lt;/keyFingerprint&gt;\n  &lt;keyMaterial&gt;-----BEGIN RSA PRIVATE KEY-----\nMIIEoQIBAAKCAQBuLFg5ujHrtm1jnutSuoO8Xe56LlT+HM8v/xkaa39EstM3/aFxTHgElQiJLChp\nHungXQ29VTc8rc1bW0lkdi23OH5eqkMHGhvEwqa0HWASUMll4o3o/IX+0f2UcPoKCOVUR+jx71Sg\n5AU52EQfanIn3ZQ8lFW7Edp5a3q4DhjGlUKToHVbicL5E+g45zfB95wIyywWZfeW/UUF3LpGZyq/\nebIUlq1qTbHkLbCC2r7RTn8vpQWp47BGVYGtGSBMpTRP5hnbzzuqj3itkiLHjU39S2sJCJ0TrJx5\ni8BygR4s3mHKBj8l+ePQxG1kGbF6R4yg6sECmXn17MRQVXODNHZbAgMBAAECggEAY1tsiUsIwDl5\n91CXirkYGuVfLyLflXenxfI50mDFms/mumTqloHO7tr0oriHDR5K7wMcY/YY5YkcXNo7mvUVD1pM\nZNUJs7rw9gZRTrf7LylaJ58kOcyajw8TsC4e4LPbFaHwS1d6K8rXh64o6WgW4SrsB6ICmr1kGQI7\n3wcfgt5ecIu4TZf0OE9IHjn+2eRlsrjBdeORi7KiUNC/pAG23I6MdDOFEQRcCSigCj+4/mciFUSA\nSWS4dMbrpb9FNSIcf9dcLxVM7/6KxgJNfZc9XWzUw77Jg8x92Zd0fVhHOux5IZC+UvSKWB4dyfcI\ntE8C3p9bbU9VGyY5vLCAiIb4qQKBgQDLiO24GXrIkswF32YtBBMuVgLGCwU9h9HlO9mKAc2m8Cm1\njUE5IpzRjTedc9I2qiIMUTwtgnw42auSCzbUeYMURPtDqyQ7p6AjMujp9EPemcSVOK9vXYL0Ptco\nxW9MC0dtV6iPkCN7gOqiZXPRKaFbWADp16p8UAIvS/a5XXk5jwKBgQCKkpHi2EISh1uRkhxljyWC\niDCiK6JBRsMvpLbc0v5dKwP5alo1fmdR5PJaV2qvZSj5CYNpMAy1/EDNTY5OSIJU+0KFmQbyhsbm\nrdLNLDL4+TcnT7c62/aH01ohYaf/VCbRhtLlBfqGoQc7+sAc8vmKkesnF7CqCEKDyF/dhrxYdQKB\ngC0iZzzNAapayz1+JcVTwwEid6j9JqNXbBc+Z2YwMi+T0Fv/P/hwkX/ypeOXnIUcw0Ih/YtGBVAC\nDQbsz7LcY1HqXiHKYNWNvXgwwO+oiChjxvEkSdsTTIfnK4VSCvU9BxDbQHjdiNDJbL6oar92UN7V\nrBYvChJZF7LvUH4YmVpHAoGAbZ2X7XvoeEO+uZ58/BGKOIGHByHBDiXtzMhdJr15HTYjxK7OgTZm\ngK+8zp4L9IbvLGDMJO8vft32XPEWuvI8twCzFH+CsWLQADZMZKSsBasOZ/h1FwhdMgCMcY+Qlzd4\nJZKjTSu3i7vhvx6RzdSedXEMNTZWN4qlIx3kR5aHcukCgYA9T+Zrvm1F0seQPbLknn7EqhXIjBaT\nP8TTvW/6bdPi23ExzxZn7KOdrfclYRph1LHMpAONv/x2xALIf91UB+v5ohy1oDoasL0gij1houRe\n2ERKKdwz0ZL9SWq6VTdhr/5G994CK72fy5WhyERbDjUIdHaK3M849JJuf8cSrvSb4g==\n-----END RSA PRIVATE KEY-----&lt;/keyMaterial&gt;\n&lt;/CreateKeyPairResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "A SHA-1 digest of the DER encoded private key.",
@@ -2646,8 +2902,12 @@
          ]
       },
       "RegisterImageResponse" : {
-         "exampleCode" : "<RegisterImageResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <imageId>ami-61a54008</imageId>\n</RegisterImageResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-RegisterImage-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;RegisterImageResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;imageId&gt;ami-61a54008&lt;/imageId&gt;\n&lt;/RegisterImageResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<RegisterImageResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <imageId>ami-61a54008</imageId>\n</RegisterImageResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-RegisterImage-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;RegisterImageResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;imageId&gt;ami-61a54008&lt;/imageId&gt;\n&lt;/RegisterImageResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "Unique ID of the newly registered machine image.",
@@ -2825,8 +3085,12 @@
          ]
       },
       "DescribeVolumesResponse" : {
-         "exampleCode" : "<DescribeVolumesResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n<volumeSet>\n  <item>\n    <volumeId>vol-4282672b</volumeId>\n    <size>800</size>\n    <snapshotId/>\n    <availabilityZone>us-east-1a</availabilityZone>\n    <status>in-use</status>\n    <createTime>2008-05-07T11:51:50.000Z</createTime>\n    <attachmentSet>\n      <item>\n        <volumeId>vol-4282672b</volumeId>\n        <instanceId>i-6058a509</instanceId>\n        <device>/dev/sdh</device>\n        <status>attached</status>\n        <attachTime>2008-05-07T12:51:50.000Z</attachTime>\n      </item>\n    </attachmentSet>\n  </item>\n</DescribeVolumesResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeVolumes-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeVolumesResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n&lt;volumeSet&gt;\n  &lt;item&gt;\n    &lt;volumeId&gt;vol-4282672b&lt;/volumeId&gt;\n    &lt;size&gt;800&lt;/size&gt;\n    &lt;snapshotId/&gt;\n    &lt;availabilityZone&gt;us-east-1a&lt;/availabilityZone&gt;\n    &lt;status&gt;in-use&lt;/status&gt;\n    &lt;createTime&gt;2008-05-07T11:51:50.000Z&lt;/createTime&gt;\n    &lt;attachmentSet&gt;\n      &lt;item&gt;\n        &lt;volumeId&gt;vol-4282672b&lt;/volumeId&gt;\n        &lt;instanceId&gt;i-6058a509&lt;/instanceId&gt;\n        &lt;device&gt;/dev/sdh&lt;/device&gt;\n        &lt;status&gt;attached&lt;/status&gt;\n        &lt;attachTime&gt;2008-05-07T12:51:50.000Z&lt;/attachTime&gt;\n      &lt;/item&gt;\n    &lt;/attachmentSet&gt;\n  &lt;/item&gt;\n&lt;/DescribeVolumesResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<DescribeVolumesResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n<volumeSet>\n  <item>\n    <volumeId>vol-4282672b</volumeId>\n    <size>800</size>\n    <snapshotId/>\n    <availabilityZone>us-east-1a</availabilityZone>\n    <status>in-use</status>\n    <createTime>2008-05-07T11:51:50.000Z</createTime>\n    <attachmentSet>\n      <item>\n        <volumeId>vol-4282672b</volumeId>\n        <instanceId>i-6058a509</instanceId>\n        <device>/dev/sdh</device>\n        <status>attached</status>\n        <attachTime>2008-05-07T12:51:50.000Z</attachTime>\n      </item>\n    </attachmentSet>\n  </item>\n</DescribeVolumesResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeVolumes-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeVolumesResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n&lt;volumeSet&gt;\n  &lt;item&gt;\n    &lt;volumeId&gt;vol-4282672b&lt;/volumeId&gt;\n    &lt;size&gt;800&lt;/size&gt;\n    &lt;snapshotId/&gt;\n    &lt;availabilityZone&gt;us-east-1a&lt;/availabilityZone&gt;\n    &lt;status&gt;in-use&lt;/status&gt;\n    &lt;createTime&gt;2008-05-07T11:51:50.000Z&lt;/createTime&gt;\n    &lt;attachmentSet&gt;\n      &lt;item&gt;\n        &lt;volumeId&gt;vol-4282672b&lt;/volumeId&gt;\n        &lt;instanceId&gt;i-6058a509&lt;/instanceId&gt;\n        &lt;device&gt;/dev/sdh&lt;/device&gt;\n        &lt;status&gt;attached&lt;/status&gt;\n        &lt;attachTime&gt;2008-05-07T12:51:50.000Z&lt;/attachTime&gt;\n      &lt;/item&gt;\n    &lt;/attachmentSet&gt;\n  &lt;/item&gt;\n&lt;/DescribeVolumesResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "The ID of the request.",
@@ -2862,8 +3126,12 @@
          ]
       },
       "DeleteSnapshotResponse" : {
-         "exampleCode" : "<DeleteSnapshotResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <return>true</return>\n</DeleteSnapshotResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DeleteSnapshot-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DeleteSnapshotResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n&lt;/DeleteSnapshotResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<DeleteSnapshotResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <return>true</return>\n</DeleteSnapshotResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DeleteSnapshot-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DeleteSnapshotResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n&lt;/DeleteSnapshotResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "The ID of the request.",
@@ -2899,8 +3167,12 @@
          ]
       },
       "DescribeAvailabilityZonesResponse" : {
-         "exampleCode" : "<DescribeAvailabilityZonesResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <availabilityZoneInfo>\n    <item>\n      <zoneName>us-east-1a</zoneName>\n      <zoneState>available</zoneState>\n    </item>\n    <item>\n      <zoneName>us-east-1b</zoneName>\n      <zoneState>available</zoneState>\n    </item>\n    <item>\n      <zoneName>us-east-1c</zoneName>\n      <zoneState>available</zoneState>\n    </item>\n    <item>\n      <zoneName>us-east-1d</zoneName>\n      <zoneState>available</zoneState>\n    </item>\n  </availabilityZoneInfo>\n</DescribeAvailabilityZonesResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeAvailabilityZones-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeAvailabilityZonesResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;availabilityZoneInfo&gt;\n    &lt;item&gt;\n      &lt;zoneName&gt;us-east-1a&lt;/zoneName&gt;\n      &lt;zoneState&gt;available&lt;/zoneState&gt;\n    &lt;/item&gt;\n    &lt;item&gt;\n      &lt;zoneName&gt;us-east-1b&lt;/zoneName&gt;\n      &lt;zoneState&gt;available&lt;/zoneState&gt;\n    &lt;/item&gt;\n    &lt;item&gt;\n      &lt;zoneName&gt;us-east-1c&lt;/zoneName&gt;\n      &lt;zoneState&gt;available&lt;/zoneState&gt;\n    &lt;/item&gt;\n    &lt;item&gt;\n      &lt;zoneName&gt;us-east-1d&lt;/zoneName&gt;\n      &lt;zoneState&gt;available&lt;/zoneState&gt;\n    &lt;/item&gt;\n  &lt;/availabilityZoneInfo&gt;\n&lt;/DescribeAvailabilityZonesResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<DescribeAvailabilityZonesResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <availabilityZoneInfo>\n    <item>\n      <zoneName>us-east-1a</zoneName>\n      <zoneState>available</zoneState>\n    </item>\n    <item>\n      <zoneName>us-east-1b</zoneName>\n      <zoneState>available</zoneState>\n    </item>\n    <item>\n      <zoneName>us-east-1c</zoneName>\n      <zoneState>available</zoneState>\n    </item>\n    <item>\n      <zoneName>us-east-1d</zoneName>\n      <zoneState>available</zoneState>\n    </item>\n  </availabilityZoneInfo>\n</DescribeAvailabilityZonesResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeAvailabilityZones-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeAvailabilityZonesResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;availabilityZoneInfo&gt;\n    &lt;item&gt;\n      &lt;zoneName&gt;us-east-1a&lt;/zoneName&gt;\n      &lt;zoneState&gt;available&lt;/zoneState&gt;\n    &lt;/item&gt;\n    &lt;item&gt;\n      &lt;zoneName&gt;us-east-1b&lt;/zoneName&gt;\n      &lt;zoneState&gt;available&lt;/zoneState&gt;\n    &lt;/item&gt;\n    &lt;item&gt;\n      &lt;zoneName&gt;us-east-1c&lt;/zoneName&gt;\n      &lt;zoneState&gt;available&lt;/zoneState&gt;\n    &lt;/item&gt;\n    &lt;item&gt;\n      &lt;zoneName&gt;us-east-1d&lt;/zoneName&gt;\n      &lt;zoneState&gt;available&lt;/zoneState&gt;\n    &lt;/item&gt;\n  &lt;/availabilityZoneInfo&gt;\n&lt;/DescribeAvailabilityZonesResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "Availability Zone information.",
@@ -2921,8 +3193,12 @@
          ]
       },
       "CreateVolumeResponse" : {
-         "exampleCode" : "<CreateVolumeResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <volumeId>vol-4d826724</volumeId>\n  <size>800</size>\n  <status>creating</status>\n  <createTime>2008-05-07T11:51:50.000Z</createTime>\n  <availabilityZone>us-east-1a</availabilityZone>\n  <snapshotId></snapshotId>\n</CreateVolumeResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-CreateVolume-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;CreateVolumeResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;volumeId&gt;vol-4d826724&lt;/volumeId&gt;\n  &lt;size&gt;800&lt;/size&gt;\n  &lt;status&gt;creating&lt;/status&gt;\n  &lt;createTime&gt;2008-05-07T11:51:50.000Z&lt;/createTime&gt;\n  &lt;availabilityZone&gt;us-east-1a&lt;/availabilityZone&gt;\n  &lt;snapshotId&gt;&lt;/snapshotId&gt;\n&lt;/CreateVolumeResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<CreateVolumeResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <volumeId>vol-4d826724</volumeId>\n  <size>800</size>\n  <status>creating</status>\n  <createTime>2008-05-07T11:51:50.000Z</createTime>\n  <availabilityZone>us-east-1a</availabilityZone>\n  <snapshotId></snapshotId>\n</CreateVolumeResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-CreateVolume-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;CreateVolumeResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;volumeId&gt;vol-4d826724&lt;/volumeId&gt;\n  &lt;size&gt;800&lt;/size&gt;\n  &lt;status&gt;creating&lt;/status&gt;\n  &lt;createTime&gt;2008-05-07T11:51:50.000Z&lt;/createTime&gt;\n  &lt;availabilityZone&gt;us-east-1a&lt;/availabilityZone&gt;\n  &lt;snapshotId&gt;&lt;/snapshotId&gt;\n&lt;/CreateVolumeResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "Availability Zone in which the volume was created.",
@@ -2988,8 +3264,12 @@
          ]
       },
       "DescribeAddressesResponse" : {
-         "exampleCode" : "<DescribeAddressesResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <addressesSet>\n    <item>\n      <instanceId>i-f15ebb98</instanceId>\n      <publicIp>67.202.55.255</publicIp>\n    </item>\n    <item>\n      <publicIp>67.202.55.233</publicIp>\n    </item>\n  </addressesSet>\n\t\t\t\t\t\t</DescribeAddressesResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeAddresses-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeAddressesResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;addressesSet&gt;\n    &lt;item&gt;\n      &lt;instanceId&gt;i-f15ebb98&lt;/instanceId&gt;\n      &lt;publicIp&gt;67.202.55.255&lt;/publicIp&gt;\n    &lt;/item&gt;\n    &lt;item&gt;\n      &lt;publicIp&gt;67.202.55.233&lt;/publicIp&gt;\n    &lt;/item&gt;\n  &lt;/addressesSet&gt;\n\t\t\t\t\t\t&lt;/DescribeAddressesResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<DescribeAddressesResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <addressesSet>\n    <item>\n      <instanceId>i-f15ebb98</instanceId>\n      <publicIp>67.202.55.255</publicIp>\n    </item>\n    <item>\n      <publicIp>67.202.55.233</publicIp>\n    </item>\n  </addressesSet>\n\t\t\t\t\t\t</DescribeAddressesResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeAddresses-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeAddressesResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;addressesSet&gt;\n    &lt;item&gt;\n      &lt;instanceId&gt;i-f15ebb98&lt;/instanceId&gt;\n      &lt;publicIp&gt;67.202.55.255&lt;/publicIp&gt;\n    &lt;/item&gt;\n    &lt;item&gt;\n      &lt;publicIp&gt;67.202.55.233&lt;/publicIp&gt;\n    &lt;/item&gt;\n  &lt;/addressesSet&gt;\n\t\t\t\t\t\t&lt;/DescribeAddressesResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "The set of IP addresses.",
@@ -3025,8 +3305,12 @@
          ]
       },
       "DetachVolumeResponse" : {
-         "exampleCode" : "<DetachVolumeResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <volumeId>vol-4d826724</volumeId>\n  <instanceId>i-6058a509</instanceId>\n  <device>/dev/sdh</device>\n  <status>detaching</status>\n  <attachTime>2008-05-08T11:51:50.000Z</attachTime>\n</DetachVolumeResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DetachVolume-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DetachVolumeResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;volumeId&gt;vol-4d826724&lt;/volumeId&gt;\n  &lt;instanceId&gt;i-6058a509&lt;/instanceId&gt;\n  &lt;device&gt;/dev/sdh&lt;/device&gt;\n  &lt;status&gt;detaching&lt;/status&gt;\n  &lt;attachTime&gt;2008-05-08T11:51:50.000Z&lt;/attachTime&gt;\n&lt;/DetachVolumeResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<DetachVolumeResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <volumeId>vol-4d826724</volumeId>\n  <instanceId>i-6058a509</instanceId>\n  <device>/dev/sdh</device>\n  <status>detaching</status>\n  <attachTime>2008-05-08T11:51:50.000Z</attachTime>\n</DetachVolumeResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DetachVolume-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DetachVolumeResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;volumeId&gt;vol-4d826724&lt;/volumeId&gt;\n  &lt;instanceId&gt;i-6058a509&lt;/instanceId&gt;\n  &lt;device&gt;/dev/sdh&lt;/device&gt;\n  &lt;status&gt;detaching&lt;/status&gt;\n  &lt;attachTime&gt;2008-05-08T11:51:50.000Z&lt;/attachTime&gt;\n&lt;/DetachVolumeResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "Time stamp when the association was created.",
@@ -3071,8 +3355,12 @@
          ]
       },
       "DescribeKeyPairsResponse" : {
-         "exampleCode" : "<DescribeKeyPairsResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <keySet>\n    <item>\n      <keyName>gsg-keypair</keyName>\n      <keyFingerprint>1f:51:ae:28:bf:89:e9:d8:1f:25:5d:37:2d:7d:b8:ca:9f:f5:f1:6f</keyFingerprint>\n    </item>\n  </keySet>\n</DescribeKeyPairsResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeKeyPairs-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeKeyPairsResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;keySet&gt;\n    &lt;item&gt;\n      &lt;keyName&gt;gsg-keypair&lt;/keyName&gt;\n      &lt;keyFingerprint&gt;1f:51:ae:28:bf:89:e9:d8:1f:25:5d:37:2d:7d:b8:ca:9f:f5:f1:6f&lt;/keyFingerprint&gt;\n    &lt;/item&gt;\n  &lt;/keySet&gt;\n&lt;/DescribeKeyPairsResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<DescribeKeyPairsResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <keySet>\n    <item>\n      <keyName>gsg-keypair</keyName>\n      <keyFingerprint>1f:51:ae:28:bf:89:e9:d8:1f:25:5d:37:2d:7d:b8:ca:9f:f5:f1:6f</keyFingerprint>\n    </item>\n  </keySet>\n</DescribeKeyPairsResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeKeyPairs-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeKeyPairsResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;keySet&gt;\n    &lt;item&gt;\n      &lt;keyName&gt;gsg-keypair&lt;/keyName&gt;\n      &lt;keyFingerprint&gt;1f:51:ae:28:bf:89:e9:d8:1f:25:5d:37:2d:7d:b8:ca:9f:f5:f1:6f&lt;/keyFingerprint&gt;\n    &lt;/item&gt;\n  &lt;/keySet&gt;\n&lt;/DescribeKeyPairsResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "Information for a key pair.",
@@ -3093,8 +3381,12 @@
          ]
       },
       "AttachVolumeResponse" : {
-         "exampleCode" : "<AttachVolumeResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <volumeId>vol-4d826724</volumeId>\n  <instanceId>i-6058a509</instanceId>\n  <device>/dev/sdh</device>\n  <status>attaching</status>\n  <attachTime>2008-05-07T11:51:50.000Z</attachTime>\n</AttachVolumeResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-AttachVolume-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;AttachVolumeResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;volumeId&gt;vol-4d826724&lt;/volumeId&gt;\n  &lt;instanceId&gt;i-6058a509&lt;/instanceId&gt;\n  &lt;device&gt;/dev/sdh&lt;/device&gt;\n  &lt;status&gt;attaching&lt;/status&gt;\n  &lt;attachTime&gt;2008-05-07T11:51:50.000Z&lt;/attachTime&gt;\n&lt;/AttachVolumeResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<AttachVolumeResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <volumeId>vol-4d826724</volumeId>\n  <instanceId>i-6058a509</instanceId>\n  <device>/dev/sdh</device>\n  <status>attaching</status>\n  <attachTime>2008-05-07T11:51:50.000Z</attachTime>\n</AttachVolumeResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-AttachVolume-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;AttachVolumeResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;volumeId&gt;vol-4d826724&lt;/volumeId&gt;\n  &lt;instanceId&gt;i-6058a509&lt;/instanceId&gt;\n  &lt;device&gt;/dev/sdh&lt;/device&gt;\n  &lt;status&gt;attaching&lt;/status&gt;\n  &lt;attachTime&gt;2008-05-07T11:51:50.000Z&lt;/attachTime&gt;\n&lt;/AttachVolumeResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "Time stamp when the attachment was initiated.",
@@ -3139,8 +3431,12 @@
          ]
       },
       "DescribeBundleTasksResponse" : {
-         "exampleCode" : "<DescribeBundleTasksResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <bundleInstanceTasksSet>\n    <item>\n        <instanceId>i-12345678</instanceId>\n        <bundleId>bun-c1a540a8</bundleId>\n        <state>canceling</state>\n        <startTime>2008-10-07T11:41:50.000Z</startTime>\n        <updateTime>2008-10-07T11:51:50.000Z</updateTime>\n        <progress>20%</progress>\n        <storage>\n          <S3>\n            <bucket>my-bucket</bucket>\n            <prefix>winami</prefix>\n          </S3>\n        </storage>\n    </item>\n  <bundleInstanceTasksSet>\n</DescribeBundleTasksResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeBundleTasks-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeBundleTasksResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;bundleInstanceTasksSet&gt;\n    &lt;item&gt;\n        &lt;instanceId&gt;i-12345678&lt;/instanceId&gt;\n        &lt;bundleId&gt;bun-c1a540a8&lt;/bundleId&gt;\n        &lt;state&gt;canceling&lt;/state&gt;\n        &lt;startTime&gt;2008-10-07T11:41:50.000Z&lt;/startTime&gt;\n        &lt;updateTime&gt;2008-10-07T11:51:50.000Z&lt;/updateTime&gt;\n        &lt;progress&gt;20%&lt;/progress&gt;\n        &lt;storage&gt;\n          &lt;S3&gt;\n            &lt;bucket&gt;my-bucket&lt;/bucket&gt;\n            &lt;prefix&gt;winami&lt;/prefix&gt;\n          &lt;/S3&gt;\n        &lt;/storage&gt;\n    &lt;/item&gt;\n  &lt;bundleInstanceTasksSet&gt;\n&lt;/DescribeBundleTasksResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<DescribeBundleTasksResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <bundleInstanceTasksSet>\n    <item>\n        <instanceId>i-12345678</instanceId>\n        <bundleId>bun-c1a540a8</bundleId>\n        <state>canceling</state>\n        <startTime>2008-10-07T11:41:50.000Z</startTime>\n        <updateTime>2008-10-07T11:51:50.000Z</updateTime>\n        <progress>20%</progress>\n        <storage>\n          <S3>\n            <bucket>my-bucket</bucket>\n            <prefix>winami</prefix>\n          </S3>\n        </storage>\n    </item>\n  <bundleInstanceTasksSet>\n</DescribeBundleTasksResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeBundleTasks-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeBundleTasksResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;bundleInstanceTasksSet&gt;\n    &lt;item&gt;\n        &lt;instanceId&gt;i-12345678&lt;/instanceId&gt;\n        &lt;bundleId&gt;bun-c1a540a8&lt;/bundleId&gt;\n        &lt;state&gt;canceling&lt;/state&gt;\n        &lt;startTime&gt;2008-10-07T11:41:50.000Z&lt;/startTime&gt;\n        &lt;updateTime&gt;2008-10-07T11:51:50.000Z&lt;/updateTime&gt;\n        &lt;progress&gt;20%&lt;/progress&gt;\n        &lt;storage&gt;\n          &lt;S3&gt;\n            &lt;bucket&gt;my-bucket&lt;/bucket&gt;\n            &lt;prefix&gt;winami&lt;/prefix&gt;\n          &lt;/S3&gt;\n        &lt;/storage&gt;\n    &lt;/item&gt;\n  &lt;bundleInstanceTasksSet&gt;\n&lt;/DescribeBundleTasksResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "Bundle task set.",
@@ -3218,8 +3514,14 @@
          ]
       },
       "DescribeImageAttributeResponse" : {
-         "exampleCode" : "<DescribeImageAttributeResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <imageId>ami-61a54008</imageId>\n  <launchPermission>\n    <item>\n      <group>all</group>\n    </item>\n    <item>\n      <userId>495219933132</userId>\n    </item>\n  </launchPermission>\n</DescribeImageAttributeResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeImageAttribute-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeImageAttributeResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;imageId&gt;ami-61a54008&lt;/imageId&gt;\n  &lt;launchPermission&gt;\n    &lt;item&gt;\n      &lt;group&gt;all&lt;/group&gt;\n    &lt;/item&gt;\n    &lt;item&gt;\n      &lt;userId&gt;495219933132&lt;/userId&gt;\n    &lt;/item&gt;\n  &lt;/launchPermission&gt;\n&lt;/DescribeImageAttributeResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<DescribeImageAttributeResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <imageId>ami-61a54008</imageId>\n  <launchPermission>\n    <item>\n      <group>all</group>\n    </item>\n    <item>\n      <userId>495219933132</userId>\n    </item>\n  </launchPermission>\n</DescribeImageAttributeResponse>",
+            "<DescribeImageAttributeResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <imageId>ami-61a54008</imageId>\n  <productCodes>\n    <item>\n      <productCode>774F4FF8</productCode>\n    </item>\n  </productCodes>\n\t\t\t\t\t\t</DescribeImageAttributeResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeImageAttribute-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeImageAttributeResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;imageId&gt;ami-61a54008&lt;/imageId&gt;\n  &lt;launchPermission&gt;\n    &lt;item&gt;\n      &lt;group&gt;all&lt;/group&gt;\n    &lt;/item&gt;\n    &lt;item&gt;\n      &lt;userId&gt;495219933132&lt;/userId&gt;\n    &lt;/item&gt;\n  &lt;/launchPermission&gt;\n&lt;/DescribeImageAttributeResponse&gt;</pre></div>\n",
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeImageAttribute-Example-Response-2\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeImageAttributeResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;imageId&gt;ami-61a54008&lt;/imageId&gt;\n  &lt;productCodes&gt;\n    &lt;item&gt;\n      &lt;productCode&gt;774F4FF8&lt;/productCode&gt;\n    &lt;/item&gt;\n  &lt;/productCodes&gt;\n\t\t\t\t\t\t&lt;/DescribeImageAttributeResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "Block device mapping set.",
@@ -3270,8 +3572,12 @@
          ]
       },
       "PurchaseReservedInstancesOfferingResponse" : {
-         "exampleCode" : "<PurchaseReservedInstancesOfferingResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n   <reservedInstancesId>reservation-1001001</reservedInstancesId>\n\t\t\t\t\t\t</PurchaseReservedInstancesOfferingResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-PurchaseReservedInstancesOffering-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;PurchaseReservedInstancesOfferingResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n   &lt;reservedInstancesId&gt;reservation-1001001&lt;/reservedInstancesId&gt;\n\t\t\t\t\t\t&lt;/PurchaseReservedInstancesOfferingResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<PurchaseReservedInstancesOfferingResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n   <reservedInstancesId>reservation-1001001</reservedInstancesId>\n\t\t\t\t\t\t</PurchaseReservedInstancesOfferingResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-PurchaseReservedInstancesOffering-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;PurchaseReservedInstancesOfferingResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n   &lt;reservedInstancesId&gt;reservation-1001001&lt;/reservedInstancesId&gt;\n\t\t\t\t\t\t&lt;/PurchaseReservedInstancesOfferingResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "The ID of the request.",
@@ -3292,8 +3598,12 @@
          ]
       },
       "CreateSnapshotResponse" : {
-         "exampleCode" : "<CreateSnapshotResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <snapshotId>snap-78a54011</snapshotId>\n  <volumeId>vol-4d826724</volumeId>\n  <status>pending</status>\n  <startTime>2008-05-07T12:51:50.000Z</startTime>\n  <progress>60%</progress>\n</CreateSnapshotResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-CreateSnapshot-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;CreateSnapshotResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;snapshotId&gt;snap-78a54011&lt;/snapshotId&gt;\n  &lt;volumeId&gt;vol-4d826724&lt;/volumeId&gt;\n  &lt;status&gt;pending&lt;/status&gt;\n  &lt;startTime&gt;2008-05-07T12:51:50.000Z&lt;/startTime&gt;\n  &lt;progress&gt;60%&lt;/progress&gt;\n&lt;/CreateSnapshotResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<CreateSnapshotResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <snapshotId>snap-78a54011</snapshotId>\n  <volumeId>vol-4d826724</volumeId>\n  <status>pending</status>\n  <startTime>2008-05-07T12:51:50.000Z</startTime>\n  <progress>60%</progress>\n</CreateSnapshotResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-CreateSnapshot-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;CreateSnapshotResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;snapshotId&gt;snap-78a54011&lt;/snapshotId&gt;\n  &lt;volumeId&gt;vol-4d826724&lt;/volumeId&gt;\n  &lt;status&gt;pending&lt;/status&gt;\n  &lt;startTime&gt;2008-05-07T12:51:50.000Z&lt;/startTime&gt;\n  &lt;progress&gt;60%&lt;/progress&gt;\n&lt;/CreateSnapshotResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "The progress of the snapshot, in percentage.",
@@ -3368,8 +3678,12 @@
          ]
       },
       "AllocateAddressResponse" : {
-         "exampleCode" : "<AllocateAddressResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <publicIp>67.202.55.255</publicIp>\n</AllocateAddressResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-AllocateAddress-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;AllocateAddressResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;publicIp&gt;67.202.55.255&lt;/publicIp&gt;\n&lt;/AllocateAddressResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<AllocateAddressResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <publicIp>67.202.55.255</publicIp>\n</AllocateAddressResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-AllocateAddress-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;AllocateAddressResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;publicIp&gt;67.202.55.255&lt;/publicIp&gt;\n&lt;/AllocateAddressResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "IP address for use with your account.",
@@ -3456,8 +3770,12 @@
          ]
       },
       "DescribeRegionsResponse" : {
-         "exampleCode" : "<DescribeRegionsResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <regionInfo>\n    <item>\n      <regionName>us-east-1</regionName>\n      <regionEndpoint>us-east-1.ec2.amazonaws.com</regionEndpoint>\n    </item>\n    <item>\n      <regionName>eu-west-1</regionName>\n      <regionUrl>eu-west-1.ec2.amazonaws.com</regionUrl>\n    </item>\n  </regionInfo>\n</DescribeRegionsResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeRegions-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeRegionsResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;regionInfo&gt;\n    &lt;item&gt;\n      &lt;regionName&gt;us-east-1&lt;/regionName&gt;\n      &lt;regionEndpoint&gt;us-east-1.ec2.amazonaws.com&lt;/regionEndpoint&gt;\n    &lt;/item&gt;\n    &lt;item&gt;\n      &lt;regionName&gt;eu-west-1&lt;/regionName&gt;\n      &lt;regionUrl&gt;eu-west-1.ec2.amazonaws.com&lt;/regionUrl&gt;\n    &lt;/item&gt;\n  &lt;/regionInfo&gt;\n&lt;/DescribeRegionsResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<DescribeRegionsResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <regionInfo>\n    <item>\n      <regionName>us-east-1</regionName>\n      <regionEndpoint>us-east-1.ec2.amazonaws.com</regionEndpoint>\n    </item>\n    <item>\n      <regionName>eu-west-1</regionName>\n      <regionUrl>eu-west-1.ec2.amazonaws.com</regionUrl>\n    </item>\n  </regionInfo>\n</DescribeRegionsResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeRegions-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeRegionsResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;regionInfo&gt;\n    &lt;item&gt;\n      &lt;regionName&gt;us-east-1&lt;/regionName&gt;\n      &lt;regionEndpoint&gt;us-east-1.ec2.amazonaws.com&lt;/regionEndpoint&gt;\n    &lt;/item&gt;\n    &lt;item&gt;\n      &lt;regionName&gt;eu-west-1&lt;/regionName&gt;\n      &lt;regionUrl&gt;eu-west-1.ec2.amazonaws.com&lt;/regionUrl&gt;\n    &lt;/item&gt;\n  &lt;/regionInfo&gt;\n&lt;/DescribeRegionsResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "Region set.",
@@ -3499,8 +3817,12 @@
          ]
       },
       "DescribeInstancesResponse" : {
-         "exampleCode" : "<DescribeInstancesResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <reservationSet>\n    <item>\n      <reservationId>r-44a5402d</reservationId>\n      <ownerId>UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM</ownerId>\n      <groupSet>\n        <item>\n          <groupId>default</groupId>\n        </item>\n      </groupSet>\n      <instancesSet>\n        <item>\n          <instanceId>i-28a64341</instanceId>\n          <imageId>ami-6ea54007</imageId>\n          <instanceState>\n            <code>0</code>\n            <name>running</name>\n          </instanceState>\n          <privateDnsName>10-251-50-132.ec2.internal</privateDnsName>\n          <dnsName>ec2-72-44-33-4.compute-1.amazonaws.com</dnsName>\n          <keyName>example-key-name</keyName>\n          <amiLaunchIndex>23</amiLaunchIndex>\n          <productCodesSet>\n            <item><productCode>774F4FF8</productCode></item>\n          </productCodesSet>\n          <instanceType>m1.large</instanceType>\n          <launchTime>2007-08-07T11:54:42.000Z</launchTime>\n          <placement>\n\t\t\t  <availabilityZone>us-east-1b</availabilityZone>\n\t  </placement>\n\t  <kernelId>aki-ba3adfd3</kernelId>\n\t  <ramdiskId>ari-badbad00</ramdiskId>\n        </item>\n        <item>\n          <instanceId>i-28a64435</instanceId>\n          <imageId>ami-6ea54007</imageId>\n          <instanceState>\n            <code>0</code>\n            <name>running</name>\n          </instanceState>\n          <privateDnsName>10-251-50-134.ec2.internal</privateDnsName>\n          <dnsName>ec2-72-44-33-6.compute-1.amazonaws.com</dnsName>\n          <keyName>example-key-name</keyName>\n          <amiLaunchIndex>23</amiLaunchIndex>\n          <productCodesSet>\n            <item><productCode>774F4FF8</productCode></item>\n          </productCodesSet>\n          <instanceType>m1.large</instanceType>\n          <launchTime>2007-08-07T11:54:42.000Z</launchTime>\n          <placement>\n\t\t\t  <availabilityZone>us-east-1b</availabilityZone>\n\t  </placement>\n\t  <kernelId>aki-ba3adfd3</kernelId>\n\t  <ramdiskId>ari-badbad00</ramdiskId>\n        </item>\n      </instancesSet>\n    </item>\n  </reservationSet>\n</DescribeInstancesResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeInstances-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeInstancesResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;reservationSet&gt;\n    &lt;item&gt;\n      &lt;reservationId&gt;r-44a5402d&lt;/reservationId&gt;\n      &lt;ownerId&gt;UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM&lt;/ownerId&gt;\n      &lt;groupSet&gt;\n        &lt;item&gt;\n          &lt;groupId&gt;default&lt;/groupId&gt;\n        &lt;/item&gt;\n      &lt;/groupSet&gt;\n      &lt;instancesSet&gt;\n        &lt;item&gt;\n          &lt;instanceId&gt;i-28a64341&lt;/instanceId&gt;\n          &lt;imageId&gt;ami-6ea54007&lt;/imageId&gt;\n          &lt;instanceState&gt;\n            &lt;code&gt;0&lt;/code&gt;\n            &lt;name&gt;running&lt;/name&gt;\n          &lt;/instanceState&gt;\n          &lt;privateDnsName&gt;10-251-50-132.ec2.internal&lt;/privateDnsName&gt;\n          &lt;dnsName&gt;ec2-72-44-33-4.compute-1.amazonaws.com&lt;/dnsName&gt;\n          &lt;keyName&gt;example-key-name&lt;/keyName&gt;\n          &lt;amiLaunchIndex&gt;23&lt;/amiLaunchIndex&gt;\n          &lt;productCodesSet&gt;\n            &lt;item&gt;&lt;productCode&gt;774F4FF8&lt;/productCode&gt;&lt;/item&gt;\n          &lt;/productCodesSet&gt;\n          &lt;instanceType&gt;m1.large&lt;/instanceType&gt;\n          &lt;launchTime&gt;2007-08-07T11:54:42.000Z&lt;/launchTime&gt;\n          &lt;placement&gt;\n\t\t\t  &lt;availabilityZone&gt;us-east-1b&lt;/availabilityZone&gt;\n\t  &lt;/placement&gt;\n\t  &lt;kernelId&gt;aki-ba3adfd3&lt;/kernelId&gt;\n\t  &lt;ramdiskId&gt;ari-badbad00&lt;/ramdiskId&gt;\n        &lt;/item&gt;\n        &lt;item&gt;\n          &lt;instanceId&gt;i-28a64435&lt;/instanceId&gt;\n          &lt;imageId&gt;ami-6ea54007&lt;/imageId&gt;\n          &lt;instanceState&gt;\n            &lt;code&gt;0&lt;/code&gt;\n            &lt;name&gt;running&lt;/name&gt;\n          &lt;/instanceState&gt;\n          &lt;privateDnsName&gt;10-251-50-134.ec2.internal&lt;/privateDnsName&gt;\n          &lt;dnsName&gt;ec2-72-44-33-6.compute-1.amazonaws.com&lt;/dnsName&gt;\n          &lt;keyName&gt;example-key-name&lt;/keyName&gt;\n          &lt;amiLaunchIndex&gt;23&lt;/amiLaunchIndex&gt;\n          &lt;productCodesSet&gt;\n            &lt;item&gt;&lt;productCode&gt;774F4FF8&lt;/productCode&gt;&lt;/item&gt;\n          &lt;/productCodesSet&gt;\n          &lt;instanceType&gt;m1.large&lt;/instanceType&gt;\n          &lt;launchTime&gt;2007-08-07T11:54:42.000Z&lt;/launchTime&gt;\n          &lt;placement&gt;\n\t\t\t  &lt;availabilityZone&gt;us-east-1b&lt;/availabilityZone&gt;\n\t  &lt;/placement&gt;\n\t  &lt;kernelId&gt;aki-ba3adfd3&lt;/kernelId&gt;\n\t  &lt;ramdiskId&gt;ari-badbad00&lt;/ramdiskId&gt;\n        &lt;/item&gt;\n      &lt;/instancesSet&gt;\n    &lt;/item&gt;\n  &lt;/reservationSet&gt;\n&lt;/DescribeInstancesResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<DescribeInstancesResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <reservationSet>\n    <item>\n      <reservationId>r-44a5402d</reservationId>\n      <ownerId>UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM</ownerId>\n      <groupSet>\n        <item>\n          <groupId>default</groupId>\n        </item>\n      </groupSet>\n      <instancesSet>\n        <item>\n          <instanceId>i-28a64341</instanceId>\n          <imageId>ami-6ea54007</imageId>\n          <instanceState>\n            <code>0</code>\n            <name>running</name>\n          </instanceState>\n          <privateDnsName>10-251-50-132.ec2.internal</privateDnsName>\n          <dnsName>ec2-72-44-33-4.compute-1.amazonaws.com</dnsName>\n          <keyName>example-key-name</keyName>\n          <amiLaunchIndex>23</amiLaunchIndex>\n          <productCodesSet>\n            <item><productCode>774F4FF8</productCode></item>\n          </productCodesSet>\n          <instanceType>m1.large</instanceType>\n          <launchTime>2007-08-07T11:54:42.000Z</launchTime>\n          <placement>\n\t\t\t  <availabilityZone>us-east-1b</availabilityZone>\n\t  </placement>\n\t  <kernelId>aki-ba3adfd3</kernelId>\n\t  <ramdiskId>ari-badbad00</ramdiskId>\n        </item>\n        <item>\n          <instanceId>i-28a64435</instanceId>\n          <imageId>ami-6ea54007</imageId>\n          <instanceState>\n            <code>0</code>\n            <name>running</name>\n          </instanceState>\n          <privateDnsName>10-251-50-134.ec2.internal</privateDnsName>\n          <dnsName>ec2-72-44-33-6.compute-1.amazonaws.com</dnsName>\n          <keyName>example-key-name</keyName>\n          <amiLaunchIndex>23</amiLaunchIndex>\n          <productCodesSet>\n            <item><productCode>774F4FF8</productCode></item>\n          </productCodesSet>\n          <instanceType>m1.large</instanceType>\n          <launchTime>2007-08-07T11:54:42.000Z</launchTime>\n          <placement>\n\t\t\t  <availabilityZone>us-east-1b</availabilityZone>\n\t  </placement>\n\t  <kernelId>aki-ba3adfd3</kernelId>\n\t  <ramdiskId>ari-badbad00</ramdiskId>\n        </item>\n      </instancesSet>\n    </item>\n  </reservationSet>\n</DescribeInstancesResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeInstances-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeInstancesResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;reservationSet&gt;\n    &lt;item&gt;\n      &lt;reservationId&gt;r-44a5402d&lt;/reservationId&gt;\n      &lt;ownerId&gt;UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM&lt;/ownerId&gt;\n      &lt;groupSet&gt;\n        &lt;item&gt;\n          &lt;groupId&gt;default&lt;/groupId&gt;\n        &lt;/item&gt;\n      &lt;/groupSet&gt;\n      &lt;instancesSet&gt;\n        &lt;item&gt;\n          &lt;instanceId&gt;i-28a64341&lt;/instanceId&gt;\n          &lt;imageId&gt;ami-6ea54007&lt;/imageId&gt;\n          &lt;instanceState&gt;\n            &lt;code&gt;0&lt;/code&gt;\n            &lt;name&gt;running&lt;/name&gt;\n          &lt;/instanceState&gt;\n          &lt;privateDnsName&gt;10-251-50-132.ec2.internal&lt;/privateDnsName&gt;\n          &lt;dnsName&gt;ec2-72-44-33-4.compute-1.amazonaws.com&lt;/dnsName&gt;\n          &lt;keyName&gt;example-key-name&lt;/keyName&gt;\n          &lt;amiLaunchIndex&gt;23&lt;/amiLaunchIndex&gt;\n          &lt;productCodesSet&gt;\n            &lt;item&gt;&lt;productCode&gt;774F4FF8&lt;/productCode&gt;&lt;/item&gt;\n          &lt;/productCodesSet&gt;\n          &lt;instanceType&gt;m1.large&lt;/instanceType&gt;\n          &lt;launchTime&gt;2007-08-07T11:54:42.000Z&lt;/launchTime&gt;\n          &lt;placement&gt;\n\t\t\t  &lt;availabilityZone&gt;us-east-1b&lt;/availabilityZone&gt;\n\t  &lt;/placement&gt;\n\t  &lt;kernelId&gt;aki-ba3adfd3&lt;/kernelId&gt;\n\t  &lt;ramdiskId&gt;ari-badbad00&lt;/ramdiskId&gt;\n        &lt;/item&gt;\n        &lt;item&gt;\n          &lt;instanceId&gt;i-28a64435&lt;/instanceId&gt;\n          &lt;imageId&gt;ami-6ea54007&lt;/imageId&gt;\n          &lt;instanceState&gt;\n            &lt;code&gt;0&lt;/code&gt;\n            &lt;name&gt;running&lt;/name&gt;\n          &lt;/instanceState&gt;\n          &lt;privateDnsName&gt;10-251-50-134.ec2.internal&lt;/privateDnsName&gt;\n          &lt;dnsName&gt;ec2-72-44-33-6.compute-1.amazonaws.com&lt;/dnsName&gt;\n          &lt;keyName&gt;example-key-name&lt;/keyName&gt;\n          &lt;amiLaunchIndex&gt;23&lt;/amiLaunchIndex&gt;\n          &lt;productCodesSet&gt;\n            &lt;item&gt;&lt;productCode&gt;774F4FF8&lt;/productCode&gt;&lt;/item&gt;\n          &lt;/productCodesSet&gt;\n          &lt;instanceType&gt;m1.large&lt;/instanceType&gt;\n          &lt;launchTime&gt;2007-08-07T11:54:42.000Z&lt;/launchTime&gt;\n          &lt;placement&gt;\n\t\t\t  &lt;availabilityZone&gt;us-east-1b&lt;/availabilityZone&gt;\n\t  &lt;/placement&gt;\n\t  &lt;kernelId&gt;aki-ba3adfd3&lt;/kernelId&gt;\n\t  &lt;ramdiskId&gt;ari-badbad00&lt;/ramdiskId&gt;\n        &lt;/item&gt;\n      &lt;/instancesSet&gt;\n    &lt;/item&gt;\n  &lt;/reservationSet&gt;\n&lt;/DescribeInstancesResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "The ID of the request.",
@@ -3632,8 +3954,12 @@
          ]
       },
       "DeleteVolumeResponse" : {
-         "exampleCode" : "<DeleteVolumeResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <return>true</return>\n</DeleteVolumeResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DeleteVolume-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DeleteVolumeResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n&lt;/DeleteVolumeResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<DeleteVolumeResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <return>true</return>\n</DeleteVolumeResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DeleteVolume-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DeleteVolumeResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n&lt;/DeleteVolumeResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "The ID of the request.",
@@ -3684,8 +4010,12 @@
          ]
       },
       "DisassociateAddressResponse" : {
-         "exampleCode" : "<DisassociateAddressResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <return>true</return>\n</DisassociateAddressResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DisassociateAddress-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DisassociateAddressResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n&lt;/DisassociateAddressResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<DisassociateAddressResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <return>true</return>\n</DisassociateAddressResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DisassociateAddress-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DisassociateAddressResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n&lt;/DisassociateAddressResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "The ID of the request.",
@@ -3721,8 +4051,12 @@
          ]
       },
       "CancelBundleTaskResponse" : {
-         "exampleCode" : "<CancelBundleTaskResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <bundleInstanceTask>\n      <instanceId>i-12345678</instanceId>\n      <bundleId>bun-cla322b9</bundleId>\n      <state>canceling</state>\n      <startTime>2008-10-07T11:41:50.000Z</startTime>\n      <updateTime>2008-10-07T11:51:50.000Z</updateTime>\n      <progress>20%</progress>\n      <storage>\n        <S3>\n          <bucket>my-bucket</bucket>\n          <prefix>my-new-image</prefix>\n        </S3>\n      </storage>\n  </bundleInstanceTask>\n</CancelBundleTaskResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-CancelBundleTask-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;CancelBundleTaskResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;bundleInstanceTask&gt;\n      &lt;instanceId&gt;i-12345678&lt;/instanceId&gt;\n      &lt;bundleId&gt;bun-cla322b9&lt;/bundleId&gt;\n      &lt;state&gt;canceling&lt;/state&gt;\n      &lt;startTime&gt;2008-10-07T11:41:50.000Z&lt;/startTime&gt;\n      &lt;updateTime&gt;2008-10-07T11:51:50.000Z&lt;/updateTime&gt;\n      &lt;progress&gt;20%&lt;/progress&gt;\n      &lt;storage&gt;\n        &lt;S3&gt;\n          &lt;bucket&gt;my-bucket&lt;/bucket&gt;\n          &lt;prefix&gt;my-new-image&lt;/prefix&gt;\n        &lt;/S3&gt;\n      &lt;/storage&gt;\n  &lt;/bundleInstanceTask&gt;\n&lt;/CancelBundleTaskResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<CancelBundleTaskResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <bundleInstanceTask>\n      <instanceId>i-12345678</instanceId>\n      <bundleId>bun-cla322b9</bundleId>\n      <state>canceling</state>\n      <startTime>2008-10-07T11:41:50.000Z</startTime>\n      <updateTime>2008-10-07T11:51:50.000Z</updateTime>\n      <progress>20%</progress>\n      <storage>\n        <S3>\n          <bucket>my-bucket</bucket>\n          <prefix>my-new-image</prefix>\n        </S3>\n      </storage>\n  </bundleInstanceTask>\n</CancelBundleTaskResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-CancelBundleTask-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;CancelBundleTaskResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;bundleInstanceTask&gt;\n      &lt;instanceId&gt;i-12345678&lt;/instanceId&gt;\n      &lt;bundleId&gt;bun-cla322b9&lt;/bundleId&gt;\n      &lt;state&gt;canceling&lt;/state&gt;\n      &lt;startTime&gt;2008-10-07T11:41:50.000Z&lt;/startTime&gt;\n      &lt;updateTime&gt;2008-10-07T11:51:50.000Z&lt;/updateTime&gt;\n      &lt;progress&gt;20%&lt;/progress&gt;\n      &lt;storage&gt;\n        &lt;S3&gt;\n          &lt;bucket&gt;my-bucket&lt;/bucket&gt;\n          &lt;prefix&gt;my-new-image&lt;/prefix&gt;\n        &lt;/S3&gt;\n      &lt;/storage&gt;\n  &lt;/bundleInstanceTask&gt;\n&lt;/CancelBundleTaskResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "Bundle task to cancel.",
@@ -3827,8 +4161,12 @@
          ]
       },
       "DescribeSecurityGroupsResponse" : {
-         "exampleCode" : "<DescribeSecurityGroupsResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <securityGroupInfo>\n    <item>\n      <ownerId>UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM</ownerId>\n      <groupName>WebServers</groupName>\n      <groupDescription>Web Servers</groupDescription>\n      <ipPermissions>\n        <item>\n  \t  <ipProtocol>tcp</ipProtocol>\n\t  <fromPort>80</fromPort>\n\t  <toPort>80</toPort>\n\t  <groups/>\n\t  <ipRanges>\n\t    <item>\n\t      <cidrIp>0.0.0.0/0</cidrIp>\n\t    </item>\n\t  </ipRanges>\n         </item>\n      </ipPermissions>\n    </item>\n    <item>\n      <ownerId>UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM</ownerId>\n      <groupName>RangedPortsBySource</groupName>\n      <groupDescription>Group A</groupDescription>\n      <ipPermissions>\n \t<item>\n\t  <ipProtocol>tcp</ipProtocol>\n\t  <fromPort>6000</fromPort>\n\t  <toPort>7000</toPort>\n\t  <groups/>\n\t  <ipRanges/>\n\t</item>\n      </ipPermissions>\n    </item>\n  </securityGroupInfo>\n</DescribeSecurityGroupsResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeSecurityGroups-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeSecurityGroupsResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;securityGroupInfo&gt;\n    &lt;item&gt;\n      &lt;ownerId&gt;UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM&lt;/ownerId&gt;\n      &lt;groupName&gt;WebServers&lt;/groupName&gt;\n      &lt;groupDescription&gt;Web Servers&lt;/groupDescription&gt;\n      &lt;ipPermissions&gt;\n        &lt;item&gt;\n  \t  &lt;ipProtocol&gt;tcp&lt;/ipProtocol&gt;\n\t  &lt;fromPort&gt;80&lt;/fromPort&gt;\n\t  &lt;toPort&gt;80&lt;/toPort&gt;\n\t  &lt;groups/&gt;\n\t  &lt;ipRanges&gt;\n\t    &lt;item&gt;\n\t      &lt;cidrIp&gt;0.0.0.0/0&lt;/cidrIp&gt;\n\t    &lt;/item&gt;\n\t  &lt;/ipRanges&gt;\n         &lt;/item&gt;\n      &lt;/ipPermissions&gt;\n    &lt;/item&gt;\n    &lt;item&gt;\n      &lt;ownerId&gt;UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM&lt;/ownerId&gt;\n      &lt;groupName&gt;RangedPortsBySource&lt;/groupName&gt;\n      &lt;groupDescription&gt;Group A&lt;/groupDescription&gt;\n      &lt;ipPermissions&gt;\n \t&lt;item&gt;\n\t  &lt;ipProtocol&gt;tcp&lt;/ipProtocol&gt;\n\t  &lt;fromPort&gt;6000&lt;/fromPort&gt;\n\t  &lt;toPort&gt;7000&lt;/toPort&gt;\n\t  &lt;groups/&gt;\n\t  &lt;ipRanges/&gt;\n\t&lt;/item&gt;\n      &lt;/ipPermissions&gt;\n    &lt;/item&gt;\n  &lt;/securityGroupInfo&gt;\n&lt;/DescribeSecurityGroupsResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<DescribeSecurityGroupsResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <securityGroupInfo>\n    <item>\n      <ownerId>UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM</ownerId>\n      <groupName>WebServers</groupName>\n      <groupDescription>Web Servers</groupDescription>\n      <ipPermissions>\n        <item>\n  \t  <ipProtocol>tcp</ipProtocol>\n\t  <fromPort>80</fromPort>\n\t  <toPort>80</toPort>\n\t  <groups/>\n\t  <ipRanges>\n\t    <item>\n\t      <cidrIp>0.0.0.0/0</cidrIp>\n\t    </item>\n\t  </ipRanges>\n         </item>\n      </ipPermissions>\n    </item>\n    <item>\n      <ownerId>UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM</ownerId>\n      <groupName>RangedPortsBySource</groupName>\n      <groupDescription>Group A</groupDescription>\n      <ipPermissions>\n \t<item>\n\t  <ipProtocol>tcp</ipProtocol>\n\t  <fromPort>6000</fromPort>\n\t  <toPort>7000</toPort>\n\t  <groups/>\n\t  <ipRanges/>\n\t</item>\n      </ipPermissions>\n    </item>\n  </securityGroupInfo>\n</DescribeSecurityGroupsResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeSecurityGroups-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeSecurityGroupsResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;securityGroupInfo&gt;\n    &lt;item&gt;\n      &lt;ownerId&gt;UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM&lt;/ownerId&gt;\n      &lt;groupName&gt;WebServers&lt;/groupName&gt;\n      &lt;groupDescription&gt;Web Servers&lt;/groupDescription&gt;\n      &lt;ipPermissions&gt;\n        &lt;item&gt;\n  \t  &lt;ipProtocol&gt;tcp&lt;/ipProtocol&gt;\n\t  &lt;fromPort&gt;80&lt;/fromPort&gt;\n\t  &lt;toPort&gt;80&lt;/toPort&gt;\n\t  &lt;groups/&gt;\n\t  &lt;ipRanges&gt;\n\t    &lt;item&gt;\n\t      &lt;cidrIp&gt;0.0.0.0/0&lt;/cidrIp&gt;\n\t    &lt;/item&gt;\n\t  &lt;/ipRanges&gt;\n         &lt;/item&gt;\n      &lt;/ipPermissions&gt;\n    &lt;/item&gt;\n    &lt;item&gt;\n      &lt;ownerId&gt;UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM&lt;/ownerId&gt;\n      &lt;groupName&gt;RangedPortsBySource&lt;/groupName&gt;\n      &lt;groupDescription&gt;Group A&lt;/groupDescription&gt;\n      &lt;ipPermissions&gt;\n \t&lt;item&gt;\n\t  &lt;ipProtocol&gt;tcp&lt;/ipProtocol&gt;\n\t  &lt;fromPort&gt;6000&lt;/fromPort&gt;\n\t  &lt;toPort&gt;7000&lt;/toPort&gt;\n\t  &lt;groups/&gt;\n\t  &lt;ipRanges/&gt;\n\t&lt;/item&gt;\n      &lt;/ipPermissions&gt;\n    &lt;/item&gt;\n  &lt;/securityGroupInfo&gt;\n&lt;/DescribeSecurityGroupsResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "The ID of the request.",
@@ -3849,8 +4187,12 @@
          ]
       },
       "GetConsoleOutputResponse" : {
-         "exampleCode" : "<GetConsoleOutputResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <instanceId>i-28a64341</instanceId>\n  <timestamp>2007-01-03 15:00:00</timestamp>\n  <output>TGludXggdmVyc2lvbiAyLjYuMTYteGVuVSAoYnVpbGRlckBwYXRjaGJhdC5hbWF6b25zYSkgKGdj\nYyB2ZXJzaW9uIDQuMC4xIDIwMDUwNzI3IChSZWQgSGF0IDQuMC4xLTUpKSAjMSBTTVAgVGh1IE9j\ndCAyNiAwODo0MToyNiBTQVNUIDIwMDYKQklPUy1wcm92aWRlZCBwaHlzaWNhbCBSQU0gbWFwOgpY\nZW46IDAwMDAwMDAwMDAwMDAwMDAgLSAwMDAwMDAwMDZhNDAwMDAwICh1c2FibGUpCjk4ME1CIEhJ\nR0hNRU0gYXZhaWxhYmxlLgo3MjdNQiBMT1dNRU0gYXZhaWxhYmxlLgpOWCAoRXhlY3V0ZSBEaXNh\nYmxlKSBwcm90ZWN0aW9uOiBhY3RpdmUKSVJRIGxvY2t1cCBkZXRlY3Rpb24gZGlzYWJsZWQKQnVp\nbHQgMSB6b25lbGlzdHMKS2VybmVsIGNvbW1hbmQgbGluZTogcm9vdD0vZGV2L3NkYTEgcm8gNApF\nbmFibGluZyBmYXN0IEZQVSBzYXZlIGFuZCByZXN0b3JlLi4uIGRvbmUuCg==</output>\n</GetConsoleOutputResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-GetConsoleOutput-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;GetConsoleOutputResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;instanceId&gt;i-28a64341&lt;/instanceId&gt;\n  &lt;timestamp&gt;2007-01-03 15:00:00&lt;/timestamp&gt;\n  &lt;output&gt;TGludXggdmVyc2lvbiAyLjYuMTYteGVuVSAoYnVpbGRlckBwYXRjaGJhdC5hbWF6b25zYSkgKGdj\nYyB2ZXJzaW9uIDQuMC4xIDIwMDUwNzI3IChSZWQgSGF0IDQuMC4xLTUpKSAjMSBTTVAgVGh1IE9j\ndCAyNiAwODo0MToyNiBTQVNUIDIwMDYKQklPUy1wcm92aWRlZCBwaHlzaWNhbCBSQU0gbWFwOgpY\nZW46IDAwMDAwMDAwMDAwMDAwMDAgLSAwMDAwMDAwMDZhNDAwMDAwICh1c2FibGUpCjk4ME1CIEhJ\nR0hNRU0gYXZhaWxhYmxlLgo3MjdNQiBMT1dNRU0gYXZhaWxhYmxlLgpOWCAoRXhlY3V0ZSBEaXNh\nYmxlKSBwcm90ZWN0aW9uOiBhY3RpdmUKSVJRIGxvY2t1cCBkZXRlY3Rpb24gZGlzYWJsZWQKQnVp\nbHQgMSB6b25lbGlzdHMKS2VybmVsIGNvbW1hbmQgbGluZTogcm9vdD0vZGV2L3NkYTEgcm8gNApF\nbmFibGluZyBmYXN0IEZQVSBzYXZlIGFuZCByZXN0b3JlLi4uIGRvbmUuCg==&lt;/output&gt;\n&lt;/GetConsoleOutputResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<GetConsoleOutputResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <instanceId>i-28a64341</instanceId>\n  <timestamp>2007-01-03 15:00:00</timestamp>\n  <output>TGludXggdmVyc2lvbiAyLjYuMTYteGVuVSAoYnVpbGRlckBwYXRjaGJhdC5hbWF6b25zYSkgKGdj\nYyB2ZXJzaW9uIDQuMC4xIDIwMDUwNzI3IChSZWQgSGF0IDQuMC4xLTUpKSAjMSBTTVAgVGh1IE9j\ndCAyNiAwODo0MToyNiBTQVNUIDIwMDYKQklPUy1wcm92aWRlZCBwaHlzaWNhbCBSQU0gbWFwOgpY\nZW46IDAwMDAwMDAwMDAwMDAwMDAgLSAwMDAwMDAwMDZhNDAwMDAwICh1c2FibGUpCjk4ME1CIEhJ\nR0hNRU0gYXZhaWxhYmxlLgo3MjdNQiBMT1dNRU0gYXZhaWxhYmxlLgpOWCAoRXhlY3V0ZSBEaXNh\nYmxlKSBwcm90ZWN0aW9uOiBhY3RpdmUKSVJRIGxvY2t1cCBkZXRlY3Rpb24gZGlzYWJsZWQKQnVp\nbHQgMSB6b25lbGlzdHMKS2VybmVsIGNvbW1hbmQgbGluZTogcm9vdD0vZGV2L3NkYTEgcm8gNApF\nbmFibGluZyBmYXN0IEZQVSBzYXZlIGFuZCByZXN0b3JlLi4uIGRvbmUuCg==</output>\n</GetConsoleOutputResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-GetConsoleOutput-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;GetConsoleOutputResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;instanceId&gt;i-28a64341&lt;/instanceId&gt;\n  &lt;timestamp&gt;2007-01-03 15:00:00&lt;/timestamp&gt;\n  &lt;output&gt;TGludXggdmVyc2lvbiAyLjYuMTYteGVuVSAoYnVpbGRlckBwYXRjaGJhdC5hbWF6b25zYSkgKGdj\nYyB2ZXJzaW9uIDQuMC4xIDIwMDUwNzI3IChSZWQgSGF0IDQuMC4xLTUpKSAjMSBTTVAgVGh1IE9j\ndCAyNiAwODo0MToyNiBTQVNUIDIwMDYKQklPUy1wcm92aWRlZCBwaHlzaWNhbCBSQU0gbWFwOgpY\nZW46IDAwMDAwMDAwMDAwMDAwMDAgLSAwMDAwMDAwMDZhNDAwMDAwICh1c2FibGUpCjk4ME1CIEhJ\nR0hNRU0gYXZhaWxhYmxlLgo3MjdNQiBMT1dNRU0gYXZhaWxhYmxlLgpOWCAoRXhlY3V0ZSBEaXNh\nYmxlKSBwcm90ZWN0aW9uOiBhY3RpdmUKSVJRIGxvY2t1cCBkZXRlY3Rpb24gZGlzYWJsZWQKQnVp\nbHQgMSB6b25lbGlzdHMKS2VybmVsIGNvbW1hbmQgbGluZTogcm9vdD0vZGV2L3NkYTEgcm8gNApF\nbmFibGluZyBmYXN0IEZQVSBzYXZlIGFuZCByZXN0b3JlLi4uIGRvbmUuCg==&lt;/output&gt;\n&lt;/GetConsoleOutputResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "The instance ID.",
@@ -3883,8 +4225,14 @@
          ]
       },
       "ModifyImageAttributeResponse" : {
-         "exampleCode" : "<ModifyImageAttributeResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <return>true</return>\n</ModifyImageAttributeResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-ModifyImageAttribute-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;ModifyImageAttributeResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n&lt;/ModifyImageAttributeResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<ModifyImageAttributeResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <return>true</return>\n</ModifyImageAttributeResponse>",
+            "<ModifyImageAttributeResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <return>true</return>\n</ModifyImageAttributeResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-ModifyImageAttribute-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;ModifyImageAttributeResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n&lt;/ModifyImageAttributeResponse&gt;</pre></div>\n",
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-ModifyImageAttribute-Example-Response-2\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;ModifyImageAttributeResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n&lt;/ModifyImageAttributeResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "The ID of the request.",
@@ -3905,8 +4253,12 @@
          ]
       },
       "AssociateAddressResponse" : {
-         "exampleCode" : "<AssociateAddressResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <return>true</return>\n</AssociateAddressResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-AssociateAddress-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;AssociateAddressResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n&lt;/AssociateAddressResponse&gt;</pre></div>\n",
+         "exampleCode" : [
+            "<AssociateAddressResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <return>true</return>\n</AssociateAddressResponse>"
+         ],
+         "exampleHTML" : [
+            "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-AssociateAddress-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;AssociateAddressResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;return&gt;true&lt;/return&gt;\n&lt;/AssociateAddressResponse&gt;</pre></div>\n"
+         ],
          "contents" : [
             {
                "desc" : "IP address.",

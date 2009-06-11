@@ -233,7 +233,7 @@ sub build_contents {
         }
         push @params, \%param;
     }
-    
+
     # Attribute query parameters come in as separate parameters, so
     # we coallate them into one
     my %attribute;
@@ -298,14 +298,20 @@ sub build_item {
             $item->{description} =
               ${descriptionDiv}->look_down( '_tag', 'p' )->as_text();
         }
-        my $id = "ApiReference-query-${_}-Example-${class}-1";
-        my ${requestExampleDiv} =
-          $tree->look_down( '_tag', 'h3', 'id', "$id" )
-          ->look_up( '_tag', 'div', 'class', 'section' );
-        $item->{exampleHTML} = ${requestExampleDiv}->as_HTML();
-        $item->{exampleCode} =
-          ${requestExampleDiv}
-          ->look_down( '_tag', 'pre', 'class', 'programlisting' )->as_text();
+        for my $I ( 1 .. 10 ) {
+            my $id = "ApiReference-query-${_}-Example-${class}-$I";
+            my ${requestExampleH3} =
+              $tree->look_down( '_tag', 'h3', 'id', "$id" );
+            last unless defined ${requestExampleH3};
+            my ${requestExampleDiv} =
+              ${requestExampleH3}->look_up( '_tag', 'div', 'class', 'section' );
+            push @{ $item->{exampleHTML} }, ${requestExampleDiv}->as_HTML();
+            push @{ $item->{exampleCode} },
+              ${requestExampleDiv}
+              ->look_down( '_tag', 'pre', 'class', 'programlisting' )
+              ->as_text();
+        }
+
         $tree->eof;
         $tree->delete;
 
