@@ -233,6 +233,31 @@ sub build_contents {
         }
         push @params, \%param;
     }
+    
+    # Attribute query parameters come in as separate parameters, so
+    # we coallate them into one
+    my %attribute;
+    for ( 0 .. $#params ) {
+        my $param = $params[$_];
+        if ( $param->{name} =~ /Attribute=/ ) {
+            delete $params[$_];
+            if ( !defined %attribute ) {
+                $attribute{name}         = "Attribute";
+                $attribute{type}         = "String";
+                $attribute{optional}     = "true";
+                $attribute{defaultValue} = "true";
+            }
+            my $enum = $attribute{valueMap};
+            $_ = $param->{name};
+            s/Attribute=//;
+            $enum->{$_} = $param->{desc};
+            $attribute{valueMap} = $enum;
+        }
+    }
+    if ( defined %attribute ) {
+        push @params, \%attribute;
+    }
+
     return \@params;
 }
 
@@ -264,6 +289,7 @@ sub build_item {
             return {};
         }
         unless ( $class =~ /Response/ ) {
+
             #$tree->dump;
             my ${descriptionDiv} =
               $tree->look_down( '_tag', 'h2', 'id',

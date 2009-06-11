@@ -223,10 +223,8 @@ public class AmazonEC2QueryAPIExpectations {
                      "DeregisterImage", ImmutableSet.of("ImageId")).put(
                      "ModifyImageAttribute",
                      ImmutableSet.of("Group.n", "UserId.n", "ImageId", "ProductCode.n", "Group.n",
-                              "UserId.n")).put(
-                     "DescribeImageAttribute",
-                     ImmutableSet.of("Attribute=productCodes", "ImageId", "Attribute=platform", "Attribute=blockDeviceMapping",
-                              "Attribute=launchPermission", "Attribute=ramdisk", "Attribute=kernel")).put("DescribeImages",
+                              "UserId.n")).put("DescribeImageAttribute",
+                     ImmutableSet.of("Attribute", "ImageId")).put("DescribeImages",
                      ImmutableSet.of("explicit", "public", "implicit")).put(
                      "DescribeAvailabilityZones", ImmutableSet.of("ZoneName")).put(
                      "DescribeRegions", ImmutableSet.of("RegionName.n")).put("DeleteVolume",

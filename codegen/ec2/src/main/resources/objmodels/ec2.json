@@ -298,46 +298,18 @@
                      "defaultValue" : "None"
                   },
                   {
-                     "desc" : "Describes the launch permissions of the AMI.",
-                     "name" : "Attribute=launchPermission",
+                     "name" : "Attribute",
                      "type" : "String",
                      "optional" : "true",
-                     "defaultValue" : "None"
-                  },
-                  {
-                     "desc" : "Describes the product code associated with the AMI.",
-                     "name" : "Attribute=productCodes",
-                     "type" : "String",
-                     "optional" : "true",
-                     "defaultValue" : "None"
-                  },
-                  {
-                     "desc" : "Describes the ID of the kernel associated with the AMI.",
-                     "name" : "Attribute=kernel",
-                     "type" : "String",
-                     "optional" : "true",
-                     "defaultValue" : "None"
-                  },
-                  {
-                     "desc" : "Describes the ID of the RAM disk associated with the AMI.",
-                     "name" : "Attribute=ramdisk",
-                     "type" : "String",
-                     "optional" : "true",
-                     "defaultValue" : "None"
-                  },
-                  {
-                     "desc" : "Describes the mapping that defines native device names to use when exposing virtual devices.",
-                     "name" : "Attribute=blockDeviceMapping",
-                     "type" : "String",
-                     "optional" : "true",
-                     "defaultValue" : "None"
-                  },
-                  {
-                     "desc" : "Describes the operating system platform.",
-                     "name" : "Attribute=platform",
-                     "type" : "String",
-                     "optional" : "true",
-                     "defaultValue" : "None"
+                     "defaultValue" : "true",
+                     "valueMap" : {
+                        "productCodes" : "Describes the product code associated with the AMI.",
+                        "ramdisk" : "Describes the ID of the RAM disk associated with the AMI.",
+                        "kernel" : "Describes the ID of the kernel associated with the AMI.",
+                        "launchPermission" : "Describes the launch permissions of the AMI.",
+                        "platform" : "Describes the operating system platform.",
+                        "blockDeviceMapping" : "Describes the mapping that defines native device names to use when exposing virtual devices."
+                     }
                   }
                ],
                "type" : "DescribeImageAttribute",
@@ -716,8 +688,8 @@
          "name" : "Availability Zones and Regions",
          "queries" : {
             "DescribeAvailabilityZones" : {
-               "exampleCode" : "https://ec2.amazonaws.com/?Action=DescribeAvailabilityZones&ZoneName.0=us-east-1a&ZoneName.1=us-east-1b&ZoneName.1=us-east-1c&AuthParams",
-               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeAvailabilityZones-Example-Request-1\">Example Request</h3></div></div></div><p>This example displays information about Availability Zones that are available to the account.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeAvailabilityZones&amp;ZoneName.0=us-east-1a&amp;ZoneName.1=us-east-1b&amp;ZoneName.1=us-east-1c&amp;AuthParams</pre></div>\n",
+               "exampleCode" : "https://ec2.amazonaws.com/?Action=DescribeAvailabilityZones&ZoneName.0=us-east-1a&ZoneName.1=us-east-1b&ZoneName.2=us-east-1c&ZoneName.3=us-east-1d&AuthParams",
+               "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeAvailabilityZones-Example-Request-1\">Example Request</h3></div></div></div><p>This example displays information about Availability Zones that are available to the account.<pre class=\"programlisting\">https://ec2.amazonaws.com/?Action=DescribeAvailabilityZones&amp;ZoneName.0=us-east-1a&amp;ZoneName.1=us-east-1b&amp;ZoneName.2=us-east-1c&amp;ZoneName.3=us-east-1d&amp;AuthParams</pre></div>\n",
                "contents" : [
                   {
                      "desc" : "Availability Zone name.",
@@ -2927,8 +2899,8 @@
          ]
       },
       "DescribeAvailabilityZonesResponse" : {
-         "exampleCode" : "<DescribeAvailabilityZonesResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <availabilityZoneInfo>\n    <item>\n      <zoneName>us-east-1a</zoneName>\n      <zoneState>available</zoneState>\n    </item>\n    <item>\n      <zoneName>us-east-1b</zoneName>\n      <zoneState>available</zoneState>\n    </item>\n    <item>\n      <zoneName>us-east-1c</zoneName>\n      <zoneState>available</zoneState>\n    </item>\n  </availabilityZoneInfo>\n</DescribeAvailabilityZonesResponse>",
-         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeAvailabilityZones-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeAvailabilityZonesResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;availabilityZoneInfo&gt;\n    &lt;item&gt;\n      &lt;zoneName&gt;us-east-1a&lt;/zoneName&gt;\n      &lt;zoneState&gt;available&lt;/zoneState&gt;\n    &lt;/item&gt;\n    &lt;item&gt;\n      &lt;zoneName&gt;us-east-1b&lt;/zoneName&gt;\n      &lt;zoneState&gt;available&lt;/zoneState&gt;\n    &lt;/item&gt;\n    &lt;item&gt;\n      &lt;zoneName&gt;us-east-1c&lt;/zoneName&gt;\n      &lt;zoneState&gt;available&lt;/zoneState&gt;\n    &lt;/item&gt;\n  &lt;/availabilityZoneInfo&gt;\n&lt;/DescribeAvailabilityZonesResponse&gt;</pre></div>\n",
+         "exampleCode" : "<DescribeAvailabilityZonesResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-04-04/\">\n  <availabilityZoneInfo>\n    <item>\n      <zoneName>us-east-1a</zoneName>\n      <zoneState>available</zoneState>\n    </item>\n    <item>\n      <zoneName>us-east-1b</zoneName>\n      <zoneState>available</zoneState>\n    </item>\n    <item>\n      <zoneName>us-east-1c</zoneName>\n      <zoneState>available</zoneState>\n    </item>\n    <item>\n      <zoneName>us-east-1d</zoneName>\n      <zoneState>available</zoneState>\n    </item>\n  </availabilityZoneInfo>\n</DescribeAvailabilityZonesResponse>",
+         "exampleHTML" : "<div class=\"section\" lang=\"en\"><div class=\"titlepage\"><div><div><h3 class=\"title\" id=\"ApiReference-query-DescribeAvailabilityZones-Example-Response-1\">Example Response</h3></div></div></div><pre class=\"programlisting\">&lt;DescribeAvailabilityZonesResponse xmlns=&quot;http://ec2.amazonaws.com/doc/2009-04-04/&quot;&gt;\n  &lt;availabilityZoneInfo&gt;\n    &lt;item&gt;\n      &lt;zoneName&gt;us-east-1a&lt;/zoneName&gt;\n      &lt;zoneState&gt;available&lt;/zoneState&gt;\n    &lt;/item&gt;\n    &lt;item&gt;\n      &lt;zoneName&gt;us-east-1b&lt;/zoneName&gt;\n      &lt;zoneState&gt;available&lt;/zoneState&gt;\n    &lt;/item&gt;\n    &lt;item&gt;\n      &lt;zoneName&gt;us-east-1c&lt;/zoneName&gt;\n      &lt;zoneState&gt;available&lt;/zoneState&gt;\n    &lt;/item&gt;\n    &lt;item&gt;\n      &lt;zoneName&gt;us-east-1d&lt;/zoneName&gt;\n      &lt;zoneState&gt;available&lt;/zoneState&gt;\n    &lt;/item&gt;\n  &lt;/availabilityZoneInfo&gt;\n&lt;/DescribeAvailabilityZonesResponse&gt;</pre></div>\n",
          "contents" : [
             {
                "desc" : "Availability Zone information.",

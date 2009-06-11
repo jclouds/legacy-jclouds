@@ -38,7 +38,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(testName = "ec2.AmazonEC2QueryAPIParser")
+@Test(testName = "ec2.AmazonEC2QueryAPIParserTest")
 public class AmazonEC2QueryAPIParserTest extends AmazonEC2QueryAPIValidator {
    @BeforeTest
    public void setUp() throws Exception {
