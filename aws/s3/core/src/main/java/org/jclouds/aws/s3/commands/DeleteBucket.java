@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.aws.AWSResponseException;
-import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.commands.callables.ReturnTrueIf2xx;
 
 import com.google.common.annotations.VisibleForTesting;

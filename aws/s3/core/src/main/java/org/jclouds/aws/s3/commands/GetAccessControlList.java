@@ -29,7 +29,6 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.s3.domain.AccessControlList;
-import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 
 import com.google.common.annotations.VisibleForTesting;

@@ -32,56 +32,50 @@ import org.jclouds.command.FutureCommand;
 import org.jclouds.logging.Logger;
 
 /**
- * // TODO: Adrian: Document this!
+ * HttpFutureCommand associates a request with a {@link ResponseCallable response parser} which
+ * extracts the result object specified as generic type <code>T</code> from the HttpResponse.
  * 
  * @author Adrian Cole
  */
-public class HttpFutureCommand<T> extends
-	FutureCommand<HttpRequest, HttpResponse, T> {
+public class HttpFutureCommand<T> extends FutureCommand<HttpRequest, HttpResponse, T> {
 
-    public HttpFutureCommand(String method, String uri,
-	    ResponseCallable<T> responseCallable) {
-	super(new HttpRequest(checkNotNull(method, "method"), checkNotNull(uri,
-		"uri")), responseCallable);
-    }
+   public HttpFutureCommand(String method, String uri, ResponseCallable<T> responseCallable) {
+      super(new HttpRequest(checkNotNull(method, "method"), checkNotNull(uri, "uri")),
+               responseCallable);
+   }
 
-    protected void addHostHeader(String host) {
-	getRequest().getHeaders().put("Host", host);
-    }
+   protected void addHostHeader(String host) {
+      getRequest().getHeaders().put("Host", host);
+   }
 
-    @Override
-    public String toString() {
-	return this.getClass().getName() + "{" + "request=" + this.getRequest()
-		+ "," + "responseFuture=" + this.getResponseFuture() + '}';
-    }
+   @Override
+   public String toString() {
+      return this.getClass().getName() + "{" + "request=" + this.getRequest() + ","
+               + "responseFuture=" + this.getResponseFuture() + '}';
+   }
 
-    /**
-     * // TODO: Adrian: Document this!
-     * 
-     * @author Adrian Cole
-     */
-    public abstract static class ResponseCallable<T> implements
-	    FutureCommand.ResponseCallable<HttpResponse, T> {
-	@Resource
-	protected Logger logger = Logger.NULL;
+   public abstract static class ResponseCallable<T> implements
+            FutureCommand.ResponseCallable<HttpResponse, T> {
+      @Resource
+      protected Logger logger = Logger.NULL;
 
-	public void checkCode() {
-	    int code = getResponse().getStatusCode();
-	    if (code >= 300){
-		IOUtils.closeQuietly(getResponse().getContent());
-		throw new IllegalStateException("incorrect code for this operation: "+getResponse());
-	    }
-	}
+      public void checkCode() {
+         int code = getResponse().getStatusCode();
+         if (code >= 300) {
+            IOUtils.closeQuietly(getResponse().getContent());
+            throw new IllegalStateException("incorrect code for this operation: " + getResponse());
+         }
+      }
 
-	private HttpResponse response;
+      private HttpResponse response;
 
-	public HttpResponse getResponse() {
-	    return response;
-	}
+      public HttpResponse getResponse() {
+         return response;
+      }
 
-	public void setResponse(HttpResponse response) {
-	    this.response = response;
-	}
-    }
+      public void setResponse(HttpResponse response) {
+         this.response = response;
+      }
+   }
 
 }

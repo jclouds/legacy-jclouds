@@ -72,6 +72,12 @@ public class ListBucket extends S3FutureCommand<S3Bucket> {
       }
    }
 
+   /**
+    * {@code bucketParser} is only enacted when the http status code is 2xx. Amazon treats
+    * NoSuchBucket as an exception, while we regard this as a valid response. Accordingly, we check
+    * for this {@code NoSuchBucket} message and return {@code S3Bucket#NOT_FOUND} if present.
+    * 
+    */
    @VisibleForTesting
    S3Bucket attemptNotFound(ExecutionException e) throws ExecutionException {
       if (e.getCause() != null && e.getCause() instanceof AWSResponseException) {
