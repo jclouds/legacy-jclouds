@@ -267,7 +267,7 @@ public class HttpNioFutureCommandConnectionPool extends
     }
 
     public void fatalProtocolException(HttpException ex, NHttpConnection conn) {
-        logger.error(ex, "%3$s-%1$d{%2$s} - http error", conn, conn.hashCode(),
+        logger.error(ex, "%3$s-%1$s{%2$s} - http error", conn, conn.hashCode(),
                 target);
         setExceptionOnCommand(conn, ex);
     }
