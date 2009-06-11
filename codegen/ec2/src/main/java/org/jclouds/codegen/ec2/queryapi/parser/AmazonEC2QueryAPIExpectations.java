@@ -26,10 +26,9 @@ package org.jclouds.codegen.ec2.queryapi.parser;
 import java.util.Map;
 import java.util.Set;
 
-import org.testng.v6.Sets;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 public class AmazonEC2QueryAPIExpectations {
    protected final Set<String> queryNames;
