@@ -73,17 +73,22 @@ public class LiveS3ConnectionModule extends AbstractModule {
 
    @Override
    protected void configure() {
+      bindResponseHandlers();
+
       bind(S3Connection.class).to(LiveS3Connection.class).in(Scopes.SINGLETON);
+      bind(HttpRetryHandler.class).annotatedWith(RetryHandler.class).to(
+               BackoffLimitedRetryHandler.class).in(Scopes.SINGLETON);
+      requestInjection(this);
+      logger.info("S3 Context = %1$s://%2$s:%3$s", (isSecure ? "https" : "http"), address, port);
+   }
+
+   protected void bindResponseHandlers() {
       bind(HttpResponseHandler.class).annotatedWith(RedirectHandler.class).to(
                CloseContentAndSetExceptionHandler.class).in(Scopes.SINGLETON);
       bind(HttpResponseHandler.class).annotatedWith(ClientErrorHandler.class).to(
                ParseAWSErrorFromXmlContent.class).in(Scopes.SINGLETON);
       bind(HttpResponseHandler.class).annotatedWith(ServerErrorHandler.class).to(
                ParseAWSErrorFromXmlContent.class).in(Scopes.SINGLETON);
-      bind(HttpRetryHandler.class).annotatedWith(RetryHandler.class).to(
-               BackoffLimitedRetryHandler.class).in(Scopes.SINGLETON);
-      requestInjection(this);
-      logger.info("S3 Context = %1$s://%2$s:%3$s", (isSecure ? "https" : "http"), address, port);
    }
 
    @Provides

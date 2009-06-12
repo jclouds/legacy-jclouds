@@ -31,7 +31,6 @@ import org.jclouds.aws.s3.commands.HeadObject;
 import org.jclouds.aws.s3.commands.PutBucket;
 import org.jclouds.aws.s3.commands.PutObject;
 import org.jclouds.aws.s3.commands.S3CommandFactory;
-import org.jclouds.aws.s3.xml.config.S3ParserModule;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.assistedinject.FactoryProvider;
@@ -42,45 +41,40 @@ import com.google.inject.assistedinject.FactoryProvider;
  * @author Adrian Cole
  */
 public class S3CommandsModule extends AbstractModule {
-    @Override
-    protected void configure() {
-	install(new S3ParserModule());
+   @Override
+   protected void configure() {
 
-	bind(S3CommandFactory.DeleteBucketFactory.class).toProvider(
-		FactoryProvider.newFactory(
-			S3CommandFactory.DeleteBucketFactory.class,
-			DeleteBucket.class));
+      bind(S3CommandFactory.DeleteBucketFactory.class).toProvider(
+               FactoryProvider.newFactory(S3CommandFactory.DeleteBucketFactory.class,
+                        DeleteBucket.class));
 
-	bind(S3CommandFactory.DeleteObjectFactory.class).toProvider(
-		FactoryProvider.newFactory(
-			S3CommandFactory.DeleteObjectFactory.class,
-			DeleteObject.class));
+      bind(S3CommandFactory.DeleteObjectFactory.class).toProvider(
+               FactoryProvider.newFactory(S3CommandFactory.DeleteObjectFactory.class,
+                        DeleteObject.class));
 
-	bind(S3CommandFactory.BucketExistsFactory.class).toProvider(
-		FactoryProvider.newFactory(
-			S3CommandFactory.BucketExistsFactory.class,
-			BucketExists.class));
+      bind(S3CommandFactory.BucketExistsFactory.class).toProvider(
+               FactoryProvider.newFactory(S3CommandFactory.BucketExistsFactory.class,
+                        BucketExists.class));
 
-	bind(S3CommandFactory.PutBucketFactory.class).toProvider(
-		FactoryProvider.newFactory(
-			S3CommandFactory.PutBucketFactory.class,
-			PutBucket.class));
+      bind(S3CommandFactory.PutBucketFactory.class)
+               .toProvider(
+                        FactoryProvider.newFactory(S3CommandFactory.PutBucketFactory.class,
+                                 PutBucket.class));
 
-	bind(S3CommandFactory.PutObjectFactory.class).toProvider(
-		FactoryProvider.newFactory(
-			S3CommandFactory.PutObjectFactory.class,
-			PutObject.class));
+      bind(S3CommandFactory.PutObjectFactory.class)
+               .toProvider(
+                        FactoryProvider.newFactory(S3CommandFactory.PutObjectFactory.class,
+                                 PutObject.class));
 
-	bind(S3CommandFactory.GetObjectFactory.class).toProvider(
-		FactoryProvider.newFactory(
-			S3CommandFactory.GetObjectFactory.class,
-			GetObject.class));
+      bind(S3CommandFactory.GetObjectFactory.class)
+               .toProvider(
+                        FactoryProvider.newFactory(S3CommandFactory.GetObjectFactory.class,
+                                 GetObject.class));
 
-	bind(S3CommandFactory.HeadMetadataFactory.class).toProvider(
-		FactoryProvider.newFactory(
-			S3CommandFactory.HeadMetadataFactory.class,
-			HeadObject.class));
+      bind(S3CommandFactory.HeadMetadataFactory.class).toProvider(
+               FactoryProvider.newFactory(S3CommandFactory.HeadMetadataFactory.class,
+                        HeadObject.class));
 
-    }
+   }
 
 }

@@ -35,6 +35,7 @@ import org.jclouds.aws.s3.commands.options.PutBucketOptions;
 import org.jclouds.aws.s3.commands.options.PutObjectOptions;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.S3Bucket.Metadata.LocationConstraint;
+import org.jclouds.aws.s3.xml.config.S3ParserModule;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -56,7 +57,7 @@ public class S3CommandFactoryTest {
 
    @BeforeTest
    void setUpInjector() {
-      injector = Guice.createInjector(new S3CommandsModule() {
+      injector = Guice.createInjector(new S3ParserModule(), new S3CommandsModule() {
          @Override
          protected void configure() {
             bindConstant().annotatedWith(Names.named("jclouds.http.address")).to("localhost");

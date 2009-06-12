@@ -27,6 +27,7 @@ import static org.testng.Assert.assertEquals;
 
 import org.jclouds.aws.s3.handlers.ParseAWSErrorFromXmlContent;
 import org.jclouds.aws.s3.reference.S3Constants;
+import org.jclouds.aws.s3.xml.config.S3ParserModule;
 import org.jclouds.http.HttpResponseHandler;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.annotation.ClientErrorHandler;
@@ -50,21 +51,27 @@ import com.google.inject.name.Names;
 public class S3ContextModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new LiveS3ConnectionModule(), new S3ContextModule() {
-         @Override
-         protected void configure() {
-            bindConstant().annotatedWith(Names.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to(
-                     "localhost");
-            bindConstant().annotatedWith(Names.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY)).to(
-                     "localhost");
-            bindConstant().annotatedWith(Names.named(S3Constants.PROPERTY_HTTP_ADDRESS)).to(
-                     "localhost");
-            bindConstant().annotatedWith(Names.named(S3Constants.PROPERTY_HTTP_PORT)).to("1000");
-            bindConstant().annotatedWith(Names.named(S3Constants.PROPERTY_HTTP_SECURE)).to("false");
-            bindConstant().annotatedWith(Names.named(S3Constants.PROPERTY_HTTP_MAX_RETRIES)).to("5");
-            super.configure();
-         }
-      }, new JavaUrlHttpFutureCommandClientModule());
+      return Guice.createInjector(new LiveS3ConnectionModule(), new S3ParserModule(),
+               new S3ContextModule() {
+                  @Override
+                  protected void configure() {
+                     bindConstant()
+                              .annotatedWith(Names.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to(
+                                       "localhost");
+                     bindConstant().annotatedWith(
+                              Names.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY))
+                              .to("localhost");
+                     bindConstant().annotatedWith(Names.named(S3Constants.PROPERTY_HTTP_ADDRESS))
+                              .to("localhost");
+                     bindConstant().annotatedWith(Names.named(S3Constants.PROPERTY_HTTP_PORT)).to(
+                              "1000");
+                     bindConstant().annotatedWith(Names.named(S3Constants.PROPERTY_HTTP_SECURE))
+                              .to("false");
+                     bindConstant().annotatedWith(
+                              Names.named(S3Constants.PROPERTY_HTTP_MAX_RETRIES)).to("5");
+                     super.configure();
+                  }
+               }, new JavaUrlHttpFutureCommandClientModule());
    }
 
    private static class ClientErrorHandlerTest {

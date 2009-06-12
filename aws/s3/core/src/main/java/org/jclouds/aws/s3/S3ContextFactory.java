@@ -44,6 +44,7 @@ import java.util.Properties;
 import org.jclouds.aws.s3.config.LiveS3ConnectionModule;
 import org.jclouds.aws.s3.config.S3ConnectionModule;
 import org.jclouds.aws.s3.config.S3ContextModule;
+import org.jclouds.aws.s3.xml.config.S3ParserModule;
 import org.jclouds.http.config.HttpFutureCommandClientModule;
 import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
 import org.jclouds.logging.config.LoggingModule;
@@ -73,13 +74,13 @@ import com.google.inject.name.Names;
  * @see S3Context
  */
 public class S3ContextFactory {
-   
+
    private static final String DEFAULT_SECURE_HTTP_PORT = "443";
    private static final String DEFAULT_NON_SECURE_HTTP_PORT = "80";
-   
-   private final Properties properties;   
+
+   private final Properties properties;
    private final List<Module> modules = new ArrayList<Module>(3);
-   
+
    private S3ContextFactory(Properties properties) {
       this.properties = properties;
    }
@@ -87,9 +88,11 @@ public class S3ContextFactory {
    public static S3ContextFactory createContext(String awsAccessKeyId, String awsSecretAccessKey) {
       Properties properties = new Properties();
 
-      properties.setProperty(PROPERTY_AWS_ACCESSKEYID, checkNotNull(awsAccessKeyId, "awsAccessKeyId"));
-      properties.setProperty(PROPERTY_AWS_SECRETACCESSKEY, checkNotNull(awsSecretAccessKey,"awsSecretAccessKey"));
-      
+      properties.setProperty(PROPERTY_AWS_ACCESSKEYID, checkNotNull(awsAccessKeyId,
+               "awsAccessKeyId"));
+      properties.setProperty(PROPERTY_AWS_SECRETACCESSKEY, checkNotNull(awsSecretAccessKey,
+               "awsSecretAccessKey"));
+
       properties.setProperty(PROPERTY_HTTP_ADDRESS, "s3.amazonaws.com");
       properties.setProperty(PROPERTY_HTTP_SECURE, "true");
       properties.setProperty(PROPERTY_HTTP_MAX_RETRIES, "5");
@@ -98,89 +101,68 @@ public class S3ContextFactory {
       properties.setProperty(PROPERTY_POOL_REQUEST_INVOKER_THREADS, "1");
       properties.setProperty(PROPERTY_POOL_IO_WORKER_THREADS, "2");
       properties.setProperty(PROPERTY_POOL_MAX_CONNECTIONS, "12");
-      
+
       return new S3ContextFactory(properties);
    }
 
    public S3Context build() {
       return createInjector().getInstance(S3Context.class);
    }
-   
+
    public static Injector createInjector(String awsAccessKeyId, String awsSecretAccessKey,
             Module... modules) {
-      return createContext(awsAccessKeyId, awsSecretAccessKey)
-               .withModules(modules)
+      return createContext(awsAccessKeyId, awsSecretAccessKey).withModules(modules)
                .createInjector();
    }
 
    public static S3Context createS3Context(String awsAccessKeyId, String awsSecretAccessKey,
             Module... modules) {
-      return createContext(awsAccessKeyId, awsSecretAccessKey)
-               .withModules(modules)
-               .build();
+      return createContext(awsAccessKeyId, awsSecretAccessKey).withModules(modules).build();
 
    }
 
    public static Injector createInjector(String awsAccessKeyId, String awsSecretAccessKey,
             boolean isSecure, Module... modules) {
-      return createContext(awsAccessKeyId, awsSecretAccessKey)
-               .withModules(modules)
-               .withHttpSecure(isSecure)
-               .createInjector();
+      return createContext(awsAccessKeyId, awsSecretAccessKey).withModules(modules).withHttpSecure(
+               isSecure).createInjector();
    }
 
    public static S3Context createS3Context(String awsAccessKeyId, String awsSecretAccessKey,
             boolean isSecure, Module... modules) {
-      
-      return createContext(awsAccessKeyId, awsSecretAccessKey)
-               .withModules(modules)
-               .withHttpSecure(isSecure)
-               .build();
+
+      return createContext(awsAccessKeyId, awsSecretAccessKey).withModules(modules).withHttpSecure(
+               isSecure).build();
    }
 
    public static Injector createInjector(String awsAccessKeyId, String awsSecretAccessKey,
             boolean isSecure, String server, Module... modules) {
-      return createContext(awsAccessKeyId, awsSecretAccessKey)
-               .withModules(modules)
-               .withHttpSecure(isSecure)
-               .withHttpAddress(server)
-               .createInjector();
+      return createContext(awsAccessKeyId, awsSecretAccessKey).withModules(modules).withHttpSecure(
+               isSecure).withHttpAddress(server).createInjector();
    }
 
    public static S3Context createS3Context(String awsAccessKeyId, String awsSecretAccessKey,
             boolean isSecure, String server, Module... modules) {
-      return createContext(awsAccessKeyId, awsSecretAccessKey)
-               .withModules(modules)
-               .withHttpSecure(isSecure)
-               .withHttpAddress(server)
-               .build();
+      return createContext(awsAccessKeyId, awsSecretAccessKey).withModules(modules).withHttpSecure(
+               isSecure).withHttpAddress(server).build();
    }
 
    public static S3Context createS3Context(String awsAccessKeyId, String awsSecretAccessKey,
             boolean isSecure, String server, int port, Module... modules) {
-      return createContext(awsAccessKeyId, awsSecretAccessKey)
-               .withModules(modules)
-               .withHttpSecure(isSecure)
-               .withHttpAddress(server)
-               .withHttpPort(port)
-               .build();
+      return createContext(awsAccessKeyId, awsSecretAccessKey).withModules(modules).withHttpSecure(
+               isSecure).withHttpAddress(server).withHttpPort(port).build();
    }
 
    public static Injector createInjector(String awsAccessKeyId, String awsSecretAccessKey,
             boolean isSecure, String server, int port, Module... modules) {
-      return createContext(awsAccessKeyId, awsSecretAccessKey)
-               .withModules(modules)
-               .withHttpSecure(isSecure)
-               .withHttpAddress(server)
-               .withHttpPort(port)
-               .createInjector();
+      return createContext(awsAccessKeyId, awsSecretAccessKey).withModules(modules).withHttpSecure(
+               isSecure).withHttpAddress(server).withHttpPort(port).createInjector();
    }
 
    public S3ContextFactory withHttpAddress(String httpAddress) {
       properties.setProperty(PROPERTY_HTTP_ADDRESS, httpAddress);
       return this;
    }
-   
+
    public S3ContextFactory withHttpMaxRetries(int httpMaxRetries) {
       properties.setProperty(PROPERTY_HTTP_MAX_RETRIES, Integer.toString(httpMaxRetries));
       return this;
@@ -197,25 +179,29 @@ public class S3ContextFactory {
    }
 
    public S3ContextFactory withPoolMaxConnectionReuse(int poolMaxConnectionReuse) {
-      properties.setProperty(PROPERTY_POOL_MAX_CONNECTION_REUSE, Integer.toString(poolMaxConnectionReuse));
+      properties.setProperty(PROPERTY_POOL_MAX_CONNECTION_REUSE, Integer
+               .toString(poolMaxConnectionReuse));
       return this;
 
    }
 
    public S3ContextFactory withPoolMaxSessionFailures(int poolMaxSessionFailures) {
-      properties.setProperty(PROPERTY_POOL_MAX_SESSION_FAILURES, Integer.toString(poolMaxSessionFailures));
+      properties.setProperty(PROPERTY_POOL_MAX_SESSION_FAILURES, Integer
+               .toString(poolMaxSessionFailures));
       return this;
 
    }
 
    public S3ContextFactory withPoolRequestInvokerThreads(int poolRequestInvokerThreads) {
-      properties.setProperty(PROPERTY_POOL_REQUEST_INVOKER_THREADS, Integer.toString(poolRequestInvokerThreads));
+      properties.setProperty(PROPERTY_POOL_REQUEST_INVOKER_THREADS, Integer
+               .toString(poolRequestInvokerThreads));
       return this;
 
    }
 
    public S3ContextFactory withPoolIoWorkerThreads(int poolIoWorkerThreads) {
-      properties.setProperty(PROPERTY_POOL_IO_WORKER_THREADS, Integer.toString(poolIoWorkerThreads));
+      properties
+               .setProperty(PROPERTY_POOL_IO_WORKER_THREADS, Integer.toString(poolIoWorkerThreads));
       return this;
 
    }
@@ -224,29 +210,31 @@ public class S3ContextFactory {
       properties.setProperty(PROPERTY_POOL_MAX_CONNECTIONS, Integer.toString(poolMaxConnections));
       return this;
    }
-   
+
    public S3ContextFactory withModule(Module module) {
       modules.add(module);
       return this;
    }
-   
+
    public S3ContextFactory withModules(Module... modules) {
       this.modules.addAll(Arrays.asList(modules));
       return this;
    }
-   
+
    private Injector createInjector() {
       /* Use 80 or 443 as the default port if one hasn't been set? */
-      if(!properties.containsKey(PROPERTY_HTTP_PORT)) {
-         if(Boolean.parseBoolean(properties.getProperty(PROPERTY_HTTP_SECURE))) {
+      if (!properties.containsKey(PROPERTY_HTTP_PORT)) {
+         if (Boolean.parseBoolean(properties.getProperty(PROPERTY_HTTP_SECURE))) {
             properties.setProperty(PROPERTY_HTTP_PORT, DEFAULT_SECURE_HTTP_PORT);
          } else {
             properties.setProperty(PROPERTY_HTTP_PORT, DEFAULT_NON_SECURE_HTTP_PORT);
          }
 
       }
-      
+
       addLoggingModuleIfNotPresent(modules);
+
+      addS3ParserModuleIfNotPresent(modules);
 
       addS3ConnectionModuleIfNotPresent(modules);
 
@@ -262,6 +250,16 @@ public class S3ContextFactory {
       }, new S3ContextModule());
    }
 
+   @VisibleForTesting
+   static void addS3ParserModuleIfNotPresent(List<Module> modules) {
+      if (!Iterables.any(modules, new Predicate<Module>() {
+         public boolean apply(Module input) {
+            return input instanceof S3ParserModule;
+         }
+
+      }))
+         modules.add(new S3ParserModule());
+   }
 
    @VisibleForTesting
    static void addHttpModuleIfNeededAndNotPresent(final List<Module> modules) {
