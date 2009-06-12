@@ -68,7 +68,7 @@ public class S3IntegrationTest {
 
    protected void createBucketAndEnsureEmpty(String sourceBucket) throws InterruptedException,
             ExecutionException, TimeoutException {
-      client.deleteBucketIfEmpty(sourceBucket).get(10, TimeUnit.SECONDS);
+      deleteBucket(sourceBucket);
       client.putBucketIfNotExists(sourceBucket).get(10, TimeUnit.SECONDS);
       assertEquals(client.listBucket(sourceBucket).get(10, TimeUnit.SECONDS).getContents().size(),
                0, "bucket " + sourceBucket + "wasn't empty");
@@ -98,7 +98,7 @@ public class S3IntegrationTest {
    }
 
    @BeforeClass(groups = { "integration", "live" })
-   void enableDebug() {
+   protected void enableDebug() {
       if (debugEnabled()) {
          Handler HANDLER = new ConsoleHandler() {
             {
@@ -176,6 +176,8 @@ public class S3IntegrationTest {
    public void setUpBucket(Method method) throws TimeoutException, ExecutionException,
             InterruptedException {
       bucketName = (bucketPrefix + method.getName()).toLowerCase();
+      if (bucketName.length() > 63)
+         bucketName = bucketName.substring(0, 62);
       createBucketAndEnsureEmpty(bucketName);
    }
 
