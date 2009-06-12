@@ -44,7 +44,7 @@ public class AWSError {
     @Override
     public String toString() {
 	final StringBuilder sb = new StringBuilder();
-	sb.append("S3Error");
+	sb.append("AWSError");
 	sb.append("{code='").append(code).append('\'');
 	sb.append(", message='").append(message).append('\'');
 	sb.append(", requestId='").append(requestId).append('\'');
