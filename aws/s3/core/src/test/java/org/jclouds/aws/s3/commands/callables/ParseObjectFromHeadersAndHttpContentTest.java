@@ -25,16 +25,24 @@ package org.jclouds.aws.s3.commands.callables;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.createNiceMock;
 import static org.easymock.classextension.EasyMock.replay;
+import static org.easymock.classextension.EasyMock.reset;
 import static org.testng.Assert.assertEquals;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.S3Object.Metadata;
+import org.jclouds.aws.s3.domain.acl.CannedAccessPolicy;
+import org.jclouds.aws.s3.reference.S3Headers;
+import org.jclouds.aws.util.DateService;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpHeaders;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 /**
  * @author Adrian Cole
@@ -85,6 +93,61 @@ public class ParseObjectFromHeadersAndHttpContentTest {
       assertEquals(object.getMetadata().getSize(), 20232760);
       assertEquals(object.getContentRange(), "0-10485759/20232760");
 
+   }
+   
+   @Test
+   public void testParseObjectFromHeadersWithCannedAccessPolicy() throws HttpException {
+      DateService dateService = new DateService();
+      ParseMetadataFromHeaders metadataParser = new ParseMetadataFromHeaders(dateService);
+      metadataParser.setKey("object-key");
+      ParseObjectFromHeadersAndHttpContent callable = new ParseObjectFromHeadersAndHttpContent(
+            metadataParser);
+
+      HttpResponse response = createNiceMock(HttpResponse.class);
+      callable.setResponse(response);
+
+      S3Object object;
+      
+      // Test with no policy
+      buildDefaultResponseMock(response);
+      expect(response.getFirstHeaderOrNull(S3Headers.CANNED_ACL)).andReturn(null);
+      replay(response);            
+      object = callable.call();
+      assertEquals(object.getMetadata().getCannedAccessPolicy(), null);
+      
+      // Test setting the "private" policy
+      buildDefaultResponseMock(response);
+      expect(response.getFirstHeaderOrNull(S3Headers.CANNED_ACL)).andReturn(
+            CannedAccessPolicy.PRIVATE.toString());
+      replay(response);            
+      object = callable.call();
+      assertEquals(object.getMetadata().getCannedAccessPolicy(), CannedAccessPolicy.PRIVATE);
+
+      // Test setting the "authenticated read" policy
+      buildDefaultResponseMock(response);
+      expect(response.getFirstHeaderOrNull(S3Headers.CANNED_ACL)).andReturn(
+            CannedAccessPolicy.AUTHENTICATED_READ.toString());
+      replay(response);            
+      object = callable.call();
+      assertEquals(object.getMetadata().getCannedAccessPolicy(), 
+            CannedAccessPolicy.AUTHENTICATED_READ);
+   }
+   
+   private void buildDefaultResponseMock(HttpResponse response) {
+      reset(response);
+      
+      // Headers required for the parse classes to work, but we don't care about this data.
+      String data = "test data";
+      expect(response.getStatusCode()).andReturn(200).atLeastOnce();
+      Multimap<String, String> emptyHeaders = HashMultimap.create();
+      expect(response.getHeaders()).andReturn(emptyHeaders).atLeastOnce();
+      expect(response.getContent()).andReturn(IOUtils.toInputStream(data)).atLeastOnce();
+      expect(response.getFirstHeaderOrNull(HttpHeaders.LAST_MODIFIED))
+         .andReturn(new DateService().rfc822DateFormat()).atLeastOnce();
+      expect(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE))
+         .andReturn("text/plain").atLeastOnce();
+      expect(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH))
+         .andReturn("" + data.length()).atLeastOnce();            
    }
 
 }

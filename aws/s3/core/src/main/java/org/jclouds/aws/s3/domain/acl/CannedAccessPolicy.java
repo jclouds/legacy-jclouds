@@ -77,4 +77,28 @@ public enum CannedAccessPolicy {
     public String toString() {
 	return policyName;
     }
+    
+    /**
+     * @param capHeader
+     * The value of the x-amz-acl HTTP Header returned by S3 when an
+     * object has a canned access policy.
+     * 
+     * @return
+     * the canned access policy object corresponding to the header value,
+     * or null if the given header value does not represent a valid canned 
+     * policy.
+     */
+    public static CannedAccessPolicy fromHeader(String capHeader) {
+       if ("private".equals(capHeader)) {
+          return CannedAccessPolicy.PRIVATE;
+       } else if ("public-read".equals(capHeader)) {
+          return CannedAccessPolicy.PUBLIC_READ;
+       } else if ("public-read-write".equals(capHeader)) {
+          return CannedAccessPolicy.PUBLIC_READ_WRITE;
+       } else if ("authenticated-read".equals(capHeader)) {
+          return CannedAccessPolicy.AUTHENTICATED_READ;
+       } else {
+          return null;
+       }
+    }
 }

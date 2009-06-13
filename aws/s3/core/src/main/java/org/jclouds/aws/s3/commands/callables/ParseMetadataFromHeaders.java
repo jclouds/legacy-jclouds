@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.S3Object.Metadata;
+import org.jclouds.aws.s3.domain.acl.CannedAccessPolicy;
 import org.jclouds.aws.s3.reference.S3Headers;
 import org.jclouds.aws.s3.util.S3Utils;
 import org.jclouds.aws.util.DateService;
@@ -63,6 +64,7 @@ public class ParseMetadataFromHeaders extends HttpFutureCommand.ResponseCallable
 
       addUserMetadataTo(metadata);
       addMd5To(metadata);
+      addCannedAccessPolicyTo(metadata);
 
       parseLastModifiedOrThrowException(metadata);
       setContentTypeOrThrowException(metadata);
@@ -119,6 +121,13 @@ public class ParseMetadataFromHeaders extends HttpFutureCommand.ResponseCallable
       for (Entry<String, String> header : getResponse().getHeaders().entries()) {
          if (header.getKey() != null && header.getKey().startsWith(S3Headers.USER_METADATA_PREFIX))
             metadata.getUserMetadata().put(header.getKey(), header.getValue());
+      }
+   }
+
+   private void addCannedAccessPolicyTo(S3Object.Metadata metadata) {
+      String aclHeader = getResponse().getFirstHeaderOrNull(S3Headers.CANNED_ACL);
+      if (aclHeader != null) {         
+         metadata.setCannedAccessPolicy(CannedAccessPolicy.fromHeader(aclHeader));
       }
    }
 

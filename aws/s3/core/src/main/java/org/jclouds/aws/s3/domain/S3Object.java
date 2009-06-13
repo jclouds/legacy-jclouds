@@ -27,6 +27,7 @@ import static com.google.common.base.Preconditions.*;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import org.jclouds.aws.s3.commands.options.GetObjectOptions;
+import org.jclouds.aws.s3.domain.acl.CannedAccessPolicy;
 import org.jclouds.aws.s3.util.S3Utils;
 import org.jclouds.aws.s3.util.S3Utils.Md5InputStreamResult;
 import org.jclouds.http.ContentTypes;
@@ -96,6 +97,8 @@ public class S3Object {
         private String cacheControl;
         private String dataDisposition;
         private String dataEncoding;
+        private CannedAccessPolicy cannedAccessPolicy;
+        private AccessControlList accessControlList;
 
         // only parsed on list
         private CanonicalUser owner = null;
@@ -318,6 +321,22 @@ public class S3Object {
 
         public void setAllHeaders(Multimap<String, String> allHeaders) {
             this.allHeaders = allHeaders;
+        }
+        
+        public void setCannedAccessPolicy(CannedAccessPolicy policy) {
+           this.cannedAccessPolicy = policy;
+        }
+        
+        public CannedAccessPolicy getCannedAccessPolicy() {
+           return this.cannedAccessPolicy;
+        }
+        
+        public void setAccessControlList(AccessControlList acl) {
+           this.accessControlList = acl;
+        }
+        
+        public AccessControlList getAccessControlList() {
+           return this.accessControlList;
         }
 
         /**
