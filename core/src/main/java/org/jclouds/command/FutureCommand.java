@@ -27,116 +27,116 @@ import java.util.concurrent.*;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * // TODO: Adrian: Document this!
+ * Command that returns an asynchronous result. Generic type parameters associate the request (
+ * {@code Q}) with the response ({#code R}). When the response is parsed, it will return value (
+ * {@code T}).
  * 
  * @author Adrian Cole
  */
 public class FutureCommand<Q, R, T> implements Future<T> {
 
-    private final Q request;
-    private final ResponseRunnableFuture<R, T> responseRunnableFuture;
-    private volatile int failureCount;
+   private final Q request;
+   private final ResponseRunnableFuture<R, T> responseRunnableFuture;
+   private volatile int failureCount;
 
-    public int incrementFailureCount() {
-	return ++failureCount;
-    }
+   public int incrementFailureCount() {
+      return ++failureCount;
+   }
 
-    public int getFailureCount() {
-	return failureCount;
-    }
+   public int getFailureCount() {
+      return failureCount;
+   }
 
-    public FutureCommand(Q request, ResponseCallable<R, T> responseCallable) {
-	this.request = checkNotNull(request, "request");
-	this.responseRunnableFuture = new ResponseRunnableFutureTask<R, T>(
-		checkNotNull(responseCallable, "responseCallable"));
-    }
+   public FutureCommand(Q request, ResponseCallable<R, T> responseCallable) {
+      this.request = checkNotNull(request, "request");
+      this.responseRunnableFuture = new ResponseRunnableFutureTask<R, T>(checkNotNull(
+               responseCallable, "responseCallable"));
+   }
 
-    public Q getRequest() {
-	return request;
-    }
+   public Q getRequest() {
+      return request;
+   }
 
-    public ResponseRunnableFuture<R, T> getResponseFuture() {
-	return responseRunnableFuture;
-    }
+   public ResponseRunnableFuture<R, T> getResponseFuture() {
+      return responseRunnableFuture;
+   }
 
-    public void setException(Exception e) {
-	responseRunnableFuture.setException(e);
-    }
+   public void setException(Exception e) {
+      responseRunnableFuture.setException(e);
+   }
 
-    public boolean cancel(boolean b) {
-	return responseRunnableFuture.cancel(b);
-    }
+   public boolean cancel(boolean b) {
+      return responseRunnableFuture.cancel(b);
+   }
 
-    public boolean isCancelled() {
-	return responseRunnableFuture.isCancelled();
-    }
+   public boolean isCancelled() {
+      return responseRunnableFuture.isCancelled();
+   }
 
-    public boolean isDone() {
-	return responseRunnableFuture.isDone();
-    }
+   public boolean isDone() {
+      return responseRunnableFuture.isDone();
+   }
 
-    public T get() throws InterruptedException, ExecutionException {
-	return responseRunnableFuture.get();
-    }
+   public T get() throws InterruptedException, ExecutionException {
+      return responseRunnableFuture.get();
+   }
 
-    public T get(long l, TimeUnit timeUnit) throws InterruptedException,
-	    ExecutionException, TimeoutException {
-	return responseRunnableFuture.get(l, timeUnit);
-    }
+   public T get(long l, TimeUnit timeUnit) throws InterruptedException, ExecutionException,
+            TimeoutException {
+      return responseRunnableFuture.get(l, timeUnit);
+   }
 
-    /**
-     * // TODO: Adrian: Document this!
-     * 
-     * @author Adrian Cole
-     */
-    public static class ResponseRunnableFutureTask<R, T> extends FutureTask<T>
-	    implements ResponseRunnableFuture<R, T> {
-	private final ResponseCallable<R, T> callable;
+   /**
+    * // TODO: Adrian: Document this!
+    * 
+    * @author Adrian Cole
+    */
+   public static class ResponseRunnableFutureTask<R, T> extends FutureTask<T> implements
+            ResponseRunnableFuture<R, T> {
+      private final ResponseCallable<R, T> callable;
 
-	public ResponseRunnableFutureTask(ResponseCallable<R, T> tCallable) {
-	    super(tCallable);
-	    this.callable = tCallable;
-	}
+      public ResponseRunnableFutureTask(ResponseCallable<R, T> tCallable) {
+         super(tCallable);
+         this.callable = tCallable;
+      }
 
-	@Override
-	public String toString() {
-	    return getClass().getSimpleName() + "{" + "tCallable=" + callable
-		    + '}';
-	}
+      @Override
+      public String toString() {
+         return getClass().getSimpleName() + "{" + "tCallable=" + callable + '}';
+      }
 
-	public R getResponse() {
-	    return callable.getResponse();
-	}
+      public R getResponse() {
+         return callable.getResponse();
+      }
 
-	public void setResponse(R response) {
-	    callable.setResponse(response);
-	}
+      public void setResponse(R response) {
+         callable.setResponse(response);
+      }
 
-	/**
-	 * opening this to public so that other errors can be associated with
-	 * the request, for example i/o errors.
-	 * 
-	 * @param throwable
-	 */
-	@Override
-	public void setException(Throwable throwable) {
-	    super.setException(throwable);
-	}
+      /**
+       * opening this to public so that other errors can be associated with the request, for example
+       * i/o errors.
+       * 
+       * @param throwable
+       */
+      @Override
+      public void setException(Throwable throwable) {
+         super.setException(throwable);
+      }
 
-    }
+   }
 
-    public interface ResponseRunnableFuture<R, T> extends Response<R>,
-	    Runnable, Future<T> {
-	public void setException(Throwable throwable);
-    }
+   public interface ResponseRunnableFuture<R, T> extends Response<R>, Runnable, Future<T> {
+      public void setException(Throwable throwable);
+   }
 
-    public interface ResponseCallable<R, T> extends Response<R>, Callable<T> {
-    }
+   public interface ResponseCallable<R, T> extends Response<R>, Callable<T> {
+   }
 
-    public interface Response<R> {
-	public R getResponse();
+   public interface Response<R> {
+      public R getResponse();
 
-	public void setResponse(R response);
-    }
+      public void setResponse(R response);
+   }
 
 }
