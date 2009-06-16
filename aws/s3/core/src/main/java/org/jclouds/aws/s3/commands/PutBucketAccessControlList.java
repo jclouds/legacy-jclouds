@@ -31,15 +31,13 @@ import org.jclouds.http.HttpHeaders;
 import org.jclouds.http.commands.callables.ReturnTrueIf2xx;
 import org.jclouds.logging.Logger;
 
-import sun.util.logging.resources.logging;
-
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 
 /**
- * A PUT request operation directed at a bucket URI with the "acl" parameter 
- * sets the Access Control List (ACL) settings for that S3 item.
+ * A PUT request operation directed at a bucket URI with the "acl" parameter sets the Access Control
+ * List (ACL) settings for that S3 item.
  * <p />
  * To set a bucket or object's ACL, you must have WRITE_ACP or FULL_CONTROL access to the item.
  * 
@@ -52,21 +50,19 @@ public class PutBucketAccessControlList extends S3FutureCommand<Boolean> {
 
    @Inject
    public PutBucketAccessControlList(@Named("jclouds.http.address") String amazonHost,
-            ReturnTrueIf2xx callable, @Assisted("bucketName") String bucket, 
-            @Assisted AccessControlList acl) 
-   {
+            ReturnTrueIf2xx callable, @Assisted("bucketName") String bucket,
+            @Assisted AccessControlList acl) {
       super("PUT", "/?acl", callable, amazonHost, bucket);
-      
+
       String aclPayload = "";
       try {
          aclPayload = (new AccessControlListBuilder(acl)).getXmlString();
-      } catch (Exception e) {         
+      } catch (Exception e) {
          // TODO: How do we handle this sanely?
          logger.error(e, "Unable to build XML document for Access Control List: " + acl);
       }
       getRequest().setPayload(aclPayload);
-      getRequest().getHeaders().put(
-            HttpHeaders.CONTENT_LENGTH, aclPayload.getBytes().length + "");
+      getRequest().getHeaders().put(HttpHeaders.CONTENT_LENGTH, aclPayload.getBytes().length + "");
    }
 
 }

@@ -54,7 +54,6 @@ import org.jclouds.aws.s3.commands.options.ListBucketOptions;
 import org.jclouds.aws.s3.commands.options.PutBucketOptions;
 import org.jclouds.aws.s3.commands.options.PutObjectOptions;
 import org.jclouds.aws.s3.domain.AccessControlList;
-import org.jclouds.aws.s3.domain.CanonicalUser;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.AccessControlList.CanonicalUserGrantee;
@@ -77,14 +76,14 @@ import com.google.common.collect.Sets;
 import com.thoughtworks.xstream.XStream;
 
 /**
- * // TODO: Adrian: Document this!
+ * Implementation of {@link S3Connection} which keeps all data in a local Map object.
  * 
  * @author Adrian Cole
  */
 public class StubS3Connection implements S3Connection {
    private static Map<String, Map<String, S3Object>> bucketToContents = new ConcurrentHashMap<String, Map<String, S3Object>>();
    private static Map<String, Metadata.LocationConstraint> bucketToLocation = new ConcurrentHashMap<String, Metadata.LocationConstraint>();
-   
+
    /**
     * An S3 item's "ACL" may be a {@link CannedAccessPolicy} or an {@link AccessControlList}.
     */
@@ -354,15 +353,15 @@ public class StubS3Connection implements S3Connection {
             }
 
             if (options.getMaxKeys() != null) {
-               SortedSet<S3Object.Metadata> contentsSlice = firstSliceOfSize(
-                     contents, Integer.parseInt(options.getMaxKeys()));
+               SortedSet<S3Object.Metadata> contentsSlice = firstSliceOfSize(contents, Integer
+                        .parseInt(options.getMaxKeys()));
                returnVal.setMaxKeys(Integer.parseInt(options.getMaxKeys()));
                if (!contentsSlice.contains(contents.last())) {
                   // Partial listing
                   returnVal.setTruncated(true);
                   returnVal.setMarker(contentsSlice.last().getKey());
                } else {
-                  returnVal.setTruncated(false);                  
+                  returnVal.setTruncated(false);
                   returnVal.setMarker(null);
                }
                contents = contentsSlice;
@@ -452,22 +451,22 @@ public class StubS3Connection implements S3Connection {
          if (options.getAcl() != null)
             keyToAcl.put(bucketName + "/" + object.getKey(), options.getAcl());
          bucketToContents.get(bucketName).put(object.getKey(), new S3Object(newMd, data));
-         
+
          // Set HTTP headers to match metadata
-         newMd.getAllHeaders().put(HttpConstants.LAST_MODIFIED, 
-               dateService.rfc822DateFormat(newMd.getLastModified()));
+         newMd.getAllHeaders().put(HttpConstants.LAST_MODIFIED,
+                  dateService.rfc822DateFormat(newMd.getLastModified()));
          newMd.getAllHeaders().put(HttpConstants.CONTENT_MD5, S3Utils.toHexString(md5));
          newMd.getAllHeaders().put(HttpConstants.CONTENT_TYPE, newMd.getContentType());
          newMd.getAllHeaders().put(HttpConstants.CONTENT_LENGTH, newMd.getSize() + "");
          for (Entry<String, String> userMD : newMd.getUserMetadata().entries()) {
-            newMd.getAllHeaders().put(userMD.getKey(), userMD.getValue());                       
+            newMd.getAllHeaders().put(userMD.getKey(), userMD.getValue());
          }
 
          return new FutureBase<byte[]>() {
             public byte[] get() throws InterruptedException, ExecutionException {
                return md5;
             }
-         };         
+         };
       } catch (IOException e) {
          throw new RuntimeException(e);
       }
@@ -542,20 +541,20 @@ public class StubS3Connection implements S3Connection {
          }
       };
    }
-   
+
    protected AccessControlList getACLforS3Item(String bucketAndObjectKey) {
       AccessControlList acl = null;
       Object aclObj = keyToAcl.get(bucketAndObjectKey);
       if (aclObj instanceof AccessControlList) {
          acl = (AccessControlList) aclObj;
       } else if (aclObj instanceof CannedAccessPolicy) {
-         acl = AccessControlList.fromCannedAccessPolicy(
-               (CannedAccessPolicy) aclObj, DEFAULT_OWNER_ID);
+         acl = AccessControlList.fromCannedAccessPolicy((CannedAccessPolicy) aclObj,
+                  DEFAULT_OWNER_ID);
       } else if (aclObj == null) {
          // Default to private access policy
-         acl = AccessControlList.fromCannedAccessPolicy(
-               CannedAccessPolicy.PRIVATE, DEFAULT_OWNER_ID);
-      }      
+         acl = AccessControlList.fromCannedAccessPolicy(CannedAccessPolicy.PRIVATE,
+                  DEFAULT_OWNER_ID);
+      }
       return acl;
    }
 
@@ -563,23 +562,23 @@ public class StubS3Connection implements S3Connection {
       return new FutureBase<AccessControlList>() {
          public AccessControlList get() throws InterruptedException, ExecutionException {
             return getACLforS3Item(bucket);
-         }         
+         }
       };
    }
 
    public Future<AccessControlList> getObjectACL(final String bucket, final String objectKey) {
       return new FutureBase<AccessControlList>() {
          public AccessControlList get() throws InterruptedException, ExecutionException {
-            return getACLforS3Item(bucket + "/" + objectKey);            
-         }         
+            return getACLforS3Item(bucket + "/" + objectKey);
+         }
       };
    }
 
    /**
-    * Replace any AmazonCustomerByEmail grantees with a somewhat-arbitrary canonical user
-    * grantee, to match S3 which substitutes each email address grantee with that 
-    * user's corresponding ID. In short, although you can PUT email address grantees, 
-    * these are actually subsequently returned by S3 as canonical user grantees. 
+    * Replace any AmazonCustomerByEmail grantees with a somewhat-arbitrary canonical user grantee,
+    * to match S3 which substitutes each email address grantee with that user's corresponding ID. In
+    * short, although you can PUT email address grantees, these are actually subsequently returned
+    * by S3 as canonical user grantees.
     * 
     * @param acl
     * @return
@@ -589,8 +588,8 @@ public class StubS3Connection implements S3Connection {
       // the acl's owner ID as the surrogate replacement.
       for (Grant grant : acl.getGrants()) {
          if (grant.getGrantee() instanceof EmailAddressGrantee) {
-            grant.setGrantee(new CanonicalUserGrantee(
-                  acl.getOwner().getId(), acl.getOwner().getDisplayName()));
+            grant.setGrantee(new CanonicalUserGrantee(acl.getOwner().getId(), acl.getOwner()
+                     .getDisplayName()));
          }
       }
       return acl;
@@ -601,18 +600,17 @@ public class StubS3Connection implements S3Connection {
          public Boolean get() throws InterruptedException, ExecutionException {
             keyToAcl.put(bucket, sanitizeUploadedACL(acl));
             return true;
-         }         
+         }
       };
    }
 
-   public Future<Boolean> putObjectACL(final String bucket, final String objectKey, 
-         final AccessControlList acl) 
-   {
+   public Future<Boolean> putObjectACL(final String bucket, final String objectKey,
+            final AccessControlList acl) {
       return new FutureBase<Boolean>() {
          public Boolean get() throws InterruptedException, ExecutionException {
             keyToAcl.put(bucket + "/" + objectKey, sanitizeUploadedACL(acl));
             return true;
-         }         
+         }
       };
    }
 
