@@ -40,5 +40,10 @@ public interface S3Constants extends AWSConstants, S3Headers {
     * time to pause before retrying a transient failure
     */
    public static final String PROPERTY_S3_MAP_RETRY = "jclouds.s3.map.retry";
+   
+   /**
+    * S3 service's XML Namespace, as used in XML request and response documents.
+    */
+   public static final String S3_REST_API_XML_NAMESPACE = "http://s3.amazonaws.com/doc/2006-03-01/";
 
 }

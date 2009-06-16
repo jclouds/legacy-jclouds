@@ -28,6 +28,7 @@ import org.jclouds.aws.s3.commands.options.GetObjectOptions;
 import org.jclouds.aws.s3.commands.options.ListBucketOptions;
 import org.jclouds.aws.s3.commands.options.PutBucketOptions;
 import org.jclouds.aws.s3.commands.options.PutObjectOptions;
+import org.jclouds.aws.s3.domain.AccessControlList;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.xml.S3ParserFactory;
 
@@ -148,6 +149,34 @@ public class S3CommandFactory {
    public GetAccessControlList createGetObjectACL(String bucket, String objectKey) {
       return new GetAccessControlList(
             amazonHost, parserFactory.createAccessControlListParser(), bucket, objectKey);
+   }
+
+   
+   @Inject
+   private PutBucketAccessControlListFactory putBucketAccessControlListFactory;
+
+   public static interface PutBucketAccessControlListFactory {
+      PutBucketAccessControlList create(@Assisted("bucketName") String bucket, 
+            AccessControlList acl);
+   }
+
+   public PutBucketAccessControlList createPutBucketACL(String bucket, AccessControlList acl) {
+      return putBucketAccessControlListFactory.create(bucket, acl);
+   }
+
+
+   @Inject
+   private PutObjectAccessControlListFactory putObjectAccessControlListFactory;
+
+   public static interface PutObjectAccessControlListFactory {
+      PutObjectAccessControlList create(@Assisted("bucketName") String bucket, 
+            @Assisted("key") String objectKey, AccessControlList acl);
+   }
+   
+   public PutObjectAccessControlList createPutObjectACL(String bucket, String objectKey,
+         AccessControlList acl) 
+   {
+      return putObjectAccessControlListFactory.create(bucket, objectKey, acl);
    }
 
 }

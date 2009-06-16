@@ -54,8 +54,12 @@ import org.jclouds.aws.s3.commands.options.ListBucketOptions;
 import org.jclouds.aws.s3.commands.options.PutBucketOptions;
 import org.jclouds.aws.s3.commands.options.PutObjectOptions;
 import org.jclouds.aws.s3.domain.AccessControlList;
+import org.jclouds.aws.s3.domain.CanonicalUser;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.s3.domain.AccessControlList.CanonicalUserGrantee;
+import org.jclouds.aws.s3.domain.AccessControlList.EmailAddressGrantee;
+import org.jclouds.aws.s3.domain.AccessControlList.Grant;
 import org.jclouds.aws.s3.domain.S3Bucket.Metadata;
 import org.jclouds.aws.s3.domain.acl.CannedAccessPolicy;
 import org.jclouds.aws.s3.util.S3Utils;
@@ -80,7 +84,11 @@ import com.thoughtworks.xstream.XStream;
 public class StubS3Connection implements S3Connection {
    private static Map<String, Map<String, S3Object>> bucketToContents = new ConcurrentHashMap<String, Map<String, S3Object>>();
    private static Map<String, Metadata.LocationConstraint> bucketToLocation = new ConcurrentHashMap<String, Metadata.LocationConstraint>();
-   private static Map<String, CannedAccessPolicy> keyToAcl = new ConcurrentHashMap<String, CannedAccessPolicy>();
+   
+   /**
+    * An S3 item's "ACL" may be a {@link CannedAccessPolicy} or an {@link AccessControlList}.
+    */
+   private static Map<String, Object> keyToAcl = new ConcurrentHashMap<String, Object>();
 
    public static final String DEFAULT_OWNER_ID = "abc123";
 
@@ -534,17 +542,27 @@ public class StubS3Connection implements S3Connection {
          }
       };
    }
+   
+   protected AccessControlList getACLforS3Item(String bucketAndObjectKey) {
+      AccessControlList acl = null;
+      Object aclObj = keyToAcl.get(bucketAndObjectKey);
+      if (aclObj instanceof AccessControlList) {
+         acl = (AccessControlList) aclObj;
+      } else if (aclObj instanceof CannedAccessPolicy) {
+         acl = AccessControlList.fromCannedAccessPolicy(
+               (CannedAccessPolicy) aclObj, DEFAULT_OWNER_ID);
+      } else if (aclObj == null) {
+         // Default to private access policy
+         acl = AccessControlList.fromCannedAccessPolicy(
+               CannedAccessPolicy.PRIVATE, DEFAULT_OWNER_ID);
+      }      
+      return acl;
+   }
 
    public Future<AccessControlList> getBucketACL(final String bucket) {
       return new FutureBase<AccessControlList>() {
          public AccessControlList get() throws InterruptedException, ExecutionException {
-            CannedAccessPolicy cannedAP = keyToAcl.get(bucket);
-            if (cannedAP == null) {
-               // Default to private access policy
-               cannedAP = CannedAccessPolicy.PRIVATE;
-            } 
-            
-            return AccessControlList.fromCannedAccessPolicy(cannedAP, DEFAULT_OWNER_ID);
+            return getACLforS3Item(bucket);
          }         
       };
    }
@@ -552,13 +570,48 @@ public class StubS3Connection implements S3Connection {
    public Future<AccessControlList> getObjectACL(final String bucket, final String objectKey) {
       return new FutureBase<AccessControlList>() {
          public AccessControlList get() throws InterruptedException, ExecutionException {
-            CannedAccessPolicy cannedAP = keyToAcl.get(bucket + "/" + objectKey);            
-            if (cannedAP == null) {
-               // Default to private access policy
-               cannedAP = CannedAccessPolicy.PRIVATE;
-            } 
-            
-            return AccessControlList.fromCannedAccessPolicy(cannedAP, DEFAULT_OWNER_ID);
+            return getACLforS3Item(bucket + "/" + objectKey);            
+         }         
+      };
+   }
+
+   /**
+    * Replace any AmazonCustomerByEmail grantees with a somewhat-arbitrary canonical user
+    * grantee, to match S3 which substitutes each email address grantee with that 
+    * user's corresponding ID. In short, although you can PUT email address grantees, 
+    * these are actually subsequently returned by S3 as canonical user grantees. 
+    * 
+    * @param acl
+    * @return
+    */
+   protected AccessControlList sanitizeUploadedACL(AccessControlList acl) {
+      // Replace any email address grantees with canonical user grantees, using
+      // the acl's owner ID as the surrogate replacement.
+      for (Grant grant : acl.getGrants()) {
+         if (grant.getGrantee() instanceof EmailAddressGrantee) {
+            grant.setGrantee(new CanonicalUserGrantee(
+                  acl.getOwner().getId(), acl.getOwner().getDisplayName()));
+         }
+      }
+      return acl;
+   }
+
+   public Future<Boolean> putBucketACL(final String bucket, final AccessControlList acl) {
+      return new FutureBase<Boolean>() {
+         public Boolean get() throws InterruptedException, ExecutionException {
+            keyToAcl.put(bucket, sanitizeUploadedACL(acl));
+            return true;
+         }         
+      };
+   }
+
+   public Future<Boolean> putObjectACL(final String bucket, final String objectKey, 
+         final AccessControlList acl) 
+   {
+      return new FutureBase<Boolean>() {
+         public Boolean get() throws InterruptedException, ExecutionException {
+            keyToAcl.put(bucket + "/" + objectKey, sanitizeUploadedACL(acl));
+            return true;
          }         
       };
    }

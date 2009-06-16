@@ -221,9 +221,40 @@ public interface S3Connection {
     Future<AccessControlList> getBucketACL(String bucket);
 
     /**
+     * Update a bucket's Access Control List settings.
+     * @param bucket
+     * the bucket whose Access Control List settings will be updated.
+     * @param acl
+     * the ACL to apply to the bucket. This acl object <strong>must</strong> 
+     * include a valid owner identifier string in {@link AccessControlList#getOwner()}.
+     * @return
+     * true if the bucket's Access Control List was updated successfully.
+     * 
+     * @see org.jclouds.aws.s3.commands.PutBucketAccessControlList
+     */
+    Future<Boolean> putBucketACL(String bucket, AccessControlList acl);
+
+    /**
      * @return access permissions of the object
      * 
      * @see org.jclouds.aws.s3.commands.GetAccessControlList
      */
     Future<AccessControlList> getObjectACL(String bucket, String objectKey);
+
+    /**
+     * Update an object's Access Control List settings.
+     * @param bucket
+     * the bucket containing the object to be updated
+     * @param objectKey
+     * the key of the object whose Access Control List settings will be updated.
+     * @param acl
+     * the ACL to apply to the object. This acl object <strong>must</strong> 
+     * include a valid owner identifier string in {@link AccessControlList#getOwner()}.
+     * @return
+     * true if the object's Access Control List was updated successfully.
+     * 
+     * @see org.jclouds.aws.s3.commands.PutBucketAccessControlList
+     */
+    Future<Boolean> putObjectACL(String bucket, String objectKey, AccessControlList acl);
+
 }

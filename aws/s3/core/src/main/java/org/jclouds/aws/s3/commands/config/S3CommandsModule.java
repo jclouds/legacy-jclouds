@@ -28,8 +28,10 @@ import org.jclouds.aws.s3.commands.DeleteBucket;
 import org.jclouds.aws.s3.commands.DeleteObject;
 import org.jclouds.aws.s3.commands.GetObject;
 import org.jclouds.aws.s3.commands.HeadObject;
+import org.jclouds.aws.s3.commands.PutBucketAccessControlList;
 import org.jclouds.aws.s3.commands.PutBucket;
 import org.jclouds.aws.s3.commands.PutObject;
+import org.jclouds.aws.s3.commands.PutObjectAccessControlList;
 import org.jclouds.aws.s3.commands.S3CommandFactory;
 
 import com.google.inject.AbstractModule;
@@ -75,6 +77,13 @@ public class S3CommandsModule extends AbstractModule {
                FactoryProvider.newFactory(S3CommandFactory.HeadMetadataFactory.class,
                         HeadObject.class));
 
+      bind(S3CommandFactory.PutBucketAccessControlListFactory.class).toProvider(
+            FactoryProvider.newFactory(S3CommandFactory.PutBucketAccessControlListFactory.class,
+                     PutBucketAccessControlList.class));
+
+      bind(S3CommandFactory.PutObjectAccessControlListFactory.class).toProvider(
+            FactoryProvider.newFactory(S3CommandFactory.PutObjectAccessControlListFactory.class,
+                     PutObjectAccessControlList.class));
    }
 
 }

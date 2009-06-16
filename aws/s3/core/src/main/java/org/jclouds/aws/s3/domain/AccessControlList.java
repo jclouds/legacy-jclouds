@@ -23,14 +23,17 @@
  */
 package org.jclouds.aws.s3.domain;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.jclouds.aws.s3.domain.acl.CannedAccessPolicy;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
@@ -51,7 +54,7 @@ public class AccessControlList {
    public static final AccessControlList NOT_FOUND = new AccessControlList();
 
    private CanonicalUser owner;
-   private final SortedSet<Grant> grants = new TreeSet<Grant>();
+   private final List<Grant> grants = new ArrayList<Grant>();
 
    public AccessControlList() {
    }
@@ -67,8 +70,8 @@ public class AccessControlList {
    /**
     * @return an unmodifiable set of grants represented by this ACL. 
     */
-   public Set<Grant> getGrants() {
-      return Collections.unmodifiableSet(grants);
+   public List<Grant> getGrants() {
+      return Collections.unmodifiableList(grants);
    }
 
    /**
@@ -280,7 +283,7 @@ public class AccessControlList {
    };
    
    public static class Grant implements Comparable<Grant> {
-      private final Grantee grantee;
+      private Grantee grantee;
       private final Permission permission;
       
       public Grant(Grantee grantee, Permission permission) {
@@ -290,6 +293,11 @@ public class AccessControlList {
       
       public Grantee getGrantee() {
          return grantee;         
+      }
+      
+      @VisibleForTesting
+      public void setGrantee(Grantee grantee) {
+         this.grantee = grantee;
       }
       
       public Permission getPermission() {
