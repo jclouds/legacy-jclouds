@@ -37,14 +37,14 @@ import org.jclouds.util.Utils;
  */
 public class CloseContentAndSetExceptionHandler implements HttpResponseHandler {
 
-    public void handle(HttpFutureCommand<?> command, HttpResponse response) {
-	String content;
-	try {
-	    content = Utils.toStringAndClose(response.getContent());
-	    command.setException(new HttpResponseException(command, response,
-		    content));
-	} catch (IOException e) {
-	    command.setException(new HttpResponseException(command, response));
-	}
-    }
+   public void handle(HttpFutureCommand<?> command, HttpResponse response) {
+      String content;
+      try {
+         content = response.getContent() != null ? Utils.toStringAndClose(response.getContent())
+                  : null;
+         command.setException(new HttpResponseException(command, response, content));
+      } catch (IOException e) {
+         command.setException(new HttpResponseException(command, response));
+      }
+   }
 }
