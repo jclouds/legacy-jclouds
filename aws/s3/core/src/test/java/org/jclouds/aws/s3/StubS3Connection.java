@@ -81,6 +81,9 @@ import com.thoughtworks.xstream.XStream;
  * @author Adrian Cole
  */
 public class StubS3Connection implements S3Connection {
+   public static final String TEST_ACL_ID = "1a405254c932b52e5b5caaa88186bc431a1bacb9ece631f835daddaf0c47677c";
+   public static final String TEST_ACL_EMAIL = "james@misterm.org";
+
    private static Map<String, Map<String, S3Object>> bucketToContents = new ConcurrentHashMap<String, Map<String, S3Object>>();
    private static Map<String, Metadata.LocationConstraint> bucketToLocation = new ConcurrentHashMap<String, Metadata.LocationConstraint>();
 
@@ -588,8 +591,10 @@ public class StubS3Connection implements S3Connection {
       // the acl's owner ID as the surrogate replacement.
       for (Grant grant : acl.getGrants()) {
          if (grant.getGrantee() instanceof EmailAddressGrantee) {
-            grant.setGrantee(new CanonicalUserGrantee(acl.getOwner().getId(), acl.getOwner()
-                     .getDisplayName()));
+            EmailAddressGrantee emailGrantee = (EmailAddressGrantee) grant.getGrantee();
+            String id = emailGrantee.getEmailAddress().equals(TEST_ACL_EMAIL) ? TEST_ACL_ID : acl
+                     .getOwner().getId();
+            grant.setGrantee(new CanonicalUserGrantee(id, acl.getOwner().getDisplayName()));
          }
       }
       return acl;

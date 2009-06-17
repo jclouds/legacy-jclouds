@@ -38,6 +38,7 @@ import org.jclouds.aws.s3.domain.AccessControlList.EmailAddressGrantee;
 import org.jclouds.aws.s3.domain.AccessControlList.GroupGranteeURI;
 import org.jclouds.aws.s3.domain.AccessControlList.Permission;
 import org.testng.annotations.Test;
+import static org.jclouds.aws.s3.StubS3Connection.*;
 
 /**
  * Tests integrated functionality of all commands that retrieve Access Control Lists (ACLs).
@@ -46,7 +47,6 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "integration", "live" }, testName = "s3.PutAccessControlListIntegrationTest")
 public class PutAccessControlListIntegrationTest extends S3IntegrationTest {
-   String jamesId = "1a405254c932b52e5b5caaa88186bc431a1bacb9ece631f835daddaf0c47677c";
 
    @Test
    void testUpdateBucketACL() throws InterruptedException, ExecutionException, TimeoutException,
@@ -91,8 +91,8 @@ public class PutAccessControlListIntegrationTest extends S3IntegrationTest {
        * Revoke all of owner's permissions!
        */
       acl.revokeAllPermissions(new CanonicalUserGrantee(ownerId));
-      if (!ownerId.equals(jamesId))
-         acl.revokeAllPermissions(new CanonicalUserGrantee(jamesId));
+      if (!ownerId.equals(TEST_ACL_ID))
+         acl.revokeAllPermissions(new CanonicalUserGrantee(TEST_ACL_ID));
       assertEquals(acl.getGrants().size(), 1);
       // Only public read permission should remain...
       assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ));
@@ -116,13 +116,13 @@ public class PutAccessControlListIntegrationTest extends S3IntegrationTest {
       assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ), acl.toString());
       assertTrue(acl.hasPermission(ownerId, Permission.WRITE_ACP), acl.toString());
       // EmailAddressGrantee is replaced by a CanonicalUserGrantee, so we cannot test by email addr
-      assertTrue(acl.hasPermission(jamesId, Permission.READ_ACP), acl.toString());
+      assertTrue(acl.hasPermission(TEST_ACL_ID, Permission.READ_ACP), acl.toString());
    }
 
    private void addGrantsToACL(AccessControlList acl) {
       String ownerId = acl.getOwner().getId();
       acl.addPermission(GroupGranteeURI.ALL_USERS, Permission.READ);
-      acl.addPermission(new EmailAddressGrantee("james@misterm.org"), Permission.READ_ACP);
+      acl.addPermission(new EmailAddressGrantee(TEST_ACL_EMAIL), Permission.READ_ACP);
       acl.addPermission(new CanonicalUserGrantee(ownerId), Permission.WRITE_ACP);
    }
 
