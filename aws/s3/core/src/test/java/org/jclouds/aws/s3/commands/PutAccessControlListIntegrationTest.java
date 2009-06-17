@@ -51,11 +51,6 @@ public class PutAccessControlListIntegrationTest extends S3IntegrationTest {
    @Test
    void testUpdateBucketACL() throws InterruptedException, ExecutionException, TimeoutException,
             IOException, Exception {
-      bucketName = bucketPrefix + ".testPrivateBucketACL".toLowerCase();
-
-      // Create default (private) bucket
-      createBucketAndEnsureEmpty(bucketName);
-
       // Confirm the bucket is private
       AccessControlList acl = client.getBucketACL(bucketName).get(10, TimeUnit.SECONDS);
       String ownerId = acl.getOwner().getId();
@@ -69,16 +64,11 @@ public class PutAccessControlListIntegrationTest extends S3IntegrationTest {
       // Confirm that the updated ACL has stuck.
       acl = client.getBucketACL(bucketName).get(10, TimeUnit.SECONDS);
       checkGrants(acl);
-
-      emptyBucket(bucketName);
    }
 
    @Test
    void testUpdateObjectACL() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
-      bucketName = bucketPrefix + ".testObjectACL".toLowerCase();
-      createBucketAndEnsureEmpty(bucketName);
-
       String objectKey = "pr“vate-acl";
 
       // Private object
@@ -114,21 +104,19 @@ public class PutAccessControlListIntegrationTest extends S3IntegrationTest {
       acl = client.getObjectACL(bucketName, objectKey).get(10, TimeUnit.SECONDS);
       assertEquals(acl.getGrants().size(), 1);
       assertEquals(acl.getPermissions(ownerId).size(), 0);
-      assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ));
-
-      emptyBucket(bucketName);
+      assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ), acl.toString());
    }
 
    private void checkGrants(AccessControlList acl) {
       String ownerId = acl.getOwner().getId();
 
-      assertEquals(acl.getGrants().size(), 4);
+      assertEquals(acl.getGrants().size(), 4, acl.toString());
 
-      assertTrue(acl.hasPermission(ownerId, Permission.FULL_CONTROL));
-      assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ));
-      assertTrue(acl.hasPermission(ownerId, Permission.WRITE_ACP));
+      assertTrue(acl.hasPermission(ownerId, Permission.FULL_CONTROL), acl.toString());
+      assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ), acl.toString());
+      assertTrue(acl.hasPermission(ownerId, Permission.WRITE_ACP), acl.toString());
       // EmailAddressGrantee is replaced by a CanonicalUserGrantee, so we cannot test by email addr
-      assertTrue(acl.hasPermission(jamesId, Permission.READ_ACP));
+      assertTrue(acl.hasPermission(jamesId, Permission.READ_ACP), acl.toString());
    }
 
    private void addGrantsToACL(AccessControlList acl) {
