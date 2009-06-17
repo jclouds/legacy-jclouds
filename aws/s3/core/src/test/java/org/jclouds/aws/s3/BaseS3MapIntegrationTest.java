@@ -47,11 +47,11 @@ import com.google.common.collect.ImmutableSet;
 @Test
 public abstract class BaseS3MapIntegrationTest<T> extends S3IntegrationTest {
 
-   public abstract void testPutAll();
+   public abstract void testPutAll() throws InterruptedException;
 
-   public abstract void testEntrySet() throws IOException;
+   public abstract void testEntrySet() throws IOException, InterruptedException;
 
-   public abstract void testValues() throws IOException;
+   public abstract void testValues() throws IOException, InterruptedException;
 
    protected BaseS3Map<T> map;
    protected Map<String, String> fiveStrings = ImmutableMap.of("one", "apple", "two", "bear",
@@ -94,54 +94,119 @@ public abstract class BaseS3MapIntegrationTest<T> extends S3IntegrationTest {
    protected abstract BaseS3Map<T> createMap(S3Context context, String bucket);
 
    @Test(groups = { "integration", "live" })
-   public void testClear() {
+   public void testClear() throws InterruptedException {
       map.clear();
-      assertEquals(map.size(), 0);
+      assertEventuallyMapSize(0);
       putString("one", "apple");
-      assertEquals(map.size(), 1);
+      assertEventuallyMapSize(1);
       map.clear();
-      assertEquals(map.size(), 0);
+      assertEventuallyMapSize(0);
    }
 
    @Test(groups = { "integration", "live" })
-   public abstract void testRemove() throws IOException;
+   public abstract void testRemove() throws IOException, InterruptedException;
 
    @Test(groups = { "integration", "live" })
-   public void testKeySet() {
-      assertEquals(map.keySet().size(), 0);
+   public void testKeySet() throws InterruptedException {
+      assertEventuallyKeySize(0);
       putString("one", "two");
-      assertEquals(map.keySet(), ImmutableSet.of("one"));
+      assertEventuallyKeySize(1);
+      assertEventuallyKeySetEquals(ImmutableSet.of("one"));
+   }
+
+   protected void assertEventuallyKeySetEquals(final Object toEqual) throws InterruptedException {
+      assertEventually(new Runnable() {
+         public void run() {
+            assertEquals(map.keySet(), toEqual);
+         }
+      });
+   }
+
+   protected void assertEventuallyKeySize(final int size) throws InterruptedException {
+      assertEventually(new Runnable() {
+         public void run() {
+            assertEquals(map.keySet().size(), size);
+         }
+      });
    }
 
    @Test(groups = { "integration", "live" })
-   public void testContainsKey() {
-      assert !map.containsKey("one");
+   public void testContainsKey() throws InterruptedException {
+      assertEventuallyDoesntContainKey();
       putString("one", "apple");
-      assert map.containsKey("one");
+      assertEventuallyContainsKey();
+   }
+
+   protected void assertEventuallyContainsKey() throws InterruptedException {
+      assertEventually(new Runnable() {
+         public void run() {
+            assert map.containsKey("one");
+         }
+      });
+   }
+
+   protected void assertEventuallyDoesntContainKey() throws InterruptedException {
+      assertEventually(new Runnable() {
+         public void run() {
+            assert !map.containsKey("one");
+         }
+      });
    }
 
    @Test(groups = { "integration", "live" })
-   public void testIsEmpty() {
-      assert map.isEmpty();
+   public void testIsEmpty() throws InterruptedException {
+      assertEventuallyEmpty();
       putString("one", "apple");
-      assert !map.isEmpty();
+      assertEventuallyNotEmpty();
+   }
+
+   protected void assertEventuallyNotEmpty() throws InterruptedException {
+      assertEventually(new Runnable() {
+         public void run() {
+            assert !map.isEmpty();
+         }
+      });
+   }
+
+   protected void assertEventuallyEmpty() throws InterruptedException {
+      assertEventually(new Runnable() {
+         public void run() {
+            assert map.isEmpty();
+         }
+      });
    }
 
    abstract protected void putString(String key, String value);
 
-   protected void fourLeftRemovingOne() {
+   protected void fourLeftRemovingOne() throws InterruptedException {
       map.remove("one");
-      assertEquals(map.size(), 4);
-      assertEquals(new TreeSet<String>(map.keySet()), new TreeSet<String>(ImmutableSet.of("two",
-               "three", "four", "five")));
+      assertEventuallyMapSize(4);
+      assertEventuallyKeySetEquals(new TreeSet<String>(ImmutableSet.of("two", "three", "four",
+               "five")));
+   }
+
+   protected void assertEventuallyMapSize(final int size) throws InterruptedException {
+      assertEventually(new Runnable() {
+         public void run() {
+            assertEquals(map.size(), size);
+         }
+      });
    }
 
    @Test(groups = { "integration", "live" })
-   public abstract void testPut() throws IOException;
+   public abstract void testPut() throws IOException, InterruptedException;
 
    @Test(groups = { "integration", "live" })
-   public void testGetBucket() {
-      assertEquals(map.getBucket().getName(), bucketName);
+   public void testGetBucket() throws InterruptedException {
+      assertEventuallyBucketNameCorrect();
+   }
+
+   protected void assertEventuallyBucketNameCorrect() throws InterruptedException {
+      assertEventually(new Runnable() {
+         public void run() {
+            assertEquals(map.getBucket().getName(), bucketName);
+         }
+      });
    }
 
 }

@@ -49,6 +49,7 @@ import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.aws.s3.util.S3Utils;
 import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
+import org.jclouds.util.Utils;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
@@ -61,6 +62,28 @@ import com.google.inject.Module;
 
 public class S3IntegrationTest {
    protected static final String TEST_STRING = "<apples><apple name=\"fuji\"></apple> </apples>";
+   public static long INCONSISTENCY_WINDOW = 1000;
+
+   /**
+    * 
+    * Due to eventual consistency, the size of the bucket and hence the size of the map may not
+    * return correctly immediately. Hence, we will try up to the inconsistency window to see if the
+    * assertion completes.
+    */
+   protected void assertEventually(Runnable assertion) throws InterruptedException {
+      AssertionError error = null;
+      for (int i = 0; i < 5; i++) {
+         try {
+            assertion.run();
+            return;
+         } catch (AssertionError e) {
+            error = e;
+         }
+         Thread.sleep(INCONSISTENCY_WINDOW / 5);
+      }
+      if (error != null)
+         throw error;
+   }
 
    protected byte[] goodMd5;
    protected byte[] badMd5;
@@ -70,8 +93,20 @@ public class S3IntegrationTest {
             ExecutionException, TimeoutException {
       deleteBucket(sourceBucket);
       client.putBucketIfNotExists(sourceBucket).get(10, TimeUnit.SECONDS);
-      assertEquals(client.listBucket(sourceBucket).get(10, TimeUnit.SECONDS).getContents().size(),
-               0, "bucket " + sourceBucket + "wasn't empty");
+      assertEventuallyBucketEmpty(sourceBucket);
+   }
+
+   protected void assertEventuallyBucketEmpty(final String bucketName) throws InterruptedException {
+      assertEventually(new Runnable() {
+         public void run() {
+            try {
+               assertEquals(client.listBucket(bucketName).get(10, TimeUnit.SECONDS).getContents()
+                        .size(), 0, "bucket " + bucketName + "wasn't empty");
+            } catch (Exception e) {
+               Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
+            }
+         }
+      });
    }
 
    protected void addObjectToBucket(String sourceBucket, String key) throws InterruptedException,
@@ -89,12 +124,25 @@ public class S3IntegrationTest {
 
    protected S3Object validateContent(String sourceBucket, String key) throws InterruptedException,
             ExecutionException, TimeoutException, IOException {
-      assertEquals(client.listBucket(sourceBucket).get(10, TimeUnit.SECONDS).getContents().size(),
-               1);
+      assertEventuallyBucketSize(sourceBucket, 1);
       S3Object newObject = client.getObject(sourceBucket, key).get(10, TimeUnit.SECONDS);
       assert newObject != S3Object.NOT_FOUND;
       assertEquals(S3Utils.getContentAsStringAndClose(newObject), TEST_STRING);
       return newObject;
+   }
+
+   protected void assertEventuallyBucketSize(final String bucketName, final int count)
+            throws InterruptedException {
+      assertEventually(new Runnable() {
+         public void run() {
+            try {
+               assertEquals(client.listBucket(bucketName).get(10, TimeUnit.SECONDS).getContents()
+                        .size(), count);
+            } catch (Exception e) {
+               Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
+            }
+         }
+      });
    }
 
    @BeforeClass(groups = { "integration", "live" })
