@@ -51,6 +51,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.File;
 import java.io.InputStream;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jets3t.service.S3Service;
@@ -96,6 +97,19 @@ public class Jets3tPerformanceLiveTest extends BasePerformance {
    @Override
    @Test(enabled = false)
    public void testPutStringParallel() throws InterruptedException, ExecutionException {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   @Test(enabled = false)
+   public void testPutBytesParallelEU() throws InterruptedException, ExecutionException,
+            TimeoutException {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   @Test(enabled = false)
+   public void testPutBytesSerialEU() throws Exception {
       throw new UnsupportedOperationException();
    }
 
