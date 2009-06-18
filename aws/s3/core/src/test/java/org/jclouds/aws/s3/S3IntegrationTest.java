@@ -65,10 +65,8 @@ public class S3IntegrationTest {
    public static long INCONSISTENCY_WINDOW = 1000;
 
    /**
-    * 
-    * Due to eventual consistency, the size of the bucket and hence the size of the map may not
-    * return correctly immediately. Hence, we will try up to the inconsistency window to see if the
-    * assertion completes.
+    * Due to eventual consistency, bucket commands may not return correctly immediately. Hence, we
+    * will try up to the inconsistency window to see if the assertion completes.
     */
    protected void assertEventually(Runnable assertion) throws InterruptedException {
       AssertionError error = null;
