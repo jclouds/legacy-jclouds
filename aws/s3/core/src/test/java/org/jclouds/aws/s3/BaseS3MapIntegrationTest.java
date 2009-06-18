@@ -137,6 +137,18 @@ public abstract class BaseS3MapIntegrationTest<T> extends S3IntegrationTest {
       assertEventuallyContainsKey();
    }
 
+   /**
+    * containsValue() uses md5 comparison to bucket contents, so this can be subject to eventual
+    * consistency problems.
+    */
+   protected void assertEventuallyContainsValue(final Object value) throws InterruptedException {
+      assertEventually(new Runnable() {
+         public void run() {
+            assert map.containsValue(value);
+         }
+      });
+   }
+
    protected void assertEventuallyContainsKey() throws InterruptedException {
       assertEventually(new Runnable() {
          public void run() {

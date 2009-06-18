@@ -102,11 +102,11 @@ public class S3ObjectMapIntegrationTest extends BaseS3MapIntegrationTest<S3Objec
    }
 
    @Test(groups = { "integration", "live" })
-   public void testContains() {
+   public void testContains() throws InterruptedException {
       putString("one", "apple");
       S3Object object = new S3Object("one");
       object.setData("apple");
-      assert map.containsValue(object);
+      assertEventuallyContainsValue(object);
    }
 
    void getOneReturnsAppleAndOldValueIsNull(S3Object old) throws IOException, InterruptedException {

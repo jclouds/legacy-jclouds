@@ -96,27 +96,27 @@ public class S3InputStreamMapIntegrationTest extends BaseS3MapIntegrationTest<In
    }
 
    @Test(groups = { "integration", "live" })
-   public void testContainsStringValue() {
+   public void testContainsStringValue() throws InterruptedException {
       map.putString("one", "apple");
-      assert map.containsValue(fiveStrings.get("one"));
+      assertEventuallyContainsValue(fiveStrings.get("one"));
    }
 
    @Test(groups = { "integration", "live" })
-   public void testContainsFileValue() {
+   public void testContainsFileValue() throws InterruptedException {
       map.putString("one", "apple");
-      assert map.containsValue(fiveFiles.get("one"));
+      assertEventuallyContainsValue(fiveFiles.get("one"));
    }
 
    @Test(groups = { "integration", "live" })
-   public void testContainsInputStreamValue() {
+   public void testContainsInputStreamValue() throws InterruptedException {
       map.putString("one", "apple");
-      assert map.containsValue(this.fiveInputs.get("one"));
+      assertEventuallyContainsValue(this.fiveInputs.get("one"));
    }
 
    @Test(groups = { "integration", "live" })
-   public void testContainsBytesValue() {
+   public void testContainsBytesValue() throws InterruptedException {
       map.putString("one", "apple");
-      assert map.containsValue(this.fiveBytes.get("one"));
+      assertEventuallyContainsValue(this.fiveBytes.get("one"));
    }
 
    @Override
