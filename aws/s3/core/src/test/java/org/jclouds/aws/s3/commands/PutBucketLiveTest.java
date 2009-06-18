@@ -38,50 +38,48 @@ import java.util.concurrent.TimeUnit;
 /**
  * Tests integrated functionality of all PutBucket commands.
  * <p/>
- * Each test uses a different bucket name, so it should be perfectly fine to run
- * in parallel.
- *
+ * Each test uses a different bucket name, so it should be perfectly fine to run in parallel.
+ * 
  * @author Adrian Cole
  */
 @Test(testName = "s3.PutBucketLiveTest")
 public class PutBucketLiveTest extends S3IntegrationTest {
 
-    /**
-     * overriding bucketName as we are changing access permissions
-     */
-    @Test(groups = {"live"})
-    void testPublicReadAccessPolicy() throws Exception {
-        String bucketName = bucketPrefix + "public";
+   /**
+    * overriding bucketName as we are changing access permissions
+    */
+   @Test(groups = { "live" })
+   void testPublicReadAccessPolicy() throws Exception {
+      String bucketName = bucketPrefix + "public";
 
-        client.putBucketIfNotExists(bucketName,
-                withBucketAcl(CannedAccessPolicy.PUBLIC_READ)).get(10,
-                TimeUnit.SECONDS);
-        URL url = new URL(String.format("http://%1$s.s3.amazonaws.com",
-                bucketName));
-        S3Utils.toStringAndClose(url.openStream());
-    }
+      client.putBucketIfNotExists(bucketName, withBucketAcl(CannedAccessPolicy.PUBLIC_READ)).get(
+               10, TimeUnit.SECONDS);
+      URL url = new URL(String.format("http://%1$s.s3.amazonaws.com", bucketName));
+      S3Utils.toStringAndClose(url.openStream());
+   }
 
-    @Test(expectedExceptions = IOException.class, groups = {"live"})
-    void testDefaultAccessPolicy() throws Exception {
-        URL url = new URL(String.format("http://%1$s.s3.amazonaws.com",
-                bucketName));
-        S3Utils.toStringAndClose(url.openStream());
-    }
+   @Test(groups = { "live" })
+   void testPutTwiceIsOk() throws Exception {
+      client.putBucketIfNotExists(bucketName).get(10, TimeUnit.SECONDS);
+   }
 
-    /**
-     * overriding bucketName as we are changing location
-     */
-    @Test(groups = "live")
-    void testEu() throws Exception {
-        String bucketName = (bucketPrefix + "wow").toLowerCase();
-        client.putBucketIfNotExists(
-                bucketName,
-                createIn(LocationConstraint.EU).withBucketAcl(
-                        CannedAccessPolicy.PUBLIC_READ)).get(10,
-                TimeUnit.SECONDS);
+   @Test(expectedExceptions = IOException.class, groups = { "live" })
+   void testDefaultAccessPolicy() throws Exception {
+      URL url = new URL(String.format("http://%1$s.s3.amazonaws.com", bucketName));
+      S3Utils.toStringAndClose(url.openStream());
+   }
 
-        URL url = new URL(String.format("http://%1$s.s3.amazonaws.com",
-                bucketName));
-        S3Utils.toStringAndClose(url.openStream());
-    }
+   /**
+    * overriding bucketName as we are changing location
+    */
+   @Test(groups = "live")
+   void testEu() throws Exception {
+      String bucketName = (bucketPrefix + "wow").toLowerCase();
+      client.putBucketIfNotExists(bucketName,
+               createIn(LocationConstraint.EU).withBucketAcl(CannedAccessPolicy.PUBLIC_READ)).get(
+               10, TimeUnit.SECONDS);
+
+      URL url = new URL(String.format("http://%1$s.s3.amazonaws.com", bucketName));
+      S3Utils.toStringAndClose(url.openStream());
+   }
 }
