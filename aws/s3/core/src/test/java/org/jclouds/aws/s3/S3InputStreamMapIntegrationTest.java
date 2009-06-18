@@ -55,8 +55,10 @@ public class S3InputStreamMapIntegrationTest extends BaseS3MapIntegrationTest<In
 
    @Override
    @Test(groups = { "integration", "live" })
-   public void testValues() throws IOException {
+   public void testValues() throws IOException, InterruptedException {
       map.putAll(this.fiveInputs);
+      // this will cause us to block until the bucket updates.
+      assertEventuallyKeySize(5);
       Collection<InputStream> values = map.values();
       assertEquals(values.size(), 5);
       Set<String> valuesAsString = new HashSet<String>();
@@ -83,6 +85,8 @@ public class S3InputStreamMapIntegrationTest extends BaseS3MapIntegrationTest<In
    @Test(groups = { "integration", "live" })
    public void testEntrySet() throws IOException, InterruptedException {
       map.putAllStrings(this.fiveStrings);
+      // this will cause us to block until the bucket updates.
+      assertEventuallyKeySize(5);
       Set<Entry<String, InputStream>> entries = map.entrySet();
       assertEquals(entries.size(), 5);
       for (Entry<String, InputStream> entry : entries) {
