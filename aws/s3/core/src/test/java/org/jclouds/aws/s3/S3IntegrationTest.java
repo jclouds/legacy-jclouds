@@ -260,7 +260,7 @@ public class S3IntegrationTest {
    private static final BlockingQueue<String> bucketNames = new ArrayBlockingQueue<String>(
             bucketCount);
 
-   @BeforeGroups(dependsOnMethods = { "setUpClient" }, groups = { "live" })
+   @BeforeGroups(dependsOnMethods = { "setUpClient" }, groups = { "integration", "live" })
    public void setUpBuckets(ITestContext context) throws Exception {
       synchronized (bucketNames) {
          if (bucketNames.peek() == null) {
