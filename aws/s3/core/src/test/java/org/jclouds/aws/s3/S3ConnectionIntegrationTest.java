@@ -63,8 +63,6 @@ public class S3ConnectionIntegrationTest extends S3IntegrationTest {
       httpStreamMd5 = checkNotNull(httpStreamMd5 != null ? httpStreamMd5 : sysHttpStreamMd5,
                "httpStreamMd5");
 
-      String bucketName = bucketPrefix + "tcu";
-      createBucketAndEnsureEmpty(bucketName);
       String key = "hello";
 
       URL url = new URL(httpStreamUrl);
@@ -78,8 +76,12 @@ public class S3ConnectionIntegrationTest extends S3IntegrationTest {
       object.setContentLength(length);
       object.getMetadata().setMd5(md5);
       object.getMetadata().setSize(length);
-
-      byte[] newMd5 = client.putObject(bucketName, object).get(30, TimeUnit.SECONDS);
-      assertEquals(newMd5, md5);
+      String bucketName = getBucketName();
+      try {
+         byte[] newMd5 = client.putObject(bucketName, object).get(30, TimeUnit.SECONDS);
+         assertEquals(newMd5, md5);
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 }

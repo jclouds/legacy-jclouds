@@ -35,34 +35,37 @@ import java.util.concurrent.TimeUnit;
 /**
  * Tests integrated functionality of all copyObject commands.
  * <p/>
- * Each test uses a different bucket name, so it should be perfectly fine to run
- * in parallel.
- *
+ * Each test uses a different bucket name, so it should be perfectly fine to run in parallel.
+ * 
  * @author Adrian Cole
  */
 @Test(testName = "s3.CopyObjectLiveTest")
 public class CopyObjectLiveTest extends S3IntegrationTest {
-    String sourceKey = "apples";
-    String destinationKey = "pears";
+   String sourceKey = "apples";
+   String destinationKey = "pears";
 
+   @Test(groups = "live")
+   void testCannedAccessPolicyPublic() throws Exception {
+      String bucketName = getBucketName();
+      String destinationBucket = getScratchBucketName();
+      try {
+         addObjectToBucket(bucketName, sourceKey);
+         validateContent(bucketName, sourceKey);
 
-    @Test(groups = "live")
-    void testCannedAccessPolicyPublic() throws Exception {
-        String destinationBucket = bucketName + "dest";
+         client.copyObject(bucketName, sourceKey, destinationBucket, destinationKey,
+                  overrideAcl(CannedAccessPolicy.PUBLIC_READ)).get(10, TimeUnit.SECONDS);
 
-        addObjectToBucket(bucketName, sourceKey);
-        validateContent(bucketName, sourceKey);
+         validateContent(destinationBucket, destinationKey);
 
-        createBucketAndEnsureEmpty(destinationBucket);
-        client.copyObject(bucketName, sourceKey, destinationBucket,
-                destinationKey, overrideAcl(CannedAccessPolicy.PUBLIC_READ)).get(10, TimeUnit.SECONDS);
+         URL url = new URL(String.format("http://%1$s.s3.amazonaws.com/%2$s", destinationBucket,
+                  destinationKey));
+         S3Utils.toStringAndClose(url.openStream());
 
-        validateContent(destinationBucket, destinationKey);
+      } finally {
+         returnBucket(bucketName);
+         returnScratchBucket(destinationBucket);
 
-        URL url = new URL(String.format("http://%1$s.s3.amazonaws.com/%2$s",
-                destinationBucket, destinationKey));
-        S3Utils.toStringAndClose(url.openStream());
-
-    }
+      }
+   }
 
 }

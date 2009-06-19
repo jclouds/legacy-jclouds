@@ -62,475 +62,450 @@ import com.google.common.collect.Iterators;
 
 /**
  * Tests to cover JCloudsS3Service
- *
+ * 
  * @author James Murty
  * @author Adrian Cole
  */
-@Test(groups = {"integration", "live"}, testName = "s3.JCloudsS3ServiceIntegrationTest")
+@Test(groups = { "integration", "live" }, testName = "s3.JCloudsS3ServiceIntegrationTest")
 public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
-    AWSCredentials credentials;
-    S3Service service;
-    String commonTestingBucketName;
-    
-    public JCloudsS3ServiceIntegrationTest() {
-       this.commonTestingBucketName = bucketPrefix + ".JCloudsS3ServiceIntegrationTest".toLowerCase();       
-    }
+   AWSCredentials credentials;
+   S3Service service;
 
-    @Override
-    protected boolean debugEnabled() {
-        return true;
-    }
+   @Override
+   protected boolean debugEnabled() {
+      return true;
+   }
 
-    /**
-     * overridden only to get access to the amazon credentials used for jets3t
-     * initialization.
-     */
-    @Override
-    protected void createLiveS3Context(String AWSAccessKeyId, String AWSSecretAccessKey) {
-        credentials = new AWSCredentials(AWSAccessKeyId, AWSSecretAccessKey);
-        super.createLiveS3Context(AWSAccessKeyId, AWSSecretAccessKey);
-    }
+   /**
+    * overridden only to get access to the amazon credentials used for jets3t initialization.
+    */
+   @Override
+   protected void createLiveS3Context(String AWSAccessKeyId, String AWSSecretAccessKey) {
+      credentials = new AWSCredentials(AWSAccessKeyId, AWSSecretAccessKey);
+      super.createLiveS3Context(AWSAccessKeyId, AWSSecretAccessKey);
+   }
 
-    /**
-     * initialize a new JCloudsS3Service, but passing
-     * JavaUrlHttpFutureCommandClientModule(), as it is easier to debug in unit
-     * tests.
-     *
-     * @throws S3ServiceException
-     */
-    @BeforeMethod
-    public void testJCloudsS3Service() throws S3ServiceException {
-        service = (credentials != null) ? new JCloudsS3Service(credentials) :
-                new JCloudsS3Service(new AWSCredentials("foo", "bar"), new StubS3ConnectionModule());
-    }
+   /**
+    * initialize a new JCloudsS3Service, but passing JavaUrlHttpFutureCommandClientModule(), as it
+    * is easier to debug in unit tests.
+    * 
+    * @throws S3ServiceException
+    */
+   @BeforeMethod
+   public void testJCloudsS3Service() throws S3ServiceException {
+      service = (credentials != null) ? new JCloudsS3Service(credentials) : new JCloudsS3Service(
+               new AWSCredentials("foo", "bar"), new StubS3ConnectionModule());
+   }
 
-    @Test
-    public void testCreateBucketImpl() 
-    	throws S3ServiceException, InterruptedException, ExecutionException 
-	{
-        S3Bucket bucket = service.createBucket(new S3Bucket(commonTestingBucketName));
-        assertEquals(bucket.getName(), commonTestingBucketName);
-        assertTrue(client.bucketExists(commonTestingBucketName).get());
-    }
-    
-    @Test
-    @AfterSuite
-    public void testDeleteBucketImpl() throws S3ServiceException,
-            InterruptedException, ExecutionException, TimeoutException 
-    {
-       emptyBucket(commonTestingBucketName);
-       
-       service.deleteBucket(commonTestingBucketName);
-       assertFalse(client.bucketExists(commonTestingBucketName).get(10, TimeUnit.SECONDS));
-    }
+   @Test
+   public void testCreateBucketImpl() throws S3ServiceException, InterruptedException,
+            ExecutionException {
+      S3Bucket bucket = service.createBucket(new S3Bucket(bucketName));
+      assertEquals(bucket.getName(), bucketName);
+      assertTrue(client.bucketExists(bucketName).get());
+   }
 
-    @Test(dependsOnMethods = "testCreateBucketImpl")
-    public void testDeleteObjectImpl() throws InterruptedException,
-            ExecutionException, TimeoutException, S3ServiceException, IOException 
-    {
-        String objectKey = "key-testDeleteObjectImpl";
-        String objectValue = "test";
+   @Test
+   @AfterSuite
+   public void testDeleteBucketImpl() throws S3ServiceException, InterruptedException,
+            ExecutionException, TimeoutException {
+      emptyBucket(bucketName);
 
-        org.jclouds.aws.s3.domain.S3Object s3Object = 
-           new org.jclouds.aws.s3.domain.S3Object(objectKey, objectValue);
-        addObjectToBucket(commonTestingBucketName, s3Object);
+      service.deleteBucket(bucketName);
+      assertFalse(client.bucketExists(bucketName).get(10, TimeUnit.SECONDS));
+   }
 
-        service.deleteObject(commonTestingBucketName, objectKey);
+   @Test(dependsOnMethods = "testCreateBucketImpl")
+   public void testDeleteObjectImpl() throws InterruptedException, ExecutionException,
+            TimeoutException, S3ServiceException, IOException {
+      String objectKey = "key-testDeleteObjectImpl";
+      String objectValue = "test";
 
-        assertEquals(
-    		client.headObject(commonTestingBucketName, objectKey).get(10, TimeUnit.SECONDS), 
-    		org.jclouds.aws.s3.domain.S3Object.Metadata.NOT_FOUND);
-    }
+      org.jclouds.aws.s3.domain.S3Object s3Object = new org.jclouds.aws.s3.domain.S3Object(
+               objectKey, objectValue);
+      addObjectToBucket(bucketName, s3Object);
 
-    @Test(dependsOnMethods = "testCreateBucketImpl")
-    public void testGetObjectDetailsImpl() 
-    	throws InterruptedException, ExecutionException, TimeoutException, 
-    	S3ServiceException, IOException 
-	{
-        String objectKey = "key-testGetObjectDetailsImpl";
-        String objectValue = "test";
-        String metadataName = "metadata-name-1";
-        String metadataValue = "metadata-value-1";
-        
-        org.jclouds.aws.s3.domain.S3Object s3Object = 
-           new org.jclouds.aws.s3.domain.S3Object(objectKey, objectValue);
-        s3Object.getMetadata().getUserMetadata().put(
-              S3Constants.USER_METADATA_PREFIX + metadataName, metadataValue);
-        addObjectToBucket(commonTestingBucketName, s3Object);
+      service.deleteObject(bucketName, objectKey);
 
-        S3Object objectDetails = service.getObjectDetails(
-              new S3Bucket(commonTestingBucketName), objectKey);
+      assertEquals(client.headObject(bucketName, objectKey).get(10, TimeUnit.SECONDS),
+               org.jclouds.aws.s3.domain.S3Object.Metadata.NOT_FOUND);
+   }
 
-        assertEquals(objectDetails.getKey(), objectKey);
-        assertEquals(objectDetails.getContentLength(), 4);
-        assertNull(objectDetails.getDataInputStream());
-        assertEquals(objectDetails.getMetadata(metadataName), metadataValue);
-        		
-        emptyBucket(commonTestingBucketName);
-    }
+   @Test(dependsOnMethods = "testCreateBucketImpl")
+   public void testGetObjectDetailsImpl() throws InterruptedException, ExecutionException,
+            TimeoutException, S3ServiceException, IOException {
+      String objectKey = "key-testGetObjectDetailsImpl";
+      String objectValue = "test";
+      String metadataName = "metadata-name-1";
+      String metadataValue = "metadata-value-1";
 
-    @Test(dependsOnMethods = "testCreateBucketImpl")
-    public void testGetObjectImpl() 
-    	throws InterruptedException, ExecutionException, TimeoutException, S3ServiceException, IOException 
-	{
-        String objectKey = "key-testGetObjectImpl";
-        String objectValue = "test";
-        String metadataName = "metadata-name-2";
-        String metadataValue = "metadata-value-2";
+      org.jclouds.aws.s3.domain.S3Object s3Object = new org.jclouds.aws.s3.domain.S3Object(
+               objectKey, objectValue);
+      s3Object.getMetadata().getUserMetadata().put(S3Constants.USER_METADATA_PREFIX + metadataName,
+               metadataValue);
+      addObjectToBucket(bucketName, s3Object);
 
-        org.jclouds.aws.s3.domain.S3Object s3Object = 
-           new org.jclouds.aws.s3.domain.S3Object(objectKey, objectValue);
-        s3Object.getMetadata().getUserMetadata().put(
-              S3Constants.USER_METADATA_PREFIX + metadataName, metadataValue);
-        addObjectToBucket(commonTestingBucketName, s3Object);
+      S3Object objectDetails = service.getObjectDetails(new S3Bucket(bucketName), objectKey);
 
-        S3Object object = service.getObject(new S3Bucket(commonTestingBucketName), objectKey);
-        
-        assertEquals(object.getKey(), objectKey);
-        assertNotNull(object.getDataInputStream());
-        assertEquals(IOUtils.toString(object.getDataInputStream()), objectValue);
-        assertEquals(object.getContentLength(), objectValue.length());
-        assertEquals(object.getMetadata(metadataName), metadataValue);
-        		
-        // TODO: Test conditional gets
-        
-        emptyBucket(commonTestingBucketName);
-    }
+      assertEquals(objectDetails.getKey(), objectKey);
+      assertEquals(objectDetails.getContentLength(), 4);
+      assertNull(objectDetails.getDataInputStream());
+      assertEquals(objectDetails.getMetadata(metadataName), metadataValue);
 
-    @Test(dependsOnMethods = "testCreateBucketImpl")
-    public void testListAllBucketsImpl() throws InterruptedException,
-            ExecutionException, TimeoutException, S3ServiceException {
-        // Ensure there is at least 1 bucket in S3 account to list and compare.
-        S3Bucket[] jsBuckets = service.listAllBuckets();
+      emptyBucket(bucketName);
+   }
 
-        List<org.jclouds.aws.s3.domain.S3Bucket.Metadata> jcBuckets = client
-                .listOwnedBuckets().get(10, TimeUnit.SECONDS);
+   @Test(dependsOnMethods = "testCreateBucketImpl")
+   public void testGetObjectImpl() throws InterruptedException, ExecutionException,
+            TimeoutException, S3ServiceException, IOException {
+      String objectKey = "key-testGetObjectImpl";
+      String objectValue = "test";
+      String metadataName = "metadata-name-2";
+      String metadataValue = "metadata-value-2";
 
-        assert jsBuckets.length == jcBuckets.size();
-        
-        Iterator<org.jclouds.aws.s3.domain.S3Bucket.Metadata> jcBucketsIter = jcBuckets
-                .iterator();
-        for (S3Bucket jsBucket : jsBuckets) {
-            assert jcBucketsIter.hasNext();
+      org.jclouds.aws.s3.domain.S3Object s3Object = new org.jclouds.aws.s3.domain.S3Object(
+               objectKey, objectValue);
+      s3Object.getMetadata().getUserMetadata().put(S3Constants.USER_METADATA_PREFIX + metadataName,
+               metadataValue);
+      addObjectToBucket(bucketName, s3Object);
 
-            org.jclouds.aws.s3.domain.S3Bucket.Metadata jcBucket = jcBucketsIter
-                    .next();
-            assert jsBucket.getName().equals(jcBucket.getName());
-        }
-    }
+      S3Object object = service.getObject(new S3Bucket(bucketName), objectKey);
 
-    @Test(dependsOnMethods = "testCreateBucketImpl")
-    public void testListObjectsChunkedImpl() throws InterruptedException, ExecutionException, 
-          TimeoutException, IOException, S3ServiceException 
-    {
-       addObjectToBucket(commonTestingBucketName, "item1/subobject2");
-       addObjectToBucket(commonTestingBucketName, "item2");
-       addObjectToBucket(commonTestingBucketName, "object1");
-       addObjectToBucket(commonTestingBucketName, "object2/subobject1");
-       
-       S3ObjectsChunk chunk;
-       
-       // Normal complete listing
-       chunk = service.listObjectsChunked(commonTestingBucketName, null, null, 1000, null, true);
-       assertEquals(chunk.getObjects().length, 4);
-       assertEquals(chunk.getCommonPrefixes().length, 0);
-       assertNull(chunk.getDelimiter());
-       assertNull(chunk.getPrefix());
-       assertNull(chunk.getPriorLastKey());
-       
-       // Partial listing
-       chunk = service.listObjectsChunked(commonTestingBucketName, null, null, 2, null, false);
-       assertEquals(chunk.getObjects().length, 2);
-       assertEquals(chunk.getCommonPrefixes().length, 0);
-       assertNull(chunk.getDelimiter());
-       assertNull(chunk.getPrefix());
-       assertEquals(chunk.getPriorLastKey(), "item2");
+      assertEquals(object.getKey(), objectKey);
+      assertNotNull(object.getDataInputStream());
+      assertEquals(IOUtils.toString(object.getDataInputStream()), objectValue);
+      assertEquals(object.getContentLength(), objectValue.length());
+      assertEquals(object.getMetadata(metadataName), metadataValue);
 
-       // Complete listing, in two chunks
-       chunk = service.listObjectsChunked(commonTestingBucketName, null, null, 2, null, true);
-       assertEquals(chunk.getObjects().length, 4);
-       assertEquals(chunk.getCommonPrefixes().length, 0);
-       assertNull(chunk.getDelimiter());
-       assertNull(chunk.getPrefix());
-       assertNull(chunk.getPriorLastKey());
+      // TODO: Test conditional gets
 
-       // Partial listing with marker
-       chunk = service.listObjectsChunked(commonTestingBucketName, null, null, 1000, 
-             "item1/subobject2", true);
-       assertEquals(chunk.getObjects().length, 3);
-       assertEquals(chunk.getCommonPrefixes().length, 0);
-       assertNull(chunk.getDelimiter());
-       assertNull(chunk.getPrefix());
-       assertNull(chunk.getPriorLastKey());
+      emptyBucket(bucketName);
+   }
 
-       // Partial listing with marker
-       chunk = service.listObjectsChunked(commonTestingBucketName, null, null, 1000, 
-             "object1", true);
-       assertEquals(chunk.getObjects().length, 1);
-       assertEquals(chunk.getCommonPrefixes().length, 0);
-       assertNull(chunk.getDelimiter());
-       assertNull(chunk.getPrefix());
-       assertNull(chunk.getPriorLastKey());
+   @Test(dependsOnMethods = "testCreateBucketImpl")
+   public void testListAllBucketsImpl() throws InterruptedException, ExecutionException,
+            TimeoutException, S3ServiceException {
+      // Ensure there is at least 1 bucket in S3 account to list and compare.
+      S3Bucket[] jsBuckets = service.listAllBuckets();
 
-       // Prefix test
-       chunk = service.listObjectsChunked(commonTestingBucketName, "item", null, 1000, null, true);
-       assertEquals(chunk.getObjects().length, 2);
-       assertEquals(chunk.getCommonPrefixes().length, 0);
-       assertNull(chunk.getDelimiter());
-       assertEquals(chunk.getPrefix(), "item");
-       assertNull(chunk.getPriorLastKey());
+      List<org.jclouds.aws.s3.domain.S3Bucket.Metadata> jcBuckets = client.listOwnedBuckets().get(
+               10, TimeUnit.SECONDS);
 
-       // Delimiter test
-       chunk = service.listObjectsChunked(commonTestingBucketName, null, "/", 1000, null, true);
-       assertEquals(chunk.getObjects().length, 2);
-       assertEquals(chunk.getCommonPrefixes().length, 2);
-       assertEquals(chunk.getDelimiter(), "/");
-       assertNull(chunk.getPrefix());
-       assertNull(chunk.getPriorLastKey());
+      assert jsBuckets.length == jcBuckets.size();
 
-       // Prefix & delimiter test
-       chunk = service.listObjectsChunked(commonTestingBucketName, "item", "/", 1000, null, true);
-       assertEquals(chunk.getObjects().length, 1);
-       assertEquals(chunk.getCommonPrefixes().length, 1);
-       assertEquals(chunk.getDelimiter(), "/");
-       assertEquals(chunk.getPrefix(), "item");
-       assertNull(chunk.getPriorLastKey());
+      Iterator<org.jclouds.aws.s3.domain.S3Bucket.Metadata> jcBucketsIter = jcBuckets.iterator();
+      for (S3Bucket jsBucket : jsBuckets) {
+         assert jcBucketsIter.hasNext();
 
-       emptyBucket(commonTestingBucketName);
-    }
+         org.jclouds.aws.s3.domain.S3Bucket.Metadata jcBucket = jcBucketsIter.next();
+         assert jsBucket.getName().equals(jcBucket.getName());
+      }
+   }
 
-    @Test(dependsOnMethods = "testCreateBucketImpl")
-    public void testListObjectsImpl() throws InterruptedException, ExecutionException, 
-          TimeoutException, IOException, S3ServiceException 
-    {
-       addObjectToBucket(commonTestingBucketName, "item1/subobject2");
-       addObjectToBucket(commonTestingBucketName, "item2");
-       addObjectToBucket(commonTestingBucketName, "object1");
-       addObjectToBucket(commonTestingBucketName, "object2/subobject1");
-       
-       S3Object[] objects;
-       
-       // Normal complete listing
-       objects = service.listObjects(commonTestingBucketName, null, null, 1000);
-       assertEquals(objects.length, 4);
-       
-       // Complete listing, in two chunks
-       objects = service.listObjects(commonTestingBucketName, null, null, 2);
-       assertEquals(objects.length, 4);
-       assertEquals(objects[0].getKey(), "item1/subobject2");
-       assertEquals(objects[3].getKey(), "object2/subobject1");
+   @Test(dependsOnMethods = "testCreateBucketImpl")
+   public void testListObjectsChunkedImpl() throws InterruptedException, ExecutionException,
+            TimeoutException, IOException, S3ServiceException {
+      addObjectToBucket(bucketName, "item1/subobject2");
+      addObjectToBucket(bucketName, "item2");
+      addObjectToBucket(bucketName, "object1");
+      addObjectToBucket(bucketName, "object2/subobject1");
 
-       // Prefix test
-       objects = service.listObjects(commonTestingBucketName, "item", null, 1000);
-       assertEquals(objects.length, 2);
+      S3ObjectsChunk chunk;
 
-       // Delimiter test
-       objects = service.listObjects(commonTestingBucketName, null, "/", 1000);
-       assertEquals(objects.length, 2);
-       assertEquals(objects[0].getKey(), "item2");
-       assertEquals(objects[1].getKey(), "object1");
+      // Normal complete listing
+      chunk = service.listObjectsChunked(bucketName, null, null, 1000, null, true);
+      assertEquals(chunk.getObjects().length, 4);
+      assertEquals(chunk.getCommonPrefixes().length, 0);
+      assertNull(chunk.getDelimiter());
+      assertNull(chunk.getPrefix());
+      assertNull(chunk.getPriorLastKey());
 
-       // Prefix & delimiter test
-       objects = service.listObjects(commonTestingBucketName, "item", "/", 1000);
-       assertEquals(objects.length, 1);
-       assertEquals(objects[0].getKey(), "item2");
+      // Partial listing
+      chunk = service.listObjectsChunked(bucketName, null, null, 2, null, false);
+      assertEquals(chunk.getObjects().length, 2);
+      assertEquals(chunk.getCommonPrefixes().length, 0);
+      assertNull(chunk.getDelimiter());
+      assertNull(chunk.getPrefix());
+      assertEquals(chunk.getPriorLastKey(), "item2");
 
-       emptyBucket(commonTestingBucketName);
-    }
-    
-    @Test(dependsOnMethods = "testCreateBucketImpl")
-    public void testPutObjectImpl() throws S3ServiceException, InterruptedException, 
-          ExecutionException, TimeoutException, NoSuchAlgorithmException, IOException 
-    {
-       String objectKey = "putObject";
-       
-       S3Object requestObject, jsResultObject;
-       org.jclouds.aws.s3.domain.S3Object jcObject;
-       
-       // Upload empty object
-       requestObject = new S3Object(objectKey);
-       jsResultObject = service.putObject(new S3Bucket(commonTestingBucketName), requestObject);
-       jcObject = client.getObject(commonTestingBucketName, objectKey).get(10, TimeUnit.SECONDS);
-       assertEquals(jcObject.getKey(), objectKey);
-       assertEquals(jcObject.getMetadata().getSize(), 0);
-       assertEquals(jcObject.getMetadata().getContentType(), ContentTypes.BINARY);
-       assertEquals(jsResultObject.getKey(), requestObject.getKey());
-       assertEquals(jsResultObject.getContentLength(), 0);
-       assertEquals(jsResultObject.getContentType(), ContentTypes.BINARY);
+      // Complete listing, in two chunks
+      chunk = service.listObjectsChunked(bucketName, null, null, 2, null, true);
+      assertEquals(chunk.getObjects().length, 4);
+      assertEquals(chunk.getCommonPrefixes().length, 0);
+      assertNull(chunk.getDelimiter());
+      assertNull(chunk.getPrefix());
+      assertNull(chunk.getPriorLastKey());
 
-       // Upload unicode-named object
-       requestObject = new S3Object("üníçòdé-object");
-       jsResultObject = service.putObject(new S3Bucket(commonTestingBucketName), requestObject);
-       jcObject = client.getObject(commonTestingBucketName, requestObject.getKey())
-             .get(10, TimeUnit.SECONDS);
-       assertEquals(jcObject.getKey(), requestObject.getKey());
-       assertEquals(jcObject.getMetadata().getSize(), 0);
-       assertEquals(jcObject.getMetadata().getContentType(), ContentTypes.BINARY);
-       assertEquals(jsResultObject.getKey(), requestObject.getKey());
-       assertEquals(jsResultObject.getContentLength(), 0);
-       assertEquals(jsResultObject.getContentType(), ContentTypes.BINARY);
+      // Partial listing with marker
+      chunk = service.listObjectsChunked(bucketName, null, null, 1000, "item1/subobject2", true);
+      assertEquals(chunk.getObjects().length, 3);
+      assertEquals(chunk.getCommonPrefixes().length, 0);
+      assertNull(chunk.getDelimiter());
+      assertNull(chunk.getPrefix());
+      assertNull(chunk.getPriorLastKey());
 
-       // Upload string object
-       String data = "This is my üníçòdé data";
-       requestObject = new S3Object(objectKey, data);
-       jsResultObject = service.putObject(new S3Bucket(commonTestingBucketName), requestObject);
-       jcObject = client.getObject(commonTestingBucketName, objectKey).get(10, TimeUnit.SECONDS);
-       assertEquals(jcObject.getMetadata().getSize(), data.getBytes("UTF-8").length);
-       assertTrue(jcObject.getMetadata().getContentType().startsWith("text/plain"));
-       assertEquals(jsResultObject.getContentLength(), data.getBytes("UTF-8").length);
-       assertTrue(jsResultObject.getContentType().startsWith("text/plain"));
+      // Partial listing with marker
+      chunk = service.listObjectsChunked(bucketName, null, null, 1000, "object1", true);
+      assertEquals(chunk.getObjects().length, 1);
+      assertEquals(chunk.getCommonPrefixes().length, 0);
+      assertNull(chunk.getDelimiter());
+      assertNull(chunk.getPrefix());
+      assertNull(chunk.getPriorLastKey());
 
-       // Upload object with metadata
-       requestObject = new S3Object(objectKey);
-       requestObject.addMetadata(S3Constants.USER_METADATA_PREFIX + "my-metadata-1", "value-1");
-       jsResultObject = service.putObject(new S3Bucket(commonTestingBucketName), requestObject);
-       jcObject = client.getObject(commonTestingBucketName, objectKey).get(10, TimeUnit.SECONDS);
-       assertEquals(Iterables.getLast(jcObject.getMetadata().getUserMetadata()
-             .get(S3Constants.USER_METADATA_PREFIX + "my-metadata-1")), "value-1");
-       assertEquals(
-             jsResultObject.getMetadata(S3Constants.USER_METADATA_PREFIX + "my-metadata-1"), 
-             "value-1");
+      // Prefix test
+      chunk = service.listObjectsChunked(bucketName, "item", null, 1000, null, true);
+      assertEquals(chunk.getObjects().length, 2);
+      assertEquals(chunk.getCommonPrefixes().length, 0);
+      assertNull(chunk.getDelimiter());
+      assertEquals(chunk.getPrefix(), "item");
+      assertNull(chunk.getPriorLastKey());
 
-       // Upload object with public-read ACL
-       requestObject = new S3Object(objectKey);
-       requestObject.setAcl(AccessControlList.REST_CANNED_PUBLIC_READ);
-       jsResultObject = service.putObject(new S3Bucket(commonTestingBucketName), requestObject);
-       jcObject = client.getObject(commonTestingBucketName, objectKey).get(10, TimeUnit.SECONDS);
-       // TODO: No way yet to get/lookup ACL from jClouds object
-       // assertEquals(jcObject.getAcl(), CannedAccessPolicy.PUBLIC_READ);
-       assertEquals(jsResultObject.getAcl(), AccessControlList.REST_CANNED_PUBLIC_READ);
+      // Delimiter test
+      chunk = service.listObjectsChunked(bucketName, null, "/", 1000, null, true);
+      assertEquals(chunk.getObjects().length, 2);
+      assertEquals(chunk.getCommonPrefixes().length, 2);
+      assertEquals(chunk.getDelimiter(), "/");
+      assertNull(chunk.getPrefix());
+      assertNull(chunk.getPriorLastKey());
 
-       // TODO : Any way to test a URL lookup that works for live and stub testing?
-       // URL publicUrl = new URL(
-       //    "http://" + commonTestingBucketName + ".s3.amazonaws.com:80/" + requestObject.getKey());
-       // assertEquals(((HttpURLConnection) publicUrl.openConnection()).getResponseCode(), 200);
+      // Prefix & delimiter test
+      chunk = service.listObjectsChunked(bucketName, "item", "/", 1000, null, true);
+      assertEquals(chunk.getObjects().length, 1);
+      assertEquals(chunk.getCommonPrefixes().length, 1);
+      assertEquals(chunk.getDelimiter(), "/");
+      assertEquals(chunk.getPrefix(), "item");
+      assertNull(chunk.getPriorLastKey());
 
-       // Upload object and check MD5
-       requestObject = new S3Object(objectKey);
-       data = "Here is some dátà for you";
-       requestObject.setDataInputStream(new ByteArrayInputStream(data.getBytes("UTF-8")));
-       jsResultObject = service.putObject(new S3Bucket(commonTestingBucketName), requestObject);
-       jcObject = client.getObject(commonTestingBucketName, objectKey).get(10, TimeUnit.SECONDS);       
-       assertTrue(jsResultObject.verifyData(data.getBytes("UTF-8")));
-       assertEquals(jsResultObject.getMd5HashAsHex(),
-             S3Utils.toHexString(jcObject.getMetadata().getMd5()));
+      emptyBucket(bucketName);
+   }
 
-       emptyBucket(commonTestingBucketName);
-    }
+   @Test(dependsOnMethods = "testCreateBucketImpl")
+   public void testListObjectsImpl() throws InterruptedException, ExecutionException,
+            TimeoutException, IOException, S3ServiceException {
+      addObjectToBucket(bucketName, "item1/subobject2");
+      addObjectToBucket(bucketName, "item2");
+      addObjectToBucket(bucketName, "object1");
+      addObjectToBucket(bucketName, "object2/subobject1");
 
-    @Test(dependsOnMethods = "testCreateBucketImpl")
-    @SuppressWarnings("unchecked")
-    public void testCopyObjectImpl() throws InterruptedException, ExecutionException, 
-          TimeoutException, IOException, S3ServiceException 
-    {
-       String data = "This is my data";
-       String sourceObjectKey = "öriginalObject";         // Notice the use of non-ASCII
-       String destinationObjectKey = "déstinationObject"; // characters here.
-       String metadataName = "metadata-name";
-       String sourceMetadataValue = "souce-metadata-value";
-       String destinationMetadataValue = "destination-metadata-value";
-       
-       org.jclouds.aws.s3.domain.S3Object sourceObject = 
-          new org.jclouds.aws.s3.domain.S3Object(sourceObjectKey, data);
-       sourceObject.getMetadata().getUserMetadata().put(
-             S3Constants.USER_METADATA_PREFIX + metadataName, sourceMetadataValue);
-       addObjectToBucket(commonTestingBucketName, sourceObject);
+      S3Object[] objects;
 
-       S3Object destinationObject;
-       Map copyResult;
-       org.jclouds.aws.s3.domain.S3Object jcDestinationObject;
-       
-       // Copy with metadata and ACL retained
-       destinationObject = new S3Object(destinationObjectKey);
-       copyResult = service.copyObject(commonTestingBucketName, sourceObjectKey, 
-             commonTestingBucketName, destinationObject, false);
-       jcDestinationObject = client.getObject(commonTestingBucketName, destinationObject.getKey())
-             .get(10, TimeUnit.SECONDS);
-       assertEquals(jcDestinationObject.getKey(), destinationObjectKey);
-       assertEquals(Iterators.getLast(jcDestinationObject.getMetadata().getUserMetadata().get(
-             S3Constants.USER_METADATA_PREFIX + metadataName).iterator()), sourceMetadataValue);
-       assertEquals(copyResult.get("ETag"), 
-             S3Utils.toHexString(jcDestinationObject.getMetadata().getMd5()));
-       // TODO: Test destination ACL is unchanged (ie private)
-       
-       // Copy with metadata replaced
-       destinationObject = new S3Object(destinationObjectKey);
-       destinationObject.addMetadata(S3Constants.USER_METADATA_PREFIX + metadataName, 
-             destinationMetadataValue);
-       copyResult = service.copyObject(commonTestingBucketName, sourceObjectKey, 
-             commonTestingBucketName, destinationObject, true);
-       jcDestinationObject = client.getObject(commonTestingBucketName, destinationObject.getKey())
-             .get(10, TimeUnit.SECONDS);
-       assertEquals(Iterators.getLast(jcDestinationObject.getMetadata().getUserMetadata().get(
-             S3Constants.USER_METADATA_PREFIX + metadataName).iterator()), 
-             destinationMetadataValue);
-       // TODO: Test destination ACL is unchanged (ie private)
-              
-       // Copy with ACL modified
-       destinationObject = new S3Object(destinationObjectKey);
-       destinationObject.setAcl(AccessControlList.REST_CANNED_PUBLIC_READ);
-       copyResult = service.copyObject(commonTestingBucketName, sourceObjectKey, 
-             commonTestingBucketName, destinationObject, false);
-       jcDestinationObject = client.getObject(commonTestingBucketName, destinationObject.getKey())
-             .get(10, TimeUnit.SECONDS);
-       // TODO: Test destination ACL is changed (ie public-read)
+      // Normal complete listing
+      objects = service.listObjects(bucketName, null, null, 1000);
+      assertEquals(objects.length, 4);
 
-       emptyBucket(commonTestingBucketName);
-    }
+      // Complete listing, in two chunks
+      objects = service.listObjects(bucketName, null, null, 2);
+      assertEquals(objects.length, 4);
+      assertEquals(objects[0].getKey(), "item1/subobject2");
+      assertEquals(objects[3].getKey(), "object2/subobject1");
 
-    @Test(enabled = false)
-    public void testCheckBucketStatus() {
-        fail("Not yet implemented");
-    }
+      // Prefix test
+      objects = service.listObjects(bucketName, "item", null, 1000);
+      assertEquals(objects.length, 2);
 
-    @Test(enabled = false)
-    public void testGetBucketAclImpl() {
-        fail("Not yet implemented");
-    }
+      // Delimiter test
+      objects = service.listObjects(bucketName, null, "/", 1000);
+      assertEquals(objects.length, 2);
+      assertEquals(objects[0].getKey(), "item2");
+      assertEquals(objects[1].getKey(), "object1");
 
-    @Test(enabled = false)
-    public void testGetBucketLocationImpl() {
-        fail("Not yet implemented");
-    }
+      // Prefix & delimiter test
+      objects = service.listObjects(bucketName, "item", "/", 1000);
+      assertEquals(objects.length, 1);
+      assertEquals(objects[0].getKey(), "item2");
 
-    @Test(enabled = false)
-    public void testGetBucketLoggingStatus() {
-        fail("Not yet implemented");
-    }
+      emptyBucket(bucketName);
+   }
 
-    @Test(enabled = false)
-    public void testGetObjectAclImpl() {
-        fail("Not yet implemented");
-    }
+   @Test(dependsOnMethods = "testCreateBucketImpl")
+   public void testPutObjectImpl() throws S3ServiceException, InterruptedException,
+            ExecutionException, TimeoutException, NoSuchAlgorithmException, IOException {
+      String objectKey = "putObject";
 
-    @Test(enabled = false)
-    public void testPutBucketAclImpl() {
-        fail("Not yet implemented");
-    }
+      S3Object requestObject, jsResultObject;
+      org.jclouds.aws.s3.domain.S3Object jcObject;
 
-    @Test(enabled = false)
-    public void testPutObjectAclImpl() {
-        fail("Not yet implemented");
-    }
+      // Upload empty object
+      requestObject = new S3Object(objectKey);
+      jsResultObject = service.putObject(new S3Bucket(bucketName), requestObject);
+      jcObject = client.getObject(bucketName, objectKey).get(10, TimeUnit.SECONDS);
+      assertEquals(jcObject.getKey(), objectKey);
+      assertEquals(jcObject.getMetadata().getSize(), 0);
+      assertEquals(jcObject.getMetadata().getContentType(), ContentTypes.BINARY);
+      assertEquals(jsResultObject.getKey(), requestObject.getKey());
+      assertEquals(jsResultObject.getContentLength(), 0);
+      assertEquals(jsResultObject.getContentType(), ContentTypes.BINARY);
 
-    @Test(enabled = false)
-    public void testSetBucketLoggingStatusImpl() {
-        fail("Not yet implemented");
-    }
+      // Upload unicode-named object
+      requestObject = new S3Object("üníçòdé-object");
+      jsResultObject = service.putObject(new S3Bucket(bucketName), requestObject);
+      jcObject = client.getObject(bucketName, requestObject.getKey()).get(10, TimeUnit.SECONDS);
+      assertEquals(jcObject.getKey(), requestObject.getKey());
+      assertEquals(jcObject.getMetadata().getSize(), 0);
+      assertEquals(jcObject.getMetadata().getContentType(), ContentTypes.BINARY);
+      assertEquals(jsResultObject.getKey(), requestObject.getKey());
+      assertEquals(jsResultObject.getContentLength(), 0);
+      assertEquals(jsResultObject.getContentType(), ContentTypes.BINARY);
 
-    @Test(enabled = false)
-    public void testSetRequesterPaysBucketImpl() {
-        fail("Not yet implemented");
-    }
+      // Upload string object
+      String data = "This is my üníçòdé data";
+      requestObject = new S3Object(objectKey, data);
+      jsResultObject = service.putObject(new S3Bucket(bucketName), requestObject);
+      jcObject = client.getObject(bucketName, objectKey).get(10, TimeUnit.SECONDS);
+      assertEquals(jcObject.getMetadata().getSize(), data.getBytes("UTF-8").length);
+      assertTrue(jcObject.getMetadata().getContentType().startsWith("text/plain"));
+      assertEquals(jsResultObject.getContentLength(), data.getBytes("UTF-8").length);
+      assertTrue(jsResultObject.getContentType().startsWith("text/plain"));
 
-    @Test(enabled = false)
-    public void testIsBucketAccessible() {
-        fail("Not yet implemented");
-    }
+      // Upload object with metadata
+      requestObject = new S3Object(objectKey);
+      requestObject.addMetadata(S3Constants.USER_METADATA_PREFIX + "my-metadata-1", "value-1");
+      jsResultObject = service.putObject(new S3Bucket(bucketName), requestObject);
+      jcObject = client.getObject(bucketName, objectKey).get(10, TimeUnit.SECONDS);
+      assertEquals(Iterables.getLast(jcObject.getMetadata().getUserMetadata().get(
+               S3Constants.USER_METADATA_PREFIX + "my-metadata-1")), "value-1");
+      assertEquals(jsResultObject.getMetadata(S3Constants.USER_METADATA_PREFIX + "my-metadata-1"),
+               "value-1");
 
-    @Test(enabled = false)
-    public void testIsRequesterPaysBucketImpl() {
-        fail("Not yet implemented");
-    }
+      // Upload object with public-read ACL
+      requestObject = new S3Object(objectKey);
+      requestObject.setAcl(AccessControlList.REST_CANNED_PUBLIC_READ);
+      jsResultObject = service.putObject(new S3Bucket(bucketName), requestObject);
+      jcObject = client.getObject(bucketName, objectKey).get(10, TimeUnit.SECONDS);
+      // TODO: No way yet to get/lookup ACL from jClouds object
+      // assertEquals(jcObject.getAcl(), CannedAccessPolicy.PUBLIC_READ);
+      assertEquals(jsResultObject.getAcl(), AccessControlList.REST_CANNED_PUBLIC_READ);
+
+      // TODO : Any way to test a URL lookup that works for live and stub testing?
+      // URL publicUrl = new URL(
+      // "http://" + bucketName + ".s3.amazonaws.com:80/" + requestObject.getKey());
+      // assertEquals(((HttpURLConnection) publicUrl.openConnection()).getResponseCode(), 200);
+
+      // Upload object and check MD5
+      requestObject = new S3Object(objectKey);
+      data = "Here is some dátà for you";
+      requestObject.setDataInputStream(new ByteArrayInputStream(data.getBytes("UTF-8")));
+      jsResultObject = service.putObject(new S3Bucket(bucketName), requestObject);
+      jcObject = client.getObject(bucketName, objectKey).get(10, TimeUnit.SECONDS);
+      assertTrue(jsResultObject.verifyData(data.getBytes("UTF-8")));
+      assertEquals(jsResultObject.getMd5HashAsHex(), S3Utils.toHexString(jcObject.getMetadata()
+               .getMd5()));
+
+      emptyBucket(bucketName);
+   }
+
+   @Test(dependsOnMethods = "testCreateBucketImpl")
+   @SuppressWarnings("unchecked")
+   public void testCopyObjectImpl() throws InterruptedException, ExecutionException,
+            TimeoutException, IOException, S3ServiceException {
+      String data = "This is my data";
+      String sourceObjectKey = "öriginalObject"; // Notice the use of non-ASCII
+      String destinationObjectKey = "déstinationObject"; // characters here.
+      String metadataName = "metadata-name";
+      String sourceMetadataValue = "souce-metadata-value";
+      String destinationMetadataValue = "destination-metadata-value";
+
+      org.jclouds.aws.s3.domain.S3Object sourceObject = new org.jclouds.aws.s3.domain.S3Object(
+               sourceObjectKey, data);
+      sourceObject.getMetadata().getUserMetadata().put(
+               S3Constants.USER_METADATA_PREFIX + metadataName, sourceMetadataValue);
+      addObjectToBucket(bucketName, sourceObject);
+
+      S3Object destinationObject;
+      Map copyResult;
+      org.jclouds.aws.s3.domain.S3Object jcDestinationObject;
+
+      // Copy with metadata and ACL retained
+      destinationObject = new S3Object(destinationObjectKey);
+      copyResult = service.copyObject(bucketName, sourceObjectKey, bucketName, destinationObject,
+               false);
+      jcDestinationObject = client.getObject(bucketName, destinationObject.getKey()).get(10,
+               TimeUnit.SECONDS);
+      assertEquals(jcDestinationObject.getKey(), destinationObjectKey);
+      assertEquals(Iterators.getLast(jcDestinationObject.getMetadata().getUserMetadata().get(
+               S3Constants.USER_METADATA_PREFIX + metadataName).iterator()), sourceMetadataValue);
+      assertEquals(copyResult.get("ETag"), S3Utils.toHexString(jcDestinationObject.getMetadata()
+               .getMd5()));
+      // TODO: Test destination ACL is unchanged (ie private)
+
+      // Copy with metadata replaced
+      destinationObject = new S3Object(destinationObjectKey);
+      destinationObject.addMetadata(S3Constants.USER_METADATA_PREFIX + metadataName,
+               destinationMetadataValue);
+      copyResult = service.copyObject(bucketName, sourceObjectKey, bucketName, destinationObject,
+               true);
+      jcDestinationObject = client.getObject(bucketName, destinationObject.getKey()).get(10,
+               TimeUnit.SECONDS);
+      assertEquals(Iterators.getLast(jcDestinationObject.getMetadata().getUserMetadata().get(
+               S3Constants.USER_METADATA_PREFIX + metadataName).iterator()),
+               destinationMetadataValue);
+      // TODO: Test destination ACL is unchanged (ie private)
+
+      // Copy with ACL modified
+      destinationObject = new S3Object(destinationObjectKey);
+      destinationObject.setAcl(AccessControlList.REST_CANNED_PUBLIC_READ);
+      copyResult = service.copyObject(bucketName, sourceObjectKey, bucketName, destinationObject,
+               false);
+      jcDestinationObject = client.getObject(bucketName, destinationObject.getKey()).get(10,
+               TimeUnit.SECONDS);
+      // TODO: Test destination ACL is changed (ie public-read)
+
+      emptyBucket(bucketName);
+   }
+
+   @Test(enabled = false)
+   public void testCheckBucketStatus() {
+      fail("Not yet implemented");
+   }
+
+   @Test(enabled = false)
+   public void testGetBucketAclImpl() {
+      fail("Not yet implemented");
+   }
+
+   @Test(enabled = false)
+   public void testGetBucketLocationImpl() {
+      fail("Not yet implemented");
+   }
+
+   @Test(enabled = false)
+   public void testGetBucketLoggingStatus() {
+      fail("Not yet implemented");
+   }
+
+   @Test(enabled = false)
+   public void testGetObjectAclImpl() {
+      fail("Not yet implemented");
+   }
+
+   @Test(enabled = false)
+   public void testPutBucketAclImpl() {
+      fail("Not yet implemented");
+   }
+
+   @Test(enabled = false)
+   public void testPutObjectAclImpl() {
+      fail("Not yet implemented");
+   }
+
+   @Test(enabled = false)
+   public void testSetBucketLoggingStatusImpl() {
+      fail("Not yet implemented");
+   }
+
+   @Test(enabled = false)
+   public void testSetRequesterPaysBucketImpl() {
+      fail("Not yet implemented");
+   }
+
+   @Test(enabled = false)
+   public void testIsBucketAccessible() {
+      fail("Not yet implemented");
+   }
+
+   @Test(enabled = false)
+   public void testIsRequesterPaysBucketImpl() {
+      fail("Not yet implemented");
+   }
 
 }

@@ -59,17 +59,21 @@ public class CopyObjectIntegrationTest extends S3IntegrationTest {
 
    @Test(groups = { "integration", "live" })
    void testCopyObject() throws Exception {
+      String bucketName = getBucketName();
+      String destinationBucket = getScratchBucketName();
 
-      String destinationBucket = bucketName + "dest";
+      try {
+         addToBucketAndValidate(bucketName, sourceKey);
 
-      addToBucketAndValidate(bucketName, sourceKey);
+         client.copyObject(bucketName, sourceKey, destinationBucket, destinationKey).get(10,
+                  TimeUnit.SECONDS);
 
-      createBucketAndEnsureEmpty(destinationBucket);
-      client.copyObject(bucketName, sourceKey, destinationBucket, destinationKey).get(10,
-               TimeUnit.SECONDS);
+         validateContent(destinationBucket, destinationKey);
+      } finally {
+         returnBucket(bucketName);
+         returnScratchBucket(destinationBucket);
 
-      validateContent(destinationBucket, destinationKey);
-
+      }
    }
 
    private void addToBucketAndValidate(String bucketName, String sourceKey)
@@ -82,24 +86,28 @@ public class CopyObjectIntegrationTest extends S3IntegrationTest {
    // TODO: fails on linux and windows
    void testCopyIfModifiedSince() throws InterruptedException, ExecutionException,
             TimeoutException, IOException {
-
-      String destinationBucket = bucketName + "dest";
-
-      DateTime before = new DateTime();
-      addToBucketAndValidate(bucketName, sourceKey);
-      DateTime after = new DateTime().plusSeconds(1);
-
-      createBucketAndEnsureEmpty(destinationBucket);
-      client.copyObject(bucketName, sourceKey, destinationBucket, destinationKey,
-               ifSourceModifiedSince(before)).get(10, TimeUnit.SECONDS);
-      validateContent(destinationBucket, destinationKey);
-
+      String bucketName = getBucketName();
+      String destinationBucket = getScratchBucketName();
       try {
+         DateTime before = new DateTime();
+         addToBucketAndValidate(bucketName, sourceKey);
+         DateTime after = new DateTime().plusSeconds(1);
+
          client.copyObject(bucketName, sourceKey, destinationBucket, destinationKey,
-                  ifSourceModifiedSince(after)).get(10, TimeUnit.SECONDS);
-      } catch (ExecutionException e) {
-         HttpResponseException ex = (HttpResponseException) e.getCause();
-         assertEquals(ex.getResponse().getStatusCode(), 412);
+                  ifSourceModifiedSince(before)).get(10, TimeUnit.SECONDS);
+         validateContent(destinationBucket, destinationKey);
+
+         try {
+            client.copyObject(bucketName, sourceKey, destinationBucket, destinationKey,
+                     ifSourceModifiedSince(after)).get(10, TimeUnit.SECONDS);
+         } catch (ExecutionException e) {
+            HttpResponseException ex = (HttpResponseException) e.getCause();
+            assertEquals(ex.getResponse().getStatusCode(), 412);
+         }
+      } finally {
+         returnBucket(bucketName);
+         returnScratchBucket(destinationBucket);
+
       }
    }
 
@@ -107,92 +115,106 @@ public class CopyObjectIntegrationTest extends S3IntegrationTest {
    // TODO: fails on linux and windows
    void testCopyIfUnmodifiedSince() throws InterruptedException, ExecutionException,
             TimeoutException, IOException {
-
-      String destinationBucket = bucketName + "dest";
-
-      DateTime before = new DateTime();
-      addToBucketAndValidate(bucketName, sourceKey);
-      DateTime after = new DateTime().plusSeconds(1);
-
-      createBucketAndEnsureEmpty(destinationBucket);
-      client.copyObject(bucketName, sourceKey, destinationBucket, destinationKey,
-               ifSourceUnmodifiedSince(after)).get(10, TimeUnit.SECONDS);
-      validateContent(destinationBucket, destinationKey);
-
+      String bucketName = getBucketName();
+      String destinationBucket = getScratchBucketName();
       try {
+         DateTime before = new DateTime();
+         addToBucketAndValidate(bucketName, sourceKey);
+         DateTime after = new DateTime().plusSeconds(1);
+
          client.copyObject(bucketName, sourceKey, destinationBucket, destinationKey,
-                  ifSourceModifiedSince(before)).get(10, TimeUnit.SECONDS);
-      } catch (ExecutionException e) {
-         HttpResponseException ex = (HttpResponseException) e.getCause();
-         assertEquals(ex.getResponse().getStatusCode(), 412);
+                  ifSourceUnmodifiedSince(after)).get(10, TimeUnit.SECONDS);
+         validateContent(destinationBucket, destinationKey);
+
+         try {
+            client.copyObject(bucketName, sourceKey, destinationBucket, destinationKey,
+                     ifSourceModifiedSince(before)).get(10, TimeUnit.SECONDS);
+         } catch (ExecutionException e) {
+            HttpResponseException ex = (HttpResponseException) e.getCause();
+            assertEquals(ex.getResponse().getStatusCode(), 412);
+         }
+      } finally {
+         returnBucket(bucketName);
+         returnScratchBucket(destinationBucket);
       }
    }
 
    @Test(groups = { "integration", "live" })
    void testCopyIfMatch() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
-
-      String destinationBucket = bucketName + "dest";
-
-      addToBucketAndValidate(bucketName, sourceKey);
-
-      createBucketAndEnsureEmpty(destinationBucket);
-      client.copyObject(bucketName, sourceKey, destinationBucket, destinationKey,
-               ifSourceMd5Matches(goodMd5)).get(10, TimeUnit.SECONDS);
-      validateContent(destinationBucket, destinationKey);
-
+      String bucketName = getBucketName();
+      String destinationBucket = getScratchBucketName();
       try {
+         addToBucketAndValidate(bucketName, sourceKey);
+
          client.copyObject(bucketName, sourceKey, destinationBucket, destinationKey,
-                  ifSourceMd5Matches(badMd5)).get(10, TimeUnit.SECONDS);
-      } catch (ExecutionException e) {
-         HttpResponseException ex = (HttpResponseException) e.getCause();
-         assertEquals(ex.getResponse().getStatusCode(), 412);
+                  ifSourceMd5Matches(goodMd5)).get(10, TimeUnit.SECONDS);
+         validateContent(destinationBucket, destinationKey);
+
+         try {
+            client.copyObject(bucketName, sourceKey, destinationBucket, destinationKey,
+                     ifSourceMd5Matches(badMd5)).get(10, TimeUnit.SECONDS);
+         } catch (ExecutionException e) {
+            HttpResponseException ex = (HttpResponseException) e.getCause();
+            assertEquals(ex.getResponse().getStatusCode(), 412);
+         }
+      } finally {
+         returnBucket(bucketName);
+         returnScratchBucket(destinationBucket);
       }
    }
 
    @Test(groups = { "integration", "live" })
    void testCopyIfNoneMatch() throws IOException, InterruptedException, ExecutionException,
             TimeoutException {
-
-      String destinationBucket = bucketName + "dest";
-
-      addToBucketAndValidate(bucketName, sourceKey);
-
-      createBucketAndEnsureEmpty(destinationBucket);
-      client.copyObject(bucketName, sourceKey, destinationBucket, destinationKey,
-               ifSourceMd5DoesntMatch(badMd5)).get(10, TimeUnit.SECONDS);
-      validateContent(destinationBucket, destinationKey);
-
+      String bucketName = getBucketName();
+      String destinationBucket = getScratchBucketName();
       try {
+         addToBucketAndValidate(bucketName, sourceKey);
+
          client.copyObject(bucketName, sourceKey, destinationBucket, destinationKey,
-                  ifSourceMd5DoesntMatch(goodMd5)).get(10, TimeUnit.SECONDS);
-      } catch (ExecutionException e) {
-         HttpResponseException ex = (HttpResponseException) e.getCause();
-         assertEquals(ex.getResponse().getStatusCode(), 412);
+                  ifSourceMd5DoesntMatch(badMd5)).get(10, TimeUnit.SECONDS);
+         validateContent(destinationBucket, destinationKey);
+
+         try {
+            client.copyObject(bucketName, sourceKey, destinationBucket, destinationKey,
+                     ifSourceMd5DoesntMatch(goodMd5)).get(10, TimeUnit.SECONDS);
+         } catch (ExecutionException e) {
+            HttpResponseException ex = (HttpResponseException) e.getCause();
+            assertEquals(ex.getResponse().getStatusCode(), 412);
+         }
+      } finally {
+         returnBucket(bucketName);
+         returnScratchBucket(destinationBucket);
+
       }
    }
 
    @Test(groups = { "integration", "live" })
    void testCopyWithMetadata() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
+      String bucketName = getBucketName();
+      String destinationBucket = getScratchBucketName();
+      try {
+         addToBucketAndValidate(bucketName, sourceKey);
 
-      String destinationBucket = bucketName + "dest";
+         Multimap<String, String> metadata = HashMultimap.create();
+         metadata.put(S3Headers.USER_METADATA_PREFIX + "adrian", "cole");
 
-      addToBucketAndValidate(bucketName, sourceKey);
+         client.copyObject(bucketName, sourceKey, destinationBucket, destinationKey,
+                  overrideMetadataWith(metadata)).get(10, TimeUnit.SECONDS);
 
-      Multimap<String, String> metadata = HashMultimap.create();
-      metadata.put(S3Headers.USER_METADATA_PREFIX + "adrian", "cole");
+         validateContent(destinationBucket, destinationKey);
 
-      createBucketAndEnsureEmpty(destinationBucket);
-      client.copyObject(bucketName, sourceKey, destinationBucket, destinationKey,
-               overrideMetadataWith(metadata)).get(10, TimeUnit.SECONDS);
+         S3Object.Metadata objectMeta = client.headObject(destinationBucket, destinationKey).get(
+                  10, TimeUnit.SECONDS);
 
-      validateContent(destinationBucket, destinationKey);
+         assertEquals(objectMeta.getUserMetadata(), metadata);
+      } finally {
+         returnBucket(bucketName);
+         returnScratchBucket(destinationBucket);
 
-      S3Object.Metadata objectMeta = client.headObject(destinationBucket, destinationKey).get(10,
-               TimeUnit.SECONDS);
-
-      assertEquals(objectMeta.getUserMetadata(), metadata);
+      }
    }
 
 }

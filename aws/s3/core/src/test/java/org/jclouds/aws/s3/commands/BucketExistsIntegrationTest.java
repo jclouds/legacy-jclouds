@@ -40,15 +40,16 @@ public class BucketExistsIntegrationTest extends S3IntegrationTest {
 
    @Test
    void bucketDoesntExist() throws Exception {
-      String bucketName = bucketPrefix + "be";
-      assert !client.bucketExists(bucketName).get(10, TimeUnit.SECONDS);
+      assert !client.bucketExists("be").get(10, TimeUnit.SECONDS);
    }
 
    @Test
    void bucketExists() throws Exception {
-      String bucketName = bucketPrefix + "bde";
-      assert client.putBucketIfNotExists(bucketName).get(10, TimeUnit.SECONDS);
-      assert client.bucketExists(bucketName).get(10, TimeUnit.SECONDS);
-
+      String bucketName = getBucketName();
+      try {
+         assert client.bucketExists(bucketName).get(10, TimeUnit.SECONDS);
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 }

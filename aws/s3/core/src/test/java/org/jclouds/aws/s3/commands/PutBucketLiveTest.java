@@ -45,41 +45,57 @@ import java.util.concurrent.TimeUnit;
 @Test(testName = "s3.PutBucketLiveTest")
 public class PutBucketLiveTest extends S3IntegrationTest {
 
-   /**
-    * overriding bucketName as we are changing access permissions
-    */
    @Test(groups = { "live" })
    void testPublicReadAccessPolicy() throws Exception {
-      String bucketName = bucketPrefix + "public";
-
-      client.putBucketIfNotExists(bucketName, withBucketAcl(CannedAccessPolicy.PUBLIC_READ)).get(
-               10, TimeUnit.SECONDS);
-      URL url = new URL(String.format("http://%1$s.s3.amazonaws.com", bucketName));
-      S3Utils.toStringAndClose(url.openStream());
+      String bucketName = getScratchBucketName();
+      try {
+         deleteBucket(bucketName);
+         client.putBucketIfNotExists(bucketName, withBucketAcl(CannedAccessPolicy.PUBLIC_READ))
+                  .get(10, TimeUnit.SECONDS);
+         URL url = new URL(String.format("http://%1$s.s3.amazonaws.com", bucketName));
+         S3Utils.toStringAndClose(url.openStream());
+      } finally {
+         returnScratchBucket(bucketName);
+      }
    }
 
    @Test(groups = { "live" })
    void testPutTwiceIsOk() throws Exception {
-      client.putBucketIfNotExists(bucketName).get(10, TimeUnit.SECONDS);
+      String bucketName = getBucketName();
+      try {
+         client.putBucketIfNotExists(bucketName).get(10, TimeUnit.SECONDS);
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
    @Test(expectedExceptions = IOException.class, groups = { "live" })
    void testDefaultAccessPolicy() throws Exception {
-      URL url = new URL(String.format("http://%1$s.s3.amazonaws.com", bucketName));
-      S3Utils.toStringAndClose(url.openStream());
+      String bucketName = getBucketName();
+      try {
+         URL url = new URL(String.format("http://%1$s.s3.amazonaws.com", bucketName));
+         S3Utils.toStringAndClose(url.openStream());
+      } finally {
+         returnBucket(bucketName);
+      }
+
    }
 
    /**
-    * overriding bucketName as we are changing location
+    * using scratch bucketName as we are changing location
     */
    @Test(groups = "live")
    void testEu() throws Exception {
-      String bucketName = (bucketPrefix + "wow").toLowerCase();
-      client.putBucketIfNotExists(bucketName,
-               createIn(LocationConstraint.EU).withBucketAcl(CannedAccessPolicy.PUBLIC_READ)).get(
-               10, TimeUnit.SECONDS);
-
-      URL url = new URL(String.format("http://%1$s.s3.amazonaws.com", bucketName));
-      S3Utils.toStringAndClose(url.openStream());
+      String bucketName = getScratchBucketName();
+      try {
+         deleteBucket(bucketName);
+         client.putBucketIfNotExists(bucketName,
+                  createIn(LocationConstraint.EU).withBucketAcl(CannedAccessPolicy.PUBLIC_READ)).get(
+                  10, TimeUnit.SECONDS);
+         URL url = new URL(String.format("http://%1$s.s3.amazonaws.com", bucketName));
+         S3Utils.toStringAndClose(url.openStream());
+      } finally {
+         returnScratchBucket(bucketName);
+      }
    }
 }

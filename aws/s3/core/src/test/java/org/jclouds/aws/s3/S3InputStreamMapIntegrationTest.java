@@ -32,6 +32,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Map.Entry;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.s3.internal.BaseS3Map;
@@ -45,166 +47,275 @@ import org.testng.annotations.Test;
  */
 @Test(testName = "s3.S3InputStreamMapIntegrationTest")
 public class S3InputStreamMapIntegrationTest extends BaseS3MapIntegrationTest<InputStream> {
-   S3InputStreamMap map = null;
 
    @SuppressWarnings("unchecked")
    protected BaseS3Map<InputStream> createMap(S3Context context, String bucket) {
-      map = context.createInputStreamMap(bucket);
+      S3InputStreamMap map = context.createInputStreamMap(bucket);
       return (BaseS3Map<InputStream>) map;
    }
 
    @Override
    @Test(groups = { "integration", "live" })
-   public void testValues() throws IOException, InterruptedException {
-      map.putAll(this.fiveInputs);
-      // this will cause us to block until the bucket updates.
-      assertEventuallyKeySize(5);
-      Collection<InputStream> values = map.values();
-      assertEquals(values.size(), 5);
-      Set<String> valuesAsString = new HashSet<String>();
-      for (InputStream stream : values) {
-         valuesAsString.add(Utils.toStringAndClose(stream));
+   public void testValues() throws IOException, InterruptedException, ExecutionException,
+            TimeoutException {
+      String bucketName = getBucketName();
+      try {
+         BaseS3Map<InputStream> map = createMap(context, bucketName);
+         map.putAll(this.fiveInputs);
+         // this will cause us to block until the bucket updates.
+         assertEventuallyKeySize(map, 5);
+         Collection<InputStream> values = map.values();
+         assertEquals(values.size(), 5);
+         Set<String> valuesAsString = new HashSet<String>();
+         for (InputStream stream : values) {
+            valuesAsString.add(Utils.toStringAndClose(stream));
+         }
+         valuesAsString.removeAll(fiveStrings.values());
+         assert valuesAsString.size() == 0;
+      } finally {
+         returnBucket(bucketName);
       }
-      valuesAsString.removeAll(fiveStrings.values());
-      assert valuesAsString.size() == 0;
    }
 
    @Test(groups = { "integration", "live" })
-   public void testRemove() throws IOException, InterruptedException {
-      putString("one", "two");
-      InputStream old = map.remove("one");
-      assertEquals(Utils.toStringAndClose(old), "two");
-      old = map.remove("one");
-      assert old == null;
-      old = map.get("one");
-      assert old == null;
-      assertEventuallyKeySize(0);
+   public void testRemove() throws IOException, InterruptedException, ExecutionException,
+            TimeoutException {
+      String bucketName = getBucketName();
+      try {
+         BaseS3Map<InputStream> map = createMap(context, bucketName);
+         putString(map, "one", "two");
+         InputStream old = map.remove("one");
+         assertEquals(Utils.toStringAndClose(old), "two");
+         old = map.remove("one");
+         assert old == null;
+         old = map.get("one");
+         assert old == null;
+         assertEventuallyKeySize(map, 0);
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
    @Override
    @Test(groups = { "integration", "live" })
-   public void testEntrySet() throws IOException, InterruptedException {
-      map.putAllStrings(this.fiveStrings);
-      // this will cause us to block until the bucket updates.
-      assertEventuallyKeySize(5);
-      Set<Entry<String, InputStream>> entries = map.entrySet();
-      assertEquals(entries.size(), 5);
-      for (Entry<String, InputStream> entry : entries) {
-         assertEquals(IOUtils.toString(entry.getValue()), fiveStrings.get(entry.getKey()));
-         entry.setValue(IOUtils.toInputStream(""));
+   public void testEntrySet() throws IOException, InterruptedException, ExecutionException,
+            TimeoutException {
+      String bucketName = getBucketName();
+      try {
+         BaseS3Map<InputStream> map = createMap(context, bucketName);
+         ((S3InputStreamMap) map).putAllStrings(this.fiveStrings);
+         // this will cause us to block until the bucket updates.
+         assertEventuallyKeySize(map, 5);
+         Set<Entry<String, InputStream>> entries = map.entrySet();
+         assertEquals(entries.size(), 5);
+         for (Entry<String, InputStream> entry : entries) {
+            assertEquals(IOUtils.toString(entry.getValue()), fiveStrings.get(entry.getKey()));
+            entry.setValue(IOUtils.toInputStream(""));
+         }
+         assertEventuallyMapSize(map, 5);
+         for (InputStream value : map.values()) {
+            assertEquals(IOUtils.toString(value), "");
+         }
+      } finally {
+         returnBucket(bucketName);
       }
-      assertEventuallyMapSize(5);
-      for (InputStream value : map.values()) {
-         assertEquals(IOUtils.toString(value), "");
+   }
+
+   @Test(groups = { "integration", "live" })
+   public void testContainsStringValue() throws InterruptedException, ExecutionException,
+            TimeoutException {
+      String bucketName = getBucketName();
+      try {
+         BaseS3Map<InputStream> map = createMap(context, bucketName);
+         ((S3InputStreamMap) map).putString("one", "apple");
+         assertEventuallyContainsValue(map, fiveStrings.get("one"));
+      } finally {
+         returnBucket(bucketName);
       }
    }
 
    @Test(groups = { "integration", "live" })
-   public void testContainsStringValue() throws InterruptedException {
-      map.putString("one", "apple");
-      assertEventuallyContainsValue(fiveStrings.get("one"));
+   public void testContainsFileValue() throws InterruptedException, ExecutionException,
+            TimeoutException {
+      String bucketName = getBucketName();
+      try {
+         BaseS3Map<InputStream> map = createMap(context, bucketName);
+         ((S3InputStreamMap) map).putString("one", "apple");
+         assertEventuallyContainsValue(map, fiveFiles.get("one"));
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
    @Test(groups = { "integration", "live" })
-   public void testContainsFileValue() throws InterruptedException {
-      map.putString("one", "apple");
-      assertEventuallyContainsValue(fiveFiles.get("one"));
+   public void testContainsInputStreamValue() throws InterruptedException, ExecutionException,
+            TimeoutException {
+      String bucketName = getBucketName();
+      try {
+         BaseS3Map<InputStream> map = createMap(context, bucketName);
+         ((S3InputStreamMap) map).putString("one", "apple");
+         assertEventuallyContainsValue(map, this.fiveInputs.get("one"));
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
    @Test(groups = { "integration", "live" })
-   public void testContainsInputStreamValue() throws InterruptedException {
-      map.putString("one", "apple");
-      assertEventuallyContainsValue(this.fiveInputs.get("one"));
-   }
-
-   @Test(groups = { "integration", "live" })
-   public void testContainsBytesValue() throws InterruptedException {
-      map.putString("one", "apple");
-      assertEventuallyContainsValue(this.fiveBytes.get("one"));
+   public void testContainsBytesValue() throws InterruptedException, ExecutionException,
+            TimeoutException {
+      String bucketName = getBucketName();
+      try {
+         BaseS3Map<InputStream> map = createMap(context, bucketName);
+         ((S3InputStreamMap) map).putString("one", "apple");
+         assertEventuallyContainsValue(map, this.fiveBytes.get("one"));
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
    @Override
    @Test(groups = { "integration", "live" })
-   public void testPutAll() throws InterruptedException {
-      map.putAll(this.fiveInputs);
-      assertEventuallyMapSize(5);
-      assertEventuallyKeySetEquals(new TreeSet<String>(fiveInputs.keySet()));
-      fourLeftRemovingOne();
+   public void testPutAll() throws InterruptedException, ExecutionException, TimeoutException {
+      String bucketName = getBucketName();
+      try {
+         BaseS3Map<InputStream> map = createMap(context, bucketName);
+         map.putAll(this.fiveInputs);
+         assertEventuallyMapSize(map, 5);
+         assertEventuallyKeySetEquals(map, new TreeSet<String>(fiveInputs.keySet()));
+         fourLeftRemovingOne(map);
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
    @Test(groups = { "integration", "live" })
-   public void testPutAllBytes() throws InterruptedException {
-      map.putAllBytes(this.fiveBytes);
-      assertEventuallyMapSize(5);
-      assertEventuallyKeySetEquals(new TreeSet<String>(fiveBytes.keySet()));
-      fourLeftRemovingOne();
+   public void testPutAllBytes() throws InterruptedException, ExecutionException, TimeoutException {
+      String bucketName = getBucketName();
+      try {
+         BaseS3Map<InputStream> map = createMap(context, bucketName);
+
+         ((S3InputStreamMap) map).putAllBytes(this.fiveBytes);
+         assertEventuallyMapSize(map, 5);
+         assertEventuallyKeySetEquals(map, new TreeSet<String>(fiveBytes.keySet()));
+         fourLeftRemovingOne(map);
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
    @Test(groups = { "integration", "live" })
-   public void testPutAllFiles() throws InterruptedException {
-      map.putAllFiles(this.fiveFiles);
-      assertEventuallyMapSize(5);
-      assertEventuallyKeySetEquals(new TreeSet<String>(fiveFiles.keySet()));
-      fourLeftRemovingOne();
+   public void testPutAllFiles() throws InterruptedException, ExecutionException, TimeoutException {
+      String bucketName = getBucketName();
+      try {
+         BaseS3Map<InputStream> map = createMap(context, bucketName);
+
+         ((S3InputStreamMap) map).putAllFiles(this.fiveFiles);
+         assertEventuallyMapSize(map, 5);
+         assertEventuallyKeySetEquals(map, new TreeSet<String>(fiveFiles.keySet()));
+         fourLeftRemovingOne(map);
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
    @Test(groups = { "integration", "live" })
-   public void testPutAllStrings() throws InterruptedException {
-      map.putAllStrings(this.fiveStrings);
-      assertEventuallyMapSize(5);
-      assertEventuallyKeySetEquals(new TreeSet<String>(fiveStrings.keySet()));
-      fourLeftRemovingOne();
+   public void testPutAllStrings() throws InterruptedException, ExecutionException,
+            TimeoutException {
+      String bucketName = getBucketName();
+      try {
+         BaseS3Map<InputStream> map = createMap(context, bucketName);
+
+         ((S3InputStreamMap) map).putAllStrings(this.fiveStrings);
+         assertEventuallyMapSize(map, 5);
+         assertEventuallyKeySetEquals(map, new TreeSet<String>(fiveStrings.keySet()));
+         fourLeftRemovingOne(map);
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
    @Test(groups = { "integration", "live" })
-   public void testPutString() throws IOException, InterruptedException {
-      InputStream old = map.putString("one", "apple");
-      getOneReturnsAppleAndOldValueIsNull(old);
-      InputStream apple = map.putString("one", "bear");
-      getOneReturnsBearAndOldValueIsApple(apple);
+   public void testPutString() throws IOException, InterruptedException, ExecutionException,
+            TimeoutException {
+      String bucketName = getBucketName();
+      try {
+         BaseS3Map<InputStream> map = createMap(context, bucketName);
+
+         InputStream old = ((S3InputStreamMap) map).putString("one", "apple");
+         getOneReturnsAppleAndOldValueIsNull(map, old);
+         InputStream apple = ((S3InputStreamMap) map).putString("one", "bear");
+         getOneReturnsBearAndOldValueIsApple(map, apple);
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
-   void getOneReturnsAppleAndOldValueIsNull(InputStream old) throws IOException,
-            InterruptedException {
+   void getOneReturnsAppleAndOldValueIsNull(BaseS3Map<InputStream> map, InputStream old)
+            throws IOException, InterruptedException, ExecutionException, TimeoutException {
       assert old == null;
       assertEquals(Utils.toStringAndClose(map.get("one")), "apple");
-      assertEventuallyMapSize(1);
+      assertEventuallyMapSize(map, 1);
    }
 
-   void getOneReturnsBearAndOldValueIsApple(InputStream oldValue) throws IOException,
-            InterruptedException {
+   void getOneReturnsBearAndOldValueIsApple(BaseS3Map<InputStream> map, InputStream oldValue)
+            throws IOException, InterruptedException, ExecutionException, TimeoutException {
       assertEquals(Utils.toStringAndClose(map.get("one")), "bear");
       assertEquals(Utils.toStringAndClose(oldValue), "apple");
-      assertEventuallyMapSize(1);
+      assertEventuallyMapSize(map, 1);
    }
 
    @Test(groups = { "integration", "live" })
-   public void testPutFile() throws IOException, InterruptedException {
-      InputStream old = map.putFile("one", fiveFiles.get("one"));
-      getOneReturnsAppleAndOldValueIsNull(old);
-      InputStream apple = map.putFile("one", fiveFiles.get("two"));
-      getOneReturnsBearAndOldValueIsApple(apple);
+   public void testPutFile() throws IOException, InterruptedException, ExecutionException,
+            TimeoutException {
+      String bucketName = getBucketName();
+      try {
+         BaseS3Map<InputStream> map = createMap(context, bucketName);
+
+         InputStream old = ((S3InputStreamMap) map).putFile("one", fiveFiles.get("one"));
+         getOneReturnsAppleAndOldValueIsNull(map, old);
+         InputStream apple = ((S3InputStreamMap) map).putFile("one", fiveFiles.get("two"));
+         getOneReturnsBearAndOldValueIsApple(map, apple);
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
    @Test(groups = { "integration", "live" })
-   public void testPutBytes() throws IOException, InterruptedException {
-      InputStream old = map.putBytes("one", "apple".getBytes());
-      getOneReturnsAppleAndOldValueIsNull(old);
-      InputStream apple = map.putBytes("one", "bear".getBytes());
-      getOneReturnsBearAndOldValueIsApple(apple);
+   public void testPutBytes() throws IOException, InterruptedException, ExecutionException,
+            TimeoutException {
+      String bucketName = getBucketName();
+      try {
+         BaseS3Map<InputStream> map = createMap(context, bucketName);
+
+         InputStream old = ((S3InputStreamMap) map).putBytes("one", "apple".getBytes());
+         getOneReturnsAppleAndOldValueIsNull(map, old);
+         InputStream apple = ((S3InputStreamMap) map).putBytes("one", "bear".getBytes());
+         getOneReturnsBearAndOldValueIsApple(map, apple);
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
    @Test(groups = { "integration", "live" })
-   public void testPut() throws IOException, InterruptedException {
-      InputStream old = map.put("one", IOUtils.toInputStream("apple"));
-      getOneReturnsAppleAndOldValueIsNull(old);
-      InputStream apple = map.put("one", IOUtils.toInputStream("bear"));
-      getOneReturnsBearAndOldValueIsApple(apple);
+   public void testPut() throws IOException, InterruptedException, ExecutionException,
+            TimeoutException {
+      String bucketName = getBucketName();
+      try {
+         BaseS3Map<InputStream> map = createMap(context, bucketName);
+
+         InputStream old = map.put("one", IOUtils.toInputStream("apple"));
+         getOneReturnsAppleAndOldValueIsNull(map, old);
+         InputStream apple = map.put("one", IOUtils.toInputStream("bear"));
+         getOneReturnsBearAndOldValueIsApple(map, apple);
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
    @Override
-   protected void putString(String key, String value) {
-      map.putString(key, value);
+   protected void putString(BaseS3Map<InputStream> map, String key, String value)
+            throws InterruptedException, ExecutionException, TimeoutException {
+      ((S3InputStreamMap) map).putString(key, value);
    }
 
 }

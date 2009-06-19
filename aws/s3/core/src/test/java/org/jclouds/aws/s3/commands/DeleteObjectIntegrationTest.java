@@ -43,32 +43,37 @@ import org.testng.annotations.Test;
 @Test(groups = { "integration", "live" }, testName = "s3.DeleteObjectIntegrationTest")
 public class DeleteObjectIntegrationTest extends S3IntegrationTest {
 
-   @Test()
+   @Test
    void deleteObjectNotFound() throws Exception {
-      String bucketName = bucketPrefix + "donf";
-      createBucketAndEnsureEmpty(bucketName);
-      addObjectToBucket(bucketName, "test");
-      assert client.deleteObject(bucketName, "test").get(10, TimeUnit.SECONDS);
+      String bucketName = getBucketName();
+      try {
+         addObjectToBucket(bucketName, "test");
+         assert client.deleteObject(bucketName, "test").get(10, TimeUnit.SECONDS);
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
    @Test
    void deleteObjectNoBucket() throws Exception {
-      String bucketName = bucketPrefix + "donb";
       try {
-         client.deleteObject(bucketName, "test").get(10, TimeUnit.SECONDS);
+         client.deleteObject("donb", "test").get(10, TimeUnit.SECONDS);
       } catch (ExecutionException e) {
          assert e.getCause() instanceof AWSResponseException;
          assertEquals(((AWSResponseException) e.getCause()).getResponse().getStatusCode(), 404);
       }
    }
 
-   @Test()
+   @Test
    void deleteObject() throws Exception {
-      String bucketName = bucketPrefix + "do";
-      createBucketAndEnsureEmpty(bucketName);
-      addObjectToBucket(bucketName, "test");
-      assert client.deleteObject(bucketName, "test").get(10, TimeUnit.SECONDS);
-      assert client.headObject(bucketName, "test").get(10, TimeUnit.SECONDS) == S3Object.Metadata.NOT_FOUND;
+      String bucketName = getBucketName();
+      try {
+         addObjectToBucket(bucketName, "test");
+         assert client.deleteObject(bucketName, "test").get(10, TimeUnit.SECONDS);
+         assert client.headObject(bucketName, "test").get(10, TimeUnit.SECONDS) == S3Object.Metadata.NOT_FOUND;
+      } finally {
+         returnBucket(bucketName);
+      }
 
    }
 }

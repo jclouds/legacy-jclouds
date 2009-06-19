@@ -23,14 +23,16 @@
  */
 package org.jclouds.aws.s3;
 
+import static org.jclouds.aws.s3.commands.options.PutBucketOptions.Builder.createIn;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -46,15 +48,14 @@ import java.util.logging.Logger;
 import org.jclouds.aws.s3.config.StubS3ConnectionModule;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.s3.domain.S3Bucket.Metadata.LocationConstraint;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.aws.s3.util.S3Utils;
 import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
 import org.jclouds.util.Utils;
 import org.testng.ITestContext;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.AfterGroups;
+import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 
@@ -85,13 +86,12 @@ public class S3IntegrationTest {
 
    protected byte[] goodMd5;
    protected byte[] badMd5;
-   protected String bucketName;
 
-   protected void createBucketAndEnsureEmpty(String sourceBucket) throws InterruptedException,
+   protected void createBucketAndEnsureEmpty(String bucketName) throws InterruptedException,
             ExecutionException, TimeoutException {
-      deleteBucket(sourceBucket);
-      client.putBucketIfNotExists(sourceBucket).get(10, TimeUnit.SECONDS);
-      assertEventuallyBucketEmpty(sourceBucket);
+      client.putBucketIfNotExists(bucketName).get(10, TimeUnit.SECONDS);
+      emptyBucket(bucketName);
+      assertEventuallyBucketEmpty(bucketName);
    }
 
    protected void assertEventuallyBucketEmpty(final String bucketName) throws InterruptedException {
@@ -143,7 +143,7 @@ public class S3IntegrationTest {
       });
    }
 
-   @BeforeClass(groups = { "integration", "live" })
+   @BeforeGroups(groups = { "integration", "live" })
    protected void enableDebug() {
       if (debugEnabled()) {
          Handler HANDLER = new ConsoleHandler() {
@@ -170,15 +170,12 @@ public class S3IntegrationTest {
    protected S3Connection client;
    protected S3Context context = null;
 
-   protected String bucketPrefix = (System.getProperty("user.name") + "." + this.getClass()
-            .getSimpleName()).toLowerCase();
-
    protected static final String sysAWSAccessKeyId = System
             .getProperty(S3Constants.PROPERTY_AWS_ACCESSKEYID);
    protected static final String sysAWSSecretAccessKey = System
             .getProperty(S3Constants.PROPERTY_AWS_SECRETACCESSKEY);
 
-   @BeforeClass(inheritGroups = false, groups = { "integration", "live" })
+   @BeforeGroups(groups = { "integration", "live" })
    @Parameters( { S3Constants.PROPERTY_AWS_ACCESSKEYID, S3Constants.PROPERTY_AWS_SECRETACCESSKEY })
    protected void setUpCredentials(@Optional String AWSAccessKeyId,
             @Optional String AWSSecretAccessKey, ITestContext testContext) throws Exception {
@@ -190,7 +187,7 @@ public class S3IntegrationTest {
          testContext.setAttribute(S3Constants.PROPERTY_AWS_SECRETACCESSKEY, AWSSecretAccessKey);
    }
 
-   @BeforeClass(dependsOnMethods = { "setUpCredentials" }, groups = { "integration", "live" })
+   @BeforeGroups(dependsOnMethods = { "setUpCredentials" }, groups = { "integration", "live" })
    protected void setUpClient(ITestContext testContext) throws Exception {
       if (testContext.getAttribute(S3Constants.PROPERTY_AWS_ACCESSKEYID) != null) {
          String AWSAccessKeyId = (String) testContext
@@ -203,7 +200,6 @@ public class S3IntegrationTest {
       }
       client = context.getConnection();
       assert client != null;
-      deleteEverything();
       goodMd5 = S3Utils.md5(TEST_STRING);
       badMd5 = S3Utils.md5("alf");
    }
@@ -218,20 +214,64 @@ public class S3IntegrationTest {
                createHttpModule()).build();
    }
 
-   @BeforeMethod(dependsOnMethods = "deleteBucket", groups = { "integration", "live" })
-   public void setUpBucket(Method method) throws TimeoutException, ExecutionException,
-            InterruptedException {
-      bucketName = (bucketPrefix + method.getName()).toLowerCase();
-      if (bucketName.length() > 63)
-         bucketName = bucketName.substring(0, 62);
-      createBucketAndEnsureEmpty(bucketName);
+   public String getBucketName() throws InterruptedException, ExecutionException, TimeoutException {
+      String bucketName = bucketNames.poll(30, TimeUnit.SECONDS);
+      emptyBucket(bucketName);
+      assert bucketName != null : "unable to get a bucket for the test";
+      return bucketName;
    }
 
-   @BeforeMethod(groups = { "integration", "live" })
-   @AfterMethod(groups = { "integration", "live" })
-   public void deleteBucket() throws TimeoutException, ExecutionException, InterruptedException {
-      if (bucketName != null)
-         deleteBucket(bucketName);
+   /**
+    * a bucket that should be deleted and recreated after the test is complete. This is due to
+    * having an ACL or otherwise that makes it not compatible with normal buckets
+    */
+   public String getScratchBucketName() throws InterruptedException, ExecutionException,
+            TimeoutException {
+      return getBucketName();
+   }
+
+   public void returnBucket(String bucketName) throws InterruptedException, ExecutionException,
+            TimeoutException {
+      if (bucketName != null) {
+         bucketNames.add(bucketName);
+         bucketName = null;
+      }
+   }
+
+   /**
+    * abandon old bucket name instead of waiting for the bucket to be created.
+    */
+   public void returnScratchBucket(String scratchBucket) throws InterruptedException,
+            ExecutionException, TimeoutException {
+      if (scratchBucket != null) {
+         deleteBucket(scratchBucket);
+         String newScratchBucket = bucketPrefix + (++bucketIndex);
+         createBucketAndEnsureEmpty(newScratchBucket);
+         returnBucket(newScratchBucket);
+      }
+   }
+
+   protected static int bucketCount = 20;
+   protected static volatile int bucketIndex = 0;
+
+   /**
+    * two test groups integration and live.
+    */
+   private static final BlockingQueue<String> bucketNames = new ArrayBlockingQueue<String>(
+            bucketCount);
+
+   @BeforeGroups(dependsOnMethods = { "setUpClient" }, groups = { "live" })
+   public void setUpBuckets(ITestContext context) throws Exception {
+      synchronized (bucketNames) {
+         if (bucketNames.peek() == null) {
+            this.deleteEverything();
+            for (; bucketIndex < bucketCount; bucketIndex++) {
+               String bucketName = bucketPrefix + bucketIndex;
+               bucketNames.put(bucketName);
+               createBucketAndEnsureEmpty(bucketName);
+            }
+         }
+      }
    }
 
    protected boolean debugEnabled() {
@@ -246,6 +286,8 @@ public class S3IntegrationTest {
    protected Module createHttpModule() {
       return new JavaUrlHttpFutureCommandClientModule();
    }
+
+   private String bucketPrefix = System.getProperty("user.name") + ".s3int";
 
    protected void deleteEverything() throws Exception {
       try {
@@ -286,6 +328,15 @@ public class S3IntegrationTest {
       }
    }
 
+   protected String createScratchBucketInEU() throws InterruptedException, ExecutionException,
+            TimeoutException {
+      String bucketName = getScratchBucketName();
+      deleteBucket(bucketName);
+      client.putBucketIfNotExists(bucketName, createIn(LocationConstraint.EU)).get(10,
+               TimeUnit.SECONDS);
+      return bucketName;
+   }
+
    /**
     * Empty and delete a bucket.
     * 
@@ -302,9 +353,8 @@ public class S3IntegrationTest {
       }
    }
 
-   @AfterClass
+   @AfterGroups(groups = { "integration", "live" })
    protected void tearDownClient() throws Exception {
-      deleteEverything();
       context.close();
       context = null;
    }

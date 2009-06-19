@@ -502,15 +502,19 @@ public class StubS3Connection implements S3Connection {
             }
             if (options.getIfModifiedSince() != null) {
                DateTime modifiedSince = dateService.rfc822DateParse(options.getIfModifiedSince());
-               if (modifiedSince.isAfter(object.getMetadata().getLastModified()))
-                  throw new ExecutionException(new RuntimeException("after"));
+               if (object.getMetadata().getLastModified().isBefore(modifiedSince))
+                  throw new ExecutionException(new RuntimeException(String.format(
+                           "%1$s is before %2$s", object.getMetadata().getLastModified(),
+                           modifiedSince)));
 
             }
             if (options.getIfUnmodifiedSince() != null) {
                DateTime unmodifiedSince = dateService.rfc822DateParse(options
                         .getIfUnmodifiedSince());
-               if (unmodifiedSince.isAfter(object.getMetadata().getLastModified()))
-                  throw new ExecutionException(new RuntimeException("after"));
+               if (object.getMetadata().getLastModified().isAfter(unmodifiedSince))
+                  throw new ExecutionException(new RuntimeException(String.format(
+                           "%1$s is after %2$s", object.getMetadata().getLastModified(),
+                           unmodifiedSince)));
             }
             S3Object returnVal = new S3Object(copy(object.getMetadata()), object.getData());
             if (options.getRange() != null) {

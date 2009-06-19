@@ -47,13 +47,15 @@ import com.google.common.collect.ImmutableSet;
 @Test
 public abstract class BaseS3MapIntegrationTest<T> extends S3IntegrationTest {
 
-   public abstract void testPutAll() throws InterruptedException;
+   public abstract void testPutAll() throws InterruptedException, ExecutionException,
+            TimeoutException;
 
-   public abstract void testEntrySet() throws IOException, InterruptedException;
+   public abstract void testEntrySet() throws IOException, InterruptedException,
+            ExecutionException, TimeoutException;
 
-   public abstract void testValues() throws IOException, InterruptedException;
+   public abstract void testValues() throws IOException, InterruptedException, ExecutionException,
+            TimeoutException;
 
-   protected BaseS3Map<T> map;
    protected Map<String, String> fiveStrings = ImmutableMap.of("one", "apple", "two", "bear",
             "three", "candy", "four", "dogma", "five", "emma");
 
@@ -68,7 +70,7 @@ public abstract class BaseS3MapIntegrationTest<T> extends S3IntegrationTest {
    protected Map<String, File> fiveFiles;
    String tmpDirectory;
 
-   @BeforeMethod(dependsOnMethods = "setUpBucket", groups = { "integration", "live" })
+   @BeforeMethod(groups = { "integration", "live" })
    @Parameters( { "basedir" })
    protected void setUpTempDir(String basedir) throws InterruptedException, ExecutionException,
             FileNotFoundException, IOException, TimeoutException {
@@ -87,34 +89,45 @@ public abstract class BaseS3MapIntegrationTest<T> extends S3IntegrationTest {
       fiveInputs = ImmutableMap.of("one", IOUtils.toInputStream("apple"), "two", IOUtils
                .toInputStream("bear"), "three", IOUtils.toInputStream("candy"), "four", IOUtils
                .toInputStream("dogma"), "five", IOUtils.toInputStream("emma"));
-      map = createMap(context, bucketName);
-      map.clear();
    }
 
    protected abstract BaseS3Map<T> createMap(S3Context context, String bucket);
 
    @Test(groups = { "integration", "live" })
-   public void testClear() throws InterruptedException {
-      map.clear();
-      assertEventuallyMapSize(0);
-      putString("one", "apple");
-      assertEventuallyMapSize(1);
-      map.clear();
-      assertEventuallyMapSize(0);
+   public void testClear() throws InterruptedException, ExecutionException, TimeoutException {
+      String bucketName = getBucketName();
+      try {
+         BaseS3Map<T> map = createMap(context, bucketName);
+         assertEventuallyMapSize(map, 0);
+         putString(map, "one", "apple");
+         assertEventuallyMapSize(map, 1);
+         map.clear();
+         assertEventuallyMapSize(map, 0);
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
    @Test(groups = { "integration", "live" })
-   public abstract void testRemove() throws IOException, InterruptedException;
+   public abstract void testRemove() throws IOException, InterruptedException, ExecutionException,
+            TimeoutException;
 
    @Test(groups = { "integration", "live" })
-   public void testKeySet() throws InterruptedException {
-      assertEventuallyKeySize(0);
-      putString("one", "two");
-      assertEventuallyKeySize(1);
-      assertEventuallyKeySetEquals(ImmutableSet.of("one"));
+   public void testKeySet() throws InterruptedException, ExecutionException, TimeoutException {
+      String bucketName = getBucketName();
+      try {
+         BaseS3Map<T> map = createMap(context, bucketName);
+         assertEventuallyKeySize(map, 0);
+         putString(map, "one", "two");
+         assertEventuallyKeySize(map, 1);
+         assertEventuallyKeySetEquals(map, ImmutableSet.of("one"));
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
-   protected void assertEventuallyKeySetEquals(final Object toEqual) throws InterruptedException {
+   protected void assertEventuallyKeySetEquals(final BaseS3Map<T> map, final Object toEqual)
+            throws InterruptedException {
       assertEventually(new Runnable() {
          public void run() {
             assertEquals(map.keySet(), toEqual);
@@ -122,7 +135,8 @@ public abstract class BaseS3MapIntegrationTest<T> extends S3IntegrationTest {
       });
    }
 
-   protected void assertEventuallyKeySize(final int size) throws InterruptedException {
+   protected void assertEventuallyKeySize(final BaseS3Map<T> map, final int size)
+            throws InterruptedException {
       assertEventually(new Runnable() {
          public void run() {
             assertEquals(map.keySet().size(), size);
@@ -131,17 +145,24 @@ public abstract class BaseS3MapIntegrationTest<T> extends S3IntegrationTest {
    }
 
    @Test(groups = { "integration", "live" })
-   public void testContainsKey() throws InterruptedException {
-      assertEventuallyDoesntContainKey();
-      putString("one", "apple");
-      assertEventuallyContainsKey();
+   public void testContainsKey() throws InterruptedException, ExecutionException, TimeoutException {
+      String bucketName = getBucketName();
+      try {
+         BaseS3Map<T> map = createMap(context, bucketName);
+         assertEventuallyDoesntContainKey(map);
+         putString(map, "one", "apple");
+         assertEventuallyContainsKey(map);
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
    /**
     * containsValue() uses md5 comparison to bucket contents, so this can be subject to eventual
     * consistency problems.
     */
-   protected void assertEventuallyContainsValue(final Object value) throws InterruptedException {
+   protected void assertEventuallyContainsValue(final BaseS3Map<T> map, final Object value)
+            throws InterruptedException {
       assertEventually(new Runnable() {
          public void run() {
             assert map.containsValue(value);
@@ -149,7 +170,7 @@ public abstract class BaseS3MapIntegrationTest<T> extends S3IntegrationTest {
       });
    }
 
-   protected void assertEventuallyContainsKey() throws InterruptedException {
+   protected void assertEventuallyContainsKey(final BaseS3Map<T> map) throws InterruptedException {
       assertEventually(new Runnable() {
          public void run() {
             assert map.containsKey("one");
@@ -157,7 +178,8 @@ public abstract class BaseS3MapIntegrationTest<T> extends S3IntegrationTest {
       });
    }
 
-   protected void assertEventuallyDoesntContainKey() throws InterruptedException {
+   protected void assertEventuallyDoesntContainKey(final BaseS3Map<T> map)
+            throws InterruptedException {
       assertEventually(new Runnable() {
          public void run() {
             assert !map.containsKey("one");
@@ -166,13 +188,19 @@ public abstract class BaseS3MapIntegrationTest<T> extends S3IntegrationTest {
    }
 
    @Test(groups = { "integration", "live" })
-   public void testIsEmpty() throws InterruptedException {
-      assertEventuallyEmpty();
-      putString("one", "apple");
-      assertEventuallyNotEmpty();
+   public void testIsEmpty() throws InterruptedException, ExecutionException, TimeoutException {
+      String bucketName = getBucketName();
+      try {
+         BaseS3Map<T> map = createMap(context, bucketName);
+         assertEventuallyEmpty(map);
+         putString(map, "one", "apple");
+         assertEventuallyNotEmpty(map);
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
-   protected void assertEventuallyNotEmpty() throws InterruptedException {
+   protected void assertEventuallyNotEmpty(final BaseS3Map<T> map) throws InterruptedException {
       assertEventually(new Runnable() {
          public void run() {
             assert !map.isEmpty();
@@ -180,7 +208,7 @@ public abstract class BaseS3MapIntegrationTest<T> extends S3IntegrationTest {
       });
    }
 
-   protected void assertEventuallyEmpty() throws InterruptedException {
+   protected void assertEventuallyEmpty(final BaseS3Map<T> map) throws InterruptedException {
       assertEventually(new Runnable() {
          public void run() {
             assert map.isEmpty();
@@ -188,16 +216,19 @@ public abstract class BaseS3MapIntegrationTest<T> extends S3IntegrationTest {
       });
    }
 
-   abstract protected void putString(String key, String value);
+   abstract protected void putString(BaseS3Map<T> map, String key, String value)
+            throws InterruptedException, ExecutionException, TimeoutException;
 
-   protected void fourLeftRemovingOne() throws InterruptedException {
+   protected void fourLeftRemovingOne(BaseS3Map<T> map) throws InterruptedException,
+            ExecutionException, TimeoutException {
       map.remove("one");
-      assertEventuallyMapSize(4);
-      assertEventuallyKeySetEquals(new TreeSet<String>(ImmutableSet.of("two", "three", "four",
+      assertEventuallyMapSize(map, 4);
+      assertEventuallyKeySetEquals(map, new TreeSet<String>(ImmutableSet.of("two", "three", "four",
                "five")));
    }
 
-   protected void assertEventuallyMapSize(final int size) throws InterruptedException {
+   protected void assertEventuallyMapSize(final BaseS3Map<T> map, final int size)
+            throws InterruptedException {
       assertEventually(new Runnable() {
          public void run() {
             assertEquals(map.size(), size);
@@ -206,14 +237,22 @@ public abstract class BaseS3MapIntegrationTest<T> extends S3IntegrationTest {
    }
 
    @Test(groups = { "integration", "live" })
-   public abstract void testPut() throws IOException, InterruptedException;
+   public abstract void testPut() throws IOException, InterruptedException, ExecutionException,
+            TimeoutException;
 
    @Test(groups = { "integration", "live" })
-   public void testGetBucket() throws InterruptedException {
-      assertEventuallyBucketNameCorrect();
+   public void testGetBucket() throws InterruptedException, ExecutionException, TimeoutException {
+      String bucketName = getBucketName();
+      try {
+         BaseS3Map<T> map = createMap(context, bucketName);
+         assertEventuallyBucketNameCorrect(map, bucketName);
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
-   protected void assertEventuallyBucketNameCorrect() throws InterruptedException {
+   protected void assertEventuallyBucketNameCorrect(final BaseS3Map<T> map, final String bucketName)
+            throws InterruptedException {
       assertEventually(new Runnable() {
          public void run() {
             assertEquals(map.getBucket().getName(), bucketName);

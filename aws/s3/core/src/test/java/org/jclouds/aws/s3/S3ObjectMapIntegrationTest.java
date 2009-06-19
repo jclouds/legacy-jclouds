@@ -33,6 +33,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Map.Entry;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.s3.domain.S3Object;
@@ -47,117 +49,158 @@ import org.testng.annotations.Test;
  */
 @Test(testName = "s3.S3ObjectMapIntegrationTest")
 public class S3ObjectMapIntegrationTest extends BaseS3MapIntegrationTest<S3Object> {
-   S3ObjectMap map = null;
 
    @SuppressWarnings("unchecked")
    protected BaseS3Map<S3Object> createMap(S3Context context, String bucket) {
-      map = context.createS3ObjectMap(bucket);
+      S3ObjectMap map = context.createS3ObjectMap(bucket);
       return (BaseS3Map<S3Object>) map;
    }
 
    @Override
    @Test(groups = { "integration", "live" })
-   public void testValues() throws IOException, InterruptedException {
-      putFiveStrings();
-      Collection<S3Object> values = map.values();
-      assertEventuallyMapSize(5);
-      Set<String> valuesAsString = new HashSet<String>();
-      for (S3Object object : values) {
-         valuesAsString.add(S3Utils.getContentAsStringAndClose(object));
+   public void testValues() throws IOException, InterruptedException, ExecutionException,
+            TimeoutException {
+      String bucketName = getBucketName();
+      try {
+         BaseS3Map<S3Object> map = createMap(context, bucketName);
+
+         putFiveStrings(map);
+         Collection<S3Object> values = map.values();
+         assertEventuallyMapSize(map, 5);
+         Set<String> valuesAsString = new HashSet<String>();
+         for (S3Object object : values) {
+            valuesAsString.add(S3Utils.getContentAsStringAndClose(object));
+         }
+         valuesAsString.removeAll(fiveStrings.values());
+         assert valuesAsString.size() == 0;
+      } finally {
+         returnBucket(bucketName);
       }
-      valuesAsString.removeAll(fiveStrings.values());
-      assert valuesAsString.size() == 0;
    }
 
    @Test(groups = { "integration", "live" })
-   public void testRemove() throws IOException, InterruptedException {
-      putString("one", "two");
-      S3Object old = map.remove("one");
-      assertEquals(S3Utils.getContentAsStringAndClose(old), "two");
-      old = map.remove("one");
-      assert old == S3Object.NOT_FOUND;
-      old = map.get("one");
-      assert old == S3Object.NOT_FOUND;
-      assertEventuallyKeySize(0);
+   public void testRemove() throws IOException, InterruptedException, ExecutionException,
+            TimeoutException {
+      String bucketName = getBucketName();
+      try {
+         BaseS3Map<S3Object> map = createMap(context, bucketName);
+         putString(map, "one", "two");
+         S3Object old = map.remove("one");
+         assertEquals(S3Utils.getContentAsStringAndClose(old), "two");
+         old = map.remove("one");
+         assert old == S3Object.NOT_FOUND;
+         old = map.get("one");
+         assert old == S3Object.NOT_FOUND;
+         assertEventuallyKeySize(map, 0);
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
    @Override
    @Test(groups = { "integration", "live" })
-   public void testEntrySet() throws IOException, InterruptedException {
-      putFiveStrings();
-      Set<Entry<String, S3Object>> entries = map.entrySet();
-      assertEquals(entries.size(), 5);
-      for (Entry<String, S3Object> entry : entries) {
-         assertEquals(S3Utils.getContentAsStringAndClose(entry.getValue()), fiveStrings.get(entry
-                  .getKey()));
-         S3Object value = entry.getValue();
-         value.setData("");
-         value.generateMd5();
-         entry.setValue(value);
-      }
-      assertEventuallyMapSize(5);
-      for (S3Object value : map.values()) {
-         assertEquals(S3Utils.getContentAsStringAndClose(value), "");
+   public void testEntrySet() throws IOException, InterruptedException, ExecutionException,
+            TimeoutException {
+      String bucketName = getBucketName();
+      try {
+         BaseS3Map<S3Object> map = createMap(context, bucketName);
+         putFiveStrings(map);
+         Set<Entry<String, S3Object>> entries = map.entrySet();
+         assertEquals(entries.size(), 5);
+         for (Entry<String, S3Object> entry : entries) {
+            assertEquals(S3Utils.getContentAsStringAndClose(entry.getValue()), fiveStrings
+                     .get(entry.getKey()));
+            S3Object value = entry.getValue();
+            value.setData("");
+            value.generateMd5();
+            entry.setValue(value);
+         }
+         assertEventuallyMapSize(map, 5);
+         for (S3Object value : map.values()) {
+            assertEquals(S3Utils.getContentAsStringAndClose(value), "");
+         }
+      } finally {
+         returnBucket(bucketName);
       }
    }
 
    @Test(groups = { "integration", "live" })
-   public void testContains() throws InterruptedException {
-      putString("one", "apple");
-      S3Object object = new S3Object("one");
-      object.setData("apple");
-      assertEventuallyContainsValue(object);
+   public void testContains() throws InterruptedException, ExecutionException, TimeoutException {
+      String bucketName = getBucketName();
+      try {
+         BaseS3Map<S3Object> map = createMap(context, bucketName);
+         putString(map, "one", "apple");
+         S3Object object = new S3Object("one");
+         object.setData("apple");
+         assertEventuallyContainsValue(map, object);
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
-   void getOneReturnsAppleAndOldValueIsNull(S3Object old) throws IOException, InterruptedException {
+   void getOneReturnsAppleAndOldValueIsNull(BaseS3Map<S3Object> map, S3Object old)
+            throws IOException, InterruptedException {
       assert old == S3Object.NOT_FOUND;
       assertEquals(S3Utils.getContentAsStringAndClose(map.get("one")), "apple");
-      assertEventuallyMapSize(1);
+      assertEventuallyMapSize(map, 1);
    }
 
-   void getOneReturnsBearAndOldValueIsApple(S3Object oldValue) throws IOException,
-            InterruptedException {
+   void getOneReturnsBearAndOldValueIsApple(BaseS3Map<S3Object> map, S3Object oldValue)
+            throws IOException, InterruptedException {
       assertEquals(S3Utils.getContentAsStringAndClose(map.get("one")), "bear");
       assertEquals(S3Utils.getContentAsStringAndClose(oldValue), "apple");
-      assertEventuallyMapSize(1);
+      assertEventuallyMapSize(map, 1);
    }
 
    @Test(groups = { "integration", "live" })
-   public void testPut() throws IOException, InterruptedException {
-      S3Object object = new S3Object("one");
-      object.setData(IOUtils.toInputStream("apple"));
-      object.generateMd5();
-      S3Object old = map.put(object.getKey(), object);
-      getOneReturnsAppleAndOldValueIsNull(old);
-      object.setData(IOUtils.toInputStream("bear"));
-      object.generateMd5();
-      S3Object apple = map.put(object.getKey(), object);
-      getOneReturnsBearAndOldValueIsApple(apple);
-   }
-
-   @Test(groups = { "integration", "live" })
-   public void testPutAll() throws InterruptedException {
-      Map<String, S3Object> newMap = new HashMap<String, S3Object>();
-      for (String key : fiveInputs.keySet()) {
-         S3Object object = new S3Object(key);
-         object.setData(fiveInputs.get(key));
-         object.getMetadata().setSize(fiveBytes.get(key).length);
-         newMap.put(key, object);
+   public void testPut() throws IOException, InterruptedException, ExecutionException,
+            TimeoutException {
+      String bucketName = getBucketName();
+      try {
+         BaseS3Map<S3Object> map = createMap(context, bucketName);
+         S3Object object = new S3Object("one");
+         object.setData(IOUtils.toInputStream("apple"));
+         object.generateMd5();
+         S3Object old = map.put(object.getKey(), object);
+         getOneReturnsAppleAndOldValueIsNull(map, old);
+         object.setData(IOUtils.toInputStream("bear"));
+         object.generateMd5();
+         S3Object apple = map.put(object.getKey(), object);
+         getOneReturnsBearAndOldValueIsApple(map, apple);
+      } finally {
+         returnBucket(bucketName);
       }
-      map.putAll(newMap);
-      assertEventuallyMapSize(5);
-      assertEventuallyKeySetEquals(new TreeSet<String>(fiveInputs.keySet()));
-      fourLeftRemovingOne();
+   }
+
+   @Test(groups = { "integration", "live" })
+   public void testPutAll() throws InterruptedException, ExecutionException, TimeoutException {
+      String bucketName = getBucketName();
+      try {
+         BaseS3Map<S3Object> map = createMap(context, bucketName);
+         Map<String, S3Object> newMap = new HashMap<String, S3Object>();
+         for (String key : fiveInputs.keySet()) {
+            S3Object object = new S3Object(key);
+            object.setData(fiveInputs.get(key));
+            object.getMetadata().setSize(fiveBytes.get(key).length);
+            newMap.put(key, object);
+         }
+         map.putAll(newMap);
+         assertEventuallyMapSize(map, 5);
+         assertEventuallyKeySetEquals(map, new TreeSet<String>(fiveInputs.keySet()));
+         fourLeftRemovingOne(map);
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
    @Override
-   protected void putString(String key, String value) {
+   protected void putString(BaseS3Map<S3Object> map, String key, String value) {
       S3Object object = new S3Object(key);
       object.setData(value);
       map.put(key, object);
    }
 
-   protected void putFiveStrings() {
+   protected void putFiveStrings(BaseS3Map<S3Object> map) {
       Map<String, S3Object> newMap = new HashMap<String, S3Object>();
       for (Map.Entry<String, String> entry : fiveStrings.entrySet()) {
          S3Object object = new S3Object(entry.getKey());

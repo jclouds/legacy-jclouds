@@ -23,47 +23,43 @@
  */
 package org.jclouds.aws.s3.commands;
 
-import org.jclouds.aws.s3.S3IntegrationTest;
-import static org.jclouds.aws.s3.commands.options.PutBucketOptions.Builder.withBucketAcl;
 import static org.jclouds.aws.s3.commands.options.PutObjectOptions.Builder.withAcl;
+
+import java.net.URL;
+import java.util.concurrent.TimeUnit;
+
+import org.jclouds.aws.s3.S3IntegrationTest;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.acl.CannedAccessPolicy;
 import org.jclouds.aws.s3.util.S3Utils;
 import org.testng.annotations.Test;
 
-import java.net.URL;
-import java.util.concurrent.TimeUnit;
-
-
 /**
  * Tests integrated functionality of all PutObject commands.
  * <p/>
- * Each test uses a different bucket name, so it should be perfectly fine to run
- * in parallel.
- *
+ * Each test uses a different bucket name, so it should be perfectly fine to run in parallel.
+ * 
  * @author Adrian Cole
  */
 @Test(testName = "s3.PutObjectLiveTest")
 public class PutObjectLiveTest extends S3IntegrationTest {
 
+   @Test(groups = { "live" })
+   void testCannedAccessPolicyPublic() throws Exception {
+      String bucketName = getBucketName();
+      try {
+         String key = "hello";
 
-    @Test(groups = {"live"})
-    void testCannedAccessPolicyPublic() throws Exception {
-        String bucketName = bucketPrefix + "tcapp";
-        createBucketAndEnsureEmpty(bucketName);
-        String key = "hello";
+         client.putObject(bucketName, new S3Object(key, TEST_STRING),
 
-        client.putBucketIfNotExists(bucketName,
-                withBucketAcl(CannedAccessPolicy.PUBLIC_READ)).get(10,
-                TimeUnit.SECONDS);
-        client.putObject(bucketName, new S3Object(key, TEST_STRING),
+         withAcl(CannedAccessPolicy.PUBLIC_READ)).get(10, TimeUnit.SECONDS);
 
-                withAcl(CannedAccessPolicy.PUBLIC_READ)).get(10, TimeUnit.SECONDS);
+         URL url = new URL(String.format("http://%1$s.s3.amazonaws.com/%2$s", bucketName, key));
+         S3Utils.toStringAndClose(url.openStream());
+      } finally {
+         returnBucket(bucketName);
+      }
 
-        URL url = new URL(String.format("http://%1$s.s3.amazonaws.com/%2$s",
-                bucketName, key));
-        S3Utils.toStringAndClose(url.openStream());
-
-    }
+   }
 
 }

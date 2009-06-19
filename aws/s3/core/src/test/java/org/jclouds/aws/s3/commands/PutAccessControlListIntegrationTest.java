@@ -51,60 +51,73 @@ public class PutAccessControlListIntegrationTest extends S3IntegrationTest {
    @Test
    void testUpdateBucketACL() throws InterruptedException, ExecutionException, TimeoutException,
             IOException, Exception {
-      // Confirm the bucket is private
-      AccessControlList acl = client.getBucketACL(bucketName).get(10, TimeUnit.SECONDS);
-      String ownerId = acl.getOwner().getId();
-      assertEquals(acl.getGrants().size(), 1);
-      assertTrue(acl.hasPermission(ownerId, Permission.FULL_CONTROL));
+      String bucketName = getScratchBucketName();
+      try {
+         // Confirm the bucket is private
+         AccessControlList acl = client.getBucketACL(bucketName).get(10, TimeUnit.SECONDS);
+         String ownerId = acl.getOwner().getId();
+         assertEquals(acl.getGrants().size(), 1);
+         assertTrue(acl.hasPermission(ownerId, Permission.FULL_CONTROL));
 
-      addGrantsToACL(acl);
-      assertEquals(acl.getGrants().size(), 4);
-      assertTrue(client.putBucketACL(bucketName, acl).get(10, TimeUnit.SECONDS));
+         addGrantsToACL(acl);
+         assertEquals(acl.getGrants().size(), 4);
+         assertTrue(client.putBucketACL(bucketName, acl).get(10, TimeUnit.SECONDS));
 
-      // Confirm that the updated ACL has stuck.
-      acl = client.getBucketACL(bucketName).get(10, TimeUnit.SECONDS);
-      checkGrants(acl);
+         // Confirm that the updated ACL has stuck.
+         acl = client.getBucketACL(bucketName).get(10, TimeUnit.SECONDS);
+         checkGrants(acl);
+      } finally {
+         returnScratchBucket(bucketName);
+      }
+
    }
 
    @Test
    void testUpdateObjectACL() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
-      String objectKey = "pr“vate-acl";
+      String bucketName = getBucketName();
+      try {
+         String objectKey = "pr“vate-acl";
 
-      // Private object
-      addObjectToBucket(bucketName, objectKey);
-      AccessControlList acl = client.getObjectACL(bucketName, objectKey).get(10, TimeUnit.SECONDS);
-      String ownerId = acl.getOwner().getId();
+         // Private object
+         addObjectToBucket(bucketName, objectKey);
+         AccessControlList acl = client.getObjectACL(bucketName, objectKey).get(10,
+                  TimeUnit.SECONDS);
+         String ownerId = acl.getOwner().getId();
 
-      assertEquals(acl.getGrants().size(), 1);
-      assertTrue(acl.hasPermission(ownerId, Permission.FULL_CONTROL));
+         assertEquals(acl.getGrants().size(), 1);
+         assertTrue(acl.hasPermission(ownerId, Permission.FULL_CONTROL));
 
-      addGrantsToACL(acl);
-      assertEquals(acl.getGrants().size(), 4);
-      assertTrue(client.putObjectACL(bucketName, objectKey, acl).get(10, TimeUnit.SECONDS));
+         addGrantsToACL(acl);
+         assertEquals(acl.getGrants().size(), 4);
+         assertTrue(client.putObjectACL(bucketName, objectKey, acl).get(10, TimeUnit.SECONDS));
 
-      // Confirm that the updated ACL has stuck.
-      acl = client.getObjectACL(bucketName, objectKey).get(10, TimeUnit.SECONDS);
-      checkGrants(acl);
+         // Confirm that the updated ACL has stuck.
+         acl = client.getObjectACL(bucketName, objectKey).get(10, TimeUnit.SECONDS);
+         checkGrants(acl);
 
-      /*
-       * Revoke all of owner's permissions!
-       */
-      acl.revokeAllPermissions(new CanonicalUserGrantee(ownerId));
-      if (!ownerId.equals(TEST_ACL_ID))
-         acl.revokeAllPermissions(new CanonicalUserGrantee(TEST_ACL_ID));
-      assertEquals(acl.getGrants().size(), 1);
-      // Only public read permission should remain...
-      assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ));
+         /*
+          * Revoke all of owner's permissions!
+          */
+         acl.revokeAllPermissions(new CanonicalUserGrantee(ownerId));
+         if (!ownerId.equals(TEST_ACL_ID))
+            acl.revokeAllPermissions(new CanonicalUserGrantee(TEST_ACL_ID));
+         assertEquals(acl.getGrants().size(), 1);
+         // Only public read permission should remain...
+         assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ));
 
-      // Update the object's ACL settings
-      assertTrue(client.putObjectACL(bucketName, objectKey, acl).get(10, TimeUnit.SECONDS));
+         // Update the object's ACL settings
+         assertTrue(client.putObjectACL(bucketName, objectKey, acl).get(10, TimeUnit.SECONDS));
 
-      // Confirm that the updated ACL has stuck
-      acl = client.getObjectACL(bucketName, objectKey).get(10, TimeUnit.SECONDS);
-      assertEquals(acl.getGrants().size(), 1);
-      assertEquals(acl.getPermissions(ownerId).size(), 0);
-      assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ), acl.toString());
+         // Confirm that the updated ACL has stuck
+         acl = client.getObjectACL(bucketName, objectKey).get(10, TimeUnit.SECONDS);
+         assertEquals(acl.getGrants().size(), 1);
+         assertEquals(acl.getPermissions(ownerId).size(), 0);
+         assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ), acl.toString());
+      } finally {
+         returnBucket(bucketName);
+      }
+
    }
 
    private void checkGrants(AccessControlList acl) {

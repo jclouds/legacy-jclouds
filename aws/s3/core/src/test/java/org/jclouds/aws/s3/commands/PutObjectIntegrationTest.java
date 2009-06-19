@@ -61,27 +61,27 @@ public class PutObjectIntegrationTest extends S3IntegrationTest {
 
    @Test(dataProvider = "putTests", groups = { "integration", "live" })
    void testPutObject(String key, String type, Object content, Object realObject) throws Exception {
-      String bucketName = bucketPrefix + "tpo";
-      client.putBucketIfNotExists(bucketName).get(10, TimeUnit.SECONDS);
-      context.createS3ObjectMap(bucketName).clear();
-      assertEquals(client.listBucket(bucketName).get(10, TimeUnit.SECONDS).getContents().size(), 0);
       S3Object object = new S3Object(key);
       object.getMetadata().setContentType(type);
       object.setData(content);
       if (content instanceof InputStream) {
          object.generateMd5();
       }
-      assertNotNull(client.putObject(bucketName, object).get(10, TimeUnit.SECONDS));
-      object = client.getObject(bucketName, object.getKey()).get(10, TimeUnit.SECONDS);
-      String returnedString = S3Utils.getContentAsStringAndClose(object);
-      assertEquals(returnedString, realObject);
-      assertEquals(client.listBucket(bucketName).get(10, TimeUnit.SECONDS).getContents().size(), 1);
+      String bucketName = getBucketName();
+      try {
+         assertNotNull(client.putObject(bucketName, object).get(10, TimeUnit.SECONDS));
+         object = client.getObject(bucketName, object.getKey()).get(10, TimeUnit.SECONDS);
+         String returnedString = S3Utils.getContentAsStringAndClose(object);
+         assertEquals(returnedString, realObject);
+         assertEquals(client.listBucket(bucketName).get(10, TimeUnit.SECONDS).getContents().size(),
+                  1);
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
    @Test(groups = { "integration", "live" })
    void testMetadata() throws Exception {
-      String bucketName = bucketPrefix + "tmd";
-      createBucketAndEnsureEmpty(bucketName);
       String key = "hello";
 
       S3Object object = new S3Object(key, TEST_STRING);
@@ -93,19 +93,23 @@ public class PutObjectIntegrationTest extends S3IntegrationTest {
       object.getMetadata().getUserMetadata().put(S3Headers.USER_METADATA_PREFIX + "adrian",
                "powderpuff");
       object.getMetadata().setMd5(S3Utils.md5(TEST_STRING.getBytes()));
+      String bucketName = getBucketName();
+      try {
+         addObjectToBucket(bucketName, object);
+         S3Object newObject = validateContent(bucketName, key);
 
-      addObjectToBucket(bucketName, object);
-      S3Object newObject = validateContent(bucketName, key);
-
-      assertEquals(newObject.getMetadata().getContentType(), "text/plain");
-      assertEquals(newObject.getMetadata().getContentEncoding(), "x-compress");
-      assertEquals(newObject.getMetadata().getContentDisposition(),
-               "attachment; filename=hello.txt");
-      assertEquals(newObject.getMetadata().getCacheControl(), "no-cache");
-      assertEquals(newObject.getMetadata().getSize(), TEST_STRING.length());
-      assertEquals(newObject.getMetadata().getUserMetadata().values().iterator().next(),
-               "powderpuff");
-      assertEquals(newObject.getMetadata().getMd5(), S3Utils.md5(TEST_STRING.getBytes()));
+         assertEquals(newObject.getMetadata().getContentType(), "text/plain");
+         assertEquals(newObject.getMetadata().getContentEncoding(), "x-compress");
+         assertEquals(newObject.getMetadata().getContentDisposition(),
+                  "attachment; filename=hello.txt");
+         assertEquals(newObject.getMetadata().getCacheControl(), "no-cache");
+         assertEquals(newObject.getMetadata().getSize(), TEST_STRING.length());
+         assertEquals(newObject.getMetadata().getUserMetadata().values().iterator().next(),
+                  "powderpuff");
+         assertEquals(newObject.getMetadata().getMd5(), S3Utils.md5(TEST_STRING.getBytes()));
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
 }

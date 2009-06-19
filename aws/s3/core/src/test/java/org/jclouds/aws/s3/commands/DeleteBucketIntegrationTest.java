@@ -31,32 +31,40 @@ import java.util.concurrent.TimeUnit;
 /**
  * Tests integrated functionality of all deleteBucket commands.
  * <p/>
- * Each test uses a different bucket name, so it should be perfectly fine to run
- * in parallel.
- *
+ * Each test uses a different bucket name, so it should be perfectly fine to run in parallel.
+ * 
  * @author Adrian Cole
  */
-@Test(groups = {"integration", "live"}, testName = "s3.DeleteBucketIntegrationTest")
+@Test(groups = { "integration", "live" }, testName = "s3.DeleteBucketIntegrationTest")
 public class DeleteBucketIntegrationTest extends S3IntegrationTest {
 
-    @Test
-    /**
-     * this method overrides bucketName to ensure it isn't found
-     */
-    void deleteBucketIfEmptyNotFound() throws Exception {
-        String bucketName = bucketPrefix + "dbienf";
-        assert client.deleteBucketIfEmpty(bucketName).get(10, TimeUnit.SECONDS);
-    }
+   /**
+    * this method overrides bucketName to ensure it isn't found
+    */
+   @Test
+   void deleteBucketIfEmptyNotFound() throws Exception {
+      assert client.deleteBucketIfEmpty("dbienf").get(10, TimeUnit.SECONDS);
+   }
 
-    @Test()
-    void deleteBucketIfEmptyButHasContents() throws Exception {
-        addObjectToBucket(bucketName, "test");
-        assert !client.deleteBucketIfEmpty(bucketName).get(10, TimeUnit.SECONDS);
-    }
+   @Test
+   void deleteBucketIfEmptyButHasContents() throws Exception {
+      String bucketName = getBucketName();
+      try {
+         addObjectToBucket(bucketName, "test");
+         assert !client.deleteBucketIfEmpty(bucketName).get(10, TimeUnit.SECONDS);
+      } finally {
+         returnBucket(bucketName);
+      }
+   }
 
-    @Test()
-    void deleteBucketIfEmpty() throws Exception {
-        assert client.deleteBucketIfEmpty(bucketName).get(10, TimeUnit.SECONDS);
-        assert !client.bucketExists(bucketName).get(10, TimeUnit.SECONDS);
-    }
+   @Test
+   void deleteBucketIfEmpty() throws Exception {
+      String bucketName = getBucketName();
+      try {
+         assert client.deleteBucketIfEmpty(bucketName).get(10, TimeUnit.SECONDS);
+         assert !client.bucketExists(bucketName).get(10, TimeUnit.SECONDS);
+      } finally {
+         returnBucket(bucketName);
+      }
+   }
 }

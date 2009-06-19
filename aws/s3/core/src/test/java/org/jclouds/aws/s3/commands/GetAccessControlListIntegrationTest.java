@@ -23,6 +23,10 @@
  */
 package org.jclouds.aws.s3.commands;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -37,88 +41,102 @@ import org.jclouds.aws.s3.domain.AccessControlList.Permission;
 import org.jclouds.aws.s3.domain.acl.CannedAccessPolicy;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.assertFalse;
-
 /**
  * Tests integrated functionality of all commands that retrieve Access Control Lists (ACLs).
- *
+ * 
  * @author James Murty
+ * @author Adrian Cole
  */
-@Test(groups = {"integration", "live"}, testName = "s3.GetAccessControlListIntegrationTest")
+@Test(groups = { "integration", "live" }, testName = "s3.GetAccessControlListIntegrationTest")
 public class GetAccessControlListIntegrationTest extends S3IntegrationTest {
 
    @Test
-   void testPrivateBucketACL() throws InterruptedException, ExecutionException, 
-         TimeoutException, IOException 
-   {
-      bucketName = bucketPrefix + ".testPrivateBucketACL".toLowerCase();
-         
-      createBucketAndEnsureEmpty(bucketName);
-      
-      AccessControlList acl = client.getBucketACL(bucketName).get(10, TimeUnit.SECONDS);
-      
-      assertEquals(acl.getGrants().size(), 1);
-      assertTrue(acl.getOwner() != null);
-      String ownerId = acl.getOwner().getId();
-      assertTrue(acl.hasPermission(ownerId, Permission.FULL_CONTROL));
+   void testPrivateAclIsDefaultForBucket() throws InterruptedException, ExecutionException,
+            TimeoutException, IOException {
+      String bucketName = getBucketName();
+      try {
+         AccessControlList acl = client.getBucketACL(bucketName).get(10, TimeUnit.SECONDS);
+         assertEquals(acl.getGrants().size(), 1);
+         assertTrue(acl.getOwner() != null);
+         String ownerId = acl.getOwner().getId();
+         assertTrue(acl.hasPermission(ownerId, Permission.FULL_CONTROL));
+      } finally {
+         returnBucket(bucketName);
+      }
+
    }
 
    @Test
-   void testObjectACL() throws InterruptedException, ExecutionException, 
-         TimeoutException, IOException 
-   {
-      bucketName = bucketPrefix + ".testObjectACL".toLowerCase();
-      createBucketAndEnsureEmpty(bucketName);
-
+   void testPrivateAclIsDefaultForObject() throws InterruptedException, ExecutionException,
+            TimeoutException, IOException {
       String privateObjectKey = "prìvate-acl";
-      String publicReadObjectKey = "püblic-read-acl";         
-      String publicReadWriteObjectKey = "püblic-read-write-acl";         
-      
-      // Private object
-      addObjectToBucket(bucketName, privateObjectKey);      
-      AccessControlList acl = client.getObjectACL(bucketName, privateObjectKey)
-         .get(10, TimeUnit.SECONDS);
-      
-      assertEquals(acl.getGrants().size(), 1);
-      assertTrue(acl.getOwner() != null);
-      String ownerId = acl.getOwner().getId();
-      assertTrue(acl.hasPermission(ownerId, Permission.FULL_CONTROL));
+      String bucketName = getBucketName();
+      try {
+         // Private object
+         addObjectToBucket(bucketName, privateObjectKey);
+         AccessControlList acl = client.getObjectACL(bucketName, privateObjectKey).get(10,
+                  TimeUnit.SECONDS);
 
-      // Public Read object
-      client.putObject(bucketName, new S3Object(publicReadObjectKey, ""), 
-            new PutObjectOptions().withAcl(CannedAccessPolicy.PUBLIC_READ));
-      
-      acl = client.getObjectACL(bucketName, publicReadObjectKey)
-         .get(10, TimeUnit.SECONDS);
-      
-      assertEquals(acl.getGrants().size(), 2);
-      assertEquals(acl.getPermissions(GroupGranteeURI.ALL_USERS).size(), 1);
-      assertTrue(acl.getOwner() != null);
-      ownerId = acl.getOwner().getId();
-      assertTrue(acl.hasPermission(ownerId, Permission.FULL_CONTROL));
-      assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ));
+         assertEquals(acl.getGrants().size(), 1);
+         assertTrue(acl.getOwner() != null);
+         String ownerId = acl.getOwner().getId();
+         assertTrue(acl.hasPermission(ownerId, Permission.FULL_CONTROL));
+      } finally {
+         returnBucket(bucketName);
+      }
 
-      // Public Read-Write object
-      client.putObject(bucketName, new S3Object(publicReadWriteObjectKey, ""), 
-            new PutObjectOptions().withAcl(CannedAccessPolicy.PUBLIC_READ_WRITE));
-      
-      acl = client.getObjectACL(bucketName, publicReadWriteObjectKey)
-         .get(10, TimeUnit.SECONDS);
-      
-      assertEquals(acl.getGrants().size(), 3);
-      assertEquals(acl.getPermissions(GroupGranteeURI.ALL_USERS).size(), 2);
-      assertTrue(acl.getOwner() != null);
-      ownerId = acl.getOwner().getId();
-      assertTrue(acl.hasPermission(ownerId, Permission.FULL_CONTROL));
-      assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ));
-      assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.WRITE));
-      assertFalse(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ_ACP));
-      assertFalse(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.WRITE_ACP));
-      assertFalse(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.FULL_CONTROL));
-
-      emptyBucket(bucketName);
    }
 
+   @Test
+   void testPublicReadOnObject() throws InterruptedException, ExecutionException, TimeoutException,
+            IOException {
+      String publicReadObjectKey = "püblic-read-acl";
+      String bucketName = getBucketName();
+      try {
+         client.putObject(bucketName, new S3Object(publicReadObjectKey, ""), new PutObjectOptions()
+                  .withAcl(CannedAccessPolicy.PUBLIC_READ));
+
+         AccessControlList acl = client.getObjectACL(bucketName, publicReadObjectKey).get(10,
+                  TimeUnit.SECONDS);
+
+         assertEquals(acl.getGrants().size(), 2);
+         assertEquals(acl.getPermissions(GroupGranteeURI.ALL_USERS).size(), 1);
+         assertTrue(acl.getOwner() != null);
+         String ownerId = acl.getOwner().getId();
+         assertTrue(acl.hasPermission(ownerId, Permission.FULL_CONTROL));
+         assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ));
+      } finally {
+         returnBucket(bucketName);
+      }
+
+   }
+
+   @Test
+   void testPublicWriteOnObject() throws InterruptedException, ExecutionException,
+            TimeoutException, IOException {
+      String publicReadWriteObjectKey = "püblic-read-write-acl";
+      String bucketName = getBucketName();
+      try {
+         // Public Read-Write object
+         client.putObject(bucketName, new S3Object(publicReadWriteObjectKey, ""),
+                  new PutObjectOptions().withAcl(CannedAccessPolicy.PUBLIC_READ_WRITE));
+
+         AccessControlList acl = client.getObjectACL(bucketName, publicReadWriteObjectKey).get(10,
+                  TimeUnit.SECONDS);
+
+         assertEquals(acl.getGrants().size(), 3);
+         assertEquals(acl.getPermissions(GroupGranteeURI.ALL_USERS).size(), 2);
+         assertTrue(acl.getOwner() != null);
+         String ownerId = acl.getOwner().getId();
+         assertTrue(acl.hasPermission(ownerId, Permission.FULL_CONTROL));
+         assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ));
+         assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.WRITE));
+         assertFalse(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ_ACP));
+         assertFalse(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.WRITE_ACP));
+         assertFalse(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.FULL_CONTROL));
+      } finally {
+         returnBucket(bucketName);
+      }
+
+   }
 }

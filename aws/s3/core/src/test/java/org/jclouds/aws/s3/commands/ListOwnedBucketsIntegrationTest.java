@@ -23,43 +23,40 @@
  */
 package org.jclouds.aws.s3.commands;
 
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.aws.s3.S3IntegrationTest;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.testng.annotations.Test;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 /**
  * Tests integrated functionality of all listOwnedBucket commands.
  * <p/>
- * Each test uses a different bucket name, so it should be perfectly fine to run
- * in parallel.
- *
+ * Each test uses a different bucket name, so it should be perfectly fine to run in parallel.
+ * 
  * @author Adrian Cole
  */
-@Test(groups = {"integration", "live"}, testName = "s3.ListOwnedBucketsIntegrationTest")
+@Test(groups = { "integration", "live" }, testName = "s3.ListOwnedBucketsIntegrationTest")
 public class ListOwnedBucketsIntegrationTest extends S3IntegrationTest {
 
-    @Test()
-    void bucketDoesntExist() throws Exception {
-        String bucketName = bucketPrefix + "shouldntexist";
-        List<S3Bucket.Metadata> list = client.listOwnedBuckets().get(10,
-                TimeUnit.SECONDS);
-        assert !list.contains(new S3Bucket(bucketName));
-    }
+   @Test()
+   void bucketDoesntExist() throws Exception {
+      List<S3Bucket.Metadata> list = client.listOwnedBuckets().get(10, TimeUnit.SECONDS);
+      assert !list.contains(new S3Bucket("shouldntexist"));
+   }
 
-    @Test()
-    void bucketExists() throws Exception {
-        String bucketName = bucketPrefix + "needstoexist";
-        assert client.putBucketIfNotExists(bucketName)
-                .get(10, TimeUnit.SECONDS);
-        List<S3Bucket.Metadata> list = client.listOwnedBuckets().get(10,
-                TimeUnit.SECONDS);
-        S3Bucket.Metadata firstBucket = list.get(0);
-        S3Bucket.Metadata toMatch = new S3Bucket.Metadata(bucketName);
-        toMatch.setOwner(firstBucket.getOwner());
-
-        assert list.contains(toMatch);
-    }
+   @Test()
+   void bucketExists() throws Exception {
+      String bucketName = getBucketName();
+      try {
+         List<S3Bucket.Metadata> list = client.listOwnedBuckets().get(10, TimeUnit.SECONDS);
+         S3Bucket.Metadata firstBucket = list.get(0);
+         S3Bucket.Metadata toMatch = new S3Bucket.Metadata(bucketName);
+         toMatch.setOwner(firstBucket.getOwner());
+         assert list.contains(toMatch);
+      } finally {
+         returnBucket(bucketName);
+      }
+   }
 }

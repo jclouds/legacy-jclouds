@@ -23,8 +23,6 @@
  */
 package org.jclouds.aws.s3;
 
-import static org.jclouds.aws.s3.commands.options.PutBucketOptions.Builder.createIn;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
@@ -38,7 +36,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.jclouds.aws.s3.domain.S3Bucket.Metadata.LocationConstraint;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -63,81 +60,119 @@ public abstract class BasePerformance extends S3IntegrationTest {
    protected ExecutorService exec;
 
    protected CompletionService<Boolean> completer;
-   protected String bucketNameEU;
 
    @BeforeTest
    protected void setUpCallables() throws InterruptedException, ExecutionException,
             TimeoutException {
       exec = Executors.newCachedThreadPool();
       completer = new ExecutorCompletionService<Boolean>(exec);
-      bucketNameEU = (bucketPrefix).toLowerCase() + ".eu";
    }
 
    @AfterTest
    protected void tearDownExecutor() throws Exception {
-      if (bucketNameEU != null)
-         deleteBucket(bucketNameEU);
       exec.shutdownNow();
       exec = null;
    }
 
    @Test(enabled = true)
    public void testPutBytesSerialEU() throws Exception {
-      client.putBucketIfNotExists(bucketNameEU, createIn(LocationConstraint.EU)).get(10,
-               TimeUnit.SECONDS);
-      doSerial(new PutBytesCallable(this.bucketNameEU), loopCount / 10);
+      String euBucketName = createScratchBucketInEU();
+      doSerial(new PutBytesCallable(euBucketName), loopCount / 10);
    }
 
    @Test(enabled = true)
    public void testPutBytesParallelEU() throws InterruptedException, ExecutionException,
             TimeoutException {
-      client.putBucketIfNotExists(bucketNameEU, createIn(LocationConstraint.EU)).get(10,
-               TimeUnit.SECONDS);
-      doParallel(new PutBytesCallable(this.bucketNameEU), loopCount);
+      String euBucketName = createScratchBucketInEU();
+      try {
+         doParallel(new PutBytesCallable(euBucketName), loopCount);
+      } finally {
+         returnBucket(euBucketName);
+      }
    }
 
    @Test(enabled = true)
    public void testPutBytesSerial() throws Exception {
-      doSerial(new PutBytesCallable(this.bucketName), loopCount / 10);
+      String bucketName = getBucketName();
+      try {
+         doSerial(new PutBytesCallable(bucketName), loopCount / 10);
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
    @Test(enabled = true)
    public void testPutBytesParallel() throws InterruptedException, ExecutionException,
             TimeoutException {
-      doParallel(new PutBytesCallable(this.bucketName), loopCount);
+      String bucketName = getBucketName();
+      try {
+         doParallel(new PutBytesCallable(bucketName), loopCount);
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
    @Test(enabled = true)
    public void testPutFileSerial() throws Exception {
-      doSerial(new PutFileCallable(this.bucketName), loopCount / 10);
+      String bucketName = getBucketName();
+      try {
+         doSerial(new PutFileCallable(bucketName), loopCount / 10);
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
    @Test(enabled = true)
    public void testPutFileParallel() throws InterruptedException, ExecutionException,
             TimeoutException {
-      doParallel(new PutFileCallable(this.bucketName), loopCount);
+      String bucketName = getBucketName();
+      try {
+         doParallel(new PutFileCallable(bucketName), loopCount);
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
    @Test(enabled = true)
    public void testPutInputStreamSerial() throws Exception {
-      doSerial(new PutInputStreamCallable(this.bucketName), loopCount / 10);
+      String bucketName = getBucketName();
+      try {
+         doSerial(new PutInputStreamCallable(bucketName), loopCount / 10);
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
    @Test(enabled = true)
    public void testPutInputStreamParallel() throws InterruptedException, ExecutionException,
             TimeoutException {
-      doParallel(new PutInputStreamCallable(this.bucketName), loopCount);
+      String bucketName = getBucketName();
+      try {
+         doParallel(new PutInputStreamCallable(bucketName), loopCount);
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
    @Test(enabled = true)
    public void testPutStringSerial() throws Exception {
-      doSerial(new PutStringCallable(this.bucketName), loopCount / 10);
+      String bucketName = getBucketName();
+      try {
+         doSerial(new PutStringCallable(bucketName), loopCount / 10);
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
    @Test(enabled = true)
    public void testPutStringParallel() throws InterruptedException, ExecutionException,
             TimeoutException {
-      doParallel(new PutStringCallable(this.bucketName), loopCount);
+      String bucketName = getBucketName();
+      try {
+         doParallel(new PutStringCallable(bucketName), loopCount);
+      } finally {
+         returnBucket(bucketName);
+      }
    }
 
    private void doSerial(Provider<Callable<Boolean>> provider, int loopCount) throws Exception,
