@@ -31,8 +31,10 @@ import java.util.concurrent.TimeoutException;
 import org.jclouds.http.commands.GetAndParseSax;
 import org.jclouds.http.commands.GetString;
 import org.jclouds.http.commands.Head;
+import org.jclouds.http.commands.Put;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
 
 /**
  * // TODO: Adrian: Document this!
@@ -42,77 +44,90 @@ import org.testng.annotations.Test;
 @Test(threadPoolSize = 10)
 public abstract class BaseHttpFutureCommandClientTest extends BaseJettyTest {
 
-    @Test(invocationCount = 50, timeOut = 3000)
-    public void testRequestFilter() throws MalformedURLException,
-	    ExecutionException, InterruptedException, TimeoutException {
-	GetString get = factory.createGetString("/");
-	get.getRequest().getHeaders().put("filterme", "filterme");
-	client.submit(get);
-	assert get.get(10, TimeUnit.SECONDS).trim().equals("test") : String
-		.format("expected: [%1$s], but got [%2$s]", "test", get.get(10,
-			TimeUnit.SECONDS));
-    }
+   @Test(invocationCount = 50, timeOut = 3000)
+   public void testRequestFilter() throws MalformedURLException, ExecutionException,
+            InterruptedException, TimeoutException {
+      GetString get = factory.createGetString("/");
+      get.getRequest().getHeaders().put("filterme", "filterme");
+      client.submit(get);
+      assertEquals(get.get(10, TimeUnit.SECONDS).trim(), "test");
+   }
 
-    @Test(invocationCount = 50, timeOut = 3000)
-    public void testGetStringWithHeader() throws MalformedURLException,
-	    ExecutionException, InterruptedException, TimeoutException {
-	GetString get = factory.createGetString("/");
-	get.getRequest().getHeaders().put("test", "test");
-	client.submit(get);
-	assert get.get(10, TimeUnit.SECONDS).trim().equals("test") : String
-		.format("expected: [%1$s], but got [%2$s]", "test", get.get(10,
-			TimeUnit.SECONDS));
-    }
+   @Test(invocationCount = 50, timeOut = 3000)
+   public void testGetStringWithHeader() throws MalformedURLException, ExecutionException,
+            InterruptedException, TimeoutException {
+      GetString get = factory.createGetString("/");
+      get.getRequest().getHeaders().put("test", "test");
+      client.submit(get);
+      assertEquals(get.get(10, TimeUnit.SECONDS).trim(), "test");
+   }
 
-    @Test(invocationCount = 50, timeOut = 3000)
-    public void testGetString() throws MalformedURLException,
-	    ExecutionException, InterruptedException, TimeoutException {
-	GetString get = factory.createGetString("/");
-	assert get != null;
-	client.submit(get);
-	assert get.get(10, TimeUnit.SECONDS).trim().equals(XML) : String
-		.format("expected: [%1$s], but got [%2$s]", XML, get.get(10,
-			TimeUnit.SECONDS));
-    }
+   @Test(invocationCount = 50, timeOut = 3000)
+   public void testGetString() throws MalformedURLException, ExecutionException,
+            InterruptedException, TimeoutException {
+      GetString get = factory.createGetString("/");
+      assert get != null;
+      client.submit(get);
+      assertEquals(get.get(10, TimeUnit.SECONDS).trim(), XML);
 
-    @Test(invocationCount = 50, timeOut = 3000)
-    public void testHead() throws MalformedURLException, ExecutionException,
-	    InterruptedException, TimeoutException {
-	Head head = factory.createHead("/");
-	assert head != null;
-	client.submit(head);
-	assert head.get(10, TimeUnit.SECONDS);
-    }
+   }
 
-    @Test(invocationCount = 50, timeOut = 3000)
-    public void testGetAndParseSax() throws MalformedURLException,
-	    ExecutionException, InterruptedException, TimeoutException {
-	GetAndParseSax<?> getAndParseSax = factory.createGetAndParseSax("/",
-		new ParseSax.HandlerWithResult<String>() {
-		    @Override
-		    public String getResult() {
-			return bar;
-		    }
+   @Test(invocationCount = 50, timeOut = 3000)
+   public void testGetStringRedirect() throws MalformedURLException, ExecutionException,
+            InterruptedException, TimeoutException {
+      GetString get = factory.createGetString("/redirect");
+      assert get != null;
+      client.submit(get);
+      assertEquals(get.get(10, TimeUnit.SECONDS).trim(), XML2);
+   }
 
-		    private String bar = null;
-		    private StringBuilder currentText = new StringBuilder();
+   @Test(invocationCount = 50, timeOut = 3000)
+   public void testPutRedirect() throws MalformedURLException, ExecutionException,
+            InterruptedException, TimeoutException {
+      Put put = factory.createPut("/redirect", "foo");
+      assert put != null;
+      client.submit(put);
+      assertEquals(put.get(10, TimeUnit.SECONDS), new Boolean(true));
+   }
 
-		    @Override
-		    public void endElement(String uri, String name, String qName) {
+   @Test(invocationCount = 50, timeOut = 3000)
+   public void testHead() throws MalformedURLException, ExecutionException, InterruptedException,
+            TimeoutException {
+      Head head = factory.createHead("/");
+      assert head != null;
+      client.submit(head);
+      assert head.get(10, TimeUnit.SECONDS);
+   }
 
-			if (qName.equals("bar")) {
-			    bar = currentText.toString();
-			}
-			currentText = new StringBuilder();
-		    }
+   @Test(invocationCount = 50, timeOut = 3000)
+   public void testGetAndParseSax() throws MalformedURLException, ExecutionException,
+            InterruptedException, TimeoutException {
+      GetAndParseSax<?> getAndParseSax = factory.createGetAndParseSax("/",
+               new ParseSax.HandlerWithResult<String>() {
+                  @Override
+                  public String getResult() {
+                     return bar;
+                  }
 
-		    @Override
-		    public void characters(char ch[], int start, int length) {
-			currentText.append(ch, start, length);
-		    }
-		});
-	assert getAndParseSax != null;
-	client.submit(getAndParseSax);
-	assert getAndParseSax.get(10, TimeUnit.SECONDS).equals("whoppers");
-    }
+                  private String bar = null;
+                  private StringBuilder currentText = new StringBuilder();
+
+                  @Override
+                  public void endElement(String uri, String name, String qName) {
+
+                     if (qName.equals("bar")) {
+                        bar = currentText.toString();
+                     }
+                     currentText = new StringBuilder();
+                  }
+
+                  @Override
+                  public void characters(char ch[], int start, int length) {
+                     currentText.append(ch, start, length);
+                  }
+               });
+      assert getAndParseSax != null;
+      client.submit(getAndParseSax);
+      assertEquals(getAndParseSax.get(10, TimeUnit.SECONDS), "whoppers");
+   }
 }

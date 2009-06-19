@@ -26,6 +26,7 @@ package org.jclouds.http.commands.config;
 import org.jclouds.http.commands.CommandFactory;
 import org.jclouds.http.commands.GetString;
 import org.jclouds.http.commands.Head;
+import org.jclouds.http.commands.Put;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 import org.jclouds.http.commands.callables.xml.config.SaxModule;
 
@@ -34,30 +35,26 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryProvider;
 
 /**
- * note that all this private factory clutter will go away when the following is
- * implemented @link http://code.google.com/p/google-guice/issues/detail?id=346
- * it will be replaced with a configuration:
+ * note that all this private factory clutter will go away when the following is implemented @link
+ * http://code.google.com/p/google-guice/issues/detail?id=346 it will be replaced with a
+ * configuration:
  * 
  * @author Adrian Cole
  */
 public class HttpCommandsModule extends AbstractModule {
-    protected void configure() {
-	bind(CommandFactory.GetStringFactory.class)
-		.toProvider(
-			FactoryProvider.newFactory(
-				CommandFactory.GetStringFactory.class,
-				GetString.class));
-	bind(CommandFactory.HeadFactory.class).toProvider(
-		FactoryProvider.newFactory(CommandFactory.HeadFactory.class,
-			Head.class));
+   protected void configure() {
+      bind(CommandFactory.GetStringFactory.class).toProvider(
+               FactoryProvider.newFactory(CommandFactory.GetStringFactory.class, GetString.class));
+      bind(CommandFactory.HeadFactory.class).toProvider(
+               FactoryProvider.newFactory(CommandFactory.HeadFactory.class, Head.class));
+      bind(CommandFactory.PutFactory.class).toProvider(
+               FactoryProvider.newFactory(CommandFactory.PutFactory.class, Put.class));
+      install(new SaxModule());
+      bind(CommandFactory.ParseSaxFactory.class).toProvider(
+               FactoryProvider.newFactory(new TypeLiteral<CommandFactory.ParseSaxFactory>() {
+               }, new TypeLiteral<ParseSax<?>>() {
+               }));
 
-	install(new SaxModule());
-	bind(CommandFactory.ParseSaxFactory.class).toProvider(
-		FactoryProvider.newFactory(
-			new TypeLiteral<CommandFactory.ParseSaxFactory>() {
-			}, new TypeLiteral<ParseSax<?>>() {
-			}));
-
-    }
+   }
 
 }

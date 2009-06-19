@@ -34,9 +34,9 @@ import org.jclouds.http.BaseHttpFutureCommandClientTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.inject.Module;
 import com.google.appengine.tools.development.ApiProxyLocalImpl;
 import com.google.apphosting.api.ApiProxy;
+import com.google.inject.Module;
 
 /**
  * 
@@ -45,97 +45,112 @@ import com.google.apphosting.api.ApiProxy;
  * @author Adrian Cole
  */
 @Test
-public class URLFetchServiceClientIntegrationTest extends
-	BaseHttpFutureCommandClientTest {
+public class URLFetchServiceClientIntegrationTest extends BaseHttpFutureCommandClientTest {
 
-    @BeforeMethod
-    void setupApiProxy() {
-	ApiProxy.setEnvironmentForCurrentThread(new TestEnvironment());
-	ApiProxy.setDelegate(new ApiProxyLocalImpl(new File(".")) {
-	});
-    }
+   @BeforeMethod
+   void setupApiProxy() {
+      ApiProxy.setEnvironmentForCurrentThread(new TestEnvironment());
+      ApiProxy.setDelegate(new ApiProxyLocalImpl(new File(".")) {
+      });
+   }
 
-    @Override
-    @Test(invocationCount = 50, timeOut = 1500)
-    public void testGetAndParseSax() throws MalformedURLException,
-	    ExecutionException, InterruptedException, TimeoutException {
-	setupApiProxy();
-	super.testGetAndParseSax();
-    }
+   @Override
+   @Test(invocationCount = 50, timeOut = 1500)
+   public void testGetAndParseSax() throws MalformedURLException, ExecutionException,
+            InterruptedException, TimeoutException {
+      setupApiProxy();
+      super.testGetAndParseSax();
+   }
 
-    @Override
-    @Test(invocationCount = 50, timeOut = 1500)
-    public void testGetString() throws MalformedURLException,
-	    ExecutionException, InterruptedException, TimeoutException {
-	setupApiProxy();
-	super.testGetString();
-    }
+   @Override
+   @Test(invocationCount = 50, timeOut = 1500)
+   public void testGetString() throws MalformedURLException, ExecutionException,
+            InterruptedException, TimeoutException {
+      setupApiProxy();
+      super.testGetString();
+   }
 
-    @Override
-    @Test(enabled = false)
-    public void testGetStringWithHeader() throws MalformedURLException,
-	    ExecutionException, InterruptedException, TimeoutException {
-	// GAE does not support sending headers in their test stub as of version
-	// 1.2.0
-    }
+   @Override
+   @Test(invocationCount = 50, timeOut = 1500)
+   public void testGetStringRedirect() throws MalformedURLException, ExecutionException,
+            InterruptedException, TimeoutException {
+      setupApiProxy();
+      super.testGetStringRedirect();
+   }
 
-    @Override
-    @Test(invocationCount = 50, timeOut = 1500)
-    public void testHead() throws MalformedURLException, ExecutionException,
-	    InterruptedException, TimeoutException {
-	setupApiProxy();
-	super.testHead();
-    }
+   @Override
+   @Test(enabled = false, invocationCount = 50, timeOut = 1500)
+   public void testPutRedirect() throws MalformedURLException, ExecutionException,
+            InterruptedException, TimeoutException {
+      setupApiProxy();
+      super.testPutRedirect();
+   }
 
-    @Test(enabled = false)
-    public void testRequestFilter() throws MalformedURLException,
-	    ExecutionException, InterruptedException, TimeoutException {
-	// GAE does not support sending headers in their test stub as of version
-	// 1.2.0
-    }
+   @Override
+   @Test(enabled = false)
+   public void testGetStringWithHeader() throws MalformedURLException, ExecutionException,
+            InterruptedException, TimeoutException {
+      // GAE does not support sending headers in their test stub as of version
+      // 1.2.0
+   }
 
-    class TestEnvironment implements ApiProxy.Environment {
-	public String getAppId() {
-	    return "Unit Tests";
-	}
+   @Override
+   @Test(invocationCount = 50, timeOut = 1500)
+   public void testHead() throws MalformedURLException, ExecutionException, InterruptedException,
+            TimeoutException {
+      setupApiProxy();
+      super.testHead();
+   }
 
-	public String getVersionId() {
-	    return "1.0";
-	}
+   @Test(enabled = false)
+   public void testRequestFilter() throws MalformedURLException, ExecutionException,
+            InterruptedException, TimeoutException {
+      // GAE does not support sending headers in their test stub as of version
+      // 1.2.0
+   }
 
-	public void setDefaultNamespace(String s) {
-	}
+   class TestEnvironment implements ApiProxy.Environment {
+      public String getAppId() {
+         return "Unit Tests";
+      }
 
-	public String getRequestNamespace() {
-	    return null;
-	}
+      public String getVersionId() {
+         return "1.0";
+      }
 
-	public String getDefaultNamespace() {
-	    return null;
-	}
+      public void setDefaultNamespace(String s) {
+      }
 
-	public String getAuthDomain() {
-	    return null;
-	}
+      public String getRequestNamespace() {
+         return null;
+      }
 
-	public boolean isLoggedIn() {
-	    return false;
-	}
+      public String getDefaultNamespace() {
+         return null;
+      }
 
-	public String getEmail() {
-	    return null;
-	}
+      public String getAuthDomain() {
+         return null;
+      }
 
-	public boolean isAdmin() {
-	    return false;
-	}
-    }
+      public boolean isLoggedIn() {
+         return false;
+      }
 
-    protected Module createClientModule() {
-	return new URLFetchServiceClientModule();
-    }
+      public String getEmail() {
+         return null;
+      }
 
-    @Override
-    protected void addConnectionProperties(Properties props) {
-    }
+      public boolean isAdmin() {
+         return false;
+      }
+   }
+
+   protected Module createClientModule() {
+      return new URLFetchServiceClientModule();
+   }
+
+   @Override
+   protected void addConnectionProperties(Properties props) {
+   }
 }

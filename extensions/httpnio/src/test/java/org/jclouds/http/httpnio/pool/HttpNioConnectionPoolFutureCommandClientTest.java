@@ -23,38 +23,48 @@
  */
 package org.jclouds.http.httpnio.pool;
 
-import com.google.inject.Module;
+import java.net.MalformedURLException;
+import java.util.Properties;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 import org.jclouds.command.pool.PoolConstants;
 import org.jclouds.http.BaseHttpFutureCommandClientTest;
 import org.jclouds.http.httpnio.config.HttpNioConnectionPoolClientModule;
 import org.testng.annotations.Test;
 
-import java.util.Properties;
+import com.google.inject.Module;
 
 /**
- * // TODO: Adrian: Document this!
+ * Tests for {@link HttpNioConnectionPoolFutureCommandClient}.
  * 
  * @author Adrian Cole
  */
 @Test
-public class HttpNioConnectionPoolFutureCommandClientTest extends
-	BaseHttpFutureCommandClientTest {
+public class HttpNioConnectionPoolFutureCommandClientTest extends BaseHttpFutureCommandClientTest {
 
-    protected void addConnectionProperties(Properties properties) {
-	properties.setProperty(
-		PoolConstants.PROPERTY_POOL_MAX_CONNECTION_REUSE, "75");
-	properties.setProperty(
-		PoolConstants.PROPERTY_POOL_MAX_SESSION_FAILURES, "2");
-	properties.setProperty(
-		PoolConstants.PROPERTY_POOL_REQUEST_INVOKER_THREADS, "1");
-	properties.setProperty(PoolConstants.PROPERTY_POOL_IO_WORKER_THREADS,
-		"2");
-	properties.setProperty(PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS,
-		"12");
-    }
+   protected void addConnectionProperties(Properties properties) {
+      properties.setProperty(PoolConstants.PROPERTY_POOL_MAX_CONNECTION_REUSE, "75");
+      properties.setProperty(PoolConstants.PROPERTY_POOL_MAX_SESSION_FAILURES, "2");
+      properties.setProperty(PoolConstants.PROPERTY_POOL_REQUEST_INVOKER_THREADS, "1");
+      properties.setProperty(PoolConstants.PROPERTY_POOL_IO_WORKER_THREADS, "2");
+      properties.setProperty(PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS, "12");
+   }
 
-    protected Module createClientModule() {
-	return new HttpNioConnectionPoolClientModule();
-    }
+   protected Module createClientModule() {
+      return new HttpNioConnectionPoolClientModule();
+   }
+
+   @Override
+   @Test(enabled = false)
+   public void testGetStringRedirect() throws MalformedURLException, ExecutionException,
+            InterruptedException, TimeoutException {
+   }
+
+   @Override
+   @Test(enabled = false)
+   public void testPutRedirect() throws MalformedURLException, ExecutionException,
+            InterruptedException, TimeoutException {
+   }
+
 }

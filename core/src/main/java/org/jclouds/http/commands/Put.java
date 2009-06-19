@@ -21,28 +21,24 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.http;
+package org.jclouds.http.commands;
 
-import com.google.inject.Module;
-import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
-import org.testng.annotations.Test;
-
-import java.util.Properties;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import org.jclouds.http.HttpFutureCommand;
+import org.jclouds.http.commands.callables.ReturnTrueIf2xx;
 
 /**
- * // TODO: Adrian: Document this!
- *
+ * PUT a string and respond with true if successful.
+ * 
  * @author Adrian Cole
  */
-@Test
-public class JavaUrlHttpFutureCommandFutureCommandClientTest extends BaseHttpFutureCommandClientTest {
-   
-    protected Module createClientModule() {
-        return new JavaUrlHttpFutureCommandClientModule();
-    }
+public class Put extends HttpFutureCommand<Boolean> {
 
-
-    protected void addConnectionProperties(Properties props) {
-        //NONE
-    }
+   @Inject
+   public Put(ReturnTrueIf2xx callable, @Assisted("uri") String uri,
+            @Assisted("payload") String payload) {
+      super("PUT", uri, callable);
+      this.getRequest().setPayload(payload);
+   }
 }

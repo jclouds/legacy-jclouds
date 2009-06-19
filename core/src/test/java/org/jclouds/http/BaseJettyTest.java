@@ -56,25 +56,30 @@ import com.google.inject.name.Names;
 
 public abstract class BaseJettyTest {
    protected static final String XML = "<foo><bar>whoppers</bar></foo>";
+   protected static final String XML2 = "<foo><bar>chubbs</bar></foo>";
+
    protected Server server = null;
    protected CommandFactory factory;
    protected HttpFutureCommandClient client;
    protected Injector injector;
    private Closer closer;
    private AtomicInteger cycle = new AtomicInteger(0);
+   private Server server2;
 
    @BeforeTest
    @Parameters( { "test-jetty-port" })
    public void setUpJetty(@Optional("8123") final int testPort) throws Exception {
-      Handler handler = new AbstractHandler() {
-
+      Handler server1Handler = new AbstractHandler() {
          public void handle(String target, HttpServletRequest request,
                   HttpServletResponse response, int dispatch) throws IOException, ServletException {
-            failIfNoContentLength(request, response);
-            if (request.getHeader("test") != null) {
+            if (failIfNoContentLength(request, response))
+               return;
+            else if (request.getHeader("test") != null) {
                response.setContentType("text/plain");
                response.setStatus(HttpServletResponse.SC_OK);
                response.getWriter().println("test");
+            } else if (target.equals("/redirect")) {
+               response.sendRedirect("http://localhost:" + (testPort + 1));
             } else {
                if (failOnRequest(request, response))
                   return;
@@ -87,8 +92,23 @@ public abstract class BaseJettyTest {
       };
 
       server = new Server(testPort);
-      server.setHandler(handler);
+      server.setHandler(server1Handler);
       server.start();
+
+      Handler server2Handler = new AbstractHandler() {
+         public void handle(String target, HttpServletRequest request,
+                  HttpServletResponse response, int dispatch) throws IOException, ServletException {
+            response.setContentType("text/xml");
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.getWriter().println(XML2);
+            ((Request) request).setHandled(true);
+         }
+      };
+
+      server2 = new Server(testPort + 1);
+      server2.setHandler(server2Handler);
+      server2.start();
+
       final Properties properties = new Properties();
       properties.put(HttpConstants.PROPERTY_HTTP_ADDRESS, "localhost");
       properties.put(HttpConstants.PROPERTY_HTTP_PORT, testPort + "");
@@ -124,6 +144,7 @@ public abstract class BaseJettyTest {
    @AfterTest
    public void tearDownJetty() throws Exception {
       closer.close();
+      server2.stop();
       server.stop();
    }
 

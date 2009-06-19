@@ -29,34 +29,33 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 /**
- * // TODO: Adrian: Document this!
+ * Tests the basic structure of the {@link GetString} object
  * 
  * @author Adrian Cole
  */
 @Test
 public class GetStringTest {
-    private static final String GOOD_PATH = "/index.html";
+   private static final String GOOD_PATH = "/index.html";
 
-    private GetString get = null;
-    private ReturnStringIf200 callable = null;
+   private GetString get = null;
+   private ReturnStringIf200 callable = null;
 
-    @BeforeMethod
-    void setUp() {
-	callable = new ReturnStringIf200();
-	get = new GetString(callable, GOOD_PATH);
+   @BeforeMethod
+   void setUp() {
+      callable = new ReturnStringIf200();
+      get = new GetString(callable, GOOD_PATH);
+   }
 
-    }
+   @AfterMethod
+   void tearDown() {
+      get = null;
+      callable = null;
+   }
 
-    @AfterMethod
-    void tearDown() {
-	get = null;
-	callable = null;
-    }
-
-    @Test
-    public void testConstructor() {
-	assert get.getResponseFuture() != null;
-	assert get.getRequest().getUri().equals(GOOD_PATH);
-	assert get.getRequest().getMethod().equals("GET");
-    }
+   @Test
+   public void testConstructor() {
+      assert get.getResponseFuture() != null;
+      assert get.getRequest().getUri().equals(GOOD_PATH);
+      assert get.getRequest().getMethod().equals("GET");
+   }
 }

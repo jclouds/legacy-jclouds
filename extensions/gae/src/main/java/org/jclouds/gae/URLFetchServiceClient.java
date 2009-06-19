@@ -43,6 +43,7 @@ import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.internal.BaseHttpFutureCommandClient;
 
+import com.google.appengine.api.urlfetch.FetchOptions;
 import com.google.appengine.api.urlfetch.HTTPHeader;
 import com.google.appengine.api.urlfetch.HTTPMethod;
 import com.google.appengine.api.urlfetch.HTTPRequest;
@@ -166,8 +167,13 @@ public class URLFetchServiceClient extends BaseHttpFutureCommandClient {
       } else {
          url = new URL(target, request.getUri());
       }
+      
+      FetchOptions options = disallowTruncate();
+      followRedirectsUnlessRequestContainsPayload(request, options);
+
       HTTPRequest gaeRequest = new HTTPRequest(url, HTTPMethod.valueOf(request.getMethod()),
-               disallowTruncate().doNotFollowRedirects());
+               options);
+      
       for (String header : request.getHeaders().keySet()) {
          // GAE/J v1.2.1 re-writes the host header, so we'll skip it.
          if (!header.equals(HttpConstants.HOST)) {
@@ -176,6 +182,7 @@ public class URLFetchServiceClient extends BaseHttpFutureCommandClient {
             }
          }
       }
+      
       if (request.getPayload() != null) {
          changeRequestContentToBytes(request);
          gaeRequest.setPayload((byte[]) request.getPayload());
@@ -183,5 +190,13 @@ public class URLFetchServiceClient extends BaseHttpFutureCommandClient {
          gaeRequest.addHeader(new HTTPHeader(HttpConstants.CONTENT_LENGTH, "0"));
       }
       return gaeRequest;
+   }
+
+   private void followRedirectsUnlessRequestContainsPayload(HttpRequest request,
+            FetchOptions options) {
+      if (request.getPayload() != null)
+         options.doNotFollowRedirects();
+      else
+         options.followRedirects();
    }
 }

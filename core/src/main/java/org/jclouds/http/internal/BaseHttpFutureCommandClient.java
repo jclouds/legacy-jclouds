@@ -40,44 +40,44 @@ import java.util.List;
 
 public abstract class BaseHttpFutureCommandClient implements HttpFutureCommandClient {
 
-    protected final URL target;
+   protected final URL target;
 
-    @Resource
-    protected Logger logger = Logger.NULL;
+   @Resource
+   protected Logger logger = Logger.NULL;
 
-    @Inject(optional = true)
-    protected List<HttpRequestFilter> requestFilters = Collections.emptyList();
-    @RedirectHandler
-    @Inject(optional = true)
-    protected HttpResponseHandler redirectHandler = new CloseContentAndSetExceptionHandler();
-    @ClientErrorHandler
-    @Inject(optional = true)
-    protected HttpResponseHandler clientErrorHandler = new CloseContentAndSetExceptionHandler();
-    @ServerErrorHandler
-    @Inject(optional = true)
-    protected HttpResponseHandler serverErrorHandler = new CloseContentAndSetExceptionHandler();
-    
-    @RetryHandler
-    @Inject(optional = true)
-    protected HttpRetryHandler httpRetryHandler = new BackoffLimitedRetryHandler(5);   
+   @Inject(optional = true)
+   protected List<HttpRequestFilter> requestFilters = Collections.emptyList();
+   @RedirectHandler
+   @Inject(optional = true)
+   protected HttpResponseHandler redirectHandler = new CloseContentAndSetExceptionHandler();
+   @ClientErrorHandler
+   @Inject(optional = true)
+   protected HttpResponseHandler clientErrorHandler = new CloseContentAndSetExceptionHandler();
+   @ServerErrorHandler
+   @Inject(optional = true)
+   protected HttpResponseHandler serverErrorHandler = new CloseContentAndSetExceptionHandler();
 
-    @Inject
-    public BaseHttpFutureCommandClient(URL target) {
-        this.target = target;
-    }
+   @RetryHandler
+   @Inject(optional = true)
+   protected HttpRetryHandler httpRetryHandler = new BackoffLimitedRetryHandler(5);
 
-    protected void handleResponse(HttpFutureCommand<?> command, HttpResponse response) {
-        int code = response.getStatusCode();
-        if (code >= 500) {
-            this.serverErrorHandler.handle(command, response);
-        } else if (code >= 400 && code < 500) {
-            this.clientErrorHandler.handle(command, response);
-        } else if (code >= 300 && code < 400) {
-            this.redirectHandler.handle(command, response);
-        } else {
-            command.getResponseFuture().setResponse(response);
-            command.getResponseFuture().run();
-        }
-    }
+   @Inject
+   public BaseHttpFutureCommandClient(URL target) {
+      this.target = target;
+   }
+
+   protected void handleResponse(HttpFutureCommand<?> command, HttpResponse response) {
+      int code = response.getStatusCode();
+      if (code >= 500) {
+         serverErrorHandler.handle(command, response);
+      } else if (code >= 400 && code < 500) {
+         clientErrorHandler.handle(command, response);
+      } else if (code >= 300 && code < 400) {
+         redirectHandler.handle(command, response);
+      } else {
+         command.getResponseFuture().setResponse(response);
+         command.getResponseFuture().run();
+      }
+   }
 
 }

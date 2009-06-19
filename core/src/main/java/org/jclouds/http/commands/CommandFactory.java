@@ -26,48 +26,60 @@ package org.jclouds.http.commands;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 
 import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 /**
  * temporary factory until guice can do multi-type assisted inject
+ * 
  * @see <a href="http://code.google.com/p/google-guice/issues/detail?id=346" />
  * 
  * @author Adrian Cole
  */
 public class CommandFactory {
 
-    @Inject
-    private ParseSaxFactory parseSaxFactory;
+   @Inject
+   private ParseSaxFactory parseSaxFactory;
 
-    public static interface ParseSaxFactory {
-	ParseSax<?> create(ParseSax.HandlerWithResult<?> handler);
-    }
+   public static interface ParseSaxFactory {
+      ParseSax<?> create(ParseSax.HandlerWithResult<?> handler);
+   }
 
-    @SuppressWarnings("unchecked")
-    public GetAndParseSax<?> createGetAndParseSax(String uri,
-	    ParseSax.HandlerWithResult<?> handler) {
-	return new GetAndParseSax(uri, parseSaxFactory.create(handler));
-    }
+   @SuppressWarnings("unchecked")
+   public GetAndParseSax<?> createGetAndParseSax(String uri, ParseSax.HandlerWithResult<?> handler) {
+      return new GetAndParseSax(uri, parseSaxFactory.create(handler));
+   }
 
-    @Inject
-    private GetStringFactory getStringFactory;
+   @Inject
+   private GetStringFactory getStringFactory;
 
-    public static interface GetStringFactory {
-	GetString create(String uri);
-    }
+   public static interface GetStringFactory {
+      GetString create(String uri);
+   }
 
-    public GetString createGetString(String uri) {
-	return getStringFactory.create(uri);
-    }
+   public GetString createGetString(String uri) {
+      return getStringFactory.create(uri);
+   }
 
-    @Inject
-    private HeadFactory headFactory;
+   @Inject
+   private PutFactory putFactory;
 
-    public static interface HeadFactory {
-	Head create(String uri);
-    }
+   public static interface PutFactory {
+      Put create(@Assisted("uri") String uri, @Assisted("payload") String payload);
+   }
 
-    public Head createHead(String uri) {
-	return headFactory.create(uri);
-    }
+   public Put createPut(String uri, String payload) {
+      return putFactory.create(uri, payload);
+   }
+
+   @Inject
+   private HeadFactory headFactory;
+
+   public static interface HeadFactory {
+      Head create(String uri);
+   }
+
+   public Head createHead(String uri) {
+      return headFactory.create(uri);
+   }
 
 }
