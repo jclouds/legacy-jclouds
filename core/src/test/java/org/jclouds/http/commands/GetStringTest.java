@@ -23,6 +23,8 @@
  */
 package org.jclouds.http.commands;
 
+import java.net.URI;
+
 import org.jclouds.http.HttpMethod;
 import org.jclouds.http.commands.callables.ReturnStringIf200;
 import org.testng.annotations.AfterMethod;
@@ -37,6 +39,7 @@ import org.testng.annotations.Test;
 @Test
 public class GetStringTest {
    private static final String GOOD_PATH = "/index.html";
+   private static final URI END_POINT = URI.create("http://localhost:8080");
 
    private GetString get = null;
    private ReturnStringIf200 callable = null;
@@ -44,7 +47,7 @@ public class GetStringTest {
    @BeforeMethod
    void setUp() {
       callable = new ReturnStringIf200();
-      get = new GetString(callable, GOOD_PATH);
+      get = new GetString(END_POINT, callable, GOOD_PATH);
    }
 
    @AfterMethod
@@ -56,6 +59,7 @@ public class GetStringTest {
    @Test
    public void testConstructor() {
       assert get.getResponseFuture() != null;
+      assert get.getRequest().getEndPoint().equals(END_POINT);
       assert get.getRequest().getUri().equals(GOOD_PATH);
       assert get.getRequest().getMethod().equals(HttpMethod.GET);
    }

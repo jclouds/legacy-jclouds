@@ -23,6 +23,7 @@
  */
 package org.jclouds.aws.s3.commands;
 
+import java.net.URI;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -37,7 +38,6 @@ import org.jclouds.http.commands.callables.ReturnTrueIf2xx;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.google.inject.name.Named;
 
 /**
  * Create and name your own bucket in which to store your objects.
@@ -57,9 +57,9 @@ import com.google.inject.name.Named;
 public class PutBucket extends S3FutureCommand<Boolean> {
 
    @Inject
-   public PutBucket(@Named("jclouds.http.address") String amazonHost, ReturnTrueIf2xx callable,
-            @Assisted String bucketName, @Assisted PutBucketOptions options) {
-      super(HttpMethod.PUT, "/", callable, amazonHost, S3Utils.validateBucketName(bucketName));
+   public PutBucket(URI endPoint, ReturnTrueIf2xx callable, @Assisted String bucketName,
+            @Assisted PutBucketOptions options) {
+      super(endPoint, HttpMethod.PUT, "/", callable, S3Utils.validateBucketName(bucketName));
       getRequest().getHeaders().putAll(options.buildRequestHeaders());
       String payload = options.buildPayload();
       if (payload != null) {

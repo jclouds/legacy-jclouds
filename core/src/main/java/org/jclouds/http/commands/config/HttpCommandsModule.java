@@ -24,6 +24,7 @@
 package org.jclouds.http.commands.config;
 
 import org.jclouds.http.commands.CommandFactory;
+import org.jclouds.http.commands.GetAndParseSax;
 import org.jclouds.http.commands.GetString;
 import org.jclouds.http.commands.Head;
 import org.jclouds.http.commands.Put;
@@ -53,6 +54,10 @@ public class HttpCommandsModule extends AbstractModule {
       bind(CommandFactory.ParseSaxFactory.class).toProvider(
                FactoryProvider.newFactory(new TypeLiteral<CommandFactory.ParseSaxFactory>() {
                }, new TypeLiteral<ParseSax<?>>() {
+               }));
+      bind(CommandFactory.GetAndParseSaxFactory.class).toProvider(
+               FactoryProvider.newFactory(new TypeLiteral<CommandFactory.GetAndParseSaxFactory>() {
+               }, new TypeLiteral<GetAndParseSax<?>>() {
                }));
 
    }

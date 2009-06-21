@@ -23,6 +23,7 @@
  */
 package org.jclouds.aws.s3.commands;
 
+import java.net.URI;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -34,7 +35,6 @@ import org.jclouds.http.commands.callables.ReturnTrueIf2xx;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.google.inject.name.Named;
 
 /**
  * The DELETE request operation deletes the bucket named in the URI. All objects in the bucket must
@@ -50,9 +50,8 @@ import com.google.inject.name.Named;
 public class DeleteBucket extends S3FutureCommand<Boolean> {
 
    @Inject
-   public DeleteBucket(@Named("jclouds.http.address") String amazonHost, ReturnTrueIf2xx callable,
-            @Assisted String s3Bucket) {
-      super(HttpMethod.DELETE, "/", callable, amazonHost, s3Bucket);
+   public DeleteBucket(URI endPoint, ReturnTrueIf2xx callable, @Assisted String s3Bucket) {
+      super(endPoint, HttpMethod.DELETE, "/", callable, s3Bucket);
    }
 
    @Override

@@ -23,6 +23,8 @@
  */
 package org.jclouds.http.commands;
 
+import java.net.URI;
+
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpMethod;
 import org.jclouds.http.commands.callables.ReturnTrueIf2xx;
@@ -38,9 +40,9 @@ import com.google.inject.assistedinject.Assisted;
 public class Put extends HttpFutureCommand<Boolean> {
 
    @Inject
-   public Put(ReturnTrueIf2xx callable, @Assisted("uri") String uri,
+   public Put(URI endPoint, ReturnTrueIf2xx callable, @Assisted("uri") String uri,
             @Assisted("payload") String payload) {
-      super(HttpMethod.PUT, uri, callable);
+      super(endPoint, HttpMethod.PUT, uri, callable);
       this.getRequest().setPayload(payload);
    }
 }

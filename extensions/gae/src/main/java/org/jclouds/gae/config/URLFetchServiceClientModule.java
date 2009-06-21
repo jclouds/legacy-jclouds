@@ -24,7 +24,7 @@
 package org.jclouds.gae.config;
 
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 
 import org.jclouds.gae.URLFetchServiceClient;
 import org.jclouds.http.HttpConstants;
@@ -54,13 +54,13 @@ public class URLFetchServiceClientModule extends AbstractModule {
 
     @Singleton
     @Provides
-    protected URL provideAddress(
-	    @Named(HttpConstants.PROPERTY_HTTP_ADDRESS) String address,
-	    @Named(HttpConstants.PROPERTY_HTTP_PORT) int port,
-	    @Named(HttpConstants.PROPERTY_HTTP_SECURE) boolean isSecure)
-	    throws MalformedURLException {
+    protected URI provideAddress(@Named(HttpConstants.PROPERTY_HTTP_ADDRESS) String address,
+             @Named(HttpConstants.PROPERTY_HTTP_PORT) int port,
+             @Named(HttpConstants.PROPERTY_HTTP_SECURE) boolean isSecure)
+             throws MalformedURLException {
 
-	return new URL(isSecure ? "https" : "http", address, port, "/");
+       return URI.create(String.format("%1$s://%2$s:%3$s", isSecure ? "https" : "http", address,
+                port));
     }
 
     @Provides

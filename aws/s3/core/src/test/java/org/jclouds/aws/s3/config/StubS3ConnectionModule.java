@@ -23,6 +23,8 @@
  */
 package org.jclouds.aws.s3.config;
 
+import java.net.URI;
+
 import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.StubS3Connection;
 
@@ -37,5 +39,6 @@ import com.google.inject.AbstractModule;
 public class StubS3ConnectionModule extends AbstractModule {
    protected void configure() {
       bind(S3Connection.class).to(StubS3Connection.class);
+      bind(URI.class).toInstance(URI.create("http://localhost:8080"));
    }
 }

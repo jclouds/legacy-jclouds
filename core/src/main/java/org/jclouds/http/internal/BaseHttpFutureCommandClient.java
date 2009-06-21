@@ -23,8 +23,18 @@
  */
 package org.jclouds.http.internal;
 
-import com.google.inject.Inject;
-import org.jclouds.http.*;
+import java.net.URI;
+import java.util.Collections;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.jclouds.http.HttpFutureCommand;
+import org.jclouds.http.HttpFutureCommandClient;
+import org.jclouds.http.HttpRequestFilter;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.HttpResponseHandler;
+import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.annotation.ClientErrorHandler;
 import org.jclouds.http.annotation.RedirectHandler;
 import org.jclouds.http.annotation.RetryHandler;
@@ -33,14 +43,11 @@ import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.http.handlers.CloseContentAndSetExceptionHandler;
 import org.jclouds.logging.Logger;
 
-import javax.annotation.Resource;
-import java.net.URL;
-import java.util.Collections;
-import java.util.List;
+import com.google.inject.Inject;
 
 public abstract class BaseHttpFutureCommandClient implements HttpFutureCommandClient {
 
-   protected final URL target;
+   protected final URI target;
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -62,7 +69,7 @@ public abstract class BaseHttpFutureCommandClient implements HttpFutureCommandCl
    protected HttpRetryHandler httpRetryHandler = new BackoffLimitedRetryHandler(5);
 
    @Inject
-   public BaseHttpFutureCommandClient(URL target) {
+   public BaseHttpFutureCommandClient(URI target) {
       this.target = target;
    }
 

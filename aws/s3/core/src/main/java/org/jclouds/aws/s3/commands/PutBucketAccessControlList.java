@@ -23,6 +23,8 @@
  */
 package org.jclouds.aws.s3.commands;
 
+import java.net.URI;
+
 import javax.annotation.Resource;
 
 import org.jclouds.aws.s3.domain.AccessControlList;
@@ -34,7 +36,6 @@ import org.jclouds.logging.Logger;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.google.inject.name.Named;
 
 /**
  * A PUT request operation directed at a bucket URI with the "acl" parameter sets the Access Control
@@ -50,10 +51,9 @@ public class PutBucketAccessControlList extends S3FutureCommand<Boolean> {
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public PutBucketAccessControlList(@Named("jclouds.http.address") String amazonHost,
-            ReturnTrueIf2xx callable, @Assisted("bucketName") String bucket,
-            @Assisted AccessControlList acl) {
-      super(HttpMethod.PUT, "/?acl", callable, amazonHost, bucket);
+   public PutBucketAccessControlList(URI endPoint, ReturnTrueIf2xx callable,
+            @Assisted("bucketName") String bucket, @Assisted AccessControlList acl) {
+      super(endPoint, HttpMethod.PUT, "/?acl", callable, bucket);
 
       String aclPayload = "";
       try {

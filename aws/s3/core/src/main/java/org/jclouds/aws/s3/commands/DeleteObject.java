@@ -25,12 +25,13 @@ package org.jclouds.aws.s3.commands;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.net.URI;
+
 import org.jclouds.http.HttpMethod;
 import org.jclouds.http.commands.callables.ReturnTrueIf2xx;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.google.inject.name.Named;
 
 /**
  * The DELETE request operation removes the specified object from Amazon S3. Once deleted, there is
@@ -43,8 +44,8 @@ import com.google.inject.name.Named;
 public class DeleteObject extends S3FutureCommand<Boolean> {
 
    @Inject
-   public DeleteObject(@Named("jclouds.http.address") String amazonHost, ReturnTrueIf2xx callable,
+   public DeleteObject(URI endPoint, ReturnTrueIf2xx callable,
             @Assisted("bucketName") String bucket, @Assisted("key") String key) {
-      super(HttpMethod.DELETE, "/" + checkNotNull(key), callable, amazonHost, bucket);
+      super(endPoint, HttpMethod.DELETE, "/" + checkNotNull(key), callable, bucket);
    }
 }

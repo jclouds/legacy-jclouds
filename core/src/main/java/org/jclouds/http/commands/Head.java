@@ -23,6 +23,8 @@
  */
 package org.jclouds.http.commands;
 
+import java.net.URI;
+
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpMethod;
 import org.jclouds.http.commands.callables.ReturnTrueIf2xx;
@@ -38,7 +40,7 @@ import com.google.inject.assistedinject.Assisted;
 public class Head extends HttpFutureCommand<Boolean> {
 
    @Inject
-   public Head(ReturnTrueIf2xx callable, @Assisted String uri) {
-      super(HttpMethod.HEAD, uri, callable);
+   public Head(URI endPoint, ReturnTrueIf2xx callable, @Assisted String uri) {
+      super(endPoint, HttpMethod.HEAD, uri, callable);
    }
 }

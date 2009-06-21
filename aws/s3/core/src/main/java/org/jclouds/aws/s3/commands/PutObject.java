@@ -26,6 +26,8 @@ package org.jclouds.aws.s3.commands;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.net.URI;
+
 import org.jclouds.aws.s3.commands.callables.ParseMd5FromETagHeader;
 import org.jclouds.aws.s3.commands.options.PutObjectOptions;
 import org.jclouds.aws.s3.domain.S3Object;
@@ -35,7 +37,6 @@ import org.jclouds.http.HttpMethod;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.google.inject.name.Named;
 
 /**
  * Store data by creating or overwriting an object.
@@ -56,10 +57,9 @@ import com.google.inject.name.Named;
 public class PutObject extends S3FutureCommand<byte[]> {
 
    @Inject
-   public PutObject(@Named("jclouds.http.address") String amazonHost,
-            ParseMd5FromETagHeader callable, @Assisted String s3Bucket, @Assisted S3Object object,
-            @Assisted PutObjectOptions options) {
-      super(HttpMethod.PUT, "/" + checkNotNull(object.getKey()), callable, amazonHost, s3Bucket);
+   public PutObject(URI endPoint, ParseMd5FromETagHeader callable, @Assisted String s3Bucket,
+            @Assisted S3Object object, @Assisted PutObjectOptions options) {
+      super(endPoint, HttpMethod.PUT, "/" + checkNotNull(object.getKey()), callable, s3Bucket);
       checkArgument(object.getMetadata().getSize() >= 0, "size must be set");
 
       getRequest().setPayload(checkNotNull(object.getData(), "object.getContent()"));

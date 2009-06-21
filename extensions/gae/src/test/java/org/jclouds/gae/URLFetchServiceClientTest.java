@@ -33,7 +33,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -59,12 +59,12 @@ import com.google.appengine.api.urlfetch.URLFetchService;
 @Test
 public class URLFetchServiceClientTest {
    URLFetchServiceClient client;
-   URL url;
+   URI endPoint;
 
    @BeforeTest
    void setupClient() throws MalformedURLException {
-      url = new URL("http://localhost:80");
-      client = new URLFetchServiceClient(80, false, url, createNiceMock(URLFetchService.class));
+      endPoint = URI.create("http://localhost:80");
+      client = new URLFetchServiceClient(endPoint, createNiceMock(URLFetchService.class));
    }
 
    @Test
@@ -101,21 +101,21 @@ public class URLFetchServiceClientTest {
 
    @Test
    void testConvertRequestGetsTargetAndUri() throws IOException {
-      HttpRequest request = new HttpRequest(HttpMethod.GET, "foo");
+      HttpRequest request = new HttpRequest(endPoint, HttpMethod.GET, "foo");
       HTTPRequest gaeRequest = client.convert(request);
       assertEquals(gaeRequest.getURL().getPath(), "/foo");
    }
 
    @Test
    void testConvertRequestSetsFetchOptions() throws IOException {
-      HttpRequest request = new HttpRequest(HttpMethod.GET, "foo");
+      HttpRequest request = new HttpRequest(endPoint, HttpMethod.GET, "foo");
       HTTPRequest gaeRequest = client.convert(request);
       assert gaeRequest.getFetchOptions() != null;
    }
 
    @Test
    void testConvertRequestSetsHeaders() throws IOException {
-      HttpRequest request = new HttpRequest(HttpMethod.GET, "foo");
+      HttpRequest request = new HttpRequest(endPoint, HttpMethod.GET, "foo");
       request.getHeaders().put("foo", "bar");
       HTTPRequest gaeRequest = client.convert(request);
       assertEquals(gaeRequest.getHeaders().get(0).getName(), "foo");
@@ -124,7 +124,7 @@ public class URLFetchServiceClientTest {
 
    @Test
    void testConvertRequestNoContent() throws IOException {
-      HttpRequest request = new HttpRequest(HttpMethod.GET, "foo");
+      HttpRequest request = new HttpRequest(endPoint, HttpMethod.GET, "foo");
       HTTPRequest gaeRequest = client.convert(request);
       assert gaeRequest.getPayload() == null;
       assertEquals(gaeRequest.getHeaders().size(), 1);// content length
@@ -132,28 +132,28 @@ public class URLFetchServiceClientTest {
 
    @Test
    void testConvertRequestStringContent() throws IOException {
-      HttpRequest request = new HttpRequest(HttpMethod.GET, "foo");
+      HttpRequest request = new HttpRequest(endPoint, HttpMethod.GET, "foo");
       request.setPayload("hoot!");
       testHoot(request);
    }
 
    @Test
    void testConvertRequestInputStreamContent() throws IOException {
-      HttpRequest request = new HttpRequest(HttpMethod.GET, "foo");
+      HttpRequest request = new HttpRequest(endPoint, HttpMethod.GET, "foo");
       request.setPayload(IOUtils.toInputStream("hoot!"));
       testHoot(request);
    }
 
    @Test
    void testConvertRequestBytesContent() throws IOException {
-      HttpRequest request = new HttpRequest(HttpMethod.GET, "foo");
+      HttpRequest request = new HttpRequest(endPoint, HttpMethod.GET, "foo");
       request.setPayload("hoot!".getBytes());
       testHoot(request);
    }
 
    @Test(expectedExceptions = UnsupportedOperationException.class)
    void testConvertRequestBadContent() throws IOException {
-      HttpRequest request = new HttpRequest(HttpMethod.GET, "foo");
+      HttpRequest request = new HttpRequest(endPoint, HttpMethod.GET, "foo");
       request.setPayload(new Date());
       client.convert(request);
 
@@ -165,7 +165,7 @@ public class URLFetchServiceClientTest {
       File file = new File(basedir, "target/testfiles/hoot");
       file.getParentFile().mkdirs();
       IOUtils.write("hoot!", new FileOutputStream(file));
-      HttpRequest request = new HttpRequest(HttpMethod.GET, "foo");
+      HttpRequest request = new HttpRequest(endPoint, HttpMethod.GET, "foo");
       request.setPayload(file);
       testHoot(request);
    }

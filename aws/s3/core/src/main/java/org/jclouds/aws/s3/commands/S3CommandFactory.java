@@ -23,6 +23,8 @@
  */
 package org.jclouds.aws.s3.commands;
 
+import java.net.URI;
+
 import org.jclouds.aws.s3.commands.options.CopyObjectOptions;
 import org.jclouds.aws.s3.commands.options.GetObjectOptions;
 import org.jclouds.aws.s3.commands.options.ListBucketOptions;
@@ -34,7 +36,6 @@ import org.jclouds.aws.s3.xml.S3ParserFactory;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.google.inject.name.Named;
 
 /**
  * Assembles the command objects for S3.
@@ -124,58 +125,53 @@ public class S3CommandFactory {
    }
 
    @Inject
-   @Named("jclouds.http.address")
-   String amazonHost;
+   URI endPoint;
 
    public ListOwnedBuckets createGetMetadataForOwnedBuckets() {
-      return new ListOwnedBuckets(amazonHost, parserFactory.createListBucketsParser());
+      return new ListOwnedBuckets(endPoint, parserFactory.createListBucketsParser());
    }
 
    public ListBucket createListBucket(String bucket, ListBucketOptions options) {
-      return new ListBucket(amazonHost, parserFactory.createListBucketParser(), bucket, options);
+      return new ListBucket(endPoint, parserFactory.createListBucketParser(), bucket, options);
    }
 
    public CopyObject createCopyObject(String sourceBucket, String sourceObject,
             String destinationBucket, String destinationObject, CopyObjectOptions options) {
-      return new CopyObject(amazonHost, parserFactory.createCopyObjectParser(), sourceBucket,
+      return new CopyObject(endPoint, parserFactory.createCopyObjectParser(), sourceBucket,
                sourceObject, destinationBucket, destinationObject, options);
    }
 
    public GetAccessControlList createGetBucketACL(String bucket) {
-      return new GetAccessControlList(
-            amazonHost, parserFactory.createAccessControlListParser(), bucket);
+      return new GetAccessControlList(endPoint, parserFactory.createAccessControlListParser(),
+               bucket);
    }
 
    public GetAccessControlList createGetObjectACL(String bucket, String objectKey) {
-      return new GetAccessControlList(
-            amazonHost, parserFactory.createAccessControlListParser(), bucket, objectKey);
+      return new GetAccessControlList(endPoint, parserFactory.createAccessControlListParser(),
+               bucket, objectKey);
    }
 
-   
    @Inject
    private PutBucketAccessControlListFactory putBucketAccessControlListFactory;
 
    public static interface PutBucketAccessControlListFactory {
-      PutBucketAccessControlList create(@Assisted("bucketName") String bucket, 
-            AccessControlList acl);
+      PutBucketAccessControlList create(@Assisted("bucketName") String bucket, AccessControlList acl);
    }
 
    public PutBucketAccessControlList createPutBucketACL(String bucket, AccessControlList acl) {
       return putBucketAccessControlListFactory.create(bucket, acl);
    }
 
-
    @Inject
    private PutObjectAccessControlListFactory putObjectAccessControlListFactory;
 
    public static interface PutObjectAccessControlListFactory {
-      PutObjectAccessControlList create(@Assisted("bucketName") String bucket, 
-            @Assisted("key") String objectKey, AccessControlList acl);
+      PutObjectAccessControlList create(@Assisted("bucketName") String bucket,
+               @Assisted("key") String objectKey, AccessControlList acl);
    }
-   
+
    public PutObjectAccessControlList createPutObjectACL(String bucket, String objectKey,
-         AccessControlList acl) 
-   {
+            AccessControlList acl) {
       return putObjectAccessControlListFactory.create(bucket, objectKey, acl);
    }
 

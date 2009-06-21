@@ -23,6 +23,7 @@
  */
 package org.jclouds.aws.s3.commands;
 
+import java.net.URI;
 import java.util.List;
 
 import org.jclouds.aws.s3.domain.S3Bucket;
@@ -30,7 +31,6 @@ import org.jclouds.http.HttpMethod;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 /**
  * Returns a list of all of the buckets owned by the authenticated sender of the request.
@@ -44,9 +44,8 @@ import com.google.inject.name.Named;
 public class ListOwnedBuckets extends S3FutureCommand<List<S3Bucket.Metadata>> {
 
    @Inject
-   public ListOwnedBuckets(@Named("jclouds.http.address") String amazonHost,
-            ParseSax<List<S3Bucket.Metadata>> callable) {
-      super(HttpMethod.GET, "/", callable, amazonHost);
+   public ListOwnedBuckets(URI endPoint, ParseSax<List<S3Bucket.Metadata>> callable) {
+      super(endPoint, HttpMethod.GET, "/", callable);
    }
 
 }

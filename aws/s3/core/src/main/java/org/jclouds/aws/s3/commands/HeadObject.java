@@ -25,6 +25,7 @@ package org.jclouds.aws.s3.commands;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.net.URI;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -37,7 +38,6 @@ import org.jclouds.http.HttpResponseException;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.google.inject.name.Named;
 
 /**
  * Retrieves the metadata associated with the Key or
@@ -58,10 +58,9 @@ import com.google.inject.name.Named;
 public class HeadObject extends S3FutureCommand<S3Object.Metadata> {
 
    @Inject
-   public HeadObject(@Named("jclouds.http.address") String amazonHost,
-            ParseMetadataFromHeaders callable, @Assisted("bucketName") String bucket,
-            @Assisted("key") String key) {
-      super(HttpMethod.HEAD, "/" + checkNotNull(key), callable, amazonHost, bucket);
+   public HeadObject(URI endPoint, ParseMetadataFromHeaders callable,
+            @Assisted("bucketName") String bucket, @Assisted("key") String key) {
+      super(endPoint, HttpMethod.HEAD, "/" + checkNotNull(key), callable, bucket);
       callable.setKey(key);
    }
 

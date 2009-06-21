@@ -23,6 +23,8 @@
  */
 package org.jclouds.http.commands;
 
+import java.net.URI;
+
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpMethod;
 import org.jclouds.http.commands.callables.ReturnStringIf200;
@@ -38,7 +40,7 @@ import com.google.inject.assistedinject.Assisted;
 public class GetString extends HttpFutureCommand<String> {
 
    @Inject
-   public GetString(ReturnStringIf200 callable, @Assisted String uri) {
-      super(HttpMethod.GET, uri, callable);
+   public GetString(URI endPoint, ReturnStringIf200 callable, @Assisted String uri) {
+      super(endPoint, HttpMethod.GET, uri, callable);
    }
 }

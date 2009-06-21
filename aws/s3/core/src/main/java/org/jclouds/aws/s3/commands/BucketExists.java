@@ -25,6 +25,7 @@ package org.jclouds.aws.s3.commands;
 
 import static org.jclouds.aws.s3.commands.options.ListBucketOptions.Builder.maxResults;
 
+import java.net.URI;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -36,7 +37,6 @@ import org.jclouds.http.commands.callables.ReturnTrueIf2xx;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.google.inject.name.Named;
 
 /**
  * Issues a HEAD command to determine if the bucket exists or not.
@@ -47,9 +47,8 @@ import com.google.inject.name.Named;
 public class BucketExists extends S3FutureCommand<Boolean> {
 
    @Inject
-   public BucketExists(@Named("jclouds.http.address") String amazonHost, ReturnTrueIf2xx callable,
-            @Assisted String s3Bucket) {
-      super(HttpMethod.HEAD, "/" + maxResults(0).buildQueryString(), callable, amazonHost, s3Bucket);
+   public BucketExists(URI endPoint, ReturnTrueIf2xx callable, @Assisted String s3Bucket) {
+      super(endPoint, HttpMethod.HEAD, "/" + maxResults(0).buildQueryString(), callable, s3Bucket);
    }
 
    @Override

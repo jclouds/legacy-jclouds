@@ -25,6 +25,8 @@ package org.jclouds.http;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.net.URI;
+
 import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
@@ -39,13 +41,14 @@ import org.jclouds.logging.Logger;
  */
 public class HttpFutureCommand<T> extends FutureCommand<HttpRequest, HttpResponse, T> {
 
-   public HttpFutureCommand(HttpMethod method, String uri, ResponseCallable<T> responseCallable) {
-      super(new HttpRequest(checkNotNull(method, "method"), checkNotNull(uri, "uri")),
-               responseCallable);
+   public HttpFutureCommand(URI endPoint, HttpMethod method, String uri,
+            ResponseCallable<T> responseCallable) {
+      super(new HttpRequest(checkNotNull(endPoint, "endPoint"), checkNotNull(method, "method"),
+               checkNotNull(uri, "uri")), responseCallable);
    }
 
    protected void addHostHeader(String host) {
-      getRequest().getHeaders().put("Host", host);
+      getRequest().getHeaders().put(HttpHeaders.HOST, host);
    }
 
    @Override

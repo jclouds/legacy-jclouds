@@ -26,6 +26,7 @@ package org.jclouds.http;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.InputStream;
+import java.net.URI;
 
 import javax.annotation.Resource;
 
@@ -39,6 +40,7 @@ import org.jclouds.util.Utils;
  */
 public class HttpRequest extends HttpMessage {
 
+   private URI endPoint;
    private final HttpMethod method;
    private final String uri;
    Object payload;
@@ -46,7 +48,16 @@ public class HttpRequest extends HttpMessage {
    @Resource
    protected Logger logger = Logger.NULL;
 
-   public HttpRequest(HttpMethod method, String uri) {
+   /**
+    * 
+    * @param endPoint
+    *           initial endPoint (ex. http://host:port ). This may change over the life of the
+    *           request due to redirects.
+    * @param method
+    * @param uri
+    */
+   public HttpRequest(URI endPoint, HttpMethod method, String uri) {
+      this.endPoint = checkNotNull(endPoint, "endPoint");
       this.method = checkNotNull(method, "method");
       this.uri = Utils.encodeUriPath(checkNotNull(uri, "uri"));
    }
@@ -55,7 +66,8 @@ public class HttpRequest extends HttpMessage {
    public String toString() {
       final StringBuilder sb = new StringBuilder();
       sb.append("HttpRequest");
-      sb.append("{method='").append(method).append('\'');
+      sb.append("{endPoint='").append(endPoint).append('\'');
+      sb.append(", method='").append(method).append('\'');
       sb.append(", uri='").append(uri).append('\'');
       sb.append(", headers=").append(headers);
       sb.append(", payload set=").append(payload != null);
@@ -86,6 +98,14 @@ public class HttpRequest extends HttpMessage {
 
    public void setPayload(Object content) {
       this.payload = content;
+   }
+
+   public void setEndPoint(URI endPoint) {
+      this.endPoint = endPoint;
+   }
+
+   public URI getEndPoint() {
+      return endPoint;
    }
 
 }

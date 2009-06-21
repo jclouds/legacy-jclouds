@@ -27,6 +27,8 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 
+import java.net.URI;
+
 import org.jclouds.aws.s3.commands.config.S3CommandsModule;
 import org.jclouds.aws.s3.commands.options.CopyObjectOptions;
 import org.jclouds.aws.s3.commands.options.GetObjectOptions;
@@ -44,7 +46,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.name.Names;
 
 /**
  * @author Adrian Cole
@@ -60,7 +61,7 @@ public class S3CommandFactoryTest {
       injector = Guice.createInjector(new S3ParserModule(), new S3CommandsModule() {
          @Override
          protected void configure() {
-            bindConstant().annotatedWith(Names.named("jclouds.http.address")).to("localhost");
+            bind(URI.class).toInstance(URI.create("http://localhost:8080"));
             super.configure();
          }
       });

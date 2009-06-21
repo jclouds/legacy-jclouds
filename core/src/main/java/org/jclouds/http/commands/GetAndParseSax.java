@@ -23,9 +23,14 @@
  */
 package org.jclouds.http.commands;
 
+import java.net.URI;
+
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpMethod;
 import org.jclouds.http.commands.callables.xml.ParseSax;
+
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 /**
  * // TODO: Adrian: Document this!
@@ -34,7 +39,8 @@ import org.jclouds.http.commands.callables.xml.ParseSax;
  */
 public class GetAndParseSax<T> extends HttpFutureCommand<T> {
 
-   public GetAndParseSax(String uri, ParseSax<T> callable) {
-      super(HttpMethod.GET, uri, callable);
+   @Inject
+   public GetAndParseSax(URI endPoint, @Assisted String uri, @Assisted ParseSax<T> callable) {
+      super(endPoint, HttpMethod.GET, uri, callable);
    }
 }

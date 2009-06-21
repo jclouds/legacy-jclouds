@@ -31,6 +31,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.List;
 
@@ -51,7 +52,6 @@ import com.google.appengine.api.urlfetch.HTTPResponse;
 import com.google.appengine.api.urlfetch.URLFetchService;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 /**
  * Google App Engine version of {@link HttpFutureCommandClient}
@@ -64,13 +64,12 @@ public class URLFetchServiceClient extends BaseHttpFutureCommandClient {
    private final boolean isSecure;
 
    @Inject
-   public URLFetchServiceClient(@Named(HttpConstants.PROPERTY_HTTP_PORT) int port,
-            @Named(HttpConstants.PROPERTY_HTTP_SECURE) boolean isSecure, URL target,
-            URLFetchService urlFetchService) throws MalformedURLException {
+   public URLFetchServiceClient(URI target, URLFetchService urlFetchService)
+            throws MalformedURLException {
       super(target);
       this.urlFetchService = urlFetchService;
-      this.port = port;
-      this.isSecure = isSecure;
+      this.port = target.getPort();
+      this.isSecure = target.getScheme().equals("https");
    }
 
    public void submit(HttpFutureCommand<?> command) {
@@ -165,7 +164,7 @@ public class URLFetchServiceClient extends BaseHttpFutureCommandClient {
          url = new URL(new URL(isSecure ? "https" : "http", hostHeader, port, "/"), request
                   .getUri());
       } else {
-         url = new URL(target, request.getUri());
+         url = new URL(target.toURL(), request.getUri());
       }
 
       FetchOptions options = disallowTruncate();

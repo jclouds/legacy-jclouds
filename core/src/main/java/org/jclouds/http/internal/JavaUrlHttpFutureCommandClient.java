@@ -31,6 +31,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 
 import org.apache.commons.io.IOUtils;
@@ -52,7 +53,7 @@ import com.google.inject.Inject;
 public class JavaUrlHttpFutureCommandClient extends BaseHttpFutureCommandClient {
 
    @Inject
-   public JavaUrlHttpFutureCommandClient(URL target) throws MalformedURLException {
+   public JavaUrlHttpFutureCommandClient(URI target) throws MalformedURLException {
       super(target);
    }
 
@@ -106,7 +107,7 @@ public class JavaUrlHttpFutureCommandClient extends BaseHttpFutureCommandClient 
    }
 
    protected HttpURLConnection openJavaConnection(HttpRequest request) throws IOException {
-      URL url = new URL(target, request.getUri());
+      URL url = new URL(target.toURL(), request.getUri());
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.setDoOutput(true);
       connection.setAllowUserInteraction(false);

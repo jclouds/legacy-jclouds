@@ -44,9 +44,15 @@ public class CommandFactory {
       ParseSax<?> create(ParseSax.HandlerWithResult<?> handler);
    }
 
-   @SuppressWarnings("unchecked")
+   @Inject
+   private GetAndParseSaxFactory getAndParseSaxFactory;
+
+   public static interface GetAndParseSaxFactory {
+      GetAndParseSax<?> create(String uri, ParseSax<?> callable);
+   }
+
    public GetAndParseSax<?> createGetAndParseSax(String uri, ParseSax.HandlerWithResult<?> handler) {
-      return new GetAndParseSax(uri, parseSaxFactory.create(handler));
+      return getAndParseSaxFactory.create(uri, parseSaxFactory.create(handler));
    }
 
    @Inject

@@ -25,6 +25,8 @@ package org.jclouds.aws.s3.commands;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.net.URI;
+
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpMethod;
 
@@ -37,16 +39,16 @@ import org.jclouds.http.HttpMethod;
  */
 public class S3FutureCommand<T> extends HttpFutureCommand<T> {
 
-   public S3FutureCommand(HttpMethod method, String uri, ResponseCallable<T> responseCallable,
-            String amazonHost, String bucketName) {
-      super(method, uri, responseCallable);
-      addHostHeader(checkNotNull(amazonHost, "amazonHost"), checkNotNull(bucketName, "bucketName"));
+   public S3FutureCommand(URI endPoint, HttpMethod method, String uri,
+            ResponseCallable<T> responseCallable, String bucketName) {
+      super(endPoint, method, uri, responseCallable);
+      addHostHeader(endPoint.getHost(), checkNotNull(bucketName, "bucketName"));
    }
 
-   public S3FutureCommand(HttpMethod method, String uri, ResponseCallable<T> responseCallable,
-            String amazonHost) {
-      super(method, uri, responseCallable);
-      addHostHeader(checkNotNull(amazonHost, "amazonHost"));
+   public S3FutureCommand(URI endPoint, HttpMethod method, String uri,
+            ResponseCallable<T> responseCallable) {
+      super(endPoint, method, uri, responseCallable);
+      addHostHeader(endPoint.getHost());
    }
 
    protected void addHostHeader(String amazonHost, String bucketName) {

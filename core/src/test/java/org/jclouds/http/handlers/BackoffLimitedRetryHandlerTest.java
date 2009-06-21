@@ -28,6 +28,7 @@ import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpMethod;
@@ -37,6 +38,7 @@ import org.testng.annotations.Test;
 
 @Test(groups = "unit", testName = "core.BackoffLimitedRetryHandler")
 public class BackoffLimitedRetryHandlerTest {
+   private static final URI END_POINT = URI.create("http://localhost:8080");
 
    BackoffLimitedRetryHandler handler = new BackoffLimitedRetryHandler(5);
 
@@ -77,8 +79,8 @@ public class BackoffLimitedRetryHandlerTest {
 
    @Test
    void testClosesInputStream() throws InterruptedException, IOException {
-      HttpFutureCommand<String> command = new HttpFutureCommand<String>(HttpMethod.HEAD, "uri",
-               new ReturnStringIf200());
+      HttpFutureCommand<String> command = new HttpFutureCommand<String>(END_POINT, HttpMethod.HEAD,
+               "uri", new ReturnStringIf200());
       HttpResponse response = new HttpResponse();
       InputStream inputStream = new InputStream() {
          boolean isOpen = true;
@@ -117,8 +119,8 @@ public class BackoffLimitedRetryHandlerTest {
 
    @Test
    void testIncrementsFailureCount() throws InterruptedException {
-      HttpFutureCommand<String> command = new HttpFutureCommand<String>(HttpMethod.HEAD, "uri",
-               new ReturnStringIf200());
+      HttpFutureCommand<String> command = new HttpFutureCommand<String>(END_POINT, HttpMethod.HEAD,
+               "uri", new ReturnStringIf200());
       HttpResponse response = new HttpResponse();
 
       handler.retryRequest(command, response);
@@ -133,8 +135,8 @@ public class BackoffLimitedRetryHandlerTest {
 
    @Test
    void testDisallowsExcessiveRetries() throws InterruptedException {
-      HttpFutureCommand<String> command = new HttpFutureCommand<String>(HttpMethod.HEAD, "uri",
-               new ReturnStringIf200());
+      HttpFutureCommand<String> command = new HttpFutureCommand<String>(END_POINT, HttpMethod.HEAD,
+               "uri", new ReturnStringIf200());
       HttpResponse response = new HttpResponse();
 
       assertEquals(handler.retryRequest(command, response), true); // Failure 1

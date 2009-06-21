@@ -23,6 +23,7 @@
  */
 package org.jclouds.aws.s3.commands;
 
+import java.net.URI;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -35,7 +36,6 @@ import org.jclouds.http.commands.callables.xml.ParseSax;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.google.inject.name.Named;
 
 /**
  * A GET request operation directed at an object or bucket URI with the "acl" parameter retrieves
@@ -49,17 +49,15 @@ import com.google.inject.name.Named;
 public class GetAccessControlList extends S3FutureCommand<AccessControlList> {
 
    @Inject
-   public GetAccessControlList(@Named("jclouds.http.address") String amazonHost,
-            ParseSax<AccessControlList> accessControlListParser,
+   public GetAccessControlList(URI endPoint, ParseSax<AccessControlList> accessControlListParser,
             @Assisted("bucketName") String bucket) {
-      super(HttpMethod.GET, "/?acl", accessControlListParser, amazonHost, bucket);
+      super(endPoint, HttpMethod.GET, "/?acl", accessControlListParser, bucket);
    }
 
    @Inject
-   public GetAccessControlList(@Named("jclouds.http.address") String amazonHost,
-            ParseSax<AccessControlList> accessControlListParser,
+   public GetAccessControlList(URI endPoint, ParseSax<AccessControlList> accessControlListParser,
             @Assisted("bucketName") String bucket, @Assisted("objectKey") String objectKey) {
-      super(HttpMethod.GET, "/" + objectKey + "?acl", accessControlListParser, amazonHost, bucket);
+      super(endPoint, HttpMethod.GET, "/" + objectKey + "?acl", accessControlListParser, bucket);
    }
 
    @Override

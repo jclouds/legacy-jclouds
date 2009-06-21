@@ -26,7 +26,6 @@ package org.jclouds.gae.config;
 import java.util.Properties;
 
 import org.jclouds.gae.URLFetchServiceClient;
-import org.jclouds.gae.config.URLFetchServiceClientModule;
 import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpFutureCommandClient;
 import org.testng.annotations.Test;
@@ -43,21 +42,20 @@ import com.google.inject.name.Names;
 @Test
 public class URLFetchServiceClientModuleTest {
 
-    public void testConfigureBindsClient() {
-	final Properties properties = new Properties();
-	properties.put(HttpConstants.PROPERTY_HTTP_ADDRESS, "localhost");
-	properties.put(HttpConstants.PROPERTY_HTTP_PORT, "8088");
-	properties.put(HttpConstants.PROPERTY_HTTP_SECURE, "false");
+   public void testConfigureBindsClient() {
+      final Properties properties = new Properties();
+      properties.put(HttpConstants.PROPERTY_HTTP_ADDRESS, "localhost");
+      properties.put(HttpConstants.PROPERTY_HTTP_PORT, "8088");
+      properties.put(HttpConstants.PROPERTY_HTTP_SECURE, "false");
 
-	Injector i = Guice.createInjector(new URLFetchServiceClientModule() {
-	    @Override
-	    protected void configure() {
-		Names.bindProperties(binder(), properties);
-		super.configure();
-	    }
-	});
-	HttpFutureCommandClient client = i
-		.getInstance(HttpFutureCommandClient.class);
-	assert client instanceof URLFetchServiceClient;
-    }
+      Injector i = Guice.createInjector(new URLFetchServiceClientModule() {
+         @Override
+         protected void configure() {
+            Names.bindProperties(binder(), properties);
+            super.configure();
+         }
+      });
+      HttpFutureCommandClient client = i.getInstance(HttpFutureCommandClient.class);
+      assert client instanceof URLFetchServiceClient;
+   }
 }

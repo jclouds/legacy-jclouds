@@ -23,11 +23,14 @@
  */
 package org.jclouds.http.commands.config;
 
+import java.net.URI;
+
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.commands.CommandFactory;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 import org.testng.annotations.Test;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -39,32 +42,44 @@ import com.google.inject.Injector;
 @Test
 public class HttpCommandsModuleTest {
 
-    public void testGetString() {
-	Injector i = Guice.createInjector(new HttpCommandsModule());
-	CommandFactory factory = i.getInstance(CommandFactory.class);
-	HttpFutureCommand<String> get = factory.createGetString("/index.html");
-	assert get != null;
-	assert get.getResponseFuture() != null;
-    }
+   public void testGetString() {
+      Injector i = createInjector();
+      CommandFactory factory = i.getInstance(CommandFactory.class);
+      HttpFutureCommand<String> get = factory.createGetString("/index.html");
+      assert get != null;
+      assert get.getResponseFuture() != null;
+   }
 
-    public void testHead() {
-	Injector i = Guice.createInjector(new HttpCommandsModule());
-	CommandFactory factory = i.getInstance(CommandFactory.class);
-	HttpFutureCommand<Boolean> Head = factory.createHead("/index.html");
-	assert Head != null;
-	assert Head.getResponseFuture() != null;
-    }
+   private Injector createInjector() {
+      Injector i = Guice.createInjector(new HttpCommandsModule(), new AbstractModule() {
 
-    public void testGetAndParseXml() {
-	Injector i = Guice.createInjector(new HttpCommandsModule());
-	CommandFactory factory = i.getInstance(CommandFactory.class);
-	HttpFutureCommand<?> GetAndParseXml = factory.createGetAndParseSax(
-		"/index.html", new ParseSax.HandlerWithResult<String>() {
-		    public String getResult() {
-			return "hello";
-		    }
-		});
-	assert GetAndParseXml != null;
-	assert GetAndParseXml.getResponseFuture() != null;
-    }
+         @Override
+         protected void configure() {
+            bind(URI.class).toInstance(URI.create("http://localhost:8080"));
+         }
+
+      });
+      return i;
+   }
+
+   public void testHead() {
+      Injector i = createInjector();
+      CommandFactory factory = i.getInstance(CommandFactory.class);
+      HttpFutureCommand<Boolean> Head = factory.createHead("/index.html");
+      assert Head != null;
+      assert Head.getResponseFuture() != null;
+   }
+
+   public void testGetAndParseXml() {
+      Injector i = createInjector();
+      CommandFactory factory = i.getInstance(CommandFactory.class);
+      HttpFutureCommand<?> GetAndParseXml = factory.createGetAndParseSax("/index.html",
+               new ParseSax.HandlerWithResult<String>() {
+                  public String getResult() {
+                     return "hello";
+                  }
+               });
+      assert GetAndParseXml != null;
+      assert GetAndParseXml.getResponseFuture() != null;
+   }
 }

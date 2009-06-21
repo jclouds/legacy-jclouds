@@ -24,6 +24,8 @@
 package org.jclouds.http.httpnio.config;
 
 import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
+import java.net.URI;
 
 import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpFutureCommandClient;
@@ -45,26 +47,33 @@ import com.google.inject.name.Named;
 @HttpFutureCommandClientModule
 public class HttpNioConnectionPoolClientModule extends AbstractModule {
 
-    @Named(HttpConstants.PROPERTY_HTTP_SECURE)
-    boolean isSecure;
+   @Named(HttpConstants.PROPERTY_HTTP_SECURE)
+   boolean isSecure;
 
-    @Override
-    protected void configure() {
-	requestInjection(this);
-	if (isSecure)
-	    install(new SSLHttpNioConnectionPoolClientModule());
-	else
-	    install(new NonSSLHttpNioConnectionPoolClientModule());
-	bind(HttpFutureCommandClient.class).to(
-		HttpNioConnectionPoolClient.class);
-    }
+   @Override
+   protected void configure() {
+      requestInjection(this);
+      if (isSecure)
+         install(new SSLHttpNioConnectionPoolClientModule());
+      else
+         install(new NonSSLHttpNioConnectionPoolClientModule());
+      bind(HttpFutureCommandClient.class).to(HttpNioConnectionPoolClient.class);
+   }
 
-    @Singleton
-    @Provides
-    protected InetSocketAddress provideAddress(
-	    @Named(HttpConstants.PROPERTY_HTTP_ADDRESS) String address,
-	    @Named(HttpConstants.PROPERTY_HTTP_PORT) int port) {
-	return new InetSocketAddress(address, port);
-    }
+   @Singleton
+   @Provides
+   protected InetSocketAddress provideAddress(URI endPoint) {
+      return new InetSocketAddress(endPoint.getHost(), endPoint.getPort());
+   }
 
+   @Singleton
+   @Provides
+   protected URI provideAddress(@Named(HttpConstants.PROPERTY_HTTP_ADDRESS) String address,
+            @Named(HttpConstants.PROPERTY_HTTP_PORT) int port,
+            @Named(HttpConstants.PROPERTY_HTTP_SECURE) boolean isSecure)
+            throws MalformedURLException {
+
+      return URI.create(String.format("%1$s://%2$s:%3$s", isSecure ? "https" : "http", address,
+               port));
+   }
 }

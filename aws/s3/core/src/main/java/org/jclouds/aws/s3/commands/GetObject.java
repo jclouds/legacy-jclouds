@@ -25,6 +25,7 @@ package org.jclouds.aws.s3.commands;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.net.URI;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -38,7 +39,6 @@ import org.jclouds.http.HttpMethod;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.google.inject.name.Named;
 
 /**
  * Retrieves the S3Object associated with the Key or {@link S3Object#NOT_FOUND} if not available;
@@ -66,10 +66,10 @@ import com.google.inject.name.Named;
 public class GetObject extends S3FutureCommand<S3Object> {
 
    @Inject
-   public GetObject(@Named("jclouds.http.address") String amazonHost,
-            ParseObjectFromHeadersAndHttpContent callable, @Assisted("bucketName") String s3Bucket,
-            @Assisted("key") String key, @Assisted GetObjectOptions options) {
-      super(HttpMethod.GET, "/" + checkNotNull(key), callable, amazonHost, s3Bucket);
+   public GetObject(URI endPoint, ParseObjectFromHeadersAndHttpContent callable,
+            @Assisted("bucketName") String s3Bucket, @Assisted("key") String key,
+            @Assisted GetObjectOptions options) {
+      super(endPoint, HttpMethod.GET, "/" + checkNotNull(key), callable, s3Bucket);
       this.getRequest().getHeaders().putAll(options.buildRequestHeaders());
       callable.setKey(key);
    }
