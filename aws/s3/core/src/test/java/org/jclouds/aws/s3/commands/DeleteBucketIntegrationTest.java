@@ -59,12 +59,12 @@ public class DeleteBucketIntegrationTest extends S3IntegrationTest {
 
    @Test
    void deleteBucketIfEmpty() throws Exception {
-      String bucketName = getBucketName();
+      String bucketName = getScratchBucketName();
       try {
          assert client.deleteBucketIfEmpty(bucketName).get(10, TimeUnit.SECONDS);
          assert !client.bucketExists(bucketName).get(10, TimeUnit.SECONDS);
       } finally {
-         returnBucket(bucketName);
+         returnScratchBucket(bucketName);
       }
    }
 }
