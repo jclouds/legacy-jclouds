@@ -48,6 +48,7 @@ import java.util.logging.Logger;
 import org.jclouds.aws.s3.config.StubS3ConnectionModule;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.s3.domain.S3Bucket.Metadata;
 import org.jclouds.aws.s3.domain.S3Bucket.Metadata.LocationConstraint;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.aws.s3.util.S3Utils;
@@ -59,6 +60,8 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.inject.Module;
 
 public class S3IntegrationTest {
@@ -200,6 +203,9 @@ public class S3IntegrationTest {
       }
       client = context.getConnection();
       assert client != null;
+      
+      SANITY_CHECK_RETURNED_BUCKET_NAME = (client instanceof StubS3Connection);
+      
       goodMd5 = S3Utils.md5(TEST_STRING);
       badMd5 = S3Utils.md5("alf");
    }
@@ -230,11 +236,30 @@ public class S3IntegrationTest {
       return getBucketName();
    }
 
-   public void returnBucket(String bucketName) throws InterruptedException, ExecutionException,
-            TimeoutException {
+   public void returnBucket(final String bucketName) throws InterruptedException, 
+            ExecutionException, TimeoutException {
       if (bucketName != null) {
          bucketNames.add(bucketName);
-         bucketName = null;
+         
+         /*
+          * Ensure that any returned bucket name actually exists on the server.
+          * Return of a non-existent bucket introduces subtle testing bugs, where later 
+          * unrelated tests will fail.
+          * 
+          * NOTE: This sanity check should only be run for Stub-based Integration testing -- 
+          * it will *substantially* slow down tests on a real server over a network. 
+          */         
+         if (SANITY_CHECK_RETURNED_BUCKET_NAME) {         
+            if (!Iterables.any(client.listOwnedBuckets().get(), new Predicate<Metadata>() {
+                  public boolean apply(Metadata md) {
+                     return bucketName.equals(md.getName());
+                  }            
+               }))
+            {
+               throw new IllegalStateException(
+                  "Test returned the name of a non-existent bucket: " + bucketName); 
+            }
+         }
       }
    }
 
@@ -253,6 +278,8 @@ public class S3IntegrationTest {
 
    protected static int bucketCount = 20;
    protected static volatile int bucketIndex = 0;
+
+   protected boolean SANITY_CHECK_RETURNED_BUCKET_NAME = false;
 
    /**
     * two test groups integration and live.
