@@ -28,6 +28,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import org.jclouds.aws.s3.commands.options.CopyObjectOptions;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.xml.CopyObjectHandler;
+import org.jclouds.http.HttpMethod;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 import org.jclouds.util.Utils;
 
@@ -63,7 +64,7 @@ public class CopyObject extends S3FutureCommand<S3Object.Metadata> {
          @Assisted("destinationObject") String destinationObject,
          @Assisted CopyObjectOptions options) 
    {
-      super("PUT", 
+      super(HttpMethod.PUT, 
             "/" + checkNotNull(destinationObject, "destinationObject"),
             callable, amazonHost, destinationBucket);
       CopyObjectHandler handler = (CopyObjectHandler) callable.getHandler();

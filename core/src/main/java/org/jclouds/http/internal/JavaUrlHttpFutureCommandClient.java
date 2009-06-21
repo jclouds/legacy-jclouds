@@ -37,6 +37,7 @@ import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpFutureCommandClient;
+import org.jclouds.http.HttpMethod;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
@@ -79,7 +80,7 @@ public class JavaUrlHttpFutureCommandClient extends BaseHttpFutureCommandClient 
       } finally {
          // DO NOT disconnect, as it will also close the unconsumed
          // outputStream from above.
-         if (request.getMethod().equals("HEAD"))
+         if (request.getMethod().equals(HttpMethod.HEAD))
             connection.disconnect();
       }
    }
@@ -110,7 +111,7 @@ public class JavaUrlHttpFutureCommandClient extends BaseHttpFutureCommandClient 
       connection.setDoOutput(true);
       connection.setAllowUserInteraction(false);
       connection.setInstanceFollowRedirects(true);
-      connection.setRequestMethod(request.getMethod());
+      connection.setRequestMethod(request.getMethod().toString());
       for (String header : request.getHeaders().keySet()) {
          for (String value : request.getHeaders().get(header))
             connection.setRequestProperty(header, value);

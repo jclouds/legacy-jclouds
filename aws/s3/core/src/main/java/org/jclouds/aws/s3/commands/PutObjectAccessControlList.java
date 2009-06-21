@@ -28,6 +28,7 @@ import javax.annotation.Resource;
 import org.jclouds.aws.s3.domain.AccessControlList;
 import org.jclouds.aws.s3.xml.AccessControlListBuilder;
 import org.jclouds.http.HttpHeaders;
+import org.jclouds.http.HttpMethod;
 import org.jclouds.http.commands.callables.ReturnTrueIf2xx;
 import org.jclouds.logging.Logger;
 
@@ -36,8 +37,8 @@ import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 
 /**
- * A PUT request operation directed at an object URI with the "acl" parameter 
- * sets the Access Control List (ACL) settings for that S3 item.
+ * A PUT request operation directed at an object URI with the "acl" parameter sets the Access
+ * Control List (ACL) settings for that S3 item.
  * <p />
  * To set a bucket or object's ACL, you must have WRITE_ACP or FULL_CONTROL access to the item.
  * 
@@ -50,11 +51,10 @@ public class PutObjectAccessControlList extends S3FutureCommand<Boolean> {
 
    @Inject
    public PutObjectAccessControlList(@Named("jclouds.http.address") String amazonHost,
-            ReturnTrueIf2xx callable, @Assisted("bucketName") String bucket, 
-            @Assisted("key") String objectKey, @Assisted AccessControlList acl) 
-   {
-      super("PUT", "/" + objectKey + "?acl",  callable, amazonHost, bucket);
-      
+            ReturnTrueIf2xx callable, @Assisted("bucketName") String bucket,
+            @Assisted("key") String objectKey, @Assisted AccessControlList acl) {
+      super(HttpMethod.PUT, "/" + objectKey + "?acl", callable, amazonHost, bucket);
+
       String aclPayload = "";
       try {
          aclPayload = (new AccessControlListBuilder(acl)).getXmlString();
@@ -63,8 +63,7 @@ public class PutObjectAccessControlList extends S3FutureCommand<Boolean> {
          logger.error(e, "Unable to build XML document for Access Control List: " + acl);
       }
       getRequest().setPayload(aclPayload);
-      getRequest().getHeaders().put(
-            HttpHeaders.CONTENT_LENGTH, aclPayload.getBytes().length + "");
+      getRequest().getHeaders().put(HttpHeaders.CONTENT_LENGTH, aclPayload.getBytes().length + "");
    }
 
 }

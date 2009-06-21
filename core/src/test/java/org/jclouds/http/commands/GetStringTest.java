@@ -23,6 +23,7 @@
  */
 package org.jclouds.http.commands;
 
+import org.jclouds.http.HttpMethod;
 import org.jclouds.http.commands.callables.ReturnStringIf200;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -56,6 +57,6 @@ public class GetStringTest {
    public void testConstructor() {
       assert get.getResponseFuture() != null;
       assert get.getRequest().getUri().equals(GOOD_PATH);
-      assert get.getRequest().getMethod().equals("GET");
+      assert get.getRequest().getMethod().equals(HttpMethod.GET);
    }
 }

@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.aws.AWSResponseException;
+import org.jclouds.http.HttpMethod;
 import org.jclouds.http.commands.callables.ReturnTrueIf2xx;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -51,7 +52,7 @@ public class DeleteBucket extends S3FutureCommand<Boolean> {
    @Inject
    public DeleteBucket(@Named("jclouds.http.address") String amazonHost, ReturnTrueIf2xx callable,
             @Assisted String s3Bucket) {
-      super("DELETE", "/", callable, amazonHost, s3Bucket);
+      super(HttpMethod.DELETE, "/", callable, amazonHost, s3Bucket);
    }
 
    @Override

@@ -33,6 +33,7 @@ import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.s3.commands.callables.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.aws.s3.commands.options.GetObjectOptions;
 import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.http.HttpMethod;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
@@ -68,7 +69,7 @@ public class GetObject extends S3FutureCommand<S3Object> {
    public GetObject(@Named("jclouds.http.address") String amazonHost,
             ParseObjectFromHeadersAndHttpContent callable, @Assisted("bucketName") String s3Bucket,
             @Assisted("key") String key, @Assisted GetObjectOptions options) {
-      super("GET", "/" + checkNotNull(key), callable, amazonHost, s3Bucket);
+      super(HttpMethod.GET, "/" + checkNotNull(key), callable, amazonHost, s3Bucket);
       this.getRequest().getHeaders().putAll(options.buildRequestHeaders());
       callable.setKey(key);
    }

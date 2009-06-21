@@ -33,60 +33,59 @@ import org.jclouds.logging.Logger;
 import org.jclouds.util.Utils;
 
 /**
- * Represents a request that can be executed within
- * {@link HttpFutureCommandClient}
+ * Represents a request that can be executed within {@link HttpFutureCommandClient}
  * 
  * @author Adrian Cole
  */
 public class HttpRequest extends HttpMessage {
 
-    private final String method;
-    private final String uri;
-    Object payload;
+   private final HttpMethod method;
+   private final String uri;
+   Object payload;
 
-    @Resource
-    protected Logger logger = Logger.NULL;
+   @Resource
+   protected Logger logger = Logger.NULL;
 
-    public HttpRequest(String method, String uri) {
-	this.method = checkNotNull(method, "method");
-	this.uri = Utils.encodeUriPath(checkNotNull(uri, "uri"));
-    }
+   public HttpRequest(HttpMethod method, String uri) {
+      this.method = checkNotNull(method, "method");
+      this.uri = Utils.encodeUriPath(checkNotNull(uri, "uri"));
+   }
 
-    @Override
-    public String toString() {
-	final StringBuilder sb = new StringBuilder();
-	sb.append("HttpRequest");
-	sb.append("{method='").append(method).append('\'');
-	sb.append(", uri='").append(uri).append('\'');
-	sb.append(", headers=").append(headers);
-	sb.append(", payload set=").append(payload != null);
-	sb.append('}');
-	return sb.toString();
-    }
+   @Override
+   public String toString() {
+      final StringBuilder sb = new StringBuilder();
+      sb.append("HttpRequest");
+      sb.append("{method='").append(method).append('\'');
+      sb.append(", uri='").append(uri).append('\'');
+      sb.append(", headers=").append(headers);
+      sb.append(", payload set=").append(payload != null);
+      sb.append('}');
+      return sb.toString();
+   }
 
-    public String getMethod() {
-	return method;
-    }
+   public HttpMethod getMethod() {
+      return method;
+   }
 
-    public String getUri() {
-	return uri;
-    }
+   public String getUri() {
+      return uri;
+   }
 
-    public boolean isReplayable() {
-	Object content = getPayload();
-	if (content != null && content instanceof InputStream) {
-	    logger.warn("%1$s: InputStreams are not replayable", toString());
-	    return false;
-	}
-	return true;
-    }
+   public boolean isReplayable() {
+      Object content = getPayload();
+      if (content != null && content instanceof InputStream) {
+         logger.warn("%1$s: InputStreams are not replayable", toString());
+         return false;
+      }
+      return true;
+   }
 
-    public Object getPayload() {
-	return payload;
-    }
+   public Object getPayload() {
+      return payload;
+   }
 
-    public void setPayload(Object content) {
-	this.payload = content;
-    }
-    
+   public void setPayload(Object content) {
+      this.payload = content;
+   }
+
 }

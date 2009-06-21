@@ -24,16 +24,17 @@
 package org.jclouds.http.commands;
 
 import org.jclouds.http.HttpFutureCommand;
+import org.jclouds.http.HttpMethod;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 
 /**
  * // TODO: Adrian: Document this!
- *
+ * 
  * @author Adrian Cole
  */
 public class GetAndParseSax<T> extends HttpFutureCommand<T> {
 
-    public GetAndParseSax(String uri, ParseSax<T> callable) {
-        super("GET", uri, callable);
-    }
+   public GetAndParseSax(String uri, ParseSax<T> callable) {
+      super(HttpMethod.GET, uri, callable);
+   }
 }

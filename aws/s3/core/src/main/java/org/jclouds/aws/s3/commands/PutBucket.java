@@ -31,6 +31,7 @@ import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.s3.commands.options.PutBucketOptions;
 import org.jclouds.aws.s3.util.S3Utils;
 import org.jclouds.http.HttpHeaders;
+import org.jclouds.http.HttpMethod;
 import org.jclouds.http.commands.callables.ReturnTrueIf2xx;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -58,7 +59,7 @@ public class PutBucket extends S3FutureCommand<Boolean> {
    @Inject
    public PutBucket(@Named("jclouds.http.address") String amazonHost, ReturnTrueIf2xx callable,
             @Assisted String bucketName, @Assisted PutBucketOptions options) {
-      super("PUT", "/", callable, amazonHost, S3Utils.validateBucketName(bucketName));
+      super(HttpMethod.PUT, "/", callable, amazonHost, S3Utils.validateBucketName(bucketName));
       getRequest().getHeaders().putAll(options.buildRequestHeaders());
       String payload = options.buildPayload();
       if (payload != null) {
@@ -77,7 +78,8 @@ public class PutBucket extends S3FutureCommand<Boolean> {
    }
 
    @VisibleForTesting
-   static Boolean eventualConsistencyAlreadyOwnedIsOk(ExecutionException e) throws ExecutionException {
+   static Boolean eventualConsistencyAlreadyOwnedIsOk(ExecutionException e)
+            throws ExecutionException {
       if (e.getCause() != null && e.getCause() instanceof AWSResponseException) {
          AWSResponseException responseException = (AWSResponseException) e.getCause();
          if ("BucketAlreadyOwnedByYou".equals(responseException.getError().getCode())) {

@@ -23,10 +23,12 @@
  */
 package org.jclouds.http.commands;
 
+import org.jclouds.http.HttpFutureCommand;
+import org.jclouds.http.HttpMethod;
+import org.jclouds.http.commands.callables.ReturnTrueIf2xx;
+
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import org.jclouds.http.HttpFutureCommand;
-import org.jclouds.http.commands.callables.ReturnTrueIf2xx;
 
 /**
  * PUT a string and respond with true if successful.
@@ -38,7 +40,7 @@ public class Put extends HttpFutureCommand<Boolean> {
    @Inject
    public Put(ReturnTrueIf2xx callable, @Assisted("uri") String uri,
             @Assisted("payload") String payload) {
-      super("PUT", uri, callable);
+      super(HttpMethod.PUT, uri, callable);
       this.getRequest().setPayload(payload);
    }
 }

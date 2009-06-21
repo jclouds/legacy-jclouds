@@ -41,79 +41,71 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 
 public class HttpNioUtils {
-    public static HttpEntityEnclosingRequest convertToApacheRequest(
-	    HttpRequest object) {
-	BasicHttpEntityEnclosingRequest apacheRequest = new BasicHttpEntityEnclosingRequest(
-		object.getMethod(), object.getUri(), HttpVersion.HTTP_1_1);
+   public static HttpEntityEnclosingRequest convertToApacheRequest(HttpRequest object) {
+      BasicHttpEntityEnclosingRequest apacheRequest = new BasicHttpEntityEnclosingRequest(object
+               .getMethod().toString(), object.getUri(), HttpVersion.HTTP_1_1);
 
-	Object content = object.getPayload();
+      Object content = object.getPayload();
 
-	// Since we may remove headers, ensure they are added to the apache
-	// request after this block
-	if (content != null) {
-	    long contentLength = Long.parseLong(object
-		    .getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH));
-	    object.getHeaders().removeAll(HttpHeaders.CONTENT_LENGTH);
-	    String contentType = object
-		    .getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE);
-	    object.getHeaders().removeAll(HttpHeaders.CONTENT_TYPE);
-	    addEntityForContent(apacheRequest, content, contentType,
-		    contentLength);
-	}
+      // Since we may remove headers, ensure they are added to the apache
+      // request after this block
+      if (content != null) {
+         long contentLength = Long.parseLong(object
+                  .getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH));
+         object.getHeaders().removeAll(HttpHeaders.CONTENT_LENGTH);
+         String contentType = object.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE);
+         object.getHeaders().removeAll(HttpHeaders.CONTENT_TYPE);
+         addEntityForContent(apacheRequest, content, contentType, contentLength);
+      }
 
-	for (String header : object.getHeaders().keySet()) {
-	    for (String value : object.getHeaders().get(header))
-		apacheRequest.addHeader(header, value);
-	}
-	return apacheRequest;
-    }
+      for (String header : object.getHeaders().keySet()) {
+         for (String value : object.getHeaders().get(header))
+            apacheRequest.addHeader(header, value);
+      }
+      return apacheRequest;
+   }
 
-    public static void addEntityForContent(
-	    BasicHttpEntityEnclosingRequest apacheRequest, Object content,
-	    String contentType, long length) {
-	if (content instanceof InputStream) {
-	    InputStream inputStream = (InputStream) content;
-	    if (length == -1)
-		throw new IllegalArgumentException(
-			"you must specify size when content is an InputStream");
-	    InputStreamEntity entity = new InputStreamEntity(inputStream,
-		    length);
-	    entity.setContentType(contentType);
-	    apacheRequest.setEntity(entity);
-	} else if (content instanceof String) {
-	    NStringEntity nStringEntity = null;
-	    try {
-		nStringEntity = new NStringEntity((String) content);
-	    } catch (UnsupportedEncodingException e) {
-		throw new UnsupportedOperationException(
-			"Encoding not supported", e);
-	    }
-	    nStringEntity.setContentType(contentType);
-	    apacheRequest.setEntity(nStringEntity);
-	} else if (content instanceof File) {
-	    apacheRequest.setEntity(new NFileEntity((File) content,
-		    contentType, true));
-	} else if (content instanceof byte[]) {
-	    NByteArrayEntity entity = new NByteArrayEntity((byte[]) content);
-	    entity.setContentType(contentType);
-	    apacheRequest.setEntity(entity);
-	} else {
-	    throw new UnsupportedOperationException(
-		    "Content class not supported: "
-			    + content.getClass().getName());
-	}
-    }
+   public static void addEntityForContent(BasicHttpEntityEnclosingRequest apacheRequest,
+            Object content, String contentType, long length) {
+      if (content instanceof InputStream) {
+         InputStream inputStream = (InputStream) content;
+         if (length == -1)
+            throw new IllegalArgumentException(
+                     "you must specify size when content is an InputStream");
+         InputStreamEntity entity = new InputStreamEntity(inputStream, length);
+         entity.setContentType(contentType);
+         apacheRequest.setEntity(entity);
+      } else if (content instanceof String) {
+         NStringEntity nStringEntity = null;
+         try {
+            nStringEntity = new NStringEntity((String) content);
+         } catch (UnsupportedEncodingException e) {
+            throw new UnsupportedOperationException("Encoding not supported", e);
+         }
+         nStringEntity.setContentType(contentType);
+         apacheRequest.setEntity(nStringEntity);
+      } else if (content instanceof File) {
+         apacheRequest.setEntity(new NFileEntity((File) content, contentType, true));
+      } else if (content instanceof byte[]) {
+         NByteArrayEntity entity = new NByteArrayEntity((byte[]) content);
+         entity.setContentType(contentType);
+         apacheRequest.setEntity(entity);
+      } else {
+         throw new UnsupportedOperationException("Content class not supported: "
+                  + content.getClass().getName());
+      }
+   }
 
-    public static HttpResponse convertToJavaCloudsResponse(
-	    org.apache.http.HttpResponse apacheResponse) throws IOException {
-	HttpResponse response = new HttpResponse();
-	if (apacheResponse.getEntity() != null) {
-	    response.setContent(apacheResponse.getEntity().getContent());
-	}
-	for (Header header : apacheResponse.getAllHeaders()) {
-	    response.getHeaders().put(header.getName(), header.getValue());
-	}
-	response.setStatusCode(apacheResponse.getStatusLine().getStatusCode());
-	return response;
-    }
+   public static HttpResponse convertToJavaCloudsResponse(
+            org.apache.http.HttpResponse apacheResponse) throws IOException {
+      HttpResponse response = new HttpResponse();
+      if (apacheResponse.getEntity() != null) {
+         response.setContent(apacheResponse.getEntity().getContent());
+      }
+      for (Header header : apacheResponse.getAllHeaders()) {
+         response.getHeaders().put(header.getName(), header.getValue());
+      }
+      response.setStatusCode(apacheResponse.getStatusLine().getStatusCode());
+      return response;
+   }
 }

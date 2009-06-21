@@ -21,24 +21,13 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.http.commands;
-
-import org.jclouds.http.HttpFutureCommand;
-import org.jclouds.http.HttpMethod;
-import org.jclouds.http.commands.callables.ReturnStringIf200;
-
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
+package org.jclouds.http;
 
 /**
- * // TODO: Adrian: Document this!
+ * {@code HttpMethod} is an enumeration of HTTP methods used in {@link HttpFutureCommand}
  * 
  * @author Adrian Cole
  */
-public class GetString extends HttpFutureCommand<String> {
-
-   @Inject
-   public GetString(ReturnStringIf200 callable, @Assisted String uri) {
-      super(HttpMethod.GET, uri, callable);
-   }
+public enum HttpMethod {
+   DELETE, GET, HEAD, POST, PUT
 }

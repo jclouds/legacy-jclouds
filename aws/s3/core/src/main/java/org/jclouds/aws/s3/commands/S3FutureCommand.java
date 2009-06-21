@@ -26,6 +26,7 @@ package org.jclouds.aws.s3.commands;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.http.HttpFutureCommand;
+import org.jclouds.http.HttpMethod;
 
 /**
  * Conditionally adds the amazon host header to requests.
@@ -36,13 +37,13 @@ import org.jclouds.http.HttpFutureCommand;
  */
 public class S3FutureCommand<T> extends HttpFutureCommand<T> {
 
-   public S3FutureCommand(String method, String uri, ResponseCallable<T> responseCallable,
+   public S3FutureCommand(HttpMethod method, String uri, ResponseCallable<T> responseCallable,
             String amazonHost, String bucketName) {
       super(method, uri, responseCallable);
       addHostHeader(checkNotNull(amazonHost, "amazonHost"), checkNotNull(bucketName, "bucketName"));
    }
 
-   public S3FutureCommand(String method, String uri, ResponseCallable<T> responseCallable,
+   public S3FutureCommand(HttpMethod method, String uri, ResponseCallable<T> responseCallable,
             String amazonHost) {
       super(method, uri, responseCallable);
       addHostHeader(checkNotNull(amazonHost, "amazonHost"));

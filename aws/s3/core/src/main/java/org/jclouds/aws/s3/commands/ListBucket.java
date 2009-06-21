@@ -31,6 +31,7 @@ import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.s3.commands.options.ListBucketOptions;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.xml.ListBucketHandler;
+import org.jclouds.http.HttpMethod;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -58,7 +59,7 @@ public class ListBucket extends S3FutureCommand<S3Bucket> {
    public ListBucket(@Named("jclouds.http.address") String amazonHost,
             ParseSax<S3Bucket> bucketParser, @Assisted String bucket,
             @Assisted ListBucketOptions options) {
-      super("GET", "/" + options.buildQueryString(), bucketParser, amazonHost, bucket);
+      super(HttpMethod.GET, "/" + options.buildQueryString(), bucketParser, amazonHost, bucket);
       ListBucketHandler handler = (ListBucketHandler) bucketParser.getHandler();
       handler.setBucketName(bucket);
    }

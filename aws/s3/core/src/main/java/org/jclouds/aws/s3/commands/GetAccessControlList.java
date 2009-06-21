@@ -29,6 +29,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.s3.domain.AccessControlList;
+import org.jclouds.http.HttpMethod;
 import org.jclouds.http.commands.callables.xml.ParseSax;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -51,14 +52,14 @@ public class GetAccessControlList extends S3FutureCommand<AccessControlList> {
    public GetAccessControlList(@Named("jclouds.http.address") String amazonHost,
             ParseSax<AccessControlList> accessControlListParser,
             @Assisted("bucketName") String bucket) {
-      super("GET", "/?acl", accessControlListParser, amazonHost, bucket);
+      super(HttpMethod.GET, "/?acl", accessControlListParser, amazonHost, bucket);
    }
 
    @Inject
    public GetAccessControlList(@Named("jclouds.http.address") String amazonHost,
             ParseSax<AccessControlList> accessControlListParser,
             @Assisted("bucketName") String bucket, @Assisted("objectKey") String objectKey) {
-      super("GET", "/" + objectKey + "?acl", accessControlListParser, amazonHost, bucket);
+      super(HttpMethod.GET, "/" + objectKey + "?acl", accessControlListParser, amazonHost, bucket);
    }
 
    @Override

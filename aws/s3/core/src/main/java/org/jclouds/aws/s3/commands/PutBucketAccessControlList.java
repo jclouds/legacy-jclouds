@@ -28,6 +28,7 @@ import javax.annotation.Resource;
 import org.jclouds.aws.s3.domain.AccessControlList;
 import org.jclouds.aws.s3.xml.AccessControlListBuilder;
 import org.jclouds.http.HttpHeaders;
+import org.jclouds.http.HttpMethod;
 import org.jclouds.http.commands.callables.ReturnTrueIf2xx;
 import org.jclouds.logging.Logger;
 
@@ -52,7 +53,7 @@ public class PutBucketAccessControlList extends S3FutureCommand<Boolean> {
    public PutBucketAccessControlList(@Named("jclouds.http.address") String amazonHost,
             ReturnTrueIf2xx callable, @Assisted("bucketName") String bucket,
             @Assisted AccessControlList acl) {
-      super("PUT", "/?acl", callable, amazonHost, bucket);
+      super(HttpMethod.PUT, "/?acl", callable, amazonHost, bucket);
 
       String aclPayload = "";
       try {

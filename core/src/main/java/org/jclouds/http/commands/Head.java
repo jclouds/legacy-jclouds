@@ -23,20 +23,22 @@
  */
 package org.jclouds.http.commands;
 
+import org.jclouds.http.HttpFutureCommand;
+import org.jclouds.http.HttpMethod;
+import org.jclouds.http.commands.callables.ReturnTrueIf2xx;
+
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import org.jclouds.http.HttpFutureCommand;
-import org.jclouds.http.commands.callables.ReturnTrueIf2xx;
 
 /**
  * // TODO: Adrian: Document this!
- *
+ * 
  * @author Adrian Cole
  */
 public class Head extends HttpFutureCommand<Boolean> {
 
-    @Inject
-    public Head(ReturnTrueIf2xx callable, @Assisted String uri) {
-        super("HEAD", uri, callable);
-    }
+   @Inject
+   public Head(ReturnTrueIf2xx callable, @Assisted String uri) {
+      super(HttpMethod.HEAD, uri, callable);
+   }
 }

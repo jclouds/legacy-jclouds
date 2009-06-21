@@ -167,13 +167,13 @@ public class URLFetchServiceClient extends BaseHttpFutureCommandClient {
       } else {
          url = new URL(target, request.getUri());
       }
-      
+
       FetchOptions options = disallowTruncate();
       followRedirectsUnlessRequestContainsPayload(request, options);
 
-      HTTPRequest gaeRequest = new HTTPRequest(url, HTTPMethod.valueOf(request.getMethod()),
-               options);
-      
+      HTTPRequest gaeRequest = new HTTPRequest(url, HTTPMethod.valueOf(request.getMethod()
+               .toString()), options);
+
       for (String header : request.getHeaders().keySet()) {
          // GAE/J v1.2.1 re-writes the host header, so we'll skip it.
          if (!header.equals(HttpConstants.HOST)) {
@@ -182,7 +182,7 @@ public class URLFetchServiceClient extends BaseHttpFutureCommandClient {
             }
          }
       }
-      
+
       if (request.getPayload() != null) {
          changeRequestContentToBytes(request);
          gaeRequest.setPayload((byte[]) request.getPayload());

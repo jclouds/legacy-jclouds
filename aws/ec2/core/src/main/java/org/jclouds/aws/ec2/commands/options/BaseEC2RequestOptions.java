@@ -177,7 +177,7 @@ public abstract class BaseEC2RequestOptions<T extends EC2RequestOptions> extends
       // 4. Separate the name-value pairs with an ampersand.
       // -- buildQueryString() does this.
       StringBuilder toSign = new StringBuilder();
-      toSign.append("GET").append("\n").append(host.toLowerCase()).append("\n").append("/").append(
+      toSign.append(HttpMethod.GET).append("\n").append(host.toLowerCase()).append("\n").append("/").append(
                "\n");
       String canonicalizedQueryString = super.buildQueryString().replaceFirst("\\?", "");
       toSign.append(canonicalizedQueryString);

@@ -40,6 +40,7 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpHeaders;
+import org.jclouds.http.HttpMethod;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.BeforeTest;
@@ -100,21 +101,21 @@ public class URLFetchServiceClientTest {
 
    @Test
    void testConvertRequestGetsTargetAndUri() throws IOException {
-      HttpRequest request = new HttpRequest("GET", "foo");
+      HttpRequest request = new HttpRequest(HttpMethod.GET, "foo");
       HTTPRequest gaeRequest = client.convert(request);
       assertEquals(gaeRequest.getURL().getPath(), "/foo");
    }
 
    @Test
    void testConvertRequestSetsFetchOptions() throws IOException {
-      HttpRequest request = new HttpRequest("GET", "foo");
+      HttpRequest request = new HttpRequest(HttpMethod.GET, "foo");
       HTTPRequest gaeRequest = client.convert(request);
       assert gaeRequest.getFetchOptions() != null;
    }
 
    @Test
    void testConvertRequestSetsHeaders() throws IOException {
-      HttpRequest request = new HttpRequest("GET", "foo");
+      HttpRequest request = new HttpRequest(HttpMethod.GET, "foo");
       request.getHeaders().put("foo", "bar");
       HTTPRequest gaeRequest = client.convert(request);
       assertEquals(gaeRequest.getHeaders().get(0).getName(), "foo");
@@ -123,36 +124,36 @@ public class URLFetchServiceClientTest {
 
    @Test
    void testConvertRequestNoContent() throws IOException {
-      HttpRequest request = new HttpRequest("GET", "foo");
+      HttpRequest request = new HttpRequest(HttpMethod.GET, "foo");
       HTTPRequest gaeRequest = client.convert(request);
       assert gaeRequest.getPayload() == null;
-      assertEquals(gaeRequest.getHeaders().size(), 1);//content length
+      assertEquals(gaeRequest.getHeaders().size(), 1);// content length
    }
 
    @Test
    void testConvertRequestStringContent() throws IOException {
-      HttpRequest request = new HttpRequest("GET", "foo");
+      HttpRequest request = new HttpRequest(HttpMethod.GET, "foo");
       request.setPayload("hoot!");
       testHoot(request);
    }
 
    @Test
    void testConvertRequestInputStreamContent() throws IOException {
-      HttpRequest request = new HttpRequest("GET", "foo");
+      HttpRequest request = new HttpRequest(HttpMethod.GET, "foo");
       request.setPayload(IOUtils.toInputStream("hoot!"));
       testHoot(request);
    }
 
    @Test
    void testConvertRequestBytesContent() throws IOException {
-      HttpRequest request = new HttpRequest("GET", "foo");
+      HttpRequest request = new HttpRequest(HttpMethod.GET, "foo");
       request.setPayload("hoot!".getBytes());
       testHoot(request);
    }
 
    @Test(expectedExceptions = UnsupportedOperationException.class)
    void testConvertRequestBadContent() throws IOException {
-      HttpRequest request = new HttpRequest("GET", "foo");
+      HttpRequest request = new HttpRequest(HttpMethod.GET, "foo");
       request.setPayload(new Date());
       client.convert(request);
 
@@ -164,7 +165,7 @@ public class URLFetchServiceClientTest {
       File file = new File(basedir, "target/testfiles/hoot");
       file.getParentFile().mkdirs();
       IOUtils.write("hoot!", new FileOutputStream(file));
-      HttpRequest request = new HttpRequest("GET", "foo");
+      HttpRequest request = new HttpRequest(HttpMethod.GET, "foo");
       request.setPayload(file);
       testHoot(request);
    }
