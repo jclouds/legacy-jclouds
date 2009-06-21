@@ -261,13 +261,13 @@ public class HttpNioFutureCommandConnectionPool extends
     }
 
     public void fatalIOException(IOException ex, NHttpConnection conn) {
-        logger.error(ex, "%3$s-%1$d{%2$s} - io error", conn, conn.hashCode(),
+        logger.error(ex, "%3$s-%1$s{%2$d} - io error", conn, conn.hashCode(),
                 target);
         resubmitIfRequestIsReplayable(conn, ex);
     }
 
     public void fatalProtocolException(HttpException ex, NHttpConnection conn) {
-        logger.error(ex, "%3$s-%1$s{%2$s} - http error", conn, conn.hashCode(),
+        logger.error(ex, "%3$s-%1$s{%2$d} - http error", conn, conn.hashCode(),
                 target);
         setExceptionOnCommand(conn, ex);
     }
