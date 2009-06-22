@@ -28,15 +28,10 @@ import static org.testng.Assert.assertEquals;
 import org.jclouds.aws.s3.handlers.ParseAWSErrorFromXmlContent;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.aws.s3.xml.config.S3ParserModule;
-import org.jclouds.http.HttpResponseHandler;
+import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRetryHandler;
-import org.jclouds.http.annotation.ClientErrorHandler;
-import org.jclouds.http.annotation.RedirectHandler;
-import org.jclouds.http.annotation.RetryHandler;
-import org.jclouds.http.annotation.ServerErrorHandler;
 import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
-import org.jclouds.http.handlers.CloseContentAndSetExceptionHandler;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
@@ -74,22 +69,10 @@ public class S3ContextModuleTest {
                }, new JavaUrlHttpFutureCommandClientModule());
    }
 
-   private static class ClientErrorHandlerTest {
-      @Inject
-      @ClientErrorHandler
-      HttpResponseHandler errorHandler;
-   }
-
-   @Test
-   void testClientErrorHandler() {
-      ClientErrorHandlerTest error = createInjector().getInstance(ClientErrorHandlerTest.class);
-      assertEquals(error.errorHandler.getClass(), ParseAWSErrorFromXmlContent.class);
-   }
 
    private static class ServerErrorHandlerTest {
       @Inject
-      @ServerErrorHandler
-      HttpResponseHandler errorHandler;
+      HttpErrorHandler errorHandler;
    }
 
    @Test
@@ -98,21 +81,9 @@ public class S3ContextModuleTest {
       assertEquals(error.errorHandler.getClass(), ParseAWSErrorFromXmlContent.class);
    }
 
-   private static class RedirectHandlerTest {
-      @Inject
-      @RedirectHandler
-      HttpResponseHandler errorHandler;
-   }
-
-   @Test
-   void testRedirectHandler() {
-      RedirectHandlerTest error = createInjector().getInstance(RedirectHandlerTest.class);
-      assertEquals(error.errorHandler.getClass(), CloseContentAndSetExceptionHandler.class);
-   }
-
+   
    private static class RetryHandlerTest {
       @Inject
-      @RetryHandler
       HttpRetryHandler retryHandler;
    }
 

@@ -30,70 +30,36 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpConstants;
-import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpFutureCommandClient;
-import org.jclouds.http.HttpMethod;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
-
-import com.google.inject.Inject;
 
 /**
  * Basic implementation of a {@link HttpFutureCommandClient}.
  * 
  * @author Adrian Cole
  */
-public class JavaUrlHttpFutureCommandClient extends BaseHttpFutureCommandClient {
+public class JavaUrlHttpFutureCommandClient extends BaseHttpFutureCommandClient<HttpURLConnection> {
 
-   @Inject
-   public JavaUrlHttpFutureCommandClient(URI target) throws MalformedURLException {
-      super(target);
-   }
-
-   public void submit(HttpFutureCommand<?> command) {
-      HttpRequest request = command.getRequest();
-      HttpURLConnection connection = null;
-      try {
-         HttpResponse response = null;
-         for (;;) {
-            for (HttpRequestFilter filter : requestFilters) {
-               filter.filter(request);
-            }
-            logger.trace("%1$s - converting request %2$s", target, request);
-            connection = openJavaConnection(request);
-            logger.trace("%1$s - submitting request %2$s", target, connection);
-            response = getResponse(connection);
-            logger.trace("%1$s - received response %2$s", target, response);
-            if (response.getStatusCode() >= 500 && httpRetryHandler.retryRequest(command, response))
-               continue;
-            break;
-         }
-         handleResponse(command, response);
-      } catch (Exception e) {
-         command.setException(e);
-      } finally {
-         // DO NOT disconnect, as it will also close the unconsumed
-         // outputStream from above.
-         if (request.getMethod().equals(HttpMethod.HEAD))
-            connection.disconnect();
-      }
-   }
-
-   protected HttpResponse getResponse(HttpURLConnection connection) throws IOException {
+   @Override
+   protected HttpResponse invoke(HttpURLConnection connection) throws IOException {
       HttpResponse response = new HttpResponse();
+      if (logger.isTraceEnabled())
+         logger.trace("%1$s - submitting request %2$s, headers: %3$s", connection.getURL()
+                  .getHost(), connection.getURL(), connection.getRequestProperties());
       InputStream in;
       try {
          in = connection.getInputStream();
       } catch (IOException e) {
          in = connection.getErrorStream();
       }
+      if (logger.isTraceEnabled())
+         logger.info("%1$s - received response code %2$s, headers: %3$s", connection.getURL()
+                  .getHost(), connection.getResponseCode(), connection.getHeaderFields());
       if (in != null) {
          response.setContent(in);
       }
@@ -106,8 +72,9 @@ public class JavaUrlHttpFutureCommandClient extends BaseHttpFutureCommandClient 
       return response;
    }
 
-   protected HttpURLConnection openJavaConnection(HttpRequest request) throws IOException {
-      URL url = new URL(target.toURL(), request.getUri());
+   @Override
+   protected HttpURLConnection convert(HttpRequest request) throws IOException {
+      URL url = new URL(request.getEndPoint().toURL(), request.getUri());
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.setDoOutput(true);
       connection.setAllowUserInteraction(false);
@@ -143,4 +110,14 @@ public class JavaUrlHttpFutureCommandClient extends BaseHttpFutureCommandClient 
       }
       return connection;
    }
+
+   /**
+    * Only disconnect if there is no content, as disconnecting will throw away unconsumed content.
+    */
+   @Override
+   protected void cleanup(HttpURLConnection connection) {
+      if (connection.getContentLength() == 0)
+         connection.disconnect();
+   }
+
 }

@@ -21,24 +21,18 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.http.annotation;
-
-import com.google.inject.BindingAnnotation;
-import java.lang.annotation.Target;
-import java.lang.annotation.Retention;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
+package org.jclouds.http;
 
 /**
- * Implies that the object can address {@link org.jclouds.http.HttpResponse}s
- * that contain status code 4xx.
+ * // TODO: Adrian: Document this!
  * 
  * @author Adrian Cole
  */
-@BindingAnnotation
-@Target( { FIELD, PARAMETER, METHOD })
-@Retention(RUNTIME)
-public @interface ClientErrorHandler {
+public interface HttpErrorHandler {
+    public static final HttpErrorHandler NOOP = new HttpErrorHandler() {
+	public void handle(HttpFutureCommand<?> command, HttpResponse response) {
+	}
+    };
+
+    void handle(HttpFutureCommand<?> command, HttpResponse response);
 }

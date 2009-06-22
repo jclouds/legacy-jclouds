@@ -37,10 +37,9 @@ import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpConstants;
-import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpFutureCommandClient;
+import org.jclouds.http.HttpHeaders;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.internal.BaseHttpFutureCommandClient;
 
@@ -58,61 +57,12 @@ import com.google.inject.Inject;
  * 
  * @author Adrian Cole
  */
-public class URLFetchServiceClient extends BaseHttpFutureCommandClient {
+public class URLFetchServiceClient extends BaseHttpFutureCommandClient<HTTPRequest> {
    private final URLFetchService urlFetchService;
-   private final int port;
-   private final boolean isSecure;
 
    @Inject
-   public URLFetchServiceClient(URI target, URLFetchService urlFetchService)
-            throws MalformedURLException {
-      super(target);
+   public URLFetchServiceClient(URLFetchService urlFetchService) throws MalformedURLException {
       this.urlFetchService = urlFetchService;
-      this.port = target.getPort();
-      this.isSecure = target.getScheme().equals("https");
-   }
-
-   public void submit(HttpFutureCommand<?> command) {
-      HttpRequest request = command.getRequest();
-
-      HTTPResponse gaeResponse = null;
-      try {
-         for (HttpRequestFilter filter : requestFilters) {
-            filter.filter(request);
-         }
-         HttpResponse response = null;
-         for (;;) {
-            logger.trace("%1$s - converting request %2$s", target, request);
-            HTTPRequest gaeRequest = convert(request);
-            if (logger.isTraceEnabled())
-               logger.trace("%1$s - submitting request %2$s, headers: %3$s", target, gaeRequest
-                        .getURL(), headersAsString(gaeRequest.getHeaders()));
-            gaeResponse = this.urlFetchService.fetch(gaeRequest);
-            if (logger.isTraceEnabled())
-               logger.info("%1$s - received response code %2$s, headers: %3$s", target, gaeResponse
-                        .getResponseCode(), headersAsString(gaeResponse.getHeaders()));
-            response = convert(gaeResponse);
-            int statusCode = response.getStatusCode();
-            if (statusCode >= 500 && httpRetryHandler.retryRequest(command, response))
-               continue;
-            break;
-         }
-         handleResponse(command, response);
-      } catch (Exception e) {
-         if (gaeResponse != null && gaeResponse.getContent() != null) {
-            logger.error(e, "error encountered during the execution: %1$s%n%2$s", gaeResponse,
-                     new String(gaeResponse.getContent()));
-         }
-         command.setException(e);
-      }
-   }
-
-   String headersAsString(List<HTTPHeader> headers) {
-      StringBuilder builder = new StringBuilder("");
-      for (HTTPHeader header : headers)
-         builder.append("[").append(header.getName()).append("=").append(header.getValue()).append(
-                  "],");
-      return builder.toString();
    }
 
    /**
@@ -142,7 +92,7 @@ public class URLFetchServiceClient extends BaseHttpFutureCommandClient {
    }
 
    @VisibleForTesting
-   HttpResponse convert(HTTPResponse gaeResponse) {
+   protected HttpResponse convert(HTTPResponse gaeResponse) {
       HttpResponse response = new HttpResponse();
       response.setStatusCode(gaeResponse.getResponseCode());
       for (HTTPHeader header : gaeResponse.getHeaders()) {
@@ -155,17 +105,11 @@ public class URLFetchServiceClient extends BaseHttpFutureCommandClient {
    }
 
    @VisibleForTesting
-   HTTPRequest convert(HttpRequest request) throws IOException {
-      String hostHeader = request.getFirstHeaderOrNull(HttpConstants.HOST);
-      URL url;
-      // As host headers are not supported in GAE/J v1.2.1, we'll change the
-      // hostname of the destination to the same value as the host header
-      if (hostHeader != null) {
-         url = new URL(new URL(isSecure ? "https" : "http", hostHeader, port, "/"), request
-                  .getUri());
-      } else {
-         url = new URL(target.toURL(), request.getUri());
-      }
+   protected HTTPRequest convert(HttpRequest request) throws IOException {
+
+      convertHostHeaderToEndPoint(request);
+
+      URL url = new URL(request.getEndPoint().toURL(), request.getUri());
 
       FetchOptions options = disallowTruncate();
       followRedirectsUnlessRequestContainsPayload(request, options);
@@ -174,11 +118,8 @@ public class URLFetchServiceClient extends BaseHttpFutureCommandClient {
                .toString()), options);
 
       for (String header : request.getHeaders().keySet()) {
-         // GAE/J v1.2.1 re-writes the host header, so we'll skip it.
-         if (!header.equals(HttpConstants.HOST)) {
-            for (String value : request.getHeaders().get(header)) {
-               gaeRequest.addHeader(new HTTPHeader(header, value));
-            }
+         for (String value : request.getHeaders().get(header)) {
+            gaeRequest.addHeader(new HTTPHeader(header, value));
          }
       }
 
@@ -191,6 +132,24 @@ public class URLFetchServiceClient extends BaseHttpFutureCommandClient {
       return gaeRequest;
    }
 
+   /**
+    * As host headers are not supported in GAE/J v1.2.1, we'll change the hostname of the
+    * destination to the same value as the host header
+    * 
+    * @param request
+    */
+   @VisibleForTesting
+   void convertHostHeaderToEndPoint(HttpRequest request) {
+
+      String hostHeader = request.getFirstHeaderOrNull(HttpConstants.HOST);
+
+      if (hostHeader != null) {
+         request.setEndPoint(URI.create(String.format("%1$s://%2$s:%3$d", request.getEndPoint()
+                  .getScheme(), hostHeader, request.getEndPoint().getPort())));
+         request.getHeaders().removeAll(HttpHeaders.HOST);
+      }
+   }
+
    private void followRedirectsUnlessRequestContainsPayload(HttpRequest request,
             FetchOptions options) {
       if (request.getPayload() != null)
@@ -198,4 +157,32 @@ public class URLFetchServiceClient extends BaseHttpFutureCommandClient {
       else
          options.followRedirects();
    }
+
+   /**
+    * nothing to clean up.
+    */
+   @Override
+   protected void cleanup(HTTPRequest nativeRequest) {
+   }
+
+   @Override
+   protected HttpResponse invoke(HTTPRequest request) throws IOException {
+      if (logger.isTraceEnabled())
+         logger.trace("%1$s - submitting request %2$s, headers: %3$s", request.getURL().getHost(),
+                  request.getURL(), headersAsString(request.getHeaders()));
+      HTTPResponse response = urlFetchService.fetch(request);
+      if (logger.isTraceEnabled())
+         logger.info("%1$s - received response code %2$s, headers: %3$s", request.getURL()
+                  .getHost(), response.getResponseCode(), headersAsString(response.getHeaders()));
+      return convert(response);
+   }
+
+   String headersAsString(List<HTTPHeader> headers) {
+      StringBuilder builder = new StringBuilder("");
+      for (HTTPHeader header : headers)
+         builder.append("[").append(header.getName()).append("=").append(header.getValue()).append(
+                  "],");
+      return builder.toString();
+   }
+
 }

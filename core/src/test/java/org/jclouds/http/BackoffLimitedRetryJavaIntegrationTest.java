@@ -34,7 +34,6 @@ import java.util.concurrent.ExecutionException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jclouds.http.annotation.RetryHandler;
 import org.jclouds.http.commands.GetString;
 import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;

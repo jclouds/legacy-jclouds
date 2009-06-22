@@ -23,64 +23,75 @@
  */
 package org.jclouds.http.internal;
 
-import java.net.URI;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpFutureCommandClient;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpResponseHandler;
 import org.jclouds.http.HttpRetryHandler;
-import org.jclouds.http.annotation.ClientErrorHandler;
-import org.jclouds.http.annotation.RedirectHandler;
-import org.jclouds.http.annotation.RetryHandler;
-import org.jclouds.http.annotation.ServerErrorHandler;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.http.handlers.CloseContentAndSetExceptionHandler;
 import org.jclouds.logging.Logger;
 
 import com.google.inject.Inject;
 
-public abstract class BaseHttpFutureCommandClient implements HttpFutureCommandClient {
-
-   protected final URI target;
+public abstract class BaseHttpFutureCommandClient<Q> implements HttpFutureCommandClient {
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject(optional = true)
    protected List<HttpRequestFilter> requestFilters = Collections.emptyList();
-   @RedirectHandler
-   @Inject(optional = true)
-   protected HttpResponseHandler redirectHandler = new CloseContentAndSetExceptionHandler();
-   @ClientErrorHandler
-   @Inject(optional = true)
-   protected HttpResponseHandler clientErrorHandler = new CloseContentAndSetExceptionHandler();
-   @ServerErrorHandler
-   @Inject(optional = true)
-   protected HttpResponseHandler serverErrorHandler = new CloseContentAndSetExceptionHandler();
 
-   @RetryHandler
+   @Inject(optional = true)
+   protected HttpErrorHandler httpErrorHandler = new CloseContentAndSetExceptionHandler();
+
    @Inject(optional = true)
    protected HttpRetryHandler httpRetryHandler = new BackoffLimitedRetryHandler(5);
 
-   @Inject
-   public BaseHttpFutureCommandClient(URI target) {
-      this.target = target;
+   public void submit(HttpFutureCommand<?> command) {
+      HttpRequest request = command.getRequest();
+
+      Q nativeRequest = null;
+      try {
+         for (HttpRequestFilter filter : requestFilters) {
+            filter.filter(request);
+         }
+         HttpResponse response = null;
+         for (;;) {
+            logger.trace("%1$s - converting request %2$s", request.getEndPoint(), request);
+            nativeRequest = convert(request);
+            response = invoke(nativeRequest);
+            int statusCode = response.getStatusCode();
+            if (statusCode >= 500 && httpRetryHandler.shouldRetryRequest(command, response))
+               continue;
+            break;
+         }
+         handleResponse(command, response);
+      } catch (Exception e) {
+         command.setException(e);
+      } finally {
+         cleanup(nativeRequest);
+      }
    }
+
+   protected abstract Q convert(HttpRequest request) throws IOException;
+
+   protected abstract HttpResponse invoke(Q nativeRequest) throws IOException;
+
+   protected abstract void cleanup(Q nativeResponse);
 
    protected void handleResponse(HttpFutureCommand<?> command, HttpResponse response) {
       int code = response.getStatusCode();
-      if (code >= 500) {
-         serverErrorHandler.handle(command, response);
-      } else if (code >= 400 && code < 500) {
-         clientErrorHandler.handle(command, response);
-      } else if (code >= 300 && code < 400) {
-         redirectHandler.handle(command, response);
+      if (code >= 300) {
+         httpErrorHandler.handle(command, response);
       } else {
          command.getResponseFuture().setResponse(response);
          command.getResponseFuture().run();

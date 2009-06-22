@@ -35,7 +35,7 @@ import org.jclouds.aws.s3.reference.S3Headers;
 import org.jclouds.aws.s3.xml.S3ParserFactory;
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpResponseHandler;
+import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.logging.Logger;
 
 import com.google.inject.Inject;
@@ -47,7 +47,7 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  * 
  */
-public class ParseAWSErrorFromXmlContent implements HttpResponseHandler {
+public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
     @Resource
     protected Logger logger = Logger.NULL;
 

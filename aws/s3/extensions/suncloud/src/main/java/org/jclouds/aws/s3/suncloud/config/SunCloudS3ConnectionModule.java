@@ -26,11 +26,7 @@ package org.jclouds.aws.s3.suncloud.config;
 import org.jclouds.aws.s3.config.LiveS3ConnectionModule;
 import org.jclouds.aws.s3.config.S3ConnectionModule;
 import org.jclouds.aws.s3.suncloud.handlers.ParseSunCloudS3ErrorFromXmlContent;
-import org.jclouds.http.HttpResponseHandler;
-import org.jclouds.http.annotation.ClientErrorHandler;
-import org.jclouds.http.annotation.RedirectHandler;
-import org.jclouds.http.annotation.ServerErrorHandler;
-import org.jclouds.http.handlers.CloseContentAndSetExceptionHandler;
+import org.jclouds.http.HttpErrorHandler;
 
 import com.google.inject.Scopes;
 
@@ -42,13 +38,9 @@ import com.google.inject.Scopes;
 @S3ConnectionModule
 public class SunCloudS3ConnectionModule extends LiveS3ConnectionModule {
 
-   protected void bindResponseHandlers() {
-      bind(HttpResponseHandler.class).annotatedWith(RedirectHandler.class).to(
-               CloseContentAndSetExceptionHandler.class).in(Scopes.SINGLETON);
-      bind(HttpResponseHandler.class).annotatedWith(ClientErrorHandler.class).to(
-               ParseSunCloudS3ErrorFromXmlContent.class).in(Scopes.SINGLETON);
-      bind(HttpResponseHandler.class).annotatedWith(ServerErrorHandler.class).to(
-               ParseSunCloudS3ErrorFromXmlContent.class).in(Scopes.SINGLETON);
+   protected void bindErrorHandler() {
+      bind(HttpErrorHandler.class).to(ParseSunCloudS3ErrorFromXmlContent.class)
+               .in(Scopes.SINGLETON);
    }
 
 }

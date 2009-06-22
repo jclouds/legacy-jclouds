@@ -67,7 +67,7 @@ public class BackoffLimitedRetryHandler implements HttpRetryHandler {
       this.retryCountLimit = retryCountLimit;
    }
 
-   public boolean retryRequest(HttpFutureCommand<?> command, HttpResponse response) 
+   public boolean shouldRetryRequest(HttpFutureCommand<?> command, HttpResponse response) 
       throws InterruptedException
    {
       IOUtils.closeQuietly(response.getContent());

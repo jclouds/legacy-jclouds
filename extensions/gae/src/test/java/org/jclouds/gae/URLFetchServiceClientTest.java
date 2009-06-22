@@ -64,7 +64,16 @@ public class URLFetchServiceClientTest {
    @BeforeTest
    void setupClient() throws MalformedURLException {
       endPoint = URI.create("http://localhost:80");
-      client = new URLFetchServiceClient(endPoint, createNiceMock(URLFetchService.class));
+      client = new URLFetchServiceClient(createNiceMock(URLFetchService.class));
+   }
+
+   @Test
+   void testConvertHostHeaderToEndPoint() {
+      HttpRequest request = new HttpRequest(endPoint, HttpMethod.GET, "foo");
+      request.getHeaders().put(HttpHeaders.HOST, "weird");
+      client.convertHostHeaderToEndPoint(request);
+      assertEquals(request.getEndPoint().getHost(), "weird");
+      assert request.getFirstHeaderOrNull(HttpHeaders.HOST) == null;
    }
 
    @Test

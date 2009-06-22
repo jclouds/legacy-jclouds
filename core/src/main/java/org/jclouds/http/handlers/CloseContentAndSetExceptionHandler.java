@@ -28,14 +28,14 @@ import java.io.IOException;
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
-import org.jclouds.http.HttpResponseHandler;
+import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.util.Utils;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class CloseContentAndSetExceptionHandler implements HttpResponseHandler {
+public class CloseContentAndSetExceptionHandler implements HttpErrorHandler {
 
    public void handle(HttpFutureCommand<?> command, HttpResponse response) {
       String content;

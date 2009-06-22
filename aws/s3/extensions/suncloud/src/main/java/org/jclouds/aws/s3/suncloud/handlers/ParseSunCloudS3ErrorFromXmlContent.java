@@ -36,7 +36,7 @@ import org.jclouds.aws.s3.suncloud.domain.SunCloudS3Error;
 import org.jclouds.aws.s3.xml.S3ParserFactory;
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpResponseHandler;
+import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Utils;
 
@@ -49,7 +49,7 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  * 
  */
-public class ParseSunCloudS3ErrorFromXmlContent implements HttpResponseHandler {
+public class ParseSunCloudS3ErrorFromXmlContent implements HttpErrorHandler {
    @Resource
    protected Logger logger = Logger.NULL;
 

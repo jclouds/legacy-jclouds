@@ -111,7 +111,7 @@ public class BackoffLimitedRetryHandlerTest {
       assertEquals(response.getContent().available(), 1);
       assertEquals(response.getContent().read(), 1);
 
-      handler.retryRequest(command, response);
+      handler.shouldRetryRequest(command, response);
 
       assertEquals(response.getContent().available(), 0);
       assertEquals(response.getContent().read(), -1);
@@ -123,13 +123,13 @@ public class BackoffLimitedRetryHandlerTest {
                "uri", new ReturnStringIf200());
       HttpResponse response = new HttpResponse();
 
-      handler.retryRequest(command, response);
+      handler.shouldRetryRequest(command, response);
       assertEquals(command.getFailureCount(), 1);
 
-      handler.retryRequest(command, response);
+      handler.shouldRetryRequest(command, response);
       assertEquals(command.getFailureCount(), 2);
 
-      handler.retryRequest(command, response);
+      handler.shouldRetryRequest(command, response);
       assertEquals(command.getFailureCount(), 3);
    }
 
@@ -139,17 +139,17 @@ public class BackoffLimitedRetryHandlerTest {
                "uri", new ReturnStringIf200());
       HttpResponse response = new HttpResponse();
 
-      assertEquals(handler.retryRequest(command, response), true); // Failure 1
+      assertEquals(handler.shouldRetryRequest(command, response), true); // Failure 1
 
-      assertEquals(handler.retryRequest(command, response), true); // Failure 2
+      assertEquals(handler.shouldRetryRequest(command, response), true); // Failure 2
 
-      assertEquals(handler.retryRequest(command, response), true); // Failure 3
+      assertEquals(handler.shouldRetryRequest(command, response), true); // Failure 3
 
-      assertEquals(handler.retryRequest(command, response), true); // Failure 4
+      assertEquals(handler.shouldRetryRequest(command, response), true); // Failure 4
 
-      assertEquals(handler.retryRequest(command, response), true); // Failure 5
+      assertEquals(handler.shouldRetryRequest(command, response), true); // Failure 5
 
-      assertEquals(handler.retryRequest(command, response), false); // Failure 6
+      assertEquals(handler.shouldRetryRequest(command, response), false); // Failure 6
    }
 
 }

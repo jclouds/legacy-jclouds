@@ -21,23 +21,27 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.http.annotation;
+package org.jclouds.http;
 
-import com.google.inject.BindingAnnotation;
-import java.lang.annotation.Target;
-import java.lang.annotation.Retention;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
+import com.google.inject.Module;
+import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
+import org.testng.annotations.Test;
+
+import java.util.Properties;
 
 /**
- * Implies that the object can address {@link org.jclouds.http.HttpRetryHandler}s.
+ * // TODO: Adrian: Document this!
  * 
- * @author James Murty
+ * @author Adrian Cole
  */
-@BindingAnnotation
-@Target( { FIELD, PARAMETER, METHOD })
-@Retention(RUNTIME)
-public @interface RetryHandler {
+@Test
+public class JavaUrlHttpFutureCommandClientTest extends BaseHttpFutureCommandClientTest {
+
+   protected Module createClientModule() {
+      return new JavaUrlHttpFutureCommandClientModule();
+   }
+
+   protected void addConnectionProperties(Properties props) {
+      // NONE
+   }
 }

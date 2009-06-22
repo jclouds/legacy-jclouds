@@ -37,6 +37,7 @@ import org.jclouds.http.commands.CommandFactory;
 import org.jclouds.http.commands.config.HttpCommandsModule;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.util.Utils;
 import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Request;
 import org.mortbay.jetty.Server;
@@ -98,9 +99,17 @@ public abstract class BaseJettyTest {
       Handler server2Handler = new AbstractHandler() {
          public void handle(String target, HttpServletRequest request,
                   HttpServletResponse response, int dispatch) throws IOException, ServletException {
-            response.setContentType("text/xml");
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.getWriter().println(XML2);
+            if (request.getMethod().equals("PUT")) {
+               if (request.getContentLength() > 0) {
+                  Utils.toStringAndClose(request.getInputStream());
+               } else {
+                  response.sendError(500, "no content");
+               }
+            } else {
+               response.setContentType("text/xml");
+               response.setStatus(HttpServletResponse.SC_OK);
+               response.getWriter().println(XML2);
+            }
             ((Request) request).setHandled(true);
          }
       };
