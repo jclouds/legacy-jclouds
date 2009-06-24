@@ -29,6 +29,7 @@ import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 
 /**
@@ -41,24 +42,39 @@ public class DelegatingErrorHandler implements HttpErrorHandler {
 
    @Redirection
    @Inject(optional = true)
-   private HttpErrorHandler redirectionHandler = new CloseContentAndSetExceptionErrorHandler();
+   @VisibleForTesting
+   HttpErrorHandler redirectionHandler = new CloseContentAndSetExceptionErrorHandler();
 
    @ClientError
    @Inject(optional = true)
-   private HttpErrorHandler clientErrorHandler = new CloseContentAndSetExceptionErrorHandler();
+   @VisibleForTesting
+   HttpErrorHandler clientErrorHandler = new CloseContentAndSetExceptionErrorHandler();
 
    @ServerError
    @Inject(optional = true)
-   private HttpErrorHandler serverErrorHandler = new CloseContentAndSetExceptionErrorHandler();
+   @VisibleForTesting
+   HttpErrorHandler serverErrorHandler = new CloseContentAndSetExceptionErrorHandler();
 
    public void handleError(HttpFutureCommand<?> command, org.jclouds.http.HttpResponse response) {
       int statusCode = response.getStatusCode();
       if (statusCode >= 300 && statusCode < 400) {
-         redirectionHandler.handleError(command, response);
+         getRedirectionHandler().handleError(command, response);
       } else if (statusCode >= 400 && statusCode < 500) {
-         clientErrorHandler.handleError(command, response);
+         getClientErrorHandler().handleError(command, response);
       } else if (statusCode >= 500) {
-         serverErrorHandler.handleError(command, response);
+         getServerErrorHandler().handleError(command, response);
       }
+   }
+
+   public HttpErrorHandler getRedirectionHandler() {
+      return redirectionHandler;
+   }
+
+   public HttpErrorHandler getClientErrorHandler() {
+      return clientErrorHandler;
+   }
+
+   public HttpErrorHandler getServerErrorHandler() {
+      return serverErrorHandler;
    }
 }

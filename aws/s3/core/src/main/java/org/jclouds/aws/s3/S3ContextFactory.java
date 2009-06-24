@@ -240,14 +240,15 @@ public class S3ContextFactory {
 
       addHttpModuleIfNeededAndNotPresent(modules);
 
-      return Guice.createInjector(new AbstractModule() {
+      modules.add(new AbstractModule() {
          @Override
          protected void configure() {
             Names.bindProperties(binder(), checkNotNull(properties, "properties"));
-            for (Module module : modules)
-               install(module);
          }
-      }, new S3ContextModule());
+      });
+      modules.add(new S3ContextModule());
+
+      return Guice.createInjector(modules);
    }
 
    @VisibleForTesting
@@ -285,7 +286,7 @@ public class S3ContextFactory {
          }
 
       })) {
-         modules.add(new LiveS3ConnectionModule());
+         modules.add(0, new LiveS3ConnectionModule());
       }
    }
 

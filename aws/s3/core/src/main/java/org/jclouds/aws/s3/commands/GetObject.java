@@ -30,11 +30,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.s3.commands.callables.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.aws.s3.commands.options.GetObjectOptions;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.http.HttpMethod;
+import org.jclouds.http.HttpResponseException;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
@@ -85,9 +85,9 @@ public class GetObject extends S3FutureCommand<S3Object> {
 
    @VisibleForTesting
    S3Object attemptNotFound(ExecutionException e) throws ExecutionException {
-      if (e.getCause() != null && e.getCause() instanceof AWSResponseException) {
-         AWSResponseException responseException = (AWSResponseException) e.getCause();
-         if ("NoSuchKey".equals(responseException.getError().getCode())) {
+      if (e.getCause() != null && e.getCause() instanceof HttpResponseException) {
+         HttpResponseException responseException = (HttpResponseException) e.getCause();
+         if (responseException.getResponse().getStatusCode() == 404) {
             return S3Object.NOT_FOUND;
          }
       }

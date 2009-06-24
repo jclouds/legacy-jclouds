@@ -28,14 +28,11 @@ import static org.testng.Assert.assertEquals;
 import org.jclouds.aws.s3.handlers.ParseAWSErrorFromXmlContent;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.aws.s3.xml.config.S3ParserModule;
-import org.jclouds.http.HttpErrorHandler;
-import org.jclouds.http.annotation.ClientError;
-import org.jclouds.http.annotation.ServerError;
 import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
+import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
-import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.name.Names;
 
@@ -69,28 +66,16 @@ public class S3ContextModuleTest {
                }, new JavaUrlHttpFutureCommandClientModule());
    }
 
-   private static class ServerErrorHandlerTest {
-      @Inject
-      @ServerError
-      HttpErrorHandler errorHandler;
-   }
-
    @Test
    void testServerErrorHandler() {
-      ServerErrorHandlerTest error = createInjector().getInstance(ServerErrorHandlerTest.class);
-      assertEquals(error.errorHandler.getClass(), ParseAWSErrorFromXmlContent.class);
-   }
-
-   private static class ClientErrorHandlerTest {
-      @Inject
-      @ClientError
-      HttpErrorHandler errorHandler;
+      DelegatingErrorHandler handler = createInjector().getInstance(DelegatingErrorHandler.class);
+      assertEquals(handler.getServerErrorHandler().getClass(), ParseAWSErrorFromXmlContent.class);
    }
 
    @Test
    void testClientErrorHandler() {
-      ClientErrorHandlerTest handler = createInjector().getInstance(ClientErrorHandlerTest.class);
-      assertEquals(handler.errorHandler.getClass(), ParseAWSErrorFromXmlContent.class);
+      DelegatingErrorHandler handler = createInjector().getInstance(DelegatingErrorHandler.class);
+      assertEquals(handler.getClientErrorHandler().getClass(), ParseAWSErrorFromXmlContent.class);
    }
 
 }
