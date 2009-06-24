@@ -41,26 +41,29 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 
 public class HttpNioUtils {
-   public static HttpEntityEnclosingRequest convertToApacheRequest(HttpRequest object) {
-      BasicHttpEntityEnclosingRequest apacheRequest = new BasicHttpEntityEnclosingRequest(object
-               .getMethod().toString(), object.getUri(), HttpVersion.HTTP_1_1);
+   public static HttpEntityEnclosingRequest convertToApacheRequest(HttpRequest request) {
+      BasicHttpEntityEnclosingRequest apacheRequest = new BasicHttpEntityEnclosingRequest(request
+               .getMethod().toString(), request.getUri(), HttpVersion.HTTP_1_1);
 
-      Object content = object.getPayload();
+      Object content = request.getPayload();
 
       // Since we may remove headers, ensure they are added to the apache
       // request after this block
       if (content != null) {
-         long contentLength = Long.parseLong(object
-                  .getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH));
-         object.getHeaders().removeAll(HttpHeaders.CONTENT_LENGTH);
-         String contentType = object.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE);
-         object.getHeaders().removeAll(HttpHeaders.CONTENT_TYPE);
+         String lengthString = request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH);
+         if (lengthString == null) {
+            throw new IllegalStateException("no Content-Length header on request: " + apacheRequest);
+         }
+         long contentLength = Long.parseLong(lengthString);
+         String contentType = request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE);
          addEntityForContent(apacheRequest, content, contentType, contentLength);
       }
 
-      for (String header : object.getHeaders().keySet()) {
-         for (String value : object.getHeaders().get(header))
-            apacheRequest.addHeader(header, value);
+      for (String header : request.getHeaders().keySet()) {
+         for (String value : request.getHeaders().get(header))
+            // apache automatically tries to add content length header
+            if (!header.equals(HttpHeaders.CONTENT_LENGTH))
+               apacheRequest.addHeader(header, value);
       }
       return apacheRequest;
    }

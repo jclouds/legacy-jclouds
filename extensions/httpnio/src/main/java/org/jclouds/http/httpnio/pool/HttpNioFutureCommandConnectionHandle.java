@@ -24,6 +24,7 @@
 package org.jclouds.http.httpnio.pool;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Semaphore;
 
@@ -31,7 +32,6 @@ import org.apache.http.nio.NHttpConnection;
 import org.jclouds.command.pool.FutureCommandConnectionHandle;
 import org.jclouds.http.HttpFutureCommand;
 
-import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
 /**
@@ -40,25 +40,24 @@ import com.google.inject.assistedinject.Assisted;
  * @author Adrian Cole
  */
 public class HttpNioFutureCommandConnectionHandle extends
-	FutureCommandConnectionHandle<NHttpConnection, HttpFutureCommand<?>> {
+         FutureCommandConnectionHandle<URI, NHttpConnection, HttpFutureCommand<?>> {
 
-    @Inject
-    public HttpNioFutureCommandConnectionHandle(
-	    BlockingQueue<NHttpConnection> available, Semaphore maxConnections,
-	    @Assisted NHttpConnection conn,
-	    @Assisted HttpFutureCommand<?> command) throws InterruptedException {
-	super(maxConnections, command, conn, available);
+   // currently not injected as we want to ensure we share the correct objects with the pool
+   public HttpNioFutureCommandConnectionHandle(Semaphore maxConnections,
+            BlockingQueue<NHttpConnection> available, @Assisted URI endPoint,
+            @Assisted HttpFutureCommand<?> command, @Assisted NHttpConnection conn)
+            throws InterruptedException {
+      super(maxConnections, available, endPoint, command, conn);
+   }
 
-    }
+   public void startConnection() {
+      conn.getContext().setAttribute("command", command);
+      logger.trace("invoking %1$s on connection %2$s", command, conn);
+      conn.requestOutput();
+   }
 
-    public void startConnection() {
-	conn.getContext().setAttribute("command", command);
-	logger.trace("invoking %1$s on connection %2$s", command, conn);
-	conn.requestOutput();
-    }
-
-    public void shutdownConnection() throws IOException {
-	conn.shutdown();
-    }
+   public void shutdownConnection() throws IOException {
+      conn.shutdown();
+   }
 
 }

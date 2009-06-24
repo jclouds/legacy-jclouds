@@ -39,8 +39,8 @@ import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRetryHandler;
-import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
-import org.jclouds.http.handlers.CloseContentAndSetExceptionHandler;
+import org.jclouds.http.handlers.DelegatingErrorHandler;
+import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.httpnio.util.HttpNioUtils;
 import org.jclouds.logging.Logger;
 
@@ -56,24 +56,28 @@ public class HttpNioFutureCommandExecutionHandler implements NHttpRequestExecuti
    @Resource
    protected Logger logger = Logger.NULL;
    private final ConsumingNHttpEntityFactory entityFactory;
-   private final BlockingQueue<HttpFutureCommand<?>> commandQueue;
+
+   /**
+    * inputOnly: nothing is taken from this queue.
+    */
+   private final BlockingQueue<HttpFutureCommand<?>> resubmitQueue;
 
    @Inject(optional = true)
-   private HttpErrorHandler serverErrorHandler = new CloseContentAndSetExceptionHandler();
+   private HttpRetryHandler retryHandler = new DelegatingRetryHandler();
 
    @Inject(optional = true)
-   protected HttpRetryHandler httpRetryHandler = new BackoffLimitedRetryHandler(5);
-
-   public interface ConsumingNHttpEntityFactory {
-      public ConsumingNHttpEntity create(HttpEntity httpEntity);
-   }
+   private HttpErrorHandler errorHandler = new DelegatingErrorHandler();
 
    @Inject
    public HttpNioFutureCommandExecutionHandler(ConsumingNHttpEntityFactory entityFactory,
-            ExecutorService executor, BlockingQueue<HttpFutureCommand<?>> commandQueue) {
+            ExecutorService executor, BlockingQueue<HttpFutureCommand<?>> resubmitQueue) {
       this.executor = executor;
       this.entityFactory = entityFactory;
-      this.commandQueue = commandQueue;
+      this.resubmitQueue = resubmitQueue;
+   }
+
+   public interface ConsumingNHttpEntityFactory {
+      public ConsumingNHttpEntity create(HttpEntity httpEntity);
    }
 
    public void initalizeContext(HttpContext context, Object attachment) {
@@ -82,8 +86,8 @@ public class HttpNioFutureCommandExecutionHandler implements NHttpRequestExecuti
    public HttpEntityEnclosingRequest submitRequest(HttpContext context) {
       HttpFutureCommand<?> command = (HttpFutureCommand<?>) context.removeAttribute("command");
       if (command != null) {
-         HttpRequest object = command.getRequest();
-         return HttpNioUtils.convertToApacheRequest(object);
+         HttpRequest request = command.getRequest();
+         return HttpNioUtils.convertToApacheRequest(request);
       }
       return null;
 
@@ -102,24 +106,13 @@ public class HttpNioFutureCommandExecutionHandler implements NHttpRequestExecuti
             HttpFutureCommand<?> command = handle.getCommand();
             org.jclouds.http.HttpResponse response = HttpNioUtils
                      .convertToJavaCloudsResponse(apacheResponse);
-
-            int code = response.getStatusCode();
-            if (code >= 500) {
-               boolean retryRequest = false;
-               try {
-                  retryRequest = httpRetryHandler.shouldRetryRequest(command, response);
-               } catch (InterruptedException ie) {
-                  // TODO: Add interrupt exception to command and abort?
-               }
-               if (retryRequest) {
-                  commandQueue.add(command);
+            int statusCode = response.getStatusCode();
+            if (statusCode >= 300) {
+               if (retryHandler.shouldRetryRequest(command, response)) {
+                  resubmitQueue.add(command);
                } else {
-                  serverErrorHandler.handle(command, response);
+                  errorHandler.handleError(command, response);
                }
-            } else if (code >= 400 && code < 500) {
-               serverErrorHandler.handle(command, response);
-            } else if (code >= 300 && code < 400) {
-               serverErrorHandler.handle(command, response);
             } else {
                processResponse(response, command);
             }

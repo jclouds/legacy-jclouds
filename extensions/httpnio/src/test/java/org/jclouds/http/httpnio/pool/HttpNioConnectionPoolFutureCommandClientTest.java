@@ -23,10 +23,7 @@
  */
 package org.jclouds.http.httpnio.pool;
 
-import java.net.MalformedURLException;
 import java.util.Properties;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
 import org.jclouds.command.pool.PoolConstants;
 import org.jclouds.http.BaseHttpFutureCommandClientTest;
@@ -53,18 +50,6 @@ public class HttpNioConnectionPoolFutureCommandClientTest extends BaseHttpFuture
 
    protected Module createClientModule() {
       return new HttpNioConnectionPoolClientModule();
-   }
-
-   @Override
-   @Test(enabled = false)
-   public void testGetStringRedirect() throws MalformedURLException, ExecutionException,
-            InterruptedException, TimeoutException {
-   }
-
-   @Override
-   @Test(enabled = false)
-   public void testPutRedirect() throws MalformedURLException, ExecutionException,
-            InterruptedException, TimeoutException {
    }
 
 }

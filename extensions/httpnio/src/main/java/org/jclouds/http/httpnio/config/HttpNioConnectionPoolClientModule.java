@@ -23,57 +23,131 @@
  */
 package org.jclouds.http.httpnio.config;
 
-import java.net.InetSocketAddress;
-import java.net.MalformedURLException;
-import java.net.URI;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
-import org.jclouds.http.HttpConstants;
+import org.apache.http.ConnectionReuseStrategy;
+import org.apache.http.HttpEntity;
+import org.apache.http.impl.DefaultConnectionReuseStrategy;
+import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor;
+import org.apache.http.nio.NHttpConnection;
+import org.apache.http.nio.entity.BufferingNHttpEntity;
+import org.apache.http.nio.protocol.AsyncNHttpClientHandler;
+import org.apache.http.nio.protocol.NHttpRequestExecutionHandler;
+import org.apache.http.nio.reactor.IOReactorException;
+import org.apache.http.nio.util.ByteBufferAllocator;
+import org.apache.http.nio.util.HeapByteBufferAllocator;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.CoreConnectionPNames;
+import org.apache.http.params.CoreProtocolPNames;
+import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.BasicHttpProcessor;
+import org.apache.http.protocol.RequestConnControl;
+import org.apache.http.protocol.RequestContent;
+import org.apache.http.protocol.RequestExpectContinue;
+import org.apache.http.protocol.RequestTargetHost;
+import org.apache.http.protocol.RequestUserAgent;
+import org.jclouds.command.pool.PoolConstants;
+import org.jclouds.command.pool.config.FutureCommandConnectionPoolClientModule;
+import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpFutureCommandClient;
-import org.jclouds.http.config.HttpFutureCommandClientModule;
-import org.jclouds.http.httpnio.config.internal.NonSSLHttpNioConnectionPoolClientModule;
-import org.jclouds.http.httpnio.config.internal.SSLHttpNioConnectionPoolClientModule;
 import org.jclouds.http.httpnio.pool.HttpNioConnectionPoolClient;
+import org.jclouds.http.httpnio.pool.HttpNioFutureCommandConnectionPool;
+import org.jclouds.http.httpnio.pool.HttpNioFutureCommandExecutionHandler;
 
-import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
 import com.google.inject.Provides;
+import com.google.inject.Scopes;
 import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.FactoryProvider;
 import com.google.inject.name.Named;
 
 /**
- * Configures {@link HttpNioConnectionPoolClient}
  * 
  * @author Adrian Cole
  */
-@HttpFutureCommandClientModule
-public class HttpNioConnectionPoolClientModule extends AbstractModule {
+public class HttpNioConnectionPoolClientModule extends
+         FutureCommandConnectionPoolClientModule<NHttpConnection> {
 
-   @Named(HttpConstants.PROPERTY_HTTP_SECURE)
-   boolean isSecure;
+   @Provides
+   // @Singleton per uri...
+   public AsyncNHttpClientHandler provideAsyncNttpClientHandler(BasicHttpProcessor httpProcessor,
+            NHttpRequestExecutionHandler execHandler, ConnectionReuseStrategy connStrategy,
+            ByteBufferAllocator allocator, HttpParams params) {
+      return new AsyncNHttpClientHandler(httpProcessor, execHandler, connStrategy, allocator,
+               params);
+
+   }
+
+   @Provides
+   @Singleton
+   public BasicHttpProcessor provideClientProcessor() {
+      BasicHttpProcessor httpproc = new BasicHttpProcessor();
+      httpproc.addInterceptor(new RequestContent());
+      httpproc.addInterceptor(new RequestTargetHost());
+      httpproc.addInterceptor(new RequestConnControl());
+      httpproc.addInterceptor(new RequestUserAgent());
+      httpproc.addInterceptor(new RequestExpectContinue());
+      return httpproc;
+   }
+
+   @Provides
+   @Singleton
+   public HttpParams provideHttpParams() {
+      HttpParams params = new BasicHttpParams();
+      params.setIntParameter(CoreConnectionPNames.SO_TIMEOUT, 5000).setIntParameter(
+               CoreConnectionPNames.SOCKET_BUFFER_SIZE, 8 * 1024).setBooleanParameter(
+               CoreConnectionPNames.STALE_CONNECTION_CHECK, false).setBooleanParameter(
+               CoreConnectionPNames.TCP_NODELAY, true).setParameter(
+               CoreProtocolPNames.ORIGIN_SERVER, "jclouds/1.0");
+      return params;
+   }
+
+   protected void configure() {
+      super.configure();
+      bind(HttpFutureCommandClient.class).to(HttpNioConnectionPoolClient.class);
+      bind(new TypeLiteral<BlockingQueue<HttpFutureCommand<?>>>() {
+      }).to(new TypeLiteral<LinkedBlockingQueue<HttpFutureCommand<?>>>() {
+      }).in(Scopes.SINGLETON);
+      bind(HttpNioFutureCommandExecutionHandler.ConsumingNHttpEntityFactory.class).toProvider(
+               FactoryProvider.newFactory(
+                        HttpNioFutureCommandExecutionHandler.ConsumingNHttpEntityFactory.class,
+                        InjectableBufferingNHttpEntity.class));// .in(Scopes.SINGLETON); but per URI
+      bind(NHttpRequestExecutionHandler.class).to(HttpNioFutureCommandExecutionHandler.class).in(
+               Scopes.SINGLETON);
+      bind(ConnectionReuseStrategy.class).to(DefaultConnectionReuseStrategy.class).in(
+               Scopes.SINGLETON);
+      bind(ByteBufferAllocator.class).to(HeapByteBufferAllocator.class);
+      bind(HttpNioFutureCommandConnectionPool.Factory.class).toProvider(
+               FactoryProvider.newFactory(
+                        new TypeLiteral<HttpNioFutureCommandConnectionPool.Factory>() {
+                        }, new TypeLiteral<HttpNioFutureCommandConnectionPool>() {
+                        }));
+   }
+
+   static class InjectableBufferingNHttpEntity extends BufferingNHttpEntity {
+      @Inject
+      public InjectableBufferingNHttpEntity(@Assisted HttpEntity httpEntity,
+               ByteBufferAllocator allocator) {
+         super(httpEntity, allocator);
+      }
+   }
 
    @Override
-   protected void configure() {
-      requestInjection(this);
-      if (isSecure)
-         install(new SSLHttpNioConnectionPoolClientModule());
-      else
-         install(new NonSSLHttpNioConnectionPoolClientModule());
-      bind(HttpFutureCommandClient.class).to(HttpNioConnectionPoolClient.class);
+   public BlockingQueue<NHttpConnection> provideAvailablePool(
+            @Named(PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS) int max) throws Exception {
+      return new ArrayBlockingQueue<NHttpConnection>(max, true);
    }
 
-   @Singleton
    @Provides
-   protected InetSocketAddress provideAddress(URI endPoint) {
-      return new InetSocketAddress(endPoint.getHost(), endPoint.getPort());
+   // @Singleton per uri...
+   public DefaultConnectingIOReactor provideDefaultConnectingIOReactor(
+            @Named(PoolConstants.PROPERTY_POOL_IO_WORKER_THREADS) int ioWorkerThreads,
+            HttpParams params) throws IOReactorException {
+      return new DefaultConnectingIOReactor(ioWorkerThreads, params);
    }
 
-   @Singleton
-   @Provides
-   protected URI provideAddress(@Named(HttpConstants.PROPERTY_HTTP_ADDRESS) String address,
-            @Named(HttpConstants.PROPERTY_HTTP_PORT) int port,
-            @Named(HttpConstants.PROPERTY_HTTP_SECURE) boolean isSecure)
-            throws MalformedURLException {
-
-      return URI.create(String.format("%1$s://%2$s:%3$s", isSecure ? "https" : "http", address,
-               port));
-   }
 }
