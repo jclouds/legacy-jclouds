@@ -82,9 +82,20 @@ public abstract class BaseHttpFutureCommandClientTest extends BaseJettyTest {
    }
 
    @Test(invocationCount = 50, timeOut = 3000)
+   public void testGetStringPermanentRedirect() throws MalformedURLException, ExecutionException,
+            InterruptedException, TimeoutException {
+      // GetString get = factory.createGetString("/permanentredirect");
+      // assert get != null;
+      // client.submit(get);
+      // assertEquals(get.get(10, TimeUnit.SECONDS).trim(), XML2);
+      // TODO assert misses are only one, as permanent redirects paths should be remembered.
+   }
+
+   @Test(invocationCount = 50, timeOut = 3000)
    public void testPutRedirect() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
       Put put = factory.createPut("/redirect", "foo");
+      put.getRequest().getHeaders().put(HttpHeaders.CONTENT_LENGTH, "foo".getBytes().length + "");
       assert put != null;
       client.submit(put);
       assertEquals(put.get(10, TimeUnit.SECONDS), new Boolean(true));

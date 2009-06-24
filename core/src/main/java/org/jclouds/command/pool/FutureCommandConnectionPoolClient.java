@@ -24,6 +24,7 @@
 package org.jclouds.command.pool;
 
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -33,6 +34,8 @@ import org.jclouds.command.FutureCommandClient;
 import org.jclouds.lifecycle.BaseLifeCycle;
 import org.jclouds.util.Utils;
 
+import com.google.common.base.Function;
+import com.google.common.collect.MapMaker;
 import com.google.inject.Inject;
 
 /**
@@ -40,28 +43,28 @@ import com.google.inject.Inject;
  * 
  * @author Adrian Cole
  */
-public class FutureCommandConnectionPoolClient<C, O extends FutureCommand<?, ?, ?>> extends
+public class FutureCommandConnectionPoolClient<E, C, O extends FutureCommand<E, ?, ?, ?>> extends
          BaseLifeCycle implements FutureCommandClient<O> {
-   private final FutureCommandConnectionPool<C, O> futureCommandConnectionPool;
+
+   private final ConcurrentMap<E, FutureCommandConnectionPool<E, C, O>> poolMap;
    private final BlockingQueue<O> commandQueue;
+   private final FutureCommandConnectionPool.Factory<E, C, O> poolFactory;
 
    @Inject
    public FutureCommandConnectionPoolClient(ExecutorService executor,
-            FutureCommandConnectionPool<C, O> futureCommandConnectionPool,
-            BlockingQueue<O> commandQueue) {
-      super(executor, futureCommandConnectionPool);
-      this.futureCommandConnectionPool = futureCommandConnectionPool;
+            FutureCommandConnectionPool.Factory<E, C, O> pf, BlockingQueue<O> commandQueue) {
+      super(executor);
+      this.poolFactory = pf;
+      // TODO inject this.
+      poolMap = new MapMaker()
+               .makeComputingMap(new Function<E, FutureCommandConnectionPool<E, C, O>>() {
+                  public FutureCommandConnectionPool<E, C, O> apply(E endPoint) {
+                     FutureCommandConnectionPool<E, C, O> pool = poolFactory.create(endPoint);
+                     addDependency(pool);
+                     return pool;
+                  }
+               });
       this.commandQueue = commandQueue;
-   }
-
-   /**
-    * {@inheritDoc}
-    * <p/>
-    * we continue while the connection pool is active
-    */
-   @Override
-   protected boolean shouldDoWork() {
-      return super.shouldDoWork() && futureCommandConnectionPool.getStatus().equals(Status.ACTIVE);
    }
 
    /**
@@ -72,9 +75,9 @@ public class FutureCommandConnectionPoolClient<C, O extends FutureCommand<?, ?, 
     */
    @Override
    protected void doShutdown() {
-      exception.compareAndSet(null, futureCommandConnectionPool.getException());
+      exception.compareAndSet(null, getExceptionFromDependenciesOrNull());
       while (!commandQueue.isEmpty()) {
-         FutureCommand<?, ?, ?> command = (FutureCommand<?, ?, ?>) commandQueue.remove();
+         FutureCommand<E, ?, ?, ?> command = (FutureCommand<E, ?, ?, ?>) commandQueue.remove();
          if (command != null) {
             if (exception.get() != null)
                command.setException(exception.get());
@@ -119,21 +122,29 @@ public class FutureCommandConnectionPoolClient<C, O extends FutureCommand<?, ?, 
     */
    protected void invoke(O command) {
       exceptionIfNotActive();
-      FutureCommandConnectionHandle<C, O> connectionHandle = null;
+      FutureCommandConnectionPool<E, C, O> pool = poolMap.get(command.getRequest().getEndPoint());
+      if (pool == null) {
+         //TODO limit;
+         logger.warn("pool not available for command %s; retrying", command);
+         commandQueue.add(command);
+         return;
+      }
+
+      FutureCommandConnectionHandle<E, C, O> connectionHandle = null;
       try {
-         connectionHandle = futureCommandConnectionPool.getHandle(command);
+         connectionHandle = pool.getHandle(command);
       } catch (InterruptedException e) {
-         logger.warn(e, "Interrupted getting a connection for command %1$s; retrying", command);
+         logger.warn(e, "Interrupted getting a connection for command %s; retrying", command);
          commandQueue.add(command);
          return;
       } catch (TimeoutException e) {
-         logger.warn(e, "Timeout getting a connection for command %1$s; retrying", command);
+         logger.warn(e, "Timeout getting a connection for command %s on pool %s; retrying", command, pool);
          commandQueue.add(command);
          return;
       }
 
       if (connectionHandle == null) {
-         logger.error("Failed to obtain connection for command %1$s; retrying", command);
+         logger.error("Failed to obtain connection for command %s; retrying", command);
          commandQueue.add(command);
          return;
       }
@@ -146,7 +157,7 @@ public class FutureCommandConnectionPoolClient<C, O extends FutureCommand<?, ?, 
       sb.append("FutureCommandConnectionPoolClient");
       sb.append("{status=").append(status);
       sb.append(", commandQueue=").append((commandQueue != null) ? commandQueue.size() : 0);
-      sb.append(", futureCommandConnectionPool=").append(futureCommandConnectionPool);
+      sb.append(", poolMap=").append(poolMap);
       sb.append('}');
       return sb.toString();
    }

@@ -24,25 +24,21 @@
 package org.jclouds.http;
 
 /**
- * Indicate whether a request should be retried after a server
- * error response (HTTP status code >= 500) based on the request's
- * replayable status and the number of attempts already performed.
+ * Indicate whether a request should be retried after a server error response (HTTP status code >=
+ * 500) based on the request's replayable status and the number of attempts already performed.
  * 
  * @author James Murty
  */
 public interface HttpRetryHandler {
    public static final HttpRetryHandler ALWAYS_RETRY = new HttpRetryHandler() {
-      public boolean shouldRetryRequest(HttpFutureCommand<?> command, HttpResponse response) 
-      {
+      public boolean shouldRetryRequest(HttpFutureCommand<?> command, HttpResponse response) {
          return true;
-      } 
+      }
    };
 
    /**
-    * Return true if the command should be retried. This method should only be 
-    * invoked when the response has failed with a HTTP 5xx error indicating a
-    * server-side error.
+    * Return true if the command should be retried. This method should only be invoked when the
+    * response has failed with a HTTP 5xx error indicating a server-side error.
     */
-   boolean shouldRetryRequest(HttpFutureCommand<?> command, HttpResponse response)
-      throws InterruptedException;
+   boolean shouldRetryRequest(HttpFutureCommand<?> command, HttpResponse response);
 }

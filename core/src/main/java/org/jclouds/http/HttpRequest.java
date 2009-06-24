@@ -30,6 +30,7 @@ import java.net.URI;
 
 import javax.annotation.Resource;
 
+import org.jclouds.command.Request;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Utils;
 
@@ -38,7 +39,7 @@ import org.jclouds.util.Utils;
  * 
  * @author Adrian Cole
  */
-public class HttpRequest extends HttpMessage {
+public class HttpRequest extends HttpMessage implements Request<URI> {
 
    private URI endPoint;
    private final HttpMethod method;
@@ -100,10 +101,16 @@ public class HttpRequest extends HttpMessage {
       this.payload = content;
    }
 
+   /**
+    * only the scheme, host, and port of the URI designates the endpoint
+    */
    public void setEndPoint(URI endPoint) {
       this.endPoint = endPoint;
    }
 
+   /**
+    * only the scheme, host, and port of the URI designates the endpoint
+    */
    public URI getEndPoint() {
       return endPoint;
    }

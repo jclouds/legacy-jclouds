@@ -32,76 +32,78 @@ import javax.annotation.Resource;
 import org.jclouds.command.FutureCommand;
 import org.jclouds.logging.Logger;
 
-import com.google.inject.assistedinject.Assisted;
-
 /**
- * // TODO: Adrian: Document this!
+ * Associates a command with an open connection to a service.
  * 
  * @author Adrian Cole
  */
-public abstract class FutureCommandConnectionHandle<C, O extends FutureCommand<?, ?, ?>> {
-    protected final BlockingQueue<C> available;
-    protected final Semaphore maxConnections;
-    protected final Semaphore completed;
-    protected C conn;
-    protected O command;
-    @Resource
-    protected Logger logger = Logger.NULL;
+public abstract class FutureCommandConnectionHandle<E, C, O extends FutureCommand<E, ?, ?, ?>> {
+   protected final BlockingQueue<C> available;
+   protected final Semaphore maxConnections;
+   protected final Semaphore completed;
+   protected final E endPoint;
+   protected C conn;
+   protected O command;
+   @Resource
+   protected Logger logger = Logger.NULL;
 
-    public FutureCommandConnectionHandle(Semaphore maxConnections,
-	    @Assisted O command, @Assisted C conn, BlockingQueue<C> available)
-	    throws InterruptedException {
-	this.maxConnections = maxConnections;
-	this.command = command;
-	this.conn = conn;
-	this.available = available;
-	this.completed = new Semaphore(1);
-	completed.acquire();
-    }
+   public FutureCommandConnectionHandle(Semaphore maxConnections, BlockingQueue<C> available,
+            E endPoint, O command, C conn) throws InterruptedException {
+      this.available = available;
+      this.maxConnections = maxConnections;
+      this.completed = new Semaphore(1);
+      this.endPoint = endPoint;
+      this.command = command;
+      this.conn = conn;
+      completed.acquire();
+   }
 
-    public O getCommand() {
-	return command;
-    }
+   public O getCommand() {
+      return command;
+   }
 
-    public abstract void startConnection();
+   public abstract void startConnection();
 
-    public boolean isCompleted() {
-	return (completed.availablePermits() == 1);
-    }
+   public boolean isCompleted() {
+      return (completed.availablePermits() == 1);
+   }
 
-    public void release() throws InterruptedException {
-	if (isCompleted()) {
-	    return;
-	}
-	logger.trace("%1$s - %2$d - releasing to pool", conn, conn.hashCode());
-	available.put(conn);
-	conn = null;
-	command = null;
-	completed.release();
-    }
+   public void release() throws InterruptedException {
+      if (isCompleted() || alreadyReleased()) {
+         return;
+      }
+      logger.trace("%1$s - %2$d - releasing to pool", conn, conn.hashCode());
+      available.put(conn);
+      conn = null;
+      command = null;
+      completed.release();
+   }
 
-    public void cancel() throws IOException {
-	if (isCompleted()) {
-	    return;
-	}
-	if (conn != null) {
-	    logger.trace("%1$s - %2$d - cancelled; shutting down connection",
-		    conn, conn.hashCode());
-	    try {
-		shutdownConnection();
-	    } finally {
-		conn = null;
-		command = null;
-		maxConnections.release();
-	    }
-	}
-	completed.release();
-    }
+   private boolean alreadyReleased() {
+      return conn == null;
+   }
 
-    public abstract void shutdownConnection() throws IOException;
+   public void cancel() throws IOException {
+      if (isCompleted()) {
+         return;
+      }
+      if (conn != null) {
+         logger.trace("%1$s - %2$d - cancelled; shutting down connection", conn, conn.hashCode());
+         try {
+            shutdownConnection();
+         } finally {
+            conn = null;
+            command = null;
+            maxConnections.release();
+         }
+      }
+      completed.release();
+   }
 
-    public void waitFor() throws InterruptedException {
-	completed.acquire();
-	completed.release();
-    }
+   public abstract void shutdownConnection() throws IOException;
+
+   public void waitFor() throws InterruptedException {
+      completed.acquire();
+      completed.release();
+   }
 }

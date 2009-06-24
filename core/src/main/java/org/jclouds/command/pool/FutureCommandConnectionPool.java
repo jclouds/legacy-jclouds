@@ -33,7 +33,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.jclouds.command.FutureCommand;
 import org.jclouds.lifecycle.BaseLifeCycle;
 
-import com.google.inject.Provides;
+import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 
 /**
@@ -41,130 +41,156 @@ import com.google.inject.name.Named;
  * 
  * @author Adrian Cole
  */
-public abstract class FutureCommandConnectionPool<C, O extends FutureCommand<?, ?, ?>>
-	extends BaseLifeCycle {
-    protected final Semaphore allConnections;
-    protected final BlockingQueue<C> available;
-    protected final BlockingQueue<O> commandQueue;
-    protected final FutureCommandConnectionHandleFactory<C, O> futureCommandConnectionHandleFactory;
-    protected final int maxConnectionReuse;
-    protected final AtomicInteger currentSessionFailures = new AtomicInteger(0);
-    protected volatile boolean hitBottom = false;
+public abstract class FutureCommandConnectionPool<E, C, O extends FutureCommand<E, ?, ?, ?>>
+         extends BaseLifeCycle {
 
-    public FutureCommandConnectionPool(
-	    ExecutorService executor,
-	    Semaphore allConnections,
-	    BlockingQueue<O> commandQueue,
-	    FutureCommandConnectionHandleFactory<C, O> futureCommandConnectionHandleFactory,
-	    @Named("maxConnectionReuse") int maxConnectionReuse,
-	    BlockingQueue<C> available, BaseLifeCycle... dependencies) {
-	super(executor, dependencies);
-	this.allConnections = allConnections;
-	this.commandQueue = commandQueue;
-	this.futureCommandConnectionHandleFactory = futureCommandConnectionHandleFactory;
-	this.maxConnectionReuse = maxConnectionReuse;
-	this.available = available;
-    }
+   protected final Semaphore allConnections;
+   protected final BlockingQueue<C> available;
 
-    protected void setResponseException(Exception ex, C conn) {
-	O command = getHandleFromConnection(conn).getCommand();
-	command.getResponseFuture().setException(ex);
-    }
+   /**
+    * inputOnly: nothing is taken from this queue.
+    */
+   protected final BlockingQueue<O> resubmitQueue;
+   protected final int maxConnectionReuse;
+   protected final AtomicInteger currentSessionFailures = new AtomicInteger(0);
+   protected volatile boolean hitBottom = false;
+   protected final E endPoint;
 
-    protected void cancel(C conn) {
-	O command = getHandleFromConnection(conn).getCommand();
-	command.cancel(true);
-    }
+   public E getEndPoint() {
+      return endPoint;
+   }
 
-    @Provides
-    public C getConnection() throws InterruptedException, TimeoutException {
-	exceptionIfNotActive();
-	if (!hitBottom) {
-	    hitBottom = available.size() == 0
-		    && allConnections.availablePermits() == 0;
-	    if (hitBottom)
-		logger.warn("%1$s - saturated connection pool", this);
-	}
-	logger
-		.debug(
-			"%1$s - attempting to acquire connection; %d currently available",
-			this, available.size());
-	C conn = available.poll(5, TimeUnit.SECONDS);
-	if (conn == null)
-	    throw new TimeoutException(
-		    "could not obtain a pooled connection within 5 seconds");
+   public static interface Factory<E, C, O extends FutureCommand<E, ?, ?, ?>> {
+      FutureCommandConnectionPool<E, C, O> create(E endPoint);
+   }
 
-	logger.trace("%1$s - %2$d - aquired", conn, conn.hashCode());
-	if (connectionValid(conn)) {
-	    logger.debug("%1$s - %2$d - reusing", conn, conn.hashCode());
-	    return conn;
-	} else {
-	    logger.debug("%1$s - %2$d - unusable", conn, conn.hashCode());
-	    shutdownConnection(conn);
-	    allConnections.release();
-	    return getConnection();
-	}
-    }
+   public FutureCommandConnectionPool(ExecutorService executor, Semaphore allConnections,
+            BlockingQueue<O> commandQueue, @Named("maxConnectionReuse") int maxConnectionReuse,
+            BlockingQueue<C> available, @Assisted E endPoint, BaseLifeCycle... dependencies) {
+      super(executor, dependencies);
+      this.allConnections = allConnections;
+      this.resubmitQueue = commandQueue;
+      this.maxConnectionReuse = maxConnectionReuse;
+      this.available = available;
+      this.endPoint = endPoint;
+   }
 
-    protected void fatalException(Exception ex, C conn) {
-	setResponseException(ex, conn);
-	exception.set(ex);
-	shutdown();
-    }
+   protected void setResponseException(Exception ex, C conn) {
+      O command = getHandleFromConnection(conn).getCommand();
+      command.getResponseFuture().setException(ex);
+   }
 
-    protected abstract void shutdownConnection(C conn);
+   protected void cancel(C conn) {
+      O command = getHandleFromConnection(conn).getCommand();
+      command.cancel(true);
+   }
 
-    protected abstract boolean connectionValid(C conn);
+   protected C getConnection() throws InterruptedException, TimeoutException {
+      exceptionIfNotActive();
+      if (!hitBottom) {
+         hitBottom = available.size() == 0 && allConnections.availablePermits() == 0;
+         if (hitBottom)
+            logger.warn("%1$s - saturated connection pool", this);
+      }
+      logger.debug("%s - attempting to acquire connection; %s currently available", this, available
+               .size());
+      C conn = available.poll(5, TimeUnit.SECONDS);
+      if (conn == null)
+         throw new TimeoutException("could not obtain a pooled connection within 5 seconds");
 
-    public FutureCommandConnectionHandle<C, O> getHandle(O command)
-	    throws InterruptedException, TimeoutException {
-	exceptionIfNotActive();
-	C conn = getConnection();
-	FutureCommandConnectionHandle<C, O> handle = futureCommandConnectionHandleFactory
-		.create(command, conn);
-	associateHandleWithConnection(handle, conn);
-	return handle;
-    }
+      logger.trace("%1$s - %2$d - aquired", conn, conn.hashCode());
+      if (connectionValid(conn)) {
+         logger.debug("%1$s - %2$d - reusing", conn, conn.hashCode());
+         return conn;
+      } else {
+         logger.debug("%1$s - %2$d - unusable", conn, conn.hashCode());
+         shutdownConnection(conn);
+         allConnections.release();
+         return getConnection();
+      }
+   }
 
-    protected void resubmitIfRequestIsReplayable(C connection, Exception e) {
-	O command = getCommandFromConnection(connection);
-	if (command != null) {
-	    if (isReplayable(command)) {
-		logger.info("resubmitting command: %1$s", command);
-		commandQueue.add(command);
-	    } else {
-		command.setException(e);
-	    }
-	}
-    }
+   protected void fatalException(Exception ex, C conn) {
+      setResponseException(ex, conn);
+      exception.set(ex);
+      shutdown();
+   }
 
-    protected abstract boolean isReplayable(O command);
+   protected abstract void shutdownConnection(C conn);
 
-    O getCommandFromConnection(C connection) {
-	FutureCommandConnectionHandle<C, O> handle = getHandleFromConnection(connection);
-	if (handle != null && handle.getCommand() != null) {
-	    return handle.getCommand();
-	}
-	return null;
-    }
+   protected abstract boolean connectionValid(C conn);
 
-    protected void setExceptionOnCommand(C connection, Exception e) {
-	FutureCommand<?, ?, ?> command = getCommandFromConnection(connection);
-	if (command != null) {
-	    logger.warn(e, "exception in command: %1$s", command);
-	    command.setException(e);
-	}
-    }
+   public FutureCommandConnectionHandle<E, C, O> getHandle(O command) throws InterruptedException,
+            TimeoutException {
+      exceptionIfNotActive();
+      C conn = getConnection();
+      FutureCommandConnectionHandle<E, C, O> handle = createHandle(command, conn);
+      associateHandleWithConnection(handle, conn);
+      return handle;
+   }
 
-    protected abstract void associateHandleWithConnection(
-	    FutureCommandConnectionHandle<C, O> handle, C connection);
+   protected abstract FutureCommandConnectionHandle<E, C, O> createHandle(O command, C conn);
 
-    protected abstract FutureCommandConnectionHandle<C, O> getHandleFromConnection(
-	    C connection);
+   protected void resubmitIfRequestIsReplayable(C connection, Exception e) {
+      O command = getCommandFromConnection(connection);
+      if (command != null) {
+         if (isReplayable(command)) {
+            logger.info("resubmitting command: %1$s", command);
+            resubmitQueue.add(command);
+         } else {
+            command.setException(e);
+         }
+      }
+   }
 
-    protected abstract void createNewConnection() throws InterruptedException;
+   protected abstract boolean isReplayable(O command);
 
-    public interface FutureCommandConnectionHandleFactory<C, O extends FutureCommand<?, ?, ?>> {
-	FutureCommandConnectionHandle<C, O> create(O command, C conn);
-    }
+   O getCommandFromConnection(C connection) {
+      FutureCommandConnectionHandle<E, C, O> handle = getHandleFromConnection(connection);
+      if (handle != null && handle.getCommand() != null) {
+         return handle.getCommand();
+      }
+      return null;
+   }
+
+   protected void setExceptionOnCommand(C connection, Exception e) {
+      FutureCommand<E, ?, ?, ?> command = getCommandFromConnection(connection);
+      if (command != null) {
+         logger.warn(e, "exception in command: %1$s", command);
+         command.setException(e);
+      }
+   }
+
+   protected abstract void associateHandleWithConnection(
+            FutureCommandConnectionHandle<E, C, O> handle, C connection);
+
+   protected abstract FutureCommandConnectionHandle<E, C, O> getHandleFromConnection(C connection);
+
+   protected abstract void createNewConnection() throws InterruptedException;
+
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((endPoint == null) ? 0 : endPoint.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      FutureCommandConnectionPool<?, ?, ?> other = (FutureCommandConnectionPool<?, ?, ?>) obj;
+      if (endPoint == null) {
+         if (other.endPoint != null)
+            return false;
+      } else if (!endPoint.equals(other.endPoint))
+         return false;
+      return true;
+   }
+
 }

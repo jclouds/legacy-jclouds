@@ -21,18 +21,15 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.http;
+package org.jclouds.command;
 
 /**
- * // TODO: Adrian: Document this!
+ * A service request must have an endPoint associated with it.
  * 
  * @author Adrian Cole
  */
-public interface HttpErrorHandler {
-    public static final HttpErrorHandler NOOP = new HttpErrorHandler() {
-	public void handleError(HttpFutureCommand<?> command, HttpResponse response) {
-	}
-    };
+public interface Request<E> {
+   E getEndPoint();
 
-    void handleError(HttpFutureCommand<?> command, HttpResponse response);
+   void setEndPoint(E endPoint);
 }

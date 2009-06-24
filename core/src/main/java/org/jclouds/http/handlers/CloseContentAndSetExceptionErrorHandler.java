@@ -21,18 +21,30 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.http;
+package org.jclouds.http.handlers;
+
+import java.io.IOException;
+
+import org.jclouds.http.HttpErrorHandler;
+import org.jclouds.http.HttpFutureCommand;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.HttpResponseException;
+import org.jclouds.util.Utils;
 
 /**
- * // TODO: Adrian: Document this!
  * 
  * @author Adrian Cole
  */
-public interface HttpErrorHandler {
-    public static final HttpErrorHandler NOOP = new HttpErrorHandler() {
-	public void handleError(HttpFutureCommand<?> command, HttpResponse response) {
-	}
-    };
+public class CloseContentAndSetExceptionErrorHandler implements HttpErrorHandler {
 
-    void handleError(HttpFutureCommand<?> command, HttpResponse response);
+   public void handleError(HttpFutureCommand<?> command, HttpResponse response) {
+      String content;
+      try {
+         content = response.getContent() != null ? Utils.toStringAndClose(response.getContent())
+                  : null;
+         command.setException(new HttpResponseException(command, response, content));
+      } catch (IOException e) {
+         command.setException(new HttpResponseException(command, response));
+      }
+   }
 }

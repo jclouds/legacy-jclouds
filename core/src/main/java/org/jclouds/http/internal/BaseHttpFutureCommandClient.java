@@ -36,8 +36,8 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
-import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
-import org.jclouds.http.handlers.CloseContentAndSetExceptionHandler;
+import org.jclouds.http.handlers.DelegatingErrorHandler;
+import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.logging.Logger;
 
 import com.google.inject.Inject;
@@ -51,10 +51,10 @@ public abstract class BaseHttpFutureCommandClient<Q> implements HttpFutureComman
    protected List<HttpRequestFilter> requestFilters = Collections.emptyList();
 
    @Inject(optional = true)
-   protected HttpErrorHandler httpErrorHandler = new CloseContentAndSetExceptionHandler();
+   private HttpRetryHandler retryHandler = new DelegatingRetryHandler();
 
    @Inject(optional = true)
-   protected HttpRetryHandler httpRetryHandler = new BackoffLimitedRetryHandler(5);
+   private HttpErrorHandler errorHandler = new DelegatingErrorHandler();
 
    public void submit(HttpFutureCommand<?> command) {
       HttpRequest request = command.getRequest();
@@ -66,15 +66,22 @@ public abstract class BaseHttpFutureCommandClient<Q> implements HttpFutureComman
          }
          HttpResponse response = null;
          for (;;) {
-            logger.trace("%1$s - converting request %2$s", request.getEndPoint(), request);
+            logger.trace("%s - converting request %s", request.getEndPoint(), request);
             nativeRequest = convert(request);
             response = invoke(nativeRequest);
             int statusCode = response.getStatusCode();
-            if (statusCode >= 500 && httpRetryHandler.shouldRetryRequest(command, response))
-               continue;
-            break;
+            if (statusCode >= 300) {
+               if (retryHandler.shouldRetryRequest(command, response)) {
+                  continue;
+               } else {
+                  errorHandler.handleError(command, response);
+                  break;
+               }
+            } else {
+               processResponse(response, command);
+               break;
+            }
          }
-         handleResponse(command, response);
       } catch (Exception e) {
          command.setException(e);
       } finally {
@@ -88,14 +95,9 @@ public abstract class BaseHttpFutureCommandClient<Q> implements HttpFutureComman
 
    protected abstract void cleanup(Q nativeResponse);
 
-   protected void handleResponse(HttpFutureCommand<?> command, HttpResponse response) {
-      int code = response.getStatusCode();
-      if (code >= 300) {
-         httpErrorHandler.handle(command, response);
-      } else {
-         command.getResponseFuture().setResponse(response);
-         command.getResponseFuture().run();
-      }
+   protected void processResponse(HttpResponse response, HttpFutureCommand<?> command) {
+      command.getResponseFuture().setResponse(response);
+      command.getResponseFuture().run();
    }
 
 }

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -21,30 +21,24 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.http.handlers;
+package org.jclouds.http.annotation;
 
-import java.io.IOException;
-
-import org.jclouds.http.HttpFutureCommand;
-import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpResponseException;
-import org.jclouds.http.HttpErrorHandler;
-import org.jclouds.util.Utils;
+import com.google.inject.BindingAnnotation;
+import java.lang.annotation.Target;
+import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
 
 /**
+ * Implies that the object can address {@link org.jclouds.http.HttpResponse}s that contain status
+ * code 5xx.
  * 
  * @author Adrian Cole
  */
-public class CloseContentAndSetExceptionHandler implements HttpErrorHandler {
-
-   public void handle(HttpFutureCommand<?> command, HttpResponse response) {
-      String content;
-      try {
-         content = response.getContent() != null ? Utils.toStringAndClose(response.getContent())
-                  : null;
-         command.setException(new HttpResponseException(command, response, content));
-      } catch (IOException e) {
-         command.setException(new HttpResponseException(command, response));
-      }
-   }
+@BindingAnnotation
+@Target( { FIELD, PARAMETER, METHOD })
+@Retention(RUNTIME)
+public @interface ServerError {
 }

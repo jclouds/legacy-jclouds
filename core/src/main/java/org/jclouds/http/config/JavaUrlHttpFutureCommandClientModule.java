@@ -23,17 +23,10 @@
  */
 package org.jclouds.http.config;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-
-import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpFutureCommandClient;
 import org.jclouds.http.internal.JavaUrlHttpFutureCommandClient;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 
 /**
  * Configures {@link JavaUrlHttpFutureCommandClient}.
@@ -51,17 +44,6 @@ public class JavaUrlHttpFutureCommandClientModule extends AbstractModule {
    protected void bindClient() {
       // note this is not threadsafe, so it cannot be singleton
       bind(HttpFutureCommandClient.class).to(JavaUrlHttpFutureCommandClient.class);
-   }
-
-   @Singleton
-   @Provides
-   protected URI provideAddress(@Named(HttpConstants.PROPERTY_HTTP_ADDRESS) String address,
-            @Named(HttpConstants.PROPERTY_HTTP_PORT) int port,
-            @Named(HttpConstants.PROPERTY_HTTP_SECURE) boolean isSecure)
-            throws MalformedURLException {
-
-      return URI.create(String.format("%1$s://%2$s:%3$s", isSecure ? "https" : "http", address,
-               port));
    }
 
 }

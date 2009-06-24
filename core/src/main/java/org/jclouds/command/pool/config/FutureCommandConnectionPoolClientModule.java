@@ -32,7 +32,6 @@ import org.jclouds.lifecycle.config.LifeCycleModule;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 
 /**
@@ -47,7 +46,7 @@ public abstract class FutureCommandConnectionPoolClientModule<C> extends
     }
 
     @Provides
-    @Singleton
+    // @Singleton per uri...
     public abstract BlockingQueue<C> provideAvailablePool(
 	    @Named(PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS) int max)
 	    throws Exception;
@@ -62,7 +61,7 @@ public abstract class FutureCommandConnectionPoolClientModule<C> extends
      * @throws Exception
      */
     @Provides
-    @Singleton
+    // @Singleton per uri...
     public Semaphore provideTotalConnectionSemaphore(
 	    @Named(PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS) int max)
 	    throws Exception {

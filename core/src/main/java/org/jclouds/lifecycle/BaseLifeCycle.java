@@ -23,6 +23,9 @@
  */
 package org.jclouds.lifecycle;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -41,16 +44,21 @@ public abstract class BaseLifeCycle implements Runnable, LifeCycle {
    @Resource
    protected Logger logger = Logger.NULL;
    protected final ExecutorService executor;
-   protected final BaseLifeCycle[] dependencies;
+   protected final List<LifeCycle> dependencies;
    protected final Object statusLock;
    protected volatile Status status;
    protected AtomicReference<Exception> exception = new AtomicReference<Exception>();
 
-   public BaseLifeCycle(ExecutorService executor, BaseLifeCycle... dependencies) {
+   public BaseLifeCycle(ExecutorService executor, LifeCycle... dependencies) {
       this.executor = executor;
-      this.dependencies = dependencies;
+      this.dependencies = new ArrayList<LifeCycle>();
+      this.dependencies.addAll(Arrays.asList(dependencies));
       this.statusLock = new Object();
       this.status = Status.INACTIVE;
+   }
+
+   public void addDependency(LifeCycle lifeCycle) {
+      dependencies.add(lifeCycle);
    }
 
    public Status getStatus() {
@@ -116,12 +124,21 @@ public abstract class BaseLifeCycle implements Runnable, LifeCycle {
    }
 
    protected void exceptionIfDepedenciesNotActive() {
-      for (BaseLifeCycle dependency : dependencies) {
-         if (dependency.status.compareTo(Status.ACTIVE) != 0) {
-            throw new IllegalStateException(String.format(
-                     "Illegal state: %1$s for component: %2$s", dependency.status, dependency));
+      for (LifeCycle dependency : dependencies) {
+         if (dependency.getStatus().compareTo(Status.ACTIVE) != 0) {
+            throw new IllegalStateException(String.format("Illegal state: %s for component: %s",
+                     dependency.getStatus(), dependency));
          }
       }
+   }
+
+   protected Exception getExceptionFromDependenciesOrNull() {
+      for (LifeCycle dependency : dependencies) {
+         if (dependency.getException() != null) {
+            return dependency.getException();
+         }
+      }
+      return null;
    }
 
    public Exception getException() {

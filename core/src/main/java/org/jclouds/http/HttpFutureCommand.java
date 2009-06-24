@@ -39,7 +39,16 @@ import org.jclouds.logging.Logger;
  * 
  * @author Adrian Cole
  */
-public class HttpFutureCommand<T> extends FutureCommand<HttpRequest, HttpResponse, T> {
+public class HttpFutureCommand<T> extends FutureCommand<URI, HttpRequest, HttpResponse, T> {
+   private volatile int redirectCount;
+
+   public int incrementRedirectCount() {
+      return ++redirectCount;
+   }
+
+   public int getRedirectCount() {
+      return redirectCount;
+   }
 
    public HttpFutureCommand(URI endPoint, HttpMethod method, String uri,
             ResponseCallable<T> responseCallable) {

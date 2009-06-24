@@ -33,7 +33,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * 
  * @author Adrian Cole
  */
-public class FutureCommand<Q, R, T> implements Future<T> {
+public class FutureCommand<E, Q extends Request<E>, R, T> implements Future<T> {
 
    private final Q request;
    private final ResponseRunnableFuture<R, T> responseRunnableFuture;

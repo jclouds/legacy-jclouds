@@ -21,18 +21,21 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.http;
+package org.jclouds.http.handlers;
+
+import org.jclouds.http.HttpFutureCommand;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.HttpRetryHandler;
 
 /**
- * // TODO: Adrian: Document this!
+ * Always returns false.
  * 
  * @author Adrian Cole
  */
-public interface HttpErrorHandler {
-    public static final HttpErrorHandler NOOP = new HttpErrorHandler() {
-	public void handleError(HttpFutureCommand<?> command, HttpResponse response) {
-	}
-    };
+public class CannotRetryHandler implements HttpRetryHandler {
 
-    void handleError(HttpFutureCommand<?> command, HttpResponse response);
+   public boolean shouldRetryRequest(HttpFutureCommand<?> command, HttpResponse response) {
+      return false;
+   }
+
 }
