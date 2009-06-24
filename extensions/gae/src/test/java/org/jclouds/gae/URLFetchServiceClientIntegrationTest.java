@@ -79,7 +79,7 @@ public class URLFetchServiceClientIntegrationTest extends BaseHttpFutureCommandC
    }
 
    @Override
-   @Test(enabled = false, invocationCount = 50, timeOut = 1500)
+   @Test(invocationCount = 50, timeOut = 1500)
    public void testPutRedirect() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
       setupApiProxy();
