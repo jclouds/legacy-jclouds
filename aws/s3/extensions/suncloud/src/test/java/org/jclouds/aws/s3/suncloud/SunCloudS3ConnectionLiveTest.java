@@ -23,20 +23,20 @@
  */
 package org.jclouds.aws.s3.suncloud;
 
-import org.jclouds.aws.s3.S3ConnectionIntegrationTest;
+import org.jclouds.aws.s3.S3ConnectionLiveTest;
 import org.jclouds.aws.s3.S3ContextFactory;
 import org.jclouds.aws.s3.suncloud.config.SunCloudS3ConnectionModule;
 import org.jclouds.aws.s3.suncloud.xml.config.SunCloudS3ParserModule;
 import org.testng.annotations.Test;
 
 /**
- * This performs the same test as {@link S3ConnectionIntegrationTest}, except using Sun Cloud
+ * This performs the same test as {@link S3ConnectionLiveTest}, except using Sun Cloud
  * Storage.
  * 
  * @author Adrian Cole
  */
 @Test(enabled = false, groups = { "live" }, testName = "s3.suncloud.SunCloudS3ConnectionLiveTest")
-public class SunCloudS3ConnectionLiveTest extends S3ConnectionIntegrationTest {
+public class SunCloudS3ConnectionLiveTest extends S3ConnectionLiveTest {
 
    @Override
    protected boolean debugEnabled() {

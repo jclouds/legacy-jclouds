@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3;
+package org.jclouds.aws.s3.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.easymock.classextension.EasyMock.createNiceMock;
@@ -47,6 +47,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.commands.CopyObject;
 import org.jclouds.aws.s3.commands.options.CopyObjectOptions;
 import org.jclouds.aws.s3.commands.options.GetObjectOptions;
@@ -79,6 +80,7 @@ import com.thoughtworks.xstream.XStream;
  * Implementation of {@link S3Connection} which keeps all data in a local Map object.
  * 
  * @author Adrian Cole
+ * @author James Murty
  */
 public class StubS3Connection implements S3Connection {
    public static final String TEST_ACL_ID = "1a405254c932b52e5b5caaa88186bc431a1bacb9ece631f835daddaf0c47677c";

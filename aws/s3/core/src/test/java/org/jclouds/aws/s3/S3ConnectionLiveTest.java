@@ -38,22 +38,17 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 /**
- * Tests connection by listing all the buckets and their size
+ * Tests connection by copying the contents of a url into the bucket.
  * 
  * @author Adrian Cole
  */
-@Test(testName = "s3.S3ConnectionIntegrationTest")
-public class S3ConnectionIntegrationTest extends S3IntegrationTest {
-
-   @Test(groups = { "integration" })
-   void testListBuckets() throws Exception {
-      client.listOwnedBuckets().get(10, TimeUnit.SECONDS);
-   }
+@Test(groups = { "live" }, testName = "s3.S3ConnectionLiveTest")
+public class S3ConnectionLiveTest extends S3IntegrationTest {
 
    private static final String sysHttpStreamUrl = System.getProperty("jclouds.s3.httpstream.url");
    private static final String sysHttpStreamMd5 = System.getProperty("jclouds.s3.httpstream.md5");
 
-   @Test(groups = { "integration" })
+   @Test
    @Parameters( { "jclouds.s3.httpstream.url", "jclouds.s3.httpstream.md5" })
    public void testCopyUrl(@Optional String httpStreamUrl, @Optional String httpStreamMd5)
             throws Exception {

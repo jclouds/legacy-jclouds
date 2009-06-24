@@ -23,6 +23,8 @@
  */
 package org.jclouds.aws.s3.commands;
 
+import static org.jclouds.aws.s3.internal.StubS3Connection.TEST_ACL_EMAIL;
+import static org.jclouds.aws.s3.internal.StubS3Connection.TEST_ACL_ID;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -38,7 +40,6 @@ import org.jclouds.aws.s3.domain.AccessControlList.EmailAddressGrantee;
 import org.jclouds.aws.s3.domain.AccessControlList.GroupGranteeURI;
 import org.jclouds.aws.s3.domain.AccessControlList.Permission;
 import org.testng.annotations.Test;
-import static org.jclouds.aws.s3.StubS3Connection.*;
 
 /**
  * Tests integrated functionality of all commands that retrieve Access Control Lists (ACLs).

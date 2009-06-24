@@ -29,9 +29,9 @@ import org.jclouds.aws.s3.handlers.ParseAWSErrorFromXmlContent;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.aws.s3.xml.config.S3ParserModule;
 import org.jclouds.http.HttpErrorHandler;
-import org.jclouds.http.HttpRetryHandler;
+import org.jclouds.http.annotation.ClientError;
+import org.jclouds.http.annotation.ServerError;
 import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
-import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
@@ -69,9 +69,9 @@ public class S3ContextModuleTest {
                }, new JavaUrlHttpFutureCommandClientModule());
    }
 
-
    private static class ServerErrorHandlerTest {
       @Inject
+      @ServerError
       HttpErrorHandler errorHandler;
    }
 
@@ -81,16 +81,16 @@ public class S3ContextModuleTest {
       assertEquals(error.errorHandler.getClass(), ParseAWSErrorFromXmlContent.class);
    }
 
-   
-   private static class RetryHandlerTest {
+   private static class ClientErrorHandlerTest {
       @Inject
-      HttpRetryHandler retryHandler;
+      @ClientError
+      HttpErrorHandler errorHandler;
    }
 
    @Test
-   void testRetryHandler() {
-      RetryHandlerTest handler = createInjector().getInstance(RetryHandlerTest.class);
-      assertEquals(handler.retryHandler.getClass(), BackoffLimitedRetryHandler.class);
+   void testClientErrorHandler() {
+      ClientErrorHandlerTest handler = createInjector().getInstance(ClientErrorHandlerTest.class);
+      assertEquals(handler.errorHandler.getClass(), ParseAWSErrorFromXmlContent.class);
    }
 
 }

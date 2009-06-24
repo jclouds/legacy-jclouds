@@ -26,12 +26,12 @@ package org.jclouds.aws.s3;
 import org.testng.annotations.Test;
 
 /**
- * This performs the same test as {@link S3ConnectionIntegrationTest}, except using SSL.
+ * This performs the same test as {@link S3ConnectionLiveTest}, except using SSL.
  *
  * @author Adrian Cole
  */
-@Test(groups = {"live"}, testName = "s3.SecureS3ConnectionIntegrationTest")
-public class SecureS3ConnectionIntegrationTest extends S3ConnectionIntegrationTest {
+@Test(groups = {"live"}, testName = "s3.SecureS3ConnectionLiveTest")
+public class SecureS3ConnectionLiveTest extends S3ConnectionLiveTest {
     @Override
     protected S3ContextFactory buildS3ContextFactory(String AWSAccessKeyId,
                                            String AWSSecretAccessKey) {

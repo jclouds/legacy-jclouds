@@ -50,6 +50,7 @@ import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.S3Bucket.Metadata;
 import org.jclouds.aws.s3.domain.S3Bucket.Metadata.LocationConstraint;
+import org.jclouds.aws.s3.internal.StubS3Connection;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.aws.s3.util.S3Utils;
 import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
