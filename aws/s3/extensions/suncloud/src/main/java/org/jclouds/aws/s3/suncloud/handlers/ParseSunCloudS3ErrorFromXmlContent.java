@@ -60,7 +60,7 @@ public class ParseSunCloudS3ErrorFromXmlContent implements HttpErrorHandler {
       this.parserFactory = parserFactory;
    }
 
-   public void handle(HttpFutureCommand<?> command, HttpResponse response) {
+   public void handleError(HttpFutureCommand<?> command, HttpResponse response) {
       SunCloudS3Error error = new SunCloudS3Error();
       error.setRequestId(response.getFirstHeaderOrNull(S3Headers.REQUEST_ID));
       error.setRequestToken(response.getFirstHeaderOrNull(S3Headers.REQUEST_TOKEN));

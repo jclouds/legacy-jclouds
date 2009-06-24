@@ -51,7 +51,6 @@ public class S3ContextModule extends AbstractModule {
                FactoryProvider.newFactory(GuiceS3Context.S3InputStreamMapFactory.class,
                         LiveS3InputStreamMap.class));
       bind(S3Context.class).to(GuiceS3Context.class);
-
    }
 
 }

@@ -23,6 +23,8 @@
  */
 package org.jclouds.aws.s3.config;
 
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +38,8 @@ import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpRetryHandler;
+import org.jclouds.http.annotation.ClientError;
+import org.jclouds.http.annotation.ServerError;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.logging.Logger;
 
@@ -77,7 +81,10 @@ public class LiveS3ConnectionModule extends AbstractModule {
    }
 
    protected void bindErrorHandler() {
-      bind(HttpErrorHandler.class).to(ParseAWSErrorFromXmlContent.class).in(Scopes.SINGLETON);
+      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
+               ParseAWSErrorFromXmlContent.class).in(Scopes.SINGLETON);
+      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(
+               ParseAWSErrorFromXmlContent.class).in(Scopes.SINGLETON);
    }
 
    @Provides
@@ -86,6 +93,17 @@ public class LiveS3ConnectionModule extends AbstractModule {
       List<HttpRequestFilter> filters = new ArrayList<HttpRequestFilter>();
       filters.add(requestAuthorizeSignature);
       return filters;
+   }
+
+   @Singleton
+   @Provides
+   protected URI provideAddress(@Named(HttpConstants.PROPERTY_HTTP_ADDRESS) String address,
+            @Named(HttpConstants.PROPERTY_HTTP_PORT) int port,
+            @Named(HttpConstants.PROPERTY_HTTP_SECURE) boolean isSecure)
+            throws MalformedURLException {
+
+      return URI.create(String.format("%1$s://%2$s:%3$s", isSecure ? "https" : "http", address,
+               port));
    }
 
 }
