@@ -41,10 +41,12 @@ import org.jclouds.util.Utils;
  */
 public class HttpRequest extends HttpMessage implements Request<URI> {
 
+   // mutable for purposes of redirects
    private URI endPoint;
-   private final HttpMethod method;
+   private HttpMethod method;
+   
    private final String uri;
-   Object payload;
+   private Object payload;
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -113,6 +115,10 @@ public class HttpRequest extends HttpMessage implements Request<URI> {
     */
    public URI getEndPoint() {
       return endPoint;
+   }
+
+   public void setMethod(HttpMethod method) {
+      this.method = method;
    }
 
 }

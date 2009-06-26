@@ -75,4 +75,15 @@ public class DelegatingRetryHandler implements HttpRetryHandler {
       return retryRequest;
    }
 
+   public HttpRetryHandler getRedirectionRetryHandler() {
+      return redirectionRetryHandler;
+   }
+
+   public HttpRetryHandler getClientErrorRetryHandler() {
+      return clientErrorRetryHandler;
+   }
+
+   public HttpRetryHandler getServerErrorRetryHandler() {
+      return serverErrorRetryHandler;
+   }
 }

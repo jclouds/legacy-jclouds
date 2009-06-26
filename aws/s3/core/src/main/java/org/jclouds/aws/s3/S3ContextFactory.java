@@ -33,6 +33,7 @@ import static org.jclouds.command.pool.PoolConstants.PROPERTY_POOL_MAX_SESSION_F
 import static org.jclouds.command.pool.PoolConstants.PROPERTY_POOL_REQUEST_INVOKER_THREADS;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_ADDRESS;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_RETRIES;
+import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_REDIRECTS;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_PORT;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_SECURE;
 
@@ -96,6 +97,7 @@ public class S3ContextFactory {
       properties.setProperty(PROPERTY_HTTP_ADDRESS, "s3.amazonaws.com");
       properties.setProperty(PROPERTY_HTTP_SECURE, "true");
       properties.setProperty(PROPERTY_HTTP_MAX_RETRIES, "5");
+      properties.setProperty(PROPERTY_HTTP_MAX_REDIRECTS, "5");
       properties.setProperty(PROPERTY_POOL_MAX_CONNECTION_REUSE, "75");
       properties.setProperty(PROPERTY_POOL_MAX_SESSION_FAILURES, "2");
       properties.setProperty(PROPERTY_POOL_REQUEST_INVOKER_THREADS, "1");
@@ -168,6 +170,12 @@ public class S3ContextFactory {
       return this;
    }
 
+   public S3ContextFactory withHttpMaxRedirects(int httpMaxRedirects) {
+      properties.setProperty(PROPERTY_HTTP_MAX_REDIRECTS, Integer.toString(httpMaxRedirects));
+      return this;
+   }
+
+   
    public S3ContextFactory withHttpPort(int httpPort) {
       properties.setProperty(PROPERTY_HTTP_PORT, Integer.toString(httpPort));
       return this;

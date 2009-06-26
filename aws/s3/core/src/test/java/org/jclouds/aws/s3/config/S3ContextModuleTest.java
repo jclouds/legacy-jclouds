@@ -25,11 +25,14 @@ package org.jclouds.aws.s3.config;
 
 import static org.testng.Assert.assertEquals;
 
+import org.jclouds.aws.s3.handlers.AWSClientErrorRetryHandler;
+import org.jclouds.aws.s3.handlers.AWSRedirectionRetryHandler;
 import org.jclouds.aws.s3.handlers.ParseAWSErrorFromXmlContent;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.aws.s3.xml.config.S3ParserModule;
 import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
+import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
@@ -61,6 +64,8 @@ public class S3ContextModuleTest {
                               .to("false");
                      bindConstant().annotatedWith(
                               Names.named(S3Constants.PROPERTY_HTTP_MAX_RETRIES)).to("5");
+                     bindConstant().annotatedWith(
+                              Names.named(S3Constants.PROPERTY_HTTP_MAX_REDIRECTS)).to("5");
                      super.configure();
                   }
                }, new JavaUrlHttpFutureCommandClientModule());
@@ -78,4 +83,16 @@ public class S3ContextModuleTest {
       assertEquals(handler.getClientErrorHandler().getClass(), ParseAWSErrorFromXmlContent.class);
    }
 
+   @Test
+   void testClientRetryHandler() {
+      DelegatingRetryHandler handler = createInjector().getInstance(DelegatingRetryHandler.class);
+      assertEquals(handler.getClientErrorRetryHandler().getClass(), AWSClientErrorRetryHandler.class);
+   }
+   
+   @Test
+   void testRedirectionRetryHandler() {
+      DelegatingRetryHandler handler = createInjector().getInstance(DelegatingRetryHandler.class);
+      assertEquals(handler.getRedirectionRetryHandler().getClass(), AWSRedirectionRetryHandler.class);
+   }
+   
 }

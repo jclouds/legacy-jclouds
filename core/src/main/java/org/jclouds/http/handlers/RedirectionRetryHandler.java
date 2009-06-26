@@ -48,7 +48,7 @@ import com.google.inject.name.Named;
  * @author Adrian Cole
  */
 public class RedirectionRetryHandler implements HttpRetryHandler {
-   private final int retryCountLimit;
+   protected final int retryCountLimit;
 
    @Resource
    protected Logger logger = Logger.NULL;

@@ -23,15 +23,20 @@
  */
 package org.jclouds.util;
 
+import static com.google.common.base.Preconditions.checkState;
+
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URLEncoder;
 import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
+import org.jclouds.http.HttpResponse;
 import org.jclouds.logging.Logger;
 
 /**
@@ -44,6 +49,43 @@ public class Utils {
 
    @Resource
    protected static Logger logger = Logger.NULL;
+
+   /**
+    * Content stream may need to be read. However, we should always close the http stream.
+    */
+   public static byte[] closeConnectionButKeepContentStream(HttpResponse response) {
+      if (response.getContent() != null) {
+         try {
+            byte[] data = IOUtils.toByteArray(response.getContent());
+            response.setContent(new ByteArrayInputStream(data));
+            return data;
+         } catch (IOException e) {
+            logger.error(e, "Error consuming input");
+         } finally {
+            IOUtils.closeQuietly(response.getContent());
+         }
+      }
+      return null;
+   }
+
+   public static URI parseEndPoint(String hostHeader) {
+      URI redirectURI = URI.create(hostHeader);
+      String scheme = redirectURI.getScheme();
+
+      checkState(redirectURI.getScheme().startsWith("http"), String.format(
+               "header %s didn't parse an http scheme: [%s]", hostHeader, scheme));
+      int port = redirectURI.getPort() > 0 ? redirectURI.getPort() : redirectURI.getScheme()
+               .equals("https") ? 443 : 80;
+      String host = redirectURI.getHost();
+      checkState(!host.matches("[/]"), String.format(
+               "header %s didn't parse an http host correctly: [%s]", hostHeader, host));
+      URI endPoint = URI.create(String.format("%s://%s:%d", scheme, host, port));
+      return endPoint;
+   }
+
+   public static URI replaceHostInEndPoint(URI endPoint, String host) {
+      return URI.create(endPoint.toString().replace(endPoint.getHost(), host));
+   }
 
    /**
     * 

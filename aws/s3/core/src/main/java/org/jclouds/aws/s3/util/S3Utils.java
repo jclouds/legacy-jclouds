@@ -28,8 +28,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.bouncycastle.crypto.digests.MD5Digest;
+import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.s3.filters.RequestAuthorizeSignature;
+import org.jclouds.aws.s3.reference.S3Headers;
+import org.jclouds.aws.s3.xml.S3ParserFactory;
 import org.jclouds.aws.util.AWSUtils;
+import org.jclouds.http.HttpException;
+import org.jclouds.http.HttpFutureCommand;
+import org.jclouds.http.HttpResponse;
 
 import java.io.*;
 
@@ -39,6 +46,25 @@ import java.io.*;
  * @author Adrian Cole
  */
 public class S3Utils extends AWSUtils {
+
+   public static AWSError parseAWSErrorFromContent(S3ParserFactory parserFactory,
+            HttpFutureCommand<?> command, HttpResponse response, InputStream content)
+            throws HttpException {
+      AWSError error = parserFactory.createErrorParser().parse(content);
+      error.setRequestId(response.getFirstHeaderOrNull(S3Headers.REQUEST_ID));
+      error.setRequestToken(response.getFirstHeaderOrNull(S3Headers.REQUEST_TOKEN));
+      if ("SignatureDoesNotMatch".equals(error.getCode()))
+         error.setStringSigned(RequestAuthorizeSignature.createStringToSign(command.getRequest()));
+      return error;
+
+   }
+
+   public static AWSError parseAWSErrorFromContent(S3ParserFactory parserFactory,
+            HttpFutureCommand<?> command, HttpResponse response, String content)
+            throws HttpException {
+      return parseAWSErrorFromContent(parserFactory, command, response, new ByteArrayInputStream(
+               content.getBytes()));
+   }
 
    public static String validateBucketName(String bucketName) {
       checkNotNull(bucketName, "bucketName");

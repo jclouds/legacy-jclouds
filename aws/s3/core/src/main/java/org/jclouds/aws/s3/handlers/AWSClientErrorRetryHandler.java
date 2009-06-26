@@ -25,62 +25,54 @@ package org.jclouds.aws.s3.handlers;
 
 import javax.annotation.Resource;
 
-import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.s3.util.S3Utils;
 import org.jclouds.aws.s3.xml.S3ParserFactory;
-import org.jclouds.http.HttpErrorHandler;
+import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpResponseException;
+import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.logging.Logger;
-import org.jclouds.util.Utils;
 
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 /**
- * This will parse and set an appropriate exception on the command object.
+ * Handles Retryable responses with error codes in the 3xx range
  * 
- * @see AWSError
  * @author Adrian Cole
- * 
  */
-public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
+public class AWSClientErrorRetryHandler implements HttpRetryHandler {
+   private final S3ParserFactory parserFactory;
+
+   private final int retryCountLimit;
+
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private final S3ParserFactory parserFactory;
-
    @Inject
-   public ParseAWSErrorFromXmlContent(S3ParserFactory parserFactory) {
+   public AWSClientErrorRetryHandler(S3ParserFactory parserFactory,
+            @Named("jclouds.http.max-retries") int retryCountLimit) {
+      this.retryCountLimit = retryCountLimit;
       this.parserFactory = parserFactory;
    }
 
-   public void handleError(HttpFutureCommand<?> command, HttpResponse response) {
-      String content;
-      try {
-         content = response.getContent() != null ? Utils.toStringAndClose(response.getContent())
-                  : null;
-         if (content != null) {
-            try {
-               if (content.indexOf('<') >= 0) {
-                  AWSError error = S3Utils.parseAWSErrorFromContent(parserFactory, command,
-                           response, content);
-                  command.setException(new AWSResponseException(command, response, error));
-               } else {
-                  command.setException(new HttpResponseException(command, response, content));
-               }
-            } catch (Exception he) {
-               command.setException(new HttpResponseException(command, response, content));
-               Utils.rethrowIfRuntime(he);
+   public boolean shouldRetryRequest(HttpFutureCommand<?> command, HttpResponse response) {
+      if (command.getFailureCount() > retryCountLimit)
+         return false;
+      if (response.getStatusCode() == 400) {
+         byte[] content = S3Utils.closeConnectionButKeepContentStream(response);
+         command.incrementRedirectCount();
+         try {
+            AWSError error = S3Utils.parseAWSErrorFromContent(parserFactory, command, response,
+                     new String(content));
+            if ("RequestTimeout".equals(error.getCode())) {
+               return true;
             }
-         } else {
-            command.setException(new HttpResponseException(command, response));
+         } catch (HttpException e) {
+            logger.warn(e, "error parsing response: %s", new String(content));
          }
-      } catch (Exception e) {
-         command.setException(new HttpResponseException(command, response));
-         Utils.rethrowIfRuntime(e);
       }
+      return false;
    }
-
 }

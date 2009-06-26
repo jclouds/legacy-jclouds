@@ -32,11 +32,14 @@ import javax.annotation.Resource;
 
 import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.filters.RequestAuthorizeSignature;
+import org.jclouds.aws.s3.handlers.AWSClientErrorRetryHandler;
+import org.jclouds.aws.s3.handlers.AWSRedirectionRetryHandler;
 import org.jclouds.aws.s3.handlers.ParseAWSErrorFromXmlContent;
 import org.jclouds.aws.s3.internal.LiveS3Connection;
 import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRequestFilter;
+import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
@@ -74,17 +77,25 @@ public class LiveS3ConnectionModule extends AbstractModule {
 
       bind(S3Connection.class).to(LiveS3Connection.class).in(Scopes.SINGLETON);
       bindErrorHandlers();
+      bindRetryHandlers();
       requestInjection(this);
       logger.info("S3 Context = %1$s://%2$s:%3$s", (isSecure ? "https" : "http"), address, port);
    }
 
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
-               ParseAWSErrorFromXmlContent.class).in(Scopes.SINGLETON);
-      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
-               ParseAWSErrorFromXmlContent.class).in(Scopes.SINGLETON);
+               ParseAWSErrorFromXmlContent.class);
       bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(
-               ParseAWSErrorFromXmlContent.class).in(Scopes.SINGLETON);
+               ParseAWSErrorFromXmlContent.class);
+      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
+               ParseAWSErrorFromXmlContent.class);
+   }
+
+   protected void bindRetryHandlers() {
+      bind(HttpRetryHandler.class).annotatedWith(Redirection.class).to(
+               AWSRedirectionRetryHandler.class);
+      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(
+               AWSClientErrorRetryHandler.class);
    }
 
    @Provides

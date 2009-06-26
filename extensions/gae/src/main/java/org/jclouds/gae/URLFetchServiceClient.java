@@ -115,7 +115,7 @@ public class URLFetchServiceClient extends BaseHttpFutureCommandClient<HTTPReque
       URL url = new URL(request.getEndPoint().toURL(), request.getUri());
 
       FetchOptions options = disallowTruncate();
-      followRedirectsUnlessRequestContainsPayload(request, options);
+      options.doNotFollowRedirects();
 
       HTTPRequest gaeRequest = new HTTPRequest(url, HTTPMethod.valueOf(request.getMethod()
                .toString()), options);
@@ -151,15 +151,6 @@ public class URLFetchServiceClient extends BaseHttpFutureCommandClient<HTTPReque
                   .getScheme(), hostHeader, request.getEndPoint().getPort())));
          request.getHeaders().removeAll(HttpHeaders.HOST);
       }
-   }
-
-   private void followRedirectsUnlessRequestContainsPayload(HttpRequest request,
-            FetchOptions options) {
-      if (request.getPayload() != null || request.getMethod().equals(HTTPMethod.PUT)
-               || request.getMethod().equals(HTTPMethod.POST))
-         options.doNotFollowRedirects();
-      else
-         options.followRedirects();
    }
 
    /**
