@@ -59,9 +59,14 @@ public class FutureCommandConnectionPoolClient<E, C, O extends FutureCommand<E, 
       poolMap = new MapMaker()
                .makeComputingMap(new Function<E, FutureCommandConnectionPool<E, C, O>>() {
                   public FutureCommandConnectionPool<E, C, O> apply(E endPoint) {
-                     FutureCommandConnectionPool<E, C, O> pool = poolFactory.create(endPoint);
-                     addDependency(pool);
-                     return pool;
+                     try {
+                        FutureCommandConnectionPool<E, C, O> pool = poolFactory.create(endPoint);
+                        addDependency(pool);
+                        return pool;
+                     } catch (RuntimeException e) {
+                        logger.error(e, "error creating entry for %s", endPoint);
+                        throw e;
+                     }
                   }
                });
       this.commandQueue = commandQueue;
@@ -124,7 +129,7 @@ public class FutureCommandConnectionPoolClient<E, C, O extends FutureCommand<E, 
       exceptionIfNotActive();
       FutureCommandConnectionPool<E, C, O> pool = poolMap.get(command.getRequest().getEndPoint());
       if (pool == null) {
-         //TODO limit;
+         // TODO limit;
          logger.warn("pool not available for command %s; retrying", command);
          commandQueue.add(command);
          return;
@@ -138,7 +143,8 @@ public class FutureCommandConnectionPoolClient<E, C, O extends FutureCommand<E, 
          commandQueue.add(command);
          return;
       } catch (TimeoutException e) {
-         logger.warn(e, "Timeout getting a connection for command %s on pool %s; retrying", command, pool);
+         logger.warn(e, "Timeout getting a connection for command %s on pool %s; retrying",
+                  command, pool);
          commandQueue.add(command);
          return;
       }

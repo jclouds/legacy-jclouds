@@ -29,103 +29,104 @@ import java.util.Map;
 /**
  * When an Amazon S3 request is in error, the client receives an error response.
  * 
- * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?ErrorResponse.html" />
+ * @see <a
+ *      href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?ErrorResponse.html"
+ *      />
  * @author Adrian Cole
  * 
  */
 public class AWSError {
-    private String code;
-    private String message;
-    private String requestId;
-    private String requestToken;
-    private Map<String, String> details = new HashMap<String, String>();
-    private String stringSigned;
+   private String code;
+   private String message;
+   private String requestId;
+   private String requestToken;
+   private Map<String, String> details = new HashMap<String, String>();
+   private String stringSigned;
 
-    @Override
-    public String toString() {
-	final StringBuilder sb = new StringBuilder();
-	sb.append("AWSError");
-	sb.append("{code='").append(code).append('\'');
-	sb.append(", message='").append(message).append('\'');
-	sb.append(", requestId='").append(requestId).append('\'');
-	sb.append(", requestToken='").append(requestToken).append('\'');
-	if (stringSigned != null)
-	    sb.append(", stringSigned='").append(stringSigned).append('\'');
-	sb.append(", context='").append(details.toString()).append('\'')
-		.append('}');
-	return sb.toString();
-    }
+   @Override
+   public String toString() {
+      final StringBuilder sb = new StringBuilder();
+      sb.append("AWSError");
+      sb.append("{requestId='").append(requestId).append('\'');
+      sb.append(", requestToken='").append(requestToken).append('\'');
+      if (code != null)
+         sb.append(", code='").append(code).append('\'');
+      if (message != null)
+         sb.append(", message='").append(message).append('\'');
+      if (stringSigned != null)
+         sb.append(", stringSigned='").append(stringSigned).append('\'');
+      if (details.size() != 0)
+         sb.append(", context='").append(details.toString()).append('\'').append('}');
+      return sb.toString();
+   }
 
-    public void setCode(String code) {
-	this.code = code;
-    }
+   public void setCode(String code) {
+      this.code = code;
+   }
 
-    /**
-     * The error code is a string that uniquely identifies an error condition.
-     * It is meant to be read and understood by programs that detect and handle
-     * errors by type
-     * 
-     * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/ErrorCode.html" />
-     */
-    public String getCode() {
-	return code;
-    }
+   /**
+    * The error code is a string that uniquely identifies an error condition. It is meant to be read
+    * and understood by programs that detect and handle errors by type
+    * 
+    * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/ErrorCode.html" />
+    */
+   public String getCode() {
+      return code;
+   }
 
-    public void setMessage(String message) {
-	this.message = message;
-    }
+   public void setMessage(String message) {
+      this.message = message;
+   }
 
-    /**
-     * The error message contains a generic description of the error condition
-     * in English.
-     * 
-     * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/ErrorMessage.html" />
-     */
-    public String getMessage() {
-	return message;
-    }
+   /**
+    * The error message contains a generic description of the error condition in English.
+    * 
+    * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/ErrorMessage.html" />
+    */
+   public String getMessage() {
+      return message;
+   }
 
-    public void setRequestId(String requestId) {
-	this.requestId = requestId;
-    }
+   public void setRequestId(String requestId) {
+      this.requestId = requestId;
+   }
 
-    /**
-     * * A unique ID assigned to each request by the system. In the unlikely
-     * event that you have problems with Amazon S3, Amazon can use this to help
-     * troubleshoot the problem.
-     * 
-     */
-    public String getRequestId() {
-	return requestId;
-    }
+   /**
+    * * A unique ID assigned to each request by the system. In the unlikely event that you have
+    * problems with Amazon S3, Amazon can use this to help troubleshoot the problem.
+    * 
+    */
+   public String getRequestId() {
+      return requestId;
+   }
 
-    public void setStringSigned(String stringSigned) {
-	this.stringSigned = stringSigned;
-    }
+   public void setStringSigned(String stringSigned) {
+      this.stringSigned = stringSigned;
+   }
 
-    /**
-     * @return what jclouds signed before sending the request.
-     */
-    public String getStringSigned() {
-	return stringSigned;
-    }
+   /**
+    * @return what jclouds signed before sending the request.
+    */
+   public String getStringSigned() {
+      return stringSigned;
+   }
 
-    public void setDetails(Map<String, String> context) {
-	this.details = context;
-    }
+   public void setDetails(Map<String, String> context) {
+      this.details = context;
+   }
 
-    /**
-     * @return additional details surrounding the error.
-     */
-    public Map<String, String> getDetails() {
-	return details;
-    }
+   /**
+    * @return additional details surrounding the error.
+    */
+   public Map<String, String> getDetails() {
+      return details;
+   }
 
-    public void setRequestToken(String requestToken) {
-	this.requestToken = requestToken;
-    }
+   public void setRequestToken(String requestToken) {
+      this.requestToken = requestToken;
+   }
 
-    public String getRequestToken() {
-	return requestToken;
-    }
+   public String getRequestToken() {
+      return requestToken;
+   }
 }

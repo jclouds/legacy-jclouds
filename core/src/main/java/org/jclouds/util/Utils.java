@@ -36,7 +36,7 @@ import org.jclouds.logging.Logger;
 
 /**
  * // TODO: Adrian: Document this!
- *
+ * 
  * @author Adrian Cole
  */
 public class Utils {
@@ -45,135 +45,155 @@ public class Utils {
    @Resource
    protected static Logger logger = Logger.NULL;
 
-    /**
-     * 
-     * @param <E> Exception type you'd like rethrown
-     * @param e Exception you are inspecting
-     * @throws E
-     */
-    @SuppressWarnings("unchecked")
-    public static <E extends Exception> void rethrowIfRuntimeOrSameType(Exception e) throws E {
-        if (e instanceof ExecutionException) {
-            Throwable nested = e.getCause();
-            if (nested instanceof Error)
-                throw (Error) nested;
-            e = (Exception) nested;
-        }
+   /**
+    * 
+    * @param <E>
+    *           Exception type you'd like rethrown
+    * @param e
+    *           Exception you are inspecting
+    * @throws E
+    */
+   public static void rethrowIfRuntime(Exception e) {
+      if (e instanceof ExecutionException) {
+         Throwable nested = e.getCause();
+         if (nested instanceof Error)
+            throw (Error) nested;
+         e = (Exception) nested;
+      }
 
-        if (e instanceof RuntimeException) {
-            throw (RuntimeException) e;
-        } else {
-            try {
-                throw (E) e;
-            } catch (ClassCastException throwAway) {
-                // using cce as there's no way to do instanceof E in current java
-            }
-        }
-    }
+      if (e instanceof RuntimeException) {
+         throw (RuntimeException) e;
+      }
+   }
 
-    public static String toStringAndClose(InputStream input) throws IOException {
-        try {
-            return IOUtils.toString(input);
-        } finally {
-            IOUtils.closeQuietly(input);
-        }
-    }
+   /**
+    * 
+    * @param <E>
+    *           Exception type you'd like rethrown
+    * @param e
+    *           Exception you are inspecting
+    * @throws E
+    */
+   @SuppressWarnings("unchecked")
+   public static <E extends Exception> void rethrowIfRuntimeOrSameType(Exception e) throws E {
+      if (e instanceof ExecutionException) {
+         Throwable nested = e.getCause();
+         if (nested instanceof Error)
+            throw (Error) nested;
+         e = (Exception) nested;
+      }
 
-    /**
-     * Encode the given string with the given encoding, if possible.
-     * If the encoding fails with {@link UnsupportedEncodingException}, 
-     * log a warning and fall back to the system's default encoding.
-     * 
-     * @see {@link String#getBytes(String)}
-     * @see {@link String#getBytes()} - used as fall-back.
-     * 
-     * @param str
-     * @param encoding
-     * @return
-     */
-    public static byte[] encodeString(String str, String encoding) {
-       try {
-          return str.getBytes(encoding);
-       } catch (UnsupportedEncodingException e) {
-          logger.warn(e, "Failed to encode string to bytes with encoding " + encoding
-                + ". Falling back to system's default encoding");
-          return str.getBytes();
-       }
-    }
-    
-    /**
-     * Encode the given string with the UTF-8 encoding, the sane default.
-     * In the very unlikely event the encoding fails with 
-     * {@link UnsupportedEncodingException}, log a warning and fall back 
-     * to the system's default encoding.
-     * 
-     * @param str
-     * @return
-     */
-    public static byte[] encodeString(String str) {
-       return encodeString(str, UTF8_ENCODING);
-    }
-    
-    /**
-     * Decode the given string with the given encoding, if possible.
-     * If the decoding fails with {@link UnsupportedEncodingException},
-     * log a warning and fall back to the system's default encoding.
-     *
-     * @param bytes
-     * @param encoding
-     * @return
-     */
-    public static String decodeString(byte[] bytes, String encoding) {
-       try {
+      if (e instanceof RuntimeException) {
+         throw (RuntimeException) e;
+      } else {
+         try {
+            throw (E) e;
+         } catch (ClassCastException throwAway) {
+            // using cce as there's no way to do instanceof E in current java
+         }
+      }
+   }
+
+   public static String toStringAndClose(InputStream input) throws IOException {
+      try {
+         return IOUtils.toString(input);
+      } finally {
+         IOUtils.closeQuietly(input);
+      }
+   }
+
+   /**
+    * Encode the given string with the given encoding, if possible. If the encoding fails with
+    * {@link UnsupportedEncodingException}, log a warning and fall back to the system's default
+    * encoding.
+    * 
+    * @see {@link String#getBytes(String)}
+    * @see {@link String#getBytes()} - used as fall-back.
+    * 
+    * @param str
+    * @param encoding
+    * @return
+    */
+   public static byte[] encodeString(String str, String encoding) {
+      try {
+         return str.getBytes(encoding);
+      } catch (UnsupportedEncodingException e) {
+         logger.warn(e, "Failed to encode string to bytes with encoding " + encoding
+                  + ". Falling back to system's default encoding");
+         return str.getBytes();
+      }
+   }
+
+   /**
+    * Encode the given string with the UTF-8 encoding, the sane default. In the very unlikely event
+    * the encoding fails with {@link UnsupportedEncodingException}, log a warning and fall back to
+    * the system's default encoding.
+    * 
+    * @param str
+    * @return
+    */
+   public static byte[] encodeString(String str) {
+      return encodeString(str, UTF8_ENCODING);
+   }
+
+   /**
+    * Decode the given string with the given encoding, if possible. If the decoding fails with
+    * {@link UnsupportedEncodingException}, log a warning and fall back to the system's default
+    * encoding.
+    * 
+    * @param bytes
+    * @param encoding
+    * @return
+    */
+   public static String decodeString(byte[] bytes, String encoding) {
+      try {
          return new String(bytes, encoding);
       } catch (UnsupportedEncodingException e) {
          logger.warn(e, "Failed to decode bytes to string with encoding " + encoding
-               + ". Falling back to system's default encoding");
+                  + ". Falling back to system's default encoding");
          return new String(bytes);
       }
-    }
+   }
 
-    /**
-     * Decode the given string with the UTF-8 encoding, the sane default.
-     * In the very unlikely event the encoding fails with 
-     * {@link UnsupportedEncodingException}, log a warning and fall back 
-     * to the system's default encoding.
-     * 
-     * @param str
-     * @return
-     */
-    public static String decodeString(byte[] bytes) {
-       return decodeString(bytes, UTF8_ENCODING);
-    }
+   /**
+    * Decode the given string with the UTF-8 encoding, the sane default. In the very unlikely event
+    * the encoding fails with {@link UnsupportedEncodingException}, log a warning and fall back to
+    * the system's default encoding.
+    * 
+    * @param str
+    * @return
+    */
+   public static String decodeString(byte[] bytes) {
+      return decodeString(bytes, UTF8_ENCODING);
+   }
 
-    /**
-     * Encode a path portion of a URI using the UTF-8 encoding, but leave slash '/' 
-     * characters and any parameters (anything after the first '?') un-encoded.
-     * If encoding with UTF-8 fails, the method falls back to using the 
-     * system's default encoding.
-     * 
-     * @param uri
-     * @return
-     */
-    @SuppressWarnings("deprecation")
-    public static String encodeUriPath(String uri) {
-       String path, params = "";
-      
-       int offset;
-       if ((offset = uri.indexOf('?')) >= 0) {
-          path = uri.substring(0, offset);
-          params = uri.substring(offset);
-       } else {
-          path = uri;
-       }
-      
-       String encodedUri;
-       try {
-          encodedUri = URLEncoder.encode(path, "UTF-8");
-       } catch (UnsupportedEncodingException e) {
-          encodedUri = URLEncoder.encode(path);
-       }
-       return encodedUri.replace("%2F", "/") + params;
-    }
+   /**
+    * Encode a path portion of a URI using the UTF-8 encoding, but leave slash '/' characters and
+    * any parameters (anything after the first '?') un-encoded. If encoding with UTF-8 fails, the
+    * method falls back to using the system's default encoding.
+    * 
+    * @param uri
+    * @return
+    */
+   @SuppressWarnings("deprecation")
+   public static String encodeUriPath(String uri) {
+      String path, params = "";
+
+      int offset;
+      if ((offset = uri.indexOf('?')) >= 0) {
+         path = uri.substring(0, offset);
+         params = uri.substring(offset);
+      } else {
+         path = uri;
+      }
+
+      String encodedUri;
+      try {
+         encodedUri = URLEncoder.encode(path, "UTF-8");
+      } catch (UnsupportedEncodingException e) {
+         encodedUri = URLEncoder.encode(path);
+      }
+      return encodedUri.replace("%2F", "/") + params;
+   }
 
 }

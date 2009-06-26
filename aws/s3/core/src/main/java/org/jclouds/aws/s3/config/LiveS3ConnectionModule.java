@@ -38,6 +38,7 @@ import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.annotation.ClientError;
+import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.logging.Logger;
 
@@ -78,6 +79,8 @@ public class LiveS3ConnectionModule extends AbstractModule {
    }
 
    protected void bindErrorHandlers() {
+      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
+               ParseAWSErrorFromXmlContent.class).in(Scopes.SINGLETON);
       bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
                ParseAWSErrorFromXmlContent.class).in(Scopes.SINGLETON);
       bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(

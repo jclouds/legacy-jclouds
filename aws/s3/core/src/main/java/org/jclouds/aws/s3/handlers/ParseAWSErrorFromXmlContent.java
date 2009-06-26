@@ -23,20 +23,22 @@
  */
 package org.jclouds.aws.s3.handlers;
 
-import java.io.InputStream;
+import java.io.ByteArrayInputStream;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.s3.filters.RequestAuthorizeSignature;
 import org.jclouds.aws.s3.reference.S3Headers;
 import org.jclouds.aws.s3.xml.S3ParserFactory;
+import org.jclouds.http.HttpErrorHandler;
+import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpErrorHandler;
+import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
+import org.jclouds.util.Utils;
 
 import com.google.inject.Inject;
 
@@ -48,38 +50,51 @@ import com.google.inject.Inject;
  * 
  */
 public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
-    @Resource
-    protected Logger logger = Logger.NULL;
+   @Resource
+   protected Logger logger = Logger.NULL;
 
-    private final S3ParserFactory parserFactory;
+   private final S3ParserFactory parserFactory;
 
-    @Inject
-    public ParseAWSErrorFromXmlContent(S3ParserFactory parserFactory) {
-	this.parserFactory = parserFactory;
-    }
+   @Inject
+   public ParseAWSErrorFromXmlContent(S3ParserFactory parserFactory) {
+      this.parserFactory = parserFactory;
+   }
 
-    public void handleError(HttpFutureCommand<?> command, HttpResponse response) {
-	AWSError error = new AWSError();
-	error.setRequestId(response.getFirstHeaderOrNull(S3Headers.REQUEST_ID));
-	error.setRequestToken(response
-		.getFirstHeaderOrNull(S3Headers.REQUEST_TOKEN));
-	InputStream errorStream = response.getContent();
-	try {
-	    if (errorStream != null) {
-		error = parserFactory.createErrorParser().parse(errorStream);
-		if ("SignatureDoesNotMatch".equals(error.getCode()))
-		    error.setStringSigned(RequestAuthorizeSignature
-			    .createStringToSign(command.getRequest()));
-		error.setRequestToken(response
-			.getFirstHeaderOrNull(S3Headers.REQUEST_TOKEN));
-	    }
-	} catch (Exception e) {
-	    logger.warn(e, "error parsing XML reponse: %1$s", response);
-	} finally {
-	    command.setException(new AWSResponseException(command, response,
-		    error));
-	    IOUtils.closeQuietly(errorStream);
-	}
-    }
+   public void handleError(HttpFutureCommand<?> command, HttpResponse response) {
+      String content;
+      try {
+         content = response.getContent() != null ? Utils.toStringAndClose(response.getContent())
+                  : null;
+         if (content != null) {
+            try {
+               if (content.indexOf('<') >= 0) {
+                  AWSError error = parseAWSErrorFromContent(command, response, content);
+                  command.setException(new AWSResponseException(command, response, error));
+               } else {
+                  command.setException(new HttpResponseException(command, response, content));
+               }
+            } catch (Exception he) {
+               command.setException(new HttpResponseException(command, response, content));
+               Utils.rethrowIfRuntime(he);
+            }
+         } else {
+            command.setException(new HttpResponseException(command, response));
+         }
+      } catch (Exception e) {
+         command.setException(new HttpResponseException(command, response));
+         Utils.rethrowIfRuntime(e);
+      }
+   }
+
+   private AWSError parseAWSErrorFromContent(HttpFutureCommand<?> command, HttpResponse response,
+            String content) throws HttpException {
+      AWSError error = parserFactory.createErrorParser().parse(
+               new ByteArrayInputStream(content.getBytes()));
+      error.setRequestId(response.getFirstHeaderOrNull(S3Headers.REQUEST_ID));
+      error.setRequestToken(response.getFirstHeaderOrNull(S3Headers.REQUEST_TOKEN));
+      if ("SignatureDoesNotMatch".equals(error.getCode()))
+         error.setStringSigned(RequestAuthorizeSignature.createStringToSign(command.getRequest()));
+      return error;
+   }
 
 }

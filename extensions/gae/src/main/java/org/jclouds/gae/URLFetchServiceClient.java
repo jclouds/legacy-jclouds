@@ -155,7 +155,8 @@ public class URLFetchServiceClient extends BaseHttpFutureCommandClient<HTTPReque
 
    private void followRedirectsUnlessRequestContainsPayload(HttpRequest request,
             FetchOptions options) {
-      if (request.getPayload() != null)
+      if (request.getPayload() != null || request.getMethod().equals(HTTPMethod.PUT)
+               || request.getMethod().equals(HTTPMethod.POST))
          options.doNotFollowRedirects();
       else
          options.followRedirects();

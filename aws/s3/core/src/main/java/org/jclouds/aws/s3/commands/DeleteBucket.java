@@ -69,7 +69,8 @@ public class DeleteBucket extends S3FutureCommand<Boolean> {
          AWSResponseException responseException = (AWSResponseException) e.getCause();
          if (responseException.getResponse().getStatusCode() == 404) {
             return true;
-         } else if ("BucketNotEmpty".equals(responseException.getError().getCode())) {
+         } else if ("BucketNotEmpty".equals(responseException.getError().getCode())
+                  || responseException.getResponse().getStatusCode() == 409) {
             return false;
          }
       }

@@ -23,6 +23,10 @@
  */
 package org.jclouds.http.handlers;
 
+import static com.google.common.base.Preconditions.checkState;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.URI;
 
 import javax.annotation.Resource;
@@ -34,6 +38,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.logging.Logger;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -54,17 +59,49 @@ public class RedirectionRetryHandler implements HttpRetryHandler {
    }
 
    public boolean shouldRetryRequest(HttpFutureCommand<?> command, HttpResponse response) {
-      IOUtils.closeQuietly(response.getContent());
+      closeConnectionButKeepContentStream(response);
+
       command.incrementRedirectCount();
 
       String hostHeader = response.getFirstHeaderOrNull(HttpHeaders.LOCATION);
       if (hostHeader != null && command.getRedirectCount() < retryCountLimit) {
-         URI redirectURI = URI.create(hostHeader);
-         command.getRequest().setEndPoint(redirectURI);
+         URI endPoint = parseEndPoint(hostHeader);
+         command.getRequest().setEndPoint(endPoint);
          return true;
       } else {
          return false;
       }
    }
 
+   /**
+    * Content stream may need to be read. However, we should always close the http stream.
+    */
+   @VisibleForTesting
+   void closeConnectionButKeepContentStream(HttpResponse response) {
+      if (response.getContent() != null) {
+         try {
+            byte[] data = IOUtils.toByteArray(response.getContent());
+            response.setContent(new ByteArrayInputStream(data));
+         } catch (IOException e) {
+            logger.error(e, "Error consuming input");
+         } finally {
+            IOUtils.closeQuietly(response.getContent());
+         }
+      }
+   }
+
+   private URI parseEndPoint(String hostHeader) {
+      URI redirectURI = URI.create(hostHeader);
+      String scheme = redirectURI.getScheme();
+
+      checkState(redirectURI.getScheme().startsWith("http"), String.format(
+               "header %s didn't parse an http scheme: [%s]", hostHeader, scheme));
+      int port = redirectURI.getPort() > 0 ? redirectURI.getPort() : redirectURI.getScheme()
+               .equals("https") ? 443 : 80;
+      String host = redirectURI.getHost();
+      checkState(!host.matches("[/]"), String.format(
+               "header %s didn't parse an http host correctly: [%s]", hostHeader, host));
+      URI endPoint = URI.create(String.format("%s://%s:%d", scheme, host, port));
+      return endPoint;
+   }
 }
