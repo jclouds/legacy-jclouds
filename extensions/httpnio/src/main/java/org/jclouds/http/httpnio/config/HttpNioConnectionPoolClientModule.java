@@ -52,6 +52,7 @@ import org.jclouds.command.pool.PoolConstants;
 import org.jclouds.command.pool.config.FutureCommandConnectionPoolClientModule;
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpFutureCommandClient;
+import org.jclouds.http.config.HttpFutureCommandClientModule;
 import org.jclouds.http.httpnio.pool.HttpNioConnectionPoolClient;
 import org.jclouds.http.httpnio.pool.HttpNioFutureCommandConnectionPool;
 import org.jclouds.http.httpnio.pool.HttpNioFutureCommandExecutionHandler;
@@ -69,6 +70,7 @@ import com.google.inject.name.Named;
  * 
  * @author Adrian Cole
  */
+@HttpFutureCommandClientModule
 public class HttpNioConnectionPoolClientModule extends
          FutureCommandConnectionPoolClientModule<NHttpConnection> {
 
