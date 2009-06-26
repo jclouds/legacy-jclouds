@@ -30,7 +30,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.List;
@@ -41,6 +40,8 @@ import org.jclouds.http.HttpFutureCommandClient;
 import org.jclouds.http.HttpHeaders;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.handlers.DelegatingErrorHandler;
+import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.internal.BaseHttpFutureCommandClient;
 
 import com.google.appengine.api.urlfetch.FetchOptions;
@@ -61,7 +62,9 @@ public class URLFetchServiceClient extends BaseHttpFutureCommandClient<HTTPReque
    private final URLFetchService urlFetchService;
 
    @Inject
-   public URLFetchServiceClient(URLFetchService urlFetchService) throws MalformedURLException {
+   public URLFetchServiceClient(URLFetchService urlFetchService,
+            DelegatingRetryHandler retryHandler, DelegatingErrorHandler errorHandler) {
+      super(retryHandler, errorHandler);
       this.urlFetchService = urlFetchService;
    }
 

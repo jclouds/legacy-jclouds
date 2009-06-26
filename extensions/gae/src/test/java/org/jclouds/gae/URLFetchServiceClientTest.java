@@ -43,6 +43,8 @@ import org.jclouds.http.HttpHeaders;
 import org.jclouds.http.HttpMethod;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.handlers.DelegatingErrorHandler;
+import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -64,7 +66,9 @@ public class URLFetchServiceClientTest {
    @BeforeTest
    void setupClient() throws MalformedURLException {
       endPoint = URI.create("http://localhost:80");
-      client = new URLFetchServiceClient(createNiceMock(URLFetchService.class));
+      client = new URLFetchServiceClient(createNiceMock(URLFetchService.class),
+               createNiceMock(DelegatingRetryHandler.class),
+               createNiceMock(DelegatingErrorHandler.class));
    }
 
    @Test

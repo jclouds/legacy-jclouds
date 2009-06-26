@@ -29,13 +29,11 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpFutureCommandClient;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.logging.Logger;
@@ -44,17 +42,20 @@ import com.google.inject.Inject;
 
 public abstract class BaseHttpFutureCommandClient<Q> implements HttpFutureCommandClient {
 
+   private final DelegatingRetryHandler retryHandler;
+   private final DelegatingErrorHandler errorHandler;
+
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject(optional = true)
    protected List<HttpRequestFilter> requestFilters = Collections.emptyList();
 
-   @Inject(optional = true)
-   private HttpRetryHandler retryHandler = new DelegatingRetryHandler();
-
-   @Inject(optional = true)
-   private HttpErrorHandler errorHandler = new DelegatingErrorHandler();
+   protected BaseHttpFutureCommandClient(DelegatingRetryHandler retryHandler,
+            DelegatingErrorHandler errorHandler) {
+      this.retryHandler = retryHandler;
+      this.errorHandler = errorHandler;
+   }
 
    public void submit(HttpFutureCommand<?> command) {
       HttpRequest request = command.getRequest();

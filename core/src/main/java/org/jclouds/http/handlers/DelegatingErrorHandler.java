@@ -40,20 +40,26 @@ import com.google.inject.Inject;
  */
 public class DelegatingErrorHandler implements HttpErrorHandler {
 
+   @VisibleForTesting
+   @Inject(optional=true)
    @Redirection
-   @Inject(optional = true)
-   @VisibleForTesting
-   HttpErrorHandler redirectionHandler = new CloseContentAndSetExceptionErrorHandler();
+   HttpErrorHandler redirectionHandler;
 
+   @VisibleForTesting
+   @Inject(optional=true)
    @ClientError
-   @Inject(optional = true)
-   @VisibleForTesting
-   HttpErrorHandler clientErrorHandler = new CloseContentAndSetExceptionErrorHandler();
+   HttpErrorHandler clientErrorHandler;
 
-   @ServerError
-   @Inject(optional = true)
    @VisibleForTesting
-   HttpErrorHandler serverErrorHandler = new CloseContentAndSetExceptionErrorHandler();
+   @Inject(optional=true)
+   @ServerError
+   HttpErrorHandler serverErrorHandler;
+
+   public DelegatingErrorHandler() {
+      this.redirectionHandler = new CloseContentAndSetExceptionErrorHandler();
+      this.clientErrorHandler = redirectionHandler;
+      this.serverErrorHandler = redirectionHandler;
+   }
 
    public void handleError(HttpFutureCommand<?> command, org.jclouds.http.HttpResponse response) {
       int statusCode = response.getStatusCode();

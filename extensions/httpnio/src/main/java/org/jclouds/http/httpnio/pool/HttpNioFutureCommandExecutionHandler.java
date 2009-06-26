@@ -35,10 +35,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.nio.entity.ConsumingNHttpEntity;
 import org.apache.http.nio.protocol.NHttpRequestExecutionHandler;
 import org.apache.http.protocol.HttpContext;
-import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.httpnio.util.HttpNioUtils;
@@ -53,27 +51,27 @@ import com.google.inject.Inject;
  */
 public class HttpNioFutureCommandExecutionHandler implements NHttpRequestExecutionHandler {
    private final ExecutorService executor;
-   @Resource
-   protected Logger logger = Logger.NULL;
    private final ConsumingNHttpEntityFactory entityFactory;
+   private final DelegatingRetryHandler retryHandler;
+   private final DelegatingErrorHandler errorHandler;
 
    /**
     * inputOnly: nothing is taken from this queue.
     */
    private final BlockingQueue<HttpFutureCommand<?>> resubmitQueue;
 
-   @Inject(optional = true)
-   private HttpRetryHandler retryHandler = new DelegatingRetryHandler();
-
-   @Inject(optional = true)
-   private HttpErrorHandler errorHandler = new DelegatingErrorHandler();
+   @Resource
+   protected Logger logger = Logger.NULL;
 
    @Inject
    public HttpNioFutureCommandExecutionHandler(ConsumingNHttpEntityFactory entityFactory,
-            ExecutorService executor, BlockingQueue<HttpFutureCommand<?>> resubmitQueue) {
+            ExecutorService executor, BlockingQueue<HttpFutureCommand<?>> resubmitQueue,
+            DelegatingRetryHandler retryHandler, DelegatingErrorHandler errorHandler) {
       this.executor = executor;
       this.entityFactory = entityFactory;
       this.resubmitQueue = resubmitQueue;
+      this.retryHandler = retryHandler;
+      this.errorHandler = errorHandler;
    }
 
    public interface ConsumingNHttpEntityFactory {

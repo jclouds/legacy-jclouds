@@ -29,6 +29,7 @@ import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 
 /**
@@ -39,17 +40,26 @@ import com.google.inject.Inject;
  */
 public class DelegatingRetryHandler implements HttpRetryHandler {
 
+   @VisibleForTesting
+   @Inject(optional = true)
    @Redirection
-   @Inject(optional = true)
-   private HttpRetryHandler redirectionRetryHandler = new RedirectionRetryHandler(5);
+   HttpRetryHandler redirectionRetryHandler;
 
+   @VisibleForTesting
+   @Inject(optional = true)
    @ClientError
-   @Inject(optional = true)
-   private HttpRetryHandler clientErrorRetryHandler = new CannotRetryHandler();
+   HttpRetryHandler clientErrorRetryHandler;
 
-   @ServerError
+   @VisibleForTesting
    @Inject(optional = true)
-   private HttpRetryHandler serverErrorRetryHandler = new BackoffLimitedRetryHandler(5);
+   @ServerError
+   HttpRetryHandler serverErrorRetryHandler;
+
+   public DelegatingRetryHandler() {
+      this.redirectionRetryHandler = new RedirectionRetryHandler(5);
+      this.clientErrorRetryHandler = new CannotRetryHandler();
+      this.serverErrorRetryHandler = new BackoffLimitedRetryHandler(5);
+   }
 
    public boolean shouldRetryRequest(HttpFutureCommand<?> command,
             org.jclouds.http.HttpResponse response) {

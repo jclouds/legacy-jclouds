@@ -37,6 +37,10 @@ import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpFutureCommandClient;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.handlers.DelegatingErrorHandler;
+import org.jclouds.http.handlers.DelegatingRetryHandler;
+
+import com.google.inject.Inject;
 
 /**
  * Basic implementation of a {@link HttpFutureCommandClient}.
@@ -44,6 +48,12 @@ import org.jclouds.http.HttpResponse;
  * @author Adrian Cole
  */
 public class JavaUrlHttpFutureCommandClient extends BaseHttpFutureCommandClient<HttpURLConnection> {
+
+   @Inject
+   public JavaUrlHttpFutureCommandClient(DelegatingRetryHandler retryHandler,
+            DelegatingErrorHandler errorHandler) {
+      super(retryHandler, errorHandler);
+   }
 
    @Override
    protected HttpResponse invoke(HttpURLConnection connection) throws IOException {
