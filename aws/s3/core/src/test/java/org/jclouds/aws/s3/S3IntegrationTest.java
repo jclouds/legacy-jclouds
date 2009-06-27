@@ -288,11 +288,19 @@ public class S3IntegrationTest {
    private static final BlockingQueue<String> bucketNames = new ArrayBlockingQueue<String>(
             bucketCount);
 
+   /**
+    * There are a lot of retries here mainly from experience running inside amazon EC2.
+    */
    @BeforeGroups(dependsOnMethods = { "setUpClient" }, groups = { "integration", "live" })
    public void setUpBuckets(ITestContext context) throws Exception {
       synchronized (bucketNames) {
          if (bucketNames.peek() == null) {
-            this.deleteEverything();
+            // try twice to delete everything
+            try {
+               deleteEverything();
+            } catch (AssertionError e) {
+               deleteEverything();
+            }
             for (; bucketIndex < bucketCount; bucketIndex++) {
                String bucketName = bucketPrefix + bucketIndex;
                try {
@@ -330,7 +338,6 @@ public class S3IntegrationTest {
             if (metaDatum.getName().startsWith(bucketPrefix.toLowerCase())) {
                deleteBucket(metaDatum.getName());
             }
-
          }
       } catch (CancellationException e) {
          throw e;
