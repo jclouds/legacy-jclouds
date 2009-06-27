@@ -34,4 +34,5 @@ public interface HttpConstants extends HttpHeaders, ContentTypes {
    public static final String PROPERTY_HTTP_ADDRESS = "jclouds.http.address";
    public static final String PROPERTY_HTTP_MAX_RETRIES = "jclouds.http.max-retries";
    public static final String PROPERTY_HTTP_MAX_REDIRECTS = "jclouds.http.max-redirects";
+   public static final String PROPERTY_SAX_DEBUG = "jclouds.http.sax.debug";
 }

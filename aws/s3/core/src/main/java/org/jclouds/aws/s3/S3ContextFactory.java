@@ -32,10 +32,11 @@ import static org.jclouds.command.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTIO
 import static org.jclouds.command.pool.PoolConstants.PROPERTY_POOL_MAX_SESSION_FAILURES;
 import static org.jclouds.command.pool.PoolConstants.PROPERTY_POOL_REQUEST_INVOKER_THREADS;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_ADDRESS;
-import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_RETRIES;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_REDIRECTS;
+import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_RETRIES;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_PORT;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_SECURE;
+import static org.jclouds.http.HttpConstants.PROPERTY_SAX_DEBUG;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -94,6 +95,7 @@ public class S3ContextFactory {
       properties.setProperty(PROPERTY_AWS_SECRETACCESSKEY, checkNotNull(awsSecretAccessKey,
                "awsSecretAccessKey"));
 
+      properties.setProperty(PROPERTY_SAX_DEBUG, "false");
       properties.setProperty(PROPERTY_HTTP_ADDRESS, "s3.amazonaws.com");
       properties.setProperty(PROPERTY_HTTP_SECURE, "true");
       properties.setProperty(PROPERTY_HTTP_MAX_RETRIES, "5");
@@ -165,6 +167,11 @@ public class S3ContextFactory {
       return this;
    }
 
+   public S3ContextFactory withSaxDebug() {
+      properties.setProperty(PROPERTY_SAX_DEBUG, "true");
+      return this;
+   }
+
    public S3ContextFactory withHttpMaxRetries(int httpMaxRetries) {
       properties.setProperty(PROPERTY_HTTP_MAX_RETRIES, Integer.toString(httpMaxRetries));
       return this;
@@ -175,7 +182,6 @@ public class S3ContextFactory {
       return this;
    }
 
-   
    public S3ContextFactory withHttpPort(int httpPort) {
       properties.setProperty(PROPERTY_HTTP_PORT, Integer.toString(httpPort));
       return this;
@@ -230,15 +236,8 @@ public class S3ContextFactory {
    }
 
    private Injector createInjector() {
-      /* Use 80 or 443 as the default port if one hasn't been set? */
-      if (!properties.containsKey(PROPERTY_HTTP_PORT)) {
-         if (Boolean.parseBoolean(properties.getProperty(PROPERTY_HTTP_SECURE))) {
-            properties.setProperty(PROPERTY_HTTP_PORT, DEFAULT_SECURE_HTTP_PORT);
-         } else {
-            properties.setProperty(PROPERTY_HTTP_PORT, DEFAULT_NON_SECURE_HTTP_PORT);
-         }
 
-      }
+      useDefaultPortIfNotPresent(properties);
 
       addLoggingModuleIfNotPresent(modules);
 
@@ -257,6 +256,17 @@ public class S3ContextFactory {
       modules.add(new S3ContextModule());
 
       return Guice.createInjector(modules);
+   }
+
+   private void useDefaultPortIfNotPresent(Properties properties) {
+      /* Use 80 or 443 as the default port if one hasn't been set? */
+      if (!properties.containsKey(PROPERTY_HTTP_PORT)) {
+         if (Boolean.parseBoolean(properties.getProperty(PROPERTY_HTTP_SECURE))) {
+            properties.setProperty(PROPERTY_HTTP_PORT, DEFAULT_SECURE_HTTP_PORT);
+         } else {
+            properties.setProperty(PROPERTY_HTTP_PORT, DEFAULT_NON_SECURE_HTTP_PORT);
+         }
+      }
    }
 
    @VisibleForTesting

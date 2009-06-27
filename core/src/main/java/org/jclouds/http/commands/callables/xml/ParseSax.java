@@ -35,90 +35,88 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
+import static org.jclouds.http.HttpConstants.PROPERTY_SAX_DEBUG;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 
 /**
- * This object will parse the body of an HttpResponse and return the result of
- * type <T> back to the caller.
+ * This object will parse the body of an HttpResponse and return the result of type <T> back to the
+ * caller.
  * 
  * @author Adrian Cole
  */
 public class ParseSax<T> extends HttpFutureCommand.ResponseCallable<T> {
 
-    private final XMLReader parser;
-    private final HandlerWithResult<T> handler;
-    @Inject(optional = true)
-    @Named("jclouds.http.sax.debug")
-    private boolean suckFirst = false;
+   private final XMLReader parser;
+   private final HandlerWithResult<T> handler;
+   @Inject(optional = true)
+   @Named(PROPERTY_SAX_DEBUG)
+   private boolean suckFirst = false;
 
-    @Inject
-    public ParseSax(XMLReader parser, @Assisted HandlerWithResult<T> handler) {
-	super();
-	this.parser = checkNotNull(parser, "parser");
-	this.handler = checkNotNull(handler, "handler");
-    }
+   @Inject
+   public ParseSax(XMLReader parser, @Assisted HandlerWithResult<T> handler) {
+      super();
+      this.parser = checkNotNull(parser, "parser");
+      this.handler = checkNotNull(handler, "handler");
+   }
 
-    public T call() throws HttpException {
-	InputStream input = null;
-	try {
-	    input = getResponse().getContent();
-	    if (input != null) {
-		return parse(input);
-	    } else {
-		throw new HttpException("No input to parse");
-	    }
-	} catch (Exception e) {
-	    Utils.<HttpException> rethrowIfRuntimeOrSameType(e);
-	    throw new HttpException("Error parsing input for " + getResponse(),
-		    e);
-	}
-    }
+   public T call() throws HttpException {
+      InputStream input = null;
+      try {
+         input = getResponse().getContent();
+         if (input != null) {
+            return parse(input);
+         } else {
+            throw new HttpException("No input to parse");
+         }
+      } catch (Exception e) {
+         Utils.<HttpException> rethrowIfRuntimeOrSameType(e);
+         throw new HttpException("Error parsing input for " + getResponse(), e);
+      }
+   }
 
-    public T parse(InputStream xml) throws HttpException {
-	parseAndCloseStream(xml, getHandler());
-	return getHandler().getResult();
-    }
+   public T parse(InputStream xml) throws HttpException {
+      parseAndCloseStream(xml, getHandler());
+      return getHandler().getResult();
+   }
 
-    private void parseAndCloseStream(InputStream xml, ContentHandler handler)
-	    throws HttpException {
-	parser.setContentHandler(handler);
-	String response = null;
-	try {
-	    if (suckFirst) {
-		response = IOUtils.toString(xml);
-		logger.trace("received content %n%s", response);
-		IOUtils.closeQuietly(xml);
-		xml = IOUtils.toInputStream(response);
-	    }
-	    parser.parse(new InputSource(xml));
-	} catch (Exception e) {
-	    StringBuilder message = new StringBuilder();
-	    message.append("Error parsing input for ").append(handler);
-	    if (response != null) {
-		message.append("\n").append(response);
-	    }
-	    logger.error(e, message.toString());
-	    Utils.<HttpException> rethrowIfRuntimeOrSameType(e);
-	    throw new HttpException(message.toString(), e);
-	} finally {
-	    IOUtils.closeQuietly(xml);
-	}
-    }
+   private void parseAndCloseStream(InputStream xml, ContentHandler handler) throws HttpException {
+      parser.setContentHandler(handler);
+      String response = null;
+      try {
+         if (suckFirst) {
+            response = IOUtils.toString(xml);
+            logger.trace("received content %n%s", response);
+            IOUtils.closeQuietly(xml);
+            xml = IOUtils.toInputStream(response);
+         }
+         parser.parse(new InputSource(xml));
+      } catch (Exception e) {
+         StringBuilder message = new StringBuilder();
+         message.append("Error parsing input for ").append(handler);
+         if (response != null) {
+            message.append("\n").append(response);
+         }
+         logger.error(e, message.toString());
+         Utils.<HttpException> rethrowIfRuntimeOrSameType(e);
+         throw new HttpException(message.toString(), e);
+      } finally {
+         IOUtils.closeQuietly(xml);
+      }
+   }
 
-    public HandlerWithResult<T> getHandler() {
-	return handler;
-    }
+   public HandlerWithResult<T> getHandler() {
+      return handler;
+   }
 
-    /**
-     * Handler that produces a useable domain object accessible after parsing
-     * completes.
-     * 
-     * @author Adrian Cole
-     */
-    public abstract static class HandlerWithResult<T> extends DefaultHandler {
-	public abstract T getResult();
-    }
+   /**
+    * Handler that produces a useable domain object accessible after parsing completes.
+    * 
+    * @author Adrian Cole
+    */
+   public abstract static class HandlerWithResult<T> extends DefaultHandler {
+      public abstract T getResult();
+   }
 }
