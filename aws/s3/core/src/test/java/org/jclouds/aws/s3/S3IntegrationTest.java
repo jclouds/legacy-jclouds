@@ -295,10 +295,15 @@ public class S3IntegrationTest {
             this.deleteEverything();
             for (; bucketIndex < bucketCount; bucketIndex++) {
                String bucketName = bucketPrefix + bucketIndex;
-               bucketNames.put(bucketName);
-               createBucketAndEnsureEmpty(bucketName);
+               try {
+                  createBucketAndEnsureEmpty(bucketName);
+                  bucketNames.put(bucketName);
+               } catch (AssertionError e) {
+                  // throw away the bucket and try again with the next index
+                  deleteBucket(bucketName);
+                  bucketCount++;
+               }
             }
-            Thread.sleep(INCONSISTENCY_WINDOW);
          }
       }
    }
