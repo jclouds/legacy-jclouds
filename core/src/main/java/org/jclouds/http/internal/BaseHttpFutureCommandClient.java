@@ -26,6 +26,7 @@ package org.jclouds.http.internal;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
 
@@ -62,12 +63,12 @@ public abstract class BaseHttpFutureCommandClient<Q> implements HttpFutureComman
 
       Q nativeRequest = null;
       try {
-         for (HttpRequestFilter filter : requestFilters) {
-            filter.filter(request);
-         }
          HttpResponse response = null;
          for (;;) {
             logger.trace("%s - converting request %s", request.getEndPoint(), request);
+            for (HttpRequestFilter filter : requestFilters) {
+               filter.filter(request);
+            }
             nativeRequest = convert(request);
             response = invoke(nativeRequest);
             int statusCode = response.getStatusCode();
@@ -84,7 +85,8 @@ public abstract class BaseHttpFutureCommandClient<Q> implements HttpFutureComman
             }
          }
       } catch (Exception e) {
-         command.setException(e);
+         command.setException(new ExecutionException(String.format("error invoking request %s",
+                  request), e));
       } finally {
          cleanup(nativeRequest);
       }
