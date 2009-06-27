@@ -23,6 +23,8 @@
  */
 package org.jclouds.aws.s3.filters;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
@@ -37,6 +39,7 @@ import org.jclouds.http.HttpHeaders;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -157,10 +160,14 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
          toSign.append(valueOrEmpty(request.getHeaders().get(header))).append("\n");
    }
 
-   private static void appendBucketName(HttpRequest request, StringBuilder toSign) {
-      String hostHeader = request.getHeaders().get(HttpHeaders.HOST).iterator().next();
-      if (hostHeader.endsWith(".s3.amazonaws.com"))
-         toSign.append("/").append(hostHeader.substring(0, hostHeader.length() - 17));
+   @VisibleForTesting
+   static void appendBucketName(HttpRequest request, StringBuilder toSign) {
+      String hostHeader = request.getFirstHeaderOrNull(HttpHeaders.HOST);
+      if (hostHeader == null)
+         hostHeader = checkNotNull(request.getEndPoint().getHost(),
+                  "request.getEndPoint().getHost()");
+      if (hostHeader.endsWith(".amazonaws.com") && !hostHeader.equals("s3.amazonaws.com"))
+         toSign.append("/").append(hostHeader.substring(0, hostHeader.lastIndexOf(".s3")));
    }
 
    private static void appendUriPath(HttpRequest request, StringBuilder toSign) {
@@ -173,21 +180,21 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
       } else {
          toSign.append(request.getUri());
       }
-      
+
       // ...however, there are a few exceptions that must be included in the signed URI.
       if (paramsString != null) {
          StringBuilder paramsToSign = new StringBuilder("?");
-         
+
          String[] params = paramsString.split("&");
          for (String param : params) {
             String[] paramNameAndValue = param.split("=");
-            
+
             if ("acl".equals(paramNameAndValue[0])) {
                paramsToSign.append("acl");
             }
             // TODO: Other special cases not yet handled: torrent, logging, location, requestPayment
          }
-         
+
          if (paramsToSign.length() > 1) {
             toSign.append(paramsToSign);
          }
