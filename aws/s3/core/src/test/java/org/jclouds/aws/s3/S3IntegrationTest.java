@@ -67,7 +67,7 @@ import com.google.inject.Module;
 
 public class S3IntegrationTest {
    protected static final String TEST_STRING = "<apples><apple name=\"fuji\"></apple> </apples>";
-   public static long INCONSISTENCY_WINDOW = 2000;
+   public static long INCONSISTENCY_WINDOW = 1000;
 
    /**
     * Due to eventual consistency, bucket commands may not return correctly immediately. Hence, we
@@ -300,12 +300,7 @@ public class S3IntegrationTest {
    public void setUpBuckets(ITestContext context) throws Exception {
       synchronized (bucketNames) {
          if (bucketNames.peek() == null) {
-            // try twice to delete everything
-            try {
-               deleteEverything();
-            } catch (AssertionError e) {
-               deleteEverything();
-            }
+            deleteEverything();
             for (; bucketIndex < bucketCount; bucketIndex++) {
                String bucketName = bucketPrefix + bucketIndex;
                try {
@@ -351,28 +346,36 @@ public class S3IntegrationTest {
 
    /**
     * Remove any objects in a bucket, leaving it empty.
-    * 
-    * @param name
-    * @throws InterruptedException
-    * @throws ExecutionException
-    * @throws TimeoutException
     */
-   protected void emptyBucket(String name) throws InterruptedException, ExecutionException,
+   protected void emptyBucket(final String name) throws InterruptedException, ExecutionException,
             TimeoutException {
       if (client.bucketExists(name).get(10, TimeUnit.SECONDS)) {
-         List<Future<Boolean>> results = new ArrayList<Future<Boolean>>();
+         // This can fail to be zero length because of stale bucket lists. Ex. client.listBucket()
+         // could return 9 keys, when there are 10. When all the deletions finish, one entry would
+         // be left in this case. Instead of failing, we will attempt this entire bucket deletion
+         // operation multiple times to ensure we can acheive a zero length bucket.
+         assertEventually(new Runnable() {
+            public void run() {
+               try {
+                  List<Future<Boolean>> results = new ArrayList<Future<Boolean>>();
 
-         S3Bucket bucket = client.listBucket(name).get(10, TimeUnit.SECONDS);
-         for (S3Object.Metadata objectMeta : bucket.getContents()) {
-            results.add(client.deleteObject(name, objectMeta.getKey()));
-         }
-         Iterator<Future<Boolean>> iterator = results.iterator();
-         while (iterator.hasNext()) {
-            iterator.next().get(10, TimeUnit.SECONDS);
-            iterator.remove();
-         }
+                  S3Bucket bucket = client.listBucket(name).get(10, TimeUnit.SECONDS);
+                  for (S3Object.Metadata objectMeta : bucket.getContents()) {
+                     results.add(client.deleteObject(name, objectMeta.getKey()));
+                  }
+                  Iterator<Future<Boolean>> iterator = results.iterator();
+                  while (iterator.hasNext()) {
+                     iterator.next().get(10, TimeUnit.SECONDS);
+                     iterator.remove();
+                  }
+                  assertEventuallyBucketEmpty(name);
+               } catch (Exception e) {
+                  Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
+               }
+            }
+         });
+
       }
-      assertEventuallyBucketEmpty(name);
    }
 
    protected String createScratchBucketInEU() throws InterruptedException, ExecutionException,
