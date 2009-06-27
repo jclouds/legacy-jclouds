@@ -88,7 +88,10 @@ public class JavaUrlHttpFutureCommandClient extends BaseHttpFutureCommandClient<
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.setDoOutput(true);
       connection.setAllowUserInteraction(false);
-      connection.setInstanceFollowRedirects(true);
+      // do not follow redirects since https redirects don't work properly
+      // ex. Caused by: java.io.IOException: HTTPS hostname wrong: should be
+      // <adriancole.s3int0.s3-external-3.amazonaws.com>
+      connection.setInstanceFollowRedirects(false);
       connection.setRequestMethod(request.getMethod().toString());
       for (String header : request.getHeaders().keySet()) {
          for (String value : request.getHeaders().get(header))
@@ -126,7 +129,7 @@ public class JavaUrlHttpFutureCommandClient extends BaseHttpFutureCommandClient<
     */
    @Override
    protected void cleanup(HttpURLConnection connection) {
-      if (connection.getContentLength() == 0)
+      if (connection != null && connection.getContentLength() == 0)
          connection.disconnect();
    }
 
