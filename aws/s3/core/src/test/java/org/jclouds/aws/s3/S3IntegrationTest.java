@@ -223,7 +223,12 @@ public class S3IntegrationTest {
 
    public String getBucketName() throws InterruptedException, ExecutionException, TimeoutException {
       String bucketName = bucketNames.poll(30, TimeUnit.SECONDS);
-      emptyBucket(bucketName);
+      // retrying as inside EC2 it may take longer to reflect the contents of a bucket.
+      try {
+         emptyBucket(bucketName);
+      } catch (AssertionError e) {
+         emptyBucket(bucketName);
+      }
       assert bucketName != null : "unable to get a bucket for the test";
       return bucketName;
    }
