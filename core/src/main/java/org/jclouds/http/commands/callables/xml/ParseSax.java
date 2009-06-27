@@ -100,7 +100,8 @@ public class ParseSax<T> extends HttpFutureCommand.ResponseCallable<T> {
             message.append("\n").append(response);
          }
          logger.error(e, message.toString());
-         Utils.<HttpException> rethrowIfRuntimeOrSameType(e);
+         if (!(e instanceof NullPointerException))
+            Utils.<HttpException> rethrowIfRuntimeOrSameType(e);
          throw new HttpException(message.toString(), e);
       } finally {
          IOUtils.closeQuietly(xml);
