@@ -67,7 +67,7 @@ import com.google.inject.Module;
 
 public class S3IntegrationTest {
    protected static final String TEST_STRING = "<apples><apple name=\"fuji\"></apple> </apples>";
-   public static long INCONSISTENCY_WINDOW = 1000;
+   public static long INCONSISTENCY_WINDOW = 2000;
 
    /**
     * Due to eventual consistency, bucket commands may not return correctly immediately. Hence, we
