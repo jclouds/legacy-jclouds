@@ -355,6 +355,7 @@ public class S3IntegrationTest {
             iterator.remove();
          }
       }
+      assertEventuallyBucketEmpty(name);
    }
 
    protected String createScratchBucketInEU() throws InterruptedException, ExecutionException,
