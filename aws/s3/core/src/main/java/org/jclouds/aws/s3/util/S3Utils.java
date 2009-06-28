@@ -25,6 +25,12 @@ package org.jclouds.aws.s3.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.bouncycastle.crypto.digests.MD5Digest;
@@ -37,8 +43,6 @@ import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpResponse;
-
-import java.io.*;
 
 /**
  * Encryption, Hashing, and IO Utilities needed to sign and verify S3 requests and responses.

@@ -50,6 +50,14 @@ public class Utils {
    @Resource
    protected static Logger logger = Logger.NULL;
 
+   public static String urlEncode(String in) {
+      try {
+         return URLEncoder.encode(in, "UTF-8");
+      } catch (UnsupportedEncodingException e) {
+         throw new IllegalStateException("Bad encoding on input: " + in, e);
+      }
+   }
+
    /**
     * Content stream may need to be read. However, we should always close the http stream.
     */
@@ -207,35 +215,6 @@ public class Utils {
     */
    public static String decodeString(byte[] bytes) {
       return decodeString(bytes, UTF8_ENCODING);
-   }
-
-   /**
-    * Encode a path portion of a URI using the UTF-8 encoding, but leave slash '/' characters and
-    * any parameters (anything after the first '?') un-encoded. If encoding with UTF-8 fails, the
-    * method falls back to using the system's default encoding.
-    * 
-    * @param uri
-    * @return
-    */
-   @SuppressWarnings("deprecation")
-   public static String encodeUriPath(String uri) {
-      String path, params = "";
-
-      int offset;
-      if ((offset = uri.indexOf('?')) >= 0) {
-         path = uri.substring(0, offset);
-         params = uri.substring(offset);
-      } else {
-         path = uri;
-      }
-
-      String encodedUri;
-      try {
-         encodedUri = URLEncoder.encode(path, "UTF-8");
-      } catch (UnsupportedEncodingException e) {
-         encodedUri = URLEncoder.encode(path);
-      }
-      return encodedUri.replace("%2F", "/") + params;
    }
 
 }

@@ -211,8 +211,6 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
     * 
     * @param md5
     *           hash representing the entity
-    * @throws UnsupportedEncodingException
-    *            if there was a problem converting this into an S3 eTag string
     */
    public CopyObjectOptions ifSourceMd5Matches(byte[] md5) throws UnsupportedEncodingException {
       checkState(getIfNoneMatch() == null,

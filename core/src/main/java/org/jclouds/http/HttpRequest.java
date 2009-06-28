@@ -32,7 +32,6 @@ import javax.annotation.Resource;
 
 import org.jclouds.command.Request;
 import org.jclouds.logging.Logger;
-import org.jclouds.util.Utils;
 
 /**
  * Represents a request that can be executed within {@link HttpFutureCommandClient}
@@ -62,7 +61,7 @@ public class HttpRequest extends HttpMessage implements Request<URI> {
    public HttpRequest(URI endPoint, HttpMethod method, String uri) {
       this.endPoint = checkNotNull(endPoint, "endPoint");
       this.method = checkNotNull(method, "method");
-      this.uri = Utils.encodeUriPath(checkNotNull(uri, "uri"));
+      this.uri = checkNotNull(uri, "uri");
    }
 
    @Override

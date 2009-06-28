@@ -24,6 +24,7 @@
 package org.jclouds.aws.s3.commands;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.util.Utils.urlEncode;
 
 import java.net.URI;
 
@@ -46,6 +47,6 @@ public class DeleteObject extends S3FutureCommand<Boolean> {
    @Inject
    public DeleteObject(URI endPoint, ReturnTrueIf2xx callable,
             @Assisted("bucketName") String bucket, @Assisted("key") String key) {
-      super(endPoint, HttpMethod.DELETE, "/" + checkNotNull(key), callable, bucket);
+      super(endPoint, HttpMethod.DELETE, "/" + urlEncode(checkNotNull(key)), callable, bucket);
    }
 }

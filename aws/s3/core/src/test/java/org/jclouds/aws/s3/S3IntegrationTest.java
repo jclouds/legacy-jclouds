@@ -232,7 +232,6 @@ public class S3IntegrationTest {
          deleteBucket(scratchBucket);
          String newScratchBucket = bucketPrefix + (++bucketIndex);
          createBucketAndEnsureEmpty(newScratchBucket);
-         Thread.sleep(INCONSISTENCY_WINDOW);
          returnBucket(newScratchBucket);
       }
    }
@@ -317,7 +316,6 @@ public class S3IntegrationTest {
       deleteBucket(bucketName);
       client.putBucketIfNotExists(bucketName, createIn(LocationConstraint.EU)).get(10,
                TimeUnit.SECONDS);
-      Thread.sleep(INCONSISTENCY_WINDOW);
       return bucketName;
    }
 

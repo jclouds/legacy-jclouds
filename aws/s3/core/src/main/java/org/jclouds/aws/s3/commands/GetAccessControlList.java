@@ -23,6 +23,9 @@
  */
 package org.jclouds.aws.s3.commands;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.util.Utils.urlEncode;
+
 import java.net.URI;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -57,7 +60,8 @@ public class GetAccessControlList extends S3FutureCommand<AccessControlList> {
    @Inject
    public GetAccessControlList(URI endPoint, ParseSax<AccessControlList> accessControlListParser,
             @Assisted("bucketName") String bucket, @Assisted("objectKey") String objectKey) {
-      super(endPoint, HttpMethod.GET, "/" + objectKey + "?acl", accessControlListParser, bucket);
+      super(endPoint, HttpMethod.GET, "/" + urlEncode(checkNotNull(objectKey)) + "?acl",
+               accessControlListParser, bucket);
    }
 
    @Override

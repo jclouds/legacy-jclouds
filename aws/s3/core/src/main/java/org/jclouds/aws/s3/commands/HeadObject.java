@@ -24,6 +24,7 @@
 package org.jclouds.aws.s3.commands;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.util.Utils.urlEncode;
 
 import java.net.URI;
 import java.util.concurrent.ExecutionException;
@@ -60,7 +61,7 @@ public class HeadObject extends S3FutureCommand<S3Object.Metadata> {
    @Inject
    public HeadObject(URI endPoint, ParseMetadataFromHeaders callable,
             @Assisted("bucketName") String bucket, @Assisted("key") String key) {
-      super(endPoint, HttpMethod.HEAD, "/" + checkNotNull(key), callable, bucket);
+      super(endPoint, HttpMethod.HEAD, "/" + urlEncode(checkNotNull(key)), callable, bucket);
       callable.setKey(key);
    }
 

@@ -23,6 +23,9 @@
  */
 package org.jclouds.aws.s3.commands;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.util.Utils.urlEncode;
+
 import java.net.URI;
 
 import javax.annotation.Resource;
@@ -54,7 +57,7 @@ public class PutObjectAccessControlList extends S3FutureCommand<Boolean> {
    public PutObjectAccessControlList(URI endPoint, ReturnTrueIf2xx callable,
             @Assisted("bucketName") String bucket, @Assisted("key") String objectKey,
             @Assisted AccessControlList acl) {
-      super(endPoint, HttpMethod.PUT, "/" + objectKey + "?acl", callable, bucket);
+      super(endPoint, HttpMethod.PUT, "/" + urlEncode(checkNotNull(objectKey)) + "?acl", callable, bucket);
 
       String aclPayload = "";
       try {

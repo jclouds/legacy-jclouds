@@ -25,6 +25,7 @@ package org.jclouds.aws.s3.commands;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.util.Utils.urlEncode;
 
 import java.net.URI;
 
@@ -59,7 +60,8 @@ public class PutObject extends S3FutureCommand<byte[]> {
    @Inject
    public PutObject(URI endPoint, ParseMd5FromETagHeader callable, @Assisted String s3Bucket,
             @Assisted S3Object object, @Assisted PutObjectOptions options) {
-      super(endPoint, HttpMethod.PUT, "/" + checkNotNull(object.getKey()), callable, s3Bucket);
+      super(endPoint, HttpMethod.PUT, "/" + urlEncode(checkNotNull(object.getKey())), callable,
+               s3Bucket);
       checkArgument(object.getMetadata().getSize() >= 0, "size must be set");
 
       getRequest().setPayload(checkNotNull(object.getData(), "object.getContent()"));

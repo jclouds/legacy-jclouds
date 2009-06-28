@@ -53,7 +53,40 @@ public class DeleteObjectIntegrationTest extends S3IntegrationTest {
          returnBucket(bucketName);
       }
    }
-
+   
+   @Test
+   void deleteObjectWithSpaces() throws Exception {
+      String bucketName = getBucketName();
+      try {
+         addObjectToBucket(bucketName, "p blic-read-acl");
+         assert client.deleteObject(bucketName, "p blic-read-acl").get(10, TimeUnit.SECONDS);
+      } finally {
+         returnBucket(bucketName);
+      }
+   }
+   
+   @Test
+   void deleteObjectUnicade() throws Exception {
+      String bucketName = getBucketName();
+      try {
+         addObjectToBucket(bucketName, "p¿blic-read-acl");
+         assert client.deleteObject(bucketName, "p¿blic-read-acl").get(10, TimeUnit.SECONDS);
+      } finally {
+         returnBucket(bucketName);
+      }
+   }
+   
+   @Test
+   void deleteObjectQuestion() throws Exception {
+      String bucketName = getBucketName();
+      try {
+         addObjectToBucket(bucketName, "p???blic-read-acl");
+         assert client.deleteObject(bucketName, "p???blic-read-acl").get(10, TimeUnit.SECONDS);
+      } finally {
+         returnBucket(bucketName);
+      }
+   }
+   
    @Test
    void deleteObjectNoBucket() throws Exception {
       try {

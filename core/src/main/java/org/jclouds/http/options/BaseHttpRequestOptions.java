@@ -24,6 +24,7 @@
 package org.jclouds.http.options;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.util.Utils.urlEncode;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -86,7 +87,8 @@ public class BaseHttpRequestOptions implements HttpRequestOptions {
          builder.append("?");
          for (Iterator<Entry<String, String>> i = parameters.entrySet().iterator(); i.hasNext();) {
             Entry<String, String> entry = i.next();
-            builder.append(entry.getKey()).append("=").append(entry.getValue());
+            builder.append(urlEncode(entry.getKey())).append("=").append(
+                     urlEncode(entry.getValue()));
             if (i.hasNext())
                builder.append("&");
          }

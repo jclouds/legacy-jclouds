@@ -24,6 +24,7 @@
 package org.jclouds.aws.s3.commands;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.util.Utils.urlEncode;
 
 import java.net.URI;
 
@@ -32,7 +33,6 @@ import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.xml.CopyObjectHandler;
 import org.jclouds.http.HttpMethod;
 import org.jclouds.http.commands.callables.xml.ParseSax;
-import org.jclouds.util.Utils;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
@@ -64,14 +64,15 @@ public class CopyObject extends S3FutureCommand<S3Object.Metadata> {
             @Assisted("destinationBucket") String destinationBucket,
             @Assisted("destinationObject") String destinationObject,
             @Assisted CopyObjectOptions options) {
-      super(endPoint, HttpMethod.PUT, "/" + checkNotNull(destinationObject, "destinationObject"),
-               callable, destinationBucket);
+      super(endPoint, HttpMethod.PUT, "/"
+               + urlEncode(checkNotNull(destinationObject, "destinationObject")), callable,
+               destinationBucket);
       CopyObjectHandler handler = (CopyObjectHandler) callable.getHandler();
       handler.setKey(destinationObject);
       getRequest().getHeaders().put(
                "x-amz-copy-source",
-               String.format("/%1$s/%2$s", checkNotNull(sourceBucket, "sourceBucket"), Utils
-                        .encodeUriPath(checkNotNull(sourceObject, "sourceObject"))));
+               String.format("/%1$s/%2$s", checkNotNull(sourceBucket, "sourceBucket"),
+                        urlEncode(checkNotNull(sourceObject, "sourceObject"))));
       getRequest().getHeaders().putAll(options.buildRequestHeaders());
    }
 }
