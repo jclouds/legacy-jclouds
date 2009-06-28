@@ -61,34 +61,37 @@ public abstract class BaseHttpFutureCommandClient<Q> implements HttpFutureComman
    public void submit(HttpFutureCommand<?> command) {
       HttpRequest request = command.getRequest();
 
-      Q nativeRequest = null;
       try {
          HttpResponse response = null;
          for (;;) {
-            logger.trace("%s - converting request %s", request.getEndPoint(), request);
-            for (HttpRequestFilter filter : requestFilters) {
-               filter.filter(request);
-            }
-            nativeRequest = convert(request);
-            response = invoke(nativeRequest);
-            int statusCode = response.getStatusCode();
-            if (statusCode >= 300) {
-               if (retryHandler.shouldRetryRequest(command, response)) {
-                  continue;
+            Q nativeRequest = null;
+            try {
+               logger.trace("%s - converting request %s", request.getEndPoint(), request);
+               for (HttpRequestFilter filter : requestFilters) {
+                  filter.filter(request);
+               }
+               nativeRequest = convert(request);
+               response = invoke(nativeRequest);
+               int statusCode = response.getStatusCode();
+               if (statusCode >= 300) {
+                  if (retryHandler.shouldRetryRequest(command, response)) {
+                     continue;
+                  } else {
+                     errorHandler.handleError(command, response);
+                     break;
+                  }
+
                } else {
-                  errorHandler.handleError(command, response);
+                  processResponse(response, command);
                   break;
                }
-            } else {
-               processResponse(response, command);
-               break;
+            } finally {
+               cleanup(nativeRequest);
             }
          }
       } catch (Exception e) {
          command.setException(new ExecutionException(String.format("error invoking request %s",
                   request), e));
-      } finally {
-         cleanup(nativeRequest);
       }
    }
 

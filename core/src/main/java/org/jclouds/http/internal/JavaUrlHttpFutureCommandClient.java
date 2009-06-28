@@ -57,10 +57,10 @@ public class JavaUrlHttpFutureCommandClient extends BaseHttpFutureCommandClient<
 
    @Override
    protected HttpResponse invoke(HttpURLConnection connection) throws IOException {
-      HttpResponse response = new HttpResponse();
       if (logger.isTraceEnabled())
-         logger.trace("%1$s - submitting request %2$s, headers: %3$s", connection.getURL()
-                  .getHost(), connection.getURL(), connection.getRequestProperties());
+         logger.trace("%1$s - submitting request %2$s", connection.getURL().getHost(), connection
+                  .getURL());
+      HttpResponse response = new HttpResponse();
       InputStream in;
       try {
          in = connection.getInputStream();
@@ -132,5 +132,4 @@ public class JavaUrlHttpFutureCommandClient extends BaseHttpFutureCommandClient<
       if (connection != null && connection.getContentLength() == 0)
          connection.disconnect();
    }
-
 }

@@ -54,6 +54,7 @@ import org.jclouds.aws.s3.internal.StubS3Connection;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.aws.s3.util.S3Utils;
 import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
+import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.util.Utils;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterGroups;
@@ -218,7 +219,7 @@ public class S3IntegrationTest {
 
    protected void createLiveS3Context(String AWSAccessKeyId, String AWSSecretAccessKey) {
       context = buildS3ContextFactory(AWSAccessKeyId, AWSSecretAccessKey).withModule(
-               createHttpModule()).build();
+               createHttpModule()).withModule(new Log4JLoggingModule()).build();
    }
 
    public String getBucketName() throws InterruptedException, ExecutionException, TimeoutException {
