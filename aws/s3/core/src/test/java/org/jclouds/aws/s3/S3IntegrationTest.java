@@ -27,15 +27,12 @@ import static org.jclouds.aws.s3.commands.options.PutBucketOptions.Builder.creat
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.ConsoleHandler;
@@ -358,17 +355,7 @@ public class S3IntegrationTest {
          assertEventually(new Runnable() {
             public void run() {
                try {
-                  List<Future<Boolean>> results = new ArrayList<Future<Boolean>>();
-
-                  S3Bucket bucket = client.listBucket(name).get(10, TimeUnit.SECONDS);
-                  for (S3Object.Metadata objectMeta : bucket.getContents()) {
-                     results.add(client.deleteObject(name, objectMeta.getKey()));
-                  }
-                  Iterator<Future<Boolean>> iterator = results.iterator();
-                  while (iterator.hasNext()) {
-                     iterator.next().get(10, TimeUnit.SECONDS);
-                     iterator.remove();
-                  }
+                  context.createInputStreamMap(name).clear();
                   assertEventuallyBucketEmpty(name);
                } catch (Exception e) {
                   Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
