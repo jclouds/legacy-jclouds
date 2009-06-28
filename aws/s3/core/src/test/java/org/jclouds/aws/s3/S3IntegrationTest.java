@@ -27,27 +27,22 @@ import static org.jclouds.aws.s3.commands.options.PutBucketOptions.Builder.creat
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.util.Date;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Formatter;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
 
 import org.jclouds.aws.s3.config.StubS3ConnectionModule;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.S3Bucket.Metadata;
 import org.jclouds.aws.s3.domain.S3Bucket.Metadata.LocationConstraint;
-import org.jclouds.aws.s3.internal.StubS3Connection;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.aws.s3.util.S3Utils;
 import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
@@ -66,6 +61,25 @@ import com.google.inject.Module;
 public class S3IntegrationTest {
    protected static final String TEST_STRING = "<apples><apple name=\"fuji\"></apple> </apples>";
    public static long INCONSISTENCY_WINDOW = 1000;
+   protected static final String sysAWSAccessKeyId = System
+            .getProperty(S3Constants.PROPERTY_AWS_ACCESSKEYID);
+   protected static final String sysAWSSecretAccessKey = System
+            .getProperty(S3Constants.PROPERTY_AWS_SECRETACCESSKEY);
+   protected static int bucketCount = 20;
+   protected static volatile int bucketIndex = 0;
+
+   protected byte[] goodMd5;
+   protected byte[] badMd5;
+   protected S3Connection client;
+   protected S3Context context = null;
+   protected boolean SANITY_CHECK_RETURNED_BUCKET_NAME = false;
+   private String bucketPrefix = System.getProperty("user.name") + ".s3int";
+
+   /**
+    * two test groups integration and live.
+    */
+   private static final BlockingQueue<String> bucketNames = new ArrayBlockingQueue<String>(
+            bucketCount);
 
    /**
     * Due to eventual consistency, bucket commands may not return correctly immediately. Hence, we
@@ -86,27 +100,10 @@ public class S3IntegrationTest {
          throw error;
    }
 
-   protected byte[] goodMd5;
-   protected byte[] badMd5;
-
    protected void createBucketAndEnsureEmpty(String bucketName) throws InterruptedException,
             ExecutionException, TimeoutException {
       client.putBucketIfNotExists(bucketName).get(10, TimeUnit.SECONDS);
       emptyBucket(bucketName);
-      assertEventuallyBucketEmpty(bucketName);
-   }
-
-   protected void assertEventuallyBucketEmpty(final String bucketName) throws InterruptedException {
-      assertEventually(new Runnable() {
-         public void run() {
-            try {
-               assertEquals(client.listBucket(bucketName).get(10, TimeUnit.SECONDS).getContents()
-                        .size(), 0, "bucket " + bucketName + "wasn't empty");
-            } catch (Exception e) {
-               Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
-            }
-         }
-      });
    }
 
    protected void addObjectToBucket(String sourceBucket, String key) throws InterruptedException,
@@ -146,38 +143,6 @@ public class S3IntegrationTest {
    }
 
    @BeforeGroups(groups = { "integration", "live" })
-   protected void enableDebug() {
-      if (debugEnabled()) {
-         Handler HANDLER = new ConsoleHandler() {
-            {
-               setLevel(Level.ALL);
-               setFormatter(new Formatter() {
-
-                  @Override
-                  public String format(LogRecord record) {
-                     return String.format("[%tT %-7s] [%-7s] [%s]: %s %s\n", new Date(record
-                              .getMillis()), record.getLevel(), Thread.currentThread().getName(),
-                              record.getLoggerName(), record.getMessage(),
-                              record.getThrown() == null ? "" : record.getThrown());
-                  }
-               });
-            }
-         };
-         Logger guiceLogger = Logger.getLogger("org.jclouds");
-         guiceLogger.addHandler(HANDLER);
-         guiceLogger.setLevel(Level.ALL);
-      }
-   }
-
-   protected S3Connection client;
-   protected S3Context context = null;
-
-   protected static final String sysAWSAccessKeyId = System
-            .getProperty(S3Constants.PROPERTY_AWS_ACCESSKEYID);
-   protected static final String sysAWSSecretAccessKey = System
-            .getProperty(S3Constants.PROPERTY_AWS_SECRETACCESSKEY);
-
-   @BeforeGroups(groups = { "integration", "live" })
    @Parameters( { S3Constants.PROPERTY_AWS_ACCESSKEYID, S3Constants.PROPERTY_AWS_SECRETACCESSKEY })
    protected void setUpCredentials(@Optional String AWSAccessKeyId,
             @Optional String AWSSecretAccessKey, ITestContext testContext) throws Exception {
@@ -202,9 +167,6 @@ public class S3IntegrationTest {
       }
       client = context.getConnection();
       assert client != null;
-
-      SANITY_CHECK_RETURNED_BUCKET_NAME = (client instanceof StubS3Connection);
-
       goodMd5 = S3Utils.md5(TEST_STRING);
       badMd5 = S3Utils.md5("alf");
    }
@@ -212,6 +174,7 @@ public class S3IntegrationTest {
    protected void createStubS3Context() {
       context = S3ContextFactory.createContext("stub", "stub").withHttpAddress("stub").withModule(
                new StubS3ConnectionModule()).build();
+      SANITY_CHECK_RETURNED_BUCKET_NAME = true;
    }
 
    protected void createLiveS3Context(String AWSAccessKeyId, String AWSSecretAccessKey) {
@@ -221,13 +184,8 @@ public class S3IntegrationTest {
 
    public String getBucketName() throws InterruptedException, ExecutionException, TimeoutException {
       String bucketName = bucketNames.poll(30, TimeUnit.SECONDS);
-      // retrying as inside EC2 it may take longer to reflect the contents of a bucket.
-      try {
-         emptyBucket(bucketName);
-      } catch (AssertionError e) {
-         emptyBucket(bucketName);
-      }
       assert bucketName != null : "unable to get a bucket for the test";
+      emptyBucket(bucketName);
       return bucketName;
    }
 
@@ -244,7 +202,6 @@ public class S3IntegrationTest {
             ExecutionException, TimeoutException {
       if (bucketName != null) {
          bucketNames.add(bucketName);
-
          /*
           * Ensure that any returned bucket name actually exists on the server. Return of a
           * non-existent bucket introduces subtle testing bugs, where later unrelated tests will
@@ -280,17 +237,6 @@ public class S3IntegrationTest {
       }
    }
 
-   protected static int bucketCount = 20;
-   protected static volatile int bucketIndex = 0;
-
-   protected boolean SANITY_CHECK_RETURNED_BUCKET_NAME = false;
-
-   /**
-    * two test groups integration and live.
-    */
-   private static final BlockingQueue<String> bucketNames = new ArrayBlockingQueue<String>(
-            bucketCount);
-
    /**
     * There are a lot of retries here mainly from experience running inside amazon EC2.
     */
@@ -314,10 +260,6 @@ public class S3IntegrationTest {
       }
    }
 
-   protected boolean debugEnabled() {
-      return false;
-   }
-
    protected S3ContextFactory buildS3ContextFactory(String AWSAccessKeyId, String AWSSecretAccessKey) {
       return S3ContextFactory.createContext(AWSAccessKeyId, AWSSecretAccessKey).withSaxDebug()
                .withHttpSecure(false).withHttpPort(80);
@@ -326,8 +268,6 @@ public class S3IntegrationTest {
    protected Module createHttpModule() {
       return new JavaUrlHttpFutureCommandClientModule();
    }
-
-   private String bucketPrefix = System.getProperty("user.name") + ".s3int";
 
    protected void deleteEverything() throws Exception {
       try {
@@ -355,8 +295,13 @@ public class S3IntegrationTest {
          assertEventually(new Runnable() {
             public void run() {
                try {
-                  context.createInputStreamMap(name).clear();
-                  assertEventuallyBucketEmpty(name);
+                  Map<String, InputStream> map = context.createInputStreamMap(name);
+                  Set<String> keys = map.keySet();
+                  if (keys.size() > 0) {
+                     map.clear();
+                     assertEquals(map.size(), 0, String.format(
+                              "deleting %s, we still have %s left", keys, map.keySet()));
+                  }
                } catch (Exception e) {
                   Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
                }

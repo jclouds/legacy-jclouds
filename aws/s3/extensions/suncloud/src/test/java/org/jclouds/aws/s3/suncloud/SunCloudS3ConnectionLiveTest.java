@@ -30,18 +30,12 @@ import org.jclouds.aws.s3.suncloud.xml.config.SunCloudS3ParserModule;
 import org.testng.annotations.Test;
 
 /**
- * This performs the same test as {@link S3ConnectionLiveTest}, except using Sun Cloud
- * Storage.
+ * This performs the same test as {@link S3ConnectionLiveTest}, except using Sun Cloud Storage.
  * 
  * @author Adrian Cole
  */
 @Test(enabled = false, groups = { "live" }, testName = "s3.suncloud.SunCloudS3ConnectionLiveTest")
 public class SunCloudS3ConnectionLiveTest extends S3ConnectionLiveTest {
-
-   @Override
-   protected boolean debugEnabled() {
-      return true;
-   }
 
    @Override
    protected S3ContextFactory buildS3ContextFactory(String AWSAccessKeyId, String AWSSecretAccessKey) {

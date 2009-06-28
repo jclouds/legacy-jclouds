@@ -49,16 +49,9 @@ import com.google.inject.Provider;
  */
 @Test(groups = { "live" })
 public abstract class BasePerformance extends S3IntegrationTest {
-   @Override
-   protected boolean debugEnabled() {
-      return false;
-   }
-
    protected int timeoutSeconds = 10;
    protected int loopCount = 100;
-
    protected ExecutorService exec;
-
    protected CompletionService<Boolean> completer;
 
    @BeforeTest
@@ -74,13 +67,13 @@ public abstract class BasePerformance extends S3IntegrationTest {
       exec = null;
    }
 
-   @Test(enabled = true)
+   @Test
    public void testPutBytesSerialEU() throws Exception {
       String euBucketName = createScratchBucketInEU();
       doSerial(new PutBytesCallable(euBucketName), loopCount / 10);
    }
 
-   @Test(enabled = true)
+   @Test
    public void testPutBytesParallelEU() throws InterruptedException, ExecutionException,
             TimeoutException {
       String euBucketName = createScratchBucketInEU();
@@ -91,7 +84,7 @@ public abstract class BasePerformance extends S3IntegrationTest {
       }
    }
 
-   @Test(enabled = true)
+   @Test
    public void testPutBytesSerial() throws Exception {
       String bucketName = getBucketName();
       try {
@@ -101,7 +94,7 @@ public abstract class BasePerformance extends S3IntegrationTest {
       }
    }
 
-   @Test(enabled = true)
+   @Test
    public void testPutBytesParallel() throws InterruptedException, ExecutionException,
             TimeoutException {
       String bucketName = getBucketName();
@@ -112,7 +105,7 @@ public abstract class BasePerformance extends S3IntegrationTest {
       }
    }
 
-   @Test(enabled = true)
+   @Test
    public void testPutFileSerial() throws Exception {
       String bucketName = getBucketName();
       try {
@@ -122,7 +115,7 @@ public abstract class BasePerformance extends S3IntegrationTest {
       }
    }
 
-   @Test(enabled = true)
+   @Test
    public void testPutFileParallel() throws InterruptedException, ExecutionException,
             TimeoutException {
       String bucketName = getBucketName();
@@ -133,7 +126,7 @@ public abstract class BasePerformance extends S3IntegrationTest {
       }
    }
 
-   @Test(enabled = true)
+   @Test
    public void testPutInputStreamSerial() throws Exception {
       String bucketName = getBucketName();
       try {
@@ -143,7 +136,7 @@ public abstract class BasePerformance extends S3IntegrationTest {
       }
    }
 
-   @Test(enabled = true)
+   @Test
    public void testPutInputStreamParallel() throws InterruptedException, ExecutionException,
             TimeoutException {
       String bucketName = getBucketName();
@@ -154,7 +147,7 @@ public abstract class BasePerformance extends S3IntegrationTest {
       }
    }
 
-   @Test(enabled = true)
+   @Test
    public void testPutStringSerial() throws Exception {
       String bucketName = getBucketName();
       try {
@@ -164,7 +157,7 @@ public abstract class BasePerformance extends S3IntegrationTest {
       }
    }
 
-   @Test(enabled = true)
+   @Test
    public void testPutStringParallel() throws InterruptedException, ExecutionException,
             TimeoutException {
       String bucketName = getBucketName();
