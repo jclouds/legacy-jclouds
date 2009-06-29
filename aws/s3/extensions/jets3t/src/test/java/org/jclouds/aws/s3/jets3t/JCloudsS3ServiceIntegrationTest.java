@@ -53,7 +53,6 @@ import org.jets3t.service.acl.AccessControlList;
 import org.jets3t.service.model.S3Bucket;
 import org.jets3t.service.model.S3Object;
 import org.jets3t.service.security.AWSCredentials;
-import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -90,6 +89,7 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
    public void testJCloudsS3Service() throws S3ServiceException {
       service = (credentials != null) ? new JCloudsS3Service(credentials) : new JCloudsS3Service(
                new AWSCredentials("foo", "bar"), new StubS3ConnectionModule());
+      assert service != null;
    }
 
    @Test
@@ -106,7 +106,6 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
    }
 
    @Test
-   @AfterSuite
    public void testDeleteBucketImpl() throws S3ServiceException, InterruptedException,
             ExecutionException, TimeoutException {
       String bucketName = getScratchBucketName();
