@@ -80,8 +80,8 @@ public class DeleteObjectIntegrationTest extends S3IntegrationTest {
    void deleteObjectQuestion() throws Exception {
       String bucketName = getBucketName();
       try {
-         addObjectToBucket(bucketName, "p???blic-read-acl");
-         assert client.deleteObject(bucketName, "p???blic-read-acl").get(10, TimeUnit.SECONDS);
+         addObjectToBucket(bucketName, "p?blic-read-acl");
+         assert client.deleteObject(bucketName, "p?blic-read-acl").get(10, TimeUnit.SECONDS);
       } finally {
          returnBucket(bucketName);
       }
