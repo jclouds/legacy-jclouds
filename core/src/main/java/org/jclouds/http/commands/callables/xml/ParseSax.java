@@ -92,7 +92,9 @@ public class ParseSax<T> extends HttpFutureCommand.ResponseCallable<T> {
             IOUtils.closeQuietly(xml);
             xml = IOUtils.toInputStream(response);
          }
-         parser.parse(new InputSource(xml));
+         InputSource input = new InputSource(xml);
+         input.setEncoding("UTF-8");
+         parser.parse(input);
       } catch (Exception e) {
          StringBuilder message = new StringBuilder();
          message.append("Error parsing input for ").append(handler);
