@@ -60,13 +60,14 @@ public class AWSClientErrorRetryHandler implements HttpRetryHandler {
    public boolean shouldRetryRequest(HttpFutureCommand<?> command, HttpResponse response) {
       if (command.getFailureCount() > retryCountLimit)
          return false;
-      if (response.getStatusCode() == 400) {
+      if (response.getStatusCode() == 400 || response.getStatusCode() == 409) {
          byte[] content = S3Utils.closeConnectionButKeepContentStream(response);
          command.incrementRedirectCount();
          try {
             AWSError error = S3Utils.parseAWSErrorFromContent(parserFactory, command, response,
                      new String(content));
-            if ("RequestTimeout".equals(error.getCode())) {
+            if ("RequestTimeout".equals(error.getCode())
+                     || "OperationAborted".equals(error.getCode())) {
                return true;
             }
          } catch (HttpException e) {
