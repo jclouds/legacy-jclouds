@@ -23,15 +23,15 @@
  */
 package org.jclouds.http.commands.callables.xml.config;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
 
 /**
  * // TODO: Adrian: Document this!
@@ -48,7 +48,6 @@ public class SaxModule extends AbstractModule {
     }
 
     @Provides
-    @Singleton
     SAXParserFactory provideSAXParserFactory() {
         SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setNamespaceAware(false);
