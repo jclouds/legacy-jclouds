@@ -27,10 +27,12 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.s3.S3IntegrationTest;
-import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.s3.domain.S3Bucket;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
@@ -43,50 +45,44 @@ import org.testng.annotations.Test;
 @Test(groups = { "integration", "live" }, testName = "s3.DeleteObjectIntegrationTest")
 public class DeleteObjectIntegrationTest extends S3IntegrationTest {
 
+   private static final String LOCAL_ENCODING = System.getProperty("file.encoding");
+
    @Test
    void deleteObjectNotFound() throws Exception {
       String bucketName = getBucketName();
+      String key = "test";
       try {
-         addObjectToBucket(bucketName, "test");
-         assert client.deleteObject(bucketName, "test").get(10, TimeUnit.SECONDS);
+         assert client.deleteObject(bucketName, key).get(10, TimeUnit.SECONDS);
       } finally {
          returnBucket(bucketName);
       }
    }
-   
-   @Test
-   void deleteObjectWithSpaces() throws Exception {
+
+   @DataProvider(name = "delete")
+   public Object[][] createData() {
+      return new Object[][] { { "sp ace" }, { "unic¿de" }, { "qu?stion" } };
+   }
+
+   @Test(dataProvider = "delete")
+   void deleteObject(String key) throws Exception {
       String bucketName = getBucketName();
       try {
-         addObjectToBucket(bucketName, "p blic-read-acl");
-         assert client.deleteObject(bucketName, "p blic-read-acl").get(10, TimeUnit.SECONDS);
+         addObjectToBucket(bucketName, key);
+         assert client.deleteObject(bucketName, key).get(10, TimeUnit.SECONDS);
+         assertBucketEmptyDeleting(bucketName, key);
       } finally {
          returnBucket(bucketName);
       }
    }
-   
-   @Test
-   void deleteObjectUnicade() throws Exception {
-      String bucketName = getBucketName();
-      try {
-         addObjectToBucket(bucketName, "p¿blic-read-acl");
-         assert client.deleteObject(bucketName, "p¿blic-read-acl").get(10, TimeUnit.SECONDS);
-      } finally {
-         returnBucket(bucketName);
-      }
+
+   private void assertBucketEmptyDeleting(String bucketName, String key)
+            throws InterruptedException, ExecutionException, TimeoutException {
+      S3Bucket listing = client.listBucket(bucketName).get(10, TimeUnit.SECONDS);
+      assertEquals(listing.getContents().size(), 0, String.format(
+               "deleting %s, we still have %s left in bucket %s, using encoding %s", key, listing
+                        .getContents().size(), bucketName, LOCAL_ENCODING));
    }
-   
-   @Test
-   void deleteObjectQuestion() throws Exception {
-      String bucketName = getBucketName();
-      try {
-         addObjectToBucket(bucketName, "p?blic-read-acl");
-         assert client.deleteObject(bucketName, "p?blic-read-acl").get(10, TimeUnit.SECONDS);
-      } finally {
-         returnBucket(bucketName);
-      }
-   }
-   
+
    @Test
    void deleteObjectNoBucket() throws Exception {
       try {
@@ -97,16 +93,4 @@ public class DeleteObjectIntegrationTest extends S3IntegrationTest {
       }
    }
 
-   @Test
-   void deleteObject() throws Exception {
-      String bucketName = getBucketName();
-      try {
-         addObjectToBucket(bucketName, "test");
-         assert client.deleteObject(bucketName, "test").get(10, TimeUnit.SECONDS);
-         assert client.headObject(bucketName, "test").get(10, TimeUnit.SECONDS) == S3Object.Metadata.NOT_FOUND;
-      } finally {
-         returnBucket(bucketName);
-      }
-
-   }
 }
