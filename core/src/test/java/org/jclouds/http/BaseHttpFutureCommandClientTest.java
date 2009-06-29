@@ -37,14 +37,15 @@ import org.testng.annotations.Test;
 import static org.testng.Assert.assertEquals;
 
 /**
- * // TODO: Adrian: Document this!
+ * Tests for functionality all HttpFutureCommandClients must express. These tests will operate
+ * against an in-memory http engine, so as to ensure end-to-end functionality works.
  * 
  * @author Adrian Cole
  */
 @Test(threadPoolSize = 10)
 public abstract class BaseHttpFutureCommandClientTest extends BaseJettyTest {
 
-   @Test(invocationCount = 50, timeOut = 3000)
+   @Test(invocationCount = 50, timeOut = 5000)
    public void testRequestFilter() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
       GetString get = factory.createGetString("/");
@@ -53,7 +54,7 @@ public abstract class BaseHttpFutureCommandClientTest extends BaseJettyTest {
       assertEquals(get.get(10, TimeUnit.SECONDS).trim(), "test");
    }
 
-   @Test(invocationCount = 50, timeOut = 3000)
+   @Test(invocationCount = 50, timeOut = 5000)
    public void testGetStringWithHeader() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
       GetString get = factory.createGetString("/");
@@ -62,7 +63,7 @@ public abstract class BaseHttpFutureCommandClientTest extends BaseJettyTest {
       assertEquals(get.get(10, TimeUnit.SECONDS).trim(), "test");
    }
 
-   @Test(invocationCount = 50, timeOut = 3000)
+   @Test(invocationCount = 50, timeOut = 5000)
    public void testGetString() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
       GetString get = factory.createGetString("/");
@@ -72,7 +73,7 @@ public abstract class BaseHttpFutureCommandClientTest extends BaseJettyTest {
 
    }
 
-   @Test(invocationCount = 50, timeOut = 3000)
+   @Test(invocationCount = 50, timeOut = 5000)
    public void testGetStringRedirect() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
       GetString get = factory.createGetString("/redirect");
@@ -81,7 +82,7 @@ public abstract class BaseHttpFutureCommandClientTest extends BaseJettyTest {
       assertEquals(get.get(10, TimeUnit.SECONDS).trim(), XML2);
    }
 
-   @Test(invocationCount = 50, timeOut = 3000)
+   @Test(invocationCount = 50, timeOut = 5000)
    public void testGetStringPermanentRedirect() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
       // GetString get = factory.createGetString("/permanentredirect");
@@ -91,7 +92,7 @@ public abstract class BaseHttpFutureCommandClientTest extends BaseJettyTest {
       // TODO assert misses are only one, as permanent redirects paths should be remembered.
    }
 
-   @Test(invocationCount = 50, timeOut = 3000)
+   @Test(invocationCount = 50, timeOut = 5000)
    public void testPutRedirect() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
       Put put = factory.createPut("/redirect", "foo");
@@ -101,7 +102,7 @@ public abstract class BaseHttpFutureCommandClientTest extends BaseJettyTest {
       assertEquals(put.get(10, TimeUnit.SECONDS), new Boolean(true));
    }
 
-   @Test(invocationCount = 50, timeOut = 3000)
+   @Test(invocationCount = 50, timeOut = 5000)
    public void testHead() throws MalformedURLException, ExecutionException, InterruptedException,
             TimeoutException {
       Head head = factory.createHead("/");
@@ -110,7 +111,7 @@ public abstract class BaseHttpFutureCommandClientTest extends BaseJettyTest {
       assert head.get(10, TimeUnit.SECONDS);
    }
 
-   @Test(invocationCount = 50, timeOut = 3000)
+   @Test(invocationCount = 50, timeOut = 5000)
    public void testGetAndParseSax() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
       GetAndParseSax<?> getAndParseSax = factory.createGetAndParseSax("/",
