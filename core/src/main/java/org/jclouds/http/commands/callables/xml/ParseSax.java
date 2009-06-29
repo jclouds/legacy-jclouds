@@ -26,6 +26,7 @@ package org.jclouds.http.commands.callables.xml;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpException;
@@ -92,8 +93,7 @@ public class ParseSax<T> extends HttpFutureCommand.ResponseCallable<T> {
             IOUtils.closeQuietly(xml);
             xml = IOUtils.toInputStream(response);
          }
-         InputSource input = new InputSource(xml);
-         input.setEncoding("UTF-8");
+         InputSource input = new InputSource(new InputStreamReader(xml,"UTF-8"));
          parser.parse(input);
       } catch (Exception e) {
          StringBuilder message = new StringBuilder();
