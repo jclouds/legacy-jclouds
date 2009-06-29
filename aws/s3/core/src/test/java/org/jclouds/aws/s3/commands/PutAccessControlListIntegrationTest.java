@@ -78,7 +78,7 @@ public class PutAccessControlListIntegrationTest extends S3IntegrationTest {
             IOException {
       String bucketName = getBucketName();
       try {
-         String objectKey = "pr“vate-acl";
+         String objectKey = "private-acl";
 
          // Private object
          addObjectToBucket(bucketName, objectKey);
