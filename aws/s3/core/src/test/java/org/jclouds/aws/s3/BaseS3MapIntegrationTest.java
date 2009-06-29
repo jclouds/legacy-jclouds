@@ -135,6 +135,24 @@ public abstract class BaseS3MapIntegrationTest<T> extends S3IntegrationTest {
       });
    }
 
+   protected void assertEventuallyRemoveEquals(final BaseS3Map<T> map, final String key,
+            final Object equals) throws InterruptedException {
+      assertEventually(new Runnable() {
+         public void run() {
+            assertEquals(map.remove(key), equals);
+         }
+      });
+   }
+
+   protected void assertEventuallyGetEquals(final BaseS3Map<T> map, final String key,
+            final Object equals) throws InterruptedException {
+      assertEventually(new Runnable() {
+         public void run() {
+            assertEquals(map.get(key), equals);
+         }
+      });
+   }
+
    protected void assertEventuallyKeySize(final BaseS3Map<T> map, final int size)
             throws InterruptedException {
       assertEventually(new Runnable() {

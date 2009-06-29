@@ -79,22 +79,33 @@ public class S3ObjectMapIntegrationTest extends BaseS3MapIntegrationTest<S3Objec
    }
 
    @Test(groups = { "integration", "live" })
-   public void testRemove() throws IOException, InterruptedException, ExecutionException,
-            TimeoutException {
+   public void testRemove() throws InterruptedException, ExecutionException, TimeoutException {
       String bucketName = getBucketName();
       try {
          BaseS3Map<S3Object> map = createMap(context, bucketName);
          putString(map, "one", "two");
-         S3Object old = map.remove("one");
-         assertEquals(S3Utils.getContentAsStringAndClose(old), "two");
-         old = map.remove("one");
-         assert old == S3Object.NOT_FOUND;
-         old = map.get("one");
-         assert old == S3Object.NOT_FOUND;
+         assertEventuallyContentEquals(map, "one", "two");
+         // TODO track how often this occurs and potentially update map implementation
+         assertEventuallyRemoveEquals(map, "one", S3Object.NOT_FOUND);
+         assertEventuallyGetEquals(map, "one", S3Object.NOT_FOUND);
          assertEventuallyKeySize(map, 0);
       } finally {
          returnBucket(bucketName);
       }
+   }
+
+   private void assertEventuallyContentEquals(final BaseS3Map<S3Object> map, final String key,
+            final String value) throws InterruptedException {
+      assertEventually(new Runnable() {
+         public void run() {
+            S3Object old = map.remove(key);
+            try {
+               assertEquals(S3Utils.getContentAsStringAndClose(old), value);
+            } catch (IOException e) {
+               throw new RuntimeException(e);
+            }
+         }
+      });
    }
 
    @Override

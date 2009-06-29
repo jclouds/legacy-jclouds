@@ -299,7 +299,8 @@ public class S3IntegrationTest {
                   if (keys.size() > 0) {
                      map.clear();
                      assertEquals(map.size(), 0, String.format(
-                              "deleting %s, we still have %s left", keys, map.keySet()));
+                              "deleting %s, we still have %s left in bucket %s", keys,
+                              map.keySet(), name));
                   }
                } catch (Exception e) {
                   Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
