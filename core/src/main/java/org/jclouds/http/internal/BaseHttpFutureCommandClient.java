@@ -26,7 +26,6 @@ package org.jclouds.http.internal;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
 
@@ -35,6 +34,7 @@ import org.jclouds.http.HttpFutureCommandClient;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.logging.Logger;
@@ -61,8 +61,8 @@ public abstract class BaseHttpFutureCommandClient<Q> implements HttpFutureComman
    public void submit(HttpFutureCommand<?> command) {
       HttpRequest request = command.getRequest();
 
+      HttpResponse response = null;
       try {
-         HttpResponse response = null;
          for (;;) {
             Q nativeRequest = null;
             try {
@@ -90,8 +90,7 @@ public abstract class BaseHttpFutureCommandClient<Q> implements HttpFutureComman
             }
          }
       } catch (Exception e) {
-         command.setException(new ExecutionException(String.format("error invoking request %s",
-                  request), e));
+         command.setException(new HttpResponseException(command, response, e));
       }
    }
 
