@@ -67,6 +67,7 @@ public class RedirectionRetryHandler implements HttpRetryHandler {
       if (hostHeader != null && command.getRedirectCount() < retryCountLimit) {
          URI endPoint = parseEndPoint(hostHeader);
          command.getRequest().setEndPoint(endPoint);
+         command.getRequest().getHeaders().removeAll(HttpHeaders.HOST);
          return true;
       } else {
          return false;

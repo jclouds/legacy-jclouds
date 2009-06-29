@@ -31,6 +31,7 @@ import org.jclouds.aws.s3.util.S3Utils;
 import org.jclouds.aws.s3.xml.S3ParserFactory;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpFutureCommand;
+import org.jclouds.http.HttpHeaders;
 import org.jclouds.http.HttpMethod;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.handlers.RedirectionRetryHandler;
@@ -82,6 +83,7 @@ public class AWSRedirectionRetryHandler extends RedirectionRetryHandler {
                      URI endPoint = command.getRequest().getEndPoint();
                      endPoint = Utils.replaceHostInEndPoint(endPoint, host);
                      command.getRequest().setEndPoint(endPoint);
+                     command.getRequest().getHeaders().removeAll(HttpHeaders.HOST);
                   }
                   return true;
                } else {
