@@ -45,8 +45,6 @@ import org.testng.annotations.Test;
 @Test(groups = { "integration", "live" }, testName = "s3.DeleteObjectIntegrationTest")
 public class DeleteObjectIntegrationTest extends S3IntegrationTest {
 
-   private static final String LOCAL_ENCODING = System.getProperty("file.encoding");
-
    @Test
    void deleteObjectNotFound() throws Exception {
       String bucketName = getBucketName();

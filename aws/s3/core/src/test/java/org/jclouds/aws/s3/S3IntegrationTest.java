@@ -59,12 +59,14 @@ import com.google.common.collect.Iterables;
 import com.google.inject.Module;
 
 public class S3IntegrationTest {
+   protected static final String LOCAL_ENCODING = System.getProperty("file.encoding");
    protected static final String TEST_STRING = "<apples><apple name=\"fuji\"></apple> </apples>";
-   public static long INCONSISTENCY_WINDOW = 1000;
    protected static final String sysAWSAccessKeyId = System
             .getProperty(S3Constants.PROPERTY_AWS_ACCESSKEYID);
    protected static final String sysAWSSecretAccessKey = System
             .getProperty(S3Constants.PROPERTY_AWS_SECRETACCESSKEY);
+
+   public static long INCONSISTENCY_WINDOW = 1000;
    protected static int bucketCount = 20;
    protected static volatile int bucketIndex = 0;
 
@@ -299,8 +301,8 @@ public class S3IntegrationTest {
                   if (keys.size() > 0) {
                      map.clear();
                      assertEquals(map.size(), 0, String.format(
-                              "deleting %s, we still have %s left in bucket %s", keys,
-                              map.keySet(), name));
+                              "deleting %s, we still have %s left in bucket %s, using encoding %s",
+                              keys, map.keySet(), name, LOCAL_ENCODING));
                   }
                } catch (Exception e) {
                   Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);

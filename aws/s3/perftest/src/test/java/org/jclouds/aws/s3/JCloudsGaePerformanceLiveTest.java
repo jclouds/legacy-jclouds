@@ -37,6 +37,14 @@ import com.google.inject.Module;
 @Test(sequential = true, testName = "s3.JCloudsGaePerformanceLiveTest", groups = { "live" })
 public class JCloudsGaePerformanceLiveTest extends BaseJCloudsPerformance {
 
+   public JCloudsGaePerformanceLiveTest() {
+      super();
+      // otherwise, we'll get timeout errors
+      // TODO sdk 1.2.3 should give the ability to set a higher timeout then 5 seconds allowing this
+      // to be removed
+      loopCount = 5;
+   }
+
    @Override
    protected boolean putByteArray(String bucket, String key, byte[] data, String contentType)
             throws Exception {
@@ -117,8 +125,6 @@ public class JCloudsGaePerformanceLiveTest extends BaseJCloudsPerformance {
 
    @Override
    protected Module createHttpModule() {
-      // otherwise, we'll get timeout errors
-      loopCount = 10;
       return new URLFetchServiceClientModule();
    }
 }
