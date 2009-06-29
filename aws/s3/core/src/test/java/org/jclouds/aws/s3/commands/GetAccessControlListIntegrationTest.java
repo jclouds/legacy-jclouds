@@ -69,7 +69,7 @@ public class GetAccessControlListIntegrationTest extends S3IntegrationTest {
    @Test
    void testPrivateAclIsDefaultForObject() throws InterruptedException, ExecutionException,
             TimeoutException, IOException {
-      String privateObjectKey = "prìvate-acl";
+      String privateObjectKey = "private-acl";
       String bucketName = getBucketName();
       try {
          // Private object
@@ -90,7 +90,7 @@ public class GetAccessControlListIntegrationTest extends S3IntegrationTest {
    @Test
    void testPublicReadOnObject() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
-      String publicReadObjectKey = "püblic-read-acl";
+      String publicReadObjectKey = "public-read-acl";
       String bucketName = getBucketName();
       try {
          client.putObject(bucketName, new S3Object(publicReadObjectKey, ""), new PutObjectOptions()
@@ -114,7 +114,7 @@ public class GetAccessControlListIntegrationTest extends S3IntegrationTest {
    @Test
    void testPublicWriteOnObject() throws InterruptedException, ExecutionException,
             TimeoutException, IOException {
-      String publicReadWriteObjectKey = "püblic-read-write-acl";
+      String publicReadWriteObjectKey = "public-read-write-acl";
       String bucketName = getBucketName();
       try {
          // Public Read-Write object
