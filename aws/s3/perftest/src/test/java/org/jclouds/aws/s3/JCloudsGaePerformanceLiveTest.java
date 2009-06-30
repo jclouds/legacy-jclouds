@@ -34,7 +34,13 @@ import com.google.appengine.tools.development.ApiProxyLocalImpl;
 import com.google.apphosting.api.ApiProxy;
 import com.google.inject.Module;
 
-@Test(sequential = true, testName = "s3.JCloudsGaePerformanceLiveTest", groups = { "live" })
+/**
+ * 
+ * This test is disabled due to timeout limitations in the google app engine sdk
+ * 
+ * @author Adrian Cole
+ */
+@Test(enabled = false, sequential = true, testName = "s3.JCloudsGaePerformanceLiveTest", groups = { "live" })
 public class JCloudsGaePerformanceLiveTest extends BaseJCloudsPerformance {
 
    public JCloudsGaePerformanceLiveTest() {

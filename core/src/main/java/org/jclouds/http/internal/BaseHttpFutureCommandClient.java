@@ -90,6 +90,7 @@ public abstract class BaseHttpFutureCommandClient<Q> implements HttpFutureComman
             }
          }
       } catch (Exception e) {
+         logger.error(e, "command: %s failed with response %s", command, response);
          command.setException(new HttpResponseException(command, response, e));
       }
    }
