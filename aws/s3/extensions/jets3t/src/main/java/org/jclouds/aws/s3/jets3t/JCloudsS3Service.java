@@ -175,8 +175,15 @@ public class JCloudsS3Service extends S3Service {
 
    @Override
    protected AccessControlList getBucketAclImpl(String bucketName) throws S3ServiceException {
-      // TODO Unimplemented
-      throw new UnsupportedOperationException();
+      try {
+         org.jclouds.aws.s3.domain.AccessControlList jcACL = 
+            connection.getBucketACL(bucketName)
+               .get(requestTimeoutMilliseconds,TimeUnit.MILLISECONDS);
+         return Util.convertAccessControlList(jcACL);
+      } catch (Exception e) {
+         Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
+         throw new S3ServiceException("error getting bucket's ACL: " + bucketName, e);
+      }
    }
 
    @Override
@@ -195,8 +202,15 @@ public class JCloudsS3Service extends S3Service {
    @Override
    protected AccessControlList getObjectAclImpl(String bucketName, String objectKey)
             throws S3ServiceException {
-      // TODO Unimplemented
-      throw new UnsupportedOperationException();
+      try {
+         org.jclouds.aws.s3.domain.AccessControlList jcACL = 
+            connection.getObjectACL(bucketName, objectKey)
+               .get(requestTimeoutMilliseconds,TimeUnit.MILLISECONDS);
+         return Util.convertAccessControlList(jcACL);
+      } catch (Exception e) {
+         Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
+         throw new S3ServiceException("error getting object's ACL", e);
+      }
    }
 
    @Override
@@ -310,19 +324,29 @@ public class JCloudsS3Service extends S3Service {
    }
 
    @Override
-   protected void putBucketAclImpl(String bucketName, AccessControlList acl)
+   protected void putBucketAclImpl(String bucketName, AccessControlList jsACL)
             throws S3ServiceException {
-      // TODO Unimplemented
-      throw new UnsupportedOperationException();
-
+      try {
+         org.jclouds.aws.s3.domain.AccessControlList jcACL = Util.convertAccessControlList(jsACL);
+         connection.putBucketACL(bucketName, jcACL)
+              .get(requestTimeoutMilliseconds,TimeUnit.MILLISECONDS);
+      } catch (Exception e) {
+         Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
+         throw new S3ServiceException("error putting bucket's ACL: " + bucketName, e);
+      }
    }
 
    @Override
-   protected void putObjectAclImpl(String bucketName, String objectKey, AccessControlList acl)
+   protected void putObjectAclImpl(String bucketName, String objectKey, AccessControlList jsACL)
             throws S3ServiceException {
-      // TODO Unimplemented
-      throw new UnsupportedOperationException();
-
+      try {
+         org.jclouds.aws.s3.domain.AccessControlList jcACL = Util.convertAccessControlList(jsACL);
+         connection.putObjectACL(bucketName, objectKey, jcACL)
+              .get(requestTimeoutMilliseconds,TimeUnit.MILLISECONDS);
+      } catch (Exception e) {
+         Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
+         throw new S3ServiceException("error putting object's ACL", e);
+      }
    }
 
    @Override

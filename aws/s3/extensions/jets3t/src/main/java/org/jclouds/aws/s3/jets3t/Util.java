@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,6 +48,12 @@ import org.jclouds.http.ContentTypes;
 import org.jclouds.util.Utils;
 import org.jets3t.service.S3ServiceException;
 import org.jets3t.service.acl.AccessControlList;
+import org.jets3t.service.acl.CanonicalGrantee;
+import org.jets3t.service.acl.EmailAddressGrantee;
+import org.jets3t.service.acl.GrantAndPermission;
+import org.jets3t.service.acl.GranteeInterface;
+import org.jets3t.service.acl.GroupGrantee;
+import org.jets3t.service.acl.Permission;
 import org.jets3t.service.model.S3Bucket;
 import org.jets3t.service.model.S3Object;
 import org.jets3t.service.model.S3Owner;
@@ -239,7 +246,7 @@ public class Util {
        return options;
     }
     
-    public static CannedAccessPolicy convertAcl(AccessControlList acl) {
+    public static CannedAccessPolicy convertACLToCannedAccessPolicy(AccessControlList acl) {
        if (acl  == null) {
           return null;
        } else if (acl == AccessControlList.REST_CANNED_AUTHENTICATED_READ) {
@@ -255,10 +262,97 @@ public class Util {
              "Only 'canned' AccessControlList options are supported: " + acl);
     }
     
+    public static AccessControlList convertAccessControlList(
+          org.jclouds.aws.s3.domain.AccessControlList jcACL)
+    {
+       AccessControlList jsACL = new AccessControlList();
+       if (jcACL.getOwner() != null) {
+          jsACL.setOwner(new S3Owner(jcACL.getOwner().getId(), jcACL.getOwner().getDisplayName()));
+       }
+       for (org.jclouds.aws.s3.domain.AccessControlList.Grant jcGrant : jcACL.getGrants()) {
+          Permission jsPermission = null;
+          org.jclouds.aws.s3.domain.AccessControlList.Permission jcPerm = jcGrant.getPermission();
+          if (org.jclouds.aws.s3.domain.AccessControlList.Permission.FULL_CONTROL == jcPerm) {
+             jsPermission = Permission.PERMISSION_FULL_CONTROL;
+          } else if (org.jclouds.aws.s3.domain.AccessControlList.Permission.READ == jcPerm) {
+             jsPermission = Permission.PERMISSION_READ;
+          } else if (org.jclouds.aws.s3.domain.AccessControlList.Permission.READ_ACP == jcPerm) {
+             jsPermission = Permission.PERMISSION_READ_ACP;
+          } else if (org.jclouds.aws.s3.domain.AccessControlList.Permission.WRITE == jcPerm) {
+             jsPermission = Permission.PERMISSION_WRITE;
+          } else if (org.jclouds.aws.s3.domain.AccessControlList.Permission.WRITE_ACP == jcPerm) {
+             jsPermission = Permission.PERMISSION_WRITE_ACP;
+          }
+          
+          GranteeInterface jsGrantee = null;
+          org.jclouds.aws.s3.domain.AccessControlList.Grantee jcGrantee = jcGrant.getGrantee();
+          if (jcGrantee instanceof 
+                org.jclouds.aws.s3.domain.AccessControlList.EmailAddressGrantee) {
+             jsGrantee = new EmailAddressGrantee(jcGrantee.getIdentifier());
+          } else if (jcGrantee instanceof 
+                org.jclouds.aws.s3.domain.AccessControlList.CanonicalUserGrantee) {
+             jsGrantee = new CanonicalGrantee(jcGrantee.getIdentifier());             
+          } else if (jcGrantee instanceof 
+                org.jclouds.aws.s3.domain.AccessControlList.GroupGrantee) {
+             jsGrantee = new GroupGrantee(jcGrantee.getIdentifier());             
+          }
+          
+          jsACL.grantPermission(jsGrantee, jsPermission);
+       }       
+       return jsACL;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static org.jclouds.aws.s3.domain.AccessControlList convertAccessControlList(
+          AccessControlList jsACL)
+    {
+       org.jclouds.aws.s3.domain.AccessControlList jcACL = 
+          new org.jclouds.aws.s3.domain.AccessControlList();
+       if (jsACL.getOwner() != null) {
+          jcACL.setOwner(new org.jclouds.aws.s3.domain.CanonicalUser(jsACL.getOwner().getId()));
+       }
+       Iterator jsGrantAndPermissionIter = jsACL.getGrants().iterator();
+       while (jsGrantAndPermissionIter.hasNext()) {
+          GrantAndPermission jsGrantAndPermission = 
+             (GrantAndPermission) jsGrantAndPermissionIter.next();
+          
+          org.jclouds.aws.s3.domain.AccessControlList.Permission jcPermission = null;
+          Permission jsPerm = jsGrantAndPermission.getPermission();
+          if (Permission.PERMISSION_FULL_CONTROL == jsPerm) {
+             jcPermission = org.jclouds.aws.s3.domain.AccessControlList.Permission.FULL_CONTROL;
+          } else if (Permission.PERMISSION_READ == jsPerm) {
+             jcPermission = org.jclouds.aws.s3.domain.AccessControlList.Permission.READ;
+          } else if (Permission.PERMISSION_READ_ACP == jsPerm) {
+             jcPermission = org.jclouds.aws.s3.domain.AccessControlList.Permission.READ_ACP;
+          } else if (Permission.PERMISSION_WRITE == jsPerm) {
+             jcPermission = org.jclouds.aws.s3.domain.AccessControlList.Permission.WRITE;
+          } else if (Permission.PERMISSION_WRITE_ACP == jsPerm) {
+             jcPermission = org.jclouds.aws.s3.domain.AccessControlList.Permission.WRITE_ACP;
+          }
+          
+          org.jclouds.aws.s3.domain.AccessControlList.Grantee jcGrantee = null;
+          GranteeInterface jsGrantee = jsGrantAndPermission.getGrantee();
+          if (jsGrantee instanceof EmailAddressGrantee) { 
+             jcGrantee = new org.jclouds.aws.s3.domain.AccessControlList.EmailAddressGrantee(
+                   jsGrantee.getIdentifier());
+          } else if (jsGrantee instanceof CanonicalGrantee) { 
+             jcGrantee = new org.jclouds.aws.s3.domain.AccessControlList.CanonicalUserGrantee(
+                   jsGrantee.getIdentifier());             
+          } else if (jsGrantee instanceof GroupGrantee) { 
+             jcGrantee = new org.jclouds.aws.s3.domain.AccessControlList.GroupGrantee(
+                   org.jclouds.aws.s3.domain.AccessControlList.GroupGranteeURI.fromURI(
+                         jsGrantee.getIdentifier()));             
+          }
+          
+          jcACL.addPermission(jcGrantee, jcPermission);
+       }       
+       return jcACL;       
+    }
+
     public static PutObjectOptions convertPutObjectOptions(AccessControlList acl) {
        PutObjectOptions options = new PutObjectOptions();
        if (acl != null) {
-          options.withAcl(convertAcl(acl));
+          options.withAcl(convertACLToCannedAccessPolicy(acl));
        }
        return options;
     }
@@ -270,7 +364,7 @@ public class Util {
     {
        CopyObjectOptions options = new CopyObjectOptions();
        if (acl != null) {
-          options.overrideAcl(convertAcl(acl));          
+          options.overrideAcl(convertACLToCannedAccessPolicy(acl));          
        }
        if (ifModifiedSince != null) {
           options.ifSourceModifiedSince(new DateTime(ifModifiedSince));

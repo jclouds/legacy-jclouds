@@ -421,7 +421,7 @@ public class StubS3Connection implements S3Connection {
                S3Object sourceS3 = source.get(sourceObject);
                S3Object.Metadata newMd = copy(sourceS3.getMetadata(), destinationObject);
                if (options.getAcl() != null)
-                  keyToAcl.put(destinationBucket + destinationObject, options.getAcl());
+                  keyToAcl.put(destinationBucket + "/" + destinationObject, options.getAcl());
                if (options.getMetadata() != null) {
                   newMd.setUserMetadata(options.getMetadata());
                }
