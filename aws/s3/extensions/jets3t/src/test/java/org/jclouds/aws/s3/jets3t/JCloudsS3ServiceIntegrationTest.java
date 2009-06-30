@@ -32,6 +32,7 @@ import static org.testng.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 import java.util.List;
@@ -56,6 +57,11 @@ import org.jets3t.service.acl.GrantAndPermission;
 import org.jets3t.service.acl.GroupGrantee;
 import org.jets3t.service.model.S3Bucket;
 import org.jets3t.service.model.S3Object;
+import org.jets3t.service.multithread.CreateObjectsEvent;
+import org.jets3t.service.multithread.S3ServiceEventAdaptor;
+import org.jets3t.service.multithread.S3ServiceEventListener;
+import org.jets3t.service.multithread.S3ServiceMulti;
+import org.jets3t.service.multithread.S3ServiceSimpleMulti;
 import org.jets3t.service.security.AWSCredentials;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -122,7 +128,7 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
       }
    }
 
-   @Test(dependsOnMethods = "testCreateBucketImpl")
+   @Test
    public void testDeleteObjectImpl() throws InterruptedException, ExecutionException,
             TimeoutException, S3ServiceException, IOException {
       String bucketName = getBucketName();
@@ -143,7 +149,7 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
       }
    }
 
-   @Test(dependsOnMethods = "testCreateBucketImpl")
+   @Test
    public void testGetObjectDetailsImpl() throws InterruptedException, ExecutionException,
             TimeoutException, S3ServiceException, IOException {
       String bucketName = getBucketName();
@@ -170,7 +176,7 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
       }
    }
 
-   @Test(dependsOnMethods = "testCreateBucketImpl")
+   @Test
    public void testGetObjectImpl() throws InterruptedException, ExecutionException,
             TimeoutException, S3ServiceException, IOException {
       String bucketName = getBucketName();
@@ -200,7 +206,7 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
       }
    }
 
-   @Test(dependsOnMethods = "testCreateBucketImpl")
+   @Test
    public void testListAllBucketsImpl() throws InterruptedException, ExecutionException,
             TimeoutException, S3ServiceException {
       String bucketName = getBucketName();
@@ -225,7 +231,7 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
       }
    }
 
-   @Test(dependsOnMethods = "testCreateBucketImpl")
+   @Test
    public void testListObjectsChunkedImpl() throws InterruptedException, ExecutionException,
             TimeoutException, IOException, S3ServiceException {
       String bucketName = getBucketName();
@@ -305,7 +311,7 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
       }
    }
 
-   @Test(dependsOnMethods = "testCreateBucketImpl")
+   @Test
    public void testListObjectsImpl() throws InterruptedException, ExecutionException,
             TimeoutException, IOException, S3ServiceException {
       String bucketName = null;
@@ -347,7 +353,7 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
       }
    }
 
-   @Test(dependsOnMethods = "testCreateBucketImpl")
+   @Test
    public void testPutObjectImpl() throws S3ServiceException, InterruptedException,
             ExecutionException, TimeoutException, NoSuchAlgorithmException, IOException {
       String bucketName = getBucketName();
@@ -428,7 +434,7 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
       }
    }
 
-   @Test(dependsOnMethods = "testCreateBucketImpl")
+   @Test
    @SuppressWarnings("unchecked")
    public void testCopyObjectImpl() throws InterruptedException, ExecutionException,
             TimeoutException, IOException, S3ServiceException {
@@ -502,7 +508,7 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
       }
    }
 
-   @Test(dependsOnMethods = "testCreateBucketImpl")
+   @Test
    @SuppressWarnings("unchecked")
    public void testPutAndGetBucketAclImpl() throws InterruptedException, ExecutionException, 
          TimeoutException, S3ServiceException 
@@ -565,7 +571,7 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
       }
    }
 
-   @Test(dependsOnMethods = "testCreateBucketImpl")
+   @Test
    @SuppressWarnings("unchecked")
    public void testGetAndPutObjectAclImpl() throws InterruptedException, ExecutionException, 
          TimeoutException, S3ServiceException, NoSuchAlgorithmException, IOException 
@@ -632,6 +638,60 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
       }
    }
 
+   @Test
+   public void testMultiService() throws InterruptedException, ExecutionException, 
+         TimeoutException, S3ServiceException, NoSuchAlgorithmException, IOException 
+   {
+      int OBJECT_COUNT = 50;
+      int OBJECT_SIZE = 1024; // 1 KB
+      
+      byte[] dataBuffer = new byte[OBJECT_SIZE];
+      
+      String bucketName = getBucketName();
+      try {
+         S3Bucket bucket = new S3Bucket(bucketName);
+         S3Object[] objects = new S3Object[OBJECT_COUNT];
+         
+         for (int i = 0; i < objects.length; i++) {
+            InputStream dataInputStream = new ByteArrayInputStream(dataBuffer);
+            objects[i] = new S3Object("testMultiServiceObject" + i);
+            objects[i].setDataInputStream(dataInputStream);
+            objects[i].setContentLength(dataBuffer.length);
+         }
+         
+         final long[] countOfUploadCompletions = new long[1];
+         S3ServiceEventListener eventListener = new S3ServiceEventAdaptor() {
+            @Override
+            public synchronized void s3ServiceEventPerformed(CreateObjectsEvent event) {
+               if (CreateObjectsEvent.EVENT_STARTED == event.getEventCode()) {      
+                  // Do nothing
+               } else if (CreateObjectsEvent.EVENT_COMPLETED == event.getEventCode()) {
+                  // Do nothing
+               } else if (CreateObjectsEvent.EVENT_ERROR == event.getEventCode()) {
+                  fail("Upload should not result in error", event.getErrorCause());
+               } else if (CreateObjectsEvent.EVENT_IGNORED_ERRORS == event.getEventCode()) {
+                  fail("Upload should not result in ignored errors: " + event.getIgnoredErrors());
+               } else if (CreateObjectsEvent.EVENT_CANCELLED == event.getEventCode()) {
+                  fail("Upload should not be cancelled");
+               } else if (CreateObjectsEvent.EVENT_IN_PROGRESS == event.getEventCode()) {
+                  countOfUploadCompletions[0] = event.getThreadWatcher().getCompletedThreads();
+               }
+            }
+         };         
+         
+         S3ServiceMulti multiService = new S3ServiceMulti(service, eventListener);
+         multiService.putObjects(bucket, objects);
+
+         assertEquals(countOfUploadCompletions[0], OBJECT_COUNT);         
+         org.jclouds.aws.s3.domain.S3Bucket theBucket = 
+            client.listBucket(bucketName).get(10, TimeUnit.SECONDS);         
+         assertEquals(theBucket.getSize(), OBJECT_COUNT);
+         
+      } finally {
+         returnBucket(bucketName);
+      }
+   }
+   
    @Test(enabled = false)
    public void testCheckBucketStatus() {
       fail("Not yet implemented");
