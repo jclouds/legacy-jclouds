@@ -29,7 +29,7 @@
     <parent>
         <artifactId>jclouds-extensions-project</artifactId>
         <groupId>org.jclouds</groupId>
-        <version>1.0-beta-2</version>
+        <version>1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -39,9 +39,9 @@
     <description>jclouds Log4J Logging Module</description>
 
     <scm>
-        <connection>scm:svn:http://jclouds.googlecode.com/svn/tags/1.0-beta-2</connection>
-        <developerConnection>scm:svn:https://jclouds.googlecode.com/svn/tags/1.0-beta-2</developerConnection>
-        <url>http://jclouds.googlecode.com/svn/tags/1.0-beta-2</url>
+        <connection>scm:svn:http://jclouds.googlecode.com/svn/trunk</connection>
+        <developerConnection>scm:svn:https://jclouds.googlecode.com/svn/trunk</developerConnection>
+        <url>http://jclouds.googlecode.com/svn/trunk</url>
     </scm>
 
     <dependencies>
