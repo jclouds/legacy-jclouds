@@ -23,19 +23,22 @@
  */
 package org.jclouds.aws.s3.domain;
 
-import static com.google.common.base.Preconditions.*;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+
 import org.jclouds.aws.s3.commands.options.GetObjectOptions;
-import org.jclouds.aws.s3.domain.acl.CannedAccessPolicy;
 import org.jclouds.aws.s3.util.S3Utils;
 import org.jclouds.aws.s3.util.S3Utils.Md5InputStreamResult;
 import org.jclouds.http.ContentTypes;
 import org.joda.time.DateTime;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 /**
  * Amazon S3 is designed to store objects. Objects are stored in
@@ -97,7 +100,6 @@ public class S3Object {
         private String cacheControl;
         private String dataDisposition;
         private String dataEncoding;
-        private CannedAccessPolicy cannedAccessPolicy;
         private AccessControlList accessControlList;
 
         // only parsed on list
@@ -321,14 +323,6 @@ public class S3Object {
 
         public void setAllHeaders(Multimap<String, String> allHeaders) {
             this.allHeaders = allHeaders;
-        }
-        
-        public void setCannedAccessPolicy(CannedAccessPolicy policy) {
-           this.cannedAccessPolicy = policy;
-        }
-        
-        public CannedAccessPolicy getCannedAccessPolicy() {
-           return this.cannedAccessPolicy;
         }
         
         public void setAccessControlList(AccessControlList acl) {
