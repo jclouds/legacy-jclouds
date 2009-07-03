@@ -32,7 +32,7 @@ import org.jclouds.aws.s3.S3Context;
 import org.jclouds.aws.s3.S3ContextFactory;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.gae.config.URLFetchServiceClientModule;
-import org.jclouds.samples.googleappengine.JCloudsServlet;
+import org.jclouds.samples.googleappengine.GetAllBucketsController;
 
 import javax.servlet.ServletContextEvent;
 import java.io.IOException;
@@ -82,7 +82,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
                 new ServletModule() {
                     @Override
                     protected void configureServlets() {
-                        serve("*.s3").with(JCloudsServlet.class);
+                        serve("*.s3").with(GetAllBucketsController.class);
                         requestInjection(this);
                     }
                 });
