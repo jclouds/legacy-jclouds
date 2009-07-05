@@ -162,13 +162,11 @@ public class URLFetchServiceClient extends BaseHttpFutureCommandClient<HTTPReque
 
    @Override
    protected HttpResponse invoke(HTTPRequest request) throws IOException {
-      if (logger.isTraceEnabled())
-         logger.trace("%1$s - submitting request %2$s, headers: %3$s", request.getURL().getHost(),
-                  request.getURL(), headersAsString(request.getHeaders()));
+      logger.trace("%1$s - submitting request %2$s, headers: %3$s", request.getURL().getHost(),
+               request.getURL(), headersAsString(request.getHeaders()));
       HTTPResponse response = urlFetchService.fetch(request);
-      if (logger.isTraceEnabled())
-         logger.info("%1$s - received response code %2$s, headers: %3$s", request.getURL()
-                  .getHost(), response.getResponseCode(), headersAsString(response.getHeaders()));
+      logger.info("%1$s - received response code %2$s, headers: %3$s", request.getURL().getHost(),
+               response.getResponseCode(), headersAsString(response.getHeaders()));
       return convert(response);
    }
 

@@ -25,7 +25,7 @@ package org.jclouds.gae.config;
 
 import org.jclouds.gae.URLFetchServiceClient;
 import org.jclouds.http.HttpFutureCommandClient;
-import org.jclouds.http.config.HttpFutureCommandClientModule;
+import org.jclouds.http.config.ConfiguresHttpFutureCommandClient;
 
 import com.google.appengine.api.urlfetch.URLFetchService;
 import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
@@ -37,7 +37,7 @@ import com.google.inject.Provides;
  * 
  * @author Adrian Cole
  */
-@HttpFutureCommandClientModule
+@ConfiguresHttpFutureCommandClient
 public class URLFetchServiceClientModule extends AbstractModule {
 
     @Override
