@@ -39,8 +39,10 @@
     <modules>
         <module>project</module>
         <module>core</module>
+        <module>objectstore</module>
         <module>extensions</module>
         <module>aws</module>
+        <module>rackspace</module>
     </modules>
     <build>
         <plugins>
