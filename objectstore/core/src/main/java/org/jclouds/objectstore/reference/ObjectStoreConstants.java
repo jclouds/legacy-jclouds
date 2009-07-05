@@ -21,22 +21,22 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.reference;
-
-import org.jclouds.aws.reference.AWSConstants;
-import org.jclouds.objectstore.reference.ObjectStoreConstants;
+package org.jclouds.objectstore.reference;
 
 /**
- * Configuration properties and constants used in S3 connections.
+ * Configuration properties and constants used in ObjectStore connections.
  * 
  * @author Adrian Cole
  */
-public interface S3Constants extends AWSConstants, S3Headers, ObjectStoreConstants {
+public interface ObjectStoreConstants {
 
    /**
-    * S3 service's XML Namespace, as used in XML request and response documents.
+    * longest time a single Map operation can take before throwing an exception.
     */
-   public static final String S3_REST_API_XML_NAMESPACE = "http://s3.amazonaws.com/doc/2006-03-01/";
-   public static final String ENDPOINT = "Endpoint";
+   public static final String PROPERTY_OBJECTMAP_TIMEOUT = "jclouds.objectmap.timeout";
+   /**
+    * time to pause before retrying a transient failure
+    */
+   public static final String PROPERTY_OBJECTMAP_RETRY = "jclouds.objectmap.retry";
 
 }

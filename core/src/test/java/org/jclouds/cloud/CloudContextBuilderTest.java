@@ -21,15 +21,16 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3;
+package org.jclouds.cloud;
 
 import static org.testng.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
-import org.jclouds.aws.s3.config.LiveS3ConnectionModule;
-import org.jclouds.http.config.HttpFutureCommandClientModule;
+import org.jclouds.http.RequiresHttp;
+import org.jclouds.http.config.ConfiguresHttpFutureCommandClient;
 import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
 import org.jclouds.logging.config.LoggingModule;
 import org.jclouds.logging.config.NullLoggingModule;
@@ -37,17 +38,18 @@ import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Binder;
 import com.google.inject.Module;
 
 /**
- * Tests behavior of modules configured in S3ContextFactory
+ * Tests behavior of modules configured in CloudContextBuilder
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "s3.S3ContextFactoryTest")
-public class S3ContextFactoryTest {
+@Test(groups = "unit", testName = "s3.CloudContextBuilderTest")
+public class CloudContextBuilderTest {
 
-   @HttpFutureCommandClientModule
+   @ConfiguresHttpFutureCommandClient
    static class HttpModule extends AbstractModule {
 
       @Override
@@ -56,12 +58,65 @@ public class S3ContextFactoryTest {
       }
    }
 
+   class TestCloudContext implements CloudContext<String> {
+
+      public void close() {
+
+      }
+
+      public String getConnection() {
+         return "";
+      }
+
+   }
+
+   class TestCloudContextBuilder extends CloudContextBuilder<String, TestCloudContext> {
+
+      protected TestCloudContextBuilder(Properties properties) {
+         super(properties);
+      }
+
+      @Override
+      public TestCloudContext buildContext() {
+         return new TestCloudContext();
+      }
+
+      @Override
+      protected void addConnectionModule(List<Module> modules) {
+         modules.add(new Module() {
+            public void configure(Binder arg0) {
+            }
+         });
+      }
+
+      @Override
+      protected void addContextModule(List<Module> modules) {
+         modules.add(new Module() {
+            public void configure(Binder arg0) {
+            }
+         });
+      }
+
+      @Override
+      protected void addParserModule(List<Module> modules) {
+         modules.add(new Module() {
+            public void configure(Binder arg0) {
+            }
+         });
+      }
+
+      @Override
+      public void authenticate(String id, String secret) {
+      }
+
+   }
+
    @Test
    public void testAddHttpModuleIfNotPresent() {
       List<Module> modules = new ArrayList<Module>();
       HttpModule module = new HttpModule();
       modules.add(module);
-      S3ContextFactory.addHttpModuleIfNeededAndNotPresent(modules);
+      new TestCloudContextBuilder(new Properties()).addHttpModuleIfNeededAndNotPresent(modules);
       assertEquals(modules.size(), 1);
       assertEquals(modules.remove(0), module);
    }
@@ -71,7 +126,7 @@ public class S3ContextFactoryTest {
       List<Module> modules = new ArrayList<Module>();
       LoggingModule module = new NullLoggingModule();
       modules.add(module);
-      S3ContextFactory.addLoggingModuleIfNotPresent(modules);
+      new TestCloudContextBuilder(new Properties()).addLoggingModuleIfNotPresent(modules);
       assertEquals(modules.size(), 1);
       assertEquals(modules.remove(0), module);
    }
@@ -83,47 +138,58 @@ public class S3ContextFactoryTest {
       modules.add(loggingModule);
       HttpModule httpModule = new HttpModule();
       modules.add(httpModule);
-      S3ContextFactory.addHttpModuleIfNeededAndNotPresent(modules);
-      S3ContextFactory.addLoggingModuleIfNotPresent(modules);
+      TestCloudContextBuilder builder = new TestCloudContextBuilder(new Properties());
+      builder.addHttpModuleIfNeededAndNotPresent(modules);
+      builder.addLoggingModuleIfNotPresent(modules);
       assertEquals(modules.size(), 2);
       assertEquals(modules.remove(0), loggingModule);
       assertEquals(modules.remove(0), httpModule);
    }
 
    @Test
-   public void testAddBothWhenNotLive() {
+   public void testAddBothWhenDoesntRequireHttp() {
       List<Module> modules = new ArrayList<Module>();
-      S3ContextFactory.addHttpModuleIfNeededAndNotPresent(modules);
-      S3ContextFactory.addLoggingModuleIfNotPresent(modules);
+      TestCloudContextBuilder builder = new TestCloudContextBuilder(new Properties());
+      builder.addHttpModuleIfNeededAndNotPresent(modules);
+      builder.addLoggingModuleIfNotPresent(modules);
       assertEquals(modules.size(), 1);
       assert modules.remove(0) instanceof JDKLoggingModule;
+   }
+
+   @RequiresHttp
+   class RequiresHttpModule implements Module {
+
+      public void configure(Binder arg0) {
+      }
+
    }
 
    @Test
    public void testAddBothWhenLive() {
       List<Module> modules = new ArrayList<Module>();
-      modules.add(new LiveS3ConnectionModule());
-      S3ContextFactory.addHttpModuleIfNeededAndNotPresent(modules);
-      S3ContextFactory.addLoggingModuleIfNotPresent(modules);
+      modules.add(new RequiresHttpModule());
+      TestCloudContextBuilder builder = new TestCloudContextBuilder(new Properties());
+      builder.addHttpModuleIfNeededAndNotPresent(modules);
+      builder.addLoggingModuleIfNotPresent(modules);
       assertEquals(modules.size(), 3);
-      assert modules.remove(0) instanceof LiveS3ConnectionModule;
+      assert modules.remove(0) instanceof RequiresHttpModule;
       assert modules.remove(0) instanceof JavaUrlHttpFutureCommandClientModule;
       assert modules.remove(0) instanceof JDKLoggingModule;
    }
 
    public void testBuilder() {
-      String awsAccessKeyId = "awsAccessKeyId";
-      String awsSecretAccessKey = "awsSecretAccessKey";
+      String id = "awsAccessKeyId";
+      String secret = "awsSecretAccessKey";
       String httpAddress = "httpAddress";
       int httpMaxRetries = 9875;
       int httpPort = 3827;
       boolean httpSecure = false;
-      int poolIoWorkerThreads= 2727;
+      int poolIoWorkerThreads = 2727;
       int poolMaxConnectionReuse = 3932;
       int poolMaxConnections = 3382;
       int poolMaxSessionFailures = 857;
       int poolRequestInvokerThreads = 8362;
-      
+
       AbstractModule module1 = new AbstractModule() {
 
          @Override
@@ -131,23 +197,23 @@ public class S3ContextFactoryTest {
          }
       };
       AbstractModule module2 = new AbstractModule() {
-         
+
          @Override
          protected void configure() {
          }
       };
-      
-      S3ContextFactory factory = S3ContextFactory.createContext(awsAccessKeyId, awsSecretAccessKey);
-      factory.withHttpAddress(httpAddress);
-      factory.withHttpMaxRetries(httpMaxRetries);
-      factory.withHttpPort(httpPort);
-      factory.withHttpSecure(httpSecure);
-      factory.withModule(module1);
-      factory.withModules(module2);
-      factory.withPoolIoWorkerThreads(poolIoWorkerThreads);
-      factory.withPoolMaxConnectionReuse(poolMaxConnectionReuse);
-      factory.withPoolMaxConnections(poolMaxConnections);
-      factory.withPoolMaxSessionFailures(poolMaxSessionFailures);
-      factory.withPoolRequestInvokerThreads(poolRequestInvokerThreads);      
+      TestCloudContextBuilder builder = new TestCloudContextBuilder(new Properties());
+      builder.authenticate(id, secret);
+      builder.withHttpAddress(httpAddress);
+      builder.withHttpMaxRetries(httpMaxRetries);
+      builder.withHttpPort(httpPort);
+      builder.withHttpSecure(httpSecure);
+      builder.withModule(module1);
+      builder.withModules(module2);
+      builder.withPoolIoWorkerThreads(poolIoWorkerThreads);
+      builder.withPoolMaxConnectionReuse(poolMaxConnectionReuse);
+      builder.withPoolMaxConnections(poolMaxConnections);
+      builder.withPoolMaxSessionFailures(poolMaxSessionFailures);
+      builder.withPoolRequestInvokerThreads(poolRequestInvokerThreads);
    }
 }

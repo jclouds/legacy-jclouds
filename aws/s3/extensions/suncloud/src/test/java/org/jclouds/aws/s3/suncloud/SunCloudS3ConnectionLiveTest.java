@@ -24,7 +24,7 @@
 package org.jclouds.aws.s3.suncloud;
 
 import org.jclouds.aws.s3.S3ConnectionLiveTest;
-import org.jclouds.aws.s3.S3ContextFactory;
+import org.jclouds.aws.s3.S3ContextBuilder;
 import org.jclouds.aws.s3.suncloud.config.SunCloudS3ConnectionModule;
 import org.jclouds.aws.s3.suncloud.xml.config.SunCloudS3ParserModule;
 import org.testng.annotations.Test;
@@ -38,11 +38,11 @@ import org.testng.annotations.Test;
 public class SunCloudS3ConnectionLiveTest extends S3ConnectionLiveTest {
 
    @Override
-   protected S3ContextFactory buildS3ContextFactory(String AWSAccessKeyId, String AWSSecretAccessKey) {
-      return S3ContextFactory.createContext(AWSAccessKeyId, AWSSecretAccessKey).withModules(
-               new SunCloudS3ConnectionModule(), new SunCloudS3ParserModule()).withHttpAddress(
-               "object.storage.network.com").withHttpSecure(false).withHttpPort(80);
-
+   protected S3ContextBuilder buildS3ContextFactory(String AWSAccessKeyId, String AWSSecretAccessKey) {
+      return (S3ContextBuilder) S3ContextBuilder.newBuilder(AWSAccessKeyId, AWSSecretAccessKey)
+               .withModules(new SunCloudS3ConnectionModule(), new SunCloudS3ParserModule())
+               .withHttpAddress("object.storage.network.com").withHttpSecure(false)
+               .withHttpPort(80);
    }
 
 }

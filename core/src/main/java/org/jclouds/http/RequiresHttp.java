@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.config;
+package org.jclouds.http;
 
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -30,13 +30,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * designates the the module configures a {@link org.jclouds.aws.s3.S3Connection}
+ * designates the cloud has an HTTP API
  * 
  * @author Adrian Cole
  * 
  */
 @Retention(RUNTIME)
 @Target(TYPE)
-public @interface S3ConnectionModule {
+public @interface RequiresHttp {
 
 }

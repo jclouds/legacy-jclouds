@@ -45,6 +45,11 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-objectstore-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>jclouds-aws-core</artifactId>
             <version>${project.version}</version>
         </dependency>

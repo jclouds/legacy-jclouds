@@ -24,8 +24,8 @@
 package org.jclouds.aws.s3.suncloud.config;
 
 import org.jclouds.aws.s3.config.LiveS3ConnectionModule;
-import org.jclouds.aws.s3.config.S3ConnectionModule;
 import org.jclouds.aws.s3.suncloud.handlers.ParseSunCloudS3ErrorFromXmlContent;
+import org.jclouds.cloud.ConfiguresCloudConnection;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.ServerError;
@@ -37,7 +37,7 @@ import com.google.inject.Scopes;
  * 
  * @author Adrian Cole
  */
-@S3ConnectionModule
+@ConfiguresCloudConnection
 public class SunCloudS3ConnectionModule extends LiveS3ConnectionModule {
 
    protected void bindErrorHandlers() {

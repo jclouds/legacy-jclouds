@@ -21,22 +21,30 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.reference;
-
-import org.jclouds.aws.reference.AWSConstants;
-import org.jclouds.objectstore.reference.ObjectStoreConstants;
+package org.jclouds.cloud;
 
 /**
- * Configuration properties and constants used in S3 connections.
+ * Represents an authenticated context to the cloud.
+ * 
+ * <h2>Note</h2> Please issue {@link #close()} when you are finished with this context in order to
+ * release resources.
+ * 
  * 
  * @author Adrian Cole
+ * 
  */
-public interface S3Constants extends AWSConstants, S3Headers, ObjectStoreConstants {
+public interface CloudContext<C> {
 
    /**
-    * S3 service's XML Namespace, as used in XML request and response documents.
+    * low-level api to the cloud. Threadsafe implementations will return a singleton.
+    * 
+    * @return a connection to the cloud
     */
-   public static final String S3_REST_API_XML_NAMESPACE = "http://s3.amazonaws.com/doc/2006-03-01/";
-   public static final String ENDPOINT = "Endpoint";
+   C getConnection();
+
+   /**
+    * Closes all connections to Cloud Files.
+    */
+   void close();
 
 }

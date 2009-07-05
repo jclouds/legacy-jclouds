@@ -30,39 +30,29 @@ import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.util.Utils;
 
-import com.google.inject.Inject;
-
 /**
  * // TODO: Adrian: Document this!
  * 
  * @author Adrian Cole
  */
-public class ReturnStringIf200 extends
-	HttpFutureCommand.ResponseCallable<String> {
+public class ReturnStringIf200 extends HttpFutureCommand.ResponseCallable<String> {
 
-    @Inject
-    public ReturnStringIf200() {
-	super();
-    }
-
-    public String call() throws HttpException {
-	checkCode();
-	if (getResponse().getStatusCode() == 200) {
-	    InputStream entity = getResponse().getContent();
-	    if (entity == null)
-		throw new HttpException("no content");
-	    String toReturn = null;
-	    try {
-		toReturn = Utils.toStringAndClose(entity);
-	    } catch (IOException e) {
-		throw new HttpException(String.format(
-			"Couldn't receive response %1$s, entity: %2$s ",
-			getResponse(), toReturn), e);
-	    }
-	    return toReturn;
-	} else {
-	    throw new HttpException(String.format(
-		    "Unhandled status code  - %1$s", getResponse()));
-	}
-    }
+   public String call() throws HttpException {
+      checkCode();
+      if (getResponse().getStatusCode() == 200) {
+         InputStream entity = getResponse().getContent();
+         if (entity == null)
+            throw new HttpException("no content");
+         String toReturn = null;
+         try {
+            toReturn = Utils.toStringAndClose(entity);
+         } catch (IOException e) {
+            throw new HttpException(String.format("Couldn't receive response %1$s, entity: %2$s ",
+                     getResponse(), toReturn), e);
+         }
+         return toReturn;
+      } else {
+         throw new HttpException(String.format("Unhandled status code  - %1$s", getResponse()));
+      }
+   }
 }

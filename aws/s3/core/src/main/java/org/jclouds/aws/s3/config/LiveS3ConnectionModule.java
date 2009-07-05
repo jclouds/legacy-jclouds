@@ -36,10 +36,12 @@ import org.jclouds.aws.s3.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.s3.handlers.AWSRedirectionRetryHandler;
 import org.jclouds.aws.s3.handlers.ParseAWSErrorFromXmlContent;
 import org.jclouds.aws.s3.internal.LiveS3Connection;
+import org.jclouds.cloud.ConfiguresCloudConnection;
 import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpRetryHandler;
+import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
@@ -57,7 +59,8 @@ import com.google.inject.name.Named;
  * 
  * @author Adrian Cole
  */
-@S3ConnectionModule
+@ConfiguresCloudConnection
+@RequiresHttp
 public class LiveS3ConnectionModule extends AbstractModule {
    @Resource
    protected Logger logger = Logger.NULL;

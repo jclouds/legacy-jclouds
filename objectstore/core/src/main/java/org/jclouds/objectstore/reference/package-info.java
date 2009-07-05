@@ -21,24 +21,8 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.http.config;
-
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
-import org.jclouds.http.HttpFutureCommandClient;
-
 /**
- * designates the the module configures a {@link HttpFutureCommandClient}
- * 
+ * This package contains properties and reference data used in S3.
  * @author Adrian Cole
- * 
  */
-@Retention(RUNTIME)
-@Target(TYPE)
-public @interface HttpFutureCommandClientModule {
-
-}
+package org.jclouds.objectstore.reference;

@@ -32,7 +32,6 @@ import javax.annotation.Resource;
 import org.jclouds.aws.s3.CreateListOwnedBuckets;
 import org.jclouds.aws.s3.S3Context;
 import org.jclouds.aws.s3.S3ContextFactory;
-import org.jclouds.aws.s3.config.LiveS3ConnectionModule;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.logging.Logger;
 
@@ -69,8 +68,7 @@ public class MainApp {
       String bucketName = args[2];
 
       // Init
-      context = S3ContextFactory.createS3Context(accesskeyid, secretkey,
-               new LiveS3ConnectionModule());
+      context = S3ContextFactory.createS3Context(accesskeyid, secretkey);
       listMyOwnBuckets = new CreateListOwnedBuckets(context);
 
       try {

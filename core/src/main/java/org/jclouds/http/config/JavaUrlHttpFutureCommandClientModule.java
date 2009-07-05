@@ -33,7 +33,7 @@ import com.google.inject.AbstractModule;
  * 
  * @author Adrian Cole
  */
-@HttpFutureCommandClientModule
+@ConfiguresHttpFutureCommandClient
 public class JavaUrlHttpFutureCommandClientModule extends AbstractModule {
 
    @Override

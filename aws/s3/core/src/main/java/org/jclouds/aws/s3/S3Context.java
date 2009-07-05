@@ -23,11 +23,13 @@
  */
 package org.jclouds.aws.s3;
 
+import org.jclouds.cloud.CloudContext;
+
 /**
  * Represents an authenticated context to S3.
  * 
- * <h2>Note</h2> Please issue {@link #close()} when you are finished with this
- * context in order to release resources.
+ * <h2>Note</h2> Please issue {@link #close()} when you are finished with this context in order to
+ * release resources.
  * 
  * 
  * @see S3Connection
@@ -36,33 +38,20 @@ package org.jclouds.aws.s3;
  * @author Adrian Cole
  * 
  */
-public interface S3Context {
+public interface S3Context extends CloudContext<S3Connection> {
 
-    /**
-     * low-level api to S3. Threadsafe implementations will return a singleton.
-     * 
-     * @return a connection to S3
-     */
-    S3Connection getConnection();
+   /**
+    * Creates a <code>Map<String,InputStream></code> view of the specified bucket.
+    * 
+    * @param bucket
+    */
+   S3InputStreamMap createInputStreamMap(String bucket);
 
-    /**
-     * Creates a <code>Map<String,InputStream></code> view of the specified
-     * bucket.
-     * 
-     * @param bucket
-     */
-    S3InputStreamMap createInputStreamMap(String bucket);
-
-    /**
-     * Creates a <code>Map<String,S3Object></code> view of the specified bucket.
-     * 
-     * @param bucket
-     */
-    S3ObjectMap createS3ObjectMap(String bucket);
-
-    /**
-     * Closes all connections to S3.
-     */
-    void close();
+   /**
+    * Creates a <code>Map<String,S3Object></code> view of the specified bucket.
+    * 
+    * @param bucket
+    */
+   S3ObjectMap createS3ObjectMap(String bucket);
 
 }

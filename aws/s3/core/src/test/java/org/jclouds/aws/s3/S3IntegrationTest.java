@@ -174,14 +174,13 @@ public class S3IntegrationTest {
    }
 
    protected void createStubS3Context() {
-      context = S3ContextFactory.createContext("stub", "stub").withHttpAddress("stub").withModule(
-               new StubS3ConnectionModule()).build();
+      context = S3ContextFactory.createS3Context("stub", "stub", new StubS3ConnectionModule());
       SANITY_CHECK_RETURNED_BUCKET_NAME = true;
    }
 
    protected void createLiveS3Context(String AWSAccessKeyId, String AWSSecretAccessKey) {
-      context = buildS3ContextFactory(AWSAccessKeyId, AWSSecretAccessKey).withModule(
-               createHttpModule()).withModule(new Log4JLoggingModule()).build();
+      context = S3ContextFactory.createS3Context(AWSAccessKeyId, AWSSecretAccessKey,
+               createHttpModule(), new Log4JLoggingModule());
    }
 
    public String getBucketName() throws InterruptedException, ExecutionException, TimeoutException {
@@ -261,9 +260,9 @@ public class S3IntegrationTest {
       }
    }
 
-   protected S3ContextFactory buildS3ContextFactory(String AWSAccessKeyId, String AWSSecretAccessKey) {
-      return S3ContextFactory.createContext(AWSAccessKeyId, AWSSecretAccessKey).withSaxDebug()
-               .withHttpSecure(false).withHttpPort(80);
+   protected S3ContextBuilder buildS3ContextFactory(String AWSAccessKeyId, String AWSSecretAccessKey) {
+      return (S3ContextBuilder) S3ContextBuilder.newBuilder(AWSAccessKeyId, AWSSecretAccessKey)
+               .withSaxDebug().withHttpSecure(false).withHttpPort(80);
    }
 
    protected Module createHttpModule() {

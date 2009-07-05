@@ -27,6 +27,7 @@ import java.net.URI;
 
 import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.internal.StubS3Connection;
+import org.jclouds.cloud.ConfiguresCloudConnection;
 
 import com.google.inject.AbstractModule;
 
@@ -35,7 +36,7 @@ import com.google.inject.AbstractModule;
  * 
  * @author Adrian Cole
  */
-@S3ConnectionModule
+@ConfiguresCloudConnection
 public class StubS3ConnectionModule extends AbstractModule {
    protected void configure() {
       bind(S3Connection.class).to(StubS3Connection.class);

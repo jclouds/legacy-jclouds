@@ -27,24 +27,19 @@ import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpFutureCommand;
 
-import com.google.inject.Inject;
-
 /**
  * Simply returns true when the http response code is in the range 200-299.
  * 
  * @author Adrian Cole
  */
-public class ReturnTrueIf2xx extends
-	HttpFutureCommand.ResponseCallable<Boolean> {
+public class ReturnTrueIf2xx extends HttpFutureCommand.ResponseCallable<Boolean> {
 
-    @Inject
-    public ReturnTrueIf2xx() {
-	super();
-    }
-
-    public Boolean call() throws HttpException {
-	checkCode();
-	IOUtils.closeQuietly(getResponse().getContent());
-	return true;
-    }
+   public Boolean call() throws HttpException {
+      IOUtils.closeQuietly(getResponse().getContent());
+      int code = getResponse().getStatusCode();
+      if (code >= 300 || code < 200) {
+         throw new IllegalStateException("incorrect code for this operation: " + getResponse());
+      }
+      return true;
+   }
 }

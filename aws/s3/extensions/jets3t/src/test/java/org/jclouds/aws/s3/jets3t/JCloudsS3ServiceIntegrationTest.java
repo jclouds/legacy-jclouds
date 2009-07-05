@@ -61,7 +61,6 @@ import org.jets3t.service.multithread.CreateObjectsEvent;
 import org.jets3t.service.multithread.S3ServiceEventAdaptor;
 import org.jets3t.service.multithread.S3ServiceEventListener;
 import org.jets3t.service.multithread.S3ServiceMulti;
-import org.jets3t.service.multithread.S3ServiceSimpleMulti;
 import org.jets3t.service.security.AWSCredentials;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

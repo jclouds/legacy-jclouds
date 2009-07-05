@@ -27,17 +27,15 @@ import org.testng.annotations.Test;
 
 /**
  * This performs the same test as {@link S3ConnectionLiveTest}, except using SSL.
- *
+ * 
  * @author Adrian Cole
  */
-@Test(groups = {"live"}, testName = "s3.SecureS3ConnectionLiveTest")
+@Test(groups = { "live" }, testName = "s3.SecureS3ConnectionLiveTest")
 public class SecureS3ConnectionLiveTest extends S3ConnectionLiveTest {
-    @Override
-    protected S3ContextFactory buildS3ContextFactory(String AWSAccessKeyId,
-                                           String AWSSecretAccessKey) {
-        return S3ContextFactory.createContext(AWSAccessKeyId, AWSSecretAccessKey)
-                 .withHttpSecure(true)
-                 .withHttpPort(443);
-    }
+   @Override
+   protected S3ContextBuilder buildS3ContextFactory(String AWSAccessKeyId, String AWSSecretAccessKey) {
+      return (S3ContextBuilder) S3ContextBuilder.newBuilder(AWSAccessKeyId, AWSSecretAccessKey)
+               .withHttpSecure(true).withHttpPort(443);
+   }
 
 }

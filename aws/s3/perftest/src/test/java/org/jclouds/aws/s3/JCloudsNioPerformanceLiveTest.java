@@ -28,22 +28,11 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Module;
 
-@Test(sequential = true, testName = "s3.JCloudsNioPerformanceLiveTest", groups = {"live"})
+@Test(sequential = true, testName = "s3.JCloudsNioPerformanceLiveTest", groups = { "live" })
 public class JCloudsNioPerformanceLiveTest extends BaseJCloudsPerformance {
 
-    @Override
-    protected S3ContextFactory buildS3ContextFactory(String AWSAccessKeyId,
-                                           String AWSSecretAccessKey) {
-        return super.buildS3ContextFactory(AWSAccessKeyId, AWSSecretAccessKey)
-                  .withPoolMaxConnectionReuse(75)
-                  .withPoolMaxSessionFailures(2)
-                  .withPoolRequestInvokerThreads(1)
-                  .withPoolIoWorkerThreads(2)
-                  .withPoolMaxConnections(12);
-    }
-
-    @Override
-    protected Module createHttpModule() {
-        return new HttpNioConnectionPoolClientModule();
-    }
+   @Override
+   protected Module createHttpModule() {
+      return new HttpNioConnectionPoolClientModule();
+   }
 }

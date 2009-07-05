@@ -127,16 +127,16 @@ public class FutureCommand<E, Q extends Request<E>, R, T> implements Future<T> {
    }
 
    public interface ResponseRunnableFuture<R, T> extends Response<R>, Runnable, Future<T> {
-      public void setException(Throwable throwable);
+      void setException(Throwable throwable);
    }
 
    public interface ResponseCallable<R, T> extends Response<R>, Callable<T> {
    }
 
    public interface Response<R> {
-      public R getResponse();
+      R getResponse();
 
-      public void setResponse(R response);
+      void setResponse(R response);
    }
 
 }

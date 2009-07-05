@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.aws.s3.CreateListOwnedBuckets;
 import org.jclouds.aws.s3.S3Context;
 import org.jclouds.aws.s3.S3ContextFactory;
-import org.jclouds.aws.s3.config.LiveS3ConnectionModule;
 import org.jclouds.aws.s3.config.StubS3ConnectionModule;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.testng.annotations.AfterClass;
@@ -61,11 +60,10 @@ public class CreateListOwnedBucketsIntegrationTest {
       AWSSecretAccessKey = AWSSecretAccessKey != null ? AWSSecretAccessKey : sysAWSSecretAccessKey;
 
       if ((AWSAccessKeyId != null) && (AWSSecretAccessKey != null))
-         context = S3ContextFactory.createS3Context(AWSAccessKeyId, AWSSecretAccessKey,
-                  new LiveS3ConnectionModule());
+         context = S3ContextFactory.createS3Context(AWSAccessKeyId, AWSSecretAccessKey);
       else
-         context = S3ContextFactory.createContext("stub", "stub").withHttpAddress("stub")
-                  .withModule(new StubS3ConnectionModule()).build();
+         context = S3ContextFactory.createS3Context("stub", "stub", new StubS3ConnectionModule());
+
    }
 
    @Test(groups = { "integration", "live" })

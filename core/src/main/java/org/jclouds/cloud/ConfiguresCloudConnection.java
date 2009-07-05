@@ -21,22 +21,22 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.reference;
+package org.jclouds.cloud;
 
-import org.jclouds.aws.reference.AWSConstants;
-import org.jclouds.objectstore.reference.ObjectStoreConstants;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
 /**
- * Configuration properties and constants used in S3 connections.
+ * designates the module configures a Connection to a cloud.
  * 
  * @author Adrian Cole
+ * 
  */
-public interface S3Constants extends AWSConstants, S3Headers, ObjectStoreConstants {
-
-   /**
-    * S3 service's XML Namespace, as used in XML request and response documents.
-    */
-   public static final String S3_REST_API_XML_NAMESPACE = "http://s3.amazonaws.com/doc/2006-03-01/";
-   public static final String ENDPOINT = "Endpoint";
+@Retention(RUNTIME)
+@Target(TYPE)
+public @interface ConfiguresCloudConnection {
 
 }

@@ -68,14 +68,14 @@ public abstract class BaseS3Map<V> implements S3Map<String, V> {
     * maximum duration of an S3 Request
     */
    @Inject(optional = true)
-   @Named(S3Constants.PROPERTY_S3_MAP_TIMEOUT)
+   @Named(S3Constants.PROPERTY_OBJECTMAP_TIMEOUT)
    protected long requestTimeoutMilliseconds = 10000;
 
    /**
     * time to pause before retrying a transient failure
     */
    @Inject(optional = true)
-   @Named(S3Constants.PROPERTY_S3_MAP_RETRY)
+   @Named(S3Constants.PROPERTY_OBJECTMAP_RETRY)
    protected long requestRetryMilliseconds = 10;
 
    @Inject

@@ -38,33 +38,30 @@ import com.google.inject.name.Named;
  * 
  * @author Adrian Cole
  */
-public abstract class FutureCommandConnectionPoolClientModule<C> extends
-	AbstractModule {
-    protected void configure() {
-	install(new LifeCycleModule());
-	bind(AtomicInteger.class).toInstance(new AtomicInteger());// max errors
-    }
+public abstract class FutureCommandConnectionPoolClientModule<C> extends AbstractModule {
 
-    @Provides
-    // @Singleton per uri...
-    public abstract BlockingQueue<C> provideAvailablePool(
-	    @Named(PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS) int max)
-	    throws Exception;
+   protected void configure() {
+      install(new LifeCycleModule());
+      bind(AtomicInteger.class).toInstance(new AtomicInteger());// max errors
+   }
 
-    /**
-     * controls production and destruction of real connections.
-     * <p/>
-     * aquire before a new connection is created release after an error has
-     * occurred
-     * 
-     * @param max
-     * @throws Exception
-     */
-    @Provides
-    // @Singleton per uri...
-    public Semaphore provideTotalConnectionSemaphore(
-	    @Named(PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS) int max)
-	    throws Exception {
-	return new Semaphore(max, true);
-    }
+   @Provides
+   // @Singleton per uri...
+   public abstract BlockingQueue<C> provideAvailablePool(
+            @Named(PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS) int max) throws Exception;
+
+   /**
+    * controls production and destruction of real connections.
+    * <p/>
+    * aquire before a new connection is created release after an error has occurred
+    * 
+    * @param max
+    * @throws Exception
+    */
+   @Provides
+   // @Singleton per uri...
+   public Semaphore provideTotalConnectionSemaphore(
+            @Named(PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS) int max) throws Exception {
+      return new Semaphore(max, true);
+   }
 }

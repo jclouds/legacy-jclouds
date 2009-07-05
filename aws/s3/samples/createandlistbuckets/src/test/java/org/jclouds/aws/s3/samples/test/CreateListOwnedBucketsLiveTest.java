@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.aws.s3.CreateListOwnedBuckets;
 import org.jclouds.aws.s3.S3Context;
 import org.jclouds.aws.s3.S3ContextFactory;
-import org.jclouds.aws.s3.config.LiveS3ConnectionModule;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -59,8 +58,7 @@ public class CreateListOwnedBucketsLiveTest {
       AWSAccessKeyId = AWSAccessKeyId != null ? AWSAccessKeyId : sysAWSAccessKeyId;
       AWSSecretAccessKey = AWSSecretAccessKey != null ? AWSSecretAccessKey : sysAWSSecretAccessKey;
 
-      context = S3ContextFactory.createS3Context(AWSAccessKeyId, AWSSecretAccessKey,
-               new LiveS3ConnectionModule());
+      context = S3ContextFactory.createS3Context(AWSAccessKeyId, AWSSecretAccessKey);
 
    }
 
