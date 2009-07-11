@@ -24,16 +24,16 @@
 package org.jclouds.rackspace.cloudfiles;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.command.pool.PoolConstants.PROPERTY_POOL_IO_WORKER_THREADS;
-import static org.jclouds.command.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS;
-import static org.jclouds.command.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTION_REUSE;
-import static org.jclouds.command.pool.PoolConstants.PROPERTY_POOL_MAX_SESSION_FAILURES;
-import static org.jclouds.command.pool.PoolConstants.PROPERTY_POOL_REQUEST_INVOKER_THREADS;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_ADDRESS;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_REDIRECTS;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_RETRIES;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_SECURE;
 import static org.jclouds.http.HttpConstants.PROPERTY_SAX_DEBUG;
+import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_IO_WORKER_THREADS;
+import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS;
+import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTION_REUSE;
+import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_SESSION_FAILURES;
+import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_REQUEST_INVOKER_THREADS;
 import static org.jclouds.rackspace.reference.RackSpaceConstants.PROPERTY_RACKSPACE_KEY;
 import static org.jclouds.rackspace.reference.RackSpaceConstants.PROPERTY_RACKSPACE_USER;
 
@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.jclouds.cloud.CloudContextBuilder;
-import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
+import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 
 import com.google.inject.Injector;
@@ -55,7 +55,7 @@ import com.google.inject.Module;
  * <p/>
  * <p/>
  * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
- * {@link JavaUrlHttpFutureCommandClientModule http transports} will be installed.
+ * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
  * @author Adrian Cole, Andrew Newdigate
  * @see CloudFilesContext

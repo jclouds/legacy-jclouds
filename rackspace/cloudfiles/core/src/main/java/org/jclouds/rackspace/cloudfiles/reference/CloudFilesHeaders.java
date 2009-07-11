@@ -23,7 +23,6 @@
  */
 package org.jclouds.rackspace.cloudfiles.reference;
 
-import org.jclouds.http.HttpHeaders;
 
 /**
  * Additional headers specified by RackSpace Cloud Files REST API.
@@ -32,7 +31,7 @@ import org.jclouds.http.HttpHeaders;
  * @author Adrian Cole
  * 
  */
-public interface CloudFilesHeaders extends HttpHeaders {
+public interface CloudFilesHeaders {
 
    public static final String ACCOUNT_BYTES_USED = "X-Account-Bytes-Used";
    public static final String ACCOUNT_CONTAINER_COUNT = "X-Account-Container-Count";
