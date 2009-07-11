@@ -38,6 +38,7 @@
     <name>jclouds</name>
     <modules>
         <module>project</module>
+        <module>thirdparty</module>
         <module>core</module>
         <module>objectstore</module>
         <module>extensions</module>

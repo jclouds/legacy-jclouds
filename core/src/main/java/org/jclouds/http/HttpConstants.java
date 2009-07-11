@@ -28,11 +28,19 @@ package org.jclouds.http;
  * 
  * @author Adrian Cole
  */
-public interface HttpConstants extends HttpHeaders, ContentTypes {
+public interface HttpConstants {
    public static final String PROPERTY_HTTP_SECURE = "jclouds.http.secure";
    public static final String PROPERTY_HTTP_PORT = "jclouds.http.port";
    public static final String PROPERTY_HTTP_ADDRESS = "jclouds.http.address";
    public static final String PROPERTY_HTTP_MAX_RETRIES = "jclouds.http.max-retries";
    public static final String PROPERTY_HTTP_MAX_REDIRECTS = "jclouds.http.max-redirects";
    public static final String PROPERTY_SAX_DEBUG = "jclouds.http.sax.debug";
+   /**
+    * longest time a single request can take before throwing an exception.
+    */
+   public static final String PROPERTY_HTTP_REQUEST_TIMEOUT = "jclouds.http.request.timeout";
+   /**
+    * allow mismatch between hostname and ssl cerificate.
+    */
+   public static final String PROPERTY_HTTP_RELAX_HOSTNAME = "jclouds.http.relax-hostname";
 }

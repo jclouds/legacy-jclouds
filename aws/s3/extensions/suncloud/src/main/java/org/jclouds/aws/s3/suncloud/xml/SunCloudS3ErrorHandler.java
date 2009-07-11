@@ -25,7 +25,7 @@ package org.jclouds.aws.s3.suncloud.xml;
 
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.s3.suncloud.domain.SunCloudS3Error;
-import org.jclouds.http.commands.callables.xml.ParseSax;
+import org.jclouds.http.functions.ParseSax;
 
 /**
  * Parses the error from the Sun Cloud S3 REST API.

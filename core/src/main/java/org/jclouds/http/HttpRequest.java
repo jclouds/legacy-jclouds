@@ -25,54 +25,55 @@ package org.jclouds.http;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.InputStream;
 import java.net.URI;
 
-import javax.annotation.Resource;
-
 import org.jclouds.command.Request;
-import org.jclouds.logging.Logger;
+
+import com.google.common.collect.Multimap;
 
 /**
- * Represents a request that can be executed within {@link HttpFutureCommandClient}
+ * Represents a request that can be executed within {@link HttpCommandExecutorService}
  * 
  * @author Adrian Cole
  */
 public class HttpRequest extends HttpMessage implements Request<URI> {
 
-   // mutable for purposes of redirects
-   private URI endPoint;
-   private HttpMethod method;
-   
-   private final String uri;
-   private Object payload;
-
-   @Resource
-   protected Logger logger = Logger.NULL;
+   private final HttpMethod method;
+   private final URI endpoint;
+   private Object entity;
 
    /**
     * 
     * @param endPoint
-    *           initial endPoint (ex. http://host:port ). This may change over the life of the
-    *           request due to redirects.
+    *           This may change over the life of the request due to redirects.
     * @param method
-    * @param uri
+    *           If the request is HEAD, this may change to GET due to redirects
     */
-   public HttpRequest(URI endPoint, HttpMethod method, String uri) {
-      this.endPoint = checkNotNull(endPoint, "endPoint");
+   public HttpRequest(HttpMethod method, URI endPoint) {
       this.method = checkNotNull(method, "method");
-      this.uri = checkNotNull(uri, "uri");
+      this.endpoint = checkNotNull(endPoint, "endPoint");
+   }
+
+   /**
+    * 
+    * @param endPoint
+    *           This may change over the life of the request due to redirects.
+    * @param method
+    *           If the request is HEAD, this may change to GET due to redirects
+    */
+   public HttpRequest(HttpMethod method, URI endPoint, Multimap<String, String> headers) {
+      this(method, endPoint);
+      setHeaders(checkNotNull(headers, "headers"));
    }
 
    @Override
    public String toString() {
       final StringBuilder sb = new StringBuilder();
       sb.append("HttpRequest");
-      sb.append("{endPoint='").append(endPoint).append('\'');
+      sb.append("{endPoint='").append(endpoint).append('\'');
       sb.append(", method='").append(method).append('\'');
-      sb.append(", uri='").append(uri).append('\'');
       sb.append(", headers=").append(headers);
-      sb.append(", payload set=").append(payload != null);
+      sb.append(", entity set=").append(entity != null);
       sb.append('}');
       return sb.toString();
    }
@@ -81,43 +82,16 @@ public class HttpRequest extends HttpMessage implements Request<URI> {
       return method;
    }
 
-   public String getUri() {
-      return uri;
+   public Object getEntity() {
+      return entity;
    }
 
-   public boolean isReplayable() {
-      Object content = getPayload();
-      if (content != null && content instanceof InputStream) {
-         logger.warn("%1$s: InputStreams are not replayable", toString());
-         return false;
-      }
-      return true;
+   public void setEntity(Object content) {
+      this.entity = content;
    }
 
-   public Object getPayload() {
-      return payload;
-   }
-
-   public void setPayload(Object content) {
-      this.payload = content;
-   }
-
-   /**
-    * only the scheme, host, and port of the URI designates the endpoint
-    */
-   public void setEndPoint(URI endPoint) {
-      this.endPoint = endPoint;
-   }
-
-   /**
-    * only the scheme, host, and port of the URI designates the endpoint
-    */
-   public URI getEndPoint() {
-      return endPoint;
-   }
-
-   public void setMethod(HttpMethod method) {
-      this.method = method;
+   public URI getEndpoint() {
+      return endpoint;
    }
 
 }

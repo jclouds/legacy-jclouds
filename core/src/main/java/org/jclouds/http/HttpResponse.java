@@ -27,7 +27,7 @@ import java.io.InputStream;
 
 
 /**
- * Represents a response produced from {@link HttpFutureCommandClient}
+ * Represents a response produced from {@link HttpCommandExecutorService}
  * 
  * @author Adrian Cole
  */

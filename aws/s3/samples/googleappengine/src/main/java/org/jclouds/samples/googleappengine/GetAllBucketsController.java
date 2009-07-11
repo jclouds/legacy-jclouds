@@ -26,7 +26,6 @@ package org.jclouds.samples.googleappengine;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
@@ -85,8 +84,7 @@ public class GetAllBucketsController extends HttpServlet {
 
    private void addMyBucketsToRequest(HttpServletRequest request) throws InterruptedException,
             ExecutionException, TimeoutException {
-      List<S3Bucket.Metadata> myBucketMetadata = context.getConnection().listOwnedBuckets().get(25,
-               TimeUnit.SECONDS);
+      List<S3Bucket.Metadata> myBucketMetadata = context.getConnection().listOwnedBuckets();
       List<BucketResult> myBuckets = Lists.transform(myBucketMetadata,
                metadataToBucketResultProvider.get());
       request.setAttribute("buckets", myBuckets);

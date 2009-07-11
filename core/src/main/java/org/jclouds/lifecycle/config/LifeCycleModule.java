@@ -33,7 +33,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -41,6 +40,7 @@ import javax.annotation.PreDestroy;
 import org.jclouds.lifecycle.Closer;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
 import com.google.inject.ProvisionException;
 import com.google.inject.TypeLiteral;
 import com.google.inject.spi.InjectionListener;
@@ -57,14 +57,20 @@ import com.google.inject.spi.TypeListener;
 public class LifeCycleModule extends AbstractModule {
 
    protected void configure() {
-      final ExecutorService executor = Executors.newCachedThreadPool();
-      bind(ExecutorService.class).toInstance(executor);
-      Closer closer = new Closer();
-      closer.addToClose(new Closeable() {
+
+      Closeable executorCloser = new Closeable() {
+         @Inject
+         ExecutorService executor;
+
          public void close() throws IOException {
+            assert executor != null;
             executor.shutdownNow();
          }
-      });
+      };
+
+      binder().requestInjection(executorCloser);
+      Closer closer = new Closer();
+      closer.addToClose(executorCloser);
       bind(Closer.class).toInstance(closer);
       bindPostInjectionInvoke(closer);
    }

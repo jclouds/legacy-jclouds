@@ -24,7 +24,7 @@
 package org.jclouds.aws.xml;
 
 import org.jclouds.aws.domain.AWSError;
-import org.jclouds.http.commands.callables.xml.ParseSax;
+import org.jclouds.http.functions.ParseSax;
 
 /**
  * Parses the error from the Amazon S3 REST API.

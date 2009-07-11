@@ -176,7 +176,7 @@ public abstract class BaseS3MapIntegrationTest<T> extends S3IntegrationTest {
    }
 
    /**
-    * containsValue() uses md5 comparison to bucket contents, so this can be subject to eventual
+    * containsValue() uses eTag comparison to bucket contents, so this can be subject to eventual
     * consistency problems.
     */
    protected void assertEventuallyContainsValue(final BaseS3Map<T> map, final Object value)

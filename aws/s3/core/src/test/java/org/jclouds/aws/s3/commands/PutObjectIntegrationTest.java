@@ -37,6 +37,7 @@ import org.jclouds.aws.s3.S3IntegrationTest;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.reference.S3Headers;
 import org.jclouds.aws.s3.util.S3Utils;
+import org.jclouds.http.HttpUtils;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -65,7 +66,7 @@ public class PutObjectIntegrationTest extends S3IntegrationTest {
       object.getMetadata().setContentType(type);
       object.setData(content);
       if (content instanceof InputStream) {
-         object.generateMd5();
+         object.generateETag();
       }
       String bucketName = getBucketName();
       try {
@@ -92,7 +93,7 @@ public class PutObjectIntegrationTest extends S3IntegrationTest {
       object.getMetadata().setContentDisposition("attachment; filename=hello.txt");
       object.getMetadata().getUserMetadata().put(S3Headers.USER_METADATA_PREFIX + "adrian",
                "powderpuff");
-      object.getMetadata().setMd5(S3Utils.md5(TEST_STRING.getBytes()));
+      object.getMetadata().setETag(HttpUtils.eTag(TEST_STRING.getBytes()));
       String bucketName = getBucketName();
       try {
          addObjectToBucket(bucketName, object);
@@ -106,7 +107,7 @@ public class PutObjectIntegrationTest extends S3IntegrationTest {
          assertEquals(newObject.getMetadata().getSize(), TEST_STRING.length());
          assertEquals(newObject.getMetadata().getUserMetadata().values().iterator().next(),
                   "powderpuff");
-         assertEquals(newObject.getMetadata().getMd5(), S3Utils.md5(TEST_STRING.getBytes()));
+         assertEquals(newObject.getMetadata().getETag(), HttpUtils.eTag(TEST_STRING.getBytes()));
       } finally {
          returnBucket(bucketName);
       }

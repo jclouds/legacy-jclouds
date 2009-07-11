@@ -29,12 +29,21 @@ import static org.testng.Assert.assertTrue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import org.jclouds.http.HttpFutureCommand;
+import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpMethod;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.commands.callables.ReturnStringIf200;
+import org.jclouds.http.TransformingHttpCommandExecutorServiceImpl;
+import org.jclouds.http.TransformingHttpCommandImpl;
+import org.jclouds.http.functions.ReturnStringIf200;
+import org.jclouds.http.internal.JavaUrlHttpCommandExecutorService;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Function;
 
 @Test(groups = "unit", testName = "core.BackoffLimitedRetryHandler")
 public class BackoffLimitedRetryHandlerTest {
@@ -77,10 +86,20 @@ public class BackoffLimitedRetryHandlerTest {
       assertTrue(elapsedTime < 1250 + acceptableDelay);
    }
 
+   TransformingHttpCommandExecutorServiceImpl executorService;
+
+   @BeforeTest
+   void setupExecutorService() throws Exception {
+      ExecutorService execService = Executors.newCachedThreadPool();
+      JavaUrlHttpCommandExecutorService httpService = new JavaUrlHttpCommandExecutorService(
+               execService, new DelegatingRetryHandler(), new DelegatingErrorHandler());
+      executorService = new TransformingHttpCommandExecutorServiceImpl(httpService, execService);
+   }
+
    @Test
    void testClosesInputStream() throws InterruptedException, IOException {
-      HttpFutureCommand<String> command = new HttpFutureCommand<String>(END_POINT, HttpMethod.HEAD,
-               "uri", new ReturnStringIf200());
+      HttpCommand command = createCommand();
+
       HttpResponse response = new HttpResponse();
       InputStream inputStream = new InputStream() {
          boolean isOpen = true;
@@ -117,10 +136,21 @@ public class BackoffLimitedRetryHandlerTest {
       assertEquals(response.getContent().read(), -1);
    }
 
+   private final HttpRequest request = new HttpRequest(HttpMethod.HEAD, END_POINT);
+
+   private HttpCommand createCommand() {
+      HttpCommand command = new TransformingHttpCommandImpl<String>(executorService, request,
+               new ReturnStringIf200(), new Function<Exception, String>() {
+                  public String apply(Exception from) {
+                     return null;
+                  }
+               });
+      return command;
+   }
+
    @Test
    void testIncrementsFailureCount() throws InterruptedException {
-      HttpFutureCommand<String> command = new HttpFutureCommand<String>(END_POINT, HttpMethod.HEAD,
-               "uri", new ReturnStringIf200());
+      HttpCommand command = createCommand();
       HttpResponse response = new HttpResponse();
 
       handler.shouldRetryRequest(command, response);
@@ -135,8 +165,7 @@ public class BackoffLimitedRetryHandlerTest {
 
    @Test
    void testDisallowsExcessiveRetries() throws InterruptedException {
-      HttpFutureCommand<String> command = new HttpFutureCommand<String>(END_POINT, HttpMethod.HEAD,
-               "uri", new ReturnStringIf200());
+      HttpCommand command = createCommand();
       HttpResponse response = new HttpResponse();
 
       assertEquals(handler.shouldRetryRequest(command, response), true); // Failure 1

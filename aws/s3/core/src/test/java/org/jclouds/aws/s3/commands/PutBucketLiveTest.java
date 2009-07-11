@@ -23,17 +23,18 @@
  */
 package org.jclouds.aws.s3.commands;
 
-import org.jclouds.aws.s3.S3IntegrationTest;
-import static org.jclouds.aws.s3.commands.options.PutBucketOptions.Builder.createIn;
-import static org.jclouds.aws.s3.commands.options.PutBucketOptions.Builder.withBucketAcl;
-import org.jclouds.aws.s3.domain.S3Bucket.Metadata.LocationConstraint;
-import org.jclouds.aws.s3.domain.acl.CannedAccessPolicy;
-import org.jclouds.aws.s3.util.S3Utils;
-import org.testng.annotations.Test;
+import static org.jclouds.aws.s3.options.PutBucketOptions.Builder.createIn;
+import static org.jclouds.aws.s3.options.PutBucketOptions.Builder.withBucketAcl;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
+
+import org.jclouds.aws.s3.S3IntegrationTest;
+import org.jclouds.aws.s3.domain.CannedAccessPolicy;
+import org.jclouds.aws.s3.domain.S3Bucket.Metadata.LocationConstraint;
+import org.jclouds.util.Utils;
+import org.testng.annotations.Test;
 
 /**
  * Tests integrated functionality of all PutBucket commands.
@@ -53,7 +54,7 @@ public class PutBucketLiveTest extends S3IntegrationTest {
          client.putBucketIfNotExists(bucketName, withBucketAcl(CannedAccessPolicy.PUBLIC_READ))
                   .get(10, TimeUnit.SECONDS);
          URL url = new URL(String.format("http://%1$s.s3.amazonaws.com", bucketName));
-         S3Utils.toStringAndClose(url.openStream());
+         Utils.toStringAndClose(url.openStream());
       } finally {
          returnScratchBucket(bucketName);
       }
@@ -74,7 +75,7 @@ public class PutBucketLiveTest extends S3IntegrationTest {
       String bucketName = getBucketName();
       try {
          URL url = new URL(String.format("http://%1$s.s3.amazonaws.com", bucketName));
-         S3Utils.toStringAndClose(url.openStream());
+         Utils.toStringAndClose(url.openStream());
       } finally {
          returnBucket(bucketName);
       }
@@ -90,10 +91,10 @@ public class PutBucketLiveTest extends S3IntegrationTest {
       try {
          deleteBucket(bucketName);
          client.putBucketIfNotExists(bucketName,
-                  createIn(LocationConstraint.EU).withBucketAcl(CannedAccessPolicy.PUBLIC_READ)).get(
-                  10, TimeUnit.SECONDS);
-         URL url = new URL(String.format("http://%1$s.s3.amazonaws.com", bucketName));
-         S3Utils.toStringAndClose(url.openStream());
+                  createIn(LocationConstraint.EU).withBucketAcl(CannedAccessPolicy.PUBLIC_READ))
+                  .get(10, TimeUnit.SECONDS);
+         URL url = new URL(String.format("http://%s.s3.amazonaws.com", bucketName));
+         Utils.toStringAndClose(url.openStream());
       } finally {
          returnScratchBucket(bucketName);
       }

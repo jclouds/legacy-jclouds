@@ -32,7 +32,7 @@ import java.net.URLConnection;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.aws.s3.util.S3Utils;
+import org.jclouds.http.HttpUtils;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -46,22 +46,22 @@ import org.testng.annotations.Test;
 public class S3ConnectionLiveTest extends S3IntegrationTest {
 
    private static final String sysHttpStreamUrl = System.getProperty("jclouds.s3.httpstream.url");
-   private static final String sysHttpStreamMd5 = System.getProperty("jclouds.s3.httpstream.md5");
+   private static final String sysHttpStreamETag = System.getProperty("jclouds.s3.httpstream.eTag");
 
    @Test
-   @Parameters( { "jclouds.s3.httpstream.url", "jclouds.s3.httpstream.md5" })
-   public void testCopyUrl(@Optional String httpStreamUrl, @Optional String httpStreamMd5)
+   @Parameters( { "jclouds.s3.httpstream.url", "jclouds.s3.httpstream.eTag" })
+   public void testCopyUrl(@Optional String httpStreamUrl, @Optional String httpStreamETag)
             throws Exception {
       httpStreamUrl = checkNotNull(httpStreamUrl != null ? httpStreamUrl : sysHttpStreamUrl,
                "httpStreamUrl");
 
-      httpStreamMd5 = checkNotNull(httpStreamMd5 != null ? httpStreamMd5 : sysHttpStreamMd5,
-               "httpStreamMd5");
+      httpStreamETag = checkNotNull(httpStreamETag != null ? httpStreamETag : sysHttpStreamETag,
+               "httpStreamETag");
 
       String key = "hello";
 
       URL url = new URL(httpStreamUrl);
-      byte[] md5 = S3Utils.fromHexString(httpStreamMd5);
+      byte[] eTag = HttpUtils.fromHexString(httpStreamETag);
 
       URLConnection connection = url.openConnection();
       int length = connection.getContentLength();
@@ -69,12 +69,12 @@ public class S3ConnectionLiveTest extends S3IntegrationTest {
 
       S3Object object = new S3Object(key, input);
       object.setContentLength(length);
-      object.getMetadata().setMd5(md5);
+      object.getMetadata().setETag(eTag);
       object.getMetadata().setSize(length);
       String bucketName = getBucketName();
       try {
-         byte[] newMd5 = client.putObject(bucketName, object).get(30, TimeUnit.SECONDS);
-         assertEquals(newMd5, md5);
+         byte[] newETag = client.putObject(bucketName, object).get(30, TimeUnit.SECONDS);
+         assertEquals(newETag, eTag);
       } finally {
          returnBucket(bucketName);
       }

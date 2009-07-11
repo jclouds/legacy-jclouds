@@ -33,19 +33,27 @@ import com.google.common.collect.Multimap;
  */
 public interface HttpRequestOptions {
 
-    /**
-     * Builds headers representing options.
-     * 
-     * @return object that may contain headers.
-     */
-    Multimap<String, String> buildRequestHeaders();
+   /**
+    * Builds headers representing options.
+    * 
+    * @return multimap that may contain headers.
+    */
+   Multimap<String, String> buildRequestHeaders();
 
-    /**
-     * Builds a query string, ex. ?marker=toast
-     * 
-     * @return an http query string representing these options, or empty string
-     *         if none are present.
-     */
-    String buildQueryString();
+   /**
+    * Builds query parameters representing options.
+    * 
+    * @return multimap that may contain query parameters.
+    */
+   Multimap<String, String> buildQueryParameters();
+
+   /**
+    * Builds matrix parameters representing options.
+    * 
+    * @return multimap that may contain matrix parameters.
+    */
+   Multimap<String, String> buildMatrixParameters();
+   
+   String buildStringEntity();
 
 }

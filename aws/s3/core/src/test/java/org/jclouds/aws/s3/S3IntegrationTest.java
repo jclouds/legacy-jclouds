@@ -23,7 +23,7 @@
  */
 package org.jclouds.aws.s3;
 
-import static org.jclouds.aws.s3.commands.options.PutBucketOptions.Builder.createIn;
+import static org.jclouds.aws.s3.options.PutBucketOptions.Builder.createIn;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -45,7 +45,8 @@ import org.jclouds.aws.s3.domain.S3Bucket.Metadata;
 import org.jclouds.aws.s3.domain.S3Bucket.Metadata.LocationConstraint;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.aws.s3.util.S3Utils;
-import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
+import org.jclouds.http.HttpUtils;
+import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.util.Utils;
 import org.testng.ITestContext;
@@ -70,8 +71,8 @@ public class S3IntegrationTest {
    protected static int bucketCount = 20;
    protected static volatile int bucketIndex = 0;
 
-   protected byte[] goodMd5;
-   protected byte[] badMd5;
+   protected byte[] goodETag;
+   protected byte[] badETag;
    protected S3Connection client;
    protected S3Context context = null;
    protected boolean SANITY_CHECK_RETURNED_BUCKET_NAME = false;
@@ -169,8 +170,8 @@ public class S3IntegrationTest {
       }
       client = context.getConnection();
       assert client != null;
-      goodMd5 = S3Utils.md5(TEST_STRING);
-      badMd5 = S3Utils.md5("alf");
+      goodETag = HttpUtils.eTag(TEST_STRING);
+      badETag = HttpUtils.eTag("alf");
    }
 
    protected void createStubS3Context() {
@@ -179,8 +180,7 @@ public class S3IntegrationTest {
    }
 
    protected void createLiveS3Context(String AWSAccessKeyId, String AWSSecretAccessKey) {
-      context = S3ContextFactory.createS3Context(AWSAccessKeyId, AWSSecretAccessKey,
-               createHttpModule(), new Log4JLoggingModule());
+      context = buildS3ContextFactory(AWSAccessKeyId, AWSSecretAccessKey).buildContext();
    }
 
    public String getBucketName() throws InterruptedException, ExecutionException, TimeoutException {
@@ -212,7 +212,7 @@ public class S3IntegrationTest {
           * *substantially* slow down tests on a real server over a network.
           */
          if (SANITY_CHECK_RETURNED_BUCKET_NAME) {
-            if (!Iterables.any(client.listOwnedBuckets().get(), new Predicate<Metadata>() {
+            if (!Iterables.any(client.listOwnedBuckets(), new Predicate<Metadata>() {
                public boolean apply(Metadata md) {
                   return bucketName.equals(md.getName());
                }
@@ -262,16 +262,16 @@ public class S3IntegrationTest {
 
    protected S3ContextBuilder buildS3ContextFactory(String AWSAccessKeyId, String AWSSecretAccessKey) {
       return (S3ContextBuilder) S3ContextBuilder.newBuilder(AWSAccessKeyId, AWSSecretAccessKey)
-               .withSaxDebug().withHttpSecure(false).withHttpPort(80);
+               .withSaxDebug().relaxSSLHostname().withModule(new Log4JLoggingModule());
    }
 
    protected Module createHttpModule() {
-      return new JavaUrlHttpFutureCommandClientModule();
+      return new JavaUrlHttpCommandExecutorServiceModule();
    }
 
    protected void deleteEverything() throws Exception {
       try {
-         List<S3Bucket.Metadata> metadata = client.listOwnedBuckets().get(10, TimeUnit.SECONDS);
+         List<S3Bucket.Metadata> metadata = client.listOwnedBuckets();
          for (S3Bucket.Metadata metaDatum : metadata) {
             if (metaDatum.getName().startsWith(bucketPrefix.toLowerCase())) {
                deleteBucket(metaDatum.getName());
@@ -287,7 +287,7 @@ public class S3IntegrationTest {
     */
    protected void emptyBucket(final String name) throws InterruptedException, ExecutionException,
             TimeoutException {
-      if (client.bucketExists(name).get(10, TimeUnit.SECONDS)) {
+      if (client.bucketExists(name)) {
          // This can fail to be zero length because of stale bucket lists. Ex. client.listBucket()
          // could return 9 keys, when there are 10. When all the deletions finish, one entry would
          // be left in this case. Instead of failing, we will attempt this entire bucket deletion
@@ -331,9 +331,9 @@ public class S3IntegrationTest {
     */
    protected void deleteBucket(String name) throws InterruptedException, ExecutionException,
             TimeoutException {
-      if (client.bucketExists(name).get(10, TimeUnit.SECONDS)) {
+      if (client.bucketExists(name)) {
          emptyBucket(name);
-         client.deleteBucketIfEmpty(name).get(10, TimeUnit.SECONDS);
+         client.deleteBucketIfEmpty(name);
       }
    }
 

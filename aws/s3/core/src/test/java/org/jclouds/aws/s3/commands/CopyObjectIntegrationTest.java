@@ -23,11 +23,11 @@
  */
 package org.jclouds.aws.s3.commands;
 
-import static org.jclouds.aws.s3.commands.options.CopyObjectOptions.Builder.ifSourceMd5DoesntMatch;
-import static org.jclouds.aws.s3.commands.options.CopyObjectOptions.Builder.ifSourceMd5Matches;
-import static org.jclouds.aws.s3.commands.options.CopyObjectOptions.Builder.ifSourceModifiedSince;
-import static org.jclouds.aws.s3.commands.options.CopyObjectOptions.Builder.ifSourceUnmodifiedSince;
-import static org.jclouds.aws.s3.commands.options.CopyObjectOptions.Builder.overrideMetadataWith;
+import static org.jclouds.aws.s3.options.CopyObjectOptions.Builder.ifSourceETagDoesntMatch;
+import static org.jclouds.aws.s3.options.CopyObjectOptions.Builder.ifSourceETagMatches;
+import static org.jclouds.aws.s3.options.CopyObjectOptions.Builder.ifSourceModifiedSince;
+import static org.jclouds.aws.s3.options.CopyObjectOptions.Builder.ifSourceUnmodifiedSince;
+import static org.jclouds.aws.s3.options.CopyObjectOptions.Builder.overrideMetadataWith;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -148,12 +148,12 @@ public class CopyObjectIntegrationTest extends S3IntegrationTest {
          addToBucketAndValidate(bucketName, sourceKey);
 
          client.copyObject(bucketName, sourceKey, destinationBucket, destinationKey,
-                  ifSourceMd5Matches(goodMd5)).get(10, TimeUnit.SECONDS);
+                  ifSourceETagMatches(goodETag)).get(10, TimeUnit.SECONDS);
          validateContent(destinationBucket, destinationKey);
 
          try {
             client.copyObject(bucketName, sourceKey, destinationBucket, destinationKey,
-                     ifSourceMd5Matches(badMd5)).get(10, TimeUnit.SECONDS);
+                     ifSourceETagMatches(badETag)).get(10, TimeUnit.SECONDS);
          } catch (ExecutionException e) {
             HttpResponseException ex = (HttpResponseException) e.getCause();
             assertEquals(ex.getResponse().getStatusCode(), 412);
@@ -173,12 +173,12 @@ public class CopyObjectIntegrationTest extends S3IntegrationTest {
          addToBucketAndValidate(bucketName, sourceKey);
 
          client.copyObject(bucketName, sourceKey, destinationBucket, destinationKey,
-                  ifSourceMd5DoesntMatch(badMd5)).get(10, TimeUnit.SECONDS);
+                  ifSourceETagDoesntMatch(badETag)).get(10, TimeUnit.SECONDS);
          validateContent(destinationBucket, destinationKey);
 
          try {
             client.copyObject(bucketName, sourceKey, destinationBucket, destinationKey,
-                     ifSourceMd5DoesntMatch(goodMd5)).get(10, TimeUnit.SECONDS);
+                     ifSourceETagDoesntMatch(goodETag)).get(10, TimeUnit.SECONDS);
          } catch (ExecutionException e) {
             HttpResponseException ex = (HttpResponseException) e.getCause();
             assertEquals(ex.getResponse().getStatusCode(), 412);
@@ -206,8 +206,7 @@ public class CopyObjectIntegrationTest extends S3IntegrationTest {
 
          validateContent(destinationBucket, destinationKey);
 
-         S3Object.Metadata objectMeta = client.headObject(destinationBucket, destinationKey).get(
-                  10, TimeUnit.SECONDS);
+         S3Object.Metadata objectMeta = client.headObject(destinationBucket, destinationKey);
 
          assertEquals(objectMeta.getUserMetadata(), metadata);
       } finally {

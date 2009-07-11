@@ -26,9 +26,10 @@ package org.jclouds.http.handlers;
 import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.http.HttpFutureCommand;
+import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
+import org.jclouds.http.TransformingHttpCommand;
 import org.jclouds.logging.Logger;
 
 import com.google.inject.Inject;
@@ -39,7 +40,7 @@ import com.google.inject.name.Named;
  * back-off delay before returning.
  * <p>
  * The back-off delay grows rapidly according to the formula
- * <code>50 * (<i>{@link HttpFutureCommand#getFailureCount()}</i> ^ 2)</code>. For example:
+ * <code>50 * (<i>{@link TransformingHttpCommand#getFailureCount()}</i> ^ 2)</code>. For example:
  * <table>
  * <tr>
  * <th>Number of Attempts</th>
@@ -68,8 +69,8 @@ import com.google.inject.name.Named;
  * </table>
  * <p>
  * This implementation has two side-effects. It increments the command's failure count with
- * {@link HttpFutureCommand#incrementFailureCount()}, because this failure count value is used to
- * determine how many times the command has already been tried. It also closes the response's
+ * {@link TransformingHttpCommand#incrementFailureCount()}, because this failure count value is used
+ * to determine how many times the command has already been tried. It also closes the response's
  * content input stream to ensure connections are cleaned up.
  * 
  * @author James Murty
@@ -85,12 +86,12 @@ public class BackoffLimitedRetryHandler implements HttpRetryHandler {
       this.retryCountLimit = retryCountLimit;
    }
 
-   public boolean shouldRetryRequest(HttpFutureCommand<?> command, HttpResponse response) {
+   public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
       IOUtils.closeQuietly(response.getContent());
 
       command.incrementFailureCount();
 
-      if (!command.getRequest().isReplayable()) {
+      if (!command.isReplayable()) {
          logger.warn("Cannot retry after server error, command is not replayable: %1$s", command);
          return false;
       } else if (command.getFailureCount() > retryCountLimit) {
@@ -104,9 +105,9 @@ public class BackoffLimitedRetryHandler implements HttpRetryHandler {
       }
    }
 
-   public void imposeBackoffExponentialDelay(int failureCound, String commandDescription) {
-      long delayMs = (long) (50L * Math.pow(failureCound, 2));
-      logger.debug("Retry %1$d/%2$d after server error, delaying for %3$d ms: %4$s", failureCound,
+   public void imposeBackoffExponentialDelay(int failureCount, String commandDescription) {
+      long delayMs = (long) (50L * Math.pow(failureCount, 2));
+      logger.debug("Retry %1$d/%2$d after server error, delaying for %3$d ms: %4$s", failureCount,
                retryCountLimit, delayMs, commandDescription);
       try {
          Thread.sleep(delayMs);

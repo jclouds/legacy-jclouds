@@ -23,8 +23,8 @@
  */
 package org.jclouds.aws.reference;
 
-import org.jclouds.command.pool.PoolConstants;
 import org.jclouds.http.HttpConstants;
+import org.jclouds.http.pool.PoolConstants;
 
 /**
  * Configuration properties and constants used in AWS connections.

@@ -29,7 +29,5 @@ package org.jclouds.command;
  * @author Adrian Cole
  */
 public interface Request<E> {
-   E getEndPoint();
-
-   void setEndPoint(E endPoint);
+   E getEndpoint();
 }

@@ -43,14 +43,15 @@ import org.jclouds.logging.Logger;
 public abstract class BaseLifeCycle implements Runnable, LifeCycle {
    @Resource
    protected Logger logger = Logger.NULL;
-   protected final ExecutorService executor;
+   
+   protected final ExecutorService executorService;
    protected final List<LifeCycle> dependencies;
    protected final Object statusLock;
    protected volatile Status status;
    protected AtomicReference<Exception> exception = new AtomicReference<Exception>();
 
    public BaseLifeCycle(ExecutorService executor, LifeCycle... dependencies) {
-      this.executor = executor;
+      this.executorService = executor;
       this.dependencies = new ArrayList<LifeCycle>();
       this.dependencies.addAll(Arrays.asList(dependencies));
       this.statusLock = new Object();
@@ -120,7 +121,7 @@ public abstract class BaseLifeCycle implements Runnable, LifeCycle {
 
          this.status = Status.ACTIVE;
       }
-      executor.execute(this);
+      executorService.execute(this);
    }
 
    protected void exceptionIfDepedenciesNotActive() {

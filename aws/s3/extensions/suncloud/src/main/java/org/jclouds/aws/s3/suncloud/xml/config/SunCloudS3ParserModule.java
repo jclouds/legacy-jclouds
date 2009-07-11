@@ -27,7 +27,7 @@ import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.s3.suncloud.xml.SunCloudS3ErrorHandler;
 import org.jclouds.aws.s3.xml.S3ParserFactory;
 import org.jclouds.aws.s3.xml.config.S3ParserModule;
-import org.jclouds.http.commands.callables.xml.ParseSax;
+import org.jclouds.http.functions.ParseSax;
 
 import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryProvider;

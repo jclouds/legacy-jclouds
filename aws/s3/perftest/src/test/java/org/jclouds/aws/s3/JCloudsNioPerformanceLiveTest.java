@@ -23,7 +23,7 @@
  */
 package org.jclouds.aws.s3;
 
-import org.jclouds.http.httpnio.config.HttpNioConnectionPoolClientModule;
+import org.jclouds.http.httpnio.config.NioTransformingHttpCommandExecutorServiceModule;
 import org.testng.annotations.Test;
 
 import com.google.inject.Module;
@@ -33,6 +33,6 @@ public class JCloudsNioPerformanceLiveTest extends BaseJCloudsPerformance {
 
    @Override
    protected Module createHttpModule() {
-      return new HttpNioConnectionPoolClientModule();
+      return new NioTransformingHttpCommandExecutorServiceModule();
    }
 }

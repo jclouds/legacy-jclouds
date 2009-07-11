@@ -32,7 +32,7 @@ import java.util.Map;
  * common object types.
  * <p/>
  * <h2>Note</h2> All <code>put</code> operations will invoke
- * {@link org.jclouds.aws.s3.domain.S3Object#generateMd5}. By extension, {@link #put(Object, Object)}
+ * {@link org.jclouds.aws.s3.domain.S3Object#generateETag}. By extension, {@link #put(Object, Object)}
  * will result in the InputStream being converted to a byte array. For this
  * reason, do not use {@link #put(Object, Object)} to store files. Use
  * {@link #putFile(String, File)} or {@link S3ObjectMap} instead.

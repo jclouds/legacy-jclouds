@@ -23,7 +23,8 @@
  */
 package org.jclouds.http.handlers;
 
-import org.jclouds.http.HttpFutureCommand;
+import org.jclouds.http.HttpCommand;
+import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
@@ -56,13 +57,13 @@ public class DelegatingRetryHandler implements HttpRetryHandler {
    HttpRetryHandler serverErrorRetryHandler;
 
    public DelegatingRetryHandler() {
-      this.redirectionRetryHandler = new RedirectionRetryHandler(5);
-      this.clientErrorRetryHandler = new CannotRetryHandler();
-      this.serverErrorRetryHandler = new BackoffLimitedRetryHandler(5);
+      BackoffLimitedRetryHandler backOff = new BackoffLimitedRetryHandler(5);
+      this.serverErrorRetryHandler = backOff;
+      this.redirectionRetryHandler = new RedirectionRetryHandler(backOff, 5);
+      this.clientErrorRetryHandler = HttpRetryHandler.NEVER_RETRY;
    }
 
-   public boolean shouldRetryRequest(HttpFutureCommand<?> command,
-            org.jclouds.http.HttpResponse response) {
+   public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
       int statusCode = response.getStatusCode();
       boolean retryRequest = false;
       if (statusCode >= 300 && statusCode < 400) {

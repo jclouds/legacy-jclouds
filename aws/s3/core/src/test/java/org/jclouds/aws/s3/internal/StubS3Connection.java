@@ -31,9 +31,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
@@ -45,28 +44,31 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import javax.ws.rs.core.HttpHeaders;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.jclouds.aws.s3.S3Connection;
-import org.jclouds.aws.s3.commands.CopyObject;
-import org.jclouds.aws.s3.commands.options.CopyObjectOptions;
-import org.jclouds.aws.s3.commands.options.GetObjectOptions;
-import org.jclouds.aws.s3.commands.options.ListBucketOptions;
-import org.jclouds.aws.s3.commands.options.PutBucketOptions;
-import org.jclouds.aws.s3.commands.options.PutObjectOptions;
 import org.jclouds.aws.s3.domain.AccessControlList;
+import org.jclouds.aws.s3.domain.CannedAccessPolicy;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.AccessControlList.CanonicalUserGrantee;
 import org.jclouds.aws.s3.domain.AccessControlList.EmailAddressGrantee;
 import org.jclouds.aws.s3.domain.AccessControlList.Grant;
 import org.jclouds.aws.s3.domain.S3Bucket.Metadata;
-import org.jclouds.aws.s3.domain.acl.CannedAccessPolicy;
-import org.jclouds.aws.s3.util.S3Utils;
-import org.jclouds.aws.util.DateService;
-import org.jclouds.http.HttpConstants;
+import org.jclouds.aws.s3.options.CopyObjectOptions;
+import org.jclouds.aws.s3.options.ListBucketOptions;
+import org.jclouds.aws.s3.options.PutBucketOptions;
+import org.jclouds.aws.s3.options.PutObjectOptions;
+import org.jclouds.aws.s3.reference.S3Constants;
+import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
+import org.jclouds.http.HttpUtils;
+import org.jclouds.http.options.GetOptions;
+import org.jclouds.http.options.HttpRequestOptions;
+import org.jclouds.util.DateService;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Function;
@@ -100,7 +102,7 @@ public class StubS3Connection implements S3Connection {
     * @throws java.io.IOException
     */
    public static byte[] toByteArray(Object data) throws IOException {
-      checkNotNull(data, "data must be set before calling generateMd5()");
+      checkNotNull(data, "data must be set before calling generateETag()");
       byte[] bytes = null;
       if (data == null || data instanceof byte[]) {
          bytes = (byte[]) data;
@@ -119,7 +121,7 @@ public class StubS3Connection implements S3Connection {
    }
 
    public Future<S3Object> getObject(final String s3Bucket, final String key) {
-      return getObject(s3Bucket, key, new GetObjectOptions());
+      return getObject(s3Bucket, key, new GetOptions());
 
    }
 
@@ -131,17 +133,13 @@ public class StubS3Connection implements S3Connection {
       return (S3Object.Metadata) xstream.fromXML(xstream.toXML(in).replaceAll(in.getKey(), newKey));
    }
 
-   public Future<S3Object.Metadata> headObject(final String s3Bucket, final String key) {
-      return new FutureBase<S3Object.Metadata>() {
-         public S3Object.Metadata get() throws InterruptedException, ExecutionException {
-            if (!bucketToContents.containsKey(s3Bucket))
-               return S3Object.Metadata.NOT_FOUND;
-            Map<String, S3Object> realContents = bucketToContents.get(s3Bucket);
-            if (!realContents.containsKey(key))
-               return S3Object.Metadata.NOT_FOUND;
-            return realContents.get(key).getMetadata();
-         }
-      };
+   public S3Object.Metadata headObject(final String s3Bucket, final String key) {
+      if (!bucketToContents.containsKey(s3Bucket))
+         return S3Object.Metadata.NOT_FOUND;
+      Map<String, S3Object> realContents = bucketToContents.get(s3Bucket);
+      if (!realContents.containsKey(key))
+         return S3Object.Metadata.NOT_FOUND;
+      return realContents.get(key).getMetadata();
    }
 
    public Future<Boolean> deleteObject(final String s3Bucket, final String key) {
@@ -170,18 +168,14 @@ public class StubS3Connection implements S3Connection {
       };
    }
 
-   public Future<Boolean> deleteBucketIfEmpty(final String s3Bucket) {
-      return new FutureBase<Boolean>() {
-         public Boolean get() throws InterruptedException, ExecutionException {
-            if (bucketToContents.containsKey(s3Bucket)) {
-               if (bucketToContents.get(s3Bucket).size() == 0)
-                  bucketToContents.remove(s3Bucket);
-               else
-                  return false;
-            }
-            return true;
-         }
-      };
+   public boolean deleteBucketIfEmpty(final String s3Bucket) {
+      if (bucketToContents.containsKey(s3Bucket)) {
+         if (bucketToContents.get(s3Bucket).size() == 0)
+            bucketToContents.remove(s3Bucket);
+         else
+            return false;
+      }
+      return true;
    }
 
    XStream xstream = new XStream();
@@ -193,12 +187,8 @@ public class StubS3Connection implements S3Connection {
                new CopyObjectOptions());
    }
 
-   public Future<Boolean> bucketExists(final String s3Bucket) {
-      return new FutureBase<Boolean>() {
-         public Boolean get() throws InterruptedException, ExecutionException {
-            return bucketToContents.containsKey(s3Bucket);
-         }
-      };
+   public boolean bucketExists(final String s3Bucket) {
+      return bucketToContents.containsKey(s3Bucket);
    }
 
    public Future<S3Bucket> listBucket(final String s3Bucket) {
@@ -224,17 +214,13 @@ public class StubS3Connection implements S3Connection {
       }
    }
 
-   public Future<List<Metadata>> listOwnedBuckets() {
-      return new FutureBase<List<S3Bucket.Metadata>>() {
-         public List<S3Bucket.Metadata> get() throws InterruptedException, ExecutionException {
-            return Lists.newArrayList(Iterables.transform(bucketToContents.keySet(),
-                     new Function<String, Metadata>() {
-                        public Metadata apply(String name) {
-                           return new S3Bucket.Metadata(name);
-                        }
-                     }));
-         }
-      };
+   public List<Metadata> listOwnedBuckets() {
+      return Lists.newArrayList(Iterables.transform(bucketToContents.keySet(),
+               new Function<String, Metadata>() {
+                  public Metadata apply(String name) {
+                     return new S3Bucket.Metadata(name);
+                  }
+               }));
    }
 
    public Future<Boolean> putBucketIfNotExists(String name, PutBucketOptions options) {
@@ -287,6 +273,11 @@ public class StubS3Connection implements S3Connection {
       }
    }
 
+   public String getFirstQueryOrNull(String string, HttpRequestOptions options) {
+      Collection<String> values = options.buildQueryParameters().get(string);
+      return (values != null && values.size() >= 1) ? values.iterator().next() : null;
+   }
+
    public Future<S3Bucket> listBucket(final String name, final ListBucketOptions options) {
       return new FutureBase<S3Bucket>() {
          public S3Bucket get() throws InterruptedException, ExecutionException {
@@ -302,13 +293,8 @@ public class StubS3Connection implements S3Connection {
                      }));
             S3Bucket returnVal = new S3Bucket(name);
 
-            if (options.getMarker() != null) {
-               final String marker;
-               try {
-                  marker = URLDecoder.decode(options.getMarker(), "UTF-8");
-               } catch (UnsupportedEncodingException e) {
-                  throw new IllegalArgumentException(e);
-               }
+            final String marker = getFirstQueryOrNull(S3Constants.MARKER, options);
+            if (marker != null) {
                S3Object.Metadata lastMarkerMetadata = Iterables.find(contents,
                         new Predicate<S3Object.Metadata>() {
                            public boolean apply(S3Object.Metadata metadata) {
@@ -320,47 +306,37 @@ public class StubS3Connection implements S3Connection {
                contents.remove(lastMarkerMetadata);
                returnVal.setMarker(marker);
             }
-            try {
-
-               if (options.getPrefix() != null) {
-                  contents = Sets.newTreeSet(Iterables.filter(contents,
-                           new Predicate<S3Object.Metadata>() {
-                              public boolean apply(S3Object.Metadata o) {
-                                 try {
-                                    return (o != null && o.getKey().startsWith(
-                                             URLDecoder.decode(options.getPrefix(), "UTF-8")));
-                                 } catch (UnsupportedEncodingException e) {
-                                    throw new RuntimeException(e);
-                                 }
-                              }
-                           }));
-                  returnVal.setPrefix(URLDecoder.decode(options.getPrefix(), "UTF-8"));
-               }
-
-               if (options.getDelimiter() != null) {
-                  Iterable<String> iterable = Iterables.transform(contents, new CommonPrefixes(
-                           options.getPrefix() != null ? URLDecoder.decode(options.getPrefix(),
-                                    "UTF-8") : null, URLDecoder.decode(options.getDelimiter(),
-                                    "UTF-8")));
-                  SortedSet<String> commonPrefixes = iterable != null ? Sets.newTreeSet(iterable)
-                           : new TreeSet<String>();
-                  commonPrefixes.remove(CommonPrefixes.NO_PREFIX);
-
-                  contents = Sets.newTreeSet(Iterables.filter(contents, new DelimiterFilter(options
-                           .getPrefix() != null ? URLDecoder.decode(options.getPrefix(), "UTF-8")
-                           : null, URLDecoder.decode(options.getDelimiter(), "UTF-8"))));
-
-                  returnVal.setCommonPrefixes(commonPrefixes);
-                  returnVal.setDelimiter(URLDecoder.decode(options.getDelimiter(), "UTF-8"));
-               }
-            } catch (UnsupportedEncodingException e) {
-               throw new RuntimeException(e);
+            final String prefix = getFirstQueryOrNull(S3Constants.PREFIX, options);
+            if (prefix != null) {
+               contents = Sets.newTreeSet(Iterables.filter(contents,
+                        new Predicate<S3Object.Metadata>() {
+                           public boolean apply(S3Object.Metadata o) {
+                              return (o != null && o.getKey().startsWith(prefix));
+                           }
+                        }));
+               returnVal.setPrefix(prefix);
             }
 
-            if (options.getMaxKeys() != null) {
-               SortedSet<S3Object.Metadata> contentsSlice = firstSliceOfSize(contents, Integer
-                        .parseInt(options.getMaxKeys()));
-               returnVal.setMaxKeys(Integer.parseInt(options.getMaxKeys()));
+            final String delimiter = getFirstQueryOrNull(S3Constants.DELIMITER, options);
+            if (delimiter != null) {
+               Iterable<String> iterable = Iterables.transform(contents, new CommonPrefixes(
+                        prefix != null ? prefix : null, delimiter));
+               SortedSet<String> commonPrefixes = iterable != null ? Sets.newTreeSet(iterable)
+                        : new TreeSet<String>();
+               commonPrefixes.remove(CommonPrefixes.NO_PREFIX);
+
+               contents = Sets.newTreeSet(Iterables.filter(contents, new DelimiterFilter(
+                        prefix != null ? prefix : null, delimiter)));
+
+               returnVal.setCommonPrefixes(commonPrefixes);
+               returnVal.setDelimiter(delimiter);
+            }
+
+            final String maxKeysString = getFirstQueryOrNull(S3Constants.MAX_KEYS, options);
+            if (maxKeysString != null) {
+               int maxKeys = Integer.parseInt(maxKeysString);
+               SortedSet<S3Object.Metadata> contentsSlice = firstSliceOfSize(contents, maxKeys);
+               returnVal.setMaxKeys(maxKeys);
                if (!contentsSlice.contains(contents.last())) {
                   // Partial listing
                   returnVal.setTruncated(true);
@@ -395,13 +371,13 @@ public class StubS3Connection implements S3Connection {
             if (source.containsKey(sourceObject)) {
                S3Object object = source.get(sourceObject);
                if (options.getIfMatch() != null) {
-                  if (!Arrays.equals(object.getMetadata().getMd5(), S3Utils.fromHexString(options
-                           .getIfMatch().replaceAll("\"", ""))))
+                  if (!Arrays.equals(object.getMetadata().getETag(), HttpUtils
+                           .fromHexString(options.getIfMatch().replaceAll("\"", ""))))
                      throwResponseException(412);
 
                }
                if (options.getIfNoneMatch() != null) {
-                  if (Arrays.equals(object.getMetadata().getMd5(), S3Utils.fromHexString(options
+                  if (Arrays.equals(object.getMetadata().getETag(), HttpUtils.fromHexString(options
                            .getIfNoneMatch().replaceAll("\"", ""))))
                      throwResponseException(412);
                }
@@ -437,7 +413,7 @@ public class StubS3Connection implements S3Connection {
    private void throwResponseException(int code) throws ExecutionException {
       HttpResponse response = new HttpResponse();
       response.setStatusCode(code);
-      throw new ExecutionException(new HttpResponseException(createNiceMock(CopyObject.class),
+      throw new ExecutionException(new HttpResponseException(createNiceMock(HttpCommand.class),
                response));
    }
 
@@ -450,26 +426,26 @@ public class StubS3Connection implements S3Connection {
          S3Object.Metadata newMd = copy(object.getMetadata());
          newMd.setLastModified(new DateTime());
          byte[] data = toByteArray(object.getData());
-         final byte[] md5 = S3Utils.md5(data);
-         newMd.setMd5(md5);
+         final byte[] eTag = HttpUtils.eTag(data);
+         newMd.setETag(eTag);
          newMd.setContentType(object.getMetadata().getContentType());
          if (options.getAcl() != null)
             keyToAcl.put(bucketName + "/" + object.getKey(), options.getAcl());
          bucketToContents.get(bucketName).put(object.getKey(), new S3Object(newMd, data));
 
          // Set HTTP headers to match metadata
-         newMd.getAllHeaders().put(HttpConstants.LAST_MODIFIED,
+         newMd.getAllHeaders().put(HttpHeaders.LAST_MODIFIED,
                   dateService.rfc822DateFormat(newMd.getLastModified()));
-         newMd.getAllHeaders().put(HttpConstants.CONTENT_MD5, S3Utils.toHexString(md5));
-         newMd.getAllHeaders().put(HttpConstants.CONTENT_TYPE, newMd.getContentType());
-         newMd.getAllHeaders().put(HttpConstants.CONTENT_LENGTH, newMd.getSize() + "");
+         newMd.getAllHeaders().put(HttpHeaders.ETAG, HttpUtils.toHexString(eTag));
+         newMd.getAllHeaders().put(HttpHeaders.CONTENT_TYPE, newMd.getContentType());
+         newMd.getAllHeaders().put(HttpHeaders.CONTENT_LENGTH, newMd.getSize() + "");
          for (Entry<String, String> userMD : newMd.getUserMetadata().entries()) {
             newMd.getAllHeaders().put(userMD.getKey(), userMD.getValue());
          }
 
          return new FutureBase<byte[]>() {
             public byte[] get() throws InterruptedException, ExecutionException {
-               return md5;
+               return eTag;
             }
          };
       } catch (IOException e) {
@@ -481,7 +457,7 @@ public class StubS3Connection implements S3Connection {
    DateService dateService = new DateService();
 
    public Future<S3Object> getObject(final String bucketName, final String key,
-            final GetObjectOptions options) {
+            final GetOptions options) {
       return new FutureBase<S3Object>() {
          public S3Object get() throws InterruptedException, ExecutionException {
             if (!bucketToContents.containsKey(bucketName))
@@ -493,12 +469,12 @@ public class StubS3Connection implements S3Connection {
             S3Object object = realContents.get(key);
 
             if (options.getIfMatch() != null) {
-               if (!Arrays.equals(object.getMetadata().getMd5(), S3Utils.fromHexString(options
+               if (!Arrays.equals(object.getMetadata().getETag(), HttpUtils.fromHexString(options
                         .getIfMatch().replaceAll("\"", ""))))
                   throwResponseException(412);
             }
             if (options.getIfNoneMatch() != null) {
-               if (Arrays.equals(object.getMetadata().getMd5(), S3Utils.fromHexString(options
+               if (Arrays.equals(object.getMetadata().getETag(), HttpUtils.fromHexString(options
                         .getIfNoneMatch().replaceAll("\"", ""))))
                   throwResponseException(304);
             }

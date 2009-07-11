@@ -41,14 +41,15 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import javax.ws.rs.core.MediaType;
+
 import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.s3.S3IntegrationTest;
 import org.jclouds.aws.s3.config.StubS3ConnectionModule;
 import org.jclouds.aws.s3.domain.AccessControlList.GroupGranteeURI;
 import org.jclouds.aws.s3.domain.AccessControlList.Permission;
 import org.jclouds.aws.s3.reference.S3Constants;
-import org.jclouds.aws.s3.util.S3Utils;
-import org.jclouds.http.ContentTypes;
+import org.jclouds.http.HttpUtils;
 import org.jets3t.service.S3ObjectsChunk;
 import org.jets3t.service.S3Service;
 import org.jets3t.service.S3ServiceException;
@@ -90,8 +91,8 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
    }
 
    /**
-    * initialize a new JCloudsS3Service, but passing JavaUrlHttpFutureCommandClientModule(), as it
-    * is easier to debug in unit tests.
+    * initialize a new JCloudsS3Service, but passing JavaUrlHttpCommandExecutorServiceModule(), as
+    * it is easier to debug in unit tests.
     * 
     * @throws S3ServiceException
     */
@@ -109,7 +110,7 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
       try {
          S3Bucket bucket = service.createBucket(new S3Bucket(bucketName));
          assertEquals(bucket.getName(), bucketName);
-         assertTrue(client.bucketExists(bucketName).get());
+         assertTrue(client.bucketExists(bucketName));
       } finally {
          returnScratchBucket(bucketName);
       }
@@ -121,7 +122,7 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
       String bucketName = getScratchBucketName();
       try {
          service.deleteBucket(bucketName);
-         assertFalse(client.bucketExists(bucketName).get(10, TimeUnit.SECONDS));
+         assertFalse(client.bucketExists(bucketName));
       } finally {
          returnScratchBucket(bucketName);
       }
@@ -141,7 +142,7 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
 
          service.deleteObject(bucketName, objectKey);
 
-         assertEquals(client.headObject(bucketName, objectKey).get(10, TimeUnit.SECONDS),
+         assertEquals(client.headObject(bucketName, objectKey),
                   org.jclouds.aws.s3.domain.S3Object.Metadata.NOT_FOUND);
       } finally {
          returnBucket(bucketName);
@@ -213,8 +214,7 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
          // Ensure there is at least 1 bucket in S3 account to list and compare.
          S3Bucket[] jsBuckets = service.listAllBuckets();
 
-         List<org.jclouds.aws.s3.domain.S3Bucket.Metadata> jcBuckets = client.listOwnedBuckets()
-                  .get(10, TimeUnit.SECONDS);
+         List<org.jclouds.aws.s3.domain.S3Bucket.Metadata> jcBuckets = client.listOwnedBuckets();
 
          assert jsBuckets.length == jcBuckets.size();
 
@@ -368,10 +368,10 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
          jcObject = client.getObject(bucketName, objectKey).get(10, TimeUnit.SECONDS);
          assertEquals(jcObject.getKey(), objectKey);
          assertEquals(jcObject.getMetadata().getSize(), 0);
-         assertEquals(jcObject.getMetadata().getContentType(), ContentTypes.BINARY);
+         assertEquals(jcObject.getMetadata().getContentType(), MediaType.APPLICATION_OCTET_STREAM);
          assertEquals(jsResultObject.getKey(), requestObject.getKey());
          assertEquals(jsResultObject.getContentLength(), 0);
-         assertEquals(jsResultObject.getContentType(), ContentTypes.BINARY);
+         assertEquals(jsResultObject.getContentType(), MediaType.APPLICATION_OCTET_STREAM);
 
          // Upload unicode-named object
          requestObject = new S3Object("üníçòdé-object");
@@ -379,10 +379,10 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
          jcObject = client.getObject(bucketName, requestObject.getKey()).get(10, TimeUnit.SECONDS);
          assertEquals(jcObject.getKey(), requestObject.getKey());
          assertEquals(jcObject.getMetadata().getSize(), 0);
-         assertEquals(jcObject.getMetadata().getContentType(), ContentTypes.BINARY);
+         assertEquals(jcObject.getMetadata().getContentType(), MediaType.APPLICATION_OCTET_STREAM);
          assertEquals(jsResultObject.getKey(), requestObject.getKey());
          assertEquals(jsResultObject.getContentLength(), 0);
-         assertEquals(jsResultObject.getContentType(), ContentTypes.BINARY);
+         assertEquals(jsResultObject.getContentType(), MediaType.APPLICATION_OCTET_STREAM);
 
          // Upload string object
          String data = "This is my üníçòdé data";
@@ -408,8 +408,8 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
          requestObject = new S3Object(objectKey);
          requestObject.setAcl(AccessControlList.REST_CANNED_PUBLIC_READ);
          jsResultObject = service.putObject(new S3Bucket(bucketName), requestObject);
-         org.jclouds.aws.s3.domain.AccessControlList jcACL = 
-            client.getObjectACL(bucketName, objectKey).get(10, TimeUnit.SECONDS);
+         org.jclouds.aws.s3.domain.AccessControlList jcACL = client.getObjectACL(bucketName,
+                  objectKey).get(10, TimeUnit.SECONDS);
          assertTrue(jcACL.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ));
          assertTrue(jcACL.hasPermission(jcACL.getOwner().getId(), Permission.FULL_CONTROL));
          assertEquals(jcACL.getGrants().size(), 2);
@@ -426,8 +426,8 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
          jsResultObject = service.putObject(new S3Bucket(bucketName), requestObject);
          jcObject = client.getObject(bucketName, objectKey).get(10, TimeUnit.SECONDS);
          assertTrue(jsResultObject.verifyData(data.getBytes("UTF-8")));
-         assertEquals(jsResultObject.getMd5HashAsHex(), S3Utils.toHexString(jcObject.getMetadata()
-                  .getMd5()));
+         assertEquals(jsResultObject.getMd5HashAsHex(), HttpUtils.toHexString(jcObject
+                  .getMetadata().getETag()));
       } finally {
          returnBucket(bucketName);
       }
@@ -465,11 +465,11 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
          assertEquals(jcDestinationObject.getKey(), destinationObjectKey);
          assertEquals(Iterators.getLast(jcDestinationObject.getMetadata().getUserMetadata().get(
                   S3Constants.USER_METADATA_PREFIX + metadataName).iterator()), sourceMetadataValue);
-         assertEquals(copyResult.get("ETag"), S3Utils.toHexString(jcDestinationObject.getMetadata()
-                  .getMd5()));         
+         assertEquals(copyResult.get("ETag"), HttpUtils.toHexString(jcDestinationObject
+                  .getMetadata().getETag()));
          // Test destination ACL is unchanged (ie private)
-         org.jclouds.aws.s3.domain.AccessControlList jcACL = 
-            client.getObjectACL(bucketName, destinationObject.getKey()).get(10, TimeUnit.SECONDS);
+         org.jclouds.aws.s3.domain.AccessControlList jcACL = client.getObjectACL(bucketName,
+                  destinationObject.getKey()).get(10, TimeUnit.SECONDS);
          assertEquals(jcACL.getGrants().size(), 1);
          assertTrue(jcACL.hasPermission(jcACL.getOwner().getId(), Permission.FULL_CONTROL));
 
@@ -485,8 +485,8 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
                   S3Constants.USER_METADATA_PREFIX + metadataName).iterator()),
                   destinationMetadataValue);
          // Test destination ACL is unchanged (ie private)
-         jcACL = client.getObjectACL(bucketName, destinationObject.getKey())
-            .get(10, TimeUnit.SECONDS);
+         jcACL = client.getObjectACL(bucketName, destinationObject.getKey()).get(10,
+                  TimeUnit.SECONDS);
          assertEquals(jcACL.getGrants().size(), 1);
          assertTrue(jcACL.hasPermission(jcACL.getOwner().getId(), Permission.FULL_CONTROL));
 
@@ -496,12 +496,12 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
          copyResult = service.copyObject(bucketName, sourceObjectKey, bucketName,
                   destinationObject, false);
          // Test destination ACL is changed (ie public-read)
-         jcACL = client.getObjectACL(bucketName, destinationObject.getKey())
-            .get(10, TimeUnit.SECONDS);
+         jcACL = client.getObjectACL(bucketName, destinationObject.getKey()).get(10,
+                  TimeUnit.SECONDS);
          assertEquals(jcACL.getGrants().size(), 2);
          assertTrue(jcACL.hasPermission(jcACL.getOwner().getId(), Permission.FULL_CONTROL));
          assertTrue(jcACL.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ));
-         
+
       } finally {
          returnBucket(bucketName);
       }
@@ -509,62 +509,59 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
 
    @Test
    @SuppressWarnings("unchecked")
-   public void testPutAndGetBucketAclImpl() throws InterruptedException, ExecutionException, 
-         TimeoutException, S3ServiceException 
-   {
+   public void testPutAndGetBucketAclImpl() throws InterruptedException, ExecutionException,
+            TimeoutException, S3ServiceException {
       String bucketName = getScratchBucketName();
       try {
          S3Bucket bucket = new S3Bucket(bucketName);
          AccessControlList acl = null;
-         
+
          // Confirm bucket is created private by default.
-         acl = service.getBucketAcl(bucket);         
+         acl = service.getBucketAcl(bucket);
          final String ownerId = acl.getOwner().getId();
          assertEquals(acl.getGrants().size(), 1);
-         GrantAndPermission gap = (GrantAndPermission) 
-            Iterables.find(acl.getGrants(), new Predicate<GrantAndPermission>() {
-              public boolean apply(GrantAndPermission gap) {
-                 return gap.getGrantee().getIdentifier().equals(ownerId);
-              }
-            });
+         GrantAndPermission gap = (GrantAndPermission) Iterables.find(acl.getGrants(),
+                  new Predicate<GrantAndPermission>() {
+                     public boolean apply(GrantAndPermission gap) {
+                        return gap.getGrantee().getIdentifier().equals(ownerId);
+                     }
+                  });
          assertNotNull(gap);
-         assertEquals(gap.getPermission(), 
-               org.jets3t.service.acl.Permission.PERMISSION_FULL_CONTROL);
-         
+         assertEquals(gap.getPermission(),
+                  org.jets3t.service.acl.Permission.PERMISSION_FULL_CONTROL);
+
          // Add read access for public, and read-acp access for authenticated users.
-         acl.grantPermission(GroupGrantee.ALL_USERS, 
-               org.jets3t.service.acl.Permission.PERMISSION_READ);
-         acl.grantPermission(GroupGrantee.AUTHENTICATED_USERS, 
-               org.jets3t.service.acl.Permission.PERMISSION_READ_ACP);
+         acl.grantPermission(GroupGrantee.ALL_USERS,
+                  org.jets3t.service.acl.Permission.PERMISSION_READ);
+         acl.grantPermission(GroupGrantee.AUTHENTICATED_USERS,
+                  org.jets3t.service.acl.Permission.PERMISSION_READ_ACP);
          service.putBucketAcl(bucketName, acl);
          acl = service.getBucketAcl(bucket);
          assertEquals(acl.getGrants().size(), 3);
-         gap = (GrantAndPermission) 
-            Iterables.find(acl.getGrants(), new Predicate<GrantAndPermission>() {
-              public boolean apply(GrantAndPermission gap) {
-                 return gap.getGrantee().getIdentifier().equals(ownerId);
-              }
-            });
-         assertEquals(gap.getPermission(), 
-               org.jets3t.service.acl.Permission.PERMISSION_FULL_CONTROL);
-         gap = (GrantAndPermission) 
-            Iterables.find(acl.getGrants(), new Predicate<GrantAndPermission>() {
-              public boolean apply(GrantAndPermission gap) {
-                 return gap.getGrantee().getIdentifier().equals(
-                       GroupGrantee.ALL_USERS.getIdentifier());
-              }
-            });
-         assertEquals(gap.getPermission(), 
-               org.jets3t.service.acl.Permission.PERMISSION_READ);
-         gap = (GrantAndPermission) 
-            Iterables.find(acl.getGrants(), new Predicate<GrantAndPermission>() {
-              public boolean apply(GrantAndPermission gap) {
-                 return gap.getGrantee().getIdentifier().equals(
-                       GroupGrantee.AUTHENTICATED_USERS.getIdentifier());
-              }
-            });
-         assertEquals(gap.getPermission(), 
-               org.jets3t.service.acl.Permission.PERMISSION_READ_ACP);
+         gap = (GrantAndPermission) Iterables.find(acl.getGrants(),
+                  new Predicate<GrantAndPermission>() {
+                     public boolean apply(GrantAndPermission gap) {
+                        return gap.getGrantee().getIdentifier().equals(ownerId);
+                     }
+                  });
+         assertEquals(gap.getPermission(),
+                  org.jets3t.service.acl.Permission.PERMISSION_FULL_CONTROL);
+         gap = (GrantAndPermission) Iterables.find(acl.getGrants(),
+                  new Predicate<GrantAndPermission>() {
+                     public boolean apply(GrantAndPermission gap) {
+                        return gap.getGrantee().getIdentifier().equals(
+                                 GroupGrantee.ALL_USERS.getIdentifier());
+                     }
+                  });
+         assertEquals(gap.getPermission(), org.jets3t.service.acl.Permission.PERMISSION_READ);
+         gap = (GrantAndPermission) Iterables.find(acl.getGrants(),
+                  new Predicate<GrantAndPermission>() {
+                     public boolean apply(GrantAndPermission gap) {
+                        return gap.getGrantee().getIdentifier().equals(
+                                 GroupGrantee.AUTHENTICATED_USERS.getIdentifier());
+                     }
+                  });
+         assertEquals(gap.getPermission(), org.jets3t.service.acl.Permission.PERMISSION_READ_ACP);
       } finally {
          returnScratchBucket(bucketName);
       }
@@ -572,97 +569,93 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
 
    @Test
    @SuppressWarnings("unchecked")
-   public void testGetAndPutObjectAclImpl() throws InterruptedException, ExecutionException, 
-         TimeoutException, S3ServiceException, NoSuchAlgorithmException, IOException 
-   {
+   public void testGetAndPutObjectAclImpl() throws InterruptedException, ExecutionException,
+            TimeoutException, S3ServiceException, NoSuchAlgorithmException, IOException {
       String bucketName = getBucketName();
       try {
          S3Bucket bucket = new S3Bucket(bucketName);
          S3Object object = new S3Object("testGetAndPutObjectAclImpl", "my data");
          AccessControlList acl = null;
-         
+
          // Create default object.
          service.putObject(bucket, object);
-         
+
          // Confirm object is created private by default.
-         acl = service.getObjectAcl(bucket, object.getKey());         
+         acl = service.getObjectAcl(bucket, object.getKey());
          final String ownerId = acl.getOwner().getId();
          assertEquals(acl.getGrants().size(), 1);
-         GrantAndPermission gap = (GrantAndPermission) 
-            Iterables.find(acl.getGrants(), new Predicate<GrantAndPermission>() {
-              public boolean apply(GrantAndPermission gap) {
-                 return gap.getGrantee().getIdentifier().equals(ownerId);
-              }
-            });
+         GrantAndPermission gap = (GrantAndPermission) Iterables.find(acl.getGrants(),
+                  new Predicate<GrantAndPermission>() {
+                     public boolean apply(GrantAndPermission gap) {
+                        return gap.getGrantee().getIdentifier().equals(ownerId);
+                     }
+                  });
          assertNotNull(gap);
-         assertEquals(gap.getPermission(), 
-               org.jets3t.service.acl.Permission.PERMISSION_FULL_CONTROL);
-         
+         assertEquals(gap.getPermission(),
+                  org.jets3t.service.acl.Permission.PERMISSION_FULL_CONTROL);
+
          // Add read access for public, and read-acp access for authenticated users.
-         acl.grantPermission(GroupGrantee.ALL_USERS, 
-               org.jets3t.service.acl.Permission.PERMISSION_READ);
-         acl.grantPermission(GroupGrantee.AUTHENTICATED_USERS, 
-               org.jets3t.service.acl.Permission.PERMISSION_READ_ACP);
+         acl.grantPermission(GroupGrantee.ALL_USERS,
+                  org.jets3t.service.acl.Permission.PERMISSION_READ);
+         acl.grantPermission(GroupGrantee.AUTHENTICATED_USERS,
+                  org.jets3t.service.acl.Permission.PERMISSION_READ_ACP);
          service.putObjectAcl(bucketName, object.getKey(), acl);
          acl = service.getObjectAcl(bucket, object.getKey());
          assertEquals(acl.getGrants().size(), 3);
-         gap = (GrantAndPermission) 
-            Iterables.find(acl.getGrants(), new Predicate<GrantAndPermission>() {
-              public boolean apply(GrantAndPermission gap) {
-                 return gap.getGrantee().getIdentifier().equals(ownerId);
-              }
-            });
-         assertEquals(gap.getPermission(), 
-               org.jets3t.service.acl.Permission.PERMISSION_FULL_CONTROL);
-         gap = (GrantAndPermission) 
-            Iterables.find(acl.getGrants(), new Predicate<GrantAndPermission>() {
-              public boolean apply(GrantAndPermission gap) {
-                 return gap.getGrantee().getIdentifier().equals(
-                       GroupGrantee.ALL_USERS.getIdentifier());
-              }
-            });
-         assertEquals(gap.getPermission(), 
-               org.jets3t.service.acl.Permission.PERMISSION_READ);
-         gap = (GrantAndPermission) 
-            Iterables.find(acl.getGrants(), new Predicate<GrantAndPermission>() {
-              public boolean apply(GrantAndPermission gap) {
-                 return gap.getGrantee().getIdentifier().equals(
-                       GroupGrantee.AUTHENTICATED_USERS.getIdentifier());
-              }
-            });
-         assertEquals(gap.getPermission(), 
-               org.jets3t.service.acl.Permission.PERMISSION_READ_ACP);
+         gap = (GrantAndPermission) Iterables.find(acl.getGrants(),
+                  new Predicate<GrantAndPermission>() {
+                     public boolean apply(GrantAndPermission gap) {
+                        return gap.getGrantee().getIdentifier().equals(ownerId);
+                     }
+                  });
+         assertEquals(gap.getPermission(),
+                  org.jets3t.service.acl.Permission.PERMISSION_FULL_CONTROL);
+         gap = (GrantAndPermission) Iterables.find(acl.getGrants(),
+                  new Predicate<GrantAndPermission>() {
+                     public boolean apply(GrantAndPermission gap) {
+                        return gap.getGrantee().getIdentifier().equals(
+                                 GroupGrantee.ALL_USERS.getIdentifier());
+                     }
+                  });
+         assertEquals(gap.getPermission(), org.jets3t.service.acl.Permission.PERMISSION_READ);
+         gap = (GrantAndPermission) Iterables.find(acl.getGrants(),
+                  new Predicate<GrantAndPermission>() {
+                     public boolean apply(GrantAndPermission gap) {
+                        return gap.getGrantee().getIdentifier().equals(
+                                 GroupGrantee.AUTHENTICATED_USERS.getIdentifier());
+                     }
+                  });
+         assertEquals(gap.getPermission(), org.jets3t.service.acl.Permission.PERMISSION_READ_ACP);
       } finally {
          returnBucket(bucketName);
       }
    }
 
    @Test
-   public void testMultiService() throws InterruptedException, ExecutionException, 
-         TimeoutException, S3ServiceException, NoSuchAlgorithmException, IOException 
-   {
+   public void testMultiService() throws InterruptedException, ExecutionException,
+            TimeoutException, S3ServiceException, NoSuchAlgorithmException, IOException {
       int OBJECT_COUNT = 50;
       int OBJECT_SIZE = 1024; // 1 KB
-      
+
       byte[] dataBuffer = new byte[OBJECT_SIZE];
-      
+
       String bucketName = getBucketName();
       try {
          S3Bucket bucket = new S3Bucket(bucketName);
          S3Object[] objects = new S3Object[OBJECT_COUNT];
-         
+
          for (int i = 0; i < objects.length; i++) {
             InputStream dataInputStream = new ByteArrayInputStream(dataBuffer);
             objects[i] = new S3Object("testMultiServiceObject" + i);
             objects[i].setDataInputStream(dataInputStream);
             objects[i].setContentLength(dataBuffer.length);
          }
-         
+
          final long[] countOfUploadCompletions = new long[1];
          S3ServiceEventListener eventListener = new S3ServiceEventAdaptor() {
             @Override
             public synchronized void s3ServiceEventPerformed(CreateObjectsEvent event) {
-               if (CreateObjectsEvent.EVENT_STARTED == event.getEventCode()) {      
+               if (CreateObjectsEvent.EVENT_STARTED == event.getEventCode()) {
                   // Do nothing
                } else if (CreateObjectsEvent.EVENT_COMPLETED == event.getEventCode()) {
                   // Do nothing
@@ -676,21 +669,21 @@ public class JCloudsS3ServiceIntegrationTest extends S3IntegrationTest {
                   countOfUploadCompletions[0] = event.getThreadWatcher().getCompletedThreads();
                }
             }
-         };         
-         
+         };
+
          S3ServiceMulti multiService = new S3ServiceMulti(service, eventListener);
          multiService.putObjects(bucket, objects);
 
-         assertEquals(countOfUploadCompletions[0], OBJECT_COUNT);         
-         org.jclouds.aws.s3.domain.S3Bucket theBucket = 
-            client.listBucket(bucketName).get(10, TimeUnit.SECONDS);         
+         assertEquals(countOfUploadCompletions[0], OBJECT_COUNT);
+         org.jclouds.aws.s3.domain.S3Bucket theBucket = client.listBucket(bucketName).get(10,
+                  TimeUnit.SECONDS);
          assertEquals(theBucket.getSize(), OBJECT_COUNT);
-         
+
       } finally {
          returnBucket(bucketName);
       }
    }
-   
+
    @Test(enabled = false)
    public void testCheckBucketStatus() {
       fail("Not yet implemented");

@@ -30,7 +30,7 @@ import org.jclouds.aws.s3.domain.AccessControlList;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.xml.ErrorHandler;
-import org.jclouds.http.commands.callables.xml.ParseSax;
+import org.jclouds.http.functions.ParseSax;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;

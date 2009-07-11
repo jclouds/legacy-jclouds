@@ -24,7 +24,6 @@
 package org.jclouds.aws.s3.commands;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.jclouds.aws.s3.S3IntegrationTest;
 import org.jclouds.aws.s3.domain.S3Bucket;
@@ -42,7 +41,7 @@ public class ListOwnedBucketsIntegrationTest extends S3IntegrationTest {
 
    @Test()
    void bucketDoesntExist() throws Exception {
-      List<S3Bucket.Metadata> list = client.listOwnedBuckets().get(10, TimeUnit.SECONDS);
+      List<S3Bucket.Metadata> list = client.listOwnedBuckets();
       assert !list.contains(new S3Bucket("shouldntexist"));
    }
 
@@ -50,7 +49,7 @@ public class ListOwnedBucketsIntegrationTest extends S3IntegrationTest {
    void bucketExists() throws Exception {
       String bucketName = getBucketName();
       try {
-         List<S3Bucket.Metadata> list = client.listOwnedBuckets().get(10, TimeUnit.SECONDS);
+         List<S3Bucket.Metadata> list = client.listOwnedBuckets();
          S3Bucket.Metadata firstBucket = list.get(0);
          S3Bucket.Metadata toMatch = new S3Bucket.Metadata(bucketName);
          toMatch.setOwner(firstBucket.getOwner());

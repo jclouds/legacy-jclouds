@@ -23,14 +23,12 @@
  */
 package org.jclouds.aws.s3.xml;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import org.jclouds.aws.s3.domain.CanonicalUser;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.aws.s3.util.S3Utils;
-import org.jclouds.aws.util.DateService;
-import org.jclouds.http.commands.callables.xml.ParseSax;
+import org.jclouds.http.HttpUtils;
+import org.jclouds.http.functions.ParseSax;
+import org.jclouds.util.DateService;
 import org.xml.sax.Attributes;
 
 import com.google.inject.Inject;
@@ -56,14 +54,11 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<S3Bucket> {
    @Inject
    public ListBucketHandler(DateService dateParser) {
       this.dateParser = dateParser;
+      this.s3Bucket = new S3Bucket();
    }
 
    public S3Bucket getResult() {
       return s3Bucket;
-   }
-
-   public void setBucketName(String bucketName) {
-      this.s3Bucket = new S3Bucket(checkNotNull(bucketName, "bucketName"));
    }
 
    private boolean inCommonPrefixes;
@@ -84,8 +79,8 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<S3Bucket> {
       } else if (qName.equals("LastModified")) {
          currentObjectMetadata.setLastModified(dateParser.iso8601DateParse(currentText.toString()));
       } else if (qName.equals("ETag")) {
-         currentObjectMetadata.setMd5(S3Utils.fromHexString(currentText.toString().replaceAll("\"",
-                  "")));
+         currentObjectMetadata.setETag(HttpUtils.fromHexString(currentText.toString().replaceAll(
+                  "\"", "")));
       } else if (qName.equals("Size")) {
          currentObjectMetadata.setSize(Long.parseLong(currentText.toString()));
       } else if (qName.equals("Owner")) {
@@ -94,7 +89,8 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<S3Bucket> {
          currentObjectMetadata.setStorageClass(currentText.toString());
       } else if (qName.equals("Contents")) {
          s3Bucket.getContents().add(currentObjectMetadata);
-      } else if (qName.equals("Name")) {// bucketName stuff last, as least likely
+      } else if (qName.equals("Name")) {
+         s3Bucket.setName(currentText.toString());
       } else if (qName.equals("Prefix")) {
          String prefix = currentText.toString().trim();
          if (inCommonPrefixes)

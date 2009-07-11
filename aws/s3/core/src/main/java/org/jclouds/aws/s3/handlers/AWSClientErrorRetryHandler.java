@@ -28,11 +28,12 @@ import javax.annotation.Resource;
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.s3.util.S3Utils;
 import org.jclouds.aws.s3.xml.S3ParserFactory;
+import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpException;
-import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.logging.Logger;
+import org.jclouds.util.Utils;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -46,25 +47,27 @@ public class AWSClientErrorRetryHandler implements HttpRetryHandler {
    private final S3ParserFactory parserFactory;
 
    private final int retryCountLimit;
+   private final S3Utils utils;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public AWSClientErrorRetryHandler(S3ParserFactory parserFactory,
+   public AWSClientErrorRetryHandler(S3Utils utils, S3ParserFactory parserFactory,
             @Named("jclouds.http.max-retries") int retryCountLimit) {
+      this.utils = utils;
       this.retryCountLimit = retryCountLimit;
       this.parserFactory = parserFactory;
    }
 
-   public boolean shouldRetryRequest(HttpFutureCommand<?> command, HttpResponse response) {
+   public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
       if (command.getFailureCount() > retryCountLimit)
          return false;
       if (response.getStatusCode() == 400 || response.getStatusCode() == 409) {
-         byte[] content = S3Utils.closeConnectionButKeepContentStream(response);
+         byte[] content = Utils.closeConnectionButKeepContentStream(response);
          command.incrementRedirectCount();
          try {
-            AWSError error = S3Utils.parseAWSErrorFromContent(parserFactory, command, response,
+            AWSError error = utils.parseAWSErrorFromContent(parserFactory, command, response,
                      new String(content));
             if ("RequestTimeout".equals(error.getCode())
                      || "OperationAborted".equals(error.getCode())) {
@@ -76,4 +79,5 @@ public class AWSClientErrorRetryHandler implements HttpRetryHandler {
       }
       return false;
    }
+
 }

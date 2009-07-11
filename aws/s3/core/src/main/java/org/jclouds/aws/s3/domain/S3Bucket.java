@@ -142,7 +142,7 @@ public class S3Bucket {
          EU
       }
 
-      private final String name;
+      private String name;
       private DateTime creationDate;
       private CanonicalUser canonicalUser;
 
@@ -151,6 +151,10 @@ public class S3Bucket {
        */
       public Metadata(String name) {
          this.name = checkNotNull(name, "name");
+      }
+
+      public Metadata() {
+         super();
       }
 
       /**
@@ -164,6 +168,10 @@ public class S3Bucket {
        * <p/>
        * Not be in an IP address style (e.g., "192.168.5.4")
        */
+      public void setName(String name) {
+         this.name = checkNotNull(name, "name");
+      }
+
       public String getName() {
          return name;
       }
@@ -203,6 +211,10 @@ public class S3Bucket {
 
    private boolean isTruncated;
 
+   public S3Bucket() {
+      this.metadata = new Metadata();
+   }
+
    public S3Bucket(String name) {
       this.metadata = new Metadata(name);
    }
@@ -213,6 +225,10 @@ public class S3Bucket {
 
    public S3Bucket(Metadata metadata) {
       this.metadata = checkNotNull(metadata, "metadata");
+   }
+
+   public void setName(String name) {
+      this.metadata.setName(name);
    }
 
    /**
@@ -262,7 +278,7 @@ public class S3Bucket {
     * and prefix is set to <code>a/</code> and delimiter is set to <code>/</code> then
     * commonprefixes would return 1,2
     * 
-    * @see org.jclouds.aws.s3.commands.options.ListBucketOptions#getPrefix()
+    * @see org.jclouds.aws.s3.options.ListBucketOptions#getPrefix()
     */
    public SortedSet<String> getCommonPrefixes() {
       return commonPrefixes;
@@ -275,7 +291,7 @@ public class S3Bucket {
    /**
     * return keys that start with this.
     * 
-    * @see org.jclouds.aws.s3.commands.options.ListBucketOptions#getPrefix()
+    * @see org.jclouds.aws.s3.options.ListBucketOptions#getPrefix()
     */
    public String getPrefix() {
       return prefix;
@@ -287,7 +303,7 @@ public class S3Bucket {
 
    /**
     * @return maximum results of the bucket.
-    * @see org.jclouds.aws.s3.commands.options.ListBucketOptions#getMaxKeys()
+    * @see org.jclouds.aws.s3.options.ListBucketOptions#getMaxKeys()
     */
    public long getMaxKeys() {
       return maxKeys;
@@ -300,7 +316,7 @@ public class S3Bucket {
    /**
     * when set, bucket contains results whose keys are lexigraphically after marker.
     * 
-    * @see org.jclouds.aws.s3.commands.options.ListBucketOptions#getMarker()
+    * @see org.jclouds.aws.s3.options.ListBucketOptions#getMarker()
     */
    public String getMarker() {
       return marker;
@@ -316,7 +332,7 @@ public class S3Bucket {
     * note that delimiter has no effect on prefix. prefix can contain the delimiter many times, or
     * not at all. delimiter only restricts after the prefix.
     * 
-    * @see org.jclouds.aws.s3.commands.options.ListBucketOptions#getMarker()
+    * @see org.jclouds.aws.s3.options.ListBucketOptions#getMarker()
     */
    public String getDelimiter() {
       return delimiter;

@@ -23,17 +23,16 @@
  */
 package org.jclouds.aws.s3.handlers;
 
-import java.net.URI;
-
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.aws.s3.util.S3Utils;
 import org.jclouds.aws.s3.xml.S3ParserFactory;
+import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpException;
-import org.jclouds.http.HttpFutureCommand;
-import org.jclouds.http.HttpHeaders;
 import org.jclouds.http.HttpMethod;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.http.handlers.RedirectionRetryHandler;
 import org.jclouds.util.Utils;
 
@@ -47,54 +46,45 @@ import com.google.inject.name.Named;
  */
 public class AWSRedirectionRetryHandler extends RedirectionRetryHandler {
    private final S3ParserFactory parserFactory;
+   private final S3Utils utils;
 
    @Inject
-   public AWSRedirectionRetryHandler(S3ParserFactory parserFactory,
-            @Named("jclouds.http.max-redirects") int retryCountLimit) {
-      super(retryCountLimit);
+   public AWSRedirectionRetryHandler(BackoffLimitedRetryHandler backoffHandler, S3Utils utils,
+            S3ParserFactory parserFactory, @Named("jclouds.http.max-redirects") int retryCountLimit) {
+      super(backoffHandler, retryCountLimit);
+      this.utils = utils;
       this.parserFactory = parserFactory;
    }
 
-   public boolean shouldRetryRequest(HttpFutureCommand<?> command, HttpResponse response) {
-      if (response.getStatusCode() == 301 || response.getStatusCode() == 307) {
-         byte[] content = S3Utils.closeConnectionButKeepContentStream(response);
-         if (command.getRequest().getMethod() == HttpMethod.HEAD) {
-            command.getRequest().setMethod(HttpMethod.GET);
-            return true;
-         } else {
-            command.incrementRedirectCount();
-            try {
-               AWSError error = S3Utils.parseAWSErrorFromContent(parserFactory, command, response,
-                        new String(content));
-               String host = error.getDetails().get(S3Constants.ENDPOINT);
-               if (host != null) {
-                  if (host.equals(command.getRequest().getEndPoint().getHost())) {
-                     // must be an amazon error related to
-                     // http://developer.amazonwebservices.com/connect/thread.jspa?messageID=72287&#72287
-                     try {
-                        command.incrementFailureCount();
-                        Thread.sleep(100);
-                        return true;
-                     } catch (InterruptedException e) {
-                        command.setException(e);
-                        return false;
-                     }
-                  } else {
-                     URI endPoint = command.getRequest().getEndPoint();
-                     endPoint = Utils.replaceHostInEndPoint(endPoint, host);
-                     command.getRequest().setEndPoint(endPoint);
-                     command.getRequest().getHeaders().removeAll(HttpHeaders.HOST);
-                  }
-                  return true;
+   public boolean shouldRetryRequest(HttpCommand command, HttpRequest request, HttpResponse response) {
+      byte[] content = Utils.closeConnectionButKeepContentStream(response);
+      if (request.getMethod() == HttpMethod.HEAD) {
+         command.setMethod(HttpMethod.GET);
+         return true;
+      } else {
+         command.incrementRedirectCount();
+         try {
+            AWSError error = utils.parseAWSErrorFromContent(parserFactory, command, response,
+                     new String(content));
+            String host = error.getDetails().get(S3Constants.ENDPOINT);
+            if (host != null) {
+               if (host.equals(request.getEndpoint().getHost())) {
+                  // must be an amazon error related to
+                  // http://developer.amazonwebservices.com/connect/thread.jspa?messageID=72287&#72287
+                  return backoffHandler.shouldRetryRequest(command, response);
                } else {
-                  return false;
+                  command.setHostAndPort(host, request.getEndpoint().getPort());
                }
-            } catch (HttpException e) {
+               return true;
+            } else {
                return false;
             }
+         } catch (HttpException e) {
+            logger.error(e, "error on redirect for command %s; response %s; retrying...", command,
+                     response);
+            return false;
          }
-      } else {
-         return super.shouldRetryRequest(command, response);
       }
+
    }
 }

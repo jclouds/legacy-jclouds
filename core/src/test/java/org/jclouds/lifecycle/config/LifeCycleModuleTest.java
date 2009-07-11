@@ -25,10 +25,12 @@ package org.jclouds.lifecycle.config;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.lifecycle.Closer;
 import org.testng.annotations.Test;
 
@@ -45,84 +47,87 @@ import com.google.inject.Injector;
 @Test
 public class LifeCycleModuleTest {
 
-    @Test
-    void testBindsExecutor() {
-	Injector i = Guice.createInjector(new LifeCycleModule());
-	assert i.getInstance(ExecutorService.class) != null;
-    }
+   @Test
+   void testBindsExecutor() {
+      Injector i = createInjector();
+      assert i.getInstance(ExecutorService.class) != null;
+   }
 
-    @Test
-    void testBindsCloser() {
-	Injector i = Guice.createInjector(new LifeCycleModule());
-	assert i.getInstance(Closer.class) != null;
-    }
+   private Injector createInjector() {
+      Injector i = Guice.createInjector(new LifeCycleModule(), new ExecutorServiceModule(Executors
+               .newCachedThreadPool()));
+      return i;
+   }
 
-    @Test
-    void testCloserClosesExecutor() throws IOException {
-	Injector i = Guice.createInjector(new LifeCycleModule());
-	ExecutorService executor = i.getInstance(ExecutorService.class);
-	assert !executor.isShutdown();
-	Closer closer = i.getInstance(Closer.class);
-	closer.close();
-	assert executor.isShutdown();
-    }
+   @Test
+   void testBindsCloser() {
+      Injector i = createInjector();
+      assert i.getInstance(Closer.class) != null;
+   }
 
-    static class PreDestroyable {
-	boolean isClosed = false;
+   @Test
+   void testCloserClosesExecutor() throws IOException {
+      Injector i = createInjector();
+      ExecutorService executor = i.getInstance(ExecutorService.class);
+      assert !executor.isShutdown();
+      Closer closer = i.getInstance(Closer.class);
+      closer.close();
+      assert executor.isShutdown();
+   }
 
-	@Inject
-	PreDestroyable(ExecutorService executor) {
-	    this.executor = executor;
-	}
+   static class PreDestroyable {
+      boolean isClosed = false;
 
-	ExecutorService executor;
+      @Inject
+      PreDestroyable(ExecutorService executor) {
+         this.executor = executor;
+      }
 
-	@PreDestroy
-	public void close() {
-	    assert !executor.isShutdown();
-	    isClosed = true;
-	}
-    }
+      ExecutorService executor;
 
-    @Test
-    void testCloserPreDestroyOrder() throws IOException {
-	Injector i = Guice.createInjector(new LifeCycleModule(),
-		new AbstractModule() {
-		    protected void configure() {
-			bind(PreDestroyable.class);
-		    }
-		});
-	ExecutorService executor = i.getInstance(ExecutorService.class);
-	assert !executor.isShutdown();
-	PreDestroyable preDestroyable = i.getInstance(PreDestroyable.class);
-	assert !preDestroyable.isClosed;
-	Closer closer = i.getInstance(Closer.class);
-	closer.close();
-	assert preDestroyable.isClosed;
-	assert executor.isShutdown();
-    }
+      @PreDestroy
+      public void close() {
+         assert !executor.isShutdown();
+         isClosed = true;
+      }
+   }
 
-    static class PostConstructable {
-	boolean isStarted;
+   @Test
+   void testCloserPreDestroyOrder() throws IOException {
+      Injector i = createInjector().createChildInjector(new AbstractModule() {
+         protected void configure() {
+            bind(PreDestroyable.class);
+         }
+      });
+      ExecutorService executor = i.getInstance(ExecutorService.class);
+      assert !executor.isShutdown();
+      PreDestroyable preDestroyable = i.getInstance(PreDestroyable.class);
+      assert !preDestroyable.isClosed;
+      Closer closer = i.getInstance(Closer.class);
+      closer.close();
+      assert preDestroyable.isClosed;
+      assert executor.isShutdown();
+   }
 
-	@PostConstruct
-	void start() {
-	    isStarted = true;
-	}
-    }
+   static class PostConstructable {
+      boolean isStarted;
 
-    @Test
-    void testPostConstruct() {
-	Injector i = Guice.createInjector(new LifeCycleModule(),
-		new AbstractModule() {
-		    protected void configure() {
-			bind(PostConstructable.class);
-		    }
-		});
-	PostConstructable postConstructable = i
-		.getInstance(PostConstructable.class);
-	assert postConstructable.isStarted;
+      @PostConstruct
+      void start() {
+         isStarted = true;
+      }
+   }
 
-    }
+   @Test
+   void testPostConstruct() {
+      Injector i = createInjector().createChildInjector(new AbstractModule() {
+         protected void configure() {
+            bind(PostConstructable.class);
+         }
+      });
+      PostConstructable postConstructable = i.getInstance(PostConstructable.class);
+      assert postConstructable.isStarted;
+
+   }
 
 }

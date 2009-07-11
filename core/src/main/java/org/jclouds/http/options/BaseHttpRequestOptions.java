@@ -23,16 +23,7 @@
  */
 package org.jclouds.http.options;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.util.Utils.urlEncode;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.Map.Entry;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -45,12 +36,13 @@ import com.google.common.collect.Multimap;
  */
 public class BaseHttpRequestOptions implements HttpRequestOptions {
 
-   protected SortedMap<String, String> parameters = new TreeMap<String, String>();
+   protected Multimap<String, String> matrixParameters = HashMultimap.create();
+   protected Multimap<String, String> queryParameters = HashMultimap.create();
    protected Multimap<String, String> headers = HashMultimap.create();
-   protected String payload;
+   protected String entity;
 
-   public String buildPayload() {
-      return payload;
+   public String buildStringEntity() {
+      return entity;
    }
 
    protected String getFirstHeaderOrNull(String string) {
@@ -63,14 +55,6 @@ public class BaseHttpRequestOptions implements HttpRequestOptions {
       headers.put(key, value);
    }
 
-   protected void encodeAndReplaceParameter(String parameter, String value) {
-      try {
-         parameters.put(parameter, URLEncoder.encode(checkNotNull(value, parameter), "UTF-8"));
-      } catch (UnsupportedEncodingException e) {
-         throw new IllegalArgumentException("bad encoding on " + parameter + ": " + value, e);
-      }
-   }
-
    /**
     * {@inheritDoc}
     */
@@ -81,20 +65,15 @@ public class BaseHttpRequestOptions implements HttpRequestOptions {
    /**
     * {@inheritDoc}
     */
-   public String buildQueryString() {
-      StringBuilder builder = new StringBuilder("");
-      if (parameters.size() > 0) {
-         builder.append("?");
-         for (Iterator<Entry<String, String>> i = parameters.entrySet().iterator(); i.hasNext();) {
-            Entry<String, String> entry = i.next();
-            builder.append(urlEncode(entry.getKey())).append("=").append(
-                     urlEncode(entry.getValue()));
-            if (i.hasNext())
-               builder.append("&");
-         }
-      }
-      String returnVal = builder.toString();
-      return returnVal;
+   public Multimap<String, String> buildQueryParameters() {
+      return queryParameters;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public Multimap<String, String> buildMatrixParameters() {
+      return matrixParameters;
    }
 
 }

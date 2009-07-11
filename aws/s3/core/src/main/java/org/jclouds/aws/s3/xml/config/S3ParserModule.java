@@ -35,9 +35,8 @@ import org.jclouds.aws.s3.xml.ListAllMyBucketsHandler;
 import org.jclouds.aws.s3.xml.ListBucketHandler;
 import org.jclouds.aws.s3.xml.S3ParserFactory;
 import org.jclouds.aws.xml.ErrorHandler;
-import org.jclouds.command.ConfiguresResponseParser;
-import org.jclouds.http.commands.callables.xml.ParseSax;
-import org.jclouds.http.commands.callables.xml.config.SaxModule;
+import org.jclouds.command.ConfiguresResponseTransformer;
+import org.jclouds.http.functions.ParseSax;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;
@@ -48,7 +47,7 @@ import com.google.inject.assistedinject.FactoryProvider;
  * 
  * @author Adrian Cole
  */
-@ConfiguresResponseParser
+@ConfiguresResponseTransformer
 public class S3ParserModule extends AbstractModule {
    protected final TypeLiteral<S3ParserFactory.GenericParseFactory<AWSError>> errorTypeLiteral = new TypeLiteral<S3ParserFactory.GenericParseFactory<AWSError>>() {
    };
@@ -63,7 +62,6 @@ public class S3ParserModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      install(new SaxModule());
       bindErrorHandler();
       bindCallablesThatReturnParseResults();
       bindParserImplementationsToReturnTypes();

@@ -38,5 +38,9 @@ public interface S3Constants extends AWSConstants, S3Headers, ObjectStoreConstan
     */
    public static final String S3_REST_API_XML_NAMESPACE = "http://s3.amazonaws.com/doc/2006-03-01/";
    public static final String ENDPOINT = "Endpoint";
+   public static final String PREFIX = "prefix";
+   public static final String MARKER = "marker";
+   public static final String MAX_KEYS = "max-keys";
+   public static final String DELIMITER = "delimiter";
 
 }

@@ -27,11 +27,12 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
+import javax.ws.rs.core.HttpHeaders;
+
 import org.jclouds.aws.s3.reference.S3Constants;
-import org.jclouds.aws.util.DateService;
-import org.jclouds.http.HttpHeaders;
 import org.jclouds.http.HttpMethod;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.util.DateService;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
@@ -44,29 +45,40 @@ public class RequestAuthorizeSignatureTest {
    @Test
    void testAppendBucketNameHostHeader() {
       URI host = URI.create("http://s3.amazonaws.com:80");
-      HttpRequest request = new HttpRequest(host, HttpMethod.GET, "/");
+      HttpRequest request = new HttpRequest(HttpMethod.GET, host);
       request.getHeaders().put(HttpHeaders.HOST, "adriancole.s3int5.s3.amazonaws.com");
       StringBuilder builder = new StringBuilder();
-      RequestAuthorizeSignature.appendBucketName(request, builder);
+      createFilter().appendBucketName(request, builder);
       assertEquals(builder.toString(), "/adriancole.s3int5");
    }
 
    @Test
+   void testAclQueryString() {
+      URI host = URI.create("http://s3.amazonaws.com:80/?acl");
+      HttpRequest request = new HttpRequest(HttpMethod.GET, host);
+      StringBuilder builder = new StringBuilder();
+      createFilter().appendUriPath(request, builder);
+      assertEquals(builder.toString(), "/?acl");
+   }
+
+   // "?acl", "?location", "?logging", or "?torrent"
+
+   @Test
    void testAppendBucketNameHostHeaderService() {
       URI host = URI.create("http://s3.amazonaws.com:80");
-      HttpRequest request = new HttpRequest(host, HttpMethod.GET, "/");
+      HttpRequest request = new HttpRequest(HttpMethod.GET, host);
       request.getHeaders().put(HttpHeaders.HOST, "s3.amazonaws.com");
       StringBuilder builder = new StringBuilder();
-      RequestAuthorizeSignature.appendBucketName(request, builder);
+      createFilter().appendBucketName(request, builder);
       assertEquals(builder.toString(), "");
    }
 
    @Test
    void testAppendBucketNameURIHost() {
       URI host = URI.create("http://adriancole.s3int5.s3-external-3.amazonaws.com:80");
-      HttpRequest request = new HttpRequest(host, HttpMethod.GET, "/");
+      HttpRequest request = new HttpRequest(HttpMethod.GET, host);
       StringBuilder builder = new StringBuilder();
-      RequestAuthorizeSignature.appendBucketName(request, builder);
+      createFilter().appendBucketName(request, builder);
       assertEquals(builder.toString(), "/adriancole.s3int5");
    }
 

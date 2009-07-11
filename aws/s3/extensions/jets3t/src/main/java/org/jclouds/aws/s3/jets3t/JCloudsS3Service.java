@@ -34,11 +34,11 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.S3Context;
 import org.jclouds.aws.s3.S3ContextBuilder;
-import org.jclouds.aws.s3.commands.options.CopyObjectOptions;
-import org.jclouds.aws.s3.commands.options.GetObjectOptions;
-import org.jclouds.aws.s3.commands.options.ListBucketOptions;
-import org.jclouds.aws.s3.commands.options.PutObjectOptions;
-import org.jclouds.aws.s3.util.S3Utils;
+import org.jclouds.aws.s3.options.CopyObjectOptions;
+import org.jclouds.aws.s3.options.ListBucketOptions;
+import org.jclouds.aws.s3.options.PutObjectOptions;
+import org.jclouds.http.HttpUtils;
+import org.jclouds.http.options.GetOptions;
 import org.jclouds.util.Utils;
 import org.jets3t.service.S3ObjectsChunk;
 import org.jets3t.service.S3Service;
@@ -109,7 +109,7 @@ public class JCloudsS3Service extends S3Service {
          Map map = new HashMap();
          // Result fields returned when copy is successful.
          map.put("Last-Modified", jcObjectMetadata.getLastModified().toDate());
-         map.put("ETag", S3Utils.toHexString(jcObjectMetadata.getMd5()));
+         map.put("ETag", HttpUtils.toHexString(jcObjectMetadata.getETag()));
          return map;
       } catch (Exception e) {
          Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
@@ -145,8 +145,7 @@ public class JCloudsS3Service extends S3Service {
    @Override
    protected void deleteBucketImpl(String bucketName) throws S3ServiceException {
       try {
-         connection.deleteBucketIfEmpty(bucketName).get(requestTimeoutMilliseconds,
-                  TimeUnit.MILLISECONDS);
+         connection.deleteBucketIfEmpty(bucketName);
       } catch (Exception e) {
          Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
          throw new S3ServiceException("error deleting bucket: " + bucketName, e);
@@ -222,7 +221,7 @@ public class JCloudsS3Service extends S3Service {
          if (ifNoneMatchTags != null)
             throw new IllegalArgumentException("ifNoneMatchTags");
 
-         return Util.convertObjectHead(connection.headObject(bucketName, objectKey).get());
+         return Util.convertObjectHead(connection.headObject(bucketName, objectKey));
       } catch (Exception e) {
          Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
          throw new S3ServiceException(String.format("error retrieving object head: %1$s:%2$s",
@@ -235,8 +234,8 @@ public class JCloudsS3Service extends S3Service {
             Calendar ifUnmodifiedSince, String[] ifMatchTags, String[] ifNoneMatchTags,
             Long byteRangeStart, Long byteRangeEnd) throws S3ServiceException {
       try {
-         GetObjectOptions options = Util.convertGetObjectOptions(ifModifiedSince,
-                  ifUnmodifiedSince, ifMatchTags, ifNoneMatchTags);
+         GetOptions options = Util.convertGetObjectOptions(ifModifiedSince, ifUnmodifiedSince,
+                  ifMatchTags, ifNoneMatchTags);
          return Util.convertObject(connection.getObject(bucketName, objectKey, options).get());
       } catch (Exception e) {
          Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
@@ -261,7 +260,7 @@ public class JCloudsS3Service extends S3Service {
    protected S3Bucket[] listAllBucketsImpl() throws S3ServiceException {
       try {
          List<org.jclouds.aws.s3.domain.S3Bucket.Metadata> jcBucketList = connection
-                  .listOwnedBuckets().get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
+                  .listOwnedBuckets();
          return Util.convertBuckets(jcBucketList);
       } catch (Exception e) {
          Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
@@ -294,7 +293,7 @@ public class JCloudsS3Service extends S3Service {
          } while (completeListing && jcBucket.isTruncated()); // Build entire listing if requested
 
          return new S3ObjectsChunk(prefix, // Return the supplied prefix, not the one in the S3
-                                           // response.
+                  // response.
                   jcBucket.getDelimiter(), (S3Object[]) jsObjects.toArray(new S3Object[jsObjects
                            .size()]), (String[]) commonPrefixes.toArray(new String[commonPrefixes
                            .size()]), priorLastKey);
@@ -347,9 +346,9 @@ public class JCloudsS3Service extends S3Service {
       try {
          PutObjectOptions options = Util.convertPutObjectOptions(jsObject.getAcl());
          org.jclouds.aws.s3.domain.S3Object jcObject = Util.convertObject(jsObject);
-         byte md5[] = connection.putObject(bucketName, jcObject, options).get(
+         byte eTag[] = connection.putObject(bucketName, jcObject, options).get(
                   requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
-         jsObject.setMd5Hash(md5);
+         jsObject.setMd5Hash(eTag);
          return jsObject;
       } catch (Exception e) {
          Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);

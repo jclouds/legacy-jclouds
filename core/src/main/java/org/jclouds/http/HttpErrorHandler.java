@@ -31,9 +31,9 @@ package org.jclouds.http;
  */
 public interface HttpErrorHandler {
    public static final HttpErrorHandler NOOP = new HttpErrorHandler() {
-      public void handleError(HttpFutureCommand<?> command, HttpResponse response) {
+      public void handleError(HttpCommand command, HttpResponse response) {
       }
    };
 
-   void handleError(HttpFutureCommand<?> command, HttpResponse response);
+   void handleError(HttpCommand command, HttpResponse response);
 }

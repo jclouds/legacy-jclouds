@@ -33,11 +33,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.http.commands.CommandFactory;
-import org.jclouds.http.commands.config.HttpCommandsModule;
+import org.jclouds.cloud.CloudContextBuilder;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.rest.RestClientFactory;
+import org.jclouds.rest.config.JaxrsModule;
 import org.jclouds.util.Utils;
 import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Request;
@@ -48,10 +50,10 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 
+import com.google.common.collect.Lists;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
@@ -61,8 +63,7 @@ public abstract class BaseJettyTest {
    protected static final String XML2 = "<foo><bar>chubbs</bar></foo>";
 
    protected Server server = null;
-   protected CommandFactory factory;
-   protected HttpFutureCommandClient client;
+   protected IntegrationTestClient client;
    protected Injector injector;
    private Closer closer;
    private AtomicInteger cycle = new AtomicInteger(0);
@@ -76,11 +77,19 @@ public abstract class BaseJettyTest {
                   HttpServletResponse response, int dispatch) throws IOException, ServletException {
             if (failIfNoContentLength(request, response))
                return;
-            else if (request.getHeader("test") != null) {
+            else if (request.getMethod().equals("PUT")) {
+               if (request.getContentLength() > 0) {
+                  Utils.toStringAndClose(request.getInputStream());
+               } else {
+                  response.sendError(500, "no content");
+               }
+            } else if (request.getHeader("Content-Range") != null) {
+               response.sendError(404, "no content");
+            } else if (request.getHeader("test") != null) {
                response.setContentType("text/plain");
                response.setStatus(HttpServletResponse.SC_OK);
                response.getWriter().println("test");
-            } else if (target.equals("/redirect")) {
+            } else if (target.indexOf("redirect") > 0) {
                response.sendRedirect("http://localhost:" + (testPort + 1));
             } else {
                if (failOnRequest(request, response))
@@ -132,22 +141,25 @@ public abstract class BaseJettyTest {
             }
          }
       });
-      injector = Guice.createInjector(new AbstractModule() {
+
+      List<Module> modules = Lists.newArrayList(new AbstractModule() {
          @Override
          protected void configure() {
             Names.bindProperties(binder(), properties);
             bind(URI.class).toInstance(URI.create("http://localhost:" + testPort));
          }
-      }, new JDKLoggingModule(), new HttpCommandsModule(), createClientModule(),
-               new AbstractModule() {
+      }, new JDKLoggingModule(),
+               new JaxrsModule(), createClientModule(), new AbstractModule() {
                   @Override
                   protected void configure() {
                      bind(new TypeLiteral<List<HttpRequestFilter>>() {
                      }).toInstance(filters);
                   }
                });
-      factory = injector.getInstance(Key.get(CommandFactory.class));
-      client = injector.getInstance(HttpFutureCommandClient.class);
+      CloudContextBuilder.addExecutorServiceIfNotPresent(modules);
+      injector = Guice.createInjector(modules);
+      RestClientFactory factory = injector.getInstance(RestClientFactory.class);
+      client = factory.create(IntegrationTestClient.class);
       closer = injector.getInstance(Closer.class);
       assert client != null;
    }
@@ -183,7 +195,7 @@ public abstract class BaseJettyTest {
 
    protected boolean failIfNoContentLength(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-      if (request.getHeader(HttpConstants.CONTENT_LENGTH) == null) {
+      if (request.getHeader(HttpHeaders.CONTENT_LENGTH) == null) {
          response.sendError(500);
          ((Request) request).setHandled(true);
          return true;

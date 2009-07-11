@@ -29,14 +29,12 @@ import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.AWSResponseException;
-import org.jclouds.aws.domain.AWSError;
-import org.jclouds.aws.s3.filters.RequestAuthorizeSignature;
 import org.jclouds.aws.s3.reference.S3Headers;
 import org.jclouds.aws.s3.suncloud.domain.SunCloudS3Error;
 import org.jclouds.aws.s3.xml.S3ParserFactory;
-import org.jclouds.http.HttpFutureCommand;
-import org.jclouds.http.HttpResponse;
+import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpErrorHandler;
+import org.jclouds.http.HttpResponse;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Utils;
 
@@ -60,7 +58,7 @@ public class ParseSunCloudS3ErrorFromXmlContent implements HttpErrorHandler {
       this.parserFactory = parserFactory;
    }
 
-   public void handleError(HttpFutureCommand<?> command, HttpResponse response) {
+   public void handleError(HttpCommand command, HttpResponse response) {
       SunCloudS3Error error = new SunCloudS3Error();
       error.setRequestId(response.getFirstHeaderOrNull(S3Headers.REQUEST_ID));
       error.setRequestToken(response.getFirstHeaderOrNull(S3Headers.REQUEST_TOKEN));
@@ -68,8 +66,8 @@ public class ParseSunCloudS3ErrorFromXmlContent implements HttpErrorHandler {
       try {
          if (errorStream != null) {
             error.setMessage(Utils.toStringAndClose(errorStream));
-            //TODO parse the Sun Cloud error.
-            
+            // TODO parse the Sun Cloud error.
+
             // error = parserFactory.createErrorParser().parse(errorStream);
             // if ("SignatureDoesNotMatch".equals(error.getCode()))
             // error.setStringSigned(RequestAuthorizeSignature

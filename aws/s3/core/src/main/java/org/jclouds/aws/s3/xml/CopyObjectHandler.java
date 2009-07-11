@@ -24,9 +24,9 @@
 package org.jclouds.aws.s3.xml;
 
 import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.aws.s3.util.S3Utils;
-import org.jclouds.aws.util.DateService;
-import org.jclouds.http.commands.callables.xml.ParseSax;
+import org.jclouds.http.HttpUtils;
+import org.jclouds.http.functions.ParseSax;
+import org.jclouds.util.DateService;
 
 import com.google.inject.Inject;
 
@@ -40,14 +40,10 @@ import com.google.inject.Inject;
  */
 public class CopyObjectHandler extends ParseSax.HandlerWithResult<S3Object.Metadata> {
 
-   private S3Object.Metadata metadata;
+   private S3Object.Metadata metadata = new S3Object.Metadata();
    private StringBuilder currentText = new StringBuilder();
    @Inject
    private DateService dateParser;
-
-   public void setKey(String key) {
-      metadata = new S3Object.Metadata(key);
-   }
 
    public S3Object.Metadata getResult() {
       return metadata;
@@ -55,7 +51,7 @@ public class CopyObjectHandler extends ParseSax.HandlerWithResult<S3Object.Metad
 
    public void endElement(String uri, String name, String qName) {
       if (qName.equals("ETag")) {
-         metadata.setMd5(S3Utils.fromHexString(currentText.toString().replaceAll("\"", "")));
+         metadata.setETag(HttpUtils.fromHexString(currentText.toString().replaceAll("\"", "")));
       } else if (qName.equals("LastModified")) {
          metadata.setLastModified(dateParser.iso8601DateParse(currentText.toString()));
       }

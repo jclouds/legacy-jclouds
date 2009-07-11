@@ -24,7 +24,7 @@
 package org.jclouds.http;
 
 /**
- * {@code HttpMethod} is an enumeration of HTTP methods used in {@link HttpFutureCommand}
+ * {@code HttpMethod} is an enumeration of HTTP methods used in {@link TransformingHttpCommand}
  * 
  * @author Adrian Cole
  */

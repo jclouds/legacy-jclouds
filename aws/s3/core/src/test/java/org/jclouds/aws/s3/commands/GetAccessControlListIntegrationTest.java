@@ -33,12 +33,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.aws.s3.S3IntegrationTest;
-import org.jclouds.aws.s3.commands.options.PutObjectOptions;
 import org.jclouds.aws.s3.domain.AccessControlList;
+import org.jclouds.aws.s3.domain.CannedAccessPolicy;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.AccessControlList.GroupGranteeURI;
 import org.jclouds.aws.s3.domain.AccessControlList.Permission;
-import org.jclouds.aws.s3.domain.acl.CannedAccessPolicy;
+import org.jclouds.aws.s3.options.PutObjectOptions;
 import org.testng.annotations.Test;
 
 /**

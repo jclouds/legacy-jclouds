@@ -31,7 +31,7 @@ import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.s3.S3Context;
 import org.jclouds.aws.s3.S3ContextBuilder;
 import org.jclouds.aws.s3.reference.S3Constants;
-import org.jclouds.gae.config.URLFetchServiceClientModule;
+import org.jclouds.gae.config.GaeHttpCommandExecutorServiceModule;
 import org.jclouds.samples.googleappengine.GetAllBucketsController;
 
 import javax.servlet.ServletContextEvent;
@@ -75,7 +75,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
    @Override
    protected Injector getInjector() {
       return S3ContextBuilder.newBuilder(accessKeyId, secretAccessKey).withHttpSecure(false)
-               .withModules(new URLFetchServiceClientModule(), new ServletModule() {
+               .withModules(new GaeHttpCommandExecutorServiceModule(), new ServletModule() {
                   @Override
                   protected void configureServlets() {
                      serve("*.s3").with(GetAllBucketsController.class);

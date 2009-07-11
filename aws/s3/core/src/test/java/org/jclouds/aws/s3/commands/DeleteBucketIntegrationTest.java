@@ -26,8 +26,6 @@ package org.jclouds.aws.s3.commands;
 import org.jclouds.aws.s3.S3IntegrationTest;
 import org.testng.annotations.Test;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * Tests integrated functionality of all deleteBucket commands.
  * <p/>
@@ -43,7 +41,7 @@ public class DeleteBucketIntegrationTest extends S3IntegrationTest {
     */
    @Test
    void deleteBucketIfEmptyNotFound() throws Exception {
-      assert client.deleteBucketIfEmpty("dbienf").get(10, TimeUnit.SECONDS);
+      assert client.deleteBucketIfEmpty("dbienf");
    }
 
    @Test
@@ -51,7 +49,7 @@ public class DeleteBucketIntegrationTest extends S3IntegrationTest {
       String bucketName = getBucketName();
       try {
          addObjectToBucket(bucketName, "test");
-         assert !client.deleteBucketIfEmpty(bucketName).get(10, TimeUnit.SECONDS);
+         assert !client.deleteBucketIfEmpty(bucketName);
       } finally {
          returnBucket(bucketName);
       }
@@ -61,8 +59,8 @@ public class DeleteBucketIntegrationTest extends S3IntegrationTest {
    void deleteBucketIfEmpty() throws Exception {
       String bucketName = getScratchBucketName();
       try {
-         assert client.deleteBucketIfEmpty(bucketName).get(10, TimeUnit.SECONDS);
-         assert !client.bucketExists(bucketName).get(10, TimeUnit.SECONDS);
+         assert client.deleteBucketIfEmpty(bucketName);
+         assert !client.bucketExists(bucketName);
       } finally {
          returnScratchBucket(bucketName);
       }

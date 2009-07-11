@@ -23,14 +23,15 @@
  */
 package org.jclouds.aws.s3.commands;
 
-import org.jclouds.aws.s3.S3IntegrationTest;
-import static org.jclouds.aws.s3.commands.options.CopyObjectOptions.Builder.overrideAcl;
-import org.jclouds.aws.s3.domain.acl.CannedAccessPolicy;
-import org.jclouds.aws.s3.util.S3Utils;
-import org.testng.annotations.Test;
+import static org.jclouds.aws.s3.options.CopyObjectOptions.Builder.overrideAcl;
 
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
+
+import org.jclouds.aws.s3.S3IntegrationTest;
+import org.jclouds.aws.s3.domain.CannedAccessPolicy;
+import org.jclouds.util.Utils;
+import org.testng.annotations.Test;
 
 /**
  * Tests integrated functionality of all copyObject commands.
@@ -59,7 +60,7 @@ public class CopyObjectLiveTest extends S3IntegrationTest {
 
          URL url = new URL(String.format("http://%1$s.s3.amazonaws.com/%2$s", destinationBucket,
                   destinationKey));
-         S3Utils.toStringAndClose(url.openStream());
+         Utils.toStringAndClose(url.openStream());
 
       } finally {
          returnBucket(bucketName);

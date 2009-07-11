@@ -26,25 +26,25 @@ package org.jclouds.aws.s3;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_ACCESSKEYID;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_SECRETACCESSKEY;
-import static org.jclouds.command.pool.PoolConstants.PROPERTY_POOL_IO_WORKER_THREADS;
-import static org.jclouds.command.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS;
-import static org.jclouds.command.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTION_REUSE;
-import static org.jclouds.command.pool.PoolConstants.PROPERTY_POOL_MAX_SESSION_FAILURES;
-import static org.jclouds.command.pool.PoolConstants.PROPERTY_POOL_REQUEST_INVOKER_THREADS;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_ADDRESS;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_REDIRECTS;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_RETRIES;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_SECURE;
 import static org.jclouds.http.HttpConstants.PROPERTY_SAX_DEBUG;
+import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_IO_WORKER_THREADS;
+import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS;
+import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTION_REUSE;
+import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_SESSION_FAILURES;
+import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_REQUEST_INVOKER_THREADS;
 
 import java.util.List;
 import java.util.Properties;
 
-import org.jclouds.aws.s3.config.LiveS3ConnectionModule;
+import org.jclouds.aws.s3.config.RestS3ConnectionModule;
 import org.jclouds.aws.s3.config.S3ContextModule;
 import org.jclouds.aws.s3.xml.config.S3ParserModule;
 import org.jclouds.cloud.CloudContextBuilder;
-import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
+import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 
 import com.google.inject.Injector;
@@ -58,7 +58,7 @@ import com.google.inject.Module;
  * <p/>
  * <p/>
  * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
- * {@link JavaUrlHttpFutureCommandClientModule http transports} will be installed.
+ * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
  * @author Adrian Cole, Andrew Newdigate
  * @see S3Context
@@ -107,7 +107,7 @@ public class S3ContextBuilder extends CloudContextBuilder<S3Connection, S3Contex
    }
 
    protected void addConnectionModule(List<Module> modules) {
-      modules.add(new LiveS3ConnectionModule());
+      modules.add(new RestS3ConnectionModule());
    }
 
 }

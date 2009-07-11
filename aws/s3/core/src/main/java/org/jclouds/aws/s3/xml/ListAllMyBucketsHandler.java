@@ -28,8 +28,8 @@ import java.util.List;
 
 import org.jclouds.aws.s3.domain.CanonicalUser;
 import org.jclouds.aws.s3.domain.S3Bucket;
-import org.jclouds.aws.util.DateService;
-import org.jclouds.http.commands.callables.xml.ParseSax;
+import org.jclouds.http.functions.ParseSax;
+import org.jclouds.util.DateService;
 
 import com.google.inject.Inject;
 

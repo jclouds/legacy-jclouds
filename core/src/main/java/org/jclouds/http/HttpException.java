@@ -28,7 +28,7 @@ package org.jclouds.http;
  * 
  * @author Adrian Cole
  */
-public class HttpException extends Exception {
+public class HttpException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 

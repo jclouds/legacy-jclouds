@@ -102,16 +102,16 @@ public abstract class BaseS3Map<V> implements S3Map<String, V> {
       }
    }
 
-   protected boolean containsMd5(byte[] md5) throws InterruptedException, ExecutionException,
+   protected boolean containsETag(byte[] eTag) throws InterruptedException, ExecutionException,
             TimeoutException {
       for (S3Object.Metadata metadata : refreshBucket().getContents()) {
-         if (Arrays.equals(md5, metadata.getMd5()))
+         if (Arrays.equals(eTag, metadata.getETag()))
             return true;
       }
       return false;
    }
 
-   protected byte[] getMd5(Object value) throws IOException, FileNotFoundException,
+   protected byte[] getETag(Object value) throws IOException, FileNotFoundException,
             InterruptedException, ExecutionException, TimeoutException {
       S3Object object = null;
       if (value instanceof S3Object) {
@@ -119,9 +119,9 @@ public abstract class BaseS3Map<V> implements S3Map<String, V> {
       } else {
          object = new S3Object("dummy", value);
       }
-      if (object.getMetadata().getMd5() == null)
-         object.generateMd5();
-      return object.getMetadata().getMd5();
+      if (object.getMetadata().getETag() == null)
+         object.generateETag();
+      return object.getMetadata().getETag();
    }
 
    /**
@@ -171,8 +171,8 @@ public abstract class BaseS3Map<V> implements S3Map<String, V> {
     */
    public boolean containsValue(Object value) {
       try {
-         byte[] md5 = getMd5(value);
-         return containsMd5(md5);
+         byte[] eTag = getETag(value);
+         return containsETag(eTag);
       } catch (Exception e) {
          Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
          throw new S3RuntimeException(String.format(
@@ -232,8 +232,7 @@ public abstract class BaseS3Map<V> implements S3Map<String, V> {
 
    public boolean containsKey(Object key) {
       try {
-         return connection.headObject(bucket, key.toString()).get(requestTimeoutMilliseconds,
-                  TimeUnit.MILLISECONDS) != S3Object.Metadata.NOT_FOUND;
+         return connection.headObject(bucket, key.toString()) != S3Object.Metadata.NOT_FOUND;
       } catch (Exception e) {
          Utils.<S3RuntimeException> rethrowIfRuntimeOrSameType(e);
          throw new S3RuntimeException(String.format("Error searching for %1$s:%2$s", bucket, key),

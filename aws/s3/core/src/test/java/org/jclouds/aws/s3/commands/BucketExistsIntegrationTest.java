@@ -23,8 +23,6 @@
  */
 package org.jclouds.aws.s3.commands;
 
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.aws.s3.S3IntegrationTest;
 import org.testng.annotations.Test;
 
@@ -40,14 +38,14 @@ public class BucketExistsIntegrationTest extends S3IntegrationTest {
 
    @Test
    void bucketDoesntExist() throws Exception {
-      assert !client.bucketExists("be").get(10, TimeUnit.SECONDS);
+      assert !client.bucketExists("be");
    }
 
    @Test
    void bucketExists() throws Exception {
       String bucketName = getBucketName();
       try {
-         assert client.bucketExists(bucketName).get(10, TimeUnit.SECONDS);
+         assert client.bucketExists(bucketName);
       } finally {
          returnBucket(bucketName);
       }

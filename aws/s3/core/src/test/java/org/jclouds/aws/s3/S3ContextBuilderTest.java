@@ -31,7 +31,7 @@ import static org.testng.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jclouds.aws.s3.config.LiveS3ConnectionModule;
+import org.jclouds.aws.s3.config.RestS3ConnectionModule;
 import org.jclouds.aws.s3.config.S3ContextModule;
 import org.jclouds.aws.s3.internal.GuiceS3Context;
 import org.jclouds.aws.s3.xml.config.S3ParserModule;
@@ -88,7 +88,7 @@ public class S3ContextBuilderTest {
       S3ContextBuilder builder = S3ContextBuilder.newBuilder("id", "secret");
       builder.addConnectionModule(modules);
       assertEquals(modules.size(), 1);
-      assertEquals(modules.get(0).getClass(), LiveS3ConnectionModule.class);
+      assertEquals(modules.get(0).getClass(), RestS3ConnectionModule.class);
    }
 
 }

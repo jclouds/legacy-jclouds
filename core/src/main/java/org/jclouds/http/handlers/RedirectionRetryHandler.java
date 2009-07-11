@@ -23,17 +23,16 @@
  */
 package org.jclouds.http.handlers;
 
-import static com.google.common.base.Preconditions.checkState;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
 
 import javax.annotation.Resource;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.UriBuilder;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.http.HttpFutureCommand;
-import org.jclouds.http.HttpHeaders;
+import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.logging.Logger;
@@ -54,20 +53,27 @@ public class RedirectionRetryHandler implements HttpRetryHandler {
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public RedirectionRetryHandler(@Named("jclouds.http.max-redirects") int retryCountLimit) {
+   protected final BackoffLimitedRetryHandler backoffHandler;
+
+   @Inject
+   public RedirectionRetryHandler(BackoffLimitedRetryHandler backoffHandler,
+            @Named("jclouds.http.max-redirects") int retryCountLimit) {
       this.retryCountLimit = retryCountLimit;
+      this.backoffHandler = backoffHandler;
    }
 
-   public boolean shouldRetryRequest(HttpFutureCommand<?> command, HttpResponse response) {
+   public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
       closeConnectionButKeepContentStream(response);
 
-      command.incrementRedirectCount();
-
       String hostHeader = response.getFirstHeaderOrNull(HttpHeaders.LOCATION);
-      if (hostHeader != null && command.getRedirectCount() < retryCountLimit) {
-         URI endPoint = parseEndPoint(hostHeader);
-         command.getRequest().setEndPoint(endPoint);
-         command.getRequest().getHeaders().removeAll(HttpHeaders.HOST);
+      if (hostHeader != null && command.incrementRedirectCount() < retryCountLimit) {
+         URI redirectionUrl = UriBuilder.fromUri(hostHeader).build();
+         if (redirectionUrl.getHost().equals(command.getRequest().getEndpoint().getHost())
+                  && redirectionUrl.getPort() == command.getRequest().getEndpoint().getPort()) {
+            return backoffHandler.shouldRetryRequest(command, response);
+         } else {
+            command.setHostAndPort(redirectionUrl.getHost(), redirectionUrl.getPort());
+         }
          return true;
       } else {
          return false;
@@ -91,18 +97,4 @@ public class RedirectionRetryHandler implements HttpRetryHandler {
       }
    }
 
-   private URI parseEndPoint(String hostHeader) {
-      URI redirectURI = URI.create(hostHeader);
-      String scheme = redirectURI.getScheme();
-
-      checkState(redirectURI.getScheme().startsWith("http"), String.format(
-               "header %s didn't parse an http scheme: [%s]", hostHeader, scheme));
-      int port = redirectURI.getPort() > 0 ? redirectURI.getPort() : redirectURI.getScheme()
-               .equals("https") ? 443 : 80;
-      String host = redirectURI.getHost();
-      checkState(!host.matches("[/]"), String.format(
-               "header %s didn't parse an http host correctly: [%s]", hostHeader, host));
-      URI endPoint = URI.create(String.format("%s://%s:%d", scheme, host, port));
-      return endPoint;
-   }
 }

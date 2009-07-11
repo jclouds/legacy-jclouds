@@ -26,7 +26,7 @@ package org.jclouds.aws.s3;
 import java.io.File;
 import java.io.InputStream;
 
-import org.jclouds.gae.config.URLFetchServiceClientModule;
+import org.jclouds.gae.config.GaeHttpCommandExecutorServiceModule;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -131,6 +131,6 @@ public class JCloudsGaePerformanceLiveTest extends BaseJCloudsPerformance {
 
    @Override
    protected Module createHttpModule() {
-      return new URLFetchServiceClientModule();
+      return new GaeHttpCommandExecutorServiceModule();
    }
 }

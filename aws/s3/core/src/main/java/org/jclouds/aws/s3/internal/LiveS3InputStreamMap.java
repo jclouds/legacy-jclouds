@@ -23,23 +23,30 @@
  */
 package org.jclouds.aws.s3.internal;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
+import java.io.File;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.S3InputStreamMap;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.util.Utils;
 
-import java.io.File;
-import java.io.InputStream;
-import java.util.*;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 /**
  * Map representation of a live connection to S3. All put operations will result
- * in Md5 calculation. If this is not desired, use {@link LiveS3ObjectMap}
+ * in ETag calculation. If this is not desired, use {@link LiveS3ObjectMap}
  * instead.
  *
  * @author Adrian Cole
@@ -184,7 +191,7 @@ public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
 
     /**
      * submits requests to add all objects and collects the results later. All
-     * values will have md5 calculated first. As a side-effect of this, the
+     * values will have eTag calculated first. As a side-effect of this, the
      * content will be copied into a byte [].
      *
      * @see S3Connection#putObject(String, S3Object)
@@ -196,8 +203,11 @@ public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
             for (Map.Entry<? extends String, ? extends Object> entry : map.entrySet()) {
                 S3Object object = new S3Object(entry.getKey());
                 object.setData(entry.getValue());
-                object.generateMd5();
+                object.generateETag();
                 puts.add(connection.putObject(bucket, object));
+                /// ParamExtractor Funcion<?,String>
+                /// response transformer  set key on the way out.
+                /// ExceptionHandler convert 404 to NOT_FOUND
             }
             for (Future<byte[]> put : puts)
                 // this will throw an exception if there was a problem
@@ -246,7 +256,7 @@ public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
     }
 
     /**
-     * calculates md5 before adding the object to s3. As a side-effect of this,
+     * calculates eTag before adding the object to s3. As a side-effect of this,
      * the content will be copied into a byte []. *
      *
      * @see S3Connection#putObject(String, S3Object)
@@ -257,7 +267,7 @@ public class LiveS3InputStreamMap extends BaseS3Map<InputStream> implements
         try {
             InputStream returnVal = containsKey(s) ? get(s) : null;
             object.setData(o);
-            object.generateMd5();
+            object.generateETag();
             connection.putObject(bucket, object).get(
                     requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
             return returnVal;

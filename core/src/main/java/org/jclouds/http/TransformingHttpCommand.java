@@ -1,0 +1,55 @@
+/**
+ *
+ * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ *
+ * ====================================================================
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ * ====================================================================
+ */
+package org.jclouds.http;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
+import com.google.common.base.Function;
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.internal.Nullable;
+
+/**
+ * Command that utilizes RESTFul apis and extracts <code>T</code> from the HttpResponse.
+ * 
+ * @author Adrian Cole
+ */
+public interface TransformingHttpCommand<T> extends HttpCommand {
+
+   public static interface Factory {
+      public TransformingHttpCommand<?> create(HttpRequest request,
+               @Assisted Function<HttpResponse, ?> transformer,
+               @Assisted @Nullable Function<Exception, ?> exceptionTransformer);
+   }
+
+   /**
+    * invoke and transform the response {@code <R>} into value type {@code <T>}
+    * 
+    * @return future containing the expected value
+    * 
+    * @throws ExecutionException
+    *            if there is a fatal error preventing the command from invoking
+    */
+   Future<T> execute() throws ExecutionException;
+}

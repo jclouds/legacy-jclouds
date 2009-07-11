@@ -25,7 +25,6 @@ package org.jclouds.aws.s3.config;
 
 import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.S3Context;
-import org.jclouds.aws.s3.commands.config.S3CommandsModule;
 import org.jclouds.aws.s3.internal.GuiceS3Context;
 import org.jclouds.aws.s3.internal.LiveS3InputStreamMap;
 import org.jclouds.aws.s3.internal.LiveS3ObjectMap;
@@ -43,7 +42,6 @@ public class S3ContextModule extends AbstractModule {
    @Override
    protected void configure() {
       this.requireBinding(S3Connection.class);
-      install(new S3CommandsModule());
       bind(GuiceS3Context.S3ObjectMapFactory.class).toProvider(
                FactoryProvider.newFactory(GuiceS3Context.S3ObjectMapFactory.class,
                         LiveS3ObjectMap.class));

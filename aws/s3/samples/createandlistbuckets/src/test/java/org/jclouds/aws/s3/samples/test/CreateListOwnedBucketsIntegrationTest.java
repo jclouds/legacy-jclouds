@@ -23,8 +23,6 @@
  */
 package org.jclouds.aws.s3.samples.test;
 
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.aws.s3.CreateListOwnedBuckets;
 import org.jclouds.aws.s3.S3Context;
 import org.jclouds.aws.s3.S3ContextFactory;
@@ -91,8 +89,7 @@ public class CreateListOwnedBucketsIntegrationTest {
    public void tearDownClient() throws Exception {
 
       // Removes the bucket created for test purposes only
-      assert context.getConnection().deleteBucketIfEmpty(bucketPrefix + "needstoexist").get(10,
-               TimeUnit.SECONDS);
+      assert context.getConnection().deleteBucketIfEmpty(bucketPrefix + "needstoexist");
 
       context.close();
       context = null;

@@ -31,7 +31,7 @@ import org.jclouds.aws.s3.domain.AccessControlList.Grantee;
 import org.jclouds.aws.s3.domain.AccessControlList.GroupGrantee;
 import org.jclouds.aws.s3.domain.AccessControlList.GroupGranteeURI;
 import org.jclouds.aws.s3.domain.AccessControlList.Permission;
-import org.jclouds.http.commands.callables.xml.ParseSax;
+import org.jclouds.http.functions.ParseSax;
 import org.xml.sax.Attributes;
 
 /**

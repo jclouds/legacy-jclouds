@@ -102,8 +102,7 @@ public class JCloudsServlet extends HttpServlet {
    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
       try {
-         List<S3Bucket.Metadata> myBucketMetadata = context.getConnection().listOwnedBuckets().get(
-                  25, TimeUnit.SECONDS);
+         List<S3Bucket.Metadata> myBucketMetadata = context.getConnection().listOwnedBuckets();
          List<BucketResult> myBuckets = new ArrayList<BucketResult>();
          for (S3Bucket.Metadata metadata : myBucketMetadata) {
             BucketResult result = new BucketResult();

@@ -23,24 +23,25 @@
  */
 package org.jclouds.aws.s3.filters;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
+import javax.ws.rs.core.HttpHeaders;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.jclouds.aws.s3.reference.S3Constants;
-import org.jclouds.aws.s3.util.S3Utils;
-import org.jclouds.aws.util.DateService;
 import org.jclouds.http.HttpException;
-import org.jclouds.http.HttpHeaders;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
+import org.jclouds.http.HttpUtils;
+import org.jclouds.util.DateService;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 
 /**
@@ -50,15 +51,16 @@ import com.google.inject.name.Named;
  * @author Adrian Cole
  * 
  */
+@Singleton
 public class RequestAuthorizeSignature implements HttpRequestFilter {
-   private static final String[] firstHeadersToSign = new String[] { HttpHeaders.CONTENT_MD5,
+   private final String[] firstHeadersToSign = new String[] { HttpHeaders.ETAG,
             HttpHeaders.CONTENT_TYPE, HttpHeaders.DATE };
 
    private final String accessKey;
    private final String secretKey;
    private final DateService dateService;
 
-   public static final long BILLION = 1000000000;
+   public final long BILLION = 1000000000;
    private final AtomicReference<String> timeStamp;
    private final AtomicLong trigger = new AtomicLong(System.nanoTime() + 1 * BILLION);
 
@@ -99,18 +101,17 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
    }
 
    public void filter(HttpRequest request) throws HttpException {
-      // re-sign the request
-      removeOldHeaders(request);
-
-      addDateHeader(request);
 
       String toSign = createStringToSign(request);
 
       addAuthHeader(request, toSign);
    }
 
-   public static String createStringToSign(HttpRequest request) {
+   public String createStringToSign(HttpRequest request) {
       StringBuilder buffer = new StringBuilder();
+      // re-sign the request
+      removeOldHeaders(request);
+      addDateHeader(request);
       appendMethod(request, buffer);
       appendHttpHeaders(request, buffer);
       appendAmzHeaders(request, buffer);
@@ -120,21 +121,21 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
    }
 
    private void removeOldHeaders(HttpRequest request) {
-      request.getHeaders().removeAll(S3Constants.AUTHORIZATION);
+      request.getHeaders().removeAll(HttpHeaders.AUTHORIZATION);
       request.getHeaders().removeAll(HttpHeaders.DATE);
    }
 
    private void addAuthHeader(HttpRequest request, String toSign) throws HttpException {
       String signature;
       try {
-         signature = S3Utils.hmacSha1Base64(toSign, secretKey.getBytes());
+         signature = HttpUtils.hmacSha1Base64(toSign, secretKey.getBytes());
       } catch (Exception e) {
          throw new HttpException("error signing request", e);
       }
-      request.getHeaders().put(S3Constants.AUTHORIZATION, "AWS " + accessKey + ":" + signature);
+      request.getHeaders().put(HttpHeaders.AUTHORIZATION, "AWS " + accessKey + ":" + signature);
    }
 
-   private static void appendMethod(HttpRequest request, StringBuilder toSign) {
+   private void appendMethod(HttpRequest request, StringBuilder toSign) {
       toSign.append(request.getMethod()).append("\n");
    }
 
@@ -142,7 +143,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
       request.getHeaders().put(HttpHeaders.DATE, timestampAsHeaderString());
    }
 
-   private static void appendAmzHeaders(HttpRequest request, StringBuilder toSign) {
+   private void appendAmzHeaders(HttpRequest request, StringBuilder toSign) {
       Set<String> headers = new TreeSet<String>(request.getHeaders().keySet());
       for (String header : headers) {
          if (header.startsWith("x-amz-")) {
@@ -155,37 +156,31 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
       }
    }
 
-   private static void appendHttpHeaders(HttpRequest request, StringBuilder toSign) {
+   private void appendHttpHeaders(HttpRequest request, StringBuilder toSign) {
       for (String header : firstHeadersToSign)
          toSign.append(valueOrEmpty(request.getHeaders().get(header))).append("\n");
    }
 
    @VisibleForTesting
-   static void appendBucketName(HttpRequest request, StringBuilder toSign) {
+   void appendBucketName(HttpRequest request, StringBuilder toSign) {
       String hostHeader = request.getFirstHeaderOrNull(HttpHeaders.HOST);
       if (hostHeader == null)
-         hostHeader = checkNotNull(request.getEndPoint().getHost(),
+         hostHeader = checkNotNull(request.getEndpoint().getHost(),
                   "request.getEndPoint().getHost()");
       if (hostHeader.endsWith(".amazonaws.com") && !hostHeader.equals("s3.amazonaws.com"))
          toSign.append("/").append(hostHeader.substring(0, hostHeader.lastIndexOf(".s3")));
    }
 
-   private static void appendUriPath(HttpRequest request, StringBuilder toSign) {
-      // Remove parameters from URI, because most must not be included in the signed URI...
-      String paramsString = null;
-      int queryIndex = request.getUri().indexOf('?');
-      if (queryIndex >= 0) {
-         toSign.append(request.getUri().substring(0, queryIndex));
-         paramsString = request.getUri().substring(queryIndex + 1);
-      } else {
-         toSign.append(request.getUri());
-      }
+   @VisibleForTesting
+   void appendUriPath(HttpRequest request, StringBuilder toSign) {
+
+      toSign.append(request.getEndpoint().getPath());
 
       // ...however, there are a few exceptions that must be included in the signed URI.
-      if (paramsString != null) {
+      if (request.getEndpoint().getQuery() != null) {
          StringBuilder paramsToSign = new StringBuilder("?");
 
-         String[] params = paramsString.split("&");
+         String[] params = request.getEndpoint().getQuery().split("&");
          for (String param : params) {
             String[] paramNameAndValue = param.split("=");
 
@@ -201,7 +196,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
       }
    }
 
-   private static String valueOrEmpty(Collection<String> collection) {
+   private String valueOrEmpty(Collection<String> collection) {
       return (collection != null && collection.size() >= 1) ? collection.iterator().next() : "";
    }
 }

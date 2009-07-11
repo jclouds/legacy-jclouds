@@ -68,7 +68,7 @@ public class Utils {
                 String lk = hashKey.toLowerCase();
 
                 // Ignore any headers that are not particularly interesting.
-                if (lk.equals("content-type") || lk.equals("content-md5") || lk.equals("date") ||
+                if (lk.equals("content-type") || lk.equals("content-eTag") || lk.equals("date") ||
                     lk.startsWith(AMAZON_HEADER_PREFIX))
                 {
                     List s = (List)headers.get(hashKey);
@@ -92,8 +92,8 @@ public class Utils {
         if (! interestingHeaders.containsKey("content-type")) {
             interestingHeaders.put("content-type", "");
         }
-        if (! interestingHeaders.containsKey("content-md5")) {
-            interestingHeaders.put("content-md5", "");
+        if (! interestingHeaders.containsKey("content-eTag")) {
+            interestingHeaders.put("content-eTag", "");
         }
 
         // Finally, add all the interesting headers (i.e.: all that startwith x-amz- ;-))

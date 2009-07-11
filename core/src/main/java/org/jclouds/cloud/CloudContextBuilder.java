@@ -24,27 +24,34 @@
 package org.jclouds.cloud;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.command.pool.PoolConstants.PROPERTY_POOL_IO_WORKER_THREADS;
-import static org.jclouds.command.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS;
-import static org.jclouds.command.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTION_REUSE;
-import static org.jclouds.command.pool.PoolConstants.PROPERTY_POOL_MAX_SESSION_FAILURES;
-import static org.jclouds.command.pool.PoolConstants.PROPERTY_POOL_REQUEST_INVOKER_THREADS;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_ADDRESS;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_REDIRECTS;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_RETRIES;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_PORT;
+import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_RELAX_HOSTNAME;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_SECURE;
 import static org.jclouds.http.HttpConstants.PROPERTY_SAX_DEBUG;
+import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_IO_WORKER_THREADS;
+import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS;
+import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTION_REUSE;
+import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_SESSION_FAILURES;
+import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_REQUEST_INVOKER_THREADS;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import org.jclouds.command.ConfiguresResponseParser;
+import org.jclouds.command.ConfiguresResponseTransformer;
+import org.jclouds.concurrent.SingleThreaded;
+import org.jclouds.concurrent.WithinThreadExecutorService;
+import org.jclouds.concurrent.config.ConfiguresExecutorService;
+import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.http.config.ConfiguresHttpFutureCommandClient;
-import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
+import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
+import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.config.LoggingModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 
@@ -66,7 +73,7 @@ import com.google.inject.name.Names;
  * <p/>
  * <p/>
  * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
- * {@link JavaUrlHttpFutureCommandClientModule http transports} will be installed.
+ * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
  * @author Adrian Cole, Andrew Newdigate
  * @see CloudContext
@@ -93,6 +100,14 @@ public abstract class CloudContextBuilder<C, X extends CloudContext<C>> {
       return this;
    }
 
+   /**
+    * allow mismatches between the certificate and the hostname of ssl requests.
+    */
+   public CloudContextBuilder<C, X> relaxSSLHostname() {
+      properties.setProperty(PROPERTY_HTTP_RELAX_HOSTNAME, "true");
+      return this;
+   }
+
    public CloudContextBuilder<C, X> withHttpMaxRetries(int httpMaxRetries) {
       properties.setProperty(PROPERTY_HTTP_MAX_RETRIES, Integer.toString(httpMaxRetries));
       return this;
@@ -100,6 +115,11 @@ public abstract class CloudContextBuilder<C, X extends CloudContext<C>> {
 
    public CloudContextBuilder<C, X> withHttpMaxRedirects(int httpMaxRedirects) {
       properties.setProperty(PROPERTY_HTTP_MAX_REDIRECTS, Integer.toString(httpMaxRedirects));
+      return this;
+   }
+
+   public CloudContextBuilder<C, X> withExecutorService(ExecutorService service) {
+      modules.add(new ExecutorServiceModule(service));
       return this;
    }
 
@@ -168,6 +188,8 @@ public abstract class CloudContextBuilder<C, X extends CloudContext<C>> {
 
       addHttpModuleIfNeededAndNotPresent(modules);
 
+      addExecutorServiceIfNotPresent(modules);
+
       modules.add(new AbstractModule() {
          @Override
          protected void configure() {
@@ -203,11 +225,31 @@ public abstract class CloudContextBuilder<C, X extends CloudContext<C>> {
 
       }) && (!Iterables.any(modules, new Predicate<Module>() {
          public boolean apply(Module input) {
-            return input.getClass().isAnnotationPresent(ConfiguresHttpFutureCommandClient.class);
+            return input.getClass().isAnnotationPresent(ConfiguresHttpCommandExecutorService.class);
          }
 
       })))
-         modules.add(new JavaUrlHttpFutureCommandClientModule());
+         modules.add(new JavaUrlHttpCommandExecutorServiceModule());
+   }
+
+   public static void addExecutorServiceIfNotPresent(final List<Module> modules) {
+      if (!Iterables.any(modules, new Predicate<Module>() {
+         public boolean apply(Module input) {
+            return input.getClass().isAnnotationPresent(ConfiguresExecutorService.class);
+         }
+      }
+
+      )) {
+         if (Iterables.any(modules, new Predicate<Module>() {
+            public boolean apply(Module input) {
+               return input.getClass().isAnnotationPresent(SingleThreaded.class);
+            }
+         })) {
+            modules.add(new ExecutorServiceModule(new WithinThreadExecutorService()));
+         } else {
+            modules.add(new ExecutorServiceModule(Executors.newCachedThreadPool()));
+         }
+      }
    }
 
    protected void addConnectionModuleIfNotPresent(final List<Module> modules) {
@@ -224,7 +266,7 @@ public abstract class CloudContextBuilder<C, X extends CloudContext<C>> {
    protected void addParserModuleIfNotPresent(List<Module> modules) {
       if (!Iterables.any(modules, new Predicate<Module>() {
          public boolean apply(Module input) {
-            return input.getClass().isAnnotationPresent(ConfiguresResponseParser.class);
+            return input.getClass().isAnnotationPresent(ConfiguresResponseTransformer.class);
          }
 
       }))

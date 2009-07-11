@@ -31,8 +31,14 @@ package org.jclouds.http;
  */
 public interface HttpRetryHandler {
    public static final HttpRetryHandler ALWAYS_RETRY = new HttpRetryHandler() {
-      public boolean shouldRetryRequest(HttpFutureCommand<?> command, HttpResponse response) {
+      public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
          return true;
+      }
+   };
+
+   public static final HttpRetryHandler NEVER_RETRY = new HttpRetryHandler() {
+      public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
+         return false;
       }
    };
 
@@ -40,5 +46,5 @@ public interface HttpRetryHandler {
     * Return true if the command should be retried. This method should only be invoked when the
     * response has failed with a HTTP 5xx error indicating a server-side error.
     */
-   boolean shouldRetryRequest(HttpFutureCommand<?> command, HttpResponse response);
+   boolean shouldRetryRequest(HttpCommand command, HttpResponse response);
 }

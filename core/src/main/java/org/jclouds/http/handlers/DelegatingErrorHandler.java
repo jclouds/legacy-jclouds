@@ -23,8 +23,9 @@
  */
 package org.jclouds.http.handlers;
 
+import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpErrorHandler;
-import org.jclouds.http.HttpFutureCommand;
+import org.jclouds.http.HttpResponse;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
@@ -41,17 +42,17 @@ import com.google.inject.Inject;
 public class DelegatingErrorHandler implements HttpErrorHandler {
 
    @VisibleForTesting
-   @Inject(optional=true)
+   @Inject(optional = true)
    @Redirection
    HttpErrorHandler redirectionHandler;
 
    @VisibleForTesting
-   @Inject(optional=true)
+   @Inject(optional = true)
    @ClientError
    HttpErrorHandler clientErrorHandler;
 
    @VisibleForTesting
-   @Inject(optional=true)
+   @Inject(optional = true)
    @ServerError
    HttpErrorHandler serverErrorHandler;
 
@@ -61,7 +62,7 @@ public class DelegatingErrorHandler implements HttpErrorHandler {
       this.serverErrorHandler = redirectionHandler;
    }
 
-   public void handleError(HttpFutureCommand<?> command, org.jclouds.http.HttpResponse response) {
+   public void handleError(HttpCommand command, HttpResponse response) {
       int statusCode = response.getStatusCode();
       if (statusCode >= 300 && statusCode < 400) {
          getRedirectionHandler().handleError(command, response);

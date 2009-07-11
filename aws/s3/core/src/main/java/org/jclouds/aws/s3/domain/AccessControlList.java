@@ -31,7 +31,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.jclouds.aws.s3.domain.acl.CannedAccessPolicy;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -87,7 +86,6 @@ public class AccessControlList {
     * 
     * @param grantee
     * @param permission
-    * @return
     */
    public AccessControlList addPermission(Grantee grantee, Permission permission) {
       Grant grant = new Grant(grantee, permission);
@@ -100,7 +98,6 @@ public class AccessControlList {
     * 
     * @param groupGranteeURI
     * @param permission
-    * @return
     */
    public AccessControlList addPermission(GroupGranteeURI groupGranteeURI, Permission permission) {
       return addPermission(new GroupGrantee(groupGranteeURI), permission);
@@ -119,7 +116,6 @@ public class AccessControlList {
     * 
     * @param grantee
     * @param permission
-    * @return
     */
    public AccessControlList revokePermission(Grantee grantee, Permission permission) {
       Collection<Grant> grantsForGrantee = findGrantsForGrantee(grantee.getIdentifier());
@@ -144,7 +140,6 @@ public class AccessControlList {
     * 
     * @param groupGranteeURI
     * @param permission
-    * @return
     */
    public AccessControlList revokePermission(GroupGranteeURI groupGranteeURI, Permission permission) {
       return revokePermission(new GroupGrantee(groupGranteeURI), permission);
@@ -154,7 +149,6 @@ public class AccessControlList {
     * Revoke all the permissions granted to the given grantee.
     * 
     * @param grantee
-    * @return
     */
    public AccessControlList revokeAllPermissions(Grantee grantee) {
       Collection<Grant> grantsForGrantee = findGrantsForGrantee(grantee.getIdentifier());
@@ -224,7 +218,6 @@ public class AccessControlList {
     * 
     * @param granteeId
     *           identifier of a canonical user, email address user, or group.
-    * @return
     */
    protected Collection<Grant> findGrantsForGrantee(final String granteeId) {
       return Collections2.filter(grants, new Predicate<Grant>() {
@@ -239,7 +232,6 @@ public class AccessControlList {
     * 
     * @param cannedAP
     * @param ownerId
-    * @return
     */
    public static AccessControlList fromCannedAccessPolicy(CannedAccessPolicy cannedAP,
             String ownerId) {

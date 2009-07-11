@@ -23,13 +23,13 @@
  */
 package org.jclouds.aws.s3.commands;
 
-import static org.jclouds.aws.s3.commands.options.GetObjectOptions.Builder.ifMd5DoesntMatch;
-import static org.jclouds.aws.s3.commands.options.GetObjectOptions.Builder.ifMd5Matches;
-import static org.jclouds.aws.s3.commands.options.GetObjectOptions.Builder.ifModifiedSince;
-import static org.jclouds.aws.s3.commands.options.GetObjectOptions.Builder.ifUnmodifiedSince;
-import static org.jclouds.aws.s3.commands.options.GetObjectOptions.Builder.range;
-import static org.jclouds.aws.s3.commands.options.GetObjectOptions.Builder.startAt;
-import static org.jclouds.aws.s3.commands.options.GetObjectOptions.Builder.tail;
+import static org.jclouds.http.options.GetOptions.Builder.ifETagDoesntMatch;
+import static org.jclouds.http.options.GetOptions.Builder.ifETagMatches;
+import static org.jclouds.http.options.GetOptions.Builder.ifModifiedSince;
+import static org.jclouds.http.options.GetOptions.Builder.ifUnmodifiedSince;
+import static org.jclouds.http.options.GetOptions.Builder.range;
+import static org.jclouds.http.options.GetOptions.Builder.startAt;
+import static org.jclouds.http.options.GetOptions.Builder.tail;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -130,11 +130,11 @@ public class GetObjectIntegrationTest extends S3IntegrationTest {
 
          addObjectAndValidateContent(bucketName, key);
 
-         client.getObject(bucketName, key, ifMd5Matches(goodMd5)).get(10, TimeUnit.SECONDS);
+         client.getObject(bucketName, key, ifETagMatches(goodETag)).get(10, TimeUnit.SECONDS);
          validateContent(bucketName, key);
 
          try {
-            client.getObject(bucketName, key, ifMd5Matches(badMd5)).get(10, TimeUnit.SECONDS);
+            client.getObject(bucketName, key, ifETagMatches(badETag)).get(10, TimeUnit.SECONDS);
             validateContent(bucketName, key);
          } catch (ExecutionException e) {
             if (e.getCause() instanceof HttpResponseException) {
@@ -161,11 +161,11 @@ public class GetObjectIntegrationTest extends S3IntegrationTest {
 
          addObjectAndValidateContent(bucketName, key);
 
-         client.getObject(bucketName, key, ifMd5DoesntMatch(badMd5)).get(10, TimeUnit.SECONDS);
+         client.getObject(bucketName, key, ifETagDoesntMatch(badETag)).get(10, TimeUnit.SECONDS);
          validateContent(bucketName, key);
 
          try {
-            client.getObject(bucketName, key, ifMd5DoesntMatch(goodMd5)).get(10, TimeUnit.SECONDS);
+            client.getObject(bucketName, key, ifETagDoesntMatch(goodETag)).get(10, TimeUnit.SECONDS);
             validateContent(bucketName, key);
          } catch (ExecutionException e) {
             if (e.getCause() instanceof HttpResponseException) {

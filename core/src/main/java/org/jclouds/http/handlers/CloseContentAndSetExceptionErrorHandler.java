@@ -25,8 +25,8 @@ package org.jclouds.http.handlers;
 
 import java.io.IOException;
 
+import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpErrorHandler;
-import org.jclouds.http.HttpFutureCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.util.Utils;
@@ -37,7 +37,7 @@ import org.jclouds.util.Utils;
  */
 public class CloseContentAndSetExceptionErrorHandler implements HttpErrorHandler {
 
-   public void handleError(HttpFutureCommand<?> command, HttpResponse response) {
+   public void handleError(HttpCommand command, HttpResponse response) {
       String content;
       try {
          content = response.getContent() != null ? Utils.toStringAndClose(response.getContent())

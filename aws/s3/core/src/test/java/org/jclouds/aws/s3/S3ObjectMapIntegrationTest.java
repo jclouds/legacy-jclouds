@@ -123,7 +123,7 @@ public class S3ObjectMapIntegrationTest extends BaseS3MapIntegrationTest<S3Objec
                      .get(entry.getKey()));
             S3Object value = entry.getValue();
             value.setData("");
-            value.generateMd5();
+            value.generateETag();
             entry.setValue(value);
          }
          assertEventuallyMapSize(map, 5);
@@ -171,11 +171,11 @@ public class S3ObjectMapIntegrationTest extends BaseS3MapIntegrationTest<S3Objec
          BaseS3Map<S3Object> map = createMap(context, bucketName);
          S3Object object = new S3Object("one");
          object.setData(IOUtils.toInputStream("apple"));
-         object.generateMd5();
+         object.generateETag();
          S3Object old = map.put(object.getKey(), object);
          getOneReturnsAppleAndOldValueIsNull(map, old);
          object.setData(IOUtils.toInputStream("bear"));
-         object.generateMd5();
+         object.generateETag();
          S3Object apple = map.put(object.getKey(), object);
          getOneReturnsBearAndOldValueIsApple(map, apple);
       } finally {

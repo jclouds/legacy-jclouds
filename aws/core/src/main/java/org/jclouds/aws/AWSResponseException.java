@@ -24,7 +24,7 @@
 package org.jclouds.aws;
 
 import org.jclouds.aws.domain.AWSError;
-import org.jclouds.http.HttpFutureCommand;
+import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 
@@ -43,14 +43,14 @@ public class AWSResponseException extends HttpResponseException {
 
    private AWSError error = new AWSError();
 
-   public AWSResponseException(HttpFutureCommand<?> command, HttpResponse response, AWSError error) {
+   public AWSResponseException(HttpCommand command, HttpResponse response, AWSError error) {
       super(String.format("command %s failed with code %s, error: %s", command.toString(), response
                .getStatusCode(), error.toString()), command, response);
       this.setError(error);
 
    }
 
-   public AWSResponseException(HttpFutureCommand<?> command, HttpResponse response, AWSError error,
+   public AWSResponseException(HttpCommand command, HttpResponse response, AWSError error,
             Throwable cause) {
       super(String.format("command %1$s failed with error: %2$s", command.toString(), error
                .toString()), command, response, cause);
@@ -58,14 +58,14 @@ public class AWSResponseException extends HttpResponseException {
 
    }
 
-   public AWSResponseException(String message, HttpFutureCommand<?> command, HttpResponse response,
+   public AWSResponseException(String message, HttpCommand command, HttpResponse response,
             AWSError error) {
       super(message, command, response);
       this.setError(error);
 
    }
 
-   public AWSResponseException(String message, HttpFutureCommand<?> command, HttpResponse response,
+   public AWSResponseException(String message, HttpCommand command, HttpResponse response,
             AWSError error, Throwable cause) {
       super(message, command, response, cause);
       this.setError(error);

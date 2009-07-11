@@ -34,17 +34,16 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.aws.PerformanceTest;
+import org.jclouds.PerformanceTest;
 import org.jclouds.aws.s3.domain.CanonicalUser;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.aws.s3.util.S3Utils;
-import org.jclouds.aws.s3.xml.CopyObjectHandler;
-import org.jclouds.aws.s3.xml.ListBucketHandler;
 import org.jclouds.aws.s3.xml.S3ParserFactory;
 import org.jclouds.aws.s3.xml.config.S3ParserModule;
 import org.jclouds.http.HttpException;
-import org.jclouds.http.commands.callables.xml.ParseSax;
+import org.jclouds.http.HttpUtils;
+import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.config.SaxModule;
 import org.joda.time.DateTime;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
@@ -69,7 +68,7 @@ public class S3ParserTest extends PerformanceTest {
 
    @BeforeTest
    protected void setUpInjector() {
-      injector = Guice.createInjector(new S3ParserModule());
+      injector = Guice.createInjector(new SaxModule(), new S3ParserModule());
       parserFactory = injector.getInstance(S3ParserFactory.class);
       assert parserFactory != null;
    }
@@ -138,7 +137,7 @@ public class S3ParserTest extends PerformanceTest {
       DateTime expected = new DateTime("2009-03-12T02:00:13.000Z");
       assert object.getLastModified().equals(expected) : String.format(
                "expected %1$s, but got %1$s", expected, object.getLastModified());
-      assertEquals(S3Utils.toHexString(object.getMd5()), "9d7bb64e8e18ee34eec06dd2cf37b766");
+      assertEquals(HttpUtils.toHexString(object.getETag()), "9d7bb64e8e18ee34eec06dd2cf37b766");
       assert object.getSize() == 136;
       CanonicalUser owner = new CanonicalUser(
                "e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0");
@@ -149,8 +148,6 @@ public class S3ParserTest extends PerformanceTest {
 
    private S3Bucket runParseListBucketResult() throws HttpException {
       ParseSax<S3Bucket> parser = parserFactory.createListBucketParser();
-      ListBucketHandler handler = (ListBucketHandler) parser.getHandler();
-      handler.setBucketName("adrianjbosstest");
       return parser.parse(IOUtils.toInputStream(listBucketResult));
    }
 
@@ -158,8 +155,6 @@ public class S3ParserTest extends PerformanceTest {
 
    private S3Object.Metadata runParseCopyObjectResult() throws HttpException {
       ParseSax<S3Object.Metadata> parser = parserFactory.createCopyObjectParser();
-      CopyObjectHandler handler = (CopyObjectHandler) parser.getHandler();
-      handler.setKey("adrianjbosstest");
       return parser.parse(IOUtils.toInputStream(successfulCopyObject200));
    }
 
@@ -167,8 +162,7 @@ public class S3ParserTest extends PerformanceTest {
       S3Object.Metadata metadata = runParseCopyObjectResult();
       DateTime expected = new DateTime("2009-03-19T13:23:27.000Z");
       assertEquals(metadata.getLastModified(), expected);
-      assertEquals(S3Utils.toHexString(metadata.getMd5()), "92836a3ea45a6984d1b4d23a747d46bb");
-      assertEquals(metadata.getKey(), "adrianjbosstest");
+      assertEquals(HttpUtils.toHexString(metadata.getETag()), "92836a3ea45a6984d1b4d23a747d46bb");
    }
 
    @Test

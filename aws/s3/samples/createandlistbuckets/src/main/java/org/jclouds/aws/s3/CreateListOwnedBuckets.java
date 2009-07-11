@@ -46,7 +46,7 @@ public class CreateListOwnedBuckets {
 
    public List<S3Bucket.Metadata> list() throws InterruptedException, ExecutionException,
             TimeoutException {
-      return s3Context.getConnection().listOwnedBuckets().get(10, TimeUnit.SECONDS);
+      return s3Context.getConnection().listOwnedBuckets();
    }
 
    public Boolean createBucket(String bucketName) throws InterruptedException, ExecutionException,

@@ -24,7 +24,9 @@
 package org.jclouds.aws.s3.commands;
 
 import org.jclouds.aws.s3.S3IntegrationTest;
-import static org.jclouds.aws.s3.commands.options.ListBucketOptions.Builder.*;
+
+import static org.jclouds.aws.s3.options.ListBucketOptions.Builder.*;
+
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
 import static org.testng.Assert.assertEquals;

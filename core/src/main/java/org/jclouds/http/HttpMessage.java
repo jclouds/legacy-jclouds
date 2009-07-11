@@ -27,33 +27,33 @@ import java.util.Collection;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 
 /**
  * Provides base functionality of HTTP requests and responses.
  * 
  * @author Adrian Cole
- *
+ * 
  */
 public class HttpMessage {
 
-    protected Multimap<String, String> headers = HashMultimap.create();
+   /**
+    * synchronized as there is no concurrent version. Headers may change in flight due to redirects.
+    */
+   protected Multimap<String, String> headers = Multimaps.synchronizedMultimap(HashMultimap
+            .<String, String> create());
 
-    public HttpMessage() {
-	super();
-    }
+   public Multimap<String, String> getHeaders() {
+      return headers;
+   }
 
-    public Multimap<String, String> getHeaders() {
-        return headers;
-    }
+   public void setHeaders(Multimap<String, String> headers) {
+      this.headers = Multimaps.synchronizedMultimap(headers);
+   }
 
-    public void setHeaders(Multimap<String, String> headers) {
-        this.headers = headers;
-    }
-
-    public String getFirstHeaderOrNull(String string) {
-        Collection<String> values = headers.get(string);
-        return (values != null && values.size() >= 1) ? values.iterator()
-        	.next() : null;
-    }
+   public String getFirstHeaderOrNull(String string) {
+      Collection<String> values = headers.get(string);
+      return (values != null && values.size() >= 1) ? values.iterator().next() : null;
+   }
 
 }

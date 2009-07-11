@@ -30,8 +30,8 @@ import java.util.List;
 import java.util.Properties;
 
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.http.config.ConfiguresHttpFutureCommandClient;
-import org.jclouds.http.config.JavaUrlHttpFutureCommandClientModule;
+import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
+import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.config.LoggingModule;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
@@ -49,7 +49,7 @@ import com.google.inject.Module;
 @Test(groups = "unit", testName = "s3.CloudContextBuilderTest")
 public class CloudContextBuilderTest {
 
-   @ConfiguresHttpFutureCommandClient
+   @ConfiguresHttpCommandExecutorService
    static class HttpModule extends AbstractModule {
 
       @Override
@@ -173,7 +173,7 @@ public class CloudContextBuilderTest {
       builder.addLoggingModuleIfNotPresent(modules);
       assertEquals(modules.size(), 3);
       assert modules.remove(0) instanceof RequiresHttpModule;
-      assert modules.remove(0) instanceof JavaUrlHttpFutureCommandClientModule;
+      assert modules.remove(0) instanceof JavaUrlHttpCommandExecutorServiceModule;
       assert modules.remove(0) instanceof JDKLoggingModule;
    }
 
