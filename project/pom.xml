@@ -91,6 +91,10 @@
             <id>jclouds-googlecode</id>
             <url>http://jclouds.googlecode.com/svn/repo</url>
         </repository>
+        <repository>
+            <id>jboss</id>
+            <url>http://repository.jboss.org/maven2/</url>
+        </repository>
     </repositories>
 
     <distributionManagement>
