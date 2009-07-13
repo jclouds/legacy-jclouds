@@ -53,8 +53,8 @@ import com.google.inject.name.Named;
  */
 @Singleton
 public class RequestAuthorizeSignature implements HttpRequestFilter {
-   private final String[] firstHeadersToSign = new String[] { HttpHeaders.ETAG,
-            HttpHeaders.CONTENT_TYPE, HttpHeaders.DATE };
+   private final String[] firstHeadersToSign = new String[] { 
+         "Content-MD5", HttpHeaders.CONTENT_TYPE, HttpHeaders.DATE };
 
    private final String accessKey;
    private final String secretKey;

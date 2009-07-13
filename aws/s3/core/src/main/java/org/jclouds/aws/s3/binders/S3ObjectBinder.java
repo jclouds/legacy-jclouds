@@ -62,9 +62,10 @@ public class S3ObjectBinder implements EntityBinder {
                   object.getMetadata().getContentEncoding());
       }
 
-      if (object.getMetadata().getETag() != null)
-         request.getHeaders().put(HttpHeaders.ETAG,
+      if (object.getMetadata().getETag() != null) {
+         request.getHeaders().put("Content-MD5", 
                   HttpUtils.toBase64String(object.getMetadata().getETag()));
+      }
 
       request.getHeaders().putAll(object.getMetadata().getUserMetadata());
    }

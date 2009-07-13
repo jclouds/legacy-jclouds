@@ -68,7 +68,7 @@ public class Utils {
                 String lk = hashKey.toLowerCase();
 
                 // Ignore any headers that are not particularly interesting.
-                if (lk.equals("content-type") || lk.equals("content-eTag") || lk.equals("date") ||
+                if (lk.equals("content-type") || lk.equals("content-md5") || lk.equals("date") ||
                     lk.startsWith(AMAZON_HEADER_PREFIX))
                 {
                     List s = (List)headers.get(hashKey);
