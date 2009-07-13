@@ -38,6 +38,7 @@ import java.util.concurrent.TimeoutException;
 import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.s3.internal.BaseS3Map;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
@@ -72,8 +73,11 @@ public abstract class BaseS3MapIntegrationTest<T> extends S3IntegrationTest {
 
    @BeforeMethod(groups = { "integration", "live" })
    @Parameters( { "basedir" })
-   protected void setUpTempDir(String basedir) throws InterruptedException, ExecutionException,
+   protected void setUpTempDir(@Optional String basedir) throws InterruptedException, ExecutionException,
             FileNotFoundException, IOException, TimeoutException {
+      if (basedir == null) {
+         basedir = System.getProperty("java.io.tmpdir");
+      }
       tmpDirectory = basedir + File.separator + "target" + File.separator + "testFiles"
                + File.separator + getClass().getSimpleName();
       new File(tmpDirectory).mkdirs();
