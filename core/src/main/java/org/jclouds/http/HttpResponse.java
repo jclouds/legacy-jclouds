@@ -24,6 +24,7 @@
 package org.jclouds.http;
 
 import java.io.InputStream;
+import java.net.URL;
 
 
 /**
@@ -32,9 +33,14 @@ import java.io.InputStream;
  * @author Adrian Cole
  */
 public class HttpResponse extends HttpMessage {
+    private URL requestURL;
     private int statusCode;
     private String message;
     private InputStream content;
+    
+    public HttpResponse(URL requestURL) {
+       this.requestURL = requestURL;
+    }
 
     @Override
     public String toString() {
@@ -71,4 +77,9 @@ public class HttpResponse extends HttpMessage {
     public void setContent(InputStream content) {
 	this.content = content;
     }
+    
+    public URL getRequestURL() {
+       return this.requestURL;
+    }
+
 }

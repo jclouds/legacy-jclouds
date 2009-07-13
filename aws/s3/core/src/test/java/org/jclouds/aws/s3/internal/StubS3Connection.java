@@ -31,6 +31,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -411,7 +414,14 @@ public class StubS3Connection implements S3Connection {
    }
 
    private void throwResponseException(int code) throws ExecutionException {
-      HttpResponse response = new HttpResponse();
+      HttpResponse response = null;
+      try {
+         response = new HttpResponse(new URL("file:///unused")); // TODO: Get real object URL?
+      } catch (MalformedURLException e) {
+         // This shouldn't ever happen.
+         e.printStackTrace();
+         assert false;
+      }
       response.setStatusCode(code);
       throw new ExecutionException(new HttpResponseException(createNiceMock(HttpCommand.class),
                response));

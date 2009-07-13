@@ -57,8 +57,12 @@ public class ParseMetadataFromHeaders implements Function<HttpResponse, S3Object
     * {@link org.jclouds.aws.s3.domain.S3Object.Metadata} object.
     */
    public Metadata apply(HttpResponse from) {
-
-      S3Object.Metadata to = new S3Object.Metadata("TODO");
+      String objectKey = from.getRequestURL().getPath();
+      if (objectKey.startsWith("/")) {
+         // Trim initial slash from object key name.
+         objectKey = objectKey.substring(1);
+      }
+      S3Object.Metadata to = new S3Object.Metadata(objectKey);
       addAllHeadersTo(from, to);
 
       addUserMetadataTo(from, to);

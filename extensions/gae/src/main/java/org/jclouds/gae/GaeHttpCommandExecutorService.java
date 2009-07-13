@@ -106,8 +106,8 @@ public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorServic
    }
 
    @VisibleForTesting
-   protected HttpResponse convert(HTTPResponse gaeResponse) {
-      HttpResponse response = new HttpResponse();
+   protected HttpResponse convert(URL requestURL, HTTPResponse gaeResponse) {
+      HttpResponse response = new HttpResponse(requestURL);
       response.setStatusCode(gaeResponse.getResponseCode());
       for (HTTPHeader header : gaeResponse.getHeaders()) {
          response.getHeaders().put(header.getName(), header.getValue());
@@ -174,7 +174,7 @@ public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorServic
       HTTPResponse response = urlFetchService.fetch(request);
       logger.info("%1$s - received response code %2$s, headers: %3$s", request.getURL().getHost(),
                response.getResponseCode(), headersAsString(response.getHeaders()));
-      return convert(response);
+      return convert(request.getURL(), response);
    }
 
    String headersAsString(List<HTTPHeader> headers) {

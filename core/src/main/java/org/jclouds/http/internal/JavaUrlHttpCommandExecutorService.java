@@ -90,7 +90,7 @@ public class JavaUrlHttpCommandExecutorService extends
    protected HttpResponse invoke(HttpURLConnection connection) throws IOException {
       logger.trace("%s - submitting request %s; %s", connection.getURL().getHost(), connection
                .getURL(), connection.getHeaderFields().toString());
-      HttpResponse response = new HttpResponse();
+      HttpResponse response = new HttpResponse(connection.getURL());
       InputStream in;
       try {
          in = connection.getInputStream();
