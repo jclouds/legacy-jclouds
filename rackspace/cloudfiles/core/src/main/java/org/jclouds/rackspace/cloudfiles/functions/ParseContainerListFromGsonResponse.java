@@ -21,19 +21,41 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudfiles.reference;
+package org.jclouds.rackspace.cloudfiles.functions;
 
-import org.jclouds.objectstore.reference.ObjectStoreConstants;
-import org.jclouds.rackspace.reference.RackSpaceConstants;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
+import java.util.List;
+
+import org.jclouds.http.functions.ParseJson;
+import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.google.inject.Inject;
 
 /**
- * Configuration properties and constants used in Cloud Files connections.
+ * This parses {@link ContainerMetadata} from a gson string.
  * 
  * @author Adrian Cole
  */
-public interface CloudFilesConstants extends ObjectStoreConstants, RackSpaceConstants {
+public class ParseContainerListFromGsonResponse extends ParseJson<List<ContainerMetadata>>
+    {
+   
+   @Inject
+   public ParseContainerListFromGsonResponse(Gson gson) {
+      super(gson);
+   }
 
-   public static final String PROPERTY_CLOUDFILES_USER = "jclouds.cloudfiles.user";
-   public static final String PROPERTY_CLOUDFILES_KEY = "jclouds.cloudfiles.key";
-
+   public List<ContainerMetadata> apply(InputStream stream) {
+      Type listType = new TypeToken<List<ContainerMetadata>>() {
+      }.getType();
+      try {
+         return gson.fromJson(new InputStreamReader(stream, "UTF-8"), listType);
+      } catch (UnsupportedEncodingException e) {
+         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
+      }
+   }
 }

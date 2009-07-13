@@ -34,8 +34,8 @@ import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS;
 import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTION_REUSE;
 import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_SESSION_FAILURES;
 import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_REQUEST_INVOKER_THREADS;
-import static org.jclouds.rackspace.reference.RackSpaceConstants.PROPERTY_RACKSPACE_KEY;
-import static org.jclouds.rackspace.reference.RackSpaceConstants.PROPERTY_RACKSPACE_USER;
+import static org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants.PROPERTY_CLOUDFILES_KEY;
+import static org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants.PROPERTY_CLOUDFILES_USER;
 
 import java.util.List;
 import java.util.Properties;
@@ -43,6 +43,7 @@ import java.util.Properties;
 import org.jclouds.cloud.CloudContextBuilder;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.rackspace.cloudfiles.config.RestCloudFilesConnectionModule;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -71,8 +72,8 @@ public class CloudFilesContextBuilder extends
       Properties properties = new Properties();
 
       properties.setProperty(PROPERTY_HTTP_ADDRESS, "api.mosso.com");
-      properties.setProperty(PROPERTY_SAX_DEBUG, "false");
       properties.setProperty(PROPERTY_HTTP_SECURE, "true");
+      properties.setProperty(PROPERTY_SAX_DEBUG, "false");
       properties.setProperty(PROPERTY_HTTP_MAX_RETRIES, "5");
       properties.setProperty(PROPERTY_HTTP_MAX_REDIRECTS, "5");
       properties.setProperty(PROPERTY_POOL_MAX_CONNECTION_REUSE, "75");
@@ -87,8 +88,8 @@ public class CloudFilesContextBuilder extends
    }
 
    public void authenticate(String id, String secret) {
-      properties.setProperty(PROPERTY_RACKSPACE_USER, checkNotNull(id, "user"));
-      properties.setProperty(PROPERTY_RACKSPACE_KEY, checkNotNull(secret, "key"));
+      properties.setProperty(PROPERTY_CLOUDFILES_USER, checkNotNull(id, "user"));
+      properties.setProperty(PROPERTY_CLOUDFILES_KEY, checkNotNull(secret, "key"));
    }
 
    public CloudFilesContext buildContext() {
@@ -96,15 +97,16 @@ public class CloudFilesContextBuilder extends
    }
 
    protected void addParserModule(List<Module> modules) {
-      //TODO
+      // TODO
    }
 
    protected void addContextModule(List<Module> modules) {
-      //TODO
+      // TODO
    }
 
    protected void addConnectionModule(List<Module> modules) {
-      //TODO
+      modules.add(new RestCloudFilesConnectionModule());
+      // TODO
    }
 
 }

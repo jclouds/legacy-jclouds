@@ -23,22 +23,17 @@
  */
 package org.jclouds.rackspace.cloudfiles;
 
-import java.util.List;
+import java.net.URI;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 
-import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
-import org.jclouds.rackspace.cloudfiles.functions.ParseContainerListFromGsonResponse;
-import org.jclouds.rackspace.filters.AuthenticateRequest;
-import org.jclouds.rest.Query;
-import org.jclouds.rest.RequestFilters;
+import org.jclouds.rackspace.cloudfiles.functions.ParseAuthenticationResponseFromHeaders;
+import org.jclouds.rackspace.cloudfiles.reference.CloudFilesHeaders;
 import org.jclouds.rest.ResponseParser;
-import org.jclouds.rest.SkipEncoding;
 
 /**
  * Provides access to Cloud Files via their REST API.
@@ -49,18 +44,23 @@ import org.jclouds.rest.SkipEncoding;
  * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090311.pdf" />
  * @author Adrian Cole
  */
-@SkipEncoding('/')
-@RequestFilters(AuthenticateRequest.class)
-public interface CloudFilesConnection {
+
+public interface CloudFilesAuthentication {
+
+   public interface AuthenticationResponse {
+      @Storage
+      URI getStorageUrl();
+
+      @CDN
+      URI getCDNManagementUrl();
+
+      @Authentication
+      String getAuthToken();
+   }
 
    @GET
-   @ResponseParser(ParseContainerListFromGsonResponse.class)
-   @Query(key = "format", value = "json")
-   @Path("/")
-   List<ContainerMetadata> listOwnedContainers();
-
-   @PUT
-   @Path("{container}")
-   boolean putContainer(@PathParam("container") String container);
-
+   @ResponseParser(ParseAuthenticationResponseFromHeaders.class)
+   @Path("/auth")
+   AuthenticationResponse authenticate(@HeaderParam(CloudFilesHeaders.AUTH_USER) String user,
+            @HeaderParam(CloudFilesHeaders.AUTH_KEY) String key);
 }
