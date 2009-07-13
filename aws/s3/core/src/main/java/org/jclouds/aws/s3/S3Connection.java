@@ -39,6 +39,7 @@ import org.jclouds.aws.s3.binders.S3ObjectBinder;
 import org.jclouds.aws.s3.domain.AccessControlList;
 import org.jclouds.aws.s3.domain.S3Bucket;
 import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.s3.filters.RequestAuthorizeSignature;
 import org.jclouds.aws.s3.functions.ParseETagHeader;
 import org.jclouds.aws.s3.functions.ParseMetadataFromHeaders;
 import org.jclouds.aws.s3.functions.ParseObjectFromHeadersAndHttpContent;
@@ -67,6 +68,7 @@ import org.jclouds.rest.HostPrefixParam;
 import org.jclouds.rest.HttpRequestOptionsBinder;
 import org.jclouds.rest.PathParamParser;
 import org.jclouds.rest.Query;
+import org.jclouds.rest.RequestFilters;
 import org.jclouds.rest.ResponseParser;
 import org.jclouds.rest.SkipEncoding;
 import org.jclouds.rest.VirtualHost;
@@ -84,6 +86,7 @@ import org.jclouds.rest.XMLResponseParser;
  */
 @VirtualHost
 @SkipEncoding('/')
+@RequestFilters(RequestAuthorizeSignature.class)
 public interface S3Connection {
 
    /**

@@ -25,8 +25,6 @@ package org.jclouds.aws.s3.config;
 
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -38,7 +36,6 @@ import org.jclouds.aws.s3.handlers.ParseAWSErrorFromXmlContent;
 import org.jclouds.cloud.ConfiguresCloudConnection;
 import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpErrorHandler;
-import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
@@ -51,6 +48,7 @@ import org.jclouds.rest.config.JaxrsModule;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
+import com.google.inject.Scopes;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 
@@ -78,6 +76,7 @@ public class RestS3ConnectionModule extends AbstractModule {
    @Override
    protected void configure() {
       install(new JaxrsModule());
+      bind(RequestAuthorizeSignature.class).in(Scopes.SINGLETON);
       bindErrorHandlers();
       bindRetryHandlers();
       requestInjection(this);
@@ -86,8 +85,8 @@ public class RestS3ConnectionModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected S3Connection provideS3Connection(RestClientFactory factory) {
-      return factory.create(S3Connection.class);
+   protected S3Connection provideS3Connection(URI uri, RestClientFactory factory) {
+      return factory.create(uri, S3Connection.class);
    }
 
    protected void bindErrorHandlers() {
@@ -104,14 +103,6 @@ public class RestS3ConnectionModule extends AbstractModule {
                AWSRedirectionRetryHandler.class);
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(
                AWSClientErrorRetryHandler.class);
-   }
-
-   @Provides
-   @Singleton
-   List<HttpRequestFilter> provideRequestFilters(RequestAuthorizeSignature requestAuthorizeSignature) {
-      List<HttpRequestFilter> filters = new ArrayList<HttpRequestFilter>();
-      filters.add(requestAuthorizeSignature);
-      return filters;
    }
 
    @Singleton

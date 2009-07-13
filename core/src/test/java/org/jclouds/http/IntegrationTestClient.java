@@ -36,6 +36,7 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.rest.EntityParam;
 import org.jclouds.rest.ExceptionParser;
+import org.jclouds.rest.RequestFilters;
 import org.jclouds.rest.XMLResponseParser;
 
 import com.google.common.base.Function;
@@ -83,8 +84,16 @@ public interface IntegrationTestClient {
 
    @GET
    @Path("objects/{id}")
+   @RequestFilters(Filter.class)
    Future<String> downloadFilter(@PathParam("id") String id, @HeaderParam("filterme") String header);
 
+   static class Filter implements HttpRequestFilter {
+      public void filter(HttpRequest request) throws HttpException {
+         if (request.getHeaders().containsKey("filterme")) {
+            request.getHeaders().put("test", "test");
+         }
+      }
+   }
    @GET
    @Path("objects/{id}")
    Future<String> download(@PathParam("id") String id, @HeaderParam("test") String header);

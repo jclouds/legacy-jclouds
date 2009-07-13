@@ -24,6 +24,7 @@
 package org.jclouds.rest;
 
 import java.lang.reflect.Proxy;
+import java.net.URI;
 
 import org.jclouds.rest.RestClientProxy.RestClientProxyFactory;
 
@@ -38,9 +39,9 @@ public class RestClientFactory {
    }
 
    @SuppressWarnings("unchecked")
-   public <T> T create(Class<T> clazz) {
+   public <T> T create(URI endPoint, Class<T> clazz) {
       return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[] { clazz },
-               proxyFactory.create(clazz));
+               proxyFactory.create(endPoint, clazz));
    }
 
 }

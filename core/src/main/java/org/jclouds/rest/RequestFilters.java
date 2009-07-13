@@ -21,28 +21,24 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.http;
+package org.jclouds.rest;
+
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import org.jclouds.http.HttpRequestFilter;
 
 /**
- * // TODO: Adrian: Document this!
+ * Filters that should be applied to the request
  * 
  * @author Adrian Cole
  */
-public interface HttpConstants {
-   public static final String PROPERTY_HTTP_SECURE = "jclouds.http.secure";
-   public static final String PROPERTY_HTTP_PORT = "jclouds.http.port";
-   public static final String PROPERTY_HTTP_ADDRESS = "jclouds.http.address";
-   public static final String PROPERTY_HTTP_MAX_RETRIES = "jclouds.http.max-retries";
-   public static final String PROPERTY_HTTP_MAX_REDIRECTS = "jclouds.http.max-redirects";
-   public static final String PROPERTY_SAX_DEBUG = "jclouds.http.sax.debug";
-   public static final String PROPERTY_JSON_DEBUG = "jclouds.http.json.debug";
-
-   /**
-    * longest time a single request can take before throwing an exception.
-    */
-   public static final String PROPERTY_HTTP_REQUEST_TIMEOUT = "jclouds.http.request.timeout";
-   /**
-    * allow mismatch between hostname and ssl cerificate.
-    */
-   public static final String PROPERTY_HTTP_RELAX_HOSTNAME = "jclouds.http.relax-hostname";
+@Target( { TYPE, METHOD })
+@Retention(RUNTIME)
+public @interface RequestFilters {
+   Class<? extends HttpRequestFilter>[] value();
 }

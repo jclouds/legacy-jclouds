@@ -24,8 +24,6 @@
 package org.jclouds.http.httpnio.pool;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
 import javax.annotation.Resource;
@@ -56,16 +54,6 @@ public class NioHttpCommandExecutionHandler implements NHttpRequestExecutionHand
    private final ConsumingNHttpEntityFactory entityFactory;
    private final DelegatingRetryHandler retryHandler;
    private final DelegatingErrorHandler errorHandler;
-   private List<HttpRequestFilter> requestFilters = Collections.emptyList();
-
-   public List<HttpRequestFilter> getRequestFilters() {
-      return requestFilters;
-   }
-
-   @Inject(optional = true)
-   public void setRequestFilters(List<HttpRequestFilter> requestFilters) {
-      this.requestFilters = requestFilters;
-   }
 
    /**
     * inputOnly: nothing is taken from this queue.
@@ -97,7 +85,7 @@ public class NioHttpCommandExecutionHandler implements NHttpRequestExecutionHand
                .removeAttribute("command");
       if (rendezvous != null) {
          HttpRequest request = rendezvous.getCommand().getRequest();
-         for (HttpRequestFilter filter : getRequestFilters()) {
+         for (HttpRequestFilter filter : request.getFilters()) {
             filter.filter(request);
          }
          return NioHttpUtils.convertToApacheRequest(request);
@@ -119,7 +107,7 @@ public class NioHttpCommandExecutionHandler implements NHttpRequestExecutionHand
             HttpCommandRendezvous<?> rendezvous = handle.getCommandRendezvous();
             HttpCommand command = rendezvous.getCommand();
             org.jclouds.http.HttpResponse response = NioHttpUtils.convertToJavaCloudsResponse(
-                  command.getRequest().getEndpoint().toURL(), apacheResponse);
+                     command.getRequest().getEndpoint().toURL(), apacheResponse);
             int statusCode = response.getStatusCode();
             // TODO determine how to get the original request here so we don't need to build each
             // time

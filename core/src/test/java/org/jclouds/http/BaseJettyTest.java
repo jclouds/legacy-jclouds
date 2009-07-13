@@ -25,7 +25,6 @@ package org.jclouds.http;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -55,7 +54,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 
 public abstract class BaseJettyTest {
@@ -133,33 +131,18 @@ public abstract class BaseJettyTest {
       properties.put(HttpConstants.PROPERTY_HTTP_PORT, testPort + "");
       properties.put(HttpConstants.PROPERTY_HTTP_SECURE, "false");
       addConnectionProperties(properties);
-      final List<HttpRequestFilter> filters = new ArrayList<HttpRequestFilter>(1);
-      filters.add(new HttpRequestFilter() {
-         public void filter(HttpRequest request) throws HttpException {
-            if (request.getHeaders().containsKey("filterme")) {
-               request.getHeaders().put("test", "test");
-            }
-         }
-      });
 
       List<Module> modules = Lists.newArrayList(new AbstractModule() {
          @Override
          protected void configure() {
             Names.bindProperties(binder(), properties);
-            bind(URI.class).toInstance(URI.create("http://localhost:" + testPort));
          }
-      }, new JDKLoggingModule(),
-               new JaxrsModule(), createClientModule(), new AbstractModule() {
-                  @Override
-                  protected void configure() {
-                     bind(new TypeLiteral<List<HttpRequestFilter>>() {
-                     }).toInstance(filters);
-                  }
-               });
+      }, new JDKLoggingModule(), new JaxrsModule(), createClientModule());
       CloudContextBuilder.addExecutorServiceIfNotPresent(modules);
       injector = Guice.createInjector(modules);
       RestClientFactory factory = injector.getInstance(RestClientFactory.class);
-      client = factory.create(IntegrationTestClient.class);
+      client = factory.create(URI.create("http://localhost:" + testPort),
+               IntegrationTestClient.class);
       closer = injector.getInstance(Closer.class);
       assert client != null;
    }

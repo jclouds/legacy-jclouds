@@ -36,6 +36,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
+import javax.annotation.Resource;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.HttpHeaders;
@@ -44,12 +45,14 @@ import javax.ws.rs.core.UriBuilder;
 import org.jboss.resteasy.util.IsHttpMethod;
 import org.jclouds.http.HttpMethod;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReturnStringIf200;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.http.options.HttpRequestOptions;
+import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -61,10 +64,12 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.internal.Lists;
+import com.google.inject.name.Named;
 
 /**
  * Tests behavior of JaxrsUtil
@@ -73,6 +78,9 @@ import com.google.inject.internal.Lists;
  */
 @Singleton
 public class JaxrsAnnotationProcessor {
+
+   @Resource
+   protected Logger logger = Logger.NULL;
 
    private final Class<?> declaring;
 
@@ -170,14 +178,19 @@ public class JaxrsAnnotationProcessor {
    private void seedCache(Class<?> declaring) {
       Set<Method> methods = Sets.newHashSet(declaring.getMethods());
       for (Method method : Sets.difference(methods, Sets.newHashSet(Object.class.getMethods()))) {
-         getHttpMethodOrThrowException(method);
-         for (int index = 0; index < method.getParameterTypes().length; index++) {
-            methodToIndexOfParamToEntityAnnotation.get(method).get(index);
-            methodToIndexOfParamToHeaderParamAnnotations.get(method).get(index);
-            methodToIndexOfParamToHostPrefixParamAnnotations.get(method).get(index);
-            methodToindexOfParamToPathParamAnnotations.get(method).get(index);
-            methodToindexOfParamToPathParamParserAnnotations.get(method).get(index);
-            methodToIndexesOfOptions.get(method);
+         if (isHttpMethod(method)) {
+            for (int index = 0; index < method.getParameterTypes().length; index++) {
+               methodToIndexOfParamToEntityAnnotation.get(method).get(index);
+               methodToIndexOfParamToHeaderParamAnnotations.get(method).get(index);
+               methodToIndexOfParamToHostPrefixParamAnnotations.get(method).get(index);
+               methodToindexOfParamToPathParamAnnotations.get(method).get(index);
+               methodToindexOfParamToPathParamParserAnnotations.get(method).get(index);
+               methodToIndexesOfOptions.get(method);
+            }
+         } else if (isConstantDeclaration(method)) {
+            bindConstant(method);
+         } else {
+            throw new RuntimeException("Method is not annotated as either http or constant");
          }
       }
    }
@@ -187,9 +200,10 @@ public class JaxrsAnnotationProcessor {
    private HttpRequestOptionsBinder optionsBinder;
 
    public HttpRequest createRequest(URI endpoint, Method method, Object[] args) {
-      HttpMethod httpMethod = getHttpMethodOrThrowException(method);
+      HttpMethod httpMethod = getHttpMethodOrConstantOrThrowException(method);
 
       UriBuilder builder = addHostPrefixIfPresent(endpoint, method, args);
+      builder.path(declaring);
       builder.path(method);
 
       if (method.isAnnotationPresent(Query.class)) {
@@ -227,9 +241,25 @@ public class JaxrsAnnotationProcessor {
       }
       HttpRequest request = new HttpRequest(httpMethod, endPoint, headers);
       addHostHeaderIfAnnotatedWithVirtualHost(headers, request.getEndpoint().getHost(), method);
+      addFiltersIfAnnotated(method, request);
 
       buildEntityIfPostOrPutRequest(method, args, request);
       return request;
+   }
+
+   private void addFiltersIfAnnotated(Method method, HttpRequest request) {
+      if (declaring.isAnnotationPresent(RequestFilters.class)) {
+         for (Class<? extends HttpRequestFilter> clazz : declaring.getAnnotation(
+                  RequestFilters.class).value()) {
+            request.getFilters().add(injector.getInstance(clazz));
+         }
+      }
+      if (method.isAnnotationPresent(RequestFilters.class)) {
+         for (Class<? extends HttpRequestFilter> clazz : method.getAnnotation(RequestFilters.class)
+                  .value()) {
+            request.getFilters().add(injector.getInstance(clazz));
+         }
+      }
    }
 
    private UriBuilder addHostPrefixIfPresent(URI endpoint, Method method, Object[] args) {
@@ -280,11 +310,27 @@ public class JaxrsAnnotationProcessor {
       return null;
    }
 
-   public static HttpMethod getHttpMethodOrThrowException(Method method) {
+   private Map<String, String> constants = Maps.newHashMap();
+
+   public boolean isHttpMethod(Method method) {
+      return IsHttpMethod.getHttpMethods(method) != null;
+   }
+
+   public boolean isConstantDeclaration(Method method) {
+      return method.isAnnotationPresent(PathParam.class) && method.isAnnotationPresent(Named.class);
+   }
+
+   public void bindConstant(Method method) {
+      String key = method.getAnnotation(PathParam.class).value();
+      String value = injector.getInstance(Key.get(String.class, method.getAnnotation(Named.class)));
+      constants.put(key, value);
+   }
+
+   public HttpMethod getHttpMethodOrConstantOrThrowException(Method method) {
       Set<String> httpMethods = IsHttpMethod.getHttpMethods(method);
       if (httpMethods == null || httpMethods.size() != 1) {
          throw new IllegalStateException(
-                  "You must use at least one, but no more than one http method annotation on: "
+                  "You must use at least one, but no more than one http method or pathparam annotation on: "
                            + method.toString());
       }
       return HttpMethod.valueOf(httpMethods.iterator().next());
@@ -406,6 +452,7 @@ public class JaxrsAnnotationProcessor {
    private Map<String, Object> getEncodedPathParamKeyValues(Method method, Object[] args,
             char... skipEncode) throws UnsupportedEncodingException {
       Map<String, Object> pathParamValues = Maps.newHashMap();
+      pathParamValues.putAll(constants);
       Map<Integer, Set<Annotation>> indexToPathParam = methodToindexOfParamToPathParamAnnotations
                .get(method);
       Map<Integer, Set<Annotation>> indexToPathParamExtractor = methodToindexOfParamToPathParamParserAnnotations

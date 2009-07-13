@@ -24,8 +24,6 @@
 package org.jclouds.http.internal;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -41,8 +39,6 @@ import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.logging.Logger;
 
-import com.google.inject.Inject;
-
 public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandExecutorService {
 
    private final DelegatingRetryHandler retryHandler;
@@ -51,9 +47,6 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
 
    @Resource
    protected Logger logger = Logger.NULL;
-
-   @Inject(optional = true)
-   protected List<HttpRequestFilter> requestFilters = Collections.emptyList();
 
    protected BaseHttpCommandExecutorService(ExecutorService executorService,
             DelegatingRetryHandler retryHandler, DelegatingErrorHandler errorHandler) {
@@ -81,7 +74,7 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
             Q nativeRequest = null;
             try {
                logger.trace("%s - converting request %s", request.getEndpoint(), request);
-               for (HttpRequestFilter filter : requestFilters) {
+               for (HttpRequestFilter filter : request.getFilters()) {
                   filter.filter(request);
                }
                nativeRequest = convert(request);

@@ -73,8 +73,8 @@ public class S3ContextBuilder extends CloudContextBuilder<S3Connection, S3Contex
       Properties properties = new Properties();
 
       properties.setProperty(PROPERTY_HTTP_ADDRESS, "s3.amazonaws.com");
-      properties.setProperty(PROPERTY_SAX_DEBUG, "false");
       properties.setProperty(PROPERTY_HTTP_SECURE, "true");
+      properties.setProperty(PROPERTY_SAX_DEBUG, "false");
       properties.setProperty(PROPERTY_HTTP_MAX_RETRIES, "5");
       properties.setProperty(PROPERTY_HTTP_MAX_REDIRECTS, "5");
       properties.setProperty(PROPERTY_POOL_MAX_CONNECTION_REUSE, "75");

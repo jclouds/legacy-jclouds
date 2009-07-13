@@ -94,7 +94,6 @@ public class ParseSax<T> implements Function<HttpResponse, T> {
    }
 
    private void parseAndCloseStream(InputStream xml, ContentHandler handler) throws HttpException {
-      parser.setContentHandler(handler);
       String response = null;
       try {
          if (suckFirst) {
@@ -103,6 +102,7 @@ public class ParseSax<T> implements Function<HttpResponse, T> {
             IOUtils.closeQuietly(xml);
             xml = IOUtils.toInputStream(response);
          }
+         parser.setContentHandler(handler);
          InputSource input = new InputSource(new InputStreamReader(xml, "UTF-8"));
          parser.parse(input);
       } catch (Exception e) {

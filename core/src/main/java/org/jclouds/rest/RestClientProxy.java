@@ -65,12 +65,13 @@ public class RestClientProxy implements InvocationHandler {
    protected Logger logger = Logger.NULL;
 
    public static interface RestClientProxyFactory {
-      RestClientProxy create(Class<?> clazz);
+      RestClientProxy create(URI endPoint, Class<?> clazz);
    }
 
    @Inject
-   public RestClientProxy(JaxrsAnnotationProcessor.Factory utilFactory, URI endPoint,
-            TransformingHttpCommand.Factory factory, @Assisted Class<?> declaring) {
+   public RestClientProxy(JaxrsAnnotationProcessor.Factory utilFactory,
+            TransformingHttpCommand.Factory factory, @Assisted URI endPoint,
+            @Assisted Class<?> declaring) {
       this.util = utilFactory.create(declaring);
       this.declaring = declaring;
       this.endPoint = endPoint;
@@ -83,29 +84,35 @@ public class RestClientProxy implements InvocationHandler {
          return this.equals(o);
       } else if (method.getName().equals("hashCode")) {
          return this.hashCode();
-      }
-      logger.trace("%s - converting method to request", method);
-      HttpRequest request = util.createRequest(endPoint, method, args);
-      logger.trace("%s - converted method to request %s", method, request);
+      } else if (util.isHttpMethod(method)) {
+         logger.trace("%s - converting method to request", method);
+         HttpRequest request = util.createRequest(endPoint, method, args);
+         logger.trace("%s - converted method to request %s", method, request);
 
-      Function<HttpResponse, ?> transformer = util.createResponseParser(method);
-      Function<Exception, ?> exceptionParser = util.createExceptionParserOrNullIfNotFound(method);
+         Function<HttpResponse, ?> transformer = util.createResponseParser(method);
+         Function<Exception, ?> exceptionParser = util
+                  .createExceptionParserOrNullIfNotFound(method);
 
-      logger.trace("%s - creating command for request %s, transformer %s, exceptionParser %s",
-               method, request, transformer, exceptionParser);
-      Future<?> result = commandFactory.create(request, transformer, exceptionParser).execute();
+         logger.trace("%s - creating command for request %s, transformer %s, exceptionParser %s",
+                  method, request, transformer, exceptionParser);
+         Future<?> result = commandFactory.create(request, transformer, exceptionParser).execute();
 
-      if (exceptionParser != null) {
-         logger.trace("%s - wrapping future for request %s in exceptionParser %s", method, request,
-                  exceptionParser);
-         result = new FutureExceptionParser(result, exceptionParser);
-      }
+         if (exceptionParser != null) {
+            logger.trace("%s - wrapping future for request %s in exceptionParser %s", method,
+                     request, exceptionParser);
+            result = new FutureExceptionParser(result, exceptionParser);
+         }
 
-      if (method.getReturnType().isAssignableFrom(Future.class)) {
-         return result;
+         if (method.getReturnType().isAssignableFrom(Future.class)) {
+            return result;
+         } else {
+            logger
+                     .trace("%s - invoking request synchronously %s", method, request,
+                              exceptionParser);
+            return result.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
+         }
       } else {
-         logger.trace("%s - invoking request synchronously %s", method, request, exceptionParser);
-         return result.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
+         throw new RuntimeException("method is intended solely to set constants: " + method);
       }
    }
 

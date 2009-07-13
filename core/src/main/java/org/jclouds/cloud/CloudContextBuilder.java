@@ -30,6 +30,7 @@ import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_RETRIES;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_PORT;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_RELAX_HOSTNAME;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_SECURE;
+import static org.jclouds.http.HttpConstants.PROPERTY_JSON_DEBUG;
 import static org.jclouds.http.HttpConstants.PROPERTY_SAX_DEBUG;
 import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_IO_WORKER_THREADS;
 import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS;
@@ -100,6 +101,11 @@ public abstract class CloudContextBuilder<C, X extends CloudContext<C>> {
       return this;
    }
 
+   public CloudContextBuilder<C, X> withJsonDebug() {
+      properties.setProperty(PROPERTY_JSON_DEBUG, "true");
+      return this;
+   }
+   
    /**
     * allow mismatches between the certificate and the hostname of ssl requests.
     */

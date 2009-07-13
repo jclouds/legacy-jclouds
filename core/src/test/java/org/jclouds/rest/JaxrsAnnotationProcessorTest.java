@@ -41,8 +41,10 @@ import javax.ws.rs.PathParam;
 
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
+import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpMethod;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.functions.ReturnStringIf200;
@@ -62,14 +64,51 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
+import com.google.inject.name.Named;
+import com.google.inject.name.Names;
 
 /**
- * Tests behavior of Guice.createInjector().getInstance(JaxrsUtil.Factory.class)
+ * Tests behavior of {@code JaxrsAnnotationProcessor}
  * 
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "jaxrs.JaxrsUtilTest")
 public class JaxrsAnnotationProcessorTest {
+
+   static class TestRequestFilter1 implements HttpRequestFilter {
+
+      public void filter(HttpRequest request) throws HttpException {
+      }
+
+   }
+
+   static class TestRequestFilter2 implements HttpRequestFilter {
+
+      public void filter(HttpRequest request) throws HttpException {
+      }
+
+   }
+
+   @RequestFilters(TestRequestFilter1.class)
+   static class TestRequestFilter {
+
+      @GET
+      @RequestFilters(TestRequestFilter2.class)
+      public void get() {
+      }
+
+   }
+
+   @Test
+   public void testRequestFilter() throws SecurityException, NoSuchMethodException {
+      Method method = TestRequestFilter.class.getMethod("get");
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = factory.create(TestRequestFilter.class).createRequest(endpoint,
+               method, new Object[] {});
+      assertEquals(httpMethod.getFilters().size(), 2);
+      assertEquals(httpMethod.getFilters().get(0).getClass(), TestRequestFilter1.class);
+      assertEquals(httpMethod.getFilters().get(1).getClass(), TestRequestFilter2.class);
+   }
 
    @SkipEncoding('/')
    public class TestEncoding {
@@ -99,6 +138,31 @@ public class JaxrsAnnotationProcessorTest {
       HttpRequest httpMethod = factory.create(TestEncoding.class).createRequest(endpoint, method,
                new Object[] { "/", "localhost" });
       assertEquals(httpMethod.getEndpoint().getPath(), "///localhost");
+      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
+      assertEquals(httpMethod.getHeaders().size(), 0);
+   }
+
+   @SkipEncoding('/')
+   @Path("/v1/{account}")
+   public interface TestConstantPathParam {
+
+      @Named("testaccount")
+      @PathParam("account")
+      void setUsername();
+
+      @GET
+      @Path("{path1}/{path2}")
+      public void twoPaths(@PathParam("path1") String path, @PathParam("path2") String path2);
+
+   }
+
+   @Test
+   public void testConstantPathParam() throws SecurityException, NoSuchMethodException {
+      Method method = TestConstantPathParam.class.getMethod("twoPaths", String.class, String.class);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = factory.create(TestConstantPathParam.class).createRequest(endpoint,
+               method, new Object[] { "1", "localhost" });
+      assertEquals(httpMethod.getEndpoint().getPath(), "/v1/ralphie/1/localhost");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
    }
@@ -627,6 +691,7 @@ public class JaxrsAnnotationProcessorTest {
       factory = Guice.createInjector(new AbstractModule() {
          @Override
          protected void configure() {
+            bindConstant().annotatedWith(Names.named("testaccount")).to("ralphie");
             bind(URI.class).toInstance(URI.create("http://localhost:8080"));
          }
       }, new JaxrsModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),

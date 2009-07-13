@@ -26,10 +26,12 @@ package org.jclouds.http;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
+import java.util.List;
 
 import org.jclouds.command.Request;
 
 import com.google.common.collect.Multimap;
+import com.google.inject.internal.Lists;
 
 /**
  * Represents a request that can be executed within {@link HttpCommandExecutorService}
@@ -37,6 +39,8 @@ import com.google.common.collect.Multimap;
  * @author Adrian Cole
  */
 public class HttpRequest extends HttpMessage implements Request<URI> {
+
+   private List<HttpRequestFilter> requestFilters = Lists.newArrayList();
 
    private final HttpMethod method;
    private final URI endpoint;
@@ -92,6 +96,14 @@ public class HttpRequest extends HttpMessage implements Request<URI> {
 
    public URI getEndpoint() {
       return endpoint;
+   }
+
+   public void addFilter(HttpRequestFilter filter) {
+      requestFilters.add(filter);
+   }
+
+   public List<HttpRequestFilter> getFilters() {
+      return requestFilters;
    }
 
 }
