@@ -27,14 +27,22 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
+import org.jclouds.rackspace.cloudfiles.domain.AccountMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
+import org.jclouds.rackspace.cloudfiles.functions.ParseAccountMetadataResponseFromHeaders;
 import org.jclouds.rackspace.cloudfiles.functions.ParseContainerListFromGsonResponse;
+import org.jclouds.rackspace.cloudfiles.functions.ReturnTrueOn204FalseOtherwise;
+import org.jclouds.rackspace.cloudfiles.functions.ReturnTrueOn404FalseOtherwise;
+import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
 import org.jclouds.rackspace.filters.AuthenticateRequest;
+import org.jclouds.rest.ExceptionParser;
 import org.jclouds.rest.Query;
 import org.jclouds.rest.RequestFilters;
 import org.jclouds.rest.ResponseParser;
@@ -53,14 +61,32 @@ import org.jclouds.rest.SkipEncoding;
 @RequestFilters(AuthenticateRequest.class)
 public interface CloudFilesConnection {
 
+   @HEAD
+   @ResponseParser(ParseAccountMetadataResponseFromHeaders.class)
+   @Path("/")
+   AccountMetadata getAccountMetadata();
+
+   // TODO: Should this method automatically retrieve paged results, i.e. for > 10,000 containers?
    @GET
    @ResponseParser(ParseContainerListFromGsonResponse.class)
    @Query(key = "format", value = "json")
    @Path("/")
    List<ContainerMetadata> listOwnedContainers();
 
+   @GET
+   @ResponseParser(ParseContainerListFromGsonResponse.class)
+   @Query(key = "format", value = "json")
+   @Path("/")
+   List<ContainerMetadata> listOwnedContainers(ListContainerOptions options);
+
    @PUT
    @Path("{container}")
    boolean putContainer(@PathParam("container") String container);
+
+   @DELETE
+   @ResponseParser(ReturnTrueOn204FalseOtherwise.class)
+   @ExceptionParser(ReturnTrueOn404FalseOtherwise.class)
+   @Path("{container}")
+   boolean deleteContainerIfEmpty(@PathParam("container") String container);
 
 }
