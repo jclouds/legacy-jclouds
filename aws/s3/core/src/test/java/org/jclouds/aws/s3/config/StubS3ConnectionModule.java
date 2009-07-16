@@ -28,7 +28,7 @@ import java.net.URI;
 import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.internal.StubS3Connection;
 import org.jclouds.cloud.ConfiguresCloudConnection;
-import org.jclouds.http.functions.config.SaxModule;
+import org.jclouds.http.functions.config.ParserModule;
 
 import com.google.inject.AbstractModule;
 
@@ -40,7 +40,7 @@ import com.google.inject.AbstractModule;
 @ConfiguresCloudConnection
 public class StubS3ConnectionModule extends AbstractModule {
    protected void configure() {
-      install(new SaxModule());
+      install(new ParserModule());
       bind(S3Connection.class).to(StubS3Connection.class);
       bind(URI.class).toInstance(URI.create("http://localhost:8080"));
    }

@@ -23,6 +23,10 @@
  */
 package org.jclouds.http.functions.config;
 
+import java.lang.reflect.Type;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -31,19 +35,46 @@ import org.jclouds.http.functions.ParseSax;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryProvider;
 
 /**
- * // TODO: Adrian: Document this!
+ * Contains logic for parsing objects from Strings.
  * 
  * @author Adrian Cole
  */
-public class SaxModule extends AbstractModule {
+public class ParserModule extends AbstractModule {
    private final static TypeLiteral<ParseSax.Factory> parseSaxFactoryLiteral = new TypeLiteral<ParseSax.Factory>() {
    };
+
+   static class InetAddressAdapter implements JsonSerializer<InetAddress>,
+            JsonDeserializer<InetAddress> {
+      public JsonElement serialize(InetAddress src, Type typeOfSrc, JsonSerializationContext context) {
+         return new JsonPrimitive(src.getHostAddress());
+      }
+
+      public InetAddress deserialize(JsonElement json, Type typeOfT,
+               JsonDeserializationContext context) throws JsonParseException {
+         try {
+            return InetAddress.getByName(json.getAsJsonPrimitive().getAsString());
+         } catch (UnknownHostException e) {
+            throw new JsonParseException(e);
+         }
+      }
+
+   }
 
    @Provides
    XMLReader provideXMLReader(SAXParserFactory factory) throws ParserConfigurationException,
@@ -60,6 +91,14 @@ public class SaxModule extends AbstractModule {
       factory.setValidating(false);
       factory.setXIncludeAware(false);
       return factory;
+   }
+
+   @Provides
+   @Singleton
+   Gson provideGson() {
+      GsonBuilder gson = new GsonBuilder();
+      gson.registerTypeAdapter(InetAddress.class, new InetAddressAdapter());
+      return gson.create();
    }
 
    protected void configure() {

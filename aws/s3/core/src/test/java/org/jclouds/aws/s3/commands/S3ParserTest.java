@@ -43,7 +43,7 @@ import org.jclouds.aws.s3.xml.config.S3ParserModule;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.http.functions.config.SaxModule;
+import org.jclouds.http.functions.config.ParserModule;
 import org.joda.time.DateTime;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
@@ -68,7 +68,7 @@ public class S3ParserTest extends PerformanceTest {
 
    @BeforeTest
    protected void setUpInjector() {
-      injector = Guice.createInjector(new SaxModule(), new S3ParserModule());
+      injector = Guice.createInjector(new ParserModule(), new S3ParserModule());
       parserFactory = injector.getInstance(S3ParserFactory.class);
       assert parserFactory != null;
    }

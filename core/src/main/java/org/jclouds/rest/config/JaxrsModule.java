@@ -27,7 +27,7 @@ import javax.ws.rs.ext.RuntimeDelegate;
 
 import org.jclouds.http.TransformingHttpCommand;
 import org.jclouds.http.TransformingHttpCommandImpl;
-import org.jclouds.http.functions.config.SaxModule;
+import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rest.JaxrsAnnotationProcessor;
 import org.jclouds.rest.RestClientProxy;
 import org.jclouds.rest.RuntimeDelegateImpl;
@@ -46,7 +46,7 @@ public class JaxrsModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      install(new SaxModule());
+      install(new ParserModule());
       RuntimeDelegate.setInstance(new RuntimeDelegateImpl());
       bind(RestClientProxy.RestClientProxyFactory.class).toProvider(
                FactoryProvider.newFactory(RestClientProxy.RestClientProxyFactory.class, RestClientProxy.class));

@@ -25,7 +25,7 @@ package org.jclouds.aws.s3.functions;
 
 import org.jclouds.aws.s3.xml.S3ParserFactory;
 import org.jclouds.aws.s3.xml.config.S3ParserModule;
-import org.jclouds.http.functions.config.SaxModule;
+import org.jclouds.http.functions.config.ParserModule;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -44,7 +44,7 @@ public class S3ParserFactoryTest {
 
    @BeforeTest
    void setUpInjector() {
-      injector = Guice.createInjector(new S3ParserModule(), new SaxModule());
+      injector = Guice.createInjector(new S3ParserModule(), new ParserModule());
       parserFactory = injector.getInstance(S3ParserFactory.class);
    }
 
