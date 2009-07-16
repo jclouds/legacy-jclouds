@@ -30,7 +30,7 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 
 import org.jclouds.rackspace.functions.ParseAuthenticationResponseFromHeaders;
-import org.jclouds.rackspace.reference.RackSpaceHeaders;
+import org.jclouds.rackspace.reference.RackspaceHeaders;
 import org.jclouds.rest.ResponseParser;
 
 /**
@@ -42,7 +42,7 @@ import org.jclouds.rest.ResponseParser;
  * @author Adrian Cole
  */
 
-public interface RackSpaceAuthentication {
+public interface RackspaceAuthentication {
 
    public interface AuthenticationResponse {
       @Storage
@@ -61,6 +61,6 @@ public interface RackSpaceAuthentication {
    @GET
    @ResponseParser(ParseAuthenticationResponseFromHeaders.class)
    @Path("/auth")
-   AuthenticationResponse authenticate(@HeaderParam(RackSpaceHeaders.AUTH_USER) String user,
-            @HeaderParam(RackSpaceHeaders.AUTH_KEY) String key);
+   AuthenticationResponse authenticate(@HeaderParam(RackspaceHeaders.AUTH_USER) String user,
+            @HeaderParam(RackspaceHeaders.AUTH_KEY) String key);
 }

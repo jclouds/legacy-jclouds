@@ -7,7 +7,7 @@ package org.jclouds.rackspace.reference;
  * @author Adrian Cole
  * 
  */
-public interface RackSpaceHeaders {
+public interface RackspaceHeaders {
 
    public static final String AUTH_USER = "X-Auth-User";
    public static final String AUTH_KEY = "X-Auth-Key";

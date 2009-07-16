@@ -1,7 +1,7 @@
 package org.jclouds.rackspace.config;
 
-import static org.jclouds.rackspace.reference.RackSpaceConstants.PROPERTY_RACKSPACE_KEY;
-import static org.jclouds.rackspace.reference.RackSpaceConstants.PROPERTY_RACKSPACE_USER;
+import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_KEY;
+import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_USER;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -10,10 +10,10 @@ import org.jclouds.http.HttpConstants;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rackspace.Authentication;
 import org.jclouds.rackspace.CDN;
-import org.jclouds.rackspace.RackSpaceAuthentication;
+import org.jclouds.rackspace.RackspaceAuthentication;
 import org.jclouds.rackspace.Server;
 import org.jclouds.rackspace.Storage;
-import org.jclouds.rackspace.RackSpaceAuthentication.AuthenticationResponse;
+import org.jclouds.rackspace.RackspaceAuthentication.AuthenticationResponse;
 import org.jclouds.rest.RestClientFactory;
 import org.jclouds.rest.config.JaxrsModule;
 
@@ -43,7 +43,7 @@ public class RackspaceAuthenticationModule extends AbstractModule {
             @Authentication URI authenticationUri, RestClientFactory factory,
             @Named(PROPERTY_RACKSPACE_USER) String user,
             @Named(PROPERTY_RACKSPACE_KEY) String key) {
-      return factory.create(authenticationUri, RackSpaceAuthentication.class).authenticate(user,
+      return factory.create(authenticationUri, RackspaceAuthentication.class).authenticate(user,
                key);
    }
 
@@ -53,7 +53,7 @@ public class RackspaceAuthenticationModule extends AbstractModule {
             RestClientFactory factory,
             @Named(PROPERTY_RACKSPACE_USER) String user,
             @Named(PROPERTY_RACKSPACE_KEY) String key) {
-      return factory.create(authenticationUri, RackSpaceAuthentication.class).authenticate(user,
+      return factory.create(authenticationUri, RackspaceAuthentication.class).authenticate(user,
                key).getAuthToken();
    }
 

@@ -31,7 +31,7 @@ import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.rackspace.Authentication;
-import org.jclouds.rackspace.reference.RackSpaceHeaders;
+import org.jclouds.rackspace.reference.RackspaceHeaders;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -89,7 +89,7 @@ public class AuthenticateRequest implements HttpRequestFilter {
    }
 
    public void filter(HttpRequest request) throws HttpException {
-      request.getHeaders().replaceValues(RackSpaceHeaders.AUTH_TOKEN,
+      request.getHeaders().replaceValues(RackspaceHeaders.AUTH_TOKEN,
                Collections.singletonList(getAuthToken()));
    }
 

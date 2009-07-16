@@ -24,14 +24,14 @@
 package org.jclouds.rackspace.cloudfiles.reference;
 
 import org.jclouds.objectstore.reference.ObjectStoreConstants;
-import org.jclouds.rackspace.reference.RackSpaceConstants;
+import org.jclouds.rackspace.reference.RackspaceConstants;
 
 /**
  * Configuration properties and constants used in Cloud Files connections.
  * 
  * @author Adrian Cole
  */
-public interface CloudFilesConstants extends ObjectStoreConstants, RackSpaceConstants {
+public interface CloudFilesConstants extends ObjectStoreConstants, RackspaceConstants {
 
 
 

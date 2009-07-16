@@ -24,11 +24,11 @@
 package org.jclouds.rackspace.reference;
 
 /**
- * Configuration properties and constants used in RackSpace connections.
+ * Configuration properties and constants used in Rackspace connections.
  * 
  * @author Adrian Cole
  */
-public interface RackSpaceConstants {
+public interface RackspaceConstants {
    public static final String PROPERTY_RACKSPACE_USER = "jclouds.rackspace.user";
    public static final String PROPERTY_RACKSPACE_KEY = "jclouds.rackspace.key";
 }

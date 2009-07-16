@@ -24,15 +24,15 @@
 package org.jclouds.rackspace.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.rackspace.reference.RackSpaceHeaders.AUTH_TOKEN;
-import static org.jclouds.rackspace.reference.RackSpaceHeaders.CDN_MANAGEMENT_URL;
-import static org.jclouds.rackspace.reference.RackSpaceHeaders.SERVER_MANAGEMENT_URL;
-import static org.jclouds.rackspace.reference.RackSpaceHeaders.STORAGE_URL;
+import static org.jclouds.rackspace.reference.RackspaceHeaders.AUTH_TOKEN;
+import static org.jclouds.rackspace.reference.RackspaceHeaders.CDN_MANAGEMENT_URL;
+import static org.jclouds.rackspace.reference.RackspaceHeaders.SERVER_MANAGEMENT_URL;
+import static org.jclouds.rackspace.reference.RackspaceHeaders.STORAGE_URL;
 
 import java.net.URI;
 
 import org.jclouds.http.HttpResponse;
-import org.jclouds.rackspace.RackSpaceAuthentication.AuthenticationResponse;
+import org.jclouds.rackspace.RackspaceAuthentication.AuthenticationResponse;
 
 import com.google.common.base.Function;
 

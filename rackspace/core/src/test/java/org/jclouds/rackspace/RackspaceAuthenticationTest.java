@@ -35,7 +35,7 @@ import org.jclouds.http.HttpMethod;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.rackspace.functions.ParseAuthenticationResponseFromHeaders;
-import org.jclouds.rackspace.reference.RackSpaceHeaders;
+import org.jclouds.rackspace.reference.RackspaceHeaders;
 import org.jclouds.rest.JaxrsAnnotationProcessor;
 import org.jclouds.rest.config.JaxrsModule;
 import org.testng.annotations.BeforeClass;
@@ -49,26 +49,26 @@ import com.google.inject.Guice;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "rackspace.RackSpaceAuthentication")
-public class RackSpaceAuthenticationTest {
+@Test(groups = "unit", testName = "rackspace.RackspaceAuthentication")
+public class RackspaceAuthenticationTest {
 
    JaxrsAnnotationProcessor.Factory factory;
 
    public void testAuthenticate() throws SecurityException, NoSuchMethodException {
-      Method method = RackSpaceAuthentication.class.getMethod("authenticate", String.class,
+      Method method = RackspaceAuthentication.class.getMethod("authenticate", String.class,
                String.class);
       URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = factory.create(RackSpaceAuthentication.class).createRequest(
+      HttpRequest httpMethod = factory.create(RackspaceAuthentication.class).createRequest(
                endpoint, method, new Object[] { "foo", "bar" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/auth");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 2);
-      assertEquals(httpMethod.getHeaders().get(RackSpaceHeaders.AUTH_USER), Collections
+      assertEquals(httpMethod.getHeaders().get(RackspaceHeaders.AUTH_USER), Collections
                .singletonList("foo"));
-      assertEquals(httpMethod.getHeaders().get(RackSpaceHeaders.AUTH_KEY), Collections
+      assertEquals(httpMethod.getHeaders().get(RackspaceHeaders.AUTH_KEY), Collections
                .singletonList("bar"));
-      factory.create(RackSpaceAuthentication.class);
+      factory.create(RackspaceAuthentication.class);
       assertEquals(JaxrsAnnotationProcessor.getParserOrThrowException(method),
                ParseAuthenticationResponseFromHeaders.class);
 
