@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
 import com.google.inject.BindingAnnotation;
 
 /**
- * Represents a component related to RackSpace Cloud Files Content delivery network.
+ * Represents a component related to Rackspace Cloud Files Content delivery network.
  * 
  * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090311.pdf" />
  * @author Adrian Cole

@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
 import com.google.inject.BindingAnnotation;
 
 /**
- * Represents an authenticated context to RackSpace.
+ * Represents an authenticated context to Rackspace.
  * 
  * @see <a href="http://docs.rackspacecloud.com/servers/api/cs-devguide-latest.pdf" />
  * @author Adrian Cole

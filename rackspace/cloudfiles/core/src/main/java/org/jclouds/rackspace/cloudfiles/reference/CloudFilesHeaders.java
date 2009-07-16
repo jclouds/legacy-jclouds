@@ -25,7 +25,7 @@ package org.jclouds.rackspace.cloudfiles.reference;
 
 
 /**
- * Additional headers specified by RackSpace Cloud Files REST API.
+ * Additional headers specified by Rackspace Cloud Files REST API.
  * 
  * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090311.pdf" />
  * @author Adrian Cole

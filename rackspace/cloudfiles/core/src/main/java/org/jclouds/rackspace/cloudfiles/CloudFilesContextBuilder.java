@@ -23,26 +23,12 @@
  */
 package org.jclouds.rackspace.cloudfiles;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_ADDRESS;
-import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_REDIRECTS;
-import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_RETRIES;
-import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_SECURE;
-import static org.jclouds.http.HttpConstants.PROPERTY_SAX_DEBUG;
-import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_IO_WORKER_THREADS;
-import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS;
-import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTION_REUSE;
-import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_SESSION_FAILURES;
-import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_REQUEST_INVOKER_THREADS;
-import static org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants.PROPERTY_RACKSPACE_KEY;
-import static org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants.PROPERTY_RACKSPACE_USER;
-
 import java.util.List;
 import java.util.Properties;
 
-import org.jclouds.cloud.CloudContextBuilder;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.rackspace.RackspaceContextBuilder;
 import org.jclouds.rackspace.cloudfiles.config.RestCloudFilesConnectionModule;
 
 import com.google.inject.Injector;
@@ -58,11 +44,11 @@ import com.google.inject.Module;
  * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
- * @author Adrian Cole, Andrew Newdigate
+ * @author Adrian Cole
  * @see CloudFilesContext
  */
 public class CloudFilesContextBuilder extends
-         CloudContextBuilder<CloudFilesConnection, CloudFilesContext> {
+         RackspaceContextBuilder<CloudFilesConnection, CloudFilesContext> {
 
    public CloudFilesContextBuilder(Properties props) {
       super(props);
@@ -70,43 +56,30 @@ public class CloudFilesContextBuilder extends
 
    public static CloudFilesContextBuilder newBuilder(String id, String secret) {
       Properties properties = new Properties();
-
-      properties.setProperty(PROPERTY_HTTP_ADDRESS, "api.mosso.com");
-      properties.setProperty(PROPERTY_HTTP_SECURE, "true");
-      properties.setProperty(PROPERTY_SAX_DEBUG, "false");
-      properties.setProperty(PROPERTY_HTTP_MAX_RETRIES, "5");
-      properties.setProperty(PROPERTY_HTTP_MAX_REDIRECTS, "5");
-      properties.setProperty(PROPERTY_POOL_MAX_CONNECTION_REUSE, "75");
-      properties.setProperty(PROPERTY_POOL_MAX_SESSION_FAILURES, "2");
-      properties.setProperty(PROPERTY_POOL_REQUEST_INVOKER_THREADS, "1");
-      properties.setProperty(PROPERTY_POOL_IO_WORKER_THREADS, "2");
-      properties.setProperty(PROPERTY_POOL_MAX_CONNECTIONS, "12");
-
       CloudFilesContextBuilder builder = new CloudFilesContextBuilder(properties);
       builder.authenticate(id, secret);
       return builder;
    }
 
-   public void authenticate(String id, String secret) {
-      properties.setProperty(PROPERTY_RACKSPACE_USER, checkNotNull(id, "user"));
-      properties.setProperty(PROPERTY_RACKSPACE_KEY, checkNotNull(secret, "key"));
-   }
-
-   public CloudFilesContext buildContext() {
-      return buildInjector().getInstance(CloudFilesContext.class);
-   }
-
-   protected void addParserModule(List<Module> modules) {
-      // TODO
-   }
-
-   protected void addContextModule(List<Module> modules) {
-      // TODO
-   }
 
    protected void addConnectionModule(List<Module> modules) {
+      super.addConnectionModule(modules);
       modules.add(new RestCloudFilesConnectionModule());
-      // TODO
+   }
+
+   @Override
+   protected void addContextModule(List<Module> modules) {
+//TODO      
+   }
+
+   @Override
+   protected void addParserModule(List<Module> modules) {
+    //TODO      
+   }
+
+   @Override
+   public CloudFilesContext buildContext() {
+      return buildInjector().getInstance(CloudFilesContext.class);
    }
 
 }

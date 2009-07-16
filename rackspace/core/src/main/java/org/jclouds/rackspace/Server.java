@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
 import com.google.inject.BindingAnnotation;
 
 /**
- * Represents a component related to RackSpace Cloud Servers.
+ * Represents a component related to Rackspace Cloud Servers.
  * 
  * @see <a href="http://docs.rackspacecloud.com/servers/api/cs-devguide-latest.pdf" />
  * @author Adrian Cole

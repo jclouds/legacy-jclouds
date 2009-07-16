@@ -22,7 +22,7 @@
  * ====================================================================
  */
 /**
- * This package contains an RackSpace Cloud Files client implemented by {@link org.jclouds.http.HttpCommandExecutorService} commands.
+ * This package contains an Rackspace Cloud Files client implemented by {@link org.jclouds.http.HttpCommandExecutorService} commands.
  *
  * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090311.pdf" />
  * @author Adrian Cole
