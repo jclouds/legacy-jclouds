@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudfiles;
+package org.jclouds.rackspace;
 
 import static org.testng.Assert.assertEquals;
 
@@ -34,8 +34,8 @@ import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpMethod;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
-import org.jclouds.rackspace.cloudfiles.functions.ParseAuthenticationResponseFromHeaders;
-import org.jclouds.rackspace.cloudfiles.reference.CloudFilesHeaders;
+import org.jclouds.rackspace.functions.ParseAuthenticationResponseFromHeaders;
+import org.jclouds.rackspace.reference.RackSpaceHeaders;
 import org.jclouds.rest.JaxrsAnnotationProcessor;
 import org.jclouds.rest.config.JaxrsModule;
 import org.testng.annotations.BeforeClass;
@@ -49,26 +49,26 @@ import com.google.inject.Guice;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "cloudfiles.CloudFilesAuthentication")
-public class CloudFilesAuthenticationTest {
+@Test(groups = "unit", testName = "rackspace.RackSpaceAuthentication")
+public class RackSpaceAuthenticationTest {
 
    JaxrsAnnotationProcessor.Factory factory;
 
    public void testAuthenticate() throws SecurityException, NoSuchMethodException {
-      Method method = CloudFilesAuthentication.class.getMethod("authenticate", String.class,
+      Method method = RackSpaceAuthentication.class.getMethod("authenticate", String.class,
                String.class);
       URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = factory.create(CloudFilesAuthentication.class).createRequest(
+      HttpRequest httpMethod = factory.create(RackSpaceAuthentication.class).createRequest(
                endpoint, method, new Object[] { "foo", "bar" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/auth");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 2);
-      assertEquals(httpMethod.getHeaders().get(CloudFilesHeaders.AUTH_USER), Collections
+      assertEquals(httpMethod.getHeaders().get(RackSpaceHeaders.AUTH_USER), Collections
                .singletonList("foo"));
-      assertEquals(httpMethod.getHeaders().get(CloudFilesHeaders.AUTH_KEY), Collections
+      assertEquals(httpMethod.getHeaders().get(RackSpaceHeaders.AUTH_KEY), Collections
                .singletonList("bar"));
-      factory.create(CloudFilesAuthentication.class);
+      factory.create(RackSpaceAuthentication.class);
       assertEquals(JaxrsAnnotationProcessor.getParserOrThrowException(method),
                ParseAuthenticationResponseFromHeaders.class);
 

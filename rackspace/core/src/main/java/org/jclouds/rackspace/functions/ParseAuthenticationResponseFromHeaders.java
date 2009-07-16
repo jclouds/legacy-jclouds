@@ -21,15 +21,18 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudfiles.functions;
+package org.jclouds.rackspace.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.rackspace.reference.RackSpaceHeaders.AUTH_TOKEN;
+import static org.jclouds.rackspace.reference.RackSpaceHeaders.CDN_MANAGEMENT_URL;
+import static org.jclouds.rackspace.reference.RackSpaceHeaders.SERVER_MANAGEMENT_URL;
+import static org.jclouds.rackspace.reference.RackSpaceHeaders.STORAGE_URL;
 
 import java.net.URI;
 
 import org.jclouds.http.HttpResponse;
-import org.jclouds.rackspace.cloudfiles.CloudFilesAuthentication.AuthenticationResponse;
-import org.jclouds.rackspace.cloudfiles.reference.CloudFilesHeaders;
+import org.jclouds.rackspace.RackSpaceAuthentication.AuthenticationResponse;
 
 import com.google.common.base.Function;
 
@@ -49,21 +52,28 @@ public class ParseAuthenticationResponseFromHeaders implements
       return new AuthenticationResponse() {
 
          public String getAuthToken() {
-            return checkNotNull(from.getFirstHeaderOrNull(CloudFilesHeaders.AUTH_TOKEN),
-                     CloudFilesHeaders.AUTH_TOKEN);
+            return checkNotNull(from.getFirstHeaderOrNull(AUTH_TOKEN),
+                     AUTH_TOKEN);
          }
 
          public URI getCDNManagementUrl() {
             String cdnManagementUrl = checkNotNull(from
-                     .getFirstHeaderOrNull(CloudFilesHeaders.CDN_MANAGEMENT_URL),
-                     CloudFilesHeaders.CDN_MANAGEMENT_URL);
+                     .getFirstHeaderOrNull(CDN_MANAGEMENT_URL),
+                     CDN_MANAGEMENT_URL);
             return URI.create(cdnManagementUrl);
          }
 
+         public URI getServerManagementUrl() {
+            String serverManagementUrl = checkNotNull(from
+                     .getFirstHeaderOrNull(SERVER_MANAGEMENT_URL),
+                     SERVER_MANAGEMENT_URL);
+            return URI.create(serverManagementUrl);
+         }
+         
          public URI getStorageUrl() {
             String storageUrl = checkNotNull(from
-                     .getFirstHeaderOrNull(CloudFilesHeaders.STORAGE_URL),
-                     CloudFilesHeaders.STORAGE_URL);
+                     .getFirstHeaderOrNull(STORAGE_URL),
+                     STORAGE_URL);
             return URI.create(storageUrl);
          }
 

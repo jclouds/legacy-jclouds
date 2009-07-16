@@ -34,8 +34,8 @@ import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS;
 import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTION_REUSE;
 import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_SESSION_FAILURES;
 import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_REQUEST_INVOKER_THREADS;
-import static org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants.PROPERTY_CLOUDFILES_KEY;
-import static org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants.PROPERTY_CLOUDFILES_USER;
+import static org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants.PROPERTY_RACKSPACE_KEY;
+import static org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants.PROPERTY_RACKSPACE_USER;
 
 import java.util.List;
 import java.util.Properties;
@@ -88,8 +88,8 @@ public class CloudFilesContextBuilder extends
    }
 
    public void authenticate(String id, String secret) {
-      properties.setProperty(PROPERTY_CLOUDFILES_USER, checkNotNull(id, "user"));
-      properties.setProperty(PROPERTY_CLOUDFILES_KEY, checkNotNull(secret, "key"));
+      properties.setProperty(PROPERTY_RACKSPACE_USER, checkNotNull(id, "user"));
+      properties.setProperty(PROPERTY_RACKSPACE_KEY, checkNotNull(secret, "key"));
    }
 
    public CloudFilesContext buildContext() {

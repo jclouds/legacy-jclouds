@@ -33,7 +33,6 @@ import org.jclouds.rackspace.reference.RackSpaceConstants;
  */
 public interface CloudFilesConstants extends ObjectStoreConstants, RackSpaceConstants {
 
-   public static final String PROPERTY_CLOUDFILES_USER = "jclouds.cloudfiles.user";
-   public static final String PROPERTY_CLOUDFILES_KEY = "jclouds.cloudfiles.key";
+
 
 }

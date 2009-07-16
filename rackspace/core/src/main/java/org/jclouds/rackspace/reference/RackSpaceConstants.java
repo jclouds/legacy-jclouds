@@ -29,5 +29,6 @@ package org.jclouds.rackspace.reference;
  * @author Adrian Cole
  */
 public interface RackSpaceConstants {
-
+   public static final String PROPERTY_RACKSPACE_USER = "jclouds.rackspace.user";
+   public static final String PROPERTY_RACKSPACE_KEY = "jclouds.rackspace.key";
 }

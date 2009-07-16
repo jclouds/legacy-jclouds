@@ -6,13 +6,13 @@ import java.net.URI;
 import org.jclouds.cloud.ConfiguresCloudConnection;
 import org.jclouds.http.HttpConstants;
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.rackspace.cloudfiles.Authentication;
-import org.jclouds.rackspace.cloudfiles.CDN;
-import org.jclouds.rackspace.cloudfiles.CloudFilesAuthentication;
+import org.jclouds.rackspace.Authentication;
+import org.jclouds.rackspace.CDN;
+import org.jclouds.rackspace.RackSpaceAuthentication;
+import org.jclouds.rackspace.Storage;
+import org.jclouds.rackspace.RackSpaceAuthentication.AuthenticationResponse;
 import org.jclouds.rackspace.cloudfiles.CloudFilesConnection;
 import org.jclouds.rackspace.cloudfiles.CloudFilesContext;
-import org.jclouds.rackspace.cloudfiles.Storage;
-import org.jclouds.rackspace.cloudfiles.CloudFilesAuthentication.AuthenticationResponse;
 import org.jclouds.rackspace.cloudfiles.internal.GuiceCloudFilesContext;
 import org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants;
 import org.jclouds.rest.RestClientFactory;
@@ -44,9 +44,9 @@ public class RestCloudFilesConnectionModule extends AbstractModule {
    @Singleton
    protected AuthenticationResponse provideAuthenticationResponse(
             @Authentication URI authenticationUri, RestClientFactory factory,
-            @Named(CloudFilesConstants.PROPERTY_CLOUDFILES_USER) String user,
-            @Named(CloudFilesConstants.PROPERTY_CLOUDFILES_KEY) String key) {
-      return factory.create(authenticationUri, CloudFilesAuthentication.class).authenticate(user,
+            @Named(CloudFilesConstants.PROPERTY_RACKSPACE_USER) String user,
+            @Named(CloudFilesConstants.PROPERTY_RACKSPACE_KEY) String key) {
+      return factory.create(authenticationUri, RackSpaceAuthentication.class).authenticate(user,
                key);
    }
 
@@ -54,9 +54,9 @@ public class RestCloudFilesConnectionModule extends AbstractModule {
    @Authentication
    protected String provideAuthenticationToken(@Authentication URI authenticationUri,
             RestClientFactory factory,
-            @Named(CloudFilesConstants.PROPERTY_CLOUDFILES_USER) String user,
-            @Named(CloudFilesConstants.PROPERTY_CLOUDFILES_KEY) String key) {
-      return factory.create(authenticationUri, CloudFilesAuthentication.class).authenticate(user,
+            @Named(CloudFilesConstants.PROPERTY_RACKSPACE_USER) String user,
+            @Named(CloudFilesConstants.PROPERTY_RACKSPACE_KEY) String key) {
+      return factory.create(authenticationUri, RackSpaceAuthentication.class).authenticate(user,
                key).getAuthToken();
    }
 

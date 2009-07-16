@@ -21,10 +21,10 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudfiles;
+package org.jclouds.rackspace;
 
-import static org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants.PROPERTY_CLOUDFILES_KEY;
-import static org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants.PROPERTY_CLOUDFILES_USER;
+import static org.jclouds.rackspace.reference.RackSpaceConstants.PROPERTY_RACKSPACE_KEY;
+import static org.jclouds.rackspace.reference.RackSpaceConstants.PROPERTY_RACKSPACE_USER;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.fail;
@@ -36,7 +36,8 @@ import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
-import org.jclouds.rackspace.cloudfiles.CloudFilesAuthentication.AuthenticationResponse;
+import org.jclouds.rackspace.RackSpaceAuthentication;
+import org.jclouds.rackspace.RackSpaceAuthentication.AuthenticationResponse;
 import org.jclouds.rest.RestClientFactory;
 import org.jclouds.rest.config.JaxrsModule;
 import org.testng.annotations.BeforeClass;
@@ -53,29 +54,30 @@ import com.google.inject.Singleton;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "cloudfiles.CloudFilesAuthenticationLiveTest")
-public class CloudFilesAuthenticationLiveTest {
+@Test(groups = "live", testName = "rackspace.RackSpaceAuthenticationLiveTest")
+public class RackSpaceAuthenticationLiveTest {
 
-   protected static final String sysRackspaceUser = System.getProperty(PROPERTY_CLOUDFILES_USER);
-   protected static final String sysRackspaceKey = System.getProperty(PROPERTY_CLOUDFILES_KEY);
+   protected static final String sysRackspaceUser = System.getProperty(PROPERTY_RACKSPACE_USER);
+   protected static final String sysRackspaceKey = System.getProperty(PROPERTY_RACKSPACE_KEY);
    private Injector injector;
 
    @Test
    public void testAuthentication() throws Exception {
-      CloudFilesAuthentication authentication = injector
-               .getInstance(CloudFilesAuthentication.class);
+      RackSpaceAuthentication authentication = injector
+               .getInstance(RackSpaceAuthentication.class);
       AuthenticationResponse response = authentication.authenticate(sysRackspaceUser,
                sysRackspaceKey);
       assertNotNull(response);
       assertNotNull(response.getStorageUrl());
       assertNotNull(response.getCDNManagementUrl());
+      assertNotNull(response.getServerManagementUrl());
       assertNotNull(response.getAuthToken());
    }
 
    @Test(expectedExceptions = HttpResponseException.class)
    public void testBadAuthentication() throws Exception {
-      CloudFilesAuthentication authentication = injector
-               .getInstance(CloudFilesAuthentication.class);
+      RackSpaceAuthentication authentication = injector
+               .getInstance(RackSpaceAuthentication.class);
       try {
          authentication.authenticate("foo", "bar");
       } catch (UndeclaredThrowableException e) {
@@ -96,10 +98,10 @@ public class CloudFilesAuthenticationLiveTest {
          @SuppressWarnings("unused")
          @Provides
          @Singleton
-         protected CloudFilesAuthentication provideCloudFilesAuthentication(
+         protected RackSpaceAuthentication provideCloudFilesAuthentication(
                   RestClientFactory factory) {
             return factory.create(URI.create("https://api.mosso.com"),
-                     CloudFilesAuthentication.class);
+                     RackSpaceAuthentication.class);
          }
       }, new JaxrsModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
                new JavaUrlHttpCommandExecutorServiceModule());

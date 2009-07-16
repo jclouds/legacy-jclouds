@@ -21,31 +21,28 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudfiles;
+package org.jclouds.rackspace;
 
 import java.net.URI;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 
-import org.jclouds.rackspace.cloudfiles.functions.ParseAuthenticationResponseFromHeaders;
-import org.jclouds.rackspace.cloudfiles.reference.CloudFilesHeaders;
+import org.jclouds.rackspace.functions.ParseAuthenticationResponseFromHeaders;
+import org.jclouds.rackspace.reference.RackSpaceHeaders;
 import org.jclouds.rest.ResponseParser;
 
 /**
- * Provides access to Cloud Files via their REST API.
+ * Provides access to Rackspace resources via their REST API.
  * <p/>
- * All commands return a Future of the result from Cloud Files. Any exceptions incurred during
- * processing will be wrapped in an {@link ExecutionException} as documented in {@link Future#get()}.
  * 
- * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090311.pdf" />
+ * @see <a href="http://docs.rackspacecloud.com/servers/api/cs-devguide-latest.pdf" />
+ * @see <a href="http://docs.rackspacecloud.com/servers/api/cs-devguide-latest.pdf" />
  * @author Adrian Cole
  */
 
-public interface CloudFilesAuthentication {
+public interface RackSpaceAuthentication {
 
    public interface AuthenticationResponse {
       @Storage
@@ -54,6 +51,9 @@ public interface CloudFilesAuthentication {
       @CDN
       URI getCDNManagementUrl();
 
+      @Server
+      URI getServerManagementUrl();
+
       @Authentication
       String getAuthToken();
    }
@@ -61,6 +61,6 @@ public interface CloudFilesAuthentication {
    @GET
    @ResponseParser(ParseAuthenticationResponseFromHeaders.class)
    @Path("/auth")
-   AuthenticationResponse authenticate(@HeaderParam(CloudFilesHeaders.AUTH_USER) String user,
-            @HeaderParam(CloudFilesHeaders.AUTH_KEY) String key);
+   AuthenticationResponse authenticate(@HeaderParam(RackSpaceHeaders.AUTH_USER) String user,
+            @HeaderParam(RackSpaceHeaders.AUTH_KEY) String key);
 }

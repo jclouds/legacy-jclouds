@@ -21,23 +21,19 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudfiles;
+package org.jclouds.rackspace;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.jclouds.cloud.CloudContext;
-
 import com.google.inject.BindingAnnotation;
 
 /**
- * Represents an authenticated context to Cloud Files.
+ * Represents a component related to RackSpace Cloud Files.
  * 
  * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090311.pdf" />
- * @see CloudFilesConnection
- * @see CloudContext
  * @author Adrian Cole
  * 
  */

@@ -21,26 +21,25 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudfiles.reference;
+package org.jclouds.rackspace;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import com.google.inject.BindingAnnotation;
 
 /**
- * Additional headers specified by RackSpace Cloud Files REST API.
+ * Represents an authenticated context to RackSpace.
  * 
- * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090311.pdf" />
+ * @see <a href="http://docs.rackspacecloud.com/servers/api/cs-devguide-latest.pdf" />
  * @author Adrian Cole
  * 
  */
-public interface CloudFilesHeaders {
-
-   public static final String ACCOUNT_BYTES_USED = "X-Account-Bytes-Used";
-   public static final String ACCOUNT_CONTAINER_COUNT = "X-Account-Container-Count";
-   public static final String CDN_ENABLED = "X-CDN-Enabled";
-   public static final String CDN_REFERRER_ACL = "X-Referrer-ACL ";
-   public static final String CDN_TTL = "X-TTL";
-   public static final String CDN_URI = "X-CDN-URI";
-   public static final String CDN_USER_AGENT_ACL = "X-User-Agent-ACL";
-   public static final String CONTAINER_BYTES_USED = "X-Container-Bytes-Used";
-   public static final String CONTAINER_OBJECT_COUNT = "X-Container-Object-Count";
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@BindingAnnotation
+public @interface Authentication {
 
 }

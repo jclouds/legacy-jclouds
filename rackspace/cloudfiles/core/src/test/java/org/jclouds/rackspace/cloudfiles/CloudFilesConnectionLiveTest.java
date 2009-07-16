@@ -23,12 +23,11 @@
  */
 package org.jclouds.rackspace.cloudfiles;
 
-import static org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants.PROPERTY_CLOUDFILES_KEY;
-import static org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants.PROPERTY_CLOUDFILES_USER;
+import static org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants.PROPERTY_RACKSPACE_KEY;
+import static org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants.PROPERTY_RACKSPACE_USER;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.fail;
 
 import java.util.List;
@@ -46,8 +45,8 @@ import org.testng.annotations.Test;
 @Test(groups = "live", testName = "cloudfiles.CloudFilesAuthenticationLiveTest")
 public class CloudFilesConnectionLiveTest {
 
-   protected static final String sysRackspaceUser = System.getProperty(PROPERTY_CLOUDFILES_USER);
-   protected static final String sysRackspaceKey = System.getProperty(PROPERTY_CLOUDFILES_KEY);
+   protected static final String sysRackspaceUser = System.getProperty(PROPERTY_RACKSPACE_USER);
+   protected static final String sysRackspaceKey = System.getProperty(PROPERTY_RACKSPACE_KEY);
 
    private String bucketPrefix = System.getProperty("user.name") + ".cfint";
 

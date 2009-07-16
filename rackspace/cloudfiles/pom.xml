@@ -39,10 +39,6 @@
     <modules>
         <module>core</module>
     </modules>
-    <properties>
-        <jclouds.cloudfiles.user />
-        <jclouds.cloudfiles.key />
-    </properties>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -69,53 +65,4 @@
             <scope>test</scope>
         </dependency>
    </dependencies>
-    <profiles>
-        <profile>
-            <id>live</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>integration</id>
-                                <phase>integration-test</phase>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <configuration>
-                                    <!-- note that the groups/excluded groups don't work due to some problem
-                                                     in surefire or testng. instead, we have to exclude via file path
-                                                        <groups>live,integration</groups>
-                                                        <excludedGroups>unit,performance</excludedGroups> -->
-                                    <excludes>
-                                        <exclude>none</exclude>
-                                    </excludes>
-                                    <includes>
-                                        <include>**/*IntegrationTest.java</include>
-                                        <include>**/*LiveTest.java</include>
-                                    </includes>
-                                    <systemProperties>
-                                        <property>
-                                            <name>file.encoding</name>
-                                            <value>UTF-8</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.cloudfiles.user</name>
-                                            <value>${jclouds.cloudfiles.user}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.cloudfiles.key</name>
-                                            <value>${jclouds.cloudfiles.key}</value>
-                                        </property>
-                                    </systemProperties>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>
