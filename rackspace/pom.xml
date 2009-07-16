@@ -39,6 +39,7 @@
     <modules>
         <module>core</module>
         <module>cloudfiles</module>
+        <module>cloudservers</module>
     </modules>
     <properties>
         <jclouds.rackspace.user />

@@ -21,22 +21,31 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.reference;
 
-/**
- * Headers common to Rackspace apis.
- * 
- * @see <a href="http://docs.rackspacecloud.com/servers/api/cs-devguide-latest.pdf" />
- * @author Adrian Cole
- * 
- */
-public interface RackspaceHeaders {
+package org.jclouds.rackspace.cloudservers.domain;
 
-   public static final String AUTH_USER = "X-Auth-User";
-   public static final String AUTH_KEY = "X-Auth-Key";
-   public static final String AUTH_TOKEN = "X-Auth-Token";
-   public static final String CDN_MANAGEMENT_URL = "X-CDN-Management-Url";
-   public static final String SERVER_MANAGEMENT_URL = "X-Server-Management-Url";
-   public static final String STORAGE_URL = "X-Storage-Url";
+public enum DailyBackup {
+
+    DISABLED,
+    H_0000_0200,
+    H_0200_0400,
+    H_0400_0600,
+    H_0600_0800,
+    H_0800_1000,
+    H_1000_1200,
+    H_1200_1400,
+    H_1400_1600,
+    H_1600_1800,
+    H_1800_2000,
+    H_2000_2200,
+    H_2200_0000;
+
+    public String value() {
+        return name();
+    }
+
+    public static DailyBackup fromValue(String v) {
+        return valueOf(v);
+    }
 
 }

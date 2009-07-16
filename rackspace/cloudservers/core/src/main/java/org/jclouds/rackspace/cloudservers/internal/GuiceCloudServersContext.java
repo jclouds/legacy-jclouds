@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudfiles.internal;
+package org.jclouds.rackspace.cloudservers.internal;
 
 import java.io.IOException;
 
@@ -29,19 +29,19 @@ import javax.annotation.Resource;
 
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.Logger;
-import org.jclouds.rackspace.cloudfiles.CloudFilesConnection;
-import org.jclouds.rackspace.cloudfiles.CloudFilesContext;
+import org.jclouds.rackspace.cloudservers.CloudServersConnection;
+import org.jclouds.rackspace.cloudservers.CloudServersContext;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 /**
- * Uses a Guice Injector to configure the objects served by CloudFilesContext methods.
+ * Uses a Guice Injector to configure the objects served by CloudServersContext methods.
  * 
  * @author Adrian Cole
  * @see Injector
  */
-public class GuiceCloudFilesContext implements CloudFilesContext {
+public class GuiceCloudServersContext implements CloudServersContext {
 
    @Resource
    private Logger logger = Logger.NULL;
@@ -49,7 +49,7 @@ public class GuiceCloudFilesContext implements CloudFilesContext {
    private final Closer closer;
 
    @Inject
-   private GuiceCloudFilesContext(Injector injector, Closer closer) {
+   private GuiceCloudServersContext(Injector injector, Closer closer) {
       this.injector = injector;
       this.closer = closer;
    }
@@ -57,10 +57,9 @@ public class GuiceCloudFilesContext implements CloudFilesContext {
    /**
     * {@inheritDoc}
     */
-   public CloudFilesConnection getConnection() {
-      return injector.getInstance(CloudFilesConnection.class);
+   public CloudServersConnection getConnection() {
+      return injector.getInstance(CloudServersConnection.class);
    }
-
 
    /**
     * {@inheritDoc}

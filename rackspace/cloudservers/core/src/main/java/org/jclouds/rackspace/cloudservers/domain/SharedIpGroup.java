@@ -21,22 +21,49 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.reference;
+package org.jclouds.rackspace.cloudservers.domain;
 
-/**
- * Headers common to Rackspace apis.
- * 
- * @see <a href="http://docs.rackspacecloud.com/servers/api/cs-devguide-latest.pdf" />
- * @author Adrian Cole
- * 
- */
-public interface RackspaceHeaders {
+import java.util.List;
 
-   public static final String AUTH_USER = "X-Auth-User";
-   public static final String AUTH_KEY = "X-Auth-Key";
-   public static final String AUTH_TOKEN = "X-Auth-Token";
-   public static final String CDN_MANAGEMENT_URL = "X-CDN-Management-Url";
-   public static final String SERVER_MANAGEMENT_URL = "X-Server-Management-Url";
-   public static final String STORAGE_URL = "X-Storage-Url";
+import com.google.inject.internal.Lists;
+
+public class SharedIpGroup {
+
+   private int server;
+   private List<Integer> servers = Lists.newArrayList();
+   private Integer id;
+   private String name;
+
+   public void setServer(int server) {
+      this.server = server;
+   }
+
+   public int getServer() {
+      return server;
+   }
+
+   public void setServers(List<Integer> servers) {
+      this.servers = servers;
+   }
+
+   public List<Integer> getServers() {
+      return servers;
+   }
+
+   public void setId(Integer id) {
+      this.id = id;
+   }
+
+   public Integer getId() {
+      return id;
+   }
+
+   public void setName(String name) {
+      this.name = name;
+   }
+
+   public String getName() {
+      return name;
+   }
 
 }

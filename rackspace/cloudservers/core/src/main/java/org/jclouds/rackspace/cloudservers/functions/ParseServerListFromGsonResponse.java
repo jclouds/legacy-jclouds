@@ -21,58 +21,42 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudfiles.internal;
+package org.jclouds.rackspace.cloudservers.functions;
 
-import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
 
-import javax.annotation.Resource;
+import org.jclouds.http.functions.ParseJson;
+import org.jclouds.rackspace.cloudservers.domain.Server;
 
-import org.jclouds.lifecycle.Closer;
-import org.jclouds.logging.Logger;
-import org.jclouds.rackspace.cloudfiles.CloudFilesConnection;
-import org.jclouds.rackspace.cloudfiles.CloudFilesContext;
-
+import com.google.gson.Gson;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
+import com.google.inject.internal.Lists;
 
 /**
- * Uses a Guice Injector to configure the objects served by CloudFilesContext methods.
+ * This parses {@link Server} from a gson string.
  * 
  * @author Adrian Cole
- * @see Injector
  */
-public class GuiceCloudFilesContext implements CloudFilesContext {
-
-   @Resource
-   private Logger logger = Logger.NULL;
-   private final Injector injector;
-   private final Closer closer;
+public class ParseServerListFromGsonResponse extends ParseJson<List<Server>> {
 
    @Inject
-   private GuiceCloudFilesContext(Injector injector, Closer closer) {
-      this.injector = injector;
-      this.closer = closer;
+   public ParseServerListFromGsonResponse(Gson gson) {
+      super(gson);
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   public CloudFilesConnection getConnection() {
-      return injector.getInstance(CloudFilesConnection.class);
+   private static class ServerListResponse {
+      List<Server> servers = Lists.newArrayList();
    }
 
+   public List<Server> apply(InputStream stream) {
 
-   /**
-    * {@inheritDoc}
-    * 
-    * @see Closer
-    */
-   public void close() {
       try {
-         closer.close();
-      } catch (IOException e) {
-         logger.error(e, "error closing content");
+         return gson.fromJson(new InputStreamReader(stream, "UTF-8"), ServerListResponse.class).servers;
+      } catch (UnsupportedEncodingException e) {
+         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
       }
    }
-
 }

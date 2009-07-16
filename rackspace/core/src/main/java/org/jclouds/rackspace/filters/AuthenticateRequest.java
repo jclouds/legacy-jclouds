@@ -38,7 +38,7 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
 /**
- * Signs the Cloud Files request. This will update the Authentication Token before 24 hours is up.
+ * Signs the Rackspace request. This will update the Authentication Token before 24 hours is up.
  * 
  * @author Adrian Cole
  * 
@@ -56,8 +56,8 @@ public class AuthenticateRequest implements HttpRequestFilter {
    private final AtomicLong trigger = new AtomicLong(0);
 
    /**
-    * Start the time update service. Cloud Files clocks need to be 24 hours of the auth token. This
-    * is not performed per-request, as creation of the token is a slow, synchronized command.
+    * Start the time update service. Rackspace clocks need to be 24 hours of the auth token. This is
+    * not performed per-request, as creation of the token is a slow, synchronized command.
     */
    synchronized void updateIfTimeOut() {
 
@@ -68,7 +68,7 @@ public class AuthenticateRequest implements HttpRequestFilter {
    }
 
    // this is a hotspot when submitted concurrently, so be lazy.
-   // cloudfiles is ok with up to 23:59 off their time, so let's
+   // rackspace is ok with up to 23:59 off their time, so let's
    // be as lazy as possible.
    public String createNewToken() {
       authToken.set(authTokenProvider.get());

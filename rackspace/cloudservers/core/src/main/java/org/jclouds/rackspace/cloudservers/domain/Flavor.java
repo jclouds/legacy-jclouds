@@ -21,22 +21,52 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.reference;
 
-/**
- * Headers common to Rackspace apis.
- * 
- * @see <a href="http://docs.rackspacecloud.com/servers/api/cs-devguide-latest.pdf" />
- * @author Adrian Cole
- * 
- */
-public interface RackspaceHeaders {
+package org.jclouds.rackspace.cloudservers.domain;
 
-   public static final String AUTH_USER = "X-Auth-User";
-   public static final String AUTH_KEY = "X-Auth-Key";
-   public static final String AUTH_TOKEN = "X-Auth-Token";
-   public static final String CDN_MANAGEMENT_URL = "X-CDN-Management-Url";
-   public static final String SERVER_MANAGEMENT_URL = "X-Server-Management-Url";
-   public static final String STORAGE_URL = "X-Storage-Url";
+public class Flavor {
+
+    public Flavor(int id, String name) {
+      super();
+      this.id = id;
+      this.name = name;
+   }
+
+   protected Integer disk;
+    protected int id;
+    protected String name;
+    protected Integer ram;
+
+  
+    public Integer getDisk() {
+        return disk;
+    }
+
+    public void setDisk(Integer value) {
+        this.disk = value;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int value) {
+        this.id = value;
+    }
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String value) {
+        this.name = value;
+    }
+
+    public Integer getRam() {
+        return ram;
+    }
+
+    public void setRam(Integer value) {
+        this.ram = value;
+    }
 
 }

@@ -29,11 +29,14 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
+import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * Tests behavior of {@code ParseContainerListFromGsonResponse}
@@ -42,6 +45,7 @@ import com.google.gson.Gson;
  */
 @Test(groups = "unit", testName = "cloudfiles.ParseContainerListFromGsonResponse")
 public class ParseContainerListFromGsonResponseTest {
+   Injector i = Guice.createInjector(new ParserModule());
 
    @Test
    public void testApplyInputStream() {
@@ -49,7 +53,7 @@ public class ParseContainerListFromGsonResponseTest {
                .toInputStream("[ {\"name\":\"test_container_1\",\"count\":2,\"bytes\":78}, {\"name\":\"test_container_2\",\"count\":1,\"bytes\":17} ]   ");
       List<ContainerMetadata> expects = ImmutableList.of(new ContainerMetadata("test_container_1",
                2, 78), new ContainerMetadata("test_container_2", 1, 17));
-      ParseContainerListFromGsonResponse parser = new ParseContainerListFromGsonResponse(new Gson());
+      ParseContainerListFromGsonResponse parser = new ParseContainerListFromGsonResponse(i.getInstance(Gson.class));
       assertEquals(parser.apply(is), expects);
    }
 

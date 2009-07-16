@@ -21,16 +21,16 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudfiles.config;
+package org.jclouds.rackspace.cloudservers.config;
 
 import java.net.URI;
 
 import org.jclouds.cloud.ConfiguresCloudConnection;
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.rackspace.Storage;
-import org.jclouds.rackspace.cloudfiles.CloudFilesConnection;
-import org.jclouds.rackspace.cloudfiles.CloudFilesContext;
-import org.jclouds.rackspace.cloudfiles.internal.GuiceCloudFilesContext;
+import org.jclouds.rackspace.Server;
+import org.jclouds.rackspace.cloudservers.CloudServersConnection;
+import org.jclouds.rackspace.cloudservers.CloudServersContext;
+import org.jclouds.rackspace.cloudservers.internal.GuiceCloudServersContext;
 import org.jclouds.rest.RestClientFactory;
 
 import com.google.inject.AbstractModule;
@@ -38,24 +38,24 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 
 /**
- * Configures the Cloud Files connection, including logging and http transport.
+ * Configures the Cloud Servers connection, including logging and http transport.
  * 
  * @author Adrian Cole
  */
 @ConfiguresCloudConnection
 @RequiresHttp
-public class RestCloudFilesConnectionModule extends AbstractModule {
+public class RestCloudServersConnectionModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      bind(CloudFilesContext.class).to(GuiceCloudFilesContext.class);
+      bind(CloudServersContext.class).to(GuiceCloudServersContext.class);
    }
-   
+
    @Provides
    @Singleton
-   protected CloudFilesConnection provideConnection(@Storage URI authenticationUri,
+   protected CloudServersConnection provideConnection(@Server URI authenticationUri,
             RestClientFactory factory) {
-      return factory.create(authenticationUri, CloudFilesConnection.class);
+      return factory.create(authenticationUri, CloudServersConnection.class);
    }
 
 }
