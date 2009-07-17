@@ -21,25 +21,42 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudservers.domain;
+package org.jclouds.rackspace.cloudservers.functions;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+
+import org.jclouds.http.functions.ParseJson;
+import org.jclouds.rackspace.cloudservers.domain.Flavor;
+
+import com.google.gson.Gson;
+import com.google.inject.Inject;
+import com.google.inject.internal.Lists;
 
 /**
- * 
- * Servers contain a status attribute that can be used as an indication of the current server state.
- * Servers with an ACTIVE status are available for use.
+ * This parses {@link Flavor} from a gson string.
  * 
  * @author Adrian Cole
  */
-public enum ServerStatus {
+public class ParseFlavorListFromGsonResponse extends ParseJson<List<Flavor>> {
 
-   ACTIVE, SUSPENDED, DELETED, QUEUE_RESIZE, PREP_RESIZE, RESIZE, VERIFY_RESIZE, QUEUE_MOVE, PREP_MOVE, MOVE, VERIFY_MOVE, RESCUE, ERROR, BUILD, RESTORING, PASSWORD, REBUILD, DELETE_IP, SHARE_IP_NO_CONFIG, SHARE_IP, REBOOT, HARD_REBOOT, UNKNOWN;
-
-   public String value() {
-      return name();
+   @Inject
+   public ParseFlavorListFromGsonResponse(Gson gson) {
+      super(gson);
    }
 
-   public static ServerStatus fromValue(String v) {
-      return valueOf(v);
+   private static class FlavorListResponse {
+      List<Flavor> flavors = Lists.newArrayList();
    }
 
+   public List<Flavor> apply(InputStream stream) {
+
+      try {
+         return gson.fromJson(new InputStreamReader(stream, "UTF-8"), FlavorListResponse.class).flavors;
+      } catch (UnsupportedEncodingException e) {
+         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
+      }
+   }
 }

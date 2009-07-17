@@ -30,7 +30,9 @@ import java.util.concurrent.Future;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
+import org.jclouds.rackspace.cloudservers.domain.Flavor;
 import org.jclouds.rackspace.cloudservers.domain.Server;
+import org.jclouds.rackspace.cloudservers.functions.ParseFlavorListFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseServerListFromGsonResponse;
 import org.jclouds.rackspace.filters.AuthenticateRequest;
 import org.jclouds.rest.Query;
@@ -61,24 +63,48 @@ public interface CloudServersConnection {
    @ResponseParser(ParseServerListFromGsonResponse.class)
    @Query(key = "format", value = "json")
    @Path("/servers")
+   // TODO: Error Response Code(s): cloudServersFault (400, 500), serviceUnavailable (503),
+   // unauthorized (401), badRequest (400), overLimit (413)
    List<Server> listServers();
 
    /**
     * This operation provides a list of servers associated with your account. Servers that have been
-    * deleted are not included in this list. Servers contain a status attribute that can be used as
-    * an indication of the current server state. Servers with an ACTIVE status are available for
-    * use. Other possible values for the status attribute include: BUILD, REBUILD, SUSPENDED,
-    * QUEUE_RESIZE, PREP_RESIZE, VERIFY_RESIZE, PASSWORD, RESCUE, REBOOT, HARD_REBOOT, SHARE_IP,
-    * SHARE_IP_NO_CONFIG, DELETE_IP, and UNKNOWN. The Cloud Servers provisioning algorithm has an
-    * anti-affinity property that attempts to spread out customer VMs across hosts. Under certain
-    * situations, VMs from the same customer may be placed on the same host. hostId represents the
-    * host your cloud server runs on and can be used to determine this scenario if it's relevant to
-    * your application. Note: hostId is unique PER ACCOUNT and is not globally unique.
+    * deleted are not included in this list. 
     */
    @GET
    @ResponseParser(ParseServerListFromGsonResponse.class)
    @Query(key = "format", value = "json")
    @Path("/servers/detail")
+   // TODO: Error Response Code(s): cloudServersFault (400, 500), serviceUnavailable (503),
+   // unauthorized (401), badRequest (400), overLimit (413)
    List<Server> listServerDetails();
+
+   /**
+    * 
+    * List available flavors (IDs and names only)
+    * 
+    * @see #listFlavorDetails()
+    */
+   @GET
+   @ResponseParser(ParseFlavorListFromGsonResponse.class)
+   @Query(key = "format", value = "json")
+   @Path("/flavors")
+   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
+   // (400)
+   List<Flavor> listFlavors();
+
+   /**
+    * 
+    * List available flavors (all details)
+    * 
+    * @see Flavor
+    */
+   @GET
+   @ResponseParser(ParseFlavorListFromGsonResponse.class)
+   @Query(key = "format", value = "json")
+   @Path("/flavors/detail")
+   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
+   // (400)
+   List<Flavor> listFlavorDetails();
 
 }

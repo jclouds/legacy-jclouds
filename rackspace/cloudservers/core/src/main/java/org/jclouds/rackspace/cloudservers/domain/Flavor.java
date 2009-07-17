@@ -24,49 +24,103 @@
 
 package org.jclouds.rackspace.cloudservers.domain;
 
+/**
+ * 
+ * A flavor is an available hardware configuration for a server. Each flavor has a unique
+ * combination of disk space, memory capacity, and priority for CPU time.
+ * 
+ * @author Adrian Cole
+ */
 public class Flavor {
 
-    public Flavor(int id, String name) {
-      super();
+   public Flavor() {
+   }
+
+   @Override
+   public String toString() {
+      return "Flavor [disk=" + disk + ", id=" + id + ", name=" + name + ", ram=" + ram + "]";
+   }
+
+   public Flavor(int id, String name) {
       this.id = id;
       this.name = name;
    }
 
-   protected Integer disk;
-    protected int id;
-    protected String name;
-    protected Integer ram;
+   private int id;
+   private String name;
+   private Integer disk;
+   private Integer ram;
 
-  
-    public Integer getDisk() {
-        return disk;
-    }
+   public Integer getDisk() {
+      return disk;
+   }
 
-    public void setDisk(Integer value) {
-        this.disk = value;
-    }
+   public void setDisk(Integer value) {
+      this.disk = value;
+   }
 
-    public int getId() {
-        return id;
-    }
+   public int getId() {
+      return id;
+   }
 
-    public void setId(int value) {
-        this.id = value;
-    }
-    public String getName() {
-        return name;
-    }
+   public void setId(int value) {
+      this.id = value;
+   }
 
-    public void setName(String value) {
-        this.name = value;
-    }
+   public String getName() {
+      return name;
+   }
 
-    public Integer getRam() {
-        return ram;
-    }
+   public void setName(String value) {
+      this.name = value;
+   }
 
-    public void setRam(Integer value) {
-        this.ram = value;
-    }
+   public Integer getRam() {
+      return ram;
+   }
+
+   public void setRam(Integer value) {
+      this.ram = value;
+   }
+
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((disk == null) ? 0 : disk.hashCode());
+      result = prime * result + id;
+      result = prime * result + ((name == null) ? 0 : name.hashCode());
+      result = prime * result + ((ram == null) ? 0 : ram.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      Flavor other = (Flavor) obj;
+      if (disk == null) {
+         if (other.disk != null)
+            return false;
+      } else if (!disk.equals(other.disk))
+         return false;
+      if (id != other.id)
+         return false;
+      if (name == null) {
+         if (other.name != null)
+            return false;
+      } else if (!name.equals(other.name))
+         return false;
+      if (ram == null) {
+         if (other.ram != null)
+            return false;
+      } else if (!ram.equals(other.ram))
+         return false;
+      return true;
+   }
 
 }

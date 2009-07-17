@@ -30,6 +30,7 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.List;
 
+import org.jclouds.rackspace.cloudservers.domain.Flavor;
 import org.jclouds.rackspace.cloudservers.domain.Server;
 import org.testng.annotations.Test;
 
@@ -65,4 +66,34 @@ public class CloudServersConnectionLiveTest {
       assertTrue(initialContainerCount >= 0);
    }
 
+   @Test
+   public void testListFlavors() throws Exception {
+      CloudServersConnection connection = CloudServersContextBuilder.newBuilder(sysRackspaceUser,
+               sysRackspaceKey).withJsonDebug().buildContext().getConnection();
+      List<Flavor> response = connection.listFlavors();
+      assertNotNull(response);
+      long flavorCount = response.size();
+      assertTrue(flavorCount >= 1);
+      for (Flavor flavor : response) {
+         assertTrue(flavor.getId() >= 0);
+         assertNotNull(flavor.getName());
+      }
+
+   }
+
+   @Test
+   public void testListFlavorsDetail() throws Exception {
+      CloudServersConnection connection = CloudServersContextBuilder.newBuilder(sysRackspaceUser,
+               sysRackspaceKey).withJsonDebug().buildContext().getConnection();
+      List<Flavor> response = connection.listFlavorDetails();
+      assertNotNull(response);
+      long flavorCount = response.size();
+      assertTrue(flavorCount >= 0);
+      for (Flavor flavor : response) {
+         assertTrue(flavor.getId() >= 1);
+         assertNotNull(flavor.getName());
+         assertNotNull(flavor.getDisk());
+         assertNotNull(flavor.getRam());
+      }
+   }
 }

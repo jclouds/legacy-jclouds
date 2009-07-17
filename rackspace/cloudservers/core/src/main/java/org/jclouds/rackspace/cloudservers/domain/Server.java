@@ -29,6 +29,13 @@ import java.util.Map;
 import com.google.inject.internal.Lists;
 import com.google.inject.internal.Maps;
 
+/**
+ * 
+ * Server.
+ * 
+ * @author Adrian Cole
+ * @since 4.0
+ */
 public class Server {
    private int id;
    private String name;
@@ -98,6 +105,14 @@ public class Server {
       this.hostId = hostId;
    }
 
+   /**
+    * The Cloud Servers provisioning algorithm has an anti-affinity property that attempts to spread
+    * out customer VMs across hosts. Under certain situations, VMs from the same customer may be
+    * placed on the same host. hostId represents the host your cloud server runs on and can be used
+    * to determine this scenario if it's relevant to your application.
+    * <p/>
+    * Note: hostId is unique PER ACCOUNT and is not globally unique.
+    */
    public String getHostId() {
       return hostId;
    }
@@ -138,6 +153,10 @@ public class Server {
       this.status = status;
    }
 
+   /**
+    * Servers contain a status attribute that can be used as an indication of the current server
+    * state. Servers with an ACTIVE status are available for use.
+    */
    public ServerStatus getStatus() {
       return status;
    }
