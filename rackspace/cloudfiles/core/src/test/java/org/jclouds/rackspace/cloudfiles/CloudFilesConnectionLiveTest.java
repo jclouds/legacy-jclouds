@@ -31,9 +31,11 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -44,6 +46,10 @@ import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
 import org.jclouds.rackspace.cloudfiles.reference.CloudFilesHeaders;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Multimap;
 
 /**
  * Tests behavior of {@code JaxrsAnnotationProcessor}
@@ -142,26 +148,65 @@ public class CloudFilesConnectionLiveTest {
    }
 
    @Test
-   public void testPutAndDeleteObjects() throws Exception {
-      String containerName = bucketPrefix + ".testPutAndDeleteObjects";
+   public void testObjectOperations() throws Exception {
+      String containerName = bucketPrefix + ".testObjectOperations";
       String data = "Here is my data";
 
       assertTrue(connection.putContainer(containerName));
 
-      // Test with string data, ETag hash, and a piece of metadata
+      // Test PUT with string data, ETag hash, and a piece of metadata
       CFObject object = new CFObject("object", data);
       object.setContentLength(data.length());
       object.generateETag();
       object.getMetadata().setContentType("text/plain");
-      // TODO: Metadata values aren't being stored by CF, but the names are. Odd...
       object.getMetadata().getUserMetadata().put(
                CloudFilesHeaders.USER_METADATA_PREFIX + "metadata", "metadata-value");
       byte[] md5 = connection.putObject(containerName, object).get(10, TimeUnit.SECONDS);
-      assertEquals(HttpUtils.toHexString(md5), HttpUtils
-               .toHexString(object.getMetadata().getETag()));
-      // TODO: Get and confirm data
+      assertEquals(HttpUtils.toHexString(md5), 
+            HttpUtils.toHexString(object.getMetadata().getETag()));
+      
+      // Test HEAD of missing object
+      CFObject.Metadata metadata = connection.headObject(containerName, "non-existent-object");
+      assertEquals(metadata, CFObject.Metadata.NOT_FOUND);
+      
+      // Test HEAD of object
+      metadata = connection.headObject(containerName, object.getKey());
+      assertEquals(metadata.getKey(), object.getKey());
+      assertEquals(metadata.getSize(), data.length());
+      assertEquals(metadata.getContentType(), "text/plain");
+      assertEquals(metadata.getETag(), object.getMetadata().getETag());
+      assertEquals(metadata.getUserMetadata().entries().size(), 1);
+      // Notice the quirk where CF changes the case of returned metadata names      
+      assertEquals(Iterables.getLast(metadata.getUserMetadata().get(
+            CloudFilesHeaders.USER_METADATA_PREFIX + "Metadata")), 
+            "metadata-value");
 
-      // Test with invalid ETag (as if object's data was corrupted in transit)
+      // Test POST to update object's metadata
+      Multimap<String, String> userMetadata = HashMultimap.create();
+      userMetadata.put(CloudFilesHeaders.USER_METADATA_PREFIX + "new-metadata-1", "value-1");
+      userMetadata.put(CloudFilesHeaders.USER_METADATA_PREFIX + "new-metadata-2", "value-2");
+      assertTrue(connection.setObjectMetadata(containerName, object.getKey(), userMetadata));
+      
+      // Test GET of missing object
+      CFObject getObject = connection.getObject(containerName, "non-existent-object")
+            .get(10, TimeUnit.SECONDS);
+      assertEquals(getObject, CFObject.NOT_FOUND);
+      
+      // Test GET of object (including updated metadata)
+      getObject = connection.getObject(containerName, object.getKey()).get(10, TimeUnit.SECONDS);
+      assertEquals(IOUtils.toString((InputStream)getObject.getData()), data);
+      assertEquals(getObject.getKey(), object.getKey());
+      assertEquals(getObject.getContentLength(), data.length());
+      assertEquals(getObject.getMetadata().getContentType(), "text/plain");
+      assertEquals(getObject.getMetadata().getETag(), object.getMetadata().getETag());
+      assertEquals(getObject.getMetadata().getUserMetadata().entries().size(), 2);
+      // Notice the quirk where CF changes the case of sreturned metadata names      
+      assertEquals(Iterables.getLast(getObject.getMetadata().getUserMetadata().get(
+            CloudFilesHeaders.USER_METADATA_PREFIX + "New-Metadata-1")), "value-1");
+      assertEquals(Iterables.getLast(getObject.getMetadata().getUserMetadata().get(
+            CloudFilesHeaders.USER_METADATA_PREFIX + "New-Metadata-2")), "value-2");
+      
+      // Test PUT with invalid ETag (as if object's data was corrupted in transit)
       String correctEtag = HttpUtils.toHexString(object.getMetadata().getETag());
       String incorrectEtag = "0" + correctEtag.substring(1);
       object.getMetadata().setETag(HttpUtils.fromHexString(incorrectEtag));
@@ -172,7 +217,7 @@ public class CloudFilesConnectionLiveTest {
          assertEquals(((HttpResponseException) e.getCause()).getResponse().getStatusCode(), 422);
       }
 
-      // Test chunked/streamed upload with data of "unknown" length
+      // Test PUT chunked/streamed upload with data of "unknown" length
       ByteArrayInputStream bais = new ByteArrayInputStream(data.getBytes("UTF-8"));
       object = new CFObject("chunked-object", bais);
       md5 = connection.putObject(containerName, object).get(10, TimeUnit.SECONDS);

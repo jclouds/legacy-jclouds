@@ -72,7 +72,7 @@ public class CFObjectBinder implements EntityBinder {
             String hexETag = HttpUtils.toHexString(object.getMetadata().getETag());
             request.getHeaders().put(HttpHeaders.ETAG, hexETag);
          } catch (UnsupportedEncodingException e) {
-            // TODO: Any sane way to recover? Should EntityBinder#addEntityToRequest throw errors?
+            throw new RuntimeException("Failed to encode ETag for object: " + object, e);
          }
       }
 

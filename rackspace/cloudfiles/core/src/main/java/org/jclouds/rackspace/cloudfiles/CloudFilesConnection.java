@@ -30,18 +30,25 @@ import java.util.concurrent.Future;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.rackspace.cloudfiles.binders.CFObjectBinder;
+import org.jclouds.rackspace.cloudfiles.binders.UserMetadataBinder;
 import org.jclouds.rackspace.cloudfiles.domain.AccountMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.CFObject;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
 import org.jclouds.rackspace.cloudfiles.functions.CFObjectKey;
 import org.jclouds.rackspace.cloudfiles.functions.ParseAccountMetadataResponseFromHeaders;
 import org.jclouds.rackspace.cloudfiles.functions.ParseContainerListFromGsonResponse;
+import org.jclouds.rackspace.cloudfiles.functions.ParseObjectFromHeadersAndHttpContent;
+import org.jclouds.rackspace.cloudfiles.functions.ParseObjectMetadataFromHeaders;
+import org.jclouds.rackspace.cloudfiles.functions.ReturnCFObjectMetadataNotFoundOn404;
+import org.jclouds.rackspace.cloudfiles.functions.ReturnS3ObjectNotFoundOn404;
+import org.jclouds.rackspace.cloudfiles.functions.ReturnTrueOn202FalseOtherwise;
 import org.jclouds.rackspace.cloudfiles.functions.ReturnTrueOn204FalseOtherwise;
 import org.jclouds.rackspace.cloudfiles.functions.ReturnTrueOn404FalseOtherwise;
 import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
@@ -53,6 +60,8 @@ import org.jclouds.rest.Query;
 import org.jclouds.rest.RequestFilters;
 import org.jclouds.rest.ResponseParser;
 import org.jclouds.rest.SkipEncoding;
+
+import com.google.common.collect.Multimap;
 
 /**
  * Provides access to Cloud Files via their REST API.
@@ -103,6 +112,29 @@ public interface CloudFilesConnection {
          @PathParam("key") @PathParamParser(CFObjectKey.class) @EntityParam(CFObjectBinder.class) 
             CFObject object);
 
+   @HEAD
+   @ResponseParser(ParseObjectMetadataFromHeaders.class)
+   @ExceptionParser(ReturnCFObjectMetadataNotFoundOn404.class)
+   @Path("{container}/{key}")
+   CFObject.Metadata headObject(@PathParam("container") String container, 
+         @PathParam("key") String key);
+
+   @GET
+   @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)
+   @ExceptionParser(ReturnS3ObjectNotFoundOn404.class)
+   @Path("{container}/{key}")
+   Future<CFObject> getObject(@PathParam("container") String container, 
+         @PathParam("key") String key);
+
+   // TODO: GET object with options
+
+   @POST
+   @ResponseParser(ReturnTrueOn202FalseOtherwise.class)
+   @Path("{container}/{key}")
+   boolean setObjectMetadata(@PathParam("container") String container, 
+         @PathParam("key") String key, 
+         @EntityParam(UserMetadataBinder.class) Multimap<String, String> userMetadata);
+   
    @DELETE
    @ResponseParser(ReturnTrueOn204FalseOtherwise.class)
    @ExceptionParser(ReturnTrueOn404FalseOtherwise.class)
