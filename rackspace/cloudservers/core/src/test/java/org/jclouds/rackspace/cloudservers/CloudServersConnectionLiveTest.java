@@ -29,9 +29,11 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.List;
 
+import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rackspace.cloudservers.domain.Flavor;
 import org.jclouds.rackspace.cloudservers.domain.Image;
 import org.jclouds.rackspace.cloudservers.domain.Server;
+import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 /**
@@ -44,11 +46,17 @@ public class CloudServersConnectionLiveTest {
 
    protected static final String sysRackspaceUser = System.getProperty(PROPERTY_RACKSPACE_USER);
    protected static final String sysRackspaceKey = System.getProperty(PROPERTY_RACKSPACE_KEY);
+   CloudServersConnection connection;
+
+   @BeforeGroups(groups = { "live" })
+   public void setupConnection() {
+      connection = CloudServersContextBuilder.newBuilder(sysRackspaceUser, sysRackspaceKey)
+               .withModule(new Log4JLoggingModule()).withJsonDebug().buildContext().getConnection();
+   }
 
    @Test
    public void testListServers() throws Exception {
-      CloudServersConnection connection = CloudServersContextBuilder.newBuilder(sysRackspaceUser,
-               sysRackspaceKey).withJsonDebug().buildContext().getConnection();
+
       List<Server> response = connection.listServers();
       assert null != response;
       long initialContainerCount = response.size();
@@ -58,8 +66,6 @@ public class CloudServersConnectionLiveTest {
 
    @Test
    public void testListServersDetail() throws Exception {
-      CloudServersConnection connection = CloudServersContextBuilder.newBuilder(sysRackspaceUser,
-               sysRackspaceKey).withJsonDebug().buildContext().getConnection();
       List<Server> response = connection.listServerDetails();
       assert null != response;
       long initialContainerCount = response.size();
@@ -68,8 +74,6 @@ public class CloudServersConnectionLiveTest {
 
    @Test
    public void testListFlavors() throws Exception {
-      CloudServersConnection connection = CloudServersContextBuilder.newBuilder(sysRackspaceUser,
-               sysRackspaceKey).withJsonDebug().buildContext().getConnection();
       List<Flavor> response = connection.listFlavors();
       assert null != response;
       long flavorCount = response.size();
@@ -83,8 +87,6 @@ public class CloudServersConnectionLiveTest {
 
    @Test
    public void testListFlavorsDetail() throws Exception {
-      CloudServersConnection connection = CloudServersContextBuilder.newBuilder(sysRackspaceUser,
-               sysRackspaceKey).withJsonDebug().buildContext().getConnection();
       List<Flavor> response = connection.listFlavorDetails();
       assert null != response;
       long flavorCount = response.size();
@@ -99,8 +101,6 @@ public class CloudServersConnectionLiveTest {
 
    @Test
    public void testListImages() throws Exception {
-      CloudServersConnection connection = CloudServersContextBuilder.newBuilder(sysRackspaceUser,
-               sysRackspaceKey).withJsonDebug().buildContext().getConnection();
       List<Image> response = connection.listImages();
       assert null != response;
       long imageCount = response.size();
@@ -114,8 +114,6 @@ public class CloudServersConnectionLiveTest {
 
    @Test
    public void testListImagesDetail() throws Exception {
-      CloudServersConnection connection = CloudServersContextBuilder.newBuilder(sysRackspaceUser,
-               sysRackspaceKey).withJsonDebug().buildContext().getConnection();
       List<Image> response = connection.listImageDetails();
       assert null != response;
       long imageCount = response.size();

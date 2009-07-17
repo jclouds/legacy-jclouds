@@ -32,6 +32,8 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.util.DateService;
+import org.joda.time.DateTime;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
@@ -58,6 +60,21 @@ import com.google.inject.assistedinject.FactoryProvider;
 public class ParserModule extends AbstractModule {
    private final static TypeLiteral<ParseSax.Factory> parseSaxFactoryLiteral = new TypeLiteral<ParseSax.Factory>() {
    };
+
+   static class DateTimeAdapter implements JsonSerializer<DateTime>, JsonDeserializer<DateTime> {
+      private final static DateService dateService = new DateService();
+
+      public JsonElement serialize(DateTime src, Type typeOfSrc, JsonSerializationContext context) {
+         return new JsonPrimitive(dateService.iso8601DateFormat(src));
+      }
+
+      public DateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+               throws JsonParseException {
+         String toParse = json.getAsJsonPrimitive().getAsString();
+         return dateService.iso8601DateParse(toParse);
+      }
+
+   }
 
    static class InetAddressAdapter implements JsonSerializer<InetAddress>,
             JsonDeserializer<InetAddress> {
@@ -98,6 +115,7 @@ public class ParserModule extends AbstractModule {
    Gson provideGson() {
       GsonBuilder gson = new GsonBuilder();
       gson.registerTypeAdapter(InetAddress.class, new InetAddressAdapter());
+      gson.registerTypeAdapter(DateTime.class, new DateTimeAdapter());
       return gson.create();
    }
 
