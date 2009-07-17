@@ -31,8 +31,10 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 import org.jclouds.rackspace.cloudservers.domain.Flavor;
+import org.jclouds.rackspace.cloudservers.domain.Image;
 import org.jclouds.rackspace.cloudservers.domain.Server;
 import org.jclouds.rackspace.cloudservers.functions.ParseFlavorListFromGsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseImageListFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseServerListFromGsonResponse;
 import org.jclouds.rackspace.filters.AuthenticateRequest;
 import org.jclouds.rest.Query;
@@ -106,5 +108,33 @@ public interface CloudServersConnection {
    // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
    // (400)
    List<Flavor> listFlavorDetails();
+   
+   
+
+   /**
+    * 
+    * List available images (IDs and names only)
+    * 
+    * @see #listImageDetails()
+    */
+   @GET
+   @ResponseParser(ParseImageListFromGsonResponse.class)
+   @Query(key = "format", value = "json")
+   @Path("/images")
+   // TODO:  cloudServersFault (400, 500),  serviceUnavailable (503), unauthorized (401), badRequest (400) 
+   List<Image> listImages();
+
+   /**
+    * 
+    * This operation will list all images visible by the account.
+    * 
+    * @see Image
+    */
+   @GET
+   @ResponseParser(ParseImageListFromGsonResponse.class)
+   @Query(key = "format", value = "json")
+   @Path("/images/detail")
+   // TODO:  cloudServersFault (400, 500),  serviceUnavailable (503), unauthorized (401), badRequest (400) 
+   List<Image> listImageDetails();
 
 }

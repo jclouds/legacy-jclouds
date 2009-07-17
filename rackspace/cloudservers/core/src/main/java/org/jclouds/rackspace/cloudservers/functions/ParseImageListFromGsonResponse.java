@@ -21,27 +21,42 @@
  * under the License.
  * ====================================================================
  */
+package org.jclouds.rackspace.cloudservers.functions;
 
-package org.jclouds.rackspace.cloudservers.domain;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+
+import org.jclouds.http.functions.ParseJson;
+import org.jclouds.rackspace.cloudservers.domain.Image;
+
+import com.google.gson.Gson;
+import com.google.inject.Inject;
+import com.google.inject.internal.Lists;
 
 /**
- * In-flight images will have the status attribute set to SAVING and the conditional progress
- * element (0- 100% completion) will also be returned. Other possible values for the status
- * attribute include: UNKNOWN, PREPARING, ACTIVE QUEUED, FAILED. Images with an ACTIVE status are
- * available for install.
+ * This parses {@link Image} from a gson string.
  * 
  * @author Adrian Cole
  */
-public enum ImageStatus {
+public class ParseImageListFromGsonResponse extends ParseJson<List<Image>> {
 
-   UNKNOWN, ACTIVE, SAVING, PREPARING, QUEUED, FAILED;
-
-   public String value() {
-      return name();
+   @Inject
+   public ParseImageListFromGsonResponse(Gson gson) {
+      super(gson);
    }
 
-   public static ImageStatus fromValue(String v) {
-      return valueOf(v);
+   private static class ImageListResponse {
+      List<Image> images = Lists.newArrayList();
    }
 
+   public List<Image> apply(InputStream stream) {
+
+      try {
+         return gson.fromJson(new InputStreamReader(stream, "UTF-8"), ImageListResponse.class).images;
+      } catch (UnsupportedEncodingException e) {
+         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
+      }
+   }
 }

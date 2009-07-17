@@ -35,6 +35,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.rackspace.Authentication;
 import org.jclouds.rackspace.cloudservers.functions.ParseFlavorListFromGsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseImageListFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseServerListFromGsonResponse;
 import org.jclouds.rest.JaxrsAnnotationProcessor;
 import org.jclouds.rest.config.JaxrsModule;
@@ -119,6 +120,39 @@ public class CloudServersConnectionTest {
 
    }
 
+   
+   public void testListImages() throws SecurityException, NoSuchMethodException {
+      Method method = CloudServersConnection.class.getMethod("listImages");
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = factory.create(CloudServersConnection.class).createRequest(endpoint,
+               method, new Object[] {});
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/images");
+      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
+      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
+      assertEquals(httpMethod.getHeaders().size(), 0);
+      factory.create(CloudServersConnection.class);
+      assertEquals(JaxrsAnnotationProcessor.getParserOrThrowException(method),
+               ParseImageListFromGsonResponse.class);
+
+   }
+   
+   public void testListImagesDetail() throws SecurityException, NoSuchMethodException {
+      Method method = CloudServersConnection.class.getMethod("listImageDetails");
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = factory.create(CloudServersConnection.class).createRequest(endpoint,
+               method, new Object[] {});
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/images/detail");
+      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
+      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
+      assertEquals(httpMethod.getHeaders().size(), 0);
+      factory.create(CloudServersConnection.class);
+      assertEquals(JaxrsAnnotationProcessor.getParserOrThrowException(method),
+               ParseImageListFromGsonResponse.class);
+
+   }
+   
    @BeforeClass
    void setupFactory() {
       factory = Guice.createInjector(new AbstractModule() {
