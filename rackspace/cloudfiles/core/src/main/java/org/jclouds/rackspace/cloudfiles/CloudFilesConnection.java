@@ -34,15 +34,21 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
+import org.jclouds.http.functions.ParseETagHeader;
+import org.jclouds.rackspace.cloudfiles.binders.CFObjectBinder;
 import org.jclouds.rackspace.cloudfiles.domain.AccountMetadata;
+import org.jclouds.rackspace.cloudfiles.domain.CFObject;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
+import org.jclouds.rackspace.cloudfiles.functions.CFObjectKey;
 import org.jclouds.rackspace.cloudfiles.functions.ParseAccountMetadataResponseFromHeaders;
 import org.jclouds.rackspace.cloudfiles.functions.ParseContainerListFromGsonResponse;
 import org.jclouds.rackspace.cloudfiles.functions.ReturnTrueOn204FalseOtherwise;
 import org.jclouds.rackspace.cloudfiles.functions.ReturnTrueOn404FalseOtherwise;
 import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
 import org.jclouds.rackspace.filters.AuthenticateRequest;
+import org.jclouds.rest.EntityParam;
 import org.jclouds.rest.ExceptionParser;
+import org.jclouds.rest.PathParamParser;
 import org.jclouds.rest.Query;
 import org.jclouds.rest.RequestFilters;
 import org.jclouds.rest.ResponseParser;
@@ -88,5 +94,19 @@ public interface CloudFilesConnection {
    @ExceptionParser(ReturnTrueOn404FalseOtherwise.class)
    @Path("{container}")
    boolean deleteContainerIfEmpty(@PathParam("container") String container);
+
+   @PUT
+   @Path("{container}/{key}")
+   @ResponseParser(ParseETagHeader.class)
+   Future<byte[]> putObject(
+         @PathParam("container") String container,
+         @PathParam("key") @PathParamParser(CFObjectKey.class) @EntityParam(CFObjectBinder.class) 
+            CFObject object);
+
+   @DELETE
+   @ResponseParser(ReturnTrueOn204FalseOtherwise.class)
+   @ExceptionParser(ReturnTrueOn404FalseOtherwise.class)
+   @Path("{container}/{key}")
+   boolean deleteObject(@PathParam("container") String container, @PathParam("key") String key);
 
 }

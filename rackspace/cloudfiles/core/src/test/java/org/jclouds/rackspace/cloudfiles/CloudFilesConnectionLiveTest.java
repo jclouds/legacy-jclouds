@@ -30,11 +30,17 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import org.jclouds.http.HttpResponseException;
+import org.jclouds.http.HttpUtils;
 import org.jclouds.rackspace.cloudfiles.domain.AccountMetadata;
+import org.jclouds.rackspace.cloudfiles.domain.CFObject;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
 import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
+import org.jclouds.rackspace.cloudfiles.reference.CloudFilesHeaders;
 import org.testng.annotations.Test;
 
 /**
@@ -134,5 +140,50 @@ public class CloudFilesConnectionLiveTest {
       assertTrue(connection.deleteContainerIfEmpty(containerName1));
       assertTrue(connection.deleteContainerIfEmpty(containerName2));
    }
-
+   
+   @Test
+   public void testPutAndDeleteObjects() throws Exception {
+      CloudFilesConnection connection = CloudFilesContextBuilder.newBuilder(sysRackspaceUser,
+               sysRackspaceKey).withJsonDebug().buildContext().getConnection();
+      String containerName = bucketPrefix + ".testPutAndDeleteObjects";
+      String data = "Here is my data";
+      
+      assertTrue(connection.putContainer(containerName));
+      
+      // Test with string data, ETag hash, and a piece of metadata
+      CFObject object = new CFObject("object", data);
+      object.setContentLength(data.length());
+      object.generateETag();
+      object.getMetadata().setContentType("text/plain");
+      // TODO: Metadata values aren't being stored by CF, but the names are. Odd...
+      object.getMetadata().getUserMetadata().put(
+            CloudFilesHeaders.USER_METADATA_PREFIX + "metadata", "metadata-value");
+      byte[] md5 = connection.putObject(containerName, object).get(10, TimeUnit.SECONDS);
+      assertEquals(HttpUtils.toHexString(md5), 
+            HttpUtils.toHexString(object.getMetadata().getETag()));
+      // TODO: Get and confirm data
+      
+      // Test with invalid ETag (as if object's data was corrupted in transit)
+      String correctEtag = HttpUtils.toHexString(object.getMetadata().getETag());
+      String incorrectEtag = "0" + correctEtag.substring(1);
+      object.getMetadata().setETag(HttpUtils.fromHexString(incorrectEtag));
+      try {
+         connection.putObject(containerName, object).get(10, TimeUnit.SECONDS);
+      } catch (Throwable e) {
+         assertEquals(e.getCause().getClass(), HttpResponseException.class);
+         assertEquals(((HttpResponseException)e.getCause()).getResponse().getStatusCode(), 422);
+      }
+      
+      // Test chunked/streamed upload with data of "unknown" length
+      ByteArrayInputStream bais = new ByteArrayInputStream(data.getBytes("UTF-8"));
+      object = new CFObject("chunked-object", bais);
+      md5 = connection.putObject(containerName, object).get(10, TimeUnit.SECONDS);
+      assertEquals(HttpUtils.toHexString(md5), correctEtag);
+      // TODO: Get and confirm data
+            
+      assertTrue(connection.deleteObject(containerName, "object"));
+      assertTrue(connection.deleteObject(containerName, "chunked-object"));
+      assertTrue(connection.deleteContainerIfEmpty(containerName));
+   }
+   
 }

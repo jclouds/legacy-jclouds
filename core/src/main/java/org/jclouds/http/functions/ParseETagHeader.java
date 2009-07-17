@@ -21,12 +21,11 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.functions;
+package org.jclouds.http.functions;
 
 import javax.ws.rs.core.HttpHeaders;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.aws.s3.reference.S3Headers;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
@@ -34,7 +33,7 @@ import org.jclouds.http.HttpUtils;
 import com.google.common.base.Function;
 
 /**
- * Parses an MD5 checksum from the header {@link S3Headers#ETAG}.
+ * Parses an MD5 checksum from the header {@link HttpHeaders#ETAG}.
  * 
  * @author Adrian Cole
  */
@@ -44,6 +43,10 @@ public class ParseETagHeader implements Function<HttpResponse, byte[]> {
       IOUtils.closeQuietly(from.getContent());
 
       String eTag = from.getFirstHeaderOrNull(HttpHeaders.ETAG);
+      if (eTag == null) {
+         // TODO: Cloud Files sends incorrectly cased ETag header... Remove this when fixed.
+         eTag = from.getFirstHeaderOrNull("Etag");
+      }
       if (eTag != null) {
          return HttpUtils.fromHexString(eTag.replaceAll("\"", ""));
       }

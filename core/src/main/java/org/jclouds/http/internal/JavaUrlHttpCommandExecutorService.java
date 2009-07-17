@@ -126,9 +126,14 @@ public class JavaUrlHttpCommandExecutorService extends
       connection.setInstanceFollowRedirects(false);
       connection.setRequestMethod(request.getMethod().toString());
       for (String header : request.getHeaders().keySet()) {
-         for (String value : request.getHeaders().get(header))
+         for (String value : request.getHeaders().get(header)) {
             connection.setRequestProperty(header, value);
-      }
+            
+            if ("Transfer-Encoding".equals(header) && "chunked".equals(value)) {
+               connection.setChunkedStreamingMode(8192);               
+            }
+         }
+      }      
       connection.setRequestProperty(HttpHeaders.HOST, request.getEndpoint().getHost());
       if (request.getEntity() != null) {
          OutputStream out = connection.getOutputStream();

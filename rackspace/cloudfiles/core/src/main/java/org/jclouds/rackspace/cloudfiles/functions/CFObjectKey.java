@@ -21,26 +21,16 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudfiles.reference;
+package org.jclouds.rackspace.cloudfiles.functions;
 
+import org.jclouds.rackspace.cloudfiles.domain.CFObject;
 
-/**
- * Additional headers specified by Rackspace Cloud Files REST API.
- * 
- * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090311.pdf" />
- * @author Adrian Cole
- * 
- */
-public interface CloudFilesHeaders {
+import com.google.common.base.Function;
 
-   public static final String ACCOUNT_BYTES_USED = "X-Account-Bytes-Used";
-   public static final String ACCOUNT_CONTAINER_COUNT = "X-Account-Container-Count";
-   public static final String CDN_ENABLED = "X-CDN-Enabled";
-   public static final String CDN_REFERRER_ACL = "X-Referrer-ACL ";
-   public static final String CDN_TTL = "X-TTL";
-   public static final String CDN_URI = "X-CDN-URI";
-   public static final String CDN_USER_AGENT_ACL = "X-User-Agent-ACL";
-   public static final String CONTAINER_BYTES_USED = "X-Container-Bytes-Used";
-   public static final String CONTAINER_OBJECT_COUNT = "X-Container-Object-Count";
-   public static final String USER_METADATA_PREFIX = "X-Object-Meta-";
+public class CFObjectKey implements Function<Object, String> {
+
+   public String apply(Object from) {
+      return ((CFObject) from).getKey();
+   }
+
 }
