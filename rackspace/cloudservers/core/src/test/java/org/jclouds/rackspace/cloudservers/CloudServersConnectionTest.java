@@ -35,6 +35,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.rackspace.Authentication;
 import org.jclouds.rackspace.cloudservers.functions.ParseFlavorListFromGsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseImageFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseImageListFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseServerListFromGsonResponse;
 import org.jclouds.rest.JaxrsAnnotationProcessor;
@@ -71,7 +72,7 @@ public class CloudServersConnectionTest {
                ParseServerListFromGsonResponse.class);
 
    }
-   
+
    public void testListServersDetail() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersConnection.class.getMethod("listServerDetails");
       URI endpoint = URI.create("http://localhost");
@@ -103,7 +104,7 @@ public class CloudServersConnectionTest {
                ParseFlavorListFromGsonResponse.class);
 
    }
-   
+
    public void testListFlavorsDetail() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersConnection.class.getMethod("listFlavorDetails");
       URI endpoint = URI.create("http://localhost");
@@ -120,7 +121,6 @@ public class CloudServersConnectionTest {
 
    }
 
-   
    public void testListImages() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersConnection.class.getMethod("listImages");
       URI endpoint = URI.create("http://localhost");
@@ -136,7 +136,7 @@ public class CloudServersConnectionTest {
                ParseImageListFromGsonResponse.class);
 
    }
-   
+
    public void testListImagesDetail() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersConnection.class.getMethod("listImageDetails");
       URI endpoint = URI.create("http://localhost");
@@ -152,7 +152,23 @@ public class CloudServersConnectionTest {
                ParseImageListFromGsonResponse.class);
 
    }
-   
+
+   public void testGetImageDetails() throws SecurityException, NoSuchMethodException {
+      Method method = CloudServersConnection.class.getMethod("getImageDetails", int.class);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = factory.create(CloudServersConnection.class).createRequest(endpoint,
+               method, new Object[] { 2 });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/images/2");
+      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
+      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
+      assertEquals(httpMethod.getHeaders().size(), 0);
+      factory.create(CloudServersConnection.class);
+      assertEquals(JaxrsAnnotationProcessor.getParserOrThrowException(method),
+               ParseImageFromGsonResponse.class);
+
+   }
+
    @BeforeClass
    void setupFactory() {
       factory = Guice.createInjector(new AbstractModule() {

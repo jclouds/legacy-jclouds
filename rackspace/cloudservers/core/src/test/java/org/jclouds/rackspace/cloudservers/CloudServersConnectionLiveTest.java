@@ -127,4 +127,17 @@ public class CloudServersConnectionLiveTest {
          assert null != image.getStatus() : image;
       }
    }
+
+   @Test(enabled = false)
+   // Rackspace Web Hosting issue #118856
+   public void testGetImageDetails() throws Exception {
+      List<Image> response = connection.listImageDetails();
+      assert null != response;
+      long imageCount = response.size();
+      assertTrue(imageCount >= 0);
+      for (Image image : response) {
+         Image newDetails = connection.getImageDetails(image.getId());
+         assert image.equals(newDetails) : String.format("%s doesn't equal %2", newDetails, image);
+      }
+   }
 }

@@ -33,6 +33,8 @@ import org.joda.time.DateTime;
  */
 public class Image {
 
+   public static final Image NOT_FOUND = new Image(-1,"NOT_FOUND");
+   
    private DateTime created;
    private int id;
    private String name;

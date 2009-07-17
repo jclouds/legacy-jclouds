@@ -29,14 +29,18 @@ import java.util.concurrent.Future;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
 import org.jclouds.rackspace.cloudservers.domain.Flavor;
 import org.jclouds.rackspace.cloudservers.domain.Image;
 import org.jclouds.rackspace.cloudservers.domain.Server;
 import org.jclouds.rackspace.cloudservers.functions.ParseFlavorListFromGsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseImageFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseImageListFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseServerListFromGsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ReturnImageNotFoundOn404;
 import org.jclouds.rackspace.filters.AuthenticateRequest;
+import org.jclouds.rest.ExceptionParser;
 import org.jclouds.rest.Query;
 import org.jclouds.rest.RequestFilters;
 import org.jclouds.rest.ResponseParser;
@@ -71,7 +75,7 @@ public interface CloudServersConnection {
 
    /**
     * This operation provides a list of servers associated with your account. Servers that have been
-    * deleted are not included in this list. 
+    * deleted are not included in this list.
     */
    @GET
    @ResponseParser(ParseServerListFromGsonResponse.class)
@@ -108,8 +112,6 @@ public interface CloudServersConnection {
    // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
    // (400)
    List<Flavor> listFlavorDetails();
-   
-   
 
    /**
     * 
@@ -121,7 +123,8 @@ public interface CloudServersConnection {
    @ResponseParser(ParseImageListFromGsonResponse.class)
    @Query(key = "format", value = "json")
    @Path("/images")
-   // TODO:  cloudServersFault (400, 500),  serviceUnavailable (503), unauthorized (401), badRequest (400) 
+   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
+   // (400)
    List<Image> listImages();
 
    /**
@@ -134,7 +137,23 @@ public interface CloudServersConnection {
    @ResponseParser(ParseImageListFromGsonResponse.class)
    @Query(key = "format", value = "json")
    @Path("/images/detail")
-   // TODO:  cloudServersFault (400, 500),  serviceUnavailable (503), unauthorized (401), badRequest (400) 
+   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
+   // (400)
    List<Image> listImageDetails();
+
+   /**
+    * 
+    * This operation returns details of the specified image.
+    * 
+    * @see Image
+    */
+   @GET
+   @ResponseParser(ParseImageFromGsonResponse.class)
+   @Query(key = "format", value = "json")
+   @ExceptionParser(ReturnImageNotFoundOn404.class)
+   @Path("/images/{id}")
+   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
+   // (400)
+   Image getImageDetails(@PathParam("id") int id);
 
 }
