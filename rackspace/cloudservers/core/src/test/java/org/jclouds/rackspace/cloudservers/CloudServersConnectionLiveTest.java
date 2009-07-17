@@ -121,9 +121,9 @@ public class CloudServersConnectionLiveTest {
       for (Image image : response) {
          assertTrue(image.getId() >= 1);
          assert null != image.getName() : image;
-         // TODO: Web Hosting #118779
+         // sometimes this is not present per: Web Hosting #118820
          // assert null != image.getCreated() : image;
-         // assert null != image.getUpdated() : image;
+         assert null != image.getUpdated() : image;
          assert null != image.getStatus() : image;
       }
    }

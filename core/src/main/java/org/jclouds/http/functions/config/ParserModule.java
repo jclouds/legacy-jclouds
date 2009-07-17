@@ -71,7 +71,10 @@ public class ParserModule extends AbstractModule {
       public DateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
                throws JsonParseException {
          String toParse = json.getAsJsonPrimitive().getAsString();
-         return dateService.iso8601DateParse(toParse);
+         DateTime toReturn = dateService.iso8601DateParse(toParse);
+         if (toReturn == null) toReturn = new DateTime(toParse);
+         if (toReturn == null) throw new RuntimeException("could not parse: "+toParse);
+         return toReturn;
       }
 
    }
