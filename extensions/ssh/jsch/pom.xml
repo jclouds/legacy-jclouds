@@ -42,7 +42,6 @@
             <groupId>com.jcraft</groupId>
             <artifactId>jsch</artifactId>
             <version>0.1.41</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
