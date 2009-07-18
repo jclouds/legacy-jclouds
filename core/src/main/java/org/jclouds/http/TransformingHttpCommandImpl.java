@@ -110,7 +110,9 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
       UriBuilder builder = UriBuilder.fromUri(request.getEndpoint());
       builder.host(host);
       builder.port(port);
+      Object oldEntity = request.getEntity();
       request = new HttpRequest(request.getMethod(), builder.build(), request.getHeaders());
+      request.setEntity(oldEntity);
       request.getHeaders().replaceValues(HttpHeaders.HOST, Collections.singletonList(host));
       return request;
    }
