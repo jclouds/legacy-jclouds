@@ -34,6 +34,7 @@ import org.jclouds.http.HttpMethod;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.rackspace.Authentication;
+import org.jclouds.rackspace.cloudservers.functions.ParseFlavorFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseFlavorListFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseImageFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseImageListFromGsonResponse;
@@ -166,6 +167,22 @@ public class CloudServersConnectionTest {
       factory.create(CloudServersConnection.class);
       assertEquals(JaxrsAnnotationProcessor.getParserOrThrowException(method),
                ParseImageFromGsonResponse.class);
+
+   }
+
+   public void testGetFlavorDetails() throws SecurityException, NoSuchMethodException {
+      Method method = CloudServersConnection.class.getMethod("getFlavorDetails", int.class);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = factory.create(CloudServersConnection.class).createRequest(endpoint,
+               method, new Object[] { 2 });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/flavors/2");
+      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
+      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
+      assertEquals(httpMethod.getHeaders().size(), 0);
+      factory.create(CloudServersConnection.class);
+      assertEquals(JaxrsAnnotationProcessor.getParserOrThrowException(method),
+               ParseFlavorFromGsonResponse.class);
 
    }
 

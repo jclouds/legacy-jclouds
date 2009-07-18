@@ -140,4 +140,17 @@ public class CloudServersConnectionLiveTest {
          assert image.equals(newDetails) : String.format("%s doesn't equal %2", newDetails, image);
       }
    }
+
+   @Test
+   public void testGetFlavorDetails() throws Exception {
+      List<Flavor> response = connection.listFlavorDetails();
+      assert null != response;
+      long flavorCount = response.size();
+      assertTrue(flavorCount >= 0);
+      for (Flavor flavor : response) {
+         Flavor newDetails = connection.getFlavorDetails(flavor.getId());
+         assert flavor.equals(newDetails) : String
+                  .format("%s doesn't equal %2", newDetails, flavor);
+      }
+   }
 }

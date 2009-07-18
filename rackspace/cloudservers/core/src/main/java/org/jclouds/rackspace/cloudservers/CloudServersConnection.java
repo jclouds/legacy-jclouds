@@ -34,10 +34,12 @@ import javax.ws.rs.PathParam;
 import org.jclouds.rackspace.cloudservers.domain.Flavor;
 import org.jclouds.rackspace.cloudservers.domain.Image;
 import org.jclouds.rackspace.cloudservers.domain.Server;
+import org.jclouds.rackspace.cloudservers.functions.ParseFlavorFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseFlavorListFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseImageFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseImageListFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseServerListFromGsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ReturnFlavorNotFoundOn404;
 import org.jclouds.rackspace.cloudservers.functions.ReturnImageNotFoundOn404;
 import org.jclouds.rackspace.filters.AuthenticateRequest;
 import org.jclouds.rest.ExceptionParser;
@@ -155,5 +157,20 @@ public interface CloudServersConnection {
    // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
    // (400)
    Image getImageDetails(@PathParam("id") int id);
+   
+   /**
+    * 
+    * This operation returns details of the specified flavor.
+    * 
+    * @see Flavor
+    */
+   @GET
+   @ResponseParser(ParseFlavorFromGsonResponse.class)
+   @Query(key = "format", value = "json")
+   @ExceptionParser(ReturnFlavorNotFoundOn404.class)
+   @Path("/flavors/{id}")
+   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
+   // (400)
+   Flavor getFlavorDetails(@PathParam("id") int id);
 
 }
