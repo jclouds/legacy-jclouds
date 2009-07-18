@@ -60,7 +60,13 @@ import com.google.inject.assistedinject.FactoryProvider;
 public class ParserModule extends AbstractModule {
    private final static TypeLiteral<ParseSax.Factory> parseSaxFactoryLiteral = new TypeLiteral<ParseSax.Factory>() {
    };
-
+   
+   protected void configure() {
+      bind(parseSaxFactoryLiteral).toProvider(
+               FactoryProvider.newFactory(parseSaxFactoryLiteral, new TypeLiteral<ParseSax<?>>() {
+               }));
+   }
+   
    static class DateTimeAdapter implements JsonSerializer<DateTime>, JsonDeserializer<DateTime> {
       private final static DateService dateService = new DateService();
 
@@ -122,9 +128,4 @@ public class ParserModule extends AbstractModule {
       return gson.create();
    }
 
-   protected void configure() {
-      bind(parseSaxFactoryLiteral).toProvider(
-               FactoryProvider.newFactory(parseSaxFactoryLiteral, new TypeLiteral<ParseSax<?>>() {
-               }));
-   }
 }

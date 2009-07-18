@@ -24,6 +24,8 @@
 package org.jclouds.http.binders;
 
 import java.util.Collections;
+import static com.google.common.base.Preconditions.checkState;
+
 import java.util.Map;
 
 import javax.ws.rs.core.HttpHeaders;
@@ -38,22 +40,20 @@ import com.google.inject.Inject;
 /**
  * Binds the object to the request as a json object.
  * 
- * @author adriancole
+ * @author Adrian Cole
  * @since 4.0
  */
 public class JsonBinder implements PostEntityBinder {
-   protected final Gson gson;
 
    @Inject
-   public JsonBinder(Gson gson) {
-      this.gson = gson;
-   }
+   protected Gson gson;
 
    public void addEntityToRequest(Map<String, String> postParams, HttpRequest request) {
       addEntityToRequest((Object) postParams, request);
    }
 
    public void addEntityToRequest(Object toBind, HttpRequest request) {
+      checkState(gson != null, "Program error: gson should have been injected at this point");
       String json = gson.toJson(toBind);
       request.setEntity(json);
       request.getHeaders().replaceValues(HttpHeaders.CONTENT_LENGTH,

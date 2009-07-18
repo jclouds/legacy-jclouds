@@ -40,7 +40,7 @@ import com.google.inject.Injector;
 import com.google.inject.name.Names;
 
 /**
- * // TODO: Adrian: Document this!
+ * Tests the ability to configure a {@link GaeHttpCommandExecutorService}
  * 
  * @author Adrian Cole
  */

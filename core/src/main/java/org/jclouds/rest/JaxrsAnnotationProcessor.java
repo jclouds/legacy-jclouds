@@ -314,8 +314,11 @@ public class JaxrsAnnotationProcessor {
 
    public PostEntityBinder getPostEntityBinderOrNull(Method method, Object[] args) {
       for (Object arg : args) {
-         if (arg instanceof PostEntityBinder)
-            return (PostEntityBinder) arg;
+         if (arg instanceof PostEntityBinder) {
+            PostEntityBinder binder = (PostEntityBinder) arg;
+            injector.injectMembers(binder);
+            return binder;
+         }
       }
       PostBinder annotation = method.getAnnotation(PostBinder.class);
       if (annotation != null) {
