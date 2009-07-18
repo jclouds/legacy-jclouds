@@ -21,22 +21,40 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.functions;
+package org.jclouds.rackspace.cloudservers.functions;
 
-import org.jclouds.http.HttpResponseException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 
-import com.google.common.base.Function;
+import org.jclouds.http.functions.ParseJson;
+import org.jclouds.rackspace.cloudservers.domain.Server;
 
-public class ReturnFalseOn404 implements Function<Exception, Boolean> {
+import com.google.gson.Gson;
+import com.google.inject.Inject;
 
-   public Boolean apply(Exception from) {
-      if (from instanceof HttpResponseException) {
-         HttpResponseException responseException = (HttpResponseException) from;
-         if (responseException.getResponse().getStatusCode() == 404) {
-            return false;
-         }
-      }
-      return null;
+/**
+ * This parses {@link Server} from a gson string.
+ * 
+ * @author Adrian Cole
+ */
+public class ParseServerFromGsonResponse extends ParseJson<Server> {
+
+   @Inject
+   public ParseServerFromGsonResponse(Gson gson) {
+      super(gson);
    }
 
+   private static class ServerListResponse {
+      Server server;
+   }
+
+   public Server apply(InputStream stream) {
+
+      try {
+         return gson.fromJson(new InputStreamReader(stream, "UTF-8"), ServerListResponse.class).server;
+      } catch (UnsupportedEncodingException e) {
+         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
+      }
+   }
 }

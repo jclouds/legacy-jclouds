@@ -25,16 +25,25 @@ package org.jclouds.rackspace.cloudservers;
 
 import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_KEY;
 import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_USER;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
+import java.io.InputStream;
 import java.util.List;
 
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rackspace.cloudservers.domain.Flavor;
 import org.jclouds.rackspace.cloudservers.domain.Image;
 import org.jclouds.rackspace.cloudservers.domain.Server;
+import org.jclouds.rackspace.cloudservers.domain.ServerStatus;
+import org.jclouds.ssh.SshConnection;
+import org.jclouds.ssh.jsch.config.JschSshConnectionModule;
+import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
+
+import com.google.inject.Injector;
 
 /**
  * Tests behavior of {@code CloudServersConnection}
@@ -47,11 +56,16 @@ public class CloudServersConnectionLiveTest {
    protected static final String sysRackspaceUser = System.getProperty(PROPERTY_RACKSPACE_USER);
    protected static final String sysRackspaceKey = System.getProperty(PROPERTY_RACKSPACE_KEY);
    CloudServersConnection connection;
+   SshConnection.Factory sshFactory;
 
    @BeforeGroups(groups = { "live" })
    public void setupConnection() {
-      connection = CloudServersContextBuilder.newBuilder(sysRackspaceUser, sysRackspaceKey)
-               .withModule(new Log4JLoggingModule()).withJsonDebug().buildContext().getConnection();
+      Injector injector = CloudServersContextBuilder.newBuilder(sysRackspaceUser, sysRackspaceKey)
+               .withModules(new Log4JLoggingModule(), new JschSshConnectionModule())
+               .withJsonDebug().buildInjector();
+      connection = injector.getInstance(CloudServersConnection.class);
+      sshFactory = injector.getInstance(SshConnection.Factory.class);
+
    }
 
    @Test
@@ -137,8 +151,15 @@ public class CloudServersConnectionLiveTest {
       assertTrue(imageCount >= 0);
       for (Image image : response) {
          Image newDetails = connection.getImageDetails(image.getId());
-         assert image.equals(newDetails) : String.format("%s doesn't equal %2", newDetails, image);
+         assertEquals(image, newDetails);
       }
+   }
+
+   @Test(enabled = false)
+   // Rackspace Web Hosting issue #118856
+   public void testGetImageDetailsNotFound() throws Exception {
+      Image newDetails = connection.getImageDetails(12312987);
+      assertEquals(Image.NOT_FOUND, newDetails);
    }
 
    @Test
@@ -149,8 +170,67 @@ public class CloudServersConnectionLiveTest {
       assertTrue(flavorCount >= 0);
       for (Flavor flavor : response) {
          Flavor newDetails = connection.getFlavorDetails(flavor.getId());
-         assert flavor.equals(newDetails) : String
-                  .format("%s doesn't equal %2", newDetails, flavor);
+         assertEquals(flavor, newDetails);
       }
    }
+
+   public void testGetFlavorDetailsNotFound() throws Exception {
+      Flavor newDetails = connection.getFlavorDetails(12312987);
+      assertEquals(Flavor.NOT_FOUND, newDetails);
+   }
+
+   public void testGetServerDetailsNotFound() throws Exception {
+      Server newDetails = connection.getServerDetails(12312987);
+      assertEquals(Server.NOT_FOUND, newDetails);
+   }
+
+   public void testGetServerDetails() throws Exception {
+      List<Server> response = connection.listServerDetails();
+      assert null != response;
+      long serverCount = response.size();
+      assertTrue(serverCount >= 0);
+      for (Server server : response) {
+         Server newDetails = connection.getServerDetails(server.getId());
+         assertEquals(server, newDetails);
+      }
+   }
+
+   private String serverPrefix = System.getProperty("user.name") + ".cs";
+
+   @Test(timeOut = 5 * 60 * 1000)
+   public void testCreateServer() throws Exception {
+      Server newDetails = connection.createServer(serverPrefix + "createserver", 2, 1);
+      System.err.print(newDetails);
+      assertNotNull(newDetails.getAdminPass());
+      assertNotNull(newDetails.getHostId());
+      assertEquals(newDetails.getStatus(), ServerStatus.BUILD);
+      assert newDetails.getProgress() >= 0 : "newDetails.getProgress()" + newDetails.getProgress();
+      assertEquals(new Integer(2), newDetails.getImageId());
+      assertEquals(new Integer(1), newDetails.getFlavorId());
+      assertNotNull(newDetails.getAddresses());
+      assertEquals(newDetails.getAddresses().getPublicAddresses().size(), 1);
+      assertEquals(newDetails.getAddresses().getPrivateAddresses().size(), 1);
+
+      int serverId = newDetails.getId();
+      ServerStatus currentStatus = newDetails.getStatus();
+      Server currentDetails = newDetails;
+      while (currentStatus != ServerStatus.ACTIVE) {
+         Thread.sleep(5 * 1000);
+         currentDetails = connection.getServerDetails(serverId);
+         System.out.println(currentDetails);
+         currentStatus = currentDetails.getStatus();
+      }
+
+      InputStream etcPasswd = sshFactory.create(
+               newDetails.getAddresses().getPublicAddresses().get(0), 22, "root",
+               newDetails.getAdminPass()).get("/etc/passwd");
+      String etcPasswdContents = Utils.toStringAndClose(etcPasswd);
+      assert etcPasswdContents.indexOf("root") >= 0 : etcPasswdContents;
+
+      connection.deleteServer(serverId);
+
+      currentDetails = connection.getServerDetails(serverId);
+      assertEquals(ServerStatus.DELETED, currentDetails.getStatus());
+   }
+
 }

@@ -27,6 +27,10 @@ import static org.testng.Assert.assertEquals;
 
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.Collections;
+
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
@@ -38,6 +42,7 @@ import org.jclouds.rackspace.cloudservers.functions.ParseFlavorFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseFlavorListFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseImageFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseImageListFromGsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseServerFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseServerListFromGsonResponse;
 import org.jclouds.rest.JaxrsAnnotationProcessor;
 import org.jclouds.rest.config.JaxrsModule;
@@ -58,6 +63,27 @@ public class CloudServersConnectionTest {
 
    JaxrsAnnotationProcessor.Factory factory;
 
+   public void testCreateServer() throws SecurityException, NoSuchMethodException {
+      Method method = CloudServersConnection.class.getMethod("createServer", String.class,
+               int.class, int.class);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = factory.create(CloudServersConnection.class).createRequest(endpoint,
+               method, new Object[] { "ralphie", 2, 1 });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/servers");
+      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
+      assertEquals(httpMethod.getMethod(), HttpMethod.POST);
+      assertEquals("{\"server\":{\"name\":\"ralphie\",\"imageId\":2,\"flavorId\":1}}", httpMethod
+               .getEntity());
+      assertEquals(httpMethod.getHeaders().size(), 2);
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
+               .singletonList(httpMethod.getEntity().toString().getBytes().length + ""));
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
+               .singletonList(MediaType.APPLICATION_JSON));
+      assertEquals(JaxrsAnnotationProcessor.getParserOrThrowException(method),
+               ParseServerFromGsonResponse.class);
+   }
+
    public void testListServers() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersConnection.class.getMethod("listServers");
       URI endpoint = URI.create("http://localhost");
@@ -68,7 +94,6 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      factory.create(CloudServersConnection.class);
       assertEquals(JaxrsAnnotationProcessor.getParserOrThrowException(method),
                ParseServerListFromGsonResponse.class);
 
@@ -84,7 +109,6 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      factory.create(CloudServersConnection.class);
       assertEquals(JaxrsAnnotationProcessor.getParserOrThrowException(method),
                ParseServerListFromGsonResponse.class);
 
@@ -100,7 +124,6 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      factory.create(CloudServersConnection.class);
       assertEquals(JaxrsAnnotationProcessor.getParserOrThrowException(method),
                ParseFlavorListFromGsonResponse.class);
 
@@ -116,7 +139,6 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      factory.create(CloudServersConnection.class);
       assertEquals(JaxrsAnnotationProcessor.getParserOrThrowException(method),
                ParseFlavorListFromGsonResponse.class);
 
@@ -132,7 +154,6 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      factory.create(CloudServersConnection.class);
       assertEquals(JaxrsAnnotationProcessor.getParserOrThrowException(method),
                ParseImageListFromGsonResponse.class);
 
@@ -148,7 +169,6 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      factory.create(CloudServersConnection.class);
       assertEquals(JaxrsAnnotationProcessor.getParserOrThrowException(method),
                ParseImageListFromGsonResponse.class);
 
@@ -164,7 +184,6 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      factory.create(CloudServersConnection.class);
       assertEquals(JaxrsAnnotationProcessor.getParserOrThrowException(method),
                ParseImageFromGsonResponse.class);
 
@@ -180,9 +199,35 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      factory.create(CloudServersConnection.class);
       assertEquals(JaxrsAnnotationProcessor.getParserOrThrowException(method),
                ParseFlavorFromGsonResponse.class);
+
+   }
+
+   public void testGetServerDetails() throws SecurityException, NoSuchMethodException {
+      Method method = CloudServersConnection.class.getMethod("getServerDetails", int.class);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = factory.create(CloudServersConnection.class).createRequest(endpoint,
+               method, new Object[] { 2 });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2");
+      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
+      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
+      assertEquals(httpMethod.getHeaders().size(), 0);
+      assertEquals(JaxrsAnnotationProcessor.getParserOrThrowException(method),
+               ParseServerFromGsonResponse.class);
+
+   }
+
+   public void testDeleteServer() throws SecurityException, NoSuchMethodException {
+      Method method = CloudServersConnection.class.getMethod("deleteServer", int.class);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = factory.create(CloudServersConnection.class).createRequest(endpoint,
+               method, new Object[] { 2 });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2");
+      assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);
+      assertEquals(httpMethod.getHeaders().size(), 0);
 
    }
 

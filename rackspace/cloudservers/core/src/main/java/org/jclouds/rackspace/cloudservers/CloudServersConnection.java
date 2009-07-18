@@ -27,10 +27,13 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
+import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.rackspace.cloudservers.domain.Flavor;
 import org.jclouds.rackspace.cloudservers.domain.Image;
 import org.jclouds.rackspace.cloudservers.domain.Server;
@@ -38,11 +41,16 @@ import org.jclouds.rackspace.cloudservers.functions.ParseFlavorFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseFlavorListFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseImageFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseImageListFromGsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseServerFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseServerListFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ReturnFlavorNotFoundOn404;
 import org.jclouds.rackspace.cloudservers.functions.ReturnImageNotFoundOn404;
+import org.jclouds.rackspace.cloudservers.functions.ReturnServerNotFoundOn404;
+import org.jclouds.rackspace.cloudservers.options.CreateServerOptions;
 import org.jclouds.rackspace.filters.AuthenticateRequest;
 import org.jclouds.rest.ExceptionParser;
+import org.jclouds.rest.PostBinder;
+import org.jclouds.rest.PostParam;
 import org.jclouds.rest.Query;
 import org.jclouds.rest.RequestFilters;
 import org.jclouds.rest.ResponseParser;
@@ -86,6 +94,55 @@ public interface CloudServersConnection {
    // TODO: Error Response Code(s): cloudServersFault (400, 500), serviceUnavailable (503),
    // unauthorized (401), badRequest (400), overLimit (413)
    List<Server> listServerDetails();
+
+   /**
+    * 
+    * This operation returns details of the specified server.
+    * 
+    * @see Server
+    */
+   @GET
+   @ResponseParser(ParseServerFromGsonResponse.class)
+   @Query(key = "format", value = "json")
+   @ExceptionParser(ReturnServerNotFoundOn404.class)
+   @Path("/servers/{id}")
+   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
+   // (400)
+   Server getServerDetails(@PathParam("id") int id);
+
+   /**
+    * 
+    * This operation deletes a cloud server instance from the system.
+    * <p/>
+    * Note: When a server is deleted, all images created from that server are also removed.
+    * 
+    * 
+    * @see Server
+    */
+   @DELETE
+   @ExceptionParser(ReturnFalseOn404.class)
+   @Path("/servers/{id}")
+   // TODO:cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
+   // (400), itemNotFound (404), buildInProgress (409), overLimit (413)
+   boolean deleteServer(@PathParam("id") int id);
+
+   /**
+    * This operation asynchronously provisions a new server. The progress of this operation depends
+    * on several factors including location of the requested image, network i/o, host load, and the
+    * selected flavor. The progress of the request can be checked by performing a GET on /server/id,
+    * which will return a progress attribute (0-100% completion). A password will be randomly
+    * generated for you and returned in the response object. For security reasons, it will not be
+    * returned in subsequent GET calls against a given server ID.
+    */
+   @POST
+   @ResponseParser(ParseServerFromGsonResponse.class)
+   @Query(key = "format", value = "json")
+   @Path("/servers")
+   @PostBinder(CreateServerOptions.class)
+   // TODO:cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401),
+   // badMediaType(415), badRequest (400), serverCapacityUnavailable (503), overLimit (413)
+   Server createServer(@PostParam("name") String name, @PostParam("imageId") int imageId,
+            @PostParam("flavorId") int flavorId);
 
    /**
     * 
@@ -157,7 +214,7 @@ public interface CloudServersConnection {
    // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
    // (400)
    Image getImageDetails(@PathParam("id") int id);
-   
+
    /**
     * 
     * This operation returns details of the specified flavor.

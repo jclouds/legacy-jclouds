@@ -23,10 +23,8 @@
  */
 package org.jclouds.rackspace.cloudservers.domain;
 
-import java.util.List;
 import java.util.Map;
 
-import com.google.inject.internal.Lists;
 import com.google.inject.internal.Maps;
 
 /**
@@ -37,11 +35,11 @@ import com.google.inject.internal.Maps;
  * @since 4.0
  */
 public class Server {
+   public static final Server NOT_FOUND = new Server(-1, "NOT_FOUND");
    private int id;
    private String name;
 
    private Map<String, String> metadata = Maps.newHashMap();
-   private List<File> personality = Lists.newArrayList();
 
    private Addresses addresses;
    private String adminPass;
@@ -75,14 +73,6 @@ public class Server {
 
    public Addresses getAddresses() {
       return addresses;
-   }
-
-   public void setPersonality(List<File> personality) {
-      this.personality = personality;
-   }
-
-   public List<File> getPersonality() {
-      return personality;
    }
 
    public void setAdminPass(String adminPass) {
@@ -173,7 +163,6 @@ public class Server {
       result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
       result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
       result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
-      result = prime * result + ((personality == null) ? 0 : personality.hashCode());
       result = prime * result + ((progress == null) ? 0 : progress.hashCode());
       result = prime * result + ((sharedIpGroupId == null) ? 0 : sharedIpGroupId.hashCode());
       result = prime * result + ((status == null) ? 0 : status.hashCode());
@@ -226,11 +215,6 @@ public class Server {
             return false;
       } else if (!getName().equals(other.getName()))
          return false;
-      if (personality == null) {
-         if (other.personality != null)
-            return false;
-      } else if (!personality.equals(other.personality))
-         return false;
       if (progress == null) {
          if (other.progress != null)
             return false;
@@ -251,11 +235,10 @@ public class Server {
 
    @Override
    public String toString() {
-      return "Server [addresses=" + addresses + ", adminPass=" + adminPass + ", flavorId="
-               + flavorId + ", hostId=" + hostId + ", id=" + id + ", imageId=" + imageId
-               + ", metadata=" + metadata + ", name=" + getName() + ", personality=" + personality
-               + ", progress=" + progress + ", sharedIpGroupId=" + sharedIpGroupId + ", status="
-               + status + "]";
+      return "Server [addresses=" + addresses + ", isAdminPassSet=" + (adminPass != null)
+               + ", flavorId=" + flavorId + ", hostId=" + hostId + ", id=" + id + ", imageId="
+               + imageId + ", metadata=" + metadata + ", name=" + getName() + ", progress="
+               + progress + ", sharedIpGroupId=" + sharedIpGroupId + ", status=" + status + "]";
    }
 
    public void setName(String name) {

@@ -21,27 +21,27 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudservers.domain;
+package org.jclouds.http.functions;
 
-public class File {
+import org.jclouds.http.HttpResponseException;
 
-   private byte[] value;
-   private String path;
+import com.google.common.base.Function;
 
-   public byte[] getValue() {
-      return value;
-   }
+/**
+ * 
+ * @author Adrian Cole
+ * @since 4.0
+ */
+public class ReturnFalseOn404 implements Function<Exception, Boolean> {
 
-   public void setValue(byte[] value) {
-      this.value = ((byte[]) value);
-   }
-
-   public String getPath() {
-      return path;
-   }
-
-   public void setPath(String value) {
-      this.path = value;
+   public Boolean apply(Exception from) {
+      if (from instanceof HttpResponseException) {
+         HttpResponseException responseException = (HttpResponseException) from;
+         if (responseException.getResponse().getStatusCode() == 404) {
+            return false;
+         }
+      }
+      return null;
    }
 
 }
