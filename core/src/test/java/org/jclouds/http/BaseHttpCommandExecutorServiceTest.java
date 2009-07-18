@@ -102,17 +102,31 @@ public abstract class BaseHttpCommandExecutorServiceTest extends BaseJettyTest {
    }
 
    @Test(invocationCount = 50, timeOut = 5000)
+   public void testPost() throws MalformedURLException, ExecutionException, InterruptedException,
+            TimeoutException {
+      Future<String> put = client.post("", "foo");
+      assertEquals(put.get(10, TimeUnit.SECONDS).trim(), "fooPOST");
+   }
+
+   @Test(invocationCount = 50, timeOut = 5000)
+   public void testPostBinder() throws MalformedURLException, ExecutionException,
+            InterruptedException, TimeoutException {
+      Future<String> put = client.postJson("", "foo");
+      assertEquals(put.get(10, TimeUnit.SECONDS).trim(), "{\"key\":\"foo\"}POST");
+   }
+
+   @Test(invocationCount = 50, timeOut = 5000)
    public void testPut() throws MalformedURLException, ExecutionException, InterruptedException,
             TimeoutException {
-      Future<Boolean> put = client.upload("", "foo");
-      assertEquals(put.get(10, TimeUnit.SECONDS), new Boolean(true));
+      Future<String> put = client.upload("", "foo");
+      assertEquals(put.get(10, TimeUnit.SECONDS).trim(), "fooPUT");
    }
 
    @Test(invocationCount = 50, timeOut = 5000)
    public void testPutRedirect() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
-      Future<Boolean> put = client.upload("redirect", "foo");
-      assertEquals(put.get(10, TimeUnit.SECONDS), new Boolean(true));
+      Future<String> put = client.upload("redirect", "foo");
+      assertEquals(put.get(10, TimeUnit.SECONDS).trim(), "fooPUTREDIRECT");
    }
 
    @Test(invocationCount = 50, timeOut = 5000)

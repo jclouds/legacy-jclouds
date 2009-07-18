@@ -88,7 +88,8 @@ public class JaxrsAnnotationProcessor {
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToHeaderParamAnnotations = createMethodToIndexOfParamToAnnotation(HeaderParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToHostPrefixParamAnnotations = createMethodToIndexOfParamToAnnotation(HostPrefixParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToPathParamAnnotations = createMethodToIndexOfParamToAnnotation(PathParam.class);
-   private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToPathParamParserAnnotations = createMethodToIndexOfParamToAnnotation(PathParamParser.class);
+   private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToPostParamAnnotations = createMethodToIndexOfParamToAnnotation(PostParam.class);
+   private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToParamParserAnnotations = createMethodToIndexOfParamToAnnotation(ParamParser.class);
 
    static Map<Method, Map<Integer, Set<Annotation>>> createMethodToIndexOfParamToAnnotation(
             final Class<? extends Annotation> annotation) {
@@ -184,7 +185,8 @@ public class JaxrsAnnotationProcessor {
                methodToIndexOfParamToHeaderParamAnnotations.get(method).get(index);
                methodToIndexOfParamToHostPrefixParamAnnotations.get(method).get(index);
                methodToindexOfParamToPathParamAnnotations.get(method).get(index);
-               methodToindexOfParamToPathParamParserAnnotations.get(method).get(index);
+               methodToindexOfParamToPostParamAnnotations.get(method).get(index);
+               methodToindexOfParamToParamParserAnnotations.get(method).get(index);
                methodToIndexesOfOptions.get(method);
             }
          } else if (isConstantDeclaration(method)) {
@@ -310,6 +312,18 @@ public class JaxrsAnnotationProcessor {
       return null;
    }
 
+   public PostEntityBinder getPostEntityBinderOrNull(Method method, Object[] args) {
+      for (Object arg : args) {
+         if (arg instanceof PostEntityBinder)
+            return (PostEntityBinder) arg;
+      }
+      PostBinder annotation = method.getAnnotation(PostBinder.class);
+      if (annotation != null) {
+         return injector.getInstance(annotation.value());
+      }
+      return null;
+   }
+
    private Map<String, String> constants = Maps.newHashMap();
 
    public boolean isHttpMethod(Method method) {
@@ -347,9 +361,18 @@ public class JaxrsAnnotationProcessor {
    public HttpRequest buildEntityIfPostOrPutRequest(Method method, Object[] args,
             HttpRequest request) {
       switch (request.getMethod()) {
-         case PUT:
          case POST:
-
+            PostEntityBinder postBinder = null;
+            Map<String, String> postParams = buildPostParams(method, args);
+            // post binder is only useful if there are parameters. We guard here in case the
+            // PostEntityBinder is also an EntityBinder. If so, it can be used with or without
+            // parameters.
+            if (postParams.size() > 0
+                     && (postBinder = this.getPostEntityBinderOrNull(method, args)) != null) {
+               postBinder.addEntityToRequest(postParams, request);
+               break;
+            }
+         case PUT:
             HttpRequestOptions options = findOptionsIn(method, args);
             if (options != null) {
                optionsBinder.addEntityToRequest(options, request);
@@ -455,14 +478,14 @@ public class JaxrsAnnotationProcessor {
       pathParamValues.putAll(constants);
       Map<Integer, Set<Annotation>> indexToPathParam = methodToindexOfParamToPathParamAnnotations
                .get(method);
-      Map<Integer, Set<Annotation>> indexToPathParamExtractor = methodToindexOfParamToPathParamParserAnnotations
+      Map<Integer, Set<Annotation>> indexToParamExtractor = methodToindexOfParamToParamParserAnnotations
                .get(method);
       for (Entry<Integer, Set<Annotation>> entry : indexToPathParam.entrySet()) {
          for (Annotation key : entry.getValue()) {
-            Set<Annotation> extractors = indexToPathParamExtractor.get(entry.getKey());
+            Set<Annotation> extractors = indexToParamExtractor.get(entry.getKey());
 
             if (extractors != null && extractors.size() > 0) {
-               PathParamParser extractor = (PathParamParser) extractors.iterator().next();
+               ParamParser extractor = (ParamParser) extractors.iterator().next();
                pathParamValues.put(((PathParam) key).value(), injector.getInstance(
                         extractor.value()).apply(args[entry.getKey()]));
             } else {
@@ -478,5 +501,29 @@ public class JaxrsAnnotationProcessor {
          }
       }
       return pathParamValues;
+   }
+
+   private Map<String, String> buildPostParams(Method method, Object[] args) {
+      Map<String, String> postParams = Maps.newHashMap();
+      Map<Integer, Set<Annotation>> indexToPathParam = methodToindexOfParamToPostParamAnnotations
+               .get(method);
+      Map<Integer, Set<Annotation>> indexToParamExtractor = methodToindexOfParamToParamParserAnnotations
+               .get(method);
+      for (Entry<Integer, Set<Annotation>> entry : indexToPathParam.entrySet()) {
+         for (Annotation key : entry.getValue()) {
+            Set<Annotation> extractors = indexToParamExtractor.get(entry.getKey());
+
+            if (extractors != null && extractors.size() > 0) {
+               ParamParser extractor = (ParamParser) extractors.iterator().next();
+               postParams.put(((PathParam) key).value(), injector.getInstance(extractor.value())
+                        .apply(args[entry.getKey()]));
+            } else {
+               String paramKey = ((PostParam) key).value();
+               String paramValue = args[entry.getKey()].toString();
+               postParams.put(paramKey, paramValue);
+            }
+         }
+      }
+      return postParams;
    }
 }

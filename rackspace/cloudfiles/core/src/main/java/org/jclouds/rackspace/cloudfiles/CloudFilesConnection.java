@@ -55,7 +55,7 @@ import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
 import org.jclouds.rackspace.filters.AuthenticateRequest;
 import org.jclouds.rest.EntityParam;
 import org.jclouds.rest.ExceptionParser;
-import org.jclouds.rest.PathParamParser;
+import org.jclouds.rest.ParamParser;
 import org.jclouds.rest.Query;
 import org.jclouds.rest.RequestFilters;
 import org.jclouds.rest.ResponseParser;
@@ -109,7 +109,7 @@ public interface CloudFilesConnection {
    @ResponseParser(ParseETagHeader.class)
    Future<byte[]> putObject(
          @PathParam("container") String container,
-         @PathParam("key") @PathParamParser(CFObjectKey.class) @EntityParam(CFObjectBinder.class) 
+         @PathParam("key") @ParamParser(CFObjectKey.class) @EntityParam(CFObjectBinder.class) 
             CFObject object);
 
    @HEAD

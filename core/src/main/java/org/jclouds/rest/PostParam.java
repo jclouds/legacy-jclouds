@@ -29,18 +29,17 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import javax.ws.rs.PathParam;
-
-import com.google.common.base.Function;
-
 /**
- * Extracts the value of a path parameter from an object.
+ * Designates that this parameter will hold the entity for a PUT or POST command.
  * 
- * @see PathParam
  * @author Adrian Cole
  */
 @Target(PARAMETER)
 @Retention(RUNTIME)
-public @interface PathParamParser {
-   Class<? extends Function<Object, String>> value();
+public @interface PostParam {
+
+   /**
+    * The key used in a map passed to the {@link PostEntityBinder} associated with the request.
+    */
+   String value();
 }

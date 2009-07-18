@@ -23,13 +23,24 @@
  */
 package org.jclouds.rest;
 
-import org.jclouds.http.HttpRequest;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
 /**
- * Adds an entity to a request.
+ * Designates that this parameter will hold the entity for a PUT or POST command.
  * 
  * @author Adrian Cole
  */
-public interface EntityBinder {
-   public void addEntityToRequest(Object toBind, HttpRequest request);
+@Target(METHOD)
+@Retention(RUNTIME)
+public @interface PostBinder {
+
+   /**
+    * How to bind {@link PostParam} values, if there is no {@link PostEntityBinder} in the method
+    * definition
+    */
+   Class<? extends PostEntityBinder> value();
 }

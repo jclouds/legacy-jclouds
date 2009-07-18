@@ -28,14 +28,18 @@ import java.util.concurrent.Future;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
+import org.jclouds.http.binders.JsonBinder;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.rest.EntityParam;
 import org.jclouds.rest.ExceptionParser;
+import org.jclouds.rest.PostBinder;
+import org.jclouds.rest.PostParam;
 import org.jclouds.rest.RequestFilters;
 import org.jclouds.rest.XMLResponseParser;
 
@@ -80,7 +84,16 @@ public interface IntegrationTestClient {
 
    @PUT
    @Path("objects/{id}")
-   Future<Boolean> upload(@PathParam("id") String id, @EntityParam String toPut);
+   Future<String> upload(@PathParam("id") String id, @EntityParam String toPut);
+
+   @POST
+   @Path("objects/{id}")
+   Future<String> post(@PathParam("id") String id, @EntityParam String toPut);
+
+   @POST
+   @Path("objects/{id}")
+   @PostBinder(JsonBinder.class)
+   Future<String> postJson(@PathParam("id") String id, @PostParam("key") String toPut);
 
    @GET
    @Path("objects/{id}")
@@ -94,6 +107,7 @@ public interface IntegrationTestClient {
          }
       }
    }
+
    @GET
    @Path("objects/{id}")
    Future<String> download(@PathParam("id") String id, @HeaderParam("test") String header);

@@ -66,7 +66,7 @@ import org.jclouds.rest.ExceptionParser;
 import org.jclouds.rest.Header;
 import org.jclouds.rest.HostPrefixParam;
 import org.jclouds.rest.HttpRequestOptionsBinder;
-import org.jclouds.rest.PathParamParser;
+import org.jclouds.rest.ParamParser;
 import org.jclouds.rest.Query;
 import org.jclouds.rest.RequestFilters;
 import org.jclouds.rest.ResponseParser;
@@ -212,7 +212,7 @@ public interface S3Connection {
    @ResponseParser(ParseETagHeader.class)
    Future<byte[]> putObject(
             @HostPrefixParam String bucketName,
-            @PathParam("key") @PathParamParser(S3ObjectKey.class) @EntityParam(S3ObjectBinder.class) S3Object object);
+            @PathParam("key") @ParamParser(S3ObjectKey.class) @EntityParam(S3ObjectBinder.class) S3Object object);
 
    /**
     * Like {@link #putObject(String, S3Object)} except you can use {@link PutObjectOptions} to
@@ -234,7 +234,7 @@ public interface S3Connection {
    @ResponseParser(ParseETagHeader.class)
    Future<byte[]> putObject(
             @HostPrefixParam String bucketName,
-            @PathParam("key") @PathParamParser(S3ObjectKey.class) @EntityParam(S3ObjectBinder.class) S3Object object,
+            @PathParam("key") @ParamParser(S3ObjectKey.class) @EntityParam(S3ObjectBinder.class) S3Object object,
             PutObjectOptions options);
 
    /**

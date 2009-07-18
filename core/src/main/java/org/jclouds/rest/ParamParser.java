@@ -23,13 +23,24 @@
  */
 package org.jclouds.rest;
 
-import org.jclouds.http.HttpRequest;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import javax.ws.rs.PathParam;
+
+import com.google.common.base.Function;
 
 /**
- * Adds an entity to a request.
+ * Extracts the value of a parameter from an object.
  * 
+ * @see PathParam
  * @author Adrian Cole
  */
-public interface EntityBinder {
-   public void addEntityToRequest(Object toBind, HttpRequest request);
+@Target(PARAMETER)
+@Retention(RUNTIME)
+public @interface ParamParser {
+   Class<? extends Function<Object, String>> value();
 }

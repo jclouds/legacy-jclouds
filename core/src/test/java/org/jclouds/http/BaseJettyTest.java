@@ -73,11 +73,23 @@ public abstract class BaseJettyTest {
       Handler server1Handler = new AbstractHandler() {
          public void handle(String target, HttpServletRequest request,
                   HttpServletResponse response, int dispatch) throws IOException, ServletException {
-            if (failIfNoContentLength(request, response))
+            if (failIfNoContentLength(request, response)) {
                return;
-            else if (request.getMethod().equals("PUT")) {
+            } else if (target.indexOf("redirect") > 0) {
+               response.sendRedirect("http://localhost:" + (testPort + 1));
+            } else if (request.getMethod().equals("PUT")) {
                if (request.getContentLength() > 0) {
-                  Utils.toStringAndClose(request.getInputStream());
+                  response.setStatus(HttpServletResponse.SC_OK);
+                  response.getWriter().println(
+                           Utils.toStringAndClose(request.getInputStream()) + "PUT");
+               } else {
+                  response.sendError(500, "no content");
+               }
+            } else if (request.getMethod().equals("POST")) {
+               if (request.getContentLength() > 0) {
+                  response.setStatus(HttpServletResponse.SC_OK);
+                  response.getWriter().println(
+                           Utils.toStringAndClose(request.getInputStream()) + "POST");
                } else {
                   response.sendError(500, "no content");
                }
@@ -87,8 +99,6 @@ public abstract class BaseJettyTest {
                response.setContentType("text/plain");
                response.setStatus(HttpServletResponse.SC_OK);
                response.getWriter().println("test");
-            } else if (target.indexOf("redirect") > 0) {
-               response.sendRedirect("http://localhost:" + (testPort + 1));
             } else {
                if (failOnRequest(request, response))
                   return;
@@ -109,7 +119,9 @@ public abstract class BaseJettyTest {
                   HttpServletResponse response, int dispatch) throws IOException, ServletException {
             if (request.getMethod().equals("PUT")) {
                if (request.getContentLength() > 0) {
-                  Utils.toStringAndClose(request.getInputStream());
+                  response.setStatus(HttpServletResponse.SC_OK);
+                  response.getWriter().println(
+                           Utils.toStringAndClose(request.getInputStream()) + "PUTREDIRECT");
                } else {
                   response.sendError(500, "no content");
                }

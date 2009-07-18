@@ -31,10 +31,12 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.Future;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -46,6 +48,7 @@ import org.jclouds.http.HttpMethod;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.binders.JsonBinder;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.functions.ReturnStringIf200;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
@@ -74,6 +77,101 @@ import com.google.inject.name.Names;
  */
 @Test(groups = "unit", testName = "jaxrs.JaxrsUtilTest")
 public class JaxrsAnnotationProcessorTest {
+
+   public class TestPost {
+      @POST
+      public void post(@EntityParam String content) {
+      }
+
+      @POST
+      public void postAsJson(@EntityParam(JsonBinder.class) String content) {
+      }
+
+      @POST
+      @Path("{foo}")
+      public void postWithPath(@PathParam("foo") @PostParam("fooble") String path,
+               PostEntityBinder content) {
+      }
+
+      @POST
+      @Path("{foo}")
+      @PostBinder(JsonBinder.class)
+      public void postWithMethodBinder(@PathParam("foo") @PostParam("fooble") String path) {
+      }
+
+   }
+
+   public void testCreatePostRequest() throws SecurityException, NoSuchMethodException {
+      Method method = TestPost.class.getMethod("post", String.class);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = factory.create(TestPost.class).createRequest(endpoint, method,
+               new Object[] { "data" });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "");
+      assertEquals(httpMethod.getMethod(), HttpMethod.POST);
+      assertEquals(httpMethod.getHeaders().size(), 2);
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
+               .singletonList("application/unknown"));
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
+               .singletonList("data".getBytes().length + ""));
+      assertEquals(httpMethod.getEntity(), "data");
+   }
+
+   public void testCreatePostJsonRequest() throws SecurityException, NoSuchMethodException {
+      Method method = TestPost.class.getMethod("postAsJson", String.class);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = factory.create(TestPost.class).createRequest(endpoint, method,
+               new Object[] { "data" });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "");
+      assertEquals(httpMethod.getMethod(), HttpMethod.POST);
+      assertEquals(httpMethod.getHeaders().size(), 2);
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
+               .singletonList("application/json"));
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
+               .singletonList("\"data\"".getBytes().length + ""));
+      assertEquals(httpMethod.getEntity(), "\"data\"");
+   }
+
+   public void testCreatePostWithPathRequest() throws SecurityException, NoSuchMethodException {
+      Method method = TestPost.class
+               .getMethod("postWithPath", String.class, PostEntityBinder.class);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = factory.create(TestPost.class).createRequest(endpoint, method,
+               new Object[] { "data", new PostEntityBinder() {
+
+                  public void addEntityToRequest(Map<String, String> postParams, HttpRequest request) {
+                     request.setEntity(postParams.get("fooble"));
+                  }
+
+                  public void addEntityToRequest(Object toBind, HttpRequest request) {
+                     throw new RuntimeException("this shouldn't be used in POST");
+                  }
+
+               } });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/data");
+      assertEquals(httpMethod.getMethod(), HttpMethod.POST);
+      assertEquals(httpMethod.getHeaders().size(), 0);
+      assertEquals(httpMethod.getEntity(), "data");
+   }
+
+   public void testCreatePostWithMethodBinder() throws SecurityException, NoSuchMethodException {
+      Method method = TestPost.class.getMethod("postWithMethodBinder", String.class);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = factory.create(TestPost.class).createRequest(endpoint, method,
+               new Object[] { "data", });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/data");
+      assertEquals(httpMethod.getMethod(), HttpMethod.POST);
+      assertEquals(httpMethod.getHeaders().size(), 2);
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
+               .singletonList("application/json"));
+      String expected = "{\"fooble\":\"data\"}";
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
+               .singletonList(expected.getBytes().length + ""));
+      assertEquals(httpMethod.getEntity(), expected);
+   }
 
    static class TestRequestFilter1 implements HttpRequestFilter {
 
@@ -188,7 +286,7 @@ public class JaxrsAnnotationProcessorTest {
       @GET
       @Path("{path}")
       public void onePathParamExtractor(
-               @PathParam("path") @PathParamParser(FirstCharacter.class) String path) {
+               @PathParam("path") @ParamParser(FirstCharacter.class) String path) {
       }
    }
 
@@ -316,7 +414,7 @@ public class JaxrsAnnotationProcessorTest {
 
       @PUT
       @Path("/{id}")
-      public Future<String> put(@PathParam("id") @PathParamParser(FirstCharacter.class) String id,
+      public Future<String> put(@PathParam("id") @ParamParser(FirstCharacter.class) String id,
                @EntityParam String payload) {
          return null;
       }

@@ -52,6 +52,14 @@ import com.google.inject.Module;
 public class GaeHttpCommandExecutorServiceIntegrationTest extends
          BaseHttpCommandExecutorServiceTest {
 
+   @Override
+   @Test(invocationCount = 50, timeOut = 3000)
+   public void testPostBinder() throws MalformedURLException, ExecutionException,
+            InterruptedException, TimeoutException {
+      setupApiProxy();
+      super.testPostBinder();
+   }
+
    @BeforeTest
    void validateExecutor() {
       ExecutorService executorService = injector.getInstance(ExecutorService.class);
@@ -122,6 +130,14 @@ public class GaeHttpCommandExecutorServiceIntegrationTest extends
             InterruptedException, TimeoutException {
       setupApiProxy();
       super.testGetSynchException();
+   }
+
+   @Override
+   @Test(invocationCount = 50, timeOut = 3000)
+   public void testPost() throws MalformedURLException, ExecutionException, InterruptedException,
+            TimeoutException {
+      setupApiProxy();
+      super.testPost();
    }
 
    @Override
@@ -207,4 +223,5 @@ public class GaeHttpCommandExecutorServiceIntegrationTest extends
    @Override
    protected void addConnectionProperties(Properties props) {
    }
+
 }
