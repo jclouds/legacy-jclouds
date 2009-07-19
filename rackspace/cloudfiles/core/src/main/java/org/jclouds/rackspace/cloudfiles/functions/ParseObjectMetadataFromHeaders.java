@@ -118,9 +118,10 @@ public class ParseObjectMetadataFromHeaders implements Function<HttpResponse, CF
    private void addUserMetadataTo(HttpResponse from, Metadata metadata) {
       for (Entry<String, String> header : from.getHeaders().entries()) {
          if (header.getKey() != null 
-             && header.getKey().startsWith(CloudFilesHeaders.USER_METADATA_PREFIX))
+             && header.getKey().toLowerCase().startsWith(
+                   CloudFilesHeaders.USER_METADATA_PREFIX.toLowerCase()))
          {
-            metadata.getUserMetadata().put(header.getKey(), header.getValue());
+            metadata.getUserMetadata().put(header.getKey().toLowerCase(), header.getValue());
          }
       }
    }

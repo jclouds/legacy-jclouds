@@ -66,7 +66,7 @@ public class GetOptions extends BaseHttpRequestOptions {
       Multimap<String, String> headers = super.buildRequestHeaders();
       String range = getRange();
       if (range != null)
-         headers.put("Content-Range", this.getRange());
+         headers.put("Range", this.getRange());
       return headers;
    }
 

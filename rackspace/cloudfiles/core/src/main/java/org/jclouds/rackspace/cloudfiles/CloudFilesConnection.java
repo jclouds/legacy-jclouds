@@ -36,6 +36,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.jclouds.http.functions.ParseETagHeader;
+import org.jclouds.http.options.GetOptions;
 import org.jclouds.rackspace.cloudfiles.binders.CFObjectBinder;
 import org.jclouds.rackspace.cloudfiles.binders.UserMetadataBinder;
 import org.jclouds.rackspace.cloudfiles.domain.AccountMetadata;
@@ -86,13 +87,7 @@ public interface CloudFilesConnection {
    @ResponseParser(ParseContainerListFromGsonResponse.class)
    @Query(key = "format", value = "json")
    @Path("/")
-   List<ContainerMetadata> listOwnedContainers();
-
-   @GET
-   @ResponseParser(ParseContainerListFromGsonResponse.class)
-   @Query(key = "format", value = "json")
-   @Path("/")
-   List<ContainerMetadata> listOwnedContainers(ListContainerOptions options);
+   List<ContainerMetadata> listOwnedContainers(ListContainerOptions ... options);
 
    @PUT
    @Path("{container}")
@@ -124,9 +119,7 @@ public interface CloudFilesConnection {
    @ExceptionParser(ReturnS3ObjectNotFoundOn404.class)
    @Path("{container}/{key}")
    Future<CFObject> getObject(@PathParam("container") String container, 
-         @PathParam("key") String key);
-
-   // TODO: GET object with options
+         @PathParam("key") String key, GetOptions ... options);
 
    @POST
    @ResponseParser(ReturnTrueOn202FalseOtherwise.class)

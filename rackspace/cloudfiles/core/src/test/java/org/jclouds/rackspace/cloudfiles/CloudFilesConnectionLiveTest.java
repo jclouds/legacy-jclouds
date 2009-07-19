@@ -38,6 +38,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.HttpUtils;
+import org.jclouds.http.options.GetOptions;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rackspace.cloudfiles.domain.AccountMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.CFObject;
@@ -78,13 +79,30 @@ public class CloudFilesConnectionLiveTest {
       long initialContainerCount = response.size();
       assertTrue(initialContainerCount >= 0);
 
-      String[] containerNames = new String[] { bucketPrefix + ".testListOwnedContainers1",
-               bucketPrefix + ".testListOwnedContainers2" };
+      // Create test containers
+      String[] containerNames = new String[] { 
+            bucketPrefix + ".testListOwnedContainers1",
+            bucketPrefix + ".testListOwnedContainers2" };
       assertTrue(connection.putContainer(containerNames[0]));
       assertTrue(connection.putContainer(containerNames[1]));
+      
+      // Test default listing
       response = connection.listOwnedContainers();
       assertEquals(response.size(), initialContainerCount + 2);
+      
+      // Test listing with options
+      response = connection.listOwnedContainers(ListContainerOptions.Builder
+            .afterMarker(containerNames[0].substring(0, containerNames[0].length() - 1)) 
+            .maxResults(1));
+      assertEquals(response.size(), 1);
+      assertEquals(response.get(0).getName(), containerNames[0]);
 
+      response = connection.listOwnedContainers(ListContainerOptions.Builder
+            .afterMarker(containerNames[0]).maxResults(1));
+      assertEquals(response.size(), 1);
+      assertEquals(response.get(0).getName(), containerNames[1]);
+
+      // Cleanup and test containers have been removed
       assertTrue(connection.deleteContainerIfEmpty(containerNames[0]));
       assertTrue(connection.deleteContainerIfEmpty(containerNames[1]));
       response = connection.listOwnedContainers();
@@ -160,7 +178,7 @@ public class CloudFilesConnectionLiveTest {
       object.generateETag();
       object.getMetadata().setContentType("text/plain");
       object.getMetadata().getUserMetadata().put(
-               CloudFilesHeaders.USER_METADATA_PREFIX + "metadata", "metadata-value");
+               CloudFilesHeaders.USER_METADATA_PREFIX + "Metadata", "metadata-value");
       byte[] md5 = connection.putObject(containerName, object).get(10, TimeUnit.SECONDS);
       assertEquals(HttpUtils.toHexString(md5), 
             HttpUtils.toHexString(object.getMetadata().getETag()));
@@ -178,13 +196,13 @@ public class CloudFilesConnectionLiveTest {
       assertEquals(metadata.getUserMetadata().entries().size(), 1);
       // Notice the quirk where CF changes the case of returned metadata names      
       assertEquals(Iterables.getLast(metadata.getUserMetadata().get(
-            CloudFilesHeaders.USER_METADATA_PREFIX + "Metadata")), 
+            (CloudFilesHeaders.USER_METADATA_PREFIX + "Metadata").toLowerCase())), 
             "metadata-value");
 
       // Test POST to update object's metadata
       Multimap<String, String> userMetadata = HashMultimap.create();
-      userMetadata.put(CloudFilesHeaders.USER_METADATA_PREFIX + "new-metadata-1", "value-1");
-      userMetadata.put(CloudFilesHeaders.USER_METADATA_PREFIX + "new-metadata-2", "value-2");
+      userMetadata.put(CloudFilesHeaders.USER_METADATA_PREFIX + "New-Metadata-1", "value-1");
+      userMetadata.put(CloudFilesHeaders.USER_METADATA_PREFIX + "New-Metadata-2", "value-2");
       assertTrue(connection.setObjectMetadata(containerName, object.getKey(), userMetadata));
       
       // Test GET of missing object
@@ -193,18 +211,18 @@ public class CloudFilesConnectionLiveTest {
       assertEquals(getObject, CFObject.NOT_FOUND);
       
       // Test GET of object (including updated metadata)
-      getObject = connection.getObject(containerName, object.getKey()).get(10, TimeUnit.SECONDS);
+      getObject = connection.getObject(containerName, object.getKey()).get(120, TimeUnit.SECONDS);
       assertEquals(IOUtils.toString((InputStream)getObject.getData()), data);
       assertEquals(getObject.getKey(), object.getKey());
       assertEquals(getObject.getContentLength(), data.length());
       assertEquals(getObject.getMetadata().getContentType(), "text/plain");
       assertEquals(getObject.getMetadata().getETag(), object.getMetadata().getETag());
       assertEquals(getObject.getMetadata().getUserMetadata().entries().size(), 2);
-      // Notice the quirk where CF changes the case of sreturned metadata names      
+      // Notice the quirk where CF changes the case of returned metadata names      
       assertEquals(Iterables.getLast(getObject.getMetadata().getUserMetadata().get(
-            CloudFilesHeaders.USER_METADATA_PREFIX + "New-Metadata-1")), "value-1");
+            (CloudFilesHeaders.USER_METADATA_PREFIX + "New-Metadata-1").toLowerCase())), "value-1");
       assertEquals(Iterables.getLast(getObject.getMetadata().getUserMetadata().get(
-            CloudFilesHeaders.USER_METADATA_PREFIX + "New-Metadata-2")), "value-2");
+            (CloudFilesHeaders.USER_METADATA_PREFIX + "New-Metadata-2").toLowerCase())), "value-2");
       
       // Test PUT with invalid ETag (as if object's data was corrupted in transit)
       String correctEtag = HttpUtils.toHexString(object.getMetadata().getETag());
@@ -222,7 +240,24 @@ public class CloudFilesConnectionLiveTest {
       object = new CFObject("chunked-object", bais);
       md5 = connection.putObject(containerName, object).get(10, TimeUnit.SECONDS);
       assertEquals(HttpUtils.toHexString(md5), correctEtag);
-      // TODO: Get and confirm data
+      
+      // Test GET with options
+      // Non-matching ETag
+      try {
+         connection.getObject(containerName, object.getKey(),
+               GetOptions.Builder.ifETagDoesntMatch(md5)).get(120, TimeUnit.SECONDS);
+      } catch (Exception e) {
+         assertEquals(e.getCause().getClass(), HttpResponseException.class);
+         assertEquals(((HttpResponseException) e.getCause()).getResponse().getStatusCode(), 304);         
+      }
+      // Matching ETag
+      getObject = connection.getObject(containerName, object.getKey(),
+            GetOptions.Builder.ifETagMatches(md5)).get(120, TimeUnit.SECONDS);
+      assertEquals(getObject.getMetadata().getETag(), md5);
+      // Range
+      getObject = connection.getObject(containerName, object.getKey(),
+            GetOptions.Builder.startAt(8)).get(120, TimeUnit.SECONDS);
+      assertEquals(IOUtils.toString((InputStream)getObject.getData()), data.substring(8));
 
       assertTrue(connection.deleteObject(containerName, "object"));
       assertTrue(connection.deleteObject(containerName, "chunked-object"));
