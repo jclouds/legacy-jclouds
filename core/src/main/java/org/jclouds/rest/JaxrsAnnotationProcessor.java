@@ -54,6 +54,7 @@ import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.logging.Logger;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
@@ -128,13 +129,17 @@ public class JaxrsAnnotationProcessor {
 
    }
 
+   private static final Class<? extends HttpRequestOptions[]> optionsVarArgsClass = new HttpRequestOptions[] {}
+            .getClass();
+
    private final Map<Method, Set<Integer>> methodToIndexesOfOptions = new MapMaker()
             .makeComputingMap(new Function<Method, Set<Integer>>() {
                public Set<Integer> apply(final Method method) {
                   Set<Integer> toReturn = Sets.newHashSet();
                   for (int index = 0; index < method.getParameterTypes().length; index++) {
                      Class<?> type = method.getParameterTypes()[index];
-                     if (HttpRequestOptions.class.isAssignableFrom(type))
+                     if (HttpRequestOptions.class.isAssignableFrom(type)
+                              || optionsVarArgsClass.isAssignableFrom(type))
                         toReturn.add(index);
                   }
                   return toReturn;
@@ -147,7 +152,8 @@ public class JaxrsAnnotationProcessor {
 
    private final ParseSax.Factory parserFactory;
 
-   Function<HttpResponse, ?> createResponseParser(Method method) {
+   @VisibleForTesting
+   public Function<HttpResponse, ?> createResponseParser(Method method) {
       Function<HttpResponse, ?> transformer;
       Class<? extends HandlerWithResult<?>> handler = getXMLTransformerOrNull(method);
       if (handler != null) {
@@ -158,7 +164,8 @@ public class JaxrsAnnotationProcessor {
       return transformer;
    }
 
-   Function<Exception, ?> createExceptionParserOrNullIfNotFound(Method method) {
+   @VisibleForTesting
+   public Function<Exception, ?> createExceptionParserOrNullIfNotFound(Method method) {
       ExceptionParser annotation = method.getAnnotation(ExceptionParser.class);
       if (annotation != null) {
          return injector.getInstance(annotation.value());
@@ -226,6 +233,10 @@ public class JaxrsAnnotationProcessor {
          }
          for (Entry<String, String> matrix : options.buildMatrixParameters().entries()) {
             builder.matrixParam(matrix.getKey(), matrix.getValue());
+         }
+         String pathSuffix = options.buildPathSuffix();
+         if (pathSuffix != null) {
+            builder.path(pathSuffix);
          }
       }
 
@@ -444,7 +455,22 @@ public class JaxrsAnnotationProcessor {
 
    private HttpRequestOptions findOptionsIn(Method method, Object[] args) {
       for (int index : methodToIndexesOfOptions.get(method)) {
-         return (HttpRequestOptions) args[index];
+         if (args.length >= index + 1) {// accomodate varargs
+            if (optionsVarArgsClass.isAssignableFrom(args[index].getClass())) {
+               HttpRequestOptions[] options = (HttpRequestOptions[]) args[index];
+               if (options.length == 0) {
+                  return null;
+               } else if (options.length == 1) {
+                  return options[0];
+               } else {
+                  throw new IllegalArgumentException(
+                           "we currently do not support multiple varargs options in: "
+                                    + method.getName());
+               }
+            } else {
+               return (HttpRequestOptions) args[index];
+            }
+         }
       }
       return null;
    }

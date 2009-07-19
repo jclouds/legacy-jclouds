@@ -53,7 +53,9 @@ public interface HttpRequestOptions {
     * @return multimap that may contain matrix parameters.
     */
    Multimap<String, String> buildMatrixParameters();
-   
+
    String buildStringEntity();
+
+   String buildPathSuffix();
 
 }

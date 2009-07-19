@@ -40,6 +40,7 @@ public class BaseHttpRequestOptions implements HttpRequestOptions {
    protected Multimap<String, String> queryParameters = HashMultimap.create();
    protected Multimap<String, String> headers = HashMultimap.create();
    protected String entity;
+   protected String pathSuffix;
 
    public String buildStringEntity() {
       return entity;
@@ -74,6 +75,10 @@ public class BaseHttpRequestOptions implements HttpRequestOptions {
     */
    public Multimap<String, String> buildMatrixParameters() {
       return matrixParameters;
+   }
+
+   public String buildPathSuffix() {
+      return pathSuffix;
    }
 
 }

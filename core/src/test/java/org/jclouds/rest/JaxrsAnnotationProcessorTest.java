@@ -391,6 +391,13 @@ public class JaxrsAnnotationProcessorTest {
       }
 
       @GET
+      @VirtualHost
+      @Path("/{id}")
+      public Future<String> get(@PathParam("id") String id, HttpRequestOptions... options) {
+         return null;
+      }
+
+      @GET
       @Path("/{id}")
       @ResponseParser(ReturnStringIf200.class)
       public Future<String> get(@PathParam("id") String id,
@@ -433,6 +440,25 @@ public class JaxrsAnnotationProcessorTest {
       public Future<String> putHeader(@PathParam("id") String id, @EntityParam String payload) {
          return null;
       }
+   }
+
+   public void testCreateGetVarArgOptionsThatProducesHeaders() throws SecurityException,
+            NoSuchMethodException {
+      DateTime date = new DateTime();
+      GetOptions options = GetOptions.Builder.ifModifiedSince(date);
+      HttpRequestOptions[] optionsHolder = new  HttpRequestOptions[]{};
+      Method method = TestRequest.class.getMethod("get", String.class, optionsHolder.getClass());
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = factory.create(TestRequest.class).createRequest(endpoint, method,
+               new Object[] { "1", options });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/1");
+      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
+      assertEquals(httpMethod.getHeaders().size(), 2);
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.HOST), Collections
+               .singletonList("localhost"));
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.IF_MODIFIED_SINCE), Collections
+               .singletonList(dateService.rfc822DateFormat(date)));
    }
 
    public void testCreateGetOptionsThatProducesHeaders() throws SecurityException,
