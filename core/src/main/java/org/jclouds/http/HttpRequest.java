@@ -77,7 +77,11 @@ public class HttpRequest extends HttpMessage implements Request<URI> {
       sb.append("{endPoint='").append(endpoint).append('\'');
       sb.append(", method='").append(method).append('\'');
       sb.append(", headers=").append(headers);
-      sb.append(", entity set=").append(entity != null);
+      if (entity != null && entity instanceof String) {
+         sb.append(", entity=").append(entity);
+      } else {
+         sb.append(", entity set=").append(entity != null);
+      }
       sb.append('}');
       return sb.toString();
    }

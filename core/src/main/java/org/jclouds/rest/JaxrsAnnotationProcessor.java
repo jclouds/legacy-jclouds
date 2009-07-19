@@ -325,7 +325,23 @@ public class JaxrsAnnotationProcessor {
 
    public PostEntityBinder getPostEntityBinderOrNull(Method method, Object[] args) {
       for (Object arg : args) {
-         if (arg instanceof PostEntityBinder) {
+         if (arg instanceof Object[]) {
+            Object[] postBinders = (Object[]) arg;
+            if (postBinders.length == 0) {
+            } else if (postBinders.length == 1) {
+               if (postBinders[0] instanceof PostEntityBinder) {
+                  PostEntityBinder binder = (PostEntityBinder) postBinders[0];
+                  injector.injectMembers(binder);
+                  return binder;
+               }
+            } else {
+               if (postBinders[0] instanceof PostEntityBinder) {
+                  throw new IllegalArgumentException(
+                           "we currently do not support multiple varargs postBinders in: "
+                                    + method.getName());
+               }
+            }
+         } else if (arg instanceof PostEntityBinder) {
             PostEntityBinder binder = (PostEntityBinder) arg;
             injector.injectMembers(binder);
             return binder;
@@ -456,16 +472,21 @@ public class JaxrsAnnotationProcessor {
    private HttpRequestOptions findOptionsIn(Method method, Object[] args) {
       for (int index : methodToIndexesOfOptions.get(method)) {
          if (args.length >= index + 1) {// accomodate varargs
-            if (optionsVarArgsClass.isAssignableFrom(args[index].getClass())) {
-               HttpRequestOptions[] options = (HttpRequestOptions[]) args[index];
+            if (args[index] instanceof Object[]) {
+               Object[] options = (Object[]) args[index];
                if (options.length == 0) {
-                  return null;
                } else if (options.length == 1) {
-                  return options[0];
+                  if (options[0] instanceof HttpRequestOptions) {
+                     HttpRequestOptions binder = (HttpRequestOptions) options[0];
+                     injector.injectMembers(binder);
+                     return binder;
+                  }
                } else {
-                  throw new IllegalArgumentException(
-                           "we currently do not support multiple varargs options in: "
-                                    + method.getName());
+                  if (options[0] instanceof HttpRequestOptions) {
+                     throw new IllegalArgumentException(
+                              "we currently do not support multiple varargs options in: "
+                                       + method.getName());
+                  }
                }
             } else {
                return (HttpRequestOptions) args[index];
