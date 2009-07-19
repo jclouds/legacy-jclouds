@@ -23,12 +23,18 @@
  */
 package org.jclouds.rackspace.cloudservers.domain;
 
-
+/**
+ * A backup schedule can be defined to create server images at regular intervals (daily and weekly).
+ * Backup schedules are configurable per server.
+ * 
+ * @author Adrian Cole
+ */
 public class BackupSchedule {
 
    protected DailyBackup daily;
    protected boolean enabled;
    protected String weekly;
+
    public DailyBackup getDaily() {
       return daily;
    }
@@ -40,6 +46,7 @@ public class BackupSchedule {
    public boolean isEnabled() {
       return enabled;
    }
+
    public void setEnabled(boolean value) {
       this.enabled = value;
    }

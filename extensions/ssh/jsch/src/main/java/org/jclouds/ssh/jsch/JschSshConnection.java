@@ -60,8 +60,8 @@ public class JschSshConnection implements SshConnection {
    }
 
    private void checkConnected() {
-      checkState(sftp.isConnected(), String.format("%s@%s:%d: SFTP not connected!", username, host
-               .getHostAddress(), port));
+      checkState(sftp != null && sftp.isConnected(), String.format("%s@%s:%d: SFTP not connected!",
+               username, host.getHostAddress(), port));
    }
 
    @PostConstruct

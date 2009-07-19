@@ -117,6 +117,12 @@ public class CreateServerOptions extends JsonBinder {
    }
 
    /**
+    * A shared IP group is a collection of servers that can share IPs with other members of the
+    * group. Any server in a group can share one or more public IPs with any other server in the
+    * group. With the exception of the first server in a shared IP group, servers must be launched
+    * into shared IP groups. A server may only be a member of one shared IP group.
+    * 
+    * <p/>
     * Servers in the same shared IP group can share public IPs for various high availability and
     * load balancing configurations. To launch an HA server, include the optional sharedIpGroupId
     * element and the server will be launched into that shared IP group.
@@ -160,6 +166,14 @@ public class CreateServerOptions extends JsonBinder {
    }
 
    /**
+    * Public IP addresses can be shared across multiple servers for use in various high availability
+    * scenarios. When an IP address is shared to another server, the cloud network restrictions are
+    * modified to allow each server to listen to and respond on that IP address (you may optionally
+    * specify that the target server network configuration be modified). Shared IP addresses can be
+    * used with many standard heartbeat facilities (e.g. keepalived) that monitor for failure and
+    * manage IP failover.
+    * 
+    * <p/>
     * If you intend to use a shared IP on the server being created and have no need for a separate
     * public IP address, you may launch the server into a shared IP group and specify an IP address
     * from that shared IP group to be used as its public IP. You can accomplish this by specifying

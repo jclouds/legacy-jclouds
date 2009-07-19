@@ -26,15 +26,17 @@ package org.jclouds.rackspace.cloudservers.domain;
 import org.joda.time.DateTime;
 
 /**
- * An image is a collection of files you use to create or rebuild a server. Rackspace provides
- * pre-built OS images by default. You may also create custom images.
+ * An image is a collection of files used to create or rebuild a server. Rackspace provides a number
+ * of pre-built OS images by default. You may also create custom images from cloud servers you have
+ * launched. These custom images are useful for backup purposes or for producing “gold” server
+ * images if you plan to deploy a particular server configuration frequently.
  * 
  * @author Adrian Cole
  */
 public class Image {
 
-   public static final Image NOT_FOUND = new Image(-1,"NOT_FOUND");
-   
+   public static final Image NOT_FOUND = new Image(-1, "NOT_FOUND");
+
    private DateTime created;
    private int id;
    private String name;

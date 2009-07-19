@@ -27,7 +27,7 @@ package org.jclouds.rackspace.cloudservers.domain;
 /**
  * 
  * A flavor is an available hardware configuration for a server. Each flavor has a unique
- * combination of disk space, memory capacity.
+ * combination of disk space and memory capacity.
  * 
  * @author Adrian Cole
  */
