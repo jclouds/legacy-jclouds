@@ -80,7 +80,7 @@ public interface IntegrationTestClient {
    @GET
    @Path("objects/{id}")
    @ExceptionParser(FooOnException.class)
-   String synchException(@PathParam("id") String id, @HeaderParam("Content-Range") String header);
+   String synchException(@PathParam("id") String id, @HeaderParam("Range") String header);
 
    @PUT
    @Path("objects/{id}")
