@@ -34,7 +34,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jclouds</groupId>
-    <artifactId>jclouds-cloudservers-core</artifactId>
+    <artifactId>jclouds-cloudservers</artifactId>
     <name>jclouds cloudservers Components Core</name>
     <packaging>jar</packaging>
     <description>jclouds Core components to access cloudservers</description>

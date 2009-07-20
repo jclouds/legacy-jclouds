@@ -34,7 +34,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jclouds</groupId>
-    <artifactId>jclouds-cloudfiles-core</artifactId>
+    <artifactId>jclouds-cloudfiles</artifactId>
     <name>jclouds cloudfiles Components Core</name>
     <packaging>jar</packaging>
     <description>jclouds Core components to access cloudfiles</description>
