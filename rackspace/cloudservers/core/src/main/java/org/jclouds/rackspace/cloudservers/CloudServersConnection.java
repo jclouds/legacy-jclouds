@@ -40,16 +40,21 @@ import org.jclouds.rackspace.cloudservers.binders.ChangeServerNameBinder;
 import org.jclouds.rackspace.cloudservers.domain.Flavor;
 import org.jclouds.rackspace.cloudservers.domain.Image;
 import org.jclouds.rackspace.cloudservers.domain.Server;
+import org.jclouds.rackspace.cloudservers.domain.SharedIpGroup;
 import org.jclouds.rackspace.cloudservers.functions.ParseFlavorFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseFlavorListFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseImageFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseImageListFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseServerFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseServerListFromGsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseSharedIpGroupFromGsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseSharedIpGroupListFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ReturnFlavorNotFoundOn404;
 import org.jclouds.rackspace.cloudservers.functions.ReturnImageNotFoundOn404;
 import org.jclouds.rackspace.cloudservers.functions.ReturnServerNotFoundOn404;
+import org.jclouds.rackspace.cloudservers.functions.ReturnSharedIpGroupNotFoundOn404;
 import org.jclouds.rackspace.cloudservers.options.CreateServerOptions;
+import org.jclouds.rackspace.cloudservers.options.CreateSharedIpGroupOptions;
 import org.jclouds.rackspace.cloudservers.options.ListOptions;
 import org.jclouds.rackspace.filters.AuthenticateRequest;
 import org.jclouds.rest.EntityParam;
@@ -212,6 +217,22 @@ public interface CloudServersConnection {
 
    /**
     * 
+    * This operation returns details of the specified flavor.
+    * 
+    * @return {@link Flavor#NOT_FOUND} if the flavor is not found
+    * @see Flavor
+    */
+   @GET
+   @ResponseParser(ParseFlavorFromGsonResponse.class)
+   @Query(key = "format", value = "json")
+   @ExceptionParser(ReturnFlavorNotFoundOn404.class)
+   @Path("/flavors/{id}")
+   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
+   // (400)
+   Flavor getFlavor(@PathParam("id") int id);
+
+   /**
+    * 
     * List available images (IDs and names only)
     * 
     * in order to retrieve all details, pass the option {@link ListOptions#withDetails()
@@ -243,18 +264,63 @@ public interface CloudServersConnection {
 
    /**
     * 
-    * This operation returns details of the specified flavor.
+    * List shared IP groups (IDs and names only)
     * 
-    * @return {@link Flavor#NOT_FOUND} if the flavor is not found
-    * @see Flavor
+    * in order to retrieve all details, pass the option {@link ListOptions#withDetails()
+    * withDetails()}
     */
    @GET
-   @ResponseParser(ParseFlavorFromGsonResponse.class)
+   @ResponseParser(ParseSharedIpGroupListFromGsonResponse.class)
    @Query(key = "format", value = "json")
-   @ExceptionParser(ReturnFlavorNotFoundOn404.class)
-   @Path("/flavors/{id}")
+   @Path("/shared_ip_groups")
    // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
    // (400)
-   Flavor getFlavor(@PathParam("id") int id);
+   List<SharedIpGroup> listSharedIpGroups(ListOptions... options);
 
+   /**
+    * 
+    * This operation returns details of the specified shared IP group.
+    * 
+    * @return {@link SharedIpGroup#NOT_FOUND} if the shared IP group is not found
+    * @see SharedIpGroup
+    */
+   @GET
+   @ResponseParser(ParseSharedIpGroupFromGsonResponse.class)
+   @Query(key = "format", value = "json")
+   @ExceptionParser(ReturnSharedIpGroupNotFoundOn404.class)
+   @Path("/shared_ip_groups/{id}")
+   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
+   // (400)
+   SharedIpGroup getSharedIpGroup(@PathParam("id") int id);
+
+   /**
+    * This operation creates a new shared IP group. Please note, all responses to requests for
+    * shared_ip_groups return an array of servers. However, on a create request, the shared IP group
+    * can be created empty or can be initially populated with a single server. Use
+    * {@link CreateSharedIpGroupOptions} to specify an server.
+    */
+   @POST
+   @ResponseParser(ParseSharedIpGroupFromGsonResponse.class)
+   @Query(key = "format", value = "json")
+   @Path("/shared_ip_groups")
+   @PostBinder(CreateSharedIpGroupOptions.class)
+   // TODO: cloudSharedIpGroupsFault (400, 500), serviceUnavailable (503), unauthorized (401),
+   // badRequest (400), badMediaType(415), overLimit (413)
+   SharedIpGroup createSharedIpGroup(@PostParam("name") String name,
+            CreateSharedIpGroupOptions... options);
+
+   /**
+    * This operation deletes the specified shared IP group. This operation will ONLY succeed if 1)
+    * there are no active servers in the group (i.e. they have all been terminated) or 2) no servers
+    * in the group are actively sharing IPs.
+    * 
+    * @return false if the shared ip group is not found
+    * @see SharedIpGroup
+    */
+   @DELETE
+   @ExceptionParser(ReturnFalseOn404.class)
+   @Path("/shared_ip_groups/{id}")
+   // TODO:cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
+   // (400)
+   boolean deleteSharedIpGroup(@PathParam("id") int id);
 }

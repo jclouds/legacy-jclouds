@@ -24,6 +24,7 @@
 package org.jclouds.rackspace.cloudservers;
 
 import static org.jclouds.rackspace.cloudservers.options.CreateServerOptions.Builder.withFile;
+import static org.jclouds.rackspace.cloudservers.options.CreateSharedIpGroupOptions.Builder.withServer;
 import static org.jclouds.rackspace.cloudservers.options.ListOptions.Builder.withDetails;
 import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_KEY;
 import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_USER;
@@ -44,12 +45,14 @@ import org.jclouds.rackspace.cloudservers.domain.Flavor;
 import org.jclouds.rackspace.cloudservers.domain.Image;
 import org.jclouds.rackspace.cloudservers.domain.Server;
 import org.jclouds.rackspace.cloudservers.domain.ServerStatus;
+import org.jclouds.rackspace.cloudservers.domain.SharedIpGroup;
 import org.jclouds.ssh.SshConnection;
 import org.jclouds.ssh.jsch.config.JschSshConnectionModule;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Injector;
 
@@ -92,33 +95,6 @@ public class CloudServersConnectionLiveTest {
       assert null != response;
       long initialContainerCount = response.size();
       assertTrue(initialContainerCount >= 0);
-   }
-
-   @Test
-   public void testListFlavors() throws Exception {
-      List<Flavor> response = connection.listFlavors();
-      assert null != response;
-      long flavorCount = response.size();
-      assertTrue(flavorCount >= 1);
-      for (Flavor flavor : response) {
-         assertTrue(flavor.getId() >= 0);
-         assert null != flavor.getName() : flavor;
-      }
-
-   }
-
-   @Test
-   public void testListFlavorsDetail() throws Exception {
-      List<Flavor> response = connection.listFlavors(withDetails());
-      assert null != response;
-      long flavorCount = response.size();
-      assertTrue(flavorCount >= 0);
-      for (Flavor flavor : response) {
-         assertTrue(flavor.getId() >= 1);
-         assert null != flavor.getName() : flavor;
-         assert null != flavor.getDisk() : flavor;
-         assert null != flavor.getRam() : flavor;
-      }
    }
 
    @Test
@@ -170,6 +146,49 @@ public class CloudServersConnectionLiveTest {
       assertEquals(Image.NOT_FOUND, newDetails);
    }
 
+   public void testGetServerDetailsNotFound() throws Exception {
+      Server newDetails = connection.getServer(12312987);
+      assertEquals(Server.NOT_FOUND, newDetails);
+   }
+
+   public void testGetServersDetail() throws Exception {
+      List<Server> response = connection.listServers(withDetails());
+      assert null != response;
+      long serverCount = response.size();
+      assertTrue(serverCount >= 0);
+      for (Server server : response) {
+         Server newDetails = connection.getServer(server.getId());
+         assertEquals(server, newDetails);
+      }
+   }
+
+   @Test
+   public void testListFlavors() throws Exception {
+      List<Flavor> response = connection.listFlavors();
+      assert null != response;
+      long flavorCount = response.size();
+      assertTrue(flavorCount >= 1);
+      for (Flavor flavor : response) {
+         assertTrue(flavor.getId() >= 0);
+         assert null != flavor.getName() : flavor;
+      }
+
+   }
+
+   @Test
+   public void testListFlavorsDetail() throws Exception {
+      List<Flavor> response = connection.listFlavors(withDetails());
+      assert null != response;
+      long flavorCount = response.size();
+      assertTrue(flavorCount >= 0);
+      for (Flavor flavor : response) {
+         assertTrue(flavor.getId() >= 1);
+         assert null != flavor.getName() : flavor;
+         assert null != flavor.getDisk() : flavor;
+         assert null != flavor.getRam() : flavor;
+      }
+   }
+
    @Test
    public void testGetFlavorsDetail() throws Exception {
       List<Flavor> response = connection.listFlavors(withDetails());
@@ -187,21 +206,79 @@ public class CloudServersConnectionLiveTest {
       assertEquals(Flavor.NOT_FOUND, newDetails);
    }
 
-   public void testGetServerDetailsNotFound() throws Exception {
-      Server newDetails = connection.getServer(12312987);
-      assertEquals(Server.NOT_FOUND, newDetails);
+   @Test
+   public void testListSharedIpGroups() throws Exception {
+      List<SharedIpGroup> response = connection.listSharedIpGroups();
+      assert null != response;
+      long sharedIpGroupCount = response.size();
+      assertTrue(sharedIpGroupCount >= 0);
+      for (SharedIpGroup sharedIpGroup : response) {
+         assertTrue(sharedIpGroup.getId() >= 0);
+         assert null != sharedIpGroup.getName() : sharedIpGroup;
+      }
+
    }
 
-   public void testGetServersDetail() throws Exception {
-      List<Server> response = connection.listServers(withDetails());
+   @Test
+   public void testListSharedIpGroupsDetail() throws Exception {
+      List<SharedIpGroup> response = connection.listSharedIpGroups(withDetails());
       assert null != response;
-      long serverCount = response.size();
-      assertTrue(serverCount >= 0);
-      for (Server server : response) {
-         Server newDetails = connection.getServer(server.getId());
-         assertEquals(server, newDetails);
+      long sharedIpGroupCount = response.size();
+      assertTrue(sharedIpGroupCount >= 0);
+      for (SharedIpGroup sharedIpGroup : response) {
+         assertTrue(sharedIpGroup.getId() >= 1);
+         assert null != sharedIpGroup.getName() : sharedIpGroup;
+         assert null != sharedIpGroup.getServers() : sharedIpGroup;
       }
    }
+
+   @Test
+   public void testGetSharedIpGroupsDetail() throws Exception {
+      List<SharedIpGroup> response = connection.listSharedIpGroups(withDetails());
+      assert null != response;
+      long sharedIpGroupCount = response.size();
+      assertTrue(sharedIpGroupCount >= 0);
+      for (SharedIpGroup sharedIpGroup : response) {
+         SharedIpGroup newDetails = connection.getSharedIpGroup(sharedIpGroup.getId());
+         assertEquals(sharedIpGroup, newDetails);
+      }
+   }
+
+   public void testGetSharedIpGroupDetailsNotFound() throws Exception {
+      SharedIpGroup newDetails = connection.getSharedIpGroup(12312987);
+      assertEquals(SharedIpGroup.NOT_FOUND, newDetails);
+   }
+
+   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateServer")
+   public void testCreateSharedIpGroup() throws Exception {
+      SharedIpGroup sharedIpGroup = null;
+      while (sharedIpGroup == null) {
+         String sharedIpGroupName = serverPrefix + "createSharedIpGroup"
+                  + new SecureRandom().nextInt();
+         try {
+            sharedIpGroup = connection.createSharedIpGroup(sharedIpGroupName, withServer(serverId));
+         } catch (UndeclaredThrowableException e) {
+            HttpResponseException htpe = (HttpResponseException) e.getCause().getCause();
+            if (htpe.getResponse().getStatusCode() == 400)
+               continue;
+            throw e;
+         }
+      }
+      assertNotNull(sharedIpGroup.getName());
+      sharedIpGroupId = sharedIpGroup.getId();
+      assertEquals(sharedIpGroup.getServers(), ImmutableList.of(serverId));
+   }
+
+   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = { "testCreateSharedIpGroup" })
+   void testDeleteSharedIpGroup() {
+      if (sharedIpGroupId > 0) {
+         connection.deleteSharedIpGroup(sharedIpGroupId);
+         SharedIpGroup server = connection.getSharedIpGroup(sharedIpGroupId);
+         assertEquals(server, SharedIpGroup.NOT_FOUND);
+      }
+   }
+
+   private int sharedIpGroupId;
 
    private String serverPrefix = System.getProperty("user.name") + ".cs";
    private int serverId;
@@ -300,7 +377,7 @@ public class CloudServersConnectionLiveTest {
    // TODO test createServer.withSharedIp
 
    // must be last!
-   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = {"testChangePassword","testRenameServer"})
+   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = { "testChangePassword", "testRenameServer" })
    void deleteServer() {
       if (serverId > 0) {
          connection.deleteServer(serverId);
