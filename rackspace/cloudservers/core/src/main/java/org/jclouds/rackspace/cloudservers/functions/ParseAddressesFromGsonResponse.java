@@ -21,34 +21,40 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudservers.binders;
+package org.jclouds.rackspace.cloudservers.functions;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 
-import java.util.Map;
+import org.jclouds.http.functions.ParseJson;
+import org.jclouds.rackspace.cloudservers.domain.Addresses;
 
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.binders.JsonBinder;
-
-import com.google.common.collect.ImmutableMap;
+import com.google.gson.Gson;
+import com.google.inject.Inject;
 
 /**
+ * This parses {@link Addresses} from a gson string.
  * 
  * @author Adrian Cole
- * 
  */
-public class ChangeAdminPassBinder extends JsonBinder {
+public class ParseAddressesFromGsonResponse extends ParseJson<Addresses> {
 
-   @Override
-   public void addEntityToRequest(Map<String, String> postParams, HttpRequest request) {
-      throw new IllegalStateException("Change Admin Pass is a PUT operation");
+   @Inject
+   public ParseAddressesFromGsonResponse(Gson gson) {
+      super(gson);
    }
 
-   @Override
-   public void addEntityToRequest(Object toBind, HttpRequest request) {
-      checkArgument(toBind instanceof String, "this binder is only valid for Strings!");
-      super.addEntityToRequest(ImmutableMap.of("server", ImmutableMap.of("adminPass", checkNotNull(
-               toBind, "adminPass"))), request);
+   private static class AddressesListResponse {
+      Addresses addresses;
+   }
+
+   public Addresses apply(InputStream stream) {
+
+      try {
+         return gson.fromJson(new InputStreamReader(stream, "UTF-8"), AddressesListResponse.class).addresses;
+      } catch (UnsupportedEncodingException e) {
+         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
+      }
    }
 }

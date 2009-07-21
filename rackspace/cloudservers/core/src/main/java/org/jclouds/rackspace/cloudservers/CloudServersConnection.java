@@ -23,6 +23,7 @@
  */
 package org.jclouds.rackspace.cloudservers;
 
+import java.net.InetAddress;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -37,14 +38,19 @@ import javax.ws.rs.PathParam;
 import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.rackspace.cloudservers.binders.ChangeAdminPassBinder;
 import org.jclouds.rackspace.cloudservers.binders.ChangeServerNameBinder;
+import org.jclouds.rackspace.cloudservers.binders.ShareIpBinder;
+import org.jclouds.rackspace.cloudservers.domain.Addresses;
 import org.jclouds.rackspace.cloudservers.domain.Flavor;
 import org.jclouds.rackspace.cloudservers.domain.Image;
 import org.jclouds.rackspace.cloudservers.domain.Server;
 import org.jclouds.rackspace.cloudservers.domain.SharedIpGroup;
+import org.jclouds.rackspace.cloudservers.functions.IpAddress;
+import org.jclouds.rackspace.cloudservers.functions.ParseAddressesFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseFlavorFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseFlavorListFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseImageFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseImageListFromGsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseInetAddressListFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseServerFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseServerListFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseSharedIpGroupFromGsonResponse;
@@ -59,8 +65,9 @@ import org.jclouds.rackspace.cloudservers.options.ListOptions;
 import org.jclouds.rackspace.filters.AuthenticateRequest;
 import org.jclouds.rest.EntityParam;
 import org.jclouds.rest.ExceptionParser;
-import org.jclouds.rest.PostBinder;
-import org.jclouds.rest.PostParam;
+import org.jclouds.rest.MapBinder;
+import org.jclouds.rest.MapEntityParam;
+import org.jclouds.rest.ParamParser;
 import org.jclouds.rest.Query;
 import org.jclouds.rest.RequestFilters;
 import org.jclouds.rest.ResponseParser;
@@ -163,11 +170,61 @@ public interface CloudServersConnection {
    @ResponseParser(ParseServerFromGsonResponse.class)
    @Query(key = "format", value = "json")
    @Path("/servers")
-   @PostBinder(CreateServerOptions.class)
+   @MapBinder(CreateServerOptions.class)
    // TODO:cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401),
    // badMediaType(415), badRequest (400), serverCapacityUnavailable (503), overLimit (413)
-   Server createServer(@PostParam("name") String name, @PostParam("imageId") int imageId,
-            @PostParam("flavorId") int flavorId, CreateServerOptions... options);
+   Server createServer(@MapEntityParam("name") String name, @MapEntityParam("imageId") int imageId,
+            @MapEntityParam("flavorId") int flavorId, CreateServerOptions... options);
+
+   /**
+    * /** This operation allows you share an IP address to the specified server
+    * <p/>
+    * This operation shares an IP from an existing server in the specified shared IP group to
+    * another specified server in the same group. The operation modifies cloud network restrictions
+    * to allow IP traffic for the given IP to/from the server specified.
+    * 
+    * <p/>
+    * Status Transition: ACTIVE - SHARE_IP - ACTIVE (if configureServer is true) ACTIVE -
+    * SHARE_IP_NO_CONFIG - ACTIVE
+    * 
+    * @param configureServer
+    *           <p/>
+    *           if set to true, the server is configured with the new address, though the address is
+    *           not enabled. Note that configuring the server does require a reboot.
+    *           <p/>
+    *           If set to false, does not bind the IP to the server itself. A heartbeat facility
+    *           (e.g. keepalived) can then be used within the servers to perform health checks and
+    *           manage IP failover.
+    * @return false if the server is not found
+    */
+   @PUT
+   @ExceptionParser(ReturnFalseOn404.class)
+   @Path("/servers/{id}/ips/public/{address}")
+   @MapBinder(ShareIpBinder.class)
+   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
+   // (400), badMediaType(415), buildInProgress (409), overLimit (413)
+   boolean shareIp(@PathParam("address") @ParamParser(IpAddress.class) InetAddress addressToShare,
+            @PathParam("id") int serverToAssignAddressTo,
+            @MapEntityParam("sharedIpGroupId") int sharedIpGroup,
+            @MapEntityParam("configureServer") boolean configureServer);
+
+   /**
+    * This operation removes a shared IP address from the specified server.
+    * <p/>
+    * Status Transition: ACTIVE - DELETE_IP - ACTIVE
+    * 
+    * @param addressToShare
+    * @param serverToAssignAddressTo
+    * @return
+    */
+   @DELETE
+   @ExceptionParser(ReturnFalseOn404.class)
+   @Path("/servers/{id}/ips/public/{address}")
+   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized(401), badRequest (400),
+   // badMediaType(415), overLimit (413)
+   boolean unshareIp(
+            @PathParam("address") @ParamParser(IpAddress.class) InetAddress addressToShare,
+            @PathParam("id") int serverToAssignAddressTo);
 
    /**
     * This operation allows you to change the administrative password.
@@ -303,10 +360,10 @@ public interface CloudServersConnection {
    @ResponseParser(ParseSharedIpGroupFromGsonResponse.class)
    @Query(key = "format", value = "json")
    @Path("/shared_ip_groups")
-   @PostBinder(CreateSharedIpGroupOptions.class)
+   @MapBinder(CreateSharedIpGroupOptions.class)
    // TODO: cloudSharedIpGroupsFault (400, 500), serviceUnavailable (503), unauthorized (401),
    // badRequest (400), badMediaType(415), overLimit (413)
-   SharedIpGroup createSharedIpGroup(@PostParam("name") String name,
+   SharedIpGroup createSharedIpGroup(@MapEntityParam("name") String name,
             CreateSharedIpGroupOptions... options);
 
    /**
@@ -323,4 +380,38 @@ public interface CloudServersConnection {
    // TODO:cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
    // (400)
    boolean deleteSharedIpGroup(@PathParam("id") int id);
+
+   /**
+    * List all server addresses
+    */
+   @GET
+   @ResponseParser(ParseAddressesFromGsonResponse.class)
+   @Query(key = "format", value = "json")
+   @Path("/servers/{id}/ips")
+   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
+   // (400), overLimit (413)
+   Addresses listAddresses(@PathParam("id") int serverId);
+
+   /**
+    * List all public server addresses
+    */
+   @GET
+   @ResponseParser(ParseInetAddressListFromGsonResponse.class)
+   @Query(key = "format", value = "json")
+   @Path("/servers/{id}/ips/public")
+   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
+   // (400), overLimit (413)
+   List<InetAddress> listPublicAddresses(@PathParam("id") int serverId);
+
+   /**
+    * List all private server addresses
+    */
+   @GET
+   @ResponseParser(ParseInetAddressListFromGsonResponse.class)
+   @Query(key = "format", value = "json")
+   @Path("/servers/{id}/ips/private")
+   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
+   // (400), overLimit (413)
+   List<InetAddress> listPrivateAddresses(@PathParam("id") int serverId);
+
 }

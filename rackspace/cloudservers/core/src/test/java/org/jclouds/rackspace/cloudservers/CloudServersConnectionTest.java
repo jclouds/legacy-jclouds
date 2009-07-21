@@ -49,10 +49,12 @@ import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.rackspace.Authentication;
+import org.jclouds.rackspace.cloudservers.functions.ParseAddressesFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseFlavorFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseFlavorListFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseImageFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseImageListFromGsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseInetAddressListFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseServerFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseServerListFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseSharedIpGroupFromGsonResponse;
@@ -168,7 +170,7 @@ public class CloudServersConnectionTest {
       assertEquals(processor.createResponseParser(method).getClass(),
                ParseServerFromGsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
-      assertNotNull(processor.getPostEntityBinderOrNull(method, new Object[] { "", 1, 2,
+      assertNotNull(processor.getMapEntityBinderOrNull(method, new Object[] { "", 1, 2,
                new CreateServerOptions[] { CreateServerOptions.Builder.withSharedIpGroup(1) } }));
    }
 
@@ -406,6 +408,65 @@ public class CloudServersConnectionTest {
       assertEquals(processor.createResponseParser(method).getClass(), ReturnTrueIf2xx.class);
    }
 
+   public void testShareIpNoConfig() throws SecurityException, NoSuchMethodException,
+            UnknownHostException {
+      Method method = CloudServersConnection.class.getMethod("shareIp", InetAddress.class,
+               int.class, int.class, boolean.class);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = processor.createRequest(endpoint, method, new Object[] {
+               InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }), 2, 3, false });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/ips/public/127.0.0.1");
+      assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
+      assertEquals(httpMethod.getHeaders().size(), 2);
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
+               .singletonList(httpMethod.getEntity().toString().getBytes().length + ""));
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
+               .singletonList(MediaType.APPLICATION_JSON));
+      assertEquals("{\"shareIp\":{\"sharedIpGroupId\":3}}", httpMethod.getEntity());
+      assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
+               ReturnFalseOn404.class);
+      assertEquals(processor.createResponseParser(method).getClass(), ReturnTrueIf2xx.class);
+   }
+
+   public void testShareIpConfig() throws SecurityException, NoSuchMethodException,
+            UnknownHostException {
+      Method method = CloudServersConnection.class.getMethod("shareIp", InetAddress.class,
+               int.class, int.class, boolean.class);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = processor.createRequest(endpoint, method, new Object[] {
+               InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }), 2, 3, true });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/ips/public/127.0.0.1");
+      assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
+      assertEquals(httpMethod.getHeaders().size(), 2);
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
+               .singletonList(httpMethod.getEntity().toString().getBytes().length + ""));
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
+               .singletonList(MediaType.APPLICATION_JSON));
+      assertEquals("{\"shareIp\":{\"sharedIpGroupId\":3,\"configureServer\":true}}", httpMethod
+               .getEntity());
+      assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
+               ReturnFalseOn404.class);
+      assertEquals(processor.createResponseParser(method).getClass(), ReturnTrueIf2xx.class);
+   }
+
+   public void testUnshareIpNoConfig() throws SecurityException, NoSuchMethodException,
+            UnknownHostException {
+      Method method = CloudServersConnection.class.getMethod("unshareIp", InetAddress.class,
+               int.class);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = processor.createRequest(endpoint, method, new Object[] {
+               InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }), 2, 3, false });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/ips/public/127.0.0.1");
+      assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);
+      assertEquals(httpMethod.getHeaders().size(), 0);
+      assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
+               ReturnFalseOn404.class);
+      assertEquals(processor.createResponseParser(method).getClass(), ReturnTrueIf2xx.class);
+   }
+
    public void testChangeAdminPass() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersConnection.class.getMethod("changeAdminPass", int.class,
                String.class);
@@ -562,7 +623,7 @@ public class CloudServersConnectionTest {
       assertEquals(processor.createResponseParser(method).getClass(),
                ParseSharedIpGroupFromGsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
-      assertNotNull(processor.getPostEntityBinderOrNull(method, new Object[] { "",
+      assertNotNull(processor.getMapEntityBinderOrNull(method, new Object[] { "",
                new CreateSharedIpGroupOptions[] { withServer(2) } }));
    }
 
@@ -577,6 +638,45 @@ public class CloudServersConnectionTest {
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnFalseOn404.class);
       assertEquals(processor.createResponseParser(method).getClass(), ReturnTrueIf2xx.class);
+   }
+
+   public void testListAddresses() throws SecurityException, NoSuchMethodException {
+      Method method = CloudServersConnection.class.getMethod("listAddresses", int.class);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = processor.createRequest(endpoint, method, new Object[] { 2 });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/ips");
+      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
+      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
+      assertEquals(httpMethod.getHeaders().size(), 0);
+      assertEquals(processor.createResponseParser(method).getClass(),
+               ParseAddressesFromGsonResponse.class);
+   }
+
+   public void testListPublicAddresses() throws SecurityException, NoSuchMethodException {
+      Method method = CloudServersConnection.class.getMethod("listPublicAddresses", int.class);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = processor.createRequest(endpoint, method, new Object[] { 2 });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/ips/public");
+      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
+      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
+      assertEquals(httpMethod.getHeaders().size(), 0);
+      assertEquals(processor.createResponseParser(method).getClass(),
+               ParseInetAddressListFromGsonResponse.class);
+   }
+
+   public void testListPrivateAddresses() throws SecurityException, NoSuchMethodException {
+      Method method = CloudServersConnection.class.getMethod("listPrivateAddresses", int.class);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = processor.createRequest(endpoint, method, new Object[] { 2 });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/ips/private");
+      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
+      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
+      assertEquals(httpMethod.getHeaders().size(), 0);
+      assertEquals(processor.createResponseParser(method).getClass(),
+               ParseInetAddressListFromGsonResponse.class);
    }
 
    JaxrsAnnotationProcessor processor;

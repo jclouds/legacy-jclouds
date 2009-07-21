@@ -23,7 +23,6 @@
  */
 package org.jclouds.rackspace.cloudservers.binders;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Map;
@@ -38,17 +37,31 @@ import com.google.common.collect.ImmutableMap;
  * @author Adrian Cole
  * 
  */
-public class ChangeAdminPassBinder extends JsonBinder {
+public class ShareIpBinder extends JsonBinder {
+
+   @SuppressWarnings("unused")
+   private class ShareIpRequest {
+      final int sharedIpGroupId;
+      Boolean configureServer;
+
+      private ShareIpRequest(int sharedIpGroupId) {
+         this.sharedIpGroupId = sharedIpGroupId;
+      }
+
+   }
 
    @Override
    public void addEntityToRequest(Map<String, String> postParams, HttpRequest request) {
-      throw new IllegalStateException("Change Admin Pass is a PUT operation");
+      ShareIpRequest createRequest = new ShareIpRequest(Integer.parseInt(checkNotNull(postParams
+               .get("sharedIpGroupId"))));
+      if (Boolean.parseBoolean(checkNotNull(postParams.get("configureServer")))) {
+         createRequest.configureServer = new Boolean(true);
+      }
+      super.addEntityToRequest(ImmutableMap.of("shareIp", createRequest), request);
    }
 
    @Override
    public void addEntityToRequest(Object toBind, HttpRequest request) {
-      checkArgument(toBind instanceof String, "this binder is only valid for Strings!");
-      super.addEntityToRequest(ImmutableMap.of("server", ImmutableMap.of("adminPass", checkNotNull(
-               toBind, "adminPass"))), request);
+      throw new IllegalStateException("shareIp is needs parameters");
    }
 }
