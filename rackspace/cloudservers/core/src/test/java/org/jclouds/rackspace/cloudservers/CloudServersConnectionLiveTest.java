@@ -25,6 +25,7 @@ package org.jclouds.rackspace.cloudservers;
 
 import static org.jclouds.rackspace.cloudservers.options.CreateServerOptions.Builder.withFile;
 import static org.jclouds.rackspace.cloudservers.options.CreateSharedIpGroupOptions.Builder.withServer;
+import static org.jclouds.rackspace.cloudservers.options.ListOptions.Builder.withDetails;
 import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_KEY;
 import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_USER;
 import static org.testng.Assert.assertEquals;
@@ -344,6 +345,10 @@ public class CloudServersConnectionLiveTest {
       try {
          doCheckPass(newDetails, pass);
       } catch (SshException e) {// try twice in case there is a network timeout
+         try {
+            Thread.sleep(2 * 1000);
+         } catch (InterruptedException e1) {
+         }
          doCheckPass(newDetails, pass);
       }
    }
@@ -472,8 +477,8 @@ public class CloudServersConnectionLiveTest {
       testUnshare();
    }
 
-   // must be last!. current order is only positionally guaranteed when in sequential mode.
-   @Test
+   // must be last!. do not rely on positional order.
+   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testShareNoConfig")
    void deleteServers() {
       if (serverId > 0) {
          connection.deleteServer(serverId);
