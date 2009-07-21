@@ -1,9 +1,33 @@
+/**
+ *
+ * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ *
+ * ====================================================================
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ * ====================================================================
+ */
 package org.jclouds.ssh.jsch;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 
@@ -11,6 +35,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 
+import org.apache.commons.io.input.ProxyInputStream;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.jclouds.logging.Logger;
 import org.jclouds.ssh.ExecResponse;
@@ -20,7 +45,6 @@ import org.jclouds.util.Utils;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
@@ -34,11 +58,27 @@ import com.jcraft.jsch.SftpException;
  */
 public class JschSshConnection implements SshConnection {
 
+   private final class CloseFtpChannelOnCloseInputStream extends ProxyInputStream {
+
+      private final ChannelSftp sftp;
+
+      private CloseFtpChannelOnCloseInputStream(InputStream proxy, ChannelSftp sftp) {
+         super(proxy);
+         this.sftp = sftp;
+      }
+
+      @Override
+      public void close() throws IOException {
+         super.close();
+         if (sftp != null)
+            sftp.disconnect();
+      }
+   }
+
    private final InetAddress host;
    private final int port;
    private final String username;
    private final String password;
-   private ChannelSftp sftp;
    @Resource
    protected Logger logger = Logger.NULL;
    private Session session;
@@ -54,10 +94,20 @@ public class JschSshConnection implements SshConnection {
    }
 
    public InputStream get(String path) {
-      checkConnected();
       checkNotNull(path, "path");
+
+      checkConnected();
+      logger.debug("%s@%s:%d: Opening sftp Channel.", username, host.getHostAddress(), port);
+      ChannelSftp sftp = null;
       try {
-         return sftp.get(path);
+         sftp = (ChannelSftp) session.openChannel("sftp");
+         sftp.connect();
+      } catch (JSchException e) {
+         throw new SshException(String.format("%s@%s:%d: Error connecting to sftp.", username, host
+                  .getHostAddress(), port), e);
+      }
+      try {
+         return new CloseFtpChannelOnCloseInputStream(sftp.get(path), sftp);
       } catch (SftpException e) {
          throw new SshException(String.format("%s@%s:%d: Error getting path: %s", username, host
                   .getHostAddress(), port, path), e);
@@ -65,17 +115,15 @@ public class JschSshConnection implements SshConnection {
    }
 
    private void checkConnected() {
-      checkState(sftp != null && sftp.isConnected(), String.format("%s@%s:%d: SFTP not connected!",
-               username, host.getHostAddress(), port));
+      checkState(session != null && session.isConnected(), String.format(
+               "%s@%s:%d: SFTP not connected!", username, host.getHostAddress(), port));
    }
 
    @PostConstruct
    public void connect() {
-      if (sftp != null && sftp.isConnected())
-         return;
+      disconnect();
       JSch jsch = new JSch();
       session = null;
-      Channel channel = null;
       try {
          session = jsch.getSession(username, host.getHostAddress(), port);
       } catch (JSchException e) {
@@ -94,24 +142,16 @@ public class JschSshConnection implements SshConnection {
                   host.getHostAddress(), port), e);
       }
       logger.debug("%s@%s:%d: Session connected.", username, host.getHostAddress(), port);
-      logger.debug("%s@%s:%d: Opening sftp Channel.", username, host.getHostAddress(), port);
-      try {
-         channel = session.openChannel("sftp");
-         channel.connect();
-      } catch (JSchException e) {
-         throw new SshException(String.format("%s@%s:%d: Error connecting to sftp.", username, host
-                  .getHostAddress(), port), e);
-      }
-      sftp = (ChannelSftp) channel;
    }
 
    @PreDestroy
    public void disconnect() {
-      if (sftp != null && sftp.isConnected())
-         sftp.quit();
+      if (session != null && session.isConnected())
+         session.disconnect();
    }
 
    public ExecResponse exec(String command) {
+      checkConnected();
       ChannelExec executor = null;
       try {
          try {
