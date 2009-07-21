@@ -1,11 +1,14 @@
 package org.jclouds.ssh.jsch;
 
+import static org.testng.Assert.assertEquals;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import org.apache.commons.io.IOUtils;
+import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshConnection;
 import org.jclouds.ssh.jsch.config.JschSshConnectionModule;
 import org.jclouds.util.Utils;
@@ -54,6 +57,17 @@ public class JschSshConnectionLiveTest {
                throw new RuntimeException("path " + path + " not stubbed");
             }
 
+            public ExecResponse exec(String command) {
+               if (command.equals("hostname")) {
+                  try {
+                     return new ExecResponse(InetAddress.getLocalHost().getHostName(), "");
+                  } catch (UnknownHostException e) {
+                     throw new RuntimeException(e);
+                  }
+               }
+               throw new RuntimeException("command " + command + " not stubbed");
+            }
+
          };
       } else {
          Injector i = Guice.createInjector(new JschSshConnectionModule());
@@ -67,6 +81,12 @@ public class JschSshConnectionLiveTest {
       InputStream input = connection.get("/etc/passwd");
       String contents = Utils.toStringAndClose(input);
       assert contents.indexOf("root") >= 0 : "no root in " + contents;
+   }
+
+   public void testExecHostname() throws IOException {
+      ExecResponse response = connection.exec("hostname");
+      assertEquals(response.getError(), "");
+      assertEquals(response.getOutput().trim(), InetAddress.getLocalHost().getHostName());
    }
 
 }

@@ -11,13 +11,17 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.jclouds.logging.Logger;
+import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshConnection;
 import org.jclouds.ssh.SshException;
+import org.jclouds.util.Utils;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -37,6 +41,7 @@ public class JschSshConnection implements SshConnection {
    private ChannelSftp sftp;
    @Resource
    protected Logger logger = Logger.NULL;
+   private Session session;
 
    @Inject
    public JschSshConnection(@Assisted InetAddress host, @Assisted int port,
@@ -69,7 +74,7 @@ public class JschSshConnection implements SshConnection {
       if (sftp != null && sftp.isConnected())
          return;
       JSch jsch = new JSch();
-      Session session = null;
+      session = null;
       Channel channel = null;
       try {
          session = jsch.getSession(username, host.getHostAddress(), port);
@@ -104,6 +109,32 @@ public class JschSshConnection implements SshConnection {
    public void disconnect() {
       if (sftp != null && sftp.isConnected())
          sftp.quit();
+   }
+
+   public ExecResponse exec(String command) {
+      ChannelExec executor = null;
+      try {
+         try {
+            executor = (ChannelExec) session.openChannel("exec");
+         } catch (JSchException e) {
+            throw new SshException(String.format("%s@%s:%d: Error connecting to exec.", username,
+                     host.getHostAddress(), port), e);
+         }
+         executor.setCommand(command);
+         ByteArrayOutputStream error = new ByteArrayOutputStream();
+         executor.setErrStream(error);
+         try {
+            executor.connect();
+            return new ExecResponse(Utils.toStringAndClose(executor.getInputStream()), error
+                     .toString());
+         } catch (Exception e) {
+            throw new SshException(String.format("%s@%s:%d: Error executing command: ", username,
+                     host.getHostAddress(), port, command), e);
+         }
+      } finally {
+         if (executor != null)
+            executor.disconnect();
+      }
    }
 
 }

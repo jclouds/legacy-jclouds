@@ -12,13 +12,15 @@ import com.google.inject.assistedinject.Assisted;
  * @author Adrian Cole
  */
 public interface SshConnection {
-   
+
    public interface Factory {
       SshConnection create(InetAddress host, int port, @Assisted("username") String username,
                @Assisted("password") String password);
    }
 
    InputStream get(String path);
+
+   ExecResponse exec(String command);
 
    @PostConstruct
    void connect();
