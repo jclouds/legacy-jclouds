@@ -89,7 +89,7 @@ public class JaxrsAnnotationProcessor {
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToHeaderParamAnnotations = createMethodToIndexOfParamToAnnotation(HeaderParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToHostPrefixParamAnnotations = createMethodToIndexOfParamToAnnotation(HostPrefixParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToPathParamAnnotations = createMethodToIndexOfParamToAnnotation(PathParam.class);
-   private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToPostParamAnnotations = createMethodToIndexOfParamToAnnotation(PostParam.class);
+   private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToPostParamAnnotations = createMethodToIndexOfParamToAnnotation(MapEntityParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToParamParserAnnotations = createMethodToIndexOfParamToAnnotation(ParamParser.class);
 
    static Map<Method, Map<Integer, Set<Annotation>>> createMethodToIndexOfParamToAnnotation(
@@ -323,31 +323,31 @@ public class JaxrsAnnotationProcessor {
       return null;
    }
 
-   public PostEntityBinder getPostEntityBinderOrNull(Method method, Object[] args) {
+   public MapEntityBinder getMapEntityBinderOrNull(Method method, Object[] args) {
       for (Object arg : args) {
          if (arg instanceof Object[]) {
             Object[] postBinders = (Object[]) arg;
             if (postBinders.length == 0) {
             } else if (postBinders.length == 1) {
-               if (postBinders[0] instanceof PostEntityBinder) {
-                  PostEntityBinder binder = (PostEntityBinder) postBinders[0];
+               if (postBinders[0] instanceof MapEntityBinder) {
+                  MapEntityBinder binder = (MapEntityBinder) postBinders[0];
                   injector.injectMembers(binder);
                   return binder;
                }
             } else {
-               if (postBinders[0] instanceof PostEntityBinder) {
+               if (postBinders[0] instanceof MapEntityBinder) {
                   throw new IllegalArgumentException(
                            "we currently do not support multiple varargs postBinders in: "
                                     + method.getName());
                }
             }
-         } else if (arg instanceof PostEntityBinder) {
-            PostEntityBinder binder = (PostEntityBinder) arg;
+         } else if (arg instanceof MapEntityBinder) {
+            MapEntityBinder binder = (MapEntityBinder) arg;
             injector.injectMembers(binder);
             return binder;
          }
       }
-      PostBinder annotation = method.getAnnotation(PostBinder.class);
+      MapBinder annotation = method.getAnnotation(MapBinder.class);
       if (annotation != null) {
          return injector.getInstance(annotation.value());
       }
@@ -392,17 +392,17 @@ public class JaxrsAnnotationProcessor {
             HttpRequest request) {
       switch (request.getMethod()) {
          case POST:
-            PostEntityBinder postBinder = null;
-            Map<String, String> postParams = buildPostParams(method, args);
-            // post binder is only useful if there are parameters. We guard here in case the
-            // PostEntityBinder is also an EntityBinder. If so, it can be used with or without
+         case PUT:
+            MapEntityBinder mapBinder = null;
+            Map<String, String> mapParams = buildPostParams(method, args);
+            // MapEntityBinder is only useful if there are parameters. We guard here in case the
+            // MapEntityBinder is also an EntityBinder. If so, it can be used with or without
             // parameters.
-            if (postParams.size() > 0
-                     && (postBinder = this.getPostEntityBinderOrNull(method, args)) != null) {
-               postBinder.addEntityToRequest(postParams, request);
+            if (mapParams.size() > 0
+                     && (mapBinder = this.getMapEntityBinderOrNull(method, args)) != null) {
+               mapBinder.addEntityToRequest(mapParams, request);
                break;
             }
-         case PUT:
             HttpRequestOptions options = findOptionsIn(method, args);
             if (options != null) {
                optionsBinder.addEntityToRequest(options, request);
@@ -568,7 +568,7 @@ public class JaxrsAnnotationProcessor {
                postParams.put(((PathParam) key).value(), injector.getInstance(extractor.value())
                         .apply(args[entry.getKey()]));
             } else {
-               String paramKey = ((PostParam) key).value();
+               String paramKey = ((MapEntityParam) key).value();
                String paramValue = args[entry.getKey()].toString();
                postParams.put(paramKey, paramValue);
             }

@@ -32,7 +32,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.PostEntityBinder;
+import org.jclouds.rest.MapEntityBinder;
 
 import com.google.gson.Gson;
 import com.google.inject.Inject;
@@ -43,7 +43,7 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  * @since 4.0
  */
-public class JsonBinder implements PostEntityBinder {
+public class JsonBinder implements MapEntityBinder {
 
    @Inject
    protected Gson gson;

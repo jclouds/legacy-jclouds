@@ -89,14 +89,14 @@ public class JaxrsAnnotationProcessorTest {
 
       @POST
       @Path("{foo}")
-      public void postWithPath(@PathParam("foo") @PostParam("fooble") String path,
-               PostEntityBinder content) {
+      public void postWithPath(@PathParam("foo") @MapEntityParam("fooble") String path,
+               MapEntityBinder content) {
       }
 
       @POST
       @Path("{foo}")
-      @PostBinder(JsonBinder.class)
-      public void postWithMethodBinder(@PathParam("foo") @PostParam("fooble") String path) {
+      @MapBinder(JsonBinder.class)
+      public void postWithMethodBinder(@PathParam("foo") @MapEntityParam("fooble") String path) {
       }
 
    }
@@ -134,11 +134,10 @@ public class JaxrsAnnotationProcessorTest {
    }
 
    public void testCreatePostWithPathRequest() throws SecurityException, NoSuchMethodException {
-      Method method = TestPost.class
-               .getMethod("postWithPath", String.class, PostEntityBinder.class);
+      Method method = TestPost.class.getMethod("postWithPath", String.class, MapEntityBinder.class);
       URI endpoint = URI.create("http://localhost");
       HttpRequest httpMethod = factory.create(TestPost.class).createRequest(endpoint, method,
-               new Object[] { "data", new PostEntityBinder() {
+               new Object[] { "data", new MapEntityBinder() {
 
                   public void addEntityToRequest(Map<String, String> postParams, HttpRequest request) {
                      request.setEntity(postParams.get("fooble"));
@@ -164,6 +163,33 @@ public class JaxrsAnnotationProcessorTest {
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/data");
       assertEquals(httpMethod.getMethod(), HttpMethod.POST);
+      assertEquals(httpMethod.getHeaders().size(), 2);
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
+               .singletonList("application/json"));
+      String expected = "{\"fooble\":\"data\"}";
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
+               .singletonList(expected.getBytes().length + ""));
+      assertEquals(httpMethod.getEntity(), expected);
+   }
+
+   public class TestPut {
+
+      @PUT
+      @Path("{foo}")
+      @MapBinder(JsonBinder.class)
+      public void putWithMethodBinder(@PathParam("foo") @MapEntityParam("fooble") String path) {
+      }
+
+   }
+
+   public void testCreatePutWithMethodBinder() throws SecurityException, NoSuchMethodException {
+      Method method = TestPut.class.getMethod("putWithMethodBinder", String.class);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = factory.create(TestPut.class).createRequest(endpoint, method,
+               new Object[] { "data", });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/data");
+      assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
       assertEquals(httpMethod.getHeaders().size(), 2);
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList("application/json"));
@@ -446,7 +472,7 @@ public class JaxrsAnnotationProcessorTest {
             NoSuchMethodException {
       DateTime date = new DateTime();
       GetOptions options = GetOptions.Builder.ifModifiedSince(date);
-      HttpRequestOptions[] optionsHolder = new  HttpRequestOptions[]{};
+      HttpRequestOptions[] optionsHolder = new HttpRequestOptions[] {};
       Method method = TestRequest.class.getMethod("get", String.class, optionsHolder.getClass());
       URI endpoint = URI.create("http://localhost");
       HttpRequest httpMethod = factory.create(TestRequest.class).createRequest(endpoint, method,

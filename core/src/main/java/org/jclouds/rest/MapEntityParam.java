@@ -36,10 +36,10 @@ import java.lang.annotation.Target;
  */
 @Target(PARAMETER)
 @Retention(RUNTIME)
-public @interface PostParam {
+public @interface MapEntityParam {
 
    /**
-    * The key used in a map passed to the {@link PostEntityBinder} associated with the request.
+    * The key used in a map passed to the {@link MapEntityBinder} associated with the request.
     */
    String value();
 }

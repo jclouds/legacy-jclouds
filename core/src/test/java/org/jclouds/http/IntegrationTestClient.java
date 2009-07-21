@@ -38,8 +38,8 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.rest.EntityParam;
 import org.jclouds.rest.ExceptionParser;
-import org.jclouds.rest.PostBinder;
-import org.jclouds.rest.PostParam;
+import org.jclouds.rest.MapBinder;
+import org.jclouds.rest.MapEntityParam;
 import org.jclouds.rest.RequestFilters;
 import org.jclouds.rest.XMLResponseParser;
 
@@ -92,8 +92,8 @@ public interface IntegrationTestClient {
 
    @POST
    @Path("objects/{id}")
-   @PostBinder(JsonBinder.class)
-   Future<String> postJson(@PathParam("id") String id, @PostParam("key") String toPut);
+   @MapBinder(JsonBinder.class)
+   Future<String> postJson(@PathParam("id") String id, @MapEntityParam("key") String toPut);
 
    @GET
    @Path("objects/{id}")
