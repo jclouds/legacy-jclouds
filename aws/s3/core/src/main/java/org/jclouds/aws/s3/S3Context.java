@@ -24,6 +24,7 @@
 package org.jclouds.aws.s3;
 
 import org.jclouds.cloud.CloudContext;
+import org.jclouds.objectstore.ObjectStoreContext;
 
 /**
  * Represents an authenticated context to S3.
@@ -38,14 +39,7 @@ import org.jclouds.cloud.CloudContext;
  * @author Adrian Cole
  * 
  */
-public interface S3Context extends CloudContext<S3Connection> {
-
-   /**
-    * Creates a <code>Map<String,InputStream></code> view of the specified bucket.
-    * 
-    * @param bucket
-    */
-   S3InputStreamMap createInputStreamMap(String bucket);
+public interface S3Context extends CloudContext<S3Connection>, ObjectStoreContext<S3InputStreamMap> {
 
    /**
     * Creates a <code>Map<String,S3Object></code> view of the specified bucket.
