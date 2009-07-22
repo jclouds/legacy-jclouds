@@ -307,11 +307,17 @@ public class CloudServersConnectionLiveTest {
    }
 
    private void blockUntilActive(int serverId) throws InterruptedException {
-      for (Server currentDetails = connection.getServer(serverId); currentDetails.getStatus() != ServerStatus.ACTIVE; currentDetails = connection
+      Server currentDetails = null;
+      for (currentDetails = connection.getServer(serverId); currentDetails.getStatus() != ServerStatus.ACTIVE; currentDetails = connection
                .getServer(serverId)) {
          System.out.printf("blocking on status active%n%s%n", currentDetails);
          Thread.sleep(5 * 1000);
       }
+      /**
+       * [Web Hosting #119335]
+       */
+      System.out.printf("awaiting daemons to start %n%s%n", currentDetails);
+      Thread.sleep(10 * 1000);
    }
 
    @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateServer")
@@ -348,7 +354,7 @@ public class CloudServersConnectionLiveTest {
          doCheckPass(newDetails, pass);
       } catch (SshException e) {// try twice in case there is a network timeout
          try {
-            Thread.sleep(2 * 1000);
+            Thread.sleep(10 * 1000);
          } catch (InterruptedException e1) {
          }
          doCheckPass(newDetails, pass);

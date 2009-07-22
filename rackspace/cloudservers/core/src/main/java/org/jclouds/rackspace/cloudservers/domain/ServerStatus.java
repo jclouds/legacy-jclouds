@@ -27,6 +27,14 @@ package org.jclouds.rackspace.cloudservers.domain;
  * 
  * Servers contain a status attribute that can be used as an indication of the current server state.
  * Servers with an ACTIVE status are available for use.
+ * <p/>
+ * <h2>Note</h2>
+ * When the system changes a server's status from BUILD to ACTIVE the system will not be immediately
+ * available. The 'ACTIVE' label is really misleading in the fact that it just means the system
+ * doesn't have any activity going on related to it's configuration.
+ * <p/>
+ * Processes such as ssh will not be available until 5-10 seconds following the phase ACTIVE 
+ * <ul><li>[Web Hosting #119335]</li></ul>
  * 
  * @author Adrian Cole
  */
