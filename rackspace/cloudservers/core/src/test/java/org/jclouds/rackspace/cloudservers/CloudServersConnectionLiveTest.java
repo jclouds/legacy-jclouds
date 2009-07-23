@@ -42,11 +42,15 @@ import java.util.Map;
 
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.rackspace.cloudservers.domain.BackupSchedule;
+import org.jclouds.rackspace.cloudservers.domain.DailyBackup;
 import org.jclouds.rackspace.cloudservers.domain.Flavor;
 import org.jclouds.rackspace.cloudservers.domain.Image;
+import org.jclouds.rackspace.cloudservers.domain.ImageStatus;
 import org.jclouds.rackspace.cloudservers.domain.Server;
 import org.jclouds.rackspace.cloudservers.domain.ServerStatus;
 import org.jclouds.rackspace.cloudservers.domain.SharedIpGroup;
+import org.jclouds.rackspace.cloudservers.domain.WeeklyBackup;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshConnection;
 import org.jclouds.ssh.SshException;
@@ -303,10 +307,10 @@ public class CloudServersConnectionLiveTest {
       adminPass = server.getAdminPass();
       ip = server.getAddresses().getPublicAddresses().iterator().next();
       assertEquals(server.getStatus(), ServerStatus.BUILD);
-      blockUntilActive(serverId);
+      blockUntilServerActive(serverId);
    }
 
-   private void blockUntilActive(int serverId) throws InterruptedException {
+   private void blockUntilServerActive(int serverId) throws InterruptedException {
       Server currentDetails = null;
       for (currentDetails = connection.getServer(serverId); currentDetails.getStatus() != ServerStatus.ACTIVE; currentDetails = connection
                .getServer(serverId)) {
@@ -318,6 +322,15 @@ public class CloudServersConnectionLiveTest {
        */
       System.out.printf("awaiting daemons to start %n%s%n", currentDetails);
       Thread.sleep(10 * 1000);
+   }
+
+   private void blockUntilImageActive(int imageId) throws InterruptedException {
+      Image currentDetails = null;
+      for (currentDetails = connection.getImage(imageId); currentDetails.getStatus() != ImageStatus.ACTIVE; currentDetails = connection
+               .getImage(imageId)) {
+         System.out.printf("blocking on status active%n%s%n", currentDetails);
+         Thread.sleep(5 * 1000);
+      }
    }
 
    @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateServer")
@@ -342,8 +355,7 @@ public class CloudServersConnectionLiveTest {
       // check metadata
       assertEquals(server.getMetadata(), metadata);
 
-      // [Web Hosting #119335] ssh timeouts after server changes status to ACTIVE
-      // checkPassOk(server, adminPass);
+      checkPassOk(server, adminPass);
    }
 
    /**
@@ -392,14 +404,14 @@ public class CloudServersConnectionLiveTest {
       Server server = connection.getServer(serverId);
       String oldName = server.getName();
       assertTrue(connection.renameServer(serverId, oldName + "new"));
-      blockUntilActive(serverId);
+      blockUntilServerActive(serverId);
       assertEquals(oldName + "new", connection.getServer(serverId).getName());
    }
 
    @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateServer")
    public void testChangePassword() throws Exception {
       assertTrue(connection.changeAdminPass(serverId, "elmo"));
-      blockUntilActive(serverId);
+      blockUntilServerActive(serverId);
       checkPassOk(connection.getServer(serverId), "elmo");
       this.adminPass = "elmo";
    }
@@ -425,7 +437,7 @@ public class CloudServersConnectionLiveTest {
       assertNotNull(server.getAdminPass());
       serverId2 = server.getId();
       adminPass2 = server.getAdminPass();
-      blockUntilActive(serverId2);
+      blockUntilServerActive(serverId2);
       assertIpConfigured(server, adminPass2);
       assert server.getAddresses().getPublicAddresses().contains(ip) : server.getAddresses()
                + " doesn't contain " + ip;
@@ -447,7 +459,7 @@ public class CloudServersConnectionLiveTest {
    @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateServerIp")
    public void testUnshare() throws Exception {
       connection.unshareIp(ip, serverId2);
-      blockUntilActive(serverId2);
+      blockUntilServerActive(serverId2);
       Server server = connection.getServer(serverId2);
       assert !server.getAddresses().getPublicAddresses().contains(ip) : server.getAddresses();
       assertIpNotConfigured(server, adminPass2);
@@ -468,7 +480,7 @@ public class CloudServersConnectionLiveTest {
    @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testUnshare")
    public void testShareConfig() throws Exception {
       connection.shareIp(ip, serverId2, sharedIpGroupId, true);
-      blockUntilActive(serverId2);
+      blockUntilServerActive(serverId2);
       Server server = connection.getServer(serverId2);
       assert server.getAddresses().getPublicAddresses().contains(ip) : server.getAddresses();
       assertIpConfigured(server, adminPass2);
@@ -478,15 +490,37 @@ public class CloudServersConnectionLiveTest {
    @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testShareConfig")
    public void testShareNoConfig() throws Exception {
       connection.shareIp(ip, serverId2, sharedIpGroupId, false);
-      blockUntilActive(serverId2);
+      blockUntilServerActive(serverId2);
       Server server = connection.getServer(serverId2);
       assert server.getAddresses().getPublicAddresses().contains(ip) : server.getAddresses();
       assertIpNotConfigured(server, adminPass2);
       testUnshare();
    }
 
-   // must be last!. do not rely on positional order.
    @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testShareNoConfig")
+   public void testBackup() throws Exception {
+      assertEquals(new BackupSchedule(), connection.listBackupSchedule(serverId));
+      BackupSchedule dailyWeekly = new BackupSchedule();
+      dailyWeekly.setEnabled(true);
+      dailyWeekly.setWeekly(WeeklyBackup.FRIDAY);
+      dailyWeekly.setDaily(DailyBackup.H_0400_0600);
+      assertEquals(true, connection.replaceBackupSchedule(serverId, dailyWeekly));
+      connection.deleteBackupSchedule(serverId);
+      // disables, doesn't delete: Web Hosting #119571
+      assertEquals(connection.listBackupSchedule(serverId).isEnabled(), false);
+   }
+
+   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testBackup")
+   public void testCreateImage() throws Exception {
+      Image image = connection.createImageFromServer("hoofie", serverId);
+      assertEquals("hoofie", image.getName());
+      assertEquals(new Integer(serverId), image.getServerId());
+      int imageId = image.getId();
+      blockUntilImageActive(imageId);
+   }
+
+   // must be last!. do not rely on positional order.
+   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateImage")
    void deleteServers() {
       if (serverId > 0) {
          connection.deleteServer(serverId);

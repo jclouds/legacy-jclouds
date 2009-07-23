@@ -49,7 +49,11 @@ import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.rackspace.Authentication;
+import org.jclouds.rackspace.cloudservers.domain.BackupSchedule;
+import org.jclouds.rackspace.cloudservers.domain.DailyBackup;
+import org.jclouds.rackspace.cloudservers.domain.WeeklyBackup;
 import org.jclouds.rackspace.cloudservers.functions.ParseAddressesFromGsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseBackupScheduleFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseFlavorFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseFlavorListFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseImageFromGsonResponse;
@@ -467,6 +471,41 @@ public class CloudServersConnectionTest {
       assertEquals(processor.createResponseParser(method).getClass(), ReturnTrueIf2xx.class);
    }
 
+   public void testReplaceBackupSchedule() throws SecurityException, NoSuchMethodException {
+      Method method = CloudServersConnection.class.getMethod("replaceBackupSchedule", int.class,
+               BackupSchedule.class);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = processor.createRequest(endpoint, method, new Object[] { 2,
+               new BackupSchedule(WeeklyBackup.MONDAY, DailyBackup.H_0800_1000, true) });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/backup_schedule");
+      assertEquals(httpMethod.getMethod(), HttpMethod.POST);
+      assertEquals(httpMethod.getHeaders().size(), 2);
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
+               .singletonList(httpMethod.getEntity().toString().getBytes().length + ""));
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
+               .singletonList(MediaType.APPLICATION_JSON));
+      assertEquals(
+               "{\"backupSchedule\":{\"daily\":\"H_0800_1000\",\"enabled\":true,\"weekly\":\"MONDAY\"}}",
+               httpMethod.getEntity());
+      assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
+               ReturnFalseOn404.class);
+      assertEquals(processor.createResponseParser(method).getClass(), ReturnTrueIf2xx.class);
+   }
+
+   public void testDeleteBackupSchedule() throws SecurityException, NoSuchMethodException {
+      Method method = CloudServersConnection.class.getMethod("deleteBackupSchedule", int.class);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = processor.createRequest(endpoint, method, new Object[] { 2 });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/backup_schedule");
+      assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);
+      assertEquals(httpMethod.getHeaders().size(), 0);
+      assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
+               ReturnFalseOn404.class);
+      assertEquals(processor.createResponseParser(method).getClass(), ReturnTrueIf2xx.class);
+   }
+
    public void testChangeAdminPass() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersConnection.class.getMethod("changeAdminPass", int.class,
                String.class);
@@ -677,6 +716,41 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method).getClass(),
                ParseInetAddressListFromGsonResponse.class);
+   }
+
+   public void testListBackupSchedule() throws SecurityException, NoSuchMethodException {
+      Method method = CloudServersConnection.class.getMethod("listBackupSchedule", int.class);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = processor.createRequest(endpoint, method, new Object[] { 2 });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/backup_schedule");
+      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
+      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
+      assertEquals(httpMethod.getHeaders().size(), 0);
+      assertEquals(processor.createResponseParser(method).getClass(),
+               ParseBackupScheduleFromGsonResponse.class);
+   }
+
+   public void testCreateImageWithIpGroup() throws SecurityException, NoSuchMethodException {
+      Method method = CloudServersConnection.class.getMethod("createImageFromServer", String.class,
+               int.class);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = processor.createRequest(endpoint, method, new Object[] { "ralphie",
+               2 });
+      assertEquals("{\"image\":{\"serverId\":2,\"name\":\"ralphie\"}}", httpMethod.getEntity());
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/images");
+      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
+      assertEquals(httpMethod.getMethod(), HttpMethod.POST);
+      assertEquals(httpMethod.getHeaders().size(), 2);
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
+               .singletonList(httpMethod.getEntity().toString().getBytes().length + ""));
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
+               .singletonList(MediaType.APPLICATION_JSON));
+      assertEquals(processor.createResponseParser(method).getClass(),
+               ParseImageFromGsonResponse.class);
+      assertNotNull(processor.createExceptionParserOrNullIfNotFound(method));
+      assertNotNull(processor.getMapEntityBinderOrNull(method, new Object[] { "", 2 }));
    }
 
    JaxrsAnnotationProcessor processor;

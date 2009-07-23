@@ -36,16 +36,20 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.jclouds.http.functions.ReturnFalseOn404;
+import org.jclouds.rackspace.cloudservers.binders.BackupScheduleBinder;
 import org.jclouds.rackspace.cloudservers.binders.ChangeAdminPassBinder;
 import org.jclouds.rackspace.cloudservers.binders.ChangeServerNameBinder;
+import org.jclouds.rackspace.cloudservers.binders.CreateImageBinder;
 import org.jclouds.rackspace.cloudservers.binders.ShareIpBinder;
 import org.jclouds.rackspace.cloudservers.domain.Addresses;
+import org.jclouds.rackspace.cloudservers.domain.BackupSchedule;
 import org.jclouds.rackspace.cloudservers.domain.Flavor;
 import org.jclouds.rackspace.cloudservers.domain.Image;
 import org.jclouds.rackspace.cloudservers.domain.Server;
 import org.jclouds.rackspace.cloudservers.domain.SharedIpGroup;
 import org.jclouds.rackspace.cloudservers.functions.IpAddress;
 import org.jclouds.rackspace.cloudservers.functions.ParseAddressesFromGsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseBackupScheduleFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseFlavorFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseFlavorListFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseImageFromGsonResponse;
@@ -220,7 +224,8 @@ public interface CloudServersConnection {
    @DELETE
    @ExceptionParser(ReturnFalseOn404.class)
    @Path("/servers/{id}/ips/public/{address}")
-   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized(401), badRequest (400),
+   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized(401), badRequest
+   // (400),
    // badMediaType(415), overLimit (413)
    boolean unshareIp(
             @PathParam("address") @ParamParser(IpAddress.class) InetAddress addressToShare,
@@ -321,6 +326,37 @@ public interface CloudServersConnection {
 
    /**
     * 
+    * This operation creates a new image for the given server ID. Once complete, a new image will be
+    * available that can be used to rebuild or create servers. Specifying the same image name as an
+    * existing custom image replaces the image. The image creation status can be queried by
+    * performing a GET on /images/id and examining the status and progress attributes.
+    * 
+    * Status Transition:
+    * <p/>
+    * QUEUED - PREPARING - SAVING - ACTIVE
+    * <p/>
+    * QUEUED - PREPARING - SAVING - FAILED (on error)
+    * <p/>
+    * Note: At present, image creation is an asynchronous operation, so coordinating the creation
+    * with data quiescence, etc. is currently not possible.
+    * 
+    * @return {@link Image#NOT_FOUND} if the server is not found
+    * @see Image
+    */
+   @POST
+   @ResponseParser(ParseImageFromGsonResponse.class)
+   @Query(key = "format", value = "json")
+   @ExceptionParser(ReturnImageNotFoundOn404.class)
+   @MapBinder(CreateImageBinder.class)
+   @Path("/images")
+   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
+   // (400), badMediaType(415), buildInProgress (409), serverCapacityUnavailable (503), overLimit
+   // (413), resizeNotAllowed (403), backupOrResizeInProgress (409)
+   Image createImageFromServer(@MapEntityParam("imageName") String imageName,
+            @MapEntityParam("serverId") int serverId);
+
+   /**
+    * 
     * List shared IP groups (IDs and names only)
     * 
     * in order to retrieve all details, pass the option {@link ListOptions#withDetails()
@@ -380,6 +416,45 @@ public interface CloudServersConnection {
    // TODO:cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
    // (400)
    boolean deleteSharedIpGroup(@PathParam("id") int id);
+
+   /**
+    * List the backup schedule for the specified server
+    */
+   @GET
+   @ResponseParser(ParseBackupScheduleFromGsonResponse.class)
+   @Query(key = "format", value = "json")
+   @Path("/servers/{id}/backup_schedule")
+   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
+   // (400), itemNotFound (404)
+   BackupSchedule listBackupSchedule(@PathParam("id") int serverId);
+
+   /**
+    * Delete backup schedule for the specified server.
+    * <p/>
+    * Web Hosting #119571 currently disables the schedule, not deletes it.
+    * 
+    * @return false if the server is not found
+    */
+   @DELETE
+   @ExceptionParser(ReturnFalseOn404.class)
+   @Path("/servers/{id}/backup_schedule")
+   // TODO:cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
+   // (400), buildInProgress (409), serverCapacityUnavailable (503), backupOrResizeInProgress(409)
+   boolean deleteBackupSchedule(@PathParam("id") int serverId);
+
+   /**
+    * Enable/update the backup schedule for the specified server
+    * 
+    * @return false if the server is not found
+    */
+   @POST
+   @ExceptionParser(ReturnFalseOn404.class)
+   @Path("/servers/{id}/backup_schedule")
+   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
+   // (400), badMediaType(415), buildInProgress (409), serverCapacityUnavailable (503),
+   // backupOrResizeInProgress(409), resizeNotAllowed (403). overLimit (413)
+   boolean replaceBackupSchedule(@PathParam("id") int id,
+            @EntityParam(BackupScheduleBinder.class) BackupSchedule backupSchedule);
 
    /**
     * List all server addresses

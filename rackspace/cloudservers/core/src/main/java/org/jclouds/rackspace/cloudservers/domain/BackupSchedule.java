@@ -30,10 +30,18 @@ package org.jclouds.rackspace.cloudservers.domain;
  * @author Adrian Cole
  */
 public class BackupSchedule {
-
-   protected DailyBackup daily;
+   protected DailyBackup daily = DailyBackup.DISABLED;
    protected boolean enabled;
-   protected String weekly;
+   protected WeeklyBackup weekly = WeeklyBackup.DISABLED;
+
+   public BackupSchedule() {
+   }
+
+   public BackupSchedule(WeeklyBackup weekly, DailyBackup daily, boolean enabled) {
+      this.weekly = weekly;
+      this.daily = daily;
+      this.enabled = enabled;
+   }
 
    public DailyBackup getDaily() {
       return daily;
@@ -51,12 +59,51 @@ public class BackupSchedule {
       this.enabled = value;
    }
 
-   public String getWeekly() {
+   public WeeklyBackup getWeekly() {
       return weekly;
    }
 
-   public void setWeekly(String value) {
+   public void setWeekly(WeeklyBackup value) {
       this.weekly = value;
+   }
+
+   @Override
+   public String toString() {
+      return "BackupSchedule [daily=" + daily + ", enabled=" + enabled + ", weekly=" + weekly + "]";
+   }
+
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((daily == null) ? 0 : daily.hashCode());
+      result = prime * result + (enabled ? 1231 : 1237);
+      result = prime * result + ((weekly == null) ? 0 : weekly.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      BackupSchedule other = (BackupSchedule) obj;
+      if (daily == null) {
+         if (other.daily != null)
+            return false;
+      } else if (!daily.equals(other.daily))
+         return false;
+      if (enabled != other.enabled)
+         return false;
+      if (weekly == null) {
+         if (other.weekly != null)
+            return false;
+      } else if (!weekly.equals(other.weekly))
+         return false;
+      return true;
    }
 
 }

@@ -25,6 +25,23 @@ package org.jclouds.rackspace.cloudservers.domain;
 
 import org.jclouds.http.HttpMethod;
 
+/**
+ * 
+ * RateLimit.
+ * <p/>
+ * we specify rate limits in terms of both a human readable wild-card URI and a machine processable
+ * regular expression. The regular expression boundary matcher '^' takes affect after the root URI
+ * path. For example, the regular expression ^/servers would match the bolded portion of the
+ * following URI: https://servers.api.rackspacecloud.com/v1.0/3542812 /servers .
+ * <p/>
+ * Rate limits are applied in order relative to the verb, going from least to most specific. For
+ * example, although the threshold for POST to /servers is 25 per day, one cannot POST to /servers
+ * more than 10 times within a single minute because the rate limits for any POST is 10/min. In the
+ * event you exceed the thresholds established for your account, a 413 Rate Control HTTP response
+ * will be returned with a Reply-After header to notify the client when theyagain.
+ * 
+ * @author Adrian Cole
+ */
 public class RateLimit {
 
    private final String uri;
