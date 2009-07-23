@@ -21,22 +21,35 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudservers.domain;
+package org.jclouds.rackspace.cloudservers.binders;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Map;
+
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.binders.JsonBinder;
+import org.jclouds.rackspace.cloudservers.domain.RebootType;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * 
  * @author Adrian Cole
+ * 
  */
-public enum RebootType {
+public class RebootTypeBinder extends JsonBinder {
 
-   HARD, SOFT;
-
-   public String value() {
-      return name();
+   @Override
+   public void addEntityToRequest(Map<String, String> postParams, HttpRequest request) {
+      throw new IllegalStateException("Reboot doesn't take map parameters");
    }
 
-   public static RebootType fromValue(String v) {
-      return valueOf(v);
+   @Override
+   public void addEntityToRequest(Object toBind, HttpRequest request) {
+      checkArgument(toBind instanceof RebootType, "this binder is only valid for RebootTypes!");
+      super.addEntityToRequest(ImmutableMap.of("reboot", ImmutableMap.of("type", checkNotNull(
+               toBind, "type"))), request);
    }
-
 }

@@ -21,22 +21,34 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudservers.domain;
+package org.jclouds.rackspace.cloudservers.binders;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Map;
+
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.binders.JsonBinder;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * 
  * @author Adrian Cole
+ * 
  */
-public enum RebootType {
+public class ResizeBinder extends JsonBinder {
 
-   HARD, SOFT;
-
-   public String value() {
-      return name();
+   @Override
+   public void addEntityToRequest(Map<String, String> postParams, HttpRequest request) {
+      throw new IllegalStateException("Resize doesn't take map parameters");
    }
 
-   public static RebootType fromValue(String v) {
-      return valueOf(v);
+   @Override
+   public void addEntityToRequest(Object toBind, HttpRequest request) {
+      checkArgument(toBind instanceof Integer, "this binder is only valid for integers!");
+      super.addEntityToRequest(ImmutableMap.of("resize", ImmutableMap.of("flavorId",
+               (Integer) checkNotNull(toBind, "flavorId"))), request);
    }
-
 }

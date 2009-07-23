@@ -27,6 +27,7 @@ import static org.jclouds.rackspace.cloudservers.options.CreateServerOptions.Bui
 import static org.jclouds.rackspace.cloudservers.options.CreateServerOptions.Builder.withMetadata;
 import static org.jclouds.rackspace.cloudservers.options.CreateServerOptions.Builder.withSharedIpGroup;
 import static org.jclouds.rackspace.cloudservers.options.CreateSharedIpGroupOptions.Builder.withServer;
+import static org.jclouds.rackspace.cloudservers.options.RebuildServerOptions.Builder.withImage;
 import static org.jclouds.rackspace.cloudservers.options.ListOptions.Builder.changesSince;
 import static org.jclouds.rackspace.cloudservers.options.ListOptions.Builder.withDetails;
 import static org.testng.Assert.assertEquals;
@@ -51,6 +52,7 @@ import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.rackspace.Authentication;
 import org.jclouds.rackspace.cloudservers.domain.BackupSchedule;
 import org.jclouds.rackspace.cloudservers.domain.DailyBackup;
+import org.jclouds.rackspace.cloudservers.domain.RebootType;
 import org.jclouds.rackspace.cloudservers.domain.WeeklyBackup;
 import org.jclouds.rackspace.cloudservers.functions.ParseAddressesFromGsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseBackupScheduleFromGsonResponse;
@@ -70,6 +72,7 @@ import org.jclouds.rackspace.cloudservers.functions.ReturnSharedIpGroupNotFoundO
 import org.jclouds.rackspace.cloudservers.options.CreateServerOptions;
 import org.jclouds.rackspace.cloudservers.options.CreateSharedIpGroupOptions;
 import org.jclouds.rackspace.cloudservers.options.ListOptions;
+import org.jclouds.rackspace.cloudservers.options.RebuildServerOptions;
 import org.jclouds.rest.JaxrsAnnotationProcessor;
 import org.jclouds.rest.config.JaxrsModule;
 import org.joda.time.DateTime;
@@ -751,6 +754,119 @@ public class CloudServersConnectionTest {
                ParseImageFromGsonResponse.class);
       assertNotNull(processor.createExceptionParserOrNullIfNotFound(method));
       assertNotNull(processor.getMapEntityBinderOrNull(method, new Object[] { "", 2 }));
+   }
+
+   private static final Class<? extends RebuildServerOptions[]> rebuildServerOptionsVarargsClass = new RebuildServerOptions[] {}
+            .getClass();
+
+   public void testRebuildServer() throws SecurityException, NoSuchMethodException {
+      Method method = CloudServersConnection.class.getMethod("rebuildServer", int.class,
+               rebuildServerOptionsVarargsClass);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = processor.createRequest(endpoint, method, new Object[] { 3 });
+      assertEquals("{\"rebuild\":{}}", httpMethod.getEntity());
+      validateRebuildServer(method, httpMethod);
+   }
+
+   public void testRebuildServerWithImage() throws SecurityException, NoSuchMethodException {
+      Method method = CloudServersConnection.class.getMethod("rebuildServer", int.class,
+               rebuildServerOptionsVarargsClass);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = processor.createRequest(endpoint, method, new Object[] { 3,
+               withImage(2) });
+      assertEquals("{\"rebuild\":{\"imageId\":2}}", httpMethod.getEntity());
+      validateRebuildServer(method, httpMethod);
+   }
+
+   private void validateRebuildServer(Method method, HttpRequest httpMethod) {
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/3/action");
+      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
+      assertEquals(httpMethod.getMethod(), HttpMethod.POST);
+      assertEquals(httpMethod.getHeaders().size(), 2);
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
+               .singletonList(httpMethod.getEntity().toString().getBytes().length + ""));
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
+               .singletonList(MediaType.APPLICATION_JSON));
+      assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
+               ReturnFalseOn404.class);
+      assertEquals(processor.createResponseParser(method).getClass(), ReturnTrueIf2xx.class);
+      assertNotNull(processor.getMapEntityBinderOrNull(method, new Object[] { "",
+               new RebuildServerOptions[] { withImage(2) } }));
+   }
+
+   public void testReboot() throws SecurityException, NoSuchMethodException {
+      Method method = CloudServersConnection.class.getMethod("rebootServer", int.class,
+               RebootType.class);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = processor.createRequest(endpoint, method, new Object[] { 2,
+               RebootType.HARD });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/action");
+      assertEquals(httpMethod.getMethod(), HttpMethod.POST);
+      assertEquals(httpMethod.getHeaders().size(), 2);
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
+               .singletonList(httpMethod.getEntity().toString().getBytes().length + ""));
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
+               .singletonList(MediaType.APPLICATION_JSON));
+      assertEquals("{\"reboot\":{\"type\":\"HARD\"}}", httpMethod.getEntity());
+      assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
+               ReturnFalseOn404.class);
+      assertEquals(processor.createResponseParser(method).getClass(), ReturnTrueIf2xx.class);
+   }
+
+   public void testResize() throws SecurityException, NoSuchMethodException {
+      Method method = CloudServersConnection.class.getMethod("resizeServer", int.class, int.class);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = processor.createRequest(endpoint, method, new Object[] { 2, 3 });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/action");
+      assertEquals(httpMethod.getMethod(), HttpMethod.POST);
+      assertEquals(httpMethod.getHeaders().size(), 2);
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
+               .singletonList(httpMethod.getEntity().toString().getBytes().length + ""));
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
+               .singletonList(MediaType.APPLICATION_JSON));
+      assertEquals("{\"resize\":{\"flavorId\":3}}", httpMethod.getEntity());
+      assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
+               ReturnFalseOn404.class);
+      assertEquals(processor.createResponseParser(method).getClass(), ReturnTrueIf2xx.class);
+   }
+
+   public void testConfirmResize() throws SecurityException, NoSuchMethodException {
+      Method method = CloudServersConnection.class.getMethod("confirmResizeServer", int.class);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = processor.createRequest(endpoint, method, new Object[] { 2 });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/action");
+      assertEquals(httpMethod.getMethod(), HttpMethod.POST);
+      assertEquals(httpMethod.getHeaders().size(), 2);
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
+               .singletonList(httpMethod.getEntity().toString().getBytes().length + ""));
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
+               .singletonList(MediaType.APPLICATION_JSON));
+      assertEquals("{\"confirmResize\":null}", httpMethod.getEntity());
+      assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
+               ReturnFalseOn404.class);
+      assertEquals(processor.createResponseParser(method).getClass(), ReturnTrueIf2xx.class);
+   }
+
+   public void testRevertResize() throws SecurityException, NoSuchMethodException {
+      Method method = CloudServersConnection.class.getMethod("revertResizeServer", int.class);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = processor.createRequest(endpoint, method, new Object[] { 2 });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/action");
+      assertEquals(httpMethod.getMethod(), HttpMethod.POST);
+      assertEquals(httpMethod.getHeaders().size(), 2);
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
+               .singletonList(httpMethod.getEntity().toString().getBytes().length + ""));
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
+               .singletonList(MediaType.APPLICATION_JSON));
+      assertEquals("{\"revertResize\":null}", httpMethod.getEntity());
+      assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
+               ReturnFalseOn404.class);
+      assertEquals(processor.createResponseParser(method).getClass(), ReturnTrueIf2xx.class);
    }
 
    JaxrsAnnotationProcessor processor;

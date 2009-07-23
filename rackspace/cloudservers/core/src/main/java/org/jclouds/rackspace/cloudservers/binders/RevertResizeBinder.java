@@ -21,22 +21,28 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudservers.domain;
+package org.jclouds.rackspace.cloudservers.binders;
+
+import java.util.Collections;
+
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+
+import org.jclouds.http.HttpRequest;
+import org.jclouds.rest.EntityBinder;
 
 /**
  * 
  * @author Adrian Cole
+ * 
  */
-public enum RebootType {
+public class RevertResizeBinder implements EntityBinder {
 
-   HARD, SOFT;
-
-   public String value() {
-      return name();
+   public void addEntityToRequest(Object toBind, HttpRequest request) {
+      request.setEntity("{\"revertResize\":null}");
+      request.getHeaders().replaceValues(HttpHeaders.CONTENT_LENGTH,
+               Collections.singletonList("{\"revertResize\":null}".getBytes().length + ""));
+      request.getHeaders().replaceValues(HttpHeaders.CONTENT_TYPE,
+               Collections.singletonList(MediaType.APPLICATION_JSON));
    }
-
-   public static RebootType fromValue(String v) {
-      return valueOf(v);
-   }
-
 }

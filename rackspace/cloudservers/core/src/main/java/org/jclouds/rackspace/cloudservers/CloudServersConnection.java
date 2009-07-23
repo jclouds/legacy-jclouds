@@ -39,12 +39,17 @@ import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.rackspace.cloudservers.binders.BackupScheduleBinder;
 import org.jclouds.rackspace.cloudservers.binders.ChangeAdminPassBinder;
 import org.jclouds.rackspace.cloudservers.binders.ChangeServerNameBinder;
+import org.jclouds.rackspace.cloudservers.binders.ConfirmResizeBinder;
 import org.jclouds.rackspace.cloudservers.binders.CreateImageBinder;
+import org.jclouds.rackspace.cloudservers.binders.RebootTypeBinder;
+import org.jclouds.rackspace.cloudservers.binders.ResizeBinder;
+import org.jclouds.rackspace.cloudservers.binders.RevertResizeBinder;
 import org.jclouds.rackspace.cloudservers.binders.ShareIpBinder;
 import org.jclouds.rackspace.cloudservers.domain.Addresses;
 import org.jclouds.rackspace.cloudservers.domain.BackupSchedule;
 import org.jclouds.rackspace.cloudservers.domain.Flavor;
 import org.jclouds.rackspace.cloudservers.domain.Image;
+import org.jclouds.rackspace.cloudservers.domain.RebootType;
 import org.jclouds.rackspace.cloudservers.domain.Server;
 import org.jclouds.rackspace.cloudservers.domain.SharedIpGroup;
 import org.jclouds.rackspace.cloudservers.functions.IpAddress;
@@ -66,6 +71,7 @@ import org.jclouds.rackspace.cloudservers.functions.ReturnSharedIpGroupNotFoundO
 import org.jclouds.rackspace.cloudservers.options.CreateServerOptions;
 import org.jclouds.rackspace.cloudservers.options.CreateSharedIpGroupOptions;
 import org.jclouds.rackspace.cloudservers.options.ListOptions;
+import org.jclouds.rackspace.cloudservers.options.RebuildServerOptions;
 import org.jclouds.rackspace.filters.AuthenticateRequest;
 import org.jclouds.rest.EntityParam;
 import org.jclouds.rest.ExceptionParser;
@@ -141,15 +147,27 @@ public interface CloudServersConnection {
    boolean deleteServer(@PathParam("id") int id);
 
    /**
-    * The reboot function allows for either a soft or hard reboot of a server. With a soft reboot,
-    * the operating system is signaled to restart, which allows for a graceful shutdown of all
-    * processes. A hard reboot is the equivalent of power cycling the server.
+    * The reboot function allows for either a soft or hard reboot of a server.
+    * <p/>
+    * Status Transition:
+    * <p/>
+    * ACTIVE - REBOOT - ACTIVE (soft reboot)
+    * <p/>
+    * ACTIVE - HARD_REBOOT - ACTIVE (hard reboot)
+    * 
+    * @param rebootType
+    *           With a soft reboot, the operating system is signaled to restart, which allows for a
+    *           graceful shutdown of all processes. A hard reboot is the equivalent of power cycling
+    *           the server.
     */
-
-   /**
-    * The rebuild function removes all data on the server and replaces it with the specified image.
-    * Server ID and IP addresses remain the same.
-    */
+   @POST
+   @Query(key = "format", value = "json")
+   @Path("/servers/{id}/action")
+   @ExceptionParser(ReturnFalseOn404.class)
+   // TODO:cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
+   // (400), badMediaType(415),buildInProgress (409), overLimit (403)
+   boolean rebootServer(@PathParam("id") int id,
+            @EntityParam(RebootTypeBinder.class) RebootType rebootType);
 
    /**
     * The resize function converts an existing server to a different flavor, in essence, scaling the
@@ -157,7 +175,61 @@ public interface CloudServersConnection {
     * there is a problem. All resizes should be tested and explicitly confirmed, at which time the
     * original server is removed. All resizes are automatically confirmed after 24 hours if they are
     * not confirmed or reverted.
+    * <p/>
+    * Status Transition:
+    * <p/>
+    * ACTIVE - QUEUE_RESIZE - PREP_RESIZE - VERIFY_RESIZE
+    * <p/>
+    * ACTIVE - QUEUE_RESIZE - ACTIVE (on error)
     */
+   @POST
+   @Query(key = "format", value = "json")
+   @Path("/servers/{id}/action")
+   @ExceptionParser(ReturnFalseOn404.class)
+   // TODO:cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
+   // (400), badMediaType(415), itemNotFound (404), buildInProgress (409), serverCapacityUnavailable
+   // (503), overLimit (413), resizeNotAllowed (403)
+   boolean resizeServer(@PathParam("id") int id, @EntityParam(ResizeBinder.class) int flavorId);
+
+   /**
+    * The resize function converts an existing server to a different flavor, in essence, scaling the
+    * server up or down. The original server is saved for a period of time to allow rollback if
+    * there is a problem. All resizes should be tested and explicitly confirmed, at which time the
+    * original server is removed. All resizes are automatically confirmed after 24 hours if they are
+    * not confirmed or reverted.
+    * <p/>
+    * Status Transition:
+    * <p/>
+    * VERIFY_RESIZE - ACTIVE
+    */
+   @POST
+   @Query(key = "format", value = "json")
+   @Path("/servers/{id}/action")
+   @ExceptionParser(ReturnFalseOn404.class)
+   // TODO:cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
+   // (400), badMediaType(415), itemNotFound (404), buildInProgress (409), serverCapacityUnavailable
+   // (503), overLimit (413), resizeNotAllowed (403)
+   boolean confirmResizeServer(@PathParam("id") @EntityParam(ConfirmResizeBinder.class) int id);
+
+   /**
+    * The resize function converts an existing server to a different flavor, in essence, scaling the
+    * server up or down. The original server is saved for a period of time to allow rollback if
+    * there is a problem. All resizes should be tested and explicitly reverted, at which time the
+    * original server is removed. All resizes are automatically reverted after 24 hours if they are
+    * not reverted or reverted.
+    * <p/>
+    * Status Transition:
+    * <p/>
+    * VERIFY_RESIZE - ACTIVE
+    */
+   @POST
+   @Query(key = "format", value = "json")
+   @Path("/servers/{id}/action")
+   @ExceptionParser(ReturnFalseOn404.class)
+   // TODO:cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
+   // (400), badMediaType(415), itemNotFound (404), buildInProgress (409), serverCapacityUnavailable
+   // (503), overLimit (413), resizeNotAllowed (403)
+   boolean revertResizeServer(@PathParam("id") @EntityParam(RevertResizeBinder.class) int id);
 
    /**
     * This operation asynchronously provisions a new server. The progress of this operation depends
@@ -179,6 +251,31 @@ public interface CloudServersConnection {
    // badMediaType(415), badRequest (400), serverCapacityUnavailable (503), overLimit (413)
    Server createServer(@MapEntityParam("name") String name, @MapEntityParam("imageId") int imageId,
             @MapEntityParam("flavorId") int flavorId, CreateServerOptions... options);
+
+   /**
+    * The rebuild function removes all data on the server and replaces it with the specified image.
+    * Server ID and IP addresses remain the same.
+    * <p/>
+    * Status Transition:
+    * <p/>
+    * ACTIVE - REBUILD - ACTIVE
+    * <p/>
+    * ACTIVE - REBUILD - ERROR (on error)
+    * <p/>
+    * 
+    * @param options
+    *           - imageId is an optional argument. If it is not specified, the server is rebuilt
+    *           with the original imageId.
+    */
+   @POST
+   @Query(key = "format", value = "json")
+   @Path("/servers/{id}/action")
+   @ExceptionParser(ReturnFalseOn404.class)
+   @MapBinder(RebuildServerOptions.class)
+   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
+   // (400), badMediaType(415), itemNotFound (404), buildInProgress (409), serverCapacityUnavailable
+   // (503), overLimit (413)
+   boolean rebuildServer(@PathParam("id") int id, RebuildServerOptions... options);
 
    /**
     * /** This operation allows you share an IP address to the specified server

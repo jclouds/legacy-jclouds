@@ -26,6 +26,7 @@ package org.jclouds.rackspace.cloudservers;
 import static org.jclouds.rackspace.cloudservers.options.CreateServerOptions.Builder.withFile;
 import static org.jclouds.rackspace.cloudservers.options.CreateSharedIpGroupOptions.Builder.withServer;
 import static org.jclouds.rackspace.cloudservers.options.ListOptions.Builder.withDetails;
+import static org.jclouds.rackspace.cloudservers.options.RebuildServerOptions.Builder.withImage;
 import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_KEY;
 import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_USER;
 import static org.testng.Assert.assertEquals;
@@ -47,6 +48,7 @@ import org.jclouds.rackspace.cloudservers.domain.DailyBackup;
 import org.jclouds.rackspace.cloudservers.domain.Flavor;
 import org.jclouds.rackspace.cloudservers.domain.Image;
 import org.jclouds.rackspace.cloudservers.domain.ImageStatus;
+import org.jclouds.rackspace.cloudservers.domain.RebootType;
 import org.jclouds.rackspace.cloudservers.domain.Server;
 import org.jclouds.rackspace.cloudservers.domain.ServerStatus;
 import org.jclouds.rackspace.cloudservers.domain.SharedIpGroup;
@@ -284,6 +286,7 @@ public class CloudServersConnectionLiveTest {
    private InetAddress ip;
    private int serverId2;
    private String adminPass2;
+   private int imageId;
 
    @Test(timeOut = 5 * 60 * 1000)
    public void testCreateServer() throws Exception {
@@ -321,6 +324,20 @@ public class CloudServersConnectionLiveTest {
        * [Web Hosting #119335]
        */
       System.out.printf("awaiting daemons to start %n%s%n", currentDetails);
+      Thread.sleep(10 * 1000);
+   }
+
+   private void blockUntilServerVerifyResize(int serverId) throws InterruptedException {
+      Server currentDetails = null;
+      for (currentDetails = connection.getServer(serverId); currentDetails.getStatus() != ServerStatus.VERIFY_RESIZE; currentDetails = connection
+               .getServer(serverId)) {
+         System.out.printf("blocking on status verify resize%n%s%n", currentDetails);
+         Thread.sleep(5 * 1000);
+      }
+      /**
+       * [Web Hosting #119335]
+       */
+      System.out.printf("awaiting daemons to  verify resize %n%s%n", currentDetails);
       Thread.sleep(10 * 1000);
    }
 
@@ -515,12 +532,51 @@ public class CloudServersConnectionLiveTest {
       Image image = connection.createImageFromServer("hoofie", serverId);
       assertEquals("hoofie", image.getName());
       assertEquals(new Integer(serverId), image.getServerId());
-      int imageId = image.getId();
+      imageId = image.getId();
       blockUntilImageActive(imageId);
    }
 
-   // must be last!. do not rely on positional order.
    @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateImage")
+   public void testRebuildServer() throws Exception {
+      assertTrue(connection.rebuildServer(serverId, withImage(imageId)));
+      blockUntilServerActive(serverId);
+      // issue Web Hosting #119580 imageId comes back incorrect after rebuild
+      // assertEquals(new Integer(imageId), connection.getServer(serverId).getImageId());
+   }
+
+   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testRebuildServer")
+   public void testRebootHard() throws Exception {
+      assertTrue(connection.rebootServer(serverId, RebootType.HARD));
+      blockUntilServerActive(serverId);
+   }
+
+   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testRebootHard")
+   public void testRebootSoft() throws Exception {
+      assertTrue(connection.rebootServer(serverId, RebootType.SOFT));
+      blockUntilServerActive(serverId);
+   }
+
+   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testRebootSoft")
+   public void testRevertResize() throws Exception {
+      assertTrue(connection.resizeServer(serverId, 2));
+      blockUntilServerVerifyResize(serverId);
+      assertTrue(connection.revertResizeServer(serverId));
+      blockUntilServerActive(serverId);
+      assertEquals(new Integer(1), connection.getServer(serverId).getFlavorId());
+   }
+
+   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testRebootSoft")
+   public void testConfirmResize() throws Exception {
+      assertTrue(connection.resizeServer(serverId2, 2));
+      blockUntilServerVerifyResize(serverId2);
+      assertTrue(connection.confirmResizeServer(serverId2));
+      blockUntilServerActive(serverId2);
+      assertEquals(new Integer(2), connection.getServer(serverId2).getFlavorId());
+   }
+
+   // must be last!. do not rely on positional order.
+   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = { "testRebootSoft", "testRevertResize",
+            "testConfirmResize" })
    void deleteServers() {
       if (serverId > 0) {
          connection.deleteServer(serverId);
