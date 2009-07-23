@@ -393,13 +393,12 @@ public class JaxrsAnnotationProcessor {
       switch (request.getMethod()) {
          case POST:
          case PUT:
-            MapEntityBinder mapBinder = null;
+            MapEntityBinder mapBinder = getMapEntityBinderOrNull(method, args);
             Map<String, String> mapParams = buildPostParams(method, args);
             // MapEntityBinder is only useful if there are parameters. We guard here in case the
             // MapEntityBinder is also an EntityBinder. If so, it can be used with or without
             // parameters.
-            if (mapParams.size() > 0
-                     && (mapBinder = this.getMapEntityBinderOrNull(method, args)) != null) {
+            if (mapBinder != null) {
                mapBinder.addEntityToRequest(mapParams, request);
                break;
             }
