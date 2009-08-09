@@ -35,7 +35,7 @@ public class SecureS3ConnectionLiveTest extends S3ConnectionLiveTest {
    @Override
    protected S3ContextBuilder buildS3ContextFactory(String AWSAccessKeyId, String AWSSecretAccessKey) {
       return (S3ContextBuilder) S3ContextBuilder.newBuilder(AWSAccessKeyId, AWSSecretAccessKey)
-               .withHttpSecure(true).withHttpPort(443);
+               .withHttpSecure(true).relaxSSLHostname().withHttpPort(443);
    }
 
 }
