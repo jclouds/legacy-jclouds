@@ -23,6 +23,8 @@
  */
 package org.jclouds.aws.s3.handlers;
 
+import javax.ws.rs.core.HttpHeaders;
+
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.aws.s3.util.S3Utils;
@@ -30,7 +32,6 @@ import org.jclouds.aws.s3.xml.S3ParserFactory;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpMethod;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.http.handlers.RedirectionRetryHandler;
@@ -56,35 +57,40 @@ public class AWSRedirectionRetryHandler extends RedirectionRetryHandler {
       this.parserFactory = parserFactory;
    }
 
-   public boolean shouldRetryRequest(HttpCommand command, HttpRequest request, HttpResponse response) {
-      byte[] content = Utils.closeConnectionButKeepContentStream(response);
-      if (request.getMethod() == HttpMethod.HEAD) {
-         command.setMethod(HttpMethod.GET);
-         return true;
-      } else {
-         command.incrementRedirectCount();
-         try {
-            AWSError error = utils.parseAWSErrorFromContent(parserFactory, command, response,
-                     new String(content));
-            String host = error.getDetails().get(S3Constants.ENDPOINT);
-            if (host != null) {
-               if (host.equals(request.getEndpoint().getHost())) {
-                  // must be an amazon error related to
-                  // http://developer.amazonwebservices.com/connect/thread.jspa?messageID=72287&#72287
-                  return backoffHandler.shouldRetryRequest(command, response);
+   @Override
+   public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
+      if (response.getFirstHeaderOrNull(HttpHeaders.LOCATION) == null
+               && (response.getStatusCode() == 301 || response.getStatusCode() == 307)) {
+         byte[] content = Utils.closeConnectionButKeepContentStream(response);
+         if (command.getRequest().getMethod() == HttpMethod.HEAD) {
+            command.setMethod(HttpMethod.GET);
+            return true;
+         } else {
+            command.incrementRedirectCount();
+            try {
+               AWSError error = utils.parseAWSErrorFromContent(parserFactory, command, response,
+                        new String(content));
+               String host = error.getDetails().get(S3Constants.ENDPOINT);
+               if (host != null) {
+                  if (host.equals(command.getRequest().getEndpoint().getHost())) {
+                     // must be an amazon error related to
+                     // http://developer.amazonwebservices.com/connect/thread.jspa?messageID=72287&#72287
+                     return backoffHandler.shouldRetryRequest(command, response);
+                  } else {
+                     command.setHostAndPort(host, command.getRequest().getEndpoint().getPort());
+                  }
+                  return true;
                } else {
-                  command.setHostAndPort(host, request.getEndpoint().getPort());
+                  return false;
                }
-               return true;
-            } else {
+            } catch (HttpException e) {
+               logger.error(e, "error on redirect for command %s; response %s; retrying...",
+                        command, response);
                return false;
             }
-         } catch (HttpException e) {
-            logger.error(e, "error on redirect for command %s; response %s; retrying...", command,
-                     response);
-            return false;
          }
+      } else {
+         return super.shouldRetryRequest(command, response);
       }
-
    }
 }
