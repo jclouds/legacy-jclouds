@@ -41,9 +41,8 @@
 	</scm>
 
 	<properties>
-		<jclouds.s3.httpstream.url>http://apache.rediris.es/maven/binaries/apache-maven-2.1.0-bin.tar.bz2
-         </jclouds.s3.httpstream.url>
-		<jclouds.s3.httpstream.eTag>9268c9de2cccfd0d8fbcdbcfaf517a87</jclouds.s3.httpstream.eTag>
+		<jclouds.s3.httpstream.url>http://apache.multihomed.net/maven/binaries/apache-maven-2.2.0-bin.zip</jclouds.s3.httpstream.url>
+		<jclouds.s3.httpstream.md5>132bcde2aeca20acb0b16c1c66b74984</jclouds.s3.httpstream.md5>
 	</properties>
 
 	<repositories>
