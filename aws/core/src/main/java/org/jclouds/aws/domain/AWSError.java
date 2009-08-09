@@ -42,6 +42,7 @@ public class AWSError {
    private String requestToken;
    private Map<String, String> details = new HashMap<String, String>();
    private String stringSigned;
+   private String signature;
 
    @Override
    public String toString() {
@@ -55,6 +56,8 @@ public class AWSError {
          sb.append(", message='").append(message).append('\'');
       if (stringSigned != null)
          sb.append(", stringSigned='").append(stringSigned).append('\'');
+      if (getSignature() != null)
+         sb.append(", signature='").append(getSignature()).append('\'');
       if (details.size() != 0)
          sb.append(", context='").append(details.toString()).append('\'').append('}');
       return sb.toString();
@@ -128,5 +131,13 @@ public class AWSError {
 
    public String getRequestToken() {
       return requestToken;
+   }
+
+   public void setSignature(String signature) {
+      this.signature = signature;
+   }
+
+   public String getSignature() {
+      return signature;
    }
 }
