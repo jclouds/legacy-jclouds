@@ -46,17 +46,17 @@ import org.testng.annotations.Test;
 public class S3ConnectionLiveTest extends S3IntegrationTest {
 
    private static final String sysHttpStreamUrl = System.getProperty("jclouds.s3.httpstream.url");
-   private static final String sysHttpStreamETag = System.getProperty("jclouds.s3.httpstream.eTag");
+   private static final String sysHttpStreamETag = System.getProperty("jclouds.s3.httpstream.md5");
 
    @Test
-   @Parameters( { "jclouds.s3.httpstream.url", "jclouds.s3.httpstream.eTag" })
+   @Parameters( { "jclouds.s3.httpstream.url", "jclouds.s3.httpstream.md5" })
    public void testCopyUrl(@Optional String httpStreamUrl, @Optional String httpStreamETag)
             throws Exception {
       httpStreamUrl = checkNotNull(httpStreamUrl != null ? httpStreamUrl : sysHttpStreamUrl,
                "httpStreamUrl");
 
       httpStreamETag = checkNotNull(httpStreamETag != null ? httpStreamETag : sysHttpStreamETag,
-               "httpStreamETag");
+               "httpStreamMd5");
 
       String key = "hello";
 
@@ -73,7 +73,7 @@ public class S3ConnectionLiveTest extends S3IntegrationTest {
       object.getMetadata().setSize(length);
       String bucketName = getBucketName();
       try {
-         byte[] newETag = client.putObject(bucketName, object).get(30, TimeUnit.SECONDS);
+         byte[] newETag = client.putObject(bucketName, object).get(180, TimeUnit.SECONDS);
          assertEquals(newETag, eTag);
       } finally {
          returnBucket(bucketName);
