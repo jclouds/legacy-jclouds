@@ -532,21 +532,24 @@ public class JaxrsAnnotationProcessor {
       for (Entry<Integer, Set<Annotation>> entry : indexToPathParam.entrySet()) {
          for (Annotation key : entry.getValue()) {
             Set<Annotation> extractors = indexToParamExtractor.get(entry.getKey());
-
+            String paramKey = ((PathParam) key).value();
+            String paramValue;
             if (extractors != null && extractors.size() > 0) {
                ParamParser extractor = (ParamParser) extractors.iterator().next();
-               pathParamValues.put(((PathParam) key).value(), injector.getInstance(
-                        extractor.value()).apply(args[entry.getKey()]));
+               paramValue = injector.getInstance(extractor.value()).apply(args[entry.getKey()]);
             } else {
-               String paramKey = ((PathParam) key).value();
-               String paramValue = URLEncoder.encode(args[entry.getKey()].toString(), "UTF-8");
-               for (char c : skipEncode) {
-                  String value = Character.toString(c);
-                  String encoded = URLEncoder.encode(value, "UTF-8");
-                  paramValue = paramValue.replaceAll(encoded, value);
-               }
-               pathParamValues.put(paramKey, paramValue);
+               paramValue = args[entry.getKey()].toString();
             }
+            paramValue = URLEncoder.encode(paramValue, "UTF-8");
+            // Web browsers do not always handle '+' characters well, use the well-supported
+            // '%20' instead.
+            paramValue = paramValue.replaceAll("\\+", "%20");
+            for (char c : skipEncode) {
+               String value = Character.toString(c);
+               String encoded = URLEncoder.encode(value, "UTF-8");
+               paramValue = paramValue.replaceAll(encoded, value);
+            }
+            pathParamValues.put(paramKey, paramValue);
          }
       }
       return pathParamValues;
