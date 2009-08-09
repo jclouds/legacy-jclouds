@@ -419,6 +419,7 @@ public interface S3Connection {
    @Query(key = "acl")
    @XMLResponseParser(AccessControlListHandler.class)
    @ExceptionParser(ReturnNotFoundIfBucketDoesntExist.class)
+   @Path("/")
    Future<AccessControlList> getBucketACL(@HostPrefixParam String bucketName);
 
    /**
