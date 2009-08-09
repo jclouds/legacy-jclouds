@@ -32,6 +32,7 @@ import org.jclouds.command.Request;
 
 import com.google.common.collect.Multimap;
 import com.google.inject.internal.Lists;
+import com.google.inject.internal.Nullable;
 
 /**
  * Represents a request that can be executed within {@link HttpCommandExecutorService}
@@ -68,6 +69,20 @@ public class HttpRequest extends HttpMessage implements Request<URI> {
    public HttpRequest(HttpMethod method, URI endPoint, Multimap<String, String> headers) {
       this(method, endPoint);
       setHeaders(checkNotNull(headers, "headers"));
+   }
+
+   /**
+    * 
+    * @param endPoint
+    *           This may change over the life of the request due to redirects.
+    * @param method
+    *           If the request is HEAD, this may change to GET due to redirects
+    */
+   public HttpRequest(HttpMethod method, URI endPoint, Multimap<String, String> headers,
+            @Nullable Object entity) {
+      this(method, endPoint);
+      setHeaders(checkNotNull(headers, "headers"));
+      setEntity("entity");
    }
 
    @Override
