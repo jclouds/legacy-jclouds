@@ -101,10 +101,11 @@ public interface IntegrationTestClient {
    Future<String> downloadFilter(@PathParam("id") String id, @HeaderParam("filterme") String header);
 
    static class Filter implements HttpRequestFilter {
-      public void filter(HttpRequest request) throws HttpException {
+      public HttpRequest filter(HttpRequest request) throws HttpException {
          if (request.getHeaders().containsKey("filterme")) {
             request.getHeaders().put("test", "test");
          }
+         return request;
       }
    }
 

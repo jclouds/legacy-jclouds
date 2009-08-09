@@ -23,14 +23,16 @@
  */
 package org.jclouds.aws.s3.filters;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.ws.rs.core.HttpHeaders;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.http.HttpException;
@@ -53,8 +55,8 @@ import com.google.inject.name.Named;
  */
 @Singleton
 public class RequestAuthorizeSignature implements HttpRequestFilter {
-   private final String[] firstHeadersToSign = new String[] { 
-         "Content-MD5", HttpHeaders.CONTENT_TYPE, HttpHeaders.DATE };
+   private final String[] firstHeadersToSign = new String[] { "Content-MD5",
+            HttpHeaders.CONTENT_TYPE, HttpHeaders.DATE };
 
    private final String accessKey;
    private final String secretKey;
@@ -100,18 +102,16 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
       timeStamp = new AtomicReference<String>(createNewStamp());
    }
 
-   public void filter(HttpRequest request) throws HttpException {
-
+   public HttpRequest filter(HttpRequest request) throws HttpException {
+      replaceDateHeader(request);
       String toSign = createStringToSign(request);
-
-      addAuthHeader(request, toSign);
+      calculateAndReplaceAuthHeader(request, toSign);
+      return request;
    }
 
    public String createStringToSign(HttpRequest request) {
       StringBuilder buffer = new StringBuilder();
       // re-sign the request
-      removeOldHeaders(request);
-      addDateHeader(request);
       appendMethod(request, buffer);
       appendHttpHeaders(request, buffer);
       appendAmzHeaders(request, buffer);
@@ -120,27 +120,30 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
       return buffer.toString();
    }
 
-   private void removeOldHeaders(HttpRequest request) {
-      request.getHeaders().removeAll(HttpHeaders.AUTHORIZATION);
-      request.getHeaders().removeAll(HttpHeaders.DATE);
+   private void calculateAndReplaceAuthHeader(HttpRequest request, String toSign)
+            throws HttpException {
+      String signature = signString(toSign);
+      request.getHeaders().replaceValues(HttpHeaders.AUTHORIZATION,
+               Collections.singletonList("AWS " + accessKey + ":" + signature));
    }
 
-   private void addAuthHeader(HttpRequest request, String toSign) throws HttpException {
+   public String signString(String toSign) {
       String signature;
       try {
          signature = HttpUtils.hmacSha1Base64(toSign, secretKey.getBytes());
       } catch (Exception e) {
          throw new HttpException("error signing request", e);
       }
-      request.getHeaders().put(HttpHeaders.AUTHORIZATION, "AWS " + accessKey + ":" + signature);
+      return signature;
    }
 
    private void appendMethod(HttpRequest request, StringBuilder toSign) {
       toSign.append(request.getMethod()).append("\n");
    }
 
-   private void addDateHeader(HttpRequest request) {
-      request.getHeaders().put(HttpHeaders.DATE, timestampAsHeaderString());
+   private void replaceDateHeader(HttpRequest request) {
+      request.getHeaders().replaceValues(HttpHeaders.DATE,
+               Collections.singletonList(timestampAsHeaderString()));
    }
 
    private void appendAmzHeaders(HttpRequest request, StringBuilder toSign) {
@@ -174,7 +177,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
    @VisibleForTesting
    void appendUriPath(HttpRequest request, StringBuilder toSign) {
 
-      toSign.append(request.getEndpoint().getPath());
+      toSign.append(request.getEndpoint().getRawPath());
 
       // ...however, there are a few exceptions that must be included in the signed URI.
       if (request.getEndpoint().getQuery() != null) {

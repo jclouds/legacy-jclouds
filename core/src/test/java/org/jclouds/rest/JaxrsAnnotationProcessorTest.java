@@ -29,6 +29,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -60,6 +61,7 @@ import org.jclouds.util.DateService;
 import org.joda.time.DateTime;
 import org.mortbay.jetty.HttpHeaders;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
@@ -201,14 +203,16 @@ public class JaxrsAnnotationProcessorTest {
 
    static class TestRequestFilter1 implements HttpRequestFilter {
 
-      public void filter(HttpRequest request) throws HttpException {
+      public HttpRequest filter(HttpRequest request) throws HttpException {
+         return null;
       }
 
    }
 
    static class TestRequestFilter2 implements HttpRequestFilter {
 
-      public void filter(HttpRequest request) throws HttpException {
+      public HttpRequest filter(HttpRequest request) throws HttpException {
+         return null;
       }
 
    }
@@ -586,13 +590,22 @@ public class JaxrsAnnotationProcessorTest {
 
    }
 
-   public void testCreateGetRequest() throws SecurityException, NoSuchMethodException {
+   @DataProvider(name = "strings")
+   public Object[][] createData() {
+      return new Object[][] { { "apples" }, { "sp ace" }, { "unic¿de" }, { "qu?stion" } };
+   }
+
+   @Test(dataProvider = "strings")
+   public void testCreateGetRequest(String key) throws SecurityException, NoSuchMethodException,
+            UnsupportedEncodingException {
       Method method = TestRequest.class.getMethod("get", String.class, String.class);
       URI endpoint = URI.create("http://localhost");
       HttpRequest httpMethod = factory.create(TestRequest.class).createRequest(endpoint, method,
-               new Object[] { "1", "localhost" });
+               new Object[] { key, "localhost" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/1");
+      String expectedPath = "/" + URLEncoder.encode(key, "UTF-8").replaceAll("\\+", "%20");
+      assertEquals(httpMethod.getEndpoint().getRawPath(), expectedPath);
+      assertEquals(httpMethod.getEndpoint().getPath(), "/" + key);
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.HOST), Collections

@@ -33,14 +33,52 @@ import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.http.HttpMethod;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.util.DateService;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.google.inject.name.Names;
 
 @Test(groups = "unit", testName = "s3.RequestAuthorizeSignatureTest")
 public class RequestAuthorizeSignatureTest {
+
+   private Injector injector;
+   private RequestAuthorizeSignature filter;
+
+   @DataProvider(parallel = true)
+   public Object[][] dataProvider() {
+      return new Object[][] {
+               { new HttpRequest(HttpMethod.GET, URI.create("http://s3.amazonaws.com:80")) },
+               { new HttpRequest(
+                        HttpMethod.GET,
+                        URI
+                                 .create("http://adriancole.s3int5.s3-external-3.amazonaws.com:80/testObject")) },
+               { new HttpRequest(HttpMethod.GET, URI.create("http://s3.amazonaws.com:80/?acl"))
+
+               } };
+   }
+
+   /**
+    * NOTE this test is dependent on how frequently the timestamp updates. At the time of writing,
+    * this was once per second. If this timestamp update interval is increased, it could make this
+    * test appear to hang for a long time.
+    */
+   @Test(threadPoolSize = 3, dataProvider = "dataProvider", timeOut = 3000)
+   void testIdempotent(HttpRequest request) {
+      filter.filter(request);
+      String signature = request.getFirstHeaderOrNull(HttpHeaders.AUTHORIZATION);
+      String date = request.getFirstHeaderOrNull(HttpHeaders.DATE);
+      int iterations = 1;
+      while (filter.filter(request).getFirstHeaderOrNull(HttpHeaders.DATE).equals(date)) {
+         iterations++;
+         assertEquals(signature, request.getFirstHeaderOrNull(HttpHeaders.AUTHORIZATION));
+      }
+      System.out.printf("%s: %d iterations before the timestamp updated %n", Thread.currentThread()
+               .getName(), iterations);
+   }
 
    @Test
    void testAppendBucketNameHostHeader() {
@@ -48,7 +86,7 @@ public class RequestAuthorizeSignatureTest {
       HttpRequest request = new HttpRequest(HttpMethod.GET, host);
       request.getHeaders().put(HttpHeaders.HOST, "adriancole.s3int5.s3.amazonaws.com");
       StringBuilder builder = new StringBuilder();
-      createFilter().appendBucketName(request, builder);
+      filter.appendBucketName(request, builder);
       assertEquals(builder.toString(), "/adriancole.s3int5");
    }
 
@@ -57,7 +95,7 @@ public class RequestAuthorizeSignatureTest {
       URI host = URI.create("http://s3.amazonaws.com:80/?acl");
       HttpRequest request = new HttpRequest(HttpMethod.GET, host);
       StringBuilder builder = new StringBuilder();
-      createFilter().appendUriPath(request, builder);
+      filter.appendUriPath(request, builder);
       assertEquals(builder.toString(), "/?acl");
    }
 
@@ -69,7 +107,7 @@ public class RequestAuthorizeSignatureTest {
       HttpRequest request = new HttpRequest(HttpMethod.GET, host);
       request.getHeaders().put(HttpHeaders.HOST, "s3.amazonaws.com");
       StringBuilder builder = new StringBuilder();
-      createFilter().appendBucketName(request, builder);
+      filter.appendBucketName(request, builder);
       assertEquals(builder.toString(), "");
    }
 
@@ -78,13 +116,12 @@ public class RequestAuthorizeSignatureTest {
       URI host = URI.create("http://adriancole.s3int5.s3-external-3.amazonaws.com:80");
       HttpRequest request = new HttpRequest(HttpMethod.GET, host);
       StringBuilder builder = new StringBuilder();
-      createFilter().appendBucketName(request, builder);
+      filter.appendBucketName(request, builder);
       assertEquals(builder.toString(), "/adriancole.s3int5");
    }
 
    @Test
    void testUpdatesOnlyOncePerSecond() throws NoSuchMethodException, InterruptedException {
-      RequestAuthorizeSignature filter = createFilter();
       // filter.createNewStamp();
       String timeStamp = filter.timestampAsHeaderString();
       // replay(filter);
@@ -96,8 +133,13 @@ public class RequestAuthorizeSignatureTest {
       // verify(filter);
    }
 
-   private RequestAuthorizeSignature createFilter() {
-      return Guice.createInjector(new AbstractModule() {
+   /**
+    * before class, as we need to ensure that the filter is threadsafe.
+    * 
+    */
+   @BeforeClass
+   protected void createFilter() {
+      injector = Guice.createInjector(new AbstractModule() {
 
          protected void configure() {
             bindConstant().annotatedWith(Names.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to(
@@ -107,7 +149,8 @@ public class RequestAuthorizeSignatureTest {
             bind(DateService.class);
 
          }
-      }).getInstance(RequestAuthorizeSignature.class);
+      });
+      filter = injector.getInstance(RequestAuthorizeSignature.class);
    }
 
 }

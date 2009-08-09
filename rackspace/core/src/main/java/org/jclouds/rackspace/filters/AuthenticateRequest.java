@@ -88,9 +88,10 @@ public class AuthenticateRequest implements HttpRequestFilter {
       authToken = new AtomicReference<String>();
    }
 
-   public void filter(HttpRequest request) throws HttpException {
+   public HttpRequest filter(HttpRequest request) throws HttpException {
       request.getHeaders().replaceValues(RackspaceHeaders.AUTH_TOKEN,
                Collections.singletonList(getAuthToken()));
+      return request;
    }
 
 }
