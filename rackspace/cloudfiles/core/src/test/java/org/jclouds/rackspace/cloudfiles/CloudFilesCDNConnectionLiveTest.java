@@ -32,6 +32,7 @@ import java.util.List;
 
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerCDNMetadata;
+import org.jclouds.rackspace.cloudfiles.options.ListCdnContainerOptions;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -92,6 +93,7 @@ public class CloudFilesCDNConnectionLiveTest {
       
       // List CDN metadata for containers, and ensure all CDN info is available for enabled container
       List<ContainerCDNMetadata> cdnMetadataList = cdnConnection.listCDNContainers();
+      assertTrue(cdnMetadataList.size() >= 1);
       assertTrue(Iterables.any(cdnMetadataList, new Predicate<ContainerCDNMetadata>() {
           public boolean apply(ContainerCDNMetadata cdnMetadata) {
              return (
@@ -101,6 +103,21 @@ public class CloudFilesCDNConnectionLiveTest {
                 cdnMetadata.getCdnUri().equals(cdnUri));
           }  
       }));
+      
+      // Test listing with options
+      cdnMetadataList = cdnConnection.listCDNContainers(
+            ListCdnContainerOptions.Builder.enabledOnly());
+      assertTrue(Iterables.all(cdnMetadataList, new Predicate<ContainerCDNMetadata>() {
+         public boolean apply(ContainerCDNMetadata cdnMetadata) {
+            return cdnMetadata.isCdnEnabled();
+         }  
+      }));
+
+      cdnMetadataList = cdnConnection.listCDNContainers(ListCdnContainerOptions.Builder
+            .afterMarker(containerNameWithCDN.substring(0, containerNameWithCDN.length() - 1)) 
+            .maxResults(1));
+      assertEquals(cdnMetadataList.size(), 1);
+      assertEquals(cdnMetadataList.get(0).getName(), containerNameWithCDN);
 
       // Enable CDN with PUT for the same container, this time with a custom TTL
       long ttl = 4000;
