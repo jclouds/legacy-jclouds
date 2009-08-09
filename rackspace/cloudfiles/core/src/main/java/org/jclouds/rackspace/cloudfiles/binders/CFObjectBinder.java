@@ -72,7 +72,7 @@ public class CFObjectBinder implements EntityBinder {
             String hexETag = HttpUtils.toHexString(object.getMetadata().getETag());
             request.getHeaders().put(HttpHeaders.ETAG, hexETag);
          } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("Failed to encode ETag for object: " + object, e);
+            throw new RuntimeException("jclouds requires UTF-8 encoding" + object, e);
          }
       }
 
