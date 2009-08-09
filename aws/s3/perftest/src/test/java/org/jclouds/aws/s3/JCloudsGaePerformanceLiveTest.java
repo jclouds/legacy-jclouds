@@ -25,6 +25,8 @@ package org.jclouds.aws.s3;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 import org.jclouds.gae.config.GaeHttpCommandExecutorServiceModule;
 import org.testng.annotations.BeforeMethod;
@@ -40,8 +42,73 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(enabled = false, sequential = true, testName = "s3.JCloudsGaePerformanceLiveTest", groups = { "live" })
+@Test(enabled = false, sequential = true, testName = "s3.JCloudsGaePerformanceLiveTest", groups = { "disabled" })
 public class JCloudsGaePerformanceLiveTest extends BaseJCloudsPerformance {
+
+   @Override
+   @Test(enabled = false)
+   public void testPutBytesParallel() throws InterruptedException, ExecutionException,
+            TimeoutException {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   @Test(enabled = false)
+   public void testPutBytesParallelEU() throws InterruptedException, ExecutionException,
+            TimeoutException {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   @Test(enabled = false)
+   public void testPutBytesSerial() throws Exception {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   @Test(enabled = false)
+   public void testPutBytesSerialEU() throws Exception {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   @Test(enabled = false)
+   public void testPutFileParallel() throws InterruptedException, ExecutionException,
+            TimeoutException {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   @Test(enabled = false)
+   public void testPutFileSerial() throws Exception {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   @Test(enabled = false)
+   public void testPutInputStreamParallel() throws InterruptedException, ExecutionException,
+            TimeoutException {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   @Test(enabled = false)
+   public void testPutInputStreamSerial() throws Exception {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   @Test(enabled = false)
+   public void testPutStringParallel() throws InterruptedException, ExecutionException,
+            TimeoutException {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   @Test(enabled = false)
+   public void testPutStringSerial() throws Exception {
+      throw new UnsupportedOperationException();
+   }
 
    public JCloudsGaePerformanceLiveTest() {
       super();
