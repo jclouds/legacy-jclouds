@@ -58,8 +58,10 @@ public class S3Utils {
       AWSError error = parserFactory.createErrorParser().parse(content);
       error.setRequestId(response.getFirstHeaderOrNull(S3Headers.REQUEST_ID));
       error.setRequestToken(response.getFirstHeaderOrNull(S3Headers.REQUEST_TOKEN));
-      if ("SignatureDoesNotMatch".equals(error.getCode()))
+      if ("SignatureDoesNotMatch".equals(error.getCode())) {
          error.setStringSigned(signer.createStringToSign(command.getRequest()));
+         error.setSignature(signer.signString(error.getStringSigned()));
+      }
       return error;
 
    }
