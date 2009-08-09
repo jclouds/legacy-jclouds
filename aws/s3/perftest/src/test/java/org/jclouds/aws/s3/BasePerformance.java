@@ -36,8 +36,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.AfterGroups;
+import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.inject.Provider;
@@ -47,22 +47,21 @@ import com.google.inject.Provider;
  * 
  * @author Adrian Cole
  */
-@Test(groups = { "live" })
+@Test(groups = { "live" }, testName = "s3.S3Performance")
 public abstract class BasePerformance extends S3IntegrationTest {
    protected int timeoutSeconds = 10;
    protected int loopCount = 100;
    protected ExecutorService exec;
    protected CompletionService<Boolean> completer;
 
-   @BeforeTest
-   protected void setUpCallables() throws InterruptedException, ExecutionException,
-            TimeoutException {
+   @BeforeGroups(groups = { "live" })
+   public void setUpCallables() throws InterruptedException, ExecutionException, TimeoutException {
       exec = Executors.newCachedThreadPool();
       completer = new ExecutorCompletionService<Boolean>(exec);
    }
 
-   @AfterTest
-   protected void tearDownExecutor() throws Exception {
+   @AfterGroups(groups = { "live" })
+   public void tearDownExecutor() throws Exception {
       exec.shutdownNow();
       exec = null;
    }
@@ -70,7 +69,11 @@ public abstract class BasePerformance extends S3IntegrationTest {
    @Test
    public void testPutBytesSerialEU() throws Exception {
       String euBucketName = createScratchBucketInEU();
-      doSerial(new PutBytesCallable(euBucketName), loopCount / 10);
+      try {
+         doSerial(new PutBytesCallable(euBucketName), loopCount);
+      } finally {
+         returnBucket(euBucketName);
+      }
    }
 
    @Test
