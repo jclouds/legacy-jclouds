@@ -41,9 +41,8 @@ import com.google.inject.Inject;
  * 
  * @author Adrian Cole
  */
-public class ParseContainerListFromGsonResponse extends ParseJson<List<ContainerMetadata>>
-    {
-   
+public class ParseContainerListFromGsonResponse extends ParseJson<List<ContainerMetadata>> {
+
    @Inject
    public ParseContainerListFromGsonResponse(Gson gson) {
       super(gson);
