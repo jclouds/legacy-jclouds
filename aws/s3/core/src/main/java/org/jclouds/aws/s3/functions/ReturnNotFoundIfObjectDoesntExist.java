@@ -33,7 +33,7 @@ public class ReturnNotFoundIfObjectDoesntExist implements Function<Exception, Ac
    public AccessControlList apply(Exception from) {
       if (from != null && from instanceof AWSResponseException) {
          AWSResponseException responseException = (AWSResponseException) from;
-         if ("NoSuchObject".equals(responseException.getError().getCode())) {
+         if ("NoSuchKey".equals(responseException.getError().getCode())) {
             return AccessControlList.NOT_FOUND;
          }
       }
