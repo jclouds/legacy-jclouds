@@ -61,15 +61,16 @@ public class AccessControlListBinder implements EntityBinder {
 
    protected XMLBuilder generateBuilder(AccessControlList acl) throws ParserConfigurationException,
             FactoryConfigurationError {
-      XMLBuilder ownerBuilder = XMLBuilder.create("AccessControlPolicy").attr("xmlns",
-               S3Constants.S3_REST_API_XML_NAMESPACE).elem("Owner");
+      XMLBuilder rootBuilder = XMLBuilder.create("AccessControlPolicy").attr("xmlns",
+               S3Constants.S3_REST_API_XML_NAMESPACE);
       if (acl.getOwner() != null) {
+         XMLBuilder ownerBuilder = rootBuilder.elem("Owner");
          ownerBuilder.elem("ID").text(acl.getOwner().getId()).up();
          if (acl.getOwner().getDisplayName() != null) {
             ownerBuilder.elem("DisplayName").text(acl.getOwner().getDisplayName()).up();
          }
       }
-      XMLBuilder grantsBuilder = ownerBuilder.root().elem("AccessControlList");
+      XMLBuilder grantsBuilder = rootBuilder.elem("AccessControlList");
       for (Grant grant : acl.getGrants()) {
          XMLBuilder grantBuilder = grantsBuilder.elem("Grant");
          XMLBuilder granteeBuilder = grantBuilder.elem("Grantee").attr("xmlns:xsi",
