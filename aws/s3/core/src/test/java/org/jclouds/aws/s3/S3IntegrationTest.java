@@ -147,7 +147,7 @@ public class S3IntegrationTest {
 
    @BeforeGroups(groups = { "integration", "live" })
    @Parameters( { S3Constants.PROPERTY_AWS_ACCESSKEYID, S3Constants.PROPERTY_AWS_SECRETACCESSKEY })
-   protected void setUpCredentials(@Optional String AWSAccessKeyId,
+   public void setUpCredentials(@Optional String AWSAccessKeyId,
             @Optional String AWSSecretAccessKey, ITestContext testContext) throws Exception {
       AWSAccessKeyId = AWSAccessKeyId != null ? AWSAccessKeyId : sysAWSAccessKeyId;
       AWSSecretAccessKey = AWSSecretAccessKey != null ? AWSSecretAccessKey : sysAWSSecretAccessKey;
@@ -158,7 +158,7 @@ public class S3IntegrationTest {
    }
 
    @BeforeGroups(dependsOnMethods = { "setUpCredentials" }, groups = { "integration", "live" })
-   protected void setUpClient(ITestContext testContext) throws Exception {
+   public void setUpClient(ITestContext testContext) throws Exception {
       if (testContext.getAttribute(S3Constants.PROPERTY_AWS_ACCESSKEYID) != null) {
          String AWSAccessKeyId = (String) testContext
                   .getAttribute(S3Constants.PROPERTY_AWS_ACCESSKEYID);
@@ -329,11 +329,20 @@ public class S3IntegrationTest {
     * @throws ExecutionException
     * @throws TimeoutException
     */
-   protected void deleteBucket(String name) throws InterruptedException, ExecutionException,
+   protected void deleteBucket(final String name) throws InterruptedException, ExecutionException,
             TimeoutException {
       if (client.bucketExists(name)) {
          emptyBucket(name);
          client.deleteBucketIfEmpty(name);
+         assertEventually(new Runnable() {
+            public void run() {
+               try {
+                  assert !client.bucketExists(name) : "bucket " + name + " still exists";
+               } catch (Exception e) {
+                  Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
+               }
+            }
+         });
       }
    }
 
