@@ -53,7 +53,7 @@ public class AmazonPerformanceLiveTest extends BasePerformance {
 
    @BeforeClass(inheritGroups = false, groups = { "live" })
    @Parameters( { S3Constants.PROPERTY_AWS_ACCESSKEYID, S3Constants.PROPERTY_AWS_SECRETACCESSKEY })
-   public void setUpJetS3t(@Optional String AWSAccessKeyId, @Optional String AWSSecretAccessKey)
+   public void setUpAmazon(@Optional String AWSAccessKeyId, @Optional String AWSSecretAccessKey)
             throws S3ServiceException {
       AWSAccessKeyId = AWSAccessKeyId != null ? AWSAccessKeyId : sysAWSAccessKeyId;
       AWSSecretAccessKey = AWSSecretAccessKey != null ? AWSSecretAccessKey : sysAWSSecretAccessKey;
