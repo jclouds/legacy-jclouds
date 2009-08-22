@@ -27,6 +27,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -37,6 +41,7 @@ import java.util.concurrent.Future;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.HttpMethod;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -45,7 +50,6 @@ import javax.ws.rs.PathParam;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpException;
-import org.jclouds.http.HttpMethod;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
@@ -79,6 +83,28 @@ import com.google.inject.name.Names;
  */
 @Test(groups = "unit", testName = "jaxrs.JaxrsUtilTest")
 public class JaxrsAnnotationProcessorTest {
+
+   @Target( { ElementType.METHOD })
+   @Retention(RetentionPolicy.RUNTIME)
+   @javax.ws.rs.HttpMethod("FOO")
+   public @interface FOO {
+   }
+
+   public class TestCustomMethod {
+      @FOO
+      public void foo() {
+      }
+   }
+
+   public void testCustomMethod() throws SecurityException, NoSuchMethodException {
+      Method method = TestCustomMethod.class.getMethod("foo");
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = factory.create(TestCustomMethod.class).createRequest(endpoint,
+               method, new Object[] {});
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "");
+      assertEquals(httpMethod.getMethod(), "FOO");
+   }
 
    public class TestPost {
       @POST

@@ -40,10 +40,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
+import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.http.HttpMethod;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.handlers.DelegatingErrorHandler;

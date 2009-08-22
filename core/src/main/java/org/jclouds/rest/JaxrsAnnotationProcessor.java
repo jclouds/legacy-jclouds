@@ -43,7 +43,6 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jboss.resteasy.util.IsHttpMethod;
-import org.jclouds.http.HttpMethod;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
@@ -209,7 +208,7 @@ public class JaxrsAnnotationProcessor {
    private HttpRequestOptionsBinder optionsBinder;
 
    public HttpRequest createRequest(URI endpoint, Method method, Object[] args) {
-      HttpMethod httpMethod = getHttpMethodOrConstantOrThrowException(method);
+      String httpMethod = getHttpMethodOrConstantOrThrowException(method);
 
       UriBuilder builder = addHostPrefixIfPresent(endpoint, method, args);
       builder.path(declaring);
@@ -370,14 +369,14 @@ public class JaxrsAnnotationProcessor {
       constants.put(key, value);
    }
 
-   public HttpMethod getHttpMethodOrConstantOrThrowException(Method method) {
+   public String getHttpMethodOrConstantOrThrowException(Method method) {
       Set<String> httpMethods = IsHttpMethod.getHttpMethods(method);
       if (httpMethods == null || httpMethods.size() != 1) {
          throw new IllegalStateException(
                   "You must use at least one, but no more than one http method or pathparam annotation on: "
                            + method.toString());
       }
-      return HttpMethod.valueOf(httpMethods.iterator().next());
+      return httpMethods.iterator().next();
    }
 
    public void addHostHeaderIfAnnotatedWithVirtualHost(Multimap<String, String> headers,
@@ -390,44 +389,42 @@ public class JaxrsAnnotationProcessor {
 
    public HttpRequest buildEntityIfPostOrPutRequest(Method method, Object[] args,
             HttpRequest request) {
-      switch (request.getMethod()) {
-         case POST:
-         case PUT:
-            MapEntityBinder mapBinder = getMapEntityBinderOrNull(method, args);
-            Map<String, String> mapParams = buildPostParams(method, args);
-            // MapEntityBinder is only useful if there are parameters. We guard here in case the
-            // MapEntityBinder is also an EntityBinder. If so, it can be used with or without
-            // parameters.
-            if (mapBinder != null) {
-               mapBinder.addEntityToRequest(mapParams, request);
-               break;
+      OUTER: if (request.getMethod().toUpperCase().equals("POST")
+               || request.getMethod().toUpperCase().equals("PUT")) {
+         MapEntityBinder mapBinder = getMapEntityBinderOrNull(method, args);
+         Map<String, String> mapParams = buildPostParams(method, args);
+         // MapEntityBinder is only useful if there are parameters. We guard here in case the
+         // MapEntityBinder is also an EntityBinder. If so, it can be used with or without
+         // parameters.
+         if (mapBinder != null) {
+            mapBinder.addEntityToRequest(mapParams, request);
+            break OUTER;
+         }
+         HttpRequestOptions options = findOptionsIn(method, args);
+         if (options != null) {
+            optionsBinder.addEntityToRequest(options, request);
+         }
+         if (request.getEntity() == null) {
+
+            Map<Integer, Set<Annotation>> indexToEntityAnnotation = getIndexToEntityAnnotation(method);
+
+            if (indexToEntityAnnotation.size() == 1) {
+               Entry<Integer, Set<Annotation>> entry = indexToEntityAnnotation.entrySet()
+                        .iterator().next();
+               EntityParam entityAnnotation = (EntityParam) entry.getValue().iterator().next();
+
+               Object entity = args[entry.getKey()];
+               EntityBinder binder = injector.getInstance(entityAnnotation.value());
+
+               binder.addEntityToRequest(entity, request);
+            } else if (indexToEntityAnnotation.size() > 1) {
+               throw new IllegalStateException("cannot have multiple @Entity annotations on "
+                        + method);
+            } else {
+               request.getHeaders().replaceValues(HttpHeaders.CONTENT_LENGTH,
+                        Lists.newArrayList("0"));
             }
-            HttpRequestOptions options = findOptionsIn(method, args);
-            if (options != null) {
-               optionsBinder.addEntityToRequest(options, request);
-            }
-            if (request.getEntity() == null) {
-
-               Map<Integer, Set<Annotation>> indexToEntityAnnotation = getIndexToEntityAnnotation(method);
-
-               if (indexToEntityAnnotation.size() == 1) {
-                  Entry<Integer, Set<Annotation>> entry = indexToEntityAnnotation.entrySet()
-                           .iterator().next();
-                  EntityParam entityAnnotation = (EntityParam) entry.getValue().iterator().next();
-
-                  Object entity = args[entry.getKey()];
-                  EntityBinder binder = injector.getInstance(entityAnnotation.value());
-
-                  binder.addEntityToRequest(entity, request);
-               } else if (indexToEntityAnnotation.size() > 1) {
-                  throw new IllegalStateException("cannot have multiple @Entity annotations on "
-                           + method);
-               } else {
-                  request.getHeaders().replaceValues(HttpHeaders.CONTENT_LENGTH,
-                           Lists.newArrayList("0"));
-               }
-            }
-            break;
+         }
       }
       return request;
    }

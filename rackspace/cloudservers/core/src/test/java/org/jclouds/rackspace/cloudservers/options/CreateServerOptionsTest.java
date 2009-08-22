@@ -23,13 +23,17 @@
  */
 package org.jclouds.rackspace.cloudservers.options;
 
+import static org.jclouds.rackspace.cloudservers.options.CreateServerOptions.Builder.withFile;
+import static org.jclouds.rackspace.cloudservers.options.CreateServerOptions.Builder.withSharedIp;
+import static org.jclouds.rackspace.cloudservers.options.CreateServerOptions.Builder.withSharedIpGroup;
 import static org.testng.Assert.assertEquals;
 
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.UnknownHostException;
 
-import org.jclouds.http.HttpMethod;
+import javax.ws.rs.HttpMethod;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.config.ParserModule;
 import org.testng.annotations.Test;
@@ -37,7 +41,6 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import static org.jclouds.rackspace.cloudservers.options.CreateServerOptions.Builder.*;
 
 /**
  * Tests behavior of {@code ParseFlavorFromGsonResponse}

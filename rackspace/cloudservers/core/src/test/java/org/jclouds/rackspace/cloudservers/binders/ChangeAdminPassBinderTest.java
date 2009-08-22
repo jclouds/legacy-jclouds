@@ -28,10 +28,10 @@ import static org.testng.Assert.assertEquals;
 import java.io.File;
 import java.net.URI;
 
-import org.jclouds.http.HttpMethod;
+import javax.ws.rs.HttpMethod;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.config.ParserModule;
-import org.jclouds.rackspace.cloudservers.binders.ChangeAdminPassBinder;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;

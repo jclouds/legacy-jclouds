@@ -48,5 +48,5 @@ public interface HttpCommand extends EndpointCommand<URI, HttpRequest, HttpRespo
    /**
     * to allow redirects to work on methods that were HEAD
     */
-   HttpRequest setMethod(HttpMethod method);
+   HttpRequest setMethod(String method);
 }

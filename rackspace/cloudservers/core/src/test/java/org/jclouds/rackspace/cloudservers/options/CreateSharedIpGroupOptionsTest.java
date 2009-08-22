@@ -28,7 +28,8 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
-import org.jclouds.http.HttpMethod;
+import javax.ws.rs.HttpMethod;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.config.ParserModule;
 import org.testng.annotations.Test;

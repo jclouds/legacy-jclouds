@@ -29,9 +29,10 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Collections;
 
+import javax.ws.rs.HttpMethod;
+
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
-import org.jclouds.http.HttpMethod;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.rackspace.functions.ParseAuthenticationResponseFromHeaders;

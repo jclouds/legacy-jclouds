@@ -43,7 +43,7 @@ public class HttpRequest extends HttpMessage implements Request<URI> {
 
    private List<HttpRequestFilter> requestFilters = Lists.newArrayList();
 
-   private final HttpMethod method;
+   private final String method;
    private final URI endpoint;
    private Object entity;
 
@@ -54,7 +54,7 @@ public class HttpRequest extends HttpMessage implements Request<URI> {
     * @param method
     *           If the request is HEAD, this may change to GET due to redirects
     */
-   public HttpRequest(HttpMethod method, URI endPoint) {
+   public HttpRequest(String method, URI endPoint) {
       this.method = checkNotNull(method, "method");
       this.endpoint = checkNotNull(endPoint, "endPoint");
    }
@@ -66,7 +66,7 @@ public class HttpRequest extends HttpMessage implements Request<URI> {
     * @param method
     *           If the request is HEAD, this may change to GET due to redirects
     */
-   public HttpRequest(HttpMethod method, URI endPoint, Multimap<String, String> headers) {
+   public HttpRequest(String method, URI endPoint, Multimap<String, String> headers) {
       this(method, endPoint);
       setHeaders(checkNotNull(headers, "headers"));
    }
@@ -78,7 +78,7 @@ public class HttpRequest extends HttpMessage implements Request<URI> {
     * @param method
     *           If the request is HEAD, this may change to GET due to redirects
     */
-   public HttpRequest(HttpMethod method, URI endPoint, Multimap<String, String> headers,
+   public HttpRequest(String method, URI endPoint, Multimap<String, String> headers,
             @Nullable Object entity) {
       this(method, endPoint);
       setHeaders(checkNotNull(headers, "headers"));
@@ -101,7 +101,11 @@ public class HttpRequest extends HttpMessage implements Request<URI> {
       return sb.toString();
    }
 
-   public HttpMethod getMethod() {
+   /**
+    * We cannot return an enum, as per specification custom methods are allowed.  Enums are not extensible.
+    * @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html#sec5.1.1
+    */
+   public String getMethod() {
       return method;
    }
 

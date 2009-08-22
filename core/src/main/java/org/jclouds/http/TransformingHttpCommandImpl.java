@@ -122,7 +122,7 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
     * 
     * @param method
     */
-   public HttpRequest setMethod(HttpMethod method) {
+   public HttpRequest setMethod(String method) {
       request = new HttpRequest(method, request.getEndpoint(), request.getHeaders());
       return request;
    }

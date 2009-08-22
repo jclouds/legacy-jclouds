@@ -27,9 +27,9 @@ import static org.jclouds.rackspace.cloudservers.options.CreateServerOptions.Bui
 import static org.jclouds.rackspace.cloudservers.options.CreateServerOptions.Builder.withMetadata;
 import static org.jclouds.rackspace.cloudservers.options.CreateServerOptions.Builder.withSharedIpGroup;
 import static org.jclouds.rackspace.cloudservers.options.CreateSharedIpGroupOptions.Builder.withServer;
-import static org.jclouds.rackspace.cloudservers.options.RebuildServerOptions.Builder.withImage;
 import static org.jclouds.rackspace.cloudservers.options.ListOptions.Builder.changesSince;
 import static org.jclouds.rackspace.cloudservers.options.ListOptions.Builder.withDetails;
+import static org.jclouds.rackspace.cloudservers.options.RebuildServerOptions.Builder.withImage;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -39,12 +39,12 @@ import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.Collections;
 
+import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
-import org.jclouds.http.HttpMethod;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.functions.ReturnFalseOn404;

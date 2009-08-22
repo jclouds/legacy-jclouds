@@ -23,6 +23,7 @@
  */
 package org.jclouds.aws.s3.handlers;
 
+import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.aws.domain.AWSError;
@@ -31,7 +32,6 @@ import org.jclouds.aws.s3.util.S3Utils;
 import org.jclouds.aws.s3.xml.S3ParserFactory;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpException;
-import org.jclouds.http.HttpMethod;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.http.handlers.RedirectionRetryHandler;

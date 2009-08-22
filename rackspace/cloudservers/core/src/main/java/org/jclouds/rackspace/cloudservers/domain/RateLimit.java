@@ -23,7 +23,7 @@
  */
 package org.jclouds.rackspace.cloudservers.domain;
 
-import org.jclouds.http.HttpMethod;
+import javax.ws.rs.HttpMethod;
 
 /**
  * 

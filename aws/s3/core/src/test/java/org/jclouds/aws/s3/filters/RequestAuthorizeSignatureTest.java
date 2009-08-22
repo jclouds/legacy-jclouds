@@ -27,10 +27,10 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
+import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.aws.s3.reference.S3Constants;
-import org.jclouds.http.HttpMethod;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.util.DateService;
 import org.testng.annotations.BeforeClass;

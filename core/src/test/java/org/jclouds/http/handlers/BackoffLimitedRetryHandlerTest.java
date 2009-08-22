@@ -34,7 +34,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.jclouds.http.HttpCommand;
-import org.jclouds.http.HttpMethod;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.TransformingHttpCommandExecutorServiceImpl;
@@ -137,7 +136,7 @@ public class BackoffLimitedRetryHandlerTest {
       assertEquals(response.getContent().read(), -1);
    }
 
-   private final HttpRequest request = new HttpRequest(HttpMethod.HEAD, END_POINT);
+   private final HttpRequest request = new HttpRequest("HEAD", END_POINT);
 
    private HttpCommand createCommand() {
       HttpCommand command = new TransformingHttpCommandImpl<String>(executorService, request,
