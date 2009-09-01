@@ -95,14 +95,22 @@ public class PutBucketLiveTest extends S3IntegrationTest {
     */
    @Test(groups = "live")
    void testEu() throws Exception {
-      String bucketName = getScratchBucketName();
+      final String bucketName = getScratchBucketName();
       try {
          deleteBucket(bucketName);
          client.putBucketIfNotExists(bucketName,
                   createIn(LocationConstraint.EU).withBucketAcl(CannedAccessPolicy.PUBLIC_READ))
-                  .get(10, TimeUnit.SECONDS);
-         AccessControlList acl = client.getBucketACL(bucketName).get(10, TimeUnit.SECONDS);
-         assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ), acl.toString());
+                  .get(30, TimeUnit.SECONDS);
+         assertEventually(new Runnable() {
+            public void run() {
+               try {
+                  AccessControlList acl = client.getBucketACL(bucketName).get(10, TimeUnit.SECONDS);
+                  assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ), acl.toString());
+               } catch (Exception e) {
+                  Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
+               }
+            }
+         });
          // TODO: I believe that the following should work based on the above acl assertion passing.
          // However, it fails on 403
          // URL url = new URL(String.format("https://%s.s3.amazonaws.com", bucketName));

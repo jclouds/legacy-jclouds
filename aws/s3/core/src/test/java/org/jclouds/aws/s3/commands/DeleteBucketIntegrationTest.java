@@ -24,6 +24,7 @@
 package org.jclouds.aws.s3.commands;
 
 import org.jclouds.aws.s3.S3IntegrationTest;
+import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
 /**
@@ -57,10 +58,20 @@ public class DeleteBucketIntegrationTest extends S3IntegrationTest {
 
    @Test
    void deleteBucketIfEmpty() throws Exception {
-      String bucketName = getScratchBucketName();
+      final String bucketName = getScratchBucketName();
       try {
          assert client.deleteBucketIfEmpty(bucketName);
-         assert !client.bucketExists(bucketName);
+
+         assertEventually(new Runnable() {
+            public void run() {
+               try {
+                  assert !client.bucketExists(bucketName) : "bucket " + bucketName
+                           + " still exists";
+               } catch (Exception e) {
+                  Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
+               }
+            }
+         });
       } finally {
          returnScratchBucket(bucketName);
       }
