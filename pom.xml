@@ -43,6 +43,7 @@
         <module>objectstore</module>
         <module>extensions</module>
         <module>aws</module>
+        <module>azure</module>
         <module>rackspace</module>
     </modules>
     <build>
