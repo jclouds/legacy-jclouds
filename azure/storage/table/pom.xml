@@ -33,7 +33,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>jclouds-azure-table-project</artifactId>
+    <artifactId>jclouds-azuretable-project</artifactId>
     <packaging>pom</packaging>
     <name>jclouds azure table project</name>
     <modules>
