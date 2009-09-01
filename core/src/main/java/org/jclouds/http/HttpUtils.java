@@ -213,4 +213,8 @@ public class HttpUtils {
 
    }
 
+   public static byte[] fromBase64String(String encoded) {
+      return Base64.decode(encoded);
+   }
+
 }
