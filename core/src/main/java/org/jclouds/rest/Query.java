@@ -23,7 +23,7 @@
  */
 package org.jclouds.rest;
 
-import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Retention;
@@ -37,10 +37,10 @@ import javax.ws.rs.QueryParam;
  * @see QueryParam
  * @author Adrian Cole
  */
-@Target(METHOD)
+@Target( { TYPE, METHOD })
 @Retention(RUNTIME)
 public @interface Query {
-   
+
    public static final String NULL = "QUERY_NULL";
 
    String key();

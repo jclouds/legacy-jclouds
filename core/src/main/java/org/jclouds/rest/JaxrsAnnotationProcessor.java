@@ -214,6 +214,14 @@ public class JaxrsAnnotationProcessor {
       builder.path(declaring);
       builder.path(method);
 
+      if (declaring.isAnnotationPresent(Query.class)) {
+         Query query = declaring.getAnnotation(Query.class);
+         if (query.value().equals(Query.NULL))
+            builder.replaceQuery(query.key());
+         else
+            builder.queryParam(query.key(), query.value());
+      }
+
       if (method.isAnnotationPresent(Query.class)) {
          Query query = method.getAnnotation(Query.class);
          if (query.value().equals(Query.NULL))

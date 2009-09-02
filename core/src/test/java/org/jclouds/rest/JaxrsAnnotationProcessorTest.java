@@ -90,6 +90,25 @@ public class JaxrsAnnotationProcessorTest {
    public @interface FOO {
    }
 
+   @Query(key = "x-ms-version", value = "2009-07-17")
+   public class TestQuery {
+      @FOO
+      @Query(key = "x-ms-rubbish", value = "bin")
+      public void foo() {
+      }
+   }
+
+   public void testQuery() throws SecurityException, NoSuchMethodException {
+      Method method = TestQuery.class.getMethod("foo");
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = factory.create(TestQuery.class).createRequest(endpoint, method,
+               new Object[] {});
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "");
+      assertEquals(httpMethod.getEndpoint().getQuery(), "x-ms-version=2009-07-17&x-ms-rubbish=bin");
+      assertEquals(httpMethod.getMethod(), "FOO");
+   }
+
    public class TestCustomMethod {
       @FOO
       public void foo() {
