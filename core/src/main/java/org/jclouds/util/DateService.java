@@ -94,7 +94,7 @@ public class DateService {
          try {
             return new DateTime(rfc822SimpleDateFormat.parse(toParse));
          } catch (ParseException e) {
-            return null;
+            throw new RuntimeException(e);
          }
       }
    }
@@ -116,7 +116,7 @@ public class DateService {
          try {
             return new DateTime(iso8601SimpleDateFormat.parse(toParse));
          } catch (ParseException e) {
-            return null;
+            throw new RuntimeException(e);
          }
       }
    }
