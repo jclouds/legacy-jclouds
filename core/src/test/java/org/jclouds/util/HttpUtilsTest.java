@@ -121,4 +121,18 @@ public class HttpUtilsTest extends PerformanceTest {
       assertEquals(base64Digest, b64);
    }
 
+   byte[] bytes = { 0, 1, 2, 4, 8, 16, 32, 64 };
+   String hex = "0001020408102040";
+
+   public void testHexStringEncode() throws UnsupportedEncodingException {
+      assertEquals(HttpUtils.toHexString(bytes), hex);
+   }
+
+   public void testHexStringDecode() throws UnsupportedEncodingException {
+      assertEquals(HttpUtils.fromHexString(hex), bytes);
+   }
+
+   public void testHexStringDecodeOx() throws UnsupportedEncodingException {
+      assertEquals(HttpUtils.fromHexString("0x" + hex), bytes);
+   }
 }
