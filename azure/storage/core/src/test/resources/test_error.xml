@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?><Error><Code>AuthenticationFailed</Code><Message>Server failed to authenticate the request. Make sure the value of Authorization header is formed correctly including the signature.
+RequestId:7859e884-e8b9-4ed0-aa62-ac6963b91bf6
+Time:2009-09-02T23:32:36.7507749Z</Message><AuthenticationErrorDetail>The MAC signature found in the HTTP request 'XEv0NqP+zePZxlrHmxy2F6MiyoRD8LIJt1f/Swgzn1U=' is not the same as any computed signature. Server used following string to sign: 'GET
+
+
+Wed, 02 Sep 2009 23:32:34 GMT
+/jclouds/?comp=list'.</AuthenticationErrorDetail></Error>
