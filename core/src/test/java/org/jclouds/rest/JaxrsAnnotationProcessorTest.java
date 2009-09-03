@@ -392,6 +392,25 @@ public class JaxrsAnnotationProcessorTest {
       }
    }
 
+   @Header(key = "x-amz-copy-source", value = "/{bucket}")
+   public class TestClassHeader {
+
+      @GET
+      public void oneHeader(@PathParam("bucket") String path) {
+      }
+   }
+
+   @Test
+   public void testBuildOneClassHeader() throws SecurityException, NoSuchMethodException,
+            UnsupportedEncodingException {
+      Method oneHeader = TestClassHeader.class.getMethod("oneHeader", String.class);
+      Multimap<String, String> headers = HashMultimap.create();
+      factory.create(TestClassHeader.class).addHeaderIfAnnotationPresentOnMethod(headers,
+               oneHeader, new Object[] { "robot" });
+      assertEquals(headers.size(), 1);
+      assertEquals(headers.get("x-amz-copy-source"), Collections.singletonList("/robot"));
+   }
+
    @Test
    public void testBuildOneHeader() throws SecurityException, NoSuchMethodException,
             UnsupportedEncodingException {

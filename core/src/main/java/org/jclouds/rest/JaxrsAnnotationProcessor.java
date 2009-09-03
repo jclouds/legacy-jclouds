@@ -216,18 +216,12 @@ public class JaxrsAnnotationProcessor {
 
       if (declaring.isAnnotationPresent(Query.class)) {
          Query query = declaring.getAnnotation(Query.class);
-         if (query.value().equals(Query.NULL))
-            builder.replaceQuery(query.key());
-         else
-            builder.queryParam(query.key(), query.value());
+         addQuery(builder, query);
       }
 
       if (method.isAnnotationPresent(Query.class)) {
          Query query = method.getAnnotation(Query.class);
-         if (query.value().equals(Query.NULL))
-            builder.replaceQuery(query.key());
-         else
-            builder.queryParam(query.key(), query.value());
+         addQuery(builder, query);
       }
 
       Multimap<String, String> headers = buildHeaders(method, args);
@@ -265,6 +259,13 @@ public class JaxrsAnnotationProcessor {
 
       buildEntityIfPostOrPutRequest(method, args, request);
       return request;
+   }
+
+   private void addQuery(UriBuilder builder, Query query) {
+      if (query.value().equals(Query.NULL))
+         builder.replaceQuery(query.key());
+      else
+         builder.queryParam(query.key(), query.value());
    }
 
    private void addFiltersIfAnnotated(Method method, HttpRequest request) {
@@ -514,16 +515,24 @@ public class JaxrsAnnotationProcessor {
 
    public void addHeaderIfAnnotationPresentOnMethod(Multimap<String, String> headers,
             Method method, Object[] args, char... skipEncode) throws UnsupportedEncodingException {
+      if (declaring.isAnnotationPresent(Header.class)) {
+         Header header = declaring.getAnnotation(Header.class);
+         addHeader(headers, method, args, header);
+      }
       if (method.isAnnotationPresent(Header.class)) {
          Header header = method.getAnnotation(Header.class);
-         String value = header.value();
-         for (Entry<String, Object> tokenValue : getEncodedPathParamKeyValues(method, args)
-                  .entrySet()) {
-            value = value.replaceAll("\\{" + tokenValue.getKey() + "\\}", tokenValue.getValue()
-                     .toString());
-         }
-         headers.put(header.key(), value);
+         addHeader(headers, method, args, header);
       }
+   }
+
+   private void addHeader(Multimap<String, String> headers, Method method, Object[] args,
+            Header header) throws UnsupportedEncodingException {
+      String value = header.value();
+      for (Entry<String, Object> tokenValue : getEncodedPathParamKeyValues(method, args).entrySet()) {
+         value = value.replaceAll("\\{" + tokenValue.getKey() + "\\}", tokenValue.getValue()
+                  .toString());
+      }
+      headers.put(header.key(), value);
    }
 
    private Map<String, Object> getEncodedPathParamKeyValues(Method method, Object[] args,

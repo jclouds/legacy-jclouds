@@ -24,10 +24,14 @@
 package org.jclouds.rest;
 
 import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.HttpHeaders;
 
 /**
  * Designates that a header will be added to the request. This header will contain the specified
@@ -36,7 +40,7 @@ import java.lang.annotation.Target;
  * @see PathParam
  * @author Adrian Cole
  */
-@Target(METHOD)
+@Target( { TYPE, METHOD })
 @Retention(RUNTIME)
 public @interface Header {
 
@@ -45,7 +49,7 @@ public @interface Header {
     */
    String key();
 
-   /**
+/**
     * can be defined literally, or with enclosed variables (ex. <code>{variable}</code>)
     * <p/>
     * The inputs to these variables are taken from method parameters annotated with {@code
