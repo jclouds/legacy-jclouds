@@ -115,7 +115,7 @@ public class AzureBlobConnectionLiveTest {
          } catch (UndeclaredThrowableException e) {
             AzureStorageResponseException htpe = (AzureStorageResponseException) e.getCause()
                      .getCause();
-            if (htpe.getError().getCode().equals("ContainerBeingDeleted")) {
+            if (htpe.getResponse().getStatusCode() == 409) {// TODO look for specific message
                Thread.sleep(5000);
                continue;
             }
