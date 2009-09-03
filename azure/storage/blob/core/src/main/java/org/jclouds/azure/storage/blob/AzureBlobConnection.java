@@ -26,6 +26,7 @@ package org.jclouds.azure.storage.blob;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -87,4 +88,48 @@ public interface AzureBlobConnection {
    @Query(key = "restype", value = "container")
    boolean createContainer(@PathParam("container") String container,
             CreateContainerOptions... options);
+
+   /**
+    * The Delete Container operation marks the specified container for deletion. The container and
+    * any blobs contained within it are later deleted during garbage collection.
+    * <p/>
+    * When a container is deleted, a container with the same name cannot be created for at least 30
+    * seconds; the container may not be available for more than 30 seconds if the service is still
+    * processing the request. While the container is being deleted, attempts to create a container
+    * of the same name will fail with status code 409 (Conflict), with the service returning
+    * additional error information indicating that the container is being deleted. All other
+    * operations, including operations on any blobs under the container, will fail with status code
+    * 404 (Not Found) while the container is being deleted.
+    * 
+    */
+   @DELETE
+   @Path("{container}")
+   @Query(key = "restype", value = "container")
+   boolean deleteContainer(@PathParam("container") String container);
+
+   /**
+    * The root container is a default container that may be inferred from a URL requesting a blob
+    * resource. The root container makes it possible to reference a blob from the top level of the
+    * storage account hierarchy, without referencing the container name.
+    * <p/>
+    * The container resource includes metadata and properties for that container. It does not
+    * include a list of the blobs contained by the container.
+    * 
+    * @see CreateContainerOptions
+    * 
+    */
+   @PUT
+   @Path("$root")
+   @Query(key = "restype", value = "container")
+   boolean createRootContainer(CreateContainerOptions... options);// TODO public is not supported!
+
+   /**
+    * 
+    * @see deleteContainer(String)
+    * @see createRootContainer(CreateContainerOptions)
+    */
+   @DELETE
+   @Path("$root")
+   @Query(key = "restype", value = "container")
+   boolean deleteRootContainer();
 }

@@ -7,10 +7,12 @@ import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URL;
 import java.security.SecureRandom;
 
+import org.jclouds.azure.storage.AzureStorageResponseException;
 import org.jclouds.azure.storage.blob.domain.ContainerMetadataList;
 import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
+import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeGroups;
@@ -65,8 +67,9 @@ public class AzureBlobConnectionLiveTest {
             created = connection.createContainer(privateContainer, CreateContainerOptions.Builder
                      .withMetadata(ImmutableMultimap.of("foo", "bar")));
          } catch (UndeclaredThrowableException e) {
-            // HttpResponseException htpe = (HttpResponseException) e.getCause().getCause();
-            // TODO: check if already created and see what the error is, and continue
+            HttpResponseException htpe = (HttpResponseException) e.getCause().getCause();
+            if (htpe.getResponse().getStatusCode() == 409)
+               continue;
             throw e;
          }
       }
@@ -86,8 +89,9 @@ public class AzureBlobConnectionLiveTest {
             created = connection.createContainer(publicContainer, CreateContainerOptions.Builder
                      .withPublicAcl());
          } catch (UndeclaredThrowableException e) {
-            // HttpResponseException htpe = (HttpResponseException) e.getCause().getCause();
-            // TODO: check if already created and see what the error is, and continue
+            HttpResponseException htpe = (HttpResponseException) e.getCause().getCause();
+            if (htpe.getResponse().getStatusCode() == 409)
+               continue;
             throw e;
          }
       }
@@ -95,6 +99,30 @@ public class AzureBlobConnectionLiveTest {
       URL url = new URL(String.format("http://%s.blob.core.windows.net/%s", sysAzureStorageAccount,
                publicContainer));
       Utils.toStringAndClose(url.openStream());
+   }
+
+   @Test(timeOut = 5 * 60 * 1000)
+   public void testCreatePublicRootContainer() throws Exception {
+      try {
+         connection.deleteRootContainer();
+      } catch (Exception e) {
+         // don't care.. we wish to recreate it.
+      }
+      boolean created = false;
+      while (!created) {
+         try {
+            created = connection.createRootContainer();
+         } catch (UndeclaredThrowableException e) {
+            AzureStorageResponseException htpe = (AzureStorageResponseException) e.getCause()
+                     .getCause();
+            if (htpe.getError().getCode().equals("ContainerBeingDeleted")) {
+               Thread.sleep(5000);
+               continue;
+            }
+            throw e;
+         }
+      }
+      // TODO check if it really exists.
    }
 
    @Test
@@ -107,6 +135,19 @@ public class AzureBlobConnectionLiveTest {
       assertTrue(initialContainerCount >= 0);
       assertEquals(privateContainer, response.getPrefix());
       assertEquals(1, response.getMaxResults());
+   }
 
+   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = { "testCreateContainer",
+            "testCreatePublicContainer" })
+   public void testDeleteContainer() throws Exception {
+      assert connection.deleteContainer(privateContainer);
+      assert connection.deleteContainer(publicContainer);
+      // TODO loop for up to 30 seconds checking if they are really gone
+   }
+
+   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = { "testCreatePublicRootContainer" })
+   public void testDeleteRootContainer() throws Exception {
+      assert connection.deleteRootContainer();
+      // TODO loop for up to 30 seconds checking if they are really gone
    }
 }

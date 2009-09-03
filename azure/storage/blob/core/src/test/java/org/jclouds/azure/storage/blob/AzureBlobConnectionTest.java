@@ -82,7 +82,7 @@ public class AzureBlobConnectionTest {
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
 
-   public void testCreateContainers() throws SecurityException, NoSuchMethodException {
+   public void testCreateContainer() throws SecurityException, NoSuchMethodException {
       Method method = AzureBlobConnection.class.getMethod("createContainer", String.class,
                createContainerOptionsVarargsClass);
       URI endpoint = URI.create("http://localhost");
@@ -101,7 +101,24 @@ public class AzureBlobConnectionTest {
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
 
-   public void testCreateContainersOptions() throws SecurityException, NoSuchMethodException {
+   public void testDeleteContainer() throws SecurityException, NoSuchMethodException {
+      Method method = AzureBlobConnection.class.getMethod("deleteContainer", String.class);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = processor.createRequest(endpoint, method,
+               new Object[] { "container" });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/container");
+      assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container");
+      assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);
+      assertEquals(httpMethod.getHeaders().size(), 1);
+      assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
+               .singletonList("2009-07-17"));
+      assertEquals(processor.createResponseParser(method).getClass(), ReturnTrueIf2xx.class);
+      // TODO check generic type of response parser
+      assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
+   }
+
+   public void testCreateContainerOptions() throws SecurityException, NoSuchMethodException {
       Method method = AzureBlobConnection.class.getMethod("createContainer", String.class,
                createContainerOptionsVarargsClass);
       URI endpoint = URI.create("http://localhost");
@@ -109,6 +126,62 @@ public class AzureBlobConnectionTest {
                "container", withPublicAcl().withMetadata(ImmutableMultimap.of("foo", "bar")) });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/container");
+      assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container");
+      assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
+      assertEquals(httpMethod.getHeaders().size(), 4);
+      assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
+               .singletonList("2009-07-17"));
+      assertEquals(httpMethod.getHeaders().get("x-ms-meta-foo"), Collections.singletonList("bar"));
+      assertEquals(httpMethod.getHeaders().get("x-ms-prop-publicaccess"), Collections
+               .singletonList("true"));
+      assertEquals(httpMethod.getHeaders().get("Content-Length"), Collections.singletonList("0"));
+      assertEquals(processor.createResponseParser(method).getClass(), ReturnTrueIf2xx.class);
+      // TODO check generic type of response parser
+      assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
+   }
+
+   public void testCreateRootContainer() throws SecurityException, NoSuchMethodException {
+      Method method = AzureBlobConnection.class.getMethod("createRootContainer",
+               createContainerOptionsVarargsClass);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = processor.createRequest(endpoint, method, new Object[] {});
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/$root");
+      assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container");
+      assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
+      assertEquals(httpMethod.getHeaders().size(), 2);
+      assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
+               .singletonList("2009-07-17"));
+      assertEquals(httpMethod.getHeaders().get("Content-Length"), Collections.singletonList("0"));
+      assertEquals(processor.createResponseParser(method).getClass(), ReturnTrueIf2xx.class);
+      // TODO check generic type of response parser
+      assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
+   }
+
+   public void testDeleteRootContainer() throws SecurityException, NoSuchMethodException {
+      Method method = AzureBlobConnection.class.getMethod("deleteRootContainer");
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = processor.createRequest(endpoint, method, new Object[] {});
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/$root");
+      assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container");
+      assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);
+      assertEquals(httpMethod.getHeaders().size(), 1);
+      assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
+               .singletonList("2009-07-17"));
+      assertEquals(processor.createResponseParser(method).getClass(), ReturnTrueIf2xx.class);
+      // TODO check generic type of response parser
+      assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
+   }
+
+   public void testCreateRootContainerOptions() throws SecurityException, NoSuchMethodException {
+      Method method = AzureBlobConnection.class.getMethod("createRootContainer",
+               createContainerOptionsVarargsClass);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = processor.createRequest(endpoint, method,
+               new Object[] { withPublicAcl().withMetadata(ImmutableMultimap.of("foo", "bar")) });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/$root");
       assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container");
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
       assertEquals(httpMethod.getHeaders().size(), 4);
