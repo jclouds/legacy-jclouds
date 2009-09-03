@@ -1,5 +1,6 @@
 package org.jclouds.azure.storage.blob;
 
+import static org.jclouds.azure.storage.blob.options.CreateContainerOptions.Builder.withPublicAcl;
 import static org.jclouds.azure.storage.options.ListOptions.Builder.maxResults;
 import static org.testng.Assert.assertEquals;
 
@@ -9,6 +10,7 @@ import java.util.Collections;
 
 import javax.ws.rs.HttpMethod;
 
+import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
 import org.jclouds.azure.storage.blob.xml.config.AzureBlobParserModule;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
@@ -18,11 +20,13 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.rest.JaxrsAnnotationProcessor;
 import org.jclouds.rest.config.JaxrsModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.name.Names;
@@ -39,8 +43,10 @@ public class AzureBlobConnectionTest {
 
    private static final Class<? extends ListOptions[]> listOptionsVarargsClass = new ListOptions[] {}
             .getClass();
+   private static final Class<? extends CreateContainerOptions[]> createContainerOptionsVarargsClass = new CreateContainerOptions[] {}
+            .getClass();
 
-   public void testListServers() throws SecurityException, NoSuchMethodException {
+   public void testListContainers() throws SecurityException, NoSuchMethodException {
       Method method = AzureBlobConnection.class
                .getMethod("listContainers", listOptionsVarargsClass);
       URI endpoint = URI.create("http://localhost");
@@ -57,7 +63,7 @@ public class AzureBlobConnectionTest {
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
 
-   public void testListServersOptions() throws SecurityException, NoSuchMethodException {
+   public void testListContainersOptions() throws SecurityException, NoSuchMethodException {
       Method method = AzureBlobConnection.class
                .getMethod("listContainers", listOptionsVarargsClass);
       URI endpoint = URI.create("http://localhost");
@@ -72,6 +78,47 @@ public class AzureBlobConnectionTest {
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
                .singletonList("2009-07-17"));
       assertEquals(processor.createResponseParser(method).getClass(), ParseSax.class);
+      // TODO check generic type of response parser
+      assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
+   }
+
+   public void testCreateContainers() throws SecurityException, NoSuchMethodException {
+      Method method = AzureBlobConnection.class.getMethod("createContainer", String.class,
+               createContainerOptionsVarargsClass);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = processor.createRequest(endpoint, method,
+               new Object[] { "container" });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/container");
+      assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container");
+      assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
+      assertEquals(httpMethod.getHeaders().size(), 2);
+      assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
+               .singletonList("2009-07-17"));
+      assertEquals(httpMethod.getHeaders().get("Content-Length"), Collections.singletonList("0"));
+      assertEquals(processor.createResponseParser(method).getClass(), ReturnTrueIf2xx.class);
+      // TODO check generic type of response parser
+      assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
+   }
+
+   public void testCreateContainersOptions() throws SecurityException, NoSuchMethodException {
+      Method method = AzureBlobConnection.class.getMethod("createContainer", String.class,
+               createContainerOptionsVarargsClass);
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = processor.createRequest(endpoint, method, new Object[] {
+               "container", withPublicAcl().withMetadata(ImmutableMultimap.of("foo", "bar")) });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/container");
+      assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container");
+      assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
+      assertEquals(httpMethod.getHeaders().size(), 4);
+      assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
+               .singletonList("2009-07-17"));
+      assertEquals(httpMethod.getHeaders().get("x-ms-meta-foo"), Collections.singletonList("bar"));
+      assertEquals(httpMethod.getHeaders().get("x-ms-prop-publicaccess"), Collections
+               .singletonList("true"));
+      assertEquals(httpMethod.getHeaders().get("Content-Length"), Collections.singletonList("0"));
+      assertEquals(processor.createResponseParser(method).getClass(), ReturnTrueIf2xx.class);
       // TODO check generic type of response parser
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }

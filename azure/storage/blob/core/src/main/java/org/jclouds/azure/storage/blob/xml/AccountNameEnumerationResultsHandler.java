@@ -47,7 +47,9 @@ import com.google.inject.Inject;
 public class AccountNameEnumerationResultsHandler extends
          ParseSax.HandlerWithResult<ContainerMetadataList> {
 
-   private List<ContainerMetadata> containers = new ArrayList<ContainerMetadata>();
+   private List<ContainerMetadata> containerMetadata = new ArrayList<ContainerMetadata>();
+   private String prefix;
+   private String marker;
    private int maxResults;
    private String nextMarker;
    private URI currentUrl;
@@ -64,16 +66,20 @@ public class AccountNameEnumerationResultsHandler extends
    }
 
    public ContainerMetadataList getResult() {
-      return new ContainerMetadataList(maxResults, containers, nextMarker);
+      return new ContainerMetadataList(prefix, marker, maxResults, containerMetadata, nextMarker);
    }
 
    public void endElement(String uri, String name, String qName) {
       if (qName.equals("MaxResults")) {
          maxResults = Integer.parseInt(currentText.toString().trim());
+      } else if (qName.equals("Marker")) {
+         marker = currentText.toString().trim();
+      } else if (qName.equals("Prefix")) {
+         prefix = currentText.toString().trim();
       } else if (qName.equals("NextMarker")) {
          nextMarker = currentText.toString().trim();
       } else if (qName.equals("Container")) {
-         containers.add(new ContainerMetadata(currentUrl, currentLastModified, currentETag));
+         containerMetadata.add(new ContainerMetadata(currentUrl, currentLastModified, currentETag));
          currentUrl = null;
          currentLastModified = null;
          currentETag = null;

@@ -31,27 +31,26 @@ import java.util.List;
  * 
  */
 public class ContainerMetadataList {
+   private String prefix;
+   private String marker;
    private int maxResults;
    private List<ContainerMetadata> containerMetadata;
    private String nextMarker;
 
-   public ContainerMetadataList(int maxResults, List<ContainerMetadata> containerMetadata,
-            String nextMarker) {
+   @Override
+   public String toString() {
+      return "ContainerMetadataList [containerMetadata=" + containerMetadata + ", marker=" + marker
+               + ", maxResults=" + maxResults + ", nextMarker=" + nextMarker + ", prefix=" + prefix
+               + "]";
+   }
+
+   public ContainerMetadataList(String prefix, String marker, int maxResults,
+            List<ContainerMetadata> containerMetadata, String nextMarker) {
+      this.prefix = prefix;
+      this.marker = marker;
       this.maxResults = maxResults;
       this.containerMetadata = containerMetadata;
       this.nextMarker = nextMarker;
-   }
-
-   public int getMaxResults() {
-      return maxResults;
-   }
-
-   public List<ContainerMetadata> getContainerMetadata() {
-      return containerMetadata;
-   }
-
-   public String getNextMarker() {
-      return nextMarker;
    }
 
    @Override
@@ -59,8 +58,10 @@ public class ContainerMetadataList {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((containerMetadata == null) ? 0 : containerMetadata.hashCode());
+      result = prime * result + ((marker == null) ? 0 : marker.hashCode());
       result = prime * result + maxResults;
       result = prime * result + ((nextMarker == null) ? 0 : nextMarker.hashCode());
+      result = prime * result + ((prefix == null) ? 0 : prefix.hashCode());
       return result;
    }
 
@@ -78,6 +79,11 @@ public class ContainerMetadataList {
             return false;
       } else if (!containerMetadata.equals(other.containerMetadata))
          return false;
+      if (marker == null) {
+         if (other.marker != null)
+            return false;
+      } else if (!marker.equals(other.marker))
+         return false;
       if (maxResults != other.maxResults)
          return false;
       if (nextMarker == null) {
@@ -85,13 +91,52 @@ public class ContainerMetadataList {
             return false;
       } else if (!nextMarker.equals(other.nextMarker))
          return false;
+      if (prefix == null) {
+         if (other.prefix != null)
+            return false;
+      } else if (!prefix.equals(other.prefix))
+         return false;
       return true;
    }
 
-   @Override
-   public String toString() {
-      return "ContainerMetadataList [containerMetadata=" + containerMetadata + ", maxResults="
-               + maxResults + ", nextMarker=" + nextMarker + "]";
+   public void setPrefix(String prefix) {
+      this.prefix = prefix;
+   }
+
+   public String getPrefix() {
+      return prefix;
+   }
+
+   public void setMarker(String marker) {
+      this.marker = marker;
+   }
+
+   public String getMarker() {
+      return marker;
+   }
+
+   public void setMaxResults(int maxResults) {
+      this.maxResults = maxResults;
+   }
+
+   public int getMaxResults() {
+      return maxResults;
+   }
+
+   public void setContainerMetadata(List<ContainerMetadata> containerMetadata) {
+      this.containerMetadata = containerMetadata;
+   }
+
+   public List<ContainerMetadata> getContainerMetadata() {
+      return containerMetadata;
+   }
+
+   public void setNextMarker(String nextMarker) {
+      this.nextMarker = nextMarker;
+   }
+
+   public String getNextMarker() {
+      return nextMarker;
    }
 
 }

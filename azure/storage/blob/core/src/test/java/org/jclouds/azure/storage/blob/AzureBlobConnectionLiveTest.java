@@ -1,13 +1,22 @@
 package org.jclouds.azure.storage.blob;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import java.lang.reflect.UndeclaredThrowableException;
+import java.net.URL;
+import java.security.SecureRandom;
+
 import org.jclouds.azure.storage.blob.domain.ContainerMetadataList;
+import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
+import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.Injector;
 
 /**
@@ -23,6 +32,8 @@ public class AzureBlobConnectionLiveTest {
    protected static final String sysAzureStorageKey = System
             .getProperty(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY);
    protected AzureBlobConnection connection;
+
+   private String containerPrefix = System.getProperty("user.name") + "-azureblob";
 
    @BeforeGroups(groups = { "live" })
    public void setupConnection() {
@@ -42,4 +53,60 @@ public class AzureBlobConnectionLiveTest {
 
    }
 
+   String privateContainer;
+   String publicContainer;
+
+   @Test(timeOut = 5 * 60 * 1000)
+   public void testCreateContainer() throws Exception {
+      boolean created = false;
+      while (!created) {
+         privateContainer = containerPrefix + new SecureRandom().nextInt();
+         try {
+            created = connection.createContainer(privateContainer, CreateContainerOptions.Builder
+                     .withMetadata(ImmutableMultimap.of("foo", "bar")));
+         } catch (UndeclaredThrowableException e) {
+            // HttpResponseException htpe = (HttpResponseException) e.getCause().getCause();
+            // TODO: check if already created and see what the error is, and continue
+            throw e;
+         }
+      }
+      ContainerMetadataList response = connection.listContainers();
+      assert null != response;
+      long containerCount = response.getContainerMetadata().size();
+      assertTrue(containerCount >= 1);
+      // TODO ... check to see the container actually exists
+   }
+
+   @Test(timeOut = 5 * 60 * 1000)
+   public void testCreatePublicContainer() throws Exception {
+      boolean created = false;
+      while (!created) {
+         publicContainer = containerPrefix + new SecureRandom().nextInt();
+         try {
+            created = connection.createContainer(publicContainer, CreateContainerOptions.Builder
+                     .withPublicAcl());
+         } catch (UndeclaredThrowableException e) {
+            // HttpResponseException htpe = (HttpResponseException) e.getCause().getCause();
+            // TODO: check if already created and see what the error is, and continue
+            throw e;
+         }
+      }
+
+      URL url = new URL(String.format("http://%s.blob.core.windows.net/%s", sysAzureStorageAccount,
+               publicContainer));
+      Utils.toStringAndClose(url.openStream());
+   }
+
+   @Test
+   public void testListContainersWithOptions() throws Exception {
+
+      ContainerMetadataList response = connection.listContainers(ListOptions.Builder.prefix(
+               privateContainer).maxResults(1));
+      assert null != response;
+      long initialContainerCount = response.getContainerMetadata().size();
+      assertTrue(initialContainerCount >= 0);
+      assertEquals(privateContainer, response.getPrefix());
+      assertEquals(1, response.getMaxResults());
+
+   }
 }

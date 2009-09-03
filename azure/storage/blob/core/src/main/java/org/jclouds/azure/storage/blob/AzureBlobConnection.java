@@ -27,9 +27,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
 import org.jclouds.azure.storage.blob.domain.ContainerMetadataList;
+import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
 import org.jclouds.azure.storage.blob.xml.AccountNameEnumerationResultsHandler;
 import org.jclouds.azure.storage.filters.SharedKeyAuthentication;
 import org.jclouds.azure.storage.options.ListOptions;
@@ -56,6 +59,8 @@ public interface AzureBlobConnection {
 
    /**
     * The List Containers operation returns a list of the containers under the specified account.
+    * <p />
+    * The 2009-07-17 version of the List Containers operation times out after 30 seconds.
     * 
     * @param listOptions
     *           controls the number or type of results requested
@@ -67,4 +72,19 @@ public interface AzureBlobConnection {
    @Query(key = "comp", value = "list")
    ContainerMetadataList listContainers(ListOptions... listOptions);
 
+   /**
+    * The Create Container operation creates a new container under the specified account. If the
+    * container with the same name already exists, the operation fails.
+    * <p/>
+    * The container resource includes metadata and properties for that container. It does not
+    * include a list of the blobs contained by the container.
+    * 
+    * @see CreateContainerOptions
+    * 
+    */
+   @PUT
+   @Path("{container}")
+   @Query(key = "restype", value = "container")
+   boolean createContainer(@PathParam("container") String container,
+            CreateContainerOptions... options);
 }
