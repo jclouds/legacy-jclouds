@@ -189,8 +189,20 @@ public class SharedKeyAuthentication implements HttpRequestFilter {
       // mark and the comp parameter (for example, ?comp=metadata). No other parameters should be
       // included on the query string.
       if (request.getEndpoint().getQuery() != null) {
-         // TODO: determine what components of the query string are really needed.
-         toSign.append("?").append(request.getEndpoint().getQuery());
+         StringBuilder paramsToSign = new StringBuilder("?");
+
+         String[] params = request.getEndpoint().getQuery().split("&");
+         for (String param : params) {
+            String[] paramNameAndValue = param.split("=");
+
+            if ("comp".equals(paramNameAndValue[0])) {
+               paramsToSign.append(param);
+            }
+         }
+
+         if (paramsToSign.length() > 1) {
+            toSign.append(paramsToSign);
+         }
       }
    }
 

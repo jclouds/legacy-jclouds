@@ -95,13 +95,34 @@ public class SharedKeyAuthenticationTest {
    }
 
    @Test
-   void testAclQueryStringRelative() {
+   void testAclQueryStringResTypeNotSignificant() {
       URI host = URI.create("http://" + ACCOUNT
                + ".blob.core.windows.net/mycontainer?restype=container");
       HttpRequest request = new HttpRequest(HttpMethod.GET, host);
       StringBuilder builder = new StringBuilder();
       filter.appendUriPath(request, builder);
-      assertEquals(builder.toString(), "/mycontainer?restype=container");
+      assertEquals(builder.toString(), "/mycontainer");
+   }
+
+   @Test
+   void testAclQueryStringComp() {
+      URI host = URI.create("http://" + ACCOUNT + ".blob.core.windows.net/mycontainer?comp=list");
+      HttpRequest request = new HttpRequest(HttpMethod.GET, host);
+      StringBuilder builder = new StringBuilder();
+      filter.appendUriPath(request, builder);
+      assertEquals(builder.toString(), "/mycontainer?comp=list");
+   }
+
+   @Test
+   void testAclQueryStringRelativeWithExtraJunk() {
+      URI host = URI
+               .create("http://"
+                        + ACCOUNT
+                        + ".blob.core.windows.net/mycontainer?comp=list&marker=marker&maxresults=1&prefix=prefix");
+      HttpRequest request = new HttpRequest(HttpMethod.GET, host);
+      StringBuilder builder = new StringBuilder();
+      filter.appendUriPath(request, builder);
+      assertEquals(builder.toString(), "/mycontainer?comp=list");
    }
 
    @Test
