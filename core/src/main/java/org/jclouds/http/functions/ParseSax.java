@@ -27,7 +27,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.http.HttpConstants.PROPERTY_SAX_DEBUG;
 
 import java.io.InputStream;
-import java.io.InputStreamReader;
 
 import javax.annotation.Resource;
 
@@ -103,7 +102,8 @@ public class ParseSax<T> implements Function<HttpResponse, T> {
             xml = IOUtils.toInputStream(response);
          }
          parser.setContentHandler(handler);
-         InputSource input = new InputSource(new InputStreamReader(xml, "UTF-8"));
+         // This method should accept documents with a BOM (Byte-order mark)
+         InputSource input = new InputSource(xml);
          parser.parse(input);
       } catch (Exception e) {
          StringBuilder message = new StringBuilder();
