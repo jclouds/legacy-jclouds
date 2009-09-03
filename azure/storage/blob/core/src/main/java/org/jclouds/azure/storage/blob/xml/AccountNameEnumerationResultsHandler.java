@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
-import org.jclouds.azure.storage.blob.domain.ContainerMetadataList;
+import org.jclouds.azure.storage.domain.MetadataList;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.DateService;
@@ -45,7 +45,7 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 public class AccountNameEnumerationResultsHandler extends
-         ParseSax.HandlerWithResult<ContainerMetadataList> {
+         ParseSax.HandlerWithResult<MetadataList<ContainerMetadata>> {
 
    private List<ContainerMetadata> containerMetadata = new ArrayList<ContainerMetadata>();
    private String prefix;
@@ -65,8 +65,9 @@ public class AccountNameEnumerationResultsHandler extends
       this.dateParser = dateParser;
    }
 
-   public ContainerMetadataList getResult() {
-      return new ContainerMetadataList(prefix, marker, maxResults, containerMetadata, nextMarker);
+   public MetadataList<ContainerMetadata> getResult() {
+      return new MetadataList<ContainerMetadata>(prefix, marker, maxResults, containerMetadata,
+               nextMarker);
    }
 
    public void endElement(String uri, String name, String qName) {
@@ -74,10 +75,13 @@ public class AccountNameEnumerationResultsHandler extends
          maxResults = Integer.parseInt(currentText.toString().trim());
       } else if (qName.equals("Marker")) {
          marker = currentText.toString().trim();
+         marker = (marker.equals("")) ? null : marker;
       } else if (qName.equals("Prefix")) {
          prefix = currentText.toString().trim();
+         prefix = (prefix.equals("")) ? null : prefix;
       } else if (qName.equals("NextMarker")) {
          nextMarker = currentText.toString().trim();
+         nextMarker = (nextMarker.equals("")) ? null : nextMarker;
       } else if (qName.equals("Container")) {
          containerMetadata.add(new ContainerMetadata(currentUrl, currentLastModified, currentETag));
          currentUrl = null;

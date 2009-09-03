@@ -12,6 +12,7 @@ import javax.ws.rs.HttpMethod;
 
 import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
 import org.jclouds.azure.storage.blob.xml.config.AzureBlobParserModule;
+import org.jclouds.azure.storage.options.CreateOptions;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.concurrent.WithinThreadExecutorService;
@@ -44,6 +45,8 @@ public class AzureBlobConnectionTest {
    private static final Class<? extends ListOptions[]> listOptionsVarargsClass = new ListOptions[] {}
             .getClass();
    private static final Class<? extends CreateContainerOptions[]> createContainerOptionsVarargsClass = new CreateContainerOptions[] {}
+            .getClass();
+   private static final Class<? extends CreateOptions[]> createOptionsVarargsClass = new CreateOptions[] {}
             .getClass();
 
    public void testListContainers() throws SecurityException, NoSuchMethodException {
@@ -142,7 +145,7 @@ public class AzureBlobConnectionTest {
 
    public void testCreateRootContainer() throws SecurityException, NoSuchMethodException {
       Method method = AzureBlobConnection.class.getMethod("createRootContainer",
-               createContainerOptionsVarargsClass);
+               createOptionsVarargsClass);
       URI endpoint = URI.create("http://localhost");
       HttpRequest httpMethod = processor.createRequest(endpoint, method, new Object[] {});
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
@@ -176,7 +179,7 @@ public class AzureBlobConnectionTest {
 
    public void testCreateRootContainerOptions() throws SecurityException, NoSuchMethodException {
       Method method = AzureBlobConnection.class.getMethod("createRootContainer",
-               createContainerOptionsVarargsClass);
+               createOptionsVarargsClass);
       URI endpoint = URI.create("http://localhost");
       HttpRequest httpMethod = processor.createRequest(endpoint, method,
                new Object[] { withPublicAcl().withMetadata(ImmutableMultimap.of("foo", "bar")) });

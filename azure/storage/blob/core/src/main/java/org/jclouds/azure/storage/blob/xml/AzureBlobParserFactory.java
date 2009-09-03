@@ -1,6 +1,7 @@
 package org.jclouds.azure.storage.blob.xml;
 
-import org.jclouds.azure.storage.blob.domain.ContainerMetadataList;
+import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
+import org.jclouds.azure.storage.domain.MetadataList;
 import org.jclouds.azure.storage.xml.AzureStorageParserFactory;
 import org.jclouds.http.functions.ParseSax;
 
@@ -17,12 +18,12 @@ import com.google.inject.Provider;
 public class AzureBlobParserFactory extends AzureStorageParserFactory {
 
    @Inject
-   private GenericParseFactory<ContainerMetadataList> parseContainerMetadataListFactory;
+   private GenericParseFactory<MetadataList<ContainerMetadata>> parseContainerMetadataListFactory;
 
    @Inject
    Provider<AccountNameEnumerationResultsHandler> containerMetaListHandlerProvider;
 
-   public ParseSax<ContainerMetadataList> createContainerMetadataListParser() {
+   public ParseSax<MetadataList<ContainerMetadata>> createContainerMetadataListParser() {
       return parseContainerMetadataListFactory.create(containerMetaListHandlerProvider.get());
    }
 }

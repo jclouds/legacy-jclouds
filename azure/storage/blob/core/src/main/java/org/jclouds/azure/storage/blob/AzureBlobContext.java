@@ -3,9 +3,9 @@ package org.jclouds.azure.storage.blob;
 import org.jclouds.cloud.CloudContext;
 
 /**
- * Represents an authenticated context to Cloud Files.
+ * Represents an authenticated context to Azure Blob Service.
  * 
- * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090311.pdf" />
+ * @see <a href="http://msdn.microsoft.com/en-us/library/dd135733.aspx" />
  * @see AzureBlobConnection
  * @see CloudContext
  * @author Adrian Cole

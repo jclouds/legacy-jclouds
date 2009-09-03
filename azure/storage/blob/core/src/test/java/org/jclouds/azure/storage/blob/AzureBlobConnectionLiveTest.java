@@ -8,8 +8,9 @@ import java.net.URL;
 import java.security.SecureRandom;
 
 import org.jclouds.azure.storage.AzureStorageResponseException;
-import org.jclouds.azure.storage.blob.domain.ContainerMetadataList;
+import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
 import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
+import org.jclouds.azure.storage.domain.MetadataList;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.http.HttpResponseException;
@@ -48,9 +49,9 @@ public class AzureBlobConnectionLiveTest {
    @Test
    public void testListContainers() throws Exception {
 
-      ContainerMetadataList response = connection.listContainers();
+      MetadataList<ContainerMetadata> response = connection.listContainers();
       assert null != response;
-      long initialContainerCount = response.getContainerMetadata().size();
+      long initialContainerCount = response.getMetadata().size();
       assertTrue(initialContainerCount >= 0);
 
    }
@@ -73,9 +74,9 @@ public class AzureBlobConnectionLiveTest {
             throw e;
          }
       }
-      ContainerMetadataList response = connection.listContainers();
+      MetadataList<ContainerMetadata> response = connection.listContainers();
       assert null != response;
-      long containerCount = response.getContainerMetadata().size();
+      long containerCount = response.getMetadata().size();
       assertTrue(containerCount >= 1);
       // TODO ... check to see the container actually exists
    }
@@ -128,10 +129,10 @@ public class AzureBlobConnectionLiveTest {
    @Test
    public void testListContainersWithOptions() throws Exception {
 
-      ContainerMetadataList response = connection.listContainers(ListOptions.Builder.prefix(
-               privateContainer).maxResults(1));
+      MetadataList<ContainerMetadata> response = connection.listContainers(ListOptions.Builder
+               .prefix(privateContainer).maxResults(1));
       assert null != response;
-      long initialContainerCount = response.getContainerMetadata().size();
+      long initialContainerCount = response.getMetadata().size();
       assertTrue(initialContainerCount >= 0);
       assertEquals(privateContainer, response.getPrefix());
       assertEquals(1, response.getMaxResults());

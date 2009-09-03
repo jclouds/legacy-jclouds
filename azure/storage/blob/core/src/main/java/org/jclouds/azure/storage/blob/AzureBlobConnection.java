@@ -32,10 +32,12 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import org.jclouds.azure.storage.blob.domain.ContainerMetadataList;
+import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
 import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
 import org.jclouds.azure.storage.blob.xml.AccountNameEnumerationResultsHandler;
+import org.jclouds.azure.storage.domain.MetadataList;
 import org.jclouds.azure.storage.filters.SharedKeyAuthentication;
+import org.jclouds.azure.storage.options.CreateOptions;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.reference.AzureStorageHeaders;
 import org.jclouds.rest.Header;
@@ -71,7 +73,7 @@ public interface AzureBlobConnection {
    @XMLResponseParser(AccountNameEnumerationResultsHandler.class)
    @Path("/")
    @Query(key = "comp", value = "list")
-   ContainerMetadataList listContainers(ListOptions... listOptions);
+   MetadataList<ContainerMetadata> listContainers(ListOptions... listOptions);
 
    /**
     * The Create Container operation creates a new container under the specified account. If the
@@ -121,7 +123,7 @@ public interface AzureBlobConnection {
    @PUT
    @Path("$root")
    @Query(key = "restype", value = "container")
-   boolean createRootContainer(CreateContainerOptions... options);// TODO public is not supported!
+   boolean createRootContainer(CreateOptions... options);
 
    /**
     * 

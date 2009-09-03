@@ -1,7 +1,8 @@
 package org.jclouds.azure.storage.blob.xml.config;
 
-import org.jclouds.azure.storage.blob.domain.ContainerMetadataList;
+import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
 import org.jclouds.azure.storage.blob.xml.AccountNameEnumerationResultsHandler;
+import org.jclouds.azure.storage.domain.MetadataList;
 import org.jclouds.azure.storage.xml.AzureStorageParserFactory;
 import org.jclouds.azure.storage.xml.config.AzureStorageParserModule;
 import org.jclouds.command.ConfiguresResponseTransformer;
@@ -17,13 +18,13 @@ import com.google.inject.assistedinject.FactoryProvider;
  */
 @ConfiguresResponseTransformer
 public class AzureBlobParserModule extends AzureStorageParserModule {
-   protected final TypeLiteral<AzureStorageParserFactory.GenericParseFactory<ContainerMetadataList>> accountNameEnumerationResultsHandler = new TypeLiteral<AzureStorageParserFactory.GenericParseFactory<ContainerMetadataList>>() {
+   protected final TypeLiteral<AzureStorageParserFactory.GenericParseFactory<MetadataList<ContainerMetadata>>> accountNameEnumerationResultsHandler = new TypeLiteral<AzureStorageParserFactory.GenericParseFactory<MetadataList<ContainerMetadata>>>() {
    };
 
    @Override
    protected void bindParserImplementationsToReturnTypes() {
       super.bindParserImplementationsToReturnTypes();
-      bind(new TypeLiteral<ParseSax.HandlerWithResult<ContainerMetadataList>>() {
+      bind(new TypeLiteral<ParseSax.HandlerWithResult<MetadataList<ContainerMetadata>>>() {
       }).to(AccountNameEnumerationResultsHandler.class);
    }
 
@@ -32,7 +33,7 @@ public class AzureBlobParserModule extends AzureStorageParserModule {
       super.bindCallablesThatReturnParseResults();
       bind(accountNameEnumerationResultsHandler).toProvider(
                FactoryProvider.newFactory(accountNameEnumerationResultsHandler,
-                        new TypeLiteral<ParseSax<ContainerMetadataList>>() {
+                        new TypeLiteral<ParseSax<MetadataList<ContainerMetadata>>>() {
                         }));
    }
 
