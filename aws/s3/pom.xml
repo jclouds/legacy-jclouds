@@ -45,7 +45,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-objectstore-core</artifactId>
+            <artifactId>jclouds-keyvaluestore-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

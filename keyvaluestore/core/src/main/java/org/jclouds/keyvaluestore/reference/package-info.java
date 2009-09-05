@@ -21,22 +21,8 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.objectstore.reference;
-
 /**
- * Configuration properties and constants used in ObjectStore connections.
- * 
+ * This package contains properties and reference data used in S3.
  * @author Adrian Cole
  */
-public interface ObjectStoreConstants {
-
-   /**
-    * longest time a single Map operation can take before throwing an exception.
-    */
-   public static final String PROPERTY_OBJECTMAP_TIMEOUT = "jclouds.objectmap.timeout";
-   /**
-    * time to pause before retrying a transient failure
-    */
-   public static final String PROPERTY_OBJECTMAP_RETRY = "jclouds.objectmap.retry";
-
-}
+package org.jclouds.keyvaluestore.reference;

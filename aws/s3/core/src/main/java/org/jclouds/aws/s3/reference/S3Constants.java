@@ -24,7 +24,7 @@
 package org.jclouds.aws.s3.reference;
 
 import org.jclouds.aws.reference.AWSConstants;
-import org.jclouds.objectstore.reference.ObjectStoreConstants;
+import org.jclouds.keyvaluestore.reference.ObjectStoreConstants;
 
 /**
  * Configuration properties and constants used in S3 connections.

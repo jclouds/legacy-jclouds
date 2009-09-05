@@ -42,12 +42,12 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-objectstore-core</artifactId>
+            <artifactId>jclouds-keyvaluestore-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-objectstore-core</artifactId>
+            <artifactId>jclouds-keyvaluestore-core</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>

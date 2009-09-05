@@ -4,7 +4,7 @@ import java.io.InputStream;
 import java.util.Map;
 
 /**
- * Represents a cloud that has object storage functionality.
+ * Represents a cloud that has key-value storage functionality.
  * 
  * 
  * @author Adrian Cole
