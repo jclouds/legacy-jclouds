@@ -59,7 +59,8 @@ public class WithinThreadExecutorService extends WithinThreadExecutor implements
    /**
     * {@inheritDoc}
     */
-   public <T> List<Future<T>> invokeAll(Collection<Callable<T>> tasks) throws InterruptedException {
+   public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks)
+            throws InterruptedException {
       checkState(!shutdown, "shutdown!");
       List<Future<T>> results = new ArrayList<Future<T>>(tasks.size());
       for (Callable<T> task : tasks) {
@@ -74,8 +75,8 @@ public class WithinThreadExecutorService extends WithinThreadExecutor implements
    /**
     * {@inheritDoc}
     */
-   public <T> List<Future<T>> invokeAll(Collection<Callable<T>> tasks, long timeout, TimeUnit unit)
-            throws InterruptedException {
+   public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout,
+            TimeUnit unit) throws InterruptedException {
       checkState(!shutdown, "shutdown!");
       List<Future<T>> results = new ArrayList<Future<T>>(tasks.size());
       long timeUp = System.nanoTime() + unit.toNanos(timeout);
@@ -94,7 +95,7 @@ public class WithinThreadExecutorService extends WithinThreadExecutor implements
    /**
     * {@inheritDoc}
     */
-   public <T> T invokeAny(Collection<Callable<T>> tasks) throws InterruptedException,
+   public <T> T invokeAny(Collection<? extends Callable<T>> tasks) throws InterruptedException,
             ExecutionException {
       checkState(!shutdown, "shutdown!");
       checkArgument(tasks.size() > 0, "no tasks");
@@ -115,7 +116,7 @@ public class WithinThreadExecutorService extends WithinThreadExecutor implements
    /**
     * {@inheritDoc}
     */
-   public <T> T invokeAny(Collection<Callable<T>> tasks, long timeout, TimeUnit unit)
+   public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
             throws InterruptedException, ExecutionException, TimeoutException {
       checkState(!shutdown, "shutdown!");
       checkArgument(tasks.size() > 0, "no tasks");

@@ -144,6 +144,7 @@
         <maven.compile.target>1.5</maven.compile.target>
         <maven.compile.optimize>true</maven.compile.optimize>
         <maven.compile.deprecation>true</maven.compile.deprecation>
+        <jclouds.test.listener>org.jclouds.test.testng.UnitTestStatusListener</jclouds.test.listener>
     </properties>
 
     <dependencies>
@@ -205,7 +206,7 @@
                     <properties>
                        <property>
                           <name>listener</name>
-                          <value>org.jclouds.test.testng.UnitTestStatusListener</value>
+                          <value>${jclouds.test.listener}</value>
                        </property>
                    </properties>
                 </configuration>
