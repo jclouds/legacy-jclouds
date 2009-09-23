@@ -90,11 +90,16 @@ public class JaxrsAnnotationProcessorTest {
    public @interface FOO {
    }
 
-   @Query(key = "x-ms-version", value = "2009-07-17")
+   @QueryParams(keys = "x-ms-version", values = "2009-07-17")
    public class TestQuery {
       @FOO
-      @Query(key = "x-ms-rubbish", value = "bin")
+      @QueryParams(keys = "x-ms-rubbish", values = "bin")
       public void foo() {
+      }
+
+      @FOO
+      @QueryParams(keys = { "foo", "fooble" }, values = { "bar", "baz" })
+      public void foo2() {
       }
    }
 
@@ -106,6 +111,18 @@ public class JaxrsAnnotationProcessorTest {
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "");
       assertEquals(httpMethod.getEndpoint().getQuery(), "x-ms-version=2009-07-17&x-ms-rubbish=bin");
+      assertEquals(httpMethod.getMethod(), "FOO");
+   }
+
+   public void testQuery2() throws SecurityException, NoSuchMethodException {
+      Method method = TestQuery.class.getMethod("foo2");
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = factory.create(TestQuery.class).createRequest(endpoint, method,
+               new Object[] {});
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "");
+      assertEquals(httpMethod.getEndpoint().getQuery(),
+               "x-ms-version=2009-07-17&foo=bar&fooble=baz");
       assertEquals(httpMethod.getMethod(), "FOO");
    }
 
@@ -123,6 +140,27 @@ public class JaxrsAnnotationProcessorTest {
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "");
       assertEquals(httpMethod.getMethod(), "FOO");
+   }
+
+   public interface Parent {
+      public void foo();
+   }
+
+   public class TestOverridden implements Parent {
+      @POST
+      public void foo() {
+
+      }
+   }
+
+   public void testOverriddenMethod() throws SecurityException, NoSuchMethodException {
+      Method method = TestOverridden.class.getMethod("foo");
+      URI endpoint = URI.create("http://localhost");
+      HttpRequest httpMethod = factory.create(TestOverridden.class).createRequest(endpoint, method,
+               new Object[] {});
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "");
+      assertEquals(httpMethod.getMethod(), "POST");
    }
 
    public class TestPost {
@@ -376,23 +414,40 @@ public class JaxrsAnnotationProcessorTest {
    public class TestHeader {
 
       @GET
-      @Header(key = "x-amz-copy-source", value = "/{bucket}")
+      @Headers(keys = "x-amz-copy-source", values = "/{bucket}")
       public void oneHeader(@PathParam("bucket") String path) {
       }
 
       @GET
-      @Header(key = "x-amz-copy-source", value = "/{bucket}/{key}")
+      @Headers(keys = { "slash", "hyphen" }, values = { "/{bucket}", "-{bucket}" })
+      public void twoHeader(@PathParam("bucket") String path) {
+      }
+
+      @GET
+      @Headers(keys = "x-amz-copy-source", values = "/{bucket}/{key}")
       public void twoHeaders(@PathParam("bucket") String path, @PathParam("key") String path2) {
       }
 
       @GET
-      @Header(key = "x-amz-copy-source", value = "/{bucket}/{key}")
+      @Headers(keys = "x-amz-copy-source", values = "/{bucket}/{key}")
       public void twoHeadersOutOfOrder(@PathParam("key") String path,
                @PathParam("bucket") String path2) {
       }
    }
 
-   @Header(key = "x-amz-copy-source", value = "/{bucket}")
+   @Test
+   public void testBuildTwoHeader() throws SecurityException, NoSuchMethodException,
+            UnsupportedEncodingException {
+      Method oneHeader = TestHeader.class.getMethod("twoHeader", String.class);
+      Multimap<String, String> headers = HashMultimap.create();
+      factory.create(TestHeader.class).addHeaderIfAnnotationPresentOnMethod(headers, oneHeader,
+               new Object[] { "robot" });
+      assertEquals(headers.size(), 2);
+      assertEquals(headers.get("slash"), Collections.singletonList("/robot"));
+      assertEquals(headers.get("hyphen"), Collections.singletonList("-robot"));
+   }
+
+   @Headers(keys = "x-amz-copy-source", values = "/{bucket}")
    public class TestClassHeader {
 
       @GET
@@ -501,14 +556,14 @@ public class JaxrsAnnotationProcessorTest {
 
       @GET
       @Path("/{id}")
-      @Query(key = "max-keys", value = "0")
+      @QueryParams(keys = "max-keys", values = "0")
       public Future<String> getQuery(@PathParam("id") String id) {
          return null;
       }
 
       @GET
       @Path("/{id}")
-      @Query(key = "acl")
+      @QueryParams(keys = "acl")
       public Future<String> getQueryNull(@PathParam("id") String id) {
          return null;
       }
@@ -529,7 +584,7 @@ public class JaxrsAnnotationProcessorTest {
 
       @PUT
       @Path("/{id}")
-      @Header(key = "foo", value = "--{id}--")
+      @Headers(keys = "foo", values = "--{id}--")
       @ResponseParser(ReturnTrueIf2xx.class)
       public Future<String> putHeader(@PathParam("id") String id, @EntityParam String payload) {
          return null;
@@ -796,6 +851,23 @@ public class JaxrsAnnotationProcessorTest {
       assertEquals(httpMethod.getEndpoint().getPath(), "/1");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
+   }
+
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testHostPrefixDotEmpty() throws SecurityException, NoSuchMethodException {
+      Method method = TestVirtualHost.class.getMethod("getPrefixDot", String.class, String.class);
+      URI endpoint = URI.create("http://localhost");
+      factory.create(TestVirtualHost.class).createRequest(endpoint, method,
+               new Object[] { "1", "" });
+
+   }
+
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testHostPrefixDotNull() throws SecurityException, NoSuchMethodException {
+      Method method = TestVirtualHost.class.getMethod("getPrefixDot", String.class, String.class);
+      URI endpoint = URI.create("http://localhost");
+      factory.create(TestVirtualHost.class).createRequest(endpoint, method,
+               new Object[] { "1", null });
    }
 
    public class TestHeaders {

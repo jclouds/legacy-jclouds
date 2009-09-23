@@ -23,6 +23,9 @@
  */
 package org.jclouds.rest;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -90,6 +93,7 @@ public class JaxrsAnnotationProcessor {
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToPathParamAnnotations = createMethodToIndexOfParamToAnnotation(PathParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToPostParamAnnotations = createMethodToIndexOfParamToAnnotation(MapEntityParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToParamParserAnnotations = createMethodToIndexOfParamToAnnotation(ParamParser.class);
+   private final Map<MethodKey, Method> delegationMap = Maps.newHashMap();
 
    static Map<Method, Map<Integer, Set<Annotation>>> createMethodToIndexOfParamToAnnotation(
             final Class<? extends Annotation> annotation) {
@@ -182,9 +186,14 @@ public class JaxrsAnnotationProcessor {
       seedCache(declaring);
    }
 
+   protected Method getDelegateOrNull(Method in) {
+      return delegationMap.get(new MethodKey(in));
+   }
+
    private void seedCache(Class<?> declaring) {
       Set<Method> methods = Sets.newHashSet(declaring.getMethods());
-      for (Method method : Sets.difference(methods, Sets.newHashSet(Object.class.getMethods()))) {
+      methods = Sets.difference(methods, Sets.newHashSet(Object.class.getMethods()));
+      for (Method method : methods) {
          if (isHttpMethod(method)) {
             for (int index = 0; index < method.getParameterTypes().length; index++) {
                methodToIndexOfParamToEntityAnnotation.get(method).get(index);
@@ -195,12 +204,56 @@ public class JaxrsAnnotationProcessor {
                methodToindexOfParamToParamParserAnnotations.get(method).get(index);
                methodToIndexesOfOptions.get(method);
             }
+            delegationMap.put(new MethodKey(method), method);
          } else if (isConstantDeclaration(method)) {
             bindConstant(method);
+         } else if (!method.getDeclaringClass().equals(declaring)) {
+            logger.debug("skipping potentially overridden method", method);
          } else {
-            throw new RuntimeException("Method is not annotated as either http or constant");
+            throw new RuntimeException("Method is not annotated as either http or constant: "
+                     + method);
          }
       }
+   }
+
+   public static class MethodKey {
+
+      @Override
+      public int hashCode() {
+         final int prime = 31;
+         int result = 1;
+         result = prime * result + ((name == null) ? 0 : name.hashCode());
+         result = prime * result + parameterCount;
+         return result;
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+         if (this == obj)
+            return true;
+         if (obj == null)
+            return false;
+         if (getClass() != obj.getClass())
+            return false;
+         MethodKey other = (MethodKey) obj;
+         if (name == null) {
+            if (other.name != null)
+               return false;
+         } else if (!name.equals(other.name))
+            return false;
+         if (parameterCount != other.parameterCount)
+            return false;
+         return true;
+      }
+
+      private final String name;
+      private final int parameterCount;
+
+      public MethodKey(Method method) {
+         this.name = method.getName();
+         this.parameterCount = method.getParameterTypes().length;
+      }
+
    }
 
    final Injector injector;
@@ -214,13 +267,13 @@ public class JaxrsAnnotationProcessor {
       builder.path(declaring);
       builder.path(method);
 
-      if (declaring.isAnnotationPresent(Query.class)) {
-         Query query = declaring.getAnnotation(Query.class);
+      if (declaring.isAnnotationPresent(QueryParams.class)) {
+         QueryParams query = declaring.getAnnotation(QueryParams.class);
          addQuery(builder, query);
       }
 
-      if (method.isAnnotationPresent(Query.class)) {
-         Query query = method.getAnnotation(Query.class);
+      if (method.isAnnotationPresent(QueryParams.class)) {
+         QueryParams query = method.getAnnotation(QueryParams.class);
          addQuery(builder, query);
       }
 
@@ -228,6 +281,7 @@ public class JaxrsAnnotationProcessor {
 
       HttpRequestOptions options = findOptionsIn(method, args);
       if (options != null) {
+         injector.injectMembers(options);// TODO test case
          headers.putAll(options.buildRequestHeaders());
          for (Entry<String, String> query : options.buildQueryParameters().entries()) {
             builder.queryParam(query.getKey(), query.getValue());
@@ -261,24 +315,33 @@ public class JaxrsAnnotationProcessor {
       return request;
    }
 
-   private void addQuery(UriBuilder builder, Query query) {
-      if (query.value().equals(Query.NULL))
-         builder.replaceQuery(query.key());
-      else
-         builder.queryParam(query.key(), query.value());
+   private void addQuery(UriBuilder builder, QueryParams query) {
+      for (int i = 0; i < query.keys().length; i++) {
+         if (query.values()[i].equals(QueryParams.NULL)) {
+            builder.replaceQuery(query.keys()[i]);
+         } else {
+            builder.queryParam(query.keys()[i], query.values()[i]);
+         }
+      }
    }
 
    private void addFiltersIfAnnotated(Method method, HttpRequest request) {
       if (declaring.isAnnotationPresent(RequestFilters.class)) {
          for (Class<? extends HttpRequestFilter> clazz : declaring.getAnnotation(
                   RequestFilters.class).value()) {
-            request.getFilters().add(injector.getInstance(clazz));
+            HttpRequestFilter instance = injector.getInstance(clazz);
+            request.getFilters().add(instance);
+            logger.debug("%s - adding filter  %s from annotation on %s", request, instance,
+                     declaring.getName());
          }
       }
       if (method.isAnnotationPresent(RequestFilters.class)) {
          for (Class<? extends HttpRequestFilter> clazz : method.getAnnotation(RequestFilters.class)
                   .value()) {
-            request.getFilters().add(injector.getInstance(clazz));
+            HttpRequestFilter instance = injector.getInstance(clazz);
+            request.getFilters().add(instance);
+            logger.debug("%s - adding filter  %s from annotation on %s", request, instance, method
+                     .getName());
          }
       }
    }
@@ -290,7 +353,10 @@ public class JaxrsAnnotationProcessor {
          HostPrefixParam param = (HostPrefixParam) map.values().iterator().next().iterator().next();
          int index = map.keySet().iterator().next();
 
-         String prefix = args[index].toString();
+         String prefix = checkNotNull(args[index],
+                  String.format("argument at index %d on method %s", index, method)).toString();
+         checkArgument(!prefix.equals(""), String.format(
+                  "argument at index %d must be a valid hostname for method %s", index, method));
          String joinOn = param.value();
          String host = endpoint.getHost();
 
@@ -332,27 +398,29 @@ public class JaxrsAnnotationProcessor {
    }
 
    public MapEntityBinder getMapEntityBinderOrNull(Method method, Object[] args) {
-      for (Object arg : args) {
-         if (arg instanceof Object[]) {
-            Object[] postBinders = (Object[]) arg;
-            if (postBinders.length == 0) {
-            } else if (postBinders.length == 1) {
-               if (postBinders[0] instanceof MapEntityBinder) {
-                  MapEntityBinder binder = (MapEntityBinder) postBinders[0];
-                  injector.injectMembers(binder);
-                  return binder;
+      if (args != null) {
+         for (Object arg : args) {
+            if (arg instanceof Object[]) {
+               Object[] postBinders = (Object[]) arg;
+               if (postBinders.length == 0) {
+               } else if (postBinders.length == 1) {
+                  if (postBinders[0] instanceof MapEntityBinder) {
+                     MapEntityBinder binder = (MapEntityBinder) postBinders[0];
+                     injector.injectMembers(binder);
+                     return binder;
+                  }
+               } else {
+                  if (postBinders[0] instanceof MapEntityBinder) {
+                     throw new IllegalArgumentException(
+                              "we currently do not support multiple varargs postBinders in: "
+                                       + method.getName());
+                  }
                }
-            } else {
-               if (postBinders[0] instanceof MapEntityBinder) {
-                  throw new IllegalArgumentException(
-                           "we currently do not support multiple varargs postBinders in: "
-                                    + method.getName());
-               }
+            } else if (arg instanceof MapEntityBinder) {
+               MapEntityBinder binder = (MapEntityBinder) arg;
+               injector.injectMembers(binder);
+               return binder;
             }
-         } else if (arg instanceof MapEntityBinder) {
-            MapEntityBinder binder = (MapEntityBinder) arg;
-            injector.injectMembers(binder);
-            return binder;
          }
       }
       MapBinder annotation = method.getAnnotation(MapBinder.class);
@@ -515,24 +583,28 @@ public class JaxrsAnnotationProcessor {
 
    public void addHeaderIfAnnotationPresentOnMethod(Multimap<String, String> headers,
             Method method, Object[] args, char... skipEncode) throws UnsupportedEncodingException {
-      if (declaring.isAnnotationPresent(Header.class)) {
-         Header header = declaring.getAnnotation(Header.class);
+      if (declaring.isAnnotationPresent(Headers.class)) {
+         Headers header = declaring.getAnnotation(Headers.class);
          addHeader(headers, method, args, header);
       }
-      if (method.isAnnotationPresent(Header.class)) {
-         Header header = method.getAnnotation(Header.class);
+      if (method.isAnnotationPresent(Headers.class)) {
+         Headers header = method.getAnnotation(Headers.class);
          addHeader(headers, method, args, header);
       }
    }
 
    private void addHeader(Multimap<String, String> headers, Method method, Object[] args,
-            Header header) throws UnsupportedEncodingException {
-      String value = header.value();
-      for (Entry<String, Object> tokenValue : getEncodedPathParamKeyValues(method, args).entrySet()) {
-         value = value.replaceAll("\\{" + tokenValue.getKey() + "\\}", tokenValue.getValue()
-                  .toString());
+            Headers header) throws UnsupportedEncodingException {
+      for (int i = 0; i < header.keys().length; i++) {
+         String value = header.values()[i];
+         for (Entry<String, Object> tokenValue : getEncodedPathParamKeyValues(method, args)
+                  .entrySet()) {
+            value = value.replaceAll("\\{" + tokenValue.getKey() + "\\}", tokenValue.getValue()
+                     .toString());
+         }
+         headers.put(header.keys()[i], value);
       }
-      headers.put(header.key(), value);
+
    }
 
    private Map<String, Object> getEncodedPathParamKeyValues(Method method, Object[] args,

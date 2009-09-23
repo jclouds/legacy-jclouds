@@ -84,7 +84,8 @@ public class RestClientProxy implements InvocationHandler {
          return this.equals(o);
       } else if (method.getName().equals("hashCode")) {
          return this.hashCode();
-      } else if (util.isHttpMethod(method)) {
+      } else if (util.getDelegateOrNull(method) != null) {
+         method = util.getDelegateOrNull(method);
          logger.trace("%s - converting method to request", method);
          HttpRequest request = util.createRequest(endPoint, method, args);
          logger.trace("%s - converted method to request %s", method, request);
