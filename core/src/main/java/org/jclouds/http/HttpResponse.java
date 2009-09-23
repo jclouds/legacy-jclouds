@@ -24,8 +24,7 @@
 package org.jclouds.http;
 
 import java.io.InputStream;
-import java.net.URL;
-
+import java.net.URI;
 
 /**
  * Represents a response produced from {@link HttpCommandExecutorService}
@@ -33,53 +32,53 @@ import java.net.URL;
  * @author Adrian Cole
  */
 public class HttpResponse extends HttpMessage {
-    private URL requestURL;
-    private int statusCode;
-    private String message;
-    private InputStream content;
-    
-    public HttpResponse(URL requestURL) {
-       this.requestURL = requestURL;
-    }
+   private URI requestURL;
+   private int statusCode;
+   private String message;
+   private InputStream content;
 
-    @Override
-    public String toString() {
-	final StringBuilder sb = new StringBuilder();
-	sb.append("HttpResponse");
-	sb.append("{statusCode=").append(statusCode);
-	sb.append(", headers=").append(headers);
-	sb.append(", message='").append(message).append('\'');
-	sb.append(", content set=").append(content != null);
-	sb.append('}');
-	return sb.toString();
-    }
+   public HttpResponse(URI requestURL) {
+      this.requestURL = requestURL;
+   }
 
-    public int getStatusCode() {
-	return statusCode;
-    }
+   @Override
+   public String toString() {
+      final StringBuilder sb = new StringBuilder();
+      sb.append("HttpResponse");
+      sb.append("{statusCode=").append(statusCode);
+      sb.append(", headers=").append(headers);
+      sb.append(", message='").append(message).append('\'');
+      sb.append(", content set=").append(content != null);
+      sb.append('}');
+      return sb.toString();
+   }
 
-    public void setStatusCode(int statusCode) {
-	this.statusCode = statusCode;
-    }
+   public int getStatusCode() {
+      return statusCode;
+   }
 
-    public String getMessage() {
-	return message;
-    }
+   public void setStatusCode(int statusCode) {
+      this.statusCode = statusCode;
+   }
 
-    public void setMessage(String message) {
-	this.message = message;
-    }
+   public String getMessage() {
+      return message;
+   }
 
-    public InputStream getContent() {
-	return content;
-    }
+   public void setMessage(String message) {
+      this.message = message;
+   }
 
-    public void setContent(InputStream content) {
-	this.content = content;
-    }
-    
-    public URL getRequestURL() {
-       return this.requestURL;
-    }
+   public InputStream getContent() {
+      return content;
+   }
+
+   public void setContent(InputStream content) {
+      this.content = content;
+   }
+
+   public URI getRequestURL() {
+      return this.requestURL;
+   }
 
 }
