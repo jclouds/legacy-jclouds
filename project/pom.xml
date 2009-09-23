@@ -177,6 +177,7 @@
                             <goal>test</goal>
                         </goals>
                         <configuration>
+                           <argLine>-Xmx512m -Xms128m</argLine>
                            <parallel>tests</parallel>
                            <threadCount>5</threadCount>
                            <!-- note that the groups/excluded groups don't work due to some problem
@@ -329,7 +330,7 @@ pageTracker._trackPageview();
                                     <version>[1.5,)</version>
                                 </requireJavaVersion>
                                 <requireMavenVersion>
-                                    <version>[2.1.0,)</version>
+                                    <version>[2.2.1,)</version>
                                 </requireMavenVersion>
                             </rules>
                         </configuration>
