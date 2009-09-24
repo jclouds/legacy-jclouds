@@ -79,7 +79,7 @@ import com.google.inject.name.Names;
  * @author Adrian Cole, Andrew Newdigate
  * @see CloudContext
  */
-public abstract class CloudContextBuilder<C, X extends CloudContext<C>> {
+public abstract class CloudContextBuilder<X extends CloudContext<?>> {
 
    private static final String DEFAULT_SECURE_HTTP_PORT = "443";
    private static final String DEFAULT_NON_SECURE_HTTP_PORT = "80";
@@ -91,17 +91,17 @@ public abstract class CloudContextBuilder<C, X extends CloudContext<C>> {
       this.properties = properties;
    }
 
-   public CloudContextBuilder<C, X> withHttpAddress(String httpAddress) {
+   public CloudContextBuilder<X> withHttpAddress(String httpAddress) {
       properties.setProperty(PROPERTY_HTTP_ADDRESS, httpAddress);
       return this;
    }
 
-   public CloudContextBuilder<C, X> withSaxDebug() {
+   public CloudContextBuilder<X> withSaxDebug() {
       properties.setProperty(PROPERTY_SAX_DEBUG, "true");
       return this;
    }
 
-   public CloudContextBuilder<C, X> withJsonDebug() {
+   public CloudContextBuilder<X> withJsonDebug() {
       properties.setProperty(PROPERTY_JSON_DEBUG, "true");
       return this;
    }
@@ -109,75 +109,75 @@ public abstract class CloudContextBuilder<C, X extends CloudContext<C>> {
    /**
     * allow mismatches between the certificate and the hostname of ssl requests.
     */
-   public CloudContextBuilder<C, X> relaxSSLHostname() {
+   public CloudContextBuilder<X> relaxSSLHostname() {
       properties.setProperty(PROPERTY_HTTP_RELAX_HOSTNAME, "true");
       return this;
    }
 
-   public CloudContextBuilder<C, X> withHttpMaxRetries(int httpMaxRetries) {
+   public CloudContextBuilder<X> withHttpMaxRetries(int httpMaxRetries) {
       properties.setProperty(PROPERTY_HTTP_MAX_RETRIES, Integer.toString(httpMaxRetries));
       return this;
    }
 
-   public CloudContextBuilder<C, X> withHttpMaxRedirects(int httpMaxRedirects) {
+   public CloudContextBuilder<X> withHttpMaxRedirects(int httpMaxRedirects) {
       properties.setProperty(PROPERTY_HTTP_MAX_REDIRECTS, Integer.toString(httpMaxRedirects));
       return this;
    }
 
-   public CloudContextBuilder<C, X> withExecutorService(ExecutorService service) {
+   public CloudContextBuilder<X> withExecutorService(ExecutorService service) {
       modules.add(new ExecutorServiceModule(service));
       return this;
    }
 
-   public CloudContextBuilder<C, X> withHttpPort(int httpPort) {
+   public CloudContextBuilder<X> withHttpPort(int httpPort) {
       properties.setProperty(PROPERTY_HTTP_PORT, Integer.toString(httpPort));
       return this;
    }
 
-   public CloudContextBuilder<C, X> withHttpSecure(boolean httpSecure) {
+   public CloudContextBuilder<X> withHttpSecure(boolean httpSecure) {
       properties.setProperty(PROPERTY_HTTP_SECURE, Boolean.toString(httpSecure));
       return this;
    }
 
-   public CloudContextBuilder<C, X> withPoolMaxConnectionReuse(int poolMaxConnectionReuse) {
+   public CloudContextBuilder<X> withPoolMaxConnectionReuse(int poolMaxConnectionReuse) {
       properties.setProperty(PROPERTY_POOL_MAX_CONNECTION_REUSE, Integer
                .toString(poolMaxConnectionReuse));
       return this;
 
    }
 
-   public CloudContextBuilder<C, X> withPoolMaxSessionFailures(int poolMaxSessionFailures) {
+   public CloudContextBuilder<X> withPoolMaxSessionFailures(int poolMaxSessionFailures) {
       properties.setProperty(PROPERTY_POOL_MAX_SESSION_FAILURES, Integer
                .toString(poolMaxSessionFailures));
       return this;
 
    }
 
-   public CloudContextBuilder<C, X> withPoolRequestInvokerThreads(int poolRequestInvokerThreads) {
+   public CloudContextBuilder<X> withPoolRequestInvokerThreads(int poolRequestInvokerThreads) {
       properties.setProperty(PROPERTY_POOL_REQUEST_INVOKER_THREADS, Integer
                .toString(poolRequestInvokerThreads));
       return this;
 
    }
 
-   public CloudContextBuilder<C, X> withPoolIoWorkerThreads(int poolIoWorkerThreads) {
+   public CloudContextBuilder<X> withPoolIoWorkerThreads(int poolIoWorkerThreads) {
       properties
                .setProperty(PROPERTY_POOL_IO_WORKER_THREADS, Integer.toString(poolIoWorkerThreads));
       return this;
 
    }
 
-   public CloudContextBuilder<C, X> withPoolMaxConnections(int poolMaxConnections) {
+   public CloudContextBuilder<X> withPoolMaxConnections(int poolMaxConnections) {
       properties.setProperty(PROPERTY_POOL_MAX_CONNECTIONS, Integer.toString(poolMaxConnections));
       return this;
    }
 
-   public CloudContextBuilder<C, X> withModule(Module module) {
+   public CloudContextBuilder<X> withModule(Module module) {
       modules.add(module);
       return this;
    }
 
-   public CloudContextBuilder<C, X> withModules(Module... modules) {
+   public CloudContextBuilder<X> withModules(Module... modules) {
       this.modules.addAll(Arrays.asList(modules));
       return this;
    }

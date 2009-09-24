@@ -23,6 +23,8 @@
  */
 package org.jclouds.cloud;
 
+import java.net.URI;
+
 /**
  * Represents an authenticated context to the cloud.
  * 
@@ -33,14 +35,17 @@ package org.jclouds.cloud;
  * @author Adrian Cole
  * 
  */
-public interface CloudContext<C> {
-
+public interface CloudContext<S> {
    /**
     * low-level api to the cloud. Threadsafe implementations will return a singleton.
     * 
     * @return a connection to the cloud
     */
-   C getConnection();
+   S getApi();
+
+   URI getEndPoint();
+
+   String getAccount();
 
    /**
     * Closes all connections to Cloud Files.
