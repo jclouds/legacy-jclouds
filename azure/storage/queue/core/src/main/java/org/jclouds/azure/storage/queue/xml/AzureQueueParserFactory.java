@@ -28,8 +28,8 @@ import org.jclouds.azure.storage.queue.domain.QueueMetadata;
 import org.jclouds.azure.storage.xml.AzureStorageParserFactory;
 import org.jclouds.http.functions.ParseSax;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
+import javax.inject.Inject;
+import javax.inject.Provider;
 
 /**
  * Creates Parsers needed to interpret Azure Queue Service messages. This class uses guice assisted

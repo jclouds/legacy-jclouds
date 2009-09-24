@@ -39,7 +39,7 @@ import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 
 /**
  * Encryption, Hashing, and IO Utilities needed to sign and verify S3 requests and responses.

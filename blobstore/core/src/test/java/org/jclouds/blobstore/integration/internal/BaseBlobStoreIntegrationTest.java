@@ -99,7 +99,7 @@ public class BaseBlobStoreIntegrationTest<S extends BlobStore<C, M, B>, C extend
    /**
     * two test groups integration and live.
     */
-   private volatile static BlockingQueue<String> containerNames = new ArrayBlockingQueue<String>(
+   private volatile static BlockingQueue<String> containerJsr330 = new ArrayBlockingQueue<String>(
             containerCount);
 
    @BeforeGroups(groups = { "integration", "live" })
@@ -169,7 +169,7 @@ public class BaseBlobStoreIntegrationTest<S extends BlobStore<C, M, B>, C extend
                   } else {
                      try {
                         createContainerAndEnsureEmpty(client, context, containerName);
-                        containerNames.put(containerName);
+                        containerJsr330.put(containerName);
                      } catch (Throwable e) {
                         // throw away the container and try again with the next index
                         deleteContainerOrWarnIfUnable(client, context, containerName);
@@ -177,8 +177,8 @@ public class BaseBlobStoreIntegrationTest<S extends BlobStore<C, M, B>, C extend
                      }
                   }
                }
-               testContext.setAttribute("containerNames", containerNames);
-               System.err.printf("*** containers to test: %s%n", containerNames);
+               testContext.setAttribute("containerJsr330", containerJsr330);
+               System.err.printf("*** containers to test: %s%n", containerJsr330);
                // careful not to keep too many files open
                context.close();
                initialized = true;
@@ -338,7 +338,7 @@ public class BaseBlobStoreIntegrationTest<S extends BlobStore<C, M, B>, C extend
 
    public String getContainerName() throws InterruptedException, ExecutionException,
             TimeoutException {
-      String containerName = containerNames.poll(30, TimeUnit.SECONDS);
+      String containerName = containerJsr330.poll(30, TimeUnit.SECONDS);
       assert containerName != null : "unable to get a container for the test";
       emptyContainer(containerName);
       return containerName;
@@ -357,7 +357,7 @@ public class BaseBlobStoreIntegrationTest<S extends BlobStore<C, M, B>, C extend
    public void returnContainer(final String containerName) throws InterruptedException,
             ExecutionException, TimeoutException {
       if (containerName != null) {
-         containerNames.add(containerName);
+         containerJsr330.add(containerName);
          /*
           * Ensure that any returned container name actually exists on the server. Return of a
           * non-existent container introduces subtle testing bugs, where later unrelated tests will

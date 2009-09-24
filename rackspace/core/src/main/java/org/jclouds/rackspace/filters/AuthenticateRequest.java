@@ -33,9 +33,9 @@ import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.rackspace.Authentication;
 import org.jclouds.rackspace.reference.RackspaceHeaders;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-import com.google.inject.Singleton;
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.inject.Singleton;
 
 /**
  * Signs the Rackspace request. This will update the Authentication Token before 24 hours is up.

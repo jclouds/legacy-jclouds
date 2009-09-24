@@ -58,9 +58,9 @@ import org.jclouds.http.pool.HttpCommandConnectionPool;
 import org.jclouds.http.pool.PoolConstants;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.google.inject.name.Named;
+import javax.inject.Named;
 
 /**
  * Connection Pool for HTTP requests that utilizes Apache HTTPNio

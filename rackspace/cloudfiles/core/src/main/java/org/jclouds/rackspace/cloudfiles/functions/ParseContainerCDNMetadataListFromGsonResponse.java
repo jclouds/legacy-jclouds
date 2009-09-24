@@ -34,7 +34,7 @@ import org.jclouds.rackspace.cloudfiles.domain.ContainerCDNMetadata;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.google.inject.Inject;
+import javax.inject.Inject;
 
 /**
  * This parses {@link ContainerCDNMetadata} from a gson string.

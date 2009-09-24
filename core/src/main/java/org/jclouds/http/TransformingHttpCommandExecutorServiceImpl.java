@@ -30,7 +30,7 @@ import java.util.concurrent.Future;
 import org.jclouds.concurrent.FutureFunctionCallable;
 
 import com.google.common.base.Function;
-import com.google.inject.Inject;
+import javax.inject.Inject;
 
 /**
  * Executor which will invoke and transform the response of an {@code EndpointCommand} into generic

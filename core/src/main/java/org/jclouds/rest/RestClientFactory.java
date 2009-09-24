@@ -28,7 +28,7 @@ import java.net.URI;
 
 import org.jclouds.rest.RestClientProxy.RestClientProxyFactory;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 
 public class RestClientFactory {
    private final RestClientProxyFactory proxyFactory;

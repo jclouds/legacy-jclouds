@@ -28,7 +28,7 @@ import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.ParseBlobFromHeadersAndHttpContent;
 import org.jclouds.blobstore.functions.ParseBlobMetadataFromHeaders;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 
 /**
  * Parses response headers and creates a new Rackspace object from them and the HTTP content.

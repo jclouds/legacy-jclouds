@@ -37,8 +37,8 @@ import org.jclouds.util.DateService;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * @author Adrian Cole

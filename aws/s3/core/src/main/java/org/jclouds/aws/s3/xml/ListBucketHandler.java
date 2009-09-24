@@ -37,7 +37,7 @@ import org.jclouds.util.DateService;
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.Lists;
-import com.google.inject.Inject;
+import javax.inject.Inject;
 
 /**
  * Parses the following XML document:

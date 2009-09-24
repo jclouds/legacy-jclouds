@@ -35,8 +35,8 @@ import org.jclouds.http.HttpUtils;
 import org.jclouds.util.DateService;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * This parses @{link {@link org.jclouds.aws.s3.domain.ObjectMetadata} from HTTP headers.

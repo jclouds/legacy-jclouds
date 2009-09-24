@@ -42,8 +42,8 @@ import org.jclouds.rest.config.JaxrsModule;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
+import javax.inject.Singleton;
+import javax.inject.Named;
 
 /**
  * Configures the Rackspace authentication service connection, including logging and http transport.

@@ -39,6 +39,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.Future;
 
+import javax.inject.Named;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.HttpMethod;
@@ -73,8 +74,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
-import com.google.inject.name.Named;
-import com.google.inject.name.Names;
+import org.jclouds.util.Jsr330;
 
 /**
  * Tests behavior of {@code JaxrsAnnotationProcessor}
@@ -990,7 +990,7 @@ public class JaxrsAnnotationProcessorTest {
       factory = Guice.createInjector(new AbstractModule() {
          @Override
          protected void configure() {
-            bindConstant().annotatedWith(Names.named("testaccount")).to("ralphie");
+            bindConstant().annotatedWith(Jsr330.named("testaccount")).to("ralphie");
             bind(URI.class).toInstance(URI.create("http://localhost:8080"));
          }
       }, new JaxrsModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),

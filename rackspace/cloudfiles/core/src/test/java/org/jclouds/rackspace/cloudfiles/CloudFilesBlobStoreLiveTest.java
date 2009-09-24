@@ -78,10 +78,10 @@ public class CloudFilesBlobStoreLiveTest {
       assertTrue(initialContainerCount >= 0);
 
       // Create test containers
-      String[] containerNames = new String[] { bucketPrefix + ".testListOwnedContainers1",
+      String[] containerJsr330 = new String[] { bucketPrefix + ".testListOwnedContainers1",
                bucketPrefix + ".testListOwnedContainers2" };
-      assertTrue(connection.createContainer(containerNames[0]).get(10, TimeUnit.SECONDS));
-      assertTrue(connection.createContainer(containerNames[1]).get(10, TimeUnit.SECONDS));
+      assertTrue(connection.createContainer(containerJsr330[0]).get(10, TimeUnit.SECONDS));
+      assertTrue(connection.createContainer(containerJsr330[1]).get(10, TimeUnit.SECONDS));
 
       // Test default listing
       response = connection.listContainers();
@@ -90,18 +90,18 @@ public class CloudFilesBlobStoreLiveTest {
 
       // Test listing with options
       response = connection.listContainers(ListContainerOptions.Builder.afterMarker(
-               containerNames[0].substring(0, containerNames[0].length() - 1)).maxResults(1));
+               containerJsr330[0].substring(0, containerJsr330[0].length() - 1)).maxResults(1));
       assertEquals(response.size(), 1);
-      assertEquals(response.get(0).getName(), containerNames[0]);
+      assertEquals(response.get(0).getName(), containerJsr330[0]);
 
       response = connection.listContainers(ListContainerOptions.Builder.afterMarker(
-               containerNames[0]).maxResults(1));
+               containerJsr330[0]).maxResults(1));
       assertEquals(response.size(), 1);
-      assertEquals(response.get(0).getName(), containerNames[1]);
+      assertEquals(response.get(0).getName(), containerJsr330[1]);
 
       // Cleanup and test containers have been removed
-      assertTrue(connection.deleteContainer(containerNames[0]).get(10, TimeUnit.SECONDS));
-      assertTrue(connection.deleteContainer(containerNames[1]).get(10, TimeUnit.SECONDS));
+      assertTrue(connection.deleteContainer(containerJsr330[0]).get(10, TimeUnit.SECONDS));
+      assertTrue(connection.deleteContainer(containerJsr330[1]).get(10, TimeUnit.SECONDS));
       response = connection.listContainers();
       // assertEquals(response.size(), initialContainerCount + 2);// if the containers already
       // exist, this will fail

@@ -31,7 +31,7 @@ import org.jclouds.http.functions.ParseJson;
 import org.jclouds.rackspace.cloudservers.domain.Flavor;
 
 import com.google.gson.Gson;
-import com.google.inject.Inject;
+import javax.inject.Inject;
 
 /**
  * This parses {@link Flavor} from a gson string.

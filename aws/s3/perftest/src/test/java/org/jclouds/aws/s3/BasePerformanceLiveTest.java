@@ -47,7 +47,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.inject.Provider;
+import javax.inject.Provider;
 
 /**
  * Tests relative performance of S3 functions.

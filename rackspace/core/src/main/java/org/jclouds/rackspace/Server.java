@@ -28,7 +28,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.google.inject.BindingAnnotation;
+import javax.inject.Qualifier;
 
 /**
  * Represents a component related to Rackspace Cloud Servers.
@@ -39,7 +39,7 @@ import com.google.inject.BindingAnnotation;
  */
 @Retention(value = RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
-@BindingAnnotation
+@Qualifier
 public @interface Server {
 
 }

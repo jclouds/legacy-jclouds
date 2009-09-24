@@ -42,9 +42,9 @@ import org.jclouds.samples.googleappengine.domain.BucketResult;
 import org.jclouds.samples.googleappengine.functions.MetadataToBucketResult;
 
 import com.google.common.collect.Lists;
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-import com.google.inject.Singleton;
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.inject.Singleton;
 
 /**
  * Shows an example of how to use @{link S3Connection} injected with Guice.

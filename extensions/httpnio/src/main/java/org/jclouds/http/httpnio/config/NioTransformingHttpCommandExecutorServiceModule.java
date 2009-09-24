@@ -27,6 +27,10 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.HttpEntity;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
@@ -57,14 +61,11 @@ import org.jclouds.http.httpnio.pool.NioTransformingHttpCommandExecutorService;
 import org.jclouds.http.pool.PoolConstants;
 import org.jclouds.http.pool.config.ConnectionPoolCommandExecutorServiceModule;
 
-import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
-import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.FactoryProvider;
-import com.google.inject.name.Named;
 
 /**
  * 
@@ -125,10 +126,9 @@ public class NioTransformingHttpCommandExecutorServiceModule extends
                Scopes.SINGLETON);
       bind(ByteBufferAllocator.class).to(HeapByteBufferAllocator.class);
       bind(NioHttpCommandConnectionPool.Factory.class).toProvider(
-               FactoryProvider.newFactory(
-                        new TypeLiteral<NioHttpCommandConnectionPool.Factory>() {
-                        }, new TypeLiteral<NioHttpCommandConnectionPool>() {
-                        }));
+               FactoryProvider.newFactory(new TypeLiteral<NioHttpCommandConnectionPool.Factory>() {
+               }, new TypeLiteral<NioHttpCommandConnectionPool>() {
+               }));
    }
 
    static class InjectableBufferingNHttpEntity extends BufferingNHttpEntity {

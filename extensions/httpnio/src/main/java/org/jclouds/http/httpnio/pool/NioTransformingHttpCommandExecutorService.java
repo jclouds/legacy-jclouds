@@ -30,8 +30,8 @@ import org.apache.http.nio.NHttpConnection;
 import org.jclouds.http.HttpCommandRendezvous;
 import org.jclouds.http.pool.ConnectionPoolTransformingHttpCommandExecutorService;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * // TODO: Adrian: Document this!

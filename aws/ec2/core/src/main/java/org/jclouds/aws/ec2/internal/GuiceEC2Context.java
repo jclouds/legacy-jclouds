@@ -32,7 +32,7 @@ import org.jclouds.aws.ec2.EC2Context;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.Logger;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import com.google.inject.Injector;
 
 /**

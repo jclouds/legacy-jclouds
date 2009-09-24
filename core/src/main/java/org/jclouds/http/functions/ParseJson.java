@@ -36,8 +36,8 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
 import com.google.gson.Gson;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * This object will parse the body of an HttpResponse and return the result of type <T> back to the

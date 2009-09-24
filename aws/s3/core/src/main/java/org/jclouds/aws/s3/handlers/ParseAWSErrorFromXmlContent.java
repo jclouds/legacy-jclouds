@@ -36,7 +36,7 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Utils;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 
 /**
  * This will parse and set an appropriate exception on the command object.

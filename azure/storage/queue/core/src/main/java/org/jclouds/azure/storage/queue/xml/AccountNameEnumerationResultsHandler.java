@@ -32,7 +32,7 @@ import org.jclouds.azure.storage.domain.BoundedList;
 import org.jclouds.azure.storage.queue.domain.QueueMetadata;
 import org.jclouds.http.functions.ParseSax;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 
 /**
  * Parses the following XML document:

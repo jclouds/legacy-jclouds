@@ -35,7 +35,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.MapEntityBinder;
 
 import com.google.gson.Gson;
-import com.google.inject.Inject;
+import javax.inject.Inject;
 
 /**
  * Binds the object to the request as a json object.

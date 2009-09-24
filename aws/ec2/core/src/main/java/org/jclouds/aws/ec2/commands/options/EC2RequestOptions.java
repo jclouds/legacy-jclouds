@@ -27,7 +27,7 @@ import org.jclouds.aws.ec2.reference.EC2Constants;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.joda.time.DateTime;
 
-import com.google.inject.name.Named;
+import javax.inject.Named;
 
 /**
  * 

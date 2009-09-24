@@ -33,7 +33,7 @@ import java.io.InputStream;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.HttpUtils.MD5InputStreamResult;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
 /**

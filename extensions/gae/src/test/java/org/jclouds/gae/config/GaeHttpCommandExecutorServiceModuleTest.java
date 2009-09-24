@@ -37,7 +37,7 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.name.Names;
+import org.jclouds.util.Jsr330;
 
 /**
  * Tests the ability to configure a {@link GaeHttpCommandExecutorService}
@@ -58,7 +58,7 @@ public class GaeHttpCommandExecutorServiceModuleTest {
                new GaeHttpCommandExecutorServiceModule() {
                   @Override
                   protected void configure() {
-                     Names.bindProperties(binder(), properties);
+                     Jsr330.bindProperties(binder(), properties);
                      super.configure();
                   }
                });

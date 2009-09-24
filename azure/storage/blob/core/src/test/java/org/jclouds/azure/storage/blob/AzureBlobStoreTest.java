@@ -55,7 +55,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
-import com.google.inject.name.Names;
+import org.jclouds.util.Jsr330;
 
 /**
  * Tests behavior of {@code AzureBlobStore}
@@ -264,10 +264,10 @@ public class AzureBlobStoreTest {
                   protected void configure() {
                      bind(URI.class).toInstance(URI.create("http://blob.core.windows.net"));
                      bindConstant().annotatedWith(
-                              Names.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT)).to(
+                              Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT)).to(
                               "myaccount");
                      bindConstant().annotatedWith(
-                              Names.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY)).to(
+                              Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY)).to(
                               HttpUtils.toBase64String("key".getBytes()));
                   }
 

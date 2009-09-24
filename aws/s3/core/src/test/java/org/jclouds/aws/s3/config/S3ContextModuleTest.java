@@ -39,7 +39,7 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.name.Names;
+import org.jclouds.util.Jsr330;
 
 /**
  * @author Adrian Cole
@@ -52,17 +52,17 @@ public class S3ContextModuleTest {
                new WithinThreadExecutorService()), new S3ParserModule(), new S3ContextModule() {
          @Override
          protected void configure() {
-            bindConstant().annotatedWith(Names.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to(
+            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to(
                      "localhost");
-            bindConstant().annotatedWith(Names.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY)).to(
+            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY)).to(
                      "localhost");
-            bindConstant().annotatedWith(Names.named(S3Constants.PROPERTY_HTTP_ADDRESS)).to(
+            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_HTTP_ADDRESS)).to(
                      "localhost");
-            bindConstant().annotatedWith(Names.named(S3Constants.PROPERTY_HTTP_PORT)).to("1000");
-            bindConstant().annotatedWith(Names.named(S3Constants.PROPERTY_HTTP_SECURE)).to("false");
-            bindConstant().annotatedWith(Names.named(S3Constants.PROPERTY_HTTP_MAX_RETRIES))
+            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_HTTP_PORT)).to("1000");
+            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_HTTP_SECURE)).to("false");
+            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_HTTP_MAX_RETRIES))
                      .to("5");
-            bindConstant().annotatedWith(Names.named(S3Constants.PROPERTY_HTTP_MAX_REDIRECTS)).to(
+            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_HTTP_MAX_REDIRECTS)).to(
                      "5");
             super.configure();
          }

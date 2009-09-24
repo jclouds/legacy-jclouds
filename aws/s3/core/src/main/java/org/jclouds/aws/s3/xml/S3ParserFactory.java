@@ -34,8 +34,8 @@ import org.jclouds.aws.xml.ErrorHandler;
 import org.jclouds.http.functions.ParseSax;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.inject.Inject;
-import com.google.inject.Provider;
+import javax.inject.Inject;
+import javax.inject.Provider;
 
 /**
  * Creates Parsers needed to interpret S3 Server messages. This class uses guice assisted inject,

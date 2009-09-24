@@ -31,7 +31,7 @@ import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.DateService;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 
 /**
  * Parses the following XML document:

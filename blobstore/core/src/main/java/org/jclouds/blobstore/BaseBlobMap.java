@@ -49,9 +49,9 @@ import org.jclouds.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.google.inject.name.Named;
+import javax.inject.Named;
 
 /**
  * Implements core Map functionality with an {@link BlobStore}

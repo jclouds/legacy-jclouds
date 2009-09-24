@@ -41,9 +41,9 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.google.common.base.Function;
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.google.inject.name.Named;
+import javax.inject.Named;
 
 /**
  * This object will parse the body of an HttpResponse and return the result of type <T> back to the

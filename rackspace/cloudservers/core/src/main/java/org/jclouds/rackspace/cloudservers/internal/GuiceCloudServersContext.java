@@ -35,9 +35,9 @@ import org.jclouds.rackspace.cloudservers.CloudServersConnection;
 import org.jclouds.rackspace.cloudservers.CloudServersContext;
 import org.jclouds.rackspace.reference.RackspaceConstants;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.name.Named;
+import javax.inject.Named;
 
 /**
  * Uses a Guice Injector to configure the objects served by CloudServersContext methods.

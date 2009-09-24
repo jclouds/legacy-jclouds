@@ -23,7 +23,7 @@
  */
 package org.jclouds.samples.googleappengine.config;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;

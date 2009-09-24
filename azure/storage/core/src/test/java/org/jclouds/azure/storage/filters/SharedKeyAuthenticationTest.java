@@ -41,7 +41,7 @@ import org.testng.annotations.Test;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.name.Names;
+import org.jclouds.util.Jsr330;
 
 @Test(groups = "unit", testName = "azurestorage.SharedKeyAuthenticationTest")
 public class SharedKeyAuthenticationTest {
@@ -148,9 +148,9 @@ public class SharedKeyAuthenticationTest {
 
          protected void configure() {
             bindConstant().annotatedWith(
-                     Names.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT)).to(ACCOUNT);
+                     Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT)).to(ACCOUNT);
             bindConstant().annotatedWith(
-                     Names.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY)).to(KEY);
+                     Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY)).to(KEY);
             bind(DateService.class);
 
          }

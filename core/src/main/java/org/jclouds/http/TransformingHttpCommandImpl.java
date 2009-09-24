@@ -36,7 +36,7 @@ import javax.ws.rs.core.UriBuilder;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.internal.Nullable;
 

@@ -35,7 +35,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.samples.googleappengine.domain.BucketResult;
 
 import com.google.common.base.Function;
-import com.google.inject.Inject;
+import javax.inject.Inject;
 
 public class MetadataToBucketResult implements Function<BucketMetadata, BucketResult> {
    private final S3BlobStore connection;

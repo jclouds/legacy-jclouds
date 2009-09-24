@@ -33,8 +33,8 @@ import org.jclouds.blobstore.binders.BlobBinder;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.http.HttpRequest;
 
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 public class S3ObjectBinder extends BlobBinder {
    @Inject

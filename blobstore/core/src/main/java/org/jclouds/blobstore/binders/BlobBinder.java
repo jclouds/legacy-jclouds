@@ -33,8 +33,8 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.rest.EntityBinder;
 
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 public class BlobBinder implements EntityBinder {
    private final String metadataPrefix;

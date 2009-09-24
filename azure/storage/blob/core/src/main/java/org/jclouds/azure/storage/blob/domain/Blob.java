@@ -23,7 +23,7 @@
  */
 package org.jclouds.azure.storage.blob.domain;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
 /**

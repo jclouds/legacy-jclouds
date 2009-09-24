@@ -32,8 +32,8 @@ import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.TransformingHttpCommand;
 import org.jclouds.logging.Logger;
 
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * Allow replayable request to be retried a limited number of times, and impose an exponential

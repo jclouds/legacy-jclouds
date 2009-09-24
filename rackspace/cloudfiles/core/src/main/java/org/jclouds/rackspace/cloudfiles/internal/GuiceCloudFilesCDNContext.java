@@ -35,9 +35,9 @@ import org.jclouds.rackspace.cloudfiles.CloudFilesCDNConnection;
 import org.jclouds.rackspace.cloudfiles.CloudFilesCDNContext;
 import org.jclouds.rackspace.reference.RackspaceConstants;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.name.Named;
+import javax.inject.Named;
 
 /**
  * Uses a Guice Injector to configure the objects served by CloudFilesCDNContext methods.

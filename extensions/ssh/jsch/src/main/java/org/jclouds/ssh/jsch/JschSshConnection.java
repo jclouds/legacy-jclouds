@@ -43,7 +43,7 @@ import org.jclouds.ssh.SshConnection;
 import org.jclouds.ssh.SshException;
 import org.jclouds.util.Utils;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.ChannelSftp;

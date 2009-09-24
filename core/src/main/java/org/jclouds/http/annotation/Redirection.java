@@ -23,7 +23,7 @@
  */
 package org.jclouds.http.annotation;
 
-import com.google.inject.BindingAnnotation;
+import javax.inject.Qualifier;
 import java.lang.annotation.Target;
 import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -37,7 +37,7 @@ import static java.lang.annotation.ElementType.METHOD;
  * 
  * @author Adrian Cole
  */
-@BindingAnnotation
+@Qualifier
 @Target( { FIELD, PARAMETER, METHOD })
 @Retention(RUNTIME)
 public @interface Redirection {

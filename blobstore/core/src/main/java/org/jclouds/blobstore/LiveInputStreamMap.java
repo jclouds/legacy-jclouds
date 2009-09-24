@@ -41,7 +41,7 @@ import org.jclouds.blobstore.domain.ContainerMetadata;
 import org.jclouds.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
 /**

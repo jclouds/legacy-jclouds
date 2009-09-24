@@ -37,7 +37,7 @@ import org.joda.time.DateTime;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 
 /**
  * Parses the following XML document:

@@ -26,7 +26,7 @@ package org.jclouds.logging.config;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
 import static com.google.common.collect.Sets.filter;
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import com.google.inject.ProvisionException;
 import com.google.inject.TypeLiteral;
 import com.google.inject.spi.InjectionListener;

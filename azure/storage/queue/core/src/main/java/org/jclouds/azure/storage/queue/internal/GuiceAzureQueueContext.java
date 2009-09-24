@@ -34,9 +34,9 @@ import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.Logger;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.name.Named;
+import javax.inject.Named;
 
 /**
  * Uses a Guice Injector to configure the objects served by AzureQueueContext methods.

@@ -46,7 +46,7 @@ import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
 import com.google.common.collect.MapMaker;
-import com.google.inject.Inject;
+import javax.inject.Inject;
 
 /**
  * // TODO: Adrian: Document this!

@@ -34,7 +34,7 @@ import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 
 /**
  * Encryption, Hashing, and IO Utilities needed to sign and verify Azure Storage requests and

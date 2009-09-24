@@ -25,7 +25,7 @@ package org.jclouds.aws.s3.domain;
 
 import org.jclouds.blobstore.domain.Blob;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
 /**

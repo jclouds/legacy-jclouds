@@ -64,7 +64,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.name.Names;
+import org.jclouds.util.Jsr330;
 
 /**
  * Creates {@link CloudContext} or {@link Injector} instances based on the most commonly requested
@@ -199,7 +199,7 @@ public abstract class CloudContextBuilder<X extends CloudContext<?>> {
       modules.add(new AbstractModule() {
          @Override
          protected void configure() {
-            Names.bindProperties(binder(), checkNotNull(properties, "properties"));
+            Jsr330.bindProperties(binder(), checkNotNull(properties, "properties"));
          }
       });
       addContextModule(modules);

@@ -32,7 +32,7 @@ import org.jclouds.http.HttpResponse;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
-import com.google.inject.Inject;
+import javax.inject.Inject;
 
 /**
  * Parses response headers and creates a new Blob from them and the HTTP content.

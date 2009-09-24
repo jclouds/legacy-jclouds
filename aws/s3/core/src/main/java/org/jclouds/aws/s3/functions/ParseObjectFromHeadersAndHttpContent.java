@@ -27,7 +27,7 @@ import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.blobstore.functions.ParseBlobFromHeadersAndHttpContent;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 
 /**
  * Parses response headers and creates a new S3Object from them and the HTTP content.

@@ -45,7 +45,7 @@ import org.testng.annotations.Test;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.name.Names;
+import org.jclouds.util.Jsr330;
 
 /**
  * Tests behavior of {@code JaxrsAnnotationProcessor}
@@ -85,9 +85,9 @@ public class SharedKeyAuthenticationLiveTest {
          @Override
          protected void configure() {
             bindConstant().annotatedWith(
-                     Names.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT)).to(account);
+                     Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT)).to(account);
             bindConstant().annotatedWith(
-                     Names.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY)).to(key);
+                     Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY)).to(key);
          }
 
       }, new JaxrsModule(), new Log4JLoggingModule(), new ExecutorServiceModule(

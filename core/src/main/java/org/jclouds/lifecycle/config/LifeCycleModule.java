@@ -40,7 +40,7 @@ import javax.annotation.PreDestroy;
 import org.jclouds.lifecycle.Closer;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import com.google.inject.ProvisionException;
 import com.google.inject.TypeLiteral;
 import com.google.inject.spi.InjectionListener;

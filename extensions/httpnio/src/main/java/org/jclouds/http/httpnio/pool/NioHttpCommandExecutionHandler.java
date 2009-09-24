@@ -43,7 +43,7 @@ import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.httpnio.util.NioHttpUtils;
 import org.jclouds.logging.Logger;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 
 /**
  * // TODO: Adrian: Document this!

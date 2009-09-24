@@ -38,8 +38,8 @@ import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.logging.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * Handles Retryable responses with error codes in the 3xx range
@@ -52,7 +52,6 @@ public class RedirectionRetryHandler implements HttpRetryHandler {
    @Resource
    protected Logger logger = Logger.NULL;
 
-   @Inject
    protected final BackoffLimitedRetryHandler backoffHandler;
 
    @Inject

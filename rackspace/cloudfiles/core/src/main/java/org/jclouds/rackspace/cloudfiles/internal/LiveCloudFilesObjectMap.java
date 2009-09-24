@@ -29,7 +29,7 @@ import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.rackspace.cloudfiles.CloudFilesBlobStore;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
 /**

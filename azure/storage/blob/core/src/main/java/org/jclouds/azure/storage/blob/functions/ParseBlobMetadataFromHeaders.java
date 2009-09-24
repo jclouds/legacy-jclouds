@@ -31,8 +31,8 @@ import org.jclouds.azure.storage.blob.domain.BlobMetadata;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.util.DateService;
 
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * This parses @{link {@link org.jclouds.azure.storage.blob.domain.BlobMetadata} from HTTP headers.

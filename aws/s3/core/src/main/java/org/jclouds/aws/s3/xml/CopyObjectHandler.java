@@ -28,7 +28,7 @@ import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.DateService;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 
 /**
  * Parses the response from Amazon S3 COPY Object command.

@@ -35,7 +35,7 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.DateService;
 import org.joda.time.DateTime;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 
 /**
  * Parses the following XML document:

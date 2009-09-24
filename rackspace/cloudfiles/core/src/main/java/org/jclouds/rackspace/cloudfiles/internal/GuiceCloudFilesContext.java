@@ -39,9 +39,9 @@ import org.jclouds.rackspace.cloudfiles.CloudFilesBlobStore;
 import org.jclouds.rackspace.cloudfiles.CloudFilesContext;
 import org.jclouds.rackspace.reference.RackspaceConstants;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.name.Named;
+import javax.inject.Named;
 
 /**
  * Uses a Guice Injector to configure the objects served by CloudFilesContext methods.

@@ -35,7 +35,7 @@ import org.jclouds.http.functions.ParseJson;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.google.inject.Inject;
+import javax.inject.Inject;
 
 /**
  * This parses a list of {@link InetAddress} from a gson string.

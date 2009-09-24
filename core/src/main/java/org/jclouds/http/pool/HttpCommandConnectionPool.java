@@ -35,7 +35,7 @@ import org.jclouds.http.HttpCommandRendezvous;
 import org.jclouds.lifecycle.BaseLifeCycle;
 
 import com.google.inject.assistedinject.Assisted;
-import com.google.inject.name.Named;
+import javax.inject.Named;
 
 /**
  * // TODO: Adrian: Document this!

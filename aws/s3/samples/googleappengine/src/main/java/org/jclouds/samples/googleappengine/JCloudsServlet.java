@@ -41,8 +41,8 @@ import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.logging.Logger;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * Shows an example of how to use @{link S3Connection} injected with Guice.

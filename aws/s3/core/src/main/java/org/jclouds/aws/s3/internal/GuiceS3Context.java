@@ -38,9 +38,9 @@ import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.Logger;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.name.Named;
+import javax.inject.Named;
 
 /**
  * Uses a Guice Injector to configure the objects served by S3Context methods.

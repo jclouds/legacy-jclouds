@@ -54,7 +54,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.name.Names;
+import org.jclouds.util.Jsr330;
 
 public abstract class BaseJettyTest {
    protected static final String XML = "<foo><bar>whoppers</bar></foo>";
@@ -147,7 +147,7 @@ public abstract class BaseJettyTest {
       List<Module> modules = Lists.newArrayList(new AbstractModule() {
          @Override
          protected void configure() {
-            Names.bindProperties(binder(), properties);
+            Jsr330.bindProperties(binder(), properties);
          }
       }, new JDKLoggingModule(), new JaxrsModule(), createClientModule());
       CloudContextBuilder.addExecutorServiceIfNotPresent(modules);

@@ -27,7 +27,7 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.http.HttpRequest;
 
-import com.google.inject.Singleton;
+import javax.inject.Singleton;
 
 /**
  * Adds an entity to a request.

@@ -27,8 +27,8 @@ import org.jclouds.azure.storage.domain.AzureStorageError;
 import org.jclouds.http.functions.ParseSax;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.inject.Inject;
-import com.google.inject.Provider;
+import javax.inject.Inject;
+import javax.inject.Provider;
 
 /**
  * Creates Parsers needed to interpret Azure Storage Service messages. This class uses guice
