@@ -28,7 +28,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.apache.http.ConnectionReuseStrategy;
@@ -58,7 +57,6 @@ import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.http.httpnio.pool.NioHttpCommandConnectionPool;
 import org.jclouds.http.httpnio.pool.NioHttpCommandExecutionHandler;
 import org.jclouds.http.httpnio.pool.NioTransformingHttpCommandExecutorService;
-import org.jclouds.http.pool.PoolConstants;
 import org.jclouds.http.pool.config.ConnectionPoolCommandExecutorServiceModule;
 
 import com.google.inject.Provides;
@@ -140,17 +138,15 @@ public class NioTransformingHttpCommandExecutorServiceModule extends
    }
 
    @Override
-   public BlockingQueue<NHttpConnection> provideAvailablePool(
-            @Named(PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS) int max) throws Exception {
-      return new ArrayBlockingQueue<NHttpConnection>(max, true);
+   public BlockingQueue<NHttpConnection> provideAvailablePool() throws Exception {
+      return new ArrayBlockingQueue<NHttpConnection>(maxConnections, true);
    }
 
    @Provides
    // @Singleton per uri...
-   public DefaultConnectingIOReactor provideDefaultConnectingIOReactor(
-            @Named(PoolConstants.PROPERTY_POOL_IO_WORKER_THREADS) int ioWorkerThreads,
-            HttpParams params) throws IOReactorException {
-      return new DefaultConnectingIOReactor(ioWorkerThreads, params);
+   public DefaultConnectingIOReactor provideDefaultConnectingIOReactor(HttpParams params)
+            throws IOReactorException {
+      return new DefaultConnectingIOReactor(maxWorkerThreads, params);
    }
 
 }

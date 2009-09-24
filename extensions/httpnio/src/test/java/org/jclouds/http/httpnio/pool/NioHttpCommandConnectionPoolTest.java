@@ -44,28 +44,28 @@ public class NioHttpCommandConnectionPoolTest {
    public void testConstructorGoodPort() throws Exception {
       NioHttpCommandConnectionPool pool = new NioHttpCommandConnectionPool(null, null, null, null,
                createNiceMock(AsyncNHttpClientHandler.class), null,
-               createNiceMock(HttpParams.class), 0, 0, URI.create("http://localhost:80"));
+               createNiceMock(HttpParams.class), URI.create("http://localhost:80"));
       assertEquals(pool.getTarget(), new InetSocketAddress("localhost", 80));
    }
 
    public void testConstructorGoodSSLPort() throws Exception {
       NioHttpCommandConnectionPool pool = new NioHttpCommandConnectionPool(null, null, null, null,
                createNiceMock(AsyncNHttpClientHandler.class), null,
-               createNiceMock(HttpParams.class), 0, 0, URI.create("https://localhost:443"));
+               createNiceMock(HttpParams.class), URI.create("https://localhost:443"));
       assertEquals(pool.getTarget(), new InetSocketAddress("localhost", 443));
    }
 
    public void testConstructorUnspecifiedPort() throws Exception {
       NioHttpCommandConnectionPool pool = new NioHttpCommandConnectionPool(null, null, null, null,
                createNiceMock(AsyncNHttpClientHandler.class), null,
-               createNiceMock(HttpParams.class), 0, 0, URI.create("http://localhost"));
+               createNiceMock(HttpParams.class), URI.create("http://localhost"));
       assertEquals(pool.getTarget(), new InetSocketAddress("localhost", 80));
    }
 
    public void testConstructorUnspecifiedSSLPort() throws Exception {
       NioHttpCommandConnectionPool pool = new NioHttpCommandConnectionPool(null, null, null, null,
                createNiceMock(AsyncNHttpClientHandler.class), null,
-               createNiceMock(HttpParams.class), 0, 0, URI.create("https://localhost"));
+               createNiceMock(HttpParams.class), URI.create("https://localhost"));
       assertEquals(pool.getTarget(), new InetSocketAddress("localhost", 443));
    }
 
@@ -73,13 +73,13 @@ public class NioHttpCommandConnectionPoolTest {
    public void testConstructorNullURI() throws Exception {
       new NioHttpCommandConnectionPool(null, null, null, null,
                createNiceMock(AsyncNHttpClientHandler.class), null,
-               createNiceMock(HttpParams.class), 0, 0, null);
+               createNiceMock(HttpParams.class), null);
    }
 
    public void testConstructorWeirdName() throws Exception {
       NioHttpCommandConnectionPool pool = new NioHttpCommandConnectionPool(null, null, null, null,
                createNiceMock(AsyncNHttpClientHandler.class), null,
-               createNiceMock(HttpParams.class), 0, 0, URI
+               createNiceMock(HttpParams.class), URI
                         .create("http://adriancole.blobstore1138eu.s3-external-3.amazonaws.com"));
       assertEquals(pool.getTarget(), new InetSocketAddress(
                "adriancole.blobstore1138eu.s3-external-3.amazonaws.com", 80));

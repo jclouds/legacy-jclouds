@@ -36,6 +36,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import javax.inject.Inject;
 import javax.net.ssl.SSLContext;
 
 import org.apache.http.HttpException;
@@ -55,12 +56,9 @@ import org.jclouds.http.TransformingHttpCommand;
 import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.pool.HttpCommandConnectionHandle;
 import org.jclouds.http.pool.HttpCommandConnectionPool;
-import org.jclouds.http.pool.PoolConstants;
 
 import com.google.common.annotations.VisibleForTesting;
-import javax.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import javax.inject.Named;
 
 /**
  * Connection Pool for HTTP requests that utilizes Apache HTTPNio
@@ -74,7 +72,6 @@ public class NioHttpCommandConnectionPool extends HttpCommandConnectionPool<NHtt
    private final DefaultConnectingIOReactor ioReactor;
    private final IOEventDispatch dispatch;
    private final InetSocketAddress target;
-   private final int maxSessionFailures;
 
    public static interface Factory extends HttpCommandConnectionPool.Factory<NHttpConnection> {
       NioHttpCommandConnectionPool create(URI endPoint);
@@ -84,11 +81,9 @@ public class NioHttpCommandConnectionPool extends HttpCommandConnectionPool<NHtt
    public NioHttpCommandConnectionPool(ExecutorService executor, Semaphore allConnections,
             BlockingQueue<HttpCommandRendezvous<?>> commandQueue,
             BlockingQueue<NHttpConnection> available, AsyncNHttpClientHandler clientHandler,
-            DefaultConnectingIOReactor ioReactor, HttpParams params,
-            @Named(PoolConstants.PROPERTY_POOL_MAX_CONNECTION_REUSE) int maxConnectionReuse,
-            @Named(PoolConstants.PROPERTY_POOL_MAX_SESSION_FAILURES) int maxSessionFailures,
-            @Assisted URI endPoint) throws Exception {
-      super(executor, allConnections, commandQueue, maxConnectionReuse, available, endPoint);
+            DefaultConnectingIOReactor ioReactor, HttpParams params, @Assisted URI endPoint)
+            throws Exception {
+      super(executor, allConnections, commandQueue, available, endPoint);
       String host = checkNotNull(checkNotNull(endPoint, "endPoint").getHost(), String.format(
                "Host null for endpoint %s", endPoint));
       int port = endPoint.getPort();
@@ -104,7 +99,6 @@ public class NioHttpCommandConnectionPool extends HttpCommandConnectionPool<NHtt
       checkArgument(port > 0, String.format("Port %d not in range for endpoint %s", endPoint
                .getPort(), endPoint));
       this.ioReactor = ioReactor;
-      this.maxSessionFailures = maxSessionFailures;
       this.sessionCallback = new NHttpClientConnectionPoolSessionRequestCallback();
       this.target = new InetSocketAddress(host, port);
       clientHandler.setEventListener(this);

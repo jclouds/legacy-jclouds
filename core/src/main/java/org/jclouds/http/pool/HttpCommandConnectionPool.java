@@ -31,11 +31,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.jclouds.http.HttpCommandRendezvous;
 import org.jclouds.lifecycle.BaseLifeCycle;
 
 import com.google.inject.assistedinject.Assisted;
-import javax.inject.Named;
 
 /**
  * // TODO: Adrian: Document this!
@@ -63,10 +65,17 @@ public abstract class HttpCommandConnectionPool<C> extends BaseLifeCycle {
     * inputOnly: nothing is taken from this queue.
     */
    protected final BlockingQueue<HttpCommandRendezvous<?>> resubmitQueue;
-   protected final int maxConnectionReuse;
    protected final AtomicInteger currentSessionFailures = new AtomicInteger(0);
    protected volatile boolean hitBottom = false;
    protected final URI endPoint;
+
+   @Inject(optional = true)
+   @Named(PoolConstants.PROPERTY_POOL_MAX_CONNECTION_REUSE)
+   protected int maxConnectionReuse = 75;
+
+   @Inject(optional = true)
+   @Named(PoolConstants.PROPERTY_POOL_MAX_SESSION_FAILURES)
+   protected int maxSessionFailures = 2;
 
    public URI getEndPoint() {
       return endPoint;
@@ -77,13 +86,11 @@ public abstract class HttpCommandConnectionPool<C> extends BaseLifeCycle {
    }
 
    public HttpCommandConnectionPool(ExecutorService executor, Semaphore allConnections,
-            BlockingQueue<HttpCommandRendezvous<?>> rendezvousQueue,
-            @Named("maxConnectionReuse") int maxConnectionReuse, BlockingQueue<C> available,
+            BlockingQueue<HttpCommandRendezvous<?>> rendezvousQueue, BlockingQueue<C> available,
             @Assisted URI endPoint, BaseLifeCycle... dependencies) {
       super(executor, dependencies);
       this.allConnections = allConnections;
       this.resubmitQueue = rendezvousQueue;
-      this.maxConnectionReuse = maxConnectionReuse;
       this.available = available;
       this.endPoint = endPoint;
    }
