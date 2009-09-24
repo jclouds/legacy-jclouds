@@ -1,6 +1,29 @@
+/**
+ *
+ * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ *
+ * ====================================================================
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ * ====================================================================
+ */
 package org.jclouds.azure.storage.queue.xml.config;
 
-import org.jclouds.azure.storage.domain.MetadataList;
+import org.jclouds.azure.storage.domain.BoundedList;
 import org.jclouds.azure.storage.queue.domain.QueueMetadata;
 import org.jclouds.azure.storage.queue.xml.AccountNameEnumerationResultsHandler;
 import org.jclouds.azure.storage.xml.AzureStorageParserFactory;
@@ -18,13 +41,13 @@ import com.google.inject.assistedinject.FactoryProvider;
  */
 @ConfiguresResponseTransformer
 public class AzureQueueParserModule extends AzureStorageParserModule {
-   protected final TypeLiteral<AzureStorageParserFactory.GenericParseFactory<MetadataList<QueueMetadata>>> accountNameEnumerationResultsHandler = new TypeLiteral<AzureStorageParserFactory.GenericParseFactory<MetadataList<QueueMetadata>>>() {
+   protected final TypeLiteral<AzureStorageParserFactory.GenericParseFactory<BoundedList<QueueMetadata>>> accountNameEnumerationResultsHandler = new TypeLiteral<AzureStorageParserFactory.GenericParseFactory<BoundedList<QueueMetadata>>>() {
    };
 
    @Override
    protected void bindParserImplementationsToReturnTypes() {
       super.bindParserImplementationsToReturnTypes();
-      bind(new TypeLiteral<ParseSax.HandlerWithResult<MetadataList<QueueMetadata>>>() {
+      bind(new TypeLiteral<ParseSax.HandlerWithResult<BoundedList<QueueMetadata>>>() {
       }).to(AccountNameEnumerationResultsHandler.class);
    }
 
@@ -33,7 +56,7 @@ public class AzureQueueParserModule extends AzureStorageParserModule {
       super.bindCallablesThatReturnParseResults();
       bind(accountNameEnumerationResultsHandler).toProvider(
                FactoryProvider.newFactory(accountNameEnumerationResultsHandler,
-                        new TypeLiteral<ParseSax<MetadataList<QueueMetadata>>>() {
+                        new TypeLiteral<ParseSax<BoundedList<QueueMetadata>>>() {
                         }));
    }
 

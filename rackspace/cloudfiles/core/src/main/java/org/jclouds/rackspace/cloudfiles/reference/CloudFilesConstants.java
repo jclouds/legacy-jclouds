@@ -23,7 +23,7 @@
  */
 package org.jclouds.rackspace.cloudfiles.reference;
 
-import org.jclouds.keyvaluestore.reference.ObjectStoreConstants;
+import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.rackspace.reference.RackspaceConstants;
 
 /**
@@ -31,7 +31,7 @@ import org.jclouds.rackspace.reference.RackspaceConstants;
  * 
  * @author Adrian Cole
  */
-public interface CloudFilesConstants extends ObjectStoreConstants, RackspaceConstants {
+public interface CloudFilesConstants extends BlobStoreConstants, RackspaceConstants {
 
 
 

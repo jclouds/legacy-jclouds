@@ -36,7 +36,6 @@ import static org.testng.Assert.assertTrue;
 import java.io.UnsupportedEncodingException;
 
 import org.jclouds.aws.s3.domain.CannedAccessPolicy;
-import org.jclouds.aws.s3.options.CopyObjectOptions;
 import org.jclouds.aws.s3.reference.S3Headers;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.util.DateService;
@@ -76,22 +75,14 @@ public class CopyObjectOptionsTest {
    @Test
    void testGoodMetaStatic() {
       CopyObjectOptions options = overrideMetadataWith(goodMeta);
+      options.setMetadataPrefix("x-amz-meta-");
+
       assertGoodMeta(options);
    }
 
    @Test(expectedExceptions = NullPointerException.class)
    public void testMetaNPE() {
       overrideMetadataWith(null);
-   }
-
-   @Test(expectedExceptions = IllegalArgumentException.class)
-   public void testBadMeta() {
-      overrideMetadataWith(badMeta);
-   }
-
-   @Test(expectedExceptions = IllegalArgumentException.class)
-   public void testBadMetaStatic() {
-      overrideMetadataWith(badMeta);
    }
 
    private void assertGoodMeta(CopyObjectOptions options) {
@@ -108,6 +99,7 @@ public class CopyObjectOptionsTest {
    @Test
    void testGoodMeta() {
       CopyObjectOptions options = new CopyObjectOptions();
+      options.setMetadataPrefix("x-amz-meta-");
       options.overrideMetadataWith(goodMeta);
       assertGoodMeta(options);
    }
@@ -283,14 +275,18 @@ public class CopyObjectOptionsTest {
 
    @Test
    void testBuildRequestHeadersWhenMetadataNull() throws UnsupportedEncodingException {
-      assert new CopyObjectOptions().buildRequestHeaders() != null;
+      CopyObjectOptions options = new CopyObjectOptions();
+      options.setMetadataPrefix("x-amz-meta-");
+      assert options.buildRequestHeaders() != null;
    }
 
    @Test
    void testBuildRequestHeaders() throws UnsupportedEncodingException {
+      CopyObjectOptions options = ifSourceModifiedSince(now).ifSourceETagDoesntMatch(testBytes)
+               .overrideMetadataWith(goodMeta);
+      options.setMetadataPrefix("x-amz-meta-");
 
-      Multimap<String, String> headers = ifSourceModifiedSince(now).ifSourceETagDoesntMatch(
-               testBytes).overrideMetadataWith(goodMeta).buildRequestHeaders();
+      Multimap<String, String> headers = options.buildRequestHeaders();
       assertEquals(headers.get("x-amz-copy-source-if-modified-since").iterator().next(),
                new DateService().rfc822DateFormat(now));
       assertEquals(headers.get("x-amz-copy-source-if-none-match").iterator().next(), "\""
@@ -314,9 +310,11 @@ public class CopyObjectOptionsTest {
 
    @Test
    void testBuildRequestHeadersACL() throws UnsupportedEncodingException {
+      CopyObjectOptions options = overrideAcl(CannedAccessPolicy.AUTHENTICATED_READ);
+      options.setMetadataPrefix("x-amz-meta-");
 
-      Multimap<String, String> headers = overrideAcl(CannedAccessPolicy.AUTHENTICATED_READ)
-               .buildRequestHeaders();
+      Multimap<String, String> headers = options.buildRequestHeaders();
+
       assertEquals(headers.get(S3Headers.CANNED_ACL).iterator().next(),
                CannedAccessPolicy.AUTHENTICATED_READ.toString());
    }

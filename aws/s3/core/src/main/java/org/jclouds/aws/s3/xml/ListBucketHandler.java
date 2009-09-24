@@ -23,14 +23,20 @@
  */
 package org.jclouds.aws.s3.xml;
 
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+import org.jclouds.aws.s3.domain.ArrayListBucketResponse;
 import org.jclouds.aws.s3.domain.CanonicalUser;
-import org.jclouds.aws.s3.domain.S3Bucket;
-import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.s3.domain.ListBucketResponse;
+import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.DateService;
 import org.xml.sax.Attributes;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 /**
@@ -43,22 +49,31 @@ import com.google.inject.Inject;
  *      href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTBucketGET.html"
  *      />
  */
-public class ListBucketHandler extends ParseSax.HandlerWithResult<S3Bucket> {
-   private S3Bucket s3Bucket;
-   private S3Object.Metadata currentObjectMetadata;
+public class ListBucketHandler extends ParseSax.HandlerWithResult<ListBucketResponse> {
+   private List<ObjectMetadata> contents;
+   private SortedSet<String> commonPrefixes;
+   private ObjectMetadata currentObjectMetadata;
    private CanonicalUser currentOwner;
    private StringBuilder currentText = new StringBuilder();
 
    private final DateService dateParser;
+   private String bucketName;
+   private String prefix;
+   private String marker;
+   private int maxResults;
+   private String delimiter;
+   private boolean isTruncated;
 
    @Inject
    public ListBucketHandler(DateService dateParser) {
       this.dateParser = dateParser;
-      this.s3Bucket = new S3Bucket();
+      this.contents = Lists.newArrayList();
+      this.commonPrefixes = new TreeSet<String>();
    }
 
-   public S3Bucket getResult() {
-      return s3Bucket;
+   public ListBucketResponse getResult() {
+      return new ArrayListBucketResponse(bucketName, contents, prefix, marker, maxResults,
+               delimiter, isTruncated, commonPrefixes);
    }
 
    private boolean inCommonPrefixes;
@@ -75,7 +90,7 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<S3Bucket> {
       } else if (qName.equals("DisplayName")) {
          currentOwner.setDisplayName(currentText.toString());
       } else if (qName.equals("Key")) { // content stuff
-         currentObjectMetadata = new S3Object.Metadata(currentText.toString());
+         currentObjectMetadata = new ObjectMetadata(currentText.toString());
       } else if (qName.equals("LastModified")) {
          currentObjectMetadata.setLastModified(dateParser.iso8601DateParse(currentText.toString()));
       } else if (qName.equals("ETag")) {
@@ -88,26 +103,25 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<S3Bucket> {
       } else if (qName.equals("StorageClass")) {
          currentObjectMetadata.setStorageClass(currentText.toString());
       } else if (qName.equals("Contents")) {
-         s3Bucket.getContents().add(currentObjectMetadata);
+         contents.add(currentObjectMetadata);
       } else if (qName.equals("Name")) {
-         s3Bucket.setName(currentText.toString());
+         this.bucketName = currentText.toString();
       } else if (qName.equals("Prefix")) {
          String prefix = currentText.toString().trim();
          if (inCommonPrefixes)
-            s3Bucket.getCommonPrefixes().add(prefix);
+            commonPrefixes.add(prefix);
          else
-            s3Bucket.setPrefix(prefix);
+            this.prefix = prefix;
       } else if (qName.equals("Delimiter")) {
          if (!currentText.toString().equals(""))
-            s3Bucket.setDelimiter(currentText.toString().trim());
+            this.delimiter = currentText.toString().trim();
       } else if (qName.equals("Marker")) {
          if (!currentText.toString().equals(""))
-            s3Bucket.setMarker(currentText.toString());
+            this.marker = currentText.toString();
       } else if (qName.equals("MaxKeys")) {
-         s3Bucket.setMaxKeys(Long.parseLong(currentText.toString()));
+         this.maxResults = Integer.parseInt(currentText.toString());
       } else if (qName.equals("IsTruncated")) {
-         boolean isTruncated = Boolean.parseBoolean(currentText.toString());
-         s3Bucket.setTruncated(isTruncated);
+         this.isTruncated = Boolean.parseBoolean(currentText.toString());
       }
       currentText = new StringBuilder();
    }

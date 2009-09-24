@@ -53,33 +53,32 @@ public class RebootTypeBinderTest {
    public void testPostIsIncorrect() {
       RebootTypeBinder binder = new RebootTypeBinder();
       injector.injectMembers(binder);
-      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("/"));
+      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
       binder.addEntityToRequest(ImmutableMap.of("adminPass", "foo"), request);
    }
-   
+
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testMustBeRebootType() {
       RebootTypeBinder binder = new RebootTypeBinder();
       injector.injectMembers(binder);
-      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("/"));
+      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
       binder.addEntityToRequest(new File("foo"), request);
    }
-   
+
    @Test
    public void testHard() {
       RebootTypeBinder binder = new RebootTypeBinder();
       injector.injectMembers(binder);
-      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("/"));
+      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
       binder.addEntityToRequest(RebootType.HARD, request);
       assertEquals("{\"reboot\":{\"type\":\"HARD\"}}", request.getEntity());
    }
-   
-   
+
    @Test
    public void testSoft() {
       RebootTypeBinder binder = new RebootTypeBinder();
       injector.injectMembers(binder);
-      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("/"));
+      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
       binder.addEntityToRequest(RebootType.SOFT, request);
       assertEquals("{\"reboot\":{\"type\":\"SOFT\"}}", request.getEntity());
    }
@@ -88,7 +87,7 @@ public class RebootTypeBinderTest {
    public void testNullIsBad() {
       RebootTypeBinder binder = new RebootTypeBinder();
       injector.injectMembers(binder);
-      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("/"));
+      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
       binder.addEntityToRequest(null, request);
    }
 }

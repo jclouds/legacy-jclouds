@@ -52,23 +52,23 @@ public class ChangeAdminPassBinderTest {
    public void testPostIsIncorrect() {
       ChangeAdminPassBinder binder = new ChangeAdminPassBinder();
       injector.injectMembers(binder);
-      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("/"));
+      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
       binder.addEntityToRequest(ImmutableMap.of("adminPass", "foo"), request);
    }
-   
+
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testMustBeString() {
       ChangeAdminPassBinder binder = new ChangeAdminPassBinder();
       injector.injectMembers(binder);
-      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("/"));
+      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
       binder.addEntityToRequest(new File("foo"), request);
    }
-   
+
    @Test
    public void testCorrect() {
       ChangeAdminPassBinder binder = new ChangeAdminPassBinder();
       injector.injectMembers(binder);
-      HttpRequest request = new HttpRequest(HttpMethod.PUT, URI.create("/"));
+      HttpRequest request = new HttpRequest(HttpMethod.PUT, URI.create("http://localhost"));
       binder.addEntityToRequest("foo", request);
       assertEquals("{\"server\":{\"adminPass\":\"foo\"}}", request.getEntity());
    }
@@ -77,7 +77,7 @@ public class ChangeAdminPassBinderTest {
    public void testNullIsBad() {
       ChangeAdminPassBinder binder = new ChangeAdminPassBinder();
       injector.injectMembers(binder);
-      HttpRequest request = new HttpRequest(HttpMethod.PUT, URI.create("/"));
+      HttpRequest request = new HttpRequest(HttpMethod.PUT, URI.create("http://localhost"));
       binder.addEntityToRequest(null, request);
    }
 }

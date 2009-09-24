@@ -28,15 +28,22 @@ package org.jclouds.rackspace.cloudfiles.domain;
  * @author Adrian Cole
  * 
  */
-public class ContainerMetadata {
-
-   public ContainerMetadata(String name, long count, long bytes) {
-      this.name = name;
-      this.count = count;
-      this.bytes = bytes;
-   }
+public class ContainerMetadata extends org.jclouds.blobstore.domain.ContainerMetadata {
+   private long count;
+   private long bytes;
 
    public ContainerMetadata() {
+      super();
+   }
+
+   public ContainerMetadata(String name) {
+      super(name);
+   }
+
+   public ContainerMetadata(String name, long count, long bytes) {
+      super(name);
+      this.count = count;
+      this.bytes = bytes;
    }
 
    @Override
@@ -78,28 +85,12 @@ public class ContainerMetadata {
       return true;
    }
 
-   private String name;
-   private long count;
-   private long bytes;
-
-   public void setName(String name) {
-      this.name = name;
-   }
-
    public String getName() {
       return name;
    }
 
-   public void setCount(long count) {
-      this.count = count;
-   }
-
    public long getCount() {
       return count;
-   }
-
-   public void setBytes(long bytes) {
-      this.bytes = bytes;
    }
 
    public long getBytes() {

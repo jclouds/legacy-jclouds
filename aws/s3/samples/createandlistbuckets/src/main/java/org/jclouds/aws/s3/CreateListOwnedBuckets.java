@@ -28,7 +28,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.aws.s3.domain.S3Bucket;
+import org.jclouds.aws.s3.domain.BucketMetadata;
 
 /**
  * CreateListOwnedBuckets is a class contaning operations to creates a bucket if it doesn't exist
@@ -44,13 +44,13 @@ public class CreateListOwnedBuckets {
       this.s3Context = context;
    }
 
-   public List<S3Bucket.Metadata> list() throws InterruptedException, ExecutionException,
+   public List<BucketMetadata> list() throws InterruptedException, ExecutionException,
             TimeoutException {
-      return s3Context.getConnection().listOwnedBuckets();
+      return s3Context.getApi().listContainers();
    }
 
    public Boolean createBucket(String bucketName) throws InterruptedException, ExecutionException,
             TimeoutException {
-      return s3Context.getConnection().putBucketIfNotExists(bucketName).get(10, TimeUnit.SECONDS);
+      return s3Context.getApi().createContainer(bucketName).get(10, TimeUnit.SECONDS);
    }
 }

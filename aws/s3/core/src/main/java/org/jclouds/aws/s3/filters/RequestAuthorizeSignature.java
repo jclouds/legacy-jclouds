@@ -150,7 +150,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
       Set<String> headers = new TreeSet<String>(request.getHeaders().keySet());
       for (String header : headers) {
          if (header.startsWith("x-amz-")) {
-            toSign.append(header).append(":");
+            toSign.append(header.toLowerCase()).append(":");
             for (String value : request.getHeaders().get(header))
                toSign.append(value.replaceAll("\r?\n", "")).append(",");
             toSign.deleteCharAt(toSign.lastIndexOf(","));

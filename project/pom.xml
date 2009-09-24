@@ -144,6 +144,8 @@
         <maven.compile.target>1.5</maven.compile.target>
         <maven.compile.optimize>true</maven.compile.optimize>
         <maven.compile.deprecation>true</maven.compile.deprecation>
+        <jclouds.blobstore.httpstream.url>http://apache.rediris.es/maven/binaries/apache-maven-2.1.0-bin.tar.bz2</jclouds.blobstore.httpstream.url>
+        <jclouds.blobstore.httpstream.md5>9268c9de2cccfd0d8fbcdbcfaf517a87</jclouds.blobstore.httpstream.md5>
         <jclouds.test.listener>org.jclouds.test.testng.UnitTestStatusListener</jclouds.test.listener>
     </properties>
 
@@ -210,6 +212,20 @@
                           <value>${jclouds.test.listener}</value>
                        </property>
                    </properties>
+                   <systemProperties>
+                       <property>
+                          <name>jclouds.test.initializer</name>
+                          <value>${jclouds.test.initializer}</value>
+                       </property>
+                       <property>
+                           <name>jclouds.blobstore.httpstream.url</name>
+                           <value>${jclouds.blobstore.httpstream.url}</value>
+                       </property>
+                       <property>
+                           <name>jclouds.blobstore.httpstream.md5</name>
+                           <value>${jclouds.blobstore.httpstream.md5}</value>
+                       </property>
+                   </systemProperties>
                 </configuration>
             </plugin>
             <!-- Make sure we generate src jars too -->
@@ -314,7 +330,7 @@ pageTracker._trackPageview();
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
             </plugin>
-            <!-- enforce java 1.5 and maven 2.1.0 -->
+            <!-- enforce java 1.5 and maven 2.2.1 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
@@ -346,7 +362,67 @@ pageTracker._trackPageview();
             </extension>
         </extensions>
     </build>
-
+    <profiles>
+        <profile>
+            <id>live</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>integration</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <!-- note that the groups/excluded groups don't work due to some problem
+                                                     in surefire or testng. instead, we have to exclude via file path
+                                                        <groups>live,integration</groups>
+                                                        <excludedGroups>unit,performance</excludedGroups> -->
+                                    <excludes>
+                                        <exclude>none</exclude>
+                                    </excludes>
+                                    <includes>
+                                        <include>**/*IntegrationTest.java</include>
+                                        <include>**/*LiveTest.java</include>
+                                    </includes>
+                                    <systemProperties>
+                                        <property>
+                                            <name>file.encoding</name>
+                                            <value>UTF-8</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.test.initializer</name>
+                                            <value>${jclouds.test.initializer}</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.test.user</name>
+                                            <value>${jclouds.test.user}</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.test.key</name>
+                                            <value>${jclouds.test.key}</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.blobstore.httpstream.url</name>
+                                            <value>${jclouds.blobstore.httpstream.url}</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.blobstore.httpstream.md5</name>
+                                            <value>${jclouds.blobstore.httpstream.md5}</value>
+                                        </property>
+                                    </systemProperties>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
     <reporting>
         <plugins>
             <plugin>

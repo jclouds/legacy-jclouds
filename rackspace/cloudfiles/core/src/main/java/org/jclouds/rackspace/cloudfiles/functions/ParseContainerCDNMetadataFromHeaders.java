@@ -46,25 +46,19 @@ public class ParseContainerCDNMetadataFromHeaders implements
    public ContainerCDNMetadata apply(final HttpResponse from) {
       // TODO: The container name is not returned as a header, hopefully one day it will be
       String containerName = null;
-      
-      String cdnUri = checkNotNull(
-            from.getFirstHeaderOrNull(CloudFilesHeaders.CDN_URI),
+
+      String cdnUri = checkNotNull(from.getFirstHeaderOrNull(CloudFilesHeaders.CDN_URI),
                CloudFilesHeaders.CDN_URI);
-      String cdnTTL = checkNotNull(
-            from.getFirstHeaderOrNull(CloudFilesHeaders.CDN_TTL),
+      String cdnTTL = checkNotNull(from.getFirstHeaderOrNull(CloudFilesHeaders.CDN_TTL),
                CloudFilesHeaders.CDN_TTL);
-      String cdnEnabled = checkNotNull(
-            from.getFirstHeaderOrNull(CloudFilesHeaders.CDN_ENABLED),
+      String cdnEnabled = checkNotNull(from.getFirstHeaderOrNull(CloudFilesHeaders.CDN_ENABLED),
                CloudFilesHeaders.CDN_ENABLED);
       if (cdnUri == null) {
          // CDN is not, and has never, been enabled for this container.
-         return ContainerCDNMetadata.NOT_FOUND;
+         return null;
       } else {
-         return new ContainerCDNMetadata(
-               containerName,
-               Boolean.parseBoolean(cdnEnabled),
-               Long.parseLong(cdnTTL), 
-               cdnUri);
+         return new ContainerCDNMetadata(containerName, Boolean.parseBoolean(cdnEnabled), Long
+                  .parseLong(cdnTTL), cdnUri);
       }
    }
 }

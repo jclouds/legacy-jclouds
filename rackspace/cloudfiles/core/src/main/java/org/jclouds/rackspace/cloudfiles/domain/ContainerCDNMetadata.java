@@ -28,16 +28,14 @@ package org.jclouds.rackspace.cloudfiles.domain;
  * @author James Murty
  * 
  */
-public class ContainerCDNMetadata {
-   public static final ContainerCDNMetadata NOT_FOUND = new ContainerCDNMetadata();
+public class ContainerCDNMetadata extends org.jclouds.blobstore.domain.ContainerMetadata {
 
-   private String name;
    private long ttl;
    private boolean cdn_enabled;
    private String cdn_uri;
 
    public ContainerCDNMetadata(String name, boolean cdnEnabled, long ttl, String cdnUri) {
-      this.name = name;
+      super(name);
       this.cdn_enabled = cdnEnabled;
       this.ttl = ttl;
       this.cdn_uri = cdnUri;
@@ -49,10 +47,9 @@ public class ContainerCDNMetadata {
    @Override
    public String toString() {
       StringBuilder builder = new StringBuilder();
-      builder.append("ContainerCDNMetadata [name=").append(name)
-         .append(", cdn_enabled=").append(cdn_enabled)
-         .append(", ttl=").append(ttl)
-         .append(", cdn_uri=").append(cdn_uri).append("]");
+      builder.append("ContainerCDNMetadata [name=").append(name).append(", cdn_enabled=").append(
+               cdn_enabled).append(", ttl=").append(ttl).append(", cdn_uri=").append(cdn_uri)
+               .append("]");
       return builder.toString();
    }
 
@@ -98,8 +95,7 @@ public class ContainerCDNMetadata {
    }
 
    /**
-    * Beware: The container name is not available from HEAD CDN responses and will be null.
-    * return
+    * Beware: The container name is not available from HEAD CDN responses and will be null. return
     * the name of the container to which these CDN settings apply.
     */
    public String getName() {

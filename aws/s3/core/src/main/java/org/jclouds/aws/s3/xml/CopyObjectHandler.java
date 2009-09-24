@@ -23,7 +23,7 @@
  */
 package org.jclouds.aws.s3.xml;
 
-import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.DateService;
@@ -38,14 +38,14 @@ import com.google.inject.Inject;
  * @see <a href= "http://docs.amazonwebservices.com/AmazonS3/2006-03-01/RESTObjectCOPY.html" />
  * @author Adrian Cole
  */
-public class CopyObjectHandler extends ParseSax.HandlerWithResult<S3Object.Metadata> {
+public class CopyObjectHandler extends ParseSax.HandlerWithResult<ObjectMetadata> {
 
-   private S3Object.Metadata metadata = new S3Object.Metadata();
+   private ObjectMetadata metadata = new ObjectMetadata();
    private StringBuilder currentText = new StringBuilder();
    @Inject
    private DateService dateParser;
 
-   public S3Object.Metadata getResult() {
+   public ObjectMetadata getResult() {
       return metadata;
    }
 

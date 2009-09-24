@@ -43,7 +43,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 /**
- * Tests behavior of {@code ParseFlavorFromGsonResponse}
+ * Tests behavior of {@code ParseFlavorFromJsonResponse}
  * 
  * @author Adrian Cole
  */
@@ -62,7 +62,7 @@ public class CreateServerOptionsTest {
 
    private HttpRequest buildRequest(CreateServerOptions options) {
       injector.injectMembers(options);
-      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("/"));
+      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
       options.addEntityToRequest(ImmutableMap.of("name", "foo", "imageId", "1", "flavorId", "2"),
                request);
       return request;

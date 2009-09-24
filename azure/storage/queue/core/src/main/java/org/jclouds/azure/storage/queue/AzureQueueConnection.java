@@ -32,15 +32,15 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import org.jclouds.azure.storage.domain.MetadataList;
+import org.jclouds.azure.storage.domain.BoundedList;
 import org.jclouds.azure.storage.filters.SharedKeyAuthentication;
 import org.jclouds.azure.storage.options.CreateOptions;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.queue.domain.QueueMetadata;
 import org.jclouds.azure.storage.queue.xml.AccountNameEnumerationResultsHandler;
 import org.jclouds.azure.storage.reference.AzureStorageHeaders;
-import org.jclouds.rest.Header;
-import org.jclouds.rest.Query;
+import org.jclouds.rest.Headers;
+import org.jclouds.rest.QueryParams;
 import org.jclouds.rest.RequestFilters;
 import org.jclouds.rest.SkipEncoding;
 import org.jclouds.rest.XMLResponseParser;
@@ -66,7 +66,7 @@ import org.jclouds.rest.XMLResponseParser;
  */
 @SkipEncoding('/')
 @RequestFilters(SharedKeyAuthentication.class)
-@Header(key = AzureStorageHeaders.VERSION, value = "2009-07-17")
+@Headers(keys = AzureStorageHeaders.VERSION, values = "2009-07-17")
 public interface AzureQueueConnection {
 
    /**
@@ -81,8 +81,8 @@ public interface AzureQueueConnection {
    @GET
    @XMLResponseParser(AccountNameEnumerationResultsHandler.class)
    @Path("/")
-   @Query(key = "comp", value = "list")
-   MetadataList<QueueMetadata> listQueues(ListOptions... listOptions);
+   @QueryParams(keys = "comp", values = "list")
+   BoundedList<QueueMetadata> listQueues(ListOptions... listOptions);
 
    /**
     * The Create Queue operation creates a new queue under the specified account.
@@ -103,7 +103,7 @@ public interface AzureQueueConnection {
     */
    @PUT
    @Path("{queue}")
-   @Query(key = "restype", value = "queue")
+   @QueryParams(keys = "restype", values = "queue")
    boolean createQueue(@PathParam("queue") String queue, CreateOptions... options);
 
    /**
@@ -117,7 +117,7 @@ public interface AzureQueueConnection {
     */
    @DELETE
    @Path("{queue}")
-   @Query(key = "restype", value = "queue")
+   @QueryParams(keys = "restype", values = "queue")
    boolean deleteQueue(@PathParam("queue") String queue);
 
 }

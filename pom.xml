@@ -40,7 +40,7 @@
         <module>project</module>
         <module>thirdparty</module>
         <module>core</module>
-        <module>keyvaluestore</module>
+        <module>blobstore</module>
         <module>extensions</module>
         <module>aws</module>
         <module>azure</module>

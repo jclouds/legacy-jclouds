@@ -28,7 +28,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-import org.jclouds.aws.util.DateService;
+import org.jclouds.util.DateService;
 import org.joda.time.DateTime;
 import org.testng.annotations.Test;
 
@@ -60,7 +60,7 @@ public class BaseEC2RequestOptionsTest {
        * @see MyRequestOptions#withId(String)
        */
       public String getId() {
-         return parameters.get("id");
+         return queryParameters.get("id");
       }
 
       /**

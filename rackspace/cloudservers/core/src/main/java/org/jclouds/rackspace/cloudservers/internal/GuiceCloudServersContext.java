@@ -24,16 +24,20 @@
 package org.jclouds.rackspace.cloudservers.internal;
 
 import java.io.IOException;
+import java.net.URI;
 
 import javax.annotation.Resource;
 
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.Logger;
+import org.jclouds.rackspace.Authentication;
 import org.jclouds.rackspace.cloudservers.CloudServersConnection;
 import org.jclouds.rackspace.cloudservers.CloudServersContext;
+import org.jclouds.rackspace.reference.RackspaceConstants;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.name.Named;
 
 /**
  * Uses a Guice Injector to configure the objects served by CloudServersContext methods.
@@ -47,20 +51,18 @@ public class GuiceCloudServersContext implements CloudServersContext {
    private Logger logger = Logger.NULL;
    private final Injector injector;
    private final Closer closer;
-
+   private final URI endPoint;
+   private final String account;
+   
    @Inject
-   private GuiceCloudServersContext(Injector injector, Closer closer) {
+   private GuiceCloudServersContext(Injector injector, Closer closer,@Authentication URI endPoint,
+            @Named(RackspaceConstants.PROPERTY_RACKSPACE_USER) String account) {
       this.injector = injector;
       this.closer = closer;
+      this.endPoint = endPoint;
+      this.account = account;
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   public CloudServersConnection getConnection() {
-      return injector.getInstance(CloudServersConnection.class);
-   }
-
+   
    /**
     * {@inheritDoc}
     * 
@@ -72,6 +74,19 @@ public class GuiceCloudServersContext implements CloudServersContext {
       } catch (IOException e) {
          logger.error(e, "error closing content");
       }
+   }
+
+
+   public String getAccount() {
+      return account;
+   }
+
+   public CloudServersConnection getApi() {
+      return injector.getInstance(CloudServersConnection.class);
+   }
+
+   public URI getEndPoint() {
+      return endPoint;
    }
 
 }

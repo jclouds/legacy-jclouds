@@ -32,17 +32,16 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.aws.s3.domain.CannedAccessPolicy;
 import org.jclouds.aws.s3.domain.CanonicalUser;
+import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.options.CopyObjectOptions;
 import org.jclouds.aws.s3.options.ListBucketOptions;
 import org.jclouds.aws.s3.options.PutObjectOptions;
-import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.util.DateService;
@@ -72,7 +71,7 @@ import com.google.common.collect.Multimap;
  */
 public class Util {
 
-   public static S3Bucket convertBucket(org.jclouds.aws.s3.domain.S3Bucket.Metadata jcBucketMD) {
+   public static S3Bucket convertBucket(org.jclouds.aws.s3.domain.BucketMetadata jcBucketMD) {
       S3Bucket jsBucket = new S3Bucket(jcBucketMD.getName());
       if (jcBucketMD.getOwner() != null) {
          jsBucket.setOwner(new S3Owner(jcBucketMD.getOwner().getId(), jcBucketMD.getOwner()
@@ -82,24 +81,23 @@ public class Util {
    }
 
    public static S3Bucket[] convertBuckets(
-            List<org.jclouds.aws.s3.domain.S3Bucket.Metadata> jcBucketMDs) {
+            List<org.jclouds.aws.s3.domain.BucketMetadata> jcBucketMDs) {
       List<S3Bucket> jsBuckets = new ArrayList<S3Bucket>(jcBucketMDs.size());
-      for (org.jclouds.aws.s3.domain.S3Bucket.Metadata jcBucketMD : jcBucketMDs) {
+      for (org.jclouds.aws.s3.domain.BucketMetadata jcBucketMD : jcBucketMDs) {
          jsBuckets.add(convertBucket(jcBucketMD));
       }
       return (S3Bucket[]) jsBuckets.toArray(new S3Bucket[jsBuckets.size()]);
    }
 
-   public static S3Object[] convertObjectHeads(
-            Set<org.jclouds.aws.s3.domain.S3Object.Metadata> jcObjectMDs) {
-      List<S3Object> jsObjects = new ArrayList<S3Object>(jcObjectMDs.size());
-      for (org.jclouds.aws.s3.domain.S3Object.Metadata jcObjectMD : jcObjectMDs) {
+   public static S3Object[] convertObjectHeads(ListBucketResponse jcBucket) {
+      List<S3Object> jsObjects = new ArrayList<S3Object>(jcBucket.size());
+      for (org.jclouds.aws.s3.domain.ObjectMetadata jcObjectMD : jcBucket) {
          jsObjects.add(convertObjectHead(jcObjectMD));
       }
       return (S3Object[]) jsObjects.toArray(new S3Object[jsObjects.size()]);
    }
 
-   public static S3Object convertObjectHead(org.jclouds.aws.s3.domain.S3Object.Metadata jcObjectMD) {
+   public static S3Object convertObjectHead(org.jclouds.aws.s3.domain.ObjectMetadata jcObjectMD) {
       S3Object jsObject = new S3Object(jcObjectMD.getKey());
       if (jcObjectMD.getOwner() != null) {
          jsObject.setOwner(new S3Owner(jcObjectMD.getOwner().getId(), jcObjectMD.getOwner()
@@ -119,8 +117,8 @@ public class Util {
                value = dateService.rfc822DateParse(value.toString()).toDate();
             }
 
-            if (key.startsWith(S3Constants.USER_METADATA_PREFIX)) {
-               key = key.substring(S3Constants.USER_METADATA_PREFIX.length());
+            if (key.startsWith("x-amz-meta-")) {
+               key = key.substring("x-amz-meta-".length());
             }
 
             jsObject.addMetadata(key, value);

@@ -1,3 +1,26 @@
+/**
+ *
+ * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ *
+ * ====================================================================
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ * ====================================================================
+ */
 package org.jclouds.azure.storage.queue;
 
 import static org.jclouds.azure.storage.options.CreateOptions.Builder.withMetadata;
@@ -69,8 +92,10 @@ public class AzureQueueConnectionTest {
                1).marker("marker").prefix("prefix") });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/");
-      assertEquals(httpMethod.getEndpoint().getQuery(),
-               "comp=list&marker=marker&maxresults=1&prefix=prefix");
+      assert httpMethod.getEndpoint().getQuery().contains("comp=list");
+      assert httpMethod.getEndpoint().getQuery().contains("marker=marker");
+      assert httpMethod.getEndpoint().getQuery().contains("maxresults=1");
+      assert httpMethod.getEndpoint().getQuery().contains("prefix=prefix");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections

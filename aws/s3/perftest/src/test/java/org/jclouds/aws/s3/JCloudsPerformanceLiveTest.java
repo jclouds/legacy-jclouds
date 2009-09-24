@@ -22,7 +22,10 @@
  * ====================================================================
  */
 package org.jclouds.aws.s3;
+import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.testng.annotations.Test;
+
+import com.google.inject.Module;
 
 /**
  * Tests the default JClouds client.
@@ -30,7 +33,10 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  * 
  */
-@Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "s3.JCloudsPerformanceLiveTest", groups = {"live"})
-public class JCloudsPerformanceLiveTest extends BaseJCloudsPerformance {
-
+@Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "perftest.JCloudsPerformanceLiveTest", groups = { "live" })
+public class JCloudsPerformanceLiveTest extends BaseJCloudsPerformanceLiveTest {
+   @Override
+   protected Module createHttpModule() {
+      return new JavaUrlHttpCommandExecutorServiceModule();
+   }
 }

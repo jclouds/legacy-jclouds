@@ -39,7 +39,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 /**
- * Tests behavior of {@code ParseFlavorFromGsonResponse}
+ * Tests behavior of {@code ParseFlavorFromJsonResponse}
  * 
  * @author Adrian Cole
  */
@@ -57,7 +57,7 @@ public class CreateSharedIpGroupOptionsTest {
 
    private HttpRequest buildRequest(CreateSharedIpGroupOptions options) {
       injector.injectMembers(options);
-      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("/"));
+      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
       options.addEntityToRequest(ImmutableMap.of("name", "foo"), request);
       return request;
    }

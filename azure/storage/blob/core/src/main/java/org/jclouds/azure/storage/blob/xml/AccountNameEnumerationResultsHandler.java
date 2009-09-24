@@ -28,7 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
-import org.jclouds.azure.storage.domain.MetadataList;
+import org.jclouds.azure.storage.domain.ArrayBoundedList;
+import org.jclouds.azure.storage.domain.BoundedList;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.DateService;
@@ -45,7 +46,7 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 public class AccountNameEnumerationResultsHandler extends
-         ParseSax.HandlerWithResult<MetadataList<ContainerMetadata>> {
+         ParseSax.HandlerWithResult<BoundedList<ContainerMetadata>> {
 
    private List<ContainerMetadata> containerMetadata = new ArrayList<ContainerMetadata>();
    private String prefix;
@@ -65,8 +66,8 @@ public class AccountNameEnumerationResultsHandler extends
       this.dateParser = dateParser;
    }
 
-   public MetadataList<ContainerMetadata> getResult() {
-      return new MetadataList<ContainerMetadata>(prefix, marker, maxResults, containerMetadata,
+   public BoundedList<ContainerMetadata> getResult() {
+      return new ArrayBoundedList<ContainerMetadata>(containerMetadata, prefix, marker, maxResults,
                nextMarker);
    }
 

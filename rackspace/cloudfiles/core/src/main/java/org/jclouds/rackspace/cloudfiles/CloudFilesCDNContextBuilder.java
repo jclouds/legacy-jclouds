@@ -47,8 +47,7 @@ import com.google.inject.Module;
  * @author James Murty
  * @see CloudFilesCDNContext, CloudFilesCDNContextBuilder
  */
-public class CloudFilesCDNContextBuilder extends 
-      RackspaceContextBuilder<CloudFilesCDNConnection, CloudFilesCDNContext> {
+public class CloudFilesCDNContextBuilder extends RackspaceContextBuilder<CloudFilesCDNContext> {
 
    public CloudFilesCDNContextBuilder(Properties props) {
       super(props);
@@ -68,12 +67,12 @@ public class CloudFilesCDNContextBuilder extends
 
    @Override
    protected void addContextModule(List<Module> modules) {
-      //TODO      
+      // TODO
    }
 
    @Override
    protected void addParserModule(List<Module> modules) {
-      //TODO      
+      // TODO
    }
 
    @Override

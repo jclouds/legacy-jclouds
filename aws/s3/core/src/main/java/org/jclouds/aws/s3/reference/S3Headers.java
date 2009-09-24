@@ -40,12 +40,6 @@ public interface S3Headers {
     * Policy.
     */
    public static final String CANNED_ACL = "x-amz-acl";
-   /**
-    * Any header starting with this prefix is considered user metadata. It will be stored with the
-    * object and returned when you retrieve the object. The total size of the HTTP request, not
-    * including the body, must be less than 8 KB.
-    */
-   public static final String USER_METADATA_PREFIX = "x-amz-meta-";
    public static final String AMZ_MD5 = "x-amz-meta-object-eTag";
    public static final String REQUEST_ID = "x-amz-request-id";
    public static final String REQUEST_TOKEN = "x-amz-id-2";

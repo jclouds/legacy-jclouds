@@ -36,7 +36,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jclouds.aws.s3.S3Context;
-import org.jclouds.aws.s3.domain.S3Bucket;
+import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.logging.Logger;
 import org.jclouds.samples.googleappengine.domain.BucketResult;
 import org.jclouds.samples.googleappengine.functions.MetadataToBucketResult;
@@ -84,7 +84,8 @@ public class GetAllBucketsController extends HttpServlet {
 
    private void addMyBucketsToRequest(HttpServletRequest request) throws InterruptedException,
             ExecutionException, TimeoutException {
-      List<S3Bucket.Metadata> myBucketMetadata = context.getConnection().listOwnedBuckets();
+      System.err.println(context.getAccount() + ":" + context.getEndPoint());
+      List<BucketMetadata> myBucketMetadata = context.getApi().listContainers();
       List<BucketResult> myBuckets = Lists.transform(myBucketMetadata,
                metadataToBucketResultProvider.get());
       request.setAttribute("buckets", myBuckets);

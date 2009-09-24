@@ -48,7 +48,7 @@ import com.google.inject.Module;
  * @see CloudServersContext
  */
 public class CloudServersContextBuilder extends
-         RackspaceContextBuilder<CloudServersConnection, CloudServersContext> {
+         RackspaceContextBuilder<CloudServersContext> {
 
    public CloudServersContextBuilder(Properties props) {
       super(props);

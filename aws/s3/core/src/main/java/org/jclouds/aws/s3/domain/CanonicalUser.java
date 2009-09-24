@@ -54,8 +54,8 @@ public class CanonicalUser {
 
     /**
      * To locate the CanonicalUser ID for a user, the user must perform the
-     * {@link org.jclouds.aws.s3.S3Connection#listBucket(String)} and retrieve
-     * {@link S3Bucket.Metadata#getOwner()}
+     * {@link org.jclouds.aws.s3.S3BlobStore#listBlobs(String)} and retrieve
+     * {@link BucketMetadata#getOwner()}
      */
     public String getId() {
 	return id;

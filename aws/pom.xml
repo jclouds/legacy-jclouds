@@ -41,8 +41,8 @@
         <module>s3</module>
     </modules>
     <properties>
-        <jclouds.aws.accesskeyid />
-        <jclouds.aws.secretaccesskey />
+        <jclouds.test.user>${jclouds.aws.accesskeyid}</jclouds.test.user>
+        <jclouds.test.key>${jclouds.aws.secretaccesskey}</jclouds.test.key>
     </properties>
     <dependencies>
         <dependency>
@@ -70,53 +70,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    <profiles>
-        <profile>
-            <id>live</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>integration</id>
-                                <phase>integration-test</phase>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <configuration>
-                                    <!-- note that the groups/excluded groups don't work due to some problem
-                                                     in surefire or testng. instead, we have to exclude via file path
-                                                        <groups>live,integration</groups>
-                                                        <excludedGroups>unit,performance</excludedGroups> -->
-                                    <excludes>
-                                        <exclude>none</exclude>
-                                    </excludes>
-                                    <includes>
-                                        <include>**/*IntegrationTest.java</include>
-                                        <include>**/*LiveTest.java</include>
-                                    </includes>
-                                    <systemProperties>
-                                        <property>
-                                            <name>file.encoding</name>
-                                            <value>UTF-8</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.aws.accesskeyid</name>
-                                            <value>${jclouds.aws.accesskeyid}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.aws.secretaccesskey</name>
-                                            <value>${jclouds.aws.secretaccesskey}</value>
-                                        </property>
-                                    </systemProperties>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

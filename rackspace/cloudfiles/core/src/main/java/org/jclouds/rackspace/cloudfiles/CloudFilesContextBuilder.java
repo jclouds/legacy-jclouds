@@ -23,13 +23,16 @@
  */
 package org.jclouds.rackspace.cloudfiles;
 
+import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
+
 import java.util.List;
 import java.util.Properties;
 
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.rackspace.RackspaceContextBuilder;
-import org.jclouds.rackspace.cloudfiles.config.RestCloudFilesConnectionModule;
+import org.jclouds.rackspace.cloudfiles.config.CloudFilesContextModule;
+import org.jclouds.rackspace.cloudfiles.config.RestCloudFilesBlobStoreModule;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -47,8 +50,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  * @see CloudFilesContext
  */
-public class CloudFilesContextBuilder extends
-         RackspaceContextBuilder<CloudFilesConnection, CloudFilesContext> {
+public class CloudFilesContextBuilder extends RackspaceContextBuilder<CloudFilesContext> {
 
    public CloudFilesContextBuilder(Properties props) {
       super(props);
@@ -56,25 +58,25 @@ public class CloudFilesContextBuilder extends
 
    public static CloudFilesContextBuilder newBuilder(String id, String secret) {
       Properties properties = new Properties();
+      properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "X-Object-Meta-");
       CloudFilesContextBuilder builder = new CloudFilesContextBuilder(properties);
       builder.authenticate(id, secret);
       return builder;
    }
 
-
    protected void addConnectionModule(List<Module> modules) {
       super.addConnectionModule(modules);
-      modules.add(new RestCloudFilesConnectionModule());
+      modules.add(new RestCloudFilesBlobStoreModule());
    }
 
    @Override
    protected void addContextModule(List<Module> modules) {
-//TODO      
+      modules.add(new CloudFilesContextModule());
    }
 
    @Override
    protected void addParserModule(List<Module> modules) {
-    //TODO      
+      // TODO
    }
 
    @Override

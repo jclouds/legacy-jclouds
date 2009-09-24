@@ -62,8 +62,8 @@ import com.google.inject.Module;
  * @author Adrian Cole
  * @see CloudFilesContext
  */
-public abstract class RackspaceContextBuilder<C, X extends CloudContext<C>> extends
-         CloudContextBuilder<C,X> {
+public abstract class RackspaceContextBuilder<X extends CloudContext<?>> extends
+         CloudContextBuilder<X> {
 
    public RackspaceContextBuilder(Properties props) {
       super(props);
@@ -84,9 +84,8 @@ public abstract class RackspaceContextBuilder<C, X extends CloudContext<C>> exte
       properties.setProperty(PROPERTY_RACKSPACE_KEY, checkNotNull(secret, "key"));
    }
 
-
    protected void addConnectionModule(List<Module> modules) {
-      modules.add( new RackspaceAuthenticationModule());
+      modules.add(new RackspaceAuthenticationModule());
    }
 
 }

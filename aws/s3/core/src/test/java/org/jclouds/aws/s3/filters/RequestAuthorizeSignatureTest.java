@@ -111,6 +111,16 @@ public class RequestAuthorizeSignatureTest {
       assertEquals(builder.toString(), "");
    }
 
+   
+   @Test
+   void testHeadersGoLowercase() {
+      URI host = URI.create("http://s3.amazonaws.com:80");
+      HttpRequest request = new HttpRequest(HttpMethod.GET, host);
+      request.getHeaders().put("x-amz-adrian", "s3.amazonaws.com");
+      StringBuilder builder = new StringBuilder();
+      filter.appendBucketName(request, builder);
+      assertEquals(builder.toString(), "");
+   }
    @Test
    void testAppendBucketNameURIHost() {
       URI host = URI.create("http://adriancole.s3int5.s3-external-3.amazonaws.com:80");

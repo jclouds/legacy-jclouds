@@ -33,27 +33,15 @@ import org.joda.time.DateTime;
  * @author Adrian Cole
  * 
  */
-public class ContainerMetadata {
+public class ContainerMetadata extends org.jclouds.blobstore.domain.ContainerMetadata {
    private URI url;
    private DateTime lastModified;
    private byte[] eTag;
 
    @Override
-   public String toString() {
-      return "ContainerMetadata [eTag=" + Arrays.toString(eTag) + ", lastModified=" + lastModified
-               + ", url=" + url + "]";
-   }
-
-   public ContainerMetadata(URI url, DateTime lastModified, byte[] eTag) {
-      this.url = url;
-      this.lastModified = lastModified;
-      this.eTag = eTag;
-   }
-
-   @Override
    public int hashCode() {
       final int prime = 31;
-      int result = 1;
+      int result = super.hashCode();
       result = prime * result + Arrays.hashCode(eTag);
       result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
       result = prime * result + ((url == null) ? 0 : url.hashCode());
@@ -61,10 +49,16 @@ public class ContainerMetadata {
    }
 
    @Override
+   public String toString() {
+      return "ContainerMetadata [eTag=" + Arrays.toString(eTag) + ", lastModified=" + lastModified
+               + ", url=" + url + ", name=" + name + "]";
+   }
+
+   @Override
    public boolean equals(Object obj) {
       if (this == obj)
          return true;
-      if (obj == null)
+      if (!super.equals(obj))
          return false;
       if (getClass() != obj.getClass())
          return false;
@@ -82,6 +76,17 @@ public class ContainerMetadata {
       } else if (!url.equals(other.url))
          return false;
       return true;
+   }
+
+   public ContainerMetadata(URI url, DateTime lastModified, byte[] eTag) {
+      super(url.getPath().substring(1));
+      this.url = url;
+      this.lastModified = lastModified;
+      this.eTag = eTag;
+   }
+
+   public ContainerMetadata(String name) {
+      super(name);
    }
 
    public URI getUrl() {

@@ -46,21 +46,17 @@ package org.jclouds.aws.s3;
  * under the License.
  * ====================================================================
  */
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.io.File;
 import java.io.InputStream;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.aws.s3.reference.S3Constants;
 import org.jets3t.service.S3Service;
 import org.jets3t.service.S3ServiceException;
 import org.jets3t.service.impl.rest.httpclient.RestS3Service;
 import org.jets3t.service.security.AWSCredentials;
+import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 /**
@@ -68,18 +64,20 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "s3.Jets3tPerformanceLiveTest", groups = { "live" })
-public class Jets3tPerformanceLiveTest extends BasePerformance {
+@Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "perftest.Jets3tPerformanceLiveTest", groups = { "live" })
+public class Jets3tPerformanceLiveTest extends BasePerformanceLiveTest {
    private S3Service jetClient;
 
-   @BeforeClass(inheritGroups = false, groups = { "live" })
-   @Parameters( { S3Constants.PROPERTY_AWS_ACCESSKEYID, S3Constants.PROPERTY_AWS_SECRETACCESSKEY })
-   public void setUpJetS3t(@Optional String AWSAccessKeyId, @Optional String AWSSecretAccessKey)
-            throws S3ServiceException {
-      AWSAccessKeyId = AWSAccessKeyId != null ? AWSAccessKeyId : sysAWSAccessKeyId;
-      AWSSecretAccessKey = AWSSecretAccessKey != null ? AWSSecretAccessKey : sysAWSSecretAccessKey;
-      jetClient = new RestS3Service(new AWSCredentials(checkNotNull(AWSAccessKeyId,
-               "AWSAccessKeyId"), checkNotNull(AWSSecretAccessKey, "AWSSecretAccessKey")));
+   @BeforeClass(groups = { "live" }, dependsOnMethods = "setUpResourcesOnThisThread")
+   protected void createLiveS3Context(ITestContext testContext) throws S3ServiceException {
+      if (testContext.getAttribute("jclouds.test.user") != null) {
+         AWSCredentials credentials = new AWSCredentials((String) testContext
+                  .getAttribute("jclouds.test.user"), (String) testContext
+                  .getAttribute("jclouds.test.key"));
+         jetClient = new RestS3Service(credentials);
+      } else {
+         throw new RuntimeException("not configured properly");
+      }
    }
 
    @Override

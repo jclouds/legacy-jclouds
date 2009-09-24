@@ -36,7 +36,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jclouds.aws.s3.S3Context;
-import org.jclouds.aws.s3.domain.S3Bucket;
+import org.jclouds.aws.s3.domain.BucketMetadata;
+import org.jclouds.aws.s3.domain.ListBucketResponse;
+import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.logging.Logger;
 
 import com.google.inject.Inject;
@@ -102,18 +104,18 @@ public class JCloudsServlet extends HttpServlet {
    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
       try {
-         List<S3Bucket.Metadata> myBucketMetadata = context.getConnection().listOwnedBuckets();
+         List<BucketMetadata> myBucketMetadata = context.getApi().listContainers();
          List<BucketResult> myBuckets = new ArrayList<BucketResult>();
-         for (S3Bucket.Metadata metadata : myBucketMetadata) {
+         for (BucketMetadata metadata : myBucketMetadata) {
             BucketResult result = new BucketResult();
             result.setName(metadata.getName());
             try {
-               S3Bucket bucket = context.getConnection().listBucket(metadata.getName()).get(10,
-                        TimeUnit.SECONDS);
-               if (bucket == S3Bucket.NOT_FOUND) {
+               try {
+                  ListBucketResponse bucket = context.getApi().listBlobs(metadata.getName()).get(
+                           10, TimeUnit.SECONDS);
+                  result.setSize(bucket.size() + "");
+               } catch (ContainerNotFoundException ex) {
                   result.setStatus("not found");
-               } else {
-                  result.setSize(bucket.getSize() + "");
                }
             } catch (Exception e) {
                logger.error(e, "Error listing bucket %1$s", result.getName());

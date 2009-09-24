@@ -53,17 +53,17 @@ import org.jclouds.rackspace.cloudservers.domain.RebootType;
 import org.jclouds.rackspace.cloudservers.domain.Server;
 import org.jclouds.rackspace.cloudservers.domain.SharedIpGroup;
 import org.jclouds.rackspace.cloudservers.functions.IpAddress;
-import org.jclouds.rackspace.cloudservers.functions.ParseAddressesFromGsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ParseBackupScheduleFromGsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ParseFlavorFromGsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ParseFlavorListFromGsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ParseImageFromGsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ParseImageListFromGsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ParseInetAddressListFromGsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ParseServerFromGsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ParseServerListFromGsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ParseSharedIpGroupFromGsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ParseSharedIpGroupListFromGsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseAddressesFromJsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseBackupScheduleFromJsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseFlavorFromJsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseFlavorListFromJsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseImageFromJsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseImageListFromJsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseInetAddressListFromJsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseServerFromJsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseServerListFromJsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseSharedIpGroupFromJsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseSharedIpGroupListFromJsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ReturnFlavorNotFoundOn404;
 import org.jclouds.rackspace.cloudservers.functions.ReturnImageNotFoundOn404;
 import org.jclouds.rackspace.cloudservers.functions.ReturnServerNotFoundOn404;
@@ -78,7 +78,7 @@ import org.jclouds.rest.ExceptionParser;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.MapEntityParam;
 import org.jclouds.rest.ParamParser;
-import org.jclouds.rest.Query;
+import org.jclouds.rest.QueryParams;
 import org.jclouds.rest.RequestFilters;
 import org.jclouds.rest.ResponseParser;
 import org.jclouds.rest.SkipEncoding;
@@ -107,8 +107,8 @@ public interface CloudServersConnection {
     * withDetails()}
     */
    @GET
-   @ResponseParser(ParseServerListFromGsonResponse.class)
-   @Query(key = "format", value = "json")
+   @ResponseParser(ParseServerListFromJsonResponse.class)
+   @QueryParams(keys = "format", values = "json")
    @Path("/servers")
    // TODO: Error Response Code(s): cloudServersFault (400, 500), serviceUnavailable (503),
    // unauthorized (401), badRequest (400), overLimit (413)
@@ -122,8 +122,8 @@ public interface CloudServersConnection {
     * @see Server
     */
    @GET
-   @ResponseParser(ParseServerFromGsonResponse.class)
-   @Query(key = "format", value = "json")
+   @ResponseParser(ParseServerFromJsonResponse.class)
+   @QueryParams(keys = "format", values = "json")
    @ExceptionParser(ReturnServerNotFoundOn404.class)
    @Path("/servers/{id}")
    // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
@@ -161,7 +161,7 @@ public interface CloudServersConnection {
     *           the server.
     */
    @POST
-   @Query(key = "format", value = "json")
+   @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/action")
    @ExceptionParser(ReturnFalseOn404.class)
    // TODO:cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
@@ -183,7 +183,7 @@ public interface CloudServersConnection {
     * ACTIVE - QUEUE_RESIZE - ACTIVE (on error)
     */
    @POST
-   @Query(key = "format", value = "json")
+   @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/action")
    @ExceptionParser(ReturnFalseOn404.class)
    // TODO:cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
@@ -203,7 +203,7 @@ public interface CloudServersConnection {
     * VERIFY_RESIZE - ACTIVE
     */
    @POST
-   @Query(key = "format", value = "json")
+   @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/action")
    @ExceptionParser(ReturnFalseOn404.class)
    // TODO:cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
@@ -223,7 +223,7 @@ public interface CloudServersConnection {
     * VERIFY_RESIZE - ACTIVE
     */
    @POST
-   @Query(key = "format", value = "json")
+   @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/action")
    @ExceptionParser(ReturnFalseOn404.class)
    // TODO:cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
@@ -243,8 +243,8 @@ public interface CloudServersConnection {
     *           - used to specify extra files, metadata, or ip parameters during server creation.
     */
    @POST
-   @ResponseParser(ParseServerFromGsonResponse.class)
-   @Query(key = "format", value = "json")
+   @ResponseParser(ParseServerFromJsonResponse.class)
+   @QueryParams(keys = "format", values = "json")
    @Path("/servers")
    @MapBinder(CreateServerOptions.class)
    // TODO:cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401),
@@ -268,7 +268,7 @@ public interface CloudServersConnection {
     *           with the original imageId.
     */
    @POST
-   @Query(key = "format", value = "json")
+   @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/action")
    @ExceptionParser(ReturnFalseOn404.class)
    @MapBinder(RebuildServerOptions.class)
@@ -367,8 +367,8 @@ public interface CloudServersConnection {
     * withDetails()}
     */
    @GET
-   @ResponseParser(ParseFlavorListFromGsonResponse.class)
-   @Query(key = "format", value = "json")
+   @ResponseParser(ParseFlavorListFromJsonResponse.class)
+   @QueryParams(keys = "format", values = "json")
    @Path("/flavors")
    // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
    // (400)
@@ -382,8 +382,8 @@ public interface CloudServersConnection {
     * @see Flavor
     */
    @GET
-   @ResponseParser(ParseFlavorFromGsonResponse.class)
-   @Query(key = "format", value = "json")
+   @ResponseParser(ParseFlavorFromJsonResponse.class)
+   @QueryParams(keys = "format", values = "json")
    @ExceptionParser(ReturnFlavorNotFoundOn404.class)
    @Path("/flavors/{id}")
    // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
@@ -398,8 +398,8 @@ public interface CloudServersConnection {
     * withDetails()}
     */
    @GET
-   @ResponseParser(ParseImageListFromGsonResponse.class)
-   @Query(key = "format", value = "json")
+   @ResponseParser(ParseImageListFromJsonResponse.class)
+   @QueryParams(keys = "format", values = "json")
    @Path("/images")
    // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
    // (400)
@@ -413,8 +413,8 @@ public interface CloudServersConnection {
     * @see Image
     */
    @GET
-   @ResponseParser(ParseImageFromGsonResponse.class)
-   @Query(key = "format", value = "json")
+   @ResponseParser(ParseImageFromJsonResponse.class)
+   @QueryParams(keys = "format", values = "json")
    @ExceptionParser(ReturnImageNotFoundOn404.class)
    @Path("/images/{id}")
    // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
@@ -441,8 +441,8 @@ public interface CloudServersConnection {
     * @see Image
     */
    @POST
-   @ResponseParser(ParseImageFromGsonResponse.class)
-   @Query(key = "format", value = "json")
+   @ResponseParser(ParseImageFromJsonResponse.class)
+   @QueryParams(keys = "format", values = "json")
    @ExceptionParser(ReturnImageNotFoundOn404.class)
    @MapBinder(CreateImageBinder.class)
    @Path("/images")
@@ -460,8 +460,8 @@ public interface CloudServersConnection {
     * withDetails()}
     */
    @GET
-   @ResponseParser(ParseSharedIpGroupListFromGsonResponse.class)
-   @Query(key = "format", value = "json")
+   @ResponseParser(ParseSharedIpGroupListFromJsonResponse.class)
+   @QueryParams(keys = "format", values = "json")
    @Path("/shared_ip_groups")
    // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
    // (400)
@@ -475,8 +475,8 @@ public interface CloudServersConnection {
     * @see SharedIpGroup
     */
    @GET
-   @ResponseParser(ParseSharedIpGroupFromGsonResponse.class)
-   @Query(key = "format", value = "json")
+   @ResponseParser(ParseSharedIpGroupFromJsonResponse.class)
+   @QueryParams(keys = "format", values = "json")
    @ExceptionParser(ReturnSharedIpGroupNotFoundOn404.class)
    @Path("/shared_ip_groups/{id}")
    // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
@@ -490,8 +490,8 @@ public interface CloudServersConnection {
     * {@link CreateSharedIpGroupOptions} to specify an server.
     */
    @POST
-   @ResponseParser(ParseSharedIpGroupFromGsonResponse.class)
-   @Query(key = "format", value = "json")
+   @ResponseParser(ParseSharedIpGroupFromJsonResponse.class)
+   @QueryParams(keys = "format", values = "json")
    @Path("/shared_ip_groups")
    @MapBinder(CreateSharedIpGroupOptions.class)
    // TODO: cloudSharedIpGroupsFault (400, 500), serviceUnavailable (503), unauthorized (401),
@@ -518,8 +518,8 @@ public interface CloudServersConnection {
     * List the backup schedule for the specified server
     */
    @GET
-   @ResponseParser(ParseBackupScheduleFromGsonResponse.class)
-   @Query(key = "format", value = "json")
+   @ResponseParser(ParseBackupScheduleFromJsonResponse.class)
+   @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/backup_schedule")
    // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
    // (400), itemNotFound (404)
@@ -557,8 +557,8 @@ public interface CloudServersConnection {
     * List all server addresses
     */
    @GET
-   @ResponseParser(ParseAddressesFromGsonResponse.class)
-   @Query(key = "format", value = "json")
+   @ResponseParser(ParseAddressesFromJsonResponse.class)
+   @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/ips")
    // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
    // (400), overLimit (413)
@@ -568,8 +568,8 @@ public interface CloudServersConnection {
     * List all public server addresses
     */
    @GET
-   @ResponseParser(ParseInetAddressListFromGsonResponse.class)
-   @Query(key = "format", value = "json")
+   @ResponseParser(ParseInetAddressListFromJsonResponse.class)
+   @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/ips/public")
    // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
    // (400), overLimit (413)
@@ -579,8 +579,8 @@ public interface CloudServersConnection {
     * List all private server addresses
     */
    @GET
-   @ResponseParser(ParseInetAddressListFromGsonResponse.class)
-   @Query(key = "format", value = "json")
+   @ResponseParser(ParseInetAddressListFromJsonResponse.class)
+   @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/ips/private")
    // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
    // (400), overLimit (413)

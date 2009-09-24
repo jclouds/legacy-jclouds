@@ -45,13 +45,4 @@
         <url>http://jclouds.googlecode.com/svn/trunk</url>
     </scm>
 
-    <dependencies>
-        <dependency>
-            <groupId>xstream</groupId>
-            <artifactId>xstream</artifactId>
-            <version>1.2</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-    
 </project>

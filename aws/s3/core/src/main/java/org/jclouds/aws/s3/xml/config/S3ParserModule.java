@@ -27,8 +27,9 @@ import java.util.List;
 
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.s3.domain.AccessControlList;
-import org.jclouds.aws.s3.domain.S3Bucket;
-import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.s3.domain.BucketMetadata;
+import org.jclouds.aws.s3.domain.ListBucketResponse;
+import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.xml.AccessControlListHandler;
 import org.jclouds.aws.s3.xml.CopyObjectHandler;
 import org.jclouds.aws.s3.xml.ListAllMyBucketsHandler;
@@ -51,11 +52,11 @@ import com.google.inject.assistedinject.FactoryProvider;
 public class S3ParserModule extends AbstractModule {
    protected final TypeLiteral<S3ParserFactory.GenericParseFactory<AWSError>> errorTypeLiteral = new TypeLiteral<S3ParserFactory.GenericParseFactory<AWSError>>() {
    };
-   protected final TypeLiteral<S3ParserFactory.GenericParseFactory<List<S3Bucket.Metadata>>> listBucketsTypeLiteral = new TypeLiteral<S3ParserFactory.GenericParseFactory<List<S3Bucket.Metadata>>>() {
+   protected final TypeLiteral<S3ParserFactory.GenericParseFactory<List<BucketMetadata>>> listBucketsTypeLiteral = new TypeLiteral<S3ParserFactory.GenericParseFactory<List<BucketMetadata>>>() {
    };
-   protected final TypeLiteral<S3ParserFactory.GenericParseFactory<S3Bucket>> bucketTypeLiteral = new TypeLiteral<S3ParserFactory.GenericParseFactory<S3Bucket>>() {
+   protected final TypeLiteral<S3ParserFactory.GenericParseFactory<ListBucketResponse>> bucketTypeLiteral = new TypeLiteral<S3ParserFactory.GenericParseFactory<ListBucketResponse>>() {
    };
-   protected final TypeLiteral<S3ParserFactory.GenericParseFactory<S3Object.Metadata>> objectMetadataTypeLiteral = new TypeLiteral<S3ParserFactory.GenericParseFactory<S3Object.Metadata>>() {
+   protected final TypeLiteral<S3ParserFactory.GenericParseFactory<ObjectMetadata>> objectMetadataTypeLiteral = new TypeLiteral<S3ParserFactory.GenericParseFactory<ObjectMetadata>>() {
    };
    protected final TypeLiteral<S3ParserFactory.GenericParseFactory<AccessControlList>> accessControlListTypeLiteral = new TypeLiteral<S3ParserFactory.GenericParseFactory<AccessControlList>>() {
    };
@@ -73,11 +74,11 @@ public class S3ParserModule extends AbstractModule {
    }
 
    private void bindParserImplementationsToReturnTypes() {
-      bind(new TypeLiteral<ParseSax.HandlerWithResult<List<S3Bucket.Metadata>>>() {
+      bind(new TypeLiteral<ParseSax.HandlerWithResult<List<BucketMetadata>>>() {
       }).to(ListAllMyBucketsHandler.class);
-      bind(new TypeLiteral<ParseSax.HandlerWithResult<S3Bucket>>() {
+      bind(new TypeLiteral<ParseSax.HandlerWithResult<ListBucketResponse>>() {
       }).to(ListBucketHandler.class);
-      bind(new TypeLiteral<ParseSax.HandlerWithResult<S3Object.Metadata>>() {
+      bind(new TypeLiteral<ParseSax.HandlerWithResult<ObjectMetadata>>() {
       }).to(CopyObjectHandler.class);
       bind(new TypeLiteral<ParseSax.HandlerWithResult<AccessControlList>>() {
       }).to(AccessControlListHandler.class);
@@ -86,14 +87,15 @@ public class S3ParserModule extends AbstractModule {
    private void bindCallablesThatReturnParseResults() {
       bind(listBucketsTypeLiteral).toProvider(
                FactoryProvider.newFactory(listBucketsTypeLiteral,
-                        new TypeLiteral<ParseSax<List<S3Bucket.Metadata>>>() {
+                        new TypeLiteral<ParseSax<List<BucketMetadata>>>() {
                         }));
       bind(bucketTypeLiteral).toProvider(
-               FactoryProvider.newFactory(bucketTypeLiteral, new TypeLiteral<ParseSax<S3Bucket>>() {
+               FactoryProvider.newFactory(bucketTypeLiteral,
+                        new TypeLiteral<ParseSax<ListBucketResponse>>() {
                }));
       bind(objectMetadataTypeLiteral).toProvider(
                FactoryProvider.newFactory(objectMetadataTypeLiteral,
-                        new TypeLiteral<ParseSax<S3Object.Metadata>>() {
+                        new TypeLiteral<ParseSax<ObjectMetadata>>() {
                         }));
       bind(accessControlListTypeLiteral).toProvider(
                FactoryProvider.newFactory(accessControlListTypeLiteral,

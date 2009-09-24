@@ -28,7 +28,8 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.net.URI;
 
-import org.jclouds.azure.storage.domain.MetadataList;
+import org.jclouds.azure.storage.domain.ArrayBoundedList;
+import org.jclouds.azure.storage.domain.BoundedList;
 import org.jclouds.azure.storage.queue.domain.QueueMetadata;
 import org.jclouds.http.functions.ParseSax;
 import org.testng.annotations.Test;
@@ -45,31 +46,26 @@ public class AccountNameEnumerationResultsHandlerTest extends BaseHandlerTest {
 
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/test_list_queues.xml");
-      MetadataList<QueueMetadata> list = new MetadataList<QueueMetadata>("q", null, 3,
-               ImmutableList.of(new QueueMetadata("q1", URI
-                        .create("http://myaccount.queue.core.windows.net/q1")), new QueueMetadata(
-                        "q2", URI.create("http://myaccount.queue.core.windows.net/q2")),
-                        new QueueMetadata("q3", URI
-                                 .create("http://myaccount.queue.core.windows.net/q3")))
-
-               , "q4");
-      ParseSax<MetadataList<QueueMetadata>> parser = parserFactory
+      BoundedList<QueueMetadata> list = new ArrayBoundedList<QueueMetadata>(ImmutableList.of(
+               new QueueMetadata("q1", URI.create("http://myaccount.queue.core.windows.net/q1")),
+               new QueueMetadata("q2", URI.create("http://myaccount.queue.core.windows.net/q2")),
+               new QueueMetadata("q3", URI.create("http://myaccount.queue.core.windows.net/q3"))),
+               "q", null, 3, "q4");
+      ParseSax<BoundedList<QueueMetadata>> parser = parserFactory
                .createContainerMetadataListParser();
-      MetadataList<QueueMetadata> result = parser.parse(is);
+      BoundedList<QueueMetadata> result = parser.parse(is);
       assertEquals(result, list);
    }
 
    public void testApplyInputStreamWithOptions() {
       InputStream is = getClass().getResourceAsStream("/test_list_queues_options.xml");
-      MetadataList<QueueMetadata> list = new MetadataList<QueueMetadata>("q", "q4", 3,
-               ImmutableList.of(new QueueMetadata("q4", URI
-                        .create("http://myaccount.queue.core.windows.net/q4")), new QueueMetadata(
-                        "q5", URI.create("http://myaccount.queue.core.windows.net/q5")))
-
-               , null);
-      ParseSax<MetadataList<QueueMetadata>> parser = parserFactory
+      BoundedList<QueueMetadata> list = new ArrayBoundedList<QueueMetadata>(ImmutableList.of(
+               new QueueMetadata("q4", URI.create("http://myaccount.queue.core.windows.net/q4")),
+               new QueueMetadata("q5", URI.create("http://myaccount.queue.core.windows.net/q5"))),
+               "q", "q4", 3, null);
+      ParseSax<BoundedList<QueueMetadata>> parser = parserFactory
                .createContainerMetadataListParser();
-      MetadataList<QueueMetadata> result = parser.parse(is);
+      BoundedList<QueueMetadata> result = parser.parse(is);
       assertEquals(result, list);
    }
 }

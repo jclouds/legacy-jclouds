@@ -24,14 +24,14 @@
 package org.jclouds.aws.s3.reference;
 
 import org.jclouds.aws.reference.AWSConstants;
-import org.jclouds.keyvaluestore.reference.ObjectStoreConstants;
+import org.jclouds.blobstore.reference.BlobStoreConstants;
 
 /**
  * Configuration properties and constants used in S3 connections.
  * 
  * @author Adrian Cole
  */
-public interface S3Constants extends AWSConstants, S3Headers, ObjectStoreConstants {
+public interface S3Constants extends AWSConstants, S3Headers, BlobStoreConstants {
 
    /**
     * S3 service's XML Namespace, as used in XML request and response documents.

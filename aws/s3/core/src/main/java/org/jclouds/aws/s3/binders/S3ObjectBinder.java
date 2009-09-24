@@ -24,50 +24,45 @@
 package org.jclouds.aws.s3.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.blobstore.binders.BlobBinder;
+import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpUtils;
-import org.jclouds.rest.EntityBinder;
 
-public class S3ObjectBinder implements EntityBinder {
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
-   public void addEntityToRequest(Object entity, HttpRequest request) {
-      S3Object object = (S3Object) entity;
-      checkArgument(object.getMetadata().getSize() >= 0, "size must be set");
-
-      request.setEntity(checkNotNull(object.getData(), "object.getContent()"));
-
-      request.getHeaders()
-               .put(
-                        HttpHeaders.CONTENT_TYPE,
-                        checkNotNull(object.getMetadata().getContentType(),
-                                 "object.metadata.contentType()"));
-
-      request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, object.getMetadata().getSize() + "");
-
-      if (object.getMetadata().getCacheControl() != null) {
-         request.getHeaders()
-                  .put(HttpHeaders.CACHE_CONTROL, object.getMetadata().getCacheControl());
-      }
-      if (object.getMetadata().getContentDisposition() != null) {
-         request.getHeaders().put("Content-Disposition",
-                  object.getMetadata().getContentDisposition());
-      }
-      if (object.getMetadata().getContentEncoding() != null) {
-         request.getHeaders().put(HttpHeaders.CONTENT_ENCODING,
-                  object.getMetadata().getContentEncoding());
-      }
-
-      if (object.getMetadata().getETag() != null) {
-         request.getHeaders().put("Content-MD5", 
-                  HttpUtils.toBase64String(object.getMetadata().getETag()));
-      }
-
-      request.getHeaders().putAll(object.getMetadata().getUserMetadata());
+public class S3ObjectBinder extends BlobBinder {
+   @Inject
+   public S3ObjectBinder(@Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix) {
+      super(metadataPrefix);
    }
 
+   public void addEntityToRequest(Object entity, HttpRequest request) {
+      Blob<?> object = (Blob<?>) entity;
+      checkArgument(object.getMetadata().getSize() >= 0, "size must be set");
+
+      if (object instanceof S3Object) {
+         S3Object s3Object = (S3Object) object;
+         if (s3Object.getMetadata().getCacheControl() != null) {
+            request.getHeaders().put(HttpHeaders.CACHE_CONTROL,
+                     s3Object.getMetadata().getCacheControl());
+         }
+
+         if (s3Object.getMetadata().getContentDisposition() != null) {
+            request.getHeaders().put("Content-Disposition",
+                     s3Object.getMetadata().getContentDisposition());
+         }
+
+         if (s3Object.getMetadata().getContentEncoding() != null) {
+            request.getHeaders().put(HttpHeaders.CONTENT_ENCODING,
+                     s3Object.getMetadata().getContentEncoding());
+         }
+      }
+      super.addEntityToRequest(entity, request);
+   }
 }

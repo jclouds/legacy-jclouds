@@ -24,6 +24,7 @@
 package org.jclouds.azure.storage.blob;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_ADDRESS;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_REDIRECTS;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_RETRIES;
@@ -39,9 +40,9 @@ import java.util.List;
 import java.util.Properties;
 
 import org.jclouds.azure.storage.blob.config.AzureBlobContextModule;
-import org.jclouds.azure.storage.blob.config.RestAzureBlobConnectionModule;
+import org.jclouds.azure.storage.blob.config.RestAzureBlobStoreModule;
+import org.jclouds.azure.storage.blob.xml.config.AzureBlobParserModule;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
-import org.jclouds.azure.storage.xml.config.AzureStorageParserModule;
 import org.jclouds.cloud.CloudContextBuilder;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
@@ -62,8 +63,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  * @see AzureBlobContext
  */
-public class AzureBlobContextBuilder extends
-         CloudContextBuilder<AzureBlobConnection, AzureBlobContext> {
+public class AzureBlobContextBuilder extends CloudContextBuilder<AzureBlobContext> {
 
    public AzureBlobContextBuilder(Properties props) {
       super(props);
@@ -71,7 +71,7 @@ public class AzureBlobContextBuilder extends
 
    public static AzureBlobContextBuilder newBuilder(String id, String secret) {
       Properties properties = new Properties();
-
+      properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "x-ms-meta-");
       properties.setProperty(PROPERTY_HTTP_ADDRESS, id + ".blob.core.windows.net");
       properties.setProperty(PROPERTY_HTTP_SECURE, "true");
       properties.setProperty(PROPERTY_SAX_DEBUG, "false");
@@ -100,7 +100,7 @@ public class AzureBlobContextBuilder extends
    }
 
    protected void addParserModule(List<Module> modules) {
-      modules.add(new AzureStorageParserModule());
+      modules.add(new AzureBlobParserModule());
    }
 
    protected void addContextModule(List<Module> modules) {
@@ -108,7 +108,7 @@ public class AzureBlobContextBuilder extends
    }
 
    protected void addConnectionModule(List<Module> modules) {
-      modules.add(new RestAzureBlobConnectionModule());
+      modules.add(new RestAzureBlobStoreModule());
    }
 
 }

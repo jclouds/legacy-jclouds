@@ -54,17 +54,17 @@ import org.jclouds.rackspace.cloudservers.domain.BackupSchedule;
 import org.jclouds.rackspace.cloudservers.domain.DailyBackup;
 import org.jclouds.rackspace.cloudservers.domain.RebootType;
 import org.jclouds.rackspace.cloudservers.domain.WeeklyBackup;
-import org.jclouds.rackspace.cloudservers.functions.ParseAddressesFromGsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ParseBackupScheduleFromGsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ParseFlavorFromGsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ParseFlavorListFromGsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ParseImageFromGsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ParseImageListFromGsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ParseInetAddressListFromGsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ParseServerFromGsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ParseServerListFromGsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ParseSharedIpGroupFromGsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ParseSharedIpGroupListFromGsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseAddressesFromJsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseBackupScheduleFromJsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseFlavorFromJsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseFlavorListFromJsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseImageFromJsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseImageListFromJsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseInetAddressListFromJsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseServerFromJsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseServerListFromJsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseSharedIpGroupFromJsonResponse;
+import org.jclouds.rackspace.cloudservers.functions.ParseSharedIpGroupListFromJsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ReturnFlavorNotFoundOn404;
 import org.jclouds.rackspace.cloudservers.functions.ReturnImageNotFoundOn404;
 import org.jclouds.rackspace.cloudservers.functions.ReturnServerNotFoundOn404;
@@ -175,7 +175,7 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
       assertEquals(processor.createResponseParser(method).getClass(),
-               ParseServerFromGsonResponse.class);
+               ParseServerFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
       assertNotNull(processor.getMapEntityBinderOrNull(method, new Object[] { "", 1, 2,
                new CreateServerOptions[] { CreateServerOptions.Builder.withSharedIpGroup(1) } }));
@@ -192,7 +192,7 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method).getClass(),
-               ParseServerListFromGsonResponse.class);
+               ParseServerListFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
 
@@ -211,7 +211,7 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method).getClass(),
-               ParseServerListFromGsonResponse.class);
+               ParseServerListFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
 
@@ -227,7 +227,7 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method).getClass(),
-               ParseServerListFromGsonResponse.class);
+               ParseServerListFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
 
@@ -241,7 +241,7 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method).getClass(),
-               ParseServerFromGsonResponse.class);
+               ParseServerFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnServerNotFoundOn404.class);
    }
@@ -257,7 +257,7 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method).getClass(),
-               ParseFlavorListFromGsonResponse.class);
+               ParseFlavorListFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
 
@@ -274,7 +274,7 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method).getClass(),
-               ParseFlavorListFromGsonResponse.class);
+               ParseFlavorListFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
 
@@ -290,7 +290,7 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method).getClass(),
-               ParseFlavorListFromGsonResponse.class);
+               ParseFlavorListFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
 
@@ -307,7 +307,7 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method).getClass(),
-               ParseFlavorListFromGsonResponse.class);
+               ParseFlavorListFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
 
@@ -321,7 +321,7 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method).getClass(),
-               ParseFlavorFromGsonResponse.class);
+               ParseFlavorFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnFlavorNotFoundOn404.class);
    }
@@ -336,7 +336,7 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method).getClass(),
-               ParseImageListFromGsonResponse.class);
+               ParseImageListFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
 
@@ -351,7 +351,7 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method).getClass(),
-               ParseImageListFromGsonResponse.class);
+               ParseImageListFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
 
@@ -367,7 +367,7 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method).getClass(),
-               ParseImageListFromGsonResponse.class);
+               ParseImageListFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
 
@@ -383,7 +383,7 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method).getClass(),
-               ParseImageListFromGsonResponse.class);
+               ParseImageListFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
 
@@ -397,7 +397,7 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method).getClass(),
-               ParseImageFromGsonResponse.class);
+               ParseImageFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnImageNotFoundOn404.class);
    }
@@ -558,7 +558,7 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method).getClass(),
-               ParseSharedIpGroupListFromGsonResponse.class);
+               ParseSharedIpGroupListFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
 
@@ -575,7 +575,7 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method).getClass(),
-               ParseSharedIpGroupListFromGsonResponse.class);
+               ParseSharedIpGroupListFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
 
@@ -591,7 +591,7 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method).getClass(),
-               ParseSharedIpGroupListFromGsonResponse.class);
+               ParseSharedIpGroupListFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
 
@@ -609,7 +609,7 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method).getClass(),
-               ParseSharedIpGroupListFromGsonResponse.class);
+               ParseSharedIpGroupListFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
 
@@ -623,7 +623,7 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method).getClass(),
-               ParseSharedIpGroupFromGsonResponse.class);
+               ParseSharedIpGroupFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnSharedIpGroupNotFoundOn404.class);
    }
@@ -663,7 +663,7 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
       assertEquals(processor.createResponseParser(method).getClass(),
-               ParseSharedIpGroupFromGsonResponse.class);
+               ParseSharedIpGroupFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
       assertNotNull(processor.getMapEntityBinderOrNull(method, new Object[] { "",
                new CreateSharedIpGroupOptions[] { withServer(2) } }));
@@ -692,7 +692,7 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method).getClass(),
-               ParseAddressesFromGsonResponse.class);
+               ParseAddressesFromJsonResponse.class);
    }
 
    public void testListPublicAddresses() throws SecurityException, NoSuchMethodException {
@@ -705,7 +705,7 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method).getClass(),
-               ParseInetAddressListFromGsonResponse.class);
+               ParseInetAddressListFromJsonResponse.class);
    }
 
    public void testListPrivateAddresses() throws SecurityException, NoSuchMethodException {
@@ -718,7 +718,7 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method).getClass(),
-               ParseInetAddressListFromGsonResponse.class);
+               ParseInetAddressListFromJsonResponse.class);
    }
 
    public void testListBackupSchedule() throws SecurityException, NoSuchMethodException {
@@ -731,7 +731,7 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method).getClass(),
-               ParseBackupScheduleFromGsonResponse.class);
+               ParseBackupScheduleFromJsonResponse.class);
    }
 
    public void testCreateImageWithIpGroup() throws SecurityException, NoSuchMethodException {
@@ -751,7 +751,7 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
       assertEquals(processor.createResponseParser(method).getClass(),
-               ParseImageFromGsonResponse.class);
+               ParseImageFromJsonResponse.class);
       assertNotNull(processor.createExceptionParserOrNullIfNotFound(method));
       assertNotNull(processor.getMapEntityBinderOrNull(method, new Object[] { "", 2 }));
    }

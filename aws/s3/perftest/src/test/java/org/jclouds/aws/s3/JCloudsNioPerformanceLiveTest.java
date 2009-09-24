@@ -28,8 +28,8 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Module;
 
-@Test(sequential = true, testName = "s3.JCloudsNioPerformanceLiveTest", groups = { "live" })
-public class JCloudsNioPerformanceLiveTest extends BaseJCloudsPerformance {
+@Test(sequential = true, testName = "perftest.JCloudsNioPerformanceLiveTest", groups = { "live" })
+public class JCloudsNioPerformanceLiveTest extends BaseJCloudsPerformanceLiveTest {
 
    @Override
    protected Module createHttpModule() {

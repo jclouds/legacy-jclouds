@@ -63,7 +63,7 @@ import com.google.inject.Module;
  * @see AzureQueueContext
  */
 public class AzureQueueContextBuilder extends
-         CloudContextBuilder<AzureQueueConnection, AzureQueueContext> {
+         CloudContextBuilder<AzureQueueContext> {
 
    public AzureQueueContextBuilder(Properties props) {
       super(props);

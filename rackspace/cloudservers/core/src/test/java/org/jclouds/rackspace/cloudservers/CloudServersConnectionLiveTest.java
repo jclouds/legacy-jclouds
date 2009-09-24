@@ -27,8 +27,6 @@ import static org.jclouds.rackspace.cloudservers.options.CreateServerOptions.Bui
 import static org.jclouds.rackspace.cloudservers.options.CreateSharedIpGroupOptions.Builder.withServer;
 import static org.jclouds.rackspace.cloudservers.options.ListOptions.Builder.withDetails;
 import static org.jclouds.rackspace.cloudservers.options.RebuildServerOptions.Builder.withImage;
-import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_KEY;
-import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_USER;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
@@ -72,16 +70,17 @@ import com.google.inject.Injector;
 @Test(groups = "live", sequential = true, testName = "cloudservers.CloudServersConnectionLiveTest")
 public class CloudServersConnectionLiveTest {
 
-   protected static final String sysRackspaceUser = System.getProperty(PROPERTY_RACKSPACE_USER);
-   protected static final String sysRackspaceKey = System.getProperty(PROPERTY_RACKSPACE_KEY);
    protected CloudServersConnection connection;
    protected SshConnection.Factory sshFactory;
 
    @BeforeGroups(groups = { "live" })
    public void setupConnection() {
-      Injector injector = CloudServersContextBuilder.newBuilder(sysRackspaceUser, sysRackspaceKey)
-               .withModules(new Log4JLoggingModule(), new JschSshConnectionModule())
-               .withJsonDebug().buildInjector();
+      String account = System.getProperty("jclouds.test.user");
+      String key = System.getProperty("jclouds.test.key");
+
+      Injector injector = CloudServersContextBuilder.newBuilder(account, key).withModules(
+               new Log4JLoggingModule(), new JschSshConnectionModule()).withJsonDebug()
+               .buildInjector();
       connection = injector.getInstance(CloudServersConnection.class);
       sshFactory = injector.getInstance(SshConnection.Factory.class);
 

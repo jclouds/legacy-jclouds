@@ -24,16 +24,24 @@
 package org.jclouds.rackspace.cloudfiles.internal;
 
 import java.io.IOException;
+import java.net.URI;
 
 import javax.annotation.Resource;
 
+import org.jclouds.blobstore.BlobMap;
+import org.jclouds.blobstore.InputStreamMap;
+import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.Logger;
-import org.jclouds.rackspace.cloudfiles.CloudFilesConnection;
+import org.jclouds.rackspace.Authentication;
+import org.jclouds.rackspace.cloudfiles.CloudFilesBlobStore;
 import org.jclouds.rackspace.cloudfiles.CloudFilesContext;
+import org.jclouds.rackspace.reference.RackspaceConstants;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.name.Named;
 
 /**
  * Uses a Guice Injector to configure the objects served by CloudFilesContext methods.
@@ -42,25 +50,35 @@ import com.google.inject.Injector;
  * @see Injector
  */
 public class GuiceCloudFilesContext implements CloudFilesContext {
+   public interface CloudFilesObjectMapFactory {
+      BlobMap<BlobMetadata, Blob<BlobMetadata>> createMapView(String container);
+   }
+
+   public interface CloudFilesInputStreamMapFactory {
+      InputStreamMap<BlobMetadata> createMapView(String container);
+   }
 
    @Resource
    private Logger logger = Logger.NULL;
    private final Injector injector;
+   private final CloudFilesInputStreamMapFactory cfInputStreamMapFactory;
+   private final CloudFilesObjectMapFactory cfObjectMapFactory;
    private final Closer closer;
+   private final URI endPoint;
+   private final String account;
 
    @Inject
-   private GuiceCloudFilesContext(Injector injector, Closer closer) {
+   private GuiceCloudFilesContext(Injector injector, Closer closer,
+            CloudFilesObjectMapFactory cfObjectMapFactory,
+            CloudFilesInputStreamMapFactory cfInputStreamMapFactory, @Authentication URI endPoint,
+            @Named(RackspaceConstants.PROPERTY_RACKSPACE_USER) String account) {
       this.injector = injector;
       this.closer = closer;
+      this.cfInputStreamMapFactory = cfInputStreamMapFactory;
+      this.cfObjectMapFactory = cfObjectMapFactory;
+      this.endPoint = endPoint;
+      this.account = account;
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   public CloudFilesConnection getConnection() {
-      return injector.getInstance(CloudFilesConnection.class);
-   }
-
 
    /**
     * {@inheritDoc}
@@ -73,6 +91,28 @@ public class GuiceCloudFilesContext implements CloudFilesContext {
       } catch (IOException e) {
          logger.error(e, "error closing content");
       }
+   }
+
+   public String getAccount() {
+      return account;
+   }
+
+   public CloudFilesBlobStore getApi() {
+      return injector.getInstance(CloudFilesBlobStore.class);
+   }
+
+   public URI getEndPoint() {
+      return endPoint;
+   }
+
+   public BlobMap<BlobMetadata, Blob<BlobMetadata>> createBlobMap(String container) {
+      getApi().createContainer(container);
+      return cfObjectMapFactory.createMapView(container);
+   }
+
+   public InputStreamMap<BlobMetadata> createInputStreamMap(String container) {
+      getApi().createContainer(container);
+      return cfInputStreamMapFactory.createMapView(container);
    }
 
 }

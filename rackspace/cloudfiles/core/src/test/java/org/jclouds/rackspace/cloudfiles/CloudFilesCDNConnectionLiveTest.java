@@ -23,12 +23,11 @@
  */
 package org.jclouds.rackspace.cloudfiles;
 
-import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_KEY;
-import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_USER;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerCDNMetadata;
@@ -47,108 +46,107 @@ import com.google.common.collect.Iterables;
 @Test(groups = "live", testName = "cloudfiles.CloudFilesAuthenticationLiveTest")
 public class CloudFilesCDNConnectionLiveTest {
 
-   protected static final String sysRackspaceUser = System.getProperty(PROPERTY_RACKSPACE_USER);
-   protected static final String sysRackspaceKey = System.getProperty(PROPERTY_RACKSPACE_KEY);
-
-   private String bucketPrefix = System.getProperty("user.name") + ".cfcdnint";
+   private String bucketPrefix = System.getProperty("user.name") + "-cfcdnint";
    CloudFilesCDNConnection cdnConnection;
-   CloudFilesConnection filesConnection;
+   CloudFilesBlobStore filesConnection;
 
    @BeforeGroups(groups = { "live" })
    public void setupConnection() {
-      cdnConnection = CloudFilesCDNContextBuilder.newBuilder(sysRackspaceUser, sysRackspaceKey)
-               .withModule(new Log4JLoggingModule()).withJsonDebug().buildContext().getConnection();
-      filesConnection = CloudFilesContextBuilder.newBuilder(sysRackspaceUser, sysRackspaceKey)
-      .withModule(new Log4JLoggingModule()).withJsonDebug().buildContext().getConnection();
+      String account = System.getProperty("jclouds.test.user");
+      String key = System.getProperty("jclouds.test.key");
+
+      cdnConnection = CloudFilesCDNContextBuilder.newBuilder(account, key).withModule(
+               new Log4JLoggingModule()).withJsonDebug().buildContext().getApi();
+      filesConnection = CloudFilesContextBuilder.newBuilder(account, key).withModule(
+               new Log4JLoggingModule()).withJsonDebug().buildContext().getApi();
    }
 
    @Test
-   public void testCDNOperations() throws Exception {      
+   public void testCDNOperations() throws Exception {
       final long minimumTTL = 60 * 60; // The minimum TTL is 1 hour
-      
-      // Create two new containers for testing      
+
+      // Create two new containers for testing
       final String containerNameWithCDN = bucketPrefix + ".testCDNOperationsContainerWithCDN";
       final String containerNameWithoutCDN = bucketPrefix + ".testCDNOperationsContainerWithoutCDN";
-      assertTrue(filesConnection.putContainer(containerNameWithCDN));
-      assertTrue(filesConnection.putContainer(containerNameWithoutCDN));
-      
+      assertTrue(filesConnection.createContainer(containerNameWithCDN).get(10, TimeUnit.SECONDS));
+      assertTrue(filesConnection.createContainer(containerNameWithoutCDN).get(10, TimeUnit.SECONDS));
+
       ContainerCDNMetadata cdnMetadata = null;
-      
+
       // Enable CDN with PUT for one container
       final String cdnUri = cdnConnection.enableCDN(containerNameWithCDN);
       assertTrue(cdnUri != null);
       assertTrue(cdnUri.startsWith("http://"));
-      
+
       // Confirm CDN is enabled via HEAD request and has default TTL
       cdnMetadata = cdnConnection.getCDNMetadata(containerNameWithCDN);
       assertTrue(cdnMetadata.isCdnEnabled());
       assertEquals(cdnMetadata.getCdnUri(), cdnUri);
       final long initialTTL = cdnMetadata.getTtl();
-      
+
       // Check HEAD responses for non-existent container, and container with no CDN metadata
       cdnMetadata = cdnConnection.getCDNMetadata(containerNameWithoutCDN);
-      assertEquals(cdnMetadata, ContainerCDNMetadata.NOT_FOUND);
+      assertEquals(cdnMetadata, null);
       cdnMetadata = cdnConnection.getCDNMetadata("DoesNotExist");
-      assertEquals(cdnMetadata, ContainerCDNMetadata.NOT_FOUND);
-      
-      // List CDN metadata for containers, and ensure all CDN info is available for enabled container
+      assertEquals(cdnMetadata, null);
+
+      // List CDN metadata for containers, and ensure all CDN info is available for enabled
+      // container
       List<ContainerCDNMetadata> cdnMetadataList = cdnConnection.listCDNContainers();
       assertTrue(cdnMetadataList.size() >= 1);
       assertTrue(Iterables.any(cdnMetadataList, new Predicate<ContainerCDNMetadata>() {
-          public boolean apply(ContainerCDNMetadata cdnMetadata) {
-             return (
-                cdnMetadata.getName().equals(containerNameWithCDN) &&                  
-                cdnMetadata.isCdnEnabled() &&
-                cdnMetadata.getTtl() == initialTTL &&
-                cdnMetadata.getCdnUri().equals(cdnUri));
-          }  
+         public boolean apply(ContainerCDNMetadata cdnMetadata) {
+            return (cdnMetadata.getName().equals(containerNameWithCDN)
+                     && cdnMetadata.isCdnEnabled() && cdnMetadata.getTtl() == initialTTL && cdnMetadata
+                     .getCdnUri().equals(cdnUri));
+         }
       }));
-      
+
       // Test listing with options
-      cdnMetadataList = cdnConnection.listCDNContainers(
-            ListCdnContainerOptions.Builder.enabledOnly());
+      cdnMetadataList = cdnConnection.listCDNContainers(ListCdnContainerOptions.Builder
+               .enabledOnly());
       assertTrue(Iterables.all(cdnMetadataList, new Predicate<ContainerCDNMetadata>() {
          public boolean apply(ContainerCDNMetadata cdnMetadata) {
             return cdnMetadata.isCdnEnabled();
-         }  
+         }
       }));
 
       cdnMetadataList = cdnConnection.listCDNContainers(ListCdnContainerOptions.Builder
-            .afterMarker(containerNameWithCDN.substring(0, containerNameWithCDN.length() - 1)) 
-            .maxResults(1));
+               .afterMarker(containerNameWithCDN.substring(0, containerNameWithCDN.length() - 1))
+               .maxResults(1));
       assertEquals(cdnMetadataList.size(), 1);
       assertEquals(cdnMetadataList.get(0).getName(), containerNameWithCDN);
 
       // Enable CDN with PUT for the same container, this time with a custom TTL
       long ttl = 4000;
       cdnConnection.enableCDN(containerNameWithCDN, ttl);
-      
+
       cdnMetadata = cdnConnection.getCDNMetadata(containerNameWithCDN);
       assertTrue(cdnMetadata.isCdnEnabled());
-      assertEquals(cdnMetadata.getTtl(), ttl);      
-      
+      assertEquals(cdnMetadata.getTtl(), ttl);
+
       // Check POST by updating TTL settings
       ttl = minimumTTL;
       cdnConnection.updateCDN(containerNameWithCDN, minimumTTL);
-      
+
       cdnMetadata = cdnConnection.getCDNMetadata(containerNameWithCDN);
       assertTrue(cdnMetadata.isCdnEnabled());
       assertEquals(cdnMetadata.getTtl(), minimumTTL);
 
       // Confirm that minimum allowed value for TTL is 3600, lower values are ignored.
-      cdnConnection.updateCDN(containerNameWithCDN, 3599L);      
+      cdnConnection.updateCDN(containerNameWithCDN, 3599L);
       cdnMetadata = cdnConnection.getCDNMetadata(containerNameWithCDN);
       assertEquals(cdnMetadata.getTtl(), minimumTTL); // Note that TTL is 3600 here, not 3599
 
       // Disable CDN with POST
       assertTrue(cdnConnection.disableCDN(containerNameWithCDN));
-      
+
       cdnMetadata = cdnConnection.getCDNMetadata(containerNameWithCDN);
       assertEquals(cdnMetadata.isCdnEnabled(), false);
-            
+
       // Delete test containers
-      assertTrue(filesConnection.deleteContainerIfEmpty(containerNameWithCDN));
-      assertTrue(filesConnection.deleteContainerIfEmpty(containerNameWithoutCDN));
+      assertTrue(filesConnection.deleteContainer(containerNameWithCDN).get(10, TimeUnit.SECONDS));
+      assertTrue(filesConnection.deleteContainer(containerNameWithoutCDN).get(10, TimeUnit.SECONDS));
    }
 
 }

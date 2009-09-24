@@ -27,19 +27,17 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 import org.jclouds.aws.domain.AWSError;
-import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.filters.RequestAuthorizeSignature;
 import org.jclouds.aws.s3.reference.S3Headers;
 import org.jclouds.aws.s3.xml.S3ParserFactory;
+import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
-import org.jclouds.util.Utils;
 
 import com.google.inject.Inject;
 
@@ -48,7 +46,7 @@ import com.google.inject.Inject;
  * 
  * @author Adrian Cole
  */
-public class S3Utils {
+public class S3Utils extends BlobStoreUtils {
 
    @Inject
    RequestAuthorizeSignature signer;
@@ -86,19 +84,4 @@ public class S3Utils {
       return bucketName;
    }
 
-   public static String getContentAsStringAndClose(S3Object object) throws IOException {
-      checkNotNull(object, "s3Object");
-      checkNotNull(object.getData(), "s3Object.content");
-      Object o = object.getData();
-
-      if (o instanceof InputStream) {
-         String returnVal = Utils.toStringAndClose((InputStream) o);
-         if (object.getMetadata().getContentType().indexOf("xml") >= 0) {
-
-         }
-         return returnVal;
-      } else {
-         throw new IllegalArgumentException("Object type not supported: " + o.getClass().getName());
-      }
-   }
 }

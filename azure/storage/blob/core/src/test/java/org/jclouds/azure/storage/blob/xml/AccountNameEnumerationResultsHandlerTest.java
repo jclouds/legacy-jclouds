@@ -29,7 +29,8 @@ import java.io.InputStream;
 import java.net.URI;
 
 import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
-import org.jclouds.azure.storage.domain.MetadataList;
+import org.jclouds.azure.storage.domain.ArrayBoundedList;
+import org.jclouds.azure.storage.domain.BoundedList;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseSax;
 import org.testng.annotations.Test;
@@ -46,11 +47,11 @@ public class AccountNameEnumerationResultsHandlerTest extends BaseHandlerTest {
 
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/test_list_containers.xml");
-      MetadataList<ContainerMetadata> list = new MetadataList<ContainerMetadata>(null, null, 3,
-               ImmutableList.of(new ContainerMetadata(URI
-                        .create("http://myaccount.blob.core.windows.net/audio"), dateService
-                        .rfc822DateParse("Wed, 13 Aug 2008 20:39:39 GMT"), HttpUtils
-                        .fromHexString("0x8CACB9BD7C6B1B2")), new ContainerMetadata(URI
+      BoundedList<ContainerMetadata> list = new ArrayBoundedList<ContainerMetadata>(ImmutableList
+               .of(new ContainerMetadata(
+                        URI.create("http://myaccount.blob.core.windows.net/audio"), dateService
+                                 .rfc822DateParse("Wed, 13 Aug 2008 20:39:39 GMT"), HttpUtils
+                                 .fromHexString("0x8CACB9BD7C6B1B2")), new ContainerMetadata(URI
                         .create("http://myaccount.blob.core.windows.net/images"), dateService
                         .rfc822DateParse("Wed, 14 Aug 2008 20:39:39 GMT"), HttpUtils
                         .fromHexString("0x8CACB9BD7C1EEEC")), new ContainerMetadata(URI
@@ -58,20 +59,20 @@ public class AccountNameEnumerationResultsHandlerTest extends BaseHandlerTest {
                         .rfc822DateParse("Wed, 15 Aug 2008 20:39:39 GMT"), HttpUtils
                         .fromHexString("0x8CACB9BD7BACAC3"))
 
-               ), "video");
-      ParseSax<MetadataList<ContainerMetadata>> parser = parserFactory
+               ), null, null, 3, "video");
+      ParseSax<BoundedList<ContainerMetadata>> parser = parserFactory
                .createContainerMetadataListParser();
-      MetadataList<ContainerMetadata> result = parser.parse(is);
+      BoundedList<ContainerMetadata> result = parser.parse(is);
       assertEquals(result, list);
    }
 
    public void testApplyInputStreamWithOptions() {
       InputStream is = getClass().getResourceAsStream("/test_list_containers_options.xml");
-      MetadataList<ContainerMetadata> list = new MetadataList<ContainerMetadata>("prefix",
-               "marker", 1, ImmutableList.of(new ContainerMetadata(URI
-                        .create("http://myaccount.blob.core.windows.net/audio"), dateService
-                        .rfc822DateParse("Wed, 13 Aug 2008 20:39:39 GMT"), HttpUtils
-                        .fromHexString("0x8CACB9BD7C6B1B2")), new ContainerMetadata(URI
+      BoundedList<ContainerMetadata> list = new ArrayBoundedList<ContainerMetadata>(ImmutableList
+               .of(new ContainerMetadata(
+                        URI.create("http://myaccount.blob.core.windows.net/audio"), dateService
+                                 .rfc822DateParse("Wed, 13 Aug 2008 20:39:39 GMT"), HttpUtils
+                                 .fromHexString("0x8CACB9BD7C6B1B2")), new ContainerMetadata(URI
                         .create("http://myaccount.blob.core.windows.net/images"), dateService
                         .rfc822DateParse("Wed, 14 Aug 2008 20:39:39 GMT"), HttpUtils
                         .fromHexString("0x8CACB9BD7C1EEEC")), new ContainerMetadata(URI
@@ -79,10 +80,10 @@ public class AccountNameEnumerationResultsHandlerTest extends BaseHandlerTest {
                         .rfc822DateParse("Wed, 15 Aug 2008 20:39:39 GMT"), HttpUtils
                         .fromHexString("0x8CACB9BD7BACAC3"))
 
-               ), "video");
-      ParseSax<MetadataList<ContainerMetadata>> parser = parserFactory
+               ), "prefix", "marker", 1, "video");
+      ParseSax<BoundedList<ContainerMetadata>> parser = parserFactory
                .createContainerMetadataListParser();
-      MetadataList<ContainerMetadata> result = parser.parse(is);
+      BoundedList<ContainerMetadata> result = parser.parse(is);
       assertEquals(result, list);
    }
 }

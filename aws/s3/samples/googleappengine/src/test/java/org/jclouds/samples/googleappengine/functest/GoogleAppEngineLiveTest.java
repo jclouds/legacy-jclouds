@@ -24,81 +24,68 @@
 package org.jclouds.samples.googleappengine.functest;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import org.apache.commons.io.IOUtils;
-import org.jclouds.aws.s3.reference.S3Constants;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
-import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 
+import org.apache.commons.io.IOUtils;
+import org.jclouds.aws.s3.reference.S3Constants;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Parameters;
+import org.testng.annotations.Test;
 
 /**
- * Starts up the Google App Engine for Java Development environment and deploys
- * an application which tests S3.
- *
+ * Starts up the Google App Engine for Java Development environment and deploys an application which
+ * tests S3.
+ * 
  * @author Adrian Cole
  */
 @Test(groups = "live", sequential = true, testName = "functionalTests")
 public class GoogleAppEngineLiveTest {
 
-    GoogleDevServer server;
-    private static final String sysAWSAccessKeyId = System
-            .getProperty(S3Constants.PROPERTY_AWS_ACCESSKEYID);
-    private static final String sysAWSSecretAccessKey = System
-            .getProperty(S3Constants.PROPERTY_AWS_SECRETACCESSKEY);
-    private URL url;
+   GoogleDevServer server;
+   private URL url;
 
-    @BeforeTest
-    @Parameters({"warfile", "devappserver.address", "devappserver.port",
-            S3Constants.PROPERTY_AWS_ACCESSKEYID,
-            S3Constants.PROPERTY_AWS_SECRETACCESSKEY})
-    public void startDevAppServer(final String warfile, final String address,
-                                  final String port, @Optional String AWSAccessKeyId,
-                                  @Optional String AWSSecretAccessKey) throws Exception {
-        url = new URL(String.format("http://%1$s:%2$s", address, port));
+   @BeforeTest
+   @Parameters( { "warfile", "devappserver.address", "devappserver.port" })
+   public void startDevAppServer(final String warfile, final String address, final String port)
+            throws Exception {
+      url = new URL(String.format("http://%1$s:%2$s", address, port));
+      String account = System.getProperty("jclouds.test.user");
+      String key = System.getProperty("jclouds.test.key");
 
-        AWSAccessKeyId = AWSAccessKeyId != null ? AWSAccessKeyId
-                : sysAWSAccessKeyId;
-        AWSSecretAccessKey = AWSSecretAccessKey != null ? AWSSecretAccessKey
-                : sysAWSSecretAccessKey;
+      checkNotNull(account, "account");
+      checkNotNull(key, "key");
 
-        checkNotNull(AWSAccessKeyId, "AWSAccessKeyId");
-        checkNotNull(AWSSecretAccessKey, "AWSSecretAccessKey");
+      Properties props = new Properties();
+      props.put(S3Constants.PROPERTY_AWS_ACCESSKEYID, account);
+      props.put(S3Constants.PROPERTY_AWS_SECRETACCESSKEY, key);
+      server = new GoogleDevServer();
+      server.writePropertiesAndStartServer(address, port, warfile, props);
+   }
 
-        Properties props = new Properties();
-        props.put(S3Constants.PROPERTY_AWS_ACCESSKEYID, AWSAccessKeyId);
-        props.put(S3Constants.PROPERTY_AWS_SECRETACCESSKEY, AWSSecretAccessKey);
-        server = new GoogleDevServer();
-        server.writePropertiesAndStartServer(address, port, warfile, props);
-    }
+   @Test
+   public void shouldPass() throws InterruptedException, IOException {
+      InputStream i = url.openStream();
+      String string = IOUtils.toString(i);
+      assert string.indexOf("Welcome") >= 0 : string;
+   }
 
-    @Test
-    public void shouldPass() throws InterruptedException, IOException {
-        InputStream i = url.openStream();
-        String string = IOUtils.toString(i);
-        assert string.indexOf("Welcome") >= 0 : string;
-    }
+   @Test(invocationCount = 5, enabled = true)
+   public void testGuiceJCloudsSerial() throws InterruptedException, IOException {
+      URL gurl = new URL(url, "/guice/listbuckets.s3");
+      InputStream i = gurl.openStream();
+      String string = IOUtils.toString(i);
+      assert string.indexOf("List") >= 0 : string;
+   }
 
-    @Test(invocationCount = 5, enabled = true)
-    public void testGuiceJCloudsSerial() throws InterruptedException,
-            IOException {
-        URL gurl = new URL(url, "/guice/listbuckets.s3");
-        InputStream i = gurl.openStream();
-        String string = IOUtils.toString(i);
-        assert string.indexOf("List") >= 0 : string;
-    }
-
-    @Test(invocationCount = 50, enabled = true, threadPoolSize = 10)
-    public void testGuiceJCloudsParallel() throws InterruptedException,
-            IOException {
-        URL gurl = new URL(url, "/guice/listbuckets.s3");
-        InputStream i = gurl.openStream();
-        String string = IOUtils.toString(i);
-        assert string.indexOf("List") >= 0 : string;
-    }
+   @Test(invocationCount = 50, enabled = true, threadPoolSize = 10)
+   public void testGuiceJCloudsParallel() throws InterruptedException, IOException {
+      URL gurl = new URL(url, "/guice/listbuckets.s3");
+      InputStream i = gurl.openStream();
+      String string = IOUtils.toString(i);
+      assert string.indexOf("List") >= 0 : string;
+   }
 }

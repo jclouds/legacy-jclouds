@@ -28,7 +28,7 @@ import java.net.URI;
 
 import javax.annotation.Resource;
 
-import org.jclouds.aws.s3.S3Connection;
+import org.jclouds.aws.s3.S3BlobStore;
 import org.jclouds.aws.s3.filters.RequestAuthorizeSignature;
 import org.jclouds.aws.s3.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.s3.handlers.AWSRedirectionRetryHandler;
@@ -85,8 +85,8 @@ public class RestS3ConnectionModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected S3Connection provideS3Connection(URI uri, RestClientFactory factory) {
-      return factory.create(uri, S3Connection.class);
+   protected S3BlobStore provideS3Connection(URI uri, RestClientFactory factory) {
+      return factory.create(uri, S3BlobStore.class);
    }
 
    protected void bindErrorHandlers() {

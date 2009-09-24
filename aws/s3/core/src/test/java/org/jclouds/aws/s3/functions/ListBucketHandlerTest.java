@@ -26,7 +26,7 @@ package org.jclouds.aws.s3.functions;
 import static org.testng.Assert.assertEquals;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.aws.s3.domain.S3Bucket;
+import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.functions.ParseSax;
 import org.testng.annotations.BeforeMethod;
@@ -38,15 +38,15 @@ public class ListBucketHandlerTest extends BaseHandlerTest {
    public static final String listBucketWithSlashDelimiterAndCommonPrefixApps = "<ListBucketResult xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"> <Delimiter>/</Delimiter> <CommonPrefixes><Prefix>apps/</Prefix></CommonPrefixes></ListBucketResult>";
 
    @BeforeMethod
-   ParseSax<S3Bucket> createParser() {
-      ParseSax<S3Bucket> parser = parserFactory.createListBucketParser();
+   ParseSax<ListBucketResponse> createParser() {
+      ParseSax<ListBucketResponse> parser = parserFactory.createListBucketParser();
       return parser;
    }
 
    @Test
    public void testListMyBucketsWithDelimiterSlashAndCommonPrefixesAppsSlash() throws HttpException {
 
-      S3Bucket bucket = createParser().parse(
+      ListBucketResponse bucket = createParser().parse(
                IOUtils.toInputStream(listBucketWithSlashDelimiterAndCommonPrefixApps));
       assertEquals(bucket.getCommonPrefixes().iterator().next(), "apps/");
       assertEquals(bucket.getDelimiter(), "/");
@@ -56,9 +56,9 @@ public class ListBucketHandlerTest extends BaseHandlerTest {
    @Test
    public void testListMyBucketsWithPrefixAppsSlash() throws HttpException {
 
-      S3Bucket bucket = createParser().parse(IOUtils.toInputStream(listBucketWithPrefixAppsSlash));
+      ListBucketResponse bucket = createParser().parse(IOUtils.toInputStream(listBucketWithPrefixAppsSlash));
       assertEquals(bucket.getPrefix(), "apps/");
-      assertEquals(bucket.getMaxKeys(), 1000);
+      assertEquals(bucket.getMaxResults(), 1000);
       assert bucket.getMarker() == null;
 
    }

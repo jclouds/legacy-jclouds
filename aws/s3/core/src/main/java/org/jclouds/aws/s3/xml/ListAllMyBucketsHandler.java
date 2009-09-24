@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jclouds.aws.s3.domain.CanonicalUser;
-import org.jclouds.aws.s3.domain.S3Bucket;
+import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.DateService;
 
@@ -43,10 +43,10 @@ import com.google.inject.Inject;
  *      />
  * @author Adrian Cole
  */
-public class ListAllMyBucketsHandler extends ParseSax.HandlerWithResult<List<S3Bucket.Metadata>> {
+public class ListAllMyBucketsHandler extends ParseSax.HandlerWithResult<List<BucketMetadata>> {
 
-   private List<S3Bucket.Metadata> buckets = new ArrayList<S3Bucket.Metadata>();
-   private S3Bucket.Metadata currentS3Bucket;
+   private List<BucketMetadata> buckets = new ArrayList<BucketMetadata>();
+   private BucketMetadata currentS3Bucket;
    private CanonicalUser currentOwner;
    private StringBuilder currentText = new StringBuilder();
 
@@ -57,7 +57,7 @@ public class ListAllMyBucketsHandler extends ParseSax.HandlerWithResult<List<S3B
       this.dateParser = dateParser;
    }
 
-   public List<S3Bucket.Metadata> getResult() {
+   public List<BucketMetadata> getResult() {
       return buckets;
    }
 
@@ -70,7 +70,7 @@ public class ListAllMyBucketsHandler extends ParseSax.HandlerWithResult<List<S3B
          currentS3Bucket.setOwner(currentOwner);
          buckets.add(currentS3Bucket);
       } else if (qName.equals("Name")) {
-         currentS3Bucket = new S3Bucket.Metadata(currentText.toString());
+         currentS3Bucket = new BucketMetadata(currentText.toString());
       } else if (qName.equals("CreationDate")) {
          currentS3Bucket.setCreationDate(dateParser.iso8601DateParse(currentText.toString()));
       }

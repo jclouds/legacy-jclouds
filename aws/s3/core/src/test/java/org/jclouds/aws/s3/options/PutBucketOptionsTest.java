@@ -29,7 +29,7 @@ import static org.jclouds.aws.s3.options.PutBucketOptions.Builder.createIn;
 import static org.jclouds.aws.s3.options.PutBucketOptions.Builder.withBucketAcl;
 
 import org.jclouds.aws.s3.domain.CannedAccessPolicy;
-import org.jclouds.aws.s3.domain.S3Bucket.Metadata.LocationConstraint;
+import org.jclouds.aws.s3.domain.BucketMetadata.LocationConstraint;
 import org.jclouds.aws.s3.options.PutBucketOptions;
 import org.jclouds.aws.s3.reference.S3Headers;
 import static org.testng.Assert.assertEquals;

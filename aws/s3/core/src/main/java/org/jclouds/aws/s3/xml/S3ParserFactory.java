@@ -27,8 +27,9 @@ import java.util.List;
 
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.s3.domain.AccessControlList;
-import org.jclouds.aws.s3.domain.S3Bucket;
-import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.s3.domain.BucketMetadata;
+import org.jclouds.aws.s3.domain.ListBucketResponse;
+import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.xml.ErrorHandler;
 import org.jclouds.http.functions.ParseSax;
 
@@ -46,7 +47,7 @@ import com.google.inject.Provider;
 public class S3ParserFactory {
 
    @Inject
-   private GenericParseFactory<List<S3Bucket.Metadata>> parseListAllMyBucketsFactory;
+   private GenericParseFactory<List<BucketMetadata>> parseListAllMyBucketsFactory;
 
    @VisibleForTesting
    public static interface GenericParseFactory<T> {
@@ -59,12 +60,12 @@ public class S3ParserFactory {
    /**
     * @return a parser used to handle {@link org.jclouds.aws.s3.commands.ListOwnedBuckets} responses
     */
-   public ParseSax<List<S3Bucket.Metadata>> createListBucketsParser() {
+   public ParseSax<List<BucketMetadata>> createListBucketsParser() {
       return parseListAllMyBucketsFactory.create(ListAllMyBucketsHandlerprovider.get());
    }
 
    @Inject
-   private GenericParseFactory<S3Bucket> parseListBucketFactory;
+   private GenericParseFactory<ListBucketResponse> parseListBucketFactory;
 
    @Inject
    Provider<ListBucketHandler> ListBucketHandlerprovider;
@@ -72,12 +73,12 @@ public class S3ParserFactory {
    /**
     * @return a parser used to handle {@link org.jclouds.aws.s3.commands.ListBucket} responses
     */
-   public ParseSax<S3Bucket> createListBucketParser() {
+   public ParseSax<ListBucketResponse> createListBucketParser() {
       return parseListBucketFactory.create(ListBucketHandlerprovider.get());
    }
 
    @Inject
-   private GenericParseFactory<S3Object.Metadata> parseCopyObjectFactory;
+   private GenericParseFactory<ObjectMetadata> parseCopyObjectFactory;
 
    @Inject
    Provider<CopyObjectHandler> copyObjectHandlerProvider;
@@ -85,7 +86,7 @@ public class S3ParserFactory {
    /**
     * @return a parser used to handle {@link org.jclouds.aws.s3.commands.CopyObject} responses
     */
-   public ParseSax<S3Object.Metadata> createCopyObjectParser() {
+   public ParseSax<ObjectMetadata> createCopyObjectParser() {
       return parseCopyObjectFactory.create(copyObjectHandlerProvider.get());
    }
 

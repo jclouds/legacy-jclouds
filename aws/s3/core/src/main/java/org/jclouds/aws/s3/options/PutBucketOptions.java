@@ -26,7 +26,7 @@ package org.jclouds.aws.s3.options;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.aws.s3.domain.CannedAccessPolicy;
-import org.jclouds.aws.s3.domain.S3Bucket.Metadata.LocationConstraint;
+import org.jclouds.aws.s3.domain.BucketMetadata.LocationConstraint;
 import org.jclouds.aws.s3.reference.S3Headers;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 
@@ -88,7 +88,7 @@ public class PutBucketOptions extends BaseHttpRequestOptions {
     }
 
     /**
-     * @see PutBucketOptions#createIn(org.jclouds.aws.s3.domain.S3Bucket.Metadata.LocationConstraint)
+     * @see PutBucketOptions#createIn(org.jclouds.aws.s3.domain.BucketMetadata.LocationConstraint)
      */
     public LocationConstraint getLocationConstraint() {
         return constraint;
@@ -96,7 +96,7 @@ public class PutBucketOptions extends BaseHttpRequestOptions {
 
     public static class Builder {
         /**
-         * @see PutBucketOptions#createIn(org.jclouds.aws.s3.domain.S3Bucket.Metadata.LocationConstraint) 
+         * @see PutBucketOptions#createIn(org.jclouds.aws.s3.domain.BucketMetadata.LocationConstraint) 
          */
         public static PutBucketOptions createIn(LocationConstraint constraint) {
             PutBucketOptions options = new PutBucketOptions();

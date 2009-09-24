@@ -24,18 +24,23 @@
 package org.jclouds.aws.s3.internal;
 
 import java.io.IOException;
+import java.net.URI;
 
 import javax.annotation.Resource;
 
-import org.jclouds.aws.s3.S3Connection;
+import org.jclouds.aws.s3.S3BlobStore;
 import org.jclouds.aws.s3.S3Context;
-import org.jclouds.aws.s3.S3InputStreamMap;
-import org.jclouds.aws.s3.S3ObjectMap;
+import org.jclouds.aws.s3.domain.ObjectMetadata;
+import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.s3.reference.S3Constants;
+import org.jclouds.blobstore.BlobMap;
+import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.Logger;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.name.Named;
 
 /**
  * Uses a Guice Injector to configure the objects served by S3Context methods.
@@ -45,11 +50,11 @@ import com.google.inject.Injector;
  */
 public class GuiceS3Context implements S3Context {
    public interface S3ObjectMapFactory {
-      S3ObjectMap createMapView(String bucket);
+      BlobMap<ObjectMetadata, S3Object> createMapView(String bucket);
    }
 
    public interface S3InputStreamMapFactory {
-      S3InputStreamMap createMapView(String bucket);
+      InputStreamMap<ObjectMetadata> createMapView(String bucket);
    }
 
    @Resource
@@ -58,36 +63,41 @@ public class GuiceS3Context implements S3Context {
    private final S3InputStreamMapFactory s3InputStreamMapFactory;
    private final S3ObjectMapFactory s3ObjectMapFactory;
    private final Closer closer;
+   private final String account;
+   private final URI endPoint;
 
    @Inject
    private GuiceS3Context(Injector injector, Closer closer, S3ObjectMapFactory s3ObjectMapFactory,
-            S3InputStreamMapFactory s3InputStreamMapFactory) {
+            S3InputStreamMapFactory s3InputStreamMapFactory,
+            @Named(S3Constants.PROPERTY_AWS_ACCESSKEYID) String accessKey, URI endPoint) {
       this.injector = injector;
       this.s3InputStreamMapFactory = s3InputStreamMapFactory;
       this.s3ObjectMapFactory = s3ObjectMapFactory;
       this.closer = closer;
+      this.account = accessKey;
+      this.endPoint = endPoint;
    }
 
    /**
     * {@inheritDoc}
     */
-   public S3Connection getConnection() {
-      return injector.getInstance(S3Connection.class);
+   public S3BlobStore getApi() {
+      return injector.getInstance(S3BlobStore.class);
    }
 
    /**
     * {@inheritDoc}
     */
-   public S3InputStreamMap createInputStreamMap(String bucket) {
-      getConnection().putBucketIfNotExists(bucket);
+   public InputStreamMap<ObjectMetadata> createInputStreamMap(String bucket) {
+      getApi().createContainer(bucket);
       return s3InputStreamMapFactory.createMapView(bucket);
    }
 
    /**
     * {@inheritDoc}
     */
-   public S3ObjectMap createS3ObjectMap(String bucket) {
-      getConnection().putBucketIfNotExists(bucket);
+   public BlobMap<ObjectMetadata, S3Object> createBlobMap(String bucket) {
+      getApi().createContainer(bucket);
       return s3ObjectMapFactory.createMapView(bucket);
    }
 
@@ -102,6 +112,50 @@ public class GuiceS3Context implements S3Context {
       } catch (IOException e) {
          logger.error(e, "error closing content");
       }
+   }
+
+   @Override
+   public String toString() {
+      return "GuiceS3Context [account=" + account + ", endPoint=" + endPoint + "]";
+   }
+
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((account == null) ? 0 : account.hashCode());
+      result = prime * result + ((endPoint == null) ? 0 : endPoint.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      GuiceS3Context other = (GuiceS3Context) obj;
+      if (account == null) {
+         if (other.account != null)
+            return false;
+      } else if (!account.equals(other.account))
+         return false;
+      if (endPoint == null) {
+         if (other.endPoint != null)
+            return false;
+      } else if (!endPoint.equals(other.endPoint))
+         return false;
+      return true;
+   }
+
+   public String getAccount() {
+      return account;
+   }
+
+   public URI getEndPoint() {
+      return endPoint;
    }
 
 }

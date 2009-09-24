@@ -32,7 +32,7 @@ import javax.annotation.Resource;
 import org.jclouds.aws.s3.CreateListOwnedBuckets;
 import org.jclouds.aws.s3.S3Context;
 import org.jclouds.aws.s3.S3ContextFactory;
-import org.jclouds.aws.s3.domain.S3Bucket;
+import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.logging.Logger;
 
 /**
@@ -60,7 +60,7 @@ public class MainApp {
       // Variables
       S3Context context = null;
       CreateListOwnedBuckets listMyOwnBuckets = null;
-      List<S3Bucket.Metadata> myBuckets = null;
+      List<BucketMetadata> myBuckets = null;
 
       // Args
       String accesskeyid = args[0];
@@ -79,7 +79,7 @@ public class MainApp {
          // List bucket
          myBuckets = listMyOwnBuckets.list();
 
-         for (S3Bucket.Metadata bucketObj : myBuckets) {
+         for (BucketMetadata bucketObj : myBuckets) {
             System.out.println(String.format("  %1$s", bucketObj));
             System.out.println(String.format(": %1$s entries%n", context.createInputStreamMap(
                      bucketObj.getName()).size()));

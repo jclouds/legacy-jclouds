@@ -52,7 +52,7 @@ public class ChangeServerNameBinderTest {
    public void testPostIsIncorrect() {
       ChangeServerNameBinder binder = new ChangeServerNameBinder();
       injector.injectMembers(binder);
-      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("/"));
+      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
       binder.addEntityToRequest(ImmutableMap.of("name", "foo"), request);
    }
 
@@ -60,7 +60,7 @@ public class ChangeServerNameBinderTest {
    public void testMustBeString() {
       ChangeServerNameBinder binder = new ChangeServerNameBinder();
       injector.injectMembers(binder);
-      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("/"));
+      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
       binder.addEntityToRequest(new File("foo"), request);
    }
 
@@ -68,7 +68,7 @@ public class ChangeServerNameBinderTest {
    public void testCorrect() {
       ChangeServerNameBinder binder = new ChangeServerNameBinder();
       injector.injectMembers(binder);
-      HttpRequest request = new HttpRequest(HttpMethod.PUT, URI.create("/"));
+      HttpRequest request = new HttpRequest(HttpMethod.PUT, URI.create("http://localhost"));
       binder.addEntityToRequest("foo", request);
       assertEquals("{\"server\":{\"name\":\"foo\"}}", request.getEntity());
    }
@@ -77,7 +77,7 @@ public class ChangeServerNameBinderTest {
    public void testNullIsBad() {
       ChangeServerNameBinder binder = new ChangeServerNameBinder();
       injector.injectMembers(binder);
-      HttpRequest request = new HttpRequest(HttpMethod.PUT, URI.create("/"));
+      HttpRequest request = new HttpRequest(HttpMethod.PUT, URI.create("http://localhost"));
       binder.addEntityToRequest(null, request);
    }
 }

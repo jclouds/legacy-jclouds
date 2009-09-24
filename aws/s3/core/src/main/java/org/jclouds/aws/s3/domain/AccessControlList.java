@@ -31,7 +31,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -50,7 +49,6 @@ import com.google.common.collect.Collections2;
  * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/RESTAccessPolicy.html"/>
  */
 public class AccessControlList {
-   public static final AccessControlList NOT_FOUND = new AccessControlList();
 
    private CanonicalUser owner;
    private final List<Grant> grants = new ArrayList<Grant>();

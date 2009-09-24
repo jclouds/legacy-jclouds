@@ -23,9 +23,9 @@
  */
 package org.jclouds.aws.s3.options;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 
 import java.io.UnsupportedEncodingException;
 
@@ -39,6 +39,8 @@ import org.joda.time.DateTime;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 /**
  * Contains options supported in the REST API for the COPY object operation.
@@ -77,6 +79,13 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
    private Multimap<String, String> metadata;
 
    private CannedAccessPolicy acl = CannedAccessPolicy.PRIVATE;
+
+   private String metadataPrefix;
+
+   @Inject
+   public void setMetadataPrefix(@Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix) {
+      this.metadataPrefix = metadataPrefix;
+   }
 
    /**
     * Override the default ACL (private) with the specified one.
@@ -245,10 +254,14 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
 
    @Override
    public Multimap<String, String> buildRequestHeaders() {
+      checkState(metadataPrefix != null, "metadataPrefix should have been injected!");
       Multimap<String, String> returnVal = HashMultimap.create();
       returnVal.putAll(headers);
       if (metadata != null) {
-         returnVal.putAll(metadata);
+         for (String key : metadata.keySet()) {
+            returnVal.putAll(key.startsWith(metadataPrefix) ? key : metadataPrefix + key, metadata
+                     .get(key));
+         }
          returnVal.put("x-amz-metadata-directive", "REPLACE");
       }
       return returnVal;
@@ -259,10 +272,6 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
     */
    public CopyObjectOptions overrideMetadataWith(Multimap<String, String> metadata) {
       checkNotNull(metadata, "metadata");
-      for (String header : metadata.keySet()) {
-         checkArgument(header.startsWith("x-amz-meta-"),
-                  "Metadata keys must start with x-amz-meta-");
-      }
       this.metadata = metadata;
       return this;
    }

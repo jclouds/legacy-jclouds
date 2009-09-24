@@ -23,11 +23,15 @@
  */
 package org.jclouds.aws.s3.samples.test;
 
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.aws.s3.CreateListOwnedBuckets;
 import org.jclouds.aws.s3.S3Context;
+import org.jclouds.aws.s3.S3ContextBuilder;
 import org.jclouds.aws.s3.S3ContextFactory;
-import org.jclouds.aws.s3.config.StubS3ConnectionModule;
+import org.jclouds.aws.s3.config.StubS3BlobStoreModule;
 import org.jclouds.aws.s3.reference.S3Constants;
+import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Optional;
@@ -58,9 +62,10 @@ public class CreateListOwnedBucketsIntegrationTest {
       AWSSecretAccessKey = AWSSecretAccessKey != null ? AWSSecretAccessKey : sysAWSSecretAccessKey;
 
       if ((AWSAccessKeyId != null) && (AWSSecretAccessKey != null))
-         context = S3ContextFactory.createS3Context(AWSAccessKeyId, AWSSecretAccessKey);
+         context = S3ContextBuilder.newBuilder(AWSAccessKeyId, AWSSecretAccessKey).withSaxDebug()
+                  .relaxSSLHostname().withModules(new Log4JLoggingModule()).buildContext();
       else
-         context = S3ContextFactory.createS3Context("stub", "stub", new StubS3ConnectionModule());
+         context = S3ContextFactory.createS3Context("stub", "stub", new StubS3BlobStoreModule());
 
    }
 
@@ -89,7 +94,8 @@ public class CreateListOwnedBucketsIntegrationTest {
    public void tearDownClient() throws Exception {
 
       // Removes the bucket created for test purposes only
-      assert context.getConnection().deleteBucketIfEmpty(bucketPrefix + "needstoexist");
+      assert context.getApi().deleteContainer(bucketPrefix + "needstoexist").get(10,
+               TimeUnit.SECONDS);
 
       context.close();
       context = null;

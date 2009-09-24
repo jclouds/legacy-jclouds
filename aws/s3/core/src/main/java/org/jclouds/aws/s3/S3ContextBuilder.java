@@ -26,6 +26,7 @@ package org.jclouds.aws.s3;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_ACCESSKEYID;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_SECRETACCESSKEY;
+import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_ADDRESS;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_REDIRECTS;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_RETRIES;
@@ -63,7 +64,7 @@ import com.google.inject.Module;
  * @author Adrian Cole, Andrew Newdigate
  * @see S3Context
  */
-public class S3ContextBuilder extends CloudContextBuilder<S3Connection, S3Context> {
+public class S3ContextBuilder extends CloudContextBuilder<S3Context> {
 
    public S3ContextBuilder(Properties props) {
       super(props);
@@ -73,6 +74,7 @@ public class S3ContextBuilder extends CloudContextBuilder<S3Connection, S3Contex
       Properties properties = new Properties();
 
       properties.setProperty(PROPERTY_HTTP_ADDRESS, "s3.amazonaws.com");
+      properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "x-amz-meta-");
       properties.setProperty(PROPERTY_HTTP_SECURE, "true");
       properties.setProperty(PROPERTY_SAX_DEBUG, "false");
       properties.setProperty(PROPERTY_HTTP_MAX_RETRIES, "5");
@@ -97,7 +99,7 @@ public class S3ContextBuilder extends CloudContextBuilder<S3Connection, S3Contex
    public S3Context buildContext() {
       return buildInjector().getInstance(S3Context.class);
    }
-   
+
    protected void addParserModule(List<Module> modules) {
       modules.add(new S3ParserModule());
    }

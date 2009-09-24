@@ -23,17 +23,21 @@
  */
 package org.jclouds.rackspace.cloudfiles;
 
+import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.cloud.CloudContext;
 
 /**
  * Represents an authenticated context to Cloud Files.
  * 
  * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090311.pdf" />
- * @see CloudFilesConnection
+ * @see CloudFilesBlobStore
  * @see CloudContext
  * @author Adrian Cole
  * 
  */
-public interface CloudFilesContext extends CloudContext<CloudFilesConnection> {
+public interface CloudFilesContext extends
+         BlobStoreContext<CloudFilesBlobStore, BlobMetadata, Blob<BlobMetadata>> {
 
 }

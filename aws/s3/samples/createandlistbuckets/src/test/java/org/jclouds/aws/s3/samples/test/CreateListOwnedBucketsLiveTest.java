@@ -25,12 +25,10 @@ package org.jclouds.aws.s3.samples.test;
 
 import org.jclouds.aws.s3.CreateListOwnedBuckets;
 import org.jclouds.aws.s3.S3Context;
-import org.jclouds.aws.s3.S3ContextFactory;
-import org.jclouds.aws.s3.reference.S3Constants;
+import org.jclouds.aws.s3.S3ContextBuilder;
+import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 /**
@@ -41,22 +39,17 @@ import org.testng.annotations.Test;
 @Test(testName = "s3.createListOwnedBucketsLiveTest")
 public class CreateListOwnedBucketsLiveTest {
 
-   private S3Context context;
-   private final String sysAWSAccessKeyId = System
-            .getProperty(S3Constants.PROPERTY_AWS_ACCESSKEYID);
-   private final String sysAWSSecretAccessKey = System
-            .getProperty(S3Constants.PROPERTY_AWS_SECRETACCESSKEY);
    private String bucketPrefix = (System.getProperty("user.name") + "." + this.getClass()
             .getSimpleName()).toLowerCase();
+   private S3Context context;
 
    @BeforeClass(inheritGroups = false, groups = { "live" })
-   @Parameters( { S3Constants.PROPERTY_AWS_ACCESSKEYID, S3Constants.PROPERTY_AWS_SECRETACCESSKEY })
-   public void setUpTest(@Optional String AWSAccessKeyId, @Optional String AWSSecretAccessKey) {
+   public void setUpTest() {
+      String account = System.getProperty("jclouds.test.user");
+      String key = System.getProperty("jclouds.test.key");
 
-      AWSAccessKeyId = AWSAccessKeyId != null ? AWSAccessKeyId : sysAWSAccessKeyId;
-      AWSSecretAccessKey = AWSSecretAccessKey != null ? AWSSecretAccessKey : sysAWSSecretAccessKey;
-
-      context = S3ContextFactory.createS3Context(AWSAccessKeyId, AWSSecretAccessKey);
+      context = S3ContextBuilder.newBuilder(account, key).withSaxDebug().relaxSSLHostname()
+               .withModules(new Log4JLoggingModule()).buildContext();
 
    }
 
@@ -82,7 +75,7 @@ public class CreateListOwnedBucketsLiveTest {
    public void tearDownClient() throws Exception {
 
       // Removes the bucket created for test purposes only
-      context.getConnection().deleteBucketIfEmpty(bucketPrefix + "needstoexist");
+      context.getApi().deleteContainer(bucketPrefix + "needstoexist");
 
       context.close();
       context = null;

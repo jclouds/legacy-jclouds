@@ -27,7 +27,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jclouds.azure.storage.domain.MetadataList;
+import org.jclouds.azure.storage.domain.ArrayBoundedList;
+import org.jclouds.azure.storage.domain.BoundedList;
 import org.jclouds.azure.storage.queue.domain.QueueMetadata;
 import org.jclouds.http.functions.ParseSax;
 
@@ -42,7 +43,7 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 public class AccountNameEnumerationResultsHandler extends
-         ParseSax.HandlerWithResult<MetadataList<QueueMetadata>> {
+         ParseSax.HandlerWithResult<BoundedList<QueueMetadata>> {
 
    private List<QueueMetadata> metadata = new ArrayList<QueueMetadata>();
    private String prefix;
@@ -58,8 +59,8 @@ public class AccountNameEnumerationResultsHandler extends
    public AccountNameEnumerationResultsHandler() {
    }
 
-   public MetadataList<QueueMetadata> getResult() {
-      return new MetadataList<QueueMetadata>(prefix, marker, maxResults, metadata, nextMarker);
+   public BoundedList<QueueMetadata> getResult() {
+      return new ArrayBoundedList<QueueMetadata>(metadata, prefix, marker, maxResults, nextMarker);
    }
 
    public void endElement(String uri, String name, String qName) {

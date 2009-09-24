@@ -39,15 +39,18 @@
     <modules>
         <module>core</module>
     </modules>
+    <properties>
+        <jclouds.test.initializer>org.jclouds.azure.storage.blob.integration.AzureBlobTestInitializer</jclouds.test.initializer>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-keyvaluestore-core</artifactId>
+            <artifactId>jclouds-blobstore-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-keyvaluestore-core</artifactId>
+            <artifactId>jclouds-blobstore-core</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>

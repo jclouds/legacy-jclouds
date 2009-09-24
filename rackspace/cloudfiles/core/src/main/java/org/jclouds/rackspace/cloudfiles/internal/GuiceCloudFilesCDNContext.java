@@ -24,16 +24,20 @@
 package org.jclouds.rackspace.cloudfiles.internal;
 
 import java.io.IOException;
+import java.net.URI;
 
 import javax.annotation.Resource;
 
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.Logger;
+import org.jclouds.rackspace.Authentication;
 import org.jclouds.rackspace.cloudfiles.CloudFilesCDNConnection;
 import org.jclouds.rackspace.cloudfiles.CloudFilesCDNContext;
+import org.jclouds.rackspace.reference.RackspaceConstants;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.name.Named;
 
 /**
  * Uses a Guice Injector to configure the objects served by CloudFilesCDNContext methods.
@@ -47,20 +51,18 @@ public class GuiceCloudFilesCDNContext implements CloudFilesCDNContext {
    private Logger logger = Logger.NULL;
    private final Injector injector;
    private final Closer closer;
+   private final URI endPoint;
+   private final String account;
 
    @Inject
-   private GuiceCloudFilesCDNContext(Injector injector, Closer closer) {
+   private GuiceCloudFilesCDNContext(Injector injector, Closer closer,
+            @Authentication URI endPoint,
+            @Named(RackspaceConstants.PROPERTY_RACKSPACE_USER) String account) {
       this.injector = injector;
       this.closer = closer;
+      this.endPoint = endPoint;
+      this.account = account;
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   public CloudFilesCDNConnection getConnection() {
-      return injector.getInstance(CloudFilesCDNConnection.class);
-   }
-
 
    /**
     * {@inheritDoc}
@@ -73,6 +75,18 @@ public class GuiceCloudFilesCDNContext implements CloudFilesCDNContext {
       } catch (IOException e) {
          logger.error(e, "error closing content");
       }
+   }
+
+   public String getAccount() {
+      return account;
+   }
+
+   public CloudFilesCDNConnection getApi() {
+      return injector.getInstance(CloudFilesCDNConnection.class);
+   }
+
+   public URI getEndPoint() {
+      return endPoint;
    }
 
 }

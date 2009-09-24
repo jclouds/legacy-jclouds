@@ -23,8 +23,6 @@
  */
 package org.jclouds.aws.s3;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.io.File;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -33,11 +31,9 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 
-import org.jclouds.aws.s3.reference.S3Constants;
 import org.jets3t.service.S3ServiceException;
+import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import com.amazon.s3.AWSAuthConnection;
@@ -47,18 +43,18 @@ import com.amazon.s3.AWSAuthConnection;
  * 
  * @author Adrian Cole
  */
-@Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "s3.AmazonPerformanceLiveTest", groups = { "live" })
-public class AmazonPerformanceLiveTest extends BasePerformance {
+@Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "perftest.AmazonPerformanceLiveTest", groups = { "live" })
+public class AmazonPerformanceLiveTest extends BasePerformanceLiveTest {
    private AWSAuthConnection amzClient;
 
-   @BeforeClass(inheritGroups = false, groups = { "live" })
-   @Parameters( { S3Constants.PROPERTY_AWS_ACCESSKEYID, S3Constants.PROPERTY_AWS_SECRETACCESSKEY })
-   public void setUpAmazon(@Optional String AWSAccessKeyId, @Optional String AWSSecretAccessKey)
-            throws S3ServiceException {
-      AWSAccessKeyId = AWSAccessKeyId != null ? AWSAccessKeyId : sysAWSAccessKeyId;
-      AWSSecretAccessKey = AWSSecretAccessKey != null ? AWSSecretAccessKey : sysAWSSecretAccessKey;
-      amzClient = new AWSAuthConnection(checkNotNull(AWSAccessKeyId, "AWSAccessKeyId"),
-               checkNotNull(AWSSecretAccessKey, "AWSSecretAccessKey"), false);
+   @BeforeClass(groups = { "live" }, dependsOnMethods = "setUpResourcesOnThisThread")
+   protected void createLiveS3Context(ITestContext testContext) throws S3ServiceException {
+      if (testContext.getAttribute("jclouds.test.user") != null) {
+         amzClient = new AWSAuthConnection((String) testContext.getAttribute("jclouds.test.user"),
+                  (String) testContext.getAttribute("jclouds.test.key"), false);
+      } else {
+         throw new RuntimeException("not configured properly");
+      }
    }
 
    @Override

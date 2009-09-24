@@ -25,21 +25,29 @@ package org.jclouds.aws.s3;
 
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_ACCESSKEYID;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_SECRETACCESSKEY;
+import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_ADDRESS;
 import static org.testng.Assert.assertEquals;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.jclouds.aws.s3.config.RestS3ConnectionModule;
 import org.jclouds.aws.s3.config.S3ContextModule;
+import org.jclouds.aws.s3.domain.ObjectMetadata;
+import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.internal.GuiceS3Context;
 import org.jclouds.aws.s3.xml.config.S3ParserModule;
+import org.jclouds.blobstore.functions.ParseBlobFromHeadersAndHttpContent.BlobFactory;
+import org.jclouds.blobstore.functions.ParseBlobMetadataFromHeaders.BlobMetadataFactory;
 import org.jclouds.cloud.CloudContext;
 import org.testng.annotations.Test;
 
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of modules configured in S3ContextBuilder
@@ -51,20 +59,31 @@ public class S3ContextBuilderTest {
 
    public void testNewBuilder() {
       S3ContextBuilder builder = S3ContextBuilder.newBuilder("id", "secret");
+      assertEquals(builder.getProperties().getProperty(PROPERTY_USER_METADATA_PREFIX),
+               "x-amz-meta-");
       assertEquals(builder.getProperties().getProperty(PROPERTY_HTTP_ADDRESS), "s3.amazonaws.com");
       assertEquals(builder.getProperties().getProperty(PROPERTY_AWS_ACCESSKEYID), "id");
       assertEquals(builder.getProperties().getProperty(PROPERTY_AWS_SECRETACCESSKEY), "secret");
    }
 
    public void testBuildContext() {
-      CloudContext<S3Connection> context = S3ContextBuilder.newBuilder("id", "secret")
+      CloudContext<S3BlobStore> context = S3ContextBuilder.newBuilder("id", "secret")
                .buildContext();
       assertEquals(context.getClass(), GuiceS3Context.class);
+      assertEquals(context.getAccount(), "id");
+      assertEquals(context.getEndPoint(), URI.create("https://s3.amazonaws.com:443"));
    }
 
    public void testBuildInjector() {
       Injector i = S3ContextBuilder.newBuilder("id", "secret").buildInjector();
       assert i.getInstance(S3Context.class) != null;
+
+      assert i.getInstance(GuiceS3Context.S3ObjectMapFactory.class) != null;
+      assert i.getInstance(GuiceS3Context.S3InputStreamMapFactory.class) != null;
+      assert i.getInstance(Key.get(new TypeLiteral<BlobMetadataFactory<ObjectMetadata>>() {
+      })) != null;
+      assert i.getInstance(Key.get(new TypeLiteral<BlobFactory<ObjectMetadata, S3Object>>() {
+      })) != null;
    }
 
    protected void testAddParserModule() {

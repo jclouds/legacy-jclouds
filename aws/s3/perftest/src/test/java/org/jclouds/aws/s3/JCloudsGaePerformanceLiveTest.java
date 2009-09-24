@@ -25,12 +25,14 @@ package org.jclouds.aws.s3;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.gae.config.GaeHttpCommandExecutorServiceModule;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.testng.v6.Maps;
 
 import com.google.appengine.tools.development.ApiProxyLocalImpl;
 import com.google.apphosting.api.ApiProxy;
@@ -42,8 +44,8 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(enabled = false, sequential = true, testName = "s3.JCloudsGaePerformanceLiveTest", groups = { "disabled" })
-public class JCloudsGaePerformanceLiveTest extends BaseJCloudsPerformance {
+@Test(enabled = false, sequential = true, testName = "perftest.JCloudsGaePerformanceLiveTest", groups = { "disabled" })
+public class JCloudsGaePerformanceLiveTest extends BaseJCloudsPerformanceLiveTest {
 
    @Override
    @Test(enabled = false)
@@ -146,12 +148,6 @@ public class JCloudsGaePerformanceLiveTest extends BaseJCloudsPerformance {
       return super.putString(bucket, key, data, contentType);
    }
 
-   @Override
-   protected void deleteEverything() throws Exception {
-      setupApiProxy();
-      super.deleteEverything();
-   }
-
    @BeforeMethod
    void setupApiProxy() {
       ApiProxy.setEnvironmentForCurrentThread(new TestEnvironment());
@@ -193,6 +189,10 @@ public class JCloudsGaePerformanceLiveTest extends BaseJCloudsPerformance {
 
       public boolean isAdmin() {
          return false;
+      }
+
+      public Map<String, Object> getAttributes() {
+         return Maps.newHashMap();
       }
    }
 

@@ -33,18 +33,17 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
+import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerCDNMetadata;
 import org.jclouds.rackspace.cloudfiles.functions.ParseCdnUriFromHeaders;
 import org.jclouds.rackspace.cloudfiles.functions.ParseContainerCDNMetadataFromHeaders;
 import org.jclouds.rackspace.cloudfiles.functions.ParseContainerCDNMetadataListFromGsonResponse;
-import org.jclouds.rackspace.cloudfiles.functions.ReturnContainerCDNMetadataNotFoundOn404;
-import org.jclouds.rackspace.cloudfiles.functions.ReturnTrueOn202FalseOtherwise;
 import org.jclouds.rackspace.cloudfiles.options.ListCdnContainerOptions;
 import org.jclouds.rackspace.cloudfiles.reference.CloudFilesHeaders;
 import org.jclouds.rackspace.filters.AuthenticateRequest;
 import org.jclouds.rest.ExceptionParser;
-import org.jclouds.rest.Header;
-import org.jclouds.rest.Query;
+import org.jclouds.rest.Headers;
+import org.jclouds.rest.QueryParams;
 import org.jclouds.rest.RequestFilters;
 import org.jclouds.rest.ResponseParser;
 import org.jclouds.rest.SkipEncoding;
@@ -61,22 +60,23 @@ public interface CloudFilesCDNConnection {
 
    @GET
    @ResponseParser(ParseContainerCDNMetadataListFromGsonResponse.class)
-   @Query(key = "format", value = "json")
+   @QueryParams(keys = "format", values = "json")
    @Path("/")
-   List<ContainerCDNMetadata> listCDNContainers(ListCdnContainerOptions ... options);   
+   List<ContainerCDNMetadata> listCDNContainers(ListCdnContainerOptions... options);
 
-   // TODO: Container name is not included in CDN HEAD response headers, so we cannot populate it here.
+   // TODO: Container name is not included in CDN HEAD response headers, so we cannot populate it
+   // here.
    @HEAD
    @ResponseParser(ParseContainerCDNMetadataFromHeaders.class)
-   @ExceptionParser(ReturnContainerCDNMetadataNotFoundOn404.class)
+   @ExceptionParser(ThrowContainerNotFoundOn404.class)
    @Path("{container}")
    ContainerCDNMetadata getCDNMetadata(@PathParam("container") String container);
 
    @PUT
    @Path("{container}")
    @ResponseParser(ParseCdnUriFromHeaders.class)
-   String enableCDN(@PathParam("container") String container, 
-         @HeaderParam(CloudFilesHeaders.CDN_TTL) Long ttl);
+   String enableCDN(@PathParam("container") String container,
+            @HeaderParam(CloudFilesHeaders.CDN_TTL) Long ttl);
 
    @PUT
    @Path("{container}")
@@ -86,13 +86,12 @@ public interface CloudFilesCDNConnection {
    @POST
    @Path("{container}")
    @ResponseParser(ParseCdnUriFromHeaders.class)
-   String updateCDN(@PathParam("container") String container, 
-         @HeaderParam(CloudFilesHeaders.CDN_TTL) Long ttl);
+   String updateCDN(@PathParam("container") String container,
+            @HeaderParam(CloudFilesHeaders.CDN_TTL) Long ttl);
 
    @POST
    @Path("{container}")
-   @Header(key = CloudFilesHeaders.CDN_ENABLED, value = "False")
-   @ResponseParser(ReturnTrueOn202FalseOtherwise.class)
+   @Headers(keys = CloudFilesHeaders.CDN_ENABLED, values = "False")
    boolean disableCDN(@PathParam("container") String container);
 
 }

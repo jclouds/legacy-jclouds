@@ -52,7 +52,7 @@ public class CreateImageBinderTest {
    public void testMustBeMap() {
       CreateImageBinder binder = new CreateImageBinder();
       injector.injectMembers(binder);
-      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("/"));
+      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
       binder.addEntityToRequest(new File("foo"), request);
    }
 
@@ -60,7 +60,7 @@ public class CreateImageBinderTest {
    public void testCorrect() {
       CreateImageBinder binder = new CreateImageBinder();
       injector.injectMembers(binder);
-      HttpRequest request = new HttpRequest(HttpMethod.PUT, URI.create("/"));
+      HttpRequest request = new HttpRequest(HttpMethod.PUT, URI.create("http://localhost"));
       binder.addEntityToRequest(ImmutableMap.of("imageName", "foo", "serverId", "2"), request);
       assertEquals("{\"image\":{\"serverId\":2,\"name\":\"foo\"}}", request.getEntity());
    }
@@ -69,7 +69,7 @@ public class CreateImageBinderTest {
    public void testNullIsBad() {
       CreateImageBinder binder = new CreateImageBinder();
       injector.injectMembers(binder);
-      HttpRequest request = new HttpRequest(HttpMethod.PUT, URI.create("/"));
+      HttpRequest request = new HttpRequest(HttpMethod.PUT, URI.create("http://localhost"));
       binder.addEntityToRequest(null, request);
    }
 }

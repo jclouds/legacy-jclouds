@@ -1,0 +1,12 @@
+[ 
+{"name":"test_obj_1", 
+"hash":"4281c348eaf83e70ddce0e07221c3d28", 
+"bytes":14, 
+"content_type":"application\/octet-stream", 
+"last_modified":"2009-02-03T05:26:32.612278"}, 
+{"name":"test_obj_2", 
+"hash":"b039efe731ad111bc1b0ef221c3849d0", 
+"bytes":64, 
+"content_type":"application\/octet-stream", 
+"last_modified":"2009-02-03T05:26:32.612278"} 
+] 
