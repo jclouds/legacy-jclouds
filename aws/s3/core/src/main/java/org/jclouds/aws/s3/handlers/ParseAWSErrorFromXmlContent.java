@@ -24,19 +24,17 @@
 package org.jclouds.aws.s3.handlers;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.s3.util.S3Utils;
-import org.jclouds.aws.s3.xml.S3ParserFactory;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Utils;
-
-import javax.inject.Inject;
 
 /**
  * This will parse and set an appropriate exception on the command object.
@@ -49,13 +47,11 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private final S3ParserFactory parserFactory;
    private final S3Utils utils;
 
    @Inject
-   public ParseAWSErrorFromXmlContent(S3Utils utils, S3ParserFactory parserFactory) {
+   public ParseAWSErrorFromXmlContent(S3Utils utils) {
       this.utils = utils;
-      this.parserFactory = parserFactory;
    }
 
    public void handleError(HttpCommand command, HttpResponse response) {
@@ -66,8 +62,7 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
          if (content != null) {
             try {
                if (content.indexOf('<') >= 0) {
-                  AWSError error = utils.parseAWSErrorFromContent(parserFactory, command, response,
-                           content);
+                  AWSError error = utils.parseAWSErrorFromContent(command, response, content);
                   command.setException(new AWSResponseException(command, response, error));
                } else {
                   command.setException(new HttpResponseException(command, response, content));

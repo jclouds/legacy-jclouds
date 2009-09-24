@@ -26,15 +26,17 @@ package org.jclouds.azure.storage.util;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
+
 import org.jclouds.azure.storage.domain.AzureStorageError;
 import org.jclouds.azure.storage.filters.SharedKeyAuthentication;
 import org.jclouds.azure.storage.reference.AzureStorageHeaders;
-import org.jclouds.azure.storage.xml.AzureStorageParserFactory;
+import org.jclouds.azure.storage.xml.ErrorHandler;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
-
-import javax.inject.Inject;
+import org.jclouds.http.functions.ParseSax;
 
 /**
  * Encryption, Hashing, and IO Utilities needed to sign and verify Azure Storage requests and
@@ -46,11 +48,17 @@ public class AzureStorageUtils {
 
    @Inject
    SharedKeyAuthentication signer;
+  
+   @Inject
+   ParseSax.Factory factory;
 
-   public AzureStorageError parseAzureStorageErrorFromContent(
-            AzureStorageParserFactory parserFactory, HttpCommand command, HttpResponse response,
-            InputStream content) throws HttpException {
-      AzureStorageError error = parserFactory.createErrorParser().parse(content);
+   @Inject
+   Provider<ErrorHandler> errorHandlerProvider;
+
+   public AzureStorageError parseAzureStorageErrorFromContent(HttpCommand command,
+            HttpResponse response, InputStream content) throws HttpException {
+      AzureStorageError error = (AzureStorageError) factory.create(errorHandlerProvider.get())
+               .parse(content);
       error.setRequestId(response.getFirstHeaderOrNull(AzureStorageHeaders.REQUEST_ID));
       if ("AuthenticationFailed".equals(error.getCode())) {
          error.setStringSigned(signer.createStringToSign(command.getRequest()));
@@ -60,11 +68,10 @@ public class AzureStorageUtils {
 
    }
 
-   public AzureStorageError parseAzureStorageErrorFromContent(
-            AzureStorageParserFactory parserFactory, HttpCommand command, HttpResponse response,
-            String content) throws HttpException {
-      return parseAzureStorageErrorFromContent(parserFactory, command, response,
-               new ByteArrayInputStream(content.getBytes()));
+   public AzureStorageError parseAzureStorageErrorFromContent(HttpCommand command,
+            HttpResponse response, String content) throws HttpException {
+      return parseAzureStorageErrorFromContent(command, response, new ByteArrayInputStream(content
+               .getBytes()));
    }
 
 }

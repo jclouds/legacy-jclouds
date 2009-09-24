@@ -23,6 +23,8 @@
  */
 package org.jclouds.http.handlers;
 
+import javax.inject.Inject;
+
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
@@ -31,7 +33,6 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 
 import com.google.common.annotations.VisibleForTesting;
-import javax.inject.Inject;
 
 /**
  * Delegates to {@link HttpRetryHandler HttpRetryHandlers} who are annotated according to the
@@ -57,9 +58,9 @@ public class DelegatingRetryHandler implements HttpRetryHandler {
    HttpRetryHandler serverErrorRetryHandler;
 
    public DelegatingRetryHandler() {
-      BackoffLimitedRetryHandler backOff = new BackoffLimitedRetryHandler(5);
+      BackoffLimitedRetryHandler backOff = new BackoffLimitedRetryHandler();
       this.serverErrorRetryHandler = backOff;
-      this.redirectionRetryHandler = new RedirectionRetryHandler(backOff, 5);
+      this.redirectionRetryHandler = new RedirectionRetryHandler(backOff);
       this.clientErrorRetryHandler = HttpRetryHandler.NEVER_RETRY;
    }
 

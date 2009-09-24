@@ -48,7 +48,7 @@ import com.google.common.base.Function;
 public class BackoffLimitedRetryHandlerTest {
    private static final URI END_POINT = URI.create("http://localhost:8080");
 
-   BackoffLimitedRetryHandler handler = new BackoffLimitedRetryHandler(5);
+   BackoffLimitedRetryHandler handler = new BackoffLimitedRetryHandler();
 
    @Test
    void testExponentialBackoffDelay() throws InterruptedException {

@@ -24,16 +24,16 @@
 package org.jclouds.http.handlers;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpCommand;
+import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.TransformingHttpCommand;
 import org.jclouds.logging.Logger;
-
-import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * Allow replayable request to be retried a limited number of times, and impose an exponential
@@ -76,15 +76,12 @@ import javax.inject.Named;
  * @author James Murty
  */
 public class BackoffLimitedRetryHandler implements HttpRetryHandler {
-   private final int retryCountLimit;
+   @Inject(optional = true)
+   @Named(HttpConstants.PROPERTY_HTTP_MAX_RETRIES)
+   private int retryCountLimit = 5;
 
    @Resource
    protected Logger logger = Logger.NULL;
-
-   @Inject
-   public BackoffLimitedRetryHandler(@Named("jclouds.http.max-retries") int retryCountLimit) {
-      this.retryCountLimit = retryCountLimit;
-   }
 
    public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
       IOUtils.closeQuietly(response.getContent());

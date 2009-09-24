@@ -28,6 +28,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 
 import org.jclouds.azure.storage.domain.AzureStorageError;
+import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.testng.annotations.Test;
 
@@ -39,9 +40,16 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "azurestorage.ErrorHandlerTest")
 public class ErrorHandlerTest extends BaseHandlerTest {
 
+   @SuppressWarnings("unchecked")
+   ParseSax<AzureStorageError> createParser() {
+      ParseSax<AzureStorageError> parser = (ParseSax<AzureStorageError>) factory.create(injector
+               .getInstance(ErrorHandler.class));
+      return parser;
+   }
+
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/test_error.xml");
-      ParseSax<AzureStorageError> parser = parserFactory.createErrorParser();
+      ParseSax<AzureStorageError> parser = createParser();
       AzureStorageError result = parser.parse(is);
       assertEquals(result.getCode(), "AuthenticationFailed");
    }

@@ -28,18 +28,19 @@ import java.io.IOException;
 import java.net.URI;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriBuilder;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpCommand;
+import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.logging.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
-import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * Handles Retryable responses with error codes in the 3xx range
@@ -47,7 +48,9 @@ import javax.inject.Named;
  * @author Adrian Cole
  */
 public class RedirectionRetryHandler implements HttpRetryHandler {
-   protected final int retryCountLimit;
+   @Inject(optional = true)
+   @Named(HttpConstants.PROPERTY_HTTP_MAX_REDIRECTS)
+   protected int retryCountLimit = 5;
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -55,9 +58,7 @@ public class RedirectionRetryHandler implements HttpRetryHandler {
    protected final BackoffLimitedRetryHandler backoffHandler;
 
    @Inject
-   public RedirectionRetryHandler(BackoffLimitedRetryHandler backoffHandler,
-            @Named("jclouds.http.max-redirects") int retryCountLimit) {
-      this.retryCountLimit = retryCountLimit;
+   public RedirectionRetryHandler(BackoffLimitedRetryHandler backoffHandler) {
       this.backoffHandler = backoffHandler;
    }
 

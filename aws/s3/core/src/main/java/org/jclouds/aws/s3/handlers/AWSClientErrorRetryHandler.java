@@ -24,19 +24,18 @@
 package org.jclouds.aws.s3.handlers;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.s3.util.S3Utils;
-import org.jclouds.aws.s3.xml.S3ParserFactory;
 import org.jclouds.http.HttpCommand;
+import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Utils;
-
-import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * Handles Retryable responses with error codes in the 3xx range
@@ -44,20 +43,19 @@ import javax.inject.Named;
  * @author Adrian Cole
  */
 public class AWSClientErrorRetryHandler implements HttpRetryHandler {
-   private final S3ParserFactory parserFactory;
 
-   private final int retryCountLimit;
+   @Inject(optional = true)
+   @Named(HttpConstants.PROPERTY_HTTP_MAX_RETRIES)
+   private int retryCountLimit = 5;
+
    private final S3Utils utils;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public AWSClientErrorRetryHandler(S3Utils utils, S3ParserFactory parserFactory,
-            @Named("jclouds.http.max-retries") int retryCountLimit) {
+   public AWSClientErrorRetryHandler(S3Utils utils) {
       this.utils = utils;
-      this.retryCountLimit = retryCountLimit;
-      this.parserFactory = parserFactory;
    }
 
    public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
@@ -67,8 +65,7 @@ public class AWSClientErrorRetryHandler implements HttpRetryHandler {
          byte[] content = Utils.closeConnectionButKeepContentStream(response);
          command.incrementRedirectCount();
          try {
-            AWSError error = utils.parseAWSErrorFromContent(parserFactory, command, response,
-                     new String(content));
+            AWSError error = utils.parseAWSErrorFromContent(command, response, new String(content));
             if ("RequestTimeout".equals(error.getCode())
                      || "OperationAborted".equals(error.getCode())) {
                return true;

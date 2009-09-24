@@ -21,40 +21,31 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.azure.storage.xml;
+package org.jclouds.http.functions;
 
-import org.jclouds.azure.storage.domain.AzureStorageError;
-import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.config.ParserModule;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
 
-import com.google.common.annotations.VisibleForTesting;
-import javax.inject.Inject;
-import javax.inject.Provider;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
-/**
- * Creates Parsers needed to interpret Azure Storage Service messages. This class uses guice
- * assisted inject, which mandates the creation of many single-method interfaces. These interfaces
- * are not intended for public api.
- * 
- * @author Adrian Cole
- */
-public class AzureStorageParserFactory {
+public class BaseHandlerTest {
 
-   @VisibleForTesting
-   public static interface GenericParseFactory<T> {
-      ParseSax<T> create(ParseSax.HandlerWithResult<T> handler);
+   protected Injector injector = null;
+   protected ParseSax.Factory factory;
+
+   @BeforeTest
+   protected void setUpInjector() {
+      injector = Guice.createInjector(new ParserModule());
+      factory = injector.getInstance(ParseSax.Factory.class);
+      assert factory != null;
    }
 
-   @Inject
-   private GenericParseFactory<AzureStorageError> parseErrorFactory;
-
-   @Inject
-   Provider<ErrorHandler> errorHandlerProvider;
-
-   /**
-    * @return a parser used to handle error conditions.
-    */
-   public ParseSax<AzureStorageError> createErrorParser() {
-      return parseErrorFactory.create(errorHandlerProvider.get());
+   @AfterTest
+   protected void tearDownInjector() {
+      factory = null;
+      injector = null;
    }
 
 }

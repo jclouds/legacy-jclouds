@@ -31,8 +31,11 @@ import java.net.URI;
 import org.jclouds.azure.storage.blob.domain.ArrayListBlobsResponse;
 import org.jclouds.azure.storage.blob.domain.BlobMetadata;
 import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
+import org.jclouds.azure.storage.domain.BoundedList;
 import org.jclouds.http.HttpUtils;
-import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.BaseHandlerTest;
+import org.jclouds.util.DateService;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -44,7 +47,17 @@ import com.google.common.collect.ImmutableList;
  */
 @Test(groups = "unit", testName = "azureblob.ContainerNameEnumerationResultsHandlerTest")
 public class ContainerNameEnumerationResultsHandlerTest extends BaseHandlerTest {
+   private DateService dateService;
 
+   @BeforeTest
+   @Override
+   protected void setUpInjector() {
+      super.setUpInjector();
+      dateService = injector.getInstance(DateService.class);
+      assert dateService != null;
+   }
+
+   @SuppressWarnings("unchecked")
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/test_list_blobs.xml");
       ListBlobsResponse list = new ArrayListBlobsResponse(URI
@@ -65,8 +78,10 @@ public class ContainerNameEnumerationResultsHandlerTest extends BaseHandlerTest 
                         "text/plain; charset=UTF-8", null, null, null)
 
       ), null, null, 4, "newblob2.txt", null, "myfolder/");
-      ParseSax<ListBlobsResponse> parser = parserFactory.createListBlobsResponseParser();
-      ListBlobsResponse result = parser.parse(is);
+      
+      BoundedList<ListBlobsResponse> result = (BoundedList<ListBlobsResponse>) factory.create(
+               injector.getInstance(ContainerNameEnumerationResultsHandler.class)).parse(is);
+      
       assertEquals(result, list);
    }
 }

@@ -32,7 +32,9 @@ import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
 import org.jclouds.azure.storage.domain.ArrayBoundedList;
 import org.jclouds.azure.storage.domain.BoundedList;
 import org.jclouds.http.HttpUtils;
-import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.BaseHandlerTest;
+import org.jclouds.util.DateService;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -45,6 +47,17 @@ import com.google.common.collect.ImmutableList;
 @Test(groups = "unit", testName = "azureblob.AccountNameEnumerationResultsHandlerTest")
 public class AccountNameEnumerationResultsHandlerTest extends BaseHandlerTest {
 
+   private DateService dateService;
+
+   @BeforeTest
+   @Override
+   protected void setUpInjector() {
+      super.setUpInjector();
+      dateService = injector.getInstance(DateService.class);
+      assert dateService != null;
+   }
+
+   @SuppressWarnings("unchecked")
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/test_list_containers.xml");
       BoundedList<ContainerMetadata> list = new ArrayBoundedList<ContainerMetadata>(ImmutableList
@@ -60,12 +73,14 @@ public class AccountNameEnumerationResultsHandlerTest extends BaseHandlerTest {
                         .fromHexString("0x8CACB9BD7BACAC3"))
 
                ), null, null, 3, "video");
-      ParseSax<BoundedList<ContainerMetadata>> parser = parserFactory
-               .createContainerMetadataListParser();
-      BoundedList<ContainerMetadata> result = parser.parse(is);
+
+      BoundedList<ContainerMetadata> result = (BoundedList<ContainerMetadata>) factory.create(
+               injector.getInstance(AccountNameEnumerationResultsHandler.class)).parse(is);
+
       assertEquals(result, list);
    }
 
+   @SuppressWarnings("unchecked")
    public void testApplyInputStreamWithOptions() {
       InputStream is = getClass().getResourceAsStream("/test_list_containers_options.xml");
       BoundedList<ContainerMetadata> list = new ArrayBoundedList<ContainerMetadata>(ImmutableList
@@ -81,9 +96,8 @@ public class AccountNameEnumerationResultsHandlerTest extends BaseHandlerTest {
                         .fromHexString("0x8CACB9BD7BACAC3"))
 
                ), "prefix", "marker", 1, "video");
-      ParseSax<BoundedList<ContainerMetadata>> parser = parserFactory
-               .createContainerMetadataListParser();
-      BoundedList<ContainerMetadata> result = parser.parse(is);
+      BoundedList<ContainerMetadata> result = (BoundedList<ContainerMetadata>) factory.create(
+               injector.getInstance(AccountNameEnumerationResultsHandler.class)).parse(is);
       assertEquals(result, list);
    }
 }

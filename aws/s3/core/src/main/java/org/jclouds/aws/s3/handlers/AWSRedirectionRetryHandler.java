@@ -23,13 +23,13 @@
  */
 package org.jclouds.aws.s3.handlers;
 
+import javax.inject.Inject;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.aws.s3.util.S3Utils;
-import org.jclouds.aws.s3.xml.S3ParserFactory;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
@@ -37,24 +37,18 @@ import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.http.handlers.RedirectionRetryHandler;
 import org.jclouds.util.Utils;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 /**
  * Handles Retryable responses with error codes in the 3xx range
  * 
  * @author Adrian Cole
  */
 public class AWSRedirectionRetryHandler extends RedirectionRetryHandler {
-   private final S3ParserFactory parserFactory;
    private final S3Utils utils;
 
    @Inject
-   public AWSRedirectionRetryHandler(BackoffLimitedRetryHandler backoffHandler, S3Utils utils,
-            S3ParserFactory parserFactory, @Named("jclouds.http.max-redirects") int retryCountLimit) {
-      super(backoffHandler, retryCountLimit);
+   public AWSRedirectionRetryHandler(BackoffLimitedRetryHandler backoffHandler, S3Utils utils) {
+      super(backoffHandler);
       this.utils = utils;
-      this.parserFactory = parserFactory;
    }
 
    @Override
@@ -68,8 +62,8 @@ public class AWSRedirectionRetryHandler extends RedirectionRetryHandler {
          } else {
             command.incrementRedirectCount();
             try {
-               AWSError error = utils.parseAWSErrorFromContent(parserFactory, command, response,
-                        new String(content));
+               AWSError error = utils.parseAWSErrorFromContent(command, response, new String(
+                        content));
                String host = error.getDetails().get(S3Constants.ENDPOINT);
                if (host != null) {
                   if (host.equals(command.getRequest().getEndpoint().getHost())) {

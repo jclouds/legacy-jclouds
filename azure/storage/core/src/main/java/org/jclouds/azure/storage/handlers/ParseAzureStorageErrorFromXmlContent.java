@@ -24,19 +24,17 @@
 package org.jclouds.azure.storage.handlers;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 
 import org.jclouds.azure.storage.AzureStorageResponseException;
 import org.jclouds.azure.storage.domain.AzureStorageError;
 import org.jclouds.azure.storage.util.AzureStorageUtils;
-import org.jclouds.azure.storage.xml.AzureStorageParserFactory;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Utils;
-
-import javax.inject.Inject;
 
 /**
  * This will parse and set an appropriate exception on the command object.
@@ -49,13 +47,11 @@ public class ParseAzureStorageErrorFromXmlContent implements HttpErrorHandler {
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private final AzureStorageParserFactory parserFactory;
    private final AzureStorageUtils utils;
 
    @Inject
-   public ParseAzureStorageErrorFromXmlContent(AzureStorageUtils utils, AzureStorageParserFactory parserFactory) {
+   public ParseAzureStorageErrorFromXmlContent(AzureStorageUtils utils) {
       this.utils = utils;
-      this.parserFactory = parserFactory;
    }
 
    public void handleError(HttpCommand command, HttpResponse response) {
@@ -66,8 +62,8 @@ public class ParseAzureStorageErrorFromXmlContent implements HttpErrorHandler {
          if (content != null) {
             try {
                if (content.indexOf('<') >= 0) {
-                  AzureStorageError error = utils.parseAzureStorageErrorFromContent(parserFactory, command, response,
-                           content);
+                  AzureStorageError error = utils.parseAzureStorageErrorFromContent(command,
+                           response, content);
                   command.setException(new AzureStorageResponseException(command, response, error));
                } else {
                   command.setException(new HttpResponseException(command, response, content));

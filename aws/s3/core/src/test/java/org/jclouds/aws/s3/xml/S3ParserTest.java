@@ -39,8 +39,6 @@ import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.CanonicalUser;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
-import org.jclouds.aws.s3.xml.S3ParserFactory;
-import org.jclouds.aws.s3.xml.config.S3ParserModule;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseSax;
@@ -62,23 +60,22 @@ import com.google.inject.Injector;
 @Test(groups = { "performance" }, testName = "s3.S3ParserTest")
 public class S3ParserTest extends PerformanceTest {
    Injector injector = null;
-
-   public static final String listAllMyBucketsResultOn200 = "<ListAllMyBucketsResult xmlns=\"http://s3.amazonaws.com/doc/callables/\"><Owner><ID>e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0</ID></Owner><Buckets><Bucket><Name>adrianjbosstest</Name><CreationDate>2009-03-12T02:00:07.000Z</CreationDate></Bucket><Bucket><Name>adrianjbosstest2</Name><CreationDate>2009-03-12T02:00:09.000Z</CreationDate></Bucket></Buckets></ListAllMyBucketsResult>";
-
-   S3ParserFactory parserFactory = null;
+   ParseSax.Factory factory;
 
    @BeforeTest
    protected void setUpInjector() {
-      injector = Guice.createInjector(new ParserModule(), new S3ParserModule());
-      parserFactory = injector.getInstance(S3ParserFactory.class);
-      assert parserFactory != null;
+      injector = Guice.createInjector(new ParserModule());
+      factory = injector.getInstance(ParseSax.Factory.class);
+      assert factory != null;
    }
 
    @AfterTest
    protected void tearDownInjector() {
-      parserFactory = null;
+      factory = null;
       injector = null;
    }
+
+   public static final String listAllMyBucketsResultOn200 = "<ListAllMyBucketsResult xmlns=\"http://s3.amazonaws.com/doc/callables/\"><Owner><ID>e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0</ID></Owner><Buckets><Bucket><Name>adrianjbosstest</Name><CreationDate>2009-03-12T02:00:07.000Z</CreationDate></Bucket><Bucket><Name>adrianjbosstest2</Name><CreationDate>2009-03-12T02:00:09.000Z</CreationDate></Bucket></Buckets></ListAllMyBucketsResult>";
 
    @Test
    void testParseListAllMyBucketsSerialResponseTime() throws HttpException {
@@ -86,8 +83,10 @@ public class S3ParserTest extends PerformanceTest {
          runParseListAllMyBuckets();
    }
 
+   @SuppressWarnings("unchecked")
    private List<BucketMetadata> runParseListAllMyBuckets() throws HttpException {
-      return parserFactory.createListBucketsParser().parse(
+      return (List<BucketMetadata>) factory.create(
+               injector.getInstance(ListAllMyBucketsHandler.class)).parse(
                IOUtils.toInputStream(listAllMyBucketsResultOn200));
    }
 
@@ -148,15 +147,15 @@ public class S3ParserTest extends PerformanceTest {
    }
 
    private ListBucketResponse runParseListContainerResult() throws HttpException {
-      ParseSax<ListBucketResponse> parser = parserFactory.createListBucketParser();
-      return parser.parse(IOUtils.toInputStream(listContainerResult));
+      return (ListBucketResponse) factory.create(injector.getInstance(ListBucketHandler.class))
+               .parse(IOUtils.toInputStream(listContainerResult));
    }
 
    public static final String successfulCopyObject200 = "<CopyObjectResult xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><LastModified>2009-03-19T13:23:27.000Z</LastModified><ETag>\"92836a3ea45a6984d1b4d23a747d46bb\"</ETag></CopyObjectResult>";
 
    private ObjectMetadata runParseCopyObjectResult() throws HttpException {
-      ParseSax<ObjectMetadata> parser = parserFactory.createCopyObjectParser();
-      return parser.parse(IOUtils.toInputStream(successfulCopyObject200));
+      return (ObjectMetadata) factory.create(injector.getInstance(CopyObjectHandler.class)).parse(
+               IOUtils.toInputStream(successfulCopyObject200));
    }
 
    public void testCanParseCopyObjectResult() throws HttpException, UnsupportedEncodingException {

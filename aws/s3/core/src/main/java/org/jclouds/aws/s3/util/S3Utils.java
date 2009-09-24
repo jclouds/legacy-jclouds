@@ -29,17 +29,19 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
+
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.s3.filters.RequestAuthorizeSignature;
 import org.jclouds.aws.s3.reference.S3Headers;
-import org.jclouds.aws.s3.xml.S3ParserFactory;
+import org.jclouds.aws.xml.ErrorHandler;
 import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
-
-import javax.inject.Inject;
+import org.jclouds.http.functions.ParseSax;
 
 /**
  * Encryption, Hashing, and IO Utilities needed to sign and verify S3 requests and responses.
@@ -51,23 +53,29 @@ public class S3Utils extends BlobStoreUtils {
    @Inject
    RequestAuthorizeSignature signer;
 
-   public AWSError parseAWSErrorFromContent(S3ParserFactory parserFactory, HttpCommand command,
-            HttpResponse response, InputStream content) throws HttpException {
-      AWSError error = parserFactory.createErrorParser().parse(content);
-      error.setRequestId(response.getFirstHeaderOrNull(S3Headers.REQUEST_ID));
+   @Inject
+   ParseSax.Factory factory;
+
+   @Inject
+   Provider<ErrorHandler> errorHandlerProvider;
+
+   public AWSError parseAWSErrorFromContent(HttpCommand command, HttpResponse response,
+            InputStream content) throws HttpException {
+      AWSError error = (AWSError) factory.create(errorHandlerProvider.get()).parse(content);
+      if (error.getRequestId() == null)
+         error.setRequestId(response.getFirstHeaderOrNull(S3Headers.REQUEST_ID));
       error.setRequestToken(response.getFirstHeaderOrNull(S3Headers.REQUEST_TOKEN));
       if ("SignatureDoesNotMatch".equals(error.getCode())) {
          error.setStringSigned(signer.createStringToSign(command.getRequest()));
          error.setSignature(signer.signString(error.getStringSigned()));
       }
       return error;
-
    }
 
-   public AWSError parseAWSErrorFromContent(S3ParserFactory parserFactory, HttpCommand command,
-            HttpResponse response, String content) throws HttpException {
-      return parseAWSErrorFromContent(parserFactory, command, response, new ByteArrayInputStream(
-               content.getBytes()));
+   public AWSError parseAWSErrorFromContent(HttpCommand command, HttpResponse response,
+            String content) throws HttpException {
+      return parseAWSErrorFromContent(command, response, new ByteArrayInputStream(content
+               .getBytes()));
    }
 
    public static String validateBucketName(String bucketName) {

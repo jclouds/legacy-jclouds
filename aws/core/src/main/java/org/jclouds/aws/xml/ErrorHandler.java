@@ -46,13 +46,13 @@ public class ErrorHandler extends ParseSax.HandlerWithResult<AWSError> {
    public void endElement(String uri, String name, String qName) {
 
       if (qName.equals("Code")) {
-         error.setCode(currentText.toString());
+         error.setCode(currentText.toString().trim());
       } else if (qName.equals("Message")) {
-         error.setMessage(currentText.toString());
+         error.setMessage(currentText.toString().trim());
       } else if (qName.equalsIgnoreCase("RequestId")) {
-         error.setRequestId(currentText.toString());
+         error.setRequestId(currentText.toString().trim());
       } else if (!qName.equals("Error")) {
-         error.getDetails().put(qName, currentText.toString());
+         error.getDetails().put(qName, currentText.toString().trim());
       }
       currentText = new StringBuilder();
    }

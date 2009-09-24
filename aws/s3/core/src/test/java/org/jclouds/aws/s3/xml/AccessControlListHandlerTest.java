@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.functions;
+package org.jclouds.aws.s3.xml;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
@@ -30,7 +30,9 @@ import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.s3.domain.AccessControlList;
 import org.jclouds.aws.s3.domain.AccessControlList.GroupGranteeURI;
 import org.jclouds.aws.s3.domain.AccessControlList.Permission;
+import org.jclouds.aws.s3.xml.AccessControlListHandler;
 import org.jclouds.http.HttpException;
+import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.testng.annotations.Test;
 
@@ -39,8 +41,10 @@ public class AccessControlListHandlerTest extends BaseHandlerTest {
    public static final String aclOwnerOnly = "<AccessControlPolicy xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Owner><ID>1a405254c932b52e5b5caaa88186bc431a1bacb9ece631f835daddaf0c47677c</ID><DisplayName>jamesmurty</DisplayName></Owner><AccessControlList><Grant><Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CanonicalUser\"><ID>1a405254c932b52e5b5caaa88186bc431a1bacb9ece631f835daddaf0c47677c</ID><DisplayName>jamesmurty</DisplayName></Grantee><Permission>FULL_CONTROL</Permission></Grant></AccessControlList></AccessControlPolicy>";
    public static final String aclExtreme = "<AccessControlPolicy xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Owner><ID>1a405254c932b52e5b5caaa88186bc431a1bacb9ece631f835daddaf0c47677c</ID><DisplayName>jamesmurty</DisplayName></Owner><AccessControlList><Grant><Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"Group\"><URI>http://acs.amazonaws.com/groups/global/AuthenticatedUsers</URI></Grantee><Permission>WRITE</Permission></Grant><Grant><Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"Group\"><URI>http://acs.amazonaws.com/groups/global/AuthenticatedUsers</URI></Grantee><Permission>READ_ACP</Permission></Grant><Grant><Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CanonicalUser\"><ID>1a405254c932b52e5b5caaa88186bc431a1bacb9ece631f835daddaf0c47677c</ID><DisplayName>jamesmurty</DisplayName></Grantee><Permission>WRITE</Permission></Grant><Grant><Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"Group\"><URI>http://acs.amazonaws.com/groups/global/AuthenticatedUsers</URI></Grantee><Permission>WRITE_ACP</Permission></Grant><Grant><Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"Group\"><URI>http://acs.amazonaws.com/groups/global/AllUsers</URI></Grantee><Permission>READ</Permission></Grant><Grant><Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"Group\"><URI>http://acs.amazonaws.com/groups/global/AuthenticatedUsers</URI></Grantee><Permission>READ</Permission></Grant><Grant><Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"Group\"><URI>http://acs.amazonaws.com/groups/s3/LogDelivery</URI></Grantee><Permission>WRITE</Permission></Grant><Grant><Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CanonicalUser\"><ID>1a405254c932b52e5b5caaa88186bc431a1bacb9ece631f835daddaf0c47677c</ID><DisplayName>jamesmurty</DisplayName></Grantee><Permission>READ</Permission></Grant><Grant><Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CanonicalUser\"><ID>1a405254c932b52e5b5caaa88186bc431a1bacb9ece631f835daddaf0c47677c</ID><DisplayName>jamesmurty</DisplayName></Grantee><Permission>FULL_CONTROL</Permission></Grant></AccessControlList></AccessControlPolicy>";
 
+   @SuppressWarnings("unchecked")
    ParseSax<AccessControlList> createParser() {
-      ParseSax<AccessControlList> parser = parserFactory.createAccessControlListParser();
+      ParseSax<AccessControlList> parser = (ParseSax<AccessControlList>) factory.create(injector
+               .getInstance(AccessControlListHandler.class));
       return parser;
    }
 
