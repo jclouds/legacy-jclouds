@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -90,7 +91,12 @@ public class JavaUrlHttpCommandExecutorService extends
    protected HttpResponse invoke(HttpURLConnection connection) throws IOException {
       logger.trace("%s - submitting request %s; %s", connection.getURL().getHost(), connection
                .getURL(), connection.getHeaderFields().toString());
-      HttpResponse response = new HttpResponse(connection.getURL());
+      HttpResponse response;
+      try {
+         response = new HttpResponse(connection.getURL().toURI());
+      } catch (URISyntaxException e1) {
+         throw new RuntimeException(e1);
+      }
       InputStream in;
       try {
          in = connection.getInputStream();
@@ -128,12 +134,12 @@ public class JavaUrlHttpCommandExecutorService extends
       for (String header : request.getHeaders().keySet()) {
          for (String value : request.getHeaders().get(header)) {
             connection.setRequestProperty(header, value);
-            
+
             if ("Transfer-Encoding".equals(header) && "chunked".equals(value)) {
-               connection.setChunkedStreamingMode(8192);               
+               connection.setChunkedStreamingMode(8192);
             }
          }
-      }      
+      }
       connection.setRequestProperty(HttpHeaders.HOST, request.getEndpoint().getHost());
       if (request.getEntity() != null) {
          OutputStream out = connection.getOutputStream();

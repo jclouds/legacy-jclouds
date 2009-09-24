@@ -26,6 +26,7 @@ package org.jclouds.gae;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -37,6 +38,7 @@ import org.jclouds.http.BaseHttpCommandExecutorServiceTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+import org.testng.v6.Maps;
 
 import com.google.appengine.tools.development.ApiProxyLocalImpl;
 import com.google.apphosting.api.ApiProxy;
@@ -93,11 +95,11 @@ public class GaeHttpCommandExecutorServiceIntegrationTest extends
    }
 
    @Override
-   @Test(invocationCount = 50, timeOut = 3000)
-   public void testGetStringSynch() throws MalformedURLException, ExecutionException,
+   @Test(invocationCount = 50, timeOut = 3000, dataProvider = "gets")
+   public void testGetStringSynch(String path) throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
       setupApiProxy();
-      super.testGetStringSynch();
+      super.testGetStringSynch(path);
    }
 
    @Override
@@ -213,6 +215,10 @@ public class GaeHttpCommandExecutorServiceIntegrationTest extends
 
       public boolean isAdmin() {
          return false;
+      }
+
+      public Map<String, Object> getAttributes() {
+         return Maps.newHashMap();
       }
    }
 

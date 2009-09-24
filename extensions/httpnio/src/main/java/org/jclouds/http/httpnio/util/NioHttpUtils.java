@@ -27,7 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
+import java.net.URI;
 
 import javax.ws.rs.core.HttpHeaders;
 
@@ -45,9 +45,11 @@ import org.jclouds.http.HttpResponse;
 public class NioHttpUtils {
    public static HttpEntityEnclosingRequest convertToApacheRequest(HttpRequest request) {
 
-      String path = request.getEndpoint().getPath() + request.getEndpoint().getQuery();
+      String path = request.getEndpoint().getRawPath();
+      if (request.getEndpoint().getQuery() != null)
+         path += "?" + request.getEndpoint().getQuery();
       BasicHttpEntityEnclosingRequest apacheRequest = new BasicHttpEntityEnclosingRequest(request
-               .getMethod().toString(), path, HttpVersion.HTTP_1_1);
+               .getMethod(), path, HttpVersion.HTTP_1_1);
 
       Object content = request.getEntity();
 
@@ -103,9 +105,9 @@ public class NioHttpUtils {
       }
    }
 
-   public static HttpResponse convertToJavaCloudsResponse(URL requestURL,
+   public static HttpResponse convertToJavaCloudsResponse(URI uri,
             org.apache.http.HttpResponse apacheResponse) throws IOException {
-      HttpResponse response = new HttpResponse(requestURL);
+      HttpResponse response = new HttpResponse(uri);
       if (apacheResponse.getEntity() != null) {
          response.setContent(apacheResponse.getEntity().getContent());
       }

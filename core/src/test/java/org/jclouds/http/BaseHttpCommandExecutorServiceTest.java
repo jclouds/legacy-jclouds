@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.http.options.GetOptions;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
@@ -50,6 +51,8 @@ public abstract class BaseHttpCommandExecutorServiceTest extends BaseJettyTest {
       assertEquals(get.get(10, TimeUnit.SECONDS).trim(), "test");
    }
 
+   // TODO: filtering redirect test
+
    @Test(invocationCount = 50, timeOut = 5000)
    public void testGetStringWithHeader() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
@@ -64,11 +67,17 @@ public abstract class BaseHttpCommandExecutorServiceTest extends BaseJettyTest {
       assertEquals(get.get(10, TimeUnit.SECONDS).trim(), XML);
    }
 
-   @Test(invocationCount = 50, timeOut = 5000)
-   public void testGetStringSynch() throws MalformedURLException, ExecutionException,
+   @DataProvider(name = "gets")
+   public Object[][] createData() {
+      return new Object[][] { { "object" }, { "/path" }, { "sp ace" }, { "unic¿de" },
+               { "qu?stion" } };
+   }
+
+   @Test(invocationCount = 50, timeOut = 5000, dataProvider = "gets")
+   public void testGetStringSynch(String uri) throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
       // TODO why need trim?
-      assertEquals(client.synch("").trim(), XML);
+      assertEquals(client.synch(uri).trim(), XML);
    }
 
    @Test(invocationCount = 50, timeOut = 5000)

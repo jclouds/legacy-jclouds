@@ -30,6 +30,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -106,8 +108,8 @@ public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorServic
    }
 
    @VisibleForTesting
-   protected HttpResponse convert(URL requestURL, HTTPResponse gaeResponse) {
-      HttpResponse response = new HttpResponse(requestURL);
+   protected HttpResponse convert(URI uri, HTTPResponse gaeResponse) {
+      HttpResponse response = new HttpResponse(uri);
       response.setStatusCode(gaeResponse.getResponseCode());
       for (HTTPHeader header : gaeResponse.getHeaders()) {
          response.getHeaders().put(header.getName(), header.getValue());
@@ -169,12 +171,16 @@ public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorServic
 
    @Override
    protected HttpResponse invoke(HTTPRequest request) throws IOException {
-      logger.trace("%1$s - submitting request %2$s, headers: %3$s", request.getURL().getHost(),
-               request.getURL(), headersAsString(request.getHeaders()));
+      logger.trace("%s - submitting request %s, headers: %s", request.getURL().getHost(), request
+               .getURL(), headersAsString(request.getHeaders()));
       HTTPResponse response = urlFetchService.fetch(request);
-      logger.info("%1$s - received response code %2$s, headers: %3$s", request.getURL().getHost(),
+      logger.trace("%s - received response code %s, headers: %s", request.getURL().getHost(),
                response.getResponseCode(), headersAsString(response.getHeaders()));
-      return convert(request.getURL(), response);
+      try {
+         return convert(request.getURL().toURI(), response);
+      } catch (URISyntaxException e) {
+         throw new RuntimeException(e);
+      }
    }
 
    String headersAsString(List<HTTPHeader> headers) {

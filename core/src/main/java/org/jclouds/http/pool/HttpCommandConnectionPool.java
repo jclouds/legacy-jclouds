@@ -159,7 +159,7 @@ public abstract class HttpCommandConnectionPool<C> extends BaseLifeCycle {
 
    protected abstract boolean isReplayable(HttpCommandRendezvous<?> rendezvous);
 
-   HttpCommandRendezvous<?> getCommandFromConnection(C connection) {
+   protected HttpCommandRendezvous<?> getCommandFromConnection(C connection) {
       HttpCommandConnectionHandle<C> handle = getHandleFromConnection(connection);
       if (handle != null && handle.getCommandRendezvous() != null) {
          return handle.getCommandRendezvous();
@@ -174,7 +174,7 @@ public abstract class HttpCommandConnectionPool<C> extends BaseLifeCycle {
       }
    }
 
-   private void setExceptionOnCommand(Exception e, HttpCommandRendezvous<?> rendezvous) {
+   protected void setExceptionOnCommand(Exception e, HttpCommandRendezvous<?> rendezvous) {
       logger.warn(e, "exception in rendezvous: %s", rendezvous);
       try {
          rendezvous.setException(e);

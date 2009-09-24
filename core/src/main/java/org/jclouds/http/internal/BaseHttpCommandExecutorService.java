@@ -73,10 +73,11 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
             HttpRequest request = command.getRequest();
             Q nativeRequest = null;
             try {
-               logger.trace("%s - converting request %s", request.getEndpoint(), request);
+               logger.trace("%s - filtering request %s", request.getEndpoint(), request);
                for (HttpRequestFilter filter : request.getFilters()) {
                   filter.filter(request);
                }
+               logger.trace("%s - request now %s", request.getEndpoint(), request);            
                nativeRequest = convert(request);
                response = invoke(nativeRequest);
                int statusCode = response.getStatusCode();

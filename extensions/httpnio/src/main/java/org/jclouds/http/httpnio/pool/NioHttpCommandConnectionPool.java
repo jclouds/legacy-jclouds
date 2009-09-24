@@ -23,9 +23,13 @@
  */
 package org.jclouds.http.httpnio.pool;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.nio.charset.UnmappableCharacterException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Semaphore;
@@ -53,6 +57,7 @@ import org.jclouds.http.pool.HttpCommandConnectionHandle;
 import org.jclouds.http.pool.HttpCommandConnectionPool;
 import org.jclouds.http.pool.PoolConstants;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
@@ -84,12 +89,24 @@ public class NioHttpCommandConnectionPool extends HttpCommandConnectionPool<NHtt
             @Named(PoolConstants.PROPERTY_POOL_MAX_SESSION_FAILURES) int maxSessionFailures,
             @Assisted URI endPoint) throws Exception {
       super(executor, allConnections, commandQueue, maxConnectionReuse, available, endPoint);
+      String host = checkNotNull(checkNotNull(endPoint, "endPoint").getHost(), String.format(
+               "Host null for endpoint %s", endPoint));
+      int port = endPoint.getPort();
+      if (endPoint.getScheme().equals("https")) {
+         this.dispatch = provideSSLClientEventDispatch(clientHandler, params);
+         if (port == -1)
+            port = 443;
+      } else {
+         this.dispatch = provideClientEventDispatch(clientHandler, params);
+         if (port == -1)
+            port = 80;
+      }
+      checkArgument(port > 0, String.format("Port %d not in range for endpoint %s", endPoint
+               .getPort(), endPoint));
       this.ioReactor = ioReactor;
-      this.dispatch = endPoint.getScheme().equals("https") ? provideSSLClientEventDispatch(
-               clientHandler, params) : provideClientEventDispatch(clientHandler, params);
       this.maxSessionFailures = maxSessionFailures;
       this.sessionCallback = new NHttpClientConnectionPoolSessionRequestCallback();
-      this.target = new InetSocketAddress(endPoint.getHost(), endPoint.getPort());
+      this.target = new InetSocketAddress(host, port);
       clientHandler.setEventListener(this);
    }
 
@@ -171,8 +188,8 @@ public class NioHttpCommandConnectionPool extends HttpCommandConnectionPool<NHtt
       boolean acquired = allConnections.tryAcquire(1, TimeUnit.SECONDS);
       if (acquired) {
          if (shouldDoWork()) {
-            logger.debug("%1$s - opening new connection", target);
-            ioReactor.connect(target, null, null, sessionCallback);
+            logger.debug("%1$s - opening new connection", getTarget());
+            ioReactor.connect(getTarget(), null, null, sessionCallback);
          } else {
             allConnections.release();
          }
@@ -187,8 +204,8 @@ public class NioHttpCommandConnectionPool extends HttpCommandConnectionPool<NHtt
 
    @Override
    protected NioHttpCommandConnectionHandle getHandleFromConnection(NHttpConnection connection) {
-      return (NioHttpCommandConnectionHandle) connection.getContext().getAttribute(
-               "command-handle");
+      return (NioHttpCommandConnectionHandle) connection.getContext()
+               .getAttribute("command-handle");
    }
 
    class NHttpClientConnectionPoolSessionRequestCallback implements SessionRequestCallback {
@@ -234,7 +251,7 @@ public class NioHttpCommandConnectionPool extends HttpCommandConnectionPool<NHtt
             logger.error(request.getException(),
                      "%1$s->%2$s[%3$s] - SessionRequest failures: %4$s, Disabling pool for %5$s",
                      request.getLocalAddress(), request.getRemoteAddress(), maxSessionFailures,
-                     target);
+                     getTarget());
             exception.set(request.getException());
          }
 
@@ -266,12 +283,23 @@ public class NioHttpCommandConnectionPool extends HttpCommandConnectionPool<NHtt
    }
 
    public void fatalIOException(IOException ex, NHttpConnection conn) {
-      logger.error(ex, "%3$s-%1$s{%2$d} - io error", conn, conn.hashCode(), target);
-      resubmitIfRequestIsReplayable(conn, ex);
+      logger.error(ex, "%3$s-%1$s{%2$d} - io error", conn, conn.hashCode(), getTarget());
+      HttpCommandRendezvous<?> rendezvous = getCommandFromConnection(conn);
+      if (rendezvous != null) {
+         /**
+          * these exceptions, while technically i/o are unresolvable. set the error on the command
+          * itself so that it doesn't replay.
+          */
+         if (ex instanceof UnmappableCharacterException) {
+            setExceptionOnCommand(ex, rendezvous);
+         } else {
+            resubmitIfRequestIsReplayable(conn, ex);
+         }
+      }
    }
 
    public void fatalProtocolException(HttpException ex, NHttpConnection conn) {
-      logger.error(ex, "%3$s-%1$s{%2$d} - http error", conn, conn.hashCode(), target);
+      logger.error(ex, "%3$s-%1$s{%2$d} - http error", conn, conn.hashCode(), getTarget());
       setExceptionOnCommand(conn, ex);
    }
 
@@ -279,8 +307,8 @@ public class NioHttpCommandConnectionPool extends HttpCommandConnectionPool<NHtt
    protected NioHttpCommandConnectionHandle createHandle(HttpCommandRendezvous<?> command,
             NHttpConnection conn) {
       try {
-         return new NioHttpCommandConnectionHandle(allConnections, available, endPoint,
-                  command, conn);
+         return new NioHttpCommandConnectionHandle(allConnections, available, endPoint, command,
+                  conn);
       } catch (InterruptedException e) {
          throw new RuntimeException("Interrupted creating a handle to " + conn, e);
       }
@@ -289,6 +317,11 @@ public class NioHttpCommandConnectionPool extends HttpCommandConnectionPool<NHtt
    @Override
    protected boolean isReplayable(HttpCommandRendezvous<?> rendezvous) {
       return rendezvous.getCommand().isReplayable();
+   }
+
+   @VisibleForTesting
+   InetSocketAddress getTarget() {
+      return target;
    }
 
 }

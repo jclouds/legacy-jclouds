@@ -101,19 +101,19 @@ public class HttpUtils {
       return hmacBase64(toEncode, key, digest);
    }
 
-   public static String eTagHex(byte[] toEncode) throws NoSuchAlgorithmException,
+   public static String md5Hex(byte[] toEncode) throws NoSuchAlgorithmException,
             NoSuchProviderException, InvalidKeyException, UnsupportedEncodingException {
-      byte[] resBuf = eTag(toEncode);
+      byte[] resBuf = md5(toEncode);
       return toHexString(resBuf);
    }
 
-   public static String eTagBase64(byte[] toEncode) throws NoSuchAlgorithmException,
+   public static String md5Base64(byte[] toEncode) throws NoSuchAlgorithmException,
             NoSuchProviderException, InvalidKeyException {
-      byte[] resBuf = eTag(toEncode);
+      byte[] resBuf = md5(toEncode);
       return toBase64String(resBuf);
    }
 
-   public static byte[] eTag(byte[] plainBytes) {
+   public static byte[] md5(byte[] plainBytes) {
       MD5Digest eTag = new MD5Digest();
       byte[] resBuf = new byte[eTag.getDigestSize()];
       eTag.update(plainBytes, 0, plainBytes.length);
@@ -121,7 +121,7 @@ public class HttpUtils {
       return resBuf;
    }
 
-   public static byte[] eTag(File toEncode) throws IOException {
+   public static byte[] md5(File toEncode) throws IOException {
       MD5Digest eTag = new MD5Digest();
       byte[] resBuf = new byte[eTag.getDigestSize()];
       byte[] buffer = new byte[1024];
@@ -160,24 +160,24 @@ public class HttpUtils {
    /**
     * @throws IOException
     */
-   public static byte[] eTag(Object data) throws IOException {
+   public static byte[] md5(Object data) throws IOException {
       checkNotNull(data, "data must be set before calling generateETag()");
-      byte[] eTag = null;
+      byte[] md5 = null;
       if (data == null) {
       } else if (data instanceof byte[]) {
-         eTag = eTag((byte[]) data);
+         md5 = md5((byte[]) data);
       } else if (data instanceof String) {
-         eTag = eTag(((String) data).getBytes());
+         md5 = md5(((String) data).getBytes());
       } else if (data instanceof File) {
-         eTag = eTag(((File) data));
+         md5 = md5(((File) data));
       } else {
          throw new UnsupportedOperationException("Content not supported " + data.getClass());
       }
-      return eTag;
+      return md5;
 
    }
 
-   public static ETagInputStreamResult generateETagResult(InputStream toEncode) throws IOException {
+   public static MD5InputStreamResult generateMD5Result(InputStream toEncode) throws IOException {
       MD5Digest eTag = new MD5Digest();
       byte[] resBuf = new byte[eTag.getDigestSize()];
       byte[] buffer = new byte[1024];
@@ -198,15 +198,15 @@ public class HttpUtils {
          IOUtils.closeQuietly(toEncode);
       }
       eTag.doFinal(resBuf, 0);
-      return new ETagInputStreamResult(out.toByteArray(), resBuf, length);
+      return new MD5InputStreamResult(out.toByteArray(), resBuf, length);
    }
 
-   public static class ETagInputStreamResult {
+   public static class MD5InputStreamResult {
       public final byte[] data;
       public final byte[] eTag;
       public final long length;
 
-      ETagInputStreamResult(byte[] data, byte[] eTag, long length) {
+      MD5InputStreamResult(byte[] data, byte[] eTag, long length) {
          this.data = checkNotNull(data, "data");
          this.eTag = checkNotNull(eTag, "eTag");
          checkArgument(length >= 0, "length cannot me negative");

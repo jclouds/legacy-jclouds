@@ -23,6 +23,7 @@
  */
 package org.jclouds.http;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
@@ -57,6 +58,8 @@ public class HttpRequest extends HttpMessage implements Request<URI> {
    public HttpRequest(String method, URI endPoint) {
       this.method = checkNotNull(method, "method");
       this.endpoint = checkNotNull(endPoint, "endPoint");
+      checkArgument(endPoint.getHost() != null, String.format("endPoint.getHost() is null for %s",
+               endPoint));
    }
 
    /**
@@ -82,7 +85,7 @@ public class HttpRequest extends HttpMessage implements Request<URI> {
             @Nullable Object entity) {
       this(method, endPoint);
       setHeaders(checkNotNull(headers, "headers"));
-      setEntity("entity");
+      setEntity(entity);
    }
 
    @Override
@@ -92,6 +95,7 @@ public class HttpRequest extends HttpMessage implements Request<URI> {
       sb.append("{endPoint='").append(endpoint).append('\'');
       sb.append(", method='").append(method).append('\'');
       sb.append(", headers=").append(headers);
+      sb.append(", filters=").append(requestFilters);
       if (entity != null && entity instanceof String) {
          sb.append(", entity=").append(entity);
       } else {
@@ -102,7 +106,9 @@ public class HttpRequest extends HttpMessage implements Request<URI> {
    }
 
    /**
-    * We cannot return an enum, as per specification custom methods are allowed.  Enums are not extensible.
+    * We cannot return an enum, as per specification custom methods are allowed. Enums are not
+    * extensible.
+    * 
     * @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html#sec5.1.1
     */
    public String getMethod() {

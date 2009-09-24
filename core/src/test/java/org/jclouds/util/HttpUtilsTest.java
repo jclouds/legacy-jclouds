@@ -117,7 +117,7 @@ public class HttpUtilsTest extends PerformanceTest {
    public void testBouncyCastleMD5Digest(String message, String base64Digest)
             throws NoSuchProviderException, NoSuchAlgorithmException, InvalidKeyException,
             UnsupportedEncodingException {
-      String b64 = HttpUtils.eTagHex(message.getBytes());
+      String b64 = HttpUtils.md5Hex(message.getBytes());
       assertEquals(base64Digest, b64);
    }
 

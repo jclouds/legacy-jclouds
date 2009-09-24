@@ -107,7 +107,7 @@ public class NioHttpCommandExecutionHandler implements NHttpRequestExecutionHand
             HttpCommandRendezvous<?> rendezvous = handle.getCommandRendezvous();
             HttpCommand command = rendezvous.getCommand();
             org.jclouds.http.HttpResponse response = NioHttpUtils.convertToJavaCloudsResponse(
-                     command.getRequest().getEndpoint().toURL(), apacheResponse);
+                     command.getRequest().getEndpoint(), apacheResponse);
             int statusCode = response.getStatusCode();
             // TODO determine how to get the original request here so we don't need to build each
             // time

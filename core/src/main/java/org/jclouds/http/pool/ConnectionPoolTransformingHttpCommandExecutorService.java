@@ -23,6 +23,8 @@
  */
 package org.jclouds.http.pool;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.net.URI;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
@@ -67,6 +69,8 @@ public class ConnectionPoolTransformingHttpCommandExecutorService<C> extends Bas
       // TODO inject this.
       poolMap = new MapMaker().makeComputingMap(new Function<URI, HttpCommandConnectionPool<C>>() {
          public HttpCommandConnectionPool<C> apply(URI endPoint) {
+            checkArgument(endPoint.getHost() != null, String.format(
+                     "endPoint.getHost() is null for %s", endPoint));
             try {
                HttpCommandConnectionPool<C> pool = poolFactory.create(endPoint);
                addDependency(pool);
@@ -159,10 +163,10 @@ public class ConnectionPoolTransformingHttpCommandExecutorService<C> extends Bas
     */
    protected void invoke(HttpCommandRendezvous<?> command) {
       exceptionIfNotActive();
-      URI endpoint = command.getCommand().getRequest().getEndpoint();
-      URI specificEndpoint = URI.create(endpoint.getScheme() + "://" + endpoint.getHost() + ":"
-               + endpoint.getPort());
-      HttpCommandConnectionPool<C> pool = poolMap.get(specificEndpoint);
+
+      URI endpoint = createBaseEndpointFor(command);
+
+      HttpCommandConnectionPool<C> pool = poolMap.get(endpoint);
       if (pool == null) {
          // TODO limit;
          logger.warn("pool not available for command %s; retrying", command);
@@ -182,6 +186,12 @@ public class ConnectionPoolTransformingHttpCommandExecutorService<C> extends Bas
                   command, pool);
          commandQueue.add(command);
          return;
+      } catch (RuntimeException e) {
+         logger.warn(e, "Error getting a connection for command %s on pool %s; retrying", command,
+                  pool);
+         discardPool(endpoint, pool);
+         commandQueue.add(command);
+         return;
       }
 
       if (connectionHandle == null) {
@@ -190,6 +200,26 @@ public class ConnectionPoolTransformingHttpCommandExecutorService<C> extends Bas
          return;
       }
       connectionHandle.startConnection();
+   }
+
+   private void discardPool(URI endpoint, HttpCommandConnectionPool<C> pool) {
+      poolMap.remove(endpoint, pool);
+      pool.shutdown();
+      this.dependencies.remove(pool);
+   }
+
+   /**
+    * keys to the map are only used for socket information, not path. In this case, you should
+    * remove any path or query details from the URI.
+    */
+   private URI createBaseEndpointFor(HttpCommandRendezvous<?> command) {
+      URI endpoint = command.getCommand().getRequest().getEndpoint();
+      if (endpoint.getPort() == -1) {
+         return URI.create(String.format("%s://%s", endpoint.getScheme(), endpoint.getHost()));
+      } else {
+         return URI.create(String.format("%s://%s:%d", endpoint.getScheme(), endpoint.getHost(),
+                  endpoint.getPort()));
+      }
    }
 
    @Override

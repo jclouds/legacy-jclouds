@@ -34,7 +34,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -88,7 +87,7 @@ public class GaeHttpCommandExecutorServiceTest {
       expect(gaeResponse.getHeaders()).andReturn(headers);
       expect(gaeResponse.getContent()).andReturn(null).atLeastOnce();
       replay(gaeResponse);
-      HttpResponse response = client.convert(new URL("file:///unused"), gaeResponse);
+      HttpResponse response = client.convert(URI.create("http://localhost"), gaeResponse);
       assertEquals(response.getStatusCode(), 200);
       assertEquals(response.getContent(), null);
       assertEquals(response.getHeaders().size(), 1);
@@ -104,7 +103,7 @@ public class GaeHttpCommandExecutorServiceTest {
       expect(gaeResponse.getHeaders()).andReturn(headers);
       expect(gaeResponse.getContent()).andReturn("hello".getBytes()).atLeastOnce();
       replay(gaeResponse);
-      HttpResponse response = client.convert(new URL("file:///unused"), gaeResponse);
+      HttpResponse response = client.convert(URI.create("http://localhost"), gaeResponse);
       assertEquals(response.getStatusCode(), 200);
       assertEquals(IOUtils.toString(response.getContent()), "hello");
       assertEquals(response.getHeaders().size(), 1);

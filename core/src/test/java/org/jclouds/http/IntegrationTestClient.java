@@ -61,8 +61,8 @@ public interface IntegrationTestClient {
    Future<String> download(@PathParam("id") String id);
 
    @GET
-   @Path("objects/{id}")
-   String synch(@PathParam("id") String id);
+   @Path("{path}")
+   String synch(@PathParam("path") String id);
 
    @GET
    @Path("objects/{id}")

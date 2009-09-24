@@ -29,7 +29,6 @@ import static org.testng.Assert.assertTrue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -100,7 +99,7 @@ public class BackoffLimitedRetryHandlerTest {
    void testClosesInputStream() throws InterruptedException, IOException {
       HttpCommand command = createCommand();
 
-      HttpResponse response = new HttpResponse(new URL("file:///unused"));
+      HttpResponse response = new HttpResponse(URI.create("http://localhost"));
       InputStream inputStream = new InputStream() {
          boolean isOpen = true;
 
@@ -151,7 +150,7 @@ public class BackoffLimitedRetryHandlerTest {
    @Test
    void testIncrementsFailureCount() throws InterruptedException, IOException {
       HttpCommand command = createCommand();
-      HttpResponse response = new HttpResponse(new URL("file:///unused"));
+      HttpResponse response = new HttpResponse(URI.create("http://localhost"));
 
       handler.shouldRetryRequest(command, response);
       assertEquals(command.getFailureCount(), 1);
@@ -166,7 +165,7 @@ public class BackoffLimitedRetryHandlerTest {
    @Test
    void testDisallowsExcessiveRetries() throws InterruptedException, IOException {
       HttpCommand command = createCommand();
-      HttpResponse response = new HttpResponse(new URL("file:///unused"));
+      HttpResponse response = new HttpResponse(URI.create("http://localhost"));
 
       assertEquals(handler.shouldRetryRequest(command, response), true); // Failure 1
 
