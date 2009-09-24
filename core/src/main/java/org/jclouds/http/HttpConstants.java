@@ -29,9 +29,6 @@ package org.jclouds.http;
  * @author Adrian Cole
  */
 public interface HttpConstants {
-   public static final String PROPERTY_HTTP_SECURE = "jclouds.http.secure";
-   public static final String PROPERTY_HTTP_PORT = "jclouds.http.port";
-   public static final String PROPERTY_HTTP_ADDRESS = "jclouds.http.address";
    public static final String PROPERTY_HTTP_MAX_RETRIES = "jclouds.http.max-retries";
    public static final String PROPERTY_HTTP_MAX_REDIRECTS = "jclouds.http.max-redirects";
    public static final String PROPERTY_SAX_DEBUG = "jclouds.http.sax.debug";

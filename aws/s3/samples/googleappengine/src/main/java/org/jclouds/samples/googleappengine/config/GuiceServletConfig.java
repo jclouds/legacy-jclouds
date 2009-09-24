@@ -74,8 +74,8 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 
    @Override
    protected Injector getInjector() {
-      return S3ContextBuilder.newBuilder(accessKeyId, secretAccessKey).withHttpSecure(false)
-               .withModules(new GaeHttpCommandExecutorServiceModule(), new ServletModule() {
+      return S3ContextBuilder.newBuilder(accessKeyId, secretAccessKey).withModules(
+               new GaeHttpCommandExecutorServiceModule(), new ServletModule() {
                   @Override
                   protected void configureServlets() {
                      serve("*.s3").with(GetAllBucketsController.class);

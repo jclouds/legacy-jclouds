@@ -34,7 +34,7 @@ import org.jclouds.blobstore.reference.BlobStoreConstants;
 public interface S3Constants extends AWSConstants, S3Headers, BlobStoreConstants {
 
    /**
-    * S3 service's XML Jsr330pace, as used in XML request and response documents.
+    * S3 service's XML Namespace, as used in XML request and response documents.
     */
    public static final String S3_REST_API_XML_NAMESPACE = "http://s3.amazonaws.com/doc/2006-03-01/";
    public static final String ENDPOINT = "Endpoint";
@@ -42,5 +42,7 @@ public interface S3Constants extends AWSConstants, S3Headers, BlobStoreConstants
    public static final String MARKER = "marker";
    public static final String MAX_KEYS = "max-keys";
    public static final String DELIMITER = "delimiter";
+   public static final String PROPERTY_S3_ENDPOINT = "https://s3.amazonaws.com";
+
 
 }

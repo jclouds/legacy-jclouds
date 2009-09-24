@@ -47,8 +47,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  * @see CloudServersContext
  */
-public class CloudServersContextBuilder extends
-         RackspaceContextBuilder<CloudServersContext> {
+public class CloudServersContextBuilder extends RackspaceContextBuilder<CloudServersContext> {
 
    public CloudServersContextBuilder(Properties props) {
       super(props);
@@ -61,20 +60,15 @@ public class CloudServersContextBuilder extends
       return builder;
    }
 
-
-   protected void addConnectionModule(List<Module> modules) {
-      super.addConnectionModule(modules);
+   @Override
+   public void addApiModule(List<Module> modules) {
+      super.addApiModule(modules);
       modules.add(new RestCloudServersConnectionModule());
    }
 
    @Override
    protected void addContextModule(List<Module> modules) {
-//TODO      
-   }
-
-   @Override
-   protected void addParserModule(List<Module> modules) {
-    //TODO      
+      // TODO
    }
 
    @Override

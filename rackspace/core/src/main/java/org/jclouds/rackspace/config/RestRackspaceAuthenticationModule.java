@@ -23,13 +23,15 @@
  */
 package org.jclouds.rackspace.config;
 
+import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_ENDPOINT;
 import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_KEY;
 import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_USER;
 
-import java.net.MalformedURLException;
 import java.net.URI;
 
-import org.jclouds.http.HttpConstants;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rackspace.Authentication;
 import org.jclouds.rackspace.CDN;
@@ -42,8 +44,6 @@ import org.jclouds.rest.config.JaxrsModule;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import javax.inject.Singleton;
-import javax.inject.Named;
 
 /**
  * Configures the Rackspace authentication service connection, including logging and http transport.
@@ -51,13 +51,20 @@ import javax.inject.Named;
  * @author Adrian Cole
  */
 @RequiresHttp
-public class RackspaceAuthenticationModule extends AbstractModule {
+public class RestRackspaceAuthenticationModule extends AbstractModule {
 
    @Override
    protected void configure() {
       install(new JaxrsModule());
       bindErrorHandlers();
       bindRetryHandlers();
+   }
+
+   @Provides
+   @Singleton
+   @Authentication
+   protected URI provideAuthenticationURI(@Named(PROPERTY_RACKSPACE_ENDPOINT) String endpoint) {
+      return URI.create(endpoint);
    }
 
    @Provides
@@ -105,18 +112,6 @@ public class RackspaceAuthenticationModule extends AbstractModule {
 
    protected void bindRetryHandlers() {
       // TODO retry on 401 by AuthenticateRequest.update()
-   }
-
-   @Singleton
-   @Provides
-   @Authentication
-   protected URI provideAddress(@Named(HttpConstants.PROPERTY_HTTP_ADDRESS) String address,
-            @Named(HttpConstants.PROPERTY_HTTP_PORT) int port,
-            @Named(HttpConstants.PROPERTY_HTTP_SECURE) boolean isSecure)
-            throws MalformedURLException {
-
-      return URI.create(String.format("%1$s://%2$s:%3$s", isSecure ? "https" : "http", address,
-               port));
    }
 
 }

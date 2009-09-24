@@ -31,6 +31,7 @@ import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 
 import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStore;
@@ -50,7 +51,6 @@ import org.jclouds.logging.Logger;
 import org.testng.ITestContext;
 
 import com.google.inject.AbstractModule;
-import javax.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
@@ -113,11 +113,11 @@ public class StubTestInitializer
    }
 
    public static interface BlobMapFactory {
-      BlobMap<BlobMetadata, Blob<BlobMetadata>> createMapView(String bucket);
+      BlobMap<BlobMetadata, Blob<BlobMetadata>> createMapView(String container);
    }
 
    public static interface InputStreamMapFactory {
-      InputStreamMap<BlobMetadata> createMapView(String bucket);
+      InputStreamMap<BlobMetadata> createMapView(String container);
    }
 
    public static class GuiceStubBlobStoreContext implements StubBlobStoreContext {
@@ -125,33 +125,33 @@ public class StubTestInitializer
       @Resource
       private Logger logger = Logger.NULL;
       private final Injector injector;
-      private final InputStreamMapFactory s3InputStreamMapFactory;
-      private final BlobMapFactory s3ObjectMapFactory;
+      private final InputStreamMapFactory inputStreamMapFactory;
+      private final BlobMapFactory objectMapFactory;
       private final Closer closer;
 
       @Inject
       private GuiceStubBlobStoreContext(Injector injector, Closer closer,
-               BlobMapFactory s3ObjectMapFactory, InputStreamMapFactory s3InputStreamMapFactory) {
+               BlobMapFactory objectMapFactory, InputStreamMapFactory inputStreamMapFactory) {
          this.injector = injector;
-         this.s3InputStreamMapFactory = s3InputStreamMapFactory;
-         this.s3ObjectMapFactory = s3ObjectMapFactory;
+         this.inputStreamMapFactory = inputStreamMapFactory;
+         this.objectMapFactory = objectMapFactory;
          this.closer = closer;
       }
 
       /**
        * {@inheritDoc}
        */
-      public InputStreamMap<BlobMetadata> createInputStreamMap(String bucket) {
-         getApi().createContainer(bucket);
-         return s3InputStreamMapFactory.createMapView(bucket);
+      public InputStreamMap<BlobMetadata> createInputStreamMap(String container) {
+         getApi().createContainer(container);
+         return inputStreamMapFactory.createMapView(container);
       }
 
       /**
        * {@inheritDoc}
        */
-      public BlobMap<BlobMetadata, Blob<BlobMetadata>> createBlobMap(String bucket) {
-         getApi().createContainer(bucket);
-         return s3ObjectMapFactory.createMapView(bucket);
+      public BlobMap<BlobMetadata, Blob<BlobMetadata>> createBlobMap(String container) {
+         getApi().createContainer(container);
+         return objectMapFactory.createMapView(container);
       }
 
       /**
@@ -205,9 +205,6 @@ public class StubTestInitializer
          return buildInjector().getInstance(StubBlobStoreContext.class);
       }
 
-      protected void addParserModule(List<Module> modules) {
-      }
-
       protected void addContextModule(List<Module> modules) {
          modules.add(new AbstractModule() {
 
@@ -234,7 +231,7 @@ public class StubTestInitializer
          });
       }
 
-      protected void addConnectionModule(List<Module> modules) {
+      protected void addApiModule(List<Module> modules) {
          modules.add(new AbstractModule() {
 
             @Override
@@ -245,6 +242,12 @@ public class StubTestInitializer
             }
 
          });
+      }
+
+      @Override
+      public CloudContextBuilder<StubBlobStoreContext> withEndpoint(URI endpoint) {
+         // throw org.jboss.util.NotImplementedException("FIXME NYI withEndpoint");
+         return null;
       }
    }
 

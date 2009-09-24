@@ -24,7 +24,6 @@
 package org.jclouds.azure.storage.blob;
 
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
-import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_ADDRESS;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
@@ -58,8 +57,6 @@ public class AzureBlobContextBuilderTest {
    public void testNewBuilder() {
       AzureBlobContextBuilder builder = AzureBlobContextBuilder.newBuilder("id", "secret");
       assertEquals(builder.getProperties().getProperty(PROPERTY_USER_METADATA_PREFIX), "x-ms-meta-");
-      assertEquals(builder.getProperties().getProperty(PROPERTY_HTTP_ADDRESS),
-               "id.blob.core.windows.net");
       assertEquals(builder.getProperties().getProperty(
                AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT), "id");
       assertEquals(builder.getProperties().getProperty(
@@ -71,7 +68,7 @@ public class AzureBlobContextBuilderTest {
                .buildContext();
       assertEquals(context.getClass(), GuiceAzureBlobContext.class);
       assertEquals(context.getAccount(), "id");
-      assertEquals(context.getEndPoint(), URI.create("https://id.blob.core.windows.net:443"));
+      assertEquals(context.getEndPoint(), URI.create("https://id.blob.core.windows.net"));
    }
 
    public void testBuildInjector() {
@@ -96,7 +93,7 @@ public class AzureBlobContextBuilderTest {
    protected void addConnectionModule() {
       List<Module> modules = new ArrayList<Module>();
       AzureBlobContextBuilder builder = AzureBlobContextBuilder.newBuilder("id", "secret");
-      builder.addConnectionModule(modules);
+      builder.addApiModule(modules);
       assertEquals(modules.size(), 1);
       assertEquals(modules.get(0).getClass(), RestAzureBlobStoreModule.class);
    }

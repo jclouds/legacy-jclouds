@@ -29,17 +29,16 @@ import org.jclouds.aws.s3.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.s3.handlers.AWSRedirectionRetryHandler;
 import org.jclouds.aws.s3.handlers.ParseAWSErrorFromXmlContent;
 import org.jclouds.aws.s3.reference.S3Constants;
-import org.jclouds.aws.s3.xml.config.S3ParserModule;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
+import org.jclouds.util.Jsr330;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import org.jclouds.util.Jsr330;
 
 /**
  * @author Adrian Cole
@@ -48,25 +47,19 @@ import org.jclouds.util.Jsr330;
 public class S3ContextModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new RestS3ConnectionModule(), new ExecutorServiceModule(
-               new WithinThreadExecutorService()), new S3ParserModule(), new S3ContextModule() {
+      return Guice.createInjector(new RestS3ConnectionModule(), new S3ContextModule() {
          @Override
          protected void configure() {
             bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to(
-                     "localhost");
-            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY)).to(
-                     "localhost");
-            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_HTTP_ADDRESS)).to(
-                     "localhost");
-            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_HTTP_PORT)).to("1000");
-            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_HTTP_SECURE)).to("false");
-            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_HTTP_MAX_RETRIES))
-                     .to("5");
-            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_HTTP_MAX_REDIRECTS)).to(
-                     "5");
+                     "user");
+            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY))
+                     .to("key");
+            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_S3_ENDPOINT)).to(
+                     "http://localhost");
             super.configure();
          }
-      }, new JavaUrlHttpCommandExecutorServiceModule());
+      }, new JavaUrlHttpCommandExecutorServiceModule(), new ExecutorServiceModule(
+               new WithinThreadExecutorService()));
    }
 
    @Test

@@ -27,7 +27,10 @@ import java.io.IOException;
 import java.net.URI;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
 
+import org.jclouds.azure.storage.blob.AzureBlob;
 import org.jclouds.azure.storage.blob.AzureBlobContext;
 import org.jclouds.azure.storage.blob.AzureBlobStore;
 import org.jclouds.azure.storage.blob.domain.Blob;
@@ -38,9 +41,7 @@ import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.Logger;
 
-import javax.inject.Inject;
 import com.google.inject.Injector;
-import javax.inject.Named;
 
 /**
  * Uses a Guice Injector to configure the objects served by AzureBlobContext methods.
@@ -70,7 +71,8 @@ public class GuiceAzureBlobContext implements AzureBlobContext {
    private GuiceAzureBlobContext(Injector injector, Closer closer,
             AzureBlobObjectMapFactory azureObjectMapFactory,
             AzureBlobInputStreamMapFactory azureInputStreamMapFactory,
-            @Named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT) String account, URI endPoint) {
+            @Named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT) String account,
+            @AzureBlob URI endPoint) {
       this.injector = injector;
       this.closer = closer;
       this.azureInputStreamMapFactory = azureInputStreamMapFactory;

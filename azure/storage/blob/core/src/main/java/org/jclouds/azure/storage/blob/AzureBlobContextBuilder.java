@@ -25,23 +25,14 @@ package org.jclouds.azure.storage.blob;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
-import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_ADDRESS;
-import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_REDIRECTS;
-import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_RETRIES;
-import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_SECURE;
-import static org.jclouds.http.HttpConstants.PROPERTY_SAX_DEBUG;
-import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_IO_WORKER_THREADS;
-import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS;
-import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTION_REUSE;
-import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_SESSION_FAILURES;
-import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_REQUEST_INVOKER_THREADS;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Properties;
 
 import org.jclouds.azure.storage.blob.config.AzureBlobContextModule;
 import org.jclouds.azure.storage.blob.config.RestAzureBlobStoreModule;
-import org.jclouds.azure.storage.blob.xml.config.AzureBlobParserModule;
+import org.jclouds.azure.storage.blob.reference.AzureBlobConstants;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.cloud.CloudContextBuilder;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
@@ -67,25 +58,23 @@ public class AzureBlobContextBuilder extends CloudContextBuilder<AzureBlobContex
 
    public AzureBlobContextBuilder(Properties props) {
       super(props);
+      properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "x-ms-meta-");
+      properties.setProperty(AzureBlobConstants.PROPERTY_AZUREBLOB_ENDPOINT,
+               "https://{account}.blob.core.windows.net");
    }
 
    public static AzureBlobContextBuilder newBuilder(String id, String secret) {
       Properties properties = new Properties();
-      properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "x-ms-meta-");
-      properties.setProperty(PROPERTY_HTTP_ADDRESS, id + ".blob.core.windows.net");
-      properties.setProperty(PROPERTY_HTTP_SECURE, "true");
-      properties.setProperty(PROPERTY_SAX_DEBUG, "false");
-      properties.setProperty(PROPERTY_HTTP_MAX_RETRIES, "5");
-      properties.setProperty(PROPERTY_HTTP_MAX_REDIRECTS, "5");
-      properties.setProperty(PROPERTY_POOL_MAX_CONNECTION_REUSE, "75");
-      properties.setProperty(PROPERTY_POOL_MAX_SESSION_FAILURES, "2");
-      properties.setProperty(PROPERTY_POOL_REQUEST_INVOKER_THREADS, "1");
-      properties.setProperty(PROPERTY_POOL_IO_WORKER_THREADS, "2");
-      properties.setProperty(PROPERTY_POOL_MAX_CONNECTIONS, "12");
-
       AzureBlobContextBuilder builder = new AzureBlobContextBuilder(properties);
       builder.authenticate(id, secret);
       return builder;
+   }
+
+   @Override
+   public CloudContextBuilder<AzureBlobContext> withEndpoint(URI endpoint) {
+      properties.setProperty(AzureBlobConstants.PROPERTY_AZUREBLOB_ENDPOINT, checkNotNull(endpoint,
+               "endpoint").toString());
+      return this;
    }
 
    public void authenticate(String id, String secret) {
@@ -93,21 +82,20 @@ public class AzureBlobContextBuilder extends CloudContextBuilder<AzureBlobContex
                "azureStorageAccount"));
       properties.setProperty(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY, checkNotNull(secret,
                "azureStorageKey"));
+      String endpoint = properties.getProperty(AzureBlobConstants.PROPERTY_AZUREBLOB_ENDPOINT);
+      properties.setProperty(AzureBlobConstants.PROPERTY_AZUREBLOB_ENDPOINT, endpoint.replaceAll(
+               "\\{account\\}", id));
    }
 
    public AzureBlobContext buildContext() {
       return buildInjector().getInstance(AzureBlobContext.class);
    }
 
-   protected void addParserModule(List<Module> modules) {
-      modules.add(new AzureBlobParserModule());
-   }
-
    protected void addContextModule(List<Module> modules) {
       modules.add(new AzureBlobContextModule());
    }
 
-   protected void addConnectionModule(List<Module> modules) {
+   protected void addApiModule(List<Module> modules) {
       modules.add(new RestAzureBlobStoreModule());
    }
 

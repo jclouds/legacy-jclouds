@@ -24,19 +24,11 @@
 package org.jclouds.rackspace;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_ADDRESS;
-import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_REDIRECTS;
-import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_RETRIES;
-import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_SECURE;
-import static org.jclouds.http.HttpConstants.PROPERTY_SAX_DEBUG;
-import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_IO_WORKER_THREADS;
-import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS;
-import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTION_REUSE;
-import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_SESSION_FAILURES;
-import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_REQUEST_INVOKER_THREADS;
+import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_ENDPOINT;
 import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_KEY;
 import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_USER;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Properties;
 
@@ -44,7 +36,7 @@ import org.jclouds.cloud.CloudContext;
 import org.jclouds.cloud.CloudContextBuilder;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.rackspace.config.RackspaceAuthenticationModule;
+import org.jclouds.rackspace.config.RestRackspaceAuthenticationModule;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -67,16 +59,14 @@ public abstract class RackspaceContextBuilder<X extends CloudContext<?>> extends
 
    public RackspaceContextBuilder(Properties props) {
       super(props);
-      properties.setProperty(PROPERTY_HTTP_ADDRESS, "api.mosso.com");
-      properties.setProperty(PROPERTY_HTTP_SECURE, "true");
-      properties.setProperty(PROPERTY_SAX_DEBUG, "false");
-      properties.setProperty(PROPERTY_HTTP_MAX_RETRIES, "5");
-      properties.setProperty(PROPERTY_HTTP_MAX_REDIRECTS, "5");
-      properties.setProperty(PROPERTY_POOL_MAX_CONNECTION_REUSE, "75");
-      properties.setProperty(PROPERTY_POOL_MAX_SESSION_FAILURES, "2");
-      properties.setProperty(PROPERTY_POOL_REQUEST_INVOKER_THREADS, "1");
-      properties.setProperty(PROPERTY_POOL_IO_WORKER_THREADS, "2");
-      properties.setProperty(PROPERTY_POOL_MAX_CONNECTIONS, "12");
+      properties.setProperty(PROPERTY_RACKSPACE_ENDPOINT, "https://api.mosso.com");
+   }
+
+   @Override
+   public CloudContextBuilder<X> withEndpoint(URI endpoint) {
+      properties.setProperty(PROPERTY_RACKSPACE_ENDPOINT, checkNotNull(endpoint, "endpoint")
+               .toString());
+      return this;
    }
 
    public void authenticate(String id, String secret) {
@@ -84,8 +74,8 @@ public abstract class RackspaceContextBuilder<X extends CloudContext<?>> extends
       properties.setProperty(PROPERTY_RACKSPACE_KEY, checkNotNull(secret, "key"));
    }
 
-   protected void addConnectionModule(List<Module> modules) {
-      modules.add(new RackspaceAuthenticationModule());
+   public void addApiModule(List<Module> modules) {
+      modules.add(new RestRackspaceAuthenticationModule());
    }
 
 }

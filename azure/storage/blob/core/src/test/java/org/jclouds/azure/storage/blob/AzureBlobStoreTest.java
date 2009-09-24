@@ -35,7 +35,6 @@ import javax.ws.rs.HttpMethod;
 
 import org.jclouds.azure.storage.blob.functions.ReturnTrueIfContainerAlreadyExists;
 import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
-import org.jclouds.azure.storage.blob.xml.config.AzureBlobParserModule;
 import org.jclouds.azure.storage.options.CreateOptions;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
@@ -49,13 +48,13 @@ import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.ReturnTrueOn404;
 import org.jclouds.rest.JaxrsAnnotationProcessor;
 import org.jclouds.rest.config.JaxrsModule;
+import org.jclouds.util.Jsr330;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
-import org.jclouds.util.Jsr330;
 
 /**
  * Tests behavior of {@code AzureBlobStore}
@@ -258,14 +257,13 @@ public class AzureBlobStoreTest {
    @BeforeClass
    void setupFactory() {
       factory = Guice.createInjector(
-               new AzureBlobParserModule(),
                new AbstractModule() {
                   @Override
                   protected void configure() {
                      bind(URI.class).toInstance(URI.create("http://blob.core.windows.net"));
                      bindConstant().annotatedWith(
-                              Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT)).to(
-                              "myaccount");
+                              Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT))
+                              .to("myaccount");
                      bindConstant().annotatedWith(
                               Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY)).to(
                               HttpUtils.toBase64String("key".getBytes()));

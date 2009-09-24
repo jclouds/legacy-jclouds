@@ -25,14 +25,18 @@ package org.jclouds.azure.storage.blob.config;
 
 import java.net.URI;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import org.jclouds.azure.storage.blob.AzureBlob;
 import org.jclouds.azure.storage.blob.AzureBlobStore;
+import org.jclouds.azure.storage.blob.reference.AzureBlobConstants;
 import org.jclouds.azure.storage.config.RestAzureStorageConnectionModule;
 import org.jclouds.cloud.ConfiguresCloudConnection;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.RestClientFactory;
 
 import com.google.inject.Provides;
-import javax.inject.Singleton;
 
 /**
  * Configures the Azure Blob Service connection, including logging and http transport.
@@ -50,7 +54,15 @@ public class RestAzureBlobStoreModule extends RestAzureStorageConnectionModule {
 
    @Provides
    @Singleton
-   protected AzureBlobStore provideAzureBlobStore(URI uri, RestClientFactory factory) {
+   @AzureBlob
+   protected URI provideAuthenticationURI(
+            @Named(AzureBlobConstants.PROPERTY_AZUREBLOB_ENDPOINT) String endpoint) {
+      return URI.create(endpoint);
+   }
+
+   @Provides
+   @Singleton
+   protected AzureBlobStore provideAzureBlobStore(@AzureBlob URI uri, RestClientFactory factory) {
       return factory.create(uri, AzureBlobStore.class);
    }
 

@@ -69,6 +69,9 @@ public class BaseBlobIntegrationTest<S extends BlobStore<C, M, B>, C extends Con
          String key = "apples";
 
          DateTime before = new DateTime().minusSeconds(1);
+         // first create the object
+         addObjectAndValidateContent(containerName, key);
+         // now, modify it
          addObjectAndValidateContent(containerName, key);
          DateTime after = new DateTime().plusSeconds(1);
 

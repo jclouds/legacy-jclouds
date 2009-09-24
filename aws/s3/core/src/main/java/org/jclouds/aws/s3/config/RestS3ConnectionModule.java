@@ -23,34 +23,31 @@
  */
 package org.jclouds.aws.s3.config;
 
-import java.net.MalformedURLException;
 import java.net.URI;
 
-import javax.annotation.Resource;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
+import org.jclouds.aws.s3.S3;
 import org.jclouds.aws.s3.S3BlobStore;
 import org.jclouds.aws.s3.filters.RequestAuthorizeSignature;
 import org.jclouds.aws.s3.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.s3.handlers.AWSRedirectionRetryHandler;
 import org.jclouds.aws.s3.handlers.ParseAWSErrorFromXmlContent;
+import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.cloud.ConfiguresCloudConnection;
-import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
-import org.jclouds.logging.Logger;
 import org.jclouds.rest.RestClientFactory;
 import org.jclouds.rest.config.JaxrsModule;
 
 import com.google.inject.AbstractModule;
-import javax.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
-import javax.inject.Singleton;
-import javax.inject.Named;
 
 /**
  * Configures the S3 connection, including logging and http transport.
@@ -60,18 +57,6 @@ import javax.inject.Named;
 @ConfiguresCloudConnection
 @RequiresHttp
 public class RestS3ConnectionModule extends AbstractModule {
-   @Resource
-   protected Logger logger = Logger.NULL;
-
-   @Inject
-   @Named(HttpConstants.PROPERTY_HTTP_ADDRESS)
-   String address;
-   @Inject
-   @Named(HttpConstants.PROPERTY_HTTP_PORT)
-   int port;
-   @Inject
-   @Named(HttpConstants.PROPERTY_HTTP_SECURE)
-   boolean isSecure;
 
    @Override
    protected void configure() {
@@ -79,13 +64,18 @@ public class RestS3ConnectionModule extends AbstractModule {
       bind(RequestAuthorizeSignature.class).in(Scopes.SINGLETON);
       bindErrorHandlers();
       bindRetryHandlers();
-      requestInjection(this);
-      logger.info("S3 Context = %s://%s:%s", (isSecure ? "https" : "http"), address, port);
    }
 
    @Provides
    @Singleton
-   protected S3BlobStore provideS3Connection(URI uri, RestClientFactory factory) {
+   @S3
+   protected URI provideS3URI(@Named(S3Constants.PROPERTY_S3_ENDPOINT) String endpoint) {
+      return URI.create(endpoint);
+   }
+
+   @Provides
+   @Singleton
+   protected S3BlobStore provideS3Connection(@S3 URI uri, RestClientFactory factory) {
       return factory.create(uri, S3BlobStore.class);
    }
 
@@ -104,16 +94,4 @@ public class RestS3ConnectionModule extends AbstractModule {
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(
                AWSClientErrorRetryHandler.class);
    }
-
-   @Singleton
-   @Provides
-   protected URI provideAddress(@Named(HttpConstants.PROPERTY_HTTP_ADDRESS) String address,
-            @Named(HttpConstants.PROPERTY_HTTP_PORT) int port,
-            @Named(HttpConstants.PROPERTY_HTTP_SECURE) boolean isSecure)
-            throws MalformedURLException {
-
-      return URI.create(String.format("%1$s://%2$s:%3$s", isSecure ? "https" : "http", address,
-               port));
-   }
-
 }

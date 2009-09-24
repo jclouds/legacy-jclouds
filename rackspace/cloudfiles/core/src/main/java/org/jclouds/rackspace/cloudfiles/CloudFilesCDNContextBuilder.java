@@ -60,18 +60,14 @@ public class CloudFilesCDNContextBuilder extends RackspaceContextBuilder<CloudFi
       return builder;
    }
 
-   protected void addConnectionModule(List<Module> modules) {
-      super.addConnectionModule(modules);
+   @Override
+   public void addApiModule(List<Module> modules) {
+      super.addApiModule(modules);
       modules.add(new RestCloudFilesCDNConnectionModule());
    }
 
    @Override
    protected void addContextModule(List<Module> modules) {
-      // TODO
-   }
-
-   @Override
-   protected void addParserModule(List<Module> modules) {
       // TODO
    }
 

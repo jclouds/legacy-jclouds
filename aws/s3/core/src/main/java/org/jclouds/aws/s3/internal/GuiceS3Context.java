@@ -27,7 +27,10 @@ import java.io.IOException;
 import java.net.URI;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
 
+import org.jclouds.aws.s3.S3;
 import org.jclouds.aws.s3.S3BlobStore;
 import org.jclouds.aws.s3.S3Context;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
@@ -38,9 +41,7 @@ import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.Logger;
 
-import javax.inject.Inject;
 import com.google.inject.Injector;
-import javax.inject.Named;
 
 /**
  * Uses a Guice Injector to configure the objects served by S3Context methods.
@@ -69,7 +70,7 @@ public class GuiceS3Context implements S3Context {
    @Inject
    private GuiceS3Context(Injector injector, Closer closer, S3ObjectMapFactory s3ObjectMapFactory,
             S3InputStreamMapFactory s3InputStreamMapFactory,
-            @Named(S3Constants.PROPERTY_AWS_ACCESSKEYID) String accessKey, URI endPoint) {
+            @Named(S3Constants.PROPERTY_AWS_ACCESSKEYID) String accessKey, @S3 URI endPoint) {
       this.injector = injector;
       this.s3InputStreamMapFactory = s3InputStreamMapFactory;
       this.s3ObjectMapFactory = s3ObjectMapFactory;

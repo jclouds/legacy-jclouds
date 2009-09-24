@@ -31,13 +31,12 @@ import org.jclouds.concurrent.SingleThreadCompatible;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.gae.GaeHttpCommandExecutorService;
-import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpCommandExecutorService;
+import org.jclouds.util.Jsr330;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import org.jclouds.util.Jsr330;
 
 /**
  * Tests the ability to configure a {@link GaeHttpCommandExecutorService}
@@ -49,9 +48,6 @@ public class GaeHttpCommandExecutorServiceModuleTest {
 
    public void testConfigureBindsClient() {
       final Properties properties = new Properties();
-      properties.put(HttpConstants.PROPERTY_HTTP_ADDRESS, "localhost");
-      properties.put(HttpConstants.PROPERTY_HTTP_PORT, "8088");
-      properties.put(HttpConstants.PROPERTY_HTTP_SECURE, "false");
 
       Injector i = Guice.createInjector(
                new ExecutorServiceModule(new WithinThreadExecutorService()),

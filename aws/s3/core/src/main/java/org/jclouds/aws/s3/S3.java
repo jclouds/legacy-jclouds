@@ -21,28 +21,24 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.config;
+package org.jclouds.aws.s3;
 
-import java.net.URI;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.jclouds.aws.s3.S3;
-import org.jclouds.aws.s3.S3BlobStore;
-import org.jclouds.aws.s3.internal.StubS3BlobStore;
-import org.jclouds.cloud.ConfiguresCloudConnection;
-import org.jclouds.http.functions.config.ParserModule;
-
-import com.google.inject.AbstractModule;
+import javax.inject.Qualifier;
 
 /**
- * adds a stub alternative to invoking S3
+ * Related to a resource of type S3
  * 
  * @author Adrian Cole
+ * 
  */
-@ConfiguresCloudConnection
-public class StubS3BlobStoreModule extends AbstractModule {
-   protected void configure() {
-      install(new ParserModule());
-      bind(S3BlobStore.class).to(StubS3BlobStore.class);
-      bind(URI.class).annotatedWith(S3.class).toInstance(URI.create("http://localhost:8080"));
-   }
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Qualifier
+public @interface S3 {
+
 }

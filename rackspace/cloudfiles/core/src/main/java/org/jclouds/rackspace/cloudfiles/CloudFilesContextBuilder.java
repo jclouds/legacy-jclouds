@@ -64,19 +64,15 @@ public class CloudFilesContextBuilder extends RackspaceContextBuilder<CloudFiles
       return builder;
    }
 
-   protected void addConnectionModule(List<Module> modules) {
-      super.addConnectionModule(modules);
+   @Override
+   public void addApiModule(List<Module> modules) {
+      super.addApiModule(modules);
       modules.add(new RestCloudFilesBlobStoreModule());
    }
 
    @Override
    protected void addContextModule(List<Module> modules) {
       modules.add(new CloudFilesContextModule());
-   }
-
-   @Override
-   protected void addParserModule(List<Module> modules) {
-      // TODO
    }
 
    @Override

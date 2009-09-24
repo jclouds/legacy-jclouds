@@ -24,24 +24,15 @@
 package org.jclouds.azure.storage.queue;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_ADDRESS;
-import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_REDIRECTS;
-import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_RETRIES;
-import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_SECURE;
-import static org.jclouds.http.HttpConstants.PROPERTY_SAX_DEBUG;
-import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_IO_WORKER_THREADS;
-import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS;
-import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTION_REUSE;
-import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_SESSION_FAILURES;
-import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_REQUEST_INVOKER_THREADS;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Properties;
 
 import org.jclouds.azure.storage.queue.config.AzureQueueContextModule;
 import org.jclouds.azure.storage.queue.config.RestAzureQueueConnectionModule;
+import org.jclouds.azure.storage.queue.reference.AzureQueueConstants;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
-import org.jclouds.azure.storage.xml.config.AzureStorageParserModule;
 import org.jclouds.cloud.CloudContextBuilder;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
@@ -62,30 +53,26 @@ import com.google.inject.Module;
  * @author Adrian Cole
  * @see AzureQueueContext
  */
-public class AzureQueueContextBuilder extends
-         CloudContextBuilder<AzureQueueContext> {
+public class AzureQueueContextBuilder extends CloudContextBuilder<AzureQueueContext> {
 
    public AzureQueueContextBuilder(Properties props) {
       super(props);
+      properties.setProperty(AzureQueueConstants.PROPERTY_AZUREQUEUE_ENDPOINT,
+               "https://{account}.blob.core.windows.net");
    }
 
    public static AzureQueueContextBuilder newBuilder(String id, String secret) {
       Properties properties = new Properties();
-
-      properties.setProperty(PROPERTY_HTTP_ADDRESS, id + ".queue.core.windows.net");
-      properties.setProperty(PROPERTY_HTTP_SECURE, "true");
-      properties.setProperty(PROPERTY_SAX_DEBUG, "false");
-      properties.setProperty(PROPERTY_HTTP_MAX_RETRIES, "5");
-      properties.setProperty(PROPERTY_HTTP_MAX_REDIRECTS, "5");
-      properties.setProperty(PROPERTY_POOL_MAX_CONNECTION_REUSE, "75");
-      properties.setProperty(PROPERTY_POOL_MAX_SESSION_FAILURES, "2");
-      properties.setProperty(PROPERTY_POOL_REQUEST_INVOKER_THREADS, "1");
-      properties.setProperty(PROPERTY_POOL_IO_WORKER_THREADS, "2");
-      properties.setProperty(PROPERTY_POOL_MAX_CONNECTIONS, "12");
-
       AzureQueueContextBuilder builder = new AzureQueueContextBuilder(properties);
       builder.authenticate(id, secret);
       return builder;
+   }
+
+   @Override
+   public CloudContextBuilder<AzureQueueContext> withEndpoint(URI endpoint) {
+      properties.setProperty(AzureQueueConstants.PROPERTY_AZUREQUEUE_ENDPOINT, checkNotNull(
+               endpoint, "endpoint").toString());
+      return this;
    }
 
    public void authenticate(String id, String secret) {
@@ -93,21 +80,20 @@ public class AzureQueueContextBuilder extends
                "azureStorageAccount"));
       properties.setProperty(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY, checkNotNull(secret,
                "azureStorageKey"));
+      String endpoint = properties.getProperty(AzureQueueConstants.PROPERTY_AZUREQUEUE_ENDPOINT);
+      properties.setProperty(AzureQueueConstants.PROPERTY_AZUREQUEUE_ENDPOINT, endpoint.replaceAll(
+               "\\{account\\}", id));
    }
 
    public AzureQueueContext buildContext() {
       return buildInjector().getInstance(AzureQueueContext.class);
    }
 
-   protected void addParserModule(List<Module> modules) {
-      modules.add(new AzureStorageParserModule());
-   }
-
    protected void addContextModule(List<Module> modules) {
       modules.add(new AzureQueueContextModule());
    }
 
-   protected void addConnectionModule(List<Module> modules) {
+   protected void addApiModule(List<Module> modules) {
       modules.add(new RestAzureQueueConnectionModule());
    }
 

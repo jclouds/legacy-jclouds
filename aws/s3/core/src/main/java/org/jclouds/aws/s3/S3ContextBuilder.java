@@ -27,23 +27,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_ACCESSKEYID;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_SECRETACCESSKEY;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
-import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_ADDRESS;
-import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_REDIRECTS;
-import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_RETRIES;
-import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_SECURE;
-import static org.jclouds.http.HttpConstants.PROPERTY_SAX_DEBUG;
-import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_IO_WORKER_THREADS;
-import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS;
-import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTION_REUSE;
-import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_SESSION_FAILURES;
-import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_REQUEST_INVOKER_THREADS;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Properties;
 
 import org.jclouds.aws.s3.config.RestS3ConnectionModule;
 import org.jclouds.aws.s3.config.S3ContextModule;
-import org.jclouds.aws.s3.xml.config.S3ParserModule;
+import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.cloud.CloudContextBuilder;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
@@ -68,23 +59,20 @@ public class S3ContextBuilder extends CloudContextBuilder<S3Context> {
 
    public S3ContextBuilder(Properties props) {
       super(props);
+      properties.setProperty(S3Constants.PROPERTY_S3_ENDPOINT, "https://s3.amazonaws.com");
+      properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "x-amz-meta-");
+
+   }
+
+   @Override
+   public CloudContextBuilder<S3Context> withEndpoint(URI endpoint) {
+      properties.setProperty(S3Constants.PROPERTY_S3_ENDPOINT, checkNotNull(endpoint, "endpoint")
+               .toString());
+      return this;
    }
 
    public static S3ContextBuilder newBuilder(String id, String secret) {
       Properties properties = new Properties();
-
-      properties.setProperty(PROPERTY_HTTP_ADDRESS, "s3.amazonaws.com");
-      properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "x-amz-meta-");
-      properties.setProperty(PROPERTY_HTTP_SECURE, "true");
-      properties.setProperty(PROPERTY_SAX_DEBUG, "false");
-      properties.setProperty(PROPERTY_HTTP_MAX_RETRIES, "5");
-      properties.setProperty(PROPERTY_HTTP_MAX_REDIRECTS, "5");
-      properties.setProperty(PROPERTY_POOL_MAX_CONNECTION_REUSE, "75");
-      properties.setProperty(PROPERTY_POOL_MAX_SESSION_FAILURES, "2");
-      properties.setProperty(PROPERTY_POOL_REQUEST_INVOKER_THREADS, "1");
-      properties.setProperty(PROPERTY_POOL_IO_WORKER_THREADS, "2");
-      properties.setProperty(PROPERTY_POOL_MAX_CONNECTIONS, "12");
-
       S3ContextBuilder builder = new S3ContextBuilder(properties);
       builder.authenticate(id, secret);
       return builder;
@@ -100,15 +88,11 @@ public class S3ContextBuilder extends CloudContextBuilder<S3Context> {
       return buildInjector().getInstance(S3Context.class);
    }
 
-   protected void addParserModule(List<Module> modules) {
-      modules.add(new S3ParserModule());
-   }
-
    protected void addContextModule(List<Module> modules) {
       modules.add(new S3ContextModule());
    }
 
-   protected void addConnectionModule(List<Module> modules) {
+   protected void addApiModule(List<Module> modules) {
       modules.add(new RestS3ConnectionModule());
    }
 

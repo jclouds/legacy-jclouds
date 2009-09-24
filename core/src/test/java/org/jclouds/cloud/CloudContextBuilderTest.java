@@ -92,7 +92,7 @@ public class CloudContextBuilderTest {
       }
 
       @Override
-      protected void addConnectionModule(List<Module> modules) {
+      protected void addApiModule(List<Module> modules) {
          modules.add(new Module() {
             public void configure(Binder arg0) {
             }
@@ -108,15 +108,12 @@ public class CloudContextBuilderTest {
       }
 
       @Override
-      protected void addParserModule(List<Module> modules) {
-         modules.add(new Module() {
-            public void configure(Binder arg0) {
-            }
-         });
+      public void authenticate(String id, String secret) {
       }
 
       @Override
-      public void authenticate(String id, String secret) {
+      public CloudContextBuilder<TestCloudContext> withEndpoint(URI endpoint) {
+         return this;
       }
 
    }
@@ -190,10 +187,7 @@ public class CloudContextBuilderTest {
    public void testBuilder() {
       String id = "awsAccessKeyId";
       String secret = "awsSecretAccessKey";
-      String httpAddress = "httpAddress";
       int httpMaxRetries = 9875;
-      int httpPort = 3827;
-      boolean httpSecure = false;
       int poolIoWorkerThreads = 2727;
       int poolMaxConnectionReuse = 3932;
       int poolMaxConnections = 3382;
@@ -214,10 +208,7 @@ public class CloudContextBuilderTest {
       };
       TestCloudContextBuilder builder = new TestCloudContextBuilder(new Properties());
       builder.authenticate(id, secret);
-      builder.withHttpAddress(httpAddress);
       builder.withHttpMaxRetries(httpMaxRetries);
-      builder.withHttpPort(httpPort);
-      builder.withHttpSecure(httpSecure);
       builder.withModule(module1);
       builder.withModules(module2);
       builder.withPoolIoWorkerThreads(poolIoWorkerThreads);

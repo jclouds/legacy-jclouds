@@ -39,6 +39,7 @@ import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.rest.RestClientFactory;
 import org.jclouds.rest.config.JaxrsModule;
+import org.jclouds.util.Jsr330;
 import org.jclouds.util.Utils;
 import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Request;
@@ -54,7 +55,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import org.jclouds.util.Jsr330;
 
 public abstract class BaseJettyTest {
    protected static final String XML = "<foo><bar>whoppers</bar></foo>";
@@ -139,9 +139,6 @@ public abstract class BaseJettyTest {
       server2.start();
 
       final Properties properties = new Properties();
-      properties.put(HttpConstants.PROPERTY_HTTP_ADDRESS, "localhost");
-      properties.put(HttpConstants.PROPERTY_HTTP_PORT, testPort + "");
-      properties.put(HttpConstants.PROPERTY_HTTP_SECURE, "false");
       addConnectionProperties(properties);
 
       List<Module> modules = Lists.newArrayList(new AbstractModule() {

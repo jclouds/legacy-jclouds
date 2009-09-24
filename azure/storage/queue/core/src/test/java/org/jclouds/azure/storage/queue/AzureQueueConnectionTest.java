@@ -35,7 +35,6 @@ import javax.ws.rs.HttpMethod;
 
 import org.jclouds.azure.storage.options.CreateOptions;
 import org.jclouds.azure.storage.options.ListOptions;
-import org.jclouds.azure.storage.queue.xml.config.AzureQueueParserModule;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
@@ -46,13 +45,13 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.rest.JaxrsAnnotationProcessor;
 import org.jclouds.rest.config.JaxrsModule;
+import org.jclouds.util.Jsr330;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
-import org.jclouds.util.Jsr330;
 
 /**
  * Tests behavior of {@code AzureQueueConnection}
@@ -164,14 +163,13 @@ public class AzureQueueConnectionTest {
    @BeforeClass
    void setupFactory() {
       factory = Guice.createInjector(
-               new AzureQueueParserModule(),
                new AbstractModule() {
                   @Override
                   protected void configure() {
                      bind(URI.class).toInstance(URI.create("http://localhost:8080"));
                      bindConstant().annotatedWith(
-                              Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT)).to(
-                              "user");
+                              Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT))
+                              .to("user");
                      bindConstant().annotatedWith(
                               Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY)).to(
                               HttpUtils.toBase64String("key".getBytes()));

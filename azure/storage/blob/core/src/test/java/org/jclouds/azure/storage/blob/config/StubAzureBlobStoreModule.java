@@ -25,6 +25,7 @@ package org.jclouds.azure.storage.blob.config;
 
 import java.net.URI;
 
+import org.jclouds.azure.storage.blob.AzureBlob;
 import org.jclouds.azure.storage.blob.AzureBlobStore;
 import org.jclouds.azure.storage.blob.internal.StubAzureBlobStore;
 import org.jclouds.cloud.ConfiguresCloudConnection;
@@ -42,6 +43,7 @@ public class StubAzureBlobStoreModule extends AbstractModule {
    protected void configure() {
       install(new ParserModule());
       bind(AzureBlobStore.class).to(StubAzureBlobStore.class);
-      bind(URI.class).toInstance(URI.create("http://localhost:8080"));
+      bind(URI.class).annotatedWith(AzureBlob.class)
+               .toInstance(URI.create("http://localhost:8080"));
    }
 }
