@@ -25,6 +25,7 @@ package org.jclouds.cloud;
 
 import static org.testng.Assert.assertEquals;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -64,13 +65,22 @@ public class CloudContextBuilderTest {
 
       }
 
-      public String getConnection() {
+      public String getApi() {
          return "";
+      }
+
+      public String getAccount() {
+         return "";
+
+      }
+
+      public URI getEndPoint() {
+         return URI.create("http://localhost");
       }
 
    }
 
-   class TestCloudContextBuilder extends CloudContextBuilder<String, TestCloudContext> {
+   class TestCloudContextBuilder extends CloudContextBuilder<TestCloudContext> {
 
       protected TestCloudContextBuilder(Properties properties) {
          super(properties);
