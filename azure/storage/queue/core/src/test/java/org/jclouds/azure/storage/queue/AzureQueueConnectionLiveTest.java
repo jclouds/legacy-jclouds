@@ -33,7 +33,6 @@ import org.jclouds.azure.storage.domain.BoundedList;
 import org.jclouds.azure.storage.options.CreateOptions;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.queue.domain.QueueMetadata;
-import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.testng.annotations.BeforeGroups;
@@ -49,20 +48,18 @@ import com.google.inject.Injector;
  */
 @Test(groups = "live", sequential = true, testName = "cloudservers.AzureQueueConnectionLiveTest")
 public class AzureQueueConnectionLiveTest {
+   String account;
 
-   protected static final String sysAzureStorageAccount = System
-            .getProperty(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT);
-   protected static final String sysAzureStorageKey = System
-            .getProperty(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY);
    protected AzureQueueConnection connection;
 
    private String queuePrefix = System.getProperty("user.name") + "-azurequeue";
 
    @BeforeGroups(groups = { "live" })
    public void setupConnection() {
-      Injector injector = AzureQueueContextBuilder.newBuilder(sysAzureStorageAccount,
-               sysAzureStorageKey).withModules(new Log4JLoggingModule()).withSaxDebug()
-               .buildInjector();
+      account = System.getProperty("jclouds.test.user");
+      String key = System.getProperty("jclouds.test.key");
+      Injector injector = AzureQueueContextBuilder.newBuilder(account, key).withModules(
+               new Log4JLoggingModule()).withSaxDebug().buildInjector();
       connection = injector.getInstance(AzureQueueConnection.class);
    }
 
