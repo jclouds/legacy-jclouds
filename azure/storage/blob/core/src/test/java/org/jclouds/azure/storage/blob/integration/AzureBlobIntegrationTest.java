@@ -47,6 +47,13 @@ public class AzureBlobIntegrationTest extends
 
    @Override
    @Test(enabled = false)
+   public void testGetIfModifiedSince() throws InterruptedException, ExecutionException,
+            TimeoutException, IOException {
+      // http://code.google.com/p/jclouds/issues/detail?id=98
+   }
+
+   @Override
+   @Test(enabled = false)
    public void testGetStartAt() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
       // http://code.google.com/p/jclouds/issues/detail?id=91
