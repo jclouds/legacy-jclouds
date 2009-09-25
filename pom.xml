@@ -46,6 +46,7 @@
         <module>azure</module>
         <module>rackspace</module>
         <module>mezeo</module>
+        <module>nirvanix</module>
     </modules>
     <build>
         <plugins>
