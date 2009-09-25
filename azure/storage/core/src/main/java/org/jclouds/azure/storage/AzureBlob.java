@@ -1,4 +1,4 @@
-package org.jclouds.azure.storage.blob;
+package org.jclouds.azure.storage;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

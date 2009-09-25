@@ -38,6 +38,7 @@ import org.jclouds.cloud.CloudContextBuilder;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.rest.RestClientFactory;
+import org.jclouds.rest.JaxrsAnnotationProcessorTest.Localhost;
 import org.jclouds.rest.config.JaxrsModule;
 import org.jclouds.util.Jsr330;
 import org.jclouds.util.Utils;
@@ -145,13 +146,14 @@ public abstract class BaseJettyTest {
          @Override
          protected void configure() {
             Jsr330.bindProperties(binder(), properties);
+            bind(URI.class).annotatedWith(Localhost.class).toInstance(
+                     URI.create("http://localhost:" + testPort));
          }
       }, new JDKLoggingModule(), new JaxrsModule(), createClientModule());
       CloudContextBuilder.addExecutorServiceIfNotPresent(modules);
       injector = Guice.createInjector(modules);
       RestClientFactory factory = injector.getInstance(RestClientFactory.class);
-      client = factory.create(URI.create("http://localhost:" + testPort),
-               IntegrationTestClient.class);
+      client = factory.create(IntegrationTestClient.class);
       closer = injector.getInstance(Closer.class);
       assert client != null;
    }

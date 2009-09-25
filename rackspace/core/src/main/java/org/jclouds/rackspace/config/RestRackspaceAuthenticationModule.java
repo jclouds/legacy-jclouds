@@ -34,10 +34,10 @@ import javax.inject.Singleton;
 
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rackspace.Authentication;
-import org.jclouds.rackspace.CDN;
+import org.jclouds.rackspace.CloudFilesCDN;
 import org.jclouds.rackspace.RackspaceAuthentication;
-import org.jclouds.rackspace.Server;
-import org.jclouds.rackspace.Storage;
+import org.jclouds.rackspace.CloudServers;
+import org.jclouds.rackspace.CloudFiles;
 import org.jclouds.rackspace.RackspaceAuthentication.AuthenticationResponse;
 import org.jclouds.rest.RestClientFactory;
 import org.jclouds.rest.config.JaxrsModule;
@@ -69,39 +69,35 @@ public class RestRackspaceAuthenticationModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected AuthenticationResponse provideAuthenticationResponse(
-            @Authentication URI authenticationUri, RestClientFactory factory,
+   protected AuthenticationResponse provideAuthenticationResponse(RestClientFactory factory,
             @Named(PROPERTY_RACKSPACE_USER) String user, @Named(PROPERTY_RACKSPACE_KEY) String key) {
-      return factory.create(authenticationUri, RackspaceAuthentication.class).authenticate(user,
-               key);
+      return factory.create(RackspaceAuthentication.class).authenticate(user, key);
    }
 
    @Provides
    @Authentication
-   protected String provideAuthenticationToken(@Authentication URI authenticationUri,
-            RestClientFactory factory, @Named(PROPERTY_RACKSPACE_USER) String user,
-            @Named(PROPERTY_RACKSPACE_KEY) String key) {
-      return factory.create(authenticationUri, RackspaceAuthentication.class).authenticate(user,
-               key).getAuthToken();
+   protected String provideAuthenticationToken(RestClientFactory factory,
+            @Named(PROPERTY_RACKSPACE_USER) String user, @Named(PROPERTY_RACKSPACE_KEY) String key) {
+      return factory.create(RackspaceAuthentication.class).authenticate(user, key).getAuthToken();
    }
 
    @Provides
    @Singleton
-   @Storage
+   @CloudFiles
    protected URI provideStorageUrl(AuthenticationResponse response) {
       return response.getStorageUrl();
    }
 
    @Provides
    @Singleton
-   @Server
+   @CloudServers
    protected URI provideServerUrl(AuthenticationResponse response) {
       return response.getServerManagementUrl();
    }
 
    @Provides
    @Singleton
-   @CDN
+   @CloudFilesCDN
    protected URI provideCDNUrl(AuthenticationResponse response) {
       return response.getCDNManagementUrl();
    }

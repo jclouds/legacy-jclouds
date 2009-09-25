@@ -36,6 +36,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.jclouds.http.functions.ReturnFalseOn404;
+import org.jclouds.rackspace.CloudServers;
 import org.jclouds.rackspace.cloudservers.binders.BackupScheduleBinder;
 import org.jclouds.rackspace.cloudservers.binders.ChangeAdminPassBinder;
 import org.jclouds.rackspace.cloudservers.binders.ChangeServerNameBinder;
@@ -73,6 +74,7 @@ import org.jclouds.rackspace.cloudservers.options.CreateSharedIpGroupOptions;
 import org.jclouds.rackspace.cloudservers.options.ListOptions;
 import org.jclouds.rackspace.cloudservers.options.RebuildServerOptions;
 import org.jclouds.rackspace.filters.AuthenticateRequest;
+import org.jclouds.rest.Endpoint;
 import org.jclouds.rest.EntityParam;
 import org.jclouds.rest.ExceptionParser;
 import org.jclouds.rest.MapBinder;
@@ -94,6 +96,7 @@ import org.jclouds.rest.SkipEncoding;
  */
 @SkipEncoding('/')
 @RequestFilters(AuthenticateRequest.class)
+@Endpoint(CloudServers.class)
 public interface CloudServersConnection {
 
    /**

@@ -75,8 +75,8 @@ public class RestS3ConnectionModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected S3BlobStore provideS3Connection(@S3 URI uri, RestClientFactory factory) {
-      return factory.create(uri, S3BlobStore.class);
+   protected S3BlobStore provideS3Connection(RestClientFactory factory) {
+      return factory.create(S3BlobStore.class);
    }
 
    protected void bindErrorHandlers() {

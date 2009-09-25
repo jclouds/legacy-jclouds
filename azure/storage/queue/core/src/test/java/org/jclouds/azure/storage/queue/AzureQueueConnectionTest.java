@@ -33,6 +33,7 @@ import java.util.Collections;
 
 import javax.ws.rs.HttpMethod;
 
+import org.jclouds.azure.storage.AzureQueue;
 import org.jclouds.azure.storage.options.CreateOptions;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
@@ -60,9 +61,7 @@ import com.google.inject.Guice;
  */
 @Test(groups = "unit", testName = "cloudservers.AzureQueueConnectionTest")
 public class AzureQueueConnectionTest {
-
    JaxrsAnnotationProcessor.Factory factory;
-
    private static final Class<? extends ListOptions[]> listOptionsVarargsClass = new ListOptions[] {}
             .getClass();
    private static final Class<? extends CreateOptions[]> createOptionsVarargsClass = new CreateOptions[] {}
@@ -70,8 +69,8 @@ public class AzureQueueConnectionTest {
 
    public void testListQueues() throws SecurityException, NoSuchMethodException {
       Method method = AzureQueueConnection.class.getMethod("listQueues", listOptionsVarargsClass);
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = processor.createRequest(endpoint, method, new Object[] {});
+
+      HttpRequest httpMethod = processor.createRequest(method, new Object[] {});
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/");
       assertEquals(httpMethod.getEndpoint().getQuery(), "comp=list");
@@ -86,9 +85,9 @@ public class AzureQueueConnectionTest {
 
    public void testListQueuesOptions() throws SecurityException, NoSuchMethodException {
       Method method = AzureQueueConnection.class.getMethod("listQueues", listOptionsVarargsClass);
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = processor.createRequest(endpoint, method, new Object[] { maxResults(
-               1).marker("marker").prefix("prefix") });
+
+      HttpRequest httpMethod = processor.createRequest(method, new Object[] { maxResults(1).marker(
+               "marker").prefix("prefix") });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/");
       assert httpMethod.getEndpoint().getQuery().contains("comp=list");
@@ -107,8 +106,8 @@ public class AzureQueueConnectionTest {
    public void testCreateQueue() throws SecurityException, NoSuchMethodException {
       Method method = AzureQueueConnection.class.getMethod("createQueue", String.class,
                createOptionsVarargsClass);
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = processor.createRequest(endpoint, method, new Object[] { "queue" });
+
+      HttpRequest httpMethod = processor.createRequest(method, new Object[] { "queue" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/queue");
       assertEquals(httpMethod.getEndpoint().getQuery(), "restype=queue");
@@ -124,8 +123,8 @@ public class AzureQueueConnectionTest {
 
    public void testDeleteQueue() throws SecurityException, NoSuchMethodException {
       Method method = AzureQueueConnection.class.getMethod("deleteQueue", String.class);
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = processor.createRequest(endpoint, method, new Object[] { "queue" });
+
+      HttpRequest httpMethod = processor.createRequest(method, new Object[] { "queue" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/queue");
       assertEquals(httpMethod.getEndpoint().getQuery(), "restype=queue");
@@ -141,8 +140,8 @@ public class AzureQueueConnectionTest {
    public void testCreateQueueOptions() throws SecurityException, NoSuchMethodException {
       Method method = AzureQueueConnection.class.getMethod("createQueue", String.class,
                createOptionsVarargsClass);
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = processor.createRequest(endpoint, method, new Object[] { "queue",
+
+      HttpRequest httpMethod = processor.createRequest(method, new Object[] { "queue",
                withMetadata(ImmutableMultimap.of("foo", "bar")) });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/queue");
@@ -166,7 +165,8 @@ public class AzureQueueConnectionTest {
                new AbstractModule() {
                   @Override
                   protected void configure() {
-                     bind(URI.class).toInstance(URI.create("http://localhost:8080"));
+                     bind(URI.class).annotatedWith(AzureQueue.class).toInstance(
+                              URI.create("http://localhost:8080"));
                      bindConstant().annotatedWith(
                               Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT))
                               .to("user");
@@ -174,11 +174,9 @@ public class AzureQueueConnectionTest {
                               Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY)).to(
                               HttpUtils.toBase64String("key".getBytes()));
                   }
-
                }, new JaxrsModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
                new JavaUrlHttpCommandExecutorServiceModule()).getInstance(
                JaxrsAnnotationProcessor.Factory.class);
       processor = factory.create(AzureQueueConnection.class);
    }
-
 }

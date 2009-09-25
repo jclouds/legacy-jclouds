@@ -58,9 +58,8 @@ public class RackspaceAuthenticationTest {
    public void testAuthenticate() throws SecurityException, NoSuchMethodException {
       Method method = RackspaceAuthentication.class.getMethod("authenticate", String.class,
                String.class);
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = factory.create(RackspaceAuthentication.class).createRequest(
-               endpoint, method, new Object[] { "foo", "bar" });
+      HttpRequest httpMethod = factory.create(RackspaceAuthentication.class).createRequest(method,
+               new Object[] { "foo", "bar" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/auth");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
@@ -77,12 +76,14 @@ public class RackspaceAuthenticationTest {
 
    @BeforeClass
    void setupFactory() {
-      factory = Guice.createInjector(new AbstractModule() {
-         @Override
-         protected void configure() {
-            bind(URI.class).toInstance(URI.create("http://localhost:8080"));
-         }
-      }, new JaxrsModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
+      factory = Guice.createInjector(
+               new AbstractModule() {
+                  @Override
+                  protected void configure() {
+                     bind(URI.class).annotatedWith(Authentication.class).toInstance(
+                              URI.create("http://localhost:8080"));
+                  }
+               }, new JaxrsModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
                new JavaUrlHttpCommandExecutorServiceModule()).getInstance(
                JaxrsAnnotationProcessor.Factory.class);
    }

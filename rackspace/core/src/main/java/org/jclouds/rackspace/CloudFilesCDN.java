@@ -31,15 +31,15 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 /**
- * Represents a component related to Rackspace Cloud Servers.
+ * Represents a component related to Rackspace Cloud Files Content delivery network.
  * 
- * @see <a href="http://docs.rackspacecloud.com/servers/api/cs-devguide-latest.pdf" />
+ * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090311.pdf" />
  * @author Adrian Cole
  * 
  */
 @Retention(value = RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Target(value = { ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
 @Qualifier
-public @interface Server {
+public @interface CloudFilesCDN {
 
 }

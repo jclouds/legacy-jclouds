@@ -21,19 +21,25 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudfiles;
+package org.jclouds.rackspace;
 
-import org.jclouds.cloud.CloudContext;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import javax.inject.Qualifier;
 
 /**
- * Represents an authenticated context to Cloud Files CDN.
+ * Represents a component related to Rackspace Cloud Servers.
  * 
- * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090311.pdf" />
- * @see CloudFilesCDNConnection
- * @see CloudContext
- * @author James Murty
+ * @see <a href="http://docs.rackspacecloud.com/servers/api/cs-devguide-latest.pdf" />
+ * @author Adrian Cole
  * 
  */
-public interface CloudFilesCDNContext extends CloudContext<CloudFilesCDNConnection> {
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Qualifier
+public @interface CloudServers {
 
 }

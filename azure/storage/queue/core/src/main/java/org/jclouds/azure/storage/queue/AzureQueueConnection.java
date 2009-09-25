@@ -32,6 +32,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
+import org.jclouds.azure.storage.AzureQueue;
 import org.jclouds.azure.storage.domain.BoundedList;
 import org.jclouds.azure.storage.filters.SharedKeyAuthentication;
 import org.jclouds.azure.storage.options.CreateOptions;
@@ -39,6 +40,7 @@ import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.queue.domain.QueueMetadata;
 import org.jclouds.azure.storage.queue.xml.AccountNameEnumerationResultsHandler;
 import org.jclouds.azure.storage.reference.AzureStorageHeaders;
+import org.jclouds.rest.Endpoint;
 import org.jclouds.rest.Headers;
 import org.jclouds.rest.QueryParams;
 import org.jclouds.rest.RequestFilters;
@@ -67,6 +69,7 @@ import org.jclouds.rest.XMLResponseParser;
 @SkipEncoding('/')
 @RequestFilters(SharedKeyAuthentication.class)
 @Headers(keys = AzureStorageHeaders.VERSION, values = "2009-07-17")
+@Endpoint(AzureQueue.class)
 public interface AzureQueueConnection {
 
    /**

@@ -62,6 +62,7 @@ import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.options.GetOptions;
+import org.jclouds.rest.Endpoint;
 import org.jclouds.rest.EntityParam;
 import org.jclouds.rest.ExceptionParser;
 import org.jclouds.rest.Headers;
@@ -90,6 +91,7 @@ import com.google.inject.internal.Nullable;
 @VirtualHost
 @SkipEncoding('/')
 @RequestFilters(RequestAuthorizeSignature.class)
+@Endpoint(S3.class)
 public interface S3BlobStore extends BlobStore<BucketMetadata, ObjectMetadata, S3Object> {
 
    /**

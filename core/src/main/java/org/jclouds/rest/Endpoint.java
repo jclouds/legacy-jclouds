@@ -21,35 +21,23 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudfiles.config;
+package org.jclouds.rest;
 
-import javax.inject.Singleton;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import org.jclouds.cloud.ConfiguresCloudConnection;
-import org.jclouds.http.RequiresHttp;
-import org.jclouds.rackspace.cloudfiles.CloudFilesBlobStore;
-import org.jclouds.rest.RestClientFactory;
-
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
+import java.lang.annotation.Annotation;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
 /**
- * Configures the Cloud Files connection, including logging and http transport.
+ * Designates that this Resource expects virtual host style requests
  * 
  * @author Adrian Cole
  */
-@ConfiguresCloudConnection
-@RequiresHttp
-public class RestCloudFilesBlobStoreModule extends AbstractModule {
-
-   @Override
-   protected void configure() {
-   }
-
-   @Provides
-   @Singleton
-   protected CloudFilesBlobStore provideConnection(RestClientFactory factory) {
-      return factory.create(CloudFilesBlobStore.class);
-   }
-
+@Target( { TYPE, METHOD })
+@Retention(RUNTIME)
+public @interface Endpoint {
+   Class<? extends Annotation> value();
 }

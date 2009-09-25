@@ -23,11 +23,10 @@
  */
 package org.jclouds.rackspace.cloudservers.config;
 
-import java.net.URI;
+import javax.inject.Singleton;
 
 import org.jclouds.cloud.ConfiguresCloudConnection;
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.rackspace.Server;
 import org.jclouds.rackspace.cloudservers.CloudServersConnection;
 import org.jclouds.rackspace.cloudservers.CloudServersContext;
 import org.jclouds.rackspace.cloudservers.internal.GuiceCloudServersContext;
@@ -35,7 +34,6 @@ import org.jclouds.rest.RestClientFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import javax.inject.Singleton;
 
 /**
  * Configures the Cloud Servers connection, including logging and http transport.
@@ -53,9 +51,8 @@ public class RestCloudServersConnectionModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected CloudServersConnection provideConnection(@Server URI authenticationUri,
-            RestClientFactory factory) {
-      return factory.create(authenticationUri, CloudServersConnection.class);
+   protected CloudServersConnection provideConnection(RestClientFactory factory) {
+      return factory.create(CloudServersConnection.class);
    }
 
 }

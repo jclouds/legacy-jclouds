@@ -40,6 +40,7 @@ import java.util.Map;
 import java.util.concurrent.Future;
 
 import javax.inject.Named;
+import javax.inject.Qualifier;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.HttpMethod;
@@ -63,6 +64,7 @@ import org.jclouds.http.options.GetOptions;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.rest.config.JaxrsModule;
 import org.jclouds.util.DateService;
+import org.jclouds.util.Jsr330;
 import org.joda.time.DateTime;
 import org.mortbay.jetty.HttpHeaders;
 import org.testng.annotations.BeforeClass;
@@ -74,7 +76,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
-import org.jclouds.util.Jsr330;
 
 /**
  * Tests behavior of {@code JaxrsAnnotationProcessor}
@@ -83,14 +84,26 @@ import org.jclouds.util.Jsr330;
  */
 @Test(groups = "unit", testName = "jaxrs.JaxrsUtilTest")
 public class JaxrsAnnotationProcessorTest {
-
    @Target( { ElementType.METHOD })
    @Retention(RetentionPolicy.RUNTIME)
    @javax.ws.rs.HttpMethod("FOO")
    public @interface FOO {
    }
 
+   @Retention(value = RetentionPolicy.RUNTIME)
+   @Target(value = { ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+   @Qualifier
+   public @interface Localhost {
+   }
+
+   @Retention(value = RetentionPolicy.RUNTIME)
+   @Target(value = { ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+   @Qualifier
+   public @interface Localhost2 {
+   }
+
    @QueryParams(keys = "x-ms-version", values = "2009-07-17")
+   @Endpoint(Localhost.class)
    public class TestQuery {
       @FOO
       @QueryParams(keys = "x-ms-rubbish", values = "bin")
@@ -105,8 +118,7 @@ public class JaxrsAnnotationProcessorTest {
 
    public void testQuery() throws SecurityException, NoSuchMethodException {
       Method method = TestQuery.class.getMethod("foo");
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = factory.create(TestQuery.class).createRequest(endpoint, method,
+      HttpRequest httpMethod = factory.create(TestQuery.class).createRequest(method,
                new Object[] {});
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "");
@@ -116,8 +128,7 @@ public class JaxrsAnnotationProcessorTest {
 
    public void testQuery2() throws SecurityException, NoSuchMethodException {
       Method method = TestQuery.class.getMethod("foo2");
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = factory.create(TestQuery.class).createRequest(endpoint, method,
+      HttpRequest httpMethod = factory.create(TestQuery.class).createRequest(method,
                new Object[] {});
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "");
@@ -126,6 +137,7 @@ public class JaxrsAnnotationProcessorTest {
       assertEquals(httpMethod.getMethod(), "FOO");
    }
 
+   @Endpoint(Localhost.class)
    public class TestCustomMethod {
       @FOO
       public void foo() {
@@ -134,9 +146,8 @@ public class JaxrsAnnotationProcessorTest {
 
    public void testCustomMethod() throws SecurityException, NoSuchMethodException {
       Method method = TestCustomMethod.class.getMethod("foo");
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = factory.create(TestCustomMethod.class).createRequest(endpoint,
-               method, new Object[] {});
+      HttpRequest httpMethod = factory.create(TestCustomMethod.class).createRequest(method,
+               new Object[] {});
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "");
       assertEquals(httpMethod.getMethod(), "FOO");
@@ -146,23 +157,42 @@ public class JaxrsAnnotationProcessorTest {
       public void foo();
    }
 
+   @Endpoint(Localhost.class)
    public class TestOverridden implements Parent {
       @POST
       public void foo() {
-
       }
    }
 
    public void testOverriddenMethod() throws SecurityException, NoSuchMethodException {
       Method method = TestOverridden.class.getMethod("foo");
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = factory.create(TestOverridden.class).createRequest(endpoint, method,
+      HttpRequest httpMethod = factory.create(TestOverridden.class).createRequest(method,
                new Object[] {});
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "");
       assertEquals(httpMethod.getMethod(), "POST");
    }
 
+   @Endpoint(Localhost.class)
+   public class TestOverriddenEndpoint implements Parent {
+
+      @POST
+      @Endpoint(Localhost2.class)
+      public void foo() {
+      }
+   }
+
+   public void testOverriddenEndpointMethod() throws SecurityException, NoSuchMethodException {
+      Method method = TestOverriddenEndpoint.class.getMethod("foo");
+      HttpRequest httpMethod = factory.create(TestOverriddenEndpoint.class).createRequest(method,
+               new Object[] {});
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPort(), 8081);
+      assertEquals(httpMethod.getEndpoint().getPath(), "");
+      assertEquals(httpMethod.getMethod(), "POST");
+   }
+
+   @Endpoint(Localhost.class)
    public class TestPost {
       @POST
       public void post(@EntityParam String content) {
@@ -183,13 +213,11 @@ public class JaxrsAnnotationProcessorTest {
       @MapBinder(JsonBinder.class)
       public void postWithMethodBinder(@PathParam("foo") @MapEntityParam("fooble") String path) {
       }
-
    }
 
    public void testCreatePostRequest() throws SecurityException, NoSuchMethodException {
       Method method = TestPost.class.getMethod("post", String.class);
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = factory.create(TestPost.class).createRequest(endpoint, method,
+      HttpRequest httpMethod = factory.create(TestPost.class).createRequest(method,
                new Object[] { "data" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "");
@@ -204,8 +232,7 @@ public class JaxrsAnnotationProcessorTest {
 
    public void testCreatePostJsonRequest() throws SecurityException, NoSuchMethodException {
       Method method = TestPost.class.getMethod("postAsJson", String.class);
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = factory.create(TestPost.class).createRequest(endpoint, method,
+      HttpRequest httpMethod = factory.create(TestPost.class).createRequest(method,
                new Object[] { "data" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "");
@@ -220,10 +247,8 @@ public class JaxrsAnnotationProcessorTest {
 
    public void testCreatePostWithPathRequest() throws SecurityException, NoSuchMethodException {
       Method method = TestPost.class.getMethod("postWithPath", String.class, MapEntityBinder.class);
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = factory.create(TestPost.class).createRequest(endpoint, method,
+      HttpRequest httpMethod = factory.create(TestPost.class).createRequest(method,
                new Object[] { "data", new MapEntityBinder() {
-
                   public void addEntityToRequest(Map<String, String> postParams, HttpRequest request) {
                      request.setEntity(postParams.get("fooble"));
                   }
@@ -231,7 +256,6 @@ public class JaxrsAnnotationProcessorTest {
                   public void addEntityToRequest(Object toBind, HttpRequest request) {
                      throw new RuntimeException("this shouldn't be used in POST");
                   }
-
                } });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/data");
@@ -242,8 +266,7 @@ public class JaxrsAnnotationProcessorTest {
 
    public void testCreatePostWithMethodBinder() throws SecurityException, NoSuchMethodException {
       Method method = TestPost.class.getMethod("postWithMethodBinder", String.class);
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = factory.create(TestPost.class).createRequest(endpoint, method,
+      HttpRequest httpMethod = factory.create(TestPost.class).createRequest(method,
                new Object[] { "data", });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/data");
@@ -257,20 +280,18 @@ public class JaxrsAnnotationProcessorTest {
       assertEquals(httpMethod.getEntity(), expected);
    }
 
+   @Endpoint(Localhost.class)
    public class TestPut {
-
       @PUT
       @Path("{foo}")
       @MapBinder(JsonBinder.class)
       public void putWithMethodBinder(@PathParam("foo") @MapEntityParam("fooble") String path) {
       }
-
    }
 
    public void testCreatePutWithMethodBinder() throws SecurityException, NoSuchMethodException {
       Method method = TestPut.class.getMethod("putWithMethodBinder", String.class);
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = factory.create(TestPut.class).createRequest(endpoint, method,
+      HttpRequest httpMethod = factory.create(TestPut.class).createRequest(method,
                new Object[] { "data", });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/data");
@@ -285,57 +306,49 @@ public class JaxrsAnnotationProcessorTest {
    }
 
    static class TestRequestFilter1 implements HttpRequestFilter {
-
       public HttpRequest filter(HttpRequest request) throws HttpException {
          return null;
       }
-
    }
 
    static class TestRequestFilter2 implements HttpRequestFilter {
-
       public HttpRequest filter(HttpRequest request) throws HttpException {
          return null;
       }
-
    }
 
    @RequestFilters(TestRequestFilter1.class)
+   @Endpoint(Localhost.class)
    static class TestRequestFilter {
-
       @GET
       @RequestFilters(TestRequestFilter2.class)
       public void get() {
       }
-
    }
 
    @Test
    public void testRequestFilter() throws SecurityException, NoSuchMethodException {
       Method method = TestRequestFilter.class.getMethod("get");
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = factory.create(TestRequestFilter.class).createRequest(endpoint,
-               method, new Object[] {});
+      HttpRequest httpMethod = factory.create(TestRequestFilter.class).createRequest(method,
+               new Object[] {});
       assertEquals(httpMethod.getFilters().size(), 2);
       assertEquals(httpMethod.getFilters().get(0).getClass(), TestRequestFilter1.class);
       assertEquals(httpMethod.getFilters().get(1).getClass(), TestRequestFilter2.class);
    }
 
    @SkipEncoding('/')
+   @Endpoint(Localhost.class)
    public class TestEncoding {
-
       @GET
       @Path("{path1}/{path2}")
       public void twoPaths(@PathParam("path1") String path, @PathParam("path2") String path2) {
       }
-
    }
 
    @Test
    public void testSkipEncoding() throws SecurityException, NoSuchMethodException {
       Method method = TestEncoding.class.getMethod("twoPaths", String.class, String.class);
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = factory.create(TestEncoding.class).createRequest(endpoint, method,
+      HttpRequest httpMethod = factory.create(TestEncoding.class).createRequest(method,
                new Object[] { "1", "localhost" });
       assertEquals(httpMethod.getEndpoint().getPath(), "/1/localhost");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
@@ -345,8 +358,7 @@ public class JaxrsAnnotationProcessorTest {
    @Test
    public void testEncodingPath() throws SecurityException, NoSuchMethodException {
       Method method = TestEncoding.class.getMethod("twoPaths", String.class, String.class);
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = factory.create(TestEncoding.class).createRequest(endpoint, method,
+      HttpRequest httpMethod = factory.create(TestEncoding.class).createRequest(method,
                new Object[] { "/", "localhost" });
       assertEquals(httpMethod.getEndpoint().getPath(), "///localhost");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
@@ -355,8 +367,8 @@ public class JaxrsAnnotationProcessorTest {
 
    @SkipEncoding('/')
    @Path("/v1/{account}")
+   @Endpoint(Localhost.class)
    public interface TestConstantPathParam {
-
       @Named("testaccount")
       @PathParam("account")
       void setUsername();
@@ -364,22 +376,20 @@ public class JaxrsAnnotationProcessorTest {
       @GET
       @Path("{path1}/{path2}")
       public void twoPaths(@PathParam("path1") String path, @PathParam("path2") String path2);
-
    }
 
    @Test
    public void testConstantPathParam() throws SecurityException, NoSuchMethodException {
       Method method = TestConstantPathParam.class.getMethod("twoPaths", String.class, String.class);
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = factory.create(TestConstantPathParam.class).createRequest(endpoint,
-               method, new Object[] { "1", "localhost" });
+      HttpRequest httpMethod = factory.create(TestConstantPathParam.class).createRequest(method,
+               new Object[] { "1", "localhost" });
       assertEquals(httpMethod.getEndpoint().getPath(), "/v1/ralphie/1/localhost");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
    }
 
+   @Endpoint(Localhost.class)
    public class TestPath {
-
       @GET
       @Path("{path}")
       public void onePath(@PathParam("path") String path) {
@@ -404,15 +414,13 @@ public class JaxrsAnnotationProcessorTest {
    }
 
    static class FirstCharacter implements Function<Object, String> {
-
       public String apply(Object from) {
          return from.toString().substring(0, 1);
       }
-
    }
 
+   @Endpoint(Localhost.class)
    public class TestHeader {
-
       @GET
       @Headers(keys = "x-amz-copy-source", values = "/{bucket}")
       public void oneHeader(@PathParam("bucket") String path) {
@@ -448,8 +456,8 @@ public class JaxrsAnnotationProcessorTest {
    }
 
    @Headers(keys = "x-amz-copy-source", values = "/{bucket}")
+   @Endpoint(Localhost.class)
    public class TestClassHeader {
-
       @GET
       public void oneHeader(@PathParam("bucket") String path) {
       }
@@ -500,8 +508,8 @@ public class JaxrsAnnotationProcessorTest {
       assertEquals(headers.get("x-amz-copy-source"), Collections.singletonList("/eggs/robot"));
    }
 
+   @Endpoint(Localhost.class)
    public class TestTransformers {
-
       @GET
       public void noTransformer() {
       }
@@ -510,7 +518,6 @@ public class JaxrsAnnotationProcessorTest {
       @ResponseParser(ReturnStringIf200.class)
       public void oneTransformer() {
       }
-
    }
 
    @SuppressWarnings("static-access")
@@ -530,8 +537,8 @@ public class JaxrsAnnotationProcessorTest {
       assertEquals(transformer, ReturnStringIf200.class);
    }
 
+   @Endpoint(Localhost.class)
    public class TestRequest {
-
       @GET
       @VirtualHost
       @Path("/{id}")
@@ -597,8 +604,7 @@ public class JaxrsAnnotationProcessorTest {
       GetOptions options = GetOptions.Builder.ifModifiedSince(date);
       HttpRequestOptions[] optionsHolder = new HttpRequestOptions[] {};
       Method method = TestRequest.class.getMethod("get", String.class, optionsHolder.getClass());
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = factory.create(TestRequest.class).createRequest(endpoint, method,
+      HttpRequest httpMethod = factory.create(TestRequest.class).createRequest(method,
                new Object[] { "1", options });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/1");
@@ -614,10 +620,8 @@ public class JaxrsAnnotationProcessorTest {
             NoSuchMethodException {
       DateTime date = new DateTime();
       GetOptions options = GetOptions.Builder.ifModifiedSince(date);
-
       Method method = TestRequest.class.getMethod("get", String.class, HttpRequestOptions.class);
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = factory.create(TestRequest.class).createRequest(endpoint, method,
+      HttpRequest httpMethod = factory.create(TestRequest.class).createRequest(method,
                new Object[] { "1", options });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/1");
@@ -629,8 +633,8 @@ public class JaxrsAnnotationProcessorTest {
                .singletonList(dateService.rfc822DateFormat(date)));
    }
 
+   @Endpoint(Localhost.class)
    public class PrefixOptions extends BaseHttpRequestOptions {
-
       public PrefixOptions withPrefix(String prefix) {
          queryParameters.put("prefix", checkNotNull(prefix, "prefix"));
          return this;
@@ -640,10 +644,8 @@ public class JaxrsAnnotationProcessorTest {
    public void testCreateGetOptionsThatProducesQuery() throws SecurityException,
             NoSuchMethodException {
       PrefixOptions options = new PrefixOptions().withPrefix("1");
-
       Method method = TestRequest.class.getMethod("get", String.class, HttpRequestOptions.class);
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = factory.create(TestRequest.class).createRequest(endpoint, method,
+      HttpRequest httpMethod = factory.create(TestRequest.class).createRequest(method,
                new Object[] { "1", options });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/1");
@@ -652,13 +654,11 @@ public class JaxrsAnnotationProcessorTest {
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.HOST), Collections
                .singletonList("localhost"));
-
    }
 
    public void testCreateGetQuery() throws SecurityException, NoSuchMethodException {
       Method method = TestRequest.class.getMethod("getQuery", String.class);
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = factory.create(TestRequest.class).createRequest(endpoint, method,
+      HttpRequest httpMethod = factory.create(TestRequest.class).createRequest(method,
                new Object[] { "1" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/1");
@@ -669,8 +669,7 @@ public class JaxrsAnnotationProcessorTest {
 
    public void testCreateGetQueryNull() throws SecurityException, NoSuchMethodException {
       Method method = TestRequest.class.getMethod("getQueryNull", String.class);
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = factory.create(TestRequest.class).createRequest(endpoint, method,
+      HttpRequest httpMethod = factory.create(TestRequest.class).createRequest(method,
                new Object[] { "1" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/1");
@@ -679,6 +678,7 @@ public class JaxrsAnnotationProcessorTest {
       assertEquals(httpMethod.getHeaders().size(), 0);
    }
 
+   @Endpoint(Localhost.class)
    public class EntityOptions extends BaseHttpRequestOptions {
       @Override
       public String buildStringEntity() {
@@ -689,11 +689,9 @@ public class JaxrsAnnotationProcessorTest {
    public void testCreateGetOptionsThatProducesEntity() throws SecurityException,
             NoSuchMethodException {
       EntityOptions options = new EntityOptions();
-
       Method method = TestRequest.class.getMethod("putOptions", String.class,
                HttpRequestOptions.class);
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = factory.create(TestRequest.class).createRequest(endpoint, method,
+      HttpRequest httpMethod = factory.create(TestRequest.class).createRequest(method,
                new Object[] { "1", options });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/1");
@@ -706,7 +704,6 @@ public class JaxrsAnnotationProcessorTest {
                .singletonList("application/unknown"));
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
                .singletonList("foo".getBytes().length + ""));
-
    }
 
    @DataProvider(name = "strings")
@@ -718,8 +715,7 @@ public class JaxrsAnnotationProcessorTest {
    public void testCreateGetRequest(String key) throws SecurityException, NoSuchMethodException,
             UnsupportedEncodingException {
       Method method = TestRequest.class.getMethod("get", String.class, String.class);
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = factory.create(TestRequest.class).createRequest(endpoint, method,
+      HttpRequest httpMethod = factory.create(TestRequest.class).createRequest(method,
                new Object[] { key, "localhost" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       String expectedPath = "/" + URLEncoder.encode(key, "UTF-8").replaceAll("\\+", "%20");
@@ -729,13 +725,11 @@ public class JaxrsAnnotationProcessorTest {
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.HOST), Collections
                .singletonList("localhost"));
-
    }
 
    public void testCreatePutRequest() throws SecurityException, NoSuchMethodException {
       Method method = TestRequest.class.getMethod("put", String.class, String.class);
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = factory.create(TestRequest.class).createRequest(endpoint, method,
+      HttpRequest httpMethod = factory.create(TestRequest.class).createRequest(method,
                new Object[] { "111", "data" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/1");
@@ -750,8 +744,7 @@ public class JaxrsAnnotationProcessorTest {
 
    public void testCreatePutHeader() throws SecurityException, NoSuchMethodException {
       Method method = TestRequest.class.getMethod("putHeader", String.class, String.class);
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = factory.create(TestRequest.class).createRequest(endpoint, method,
+      HttpRequest httpMethod = factory.create(TestRequest.class).createRequest(method,
                new Object[] { "1", "data" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/1");
@@ -765,34 +758,31 @@ public class JaxrsAnnotationProcessorTest {
       assertEquals(httpMethod.getEntity(), "data");
    }
 
+   @Endpoint(Localhost.class)
    public class TestVirtualHostMethod {
-
       @GET
       @Path("/{id}")
       @VirtualHost
       public Future<String> get(@PathParam("id") String id, String foo) {
          return null;
       }
-
    }
 
    @Test
    public void testVirtualHostMethod() throws SecurityException, NoSuchMethodException {
       Method method = TestVirtualHostMethod.class.getMethod("get", String.class, String.class);
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = factory.create(TestVirtualHostMethod.class).createRequest(endpoint,
-               method, new Object[] { "1", "localhost" });
+      HttpRequest httpMethod = factory.create(TestVirtualHostMethod.class).createRequest(method,
+               new Object[] { "1", "localhost" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/1");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.HOST), Collections
                .singletonList("localhost"));
-
    }
 
+   @Endpoint(Localhost.class)
    public class TestVirtualHost {
-
       @GET
       @Path("/{id}")
       @VirtualHost
@@ -816,37 +806,32 @@ public class JaxrsAnnotationProcessorTest {
    @Test
    public void testVirtualHost() throws SecurityException, NoSuchMethodException {
       Method method = TestVirtualHost.class.getMethod("get", String.class, String.class);
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = factory.create(TestVirtualHost.class).createRequest(endpoint,
-               method, new Object[] { "1", "localhost" });
+      HttpRequest httpMethod = factory.create(TestVirtualHost.class).createRequest(method,
+               new Object[] { "1", "localhost" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/1");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.HOST), Collections
                .singletonList("localhost"));
-
    }
 
    @Test
    public void testHostPrefix() throws SecurityException, NoSuchMethodException {
       Method method = TestVirtualHost.class.getMethod("getPrefix", String.class, String.class);
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = factory.create(TestVirtualHost.class).createRequest(endpoint,
-               method, new Object[] { "1", "holy" });
+      HttpRequest httpMethod = factory.create(TestVirtualHost.class).createRequest(method,
+               new Object[] { "1", "holy" });
       assertEquals(httpMethod.getEndpoint().getHost(), "holylocalhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/1");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-
    }
 
    @Test
    public void testHostPrefixDot() throws SecurityException, NoSuchMethodException {
       Method method = TestVirtualHost.class.getMethod("getPrefixDot", String.class, String.class);
-      URI endpoint = URI.create("http://localhost");
-      HttpRequest httpMethod = factory.create(TestVirtualHost.class).createRequest(endpoint,
-               method, new Object[] { "1", "holy" });
+      HttpRequest httpMethod = factory.create(TestVirtualHost.class).createRequest(method,
+               new Object[] { "1", "holy" });
       assertEquals(httpMethod.getEndpoint().getHost(), "holy.localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/1");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
@@ -856,22 +841,17 @@ public class JaxrsAnnotationProcessorTest {
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testHostPrefixDotEmpty() throws SecurityException, NoSuchMethodException {
       Method method = TestVirtualHost.class.getMethod("getPrefixDot", String.class, String.class);
-      URI endpoint = URI.create("http://localhost");
-      factory.create(TestVirtualHost.class).createRequest(endpoint, method,
-               new Object[] { "1", "" });
-
+      factory.create(TestVirtualHost.class).createRequest(method, new Object[] { "1", "" });
    }
 
    @Test(expectedExceptions = NullPointerException.class)
    public void testHostPrefixDotNull() throws SecurityException, NoSuchMethodException {
       Method method = TestVirtualHost.class.getMethod("getPrefixDot", String.class, String.class);
-      URI endpoint = URI.create("http://localhost");
-      factory.create(TestVirtualHost.class).createRequest(endpoint, method,
-               new Object[] { "1", null });
+      factory.create(TestVirtualHost.class).createRequest(method, new Object[] { "1", null });
    }
 
+   @Endpoint(Localhost.class)
    public class TestHeaders {
-
       @GET
       public void oneHeader(@HeaderParam("header") String header) {
       }
@@ -931,6 +911,7 @@ public class JaxrsAnnotationProcessorTest {
       assert values.contains("egg");
    }
 
+   @Endpoint(Localhost.class)
    public class TestEntity {
       @PUT
       public void put(@EntityParam String content) {
@@ -944,7 +925,6 @@ public class JaxrsAnnotationProcessorTest {
       @PUT
       public void twoEntities(@EntityParam String entity1, @EntityParam String entity2) {
       }
-
    }
 
    @Test
@@ -964,7 +944,6 @@ public class JaxrsAnnotationProcessorTest {
    public void putWithPath() throws SecurityException, NoSuchMethodException {
       Method method = TestEntity.class.getMethod("putWithPath", String.class, String.class);
       HttpRequest request = new HttpRequest(HttpMethod.PUT, URI.create("http://localhost:8080"));
-
       factory.create(TestEntity.class).buildEntityIfPostOrPutRequest(method,
                new Object[] { "rabble", "test" }, request);
       assertEquals(request.getEntity(), "test");
@@ -987,13 +966,17 @@ public class JaxrsAnnotationProcessorTest {
 
    @BeforeClass
    void setupFactory() {
-      factory = Guice.createInjector(new AbstractModule() {
-         @Override
-         protected void configure() {
-            bindConstant().annotatedWith(Jsr330.named("testaccount")).to("ralphie");
-            bind(URI.class).toInstance(URI.create("http://localhost:8080"));
-         }
-      }, new JaxrsModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
+      factory = Guice.createInjector(
+               new AbstractModule() {
+                  @Override
+                  protected void configure() {
+                     bindConstant().annotatedWith(Jsr330.named("testaccount")).to("ralphie");
+                     bind(URI.class).annotatedWith(Localhost.class).toInstance(
+                              URI.create("http://localhost:8080"));
+                     bind(URI.class).annotatedWith(Localhost2.class).toInstance(
+                              URI.create("http://localhost:8081"));
+                  }
+               }, new JaxrsModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
                new JavaUrlHttpCommandExecutorServiceModule()).getInstance(
                JaxrsAnnotationProcessor.Factory.class);
    }

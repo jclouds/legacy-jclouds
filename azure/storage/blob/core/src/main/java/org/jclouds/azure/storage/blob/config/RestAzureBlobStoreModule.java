@@ -28,7 +28,7 @@ import java.net.URI;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.azure.storage.blob.AzureBlob;
+import org.jclouds.azure.storage.AzureBlob;
 import org.jclouds.azure.storage.blob.AzureBlobStore;
 import org.jclouds.azure.storage.blob.reference.AzureBlobConstants;
 import org.jclouds.azure.storage.config.RestAzureStorageConnectionModule;
@@ -62,8 +62,8 @@ public class RestAzureBlobStoreModule extends RestAzureStorageConnectionModule {
 
    @Provides
    @Singleton
-   protected AzureBlobStore provideAzureBlobStore(@AzureBlob URI uri, RestClientFactory factory) {
-      return factory.create(uri, AzureBlobStore.class);
+   protected AzureBlobStore provideAzureBlobStore(RestClientFactory factory) {
+      return factory.create(AzureBlobStore.class);
    }
 
 }

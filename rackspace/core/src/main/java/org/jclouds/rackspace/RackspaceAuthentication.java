@@ -31,6 +31,7 @@ import javax.ws.rs.Path;
 
 import org.jclouds.rackspace.functions.ParseAuthenticationResponseFromHeaders;
 import org.jclouds.rackspace.reference.RackspaceHeaders;
+import org.jclouds.rest.Endpoint;
 import org.jclouds.rest.ResponseParser;
 
 /**
@@ -40,17 +41,17 @@ import org.jclouds.rest.ResponseParser;
  * @see <a href="http://docs.rackspacecloud.com/servers/api/cs-devguide-latest.pdf" />
  * @author Adrian Cole
  */
-
+@Endpoint(Authentication.class)
 public interface RackspaceAuthentication {
 
    public interface AuthenticationResponse {
-      @Storage
+      @CloudFiles
       URI getStorageUrl();
 
-      @CDN
+      @CloudFilesCDN
       URI getCDNManagementUrl();
 
-      @Server
+      @CloudServers
       URI getServerManagementUrl();
 
       @Authentication

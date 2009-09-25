@@ -40,6 +40,9 @@ import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.HttpHeaders;
@@ -65,14 +68,11 @@ import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-import javax.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
-import javax.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.internal.Lists;
-import javax.inject.Named;
 
 /**
  * Tests behavior of JaxrsUtil
@@ -260,7 +260,9 @@ public class JaxrsAnnotationProcessor {
 
    private HttpRequestOptionsBinder optionsBinder;
 
-   public HttpRequest createRequest(URI endpoint, Method method, Object[] args) {
+   public HttpRequest createRequest(Method method, Object[] args) {
+      URI endpoint = getEndpointFor(method);
+
       String httpMethod = getHttpMethodOrConstantOrThrowException(method);
 
       UriBuilder builder = addHostPrefixIfPresent(endpoint, method, args);
@@ -663,5 +665,18 @@ public class JaxrsAnnotationProcessor {
          }
       }
       return postParams;
+   }
+
+   public URI getEndpointFor(Method method) {
+      Endpoint endpoint;
+      if (method.isAnnotationPresent(Endpoint.class)) {
+         endpoint = method.getAnnotation(Endpoint.class);
+      } else if (declaring.isAnnotationPresent(Endpoint.class)) {
+         endpoint = declaring.getAnnotation(Endpoint.class);
+      } else {
+         throw new IllegalStateException(
+                  "There must be an @Endpoint annotation on type or method: " + method);
+      }
+      return injector.getInstance(Key.get(URI.class, endpoint.value()));
    }
 }

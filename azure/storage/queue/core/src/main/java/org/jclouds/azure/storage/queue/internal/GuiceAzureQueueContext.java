@@ -30,7 +30,7 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jclouds.azure.storage.queue.AzureQueue;
+import org.jclouds.azure.storage.AzureQueue;
 import org.jclouds.azure.storage.queue.AzureQueueConnection;
 import org.jclouds.azure.storage.queue.AzureQueueContext;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;

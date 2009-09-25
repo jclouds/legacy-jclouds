@@ -46,9 +46,9 @@ public class Server {
    private Integer flavorId;
    private String hostId;
    private Integer imageId;
+   private Integer sharedIpGroupId;
 
    private Integer progress;
-   private Integer sharedIpGroupId;
    private ServerStatus status;
 
    public Server() {
@@ -163,9 +163,7 @@ public class Server {
       result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
       result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
       result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
-      result = prime * result + ((progress == null) ? 0 : progress.hashCode());
       result = prime * result + ((sharedIpGroupId == null) ? 0 : sharedIpGroupId.hashCode());
-      result = prime * result + ((status == null) ? 0 : status.hashCode());
       return result;
    }
 
@@ -215,20 +213,10 @@ public class Server {
             return false;
       } else if (!getName().equals(other.getName()))
          return false;
-      if (progress == null) {
-         if (other.progress != null)
-            return false;
-      } else if (!progress.equals(other.progress))
-         return false;
       if (sharedIpGroupId == null) {
          if (other.sharedIpGroupId != null)
             return false;
       } else if (!sharedIpGroupId.equals(other.sharedIpGroupId))
-         return false;
-      if (status == null) {
-         if (other.status != null)
-            return false;
-      } else if (!status.equals(other.status))
          return false;
       return true;
    }

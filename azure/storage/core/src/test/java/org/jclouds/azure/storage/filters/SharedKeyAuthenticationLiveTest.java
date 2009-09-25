@@ -23,6 +23,7 @@
  */
 package org.jclouds.azure.storage.filters;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
@@ -30,22 +31,24 @@ import java.net.URI;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
+import org.jclouds.azure.storage.AzureBlob;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.rest.Endpoint;
 import org.jclouds.rest.QueryParams;
 import org.jclouds.rest.RequestFilters;
 import org.jclouds.rest.RestClientFactory;
 import org.jclouds.rest.config.JaxrsModule;
+import org.jclouds.util.Jsr330;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import org.jclouds.util.Jsr330;
 
 /**
  * Tests behavior of {@code JaxrsAnnotationProcessor}
@@ -56,6 +59,7 @@ import org.jclouds.util.Jsr330;
 public class SharedKeyAuthenticationLiveTest {
 
    @RequestFilters(SharedKeyAuthentication.class)
+   @Endpoint(AzureBlob.class)
    public interface IntegrationTestClient {
 
       @GET
@@ -77,13 +81,15 @@ public class SharedKeyAuthenticationLiveTest {
 
    @BeforeClass
    void setupFactory() {
-      final String account = System.getProperty("jclouds.test.user");
-      final String key = System.getProperty("jclouds.test.key");
-
+      final String account = checkNotNull(System.getProperty("jclouds.test.user"),
+               "jclouds.test.user");
+      final String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+      uri = "http://" + account + ".blob.core.windows.net";
       injector = Guice.createInjector(new AbstractModule() {
 
          @Override
          protected void configure() {
+            bind(URI.class).annotatedWith(AzureBlob.class).toInstance(URI.create(uri));
             bindConstant().annotatedWith(
                      Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT)).to(account);
             bindConstant().annotatedWith(
@@ -93,7 +99,6 @@ public class SharedKeyAuthenticationLiveTest {
       }, new JaxrsModule(), new Log4JLoggingModule(), new ExecutorServiceModule(
                new WithinThreadExecutorService()), new JavaUrlHttpCommandExecutorServiceModule());
       RestClientFactory factory = injector.getInstance(RestClientFactory.class);
-      uri = "http://" + account + ".blob.core.windows.net";
-      client = factory.create(URI.create(uri), IntegrationTestClient.class);
+      client = factory.create(IntegrationTestClient.class);
    }
 }

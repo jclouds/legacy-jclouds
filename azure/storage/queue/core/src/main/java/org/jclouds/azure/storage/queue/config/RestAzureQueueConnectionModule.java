@@ -28,8 +28,8 @@ import java.net.URI;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.azure.storage.AzureQueue;
 import org.jclouds.azure.storage.config.RestAzureStorageConnectionModule;
-import org.jclouds.azure.storage.queue.AzureQueue;
 import org.jclouds.azure.storage.queue.AzureQueueConnection;
 import org.jclouds.azure.storage.queue.reference.AzureQueueConstants;
 import org.jclouds.cloud.ConfiguresCloudConnection;
@@ -57,9 +57,8 @@ public class RestAzureQueueConnectionModule extends RestAzureStorageConnectionMo
 
    @Provides
    @Singleton
-   protected AzureQueueConnection provideAzureStorageConnection(@AzureQueue URI uri,
-            RestClientFactory factory) {
-      return factory.create(uri, AzureQueueConnection.class);
+   protected AzureQueueConnection provideAzureStorageConnection(RestClientFactory factory) {
+      return factory.create(AzureQueueConnection.class);
    }
 
 }

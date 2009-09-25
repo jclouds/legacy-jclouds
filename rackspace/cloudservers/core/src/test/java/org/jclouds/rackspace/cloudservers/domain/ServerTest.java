@@ -21,25 +21,33 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace;
+package org.jclouds.rackspace.cloudservers.domain;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import static org.testng.Assert.assertEquals;
 
-import javax.inject.Qualifier;
+import org.testng.annotations.Test;
 
 /**
- * Represents a component related to Rackspace Cloud Files Content delivery network.
+ * Tests behavior of {@code CreateImageBinder}
  * 
- * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090311.pdf" />
  * @author Adrian Cole
- * 
  */
-@Retention(value = RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
-@Qualifier
-public @interface CDN {
+@Test(groups = "unit", testName = "cloudservers.CreateImageBinderTest")
+public class ServerTest {
+   public void testStatusDoesntAffectEquals() {
+      Server server1 = new Server(1, "hello");
+      server1.setStatus(ServerStatus.ACTIVE);
+      Server server2 = new Server(1, "hello");
+      server2.setStatus(ServerStatus.BUILD);
+      assertEquals(server1, server2);
+   }
+
+   public void testProgressDoesntAffectEquals() {
+      Server server1 = new Server(1, "hello");
+      server1.setProgress(1);
+      Server server2 = new Server(1, "hello");
+      server2.setProgress(2);
+      assertEquals(server1, server2);
+   }
 
 }

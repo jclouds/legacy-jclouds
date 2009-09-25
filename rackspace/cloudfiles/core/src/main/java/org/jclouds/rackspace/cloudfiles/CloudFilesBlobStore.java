@@ -30,6 +30,7 @@ import java.util.concurrent.Future;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -41,23 +42,34 @@ import org.jclouds.blobstore.binders.UserMetadataBinder;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.BlobKey;
+import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.functions.ReturnTrueOn404;
 import org.jclouds.http.options.GetOptions;
+import org.jclouds.rackspace.CloudFiles;
+import org.jclouds.rackspace.CloudFilesCDN;
 import org.jclouds.rackspace.cloudfiles.domain.AccountMetadata;
+import org.jclouds.rackspace.cloudfiles.domain.ContainerCDNMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
 import org.jclouds.rackspace.cloudfiles.functions.ParseAccountMetadataResponseFromHeaders;
 import org.jclouds.rackspace.cloudfiles.functions.ParseBlobMetadataListFromJsonResponse;
+import org.jclouds.rackspace.cloudfiles.functions.ParseCdnUriFromHeaders;
+import org.jclouds.rackspace.cloudfiles.functions.ParseContainerCDNMetadataFromHeaders;
+import org.jclouds.rackspace.cloudfiles.functions.ParseContainerCDNMetadataListFromGsonResponse;
 import org.jclouds.rackspace.cloudfiles.functions.ParseContainerListFromJsonResponse;
 import org.jclouds.rackspace.cloudfiles.functions.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.rackspace.cloudfiles.functions.ParseObjectMetadataFromHeaders;
 import org.jclouds.rackspace.cloudfiles.functions.ReturnTrueOn404FalseOn409;
+import org.jclouds.rackspace.cloudfiles.options.ListCdnContainerOptions;
 import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
+import org.jclouds.rackspace.cloudfiles.reference.CloudFilesHeaders;
 import org.jclouds.rackspace.filters.AuthenticateRequest;
+import org.jclouds.rest.Endpoint;
 import org.jclouds.rest.EntityParam;
 import org.jclouds.rest.ExceptionParser;
+import org.jclouds.rest.Headers;
 import org.jclouds.rest.ParamParser;
 import org.jclouds.rest.QueryParams;
 import org.jclouds.rest.RequestFilters;
@@ -77,6 +89,7 @@ import com.google.common.collect.Multimap;
  */
 @SkipEncoding('/')
 @RequestFilters(AuthenticateRequest.class)
+@Endpoint(CloudFiles.class)
 public interface CloudFilesBlobStore extends
          BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> {
    @GET
@@ -154,5 +167,49 @@ public interface CloudFilesBlobStore extends
    boolean setObjectMetadata(@PathParam("container") String container,
             @PathParam("key") String key,
             @EntityParam(UserMetadataBinder.class) Multimap<String, String> userMetadata);
+
+   // / cdn functionality below
+
+   @GET
+   @ResponseParser(ParseContainerCDNMetadataListFromGsonResponse.class)
+   @QueryParams(keys = "format", values = "json")
+   @Path("/")
+   @Endpoint(CloudFilesCDN.class)
+   List<ContainerCDNMetadata> listCDNContainers(ListCdnContainerOptions... options);
+
+   // TODO: Container name is not included in CDN HEAD response headers, so we cannot populate it
+   // here.
+   @HEAD
+   @ResponseParser(ParseContainerCDNMetadataFromHeaders.class)
+   @ExceptionParser(ThrowContainerNotFoundOn404.class)
+   @Path("{container}")
+   @Endpoint(CloudFilesCDN.class)
+   ContainerCDNMetadata getCDNMetadata(@PathParam("container") String container);
+
+   @PUT
+   @Path("{container}")
+   @ResponseParser(ParseCdnUriFromHeaders.class)
+   @Endpoint(CloudFilesCDN.class)
+   String enableCDN(@PathParam("container") String container,
+            @HeaderParam(CloudFilesHeaders.CDN_TTL) Long ttl);
+
+   @PUT
+   @Path("{container}")
+   @ResponseParser(ParseCdnUriFromHeaders.class)
+   @Endpoint(CloudFilesCDN.class)
+   String enableCDN(@PathParam("container") String container);
+
+   @POST
+   @Path("{container}")
+   @ResponseParser(ParseCdnUriFromHeaders.class)
+   @Endpoint(CloudFilesCDN.class)
+   String updateCDN(@PathParam("container") String container,
+            @HeaderParam(CloudFilesHeaders.CDN_TTL) Long ttl);
+
+   @POST
+   @Path("{container}")
+   @Headers(keys = CloudFilesHeaders.CDN_ENABLED, values = "False")
+   @Endpoint(CloudFilesCDN.class)
+   boolean disableCDN(@PathParam("container") String container);
 
 }

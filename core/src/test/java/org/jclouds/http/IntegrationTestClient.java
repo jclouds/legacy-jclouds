@@ -36,12 +36,14 @@ import javax.ws.rs.PathParam;
 import org.jclouds.http.binders.JsonBinder;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.options.HttpRequestOptions;
+import org.jclouds.rest.Endpoint;
 import org.jclouds.rest.EntityParam;
 import org.jclouds.rest.ExceptionParser;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.MapEntityParam;
 import org.jclouds.rest.RequestFilters;
 import org.jclouds.rest.XMLResponseParser;
+import org.jclouds.rest.JaxrsAnnotationProcessorTest.Localhost;
 
 import com.google.common.base.Function;
 
@@ -50,6 +52,7 @@ import com.google.common.base.Function;
  * 
  * @author Adrian Cole
  */
+@Endpoint(Localhost.class)
 public interface IntegrationTestClient {
 
    @HEAD

@@ -44,7 +44,7 @@ public class CreateSharedIpGroupOptions extends JsonBinder {
    Integer serverId;
 
    @SuppressWarnings("unused")
-   private class SharedIpGroupRequest {
+   private static class SharedIpGroupRequest {
       final String name;
       Integer server;
 

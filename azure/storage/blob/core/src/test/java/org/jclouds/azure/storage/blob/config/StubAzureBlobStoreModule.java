@@ -25,7 +25,7 @@ package org.jclouds.azure.storage.blob.config;
 
 import java.net.URI;
 
-import org.jclouds.azure.storage.blob.AzureBlob;
+import org.jclouds.azure.storage.AzureBlob;
 import org.jclouds.azure.storage.blob.AzureBlobStore;
 import org.jclouds.azure.storage.blob.internal.StubAzureBlobStore;
 import org.jclouds.cloud.ConfiguresCloudConnection;

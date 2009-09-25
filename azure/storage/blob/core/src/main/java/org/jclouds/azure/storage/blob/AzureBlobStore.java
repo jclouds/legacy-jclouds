@@ -34,6 +34,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
+import org.jclouds.azure.storage.AzureBlob;
 import org.jclouds.azure.storage.blob.domain.Blob;
 import org.jclouds.azure.storage.blob.domain.BlobMetadata;
 import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
@@ -57,6 +58,7 @@ import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.functions.ReturnTrueOn404;
 import org.jclouds.http.options.GetOptions;
+import org.jclouds.rest.Endpoint;
 import org.jclouds.rest.EntityParam;
 import org.jclouds.rest.ExceptionParser;
 import org.jclouds.rest.Headers;
@@ -79,6 +81,7 @@ import org.jclouds.rest.XMLResponseParser;
 @SkipEncoding('/')
 @RequestFilters(SharedKeyAuthentication.class)
 @Headers(keys = AzureStorageHeaders.VERSION, values = "2009-07-17")
+@Endpoint(AzureBlob.class)
 public interface AzureBlobStore extends BlobStore<ContainerMetadata, BlobMetadata, Blob> {
 
    /**

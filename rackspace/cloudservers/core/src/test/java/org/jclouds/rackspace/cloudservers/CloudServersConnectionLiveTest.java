@@ -68,7 +68,8 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "cloudservers.CloudServersConnectionLiveTest")
+// disabled [Web Hosting #129069
+@Test(groups = "live", enabled = false, sequential = true, testName = "cloudservers.CloudServersConnectionLiveTest")
 public class CloudServersConnectionLiveTest {
 
    protected CloudServersConnection connection;
@@ -475,7 +476,8 @@ public class CloudServersConnectionLiveTest {
       }
    }
 
-   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateServerIp")
+   // [Web Hosting #129069
+   @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testCreateServerIp")
    public void testUnshare() throws Exception {
       connection.unshareIp(ip, serverId2);
       blockUntilServerActive(serverId2);
@@ -496,7 +498,8 @@ public class CloudServersConnectionLiveTest {
       }
    }
 
-   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testUnshare")
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testCreateServerIp")
+   // "testUnshare")
    public void testShareConfig() throws Exception {
       connection.shareIp(ip, serverId2, sharedIpGroupId, true);
       blockUntilServerActive(serverId2);
@@ -506,7 +509,7 @@ public class CloudServersConnectionLiveTest {
       testUnshare();
    }
 
-   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testShareConfig")
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testShareConfig")
    public void testShareNoConfig() throws Exception {
       connection.shareIp(ip, serverId2, sharedIpGroupId, false);
       blockUntilServerActive(serverId2);
@@ -516,7 +519,7 @@ public class CloudServersConnectionLiveTest {
       testUnshare();
    }
 
-   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testShareNoConfig")
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testShareNoConfig")
    public void testBackup() throws Exception {
       assertEquals(new BackupSchedule(), connection.listBackupSchedule(serverId));
       BackupSchedule dailyWeekly = new BackupSchedule();
@@ -529,7 +532,7 @@ public class CloudServersConnectionLiveTest {
       assertEquals(connection.listBackupSchedule(serverId).isEnabled(), false);
    }
 
-   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testBackup")
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testBackup")
    public void testCreateImage() throws Exception {
       Image image = connection.createImageFromServer("hoofie", serverId);
       assertEquals("hoofie", image.getName());
@@ -538,7 +541,7 @@ public class CloudServersConnectionLiveTest {
       blockUntilImageActive(imageId);
    }
 
-   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateImage")
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testCreateImage")
    public void testRebuildServer() throws Exception {
       assertTrue(connection.rebuildServer(serverId, withImage(imageId)));
       blockUntilServerActive(serverId);
@@ -546,19 +549,19 @@ public class CloudServersConnectionLiveTest {
       // assertEquals(new Integer(imageId), connection.getServer(serverId).getImageId());
    }
 
-   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testRebuildServer")
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebuildServer")
    public void testRebootHard() throws Exception {
       assertTrue(connection.rebootServer(serverId, RebootType.HARD));
       blockUntilServerActive(serverId);
    }
 
-   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testRebootHard")
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebootHard")
    public void testRebootSoft() throws Exception {
       assertTrue(connection.rebootServer(serverId, RebootType.SOFT));
       blockUntilServerActive(serverId);
    }
 
-   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testRebootSoft")
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebootSoft")
    public void testRevertResize() throws Exception {
       assertTrue(connection.resizeServer(serverId, 2));
       blockUntilServerVerifyResize(serverId);
@@ -567,7 +570,7 @@ public class CloudServersConnectionLiveTest {
       assertEquals(new Integer(1), connection.getServer(serverId).getFlavorId());
    }
 
-   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testRebootSoft")
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebootSoft")
    public void testConfirmResize() throws Exception {
       assertTrue(connection.resizeServer(serverId2, 2));
       blockUntilServerVerifyResize(serverId2);
@@ -577,7 +580,7 @@ public class CloudServersConnectionLiveTest {
    }
 
    // must be last!. do not rely on positional order.
-   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = { "testRebootSoft", "testRevertResize",
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = { "testRebootSoft", "testRevertResize",
             "testConfirmResize" })
    void deleteServers() {
       if (serverId > 0) {
@@ -592,7 +595,7 @@ public class CloudServersConnectionLiveTest {
       }
    }
 
-   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = { "deleteServers" })
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = { "deleteServers" })
    void testDeleteSharedIpGroup() {
       if (sharedIpGroupId > 0) {
          connection.deleteSharedIpGroup(sharedIpGroupId);

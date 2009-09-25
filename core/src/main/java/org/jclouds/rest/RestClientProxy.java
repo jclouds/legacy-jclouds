@@ -30,11 +30,12 @@ package org.jclouds.rest;
  */
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.jclouds.concurrent.FutureExceptionParser;
 import org.jclouds.http.HttpConstants;
@@ -44,14 +45,11 @@ import org.jclouds.http.TransformingHttpCommand;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
-import javax.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import javax.inject.Named;
 
 public class RestClientProxy implements InvocationHandler {
    private final JaxrsAnnotationProcessor util;
    private final Class<?> declaring;
-   private final URI endPoint;
    private final TransformingHttpCommand.Factory commandFactory;
 
    /**
@@ -65,16 +63,14 @@ public class RestClientProxy implements InvocationHandler {
    protected Logger logger = Logger.NULL;
 
    public static interface RestClientProxyFactory {
-      RestClientProxy create(URI endPoint, Class<?> clazz);
+      RestClientProxy create(Class<?> clazz);
    }
 
    @Inject
    public RestClientProxy(JaxrsAnnotationProcessor.Factory utilFactory,
-            TransformingHttpCommand.Factory factory, @Assisted URI endPoint,
-            @Assisted Class<?> declaring) {
+            TransformingHttpCommand.Factory factory, @Assisted Class<?> declaring) {
       this.util = utilFactory.create(declaring);
       this.declaring = declaring;
-      this.endPoint = endPoint;
       this.commandFactory = factory;
    }
 
@@ -87,7 +83,7 @@ public class RestClientProxy implements InvocationHandler {
       } else if (util.getDelegateOrNull(method) != null) {
          method = util.getDelegateOrNull(method);
          logger.trace("%s - converting method to request", method);
-         HttpRequest request = util.createRequest(endPoint, method, args);
+         HttpRequest request = util.createRequest(method, args);
          logger.trace("%s - converted method to request %s", method, request);
 
          Function<HttpResponse, ?> transformer = util.createResponseParser(method);

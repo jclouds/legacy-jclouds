@@ -30,6 +30,8 @@ import static org.testng.Assert.fail;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
 
+import javax.inject.Singleton;
+
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpResponseException;
@@ -44,7 +46,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
-import javax.inject.Singleton;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Tests behavior of {@code JaxrsAnnotationProcessor}
@@ -54,8 +56,8 @@ import javax.inject.Singleton;
 @Test(groups = "live", testName = "rackspace.RackspaceAuthenticationLiveTest")
 public class RackspaceAuthenticationLiveTest {
 
-   String account = System.getProperty("jclouds.test.user");
-   String key = System.getProperty("jclouds.test.key");
+   String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
+   String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
    private Injector injector;
 
@@ -89,6 +91,8 @@ public class RackspaceAuthenticationLiveTest {
                new AbstractModule() {
                   @Override
                   protected void configure() {
+                     bind(URI.class).annotatedWith(Authentication.class).toInstance(
+                              URI.create("https://api.mosso.com"));
                   }
 
                   @SuppressWarnings("unused")
@@ -96,8 +100,7 @@ public class RackspaceAuthenticationLiveTest {
                   @Singleton
                   protected RackspaceAuthentication provideCloudFilesAuthentication(
                            RestClientFactory factory) {
-                     return factory.create(URI.create("https://api.mosso.com"),
-                              RackspaceAuthentication.class);
+                     return factory.create(RackspaceAuthentication.class);
                   }
                }, new JaxrsModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
                new JavaUrlHttpCommandExecutorServiceModule());

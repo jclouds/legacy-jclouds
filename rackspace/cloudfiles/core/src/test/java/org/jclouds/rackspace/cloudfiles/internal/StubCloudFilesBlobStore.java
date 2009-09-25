@@ -32,7 +32,9 @@ import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.integration.internal.StubBlobStore;
 import org.jclouds.rackspace.cloudfiles.CloudFilesBlobStore;
 import org.jclouds.rackspace.cloudfiles.domain.AccountMetadata;
+import org.jclouds.rackspace.cloudfiles.domain.ContainerCDNMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
+import org.jclouds.rackspace.cloudfiles.options.ListCdnContainerOptions;
 import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
 
 import com.google.common.collect.Multimap;
@@ -83,6 +85,30 @@ public class StubCloudFilesBlobStore extends
    public boolean setObjectMetadata(String container, String key,
             Multimap<String, String> userMetadata) {
       return false;
+   }
+
+   public boolean disableCDN(String container) {
+      return false;
+   }
+
+   public String enableCDN(String container, Long ttl) {
+      return null;
+   }
+
+   public String enableCDN(String container) {
+      return null;
+   }
+
+   public ContainerCDNMetadata getCDNMetadata(String container) {
+      return null;
+   }
+
+   public List<ContainerCDNMetadata> listCDNContainers(ListCdnContainerOptions... options) {
+      return null;
+   }
+
+   public String updateCDN(String container, Long ttl) {
+      return null;
    }
 
 }

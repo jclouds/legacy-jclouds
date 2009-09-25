@@ -1,4 +1,4 @@
-package org.jclouds.azure.storage.queue;
+package org.jclouds.azure.storage;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 /**
- * Related to a resource of type Azure Queue
+ * Related to a resource of type Azure Table
  * 
  * @author Adrian Cole
  * 
@@ -16,6 +16,6 @@ import javax.inject.Qualifier;
 @Retention(value = RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
 @Qualifier
-public @interface AzureQueue {
+public @interface AzureTable {
 
 }
