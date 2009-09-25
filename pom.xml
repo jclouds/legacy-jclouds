@@ -45,6 +45,7 @@
         <module>aws</module>
         <module>azure</module>
         <module>rackspace</module>
+        <module>mezeo</module>
     </modules>
     <build>
         <plugins>
