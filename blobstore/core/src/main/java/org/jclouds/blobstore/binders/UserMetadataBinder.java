@@ -27,12 +27,13 @@ import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_M
 
 import java.util.Map.Entry;
 
-import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.EntityBinder;
-
-import com.google.common.collect.Multimap;
 import javax.inject.Inject;
 import javax.inject.Named;
+
+import org.jclouds.http.HttpRequest;
+import org.jclouds.rest.binders.EntityBinder;
+
+import com.google.common.collect.Multimap;
 
 public class UserMetadataBinder implements EntityBinder {
    private final String metadataPrefix;

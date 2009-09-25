@@ -21,25 +21,25 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rest;
+package org.jclouds.rest.binders;
 
-import javax.ws.rs.core.HttpHeaders;
+import java.util.Map;
 
 import org.jclouds.http.HttpRequest;
 
-import javax.inject.Singleton;
-
 /**
- * Adds an entity to a request.
+ * Builds the entity of a Post request.
  * 
  * @author Adrian Cole
+ * 
  */
-@Singleton
-public class ToStringEntityBinder implements EntityBinder {
-   public void addEntityToRequest(Object entity, HttpRequest request) {
-      String stringEntity = entity.toString();
-      request.getHeaders().put(HttpHeaders.CONTENT_TYPE, "application/unknown");
-      request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, stringEntity.getBytes().length + "");
-      request.setEntity(stringEntity);
-   }
+public interface MapEntityBinder extends EntityBinder {
+
+   /**
+    * creates and binds the POST entity to the request using parameters specified.
+    * 
+    * @see MapEntityParam
+    */
+   public void addEntityToRequest(Map<String,String> postParams, HttpRequest request);
+   
 }

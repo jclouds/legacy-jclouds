@@ -21,21 +21,20 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.http.binders;
+package org.jclouds.rest.binders;
 
-import java.util.Collections;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.util.Collections;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.MapEntityBinder;
 
 import com.google.gson.Gson;
-import javax.inject.Inject;
 
 /**
  * Binds the object to the request as a json object.

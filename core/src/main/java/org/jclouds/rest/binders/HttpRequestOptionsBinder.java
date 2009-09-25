@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rest;
+package org.jclouds.rest.binders;
 
 import javax.ws.rs.core.HttpHeaders;
 

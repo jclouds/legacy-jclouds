@@ -29,7 +29,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.EntityBinder;
+import org.jclouds.rest.binders.EntityBinder;
 
 /**
  * 

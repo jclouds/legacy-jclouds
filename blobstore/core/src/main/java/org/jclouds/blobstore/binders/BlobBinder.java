@@ -26,15 +26,14 @@ package org.jclouds.blobstore.binders;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpUtils;
-import org.jclouds.rest.EntityBinder;
-
-import javax.inject.Inject;
-import javax.inject.Named;
+import org.jclouds.rest.binders.EntityBinder;
 
 public class BlobBinder implements EntityBinder {
    private final String metadataPrefix;

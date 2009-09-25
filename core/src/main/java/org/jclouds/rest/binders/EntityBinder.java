@@ -21,25 +21,15 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rest;
-
-import java.util.Map;
+package org.jclouds.rest.binders;
 
 import org.jclouds.http.HttpRequest;
 
 /**
- * Builds the entity of a Post request.
+ * Adds an entity to a request.
  * 
  * @author Adrian Cole
- * 
  */
-public interface MapEntityBinder extends EntityBinder {
-
-   /**
-    * creates and binds the POST entity to the request using parameters specified.
-    * 
-    * @see MapEntityParam
-    */
-   public void addEntityToRequest(Map<String,String> postParams, HttpRequest request);
-   
+public interface EntityBinder {
+   public void addEntityToRequest(Object toBind, HttpRequest request);
 }

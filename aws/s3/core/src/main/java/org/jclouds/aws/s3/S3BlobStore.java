@@ -67,7 +67,6 @@ import org.jclouds.rest.EntityParam;
 import org.jclouds.rest.ExceptionParser;
 import org.jclouds.rest.Headers;
 import org.jclouds.rest.HostPrefixParam;
-import org.jclouds.rest.HttpRequestOptionsBinder;
 import org.jclouds.rest.ParamParser;
 import org.jclouds.rest.QueryParams;
 import org.jclouds.rest.RequestFilters;
@@ -75,6 +74,7 @@ import org.jclouds.rest.ResponseParser;
 import org.jclouds.rest.SkipEncoding;
 import org.jclouds.rest.VirtualHost;
 import org.jclouds.rest.XMLResponseParser;
+import org.jclouds.rest.binders.HttpRequestOptionsBinder;
 
 import com.google.inject.internal.Nullable;
 

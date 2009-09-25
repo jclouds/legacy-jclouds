@@ -35,7 +35,7 @@ import java.util.Map.Entry;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpUtils;
-import org.jclouds.http.binders.JsonBinder;
+import org.jclouds.rest.binders.JsonBinder;
 import org.jclouds.rackspace.cloudservers.domain.Addresses;
 
 import com.google.common.collect.ImmutableMap;

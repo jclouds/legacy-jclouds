@@ -37,7 +37,7 @@ import org.jclouds.aws.s3.domain.AccessControlList.Grant;
 import org.jclouds.aws.s3.domain.AccessControlList.GroupGrantee;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.EntityBinder;
+import org.jclouds.rest.binders.EntityBinder;
 import org.jclouds.util.Utils;
 
 import com.jamesmurty.utils.XMLBuilder;

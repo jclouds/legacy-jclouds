@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -40,9 +42,6 @@ import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.logging.Logger;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
 
 /**
  * Shows an example of how to use @{link S3Connection} injected with Guice.

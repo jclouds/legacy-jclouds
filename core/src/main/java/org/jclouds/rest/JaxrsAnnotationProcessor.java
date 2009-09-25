@@ -58,6 +58,9 @@ import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.binders.EntityBinder;
+import org.jclouds.rest.binders.HttpRequestOptionsBinder;
+import org.jclouds.rest.binders.MapEntityBinder;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;

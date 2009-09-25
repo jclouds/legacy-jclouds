@@ -29,7 +29,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Map;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.binders.JsonBinder;
+import org.jclouds.rest.binders.JsonBinder;
 import org.jclouds.rackspace.cloudservers.domain.RebootType;
 
 import com.google.common.collect.ImmutableMap;

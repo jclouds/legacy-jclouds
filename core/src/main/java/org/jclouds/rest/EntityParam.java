@@ -29,6 +29,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import org.jclouds.rest.binders.EntityBinder;
+import org.jclouds.rest.binders.ToStringEntityBinder;
+
 /**
  * Designates that this parameter will hold the entity for a PUT or POST command.
  * 

@@ -28,7 +28,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import java.util.Map;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.binders.JsonBinder;
+import org.jclouds.rest.binders.JsonBinder;
 import org.jclouds.rackspace.cloudservers.domain.BackupSchedule;
 
 import com.google.common.collect.ImmutableMap;

@@ -21,15 +21,25 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rest;
+package org.jclouds.rest.binders;
+
+import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.http.HttpRequest;
+
+import javax.inject.Singleton;
 
 /**
  * Adds an entity to a request.
  * 
  * @author Adrian Cole
  */
-public interface EntityBinder {
-   public void addEntityToRequest(Object toBind, HttpRequest request);
+@Singleton
+public class ToStringEntityBinder implements EntityBinder {
+   public void addEntityToRequest(Object entity, HttpRequest request) {
+      String stringEntity = entity.toString();
+      request.getHeaders().put(HttpHeaders.CONTENT_TYPE, "application/unknown");
+      request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, stringEntity.getBytes().length + "");
+      request.setEntity(stringEntity);
+   }
 }
