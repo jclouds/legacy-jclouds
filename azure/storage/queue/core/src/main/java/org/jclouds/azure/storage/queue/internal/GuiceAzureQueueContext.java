@@ -27,16 +27,17 @@ import java.io.IOException;
 import java.net.URI;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
 
+import org.jclouds.azure.storage.queue.AzureQueue;
 import org.jclouds.azure.storage.queue.AzureQueueConnection;
 import org.jclouds.azure.storage.queue.AzureQueueContext;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.Logger;
 
-import javax.inject.Inject;
 import com.google.inject.Injector;
-import javax.inject.Named;
 
 /**
  * Uses a Guice Injector to configure the objects served by AzureQueueContext methods.
@@ -55,7 +56,8 @@ public class GuiceAzureQueueContext implements AzureQueueContext {
 
    @Inject
    private GuiceAzureQueueContext(Injector injector, Closer closer,
-            @Named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT) String account, URI endPoint) {
+            @Named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT) String account,
+            @AzureQueue URI endPoint) {
       this.injector = injector;
       this.closer = closer;
       this.endPoint = endPoint;

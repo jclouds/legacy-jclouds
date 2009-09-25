@@ -58,7 +58,7 @@ public class AzureQueueContextBuilder extends CloudContextBuilder<AzureQueueCont
    public AzureQueueContextBuilder(Properties props) {
       super(props);
       properties.setProperty(AzureQueueConstants.PROPERTY_AZUREQUEUE_ENDPOINT,
-               "https://{account}.blob.core.windows.net");
+               "https://{account}.queue.core.windows.net");
    }
 
    public static AzureQueueContextBuilder newBuilder(String id, String secret) {

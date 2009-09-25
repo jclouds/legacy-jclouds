@@ -25,14 +25,18 @@ package org.jclouds.azure.storage.queue.config;
 
 import java.net.URI;
 
-import org.jclouds.azure.storage.queue.AzureQueueConnection;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.jclouds.azure.storage.config.RestAzureStorageConnectionModule;
+import org.jclouds.azure.storage.queue.AzureQueue;
+import org.jclouds.azure.storage.queue.AzureQueueConnection;
+import org.jclouds.azure.storage.queue.reference.AzureQueueConstants;
 import org.jclouds.cloud.ConfiguresCloudConnection;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.RestClientFactory;
 
 import com.google.inject.Provides;
-import javax.inject.Singleton;
 
 /**
  * Configures the Azure Queue Service connection, including logging and http transport.
@@ -42,10 +46,19 @@ import javax.inject.Singleton;
 @ConfiguresCloudConnection
 @RequiresHttp
 public class RestAzureQueueConnectionModule extends RestAzureStorageConnectionModule {
-  
+
    @Provides
    @Singleton
-   protected AzureQueueConnection provideAzureStorageConnection(URI uri, RestClientFactory factory) {
+   @AzureQueue
+   protected URI provideAuthenticationURI(
+            @Named(AzureQueueConstants.PROPERTY_AZUREQUEUE_ENDPOINT) String endpoint) {
+      return URI.create(endpoint);
+   }
+
+   @Provides
+   @Singleton
+   protected AzureQueueConnection provideAzureStorageConnection(@AzureQueue URI uri,
+            RestClientFactory factory) {
       return factory.create(uri, AzureQueueConnection.class);
    }
 
