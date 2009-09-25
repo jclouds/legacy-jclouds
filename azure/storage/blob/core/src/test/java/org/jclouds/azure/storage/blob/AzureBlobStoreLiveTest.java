@@ -55,7 +55,6 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Iterables;
-import com.google.inject.Injector;
 
 /**
  * Tests behavior of {@code AzureBlobConnection}
@@ -73,9 +72,8 @@ public class AzureBlobStoreLiveTest {
    public void setupConnection() {
       account = System.getProperty("jclouds.test.user");
       String key = System.getProperty("jclouds.test.key");
-      Injector injector = AzureBlobContextBuilder.newBuilder(account, key).withModules(
-               new Log4JLoggingModule()).withSaxDebug().buildInjector();
-      connection = injector.getInstance(AzureBlobStore.class);
+      connection = AzureBlobContextFactory.createAzureBlobContext(account, key,
+               new Log4JLoggingModule()).getApi();
    }
 
    @Test

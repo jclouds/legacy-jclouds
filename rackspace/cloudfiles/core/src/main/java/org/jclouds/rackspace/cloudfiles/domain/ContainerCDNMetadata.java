@@ -34,8 +34,8 @@ public class ContainerCDNMetadata extends org.jclouds.blobstore.domain.Container
    private boolean cdn_enabled;
    private String cdn_uri;
 
-   public ContainerCDNMetadata(String name, boolean cdnEnabled, long ttl, String cdnUri) {
-      super(name);
+   public ContainerCDNMetadata(boolean cdnEnabled, long ttl, String cdnUri) {
+      super();
       this.cdn_enabled = cdnEnabled;
       this.ttl = ttl;
       this.cdn_uri = cdnUri;

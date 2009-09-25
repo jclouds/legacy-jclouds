@@ -29,6 +29,7 @@ import static org.testng.Assert.assertTrue;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerCDNMetadata;
 import org.jclouds.rackspace.cloudfiles.options.ListCdnContainerOptions;
@@ -55,10 +56,10 @@ public class CloudFilesCDNConnectionLiveTest {
       String account = System.getProperty("jclouds.test.user");
       String key = System.getProperty("jclouds.test.key");
 
-      cdnConnection = CloudFilesCDNContextBuilder.newBuilder(account, key).withModule(
-               new Log4JLoggingModule()).withJsonDebug().buildContext().getApi();
-      filesConnection = CloudFilesContextBuilder.newBuilder(account, key).withModule(
-               new Log4JLoggingModule()).withJsonDebug().buildContext().getApi();
+      cdnConnection = CloudFilesCDNContextFactory.createCloudFilesCDNContext(account, key,
+               new Log4JLoggingModule()).getApi();
+      filesConnection = CloudFilesContextFactory.createCloudFilesContext(account, key,
+               new Log4JLoggingModule()).getApi();
    }
 
    @Test
@@ -84,11 +85,17 @@ public class CloudFilesCDNConnectionLiveTest {
       assertEquals(cdnMetadata.getCdnUri(), cdnUri);
       final long initialTTL = cdnMetadata.getTtl();
 
-      // Check HEAD responses for non-existent container, and container with no CDN metadata
-      cdnMetadata = cdnConnection.getCDNMetadata(containerNameWithoutCDN);
-      assertEquals(cdnMetadata, null);
-      cdnMetadata = cdnConnection.getCDNMetadata("DoesNotExist");
-      assertEquals(cdnMetadata, null);
+      try {
+         cdnMetadata = cdnConnection.getCDNMetadata(containerNameWithoutCDN);
+         assert false : "should not exist";
+      } catch (ContainerNotFoundException e) {
+      }
+
+      try {
+         cdnMetadata = cdnConnection.getCDNMetadata("DoesNotExist");
+         assert false : "should not exist";
+      } catch (ContainerNotFoundException e) {
+      }
 
       // List CDN metadata for containers, and ensure all CDN info is available for enabled
       // container

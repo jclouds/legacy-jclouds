@@ -23,6 +23,8 @@
  */
 package org.jclouds.aws.s3;
 
+import java.net.URI;
+
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 
@@ -48,4 +50,9 @@ public class S3ContextFactory {
                .buildContext();
    }
 
+   public static S3Context createS3Context(URI endpoint, String awsAccessKeyId,
+            String awsSecretAccessKey, Module... modules) {
+      return S3ContextBuilder.newBuilder(awsAccessKeyId, awsSecretAccessKey).withEndpoint(endpoint)
+               .withModules(modules).buildContext();
+   }
 }

@@ -60,6 +60,7 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 /**
@@ -78,10 +79,12 @@ public class CloudServersConnectionLiveTest {
       String account = System.getProperty("jclouds.test.user");
       String key = System.getProperty("jclouds.test.key");
 
-      Injector injector = CloudServersContextBuilder.newBuilder(account, key).withModules(
-               new Log4JLoggingModule(), new JschSshConnectionModule()).withJsonDebug()
-               .buildInjector();
-      connection = injector.getInstance(CloudServersConnection.class);
+      connection = CloudServersContextFactory.createCloudServersContext(account, key,
+               new Log4JLoggingModule()).getApi();
+
+      Injector injector = Guice.createInjector(new Log4JLoggingModule(),
+               new JschSshConnectionModule());
+
       sshFactory = injector.getInstance(SshConnection.Factory.class);
 
    }

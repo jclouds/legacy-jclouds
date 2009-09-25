@@ -66,8 +66,8 @@ public class CloudFilesBlobStoreLiveTest {
    public void setupConnection() {
       String account = System.getProperty("jclouds.test.user");
       String key = System.getProperty("jclouds.test.key");
-      connection = CloudFilesContextBuilder.newBuilder(account, key).withModule(
-               new Log4JLoggingModule()).withJsonDebug().buildContext().getApi();
+      connection = CloudFilesContextFactory.createCloudFilesContext(account, key,
+               new Log4JLoggingModule()).getApi();
    }
 
    @Test
