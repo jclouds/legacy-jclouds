@@ -45,6 +45,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriBuilder;
 
@@ -93,6 +94,7 @@ public class JaxrsAnnotationProcessor {
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToEntityAnnotation = createMethodToIndexOfParamToAnnotation(EntityParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToHeaderParamAnnotations = createMethodToIndexOfParamToAnnotation(HeaderParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToHostPrefixParamAnnotations = createMethodToIndexOfParamToAnnotation(HostPrefixParam.class);
+   private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToQueryParamAnnotations = createMethodToIndexOfParamToAnnotation(QueryParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToPathParamAnnotations = createMethodToIndexOfParamToAnnotation(PathParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToPostParamAnnotations = createMethodToIndexOfParamToAnnotation(MapEntityParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToParamParserAnnotations = createMethodToIndexOfParamToAnnotation(ParamParser.class);
@@ -202,6 +204,7 @@ public class JaxrsAnnotationProcessor {
                methodToIndexOfParamToEntityAnnotation.get(method).get(index);
                methodToIndexOfParamToHeaderParamAnnotations.get(method).get(index);
                methodToIndexOfParamToHostPrefixParamAnnotations.get(method).get(index);
+               methodToindexOfParamToQueryParamAnnotations.get(method).get(index);
                methodToindexOfParamToPathParamAnnotations.get(method).get(index);
                methodToindexOfParamToPostParamAnnotations.get(method).get(index);
                methodToindexOfParamToParamParserAnnotations.get(method).get(index);
@@ -280,6 +283,10 @@ public class JaxrsAnnotationProcessor {
       if (method.isAnnotationPresent(QueryParams.class)) {
          QueryParams query = method.getAnnotation(QueryParams.class);
          addQuery(builder, query);
+      }
+
+      for (Entry<String, String> query : getQueryParamKeyValues(method, args).entrySet()) {
+         builder.queryParam(query.getKey(), query.getValue());
       }
 
       Multimap<String, String> headers = buildHeaders(method, args);
@@ -644,6 +651,21 @@ public class JaxrsAnnotationProcessor {
          }
       }
       return pathParamValues;
+   }
+
+   private Map<String, String> getQueryParamKeyValues(Method method, Object[] args) {
+      Map<String, String> queryParamValues = Maps.newHashMap();
+      queryParamValues.putAll(constants);
+      Map<Integer, Set<Annotation>> indexToQueryParam = methodToindexOfParamToQueryParamAnnotations
+               .get(method);
+      for (Entry<Integer, Set<Annotation>> entry : indexToQueryParam.entrySet()) {
+         for (Annotation key : entry.getValue()) {
+            String paramKey = ((QueryParam) key).value();
+            String paramValue = args[entry.getKey()].toString();
+            queryParamValues.put(paramKey, paramValue);
+         }
+      }
+      return queryParamValues;
    }
 
    private Map<String, String> buildPostParams(Method method, Object[] args) {

@@ -48,6 +48,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
 
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
@@ -115,6 +116,11 @@ public class JaxrsAnnotationProcessorTest {
       @QueryParams(keys = { "foo", "fooble" }, values = { "bar", "baz" })
       public void foo2() {
       }
+      
+      @FOO
+      @QueryParams(keys = { "foo", "fooble" }, values = { "bar", "baz" })
+      public void foo3(@QueryParam("robbie") String robbie) {
+      }
    }
 
    public void testQuery() throws SecurityException, NoSuchMethodException {
@@ -138,6 +144,16 @@ public class JaxrsAnnotationProcessorTest {
       assertEquals(httpMethod.getMethod(), "FOO");
    }
 
+   public void testQuery3() throws SecurityException, NoSuchMethodException {
+      Method method = TestQuery.class.getMethod("foo3", String.class);
+      HttpRequest httpMethod = factory.create(TestQuery.class).createRequest(method,
+               new Object[] {"wonder"});
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "");
+      assertEquals(httpMethod.getEndpoint().getQuery(),
+               "x-ms-version=2009-07-17&foo=bar&fooble=baz&robbie=wonder");
+      assertEquals(httpMethod.getMethod(), "FOO");
+   }
    @Endpoint(Localhost.class)
    public class TestCustomMethod {
       @FOO
