@@ -90,7 +90,6 @@ public class CloudServersConnectionLiveTest {
 
    }
 
-   @Test
    public void testListServers() throws Exception {
 
       List<Server> response = connection.listServers();
@@ -100,7 +99,6 @@ public class CloudServersConnectionLiveTest {
 
    }
 
-   @Test
    public void testListServersDetail() throws Exception {
       List<Server> response = connection.listServers(withDetails());
       assert null != response;
@@ -108,7 +106,6 @@ public class CloudServersConnectionLiveTest {
       assertTrue(initialContainerCount >= 0);
    }
 
-   @Test
    public void testListImages() throws Exception {
       List<Image> response = connection.listImages();
       assert null != response;
@@ -121,7 +118,6 @@ public class CloudServersConnectionLiveTest {
 
    }
 
-   @Test
    public void testListImagesDetail() throws Exception {
       List<Image> response = connection.listImages(withDetails());
       assert null != response;
@@ -136,7 +132,6 @@ public class CloudServersConnectionLiveTest {
       }
    }
 
-   @Test(enabled = false)
    // Rackspace Web Hosting issue #118856
    public void testGetImagesDetail() throws Exception {
       List<Image> response = connection.listImages(withDetails());
@@ -149,7 +144,6 @@ public class CloudServersConnectionLiveTest {
       }
    }
 
-   @Test(enabled = false)
    // Rackspace Web Hosting issue #118856
    public void testGetImageDetailsNotFound() throws Exception {
       Image newDetails = connection.getImage(12312987);
@@ -172,7 +166,6 @@ public class CloudServersConnectionLiveTest {
       }
    }
 
-   @Test
    public void testListFlavors() throws Exception {
       List<Flavor> response = connection.listFlavors();
       assert null != response;
@@ -185,7 +178,6 @@ public class CloudServersConnectionLiveTest {
 
    }
 
-   @Test
    public void testListFlavorsDetail() throws Exception {
       List<Flavor> response = connection.listFlavors(withDetails());
       assert null != response;
@@ -199,7 +191,6 @@ public class CloudServersConnectionLiveTest {
       }
    }
 
-   @Test
    public void testGetFlavorsDetail() throws Exception {
       List<Flavor> response = connection.listFlavors(withDetails());
       assert null != response;
@@ -216,7 +207,6 @@ public class CloudServersConnectionLiveTest {
       assertEquals(Flavor.NOT_FOUND, newDetails);
    }
 
-   @Test
    public void testListSharedIpGroups() throws Exception {
       List<SharedIpGroup> response = connection.listSharedIpGroups();
       assert null != response;
@@ -229,7 +219,6 @@ public class CloudServersConnectionLiveTest {
 
    }
 
-   @Test
    public void testListSharedIpGroupsDetail() throws Exception {
       List<SharedIpGroup> response = connection.listSharedIpGroups(withDetails());
       assert null != response;
@@ -242,7 +231,6 @@ public class CloudServersConnectionLiveTest {
       }
    }
 
-   @Test
    public void testGetSharedIpGroupsDetail() throws Exception {
       List<SharedIpGroup> response = connection.listSharedIpGroups(withDetails());
       assert null != response;
@@ -291,7 +279,6 @@ public class CloudServersConnectionLiveTest {
    private String adminPass2;
    private int imageId;
 
-   @Test(timeOut = 5 * 60 * 1000)
    public void testCreateServer() throws Exception {
       int imageId = 2;
       int flavorId = 1;
