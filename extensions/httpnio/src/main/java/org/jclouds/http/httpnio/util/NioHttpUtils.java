@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
 
 import javax.ws.rs.core.HttpHeaders;
 
@@ -105,9 +104,9 @@ public class NioHttpUtils {
       }
    }
 
-   public static HttpResponse convertToJavaCloudsResponse(URI uri,
+   public static HttpResponse convertToJavaCloudsResponse(
             org.apache.http.HttpResponse apacheResponse) throws IOException {
-      HttpResponse response = new HttpResponse(uri);
+      HttpResponse response = new HttpResponse();
       if (apacheResponse.getEntity() != null) {
          response.setContent(apacheResponse.getEntity().getContent());
       }

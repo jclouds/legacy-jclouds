@@ -40,7 +40,7 @@ import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.internal.GuiceS3Context;
 import org.jclouds.blobstore.functions.ParseBlobFromHeadersAndHttpContent.BlobFactory;
-import org.jclouds.blobstore.functions.ParseBlobMetadataFromHeaders.BlobMetadataFactory;
+import org.jclouds.blobstore.functions.ParseContentTypeFromHeaders.BlobMetadataFactory;
 import org.jclouds.cloud.CloudContext;
 import org.testng.annotations.Test;
 

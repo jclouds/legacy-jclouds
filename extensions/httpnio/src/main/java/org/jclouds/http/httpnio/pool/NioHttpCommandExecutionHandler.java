@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
@@ -42,8 +43,6 @@ import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.httpnio.util.NioHttpUtils;
 import org.jclouds.logging.Logger;
-
-import javax.inject.Inject;
 
 /**
  * // TODO: Adrian: Document this!
@@ -106,8 +105,8 @@ public class NioHttpCommandExecutionHandler implements NHttpRequestExecutionHand
          try {
             HttpCommandRendezvous<?> rendezvous = handle.getCommandRendezvous();
             HttpCommand command = rendezvous.getCommand();
-            org.jclouds.http.HttpResponse response = NioHttpUtils.convertToJavaCloudsResponse(
-                     command.getRequest().getEndpoint(), apacheResponse);
+            org.jclouds.http.HttpResponse response = NioHttpUtils
+                     .convertToJavaCloudsResponse(apacheResponse);
             int statusCode = response.getStatusCode();
             // TODO determine how to get the original request here so we don't need to build each
             // time

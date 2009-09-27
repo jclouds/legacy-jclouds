@@ -77,7 +77,8 @@ public class AzureBlobStoreTest {
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
                .singletonList("2009-07-17"));
-      assertEquals(processor.createResponseParser(method).getClass(), ParseSax.class);
+      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+               ParseSax.class);
       // TODO check generic type of response parser
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
@@ -97,7 +98,8 @@ public class AzureBlobStoreTest {
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
                .singletonList("2009-07-17"));
-      assertEquals(processor.createResponseParser(method).getClass(), ParseSax.class);
+      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+               ParseSax.class);
       // TODO check generic type of response parser
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
@@ -114,7 +116,8 @@ public class AzureBlobStoreTest {
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
                .singletonList("2009-07-17"));
       assertEquals(httpMethod.getHeaders().get("Content-Length"), Collections.singletonList("0"));
-      assertEquals(processor.createResponseParser(method).getClass(), ReturnTrueIf2xx.class);
+      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+               ReturnTrueIf2xx.class);
       // TODO check generic type of response parser
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnTrueIfContainerAlreadyExists.class);
@@ -131,7 +134,8 @@ public class AzureBlobStoreTest {
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
                .singletonList("2009-07-17"));
-      assertEquals(processor.createResponseParser(method).getClass(), ReturnTrueIf2xx.class);
+      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+               ReturnTrueIf2xx.class);
       // TODO check generic type of response parser
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnTrueOn404.class);
@@ -154,7 +158,8 @@ public class AzureBlobStoreTest {
       assertEquals(httpMethod.getHeaders().get("x-ms-prop-publicaccess"), Collections
                .singletonList("true"));
       assertEquals(httpMethod.getHeaders().get("Content-Length"), Collections.singletonList("0"));
-      assertEquals(processor.createResponseParser(method).getClass(), ReturnTrueIf2xx.class);
+      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+               ReturnTrueIf2xx.class);
       // TODO check generic type of response parser
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnTrueIfContainerAlreadyExists.class);
@@ -172,7 +177,8 @@ public class AzureBlobStoreTest {
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
                .singletonList("2009-07-17"));
       assertEquals(httpMethod.getHeaders().get("Content-Length"), Collections.singletonList("0"));
-      assertEquals(processor.createResponseParser(method).getClass(), ReturnTrueIf2xx.class);
+      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+               ReturnTrueIf2xx.class);
       // TODO check generic type of response parser
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnTrueIfContainerAlreadyExists.class);
@@ -189,7 +195,8 @@ public class AzureBlobStoreTest {
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
                .singletonList("2009-07-17"));
-      assertEquals(processor.createResponseParser(method).getClass(), ReturnTrueIf2xx.class);
+      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+               ReturnTrueIf2xx.class);
       // TODO check generic type of response parser
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnTrueOn404.class);
@@ -211,7 +218,8 @@ public class AzureBlobStoreTest {
       assertEquals(httpMethod.getHeaders().get("x-ms-prop-publicaccess"), Collections
                .singletonList("true"));
       assertEquals(httpMethod.getHeaders().get("Content-Length"), Collections.singletonList("0"));
-      assertEquals(processor.createResponseParser(method).getClass(), ReturnTrueIf2xx.class);
+      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+               ReturnTrueIf2xx.class);
       // TODO check generic type of response parser
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnTrueIfContainerAlreadyExists.class);
@@ -228,7 +236,8 @@ public class AzureBlobStoreTest {
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
                .singletonList("2009-07-17"));
-      assertEquals(processor.createResponseParser(method).getClass(), ParseSax.class);
+      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+               ParseSax.class);
       // TODO check generic type of response parser
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
@@ -244,7 +253,8 @@ public class AzureBlobStoreTest {
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
                .singletonList("2009-07-17"));
-      assertEquals(processor.createResponseParser(method).getClass(), ParseSax.class);
+      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+               ParseSax.class);
       // TODO check generic type of response parser
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }

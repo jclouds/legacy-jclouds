@@ -87,7 +87,7 @@ public class GaeHttpCommandExecutorServiceTest {
       expect(gaeResponse.getHeaders()).andReturn(headers);
       expect(gaeResponse.getContent()).andReturn(null).atLeastOnce();
       replay(gaeResponse);
-      HttpResponse response = client.convert(URI.create("http://localhost"), gaeResponse);
+      HttpResponse response = client.convert(gaeResponse);
       assertEquals(response.getStatusCode(), 200);
       assertEquals(response.getContent(), null);
       assertEquals(response.getHeaders().size(), 1);
@@ -103,7 +103,7 @@ public class GaeHttpCommandExecutorServiceTest {
       expect(gaeResponse.getHeaders()).andReturn(headers);
       expect(gaeResponse.getContent()).andReturn("hello".getBytes()).atLeastOnce();
       replay(gaeResponse);
-      HttpResponse response = client.convert(URI.create("http://localhost"), gaeResponse);
+      HttpResponse response = client.convert(gaeResponse);
       assertEquals(response.getStatusCode(), 200);
       assertEquals(IOUtils.toString(response.getContent()), "hello");
       assertEquals(response.getHeaders().size(), 1);

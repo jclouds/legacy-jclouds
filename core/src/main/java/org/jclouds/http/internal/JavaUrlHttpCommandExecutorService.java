@@ -30,11 +30,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
@@ -49,8 +50,6 @@ import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 
 import com.google.common.collect.Maps;
-import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * Basic implementation of a {@link HttpCommandExecutorService}.
@@ -91,12 +90,7 @@ public class JavaUrlHttpCommandExecutorService extends
    protected HttpResponse invoke(HttpURLConnection connection) throws IOException {
       logger.trace("%s - submitting request %s; %s", connection.getURL().getHost(), connection
                .getURL(), connection.getHeaderFields().toString());
-      HttpResponse response;
-      try {
-         response = new HttpResponse(connection.getURL().toURI());
-      } catch (URISyntaxException e1) {
-         throw new RuntimeException(e1);
-      }
+      HttpResponse response = new HttpResponse();
       InputStream in;
       try {
          in = connection.getInputStream();

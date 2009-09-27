@@ -26,14 +26,14 @@ package org.jclouds.rackspace.cloudfiles.functions;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.ParseBlobFromHeadersAndHttpContent;
-import org.jclouds.blobstore.functions.ParseBlobMetadataFromHeaders;
+import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
 
 import javax.inject.Inject;
 
 /**
  * Parses response headers and creates a new Rackspace object from them and the HTTP content.
  * 
- * @see ParseBlobMetadataFromHeaders
+ * @see ParseSystemAndUserMetadataFromHeaders
  * @author Adrian Cole
  */
 public class ParseObjectFromHeadersAndHttpContent extends

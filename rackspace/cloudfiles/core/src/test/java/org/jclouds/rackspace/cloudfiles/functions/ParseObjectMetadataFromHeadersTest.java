@@ -26,10 +26,8 @@ package org.jclouds.rackspace.cloudfiles.functions;
 import static org.easymock.classextension.EasyMock.createNiceMock;
 import static org.testng.Assert.assertNotNull;
 
-import java.net.URI;
-
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.functions.ParseBlobMetadataFromHeaders.BlobMetadataFactory;
+import org.jclouds.blobstore.functions.ParseContentTypeFromHeaders.BlobMetadataFactory;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.util.DateService;
 import org.testng.annotations.Test;
@@ -50,7 +48,7 @@ public class ParseObjectMetadataFromHeadersTest {
                   }
                });
       BlobMetadata md = new BlobMetadata("hello");
-      HttpResponse response = new HttpResponse(URI.create("http://localhost"));
+      HttpResponse response = new HttpResponse();
       response.getHeaders().put("Etag", "feb1");
       parser.addETagTo(response, md);
       assertNotNull(md.getETag());

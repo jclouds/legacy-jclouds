@@ -34,7 +34,6 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
-import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -217,7 +216,7 @@ public abstract class StubBlobStore<C extends ContainerMetadata, M extends BlobM
       return getContainerToBlobs().containsKey(container);
    }
 
-   public abstract class FutureBase<V> implements Future<V> {
+   public static abstract class FutureBase<V> implements Future<V> {
       public boolean cancel(boolean b) {
          return false;
       }
@@ -321,7 +320,7 @@ public abstract class StubBlobStore<C extends ContainerMetadata, M extends BlobM
 
    protected void throwResponseException(int code) throws ExecutionException {
       HttpResponse response = null;
-      response = new HttpResponse(URI.create("http://localhost")); // TODO: Get real object URL?
+      response = new HttpResponse(); // TODO: Get real object URL?
       response.setStatusCode(code);
       throw new ExecutionException(new HttpResponseException(new HttpCommand() {
 

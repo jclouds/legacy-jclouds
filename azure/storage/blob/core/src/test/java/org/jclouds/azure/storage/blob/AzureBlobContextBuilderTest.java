@@ -37,7 +37,7 @@ import org.jclouds.azure.storage.blob.domain.BlobMetadata;
 import org.jclouds.azure.storage.blob.internal.GuiceAzureBlobContext;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.blobstore.functions.ParseBlobFromHeadersAndHttpContent.BlobFactory;
-import org.jclouds.blobstore.functions.ParseBlobMetadataFromHeaders.BlobMetadataFactory;
+import org.jclouds.blobstore.functions.ParseContentTypeFromHeaders.BlobMetadataFactory;
 import org.jclouds.cloud.CloudContext;
 import org.testng.annotations.Test;
 

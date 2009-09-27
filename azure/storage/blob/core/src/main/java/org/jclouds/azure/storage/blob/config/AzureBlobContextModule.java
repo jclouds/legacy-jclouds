@@ -31,7 +31,7 @@ import org.jclouds.azure.storage.blob.internal.GuiceAzureBlobContext;
 import org.jclouds.azure.storage.blob.internal.LiveAzureBlobInputStreamMap;
 import org.jclouds.azure.storage.blob.internal.LiveAzureBlobObjectMap;
 import org.jclouds.blobstore.functions.ParseBlobFromHeadersAndHttpContent.BlobFactory;
-import org.jclouds.blobstore.functions.ParseBlobMetadataFromHeaders.BlobMetadataFactory;
+import org.jclouds.blobstore.functions.ParseContentTypeFromHeaders.BlobMetadataFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;

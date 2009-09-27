@@ -40,7 +40,7 @@ import javax.inject.Named;
  * 
  * @author Adrian Cole
  */
-public class ParseBlobMetadataFromHeaders extends org.jclouds.blobstore.functions.ParseBlobMetadataFromHeaders<BlobMetadata> {
+public class ParseBlobMetadataFromHeaders extends org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders<BlobMetadata> {
 
    @Inject
    public ParseBlobMetadataFromHeaders(DateService dateParser,

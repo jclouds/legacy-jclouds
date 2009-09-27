@@ -29,7 +29,7 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.reference.S3Headers;
-import org.jclouds.blobstore.functions.ParseBlobMetadataFromHeaders;
+import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.util.DateService;
@@ -44,7 +44,7 @@ import javax.inject.Named;
  * @see <a href="http://docs.amazonwebservices.com/AmazonS3/latest/RESTObjectGET.html" />
  * @author Adrian Cole
  */
-public class ParseObjectMetadataFromHeaders extends ParseBlobMetadataFromHeaders<ObjectMetadata> {
+public class ParseObjectMetadataFromHeaders extends ParseSystemAndUserMetadataFromHeaders<ObjectMetadata> {
 
    @Inject
    public ParseObjectMetadataFromHeaders(DateService dateParser,

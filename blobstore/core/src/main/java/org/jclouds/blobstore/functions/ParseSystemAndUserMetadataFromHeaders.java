@@ -27,6 +27,8 @@ import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_M
 
 import java.util.Map.Entry;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.blobstore.domain.BlobMetadata;
@@ -36,63 +38,42 @@ import org.jclouds.http.HttpUtils;
 import org.jclouds.util.DateService;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
-import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * @author Adrian Cole
  */
-public class ParseBlobMetadataFromHeaders<M extends BlobMetadata> implements
-         Function<HttpResponse, M> {
-   private final DateService dateParser;
+public class ParseSystemAndUserMetadataFromHeaders<M extends BlobMetadata> extends
+         ParseContentTypeFromHeaders<M> {
    private final String metadataPrefix;
-   private final BlobMetadataFactory<M> metadataFactory;
-
-   public static interface BlobMetadataFactory<M extends BlobMetadata> {
-      M create(String key);
-   }
+   private final DateService dateParser;
 
    @Inject
-   public ParseBlobMetadataFromHeaders(DateService dateParser,
+   public ParseSystemAndUserMetadataFromHeaders(DateService dateParser,
             @Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix,
             BlobMetadataFactory<M> metadataFactory) {
+      super(metadataFactory);
       this.dateParser = dateParser;
       this.metadataPrefix = metadataPrefix;
-      this.metadataFactory = metadataFactory;
    }
 
    public M apply(HttpResponse from) {
-      String objectKey = from.getRequestURL().getPath();
-      if (objectKey.startsWith("/")) {
-         // Trim initial slash from object key name.
-         objectKey = objectKey.substring(1);
-      }
-      M to = metadataFactory.create(objectKey);
-      addAllHeadersTo(from, to);
-
-      addUserMetadataTo(from, to);
+      M to = super.apply(from);
       addETagTo(from, to);
       addContentMD5To(from, to);
-
       parseLastModifiedOrThrowException(from, to);
-      setContentTypeOrThrowException(from, to);
       setContentLengthOrThrowException(from, to);
+      addUserMetadataTo(from, to);
       return to;
    }
 
    @VisibleForTesting
-   void addAllHeadersTo(HttpResponse from, M metadata) {
-      metadata.getAllHeaders().putAll(from.getHeaders());
-   }
-
-   @VisibleForTesting
-   void setContentTypeOrThrowException(HttpResponse from, M metadata) throws HttpException {
-      String contentType = from.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE);
-      if (contentType == null)
-         throw new HttpException(HttpHeaders.CONTENT_TYPE + " not found in headers");
-      else
-         metadata.setContentType(contentType);
+   void addUserMetadataTo(HttpResponse from, M metadata) {
+      for (Entry<String, String> header : from.getHeaders().entries()) {
+         if (header.getKey() != null && header.getKey().startsWith(metadataPrefix))
+            metadata.getUserMetadata().put(
+                     (header.getKey().substring(metadataPrefix.length())).toLowerCase(),
+                     header.getValue());
+      }
    }
 
    @VisibleForTesting
@@ -107,6 +88,9 @@ public class ParseBlobMetadataFromHeaders<M extends BlobMetadata> implements
    @VisibleForTesting
    void parseLastModifiedOrThrowException(HttpResponse from, M metadata) throws HttpException {
       String lastModified = from.getFirstHeaderOrNull(HttpHeaders.LAST_MODIFIED);
+      if (lastModified == null)
+         throw new HttpException(HttpHeaders.LAST_MODIFIED + " header not present in response: "
+                  + from);
       metadata.setLastModified(dateParser.rfc822DateParse(lastModified));
       if (metadata.getLastModified() == null)
          throw new HttpException("could not parse: " + HttpHeaders.LAST_MODIFIED + ": "
@@ -128,15 +112,4 @@ public class ParseBlobMetadataFromHeaders<M extends BlobMetadata> implements
          metadata.setContentMD5(HttpUtils.fromBase64String(contentMD5));
       }
    }
-
-   @VisibleForTesting
-   void addUserMetadataTo(HttpResponse from, M metadata) {
-      for (Entry<String, String> header : from.getHeaders().entries()) {
-         if (header.getKey() != null && header.getKey().startsWith(metadataPrefix))
-            metadata.getUserMetadata().put(
-                     (header.getKey().substring(metadataPrefix.length())).toLowerCase(),
-                     header.getValue());
-      }
-   }
-
 }

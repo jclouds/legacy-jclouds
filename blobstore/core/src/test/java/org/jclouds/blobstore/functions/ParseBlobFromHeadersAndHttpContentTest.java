@@ -47,7 +47,7 @@ public class ParseBlobFromHeadersAndHttpContentTest {
    @SuppressWarnings("unchecked")
    @Test(expectedExceptions = NullPointerException.class)
    public void testCall() throws HttpException {
-      ParseBlobMetadataFromHeaders<BlobMetadata> metadataParser = createMock(ParseBlobMetadataFromHeaders.class);
+      ParseSystemAndUserMetadataFromHeaders<BlobMetadata> metadataParser = createMock(ParseSystemAndUserMetadataFromHeaders.class);
       ParseBlobFromHeadersAndHttpContent.BlobFactory<BlobMetadata, Blob<BlobMetadata>> objectFactory = createMock(ParseBlobFromHeadersAndHttpContent.BlobFactory.class);
       ParseBlobFromHeadersAndHttpContent<BlobMetadata, Blob<BlobMetadata>> callable = new ParseBlobFromHeadersAndHttpContent(
                metadataParser, objectFactory);
@@ -63,7 +63,7 @@ public class ParseBlobFromHeadersAndHttpContentTest {
    @SuppressWarnings("unchecked")
    @Test
    public void testParseContentLengthWhenContentRangeSet() throws HttpException {
-      ParseBlobMetadataFromHeaders<BlobMetadata> metadataParser = createMock(ParseBlobMetadataFromHeaders.class);
+      ParseSystemAndUserMetadataFromHeaders<BlobMetadata> metadataParser = createMock(ParseSystemAndUserMetadataFromHeaders.class);
       ParseBlobFromHeadersAndHttpContent.BlobFactory<BlobMetadata, Blob<BlobMetadata>> objectFactory = new ParseBlobFromHeadersAndHttpContent.BlobFactory<BlobMetadata, Blob<BlobMetadata>>() {
 
          public Blob<BlobMetadata> create(BlobMetadata metadata) {

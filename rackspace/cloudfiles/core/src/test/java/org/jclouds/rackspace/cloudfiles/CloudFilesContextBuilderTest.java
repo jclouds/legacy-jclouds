@@ -33,7 +33,7 @@ import java.util.List;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.ParseBlobFromHeadersAndHttpContent.BlobFactory;
-import org.jclouds.blobstore.functions.ParseBlobMetadataFromHeaders.BlobMetadataFactory;
+import org.jclouds.blobstore.functions.ParseContentTypeFromHeaders.BlobMetadataFactory;
 import org.jclouds.cloud.CloudContext;
 import org.jclouds.rackspace.cloudfiles.config.RestCloudFilesBlobStoreModule;
 import org.jclouds.rackspace.cloudfiles.internal.GuiceCloudFilesContext;

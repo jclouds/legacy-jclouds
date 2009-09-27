@@ -27,7 +27,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.s3.reference.S3Constants;
@@ -72,7 +71,7 @@ public class S3UtilsTest {
 
       });
       utils = injector.getInstance(S3Utils.class);
-      response = new HttpResponse(URI.create("http://localhost")); // TODO: Get real object URL?
+      response = new HttpResponse();
       response.setStatusCode(400);
       response.getHeaders().put(S3Headers.REQUEST_ID, "requestid");
       response.getHeaders().put(S3Headers.REQUEST_TOKEN, "requesttoken");

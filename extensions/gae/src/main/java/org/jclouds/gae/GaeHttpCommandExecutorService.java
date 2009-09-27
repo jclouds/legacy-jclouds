@@ -30,13 +30,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
+import javax.inject.Inject;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.apache.commons.io.IOUtils;
@@ -56,7 +55,6 @@ import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.api.urlfetch.HTTPResponse;
 import com.google.appengine.api.urlfetch.URLFetchService;
 import com.google.common.annotations.VisibleForTesting;
-import javax.inject.Inject;
 
 /**
  * Google App Engine version of {@link HttpCommandExecutorService}
@@ -108,8 +106,8 @@ public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorServic
    }
 
    @VisibleForTesting
-   protected HttpResponse convert(URI uri, HTTPResponse gaeResponse) {
-      HttpResponse response = new HttpResponse(uri);
+   protected HttpResponse convert(HTTPResponse gaeResponse) {
+      HttpResponse response = new HttpResponse();
       response.setStatusCode(gaeResponse.getResponseCode());
       for (HTTPHeader header : gaeResponse.getHeaders()) {
          response.getHeaders().put(header.getName(), header.getValue());
@@ -176,11 +174,7 @@ public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorServic
       HTTPResponse response = urlFetchService.fetch(request);
       logger.trace("%s - received response code %s, headers: %s", request.getURL().getHost(),
                response.getResponseCode(), headersAsString(response.getHeaders()));
-      try {
-         return convert(request.getURL().toURI(), response);
-      } catch (URISyntaxException e) {
-         throw new RuntimeException(e);
-      }
+      return convert(response);
    }
 
    String headersAsString(List<HTTPHeader> headers) {

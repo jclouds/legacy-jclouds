@@ -24,7 +24,6 @@
 package org.jclouds.http;
 
 import java.io.InputStream;
-import java.net.URI;
 
 /**
  * Represents a response produced from {@link HttpCommandExecutorService}
@@ -32,14 +31,9 @@ import java.net.URI;
  * @author Adrian Cole
  */
 public class HttpResponse extends HttpMessage {
-   private URI requestURL;
    private int statusCode;
    private String message;
    private InputStream content;
-
-   public HttpResponse(URI requestURL) {
-      this.requestURL = requestURL;
-   }
 
    @Override
    public String toString() {
@@ -75,10 +69,6 @@ public class HttpResponse extends HttpMessage {
 
    public void setContent(InputStream content) {
       this.content = content;
-   }
-
-   public URI getRequestURL() {
-      return this.requestURL;
    }
 
 }

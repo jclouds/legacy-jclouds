@@ -25,21 +25,21 @@ package org.jclouds.azure.storage.blob.functions;
 
 import org.jclouds.azure.storage.blob.domain.Blob;
 import org.jclouds.azure.storage.blob.domain.BlobMetadata;
-import org.jclouds.blobstore.functions.ParseBlobMetadataFromHeaders;
+import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
 
 import javax.inject.Inject;
 
 /**
  * Parses response headers and creates a new Azure Blob from them and the HTTP content.
  * 
- * @see ParseBlobMetadataFromHeaders
+ * @see ParseSystemAndUserMetadataFromHeaders
  * @author Adrian Cole
  */
 public class ParseBlobFromHeadersAndHttpContent extends
          org.jclouds.blobstore.functions.ParseBlobFromHeadersAndHttpContent<BlobMetadata, Blob> {
    @Inject
    public ParseBlobFromHeadersAndHttpContent(
-            ParseBlobMetadataFromHeaders<BlobMetadata> metadataParser,
+            ParseSystemAndUserMetadataFromHeaders<BlobMetadata> metadataParser,
             BlobFactory<BlobMetadata, Blob> blobFactory) {
       super(metadataParser, blobFactory);
    }

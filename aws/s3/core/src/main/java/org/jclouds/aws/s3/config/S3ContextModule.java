@@ -31,7 +31,7 @@ import org.jclouds.aws.s3.internal.GuiceS3Context;
 import org.jclouds.aws.s3.internal.LiveS3InputStreamMap;
 import org.jclouds.aws.s3.internal.LiveS3ObjectMap;
 import org.jclouds.blobstore.functions.ParseBlobFromHeadersAndHttpContent.BlobFactory;
-import org.jclouds.blobstore.functions.ParseBlobMetadataFromHeaders.BlobMetadataFactory;
+import org.jclouds.blobstore.functions.ParseContentTypeFromHeaders.BlobMetadataFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;

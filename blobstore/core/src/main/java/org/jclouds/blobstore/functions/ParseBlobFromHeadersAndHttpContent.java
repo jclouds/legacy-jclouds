@@ -23,6 +23,7 @@
  */
 package org.jclouds.blobstore.functions;
 
+import javax.inject.Inject;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.blobstore.domain.Blob;
@@ -32,17 +33,16 @@ import org.jclouds.http.HttpResponse;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
-import javax.inject.Inject;
 
 /**
  * Parses response headers and creates a new Blob from them and the HTTP content.
  * 
- * @see ParseBlobMetadataFromHeaders
+ * @see ParseSystemAndUserMetadataFromHeaders
  * @author Adrian Cole
  */
 public class ParseBlobFromHeadersAndHttpContent<M extends BlobMetadata, B extends Blob<M>>
          implements Function<HttpResponse, B> {
-   private final ParseBlobMetadataFromHeaders<M> metadataParser;
+   private final ParseContentTypeFromHeaders<M> metadataParser;
    private final BlobFactory<M, B> blobFactory;
 
    public static interface BlobFactory<M extends BlobMetadata, B extends Blob<M>> {
@@ -50,14 +50,14 @@ public class ParseBlobFromHeadersAndHttpContent<M extends BlobMetadata, B extend
    }
 
    @Inject
-   public ParseBlobFromHeadersAndHttpContent(ParseBlobMetadataFromHeaders<M> metadataParser,
+   public ParseBlobFromHeadersAndHttpContent(ParseContentTypeFromHeaders<M> metadataParser,
             BlobFactory<M, B> blobFactory) {
       this.metadataParser = metadataParser;
       this.blobFactory = blobFactory;
    }
 
    /**
-    * First, calls {@link ParseBlobMetadataFromHeaders}.
+    * First, calls {@link ParseSystemAndUserMetadataFromHeaders}.
     * 
     * Then, sets the object size based on the Content-Length header and adds the content to the
     * {@link Blob} result.
@@ -69,22 +69,22 @@ public class ParseBlobFromHeadersAndHttpContent<M extends BlobMetadata, B extend
       B object = blobFactory.create(metadata);
       assert object.getMetadata() == metadata;
       object.setData(from.getContent());
-      parseContentLengthOrThrowException(from, object);
+      attemptToParseSizeAndRangeFromHeaders(from, object);
       return object;
    }
 
    @VisibleForTesting
-   void parseContentLengthOrThrowException(HttpResponse from, B object) throws HttpException {
+   void attemptToParseSizeAndRangeFromHeaders(HttpResponse from, B object) throws HttpException {
       String contentLength = from.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH);
-      if (contentLength == null)
-         throw new HttpException(HttpHeaders.CONTENT_LENGTH + " header not present in headers: "
-                  + from.getHeaders());
-      object.setContentLength(Long.parseLong(contentLength));
-
       String contentRange = from.getFirstHeaderOrNull("Content-Range");
-      if (contentRange == null) {
+
+      if (contentLength != null) {
+         object.setContentLength(Long.parseLong(contentLength));
+      }
+
+      if (contentRange == null && contentLength != null) {
          object.getMetadata().setSize(object.getContentLength());
-      } else {
+      } else if (contentRange != null ) {
          object.setContentRange(contentRange);
          object.getMetadata().setSize(
                   Long.parseLong(contentRange.substring(contentRange.lastIndexOf('/') + 1)));

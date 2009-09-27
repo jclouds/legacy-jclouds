@@ -26,7 +26,7 @@ package org.jclouds.rackspace.cloudfiles.config;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.ParseBlobFromHeadersAndHttpContent.BlobFactory;
-import org.jclouds.blobstore.functions.ParseBlobMetadataFromHeaders.BlobMetadataFactory;
+import org.jclouds.blobstore.functions.ParseContentTypeFromHeaders.BlobMetadataFactory;
 import org.jclouds.cloud.ConfiguresCloudConnection;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rackspace.cloudfiles.CloudFilesBlobStore;
