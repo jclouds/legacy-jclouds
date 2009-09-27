@@ -407,6 +407,10 @@ pageTracker._trackPageview();
                                             <value>${jclouds.test.key}</value>
                                         </property>
                                         <property>
+                                            <name>jclouds.test.endpoint</name>
+                                            <value>${jclouds.test.endpoint}</value>
+                                        </property>
+                                        <property>
                                             <name>jclouds.test.app</name>
                                             <value>${jclouds.test.app}</value>
                                         </property>
