@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import org.jclouds.PerformanceTest;
-import org.jclouds.util.DateService;
 import org.joda.time.DateTime;
 import org.testng.annotations.Test;
 
@@ -111,6 +110,13 @@ public class DateServiceTest extends PerformanceTest {
    void testIso8601DateFormatResponseTime() throws ExecutionException, InterruptedException {
       for (int i = 0; i < LOOP_COUNT; i++)
          dateService.iso8601DateFormat();
+   }
+
+   @Test
+   void testFromSeconds() throws ExecutionException, InterruptedException {
+      long seconds = 1254008225;
+      DateTime date = dateService.fromSeconds(seconds);
+      assertEquals(dateService.rfc822DateFormat(date), "Sat, 26 Sep 2009 23:37:05 GMT");
    }
 
    @Test

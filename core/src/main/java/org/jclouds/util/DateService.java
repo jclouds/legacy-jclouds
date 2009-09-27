@@ -77,6 +77,10 @@ public class DateService {
       rfc822SimpleDateFormat.setTimeZone(new SimpleTimeZone(0, "GMT"));
    }
 
+   public final DateTime fromSeconds(long seconds) {
+      return new DateTime(seconds*1000);
+   }
+
    public final String rfc822DateFormat(DateTime dateTime) {
       return rfc822DateTimeFormatter.print(dateTime);
    }
