@@ -51,12 +51,12 @@ public class MultipartFormTest {
       addData(boundary, "hello", builder);
       builder.append("--").append(boundary).append("--").append("\r\n");
       String expects = builder.toString();
-      assertEquals(expects.length(), 197);
+      assertEquals(expects.length(), 199);
 
       MultipartForm multipartForm = new MultipartForm(boundary, newPart("hello"));
 
       assertEquals(Utils.toStringAndClose(multipartForm.getData()), expects);
-      assertEquals(multipartForm.getSize(), 197);
+      assertEquals(multipartForm.getSize(), 199);
    }
 
    private Part newPart(String data) {
@@ -76,20 +76,20 @@ public class MultipartFormTest {
 
    public void testMultipleParts() throws IOException {
 
-      StringBuilder builder = new StringBuilder("--");
+      StringBuilder builder = new StringBuilder();
       addData(boundary, "hello", builder);
       addData(boundary, "goodbye", builder);
 
-      builder.append(boundary).append("--").append("\r\n");
+      builder.append("--").append(boundary).append("--").append("\r\n");
       String expects = builder.toString();
 
-      assertEquals(expects.length(), 348);
+      assertEquals(expects.length(), 352);
 
       MultipartForm multipartForm = new MultipartForm(boundary, newPart("hello"),
                newPart("goodbye"));
 
       assertEquals(Utils.toStringAndClose(multipartForm.getData()), expects);
-      assertEquals(multipartForm.getSize(), 348);
+      assertEquals(multipartForm.getSize(), 352);
    }
 
 }
