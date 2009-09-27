@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(testName = "httpnio.HttpRequestTest")
+@Test(testName = "http.HttpRequestTest")
 public class HttpRequestTest {
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testConstructorHostNull() throws Exception {
