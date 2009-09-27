@@ -23,26 +23,21 @@
  */
 package org.jclouds.rest;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
 import javax.ws.rs.PathParam;
 
-import com.google.common.base.Function;
+import org.jclouds.http.HttpRequest;
 
 /**
- * Extracts the value of a parameter from an object. If placed on a method, the function will be
- * presented with a Object [] from the method args used to derive the value;
+ * Passes parsed Http request and Object [] from the method args used to derive the request into
+ * this object;
  * 
  * @see PathParam
  * @author Adrian Cole
  */
-@Target( { METHOD, PARAMETER })
-@Retention(RUNTIME)
-public @interface ParamParser {
-   Class<? extends Function<Object, String>> value();
+public interface RestContext {
+   void setContext(HttpRequest request, Object[] args);
+
+   Object[] getArgs();
+
+   HttpRequest getRequest();
 }

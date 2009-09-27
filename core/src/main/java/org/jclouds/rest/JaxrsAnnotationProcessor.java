@@ -48,6 +48,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriBuilderException;
 
 import org.jboss.resteasy.util.IsHttpMethod;
 import org.jclouds.http.HttpRequest;
@@ -161,13 +162,17 @@ public class JaxrsAnnotationProcessor {
    private final ParseSax.Factory parserFactory;
 
    @VisibleForTesting
-   public Function<HttpResponse, ?> createResponseParser(Method method) {
+   public Function<HttpResponse, ?> createResponseParser(Method method, HttpRequest request,
+            Object[] args) {
       Function<HttpResponse, ?> transformer;
       Class<? extends HandlerWithResult<?>> handler = getXMLTransformerOrNull(method);
       if (handler != null) {
          transformer = parserFactory.create(injector.getInstance(handler));
       } else {
          transformer = injector.getInstance(getParserOrThrowException(method));
+      }
+      if (transformer instanceof RestContext) {
+         ((RestContext) transformer).setContext(request, args);
       }
       return transformer;
    }
@@ -316,8 +321,12 @@ public class JaxrsAnnotationProcessor {
          } else {
             endPoint = builder.buildFromEncodedMap(getEncodedPathParamKeyValues(method, args));
          }
-      } catch (Exception e) {
-         throw new IllegalStateException("problem encoding parameters", e);
+      } catch (IllegalArgumentException e) {
+         throw new IllegalStateException(e);
+      } catch (UriBuilderException e) {
+         throw new IllegalStateException(e);
+      } catch (UnsupportedEncodingException e) {
+         throw new IllegalStateException(e);
       }
       HttpRequest request = new HttpRequest(httpMethod, endPoint, headers);
       addHostHeaderIfAnnotatedWithVirtualHost(headers, request.getEndpoint().getHost(), method);
@@ -609,22 +618,22 @@ public class JaxrsAnnotationProcessor {
             Headers header) throws UnsupportedEncodingException {
       for (int i = 0; i < header.keys().length; i++) {
          String value = header.values()[i];
-         for (Entry<String, Object> tokenValue : getEncodedPathParamKeyValues(method, args)
+         for (Entry<String, String> tokenValue : getEncodedPathParamKeyValues(method, args)
                   .entrySet()) {
-            value = value.replaceAll("\\{" + tokenValue.getKey() + "\\}", tokenValue.getValue()
-                     .toString());
+            value = value.replaceAll("\\{" + tokenValue.getKey() + "\\}", tokenValue.getValue());
          }
          headers.put(header.keys()[i], value);
       }
 
    }
 
-   private Map<String, Object> getEncodedPathParamKeyValues(Method method, Object[] args,
-            char... skipEncode) throws UnsupportedEncodingException {
-      Map<String, Object> pathParamValues = Maps.newHashMap();
+   private Map<String, String> getEncodedPathParamKeyValues(Method method, Object[] args,
+            final char... skipEncode) throws UnsupportedEncodingException {
+      Map<String, String> pathParamValues = Maps.newHashMap();
       pathParamValues.putAll(constants);
       Map<Integer, Set<Annotation>> indexToPathParam = methodToindexOfParamToPathParamAnnotations
                .get(method);
+
       Map<Integer, Set<Annotation>> indexToParamExtractor = methodToindexOfParamToParamParserAnnotations
                .get(method);
       for (Entry<Integer, Set<Annotation>> entry : indexToPathParam.entrySet()) {
@@ -638,19 +647,36 @@ public class JaxrsAnnotationProcessor {
             } else {
                paramValue = args[entry.getKey()].toString();
             }
-            paramValue = URLEncoder.encode(paramValue, "UTF-8");
-            // Web browsers do not always handle '+' characters well, use the well-supported
-            // '%20' instead.
-            paramValue = paramValue.replaceAll("\\+", "%20");
-            for (char c : skipEncode) {
-               String value = Character.toString(c);
-               String encoded = URLEncoder.encode(value, "UTF-8");
-               paramValue = paramValue.replaceAll(encoded, value);
-            }
             pathParamValues.put(paramKey, paramValue);
          }
       }
-      return pathParamValues;
+
+      if (method.isAnnotationPresent(PathParam.class)
+               && method.isAnnotationPresent(ParamParser.class)) {
+         String paramKey = method.getAnnotation(PathParam.class).value();
+         String paramValue = injector.getInstance(method.getAnnotation(ParamParser.class).value())
+                  .apply(args);
+         pathParamValues.put(paramKey, paramValue);
+      }
+
+      return Maps.transformValues(pathParamValues, new Function<String, String>() {
+         public String apply(String paramValue) {
+            try {
+               paramValue = URLEncoder.encode(paramValue, "UTF-8");
+               // Web browsers do not always handle '+' characters well, use the well-supported
+               // '%20' instead.
+               paramValue = paramValue.replaceAll("\\+", "%20");
+               for (char c : skipEncode) {
+                  String value = Character.toString(c);
+                  String encoded = URLEncoder.encode(value, "UTF-8");
+                  paramValue = paramValue.replaceAll(encoded, value);
+               }
+            } catch (UnsupportedEncodingException e) {
+               throw new RuntimeException("jclouds only supports UTF-8", e);
+            }
+            return paramValue;
+         }
+      });
    }
 
    private Map<String, String> getQueryParamKeyValues(Method method, Object[] args) {

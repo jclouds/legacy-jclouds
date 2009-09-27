@@ -116,7 +116,7 @@ public class JaxrsAnnotationProcessorTest {
       @QueryParams(keys = { "foo", "fooble" }, values = { "bar", "baz" })
       public void foo2() {
       }
-      
+
       @FOO
       @QueryParams(keys = { "foo", "fooble" }, values = { "bar", "baz" })
       public void foo3(@QueryParam("robbie") String robbie) {
@@ -147,13 +147,14 @@ public class JaxrsAnnotationProcessorTest {
    public void testQuery3() throws SecurityException, NoSuchMethodException {
       Method method = TestQuery.class.getMethod("foo3", String.class);
       HttpRequest httpMethod = factory.create(TestQuery.class).createRequest(method,
-               new Object[] {"wonder"});
+               new Object[] { "wonder" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "");
       assertEquals(httpMethod.getEndpoint().getQuery(),
                "x-ms-version=2009-07-17&foo=bar&fooble=baz&robbie=wonder");
       assertEquals(httpMethod.getMethod(), "FOO");
    }
+
    @Endpoint(Localhost.class)
    public class TestCustomMethod {
       @FOO
@@ -428,11 +429,44 @@ public class JaxrsAnnotationProcessorTest {
       public void onePathParamExtractor(
                @PathParam("path") @ParamParser(FirstCharacter.class) String path) {
       }
+
+      @GET
+      @Path("{path}")
+      @PathParam("path")
+      @ParamParser(FirstCharacterFirstElement.class)
+      public void onePathParamExtractorMethod(String path) {
+      }
+   }
+
+   @Test
+   public void testParamExtractor() throws SecurityException, NoSuchMethodException {
+      Method method = TestPath.class.getMethod("onePathParamExtractor", String.class);
+      HttpRequest httpMethod = factory.create(TestPath.class).createRequest(method,
+               new Object[] { "localhost" });
+      assertEquals(httpMethod.getEndpoint().getPath(), "/l");
+      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
+      assertEquals(httpMethod.getHeaders().size(), 0);
+   }
+
+   @Test
+   public void testParamExtractorMethod() throws SecurityException, NoSuchMethodException {
+      Method method = TestPath.class.getMethod("onePathParamExtractorMethod", String.class);
+      HttpRequest httpMethod = factory.create(TestPath.class).createRequest(method,
+               new Object[] { "localhost" });
+      assertEquals(httpMethod.getEndpoint().getPath(), "/l");
+      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
+      assertEquals(httpMethod.getHeaders().size(), 0);
    }
 
    static class FirstCharacter implements Function<Object, String> {
       public String apply(Object from) {
          return from.toString().substring(0, 1);
+      }
+   }
+
+   static class FirstCharacterFirstElement implements Function<Object, String> {
+      public String apply(Object from) {
+         return ((String) ((Object[]) from)[0]).substring(0, 1);
       }
    }
 
@@ -535,6 +569,31 @@ public class JaxrsAnnotationProcessorTest {
       @ResponseParser(ReturnStringIf200.class)
       public void oneTransformer() {
       }
+
+      @GET
+      @ResponseParser(ReturnStringIf200Context.class)
+      public void oneTransformerWithContext() {
+      }
+
+   }
+
+   public static class ReturnStringIf200Context extends ReturnStringIf200 implements RestContext {
+      private Object[] args;
+      private HttpRequest request;
+
+      public Object[] getArgs() {
+         return args;
+      }
+
+      public HttpRequest getRequest() {
+         return request;
+      }
+
+      public void setContext(HttpRequest request, Object[] args) {
+         this.request = request;
+         this.args = args;
+      }
+
    }
 
    @SuppressWarnings("static-access")
@@ -544,6 +603,17 @@ public class JaxrsAnnotationProcessorTest {
       Class<? extends Function<HttpResponse, ?>> transformer = factory.create(
                TestTransformers.class).getParserOrThrowException(method);
       assertEquals(transformer, ReturnStringIf200.class);
+   }
+
+   public void oneTransformerWithContext() throws SecurityException, NoSuchMethodException {
+      Method method = TestTransformers.class.getMethod("oneTransformerWithContext");
+      HttpRequest request = new HttpRequest("GET", URI.create("http://localhost"));
+      Object[] args = new Object[] {};
+      Function<HttpResponse, ?> transformer = factory.create(TestTransformers.class)
+               .createResponseParser(method, request, args);
+      assertEquals(transformer.getClass(), ReturnStringIf200Context.class);
+      assertEquals(((ReturnStringIf200Context) transformer).getArgs(), args);
+      assertEquals(((ReturnStringIf200Context) transformer).getRequest(), request);
    }
 
    @SuppressWarnings("static-access")

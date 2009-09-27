@@ -30,8 +30,10 @@ package org.jclouds.rest;
  */
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -83,12 +85,51 @@ public class RestClientProxy implements InvocationHandler {
       } else if (util.getDelegateOrNull(method) != null) {
          method = util.getDelegateOrNull(method);
          logger.trace("%s - converting method to request", method);
-         HttpRequest request = util.createRequest(method, args);
-         logger.trace("%s - converted method to request %s", method, request);
-
-         Function<HttpResponse, ?> transformer = util.createResponseParser(method);
          Function<Exception, ?> exceptionParser = util
                   .createExceptionParserOrNullIfNotFound(method);
+         HttpRequest request;
+         try {
+            request = util.createRequest(method, args);
+         } catch (RuntimeException e) {
+            if (exceptionParser != null) {
+               final Object toReturn = exceptionParser.apply(e);
+               if (toReturn == null)
+                  throw e;
+               if (method.getReturnType().isAssignableFrom(Future.class)) {
+                  return new Future<Object>() {
+
+                     public boolean cancel(boolean mayInterruptIfRunning) {
+                        return false;
+                     }
+
+                     public Object get() throws InterruptedException, ExecutionException {
+                        return toReturn;
+                     }
+
+                     public Object get(long timeout, TimeUnit unit) throws InterruptedException,
+                              ExecutionException, TimeoutException {
+                        return get();
+                     }
+
+                     public boolean isCancelled() {
+                        return false;
+                     }
+
+                     public boolean isDone() {
+                        return true;
+                     }
+
+                  };
+               } else {
+                  return toReturn;
+               }
+            }
+            throw e;
+         }
+
+         logger.trace("%s - converted method to request %s", method, request);
+
+         Function<HttpResponse, ?> transformer = util.createResponseParser(method, request, args);
 
          logger.trace("%s - creating command for request %s, transformer %s, exceptionParser %s",
                   method, request, transformer, exceptionParser);
