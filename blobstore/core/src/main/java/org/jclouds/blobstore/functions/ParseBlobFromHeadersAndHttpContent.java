@@ -29,7 +29,9 @@ import javax.ws.rs.core.HttpHeaders;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.http.HttpException;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.rest.RestContext;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -41,7 +43,7 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 public class ParseBlobFromHeadersAndHttpContent<M extends BlobMetadata, B extends Blob<M>>
-         implements Function<HttpResponse, B> {
+         implements Function<HttpResponse, B>, RestContext {
    private final ParseContentTypeFromHeaders<M> metadataParser;
    private final BlobFactory<M, B> blobFactory;
 
@@ -84,11 +86,23 @@ public class ParseBlobFromHeadersAndHttpContent<M extends BlobMetadata, B extend
 
       if (contentRange == null && contentLength != null) {
          object.getMetadata().setSize(object.getContentLength());
-      } else if (contentRange != null ) {
+      } else if (contentRange != null) {
          object.setContentRange(contentRange);
          object.getMetadata().setSize(
                   Long.parseLong(contentRange.substring(contentRange.lastIndexOf('/') + 1)));
       }
+   }
+
+   public Object[] getArgs() {
+      return metadataParser.getArgs();
+   }
+
+   public HttpRequest getRequest() {
+      return metadataParser.getRequest();
+   }
+
+   public void setContext(HttpRequest request, Object[] args) {
+      metadataParser.setContext(request, args);
    }
 
 }

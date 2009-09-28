@@ -44,6 +44,9 @@ import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code JaxrsAnnotationProcessor}
@@ -53,13 +56,12 @@ import com.google.inject.Guice;
 @Test(groups = "unit", testName = "rackspace.RackspaceAuthentication")
 public class RackspaceAuthenticationTest {
 
-   JaxrsAnnotationProcessor.Factory factory;
+   private JaxrsAnnotationProcessor<RackspaceAuthentication> processor;
 
    public void testAuthenticate() throws SecurityException, NoSuchMethodException {
       Method method = RackspaceAuthentication.class.getMethod("authenticate", String.class,
                String.class);
-      HttpRequest httpMethod = factory.create(RackspaceAuthentication.class).createRequest(method,
-               new Object[] { "foo", "bar" });
+      HttpRequest httpMethod = processor.createRequest(method, new Object[] { "foo", "bar" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/auth");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
@@ -68,7 +70,6 @@ public class RackspaceAuthenticationTest {
                .singletonList("foo"));
       assertEquals(httpMethod.getHeaders().get(RackspaceHeaders.AUTH_KEY), Collections
                .singletonList("bar"));
-      factory.create(RackspaceAuthentication.class);
       assertEquals(JaxrsAnnotationProcessor.getParserOrThrowException(method),
                ParseAuthenticationResponseFromHeaders.class);
 
@@ -76,16 +77,17 @@ public class RackspaceAuthenticationTest {
 
    @BeforeClass
    void setupFactory() {
-      factory = Guice.createInjector(
-               new AbstractModule() {
-                  @Override
-                  protected void configure() {
-                     bind(URI.class).annotatedWith(Authentication.class).toInstance(
-                              URI.create("http://localhost:8080"));
-                  }
-               }, new JaxrsModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
-               new JavaUrlHttpCommandExecutorServiceModule()).getInstance(
-               JaxrsAnnotationProcessor.Factory.class);
+      Injector injector = Guice.createInjector(new AbstractModule() {
+         @Override
+         protected void configure() {
+            bind(URI.class).annotatedWith(Authentication.class).toInstance(
+                     URI.create("http://localhost:8080"));
+         }
+      }, new JaxrsModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
+               new JavaUrlHttpCommandExecutorServiceModule());
+      processor = injector.getInstance(Key
+               .get(new TypeLiteral<JaxrsAnnotationProcessor<RackspaceAuthentication>>() {
+               }));
    }
 
 }

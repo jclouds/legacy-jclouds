@@ -149,6 +149,7 @@ public abstract class BaseJettyTest {
             bind(URI.class).annotatedWith(Localhost.class).toInstance(
                      URI.create("http://localhost:" + testPort));
          }
+
       }, new JDKLoggingModule(), new JaxrsModule(), createClientModule());
       CloudContextBuilder.addExecutorServiceIfNotPresent(modules);
       injector = Guice.createInjector(modules);

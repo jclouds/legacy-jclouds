@@ -38,6 +38,7 @@ import java.util.concurrent.TimeoutException;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.jclouds.concurrent.FutureExceptionParser;
 import org.jclouds.http.HttpConstants;
@@ -47,11 +48,12 @@ import org.jclouds.http.TransformingHttpCommand;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
-import com.google.inject.assistedinject.Assisted;
+import com.google.inject.TypeLiteral;
 
-public class RestClientProxy implements InvocationHandler {
-   private final JaxrsAnnotationProcessor util;
-   private final Class<?> declaring;
+@Singleton
+public class RestClientProxy<T> implements InvocationHandler {
+   private final JaxrsAnnotationProcessor<T> util;
+   private final Class<T> declaring;
    private final TransformingHttpCommand.Factory commandFactory;
 
    /**
@@ -64,15 +66,12 @@ public class RestClientProxy implements InvocationHandler {
    @Resource
    protected Logger logger = Logger.NULL;
 
-   public static interface RestClientProxyFactory {
-      RestClientProxy create(Class<?> clazz);
-   }
-
+   @SuppressWarnings("unchecked")
    @Inject
-   public RestClientProxy(JaxrsAnnotationProcessor.Factory utilFactory,
-            TransformingHttpCommand.Factory factory, @Assisted Class<?> declaring) {
-      this.util = utilFactory.create(declaring);
-      this.declaring = declaring;
+   public RestClientProxy(TransformingHttpCommand.Factory factory,
+           JaxrsAnnotationProcessor<T> util, TypeLiteral<T> typeLiteral) {
+      this.util = util;
+      this.declaring = (Class<T>) typeLiteral.getRawType();
       this.commandFactory = factory;
    }
 
@@ -156,9 +155,9 @@ public class RestClientProxy implements InvocationHandler {
 
    @Override
    public boolean equals(Object obj) {
-      if (obj == null || !(obj instanceof RestClientProxy))
+      if (obj == null || !(obj instanceof RestClientProxy<?>))
          return false;
-      RestClientProxy other = (RestClientProxy) obj;
+      RestClientProxy<?> other = (RestClientProxy<?>) obj;
       if (other == this)
          return true;
       if (other.declaring != this.declaring)

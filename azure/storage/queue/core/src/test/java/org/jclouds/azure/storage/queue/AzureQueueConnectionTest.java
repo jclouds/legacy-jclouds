@@ -53,6 +53,9 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code AzureQueueConnection}
@@ -61,7 +64,6 @@ import com.google.inject.Guice;
  */
 @Test(groups = "unit", testName = "cloudservers.AzureQueueConnectionTest")
 public class AzureQueueConnectionTest {
-   JaxrsAnnotationProcessor.Factory factory;
    private static final Class<? extends ListOptions[]> listOptionsVarargsClass = new ListOptions[] {}
             .getClass();
    private static final Class<? extends CreateOptions[]> createOptionsVarargsClass = new CreateOptions[] {}
@@ -162,26 +164,25 @@ public class AzureQueueConnectionTest {
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
 
-   JaxrsAnnotationProcessor processor;
-
    @BeforeClass
    void setupFactory() {
-      factory = Guice.createInjector(
-               new AbstractModule() {
-                  @Override
-                  protected void configure() {
-                     bind(URI.class).annotatedWith(AzureQueue.class).toInstance(
-                              URI.create("http://localhost:8080"));
-                     bindConstant().annotatedWith(
-                              Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT))
-                              .to("user");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY)).to(
-                              HttpUtils.toBase64String("key".getBytes()));
-                  }
-               }, new JaxrsModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
-               new JavaUrlHttpCommandExecutorServiceModule()).getInstance(
-               JaxrsAnnotationProcessor.Factory.class);
-      processor = factory.create(AzureQueueConnection.class);
+      Injector injector = Guice.createInjector(new AbstractModule() {
+         @Override
+         protected void configure() {
+            bind(URI.class).annotatedWith(AzureQueue.class).toInstance(
+                     URI.create("http://localhost:8080"));
+            bindConstant().annotatedWith(
+                     Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT)).to("user");
+            bindConstant().annotatedWith(
+                     Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY)).to(
+                     HttpUtils.toBase64String("key".getBytes()));
+         }
+      }, new JaxrsModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
+               new JavaUrlHttpCommandExecutorServiceModule());
+      processor = injector.getInstance(Key
+               .get(new TypeLiteral<JaxrsAnnotationProcessor<AzureQueueConnection>>() {
+               }));
    }
+
+   JaxrsAnnotationProcessor<AzureQueueConnection> processor;
 }

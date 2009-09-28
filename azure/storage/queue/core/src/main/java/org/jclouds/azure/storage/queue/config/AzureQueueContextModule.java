@@ -41,5 +41,4 @@ public class AzureQueueContextModule extends AbstractModule {
       this.requireBinding(AzureQueueConnection.class);
       bind(AzureQueueContext.class).to(GuiceAzureQueueContext.class);
    }
-
 }

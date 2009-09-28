@@ -56,6 +56,9 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code AzureBlobStore}
@@ -64,7 +67,6 @@ import com.google.inject.Guice;
  */
 @Test(groups = "unit", testName = "cloudservers.AzureBlobStoreTest")
 public class AzureBlobStoreTest {
-   JaxrsAnnotationProcessor.Factory factory;
 
    public void testListContainers() throws SecurityException, NoSuchMethodException {
       Method method = AzureBlobStore.class.getMethod("listContainers");
@@ -259,26 +261,26 @@ public class AzureBlobStoreTest {
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
 
-   JaxrsAnnotationProcessor processor;
-
    @BeforeClass
    void setupFactory() {
-      factory = Guice.createInjector(
-               new AbstractModule() {
-                  @Override
-                  protected void configure() {
-                     bind(URI.class).annotatedWith(AzureBlob.class).toInstance(
-                              URI.create("http://myaccount.blob.core.windows.net"));
-                     bindConstant().annotatedWith(
-                              Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT))
-                              .to("myaccount");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY)).to(
-                              HttpUtils.toBase64String("key".getBytes()));
-                  }
-               }, new JaxrsModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
-               new JavaUrlHttpCommandExecutorServiceModule()).getInstance(
-               JaxrsAnnotationProcessor.Factory.class);
-      processor = factory.create(AzureBlobStore.class);
+      Injector injector = Guice.createInjector(new AbstractModule() {
+         @Override
+         protected void configure() {
+            bind(URI.class).annotatedWith(AzureBlob.class).toInstance(
+                     URI.create("http://myaccount.blob.core.windows.net"));
+            bindConstant().annotatedWith(
+                     Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT)).to(
+                     "myaccount");
+            bindConstant().annotatedWith(
+                     Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY)).to(
+                     HttpUtils.toBase64String("key".getBytes()));
+         }
+      }, new JaxrsModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
+               new JavaUrlHttpCommandExecutorServiceModule());
+      processor = injector.getInstance(Key
+               .get(new TypeLiteral<JaxrsAnnotationProcessor<AzureBlobStore>>() {
+               }));
    }
+
+   JaxrsAnnotationProcessor<AzureBlobStore> processor;
 }

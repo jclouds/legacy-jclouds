@@ -23,24 +23,29 @@
  */
 package org.jclouds.rest;
 
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 
 import javax.inject.Inject;
 
-import org.jclouds.rest.RestClientProxy.RestClientProxyFactory;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
+import com.google.inject.util.Types;
 
 public class RestClientFactory {
-   private final RestClientProxyFactory proxyFactory;
+   private final Injector injector;
 
    @Inject
-   public RestClientFactory(RestClientProxyFactory proxyFactory) {
-      this.proxyFactory = proxyFactory;
+   public RestClientFactory(Injector injector) {
+      this.injector = injector;
    }
 
    @SuppressWarnings("unchecked")
    public <T> T create(Class<T> clazz) {
       return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[] { clazz },
-               proxyFactory.create(clazz));
+               (InvocationHandler) injector.getInstance(Key.get(TypeLiteral.get(Types
+                        .newParameterizedType(RestClientProxy.class, clazz)))));
    }
 
 }

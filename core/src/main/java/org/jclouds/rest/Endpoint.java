@@ -24,6 +24,7 @@
 package org.jclouds.rest;
 
 import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
@@ -36,8 +37,11 @@ import java.lang.annotation.Target;
  * 
  * @author Adrian Cole
  */
-@Target( { TYPE, METHOD })
+@Target( { TYPE, METHOD, PARAMETER })
 @Retention(RUNTIME)
 public @interface Endpoint {
-   Class<? extends Annotation> value();
+   public static @interface NONE {
+   }
+
+   Class<? extends Annotation> value() default NONE.class;
 }

@@ -28,8 +28,6 @@ import javax.ws.rs.ext.RuntimeDelegate;
 import org.jclouds.http.TransformingHttpCommand;
 import org.jclouds.http.TransformingHttpCommandImpl;
 import org.jclouds.http.functions.config.ParserModule;
-import org.jclouds.rest.JaxrsAnnotationProcessor;
-import org.jclouds.rest.RestClientProxy;
 import org.jclouds.rest.RuntimeDelegateImpl;
 
 import com.google.inject.AbstractModule;
@@ -48,11 +46,6 @@ public class JaxrsModule extends AbstractModule {
    protected void configure() {
       install(new ParserModule());
       RuntimeDelegate.setInstance(new RuntimeDelegateImpl());
-      bind(RestClientProxy.RestClientProxyFactory.class).toProvider(
-               FactoryProvider.newFactory(RestClientProxy.RestClientProxyFactory.class, RestClientProxy.class));
-      bind(JaxrsAnnotationProcessor.Factory.class).toProvider(
-               FactoryProvider.newFactory(JaxrsAnnotationProcessor.Factory.class,
-                        JaxrsAnnotationProcessor.class));
       bind(httpCommandFactoryLiteral).toProvider(
                FactoryProvider.newFactory(httpCommandFactoryLiteral,
                         new TypeLiteral<TransformingHttpCommandImpl<?>>() {

@@ -25,6 +25,7 @@ package org.jclouds.rest;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
@@ -76,7 +77,6 @@ import com.google.common.collect.Sets;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
-import com.google.inject.assistedinject.Assisted;
 import com.google.inject.internal.Lists;
 
 /**
@@ -85,16 +85,17 @@ import com.google.inject.internal.Lists;
  * @author Adrian Cole
  */
 @Singleton
-public class JaxrsAnnotationProcessor {
+public class JaxrsAnnotationProcessor<T> {
 
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private final Class<?> declaring;
+   private final Class<T> declaring;
 
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToEntityAnnotation = createMethodToIndexOfParamToAnnotation(EntityParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToHeaderParamAnnotations = createMethodToIndexOfParamToAnnotation(HeaderParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToHostPrefixParamAnnotations = createMethodToIndexOfParamToAnnotation(HostPrefixParam.class);
+   private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToEndpointAnnotations = createMethodToIndexOfParamToAnnotation(Endpoint.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToQueryParamAnnotations = createMethodToIndexOfParamToAnnotation(QueryParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToPathParamAnnotations = createMethodToIndexOfParamToAnnotation(PathParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToPostParamAnnotations = createMethodToIndexOfParamToAnnotation(MapEntityParam.class);
@@ -155,10 +156,6 @@ public class JaxrsAnnotationProcessor {
                }
             });
 
-   public static interface Factory {
-      JaxrsAnnotationProcessor create(Class<?> declaring);
-   }
-
    private final ParseSax.Factory parserFactory;
 
    @VisibleForTesting
@@ -186,10 +183,11 @@ public class JaxrsAnnotationProcessor {
       return null;
    }
 
+   @SuppressWarnings("unchecked")
    @Inject
    public JaxrsAnnotationProcessor(Injector injector, ParseSax.Factory parserFactory,
-            @Assisted Class<?> declaring) {
-      this.declaring = declaring;
+            TypeLiteral<T> typeLiteral) {
+      this.declaring = (Class<T>) typeLiteral.getRawType();
       this.injector = injector;
       this.parserFactory = parserFactory;
       this.optionsBinder = injector.getInstance(HttpRequestOptionsBinder.class);
@@ -210,6 +208,7 @@ public class JaxrsAnnotationProcessor {
                methodToIndexOfParamToHeaderParamAnnotations.get(method).get(index);
                methodToIndexOfParamToHostPrefixParamAnnotations.get(method).get(index);
                methodToindexOfParamToQueryParamAnnotations.get(method).get(index);
+               methodToindexOfParamToEndpointAnnotations.get(method).get(index);
                methodToindexOfParamToPathParamAnnotations.get(method).get(index);
                methodToindexOfParamToPostParamAnnotations.get(method).get(index);
                methodToindexOfParamToParamParserAnnotations.get(method).get(index);
@@ -272,7 +271,7 @@ public class JaxrsAnnotationProcessor {
    private HttpRequestOptionsBinder optionsBinder;
 
    public HttpRequest createRequest(Method method, Object[] args) {
-      URI endpoint = getEndpointFor(method);
+      URI endpoint = getEndpointFor(method, args);
 
       String httpMethod = getHttpMethodOrConstantOrThrowException(method);
 
@@ -367,8 +366,31 @@ public class JaxrsAnnotationProcessor {
       }
    }
 
+   @VisibleForTesting
+   URI getEndpointInParametersOrNull(Method method, Object[] args) {
+      Map<Integer, Set<Annotation>> map = indexWithOnlyOneAnnotation(method, "@Endpoint",
+               methodToindexOfParamToEndpointAnnotations);
+      if (map.size() == 1) {
+         Endpoint annotation = (Endpoint) map.values().iterator().next().iterator().next();
+         int index = map.keySet().iterator().next();
+         checkState(
+                  annotation.value() == Endpoint.NONE.class,
+                  String
+                           .format(
+                                    "@Endpoint annotation at index %d on method %s should not have a value() except Endpoint.NONE ",
+                                    index, method));
+         Object arg = checkNotNull(args[index], String.format("argument at index %d on method %s",
+                  index, method));
+         checkArgument(arg instanceof URI, String.format(
+                  "argument at index %d must be a URI for method %s", index, method));
+         return (URI) arg;
+      }
+      return null;
+   }
+
    private UriBuilder addHostPrefixIfPresent(URI endpoint, Method method, Object[] args) {
-      Map<Integer, Set<Annotation>> map = getIndexToHostPrefixAnnotation(method);
+      Map<Integer, Set<Annotation>> map = indexWithOnlyOneAnnotation(method, "@HostPrefixParam",
+               methodToIndexOfParamToHostPrefixParamAnnotations);
       UriBuilder builder = UriBuilder.fromUri(endpoint);
       if (map.size() == 1) {
          HostPrefixParam param = (HostPrefixParam) map.values().iterator().next().iterator().next();
@@ -504,7 +526,8 @@ public class JaxrsAnnotationProcessor {
          }
          if (request.getEntity() == null) {
 
-            Map<Integer, Set<Annotation>> indexToEntityAnnotation = getIndexToEntityAnnotation(method);
+            Map<Integer, Set<Annotation>> indexToEntityAnnotation = indexWithOnlyOneAnnotation(
+                     method, "@Entity", methodToIndexOfParamToEntityAnnotation);
 
             if (indexToEntityAnnotation.size() == 1) {
                Entry<Integer, Set<Annotation>> entry = indexToEntityAnnotation.entrySet()
@@ -527,40 +550,21 @@ public class JaxrsAnnotationProcessor {
       return request;
    }
 
-   private Map<Integer, Set<Annotation>> getIndexToEntityAnnotation(Method method) {
-      Map<Integer, Set<Annotation>> indexToEntityAnnotation = Maps.filterValues(
-               methodToIndexOfParamToEntityAnnotation.get(method),
-               new Predicate<Set<Annotation>>() {
-                  public boolean apply(Set<Annotation> input) {
-                     return input.size() == 1;
-                  }
-               });
+   protected Map<Integer, Set<Annotation>> indexWithOnlyOneAnnotation(Method method,
+            String description, Map<Method, Map<Integer, Set<Annotation>>> toRefine) {
+      Map<Integer, Set<Annotation>> indexToEntityAnnotation = Maps.filterValues(toRefine
+               .get(method), new Predicate<Set<Annotation>>() {
+         public boolean apply(Set<Annotation> input) {
+            return input.size() == 1;
+         }
+      });
 
       if (indexToEntityAnnotation.size() > 1) {
          throw new IllegalStateException(String.format(
-                  "You must not specify more than one @Entity annotation on: %s; found %s", method
-                           .toString(), indexToEntityAnnotation));
+                  "You must not specify more than one %s annotation on: %s; found %s", description,
+                  method.toString(), indexToEntityAnnotation));
       }
       return indexToEntityAnnotation;
-   }
-
-   private Map<Integer, Set<Annotation>> getIndexToHostPrefixAnnotation(Method method) {
-      Map<Integer, Set<Annotation>> indexToHostPrefixAnnotation = Maps.filterValues(
-               methodToIndexOfParamToHostPrefixParamAnnotations.get(method),
-               new Predicate<Set<Annotation>>() {
-                  public boolean apply(Set<Annotation> input) {
-                     return input.size() == 1;
-                  }
-               });
-
-      if (indexToHostPrefixAnnotation.size() > 1) {
-         throw new IllegalStateException(
-                  String
-                           .format(
-                                    "You must not specify more than one @HostPrefixParam annotation on: %s; found %s",
-                                    method.toString(), indexToHostPrefixAnnotation));
-      }
-      return indexToHostPrefixAnnotation;
    }
 
    private HttpRequestOptions findOptionsIn(Method method, Object[] args) {
@@ -718,16 +722,27 @@ public class JaxrsAnnotationProcessor {
       return postParams;
    }
 
-   public URI getEndpointFor(Method method) {
-      Endpoint endpoint;
-      if (method.isAnnotationPresent(Endpoint.class)) {
-         endpoint = method.getAnnotation(Endpoint.class);
-      } else if (declaring.isAnnotationPresent(Endpoint.class)) {
-         endpoint = declaring.getAnnotation(Endpoint.class);
-      } else {
-         throw new IllegalStateException(
-                  "There must be an @Endpoint annotation on type or method: " + method);
+   public URI getEndpointFor(Method method, Object[] args) {
+      URI endpoint = getEndpointInParametersOrNull(method, args);
+      if (endpoint == null) {
+         Endpoint annotation;
+         if (method.isAnnotationPresent(Endpoint.class)) {
+            annotation = method.getAnnotation(Endpoint.class);
+            checkState(annotation.value() != Endpoint.NONE.class, String.format(
+                     "@Endpoint annotation at method %s must have a value() of valid Qualifier",
+                     method));
+         } else if (declaring.isAnnotationPresent(Endpoint.class)) {
+            annotation = declaring.getAnnotation(Endpoint.class);
+            checkState(annotation.value() != Endpoint.NONE.class, String.format(
+                     "@Endpoint annotation at type %s must have a value() of valid Qualifier",
+                     declaring));
+         } else {
+            throw new IllegalStateException(
+                     "There must be an @Endpoint annotation on parameter, method or type: "
+                              + method);
+         }
+         return injector.getInstance(Key.get(URI.class, annotation.value()));
       }
-      return injector.getInstance(Key.get(URI.class, endpoint.value()));
+      return endpoint;
    }
 }

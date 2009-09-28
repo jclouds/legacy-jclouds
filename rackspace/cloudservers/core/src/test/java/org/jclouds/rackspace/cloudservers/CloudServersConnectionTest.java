@@ -83,7 +83,10 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code CloudServersConnection}
@@ -92,7 +95,6 @@ import com.google.inject.Provides;
  */
 @Test(groups = "unit", testName = "cloudservers.CloudServersConnectionTest")
 public class CloudServersConnectionTest {
-   JaxrsAnnotationProcessor.Factory factory;
    private static final Class<? extends ListOptions[]> listOptionsVarargsClass = new ListOptions[] {}
             .getClass();
    private static final Class<? extends CreateServerOptions[]> createServerOptionsVarargsClass = new CreateServerOptions[] {}
@@ -871,27 +873,28 @@ public class CloudServersConnectionTest {
                ReturnTrueIf2xx.class);
    }
 
-   JaxrsAnnotationProcessor processor;
-
    @BeforeClass
    void setupFactory() {
-      factory = Guice.createInjector(
-               new AbstractModule() {
-                  @Override
-                  protected void configure() {
-                     bind(URI.class).annotatedWith(CloudServers.class).toInstance(
-                              URI.create("http://localhost:8080"));
-                  }
+      Injector injector = Guice.createInjector(new AbstractModule() {
+         @Override
+         protected void configure() {
+            bind(URI.class).annotatedWith(CloudServers.class).toInstance(
+                     URI.create("http://localhost:8080"));
+         }
 
-                  @SuppressWarnings("unused")
-                  @Provides
-                  @Authentication
-                  public String getAuthToken() {
-                     return "testtoken";
-                  }
-               }, new JaxrsModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
-               new JavaUrlHttpCommandExecutorServiceModule()).getInstance(
-               JaxrsAnnotationProcessor.Factory.class);
-      processor = factory.create(CloudServersConnection.class);
+         @SuppressWarnings("unused")
+         @Provides
+         @Authentication
+         public String getAuthToken() {
+            return "testtoken";
+         }
+      }, new JaxrsModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
+               new JavaUrlHttpCommandExecutorServiceModule());
+      processor = injector.getInstance(Key
+               .get(new TypeLiteral<JaxrsAnnotationProcessor<CloudServersConnection>>() {
+               }));
    }
+
+   JaxrsAnnotationProcessor<CloudServersConnection> processor;
+
 }
