@@ -23,17 +23,13 @@
  */
 package org.jclouds.aws.s3.samples;
 
-import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import javax.annotation.Resource;
-
-import org.jclouds.aws.s3.CreateListOwnedBuckets;
 import org.jclouds.aws.s3.S3Context;
 import org.jclouds.aws.s3.S3ContextFactory;
 import org.jclouds.aws.s3.domain.BucketMetadata;
-import org.jclouds.logging.Logger;
 
 /**
  * This the Main class of an Application that demonstrates the use of the CreateListOwnedBuckets
@@ -45,9 +41,6 @@ import org.jclouds.logging.Logger;
  */
 public class MainApp {
 
-   @Resource
-   protected static Logger logger = Logger.NULL;
-
    public static int PARAMETERS = 3;
    public static String INVALID_SYNTAX = "Invalid number of parameters. Syntax is: \"accesskeyid\" \"secretekey\" \"bucketName\" ";
 
@@ -57,29 +50,21 @@ public class MainApp {
       if (args.length < PARAMETERS)
          throw new IllegalArgumentException(INVALID_SYNTAX);
 
-      // Variables
-      S3Context context = null;
-      CreateListOwnedBuckets listMyOwnBuckets = null;
-      List<BucketMetadata> myBuckets = null;
-
       // Args
       String accesskeyid = args[0];
       String secretkey = args[1];
       String bucketName = args[2];
 
       // Init
-      context = S3ContextFactory.createS3Context(accesskeyid, secretkey);
-      listMyOwnBuckets = new CreateListOwnedBuckets(context);
+      S3Context context = S3ContextFactory.createContext(accesskeyid, secretkey);
 
       try {
 
          // Create Bucket
-         listMyOwnBuckets.createBucket(bucketName);
+         context.getApi().createContainer(bucketName).get(10, TimeUnit.SECONDS);
 
          // List bucket
-         myBuckets = listMyOwnBuckets.list();
-
-         for (BucketMetadata bucketObj : myBuckets) {
+         for (BucketMetadata bucketObj : context.getApi().listContainers()) {
             System.out.println(String.format("  %1$s", bucketObj));
             System.out.println(String.format(": %1$s entries%n", context.createInputStreamMap(
                      bucketObj.getName()).size()));
@@ -88,7 +73,6 @@ public class MainApp {
       } finally {
          // Close connecton
          context.close();
-         context = null;
       }
 
    }
