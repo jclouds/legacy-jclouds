@@ -43,6 +43,7 @@
         <jclouds.test.initializer>org.jclouds.mezeo.pcs2.integration.PCSTestInitializer</jclouds.test.initializer>
         <jclouds.test.user>${jclouds.mezeo.pcs2.user}</jclouds.test.user>
         <jclouds.test.key>${jclouds.mezeo.pcs2.password}</jclouds.test.key>
+        <jclouds.test.endpoint>${jclouds.mezeo.pcs2.endpoint}</jclouds.test.endpoint>
     </properties>
     <dependencies>
         <dependency>

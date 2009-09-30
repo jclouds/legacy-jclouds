@@ -23,14 +23,22 @@
  */
 package org.jclouds.mezeo.pcs2.config;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.cloud.ConfiguresCloudConnection;
+import org.jclouds.concurrent.SingleThreaded;
+import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
+import org.jclouds.http.annotation.ClientError;
+import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.mezeo.pcs2.PCS;
+import org.jclouds.mezeo.pcs2.PCSBlobStore;
 import org.jclouds.mezeo.pcs2.PCSCloud;
+import org.jclouds.mezeo.pcs2.PCSUtil;
 import org.jclouds.mezeo.pcs2.PCSCloud.Response;
 import org.jclouds.mezeo.pcs2.endpoints.Contacts;
 import org.jclouds.mezeo.pcs2.endpoints.Metacontainers;
@@ -39,9 +47,9 @@ import org.jclouds.mezeo.pcs2.endpoints.Recyclebin;
 import org.jclouds.mezeo.pcs2.endpoints.RootContainer;
 import org.jclouds.mezeo.pcs2.endpoints.Shares;
 import org.jclouds.mezeo.pcs2.endpoints.Tags;
+import org.jclouds.mezeo.pcs2.handlers.PCSClientErrorRetryHandler;
 import org.jclouds.mezeo.pcs2.reference.PCSConstants;
 import org.jclouds.rest.RestClientFactory;
-import org.jclouds.rest.config.JaxrsModule;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -52,19 +60,42 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 @RequiresHttp
-public class RestPCSCloudModule extends AbstractModule {
+@ConfiguresCloudConnection
+@SingleThreaded
+// http://code.google.com/p/jclouds/issues/detail?id=104
+public class RestPCSBlobStoreModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      install(new JaxrsModule());
       bindErrorHandlers();
       bindRetryHandlers();
    }
 
    @Provides
    @Singleton
+   public BasicAuthentication provideBasicAuthentication(
+            @Named(PCSConstants.PROPERTY_PCS2_USER) String user,
+            @Named(PCSConstants.PROPERTY_PCS2_PASSWORD) String password)
+            throws UnsupportedEncodingException {
+      return new BasicAuthentication(user, password);
+   }
+
+   @Provides
+   @Singleton
    protected Response provideCloudResponse(RestClientFactory factory, @PCS URI authenticationUri) {
       return factory.create(PCSCloud.class).authenticate();
+   }
+
+   @Provides
+   @Singleton
+   protected PCSBlobStore provideConnection(RestClientFactory factory) {
+      return factory.create(PCSBlobStore.class);
+   }
+
+   @Provides
+   @Singleton
+   protected PCSUtil providePCSUtil(RestClientFactory factory) {
+      return factory.create(PCSUtil.class);
    }
 
    @Provides
@@ -129,7 +160,8 @@ public class RestPCSCloudModule extends AbstractModule {
    }
 
    protected void bindRetryHandlers() {
-      // TODO retry on 401 by AuthenticateRequest.update()
+      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(
+               PCSClientErrorRetryHandler.class);
    }
 
 }
