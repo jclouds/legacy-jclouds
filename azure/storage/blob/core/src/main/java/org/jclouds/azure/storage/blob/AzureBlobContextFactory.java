@@ -39,20 +39,19 @@ import com.google.inject.Module;
  * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
- * @author Adrian Cole, Andrew Newdigate
+ * @author Adrian Cole
  * @see AzureBlobContext
  */
 public class AzureBlobContextFactory {
 
-   public static AzureBlobContext createAzureBlobContext(String account, String encodedKey,
+   public static AzureBlobContext createContext(String account, String encodedKey,
             Module... modules) {
-      return AzureBlobContextBuilder.newBuilder(account, encodedKey).withModules(modules)
-               .buildContext();
+      return new AzureBlobContextBuilder(account, encodedKey).withModules(modules).buildContext();
    }
 
-   public static AzureBlobContext createAzureBlobContext(URI endpoint, String account,
-            String encodedKey, Module... modules) {
-      return AzureBlobContextBuilder.newBuilder(account, encodedKey).withEndpoint(endpoint)
-               .withModules(modules).buildContext();
+   public static AzureBlobContext createContext(URI endpoint, String account, String encodedKey,
+            Module... modules) {
+      return new AzureBlobContextBuilder(account, encodedKey).withEndpoint(endpoint).withModules(
+               modules).buildContext();
    }
 }

@@ -25,35 +25,63 @@ package org.jclouds.nirvanix.sdn;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Properties;
 
-import org.jclouds.cloud.CloudContext;
 import org.jclouds.cloud.CloudContextBuilder;
 import org.jclouds.nirvanix.sdn.config.RestSDNAuthenticationModule;
 import org.jclouds.nirvanix.sdn.reference.SDNConstants;
 
 import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
 
 /**
  * 
  * @author Adrian Cole
  */
-public abstract class SDNContextBuilder<X extends CloudContext<?>> extends CloudContextBuilder<X> {
+public abstract class SDNContextBuilder<C> extends CloudContextBuilder<C> {
 
-   public SDNContextBuilder(Properties props) {
-      super(props);
-      properties.setProperty(SDNConstants.PROPERTY_SDN_ENDPOINT, "http://services.nirvanix.com/ws");
+   public SDNContextBuilder(TypeLiteral<C> defaultApiClass, String apikey, String id, String secret) {
+      this(defaultApiClass, new Properties());
+      authenticate(this, apikey, id, secret);
    }
 
-   public void authenticate(String id, String secret) {
-      checkNotNull(properties.getProperty(SDNConstants.PROPERTY_SDN_APPKEY));
-      properties.setProperty(SDNConstants.PROPERTY_SDN_USERNAME, checkNotNull(id, "user"));
-      properties.setProperty(SDNConstants.PROPERTY_SDN_PASSWORD, checkNotNull(secret, "key"));
+   public SDNContextBuilder(TypeLiteral<C> defaultApiClass, Properties props) {
+      super(defaultApiClass, props);
+      initialize(this);
    }
 
-   protected void addApiModule(List<Module> modules) {
-      modules.add(new RestSDNAuthenticationModule());
+   @Override
+   protected void addConnectionModule(List<Module> modules) {
+      addAuthenticationModule(this);
+   }
+
+   public static <C> void authenticate(CloudContextBuilder<C> builder, String appkey, String id,
+            String secret) {
+      builder.getProperties().setProperty(SDNConstants.PROPERTY_SDN_APPKEY, checkNotNull(appkey, "appkey"));
+      builder.getProperties().setProperty(SDNConstants.PROPERTY_SDN_USERNAME, checkNotNull(id, "user"));
+      builder.getProperties().setProperty(SDNConstants.PROPERTY_SDN_PASSWORD, checkNotNull(secret, "key"));
+   }
+
+   public static <C> void initialize(CloudContextBuilder<C> builder) {
+      builder.getProperties().setProperty(SDNConstants.PROPERTY_SDN_ENDPOINT, "http://services.nirvanix.com/ws");
+   }
+
+   public static <C> void addAuthenticationModule(CloudContextBuilder<C> builder) {
+      builder.withModule(new RestSDNAuthenticationModule());
+   }
+
+   public static <C> CloudContextBuilder<C> withEndpoint(CloudContextBuilder<C> builder,
+            URI endpoint) {
+      builder.getProperties().setProperty(SDNConstants.PROPERTY_SDN_ENDPOINT,
+               checkNotNull(endpoint, "endpoint").toString());
+      return builder;
+   }
+
+   @Override
+   public SDNContextBuilder<C> withEndpoint(URI endpoint) {
+      return (SDNContextBuilder<C>) withEndpoint(this, endpoint);
    }
 
 }

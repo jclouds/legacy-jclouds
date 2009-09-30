@@ -35,13 +35,14 @@ import java.net.URI;
  * @author Adrian Cole
  * 
  */
-public interface CloudContext<S> {
+public interface CloudContext<C> {
+
    /**
     * low-level api to the cloud. Threadsafe implementations will return a singleton.
     * 
     * @return a connection to the cloud
     */
-   S getApi();
+   C getApi();
 
    URI getEndPoint();
 

@@ -29,6 +29,7 @@ import java.util.Map.Entry;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.blobstore.domain.BlobMetadata;
@@ -50,7 +51,7 @@ public class ParseSystemAndUserMetadataFromHeaders<M extends BlobMetadata> exten
    @Inject
    public ParseSystemAndUserMetadataFromHeaders(DateService dateParser,
             @Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix,
-            BlobMetadataFactory<M> metadataFactory) {
+            Provider<M> metadataFactory) {
       super(metadataFactory);
       this.dateParser = dateParser;
       this.metadataPrefix = metadataPrefix;

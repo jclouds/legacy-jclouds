@@ -46,15 +46,15 @@ public class BaseContainerIntegrationTest<S extends BlobStore<C, M, B>, C extend
 
    @Test(groups = { "integration", "live" })
    public void containerDoesntExist() throws Exception {
-      assert !client.containerExists("forgetaboutit");
+      assert !context.getApi().containerExists("forgetaboutit");
    }
 
    @Test(groups = { "integration", "live" })
    public void testPutTwiceIsOk() throws Exception {
       String containerName = getContainerName();
       try {
-         client.createContainer(containerName).get(10, TimeUnit.SECONDS);
-         client.createContainer(containerName).get(10, TimeUnit.SECONDS);
+         context.getApi().createContainer(containerName).get(10, TimeUnit.SECONDS);
+         context.getApi().createContainer(containerName).get(10, TimeUnit.SECONDS);
       } finally {
          returnContainer(containerName);
       }
@@ -64,7 +64,7 @@ public class BaseContainerIntegrationTest<S extends BlobStore<C, M, B>, C extend
    public void containerExists() throws Exception {
       String containerName = getContainerName();
       try {
-         assert client.containerExists(containerName);
+         assert context.getApi().containerExists(containerName);
       } finally {
          returnContainer(containerName);
       }
@@ -75,7 +75,7 @@ public class BaseContainerIntegrationTest<S extends BlobStore<C, M, B>, C extend
     */
    @Test(groups = { "integration", "live" })
    public void deleteContainerIfEmptyNotFound() throws Exception {
-      assert client.deleteContainer("dbienf").get(10, TimeUnit.SECONDS);
+      assert context.getApi().deleteContainer("dbienf").get(10, TimeUnit.SECONDS);
    }
 
    @Test(groups = { "integration", "live" })
@@ -83,7 +83,7 @@ public class BaseContainerIntegrationTest<S extends BlobStore<C, M, B>, C extend
       String containerName = getContainerName();
       try {
          addBlobToContainer(containerName, "test");
-         assert !client.deleteContainer(containerName).get(10, TimeUnit.SECONDS);
+         assert !context.getApi().deleteContainer(containerName).get(10, TimeUnit.SECONDS);
       } finally {
          returnContainer(containerName);
       }
@@ -93,13 +93,13 @@ public class BaseContainerIntegrationTest<S extends BlobStore<C, M, B>, C extend
    public void deleteContainerIfEmpty() throws Exception {
       final String containerName = getContainerName();
       try {
-         assert client.deleteContainer(containerName).get(10, TimeUnit.SECONDS);
+         assert context.getApi().deleteContainer(containerName).get(10, TimeUnit.SECONDS);
 
          assertEventually(new Runnable() {
             public void run() {
                try {
-                  assert !client.containerExists(containerName) : "container " + containerName
-                           + " still exists";
+                  assert !context.getApi().containerExists(containerName) : "container "
+                           + containerName + " still exists";
                } catch (Exception e) {
                   Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
                }
@@ -114,9 +114,9 @@ public class BaseContainerIntegrationTest<S extends BlobStore<C, M, B>, C extend
    protected void addAlphabetUnderRoot(String containerName) throws InterruptedException,
             ExecutionException, TimeoutException {
       for (char letter = 'a'; letter <= 'z'; letter++) {
-         B blob = objectFactory.createBlob(letter + "");
+         B blob = context.newBlob(letter + "");
          blob.setData(letter + "content");
-         client.putBlob(containerName, blob).get(10, TimeUnit.SECONDS);
+         context.getApi().putBlob(containerName, blob).get(10, TimeUnit.SECONDS);
       }
    }
 
@@ -125,10 +125,9 @@ public class BaseContainerIntegrationTest<S extends BlobStore<C, M, B>, C extend
             TimeoutException, UnsupportedEncodingException {
       String containerName = getContainerName();
       try {
-         String prefix = "apps";
-         addTenObjectsUnderPrefix(containerName, prefix);
-         List<M> container = client.listBlobs(containerName).get(10, TimeUnit.SECONDS);
-         assertEquals(container.size(), 10);
+         add15UnderRoot(containerName);
+         List<M> container = context.getApi().listBlobs(containerName).get(10, TimeUnit.SECONDS);
+         assertEquals(container.size(), 15);
       } finally {
          returnContainer(containerName);
       }
@@ -138,18 +137,18 @@ public class BaseContainerIntegrationTest<S extends BlobStore<C, M, B>, C extend
    protected void add15UnderRoot(String containerName) throws InterruptedException,
             ExecutionException, TimeoutException {
       for (int i = 0; i < 15; i++) {
-         B blob = objectFactory.createBlob(i + "");
+         B blob = context.newBlob(i + "");
          blob.setData(i + "content");
-         client.putBlob(containerName, blob).get(10, TimeUnit.SECONDS);
+         context.getApi().putBlob(containerName, blob).get(10, TimeUnit.SECONDS);
       }
    }
 
    protected void addTenObjectsUnderPrefix(String containerName, String prefix)
             throws InterruptedException, ExecutionException, TimeoutException {
       for (int i = 0; i < 10; i++) {
-         B blob = objectFactory.createBlob(prefix + "/" + i);
+         B blob = context.newBlob(prefix + "/" + i);
          blob.setData(i + "content");
-         client.putBlob(containerName, blob).get(10, TimeUnit.SECONDS);
+         context.getApi().putBlob(containerName, blob).get(10, TimeUnit.SECONDS);
       }
    }
 }

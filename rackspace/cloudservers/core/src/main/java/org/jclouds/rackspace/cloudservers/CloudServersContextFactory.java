@@ -25,6 +25,7 @@ package org.jclouds.rackspace.cloudservers;
 
 import java.net.URI;
 
+import org.jclouds.cloud.CloudContext;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 
@@ -44,14 +45,14 @@ import com.google.inject.Module;
  */
 public class CloudServersContextFactory {
 
-   public static CloudServersContext createCloudServersContext(String user, String key,
-            Module... modules) {
-      return CloudServersContextBuilder.newBuilder(user, key).withModules(modules).buildContext();
+   public static CloudContext<CloudServersConnection> createContext(String user,
+            String key, Module... modules) {
+      return new CloudServersContextBuilder(user, key).withModules(modules).buildContext();
    }
 
-   public static CloudServersContext createCloudServersContext(URI endpoint, String user,
-            String key, Module... modules) {
-      return CloudServersContextBuilder.newBuilder(user, key).withEndpoint(endpoint).withModules(
-               modules).buildContext();
+   public static CloudContext<CloudServersConnection> createContext(URI endpoint,
+            String user, String key, Module... modules) {
+      return new CloudServersContextBuilder(user, key).withEndpoint(endpoint).withModules(modules)
+               .buildContext();
    }
 }

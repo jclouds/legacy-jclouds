@@ -21,48 +21,36 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudservers.internal;
+package org.jclouds.cloud.internal;
 
 import java.io.IOException;
 import java.net.URI;
 
 import javax.annotation.Resource;
 
+import org.jclouds.cloud.CloudContext;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.Logger;
-import org.jclouds.rackspace.Authentication;
-import org.jclouds.rackspace.cloudservers.CloudServersConnection;
-import org.jclouds.rackspace.cloudservers.CloudServersContext;
-import org.jclouds.rackspace.reference.RackspaceConstants;
-
-import javax.inject.Inject;
-import com.google.inject.Injector;
-import javax.inject.Named;
 
 /**
- * Uses a Guice Injector to configure the objects served by CloudServersContext methods.
- * 
  * @author Adrian Cole
- * @see Injector
  */
-public class GuiceCloudServersContext implements CloudServersContext {
+public class CloudContextImpl<C> implements CloudContext<C> {
 
    @Resource
    private Logger logger = Logger.NULL;
-   private final Injector injector;
+   private final C defaultApi;
    private final Closer closer;
    private final URI endPoint;
    private final String account;
-   
-   @Inject
-   private GuiceCloudServersContext(Injector injector, Closer closer,@Authentication URI endPoint,
-            @Named(RackspaceConstants.PROPERTY_RACKSPACE_USER) String account) {
-      this.injector = injector;
+
+   public CloudContextImpl(Closer closer, C defaultApi, URI endPoint, String account) {
+      this.defaultApi = defaultApi;
       this.closer = closer;
       this.endPoint = endPoint;
       this.account = account;
    }
-   
+
    /**
     * {@inheritDoc}
     * 
@@ -76,13 +64,12 @@ public class GuiceCloudServersContext implements CloudServersContext {
       }
    }
 
-
    public String getAccount() {
       return account;
    }
 
-   public CloudServersConnection getApi() {
-      return injector.getInstance(CloudServersConnection.class);
+   public C getApi() {
+      return defaultApi;
    }
 
    public URI getEndPoint() {

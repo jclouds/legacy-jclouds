@@ -41,7 +41,11 @@ import org.jclouds.blobstore.domain.BlobMetadata;
  * 
  * @author Adrian Cole
  */
-public interface InputStreamMap<B extends BlobMetadata> extends ListableMap<B, String, InputStream> {
+public interface InputStreamMap<M extends BlobMetadata> extends ListableMap<M, String, InputStream> {
+   public static interface Factory<M extends BlobMetadata> {
+      InputStreamMap<M> create(String containerName);
+   }
+
    InputStream putString(String key, String value);
 
    InputStream putFile(String key, File value);

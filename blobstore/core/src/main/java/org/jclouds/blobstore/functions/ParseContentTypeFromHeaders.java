@@ -24,6 +24,7 @@
 package org.jclouds.blobstore.functions;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.blobstore.domain.BlobMetadata;
@@ -40,22 +41,19 @@ import com.google.common.base.Function;
  */
 public class ParseContentTypeFromHeaders<M extends BlobMetadata> implements
          Function<HttpResponse, M>, RestContext {
-   private final BlobMetadataFactory<M> metadataFactory;
+   private final Provider<M> metadataFactory;
    private HttpRequest request;
    private Object[] args;
 
-   public static interface BlobMetadataFactory<M extends BlobMetadata> {
-      M create(String key);
-   }
-
    @Inject
-   public ParseContentTypeFromHeaders(BlobMetadataFactory<M> metadataFactory) {
+   public ParseContentTypeFromHeaders(Provider<M> metadataFactory) {
       this.metadataFactory = metadataFactory;
    }
 
    public M apply(HttpResponse from) {
       String objectKey = getKeyFor(from);
-      M to = metadataFactory.create(objectKey);
+      M to = metadataFactory.get();
+      to.setKey(objectKey);
       addAllHeadersTo(from, to);
       setContentTypeOrThrowException(from, to);
       return to;

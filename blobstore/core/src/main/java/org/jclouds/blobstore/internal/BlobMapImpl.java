@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.blobstore;
+package org.jclouds.blobstore.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,12 +32,18 @@ import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
+
+import org.jclouds.blobstore.BaseBlobMap;
+import org.jclouds.blobstore.BlobMap;
+import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ContainerMetadata;
 import org.jclouds.util.Utils;
 
-import javax.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
 /**
@@ -48,12 +54,13 @@ import com.google.inject.assistedinject.Assisted;
  * 
  * @author Adrian Cole
  */
-public class LiveBlobMap<C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
+public class BlobMapImpl<S extends BlobStore<C, M, B>, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
          extends BaseBlobMap<C, M, B, B> implements BlobMap<M, B> {
 
    @Inject
-   public LiveBlobMap(BlobStore<C, M, B> connection, @Assisted String containerName) {
-      super(connection, containerName);
+   public BlobMapImpl(S connection, Provider<B> blobFactory,
+            @Assisted String containerName) {
+      super(connection, blobFactory, containerName);
    }
 
    /**

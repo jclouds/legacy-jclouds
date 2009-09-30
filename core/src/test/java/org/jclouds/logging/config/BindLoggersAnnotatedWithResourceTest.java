@@ -54,7 +54,7 @@ public class BindLoggersAnnotatedWithResourceTest {
         private Logger logger = Logger.NULL;
     }
 
-    public static class B {
+    private static class B {
         @Resource
         private Logger logger = Logger.NULL;
     }

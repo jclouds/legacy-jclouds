@@ -21,9 +21,8 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.config;
+package org.jclouds.rackspace;
 
-import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_ENDPOINT;
 import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_KEY;
 import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_USER;
 
@@ -31,15 +30,6 @@ import java.net.URI;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
-
-import org.jclouds.http.RequiresHttp;
-import org.jclouds.rackspace.Authentication;
-import org.jclouds.rackspace.CloudFiles;
-import org.jclouds.rackspace.CloudFilesCDN;
-import org.jclouds.rackspace.CloudServers;
-import org.jclouds.rackspace.RackspaceAuthentication;
-import org.jclouds.rackspace.RackspaceAuthentication.AuthenticationResponse;
-import org.jclouds.rest.RestClientFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -49,8 +39,7 @@ import com.google.inject.Provides;
  * 
  * @author Adrian Cole
  */
-@RequiresHttp
-public class RestRackspaceAuthenticationModule extends AbstractModule {
+public class StubRackspaceAuthenticationModule extends AbstractModule {
 
    @Override
    protected void configure() {
@@ -59,42 +48,35 @@ public class RestRackspaceAuthenticationModule extends AbstractModule {
    @Provides
    @Singleton
    @Authentication
-   protected URI provideAuthenticationURI(@Named(PROPERTY_RACKSPACE_ENDPOINT) String endpoint) {
-      return URI.create(endpoint);
-   }
-
-   @Provides
-   @Singleton
-   protected AuthenticationResponse provideAuthenticationResponse(RestClientFactory factory,
-            @Named(PROPERTY_RACKSPACE_USER) String user, @Named(PROPERTY_RACKSPACE_KEY) String key) {
-      return factory.create(RackspaceAuthentication.class).authenticate(user, key);
+   protected URI provideAuthenticationURI() {
+      return URI.create("http://localhost/rackspacestub/authentication");
    }
 
    @Provides
    @Authentication
-   protected String provideAuthenticationToken(RestClientFactory factory,
-            @Named(PROPERTY_RACKSPACE_USER) String user, @Named(PROPERTY_RACKSPACE_KEY) String key) {
-      return factory.create(RackspaceAuthentication.class).authenticate(user, key).getAuthToken();
+   protected String provideAuthenticationToken(@Named(PROPERTY_RACKSPACE_USER) String user,
+            @Named(PROPERTY_RACKSPACE_KEY) String key) {
+      return user + ":" + key;
    }
 
    @Provides
    @Singleton
    @CloudFiles
-   protected URI provideStorageUrl(AuthenticationResponse response) {
-      return response.getStorageUrl();
+   protected URI provideStorageUrl() {
+      return URI.create("http://localhost/rackspacestub/cloudfiles");
    }
 
    @Provides
    @Singleton
    @CloudServers
-   protected URI provideServerUrl(AuthenticationResponse response) {
-      return response.getServerManagementUrl();
+   protected URI provideServerUrl() {
+      return URI.create("http://localhost/rackspacestub/cloudservers");
    }
 
    @Provides
    @Singleton
    @CloudFilesCDN
-   protected URI provideCDNUrl(AuthenticationResponse response) {
-      return response.getCDNManagementUrl();
+   protected URI provideCDNUrl() {
+      return URI.create("http://localhost/rackspacestub/cloudfilescdn");
    }
 }

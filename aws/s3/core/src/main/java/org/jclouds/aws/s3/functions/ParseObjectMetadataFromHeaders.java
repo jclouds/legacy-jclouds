@@ -25,6 +25,9 @@ package org.jclouds.aws.s3.functions;
 
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.aws.s3.domain.ObjectMetadata;
@@ -35,8 +38,6 @@ import org.jclouds.http.HttpUtils;
 import org.jclouds.util.DateService;
 
 import com.google.common.annotations.VisibleForTesting;
-import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * This parses @{link {@link org.jclouds.aws.s3.domain.ObjectMetadata} from HTTP headers.
@@ -44,12 +45,13 @@ import javax.inject.Named;
  * @see <a href="http://docs.amazonwebservices.com/AmazonS3/latest/RESTObjectGET.html" />
  * @author Adrian Cole
  */
-public class ParseObjectMetadataFromHeaders extends ParseSystemAndUserMetadataFromHeaders<ObjectMetadata> {
+public class ParseObjectMetadataFromHeaders extends
+         ParseSystemAndUserMetadataFromHeaders<ObjectMetadata> {
 
    @Inject
    public ParseObjectMetadataFromHeaders(DateService dateParser,
             @Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix,
-            BlobMetadataFactory<ObjectMetadata> metadataFactory) {
+            Provider<ObjectMetadata> metadataFactory) {
       super(dateParser, metadataPrefix, metadataFactory);
    }
 

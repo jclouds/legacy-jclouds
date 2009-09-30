@@ -27,8 +27,8 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.createNiceMock;
 import static org.easymock.classextension.EasyMock.replay;
+import static org.testng.Assert.assertEquals;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -40,7 +40,13 @@ import java.util.concurrent.TimeoutException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ContainerMetadata;
+import org.jclouds.blobstore.integration.StubBlobStoreContextBuilder;
+import org.jclouds.blobstore.internal.InputStreamMapImpl;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import com.google.inject.TypeLiteral;
+import com.google.inject.util.Types;
 
 /**
  * 
@@ -49,53 +55,67 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = { "unit" }, testName = "blobstore.BaseBlobMapTest")
-public abstract class BaseBlobMapTest<C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>, V> {
+public class BaseBlobMapTest {
 
-   class MockBaseBlobMap extends BaseBlobMap<C, M, B, String> {
+   BlobStoreContext<BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> context;
 
-      @SuppressWarnings("unchecked")
-      public MockBaseBlobMap(String container) {
-         super(createNiceMock(BlobStore.class), container);
-      }
+   InputStreamMapImpl<BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> map;
 
-      public Set<java.util.Map.Entry<String, String>> entrySet() {
-         return null;
-      }
+   @SuppressWarnings("unchecked")
+   @BeforeClass
+   void addDefaultObjectsSoThatTestsWillPass() {
+      context = new StubBlobStoreContextBuilder().buildContext();
+      map = (InputStreamMapImpl<BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>) context
+               .createInputStreamMap("test");
+   }
 
-      public String get(Object key) {
-         return null;
-      }
+   @SuppressWarnings("unchecked")
+   public void testTypes() {
+      TypeLiteral type0 = new TypeLiteral<Map<String, Map<String, Blob<BlobMetadata>>>>() {
+      };
+      TypeLiteral type1 = TypeLiteral.get(Types.newParameterizedType(Map.class, String.class, Types
+               .newParameterizedType(Map.class, String.class, Types.newParameterizedType(
+                        Blob.class, BlobMetadata.class))));
+      assertEquals(type0, type1);
 
-      public String put(String key, String value) {
-         return null;
-      }
+      TypeLiteral type2 = new TypeLiteral<BlobMap.Factory<BlobMetadata, Blob<BlobMetadata>>>() {
+      };
+      TypeLiteral type3 = TypeLiteral.get(Types.newParameterizedTypeWithOwner(BlobMap.class,
+               BlobMap.Factory.class, BlobMetadata.class, Types.newParameterizedType(Blob.class,
+                        BlobMetadata.class)));
 
-      public void putAll(Map<? extends String, ? extends String> t) {
+      assertEquals(type2, type3);
 
-      }
+      TypeLiteral type4 = new TypeLiteral<Blob<BlobMetadata>>() {
+      };
+      TypeLiteral type5 = TypeLiteral.get(Types
+               .newParameterizedType(Blob.class, BlobMetadata.class));
 
-      public String remove(Object key) {
-         return null;
-      }
+      assertEquals(type4, type5);
 
-      public Collection<String> values() {
-         return null;
-      }
+      TypeLiteral type6 = new TypeLiteral<BlobStoreContextImpl<BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
+      };
+
+      TypeLiteral type7 = TypeLiteral.get(Types.newParameterizedType(BlobStoreContextImpl.class,
+               Types.newParameterizedType(BlobStore.class, ContainerMetadata.class,
+                        BlobMetadata.class, Types.newParameterizedType(Blob.class,
+                                 BlobMetadata.class)), ContainerMetadata.class, BlobMetadata.class,
+               Types.newParameterizedType(Blob.class, BlobMetadata.class)));
+      assertEquals(type6, type7);
 
    }
 
    @SuppressWarnings("unchecked")
    public void testIfNotFoundRetryOtherwiseAddToSet() throws InterruptedException,
             ExecutionException, TimeoutException {
-      BaseBlobMap<C, M, B, String> map = new MockBaseBlobMap("test");
-      Future<B> futureObject = createMock(Future.class);
-      B object = createBlob();
+      Future<Blob<BlobMetadata>> futureObject = createMock(Future.class);
+      Blob<BlobMetadata> object = context.newBlob("key");
       expect(futureObject.get(map.requestTimeoutMilliseconds, TimeUnit.MILLISECONDS)).andThrow(
                new KeyNotFoundException());
       expect(futureObject.get(map.requestTimeoutMilliseconds, TimeUnit.MILLISECONDS)).andReturn(
                object);
       replay(futureObject);
-      Set<B> objects = new HashSet<B>();
+      Set<Blob<BlobMetadata>> objects = new HashSet<Blob<BlobMetadata>>();
       long time = System.currentTimeMillis();
       map.ifNotFoundRetryOtherwiseAddToSet("key", futureObject, objects);
       // should have retried once
@@ -104,18 +124,15 @@ public abstract class BaseBlobMapTest<C extends ContainerMetadata, M extends Blo
       assert !objects.contains(null);
    }
 
-   protected abstract B createBlob();
-
    @SuppressWarnings("unchecked")
    public void testIfNotFoundRetryOtherwiseAddToSetButNeverGetsIt() throws InterruptedException,
             ExecutionException, TimeoutException {
-      BaseBlobMap<C, M, B, String> map = new MockBaseBlobMap("test");
-      Future<B> futureObject = createMock(Future.class);
+      Future<Blob<BlobMetadata>> futureObject = createMock(Future.class);
       Blob object = createNiceMock(Blob.class);
       expect(futureObject.get(map.requestTimeoutMilliseconds, TimeUnit.MILLISECONDS)).andThrow(
                new KeyNotFoundException()).atLeastOnce();
       replay(futureObject);
-      Set<B> objects = new HashSet<B>();
+      Set<Blob<BlobMetadata>> objects = new HashSet<Blob<BlobMetadata>>();
       long time = System.currentTimeMillis();
       map.ifNotFoundRetryOtherwiseAddToSet("key", futureObject, objects);
       // should have retried thrice
@@ -125,8 +142,4 @@ public abstract class BaseBlobMapTest<C extends ContainerMetadata, M extends Blo
       assert !objects.contains(null);
    }
 
-   @Test(expectedExceptions = IllegalArgumentException.class)
-   public void testBlankContainerName() {
-      new MockBaseBlobMap("test");
-   }
 }

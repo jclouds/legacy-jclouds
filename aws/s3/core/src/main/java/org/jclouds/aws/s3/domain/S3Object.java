@@ -23,10 +23,9 @@
  */
 package org.jclouds.aws.s3.domain;
 
-import org.jclouds.blobstore.domain.Blob;
-
 import javax.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
+
+import org.jclouds.blobstore.domain.Blob;
 
 /**
  * Amazon S3 is designed to store objects. Objects are stored in {@link S3Bucket buckets} and
@@ -44,13 +43,17 @@ public class S3Object extends Blob<ObjectMetadata> {
       super(metadata, data);
    }
 
-   @Inject
-   public S3Object(@Assisted ObjectMetadata metadata) {
+   public S3Object(ObjectMetadata metadata) {
       super(metadata);
    }
 
    public S3Object(String key, Object data) {
       this(new ObjectMetadata(key), data);
+   }
+
+   @Inject
+   public S3Object() {
+      this(new ObjectMetadata());
    }
 
    public S3Object(String key) {

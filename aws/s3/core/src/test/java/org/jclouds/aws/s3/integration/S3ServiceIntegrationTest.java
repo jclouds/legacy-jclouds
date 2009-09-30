@@ -35,16 +35,16 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = { "integration", "live" },  testName = "s3.S3ServiceIntegrationTest")
+@Test(groups = { "integration", "live" }, testName = "s3.S3ServiceIntegrationTest")
 public class S3ServiceIntegrationTest extends
          BaseServiceIntegrationTest<S3BlobStore, BucketMetadata, ObjectMetadata, S3Object> {
 
    void containerExists() throws Exception {
       String containerName = getContainerName();
       try {
-         List<BucketMetadata> list = client.listContainers();
+         List<BucketMetadata> list = context.getApi().listContainers();
          BucketMetadata firstContainer = list.get(0);
-         BucketMetadata toMatch = objectFactory.createContainerMetadata(containerName);
+         BucketMetadata toMatch = new BucketMetadata(containerName);
          toMatch.setOwner(firstContainer.getOwner());
          assert list.contains(toMatch);
       } finally {

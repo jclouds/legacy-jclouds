@@ -28,31 +28,26 @@ import javax.inject.Singleton;
 import org.jclouds.cloud.ConfiguresCloudConnection;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rackspace.cloudservers.CloudServersConnection;
-import org.jclouds.rackspace.cloudservers.CloudServersContext;
-import org.jclouds.rackspace.cloudservers.internal.GuiceCloudServersContext;
 import org.jclouds.rest.RestClientFactory;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
- * Configures the Cloud Servers connection, including logging and http transport.
  * 
  * @author Adrian Cole
  */
 @ConfiguresCloudConnection
 @RequiresHttp
 public class RestCloudServersConnectionModule extends AbstractModule {
-
    @Override
    protected void configure() {
-      bind(CloudServersContext.class).to(GuiceCloudServersContext.class);
+
    }
 
    @Provides
    @Singleton
-   protected CloudServersConnection provideConnection(RestClientFactory factory) {
+   public CloudServersConnection provideConnection(RestClientFactory factory) {
       return factory.create(CloudServersConnection.class);
    }
-
 }

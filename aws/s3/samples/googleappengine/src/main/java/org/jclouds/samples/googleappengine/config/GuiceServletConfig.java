@@ -23,10 +23,13 @@
  */
 package org.jclouds.samples.googleappengine.config;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 import javax.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.servlet.GuiceServletContextListener;
-import com.google.inject.servlet.ServletModule;
+import javax.servlet.ServletContextEvent;
+
 import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.s3.S3Context;
 import org.jclouds.aws.s3.S3ContextBuilder;
@@ -34,10 +37,9 @@ import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.gae.config.GaeHttpCommandExecutorServiceModule;
 import org.jclouds.samples.googleappengine.GetAllBucketsController;
 
-import javax.servlet.ServletContextEvent;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
+import com.google.inject.Injector;
+import com.google.inject.servlet.GuiceServletContextListener;
+import com.google.inject.servlet.ServletModule;
 
 /**
  * Setup Logging and create Injector for use in testing S3.
@@ -74,7 +76,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 
    @Override
    protected Injector getInjector() {
-      return S3ContextBuilder.newBuilder(accessKeyId, secretAccessKey).withModules(
+      return new S3ContextBuilder(accessKeyId, secretAccessKey).withModules(
                new GaeHttpCommandExecutorServiceModule(), new ServletModule() {
                   @Override
                   protected void configureServlets() {

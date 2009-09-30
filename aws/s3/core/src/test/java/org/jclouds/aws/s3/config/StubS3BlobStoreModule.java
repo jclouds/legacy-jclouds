@@ -24,14 +24,18 @@
 package org.jclouds.aws.s3.config;
 
 import java.net.URI;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.jclouds.aws.s3.S3;
 import org.jclouds.aws.s3.S3BlobStore;
+import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.internal.StubS3BlobStore;
 import org.jclouds.cloud.ConfiguresCloudConnection;
 import org.jclouds.http.functions.config.ParserModule;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.TypeLiteral;
 
 /**
  * adds a stub alternative to invoking S3
@@ -40,9 +44,13 @@ import com.google.inject.AbstractModule;
  */
 @ConfiguresCloudConnection
 public class StubS3BlobStoreModule extends AbstractModule {
+   static final ConcurrentHashMap<String, Map<String, S3Object>> map = new ConcurrentHashMap<String, Map<String, S3Object>>();
+
    protected void configure() {
       install(new ParserModule());
-      bind(S3BlobStore.class).to(StubS3BlobStore.class);
-      bind(URI.class).annotatedWith(S3.class).toInstance(URI.create("http://localhost:8080"));
+      bind(new TypeLiteral<Map<String, Map<String, S3Object>>>() {
+      }).toInstance(map);
+      bind(S3BlobStore.class).to(StubS3BlobStore.class).asEagerSingleton();
+      bind(URI.class).annotatedWith(S3.class).toInstance(URI.create("https://localhost/s3stub"));
    }
 }

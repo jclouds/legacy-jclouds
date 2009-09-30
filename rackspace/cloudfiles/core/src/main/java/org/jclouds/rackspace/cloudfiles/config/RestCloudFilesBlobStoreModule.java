@@ -34,22 +34,20 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
- * Configures the Cloud Files connection, including logging and http transport.
  * 
  * @author Adrian Cole
  */
 @ConfiguresCloudConnection
 @RequiresHttp
 public class RestCloudFilesBlobStoreModule extends AbstractModule {
-
    @Override
    protected void configure() {
+
    }
 
    @Provides
    @Singleton
-   protected CloudFilesBlobStore provideConnection(RestClientFactory factory) {
+   public CloudFilesBlobStore provideConnection(RestClientFactory factory) {
       return factory.create(CloudFilesBlobStore.class);
    }
-
 }

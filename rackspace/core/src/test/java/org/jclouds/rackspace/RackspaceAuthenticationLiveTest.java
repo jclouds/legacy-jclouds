@@ -23,30 +23,37 @@
  */
 package org.jclouds.rackspace;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.fail;
 
 import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
+import java.util.List;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.cloud.CloudContext;
+import org.jclouds.cloud.ConfiguresCloudConnection;
+import org.jclouds.cloud.internal.CloudContextImpl;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpResponseException;
-import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
+import org.jclouds.http.RequiresHttp;
+import org.jclouds.lifecycle.Closer;
+import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rackspace.RackspaceAuthentication.AuthenticationResponse;
+import org.jclouds.rackspace.reference.RackspaceConstants;
 import org.jclouds.rest.RestClientFactory;
-import org.jclouds.rest.config.JaxrsModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import com.google.inject.Module;
 import com.google.inject.Provides;
-import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code JaxrsAnnotationProcessor}
@@ -56,14 +63,49 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Test(groups = "live", testName = "rackspace.RackspaceAuthenticationLiveTest")
 public class RackspaceAuthenticationLiveTest {
 
+   @ConfiguresCloudConnection
+   @RequiresHttp
+   private final class RestRackspaceAuthenticationConnectionModule extends AbstractModule {
+
+      @SuppressWarnings("unused")
+      @Provides
+      @Singleton
+      RackspaceAuthentication provideConnection(RestClientFactory factory) {
+         return factory.create(RackspaceAuthentication.class);
+      }
+
+
+      @Override
+      protected void configure() {
+
+      }
+   }
+
+   private final class RackspaceAuthenticationContextModule extends AbstractModule {
+
+      @SuppressWarnings( { "unused" })
+      @Provides
+      @Singleton
+      CloudContext<RackspaceAuthentication> provideContext(Closer closer, RackspaceAuthentication api,
+               @Authentication URI endPoint,
+               @Named(RackspaceConstants.PROPERTY_RACKSPACE_USER) String account) {
+         return new CloudContextImpl<RackspaceAuthentication>(closer, api, endPoint, account);
+      }
+
+      @Override
+      protected void configure() {
+
+      }
+   }
+
    String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
    String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
-   private Injector injector;
+   private CloudContext<RackspaceAuthentication> context;
 
    @Test
    public void testAuthentication() throws Exception {
-      RackspaceAuthentication authentication = injector.getInstance(RackspaceAuthentication.class);
+      RackspaceAuthentication authentication = context.getApi();
       AuthenticationResponse response = authentication.authenticate(account, key);
       assertNotNull(response);
       assertNotNull(response.getStorageUrl());
@@ -74,7 +116,7 @@ public class RackspaceAuthenticationLiveTest {
 
    @Test(expectedExceptions = HttpResponseException.class)
    public void testBadAuthentication() throws Exception {
-      RackspaceAuthentication authentication = injector.getInstance(RackspaceAuthentication.class);
+      RackspaceAuthentication authentication = context.getApi();
       try {
          authentication.authenticate("foo", "bar");
       } catch (UndeclaredThrowableException e) {
@@ -87,22 +129,19 @@ public class RackspaceAuthenticationLiveTest {
 
    @BeforeClass
    void setupFactory() {
-      injector = Guice.createInjector(
-               new AbstractModule() {
-                  @Override
-                  protected void configure() {
-                     bind(URI.class).annotatedWith(Authentication.class).toInstance(
-                              URI.create("https://api.mosso.com"));
-                  }
+      context = new RackspaceContextBuilder<RackspaceAuthentication>(
+               new TypeLiteral<RackspaceAuthentication>() {
+               }, account, key) {
+         @Override
+         protected void addConnectionModule(List<Module> modules) {
+            super.addConnectionModule(modules);
+            modules.add(new RestRackspaceAuthenticationConnectionModule());
+         }
 
-                  @SuppressWarnings("unused")
-                  @Provides
-                  @Singleton
-                  protected RackspaceAuthentication provideCloudFilesAuthentication(
-                           RestClientFactory factory) {
-                     return factory.create(RackspaceAuthentication.class);
-                  }
-               }, new JaxrsModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
-               new JavaUrlHttpCommandExecutorServiceModule());
+         public void addContextModule(List<Module> modules) {
+            modules.add(new RackspaceAuthenticationContextModule());
+         }
+      }.withModules(new Log4JLoggingModule(),
+               new ExecutorServiceModule(new WithinThreadExecutorService())).buildContext();
    }
 }

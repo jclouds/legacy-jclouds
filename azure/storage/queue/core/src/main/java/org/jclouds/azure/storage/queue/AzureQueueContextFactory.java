@@ -39,20 +39,19 @@ import com.google.inject.Module;
  * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
- * @author Adrian Cole, Andrew Newdigate
+ * @author Adrian Cole
  * @see AzureQueueContext
  */
 public class AzureQueueContextFactory {
 
-   public static AzureQueueContext createAzureQueueContext(String account, String encodedKey,
+   public static AzureQueueContext createContext(String account, String encodedKey,
             Module... modules) {
-      return AzureQueueContextBuilder.newBuilder(account, encodedKey).withModules(modules)
-               .buildContext();
+      return new AzureQueueContextBuilder(account, encodedKey).withModules(modules).buildContext();
    }
 
-   public static AzureQueueContext createAzureQueueContext(URI endpoint, String account,
-            String encodedKey, Module... modules) {
-      return AzureQueueContextBuilder.newBuilder(account, encodedKey).withEndpoint(endpoint)
-               .withModules(modules).buildContext();
+   public static AzureQueueContext createContext(URI endpoint, String account, String encodedKey,
+            Module... modules) {
+      return new AzureQueueContextBuilder(account, encodedKey).withEndpoint(endpoint).withModules(
+               modules).buildContext();
    }
 }

@@ -23,6 +23,7 @@
  */
 package org.jclouds.aws.s3;
 
+import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -39,6 +40,7 @@ import org.jclouds.blobstore.BlobStoreContext;
  * @author Adrian Cole
  * 
  */
-public interface S3Context extends BlobStoreContext<S3BlobStore, ObjectMetadata, S3Object> {
+public interface S3Context extends
+         BlobStoreContext<S3BlobStore, BucketMetadata, ObjectMetadata, S3Object> {
 
 }

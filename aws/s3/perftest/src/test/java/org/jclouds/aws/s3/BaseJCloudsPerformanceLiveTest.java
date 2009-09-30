@@ -45,7 +45,7 @@ public abstract class BaseJCloudsPerformanceLiveTest extends BasePerformanceLive
    // object.setContentType("application/octetstream");
    // //object.setData("this is a test");
    // object.setData(test);
-   // return clientProvider.getObject(s3Bucket,
+   // return context.getApi()Provider.getObject(s3Bucket,
    // object.getKey()).get(120,TimeUnit.SECONDS) !=
    // org.jclouds.aws.s3.domain.S3Object.NOT_FOUND;
 
@@ -57,7 +57,7 @@ public abstract class BaseJCloudsPerformanceLiveTest extends BasePerformanceLive
       org.jclouds.aws.s3.domain.S3Object object = new org.jclouds.aws.s3.domain.S3Object(key);
       object.getMetadata().setContentType(contentType);
       object.setData(data);
-      return client.putBlob(bucket, object).get(120, TimeUnit.SECONDS) != null;
+      return context.getApi().putBlob(bucket, object).get(120, TimeUnit.SECONDS) != null;
    }
 
    @Override
@@ -66,7 +66,7 @@ public abstract class BaseJCloudsPerformanceLiveTest extends BasePerformanceLive
       org.jclouds.aws.s3.domain.S3Object object = new org.jclouds.aws.s3.domain.S3Object(key);
       object.getMetadata().setContentType(contentType);
       object.setData(data);
-      return client.putBlob(bucket, object).get(120, TimeUnit.SECONDS) != null;
+      return context.getApi().putBlob(bucket, object).get(120, TimeUnit.SECONDS) != null;
    }
 
    @Override
@@ -76,7 +76,7 @@ public abstract class BaseJCloudsPerformanceLiveTest extends BasePerformanceLive
       object.getMetadata().setContentType(contentType);
       object.setData(data);
       object.getMetadata().setSize(data.available());
-      return client.putBlob(bucket, object).get(120, TimeUnit.SECONDS) != null;
+      return context.getApi().putBlob(bucket, object).get(120, TimeUnit.SECONDS) != null;
    }
 
    @Override
@@ -85,6 +85,6 @@ public abstract class BaseJCloudsPerformanceLiveTest extends BasePerformanceLive
       org.jclouds.aws.s3.domain.S3Object object = new org.jclouds.aws.s3.domain.S3Object(key);
       object.getMetadata().setContentType(contentType);
       object.setData(data);
-      return client.putBlob(bucket, object).get(120, TimeUnit.SECONDS) != null;
+      return context.getApi().putBlob(bucket, object).get(120, TimeUnit.SECONDS) != null;
    }
 }

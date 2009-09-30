@@ -33,6 +33,9 @@ import org.jclouds.blobstore.domain.BlobMetadata;
  * @author Adrian Cole
  * 
  */
-public interface BlobMap<M extends BlobMetadata, B extends Blob<M>> extends ListableMap<M, String, B> {
-
+public interface BlobMap<M extends BlobMetadata, B extends Blob<M>> extends
+         ListableMap<M, String, B> {
+   public static interface Factory<M extends BlobMetadata, B extends Blob<M>> {
+      BlobMap<M, B> create(String containerName);
+   }
 }

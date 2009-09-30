@@ -26,8 +26,9 @@ package org.jclouds.rackspace.cloudfiles.functions;
 import static org.easymock.classextension.EasyMock.createNiceMock;
 import static org.testng.Assert.assertNotNull;
 
+import javax.inject.Provider;
+
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.functions.ParseContentTypeFromHeaders.BlobMetadataFactory;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.util.DateService;
 import org.testng.annotations.Test;
@@ -40,13 +41,10 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "cloudfiles.ParseObjectMetadataFromHeadersTest")
 public class ParseObjectMetadataFromHeadersTest {
 
+   @SuppressWarnings("unchecked")
    public void testEtagCaseIssue() {
       ParseObjectMetadataFromHeaders parser = new ParseObjectMetadataFromHeaders(
-               createNiceMock(DateService.class), "", new BlobMetadataFactory<BlobMetadata>() {
-                  public BlobMetadata create(String key) {
-                     return null;
-                  }
-               });
+               createNiceMock(DateService.class), "", createNiceMock(Provider.class));
       BlobMetadata md = new BlobMetadata("hello");
       HttpResponse response = new HttpResponse();
       response.getHeaders().put("Etag", "feb1");

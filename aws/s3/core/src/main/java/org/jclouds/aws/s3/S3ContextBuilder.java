@@ -31,16 +31,21 @@ import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_M
 import java.net.URI;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
 
 import org.jclouds.aws.s3.config.RestS3ConnectionModule;
 import org.jclouds.aws.s3.config.S3ContextModule;
+import org.jclouds.aws.s3.domain.BucketMetadata;
+import org.jclouds.aws.s3.domain.ObjectMetadata;
+import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.reference.S3Constants;
-import org.jclouds.cloud.CloudContextBuilder;
+import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
 
 /**
  * Creates {@link S3Context} or {@link Injector} instances based on the most commonly requested
@@ -55,44 +60,110 @@ import com.google.inject.Module;
  * @author Adrian Cole, Andrew Newdigate
  * @see S3Context
  */
-public class S3ContextBuilder extends CloudContextBuilder<S3Context> {
-
-   public S3ContextBuilder(Properties props) {
-      super(props);
-      properties.setProperty(S3Constants.PROPERTY_S3_ENDPOINT, "https://s3.amazonaws.com");
-      properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "x-amz-meta-");
-
-   }
+public class S3ContextBuilder extends
+         BlobStoreContextBuilder<S3BlobStore, BucketMetadata, ObjectMetadata, S3Object> {
 
    @Override
-   public CloudContextBuilder<S3Context> withEndpoint(URI endpoint) {
-      properties.setProperty(S3Constants.PROPERTY_S3_ENDPOINT, checkNotNull(endpoint, "endpoint")
-               .toString());
-      return this;
+   public S3Context buildContext() {
+      return this.buildInjector().getInstance(S3Context.class);
    }
 
-   public static S3ContextBuilder newBuilder(String id, String secret) {
-      Properties properties = new Properties();
-      S3ContextBuilder builder = new S3ContextBuilder(properties);
-      builder.authenticate(id, secret);
-      return builder;
+   public S3ContextBuilder(Properties props) {
+      super(new TypeLiteral<S3BlobStore>() {
+      }, new TypeLiteral<BucketMetadata>() {
+      }, new TypeLiteral<ObjectMetadata>() {
+      }, new TypeLiteral<S3Object>() {
+      }, props);
+      properties.setProperty(S3Constants.PROPERTY_S3_ENDPOINT, "https://s3.amazonaws.com");
+      properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "x-amz-meta-");
    }
 
-   public void authenticate(String id, String secret) {
+   public S3ContextBuilder(String id, String secret) {
+      this(new Properties());
       properties.setProperty(PROPERTY_AWS_ACCESSKEYID, checkNotNull(id, "awsAccessKeyId"));
       properties.setProperty(PROPERTY_AWS_SECRETACCESSKEY, checkNotNull(secret,
                "awsSecretAccessKey"));
    }
 
-   public S3Context buildContext() {
-      return buildInjector().getInstance(S3Context.class);
+   @Override
+   public S3ContextBuilder relaxSSLHostname() {
+      return (S3ContextBuilder) super.relaxSSLHostname();
    }
 
+   @Override
+   public S3ContextBuilder withExecutorService(ExecutorService service) {
+      return (S3ContextBuilder) super.withExecutorService(service);
+   }
+
+   @Override
+   public S3ContextBuilder withHttpMaxRedirects(int httpMaxRedirects) {
+      return (S3ContextBuilder) super.withHttpMaxRedirects(httpMaxRedirects);
+   }
+
+   @Override
+   public S3ContextBuilder withHttpMaxRetries(int httpMaxRetries) {
+      return (S3ContextBuilder) super.withHttpMaxRetries(httpMaxRetries);
+   }
+
+   @Override
+   public S3ContextBuilder withJsonDebug() {
+      return (S3ContextBuilder) super.withJsonDebug();
+   }
+
+   @Override
+   public S3ContextBuilder withModule(Module module) {
+      return (S3ContextBuilder) super.withModule(module);
+   }
+
+   @Override
+   public S3ContextBuilder withModules(Module... modules) {
+      return (S3ContextBuilder) super.withModules(modules);
+   }
+
+   @Override
+   public S3ContextBuilder withPoolIoWorkerThreads(int poolIoWorkerThreads) {
+      return (S3ContextBuilder) super.withPoolIoWorkerThreads(poolIoWorkerThreads);
+   }
+
+   @Override
+   public S3ContextBuilder withPoolMaxConnectionReuse(int poolMaxConnectionReuse) {
+      return (S3ContextBuilder) super.withPoolMaxConnectionReuse(poolMaxConnectionReuse);
+   }
+
+   @Override
+   public S3ContextBuilder withPoolMaxConnections(int poolMaxConnections) {
+      return (S3ContextBuilder) super.withPoolMaxConnections(poolMaxConnections);
+   }
+
+   @Override
+   public S3ContextBuilder withPoolMaxSessionFailures(int poolMaxSessionFailures) {
+      return (S3ContextBuilder) super.withPoolMaxSessionFailures(poolMaxSessionFailures);
+   }
+
+   @Override
+   public S3ContextBuilder withPoolRequestInvokerThreads(int poolRequestInvokerThreads) {
+      return (S3ContextBuilder) super.withPoolRequestInvokerThreads(poolRequestInvokerThreads);
+   }
+
+   @Override
+   public S3ContextBuilder withSaxDebug() {
+      return (S3ContextBuilder) (S3ContextBuilder) super.withSaxDebug();
+   }
+
+   @Override
+   public S3ContextBuilder withEndpoint(URI endpoint) {
+      properties.setProperty(S3Constants.PROPERTY_S3_ENDPOINT, checkNotNull(endpoint, "endpoint")
+               .toString());
+      return (S3ContextBuilder) this;
+   }
+
+   @Override
    protected void addContextModule(List<Module> modules) {
       modules.add(new S3ContextModule());
    }
 
-   protected void addApiModule(List<Module> modules) {
+   @Override
+   protected void addConnectionModule(List<Module> modules) {
       modules.add(new RestS3ConnectionModule());
    }
 

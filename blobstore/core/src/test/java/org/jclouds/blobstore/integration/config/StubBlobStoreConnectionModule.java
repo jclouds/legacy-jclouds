@@ -21,27 +21,33 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.config;
+package org.jclouds.blobstore.integration.config;
 
-import java.net.URI;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
+import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobMetadata;
+import org.jclouds.blobstore.domain.ContainerMetadata;
+import org.jclouds.blobstore.integration.internal.StubBlobStore;
 import org.jclouds.cloud.ConfiguresCloudConnection;
-import org.jclouds.rackspace.Authentication;
-import org.jclouds.rackspace.cloudfiles.CloudFilesBlobStore;
-import org.jclouds.rackspace.cloudfiles.internal.StubCloudFilesBlobStore;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.TypeLiteral;
 
-/**
- * adds a stub alternative to invoking CloudFiles
- * 
- * @author Adrian Cole
- */
 @ConfiguresCloudConnection
-public class StubCloudFilesBlobStoreModule extends AbstractModule {
+public class StubBlobStoreConnectionModule extends AbstractModule {
+
+   // must be singleton for all threads and all objects or tests may fail;
+   static final ConcurrentHashMap<String, Map<String, Blob<BlobMetadata>>> map = new ConcurrentHashMap<String, Map<String, Blob<BlobMetadata>>>();
+
+   @Override
    protected void configure() {
-      bind(CloudFilesBlobStore.class).to(StubCloudFilesBlobStore.class);
-      bind(URI.class).annotatedWith(Authentication.class).toInstance(
-               URI.create("http://localhost:8080"));
+      bind(new TypeLiteral<Map<String, Map<String, Blob<BlobMetadata>>>>() {
+      }).toInstance(map);
+      bind(new TypeLiteral<BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
+      }).to(new TypeLiteral<StubBlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
+      }).asEagerSingleton();
    }
 }

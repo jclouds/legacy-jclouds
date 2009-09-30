@@ -21,8 +21,24 @@
  * under the License.
  * ====================================================================
  */
-/**
- * This package contains implementation classes for the jclouds-s3 public api
- * @author Adrian Cole
- */
-package org.jclouds.aws.s3.internal;
+package org.jclouds.blobstore.functions;
+
+import org.jclouds.blobstore.ContainerNotFoundException;
+import org.jclouds.blobstore.KeyNotFoundException;
+import org.jclouds.http.functions.ReturnTrueOn404;
+
+import com.google.common.base.Function;
+
+public class ReturnTrueOnNotFoundOr404 implements Function<Exception, Boolean> {
+   ReturnTrueOn404 rto404 = new ReturnTrueOn404();
+
+   public Boolean apply(Exception from) {
+      if (from instanceof KeyNotFoundException||from instanceof ContainerNotFoundException) {
+         return true;
+      } else {
+         return rto404.apply(from);
+      }
+
+   }
+
+}

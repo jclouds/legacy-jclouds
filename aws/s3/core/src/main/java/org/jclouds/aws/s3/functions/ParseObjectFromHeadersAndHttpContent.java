@@ -23,11 +23,12 @@
  */
 package org.jclouds.aws.s3.functions;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
+
 import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.blobstore.functions.ParseBlobFromHeadersAndHttpContent;
-
-import javax.inject.Inject;
 
 /**
  * Parses response headers and creates a new S3Object from them and the HTTP content.
@@ -35,13 +36,13 @@ import javax.inject.Inject;
  * @see ParseMetadataFromHeaders
  * @author Adrian Cole
  */
-public class ParseObjectFromHeadersAndHttpContent extends ParseBlobFromHeadersAndHttpContent<ObjectMetadata, S3Object> {
+public class ParseObjectFromHeadersAndHttpContent extends
+         ParseBlobFromHeadersAndHttpContent<ObjectMetadata, S3Object> {
 
    @Inject
-   public ParseObjectFromHeadersAndHttpContent(
-            ParseObjectMetadataFromHeaders metadataParser,
-            BlobFactory<ObjectMetadata, S3Object> blobFactory) {
+   public ParseObjectFromHeadersAndHttpContent(ParseObjectMetadataFromHeaders metadataParser,
+            Provider<S3Object> blobFactory) {
       super(metadataParser, blobFactory);
    }
-  
+
 }

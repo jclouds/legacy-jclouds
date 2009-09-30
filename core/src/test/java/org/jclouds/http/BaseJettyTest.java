@@ -29,17 +29,19 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.inject.Singleton;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.cloud.CloudContext;
 import org.jclouds.cloud.CloudContextBuilder;
+import org.jclouds.cloud.ConfiguresCloudConnection;
+import org.jclouds.cloud.internal.CloudContextImpl;
 import org.jclouds.lifecycle.Closer;
-import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.rest.RestClientFactory;
 import org.jclouds.rest.JaxrsAnnotationProcessorTest.Localhost;
-import org.jclouds.rest.config.JaxrsModule;
 import org.jclouds.util.Jsr330;
 import org.jclouds.util.Utils;
 import org.mortbay.jetty.Handler;
@@ -51,22 +53,64 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 
-import com.google.common.collect.Lists;
 import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 
 public abstract class BaseJettyTest {
+
+   @ConfiguresCloudConnection
+   @RequiresHttp
+   private final class RestIntegrationTestConnectionModule extends AbstractModule {
+      @Override
+      protected void configure() {
+
+      }
+
+      @SuppressWarnings("unused")
+      @Provides
+      @Singleton
+      public IntegrationTestClient provideConnection(RestClientFactory factory) {
+         return factory.create(IntegrationTestClient.class);
+      }
+   }
+
+   private final class JettyContextModule extends AbstractModule {
+      private final Properties properties;
+      private final int testPort;
+
+      private JettyContextModule(Properties properties, int testPort) {
+         this.properties = properties;
+         this.testPort = testPort;
+      }
+
+      @Override
+      protected void configure() {
+         Jsr330.bindProperties(binder(), properties);
+         bind(URI.class).annotatedWith(Localhost.class).toInstance(
+                  URI.create("http://localhost:" + testPort));
+      }
+
+      @SuppressWarnings( { "unchecked", "unused" })
+      @Provides
+      @Singleton
+      CloudContext<IntegrationTestClient> provideContext(Closer closer,
+               IntegrationTestClient client, @Localhost URI endPoint) {
+         return new CloudContextImpl(closer, client, endPoint, System.getProperty("user.name"));
+      }
+   }
+
    protected static final String XML = "<foo><bar>whoppers</bar></foo>";
    protected static final String XML2 = "<foo><bar>chubbs</bar></foo>";
 
    protected Server server = null;
    protected IntegrationTestClient client;
    protected Injector injector;
-   private Closer closer;
    private AtomicInteger cycle = new AtomicInteger(0);
    private Server server2;
+   private CloudContext<IntegrationTestClient> context;
 
    @BeforeTest
    @Parameters( { "test-jetty-port" })
@@ -141,27 +185,32 @@ public abstract class BaseJettyTest {
 
       final Properties properties = new Properties();
       addConnectionProperties(properties);
+      context = new CloudContextBuilder<IntegrationTestClient>(
+               new TypeLiteral<IntegrationTestClient>() {
+               }, properties) {
 
-      List<Module> modules = Lists.newArrayList(new AbstractModule() {
          @Override
-         protected void configure() {
-            Jsr330.bindProperties(binder(), properties);
-            bind(URI.class).annotatedWith(Localhost.class).toInstance(
-                     URI.create("http://localhost:" + testPort));
+         public CloudContextBuilder<IntegrationTestClient> withEndpoint(URI endpoint) {
+            return this;
          }
 
-      }, new JDKLoggingModule(), new JaxrsModule(), createClientModule());
-      CloudContextBuilder.addExecutorServiceIfNotPresent(modules);
-      injector = Guice.createInjector(modules);
-      RestClientFactory factory = injector.getInstance(RestClientFactory.class);
-      client = factory.create(IntegrationTestClient.class);
-      closer = injector.getInstance(Closer.class);
+         @Override
+         protected void addContextModule(List<Module> modules) {
+            modules.add(new JettyContextModule(properties, testPort));
+         }
+
+         @Override
+         protected void addConnectionModule(List<Module> modules) {
+            modules.add(new RestIntegrationTestConnectionModule());
+         }
+      }.withModules(createClientModule()).buildContext();
+      client = context.getApi();
       assert client != null;
    }
 
    @AfterTest
    public void tearDownJetty() throws Exception {
-      closer.close();
+      context.close();
       server2.stop();
       server.stop();
    }

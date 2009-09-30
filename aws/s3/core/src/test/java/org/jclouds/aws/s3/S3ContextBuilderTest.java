@@ -32,22 +32,14 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.jclouds.aws.s3.config.RestS3ConnectionModule;
 import org.jclouds.aws.s3.config.S3ContextModule;
-import org.jclouds.aws.s3.domain.ObjectMetadata;
-import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.aws.s3.internal.GuiceS3Context;
-import org.jclouds.blobstore.functions.ParseBlobFromHeadersAndHttpContent.BlobFactory;
-import org.jclouds.blobstore.functions.ParseContentTypeFromHeaders.BlobMetadataFactory;
-import org.jclouds.cloud.CloudContext;
+import org.jclouds.aws.s3.config.StubS3BlobStoreModule;
+import org.jclouds.aws.s3.config.S3ContextModule.S3ContextImpl;
 import org.testng.annotations.Test;
 
 import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of modules configured in S3ContextBuilder
@@ -58,7 +50,7 @@ import com.google.inject.TypeLiteral;
 public class S3ContextBuilderTest {
 
    public void testNewBuilder() {
-      S3ContextBuilder builder = S3ContextBuilder.newBuilder("id", "secret");
+      S3ContextBuilder builder = new S3ContextBuilder("id", "secret");
       assertEquals(builder.getProperties().getProperty(PROPERTY_USER_METADATA_PREFIX),
                "x-amz-meta-");
       assertEquals(builder.getProperties().getProperty(PROPERTY_AWS_ACCESSKEYID), "id");
@@ -66,34 +58,22 @@ public class S3ContextBuilderTest {
    }
 
    public void testBuildContext() {
-      CloudContext<S3BlobStore> context = S3ContextBuilder.newBuilder("id", "secret")
-               .buildContext();
-      assertEquals(context.getClass(), GuiceS3Context.class);
+      S3Context context = new S3ContextBuilder("id", "secret").withModules(
+               new StubS3BlobStoreModule()).buildContext();
+      assertEquals(context.getClass(), S3ContextImpl.class);
       assertEquals(context.getAccount(), "id");
-      assertEquals(context.getEndPoint(), URI.create("https://s3.amazonaws.com"));
+      assertEquals(context.getEndPoint(), URI.create("https://localhost/s3stub"));
    }
 
    public void testBuildInjector() {
-      Injector i = S3ContextBuilder.newBuilder("id", "secret").buildInjector();
+      Injector i = new S3ContextBuilder("id", "secret").withModules(new StubS3BlobStoreModule())
+               .buildInjector();
       assert i.getInstance(S3Context.class) != null;
-
-      assert i.getInstance(GuiceS3Context.S3ObjectMapFactory.class) != null;
-      assert i.getInstance(GuiceS3Context.S3InputStreamMapFactory.class) != null;
-      assert i.getInstance(Key.get(new TypeLiteral<BlobMetadataFactory<ObjectMetadata>>() {
-      })) != null;
-      assert i.getInstance(Key.get(new TypeLiteral<BlobFactory<ObjectMetadata, S3Object>>() {
-      })) != null;
-      i.injectMembers(this);
-      assertEquals(endpoint, URI.create("https://s3.amazonaws.com"));
    }
-
-   private @Inject
-   @S3
-   URI endpoint;
 
    protected void testAddContextModule() {
       List<Module> modules = new ArrayList<Module>();
-      S3ContextBuilder builder = S3ContextBuilder.newBuilder("id", "secret");
+      S3ContextBuilder builder = new S3ContextBuilder("id", "secret");
       builder.addContextModule(modules);
       assertEquals(modules.size(), 1);
       assertEquals(modules.get(0).getClass(), S3ContextModule.class);
@@ -101,8 +81,8 @@ public class S3ContextBuilderTest {
 
    protected void addConnectionModule() {
       List<Module> modules = new ArrayList<Module>();
-      S3ContextBuilder builder = S3ContextBuilder.newBuilder("id", "secret");
-      builder.addApiModule(modules);
+      S3ContextBuilder builder = new S3ContextBuilder("id", "secret");
+      builder.addConnectionModule(modules);
       assertEquals(modules.size(), 1);
       assertEquals(modules.get(0).getClass(), RestS3ConnectionModule.class);
    }

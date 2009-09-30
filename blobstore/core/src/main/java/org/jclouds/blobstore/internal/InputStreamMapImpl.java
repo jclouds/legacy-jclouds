@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.blobstore;
+package org.jclouds.blobstore.internal;
 
 import java.io.File;
 import java.io.InputStream;
@@ -35,13 +35,19 @@ import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
+
+import org.jclouds.blobstore.BaseBlobMap;
+import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.InputStreamMap;
+import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ContainerMetadata;
 import org.jclouds.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
-import javax.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
 /**
@@ -53,12 +59,13 @@ import com.google.inject.assistedinject.Assisted;
  * @see InputStreamMap
  * @see BaseBlobMap
  */
-public abstract class LiveInputStreamMap<C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
+public class InputStreamMapImpl<S extends BlobStore<C, M, B>, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
          extends BaseBlobMap<C, M, B, InputStream> implements InputStreamMap<M> {
 
    @Inject
-   public LiveInputStreamMap(BlobStore<C, M, B> connection, @Assisted String container) {
-      super(connection, container);
+   public InputStreamMapImpl(S connection, Provider<B> blobFactory,
+            @Assisted String container) {
+      super(connection, blobFactory, container);
    }
 
    /**
@@ -155,7 +162,7 @@ public abstract class LiveInputStreamMap<C extends ContainerMetadata, M extends 
       /**
        * {@inheritDoc}
        * 
-       * @see LiveInputStreamMap#put(String, InputStream)
+       * @see InputStreamMapImpl#put(String, InputStream)
        */
       public InputStream setValue(InputStream value) {
          return put(key, value);
@@ -210,7 +217,8 @@ public abstract class LiveInputStreamMap<C extends ContainerMetadata, M extends 
       try {
          List<Future<byte[]>> puts = new ArrayList<Future<byte[]>>();
          for (Map.Entry<? extends String, ? extends Object> entry : map.entrySet()) {
-            B object = createBlob(entry.getKey());
+            B object = blobFactory.get();
+            object.getMetadata().setKey(entry.getKey());
             object.setData(entry.getValue());
             object.generateMD5();
             puts.add(connection.putBlob(container, object));
@@ -271,7 +279,8 @@ public abstract class LiveInputStreamMap<C extends ContainerMetadata, M extends 
     */
    @VisibleForTesting
    InputStream putInternal(String s, Object o) {
-      B object = createBlob(s);
+      B object = blobFactory.get();
+      object.getMetadata().setKey(s);
       try {
          InputStream returnVal = containsKey(s) ? get(s) : null;
          object.setData(o);
@@ -285,7 +294,5 @@ public abstract class LiveInputStreamMap<C extends ContainerMetadata, M extends 
                   object), e);
       }
    }
-
-   protected abstract B createBlob(String s);
 
 }

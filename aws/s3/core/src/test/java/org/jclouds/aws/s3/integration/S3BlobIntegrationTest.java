@@ -76,16 +76,15 @@ public class S3BlobIntegrationTest extends
       final String containerName = getContainerName();
       try {
          // Public Read-Write object
-         client.putBlob(containerName, new S3Object(publicReadWriteObjectKey, ""),
+         context.getApi().putBlob(containerName, new S3Object(publicReadWriteObjectKey, ""),
                   new PutObjectOptions().withAcl(CannedAccessPolicy.PUBLIC_READ_WRITE)).get(10,
                   TimeUnit.SECONDS);
 
          assertEventually(new Runnable() {
             public void run() {
                try {
-                  AccessControlList acl = client
-                           .getBlobACL(containerName, publicReadWriteObjectKey).get(10,
-                                    TimeUnit.SECONDS);
+                  AccessControlList acl = context.getApi().getBlobACL(containerName,
+                           publicReadWriteObjectKey).get(10, TimeUnit.SECONDS);
                   assertEquals(acl.getGrants().size(), 3);
                   assertEquals(acl.getPermissions(GroupGranteeURI.ALL_USERS).size(), 2);
                   assertTrue(acl.getOwner() != null);
@@ -115,7 +114,7 @@ public class S3BlobIntegrationTest extends
 
          // Private object
          addBlobToContainer(containerName, objectKey);
-         AccessControlList acl = client.getBlobACL(containerName, objectKey).get(10,
+         AccessControlList acl = context.getApi().getBlobACL(containerName, objectKey).get(10,
                   TimeUnit.SECONDS);
          String ownerId = acl.getOwner().getId();
 
@@ -124,10 +123,11 @@ public class S3BlobIntegrationTest extends
 
          addGrantsToACL(acl);
          assertEquals(acl.getGrants().size(), 4);
-         assertTrue(client.putBlobACL(containerName, objectKey, acl).get(10, TimeUnit.SECONDS));
+         assertTrue(context.getApi().putBlobACL(containerName, objectKey, acl).get(10,
+                  TimeUnit.SECONDS));
 
          // Confirm that the updated ACL has stuck.
-         acl = client.getBlobACL(containerName, objectKey).get(10, TimeUnit.SECONDS);
+         acl = context.getApi().getBlobACL(containerName, objectKey).get(10, TimeUnit.SECONDS);
          checkGrants(acl);
 
          /*
@@ -141,10 +141,11 @@ public class S3BlobIntegrationTest extends
          assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ));
 
          // Update the object's ACL settings
-         assertTrue(client.putBlobACL(containerName, objectKey, acl).get(10, TimeUnit.SECONDS));
+         assertTrue(context.getApi().putBlobACL(containerName, objectKey, acl).get(10,
+                  TimeUnit.SECONDS));
 
          // Confirm that the updated ACL has stuck
-         acl = client.getBlobACL(containerName, objectKey).get(10, TimeUnit.SECONDS);
+         acl = context.getApi().getBlobACL(containerName, objectKey).get(10, TimeUnit.SECONDS);
          assertEquals(acl.getGrants().size(), 1);
          assertEquals(acl.getPermissions(ownerId).size(), 0);
          assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ), acl.toString());
@@ -180,8 +181,8 @@ public class S3BlobIntegrationTest extends
       try {
          // Private object
          addBlobToContainer(containerName, privateObjectKey);
-         AccessControlList acl = client.getBlobACL(containerName, privateObjectKey).get(10,
-                  TimeUnit.SECONDS);
+         AccessControlList acl = context.getApi().getBlobACL(containerName, privateObjectKey).get(
+                  10, TimeUnit.SECONDS);
 
          assertEquals(acl.getGrants().size(), 1);
          assertTrue(acl.getOwner() != null);
@@ -198,15 +199,15 @@ public class S3BlobIntegrationTest extends
       final String publicReadObjectKey = "public-read-acl";
       final String containerName = getContainerName();
       try {
-         client.putBlob(containerName, new S3Object(publicReadObjectKey, ""),
+         context.getApi().putBlob(containerName, new S3Object(publicReadObjectKey, ""),
                   new PutObjectOptions().withAcl(CannedAccessPolicy.PUBLIC_READ)).get(10,
                   TimeUnit.SECONDS);
 
          assertEventually(new Runnable() {
             public void run() {
                try {
-                  AccessControlList acl = client.getBlobACL(containerName, publicReadObjectKey)
-                           .get(10, TimeUnit.SECONDS);
+                  AccessControlList acl = context.getApi().getBlobACL(containerName,
+                           publicReadObjectKey).get(10, TimeUnit.SECONDS);
 
                   assertEquals(acl.getGrants().size(), 2);
                   assertEquals(acl.getPermissions(GroupGranteeURI.ALL_USERS).size(), 1);
@@ -229,7 +230,7 @@ public class S3BlobIntegrationTest extends
    public void testMetadataWithCacheControlAndContentDisposition() throws Exception {
       String key = "hello";
 
-      S3Object object = objectFactory.createBlob(key);
+      S3Object object = context.newBlob(key);
       object.setData(TEST_STRING);
       object.getMetadata().setCacheControl("no-cache");
       object.getMetadata().setContentDisposition("attachment; filename=hello.txt");
@@ -250,7 +251,7 @@ public class S3BlobIntegrationTest extends
    public void testMetadataContentEncoding() throws Exception {
       String key = "hello";
 
-      S3Object object = objectFactory.createBlob(key);
+      S3Object object = context.newBlob(key);
       object.setData(TEST_STRING);
       object.getMetadata().setContentEncoding("x-compress");
       String containerName = getContainerName();
@@ -271,8 +272,8 @@ public class S3BlobIntegrationTest extends
       try {
          addToContainerAndValidate(containerName, sourceKey);
 
-         client.copyBlob(containerName, sourceKey, destinationContainer, destinationKey).get(10,
-                  TimeUnit.SECONDS);
+         context.getApi().copyBlob(containerName, sourceKey, destinationContainer, destinationKey)
+                  .get(10, TimeUnit.SECONDS);
 
          validateContent(destinationContainer, destinationKey);
       } finally {
@@ -298,13 +299,13 @@ public class S3BlobIntegrationTest extends
          addToContainerAndValidate(containerName, sourceKey + "mod");
          DateTime after = new DateTime().plusSeconds(1);
 
-         client.copyBlob(containerName, sourceKey + "mod", destinationContainer, destinationKey,
-                  ifSourceModifiedSince(before)).get(10, TimeUnit.SECONDS);
+         context.getApi().copyBlob(containerName, sourceKey + "mod", destinationContainer,
+                  destinationKey, ifSourceModifiedSince(before)).get(10, TimeUnit.SECONDS);
          validateContent(destinationContainer, destinationKey);
 
          try {
-            client.copyBlob(containerName, sourceKey + "mod", destinationContainer, destinationKey,
-                     ifSourceModifiedSince(after)).get(10, TimeUnit.SECONDS);
+            context.getApi().copyBlob(containerName, sourceKey + "mod", destinationContainer,
+                     destinationKey, ifSourceModifiedSince(after)).get(10, TimeUnit.SECONDS);
          } catch (ExecutionException e) {
             if (e.getCause() instanceof HttpResponseException) {
                HttpResponseException ex = (HttpResponseException) e.getCause();
@@ -330,13 +331,13 @@ public class S3BlobIntegrationTest extends
          addToContainerAndValidate(containerName, sourceKey + "un");
          DateTime after = new DateTime().plusSeconds(1);
 
-         client.copyBlob(containerName, sourceKey + "un", destinationContainer, destinationKey,
-                  ifSourceUnmodifiedSince(after)).get(10, TimeUnit.SECONDS);
+         context.getApi().copyBlob(containerName, sourceKey + "un", destinationContainer,
+                  destinationKey, ifSourceUnmodifiedSince(after)).get(10, TimeUnit.SECONDS);
          validateContent(destinationContainer, destinationKey);
 
          try {
-            client.copyBlob(containerName, sourceKey + "un", destinationContainer, destinationKey,
-                     ifSourceModifiedSince(before)).get(10, TimeUnit.SECONDS);
+            context.getApi().copyBlob(containerName, sourceKey + "un", destinationContainer,
+                     destinationKey, ifSourceModifiedSince(before)).get(10, TimeUnit.SECONDS);
          } catch (ExecutionException e) {
             HttpResponseException ex = (HttpResponseException) e.getCause();
             assertEquals(ex.getResponse().getStatusCode(), 412);
@@ -354,13 +355,13 @@ public class S3BlobIntegrationTest extends
       try {
          addToContainerAndValidate(containerName, sourceKey);
 
-         client.copyBlob(containerName, sourceKey, destinationContainer, destinationKey,
+         context.getApi().copyBlob(containerName, sourceKey, destinationContainer, destinationKey,
                   ifSourceETagMatches(goodETag)).get(10, TimeUnit.SECONDS);
          validateContent(destinationContainer, destinationKey);
 
          try {
-            client.copyBlob(containerName, sourceKey, destinationContainer, destinationKey,
-                     ifSourceETagMatches(badETag)).get(10, TimeUnit.SECONDS);
+            context.getApi().copyBlob(containerName, sourceKey, destinationContainer,
+                     destinationKey, ifSourceETagMatches(badETag)).get(10, TimeUnit.SECONDS);
          } catch (ExecutionException e) {
             HttpResponseException ex = (HttpResponseException) e.getCause();
             assertEquals(ex.getResponse().getStatusCode(), 412);
@@ -378,13 +379,13 @@ public class S3BlobIntegrationTest extends
       try {
          addToContainerAndValidate(containerName, sourceKey);
 
-         client.copyBlob(containerName, sourceKey, destinationContainer, destinationKey,
+         context.getApi().copyBlob(containerName, sourceKey, destinationContainer, destinationKey,
                   ifSourceETagDoesntMatch(badETag)).get(10, TimeUnit.SECONDS);
          validateContent(destinationContainer, destinationKey);
 
          try {
-            client.copyBlob(containerName, sourceKey, destinationContainer, destinationKey,
-                     ifSourceETagDoesntMatch(goodETag)).get(10, TimeUnit.SECONDS);
+            context.getApi().copyBlob(containerName, sourceKey, destinationContainer,
+                     destinationKey, ifSourceETagDoesntMatch(goodETag)).get(10, TimeUnit.SECONDS);
          } catch (ExecutionException e) {
             HttpResponseException ex = (HttpResponseException) e.getCause();
             assertEquals(ex.getResponse().getStatusCode(), 412);
@@ -406,12 +407,13 @@ public class S3BlobIntegrationTest extends
          Multimap<String, String> metadata = HashMultimap.create();
          metadata.put("adrian", "cole");
 
-         client.copyBlob(containerName, sourceKey, destinationContainer, destinationKey,
+         context.getApi().copyBlob(containerName, sourceKey, destinationContainer, destinationKey,
                   overrideMetadataWith(metadata)).get(10, TimeUnit.SECONDS);
 
          validateContent(destinationContainer, destinationKey);
 
-         ObjectMetadata objectMeta = client.blobMetadata(destinationContainer, destinationKey);
+         ObjectMetadata objectMeta = context.getApi().blobMetadata(destinationContainer,
+                  destinationKey);
 
          assertEquals(objectMeta.getUserMetadata(), metadata);
       } finally {

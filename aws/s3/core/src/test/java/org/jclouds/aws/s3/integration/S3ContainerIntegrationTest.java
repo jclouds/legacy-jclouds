@@ -66,8 +66,8 @@ public class S3ContainerIntegrationTest extends
          String prefix = "apps";
          addTenObjectsUnderPrefix(containerName, prefix);
          add15UnderRoot(containerName);
-         ListBucketResponse container = client.listBlobs(containerName, delimiter("/")).get(10,
-                  TimeUnit.SECONDS);
+         ListBucketResponse container = context.getApi().listBlobs(containerName, delimiter("/"))
+                  .get(10, TimeUnit.SECONDS);
          assertEquals(container.getDelimiter(), "/");
          assert !container.isTruncated();
          assertEquals(container.size(), 15);
@@ -86,8 +86,8 @@ public class S3ContainerIntegrationTest extends
          addTenObjectsUnderPrefix(containerName, prefix);
          add15UnderRoot(containerName);
 
-         ListBucketResponse container = client.listBlobs(containerName, withPrefix("apps/")).get(
-                  10, TimeUnit.SECONDS);
+         ListBucketResponse container = context.getApi().listBlobs(containerName,
+                  withPrefix("apps/")).get(10, TimeUnit.SECONDS);
          assert !container.isTruncated();
          assertEquals(container.size(), 10);
          assertEquals(container.getPrefix(), "apps/");
@@ -101,7 +101,8 @@ public class S3ContainerIntegrationTest extends
             ExecutionException, TimeoutException, IOException {
       String containerName = getContainerName();
       try {
-         AccessControlList acl = client.getContainerACL(containerName).get(10, TimeUnit.SECONDS);
+         AccessControlList acl = context.getApi().getContainerACL(containerName).get(10,
+                  TimeUnit.SECONDS);
          assertEquals(acl.getGrants().size(), 1);
          assertTrue(acl.getOwner() != null);
          String ownerId = acl.getOwner().getId();
@@ -117,17 +118,18 @@ public class S3ContainerIntegrationTest extends
       String containerName = getContainerName();
       try {
          // Confirm the container is private
-         AccessControlList acl = client.getContainerACL(containerName).get(10, TimeUnit.SECONDS);
+         AccessControlList acl = context.getApi().getContainerACL(containerName).get(10,
+                  TimeUnit.SECONDS);
          String ownerId = acl.getOwner().getId();
          assertEquals(acl.getGrants().size(), 1);
          assertTrue(acl.hasPermission(ownerId, Permission.FULL_CONTROL));
 
          addGrantsToACL(acl);
          assertEquals(acl.getGrants().size(), 4);
-         assertTrue(client.putContainerACL(containerName, acl).get(10, TimeUnit.SECONDS));
+         assertTrue(context.getApi().putContainerACL(containerName, acl).get(10, TimeUnit.SECONDS));
 
          // Confirm that the updated ACL has stuck.
-         acl = client.getContainerACL(containerName).get(10, TimeUnit.SECONDS);
+         acl = context.getApi().getContainerACL(containerName).get(10, TimeUnit.SECONDS);
          checkGrants(acl);
       } finally {
          destroyContainer(containerName);
@@ -159,8 +161,8 @@ public class S3ContainerIntegrationTest extends
       String containerName = getContainerName();
       try {
          addAlphabetUnderRoot(containerName);
-         ListBucketResponse container = client.listBlobs(containerName, afterMarker("y")).get(10,
-                  TimeUnit.SECONDS);
+         ListBucketResponse container = context.getApi().listBlobs(containerName, afterMarker("y"))
+                  .get(10, TimeUnit.SECONDS);
          assertEquals(container.getMarker(), "y");
          assert !container.isTruncated();
          assertEquals(container.size(), 1);
@@ -174,8 +176,8 @@ public class S3ContainerIntegrationTest extends
       String containerName = getContainerName();
       try {
          addAlphabetUnderRoot(containerName);
-         ListBucketResponse container = client.listBlobs(containerName, maxResults(5)).get(10,
-                  TimeUnit.SECONDS);
+         ListBucketResponse container = context.getApi().listBlobs(containerName, maxResults(5))
+                  .get(10, TimeUnit.SECONDS);
          assertEquals(container.getMaxResults(), 5);
          assert container.isTruncated();
          assertEquals(container.size(), 5);

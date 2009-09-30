@@ -40,8 +40,8 @@ public class BaseServiceIntegrationTest<S extends BlobStore<C, M, B>, C extends 
 
    @Test(groups = { "integration", "live" })
    void containerDoesntExist() throws Exception {
-      List<C> list = client.listContainers();
-      assert !list.contains(objectFactory.createContainerMetadata("shouldntexist"));
+      List<C> list = context.getApi().listContainers();
+      assert !list.contains(new ContainerMetadata("shouldntexist"));
    }
 
 }

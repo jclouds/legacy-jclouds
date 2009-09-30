@@ -28,9 +28,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,6 +38,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
+
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ContainerMetadata;
@@ -48,10 +50,10 @@ import org.jclouds.rest.BoundedList;
 import org.jclouds.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import javax.inject.Inject;
+import com.google.common.collect.Sets;
 import com.google.inject.assistedinject.Assisted;
-import javax.inject.Named;
 
 /**
  * Implements core Map functionality with an {@link BlobStore}
@@ -67,6 +69,7 @@ public abstract class BaseBlobMap<C extends ContainerMetadata, M extends BlobMet
 
    protected final BlobStore<C, M, B> connection;
    protected final String container;
+   protected final Provider<B> blobFactory;
 
    /**
     * maximum duration of an blob Request
@@ -83,9 +86,11 @@ public abstract class BaseBlobMap<C extends ContainerMetadata, M extends BlobMet
    protected long requestRetryMilliseconds = 10;
 
    @Inject
-   public BaseBlobMap(BlobStore<C, M, B> connection, @Assisted String containerName) {
+   public BaseBlobMap(BlobStore<C, M, B> connection, Provider<B> blobFactory,
+            @Assisted String containerName) {
       this.connection = checkNotNull(connection, "connection");
       this.container = checkNotNull(containerName, "container");
+      this.blobFactory = checkNotNull(blobFactory, "blobFactory");
       checkArgument(!container.equals(""), "container name must not be a blank string!");
    }
 
@@ -120,7 +125,8 @@ public abstract class BaseBlobMap<C extends ContainerMetadata, M extends BlobMet
       if (value instanceof Blob<?>) {
          object = (Blob<?>) value;
       } else {
-         object = new Blob<BlobMetadata>("dummy", value);
+         object = blobFactory.get();
+         object.setData(value);
       }
       if (object.getMetadata().getContentMD5() == null)
          object.generateMD5();
@@ -133,7 +139,7 @@ public abstract class BaseBlobMap<C extends ContainerMetadata, M extends BlobMet
     * @see BlobStore#getBlob(String, String)
     */
    protected Set<B> getAllObjects() {
-      Set<B> objects = new HashSet<B>();
+      Set<B> objects = Sets.newHashSet();
       Map<String, Future<B>> futureObjects = Maps.newHashMap();
       for (String key : keySet()) {
          futureObjects.put(key, connection.getBlob(container, key));
@@ -153,7 +159,7 @@ public abstract class BaseBlobMap<C extends ContainerMetadata, M extends BlobMet
    }
 
    @VisibleForTesting
-   void ifNotFoundRetryOtherwiseAddToSet(String key, Future<B> value, Set<B> objects)
+   public void ifNotFoundRetryOtherwiseAddToSet(String key, Future<B> value, Set<B> objects)
             throws InterruptedException, ExecutionException, TimeoutException {
       for (int i = 0; i < 3; i++) {
          try {
@@ -203,7 +209,7 @@ public abstract class BaseBlobMap<C extends ContainerMetadata, M extends BlobMet
 
    public void clear() {
       try {
-         List<Future<Boolean>> deletes = new ArrayList<Future<Boolean>>();
+         List<Future<Boolean>> deletes = Lists.newArrayList();
          for (String key : keySet()) {
             deletes.add(connection.removeBlob(container, key));
          }
@@ -229,7 +235,7 @@ public abstract class BaseBlobMap<C extends ContainerMetadata, M extends BlobMet
 
    public Set<String> keySet() {
       try {
-         Set<String> keys = new HashSet<String>();
+         Set<String> keys = Sets.newHashSet();
          for (BlobMetadata object : refreshContainer())
             keys.add(object.getKey());
          return keys;

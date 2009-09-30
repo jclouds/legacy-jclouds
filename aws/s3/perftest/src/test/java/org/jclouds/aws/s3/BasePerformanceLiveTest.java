@@ -38,6 +38,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.inject.Provider;
+
 import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.S3Object;
@@ -46,8 +48,6 @@ import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import javax.inject.Provider;
 
 /**
  * Tests relative performance of S3 functions.
@@ -94,7 +94,7 @@ public abstract class BasePerformanceLiveTest extends
    protected String createScratchContainerInEU() throws InterruptedException, ExecutionException,
             TimeoutException {
       String containerName = getScratchContainerName();
-      client.createContainer(containerName, createIn(LocationConstraint.EU)).get(30,
+      context.getApi().createContainer(containerName, createIn(LocationConstraint.EU)).get(30,
                TimeUnit.SECONDS);
       return containerName;
    }

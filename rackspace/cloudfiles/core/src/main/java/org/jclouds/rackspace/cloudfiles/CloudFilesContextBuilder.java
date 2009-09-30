@@ -25,17 +25,24 @@ package org.jclouds.rackspace.cloudfiles;
 
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
 
+import org.jclouds.blobstore.BlobStoreContextBuilder;
+import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.rackspace.RackspaceContextBuilder;
 import org.jclouds.rackspace.cloudfiles.config.CloudFilesContextModule;
 import org.jclouds.rackspace.cloudfiles.config.RestCloudFilesBlobStoreModule;
+import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
 
 /**
  * Creates {@link CloudFilesContext} or {@link Injector} instances based on the most commonly
@@ -50,34 +57,111 @@ import com.google.inject.Module;
  * @author Adrian Cole
  * @see CloudFilesContext
  */
-public class CloudFilesContextBuilder extends RackspaceContextBuilder<CloudFilesContext> {
+public class CloudFilesContextBuilder
+         extends
+         BlobStoreContextBuilder<CloudFilesBlobStore, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> {
+
+   @Override
+   public CloudFilesContext buildContext() {
+      return this.buildInjector().getInstance(CloudFilesContext.class);
+   }
+
+   @Override
+   public CloudFilesContextBuilder relaxSSLHostname() {
+      return (CloudFilesContextBuilder) (CloudFilesContextBuilder) super.relaxSSLHostname();
+   }
+
+   @Override
+   public CloudFilesContextBuilder withExecutorService(ExecutorService service) {
+      return (CloudFilesContextBuilder) super.withExecutorService(service);
+   }
+
+   @Override
+   public CloudFilesContextBuilder withHttpMaxRedirects(int httpMaxRedirects) {
+      return (CloudFilesContextBuilder) super.withHttpMaxRedirects(httpMaxRedirects);
+   }
+
+   @Override
+   public CloudFilesContextBuilder withHttpMaxRetries(int httpMaxRetries) {
+      return (CloudFilesContextBuilder) super.withHttpMaxRetries(httpMaxRetries);
+   }
+
+   @Override
+   public CloudFilesContextBuilder withJsonDebug() {
+      return (CloudFilesContextBuilder) super.withJsonDebug();
+   }
+
+   @Override
+   public CloudFilesContextBuilder withModule(Module module) {
+      return (CloudFilesContextBuilder) super.withModule(module);
+   }
+
+   @Override
+   public CloudFilesContextBuilder withModules(Module... modules) {
+      return (CloudFilesContextBuilder) super.withModules(modules);
+   }
+
+   @Override
+   public CloudFilesContextBuilder withPoolIoWorkerThreads(int poolIoWorkerThreads) {
+      return (CloudFilesContextBuilder) super.withPoolIoWorkerThreads(poolIoWorkerThreads);
+   }
+
+   @Override
+   public CloudFilesContextBuilder withPoolMaxConnectionReuse(int poolMaxConnectionReuse) {
+      return (CloudFilesContextBuilder) super.withPoolMaxConnectionReuse(poolMaxConnectionReuse);
+   }
+
+   @Override
+   public CloudFilesContextBuilder withPoolMaxConnections(int poolMaxConnections) {
+      return (CloudFilesContextBuilder) super.withPoolMaxConnections(poolMaxConnections);
+   }
+
+   @Override
+   public CloudFilesContextBuilder withPoolMaxSessionFailures(int poolMaxSessionFailures) {
+      return (CloudFilesContextBuilder) super.withPoolMaxSessionFailures(poolMaxSessionFailures);
+   }
+
+   @Override
+   public CloudFilesContextBuilder withPoolRequestInvokerThreads(int poolRequestInvokerThreads) {
+      return (CloudFilesContextBuilder) super
+               .withPoolRequestInvokerThreads(poolRequestInvokerThreads);
+   }
+
+   @Override
+   public CloudFilesContextBuilder withSaxDebug() {
+      return (CloudFilesContextBuilder) super.withSaxDebug();
+   }
 
    public CloudFilesContextBuilder(Properties props) {
-      super(props);
-   }
-
-   public static CloudFilesContextBuilder newBuilder(String id, String secret) {
-      Properties properties = new Properties();
+      super(new TypeLiteral<CloudFilesBlobStore>() {
+      }, new TypeLiteral<ContainerMetadata>() {
+      }, new TypeLiteral<BlobMetadata>() {
+      }, new TypeLiteral<Blob<BlobMetadata>>() {
+      }, props);
       properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "X-Object-Meta-");
-      CloudFilesContextBuilder builder = new CloudFilesContextBuilder(properties);
-      builder.authenticate(id, secret);
-      return builder;
+      RackspaceContextBuilder.initialize(this);
+   }
+
+   public CloudFilesContextBuilder(String id, String secret) {
+      this(new Properties());
+      RackspaceContextBuilder.authenticate(this, id, secret);
    }
 
    @Override
-   public void addApiModule(List<Module> modules) {
-      super.addApiModule(modules);
+   protected void addConnectionModule(List<Module> modules) {
       modules.add(new RestCloudFilesBlobStoreModule());
+      RackspaceContextBuilder.addAuthenticationModule(this);
    }
 
    @Override
-   protected void addContextModule(List<Module> modules) {
+   public void addContextModule(List<Module> modules) {
       modules.add(new CloudFilesContextModule());
    }
 
    @Override
-   public CloudFilesContext buildContext() {
-      return buildInjector().getInstance(CloudFilesContext.class);
+   public CloudFilesContextBuilder withEndpoint(URI endpoint) {
+      return (CloudFilesContextBuilder) (CloudFilesContextBuilder) RackspaceContextBuilder
+               .withEndpoint(this, endpoint);
    }
 
 }

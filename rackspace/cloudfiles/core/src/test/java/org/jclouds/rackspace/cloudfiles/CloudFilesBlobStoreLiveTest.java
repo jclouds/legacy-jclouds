@@ -70,10 +70,9 @@ public class CloudFilesBlobStoreLiveTest {
    public void setupConnection() {
       String account = System.getProperty("jclouds.test.user");
       String key = System.getProperty("jclouds.test.key");
-      connection = CloudFilesContextFactory.createCloudFilesContext(account, key,
-               new Log4JLoggingModule()).getApi();
+      connection = CloudFilesContextFactory.createContext(account, key, new Log4JLoggingModule())
+               .getApi();
    }
-
 
    @Test
    public void testCDNOperations() throws Exception {
@@ -166,7 +165,7 @@ public class CloudFilesBlobStoreLiveTest {
       assertTrue(connection.deleteContainer(containerNameWithCDN).get(10, TimeUnit.SECONDS));
       assertTrue(connection.deleteContainer(containerNameWithoutCDN).get(10, TimeUnit.SECONDS));
    }
-   
+
    @Test
    public void testListOwnedContainers() throws Exception {
       List<ContainerMetadata> response = connection.listContainers();
@@ -247,10 +246,6 @@ public class CloudFilesBlobStoreLiveTest {
          fail("Should not be able to create container with illegal '?' character");
       } catch (Exception e) {
       }
-      // List only the container just created, using a marker with the container name less 1 char
-      response = connection.listContainers(ListContainerOptions.Builder.afterMarker(
-               containerName2.substring(0, containerName2.length() - 1)).maxResults(1));
-      assertEquals(response.size(), 1);
 
       // TODO: Should throw a specific exception, not UndeclaredThrowableException
       try {

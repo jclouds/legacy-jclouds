@@ -23,18 +23,16 @@
  */
 package org.jclouds.azure.storage.blob.integration;
 
-import org.jclouds.azure.storage.blob.AzureBlobContext;
 import org.jclouds.azure.storage.blob.AzureBlobContextBuilder;
+import org.jclouds.azure.storage.blob.AzureBlobContextFactory;
 import org.jclouds.azure.storage.blob.AzureBlobStore;
 import org.jclouds.azure.storage.blob.config.StubAzureBlobStoreModule;
 import org.jclouds.azure.storage.blob.domain.Blob;
 import org.jclouds.azure.storage.blob.domain.BlobMetadata;
 import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
-import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest.BlobStoreObjectFactory;
+import org.jclouds.blobstore.integration.internal.BaseTestInitializer;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.testng.ITestContext;
 
 import com.google.inject.Module;
 
@@ -42,75 +40,18 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class AzureBlobTestInitializer
-         implements
-         BaseBlobStoreIntegrationTest.TestInitializer<AzureBlobStore, ContainerMetadata, BlobMetadata, Blob> {
+public class AzureBlobTestInitializer extends
+         BaseTestInitializer<AzureBlobStore, ContainerMetadata, BlobMetadata, Blob> {
 
-   public BaseBlobStoreIntegrationTest.TestInitializer.Result<AzureBlobStore, ContainerMetadata, BlobMetadata, Blob> init(
-            Module configurationModule, ITestContext testContext) throws Exception {
-      String account = System.getProperty("jclouds.test.user");
-      String key = System.getProperty("jclouds.test.key");
-      if (account != null)
-         testContext.setAttribute("jclouds.test.user", account);
-      if (key != null)
-         testContext.setAttribute("jclouds.test.key", key);
-
-      final AzureBlobContext context;
-      if (account != null) {
-         context = createLiveAzureBlobContext(configurationModule, account, key);
-      } else {
-         context = createStubAzureBlobContext();
-      }
-      assert context != null;
-
-      final AzureBlobStore client = context.getApi();
-      assert client != null;
-
-      final BlobStoreObjectFactory<ContainerMetadata, Blob> objectFactory = new BaseBlobStoreIntegrationTest.BlobStoreObjectFactory<ContainerMetadata, Blob>() {
-
-         public Blob createBlob(String key) {
-            return new Blob(key);
-
-         }
-
-         public ContainerMetadata createContainerMetadata(String key) {
-            return new ContainerMetadata(key);
-         }
-
-      };
-      assert objectFactory != null;
-
-      return new BaseBlobStoreIntegrationTest.TestInitializer.Result<AzureBlobStore, ContainerMetadata, BlobMetadata, Blob>() {
-
-         public AzureBlobStore getClient() {
-            return client;
-         }
-
-         public BlobStoreContext<AzureBlobStore, BlobMetadata, Blob> getContext() {
-            return (BlobStoreContext<AzureBlobStore, BlobMetadata, Blob>) context;
-         }
-
-         public BlobStoreObjectFactory<ContainerMetadata, Blob> getObjectFactory() {
-            return objectFactory;
-         }
-
-      };
+   @Override
+   protected BlobStoreContext<AzureBlobStore, ContainerMetadata, BlobMetadata, Blob> createLiveContext(
+            Module configurationModule, String url, String app, String account, String key) {
+      return new AzureBlobContextBuilder(account, key).withSaxDebug().relaxSSLHostname()
+               .withModules(configurationModule, new Log4JLoggingModule()).buildContext();
    }
 
-   protected AzureBlobContext createStubAzureBlobContext() {
-      return AzureBlobContextBuilder.newBuilder("stub", "stub").withModules(
-               new StubAzureBlobStoreModule()).buildContext();
+   @Override
+   protected BlobStoreContext<AzureBlobStore, ContainerMetadata, BlobMetadata, Blob> createStubContext() {
+      return AzureBlobContextFactory.createContext("user", "pass", new StubAzureBlobStoreModule());
    }
-
-   protected AzureBlobContext createLiveAzureBlobContext(Module configurationModule,
-            String account, String key) {
-      return buildAzureBlobContextFactory(configurationModule, account, key).buildContext();
-   }
-
-   protected AzureBlobContextBuilder buildAzureBlobContextFactory(Module configurationModule,
-            String account, String key) {
-      return (AzureBlobContextBuilder) AzureBlobContextBuilder.newBuilder(account, key)
-               .relaxSSLHostname().withModules(configurationModule, new Log4JLoggingModule());
-   }
-
 }

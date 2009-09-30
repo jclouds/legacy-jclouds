@@ -39,6 +39,8 @@ import java.security.SecureRandom;
 import java.util.List;
 import java.util.Map;
 
+import org.jclouds.concurrent.WithinThreadExecutorService;
+import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rackspace.cloudservers.domain.BackupSchedule;
@@ -80,11 +82,12 @@ public class CloudServersConnectionLiveTest {
       String account = System.getProperty("jclouds.test.user");
       String key = System.getProperty("jclouds.test.key");
 
-      connection = CloudServersContextFactory.createCloudServersContext(account, key,
-               new Log4JLoggingModule()).getApi();
+      connection = new CloudServersContextBuilder(account, key).withModules(
+               new Log4JLoggingModule()).withJsonDebug().buildContext().getApi();
 
       Injector injector = Guice.createInjector(new Log4JLoggingModule(),
-               new JschSshConnectionModule());
+               new JschSshConnectionModule(), new ExecutorServiceModule(
+                        new WithinThreadExecutorService()));
 
       sshFactory = injector.getInstance(SshConnection.Factory.class);
 
@@ -464,7 +467,7 @@ public class CloudServersConnectionLiveTest {
    }
 
    // [Web Hosting #129069
-   @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testCreateServerIp")
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testCreateServerIp")
    public void testUnshare() throws Exception {
       connection.unshareIp(ip, serverId2);
       blockUntilServerActive(serverId2);
@@ -485,8 +488,7 @@ public class CloudServersConnectionLiveTest {
       }
    }
 
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testCreateServerIp")
-   // "testUnshare")
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testUnshare")
    public void testShareConfig() throws Exception {
       connection.shareIp(ip, serverId2, sharedIpGroupId, true);
       blockUntilServerActive(serverId2);

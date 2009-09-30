@@ -21,43 +21,38 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.azure.storage.config;
+package org.jclouds.rackspace.cloudservers.config;
 
-import org.jclouds.azure.storage.handlers.ParseAzureStorageErrorFromXmlContent;
-import org.jclouds.cloud.ConfiguresCloudConnection;
-import org.jclouds.http.HttpErrorHandler;
+import java.net.URI;
+
+import javax.inject.Named;
+
+import org.jclouds.cloud.internal.CloudContextImpl;
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.http.annotation.ClientError;
-import org.jclouds.http.annotation.Redirection;
-import org.jclouds.http.annotation.ServerError;
+import org.jclouds.lifecycle.Closer;
+import org.jclouds.rackspace.CloudServers;
+import org.jclouds.rackspace.cloudservers.CloudServersConnection;
+import org.jclouds.rackspace.cloudservers.CloudServersContext;
+import org.jclouds.rackspace.reference.RackspaceConstants;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Scopes;
 
-/**
- * Configures the AzureStorage connection, including logging and http transport.
- * 
- * @author Adrian Cole
- */
-@ConfiguresCloudConnection
 @RequiresHttp
-public class RestAzureStorageConnectionModule extends AbstractModule {
-
+public class CloudServersContextModule extends AbstractModule {
    @Override
    protected void configure() {
-      bindErrorHandlers();
-      bindRetryHandlers();
+      bind(CloudServersContext.class).to(CloudServersContextImpl.class).in(Scopes.SINGLETON);
    }
 
-   protected void bindErrorHandlers() {
-      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
-               ParseAzureStorageErrorFromXmlContent.class);
-      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(
-               ParseAzureStorageErrorFromXmlContent.class);
-      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
-               ParseAzureStorageErrorFromXmlContent.class);
-   }
+   public static class CloudServersContextImpl extends CloudContextImpl<CloudServersConnection>
+            implements CloudServersContext {
 
-   protected void bindRetryHandlers() {
+      public CloudServersContextImpl(Closer closer, CloudServersConnection defaultApi,
+               @CloudServers URI endPoint,
+               @Named(RackspaceConstants.PROPERTY_RACKSPACE_USER) String account) {
+         super(closer, defaultApi, endPoint, account);
+      }
    }
 
 }

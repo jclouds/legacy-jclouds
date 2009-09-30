@@ -24,14 +24,18 @@
 package org.jclouds.azure.storage.blob.config;
 
 import java.net.URI;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.jclouds.azure.storage.AzureBlob;
 import org.jclouds.azure.storage.blob.AzureBlobStore;
+import org.jclouds.azure.storage.blob.domain.Blob;
 import org.jclouds.azure.storage.blob.internal.StubAzureBlobStore;
 import org.jclouds.cloud.ConfiguresCloudConnection;
 import org.jclouds.http.functions.config.ParserModule;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.TypeLiteral;
 
 /**
  * adds a stub alternative to invoking AzureBlob
@@ -40,10 +44,16 @@ import com.google.inject.AbstractModule;
  */
 @ConfiguresCloudConnection
 public class StubAzureBlobStoreModule extends AbstractModule {
+
+   static final ConcurrentHashMap<String, Map<String, Blob>> map = new ConcurrentHashMap<String, Map<String, Blob>>();
+
    protected void configure() {
       install(new ParserModule());
-      bind(AzureBlobStore.class).to(StubAzureBlobStore.class);
-      bind(URI.class).annotatedWith(AzureBlob.class)
-               .toInstance(URI.create("http://localhost:8080"));
+      bind(new TypeLiteral<Map<String, Map<String, Blob>>>() {
+      }).toInstance(map);
+      bind(AzureBlobStore.class).to(StubAzureBlobStore.class).asEagerSingleton();
+      bind(URI.class).annotatedWith(AzureBlob.class).toInstance(
+               URI.create("https://id.blob.core.windows.net"));
    }
+
 }

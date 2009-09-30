@@ -23,19 +23,25 @@
  */
 package org.jclouds.azure.storage.blob.config;
 
+import java.net.URI;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
+
+import org.jclouds.azure.storage.AzureBlob;
 import org.jclouds.azure.storage.blob.AzureBlobContext;
 import org.jclouds.azure.storage.blob.AzureBlobStore;
 import org.jclouds.azure.storage.blob.domain.Blob;
 import org.jclouds.azure.storage.blob.domain.BlobMetadata;
-import org.jclouds.azure.storage.blob.internal.GuiceAzureBlobContext;
-import org.jclouds.azure.storage.blob.internal.LiveAzureBlobInputStreamMap;
-import org.jclouds.azure.storage.blob.internal.LiveAzureBlobObjectMap;
-import org.jclouds.blobstore.functions.ParseBlobFromHeadersAndHttpContent.BlobFactory;
-import org.jclouds.blobstore.functions.ParseContentTypeFromHeaders.BlobMetadataFactory;
+import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
+import org.jclouds.azure.storage.reference.AzureStorageConstants;
+import org.jclouds.blobstore.BlobStoreContextImpl;
+import org.jclouds.blobstore.BlobMap.Factory;
+import org.jclouds.lifecycle.Closer;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.TypeLiteral;
-import com.google.inject.assistedinject.FactoryProvider;
+import com.google.inject.Scopes;
 
 /**
  * Configures the {@link AzureBlobContext}; requires {@link AzureBlobStore} bound.
@@ -43,29 +49,23 @@ import com.google.inject.assistedinject.FactoryProvider;
  * @author Adrian Cole
  */
 public class AzureBlobContextModule extends AbstractModule {
-   protected final TypeLiteral<BlobMetadataFactory<BlobMetadata>> objectMetadataFactoryLiteral = new TypeLiteral<BlobMetadataFactory<BlobMetadata>>() {
-   };
-   protected final TypeLiteral<BlobFactory<BlobMetadata, Blob>> objectFactoryLiteral = new TypeLiteral<BlobFactory<BlobMetadata, Blob>>() {
-   };
-
    @Override
    protected void configure() {
-      this.requireBinding(AzureBlobStore.class);
-      bind(GuiceAzureBlobContext.AzureBlobObjectMapFactory.class).toProvider(
-               FactoryProvider.newFactory(GuiceAzureBlobContext.AzureBlobObjectMapFactory.class,
-                        LiveAzureBlobObjectMap.class));
-      bind(GuiceAzureBlobContext.AzureBlobInputStreamMapFactory.class).toProvider(
-               FactoryProvider.newFactory(
-                        GuiceAzureBlobContext.AzureBlobInputStreamMapFactory.class,
-                        LiveAzureBlobInputStreamMap.class));
-      bind(AzureBlobContext.class).to(GuiceAzureBlobContext.class);
-      bind(objectMetadataFactoryLiteral).toProvider(
-               FactoryProvider.newFactory(objectMetadataFactoryLiteral,
-                        new TypeLiteral<BlobMetadata>() {
-                        }));
-      bind(objectFactoryLiteral).toProvider(
-               FactoryProvider.newFactory(objectFactoryLiteral, new TypeLiteral<Blob>() {
-               }));
+      bind(AzureBlobContext.class).to(AzureBlobContextImpl.class).in(Scopes.SINGLETON);
    }
 
+   public static class AzureBlobContextImpl extends
+            BlobStoreContextImpl<AzureBlobStore, ContainerMetadata, BlobMetadata, Blob> implements
+            AzureBlobContext {
+      @Inject
+      AzureBlobContextImpl(Factory<BlobMetadata, Blob> blobMapFactory,
+               org.jclouds.blobstore.InputStreamMap.Factory<BlobMetadata> inputStreamMapFactory,
+               Closer closer, Provider<Blob> blobProvider, AzureBlobStore defaultApi,
+               @AzureBlob URI endPoint,
+               @Named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT) String account) {
+         super(blobMapFactory, inputStreamMapFactory, closer, blobProvider, defaultApi, endPoint,
+                  account);
+      }
+
+   }
 }

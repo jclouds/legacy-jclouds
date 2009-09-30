@@ -25,13 +25,19 @@ package org.jclouds.aws.s3.config;
 
 import static org.testng.Assert.assertEquals;
 
+import org.jclouds.aws.s3.S3BlobStore;
+import org.jclouds.aws.s3.domain.BucketMetadata;
+import org.jclouds.aws.s3.domain.ObjectMetadata;
+import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.s3.handlers.AWSRedirectionRetryHandler;
 import org.jclouds.aws.s3.handlers.ParseAWSErrorFromXmlContent;
 import org.jclouds.aws.s3.reference.S3Constants;
+import org.jclouds.blobstore.BlobStoreMapsModule;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
+import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.util.Jsr330;
@@ -39,6 +45,7 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.TypeLiteral;
 
 /**
  * @author Adrian Cole
@@ -47,19 +54,25 @@ import com.google.inject.Injector;
 public class S3ContextModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new RestS3ConnectionModule(), new S3ContextModule() {
-         @Override
-         protected void configure() {
-            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to(
-                     "user");
-            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY))
-                     .to("key");
-            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_S3_ENDPOINT)).to(
-                     "http://localhost");
-            super.configure();
-         }
-      }, new JavaUrlHttpCommandExecutorServiceModule(), new ExecutorServiceModule(
-               new WithinThreadExecutorService()));
+      return Guice.createInjector(new RestS3ConnectionModule(),
+               new BlobStoreMapsModule<S3BlobStore, BucketMetadata, ObjectMetadata, S3Object>(
+                        new TypeLiteral<S3BlobStore>() {
+                        }, new TypeLiteral<BucketMetadata>() {
+                        }, new TypeLiteral<ObjectMetadata>() {
+                        }, new TypeLiteral<S3Object>() {
+                        }), new S3ContextModule() {
+                  @Override
+                  protected void configure() {
+                     bindConstant().annotatedWith(
+                              Jsr330.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to("user");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY)).to("key");
+                     bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_S3_ENDPOINT))
+                              .to("http://localhost");
+                     super.configure();
+                  }
+               }, new ParserModule(), new JavaUrlHttpCommandExecutorServiceModule(),
+               new ExecutorServiceModule(new WithinThreadExecutorService()));
    }
 
    @Test

@@ -44,15 +44,13 @@ import com.google.inject.Module;
  */
 public class CloudFilesContextFactory {
 
-   public static CloudFilesContext createCloudFilesContext(String user, String key,
-            Module... modules) {
-      return CloudFilesContextBuilder.newBuilder(user, key).withModules(modules)
-               .buildContext();
+   public static CloudFilesContext createContext(String user, String key, Module... modules) {
+      return new CloudFilesContextBuilder(user, key).withModules(modules).buildContext();
    }
 
-   public static CloudFilesContext createCloudFilesContext(URI endpoint, String user,
-            String key, Module... modules) {
-      return CloudFilesContextBuilder.newBuilder(user, key).withEndpoint(endpoint)
-               .withModules(modules).buildContext();
+   public static CloudFilesContext createContext(URI endpoint, String user, String key,
+            Module... modules) {
+      return new CloudFilesContextBuilder(user, key).withEndpoint(endpoint).withModules(modules)
+               .buildContext();
    }
 }

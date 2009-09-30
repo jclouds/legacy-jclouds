@@ -28,11 +28,11 @@ import static org.testng.Assert.assertEquals;
 import java.net.URI;
 import java.util.Collections;
 
+import javax.inject.Provider;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.functions.ParseContentTypeFromHeaders.BlobMetadataFactory;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -47,15 +47,19 @@ import com.google.common.collect.Multimap;
 public class ParseBlobMetadataFromHeadersTest {
 
    private ParseSystemAndUserMetadataFromHeaders<BlobMetadata> parser;
+   private Provider<BlobMetadata> blobMetadataProvider = new Provider<BlobMetadata>() {
+
+      public BlobMetadata get() {
+         return new BlobMetadata("key");
+      }
+
+   };
 
    @BeforeTest
    void setUp() {
+
       parser = new ParseSystemAndUserMetadataFromHeaders<BlobMetadata>(new DateService(), "prefix",
-               new BlobMetadataFactory<BlobMetadata>() {
-                  public BlobMetadata create(String key) {
-                     return new BlobMetadata(key);
-                  }
-               });
+               blobMetadataProvider);
       parser
                .setContext(new HttpRequest("GET", URI.create("http://localhost/key")),
                         new Object[] {});

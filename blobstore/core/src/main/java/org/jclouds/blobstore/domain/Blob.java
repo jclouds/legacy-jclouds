@@ -30,11 +30,10 @@ import java.awt.Container;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.inject.Inject;
+
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.HttpUtils.MD5InputStreamResult;
-
-import javax.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 
 /**
  * Value type for an HTTP Blob service. Blobs are stored in {@link Container containers} and consist
@@ -68,10 +67,10 @@ public class Blob<M extends BlobMetadata> {
             return false;
       } else if (!data.equals(other.data))
          return false;
-      if (metadata == null) {
-         if (other.metadata != null)
+      if (getMetadata() == null) {
+         if (other.getMetadata() != null)
             return false;
-      } else if (!metadata.equals(other.metadata))
+      } else if (!getMetadata().equals(other.getMetadata()))
          return false;
       return true;
    }
@@ -79,11 +78,11 @@ public class Blob<M extends BlobMetadata> {
    @Override
    public String toString() {
       return "Blob [contentLength=" + contentLength + ", contentRange=" + contentRange + ", data="
-               + data + ", metadata=" + metadata + "]";
+               + data + ", metadata=" + getMetadata() + "]";
    }
 
    protected Object data;
-   protected final M metadata;
+   private M metadata;
    protected long contentLength = -1;
    protected String contentRange;
 
@@ -93,9 +92,14 @@ public class Blob<M extends BlobMetadata> {
       this((M) new BlobMetadata(key));
    }
 
+   @SuppressWarnings("unchecked")
    @Inject
-   public Blob(@Assisted M metadata) {
-      this.metadata = metadata;
+   public Blob() {
+      this((M) new BlobMetadata());
+   }
+
+   public Blob(M metadata) {
+      this.setMetadata(metadata);
    }
 
    public Blob(M metadata, Object data) {
@@ -112,7 +116,7 @@ public class Blob<M extends BlobMetadata> {
     * @see BlobMetadata#getKey()
     */
    public String getKey() {
-      return metadata.getKey();
+      return getMetadata().getKey();
    }
 
    /**
@@ -172,7 +176,7 @@ public class Blob<M extends BlobMetadata> {
       result = prime * result + (int) (contentLength ^ (contentLength >>> 32));
       result = prime * result + ((contentRange == null) ? 0 : contentRange.hashCode());
       result = prime * result + ((data == null) ? 0 : data.hashCode());
-      result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
+      result = prime * result + ((getMetadata() == null) ? 0 : getMetadata().hashCode());
       return result;
    }
 
@@ -207,6 +211,10 @@ public class Blob<M extends BlobMetadata> {
     */
    public String getContentRange() {
       return contentRange;
+   }
+
+   public void setMetadata(M metadata) {
+      this.metadata = metadata;
    }
 
 }

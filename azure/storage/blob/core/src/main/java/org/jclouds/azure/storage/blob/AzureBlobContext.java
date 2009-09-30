@@ -25,6 +25,7 @@ package org.jclouds.azure.storage.blob;
 
 import org.jclouds.azure.storage.blob.domain.Blob;
 import org.jclouds.azure.storage.blob.domain.BlobMetadata;
+import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.cloud.CloudContext;
 
@@ -37,6 +38,7 @@ import org.jclouds.cloud.CloudContext;
  * @author Adrian Cole
  * 
  */
-public interface AzureBlobContext extends BlobStoreContext<AzureBlobStore, BlobMetadata, Blob> {
+public interface AzureBlobContext extends
+         BlobStoreContext<AzureBlobStore, ContainerMetadata, BlobMetadata, Blob> {
 
 }

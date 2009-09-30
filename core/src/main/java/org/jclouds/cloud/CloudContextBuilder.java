@@ -52,6 +52,7 @@ import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.config.LoggingModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.rest.config.JaxrsModule;
 import org.jclouds.util.Jsr330;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -61,7 +62,10 @@ import com.google.common.collect.Iterables;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
+import com.google.inject.util.Types;
 
 /**
  * Creates {@link CloudContext} or {@link Injector} instances based on the most commonly requested
@@ -76,118 +80,118 @@ import com.google.inject.Module;
  * @author Adrian Cole, Andrew Newdigate
  * @see CloudContext
  */
-public abstract class CloudContextBuilder<X extends CloudContext<?>> {
+public abstract class CloudContextBuilder<C> {
 
    protected final Properties properties;
-   private final List<Module> modules = new ArrayList<Module>(3);
+   protected final List<Module> modules = new ArrayList<Module>(3);
+   protected final TypeLiteral<C> connectionType;
 
-   protected CloudContextBuilder(Properties properties) {
+   protected CloudContextBuilder(TypeLiteral<C> connectionTypeLiteral, Properties properties) {
+      this.connectionType = connectionTypeLiteral;
       this.properties = properties;
    }
 
-   public CloudContextBuilder<X> withSaxDebug() {
+   public CloudContextBuilder<C> withSaxDebug() {
       properties.setProperty(PROPERTY_SAX_DEBUG, "true");
       return this;
    }
 
-   public CloudContextBuilder<X> withJsonDebug() {
+   public CloudContextBuilder<C> withJsonDebug() {
       properties.setProperty(PROPERTY_JSON_DEBUG, "true");
       return this;
    }
-   
+
    /**
     * allow mismatches between the certificate and the hostname of ssl requests.
     */
-   public CloudContextBuilder<X> relaxSSLHostname() {
+   public CloudContextBuilder<C> relaxSSLHostname() {
       properties.setProperty(PROPERTY_HTTP_RELAX_HOSTNAME, "true");
       return this;
    }
 
-   public CloudContextBuilder<X> withHttpMaxRetries(int httpMaxRetries) {
+   public CloudContextBuilder<C> withHttpMaxRetries(int httpMaxRetries) {
       properties.setProperty(PROPERTY_HTTP_MAX_RETRIES, Integer.toString(httpMaxRetries));
       return this;
    }
 
-   public CloudContextBuilder<X> withHttpMaxRedirects(int httpMaxRedirects) {
+   public CloudContextBuilder<C> withHttpMaxRedirects(int httpMaxRedirects) {
       properties.setProperty(PROPERTY_HTTP_MAX_REDIRECTS, Integer.toString(httpMaxRedirects));
       return this;
    }
 
-   public CloudContextBuilder<X> withExecutorService(ExecutorService service) {
+   public CloudContextBuilder<C> withExecutorService(ExecutorService service) {
       modules.add(new ExecutorServiceModule(service));
       return this;
    }
 
-   public CloudContextBuilder<X> withPoolMaxConnectionReuse(int poolMaxConnectionReuse) {
+   public CloudContextBuilder<C> withPoolMaxConnectionReuse(int poolMaxConnectionReuse) {
       properties.setProperty(PROPERTY_POOL_MAX_CONNECTION_REUSE, Integer
                .toString(poolMaxConnectionReuse));
       return this;
    }
 
-   public abstract CloudContextBuilder<X> withEndpoint(URI endpoint);
-   
-   public CloudContextBuilder<X> withPoolMaxSessionFailures(int poolMaxSessionFailures) {
+   public abstract CloudContextBuilder<C> withEndpoint(URI endpoint);
+
+   public CloudContextBuilder<C> withPoolMaxSessionFailures(int poolMaxSessionFailures) {
       properties.setProperty(PROPERTY_POOL_MAX_SESSION_FAILURES, Integer
                .toString(poolMaxSessionFailures));
       return this;
 
    }
 
-   public CloudContextBuilder<X> withPoolRequestInvokerThreads(int poolRequestInvokerThreads) {
+   public CloudContextBuilder<C> withPoolRequestInvokerThreads(int poolRequestInvokerThreads) {
       properties.setProperty(PROPERTY_POOL_REQUEST_INVOKER_THREADS, Integer
                .toString(poolRequestInvokerThreads));
       return this;
 
    }
 
-   public CloudContextBuilder<X> withPoolIoWorkerThreads(int poolIoWorkerThreads) {
+   public CloudContextBuilder<C> withPoolIoWorkerThreads(int poolIoWorkerThreads) {
       properties
                .setProperty(PROPERTY_POOL_IO_WORKER_THREADS, Integer.toString(poolIoWorkerThreads));
       return this;
 
    }
 
-   public CloudContextBuilder<X> withPoolMaxConnections(int poolMaxConnections) {
+   public CloudContextBuilder<C> withPoolMaxConnections(int poolMaxConnections) {
       properties.setProperty(PROPERTY_POOL_MAX_CONNECTIONS, Integer.toString(poolMaxConnections));
       return this;
    }
 
-   public CloudContextBuilder<X> withModule(Module module) {
+   public CloudContextBuilder<C> withModule(Module module) {
       modules.add(module);
       return this;
    }
 
-   public CloudContextBuilder<X> withModules(Module... modules) {
+   public CloudContextBuilder<C> withModules(Module... modules) {
       this.modules.addAll(Arrays.asList(modules));
       return this;
    }
 
    public Injector buildInjector() {
 
-      addLoggingModuleIfNotPresent(modules);
-
+      addContextModule(modules);
       addConnectionModuleIfNotPresent(modules);
-
+      addLoggingModuleIfNotPresent(modules);
       addHttpModuleIfNeededAndNotPresent(modules);
-
+      ifHttpConfigureRestOtherwiseGuiceClientFactory(modules);
       addExecutorServiceIfNotPresent(modules);
-
       modules.add(new AbstractModule() {
          @Override
          protected void configure() {
             Jsr330.bindProperties(binder(), checkNotNull(properties, "properties"));
          }
       });
-      addContextModule(modules);
-
       return Guice.createInjector(modules);
    }
 
+   @VisibleForTesting
    protected void addLoggingModuleIfNotPresent(final List<Module> modules) {
       if (!Iterables.any(modules, Predicates.instanceOf(LoggingModule.class)))
          modules.add(new JDKLoggingModule());
    }
 
+   @VisibleForTesting
    protected void addHttpModuleIfNeededAndNotPresent(final List<Module> modules) {
       if (Iterables.any(modules, new Predicate<Module>() {
          public boolean apply(Module input) {
@@ -203,7 +207,37 @@ public abstract class CloudContextBuilder<X extends CloudContext<?>> {
          modules.add(new JavaUrlHttpCommandExecutorServiceModule());
    }
 
-   public static void addExecutorServiceIfNotPresent(final List<Module> modules) {
+   @VisibleForTesting
+   protected abstract void addContextModule(List<Module> modules);
+
+   @VisibleForTesting
+   protected void ifHttpConfigureRestOtherwiseGuiceClientFactory(final List<Module> modules) {
+      if (Iterables.any(modules, new Predicate<Module>() {
+         public boolean apply(Module input) {
+            return input.getClass().isAnnotationPresent(RequiresHttp.class);
+         }
+
+      })) {
+         modules.add(new JaxrsModule());
+      }
+   }
+
+   @VisibleForTesting
+   protected void addConnectionModuleIfNotPresent(final List<Module> modules) {
+      if (!Iterables.any(modules, new Predicate<Module>() {
+         public boolean apply(Module input) {
+            return input.getClass().isAnnotationPresent(ConfiguresCloudConnection.class);
+         }
+
+      })) {
+         addConnectionModule(modules);
+      }
+   }
+
+   protected abstract void addConnectionModule(final List<Module> modules);
+
+   @VisibleForTesting
+   protected void addExecutorServiceIfNotPresent(final List<Module> modules) {
       if (!Iterables.any(modules, new Predicate<Module>() {
          public boolean apply(Module input) {
             return input.getClass().isAnnotationPresent(ConfiguresExecutorService.class);
@@ -223,28 +257,18 @@ public abstract class CloudContextBuilder<X extends CloudContext<?>> {
       }
    }
 
-   protected void addConnectionModuleIfNotPresent(final List<Module> modules) {
-      if (!Iterables.any(modules, new Predicate<Module>() {
-         public boolean apply(Module input) {
-            return input.getClass().isAnnotationPresent(ConfiguresCloudConnection.class);
-         }
-
-      })) {
-         addApiModule(modules);
-      }
-   }
-
    @VisibleForTesting
    public Properties getProperties() {
       return properties;
    }
 
-   public abstract X buildContext();
-
-   public abstract void authenticate(String id, String secret);
-
-   protected abstract void addContextModule(List<Module> modules);
-
-   protected abstract void addApiModule(List<Module> modules);
-
+   @SuppressWarnings("unchecked")
+   public CloudContext<C> buildContext() {
+      Injector injector = buildInjector();
+      return (CloudContext<C>) injector.getInstance(Key.get(Types.newParameterizedType(
+               CloudContext.class, connectionType.getType())));
+      // return (CloudContext<C>) this.buildInjector().getInstance(
+      // Key.get(new TypeLiteral<CloudContext<?>>() {
+      // }));
+   }
 }

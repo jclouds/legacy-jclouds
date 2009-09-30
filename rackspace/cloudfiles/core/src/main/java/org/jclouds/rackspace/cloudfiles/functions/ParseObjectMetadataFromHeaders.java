@@ -25,6 +25,10 @@ package org.jclouds.rackspace.cloudfiles.functions;
 
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
+
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
 import org.jclouds.http.HttpResponse;
@@ -32,18 +36,17 @@ import org.jclouds.http.HttpUtils;
 import org.jclouds.util.DateService;
 
 import com.google.common.annotations.VisibleForTesting;
-import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * @author Adrian Cole
  */
-public class ParseObjectMetadataFromHeaders extends ParseSystemAndUserMetadataFromHeaders<BlobMetadata> {
+public class ParseObjectMetadataFromHeaders extends
+         ParseSystemAndUserMetadataFromHeaders<BlobMetadata> {
 
    @Inject
    public ParseObjectMetadataFromHeaders(DateService dateParser,
             @Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix,
-            BlobMetadataFactory<BlobMetadata> metadataFactory) {
+            Provider<BlobMetadata> metadataFactory) {
       super(dateParser, metadataPrefix, metadataFactory);
    }
 

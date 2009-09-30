@@ -45,6 +45,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ContainerMetadata;
@@ -75,11 +76,13 @@ public class BaseBlobIntegrationTest<S extends BlobStore<C, M, B>, C extends Con
          addObjectAndValidateContent(containerName, key);
          DateTime after = new DateTime().plusSeconds(1);
 
-         client.getBlob(containerName, key, ifModifiedSince(before)).get(10, TimeUnit.SECONDS);
+         context.getApi().getBlob(containerName, key, ifModifiedSince(before)).get(10,
+                  TimeUnit.SECONDS);
          validateContent(containerName, key);
 
          try {
-            client.getBlob(containerName, key, ifModifiedSince(after)).get(10, TimeUnit.SECONDS);
+            context.getApi().getBlob(containerName, key, ifModifiedSince(after)).get(10,
+                     TimeUnit.SECONDS);
             validateContent(containerName, key);
          } catch (ExecutionException e) {
             if (e.getCause() instanceof HttpResponseException) {
@@ -109,11 +112,13 @@ public class BaseBlobIntegrationTest<S extends BlobStore<C, M, B>, C extends Con
          addObjectAndValidateContent(containerName, key);
          DateTime after = new DateTime().plusSeconds(1);
 
-         client.getBlob(containerName, key, ifUnmodifiedSince(after)).get(10, TimeUnit.SECONDS);
+         context.getApi().getBlob(containerName, key, ifUnmodifiedSince(after)).get(10,
+                  TimeUnit.SECONDS);
          validateContent(containerName, key);
 
          try {
-            client.getBlob(containerName, key, ifUnmodifiedSince(before)).get(10, TimeUnit.SECONDS);
+            context.getApi().getBlob(containerName, key, ifUnmodifiedSince(before)).get(10,
+                     TimeUnit.SECONDS);
             validateContent(containerName, key);
          } catch (ExecutionException e) {
             if (e.getCause() instanceof HttpResponseException) {
@@ -140,11 +145,13 @@ public class BaseBlobIntegrationTest<S extends BlobStore<C, M, B>, C extends Con
 
          addObjectAndValidateContent(containerName, key);
 
-         client.getBlob(containerName, key, ifETagMatches(goodETag)).get(10, TimeUnit.SECONDS);
+         context.getApi().getBlob(containerName, key, ifETagMatches(goodETag)).get(10,
+                  TimeUnit.SECONDS);
          validateContent(containerName, key);
 
          try {
-            client.getBlob(containerName, key, ifETagMatches(badETag)).get(10, TimeUnit.SECONDS);
+            context.getApi().getBlob(containerName, key, ifETagMatches(badETag)).get(10,
+                     TimeUnit.SECONDS);
             validateContent(containerName, key);
          } catch (ExecutionException e) {
             if (e.getCause() instanceof HttpResponseException) {
@@ -171,11 +178,12 @@ public class BaseBlobIntegrationTest<S extends BlobStore<C, M, B>, C extends Con
 
          addObjectAndValidateContent(containerName, key);
 
-         client.getBlob(containerName, key, ifETagDoesntMatch(badETag)).get(10, TimeUnit.SECONDS);
+         context.getApi().getBlob(containerName, key, ifETagDoesntMatch(badETag)).get(10,
+                  TimeUnit.SECONDS);
          validateContent(containerName, key);
 
          try {
-            client.getBlob(containerName, key, ifETagDoesntMatch(goodETag)).get(10,
+            context.getApi().getBlob(containerName, key, ifETagDoesntMatch(goodETag)).get(10,
                      TimeUnit.SECONDS);
             validateContent(containerName, key);
          } catch (ExecutionException e) {
@@ -200,12 +208,13 @@ public class BaseBlobIntegrationTest<S extends BlobStore<C, M, B>, C extends Con
          String key = "apples";
 
          addObjectAndValidateContent(containerName, key);
-         B object1 = client.getBlob(containerName, key, range(0, 5)).get(10, TimeUnit.SECONDS);
+         B object1 = context.getApi().getBlob(containerName, key, range(0, 5)).get(10,
+                  TimeUnit.SECONDS);
          assertEquals(BlobStoreUtils.getContentAsStringAndClose(object1), TEST_STRING.substring(0,
                   6));
 
-         B object2 = client.getBlob(containerName, key, range(6, TEST_STRING.length())).get(10,
-                  TimeUnit.SECONDS);
+         B object2 = context.getApi().getBlob(containerName, key, range(6, TEST_STRING.length()))
+                  .get(10, TimeUnit.SECONDS);
          assertEquals(BlobStoreUtils.getContentAsStringAndClose(object2), TEST_STRING.substring(6,
                   TEST_STRING.length()));
       } finally {
@@ -222,8 +231,8 @@ public class BaseBlobIntegrationTest<S extends BlobStore<C, M, B>, C extends Con
          String key = "apples";
 
          addObjectAndValidateContent(containerName, key);
-         B object = client.getBlob(containerName, key, range(0, 5).range(6, TEST_STRING.length()))
-                  .get(10, TimeUnit.SECONDS);
+         B object = context.getApi().getBlob(containerName, key,
+                  range(0, 5).range(6, TEST_STRING.length())).get(10, TimeUnit.SECONDS);
 
          assertEquals(BlobStoreUtils.getContentAsStringAndClose(object), TEST_STRING);
       } finally {
@@ -240,7 +249,7 @@ public class BaseBlobIntegrationTest<S extends BlobStore<C, M, B>, C extends Con
          String key = "apples";
 
          addObjectAndValidateContent(containerName, key);
-         B object = client.getBlob(containerName, key, tail(5)).get(10, TimeUnit.SECONDS);
+         B object = context.getApi().getBlob(containerName, key, tail(5)).get(10, TimeUnit.SECONDS);
          assertEquals(BlobStoreUtils.getContentAsStringAndClose(object), TEST_STRING
                   .substring(TEST_STRING.length() - 5));
          assertEquals(object.getContentLength(), 5);
@@ -258,7 +267,8 @@ public class BaseBlobIntegrationTest<S extends BlobStore<C, M, B>, C extends Con
          String key = "apples";
 
          addObjectAndValidateContent(containerName, key);
-         B object = client.getBlob(containerName, key, startAt(5)).get(10, TimeUnit.SECONDS);
+         B object = context.getApi().getBlob(containerName, key, startAt(5)).get(10,
+                  TimeUnit.SECONDS);
          assertEquals(BlobStoreUtils.getContentAsStringAndClose(object), TEST_STRING.substring(5,
                   TEST_STRING.length()));
          assertEquals(object.getContentLength(), TEST_STRING.length() - 5);
@@ -279,7 +289,7 @@ public class BaseBlobIntegrationTest<S extends BlobStore<C, M, B>, C extends Con
       String containerName = getContainerName();
       String key = "test";
       try {
-         assert client.removeBlob(containerName, key).get(10, TimeUnit.SECONDS);
+         assert context.getApi().removeBlob(containerName, key).get(10, TimeUnit.SECONDS);
       } finally {
          returnContainer(containerName);
       }
@@ -287,7 +297,7 @@ public class BaseBlobIntegrationTest<S extends BlobStore<C, M, B>, C extends Con
 
    @DataProvider(name = "delete")
    public Object[][] createData() {
-      return new Object[][] { { "sp ace" }, { "unic¿de" }, { "qu?stion" } };
+      return new Object[][] { { "sp ace" }, { "qu?stion" }, { "unic¿de" }, { "path/" } };
    }
 
    @Test(groups = { "integration", "live" }, dataProvider = "delete")
@@ -295,7 +305,7 @@ public class BaseBlobIntegrationTest<S extends BlobStore<C, M, B>, C extends Con
       String containerName = getContainerName();
       try {
          addBlobToContainer(containerName, key);
-         assert client.removeBlob(containerName, key).get(10, TimeUnit.SECONDS);
+         assert context.getApi().removeBlob(containerName, key).get(10, TimeUnit.SECONDS);
          assertContainerEmptyDeleting(containerName, key);
       } finally {
          returnContainer(containerName);
@@ -304,7 +314,7 @@ public class BaseBlobIntegrationTest<S extends BlobStore<C, M, B>, C extends Con
 
    private void assertContainerEmptyDeleting(String containerName, String key)
             throws InterruptedException, ExecutionException, TimeoutException {
-      List<M> listing = client.listBlobs(containerName).get(10, TimeUnit.SECONDS);
+      List<M> listing = context.getApi().listBlobs(containerName).get(10, TimeUnit.SECONDS);
       assertEquals(listing.size(), 0, String.format(
                "deleting %s, we still have %s left in container %s, using encoding %s", key,
                listing.size(), containerName, LOCAL_ENCODING));
@@ -313,10 +323,11 @@ public class BaseBlobIntegrationTest<S extends BlobStore<C, M, B>, C extends Con
    @Test(groups = { "integration", "live" })
    public void deleteObjectNoContainer() throws Exception {
       try {
-         client.removeBlob("donb", "test").get(10, TimeUnit.SECONDS);
+         context.getApi().removeBlob("donb", "test").get(10, TimeUnit.SECONDS);
       } catch (ExecutionException e) {
-         assert e.getCause() instanceof HttpResponseException;
-         assertEquals(((HttpResponseException) e.getCause()).getResponse().getStatusCode(), 404);
+         assert (e.getCause() instanceof HttpResponseException || e.getCause() instanceof ContainerNotFoundException);
+         if (e.getCause() instanceof HttpResponseException)
+            assertEquals(((HttpResponseException) e.getCause()).getResponse().getStatusCode(), 404);
       }
    }
 
@@ -333,7 +344,7 @@ public class BaseBlobIntegrationTest<S extends BlobStore<C, M, B>, C extends Con
    @Test(groups = { "integration", "live" }, dataProvider = "putTests")
    public void testPutObject(String key, String type, Object content, Object realObject)
             throws Exception {
-      B object = objectFactory.createBlob(key);
+      B object = context.newBlob(key);
       object.getMetadata().setContentType(type);
       object.setData(content);
       if (content instanceof InputStream) {
@@ -341,11 +352,12 @@ public class BaseBlobIntegrationTest<S extends BlobStore<C, M, B>, C extends Con
       }
       String containerName = getContainerName();
       try {
-         assertNotNull(client.putBlob(containerName, object).get(10, TimeUnit.SECONDS));
-         object = client.getBlob(containerName, object.getKey()).get(10, TimeUnit.SECONDS);
+         assertNotNull(context.getApi().putBlob(containerName, object).get(10, TimeUnit.SECONDS));
+         object = context.getApi().getBlob(containerName, object.getKey())
+                  .get(10, TimeUnit.SECONDS);
          String returnedString = BlobStoreUtils.getContentAsStringAndClose(object);
          assertEquals(returnedString, realObject);
-         assertEquals(client.listBlobs(containerName).get(10, TimeUnit.SECONDS).size(), 1);
+         assertEquals(context.getApi().listBlobs(containerName).get(10, TimeUnit.SECONDS).size(), 1);
       } finally {
          returnContainer(containerName);
       }
@@ -355,7 +367,7 @@ public class BaseBlobIntegrationTest<S extends BlobStore<C, M, B>, C extends Con
    public void testMetadata() throws Exception {
       String key = "hello";
 
-      B object = objectFactory.createBlob(key);
+      B object = context.newBlob(key);
       object.setData(TEST_STRING);
       object.getMetadata().setContentType("text/plain");
       object.getMetadata().setSize(TEST_STRING.length());
@@ -371,7 +383,7 @@ public class BaseBlobIntegrationTest<S extends BlobStore<C, M, B>, C extends Con
          M metadata = newObject.getMetadata();
 
          validateMetadata(metadata);
-         validateMetadata(client.blobMetadata(containerName, key));
+         validateMetadata(context.getApi().blobMetadata(containerName, key));
       } finally {
          returnContainer(containerName);
       }

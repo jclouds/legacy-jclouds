@@ -46,7 +46,6 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ContainerMetadata;
-import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest.TestInitializer.Result;
 import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.HttpUtils;
@@ -67,33 +66,13 @@ public class BaseBlobStoreIntegrationTest<S extends BlobStore<C, M, B>, C extend
    protected static final String LOCAL_ENCODING = System.getProperty("file.encoding");
    protected static final String TEST_STRING = "<apples><apple name=\"fuji\"></apple> </apples>";
 
-   public static interface BlobStoreObjectFactory<C, B> {
-      B createBlob(String key);
-
-      C createContainerMetadata(String key);
-   }
-
-   public static interface TestInitializer<S extends BlobStore<C, M, B>, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>> {
-      Result<S, C, M, B> init(Module configurationModule, ITestContext context) throws Exception;
-
-      public static interface Result<S extends BlobStore<C, M, B>, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>> {
-         BlobStoreObjectFactory<C, B> getObjectFactory();
-
-         S getClient();
-
-         BlobStoreContext<S, M, B> getContext();
-      }
-   }
-
    public static long INCONSISTENCY_WINDOW = 5000;
    protected static volatile AtomicInteger containerIndex = new AtomicInteger(0);
 
    protected byte[] goodETag;
    protected byte[] badETag;
 
-   protected volatile BlobStoreObjectFactory<C, B> objectFactory;
-   protected volatile S client;
-   protected volatile BlobStoreContext<S, M, B> context;
+   protected volatile BlobStoreContext<S, C, M, B> context;
    protected static volatile int containerCount = 20;
    public static final String CONTAINER_PREFIX = System.getProperty("user.name") + "-blobstore";
    /**
@@ -117,31 +96,28 @@ public class BaseBlobStoreIntegrationTest<S extends BlobStore<C, M, B>, C extend
    }
 
    @SuppressWarnings("unchecked")
-   private Result<S, C, M, B> getCloudResources(ITestContext testContext)
+   private BlobStoreContext<S, C, M, B> getCloudResources(ITestContext testContext)
             throws ClassNotFoundException, InstantiationException, IllegalAccessException,
             Exception {
       String initializerClass = checkNotNull(System.getProperty("jclouds.test.initializer"),
                "jclouds.test.initializer");
-      Class<TestInitializer<S, C, M, B>> clazz = (Class<TestInitializer<S, C, M, B>>) Class
+      Class<BaseTestInitializer<S, C, M, B>> clazz = (Class<BaseTestInitializer<S, C, M, B>>) Class
                .forName(initializerClass);
-      TestInitializer<S, C, M, B> initializer = clazz.newInstance();
+      BaseTestInitializer<S, C, M, B> initializer = clazz.newInstance();
       return initializer.init(createHttpModule(), testContext);
    }
 
    protected ExecutorService exec;
 
    /**
-    * we are doing this at a class level, as the client object is going to be shared for all methods
-    * in the class. We don't want to do this for group, as some test classes may want to have a
-    * different implementation of client. For example, one class may want non-blocking i/o and
-    * another class google appengine.
+    * we are doing this at a class level, as the context.getApi() object is going to be shared for
+    * all methods in the class. We don't want to do this for group, as some test classes may want to
+    * have a different implementation of context.getApi(). For example, one class may want
+    * non-blocking i/o and another class google appengine.
     */
    @BeforeClass(groups = { "integration", "live" })
    public void setUpResourcesOnThisThread(ITestContext testContext) throws Exception {
-      TestInitializer.Result<S, C, M, B> result = getCloudResources(testContext);
-      objectFactory = result.getObjectFactory();
-      client = result.getClient();
-      context = result.getContext();
+      context = getCloudResources(testContext);
       exec = Executors.newCachedThreadPool();
    }
 
@@ -154,25 +130,23 @@ public class BaseBlobStoreIntegrationTest<S extends BlobStore<C, M, B>, C extend
 
    private static volatile boolean initialized = false;
 
-   protected void createContainersSharedByAllThreads(Result<S, C, M, B> result,
+   protected void createContainersSharedByAllThreads(BlobStoreContext<S, C, M, B> context,
             ITestContext testContext) throws Exception {
       while (!initialized) {
          synchronized (BaseBlobStoreIntegrationTest.class) {
             if (!initialized) {
-               S client = result.getClient();
-               BlobStoreContext<S, M, B> context = result.getContext();
-               deleteEverything(client, context);
+               deleteEverything(context);
                for (; containerIndex.get() < containerCount; containerIndex.incrementAndGet()) {
                   String containerName = CONTAINER_PREFIX + containerIndex;
                   if (blackListContainers.contains(containerName)) {
                      containerCount++;
                   } else {
                      try {
-                        createContainerAndEnsureEmpty(client, context, containerName);
+                        createContainerAndEnsureEmpty(context, containerName);
                         containerJsr330.put(containerName);
                      } catch (Throwable e) {
                         // throw away the container and try again with the next index
-                        deleteContainerOrWarnIfUnable(client, context, containerName);
+                        deleteContainerOrWarnIfUnable(context, containerName);
                         containerCount++;
                      }
                   }
@@ -187,10 +161,10 @@ public class BaseBlobStoreIntegrationTest<S extends BlobStore<C, M, B>, C extend
       }
    }
 
-   private static void deleteContainerOrWarnIfUnable(BlobStore<?, ?, ?> client,
-            BlobStoreContext<?, ?, ?> context, String containerName) {
+   private static void deleteContainerOrWarnIfUnable(BlobStoreContext<?, ?, ?, ?> context,
+            String containerName) {
       try {
-         deleteContainer(client, context, containerName);
+         deleteContainer(context, containerName);
       } catch (Throwable ex) {
          System.err.printf("unable to delete container %s, ignoring...%n", containerName);
          blackListContainers.add(containerName);
@@ -203,12 +177,12 @@ public class BaseBlobStoreIntegrationTest<S extends BlobStore<C, M, B>, C extend
     * Tries to delete all containers, runs up to two times
     */
    @SuppressWarnings("unchecked")
-   protected static void deleteEverything(final BlobStore<?, ?, ?> client,
-            final BlobStoreContext<?, ?, ?> context) throws Exception {
+   protected static void deleteEverything(final BlobStoreContext<?, ?, ?, ?> context)
+            throws Exception {
       try {
          for (int i = 0; i < 2; i++) {
             Iterable<ContainerMetadata> testContainers = Iterables.filter(
-                     (List<ContainerMetadata>) client.listContainers(),
+                     (List<ContainerMetadata>) context.getApi().listContainers(),
                      new Predicate<ContainerMetadata>() {
                         public boolean apply(ContainerMetadata input) {
                            return input.getName().startsWith(CONTAINER_PREFIX.toLowerCase());
@@ -219,7 +193,7 @@ public class BaseBlobStoreIntegrationTest<S extends BlobStore<C, M, B>, C extend
                for (final ContainerMetadata metaDatum : testContainers) {
                   executor.execute(new Runnable() {
                      public void run() {
-                        deleteContainerOrWarnIfUnable(client, context, metaDatum.getName());
+                        deleteContainerOrWarnIfUnable(context, metaDatum.getName());
                      }
                   });
                }
@@ -257,29 +231,31 @@ public class BaseBlobStoreIntegrationTest<S extends BlobStore<C, M, B>, C extend
          throw error;
    }
 
-   protected static void createContainerAndEnsureEmpty(BlobStore<?, ?, ?> client,
-            BlobStoreContext<?, ?, ?> context, final String containerName)
-            throws InterruptedException, ExecutionException, TimeoutException {
-      attemptToCreateContainerButRetryOn409(client, containerName);
-      emptyContainer(client, context, containerName);
+   protected static void createContainerAndEnsureEmpty(BlobStoreContext<?, ?, ?, ?> context,
+            final String containerName) throws InterruptedException, ExecutionException,
+            TimeoutException {
+      attemptToCreateContainerButRetryOn409(context, containerName);
+      emptyContainer(context, containerName);
    }
 
    /**
     * 409 could be a resolvable conflict, ex. container delete in progress. FIXME Comment this
     * 
-    * @param client
+    * @param context
+    *           .getApi()
     * @param containerName
     * @throws InterruptedException
     * @throws TimeoutException
     * @throws ExecutionException
     */
-   private static void attemptToCreateContainerButRetryOn409(BlobStore<?, ?, ?> client,
+   private static void attemptToCreateContainerButRetryOn409(
+            BlobStoreContext<? extends BlobStore<?, ?, ?>, ?, ?, ?> context,
             final String containerName) throws InterruptedException, TimeoutException,
             ExecutionException {
       ExecutionException error = null;
       OUTER: for (int i = 0; i < 10; i++) {
          try {
-            client.createContainer(containerName).get(10, TimeUnit.SECONDS);
+            context.getApi().createContainer(containerName).get(10, TimeUnit.SECONDS);
             break OUTER;
          } catch (ExecutionException e) {
             error = e;
@@ -298,12 +274,12 @@ public class BaseBlobStoreIntegrationTest<S extends BlobStore<C, M, B>, C extend
 
    protected void createContainerAndEnsureEmpty(String containerName) throws InterruptedException,
             ExecutionException, TimeoutException {
-      createContainerAndEnsureEmpty(client, context, containerName);
+      createContainerAndEnsureEmpty(context, containerName);
    }
 
    protected void addBlobToContainer(String sourceContainer, String key)
             throws InterruptedException, ExecutionException, TimeoutException, IOException {
-      B sourceObject = objectFactory.createBlob(key);
+      B sourceObject = context.newBlob(key);
       sourceObject.getMetadata().setContentType("text/xml");
       sourceObject.setData(TEST_STRING);
       addBlobToContainer(sourceContainer, sourceObject);
@@ -311,13 +287,13 @@ public class BaseBlobStoreIntegrationTest<S extends BlobStore<C, M, B>, C extend
 
    protected void addBlobToContainer(String sourceContainer, B object) throws InterruptedException,
             ExecutionException, TimeoutException, IOException {
-      client.putBlob(sourceContainer, object).get(10, TimeUnit.SECONDS);
+      context.getApi().putBlob(sourceContainer, object).get(10, TimeUnit.SECONDS);
    }
 
    protected B validateContent(String sourceContainer, String key) throws InterruptedException,
             ExecutionException, TimeoutException, IOException {
       assertEventuallyContainerSize(sourceContainer, 1);
-      B newObject = client.getBlob(sourceContainer, key).get(10, TimeUnit.SECONDS);
+      B newObject = context.getApi().getBlob(sourceContainer, key).get(10, TimeUnit.SECONDS);
       assert newObject != null;
       assertEquals(BlobStoreUtils.getContentAsStringAndClose(newObject), TEST_STRING);
       return newObject;
@@ -328,7 +304,8 @@ public class BaseBlobStoreIntegrationTest<S extends BlobStore<C, M, B>, C extend
       assertEventually(new Runnable() {
          public void run() {
             try {
-               assertEquals(client.listBlobs(containerName).get(10, TimeUnit.SECONDS).size(), count);
+               assertEquals(context.getApi().listBlobs(containerName).get(10, TimeUnit.SECONDS)
+                        .size(), count);
             } catch (Exception e) {
                Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
             }
@@ -340,7 +317,8 @@ public class BaseBlobStoreIntegrationTest<S extends BlobStore<C, M, B>, C extend
             TimeoutException {
       String containerName = containerJsr330.poll(30, TimeUnit.SECONDS);
       assert containerName != null : "unable to get a container for the test";
-      emptyContainer(containerName);
+      if (!emptyContainer(containerName))
+         this.createContainerAndEnsureEmpty(containerName);
       return containerName;
    }
 
@@ -367,11 +345,12 @@ public class BaseBlobStoreIntegrationTest<S extends BlobStore<C, M, B>, C extend
           * *substantially* slow down tests on a real server over a network.
           */
          if (SANITY_CHECK_RETURNED_BUCKET_NAME) {
-            if (!Iterables.any(client.listContainers(), new Predicate<ContainerMetadata>() {
-               public boolean apply(ContainerMetadata md) {
-                  return containerName.equals(md.getName());
-               }
-            })) {
+            if (!Iterables.any(context.getApi().listContainers(),
+                     new Predicate<ContainerMetadata>() {
+                        public boolean apply(ContainerMetadata md) {
+                           return containerName.equals(md.getName());
+                        }
+                     })) {
                throw new IllegalStateException(
                         "Test returned the name of a non-existent container: " + containerName);
             }
@@ -405,7 +384,7 @@ public class BaseBlobStoreIntegrationTest<S extends BlobStore<C, M, B>, C extend
    private String allocateNewContainerName(final String container) {
       exec.submit(new Runnable() {
          public void run() {
-            deleteContainerOrWarnIfUnable(client, context, container);
+            deleteContainerOrWarnIfUnable(context, container);
          }
       });
       String newScratchContainer = container + containerIndex.incrementAndGet();
@@ -417,20 +396,21 @@ public class BaseBlobStoreIntegrationTest<S extends BlobStore<C, M, B>, C extend
       return new JavaUrlHttpCommandExecutorServiceModule();
    }
 
-   protected void emptyContainer(String name) throws InterruptedException, ExecutionException,
+   protected boolean emptyContainer(String name) throws InterruptedException, ExecutionException,
             TimeoutException {
-      emptyContainer(client, context, name);
+      return emptyContainer(context, name);
    }
 
    /**
     * Remove any objects in a container, leaving it empty.
+    * 
+    * @return
     */
-   protected static void emptyContainer(BlobStore<?, ?, ?> client,
-            final BlobStoreContext<?, ?, ?> context, final String name)
-            throws InterruptedException, ExecutionException, TimeoutException {
-      if (client.containerExists(name)) {
+   protected static boolean emptyContainer(final BlobStoreContext<?, ?, ?, ?> context,
+            final String name) throws InterruptedException, ExecutionException, TimeoutException {
+      if (context.getApi().containerExists(name)) {
          // This can fail to be zero length because of stale container lists. Ex.
-         // client.listContainer()
+         // context.getApi().listContainer()
          // could return 9 keys, when there are 10. When all the deletions finish, one entry would
          // be left in this case. Instead of failing, we will attempt this entire container deletion
          // operation multiple times to ensure we can acheive a zero length container.
@@ -454,21 +434,23 @@ public class BaseBlobStoreIntegrationTest<S extends BlobStore<C, M, B>, C extend
                }
             }
          });
-
+         return true;
       }
+      return false;
    }
 
-   protected static void deleteContainer(final BlobStore<?, ?, ?> client,
-            BlobStoreContext<?, ?, ?> context, final String name) throws InterruptedException,
-            ExecutionException, TimeoutException {
-      if (client.containerExists(name)) {
+   protected static void deleteContainer(
+            final BlobStoreContext<? extends BlobStore<?, ?, ?>, ?, ?, ?> context, final String name)
+            throws InterruptedException, ExecutionException, TimeoutException {
+      if (context.getApi().containerExists(name)) {
          System.err.printf("*** deleting container %s...%n", name);
-         emptyContainer(client, context, name);
-         client.deleteContainer(name).get(10, TimeUnit.SECONDS);
+         emptyContainer(context, name);
+         context.getApi().deleteContainer(name).get(10, TimeUnit.SECONDS);
          assertEventually(new Runnable() {
             public void run() {
                try {
-                  assert !client.containerExists(name) : "container " + name + " still exists";
+                  assert !context.getApi().containerExists(name) : "container " + name
+                           + " still exists";
                } catch (Exception e) {
                   Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
                }

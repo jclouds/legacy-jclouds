@@ -31,6 +31,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
+
 import org.jclouds.aws.s3.S3BlobStore;
 import org.jclouds.aws.s3.domain.AccessControlList;
 import org.jclouds.aws.s3.domain.ArrayListBucketResponse;
@@ -52,6 +55,7 @@ import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.integration.internal.StubBlobStore;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.options.GetOptions;
+import org.jclouds.util.DateService;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Function;
@@ -69,6 +73,14 @@ import com.google.inject.internal.Nullable;
  */
 public class StubS3BlobStore extends StubBlobStore<BucketMetadata, ObjectMetadata, S3Object>
          implements S3BlobStore {
+
+   @Inject
+   protected StubS3BlobStore(Map<String, Map<String, S3Object>> containerToBlobs,
+            DateService dateService, Provider<BucketMetadata> containerMetaProvider,
+            Provider<S3Object> blobProvider) {
+      super(containerToBlobs, dateService, containerMetaProvider, blobProvider);
+   }
+
    public static final String TEST_ACL_ID = "1a405254c932b52e5b5caaa88186bc431a1bacb9ece631f835daddaf0c47677c";
    public static final String TEST_ACL_EMAIL = "james@misterm.org";
    private static Map<String, BucketMetadata.LocationConstraint> bucketToLocation = new ConcurrentHashMap<String, BucketMetadata.LocationConstraint>();
@@ -316,31 +328,6 @@ public class StubS3BlobStore extends StubBlobStore<BucketMetadata, ObjectMetadat
 
    public Future<byte[]> putBlob(String bucketName, S3Object object) {
       return putBlob(bucketName, object, PutObjectOptions.NONE);
-   }
-
-   @Override
-   protected S3Object createBlob(String name) {
-      return new S3Object(name);
-   }
-
-   @Override
-   protected S3Object createBlob(ObjectMetadata metadata) {
-      return new S3Object(metadata);
-   }
-
-   @Override
-   protected BucketMetadata createContainerMetadata(String name) {
-      return new BucketMetadata(name);
-   }
-
-   /**
-    * note this must be final and static so that tests coming from multiple threads will pass.
-    */
-   private static final Map<String, Map<String, S3Object>> containerToBlobs = new ConcurrentHashMap<String, Map<String, S3Object>>();
-
-   @Override
-   public Map<String, Map<String, S3Object>> getContainerToBlobs() {
-      return containerToBlobs;
    }
 
 }

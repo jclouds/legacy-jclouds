@@ -55,9 +55,9 @@ public class S3ContainerLiveTest extends
    public void testPublicReadAccessPolicy() throws Exception {
       String containerName = getScratchContainerName();
       try {
-         client.createContainer(containerName, withBucketAcl(CannedAccessPolicy.PUBLIC_READ)).get(
+         context.getApi().createContainer(containerName, withBucketAcl(CannedAccessPolicy.PUBLIC_READ)).get(
                   10, TimeUnit.SECONDS);
-         AccessControlList acl = client.getContainerACL(containerName).get(10, TimeUnit.SECONDS);
+         AccessControlList acl = context.getApi().getContainerACL(containerName).get(10, TimeUnit.SECONDS);
          assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ), acl.toString());
          // TODO: I believe that the following should work based on the above acl assertion passing.
          // However, it fails on 403
@@ -86,13 +86,13 @@ public class S3ContainerLiveTest extends
    public void testEu() throws Exception {
       final String containerName = getScratchContainerName();
       try {
-         client.createContainer(containerName + "eu",
+         context.getApi().createContainer(containerName + "eu",
                   createIn(LocationConstraint.EU).withBucketAcl(CannedAccessPolicy.PUBLIC_READ))
                   .get(30, TimeUnit.SECONDS);
          assertEventually(new Runnable() {
             public void run() {
                try {
-                  AccessControlList acl = client.getContainerACL(containerName + "eu").get(30,
+                  AccessControlList acl = context.getApi().getContainerACL(containerName + "eu").get(30,
                            TimeUnit.SECONDS);
                   assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ), acl
                            .toString());

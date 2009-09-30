@@ -44,15 +44,15 @@ import com.google.inject.Module;
  */
 public class S3ContextFactory {
 
-   public static S3Context createS3Context(String awsAccessKeyId, String awsSecretAccessKey,
-            Module... modules) {
-      return S3ContextBuilder.newBuilder(awsAccessKeyId, awsSecretAccessKey).withModules(modules)
+   public static S3Context createContext(
+            String awsAccessKeyId, String awsSecretAccessKey, Module... modules) {
+      return new S3ContextBuilder(awsAccessKeyId, awsSecretAccessKey).withModules(modules)
                .buildContext();
    }
 
-   public static S3Context createS3Context(URI endpoint, String awsAccessKeyId,
-            String awsSecretAccessKey, Module... modules) {
-      return S3ContextBuilder.newBuilder(awsAccessKeyId, awsSecretAccessKey).withEndpoint(endpoint)
+   public static S3Context createContext(
+            URI endpoint, String awsAccessKeyId, String awsSecretAccessKey, Module... modules) {
+      return new S3ContextBuilder(awsAccessKeyId, awsSecretAccessKey).withEndpoint(endpoint)
                .withModules(modules).buildContext();
    }
 }

@@ -69,7 +69,7 @@ public class RestClientProxy<T> implements InvocationHandler {
    @SuppressWarnings("unchecked")
    @Inject
    public RestClientProxy(TransformingHttpCommand.Factory factory,
-           JaxrsAnnotationProcessor<T> util, TypeLiteral<T> typeLiteral) {
+            JaxrsAnnotationProcessor<T> util, TypeLiteral<T> typeLiteral) {
       this.util = util;
       this.declaring = (Class<T>) typeLiteral.getRawType();
       this.commandFactory = factory;

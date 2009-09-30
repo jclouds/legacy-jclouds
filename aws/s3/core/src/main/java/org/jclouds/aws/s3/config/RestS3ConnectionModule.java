@@ -43,7 +43,6 @@ import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.rest.RestClientFactory;
-import org.jclouds.rest.config.JaxrsModule;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -60,7 +59,6 @@ public class RestS3ConnectionModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      install(new JaxrsModule());
       bind(RequestAuthorizeSignature.class).in(Scopes.SINGLETON);
       bindErrorHandlers();
       bindRetryHandlers();

@@ -63,7 +63,7 @@ public class AWSClientErrorRetryHandler implements HttpRetryHandler {
          return false;
       if (response.getStatusCode() == 400 || response.getStatusCode() == 409) {
          byte[] content = Utils.closeConnectionButKeepContentStream(response);
-         command.incrementRedirectCount();
+         command.incrementFailureCount();
          try {
             AWSError error = utils.parseAWSErrorFromContent(command, response, new String(content));
             if ("RequestTimeout".equals(error.getCode())

@@ -75,15 +75,15 @@ public class BaseBlobLiveTest<S extends BlobStore<C, M, B>, C extends ContainerM
       int length = connection.getContentLength();
       InputStream input = connection.getInputStream();
 
-      B object = objectFactory.createBlob(key);
+      B object = context.newBlob(key);
       object.setData(input);
       object.setContentLength(length);
       object.getMetadata().setContentMD5(md5);
       object.getMetadata().setSize(length);
       String bucketName = getContainerName();
       try {
-         client.putBlob(bucketName, object).get(180, TimeUnit.SECONDS);
-         assertEquals(client.blobMetadata(bucketName, key).getContentMD5(), md5);
+         context.getApi().putBlob(bucketName, object).get(180, TimeUnit.SECONDS);
+         assertEquals(context.getApi().blobMetadata(bucketName, key).getContentMD5(), md5);
       } finally {
          returnContainer(bucketName);
       }

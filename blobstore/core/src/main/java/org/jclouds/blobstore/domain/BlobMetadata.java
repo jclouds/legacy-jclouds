@@ -29,6 +29,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.Serializable;
 import java.util.Arrays;
 
+import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 
 import org.joda.time.DateTime;
@@ -114,6 +115,7 @@ public class BlobMetadata implements Comparable<BlobMetadata>, Serializable {
       return true;
    }
 
+   @Inject
    public BlobMetadata() {
       super();
    }

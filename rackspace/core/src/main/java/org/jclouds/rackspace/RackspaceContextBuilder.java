@@ -32,7 +32,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.Properties;
 
-import org.jclouds.cloud.CloudContext;
 import org.jclouds.cloud.CloudContextBuilder;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
@@ -40,6 +39,7 @@ import org.jclouds.rackspace.config.RestRackspaceAuthenticationModule;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
 
 /**
  * Creates {@link RackspaceContext} or {@link Injector} instances based on the most commonly
@@ -54,28 +54,46 @@ import com.google.inject.Module;
  * @author Adrian Cole
  * @see CloudFilesContext
  */
-public abstract class RackspaceContextBuilder<X extends CloudContext<?>> extends
-         CloudContextBuilder<X> {
+public abstract class RackspaceContextBuilder<C> extends CloudContextBuilder<C> {
 
-   public RackspaceContextBuilder(Properties props) {
-      super(props);
-      properties.setProperty(PROPERTY_RACKSPACE_ENDPOINT, "https://api.mosso.com");
+   public RackspaceContextBuilder(TypeLiteral<C> defaultApiClass, String id, String secret) {
+      this(defaultApiClass, new Properties());
+      authenticate(this, id, secret);
+   }
+
+   public RackspaceContextBuilder(TypeLiteral<C> defaultApiClass, Properties props) {
+      super(defaultApiClass, props);
+      initialize(this);
    }
 
    @Override
-   public CloudContextBuilder<X> withEndpoint(URI endpoint) {
-      properties.setProperty(PROPERTY_RACKSPACE_ENDPOINT, checkNotNull(endpoint, "endpoint")
-               .toString());
-      return this;
+   protected void addConnectionModule(List<Module> modules) {
+      addAuthenticationModule(this);
    }
 
-   public void authenticate(String id, String secret) {
-      properties.setProperty(PROPERTY_RACKSPACE_USER, checkNotNull(id, "user"));
-      properties.setProperty(PROPERTY_RACKSPACE_KEY, checkNotNull(secret, "key"));
+   public static <C> void authenticate(CloudContextBuilder<C> builder, String id, String secret) {
+      builder.getProperties().setProperty(PROPERTY_RACKSPACE_USER, checkNotNull(id, "user"));
+      builder.getProperties().setProperty(PROPERTY_RACKSPACE_KEY, checkNotNull(secret, "key"));
    }
 
-   public void addApiModule(List<Module> modules) {
-      modules.add(new RestRackspaceAuthenticationModule());
+   public static <C> void initialize(CloudContextBuilder<C> builder) {
+      builder.getProperties().setProperty(PROPERTY_RACKSPACE_ENDPOINT, "https://api.mosso.com");
+   }
+
+   public static <C> void addAuthenticationModule(CloudContextBuilder<C> builder) {
+      builder.withModule(new RestRackspaceAuthenticationModule());
+   }
+
+   public static <C> CloudContextBuilder<C> withEndpoint(CloudContextBuilder<C> builder,
+            URI endpoint) {
+      builder.getProperties().setProperty(PROPERTY_RACKSPACE_ENDPOINT,
+               checkNotNull(endpoint, "endpoint").toString());
+      return builder;
+   }
+
+   @Override
+   public RackspaceContextBuilder<C> withEndpoint(URI endpoint) {
+      return (RackspaceContextBuilder<C>) withEndpoint(this, endpoint);
    }
 
 }

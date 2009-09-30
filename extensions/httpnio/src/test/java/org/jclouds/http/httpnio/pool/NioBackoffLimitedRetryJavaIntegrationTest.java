@@ -23,12 +23,9 @@
  */
 package org.jclouds.http.httpnio.pool;
 
-import java.util.Properties;
-
 import org.jclouds.http.BackoffLimitedRetryJavaIntegrationTest;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.http.httpnio.config.NioTransformingHttpCommandExecutorServiceModule;
-import org.jclouds.http.pool.PoolConstants;
 import org.testng.annotations.Test;
 
 import com.google.inject.Module;
@@ -44,14 +41,6 @@ import com.google.inject.Module;
 @Test(sequential = true)
 public class NioBackoffLimitedRetryJavaIntegrationTest extends
          BackoffLimitedRetryJavaIntegrationTest {
-
-   protected void addConnectionProperties(Properties properties) {
-      properties.setProperty(PoolConstants.PROPERTY_POOL_MAX_CONNECTION_REUSE, "75");
-      properties.setProperty(PoolConstants.PROPERTY_POOL_MAX_SESSION_FAILURES, "2");
-      properties.setProperty(PoolConstants.PROPERTY_POOL_REQUEST_INVOKER_THREADS, "1");
-      properties.setProperty(PoolConstants.PROPERTY_POOL_IO_WORKER_THREADS, "2");
-      properties.setProperty(PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS, "12");
-   }
 
    protected Module createClientModule() {
       return new NioTransformingHttpCommandExecutorServiceModule();

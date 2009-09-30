@@ -21,35 +21,32 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudfiles.internal;
+package org.jclouds.rackspace.cloudfiles.integration;
 
-import org.jclouds.blobstore.LiveInputStreamMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
+import org.jclouds.cloud.ConfiguresCloudConnection;
 import org.jclouds.rackspace.cloudfiles.CloudFilesBlobStore;
-import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
+import org.jclouds.rackspace.cloudfiles.internal.StubCloudFilesBlobStore;
 
-import javax.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
+import com.google.inject.AbstractModule;
+import com.google.inject.TypeLiteral;
 
-/**
- * Map representation of a live connection to CloudFiles. All put operations will result in ETag
- * calculation. If this is not desired, use {@link LiveCloudFilesObjectMap} instead.
- * 
- * @author Adrian Cole
- * @see CloudFilesBlobStore
- * @see LiveInputStreamMap
- */
-public class LiveCloudFilesInputStreamMap extends
-         LiveInputStreamMap<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> {
-
-   @Inject
-   public LiveCloudFilesInputStreamMap(CloudFilesBlobStore connection, @Assisted String container) {
-      super(connection, container);
-   }
+@ConfiguresCloudConnection
+public class StubCloudFilesConnectionModule extends AbstractModule {
+   // must be singleton for all threads and all objects or tests may fail;
+   static final ConcurrentHashMap<String, Map<String, Blob<BlobMetadata>>> map = new ConcurrentHashMap<String, Map<String, Blob<BlobMetadata>>>();
 
    @Override
-   protected Blob<BlobMetadata> createBlob(String s) {
-      return new Blob<BlobMetadata>(s);
+   protected void configure() {
+      bind(new TypeLiteral<Map<String, Map<String, Blob<BlobMetadata>>>>() {
+      }).toInstance(map);
+      bind(new TypeLiteral<CloudFilesBlobStore>() {
+      }).to(new TypeLiteral<StubCloudFilesBlobStore>() {
+      }).asEagerSingleton();
    }
+
 }

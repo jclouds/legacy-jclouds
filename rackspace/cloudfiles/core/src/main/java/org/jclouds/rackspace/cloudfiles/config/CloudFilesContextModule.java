@@ -23,53 +23,46 @@
  */
 package org.jclouds.rackspace.cloudfiles.config;
 
+import java.net.URI;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
+
+import org.jclouds.blobstore.BlobStoreContextImpl;
+import org.jclouds.blobstore.BlobMap.Factory;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.functions.ParseBlobFromHeadersAndHttpContent.BlobFactory;
-import org.jclouds.blobstore.functions.ParseContentTypeFromHeaders.BlobMetadataFactory;
-import org.jclouds.cloud.ConfiguresCloudConnection;
-import org.jclouds.http.RequiresHttp;
+import org.jclouds.lifecycle.Closer;
+import org.jclouds.rackspace.CloudFiles;
 import org.jclouds.rackspace.cloudfiles.CloudFilesBlobStore;
 import org.jclouds.rackspace.cloudfiles.CloudFilesContext;
-import org.jclouds.rackspace.cloudfiles.internal.GuiceCloudFilesContext;
-import org.jclouds.rackspace.cloudfiles.internal.LiveCloudFilesInputStreamMap;
-import org.jclouds.rackspace.cloudfiles.internal.LiveCloudFilesObjectMap;
+import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
+import org.jclouds.rackspace.reference.RackspaceConstants;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.TypeLiteral;
-import com.google.inject.assistedinject.FactoryProvider;
+import com.google.inject.Scopes;
 
-/**
- * Configures the Cloud Files connection, including logging and http transport.
- * 
- * @author Adrian Cole
- */
-@ConfiguresCloudConnection
-@RequiresHttp
 public class CloudFilesContextModule extends AbstractModule {
-   protected final TypeLiteral<BlobMetadataFactory<BlobMetadata>> objectMetadataFactoryLiteral = new TypeLiteral<BlobMetadataFactory<BlobMetadata>>() {
-   };
-   protected final TypeLiteral<BlobFactory<BlobMetadata, Blob<BlobMetadata>>> objectFactoryLiteral = new TypeLiteral<BlobFactory<BlobMetadata, Blob<BlobMetadata>>>() {
-   };
 
    @Override
    protected void configure() {
-      this.requireBinding(CloudFilesBlobStore.class);
-      bind(GuiceCloudFilesContext.CloudFilesObjectMapFactory.class).toProvider(
-               FactoryProvider.newFactory(GuiceCloudFilesContext.CloudFilesObjectMapFactory.class,
-                        LiveCloudFilesObjectMap.class));
-      bind(GuiceCloudFilesContext.CloudFilesInputStreamMapFactory.class).toProvider(
-               FactoryProvider.newFactory(
-                        GuiceCloudFilesContext.CloudFilesInputStreamMapFactory.class,
-                        LiveCloudFilesInputStreamMap.class));
-      bind(objectMetadataFactoryLiteral).toProvider(
-               FactoryProvider.newFactory(objectMetadataFactoryLiteral,
-                        new TypeLiteral<BlobMetadata>() {
-                        }));
-      bind(objectFactoryLiteral).toProvider(
-               FactoryProvider.newFactory(objectFactoryLiteral,
-                        new TypeLiteral<Blob<BlobMetadata>>() {
-                        }));
-      bind(CloudFilesContext.class).to(GuiceCloudFilesContext.class);
+      bind(CloudFilesContext.class).to(CloudFilesContextImpl.class).in(Scopes.SINGLETON);
+   }
+
+   public static class CloudFilesContextImpl
+            extends
+            BlobStoreContextImpl<CloudFilesBlobStore, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>
+            implements CloudFilesContext {
+      @Inject
+      CloudFilesContextImpl(Factory<BlobMetadata, Blob<BlobMetadata>> blobMapFactory,
+               org.jclouds.blobstore.InputStreamMap.Factory<BlobMetadata> inputStreamMapFactory,
+               Closer closer, Provider<Blob<BlobMetadata>> blobProvider,
+               CloudFilesBlobStore defaultApi, @CloudFiles URI endPoint,
+               @Named(RackspaceConstants.PROPERTY_RACKSPACE_USER) String account) {
+         super(blobMapFactory, inputStreamMapFactory, closer, blobProvider, defaultApi, endPoint,
+                  account);
+      }
+
    }
 }

@@ -41,9 +41,10 @@ import org.testng.annotations.Test;
 import com.google.inject.AbstractModule;
 import com.google.inject.Binder;
 import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
 
 /**
- * Tests behavior of modules configured in CloudContextBuilder
+ * Tests behavior of modules configured in CloudContextBuilder<String>
  * 
  * @author Adrian Cole
  */
@@ -78,12 +79,17 @@ public class CloudContextBuilderTest {
          return URI.create("http://localhost");
       }
 
+      public <T> T getApi(Class<T> clazz) {
+         return null;
+      }
+
    }
 
-   class TestCloudContextBuilder extends CloudContextBuilder<TestCloudContext> {
+   class TestCloudContextBuilder extends CloudContextBuilder<String> {
 
       protected TestCloudContextBuilder(Properties properties) {
-         super(properties);
+         super(new TypeLiteral<String>() {
+         }, properties);
       }
 
       @Override
@@ -92,28 +98,18 @@ public class CloudContextBuilderTest {
       }
 
       @Override
-      protected void addApiModule(List<Module> modules) {
-         modules.add(new Module() {
-            public void configure(Binder arg0) {
-            }
-         });
+      public CloudContextBuilder<String> withEndpoint(URI endpoint) {
+         return this;
       }
 
       @Override
       protected void addContextModule(List<Module> modules) {
-         modules.add(new Module() {
-            public void configure(Binder arg0) {
-            }
-         });
+         // ignored as we add it directly above without use of injection
       }
 
       @Override
-      public void authenticate(String id, String secret) {
-      }
+      protected void addConnectionModule(List<Module> modules) {
 
-      @Override
-      public CloudContextBuilder<TestCloudContext> withEndpoint(URI endpoint) {
-         return this;
       }
 
    }
@@ -185,8 +181,6 @@ public class CloudContextBuilderTest {
    }
 
    public void testBuilder() {
-      String id = "awsAccessKeyId";
-      String secret = "awsSecretAccessKey";
       int httpMaxRetries = 9875;
       int poolIoWorkerThreads = 2727;
       int poolMaxConnectionReuse = 3932;
@@ -207,7 +201,6 @@ public class CloudContextBuilderTest {
          }
       };
       TestCloudContextBuilder builder = new TestCloudContextBuilder(new Properties());
-      builder.authenticate(id, secret);
       builder.withHttpMaxRetries(httpMaxRetries);
       builder.withModule(module1);
       builder.withModules(module2);

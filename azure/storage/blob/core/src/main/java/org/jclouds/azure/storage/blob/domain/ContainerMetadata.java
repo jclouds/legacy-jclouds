@@ -85,6 +85,10 @@ public class ContainerMetadata extends org.jclouds.blobstore.domain.ContainerMet
       this.eTag = eTag;
    }
 
+   public ContainerMetadata() {
+      super();
+   }
+
    public ContainerMetadata(String name) {
       super(name);
    }

@@ -23,9 +23,6 @@
  */
 package org.jclouds.azure.storage.blob.domain;
 
-import javax.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
-
 /**
  * @author Adrian Cole
  */
@@ -35,8 +32,7 @@ public class Blob extends org.jclouds.blobstore.domain.Blob<BlobMetadata> {
       super(metadata, data);
    }
 
-   @Inject
-   public Blob(@Assisted BlobMetadata metadata) {
+   public Blob(BlobMetadata metadata) {
       super(metadata);
    }
 
@@ -46,6 +42,10 @@ public class Blob extends org.jclouds.blobstore.domain.Blob<BlobMetadata> {
 
    public Blob(String key) {
       this(new BlobMetadata(key));
+   }
+
+   public Blob() {
+      this(new BlobMetadata());
    }
 
 }

@@ -46,6 +46,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.apache.commons.io.IOUtils;
@@ -82,10 +84,22 @@ import com.google.inject.internal.Nullable;
  * @author Adrian Cole
  * @author James Murty
  */
-public abstract class StubBlobStore<C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
+public class StubBlobStore<C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
          implements BlobStore<C, M, B> {
 
-   protected DateService dateService = new DateService();
+   protected final DateService dateService;
+   private final Map<String, Map<String, B>> containerToBlobs;
+   protected final Provider<C> containerMetaProvider;
+   protected final Provider<B> blobProvider;
+
+   @Inject
+   protected StubBlobStore(Map<String, Map<String, B>> containerToBlobs, DateService dateService,
+            Provider<C> containerMetaProvider, Provider<B> blobProvider) {
+      this.dateService = dateService;
+      this.containerToBlobs = containerToBlobs;
+      this.containerMetaProvider = containerMetaProvider;
+      this.blobProvider = blobProvider;
+   }
 
    /**
     * @throws java.io.IOException
@@ -119,10 +133,9 @@ public abstract class StubBlobStore<C extends ContainerMetadata, M extends BlobM
                throw new KeyNotFoundException(bucketName, key);
 
             B object = realContents.get(key);
-
-            B returnVal = createBlob(copy(object.getMetadata()), object.getData());
-
-            returnVal.setData(new ByteArrayInputStream((byte[]) returnVal.getData()));
+            B returnVal = blobProvider.get();
+            returnVal.setMetadata(copy(object.getMetadata()));
+            returnVal.setData(new ByteArrayInputStream((byte[]) object.getData()));
             return returnVal;
          }
       };
@@ -198,7 +211,6 @@ public abstract class StubBlobStore<C extends ContainerMetadata, M extends BlobM
    }
 
    public Future<Boolean> deleteContainer(final String container) {
-      new Exception().printStackTrace();
       return new FutureBase<Boolean>() {
          public Boolean get() throws InterruptedException, ExecutionException {
             if (getContainerToBlobs().containsKey(container)) {
@@ -239,17 +251,13 @@ public abstract class StubBlobStore<C extends ContainerMetadata, M extends BlobM
       return Lists.newArrayList(Iterables.transform(getContainerToBlobs().keySet(),
                new Function<String, C>() {
                   public C apply(String name) {
-                     return createContainerMetadata(name);
+                     C cmd = containerMetaProvider.get();
+                     cmd.setName(name);
+                     return cmd;
                   }
 
                }));
    }
-
-   protected abstract C createContainerMetadata(String name);
-
-   protected abstract B createBlob(String name);
-
-   protected abstract B createBlob(M metadata);
 
    public Future<Boolean> createContainer(final String name) {
       return new FutureBase<Boolean>() {
@@ -378,7 +386,10 @@ public abstract class StubBlobStore<C extends ContainerMetadata, M extends BlobM
          final byte[] eTag = HttpUtils.md5(data);
          newMd.setETag(eTag);
          newMd.setContentType(object.getMetadata().getContentType());
-         B blob = createBlob(newMd, data);
+
+         B blob = blobProvider.get();
+         blob.setMetadata(newMd);
+         blob.setData(data);
          container.put(object.getKey(), blob);
 
          // Set HTTP headers to match metadata
@@ -400,12 +411,6 @@ public abstract class StubBlobStore<C extends ContainerMetadata, M extends BlobM
          throw new RuntimeException(e);
       }
 
-   }
-
-   private B createBlob(M newMd, Object data) {
-      B blob = createBlob(newMd);
-      blob.setData(data);
-      return blob;
    }
 
    public Future<B> getBlob(final String bucketName, final String key,
@@ -447,7 +452,7 @@ public abstract class StubBlobStore<C extends ContainerMetadata, M extends BlobM
                            "%1$s is after %2$s", object.getMetadata().getLastModified(),
                            unmodifiedSince)));
             }
-            B returnVal = createBlob(copy(object.getMetadata()), object.getData());
+            B returnVal = copyBlob(object);
 
             if (options.getRange() != null) {
                byte[] data = (byte[]) returnVal.getData();
@@ -485,11 +490,20 @@ public abstract class StubBlobStore<C extends ContainerMetadata, M extends BlobM
       try {
          return getBlob(container, key).get().getMetadata();
       } catch (Exception e) {
+         Utils.<ContainerNotFoundException> rethrowIfRuntimeOrSameType(e);
          Utils.<KeyNotFoundException> rethrowIfRuntimeOrSameType(e);
          throw new RuntimeException(e);// TODO
       }
    }
 
-   abstract public Map<String, Map<String, B>> getContainerToBlobs();
+   private B copyBlob(B object) {
+      B returnVal = blobProvider.get();
+      returnVal.setMetadata(copy(object.getMetadata()));
+      returnVal.setData(object.getData());
+      return returnVal;
+   }
 
+   public Map<String, Map<String, B>> getContainerToBlobs() {
+      return containerToBlobs;
+   }
 }

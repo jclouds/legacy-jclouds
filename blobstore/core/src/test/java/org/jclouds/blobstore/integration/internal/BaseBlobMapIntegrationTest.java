@@ -138,7 +138,7 @@ public class BaseBlobMapIntegrationTest<S extends BlobStore<C, M, B>, C extends 
       try {
          Map<String, B> map = createMap(context, bucketName);
          putString(map, "one", "apple");
-         B object = objectFactory.createBlob("one");
+         B object = context.newBlob("one");
          object.setData("apple");
          assertEventuallyContainsValue(map, object);
       } finally {
@@ -166,7 +166,7 @@ public class BaseBlobMapIntegrationTest<S extends BlobStore<C, M, B>, C extends 
       String bucketName = getContainerName();
       try {
          Map<String, B> map = createMap(context, bucketName);
-         B object = objectFactory.createBlob("one");
+         B object = context.newBlob("one");
          object.setData(IOUtils.toInputStream("apple"));
          object.generateMD5();
          B old = map.put(object.getKey(), object);
@@ -187,7 +187,7 @@ public class BaseBlobMapIntegrationTest<S extends BlobStore<C, M, B>, C extends 
          Map<String, B> map = createMap(context, bucketName);
          Map<String, B> newMap = new HashMap<String, B>();
          for (String key : fiveInputs.keySet()) {
-            B object = objectFactory.createBlob(key);
+            B object = context.newBlob(key);
             object.setData(fiveInputs.get(key));
             object.getMetadata().setSize(fiveBytes.get(key).length);
             newMap.put(key, object);
@@ -203,7 +203,7 @@ public class BaseBlobMapIntegrationTest<S extends BlobStore<C, M, B>, C extends 
 
    @Override
    protected void putString(Map<String, B> map, String key, String value) {
-      B object = objectFactory.createBlob(key);
+      B object = context.newBlob(key);
       object.setData(value);
       map.put(key, object);
    }
@@ -211,7 +211,7 @@ public class BaseBlobMapIntegrationTest<S extends BlobStore<C, M, B>, C extends 
    protected void putFiveStrings(Map<String, B> map) {
       Map<String, B> newMap = new HashMap<String, B>();
       for (Map.Entry<String, String> entry : fiveStrings.entrySet()) {
-         B object = objectFactory.createBlob(entry.getKey());
+         B object = context.newBlob(entry.getKey());
          object.setData(entry.getValue());
          newMap.put(entry.getKey(), object);
       }

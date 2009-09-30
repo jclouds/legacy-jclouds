@@ -23,19 +23,25 @@
  */
 package org.jclouds.aws.s3.config;
 
+import java.net.URI;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
+
+import org.jclouds.aws.reference.AWSConstants;
+import org.jclouds.aws.s3.S3;
 import org.jclouds.aws.s3.S3BlobStore;
 import org.jclouds.aws.s3.S3Context;
+import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.aws.s3.internal.GuiceS3Context;
-import org.jclouds.aws.s3.internal.LiveS3InputStreamMap;
-import org.jclouds.aws.s3.internal.LiveS3ObjectMap;
-import org.jclouds.blobstore.functions.ParseBlobFromHeadersAndHttpContent.BlobFactory;
-import org.jclouds.blobstore.functions.ParseContentTypeFromHeaders.BlobMetadataFactory;
+import org.jclouds.blobstore.BlobStoreContextImpl;
+import org.jclouds.blobstore.BlobMap.Factory;
+import org.jclouds.lifecycle.Closer;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.TypeLiteral;
-import com.google.inject.assistedinject.FactoryProvider;
+import com.google.inject.Scopes;
 
 /**
  * Configures the {@link S3Context}; requires {@link S3BlobStore} bound.
@@ -43,28 +49,24 @@ import com.google.inject.assistedinject.FactoryProvider;
  * @author Adrian Cole
  */
 public class S3ContextModule extends AbstractModule {
-   protected final TypeLiteral<BlobMetadataFactory<ObjectMetadata>> objectMetadataFactoryLiteral = new TypeLiteral<BlobMetadataFactory<ObjectMetadata>>() {
-   };
-   protected final TypeLiteral<BlobFactory<ObjectMetadata, S3Object>> objectFactoryLiteral = new TypeLiteral<BlobFactory<ObjectMetadata, S3Object>>() {
-   };
 
    @Override
    protected void configure() {
-      this.requireBinding(S3BlobStore.class);
-      bind(GuiceS3Context.S3ObjectMapFactory.class).toProvider(
-               FactoryProvider.newFactory(GuiceS3Context.S3ObjectMapFactory.class,
-                        LiveS3ObjectMap.class));
-      bind(GuiceS3Context.S3InputStreamMapFactory.class).toProvider(
-               FactoryProvider.newFactory(GuiceS3Context.S3InputStreamMapFactory.class,
-                        LiveS3InputStreamMap.class));
-      bind(objectMetadataFactoryLiteral).toProvider(
-               FactoryProvider.newFactory(objectMetadataFactoryLiteral,
-                        new TypeLiteral<ObjectMetadata>() {
-                        }));
-      bind(objectFactoryLiteral).toProvider(
-               FactoryProvider.newFactory(objectFactoryLiteral, new TypeLiteral<S3Object>() {
-               }));
-      bind(S3Context.class).to(GuiceS3Context.class);
+      bind(S3Context.class).to(S3ContextImpl.class).in(Scopes.SINGLETON);
+   }
+
+   public static class S3ContextImpl extends
+            BlobStoreContextImpl<S3BlobStore, BucketMetadata, ObjectMetadata, S3Object> implements
+            S3Context {
+      @Inject
+      S3ContextImpl(Factory<ObjectMetadata, S3Object> blobMapFactory,
+               org.jclouds.blobstore.InputStreamMap.Factory<ObjectMetadata> inputStreamMapFactory,
+               Closer closer, Provider<S3Object> blobProvider, S3BlobStore defaultApi,
+               @S3 URI endPoint, @Named(AWSConstants.PROPERTY_AWS_ACCESSKEYID) String account) {
+         super(blobMapFactory, inputStreamMapFactory, closer, blobProvider, defaultApi, endPoint,
+                  account);
+      }
+
    }
 
 }

@@ -52,7 +52,7 @@ public class S3BlobLiveTest extends
       try {
          String key = "hello";
 
-         client.putBlob(containerName, new S3Object(key, TEST_STRING),
+         context.getApi().putBlob(containerName, new S3Object(key, TEST_STRING),
 
          withAcl(CannedAccessPolicy.PUBLIC_READ)).get(10, TimeUnit.SECONDS);
 
@@ -74,7 +74,7 @@ public class S3BlobLiveTest extends
          addBlobToContainer(containerName, sourceKey);
          validateContent(containerName, sourceKey);
 
-         client.copyBlob(containerName, sourceKey, destinationContainer, destinationKey,
+         context.getApi().copyBlob(containerName, sourceKey, destinationContainer, destinationKey,
                   overrideAcl(CannedAccessPolicy.PUBLIC_READ)).get(10, TimeUnit.SECONDS);
 
          validateContent(destinationContainer, destinationKey);

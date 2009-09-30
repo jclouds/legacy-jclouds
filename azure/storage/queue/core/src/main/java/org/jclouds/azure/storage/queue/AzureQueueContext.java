@@ -23,7 +23,10 @@
  */
 package org.jclouds.azure.storage.queue;
 
+import org.jclouds.azure.storage.queue.internal.GuiceAzureQueueContext;
 import org.jclouds.cloud.CloudContext;
+
+import com.google.inject.ImplementedBy;
 
 /**
  * Represents an authenticated context to Azure Queue Service.
@@ -34,6 +37,7 @@ import org.jclouds.cloud.CloudContext;
  * @author Adrian Cole
  * 
  */
+@ImplementedBy(GuiceAzureQueueContext.class)
 public interface AzureQueueContext extends CloudContext<AzureQueueConnection> {
 
 }

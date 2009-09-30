@@ -39,6 +39,8 @@ import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.logging.Logger;
 
+import com.google.common.collect.ComputationException;
+
 /**
  * // TODO: Adrian: Document this!
  * 
@@ -126,7 +128,7 @@ public class Utils {
     */
    @SuppressWarnings("unchecked")
    public static <E extends Exception> void rethrowIfRuntimeOrSameType(Exception e) throws E {
-      if (e instanceof ExecutionException) {
+      if (e instanceof ExecutionException || e instanceof ComputationException) {
          Throwable nested = e.getCause();
          if (nested instanceof Error)
             throw (Error) nested;

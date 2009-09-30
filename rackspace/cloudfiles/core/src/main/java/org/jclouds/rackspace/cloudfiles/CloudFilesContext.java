@@ -27,6 +27,7 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.cloud.CloudContext;
+import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
 
 /**
  * Represents an authenticated context to Cloud Files.
@@ -38,6 +39,6 @@ import org.jclouds.cloud.CloudContext;
  * 
  */
 public interface CloudFilesContext extends
-         BlobStoreContext<CloudFilesBlobStore, BlobMetadata, Blob<BlobMetadata>> {
+         BlobStoreContext<CloudFilesBlobStore, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> {
 
 }

@@ -78,6 +78,13 @@ public abstract class BaseMapIntegrationTest<S extends BlobStore<C, M, B>, C ext
    String tmpDirectory;
 
    @BeforeMethod(groups = { "integration", "live" })
+   protected void setUpInputStreams() {
+      fiveInputs = ImmutableMap.of("one", IOUtils.toInputStream("apple"), "two", IOUtils
+               .toInputStream("bear"), "three", IOUtils.toInputStream("candy"), "four", IOUtils
+               .toInputStream("dogma"), "five", IOUtils.toInputStream("emma"));
+   }
+
+   @BeforeMethod(groups = { "integration", "live" })
    @Parameters( { "basedir" })
    protected void setUpTempDir(@Optional String basedir) throws InterruptedException,
             ExecutionException, FileNotFoundException, IOException, TimeoutException {
@@ -96,12 +103,9 @@ public abstract class BaseMapIntegrationTest<S extends BlobStore<C, M, B>, C ext
          IOUtils.write(file.getName(), new FileOutputStream(file));
       }
 
-      fiveInputs = ImmutableMap.of("one", IOUtils.toInputStream("apple"), "two", IOUtils
-               .toInputStream("bear"), "three", IOUtils.toInputStream("candy"), "four", IOUtils
-               .toInputStream("dogma"), "five", IOUtils.toInputStream("emma"));
    }
 
-   protected abstract Map<String, V> createMap(BlobStoreContext<?, ?, ?> context, String bucket);
+   protected abstract Map<String, V> createMap(BlobStoreContext<?, ?, ?, ?> context, String bucket);
 
    @Test(groups = { "integration", "live" })
    public void testClear() throws InterruptedException, ExecutionException, TimeoutException {
@@ -280,8 +284,8 @@ public abstract class BaseMapIntegrationTest<S extends BlobStore<C, M, B>, C ext
       }
    }
 
-   protected void assertEventuallyListContainer(final ListableMap<?, ?, ?> map, final String bucketName)
-            throws InterruptedException {
+   protected void assertEventuallyListContainer(final ListableMap<?, ?, ?> map,
+            final String bucketName) throws InterruptedException {
       assertEventually(new Runnable() {
          public void run() {
             assertTrue(map.listContainer().size() >= 0);

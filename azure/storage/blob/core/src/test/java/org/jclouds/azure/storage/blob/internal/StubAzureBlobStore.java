@@ -26,9 +26,11 @@ package org.jclouds.azure.storage.blob.internal;
 import java.net.URI;
 import java.util.Map;
 import java.util.SortedSet;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
 
 import org.jclouds.azure.storage.blob.AzureBlobStore;
 import org.jclouds.azure.storage.blob.domain.ArrayListBlobsResponse;
@@ -42,6 +44,7 @@ import org.jclouds.azure.storage.options.CreateOptions;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.integration.internal.StubBlobStore;
+import org.jclouds.util.DateService;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -56,29 +59,11 @@ import com.google.common.collect.Sets;
 public class StubAzureBlobStore extends StubBlobStore<ContainerMetadata, BlobMetadata, Blob>
          implements AzureBlobStore {
 
-   @Override
-   protected Blob createBlob(String name) {
-      return new Blob(name);
-   }
-
-   @Override
-   protected Blob createBlob(BlobMetadata metadata) {
-      return new Blob(metadata);
-   }
-
-   @Override
-   protected ContainerMetadata createContainerMetadata(String name) {
-      return new ContainerMetadata(name);
-   }
-
-   /**
-    * note this must be final and static so that tests coming from multiple threads will pass.
-    */
-   private static final Map<String, Map<String, Blob>> containerToBlobs = new ConcurrentHashMap<String, Map<String, Blob>>();
-
-   @Override
-   public Map<String, Map<String, Blob>> getContainerToBlobs() {
-      return containerToBlobs;
+   @Inject
+   protected StubAzureBlobStore(Map<String, Map<String, Blob>> containerToBlobs,
+            DateService dateService, Provider<ContainerMetadata> containerMetaProvider,
+            Provider<Blob> blobProvider) {
+      super(containerToBlobs, dateService, containerMetaProvider, blobProvider);
    }
 
    public BoundedList<ContainerMetadata> listContainers(ListOptions options) {

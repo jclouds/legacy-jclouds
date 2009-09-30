@@ -25,14 +25,14 @@ package org.jclouds.azure.storage.blob.functions;
 
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.azure.storage.blob.domain.BlobMetadata;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.util.DateService;
-
-import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * This parses @{link {@link org.jclouds.azure.storage.blob.domain.BlobMetadata} from HTTP headers.
@@ -45,7 +45,7 @@ public class ParseBlobMetadataFromHeaders extends org.jclouds.blobstore.function
    @Inject
    public ParseBlobMetadataFromHeaders(DateService dateParser,
             @Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix,
-            BlobMetadataFactory<BlobMetadata> metadataFactory) {
+            Provider<BlobMetadata> metadataFactory) {
       super(dateParser, metadataPrefix, metadataFactory);
    }
 

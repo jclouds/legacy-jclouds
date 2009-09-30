@@ -23,22 +23,39 @@
  */
 package org.jclouds.azure.storage.queue.config;
 
+import java.net.URI;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.jclouds.azure.storage.AzureQueue;
 import org.jclouds.azure.storage.queue.AzureQueueConnection;
 import org.jclouds.azure.storage.queue.AzureQueueContext;
-import org.jclouds.azure.storage.queue.internal.GuiceAzureQueueContext;
+import org.jclouds.azure.storage.reference.AzureStorageConstants;
+import org.jclouds.cloud.internal.CloudContextImpl;
+import org.jclouds.http.RequiresHttp;
+import org.jclouds.lifecycle.Closer;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Scopes;
 
-/**
- * Configures the {@link AzureQueueContext}; requires {@link AzureQueueConnection} bound.
- * 
- * @author Adrian Cole
- */
+@RequiresHttp
 public class AzureQueueContextModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      this.requireBinding(AzureQueueConnection.class);
-      bind(AzureQueueContext.class).to(GuiceAzureQueueContext.class);
+      bind(AzureQueueContext.class).to(AzureQueueContextImpl.class).in(Scopes.SINGLETON);
    }
+
+   public static class AzureQueueContextImpl extends CloudContextImpl<AzureQueueConnection>
+            implements AzureQueueContext {
+      @Inject
+      public AzureQueueContextImpl(Closer closer, AzureQueueConnection defaultApi,
+               @AzureQueue URI endPoint,
+               @Named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT) String account) {
+         super(closer, defaultApi, endPoint, account);
+      }
+
+   }
+
 }

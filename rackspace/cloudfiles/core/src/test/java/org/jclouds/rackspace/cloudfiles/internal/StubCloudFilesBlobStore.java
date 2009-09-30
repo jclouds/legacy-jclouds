@@ -25,7 +25,9 @@ package org.jclouds.rackspace.cloudfiles.internal;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
@@ -36,6 +38,7 @@ import org.jclouds.rackspace.cloudfiles.domain.ContainerCDNMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
 import org.jclouds.rackspace.cloudfiles.options.ListCdnContainerOptions;
 import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
+import org.jclouds.util.DateService;
 
 import com.google.common.collect.Multimap;
 
@@ -48,30 +51,12 @@ import com.google.common.collect.Multimap;
 public class StubCloudFilesBlobStore extends
          StubBlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> implements
          CloudFilesBlobStore {
-
-   @Override
-   protected Blob<BlobMetadata> createBlob(String name) {
-      return new Blob<BlobMetadata>(name);
-   }
-
-   @Override
-   protected Blob<BlobMetadata> createBlob(BlobMetadata metadata) {
-      return new Blob<BlobMetadata>(metadata);
-   }
-
-   @Override
-   protected ContainerMetadata createContainerMetadata(String name) {
-      return new ContainerMetadata(name);
-   }
-
-   /**
-    * note this must be final and static so that tests coming from multiple threads will pass.
-    */
-   private static final Map<String, Map<String, Blob<BlobMetadata>>> containerToBlobs = new ConcurrentHashMap<String, Map<String, Blob<BlobMetadata>>>();
-
-   @Override
-   public Map<String, Map<String, Blob<BlobMetadata>>> getContainerToBlobs() {
-      return containerToBlobs;
+   
+   @Inject
+   protected StubCloudFilesBlobStore(Map<String, Map<String, Blob<BlobMetadata>>> containerToBlobs,
+            DateService dateService, Provider<ContainerMetadata> containerMetaProvider,
+            Provider<Blob<BlobMetadata>> blobProvider) {
+      super(containerToBlobs, dateService, containerMetaProvider, blobProvider);
    }
 
    public AccountMetadata getAccountMetadata() {

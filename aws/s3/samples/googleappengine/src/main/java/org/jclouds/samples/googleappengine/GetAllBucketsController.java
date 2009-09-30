@@ -29,6 +29,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.inject.Singleton;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -42,9 +45,6 @@ import org.jclouds.samples.googleappengine.domain.BucketResult;
 import org.jclouds.samples.googleappengine.functions.MetadataToBucketResult;
 
 import com.google.common.collect.Lists;
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.inject.Singleton;
 
 /**
  * Shows an example of how to use @{link S3Connection} injected with Guice.

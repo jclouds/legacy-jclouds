@@ -25,7 +25,10 @@ package org.jclouds.blobstore;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
+import org.jclouds.blobstore.domain.ContainerMetadata;
 import org.jclouds.cloud.CloudContext;
+
+import com.google.inject.ImplementedBy;
 
 /**
  * Represents a cloud that has key-value storage functionality.
@@ -34,7 +37,8 @@ import org.jclouds.cloud.CloudContext;
  * @author Adrian Cole
  * 
  */
-public interface BlobStoreContext<S extends BlobStore<?, M, B>, M extends BlobMetadata, B extends Blob<M>>
+@ImplementedBy(BlobStoreContextImpl.class)
+public interface BlobStoreContext<S extends BlobStore<C, M, B>, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
          extends CloudContext<S> {
 
    /**
@@ -51,4 +55,5 @@ public interface BlobStoreContext<S extends BlobStore<?, M, B>, M extends BlobMe
     */
    BlobMap<M, B> createBlobMap(String container);
 
+   B newBlob(String key);
 }

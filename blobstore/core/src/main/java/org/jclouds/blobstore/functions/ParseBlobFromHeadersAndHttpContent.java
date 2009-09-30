@@ -24,6 +24,7 @@
 package org.jclouds.blobstore.functions;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.blobstore.domain.Blob;
@@ -45,15 +46,11 @@ import com.google.common.base.Function;
 public class ParseBlobFromHeadersAndHttpContent<M extends BlobMetadata, B extends Blob<M>>
          implements Function<HttpResponse, B>, RestContext {
    private final ParseContentTypeFromHeaders<M> metadataParser;
-   private final BlobFactory<M, B> blobFactory;
-
-   public static interface BlobFactory<M extends BlobMetadata, B extends Blob<M>> {
-      B create(M metadata);
-   }
+   private final Provider<B> blobFactory;
 
    @Inject
    public ParseBlobFromHeadersAndHttpContent(ParseContentTypeFromHeaders<M> metadataParser,
-            BlobFactory<M, B> blobFactory) {
+            Provider<B> blobFactory) {
       this.metadataParser = metadataParser;
       this.blobFactory = blobFactory;
    }
@@ -68,9 +65,10 @@ public class ParseBlobFromHeadersAndHttpContent<M extends BlobMetadata, B extend
     */
    public B apply(HttpResponse from) {
       M metadata = metadataParser.apply(from);
-      B object = blobFactory.create(metadata);
-      assert object.getMetadata() == metadata;
+      B object = blobFactory.get();
+      object.setMetadata(metadata);
       object.setData(from.getContent());
+      assert object.getMetadata() == metadata;
       attemptToParseSizeAndRangeFromHeaders(from, object);
       return object;
    }

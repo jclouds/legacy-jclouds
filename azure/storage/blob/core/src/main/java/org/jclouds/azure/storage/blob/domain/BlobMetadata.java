@@ -25,6 +25,8 @@ package org.jclouds.azure.storage.blob.domain;
 
 import java.net.URI;
 
+import javax.inject.Inject;
+
 import org.joda.time.DateTime;
 
 import com.google.inject.internal.Nullable;
@@ -41,6 +43,7 @@ public class BlobMetadata extends org.jclouds.blobstore.domain.BlobMetadata {
    private String contentLanguage;
    protected String dataEncoding;
 
+   @Inject
    public BlobMetadata() {
       super();
    }
