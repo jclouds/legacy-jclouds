@@ -31,26 +31,22 @@ import com.google.inject.TypeLiteral;
 public class PCSContextModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new RestPCSBlobStoreModule(),
-               new BlobStoreMapsModule<PCSBlobStore, ContainerMetadata, FileMetadata, PCSFile>(
-                        new TypeLiteral<PCSBlobStore>() {
-                        }, new TypeLiteral<ContainerMetadata>() {
-                        }, new TypeLiteral<FileMetadata>() {
-                        }, new TypeLiteral<PCSFile>() {
-                        }), new PCSContextModule() {
-                  @Override
-                  protected void configure() {
-                     bindConstant().annotatedWith(Jsr330.named(PCSConstants.PROPERTY_PCS2_USER))
-                              .to("user");
-                     bindConstant()
-                              .annotatedWith(Jsr330.named(PCSConstants.PROPERTY_PCS2_PASSWORD)).to(
-                                       "key");
-                     bindConstant()
-                              .annotatedWith(Jsr330.named(PCSConstants.PROPERTY_PCS2_ENDPOINT)).to(
-                                       "http://localhost");
-                     super.configure();
-                  }
-               }, new ParserModule(), new JavaUrlHttpCommandExecutorServiceModule(),
+      return Guice.createInjector(new RestPCSBlobStoreModule(), BlobStoreMapsModule.Builder
+               .newBuilder(new TypeLiteral<PCSBlobStore>() {
+               }, new TypeLiteral<ContainerMetadata>() {
+               }, new TypeLiteral<FileMetadata>() {
+               }, new TypeLiteral<PCSFile>() {
+               }).build(), new PCSContextModule() {
+         @Override
+         protected void configure() {
+            bindConstant().annotatedWith(Jsr330.named(PCSConstants.PROPERTY_PCS2_USER)).to("user");
+            bindConstant().annotatedWith(Jsr330.named(PCSConstants.PROPERTY_PCS2_PASSWORD)).to(
+                     "key");
+            bindConstant().annotatedWith(Jsr330.named(PCSConstants.PROPERTY_PCS2_ENDPOINT)).to(
+                     "http://localhost");
+            super.configure();
+         }
+      }, new ParserModule(), new JavaUrlHttpCommandExecutorServiceModule(),
                new ExecutorServiceModule(new WithinThreadExecutorService()));
    }
 

@@ -35,8 +35,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -211,7 +211,7 @@ public class JCloudsS3ServiceLiveTest
          // Ensure there is at least 1 bucket in S3 account to list and compare.
          S3Bucket[] jsBuckets = service.listAllBuckets();
 
-         List<org.jclouds.aws.s3.domain.BucketMetadata> jcBuckets = context.getApi()
+         SortedSet<org.jclouds.aws.s3.domain.BucketMetadata> jcBuckets = context.getApi()
                   .listContainers();
 
          assert jsBuckets.length == jcBuckets.size();

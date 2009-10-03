@@ -31,7 +31,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Collections;
-import java.util.List;
+import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -76,13 +76,13 @@ import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSortedSet;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
-import com.google.inject.internal.ImmutableList;
 
 /**
  * Tests behavior of {@code PCSConnection}
@@ -102,11 +102,11 @@ public class PCSBlobStoreTest {
          return null;
       }
 
-      public Future<? extends List<FileMetadata>> listBlobs(String containerName) {
-         return new StubBlobStore.FutureBase<List<FileMetadata>>() {
-            public List<FileMetadata> get() throws InterruptedException, ExecutionException {
+      public Future<? extends SortedSet<FileMetadata>> listBlobs(String containerName) {
+         return new StubBlobStore.FutureBase<SortedSet<FileMetadata>>() {
+            public SortedSet<FileMetadata> get() throws InterruptedException, ExecutionException {
 
-               return ImmutableList
+               return ImmutableSortedSet
                         .of(
                                  new FileMetadata(
                                           "more",
@@ -132,8 +132,8 @@ public class PCSBlobStoreTest {
 
       }
 
-      public List<ContainerMetadata> listContainers() {
-         return ImmutableList
+      public SortedSet<ContainerMetadata> listContainers() {
+         return ImmutableSortedSet
                   .of(new ContainerMetadata(
                            "mycontainer",
                            URI
@@ -383,7 +383,6 @@ public class PCSBlobStoreTest {
    JaxrsAnnotationProcessor<PCSBlobStore> processor;
    private JaxrsAnnotationProcessor<PCSUtil> utilProcessor;
 
-   @SuppressWarnings("unchecked")
    @BeforeClass
    void setupFactory() {
       Injector injector = Guice.createInjector(new AbstractModule() {
@@ -431,12 +430,12 @@ public class PCSBlobStoreTest {
                   throws UnsupportedEncodingException {
             return new BasicAuthentication(user, password);
          }
-      }, new JaxrsModule(), new BlobStoreMapsModule(new TypeLiteral<PCSBlobStore>() {
+      }, new JaxrsModule(), BlobStoreMapsModule.Builder.newBuilder(new TypeLiteral<PCSBlobStore>() {
       }, new TypeLiteral<ContainerMetadata>() {
       }, new TypeLiteral<FileMetadata>() {
       }, new TypeLiteral<PCSFile>() {
-      }), new PCSContextModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
-               new JavaUrlHttpCommandExecutorServiceModule());
+      }).build(), new PCSContextModule(), new ExecutorServiceModule(
+               new WithinThreadExecutorService()), new JavaUrlHttpCommandExecutorServiceModule());
 
       processor = injector.getInstance(Key
                .get(new TypeLiteral<JaxrsAnnotationProcessor<PCSBlobStore>>() {

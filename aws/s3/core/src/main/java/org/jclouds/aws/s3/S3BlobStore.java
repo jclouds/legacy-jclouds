@@ -23,7 +23,7 @@
  */
 package org.jclouds.aws.s3;
 
-import java.util.List;
+import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -328,7 +328,7 @@ public interface S3BlobStore extends BlobStore<BucketMetadata, ObjectMetadata, S
    @GET
    @XMLResponseParser(ListAllMyBucketsHandler.class)
    @Path("/")
-   List<BucketMetadata> listContainers();
+   SortedSet<BucketMetadata> listContainers();
 
    /**
     * Copies one object to another bucket, retaining UserMetadata from the source. The destination

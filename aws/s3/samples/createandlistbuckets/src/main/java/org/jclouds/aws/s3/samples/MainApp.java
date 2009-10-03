@@ -23,6 +23,7 @@
  */
 package org.jclouds.aws.s3.samples;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -30,6 +31,9 @@ import java.util.concurrent.TimeoutException;
 import org.jclouds.aws.s3.S3Context;
 import org.jclouds.aws.s3.S3ContextFactory;
 import org.jclouds.aws.s3.domain.BucketMetadata;
+import org.jclouds.blobstore.BlobMap;
+import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.domain.Blob;
 
 /**
  * This the Main class of an Application that demonstrates the use of the CreateListOwnedBuckets
@@ -44,8 +48,9 @@ public class MainApp {
    public static int PARAMETERS = 3;
    public static String INVALID_SYNTAX = "Invalid number of parameters. Syntax is: \"accesskeyid\" \"secretekey\" \"bucketName\" ";
 
+   @SuppressWarnings("unchecked")
    public static void main(String[] args) throws InterruptedException, ExecutionException,
-            TimeoutException {
+            TimeoutException, IOException {
 
       if (args.length < PARAMETERS)
          throw new IllegalArgumentException(INVALID_SYNTAX);
@@ -56,15 +61,19 @@ public class MainApp {
       String bucketName = args[2];
 
       // Init
-      S3Context context = S3ContextFactory.createContext(accesskeyid, secretkey);
+      BlobStoreContext context = S3ContextFactory.createContext(accesskeyid, secretkey);
 
       try {
 
          // Create Bucket
-         context.getApi().createContainer(bucketName).get(10, TimeUnit.SECONDS);
+         ((S3Context) context).getApi().createContainer(bucketName).get(10, TimeUnit.SECONDS);
+         BlobMap blobMap = context.createBlobMap(bucketName);
+         Blob blob = context.newBlob("test");
+         blob.setData("testdata");
+         blobMap.put("test", blob);
 
          // List bucket
-         for (BucketMetadata bucketObj : context.getApi().listContainers()) {
+         for (BucketMetadata bucketObj : ((S3Context) context).getApi().listContainers()) {
             System.out.println(String.format("  %1$s", bucketObj));
             System.out.println(String.format(": %1$s entries%n", context.createInputStreamMap(
                      bucketObj.getName()).size()));

@@ -23,7 +23,7 @@
  */
 package org.jclouds.rackspace.cloudfiles;
 
-import java.util.List;
+import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -96,13 +96,13 @@ public interface CloudFilesBlobStore extends
    @ResponseParser(ParseContainerListFromJsonResponse.class)
    @QueryParams(keys = "format", values = "json")
    @Path("/")
-   List<ContainerMetadata> listContainers();
+   SortedSet<ContainerMetadata> listContainers();
 
    @GET
    @ResponseParser(ParseContainerListFromJsonResponse.class)
    @QueryParams(keys = "format", values = "json")
    @Path("/")
-   List<ContainerMetadata> listContainers(ListContainerOptions options);
+   SortedSet<ContainerMetadata> listContainers(ListContainerOptions options);
 
    @HEAD
    @Path("{container}")
@@ -122,7 +122,7 @@ public interface CloudFilesBlobStore extends
    @QueryParams(keys = "format", values = "json")
    @ResponseParser(ParseBlobMetadataListFromJsonResponse.class)
    @Path("{container}")
-   Future<? extends List<BlobMetadata>> listBlobs(@PathParam("container") String container);
+   Future<? extends SortedSet<BlobMetadata>> listBlobs(@PathParam("container") String container);
 
    @PUT
    @Path("{container}/{key}")
@@ -175,7 +175,7 @@ public interface CloudFilesBlobStore extends
    @QueryParams(keys = "format", values = "json")
    @Path("/")
    @Endpoint(CloudFilesCDN.class)
-   List<ContainerCDNMetadata> listCDNContainers(ListCdnContainerOptions... options);
+   SortedSet<ContainerCDNMetadata> listCDNContainers(ListCdnContainerOptions... options);
 
    // TODO: Container name is not included in CDN HEAD response headers, so we cannot populate it
    // here.

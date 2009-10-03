@@ -23,8 +23,8 @@
  */
 package org.jclouds.blobstore;
 
-import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 
 import org.jclouds.blobstore.domain.BlobMetadata;
 
@@ -34,12 +34,12 @@ import org.jclouds.blobstore.domain.BlobMetadata;
  * @author Adrian Cole
  * 
  */
-public interface ListableMap<B extends BlobMetadata, K, V> extends Map<K, V> {
+public interface ListableMap<M extends BlobMetadata, K, V> extends Map<K, V> {
 
    /**
     * 
     * @return blob listing that this map represents
     */
-   List<B> listContainer();
+   SortedSet<M> listContainer();
 
 }

@@ -1,7 +1,7 @@
 package org.jclouds.mezeo.pcs2.functions;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -25,7 +25,7 @@ public class FindIdInFileList implements Function<Key, String> {
    }
 
    public String apply(Key key) {
-      List<FileMetadata> response;
+      SortedSet<FileMetadata> response;
       try {
          response = connection.listBlobs(key.getContainer()).get(10, TimeUnit.SECONDS);
       } catch (Exception e) {
@@ -36,7 +36,7 @@ public class FindIdInFileList implements Function<Key, String> {
    }
 
    @VisibleForTesting
-   String idForNameInListOrException(String container, String toFind, List<FileMetadata> response) {
+   String idForNameInListOrException(String container, String toFind, SortedSet<FileMetadata> response) {
       for (FileMetadata data : response) {
          if (toFind.equals(data.getKey())) {
             String path = data.getUrl().getPath();

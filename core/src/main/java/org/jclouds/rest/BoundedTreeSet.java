@@ -21,15 +21,36 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.azure.storage.domain;
+package org.jclouds.rest;
 
-/**
- * 
- * @author Adrian Cole
- * 
- */
-public interface BoundedList<T> extends org.jclouds.rest.BoundedList<T> {
+import java.util.List;
+import java.util.TreeSet;
 
-   String getNextMarker();
+public class BoundedTreeSet<T> extends TreeSet<T> implements BoundedSortedSet<T> {
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -7133632087734650835L;
+   protected final String prefix;
+   protected final String marker;
+   protected final int maxResults;
+
+   public BoundedTreeSet(List<T> contents, String prefix, String marker, int maxResults) {
+      this.addAll(contents);
+      this.prefix = prefix;
+      this.marker = marker;
+      this.maxResults = maxResults;
+   }
+
+   public String getPrefix() {
+      return prefix;
+   }
+
+   public String getMarker() {
+      return marker;
+   }
+
+   public int getMaxResults() {
+      return maxResults;
+   }
 
 }

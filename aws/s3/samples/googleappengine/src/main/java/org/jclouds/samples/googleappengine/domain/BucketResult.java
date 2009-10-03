@@ -23,7 +23,8 @@
  */
 package org.jclouds.samples.googleappengine.domain;
 
-public class BucketResult {
+
+public class BucketResult implements Comparable<BucketResult>{
    private String name;
    private String size = "unknown";
    private String status = "ok";
@@ -50,5 +51,9 @@ public class BucketResult {
 
    public String getStatus() {
       return status;
+   }
+   
+   public int compareTo(BucketResult o) {
+      return (this == o) ? 0 : getName().compareTo(o.getName());
    }
 }

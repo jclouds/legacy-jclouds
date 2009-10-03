@@ -26,7 +26,7 @@ package org.jclouds.blobstore.integration.internal;
 import static org.testng.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
-import java.util.List;
+import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -126,7 +126,8 @@ public class BaseContainerIntegrationTest<S extends BlobStore<C, M, B>, C extend
       String containerName = getContainerName();
       try {
          add15UnderRoot(containerName);
-         List<M> container = context.getApi().listBlobs(containerName).get(10, TimeUnit.SECONDS);
+         SortedSet<M> container = context.getApi().listBlobs(containerName).get(10,
+                  TimeUnit.SECONDS);
          assertEquals(container.size(), 15);
       } finally {
          returnContainer(containerName);

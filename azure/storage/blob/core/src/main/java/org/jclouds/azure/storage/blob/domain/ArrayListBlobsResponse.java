@@ -26,14 +26,14 @@ package org.jclouds.azure.storage.blob.domain;
 import java.net.URI;
 import java.util.List;
 
-import org.jclouds.azure.storage.domain.ArrayBoundedList;
+import org.jclouds.azure.storage.domain.BoundedTreeSet;
 
 /**
  * 
  * @author Adrian Cole
  * 
  */
-public class ArrayListBlobsResponse extends ArrayBoundedList<BlobMetadata> implements
+public class ArrayListBlobsResponse extends BoundedTreeSet<BlobMetadata> implements
          ListBlobsResponse {
    /** The serialVersionUID */
    private static final long serialVersionUID = -4475709781001190244L;

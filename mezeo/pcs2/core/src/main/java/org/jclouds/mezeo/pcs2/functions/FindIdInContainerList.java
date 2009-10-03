@@ -1,6 +1,6 @@
 package org.jclouds.mezeo.pcs2.functions;
 
-import java.util.List;
+import java.util.SortedSet;
 
 import javax.inject.Inject;
 
@@ -20,12 +20,12 @@ public class FindIdInContainerList implements Function<String, String> {
    }
 
    public String apply(String key) {
-      List<ContainerMetadata> response = connection.listContainers();
+      SortedSet<ContainerMetadata> response = connection.listContainers();
       return idForNameInListOrException(key, response);
    }
 
    @VisibleForTesting
-   String idForNameInListOrException(String toFind, List<ContainerMetadata> containerMetadataList) {
+   String idForNameInListOrException(String toFind, SortedSet<ContainerMetadata> containerMetadataList) {
       for (ContainerMetadata data : containerMetadataList) {
          if (toFind.equals(data.getName())) {
             String path = data.getUrl().getPath();

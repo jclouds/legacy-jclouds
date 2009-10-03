@@ -23,7 +23,7 @@
  */
 package org.jclouds.azure.storage.blob;
 
-import java.util.List;
+import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -45,7 +45,7 @@ import org.jclouds.azure.storage.blob.functions.ReturnTrueIfContainerAlreadyExis
 import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
 import org.jclouds.azure.storage.blob.xml.AccountNameEnumerationResultsHandler;
 import org.jclouds.azure.storage.blob.xml.ContainerNameEnumerationResultsHandler;
-import org.jclouds.azure.storage.domain.BoundedList;
+import org.jclouds.azure.storage.domain.BoundedSortedSet;
 import org.jclouds.azure.storage.filters.SharedKeyAuthentication;
 import org.jclouds.azure.storage.options.CreateOptions;
 import org.jclouds.azure.storage.options.ListOptions;
@@ -97,13 +97,13 @@ public interface AzureBlobStore extends BlobStore<ContainerMetadata, BlobMetadat
    @XMLResponseParser(AccountNameEnumerationResultsHandler.class)
    @Path("/")
    @QueryParams(keys = "comp", values = "list")
-   List<ContainerMetadata> listContainers();
+   SortedSet<ContainerMetadata> listContainers();
 
    @GET
    @XMLResponseParser(AccountNameEnumerationResultsHandler.class)
    @Path("/")
    @QueryParams(keys = "comp", values = "list")
-   BoundedList<ContainerMetadata> listContainers(ListOptions listOptions);
+   BoundedSortedSet<ContainerMetadata> listContainers(ListOptions listOptions);
 
    @HEAD
    @Path("{container}")

@@ -29,6 +29,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.aws.s3.S3BlobStore;
@@ -264,7 +265,7 @@ public class JCloudsS3Service extends S3Service {
    @Override
    protected S3Bucket[] listAllBucketsImpl() throws S3ServiceException {
       try {
-         List<org.jclouds.aws.s3.domain.BucketMetadata> jcBucketList = connection.listContainers();
+         SortedSet<org.jclouds.aws.s3.domain.BucketMetadata> jcBucketList = connection.listContainers();
          return Util.convertBuckets(jcBucketList);
       } catch (Exception e) {
          Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);

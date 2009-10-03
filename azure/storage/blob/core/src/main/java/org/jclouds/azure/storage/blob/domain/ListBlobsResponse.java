@@ -25,13 +25,13 @@ package org.jclouds.azure.storage.blob.domain;
 
 import java.net.URI;
 
-import org.jclouds.azure.storage.domain.BoundedList;
+import org.jclouds.azure.storage.domain.BoundedSortedSet;
 
 /**
  * 
  * @author Adrian Cole
  */
-public interface ListBlobsResponse extends BoundedList<BlobMetadata> {
+public interface ListBlobsResponse extends BoundedSortedSet<BlobMetadata> {
    public URI getContainerUrl();
 
    public String getBlobPrefix();

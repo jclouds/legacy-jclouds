@@ -24,7 +24,7 @@
 package org.jclouds.samples.googleappengine;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -44,7 +44,8 @@ import org.jclouds.logging.Logger;
 import org.jclouds.samples.googleappengine.domain.BucketResult;
 import org.jclouds.samples.googleappengine.functions.MetadataToBucketResult;
 
-import com.google.common.collect.Lists;
+import com.google.appengine.repackaged.com.google.common.collect.Sets;
+import com.google.common.collect.Iterables;
 
 /**
  * Shows an example of how to use @{link S3Connection} injected with Guice.
@@ -85,9 +86,9 @@ public class GetAllBucketsController extends HttpServlet {
    private void addMyBucketsToRequest(HttpServletRequest request) throws InterruptedException,
             ExecutionException, TimeoutException {
       System.err.println(context.getAccount() + ":" + context.getEndPoint());
-      List<BucketMetadata> myBucketMetadata = context.getApi().listContainers();
-      List<BucketResult> myBuckets = Lists.transform(myBucketMetadata,
-               metadataToBucketResultProvider.get());
+      SortedSet<BucketMetadata> myBucketMetadata = context.getApi().listContainers();
+      SortedSet<BucketResult> myBuckets = Sets.newTreeSet(Iterables.transform(myBucketMetadata,
+               metadataToBucketResultProvider.get()));
       request.setAttribute("buckets", myBuckets);
    }
 }

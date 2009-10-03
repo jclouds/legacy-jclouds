@@ -141,9 +141,9 @@ public class StubBlobStore<C extends ContainerMetadata, M extends BlobMetadata, 
       };
    }
 
-   public Future<? extends List<M>> listBlobs(final String name) {
-      return new FutureBase<List<M>>() {
-         public List<M> get() throws InterruptedException, ExecutionException {
+   public Future<? extends SortedSet<M>> listBlobs(final String name) {
+      return new FutureBase<SortedSet<M>>() {
+         public SortedSet<M> get() throws InterruptedException, ExecutionException {
             final Map<String, B> realContents = getContainerToBlobs().get(name);
 
             if (realContents == null)
@@ -155,7 +155,7 @@ public class StubBlobStore<C extends ContainerMetadata, M extends BlobMetadata, 
                         }
                      }));
 
-            return Lists.newArrayList(contents);
+            return Sets.newTreeSet(contents);
          }
       };
    }
@@ -247,8 +247,8 @@ public class StubBlobStore<C extends ContainerMetadata, M extends BlobMetadata, 
       }
    }
 
-   public List<C> listContainers() {
-      return Lists.newArrayList(Iterables.transform(getContainerToBlobs().keySet(),
+   public SortedSet<C> listContainers() {
+      return Sets.newTreeSet(Iterables.transform(getContainerToBlobs().keySet(),
                new Function<String, C>() {
                   public C apply(String name) {
                      C cmd = containerMetaProvider.get();

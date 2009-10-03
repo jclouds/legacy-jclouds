@@ -36,7 +36,7 @@ import org.jclouds.mezeo.pcs2.domain.FileMetadata;
 import org.jclouds.util.DateService;
 import org.testng.annotations.Test;
 
-import com.google.inject.internal.ImmutableList;
+import com.google.common.collect.ImmutableSortedSet;
 
 /**
  * Tests behavior of {@code ContainerResourceId}
@@ -47,7 +47,7 @@ import com.google.inject.internal.ImmutableList;
 public class FindIdInFileListIdTest {
    private DateService dateService = new DateService();
 
-   private final ImmutableList<FileMetadata> OF = ImmutableList.of(new FileMetadata("more", URI
+   private final ImmutableSortedSet<FileMetadata> OF = ImmutableSortedSet.of(new FileMetadata("more", URI
             .create("https://pcsbeta.mezeo.net/v2/files/5C81DADC-AAEE-11DE-9D55-B39340AEFF3A"),
             dateService.fromSeconds(1254005157), dateService.fromSeconds(1254005158), dateService
                      .fromSeconds(1254005159), "adrian@jclouds.org", false, false, 1, 254288,

@@ -27,8 +27,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jclouds.azure.storage.domain.ArrayBoundedList;
-import org.jclouds.azure.storage.domain.BoundedList;
+import org.jclouds.azure.storage.domain.BoundedTreeSet;
+import org.jclouds.azure.storage.domain.BoundedSortedSet;
 import org.jclouds.azure.storage.queue.domain.QueueMetadata;
 import org.jclouds.http.functions.ParseSax;
 
@@ -43,7 +43,7 @@ import javax.inject.Inject;
  * @author Adrian Cole
  */
 public class AccountNameEnumerationResultsHandler extends
-         ParseSax.HandlerWithResult<BoundedList<QueueMetadata>> {
+         ParseSax.HandlerWithResult<BoundedSortedSet<QueueMetadata>> {
 
    private List<QueueMetadata> metadata = new ArrayList<QueueMetadata>();
    private String prefix;
@@ -59,8 +59,8 @@ public class AccountNameEnumerationResultsHandler extends
    public AccountNameEnumerationResultsHandler() {
    }
 
-   public BoundedList<QueueMetadata> getResult() {
-      return new ArrayBoundedList<QueueMetadata>(metadata, prefix, marker, maxResults, nextMarker);
+   public BoundedSortedSet<QueueMetadata> getResult() {
+      return new BoundedTreeSet<QueueMetadata>(metadata, prefix, marker, maxResults, nextMarker);
    }
 
    public void endElement(String uri, String name, String qName) {

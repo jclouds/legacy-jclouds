@@ -21,21 +21,15 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rest;
-
-import java.util.List;
+package org.jclouds.azure.storage.domain;
 
 /**
  * 
  * @author Adrian Cole
  * 
  */
-public interface BoundedList<T> extends List<T> {
+public interface BoundedSortedSet<T> extends org.jclouds.rest.BoundedSortedSet<T> {
 
-   String getPrefix();
-
-   String getMarker();
-
-   int getMaxResults();
+   String getNextMarker();
 
 }

@@ -31,7 +31,7 @@ import java.net.URI;
 import org.jclouds.azure.storage.blob.domain.ArrayListBlobsResponse;
 import org.jclouds.azure.storage.blob.domain.BlobMetadata;
 import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
-import org.jclouds.azure.storage.domain.BoundedList;
+import org.jclouds.azure.storage.domain.BoundedSortedSet;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.util.DateService;
@@ -79,7 +79,7 @@ public class ContainerNameEnumerationResultsHandlerTest extends BaseHandlerTest 
 
       ), null, null, 4, "newblob2.txt", null, "myfolder/");
       
-      BoundedList<ListBlobsResponse> result = (BoundedList<ListBlobsResponse>) factory.create(
+      BoundedSortedSet<ListBlobsResponse> result = (BoundedSortedSet<ListBlobsResponse>) factory.create(
                injector.getInstance(ContainerNameEnumerationResultsHandler.class)).parse(is);
       
       assertEquals(result, list);

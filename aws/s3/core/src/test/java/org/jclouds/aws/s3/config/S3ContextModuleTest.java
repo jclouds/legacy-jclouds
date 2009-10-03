@@ -54,24 +54,23 @@ import com.google.inject.TypeLiteral;
 public class S3ContextModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new RestS3ConnectionModule(),
-               new BlobStoreMapsModule<S3BlobStore, BucketMetadata, ObjectMetadata, S3Object>(
-                        new TypeLiteral<S3BlobStore>() {
-                        }, new TypeLiteral<BucketMetadata>() {
-                        }, new TypeLiteral<ObjectMetadata>() {
-                        }, new TypeLiteral<S3Object>() {
-                        }), new S3ContextModule() {
-                  @Override
-                  protected void configure() {
-                     bindConstant().annotatedWith(
-                              Jsr330.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to("user");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY)).to("key");
-                     bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_S3_ENDPOINT))
-                              .to("http://localhost");
-                     super.configure();
-                  }
-               }, new ParserModule(), new JavaUrlHttpCommandExecutorServiceModule(),
+      return Guice.createInjector(new RestS3ConnectionModule(), BlobStoreMapsModule.Builder
+               .newBuilder(new TypeLiteral<S3BlobStore>() {
+               }, new TypeLiteral<BucketMetadata>() {
+               }, new TypeLiteral<ObjectMetadata>() {
+               }, new TypeLiteral<S3Object>() {
+               }).build(), new S3ContextModule() {
+         @Override
+         protected void configure() {
+            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to(
+                     "user");
+            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY))
+                     .to("key");
+            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_S3_ENDPOINT)).to(
+                     "http://localhost");
+            super.configure();
+         }
+      }, new ParserModule(), new JavaUrlHttpCommandExecutorServiceModule(),
                new ExecutorServiceModule(new WithinThreadExecutorService()));
    }
 

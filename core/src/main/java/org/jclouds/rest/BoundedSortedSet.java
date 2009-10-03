@@ -23,34 +23,19 @@
  */
 package org.jclouds.rest;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.SortedSet;
 
-public class ArrayBoundedList<T> extends ArrayList<T> implements BoundedList<T> {
+/**
+ * 
+ * @author Adrian Cole
+ * 
+ */
+public interface BoundedSortedSet<T> extends SortedSet<T> {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -7133632087734650835L;
-   protected final String prefix;
-   protected final String marker;
-   protected final int maxResults;
+   String getPrefix();
 
-   public ArrayBoundedList(List<T> contents, String prefix, String marker, int maxResults) {
-      this.addAll(contents);
-      this.prefix = prefix;
-      this.marker = marker;
-      this.maxResults = maxResults;
-   }
+   String getMarker();
 
-   public String getPrefix() {
-      return prefix;
-   }
-
-   public String getMarker() {
-      return marker;
-   }
-
-   public int getMaxResults() {
-      return maxResults;
-   }
+   int getMaxResults();
 
 }

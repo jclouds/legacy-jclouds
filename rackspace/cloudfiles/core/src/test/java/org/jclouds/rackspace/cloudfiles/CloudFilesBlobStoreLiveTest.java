@@ -30,7 +30,7 @@ import static org.testng.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.List;
+import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.IOUtils;
@@ -111,7 +111,7 @@ public class CloudFilesBlobStoreLiveTest {
 
       // List CDN metadata for containers, and ensure all CDN info is available for enabled
       // container
-      List<ContainerCDNMetadata> cdnMetadataList = connection.listCDNContainers();
+      SortedSet<ContainerCDNMetadata> cdnMetadataList = connection.listCDNContainers();
       assertTrue(cdnMetadataList.size() >= 1);
       assertTrue(Iterables.any(cdnMetadataList, new Predicate<ContainerCDNMetadata>() {
          public boolean apply(ContainerCDNMetadata cdnMetadata) {
@@ -132,7 +132,7 @@ public class CloudFilesBlobStoreLiveTest {
       cdnMetadataList = connection.listCDNContainers(ListCdnContainerOptions.Builder.afterMarker(
                containerNameWithCDN.substring(0, containerNameWithCDN.length() - 1)).maxResults(1));
       assertEquals(cdnMetadataList.size(), 1);
-      assertEquals(cdnMetadataList.get(0).getName(), containerNameWithCDN);
+      assertEquals(cdnMetadataList.first().getName(), containerNameWithCDN);
 
       // Enable CDN with PUT for the same container, this time with a custom TTL
       long ttl = 4000;
@@ -168,7 +168,7 @@ public class CloudFilesBlobStoreLiveTest {
 
    @Test
    public void testListOwnedContainers() throws Exception {
-      List<ContainerMetadata> response = connection.listContainers();
+      SortedSet<ContainerMetadata> response = connection.listContainers();
       assertNotNull(response);
       long initialContainerCount = response.size();
       assertTrue(initialContainerCount >= 0);
@@ -188,12 +188,12 @@ public class CloudFilesBlobStoreLiveTest {
       response = connection.listContainers(ListContainerOptions.Builder.afterMarker(
                containerJsr330[0].substring(0, containerJsr330[0].length() - 1)).maxResults(1));
       assertEquals(response.size(), 1);
-      assertEquals(response.get(0).getName(), containerJsr330[0]);
+      assertEquals(response.first().getName(), containerJsr330[0]);
 
       response = connection.listContainers(ListContainerOptions.Builder.afterMarker(
                containerJsr330[0]).maxResults(1));
       assertEquals(response.size(), 1);
-      assertEquals(response.get(0).getName(), containerJsr330[1]);
+      assertEquals(response.first().getName(), containerJsr330[1]);
 
       // Cleanup and test containers have been removed
       assertTrue(connection.deleteContainer(containerJsr330[0]).get(10, TimeUnit.SECONDS));
@@ -233,12 +233,12 @@ public class CloudFilesBlobStoreLiveTest {
       String containerName1 = bucketPrefix + ".hello";
       assertTrue(connection.createContainer(containerName1).get(10, TimeUnit.SECONDS));
       // List only the container just created, using a marker with the container name less 1 char
-      List<ContainerMetadata> response = connection
+      SortedSet<ContainerMetadata> response = connection
                .listContainers(ListContainerOptions.Builder.afterMarker(
                         containerName1.substring(0, containerName1.length() - 1)).maxResults(1));
       assertNotNull(response);
       assertEquals(response.size(), 1);
-      assertEquals(response.get(0).getName(), bucketPrefix + ".hello");
+      assertEquals(response.first().getName(), bucketPrefix + ".hello");
 
       String containerName2 = bucketPrefix + "?should-be-illegal-question-char";
       try {

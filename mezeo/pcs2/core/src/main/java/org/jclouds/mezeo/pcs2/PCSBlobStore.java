@@ -23,7 +23,7 @@
  */
 package org.jclouds.mezeo.pcs2;
 
-import java.util.List;
+import java.util.SortedSet;
 import java.util.concurrent.Future;
 
 import javax.ws.rs.DELETE;
@@ -83,7 +83,7 @@ public interface PCSBlobStore extends BlobStore<ContainerMetadata, FileMetadata,
    @Headers(keys = "X-Cloud-Depth", values = "2")
    @Path("/contents")
    @Endpoint(RootContainer.class)
-   List<ContainerMetadata> listContainers();
+   SortedSet<ContainerMetadata> listContainers();
 
    @GET
    @ExceptionParser(ReturnFalseIfContainerNotFound.class)
@@ -111,7 +111,7 @@ public interface PCSBlobStore extends BlobStore<ContainerMetadata, FileMetadata,
    @Headers(keys = "X-Cloud-Depth", values = "2")
    @Path("/containers/{containerResourceId}/contents")
    @Endpoint(PCS.class)
-   Future<? extends List<FileMetadata>> listBlobs(
+   Future<? extends SortedSet<FileMetadata>> listBlobs(
             @PathParam("containerResourceId") @ParamParser(ContainerNameToResourceId.class) String containerName);
 
    @POST

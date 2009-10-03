@@ -32,7 +32,7 @@ import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
 import java.net.URL;
 import java.security.SecureRandom;
-import java.util.List;
+import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -43,7 +43,7 @@ import org.jclouds.azure.storage.blob.domain.BlobMetadata;
 import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
 import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
 import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
-import org.jclouds.azure.storage.domain.BoundedList;
+import org.jclouds.azure.storage.domain.BoundedSortedSet;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.HttpUtils;
@@ -79,7 +79,7 @@ public class AzureBlobStoreLiveTest {
    @Test
    public void testListContainers() throws Exception {
 
-      List<ContainerMetadata> response = connection.listContainers();
+      SortedSet<ContainerMetadata> response = connection.listContainers();
       assert null != response;
       long initialContainerCount = response.size();
       assertTrue(initialContainerCount >= 0);
@@ -108,7 +108,7 @@ public class AzureBlobStoreLiveTest {
             throw e;
          }
       }
-      List<ContainerMetadata> response = connection.listContainers();
+      SortedSet<ContainerMetadata> response = connection.listContainers();
       assert null != response;
       long containerCount = response.size();
       assertTrue(containerCount >= 1);
@@ -176,7 +176,7 @@ public class AzureBlobStoreLiveTest {
    @Test
    public void testListContainersWithOptions() throws Exception {
 
-      BoundedList<ContainerMetadata> response = connection.listContainers(ListOptions.Builder
+      BoundedSortedSet<ContainerMetadata> response = connection.listContainers(ListOptions.Builder
                .prefix(privateContainer).maxResults(1));
       assert null != response;
       long initialContainerCount = response.size();
@@ -196,7 +196,7 @@ public class AzureBlobStoreLiveTest {
    public void testListOwnedContainers() throws Exception {
 
       // Test default listing
-      List<ContainerMetadata> response = connection.listContainers();
+      SortedSet<ContainerMetadata> response = connection.listContainers();
       // assertEquals(response.size(), initialContainerCount + 2);// if the containers already
       // exist, this will fail
 
@@ -204,12 +204,12 @@ public class AzureBlobStoreLiveTest {
       response = connection.listContainers(ListOptions.Builder.prefix(
                privateContainer.substring(0, privateContainer.length() - 1)).maxResults(1));
       assertEquals(response.size(), 1);
-      assertEquals(response.get(0).getName(), privateContainer);
+      assertEquals(response.first().getName(), privateContainer);
 
       response = connection.listContainers(ListOptions.Builder.prefix(publicContainer)
                .maxResults(1));
       assertEquals(response.size(), 1);
-      assertEquals(response.get(0).getName(), publicContainer);
+      assertEquals(response.first().getName(), publicContainer);
 
    }
 

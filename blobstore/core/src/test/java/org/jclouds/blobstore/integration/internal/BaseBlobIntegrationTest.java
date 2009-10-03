@@ -38,7 +38,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
-import java.util.List;
+import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -314,7 +314,7 @@ public class BaseBlobIntegrationTest<S extends BlobStore<C, M, B>, C extends Con
 
    private void assertContainerEmptyDeleting(String containerName, String key)
             throws InterruptedException, ExecutionException, TimeoutException {
-      List<M> listing = context.getApi().listBlobs(containerName).get(10, TimeUnit.SECONDS);
+      SortedSet<M> listing = context.getApi().listBlobs(containerName).get(10, TimeUnit.SECONDS);
       assertEquals(listing.size(), 0, String.format(
                "deleting %s, we still have %s left in container %s, using encoding %s", key,
                listing.size(), containerName, LOCAL_ENCODING));

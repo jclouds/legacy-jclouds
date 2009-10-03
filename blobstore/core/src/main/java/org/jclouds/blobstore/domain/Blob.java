@@ -43,7 +43,7 @@ import org.jclouds.http.HttpUtils.MD5InputStreamResult;
  * 
  * @author Adrian Cole
  */
-public class Blob<M extends BlobMetadata> {
+public class Blob<M extends BlobMetadata> implements Comparable<Blob<M>> {
 
    @SuppressWarnings("unchecked")
    @Override
@@ -215,6 +215,10 @@ public class Blob<M extends BlobMetadata> {
 
    public void setMetadata(M metadata) {
       this.metadata = metadata;
+   }
+
+   public int compareTo(Blob<M> o) {
+      return (this == o) ? 0 : getKey().compareTo(o.getKey());
    }
 
 }

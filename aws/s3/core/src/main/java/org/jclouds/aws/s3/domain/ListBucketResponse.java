@@ -48,7 +48,7 @@ import java.util.SortedSet;
  * @author Adrian Cole
  * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html" />
  */
-public interface ListBucketResponse extends org.jclouds.rest.BoundedList<ObjectMetadata> {
+public interface ListBucketResponse extends org.jclouds.rest.BoundedSortedSet<ObjectMetadata> {
 
    /**
     * Example:

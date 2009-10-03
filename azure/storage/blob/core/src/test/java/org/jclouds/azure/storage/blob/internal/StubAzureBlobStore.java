@@ -39,7 +39,7 @@ import org.jclouds.azure.storage.blob.domain.BlobMetadata;
 import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
 import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
 import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
-import org.jclouds.azure.storage.domain.BoundedList;
+import org.jclouds.azure.storage.domain.BoundedSortedSet;
 import org.jclouds.azure.storage.options.CreateOptions;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.blobstore.ContainerNotFoundException;
@@ -66,7 +66,7 @@ public class StubAzureBlobStore extends StubBlobStore<ContainerMetadata, BlobMet
       super(containerToBlobs, dateService, containerMetaProvider, blobProvider);
    }
 
-   public BoundedList<ContainerMetadata> listContainers(ListOptions options) {
+   public BoundedSortedSet<ContainerMetadata> listContainers(ListOptions options) {
       return null;
    }
 

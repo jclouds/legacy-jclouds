@@ -24,8 +24,7 @@
 package org.jclouds.samples.googleappengine;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
@@ -42,6 +41,8 @@ import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.logging.Logger;
+
+import com.google.common.collect.Sets;
 
 /**
  * Shows an example of how to use @{link S3Connection} injected with Guice.
@@ -69,7 +70,7 @@ public class JCloudsServlet extends HttpServlet {
    @Resource
    protected Logger logger = Logger.NULL;
 
-   public static class BucketResult {
+   public static class BucketResult implements Comparable<BucketResult> {
       private String name;
       private String size = "unknown";
       private String status = "ok";
@@ -97,14 +98,18 @@ public class JCloudsServlet extends HttpServlet {
       public String getStatus() {
          return status;
       }
+
+      public int compareTo(BucketResult o) {
+         return (this == o) ? 0 : getName().compareTo(o.getName());
+      }
    }
 
    @Override
    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
       try {
-         List<BucketMetadata> myBucketMetadata = context.getApi().listContainers();
-         List<BucketResult> myBuckets = new ArrayList<BucketResult>();
+         SortedSet<BucketMetadata> myBucketMetadata = context.getApi().listContainers();
+         SortedSet<BucketResult> myBuckets = Sets.newTreeSet();
          for (BucketMetadata metadata : myBucketMetadata) {
             BucketResult result = new BucketResult();
             result.setName(metadata.getName());

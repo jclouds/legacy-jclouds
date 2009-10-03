@@ -30,8 +30,8 @@ import java.util.List;
  * @author Adrian Cole
  * 
  */
-public class ArrayBoundedList<T> extends org.jclouds.rest.ArrayBoundedList<T> implements
-         BoundedList<T> {
+public class BoundedTreeSet<T> extends org.jclouds.rest.BoundedTreeSet<T> implements
+         BoundedSortedSet<T> {
    /** The serialVersionUID */
    private static final long serialVersionUID = -4475709781001190244L;
 
@@ -53,7 +53,7 @@ public class ArrayBoundedList<T> extends org.jclouds.rest.ArrayBoundedList<T> im
          return false;
       if (getClass() != obj.getClass())
          return false;
-      ArrayBoundedList<?> other = (ArrayBoundedList<?>) obj;
+      BoundedTreeSet<?> other = (BoundedTreeSet<?>) obj;
       if (nextMarker == null) {
          if (other.nextMarker != null)
             return false;
@@ -68,7 +68,7 @@ public class ArrayBoundedList<T> extends org.jclouds.rest.ArrayBoundedList<T> im
                + maxResults + ", prefix=" + prefix + "]";
    }
 
-   public ArrayBoundedList(List<T> contents, String prefix, String marker, int maxResults,
+   public BoundedTreeSet(List<T> contents, String prefix, String marker, int maxResults,
             String nextMarker) {
       super(contents, prefix, marker, maxResults);
       this.nextMarker = nextMarker;

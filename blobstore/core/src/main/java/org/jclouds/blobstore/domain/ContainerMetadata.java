@@ -30,7 +30,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * 
  * @author Adrian Cole
  */
-public class ContainerMetadata {
+public class ContainerMetadata implements Comparable<ContainerMetadata> {
 
    protected String name;
 
@@ -76,5 +76,9 @@ public class ContainerMetadata {
       } else if (!name.equals(other.name))
          return false;
       return true;
+   }
+
+   public int compareTo(ContainerMetadata o) {
+      return (this == o) ? 0 : getName().compareTo(o.getName());
    }
 }

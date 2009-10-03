@@ -80,15 +80,14 @@ public class BucketMetadata extends ContainerMetadata {
       super.setName(name);
    }
 
-   @Override
-   public String toString() {
-      StringBuilder builder = new StringBuilder();
-      builder.append("Metadata [canonicalUser=").append(canonicalUser).append("]");
-      return builder.toString();
-   }
-
    public String getName() {
       return name;
+   }
+
+   @Override
+   public String toString() {
+      return "BucketMetadata [canonicalUser=" + canonicalUser + ", creationDate=" + creationDate
+               + ", name=" + name + "]";
    }
 
    /**

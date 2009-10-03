@@ -30,7 +30,7 @@ import static org.testng.Assert.assertTrue;
 
 import java.io.InputStream;
 import java.net.URI;
-import java.util.List;
+import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.IOUtils;
@@ -73,7 +73,7 @@ public class PCSBlobStoreLiveTest {
 
    @Test
    public void testListContainers() throws Exception {
-      List<ContainerMetadata> response = connection.listContainers();
+      SortedSet<ContainerMetadata> response = connection.listContainers();
       assertNotNull(response);
       long initialContainerCount = response.size();
       assertTrue(initialContainerCount >= 0);

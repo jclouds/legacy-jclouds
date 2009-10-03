@@ -32,6 +32,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 import java.util.Map.Entry;
 
 import javax.ws.rs.core.MediaType;
@@ -81,7 +82,7 @@ public class Util {
    }
 
    public static S3Bucket[] convertBuckets(
-            List<org.jclouds.aws.s3.domain.BucketMetadata> jcBucketMDs) {
+            SortedSet<org.jclouds.aws.s3.domain.BucketMetadata> jcBucketMDs) {
       List<S3Bucket> jsBuckets = new ArrayList<S3Bucket>(jcBucketMDs.size());
       for (org.jclouds.aws.s3.domain.BucketMetadata jcBucketMD : jcBucketMDs) {
          jsBuckets.add(convertBucket(jcBucketMD));

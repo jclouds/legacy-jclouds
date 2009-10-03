@@ -31,7 +31,7 @@ import java.util.SortedSet;
  * @author Adrian Cole
  * 
  */
-public class ArrayListBucketResponse extends org.jclouds.rest.ArrayBoundedList<ObjectMetadata>
+public class ArrayListBucketResponse extends org.jclouds.rest.BoundedTreeSet<ObjectMetadata>
          implements ListBucketResponse {
    /** The serialVersionUID */
    private static final long serialVersionUID = -4475709781001190244L;

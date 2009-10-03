@@ -34,7 +34,7 @@ import org.jclouds.mezeo.pcs2.domain.ContainerMetadata;
 import org.jclouds.util.DateService;
 import org.testng.annotations.Test;
 
-import com.google.inject.internal.ImmutableList;
+import com.google.common.collect.ImmutableSortedSet;
 
 /**
  * Tests behavior of {@code ContainerResourceId}
@@ -45,7 +45,7 @@ import com.google.inject.internal.ImmutableList;
 public class FindIdInContainerListTest {
    private DateService dateService = new DateService();
 
-   private final ImmutableList<ContainerMetadata> OF = ImmutableList
+   private final ImmutableSortedSet<ContainerMetadata> OF = ImmutableSortedSet
             .of(new ContainerMetadata(
                      "test1",
                      URI

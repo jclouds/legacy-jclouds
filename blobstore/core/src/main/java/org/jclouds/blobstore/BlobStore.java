@@ -23,7 +23,7 @@
  */
 package org.jclouds.blobstore;
 
-import java.util.List;
+import java.util.SortedSet;
 import java.util.concurrent.Future;
 
 import org.jclouds.blobstore.domain.Blob;
@@ -35,7 +35,7 @@ import org.jclouds.http.options.GetOptions;
  * Provides hooks needed to run a blob store
  */
 public interface BlobStore<C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>> {
-   List<C> listContainers();
+   SortedSet<C> listContainers();
 
    boolean containerExists(String container);
 
@@ -50,7 +50,7 @@ public interface BlobStore<C extends ContainerMetadata, M extends BlobMetadata, 
     */
    Future<Boolean> deleteContainer(String container);
 
-   Future<? extends List<M>> listBlobs(String container);
+   Future<? extends SortedSet<M>> listBlobs(String container);
 
    Future<byte[]> putBlob(String container, B blob);
 

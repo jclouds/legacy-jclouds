@@ -23,8 +23,8 @@
  */
 package org.jclouds.rackspace.cloudfiles.internal;
 
-import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -51,7 +51,7 @@ import com.google.common.collect.Multimap;
 public class StubCloudFilesBlobStore extends
          StubBlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> implements
          CloudFilesBlobStore {
-   
+
    @Inject
    protected StubCloudFilesBlobStore(Map<String, Map<String, Blob<BlobMetadata>>> containerToBlobs,
             DateService dateService, Provider<ContainerMetadata> containerMetaProvider,
@@ -63,7 +63,7 @@ public class StubCloudFilesBlobStore extends
       return null;
    }
 
-   public List<ContainerMetadata> listContainers(ListContainerOptions options) {
+   public SortedSet<ContainerMetadata> listContainers(ListContainerOptions options) {
       return null;
    }
 
@@ -88,7 +88,7 @@ public class StubCloudFilesBlobStore extends
       return null;
    }
 
-   public List<ContainerCDNMetadata> listCDNContainers(ListCdnContainerOptions... options) {
+   public SortedSet<ContainerCDNMetadata> listCDNContainers(ListCdnContainerOptions... options) {
       return null;
    }
 

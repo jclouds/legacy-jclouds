@@ -29,8 +29,8 @@ import java.io.InputStream;
 import java.net.URI;
 
 import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
-import org.jclouds.azure.storage.domain.ArrayBoundedList;
-import org.jclouds.azure.storage.domain.BoundedList;
+import org.jclouds.azure.storage.domain.BoundedTreeSet;
+import org.jclouds.azure.storage.domain.BoundedSortedSet;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.util.DateService;
@@ -60,7 +60,7 @@ public class AccountNameEnumerationResultsHandlerTest extends BaseHandlerTest {
    @SuppressWarnings("unchecked")
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/test_list_containers.xml");
-      BoundedList<ContainerMetadata> list = new ArrayBoundedList<ContainerMetadata>(ImmutableList
+      BoundedSortedSet<ContainerMetadata> list = new BoundedTreeSet<ContainerMetadata>(ImmutableList
                .of(new ContainerMetadata(
                         URI.create("http://myaccount.blob.core.windows.net/audio"), dateService
                                  .rfc822DateParse("Wed, 13 Aug 2008 20:39:39 GMT"), HttpUtils
@@ -74,7 +74,7 @@ public class AccountNameEnumerationResultsHandlerTest extends BaseHandlerTest {
 
                ), null, null, 3, "video");
 
-      BoundedList<ContainerMetadata> result = (BoundedList<ContainerMetadata>) factory.create(
+      BoundedSortedSet<ContainerMetadata> result = (BoundedSortedSet<ContainerMetadata>) factory.create(
                injector.getInstance(AccountNameEnumerationResultsHandler.class)).parse(is);
 
       assertEquals(result, list);
@@ -83,7 +83,7 @@ public class AccountNameEnumerationResultsHandlerTest extends BaseHandlerTest {
    @SuppressWarnings("unchecked")
    public void testApplyInputStreamWithOptions() {
       InputStream is = getClass().getResourceAsStream("/test_list_containers_options.xml");
-      BoundedList<ContainerMetadata> list = new ArrayBoundedList<ContainerMetadata>(ImmutableList
+      BoundedSortedSet<ContainerMetadata> list = new BoundedTreeSet<ContainerMetadata>(ImmutableList
                .of(new ContainerMetadata(
                         URI.create("http://myaccount.blob.core.windows.net/audio"), dateService
                                  .rfc822DateParse("Wed, 13 Aug 2008 20:39:39 GMT"), HttpUtils
@@ -96,7 +96,7 @@ public class AccountNameEnumerationResultsHandlerTest extends BaseHandlerTest {
                         .fromHexString("0x8CACB9BD7BACAC3"))
 
                ), "prefix", "marker", 1, "video");
-      BoundedList<ContainerMetadata> result = (BoundedList<ContainerMetadata>) factory.create(
+      BoundedSortedSet<ContainerMetadata> result = (BoundedSortedSet<ContainerMetadata>) factory.create(
                injector.getInstance(AccountNameEnumerationResultsHandler.class)).parse(is);
       assertEquals(result, list);
    }
