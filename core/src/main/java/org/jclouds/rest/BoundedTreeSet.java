@@ -23,7 +23,7 @@
  */
 package org.jclouds.rest;
 
-import java.util.List;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 public class BoundedTreeSet<T> extends TreeSet<T> implements BoundedSortedSet<T> {
@@ -34,7 +34,7 @@ public class BoundedTreeSet<T> extends TreeSet<T> implements BoundedSortedSet<T>
    protected final String marker;
    protected final int maxResults;
 
-   public BoundedTreeSet(List<T> contents, String prefix, String marker, int maxResults) {
+   public BoundedTreeSet(SortedSet<T> contents, String prefix, String marker, int maxResults) {
       this.addAll(contents);
       this.prefix = prefix;
       this.marker = marker;

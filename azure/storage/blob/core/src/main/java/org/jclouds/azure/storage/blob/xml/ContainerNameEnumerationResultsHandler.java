@@ -24,12 +24,13 @@
 package org.jclouds.azure.storage.blob.xml;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.SortedSet;
 
-import org.jclouds.azure.storage.blob.domain.ArrayListBlobsResponse;
+import javax.inject.Inject;
+
 import org.jclouds.azure.storage.blob.domain.BlobMetadata;
 import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
+import org.jclouds.azure.storage.blob.domain.TreeSetListBlobsResponse;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.DateService;
@@ -37,7 +38,7 @@ import org.joda.time.DateTime;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import javax.inject.Inject;
+import com.google.common.collect.Sets;
 
 /**
  * Parses the following XML document:
@@ -50,7 +51,7 @@ import javax.inject.Inject;
 public class ContainerNameEnumerationResultsHandler extends
          ParseSax.HandlerWithResult<ListBlobsResponse> {
 
-   private List<BlobMetadata> blobMetadata = new ArrayList<BlobMetadata>();
+   private SortedSet<BlobMetadata> blobMetadata = Sets.newTreeSet();
    private String prefix;
    private String marker;
    private int maxResults;
@@ -79,7 +80,7 @@ public class ContainerNameEnumerationResultsHandler extends
    }
 
    public ListBlobsResponse getResult() {
-      return new ArrayListBlobsResponse(containerUrl, blobMetadata, prefix, marker, maxResults,
+      return new TreeSetListBlobsResponse(containerUrl, blobMetadata, prefix, marker, maxResults,
                nextMarker, delimiter, blobPrefix);
    }
 

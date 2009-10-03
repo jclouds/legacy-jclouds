@@ -33,11 +33,11 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.jclouds.azure.storage.blob.AzureBlobStore;
-import org.jclouds.azure.storage.blob.domain.ArrayListBlobsResponse;
 import org.jclouds.azure.storage.blob.domain.Blob;
 import org.jclouds.azure.storage.blob.domain.BlobMetadata;
 import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
 import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
+import org.jclouds.azure.storage.blob.domain.TreeSetListBlobsResponse;
 import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
 import org.jclouds.azure.storage.domain.BoundedSortedSet;
 import org.jclouds.azure.storage.options.CreateOptions;
@@ -48,7 +48,6 @@ import org.jclouds.util.DateService;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
@@ -104,8 +103,8 @@ public class StubAzureBlobStore extends StubBlobStore<ContainerMetadata, BlobMet
                }
             }));
 
-            return new ArrayListBlobsResponse(URI.create("http://localhost"), Lists
-                     .newArrayList(contents), null, null, 5000, null, null, null);
+            return new TreeSetListBlobsResponse(URI.create("http://localhost"), contents, null,
+                     null, 5000, null, null, null);
          }
       };
    }

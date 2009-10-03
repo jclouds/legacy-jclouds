@@ -23,7 +23,7 @@
  */
 package org.jclouds.azure.storage.domain;
 
-import java.util.List;
+import java.util.SortedSet;
 
 /**
  * 
@@ -68,7 +68,7 @@ public class BoundedTreeSet<T> extends org.jclouds.rest.BoundedTreeSet<T> implem
                + maxResults + ", prefix=" + prefix + "]";
    }
 
-   public BoundedTreeSet(List<T> contents, String prefix, String marker, int maxResults,
+   public BoundedTreeSet(SortedSet<T> contents, String prefix, String marker, int maxResults,
             String nextMarker) {
       super(contents, prefix, marker, maxResults);
       this.nextMarker = nextMarker;

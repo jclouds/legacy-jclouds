@@ -24,18 +24,19 @@
 package org.jclouds.azure.storage.blob.xml;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.SortedSet;
+
+import javax.inject.Inject;
 
 import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
-import org.jclouds.azure.storage.domain.BoundedTreeSet;
 import org.jclouds.azure.storage.domain.BoundedSortedSet;
+import org.jclouds.azure.storage.domain.BoundedTreeSet;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.DateService;
 import org.joda.time.DateTime;
 
-import javax.inject.Inject;
+import com.google.common.collect.Sets;
 
 /**
  * Parses the following XML document:
@@ -48,7 +49,7 @@ import javax.inject.Inject;
 public class AccountNameEnumerationResultsHandler extends
          ParseSax.HandlerWithResult<BoundedSortedSet<ContainerMetadata>> {
 
-   private List<ContainerMetadata> containerMetadata = new ArrayList<ContainerMetadata>();
+   private SortedSet<ContainerMetadata> containerMetadata = Sets.newTreeSet();
    private String prefix;
    private String marker;
    private int maxResults;

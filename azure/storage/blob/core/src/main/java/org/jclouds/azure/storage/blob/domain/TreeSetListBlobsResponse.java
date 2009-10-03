@@ -24,7 +24,7 @@
 package org.jclouds.azure.storage.blob.domain;
 
 import java.net.URI;
-import java.util.List;
+import java.util.SortedSet;
 
 import org.jclouds.azure.storage.domain.BoundedTreeSet;
 
@@ -33,7 +33,7 @@ import org.jclouds.azure.storage.domain.BoundedTreeSet;
  * @author Adrian Cole
  * 
  */
-public class ArrayListBlobsResponse extends BoundedTreeSet<BlobMetadata> implements
+public class TreeSetListBlobsResponse extends BoundedTreeSet<BlobMetadata> implements
          ListBlobsResponse {
    /** The serialVersionUID */
    private static final long serialVersionUID = -4475709781001190244L;
@@ -43,9 +43,9 @@ public class ArrayListBlobsResponse extends BoundedTreeSet<BlobMetadata> impleme
 
    @Override
    public String toString() {
-      return "ArrayListBlobsResponse [blobPrefix=" + blobPrefix + ", containerUrl=" + containerUrl
-               + ", delimiter=" + delimiter + ", nextMarker=" + nextMarker + ", marker=" + marker
-               + ", maxResults=" + maxResults + ", prefix=" + prefix + "]";
+      return "TreeSetListBlobsResponse [blobPrefix=" + blobPrefix + ", containerUrl="
+               + containerUrl + ", delimiter=" + delimiter + ", nextMarker=" + nextMarker
+               + ", marker=" + marker + ", maxResults=" + maxResults + ", prefix=" + prefix + "]";
    }
 
    @Override
@@ -66,7 +66,7 @@ public class ArrayListBlobsResponse extends BoundedTreeSet<BlobMetadata> impleme
          return false;
       if (getClass() != obj.getClass())
          return false;
-      ArrayListBlobsResponse other = (ArrayListBlobsResponse) obj;
+      TreeSetListBlobsResponse other = (TreeSetListBlobsResponse) obj;
       if (blobPrefix == null) {
          if (other.blobPrefix != null)
             return false;
@@ -85,8 +85,9 @@ public class ArrayListBlobsResponse extends BoundedTreeSet<BlobMetadata> impleme
       return true;
    }
 
-   public ArrayListBlobsResponse(URI containerUrl, List<BlobMetadata> contents, String prefix,
-            String marker, int maxResults, String nextMarker, String delimiter, String blobPrefix) {
+   public TreeSetListBlobsResponse(URI containerUrl, SortedSet<BlobMetadata> contents,
+            String prefix, String marker, int maxResults, String nextMarker, String delimiter,
+            String blobPrefix) {
       super(contents, prefix, marker, maxResults, nextMarker);
       this.containerUrl = containerUrl;
       this.delimiter = delimiter;

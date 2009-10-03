@@ -28,9 +28,9 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.net.URI;
 
-import org.jclouds.azure.storage.blob.domain.ArrayListBlobsResponse;
 import org.jclouds.azure.storage.blob.domain.BlobMetadata;
 import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
+import org.jclouds.azure.storage.blob.domain.TreeSetListBlobsResponse;
 import org.jclouds.azure.storage.domain.BoundedSortedSet;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.BaseHandlerTest;
@@ -38,7 +38,7 @@ import org.jclouds.util.DateService;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSortedSet;
 
 /**
  * Tests behavior of {@code ContainerNameEnumerationResultsHandlerTest}
@@ -60,28 +60,41 @@ public class ContainerNameEnumerationResultsHandlerTest extends BaseHandlerTest 
    @SuppressWarnings("unchecked")
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/test_list_blobs.xml");
-      ListBlobsResponse list = new ArrayListBlobsResponse(URI
-               .create("http://myaccount.blob.core.windows.net/mycontainer"), ImmutableList.of(
-               new BlobMetadata("blob1.txt", URI
-                        .create("http://myaccount.blob.core.windows.net/mycontainer/blob1.txt"),
-                        dateService.rfc822DateParse("Thu, 18 Sep 2008 18:41:57 GMT"), HttpUtils
-                                 .fromHexString("0x8CAE7D55D050B8B"), 8,
-                        "text/plain; charset=UTF-8", null, null, null), new BlobMetadata("blob2.txt", URI
-                        .create("http://myaccount.blob.core.windows.net/mycontainer/blob2.txt"),
-                        dateService.rfc822DateParse("Thu, 18 Sep 2008 18:41:57 GMT"), HttpUtils
-                                 .fromHexString("0x8CAE7D55CF6C339"), 14,
-                        "text/plain; charset=UTF-8", null, null, null),
-               new BlobMetadata("newblob1.txt", URI
-                        .create("http://myaccount.blob.core.windows.net/mycontainer/newblob1.txt"),
-                        dateService.rfc822DateParse("Thu, 18 Sep 2008 18:41:57 GMT"), HttpUtils
-                                 .fromHexString("0x8CAE7D55CF6C339"), 25,
-                        "text/plain; charset=UTF-8", null, null, null)
+      ListBlobsResponse list = new TreeSetListBlobsResponse(
+               URI.create("http://myaccount.blob.core.windows.net/mycontainer"),
+               ImmutableSortedSet
+                        .of(
+                                 new BlobMetadata(
+                                          "blob1.txt",
+                                          URI
+                                                   .create("http://myaccount.blob.core.windows.net/mycontainer/blob1.txt"),
+                                          dateService
+                                                   .rfc822DateParse("Thu, 18 Sep 2008 18:41:57 GMT"),
+                                          HttpUtils.fromHexString("0x8CAE7D55D050B8B"), 8,
+                                          "text/plain; charset=UTF-8", null, null, null),
+                                 new BlobMetadata(
+                                          "blob2.txt",
+                                          URI
+                                                   .create("http://myaccount.blob.core.windows.net/mycontainer/blob2.txt"),
+                                          dateService
+                                                   .rfc822DateParse("Thu, 18 Sep 2008 18:41:57 GMT"),
+                                          HttpUtils.fromHexString("0x8CAE7D55CF6C339"), 14,
+                                          "text/plain; charset=UTF-8", null, null, null),
+                                 new BlobMetadata(
+                                          "newblob1.txt",
+                                          URI
+                                                   .create("http://myaccount.blob.core.windows.net/mycontainer/newblob1.txt"),
+                                          dateService
+                                                   .rfc822DateParse("Thu, 18 Sep 2008 18:41:57 GMT"),
+                                          HttpUtils.fromHexString("0x8CAE7D55CF6C339"), 25,
+                                          "text/plain; charset=UTF-8", null, null, null)
 
-      ), null, null, 4, "newblob2.txt", null, "myfolder/");
-      
-      BoundedSortedSet<ListBlobsResponse> result = (BoundedSortedSet<ListBlobsResponse>) factory.create(
-               injector.getInstance(ContainerNameEnumerationResultsHandler.class)).parse(is);
-      
+                        ), null, null, 4, "newblob2.txt", null, "myfolder/");
+
+      BoundedSortedSet<ListBlobsResponse> result = (BoundedSortedSet<ListBlobsResponse>) factory
+               .create(injector.getInstance(ContainerNameEnumerationResultsHandler.class))
+               .parse(is);
+
       assertEquals(result, list);
    }
 }

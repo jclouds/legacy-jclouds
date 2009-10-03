@@ -29,15 +29,15 @@ import java.io.InputStream;
 import java.net.URI;
 
 import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
-import org.jclouds.azure.storage.domain.BoundedTreeSet;
 import org.jclouds.azure.storage.domain.BoundedSortedSet;
+import org.jclouds.azure.storage.domain.BoundedTreeSet;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.util.DateService;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSortedSet;
 
 /**
  * Tests behavior of {@code ParseFlavorListFromGsonResponseTest}
@@ -60,11 +60,11 @@ public class AccountNameEnumerationResultsHandlerTest extends BaseHandlerTest {
    @SuppressWarnings("unchecked")
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/test_list_containers.xml");
-      BoundedSortedSet<ContainerMetadata> list = new BoundedTreeSet<ContainerMetadata>(ImmutableList
-               .of(new ContainerMetadata(
-                        URI.create("http://myaccount.blob.core.windows.net/audio"), dateService
-                                 .rfc822DateParse("Wed, 13 Aug 2008 20:39:39 GMT"), HttpUtils
-                                 .fromHexString("0x8CACB9BD7C6B1B2")), new ContainerMetadata(URI
+      BoundedSortedSet<ContainerMetadata> list = new BoundedTreeSet<ContainerMetadata>(
+               ImmutableSortedSet.of(new ContainerMetadata(URI
+                        .create("http://myaccount.blob.core.windows.net/audio"), dateService
+                        .rfc822DateParse("Wed, 13 Aug 2008 20:39:39 GMT"), HttpUtils
+                        .fromHexString("0x8CACB9BD7C6B1B2")), new ContainerMetadata(URI
                         .create("http://myaccount.blob.core.windows.net/images"), dateService
                         .rfc822DateParse("Wed, 14 Aug 2008 20:39:39 GMT"), HttpUtils
                         .fromHexString("0x8CACB9BD7C1EEEC")), new ContainerMetadata(URI
@@ -74,8 +74,8 @@ public class AccountNameEnumerationResultsHandlerTest extends BaseHandlerTest {
 
                ), null, null, 3, "video");
 
-      BoundedSortedSet<ContainerMetadata> result = (BoundedSortedSet<ContainerMetadata>) factory.create(
-               injector.getInstance(AccountNameEnumerationResultsHandler.class)).parse(is);
+      BoundedSortedSet<ContainerMetadata> result = (BoundedSortedSet<ContainerMetadata>) factory
+               .create(injector.getInstance(AccountNameEnumerationResultsHandler.class)).parse(is);
 
       assertEquals(result, list);
    }
@@ -83,11 +83,11 @@ public class AccountNameEnumerationResultsHandlerTest extends BaseHandlerTest {
    @SuppressWarnings("unchecked")
    public void testApplyInputStreamWithOptions() {
       InputStream is = getClass().getResourceAsStream("/test_list_containers_options.xml");
-      BoundedSortedSet<ContainerMetadata> list = new BoundedTreeSet<ContainerMetadata>(ImmutableList
-               .of(new ContainerMetadata(
-                        URI.create("http://myaccount.blob.core.windows.net/audio"), dateService
-                                 .rfc822DateParse("Wed, 13 Aug 2008 20:39:39 GMT"), HttpUtils
-                                 .fromHexString("0x8CACB9BD7C6B1B2")), new ContainerMetadata(URI
+      BoundedSortedSet<ContainerMetadata> list = new BoundedTreeSet<ContainerMetadata>(
+               ImmutableSortedSet.of(new ContainerMetadata(URI
+                        .create("http://myaccount.blob.core.windows.net/audio"), dateService
+                        .rfc822DateParse("Wed, 13 Aug 2008 20:39:39 GMT"), HttpUtils
+                        .fromHexString("0x8CACB9BD7C6B1B2")), new ContainerMetadata(URI
                         .create("http://myaccount.blob.core.windows.net/images"), dateService
                         .rfc822DateParse("Wed, 14 Aug 2008 20:39:39 GMT"), HttpUtils
                         .fromHexString("0x8CACB9BD7C1EEEC")), new ContainerMetadata(URI
@@ -96,8 +96,8 @@ public class AccountNameEnumerationResultsHandlerTest extends BaseHandlerTest {
                         .fromHexString("0x8CACB9BD7BACAC3"))
 
                ), "prefix", "marker", 1, "video");
-      BoundedSortedSet<ContainerMetadata> result = (BoundedSortedSet<ContainerMetadata>) factory.create(
-               injector.getInstance(AccountNameEnumerationResultsHandler.class)).parse(is);
+      BoundedSortedSet<ContainerMetadata> result = (BoundedSortedSet<ContainerMetadata>) factory
+               .create(injector.getInstance(AccountNameEnumerationResultsHandler.class)).parse(is);
       assertEquals(result, list);
    }
 }

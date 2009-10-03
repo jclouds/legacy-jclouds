@@ -30,7 +30,7 @@ import java.net.URI;
  * @author Adrian Cole
  * 
  */
-public class QueueMetadata {
+public class QueueMetadata implements Comparable<QueueMetadata> {
    private final String name;
    private final URI url;
 
@@ -83,4 +83,7 @@ public class QueueMetadata {
       return url;
    }
 
+   public int compareTo(QueueMetadata o) {
+      return (this == o) ? 0 : getName().compareTo(o.getName());
+   }
 }
