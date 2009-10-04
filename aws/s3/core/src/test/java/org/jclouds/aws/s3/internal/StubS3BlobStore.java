@@ -36,12 +36,12 @@ import javax.inject.Provider;
 
 import org.jclouds.aws.s3.S3BlobStore;
 import org.jclouds.aws.s3.domain.AccessControlList;
-import org.jclouds.aws.s3.domain.ArrayListBucketResponse;
 import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.CannedAccessPolicy;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.s3.domain.TreeSetListBucketResponse;
 import org.jclouds.aws.s3.domain.AccessControlList.CanonicalUserGrantee;
 import org.jclouds.aws.s3.domain.AccessControlList.EmailAddressGrantee;
 import org.jclouds.aws.s3.domain.AccessControlList.Grant;
@@ -61,7 +61,6 @@ import org.joda.time.DateTime;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.internal.Nullable;
 
@@ -167,8 +166,8 @@ public class StubS3BlobStore extends StubBlobStore<BucketMetadata, ObjectMetadat
                }
                contents = contentsSlice;
             }
-            return new ArrayListBucketResponse(name, Lists.newArrayList(contents), prefix, marker,
-                     maxResults, delimiter, truncated, commonPrefixes);
+            return new TreeSetListBucketResponse(name, contents, prefix, marker, maxResults,
+                     delimiter, truncated, commonPrefixes);
          }
       };
    }

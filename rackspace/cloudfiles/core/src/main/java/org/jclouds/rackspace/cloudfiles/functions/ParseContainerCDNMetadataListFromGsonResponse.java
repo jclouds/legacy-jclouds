@@ -27,21 +27,22 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
-import java.util.List;
+import java.util.SortedSet;
+
+import javax.inject.Inject;
 
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerCDNMetadata;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import javax.inject.Inject;
 
 /**
  * This parses {@link ContainerCDNMetadata} from a gson string.
  * 
  * @author James Murty
  */
-public class ParseContainerCDNMetadataListFromGsonResponse extends ParseJson<List<ContainerCDNMetadata>>
+public class ParseContainerCDNMetadataListFromGsonResponse extends ParseJson<SortedSet<ContainerCDNMetadata>>
     {
    
    @Inject
@@ -49,8 +50,8 @@ public class ParseContainerCDNMetadataListFromGsonResponse extends ParseJson<Lis
       super(gson);
    }
 
-   public List<ContainerCDNMetadata> apply(InputStream stream) {
-      Type listType = new TypeToken<List<ContainerCDNMetadata>>() {
+   public SortedSet<ContainerCDNMetadata> apply(InputStream stream) {
+      Type listType = new TypeToken<SortedSet<ContainerCDNMetadata>>() {
       }.getType();
       try {
          return gson.fromJson(new InputStreamReader(stream, "UTF-8"), listType);

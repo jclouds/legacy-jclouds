@@ -27,7 +27,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.net.URI;
-import java.util.List;
+import java.util.SortedSet;
 
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.mezeo.pcs2.domain.ContainerMetadata;
@@ -35,7 +35,7 @@ import org.jclouds.util.DateService;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSortedSet;
 
 /**
  * Tests behavior of {@code FileListToContainerMetadataListHandler}
@@ -58,7 +58,7 @@ public class FileListToContainerMetadataListHandlerTest extends BaseHandlerTest 
    @SuppressWarnings("unchecked")
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/test_file_list.xml");
-      List<ContainerMetadata> list = ImmutableList
+      SortedSet<ContainerMetadata> list = ImmutableSortedSet
                .of(new ContainerMetadata(
                         "test1",
                         URI
@@ -67,7 +67,7 @@ public class FileListToContainerMetadataListHandlerTest extends BaseHandlerTest 
                         dateService.fromSeconds(1254008227), "adrian@jclouds.org", true, false, 1,
                         1024));
 
-      List<ContainerMetadata> result = (List<ContainerMetadata>) factory.create(
+      SortedSet<ContainerMetadata> result = (SortedSet<ContainerMetadata>) factory.create(
                injector.getInstance(FileListToContainerMetadataListHandler.class)).parse(is);
 
       assertEquals(result, list);

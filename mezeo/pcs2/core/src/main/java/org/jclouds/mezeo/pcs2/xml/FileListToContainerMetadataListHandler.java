@@ -24,8 +24,7 @@
 package org.jclouds.mezeo.pcs2.xml;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.SortedSet;
 
 import javax.inject.Inject;
 
@@ -36,13 +35,15 @@ import org.joda.time.DateTime;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import com.google.common.collect.Sets;
+
 /**
  * @author Adrian Cole
  */
 public class FileListToContainerMetadataListHandler extends
-         ParseSax.HandlerWithResult<List<ContainerMetadata>> {
+         ParseSax.HandlerWithResult<SortedSet<ContainerMetadata>> {
 
-   private List<ContainerMetadata> containerMetadata = new ArrayList<ContainerMetadata>();
+   private SortedSet<ContainerMetadata> containerMetadata = Sets.newTreeSet();
    private URI currentUrl;
    private String currentName;
    private DateTime currentCreated;
@@ -63,7 +64,7 @@ public class FileListToContainerMetadataListHandler extends
       this.dateParser = dateParser;
    }
 
-   public List<ContainerMetadata> getResult() {
+   public SortedSet<ContainerMetadata> getResult() {
       return containerMetadata;
    }
 

@@ -23,7 +23,6 @@
  */
 package org.jclouds.aws.s3.domain;
 
-import java.util.List;
 import java.util.SortedSet;
 
 /**
@@ -31,7 +30,7 @@ import java.util.SortedSet;
  * @author Adrian Cole
  * 
  */
-public class ArrayListBucketResponse extends org.jclouds.rest.BoundedTreeSet<ObjectMetadata>
+public class TreeSetListBucketResponse extends org.jclouds.rest.BoundedTreeSet<ObjectMetadata>
          implements ListBucketResponse {
    /** The serialVersionUID */
    private static final long serialVersionUID = -4475709781001190244L;
@@ -40,8 +39,8 @@ public class ArrayListBucketResponse extends org.jclouds.rest.BoundedTreeSet<Obj
    private final SortedSet<String> commonPrefixes;
    private final boolean truncated;
 
-   public ArrayListBucketResponse(String bucketName, List<ObjectMetadata> contents, String prefix,
-            String marker, int maxResults, String delimiter, boolean isTruncated,
+   public TreeSetListBucketResponse(String bucketName, SortedSet<ObjectMetadata> contents,
+            String prefix, String marker, int maxResults, String delimiter, boolean isTruncated,
             SortedSet<String> commonPrefixes) {
       super(contents, prefix, marker, maxResults);
       this.delimiter = delimiter;

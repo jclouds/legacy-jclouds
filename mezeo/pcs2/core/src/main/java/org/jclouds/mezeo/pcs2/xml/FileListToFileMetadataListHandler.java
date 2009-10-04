@@ -24,8 +24,7 @@
 package org.jclouds.mezeo.pcs2.xml;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.SortedSet;
 
 import javax.inject.Inject;
 
@@ -34,20 +33,22 @@ import org.jclouds.util.DateService;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import com.google.common.collect.Sets;
+
 /**
  * @author Adrian Cole
  */
 public class FileListToFileMetadataListHandler extends
-BaseFileMetadataHandler<List<FileMetadata>> {
+BaseFileMetadataHandler<SortedSet<FileMetadata>> {
 
-   private List<FileMetadata> containerMetadata = new ArrayList<FileMetadata>();
+   private SortedSet<FileMetadata> containerMetadata = Sets.newTreeSet();
 
    @Inject
    public FileListToFileMetadataListHandler(DateService dateParser) {
      super(dateParser);
    }
 
-   public List<FileMetadata> getResult() {
+   public SortedSet<FileMetadata> getResult() {
       return containerMetadata;
    }
 

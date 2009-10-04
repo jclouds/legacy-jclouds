@@ -25,34 +25,28 @@ package org.jclouds.aws.s3.config;
 
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.aws.s3.S3BlobStore;
-import org.jclouds.aws.s3.S3Context;
-import org.jclouds.aws.s3.config.S3ContextModule.S3ContextImpl;
-import org.jclouds.aws.s3.domain.BucketMetadata;
-import org.jclouds.aws.s3.domain.ObjectMetadata;
-import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.s3.handlers.AWSClientErrorRetryHandler;
+import org.jclouds.aws.s3.handlers.AWSRedirectionRetryHandler;
+import org.jclouds.aws.s3.handlers.ParseAWSErrorFromXmlContent;
 import org.jclouds.aws.s3.reference.S3Constants;
-import org.jclouds.blobstore.BlobStoreMapsModule;
+import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.http.handlers.DelegatingErrorHandler;
+import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.util.Jsr330;
 import org.testng.annotations.Test;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.TypeLiteral;
 
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "s3.S3ContextModuleTest")
-public class S3ContextModuleTest {
+@Test(groups = "unit", testName = "s3.RestS3ConnectionModuleTest")
+public class RestS3ConnectionModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new StubS3BlobStoreModule(), BlobStoreMapsModule.Builder
-               .newBuilder(new TypeLiteral<S3BlobStore>() {
-               }, new TypeLiteral<BucketMetadata>() {
-               }, new TypeLiteral<ObjectMetadata>() {
-               }, new TypeLiteral<S3Object>() {
-               }).build(), new S3ContextModule() {
+      return Guice.createInjector(new RestS3ConnectionModule(), new ParserModule(), new AbstractModule() {
          @Override
          protected void configure() {
             bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to(
@@ -61,15 +55,34 @@ public class S3ContextModuleTest {
                      .to("key");
             bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_S3_ENDPOINT)).to(
                      "http://localhost");
-            super.configure();
          }
       });
    }
 
    @Test
-   void testContextImpl() {
-      S3Context handler = createInjector().getInstance(S3Context.class);
-      assertEquals(handler.getClass(), S3ContextImpl.class);
+   void testServerErrorHandler() {
+      DelegatingErrorHandler handler = createInjector().getInstance(DelegatingErrorHandler.class);
+      assertEquals(handler.getServerErrorHandler().getClass(), ParseAWSErrorFromXmlContent.class);
+   }
+
+   @Test
+   void testClientErrorHandler() {
+      DelegatingErrorHandler handler = createInjector().getInstance(DelegatingErrorHandler.class);
+      assertEquals(handler.getClientErrorHandler().getClass(), ParseAWSErrorFromXmlContent.class);
+   }
+
+   @Test
+   void testClientRetryHandler() {
+      DelegatingRetryHandler handler = createInjector().getInstance(DelegatingRetryHandler.class);
+      assertEquals(handler.getClientErrorRetryHandler().getClass(),
+               AWSClientErrorRetryHandler.class);
+   }
+
+   @Test
+   void testRedirectionRetryHandler() {
+      DelegatingRetryHandler handler = createInjector().getInstance(DelegatingRetryHandler.class);
+      assertEquals(handler.getRedirectionRetryHandler().getClass(),
+               AWSRedirectionRetryHandler.class);
    }
 
 }

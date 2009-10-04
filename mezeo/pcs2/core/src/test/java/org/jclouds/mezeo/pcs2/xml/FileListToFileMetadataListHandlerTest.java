@@ -27,7 +27,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.net.URI;
-import java.util.List;
+import java.util.SortedSet;
 
 import javax.ws.rs.core.MediaType;
 
@@ -37,10 +37,10 @@ import org.jclouds.util.DateService;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSortedSet;
 
 /**
- * Tests behavior of {@code FileListToFileMetadataListHandler}
+ * Tests behavior of {@code FileSortedSetToFileMetadataSortedSetHandler}
  * 
  * @author Adrian Cole
  */
@@ -60,7 +60,7 @@ public class FileListToFileMetadataListHandlerTest extends BaseHandlerTest {
    @SuppressWarnings("unchecked")
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/test_file_list.xml");
-      List<FileMetadata> list = ImmutableList.of(new FileMetadata("more", URI
+      SortedSet<FileMetadata> list = ImmutableSortedSet.of(new FileMetadata("more", URI
                .create("https://pcsbeta.mezeo.net/v2/files/5C81DADC-AAEE-11DE-9D55-B39340AEFF3A"),
                dateService.fromSeconds(1254005157), dateService.fromSeconds(1254005158),
                dateService.fromSeconds(1254005159), "adrian@jclouds.org", false, false, 1, 254288,
@@ -72,7 +72,7 @@ public class FileListToFileMetadataListHandlerTest extends BaseHandlerTest {
                dateService.fromSeconds(1254000182), "adrian@jclouds.org", false, true, 3, 5,
                MediaType.TEXT_PLAIN, false));
 
-      List<FileMetadata> result = (List<FileMetadata>) factory.create(
+      SortedSet<FileMetadata> result = (SortedSet<FileMetadata>) factory.create(
                injector.getInstance(FileListToFileMetadataListHandler.class)).parse(is);
 
       assertEquals(result, list);

@@ -27,7 +27,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
+import java.util.SortedSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
@@ -84,8 +84,8 @@ public class S3ParserTest extends PerformanceTest {
    }
 
    @SuppressWarnings("unchecked")
-   private List<BucketMetadata> runParseListAllMyBuckets() throws HttpException {
-      return (List<BucketMetadata>) factory.create(
+   private SortedSet<BucketMetadata> runParseListAllMyBuckets() throws HttpException {
+      return (SortedSet<BucketMetadata>) factory.create(
                injector.getInstance(ListAllMyBucketsHandler.class)).parse(
                IOUtils.toInputStream(listAllMyBucketsResultOn200));
    }
@@ -93,11 +93,11 @@ public class S3ParserTest extends PerformanceTest {
    @Test
    void testParseListAllMyBucketsParallelResponseTime() throws InterruptedException,
             ExecutionException {
-      CompletionService<List<BucketMetadata>> completer = new ExecutorCompletionService<List<BucketMetadata>>(
+      CompletionService<SortedSet<BucketMetadata>> completer = new ExecutorCompletionService<SortedSet<BucketMetadata>>(
                exec);
       for (int i = 0; i < LOOP_COUNT; i++)
-         completer.submit(new Callable<List<BucketMetadata>>() {
-            public List<BucketMetadata> call() throws IOException, SAXException, HttpException {
+         completer.submit(new Callable<SortedSet<BucketMetadata>>() {
+            public SortedSet<BucketMetadata> call() throws IOException, SAXException, HttpException {
                return runParseListAllMyBuckets();
             }
          });
@@ -107,13 +107,13 @@ public class S3ParserTest extends PerformanceTest {
 
    @Test
    public void testCanParseListAllMyBuckets() throws HttpException {
-      List<BucketMetadata> s3Buckets = runParseListAllMyBuckets();
-      BucketMetadata container1 = s3Buckets.get(0);
+      SortedSet<BucketMetadata> s3Buckets = runParseListAllMyBuckets();
+      BucketMetadata container1 = s3Buckets.first();
       assert container1.getName().equals("adrianjbosstest");
       DateTime expectedDate1 = new DateTime("2009-03-12T02:00:07.000Z");
       DateTime date1 = container1.getCreationDate();
       assert date1.equals(expectedDate1);
-      BucketMetadata container2 = s3Buckets.get(1);
+      BucketMetadata container2 = (BucketMetadata) s3Buckets.toArray()[1];
       assert container2.getName().equals("adrianjbosstest2");
       DateTime expectedDate2 = new DateTime("2009-03-12T02:00:09.000Z");
       DateTime date2 = container2.getCreationDate();

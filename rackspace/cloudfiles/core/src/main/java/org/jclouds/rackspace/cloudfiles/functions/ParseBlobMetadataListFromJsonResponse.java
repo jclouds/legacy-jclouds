@@ -27,7 +27,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
-import java.util.List;
+import java.util.SortedSet;
+
+import javax.inject.Inject;
 
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.http.HttpUtils;
@@ -35,24 +37,24 @@ import org.jclouds.http.functions.ParseJson;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import javax.inject.Inject;
 
 /**
  * This parses {@link BlobMetadata} from a gson string.
  * 
  * @author Adrian Cole
  */
-public class ParseBlobMetadataListFromJsonResponse extends ParseJson<List<BlobMetadata>> {
+public class ParseBlobMetadataListFromJsonResponse extends ParseJson<SortedSet<BlobMetadata>> {
 
    @Inject
    public ParseBlobMetadataListFromJsonResponse(Gson gson) {
       super(gson);
    }
 
-   public static class CloudFilesMetadata {
+   public static class CloudFilesMetadata implements Comparable<CloudFilesMetadata> {
       public CloudFilesMetadata() {
       }
 
@@ -61,25 +63,30 @@ public class ParseBlobMetadataListFromJsonResponse extends ParseJson<List<BlobMe
       long bytes;
       String content_type;
       DateTime last_modified;
+
+      public int compareTo(CloudFilesMetadata o) {
+         return (this == o) ? 0 : name.compareTo(o.name);
+      }
    }
 
-   public List<BlobMetadata> apply(InputStream stream) {
-      Type listType = new TypeToken<List<CloudFilesMetadata>>() {
+   public SortedSet<BlobMetadata> apply(InputStream stream) {
+      Type listType = new TypeToken<SortedSet<CloudFilesMetadata>>() {
       }.getType();
 
       try {
-         List<CloudFilesMetadata> list = gson.fromJson(new InputStreamReader(stream, "UTF-8"),
+         SortedSet<CloudFilesMetadata> list = gson.fromJson(new InputStreamReader(stream, "UTF-8"),
                   listType);
-         return Lists.transform(list, new Function<CloudFilesMetadata, BlobMetadata>() {
-            public BlobMetadata apply(CloudFilesMetadata from) {
-               BlobMetadata metadata = new BlobMetadata(from.name);
-               metadata.setSize(from.bytes);
-               metadata.setLastModified(from.last_modified);
-               metadata.setContentType(from.content_type);
-               metadata.setETag(HttpUtils.fromHexString(from.hash));
-               return metadata;
-            }
-         });
+         return Sets.newTreeSet(Iterables.transform(list,
+                  new Function<CloudFilesMetadata, BlobMetadata>() {
+                     public BlobMetadata apply(CloudFilesMetadata from) {
+                        BlobMetadata metadata = new BlobMetadata(from.name);
+                        metadata.setSize(from.bytes);
+                        metadata.setLastModified(from.last_modified);
+                        metadata.setContentType(from.content_type);
+                        metadata.setETag(HttpUtils.fromHexString(from.hash));
+                        return metadata;
+                     }
+                  }));
 
       } catch (UnsupportedEncodingException e) {
          throw new RuntimeException("jclouds requires UTF-8 encoding", e);

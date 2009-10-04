@@ -23,21 +23,20 @@
  */
 package org.jclouds.aws.s3.xml;
 
-import java.util.List;
 import java.util.SortedSet;
-import java.util.TreeSet;
 
-import org.jclouds.aws.s3.domain.ArrayListBucketResponse;
+import javax.inject.Inject;
+
 import org.jclouds.aws.s3.domain.CanonicalUser;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
+import org.jclouds.aws.s3.domain.TreeSetListBucketResponse;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.DateService;
 import org.xml.sax.Attributes;
 
-import com.google.common.collect.Lists;
-import javax.inject.Inject;
+import com.google.common.collect.Sets;
 
 /**
  * Parses the following XML document:
@@ -50,7 +49,7 @@ import javax.inject.Inject;
  *      />
  */
 public class ListBucketHandler extends ParseSax.HandlerWithResult<ListBucketResponse> {
-   private List<ObjectMetadata> contents;
+   private SortedSet<ObjectMetadata> contents;
    private SortedSet<String> commonPrefixes;
    private ObjectMetadata currentObjectMetadata;
    private CanonicalUser currentOwner;
@@ -67,12 +66,12 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<ListBucketResp
    @Inject
    public ListBucketHandler(DateService dateParser) {
       this.dateParser = dateParser;
-      this.contents = Lists.newArrayList();
-      this.commonPrefixes = new TreeSet<String>();
+      this.contents = Sets.newTreeSet();
+      this.commonPrefixes = Sets.newTreeSet();
    }
 
    public ListBucketResponse getResult() {
-      return new ArrayListBucketResponse(bucketName, contents, prefix, marker, maxResults,
+      return new TreeSetListBucketResponse(bucketName, contents, prefix, marker, maxResults,
                delimiter, isTruncated, commonPrefixes);
    }
 

@@ -23,29 +23,30 @@
  */
 package org.jclouds.aws.s3.xml;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.SortedSet;
 
-import org.jclouds.aws.s3.domain.CanonicalUser;
+import javax.inject.Inject;
+
 import org.jclouds.aws.s3.domain.BucketMetadata;
+import org.jclouds.aws.s3.domain.CanonicalUser;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.DateService;
 
-import javax.inject.Inject;
+import com.google.common.collect.Sets;
 
 /**
  * Parses the following XML document:
  * <p/>
- * ListAllMyBucketsResult xmlns="http://doc.s3.amazonaws.com/2006-03-01"
+ * SortedSetAllMyBucketsResult xmlns="http://doc.s3.amazonaws.com/2006-03-01"
  * 
  * @see <a
  *      href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTServiceGET.html"
  *      />
  * @author Adrian Cole
  */
-public class ListAllMyBucketsHandler extends ParseSax.HandlerWithResult<List<BucketMetadata>> {
+public class ListAllMyBucketsHandler extends ParseSax.HandlerWithResult<SortedSet<BucketMetadata>> {
 
-   private List<BucketMetadata> buckets = new ArrayList<BucketMetadata>();
+   private SortedSet<BucketMetadata> buckets = Sets.newTreeSet();
    private BucketMetadata currentS3Bucket;
    private CanonicalUser currentOwner;
    private StringBuilder currentText = new StringBuilder();
@@ -57,7 +58,7 @@ public class ListAllMyBucketsHandler extends ParseSax.HandlerWithResult<List<Buc
       this.dateParser = dateParser;
    }
 
-   public List<BucketMetadata> getResult() {
+   public SortedSet<BucketMetadata> getResult() {
       return buckets;
    }
 
