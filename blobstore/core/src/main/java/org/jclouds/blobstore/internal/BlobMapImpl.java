@@ -23,10 +23,8 @@
  */
 package org.jclouds.blobstore.internal;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
@@ -35,15 +33,17 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.jclouds.blobstore.BaseBlobMap;
 import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ContainerMetadata;
+import org.jclouds.blobstore.strategy.GetAllBlobMetadataStrategy;
+import org.jclouds.blobstore.strategy.GetAllBlobsStrategy;
 import org.jclouds.util.Utils;
 
+import com.google.common.collect.Sets;
 import com.google.inject.assistedinject.Assisted;
 
 /**
@@ -59,8 +59,9 @@ public class BlobMapImpl<S extends BlobStore<C, M, B>, C extends ContainerMetada
 
    @Inject
    public BlobMapImpl(S connection, Provider<B> blobFactory,
-            @Assisted String containerName) {
-      super(connection, blobFactory, containerName);
+            GetAllBlobsStrategy<C, M, B> getAllBlobs,
+            GetAllBlobMetadataStrategy<C, M, B> getAllBlobMetadata, @Assisted String containerName) {
+      super(connection, blobFactory, getAllBlobs, getAllBlobMetadata, containerName);
    }
 
    /**
@@ -113,14 +114,14 @@ public class BlobMapImpl<S extends BlobStore<C, M, B>, C extends ContainerMetada
     */
    public B get(Object key) {
       try {
-         return connection.getBlob(container, key.toString()).get(requestTimeoutMilliseconds,
+         return connection.getBlob(containerName, key.toString()).get(requestTimeoutMilliseconds,
                   TimeUnit.MILLISECONDS);
       } catch (KeyNotFoundException e) {
          return null;
       } catch (Exception e) {
          Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
-         throw new BlobRuntimeException(String.format("Error geting object %1$s:%2$s", container,
-                  key), e);
+         throw new BlobRuntimeException(String.format("Error geting object %1$s:%2$s",
+                  containerName, key), e);
       }
    }
 
@@ -132,12 +133,12 @@ public class BlobMapImpl<S extends BlobStore<C, M, B>, C extends ContainerMetada
    public B put(String key, B value) {
       B returnVal = getLastValue(key);
       try {
-         connection.putBlob(container, value)
-                  .get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
+         connection.putBlob(containerName, value).get(requestTimeoutMilliseconds,
+                  TimeUnit.MILLISECONDS);
       } catch (Exception e) {
          Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
          throw new BlobRuntimeException(String.format("Error putting object %1$s:%2$s%n%3$s",
-                  container, key, value), e);
+                  containerName, key, value), e);
       }
       return returnVal;
    }
@@ -149,16 +150,16 @@ public class BlobMapImpl<S extends BlobStore<C, M, B>, C extends ContainerMetada
     */
    public void putAll(Map<? extends String, ? extends B> map) {
       try {
-         List<Future<byte[]>> puts = new ArrayList<Future<byte[]>>();
+         Set<Future<byte[]>> puts = Sets.newHashSet();
          for (B object : map.values()) {
-            puts.add(connection.putBlob(container, object));
+            puts.add(connection.putBlob(containerName, object));
          }
          for (Future<byte[]> put : puts)
             // this will throw an exception if there was a problem
             put.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
       } catch (Exception e) {
          Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
-         throw new BlobRuntimeException("Error putting into containerName" + container, e);
+         throw new BlobRuntimeException("Error putting into containerName" + containerName, e);
       }
    }
 
@@ -170,12 +171,12 @@ public class BlobMapImpl<S extends BlobStore<C, M, B>, C extends ContainerMetada
    public B remove(Object key) {
       B old = getLastValue(key);
       try {
-         connection.removeBlob(container, key.toString()).get(requestTimeoutMilliseconds,
+         connection.removeBlob(containerName, key.toString()).get(requestTimeoutMilliseconds,
                   TimeUnit.MILLISECONDS);
       } catch (Exception e) {
          Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
-         throw new BlobRuntimeException(String.format("Error removing object %1$s:%2$s", container,
-                  key), e);
+         throw new BlobRuntimeException(String.format("Error removing object %1$s:%2$s",
+                  containerName, key), e);
       }
       return old;
    }
@@ -196,7 +197,6 @@ public class BlobMapImpl<S extends BlobStore<C, M, B>, C extends ContainerMetada
     * @see #getAllObjects()
     */
    public Collection<B> values() {
-      return getAllObjects();
+      return super.getAllBlobs();
    }
-
 }

@@ -28,9 +28,9 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
@@ -56,10 +56,10 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.BeforeSuite;
-import org.testng.collections.Lists;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import com.google.inject.Module;
 
 public class BaseBlobStoreIntegrationTest<S extends BlobStore<C, M, B>, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>> {
@@ -171,7 +171,7 @@ public class BaseBlobStoreIntegrationTest<S extends BlobStore<C, M, B>, C extend
       }
    }
 
-   private static final List<String> blackListContainers = Lists.newArrayList();
+   private static final Set<String> blackListContainers = Sets.newHashSet();
 
    /**
     * Tries to delete all containers, runs up to two times
@@ -182,7 +182,7 @@ public class BaseBlobStoreIntegrationTest<S extends BlobStore<C, M, B>, C extend
       try {
          for (int i = 0; i < 2; i++) {
             Iterable<ContainerMetadata> testContainers = Iterables.filter(
-                     (List<ContainerMetadata>) context.getApi().listContainers(),
+                     (SortedSet<ContainerMetadata>) context.getApi().listContainers(),
                      new Predicate<ContainerMetadata>() {
                         public boolean apply(ContainerMetadata input) {
                            return input.getName().startsWith(CONTAINER_PREFIX.toLowerCase());

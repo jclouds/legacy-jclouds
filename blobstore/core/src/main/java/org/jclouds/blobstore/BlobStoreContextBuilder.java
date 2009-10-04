@@ -141,8 +141,8 @@ public abstract class BlobStoreContextBuilder<S extends BlobStore<C, M, B>, C ex
       this.containerMetadataType = containerMetadataType;
       this.blobMetadataType = blobMetadataType;
       this.blobType = blobType;
-      modules.add(new BlobStoreMapsModule<S, C, M, B>(connectionType,
-               containerMetadataType, blobMetadataType, blobType));
+      modules.add(BlobStoreMapsModule.Builder.newBuilder(connectionType,
+               containerMetadataType, blobMetadataType, blobType).build());
    }
 
    @SuppressWarnings("unchecked")

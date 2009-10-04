@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.blobstore;
+package org.jclouds.blobstore.internal;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -29,10 +29,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
+import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -42,16 +40,17 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 
+import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ContainerMetadata;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
-import org.jclouds.rest.BoundedList;
+import org.jclouds.blobstore.strategy.GetAllBlobMetadataStrategy;
+import org.jclouds.blobstore.strategy.GetAllBlobsStrategy;
+import org.jclouds.rest.BoundedSortedSet;
 import org.jclouds.util.Utils;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.assistedinject.Assisted;
 
@@ -68,8 +67,10 @@ import com.google.inject.assistedinject.Assisted;
 public abstract class BaseBlobMap<C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>, V> {
 
    protected final BlobStore<C, M, B> connection;
-   protected final String container;
+   protected final String containerName;
    protected final Provider<B> blobFactory;
+   protected final GetAllBlobsStrategy<C, M, B> getAllBlobs;
+   protected final GetAllBlobMetadataStrategy<C, M, B> getAllBlobMetadata;
 
    /**
     * maximum duration of an blob Request
@@ -87,32 +88,30 @@ public abstract class BaseBlobMap<C extends ContainerMetadata, M extends BlobMet
 
    @Inject
    public BaseBlobMap(BlobStore<C, M, B> connection, Provider<B> blobFactory,
-            @Assisted String containerName) {
+            GetAllBlobsStrategy<C, M, B> getAllBlobs,
+            GetAllBlobMetadataStrategy<C, M, B> getAllBlobMetadata, @Assisted String containerName) {
       this.connection = checkNotNull(connection, "connection");
-      this.container = checkNotNull(containerName, "container");
+      this.containerName = checkNotNull(containerName, "container");
       this.blobFactory = checkNotNull(blobFactory, "blobFactory");
-      checkArgument(!container.equals(""), "container name must not be a blank string!");
+      this.getAllBlobs = checkNotNull(getAllBlobs, "getAllBlobs");
+      this.getAllBlobMetadata = checkNotNull(getAllBlobMetadata, "getAllBlobMetadata");
+      checkArgument(!containerName.equals(""), "container name must not be a blank string!");
    }
 
    /**
     * {@inheritDoc}
     * <p/>
-    * This returns the number of keys in the {@link BoundedList}
+    * This returns the number of keys in the {@link BoundedSortedSet}
     * 
-    * @see BoundedList#getContents()
+    * @see BoundedSortedSet#getContents()
     */
    public int size() {
-      try {
-         return refreshContainer().size();
-      } catch (Exception e) {
-         Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
-         throw new BlobRuntimeException("Error getting size of container" + container, e);
-      }
+      return getAllBlobMetadata.execute(connection, containerName).size();
    }
 
    protected boolean containsETag(byte[] eTag) throws InterruptedException, ExecutionException,
             TimeoutException {
-      for (BlobMetadata metadata : refreshContainer()) {
+      for (BlobMetadata metadata : getAllBlobMetadata.execute(connection, containerName)) {
          if (Arrays.equals(eTag, metadata.getETag()))
             return true;
       }
@@ -138,39 +137,10 @@ public abstract class BaseBlobMap<C extends ContainerMetadata, M extends BlobMet
     * 
     * @see BlobStore#getBlob(String, String)
     */
-   protected Set<B> getAllObjects() {
-      Set<B> objects = Sets.newHashSet();
-      Map<String, Future<B>> futureObjects = Maps.newHashMap();
-      for (String key : keySet()) {
-         futureObjects.put(key, connection.getBlob(container, key));
-      }
-      for (Entry<String, Future<B>> futureObjectEntry : futureObjects.entrySet()) {
-         try {
-            ifNotFoundRetryOtherwiseAddToSet(futureObjectEntry.getKey(), futureObjectEntry
-                     .getValue(), objects);
-         } catch (Exception e) {
-            Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
-            throw new BlobRuntimeException(String.format("Error getting value from blob %1$s",
-                     container), e);
-         }
+   protected Set<B> getAllBlobs() {
 
-      }
-      return objects;
-   }
+      return getAllBlobs.execute(connection, containerName);
 
-   @VisibleForTesting
-   public void ifNotFoundRetryOtherwiseAddToSet(String key, Future<B> value, Set<B> objects)
-            throws InterruptedException, ExecutionException, TimeoutException {
-      for (int i = 0; i < 3; i++) {
-         try {
-            B object = value.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
-            object.getMetadata().setKey(key);
-            objects.add(object);
-            return;
-         } catch (KeyNotFoundException e) {
-            Thread.sleep(requestRetryMilliseconds);
-         }
-      }
    }
 
    /**
@@ -190,8 +160,8 @@ public abstract class BaseBlobMap<C extends ContainerMetadata, M extends BlobMet
       } catch (Exception e) {
          Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
          throw new BlobRuntimeException(String.format(
-                  "Error searching for ETAG of value: [%2$s] in container:%1$s", container, value),
-                  e);
+                  "Error searching for ETAG of value: [%2$s] in container:%1$s", containerName,
+                  value), e);
       }
    }
 
@@ -208,65 +178,48 @@ public abstract class BaseBlobMap<C extends ContainerMetadata, M extends BlobMet
    }
 
    public void clear() {
-      try {
-         List<Future<Boolean>> deletes = Lists.newArrayList();
-         for (String key : keySet()) {
-            deletes.add(connection.removeBlob(container, key));
-         }
-         for (Future<Boolean> isdeleted : deletes)
-            if (!isdeleted.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS)) {
-               throw new BlobRuntimeException("failed to delete entry");
-            }
-      } catch (Exception e) {
-         Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
-         throw new BlobRuntimeException("Error clearing container" + container, e);
+      Set<Future<Boolean>> deletes = Sets.newHashSet();
+      for (M md : getAllBlobMetadata.execute(connection, containerName)) {
+         deletes.add(connection.removeBlob(containerName, md.getKey()));
       }
-   }
-
-   /**
-    * 
-    * @throws ContainerNotFoundException
-    *            when the container doesn't exist
-    */
-   protected List<M> refreshContainer() throws InterruptedException, ExecutionException,
-            TimeoutException {
-      return connection.listBlobs(container).get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
+      for (Future<Boolean> isdeleted : deletes) {
+         try {
+            if (!isdeleted.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS)) {
+               throw new BlobRuntimeException("Failed to delete blob in container: "
+                        + containerName);
+            }
+         } catch (Exception e) {
+            Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
+            throw new BlobRuntimeException("Error deleting blob in container: " + containerName, e);
+         }
+      }
    }
 
    public Set<String> keySet() {
-      try {
-         Set<String> keys = Sets.newHashSet();
-         for (BlobMetadata object : refreshContainer())
-            keys.add(object.getKey());
-         return keys;
-      } catch (Exception e) {
-         Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
-         throw new BlobRuntimeException("Error getting keys in container: " + container, e);
-      }
+      Set<String> keys = Sets.newHashSet();
+      for (BlobMetadata object : getAllBlobMetadata.execute(connection, containerName))
+         keys.add(object.getKey());
+      return keys;
    }
 
    public boolean containsKey(Object key) {
       try {
-         return connection.blobMetadata(container, key.toString()) != null;
+         return connection.blobMetadata(containerName, key.toString()) != null;
       } catch (KeyNotFoundException e) {
          return false;
       } catch (Exception e) {
          Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
-         throw new BlobRuntimeException(String.format("Error searching for %1$s:%2$s", container,
-                  key), e);
+         throw new BlobRuntimeException(String.format("Error searching for %1$s:%2$s",
+                  containerName, key), e);
       }
    }
 
    public boolean isEmpty() {
-      return keySet().size() == 0;
+      return size() == 0;
+   }
+   
+   public SortedSet<M> listContainer() {
+      return getAllBlobMetadata.execute(connection, containerName);
    }
 
-   public List<M> listContainer() {
-      try {
-         return refreshContainer();
-      } catch (Exception e) {
-         Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
-         throw new BlobRuntimeException("Error getting container" + container, e);
-      }
-   }
 }

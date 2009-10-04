@@ -25,11 +25,9 @@ package org.jclouds.blobstore.internal;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
@@ -38,16 +36,18 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.jclouds.blobstore.BaseBlobMap;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ContainerMetadata;
+import org.jclouds.blobstore.strategy.GetAllBlobMetadataStrategy;
+import org.jclouds.blobstore.strategy.GetAllBlobsStrategy;
 import org.jclouds.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.Sets;
 import com.google.inject.assistedinject.Assisted;
 
 /**
@@ -64,8 +64,9 @@ public class InputStreamMapImpl<S extends BlobStore<C, M, B>, C extends Containe
 
    @Inject
    public InputStreamMapImpl(S connection, Provider<B> blobFactory,
-            @Assisted String container) {
-      super(connection, blobFactory, container);
+            GetAllBlobsStrategy<C, M, B> getAllBlobs,
+            GetAllBlobMetadataStrategy<C, M, B> getAllBlobMetadata, @Assisted String containerName) {
+      super(connection, blobFactory, getAllBlobs, getAllBlobMetadata, containerName);
    }
 
    /**
@@ -75,14 +76,14 @@ public class InputStreamMapImpl<S extends BlobStore<C, M, B>, C extends Containe
     */
    public InputStream get(Object o) {
       try {
-         return (InputStream) (connection.getBlob(container, o.toString()).get(
+         return (InputStream) (connection.getBlob(containerName, o.toString()).get(
                   requestTimeoutMilliseconds, TimeUnit.MILLISECONDS)).getData();
       } catch (KeyNotFoundException e) {
          return null;
       } catch (Exception e) {
          Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
-         throw new BlobRuntimeException(String
-                  .format("Error geting object %1$s:%2$s", container, o), e);
+         throw new BlobRuntimeException(String.format("Error geting object %1$s:%2$s",
+                  containerName, o), e);
       }
    }
 
@@ -94,12 +95,12 @@ public class InputStreamMapImpl<S extends BlobStore<C, M, B>, C extends Containe
    public InputStream remove(Object o) {
       InputStream old = getLastValue(o);
       try {
-         connection.removeBlob(container, o.toString()).get(requestTimeoutMilliseconds,
+         connection.removeBlob(containerName, o.toString()).get(requestTimeoutMilliseconds,
                   TimeUnit.MILLISECONDS);
       } catch (Exception e) {
          Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
-         throw new BlobRuntimeException(String.format("Error removing object %1$s:%2$s", container,
-                  o), e);
+         throw new BlobRuntimeException(String.format("Error removing object %1$s:%2$s",
+                  containerName, o), e);
       }
       return old;
    }
@@ -121,7 +122,7 @@ public class InputStreamMapImpl<S extends BlobStore<C, M, B>, C extends Containe
     */
    public Collection<InputStream> values() {
       Collection<InputStream> values = new LinkedList<InputStream>();
-      Set<B> objects = getAllObjects();
+      Set<B> objects = this.getAllBlobs.execute(connection, containerName);
       for (B object : objects) {
          values.add((InputStream) object.getData());
       }
@@ -135,7 +136,7 @@ public class InputStreamMapImpl<S extends BlobStore<C, M, B>, C extends Containe
     */
    public Set<Map.Entry<String, InputStream>> entrySet() {
       Set<Map.Entry<String, InputStream>> entrySet = new HashSet<Map.Entry<String, InputStream>>();
-      for (B object : getAllObjects()) {
+      for (B object : this.getAllBlobs.execute(connection, containerName)) {
          entrySet.add(new Entry(object.getKey(), (InputStream) object.getData()));
       }
       return entrySet;
@@ -215,13 +216,13 @@ public class InputStreamMapImpl<S extends BlobStore<C, M, B>, C extends Containe
    @VisibleForTesting
    void putAllInternal(Map<? extends String, ? extends Object> map) {
       try {
-         List<Future<byte[]>> puts = new ArrayList<Future<byte[]>>();
+         Set<Future<byte[]>> puts = Sets.newHashSet();
          for (Map.Entry<? extends String, ? extends Object> entry : map.entrySet()) {
             B object = blobFactory.get();
             object.getMetadata().setKey(entry.getKey());
             object.setData(entry.getValue());
             object.generateMD5();
-            puts.add(connection.putBlob(container, object));
+            puts.add(connection.putBlob(containerName, object));
             // / ParamExtractor Funcion<?,String>
             // / response transformer set key on the way out.
             // / ExceptionHandler convert 404 to NOT_FOUND
@@ -231,7 +232,7 @@ public class InputStreamMapImpl<S extends BlobStore<C, M, B>, C extends Containe
             put.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
       } catch (Exception e) {
          Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
-         throw new BlobRuntimeException("Error putting into containerName" + container, e);
+         throw new BlobRuntimeException("Error putting into containerName" + containerName, e);
       }
    }
 
@@ -285,13 +286,13 @@ public class InputStreamMapImpl<S extends BlobStore<C, M, B>, C extends Containe
          InputStream returnVal = containsKey(s) ? get(s) : null;
          object.setData(o);
          object.generateMD5();
-         connection.putBlob(container, object).get(requestTimeoutMilliseconds,
+         connection.putBlob(containerName, object).get(requestTimeoutMilliseconds,
                   TimeUnit.MILLISECONDS);
          return returnVal;
       } catch (Exception e) {
          Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
-         throw new BlobRuntimeException(String.format("Error adding object %1$s:%2$s", container,
-                  object), e);
+         throw new BlobRuntimeException(String.format("Error adding object %1$s:%2$s",
+                  containerName, object), e);
       }
    }
 

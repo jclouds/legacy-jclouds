@@ -21,32 +21,31 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.blobstore;
+package org.jclouds.blobstore.strategy.internal;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.createNiceMock;
 import static org.easymock.classextension.EasyMock.replay;
-import static org.testng.Assert.assertEquals;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ContainerMetadata;
 import org.jclouds.blobstore.integration.StubBlobStoreContextBuilder;
-import org.jclouds.blobstore.internal.InputStreamMapImpl;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
-import com.google.inject.util.Types;
 
 /**
  * 
@@ -54,62 +53,27 @@ import com.google.inject.util.Types;
  * 
  * @author Adrian Cole
  */
-@Test(groups = { "unit" }, testName = "blobstore.BaseBlobMapTest")
-public class BaseBlobMapTest {
+@Test(groups = { "unit" }, testName = "blobstore.RetryOnNotFoundGetAllBlobsStrategyTest")
+public class RetryOnNotFoundGetAllBlobsStrategyTest {
 
-   BlobStoreContext<BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> context;
+   Injector context;
 
-   InputStreamMapImpl<BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> map;
+   RetryOnNotFoundGetAllBlobsStrategy<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> map;
 
-   @SuppressWarnings("unchecked")
    @BeforeClass
    void addDefaultObjectsSoThatTestsWillPass() {
-      context = new StubBlobStoreContextBuilder().buildContext();
-      map = (InputStreamMapImpl<BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>) context
-               .createInputStreamMap("test");
-   }
-
-   @SuppressWarnings("unchecked")
-   public void testTypes() {
-      TypeLiteral type0 = new TypeLiteral<Map<String, Map<String, Blob<BlobMetadata>>>>() {
-      };
-      TypeLiteral type1 = TypeLiteral.get(Types.newParameterizedType(Map.class, String.class, Types
-               .newParameterizedType(Map.class, String.class, Types.newParameterizedType(
-                        Blob.class, BlobMetadata.class))));
-      assertEquals(type0, type1);
-
-      TypeLiteral type2 = new TypeLiteral<BlobMap.Factory<BlobMetadata, Blob<BlobMetadata>>>() {
-      };
-      TypeLiteral type3 = TypeLiteral.get(Types.newParameterizedTypeWithOwner(BlobMap.class,
-               BlobMap.Factory.class, BlobMetadata.class, Types.newParameterizedType(Blob.class,
-                        BlobMetadata.class)));
-
-      assertEquals(type2, type3);
-
-      TypeLiteral type4 = new TypeLiteral<Blob<BlobMetadata>>() {
-      };
-      TypeLiteral type5 = TypeLiteral.get(Types
-               .newParameterizedType(Blob.class, BlobMetadata.class));
-
-      assertEquals(type4, type5);
-
-      TypeLiteral type6 = new TypeLiteral<BlobStoreContextImpl<BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
-      };
-
-      TypeLiteral type7 = TypeLiteral.get(Types.newParameterizedType(BlobStoreContextImpl.class,
-               Types.newParameterizedType(BlobStore.class, ContainerMetadata.class,
-                        BlobMetadata.class, Types.newParameterizedType(Blob.class,
-                                 BlobMetadata.class)), ContainerMetadata.class, BlobMetadata.class,
-               Types.newParameterizedType(Blob.class, BlobMetadata.class)));
-      assertEquals(type6, type7);
-
+      context = new StubBlobStoreContextBuilder().buildInjector();
+      map = context
+               .getInstance(Key
+                        .get(new TypeLiteral<RetryOnNotFoundGetAllBlobsStrategy<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
+                        }));
    }
 
    @SuppressWarnings("unchecked")
    public void testIfNotFoundRetryOtherwiseAddToSet() throws InterruptedException,
             ExecutionException, TimeoutException {
       Future<Blob<BlobMetadata>> futureObject = createMock(Future.class);
-      Blob<BlobMetadata> object = context.newBlob("key");
+      Blob<BlobMetadata> object = new Blob<BlobMetadata>("key");
       expect(futureObject.get(map.requestTimeoutMilliseconds, TimeUnit.MILLISECONDS)).andThrow(
                new KeyNotFoundException());
       expect(futureObject.get(map.requestTimeoutMilliseconds, TimeUnit.MILLISECONDS)).andReturn(
