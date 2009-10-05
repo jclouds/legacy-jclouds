@@ -86,9 +86,16 @@ public class RestClientProxy<T> implements InvocationHandler {
          logger.trace("%s - converting method to request", method);
          Function<Exception, ?> exceptionParser = util
                   .createExceptionParserOrNullIfNotFound(method);
+         // in case there is an exception creating the request, we should at least pass in args
+         if (exceptionParser instanceof RestContext) {
+            ((RestContext) exceptionParser).setContext(null, args);
+         }
          HttpRequest request;
          try {
             request = util.createRequest(method, args);
+            if (exceptionParser instanceof RestContext) {
+               ((RestContext) exceptionParser).setContext(request, args);
+            }
          } catch (RuntimeException e) {
             if (exceptionParser != null) {
                final Object toReturn = exceptionParser.apply(e);

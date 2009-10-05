@@ -26,7 +26,7 @@ package org.jclouds.rackspace.cloudfiles.integration;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.integration.internal.BaseContainerLiveTest;
-import org.jclouds.rackspace.cloudfiles.CloudFilesBlobStore;
+import org.jclouds.rackspace.cloudfiles.CloudFilesConnection;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
 import org.testng.annotations.Test;
 
@@ -37,6 +37,6 @@ import org.testng.annotations.Test;
 @Test(groups = { "live" }, testName = "cloudfiles.CloudFilesContainerLiveTest")
 public class CloudFilesContainerLiveTest
          extends
-         BaseContainerLiveTest<CloudFilesBlobStore, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> {
+         BaseContainerLiveTest<CloudFilesConnection, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> {
 
 }

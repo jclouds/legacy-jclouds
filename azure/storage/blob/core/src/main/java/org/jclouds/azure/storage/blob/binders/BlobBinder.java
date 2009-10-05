@@ -44,7 +44,8 @@ public class BlobBinder extends org.jclouds.blobstore.binders.BlobBinder {
    public void addEntityToRequest(Object entity, HttpRequest request) {
       Blob<?> object = (Blob<?>) entity;
       checkArgument(object.getMetadata().getSize() >= 0, "size must be set");
-
+      checkArgument(object.getContentLength() <= 64 * 1024 * 1024,
+               "maximum size for put Blob is 64MB");
       if (object.getMetadata() instanceof BlobMetadata) {
          BlobMetadata md = (BlobMetadata) object.getMetadata();
 

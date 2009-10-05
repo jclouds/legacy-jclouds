@@ -26,16 +26,16 @@ package org.jclouds.rackspace.cloudfiles.integration;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.integration.internal.BaseServiceIntegrationTest;
-import org.jclouds.rackspace.cloudfiles.CloudFilesBlobStore;
+import org.jclouds.rackspace.cloudfiles.CloudFilesConnection;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
-@Test(groups = { "integration", "live" },  testName = "cloudfiles.CloudFilesServiceIntegrationTest")
-public class CloudFilesServiceIntegrationTest extends
-         BaseServiceIntegrationTest<CloudFilesBlobStore, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> {
-
+@Test(groups = { "integration", "live" }, testName = "cloudfiles.CloudFilesServiceIntegrationTest")
+public class CloudFilesServiceIntegrationTest
+         extends
+         BaseServiceIntegrationTest<CloudFilesConnection, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> {
 
 }

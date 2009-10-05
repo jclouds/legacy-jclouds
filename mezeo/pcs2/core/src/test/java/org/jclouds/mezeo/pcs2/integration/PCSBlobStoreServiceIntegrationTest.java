@@ -24,7 +24,7 @@
 package org.jclouds.mezeo.pcs2.integration;
 
 import org.jclouds.blobstore.integration.internal.BaseServiceIntegrationTest;
-import org.jclouds.mezeo.pcs2.PCSBlobStore;
+import org.jclouds.mezeo.pcs2.PCSConnection;
 import org.jclouds.mezeo.pcs2.domain.ContainerMetadata;
 import org.jclouds.mezeo.pcs2.domain.FileMetadata;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
@@ -35,6 +35,6 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "integration", "live" }, testName = "cloudfiles.PCSBlobServiceIntegrationTest")
 public class PCSBlobStoreServiceIntegrationTest extends
-         BaseServiceIntegrationTest<PCSBlobStore, ContainerMetadata, FileMetadata, PCSFile> {
+         BaseServiceIntegrationTest<PCSConnection, ContainerMetadata, FileMetadata, PCSFile> {
 
 }

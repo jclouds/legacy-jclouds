@@ -23,7 +23,7 @@
  */
 package org.jclouds.blobstore.binders;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.*;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 
 import javax.inject.Inject;
@@ -45,6 +45,7 @@ public class BlobBinder implements EntityBinder {
 
    public void addEntityToRequest(Object entity, HttpRequest request) {
       Blob<?> object = (Blob<?>) entity;
+
       for (String key : object.getMetadata().getUserMetadata().keySet()) {
          request.getHeaders().putAll(key.startsWith(metadataPrefix) ? key : metadataPrefix + key,
                   object.getMetadata().getUserMetadata().get(key));

@@ -39,6 +39,6 @@ import org.jclouds.cloud.CloudContext;
  * 
  */
 public interface AzureBlobContext extends
-         BlobStoreContext<AzureBlobStore, ContainerMetadata, BlobMetadata, Blob> {
+         BlobStoreContext<AzureBlobConnection, ContainerMetadata, BlobMetadata, Blob> {
 
 }

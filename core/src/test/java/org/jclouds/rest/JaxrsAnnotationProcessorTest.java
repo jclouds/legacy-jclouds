@@ -26,11 +26,13 @@ package org.jclouds.rest;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -57,11 +59,15 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
+import org.jclouds.http.functions.ParseURIList;
+import org.jclouds.http.functions.ReturnInputStream;
 import org.jclouds.http.functions.ReturnStringIf200;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
+import org.jclouds.http.functions.ReturnVoidIf2xx;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.http.options.HttpRequestOptions;
+import org.jclouds.rest.binders.HttpRequestOptionsBinder;
 import org.jclouds.rest.binders.JsonBinder;
 import org.jclouds.rest.binders.MapEntityBinder;
 import org.jclouds.rest.config.JaxrsModule;
@@ -155,6 +161,65 @@ public class JaxrsAnnotationProcessorTest {
       assertEquals(httpMethod.getEndpoint().getQuery(),
                "x-ms-version=2009-07-17&foo=bar&fooble=baz&robbie=wonder");
       assertEquals(httpMethod.getMethod(), "FOO");
+   }
+
+   @Endpoint(Localhost.class)
+   public class TestEntityParamVarargs {
+      @POST
+      public void varargs(
+               @EntityParam(HttpRequestOptionsBinder.class) HttpRequestOptions... options) {
+      }
+
+      @POST
+      public void post(@EntityParam(HttpRequestOptionsBinder.class) HttpRequestOptions options) {
+      }
+   }
+
+   public void testHttpRequestOptionsEntityParam() throws SecurityException, NoSuchMethodException {
+      Method method = TestEntityParamVarargs.class.getMethod("post", HttpRequestOptions.class);
+      verifyTestPostOptions(method);
+   }
+
+   public void testEntityParamVarargs() throws SecurityException, NoSuchMethodException {
+      Method method = TestEntityParamVarargs.class.getMethod("varargs", Array.newInstance(
+               HttpRequestOptions.class, 0).getClass());
+      verifyTestPostOptions(method);
+   }
+
+   private void verifyTestPostOptions(Method method) {
+      HttpRequest httpMethod = factory(TestEntityParamVarargs.class).createRequest(method,
+               new Object[] { new HttpRequestOptions() {
+
+                  public Multimap<String, String> buildMatrixParameters() {
+                     return HashMultimap.create();
+                  }
+
+                  public String buildPathSuffix() {
+                     return null;
+                  }
+
+                  public Multimap<String, String> buildQueryParameters() {
+                     return HashMultimap.create();
+                  }
+
+                  public Multimap<String, String> buildRequestHeaders() {
+                     return HashMultimap.create();
+                  }
+
+                  public String buildStringEntity() {
+                     return "fooya";
+                  }
+
+               } });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "");
+      assertEquals(httpMethod.getMethod(), HttpMethod.POST);
+      assertEquals(httpMethod.getHeaders().size(), 2);
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
+               .singletonList("application/unknown"));
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
+               .singletonList("fooya".getBytes().length + ""));
+      assertEquals(httpMethod.getEntity(), "fooya");
    }
 
    @Endpoint(Localhost.class)
@@ -575,21 +640,61 @@ public class JaxrsAnnotationProcessorTest {
    }
 
    @Endpoint(Localhost.class)
-   public class TestTransformers {
+   public interface TestTransformers {
       @GET
-      public void noTransformer() {
-      }
+      public int noTransformer();
 
       @GET
       @ResponseParser(ReturnStringIf200.class)
-      public void oneTransformer() {
-      }
+      public void oneTransformer();
 
       @GET
       @ResponseParser(ReturnStringIf200Context.class)
-      public void oneTransformerWithContext() {
-      }
+      public void oneTransformerWithContext();
 
+      @GET
+      public InputStream inputStream();
+
+      @GET
+      public Future<InputStream> futureInputStream();
+
+      @GET
+      public URI uri();
+
+      @GET
+      public Future<URI> futureUri();
+   }
+
+   @SuppressWarnings("static-access")
+   public void testInputStream() throws SecurityException, NoSuchMethodException {
+      Method method = TestTransformers.class.getMethod("inputStream");
+      Class<? extends Function<HttpResponse, ?>> transformer = factory(TestTransformers.class)
+               .getParserOrThrowException(method);
+      assertEquals(transformer, ReturnInputStream.class);
+   }
+
+   @SuppressWarnings("static-access")
+   public void testInputStreamFuture() throws SecurityException, NoSuchMethodException {
+      Method method = TestTransformers.class.getMethod("futureInputStream");
+      Class<? extends Function<HttpResponse, ?>> transformer = factory(TestTransformers.class)
+               .getParserOrThrowException(method);
+      assertEquals(transformer, ReturnInputStream.class);
+   }
+
+   @SuppressWarnings("static-access")
+   public void testURI() throws SecurityException, NoSuchMethodException {
+      Method method = TestTransformers.class.getMethod("uri");
+      Class<? extends Function<HttpResponse, ?>> transformer = factory(TestTransformers.class)
+               .getParserOrThrowException(method);
+      assertEquals(transformer, ParseURIList.class);
+   }
+
+   @SuppressWarnings("static-access")
+   public void testURIFuture() throws SecurityException, NoSuchMethodException {
+      Method method = TestTransformers.class.getMethod("futureUri");
+      Class<? extends Function<HttpResponse, ?>> transformer = factory(TestTransformers.class)
+               .getParserOrThrowException(method);
+      assertEquals(transformer, ParseURIList.class);
    }
 
    public static class ReturnStringIf200Context extends ReturnStringIf200 implements RestContext {
@@ -615,9 +720,7 @@ public class JaxrsAnnotationProcessorTest {
    @Test(expectedExceptions = { RuntimeException.class })
    public void testNoTransformer() throws SecurityException, NoSuchMethodException {
       Method method = TestTransformers.class.getMethod("noTransformer");
-      Class<? extends Function<HttpResponse, ?>> transformer = factory(TestTransformers.class)
-               .getParserOrThrowException(method);
-      assertEquals(transformer, ReturnStringIf200.class);
+      factory(TestTransformers.class).getParserOrThrowException(method);
    }
 
    public void oneTransformerWithContext() throws SecurityException, NoSuchMethodException {
@@ -1014,19 +1117,16 @@ public class JaxrsAnnotationProcessorTest {
    }
 
    @Endpoint(Localhost.class)
-   public class TestEntity {
+   public interface TestEntity {
       @PUT
-      public void put(@EntityParam String content) {
-      }
+      public void put(@EntityParam String content);
 
       @PUT
       @Path("{foo}")
-      public void putWithPath(@PathParam("foo") String path, @EntityParam String content) {
-      }
+      public Future<Void> putWithPath(@PathParam("foo") String path, @EntityParam String content);
 
       @PUT
-      public void twoEntities(@EntityParam String entity1, @EntityParam String entity2) {
-      }
+      public void twoEntities(@EntityParam String entity1, @EntityParam String entity2);
    }
 
    @Test
@@ -1040,6 +1140,9 @@ public class JaxrsAnnotationProcessorTest {
                .singletonList("application/unknown"));
       assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
                .singletonList("test".getBytes().length + ""));
+      assertEquals(
+               factory(TestEntity.class).createResponseParser(method, request, null).getClass(),
+               ReturnVoidIf2xx.class);
    }
 
    @Test

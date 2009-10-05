@@ -26,7 +26,7 @@ package org.jclouds.rackspace.cloudfiles.integration;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.integration.internal.BaseBlobMapIntegrationTest;
-import org.jclouds.rackspace.cloudfiles.CloudFilesBlobStore;
+import org.jclouds.rackspace.cloudfiles.CloudFilesConnection;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
 import org.testng.annotations.Test;
 
@@ -36,6 +36,6 @@ import org.testng.annotations.Test;
 @Test(groups = { "integration", "live" }, testName = "cloudfiles.CloudFilesBlobMapIntegrationTest")
 public class CloudFilesBlobMapIntegrationTest
          extends
-         BaseBlobMapIntegrationTest<CloudFilesBlobStore, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> {
+         BaseBlobMapIntegrationTest<CloudFilesConnection, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> {
 
 }

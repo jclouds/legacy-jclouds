@@ -52,13 +52,13 @@ public class BaseBlobMapTest {
 
    BlobStoreContext<BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> context;
 
-   InputStreamMapImpl<BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> map;
+   InputStreamMapImpl<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> map;
 
    @SuppressWarnings("unchecked")
    @BeforeClass
    void addDefaultObjectsSoThatTestsWillPass() {
       context = new StubBlobStoreContextBuilder().buildContext();
-      map = (InputStreamMapImpl<BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>) context
+      map = (InputStreamMapImpl<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>) context
                .createInputStreamMap("test");
    }
 

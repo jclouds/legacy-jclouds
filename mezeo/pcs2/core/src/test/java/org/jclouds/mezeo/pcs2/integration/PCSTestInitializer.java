@@ -27,7 +27,7 @@ import java.net.URI;
 
 import org.jclouds.blobstore.integration.internal.BaseTestInitializer;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.mezeo.pcs2.PCSBlobStore;
+import org.jclouds.mezeo.pcs2.PCSConnection;
 import org.jclouds.mezeo.pcs2.PCSContext;
 import org.jclouds.mezeo.pcs2.PCSContextBuilder;
 import org.jclouds.mezeo.pcs2.PCSContextFactory;
@@ -43,7 +43,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 public class PCSTestInitializer extends
-         BaseTestInitializer<PCSBlobStore, ContainerMetadata, FileMetadata, PCSFile> {
+         BaseTestInitializer<PCSConnection, ContainerMetadata, FileMetadata, PCSFile> {
 
    @Override
    protected PCSContext createLiveContext(Module configurationModule, String url, String app,

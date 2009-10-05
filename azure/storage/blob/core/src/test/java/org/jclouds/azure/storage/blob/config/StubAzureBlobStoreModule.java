@@ -28,9 +28,13 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.jclouds.azure.storage.AzureBlob;
-import org.jclouds.azure.storage.blob.AzureBlobStore;
+import org.jclouds.azure.storage.blob.AzureBlobConnection;
 import org.jclouds.azure.storage.blob.domain.Blob;
-import org.jclouds.azure.storage.blob.internal.StubAzureBlobStore;
+import org.jclouds.azure.storage.blob.domain.BlobMetadata;
+import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
+import org.jclouds.azure.storage.blob.internal.StubAzureBlobConnection;
+import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.integration.internal.StubBlobStore;
 import org.jclouds.cloud.ConfiguresCloudConnection;
 import org.jclouds.http.functions.config.ParserModule;
 
@@ -51,7 +55,10 @@ public class StubAzureBlobStoreModule extends AbstractModule {
       install(new ParserModule());
       bind(new TypeLiteral<Map<String, Map<String, Blob>>>() {
       }).toInstance(map);
-      bind(AzureBlobStore.class).to(StubAzureBlobStore.class).asEagerSingleton();
+      bind(new TypeLiteral<BlobStore<ContainerMetadata, BlobMetadata, Blob>>() {
+      }).to(new TypeLiteral<StubBlobStore<ContainerMetadata, BlobMetadata, Blob>>() {
+      }).asEagerSingleton();
+      bind(AzureBlobConnection.class).to(StubAzureBlobConnection.class).asEagerSingleton();
       bind(URI.class).annotatedWith(AzureBlob.class).toInstance(
                URI.create("https://id.blob.core.windows.net"));
    }

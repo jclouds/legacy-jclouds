@@ -21,23 +21,35 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.mezeo.pcs2.functions;
+package org.jclouds.azure.storage.blob.functions;
 
-import org.jclouds.blobstore.ContainerNotFoundException;
+import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 
-import com.google.common.base.Function;
+import java.io.IOException;
 
-/**
- * 
- * @author Adrian Cole
- */
-public class ReturnTrueIfContainerNotFound implements Function<Exception, Boolean> {
+import javax.inject.Inject;
+import javax.inject.Named;
 
-   public Boolean apply(Exception from) {
-      if (from instanceof ContainerNotFoundException) {
-         return true;
-      }
-      return null;
+import org.jclouds.azure.storage.blob.binders.BlobBinder;
+import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.http.HttpRequest;
+
+public class MD5EnforcingBlobBinder extends BlobBinder {
+
+   @Inject
+   public MD5EnforcingBlobBinder(@Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix) {
+      super(metadataPrefix);
    }
 
+   public void addEntityToRequest(Object entity, HttpRequest request) {
+      Blob<?> object = (Blob<?>) entity;
+      if (object.getMetadata().getContentMD5() == null) {
+         try {
+            object.generateMD5();
+         } catch (IOException e) {
+            throw new RuntimeException("Could not generate MD5 for " + object.getKey(), e);
+         }
+      }
+      super.addEntityToRequest(entity, request);
+   }
 }

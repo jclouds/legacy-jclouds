@@ -23,7 +23,6 @@
  */
 package org.jclouds.blobstore.integration.internal;
 
-import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ContainerMetadata;
@@ -32,7 +31,7 @@ import org.jclouds.blobstore.domain.ContainerMetadata;
  * 
  * @author Adrian Cole
  */
-public class BaseContainerLiveTest<S extends BlobStore<C, M, B>, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
+public class BaseContainerLiveTest<S, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
          extends BaseBlobStoreIntegrationTest<S, C, M, B> {
 
 }

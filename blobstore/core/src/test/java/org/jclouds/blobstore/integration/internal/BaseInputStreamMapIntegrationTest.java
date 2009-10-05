@@ -37,7 +37,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.domain.Blob;
@@ -51,7 +50,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-public class BaseInputStreamMapIntegrationTest<S extends BlobStore<C, M, B>, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
+public class BaseInputStreamMapIntegrationTest<S, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
          extends BaseMapIntegrationTest<S, C, M, B, InputStream> {
 
    @Override

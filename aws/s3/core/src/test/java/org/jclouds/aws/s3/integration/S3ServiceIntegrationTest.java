@@ -23,9 +23,7 @@
  */
 package org.jclouds.aws.s3.integration;
 
-import java.util.SortedSet;
-
-import org.jclouds.aws.s3.S3BlobStore;
+import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.S3Object;
@@ -37,18 +35,6 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "integration", "live" }, testName = "s3.S3ServiceIntegrationTest")
 public class S3ServiceIntegrationTest extends
-         BaseServiceIntegrationTest<S3BlobStore, BucketMetadata, ObjectMetadata, S3Object> {
+         BaseServiceIntegrationTest<S3Connection, BucketMetadata, ObjectMetadata, S3Object> {
 
-   void containerExists() throws Exception {
-      String containerName = getContainerName();
-      try {
-         SortedSet<BucketMetadata> list = context.getApi().listContainers();
-         BucketMetadata firstContainer = list.first();
-         BucketMetadata toMatch = new BucketMetadata(containerName);
-         toMatch.setOwner(firstContainer.getOwner());
-         assert list.contains(toMatch);
-      } finally {
-         returnContainer(containerName);
-      }
-   }
 }

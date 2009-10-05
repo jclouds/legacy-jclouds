@@ -25,9 +25,14 @@ package org.jclouds.rackspace.cloudfiles.config;
 
 import javax.inject.Singleton;
 
+import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.cloud.ConfiguresCloudConnection;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rackspace.cloudfiles.CloudFilesBlobStore;
+import org.jclouds.rackspace.cloudfiles.CloudFilesConnection;
+import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
 import org.jclouds.rest.RestClientFactory;
 
 import com.google.inject.AbstractModule;
@@ -47,7 +52,14 @@ public class RestCloudFilesBlobStoreModule extends AbstractModule {
 
    @Provides
    @Singleton
-   public CloudFilesBlobStore provideConnection(RestClientFactory factory) {
+   public CloudFilesConnection provideConnection(RestClientFactory factory) {
+      return factory.create(CloudFilesConnection.class);
+   }
+
+   @Provides
+   @Singleton
+   public BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> provideBlobStore(
+            RestClientFactory factory) {
       return factory.create(CloudFilesBlobStore.class);
    }
 }

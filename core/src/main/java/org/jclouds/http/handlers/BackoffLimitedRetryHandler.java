@@ -103,7 +103,12 @@ public class BackoffLimitedRetryHandler implements HttpRetryHandler {
    }
 
    public void imposeBackoffExponentialDelay(int failureCount, String commandDescription) {
-      long delayMs = (long) (50L * Math.pow(failureCount, 2));
+      imposeBackoffExponentialDelay(50L, 2, failureCount, commandDescription);
+   }
+
+   public void imposeBackoffExponentialDelay(long period, int pow, int failureCount,
+            String commandDescription) {
+      long delayMs = (long) (period * Math.pow(failureCount, pow));
       logger.debug("Retry %1$d/%2$d after server error, delaying for %3$d ms: %4$s", failureCount,
                retryCountLimit, delayMs, commandDescription);
       try {

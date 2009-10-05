@@ -29,6 +29,7 @@ import java.net.URI;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.cloud.ConfiguresCloudConnection;
 import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.http.HttpRetryHandler;
@@ -38,8 +39,12 @@ import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.mezeo.pcs2.PCS;
 import org.jclouds.mezeo.pcs2.PCSBlobStore;
 import org.jclouds.mezeo.pcs2.PCSCloud;
+import org.jclouds.mezeo.pcs2.PCSConnection;
 import org.jclouds.mezeo.pcs2.PCSUtil;
 import org.jclouds.mezeo.pcs2.PCSCloud.Response;
+import org.jclouds.mezeo.pcs2.domain.ContainerMetadata;
+import org.jclouds.mezeo.pcs2.domain.FileMetadata;
+import org.jclouds.mezeo.pcs2.domain.PCSFile;
 import org.jclouds.mezeo.pcs2.endpoints.Contacts;
 import org.jclouds.mezeo.pcs2.endpoints.Metacontainers;
 import org.jclouds.mezeo.pcs2.endpoints.Projects;
@@ -88,7 +93,13 @@ public class RestPCSBlobStoreModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected PCSBlobStore provideConnection(RestClientFactory factory) {
+   protected PCSConnection provideConnection(RestClientFactory factory) {
+      return factory.create(PCSConnection.class);
+   }
+
+   @Provides
+   @Singleton
+   protected  BlobStore<ContainerMetadata, FileMetadata, PCSFile> provideBlobStore(RestClientFactory factory) {
       return factory.create(PCSBlobStore.class);
    }
 

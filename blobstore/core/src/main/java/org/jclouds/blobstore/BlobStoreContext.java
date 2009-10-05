@@ -38,7 +38,7 @@ import com.google.inject.ImplementedBy;
  * 
  */
 @ImplementedBy(BlobStoreContextImpl.class)
-public interface BlobStoreContext<S extends BlobStore<C, M, B>, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
+public interface BlobStoreContext<S, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
          extends CloudContext<S> {
 
    /**
@@ -54,6 +54,8 @@ public interface BlobStoreContext<S extends BlobStore<C, M, B>, C extends Contai
     * @param container
     */
    BlobMap<M, B> createBlobMap(String container);
+
+   BlobStore<C, M, B> getBlobStore();
 
    B newBlob(String key);
 }

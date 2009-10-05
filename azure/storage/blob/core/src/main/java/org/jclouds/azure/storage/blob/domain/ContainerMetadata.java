@@ -28,6 +28,9 @@ import java.util.Arrays;
 
 import org.joda.time.DateTime;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+
 /**
  * 
  * @author Adrian Cole
@@ -37,21 +40,22 @@ public class ContainerMetadata extends org.jclouds.blobstore.domain.ContainerMet
    private URI url;
    private DateTime lastModified;
    private byte[] eTag;
+   private Multimap<String, String> userMetadata = HashMultimap.create();
 
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = super.hashCode();
       result = prime * result + Arrays.hashCode(eTag);
-      result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
-      result = prime * result + ((url == null) ? 0 : url.hashCode());
+      result = prime * result + ((getLastModified() == null) ? 0 : getLastModified().hashCode());
+      result = prime * result + ((getUrl() == null) ? 0 : getUrl().hashCode());
       return result;
    }
 
    @Override
    public String toString() {
-      return "ContainerMetadata [eTag=" + Arrays.toString(eTag) + ", lastModified=" + lastModified
-               + ", url=" + url + ", name=" + name + "]";
+      return "ContainerMetadata [eTag=" + Arrays.toString(eTag) + ", lastModified="
+               + getLastModified() + ", url=" + getUrl() + ", name=" + name + "]";
    }
 
    @Override
@@ -65,22 +69,22 @@ public class ContainerMetadata extends org.jclouds.blobstore.domain.ContainerMet
       ContainerMetadata other = (ContainerMetadata) obj;
       if (!Arrays.equals(eTag, other.eTag))
          return false;
-      if (lastModified == null) {
-         if (other.lastModified != null)
+      if (getLastModified() == null) {
+         if (other.getLastModified() != null)
             return false;
-      } else if (!lastModified.equals(other.lastModified))
+      } else if (!getLastModified().equals(other.getLastModified()))
          return false;
-      if (url == null) {
-         if (other.url != null)
+      if (getUrl() == null) {
+         if (other.getUrl() != null)
             return false;
-      } else if (!url.equals(other.url))
+      } else if (!getUrl().equals(other.getUrl()))
          return false;
       return true;
    }
 
    public ContainerMetadata(URI url, DateTime lastModified, byte[] eTag) {
       super(url.getPath().substring(1));
-      this.url = url;
+      this.setUrl(url);
       this.lastModified = lastModified;
       this.eTag = eTag;
    }
@@ -103,6 +107,26 @@ public class ContainerMetadata extends org.jclouds.blobstore.domain.ContainerMet
 
    public byte[] getETag() {
       return eTag;
+   }
+
+   public void setUserMetadata(Multimap<String, String> userMetadata) {
+      this.userMetadata = userMetadata;
+   }
+
+   public Multimap<String, String> getUserMetadata() {
+      return userMetadata;
+   }
+
+   public void setLastModified(DateTime lastModified) {
+      this.lastModified = lastModified;
+   }
+
+   public void setETag(byte[] eTag) {
+      this.eTag = eTag;
+   }
+
+   public void setUrl(URI url) {
+      this.url = url;
    }
 
 }

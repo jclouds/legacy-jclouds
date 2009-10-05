@@ -32,6 +32,7 @@ import java.util.concurrent.Future;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.jclouds.azure.storage.blob.AzureBlobConnection;
 import org.jclouds.azure.storage.blob.AzureBlobStore;
 import org.jclouds.azure.storage.blob.domain.Blob;
 import org.jclouds.azure.storage.blob.domain.BlobMetadata;
@@ -39,15 +40,17 @@ import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
 import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
 import org.jclouds.azure.storage.blob.domain.TreeSetListBlobsResponse;
 import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
+import org.jclouds.azure.storage.blob.options.ListBlobsOptions;
 import org.jclouds.azure.storage.domain.BoundedSortedSet;
-import org.jclouds.azure.storage.options.CreateOptions;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.integration.internal.StubBlobStore;
+import org.jclouds.http.options.GetOptions;
 import org.jclouds.util.DateService;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 /**
@@ -55,38 +58,14 @@ import com.google.common.collect.Sets;
  * 
  * @author Adrian Cole
  */
-public class StubAzureBlobStore extends StubBlobStore<ContainerMetadata, BlobMetadata, Blob>
-         implements AzureBlobStore {
+public class StubAzureBlobConnection extends StubBlobStore<ContainerMetadata, BlobMetadata, Blob>
+         implements AzureBlobConnection {
 
    @Inject
-   protected StubAzureBlobStore(Map<String, Map<String, Blob>> containerToBlobs,
+   protected StubAzureBlobConnection(Map<String, Map<String, Blob>> containerToBlobs,
             DateService dateService, Provider<ContainerMetadata> containerMetaProvider,
             Provider<Blob> blobProvider) {
       super(containerToBlobs, dateService, containerMetaProvider, blobProvider);
-   }
-
-   public BoundedSortedSet<ContainerMetadata> listContainers(ListOptions options) {
-      return null;
-   }
-
-   public Future<Boolean> createContainer(String container, CreateContainerOptions options) {
-      return null;
-   }
-
-   public Future<Boolean> createRootContainer() {
-      return null;
-   }
-
-   public Future<Boolean> createRootContainer(CreateOptions options) {
-      return null;
-   }
-
-   public Future<Boolean> deleteRootContainer() {
-      return null;
-   }
-
-   public Future<ListBlobsResponse> listBlobs() {
-      return null;
    }
 
    public Future<ListBlobsResponse> listBlobs(final String name) {
@@ -109,4 +88,51 @@ public class StubAzureBlobStore extends StubBlobStore<ContainerMetadata, BlobMet
       };
    }
 
+   public Future<Boolean> createContainer(String container, CreateContainerOptions... options) {
+      throw new UnsupportedOperationException();
+   }
+
+   public Future<Void> deleteBlob(String container, String key) {
+      throw new UnsupportedOperationException();
+   }
+
+   public Future<Boolean> deleteRootContainer() {
+      throw new UnsupportedOperationException();
+   }
+
+   public Future<Blob> getBlob(String container, String key, GetOptions... options) {
+      throw new UnsupportedOperationException();
+   }
+
+   public BlobMetadata getBlobProperties(String container, String key) {
+      throw new UnsupportedOperationException();
+   }
+
+   public Future<ListBlobsResponse> listBlobs(String container, ListBlobsOptions... options) {
+      throw new UnsupportedOperationException();
+   }
+
+   public Future<ListBlobsResponse> listBlobs(ListBlobsOptions... options) {
+      throw new UnsupportedOperationException();
+   }
+
+   public BoundedSortedSet<ContainerMetadata> listContainers(ListOptions... listOptions) {
+      throw new UnsupportedOperationException();
+   }
+
+   public Future<Boolean> createRootContainer(CreateContainerOptions... options) {
+      throw new UnsupportedOperationException();
+   }
+
+   public ContainerMetadata getContainerProperties(String container) {
+      throw new UnsupportedOperationException();
+   }
+
+   public void setContainerMetadata(String container, Multimap<String, String> metadata) {
+      throw new UnsupportedOperationException();
+   }
+
+   public void setBlobMetadata(String container, String key, Multimap<String, String> metadata) {
+      throw new UnsupportedOperationException();
+   }
 }

@@ -36,6 +36,8 @@ import org.jclouds.aws.s3.config.RestS3ConnectionModule;
 import org.jclouds.aws.s3.config.S3ContextModule;
 import org.jclouds.aws.s3.config.StubS3BlobStoreModule;
 import org.jclouds.aws.s3.config.S3ContextModule.S3ContextImpl;
+import org.jclouds.aws.s3.internal.StubS3Connection;
+import org.jclouds.blobstore.integration.internal.StubBlobStore;
 import org.testng.annotations.Test;
 
 import com.google.inject.Injector;
@@ -61,6 +63,8 @@ public class S3ContextBuilderTest {
       S3Context context = new S3ContextBuilder("id", "secret").withModules(
                new StubS3BlobStoreModule()).buildContext();
       assertEquals(context.getClass(), S3ContextImpl.class);
+      assertEquals(context.getApi().getClass(), StubS3Connection.class);
+      assertEquals(context.getBlobStore().getClass(), StubBlobStore.class);
       assertEquals(context.getAccount(), "id");
       assertEquals(context.getEndPoint(), URI.create("https://localhost/s3stub"));
    }

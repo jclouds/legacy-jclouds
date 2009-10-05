@@ -25,7 +25,6 @@ package org.jclouds.blobstore.integration.internal;
 
 import java.util.SortedSet;
 
-import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ContainerMetadata;
@@ -35,12 +34,12 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-public class BaseServiceIntegrationTest<S extends BlobStore<C, M, B>, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
+public class BaseServiceIntegrationTest<S, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
          extends BaseBlobStoreIntegrationTest<S, C, M, B> {
 
    @Test(groups = { "integration", "live" })
    void containerDoesntExist() throws Exception {
-      SortedSet<C> list = context.getApi().listContainers();
+      SortedSet<C> list = context.getBlobStore().listContainers();
       assert !list.contains(new ContainerMetadata("shouldntexist"));
    }
 

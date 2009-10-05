@@ -30,11 +30,16 @@ import javax.inject.Singleton;
 
 import org.jclouds.aws.s3.S3;
 import org.jclouds.aws.s3.S3BlobStore;
+import org.jclouds.aws.s3.S3Connection;
+import org.jclouds.aws.s3.domain.BucketMetadata;
+import org.jclouds.aws.s3.domain.ObjectMetadata;
+import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.filters.RequestAuthorizeSignature;
 import org.jclouds.aws.s3.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.s3.handlers.AWSRedirectionRetryHandler;
 import org.jclouds.aws.s3.handlers.ParseAWSErrorFromXmlContent;
 import org.jclouds.aws.s3.reference.S3Constants;
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.cloud.ConfiguresCloudConnection;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRetryHandler;
@@ -73,8 +78,14 @@ public class RestS3ConnectionModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected S3BlobStore provideS3Connection(RestClientFactory factory) {
+   protected BlobStore<BucketMetadata, ObjectMetadata, S3Object> provideS3BlobStore(RestClientFactory factory) {
       return factory.create(S3BlobStore.class);
+   }
+
+   @Provides
+   @Singleton
+   protected S3Connection provideS3Connection(RestClientFactory factory) {
+      return factory.create(S3Connection.class);
    }
 
    protected void bindErrorHandlers() {

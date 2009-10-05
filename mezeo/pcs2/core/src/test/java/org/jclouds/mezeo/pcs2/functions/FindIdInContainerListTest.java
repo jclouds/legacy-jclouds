@@ -29,7 +29,7 @@ import static org.testng.Assert.assertEquals;
 import java.net.URI;
 
 import org.jclouds.blobstore.ContainerNotFoundException;
-import org.jclouds.mezeo.pcs2.PCSBlobStore;
+import org.jclouds.mezeo.pcs2.PCSConnection;
 import org.jclouds.mezeo.pcs2.domain.ContainerMetadata;
 import org.jclouds.util.DateService;
 import org.testng.annotations.Test;
@@ -56,12 +56,12 @@ public class FindIdInContainerListTest {
 
    @Test(expectedExceptions = ContainerNotFoundException.class)
    public void testBad() {
-      FindIdInContainerList binder = new FindIdInContainerList(createNiceMock(PCSBlobStore.class));
+      FindIdInContainerList binder = new FindIdInContainerList(createNiceMock(PCSConnection.class));
       binder.idForNameInListOrException("hello", OF);
    }
 
    public void testGood() {
-      FindIdInContainerList binder = new FindIdInContainerList(createNiceMock(PCSBlobStore.class));
+      FindIdInContainerList binder = new FindIdInContainerList(createNiceMock(PCSConnection.class));
       assertEquals(binder.idForNameInListOrException("test1", OF),
                "7F143552-AAF5-11DE-BBB0-0BC388ED913B");
    }

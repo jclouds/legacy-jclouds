@@ -21,24 +21,20 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.blobstore.functions;
+package org.jclouds.blobstore.strategy;
 
-import org.jclouds.blobstore.ContainerNotFoundException;
-import org.jclouds.blobstore.KeyNotFoundException;
-import org.jclouds.http.functions.ReturnTrueOn404;
+import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobMetadata;
+import org.jclouds.blobstore.domain.ContainerMetadata;
 
-import com.google.common.base.Function;
+/**
+ * Clears a container
+ * 
+ * @author Adrian Cole
+ */
+public interface ClearContainerStrategy<C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>> {
 
-public class ReturnTrueOnNotFoundOr404 implements Function<Exception, Boolean> {
-   ReturnTrueOn404 rto404 = new ReturnTrueOn404();
-
-   public Boolean apply(Exception from) {
-      if (from instanceof KeyNotFoundException||from instanceof ContainerNotFoundException) {
-         return true;
-      } else {
-         return rto404.apply(from);
-      }
-
-   }
+   void execute(BlobStore<C, M, B> connection, String containerName);
 
 }

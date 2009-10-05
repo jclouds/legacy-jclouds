@@ -35,6 +35,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import org.jclouds.aws.s3.S3BlobStore;
+import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.domain.AccessControlList;
 import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.CannedAccessPolicy;
@@ -70,11 +71,11 @@ import com.google.inject.internal.Nullable;
  * @author Adrian Cole
  * @author James Murty
  */
-public class StubS3BlobStore extends StubBlobStore<BucketMetadata, ObjectMetadata, S3Object>
-         implements S3BlobStore {
+public class StubS3Connection extends StubBlobStore<BucketMetadata, ObjectMetadata, S3Object>
+         implements S3Connection {
 
    @Inject
-   protected StubS3BlobStore(Map<String, Map<String, S3Object>> containerToBlobs,
+   protected StubS3Connection(Map<String, Map<String, S3Object>> containerToBlobs,
             DateService dateService, Provider<BucketMetadata> containerMetaProvider,
             Provider<S3Object> blobProvider) {
       super(containerToBlobs, dateService, containerMetaProvider, blobProvider);
@@ -91,16 +92,18 @@ public class StubS3BlobStore extends StubBlobStore<BucketMetadata, ObjectMetadat
 
    public static final String DEFAULT_OWNER_ID = "abc123";
 
-   public Future<Boolean> createContainer(String name, @Nullable PutBucketOptions nullableOptions) {
-      final PutBucketOptions options = (nullableOptions == null) ? new PutBucketOptions()
-               : nullableOptions;
+   public Future<Boolean> putBucketIfNotExists(String name, PutBucketOptions... optionsList) {
+      final PutBucketOptions options = (optionsList.length == 0) ? new PutBucketOptions()
+               : optionsList[0];
       if (options.getLocationConstraint() != null)
          bucketToLocation.put(name, options.getLocationConstraint());
       keyToAcl.put(name, options.getAcl());
       return super.createContainer(name);
    }
 
-   public Future<ListBucketResponse> listBlobs(final String name, final ListBucketOptions options) {
+   public Future<ListBucketResponse> listBucket(final String name, ListBucketOptions... optionsList) {
+      final ListBucketOptions options = (optionsList.length == 0) ? new ListBucketOptions()
+               : optionsList[0];
       return new FutureBase<ListBucketResponse>() {
          public ListBucketResponse get() throws InterruptedException, ExecutionException {
             final Map<String, S3Object> realContents = getContainerToBlobs().get(name);
@@ -172,11 +175,11 @@ public class StubS3BlobStore extends StubBlobStore<BucketMetadata, ObjectMetadat
       };
    }
 
-   public Future<ObjectMetadata> copyBlob(final String sourceBucket, final String sourceObject,
+   public Future<ObjectMetadata> copyObject(final String sourceBucket, final String sourceObject,
             final String destinationBucket, final String destinationObject,
-            @Nullable CopyObjectOptions nullableOptions) {
-      final CopyObjectOptions options = (nullableOptions == null) ? new CopyObjectOptions()
-               : nullableOptions;
+            CopyObjectOptions... nullableOptions) {
+      final CopyObjectOptions options = (nullableOptions.length == 0) ? new CopyObjectOptions()
+               : nullableOptions[0];
       return new FutureBase<ObjectMetadata>() {
          public ObjectMetadata get() throws InterruptedException, ExecutionException {
             Map<String, S3Object> source = getContainerToBlobs().get(sourceBucket);
@@ -223,7 +226,7 @@ public class StubS3BlobStore extends StubBlobStore<BucketMetadata, ObjectMetadat
       };
    }
 
-   public Future<byte[]> putBlob(final String bucketName, final S3Object object,
+   public Future<byte[]> putObject(final String bucketName, final S3Object object,
             @Nullable PutObjectOptions nullableOptions) {
       final PutObjectOptions options = (nullableOptions == null) ? new PutObjectOptions()
                : nullableOptions;
@@ -248,7 +251,7 @@ public class StubS3BlobStore extends StubBlobStore<BucketMetadata, ObjectMetadat
       return acl;
    }
 
-   public Future<AccessControlList> getContainerACL(final String bucket) {
+   public Future<AccessControlList> getBucketACL(final String bucket) {
       return new FutureBase<AccessControlList>() {
          public AccessControlList get() throws InterruptedException, ExecutionException {
             return getACLforS3Item(bucket);
@@ -256,7 +259,7 @@ public class StubS3BlobStore extends StubBlobStore<BucketMetadata, ObjectMetadat
       };
    }
 
-   public Future<AccessControlList> getBlobACL(final String bucket, final String objectKey) {
+   public Future<AccessControlList> getObjectACL(final String bucket, final String objectKey) {
       return new FutureBase<AccessControlList>() {
          public AccessControlList get() throws InterruptedException, ExecutionException {
             return getACLforS3Item(bucket + "/" + objectKey);
@@ -287,7 +290,7 @@ public class StubS3BlobStore extends StubBlobStore<BucketMetadata, ObjectMetadat
       return acl;
    }
 
-   public Future<Boolean> putContainerACL(final String bucket, final AccessControlList acl) {
+   public Future<Boolean> putBucketACL(final String bucket, final AccessControlList acl) {
       return new FutureBase<Boolean>() {
          public Boolean get() throws InterruptedException, ExecutionException {
             keyToAcl.put(bucket, sanitizeUploadedACL(acl));
@@ -296,7 +299,7 @@ public class StubS3BlobStore extends StubBlobStore<BucketMetadata, ObjectMetadat
       };
    }
 
-   public Future<Boolean> putBlobACL(final String bucket, final String objectKey,
+   public Future<Boolean> putObjectACL(final String bucket, final String objectKey,
             final AccessControlList acl) {
       return new FutureBase<Boolean>() {
          public Boolean get() throws InterruptedException, ExecutionException {
@@ -306,27 +309,33 @@ public class StubS3BlobStore extends StubBlobStore<BucketMetadata, ObjectMetadat
       };
    }
 
-   public Future<ObjectMetadata> copyBlob(String sourceBucket, String sourceObject,
-            String destinationBucket, String destinationObject) {
-      return copyBlob(sourceBucket, sourceObject, destinationBucket, destinationObject,
-               CopyObjectOptions.NONE);
+   public Future<S3Object> getObject(String bucketName, String key, GetOptions... optionsList) {
+      return super.getBlob(bucketName, key, optionsList.length != 0 ? optionsList[0] : null);
    }
 
-   public Future<Boolean> createContainer(String bucketName) {
-      return createContainer(bucketName, PutBucketOptions.NONE);
+   public Future<byte[]> putObject(String bucketName, S3Object object,
+            PutObjectOptions... optionsList) {
+      return putObject(bucketName, object, optionsList.length != 0 ? optionsList[0] : null);
    }
 
-   @Override
-   public Future<S3Object> getBlob(String bucketName, String key) {
-      return getBlob(bucketName, key, GetOptions.NONE);
+   public boolean bucketExists(String bucketName) {
+      return super.containerExists(bucketName);
    }
 
-   public Future<ListBucketResponse> listBlobs(String bucketName) {
-      return listBlobs(bucketName, ListBucketOptions.NONE);
+   public Future<Boolean> deleteBucketIfEmpty(String bucketName) {
+      return super.deleteContainerImpl(bucketName);
    }
 
-   public Future<byte[]> putBlob(String bucketName, S3Object object) {
-      return putBlob(bucketName, object, PutObjectOptions.NONE);
+   public Future<Void> deleteObject(String bucketName, String key) {
+      return super.removeBlob(bucketName, key);
+   }
+
+   public ObjectMetadata headObject(String bucketName, String key) {
+      return super.blobMetadata(bucketName, key);
+   }
+
+   public SortedSet<BucketMetadata> listOwnedBuckets() {
+      return super.listContainers();
    }
 
 }

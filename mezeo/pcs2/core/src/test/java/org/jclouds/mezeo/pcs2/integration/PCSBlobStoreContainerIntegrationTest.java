@@ -23,10 +23,8 @@
  */
 package org.jclouds.mezeo.pcs2.integration;
 
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.blobstore.integration.internal.BaseContainerIntegrationTest;
-import org.jclouds.mezeo.pcs2.PCSBlobStore;
+import org.jclouds.mezeo.pcs2.PCSConnection;
 import org.jclouds.mezeo.pcs2.domain.ContainerMetadata;
 import org.jclouds.mezeo.pcs2.domain.FileMetadata;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
@@ -37,19 +35,6 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "integration", "live" }, testName = "cloudfiles.PCSBlobContainerIntegrationTest")
 public class PCSBlobStoreContainerIntegrationTest extends
-         BaseContainerIntegrationTest<PCSBlobStore, ContainerMetadata, FileMetadata, PCSFile> {
+         BaseContainerIntegrationTest<PCSConnection, ContainerMetadata, FileMetadata, PCSFile> {
 
-   @Override
-   @Test(groups = { "integration", "live" })
-   public void deleteContainerIfEmptyButHasContents() throws Exception {
-      String containerName = getContainerName();
-      try {
-         addBlobToContainer(containerName, "test");
-         // true is returned, since we can delete containers with contents
-         assert context.getApi().deleteContainer(containerName).get(10, TimeUnit.SECONDS);
-      } finally {
-         returnContainer(containerName);
-      }
-   }
-   
 }

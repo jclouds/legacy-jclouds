@@ -79,7 +79,7 @@ public class StubBlobStoreContextBuilder
                   Provider<Blob<BlobMetadata>> blobProvider,
                   BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> api) {
             return new BlobStoreContextImpl<BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>(
-                     blobMapFactory, inputStreamMapFactory, closer, blobProvider, api, URI
+                     blobMapFactory, inputStreamMapFactory, closer, blobProvider, api, api, URI
                               .create("http://localhost/blobstub"), "foo");
          }
 

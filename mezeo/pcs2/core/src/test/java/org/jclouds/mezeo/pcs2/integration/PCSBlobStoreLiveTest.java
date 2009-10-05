@@ -24,7 +24,7 @@
 package org.jclouds.mezeo.pcs2.integration;
 
 import org.jclouds.blobstore.integration.internal.BaseBlobLiveTest;
-import org.jclouds.mezeo.pcs2.PCSBlobStore;
+import org.jclouds.mezeo.pcs2.PCSConnection;
 import org.jclouds.mezeo.pcs2.domain.ContainerMetadata;
 import org.jclouds.mezeo.pcs2.domain.FileMetadata;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
@@ -35,7 +35,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "live" }, testName = "cloudfiles.PCSBlobLiveTest")
 public class PCSBlobStoreLiveTest extends
-         BaseBlobLiveTest<PCSBlobStore, ContainerMetadata, FileMetadata, PCSFile> {
+         BaseBlobLiveTest<PCSConnection, ContainerMetadata, FileMetadata, PCSFile> {
 
    @Override
    @Test(enabled = false)

@@ -66,14 +66,14 @@ public class MainApp {
       try {
 
          // Create Bucket
-         ((S3Context) context).getApi().createContainer(bucketName).get(10, TimeUnit.SECONDS);
+         ((S3Context) context).getApi().putBucketIfNotExists(bucketName).get(10, TimeUnit.SECONDS);
          BlobMap blobMap = context.createBlobMap(bucketName);
          Blob blob = context.newBlob("test");
          blob.setData("testdata");
          blobMap.put("test", blob);
 
          // List bucket
-         for (BucketMetadata bucketObj : ((S3Context) context).getApi().listContainers()) {
+         for (BucketMetadata bucketObj : ((S3Context) context).getApi().listOwnedBuckets()) {
             System.out.println(String.format("  %1$s", bucketObj));
             System.out.println(String.format(": %1$s entries%n", context.createInputStreamMap(
                      bucketObj.getName()).size()));

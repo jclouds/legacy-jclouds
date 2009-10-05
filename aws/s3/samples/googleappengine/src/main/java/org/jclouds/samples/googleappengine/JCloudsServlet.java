@@ -108,14 +108,14 @@ public class JCloudsServlet extends HttpServlet {
    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
       try {
-         SortedSet<BucketMetadata> myBucketMetadata = context.getApi().listContainers();
+         SortedSet<BucketMetadata> myBucketMetadata = context.getApi().listOwnedBuckets();
          SortedSet<BucketResult> myBuckets = Sets.newTreeSet();
          for (BucketMetadata metadata : myBucketMetadata) {
             BucketResult result = new BucketResult();
             result.setName(metadata.getName());
             try {
                try {
-                  ListBucketResponse bucket = context.getApi().listBlobs(metadata.getName()).get(
+                  ListBucketResponse bucket = context.getApi().listBucket(metadata.getName()).get(
                            10, TimeUnit.SECONDS);
                   result.setSize(bucket.size() + "");
                } catch (ContainerNotFoundException ex) {

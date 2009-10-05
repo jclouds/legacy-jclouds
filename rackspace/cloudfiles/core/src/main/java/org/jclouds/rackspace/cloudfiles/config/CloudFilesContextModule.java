@@ -29,13 +29,14 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContextImpl;
 import org.jclouds.blobstore.BlobMap.Factory;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.rackspace.CloudFiles;
-import org.jclouds.rackspace.cloudfiles.CloudFilesBlobStore;
+import org.jclouds.rackspace.cloudfiles.CloudFilesConnection;
 import org.jclouds.rackspace.cloudfiles.CloudFilesContext;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
 import org.jclouds.rackspace.reference.RackspaceConstants;
@@ -52,16 +53,17 @@ public class CloudFilesContextModule extends AbstractModule {
 
    public static class CloudFilesContextImpl
             extends
-            BlobStoreContextImpl<CloudFilesBlobStore, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>
+            BlobStoreContextImpl<CloudFilesConnection, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>
             implements CloudFilesContext {
       @Inject
       CloudFilesContextImpl(Factory<BlobMetadata, Blob<BlobMetadata>> blobMapFactory,
                org.jclouds.blobstore.InputStreamMap.Factory<BlobMetadata> inputStreamMapFactory,
                Closer closer, Provider<Blob<BlobMetadata>> blobProvider,
-               CloudFilesBlobStore defaultApi, @CloudFiles URI endPoint,
+               BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> blobStore,
+               CloudFilesConnection defaultApi, @CloudFiles URI endPoint,
                @Named(RackspaceConstants.PROPERTY_RACKSPACE_USER) String account) {
-         super(blobMapFactory, inputStreamMapFactory, closer, blobProvider, defaultApi, endPoint,
-                  account);
+         super(blobMapFactory, inputStreamMapFactory, closer, blobProvider, blobStore, defaultApi,
+                  endPoint, account);
       }
 
    }

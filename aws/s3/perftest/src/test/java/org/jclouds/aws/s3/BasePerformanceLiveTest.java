@@ -55,7 +55,7 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 public abstract class BasePerformanceLiveTest extends
-         BaseBlobStoreIntegrationTest<S3BlobStore, BucketMetadata, ObjectMetadata, S3Object> {
+         BaseBlobStoreIntegrationTest<S3Connection, BucketMetadata, ObjectMetadata, S3Object> {
    protected int timeoutSeconds = 10;
    protected int loopCount = 100;
    protected ExecutorService exec;
@@ -94,7 +94,7 @@ public abstract class BasePerformanceLiveTest extends
    protected String createScratchContainerInEU() throws InterruptedException, ExecutionException,
             TimeoutException {
       String containerName = getScratchContainerName();
-      context.getApi().createContainer(containerName, createIn(LocationConstraint.EU)).get(30,
+      context.getApi().putBucketIfNotExists(containerName, createIn(LocationConstraint.EU)).get(30,
                TimeUnit.SECONDS);
       return containerName;
    }

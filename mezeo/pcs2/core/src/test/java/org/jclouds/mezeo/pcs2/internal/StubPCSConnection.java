@@ -23,42 +23,49 @@
  */
 package org.jclouds.mezeo.pcs2.internal;
 
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.SortedSet;
 import java.util.concurrent.Future;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-
-import org.jclouds.blobstore.integration.internal.StubBlobStore;
 import org.jclouds.mezeo.pcs2.PCSBlobStore;
+import org.jclouds.mezeo.pcs2.PCSConnection;
 import org.jclouds.mezeo.pcs2.domain.ContainerMetadata;
 import org.jclouds.mezeo.pcs2.domain.FileMetadata;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
-import org.jclouds.util.DateService;
 
 /**
  * Implementation of {@link PCSBlobStore} which keeps all data in a local Map object.
  * 
  * @author Adrian Cole
  */
-public class StubPCSBlobStore extends StubBlobStore<ContainerMetadata, FileMetadata, PCSFile>
-         implements PCSBlobStore {
+public class StubPCSConnection implements PCSConnection {
 
-   @Override
-   public Future<Boolean> deleteContainer(final String container) {
-      return new FutureBase<Boolean>() {
-         public Boolean get() throws InterruptedException, ExecutionException {
-            getContainerToBlobs().remove(container);
-            return true;
-         }
-      };
+   public Future<Void> deleteContainer(URI container) {
+      throw new UnsupportedOperationException();
    }
 
-   @Inject
-   protected StubPCSBlobStore(Map<String, Map<String, PCSFile>> containerToBlobs,
-            DateService dateService, Provider<ContainerMetadata> containerMetaProvider,
-            Provider<PCSFile> blobProvider) {
-      super(containerToBlobs, dateService, containerMetaProvider, blobProvider);
+   public Future<Void> deleteFile(URI file) {
+      throw new UnsupportedOperationException();
+   }
+
+   public Future<InputStream> downloadFile(URI file) {
+      throw new UnsupportedOperationException();
+   }
+
+   public Future<? extends SortedSet<FileMetadata>> listFiles(URI container) {
+      throw new UnsupportedOperationException();
+   }
+
+   public Future<URI> uploadFile(URI container, PCSFile object) {
+      throw new UnsupportedOperationException();
+   }
+
+   public Future<URI> createContainer(String container) {
+      throw new UnsupportedOperationException();
+   }
+
+   public SortedSet<ContainerMetadata> listContainers() {
+      throw new UnsupportedOperationException();
    }
 }

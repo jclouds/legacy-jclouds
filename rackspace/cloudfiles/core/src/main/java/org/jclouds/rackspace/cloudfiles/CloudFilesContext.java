@@ -38,7 +38,8 @@ import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
  * @author Adrian Cole
  * 
  */
-public interface CloudFilesContext extends
-         BlobStoreContext<CloudFilesBlobStore, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> {
+public interface CloudFilesContext
+         extends
+         BlobStoreContext<CloudFilesConnection, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> {
 
 }

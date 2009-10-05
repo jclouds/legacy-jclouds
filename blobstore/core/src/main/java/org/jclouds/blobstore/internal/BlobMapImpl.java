@@ -39,6 +39,9 @@ import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ContainerMetadata;
+import org.jclouds.blobstore.strategy.ClearContainerStrategy;
+import org.jclouds.blobstore.strategy.ContainerCountStrategy;
+import org.jclouds.blobstore.strategy.ContainsValueStrategy;
 import org.jclouds.blobstore.strategy.GetAllBlobMetadataStrategy;
 import org.jclouds.blobstore.strategy.GetAllBlobsStrategy;
 import org.jclouds.util.Utils;
@@ -54,14 +57,18 @@ import com.google.inject.assistedinject.Assisted;
  * 
  * @author Adrian Cole
  */
-public class BlobMapImpl<S extends BlobStore<C, M, B>, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
+public class BlobMapImpl<C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
          extends BaseBlobMap<C, M, B, B> implements BlobMap<M, B> {
 
    @Inject
-   public BlobMapImpl(S connection, Provider<B> blobFactory,
+   public BlobMapImpl(BlobStore<C, M, B> connection, Provider<B> blobFactory,
             GetAllBlobsStrategy<C, M, B> getAllBlobs,
-            GetAllBlobMetadataStrategy<C, M, B> getAllBlobMetadata, @Assisted String containerName) {
-      super(connection, blobFactory, getAllBlobs, getAllBlobMetadata, containerName);
+            GetAllBlobMetadataStrategy<C, M, B> getAllBlobMetadata,
+            ContainsValueStrategy<C, M, B> containsValueStrategy,
+            ClearContainerStrategy<C, M, B> clearContainerStrategy,
+            ContainerCountStrategy<C, M, B> containerCountStrategy, @Assisted String containerName) {
+      super(connection, blobFactory, getAllBlobs, getAllBlobMetadata, containsValueStrategy,
+               clearContainerStrategy, containerCountStrategy, containerName);
    }
 
    /**

@@ -37,7 +37,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.ListableMap;
 import org.jclouds.blobstore.domain.Blob;
@@ -51,7 +50,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
-public abstract class BaseMapIntegrationTest<S extends BlobStore<C, M, B>, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>, V>
+public abstract class BaseMapIntegrationTest<S, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>, V>
          extends BaseBlobStoreIntegrationTest<S, C, M, B> {
 
    public abstract void testPutAll() throws InterruptedException, ExecutionException,

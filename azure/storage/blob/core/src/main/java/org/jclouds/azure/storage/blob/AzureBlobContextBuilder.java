@@ -60,7 +60,7 @@ import com.google.inject.TypeLiteral;
  * @see AzureBlobContext
  */
 public class AzureBlobContextBuilder extends
-         BlobStoreContextBuilder<AzureBlobStore, ContainerMetadata, BlobMetadata, Blob> {
+         BlobStoreContextBuilder<AzureBlobConnection, ContainerMetadata, BlobMetadata, Blob> {
 
    @Override
    public AzureBlobContext buildContext() {
@@ -68,7 +68,7 @@ public class AzureBlobContextBuilder extends
    }
 
    public AzureBlobContextBuilder(Properties props) {
-      super(new TypeLiteral<AzureBlobStore>() {
+      super(new TypeLiteral<AzureBlobConnection>() {
       }, new TypeLiteral<ContainerMetadata>() {
       }, new TypeLiteral<BlobMetadata>() {
       }, new TypeLiteral<Blob>() {
@@ -77,6 +77,12 @@ public class AzureBlobContextBuilder extends
       properties.setProperty(AzureBlobConstants.PROPERTY_AZUREBLOB_ENDPOINT,
                "https://{account}.blob.core.windows.net");
    }
+
+//   @Override
+//   protected void addBlobStoreModule(List<Module> modules) {
+//      modules.add(BlobStoreMapsModule.Builder.newBuilder(containerMetadataType, blobMetadataType,
+//               blobType).withClearContainerStrategy(RecreateClearContainerStrategy.class).build());
+//   }
 
    public AzureBlobContextBuilder(String id, String secret) {
       this(new Properties());
@@ -152,7 +158,7 @@ public class AzureBlobContextBuilder extends
 
    @Override
    public AzureBlobContextBuilder withSaxDebug() {
-      return (AzureBlobContextBuilder) (AzureBlobContextBuilder) super.withSaxDebug();
+      return (AzureBlobContextBuilder) super.withSaxDebug();
    }
 
    @Override

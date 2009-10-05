@@ -25,6 +25,7 @@ package org.jclouds.rackspace.cloudfiles.internal;
 
 import java.util.Map;
 import java.util.SortedSet;
+import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -32,7 +33,9 @@ import javax.inject.Provider;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.integration.internal.StubBlobStore;
+import org.jclouds.http.options.GetOptions;
 import org.jclouds.rackspace.cloudfiles.CloudFilesBlobStore;
+import org.jclouds.rackspace.cloudfiles.CloudFilesConnection;
 import org.jclouds.rackspace.cloudfiles.domain.AccountMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerCDNMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
@@ -48,52 +51,83 @@ import com.google.common.collect.Multimap;
  * @author Adrian Cole
  * @author James Murty
  */
-public class StubCloudFilesBlobStore extends
+public class StubCloudFilesConnection extends
          StubBlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> implements
-         CloudFilesBlobStore {
+         CloudFilesConnection {
 
    @Inject
-   protected StubCloudFilesBlobStore(Map<String, Map<String, Blob<BlobMetadata>>> containerToBlobs,
-            DateService dateService, Provider<ContainerMetadata> containerMetaProvider,
+   protected StubCloudFilesConnection(
+            Map<String, Map<String, Blob<BlobMetadata>>> containerToBlobs, DateService dateService,
+            Provider<ContainerMetadata> containerMetaProvider,
             Provider<Blob<BlobMetadata>> blobProvider) {
       super(containerToBlobs, dateService, containerMetaProvider, blobProvider);
    }
 
-   public AccountMetadata getAccountMetadata() {
-      return null;
+   public AccountMetadata getAccountStatistics() {
+      throw new UnsupportedOperationException();
    }
 
    public SortedSet<ContainerMetadata> listContainers(ListContainerOptions options) {
-      return null;
+      throw new UnsupportedOperationException();
    }
 
    public boolean setObjectMetadata(String container, String key,
             Multimap<String, String> userMetadata) {
-      return false;
+      throw new UnsupportedOperationException();
    }
 
    public boolean disableCDN(String container) {
-      return false;
+      throw new UnsupportedOperationException();
    }
 
    public String enableCDN(String container, Long ttl) {
-      return null;
+      throw new UnsupportedOperationException();
    }
 
    public String enableCDN(String container) {
-      return null;
+      throw new UnsupportedOperationException();
    }
 
    public ContainerCDNMetadata getCDNMetadata(String container) {
-      return null;
+      throw new UnsupportedOperationException();
    }
 
    public SortedSet<ContainerCDNMetadata> listCDNContainers(ListCdnContainerOptions... options) {
-      return null;
+      throw new UnsupportedOperationException();
    }
 
    public String updateCDN(String container, Long ttl) {
-      return null;
+      throw new UnsupportedOperationException();
+   }
+
+   public Future<Boolean> deleteContainerIfEmpty(String container) {
+      return super.deleteContainerImpl(container);
+   }
+
+   public Future<Blob<BlobMetadata>> getObject(String container, String key, GetOptions... options) {
+      throw new UnsupportedOperationException();
+
+   }
+
+   public SortedSet<ContainerMetadata> listContainers(ListContainerOptions... options) {
+      throw new UnsupportedOperationException();
+
+   }
+
+   public BlobMetadata getObjectMetadata(String container, String key) {
+      throw new UnsupportedOperationException();
+   }
+
+   public Future<? extends SortedSet<BlobMetadata>> listObjects(String container) {
+      throw new UnsupportedOperationException();
+   }
+
+   public Future<byte[]> putObject(String container, Blob<BlobMetadata> object) {
+      throw new UnsupportedOperationException();
+   }
+
+   public Future<Boolean> removeObject(String container, String key) {
+      throw new UnsupportedOperationException();
    }
 
 }

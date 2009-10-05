@@ -21,32 +21,44 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudfiles.integration;
+package org.jclouds.blobstore.functions;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.io.IOException;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.cloud.ConfiguresCloudConnection;
-import org.jclouds.rackspace.cloudfiles.CloudFilesBlobStore;
-import org.jclouds.rackspace.cloudfiles.internal.StubCloudFilesBlobStore;
+import org.jclouds.blobstore.internal.BlobRuntimeException;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.TypeLiteral;
+import com.google.common.base.Function;
 
-@ConfiguresCloudConnection
-public class StubCloudFilesConnectionModule extends AbstractModule {
-   // must be singleton for all threads and all objects or tests may fail;
-   static final ConcurrentHashMap<String, Map<String, Blob<BlobMetadata>>> map = new ConcurrentHashMap<String, Map<String, Blob<BlobMetadata>>>();
+public class ObjectMD5<M extends BlobMetadata, B extends Blob<M>> implements
+         Function<Object, byte[]> {
 
-   @Override
-   protected void configure() {
-      bind(new TypeLiteral<Map<String, Map<String, Blob<BlobMetadata>>>>() {
-      }).toInstance(map);
-      bind(new TypeLiteral<CloudFilesBlobStore>() {
-      }).to(new TypeLiteral<StubCloudFilesBlobStore>() {
-      }).asEagerSingleton();
+   protected final Provider<B> blobFactory;
+
+   @Inject
+   ObjectMD5(Provider<B> blobFactory) {
+      this.blobFactory = blobFactory;
+   }
+
+   public byte[] apply(Object from) {
+      Blob<?> object;
+      if (from instanceof Blob<?>) {
+         object = (Blob<?>) from;
+      } else {
+         object = blobFactory.get();
+         object.setData(from);
+      }
+      if (object.getMetadata().getContentMD5() == null)
+         try {
+            object.generateMD5();
+         } catch (IOException e) {
+            throw new BlobRuntimeException("couldn't get MD5 for: " + from, e);
+         }
+      return object.getMetadata().getContentMD5();
    }
 
 }

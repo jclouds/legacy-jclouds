@@ -86,7 +86,7 @@ public class GetAllBucketsController extends HttpServlet {
    private void addMyBucketsToRequest(HttpServletRequest request) throws InterruptedException,
             ExecutionException, TimeoutException {
       System.err.println(context.getAccount() + ":" + context.getEndPoint());
-      SortedSet<BucketMetadata> myBucketMetadata = context.getApi().listContainers();
+      SortedSet<BucketMetadata> myBucketMetadata = context.getApi().listOwnedBuckets();
       SortedSet<BucketResult> myBuckets = Sets.newTreeSet(Iterables.transform(myBucketMetadata,
                metadataToBucketResultProvider.get()));
       request.setAttribute("buckets", myBuckets);

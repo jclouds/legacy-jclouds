@@ -31,7 +31,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ContainerMetadata;
@@ -41,20 +40,20 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-public class BaseContainerIntegrationTest<S extends BlobStore<C, M, B>, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
+public class BaseContainerIntegrationTest<S, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
          extends BaseBlobStoreIntegrationTest<S, C, M, B> {
 
    @Test(groups = { "integration", "live" })
    public void containerDoesntExist() throws Exception {
-      assert !context.getApi().containerExists("forgetaboutit");
+      assert !context.getBlobStore().containerExists("forgetaboutit");
    }
 
    @Test(groups = { "integration", "live" })
    public void testPutTwiceIsOk() throws Exception {
       String containerName = getContainerName();
       try {
-         context.getApi().createContainer(containerName).get(10, TimeUnit.SECONDS);
-         context.getApi().createContainer(containerName).get(10, TimeUnit.SECONDS);
+         context.getBlobStore().createContainer(containerName).get(10, TimeUnit.SECONDS);
+         context.getBlobStore().createContainer(containerName).get(10, TimeUnit.SECONDS);
       } finally {
          returnContainer(containerName);
       }
@@ -64,28 +63,21 @@ public class BaseContainerIntegrationTest<S extends BlobStore<C, M, B>, C extend
    public void containerExists() throws Exception {
       String containerName = getContainerName();
       try {
-         assert context.getApi().containerExists(containerName);
+         assert context.getBlobStore().containerExists(containerName);
       } finally {
          returnContainer(containerName);
       }
    }
 
-   /**
-    * this method overrides containerName to ensure it isn't found
-    */
    @Test(groups = { "integration", "live" })
-   public void deleteContainerIfEmptyNotFound() throws Exception {
-      assert context.getApi().deleteContainer("dbienf").get(10, TimeUnit.SECONDS);
-   }
-
-   @Test(groups = { "integration", "live" })
-   public void deleteContainerIfEmptyButHasContents() throws Exception {
+   public void deleteContainerWithContents() throws Exception {
       String containerName = getContainerName();
       try {
          addBlobToContainer(containerName, "test");
-         assert !context.getApi().deleteContainer(containerName).get(10, TimeUnit.SECONDS);
+         context.getBlobStore().deleteContainer(containerName).get(10, TimeUnit.SECONDS);
+         assertNotExists(containerName);
       } finally {
-         returnContainer(containerName);
+         recycleContainer(containerName);
       }
    }
 
@@ -93,31 +85,25 @@ public class BaseContainerIntegrationTest<S extends BlobStore<C, M, B>, C extend
    public void deleteContainerIfEmpty() throws Exception {
       final String containerName = getContainerName();
       try {
-         assert context.getApi().deleteContainer(containerName).get(10, TimeUnit.SECONDS);
-
-         assertEventually(new Runnable() {
-            public void run() {
-               try {
-                  assert !context.getApi().containerExists(containerName) : "container "
-                           + containerName + " still exists";
-               } catch (Exception e) {
-                  Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
-               }
-            }
-         });
+         context.getBlobStore().deleteContainer(containerName).get(10, TimeUnit.SECONDS);
+         assertNotExists(containerName);
       } finally {
          // this container is now deleted, so we can't reuse it directly
          recycleContainer(containerName);
       }
    }
 
-   protected void addAlphabetUnderRoot(String containerName) throws InterruptedException,
-            ExecutionException, TimeoutException {
-      for (char letter = 'a'; letter <= 'z'; letter++) {
-         B blob = context.newBlob(letter + "");
-         blob.setData(letter + "content");
-         context.getApi().putBlob(containerName, blob).get(10, TimeUnit.SECONDS);
-      }
+   private void assertNotExists(final String containerName) throws InterruptedException {
+      assertEventually(new Runnable() {
+         public void run() {
+            try {
+               assert !context.getBlobStore().containerExists(containerName) : "container "
+                        + containerName + " still exists";
+            } catch (Exception e) {
+               Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
+            }
+         }
+      });
    }
 
    @Test(groups = { "integration", "live" })
@@ -126,7 +112,7 @@ public class BaseContainerIntegrationTest<S extends BlobStore<C, M, B>, C extend
       String containerName = getContainerName();
       try {
          add15UnderRoot(containerName);
-         SortedSet<M> container = context.getApi().listBlobs(containerName).get(10,
+         SortedSet<M> container = context.getBlobStore().listBlobs(containerName).get(10,
                   TimeUnit.SECONDS);
          assertEquals(container.size(), 15);
       } finally {
@@ -135,12 +121,21 @@ public class BaseContainerIntegrationTest<S extends BlobStore<C, M, B>, C extend
 
    }
 
+   protected void addAlphabetUnderRoot(String containerName) throws InterruptedException,
+            ExecutionException, TimeoutException {
+      for (char letter = 'a'; letter <= 'z'; letter++) {
+         B blob = context.newBlob(letter + "");
+         blob.setData(letter + "content");
+         context.getBlobStore().putBlob(containerName, blob).get(10, TimeUnit.SECONDS);
+      }
+   }
+
    protected void add15UnderRoot(String containerName) throws InterruptedException,
             ExecutionException, TimeoutException {
       for (int i = 0; i < 15; i++) {
          B blob = context.newBlob(i + "");
          blob.setData(i + "content");
-         context.getApi().putBlob(containerName, blob).get(10, TimeUnit.SECONDS);
+         context.getBlobStore().putBlob(containerName, blob).get(10, TimeUnit.SECONDS);
       }
    }
 
@@ -149,7 +144,7 @@ public class BaseContainerIntegrationTest<S extends BlobStore<C, M, B>, C extend
       for (int i = 0; i < 10; i++) {
          B blob = context.newBlob(prefix + "/" + i);
          blob.setData(i + "content");
-         context.getApi().putBlob(containerName, blob).get(10, TimeUnit.SECONDS);
+         context.getBlobStore().putBlob(containerName, blob).get(10, TimeUnit.SECONDS);
       }
    }
 }

@@ -27,6 +27,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -56,8 +57,11 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.ParseURIList;
+import org.jclouds.http.functions.ReturnInputStream;
 import org.jclouds.http.functions.ReturnStringIf200;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
+import org.jclouds.http.functions.ReturnVoidIf2xx;
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.logging.Logger;
@@ -414,6 +418,13 @@ public class JaxrsAnnotationProcessor<T> {
    public static final TypeLiteral<Future<String>> futureStringLiteral = new TypeLiteral<Future<String>>() {
    };
 
+   public static final TypeLiteral<Future<Void>> futureVoidLiteral = new TypeLiteral<Future<Void>>() {
+   };
+   public static final TypeLiteral<Future<URI>> futureURILiteral = new TypeLiteral<Future<URI>>() {
+   };
+   public static final TypeLiteral<Future<InputStream>> futureInputStreamLiteral = new TypeLiteral<Future<InputStream>>() {
+   };
+
    public static Class<? extends Function<HttpResponse, ?>> getParserOrThrowException(Method method) {
       ResponseParser annotation = method.getAnnotation(ResponseParser.class);
       if (annotation == null) {
@@ -424,6 +435,16 @@ public class JaxrsAnnotationProcessor<T> {
          } else if (method.getReturnType().equals(String.class)
                   || TypeLiteral.get(method.getGenericReturnType()).equals(futureStringLiteral)) {
             return ReturnStringIf200.class;
+         } else if (method.getReturnType().equals(void.class)
+                  || TypeLiteral.get(method.getGenericReturnType()).equals(futureVoidLiteral)) {
+            return ReturnVoidIf2xx.class;
+         } else if (method.getReturnType().equals(URI.class)
+                  || TypeLiteral.get(method.getGenericReturnType()).equals(futureURILiteral)) {
+            return ParseURIList.class;
+         } else if (method.getReturnType().equals(InputStream.class)
+                  || TypeLiteral.get(method.getGenericReturnType())
+                           .equals(futureInputStreamLiteral)) {
+            return ReturnInputStream.class;
          } else {
             throw new IllegalStateException(
                      "You must specify a ResponseTransformer annotation on: " + method.toString());
@@ -534,10 +555,14 @@ public class JaxrsAnnotationProcessor<T> {
                         .iterator().next();
                EntityParam entityAnnotation = (EntityParam) entry.getValue().iterator().next();
 
-               Object entity = args[entry.getKey()];
                EntityBinder binder = injector.getInstance(entityAnnotation.value());
-
-               binder.addEntityToRequest(entity, request);
+               Object entity = args[entry.getKey()];
+               if (entity.getClass().isArray()) {
+                  Object[] entityArray = (Object[]) entity;
+                  entity = entityArray.length > 0 ? entityArray[0] : null;
+               }
+               if (entity != null)
+                  binder.addEntityToRequest(entity, request);
             } else if (indexToEntityAnnotation.size() > 1) {
                throw new IllegalStateException("cannot have multiple @Entity annotations on "
                         + method);

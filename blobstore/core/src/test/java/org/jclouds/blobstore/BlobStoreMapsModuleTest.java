@@ -32,9 +32,15 @@ import org.jclouds.blobstore.domain.ContainerMetadata;
 import org.jclouds.blobstore.integration.config.StubBlobStoreConnectionModule;
 import org.jclouds.blobstore.internal.BlobMapImpl;
 import org.jclouds.blobstore.internal.InputStreamMapImpl;
+import org.jclouds.blobstore.strategy.ClearContainerStrategy;
+import org.jclouds.blobstore.strategy.ContainerCountStrategy;
+import org.jclouds.blobstore.strategy.ContainsValueStrategy;
 import org.jclouds.blobstore.strategy.GetAllBlobMetadataStrategy;
 import org.jclouds.blobstore.strategy.GetAllBlobsStrategy;
 import org.jclouds.blobstore.strategy.internal.ContainerListGetAllBlobMetadataStrategy;
+import org.jclouds.blobstore.strategy.internal.ContentMD5ContainsValueStrategy;
+import org.jclouds.blobstore.strategy.internal.DeleteAllKeysClearContainerStrategy;
+import org.jclouds.blobstore.strategy.internal.KeyCountStrategy;
 import org.jclouds.blobstore.strategy.internal.RetryOnNotFoundGetAllBlobsStrategy;
 import org.testng.annotations.Test;
 
@@ -48,54 +54,61 @@ public class BlobStoreMapsModuleTest {
 
    public void testBuilderBuild() {
       BlobStoreMapsModule module = BlobStoreMapsModule.Builder.newBuilder(
-               new TypeLiteral<BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
-               }, new TypeLiteral<ContainerMetadata>() {
+               new TypeLiteral<ContainerMetadata>() {
                }, new TypeLiteral<BlobMetadata>() {
                }, new TypeLiteral<Blob<BlobMetadata>>() {
                }).build();
       assertEquals(module.blobMapFactoryType,
                new TypeLiteral<BlobMap.Factory<BlobMetadata, Blob<BlobMetadata>>>() {
                });
-      assertEquals(
-               module.blobMapImplType,
-               new TypeLiteral<BlobMapImpl<BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
+      assertEquals(module.blobMapImplType,
+               new TypeLiteral<BlobMapImpl<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
                });
       assertEquals(module.inputStreamMapFactoryType,
                new TypeLiteral<InputStreamMap.Factory<BlobMetadata>>() {
                });
       assertEquals(
                module.inputStreamMapImplType,
-               new TypeLiteral<InputStreamMapImpl<BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
+               new TypeLiteral<InputStreamMapImpl<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
                });
       assertEquals(
-               module.getAllBlobsStrategyType,
-               new TypeLiteral<GetAllBlobsStrategy<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
-               });
-      assertEquals(
-               module.getAllBlobsStrategyImplType,
+               module.strategyImplMap
+                        .get(new TypeLiteral<GetAllBlobsStrategy<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
+                        }),
                new TypeLiteral<RetryOnNotFoundGetAllBlobsStrategy<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
                });
       assertEquals(
-               module.getAllBlobMetadataStrategyType,
-               new TypeLiteral<GetAllBlobMetadataStrategy<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
+               module.strategyImplMap
+                        .get(new TypeLiteral<GetAllBlobMetadataStrategy<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
+                        }),
+               new TypeLiteral<ContainerListGetAllBlobMetadataStrategy<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
                });
       assertEquals(
-               module.getAllBlobMetadataStrategyImplType,
-               new TypeLiteral<ContainerListGetAllBlobMetadataStrategy<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
+               module.strategyImplMap
+                        .get(new TypeLiteral<ContainsValueStrategy<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
+                        }),
+               new TypeLiteral<ContentMD5ContainsValueStrategy<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
+               });
+      assertEquals(
+               module.strategyImplMap
+                        .get(new TypeLiteral<ClearContainerStrategy<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
+                        }),
+               new TypeLiteral<DeleteAllKeysClearContainerStrategy<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
+               });
+      assertEquals(
+               module.strategyImplMap
+                        .get(new TypeLiteral<ContainerCountStrategy<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
+                        }),
+               new TypeLiteral<KeyCountStrategy<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
                });
    }
 
    public void testInject() {
-      Injector i = Guice
-               .createInjector(
-                        new StubBlobStoreConnectionModule(),
-                        BlobStoreMapsModule.Builder
-                                 .newBuilder(
-                                          new TypeLiteral<BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
-                                          }, new TypeLiteral<ContainerMetadata>() {
-                                          }, new TypeLiteral<BlobMetadata>() {
-                                          }, new TypeLiteral<Blob<BlobMetadata>>() {
-                                          }).build());
+      Injector i = Guice.createInjector(new StubBlobStoreConnectionModule(),
+               BlobStoreMapsModule.Builder.newBuilder(new TypeLiteral<ContainerMetadata>() {
+               }, new TypeLiteral<BlobMetadata>() {
+               }, new TypeLiteral<Blob<BlobMetadata>>() {
+               }).build());
       assertNotNull(i.getInstance(Key
                .get(new TypeLiteral<BlobMap.Factory<BlobMetadata, Blob<BlobMetadata>>>() {
                })));

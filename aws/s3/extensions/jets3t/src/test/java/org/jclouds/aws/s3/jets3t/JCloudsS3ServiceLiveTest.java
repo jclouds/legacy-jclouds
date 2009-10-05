@@ -44,7 +44,7 @@ import java.util.concurrent.TimeoutException;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.aws.s3.S3BlobStore;
+import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
@@ -82,7 +82,7 @@ import com.google.common.collect.Iterators;
 @Test(groups = { "live" }, testName = "jets3t.JCloudsS3ServiceIntegrationTest")
 public class JCloudsS3ServiceLiveTest
          extends
-         BaseBlobStoreIntegrationTest<S3BlobStore, BucketMetadata, ObjectMetadata, org.jclouds.aws.s3.domain.S3Object> {
+         BaseBlobStoreIntegrationTest<S3Connection, BucketMetadata, ObjectMetadata, org.jclouds.aws.s3.domain.S3Object> {
    AWSCredentials credentials;
    S3Service service;
 
@@ -112,7 +112,7 @@ public class JCloudsS3ServiceLiveTest
       try {
          S3Bucket bucket = service.createBucket(new S3Bucket(bucketName));
          assertEquals(bucket.getName(), bucketName);
-         assertTrue(context.getApi().containerExists(bucketName));
+         assertTrue(context.getApi().bucketExists(bucketName));
       } finally {
          returnContainer(bucketName);
       }
@@ -125,7 +125,7 @@ public class JCloudsS3ServiceLiveTest
       service.deleteBucket(bucketName);
       assertEventually(new Runnable() {
          public void run() {
-            assertFalse(context.getApi().containerExists(bucketName));
+            assertFalse(context.getApi().bucketExists(bucketName));
          }
       });
    }
@@ -212,7 +212,7 @@ public class JCloudsS3ServiceLiveTest
          S3Bucket[] jsBuckets = service.listAllBuckets();
 
          SortedSet<org.jclouds.aws.s3.domain.BucketMetadata> jcBuckets = context.getApi()
-                  .listContainers();
+                  .listOwnedBuckets();
 
          assert jsBuckets.length == jcBuckets.size();
 
@@ -363,7 +363,7 @@ public class JCloudsS3ServiceLiveTest
          // Upload empty object
          requestObject = new S3Object(objectKey);
          jsResultObject = service.putObject(new S3Bucket(bucketName), requestObject);
-         jcObject = context.getApi().getBlob(bucketName, objectKey).get(10, TimeUnit.SECONDS);
+         jcObject = context.getApi().getObject(bucketName, objectKey).get(10, TimeUnit.SECONDS);
          // TODO null keys from s3object! assertEquals(jcObject.getKey(), objectKey);
          assertEquals(jcObject.getMetadata().getSize(), 0);
          assertEquals(jcObject.getMetadata().getContentType(), MediaType.APPLICATION_OCTET_STREAM);
@@ -374,7 +374,7 @@ public class JCloudsS3ServiceLiveTest
          // Upload unicode-named object
          requestObject = new S3Object("üníçòdé-object");
          jsResultObject = service.putObject(new S3Bucket(bucketName), requestObject);
-         jcObject = context.getApi().getBlob(bucketName, requestObject.getKey()).get(10,
+         jcObject = context.getApi().getObject(bucketName, requestObject.getKey()).get(10,
                   TimeUnit.SECONDS);
          // TODO null keys from s3object! assertEquals(jcObject.getKey(), requestObject.getKey());
          assertEquals(jcObject.getMetadata().getSize(), 0);
@@ -387,7 +387,7 @@ public class JCloudsS3ServiceLiveTest
          String data = "This is my üníçòdé data";
          requestObject = new S3Object(objectKey, data);
          jsResultObject = service.putObject(new S3Bucket(bucketName), requestObject);
-         jcObject = context.getApi().getBlob(bucketName, objectKey).get(10, TimeUnit.SECONDS);
+         jcObject = context.getApi().getObject(bucketName, objectKey).get(10, TimeUnit.SECONDS);
          assertEquals(jcObject.getMetadata().getSize(), data.getBytes("UTF-8").length);
          assertTrue(jcObject.getMetadata().getContentType().startsWith("text/plain"));
          assertEquals(jsResultObject.getContentLength(), data.getBytes("UTF-8").length);
@@ -397,7 +397,7 @@ public class JCloudsS3ServiceLiveTest
          requestObject = new S3Object(objectKey);
          requestObject.addMetadata("x-amz-meta-" + "my-metadata-1", "value-1");
          jsResultObject = service.putObject(new S3Bucket(bucketName), requestObject);
-         jcObject = context.getApi().getBlob(bucketName, objectKey).get(10, TimeUnit.SECONDS);
+         jcObject = context.getApi().getObject(bucketName, objectKey).get(10, TimeUnit.SECONDS);
          assertEquals(Iterables.getLast(jcObject.getMetadata().getUserMetadata().get(
                   "my-metadata-1")), "value-1");
          assertEquals(jsResultObject.getMetadata("x-amz-meta-" + "my-metadata-1"), "value-1");
@@ -406,7 +406,7 @@ public class JCloudsS3ServiceLiveTest
          requestObject = new S3Object(objectKey);
          requestObject.setAcl(AccessControlList.REST_CANNED_PUBLIC_READ);
          jsResultObject = service.putObject(new S3Bucket(bucketName), requestObject);
-         org.jclouds.aws.s3.domain.AccessControlList jcACL = context.getApi().getBlobACL(
+         org.jclouds.aws.s3.domain.AccessControlList jcACL = context.getApi().getObjectACL(
                   bucketName, objectKey).get(10, TimeUnit.SECONDS);
          assertTrue(jcACL.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ));
          assertTrue(jcACL.hasPermission(jcACL.getOwner().getId(), Permission.FULL_CONTROL));
@@ -422,7 +422,7 @@ public class JCloudsS3ServiceLiveTest
          data = "Here is some dátà for you";
          requestObject.setDataInputStream(new ByteArrayInputStream(data.getBytes("UTF-8")));
          jsResultObject = service.putObject(new S3Bucket(bucketName), requestObject);
-         jcObject = context.getApi().getBlob(bucketName, objectKey).get(10, TimeUnit.SECONDS);
+         jcObject = context.getApi().getObject(bucketName, objectKey).get(10, TimeUnit.SECONDS);
          assertTrue(jsResultObject.verifyData(data.getBytes("UTF-8")));
          assertEquals(jsResultObject.getMd5HashAsHex(), HttpUtils.toHexString(jcObject
                   .getMetadata().getETag()));
@@ -458,7 +458,7 @@ public class JCloudsS3ServiceLiveTest
          destinationObject = new S3Object(destinationObjectKey);
          copyResult = service.copyObject(bucketName, sourceObjectKey, bucketName,
                   destinationObject, false);
-         jcDestinationObject = context.getApi().getBlob(bucketName, destinationObject.getKey())
+         jcDestinationObject = context.getApi().getObject(bucketName, destinationObject.getKey())
                   .get(10, TimeUnit.SECONDS);
          // TODO null keys from s3object! assertEquals(jcDestinationObject.getKey(),
          // destinationObjectKey);
@@ -467,7 +467,7 @@ public class JCloudsS3ServiceLiveTest
          assertEquals(copyResult.get("ETag"), HttpUtils.toHexString(jcDestinationObject
                   .getMetadata().getETag()));
          // Test destination ACL is unchanged (ie private)
-         org.jclouds.aws.s3.domain.AccessControlList jcACL = context.getApi().getBlobACL(
+         org.jclouds.aws.s3.domain.AccessControlList jcACL = context.getApi().getObjectACL(
                   bucketName, destinationObject.getKey()).get(10, TimeUnit.SECONDS);
          assertEquals(jcACL.getGrants().size(), 1);
          assertTrue(jcACL.hasPermission(jcACL.getOwner().getId(), Permission.FULL_CONTROL));
@@ -477,12 +477,12 @@ public class JCloudsS3ServiceLiveTest
          destinationObject.addMetadata("x-amz-meta-" + metadataName, destinationMetadataValue);
          copyResult = service.copyObject(bucketName, sourceObjectKey, bucketName,
                   destinationObject, true);
-         jcDestinationObject = context.getApi().getBlob(bucketName, destinationObject.getKey())
+         jcDestinationObject = context.getApi().getObject(bucketName, destinationObject.getKey())
                   .get(10, TimeUnit.SECONDS);
          assertEquals(Iterators.getLast(jcDestinationObject.getMetadata().getUserMetadata().get(
                   metadataName).iterator()), destinationMetadataValue);
          // Test destination ACL is unchanged (ie private)
-         jcACL = context.getApi().getBlobACL(bucketName, destinationObject.getKey()).get(10,
+         jcACL = context.getApi().getObjectACL(bucketName, destinationObject.getKey()).get(10,
                   TimeUnit.SECONDS);
          assertEquals(jcACL.getGrants().size(), 1);
          assertTrue(jcACL.hasPermission(jcACL.getOwner().getId(), Permission.FULL_CONTROL));
@@ -493,7 +493,7 @@ public class JCloudsS3ServiceLiveTest
          copyResult = service.copyObject(bucketName, sourceObjectKey, bucketName,
                   destinationObject, false);
          // Test destination ACL is changed (ie public-read)
-         jcACL = context.getApi().getBlobACL(bucketName, destinationObject.getKey()).get(10,
+         jcACL = context.getApi().getObjectACL(bucketName, destinationObject.getKey()).get(10,
                   TimeUnit.SECONDS);
          assertEquals(jcACL.getGrants().size(), 2);
          assertTrue(jcACL.hasPermission(jcACL.getOwner().getId(), Permission.FULL_CONTROL));
@@ -673,7 +673,7 @@ public class JCloudsS3ServiceLiveTest
          multiService.putObjects(bucket, objects);
 
          assertEquals(countOfUploadCompletions[0], OBJECT_COUNT);
-         ListBucketResponse theBucket = context.getApi().listBlobs(bucketName).get(10,
+         ListBucketResponse theBucket = context.getApi().listBucket(bucketName).get(10,
                   TimeUnit.SECONDS);
          assertEquals(theBucket.size(), OBJECT_COUNT);
 

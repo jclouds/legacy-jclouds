@@ -33,7 +33,7 @@ import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ContainerMetadata;
-import org.jclouds.blobstore.internal.BaseBlobMap.BlobRuntimeException;
+import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.GetAllBlobMetadataStrategy;
 import org.jclouds.util.Utils;

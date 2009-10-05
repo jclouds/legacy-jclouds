@@ -84,9 +84,11 @@ public class AzureQueueConnectionLiveTest {
             created = connection.createQueue(privateQueue, CreateOptions.Builder
                      .withMetadata(ImmutableMultimap.of("foo", "bar")));
          } catch (UndeclaredThrowableException e) {
-            HttpResponseException htpe = (HttpResponseException) e.getCause().getCause();
-            if (htpe.getResponse().getStatusCode() == 409)
-               continue;
+            if (e.getCause().getCause() instanceof HttpResponseException) {
+               HttpResponseException htpe = (HttpResponseException) e.getCause().getCause();
+               if (htpe.getResponse().getStatusCode() == 409)
+                  continue;
+            }
             throw e;
          }
       }

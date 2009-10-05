@@ -27,12 +27,15 @@ import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.integration.internal.StubBlobStore;
 import org.jclouds.cloud.ConfiguresCloudConnection;
-import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.mezeo.pcs2.PCS;
-import org.jclouds.mezeo.pcs2.PCSBlobStore;
+import org.jclouds.mezeo.pcs2.PCSConnection;
+import org.jclouds.mezeo.pcs2.domain.ContainerMetadata;
+import org.jclouds.mezeo.pcs2.domain.FileMetadata;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
-import org.jclouds.mezeo.pcs2.internal.StubPCSBlobStore;
+import org.jclouds.mezeo.pcs2.internal.StubPCSConnection;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;
@@ -48,10 +51,12 @@ public class StubPCSBlobStoreModule extends AbstractModule {
    static final ConcurrentHashMap<String, Map<String, PCSFile>> map = new ConcurrentHashMap<String, Map<String, PCSFile>>();
 
    protected void configure() {
-      install(new ParserModule());
       bind(new TypeLiteral<Map<String, Map<String, PCSFile>>>() {
       }).toInstance(map);
-      bind(PCSBlobStore.class).to(StubPCSBlobStore.class).asEagerSingleton();
+      bind(new TypeLiteral<BlobStore<ContainerMetadata, FileMetadata, PCSFile>>() {
+      }).to(new TypeLiteral<StubBlobStore<ContainerMetadata, FileMetadata, PCSFile>>() {
+      }).asEagerSingleton();
+      bind(PCSConnection.class).to(StubPCSConnection.class).asEagerSingleton();
       bind(URI.class).annotatedWith(PCS.class).toInstance(URI.create("https://localhost/pcsblob"));
    }
 

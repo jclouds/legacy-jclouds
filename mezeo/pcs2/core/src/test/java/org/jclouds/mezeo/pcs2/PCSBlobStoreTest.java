@@ -32,17 +32,17 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Collections;
 import java.util.SortedSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.blobstore.BlobStoreMapsModule;
-import org.jclouds.blobstore.functions.ReturnTrueOnNotFoundOr404;
+import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.blobstore.integration.internal.StubBlobStore;
 import org.jclouds.concurrent.WithinThreadExecutorService;
@@ -56,7 +56,6 @@ import org.jclouds.http.functions.ReturnStringIf200;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.mezeo.pcs2.binders.PCSFileAsMultipartFormBinderTest;
-import org.jclouds.mezeo.pcs2.config.PCSContextModule;
 import org.jclouds.mezeo.pcs2.domain.ContainerMetadata;
 import org.jclouds.mezeo.pcs2.domain.FileMetadata;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
@@ -64,14 +63,11 @@ import org.jclouds.mezeo.pcs2.endpoints.RootContainer;
 import org.jclouds.mezeo.pcs2.functions.AddMetadataAndParseResourceIdIntoBytes;
 import org.jclouds.mezeo.pcs2.functions.AssembleBlobFromContentAndMetadataCache;
 import org.jclouds.mezeo.pcs2.functions.InvalidateContainerNameCacheAndReturnTrueIf2xx;
-import org.jclouds.mezeo.pcs2.functions.InvalidatePCSKeyCacheAndReturnTrueIf2xx;
+import org.jclouds.mezeo.pcs2.functions.InvalidatePCSKeyCacheAndReturnVoidIf2xx;
 import org.jclouds.mezeo.pcs2.functions.ReturnFalseIfContainerNotFound;
-import org.jclouds.mezeo.pcs2.functions.ReturnTrueIfContainerNotFound;
-import org.jclouds.mezeo.pcs2.reference.PCSConstants;
 import org.jclouds.rest.JaxrsAnnotationProcessor;
 import org.jclouds.rest.config.JaxrsModule;
 import org.jclouds.util.DateService;
-import org.jclouds.util.Jsr330;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -91,16 +87,8 @@ import com.google.inject.TypeLiteral;
  */
 @Test(groups = "unit", testName = "pcs2.PCSConnectionTest")
 public class PCSBlobStoreTest {
-   public static final class StubPCSConnection implements PCSBlobStore {
+   public static final class StubPCSConnection implements PCSConnection {
       DateService dateService = new DateService();
-
-      public Future<Boolean> createContainer(String container) {
-         return null;
-      }
-
-      public Future<Boolean> deleteContainer(String containerName) {
-         return null;
-      }
 
       public Future<? extends SortedSet<FileMetadata>> listBlobs(String containerName) {
          return new StubBlobStore.FutureBase<SortedSet<FileMetadata>>() {
@@ -144,7 +132,7 @@ public class PCSBlobStoreTest {
                            1, 1024));
       }
 
-      public Future<byte[]> putBlob(String containerName, PCSFile object) {
+      public Future<byte[]> uploadFile(String containerName, PCSFile object) {
          return null;
       }
 
@@ -166,6 +154,30 @@ public class PCSBlobStoreTest {
 
       public boolean containerExists(String containerName) {
          return false;
+      }
+
+      public Future<URI> createContainer(String container) {
+         return null;
+      }
+
+      public Future<Void> deleteContainer(URI container) {
+         return null;
+      }
+
+      public Future<Void> deleteFile(URI file) {
+         return null;
+      }
+
+      public Future<InputStream> downloadFile(URI file) {
+         return null;
+      }
+
+      public Future<? extends SortedSet<FileMetadata>> listFiles(URI container) {
+         return null;
+      }
+
+      public Future<URI> uploadFile(URI container, PCSFile object) {
+         return null;
       }
 
    }
@@ -218,7 +230,7 @@ public class PCSBlobStoreTest {
       assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
                InvalidateContainerNameCacheAndReturnTrueIf2xx.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
-               ReturnTrueIfContainerNotFound.class);
+               ReturnVoidOnNotFoundOr404.class);
    }
 
    public void testContainerExists() throws SecurityException, NoSuchMethodException {
@@ -288,9 +300,9 @@ public class PCSBlobStoreTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
-               InvalidatePCSKeyCacheAndReturnTrueIf2xx.class);
+               InvalidatePCSKeyCacheAndReturnVoidIf2xx.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
-               ReturnTrueOnNotFoundOr404.class);
+               ReturnVoidOnNotFoundOr404.class);
    }
 
    public void testGetBlob() throws SecurityException, NoSuchMethodException, IOException {
@@ -385,57 +397,74 @@ public class PCSBlobStoreTest {
 
    @BeforeClass
    void setupFactory() {
-      Injector injector = Guice.createInjector(new AbstractModule() {
-         @Override
-         protected void configure() {
-            bind(URI.class).annotatedWith(PCS.class)
-                     .toInstance(URI.create("http://localhost:8080"));
-            bind(URI.class).annotatedWith(RootContainer.class).toInstance(
-                     URI.create("http://localhost:8080/root"));
-            bindConstant().annotatedWith(Jsr330.named(PCSConstants.PROPERTY_PCS2_USER)).to("user");
-            bindConstant().annotatedWith(Jsr330.named(PCSConstants.PROPERTY_PCS2_PASSWORD)).to(
-                     "password");
-         }
 
-         @SuppressWarnings("unused")
-         @Provides
-         @Singleton
-         public PCSBlobStore getPCSConnection() {
-            return new StubPCSConnection();
-         }
+      Injector injector = Guice.createInjector(
+               new AbstractModule() {
+                  @Override
+                  protected void configure() {
+                     bind(URI.class).annotatedWith(PCS.class).toInstance(
+                              URI.create("http://localhost:8080"));
+                     bind(URI.class).annotatedWith(RootContainer.class).toInstance(
+                              URI.create("http://localhost:8080/root"));
+                  }
 
-         @SuppressWarnings("unused")
-         @Provides
-         @Singleton
-         public PCSUtil getPCSUtil() {
-            return new PCSUtil() {
+                  @SuppressWarnings("unused")
+                  @Provides
+                  @Singleton
+                  public PCSUtil getPCSUtil() {
+                     return new PCSUtil() {
 
-               public String get(URI resource) {
-                  return null;
-               }
+                        public String get(URI resource) {
+                           return null;
+                        }
 
-               public boolean put(URI resource, String value) {
-                  return true;
-               }
+                        public boolean put(URI resource, String value) {
+                           return true;
+                        }
 
-            };
-         }
+                     };
+                  }
 
-         @SuppressWarnings("unused")
-         @Provides
-         @Singleton
-         public BasicAuthentication provideBasicAuthentication(
-                  @Named(PCSConstants.PROPERTY_PCS2_USER) String user,
-                  @Named(PCSConstants.PROPERTY_PCS2_PASSWORD) String password)
-                  throws UnsupportedEncodingException {
-            return new BasicAuthentication(user, password);
-         }
-      }, new JaxrsModule(), BlobStoreMapsModule.Builder.newBuilder(new TypeLiteral<PCSBlobStore>() {
-      }, new TypeLiteral<ContainerMetadata>() {
-      }, new TypeLiteral<FileMetadata>() {
-      }, new TypeLiteral<PCSFile>() {
-      }).build(), new PCSContextModule(), new ExecutorServiceModule(
-               new WithinThreadExecutorService()), new JavaUrlHttpCommandExecutorServiceModule());
+                  @SuppressWarnings("unused")
+                  @Provides
+                  @Singleton
+                  ConcurrentMap<org.jclouds.mezeo.pcs2.functions.Key, String> giveMap() {
+                     ConcurrentHashMap<org.jclouds.mezeo.pcs2.functions.Key, String> map = new ConcurrentHashMap<org.jclouds.mezeo.pcs2.functions.Key, String>();
+                     map.put(
+                              new org.jclouds.mezeo.pcs2.functions.Key("mycontainer",
+                                       "testfile.txt"), "9E4C5AFA-A98B-11DE-8B4C-C3884B4A2DA3");
+                     return map;
+                  }
+
+                  @SuppressWarnings("unused")
+                  @Provides
+                  @Singleton
+                  ConcurrentMap<org.jclouds.mezeo.pcs2.functions.Key, FileMetadata> giveMap2() {
+                     ConcurrentHashMap<org.jclouds.mezeo.pcs2.functions.Key, FileMetadata> map = new ConcurrentHashMap<org.jclouds.mezeo.pcs2.functions.Key, FileMetadata>();
+                     map.put(
+                              new org.jclouds.mezeo.pcs2.functions.Key("mycontainer",
+                                       "testfile.txt"), new FileMetadata("testfile.txt"));
+                     return map;
+                  }
+
+                  @SuppressWarnings("unused")
+                  @Provides
+                  @Singleton
+                  ConcurrentMap<String, String> giveMap3() {
+                     ConcurrentHashMap<String, String> map = new ConcurrentHashMap<String, String>();
+                     map.put("mycontainer", "7F143552-AAF5-11DE-BBB0-0BC388ED913B");
+                     return map;
+                  }
+
+                  @SuppressWarnings("unused")
+                  @Provides
+                  @Singleton
+                  public BasicAuthentication provideBasicAuthentication()
+                           throws UnsupportedEncodingException {
+                     return new BasicAuthentication("foo", "bar");
+                  }
+               }, new JaxrsModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
+               new JavaUrlHttpCommandExecutorServiceModule());
 
       processor = injector.getInstance(Key
                .get(new TypeLiteral<JaxrsAnnotationProcessor<PCSBlobStore>>() {

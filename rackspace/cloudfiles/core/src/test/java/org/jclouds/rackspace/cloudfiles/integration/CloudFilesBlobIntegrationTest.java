@@ -30,7 +30,7 @@ import java.util.concurrent.TimeoutException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
-import org.jclouds.rackspace.cloudfiles.CloudFilesBlobStore;
+import org.jclouds.rackspace.cloudfiles.CloudFilesConnection;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
 import org.testng.annotations.Test;
 
@@ -42,7 +42,7 @@ import org.testng.annotations.Test;
 @Test(groups = { "integration", "live" }, testName = "cloudfiles.CloudFilesBlobIntegrationTest")
 public class CloudFilesBlobIntegrationTest
          extends
-         BaseBlobIntegrationTest<CloudFilesBlobStore, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> {
+         BaseBlobIntegrationTest<CloudFilesConnection, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> {
 
    @Test(enabled = false)
    @Override

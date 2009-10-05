@@ -23,7 +23,7 @@
  */
 package org.jclouds.azure.storage.blob.integration;
 
-import org.jclouds.azure.storage.blob.AzureBlobStore;
+import org.jclouds.azure.storage.blob.AzureBlobConnection;
 import org.jclouds.azure.storage.blob.domain.Blob;
 import org.jclouds.azure.storage.blob.domain.BlobMetadata;
 import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
@@ -33,8 +33,8 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = { "live" }, testName = "cloudfiles.AzureBlobContainerLiveTest")
+@Test(groups = { "live" }, testName = "azureblob.AzureBlobContainerLiveTest")
 public class AzureBlobContainerLiveTest extends
-         BaseContainerLiveTest<AzureBlobStore, ContainerMetadata, BlobMetadata, Blob> {
+         BaseContainerLiveTest<AzureBlobConnection, ContainerMetadata, BlobMetadata, Blob> {
 
 }

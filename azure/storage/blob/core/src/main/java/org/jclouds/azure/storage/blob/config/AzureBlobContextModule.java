@@ -30,12 +30,14 @@ import javax.inject.Named;
 import javax.inject.Provider;
 
 import org.jclouds.azure.storage.AzureBlob;
+import org.jclouds.azure.storage.blob.AzureBlobConnection;
 import org.jclouds.azure.storage.blob.AzureBlobContext;
 import org.jclouds.azure.storage.blob.AzureBlobStore;
 import org.jclouds.azure.storage.blob.domain.Blob;
 import org.jclouds.azure.storage.blob.domain.BlobMetadata;
 import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContextImpl;
 import org.jclouds.blobstore.BlobMap.Factory;
 import org.jclouds.lifecycle.Closer;
@@ -55,16 +57,17 @@ public class AzureBlobContextModule extends AbstractModule {
    }
 
    public static class AzureBlobContextImpl extends
-            BlobStoreContextImpl<AzureBlobStore, ContainerMetadata, BlobMetadata, Blob> implements
-            AzureBlobContext {
+            BlobStoreContextImpl<AzureBlobConnection, ContainerMetadata, BlobMetadata, Blob>
+            implements AzureBlobContext {
       @Inject
       AzureBlobContextImpl(Factory<BlobMetadata, Blob> blobMapFactory,
                org.jclouds.blobstore.InputStreamMap.Factory<BlobMetadata> inputStreamMapFactory,
-               Closer closer, Provider<Blob> blobProvider, AzureBlobStore defaultApi,
-               @AzureBlob URI endPoint,
+               Closer closer, Provider<Blob> blobProvider,
+               BlobStore<ContainerMetadata, BlobMetadata, Blob> blobStore,
+               AzureBlobConnection defaultApi, @AzureBlob URI endPoint,
                @Named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT) String account) {
-         super(blobMapFactory, inputStreamMapFactory, closer, blobProvider, defaultApi, endPoint,
-                  account);
+         super(blobMapFactory, inputStreamMapFactory, closer, blobProvider, blobStore, defaultApi,
+                  endPoint, account);
       }
 
    }

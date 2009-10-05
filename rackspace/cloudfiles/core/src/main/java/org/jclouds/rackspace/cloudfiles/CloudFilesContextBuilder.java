@@ -59,7 +59,7 @@ import com.google.inject.TypeLiteral;
  */
 public class CloudFilesContextBuilder
          extends
-         BlobStoreContextBuilder<CloudFilesBlobStore, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> {
+         BlobStoreContextBuilder<CloudFilesConnection, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> {
 
    @Override
    public CloudFilesContext buildContext() {
@@ -133,7 +133,7 @@ public class CloudFilesContextBuilder
    }
 
    public CloudFilesContextBuilder(Properties props) {
-      super(new TypeLiteral<CloudFilesBlobStore>() {
+      super(new TypeLiteral<CloudFilesConnection>() {
       }, new TypeLiteral<ContainerMetadata>() {
       }, new TypeLiteral<BlobMetadata>() {
       }, new TypeLiteral<Blob<BlobMetadata>>() {

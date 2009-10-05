@@ -23,7 +23,6 @@
  */
 package org.jclouds.blobstore.integration.internal;
 
-import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
@@ -32,7 +31,7 @@ import org.testng.ITestContext;
 
 import com.google.inject.Module;
 
-public abstract class BaseTestInitializer<S extends BlobStore<C, M, B>, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>> {
+public abstract class BaseTestInitializer<S, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>> {
 
    public BlobStoreContext<S, C, M, B> init(Module configurationModule, ITestContext testContext)
             throws Exception {

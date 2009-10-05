@@ -25,7 +25,6 @@ package org.jclouds.aws.s3.config;
 
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.aws.s3.S3BlobStore;
 import org.jclouds.aws.s3.S3Context;
 import org.jclouds.aws.s3.config.S3ContextModule.S3ContextImpl;
 import org.jclouds.aws.s3.domain.BucketMetadata;
@@ -48,8 +47,7 @@ public class S3ContextModuleTest {
 
    Injector createInjector() {
       return Guice.createInjector(new StubS3BlobStoreModule(), BlobStoreMapsModule.Builder
-               .newBuilder(new TypeLiteral<S3BlobStore>() {
-               }, new TypeLiteral<BucketMetadata>() {
+               .newBuilder(new TypeLiteral<BucketMetadata>() {
                }, new TypeLiteral<ObjectMetadata>() {
                }, new TypeLiteral<S3Object>() {
                }).build(), new S3ContextModule() {

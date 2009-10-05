@@ -42,13 +42,11 @@ public interface BlobStore<C extends ContainerMetadata, M extends BlobMetadata, 
    Future<Boolean> createContainer(String container);
 
    /**
-    * if supported, this will delete a container recursively. Otherwise, it will return false, if
-    * the container could not be deleted because it is not empty.
+    * This will delete a container recursively.
     * 
     * @param container
-    * @return false if container cannot be deleted because it is not empty
     */
-   Future<Boolean> deleteContainer(String container);
+   Future<Void> deleteContainer(String container);
 
    Future<? extends SortedSet<M>> listBlobs(String container);
 
@@ -60,6 +58,6 @@ public interface BlobStore<C extends ContainerMetadata, M extends BlobMetadata, 
 
    M blobMetadata(String container, String key);
 
-   Future<Boolean> removeBlob(String container, String key);
+   Future<Void> removeBlob(String container, String key);
 
 }

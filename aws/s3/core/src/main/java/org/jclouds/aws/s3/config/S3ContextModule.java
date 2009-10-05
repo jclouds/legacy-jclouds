@@ -32,10 +32,12 @@ import javax.inject.Provider;
 import org.jclouds.aws.reference.AWSConstants;
 import org.jclouds.aws.s3.S3;
 import org.jclouds.aws.s3.S3BlobStore;
+import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.S3Context;
 import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContextImpl;
 import org.jclouds.blobstore.BlobMap.Factory;
 import org.jclouds.lifecycle.Closer;
@@ -56,15 +58,17 @@ public class S3ContextModule extends AbstractModule {
    }
 
    public static class S3ContextImpl extends
-            BlobStoreContextImpl<S3BlobStore, BucketMetadata, ObjectMetadata, S3Object> implements
+            BlobStoreContextImpl<S3Connection, BucketMetadata, ObjectMetadata, S3Object> implements
             S3Context {
       @Inject
       S3ContextImpl(Factory<ObjectMetadata, S3Object> blobMapFactory,
                org.jclouds.blobstore.InputStreamMap.Factory<ObjectMetadata> inputStreamMapFactory,
-               Closer closer, Provider<S3Object> blobProvider, S3BlobStore defaultApi,
-               @S3 URI endPoint, @Named(AWSConstants.PROPERTY_AWS_ACCESSKEYID) String account) {
-         super(blobMapFactory, inputStreamMapFactory, closer, blobProvider, defaultApi, endPoint,
-                  account);
+               Closer closer, Provider<S3Object> blobProvider,
+               BlobStore<BucketMetadata, ObjectMetadata, S3Object> blobStore,
+               S3Connection defaultApi, @S3 URI endPoint,
+               @Named(AWSConstants.PROPERTY_AWS_ACCESSKEYID) String account) {
+         super(blobMapFactory, inputStreamMapFactory, closer, blobProvider, blobStore, defaultApi,
+                  endPoint, account);
       }
 
    }

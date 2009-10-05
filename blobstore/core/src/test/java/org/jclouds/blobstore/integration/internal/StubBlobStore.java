@@ -199,18 +199,29 @@ public class StubBlobStore<C extends ContainerMetadata, M extends BlobMetadata, 
       return realContents.get(key).getMetadata();
    }
 
-   public Future<Boolean> removeBlob(final String container, final String key) {
-      return new FutureBase<Boolean>() {
-         public Boolean get() throws InterruptedException, ExecutionException {
+   public Future<Void> removeBlob(final String container, final String key) {
+      return new FutureBase<Void>() {
+         public Void get() throws InterruptedException, ExecutionException {
             if (getContainerToBlobs().containsKey(container)) {
                getContainerToBlobs().get(container).remove(key);
             }
-            return true;
+            return null;
          }
       };
    }
 
-   public Future<Boolean> deleteContainer(final String container) {
+   public Future<Void> deleteContainer(final String container) {
+      return new FutureBase<Void>() {
+         public Void get() throws InterruptedException, ExecutionException {
+            if (getContainerToBlobs().containsKey(container)) {
+               getContainerToBlobs().remove(container);
+            }
+            return null;
+         }
+      };
+   }
+
+   public Future<Boolean> deleteContainerImpl(final String container) {
       return new FutureBase<Boolean>() {
          public Boolean get() throws InterruptedException, ExecutionException {
             if (getContainerToBlobs().containsKey(container)) {
@@ -385,6 +396,7 @@ public class StubBlobStore<C extends ContainerMetadata, M extends BlobMetadata, 
          byte[] data = toByteArray(object.getData());
          final byte[] eTag = HttpUtils.md5(data);
          newMd.setETag(eTag);
+         newMd.setContentMD5(eTag);
          newMd.setContentType(object.getMetadata().getContentType());
 
          B blob = blobProvider.get();

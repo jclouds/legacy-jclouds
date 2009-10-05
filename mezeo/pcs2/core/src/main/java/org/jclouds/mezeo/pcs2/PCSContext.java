@@ -38,6 +38,6 @@ import org.jclouds.mezeo.pcs2.domain.PCSFile;
  * 
  */
 public interface PCSContext extends
-         BlobStoreContext<PCSBlobStore, ContainerMetadata, FileMetadata, PCSFile> {
+         BlobStoreContext<PCSConnection, ContainerMetadata, FileMetadata, PCSFile> {
 
 }

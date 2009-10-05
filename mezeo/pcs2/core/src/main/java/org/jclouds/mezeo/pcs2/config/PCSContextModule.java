@@ -32,11 +32,12 @@ import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContextImpl;
 import org.jclouds.blobstore.BlobMap.Factory;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.mezeo.pcs2.PCS;
-import org.jclouds.mezeo.pcs2.PCSBlobStore;
+import org.jclouds.mezeo.pcs2.PCSConnection;
 import org.jclouds.mezeo.pcs2.PCSContext;
 import org.jclouds.mezeo.pcs2.domain.ContainerMetadata;
 import org.jclouds.mezeo.pcs2.domain.FileMetadata;
@@ -64,15 +65,17 @@ public class PCSContextModule extends AbstractModule {
    }
 
    public static class PCSContextImpl extends
-            BlobStoreContextImpl<PCSBlobStore, ContainerMetadata, FileMetadata, PCSFile> implements
+            BlobStoreContextImpl<PCSConnection, ContainerMetadata, FileMetadata, PCSFile> implements
             PCSContext {
       @Inject
       PCSContextImpl(Factory<FileMetadata, PCSFile> blobMapFactory,
                org.jclouds.blobstore.InputStreamMap.Factory<FileMetadata> inputStreamMapFactory,
-               Closer closer, Provider<PCSFile> blobProvider, PCSBlobStore defaultApi,
-               @PCS URI endPoint, @Named(PCSConstants.PROPERTY_PCS2_USER) String account) {
-         super(blobMapFactory, inputStreamMapFactory, closer, blobProvider, defaultApi, endPoint,
-                  account);
+               Closer closer, Provider<PCSFile> blobProvider,
+               BlobStore<ContainerMetadata, FileMetadata, PCSFile> blobStore,
+               PCSConnection defaultApi, @PCS URI endPoint,
+               @Named(PCSConstants.PROPERTY_PCS2_USER) String account) {
+         super(blobMapFactory, inputStreamMapFactory, closer, blobProvider, blobStore, defaultApi,
+                  endPoint, account);
       }
    }
 
@@ -91,7 +94,8 @@ public class PCSContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   public ConcurrentMap<Key, FileMetadata> provideConcurrentMap(final PCSBlobStore connection) {
+   public ConcurrentMap<Key, FileMetadata> provideConcurrentMap(
+            final BlobStore<ContainerMetadata, FileMetadata, PCSFile> connection) {
       return new MapMaker().expiration(30, TimeUnit.SECONDS).makeComputingMap(
                new Function<Key, FileMetadata>() {
 

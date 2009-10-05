@@ -41,6 +41,6 @@ import org.jclouds.blobstore.BlobStoreContext;
  * 
  */
 public interface S3Context extends
-         BlobStoreContext<S3BlobStore, BucketMetadata, ObjectMetadata, S3Object> {
+         BlobStoreContext<S3Connection, BucketMetadata, ObjectMetadata, S3Object> {
 
 }

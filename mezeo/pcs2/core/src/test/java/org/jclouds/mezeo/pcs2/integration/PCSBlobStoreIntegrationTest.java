@@ -31,7 +31,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
-import org.jclouds.mezeo.pcs2.PCSBlobStore;
+import org.jclouds.mezeo.pcs2.PCSConnection;
 import org.jclouds.mezeo.pcs2.domain.ContainerMetadata;
 import org.jclouds.mezeo.pcs2.domain.FileMetadata;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
@@ -43,7 +43,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "integration", "live" }, testName = "cloudfiles.PCSBlobIntegrationTest")
 public class PCSBlobStoreIntegrationTest extends
-         BaseBlobIntegrationTest<PCSBlobStore, ContainerMetadata, FileMetadata, PCSFile> {
+         BaseBlobIntegrationTest<PCSConnection, ContainerMetadata, FileMetadata, PCSFile> {
    @Override
    protected void validateMetadata(FileMetadata metadata) {
       assertEquals(metadata.getContentType(), "text/plain");

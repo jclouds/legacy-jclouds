@@ -23,7 +23,7 @@
  */
 package org.jclouds.azure.storage.blob.integration;
 
-import org.jclouds.azure.storage.blob.AzureBlobStore;
+import org.jclouds.azure.storage.blob.AzureBlobConnection;
 import org.jclouds.azure.storage.blob.domain.Blob;
 import org.jclouds.azure.storage.blob.domain.BlobMetadata;
 import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
@@ -33,11 +33,8 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = { "integration", "live" }, testName = "cloudfiles.AzureBlobContainerIntegrationTest")
+@Test(groups = { "integration", "live" }, testName = "azureblob.AzureBlobContainerIntegrationTest")
 public class AzureBlobContainerIntegrationTest extends
-         BaseContainerIntegrationTest<AzureBlobStore, ContainerMetadata, BlobMetadata, Blob> {
-   @Test(groups = { "integration", "live" }, enabled = false)
-   public void deleteContainerIfEmptyButHasContents() throws Exception {
-      // azure recursively deletes containers in the background.
-   }
+         BaseContainerIntegrationTest<AzureBlobConnection, ContainerMetadata, BlobMetadata, Blob> {
+
 }

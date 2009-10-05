@@ -29,7 +29,7 @@ import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.integration.internal.BaseTestInitializer;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rackspace.StubRackspaceAuthenticationModule;
-import org.jclouds.rackspace.cloudfiles.CloudFilesBlobStore;
+import org.jclouds.rackspace.cloudfiles.CloudFilesConnection;
 import org.jclouds.rackspace.cloudfiles.CloudFilesContextBuilder;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
 
@@ -41,15 +41,15 @@ import com.google.inject.Module;
  */
 public class CloudFilesTestInitializer
          extends
-         BaseTestInitializer<CloudFilesBlobStore, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> {
+         BaseTestInitializer<CloudFilesConnection, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> {
 
-   protected BlobStoreContext<CloudFilesBlobStore, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> createStubContext() {
+   protected BlobStoreContext<CloudFilesConnection, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> createStubContext() {
       return new CloudFilesContextBuilder("foo", "bar").withModules(
-               new StubCloudFilesConnectionModule(), new StubRackspaceAuthenticationModule())
+               new StubCloudFilesBlobStoreModule(), new StubRackspaceAuthenticationModule())
                .buildContext();
    }
 
-   protected BlobStoreContext<CloudFilesBlobStore, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> createLiveContext(
+   protected BlobStoreContext<CloudFilesConnection, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> createLiveContext(
             Module configurationModule, String url, String app, String account, String key) {
       return new CloudFilesContextBuilder(account, key).relaxSSLHostname().withModules(
                configurationModule, new Log4JLoggingModule()).buildContext();

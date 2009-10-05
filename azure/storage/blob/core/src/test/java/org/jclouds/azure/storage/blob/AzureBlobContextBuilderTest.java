@@ -34,8 +34,10 @@ import org.jclouds.azure.storage.blob.config.AzureBlobContextModule;
 import org.jclouds.azure.storage.blob.config.RestAzureBlobStoreModule;
 import org.jclouds.azure.storage.blob.config.StubAzureBlobStoreModule;
 import org.jclouds.azure.storage.blob.config.AzureBlobContextModule.AzureBlobContextImpl;
+import org.jclouds.azure.storage.blob.internal.StubAzureBlobConnection;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
-import org.jclouds.cloud.CloudContext;
+import org.jclouds.blobstore.integration.internal.StubBlobStore;
+import org.jclouds.http.HttpUtils;
 import org.testng.annotations.Test;
 
 import com.google.inject.Injector;
@@ -60,22 +62,26 @@ public class AzureBlobContextBuilderTest {
    }
 
    public void testBuildContext() {
-      CloudContext<AzureBlobStore> context = new AzureBlobContextBuilder("id", "secret")
-               .withModules(new StubAzureBlobStoreModule()).buildContext();
+      AzureBlobContext context = new AzureBlobContextBuilder("id", HttpUtils
+               .toBase64String("secret".getBytes())).withModules(new StubAzureBlobStoreModule())
+               .buildContext();
       assertEquals(context.getClass(), AzureBlobContextImpl.class);
+      assertEquals(context.getApi().getClass(), StubAzureBlobConnection.class);
+      assertEquals(context.getBlobStore().getClass(), StubBlobStore.class);
       assertEquals(context.getAccount(), "id");
       assertEquals(context.getEndPoint(), URI.create("https://id.blob.core.windows.net"));
    }
 
    public void testBuildInjector() {
-      Injector i = new AzureBlobContextBuilder("id", "secret").withModules(
-               new StubAzureBlobStoreModule()).buildInjector();
+      Injector i = new AzureBlobContextBuilder("id", HttpUtils.toBase64String("secret".getBytes()))
+               .withModules(new StubAzureBlobStoreModule()).buildInjector();
       assert i.getInstance(AzureBlobContext.class) != null;
    }
 
    protected void testAddContextModule() {
       List<Module> modules = new ArrayList<Module>();
-      AzureBlobContextBuilder builder = new AzureBlobContextBuilder("id", "secret");
+      AzureBlobContextBuilder builder = new AzureBlobContextBuilder("id", HttpUtils
+               .toBase64String("secret".getBytes()));
       builder.addContextModule(modules);
       assertEquals(modules.size(), 1);
       assertEquals(modules.get(0).getClass(), AzureBlobContextModule.class);
@@ -83,7 +89,8 @@ public class AzureBlobContextBuilderTest {
 
    protected void addConnectionModule() {
       List<Module> modules = new ArrayList<Module>();
-      AzureBlobContextBuilder builder = new AzureBlobContextBuilder("id", "secret");
+      AzureBlobContextBuilder builder = new AzureBlobContextBuilder("id", HttpUtils
+               .toBase64String("secret".getBytes()));
       builder.addConnectionModule(modules);
       assertEquals(modules.size(), 1);
       assertEquals(modules.get(0).getClass(), RestAzureBlobStoreModule.class);

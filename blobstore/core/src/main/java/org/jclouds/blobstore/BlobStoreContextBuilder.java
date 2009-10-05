@@ -23,6 +23,7 @@
  */
 package org.jclouds.blobstore;
 
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 
@@ -39,7 +40,7 @@ import com.google.inject.util.Types;
 /**
  * @author Adrian Cole
  */
-public abstract class BlobStoreContextBuilder<S extends BlobStore<C, M, B>, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
+public abstract class BlobStoreContextBuilder<S, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
          extends CloudContextBuilder<S> {
    @SuppressWarnings("unchecked")
    @Override
@@ -141,8 +142,12 @@ public abstract class BlobStoreContextBuilder<S extends BlobStore<C, M, B>, C ex
       this.containerMetadataType = containerMetadataType;
       this.blobMetadataType = blobMetadataType;
       this.blobType = blobType;
-      modules.add(BlobStoreMapsModule.Builder.newBuilder(connectionType,
-               containerMetadataType, blobMetadataType, blobType).build());
+      addBlobStoreModule(modules);
+   }
+
+   protected void addBlobStoreModule(List<Module> modules) {
+      modules.add(BlobStoreMapsModule.Builder.newBuilder(containerMetadataType, blobMetadataType,
+               blobType).build());
    }
 
    @SuppressWarnings("unchecked")

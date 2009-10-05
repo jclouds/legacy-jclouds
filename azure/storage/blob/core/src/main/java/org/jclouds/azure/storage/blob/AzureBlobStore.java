@@ -39,24 +39,22 @@ import org.jclouds.azure.storage.blob.domain.Blob;
 import org.jclouds.azure.storage.blob.domain.BlobMetadata;
 import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
 import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
+import org.jclouds.azure.storage.blob.functions.MD5EnforcingBlobBinder;
 import org.jclouds.azure.storage.blob.functions.ParseBlobFromHeadersAndHttpContent;
 import org.jclouds.azure.storage.blob.functions.ParseBlobMetadataFromHeaders;
 import org.jclouds.azure.storage.blob.functions.ReturnTrueIfContainerAlreadyExists;
 import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
 import org.jclouds.azure.storage.blob.xml.AccountNameEnumerationResultsHandler;
-import org.jclouds.azure.storage.blob.xml.ContainerNameEnumerationResultsHandler;
-import org.jclouds.azure.storage.domain.BoundedSortedSet;
+import org.jclouds.azure.storage.blob.xml.AddMD5ToListBlobsResponse;
 import org.jclouds.azure.storage.filters.SharedKeyAuthentication;
-import org.jclouds.azure.storage.options.CreateOptions;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.reference.AzureStorageHeaders;
 import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.binders.BlobBinder;
 import org.jclouds.blobstore.functions.BlobKey;
+import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.functions.ReturnFalseOn404;
-import org.jclouds.http.functions.ReturnTrueOn404;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rest.Endpoint;
 import org.jclouds.rest.EntityParam;
@@ -99,12 +97,6 @@ public interface AzureBlobStore extends BlobStore<ContainerMetadata, BlobMetadat
    @QueryParams(keys = "comp", values = "list")
    SortedSet<ContainerMetadata> listContainers();
 
-   @GET
-   @XMLResponseParser(AccountNameEnumerationResultsHandler.class)
-   @Path("/")
-   @QueryParams(keys = "comp", values = "list")
-   BoundedSortedSet<ContainerMetadata> listContainers(ListOptions listOptions);
-
    @HEAD
    @Path("{container}")
    @ExceptionParser(ReturnFalseOn404.class)
@@ -127,13 +119,6 @@ public interface AzureBlobStore extends BlobStore<ContainerMetadata, BlobMetadat
    @QueryParams(keys = "restype", values = "container")
    Future<Boolean> createContainer(@PathParam("container") String container);
 
-   @PUT
-   @Path("{container}")
-   @QueryParams(keys = "restype", values = "container")
-   @ExceptionParser(ReturnTrueIfContainerAlreadyExists.class)
-   Future<Boolean> createContainer(@PathParam("container") String container,
-            CreateContainerOptions options);
-
    /**
     * The Delete Container operation marks the specified container for deletion. The container and
     * any blobs contained within it are later deleted during garbage collection.
@@ -149,68 +134,22 @@ public interface AzureBlobStore extends BlobStore<ContainerMetadata, BlobMetadat
     */
    @DELETE
    @Path("{container}")
-   @ExceptionParser(ReturnTrueOn404.class)
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    @QueryParams(keys = "restype", values = "container")
-   Future<Boolean> deleteContainer(@PathParam("container") String container);
-
-   /**
-    * The root container is a default container that may be inferred from a URL requesting a blob
-    * resource. The root container makes it possible to reference a blob from the top level of the
-    * storage account hierarchy, without referencing the container name.
-    * <p/>
-    * The container resource includes metadata and properties for that container. It does not
-    * include a list of the blobs contained by the container.
-    * 
-    * @see CreateContainerOptions
-    * 
-    */
-   @PUT
-   @Path("$root")
-   @ExceptionParser(ReturnTrueIfContainerAlreadyExists.class)
-   @QueryParams(keys = "restype", values = "container")
-   Future<Boolean> createRootContainer();
-
-   @PUT
-   @Path("$root")
-   @ExceptionParser(ReturnTrueIfContainerAlreadyExists.class)
-   @QueryParams(keys = "restype", values = "container")
-   Future<Boolean> createRootContainer(CreateOptions options);
-
-   /**
-    * 
-    * @see deleteContainer(String)
-    * @see createRootContainer(CreateContainerOptions)
-    */
-   @DELETE
-   @Path("$root")
-   @ExceptionParser(ReturnTrueOn404.class)
-   @QueryParams(keys = "restype", values = "container")
-   Future<Boolean> deleteRootContainer();
+   Future<Void> deleteContainer(@PathParam("container") String container);
 
    @GET
-   @XMLResponseParser(ContainerNameEnumerationResultsHandler.class)
+   @XMLResponseParser(AddMD5ToListBlobsResponse.class)
    @Path("{container}")
    @QueryParams(keys = { "restype", "comp" }, values = { "container", "list" })
    Future<ListBlobsResponse> listBlobs(@PathParam("container") String container);
 
-   @GET
-   @XMLResponseParser(ContainerNameEnumerationResultsHandler.class)
-   @Path("$root")
-   @QueryParams(keys = { "restype", "comp" }, values = { "container", "list" })
-   Future<ListBlobsResponse> listBlobs();
-
-   // @GET
-   // @XMLResponseParser(ContainerNameEnumerationResultsHandler.class)
-   // @Path("{container}")
-   // @QueryParams(keys = { "restype", "comp" }, values = { "container", "list" })
-   // Future<ListBlobsResponse> listBlobs(@PathParam("container") String container,
-   // ListBlobsOptions options);
-
    @PUT
    @Path("{container}/{key}")
    @ResponseParser(ParseETagHeader.class)
-   Future<byte[]> putBlob(@PathParam("container") String container,
-            @PathParam("key") @ParamParser(BlobKey.class) @EntityParam(BlobBinder.class) Blob object);
+   Future<byte[]> putBlob(
+            @PathParam("container") String container,
+            @PathParam("key") @ParamParser(BlobKey.class) @EntityParam(MD5EnforcingBlobBinder.class) Blob object);
 
    @GET
    @ResponseParser(ParseBlobFromHeadersAndHttpContent.class)
@@ -234,8 +173,8 @@ public interface AzureBlobStore extends BlobStore<ContainerMetadata, BlobMetadat
    BlobMetadata blobMetadata(@PathParam("container") String container, @PathParam("key") String key);
 
    @DELETE
-   @ExceptionParser(ReturnTrueOn404.class)
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    @Path("{container}/{key}")
-   Future<Boolean> removeBlob(@PathParam("container") String container, @PathParam("key") String key);
+   Future<Void> removeBlob(@PathParam("container") String container, @PathParam("key") String key);
 
 }

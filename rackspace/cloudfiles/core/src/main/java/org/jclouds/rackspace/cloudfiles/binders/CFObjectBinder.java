@@ -23,6 +23,7 @@
  */
 package org.jclouds.rackspace.cloudfiles.binders;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 
 import javax.ws.rs.core.HttpHeaders;
@@ -44,6 +45,8 @@ public class CFObjectBinder extends BlobBinder {
    public void addEntityToRequest(Object entity, HttpRequest request) {
       Blob<?> object = (Blob<?>) entity;
       if (object.getMetadata().getSize() >= 0) {
+         checkArgument(object.getContentLength() <= 5 * 1024 * 1024 * 1024,
+                  "maximum size for put object is 5GB");
          request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, object.getMetadata().getSize() + "");
       } else {
          // Enable "chunked"/"streamed" data, where the size needn't be known in advance.

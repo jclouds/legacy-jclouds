@@ -29,11 +29,20 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.azure.storage.AzureBlob;
+import org.jclouds.azure.storage.blob.AzureBlobConnection;
 import org.jclouds.azure.storage.blob.AzureBlobStore;
+import org.jclouds.azure.storage.blob.AzureBlobUtil;
+import org.jclouds.azure.storage.blob.domain.Blob;
+import org.jclouds.azure.storage.blob.domain.BlobMetadata;
+import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
+import org.jclouds.azure.storage.blob.handlers.AzureBlobClientErrorRetryHandler;
 import org.jclouds.azure.storage.blob.reference.AzureBlobConstants;
 import org.jclouds.azure.storage.config.RestAzureStorageConnectionModule;
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.cloud.ConfiguresCloudConnection;
+import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
+import org.jclouds.http.annotation.ClientError;
 import org.jclouds.rest.RestClientFactory;
 
 import com.google.inject.Provides;
@@ -62,8 +71,26 @@ public class RestAzureBlobStoreModule extends RestAzureStorageConnectionModule {
 
    @Provides
    @Singleton
-   protected AzureBlobStore provideAzureBlobStore(RestClientFactory factory) {
+   protected AzureBlobUtil provideAzureBlobUtil(RestClientFactory factory) {
+      return factory.create(AzureBlobUtil.class);
+   }
+
+   @Provides
+   @Singleton
+   protected AzureBlobConnection provideAzureBlobConnection(RestClientFactory factory) {
+      return factory.create(AzureBlobConnection.class);
+   }
+
+   @Provides
+   @Singleton
+   protected BlobStore<ContainerMetadata, BlobMetadata, Blob> provideAzureBlobStore(
+            RestClientFactory factory) {
       return factory.create(AzureBlobStore.class);
    }
 
+   @Override
+   protected void bindRetryHandlers() {
+      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(
+               AzureBlobClientErrorRetryHandler.class);
+   }
 }

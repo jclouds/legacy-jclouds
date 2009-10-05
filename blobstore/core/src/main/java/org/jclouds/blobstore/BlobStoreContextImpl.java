@@ -36,19 +36,22 @@ import org.jclouds.lifecycle.Closer;
 /**
  * @author Adrian Cole
  */
-public class BlobStoreContextImpl<S extends BlobStore<C, M, B>, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
+public class BlobStoreContextImpl<S, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
          extends CloudContextImpl<S> implements BlobStoreContext<S, C, M, B> {
    private final BlobMap.Factory<M, B> blobMapFactory;
    private final InputStreamMap.Factory<M> inputStreamMapFactory;
    private final Provider<B> blobProvider;
+   private final BlobStore<C, M, B> blobStore;
 
    public BlobStoreContextImpl(BlobMap.Factory<M, B> blobMapFactory,
             InputStreamMap.Factory<M> inputStreamMapFactory, Closer closer,
-            Provider<B> blobProvider, S defaultApi, URI endPoint, String account) {
+            Provider<B> blobProvider, BlobStore<C, M, B> blobStore, S defaultApi, URI endPoint,
+            String account) {
       super(closer, defaultApi, endPoint, account);
       this.blobMapFactory = blobMapFactory;
       this.inputStreamMapFactory = inputStreamMapFactory;
       this.blobProvider = blobProvider;
+      this.blobStore = blobStore;
    }
 
    public BlobMap<M, B> createBlobMap(String container) {
@@ -65,5 +68,9 @@ public class BlobStoreContextImpl<S extends BlobStore<C, M, B>, C extends Contai
       B blob = (B) object;
       blob.getMetadata().setKey(key);
       return blob;
+   }
+
+   public BlobStore<C, M, B> getBlobStore() {
+      return blobStore;
    }
 }

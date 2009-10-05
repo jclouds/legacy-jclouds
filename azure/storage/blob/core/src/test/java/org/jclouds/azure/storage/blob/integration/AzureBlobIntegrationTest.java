@@ -30,7 +30,7 @@ import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.azure.storage.blob.AzureBlobStore;
+import org.jclouds.azure.storage.blob.AzureBlobConnection;
 import org.jclouds.azure.storage.blob.domain.Blob;
 import org.jclouds.azure.storage.blob.domain.BlobMetadata;
 import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
@@ -41,9 +41,9 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = { "integration", "live" }, testName = "cloudfiles.AzureBlobIntegrationTest")
+@Test(groups = { "integration", "live" }, testName = "azureblob.AzureBlobIntegrationTest")
 public class AzureBlobIntegrationTest extends
-         BaseBlobIntegrationTest<AzureBlobStore, ContainerMetadata, BlobMetadata, Blob> {
+         BaseBlobIntegrationTest<AzureBlobConnection, ContainerMetadata, BlobMetadata, Blob> {
 
    @Override
    @Test(enabled = false)
@@ -68,7 +68,7 @@ public class AzureBlobIntegrationTest extends
 
    protected void validateMetadata(BlobMetadata metadata) {
       assertEquals(metadata.getContentType(), "text/plain");
-      // we can't check this while hacking around lack of content-md5, as GET of the first byte will
+      // we can't check this while hacking around HEAD being broken, as GET of the first byte will
       // show incorrect length 1, the returned size, as opposed to the real length. This is an ok
       // tradeoff, as a container list will contain the correct size of the objects in an
       // inexpensive fashion

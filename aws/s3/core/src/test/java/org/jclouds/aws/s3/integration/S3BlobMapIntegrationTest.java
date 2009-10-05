@@ -23,7 +23,7 @@
  */
 package org.jclouds.aws.s3.integration;
 
-import org.jclouds.aws.s3.S3BlobStore;
+import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.S3Object;
@@ -33,8 +33,8 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = { "integration", "live" },  testName = "s3.S3BlobMapIntegrationTest")
+@Test(groups = { "integration", "live" }, testName = "s3.S3BlobMapIntegrationTest")
 public class S3BlobMapIntegrationTest extends
-         BaseBlobMapIntegrationTest<S3BlobStore, BucketMetadata, ObjectMetadata, S3Object> {
+         BaseBlobMapIntegrationTest<S3Connection, BucketMetadata, ObjectMetadata, S3Object> {
 
 }

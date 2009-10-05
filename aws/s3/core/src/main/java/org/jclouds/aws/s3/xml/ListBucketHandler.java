@@ -95,6 +95,7 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<ListBucketResp
       } else if (qName.equals("ETag")) {
          currentObjectMetadata.setETag(HttpUtils.fromHexString(currentText.toString().replaceAll(
                   "\"", "")));
+         currentObjectMetadata.setContentMD5(currentObjectMetadata.getETag());
       } else if (qName.equals("Size")) {
          currentObjectMetadata.setSize(Long.parseLong(currentText.toString()));
       } else if (qName.equals("Owner")) {

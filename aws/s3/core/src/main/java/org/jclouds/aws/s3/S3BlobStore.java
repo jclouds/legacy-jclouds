@@ -34,30 +34,23 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import org.jclouds.aws.s3.binders.AccessControlListBinder;
 import org.jclouds.aws.s3.binders.S3ObjectBinder;
-import org.jclouds.aws.s3.domain.AccessControlList;
 import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.filters.RequestAuthorizeSignature;
+import org.jclouds.aws.s3.functions.ClearAndDeleteBucketIfNotEmpty;
 import org.jclouds.aws.s3.functions.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.aws.s3.functions.ParseObjectMetadataFromHeaders;
 import org.jclouds.aws.s3.functions.ReturnTrueIfBucketAlreadyOwnedByYou;
-import org.jclouds.aws.s3.functions.ReturnTrueOn404FalseIfNotEmpty;
-import org.jclouds.aws.s3.options.CopyObjectOptions;
 import org.jclouds.aws.s3.options.ListBucketOptions;
-import org.jclouds.aws.s3.options.PutBucketOptions;
-import org.jclouds.aws.s3.options.PutObjectOptions;
-import org.jclouds.aws.s3.xml.AccessControlListHandler;
-import org.jclouds.aws.s3.xml.CopyObjectHandler;
 import org.jclouds.aws.s3.xml.ListAllMyBucketsHandler;
 import org.jclouds.aws.s3.xml.ListBucketHandler;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.functions.BlobKey;
-import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
+import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.functions.ReturnFalseOn404;
@@ -65,7 +58,6 @@ import org.jclouds.http.options.GetOptions;
 import org.jclouds.rest.Endpoint;
 import org.jclouds.rest.EntityParam;
 import org.jclouds.rest.ExceptionParser;
-import org.jclouds.rest.Headers;
 import org.jclouds.rest.HostPrefixParam;
 import org.jclouds.rest.ParamParser;
 import org.jclouds.rest.QueryParams;
@@ -74,9 +66,6 @@ import org.jclouds.rest.ResponseParser;
 import org.jclouds.rest.SkipEncoding;
 import org.jclouds.rest.VirtualHost;
 import org.jclouds.rest.XMLResponseParser;
-import org.jclouds.rest.binders.HttpRequestOptionsBinder;
-
-import com.google.inject.internal.Nullable;
 
 /**
  * Provides access to S3 via their REST API.
@@ -184,38 +173,8 @@ public interface S3BlobStore extends BlobStore<BucketMetadata, ObjectMetadata, S
     */
    @DELETE
    @Path("{key}")
-   Future<Boolean> removeBlob(@HostPrefixParam String bucketName, @PathParam("key") String key);
-
-   /**
-    * Store data by creating or overwriting an object.
-    * <p/>
-    * This method will store the object with the default <code>private</code> acl.
-    * 
-    * <p/>
-    * This returns a byte[] of the eTag hash of what Amazon S3 received
-    * <p />
-    * 
-    * @param bucketName
-    *           namespace of the object you are storing
-    * @param object
-    *           contains the data and metadata to create or overwrite
-    * @param options
-    *           options for creating the object
-    * @return MD5 hash of the content uploaded
-    * @throws org.jclouds.http.HttpResponseException
-    *            if the conditions requested set are not satisfied by the object on the server.
-    * @see org.jclouds.aws.s3.domain.CannedAccessPolicy#PRIVATE
-    * @see <a
-    *      href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTObjectPUT.html"
-    *      />
-    */
-   @PUT
-   @Path("{key}")
-   @ResponseParser(ParseETagHeader.class)
-   Future<byte[]> putBlob(
-            @HostPrefixParam String bucketName,
-            @PathParam("key") @ParamParser(BlobKey.class) @EntityParam(S3ObjectBinder.class) S3Object object,
-            PutObjectOptions options);
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   Future<Void> removeBlob(@HostPrefixParam String bucketName, @PathParam("key") String key);
 
    @PUT
    @Path("{key}")
@@ -223,33 +182,6 @@ public interface S3BlobStore extends BlobStore<BucketMetadata, ObjectMetadata, S
    Future<byte[]> putBlob(
             @HostPrefixParam String bucketName,
             @PathParam("key") @ParamParser(BlobKey.class) @EntityParam(S3ObjectBinder.class) S3Object object);
-
-   /**
-    * Create and name your own bucket in which to store your objects.
-    * 
-    * <p/>
-    * you can use {@link PutBucketOptions} to create the bucket in EU.
-    * <p/>
-    * The PUT request operation with a bucket URI creates a new bucket. Depending on your latency
-    * and legal requirements, you can specify a location constraint that will affect where your data
-    * physically resides. You can currently specify a Europe (EU) location constraint via
-    * {@link PutBucketOptions}.
-    * 
-    * @param options
-    *           for creating your bucket
-    * @return true, if the bucket was created or already exists
-    * 
-    * @see PutBucketOptions
-    * @see <a
-    *      href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTBucketPUT.html"
-    *      />
-    * 
-    */
-   @PUT
-   @Path("/")
-   @ExceptionParser(ReturnTrueIfBucketAlreadyOwnedByYou.class)
-   Future<Boolean> createContainer(@HostPrefixParam String bucketName,
-            @Nullable @EntityParam(HttpRequestOptionsBinder.class) PutBucketOptions options);
 
    @PUT
    @Path("/")
@@ -267,7 +199,6 @@ public interface S3BlobStore extends BlobStore<BucketMetadata, ObjectMetadata, S
     * 
     * @param bucketName
     *           what to delete
-    * @return false, if the bucket was not empty and therefore not deleted
     * @see org.jclouds.aws.s3.commands.DeleteBucket
     * @see <a href=
     *      "http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTBucketDELETE.html"
@@ -275,8 +206,8 @@ public interface S3BlobStore extends BlobStore<BucketMetadata, ObjectMetadata, S
     */
    @DELETE
    @Path("/")
-   @ExceptionParser(ReturnTrueOn404FalseIfNotEmpty.class)
-   Future<Boolean> deleteContainer(@HostPrefixParam String bucketName);
+   @ExceptionParser(ClearAndDeleteBucketIfNotEmpty.class)
+   Future<Void> deleteContainer(@HostPrefixParam String bucketName);
 
    /**
     * Issues a HEAD command to determine if the bucket exists or not.
@@ -308,12 +239,6 @@ public interface S3BlobStore extends BlobStore<BucketMetadata, ObjectMetadata, S
    @GET
    @Path("/")
    @XMLResponseParser(ListBucketHandler.class)
-   Future<ListBucketResponse> listBlobs(@HostPrefixParam String bucketName,
-            @Nullable ListBucketOptions options);
-
-   @GET
-   @Path("/")
-   @XMLResponseParser(ListBucketHandler.class)
    Future<ListBucketResponse> listBlobs(@HostPrefixParam String bucketName);
 
    /**
@@ -329,130 +254,5 @@ public interface S3BlobStore extends BlobStore<BucketMetadata, ObjectMetadata, S
    @XMLResponseParser(ListAllMyBucketsHandler.class)
    @Path("/")
    SortedSet<BucketMetadata> listContainers();
-
-   /**
-    * Copies one object to another bucket, retaining UserMetadata from the source. The destination
-    * will have a private acl. The copy operation creates a copy of an object that is already stored
-    * in Amazon S3.
-    * <p/>
-    * When copying an object, you can preserve all metadata (default) or
-    * {@link CopyObjectOptions#overrideMetadataWith(com.google.common.collect.Multimap) specify new
-    * metadata}. However, the ACL is not preserved and is set to private for the user making the
-    * request. To override the default ACL setting,
-    * {@link CopyObjectOptions#overrideAcl(org.jclouds.aws.s3.domain.CannedAccessPolicy) specify a
-    * new ACL} when generating a copy request.
-    * 
-    * @return metadata populated with lastModified and eTag of the new object
-    * @see org.jclouds.aws.s3.commands.CopyObject
-    * @see <a
-    *      href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTObjectCOPY.html"
-    *      />
-    * @throws org.jclouds.http.HttpResponseException
-    *            if the conditions requested set are not satisfied by the object on the server.
-    * @see CopyObjectOptions
-    * @see org.jclouds.aws.s3.domain.CannedAccessPolicy
-    */
-   @PUT
-   @Path("{destinationObject}")
-   @Headers(keys = "x-amz-copy-source", values = "/{sourceBucket}/{sourceObject}")
-   @XMLResponseParser(CopyObjectHandler.class)
-   Future<ObjectMetadata> copyBlob(@PathParam("sourceBucket") String sourceBucket,
-            @PathParam("sourceObject") String sourceObject,
-            @HostPrefixParam String destinationBucket,
-            @PathParam("destinationObject") String destinationObject,
-            @Nullable CopyObjectOptions options);
-
-   @PUT
-   @Path("{destinationObject}")
-   @Headers(keys = "x-amz-copy-source", values = "/{sourceBucket}/{sourceObject}")
-   @XMLResponseParser(CopyObjectHandler.class)
-   Future<ObjectMetadata> copyBlob(@PathParam("sourceBucket") String sourceBucket,
-            @PathParam("sourceObject") String sourceObject,
-            @HostPrefixParam String destinationBucket,
-            @PathParam("destinationObject") String destinationObject);
-
-   /**
-    * 
-    * A GET request operation directed at an object or bucket URI with the "acl" parameter retrieves
-    * the Access Control List (ACL) settings for that S3 item.
-    * <p />
-    * To list a bucket's ACL, you must have READ_ACP access to the item.
-    * 
-    * @return access permissions of the bucket
-    * 
-    * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/RESTAccessPolicy.html"/>
-    */
-   @GET
-   @QueryParams(keys = "acl")
-   @XMLResponseParser(AccessControlListHandler.class)
-   @ExceptionParser(ThrowContainerNotFoundOn404.class)
-   @Path("/")
-   Future<AccessControlList> getContainerACL(@HostPrefixParam String bucketName);
-
-   /**
-    * Update a bucket's Access Control List settings.
-    * <p/>
-    * A PUT request operation directed at a bucket URI with the "acl" parameter sets the Access
-    * Control List (ACL) settings for that S3 item.
-    * <p />
-    * To set a bucket or object's ACL, you must have WRITE_ACP or FULL_CONTROL access to the item.
-    * 
-    * @param bucketName
-    *           the bucket whose Access Control List settings will be updated.
-    * @param acl
-    *           the ACL to apply to the bucket. This acl object <strong>must</strong> include a
-    *           valid owner identifier string in {@link AccessControlList#getOwner()}.
-    * @return true if the bucket's Access Control List was updated successfully.
-    * 
-    * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/RESTAccessPolicy.html"/>
-    */
-   @PUT
-   @Path("/")
-   @QueryParams(keys = "acl")
-   Future<Boolean> putContainerACL(@HostPrefixParam String bucketName,
-            @EntityParam(AccessControlListBinder.class) AccessControlList acl);
-
-   /**
-    * A GET request operation directed at an object or bucket URI with the "acl" parameter retrieves
-    * the Access Control List (ACL) settings for that S3 item.
-    * <p />
-    * To list a object's ACL, you must have READ_ACP access to the item.
-    * 
-    * @return access permissions of the object
-    * 
-    * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/RESTAccessPolicy.html"/>
-    */
-   @GET
-   @QueryParams(keys = "acl")
-   @Path("{key}")
-   @XMLResponseParser(AccessControlListHandler.class)
-   @ExceptionParser(ThrowKeyNotFoundOn404.class)
-   Future<AccessControlList> getBlobACL(@HostPrefixParam String bucketName,
-            @PathParam("key") String key);
-
-   /**
-    * Update an object's Access Control List settings.
-    * <p/>
-    * A PUT request operation directed at an object URI with the "acl" parameter sets the Access
-    * Control List (ACL) settings for that S3 item.
-    * <p />
-    * To set a bucket or object's ACL, you must have WRITE_ACP or FULL_CONTROL access to the item.
-    * 
-    * @param bucket
-    *           the bucket containing the object to be updated
-    * @param objectKey
-    *           the key of the object whose Access Control List settings will be updated.
-    * @param acl
-    *           the ACL to apply to the object. This acl object <strong>must</strong> include a
-    *           valid owner identifier string in {@link AccessControlList#getOwner()}.
-    * @return true if the object's Access Control List was updated successfully.
-    * 
-    * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/RESTAccessPolicy.html"/>
-    */
-   @PUT
-   @QueryParams(keys = "acl")
-   @Path("{key}")
-   Future<Boolean> putBlobACL(@HostPrefixParam String bucketName, @PathParam("key") String key,
-            @EntityParam(AccessControlListBinder.class) AccessControlList acl);
 
 }

@@ -47,10 +47,10 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 public class PCSContextBuilder extends
-         BlobStoreContextBuilder<PCSBlobStore, ContainerMetadata, FileMetadata, PCSFile> {
+         BlobStoreContextBuilder<PCSConnection, ContainerMetadata, FileMetadata, PCSFile> {
 
    public PCSContextBuilder(Properties props) {
-      super(new TypeLiteral<PCSBlobStore>() {
+      super(new TypeLiteral<PCSConnection>() {
       }, new TypeLiteral<ContainerMetadata>() {
       }, new TypeLiteral<FileMetadata>() {
       }, new TypeLiteral<PCSFile>() {

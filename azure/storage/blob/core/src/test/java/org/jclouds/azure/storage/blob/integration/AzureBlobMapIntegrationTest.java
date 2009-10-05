@@ -23,10 +23,7 @@
  */
 package org.jclouds.azure.storage.blob.integration;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
-
-import org.jclouds.azure.storage.blob.AzureBlobStore;
+import org.jclouds.azure.storage.blob.AzureBlobConnection;
 import org.jclouds.azure.storage.blob.domain.Blob;
 import org.jclouds.azure.storage.blob.domain.BlobMetadata;
 import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
@@ -36,12 +33,8 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = { "integration", "live" }, testName = "cloudfiles.AzureBlobMapIntegrationTest")
+@Test(groups = { "integration", "live" }, testName = "azureblob.AzureBlobMapIntegrationTest")
 public class AzureBlobMapIntegrationTest extends
-         BaseBlobMapIntegrationTest<AzureBlobStore, ContainerMetadata, BlobMetadata, Blob> {
+         BaseBlobMapIntegrationTest<AzureBlobConnection, ContainerMetadata, BlobMetadata, Blob> {
 
-   @Override
-   public void testContains() throws InterruptedException, ExecutionException, TimeoutException {
-      // http://code.google.com/p/jclouds/issues/detail?id=90
-   }
 }

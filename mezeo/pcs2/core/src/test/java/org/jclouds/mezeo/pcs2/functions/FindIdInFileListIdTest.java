@@ -30,8 +30,8 @@ import java.net.URI;
 
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.KeyNotFoundException;
-import org.jclouds.mezeo.pcs2.PCSBlobStore;
 import org.jclouds.mezeo.pcs2.domain.FileMetadata;
 import org.jclouds.util.DateService;
 import org.testng.annotations.Test;
@@ -47,8 +47,9 @@ import com.google.common.collect.ImmutableSortedSet;
 public class FindIdInFileListIdTest {
    private DateService dateService = new DateService();
 
-   private final ImmutableSortedSet<FileMetadata> OF = ImmutableSortedSet.of(new FileMetadata("more", URI
-            .create("https://pcsbeta.mezeo.net/v2/files/5C81DADC-AAEE-11DE-9D55-B39340AEFF3A"),
+   private final ImmutableSortedSet<FileMetadata> OF = ImmutableSortedSet.of(new FileMetadata(
+            "more",
+            URI.create("https://pcsbeta.mezeo.net/v2/files/5C81DADC-AAEE-11DE-9D55-B39340AEFF3A"),
             dateService.fromSeconds(1254005157), dateService.fromSeconds(1254005158), dateService
                      .fromSeconds(1254005159), "adrian@jclouds.org", false, false, 1, 254288,
             MediaType.APPLICATION_OCTET_STREAM, true),
@@ -59,14 +60,16 @@ public class FindIdInFileListIdTest {
                      .fromSeconds(1254000182), "adrian@jclouds.org", false, true, 3, 5,
             MediaType.TEXT_PLAIN, false));
 
+   @SuppressWarnings("unchecked")
    @Test(expectedExceptions = KeyNotFoundException.class)
    public void testBad() {
-      FindIdInFileList binder = new FindIdInFileList(createNiceMock(PCSBlobStore.class));
+      FindIdInFileList binder = new FindIdInFileList(createNiceMock(BlobStore.class));
       binder.idForNameInListOrException("bob", "hello", OF);
    }
 
+   @SuppressWarnings("unchecked")
    public void testGood() {
-      FindIdInFileList binder = new FindIdInFileList(createNiceMock(PCSBlobStore.class));
+      FindIdInFileList binder = new FindIdInFileList(createNiceMock(BlobStore.class));
       assertEquals(binder.idForNameInListOrException("bob", "testfile.txt", OF),
                "9E4C5AFA-A98B-11DE-8B4C-C3884B4A2DA3");
    }

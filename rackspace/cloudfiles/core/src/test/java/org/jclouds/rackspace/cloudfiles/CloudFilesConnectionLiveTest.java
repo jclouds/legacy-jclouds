@@ -35,6 +35,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.blobstore.ContainerNotFoundException;
+import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
@@ -60,11 +61,11 @@ import com.google.common.collect.Multimap;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "cloudfiles.CloudFilesAuthenticationLiveTest")
-public class CloudFilesBlobStoreLiveTest {
+@Test(groups = "live", testName = "cloudfiles.CloudFilesConnectionLiveTest")
+public class CloudFilesConnectionLiveTest {
 
    private String bucketPrefix = BaseBlobStoreIntegrationTest.CONTAINER_PREFIX;
-   CloudFilesBlobStore connection;
+   CloudFilesConnection connection;
 
    @BeforeGroups(groups = { "live" })
    public void setupConnection() {
@@ -72,6 +73,14 @@ public class CloudFilesBlobStoreLiveTest {
       String key = System.getProperty("jclouds.test.key");
       connection = CloudFilesContextFactory.createContext(account, key, new Log4JLoggingModule())
                .getApi();
+   }
+
+   /**
+    * this method overrides containerName to ensure it isn't found
+    */
+   @Test(groups = { "integration", "live" })
+   public void deleteContainerIfEmptyNotFound() throws Exception {
+      assert connection.deleteContainerIfEmpty("dbienf").get(10, TimeUnit.SECONDS);
    }
 
    @Test
@@ -162,8 +171,9 @@ public class CloudFilesBlobStoreLiveTest {
       assertEquals(cdnMetadata.isCdnEnabled(), false);
 
       // Delete test containers
-      assertTrue(connection.deleteContainer(containerNameWithCDN).get(10, TimeUnit.SECONDS));
-      assertTrue(connection.deleteContainer(containerNameWithoutCDN).get(10, TimeUnit.SECONDS));
+      assertTrue(connection.deleteContainerIfEmpty(containerNameWithCDN).get(10, TimeUnit.SECONDS));
+      assertTrue(connection.deleteContainerIfEmpty(containerNameWithoutCDN).get(10,
+               TimeUnit.SECONDS));
    }
 
    @Test
@@ -196,8 +206,8 @@ public class CloudFilesBlobStoreLiveTest {
       assertEquals(response.first().getName(), containerJsr330[1]);
 
       // Cleanup and test containers have been removed
-      assertTrue(connection.deleteContainer(containerJsr330[0]).get(10, TimeUnit.SECONDS));
-      assertTrue(connection.deleteContainer(containerJsr330[1]).get(10, TimeUnit.SECONDS));
+      assertTrue(connection.deleteContainerIfEmpty(containerJsr330[0]).get(10, TimeUnit.SECONDS));
+      assertTrue(connection.deleteContainerIfEmpty(containerJsr330[1]).get(10, TimeUnit.SECONDS));
       response = connection.listContainers();
       // assertEquals(response.size(), initialContainerCount + 2);// if the containers already
       // exist, this will fail
@@ -205,27 +215,27 @@ public class CloudFilesBlobStoreLiveTest {
 
    @Test
    public void testHeadAccountMetadata() throws Exception {
-      AccountMetadata metadata = connection.getAccountMetadata();
+      AccountMetadata metadata = connection.getAccountStatistics();
       assertNotNull(metadata);
       long initialContainerCount = metadata.getContainerCount();
 
       String containerName = bucketPrefix + ".testHeadAccountMetadata";
       assertTrue(connection.createContainer(containerName).get(10, TimeUnit.SECONDS));
 
-      metadata = connection.getAccountMetadata();
+      metadata = connection.getAccountStatistics();
       assertNotNull(metadata);
       assertTrue(metadata.getContainerCount() >= initialContainerCount);
 
-      assertTrue(connection.deleteContainer(containerName).get(10, TimeUnit.SECONDS));
+      assertTrue(connection.deleteContainerIfEmpty(containerName).get(10, TimeUnit.SECONDS));
    }
 
    @Test
    public void testDeleteContainer() throws Exception {
-      assertTrue(connection.deleteContainer("does-not-exist").get(10, TimeUnit.SECONDS));
+      assertTrue(connection.deleteContainerIfEmpty("does-not-exist").get(10, TimeUnit.SECONDS));
 
       String containerName = bucketPrefix + ".testDeleteContainer";
       assertTrue(connection.createContainer(containerName).get(10, TimeUnit.SECONDS));
-      assertTrue(connection.deleteContainer(containerName).get(10, TimeUnit.SECONDS));
+      assertTrue(connection.deleteContainerIfEmpty(containerName).get(10, TimeUnit.SECONDS));
    }
 
    @Test
@@ -255,8 +265,8 @@ public class CloudFilesBlobStoreLiveTest {
       } catch (Exception e) {
       }
 
-      assertTrue(connection.deleteContainer(containerName1).get(10, TimeUnit.SECONDS));
-      assertTrue(connection.deleteContainer(containerName2).get(10, TimeUnit.SECONDS));
+      assertTrue(connection.deleteContainerIfEmpty(containerName1).get(10, TimeUnit.SECONDS));
+      assertTrue(connection.deleteContainerIfEmpty(containerName2).get(10, TimeUnit.SECONDS));
    }
 
    @Test
@@ -274,20 +284,19 @@ public class CloudFilesBlobStoreLiveTest {
       object.getMetadata().setContentType("text/plain");
       object.getMetadata().getUserMetadata().put("Metadata", "metadata-value");
       byte[] md5 = object.getMetadata().getContentMD5();
-      byte[] newEtag = connection.putBlob(containerName, object).get(10, TimeUnit.SECONDS);
+      byte[] newEtag = connection.putObject(containerName, object).get(10, TimeUnit.SECONDS);
       assertEquals(HttpUtils.toHexString(md5), HttpUtils.toHexString(object.getMetadata()
                .getContentMD5()));
 
       // Test HEAD of missing object
       try {
-         connection.blobMetadata(containerName, "non-existent-object");
+         connection.getObjectMetadata(containerName, "non-existent-object");
          assert false;
-      } catch (Exception e) {
-         e.printStackTrace();
+      } catch (KeyNotFoundException e) {
       }
 
       // Test HEAD of object
-      BlobMetadata metadata = connection.blobMetadata(containerName, object.getKey());
+      BlobMetadata metadata = connection.getObjectMetadata(containerName, object.getKey());
       // TODO assertEquals(metadata.getKey(), object.getKey());
       assertEquals(metadata.getSize(), data.length());
       assertEquals(metadata.getContentType(), "text/plain");
@@ -305,13 +314,12 @@ public class CloudFilesBlobStoreLiveTest {
 
       // Test GET of missing object
       try {
-         connection.getBlob(containerName, "non-existent-object").get(10, TimeUnit.SECONDS);
+         connection.getObject(containerName, "non-existent-object").get(10, TimeUnit.SECONDS);
          assert false;
-      } catch (Exception e) {
-         e.printStackTrace();
+      } catch (KeyNotFoundException e) {
       }
       // Test GET of object (including updated metadata)
-      Blob<BlobMetadata> getBlob = connection.getBlob(containerName, object.getKey()).get(120,
+      Blob<BlobMetadata> getBlob = connection.getObject(containerName, object.getKey()).get(120,
                TimeUnit.SECONDS);
       assertEquals(IOUtils.toString((InputStream) getBlob.getData()), data);
       // TODO assertEquals(getBlob.getKey(), object.getKey());
@@ -333,7 +341,7 @@ public class CloudFilesBlobStoreLiveTest {
       String incorrectEtag = "0" + correctEtag.substring(1);
       object.getMetadata().setETag(HttpUtils.fromHexString(incorrectEtag));
       try {
-         connection.putBlob(containerName, object).get(10, TimeUnit.SECONDS);
+         connection.putObject(containerName, object).get(10, TimeUnit.SECONDS);
       } catch (Throwable e) {
          assertEquals(e.getCause().getClass(), HttpResponseException.class);
          assertEquals(((HttpResponseException) e.getCause()).getResponse().getStatusCode(), 422);
@@ -343,14 +351,14 @@ public class CloudFilesBlobStoreLiveTest {
       ByteArrayInputStream bais = new ByteArrayInputStream(data.getBytes("UTF-8"));
       object = new Blob<BlobMetadata>("chunked-object");
       object.setData(bais);
-      newEtag = connection.putBlob(containerName, object).get(10, TimeUnit.SECONDS);
+      newEtag = connection.putObject(containerName, object).get(10, TimeUnit.SECONDS);
       assertEquals(HttpUtils.toHexString(md5), HttpUtils.toHexString(getBlob.getMetadata()
                .getContentMD5()));
 
       // Test GET with options
       // Non-matching ETag
       try {
-         connection.getBlob(containerName, object.getKey(),
+         connection.getObject(containerName, object.getKey(),
                   GetOptions.Builder.ifETagDoesntMatch(newEtag)).get(120, TimeUnit.SECONDS);
       } catch (Exception e) {
          assertEquals(e.getCause().getClass(), HttpResponseException.class);
@@ -358,17 +366,17 @@ public class CloudFilesBlobStoreLiveTest {
       }
 
       // Matching ETag
-      getBlob = connection.getBlob(containerName, object.getKey(),
+      getBlob = connection.getObject(containerName, object.getKey(),
                GetOptions.Builder.ifETagMatches(newEtag)).get(120, TimeUnit.SECONDS);
       assertEquals(getBlob.getMetadata().getETag(), newEtag);
-      getBlob = connection.getBlob(containerName, object.getKey(), GetOptions.Builder.startAt(8))
+      getBlob = connection.getObject(containerName, object.getKey(), GetOptions.Builder.startAt(8))
                .get(120, TimeUnit.SECONDS);
       assertEquals(IOUtils.toString((InputStream) getBlob.getData()), data.substring(8));
 
-      assertTrue(connection.removeBlob(containerName, "object").get(10, TimeUnit.SECONDS));
-      assertTrue(connection.removeBlob(containerName, "chunked-object").get(10, TimeUnit.SECONDS));
+      assertTrue(connection.removeObject(containerName, "object").get(10, TimeUnit.SECONDS));
+      assertTrue(connection.removeObject(containerName, "chunked-object").get(10, TimeUnit.SECONDS));
 
-      assertTrue(connection.deleteContainer(containerName).get(10, TimeUnit.SECONDS));
+      assertTrue(connection.deleteContainerIfEmpty(containerName).get(10, TimeUnit.SECONDS));
    }
 
 }

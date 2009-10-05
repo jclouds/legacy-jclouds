@@ -23,9 +23,9 @@
  */
 package org.jclouds.azure.storage.blob.integration;
 
+import org.jclouds.azure.storage.blob.AzureBlobConnection;
 import org.jclouds.azure.storage.blob.AzureBlobContextBuilder;
 import org.jclouds.azure.storage.blob.AzureBlobContextFactory;
-import org.jclouds.azure.storage.blob.AzureBlobStore;
 import org.jclouds.azure.storage.blob.config.StubAzureBlobStoreModule;
 import org.jclouds.azure.storage.blob.domain.Blob;
 import org.jclouds.azure.storage.blob.domain.BlobMetadata;
@@ -41,17 +41,17 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 public class AzureBlobTestInitializer extends
-         BaseTestInitializer<AzureBlobStore, ContainerMetadata, BlobMetadata, Blob> {
+         BaseTestInitializer<AzureBlobConnection, ContainerMetadata, BlobMetadata, Blob> {
 
    @Override
-   protected BlobStoreContext<AzureBlobStore, ContainerMetadata, BlobMetadata, Blob> createLiveContext(
+   protected BlobStoreContext<AzureBlobConnection, ContainerMetadata, BlobMetadata, Blob> createLiveContext(
             Module configurationModule, String url, String app, String account, String key) {
       return new AzureBlobContextBuilder(account, key).withSaxDebug().relaxSSLHostname()
                .withModules(configurationModule, new Log4JLoggingModule()).buildContext();
    }
 
    @Override
-   protected BlobStoreContext<AzureBlobStore, ContainerMetadata, BlobMetadata, Blob> createStubContext() {
+   protected BlobStoreContext<AzureBlobConnection, ContainerMetadata, BlobMetadata, Blob> createStubContext() {
       return AzureBlobContextFactory.createContext("user", "pass", new StubAzureBlobStoreModule());
    }
 }

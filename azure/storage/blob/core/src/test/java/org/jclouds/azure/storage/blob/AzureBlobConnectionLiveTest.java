@@ -61,10 +61,10 @@ import com.google.common.collect.Iterables;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "cloudservers.AzureBlobStoreLiveTest")
-public class AzureBlobStoreLiveTest {
+@Test(groups = "live", sequential = true, testName = "azureblob.AzureBlobConnectionLiveTest")
+public class AzureBlobConnectionLiveTest {
 
-   protected AzureBlobStore connection;
+   protected AzureBlobConnection connection;
 
    private String containerPrefix = System.getProperty("user.name") + "-azureblob";
 
@@ -215,14 +215,14 @@ public class AzureBlobStoreLiveTest {
 
    @Test
    public void testDeleteOneContainer() throws Exception {
-      assertTrue(connection.deleteContainer("does-not-exist").get(10, TimeUnit.SECONDS));
+      connection.deleteContainer("does-not-exist").get(10, TimeUnit.SECONDS);
    }
 
    @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = { "testListOwnedContainers",
             "testObjectOperations" })
    public void testDeleteContainer() throws Exception {
-      assert connection.deleteContainer(privateContainer).get(10, TimeUnit.SECONDS);
-      assert connection.deleteContainer(publicContainer).get(10, TimeUnit.SECONDS);
+      connection.deleteContainer(privateContainer).get(10, TimeUnit.SECONDS);
+      connection.deleteContainer(publicContainer).get(10, TimeUnit.SECONDS);
       // TODO loop for up to 30 seconds checking if they are really gone
    }
 
@@ -245,14 +245,14 @@ public class AzureBlobStoreLiveTest {
 
       // Test HEAD of missing object
       try {
-         connection.blobMetadata(privateContainer, "non-existent-object");
+         connection.getBlobProperties(privateContainer, "non-existent-object");
          assert false;
       } catch (Exception e) {
          e.printStackTrace();
       }
 
       // Test HEAD of object
-      BlobMetadata metadata = connection.blobMetadata(privateContainer, object.getKey());
+      BlobMetadata metadata = connection.getBlobProperties(privateContainer, object.getKey());
       // TODO assertEquals(metadata.getKey(), object.getKey());
       // we can't check this while hacking around lack of content-md5, as GET of the first byte will
       // show incorrect length 1, the returned size, as opposed to the real length. This is an ok
@@ -344,9 +344,8 @@ public class AzureBlobStoreLiveTest {
       // TimeUnit.SECONDS);
       // assertEquals(IOUtils.toString((InputStream) getBlob.getData()), data.substring(8));
 
-      assertTrue(connection.removeBlob(privateContainer, "object").get(10, TimeUnit.SECONDS));
-      assertTrue(connection.removeBlob(privateContainer, "chunked-object")
-               .get(10, TimeUnit.SECONDS));
+      connection.deleteBlob(privateContainer, "object").get(10, TimeUnit.SECONDS);
+      connection.deleteBlob(privateContainer, "chunked-object").get(10, TimeUnit.SECONDS);
    }
 
 }

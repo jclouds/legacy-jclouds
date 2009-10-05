@@ -23,7 +23,7 @@
  */
 package org.jclouds.aws.s3.integration;
 
-import org.jclouds.aws.s3.S3BlobStore;
+import org.jclouds.aws.s3.S3Connection;
 import org.jclouds.aws.s3.S3ContextBuilder;
 import org.jclouds.aws.s3.S3ContextFactory;
 import org.jclouds.aws.s3.config.StubS3BlobStoreModule;
@@ -42,10 +42,10 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 public class S3TestInitializer extends
-         BaseTestInitializer<S3BlobStore, BucketMetadata, ObjectMetadata, S3Object> {
+         BaseTestInitializer<S3Connection, BucketMetadata, ObjectMetadata, S3Object> {
 
    @Override
-   protected BlobStoreContext<S3BlobStore, BucketMetadata, ObjectMetadata, S3Object> createLiveContext(
+   protected BlobStoreContext<S3Connection, BucketMetadata, ObjectMetadata, S3Object> createLiveContext(
             Module configurationModule, String url, String app, String account, String key) {
       BaseBlobStoreIntegrationTest.SANITY_CHECK_RETURNED_BUCKET_NAME = true;
       return new S3ContextBuilder(account, key).withSaxDebug().relaxSSLHostname().withModules(
@@ -53,7 +53,7 @@ public class S3TestInitializer extends
    }
 
    @Override
-   protected BlobStoreContext<S3BlobStore, BucketMetadata, ObjectMetadata, S3Object> createStubContext() {
+   protected BlobStoreContext<S3Connection, BucketMetadata, ObjectMetadata, S3Object> createStubContext() {
       return S3ContextFactory.createContext("user", "pass", new StubS3BlobStoreModule());
    }
 

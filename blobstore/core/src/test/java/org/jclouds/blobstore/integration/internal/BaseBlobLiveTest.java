@@ -31,7 +31,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ContainerMetadata;
@@ -48,7 +47,7 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = { "live" }, testName = "blobstore.BlobLiveTest")
-public class BaseBlobLiveTest<S extends BlobStore<C, M, B>, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
+public class BaseBlobLiveTest<S, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
          extends BaseBlobStoreIntegrationTest<S, C, M, B> {
 
    private static final String sysHttpStreamUrl = System
@@ -82,8 +81,8 @@ public class BaseBlobLiveTest<S extends BlobStore<C, M, B>, C extends ContainerM
       object.getMetadata().setSize(length);
       String bucketName = getContainerName();
       try {
-         context.getApi().putBlob(bucketName, object).get(180, TimeUnit.SECONDS);
-         assertEquals(context.getApi().blobMetadata(bucketName, key).getContentMD5(), md5);
+         context.getBlobStore().putBlob(bucketName, object).get(180, TimeUnit.SECONDS);
+         assertEquals(context.getBlobStore().blobMetadata(bucketName, key).getContentMD5(), md5);
       } finally {
          returnContainer(bucketName);
       }

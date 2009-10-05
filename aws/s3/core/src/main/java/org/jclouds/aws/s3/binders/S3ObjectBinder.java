@@ -45,7 +45,8 @@ public class S3ObjectBinder extends BlobBinder {
    public void addEntityToRequest(Object entity, HttpRequest request) {
       Blob<?> object = (Blob<?>) entity;
       checkArgument(object.getMetadata().getSize() >= 0, "size must be set");
-
+      checkArgument(object.getContentLength() <= 5 * 1024 * 1024 * 1024,
+               "maximum size for put object is 5GB");
       if (object instanceof S3Object) {
          S3Object s3Object = (S3Object) object;
          if (s3Object.getMetadata().getCacheControl() != null) {

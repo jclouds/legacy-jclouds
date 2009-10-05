@@ -30,10 +30,11 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jclouds.cloud.CloudContext;
+import org.jclouds.blobstore.integration.internal.StubBlobStore;
 import org.jclouds.rackspace.StubRackspaceAuthenticationModule;
 import org.jclouds.rackspace.cloudfiles.config.CloudFilesContextModule.CloudFilesContextImpl;
-import org.jclouds.rackspace.cloudfiles.integration.StubCloudFilesConnectionModule;
+import org.jclouds.rackspace.cloudfiles.integration.StubCloudFilesBlobStoreModule;
+import org.jclouds.rackspace.cloudfiles.internal.StubCloudFilesConnection;
 import org.jclouds.rackspace.config.RestRackspaceAuthenticationModule;
 import org.jclouds.rackspace.reference.RackspaceConstants;
 import org.testng.annotations.Test;
@@ -62,17 +63,19 @@ public class CloudFilesContextBuilderTest {
    }
 
    public void testBuildContext() {
-      CloudContext<CloudFilesBlobStore> context = new CloudFilesContextBuilder("id", "secret")
-               .withModules(new StubCloudFilesConnectionModule(),
-                        new StubRackspaceAuthenticationModule()).buildContext();
+      CloudFilesContext context = new CloudFilesContextBuilder("id", "secret").withModules(
+               new StubCloudFilesBlobStoreModule(), new StubRackspaceAuthenticationModule())
+               .buildContext();
       assertEquals(context.getClass(), CloudFilesContextImpl.class);
+      assertEquals(context.getApi().getClass(), StubCloudFilesConnection.class);
+      assertEquals(context.getBlobStore().getClass(), StubBlobStore.class);
       assertEquals(context.getAccount(), "id");
       assertEquals(context.getEndPoint(), URI.create("http://localhost/rackspacestub/cloudfiles"));
    }
 
    public void testBuildInjector() {
       Injector i = new CloudFilesContextBuilder("id", "secret").withModules(
-               new StubCloudFilesConnectionModule(), new StubRackspaceAuthenticationModule())
+               new StubCloudFilesBlobStoreModule(), new StubRackspaceAuthenticationModule())
                .buildInjector();
       assert i.getInstance(CloudFilesContextImpl.class) != null;
    }

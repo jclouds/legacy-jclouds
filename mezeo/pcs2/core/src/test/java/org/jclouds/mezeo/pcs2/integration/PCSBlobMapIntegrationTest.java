@@ -27,7 +27,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.blobstore.integration.internal.BaseBlobMapIntegrationTest;
-import org.jclouds.mezeo.pcs2.PCSBlobStore;
+import org.jclouds.mezeo.pcs2.PCSConnection;
 import org.jclouds.mezeo.pcs2.domain.ContainerMetadata;
 import org.jclouds.mezeo.pcs2.domain.FileMetadata;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
@@ -38,7 +38,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "integration", "live" }, testName = "cloudfiles.PCSBlobMapIntegrationTest")
 public class PCSBlobMapIntegrationTest extends
-         BaseBlobMapIntegrationTest<PCSBlobStore, ContainerMetadata, FileMetadata, PCSFile> {
+         BaseBlobMapIntegrationTest<PCSConnection, ContainerMetadata, FileMetadata, PCSFile> {
 
    @Override
    public void testContains() throws InterruptedException, ExecutionException, TimeoutException {

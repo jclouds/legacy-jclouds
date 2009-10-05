@@ -33,7 +33,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.functions.ReturnTrueOnNotFoundOr404;
+import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.options.GetOptions;
@@ -48,10 +48,9 @@ import org.jclouds.mezeo.pcs2.functions.AssembleBlobFromContentAndMetadataCache;
 import org.jclouds.mezeo.pcs2.functions.ContainerAndFileNameToResourceId;
 import org.jclouds.mezeo.pcs2.functions.ContainerNameToResourceId;
 import org.jclouds.mezeo.pcs2.functions.InvalidateContainerNameCacheAndReturnTrueIf2xx;
-import org.jclouds.mezeo.pcs2.functions.InvalidatePCSKeyCacheAndReturnTrueIf2xx;
+import org.jclouds.mezeo.pcs2.functions.InvalidatePCSKeyCacheAndReturnVoidIf2xx;
 import org.jclouds.mezeo.pcs2.functions.ReturnFalseIfContainerNotFound;
 import org.jclouds.mezeo.pcs2.functions.ReturnTrueIfContainerAlreadyExists;
-import org.jclouds.mezeo.pcs2.functions.ReturnTrueIfContainerNotFound;
 import org.jclouds.mezeo.pcs2.xml.FileListToContainerMetadataListHandler;
 import org.jclouds.mezeo.pcs2.xml.FileListToFileMetadataListHandler;
 import org.jclouds.mezeo.pcs2.xml.FileMetadataHandler;
@@ -99,11 +98,11 @@ public interface PCSBlobStore extends BlobStore<ContainerMetadata, FileMetadata,
    Future<Boolean> createContainer(@EntityParam(CreateContainerBinder.class) String container);
 
    @DELETE
-   @ExceptionParser(ReturnTrueIfContainerNotFound.class)
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    @Path("/containers/{containerResourceId}")
    @Endpoint(PCS.class)
    @ResponseParser(InvalidateContainerNameCacheAndReturnTrueIf2xx.class)
-   Future<Boolean> deleteContainer(
+   Future<Void> deleteContainer(
             @PathParam("containerResourceId") @ParamParser(ContainerNameToResourceId.class) String containerName);
 
    @GET
@@ -123,13 +122,13 @@ public interface PCSBlobStore extends BlobStore<ContainerMetadata, FileMetadata,
             @EntityParam(PCSFileAsMultipartFormBinder.class) PCSFile object);
 
    @DELETE
-   @ExceptionParser(ReturnTrueOnNotFoundOr404.class)
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    @Path("/files/{resourceId}")
    @PathParam("resourceId")
    @Endpoint(PCS.class)
-   @ResponseParser(InvalidatePCSKeyCacheAndReturnTrueIf2xx.class)
+   @ResponseParser(InvalidatePCSKeyCacheAndReturnVoidIf2xx.class)
    @ParamParser(ContainerAndFileNameToResourceId.class)
-   Future<Boolean> removeBlob(String container, String key);
+   Future<Void> removeBlob(String container, String key);
 
    @GET
    @ExceptionParser(ThrowKeyNotFoundOn404.class)

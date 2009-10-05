@@ -61,7 +61,7 @@ import com.google.inject.TypeLiteral;
  * @see S3Context
  */
 public class S3ContextBuilder extends
-         BlobStoreContextBuilder<S3BlobStore, BucketMetadata, ObjectMetadata, S3Object> {
+         BlobStoreContextBuilder<S3Connection, BucketMetadata, ObjectMetadata, S3Object> {
 
    @Override
    public S3Context buildContext() {
@@ -69,7 +69,7 @@ public class S3ContextBuilder extends
    }
 
    public S3ContextBuilder(Properties props) {
-      super(new TypeLiteral<S3BlobStore>() {
+      super(new TypeLiteral<S3Connection>() {
       }, new TypeLiteral<BucketMetadata>() {
       }, new TypeLiteral<ObjectMetadata>() {
       }, new TypeLiteral<S3Object>() {

@@ -26,15 +26,8 @@ package org.jclouds.blobstore.internal;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -46,6 +39,9 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ContainerMetadata;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
+import org.jclouds.blobstore.strategy.ClearContainerStrategy;
+import org.jclouds.blobstore.strategy.ContainerCountStrategy;
+import org.jclouds.blobstore.strategy.ContainsValueStrategy;
 import org.jclouds.blobstore.strategy.GetAllBlobMetadataStrategy;
 import org.jclouds.blobstore.strategy.GetAllBlobsStrategy;
 import org.jclouds.rest.BoundedSortedSet;
@@ -71,6 +67,9 @@ public abstract class BaseBlobMap<C extends ContainerMetadata, M extends BlobMet
    protected final Provider<B> blobFactory;
    protected final GetAllBlobsStrategy<C, M, B> getAllBlobs;
    protected final GetAllBlobMetadataStrategy<C, M, B> getAllBlobMetadata;
+   protected final ContainsValueStrategy<C, M, B> containsValueStrategy;
+   protected final ClearContainerStrategy<C, M, B> clearContainerStrategy;
+   protected final ContainerCountStrategy<C, M, B> containerCountStrategy;
 
    /**
     * maximum duration of an blob Request
@@ -89,12 +88,18 @@ public abstract class BaseBlobMap<C extends ContainerMetadata, M extends BlobMet
    @Inject
    public BaseBlobMap(BlobStore<C, M, B> connection, Provider<B> blobFactory,
             GetAllBlobsStrategy<C, M, B> getAllBlobs,
-            GetAllBlobMetadataStrategy<C, M, B> getAllBlobMetadata, @Assisted String containerName) {
+            GetAllBlobMetadataStrategy<C, M, B> getAllBlobMetadata,
+            ContainsValueStrategy<C, M, B> containsValueStrategy,
+            ClearContainerStrategy<C, M, B> clearContainerStrategy,
+            ContainerCountStrategy<C, M, B> containerCountStrategy, @Assisted String containerName) {
       this.connection = checkNotNull(connection, "connection");
       this.containerName = checkNotNull(containerName, "container");
       this.blobFactory = checkNotNull(blobFactory, "blobFactory");
       this.getAllBlobs = checkNotNull(getAllBlobs, "getAllBlobs");
       this.getAllBlobMetadata = checkNotNull(getAllBlobMetadata, "getAllBlobMetadata");
+      this.containsValueStrategy = checkNotNull(containsValueStrategy, "containsValueStrategy");
+      this.clearContainerStrategy = checkNotNull(clearContainerStrategy, "clearContainerStrategy");
+      this.containerCountStrategy = checkNotNull(containerCountStrategy, "containerCountStrategy");
       checkArgument(!containerName.equals(""), "container name must not be a blank string!");
    }
 
@@ -106,30 +111,7 @@ public abstract class BaseBlobMap<C extends ContainerMetadata, M extends BlobMet
     * @see BoundedSortedSet#getContents()
     */
    public int size() {
-      return getAllBlobMetadata.execute(connection, containerName).size();
-   }
-
-   protected boolean containsETag(byte[] eTag) throws InterruptedException, ExecutionException,
-            TimeoutException {
-      for (BlobMetadata metadata : getAllBlobMetadata.execute(connection, containerName)) {
-         if (Arrays.equals(eTag, metadata.getETag()))
-            return true;
-      }
-      return false;
-   }
-
-   protected byte[] getMD5(Object value) throws IOException, FileNotFoundException,
-            InterruptedException, ExecutionException, TimeoutException {
-      Blob<?> object;
-      if (value instanceof Blob<?>) {
-         object = (Blob<?>) value;
-      } else {
-         object = blobFactory.get();
-         object.setData(value);
-      }
-      if (object.getMetadata().getContentMD5() == null)
-         object.generateMD5();
-      return object.getMetadata().getContentMD5();
+      return (int) containerCountStrategy.execute(connection, containerName);
    }
 
    /**
@@ -138,9 +120,7 @@ public abstract class BaseBlobMap<C extends ContainerMetadata, M extends BlobMet
     * @see BlobStore#getBlob(String, String)
     */
    protected Set<B> getAllBlobs() {
-
       return getAllBlobs.execute(connection, containerName);
-
    }
 
    /**
@@ -150,49 +130,11 @@ public abstract class BaseBlobMap<C extends ContainerMetadata, M extends BlobMet
     * method. To reuse data from InputStreams, pass {@link java.io.InputStream}s inside {@link Blob}s
     */
    public boolean containsValue(Object value) {
-      return eTagExistsMatchingMD5Of(value);
-   }
-
-   private boolean eTagExistsMatchingMD5Of(Object value) {
-      try {
-         byte[] eTag = getMD5(value);
-         return containsETag(eTag);
-      } catch (Exception e) {
-         Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
-         throw new BlobRuntimeException(String.format(
-                  "Error searching for ETAG of value: [%2$s] in container:%1$s", containerName,
-                  value), e);
-      }
-   }
-
-   public static class BlobRuntimeException extends RuntimeException {
-      private static final long serialVersionUID = 1L;
-
-      BlobRuntimeException(String s) {
-         super(s);
-      }
-
-      public BlobRuntimeException(String s, Throwable throwable) {
-         super(s, throwable);
-      }
+      return containsValueStrategy.execute(connection, containerName, value);
    }
 
    public void clear() {
-      Set<Future<Boolean>> deletes = Sets.newHashSet();
-      for (M md : getAllBlobMetadata.execute(connection, containerName)) {
-         deletes.add(connection.removeBlob(containerName, md.getKey()));
-      }
-      for (Future<Boolean> isdeleted : deletes) {
-         try {
-            if (!isdeleted.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS)) {
-               throw new BlobRuntimeException("Failed to delete blob in container: "
-                        + containerName);
-            }
-         } catch (Exception e) {
-            Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
-            throw new BlobRuntimeException("Error deleting blob in container: " + containerName, e);
-         }
-      }
+      clearContainerStrategy.execute(connection, containerName);
    }
 
    public Set<String> keySet() {
@@ -217,7 +159,7 @@ public abstract class BaseBlobMap<C extends ContainerMetadata, M extends BlobMet
    public boolean isEmpty() {
       return size() == 0;
    }
-   
+
    public SortedSet<M> listContainer() {
       return getAllBlobMetadata.execute(connection, containerName);
    }
