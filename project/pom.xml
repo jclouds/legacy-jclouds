@@ -144,8 +144,8 @@
         <maven.compile.target>1.5</maven.compile.target>
         <maven.compile.optimize>true</maven.compile.optimize>
         <maven.compile.deprecation>true</maven.compile.deprecation>
-        <jclouds.blobstore.httpstream.url>http://apache.rediris.es/maven/binaries/apache-maven-2.1.0-bin.tar.bz2</jclouds.blobstore.httpstream.url>
-        <jclouds.blobstore.httpstream.md5>9268c9de2cccfd0d8fbcdbcfaf517a87</jclouds.blobstore.httpstream.md5>
+        <jclouds.blobstore.httpstream.url>http://mirror.cloudera.com/apache/maven/binaries/apache-maven-2.2.1-bin.tar.bz2</jclouds.blobstore.httpstream.url>
+        <jclouds.blobstore.httpstream.md5>c581a15cb0001d9b771ad6df7c8156f8</jclouds.blobstore.httpstream.md5>
         <jclouds.test.listener>org.jclouds.test.testng.UnitTestStatusListener</jclouds.test.listener>
     </properties>
 
