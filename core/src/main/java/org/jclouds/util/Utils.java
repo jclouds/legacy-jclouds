@@ -106,7 +106,7 @@ public class Utils {
     * @throws E
     */
    public static void rethrowIfRuntime(Exception e) {
-      if (e instanceof ExecutionException) {
+      if (e instanceof ExecutionException || e instanceof ComputationException) {
          Throwable nested = e.getCause();
          if (nested instanceof Error)
             throw (Error) nested;
