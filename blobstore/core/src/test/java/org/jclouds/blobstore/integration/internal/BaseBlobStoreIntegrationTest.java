@@ -214,14 +214,14 @@ public class BaseBlobStoreIntegrationTest<S, C extends ContainerMetadata, M exte
     */
    protected static void assertEventually(Runnable assertion) throws InterruptedException {
       AssertionError error = null;
-      for (int i = 0; i < 10; i++) {
+      for (int i = 0; i < 30; i++) {
          try {
             assertion.run();
             return;
          } catch (AssertionError e) {
             error = e;
          }
-         Thread.sleep(INCONSISTENCY_WINDOW / 10);
+         Thread.sleep(INCONSISTENCY_WINDOW / 30);
       }
       if (error != null)
          throw error;
@@ -249,13 +249,13 @@ public class BaseBlobStoreIntegrationTest<S, C extends ContainerMetadata, M exte
 
    protected void addBlobToContainer(String sourceContainer, B object) throws InterruptedException,
             ExecutionException, TimeoutException, IOException {
-      context.getBlobStore().putBlob(sourceContainer, object).get(10, TimeUnit.SECONDS);
+      context.getBlobStore().putBlob(sourceContainer, object).get(30, TimeUnit.SECONDS);
    }
 
    protected B validateContent(String sourceContainer, String key) throws InterruptedException,
             ExecutionException, TimeoutException, IOException {
       assertEventuallyContainerSize(sourceContainer, 1);
-      B newObject = context.getBlobStore().getBlob(sourceContainer, key).get(10, TimeUnit.SECONDS);
+      B newObject = context.getBlobStore().getBlob(sourceContainer, key).get(30, TimeUnit.SECONDS);
       assert newObject != null;
       assertEquals(BlobStoreUtils.getContentAsStringAndClose(newObject), TEST_STRING);
       return newObject;
@@ -266,7 +266,7 @@ public class BaseBlobStoreIntegrationTest<S, C extends ContainerMetadata, M exte
       assertEventually(new Runnable() {
          public void run() {
             try {
-               assertEquals(context.getBlobStore().listBlobs(containerName).get(10,
+               assertEquals(context.getBlobStore().listBlobs(containerName).get(30,
                         TimeUnit.SECONDS).size(), count);
             } catch (Exception e) {
                Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
@@ -361,7 +361,7 @@ public class BaseBlobStoreIntegrationTest<S, C extends ContainerMetadata, M exte
             final String name) throws InterruptedException, ExecutionException, TimeoutException {
       if (context.getBlobStore().containerExists(name)) {
          System.err.printf("*** deleting container %s...%n", name);
-         context.getBlobStore().deleteContainer(name).get(10, TimeUnit.SECONDS);
+         context.getBlobStore().deleteContainer(name).get(30, TimeUnit.SECONDS);
          assertEventually(new Runnable() {
             public void run() {
                try {
