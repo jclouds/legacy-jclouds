@@ -68,9 +68,14 @@ public class CloudFilesContextBuilder
 
    @Override
    public CloudFilesContextBuilder relaxSSLHostname() {
-      return (CloudFilesContextBuilder) (CloudFilesContextBuilder) super.relaxSSLHostname();
+      return (CloudFilesContextBuilder) super.relaxSSLHostname();
    }
 
+   @Override
+   public CloudFilesContextBuilder withRequestTimeout(long milliseconds) {
+      return (CloudFilesContextBuilder) super.withRequestTimeout(milliseconds);
+   }
+   
    @Override
    public CloudFilesContextBuilder withExecutorService(ExecutorService service) {
       return (CloudFilesContextBuilder) super.withExecutorService(service);
@@ -160,7 +165,7 @@ public class CloudFilesContextBuilder
 
    @Override
    public CloudFilesContextBuilder withEndpoint(URI endpoint) {
-      return (CloudFilesContextBuilder) (CloudFilesContextBuilder) RackspaceContextBuilder
+      return (CloudFilesContextBuilder) RackspaceContextBuilder
                .withEndpoint(this, endpoint);
    }
 

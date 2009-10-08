@@ -91,6 +91,11 @@ public class S3ContextBuilder extends
    }
 
    @Override
+   public S3ContextBuilder withRequestTimeout(long milliseconds) {
+      return (S3ContextBuilder) super.withRequestTimeout(milliseconds);
+   }
+
+   @Override
    public S3ContextBuilder withExecutorService(ExecutorService service) {
       return (S3ContextBuilder) super.withExecutorService(service);
    }

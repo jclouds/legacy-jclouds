@@ -52,8 +52,8 @@ public class BaseContainerIntegrationTest<S, C extends ContainerMetadata, M exte
    public void testPutTwiceIsOk() throws Exception {
       String containerName = getContainerName();
       try {
-         context.getBlobStore().createContainer(containerName).get(10, TimeUnit.SECONDS);
-         context.getBlobStore().createContainer(containerName).get(10, TimeUnit.SECONDS);
+         context.getBlobStore().createContainer(containerName).get(60, TimeUnit.SECONDS);
+         context.getBlobStore().createContainer(containerName).get(60, TimeUnit.SECONDS);
       } finally {
          returnContainer(containerName);
       }
@@ -74,7 +74,7 @@ public class BaseContainerIntegrationTest<S, C extends ContainerMetadata, M exte
       String containerName = getContainerName();
       try {
          addBlobToContainer(containerName, "test");
-         context.getBlobStore().deleteContainer(containerName).get(10, TimeUnit.SECONDS);
+         context.getBlobStore().deleteContainer(containerName).get(60, TimeUnit.SECONDS);
          assertNotExists(containerName);
       } finally {
          recycleContainer(containerName);
@@ -85,7 +85,7 @@ public class BaseContainerIntegrationTest<S, C extends ContainerMetadata, M exte
    public void deleteContainerIfEmpty() throws Exception {
       final String containerName = getContainerName();
       try {
-         context.getBlobStore().deleteContainer(containerName).get(10, TimeUnit.SECONDS);
+         context.getBlobStore().deleteContainer(containerName).get(60, TimeUnit.SECONDS);
          assertNotExists(containerName);
       } finally {
          // this container is now deleted, so we can't reuse it directly
@@ -112,7 +112,7 @@ public class BaseContainerIntegrationTest<S, C extends ContainerMetadata, M exte
       String containerName = getContainerName();
       try {
          add15UnderRoot(containerName);
-         SortedSet<M> container = context.getBlobStore().listBlobs(containerName).get(10,
+         SortedSet<M> container = context.getBlobStore().listBlobs(containerName).get(60,
                   TimeUnit.SECONDS);
          assertEquals(container.size(), 15);
       } finally {
@@ -126,7 +126,7 @@ public class BaseContainerIntegrationTest<S, C extends ContainerMetadata, M exte
       for (char letter = 'a'; letter <= 'z'; letter++) {
          B blob = context.newBlob(letter + "");
          blob.setData(letter + "content");
-         context.getBlobStore().putBlob(containerName, blob).get(10, TimeUnit.SECONDS);
+         context.getBlobStore().putBlob(containerName, blob).get(60, TimeUnit.SECONDS);
       }
    }
 
@@ -135,7 +135,7 @@ public class BaseContainerIntegrationTest<S, C extends ContainerMetadata, M exte
       for (int i = 0; i < 15; i++) {
          B blob = context.newBlob(i + "");
          blob.setData(i + "content");
-         context.getBlobStore().putBlob(containerName, blob).get(10, TimeUnit.SECONDS);
+         context.getBlobStore().putBlob(containerName, blob).get(60, TimeUnit.SECONDS);
       }
    }
 
@@ -144,7 +144,7 @@ public class BaseContainerIntegrationTest<S, C extends ContainerMetadata, M exte
       for (int i = 0; i < 10; i++) {
          B blob = context.newBlob(prefix + "/" + i);
          blob.setData(i + "content");
-         context.getBlobStore().putBlob(containerName, blob).get(10, TimeUnit.SECONDS);
+         context.getBlobStore().putBlob(containerName, blob).get(60, TimeUnit.SECONDS);
       }
    }
 }

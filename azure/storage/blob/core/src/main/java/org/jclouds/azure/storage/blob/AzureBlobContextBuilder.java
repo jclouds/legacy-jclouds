@@ -146,6 +146,11 @@ public class AzureBlobContextBuilder extends
    }
 
    @Override
+   public AzureBlobContextBuilder withRequestTimeout(long milliseconds) {
+      return (AzureBlobContextBuilder) super.withRequestTimeout(milliseconds);
+   }
+
+   @Override
    public AzureBlobContextBuilder withPoolMaxSessionFailures(int poolMaxSessionFailures) {
       return (AzureBlobContextBuilder) super.withPoolMaxSessionFailures(poolMaxSessionFailures);
    }

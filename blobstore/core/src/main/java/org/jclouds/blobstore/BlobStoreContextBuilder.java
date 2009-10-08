@@ -30,6 +30,7 @@ import java.util.concurrent.ExecutorService;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ContainerMetadata;
+import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.cloud.CloudContextBuilder;
 
 import com.google.inject.Key;
@@ -54,6 +55,14 @@ public abstract class BlobStoreContextBuilder<S, C extends ContainerMetadata, M 
       return (BlobStoreContextBuilder<S, C, M, B>) super.withHttpMaxRedirects(httpMaxRedirects);
    }
 
+   /**
+    * longest time a single synchronous operation can take before throwing an exception.
+    */
+   public BlobStoreContextBuilder<S, C, M, B>  withRequestTimeout(long milliseconds) {
+      properties.setProperty(BlobStoreConstants.PROPERTY_BLOBSTORE_TIMEOUT, Long.toString(milliseconds));
+      return this;
+   }
+   
    @SuppressWarnings("unchecked")
    @Override
    public BlobStoreContextBuilder<S, C, M, B> withHttpMaxRetries(int httpMaxRetries) {
