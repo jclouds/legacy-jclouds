@@ -31,6 +31,7 @@ import static org.easymock.classextension.EasyMock.verify;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
+import java.util.concurrent.Future;
 
 import javax.ws.rs.ext.RuntimeDelegate;
 
@@ -55,20 +56,22 @@ public class AddMetadataAndParseResourceIdIntoBytesTest {
    }
    HttpResponse response = new HttpResponse();
 
+   @SuppressWarnings("unchecked")
    PCSUtil createPCSUtil() {
       PCSUtil connection = createMock(PCSUtil.class);
+      final Future<Void> voidF = createMock(Future.class);
       expect(
                connection
                         .put(
                                  eq(URI
                                           .create("http://localhost/contents/7F143552-AAF5-11DE-BBB0-0BC388ED913B/metadata/foo")),
-                                 eq("bar"))).andReturn(true);
+                                 eq("bar"))).andReturn(voidF);
       expect(
                connection
                         .put(
                                  eq(URI
                                           .create("http://localhost/contents/7F143552-AAF5-11DE-BBB0-0BC388ED913B/metadata/biz")),
-                                 eq("baz"))).andReturn(true);
+                                 eq("baz"))).andReturn(voidF);
       replay(connection);
       return connection;
    }

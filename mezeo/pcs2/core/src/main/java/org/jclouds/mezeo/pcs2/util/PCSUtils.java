@@ -26,6 +26,7 @@ package org.jclouds.mezeo.pcs2.util;
 import java.net.URI;
 
 import org.jclouds.http.HttpUtils;
+import org.jclouds.mezeo.pcs2.functions.Key;
 
 /**
  * Utilities for PCS connections.
@@ -44,4 +45,20 @@ public class PCSUtils {
       return eTag;
    }
 
+   public static Key parseKey(Key key) {
+
+      if (key.getKey().indexOf('/') != -1) {
+         String container = key.getContainer() + '/'
+                  + key.getKey().substring(0, key.getKey().lastIndexOf('/'));
+         String newKey = key.getKey().substring(key.getKey().lastIndexOf('/')+1);
+         key = new Key(container.replaceAll("//", "/"), newKey);
+      }
+      return key;
+   }
+
+   public static String getContainerId(URI url) {
+      String path = url.getPath();
+      int indexAfterContainersSlash = path.indexOf("containers/") + "containers/".length();
+      return path.substring(indexAfterContainersSlash);
+   }
 }

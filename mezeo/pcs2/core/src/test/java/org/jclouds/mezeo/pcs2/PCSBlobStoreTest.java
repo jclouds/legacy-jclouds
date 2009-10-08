@@ -51,15 +51,16 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.http.functions.ReturnFalseOn404;
-import org.jclouds.http.functions.ReturnStringIf200;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
+import org.jclouds.http.functions.ReturnVoidIf2xx;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.mezeo.pcs2.binders.PCSFileAsMultipartFormBinderTest;
 import org.jclouds.mezeo.pcs2.domain.ContainerMetadata;
 import org.jclouds.mezeo.pcs2.domain.FileMetadata;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
 import org.jclouds.mezeo.pcs2.endpoints.RootContainer;
+import org.jclouds.mezeo.pcs2.endpoints.WebDAV;
+import org.jclouds.mezeo.pcs2.functions.AddEntryIntoMultiMap;
 import org.jclouds.mezeo.pcs2.functions.AddMetadataAndParseResourceIdIntoBytes;
 import org.jclouds.mezeo.pcs2.functions.AssembleBlobFromContentAndMetadataCache;
 import org.jclouds.mezeo.pcs2.functions.InvalidateContainerNameCacheAndReturnTrueIf2xx;
@@ -72,7 +73,9 @@ import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Multimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -124,6 +127,8 @@ public class PCSBlobStoreTest {
          return ImmutableSortedSet
                   .of(new ContainerMetadata(
                            "mycontainer",
+                           URI
+                                    .create("https://pcsbeta.mezeo.net/v2/containers/7F143552-AAF5-11DE-BBB0-0BC388ED913B"),
                            URI
                                     .create("https://pcsbeta.mezeo.net/v2/containers/7F143552-AAF5-11DE-BBB0-0BC388ED913B"),
                            dateService.fromSeconds(1254008225),
@@ -178,6 +183,14 @@ public class PCSBlobStoreTest {
 
       public Future<URI> uploadFile(URI container, PCSFile object) {
          return null;
+      }
+
+      public Future<? extends SortedSet<ContainerMetadata>> listContainers(URI container) {
+         throw new UnsupportedOperationException();
+      }
+
+      public Future<URI> createContainer(URI parent, String container) {
+         throw new UnsupportedOperationException();
       }
 
    }
@@ -311,8 +324,7 @@ public class PCSBlobStoreTest {
       HttpRequest httpMethod = processor.createRequest(method, new Object[] { "mycontainer",
                "testfile.txt" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
-      assertEquals(httpMethod.getEndpoint().getPath(),
-               "/files/9E4C5AFA-A98B-11DE-8B4C-C3884B4A2DA3/content");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/webdav/mycontainer/testfile.txt");
       assertEquals(httpMethod.getEndpoint().getQuery(), null);
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
@@ -372,24 +384,25 @@ public class PCSBlobStoreTest {
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList("application/unknown"));
       assertEquals("bar", httpMethod.getEntity());
-      assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
-               ReturnFalseOn404.class);
+      assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
       assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
-               ReturnTrueIf2xx.class);
+               ReturnVoidIf2xx.class);
    }
 
-   public void testGetMetadata() throws SecurityException, NoSuchMethodException {
-      Method method = PCSUtil.class.getMethod("get", URI.class);
+   public void testAddEntryToMultiMap() throws SecurityException, NoSuchMethodException {
+      Method method = PCSUtil.class.getMethod("addEntryToMultiMap", Multimap.class, String.class,
+               URI.class);
 
-      HttpRequest httpMethod = utilProcessor.createRequest(method, new Object[] {
-               URI.create("http://localhost/pow"), "foo" });
+      HttpRequest httpMethod = utilProcessor
+               .createRequest(method, new Object[] { ImmutableMultimap.of("key", "value"),
+                        "newkey", URI.create("http://localhost/pow") });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/pow");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
       assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
-               ReturnStringIf200.class);
+               AddEntryIntoMultiMap.class);
    }
 
    JaxrsAnnotationProcessor<PCSBlobStore> processor;
@@ -406,6 +419,9 @@ public class PCSBlobStoreTest {
                               URI.create("http://localhost:8080"));
                      bind(URI.class).annotatedWith(RootContainer.class).toInstance(
                               URI.create("http://localhost:8080/root"));
+                     bind(URI.class).annotatedWith(WebDAV.class).toInstance(
+                              URI.create("http://localhost:8080/webdav"));
+                     bind(PCSConnection.class).to(StubPCSConnection.class).asEagerSingleton();
                   }
 
                   @SuppressWarnings("unused")
@@ -414,12 +430,13 @@ public class PCSBlobStoreTest {
                   public PCSUtil getPCSUtil() {
                      return new PCSUtil() {
 
-                        public String get(URI resource) {
+                        public Future<Void> put(URI resource, String value) {
                            return null;
                         }
 
-                        public boolean put(URI resource, String value) {
-                           return true;
+                        public Future<Void> addEntryToMultiMap(Multimap<String, String> map,
+                                 String key, URI value) {
+                           return null;
                         }
 
                      };

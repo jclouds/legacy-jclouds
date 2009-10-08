@@ -88,7 +88,7 @@ public class PCSContextModule extends AbstractModule {
    @Provides
    @Singleton
    public ConcurrentMap<String, String> provideConcurrentMap(FindIdInContainerList finder) {
-      return new MapMaker().concurrencyLevel(32).expiration(30, TimeUnit.SECONDS).makeComputingMap(
+      return new MapMaker().expiration(30, TimeUnit.SECONDS).makeComputingMap(
                finder);
    }
 

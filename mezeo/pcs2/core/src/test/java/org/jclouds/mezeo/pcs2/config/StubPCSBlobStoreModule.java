@@ -35,6 +35,7 @@ import org.jclouds.mezeo.pcs2.PCSConnection;
 import org.jclouds.mezeo.pcs2.domain.ContainerMetadata;
 import org.jclouds.mezeo.pcs2.domain.FileMetadata;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
+import org.jclouds.mezeo.pcs2.endpoints.RootContainer;
 import org.jclouds.mezeo.pcs2.internal.StubPCSConnection;
 
 import com.google.inject.AbstractModule;
@@ -58,6 +59,7 @@ public class StubPCSBlobStoreModule extends AbstractModule {
       }).asEagerSingleton();
       bind(PCSConnection.class).to(StubPCSConnection.class).asEagerSingleton();
       bind(URI.class).annotatedWith(PCS.class).toInstance(URI.create("https://localhost/pcsblob"));
+      bind(URI.class).annotatedWith(RootContainer.class).toInstance(
+               URI.create("http://localhost/root"));
    }
-
 }

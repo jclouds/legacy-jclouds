@@ -63,6 +63,8 @@ public class FileListToContainerMetadataListHandlerTest extends BaseHandlerTest 
                         "test1",
                         URI
                                  .create("https://pcsbeta.mezeo.net/v2/containers/7F143552-AAF5-11DE-BBB0-0BC388ED913B"),
+                        URI
+                                 .create("https://pcsbeta.mezeo.net/v2/containers/0B5C8F50-8E72-11DE-A1D4-D73479DA6257"),
                         dateService.fromSeconds(1254008225), dateService.fromSeconds(1254008226),
                         dateService.fromSeconds(1254008227), "adrian@jclouds.org", true, false, 1,
                         1024));

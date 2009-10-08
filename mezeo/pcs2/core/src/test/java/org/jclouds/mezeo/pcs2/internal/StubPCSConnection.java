@@ -41,31 +41,48 @@ import org.jclouds.mezeo.pcs2.domain.PCSFile;
  */
 public class StubPCSConnection implements PCSConnection {
 
+   public Future<URI> createContainer(String container) {
+      throw new UnsupportedOperationException();
+
+   }
+
+   public Future<URI> createContainer(URI parent, String container) {
+      throw new UnsupportedOperationException();
+
+   }
+
    public Future<Void> deleteContainer(URI container) {
       throw new UnsupportedOperationException();
+
    }
 
    public Future<Void> deleteFile(URI file) {
       throw new UnsupportedOperationException();
+
    }
 
    public Future<InputStream> downloadFile(URI file) {
       throw new UnsupportedOperationException();
-   }
 
-   public Future<? extends SortedSet<FileMetadata>> listFiles(URI container) {
-      throw new UnsupportedOperationException();
-   }
-
-   public Future<URI> uploadFile(URI container, PCSFile object) {
-      throw new UnsupportedOperationException();
-   }
-
-   public Future<URI> createContainer(String container) {
-      throw new UnsupportedOperationException();
    }
 
    public SortedSet<ContainerMetadata> listContainers() {
       throw new UnsupportedOperationException();
+
+   }
+
+   public Future<? extends SortedSet<ContainerMetadata>> listContainers(URI container) {
+      throw new UnsupportedOperationException();
+
+   }
+
+   public Future<? extends SortedSet<FileMetadata>> listFiles(URI container) {
+      throw new UnsupportedOperationException();
+
+   }
+
+   public Future<URI> uploadFile(URI container, PCSFile object) {
+      throw new UnsupportedOperationException();
+
    }
 }

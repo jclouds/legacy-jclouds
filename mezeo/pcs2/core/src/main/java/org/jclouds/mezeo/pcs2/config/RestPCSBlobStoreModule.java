@@ -52,6 +52,7 @@ import org.jclouds.mezeo.pcs2.endpoints.Recyclebin;
 import org.jclouds.mezeo.pcs2.endpoints.RootContainer;
 import org.jclouds.mezeo.pcs2.endpoints.Shares;
 import org.jclouds.mezeo.pcs2.endpoints.Tags;
+import org.jclouds.mezeo.pcs2.endpoints.WebDAV;
 import org.jclouds.mezeo.pcs2.handlers.PCSClientErrorRetryHandler;
 import org.jclouds.mezeo.pcs2.reference.PCSConstants;
 import org.jclouds.rest.RestClientFactory;
@@ -99,7 +100,8 @@ public class RestPCSBlobStoreModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected  BlobStore<ContainerMetadata, FileMetadata, PCSFile> provideBlobStore(RestClientFactory factory) {
+   protected BlobStore<ContainerMetadata, FileMetadata, PCSFile> provideBlobStore(
+            RestClientFactory factory) {
       return factory.create(PCSBlobStore.class);
    }
 
@@ -115,6 +117,13 @@ public class RestPCSBlobStoreModule extends AbstractModule {
    protected URI provideAuthenticationURI(
             @Named(PCSConstants.PROPERTY_PCS2_ENDPOINT) String endpoint) {
       return URI.create(endpoint);
+   }
+
+   @Provides
+   @Singleton
+   @WebDAV
+   protected URI provideWebDAVURI(@Named(PCSConstants.PROPERTY_PCS2_ENDPOINT) String endpoint) {
+      return URI.create(endpoint.replaceAll("v2", "dav"));
    }
 
    @Provides

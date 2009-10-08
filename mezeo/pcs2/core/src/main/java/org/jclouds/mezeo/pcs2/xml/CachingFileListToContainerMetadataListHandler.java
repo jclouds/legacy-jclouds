@@ -21,41 +21,37 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.mezeo.pcs2;
+package org.jclouds.mezeo.pcs2.xml;
 
-import java.net.URI;
-import java.util.concurrent.Future;
+import java.util.SortedSet;
+import java.util.concurrent.ConcurrentMap;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
+import javax.inject.Inject;
 
-import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.mezeo.pcs2.functions.AddEntryIntoMultiMap;
-import org.jclouds.rest.Endpoint;
-import org.jclouds.rest.EntityParam;
-import org.jclouds.rest.RequestFilters;
-import org.jclouds.rest.ResponseParser;
-import org.jclouds.rest.SkipEncoding;
-
-import com.google.common.collect.Multimap;
+import org.jclouds.mezeo.pcs2.domain.ContainerMetadata;
+import org.jclouds.mezeo.pcs2.util.PCSUtils;
+import org.jclouds.util.DateService;
 
 /**
- * Provides access to Mezeo PCS v2 via their REST API.
- * <p/>
- * 
- * @see <a href=
- *      "http://developer.mezeo.com/mezeo-developer-center/documentation/howto-using-curl-to-access-api"
- *      />
  * @author Adrian Cole
  */
-@SkipEncoding('/')
-@RequestFilters(BasicAuthentication.class)
-public interface PCSUtil {
+public class CachingFileListToContainerMetadataListHandler extends
+         FileListToContainerMetadataListHandler {
+   private final ConcurrentMap<String, String> cache;
 
-   @PUT
-   Future<Void> put(@Endpoint URI resource, @EntityParam String value);
+   @Inject
+   public CachingFileListToContainerMetadataListHandler(ConcurrentMap<String, String> cache,
+            DateService dateParser) {
+      super(dateParser);
+      this.cache = cache;
+   }
 
-   @GET
-   @ResponseParser(AddEntryIntoMultiMap.class)
-   Future<Void> addEntryToMultiMap(Multimap<String, String> map, String key, @Endpoint URI value);
+   @Override
+   public SortedSet<ContainerMetadata> getResult() {
+      SortedSet<ContainerMetadata> result = super.getResult();
+      for (ContainerMetadata md : result) {
+         cache.put(md.getName(), PCSUtils.getContainerId(md.getUrl()));
+      }
+      return result;
+   }
 }

@@ -77,6 +77,11 @@ public interface PCSConnection {
    @Endpoint(RootContainer.class)
    Future<URI> createContainer(@EntityParam(CreateContainerBinder.class) String container);
 
+
+   @POST
+   @Path("/contents")
+   Future<URI> createContainer(@Endpoint URI parent, @EntityParam(CreateContainerBinder.class) String container);
+   
    @DELETE
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    Future<Void> deleteContainer(@Endpoint URI container);
@@ -86,6 +91,12 @@ public interface PCSConnection {
    @Headers(keys = "X-Cloud-Depth", values = "2")
    @Path("/contents")
    Future<? extends SortedSet<FileMetadata>> listFiles(@Endpoint URI container);
+
+   @GET
+   @XMLResponseParser(FileListToContainerMetadataListHandler.class)
+   @Headers(keys = "X-Cloud-Depth", values = "2")
+   @Path("/contents")
+   Future<? extends SortedSet<ContainerMetadata>> listContainers(@Endpoint URI container);
 
    @POST
    @Path("/contents")

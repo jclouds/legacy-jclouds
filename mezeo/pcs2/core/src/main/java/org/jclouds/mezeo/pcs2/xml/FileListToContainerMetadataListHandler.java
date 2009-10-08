@@ -26,9 +26,11 @@ package org.jclouds.mezeo.pcs2.xml;
 import java.net.URI;
 import java.util.SortedSet;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
 
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.logging.Logger;
 import org.jclouds.mezeo.pcs2.domain.ContainerMetadata;
 import org.jclouds.util.DateService;
 import org.joda.time.DateTime;
@@ -42,6 +44,20 @@ import com.google.common.collect.Sets;
  */
 public class FileListToContainerMetadataListHandler extends
          ParseSax.HandlerWithResult<SortedSet<ContainerMetadata>> {
+
+   @Override
+   public String toString() {
+      return "FileListToContainerMetadataListHandler [containerMetadata=" + containerMetadata
+               + ", currentAccessed=" + currentAccessed + ", currentBytes=" + currentBytes
+               + ", currentCreated=" + currentCreated + ", currentInproject=" + currentInproject
+               + ", currentModified=" + currentModified + ", currentName=" + currentName
+               + ", currentOwner=" + currentOwner + ", currentShared=" + currentShared
+               + ", currentText=" + currentText + ", currentUrl=" + currentUrl
+               + ", currentVersion=" + currentVersion + ", dateParser=" + dateParser + "]";
+   }
+
+   @Resource
+   protected Logger logger = Logger.NULL;
 
    private SortedSet<ContainerMetadata> containerMetadata = Sets.newTreeSet();
    private URI currentUrl;
@@ -59,6 +75,11 @@ public class FileListToContainerMetadataListHandler extends
 
    private final DateService dateParser;
 
+   boolean inContainer = false;
+   boolean ignore = false;
+
+   private URI currentParent;
+
    @Inject
    public FileListToContainerMetadataListHandler(DateService dateParser) {
       this.dateParser = dateParser;
@@ -72,16 +93,54 @@ public class FileListToContainerMetadataListHandler extends
    public void startElement(String uri, String localName, String qName, Attributes attributes)
             throws SAXException {
       if (qName.equals("container")) {
+         if (inContainer) {
+            ignore = true;
+            return;
+         }
+         inContainer = true;
          int index = attributes.getIndex("xlink:href");
          if (index != -1) {
             currentUrl = URI.create(attributes.getValue(index));
+         }
+      } else if (qName.equals("parent") && !ignore) {
+         int index = attributes.getIndex("xlink:href");
+         if (index != -1) {
+            currentParent = URI.create(attributes.getValue(index));
          }
       }
    }
 
    @Override
    public void endElement(String uri, String name, String qName) {
-      if (qName.equals("name")) {
+      if (ignore) {
+         currentText = new StringBuilder();
+         if (qName.equals("container")) {
+            ignore = false;
+         }
+         return;
+      }
+      if (qName.equals("container")) {
+         inContainer = false;
+         try {
+            containerMetadata.add(new ContainerMetadata(currentName, currentUrl, currentParent,
+                     currentCreated, currentModified, currentAccessed, currentOwner, currentShared,
+                     currentInproject, currentVersion, currentBytes));
+         } catch (RuntimeException e) {
+            logger.error(e, "error creating object!  current state %s", this);
+            throw e;
+         }
+         currentUrl = null;
+         currentParent = null;
+         currentName = null;
+         currentCreated = null;
+         currentInproject = false;
+         currentModified = null;
+         currentOwner = null;
+         currentVersion = 0;
+         currentShared = false;
+         currentAccessed = null;
+         currentBytes = 0;
+      } else if (qName.equals("name")) {
          currentName = currentText.toString().trim();
       } else if (qName.equals("created")) {
          currentCreated = dateParser.fromSeconds(Long.parseLong(currentText.toString().trim()));
@@ -99,21 +158,6 @@ public class FileListToContainerMetadataListHandler extends
          currentAccessed = dateParser.fromSeconds(Long.parseLong(currentText.toString().trim()));
       } else if (qName.equals("bytes")) {
          currentBytes = Long.parseLong(currentText.toString().trim());
-      } else if (qName.equals("container")) {
-         containerMetadata.add(new ContainerMetadata(currentName, currentUrl, currentCreated,
-                  currentModified, currentAccessed, currentOwner, currentShared, currentInproject,
-                  currentVersion, currentBytes));
-         currentUrl = null;
-         currentName = null;
-         currentCreated = null;
-         currentInproject = false;
-         currentModified = null;
-         currentOwner = null;
-         currentVersion = 0;
-         currentShared = false;
-         currentAccessed = null;
-         currentBytes = 0;
-
       }
       currentText = new StringBuilder();
    }

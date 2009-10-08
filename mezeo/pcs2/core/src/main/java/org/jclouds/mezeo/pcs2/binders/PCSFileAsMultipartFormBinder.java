@@ -35,6 +35,8 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.MultipartForm;
 import org.jclouds.http.MultipartForm.Part;
+import org.jclouds.mezeo.pcs2.functions.Key;
+import org.jclouds.mezeo.pcs2.util.PCSUtils;
 import org.jclouds.rest.binders.EntityBinder;
 
 import com.google.common.collect.ImmutableMultimap;
@@ -50,12 +52,11 @@ public class PCSFileAsMultipartFormBinder implements EntityBinder {
 
    public void addEntityToRequest(Object entity, HttpRequest request) {
       Blob<?> object = (Blob<?>) entity;
-
-      Multimap<String, String> partHeaders = ImmutableMultimap.of("Content-Disposition",
-               String.format("form-data; name=\"%s\"; filename=\"%s\"", object.getKey(), object
-                        .getKey()), HttpHeaders.CONTENT_TYPE, checkNotNull(object.getMetadata()
-                        .getContentType(), "object.metadata.contentType()"));
-
+      Key key = PCSUtils.parseKey(new Key("junk", object.getKey()));
+      Multimap<String, String> partHeaders = ImmutableMultimap.of("Content-Disposition", String
+               .format("form-data; name=\"%s\"; filename=\"%s\"", key.getKey(), key.getKey()),
+               HttpHeaders.CONTENT_TYPE, checkNotNull(object.getMetadata().getContentType(),
+                        "object.metadata.contentType()"));
       Object data = checkNotNull(object.getData(), "object.getData()");
 
       Part part;

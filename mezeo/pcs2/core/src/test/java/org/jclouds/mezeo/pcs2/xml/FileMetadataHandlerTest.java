@@ -23,14 +23,12 @@
  */
 package org.jclouds.mezeo.pcs2.xml;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.net.URI;
+import java.util.concurrent.Future;
 
 import javax.inject.Singleton;
 import javax.ws.rs.core.MediaType;
@@ -42,6 +40,7 @@ import org.jclouds.util.DateService;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.Multimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
@@ -54,7 +53,6 @@ import com.google.inject.Provides;
 public class FileMetadataHandlerTest extends BaseHandlerTest {
 
    private DateService dateService;
-   private PCSUtil util;
 
    @BeforeTest
    @Override
@@ -66,19 +64,23 @@ public class FileMetadataHandlerTest extends BaseHandlerTest {
          protected void configure() {
          }
 
-         @SuppressWarnings("unused")
+         @SuppressWarnings( { "unused", "unchecked" })
          @Singleton
          @Provides
          PCSUtil provideUtil() {
-            util = createMock(PCSUtil.class);
-            // Note that we should convert uppercase to lowercase!
-            expect(
-                     util
-                              .get(URI
-                                       .create("https://pcsbeta.mezeo.net/v2/files/9E4C5AFA-A98B-11DE-8B4C-C3884B4A2DA3/metadata/Foo")))
-                     .andReturn("bar");
-            replay(util);
-            return util;
+            final Future<Void> voidF = createMock(Future.class);
+            return new PCSUtil() {
+               public Future<Void> addEntryToMultiMap(Multimap<String, String> map, String key,
+                        URI value) {
+                  map.put(key.toLowerCase(), "bar");
+                  return voidF;
+               }
+
+               public Future<Void> put(URI resource, String value) {
+                  return null;
+               }
+
+            };
          }
 
       });
@@ -96,10 +98,8 @@ public class FileMetadataHandlerTest extends BaseHandlerTest {
                MediaType.TEXT_PLAIN, false);
       // Note that we should convert uppercase to lowercase, since most clouds do anyway
       expects.getUserMetadata().put("foo", "bar");
-
       FileMetadata result = (FileMetadata) factory.create(
                injector.getInstance(FileMetadataHandler.class)).parse(is);
-      verify(util);
 
       assertEquals(result, expects);
    }

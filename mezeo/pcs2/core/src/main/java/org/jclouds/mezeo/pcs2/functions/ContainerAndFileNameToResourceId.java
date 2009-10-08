@@ -59,9 +59,9 @@ public class ContainerAndFileNameToResourceId implements Function<Object, String
       Object[] args = (Object[]) from;
       checkArgument(args[0] instanceof String, "arg[0] must be a container name");
       checkArgument(args[1] instanceof String, "arg[1] must be a pcsfile name (key)");
-
       String container = args[0].toString();
       String key = args[1].toString();
+
       try {
          return cachedFinder.get(new Key(container, key));
       } catch (ComputationException e) {

@@ -35,6 +35,7 @@ import org.joda.time.DateTime;
 public class ContainerMetadata extends org.jclouds.blobstore.domain.ContainerMetadata implements
          PCSObject {
    private URI url;
+   private URI parent;
    private DateTime created;
    private DateTime lastModified;
    private DateTime accessed;
@@ -46,15 +47,15 @@ public class ContainerMetadata extends org.jclouds.blobstore.domain.ContainerMet
 
    @Override
    public String toString() {
-      return "ContainerMetadata [name=" + name + ", url=" + url + ", accessed=" + accessed
-               + ", bytes=" + bytes + ", created=" + created + ", isInProject=" + isInProject
-               + ", isShared=" + isShared + ", lastModified=" + lastModified + ", owner=" + owner
-               + ", version=" + version + "]";
+      return "ContainerMetadata [name=" + name + ", url=" + url + ", parent=" + parent + ", owner="
+               + owner + ", version=" + version + ", bytes=" + bytes + ", isInProject="
+               + isInProject + ", isShared=" + isShared + ", created=" + created
+               + ", lastModified=" + lastModified + ", accessed=" + accessed + "]";
    }
 
    @Override
    public int hashCode() {
-      int prime = 31;
+      final int prime = 31;
       int result = super.hashCode();
       result = prime * result + ((accessed == null) ? 0 : accessed.hashCode());
       result = prime * result + (int) (bytes ^ (bytes >>> 32));
@@ -63,6 +64,7 @@ public class ContainerMetadata extends org.jclouds.blobstore.domain.ContainerMet
       result = prime * result + (isShared ? 1231 : 1237);
       result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
       result = prime * result + ((owner == null) ? 0 : owner.hashCode());
+      result = prime * result + ((parent == null) ? 0 : parent.hashCode());
       result = prime * result + ((url == null) ? 0 : url.hashCode());
       result = prime * result + version;
       return result;
@@ -103,6 +105,11 @@ public class ContainerMetadata extends org.jclouds.blobstore.domain.ContainerMet
             return false;
       } else if (!owner.equals(other.owner))
          return false;
+      if (parent == null) {
+         if (other.parent != null)
+            return false;
+      } else if (!parent.equals(other.parent))
+         return false;
       if (url == null) {
          if (other.url != null)
             return false;
@@ -112,15 +119,16 @@ public class ContainerMetadata extends org.jclouds.blobstore.domain.ContainerMet
          return false;
       return true;
    }
-
+   
    public ContainerMetadata() {
       super();
    }
-
-   public ContainerMetadata(String name, URI url, DateTime created, DateTime lastModified,
-            DateTime accessed, String owner, boolean isShared, boolean isInProject, int version,
-            long bytes) {
+   
+   public ContainerMetadata(String name, URI url, URI parent, DateTime created,
+            DateTime lastModified, DateTime accessed, String owner, boolean isShared,
+            boolean isInProject, int version, long bytes) {
       super(name);
+      this.setParent(parent);
       this.url = url;
       this.created = created;
       this.lastModified = lastModified;
@@ -166,6 +174,14 @@ public class ContainerMetadata extends org.jclouds.blobstore.domain.ContainerMet
 
    public long getSize() {
       return bytes;
+   }
+
+   public void setParent(URI parent) {
+      this.parent = parent;
+   }
+
+   public URI getParent() {
+      return parent;
    }
 
 }

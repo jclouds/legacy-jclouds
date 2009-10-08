@@ -50,7 +50,7 @@ public class PCSBlobStoreIntegrationTest extends
       assertEquals(metadata.getSize(), TEST_STRING.length());
       assertEquals(metadata.getUserMetadata().get("adrian"), Collections
                .singletonList("powderpuff"));
-      // Content-MD5 not supported http://code.google.com/p/jclouds/issues/detail?id=105
+      // Issue 105
       // assertEquals(metadata.getContentMD5(), HttpUtils.md5(TEST_STRING.getBytes()));
    }
 
@@ -58,62 +58,64 @@ public class PCSBlobStoreIntegrationTest extends
    @Test(enabled = false)
    public void testGetIfMatch() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
-      // etag not supported http://code.google.com/p/jclouds/issues/detail?id=105
+      // Issue 105
    }
 
    @Override
    @Test(enabled = false)
    public void testGetIfModifiedSince() throws InterruptedException, ExecutionException,
             TimeoutException, IOException {
-      // unsupported
+      // Issue 105
    }
 
    @Override
    @Test(enabled = false)
    public void testGetIfNoneMatch() throws InterruptedException, ExecutionException,
             TimeoutException, IOException {
-      // etag not supported http://code.google.com/p/jclouds/issues/detail?id=105
+      // Issue 105
    }
 
    @Override
    @Test(enabled = false)
    public void testGetIfUnmodifiedSince() throws InterruptedException, ExecutionException,
             TimeoutException, IOException {
-      // unsupported
+      // Issue 105
    }
 
    @Override
    @Test(enabled = false)
    public void testGetRange() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
-      // unsupported http://code.google.com/p/jclouds/issues/detail?id=106
+      // Issue 106, Mezeo defect 2644
    }
 
    @Override
    @Test(enabled = false)
    public void testGetStartAt() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
-      // unsupported http://code.google.com/p/jclouds/issues/detail?id=106
+      // Issue 106, Mezeo defect 2644
    }
 
    @Override
    @Test(enabled = false)
    public void testGetTail() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
-      // unsupported http://code.google.com/p/jclouds/issues/detail?id=106
+      // Issue 106, Mezeo defect 2644
    }
 
    @Override
    @Test(enabled = false)
    public void testGetTwoRanges() throws InterruptedException, ExecutionException,
             TimeoutException, IOException {
-      // unsupported http://code.google.com/p/jclouds/issues/detail?id=106
+      // Issue 106, Mezeo defect 2644
    }
 
    @DataProvider(name = "delete")
    @Override
-   public Object[][] createData() {
-      return new Object[][] { { "normal" } };
+   // normal constraints: The characters \ / : * ? " < > and | cannot be used in names.
+   public Object[][] createData() {// unicode Issue 110, Mezeo defect: 2675
+      // slashes are supported, as they are a part of filepaths which we use nested container to
+      // create.
+      return new Object[][] { { "normal" }, { "sp ace" }, { "path/foo" } };
    }
-
 }

@@ -27,12 +27,18 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Set;
 import java.util.Map.Entry;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.ws.rs.core.UriBuilder;
 
+import org.jclouds.blobstore.internal.BlobRuntimeException;
+import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
@@ -44,6 +50,7 @@ import org.jclouds.rest.RestContext;
 import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Sets;
 
 /**
  * PCS does not return an eTag header. As such, we'll make one out of the object id.
@@ -57,6 +64,13 @@ public class AddMetadataAndParseResourceIdIntoBytes implements Function<HttpResp
    protected Logger logger = Logger.NULL;
    private Object[] args;
    private HttpRequest request;
+
+   /**
+    * maximum duration of an blob Request
+    */
+   @Inject(optional = true)
+   @Named(BlobStoreConstants.PROPERTY_BLOBSTORE_TIMEOUT)
+   protected long requestTimeoutMilliseconds = 30000;
 
    @Inject
    public AddMetadataAndParseResourceIdIntoBytes(PCSUtil util) {
@@ -77,11 +91,22 @@ public class AddMetadataAndParseResourceIdIntoBytes implements Function<HttpResp
          String toParse = Utils.toStringAndClose(from.getContent());
          logger.trace("%s: received the following response: %s", from, toParse);
          URI uri = URI.create(toParse.trim());
+
+         Set<Future<Void>> puts = Sets.newHashSet();
          for (Entry<String, String> entry : file.getMetadata().getUserMetadata().entries()) {
             URI key = UriBuilder.fromUri(uri).path(String.format("metadata/%s", entry.getKey()))
                      .build();
-            util.put(key, entry.getValue());
+            puts.add(util.put(key, entry.getValue()));
          }
+         for (Future<Void> put : puts) {
+            try {
+               put.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
+            } catch (Exception e) {
+               Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
+               throw new BlobRuntimeException("Error putting metadata for file: " + file, e);
+            }
+         }
+
          return PCSUtils.getEtag(uri);
       } catch (IOException e) {
          throw new HttpResponseException("couldn't parse url from response", null, from, e);

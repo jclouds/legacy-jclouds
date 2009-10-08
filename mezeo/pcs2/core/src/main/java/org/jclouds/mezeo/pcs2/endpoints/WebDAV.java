@@ -21,41 +21,24 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.mezeo.pcs2;
+package org.jclouds.mezeo.pcs2.endpoints;
 
-import java.net.URI;
-import java.util.concurrent.Future;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-
-import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.mezeo.pcs2.functions.AddEntryIntoMultiMap;
-import org.jclouds.rest.Endpoint;
-import org.jclouds.rest.EntityParam;
-import org.jclouds.rest.RequestFilters;
-import org.jclouds.rest.ResponseParser;
-import org.jclouds.rest.SkipEncoding;
-
-import com.google.common.collect.Multimap;
+import javax.inject.Qualifier;
 
 /**
- * Provides access to Mezeo PCS v2 via their REST API.
- * <p/>
+ * Related to a resource of type WebDAV
  * 
- * @see <a href=
- *      "http://developer.mezeo.com/mezeo-developer-center/documentation/howto-using-curl-to-access-api"
- *      />
  * @author Adrian Cole
+ * 
  */
-@SkipEncoding('/')
-@RequestFilters(BasicAuthentication.class)
-public interface PCSUtil {
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Qualifier
+public @interface WebDAV {
 
-   @PUT
-   Future<Void> put(@Endpoint URI resource, @EntityParam String value);
-
-   @GET
-   @ResponseParser(AddEntryIntoMultiMap.class)
-   Future<Void> addEntryToMultiMap(Multimap<String, String> map, String key, @Endpoint URI value);
 }

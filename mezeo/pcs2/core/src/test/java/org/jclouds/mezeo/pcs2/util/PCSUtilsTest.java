@@ -28,6 +28,7 @@ import static org.testng.Assert.assertEquals;
 import java.net.URI;
 
 import org.jclouds.http.HttpUtils;
+import org.jclouds.mezeo.pcs2.functions.Key;
 import org.testng.annotations.Test;
 
 /**
@@ -43,5 +44,18 @@ public class PCSUtilsTest {
       byte[] eTag = PCSUtils.getEtag(URI
                .create("http://localhost/contents/7F143552-AAF5-11DE-BBB0-0BC388ED913B"));
       assertEquals(eTag, expected);
+   }
+
+   public void testParseKey() {
+      Key key = PCSUtils.parseKey(new Key("container", "key"));
+      assertEquals(key.getContainer(), "container");
+      assertEquals(key.getKey(), "key");
+      key = PCSUtils.parseKey(new Key("container", "container/key"));
+      assertEquals(key.getContainer(), "container/container");
+      assertEquals(key.getKey(), "key");
+      key = PCSUtils.parseKey(new Key("container", "/container/key"));
+      assertEquals(key.getContainer(), "container/container");
+      assertEquals(key.getKey(), "key");
+
    }
 }

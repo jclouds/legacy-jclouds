@@ -102,14 +102,14 @@ public class PCSConnectionLiveTest {
    public void testObjectOperations() throws Exception {
       String containerName = containerPrefix + ".testObjectOperations";
       String data = "Here is my data";
-
+      
       URI container = connection.createContainer(containerName).get(10, TimeUnit.SECONDS);
 
       // Test PUT with string data, ETag hash, and a piece of metadata
       PCSFile object = new PCSFile("object");
       object.setData(data);
       object.setContentLength(data.length());
-      URI objectURI = connection.uploadFile(container, object).get(10, TimeUnit.SECONDS);
+      URI objectURI = connection.uploadFile(container, object).get(30, TimeUnit.SECONDS);
 
       try {
          connection.downloadFile(UriBuilder.fromUri(objectURI).path("sad").build()).get(10,

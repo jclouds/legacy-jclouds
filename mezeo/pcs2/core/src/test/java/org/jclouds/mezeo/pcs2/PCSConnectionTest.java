@@ -33,6 +33,7 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Future;
 
 import javax.inject.Singleton;
 import javax.ws.rs.HttpMethod;
@@ -58,6 +59,7 @@ import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.Multimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -126,6 +128,23 @@ public class PCSConnectionTest {
 
    public void testListFiles() throws SecurityException, NoSuchMethodException {
       Method method = PCSConnection.class.getMethod("listFiles", URI.class);
+
+      HttpRequest httpMethod = processor.createRequest(method, new Object[] { URI
+               .create("http://localhost/mycontainer") });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/mycontainer/contents");
+      assertEquals(httpMethod.getEndpoint().getQuery(), null);
+      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
+      assertEquals(httpMethod.getHeaders().size(), 1);
+      assertEquals(httpMethod.getHeaders().get("X-Cloud-Depth"), Collections.singletonList("2"));
+      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+               ParseSax.class);
+      // TODO check generic type of response parser
+      assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
+   }
+
+   public void testListContainersURI() throws SecurityException, NoSuchMethodException {
+      Method method = PCSConnection.class.getMethod("listContainers", URI.class);
 
       HttpRequest httpMethod = processor.createRequest(method, new Object[] { URI
                .create("http://localhost/mycontainer") });
@@ -214,12 +233,13 @@ public class PCSConnectionTest {
                   public PCSUtil getPCSUtil() {
                      return new PCSUtil() {
 
-                        public String get(URI resource) {
+                        public Future<Void> put(URI resource, String value) {
                            return null;
                         }
 
-                        public boolean put(URI resource, String value) {
-                           return true;
+                        public Future<Void> addEntryToMultiMap(Multimap<String, String> map,
+                                 String key, URI value) {
+                           return null;
                         }
 
                      };
