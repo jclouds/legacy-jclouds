@@ -28,6 +28,8 @@ import java.util.concurrent.Future;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.mezeo.pcs2.functions.AddEntryIntoMultiMap;
@@ -53,7 +55,10 @@ import com.google.common.collect.Multimap;
 public interface PCSUtil {
 
    @PUT
-   Future<Void> put(@Endpoint URI resource, @EntityParam String value);
+   @Endpoint(PCS.class)
+   @Path("/files/{fileResourceId}/metadata/{key}")
+   Future<Void> putMetadata(@PathParam("fileResourceId") String resourceId,
+            @PathParam("key") String key, @EntityParam String value);
 
    @GET
    @ResponseParser(AddEntryIntoMultiMap.class)

@@ -66,10 +66,10 @@ import org.jclouds.mezeo.pcs2.functions.AssembleBlobFromContentAndMetadataCache;
 import org.jclouds.mezeo.pcs2.functions.InvalidateContainerNameCacheAndReturnTrueIf2xx;
 import org.jclouds.mezeo.pcs2.functions.InvalidatePCSKeyCacheAndReturnVoidIf2xx;
 import org.jclouds.mezeo.pcs2.functions.ReturnFalseIfContainerNotFound;
+import org.jclouds.mezeo.pcs2.options.PutBlockOptions;
 import org.jclouds.rest.JaxrsAnnotationProcessor;
 import org.jclouds.rest.config.JaxrsModule;
 import org.jclouds.util.DateService;
-import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -193,6 +193,23 @@ public class PCSBlobStoreTest {
          throw new UnsupportedOperationException();
       }
 
+      public Future<Void> appendFile(URI file, PCSFile object) {
+         throw new UnsupportedOperationException();
+      }
+
+      public Future<URI> createFile(URI container, final PCSFile object) {
+         return new StubBlobStore.FutureBase<URI>() {
+
+            public URI get() throws InterruptedException, ExecutionException {
+               return URI.create("http://localhost/" + object.getKey());
+            }
+         };
+      }
+
+      public Future<Void> uploadBlock(URI file, PCSFile object, PutBlockOptions... options) {
+         throw new UnsupportedOperationException();
+      }
+
    }
 
    public void testListContainers() throws SecurityException, NoSuchMethodException {
@@ -285,18 +302,15 @@ public class PCSBlobStoreTest {
       HttpRequest httpMethod = processor.createRequest(method, new Object[] { "mycontainer",
                PCSFileAsMultipartFormBinderTest.TEST_BLOB });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
-      assertEquals(httpMethod.getEndpoint().getPath(),
-               "/containers/7F143552-AAF5-11DE-BBB0-0BC388ED913B/contents");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/files/o/content");
       assertEquals(httpMethod.getEndpoint().getQuery(), null);
-      assertEquals(httpMethod.getMethod(), HttpMethod.POST);
-      assertEquals(httpMethod.getHeaders().size(), 2);
+      assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
+      assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(PCSFileAsMultipartFormBinderTest.EXPECTS.length() + ""));
-      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
-               .singletonList("multipart/form-data; boundary="
-                        + PCSFileAsMultipartFormBinderTest.BOUNDRY));
-      assertEquals(Utils.toStringAndClose((InputStream) httpMethod.getEntity()),
-               PCSFileAsMultipartFormBinderTest.EXPECTS);
+               .singletonList(PCSFileAsMultipartFormBinderTest.TEST_BLOB.getData().toString()
+                        .getBytes().length
+                        + ""));
+      assertEquals(httpMethod.getEntity(), PCSFileAsMultipartFormBinderTest.TEST_BLOB.getData());
       assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
                AddMetadataAndParseResourceIdIntoBytes.class);
    }
@@ -334,15 +348,14 @@ public class PCSBlobStoreTest {
                ThrowKeyNotFoundOn404.class);
    }
 
-   public void testGetBlobOptios() throws SecurityException, NoSuchMethodException, IOException {
+   public void testGetBlobOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = PCSBlobStore.class.getMethod("getBlob", String.class, String.class,
                GetOptions.class);
 
       HttpRequest httpMethod = processor.createRequest(method, new Object[] { "mycontainer",
                "testfile.txt", new GetOptions() });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
-      assertEquals(httpMethod.getEndpoint().getPath(),
-               "/files/9E4C5AFA-A98B-11DE-8B4C-C3884B4A2DA3/content");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/webdav/mycontainer/testfile.txt");
       assertEquals(httpMethod.getEndpoint().getQuery(), null);
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
@@ -372,11 +385,12 @@ public class PCSBlobStoreTest {
    }
 
    public void testPutMetadata() throws SecurityException, NoSuchMethodException {
-      Method method = PCSUtil.class.getMethod("put", URI.class, String.class);
-      HttpRequest httpMethod = utilProcessor.createRequest(method, new Object[] {
-               URI.create("http://localhost/pow"), "bar" });
+      Method method = PCSUtil.class.getMethod("putMetadata", String.class, String.class,
+               String.class);
+      HttpRequest httpMethod = utilProcessor.createRequest(method, new Object[] { "id", "pow",
+               "bar" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/pow");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/files/id/metadata/pow");
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
       assertEquals(httpMethod.getHeaders().size(), 2);
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
@@ -430,12 +444,12 @@ public class PCSBlobStoreTest {
                   public PCSUtil getPCSUtil() {
                      return new PCSUtil() {
 
-                        public Future<Void> put(URI resource, String value) {
+                        public Future<Void> addEntryToMultiMap(Multimap<String, String> map,
+                                 String key, URI value) {
                            return null;
                         }
 
-                        public Future<Void> addEntryToMultiMap(Multimap<String, String> map,
-                                 String key, URI value) {
+                        public Future<Void> putMetadata(String resourceId, String key, String value) {
                            return null;
                         }
 

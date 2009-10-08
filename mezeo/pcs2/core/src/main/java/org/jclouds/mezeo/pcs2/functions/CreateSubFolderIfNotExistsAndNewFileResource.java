@@ -27,45 +27,38 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import java.util.Set;
-import java.util.Map.Entry;
+import java.net.URI;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
+import javax.ws.rs.core.UriBuilder;
 
-import org.apache.commons.io.IOUtils;
+import org.jclouds.blobstore.ContainerNotFoundException;
+import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpResponse;
-import org.jclouds.logging.Logger;
-import org.jclouds.mezeo.pcs2.PCSUtil;
+import org.jclouds.mezeo.pcs2.PCS;
+import org.jclouds.mezeo.pcs2.PCSConnection;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
 import org.jclouds.mezeo.pcs2.util.PCSUtils;
-import org.jclouds.rest.RestContext;
 import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Sets;
 
 /**
- * PCS does not return an eTag header. As such, we'll make one out of the object id.
  * 
  * @author Adrian Cole
  */
-public class AddMetadataAndParseResourceIdIntoBytes implements Function<HttpResponse, byte[]>,
-         RestContext {
-   private final PCSUtil util;
-   private final ConcurrentMap<Key, String> fileCache;
+@Singleton
+public class CreateSubFolderIfNotExistsAndNewFileResource implements Function<Object, String> {
 
-   @Resource
-   protected Logger logger = Logger.NULL;
-   private Object[] args;
-   private HttpRequest request;
+   private final PCSConnection connection;
+   private final URI pcs;
+   private final CreateSubFolderIfNotExistsAndGetResourceId subFolderMaker;
+   private final ConcurrentMap<Key, String> fileCache;
 
    /**
     * maximum duration of an blob Request
@@ -75,54 +68,37 @@ public class AddMetadataAndParseResourceIdIntoBytes implements Function<HttpResp
    protected long requestTimeoutMilliseconds = 30000;
 
    @Inject
-   public AddMetadataAndParseResourceIdIntoBytes(ConcurrentMap<Key, String> fileCache, PCSUtil util) {
+   public CreateSubFolderIfNotExistsAndNewFileResource(ConcurrentMap<Key, String> fileCache,
+            CreateSubFolderIfNotExistsAndGetResourceId subFolderMaker, PCSConnection connection,
+            @PCS URI pcs) {
       this.fileCache = fileCache;
-      this.util = util;
+      this.subFolderMaker = subFolderMaker;
+      this.connection = connection;
+      this.pcs = pcs;
    }
 
-   public byte[] apply(HttpResponse from) {
-      if (from.getStatusCode() > 204)
-         throw new BlobRuntimeException("Incorrect code for: " + from);
-      checkState(request != null, "request should be initialized at this point");
-      checkState(args != null, "args should be initialized at this point");
+   public String apply(Object from) {
+      checkState(checkNotNull(from, "args") instanceof Object[],
+               "this must be applied to a method!");
+      Object[] args = (Object[]) from;
       checkArgument(args[0] instanceof String, "arg[0] must be a container name");
       checkArgument(args[1] instanceof PCSFile, "arg[1] must be a pcsfile");
       String container = args[0].toString();
       PCSFile file = (PCSFile) args[1];
 
-      Key key = new Key(container, file.getKey());
-      String id = checkNotNull(fileCache.get(key), String.format(
-               "file %s should have an id in cache by now", key));
-
-      IOUtils.closeQuietly(from.getContent());
-
-      Set<Future<Void>> puts = Sets.newHashSet();
-      for (Entry<String, String> entry : file.getMetadata().getUserMetadata().entries()) {
-         puts.add(util.putMetadata(id, entry.getKey(), entry.getValue()));
+      try {
+         String containerId = subFolderMaker.apply(args);
+         URI containerUri = UriBuilder.fromUri(pcs).path("containers/" + containerId).build();
+         URI newFile = connection.createFile(containerUri, file).get(
+                  this.requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
+         String id = PCSUtils.getFileId(newFile);
+         fileCache.put(new Key(container, file.getKey()), id);
+         return id;
+      } catch (Exception e) {
+         Utils.<ContainerNotFoundException> rethrowIfRuntimeOrSameType(e);
+         Utils.<KeyNotFoundException> rethrowIfRuntimeOrSameType(e);
+         throw new BlobRuntimeException(String.format("error creating file %s in container %s",
+                  file, container), e);
       }
-      for (Future<Void> put : puts) {
-         try {
-            put.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
-         } catch (Exception e) {
-            Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
-            throw new BlobRuntimeException("Error putting metadata for file: " + file, e);
-         }
-      }
-
-      return PCSUtils.getETag(id);
    }
-
-   public Object[] getArgs() {
-      return args;
-   }
-
-   public HttpRequest getRequest() {
-      return request;
-   }
-
-   public void setContext(HttpRequest request, Object[] args) {
-      this.request = request;
-      this.args = args;
-   }
-
 }

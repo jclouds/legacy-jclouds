@@ -138,7 +138,7 @@ public class FileMetadata extends org.jclouds.blobstore.domain.BlobMetadata {
       this.isInProject = isInProject;
       this.version = version;
       this.isPublic = isPublic;
-      byte[] eTag = PCSUtils.getEtag(url);
+      byte[] eTag = PCSUtils.getETag(url);
       setETag(eTag);
    }
 

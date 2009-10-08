@@ -233,12 +233,12 @@ public class PCSConnectionTest {
                   public PCSUtil getPCSUtil() {
                      return new PCSUtil() {
 
-                        public Future<Void> put(URI resource, String value) {
+                        public Future<Void> addEntryToMultiMap(Multimap<String, String> map,
+                                 String key, URI value) {
                            return null;
                         }
 
-                        public Future<Void> addEntryToMultiMap(Multimap<String, String> map,
-                                 String key, URI value) {
+                        public Future<Void> putMetadata(String resourceId, String key, String value) {
                            return null;
                         }
 

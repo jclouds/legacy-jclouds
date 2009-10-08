@@ -37,8 +37,12 @@ public class PCSUtils {
    /**
     * converts the object id into something we can use as an etag
     */
-   public static byte[] getEtag(URI url) {
+   public static byte[] getETag(URI url) {
       String id = url.getPath().substring(url.getPath().lastIndexOf('/') + 1);
+      return getETag(id);
+   }
+
+   public static byte[] getETag(String id) {
       id = id.replaceAll("-", "");
       // parse url to create an "etag"
       byte[] eTag = HttpUtils.fromHexString(id);
@@ -50,7 +54,7 @@ public class PCSUtils {
       if (key.getKey().indexOf('/') != -1) {
          String container = key.getContainer() + '/'
                   + key.getKey().substring(0, key.getKey().lastIndexOf('/'));
-         String newKey = key.getKey().substring(key.getKey().lastIndexOf('/')+1);
+         String newKey = key.getKey().substring(key.getKey().lastIndexOf('/') + 1);
          key = new Key(container.replaceAll("//", "/"), newKey);
       }
       return key;
@@ -59,6 +63,12 @@ public class PCSUtils {
    public static String getContainerId(URI url) {
       String path = url.getPath();
       int indexAfterContainersSlash = path.indexOf("containers/") + "containers/".length();
+      return path.substring(indexAfterContainersSlash);
+   }
+
+   public static String getFileId(URI url) {
+      String path = url.getPath();
+      int indexAfterContainersSlash = path.indexOf("files/") + "files/".length();
       return path.substring(indexAfterContainersSlash);
    }
 }

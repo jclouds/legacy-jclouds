@@ -76,10 +76,9 @@ public class FileMetadataHandlerTest extends BaseHandlerTest {
                   return voidF;
                }
 
-               public Future<Void> put(URI resource, String value) {
+               public Future<Void> putMetadata(String resourceId, String key, String value) {
                   return null;
                }
-
             };
          }
 

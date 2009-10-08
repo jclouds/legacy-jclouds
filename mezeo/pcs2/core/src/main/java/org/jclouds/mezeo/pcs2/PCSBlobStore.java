@@ -29,6 +29,7 @@ import java.util.concurrent.Future;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
@@ -37,8 +38,8 @@ import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.options.GetOptions;
+import org.jclouds.mezeo.pcs2.binders.BlockBinder;
 import org.jclouds.mezeo.pcs2.binders.CreateContainerBinder;
-import org.jclouds.mezeo.pcs2.binders.PCSFileAsMultipartFormBinder;
 import org.jclouds.mezeo.pcs2.domain.ContainerMetadata;
 import org.jclouds.mezeo.pcs2.domain.FileMetadata;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
@@ -46,9 +47,9 @@ import org.jclouds.mezeo.pcs2.endpoints.RootContainer;
 import org.jclouds.mezeo.pcs2.endpoints.WebDAV;
 import org.jclouds.mezeo.pcs2.functions.AddMetadataAndParseResourceIdIntoBytes;
 import org.jclouds.mezeo.pcs2.functions.AssembleBlobFromContentAndMetadataCache;
-import org.jclouds.mezeo.pcs2.functions.CreateSubFolderIfNotExistsAndGetResourceId;
 import org.jclouds.mezeo.pcs2.functions.ContainerAndFileNameToResourceId;
 import org.jclouds.mezeo.pcs2.functions.ContainerNameToResourceId;
+import org.jclouds.mezeo.pcs2.functions.CreateSubFolderIfNotExistsAndNewFileResource;
 import org.jclouds.mezeo.pcs2.functions.InvalidateContainerNameCacheAndReturnTrueIf2xx;
 import org.jclouds.mezeo.pcs2.functions.InvalidatePCSKeyCacheAndReturnVoidIf2xx;
 import org.jclouds.mezeo.pcs2.functions.ReturnFalseIfContainerNotFound;
@@ -115,14 +116,24 @@ public interface PCSBlobStore extends BlobStore<ContainerMetadata, FileMetadata,
    Future<? extends SortedSet<FileMetadata>> listBlobs(
             @PathParam("containerResourceId") @ParamParser(ContainerNameToResourceId.class) String containerName);
 
-   @POST
-   @Path("/containers/{containerResourceId}/contents")
+
+   @PUT
+   @Path("/files/{fileResourceId}/content")
    @Endpoint(PCS.class)
    @ResponseParser(AddMetadataAndParseResourceIdIntoBytes.class)
-   @PathParam("containerResourceId")
-   @ParamParser(CreateSubFolderIfNotExistsAndGetResourceId.class)
+   @PathParam("fileResourceId")
+   @ParamParser(CreateSubFolderIfNotExistsAndNewFileResource.class)
    Future<byte[]> putBlob(String containerName,
-            @EntityParam(PCSFileAsMultipartFormBinder.class) PCSFile object);
+            @EntityParam(BlockBinder.class) PCSFile object);
+   
+//   @POST
+//   @Path("/containers/{containerResourceId}/contents")
+//   @Endpoint(PCS.class)
+//   @ResponseParser(AddMetadataAndParseResourceIdIntoBytes.class)
+//   @PathParam("containerResourceId")
+//   @ParamParser(CreateSubFolderIfNotExistsAndGetResourceId.class)
+//   Future<byte[]> putBlob(String containerName,
+//            @EntityParam(PCSFileAsMultipartFormBinder.class) PCSFile object);
 
    @DELETE
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
@@ -142,12 +153,10 @@ public interface PCSBlobStore extends BlobStore<ContainerMetadata, FileMetadata,
 
    @GET
    @ExceptionParser(ThrowKeyNotFoundOn404.class)
-   @Path("/files/{resourceId}/content")
-   @PathParam("resourceId")
-   @Endpoint(PCS.class)
-   @ParamParser(ContainerAndFileNameToResourceId.class)
+   @Path("{container}/{key}")
+   @Endpoint(WebDAV.class)
    @ResponseParser(AssembleBlobFromContentAndMetadataCache.class)
-   Future<PCSFile> getBlob(String container, String key, GetOptions options);
+   Future<PCSFile> getBlob(@PathParam("container") String container, @PathParam("key") String key, GetOptions options);
 
    @GET
    @ExceptionParser(ThrowKeyNotFoundOn404.class)

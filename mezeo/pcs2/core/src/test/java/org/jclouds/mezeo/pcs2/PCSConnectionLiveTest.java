@@ -24,6 +24,8 @@
 package org.jclouds.mezeo.pcs2;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.http.HttpUtils.calculateSize;
+import static org.jclouds.mezeo.pcs2.options.PutBlockOptions.Builder.range;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
@@ -102,7 +104,7 @@ public class PCSConnectionLiveTest {
    public void testObjectOperations() throws Exception {
       String containerName = containerPrefix + ".testObjectOperations";
       String data = "Here is my data";
-      
+
       URI container = connection.createContainer(containerName).get(10, TimeUnit.SECONDS);
 
       // Test PUT with string data, ETag hash, and a piece of metadata
@@ -127,6 +129,34 @@ public class PCSConnectionLiveTest {
          assertEquals(e.getCause().getClass(), HttpResponseException.class);
          assertEquals(((HttpResponseException) e.getCause()).getResponse().getStatusCode(), 422);
       }
+
+      connection.deleteFile(objectURI).get(10, TimeUnit.SECONDS);
+
+      // try sending it in 2 parts
+      object.getMetadata().setKey("sad");
+      objectURI = connection.createFile(container, object).get(30, TimeUnit.SECONDS);
+
+      object.setData(data.substring(0, 2));
+      object.getMetadata().setSize(calculateSize(object.getData()));
+      connection.uploadBlock(objectURI, object, range(0, 2)).get(30, TimeUnit.SECONDS);
+
+      object.setData(data.substring(2));
+      object.getMetadata().setSize(calculateSize(object.getData()));
+      connection.uploadBlock(objectURI, object, range(2, data.getBytes().length)).get(30,
+               TimeUnit.SECONDS);
+
+      file = connection.downloadFile(objectURI).get(120, TimeUnit.SECONDS);
+      assertEquals(IOUtils.toString(file), data);
+
+      // change data in an existing file
+      data = "Here is my datum";
+      object.setData(data.substring(2));
+      object.getMetadata().setSize(calculateSize(object.getData()));
+      connection.uploadBlock(objectURI, object, range(2, data.getBytes().length)).get(30,
+               TimeUnit.SECONDS);
+
+      file = connection.downloadFile(objectURI).get(120, TimeUnit.SECONDS);
+      assertEquals(IOUtils.toString(file), data);
 
       connection.deleteFile(objectURI).get(10, TimeUnit.SECONDS);
       connection.deleteContainer(container).get(10, TimeUnit.SECONDS);

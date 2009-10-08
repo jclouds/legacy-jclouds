@@ -31,6 +31,8 @@ import static org.easymock.classextension.EasyMock.verify;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Future;
 
 import javax.ws.rs.ext.RuntimeDelegate;
@@ -42,6 +44,7 @@ import org.jclouds.http.HttpUtils;
 import org.jclouds.mezeo.pcs2.PCSUtil;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
 import org.jclouds.rest.RuntimeDelegateImpl;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
@@ -55,23 +58,22 @@ public class AddMetadataAndParseResourceIdIntoBytesTest {
       RuntimeDelegate.setInstance(new RuntimeDelegateImpl());
    }
    HttpResponse response = new HttpResponse();
+   ConcurrentMap<Key, String> fileCache;
+
+   @BeforeClass
+   void setupMap() {
+      fileCache = new ConcurrentHashMap<Key, String>();
+      fileCache.put(new Key("container", "key"), "7F143552-AAF5-11DE-BBB0-0BC388ED913B");
+   }
 
    @SuppressWarnings("unchecked")
    PCSUtil createPCSUtil() {
       PCSUtil connection = createMock(PCSUtil.class);
       final Future<Void> voidF = createMock(Future.class);
-      expect(
-               connection
-                        .put(
-                                 eq(URI
-                                          .create("http://localhost/contents/7F143552-AAF5-11DE-BBB0-0BC388ED913B/metadata/foo")),
-                                 eq("bar"))).andReturn(voidF);
-      expect(
-               connection
-                        .put(
-                                 eq(URI
-                                          .create("http://localhost/contents/7F143552-AAF5-11DE-BBB0-0BC388ED913B/metadata/biz")),
-                                 eq("baz"))).andReturn(voidF);
+      expect(connection.putMetadata(eq("7F143552-AAF5-11DE-BBB0-0BC388ED913B"), eq("foo"), eq("bar")))
+               .andReturn(voidF);
+      expect(connection.putMetadata(eq("7F143552-AAF5-11DE-BBB0-0BC388ED913B"), eq("biz"), eq("baz")))
+               .andReturn(voidF);
       replay(connection);
       return connection;
    }
@@ -79,7 +81,7 @@ public class AddMetadataAndParseResourceIdIntoBytesTest {
    @Test(expectedExceptions = IllegalStateException.class)
    public void testNoArgs() {
       AddMetadataAndParseResourceIdIntoBytes function = new AddMetadataAndParseResourceIdIntoBytes(
-               createPCSUtil());
+               fileCache, createPCSUtil());
 
       function.apply(response);
    }
@@ -87,17 +89,17 @@ public class AddMetadataAndParseResourceIdIntoBytesTest {
    @Test(expectedExceptions = IllegalStateException.class)
    public void testNoRequest() {
       AddMetadataAndParseResourceIdIntoBytes function = new AddMetadataAndParseResourceIdIntoBytes(
-               createPCSUtil());
-      function.setContext(null, new Object[] { new PCSFile("key") });
+               fileCache, createPCSUtil());
+      function.setContext(null, new Object[] {"container", new PCSFile("key") });
       function.apply(response);
    }
 
    public void testGetEtag() {
       PCSUtil connection = createPCSUtil();
       AddMetadataAndParseResourceIdIntoBytes function = new AddMetadataAndParseResourceIdIntoBytes(
-               connection);
+               fileCache, connection);
       function.setContext(new HttpRequest("GET", URI.create("http://localhost:8080")),
-               new Object[] { new PCSFile("key") });
+               new Object[] { "container", new PCSFile("key") });
       response.setContent(IOUtils
                .toInputStream("http://localhost/contents/7F143552-AAF5-11DE-BBB0-0BC388ED913B"));
       byte[] eTag = function.apply(response);
@@ -109,13 +111,13 @@ public class AddMetadataAndParseResourceIdIntoBytesTest {
    public void testMetadataGetEtag() {
       PCSUtil connection = createPCSUtil();
       AddMetadataAndParseResourceIdIntoBytes function = new AddMetadataAndParseResourceIdIntoBytes(
-               connection);
+               fileCache, connection);
       PCSFile pcsFile = new PCSFile("key");
       pcsFile.getMetadata().getUserMetadata().put("foo", "bar");
       pcsFile.getMetadata().getUserMetadata().put("biz", "baz");
 
       function.setContext(new HttpRequest("GET", URI.create("http://localhost:8080")),
-               new Object[] { pcsFile });
+               new Object[] { "container", pcsFile });
       response.setContent(IOUtils
                .toInputStream("http://localhost/contents/7F143552-AAF5-11DE-BBB0-0BC388ED913B"));
       byte[] eTag = function.apply(response);

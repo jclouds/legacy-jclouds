@@ -124,6 +124,11 @@ public class PCSContextBuilder extends
    }
 
    @Override
+   public PCSContextBuilder withRequestTimeout(long milliseconds) {
+      return (PCSContextBuilder) super.withRequestTimeout(milliseconds);
+   }
+   
+   @Override
    public PCSContextBuilder withModules(Module... modules) {
       return (PCSContextBuilder) super.withModules(modules);
    }

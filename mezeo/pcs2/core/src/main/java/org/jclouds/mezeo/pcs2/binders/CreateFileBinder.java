@@ -21,41 +21,35 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.mezeo.pcs2.util;
+package org.jclouds.mezeo.pcs2.binders;
 
-import static org.testng.Assert.assertEquals;
+import java.util.Collections;
 
-import java.net.URI;
+import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.http.HttpUtils;
+import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.mezeo.pcs2.functions.Key;
-import org.testng.annotations.Test;
+import org.jclouds.mezeo.pcs2.util.PCSUtils;
+import org.jclouds.rest.binders.EntityBinder;
 
 /**
- * Tests behavior of {@code PCSUtils}
  * 
  * @author Adrian Cole
+ * 
  */
-@Test(groups = "unit", testName = "pcs2.PCSUtilsTest")
-public class PCSUtilsTest {
-   public void testGetEtag() {
-      byte[] expected = HttpUtils.fromHexString("7F143552AAF511DEBBB00BC388ED913B");
+public class CreateFileBinder implements EntityBinder {
 
-      byte[] eTag = PCSUtils.getETag(URI
-               .create("http://localhost/contents/7F143552-AAF5-11DE-BBB0-0BC388ED913B"));
-      assertEquals(eTag, expected);
-   }
-
-   public void testParseKey() {
-      Key key = PCSUtils.parseKey(new Key("container", "key"));
-      assertEquals(key.getContainer(), "container");
-      assertEquals(key.getKey(), "key");
-      key = PCSUtils.parseKey(new Key("container", "container/key"));
-      assertEquals(key.getContainer(), "container/container");
-      assertEquals(key.getKey(), "key");
-      key = PCSUtils.parseKey(new Key("container", "/container/key"));
-      assertEquals(key.getContainer(), "container/container");
-      assertEquals(key.getKey(), "key");
-
+   public void addEntityToRequest(Object toBind, HttpRequest request) {
+      Blob<?> blob = (Blob<?>) toBind;
+      String bareKey = PCSUtils.parseKey(new Key("trash", blob.getKey())).getKey();
+      String file = String.format(
+               "<file><name>%s</name><mime_type>%s</mime_type><public>false</public></file>",
+               bareKey, blob.getMetadata().getContentType());
+      request.setEntity(file);
+      request.getHeaders().replaceValues(HttpHeaders.CONTENT_LENGTH,
+               Collections.singletonList(file.getBytes().length + ""));
+      request.getHeaders().replaceValues(HttpHeaders.CONTENT_TYPE,
+               Collections.singletonList("application/vnd.csp.file-info+xml"));
    }
 }

@@ -38,6 +38,7 @@ import org.jclouds.mezeo.pcs2.PCSConnection;
 import org.jclouds.mezeo.pcs2.domain.ContainerMetadata;
 import org.jclouds.mezeo.pcs2.domain.FileMetadata;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
+import org.jclouds.mezeo.pcs2.options.PutBlockOptions;
 import org.jclouds.util.DateService;
 import org.testng.annotations.Test;
 
@@ -128,6 +129,14 @@ public class FindIdInContainerListTest {
 
       public Future<URI> uploadFile(URI container, PCSFile object) {
          return null;
+      }
+
+      public Future<URI> createFile(URI container, PCSFile object) {
+         return null;
+      }
+
+      public Future<Void> uploadBlock(URI file, PCSFile object, PutBlockOptions... options) {
+         throw new UnsupportedOperationException();
       }
 
    };
