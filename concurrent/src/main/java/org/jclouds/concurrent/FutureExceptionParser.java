@@ -28,6 +28,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.jclouds.logging.Logger;
+
 import com.google.common.base.Function;
 
 /**
@@ -39,10 +41,16 @@ public class FutureExceptionParser<T> implements Future<T> {
 
    private final Future<T> delegate;
    private final Function<Exception, T> function;
+   private final Logger logger;
 
    public FutureExceptionParser(Future<T> delegate, Function<Exception, T> function) {
+      this(delegate, function, Logger.NULL);
+   }
+
+   public FutureExceptionParser(Future<T> delegate, Function<Exception, T> function, Logger logger) {
       this.delegate = delegate;
       this.function = function;
+      this.logger = logger;
    }
 
    public boolean cancel(boolean mayInterruptIfRunning) {
@@ -59,7 +67,10 @@ public class FutureExceptionParser<T> implements Future<T> {
 
    private T attemptConvert(ExecutionException e) throws ExecutionException {
       if (e.getCause() instanceof Exception) {
+
+         logger.debug("Processing exception for: %s", e.getCause());
          T returnVal = function.apply((Exception) e.getCause());
+         logger.debug("Processed exception for: %s", e.getCause());
          if (returnVal != null)
             return returnVal;
       }

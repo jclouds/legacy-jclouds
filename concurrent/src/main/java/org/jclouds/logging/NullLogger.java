@@ -21,22 +21,73 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.concurrent;
-
-import java.util.concurrent.Executor;
+package org.jclouds.logging;
 
 /**
- * Executor that executes within the current thread. Useful in environments where starting threads
- * is prohibited.
+ * <tt>Logger</tt> that doesn't do anything.
+ * <p />
+ * Useful to get baseline performance unaffected by logging.
  * 
  * @author Adrian Cole
+ * 
  */
-@SingleThreadCompatible
-@SingleThreaded
-public class WithinThreadExecutor implements Executor {
+public class NullLogger implements Logger {
 
-   public void execute(Runnable command) {
-      command.run();
-   }
+    public void debug(String message, Object... args) {
 
+    }
+
+    public void error(String message, Object... args) {
+
+    }
+
+    public void error(Throwable throwable, String message, Object... args) {
+
+    }
+
+    public String getCategory() {
+
+	return null;
+    }
+
+    public void info(String message, Object... args) {
+
+    }
+
+    public boolean isDebugEnabled() {
+
+	return false;
+    }
+
+    public boolean isErrorEnabled() {
+
+	return false;
+    }
+
+    public boolean isInfoEnabled() {
+
+	return false;
+    }
+
+    public boolean isTraceEnabled() {
+
+	return false;
+    }
+
+    public boolean isWarnEnabled() {
+
+	return false;
+    }
+
+    public void trace(String message, Object... args) {
+
+    }
+
+    public void warn(String message, Object... args) {
+
+    }
+
+    public void warn(Throwable throwable, String message, Object... args) {
+
+    }
 }

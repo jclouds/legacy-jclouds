@@ -27,6 +27,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import org.jclouds.logging.Logger;
+
 import com.google.common.base.Function;
 
 /**
@@ -38,15 +40,25 @@ public class FutureFunctionCallable<F, T> implements Callable<T> {
 
    private final Future<F> future;
    private final Function<F, T> function;
+   private final Logger logger;
 
    public FutureFunctionCallable(Future<F> future, Function<F, T> function) {
+      this(future, function, Logger.NULL);
+   }
+
+   public FutureFunctionCallable(Future<F> future, Function<F, T> function, Logger logger) {
       this.future = future;
       this.function = function;
+      this.logger = logger;
    }
 
    public T call() throws Exception {
       try {
-         return function.apply(future.get());
+         F input = future.get();
+         logger.debug("Processing intermediate result for: %s", input);
+         T result = function.apply(input);
+         logger.debug("Processed intermediate result for: %s", input);
+         return result;
       } catch (ExecutionException e) {
          throw (Exception) e.getCause();
       }
