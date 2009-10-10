@@ -31,6 +31,7 @@ import java.net.InetSocketAddress;
 import java.net.URI;
 import java.nio.charset.UnmappableCharacterException;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -53,7 +54,6 @@ import org.apache.http.nio.reactor.SessionRequestCallback;
 import org.apache.http.params.HttpParams;
 import org.jclouds.http.HttpCommandRendezvous;
 import org.jclouds.http.TransformingHttpCommand;
-import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.pool.HttpCommandConnectionHandle;
 import org.jclouds.http.pool.HttpCommandConnectionPool;
 
@@ -67,6 +67,12 @@ import com.google.inject.assistedinject.Assisted;
  */
 public class NioHttpCommandConnectionPool extends HttpCommandConnectionPool<NHttpConnection>
          implements EventListener {
+
+   @Override
+   public String toString() {
+      return "NioHttpCommandConnectionPool [ target=" + target + ", endPoint=" + getEndPoint()
+               + ", hashCode=" + hashCode() + " ]";
+   }
 
    private final NHttpClientConnectionPoolSessionRequestCallback sessionCallback;
    private final DefaultConnectingIOReactor ioReactor;
@@ -152,9 +158,6 @@ public class NioHttpCommandConnectionPool extends HttpCommandConnectionPool<NHtt
 
    @Override
    public void shutdownConnection(NHttpConnection conn) {
-      if (conn.getMetrics().getRequestCount() >= maxConnectionReuse)
-         logger.debug("%1$s - %2$d - closing connection due to overuse %1$s/%2$s", conn, conn
-                  .hashCode(), conn.getMetrics().getRequestCount(), maxConnectionReuse);
       if (conn.getStatus() == NHttpConnection.ACTIVE) {
          try {
             conn.shutdown();
@@ -182,7 +185,7 @@ public class NioHttpCommandConnectionPool extends HttpCommandConnectionPool<NHtt
       boolean acquired = allConnections.tryAcquire(1, TimeUnit.SECONDS);
       if (acquired) {
          if (shouldDoWork()) {
-            logger.debug("%1$s - opening new connection", getTarget());
+            logger.trace("Opening: %s", getTarget());
             ioReactor.connect(getTarget(), null, null, sessionCallback);
          } else {
             allConnections.release();
@@ -205,56 +208,37 @@ public class NioHttpCommandConnectionPool extends HttpCommandConnectionPool<NHtt
    class NHttpClientConnectionPoolSessionRequestCallback implements SessionRequestCallback {
 
       public void completed(SessionRequest request) {
-         logger.trace("%1$s->%2$s[%3$s] - SessionRequest complete", request.getLocalAddress(),
-                  request.getRemoteAddress(), request.getAttachment());
+
       }
 
       public void cancelled(SessionRequest request) {
-         logger.trace("%1$s->%2$s[%3$s] - SessionRequest cancelled", request.getLocalAddress(),
-                  request.getRemoteAddress(), request.getAttachment());
-         releaseConnectionAndCancelResponse(request);
-      }
-
-      private void releaseConnectionAndCancelResponse(SessionRequest request) {
-         allConnections.release();
-         TransformingHttpCommandExecutorService frequest = (TransformingHttpCommandExecutorService) request
-                  .getAttachment();
-         if (frequest != null) {
-            logger.error("%1$s->%2$s[%3$s] - Cancelling FutureCommand", request.getLocalAddress(),
-                     request.getRemoteAddress(), frequest);
-            // TODO frequest.cancel(true);
-         }
+         releaseConnectionAndSetResponseException(request, new CancellationException(
+                  "Cancelled request: " + request.getRemoteAddress()));
       }
 
       private void releaseConnectionAndSetResponseException(SessionRequest request, Exception e) {
          allConnections.release();
          TransformingHttpCommand<?> frequest = (TransformingHttpCommand<?>) request.getAttachment();
          if (frequest != null) {
-            logger.error(e, "%1$s->%2$s[%3$s] - Setting Exception on FutureCommand", request
-                     .getLocalAddress(), request.getRemoteAddress(), frequest);
             frequest.setException(e);
          }
       }
 
       public void failed(SessionRequest request) {
          int count = currentSessionFailures.getAndIncrement();
-         logger.warn("%1$s->%2$s[%3$s] - SessionRequest failed", request.getLocalAddress(), request
-                  .getRemoteAddress(), request.getAttachment());
          releaseConnectionAndSetResponseException(request, request.getException());
          if (count >= maxSessionFailures) {
             logger.error(request.getException(),
-                     "%1$s->%2$s[%3$s] - SessionRequest failures: %4$s, Disabling pool for %5$s",
-                     request.getLocalAddress(), request.getRemoteAddress(), maxSessionFailures,
-                     getTarget());
+                     "Exceeded maximum Session failures: %d, Disabling pool for %s",
+                     maxSessionFailures, getTarget());
             exception.set(request.getException());
          }
 
       }
 
       public void timeout(SessionRequest request) {
-         logger.warn("%1$s->%2$s[%3$s] - SessionRequest timeout", request.getLocalAddress(),
-                  request.getRemoteAddress(), request.getAttachment());
-         releaseConnectionAndCancelResponse(request);
+         releaseConnectionAndSetResponseException(request, new TimeoutException("Timeout on: "
+                  + request.getRemoteAddress()));
       }
 
    }
@@ -262,22 +246,22 @@ public class NioHttpCommandConnectionPool extends HttpCommandConnectionPool<NHtt
    public void connectionOpen(NHttpConnection conn) {
       conn.setSocketTimeout(0);
       available.offer(conn);
-      logger.trace("%1$s - %2$d - open", conn, conn.hashCode());
+      logger.info("Opened: %s", getTarget());
    }
 
    public void connectionTimeout(NHttpConnection conn) {
-      String message = String.format("%1$s - %2$d - timeout  %2$d", conn, conn.hashCode(), conn
+      String message = String.format("Timeout on : %s - timeout %d", getTarget(), conn
                .getSocketTimeout());
       logger.warn(message);
       resubmitIfRequestIsReplayable(conn, new TimeoutException(message));
    }
 
    public void connectionClosed(NHttpConnection conn) {
-      logger.trace("%1$s - %2$d - closed", conn, conn.hashCode());
+      logger.info("Closed: %s", getTarget());
    }
 
    public void fatalIOException(IOException ex, NHttpConnection conn) {
-      logger.error(ex, "%3$s-%1$s{%2$d} - io error", conn, conn.hashCode(), getTarget());
+      logger.error(ex, "IO Exception: %s", getTarget());
       HttpCommandRendezvous<?> rendezvous = getCommandFromConnection(conn);
       if (rendezvous != null) {
          /**
@@ -293,7 +277,7 @@ public class NioHttpCommandConnectionPool extends HttpCommandConnectionPool<NHtt
    }
 
    public void fatalProtocolException(HttpException ex, NHttpConnection conn) {
-      logger.error(ex, "%3$s-%1$s{%2$d} - http error", conn, conn.hashCode(), getTarget());
+      logger.error(ex, "Protocol Exception: %s", getTarget());
       setExceptionOnCommand(conn, ex);
    }
 

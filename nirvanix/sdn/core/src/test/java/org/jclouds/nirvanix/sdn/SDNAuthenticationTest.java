@@ -34,6 +34,8 @@ import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
+import org.jclouds.logging.Logger;
+import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.nirvanix.sdn.functions.ParseSessionTokenFromJsonResponse;
 import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
@@ -78,6 +80,11 @@ public class SDNAuthenticationTest {
          protected void configure() {
             bind(URI.class).annotatedWith(SDN.class)
                      .toInstance(URI.create("http://localhost:8080"));
+            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
+               public Logger getLogger(String category) {
+                  return Logger.NULL;
+               }
+            });
          }
       }, new RestModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
                new JavaUrlHttpCommandExecutorServiceModule());

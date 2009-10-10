@@ -34,6 +34,8 @@ import org.jclouds.http.handlers.CloseContentAndSetExceptionErrorHandler;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.handlers.RedirectionRetryHandler;
+import org.jclouds.logging.Logger;
+import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.mezeo.pcs2.domain.ContainerMetadata;
 import org.jclouds.mezeo.pcs2.domain.FileMetadata;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
@@ -65,6 +67,11 @@ public class PCSContextModuleTest {
                      "key");
             bindConstant().annotatedWith(Jsr330.named(PCSConstants.PROPERTY_PCS2_ENDPOINT)).to(
                      "http://localhost");
+            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
+               public Logger getLogger(String category) {
+                  return Logger.NULL;
+               }
+            });
             super.configure();
          }
       }, new ParserModule(), new JavaUrlHttpCommandExecutorServiceModule(),

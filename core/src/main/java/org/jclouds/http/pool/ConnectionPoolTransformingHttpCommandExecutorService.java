@@ -36,17 +36,20 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import javax.inject.Inject;
+
 import org.jclouds.concurrent.FutureExceptionParser;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpCommandRendezvous;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.lifecycle.BaseLifeCycle;
+import org.jclouds.logging.Logger;
+import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
 import com.google.common.collect.MapMaker;
-import javax.inject.Inject;
 
 /**
  * // TODO: Adrian: Document this!
@@ -59,11 +62,12 @@ public class ConnectionPoolTransformingHttpCommandExecutorService<C> extends Bas
    private final ConcurrentMap<URI, HttpCommandConnectionPool<C>> poolMap;
    private final BlockingQueue<HttpCommandRendezvous<?>> commandQueue;
    private final HttpCommandConnectionPool.Factory<C> poolFactory;
+   private final LoggerFactory logFactory;
 
    @Inject
    public ConnectionPoolTransformingHttpCommandExecutorService(ExecutorService executor,
             HttpCommandConnectionPool.Factory<C> pf,
-            BlockingQueue<HttpCommandRendezvous<?>> commandQueue) {
+            BlockingQueue<HttpCommandRendezvous<?>> commandQueue, LoggerFactory logFactory) {
       super(executor);
       this.poolFactory = pf;
       // TODO inject this.
@@ -82,6 +86,7 @@ public class ConnectionPoolTransformingHttpCommandExecutorService<C> extends Bas
          }
       });
       this.commandQueue = commandQueue;
+      this.logFactory = logFactory;
    }
 
    /**
@@ -120,7 +125,7 @@ public class ConnectionPoolTransformingHttpCommandExecutorService<C> extends Bas
             invoke(rendezvous);
          } catch (Exception e) {
             Utils.<InterruptedException> rethrowIfRuntimeOrSameType(e);
-            logger.error(e, "Error processing command %s", rendezvous);
+            logger.error(e, "Error processing command %s", rendezvous.getCommand());
          }
       }
    }
@@ -135,14 +140,18 @@ public class ConnectionPoolTransformingHttpCommandExecutorService<C> extends Bas
             Function<Exception, T> exceptionTransformer) {
       exceptionIfNotActive();
       final SynchronousQueue<?> channel = new SynchronousQueue<Object>();
-
       // should block and immediately parse the response on exit.
       Future<T> future = executorService.submit(new Callable<T>() {
+         Logger transformerLogger = logFactory.getLogger(responseTransformer.getClass().getName());
          public T call() throws Exception {
             Object o = channel.take();
-            if (o instanceof Exception)
+            if (o instanceof Exception) {
                throw (Exception) o;
-            return responseTransformer.apply((HttpResponse) o);
+            }
+            transformerLogger.debug("Processing intermediate result for: %s", o);
+            T result = responseTransformer.apply((HttpResponse) o);
+            transformerLogger.debug("Processed intermediate result for: %s", o);
+            return result;
          }
       });
 
@@ -169,7 +178,7 @@ public class ConnectionPoolTransformingHttpCommandExecutorService<C> extends Bas
       HttpCommandConnectionPool<C> pool = poolMap.get(endpoint);
       if (pool == null) {
          // TODO limit;
-         logger.warn("pool not available for command %s; retrying", command);
+         logger.warn("pool not available for command %s; retrying", command.getCommand());
          commandQueue.add(command);
          return;
       }
@@ -178,24 +187,25 @@ public class ConnectionPoolTransformingHttpCommandExecutorService<C> extends Bas
       try {
          connectionHandle = pool.getHandle(command);
       } catch (InterruptedException e) {
-         logger.warn(e, "Interrupted getting a connection for command %s; retrying", command);
+         logger.warn(e, "Interrupted getting a connection for command %s; retrying", command
+                  .getCommand());
          commandQueue.add(command);
          return;
       } catch (TimeoutException e) {
-         logger.warn(e, "Timeout getting a connection for command %s on pool %s; retrying",
-                  command, pool);
+         logger.warn(e, "Timeout getting a connection for command %s on pool %s; retrying", command
+                  .getCommand(), pool);
          commandQueue.add(command);
          return;
       } catch (RuntimeException e) {
-         logger.warn(e, "Error getting a connection for command %s on pool %s; retrying", command,
-                  pool);
+         logger.warn(e, "Error getting a connection for command %s on pool %s; retrying", command
+                  .getCommand(), pool);
          discardPool(endpoint, pool);
          commandQueue.add(command);
          return;
       }
 
       if (connectionHandle == null) {
-         logger.error("Failed to obtain connection for command %s; retrying", command);
+         logger.error("Failed to obtain connection for command %s; retrying", command.getCommand());
          commandQueue.add(command);
          return;
       }
@@ -221,16 +231,4 @@ public class ConnectionPoolTransformingHttpCommandExecutorService<C> extends Bas
                   endpoint.getPort()));
       }
    }
-
-   @Override
-   public String toString() {
-      final StringBuilder sb = new StringBuilder();
-      sb.append("ConnectionPoolTransformingHttpCommandExecutorService");
-      sb.append("{status=").append(status);
-      sb.append(", commandQueue=").append((commandQueue != null) ? commandQueue.size() : 0);
-      sb.append(", poolMap=").append(poolMap);
-      sb.append('}');
-      return sb.toString();
-   }
-
 }

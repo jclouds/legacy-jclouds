@@ -24,14 +24,17 @@
 package org.jclouds.http.internal;
 
 import java.io.IOException;
+import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
+import javax.inject.Named;
 
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpCommandExecutorService;
+import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
@@ -47,12 +50,18 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
 
    @Resource
    protected Logger logger = Logger.NULL;
+   @Resource
+   @Named(HttpConstants.HTTP_HEADERS_LOGGER)
+   protected Logger headerLog = Logger.NULL;
+
+   private final Wire wire;
 
    protected BaseHttpCommandExecutorService(ExecutorService executorService,
-            DelegatingRetryHandler retryHandler, DelegatingErrorHandler errorHandler) {
+            DelegatingRetryHandler retryHandler, DelegatingErrorHandler errorHandler, Wire wire) {
       this.retryHandler = retryHandler;
       this.errorHandler = errorHandler;
       this.executorService = executorService;
+      this.wire = wire;
    }
 
    public Future<HttpResponse> submit(HttpCommand command) {
@@ -73,13 +82,31 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
             HttpRequest request = command.getRequest();
             Q nativeRequest = null;
             try {
-               logger.trace("%s - filtering request %s", request.getEndpoint(), request);
                for (HttpRequestFilter filter : request.getFilters()) {
                   request = filter.filter(request);
                }
-               logger.trace("%s - request now %s", request.getEndpoint(), request);            
+               logger.debug("Sending request: %s", request.getRequestLine());
+               if (request.getEntity() != null && wire.enabled())
+                  request.setEntity(wire.output(request.getEntity()));
                nativeRequest = convert(request);
+               if (headerLog.isDebugEnabled()) {
+                  headerLog.debug(">> %s", request.getRequestLine().toString());
+                  for (Entry<String, String> header : request.getHeaders().entries()) {
+                     if (header.getKey() != null)
+                        headerLog.debug(">> %s: %s", header.getKey(), header.getValue());
+                  }
+               }
                response = invoke(nativeRequest);
+               logger.debug("Receiving response: " + response.getStatusLine());
+               if (headerLog.isDebugEnabled()) {
+                  headerLog.debug("<< " + response.getStatusLine().toString());
+                  for (Entry<String, String> header : response.getHeaders().entries()) {
+                     if (header.getKey() != null)
+                        headerLog.debug("<< %s: %s", header.getKey(), header.getValue());
+                  }
+               }
+               if (response.getContent() != null && wire.enabled())
+                  response.setContent(wire.input(response.getContent()));
                int statusCode = response.getStatusCode();
                if (statusCode >= 300) {
                   if (retryHandler.shouldRetryRequest(command, response)) {

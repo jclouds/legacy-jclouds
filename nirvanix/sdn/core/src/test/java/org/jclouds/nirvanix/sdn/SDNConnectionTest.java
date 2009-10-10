@@ -42,6 +42,8 @@ import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.functions.ReturnVoidIf2xx;
+import org.jclouds.logging.Logger;
+import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.nirvanix.sdn.functions.ParseUploadInfoFromJsonResponse;
 import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
@@ -130,6 +132,11 @@ public class SDNConnectionTest {
          protected void configure() {
             bind(URI.class).annotatedWith(SDN.class)
                      .toInstance(URI.create("http://localhost:8080"));
+            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
+               public Logger getLogger(String category) {
+                  return Logger.NULL;
+               }
+            });
          }
 
          @SuppressWarnings("unused")

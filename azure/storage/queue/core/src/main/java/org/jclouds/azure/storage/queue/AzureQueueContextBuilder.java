@@ -127,11 +127,6 @@ public class AzureQueueContextBuilder extends CloudContextBuilder<AzureQueueConn
    }
 
    @Override
-   public AzureQueueContextBuilder withJsonDebug() {
-      return (AzureQueueContextBuilder) super.withJsonDebug();
-   }
-
-   @Override
    public AzureQueueContextBuilder withModule(Module module) {
       return (AzureQueueContextBuilder) super.withModule(module);
    }
@@ -166,10 +161,4 @@ public class AzureQueueContextBuilder extends CloudContextBuilder<AzureQueueConn
       return (AzureQueueContextBuilder) super
                .withPoolRequestInvokerThreads(poolRequestInvokerThreads);
    }
-
-   @Override
-   public AzureQueueContextBuilder withSaxDebug() {
-      return (AzureQueueContextBuilder) super.withSaxDebug();
-   }
-
 }

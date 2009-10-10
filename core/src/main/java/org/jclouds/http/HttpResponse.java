@@ -35,18 +35,6 @@ public class HttpResponse extends HttpMessage {
    private String message;
    private InputStream content;
 
-   @Override
-   public String toString() {
-      final StringBuilder sb = new StringBuilder();
-      sb.append("HttpResponse");
-      sb.append("{statusCode=").append(statusCode);
-      sb.append(", headers=").append(headers);
-      sb.append(", message='").append(message).append('\'');
-      sb.append(", content set=").append(content != null);
-      sb.append('}');
-      return sb.toString();
-   }
-
    public int getStatusCode() {
       return statusCode;
    }
@@ -69,6 +57,10 @@ public class HttpResponse extends HttpMessage {
 
    public void setContent(InputStream content) {
       this.content = content;
+   }
+
+   public String getStatusLine() {
+      return String.format("HTTP/1.1 %d %s", getStatusCode(), getMessage());
    }
 
 }

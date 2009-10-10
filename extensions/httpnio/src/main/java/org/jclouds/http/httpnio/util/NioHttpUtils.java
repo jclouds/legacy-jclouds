@@ -114,6 +114,7 @@ public class NioHttpUtils {
          response.getHeaders().put(header.getName(), header.getValue());
       }
       response.setStatusCode(apacheResponse.getStatusLine().getStatusCode());
+      response.setMessage(apacheResponse.getStatusLine().getReasonPhrase());
       return response;
    }
 }

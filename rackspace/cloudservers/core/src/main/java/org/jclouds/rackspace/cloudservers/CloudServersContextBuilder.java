@@ -108,11 +108,6 @@ public class CloudServersContextBuilder extends RackspaceContextBuilder<CloudSer
    }
 
    @Override
-   public CloudServersContextBuilder withJsonDebug() {
-      return (CloudServersContextBuilder) super.withJsonDebug();
-   }
-
-   @Override
    public CloudServersContextBuilder withModule(Module module) {
       return (CloudServersContextBuilder) super.withModule(module);
    }
@@ -148,8 +143,4 @@ public class CloudServersContextBuilder extends RackspaceContextBuilder<CloudSer
                .withPoolRequestInvokerThreads(poolRequestInvokerThreads);
    }
 
-   @Override
-   public CloudServersContextBuilder withSaxDebug() {
-      return (CloudServersContextBuilder) (CloudServersContextBuilder) super.withSaxDebug();
-   }
 }

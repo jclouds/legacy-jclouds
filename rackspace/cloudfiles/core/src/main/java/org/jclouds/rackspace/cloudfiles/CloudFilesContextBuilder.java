@@ -75,7 +75,7 @@ public class CloudFilesContextBuilder
    public CloudFilesContextBuilder withRequestTimeout(long milliseconds) {
       return (CloudFilesContextBuilder) super.withRequestTimeout(milliseconds);
    }
-   
+
    @Override
    public CloudFilesContextBuilder withExecutorService(ExecutorService service) {
       return (CloudFilesContextBuilder) super.withExecutorService(service);
@@ -89,11 +89,6 @@ public class CloudFilesContextBuilder
    @Override
    public CloudFilesContextBuilder withHttpMaxRetries(int httpMaxRetries) {
       return (CloudFilesContextBuilder) super.withHttpMaxRetries(httpMaxRetries);
-   }
-
-   @Override
-   public CloudFilesContextBuilder withJsonDebug() {
-      return (CloudFilesContextBuilder) super.withJsonDebug();
    }
 
    @Override
@@ -132,11 +127,6 @@ public class CloudFilesContextBuilder
                .withPoolRequestInvokerThreads(poolRequestInvokerThreads);
    }
 
-   @Override
-   public CloudFilesContextBuilder withSaxDebug() {
-      return (CloudFilesContextBuilder) super.withSaxDebug();
-   }
-
    public CloudFilesContextBuilder(Properties props) {
       super(new TypeLiteral<CloudFilesConnection>() {
       }, new TypeLiteral<ContainerMetadata>() {
@@ -165,8 +155,7 @@ public class CloudFilesContextBuilder
 
    @Override
    public CloudFilesContextBuilder withEndpoint(URI endpoint) {
-      return (CloudFilesContextBuilder) RackspaceContextBuilder
-               .withEndpoint(this, endpoint);
+      return (CloudFilesContextBuilder) RackspaceContextBuilder.withEndpoint(this, endpoint);
    }
 
 }

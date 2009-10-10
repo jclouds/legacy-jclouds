@@ -44,6 +44,8 @@ import org.jclouds.http.HttpUtils;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
+import org.jclouds.logging.Logger;
+import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Jsr330;
@@ -176,6 +178,11 @@ public class AzureQueueConnectionTest {
             bindConstant().annotatedWith(
                      Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY)).to(
                      HttpUtils.toBase64String("key".getBytes()));
+            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
+               public Logger getLogger(String category) {
+                  return Logger.NULL;
+               }
+            });
          }
       }, new RestModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
                new JavaUrlHttpCommandExecutorServiceModule());

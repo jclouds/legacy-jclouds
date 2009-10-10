@@ -28,6 +28,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import org.jclouds.concurrent.FutureFunctionCallable;
+import org.jclouds.logging.Logger.LoggerFactory;
 
 import com.google.common.base.Function;
 import javax.inject.Inject;
@@ -42,12 +43,14 @@ public class TransformingHttpCommandExecutorServiceImpl implements
          TransformingHttpCommandExecutorService {
    private final HttpCommandExecutorService client;
    private final ExecutorService executorService;
+   private final LoggerFactory logFactory;
 
    @Inject
    public TransformingHttpCommandExecutorServiceImpl(HttpCommandExecutorService client,
-            ExecutorService executorService) {
+            ExecutorService executorService, LoggerFactory logFactory) {
       this.client = client;
       this.executorService = executorService;
+      this.logFactory = logFactory;
    }
 
    /**
@@ -57,7 +60,7 @@ public class TransformingHttpCommandExecutorServiceImpl implements
             Function<Exception, T> exceptionTransformer) {
       Future<HttpResponse> responseFuture = client.submit(command);
       Callable<T> valueCallable = new FutureFunctionCallable<HttpResponse, T>(responseFuture,
-               responseTransformer);
+               responseTransformer, logFactory.getLogger(responseTransformer.getClass().getName()));
       return executorService.submit(valueCallable);
    }
 

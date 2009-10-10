@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -177,6 +178,26 @@ public class HttpUtils {
 
    }
 
+   
+
+   public static void copy(InputStream input, OutputStream output) throws IOException {
+      byte[] buffer = new byte[1024];
+      long length = 0;
+      int numRead = -1;
+      try {
+         do {
+            numRead = input.read(buffer);
+            if (numRead > 0) {
+               length += numRead;
+               output.write(buffer, 0, numRead);
+            }
+         } while (numRead != -1);
+      } finally {
+         output.close();
+         IOUtils.closeQuietly(input);
+      }
+   }
+   
    public static MD5InputStreamResult generateMD5Result(InputStream toEncode) throws IOException {
       MD5Digest eTag = new MD5Digest();
       byte[] resBuf = new byte[eTag.getDigestSize()];

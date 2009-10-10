@@ -31,8 +31,8 @@ package org.jclouds.http;
 public interface HttpConstants {
    public static final String PROPERTY_HTTP_MAX_RETRIES = "jclouds.http.max-retries";
    public static final String PROPERTY_HTTP_MAX_REDIRECTS = "jclouds.http.max-redirects";
-   public static final String PROPERTY_SAX_DEBUG = "jclouds.http.sax.debug";
-   public static final String PROPERTY_JSON_DEBUG = "jclouds.http.json.debug";
+   public static final String HTTP_HEADERS_LOGGER = "jclouds.http.headers";
+   public static final String HTTP_WIRE_LOGGER = "jclouds.http.wire";
 
    /**
     * longest time a single request can take before throwing an exception.

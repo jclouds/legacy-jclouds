@@ -23,8 +23,6 @@
  */
 package org.jclouds.http.functions;
 
-import static org.jclouds.http.HttpConstants.PROPERTY_JSON_DEBUG;
-
 import java.io.InputStream;
 
 import javax.annotation.Resource;
@@ -36,8 +34,6 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
 import com.google.gson.Gson;
-import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * This object will parse the body of an HttpResponse and return the result of type <T> back to the
@@ -47,9 +43,6 @@ import javax.inject.Named;
  */
 public abstract class ParseJson<T> implements Function<HttpResponse, T> {
 
-   @Inject(optional = true)
-   @Named(PROPERTY_JSON_DEBUG)
-   private boolean suckFirst = false;
    @Resource
    protected Logger logger = Logger.NULL;
    protected final Gson gson;
@@ -63,23 +56,13 @@ public abstract class ParseJson<T> implements Function<HttpResponse, T> {
     */
    public T apply(HttpResponse from) {
       InputStream gson = from.getContent();
-      String response = null;
       try {
-         if (suckFirst) {
-            response = IOUtils.toString(gson);
-            logger.trace("received content %n%s", response);
-            IOUtils.closeQuietly(gson);
-            gson = IOUtils.toInputStream(response);
-         }
          return apply(gson);
       } catch (Exception e) {
          StringBuilder message = new StringBuilder();
          message.append("Error parsing input");
-         if (response != null) {
-            message.append("\n").append(response);
-         }
          logger.error(e, message.toString());
-         throw new HttpResponseException(message.toString()+"\n"+from, null, from, e);
+         throw new HttpResponseException(message.toString() + "\n" + from, null, from, e);
       } finally {
          IOUtils.closeQuietly(gson);
       }

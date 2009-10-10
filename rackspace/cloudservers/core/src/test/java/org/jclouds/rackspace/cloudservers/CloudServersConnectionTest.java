@@ -49,6 +49,8 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
+import org.jclouds.logging.Logger;
+import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rackspace.Authentication;
 import org.jclouds.rackspace.CloudServers;
 import org.jclouds.rackspace.cloudservers.domain.BackupSchedule;
@@ -880,6 +882,11 @@ public class CloudServersConnectionTest {
          protected void configure() {
             bind(URI.class).annotatedWith(CloudServers.class).toInstance(
                      URI.create("http://localhost:8080"));
+            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
+               public Logger getLogger(String category) {
+                  return Logger.NULL;
+               }
+            });
          }
 
          @SuppressWarnings("unused")

@@ -24,11 +24,11 @@
 package org.jclouds.http.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.http.HttpConstants.PROPERTY_SAX_DEBUG;
 
 import java.io.InputStream;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpException;
@@ -41,9 +41,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.google.common.base.Function;
-import javax.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import javax.inject.Named;
 
 /**
  * This object will parse the body of an HttpResponse and return the result of type <T> back to the
@@ -55,9 +53,6 @@ public class ParseSax<T> implements Function<HttpResponse, T> {
 
    private final XMLReader parser;
    private final HandlerWithResult<T> handler;
-   @Inject(optional = true)
-   @Named(PROPERTY_SAX_DEBUG)
-   private boolean suckFirst = false;
    @Resource
    protected Logger logger = Logger.NULL;
 
@@ -93,14 +88,7 @@ public class ParseSax<T> implements Function<HttpResponse, T> {
    }
 
    private void parseAndCloseStream(InputStream xml, ContentHandler handler) throws HttpException {
-      String response = null;
       try {
-         if (suckFirst) {
-            response = IOUtils.toString(xml);
-            logger.trace("received content %n%s", response);
-            IOUtils.closeQuietly(xml);
-            xml = IOUtils.toInputStream(response);
-         }
          parser.setContentHandler(handler);
          // This method should accept documents with a BOM (Byte-order mark)
          InputSource input = new InputSource(xml);
@@ -108,9 +96,6 @@ public class ParseSax<T> implements Function<HttpResponse, T> {
       } catch (Exception e) {
          StringBuilder message = new StringBuilder();
          message.append("Error parsing input for ").append(handler);
-         if (response != null) {
-            message.append("\n").append(response);
-         }
          logger.error(e, message.toString());
          if (!(e instanceof NullPointerException))
             Utils.<HttpException> rethrowIfRuntimeOrSameType(e);

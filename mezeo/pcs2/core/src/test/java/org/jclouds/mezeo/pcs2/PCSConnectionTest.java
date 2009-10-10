@@ -50,6 +50,8 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseURIList;
 import org.jclouds.http.functions.ReturnInputStream;
 import org.jclouds.http.functions.ReturnVoidIf2xx;
+import org.jclouds.logging.Logger;
+import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.mezeo.pcs2.domain.FileMetadata;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
 import org.jclouds.mezeo.pcs2.endpoints.RootContainer;
@@ -225,6 +227,11 @@ public class PCSConnectionTest {
                               URI.create("http://localhost:8080"));
                      bind(URI.class).annotatedWith(RootContainer.class).toInstance(
                               URI.create("http://localhost:8080/root"));
+                     bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
+                        public Logger getLogger(String category) {
+                           return Logger.NULL;
+                        }
+                     });
                   }
 
                   @SuppressWarnings("unused")

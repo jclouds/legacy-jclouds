@@ -31,53 +31,57 @@ package org.jclouds.logging;
  */
 public abstract class BaseLogger implements Logger {
 
-    protected abstract void logError(String message, Throwable e);
+   protected abstract void logError(String message, Throwable e);
 
-    protected abstract void logError(String message);
+   protected abstract void logError(String message);
 
-    protected abstract void logWarn(String message, Throwable e);
+   protected abstract void logWarn(String message, Throwable e);
 
-    protected abstract void logWarn(String message);
+   protected abstract void logWarn(String message);
 
-    protected abstract void logInfo(String message);
+   protected abstract void logInfo(String message);
 
-    protected abstract void logDebug(String message);
+   protected abstract void logDebug(String message);
 
-    protected abstract void logTrace(String message);
+   protected abstract void logTrace(String message);
 
-    public void trace(String message, Object... args) {
-	if (isTraceEnabled())
-	    logTrace(String.format(message, args));
-    }
+   public void trace(String message, Object... args) {
+      if (isTraceEnabled())
+         logTrace(formatIfArgs(message, args));
+   }
 
-    public void debug(String message, Object... args) {
-	if (isDebugEnabled())
-	    logDebug(String.format(message, args));
-    }
+   private String formatIfArgs(String message, Object... args) {
+      return args.length == 0 ? message : String.format(message, args);
+   }
 
-    public void info(String message, Object... args) {
-	if (isInfoEnabled())
-	    logInfo(String.format(message, args));
-    }
+   public void debug(String message, Object... args) {
+      if (isDebugEnabled())
+         logDebug(formatIfArgs(message, args));
+   }
 
-    public void warn(String message, Object... args) {
-	if (isWarnEnabled())
-	    logWarn(String.format(message, args));
-    }
+   public void info(String message, Object... args) {
+      if (isInfoEnabled())
+         logInfo(formatIfArgs(message, args));
+   }
 
-    public void warn(Throwable e, String message, Object... args) {
-	if (isWarnEnabled())
-	    logWarn(String.format(message, args), e);
-    }
+   public void warn(String message, Object... args) {
+      if (isWarnEnabled())
+         logWarn(formatIfArgs(message, args));
+   }
 
-    public void error(String message, Object... args) {
-	if (isErrorEnabled())
-	    logError(String.format(message, args));
-    }
+   public void warn(Throwable e, String message, Object... args) {
+      if (isWarnEnabled())
+         logWarn(formatIfArgs(message, args), e);
+   }
 
-    public void error(Throwable e, String message, Object... args) {
-	if (isErrorEnabled())
-	    logError(String.format(message, args), e);
-    }
+   public void error(String message, Object... args) {
+      if (isErrorEnabled())
+         logError(formatIfArgs(message, args));
+   }
+
+   public void error(Throwable e, String message, Object... args) {
+      if (isErrorEnabled())
+         logError(formatIfArgs(message, args), e);
+   }
 
 }

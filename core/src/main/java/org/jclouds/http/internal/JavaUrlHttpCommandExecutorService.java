@@ -66,8 +66,8 @@ public class JavaUrlHttpCommandExecutorService extends
 
    @Inject
    public JavaUrlHttpCommandExecutorService(ExecutorService executorService,
-            DelegatingRetryHandler retryHandler, DelegatingErrorHandler errorHandler) {
-      super(executorService, retryHandler, errorHandler);
+            DelegatingRetryHandler retryHandler, DelegatingErrorHandler errorHandler, Wire wire) {
+      super(executorService, retryHandler, errorHandler, wire);
       sslMap = Maps.newHashMap();
    }
 
@@ -88,8 +88,6 @@ public class JavaUrlHttpCommandExecutorService extends
 
    @Override
    protected HttpResponse invoke(HttpURLConnection connection) throws IOException {
-      logger.trace("%s - submitting request %s; %s", connection.getURL().getHost(), connection
-               .getURL(), connection.getHeaderFields().toString());
       HttpResponse response = new HttpResponse();
       InputStream in;
       try {
@@ -97,8 +95,6 @@ public class JavaUrlHttpCommandExecutorService extends
       } catch (IOException e) {
          in = connection.getErrorStream();
       }
-      logger.trace("%s - received response code %s, headers: %s", connection.getURL().getHost(),
-               connection.getResponseCode(), connection.getHeaderFields());
       if (in != null) {
          response.setContent(in);
       }

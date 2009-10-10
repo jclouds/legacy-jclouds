@@ -49,6 +49,8 @@ import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.ReturnVoidIf2xx;
+import org.jclouds.logging.Logger;
+import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Jsr330;
@@ -181,6 +183,11 @@ public class AzureBlobStoreTest {
                      HttpUtils.toBase64String("key".getBytes()));
             bindConstant().annotatedWith(
                      Jsr330.named(BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX)).to("prefix");
+            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
+               public Logger getLogger(String category) {
+                  return Logger.NULL;
+               }
+            });
          }
 
          @SuppressWarnings("unused")

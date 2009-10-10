@@ -107,11 +107,6 @@ public class SDNContextBuilder extends CloudContextBuilder<SDNConnection> {
    }
 
    @Override
-   public SDNContextBuilder withJsonDebug() {
-      return (SDNContextBuilder) super.withJsonDebug();
-   }
-
-   @Override
    public SDNContextBuilder withModule(Module module) {
       return (SDNContextBuilder) super.withModule(module);
    }
@@ -144,11 +139,6 @@ public class SDNContextBuilder extends CloudContextBuilder<SDNConnection> {
    @Override
    public SDNContextBuilder withPoolRequestInvokerThreads(int poolRequestInvokerThreads) {
       return (SDNContextBuilder) super.withPoolRequestInvokerThreads(poolRequestInvokerThreads);
-   }
-
-   @Override
-   public SDNContextBuilder withSaxDebug() {
-      return (SDNContextBuilder) super.withSaxDebug();
    }
 
    @Override

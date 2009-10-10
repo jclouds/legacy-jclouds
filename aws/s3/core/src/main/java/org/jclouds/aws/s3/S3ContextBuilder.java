@@ -111,11 +111,6 @@ public class S3ContextBuilder extends
    }
 
    @Override
-   public S3ContextBuilder withJsonDebug() {
-      return (S3ContextBuilder) super.withJsonDebug();
-   }
-
-   @Override
    public S3ContextBuilder withModule(Module module) {
       return (S3ContextBuilder) super.withModule(module);
    }
@@ -148,11 +143,6 @@ public class S3ContextBuilder extends
    @Override
    public S3ContextBuilder withPoolRequestInvokerThreads(int poolRequestInvokerThreads) {
       return (S3ContextBuilder) super.withPoolRequestInvokerThreads(poolRequestInvokerThreads);
-   }
-
-   @Override
-   public S3ContextBuilder withSaxDebug() {
-      return (S3ContextBuilder) (S3ContextBuilder) super.withSaxDebug();
    }
 
    @Override

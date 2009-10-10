@@ -83,7 +83,7 @@ public class CloudServersConnectionLiveTest {
       String key = System.getProperty("jclouds.test.key");
 
       connection = new CloudServersContextBuilder(account, key).withModules(
-               new Log4JLoggingModule()).withJsonDebug().buildContext().getApi();
+               new Log4JLoggingModule()).buildContext().getApi();
 
       Injector injector = Guice.createInjector(new Log4JLoggingModule(),
                new JschSshConnectionModule(), new ExecutorServiceModule(

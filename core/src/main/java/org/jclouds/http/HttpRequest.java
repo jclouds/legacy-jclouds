@@ -88,21 +88,8 @@ public class HttpRequest extends HttpMessage implements Request<URI> {
       setEntity(entity);
    }
 
-   @Override
-   public String toString() {
-      final StringBuilder sb = new StringBuilder();
-      sb.append("HttpRequest");
-      sb.append("{endPoint='").append(endpoint).append('\'');
-      sb.append(", method='").append(method).append('\'');
-      sb.append(", headers=").append(headers);
-      sb.append(", filters=").append(requestFilters);
-      if (entity != null && entity instanceof String) {
-         sb.append(", entity=").append(entity);
-      } else {
-         sb.append(", entity set=").append(entity != null);
-      }
-      sb.append('}');
-      return sb.toString();
+   public String getRequestLine() {
+      return String.format("%s %s HTTP/1.1", getMethod(), endpoint.toASCIIString());
    }
 
    /**

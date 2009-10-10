@@ -58,21 +58,16 @@ public abstract class BlobStoreContextBuilder<S, C extends ContainerMetadata, M 
    /**
     * longest time a single synchronous operation can take before throwing an exception.
     */
-   public BlobStoreContextBuilder<S, C, M, B>  withRequestTimeout(long milliseconds) {
-      properties.setProperty(BlobStoreConstants.PROPERTY_BLOBSTORE_TIMEOUT, Long.toString(milliseconds));
+   public BlobStoreContextBuilder<S, C, M, B> withRequestTimeout(long milliseconds) {
+      properties.setProperty(BlobStoreConstants.PROPERTY_BLOBSTORE_TIMEOUT, Long
+               .toString(milliseconds));
       return this;
-   }
-   
-   @SuppressWarnings("unchecked")
-   @Override
-   public BlobStoreContextBuilder<S, C, M, B> withHttpMaxRetries(int httpMaxRetries) {
-      return (BlobStoreContextBuilder<S, C, M, B>) super.withHttpMaxRetries(httpMaxRetries);
    }
 
    @SuppressWarnings("unchecked")
    @Override
-   public BlobStoreContextBuilder<S, C, M, B> withJsonDebug() {
-      return (BlobStoreContextBuilder<S, C, M, B>) super.withJsonDebug();
+   public BlobStoreContextBuilder<S, C, M, B> withHttpMaxRetries(int httpMaxRetries) {
+      return (BlobStoreContextBuilder<S, C, M, B>) super.withHttpMaxRetries(httpMaxRetries);
    }
 
    @SuppressWarnings("unchecked")
@@ -120,12 +115,6 @@ public abstract class BlobStoreContextBuilder<S, C extends ContainerMetadata, M 
             int poolRequestInvokerThreads) {
       return (BlobStoreContextBuilder<S, C, M, B>) super
                .withPoolRequestInvokerThreads(poolRequestInvokerThreads);
-   }
-
-   @SuppressWarnings("unchecked")
-   @Override
-   public BlobStoreContextBuilder<S, C, M, B> withSaxDebug() {
-      return (BlobStoreContextBuilder<S, C, M, B>) super.withSaxDebug();
    }
 
    @SuppressWarnings("unchecked")

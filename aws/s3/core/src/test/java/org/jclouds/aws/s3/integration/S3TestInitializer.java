@@ -48,8 +48,8 @@ public class S3TestInitializer extends
    protected BlobStoreContext<S3Connection, BucketMetadata, ObjectMetadata, S3Object> createLiveContext(
             Module configurationModule, String url, String app, String account, String key) {
       BaseBlobStoreIntegrationTest.SANITY_CHECK_RETURNED_BUCKET_NAME = true;
-      return new S3ContextBuilder(account, key).withSaxDebug().relaxSSLHostname().withModules(
-               configurationModule, new Log4JLoggingModule()).buildContext();
+      return new S3ContextBuilder(account, key).relaxSSLHostname().withModules(configurationModule,
+               new Log4JLoggingModule()).buildContext();
    }
 
    @Override

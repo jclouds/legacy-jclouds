@@ -27,8 +27,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_REDIRECTS;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_MAX_RETRIES;
 import static org.jclouds.http.HttpConstants.PROPERTY_HTTP_RELAX_HOSTNAME;
-import static org.jclouds.http.HttpConstants.PROPERTY_JSON_DEBUG;
-import static org.jclouds.http.HttpConstants.PROPERTY_SAX_DEBUG;
 import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_IO_WORKER_THREADS;
 import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS;
 import static org.jclouds.http.pool.PoolConstants.PROPERTY_POOL_MAX_CONNECTION_REUSE;
@@ -89,16 +87,6 @@ public abstract class CloudContextBuilder<C> {
    protected CloudContextBuilder(TypeLiteral<C> connectionTypeLiteral, Properties properties) {
       this.connectionType = connectionTypeLiteral;
       this.properties = properties;
-   }
-
-   public CloudContextBuilder<C> withSaxDebug() {
-      properties.setProperty(PROPERTY_SAX_DEBUG, "true");
-      return this;
-   }
-
-   public CloudContextBuilder<C> withJsonDebug() {
-      properties.setProperty(PROPERTY_JSON_DEBUG, "true");
-      return this;
    }
 
    /**
@@ -266,9 +254,6 @@ public abstract class CloudContextBuilder<C> {
    public CloudContext<C> buildContext() {
       Injector injector = buildInjector();
       return (CloudContext<C>) injector.getInstance(Key.get(Types.newParameterizedType(
-               CloudContext.class, connectionType.getType())));
-      // return (CloudContext<C>) this.buildInjector().getInstance(
-      // Key.get(new TypeLiteral<CloudContext<?>>() {
-      // }));
+               CloudContext.class, connectionType.getType()))); 
    }
 }

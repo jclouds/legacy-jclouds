@@ -24,7 +24,6 @@
 package org.jclouds.nirvanix.sdn;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.http.HttpConstants.PROPERTY_JSON_DEBUG;
 import static org.testng.Assert.assertNotNull;
 
 import java.net.URI;
@@ -37,7 +36,6 @@ import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestClientFactory;
 import org.jclouds.rest.config.RestModule;
-import org.jclouds.util.Jsr330;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -73,7 +71,6 @@ public class SDNAuthenticationLiveTest {
          protected void configure() {
             bind(URI.class).annotatedWith(SDN.class).toInstance(
                      URI.create("http://services.nirvanix.com/ws"));
-            bindConstant().annotatedWith(Jsr330.named(PROPERTY_JSON_DEBUG)).to(true);
          }
 
          @SuppressWarnings("unused")

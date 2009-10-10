@@ -30,13 +30,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
-import javax.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.internal.Nullable;
 
@@ -66,7 +66,7 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
    @Override
    public String toString() {
       final StringBuilder sb = new StringBuilder();
-      sb.append("TransformingHttpCommandImpl");
+      sb.append("HttpCommand");
       sb.append("{request='").append(request).append('\'');
       sb.append(", transformer='").append(transformer).append('\'');
       sb.append(", exceptionTransformer='").append(exceptionTransformer).append('\'');

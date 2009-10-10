@@ -59,7 +59,7 @@ public class AzureQueueConnectionLiveTest {
       account = System.getProperty("jclouds.test.user");
       String key = System.getProperty("jclouds.test.key");
       Injector injector = new AzureQueueContextBuilder(account, key).withModules(
-               new Log4JLoggingModule()).withSaxDebug().buildInjector();
+               new Log4JLoggingModule()).buildInjector();
       connection = injector.getInstance(AzureQueueConnection.class);
    }
 

@@ -78,11 +78,11 @@ public class AzureBlobContextBuilder extends
                "https://{account}.blob.core.windows.net");
    }
 
-//   @Override
-//   protected void addBlobStoreModule(List<Module> modules) {
-//      modules.add(BlobStoreMapsModule.Builder.newBuilder(containerMetadataType, blobMetadataType,
-//               blobType).withClearContainerStrategy(RecreateClearContainerStrategy.class).build());
-//   }
+   // @Override
+   // protected void addBlobStoreModule(List<Module> modules) {
+   // modules.add(BlobStoreMapsModule.Builder.newBuilder(containerMetadataType, blobMetadataType,
+   // blobType).withClearContainerStrategy(RecreateClearContainerStrategy.class).build());
+   // }
 
    public AzureBlobContextBuilder(String id, String secret) {
       this(new Properties());
@@ -113,11 +113,6 @@ public class AzureBlobContextBuilder extends
    @Override
    public AzureBlobContextBuilder withHttpMaxRetries(int httpMaxRetries) {
       return (AzureBlobContextBuilder) super.withHttpMaxRetries(httpMaxRetries);
-   }
-
-   @Override
-   public AzureBlobContextBuilder withJsonDebug() {
-      return (AzureBlobContextBuilder) super.withJsonDebug();
    }
 
    @Override
@@ -159,11 +154,6 @@ public class AzureBlobContextBuilder extends
    public AzureBlobContextBuilder withPoolRequestInvokerThreads(int poolRequestInvokerThreads) {
       return (AzureBlobContextBuilder) super
                .withPoolRequestInvokerThreads(poolRequestInvokerThreads);
-   }
-
-   @Override
-   public AzureBlobContextBuilder withSaxDebug() {
-      return (AzureBlobContextBuilder) super.withSaxDebug();
    }
 
    @Override

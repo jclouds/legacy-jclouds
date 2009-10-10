@@ -46,8 +46,8 @@ public class AzureBlobTestInitializer extends
    @Override
    protected BlobStoreContext<AzureBlobConnection, ContainerMetadata, BlobMetadata, Blob> createLiveContext(
             Module configurationModule, String url, String app, String account, String key) {
-      return new AzureBlobContextBuilder(account, key).withSaxDebug().relaxSSLHostname()
-               .withModules(configurationModule, new Log4JLoggingModule()).buildContext();
+      return new AzureBlobContextBuilder(account, key).relaxSSLHostname().withModules(
+               configurationModule, new Log4JLoggingModule()).buildContext();
    }
 
    @Override

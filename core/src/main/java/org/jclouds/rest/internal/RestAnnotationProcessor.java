@@ -243,7 +243,7 @@ public class RestAnnotationProcessor<T> {
          } else if (isConstantDeclaration(method)) {
             bindConstant(method);
          } else if (!method.getDeclaringClass().equals(declaring)) {
-            logger.debug("skipping potentially overridden method", method);
+            logger.debug("skipping potentially overridden method %s", method);
          } else {
             throw new RuntimeException("Method is not annotated as either http or constant: "
                      + method);
@@ -422,7 +422,7 @@ public class RestAnnotationProcessor<T> {
                   RequestFilters.class).value()) {
             HttpRequestFilter instance = injector.getInstance(clazz);
             request.getFilters().add(instance);
-            logger.debug("%s - adding filter  %s from annotation on %s", request, instance,
+            logger.trace("%s - adding filter  %s from annotation on %s", request, instance,
                      declaring.getName());
          }
       }
@@ -431,7 +431,7 @@ public class RestAnnotationProcessor<T> {
                   .value()) {
             HttpRequestFilter instance = injector.getInstance(clazz);
             request.getFilters().add(instance);
-            logger.debug("%s - adding filter  %s from annotation on %s", request, instance, method
+            logger.trace("%s - adding filter  %s from annotation on %s", request, instance, method
                      .getName());
          }
       }

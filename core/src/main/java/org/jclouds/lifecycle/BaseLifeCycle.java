@@ -100,7 +100,7 @@ public abstract class BaseLifeCycle implements Runnable, LifeCycle {
 
    @PostConstruct
    public void start() {
-      logger.info("starting %1$s", this);
+      logger.info("Starting %s", this);
       synchronized (this.statusLock) {
          if (this.status.compareTo(Status.SHUTDOWN_REQUEST) >= 0) {
             doShutdown();

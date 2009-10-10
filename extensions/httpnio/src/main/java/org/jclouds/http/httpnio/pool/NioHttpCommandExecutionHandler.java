@@ -24,10 +24,12 @@
 package org.jclouds.http.httpnio.pool;
 
 import java.io.IOException;
+import java.util.Map.Entry;
 import java.util.concurrent.BlockingQueue;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
@@ -37,11 +39,13 @@ import org.apache.http.nio.protocol.NHttpRequestExecutionHandler;
 import org.apache.http.protocol.HttpContext;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpCommandRendezvous;
+import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.httpnio.util.NioHttpUtils;
+import org.jclouds.http.internal.Wire;
 import org.jclouds.logging.Logger;
 
 /**
@@ -53,6 +57,7 @@ public class NioHttpCommandExecutionHandler implements NHttpRequestExecutionHand
    private final ConsumingNHttpEntityFactory entityFactory;
    private final DelegatingRetryHandler retryHandler;
    private final DelegatingErrorHandler errorHandler;
+   private final Wire wire;
 
    /**
     * inputOnly: nothing is taken from this queue.
@@ -61,15 +66,19 @@ public class NioHttpCommandExecutionHandler implements NHttpRequestExecutionHand
 
    @Resource
    protected Logger logger = Logger.NULL;
+   @Resource
+   @Named(HttpConstants.HTTP_HEADERS_LOGGER)
+   protected Logger headerLog = Logger.NULL;
 
    @Inject
    public NioHttpCommandExecutionHandler(ConsumingNHttpEntityFactory entityFactory,
             BlockingQueue<HttpCommandRendezvous<?>> resubmitQueue,
-            DelegatingRetryHandler retryHandler, DelegatingErrorHandler errorHandler) {
+            DelegatingRetryHandler retryHandler, DelegatingErrorHandler errorHandler, Wire wire) {
       this.entityFactory = entityFactory;
       this.resubmitQueue = resubmitQueue;
       this.retryHandler = retryHandler;
       this.errorHandler = errorHandler;
+      this.wire = wire;
    }
 
    public interface ConsumingNHttpEntityFactory {
@@ -87,10 +96,19 @@ public class NioHttpCommandExecutionHandler implements NHttpRequestExecutionHand
          for (HttpRequestFilter filter : request.getFilters()) {
             request = filter.filter(request);
          }
-         return NioHttpUtils.convertToApacheRequest(request);
+         logger.debug("Sending request: %s", request.getRequestLine());
+         if (request.getEntity() != null && wire.enabled())
+            request.setEntity(wire.output(request.getEntity()));
+         HttpEntityEnclosingRequest nativeRequest = NioHttpUtils.convertToApacheRequest(request);
+         if (headerLog.isDebugEnabled()) {
+            headerLog.debug(">> %s", request.getRequestLine().toString());
+            for (Entry<String, String> header : request.getHeaders().entries()) {
+               headerLog.debug(">> %s: %s", header.getKey(), header.getValue());
+            }
+         }
+         return nativeRequest;
       }
       return null;
-
    }
 
    public ConsumingNHttpEntity responseEntity(HttpResponse response, HttpContext context)
@@ -107,9 +125,16 @@ public class NioHttpCommandExecutionHandler implements NHttpRequestExecutionHand
             HttpCommand command = rendezvous.getCommand();
             org.jclouds.http.HttpResponse response = NioHttpUtils
                      .convertToJavaCloudsResponse(apacheResponse);
+            logger.debug("Receiving response: %s", response.getStatusLine());
+            if (headerLog.isDebugEnabled()) {
+               headerLog.debug("<< %s", response.getStatusLine().toString());
+               for (Entry<String, String> header : response.getHeaders().entries()) {
+                  headerLog.debug("<< %s: %s", header.getKey(), header.getValue());
+               }
+            }
+            if (response.getContent() != null && wire.enabled())
+               response.setContent(wire.input(response.getContent()));
             int statusCode = response.getStatusCode();
-            // TODO determine how to get the original request here so we don't need to build each
-            // time
             if (statusCode >= 300) {
                if (retryHandler.shouldRetryRequest(command, response)) {
                   resubmitQueue.add(rendezvous);
@@ -119,7 +144,6 @@ public class NioHttpCommandExecutionHandler implements NHttpRequestExecutionHand
                   rendezvous.setException(command.getException());
                }
             } else {
-               logger.trace("submitting response task %s", command);
                rendezvous.setResponse(response);
             }
          } catch (InterruptedException e) {

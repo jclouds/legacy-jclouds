@@ -54,6 +54,8 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.ReturnVoidIf2xx;
 import org.jclouds.http.options.GetOptions;
+import org.jclouds.logging.Logger;
+import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.mezeo.pcs2.domain.ContainerMetadata;
 import org.jclouds.mezeo.pcs2.domain.FileMetadata;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
@@ -434,6 +436,11 @@ public class PCSBlobStoreTest {
                      bind(URI.class).annotatedWith(WebDAV.class).toInstance(
                               URI.create("http://localhost:8080/webdav"));
                      bind(PCSConnection.class).to(StubPCSConnection.class).asEagerSingleton();
+                     bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
+                        public Logger getLogger(String category) {
+                           return Logger.NULL;
+                        }
+                     });
                   }
 
                   @SuppressWarnings("unused")

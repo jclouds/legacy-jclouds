@@ -26,6 +26,8 @@ package org.jclouds.mezeo.pcs2;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.blobstore.BlobStoreMapsModule;
+import org.jclouds.logging.Logger;
+import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.mezeo.pcs2.config.PCSContextModule;
 import org.jclouds.mezeo.pcs2.config.StubPCSBlobStoreModule;
 import org.jclouds.mezeo.pcs2.config.PCSContextModule.PCSContextImpl;
@@ -58,6 +60,11 @@ public class PCSContextModuleTest {
                      "key");
             bindConstant().annotatedWith(Jsr330.named(PCSConstants.PROPERTY_PCS2_ENDPOINT)).to(
                      "http://localhost");
+            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
+               public Logger getLogger(String category) {
+                  return Logger.NULL;
+               }
+            });
             super.configure();
          }
       });

@@ -49,8 +49,8 @@ public class PCSTestInitializer extends
    protected PCSContext createLiveContext(Module configurationModule, String url, String app,
             String account, String key) {
       return new PCSContextBuilder(URI.create(url), account, key).withRequestTimeout(60000)
-               .relaxSSLHostname().withSaxDebug().withModules(configurationModule,
-                        new Log4JLoggingModule()).buildContext();
+               .relaxSSLHostname().withModules(configurationModule, new Log4JLoggingModule())
+               .buildContext();
    }
 
    @Override

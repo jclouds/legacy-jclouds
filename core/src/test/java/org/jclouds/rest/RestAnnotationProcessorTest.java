@@ -70,7 +70,8 @@ import org.jclouds.http.functions.ReturnVoidIf2xx;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.http.options.HttpRequestOptions;
-import org.jclouds.rest.InvocationContext;
+import org.jclouds.logging.Logger;
+import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.annotations.DecoratorParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.Headers;
@@ -438,7 +439,7 @@ public class RestAnnotationProcessorTest {
                .singletonList(expected.getBytes().length + ""));
       assertEquals(httpMethod.getEntity(), expected);
    }
-   
+
    public void testCreatePutWithMethodProduces() throws SecurityException, NoSuchMethodException {
       Method method = TestPut.class.getMethod("putWithMethodBinderProduces", String.class);
       HttpRequest httpMethod = factory(TestPut.class).createRequest(method,
@@ -453,7 +454,7 @@ public class RestAnnotationProcessorTest {
                .singletonList("data".getBytes().length + ""));
       assertEquals(httpMethod.getEntity(), "data");
    }
-   
+
    public void testCreatePutWithMethodConsumes() throws SecurityException, NoSuchMethodException {
       Method method = TestPut.class.getMethod("putWithMethodBinderConsumes", String.class);
       HttpRequest httpMethod = factory(TestPut.class).createRequest(method,
@@ -471,7 +472,6 @@ public class RestAnnotationProcessorTest {
                .singletonList(expected.getBytes().length + ""));
       assertEquals(httpMethod.getEntity(), expected);
    }
-
 
    static class TestRequestFilter1 implements HttpRequestFilter {
       public HttpRequest filter(HttpRequest request) throws HttpException {
@@ -963,7 +963,8 @@ public class RestAnnotationProcessorTest {
       assertEquals(transformer, ParseURIList.class);
    }
 
-   public static class ReturnStringIf200Context extends ReturnStringIf200 implements InvocationContext {
+   public static class ReturnStringIf200Context extends ReturnStringIf200 implements
+            InvocationContext {
       private Object[] args;
       private HttpRequest request;
 
@@ -1452,6 +1453,11 @@ public class RestAnnotationProcessorTest {
                      URI.create("http://localhost:8080"));
             bind(URI.class).annotatedWith(Localhost2.class).toInstance(
                      URI.create("http://localhost:8081"));
+            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
+               public Logger getLogger(String category) {
+                  return Logger.NULL;
+               }
+            });
          }
       }, new RestModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
                new JavaUrlHttpCommandExecutorServiceModule());

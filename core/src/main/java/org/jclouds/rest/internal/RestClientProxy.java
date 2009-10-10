@@ -69,8 +69,8 @@ public class RestClientProxy<T> implements InvocationHandler {
 
    @SuppressWarnings("unchecked")
    @Inject
-   public RestClientProxy(TransformingHttpCommand.Factory factory,
-            RestAnnotationProcessor<T> util, TypeLiteral<T> typeLiteral) {
+   public RestClientProxy(TransformingHttpCommand.Factory factory, RestAnnotationProcessor<T> util,
+            TypeLiteral<T> typeLiteral) {
       this.util = util;
       this.declaring = (Class<T>) typeLiteral.getRawType();
       this.commandFactory = factory;
@@ -84,7 +84,7 @@ public class RestClientProxy<T> implements InvocationHandler {
          return this.hashCode();
       } else if (util.getDelegateOrNull(method) != null) {
          method = util.getDelegateOrNull(method);
-         logger.trace("%s - converting method to request", method);
+         logger.trace("Converting %s.%s", declaring.getSimpleName(), method.getName());
          Function<Exception, ?> exceptionParser = util
                   .createExceptionParserOrNullIfNotFound(method);
          // in case there is an exception creating the request, we should at least pass in args
@@ -133,27 +133,27 @@ public class RestClientProxy<T> implements InvocationHandler {
             }
             throw e;
          }
-
-         logger.trace("%s - converted method to request %s", method, request);
+         logger.debug("Converted %s.%s to %s", declaring.getSimpleName(), method.getName(), request
+                  .getRequestLine());
 
          Function<HttpResponse, ?> transformer = util.createResponseParser(method, request, args);
+         logger.trace("Response from %s.%s is parsed by %s", declaring.getSimpleName(), method
+                  .getName(), transformer.getClass().getSimpleName());
 
-         logger.trace("%s - creating command for request %s, transformer %s, exceptionParser %s",
-                  method, request, transformer, exceptionParser);
+         logger.debug("Invoking %s.%s", declaring.getSimpleName(), method.getName());
          Future<?> result = commandFactory.create(request, transformer, exceptionParser).execute();
 
          if (exceptionParser != null) {
-            logger.trace("%s - wrapping future for request %s in exceptionParser %s", method,
-                     request, exceptionParser);
+            logger.trace("Exceptions from %s.%s are parsed by %s", declaring.getSimpleName(),
+                     method.getName(), exceptionParser.getClass().getSimpleName());
             result = new FutureExceptionParser(result, exceptionParser);
          }
 
          if (method.getReturnType().isAssignableFrom(Future.class)) {
             return result;
          } else {
-            logger
-                     .trace("%s - invoking request synchronously %s", method, request,
-                              exceptionParser);
+            logger.debug("Blocking up to %dms for %s.%s to complete", requestTimeoutMilliseconds,
+                     declaring.getSimpleName(), method.getName());
             return result.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
          }
       } else {

@@ -23,24 +23,28 @@
  */
 package org.jclouds.logging.config;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Predicate;
 import static com.google.common.collect.Sets.filter;
-import javax.inject.Inject;
-import com.google.inject.ProvisionException;
-import com.google.inject.TypeLiteral;
-import com.google.inject.spi.InjectionListener;
-import com.google.inject.spi.TypeEncounter;
-import com.google.inject.spi.TypeListener;
-import org.jclouds.logging.Logger;
-import org.jclouds.logging.Logger.LoggerFactory;
 
-import javax.annotation.Resource;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.jclouds.logging.Logger;
+import org.jclouds.logging.Logger.LoggerFactory;
+
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Predicate;
+import com.google.inject.ProvisionException;
+import com.google.inject.TypeLiteral;
+import com.google.inject.spi.InjectionListener;
+import com.google.inject.spi.TypeEncounter;
+import com.google.inject.spi.TypeListener;
 
 /**
  * TypeListener that will bind {@link org.jclouds.logging.Logger} to members annotated with
@@ -119,7 +123,12 @@ public class BindLoggersAnnotatedWithResource implements TypeListener {
         Logger logger = loggerFactory.getLogger(type.getName());
 
         for (Field field : loggerFields) {
-            encounter.register(new AssignLoggerToField<I>(logger, field));
+           if (field.isAnnotationPresent(Named.class)){
+              Named name = field.getAnnotation(Named.class);
+              encounter.register(new AssignLoggerToField<I>(loggerFactory.getLogger(name.value()), field));
+           } else {
+              encounter.register(new AssignLoggerToField<I>(logger, field));
+           }
         }
     }
 

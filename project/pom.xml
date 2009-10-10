@@ -146,6 +146,8 @@
         <maven.compile.deprecation>true</maven.compile.deprecation>
         <jclouds.blobstore.httpstream.url>http://mirror.cloudera.com/apache/maven/binaries/apache-maven-2.2.1-bin.tar.bz2</jclouds.blobstore.httpstream.url>
         <jclouds.blobstore.httpstream.md5>c581a15cb0001d9b771ad6df7c8156f8</jclouds.blobstore.httpstream.md5>
+        <jclouds.wire.httpstream.url>http://apache.opensourceresources.org/commons/logging/binaries/commons-logging-1.1.1-bin.tar.gz</jclouds.wire.httpstream.url>
+        <jclouds.wire.httpstream.md5>e5de09672af9b386c30a311654d8541a</jclouds.wire.httpstream.md5>
         <jclouds.test.listener>org.jclouds.test.testng.UnitTestStatusListener</jclouds.test.listener>
     </properties>
 
@@ -216,6 +218,14 @@
                        <property>
                           <name>jclouds.test.initializer</name>
                           <value>${jclouds.test.initializer}</value>
+                       </property>
+                       <property>
+                           <name>jclouds.wire.httpstream.url</name>
+                           <value>${jclouds.wire.httpstream.url}</value>
+                       </property>
+                       <property>
+                           <name>jclouds.wire.httpstream.md5</name>
+                           <value>${jclouds.wire.httpstream.md5}</value>
                        </property>
                        <property>
                            <name>jclouds.blobstore.httpstream.url</name>
@@ -421,6 +431,14 @@ pageTracker._trackPageview();
                                         <property>
                                             <name>jclouds.blobstore.httpstream.md5</name>
                                             <value>${jclouds.blobstore.httpstream.md5}</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.wire.httpstream.url</name>
+                                            <value>${jclouds.wire.httpstream.url}</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.wire.httpstream.md5</name>
+                                            <value>${jclouds.wire.httpstream.md5}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

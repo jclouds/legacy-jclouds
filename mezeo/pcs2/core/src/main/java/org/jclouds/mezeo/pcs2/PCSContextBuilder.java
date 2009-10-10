@@ -114,11 +114,6 @@ public class PCSContextBuilder extends
    }
 
    @Override
-   public PCSContextBuilder withJsonDebug() {
-      return (PCSContextBuilder) super.withJsonDebug();
-   }
-
-   @Override
    public PCSContextBuilder withModule(Module module) {
       return (PCSContextBuilder) super.withModule(module);
    }
@@ -127,7 +122,7 @@ public class PCSContextBuilder extends
    public PCSContextBuilder withRequestTimeout(long milliseconds) {
       return (PCSContextBuilder) super.withRequestTimeout(milliseconds);
    }
-   
+
    @Override
    public PCSContextBuilder withModules(Module... modules) {
       return (PCSContextBuilder) super.withModules(modules);
@@ -156,10 +151,5 @@ public class PCSContextBuilder extends
    @Override
    public PCSContextBuilder withPoolRequestInvokerThreads(int poolRequestInvokerThreads) {
       return (PCSContextBuilder) super.withPoolRequestInvokerThreads(poolRequestInvokerThreads);
-   }
-
-   @Override
-   public PCSContextBuilder withSaxDebug() {
-      return (PCSContextBuilder) super.withSaxDebug();
    }
 }

@@ -31,7 +31,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -47,6 +46,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.internal.BaseHttpCommandExecutorService;
+import org.jclouds.http.internal.Wire;
 
 import com.google.appengine.api.urlfetch.FetchOptions;
 import com.google.appengine.api.urlfetch.HTTPHeader;
@@ -68,8 +68,8 @@ public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorServic
    @Inject
    public GaeHttpCommandExecutorService(URLFetchService urlFetchService,
             ExecutorService executorService, DelegatingRetryHandler retryHandler,
-            DelegatingErrorHandler errorHandler) {
-      super(executorService, retryHandler, errorHandler);
+            DelegatingErrorHandler errorHandler, Wire wire) {
+      super(executorService, retryHandler, errorHandler, wire);
       this.urlFetchService = urlFetchService;
    }
 
@@ -169,20 +169,6 @@ public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorServic
 
    @Override
    protected HttpResponse invoke(HTTPRequest request) throws IOException {
-      logger.trace("%s - submitting request %s, headers: %s", request.getURL().getHost(), request
-               .getURL(), headersAsString(request.getHeaders()));
-      HTTPResponse response = urlFetchService.fetch(request);
-      logger.trace("%s - received response code %s, headers: %s", request.getURL().getHost(),
-               response.getResponseCode(), headersAsString(response.getHeaders()));
-      return convert(response);
+      return convert(urlFetchService.fetch(request));
    }
-
-   String headersAsString(List<HTTPHeader> headers) {
-      StringBuilder builder = new StringBuilder("");
-      for (HTTPHeader header : headers)
-         builder.append("[").append(header.getName()).append("=").append(header.getValue()).append(
-                  "],");
-      return builder.toString();
-   }
-
 }

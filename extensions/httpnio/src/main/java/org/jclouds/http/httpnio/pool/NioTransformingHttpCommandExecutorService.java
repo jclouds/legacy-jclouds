@@ -26,12 +26,13 @@ package org.jclouds.http.httpnio.pool;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.apache.http.nio.NHttpConnection;
 import org.jclouds.http.HttpCommandRendezvous;
 import org.jclouds.http.pool.ConnectionPoolTransformingHttpCommandExecutorService;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import org.jclouds.logging.Logger.LoggerFactory;
 
 /**
  * // TODO: Adrian: Document this!
@@ -42,11 +43,16 @@ import javax.inject.Singleton;
 public class NioTransformingHttpCommandExecutorService extends
          ConnectionPoolTransformingHttpCommandExecutorService<NHttpConnection> {
 
+   @Override
+   public String toString() {
+      return String.format("NioTransformingHttpCommandExecutorService [ hashCode=%d ]", hashCode());
+   }
+
    @Inject
    public NioTransformingHttpCommandExecutorService(ExecutorService executor,
             NioHttpCommandConnectionPool.Factory poolFactory,
-            BlockingQueue<HttpCommandRendezvous<?>> commandQueue) {
-      super(executor, poolFactory, commandQueue);
+            BlockingQueue<HttpCommandRendezvous<?>> commandQueue, LoggerFactory logFactory) {
+      super(executor, poolFactory, commandQueue, logFactory);
    }
 
 }

@@ -46,18 +46,6 @@ import com.google.inject.assistedinject.Assisted;
  */
 public abstract class HttpCommandConnectionPool<C> extends BaseLifeCycle {
 
-   @Override
-   public String toString() {
-      final StringBuilder sb = new StringBuilder();
-      sb.append("HttpCommandConnectionPool");
-      sb.append("{endPoint=").append(endPoint);
-      sb.append(", available=").append(available);
-      sb.append(", currentSessionFailures=").append(currentSessionFailures);
-      sb.append(", hitBottom=").append(hitBottom);
-      sb.append('}');
-      return sb.toString();
-   }
-
    protected final Semaphore allConnections;
    protected final BlockingQueue<C> available;
 
@@ -110,20 +98,18 @@ public abstract class HttpCommandConnectionPool<C> extends BaseLifeCycle {
       if (!hitBottom) {
          hitBottom = available.size() == 0 && allConnections.availablePermits() == 0;
          if (hitBottom)
-            logger.warn("%1$s - saturated connection pool", this);
+            logger.warn("saturated connection pool");
       }
-      logger.debug("%s - attempting to acquire connection; %s currently available", this, available
-               .size());
+      logger.trace("Blocking up to %ds for a connection to %s", 5, getEndPoint());
       C conn = available.poll(5, TimeUnit.SECONDS);
       if (conn == null)
-         throw new TimeoutException("could not obtain a pooled connection within 5 seconds");
+         throw new TimeoutException(String.format("Timeout after %ds for a connection to %s", 5,
+                  getEndPoint()));
 
-      logger.trace("%1$s - %2$d - aquired", conn, conn.hashCode());
       if (connectionValid(conn)) {
-         logger.debug("%1$s - %2$d - reusing", conn, conn.hashCode());
          return conn;
       } else {
-         logger.debug("%1$s - %2$d - unusable", conn, conn.hashCode());
+         logger.debug("Connection %s unusable for endpoint %s", conn.hashCode(), getEndPoint());
          shutdownConnection(conn);
          allConnections.release();
          return getConnection();
@@ -156,7 +142,8 @@ public abstract class HttpCommandConnectionPool<C> extends BaseLifeCycle {
       HttpCommandRendezvous<?> rendezvous = getCommandFromConnection(connection);
       if (rendezvous != null) {
          if (isReplayable(rendezvous)) {
-            logger.info("resubmitting rendezvous: %1$s", rendezvous);
+            logger.info("resubmitting request: %s", rendezvous.getCommand().getRequest()
+                     .getRequestLine());
             resubmitQueue.add(rendezvous);
          } else {
             setExceptionOnCommand(e, rendezvous);
@@ -182,11 +169,11 @@ public abstract class HttpCommandConnectionPool<C> extends BaseLifeCycle {
    }
 
    protected void setExceptionOnCommand(Exception e, HttpCommandRendezvous<?> rendezvous) {
-      logger.warn(e, "exception in rendezvous: %s", rendezvous);
+      logger.warn(e, "Exception processing command: %s", rendezvous.getCommand());
       try {
          rendezvous.setException(e);
       } catch (InterruptedException e1) {
-         logger.error(e, "interrupted setting exception on command", rendezvous);
+         logger.error(e, "interrupted setting exception on command", rendezvous.getCommand());
       }
    }
 

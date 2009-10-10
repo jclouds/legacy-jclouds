@@ -32,6 +32,8 @@ import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.gae.GaeHttpCommandExecutorService;
 import org.jclouds.http.HttpCommandExecutorService;
+import org.jclouds.logging.Logger;
+import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.util.Jsr330;
 import org.testng.annotations.Test;
 
@@ -55,6 +57,11 @@ public class GaeHttpCommandExecutorServiceModuleTest {
                   @Override
                   protected void configure() {
                      Jsr330.bindProperties(binder(), properties);
+                     bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
+                        public Logger getLogger(String category) {
+                           return Logger.NULL;
+                        }
+                     });
                      super.configure();
                   }
                });

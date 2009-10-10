@@ -16,9 +16,6 @@ import org.jclouds.nirvanix.sdn.domain.UploadInfo;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
-
 /**
  * Tests behavior of {@code SDNConnection}
  * 
@@ -40,7 +37,7 @@ public class SDNConnectionLiveTest {
       String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
       connection = new SDNContextBuilder(app, user, password).withModules(new Log4JLoggingModule())
-               .withJsonDebug().buildContext().getApi();
+               .buildContext().getApi();
    }
 
    public void testUploadToken() throws InterruptedException, ExecutionException, TimeoutException {
@@ -53,7 +50,8 @@ public class SDNConnectionLiveTest {
       connection.upload(uploadInfo.getHost(), uploadInfo.getToken(), "container",
                new Blob<BlobMetadata>("key", "value")).get(30, TimeUnit.SECONDS);
 
-     //  Multimap<String, String> metadata = ImmutableMultimap.of("chef", "sushi");
-     // who knows... 403 error; connection.setMetadata("container", "key", metadata).get(30, TimeUnit.SECONDS);
+      // Multimap<String, String> metadata = ImmutableMultimap.of("chef", "sushi");
+      // who knows... 403 error; connection.setMetadata("container", "key", metadata).get(30,
+      // TimeUnit.SECONDS);
    }
 }

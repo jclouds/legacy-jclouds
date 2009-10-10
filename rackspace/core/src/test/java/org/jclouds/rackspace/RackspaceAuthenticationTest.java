@@ -35,6 +35,8 @@ import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
+import org.jclouds.logging.Logger;
+import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rackspace.functions.ParseAuthenticationResponseFromHeaders;
 import org.jclouds.rackspace.reference.RackspaceHeaders;
 import org.jclouds.rest.config.RestModule;
@@ -82,6 +84,11 @@ public class RackspaceAuthenticationTest {
          protected void configure() {
             bind(URI.class).annotatedWith(Authentication.class).toInstance(
                      URI.create("http://localhost:8080"));
+            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
+               public Logger getLogger(String category) {
+                  return Logger.NULL;
+               }
+            });
          }
       }, new RestModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
                new JavaUrlHttpCommandExecutorServiceModule());
