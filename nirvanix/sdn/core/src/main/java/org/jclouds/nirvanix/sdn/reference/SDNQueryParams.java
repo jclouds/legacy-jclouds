@@ -35,4 +35,9 @@ public interface SDNQueryParams {
    public static final String PASSWORD = "password";
    public static final String APPKEY = "appKey";
    public static final String OUTPUT = "output";
+   public static final String SESSIONTOKEN = "sessionToken";
+   public static final String DESTFOLDERPATH = "destFolderPath";
+   public static final String PATH = "path";
+   public static final String SIZEBYTES = "sizeBytes";
+   public static final String UPLOADTOKEN = "uploadToken";
 }

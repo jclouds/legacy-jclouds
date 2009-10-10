@@ -29,9 +29,9 @@ import javax.ws.rs.QueryParam;
 
 import org.jclouds.nirvanix.sdn.functions.ParseSessionTokenFromJsonResponse;
 import org.jclouds.nirvanix.sdn.reference.SDNQueryParams;
-import org.jclouds.rest.Endpoint;
-import org.jclouds.rest.QueryParams;
-import org.jclouds.rest.ResponseParser;
+import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.QueryParams;
+import org.jclouds.rest.annotations.ResponseParser;
 
 /**
  * Provides access to Nirvanix SDN resources via their REST API.
@@ -45,7 +45,7 @@ import org.jclouds.rest.ResponseParser;
 public interface SDNAuthentication {
 
    public interface AuthenticationResponse {
-      @Authentication
+      @SessionToken
       String getSessionToken();
    }
 

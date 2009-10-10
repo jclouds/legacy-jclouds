@@ -29,11 +29,12 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.nirvanix.sdn.Authentication;
+import org.jclouds.nirvanix.sdn.SDN;
 import org.jclouds.nirvanix.sdn.SDNAuthentication;
+import org.jclouds.nirvanix.sdn.SDNConnection;
+import org.jclouds.nirvanix.sdn.SessionToken;
 import org.jclouds.nirvanix.sdn.reference.SDNConstants;
 import org.jclouds.rest.RestClientFactory;
-import org.jclouds.rest.config.JaxrsModule;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -48,20 +49,19 @@ public class RestSDNAuthenticationModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      install(new JaxrsModule());
       bindErrorHandlers();
       bindRetryHandlers();
    }
 
    @Provides
    @Singleton
-   @Authentication
+   @SDN
    protected URI provideAuthenticationURI(@Named(SDNConstants.PROPERTY_SDN_ENDPOINT) String endpoint) {
       return URI.create(endpoint);
    }
 
    @Provides
-   @Authentication
+   @SessionToken
    protected String provideSessionToken(RestClientFactory factory,
             @Named(SDNConstants.PROPERTY_SDN_APPKEY) String appKey,
             @Named(SDNConstants.PROPERTY_SDN_USERNAME) String username,
@@ -69,6 +69,11 @@ public class RestSDNAuthenticationModule extends AbstractModule {
       return factory.create(SDNAuthentication.class).authenticate(appKey, username, password);
    }
 
+   @Provides
+   protected SDNConnection provideConnection(RestClientFactory factory) {
+      return factory.create(SDNConnection.class);
+   }
+   
    protected void bindErrorHandlers() {
       // TODO
    }

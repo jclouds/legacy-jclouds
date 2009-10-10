@@ -36,7 +36,7 @@ import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestClientFactory;
-import org.jclouds.rest.config.JaxrsModule;
+import org.jclouds.rest.config.RestModule;
 import org.jclouds.util.Jsr330;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -82,7 +82,7 @@ public class SDNAuthenticationLiveTest {
          protected SDNAuthentication provideCloud(RestClientFactory factory) {
             return factory.create(SDNAuthentication.class);
          }
-      }, new JaxrsModule(), new Log4JLoggingModule(), new ExecutorServiceModule(
+      }, new RestModule(), new Log4JLoggingModule(), new ExecutorServiceModule(
                new WithinThreadExecutorService()), new JavaUrlHttpCommandExecutorServiceModule());
    }
 }

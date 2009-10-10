@@ -39,6 +39,6 @@ import javax.inject.Qualifier;
 @Retention(value = RetentionPolicy.RUNTIME)
 @Target(value = { ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
 @Qualifier
-public @interface Authentication {
+public @interface SessionToken {
 
 }
