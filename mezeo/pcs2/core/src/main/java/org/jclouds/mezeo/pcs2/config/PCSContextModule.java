@@ -35,6 +35,7 @@ import javax.inject.Singleton;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContextImpl;
 import org.jclouds.blobstore.BlobMap.Factory;
+import org.jclouds.blobstore.domain.Key;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.mezeo.pcs2.PCS;
 import org.jclouds.mezeo.pcs2.PCSConnection;
@@ -44,7 +45,6 @@ import org.jclouds.mezeo.pcs2.domain.FileMetadata;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
 import org.jclouds.mezeo.pcs2.functions.FindIdInContainerList;
 import org.jclouds.mezeo.pcs2.functions.FindIdInFileList;
-import org.jclouds.mezeo.pcs2.functions.Key;
 import org.jclouds.mezeo.pcs2.reference.PCSConstants;
 
 import com.google.common.base.Function;

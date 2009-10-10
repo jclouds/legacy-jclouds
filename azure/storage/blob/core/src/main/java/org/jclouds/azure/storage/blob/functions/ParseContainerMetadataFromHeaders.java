@@ -36,7 +36,7 @@ import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
-import org.jclouds.rest.RestContext;
+import org.jclouds.rest.InvocationContext;
 import org.jclouds.util.DateService;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -50,7 +50,7 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 public class ParseContainerMetadataFromHeaders implements
-         Function<HttpResponse, ContainerMetadata>, RestContext {
+         Function<HttpResponse, ContainerMetadata>, InvocationContext {
 
    private final DateService dateParser;
    private final String metadataPrefix;

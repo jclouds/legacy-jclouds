@@ -33,17 +33,18 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import org.jclouds.rest.binders.JsonBinder;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.options.HttpRequestOptions;
-import org.jclouds.rest.Endpoint;
-import org.jclouds.rest.EntityParam;
-import org.jclouds.rest.ExceptionParser;
-import org.jclouds.rest.MapBinder;
-import org.jclouds.rest.MapEntityParam;
-import org.jclouds.rest.RequestFilters;
-import org.jclouds.rest.XMLResponseParser;
-import org.jclouds.rest.JaxrsAnnotationProcessorTest.Localhost;
+import org.jclouds.rest.RestAnnotationProcessorTest.Localhost;
+import org.jclouds.rest.annotations.DecoratorParam;
+import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.MapBinder;
+import org.jclouds.rest.annotations.MapEntityParam;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.rest.decorators.AddAsJsonEntity;
+import org.jclouds.rest.decorators.AddAsStringEntity;
 
 import com.google.common.base.Function;
 
@@ -87,15 +88,15 @@ public interface IntegrationTestClient {
 
    @PUT
    @Path("objects/{id}")
-   Future<String> upload(@PathParam("id") String id, @EntityParam String toPut);
+   Future<String> upload(@PathParam("id") String id, @DecoratorParam(AddAsStringEntity.class) String toPut);
 
    @POST
    @Path("objects/{id}")
-   Future<String> post(@PathParam("id") String id, @EntityParam String toPut);
+   Future<String> post(@PathParam("id") String id, @DecoratorParam(AddAsStringEntity.class) String toPut);
 
    @POST
    @Path("objects/{id}")
-   @MapBinder(JsonBinder.class)
+   @MapBinder(AddAsJsonEntity.class)
    Future<String> postJson(@PathParam("id") String id, @MapEntityParam("key") String toPut);
 
    @GET

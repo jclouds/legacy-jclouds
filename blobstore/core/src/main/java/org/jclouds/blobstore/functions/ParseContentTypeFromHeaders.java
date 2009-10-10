@@ -31,7 +31,7 @@ import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.rest.RestContext;
+import org.jclouds.rest.InvocationContext;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -40,7 +40,7 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 public class ParseContentTypeFromHeaders<M extends BlobMetadata> implements
-         Function<HttpResponse, M>, RestContext {
+         Function<HttpResponse, M>, InvocationContext {
    private final Provider<M> metadataFactory;
    private HttpRequest request;
    private Object[] args;

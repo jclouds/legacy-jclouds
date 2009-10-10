@@ -28,10 +28,11 @@ import java.util.concurrent.ConcurrentMap;
 import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
+import org.jclouds.blobstore.domain.Key;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.mezeo.pcs2.domain.FileMetadata;
-import org.jclouds.rest.RestContext;
+import org.jclouds.rest.InvocationContext;
 
 import com.google.common.base.Function;
 
@@ -41,7 +42,7 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 public class InvalidatePCSKeyCacheAndReturnVoidIf2xx implements Function<HttpResponse, Void>,
-         RestContext {
+         InvocationContext {
    private final ConcurrentMap<Key, String> cache;
    private final ConcurrentMap<Key, FileMetadata> mdCache;
    private HttpRequest request;

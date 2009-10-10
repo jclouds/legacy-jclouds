@@ -38,6 +38,7 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.KeyNotFoundException;
+import org.jclouds.blobstore.domain.Key;
 import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.mezeo.pcs2.PCS;

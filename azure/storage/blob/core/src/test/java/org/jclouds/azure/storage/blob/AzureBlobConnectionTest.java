@@ -33,6 +33,7 @@ import java.net.URI;
 import java.util.Collections;
 
 import javax.ws.rs.HttpMethod;
+import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.azure.storage.AzureBlob;
 import org.jclouds.azure.storage.blob.functions.ParseContainerMetadataFromHeaders;
@@ -52,8 +53,8 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.ReturnTrueOn404;
 import org.jclouds.http.functions.ReturnVoidIf2xx;
-import org.jclouds.rest.JaxrsAnnotationProcessor;
-import org.jclouds.rest.config.JaxrsModule;
+import org.jclouds.rest.config.RestModule;
+import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Jsr330;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -300,7 +301,9 @@ public class AzureBlobConnectionTest {
       assertEquals(httpMethod.getEndpoint().getPath(), "/container");
       assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container&comp=metadata");
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
-      assertEquals(httpMethod.getHeaders().size(), 2);
+      assertEquals(httpMethod.getHeaders().size(), 3);
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
+               .singletonList("0"));
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
                .singletonList("2009-07-17"));
       assertEquals(httpMethod.getHeaders().get("x-ms-meta-key"), Collections.singletonList("value"));
@@ -319,9 +322,11 @@ public class AzureBlobConnectionTest {
       assertEquals(httpMethod.getEndpoint().getPath(), "/container/blob");
       assertEquals(httpMethod.getEndpoint().getQuery(), "comp=metadata");
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
-      assertEquals(httpMethod.getHeaders().size(), 2);
+      assertEquals(httpMethod.getHeaders().size(), 3);
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
                .singletonList("2009-07-17"));
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
+               .singletonList("0"));
       assertEquals(httpMethod.getHeaders().get("x-ms-meta-key"), Collections.singletonList("value"));
 
       assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
@@ -346,12 +351,12 @@ public class AzureBlobConnectionTest {
                      Jsr330.named(BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX)).to(
                      "x-ms-meta-");
          }
-      }, new JaxrsModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
+      }, new RestModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
                new JavaUrlHttpCommandExecutorServiceModule());
       processor = injector.getInstance(Key
-               .get(new TypeLiteral<JaxrsAnnotationProcessor<AzureBlobConnection>>() {
+               .get(new TypeLiteral<RestAnnotationProcessor<AzureBlobConnection>>() {
                }));
    }
 
-   JaxrsAnnotationProcessor<AzureBlobConnection> processor;
+   RestAnnotationProcessor<AzureBlobConnection> processor;
 }

@@ -38,8 +38,8 @@ import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.mezeo.pcs2.binders.BlockBinder;
-import org.jclouds.mezeo.pcs2.binders.CreateContainerBinder;
+import org.jclouds.mezeo.pcs2.decorators.AddDataAndLength;
+import org.jclouds.mezeo.pcs2.decorators.AddContainerNameAsXmlEntity;
 import org.jclouds.mezeo.pcs2.domain.ContainerMetadata;
 import org.jclouds.mezeo.pcs2.domain.FileMetadata;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
@@ -57,15 +57,15 @@ import org.jclouds.mezeo.pcs2.functions.ReturnTrueIfContainerAlreadyExists;
 import org.jclouds.mezeo.pcs2.xml.CachingFileListToContainerMetadataListHandler;
 import org.jclouds.mezeo.pcs2.xml.FileListToFileMetadataListHandler;
 import org.jclouds.mezeo.pcs2.xml.FileMetadataHandler;
-import org.jclouds.rest.Endpoint;
-import org.jclouds.rest.EntityParam;
-import org.jclouds.rest.ExceptionParser;
-import org.jclouds.rest.Headers;
-import org.jclouds.rest.ParamParser;
-import org.jclouds.rest.RequestFilters;
-import org.jclouds.rest.ResponseParser;
-import org.jclouds.rest.SkipEncoding;
-import org.jclouds.rest.XMLResponseParser;
+import org.jclouds.rest.annotations.DecoratorParam;
+import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Headers;
+import org.jclouds.rest.annotations.ParamParser;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.annotations.SkipEncoding;
+import org.jclouds.rest.annotations.XMLResponseParser;
 
 /**
  * Provides access to Mezeo PCS v2 via their REST API.
@@ -98,7 +98,7 @@ public interface PCSBlobStore extends BlobStore<ContainerMetadata, FileMetadata,
    @Path("/contents")
    @Endpoint(RootContainer.class)
    @ExceptionParser(ReturnTrueIfContainerAlreadyExists.class)
-   Future<Boolean> createContainer(@EntityParam(CreateContainerBinder.class) String container);
+   Future<Boolean> createContainer(@DecoratorParam(AddContainerNameAsXmlEntity.class) String container);
 
    @DELETE
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
@@ -124,7 +124,7 @@ public interface PCSBlobStore extends BlobStore<ContainerMetadata, FileMetadata,
    @PathParam("fileResourceId")
    @ParamParser(CreateSubFolderIfNotExistsAndNewFileResource.class)
    Future<byte[]> putBlob(String containerName,
-            @EntityParam(BlockBinder.class) PCSFile object);
+            @DecoratorParam(AddDataAndLength.class) PCSFile object);
    
 //   @POST
 //   @Path("/containers/{containerResourceId}/contents")
@@ -133,7 +133,7 @@ public interface PCSBlobStore extends BlobStore<ContainerMetadata, FileMetadata,
 //   @PathParam("containerResourceId")
 //   @ParamParser(CreateSubFolderIfNotExistsAndGetResourceId.class)
 //   Future<byte[]> putBlob(String containerName,
-//            @EntityParam(PCSFileAsMultipartFormBinder.class) PCSFile object);
+//            @EntityParam(BlobAsMultipartFormBinder.class) PCSFile object);
 
    @DELETE
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)

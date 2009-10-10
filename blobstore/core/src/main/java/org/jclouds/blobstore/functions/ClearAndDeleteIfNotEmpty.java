@@ -38,13 +38,13 @@ import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.ClearContainerStrategy;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponseException;
-import org.jclouds.rest.RestContext;
+import org.jclouds.rest.InvocationContext;
 import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
 
 public class ClearAndDeleteIfNotEmpty<C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
-         implements Function<Exception, Void>, RestContext {
+         implements Function<Exception, Void>, InvocationContext {
    static final Void v;
    static {
       Constructor<Void> cv;

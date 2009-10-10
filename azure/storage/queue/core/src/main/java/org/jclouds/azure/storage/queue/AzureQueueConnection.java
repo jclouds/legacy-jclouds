@@ -40,12 +40,12 @@ import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.queue.domain.QueueMetadata;
 import org.jclouds.azure.storage.queue.xml.AccountNameEnumerationResultsHandler;
 import org.jclouds.azure.storage.reference.AzureStorageHeaders;
-import org.jclouds.rest.Endpoint;
-import org.jclouds.rest.Headers;
-import org.jclouds.rest.QueryParams;
-import org.jclouds.rest.RequestFilters;
-import org.jclouds.rest.SkipEncoding;
-import org.jclouds.rest.XMLResponseParser;
+import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.Headers;
+import org.jclouds.rest.annotations.QueryParams;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.SkipEncoding;
+import org.jclouds.rest.annotations.XMLResponseParser;
 
 /**
  * Provides access to Azure Queue via their REST API.

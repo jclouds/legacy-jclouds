@@ -34,6 +34,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.KeyNotFoundException;
+import org.jclouds.blobstore.domain.Key;
 import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;

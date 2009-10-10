@@ -37,7 +37,7 @@ import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.mezeo.pcs2.PCSCloud.Response;
 import org.jclouds.rest.RestClientFactory;
-import org.jclouds.rest.config.JaxrsModule;
+import org.jclouds.rest.config.RestModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -97,7 +97,7 @@ public class PCSCloudLiveTest {
          protected PCSCloud provideCloud(RestClientFactory factory) {
             return factory.create(PCSCloud.class);
          }
-      }, new JaxrsModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
+      }, new RestModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
                new JavaUrlHttpCommandExecutorServiceModule());
    }
 }

@@ -30,14 +30,14 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.logging.Logger;
-import org.jclouds.rest.RestContext;
+import org.jclouds.rest.InvocationContext;
 
 import com.google.common.base.Function;
 
 /**
  * @author Adrian Cole
  */
-public class ParseContentMD5FromHeaders implements Function<HttpResponse, byte[]>, RestContext {
+public class ParseContentMD5FromHeaders implements Function<HttpResponse, byte[]>, InvocationContext {
 
    public static class NoContentMD5Exception extends RuntimeException {
 

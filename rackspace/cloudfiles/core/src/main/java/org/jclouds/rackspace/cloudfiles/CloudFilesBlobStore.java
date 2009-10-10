@@ -35,7 +35,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.binders.BlobBinder;
+import org.jclouds.blobstore.decorators.AddBlobEntity;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.BlobKey;
@@ -53,14 +53,14 @@ import org.jclouds.rackspace.cloudfiles.functions.ParseObjectFromHeadersAndHttpC
 import org.jclouds.rackspace.cloudfiles.functions.ParseObjectMetadataFromHeaders;
 import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
 import org.jclouds.rackspace.filters.AuthenticateRequest;
-import org.jclouds.rest.Endpoint;
-import org.jclouds.rest.EntityParam;
-import org.jclouds.rest.ExceptionParser;
-import org.jclouds.rest.ParamParser;
-import org.jclouds.rest.QueryParams;
-import org.jclouds.rest.RequestFilters;
-import org.jclouds.rest.ResponseParser;
-import org.jclouds.rest.SkipEncoding;
+import org.jclouds.rest.annotations.DecoratorParam;
+import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.ParamParser;
+import org.jclouds.rest.annotations.QueryParams;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.annotations.SkipEncoding;
 
 /**
  * Provides access to Cloud Files via their REST API.
@@ -113,7 +113,7 @@ public interface CloudFilesBlobStore extends
    @ResponseParser(ParseETagHeader.class)
    Future<byte[]> putBlob(
             @PathParam("container") String container,
-            @PathParam("key") @ParamParser(BlobKey.class) @EntityParam(BlobBinder.class) Blob<BlobMetadata> object);
+            @PathParam("key") @ParamParser(BlobKey.class) @DecoratorParam(AddBlobEntity.class) Blob<BlobMetadata> object);
 
    @GET
    @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)

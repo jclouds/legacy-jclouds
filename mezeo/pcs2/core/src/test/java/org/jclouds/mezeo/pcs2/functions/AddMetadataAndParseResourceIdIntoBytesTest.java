@@ -38,12 +38,13 @@ import java.util.concurrent.Future;
 import javax.ws.rs.ext.RuntimeDelegate;
 
 import org.apache.commons.io.IOUtils;
+import org.jclouds.blobstore.domain.Key;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.mezeo.pcs2.PCSUtil;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
-import org.jclouds.rest.RuntimeDelegateImpl;
+import org.jclouds.rest.internal.RuntimeDelegateImpl;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 

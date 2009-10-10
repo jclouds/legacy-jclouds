@@ -30,6 +30,7 @@ import java.io.InputStream;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
+import org.jclouds.blobstore.domain.Key;
 import org.jclouds.util.Utils;
 
 /**
@@ -38,6 +39,17 @@ import org.jclouds.util.Utils;
  * @author Adrian Cole
  */
 public class BlobStoreUtils {
+
+   public static Key parseKey(Key key) {
+
+      if (key.getKey().indexOf('/') != -1) {
+         String container = key.getContainer() + '/'
+                  + key.getKey().substring(0, key.getKey().lastIndexOf('/'));
+         String newKey = key.getKey().substring(key.getKey().lastIndexOf('/') + 1);
+         key = new Key(container.replaceAll("//", "/"), newKey);
+      }
+      return key;
+   }
 
    public static String getContentAsStringAndClose(Blob<? extends BlobMetadata> object)
             throws IOException {

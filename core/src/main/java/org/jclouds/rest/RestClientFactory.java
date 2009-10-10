@@ -28,6 +28,8 @@ import java.lang.reflect.Proxy;
 
 import javax.inject.Inject;
 
+import org.jclouds.rest.internal.RestClientProxy;
+
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;

@@ -37,9 +37,9 @@ import org.jclouds.mezeo.pcs2.endpoints.RootContainer;
 import org.jclouds.mezeo.pcs2.endpoints.Shares;
 import org.jclouds.mezeo.pcs2.endpoints.Tags;
 import org.jclouds.mezeo.pcs2.xml.CloudXlinkHandler;
-import org.jclouds.rest.Endpoint;
-import org.jclouds.rest.RequestFilters;
-import org.jclouds.rest.XMLResponseParser;
+import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.XMLResponseParser;
 
 /**
  * Provides URIs to PCS services via their REST API.

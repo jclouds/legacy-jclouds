@@ -37,15 +37,15 @@ import javax.ws.rs.PathParam;
 
 import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.rackspace.CloudServers;
-import org.jclouds.rackspace.cloudservers.binders.BackupScheduleBinder;
-import org.jclouds.rackspace.cloudservers.binders.ChangeAdminPassBinder;
-import org.jclouds.rackspace.cloudservers.binders.ChangeServerNameBinder;
-import org.jclouds.rackspace.cloudservers.binders.ConfirmResizeBinder;
-import org.jclouds.rackspace.cloudservers.binders.CreateImageBinder;
-import org.jclouds.rackspace.cloudservers.binders.RebootTypeBinder;
-import org.jclouds.rackspace.cloudservers.binders.ResizeBinder;
-import org.jclouds.rackspace.cloudservers.binders.RevertResizeBinder;
-import org.jclouds.rackspace.cloudservers.binders.ShareIpBinder;
+import org.jclouds.rackspace.cloudservers.decorators.AddBackupScheduleAsJsonEntity;
+import org.jclouds.rackspace.cloudservers.decorators.AddAdminPassAsJsonEntity;
+import org.jclouds.rackspace.cloudservers.decorators.AddServerNameAsJsonEntity;
+import org.jclouds.rackspace.cloudservers.decorators.AddConfirmResizeAsJsonEntity;
+import org.jclouds.rackspace.cloudservers.decorators.AddCreateImageAsJsonEntity;
+import org.jclouds.rackspace.cloudservers.decorators.AddRebootTypeAsJsonEntity;
+import org.jclouds.rackspace.cloudservers.decorators.AddResizeFlavorAsJsonEntity;
+import org.jclouds.rackspace.cloudservers.decorators.AddRevertResizeAsJsonEntity;
+import org.jclouds.rackspace.cloudservers.decorators.AddSharedIpGroupAsJsonEntity;
 import org.jclouds.rackspace.cloudservers.domain.Addresses;
 import org.jclouds.rackspace.cloudservers.domain.BackupSchedule;
 import org.jclouds.rackspace.cloudservers.domain.Flavor;
@@ -74,16 +74,16 @@ import org.jclouds.rackspace.cloudservers.options.CreateSharedIpGroupOptions;
 import org.jclouds.rackspace.cloudservers.options.ListOptions;
 import org.jclouds.rackspace.cloudservers.options.RebuildServerOptions;
 import org.jclouds.rackspace.filters.AuthenticateRequest;
-import org.jclouds.rest.Endpoint;
-import org.jclouds.rest.EntityParam;
-import org.jclouds.rest.ExceptionParser;
-import org.jclouds.rest.MapBinder;
-import org.jclouds.rest.MapEntityParam;
-import org.jclouds.rest.ParamParser;
-import org.jclouds.rest.QueryParams;
-import org.jclouds.rest.RequestFilters;
-import org.jclouds.rest.ResponseParser;
-import org.jclouds.rest.SkipEncoding;
+import org.jclouds.rest.annotations.DecoratorParam;
+import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.MapBinder;
+import org.jclouds.rest.annotations.MapEntityParam;
+import org.jclouds.rest.annotations.ParamParser;
+import org.jclouds.rest.annotations.QueryParams;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.annotations.SkipEncoding;
 
 /**
  * Provides access to Cloud Servers via their REST API.
@@ -170,7 +170,7 @@ public interface CloudServersConnection {
    // TODO:cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
    // (400), badMediaType(415),buildInProgress (409), overLimit (403)
    boolean rebootServer(@PathParam("id") int id,
-            @EntityParam(RebootTypeBinder.class) RebootType rebootType);
+            @DecoratorParam(AddRebootTypeAsJsonEntity.class) RebootType rebootType);
 
    /**
     * The resize function converts an existing server to a different flavor, in essence, scaling the
@@ -192,7 +192,7 @@ public interface CloudServersConnection {
    // TODO:cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
    // (400), badMediaType(415), itemNotFound (404), buildInProgress (409), serverCapacityUnavailable
    // (503), overLimit (413), resizeNotAllowed (403)
-   boolean resizeServer(@PathParam("id") int id, @EntityParam(ResizeBinder.class) int flavorId);
+   boolean resizeServer(@PathParam("id") int id, @DecoratorParam(AddResizeFlavorAsJsonEntity.class) int flavorId);
 
    /**
     * The resize function converts an existing server to a different flavor, in essence, scaling the
@@ -212,7 +212,7 @@ public interface CloudServersConnection {
    // TODO:cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
    // (400), badMediaType(415), itemNotFound (404), buildInProgress (409), serverCapacityUnavailable
    // (503), overLimit (413), resizeNotAllowed (403)
-   boolean confirmResizeServer(@PathParam("id") @EntityParam(ConfirmResizeBinder.class) int id);
+   boolean confirmResizeServer(@PathParam("id") @DecoratorParam(AddConfirmResizeAsJsonEntity.class) int id);
 
    /**
     * The resize function converts an existing server to a different flavor, in essence, scaling the
@@ -232,7 +232,7 @@ public interface CloudServersConnection {
    // TODO:cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
    // (400), badMediaType(415), itemNotFound (404), buildInProgress (409), serverCapacityUnavailable
    // (503), overLimit (413), resizeNotAllowed (403)
-   boolean revertResizeServer(@PathParam("id") @EntityParam(RevertResizeBinder.class) int id);
+   boolean revertResizeServer(@PathParam("id") @DecoratorParam(AddRevertResizeAsJsonEntity.class) int id);
 
    /**
     * This operation asynchronously provisions a new server. The progress of this operation depends
@@ -304,7 +304,7 @@ public interface CloudServersConnection {
    @PUT
    @ExceptionParser(ReturnFalseOn404.class)
    @Path("/servers/{id}/ips/public/{address}")
-   @MapBinder(ShareIpBinder.class)
+   @MapBinder(AddSharedIpGroupAsJsonEntity.class)
    // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
    // (400), badMediaType(415), buildInProgress (409), overLimit (413)
    boolean shareIp(@PathParam("address") @ParamParser(IpAddress.class) InetAddress addressToShare,
@@ -344,7 +344,7 @@ public interface CloudServersConnection {
    // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
    // (400), badMediaType(415), buildInProgress (409), overLimit (413)
    boolean changeAdminPass(@PathParam("id") int id,
-            @EntityParam(ChangeAdminPassBinder.class) String adminPass);
+            @DecoratorParam(AddAdminPassAsJsonEntity.class) String adminPass);
 
    /**
     * This operation allows you to update the name of the server. This operation changes the name of
@@ -360,7 +360,7 @@ public interface CloudServersConnection {
    // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
    // (400), badMediaType(415), buildInProgress (409), overLimit (413)
    boolean renameServer(@PathParam("id") int id,
-            @EntityParam(ChangeServerNameBinder.class) String newName);
+            @DecoratorParam(AddServerNameAsJsonEntity.class) String newName);
 
    /**
     * 
@@ -447,7 +447,7 @@ public interface CloudServersConnection {
    @ResponseParser(ParseImageFromJsonResponse.class)
    @QueryParams(keys = "format", values = "json")
    @ExceptionParser(ReturnImageNotFoundOn404.class)
-   @MapBinder(CreateImageBinder.class)
+   @MapBinder(AddCreateImageAsJsonEntity.class)
    @Path("/images")
    // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
    // (400), badMediaType(415), buildInProgress (409), serverCapacityUnavailable (503), overLimit
@@ -554,7 +554,7 @@ public interface CloudServersConnection {
    // (400), badMediaType(415), buildInProgress (409), serverCapacityUnavailable (503),
    // backupOrResizeInProgress(409), resizeNotAllowed (403). overLimit (413)
    boolean replaceBackupSchedule(@PathParam("id") int id,
-            @EntityParam(BackupScheduleBinder.class) BackupSchedule backupSchedule);
+            @DecoratorParam(AddBackupScheduleAsJsonEntity.class) BackupSchedule backupSchedule);
 
    /**
     * List all server addresses

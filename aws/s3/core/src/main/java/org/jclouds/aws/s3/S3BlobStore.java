@@ -34,7 +34,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import org.jclouds.aws.s3.binders.S3ObjectBinder;
+import org.jclouds.aws.s3.decorators.AddS3ObjectEntity;
 import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
@@ -55,17 +55,17 @@ import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.rest.Endpoint;
-import org.jclouds.rest.EntityParam;
-import org.jclouds.rest.ExceptionParser;
-import org.jclouds.rest.HostPrefixParam;
-import org.jclouds.rest.ParamParser;
-import org.jclouds.rest.QueryParams;
-import org.jclouds.rest.RequestFilters;
-import org.jclouds.rest.ResponseParser;
-import org.jclouds.rest.SkipEncoding;
-import org.jclouds.rest.VirtualHost;
-import org.jclouds.rest.XMLResponseParser;
+import org.jclouds.rest.annotations.DecoratorParam;
+import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.HostPrefixParam;
+import org.jclouds.rest.annotations.ParamParser;
+import org.jclouds.rest.annotations.QueryParams;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.annotations.SkipEncoding;
+import org.jclouds.rest.annotations.VirtualHost;
+import org.jclouds.rest.annotations.XMLResponseParser;
 
 /**
  * Provides access to S3 via their REST API.
@@ -181,7 +181,7 @@ public interface S3BlobStore extends BlobStore<BucketMetadata, ObjectMetadata, S
    @ResponseParser(ParseETagHeader.class)
    Future<byte[]> putBlob(
             @HostPrefixParam String bucketName,
-            @PathParam("key") @ParamParser(BlobKey.class) @EntityParam(S3ObjectBinder.class) S3Object object);
+            @PathParam("key") @ParamParser(BlobKey.class) @DecoratorParam(AddS3ObjectEntity.class) S3Object object);
 
    @PUT
    @Path("/")

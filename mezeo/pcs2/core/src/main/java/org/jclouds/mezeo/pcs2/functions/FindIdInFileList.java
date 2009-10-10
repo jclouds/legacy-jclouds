@@ -32,11 +32,12 @@ import javax.inject.Inject;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.KeyNotFoundException;
+import org.jclouds.blobstore.domain.Key;
+import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.http.HttpException;
 import org.jclouds.mezeo.pcs2.domain.ContainerMetadata;
 import org.jclouds.mezeo.pcs2.domain.FileMetadata;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
-import org.jclouds.mezeo.pcs2.util.PCSUtils;
 import org.jclouds.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -51,7 +52,7 @@ public class FindIdInFileList implements Function<Key, String> {
    }
 
    public String apply(Key key) {
-      key = PCSUtils.parseKey(key);
+      key = BlobStoreUtils.parseKey(key);
       SortedSet<FileMetadata> response;
       try {
          response = connection.listBlobs(key.getContainer()).get(10, TimeUnit.SECONDS);

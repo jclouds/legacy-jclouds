@@ -29,7 +29,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Map;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.binders.JsonBinder;
+import org.jclouds.rest.decorators.AddAsJsonEntity;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.internal.Nullable;
@@ -40,7 +40,7 @@ import com.google.inject.internal.Nullable;
  * @author Adrian Cole
  * 
  */
-public class CreateSharedIpGroupOptions extends JsonBinder {
+public class CreateSharedIpGroupOptions extends AddAsJsonEntity {
    Integer serverId;
 
    @SuppressWarnings("unused")
@@ -56,14 +56,14 @@ public class CreateSharedIpGroupOptions extends JsonBinder {
    }
 
    @Override
-   public void addEntityToRequest(Map<String, String> postParams, HttpRequest request) {
+   public HttpRequest decorateRequest(HttpRequest request, Map<String, String> postParams) {
       SharedIpGroupRequest createRequest = new SharedIpGroupRequest(checkNotNull(postParams
                .get("name")), serverId);
-      super.addEntityToRequest(ImmutableMap.of("sharedIpGroup", createRequest), request);
+      return super.decorateRequest(request, ImmutableMap.of("sharedIpGroup", createRequest));
    }
 
    @Override
-   public void addEntityToRequest(Object toBind, HttpRequest request) {
+   public HttpRequest decorateRequest(HttpRequest request, Object toBind) {
       throw new IllegalStateException("CreateSharedIpGroup is a POST operation");
    }
 

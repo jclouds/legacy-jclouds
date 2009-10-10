@@ -49,8 +49,8 @@ import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.ReturnVoidIf2xx;
-import org.jclouds.rest.JaxrsAnnotationProcessor;
-import org.jclouds.rest.config.JaxrsModule;
+import org.jclouds.rest.config.RestModule;
+import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Jsr330;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -195,12 +195,12 @@ public class AzureBlobStoreTest {
             };
          }
 
-      }, new JaxrsModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
+      }, new RestModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
                new JavaUrlHttpCommandExecutorServiceModule());
       processor = injector.getInstance(Key
-               .get(new TypeLiteral<JaxrsAnnotationProcessor<AzureBlobStore>>() {
+               .get(new TypeLiteral<RestAnnotationProcessor<AzureBlobStore>>() {
                }));
    }
 
-   JaxrsAnnotationProcessor<AzureBlobStore> processor;
+   RestAnnotationProcessor<AzureBlobStore> processor;
 }

@@ -9,7 +9,7 @@ import javax.inject.Inject;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ReturnStringIf200;
-import org.jclouds.rest.RestContext;
+import org.jclouds.rest.InvocationContext;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Multimap;
@@ -18,7 +18,7 @@ import com.google.common.collect.Multimap;
  * 
  * @author Adrian Cole
  */
-public class AddEntryIntoMultiMap implements Function<HttpResponse, Void>, RestContext {
+public class AddEntryIntoMultiMap implements Function<HttpResponse, Void>, InvocationContext {
    ReturnStringIf200 returnIf200;
 
    @Inject

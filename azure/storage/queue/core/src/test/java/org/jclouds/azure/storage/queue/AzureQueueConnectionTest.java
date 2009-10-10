@@ -44,8 +44,8 @@ import org.jclouds.http.HttpUtils;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
-import org.jclouds.rest.JaxrsAnnotationProcessor;
-import org.jclouds.rest.config.JaxrsModule;
+import org.jclouds.rest.config.RestModule;
+import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Jsr330;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -177,12 +177,12 @@ public class AzureQueueConnectionTest {
                      Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY)).to(
                      HttpUtils.toBase64String("key".getBytes()));
          }
-      }, new JaxrsModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
+      }, new RestModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
                new JavaUrlHttpCommandExecutorServiceModule());
       processor = injector.getInstance(Key
-               .get(new TypeLiteral<JaxrsAnnotationProcessor<AzureQueueConnection>>() {
+               .get(new TypeLiteral<RestAnnotationProcessor<AzureQueueConnection>>() {
                }));
    }
 
-   JaxrsAnnotationProcessor<AzureQueueConnection> processor;
+   RestAnnotationProcessor<AzureQueueConnection> processor;
 }

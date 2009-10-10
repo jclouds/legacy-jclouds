@@ -44,7 +44,7 @@ import org.jclouds.blobstore.strategy.ContainerCountStrategy;
 import org.jclouds.blobstore.strategy.ContainsValueStrategy;
 import org.jclouds.blobstore.strategy.GetAllBlobMetadataStrategy;
 import org.jclouds.blobstore.strategy.GetAllBlobsStrategy;
-import org.jclouds.rest.BoundedSortedSet;
+import org.jclouds.rest.internal.BoundedSortedSet;
 import org.jclouds.util.Utils;
 
 import com.google.common.collect.Sets;

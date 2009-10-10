@@ -30,7 +30,7 @@ import javax.inject.Inject;
 import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.rest.RestContext;
+import org.jclouds.rest.InvocationContext;
 
 import com.google.common.base.Function;
 
@@ -40,7 +40,7 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 public class InvalidateContainerNameCacheAndReturnTrueIf2xx implements Function<HttpResponse, Boolean>,
-         RestContext {
+         InvocationContext {
    private final ConcurrentMap<String, String> cache;
    private HttpRequest request;
    private Object[] args;

@@ -37,8 +37,8 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.rackspace.functions.ParseAuthenticationResponseFromHeaders;
 import org.jclouds.rackspace.reference.RackspaceHeaders;
-import org.jclouds.rest.JaxrsAnnotationProcessor;
-import org.jclouds.rest.config.JaxrsModule;
+import org.jclouds.rest.config.RestModule;
+import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -56,7 +56,7 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit", testName = "rackspace.RackspaceAuthentication")
 public class RackspaceAuthenticationTest {
 
-   private JaxrsAnnotationProcessor<RackspaceAuthentication> processor;
+   private RestAnnotationProcessor<RackspaceAuthentication> processor;
 
    public void testAuthenticate() throws SecurityException, NoSuchMethodException {
       Method method = RackspaceAuthentication.class.getMethod("authenticate", String.class,
@@ -70,7 +70,7 @@ public class RackspaceAuthenticationTest {
                .singletonList("foo"));
       assertEquals(httpMethod.getHeaders().get(RackspaceHeaders.AUTH_KEY), Collections
                .singletonList("bar"));
-      assertEquals(JaxrsAnnotationProcessor.getParserOrThrowException(method),
+      assertEquals(RestAnnotationProcessor.getParserOrThrowException(method),
                ParseAuthenticationResponseFromHeaders.class);
 
    }
@@ -83,10 +83,10 @@ public class RackspaceAuthenticationTest {
             bind(URI.class).annotatedWith(Authentication.class).toInstance(
                      URI.create("http://localhost:8080"));
          }
-      }, new JaxrsModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
+      }, new RestModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
                new JavaUrlHttpCommandExecutorServiceModule());
       processor = injector.getInstance(Key
-               .get(new TypeLiteral<JaxrsAnnotationProcessor<RackspaceAuthentication>>() {
+               .get(new TypeLiteral<RestAnnotationProcessor<RackspaceAuthentication>>() {
                }));
    }
 

@@ -52,7 +52,7 @@ import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.config.LoggingModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.rest.config.JaxrsModule;
+import org.jclouds.rest.config.RestModule;
 import org.jclouds.util.Jsr330;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -218,7 +218,7 @@ public abstract class CloudContextBuilder<C> {
          }
 
       })) {
-         modules.add(new JaxrsModule());
+         modules.add(new RestModule());
       }
    }
 

@@ -30,7 +30,7 @@ import java.util.SortedSet;
  * @author Adrian Cole
  * 
  */
-public class BoundedTreeSet<T> extends org.jclouds.rest.BoundedTreeSet<T> implements
+public class BoundedTreeSet<T> extends org.jclouds.rest.internal.BoundedTreeSet<T> implements
          BoundedSortedSet<T> {
    /** The serialVersionUID */
    private static final long serialVersionUID = -4475709781001190244L;

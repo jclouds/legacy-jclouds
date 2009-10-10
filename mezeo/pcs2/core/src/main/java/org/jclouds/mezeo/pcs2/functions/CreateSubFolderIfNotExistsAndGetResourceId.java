@@ -40,8 +40,10 @@ import javax.inject.Singleton;
 
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.Key;
 import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
+import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.mezeo.pcs2.PCSConnection;
 import org.jclouds.mezeo.pcs2.domain.ContainerMetadata;
 import org.jclouds.mezeo.pcs2.endpoints.RootContainer;
@@ -85,7 +87,7 @@ public class CreateSubFolderIfNotExistsAndGetResourceId implements Function<Obje
       Object[] args = (Object[]) from;
       checkArgument(args[0] instanceof String, "arg[0] must be a container name");
       checkArgument(args[1] instanceof Blob, "arg[1] must be a pcsfile");
-      Key key = PCSUtils.parseKey(new Key(args[0].toString(), ((Blob) args[1]).getKey()));
+      Key key = BlobStoreUtils.parseKey(new Key(args[0].toString(), ((Blob) args[1]).getKey()));
       try {
          return finder.get(key.getContainer());
       } catch (ComputationException e) {
@@ -95,12 +97,12 @@ public class CreateSubFolderIfNotExistsAndGetResourceId implements Function<Obje
             SortedSet<ContainerMetadata> response = blobStore.listContainers();
             URI containerUri;
             try {
-               containerUri = urlForNameInListOrCreate(rootContainer, containerTree[0],
-                        response);
+               containerUri = urlForNameInListOrCreate(rootContainer, containerTree[0], response);
             } catch (Exception e1) {
 
                Utils.<ContainerNotFoundException> rethrowIfRuntimeOrSameType(e1);
-               throw new BlobRuntimeException("error creating container at: " + containerTree[0], e1);
+               throw new BlobRuntimeException("error creating container at: " + containerTree[0],
+                        e1);
             }
             if (containerTree.length != 1) {
                for (int i = 1; i < containerTree.length; i++) {

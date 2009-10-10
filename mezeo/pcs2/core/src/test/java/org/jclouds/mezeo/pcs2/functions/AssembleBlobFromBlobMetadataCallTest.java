@@ -31,6 +31,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.util.concurrent.ConcurrentMap;
 
+import org.jclouds.blobstore.domain.Key;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.mezeo.pcs2.domain.FileMetadata;

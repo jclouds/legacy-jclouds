@@ -50,24 +50,24 @@ import org.jclouds.azure.storage.domain.BoundedSortedSet;
 import org.jclouds.azure.storage.filters.SharedKeyAuthentication;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.reference.AzureStorageHeaders;
-import org.jclouds.blobstore.binders.BlobBinder;
-import org.jclouds.blobstore.binders.UserMetadataBinder;
+import org.jclouds.blobstore.decorators.AddBlobEntity;
+import org.jclouds.blobstore.decorators.AddHeadersWithPrefix;
 import org.jclouds.blobstore.functions.BlobKey;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.functions.ReturnTrueOn404;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.rest.Endpoint;
-import org.jclouds.rest.EntityParam;
-import org.jclouds.rest.ExceptionParser;
-import org.jclouds.rest.Headers;
-import org.jclouds.rest.ParamParser;
-import org.jclouds.rest.QueryParams;
-import org.jclouds.rest.RequestFilters;
-import org.jclouds.rest.ResponseParser;
-import org.jclouds.rest.SkipEncoding;
-import org.jclouds.rest.XMLResponseParser;
+import org.jclouds.rest.annotations.DecoratorParam;
+import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Headers;
+import org.jclouds.rest.annotations.ParamParser;
+import org.jclouds.rest.annotations.QueryParams;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.annotations.SkipEncoding;
+import org.jclouds.rest.annotations.XMLResponseParser;
 
 import com.google.common.collect.Multimap;
 
@@ -144,7 +144,7 @@ public interface AzureBlobConnection {
    @Path("{container}")
    @QueryParams(keys = { "restype", "comp" }, values = { "container", "metadata" })
    void setContainerMetadata(@PathParam("container") String container,
-            @EntityParam(UserMetadataBinder.class) Multimap<String, String> metadata);
+            @DecoratorParam(AddHeadersWithPrefix.class) Multimap<String, String> metadata);
 
    /**
     * The Delete Container operation marks the specified container for deletion. The container and
@@ -272,7 +272,7 @@ public interface AzureBlobConnection {
    @Path("{container}/{key}")
    @ResponseParser(ParseETagHeader.class)
    Future<byte[]> putBlob(@PathParam("container") String container,
-            @PathParam("key") @ParamParser(BlobKey.class) @EntityParam(BlobBinder.class) Blob object);
+            @PathParam("key") @ParamParser(BlobKey.class) @DecoratorParam(AddBlobEntity.class) Blob object);
 
    /**
     * The Get Blob operation reads or downloads a blob from the system, including its metadata and
@@ -302,7 +302,7 @@ public interface AzureBlobConnection {
    @Path("{container}/{key}")
    @QueryParams(keys = { "comp" }, values = { "metadata" })
    void setBlobMetadata(@PathParam("container") String container, @PathParam("key") String key,
-            @EntityParam(UserMetadataBinder.class) Multimap<String, String> metadata);
+            @DecoratorParam(AddHeadersWithPrefix.class) Multimap<String, String> metadata);
 
    /**
     * The Delete Blob operation marks the specified blob for deletion. The blob is later deleted

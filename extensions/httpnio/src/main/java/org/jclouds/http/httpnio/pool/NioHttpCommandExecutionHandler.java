@@ -85,7 +85,7 @@ public class NioHttpCommandExecutionHandler implements NHttpRequestExecutionHand
       if (rendezvous != null) {
          HttpRequest request = rendezvous.getCommand().getRequest();
          for (HttpRequestFilter filter : request.getFilters()) {
-            filter.filter(request);
+            request = filter.filter(request);
          }
          return NioHttpUtils.convertToApacheRequest(request);
       }

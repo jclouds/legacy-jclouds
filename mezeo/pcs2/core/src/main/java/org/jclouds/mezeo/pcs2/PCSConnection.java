@@ -34,13 +34,13 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 
+import org.jclouds.blobstore.decorators.AddBlobEntityAsMultipartForm;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.mezeo.pcs2.binders.BlockBinder;
-import org.jclouds.mezeo.pcs2.binders.CreateContainerBinder;
-import org.jclouds.mezeo.pcs2.binders.CreateFileBinder;
-import org.jclouds.mezeo.pcs2.binders.PCSFileAsMultipartFormBinder;
+import org.jclouds.mezeo.pcs2.decorators.AddDataAndLength;
+import org.jclouds.mezeo.pcs2.decorators.AddContainerNameAsXmlEntity;
+import org.jclouds.mezeo.pcs2.decorators.AddFileInfoAsXmlEntity;
 import org.jclouds.mezeo.pcs2.domain.ContainerMetadata;
 import org.jclouds.mezeo.pcs2.domain.FileMetadata;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
@@ -48,13 +48,13 @@ import org.jclouds.mezeo.pcs2.endpoints.RootContainer;
 import org.jclouds.mezeo.pcs2.options.PutBlockOptions;
 import org.jclouds.mezeo.pcs2.xml.FileListToContainerMetadataListHandler;
 import org.jclouds.mezeo.pcs2.xml.FileListToFileMetadataListHandler;
-import org.jclouds.rest.Endpoint;
-import org.jclouds.rest.EntityParam;
-import org.jclouds.rest.ExceptionParser;
-import org.jclouds.rest.Headers;
-import org.jclouds.rest.RequestFilters;
-import org.jclouds.rest.SkipEncoding;
-import org.jclouds.rest.XMLResponseParser;
+import org.jclouds.rest.annotations.DecoratorParam;
+import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Headers;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.SkipEncoding;
+import org.jclouds.rest.annotations.XMLResponseParser;
 
 /**
  * Provides access to Mezeo PCS v2 via their REST API.
@@ -79,12 +79,12 @@ public interface PCSConnection {
    @POST
    @Path("/contents")
    @Endpoint(RootContainer.class)
-   Future<URI> createContainer(@EntityParam(CreateContainerBinder.class) String container);
+   Future<URI> createContainer(@DecoratorParam(AddContainerNameAsXmlEntity.class) String container);
 
    @POST
    @Path("/contents")
    Future<URI> createContainer(@Endpoint URI parent,
-            @EntityParam(CreateContainerBinder.class) String container);
+            @DecoratorParam(AddContainerNameAsXmlEntity.class) String container);
 
    @DELETE
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
@@ -105,17 +105,17 @@ public interface PCSConnection {
    @POST
    @Path("/contents")
    Future<URI> uploadFile(@Endpoint URI container,
-            @EntityParam(PCSFileAsMultipartFormBinder.class) PCSFile object);
+            @DecoratorParam(AddBlobEntityAsMultipartForm.class) PCSFile object);
 
    @POST
    @Path("/contents")
    Future<URI> createFile(@Endpoint URI container,
-            @EntityParam(CreateFileBinder.class) PCSFile object);
+            @DecoratorParam(AddFileInfoAsXmlEntity.class) PCSFile object);
    
    @PUT
    @Path("/content")
    Future<Void> uploadBlock(@Endpoint URI file,
-            @EntityParam(BlockBinder.class) PCSFile object, PutBlockOptions ... options);
+            @DecoratorParam(AddDataAndLength.class) PCSFile object, PutBlockOptions ... options);
 
    @DELETE
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)

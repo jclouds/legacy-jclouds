@@ -37,11 +37,11 @@ import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.Endpoint;
-import org.jclouds.rest.QueryParams;
-import org.jclouds.rest.RequestFilters;
 import org.jclouds.rest.RestClientFactory;
-import org.jclouds.rest.config.JaxrsModule;
+import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.QueryParams;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.config.RestModule;
 import org.jclouds.util.Jsr330;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -96,7 +96,7 @@ public class SharedKeyAuthenticationLiveTest {
                      Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY)).to(key);
          }
 
-      }, new JaxrsModule(), new Log4JLoggingModule(), new ExecutorServiceModule(
+      }, new RestModule(), new Log4JLoggingModule(), new ExecutorServiceModule(
                new WithinThreadExecutorService()), new JavaUrlHttpCommandExecutorServiceModule());
       RestClientFactory factory = injector.getInstance(RestClientFactory.class);
       client = factory.create(IntegrationTestClient.class);

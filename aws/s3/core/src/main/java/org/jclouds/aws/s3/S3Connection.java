@@ -34,8 +34,8 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import org.jclouds.aws.s3.binders.AccessControlListBinder;
-import org.jclouds.aws.s3.binders.S3ObjectBinder;
+import org.jclouds.aws.s3.decorators.AddACLAsXMLEntity;
+import org.jclouds.aws.s3.decorators.AddS3ObjectEntity;
 import org.jclouds.aws.s3.domain.AccessControlList;
 import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
@@ -62,21 +62,18 @@ import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.rest.Endpoint;
-import org.jclouds.rest.EntityParam;
-import org.jclouds.rest.ExceptionParser;
-import org.jclouds.rest.Headers;
-import org.jclouds.rest.HostPrefixParam;
-import org.jclouds.rest.ParamParser;
-import org.jclouds.rest.QueryParams;
-import org.jclouds.rest.RequestFilters;
-import org.jclouds.rest.ResponseParser;
-import org.jclouds.rest.SkipEncoding;
-import org.jclouds.rest.VirtualHost;
-import org.jclouds.rest.XMLResponseParser;
-import org.jclouds.rest.binders.HttpRequestOptionsBinder;
-
-import com.google.inject.internal.Nullable;
+import org.jclouds.rest.annotations.DecoratorParam;
+import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Headers;
+import org.jclouds.rest.annotations.HostPrefixParam;
+import org.jclouds.rest.annotations.ParamParser;
+import org.jclouds.rest.annotations.QueryParams;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.annotations.SkipEncoding;
+import org.jclouds.rest.annotations.VirtualHost;
+import org.jclouds.rest.annotations.XMLResponseParser;
 
 /**
  * Provides access to S3 via their REST API.
@@ -209,7 +206,7 @@ public interface S3Connection {
    @ResponseParser(ParseETagHeader.class)
    Future<byte[]> putObject(
             @HostPrefixParam String bucketName,
-            @PathParam("key") @ParamParser(BlobKey.class) @EntityParam(S3ObjectBinder.class) S3Object object,
+            @PathParam("key") @ParamParser(BlobKey.class) @DecoratorParam(AddS3ObjectEntity.class) S3Object object,
             PutObjectOptions... options);
 
    /**
@@ -237,7 +234,7 @@ public interface S3Connection {
    @Path("/")
    @ExceptionParser(ReturnTrueIfBucketAlreadyOwnedByYou.class)
    Future<Boolean> putBucketIfNotExists(@HostPrefixParam String bucketName,
-            @Nullable @EntityParam(HttpRequestOptionsBinder.class) PutBucketOptions... options);
+            PutBucketOptions... options);
 
    /**
     * Deletes the bucket, if it is empty.
@@ -378,7 +375,7 @@ public interface S3Connection {
    @Path("/")
    @QueryParams(keys = "acl")
    Future<Boolean> putBucketACL(@HostPrefixParam String bucketName,
-            @EntityParam(AccessControlListBinder.class) AccessControlList acl);
+            @DecoratorParam(AddACLAsXMLEntity.class) AccessControlList acl);
 
    /**
     * A GET request operation directed at an object or bucket URI with the "acl" parameter retrieves
@@ -421,6 +418,6 @@ public interface S3Connection {
    @QueryParams(keys = "acl")
    @Path("{key}")
    Future<Boolean> putObjectACL(@HostPrefixParam String bucketName, @PathParam("key") String key,
-            @EntityParam(AccessControlListBinder.class) AccessControlList acl);
+            @DecoratorParam(AddACLAsXMLEntity.class) AccessControlList acl);
 
 }

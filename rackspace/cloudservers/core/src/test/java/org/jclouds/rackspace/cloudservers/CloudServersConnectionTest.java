@@ -74,8 +74,8 @@ import org.jclouds.rackspace.cloudservers.options.CreateServerOptions;
 import org.jclouds.rackspace.cloudservers.options.CreateSharedIpGroupOptions;
 import org.jclouds.rackspace.cloudservers.options.ListOptions;
 import org.jclouds.rackspace.cloudservers.options.RebuildServerOptions;
-import org.jclouds.rest.JaxrsAnnotationProcessor;
-import org.jclouds.rest.config.JaxrsModule;
+import org.jclouds.rest.config.RestModule;
+import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.joda.time.DateTime;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -489,8 +489,8 @@ public class CloudServersConnectionTest {
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
       assertEquals(
-               "{\"backupSchedule\":{\"daily\":\"H_0800_1000\",\"enabled\":true,\"weekly\":\"MONDAY\"}}",
-               httpMethod.getEntity());
+      httpMethod.getEntity(),
+               "{\"backupSchedule\":{\"daily\":\"H_0800_1000\",\"enabled\":true,\"weekly\":\"MONDAY\"}}");
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnFalseOn404.class);
       assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
@@ -888,13 +888,13 @@ public class CloudServersConnectionTest {
          public String getAuthToken() {
             return "testtoken";
          }
-      }, new JaxrsModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
+      }, new RestModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
                new JavaUrlHttpCommandExecutorServiceModule());
       processor = injector.getInstance(Key
-               .get(new TypeLiteral<JaxrsAnnotationProcessor<CloudServersConnection>>() {
+               .get(new TypeLiteral<RestAnnotationProcessor<CloudServersConnection>>() {
                }));
    }
 
-   JaxrsAnnotationProcessor<CloudServersConnection> processor;
+   RestAnnotationProcessor<CloudServersConnection> processor;
 
 }

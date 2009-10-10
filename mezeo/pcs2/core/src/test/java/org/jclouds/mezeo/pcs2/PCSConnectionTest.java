@@ -39,6 +39,7 @@ import javax.inject.Singleton;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.blobstore.decorators.AddBlobEntityAsMultipartFormTest;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
@@ -49,12 +50,11 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseURIList;
 import org.jclouds.http.functions.ReturnInputStream;
 import org.jclouds.http.functions.ReturnVoidIf2xx;
-import org.jclouds.mezeo.pcs2.binders.PCSFileAsMultipartFormBinderTest;
 import org.jclouds.mezeo.pcs2.domain.FileMetadata;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
 import org.jclouds.mezeo.pcs2.endpoints.RootContainer;
-import org.jclouds.rest.JaxrsAnnotationProcessor;
-import org.jclouds.rest.config.JaxrsModule;
+import org.jclouds.rest.config.RestModule;
+import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -165,19 +165,19 @@ public class PCSConnectionTest {
 
       HttpRequest httpMethod = processor.createRequest(method, new Object[] {
                URI.create("http://localhost/mycontainer"),
-               PCSFileAsMultipartFormBinderTest.TEST_BLOB });
+               AddBlobEntityAsMultipartFormTest.TEST_BLOB });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/mycontainer/contents");
       assertEquals(httpMethod.getEndpoint().getQuery(), null);
       assertEquals(httpMethod.getMethod(), HttpMethod.POST);
       assertEquals(httpMethod.getHeaders().size(), 2);
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(PCSFileAsMultipartFormBinderTest.EXPECTS.length() + ""));
+               .singletonList(AddBlobEntityAsMultipartFormTest.EXPECTS.length() + ""));
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList("multipart/form-data; boundary="
-                        + PCSFileAsMultipartFormBinderTest.BOUNDRY));
+                        + AddBlobEntityAsMultipartFormTest.BOUNDRY));
       assertEquals(Utils.toStringAndClose((InputStream) httpMethod.getEntity()),
-               PCSFileAsMultipartFormBinderTest.EXPECTS);
+               AddBlobEntityAsMultipartFormTest.EXPECTS);
       assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
                ParseURIList.class);
    }
@@ -212,7 +212,7 @@ public class PCSConnectionTest {
                ReturnVoidOnNotFoundOr404.class);
    }
 
-   JaxrsAnnotationProcessor<PCSConnection> processor;
+   RestAnnotationProcessor<PCSConnection> processor;
 
    @BeforeClass
    void setupFactory() {
@@ -248,22 +248,20 @@ public class PCSConnectionTest {
                   @SuppressWarnings("unused")
                   @Provides
                   @Singleton
-                  ConcurrentMap<org.jclouds.mezeo.pcs2.functions.Key, String> giveMap() {
-                     ConcurrentHashMap<org.jclouds.mezeo.pcs2.functions.Key, String> map = new ConcurrentHashMap<org.jclouds.mezeo.pcs2.functions.Key, String>();
-                     map.put(
-                              new org.jclouds.mezeo.pcs2.functions.Key("mycontainer",
-                                       "testfile.txt"), "9E4C5AFA-A98B-11DE-8B4C-C3884B4A2DA3");
+                  ConcurrentMap<org.jclouds.blobstore.domain.Key, String> giveMap() {
+                     ConcurrentHashMap<org.jclouds.blobstore.domain.Key, String> map = new ConcurrentHashMap<org.jclouds.blobstore.domain.Key, String>();
+                     map.put(new org.jclouds.blobstore.domain.Key("mycontainer", "testfile.txt"),
+                              "9E4C5AFA-A98B-11DE-8B4C-C3884B4A2DA3");
                      return map;
                   }
 
                   @SuppressWarnings("unused")
                   @Provides
                   @Singleton
-                  ConcurrentMap<org.jclouds.mezeo.pcs2.functions.Key, FileMetadata> giveMap2() {
-                     ConcurrentHashMap<org.jclouds.mezeo.pcs2.functions.Key, FileMetadata> map = new ConcurrentHashMap<org.jclouds.mezeo.pcs2.functions.Key, FileMetadata>();
-                     map.put(
-                              new org.jclouds.mezeo.pcs2.functions.Key("mycontainer",
-                                       "testfile.txt"), new FileMetadata("testfile.txt"));
+                  ConcurrentMap<org.jclouds.blobstore.domain.Key, FileMetadata> giveMap2() {
+                     ConcurrentHashMap<org.jclouds.blobstore.domain.Key, FileMetadata> map = new ConcurrentHashMap<org.jclouds.blobstore.domain.Key, FileMetadata>();
+                     map.put(new org.jclouds.blobstore.domain.Key("mycontainer", "testfile.txt"),
+                              new FileMetadata("testfile.txt"));
                      return map;
                   }
 
@@ -283,11 +281,11 @@ public class PCSConnectionTest {
                            throws UnsupportedEncodingException {
                      return new BasicAuthentication("foo", "bar");
                   }
-               }, new JaxrsModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
+               }, new RestModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
                new JavaUrlHttpCommandExecutorServiceModule());
 
       processor = injector.getInstance(Key
-               .get(new TypeLiteral<JaxrsAnnotationProcessor<PCSConnection>>() {
+               .get(new TypeLiteral<RestAnnotationProcessor<PCSConnection>>() {
                }));
    }
 }

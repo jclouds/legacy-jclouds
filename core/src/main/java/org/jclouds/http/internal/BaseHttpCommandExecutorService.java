@@ -75,7 +75,7 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
             try {
                logger.trace("%s - filtering request %s", request.getEndpoint(), request);
                for (HttpRequestFilter filter : request.getFilters()) {
-                  filter.filter(request);
+                  request = filter.filter(request);
                }
                logger.trace("%s - request now %s", request.getEndpoint(), request);            
                nativeRequest = convert(request);

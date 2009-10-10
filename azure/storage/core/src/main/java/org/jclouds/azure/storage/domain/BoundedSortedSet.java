@@ -28,7 +28,7 @@ package org.jclouds.azure.storage.domain;
  * @author Adrian Cole
  * 
  */
-public interface BoundedSortedSet<T> extends org.jclouds.rest.BoundedSortedSet<T> {
+public interface BoundedSortedSet<T> extends org.jclouds.rest.internal.BoundedSortedSet<T> {
 
    String getNextMarker();
 

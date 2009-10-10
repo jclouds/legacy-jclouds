@@ -35,8 +35,8 @@ import java.util.Map.Entry;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpUtils;
-import org.jclouds.rest.binders.JsonBinder;
 import org.jclouds.rackspace.cloudservers.domain.Addresses;
+import org.jclouds.rest.decorators.AddAsJsonEntity;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.internal.Lists;
@@ -47,7 +47,7 @@ import com.google.inject.internal.Maps;
  * @author Adrian Cole
  * 
  */
-public class CreateServerOptions extends JsonBinder {
+public class CreateServerOptions extends AddAsJsonEntity {
 
    static class File {
       private final String path;
@@ -98,7 +98,7 @@ public class CreateServerOptions extends JsonBinder {
    private InetAddress publicIp;
 
    @Override
-   public void addEntityToRequest(Map<String, String> postParams, HttpRequest request) {
+   public HttpRequest decorateRequest(HttpRequest request, Map<String, String> postParams) {
 
       ServerRequest server = new ServerRequest(checkNotNull(postParams.get("name"),
                "name parameter not present"), Integer.parseInt(checkNotNull(postParams
@@ -115,7 +115,7 @@ public class CreateServerOptions extends JsonBinder {
          server.addresses.setPublicAddresses(Collections.singletonList(publicIp));
          server.addresses.setPrivateAddresses(null);
       }
-      addEntityToRequest(ImmutableMap.of("server", server), request);
+      return decorateRequest(request, ImmutableMap.of("server", server));
    }
 
    /**

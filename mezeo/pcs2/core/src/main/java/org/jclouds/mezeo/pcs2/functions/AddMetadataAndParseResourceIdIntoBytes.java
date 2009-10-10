@@ -38,6 +38,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.io.IOUtils;
+import org.jclouds.blobstore.domain.Key;
 import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.http.HttpRequest;
@@ -46,7 +47,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.mezeo.pcs2.PCSUtil;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
 import org.jclouds.mezeo.pcs2.util.PCSUtils;
-import org.jclouds.rest.RestContext;
+import org.jclouds.rest.InvocationContext;
 import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
@@ -58,7 +59,7 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 public class AddMetadataAndParseResourceIdIntoBytes implements Function<HttpResponse, byte[]>,
-         RestContext {
+         InvocationContext {
    private final PCSUtil util;
    private final ConcurrentMap<Key, String> fileCache;
 
