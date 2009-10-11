@@ -78,7 +78,7 @@ public abstract class BaseLifeCycle implements Runnable, LifeCycle {
       this.status = Status.SHUTTING_DOWN;
       doShutdown();
       this.status = Status.SHUT_DOWN;
-      logger.info("%1$s", this);
+      logger.info("Shutdown %s", this);
    }
 
    protected abstract void doWork() throws Exception;
@@ -186,7 +186,7 @@ public abstract class BaseLifeCycle implements Runnable, LifeCycle {
 
    protected void exceptionIfNotActive() {
       if (!status.equals(Status.ACTIVE))
-         throw new IllegalStateException(String.format("not active: %1$s", this));
+         throw new IllegalStateException(String.format("not active: %s", this));
    }
 
 }
