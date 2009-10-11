@@ -168,16 +168,15 @@ public class GaeHttpCommandExecutorServiceTest {
       HttpRequest request = new HttpRequest(HttpMethod.GET, endPoint);
       request.setEntity(new Date());
       client.convert(request);
-
    }
 
    @Test
    @Parameters("basedir")
    void testConvertRequestFileContent(String basedir) throws IOException {
+      HttpRequest request = new HttpRequest(HttpMethod.GET, endPoint);
       File file = new File(basedir, "target/testfiles/hoot");
       file.getParentFile().mkdirs();
       IOUtils.write("hoot!", new FileOutputStream(file));
-      HttpRequest request = new HttpRequest(HttpMethod.GET, endPoint);
       request.setEntity(file);
       testHoot(request);
    }

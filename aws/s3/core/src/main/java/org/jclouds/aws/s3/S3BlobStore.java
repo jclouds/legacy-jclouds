@@ -34,7 +34,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import org.jclouds.aws.s3.decorators.AddS3ObjectEntity;
+import org.jclouds.aws.s3.binders.BindS3ObjectToEntity;
 import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
@@ -55,7 +55,7 @@ import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.rest.annotations.DecoratorParam;
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.HostPrefixParam;
@@ -181,7 +181,7 @@ public interface S3BlobStore extends BlobStore<BucketMetadata, ObjectMetadata, S
    @ResponseParser(ParseETagHeader.class)
    Future<byte[]> putBlob(
             @HostPrefixParam String bucketName,
-            @PathParam("key") @ParamParser(BlobKey.class) @DecoratorParam(AddS3ObjectEntity.class) S3Object object);
+            @PathParam("key") @ParamParser(BlobKey.class) @BinderParam(BindS3ObjectToEntity.class) S3Object object);
 
    @PUT
    @Path("/")

@@ -47,7 +47,6 @@ import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.blobstore.integration.internal.StubBlobStore;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.functions.ParseSax;
@@ -69,6 +68,7 @@ import org.jclouds.mezeo.pcs2.functions.InvalidatePCSKeyCacheAndReturnVoidIf2xx;
 import org.jclouds.mezeo.pcs2.functions.ReturnFalseIfContainerNotFound;
 import org.jclouds.mezeo.pcs2.options.PutBlockOptions;
 import org.jclouds.rest.config.RestModule;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.DateService;
 import org.testng.annotations.BeforeClass;
@@ -216,15 +216,15 @@ public class PCSBlobStoreTest {
    public void testListContainers() throws SecurityException, NoSuchMethodException {
       Method method = PCSBlobStore.class.getMethod("listContainers");
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] {});
+      GeneratedHttpRequest<PCSBlobStore> httpMethod = processor.createRequest(method,
+               new Object[] {});
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/root/contents");
       assertEquals(httpMethod.getEndpoint().getQuery(), null);
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get("X-Cloud-Depth"), Collections.singletonList("2"));
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
-               ParseSax.class);
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(), ParseSax.class);
       // TODO check generic type of response parser
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
@@ -232,7 +232,8 @@ public class PCSBlobStoreTest {
    public void testCreateContainer() throws SecurityException, NoSuchMethodException, IOException {
       Method method = PCSBlobStore.class.getMethod("createContainer", String.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { "container" });
+      GeneratedHttpRequest<PCSBlobStore> httpMethod = processor.createRequest(method,
+               new Object[] { "container" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/root/contents");
       assertEquals(httpMethod.getEndpoint().getQuery(), null);
@@ -243,7 +244,7 @@ public class PCSBlobStoreTest {
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList("application/vnd.csp.container-info+xml"));
       assertEquals(httpMethod.getEntity(), "<container><name>container</name></container>");
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
       // TODO check generic type of response parser
    }
@@ -251,14 +252,15 @@ public class PCSBlobStoreTest {
    public void testDeleteContainer() throws SecurityException, NoSuchMethodException {
       Method method = PCSBlobStore.class.getMethod("deleteContainer", String.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { "mycontainer" });
+      GeneratedHttpRequest<PCSBlobStore> httpMethod = processor.createRequest(method,
+               new Object[] { "mycontainer" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(),
                "/containers/7F143552-AAF5-11DE-BBB0-0BC388ED913B");
       assertEquals(httpMethod.getEndpoint().getQuery(), null);
       assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                InvalidateContainerNameCacheAndReturnTrueIf2xx.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnVoidOnNotFoundOr404.class);
@@ -267,14 +269,15 @@ public class PCSBlobStoreTest {
    public void testContainerExists() throws SecurityException, NoSuchMethodException {
       Method method = PCSBlobStore.class.getMethod("containerExists", String.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { "mycontainer" });
+      GeneratedHttpRequest<PCSBlobStore> httpMethod = processor.createRequest(method,
+               new Object[] { "mycontainer" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(),
                "/containers/7F143552-AAF5-11DE-BBB0-0BC388ED913B");
       assertEquals(httpMethod.getEndpoint().getQuery(), null);
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnFalseIfContainerNotFound.class);
@@ -283,7 +286,8 @@ public class PCSBlobStoreTest {
    public void testListBlobs() throws SecurityException, NoSuchMethodException {
       Method method = PCSBlobStore.class.getMethod("listBlobs", String.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { "mycontainer" });
+      GeneratedHttpRequest<PCSBlobStore> httpMethod = processor.createRequest(method,
+               new Object[] { "mycontainer" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(),
                "/containers/7F143552-AAF5-11DE-BBB0-0BC388ED913B/contents");
@@ -291,8 +295,7 @@ public class PCSBlobStoreTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get("X-Cloud-Depth"), Collections.singletonList("2"));
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
-               ParseSax.class);
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(), ParseSax.class);
       // TODO check generic type of response parser
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
@@ -301,8 +304,8 @@ public class PCSBlobStoreTest {
       Method method = PCSBlobStore.class.getMethod("putBlob", String.class, PCSFile.class);
       PCSFile file = new PCSFile("hello");
       file.setData("wonkers");
-      HttpRequest httpMethod = processor
-               .createRequest(method, new Object[] { "mycontainer", file });
+      GeneratedHttpRequest<PCSBlobStore> httpMethod = processor.createRequest(method, new Object[] {
+               "mycontainer", file });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/files/o/content");
       assertEquals(httpMethod.getEndpoint().getQuery(), null);
@@ -311,22 +314,22 @@ public class PCSBlobStoreTest {
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
                .singletonList(file.getData().toString().getBytes().length + ""));
       assertEquals(httpMethod.getEntity(), file.getData());
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                AddMetadataAndParseResourceIdIntoBytes.class);
    }
 
    public void testRemoveBlob() throws SecurityException, NoSuchMethodException, IOException {
       Method method = PCSBlobStore.class.getMethod("removeBlob", String.class, String.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { "mycontainer",
-               "testfile.txt" });
+      GeneratedHttpRequest<PCSBlobStore> httpMethod = processor.createRequest(method, new Object[] {
+               "mycontainer", "testfile.txt" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(),
                "/files/9E4C5AFA-A98B-11DE-8B4C-C3884B4A2DA3");
       assertEquals(httpMethod.getEndpoint().getQuery(), null);
       assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                InvalidatePCSKeyCacheAndReturnVoidIf2xx.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnVoidOnNotFoundOr404.class);
@@ -335,14 +338,14 @@ public class PCSBlobStoreTest {
    public void testGetBlob() throws SecurityException, NoSuchMethodException, IOException {
       Method method = PCSBlobStore.class.getMethod("getBlob", String.class, String.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { "mycontainer",
-               "testfile.txt" });
+      GeneratedHttpRequest<PCSBlobStore> httpMethod = processor.createRequest(method, new Object[] {
+               "mycontainer", "testfile.txt" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/webdav/mycontainer/testfile.txt");
       assertEquals(httpMethod.getEndpoint().getQuery(), null);
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                AssembleBlobFromContentAndMetadataCache.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ThrowKeyNotFoundOn404.class);
@@ -352,14 +355,14 @@ public class PCSBlobStoreTest {
       Method method = PCSBlobStore.class.getMethod("getBlob", String.class, String.class,
                GetOptions.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { "mycontainer",
-               "testfile.txt", new GetOptions() });
+      GeneratedHttpRequest<PCSBlobStore> httpMethod = processor.createRequest(method, new Object[] {
+               "mycontainer", "testfile.txt", new GetOptions() });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/webdav/mycontainer/testfile.txt");
       assertEquals(httpMethod.getEndpoint().getQuery(), null);
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                AssembleBlobFromContentAndMetadataCache.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ThrowKeyNotFoundOn404.class);
@@ -368,15 +371,14 @@ public class PCSBlobStoreTest {
    public void testGetBlobMetadata() throws SecurityException, NoSuchMethodException, IOException {
       Method method = PCSBlobStore.class.getMethod("blobMetadata", String.class, String.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { "mycontainer",
-               "testfile.txt" });
+      GeneratedHttpRequest<PCSBlobStore> httpMethod = processor.createRequest(method, new Object[] {
+               "mycontainer", "testfile.txt" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(),
                "/files/9E4C5AFA-A98B-11DE-8B4C-C3884B4A2DA3");
       assertEquals(httpMethod.getEndpoint().getQuery(), null);
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
-               ParseSax.class);
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(), ParseSax.class);
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get("X-Cloud-Depth"), Collections.singletonList("2"));
       // TODO check generic type of response parser
@@ -387,8 +389,8 @@ public class PCSBlobStoreTest {
    public void testPutMetadata() throws SecurityException, NoSuchMethodException {
       Method method = PCSUtil.class.getMethod("putMetadata", String.class, String.class,
                String.class);
-      HttpRequest httpMethod = utilProcessor.createRequest(method, new Object[] { "id", "pow",
-               "bar" });
+      GeneratedHttpRequest<PCSUtil> httpMethod = utilProcessor.createRequest(method, new Object[] {
+               "id", "pow", "bar" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/files/id/metadata/pow");
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
@@ -398,8 +400,8 @@ public class PCSBlobStoreTest {
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList("application/unknown"));
       assertEquals("bar", httpMethod.getEntity());
-      assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(utilProcessor.createExceptionParserOrNullIfNotFound(method), null);
+      assertEquals(utilProcessor.createResponseParser(method, httpMethod).getClass(),
                ReturnVoidIf2xx.class);
    }
 
@@ -407,15 +409,15 @@ public class PCSBlobStoreTest {
       Method method = PCSUtil.class.getMethod("addEntryToMultiMap", Multimap.class, String.class,
                URI.class);
 
-      HttpRequest httpMethod = utilProcessor
+      GeneratedHttpRequest<PCSUtil> httpMethod = utilProcessor
                .createRequest(method, new Object[] { ImmutableMultimap.of("key", "value"),
                         "newkey", URI.create("http://localhost/pow") });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/pow");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(utilProcessor.createExceptionParserOrNullIfNotFound(method), null);
+      assertEquals(utilProcessor.createResponseParser(method, httpMethod).getClass(),
                AddEntryIntoMultiMap.class);
    }
 

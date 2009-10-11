@@ -63,7 +63,7 @@ public class CreateServerOptionsTest {
    private HttpRequest buildRequest(CreateServerOptions options) {
       injector.injectMembers(options);
       HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
-      options.decorateRequest(request, ImmutableMap.of("name", "foo", "imageId", "1", "flavorId",
+      options.bindToRequest(request, ImmutableMap.of("name", "foo", "imageId", "1", "flavorId",
                "2"));
       return request;
    }

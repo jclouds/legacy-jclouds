@@ -39,11 +39,10 @@ import javax.inject.Singleton;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.blobstore.decorators.AddBlobEntityAsMultipartFormTest;
+import org.jclouds.blobstore.binders.BindBlobToMultipartFormTest;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.functions.ParseSax;
@@ -56,6 +55,7 @@ import org.jclouds.mezeo.pcs2.domain.FileMetadata;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
 import org.jclouds.mezeo.pcs2.endpoints.RootContainer;
 import org.jclouds.rest.config.RestModule;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeClass;
@@ -80,14 +80,14 @@ public class PCSConnectionTest {
    public void testListContainers() throws SecurityException, NoSuchMethodException {
       Method method = PCSConnection.class.getMethod("listContainers");
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] {});
+      GeneratedHttpRequest<PCSConnection> httpMethod = processor.createRequest(method, new Object[] {});
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/root/contents");
       assertEquals(httpMethod.getEndpoint().getQuery(), null);
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get("X-Cloud-Depth"), Collections.singletonList("2"));
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseSax.class);
       // TODO check generic type of response parser
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
@@ -96,7 +96,7 @@ public class PCSConnectionTest {
    public void testCreateContainer() throws SecurityException, NoSuchMethodException, IOException {
       Method method = PCSConnection.class.getMethod("createContainer", String.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { "container" });
+      GeneratedHttpRequest<PCSConnection> httpMethod = processor.createRequest(method, new Object[] { "container" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/root/contents");
       assertEquals(httpMethod.getEndpoint().getQuery(), null);
@@ -107,7 +107,7 @@ public class PCSConnectionTest {
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList("application/vnd.csp.container-info+xml"));
       assertEquals(httpMethod.getEntity(), "<container><name>container</name></container>");
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseURIList.class);
       // TODO check generic type of response parser
    }
@@ -115,14 +115,14 @@ public class PCSConnectionTest {
    public void testDeleteContainer() throws SecurityException, NoSuchMethodException {
       Method method = PCSConnection.class.getMethod("deleteContainer", URI.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { URI
+      GeneratedHttpRequest<PCSConnection> httpMethod = processor.createRequest(method, new Object[] { URI
                .create("http://localhost/container/1234") });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/container/1234");
       assertEquals(httpMethod.getEndpoint().getQuery(), null);
       assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnVoidIf2xx.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnVoidOnNotFoundOr404.class);
@@ -131,7 +131,7 @@ public class PCSConnectionTest {
    public void testListFiles() throws SecurityException, NoSuchMethodException {
       Method method = PCSConnection.class.getMethod("listFiles", URI.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { URI
+      GeneratedHttpRequest<PCSConnection> httpMethod = processor.createRequest(method, new Object[] { URI
                .create("http://localhost/mycontainer") });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/mycontainer/contents");
@@ -139,7 +139,7 @@ public class PCSConnectionTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get("X-Cloud-Depth"), Collections.singletonList("2"));
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseSax.class);
       // TODO check generic type of response parser
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
@@ -148,7 +148,7 @@ public class PCSConnectionTest {
    public void testListContainersURI() throws SecurityException, NoSuchMethodException {
       Method method = PCSConnection.class.getMethod("listContainers", URI.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { URI
+      GeneratedHttpRequest<PCSConnection> httpMethod = processor.createRequest(method, new Object[] { URI
                .create("http://localhost/mycontainer") });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/mycontainer/contents");
@@ -156,7 +156,7 @@ public class PCSConnectionTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get("X-Cloud-Depth"), Collections.singletonList("2"));
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseSax.class);
       // TODO check generic type of response parser
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
@@ -165,50 +165,50 @@ public class PCSConnectionTest {
    public void testUploadFile() throws SecurityException, NoSuchMethodException, IOException {
       Method method = PCSConnection.class.getMethod("uploadFile", URI.class, PCSFile.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] {
+      GeneratedHttpRequest<PCSConnection> httpMethod = processor.createRequest(method, new Object[] {
                URI.create("http://localhost/mycontainer"),
-               AddBlobEntityAsMultipartFormTest.TEST_BLOB });
+               BindBlobToMultipartFormTest.TEST_BLOB });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/mycontainer/contents");
       assertEquals(httpMethod.getEndpoint().getQuery(), null);
       assertEquals(httpMethod.getMethod(), HttpMethod.POST);
       assertEquals(httpMethod.getHeaders().size(), 2);
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(AddBlobEntityAsMultipartFormTest.EXPECTS.length() + ""));
+               .singletonList(BindBlobToMultipartFormTest.EXPECTS.length() + ""));
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList("multipart/form-data; boundary="
-                        + AddBlobEntityAsMultipartFormTest.BOUNDRY));
+                        + BindBlobToMultipartFormTest.BOUNDRY));
       assertEquals(Utils.toStringAndClose((InputStream) httpMethod.getEntity()),
-               AddBlobEntityAsMultipartFormTest.EXPECTS);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+               BindBlobToMultipartFormTest.EXPECTS);
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseURIList.class);
    }
 
    public void testDownloadFile() throws SecurityException, NoSuchMethodException, IOException {
       Method method = PCSConnection.class.getMethod("downloadFile", URI.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { URI
+      GeneratedHttpRequest<PCSConnection> httpMethod = processor.createRequest(method, new Object[] { URI
                .create("http://localhost/container") });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/container/content");
       assertEquals(httpMethod.getEndpoint().getQuery(), null);
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnInputStream.class);
    }
 
    public void testDeleteFile() throws SecurityException, NoSuchMethodException, IOException {
       Method method = PCSConnection.class.getMethod("deleteFile", URI.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { URI
+      GeneratedHttpRequest<PCSConnection> httpMethod = processor.createRequest(method, new Object[] { URI
                .create("http://localhost/contents/file") });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/contents/file");
       assertEquals(httpMethod.getEndpoint().getQuery(), null);
       assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnVoidIf2xx.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnVoidOnNotFoundOr404.class);

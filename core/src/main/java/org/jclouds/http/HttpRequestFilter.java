@@ -29,5 +29,5 @@ package org.jclouds.http;
  * @author Adrian Cole
  */
 public interface HttpRequestFilter {
-   HttpRequest filter(HttpRequest request) throws HttpException;
+   void filter(HttpRequest request) throws HttpException;
 }

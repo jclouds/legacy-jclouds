@@ -29,8 +29,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.jclouds.rest.decorators.MapRequestDecorator;
-
 /**
  * Designates that this parameter will hold the entity for a PUT or POST command.
  * 
@@ -41,8 +39,8 @@ import org.jclouds.rest.decorators.MapRequestDecorator;
 public @interface MapBinder {
 
    /**
-    * How to bind {@link MapEntityParam} values, if there is no {@link MapRequestDecorator} in the method
+    * How to bind {@link MapEntityParam} values, if there is no {@link MapBinder} in the method
     * definition
     */
-   Class<? extends MapRequestDecorator> value();
+   Class<? extends org.jclouds.rest.MapBinder> value();
 }

@@ -29,14 +29,13 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
-
-import javax.inject.Singleton;
 
 /**
  * Uses Basic Authentication to sign the request.
@@ -56,8 +55,7 @@ public class BasicAuthentication implements HttpRequestFilter {
                         checkNotNull(password, "password")).getBytes("UTF-8")));
    }
 
-   public HttpRequest filter(HttpRequest request) throws HttpException {
+   public void filter(HttpRequest request) throws HttpException {
       request.getHeaders().replaceValues(HttpHeaders.AUTHORIZATION, credentialList);
-      return request;
    }
 }

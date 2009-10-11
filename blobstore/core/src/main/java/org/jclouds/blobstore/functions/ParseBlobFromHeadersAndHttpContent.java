@@ -30,9 +30,9 @@ import javax.ws.rs.core.HttpHeaders;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.http.HttpException;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.InvocationContext;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -91,16 +91,8 @@ public class ParseBlobFromHeadersAndHttpContent<M extends BlobMetadata, B extend
       }
    }
 
-   public Object[] getArgs() {
-      return metadataParser.getArgs();
-   }
-
-   public HttpRequest getRequest() {
-      return metadataParser.getRequest();
-   }
-
-   public void setContext(HttpRequest request, Object[] args) {
-      metadataParser.setContext(request, args);
+   public void setContext(GeneratedHttpRequest<?> request) {
+      metadataParser.setContext(request);
    }
 
 }

@@ -33,6 +33,7 @@ import javax.ws.rs.core.HttpHeaders;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.util.DateService;
+import org.jclouds.util.Jsr330;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -40,7 +41,6 @@ import org.testng.annotations.Test;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import org.jclouds.util.Jsr330;
 
 @Test(groups = "unit", testName = "s3.RequestAuthorizeSignatureTest")
 public class RequestAuthorizeSignatureTest {
@@ -72,7 +72,9 @@ public class RequestAuthorizeSignatureTest {
       String signature = request.getFirstHeaderOrNull(HttpHeaders.AUTHORIZATION);
       String date = request.getFirstHeaderOrNull(HttpHeaders.DATE);
       int iterations = 1;
-      while (filter.filter(request).getFirstHeaderOrNull(HttpHeaders.DATE).equals(date)) {
+      while (request.getFirstHeaderOrNull(HttpHeaders.DATE).equals(date)) {
+         date = request.getFirstHeaderOrNull(HttpHeaders.DATE);
+         filter.filter(request);
          iterations++;
          assertEquals(signature, request.getFirstHeaderOrNull(HttpHeaders.AUTHORIZATION));
       }
@@ -111,7 +113,6 @@ public class RequestAuthorizeSignatureTest {
       assertEquals(builder.toString(), "");
    }
 
-   
    @Test
    void testHeadersGoLowercase() {
       URI host = URI.create("http://s3.amazonaws.com:80");
@@ -121,6 +122,7 @@ public class RequestAuthorizeSignatureTest {
       filter.appendBucketName(request, builder);
       assertEquals(builder.toString(), "");
    }
+
    @Test
    void testAppendBucketNameURIHost() {
       URI host = URI.create("http://adriancole.s3int5.s3-external-3.amazonaws.com:80");
@@ -154,8 +156,8 @@ public class RequestAuthorizeSignatureTest {
          protected void configure() {
             bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to(
                      "foo");
-            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY)).to(
-                     "bar");
+            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY))
+                     .to("bar");
             bind(DateService.class);
 
          }

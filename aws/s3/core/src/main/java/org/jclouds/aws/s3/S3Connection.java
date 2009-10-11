@@ -34,8 +34,8 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import org.jclouds.aws.s3.decorators.AddACLAsXMLEntity;
-import org.jclouds.aws.s3.decorators.AddS3ObjectEntity;
+import org.jclouds.aws.s3.binders.BindACLToXMLEntity;
+import org.jclouds.aws.s3.binders.BindS3ObjectToEntity;
 import org.jclouds.aws.s3.domain.AccessControlList;
 import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
@@ -62,7 +62,7 @@ import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.rest.annotations.DecoratorParam;
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;
@@ -206,7 +206,7 @@ public interface S3Connection {
    @ResponseParser(ParseETagHeader.class)
    Future<byte[]> putObject(
             @HostPrefixParam String bucketName,
-            @PathParam("key") @ParamParser(BlobKey.class) @DecoratorParam(AddS3ObjectEntity.class) S3Object object,
+            @PathParam("key") @ParamParser(BlobKey.class) @BinderParam(BindS3ObjectToEntity.class) S3Object object,
             PutObjectOptions... options);
 
    /**
@@ -375,7 +375,7 @@ public interface S3Connection {
    @Path("/")
    @QueryParams(keys = "acl")
    Future<Boolean> putBucketACL(@HostPrefixParam String bucketName,
-            @DecoratorParam(AddACLAsXMLEntity.class) AccessControlList acl);
+            @BinderParam(BindACLToXMLEntity.class) AccessControlList acl);
 
    /**
     * A GET request operation directed at an object or bucket URI with the "acl" parameter retrieves
@@ -418,6 +418,6 @@ public interface S3Connection {
    @QueryParams(keys = "acl")
    @Path("{key}")
    Future<Boolean> putObjectACL(@HostPrefixParam String bucketName, @PathParam("key") String key,
-            @DecoratorParam(AddACLAsXMLEntity.class) AccessControlList acl);
+            @BinderParam(BindACLToXMLEntity.class) AccessControlList acl);
 
 }

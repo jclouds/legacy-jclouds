@@ -35,7 +35,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.decorators.AddBlobEntity;
+import org.jclouds.blobstore.binders.BindBlobToEntity;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.BlobKey;
@@ -53,7 +53,7 @@ import org.jclouds.rackspace.cloudfiles.functions.ParseObjectFromHeadersAndHttpC
 import org.jclouds.rackspace.cloudfiles.functions.ParseObjectMetadataFromHeaders;
 import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
 import org.jclouds.rackspace.filters.AuthenticateRequest;
-import org.jclouds.rest.annotations.DecoratorParam;
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.ParamParser;
@@ -113,7 +113,7 @@ public interface CloudFilesBlobStore extends
    @ResponseParser(ParseETagHeader.class)
    Future<byte[]> putBlob(
             @PathParam("container") String container,
-            @PathParam("key") @ParamParser(BlobKey.class) @DecoratorParam(AddBlobEntity.class) Blob<BlobMetadata> object);
+            @PathParam("key") @ParamParser(BlobKey.class) @BinderParam(BindBlobToEntity.class) Blob<BlobMetadata> object);
 
    @GET
    @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)

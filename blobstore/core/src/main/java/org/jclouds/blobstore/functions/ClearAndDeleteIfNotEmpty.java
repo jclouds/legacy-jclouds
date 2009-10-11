@@ -36,9 +36,9 @@ import org.jclouds.blobstore.domain.ContainerMetadata;
 import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.ClearContainerStrategy;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.InvocationContext;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
@@ -62,11 +62,11 @@ public class ClearAndDeleteIfNotEmpty<C extends ContainerMetadata, M extends Blo
    @Inject(optional = true)
    @Named(BlobStoreConstants.PROPERTY_BLOBSTORE_TIMEOUT)
    protected long requestTimeoutMilliseconds = 30000;
-   private Object[] args;
-   private HttpRequest request;
 
    private final ClearContainerStrategy<C, M, B> clear;
    private final BlobStore<C, M, B> connection;
+
+   private GeneratedHttpRequest<?> request;
 
    @Inject
    protected
@@ -81,31 +81,21 @@ public class ClearAndDeleteIfNotEmpty<C extends ContainerMetadata, M extends Blo
          if (responseException.getResponse().getStatusCode() == 404) {
             return v;
          } else if (responseException.getResponse().getStatusCode() == 409) {
-            clear.execute(connection, args[0].toString());
+            clear.execute(connection, request.getArgs()[0].toString());
             try {
-               connection.deleteContainer(args[0].toString()).get(requestTimeoutMilliseconds,
+               connection.deleteContainer(request.getArgs()[0].toString()).get(requestTimeoutMilliseconds,
                         TimeUnit.MILLISECONDS);
                return v;
             } catch (Exception e) {
                Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
-               throw new BlobRuntimeException("Error deleting container: " + args[0].toString(), e);
+               throw new BlobRuntimeException("Error deleting container: " + request.getArgs()[0].toString(), e);
             }
          }
       }
       return null;
    }
-
-   public Object[] getArgs() {
-      return args;
-   }
-
-   public HttpRequest getRequest() {
-      return request;
-   }
-
-   public void setContext(HttpRequest request, Object[] args) {
+   public void setContext(GeneratedHttpRequest<?> request) {
       this.request = request;
-      this.args = args;
    }
 
 }

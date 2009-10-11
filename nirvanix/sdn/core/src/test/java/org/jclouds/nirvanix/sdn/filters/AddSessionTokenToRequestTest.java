@@ -25,13 +25,22 @@ package org.jclouds.nirvanix.sdn.filters;
 
 import static org.testng.Assert.assertEquals;
 
+import java.lang.reflect.Method;
 import java.net.URI;
 
-import javax.ws.rs.HttpMethod;
+import javax.ws.rs.POST;
 import javax.ws.rs.ext.RuntimeDelegate;
 
+import org.jclouds.concurrent.WithinThreadExecutorService;
+import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
+import org.jclouds.logging.Logger;
+import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.nirvanix.sdn.SessionToken;
+import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.config.RestModule;
+import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.rest.internal.RuntimeDelegateImpl;
 import org.jclouds.util.DateService;
 import org.testng.annotations.BeforeClass;
@@ -41,7 +50,9 @@ import org.testng.annotations.Test;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 
 @Test(groups = "unit", testName = "sdn.AddSessionTokenToRequestTest")
 public class AddSessionTokenToRequestTest {
@@ -49,11 +60,23 @@ public class AddSessionTokenToRequestTest {
    private Injector injector;
    private AddSessionTokenToRequest filter;
 
+   private static interface TestService {
+      @POST
+      public void foo(@Endpoint URI endpoint);
+   }
+
    @DataProvider
-   public Object[][] dataProvider() {
-      return new Object[][] { { new HttpRequest(HttpMethod.GET, URI.create("https://host:443")) },
-               { new HttpRequest(HttpMethod.GET, URI.create("https://host/path")) },
-               { new HttpRequest(HttpMethod.GET, URI.create("https://host/?query"))
+   public Object[][] dataProvider() throws SecurityException, NoSuchMethodException {
+
+      RestAnnotationProcessor<TestService> factory = injector.getInstance(Key
+               .get(new TypeLiteral<RestAnnotationProcessor<TestService>>() {
+               }));
+
+      Method method = TestService.class.getMethod("foo", URI.class);
+      return new Object[][] {
+               { factory.createRequest(method, new Object[] { URI.create("https://host:443") }) },
+               { factory.createRequest(method, new Object[] { URI.create("https://host/path") }) },
+               { factory.createRequest(method, new Object[] { URI.create("https://host/?query") })
 
                } };
    }
@@ -63,7 +86,7 @@ public class AddSessionTokenToRequestTest {
       String token = filter.getSessionToken();
 
       String query = request.getEndpoint().getQuery();
-      request = filter.filter(request);
+      filter.filter(request);
       assertEquals(request.getEndpoint().getQuery(), query == null ? "sessionToken=" + token
                : query + "&sessionToken=" + token);
    }
@@ -82,20 +105,27 @@ public class AddSessionTokenToRequestTest {
     */
    @BeforeClass
    protected void createFilter() {
-      injector = Guice.createInjector(new AbstractModule() {
+      injector = Guice.createInjector(new RestModule(), new ExecutorServiceModule(
+               new WithinThreadExecutorService()), new JavaUrlHttpCommandExecutorServiceModule(),
+               new AbstractModule() {
 
-         protected void configure() {
-            RuntimeDelegate.setInstance(new RuntimeDelegateImpl());
-            bind(DateService.class);
-         }
+                  protected void configure() {
+                     RuntimeDelegate.setInstance(new RuntimeDelegateImpl());
+                     bind(DateService.class);
+                     bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
+                        public Logger getLogger(String category) {
+                           return Logger.NULL;
+                        }
+                     });
+                  }
 
-         @SuppressWarnings("unused")
-         @SessionToken
-         @Provides
-         String authTokenProvider() {
-            return System.currentTimeMillis() + "";
-         }
-      });
+                  @SuppressWarnings("unused")
+                  @SessionToken
+                  @Provides
+                  String authTokenProvider() {
+                     return System.currentTimeMillis() + "";
+                  }
+               });
       filter = injector.getInstance(AddSessionTokenToRequest.class);
    }
 

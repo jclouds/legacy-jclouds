@@ -33,15 +33,15 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 
-import org.jclouds.blobstore.decorators.AddBlobEntityAsMultipartForm;
+import org.jclouds.blobstore.binders.BindBlobToMultipartForm;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.nirvanix.sdn.decorators.AddMetadataAsQueryParams;
+import org.jclouds.nirvanix.sdn.binders.BindMetadataToQueryParams;
 import org.jclouds.nirvanix.sdn.domain.UploadInfo;
 import org.jclouds.nirvanix.sdn.filters.AddSessionTokenToRequest;
 import org.jclouds.nirvanix.sdn.functions.ParseUploadInfoFromJsonResponse;
 import org.jclouds.nirvanix.sdn.reference.SDNQueryParams;
-import org.jclouds.rest.annotations.DecoratorParam;
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -78,12 +78,22 @@ public interface SDNConnection {
    Future<Void> upload(@Endpoint URI endpoint,
             @QueryParam(SDNQueryParams.UPLOADTOKEN) String uploadToken,
             @QueryParam(SDNQueryParams.DESTFOLDERPATH) String folderPath,
-            @DecoratorParam(AddBlobEntityAsMultipartForm.class) Blob<BlobMetadata> blob);
+            @BinderParam(BindBlobToMultipartForm.class) Blob<BlobMetadata> blob);
 
+   /**
+    * The SetMetadata method is used to set specified metadata for a file or folder.
+    */
    @PUT
    @Path("/Metadata/SetMetadata.ashx")
-   @QueryParams(keys = SDNQueryParams.PATH, values = "{container}/{key}")
-   Future<Void> setMetadata(@PathParam("container") String container, @PathParam("key") String key,
-            @DecoratorParam(AddMetadataAsQueryParams.class) Multimap<String, String> metadata);
+   @QueryParams(keys = SDNQueryParams.PATH, values = "{path}")
+   Future<Void> setMetadata(@PathParam("path") String path,
+            @BinderParam(BindMetadataToQueryParams.class) Multimap<String, String> metadata);
 
+   /**
+    * The GetMetadata method is used to retrieve all metadata from a file or folder.
+    */
+   @GET
+   @Path("/Metadata/GetMetadata.ashx")
+   @QueryParams(keys = SDNQueryParams.PATH, values = "{path}")
+   Future<String> getMetadata(@PathParam("path") String path);
 }

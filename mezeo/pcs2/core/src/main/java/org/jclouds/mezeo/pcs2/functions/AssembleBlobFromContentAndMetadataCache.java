@@ -29,11 +29,11 @@ import javax.inject.Inject;
 
 import org.jclouds.blobstore.domain.Key;
 import org.jclouds.blobstore.functions.ParseContentTypeFromHeaders;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.mezeo.pcs2.domain.FileMetadata;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
 import org.jclouds.rest.InvocationContext;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.base.Function;
 
@@ -47,8 +47,7 @@ public class AssembleBlobFromContentAndMetadataCache implements Function<HttpRes
          InvocationContext {
 
    private final ConcurrentMap<Key, FileMetadata> cache;
-   private HttpRequest request;
-   private Object[] args;
+   private GeneratedHttpRequest<?> request;
 
    @Inject
    public AssembleBlobFromContentAndMetadataCache(ConcurrentMap<Key, FileMetadata> cache) {
@@ -56,23 +55,15 @@ public class AssembleBlobFromContentAndMetadataCache implements Function<HttpRes
    }
 
    public PCSFile apply(HttpResponse from) {
-      FileMetadata metadata = cache.get(new Key(getArgs()[0].toString(), this.getArgs()[1].toString()));
+      FileMetadata metadata = cache.get(new Key(request.getArgs()[0].toString(),
+               request.getArgs()[1].toString()));
       PCSFile blob = new PCSFile(metadata);
       blob.setData(from.getContent());
       blob.setContentLength(metadata.getSize());
       return blob;
    }
 
-   public Object[] getArgs() {
-      return args;
-   }
-
-   public HttpRequest getRequest() {
-      return request;
-   }
-
-   public void setContext(HttpRequest request, Object[] args) {
-      this.args = args;
+   public void setContext(GeneratedHttpRequest<?> request) {
       this.request = request;
    }
 

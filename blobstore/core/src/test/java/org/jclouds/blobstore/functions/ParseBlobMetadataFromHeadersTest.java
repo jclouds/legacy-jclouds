@@ -23,6 +23,9 @@
  */
 package org.jclouds.blobstore.functions;
 
+import static org.easymock.EasyMock.expect;
+import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
@@ -34,9 +37,9 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.http.HttpException;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.DateService;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -60,9 +63,11 @@ public class ParseBlobMetadataFromHeadersTest {
 
       parser = new ParseSystemAndUserMetadataFromHeaders<BlobMetadata>(new DateService(), "prefix",
                blobMetadataProvider);
-      parser
-               .setContext(new HttpRequest("GET", URI.create("http://localhost/key")),
-                        new Object[] {});
+
+      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
+      replay(request);
+      parser.setContext(request);
    }
 
    @Test

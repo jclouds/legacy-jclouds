@@ -1,19 +1,21 @@
 package org.jclouds.nirvanix.sdn.filters;
 
-import java.util.List;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
-import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.nirvanix.sdn.SessionToken;
 import org.jclouds.nirvanix.sdn.reference.SDNQueryParams;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 /**
  * Adds the Session Token to the request. This will update the Session Token before 20 minutes is
@@ -65,14 +67,12 @@ public class AddSessionTokenToRequest implements HttpRequestFilter {
       authToken = new AtomicReference<String>();
    }
 
-   public HttpRequest filter(HttpRequest request) throws HttpException {
-      UriBuilder builder = UriBuilder.fromUri(request.getEndpoint());
-      builder.replaceQueryParam(SDNQueryParams.SESSIONTOKEN, getSessionToken());
-      List<HttpRequestFilter> oldFilters = request.getFilters();
-      request = new HttpRequest(request.getMethod(), builder.build(), request.getHeaders(), request
-               .getEntity());
-      request.getFilters().addAll(oldFilters);
-      return request;
+   public void filter(HttpRequest request) throws HttpException {
+      checkArgument(checkNotNull(request, "input") instanceof GeneratedHttpRequest<?>,
+               "this decorator is only valid for GeneratedHttpRequests!");
+      ((GeneratedHttpRequest<?>) request).replaceQueryParam(SDNQueryParams.SESSIONTOKEN,
+               getSessionToken());
+
    }
 
 }

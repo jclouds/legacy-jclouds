@@ -29,9 +29,9 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.http.HttpException;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.InvocationContext;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -42,8 +42,7 @@ import com.google.common.base.Function;
 public class ParseContentTypeFromHeaders<M extends BlobMetadata> implements
          Function<HttpResponse, M>, InvocationContext {
    private final Provider<M> metadataFactory;
-   private HttpRequest request;
-   private Object[] args;
+   private GeneratedHttpRequest<?> request;
 
    @Inject
    public ParseContentTypeFromHeaders(Provider<M> metadataFactory) {
@@ -60,7 +59,7 @@ public class ParseContentTypeFromHeaders<M extends BlobMetadata> implements
    }
 
    protected String getKeyFor(HttpResponse from) {
-      String objectKey = getRequest().getEndpoint().getPath();
+      String objectKey = request.getEndpoint().getPath();
       if (objectKey.startsWith("/")) {
          // Trim initial slash from object key name.
          objectKey = objectKey.substring(1);
@@ -82,17 +81,8 @@ public class ParseContentTypeFromHeaders<M extends BlobMetadata> implements
          metadata.setContentType(contentType);
    }
 
-   public Object[] getArgs() {
-      return args;
-   }
-
-   public HttpRequest getRequest() {
-      return request;
-   }
-
-   public void setContext(HttpRequest request, Object[] args) {
+   public void setContext(GeneratedHttpRequest<?> request) {
       this.request = request;
-      this.args = args;
    }
 
 }

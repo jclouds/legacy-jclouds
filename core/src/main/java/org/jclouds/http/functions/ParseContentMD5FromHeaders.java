@@ -26,11 +26,11 @@ package org.jclouds.http.functions;
 import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.InvocationContext;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.base.Function;
 
@@ -42,16 +42,16 @@ public class ParseContentMD5FromHeaders implements Function<HttpResponse, byte[]
    public static class NoContentMD5Exception extends RuntimeException {
 
       private static final long serialVersionUID = 1L;
-      private final HttpRequest request;
+      private final GeneratedHttpRequest<?> request;
       private final HttpResponse response;
 
-      public NoContentMD5Exception(HttpRequest request, HttpResponse response) {
+      public NoContentMD5Exception(GeneratedHttpRequest<?> request, HttpResponse response) {
          super(String.format("no MD5 returned from request: %s; response %s", request, response));
          this.request = request;
          this.response = response;
       }
 
-      public HttpRequest getRequest() {
+      public GeneratedHttpRequest<?> getRequest() {
          return request;
       }
 
@@ -63,8 +63,7 @@ public class ParseContentMD5FromHeaders implements Function<HttpResponse, byte[]
 
    @Resource
    protected Logger logger = Logger.NULL;
-   private Object[] args;
-   private HttpRequest request;
+   private GeneratedHttpRequest<?> request;
 
    public byte[] apply(HttpResponse from) {
       IOUtils.closeQuietly(from.getContent());
@@ -75,17 +74,8 @@ public class ParseContentMD5FromHeaders implements Function<HttpResponse, byte[]
       throw new NoContentMD5Exception(request, from);
    }
 
-   public Object[] getArgs() {
-      return args;
-   }
-
-   public HttpRequest getRequest() {
-      return request;
-   }
-
-   public void setContext(HttpRequest request, Object[] args) {
+   public void setContext(GeneratedHttpRequest<?> request) {
       this.request = request;
-      this.args = args;
    }
 
 }

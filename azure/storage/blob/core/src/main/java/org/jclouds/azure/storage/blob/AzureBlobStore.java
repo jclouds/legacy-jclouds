@@ -35,7 +35,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.jclouds.azure.storage.AzureBlob;
-import org.jclouds.azure.storage.blob.decorators.GenerateMD5AndAddBlobEntity;
+import org.jclouds.azure.storage.blob.binders.GenerateMD5AndBindBlobToEntity;
 import org.jclouds.azure.storage.blob.domain.Blob;
 import org.jclouds.azure.storage.blob.domain.BlobMetadata;
 import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
@@ -56,7 +56,7 @@ import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.rest.annotations.DecoratorParam;
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;
@@ -149,7 +149,7 @@ public interface AzureBlobStore extends BlobStore<ContainerMetadata, BlobMetadat
    @ResponseParser(ParseETagHeader.class)
    Future<byte[]> putBlob(
             @PathParam("container") String container,
-            @PathParam("key") @ParamParser(BlobKey.class) @DecoratorParam(GenerateMD5AndAddBlobEntity.class) Blob object);
+            @PathParam("key") @ParamParser(BlobKey.class) @BinderParam(GenerateMD5AndBindBlobToEntity.class) Blob object);
 
    @GET
    @ResponseParser(ParseBlobFromHeadersAndHttpContent.class)

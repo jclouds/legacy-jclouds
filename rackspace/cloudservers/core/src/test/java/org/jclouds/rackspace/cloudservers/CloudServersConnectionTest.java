@@ -45,7 +45,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
@@ -77,6 +76,7 @@ import org.jclouds.rackspace.cloudservers.options.CreateSharedIpGroupOptions;
 import org.jclouds.rackspace.cloudservers.options.ListOptions;
 import org.jclouds.rackspace.cloudservers.options.RebuildServerOptions;
 import org.jclouds.rest.config.RestModule;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.joda.time.DateTime;
 import org.testng.annotations.BeforeClass;
@@ -106,7 +106,8 @@ public class CloudServersConnectionTest {
       Method method = CloudServersConnection.class.getMethod("createServer", String.class,
                int.class, int.class, createServerOptionsVarargsClass);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { "ralphie", 2, 1 });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { "ralphie", 2, 1 });
       assertEquals("{\"server\":{\"name\":\"ralphie\",\"imageId\":2,\"flavorId\":1}}", httpMethod
                .getEntity());
       validateCreateServer(method, httpMethod, null);
@@ -116,8 +117,8 @@ public class CloudServersConnectionTest {
       Method method = CloudServersConnection.class.getMethod("createServer", String.class,
                int.class, int.class, createServerOptionsVarargsClass);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { "ralphie", 2, 1,
-               withSharedIpGroup(2) });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { "ralphie", 2, 1, withSharedIpGroup(2) });
       assertEquals(
                "{\"server\":{\"name\":\"ralphie\",\"imageId\":2,\"flavorId\":1,\"sharedIpGroupId\":2}}",
                httpMethod.getEntity());
@@ -128,8 +129,9 @@ public class CloudServersConnectionTest {
       Method method = CloudServersConnection.class.getMethod("createServer", String.class,
                int.class, int.class, createServerOptionsVarargsClass);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { "ralphie", 2, 1,
-               new CreateServerOptions[] { withFile("/etc/jclouds", "foo".getBytes()) } });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { "ralphie", 2, 1,
+                        new CreateServerOptions[] { withFile("/etc/jclouds", "foo".getBytes()) } });
       assertEquals(
                "{\"server\":{\"name\":\"ralphie\",\"imageId\":2,\"flavorId\":1,\"personality\":[{\"path\":\"/etc/jclouds\",\"contents\":\"Zm9v\"}]}}",
                httpMethod.getEntity());
@@ -140,8 +142,8 @@ public class CloudServersConnectionTest {
       Method method = CloudServersConnection.class.getMethod("createServer", String.class,
                int.class, int.class, createServerOptionsVarargsClass);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { "ralphie", 2, 1,
-               withMetadata(ImmutableMap.of("foo", "bar")) });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { "ralphie", 2, 1, withMetadata(ImmutableMap.of("foo", "bar")) });
       assertEquals(
                "{\"server\":{\"name\":\"ralphie\",\"imageId\":2,\"flavorId\":1,\"metadata\":{\"foo\":\"bar\"}}}",
                httpMethod.getEntity());
@@ -153,19 +155,21 @@ public class CloudServersConnectionTest {
       Method method = CloudServersConnection.class.getMethod("createServer", String.class,
                int.class, int.class, createServerOptionsVarargsClass);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] {
-               "ralphie",
-               2,
-               1,
-               withSharedIpGroup(2).withSharedIp(
-                        InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 })) });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] {
+                        "ralphie",
+                        2,
+                        1,
+                        withSharedIpGroup(2).withSharedIp(
+                                 InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 })) });
       assertEquals(
                "{\"server\":{\"name\":\"ralphie\",\"imageId\":2,\"flavorId\":1,\"sharedIpGroupId\":2,\"addresses\":{\"public\":[\"127.0.0.1\"]}}}",
                httpMethod.getEntity());
       validateCreateServer(method, httpMethod, null);
    }
 
-   private void validateCreateServer(Method method, HttpRequest httpMethod, Object[] args) {
+   private void validateCreateServer(Method method,
+            GeneratedHttpRequest<CloudServersConnection> httpMethod, Object[] args) {
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
@@ -186,13 +190,14 @@ public class CloudServersConnectionTest {
       Method method = CloudServersConnection.class
                .getMethod("listServers", listOptionsVarargsClass);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] {});
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] {});
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseServerListFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
@@ -203,15 +208,15 @@ public class CloudServersConnectionTest {
       Method method = CloudServersConnection.class
                .getMethod("listServers", listOptionsVarargsClass);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { changesSince(now)
-               .maxResults(1).startAt(2) });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { changesSince(now).maxResults(1).startAt(2) });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json" + "&limit=1&changes-since="
                + now.getMillis() / 1000 + "&offset=2");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseServerListFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
@@ -220,13 +225,14 @@ public class CloudServersConnectionTest {
       Method method = CloudServersConnection.class
                .getMethod("listServers", listOptionsVarargsClass);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { withDetails() });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { withDetails() });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/detail");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseServerListFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
@@ -234,13 +240,14 @@ public class CloudServersConnectionTest {
    public void testGetServer() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersConnection.class.getMethod("getServer", int.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { 2 });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { 2 });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseServerFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnServerNotFoundOn404.class);
@@ -250,13 +257,14 @@ public class CloudServersConnectionTest {
       Method method = CloudServersConnection.class
                .getMethod("listFlavors", listOptionsVarargsClass);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] {});
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] {});
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/flavors");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseFlavorListFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
@@ -265,15 +273,15 @@ public class CloudServersConnectionTest {
       Method method = CloudServersConnection.class
                .getMethod("listFlavors", listOptionsVarargsClass);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { changesSince(now)
-               .maxResults(1).startAt(2) });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { changesSince(now).maxResults(1).startAt(2) });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/flavors");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json" + "&limit=1&changes-since="
                + now.getMillis() / 1000 + "&offset=2");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseFlavorListFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
@@ -282,13 +290,14 @@ public class CloudServersConnectionTest {
       Method method = CloudServersConnection.class
                .getMethod("listFlavors", listOptionsVarargsClass);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { withDetails() });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { withDetails() });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/flavors/detail");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseFlavorListFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
@@ -297,15 +306,15 @@ public class CloudServersConnectionTest {
       Method method = CloudServersConnection.class
                .getMethod("listFlavors", listOptionsVarargsClass);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { withDetails()
-               .changesSince(now).maxResults(1).startAt(2) });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { withDetails().changesSince(now).maxResults(1).startAt(2) });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/flavors/detail");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json" + "&limit=1&changes-since="
                + now.getMillis() / 1000 + "&offset=2");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseFlavorListFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
@@ -313,13 +322,14 @@ public class CloudServersConnectionTest {
    public void testGetFlavor() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersConnection.class.getMethod("getFlavor", int.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { 2 });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { 2 });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/flavors/2");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseFlavorFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnFlavorNotFoundOn404.class);
@@ -328,13 +338,14 @@ public class CloudServersConnectionTest {
    public void testListImages() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersConnection.class.getMethod("listImages", listOptionsVarargsClass);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] {});
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] {});
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/images");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseImageListFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
@@ -342,13 +353,14 @@ public class CloudServersConnectionTest {
    public void testListImagesDetail() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersConnection.class.getMethod("listImages", listOptionsVarargsClass);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { withDetails() });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { withDetails() });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/images/detail");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseImageListFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
@@ -356,15 +368,15 @@ public class CloudServersConnectionTest {
    public void testListImagesOptions() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersConnection.class.getMethod("listImages", listOptionsVarargsClass);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { changesSince(now)
-               .maxResults(1).startAt(2) });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { changesSince(now).maxResults(1).startAt(2) });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/images");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json" + "&limit=1&changes-since="
                + now.getMillis() / 1000 + "&offset=2");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseImageListFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
@@ -372,15 +384,15 @@ public class CloudServersConnectionTest {
    public void testListImagesDetailOptions() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersConnection.class.getMethod("listImages", listOptionsVarargsClass);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { withDetails()
-               .changesSince(now).maxResults(1).startAt(2) });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { withDetails().changesSince(now).maxResults(1).startAt(2) });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/images/detail");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json" + "&limit=1&changes-since="
                + now.getMillis() / 1000 + "&offset=2");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseImageListFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
@@ -388,13 +400,14 @@ public class CloudServersConnectionTest {
    public void testGetImage() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersConnection.class.getMethod("getImage", int.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { 2 });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { 2 });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/images/2");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseImageFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnImageNotFoundOn404.class);
@@ -403,14 +416,15 @@ public class CloudServersConnectionTest {
    public void testDeleteServer() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersConnection.class.getMethod("deleteServer", int.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { 2 });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { 2 });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2");
       assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnFalseOn404.class);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
    }
 
@@ -419,8 +433,8 @@ public class CloudServersConnectionTest {
       Method method = CloudServersConnection.class.getMethod("shareIp", InetAddress.class,
                int.class, int.class, boolean.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] {
-               InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }), 2, 3, false });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }), 2, 3, false });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/ips/public/127.0.0.1");
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
@@ -432,7 +446,7 @@ public class CloudServersConnectionTest {
       assertEquals("{\"shareIp\":{\"sharedIpGroupId\":3}}", httpMethod.getEntity());
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnFalseOn404.class);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
    }
 
@@ -441,8 +455,8 @@ public class CloudServersConnectionTest {
       Method method = CloudServersConnection.class.getMethod("shareIp", InetAddress.class,
                int.class, int.class, boolean.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] {
-               InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }), 2, 3, true });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }), 2, 3, true });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/ips/public/127.0.0.1");
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
@@ -455,7 +469,7 @@ public class CloudServersConnectionTest {
                .getEntity());
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnFalseOn404.class);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
    }
 
@@ -464,15 +478,15 @@ public class CloudServersConnectionTest {
       Method method = CloudServersConnection.class.getMethod("unshareIp", InetAddress.class,
                int.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] {
-               InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }), 2, 3, false });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }), 2, 3, false });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/ips/public/127.0.0.1");
       assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnFalseOn404.class);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
    }
 
@@ -480,8 +494,9 @@ public class CloudServersConnectionTest {
       Method method = CloudServersConnection.class.getMethod("replaceBackupSchedule", int.class,
                BackupSchedule.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { 2,
-               new BackupSchedule(WeeklyBackup.MONDAY, DailyBackup.H_0800_1000, true) });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { 2,
+                        new BackupSchedule(WeeklyBackup.MONDAY, DailyBackup.H_0800_1000, true) });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/backup_schedule");
       assertEquals(httpMethod.getMethod(), HttpMethod.POST);
@@ -490,26 +505,26 @@ public class CloudServersConnectionTest {
                .singletonList(httpMethod.getEntity().toString().getBytes().length + ""));
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
-      assertEquals(
-      httpMethod.getEntity(),
+      assertEquals(httpMethod.getEntity(),
                "{\"backupSchedule\":{\"daily\":\"H_0800_1000\",\"enabled\":true,\"weekly\":\"MONDAY\"}}");
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnFalseOn404.class);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
    }
 
    public void testDeleteBackupSchedule() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersConnection.class.getMethod("deleteBackupSchedule", int.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { 2 });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { 2 });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/backup_schedule");
       assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnFalseOn404.class);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
    }
 
@@ -517,7 +532,8 @@ public class CloudServersConnectionTest {
       Method method = CloudServersConnection.class.getMethod("changeAdminPass", int.class,
                String.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { 2, "foo" });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { 2, "foo" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2");
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
@@ -529,7 +545,7 @@ public class CloudServersConnectionTest {
       assertEquals("{\"server\":{\"adminPass\":\"foo\"}}", httpMethod.getEntity());
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnFalseOn404.class);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
    }
 
@@ -537,7 +553,8 @@ public class CloudServersConnectionTest {
       Method method = CloudServersConnection.class.getMethod("renameServer", int.class,
                String.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { 2, "foo" });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { 2, "foo" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2");
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
@@ -549,7 +566,7 @@ public class CloudServersConnectionTest {
       assertEquals("{\"server\":{\"name\":\"foo\"}}", httpMethod.getEntity());
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnFalseOn404.class);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
    }
 
@@ -557,13 +574,14 @@ public class CloudServersConnectionTest {
       Method method = CloudServersConnection.class.getMethod("listSharedIpGroups",
                listOptionsVarargsClass);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] {});
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] {});
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/shared_ip_groups");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseSharedIpGroupListFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
@@ -572,15 +590,15 @@ public class CloudServersConnectionTest {
       Method method = CloudServersConnection.class.getMethod("listSharedIpGroups",
                listOptionsVarargsClass);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { changesSince(now)
-               .maxResults(1).startAt(2) });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { changesSince(now).maxResults(1).startAt(2) });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/shared_ip_groups");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json" + "&limit=1&changes-since="
                + now.getMillis() / 1000 + "&offset=2");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseSharedIpGroupListFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
@@ -589,13 +607,14 @@ public class CloudServersConnectionTest {
       Method method = CloudServersConnection.class.getMethod("listSharedIpGroups",
                listOptionsVarargsClass);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { withDetails() });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { withDetails() });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/shared_ip_groups/detail");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseSharedIpGroupListFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
@@ -605,15 +624,15 @@ public class CloudServersConnectionTest {
       Method method = CloudServersConnection.class.getMethod("listSharedIpGroups",
                listOptionsVarargsClass);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { withDetails()
-               .changesSince(now).maxResults(1).startAt(2) });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { withDetails().changesSince(now).maxResults(1).startAt(2) });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/shared_ip_groups/detail");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json" + "&limit=1&changes-since="
                + now.getMillis() / 1000 + "&offset=2");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseSharedIpGroupListFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
@@ -621,13 +640,14 @@ public class CloudServersConnectionTest {
    public void testGetSharedIpGroup() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersConnection.class.getMethod("getSharedIpGroup", int.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { 2 });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { 2 });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/shared_ip_groups/2");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseSharedIpGroupFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnSharedIpGroupNotFoundOn404.class);
@@ -640,7 +660,8 @@ public class CloudServersConnectionTest {
       Method method = CloudServersConnection.class.getMethod("createSharedIpGroup", String.class,
                createSharedIpGroupOptionsVarargsClass);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { "ralphie" });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { "ralphie" });
       assertEquals("{\"sharedIpGroup\":{\"name\":\"ralphie\"}}", httpMethod.getEntity());
       validateCreateSharedIpGroup(method, httpMethod);
    }
@@ -649,14 +670,15 @@ public class CloudServersConnectionTest {
       Method method = CloudServersConnection.class.getMethod("createSharedIpGroup", String.class,
                createSharedIpGroupOptionsVarargsClass);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { "ralphie",
-               withServer(2) });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { "ralphie", withServer(2) });
       assertEquals("{\"sharedIpGroup\":{\"name\":\"ralphie\",\"server\":2}}", httpMethod
                .getEntity());
       validateCreateSharedIpGroup(method, httpMethod);
    }
 
-   private void validateCreateSharedIpGroup(Method method, HttpRequest httpMethod) {
+   private void validateCreateSharedIpGroup(Method method,
+            GeneratedHttpRequest<CloudServersConnection> httpMethod) {
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/shared_ip_groups");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
@@ -666,7 +688,7 @@ public class CloudServersConnectionTest {
                .singletonList(httpMethod.getEntity().toString().getBytes().length + ""));
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseSharedIpGroupFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
       assertNotNull(processor.getMapEntityBinderOrNull(method, new Object[] { "",
@@ -676,66 +698,71 @@ public class CloudServersConnectionTest {
    public void testDeleteSharedIpGroup() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersConnection.class.getMethod("deleteSharedIpGroup", int.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { 2 });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { 2 });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/shared_ip_groups/2");
       assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnFalseOn404.class);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
    }
 
    public void testListAddresses() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersConnection.class.getMethod("listAddresses", int.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { 2 });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { 2 });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/ips");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseAddressesFromJsonResponse.class);
    }
 
    public void testListPublicAddresses() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersConnection.class.getMethod("listPublicAddresses", int.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { 2 });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { 2 });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/ips/public");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseInetAddressListFromJsonResponse.class);
    }
 
    public void testListPrivateAddresses() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersConnection.class.getMethod("listPrivateAddresses", int.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { 2 });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { 2 });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/ips/private");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseInetAddressListFromJsonResponse.class);
    }
 
    public void testListBackupSchedule() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersConnection.class.getMethod("listBackupSchedule", int.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { 2 });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { 2 });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/backup_schedule");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseBackupScheduleFromJsonResponse.class);
    }
 
@@ -743,7 +770,8 @@ public class CloudServersConnectionTest {
       Method method = CloudServersConnection.class.getMethod("createImageFromServer", String.class,
                int.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { "ralphie", 2 });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { "ralphie", 2 });
       assertEquals("{\"image\":{\"serverId\":2,\"name\":\"ralphie\"}}", httpMethod.getEntity());
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/images");
@@ -754,7 +782,7 @@ public class CloudServersConnectionTest {
                .singletonList(httpMethod.getEntity().toString().getBytes().length + ""));
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseImageFromJsonResponse.class);
       assertNotNull(processor.createExceptionParserOrNullIfNotFound(method));
       assertNotNull(processor.getMapEntityBinderOrNull(method, new Object[] { "", 2 }));
@@ -767,7 +795,8 @@ public class CloudServersConnectionTest {
       Method method = CloudServersConnection.class.getMethod("rebuildServer", int.class,
                rebuildServerOptionsVarargsClass);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { 3 });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { 3 });
       assertEquals("{\"rebuild\":{}}", httpMethod.getEntity());
       validateRebuildServer(method, httpMethod);
    }
@@ -776,12 +805,14 @@ public class CloudServersConnectionTest {
       Method method = CloudServersConnection.class.getMethod("rebuildServer", int.class,
                rebuildServerOptionsVarargsClass);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { 3, withImage(2) });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { 3, withImage(2) });
       assertEquals("{\"rebuild\":{\"imageId\":2}}", httpMethod.getEntity());
       validateRebuildServer(method, httpMethod);
    }
 
-   private void validateRebuildServer(Method method, HttpRequest httpMethod) {
+   private void validateRebuildServer(Method method,
+            GeneratedHttpRequest<CloudServersConnection> httpMethod) {
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/3/action");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
@@ -793,7 +824,7 @@ public class CloudServersConnectionTest {
                .singletonList(MediaType.APPLICATION_JSON));
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnFalseOn404.class);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
       assertNotNull(processor.getMapEntityBinderOrNull(method, new Object[] { "",
                new RebuildServerOptions[] { withImage(2) } }));
@@ -803,7 +834,8 @@ public class CloudServersConnectionTest {
       Method method = CloudServersConnection.class.getMethod("rebootServer", int.class,
                RebootType.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { 2, RebootType.HARD });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { 2, RebootType.HARD });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/action");
       assertEquals(httpMethod.getMethod(), HttpMethod.POST);
@@ -815,14 +847,15 @@ public class CloudServersConnectionTest {
       assertEquals("{\"reboot\":{\"type\":\"HARD\"}}", httpMethod.getEntity());
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnFalseOn404.class);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
    }
 
    public void testResize() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersConnection.class.getMethod("resizeServer", int.class, int.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { 2, 3 });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { 2, 3 });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/action");
       assertEquals(httpMethod.getMethod(), HttpMethod.POST);
@@ -834,14 +867,15 @@ public class CloudServersConnectionTest {
       assertEquals("{\"resize\":{\"flavorId\":3}}", httpMethod.getEntity());
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnFalseOn404.class);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
    }
 
    public void testConfirmResize() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersConnection.class.getMethod("confirmResizeServer", int.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { 2 });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { 2 });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/action");
       assertEquals(httpMethod.getMethod(), HttpMethod.POST);
@@ -853,13 +887,14 @@ public class CloudServersConnectionTest {
       assertEquals("{\"confirmResize\":null}", httpMethod.getEntity());
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnFalseOn404.class);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
    }
 
    public void testRevertResize() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersConnection.class.getMethod("revertResizeServer", int.class);
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { 2 });
+      GeneratedHttpRequest<CloudServersConnection> httpMethod = processor.createRequest(method,
+               new Object[] { 2 });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers/2/action");
       assertEquals(httpMethod.getMethod(), HttpMethod.POST);
@@ -871,7 +906,7 @@ public class CloudServersConnectionTest {
       assertEquals("{\"revertResize\":null}", httpMethod.getEntity());
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnFalseOn404.class);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
    }
 

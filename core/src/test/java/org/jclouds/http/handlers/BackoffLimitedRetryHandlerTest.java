@@ -49,7 +49,6 @@ import com.google.common.base.Function;
 
 @Test(groups = "unit", testName = "core.BackoffLimitedRetryHandler")
 public class BackoffLimitedRetryHandlerTest {
-   private static final URI END_POINT = URI.create("http://localhost:8080");
 
    BackoffLimitedRetryHandler handler = new BackoffLimitedRetryHandler();
 
@@ -146,7 +145,7 @@ public class BackoffLimitedRetryHandlerTest {
       assertEquals(response.getContent().read(), -1);
    }
 
-   private final HttpRequest request = new HttpRequest("HEAD", END_POINT);
+   private final HttpRequest request = new HttpRequest("GET", URI.create("http://localhost"));
 
    private HttpCommand createCommand() {
       HttpCommand command = new TransformingHttpCommandImpl<String>(executorService, request,

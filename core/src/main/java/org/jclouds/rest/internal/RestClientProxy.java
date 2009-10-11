@@ -42,7 +42,6 @@ import javax.inject.Singleton;
 
 import org.jclouds.concurrent.FutureExceptionParser;
 import org.jclouds.http.HttpConstants;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.TransformingHttpCommand;
 import org.jclouds.logging.Logger;
@@ -89,13 +88,13 @@ public class RestClientProxy<T> implements InvocationHandler {
                   .createExceptionParserOrNullIfNotFound(method);
          // in case there is an exception creating the request, we should at least pass in args
          if (exceptionParser instanceof InvocationContext) {
-            ((InvocationContext) exceptionParser).setContext(null, args);
+            ((InvocationContext) exceptionParser).setContext(null);
          }
-         HttpRequest request;
+         GeneratedHttpRequest<T> request;
          try {
             request = util.createRequest(method, args);
             if (exceptionParser instanceof InvocationContext) {
-               ((InvocationContext) exceptionParser).setContext(request, args);
+               ((InvocationContext) exceptionParser).setContext(request);
             }
          } catch (RuntimeException e) {
             if (exceptionParser != null) {

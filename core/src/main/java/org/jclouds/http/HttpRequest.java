@@ -44,8 +44,8 @@ public class HttpRequest extends HttpMessage implements Request<URI> {
 
    private List<HttpRequestFilter> requestFilters = Lists.newArrayList();
 
-   private final String method;
-   private final URI endpoint;
+   private String method;
+   private URI endpoint;
    private Object entity;
 
    /**
@@ -56,8 +56,8 @@ public class HttpRequest extends HttpMessage implements Request<URI> {
     *           If the request is HEAD, this may change to GET due to redirects
     */
    public HttpRequest(String method, URI endPoint) {
-      this.method = checkNotNull(method, "method");
-      this.endpoint = checkNotNull(endPoint, "endPoint");
+      this.setMethod(checkNotNull(method, "method"));
+      this.setEndpoint(checkNotNull(endPoint, "endPoint"));
       checkArgument(endPoint.getHost() != null, String.format("endPoint.getHost() is null for %s",
                endPoint));
    }
@@ -81,7 +81,7 @@ public class HttpRequest extends HttpMessage implements Request<URI> {
     * @param method
     *           If the request is HEAD, this may change to GET due to redirects
     */
-   public HttpRequest(String method, URI endPoint, Multimap<String, String> headers,
+   protected HttpRequest(String method, URI endPoint, Multimap<String, String> headers,
             @Nullable Object entity) {
       this(method, endPoint);
       setHeaders(checkNotNull(headers, "headers"));
@@ -89,7 +89,7 @@ public class HttpRequest extends HttpMessage implements Request<URI> {
    }
 
    public String getRequestLine() {
-      return String.format("%s %s HTTP/1.1", getMethod(), endpoint.toASCIIString());
+      return String.format("%s %s HTTP/1.1", getMethod(), getEndpoint().toASCIIString());
    }
 
    /**
@@ -120,6 +120,14 @@ public class HttpRequest extends HttpMessage implements Request<URI> {
 
    public List<HttpRequestFilter> getFilters() {
       return requestFilters;
+   }
+
+   public void setMethod(String method) {
+      this.method = method;
+   }
+
+   public void setEndpoint(URI endpoint) {
+      this.endpoint = endpoint;
    }
 
 }

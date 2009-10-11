@@ -70,8 +70,9 @@ import org.jclouds.http.functions.ReturnVoidIf2xx;
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.Binder;
 import org.jclouds.rest.InvocationContext;
-import org.jclouds.rest.annotations.DecoratorParam;
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;
@@ -86,8 +87,6 @@ import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.decorators.MapRequestDecorator;
-import org.jclouds.rest.decorators.RequestDecorator;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -116,7 +115,7 @@ public class RestAnnotationProcessor<T> {
 
    private final Class<T> declaring;
 
-   private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToDecoratorParamAnnotation = createMethodToIndexOfParamToAnnotation(DecoratorParam.class);
+   private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToDecoratorParamAnnotation = createMethodToIndexOfParamToAnnotation(BinderParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToHeaderParamAnnotations = createMethodToIndexOfParamToAnnotation(HeaderParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToHostPrefixParamAnnotations = createMethodToIndexOfParamToAnnotation(HostPrefixParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToEndpointAnnotations = createMethodToIndexOfParamToAnnotation(Endpoint.class);
@@ -184,8 +183,8 @@ public class RestAnnotationProcessor<T> {
    private final ParseSax.Factory parserFactory;
 
    @VisibleForTesting
-   public Function<HttpResponse, ?> createResponseParser(Method method, HttpRequest request,
-            Object[] args) {
+   public Function<HttpResponse, ?> createResponseParser(Method method,
+            GeneratedHttpRequest<T> request, Object... args) {
       Function<HttpResponse, ?> transformer;
       Class<? extends HandlerWithResult<?>> handler = getXMLTransformerOrNull(method);
       if (handler != null) {
@@ -194,7 +193,7 @@ public class RestAnnotationProcessor<T> {
          transformer = injector.getInstance(getParserOrThrowException(method));
       }
       if (transformer instanceof InvocationContext) {
-         ((InvocationContext) transformer).setContext(request, args);
+         ((InvocationContext) transformer).setContext(request);
       }
       return transformer;
    }
@@ -216,6 +215,11 @@ public class RestAnnotationProcessor<T> {
       this.injector = injector;
       this.parserFactory = parserFactory;
       seedCache(declaring);
+      if (declaring.isAnnotationPresent(SkipEncoding.class)) {
+         skipEncode = declaring.getAnnotation(SkipEncoding.class).value();
+      } else {
+         skipEncode = new char[] {};
+      }
    }
 
    public Method getDelegateOrNull(Method in) {
@@ -292,8 +296,9 @@ public class RestAnnotationProcessor<T> {
    }
 
    final Injector injector;
+   final char[] skipEncode;
 
-   public HttpRequest createRequest(Method method, Object[] args) {
+   public GeneratedHttpRequest<T> createRequest(Method method, Object... args) {
       URI endpoint = getEndpointFor(method, args);
 
       String httpMethod = getHttpMethodOrConstantOrThrowException(method);
@@ -302,18 +307,13 @@ public class RestAnnotationProcessor<T> {
       builder.path(declaring);
       builder.path(method);
 
-      Multimap<String, String> tokenValues;
-      if (declaring.isAnnotationPresent(SkipEncoding.class)) {
-         tokenValues = encodeValues(getPathParamKeyValues(method, args), declaring.getAnnotation(
-                  SkipEncoding.class).value());
-      } else {
-         tokenValues = encodeValues(getPathParamKeyValues(method, args));
-      }
+      Multimap<String, String> tokenValues = encodeValues(getPathParamKeyValues(method, args),
+               skipEncode);
 
-      addQueryParams(method, args, builder, tokenValues.entries());
-      addMatrixParams(method, args, builder, tokenValues.entries());
+      addQueryParams(builder, tokenValues.entries(), method, args);
+      addMatrixParams(builder, tokenValues.entries(), method, args);
 
-      Multimap<String, String> headers = buildHeaders(method, args, tokenValues.entries());
+      Multimap<String, String> headers = buildHeaders(tokenValues.entries(), method, args);
 
       String stringEntity = null;
       HttpRequestOptions options = findOptionsIn(method, args);
@@ -349,7 +349,11 @@ public class RestAnnotationProcessor<T> {
          throw new IllegalStateException(e);
       }
 
-      HttpRequest request = new HttpRequest(httpMethod, endPoint, headers);
+      endPoint = replaceQuery(endPoint, endPoint.getQuery());
+
+      GeneratedHttpRequest<T> request = new GeneratedHttpRequest<T>(httpMethod, endPoint, this,
+               declaring, method, args);
+      request.setHeaders(headers);
       addHostHeaderIfAnnotatedWithVirtualHost(headers, request.getEndpoint().getHost(), method);
       addFiltersIfAnnotated(method, request);
       if (stringEntity != null) {
@@ -357,11 +361,26 @@ public class RestAnnotationProcessor<T> {
          if (headers.get(HttpHeaders.CONTENT_TYPE) != null)
             headers.put(HttpHeaders.CONTENT_TYPE, "application/unknown");
       }
-      return decorateRequest(method, args, request);
+      decorateRequest(request);
+      return request;
    }
 
-   private void addMatrixParams(Method method, Object[] args, UriBuilder builder,
-            Collection<Entry<String, String>> tokenValues) {
+   @VisibleForTesting
+   URI replaceQuery(URI endPoint, String query) {
+      return replaceQuery(endPoint, query, skipEncode);
+   }
+
+   @VisibleForTesting
+   static URI replaceQuery(URI endPoint, String query, char... skipEncode) {
+      UriBuilder qbuilder = UriBuilder.fromUri(endPoint);
+      String unencodedQuery = query == null ? null : unEncode(query, skipEncode);
+      qbuilder.replaceQuery(unencodedQuery);
+      endPoint = qbuilder.build();
+      return endPoint;
+   }
+
+   private void addMatrixParams(UriBuilder builder, Collection<Entry<String, String>> tokenValues,
+            Method method, Object... args) {
       if (declaring.isAnnotationPresent(MatrixParams.class)) {
          MatrixParams query = declaring.getAnnotation(MatrixParams.class);
          addMatrix(builder, query, tokenValues);
@@ -377,8 +396,8 @@ public class RestAnnotationProcessor<T> {
       }
    }
 
-   private void addQueryParams(Method method, Object[] args, UriBuilder builder,
-            Collection<Entry<String, String>> tokenValues) {
+   private void addQueryParams(UriBuilder builder, Collection<Entry<String, String>> tokenValues,
+            Method method, Object... args) {
       if (declaring.isAnnotationPresent(QueryParams.class)) {
          QueryParams query = declaring.getAnnotation(QueryParams.class);
          addQuery(builder, query, tokenValues);
@@ -438,10 +457,10 @@ public class RestAnnotationProcessor<T> {
    }
 
    @VisibleForTesting
-   URI getEndpointInParametersOrNull(Method method, Object[] args) {
+   URI getEndpointInParametersOrNull(Method method, Object... args) {
       Map<Integer, Set<Annotation>> map = indexWithOnlyOneAnnotation(method, "@Endpoint",
                methodToindexOfParamToEndpointAnnotations);
-      if (map.size() == 1) {
+      if (map.size() == 1 && args.length > 0) {
          Endpoint annotation = (Endpoint) map.values().iterator().next().iterator().next();
          int index = map.keySet().iterator().next();
          checkState(
@@ -459,7 +478,7 @@ public class RestAnnotationProcessor<T> {
       return null;
    }
 
-   private UriBuilder addHostPrefixIfPresent(URI endpoint, Method method, Object[] args) {
+   private UriBuilder addHostPrefixIfPresent(URI endpoint, Method method, Object... args) {
       Map<Integer, Set<Annotation>> map = indexWithOnlyOneAnnotation(method, "@HostPrefixParam",
                methodToIndexOfParamToHostPrefixParamAnnotations);
       UriBuilder builder = UriBuilder.fromUri(endpoint);
@@ -528,27 +547,27 @@ public class RestAnnotationProcessor<T> {
       return null;
    }
 
-   public MapRequestDecorator getMapEntityBinderOrNull(Method method, Object[] args) {
+   public org.jclouds.rest.MapBinder getMapEntityBinderOrNull(Method method, Object... args) {
       if (args != null) {
          for (Object arg : args) {
             if (arg instanceof Object[]) {
                Object[] postBinders = (Object[]) arg;
                if (postBinders.length == 0) {
                } else if (postBinders.length == 1) {
-                  if (postBinders[0] instanceof MapRequestDecorator) {
-                     MapRequestDecorator binder = (MapRequestDecorator) postBinders[0];
+                  if (postBinders[0] instanceof org.jclouds.rest.MapBinder) {
+                     org.jclouds.rest.MapBinder binder = (org.jclouds.rest.MapBinder) postBinders[0];
                      injector.injectMembers(binder);
                      return binder;
                   }
                } else {
-                  if (postBinders[0] instanceof MapRequestDecorator) {
+                  if (postBinders[0] instanceof org.jclouds.rest.MapBinder) {
                      throw new IllegalArgumentException(
                               "we currently do not support multiple varargs postBinders in: "
                                        + method.getName());
                   }
                }
-            } else if (arg instanceof MapRequestDecorator) {
-               MapRequestDecorator binder = (MapRequestDecorator) arg;
+            } else if (arg instanceof org.jclouds.rest.MapBinder) {
+               org.jclouds.rest.MapBinder binder = (org.jclouds.rest.MapBinder) arg;
                injector.injectMembers(binder);
                return binder;
             }
@@ -595,33 +614,34 @@ public class RestAnnotationProcessor<T> {
       }
    }
 
-   public HttpRequest decorateRequest(Method method, Object[] args, HttpRequest request) {
-      MapRequestDecorator mapBinder = getMapEntityBinderOrNull(method, args);
-      Map<String, String> mapParams = buildPostParams(method, args);
+   public void decorateRequest(GeneratedHttpRequest<T> request) {
+      org.jclouds.rest.MapBinder mapBinder = getMapEntityBinderOrNull(request.getJavaMethod(),
+               request.getArgs());
+      Map<String, String> mapParams = buildPostParams(request.getJavaMethod(), request.getArgs());
       // MapEntityBinder is only useful if there are parameters. We guard here in case the
       // MapEntityBinder is also an EntityBinder. If so, it can be used with or without
       // parameters.
       if (mapBinder != null) {
-         mapBinder.decorateRequest(request, mapParams);
-         return request;
+         mapBinder.bindToRequest(request, mapParams);
+         return;
       }
 
       for (Entry<Integer, Set<Annotation>> entry : Maps.filterValues(
-               methodToIndexOfParamToDecoratorParamAnnotation.get(method),
+               methodToIndexOfParamToDecoratorParamAnnotation.get(request.getJavaMethod()),
                new Predicate<Set<Annotation>>() {
                   public boolean apply(Set<Annotation> input) {
                      return input.size() >= 1;
                   }
                }).entrySet()) {
-         DecoratorParam entityAnnotation = (DecoratorParam) entry.getValue().iterator().next();
-         RequestDecorator binder = injector.getInstance(entityAnnotation.value());
-         Object input = args[entry.getKey()];
+         BinderParam entityAnnotation = (BinderParam) entry.getValue().iterator().next();
+         Binder binder = injector.getInstance(entityAnnotation.value());
+         Object input = request.getArgs()[entry.getKey()];
          if (input.getClass().isArray()) {
             Object[] entityArray = (Object[]) input;
             input = entityArray.length > 0 ? entityArray[0] : null;
          }
          Object oldEntity = request.getEntity();
-         request = binder.decorateRequest(request, input);
+         binder.bindToRequest(request, input);
          if (oldEntity != null && !oldEntity.equals(request.getEntity())) {
             throw new IllegalStateException(String.format(
                      "binder %s replaced the previous entity on request: %s", binder, request));
@@ -631,7 +651,6 @@ public class RestAnnotationProcessor<T> {
          request.getHeaders().replaceValues(HttpHeaders.CONTENT_LENGTH,
                   Collections.singletonList(0 + ""));
       }
-      return request;
    }
 
    protected Map<Integer, Set<Annotation>> indexWithOnlyOneAnnotation(Method method,
@@ -651,7 +670,7 @@ public class RestAnnotationProcessor<T> {
       return indexToEntityAnnotation;
    }
 
-   private HttpRequestOptions findOptionsIn(Method method, Object[] args) {
+   private HttpRequestOptions findOptionsIn(Method method, Object... args) {
       for (int index : methodToIndexesOfOptions.get(method)) {
          if (args.length >= index + 1) {// accomodate varargs
             if (args[index] instanceof Object[]) {
@@ -678,8 +697,8 @@ public class RestAnnotationProcessor<T> {
       return null;
    }
 
-   public Multimap<String, String> buildHeaders(Method method, final Object[] args,
-            Collection<Entry<String, String>> tokenValues) {
+   public Multimap<String, String> buildHeaders(Collection<Entry<String, String>> tokenValues,
+            Method method, final Object... args) {
       Multimap<String, String> headers = HashMultimap.create();
       addHeaderIfAnnotationPresentOnMethod(headers, method, tokenValues);
       Map<Integer, Set<Annotation>> indexToHeaderParam = methodToIndexOfParamToHeaderParamAnnotations
@@ -755,7 +774,7 @@ public class RestAnnotationProcessor<T> {
       return out;
    }
 
-   private Multimap<String, String> getPathParamKeyValues(Method method, Object[] args) {
+   private Multimap<String, String> getPathParamKeyValues(Method method, Object... args) {
       Multimap<String, String> pathParamValues = HashMultimap.create();
       pathParamValues.putAll(constants);
       Map<Integer, Set<Annotation>> indexToPathParam = methodToindexOfParamToPathParamAnnotations
@@ -798,10 +817,8 @@ public class RestAnnotationProcessor<T> {
             // Web browsers do not always handle '+' characters well, use the well-supported
             // '%20' instead.
             value = value.replaceAll("\\+", "%20");
-            for (char c : skipEncode) {
-               String toSkip = Character.toString(c);
-               String encodedValueToSkip = URLEncoder.encode(toSkip, "UTF-8");
-               value = value.replaceAll(encodedValueToSkip, toSkip);
+            if (skipEncode.length > 0) {
+               value = unEncode(value, skipEncode);
             }
             encoded.put(entry.getKey(), value);
          } catch (UnsupportedEncodingException e) {
@@ -811,7 +828,21 @@ public class RestAnnotationProcessor<T> {
       return encoded;
    }
 
-   private Multimap<String, String> getMatrixParamKeyValues(Method method, Object[] args) {
+   @VisibleForTesting
+   static String unEncode(String value, final char... skipEncode) {
+      for (char c : skipEncode) {
+         String toSkip = Character.toString(c);
+         try {
+            String encodedValueToSkip = URLEncoder.encode(toSkip, "UTF-8");
+            value = value.replaceAll(encodedValueToSkip, toSkip);
+         } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("jclouds only supports UTF-8", e);
+         }
+      }
+      return value;
+   }
+
+   private Multimap<String, String> getMatrixParamKeyValues(Method method, Object... args) {
       Multimap<String, String> queryParamValues = HashMultimap.create();
       queryParamValues.putAll(constants);
       Map<Integer, Set<Annotation>> indexToMatrixParam = methodToindexOfParamToMatrixParamAnnotations
@@ -826,7 +857,7 @@ public class RestAnnotationProcessor<T> {
       return queryParamValues;
    }
 
-   private Multimap<String, String> getQueryParamKeyValues(Method method, Object[] args) {
+   private Multimap<String, String> getQueryParamKeyValues(Method method, Object... args) {
       Multimap<String, String> queryParamValues = HashMultimap.create();
       queryParamValues.putAll(constants);
       Map<Integer, Set<Annotation>> indexToQueryParam = methodToindexOfParamToQueryParamAnnotations
@@ -841,7 +872,7 @@ public class RestAnnotationProcessor<T> {
       return queryParamValues;
    }
 
-   private Map<String, String> buildPostParams(Method method, Object[] args) {
+   private Map<String, String> buildPostParams(Method method, Object... args) {
       Map<String, String> postParams = Maps.newHashMap();
       Map<Integer, Set<Annotation>> indexToPathParam = methodToindexOfParamToPostParamAnnotations
                .get(method);
@@ -865,7 +896,7 @@ public class RestAnnotationProcessor<T> {
       return postParams;
    }
 
-   public URI getEndpointFor(Method method, Object[] args) {
+   public URI getEndpointFor(Method method, Object... args) {
       URI endpoint = getEndpointInParametersOrNull(method, args);
       if (endpoint == null) {
          Endpoint annotation;

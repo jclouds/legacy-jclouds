@@ -33,12 +33,12 @@ import javax.ws.rs.PathParam;
 
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.mezeo.pcs2.functions.AddEntryIntoMultiMap;
-import org.jclouds.rest.annotations.DecoratorParam;
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
-import org.jclouds.rest.decorators.AddAsStringEntity;
+import org.jclouds.rest.binders.BindToStringEntity;
 
 import com.google.common.collect.Multimap;
 
@@ -59,7 +59,7 @@ public interface PCSUtil {
    @Endpoint(PCS.class)
    @Path("/files/{fileResourceId}/metadata/{key}")
    Future<Void> putMetadata(@PathParam("fileResourceId") String resourceId,
-            @PathParam("key") String key, @DecoratorParam(AddAsStringEntity.class) String value);
+            @PathParam("key") String key, @BinderParam(BindToStringEntity.class) String value);
 
    @GET
    @ResponseParser(AddEntryIntoMultiMap.class)

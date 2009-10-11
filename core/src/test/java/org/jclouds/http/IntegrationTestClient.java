@@ -35,16 +35,16 @@ import javax.ws.rs.PathParam;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.options.HttpRequestOptions;
-import org.jclouds.rest.RestAnnotationProcessorTest.Localhost;
-import org.jclouds.rest.annotations.DecoratorParam;
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.MapEntityParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.decorators.AddAsJsonEntity;
-import org.jclouds.rest.decorators.AddAsStringEntity;
+import org.jclouds.rest.binders.BindToJsonEntity;
+import org.jclouds.rest.binders.BindToStringEntity;
+import org.jclouds.rest.internal.RestAnnotationProcessorTest.Localhost;
 
 import com.google.common.base.Function;
 
@@ -88,15 +88,17 @@ public interface IntegrationTestClient {
 
    @PUT
    @Path("objects/{id}")
-   Future<String> upload(@PathParam("id") String id, @DecoratorParam(AddAsStringEntity.class) String toPut);
+   Future<String> upload(@PathParam("id") String id,
+            @BinderParam(BindToStringEntity.class) String toPut);
 
    @POST
    @Path("objects/{id}")
-   Future<String> post(@PathParam("id") String id, @DecoratorParam(AddAsStringEntity.class) String toPut);
+   Future<String> post(@PathParam("id") String id,
+            @BinderParam(BindToStringEntity.class) String toPut);
 
    @POST
    @Path("objects/{id}")
-   @MapBinder(AddAsJsonEntity.class)
+   @MapBinder(BindToJsonEntity.class)
    Future<String> postJson(@PathParam("id") String id, @MapEntityParam("key") String toPut);
 
    @GET
@@ -105,11 +107,10 @@ public interface IntegrationTestClient {
    Future<String> downloadFilter(@PathParam("id") String id, @HeaderParam("filterme") String header);
 
    static class Filter implements HttpRequestFilter {
-      public HttpRequest filter(HttpRequest request) throws HttpException {
+      public void filter(HttpRequest request) throws HttpException {
          if (request.getHeaders().containsKey("filterme")) {
             request.getHeaders().put("test", "test");
          }
-         return request;
       }
    }
 

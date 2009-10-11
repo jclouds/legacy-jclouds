@@ -27,15 +27,15 @@ import java.util.Collections;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.inject.Singleton;
+
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.rackspace.Authentication;
 import org.jclouds.rackspace.reference.RackspaceHeaders;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.inject.Singleton;
 
 /**
  * Signs the Rackspace request. This will update the Authentication Token before 24 hours is up.
@@ -88,10 +88,9 @@ public class AuthenticateRequest implements HttpRequestFilter {
       authToken = new AtomicReference<String>();
    }
 
-   public HttpRequest filter(HttpRequest request) throws HttpException {
+   public void filter(HttpRequest request) throws HttpException {
       request.getHeaders().replaceValues(RackspaceHeaders.AUTH_TOKEN,
                Collections.singletonList(getAuthToken()));
-      return request;
    }
 
 }

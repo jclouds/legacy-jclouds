@@ -94,7 +94,7 @@ public class NioHttpCommandExecutionHandler implements NHttpRequestExecutionHand
       if (rendezvous != null) {
          HttpRequest request = rendezvous.getCommand().getRequest();
          for (HttpRequestFilter filter : request.getFilters()) {
-            request = filter.filter(request);
+            filter.filter(request);
          }
          logger.debug("Sending request: %s", request.getRequestLine());
          if (request.getEntity() != null && wire.enabled())

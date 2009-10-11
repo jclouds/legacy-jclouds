@@ -50,15 +50,15 @@ import org.jclouds.azure.storage.domain.BoundedSortedSet;
 import org.jclouds.azure.storage.filters.SharedKeyAuthentication;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.reference.AzureStorageHeaders;
-import org.jclouds.blobstore.decorators.AddBlobEntity;
-import org.jclouds.blobstore.decorators.AddHeadersWithPrefix;
+import org.jclouds.blobstore.binders.BindBlobToEntity;
+import org.jclouds.blobstore.binders.BindMultimapToHeadersWithPrefix;
 import org.jclouds.blobstore.functions.BlobKey;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.functions.ReturnTrueOn404;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.rest.annotations.DecoratorParam;
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;
@@ -144,7 +144,7 @@ public interface AzureBlobConnection {
    @Path("{container}")
    @QueryParams(keys = { "restype", "comp" }, values = { "container", "metadata" })
    void setContainerMetadata(@PathParam("container") String container,
-            @DecoratorParam(AddHeadersWithPrefix.class) Multimap<String, String> metadata);
+            @BinderParam(BindMultimapToHeadersWithPrefix.class) Multimap<String, String> metadata);
 
    /**
     * The Delete Container operation marks the specified container for deletion. The container and
@@ -272,7 +272,7 @@ public interface AzureBlobConnection {
    @Path("{container}/{key}")
    @ResponseParser(ParseETagHeader.class)
    Future<byte[]> putBlob(@PathParam("container") String container,
-            @PathParam("key") @ParamParser(BlobKey.class) @DecoratorParam(AddBlobEntity.class) Blob object);
+            @PathParam("key") @ParamParser(BlobKey.class) @BinderParam(BindBlobToEntity.class) Blob object);
 
    /**
     * The Get Blob operation reads or downloads a blob from the system, including its metadata and
@@ -302,7 +302,7 @@ public interface AzureBlobConnection {
    @Path("{container}/{key}")
    @QueryParams(keys = { "comp" }, values = { "metadata" })
    void setBlobMetadata(@PathParam("container") String container, @PathParam("key") String key,
-            @DecoratorParam(AddHeadersWithPrefix.class) Multimap<String, String> metadata);
+            @BinderParam(BindMultimapToHeadersWithPrefix.class) Multimap<String, String> metadata);
 
    /**
     * The Delete Blob operation marks the specified blob for deletion. The blob is later deleted

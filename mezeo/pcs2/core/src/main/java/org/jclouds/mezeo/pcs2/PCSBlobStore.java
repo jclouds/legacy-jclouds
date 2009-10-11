@@ -38,8 +38,8 @@ import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.mezeo.pcs2.decorators.AddDataAndLength;
-import org.jclouds.mezeo.pcs2.decorators.AddContainerNameAsXmlEntity;
+import org.jclouds.mezeo.pcs2.binders.BindContainerNameToXmlEntity;
+import org.jclouds.mezeo.pcs2.binders.BindDataToEntity;
 import org.jclouds.mezeo.pcs2.domain.ContainerMetadata;
 import org.jclouds.mezeo.pcs2.domain.FileMetadata;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
@@ -57,7 +57,7 @@ import org.jclouds.mezeo.pcs2.functions.ReturnTrueIfContainerAlreadyExists;
 import org.jclouds.mezeo.pcs2.xml.CachingFileListToContainerMetadataListHandler;
 import org.jclouds.mezeo.pcs2.xml.FileListToFileMetadataListHandler;
 import org.jclouds.mezeo.pcs2.xml.FileMetadataHandler;
-import org.jclouds.rest.annotations.DecoratorParam;
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;
@@ -98,7 +98,7 @@ public interface PCSBlobStore extends BlobStore<ContainerMetadata, FileMetadata,
    @Path("/contents")
    @Endpoint(RootContainer.class)
    @ExceptionParser(ReturnTrueIfContainerAlreadyExists.class)
-   Future<Boolean> createContainer(@DecoratorParam(AddContainerNameAsXmlEntity.class) String container);
+   Future<Boolean> createContainer(@BinderParam(BindContainerNameToXmlEntity.class) String container);
 
    @DELETE
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
@@ -124,7 +124,7 @@ public interface PCSBlobStore extends BlobStore<ContainerMetadata, FileMetadata,
    @PathParam("fileResourceId")
    @ParamParser(CreateSubFolderIfNotExistsAndNewFileResource.class)
    Future<byte[]> putBlob(String containerName,
-            @DecoratorParam(AddDataAndLength.class) PCSFile object);
+            @BinderParam(BindDataToEntity.class) PCSFile object);
    
 //   @POST
 //   @Path("/containers/{containerResourceId}/contents")

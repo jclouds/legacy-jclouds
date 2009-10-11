@@ -41,13 +41,13 @@ import org.apache.commons.io.IOUtils;
 import org.jclouds.blobstore.domain.Key;
 import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.logging.Logger;
 import org.jclouds.mezeo.pcs2.PCSUtil;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
 import org.jclouds.mezeo.pcs2.util.PCSUtils;
 import org.jclouds.rest.InvocationContext;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
@@ -65,8 +65,6 @@ public class AddMetadataAndParseResourceIdIntoBytes implements Function<HttpResp
 
    @Resource
    protected Logger logger = Logger.NULL;
-   private Object[] args;
-   private HttpRequest request;
 
    /**
     * maximum duration of an blob Request
@@ -74,6 +72,7 @@ public class AddMetadataAndParseResourceIdIntoBytes implements Function<HttpResp
    @Inject(optional = true)
    @Named(BlobStoreConstants.PROPERTY_BLOBSTORE_TIMEOUT)
    protected long requestTimeoutMilliseconds = 30000;
+   private GeneratedHttpRequest<?> request;
 
    @Inject
    public AddMetadataAndParseResourceIdIntoBytes(ConcurrentMap<Key, String> fileCache, PCSUtil util) {
@@ -85,11 +84,11 @@ public class AddMetadataAndParseResourceIdIntoBytes implements Function<HttpResp
       if (from.getStatusCode() > 204)
          throw new BlobRuntimeException("Incorrect code for: " + from);
       checkState(request != null, "request should be initialized at this point");
-      checkState(args != null, "args should be initialized at this point");
-      checkArgument(args[0] instanceof String, "arg[0] must be a container name");
-      checkArgument(args[1] instanceof PCSFile, "arg[1] must be a pcsfile");
-      String container = args[0].toString();
-      PCSFile file = (PCSFile) args[1];
+      checkState(request.getArgs() != null, "request.getArgs() should be initialized at this point");
+      checkArgument(request.getArgs()[0] instanceof String, "arg[0] must be a container name");
+      checkArgument(request.getArgs()[1] instanceof PCSFile, "arg[1] must be a pcsfile");
+      String container = request.getArgs()[0].toString();
+      PCSFile file = (PCSFile) request.getArgs()[1];
 
       Key key = new Key(container, file.getKey());
       String id = checkNotNull(fileCache.get(key), String.format(
@@ -113,17 +112,8 @@ public class AddMetadataAndParseResourceIdIntoBytes implements Function<HttpResp
       return PCSUtils.getETag(id);
    }
 
-   public Object[] getArgs() {
-      return args;
-   }
-
-   public HttpRequest getRequest() {
-      return request;
-   }
-
-   public void setContext(HttpRequest request, Object[] args) {
+   public void setContext(GeneratedHttpRequest<?> request) {
       this.request = request;
-      this.args = args;
    }
 
 }

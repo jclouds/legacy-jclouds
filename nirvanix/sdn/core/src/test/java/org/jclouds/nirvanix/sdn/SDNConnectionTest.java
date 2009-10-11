@@ -34,18 +34,19 @@ import java.util.Collections;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.blobstore.decorators.AddBlobEntityAsMultipartFormTest;
+import org.jclouds.blobstore.binders.BindBlobToMultipartFormTest;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
+import org.jclouds.http.functions.ReturnStringIf200;
 import org.jclouds.http.functions.ReturnVoidIf2xx;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.nirvanix.sdn.functions.ParseUploadInfoFromJsonResponse;
 import org.jclouds.rest.config.RestModule;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeClass;
@@ -72,8 +73,8 @@ public class SDNConnectionTest {
 
    public void testGetStorageNode() throws SecurityException, NoSuchMethodException {
       Method method = SDNConnection.class.getMethod("getStorageNode", String.class, long.class);
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { "adriansmovies",
-               734859264 });
+      GeneratedHttpRequest<?> httpMethod = processor.createRequest(method, new Object[] {
+               "adriansmovies", 734859264 });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/IMFS/GetStorageNode.ashx");
       assertEquals(httpMethod.getEndpoint().getQuery(),
@@ -87,9 +88,9 @@ public class SDNConnectionTest {
    public void testUpload() throws SecurityException, NoSuchMethodException, IOException {
       Method method = SDNConnection.class.getMethod("upload", URI.class, String.class,
                String.class, Blob.class);
-      Blob<BlobMetadata> blob = AddBlobEntityAsMultipartFormTest.TEST_BLOB;
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] {
-               URI.create("http://uploader"), "token", "adriansmovies", blob });
+      Blob<BlobMetadata> blob = BindBlobToMultipartFormTest.TEST_BLOB;
+      GeneratedHttpRequest<SDNConnection> httpMethod = processor.createRequest(method,
+               new Object[] { URI.create("http://uploader"), "token", "adriansmovies", blob });
       assertEquals(httpMethod.getEndpoint().getHost(), "uploader");
       assertEquals(httpMethod.getEndpoint().getPath(), "/Upload.ashx");
       assertEquals(httpMethod.getEndpoint().getQuery(),
@@ -97,21 +98,21 @@ public class SDNConnectionTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.POST);
       assertEquals(httpMethod.getHeaders().size(), 2);
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(AddBlobEntityAsMultipartFormTest.EXPECTS.length() + ""));
+               .singletonList(BindBlobToMultipartFormTest.EXPECTS.length() + ""));
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList("multipart/form-data; boundary="
-                        + AddBlobEntityAsMultipartFormTest.BOUNDRY));
+                        + BindBlobToMultipartFormTest.BOUNDRY));
       assertEquals(Utils.toStringAndClose((InputStream) httpMethod.getEntity()),
-               AddBlobEntityAsMultipartFormTest.EXPECTS);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+               BindBlobToMultipartFormTest.EXPECTS);
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnVoidIf2xx.class);
    }
 
    public void testSetMetadata() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SDNConnection.class.getMethod("setMetadata", String.class, String.class,
-               Multimap.class);
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { "adriansmovies",
-               "sushi.avi", ImmutableMultimap.of("Chef", "Kawasaki") });
+      Method method = SDNConnection.class.getMethod("setMetadata", String.class, Multimap.class);
+      GeneratedHttpRequest<SDNConnection> httpMethod = processor
+               .createRequest(method, new Object[] { "adriansmovies/sushi.avi",
+                        ImmutableMultimap.of("Chef", "Kawasaki") });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/Metadata/SetMetadata.ashx");
       assertEquals(httpMethod.getEndpoint().getQuery(),
@@ -121,8 +122,22 @@ public class SDNConnectionTest {
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
                .singletonList(0 + ""));
       assertEquals(httpMethod.getEntity(), null);
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnVoidIf2xx.class);
+   }
+
+   public void testGetMetadata() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = SDNConnection.class.getMethod("getMetadata", String.class);
+      GeneratedHttpRequest<SDNConnection> httpMethod = processor.createRequest(method,
+               new Object[] { "adriansmovies/sushi.avi" });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/Metadata/GetMetadata.ashx");
+      assertEquals(httpMethod.getEndpoint().getQuery(), "output=json&path=adriansmovies/sushi.avi");
+      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
+      assertEquals(httpMethod.getHeaders().size(), 0);
+      assertEquals(httpMethod.getEntity(), null);
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+               ReturnStringIf200.class);
    }
 
    @BeforeClass

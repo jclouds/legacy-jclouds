@@ -25,19 +25,14 @@ package org.jclouds.rest;
 
 import javax.ws.rs.PathParam;
 
-import org.jclouds.http.HttpRequest;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 /**
- * Passes parsed Http request and Object [] from the method args used to derive the request into
- * this object;
+ * Passes generated Http request into this object;
  * 
  * @see PathParam
  * @author Adrian Cole
  */
 public interface InvocationContext {
-   void setContext(HttpRequest request, Object[] args);
-
-   Object[] getArgs();
-
-   HttpRequest getRequest();
+   void setContext(GeneratedHttpRequest<?> request);
 }

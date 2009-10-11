@@ -28,9 +28,9 @@ import java.util.concurrent.ConcurrentMap;
 import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.InvocationContext;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.base.Function;
 
@@ -39,11 +39,10 @@ import com.google.common.base.Function;
  * 
  * @author Adrian Cole
  */
-public class InvalidateContainerNameCacheAndReturnTrueIf2xx implements Function<HttpResponse, Boolean>,
-         InvocationContext {
+public class InvalidateContainerNameCacheAndReturnTrueIf2xx implements
+         Function<HttpResponse, Boolean>, InvocationContext {
    private final ConcurrentMap<String, String> cache;
-   private HttpRequest request;
-   private Object[] args;
+   private GeneratedHttpRequest<?> request;
 
    @Inject
    public InvalidateContainerNameCacheAndReturnTrueIf2xx(ConcurrentMap<String, String> cache) {
@@ -56,20 +55,11 @@ public class InvalidateContainerNameCacheAndReturnTrueIf2xx implements Function<
       if (code >= 300 || code < 200) {
          throw new IllegalStateException("incorrect code for this operation: " + from);
       }
-      cache.remove(getArgs()[0]);
+      cache.remove(request.getArgs()[0]);
       return true;
    }
 
-   public Object[] getArgs() {
-      return args;
-   }
-
-   public HttpRequest getRequest() {
-      return request;
-   }
-
-   public void setContext(HttpRequest request, Object[] args) {
-      this.args = args;
+   public void setContext(GeneratedHttpRequest<?> request) {
       this.request = request;
    }
 

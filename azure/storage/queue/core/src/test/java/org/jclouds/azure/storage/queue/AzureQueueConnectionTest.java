@@ -39,7 +39,6 @@ import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.functions.ParseSax;
@@ -47,6 +46,7 @@ import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.config.RestModule;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Jsr330;
 import org.testng.annotations.BeforeClass;
@@ -74,7 +74,8 @@ public class AzureQueueConnectionTest {
    public void testListQueues() throws SecurityException, NoSuchMethodException {
       Method method = AzureQueueConnection.class.getMethod("listQueues", listOptionsVarargsClass);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] {});
+      GeneratedHttpRequest<AzureQueueConnection> httpMethod = processor.createRequest(method,
+               new Object[] {});
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/");
       assertEquals(httpMethod.getEndpoint().getQuery(), "comp=list");
@@ -82,8 +83,7 @@ public class AzureQueueConnectionTest {
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
                .singletonList("2009-07-17"));
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
-               ParseSax.class);
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(), ParseSax.class);
       // TODO check generic type of response parser
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
@@ -91,8 +91,8 @@ public class AzureQueueConnectionTest {
    public void testListQueuesOptions() throws SecurityException, NoSuchMethodException {
       Method method = AzureQueueConnection.class.getMethod("listQueues", listOptionsVarargsClass);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { maxResults(1).marker(
-               "marker").prefix("prefix") });
+      GeneratedHttpRequest<AzureQueueConnection> httpMethod = processor.createRequest(method,
+               new Object[] { maxResults(1).marker("marker").prefix("prefix") });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/");
       assert httpMethod.getEndpoint().getQuery().contains("comp=list");
@@ -103,8 +103,7 @@ public class AzureQueueConnectionTest {
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
                .singletonList("2009-07-17"));
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
-               ParseSax.class);
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(), ParseSax.class);
       // TODO check generic type of response parser
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
@@ -113,7 +112,8 @@ public class AzureQueueConnectionTest {
       Method method = AzureQueueConnection.class.getMethod("createQueue", String.class,
                createOptionsVarargsClass);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { "queue" });
+      GeneratedHttpRequest<AzureQueueConnection> httpMethod = processor.createRequest(method,
+               new Object[] { "queue" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/queue");
       assertEquals(httpMethod.getEndpoint().getQuery(), "restype=queue");
@@ -122,7 +122,7 @@ public class AzureQueueConnectionTest {
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
                .singletonList("2009-07-17"));
       assertEquals(httpMethod.getHeaders().get("Content-Length"), Collections.singletonList("0"));
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
       // TODO check generic type of response parser
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
@@ -131,7 +131,8 @@ public class AzureQueueConnectionTest {
    public void testDeleteQueue() throws SecurityException, NoSuchMethodException {
       Method method = AzureQueueConnection.class.getMethod("deleteQueue", String.class);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { "queue" });
+      GeneratedHttpRequest<AzureQueueConnection> httpMethod = processor.createRequest(method,
+               new Object[] { "queue" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/queue");
       assertEquals(httpMethod.getEndpoint().getQuery(), "restype=queue");
@@ -139,7 +140,7 @@ public class AzureQueueConnectionTest {
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
                .singletonList("2009-07-17"));
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
       // TODO check generic type of response parser
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
@@ -149,8 +150,8 @@ public class AzureQueueConnectionTest {
       Method method = AzureQueueConnection.class.getMethod("createQueue", String.class,
                createOptionsVarargsClass);
 
-      HttpRequest httpMethod = processor.createRequest(method, new Object[] { "queue",
-               withMetadata(ImmutableMultimap.of("foo", "bar")) });
+      GeneratedHttpRequest<AzureQueueConnection> httpMethod = processor.createRequest(method,
+               new Object[] { "queue", withMetadata(ImmutableMultimap.of("foo", "bar")) });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/queue");
       assertEquals(httpMethod.getEndpoint().getQuery(), "restype=queue");
@@ -160,7 +161,7 @@ public class AzureQueueConnectionTest {
                .singletonList("2009-07-17"));
       assertEquals(httpMethod.getHeaders().get("x-ms-meta-foo"), Collections.singletonList("bar"));
       assertEquals(httpMethod.getHeaders().get("Content-Length"), Collections.singletonList("0"));
-      assertEquals(processor.createResponseParser(method, httpMethod, null).getClass(),
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
       // TODO check generic type of response parser
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);

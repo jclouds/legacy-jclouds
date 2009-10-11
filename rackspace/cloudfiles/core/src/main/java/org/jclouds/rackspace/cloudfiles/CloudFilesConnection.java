@@ -36,8 +36,8 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import org.jclouds.blobstore.decorators.AddBlobEntity;
-import org.jclouds.blobstore.decorators.AddHeadersWithPrefix;
+import org.jclouds.blobstore.binders.BindBlobToEntity;
+import org.jclouds.blobstore.binders.BindMultimapToHeadersWithPrefix;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.BlobKey;
@@ -64,7 +64,7 @@ import org.jclouds.rackspace.cloudfiles.options.ListCdnContainerOptions;
 import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
 import org.jclouds.rackspace.cloudfiles.reference.CloudFilesHeaders;
 import org.jclouds.rackspace.filters.AuthenticateRequest;
-import org.jclouds.rest.annotations.DecoratorParam;
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;
@@ -141,7 +141,7 @@ public interface CloudFilesConnection {
    @Path("{container}/{key}")
    boolean setObjectMetadata(@PathParam("container") String container,
             @PathParam("key") String key,
-            @DecoratorParam(AddHeadersWithPrefix.class) Multimap<String, String> userMetadata);
+            @BinderParam(BindMultimapToHeadersWithPrefix.class) Multimap<String, String> userMetadata);
 
    @GET
    @ResponseParser(ParseContainerCDNMetadataListFromGsonResponse.class)
@@ -205,7 +205,7 @@ public interface CloudFilesConnection {
    @ResponseParser(ParseETagHeader.class)
    Future<byte[]> putObject(
             @PathParam("container") String container,
-            @PathParam("key") @ParamParser(BlobKey.class) @DecoratorParam(AddBlobEntity.class) Blob<BlobMetadata> object);
+            @PathParam("key") @ParamParser(BlobKey.class) @BinderParam(BindBlobToEntity.class) Blob<BlobMetadata> object);
 
    @GET
    @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)

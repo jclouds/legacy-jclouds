@@ -25,7 +25,6 @@ package org.jclouds.http;
 
 import java.io.InputStream;
 import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -107,15 +106,11 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
     * <p />
     * This also removes the Host header in order to avoid ssl problems.
     */
-   public HttpRequest setHostAndPort(String host, int port) { // TODO must unit test to ensure
-      // request is copied 100%
+   public HttpRequest setHostAndPort(String host, int port) {
       UriBuilder builder = UriBuilder.fromUri(request.getEndpoint());
       builder.host(host);
       builder.port(port);
-      List<HttpRequestFilter> oldFilters = request.getFilters();
-      request = new HttpRequest(request.getMethod(), builder.build(), request.getHeaders(), request
-               .getEntity());
-      request.getFilters().addAll(oldFilters);
+      request.setEndpoint(builder.build());
       request.getHeaders().replaceValues(HttpHeaders.HOST, Collections.singletonList(host));
       return request;
    }
@@ -126,7 +121,7 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
     * @param method
     */
    public HttpRequest setMethod(String method) {
-      request = new HttpRequest(method, request.getEndpoint(), request.getHeaders());
+      request.setMethod(method);
       return request;
    }
 

@@ -28,7 +28,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import java.util.Map;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.decorators.AddAsJsonEntity;
+import org.jclouds.rest.binders.BindToJsonEntity;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.internal.Maps;
@@ -39,19 +39,19 @@ import com.google.inject.internal.Maps;
  * @author Adrian Cole
  * 
  */
-public class RebuildServerOptions extends AddAsJsonEntity {
+public class RebuildServerOptions extends BindToJsonEntity {
    Integer imageId;
 
    @Override
-   public HttpRequest decorateRequest(HttpRequest request, Map<String, String> postParams) {
+   public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
       Map<String, Integer> image = Maps.newHashMap();
       if (imageId != null)
          image.put("imageId", imageId);
-      return super.decorateRequest(request, ImmutableMap.of("rebuild", image));
+      super.bindToRequest(request, ImmutableMap.of("rebuild", image));
    }
 
    @Override
-   public HttpRequest decorateRequest(HttpRequest request, Object toBind) {
+   public void bindToRequest(HttpRequest request, Object toBind) {
       throw new IllegalStateException("RebuildServer is a POST operation");
    }
 

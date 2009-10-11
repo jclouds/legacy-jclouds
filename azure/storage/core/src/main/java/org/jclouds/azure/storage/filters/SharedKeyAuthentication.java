@@ -30,6 +30,9 @@ import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
@@ -40,9 +43,6 @@ import org.jclouds.http.HttpUtils;
 import org.jclouds.util.DateService;
 
 import com.google.common.annotations.VisibleForTesting;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.inject.Named;
 
 /**
  * Signs the Azure Storage request. This will update timestamps at most once per second.
@@ -101,11 +101,10 @@ public class SharedKeyAuthentication implements HttpRequestFilter {
       timeStamp = new AtomicReference<String>(createNewStamp());
    }
 
-   public HttpRequest filter(HttpRequest request) throws HttpException {
+   public void filter(HttpRequest request) throws HttpException {
       replaceDateHeader(request);
       String toSign = createStringToSign(request);
       calculateAndReplaceAuthHeader(request, toSign);
-      return request;
    }
 
    public String createStringToSign(HttpRequest request) {
@@ -154,42 +153,45 @@ public class SharedKeyAuthentication implements HttpRequestFilter {
             toSign.deleteCharAt(toSign.lastIndexOf(","));
             toSign.append("\n");
          }
-//      }
-//      // Retrieve all headers for the resource that begin with x-ms-, including the x-ms-date
-//      // header.
-//      Set<String> matchingHeaders = Sets.filter(request.getHeaders().keySet(),
-//               new Predicate<String>() {
-//                  public boolean apply(String input) {
-//                     return input.startsWith("x-ms-");
-//                  }
-//               });
-//
-//      // Convert each HTTP header name to lowercase.
-//      // Sort the container of headers lexicographically by header name, in ascending order.
-//      SortedSet<String> lowercaseHeaders = Sets.newTreeSet(Iterables.transform(matchingHeaders,
-//               new Function<String, String>() {
-//                  public String apply(String from) {
-//                     return from.toLowerCase();
-//                  }
-//               }));
-//
-//      for (String header : lowercaseHeaders) {
-//         // Combine headers with the same name into one header. The resulting header should be a
-//         // name-value pair of the format "header-name:comma-separated-value-list", without any
-//         // white
-//         // space between values.
-//         toSign.append(header).append(":");
-//         // Trim any white space around the colon in the header.
-//         // TODO: not sure why there would be...
-//         for (String value : request.getHeaders().get(header))
-//            // Replace any breaking white space with a single space.
-//            toSign.append(value.replaceAll("\r?\n", " ")).append(",");
-//         toSign.deleteCharAt(toSign.lastIndexOf(","));
-//         // Finally, append a new line character to each canonicalized header in the resulting list.
-//         // Construct the CanonicalizedHeaders string by concatenating all headers in this list into
-//         // a
-//         // single string.
-//         toSign.append("\n");
+         // }
+         // // Retrieve all headers for the resource that begin with x-ms-, including the x-ms-date
+         // // header.
+         // Set<String> matchingHeaders = Sets.filter(request.getHeaders().keySet(),
+         // new Predicate<String>() {
+         // public boolean apply(String input) {
+         // return input.startsWith("x-ms-");
+         // }
+         // });
+         //
+         // // Convert each HTTP header name to lowercase.
+         // // Sort the container of headers lexicographically by header name, in ascending order.
+         // SortedSet<String> lowercaseHeaders =
+         // Sets.newTreeSet(Iterables.transform(matchingHeaders,
+         // new Function<String, String>() {
+         // public String apply(String from) {
+         // return from.toLowerCase();
+         // }
+         // }));
+         //
+         // for (String header : lowercaseHeaders) {
+         // // Combine headers with the same name into one header. The resulting header should be a
+         // // name-value pair of the format "header-name:comma-separated-value-list", without any
+         // // white
+         // // space between values.
+         // toSign.append(header).append(":");
+         // // Trim any white space around the colon in the header.
+         // // TODO: not sure why there would be...
+         // for (String value : request.getHeaders().get(header))
+         // // Replace any breaking white space with a single space.
+         // toSign.append(value.replaceAll("\r?\n", " ")).append(",");
+         // toSign.deleteCharAt(toSign.lastIndexOf(","));
+         // // Finally, append a new line character to each canonicalized header in the resulting
+         // list.
+         // // Construct the CanonicalizedHeaders string by concatenating all headers in this list
+         // into
+         // // a
+         // // single string.
+         // toSign.append("\n");
       }
    }
 

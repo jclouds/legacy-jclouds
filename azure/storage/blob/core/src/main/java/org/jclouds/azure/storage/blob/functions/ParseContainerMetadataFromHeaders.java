@@ -33,10 +33,10 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
 import org.jclouds.http.HttpException;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.rest.InvocationContext;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.DateService;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -54,8 +54,7 @@ public class ParseContainerMetadataFromHeaders implements
 
    private final DateService dateParser;
    private final String metadataPrefix;
-   private HttpRequest request;
-   private Object[] args;
+   private GeneratedHttpRequest<?> request;
 
    @Inject
    public ParseContainerMetadataFromHeaders(DateService dateParser,
@@ -65,11 +64,11 @@ public class ParseContainerMetadataFromHeaders implements
    }
 
    public ContainerMetadata apply(HttpResponse from) {
-      ContainerMetadata to = new ContainerMetadata(getArgs()[0].toString());
+      ContainerMetadata to = new ContainerMetadata(request.getArgs()[0].toString());
       addUserMetadataTo(from, to);
       parseLastModifiedOrThrowException(from, to);
       addETagTo(from, to);
-      to.setUrl(getRequest().getEndpoint());
+      to.setUrl(request.getEndpoint());
       return to;
    }
 
@@ -104,17 +103,8 @@ public class ParseContainerMetadataFromHeaders implements
       }
    }
 
-   public Object[] getArgs() {
-      return args;
-   }
-
-   public HttpRequest getRequest() {
-      return request;
-   }
-
-   public void setContext(HttpRequest request, Object[] args) {
+   public void setContext(GeneratedHttpRequest<?> request) {
       this.request = request;
-      this.args = args;
    }
 
 }

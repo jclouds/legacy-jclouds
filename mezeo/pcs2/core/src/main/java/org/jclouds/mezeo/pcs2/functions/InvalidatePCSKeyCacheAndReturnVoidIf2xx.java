@@ -29,10 +29,10 @@ import javax.inject.Inject;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.blobstore.domain.Key;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.mezeo.pcs2.domain.FileMetadata;
 import org.jclouds.rest.InvocationContext;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.base.Function;
 
@@ -45,8 +45,7 @@ public class InvalidatePCSKeyCacheAndReturnVoidIf2xx implements Function<HttpRes
          InvocationContext {
    private final ConcurrentMap<Key, String> cache;
    private final ConcurrentMap<Key, FileMetadata> mdCache;
-   private HttpRequest request;
-   private Object[] args;
+   private GeneratedHttpRequest<?> request;
 
    @Inject
    public InvalidatePCSKeyCacheAndReturnVoidIf2xx(ConcurrentMap<Key, String> cache,
@@ -61,22 +60,13 @@ public class InvalidatePCSKeyCacheAndReturnVoidIf2xx implements Function<HttpRes
       if (code >= 300 || code < 200) {
          throw new IllegalStateException("incorrect code for this operation: " + from);
       }
-      Key key = new Key(getArgs()[0].toString(), getArgs()[1].toString());
+      Key key = new Key(request.getArgs()[0].toString(), request.getArgs()[1].toString());
       cache.remove(key);
       mdCache.remove(key);
       return null;
    }
 
-   public Object[] getArgs() {
-      return args;
-   }
-
-   public HttpRequest getRequest() {
-      return request;
-   }
-
-   public void setContext(HttpRequest request, Object[] args) {
-      this.args = args;
+   public void setContext(GeneratedHttpRequest<?> request) {
       this.request = request;
    }
 

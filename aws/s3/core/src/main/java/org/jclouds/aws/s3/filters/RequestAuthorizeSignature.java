@@ -32,6 +32,9 @@ import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.aws.s3.reference.S3Constants;
@@ -42,9 +45,6 @@ import org.jclouds.http.HttpUtils;
 import org.jclouds.util.DateService;
 
 import com.google.common.annotations.VisibleForTesting;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import javax.inject.Named;
 
 /**
  * Signs the S3 request. This will update timestamps at most once per second.
@@ -102,11 +102,10 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
       timeStamp = new AtomicReference<String>(createNewStamp());
    }
 
-   public HttpRequest filter(HttpRequest request) throws HttpException {
+   public void filter(HttpRequest request) throws HttpException {
       replaceDateHeader(request);
       String toSign = createStringToSign(request);
       calculateAndReplaceAuthHeader(request, toSign);
-      return request;
    }
 
    public String createStringToSign(HttpRequest request) {

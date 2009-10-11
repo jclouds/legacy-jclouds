@@ -41,7 +41,7 @@ import org.jclouds.cloud.ConfiguresCloudConnection;
 import org.jclouds.cloud.internal.CloudContextImpl;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.rest.RestClientFactory;
-import org.jclouds.rest.RestAnnotationProcessorTest.Localhost;
+import org.jclouds.rest.internal.RestAnnotationProcessorTest.Localhost;
 import org.jclouds.util.Jsr330;
 import org.jclouds.util.Utils;
 import org.mortbay.jetty.Handler;

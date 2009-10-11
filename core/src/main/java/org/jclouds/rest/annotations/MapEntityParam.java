@@ -39,7 +39,7 @@ import java.lang.annotation.Target;
 public @interface MapEntityParam {
 
    /**
-    * The key used in a map passed to the {@link MapRequestDecorator} associated with the request.
+    * The key used in a map passed to the {@link MapBinder} associated with the request.
     */
    String value();
 }
