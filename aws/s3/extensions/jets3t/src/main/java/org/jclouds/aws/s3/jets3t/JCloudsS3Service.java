@@ -42,7 +42,6 @@ import org.jclouds.aws.s3.options.CopyObjectOptions;
 import org.jclouds.aws.s3.options.ListBucketOptions;
 import org.jclouds.aws.s3.options.PutObjectOptions;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.util.Utils;
 import org.jets3t.service.S3ObjectsChunk;
@@ -114,7 +113,7 @@ public class JCloudsS3Service extends S3Service {
          Map map = new HashMap();
          // Result fields returned when copy is successful.
          map.put("Last-Modified", jcObjectMetadata.getLastModified().toDate());
-         map.put("ETag", HttpUtils.toHexString(jcObjectMetadata.getETag()));
+         map.put("ETag", jcObjectMetadata.getETag());
          return map;
       } catch (Exception e) {
          Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
@@ -353,9 +352,9 @@ public class JCloudsS3Service extends S3Service {
       try {
          PutObjectOptions options = Util.convertPutObjectOptions(jsObject.getAcl());
          org.jclouds.aws.s3.domain.S3Object jcObject = Util.convertObject(jsObject);
-         byte eTag[] = connection.putObject(bucketName, jcObject, options).get(
+         String eTag = connection.putObject(bucketName, jcObject, options).get(
                   requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
-         jsObject.setMd5Hash(eTag);
+         jsObject.setETag(eTag);
          return jsObject;
       } catch (Exception e) {
          Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);

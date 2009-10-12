@@ -26,7 +26,6 @@ package org.jclouds.mezeo.pcs2.integration;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -48,8 +47,7 @@ public class PCSBlobStoreIntegrationTest extends
    protected void validateMetadata(FileMetadata metadata) {
       assertEquals(metadata.getContentType(), "text/plain");
       assertEquals(metadata.getSize(), TEST_STRING.length());
-      assertEquals(metadata.getUserMetadata().get("adrian"), Collections
-               .singletonList("powderpuff"));
+      assertEquals(metadata.getUserMetadata().get("adrian"), "powderpuff");
       // Issue 105
       // assertEquals(metadata.getContentMD5(), HttpUtils.md5(TEST_STRING.getBytes()));
    }

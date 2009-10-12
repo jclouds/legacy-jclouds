@@ -54,7 +54,6 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Iterables;
 
 /**
  * Tests behavior of {@code AzureBlobConnection}
@@ -239,7 +238,7 @@ public class AzureBlobConnectionLiveTest {
       object.getMetadata().setContentType("text/plain");
       object.getMetadata().getUserMetadata().put("Metadata", "metadata-value");
       byte[] md5 = object.getMetadata().getContentMD5();
-      byte[] newEtag = connection.putBlob(privateContainer, object).get(10, TimeUnit.SECONDS);
+      String newEtag = connection.putBlob(privateContainer, object).get(10, TimeUnit.SECONDS);
       assertEquals(HttpUtils.toHexString(md5), HttpUtils.toHexString(object.getMetadata()
                .getContentMD5()));
 
@@ -265,8 +264,8 @@ public class AzureBlobConnectionLiveTest {
       assertEquals(HttpUtils.toHexString(md5), HttpUtils.toHexString(object.getMetadata()
                .getContentMD5()));
       assertEquals(metadata.getETag(), newEtag);
-      assertEquals(metadata.getUserMetadata().entries().size(), 1);
-      assertEquals(Iterables.getLast(metadata.getUserMetadata().get("metadata")), "metadata-value");
+      assertEquals(metadata.getUserMetadata().entrySet().size(), 1);
+      assertEquals(metadata.getUserMetadata().get("metadata"), "metadata-value");
 
       // // Test POST to update object's metadata
       // Multimap<String, String> userMetadata = HashMultimap.create();
@@ -299,13 +298,13 @@ public class AzureBlobConnectionLiveTest {
       // assertEquals(
       // Iterables.getLast(getBlob.getMetadata().getUserMetadata().get("New-Metadata-2")),
       // "value-2");
-      assertEquals(metadata.getUserMetadata().entries().size(), 1);
-      assertEquals(Iterables.getLast(metadata.getUserMetadata().get("metadata")), "metadata-value");
+      assertEquals(metadata.getUserMetadata().entrySet().size(), 1);
+      assertEquals(metadata.getUserMetadata().get("metadata"), "metadata-value");
 
       // Test PUT with invalid ETag (as if object's data was corrupted in transit)
-      String correctEtag = HttpUtils.toHexString(newEtag);
+      String correctEtag = newEtag;
       String incorrectEtag = "0" + correctEtag.substring(1);
-      object.getMetadata().setETag(HttpUtils.fromHexString(incorrectEtag));
+      object.getMetadata().setETag(incorrectEtag);
       try {
          connection.putBlob(privateContainer, object).get(10, TimeUnit.SECONDS);
       } catch (Throwable e) {
@@ -347,5 +346,4 @@ public class AzureBlobConnectionLiveTest {
       connection.deleteBlob(privateContainer, "object").get(10, TimeUnit.SECONDS);
       connection.deleteBlob(privateContainer, "chunked-object").get(10, TimeUnit.SECONDS);
    }
-
 }

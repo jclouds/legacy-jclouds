@@ -24,7 +24,6 @@
 package org.jclouds.blobstore.domain;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotSame;
 
 import java.io.File;
 
@@ -41,15 +40,6 @@ public class BlobTest {
       File file = new File("hello.txt");
       object.setData(file);
       assertEquals(object.getMetadata().getContentType(), MediaType.APPLICATION_OCTET_STREAM);
-   }
-
-   @Test
-   void testETagCopyingNotReference() {
-      byte[] eTag = new byte[12];
-      Blob<BlobMetadata> object = new Blob<BlobMetadata>("test");
-      object.getMetadata().setETag(eTag);
-      byte[] returnedETag = object.getMetadata().getETag();
-      assertNotSame(eTag, returnedETag);
    }
 
 }

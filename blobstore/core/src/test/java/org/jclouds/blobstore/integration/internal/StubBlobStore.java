@@ -34,7 +34,6 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -71,10 +70,9 @@ import org.joda.time.DateTime;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.internal.Nullable;
 
@@ -177,8 +175,8 @@ public class StubBlobStore<C extends ContainerMetadata, M extends BlobMetadata, 
    }
 
    private void convertUserMetadataKeysToLowercase(M metadata) {
-      Multimap<String, String> lowerCaseUserMetadata = HashMultimap.create();
-      for (Entry<String, String> entry : metadata.getUserMetadata().entries()) {
+      Map<String, String> lowerCaseUserMetadata = Maps.newHashMap();
+      for (Entry<String, String> entry : metadata.getUserMetadata().entrySet()) {
          lowerCaseUserMetadata.put(entry.getKey().toLowerCase(), entry.getValue());
       }
       metadata.setUserMetadata(lowerCaseUserMetadata);
@@ -385,7 +383,7 @@ public class StubBlobStore<C extends ContainerMetadata, M extends BlobMetadata, 
       }, response));
    }
 
-   public Future<byte[]> putBlob(final String bucketName, final B object) {
+   public Future<String> putBlob(final String bucketName, final B object) {
       Map<String, B> container = getContainerToBlobs().get(bucketName);
       if (container == null) {
          new RuntimeException("bucketName not found: " + bucketName);
@@ -394,9 +392,10 @@ public class StubBlobStore<C extends ContainerMetadata, M extends BlobMetadata, 
          M newMd = copy(object.getMetadata());
          newMd.setLastModified(new DateTime());
          byte[] data = toByteArray(object.getData());
-         final byte[] eTag = HttpUtils.md5(data);
+         final byte[] md5 = HttpUtils.md5(data);
+         final String eTag = HttpUtils.toHexString(md5);
          newMd.setETag(eTag);
-         newMd.setContentMD5(eTag);
+         newMd.setContentMD5(md5);
          newMd.setContentType(object.getMetadata().getContentType());
 
          B blob = blobProvider.get();
@@ -407,15 +406,15 @@ public class StubBlobStore<C extends ContainerMetadata, M extends BlobMetadata, 
          // Set HTTP headers to match metadata
          newMd.getAllHeaders().put(HttpHeaders.LAST_MODIFIED,
                   dateService.rfc822DateFormat(newMd.getLastModified()));
-         newMd.getAllHeaders().put(HttpHeaders.ETAG, HttpUtils.toHexString(eTag));
+         newMd.getAllHeaders().put(HttpHeaders.ETAG, eTag);
          newMd.getAllHeaders().put(HttpHeaders.CONTENT_TYPE, newMd.getContentType());
          newMd.getAllHeaders().put(HttpHeaders.CONTENT_LENGTH, newMd.getSize() + "");
-         for (Entry<String, String> userMD : newMd.getUserMetadata().entries()) {
+         for (Entry<String, String> userMD : newMd.getUserMetadata().entrySet()) {
             newMd.getAllHeaders().put(userMD.getKey(), userMD.getValue());
          }
 
-         return new FutureBase<byte[]>() {
-            public byte[] get() throws InterruptedException, ExecutionException {
+         return new FutureBase<String>() {
+            public String get() throws InterruptedException, ExecutionException {
                return eTag;
             }
          };
@@ -439,13 +438,11 @@ public class StubBlobStore<C extends ContainerMetadata, M extends BlobMetadata, 
             B object = realContents.get(key);
 
             if (options.getIfMatch() != null) {
-               if (!Arrays.equals(object.getMetadata().getETag(), HttpUtils.fromHexString(options
-                        .getIfMatch().replaceAll("\"", ""))))
+               if (object.getMetadata().getETag().equals(options.getIfMatch()))
                   throwResponseException(412);
             }
             if (options.getIfNoneMatch() != null) {
-               if (Arrays.equals(object.getMetadata().getETag(), HttpUtils.fromHexString(options
-                        .getIfNoneMatch().replaceAll("\"", ""))))
+               if (object.getMetadata().getETag().equals(options.getIfNoneMatch()))
                   throwResponseException(304);
             }
             if (options.getIfModifiedSince() != null) {

@@ -60,9 +60,9 @@ public class ParseObjectMetadataFromHeaders extends
          // etag comes back incorrect case
          String eTagHeader = from.getFirstHeaderOrNull("Etag");
          if (eTagHeader != null) {
-            metadata.setETag(HttpUtils.fromHexString(eTagHeader));
+            metadata.setETag(eTagHeader);
          }
       }
-      metadata.setContentMD5(metadata.getETag());
+      metadata.setContentMD5(HttpUtils.fromHexString(metadata.getETag()));
    }
 }

@@ -50,8 +50,7 @@ public class ParseSystemAndUserMetadataFromHeaders<M extends BlobMetadata> exten
 
    @Inject
    public ParseSystemAndUserMetadataFromHeaders(DateService dateParser,
-            @Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix,
-            Provider<M> metadataFactory) {
+            @Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix, Provider<M> metadataFactory) {
       super(metadataFactory);
       this.dateParser = dateParser;
       this.metadataPrefix = metadataPrefix;
@@ -102,7 +101,7 @@ public class ParseSystemAndUserMetadataFromHeaders<M extends BlobMetadata> exten
    protected void addETagTo(HttpResponse from, M metadata) {
       String eTag = from.getFirstHeaderOrNull(HttpHeaders.ETAG);
       if (metadata.getETag() == null && eTag != null) {
-         metadata.setETag(HttpUtils.fromHexString(eTag.replaceAll("\"", "")));
+         metadata.setETag(eTag);
       }
    }
 

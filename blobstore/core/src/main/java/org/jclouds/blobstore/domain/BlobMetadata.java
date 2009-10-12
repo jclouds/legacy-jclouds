@@ -27,7 +27,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
-import java.util.Arrays;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
@@ -35,6 +35,7 @@ import javax.ws.rs.core.MediaType;
 import org.joda.time.DateTime;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 /**
@@ -47,22 +48,22 @@ public class BlobMetadata implements Comparable<BlobMetadata>, Serializable {
    private static final long serialVersionUID = -5932618957134612231L;
 
    protected String key;
-   protected byte[] eTag;
+   protected String eTag;
    protected volatile long size = -1;
    private byte[] contentMD5;
 
    protected Multimap<String, String> allHeaders = HashMultimap.create();
-   protected Multimap<String, String> userMetadata = HashMultimap.create();
+   protected Map<String, String> userMetadata = Maps.newHashMap();
    protected DateTime lastModified;
    protected String dataType = MediaType.APPLICATION_OCTET_STREAM;
 
    @Override
    public String toString() {
       StringBuilder builder = new StringBuilder();
-      builder.append("BlobMetadata [key=").append(key).append(", eTag=").append(
-               Arrays.toString(eTag)).append(", lastModified=").append(lastModified).append(
-               ", size=").append(size).append(", dataType=").append(dataType).append(
-               ", userMetadata=").append(userMetadata).append("]");
+      builder.append("BlobMetadata [key=").append(key).append(", eTag=").append(eTag).append(
+               ", lastModified=").append(lastModified).append(", size=").append(size).append(
+               ", dataType=").append(dataType).append(", userMetadata=").append(userMetadata)
+               .append("]");
       return builder.toString();
    }
 
@@ -71,7 +72,7 @@ public class BlobMetadata implements Comparable<BlobMetadata>, Serializable {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((dataType == null) ? 0 : dataType.hashCode());
-      result = prime * result + Arrays.hashCode(eTag);
+      result = prime * result + ((eTag == null) ? 0 : eTag.hashCode());
       result = prime * result + ((key == null) ? 0 : key.hashCode());
       result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
       result = prime * result + (int) (size ^ (size >>> 32));
@@ -93,7 +94,10 @@ public class BlobMetadata implements Comparable<BlobMetadata>, Serializable {
             return false;
       } else if (!dataType.equals(other.dataType))
          return false;
-      if (!Arrays.equals(eTag, other.eTag))
+      if (eTag == null) {
+         if (other.eTag != null)
+            return false;
+      } else if (!eTag.equals(other.eTag))
          return false;
       if (key == null) {
          if (other.key != null)
@@ -197,34 +201,25 @@ public class BlobMetadata implements Comparable<BlobMetadata>, Serializable {
       }
    }
 
-   public void setETag(byte[] eTag) {
-      if (eTag != null) {
-         this.eTag = new byte[eTag.length];
-         System.arraycopy(eTag, 0, this.eTag, 0, eTag.length);
-      }
+   public void setETag(String eTag) {
+      this.eTag = eTag;
    }
 
    /**
     * @return the eTag value stored in the Etag header returned by HTTP.
     */
-   public byte[] getETag() {
-      if (eTag != null) {
-         byte[] retval = new byte[eTag.length];
-         System.arraycopy(this.eTag, 0, retval, 0, eTag.length);
-         return retval;
-      } else {
-         return null;
-      }
+   public String getETag() {
+      return eTag;
    }
 
-   public void setUserMetadata(Multimap<String, String> userMetadata) {
+   public void setUserMetadata(Map<String, String> userMetadata) {
       this.userMetadata = userMetadata;
    }
 
    /**
     * Any key-value pairs associated with the object.
     */
-   public Multimap<String, String> getUserMetadata() {
+   public Map<String, String> getUserMetadata() {
       return userMetadata;
    }
 

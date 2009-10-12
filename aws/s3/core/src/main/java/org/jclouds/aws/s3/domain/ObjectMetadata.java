@@ -24,7 +24,6 @@
 package org.jclouds.aws.s3.domain;
 
 import java.io.Serializable;
-import java.util.Arrays;
 
 import org.jclouds.blobstore.domain.BlobMetadata;
 
@@ -52,9 +51,9 @@ public class ObjectMetadata extends BlobMetadata implements Serializable {
                dataDisposition).append(", owner=").append(owner).append(", storageClass=").append(
                storageClass).append(", allHeaders=").append(allHeaders).append(", dataEncoding=")
                .append(dataEncoding).append(", dataType=").append(dataType).append(", eTag=")
-               .append(Arrays.toString(eTag)).append(", key=").append(key)
-               .append(", lastModified=").append(lastModified).append(", size=").append(size)
-               .append(", userMetadata=").append(userMetadata).append("]");
+               .append(eTag).append(", key=").append(key).append(", lastModified=").append(
+                        lastModified).append(", size=").append(size).append(", userMetadata=")
+               .append(userMetadata).append("]");
       return builder.toString();
    }
 

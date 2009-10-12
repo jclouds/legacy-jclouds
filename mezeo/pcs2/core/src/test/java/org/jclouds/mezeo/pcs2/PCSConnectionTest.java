@@ -31,6 +31,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Future;
@@ -61,7 +62,6 @@ import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Multimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -240,7 +240,7 @@ public class PCSConnectionTest {
                   public PCSUtil getPCSUtil() {
                      return new PCSUtil() {
 
-                        public Future<Void> addEntryToMultiMap(Multimap<String, String> map,
+                        public Future<Void> addEntryToMap(Map<String, String> map,
                                  String key, URI value) {
                            return null;
                         }

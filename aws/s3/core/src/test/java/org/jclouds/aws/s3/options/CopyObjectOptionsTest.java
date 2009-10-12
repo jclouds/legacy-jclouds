@@ -34,16 +34,16 @@ import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Map;
 
 import org.jclouds.aws.s3.domain.CannedAccessPolicy;
 import org.jclouds.aws.s3.reference.S3Headers;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.util.DateService;
 import org.joda.time.DateTime;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 /**
@@ -54,22 +54,22 @@ import com.google.common.collect.Multimap;
 @Test(groups = "unit", testName = "s3.CopyObjectOptionsTest")
 public class CopyObjectOptionsTest {
 
-   private byte[] testBytes;
+   private String etag;
    private DateTime now;
    private String nowExpected;
-   private Multimap<String, String> goodMeta;
-   private Multimap<String, String> badMeta;
+   private Map<String, String> goodMeta;
+   private Map<String, String> badMeta;
 
    @BeforeMethod
    void setUp() {
-      goodMeta = HashMultimap.create();
+      goodMeta = Maps.newHashMap();
       goodMeta.put("x-amz-meta-adrian", "foo");
-      badMeta = HashMultimap.create();
+      badMeta = Maps.newHashMap();
       badMeta.put("x-google-meta-adrian", "foo");
 
       now = new DateTime();
       nowExpected = new DateService().rfc822DateFormat(now);
-      testBytes = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 };
+      etag = "mama";
    }
 
    @Test
@@ -93,7 +93,7 @@ public class CopyObjectOptionsTest {
       assertEquals(headers.get("x-amz-metadata-directive").iterator().next(), "REPLACE");
       assertEquals(options.getMetadata().size(), 1);
       assertEquals(headers.get("x-amz-meta-adrian").iterator().next(), "foo");
-      assertEquals(options.getMetadata().get("x-amz-meta-adrian").iterator().next(), "foo");
+      assertEquals(options.getMetadata().get("x-amz-meta-adrian"), "foo");
    }
 
    @Test
@@ -159,7 +159,7 @@ public class CopyObjectOptionsTest {
    @Test
    public void testIfETagMatches() throws UnsupportedEncodingException {
       CopyObjectOptions options = new CopyObjectOptions();
-      options.ifSourceETagMatches(testBytes);
+      options.ifSourceETagMatches(etag);
       matchesHex(options.getIfMatch());
    }
 
@@ -171,7 +171,7 @@ public class CopyObjectOptionsTest {
 
    @Test
    public void testIfETagMatchesStatic() throws UnsupportedEncodingException {
-      CopyObjectOptions options = ifSourceETagMatches(testBytes);
+      CopyObjectOptions options = ifSourceETagMatches(etag);
       matchesHex(options.getIfMatch());
    }
 
@@ -183,7 +183,7 @@ public class CopyObjectOptionsTest {
    @Test
    public void testIfETagDoesntMatch() throws UnsupportedEncodingException {
       CopyObjectOptions options = new CopyObjectOptions();
-      options.ifSourceETagDoesntMatch(testBytes);
+      options.ifSourceETagDoesntMatch(etag);
       matchesHex(options.getIfNoneMatch());
    }
 
@@ -195,7 +195,7 @@ public class CopyObjectOptionsTest {
 
    @Test
    public void testIfETagDoesntMatchStatic() throws UnsupportedEncodingException {
-      CopyObjectOptions options = ifSourceETagDoesntMatch(testBytes);
+      CopyObjectOptions options = ifSourceETagDoesntMatch(etag);
       matchesHex(options.getIfNoneMatch());
    }
 
@@ -205,7 +205,7 @@ public class CopyObjectOptionsTest {
    }
 
    private void matchesHex(String match) throws UnsupportedEncodingException {
-      String expected = "\"" + HttpUtils.toHexString(testBytes) + "\"";
+      String expected = "\"" + etag + "\"";
       assertEquals(match, expected);
    }
 
@@ -216,13 +216,13 @@ public class CopyObjectOptionsTest {
    }
 
    public void testIfUnmodifiedAfterETagMatches() throws UnsupportedEncodingException {
-      ifSourceETagMatches(testBytes).ifSourceUnmodifiedSince(now);
+      ifSourceETagMatches(etag).ifSourceUnmodifiedSince(now);
 
    }
 
    @Test(expectedExceptions = IllegalStateException.class)
    public void testIfUnmodifiedAfterETagDoesntMatch() throws UnsupportedEncodingException {
-      ifSourceETagDoesntMatch(testBytes).ifSourceUnmodifiedSince(now);
+      ifSourceETagDoesntMatch(etag).ifSourceUnmodifiedSince(now);
    }
 
    @Test(expectedExceptions = IllegalStateException.class)
@@ -233,44 +233,44 @@ public class CopyObjectOptionsTest {
 
    @Test(expectedExceptions = IllegalStateException.class)
    public void testIfModifiedAfterETagMatches() throws UnsupportedEncodingException {
-      ifSourceETagMatches(testBytes).ifSourceModifiedSince(now);
+      ifSourceETagMatches(etag).ifSourceModifiedSince(now);
 
    }
 
    public void testIfModifiedAfterETagDoesntMatch() throws UnsupportedEncodingException {
-      ifSourceETagDoesntMatch(testBytes).ifSourceModifiedSince(now);
+      ifSourceETagDoesntMatch(etag).ifSourceModifiedSince(now);
    }
 
    @Test(expectedExceptions = IllegalStateException.class)
    public void testETagMatchesAfterIfModified() throws UnsupportedEncodingException {
-      ifSourceModifiedSince(now).ifSourceETagMatches(testBytes);
+      ifSourceModifiedSince(now).ifSourceETagMatches(etag);
 
    }
 
    public void testETagMatchesAfterIfUnmodified() throws UnsupportedEncodingException {
-      ifSourceUnmodifiedSince(now).ifSourceETagMatches(testBytes);
+      ifSourceUnmodifiedSince(now).ifSourceETagMatches(etag);
 
    }
 
    @Test(expectedExceptions = IllegalStateException.class)
    public void testETagMatchesAfterETagDoesntMatch() throws UnsupportedEncodingException {
-      ifSourceETagDoesntMatch(testBytes).ifSourceETagMatches(testBytes);
+      ifSourceETagDoesntMatch(etag).ifSourceETagMatches(etag);
    }
 
    public void testETagDoesntMatchAfterIfModified() throws UnsupportedEncodingException {
-      ifSourceModifiedSince(now).ifSourceETagDoesntMatch(testBytes);
+      ifSourceModifiedSince(now).ifSourceETagDoesntMatch(etag);
 
    }
 
    @Test(expectedExceptions = IllegalStateException.class)
    public void testETagDoesntMatchAfterIfUnmodified() throws UnsupportedEncodingException {
-      ifSourceUnmodifiedSince(now).ifSourceETagDoesntMatch(testBytes);
+      ifSourceUnmodifiedSince(now).ifSourceETagDoesntMatch(etag);
 
    }
 
    @Test(expectedExceptions = IllegalStateException.class)
    public void testETagDoesntMatchAfterETagMatches() throws UnsupportedEncodingException {
-      ifSourceETagMatches(testBytes).ifSourceETagDoesntMatch(testBytes);
+      ifSourceETagMatches(etag).ifSourceETagDoesntMatch(etag);
    }
 
    @Test
@@ -282,15 +282,15 @@ public class CopyObjectOptionsTest {
 
    @Test
    void testBuildRequestHeaders() throws UnsupportedEncodingException {
-      CopyObjectOptions options = ifSourceModifiedSince(now).ifSourceETagDoesntMatch(testBytes)
+      CopyObjectOptions options = ifSourceModifiedSince(now).ifSourceETagDoesntMatch(etag)
                .overrideMetadataWith(goodMeta);
       options.setMetadataPrefix("x-amz-meta-");
 
       Multimap<String, String> headers = options.buildRequestHeaders();
       assertEquals(headers.get("x-amz-copy-source-if-modified-since").iterator().next(),
                new DateService().rfc822DateFormat(now));
-      assertEquals(headers.get("x-amz-copy-source-if-none-match").iterator().next(), "\""
-               + HttpUtils.toHexString(testBytes) + "\"");
+      assertEquals(headers.get("x-amz-copy-source-if-none-match").iterator().next(), "\"" + etag
+               + "\"");
       for (String value : goodMeta.values())
          assertTrue(headers.containsValue(value));
 

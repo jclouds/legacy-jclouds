@@ -147,7 +147,7 @@ public interface AzureBlobStore extends BlobStore<ContainerMetadata, BlobMetadat
    @PUT
    @Path("{container}/{key}")
    @ResponseParser(ParseETagHeader.class)
-   Future<byte[]> putBlob(
+   Future<String> putBlob(
             @PathParam("container") String container,
             @PathParam("key") @ParamParser(BlobKey.class) @BinderParam(GenerateMD5AndBindBlobToEntity.class) Blob object);
 

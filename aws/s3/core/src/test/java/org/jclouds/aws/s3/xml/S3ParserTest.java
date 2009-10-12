@@ -40,7 +40,6 @@ import org.jclouds.aws.s3.domain.CanonicalUser;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.http.HttpException;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.ParserModule;
 import org.joda.time.DateTime;
@@ -137,7 +136,7 @@ public class S3ParserTest extends PerformanceTest {
       DateTime expected = new DateTime("2009-03-12T02:00:13.000Z");
       assert object.getLastModified().equals(expected) : String.format(
                "expected %1$s, but got %1$s", expected, object.getLastModified());
-      assertEquals(HttpUtils.toHexString(object.getETag()), "9d7bb64e8e18ee34eec06dd2cf37b766");
+      assertEquals(object.getETag(), "\"9d7bb64e8e18ee34eec06dd2cf37b766\"");
       assert object.getSize() == 136;
       CanonicalUser owner = new CanonicalUser(
                "e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0");
@@ -162,7 +161,7 @@ public class S3ParserTest extends PerformanceTest {
       ObjectMetadata metadata = runParseCopyObjectResult();
       DateTime expected = new DateTime("2009-03-19T13:23:27.000Z");
       assertEquals(metadata.getLastModified(), expected);
-      assertEquals(HttpUtils.toHexString(metadata.getETag()), "92836a3ea45a6984d1b4d23a747d46bb");
+      assertEquals(metadata.getETag(), "\"92836a3ea45a6984d1b4d23a747d46bb\"");
    }
 
    @Test

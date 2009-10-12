@@ -24,7 +24,6 @@
 package org.jclouds.mezeo.pcs2.domain;
 
 import java.net.URI;
-import java.util.Arrays;
 
 import org.jclouds.mezeo.pcs2.util.PCSUtils;
 import org.joda.time.DateTime;
@@ -51,7 +50,7 @@ public class FileMetadata extends org.jclouds.blobstore.domain.BlobMetadata {
       return "FileMetadata [key=" + key + ", created=" + created + ", isInProject=" + isInProject
                + ", isPublic=" + isPublic + ", isShared=" + isShared + ", owner=" + owner
                + ", url=" + url + ", version=" + version + ", allHeaders=" + allHeaders
-               + ", dataType=" + dataType + ", eTag=" + Arrays.toString(eTag) + ", accessed="
+               + ", dataType=" + dataType + ", eTag=" + eTag + ", accessed="
                + accessed + ", lastModified=" + lastModified + ", size=" + size + ", userMetadata="
                + userMetadata + "]";
    }
@@ -138,8 +137,7 @@ public class FileMetadata extends org.jclouds.blobstore.domain.BlobMetadata {
       this.isInProject = isInProject;
       this.version = version;
       this.isPublic = isPublic;
-      byte[] eTag = PCSUtils.getETag(url);
-      setETag(eTag);
+      setETag(PCSUtils.getId(url));
    }
 
    public FileMetadata(String key) {

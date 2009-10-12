@@ -23,12 +23,11 @@
  */
 package org.jclouds.aws.s3.xml;
 
+import javax.inject.Inject;
+
 import org.jclouds.aws.s3.domain.ObjectMetadata;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.DateService;
-
-import javax.inject.Inject;
 
 /**
  * Parses the response from Amazon S3 COPY Object command.
@@ -51,7 +50,7 @@ public class CopyObjectHandler extends ParseSax.HandlerWithResult<ObjectMetadata
 
    public void endElement(String uri, String name, String qName) {
       if (qName.equals("ETag")) {
-         metadata.setETag(HttpUtils.fromHexString(currentText.toString().replaceAll("\"", "")));
+         metadata.setETag(currentText.toString());
       } else if (qName.equals("LastModified")) {
          metadata.setLastModified(dateParser.iso8601DateParse(currentText.toString()));
       }

@@ -44,13 +44,11 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ContainerMetadata;
 import org.jclouds.blobstore.util.BlobStoreUtils;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.util.Utils;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.BeforeSuite;
 
 import com.google.common.base.Predicate;
@@ -65,9 +63,6 @@ public class BaseBlobStoreIntegrationTest<S, C extends ContainerMetadata, M exte
    public static long INCONSISTENCY_WINDOW = 5000;
    protected static volatile AtomicInteger containerIndex = new AtomicInteger(0);
 
-   protected byte[] goodETag;
-   protected byte[] badETag;
-
    protected volatile BlobStoreContext<S, C, M, B> context;
    protected static volatile int containerCount = 20;
    public static final String CONTAINER_PREFIX = System.getProperty("user.name") + "-blobstore";
@@ -76,12 +71,6 @@ public class BaseBlobStoreIntegrationTest<S, C extends ContainerMetadata, M exte
     */
    private volatile static BlockingQueue<String> containerJsr330 = new ArrayBlockingQueue<String>(
             containerCount);
-
-   @BeforeGroups(groups = { "integration", "live" })
-   public void setupTags() throws IOException {
-      goodETag = HttpUtils.md5(TEST_STRING);
-      badETag = HttpUtils.md5("alf");
-   }
 
    /**
     * There are a lot of retries here mainly from experience running inside amazon EC2.
@@ -239,17 +228,17 @@ public class BaseBlobStoreIntegrationTest<S, C extends ContainerMetadata, M exte
       createContainerAndEnsureEmpty(context, containerName);
    }
 
-   protected void addBlobToContainer(String sourceContainer, String key)
+   protected String addBlobToContainer(String sourceContainer, String key)
             throws InterruptedException, ExecutionException, TimeoutException, IOException {
       B sourceObject = context.newBlob(key);
       sourceObject.getMetadata().setContentType("text/xml");
       sourceObject.setData(TEST_STRING);
-      addBlobToContainer(sourceContainer, sourceObject);
+      return addBlobToContainer(sourceContainer, sourceObject);
    }
 
-   protected void addBlobToContainer(String sourceContainer, B object) throws InterruptedException,
-            ExecutionException, TimeoutException, IOException {
-      context.getBlobStore().putBlob(sourceContainer, object).get(30, TimeUnit.SECONDS);
+   protected String addBlobToContainer(String sourceContainer, B object)
+            throws InterruptedException, ExecutionException, TimeoutException, IOException {
+      return context.getBlobStore().putBlob(sourceContainer, object).get(30, TimeUnit.SECONDS);
    }
 
    protected B validateContent(String sourceContainer, String key) throws InterruptedException,

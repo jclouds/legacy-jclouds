@@ -157,11 +157,11 @@ public class BlobMapImpl<C extends ContainerMetadata, M extends BlobMetadata, B 
     */
    public void putAll(Map<? extends String, ? extends B> map) {
       try {
-         Set<Future<byte[]>> puts = Sets.newHashSet();
+         Set<Future<String>> puts = Sets.newHashSet();
          for (B object : map.values()) {
             puts.add(connection.putBlob(containerName, object));
          }
-         for (Future<byte[]> put : puts)
+         for (Future<String> put : puts)
             // this will throw an exception if there was a problem
             put.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
       } catch (Exception e) {

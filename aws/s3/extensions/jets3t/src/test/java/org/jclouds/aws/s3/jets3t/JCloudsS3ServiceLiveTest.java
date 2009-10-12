@@ -51,7 +51,6 @@ import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.AccessControlList.GroupGranteeURI;
 import org.jclouds.aws.s3.domain.AccessControlList.Permission;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
-import org.jclouds.http.HttpUtils;
 import org.jets3t.service.S3ObjectsChunk;
 import org.jets3t.service.S3Service;
 import org.jets3t.service.S3ServiceException;
@@ -71,7 +70,6 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Iterators;
 
 /**
  * Tests to cover JCloudsS3Service
@@ -398,8 +396,7 @@ public class JCloudsS3ServiceLiveTest
          requestObject.addMetadata("x-amz-meta-" + "my-metadata-1", "value-1");
          jsResultObject = service.putObject(new S3Bucket(bucketName), requestObject);
          jcObject = context.getApi().getObject(bucketName, objectKey).get(10, TimeUnit.SECONDS);
-         assertEquals(Iterables.getLast(jcObject.getMetadata().getUserMetadata().get(
-                  "my-metadata-1")), "value-1");
+         assertEquals(jcObject.getMetadata().getUserMetadata().get("my-metadata-1"), "value-1");
          assertEquals(jsResultObject.getMetadata("x-amz-meta-" + "my-metadata-1"), "value-1");
 
          // Upload object with canned public-read ACL
@@ -424,8 +421,8 @@ public class JCloudsS3ServiceLiveTest
          jsResultObject = service.putObject(new S3Bucket(bucketName), requestObject);
          jcObject = context.getApi().getObject(bucketName, objectKey).get(10, TimeUnit.SECONDS);
          assertTrue(jsResultObject.verifyData(data.getBytes("UTF-8")));
-         assertEquals(jsResultObject.getMd5HashAsHex(), HttpUtils.toHexString(jcObject
-                  .getMetadata().getETag()));
+         assertEquals(jsResultObject.getETag(), jcObject.getMetadata().getETag().replaceAll("\"",
+                  ""));
       } finally {
          returnContainer(bucketName);
       }
@@ -462,10 +459,9 @@ public class JCloudsS3ServiceLiveTest
                   .get(10, TimeUnit.SECONDS);
          // TODO null keys from s3object! assertEquals(jcDestinationObject.getKey(),
          // destinationObjectKey);
-         assertEquals(Iterators.getLast(jcDestinationObject.getMetadata().getUserMetadata().get(
-                  metadataName).iterator()), sourceMetadataValue);
-         assertEquals(copyResult.get("ETag"), HttpUtils.toHexString(jcDestinationObject
-                  .getMetadata().getETag()));
+         assertEquals(jcDestinationObject.getMetadata().getUserMetadata().get(metadataName),
+                  sourceMetadataValue);
+         assertEquals(copyResult.get("ETag"), jcDestinationObject.getMetadata().getETag());
          // Test destination ACL is unchanged (ie private)
          org.jclouds.aws.s3.domain.AccessControlList jcACL = context.getApi().getObjectACL(
                   bucketName, destinationObject.getKey()).get(10, TimeUnit.SECONDS);
@@ -479,8 +475,8 @@ public class JCloudsS3ServiceLiveTest
                   destinationObject, true);
          jcDestinationObject = context.getApi().getObject(bucketName, destinationObject.getKey())
                   .get(10, TimeUnit.SECONDS);
-         assertEquals(Iterators.getLast(jcDestinationObject.getMetadata().getUserMetadata().get(
-                  metadataName).iterator()), destinationMetadataValue);
+         assertEquals(jcDestinationObject.getMetadata().getUserMetadata().get(metadataName),
+                  destinationMetadataValue);
          // Test destination ACL is unchanged (ie private)
          jcACL = context.getApi().getObjectACL(bucketName, destinationObject.getKey()).get(10,
                   TimeUnit.SECONDS);

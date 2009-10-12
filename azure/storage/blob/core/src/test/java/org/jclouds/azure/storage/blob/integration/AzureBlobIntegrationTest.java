@@ -26,7 +26,6 @@ package org.jclouds.azure.storage.blob.integration;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -74,8 +73,7 @@ public class AzureBlobIntegrationTest extends
       // inexpensive fashion
       // http://code.google.com/p/jclouds/issues/detail?id=92
       // assertEquals(metadata.getSize(), TEST_STRING.length());
-      assertEquals(metadata.getUserMetadata().get("adrian"), Collections
-               .singletonList("powderpuff"));
+      assertEquals(metadata.getUserMetadata().get("adrian"), "powderpuff");
       assertEquals(metadata.getContentMD5(), HttpUtils.md5(TEST_STRING.getBytes()));
    }
 

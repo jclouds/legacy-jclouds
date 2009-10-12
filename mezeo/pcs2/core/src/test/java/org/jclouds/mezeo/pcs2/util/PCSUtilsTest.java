@@ -27,7 +27,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
-import org.jclouds.http.HttpUtils;
 import org.testng.annotations.Test;
 
 /**
@@ -38,10 +37,8 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "pcs2.PCSUtilsTest")
 public class PCSUtilsTest {
    public void testGetEtag() {
-      byte[] expected = HttpUtils.fromHexString("7F143552AAF511DEBBB00BC388ED913B");
-
-      byte[] eTag = PCSUtils.getETag(URI
+      String eTag = PCSUtils.getId(URI
                .create("http://localhost/contents/7F143552-AAF5-11DE-BBB0-0BC388ED913B"));
-      assertEquals(eTag, expected);
+      assertEquals(eTag, "7F143552-AAF5-11DE-BBB0-0BC388ED913B");
    }
 }

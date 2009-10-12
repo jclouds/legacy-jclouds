@@ -179,7 +179,7 @@ public interface S3BlobStore extends BlobStore<BucketMetadata, ObjectMetadata, S
    @PUT
    @Path("{key}")
    @ResponseParser(ParseETagHeader.class)
-   Future<byte[]> putBlob(
+   Future<String> putBlob(
             @HostPrefixParam String bucketName,
             @PathParam("key") @ParamParser(BlobKey.class) @BinderParam(BindS3ObjectToEntity.class) S3Object object);
 

@@ -21,35 +21,20 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.http.functions;
+package org.jclouds.rest.annotations;
 
-import javax.ws.rs.core.HttpHeaders;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import org.apache.commons.io.IOUtils;
-import org.jclouds.http.HttpException;
-import org.jclouds.http.HttpResponse;
-
-import com.google.common.base.Function;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
 /**
- * Parses an MD5 checksum from the header {@link HttpHeaders#ETAG}.
+ * Do not accept filters that were passed from the type.
  * 
  * @author Adrian Cole
  */
-public class ParseETagHeader implements Function<HttpResponse, String> {
-
-   public String apply(HttpResponse from) {
-      IOUtils.closeQuietly(from.getContent());
-
-      String eTag = from.getFirstHeaderOrNull(HttpHeaders.ETAG);
-      if (eTag == null) {
-         // TODO: Cloud Files sends incorrectly cased ETag header... Remove this when fixed.
-         eTag = from.getFirstHeaderOrNull("Etag");
-      }
-      if (eTag != null) {
-         return eTag;
-      }
-      throw new HttpException("did not receive ETag");
-   }
-
+@Target( { METHOD })
+@Retention(RUNTIME)
+public @interface OverrideRequestFilters {
 }

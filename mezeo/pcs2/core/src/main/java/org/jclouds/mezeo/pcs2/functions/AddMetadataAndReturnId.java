@@ -45,7 +45,6 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.logging.Logger;
 import org.jclouds.mezeo.pcs2.PCSUtil;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
-import org.jclouds.mezeo.pcs2.util.PCSUtils;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Utils;
@@ -58,7 +57,7 @@ import com.google.common.collect.Sets;
  * 
  * @author Adrian Cole
  */
-public class AddMetadataAndParseResourceIdIntoBytes implements Function<HttpResponse, byte[]>,
+public class AddMetadataAndReturnId implements Function<HttpResponse, String>,
          InvocationContext {
    private final PCSUtil util;
    private final ConcurrentMap<Key, String> fileCache;
@@ -75,12 +74,12 @@ public class AddMetadataAndParseResourceIdIntoBytes implements Function<HttpResp
    private GeneratedHttpRequest<?> request;
 
    @Inject
-   public AddMetadataAndParseResourceIdIntoBytes(ConcurrentMap<Key, String> fileCache, PCSUtil util) {
+   public AddMetadataAndReturnId(ConcurrentMap<Key, String> fileCache, PCSUtil util) {
       this.fileCache = fileCache;
       this.util = util;
    }
 
-   public byte[] apply(HttpResponse from) {
+   public String apply(HttpResponse from) {
       if (from.getStatusCode() > 204)
          throw new BlobRuntimeException("Incorrect code for: " + from);
       checkState(request != null, "request should be initialized at this point");
@@ -97,7 +96,7 @@ public class AddMetadataAndParseResourceIdIntoBytes implements Function<HttpResp
       IOUtils.closeQuietly(from.getContent());
 
       Set<Future<Void>> puts = Sets.newHashSet();
-      for (Entry<String, String> entry : file.getMetadata().getUserMetadata().entries()) {
+      for (Entry<String, String> entry : file.getMetadata().getUserMetadata().entrySet()) {
          puts.add(util.putMetadata(id, entry.getKey(), entry.getValue()));
       }
       for (Future<Void> put : puts) {
@@ -108,8 +107,7 @@ public class AddMetadataAndParseResourceIdIntoBytes implements Function<HttpResp
             throw new BlobRuntimeException("Error putting metadata for file: " + file, e);
          }
       }
-
-      return PCSUtils.getETag(id);
+      return id;
    }
 
    public void setContext(GeneratedHttpRequest<?> request) {

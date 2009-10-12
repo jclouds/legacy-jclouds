@@ -35,7 +35,6 @@ import static org.testng.Assert.assertNull;
 
 import java.io.UnsupportedEncodingException;
 
-import org.jclouds.http.HttpUtils;
 import org.jclouds.util.DateService;
 import org.joda.time.DateTime;
 import org.testng.annotations.BeforeTest;
@@ -49,7 +48,7 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "s3.GetOptionsTest")
 public class GetOptionsTest {
 
-   private byte[] testBytes;
+   private String etag;
    private DateTime now;
    private String nowExpected;
 
@@ -57,7 +56,7 @@ public class GetOptionsTest {
    void setUp() {
       now = new DateTime();
       nowExpected = new DateService().rfc822DateFormat(now);
-      testBytes = new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 };
+      etag = "yrdy";
    }
 
    @Test
@@ -213,7 +212,7 @@ public class GetOptionsTest {
    @Test
    public void testIfETagMatches() throws UnsupportedEncodingException {
       GetOptions options = new GetOptions();
-      options.ifETagMatches(testBytes);
+      options.ifETagMatches(etag);
       matchesHex(options.getIfMatch());
    }
 
@@ -225,7 +224,7 @@ public class GetOptionsTest {
 
    @Test
    public void testIfETagMatchesStatic() throws UnsupportedEncodingException {
-      GetOptions options = ifETagMatches(testBytes);
+      GetOptions options = ifETagMatches(etag);
       matchesHex(options.getIfMatch());
    }
 
@@ -237,7 +236,7 @@ public class GetOptionsTest {
    @Test
    public void testIfETagDoesntMatch() throws UnsupportedEncodingException {
       GetOptions options = new GetOptions();
-      options.ifETagDoesntMatch(testBytes);
+      options.ifETagDoesntMatch(etag);
       matchesHex(options.getIfNoneMatch());
    }
 
@@ -249,7 +248,7 @@ public class GetOptionsTest {
 
    @Test
    public void testIfETagDoesntMatchStatic() throws UnsupportedEncodingException {
-      GetOptions options = ifETagDoesntMatch(testBytes);
+      GetOptions options = ifETagDoesntMatch(etag);
       matchesHex(options.getIfNoneMatch());
    }
 
@@ -259,7 +258,7 @@ public class GetOptionsTest {
    }
 
    private void matchesHex(String match) throws UnsupportedEncodingException {
-      String expected = "\"" + HttpUtils.toHexString(testBytes) + "\"";
+      String expected = "\"" + etag + "\"";
       assertEquals(match, expected);
    }
 
@@ -270,13 +269,13 @@ public class GetOptionsTest {
    }
 
    public void testIfUnmodifiedAfterETagMatches() throws UnsupportedEncodingException {
-      ifETagMatches(testBytes).ifUnmodifiedSince(now);
+      ifETagMatches(etag).ifUnmodifiedSince(now);
 
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testIfUnmodifiedAfterETagDoesntMatch() throws UnsupportedEncodingException {
-      ifETagDoesntMatch(testBytes).ifUnmodifiedSince(now);
+      ifETagDoesntMatch(etag).ifUnmodifiedSince(now);
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
@@ -287,44 +286,44 @@ public class GetOptionsTest {
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testIfModifiedAfterETagMatches() throws UnsupportedEncodingException {
-      ifETagMatches(testBytes).ifModifiedSince(now);
+      ifETagMatches(etag).ifModifiedSince(now);
 
    }
 
    public void testIfModifiedAfterETagDoesntMatch() throws UnsupportedEncodingException {
-      ifETagDoesntMatch(testBytes).ifModifiedSince(now);
+      ifETagDoesntMatch(etag).ifModifiedSince(now);
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testETagMatchesAfterIfModified() throws UnsupportedEncodingException {
-      ifModifiedSince(now).ifETagMatches(testBytes);
+      ifModifiedSince(now).ifETagMatches(etag);
 
    }
 
    public void testETagMatchesAfterIfUnmodified() throws UnsupportedEncodingException {
-      ifUnmodifiedSince(now).ifETagMatches(testBytes);
+      ifUnmodifiedSince(now).ifETagMatches(etag);
 
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testETagMatchesAfterETagDoesntMatch() throws UnsupportedEncodingException {
-      ifETagDoesntMatch(testBytes).ifETagMatches(testBytes);
+      ifETagDoesntMatch(etag).ifETagMatches(etag);
    }
 
    public void testETagDoesntMatchAfterIfModified() throws UnsupportedEncodingException {
-      ifModifiedSince(now).ifETagDoesntMatch(testBytes);
+      ifModifiedSince(now).ifETagDoesntMatch(etag);
 
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testETagDoesntMatchAfterIfUnmodified() throws UnsupportedEncodingException {
-      ifUnmodifiedSince(now).ifETagDoesntMatch(testBytes);
+      ifUnmodifiedSince(now).ifETagDoesntMatch(etag);
 
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testETagDoesntMatchAfterETagMatches() throws UnsupportedEncodingException {
-      ifETagMatches(testBytes).ifETagDoesntMatch(testBytes);
+      ifETagMatches(etag).ifETagDoesntMatch(etag);
    }
 
 }

@@ -421,8 +421,12 @@ pageTracker._trackPageview();
                                             <value>${jclouds.test.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.test.app</name>
-                                            <value>${jclouds.test.app}</value>
+                                            <name>jclouds.test.appname</name>
+                                            <value>${jclouds.test.appname}</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.test.appid</name>
+                                            <value>${jclouds.test.appid}</value>
                                         </property>
                                         <property>
                                             <name>jclouds.blobstore.httpstream.url</name>

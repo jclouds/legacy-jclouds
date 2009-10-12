@@ -145,7 +145,7 @@ public class ParseBlobMetadataFromHeadersTest {
       from.getHeaders().put(HttpHeaders.ETAG, "0xfeb");
       BlobMetadata metadata = new BlobMetadata("test");
       parser.addETagTo(from, metadata);
-      assertEquals(metadata.getETag(), HttpUtils.fromHexString("0xfeb"));
+      assertEquals(metadata.getETag(), "0xfeb");
    }
 
    @Test
@@ -155,6 +155,6 @@ public class ParseBlobMetadataFromHeadersTest {
       from.setHeaders(allHeaders);
       BlobMetadata metadata = new BlobMetadata("test");
       parser.addUserMetadataTo(from, metadata);
-      assertEquals(metadata.getUserMetadata().get("key"), Collections.singletonList("value"));
+      assertEquals(metadata.getUserMetadata().get("key"), "value");
    }
 }

@@ -77,10 +77,10 @@ public class ParseObjectMetadataFromHeaders extends
       if (metadata.getETag() == null) {
          String eTagHeader = from.getFirstHeaderOrNull(S3Headers.AMZ_MD5);
          if (eTagHeader != null) {
-            metadata.setETag(HttpUtils.fromHexString(eTagHeader));
+            metadata.setETag(eTagHeader);
          }
       }
-      metadata.setContentMD5(metadata.getETag());
+      metadata.setContentMD5(HttpUtils.fromHexString(metadata.getETag().replaceAll("\"", "")));
    }
 
 }

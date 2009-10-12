@@ -80,6 +80,7 @@ import org.jclouds.rest.annotations.HostPrefixParam;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.MapEntityParam;
 import org.jclouds.rest.annotations.MatrixParams;
+import org.jclouds.rest.annotations.OverrideRequestFilters;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -496,6 +497,12 @@ public class RestAnnotationProcessorTest {
       @RequestFilters(TestRequestFilter2.class)
       public void get() {
       }
+
+      @GET
+      @OverrideRequestFilters
+      @RequestFilters(TestRequestFilter2.class)
+      public void getOverride() {
+      }
    }
 
    @Test
@@ -506,6 +513,14 @@ public class RestAnnotationProcessorTest {
       assertEquals(httpMethod.getFilters().size(), 2);
       assertEquals(httpMethod.getFilters().get(0).getClass(), TestRequestFilter1.class);
       assertEquals(httpMethod.getFilters().get(1).getClass(), TestRequestFilter2.class);
+   }
+
+   public void testRequestFilterOverride() throws SecurityException, NoSuchMethodException {
+      Method method = TestRequestFilter.class.getMethod("getOverride");
+      HttpRequest httpMethod = factory(TestRequestFilter.class).createRequest(method,
+               new Object[] {});
+      assertEquals(httpMethod.getFilters().size(), 1);
+      assertEquals(httpMethod.getFilters().get(0).getClass(), TestRequestFilter2.class);
    }
 
    @SkipEncoding('/')

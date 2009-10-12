@@ -31,7 +31,6 @@ import javax.inject.Inject;
 import org.jclouds.azure.storage.blob.domain.BlobMetadata;
 import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
 import org.jclouds.azure.storage.blob.domain.TreeSetListBlobsResponse;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.DateService;
 import org.joda.time.DateTime;
@@ -59,7 +58,7 @@ public class ContainerNameEnumerationResultsHandler extends
    private URI currentUrl;
    private URI containerUrl;
    private DateTime currentLastModified;
-   private byte[] currentETag;
+   private String currentETag;
 
    private StringBuilder currentText = new StringBuilder();
 
@@ -131,7 +130,7 @@ public class ContainerNameEnumerationResultsHandler extends
       } else if (qName.equals("LastModified")) {
          currentLastModified = dateParser.rfc822DateParse(currentText.toString().trim());
       } else if (qName.equals("Etag")) {
-         currentETag = HttpUtils.fromHexString(currentText.toString().trim());
+         currentETag = currentText.toString().trim();
       } else if (qName.equals("Name")) {
          if (inBlob)
             currentName = currentText.toString().trim();

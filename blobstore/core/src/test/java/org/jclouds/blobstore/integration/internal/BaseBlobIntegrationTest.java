@@ -37,7 +37,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -142,15 +141,15 @@ public class BaseBlobIntegrationTest<S, C extends ContainerMetadata, M extends B
 
          String key = "apples";
 
-         addObjectAndValidateContent(containerName, key);
+         String goodETag = addObjectAndValidateContent(containerName, key);
 
          context.getBlobStore().getBlob(containerName, key, ifETagMatches(goodETag)).get(30,
                   TimeUnit.SECONDS);
          validateContent(containerName, key);
 
          try {
-            context.getBlobStore().getBlob(containerName, key, ifETagMatches(badETag)).get(30,
-                     TimeUnit.SECONDS);
+            context.getBlobStore().getBlob(containerName, key, ifETagMatches("powerfrisbee")).get(
+                     30, TimeUnit.SECONDS);
             validateContent(containerName, key);
          } catch (ExecutionException e) {
             if (e.getCause() instanceof HttpResponseException) {
@@ -175,10 +174,10 @@ public class BaseBlobIntegrationTest<S, C extends ContainerMetadata, M extends B
 
          String key = "apples";
 
-         addObjectAndValidateContent(containerName, key);
+         String goodETag = addObjectAndValidateContent(containerName, key);
 
-         context.getBlobStore().getBlob(containerName, key, ifETagDoesntMatch(badETag)).get(30,
-                  TimeUnit.SECONDS);
+         context.getBlobStore().getBlob(containerName, key, ifETagDoesntMatch("powerfrisbee")).get(
+                  30, TimeUnit.SECONDS);
          validateContent(containerName, key);
 
          try {
@@ -278,10 +277,11 @@ public class BaseBlobIntegrationTest<S, C extends ContainerMetadata, M extends B
       }
    }
 
-   private void addObjectAndValidateContent(String sourcecontainerName, String sourceKey)
+   private String addObjectAndValidateContent(String sourcecontainerName, String sourceKey)
             throws InterruptedException, ExecutionException, TimeoutException, IOException {
-      addBlobToContainer(sourcecontainerName, sourceKey);
+      String eTag = addBlobToContainer(sourcecontainerName, sourceKey);
       validateContent(sourcecontainerName, sourceKey);
+      return eTag;
    }
 
    @Test(groups = { "integration", "live" })
@@ -397,8 +397,7 @@ public class BaseBlobIntegrationTest<S, C extends ContainerMetadata, M extends B
    protected void validateMetadata(M metadata) {
       assertEquals(metadata.getContentType(), "text/plain");
       assertEquals(metadata.getSize(), TEST_STRING.length());
-      assertEquals(metadata.getUserMetadata().get("adrian"), Collections
-               .singletonList("powderpuff"));
+      assertEquals(metadata.getUserMetadata().get("adrian"), "powderpuff");
       assertEquals(metadata.getContentMD5(), HttpUtils.md5(TEST_STRING.getBytes()));
    }
 

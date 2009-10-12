@@ -47,7 +47,7 @@ public class BindBlobToEntity implements Binder {
       Blob<?> object = (Blob<?>) entity;
 
       for (String key : object.getMetadata().getUserMetadata().keySet()) {
-         request.getHeaders().putAll(key.startsWith(metadataPrefix) ? key : metadataPrefix + key,
+         request.getHeaders().put(key.startsWith(metadataPrefix) ? key : metadataPrefix + key,
                   object.getMetadata().getUserMetadata().get(key));
       }
       request.setEntity(checkNotNull(object.getData(), "object.getContent()"));

@@ -50,7 +50,7 @@ public interface BlobStore<C extends ContainerMetadata, M extends BlobMetadata, 
 
    Future<? extends SortedSet<M>> listBlobs(String container);
 
-   Future<byte[]> putBlob(String container, B blob);
+   Future<String> putBlob(String container, B blob);
 
    Future<B> getBlob(String container, String key);
 

@@ -111,7 +111,7 @@ public interface CloudFilesBlobStore extends
    @PUT
    @Path("{container}/{key}")
    @ResponseParser(ParseETagHeader.class)
-   Future<byte[]> putBlob(
+   Future<String> putBlob(
             @PathParam("container") String container,
             @PathParam("key") @ParamParser(BlobKey.class) @BinderParam(BindBlobToEntity.class) Blob<BlobMetadata> object);
 

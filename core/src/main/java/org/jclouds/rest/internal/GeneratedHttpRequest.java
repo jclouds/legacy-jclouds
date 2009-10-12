@@ -49,4 +49,10 @@ public class GeneratedHttpRequest<T> extends HttpRequest {
       URI newEndpoint = processor.replaceQuery(getEndpoint(), builder.build().getQuery());
       setEndpoint(newEndpoint);
    }
+
+   public void replacePath(String path) {
+      UriBuilder builder = UriBuilder.fromUri(getEndpoint());
+      builder.replacePath(path);
+      setEndpoint(builder.build());
+   }
 }

@@ -99,7 +99,7 @@ public class ParseContainerMetadataFromHeaders implements
    protected void addETagTo(HttpResponse from, ContainerMetadata metadata) {
       String eTag = from.getFirstHeaderOrNull(HttpHeaders.ETAG);
       if (metadata.getETag() == null && eTag != null) {
-         metadata.setETag(HttpUtils.fromHexString(eTag.replaceAll("\"", "")));
+         metadata.setETag(HttpUtils.fromHexString(eTag));
       }
    }
 

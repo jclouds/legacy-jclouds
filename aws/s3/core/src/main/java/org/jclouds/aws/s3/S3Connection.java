@@ -204,7 +204,7 @@ public interface S3Connection {
    @PUT
    @Path("{key}")
    @ResponseParser(ParseETagHeader.class)
-   Future<byte[]> putObject(
+   Future<String> putObject(
             @HostPrefixParam String bucketName,
             @PathParam("key") @ParamParser(BlobKey.class) @BinderParam(BindS3ObjectToEntity.class) S3Object object,
             PutObjectOptions... options);

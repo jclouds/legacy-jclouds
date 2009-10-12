@@ -32,7 +32,6 @@ import java.util.List;
 
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.http.HttpUtils;
 import org.jclouds.util.DateService;
 import org.joda.time.DateTime;
 
@@ -173,13 +172,12 @@ public class GetOptions extends BaseHttpRequestOptions {
     * @throws UnsupportedEncodingException
     *            if there was a problem converting this into an S3 eTag string
     */
-   public GetOptions ifETagMatches(byte[] eTag) throws UnsupportedEncodingException {
+   public GetOptions ifETagMatches(String eTag) throws UnsupportedEncodingException {
       checkArgument(getIfNoneMatch() == null,
                "ifETagDoesntMatch() is not compatible with ifETagMatches()");
       checkArgument(getIfModifiedSince() == null,
                "ifModifiedSince() is not compatible with ifETagMatches()");
-      this.headers.put(HttpHeaders.IF_MATCH, String.format("\"%1$s\"", HttpUtils
-               .toHexString(checkNotNull(eTag, "eTag"))));
+      this.headers.put(HttpHeaders.IF_MATCH, String.format("\"%1$s\"", checkNotNull(eTag, "eTag")));
       return this;
    }
 
@@ -198,20 +196,20 @@ public class GetOptions extends BaseHttpRequestOptions {
    /**
     * The object should not have a eTag hash corresponding with the parameter <code>eTag</code>.
     * <p />
-    * Not compatible with {@link #ifETagMatches(byte[])} or {@link #ifUnmodifiedSince(DateTime)}
+    * Not compatible with {@link #ifETagMatches(String)} or {@link #ifUnmodifiedSince(DateTime)}
     * 
     * @param eTag
     *           hash representing the entity
     * @throws UnsupportedEncodingException
     *            if there was a problem converting this into an S3 eTag string
     */
-   public GetOptions ifETagDoesntMatch(byte[] eTag) throws UnsupportedEncodingException {
+   public GetOptions ifETagDoesntMatch(String eTag) throws UnsupportedEncodingException {
       checkArgument(getIfMatch() == null,
                "ifETagMatches() is not compatible with ifETagDoesntMatch()");
       checkArgument(getIfUnmodifiedSince() == null,
                "ifUnmodifiedSince() is not compatible with ifETagDoesntMatch()");
-      this.headers.put(HttpHeaders.IF_NONE_MATCH, String.format("\"%1$s\"", HttpUtils
-               .toHexString(checkNotNull(eTag, "ifETagDoesntMatch"))));
+      this.headers.put(HttpHeaders.IF_NONE_MATCH, String.format("\"%1$s\"", checkNotNull(eTag,
+               "ifETagDoesntMatch")));
       return this;
    }
 
@@ -270,18 +268,17 @@ public class GetOptions extends BaseHttpRequestOptions {
       }
 
       /**
-       * @see GetOptions#ifETagMatches(byte[])
+       * @see GetOptions#ifETagMatches(String)
        */
-      public static GetOptions ifETagMatches(byte[] eTag) throws UnsupportedEncodingException {
+      public static GetOptions ifETagMatches(String eTag) throws UnsupportedEncodingException {
          GetOptions options = new GetOptions();
          return options.ifETagMatches(eTag);
       }
 
       /**
-       * @see GetOptions#ifETagDoesntMatch(byte[])
+       * @see GetOptions#ifETagDoesntMatch(String)
        */
-      public static GetOptions ifETagDoesntMatch(byte[] eTag)
-               throws UnsupportedEncodingException {
+      public static GetOptions ifETagDoesntMatch(String eTag) throws UnsupportedEncodingException {
          GetOptions options = new GetOptions();
          return options.ifETagDoesntMatch(eTag);
       }

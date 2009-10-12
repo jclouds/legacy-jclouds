@@ -32,7 +32,6 @@ import org.jclouds.azure.storage.blob.domain.BlobMetadata;
 import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
 import org.jclouds.azure.storage.blob.domain.TreeSetListBlobsResponse;
 import org.jclouds.azure.storage.domain.BoundedSortedSet;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.util.DateService;
 import org.testng.annotations.BeforeTest;
@@ -70,24 +69,24 @@ public class ContainerNameEnumerationResultsHandlerTest extends BaseHandlerTest 
                                                    .create("http://myaccount.blob.core.windows.net/mycontainer/blob1.txt"),
                                           dateService
                                                    .rfc822DateParse("Thu, 18 Sep 2008 18:41:57 GMT"),
-                                          HttpUtils.fromHexString("0x8CAE7D55D050B8B"), 8,
-                                          "text/plain; charset=UTF-8", null, null, null),
+                                          "0x8CAE7D55D050B8B", 8, "text/plain; charset=UTF-8",
+                                          null, null, null),
                                  new BlobMetadata(
                                           "blob2.txt",
                                           URI
                                                    .create("http://myaccount.blob.core.windows.net/mycontainer/blob2.txt"),
                                           dateService
                                                    .rfc822DateParse("Thu, 18 Sep 2008 18:41:57 GMT"),
-                                          HttpUtils.fromHexString("0x8CAE7D55CF6C339"), 14,
-                                          "text/plain; charset=UTF-8", null, null, null),
+                                          "0x8CAE7D55CF6C339", 14, "text/plain; charset=UTF-8",
+                                          null, null, null),
                                  new BlobMetadata(
                                           "newblob1.txt",
                                           URI
                                                    .create("http://myaccount.blob.core.windows.net/mycontainer/newblob1.txt"),
                                           dateService
                                                    .rfc822DateParse("Thu, 18 Sep 2008 18:41:57 GMT"),
-                                          HttpUtils.fromHexString("0x8CAE7D55CF6C339"), 25,
-                                          "text/plain; charset=UTF-8", null, null, null)
+                                          "0x8CAE7D55CF6C339", 25, "text/plain; charset=UTF-8",
+                                          null, null, null)
 
                         ), null, null, 4, "newblob2.txt", null, "myfolder/");
 

@@ -28,6 +28,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Map;
 import java.util.concurrent.Future;
 
 import javax.inject.Singleton;
@@ -40,7 +41,6 @@ import org.jclouds.util.DateService;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Multimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
@@ -70,7 +70,7 @@ public class FileMetadataHandlerTest extends BaseHandlerTest {
          PCSUtil provideUtil() {
             final Future<Void> voidF = createMock(Future.class);
             return new PCSUtil() {
-               public Future<Void> addEntryToMultiMap(Multimap<String, String> map, String key,
+               public Future<Void> addEntryToMap(Map<String, String> map, String key,
                         URI value) {
                   map.put(key.toLowerCase(), "bar");
                   return voidF;

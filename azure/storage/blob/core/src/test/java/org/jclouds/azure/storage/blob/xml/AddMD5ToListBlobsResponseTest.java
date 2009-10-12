@@ -100,27 +100,24 @@ public class AddMD5ToListBlobsResponseTest extends BaseHandlerTest {
                                                    .create("http://myaccount.blob.core.windows.net/mycontainer/blob1.txt"),
                                           dateService
                                                    .rfc822DateParse("Thu, 18 Sep 2008 18:41:57 GMT"),
-                                          HttpUtils.fromHexString("0x8CAE7D55D050B8B"), 8,
-                                          "text/plain; charset=UTF-8", HttpUtils
-                                                   .fromHexString("01"), null, null),
+                                          "0x8CAE7D55D050B8B", 8, "text/plain; charset=UTF-8",
+                                          HttpUtils.fromHexString("01"), null, null),
                                  new BlobMetadata(
                                           "blob2.txt",
                                           URI
                                                    .create("http://myaccount.blob.core.windows.net/mycontainer/blob2.txt"),
                                           dateService
                                                    .rfc822DateParse("Thu, 18 Sep 2008 18:41:57 GMT"),
-                                          HttpUtils.fromHexString("0x8CAE7D55CF6C339"), 14,
-                                          "text/plain; charset=UTF-8", HttpUtils
-                                                   .fromHexString("02"), null, null),
+                                          "0x8CAE7D55CF6C339", 14, "text/plain; charset=UTF-8",
+                                          HttpUtils.fromHexString("02"), null, null),
                                  new BlobMetadata(
                                           "newblob1.txt",
                                           URI
                                                    .create("http://myaccount.blob.core.windows.net/mycontainer/newblob1.txt"),
                                           dateService
                                                    .rfc822DateParse("Thu, 18 Sep 2008 18:41:57 GMT"),
-                                          HttpUtils.fromHexString("0x8CAE7D55CF6C339"), 25,
-                                          "text/plain; charset=UTF-8", HttpUtils
-                                                   .fromHexString("03"), null, null)
+                                          "0x8CAE7D55CF6C339", 25, "text/plain; charset=UTF-8",
+                                          HttpUtils.fromHexString("03"), null, null)
 
                         ), null, null, 4, "newblob2.txt", null, "myfolder/");
 

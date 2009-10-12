@@ -139,7 +139,8 @@ public interface CloudFilesConnection {
 
    @POST
    @Path("{container}/{key}")
-   boolean setObjectMetadata(@PathParam("container") String container,
+   boolean setObjectMetadata(
+            @PathParam("container") String container,
             @PathParam("key") String key,
             @BinderParam(BindMultimapToHeadersWithPrefix.class) Multimap<String, String> userMetadata);
 
@@ -203,7 +204,7 @@ public interface CloudFilesConnection {
    @PUT
    @Path("{container}/{key}")
    @ResponseParser(ParseETagHeader.class)
-   Future<byte[]> putObject(
+   Future<String> putObject(
             @PathParam("container") String container,
             @PathParam("key") @ParamParser(BlobKey.class) @BinderParam(BindBlobToEntity.class) Blob<BlobMetadata> object);
 
@@ -218,11 +219,13 @@ public interface CloudFilesConnection {
    @ResponseParser(ParseObjectMetadataFromHeaders.class)
    @ExceptionParser(ThrowKeyNotFoundOn404.class)
    @Path("{container}/{key}")
-   BlobMetadata getObjectMetadata(@PathParam("container") String container, @PathParam("key") String key);
+   BlobMetadata getObjectMetadata(@PathParam("container") String container,
+            @PathParam("key") String key);
 
    @DELETE
    @ExceptionParser(ReturnTrueOn404.class)
    @Path("{container}/{key}")
-   Future<Boolean> removeObject(@PathParam("container") String container, @PathParam("key") String key);
+   Future<Boolean> removeObject(@PathParam("container") String container,
+            @PathParam("key") String key);
 
 }

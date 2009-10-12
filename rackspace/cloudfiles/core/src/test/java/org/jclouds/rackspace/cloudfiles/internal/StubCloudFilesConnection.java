@@ -122,7 +122,7 @@ public class StubCloudFilesConnection extends
       throw new UnsupportedOperationException();
    }
 
-   public Future<byte[]> putObject(String container, Blob<BlobMetadata> object) {
+   public Future<String> putObject(String container, Blob<BlobMetadata> object) {
       throw new UnsupportedOperationException();
    }
 

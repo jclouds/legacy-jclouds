@@ -83,7 +83,7 @@ public class ParseBlobMetadataListFromJsonResponse extends ParseJson<SortedSet<B
                         metadata.setSize(from.bytes);
                         metadata.setLastModified(from.last_modified);
                         metadata.setContentType(from.content_type);
-                        metadata.setETag(HttpUtils.fromHexString(from.hash));
+                        metadata.setETag(from.hash);
                         metadata.setContentMD5(HttpUtils.fromHexString(from.hash));
                         return metadata;
                      }

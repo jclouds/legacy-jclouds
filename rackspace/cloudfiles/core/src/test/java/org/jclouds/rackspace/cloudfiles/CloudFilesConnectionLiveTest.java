@@ -284,7 +284,7 @@ public class CloudFilesConnectionLiveTest {
       object.getMetadata().setContentType("text/plain");
       object.getMetadata().getUserMetadata().put("Metadata", "metadata-value");
       byte[] md5 = object.getMetadata().getContentMD5();
-      byte[] newEtag = connection.putObject(containerName, object).get(10, TimeUnit.SECONDS);
+      String newEtag = connection.putObject(containerName, object).get(10, TimeUnit.SECONDS);
       assertEquals(HttpUtils.toHexString(md5), HttpUtils.toHexString(object.getMetadata()
                .getContentMD5()));
 
@@ -303,8 +303,8 @@ public class CloudFilesConnectionLiveTest {
       assertEquals(HttpUtils.toHexString(md5), HttpUtils.toHexString(object.getMetadata()
                .getContentMD5()));
       assertEquals(metadata.getETag(), newEtag);
-      assertEquals(metadata.getUserMetadata().entries().size(), 1);
-      assertEquals(Iterables.getLast(metadata.getUserMetadata().get("metadata")), "metadata-value");
+      assertEquals(metadata.getUserMetadata().entrySet().size(), 1);
+      assertEquals(metadata.getUserMetadata().get("metadata"), "metadata-value");
 
       // // Test POST to update object's metadata
       Multimap<String, String> userMetadata = HashMultimap.create();
@@ -328,18 +328,14 @@ public class CloudFilesConnectionLiveTest {
       assertEquals(HttpUtils.toHexString(md5), HttpUtils.toHexString(getBlob.getMetadata()
                .getContentMD5()));
       assertEquals(newEtag, getBlob.getMetadata().getETag());
-      assertEquals(getBlob.getMetadata().getUserMetadata().entries().size(), 2);
-      assertEquals(
-               Iterables.getLast(getBlob.getMetadata().getUserMetadata().get("new-metadata-1")),
-               "value-1");
-      assertEquals(
-               Iterables.getLast(getBlob.getMetadata().getUserMetadata().get("new-metadata-2")),
-               "value-2");
+      assertEquals(getBlob.getMetadata().getUserMetadata().entrySet().size(), 2);
+      assertEquals(getBlob.getMetadata().getUserMetadata().get("new-metadata-1"), "value-1");
+      assertEquals(getBlob.getMetadata().getUserMetadata().get("new-metadata-2"), "value-2");
 
       // Test PUT with invalid ETag (as if object's data was corrupted in transit)
-      String correctEtag = HttpUtils.toHexString(newEtag);
+      String correctEtag = newEtag;
       String incorrectEtag = "0" + correctEtag.substring(1);
-      object.getMetadata().setETag(HttpUtils.fromHexString(incorrectEtag));
+      object.getMetadata().setETag(incorrectEtag);
       try {
          connection.putObject(containerName, object).get(10, TimeUnit.SECONDS);
       } catch (Throwable e) {

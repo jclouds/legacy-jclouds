@@ -45,6 +45,7 @@ import static org.testng.Assert.assertTrue;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -68,8 +69,7 @@ import org.jclouds.util.Utils;
 import org.joda.time.DateTime;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.Maps;
 
 /**
  * 
@@ -337,10 +337,11 @@ public class S3ConnectionLiveTest extends
       }
    }
 
-   private void addToContainerAndValidate(String containerName, String sourceKey)
+   protected String addToContainerAndValidate(String containerName, String sourceKey)
             throws InterruptedException, ExecutionException, TimeoutException, IOException {
-      addBlobToContainer(containerName, sourceKey);
+      String etag = addBlobToContainer(containerName, sourceKey);
       validateContent(containerName, sourceKey);
+      return etag;
    }
 
    // TODO: fails on linux and windows
@@ -407,7 +408,7 @@ public class S3ConnectionLiveTest extends
       String containerName = getContainerName();
       String destinationContainer = getContainerName();
       try {
-         addToContainerAndValidate(containerName, sourceKey);
+         String goodETag = addToContainerAndValidate(containerName, sourceKey);
 
          context.getApi().copyObject(containerName, sourceKey, destinationContainer,
                   destinationKey, ifSourceETagMatches(goodETag)).get(10, TimeUnit.SECONDS);
@@ -415,7 +416,7 @@ public class S3ConnectionLiveTest extends
 
          try {
             context.getApi().copyObject(containerName, sourceKey, destinationContainer,
-                     destinationKey, ifSourceETagMatches(badETag)).get(10, TimeUnit.SECONDS);
+                     destinationKey, ifSourceETagMatches("setsds")).get(10, TimeUnit.SECONDS);
          } catch (ExecutionException e) {
             HttpResponseException ex = (HttpResponseException) e.getCause();
             assertEquals(ex.getResponse().getStatusCode(), 412);
@@ -431,10 +432,10 @@ public class S3ConnectionLiveTest extends
       String containerName = getContainerName();
       String destinationContainer = getContainerName();
       try {
-         addToContainerAndValidate(containerName, sourceKey);
+         String goodETag = addToContainerAndValidate(containerName, sourceKey);
 
          context.getApi().copyObject(containerName, sourceKey, destinationContainer,
-                  destinationKey, ifSourceETagDoesntMatch(badETag)).get(10, TimeUnit.SECONDS);
+                  destinationKey, ifSourceETagDoesntMatch("asfasdf")).get(10, TimeUnit.SECONDS);
          validateContent(destinationContainer, destinationKey);
 
          try {
@@ -458,7 +459,7 @@ public class S3ConnectionLiveTest extends
       try {
          addToContainerAndValidate(containerName, sourceKey);
 
-         Multimap<String, String> metadata = HashMultimap.create();
+         Map<String, String> metadata = Maps.newHashMap();
          metadata.put("adrian", "cole");
 
          context.getApi().copyObject(containerName, sourceKey, destinationContainer,

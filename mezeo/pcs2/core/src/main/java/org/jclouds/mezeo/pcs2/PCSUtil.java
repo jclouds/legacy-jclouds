@@ -24,6 +24,7 @@
 package org.jclouds.mezeo.pcs2;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.concurrent.Future;
 
 import javax.ws.rs.GET;
@@ -32,15 +33,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.mezeo.pcs2.functions.AddEntryIntoMultiMap;
+import org.jclouds.mezeo.pcs2.functions.AddEntryIntoMap;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.binders.BindToStringEntity;
-
-import com.google.common.collect.Multimap;
 
 /**
  * Provides access to Mezeo PCS v2 via their REST API.
@@ -62,6 +61,6 @@ public interface PCSUtil {
             @PathParam("key") String key, @BinderParam(BindToStringEntity.class) String value);
 
    @GET
-   @ResponseParser(AddEntryIntoMultiMap.class)
-   Future<Void> addEntryToMultiMap(Multimap<String, String> map, String key, @Endpoint URI value);
+   @ResponseParser(AddEntryIntoMap.class)
+   Future<Void> addEntryToMap(Map<String, String> map, String key, @Endpoint URI value);
 }

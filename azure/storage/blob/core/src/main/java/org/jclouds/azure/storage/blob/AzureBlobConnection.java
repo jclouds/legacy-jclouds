@@ -271,7 +271,7 @@ public interface AzureBlobConnection {
    @PUT
    @Path("{container}/{key}")
    @ResponseParser(ParseETagHeader.class)
-   Future<byte[]> putBlob(@PathParam("container") String container,
+   Future<String> putBlob(@PathParam("container") String container,
             @PathParam("key") @ParamParser(BlobKey.class) @BinderParam(BindBlobToEntity.class) Blob object);
 
    /**

@@ -223,7 +223,7 @@ public class InputStreamMapImpl<C extends ContainerMetadata, M extends BlobMetad
    @VisibleForTesting
    void putAllInternal(Map<? extends String, ? extends Object> map) {
       try {
-         Set<Future<byte[]>> puts = Sets.newHashSet();
+         Set<Future<String>> puts = Sets.newHashSet();
          for (Map.Entry<? extends String, ? extends Object> entry : map.entrySet()) {
             B object = blobFactory.get();
             object.getMetadata().setKey(entry.getKey());
@@ -234,7 +234,7 @@ public class InputStreamMapImpl<C extends ContainerMetadata, M extends BlobMetad
             // / response transformer set key on the way out.
             // / ExceptionHandler convert 404 to NOT_FOUND
          }
-         for (Future<byte[]> put : puts)
+         for (Future<String> put : puts)
             // this will throw an exception if there was a problem
             put.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
       } catch (Exception e) {

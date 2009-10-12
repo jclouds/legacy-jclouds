@@ -31,6 +31,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Collections;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -60,8 +61,8 @@ import org.jclouds.mezeo.pcs2.domain.FileMetadata;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
 import org.jclouds.mezeo.pcs2.endpoints.RootContainer;
 import org.jclouds.mezeo.pcs2.endpoints.WebDAV;
-import org.jclouds.mezeo.pcs2.functions.AddEntryIntoMultiMap;
-import org.jclouds.mezeo.pcs2.functions.AddMetadataAndParseResourceIdIntoBytes;
+import org.jclouds.mezeo.pcs2.functions.AddEntryIntoMap;
+import org.jclouds.mezeo.pcs2.functions.AddMetadataAndReturnId;
 import org.jclouds.mezeo.pcs2.functions.AssembleBlobFromContentAndMetadataCache;
 import org.jclouds.mezeo.pcs2.functions.InvalidateContainerNameCacheAndReturnTrueIf2xx;
 import org.jclouds.mezeo.pcs2.functions.InvalidatePCSKeyCacheAndReturnVoidIf2xx;
@@ -74,9 +75,8 @@ import org.jclouds.util.DateService;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Multimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -315,7 +315,7 @@ public class PCSBlobStoreTest {
                .singletonList(file.getData().toString().getBytes().length + ""));
       assertEquals(httpMethod.getEntity(), file.getData());
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               AddMetadataAndParseResourceIdIntoBytes.class);
+               AddMetadataAndReturnId.class);
    }
 
    public void testRemoveBlob() throws SecurityException, NoSuchMethodException, IOException {
@@ -405,12 +405,12 @@ public class PCSBlobStoreTest {
                ReturnVoidIf2xx.class);
    }
 
-   public void testAddEntryToMultiMap() throws SecurityException, NoSuchMethodException {
-      Method method = PCSUtil.class.getMethod("addEntryToMultiMap", Multimap.class, String.class,
+   public void testAddEntryToMap() throws SecurityException, NoSuchMethodException {
+      Method method = PCSUtil.class.getMethod("addEntryToMap", Map.class, String.class,
                URI.class);
 
       GeneratedHttpRequest<PCSUtil> httpMethod = utilProcessor
-               .createRequest(method, new Object[] { ImmutableMultimap.of("key", "value"),
+               .createRequest(method, new Object[] { ImmutableMap.of("key", "value"),
                         "newkey", URI.create("http://localhost/pow") });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/pow");
@@ -418,7 +418,7 @@ public class PCSBlobStoreTest {
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(utilProcessor.createExceptionParserOrNullIfNotFound(method), null);
       assertEquals(utilProcessor.createResponseParser(method, httpMethod).getClass(),
-               AddEntryIntoMultiMap.class);
+               AddEntryIntoMap.class);
    }
 
    RestAnnotationProcessor<PCSBlobStore> processor;
@@ -451,7 +451,7 @@ public class PCSBlobStoreTest {
                   public PCSUtil getPCSUtil() {
                      return new PCSUtil() {
 
-                        public Future<Void> addEntryToMultiMap(Multimap<String, String> map,
+                        public Future<Void> addEntryToMap(Map<String, String> map,
                                  String key, URI value) {
                            return null;
                         }

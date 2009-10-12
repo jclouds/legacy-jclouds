@@ -43,10 +43,8 @@ import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.options.CopyObjectOptions;
 import org.jclouds.aws.s3.options.ListBucketOptions;
 import org.jclouds.aws.s3.options.PutObjectOptions;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.util.DateService;
-import org.jclouds.util.Utils;
 import org.jets3t.service.S3ServiceException;
 import org.jets3t.service.acl.AccessControlList;
 import org.jets3t.service.acl.CanonicalGrantee;
@@ -61,9 +59,8 @@ import org.jets3t.service.model.S3Owner;
 import org.jets3t.service.utils.RestUtils;
 import org.joda.time.DateTime;
 
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.Maps;
 
 /**
  * Convert between jCloud and JetS3t objects.
@@ -158,7 +155,7 @@ public class Util {
       jcObject.getMetadata().setStorageClass(jsObject.getStorageClass());
 
       if (jsObject.getMd5HashAsHex() != null) {
-         jcObject.getMetadata().setETag(HttpUtils.fromHexString(jsObject.getMd5HashAsHex()));
+         jcObject.getMetadata().setETag(jsObject.getMd5HashAsHex());
       }
 
       if (jsObject.getOwner() != null) {
@@ -207,11 +204,11 @@ public class Util {
       }
       // TODO: options.ifETagMatches should accept multiple match tags
       if (ifMatchTags != null && ifMatchTags.length > 0) {
-         options.ifETagMatches(Utils.encodeString(ifMatchTags[0]));
+         options.ifETagMatches(ifMatchTags[0]);
       }
       // TODO: options.ifETagDoesntMatch should accept multiple match tags
       if (ifNoneMatchTags != null && ifNoneMatchTags.length > 0) {
-         options.ifETagDoesntMatch(Utils.encodeString(ifNoneMatchTags[0]));
+         options.ifETagDoesntMatch(ifNoneMatchTags[0]);
       }
       return options;
    }
@@ -355,14 +352,14 @@ public class Util {
       }
       // TODO: options.ifETagMatches should accept multiple match tags
       if (ifMatchTags != null && ifMatchTags.length > 0) {
-         options.ifSourceETagMatches(Utils.encodeString(ifMatchTags[0]));
+         options.ifSourceETagMatches(ifMatchTags[0]);
       }
       // TODO: options.ifETagDoesntMatch should accept multiple match tags
       if (ifNoneMatchTags != null && ifNoneMatchTags.length > 0) {
-         options.ifSourceETagDoesntMatch(Utils.encodeString(ifNoneMatchTags[0]));
+         options.ifSourceETagDoesntMatch(ifNoneMatchTags[0]);
       }
       if (destinationMetadata != null) {
-         Multimap<String, String> newMetadata = HashMultimap.create();
+         Map<String, String> newMetadata = Maps.newHashMap();
          for (Object maybeUserMetadataObj : destinationMetadata.entrySet()) {
             String name = ((Entry<String, String>) maybeUserMetadataObj).getKey();
             String value = ((Entry<String, String>) maybeUserMetadataObj).getValue();

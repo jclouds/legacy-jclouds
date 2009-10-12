@@ -3,6 +3,7 @@ package org.jclouds.mezeo.pcs2.functions;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.lang.reflect.Constructor;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -12,18 +13,17 @@ import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Multimap;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class AddEntryIntoMultiMap implements Function<HttpResponse, Void>, InvocationContext {
+public class AddEntryIntoMap implements Function<HttpResponse, Void>, InvocationContext {
    ReturnStringIf200 returnIf200;
    private GeneratedHttpRequest<?> request;
 
    @Inject
-   private AddEntryIntoMultiMap(ReturnStringIf200 returnIf200) {
+   private AddEntryIntoMap(ReturnStringIf200 returnIf200) {
       this.returnIf200 = returnIf200;
    }
 
@@ -44,15 +44,15 @@ public class AddEntryIntoMultiMap implements Function<HttpResponse, Void>, Invoc
 
    {
       checkState(request.getArgs() != null, "args should be initialized at this point");
-      Multimap<String, String> map = null;
+      Map<String, String> map = null;
       String key = null;
       for (Object arg : request.getArgs()) {
-         if (arg instanceof Multimap)
-            map = (Multimap<String, String>) arg;
+         if (arg instanceof Map)
+            map = (Map<String, String>) arg;
          else if (arg instanceof String)
             key = arg.toString();
       }
-      checkState(map != null, "No Multimap found in args, improper method declarations");
+      checkState(map != null, "No Map found in args, improper method declarations");
       checkState(key != null, "No String found in args, improper method declarations");
 
       map.put(key, returnIf200.apply(from).trim());

@@ -53,7 +53,7 @@ public class BlobMetadata extends org.jclouds.blobstore.domain.BlobMetadata {
    }
 
    public BlobMetadata(String currentName, URI currentUrl, DateTime currentLastModified,
-            byte[] currentETag, long currentSize, String currentContentType,
+            String currentETag, long currentSize, String currentContentType,
             @Nullable byte[] contentMD5, @Nullable String currentContentEncoding,
             @Nullable String currentContentLanguage) {
       this(currentName);

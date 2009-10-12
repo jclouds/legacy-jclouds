@@ -25,8 +25,6 @@ package org.jclouds.mezeo.pcs2.util;
 
 import java.net.URI;
 
-import org.jclouds.http.HttpUtils;
-
 /**
  * Utilities for PCS connections.
  * 
@@ -36,16 +34,8 @@ public class PCSUtils {
    /**
     * converts the object id into something we can use as an etag
     */
-   public static byte[] getETag(URI url) {
-      String id = url.getPath().substring(url.getPath().lastIndexOf('/') + 1);
-      return getETag(id);
-   }
-
-   public static byte[] getETag(String id) {
-      id = id.replaceAll("-", "");
-      // parse url to create an "etag"
-      byte[] eTag = HttpUtils.fromHexString(id);
-      return eTag;
+   public static String getId(URI url) {
+      return url.getPath().substring(url.getPath().lastIndexOf('/') + 1);
    }
 
    public static String getContainerId(URI url) {

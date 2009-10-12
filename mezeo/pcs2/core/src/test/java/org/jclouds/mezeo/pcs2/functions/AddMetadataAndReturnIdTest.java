@@ -44,7 +44,6 @@ import org.jclouds.blobstore.domain.Key;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
@@ -67,14 +66,14 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "pcs2.AddMetadataAndParseResourceIdIntoBytesTest")
-public class AddMetadataAndParseResourceIdIntoBytesTest {
+@Test(groups = "unit", testName = "pcs2.AddMetadataAndReturnIdTest")
+public class AddMetadataAndReturnIdTest {
    static {
       RuntimeDelegate.setInstance(new RuntimeDelegateImpl());
    }
    HttpResponse response = new HttpResponse();
    ConcurrentMap<Key, String> fileCache;
-   private RestAnnotationProcessor<org.jclouds.mezeo.pcs2.functions.AddMetadataAndParseResourceIdIntoBytesTest.TestService> factory;
+   private RestAnnotationProcessor<TestService> factory;
    private Method method;
 
    private static interface TestService {
@@ -104,37 +103,31 @@ public class AddMetadataAndParseResourceIdIntoBytesTest {
 
    @Test(expectedExceptions = IllegalStateException.class)
    public void testNoArgs() {
-      AddMetadataAndParseResourceIdIntoBytes function = new AddMetadataAndParseResourceIdIntoBytes(
-               fileCache, createPCSUtil());
+      AddMetadataAndReturnId function = new AddMetadataAndReturnId(fileCache, createPCSUtil());
 
       function.apply(response);
    }
 
    @Test(expectedExceptions = IllegalStateException.class)
    public void testNoRequest() {
-      AddMetadataAndParseResourceIdIntoBytes function = new AddMetadataAndParseResourceIdIntoBytes(
-               fileCache, createPCSUtil());
+      AddMetadataAndReturnId function = new AddMetadataAndReturnId(fileCache, createPCSUtil());
       function.apply(response);
    }
 
    public void testGetEtag() {
       PCSUtil connection = createPCSUtil();
-      AddMetadataAndParseResourceIdIntoBytes function = new AddMetadataAndParseResourceIdIntoBytes(
-               fileCache, connection);
+      AddMetadataAndReturnId function = new AddMetadataAndReturnId(fileCache, connection);
       function.setContext(factory.createRequest(method, "container", new PCSFile("key"), URI
                .create("http://localhost:8080")));
       response.setContent(IOUtils
                .toInputStream("http://localhost/contents/7F143552-AAF5-11DE-BBB0-0BC388ED913B"));
-      byte[] eTag = function.apply(response);
-
-      byte[] expected = HttpUtils.fromHexString("7F143552AAF511DEBBB00BC388ED913B");
-      assertEquals(eTag, expected);
+      String eTag = function.apply(response);
+      assertEquals(eTag, "7F143552-AAF5-11DE-BBB0-0BC388ED913B");
    }
 
    public void testMetadataGetEtag() {
       PCSUtil connection = createPCSUtil();
-      AddMetadataAndParseResourceIdIntoBytes function = new AddMetadataAndParseResourceIdIntoBytes(
-               fileCache, connection);
+      AddMetadataAndReturnId function = new AddMetadataAndReturnId(fileCache, connection);
       PCSFile pcsFile = new PCSFile("key");
       pcsFile.getMetadata().getUserMetadata().put("foo", "bar");
       pcsFile.getMetadata().getUserMetadata().put("biz", "baz");
@@ -143,10 +136,8 @@ public class AddMetadataAndParseResourceIdIntoBytesTest {
                .create("http://localhost:8080")));
       response.setContent(IOUtils
                .toInputStream("http://localhost/contents/7F143552-AAF5-11DE-BBB0-0BC388ED913B"));
-      byte[] eTag = function.apply(response);
-
-      byte[] expected = HttpUtils.fromHexString("7F143552AAF511DEBBB00BC388ED913B");
-      assertEquals(eTag, expected);
+      String eTag = function.apply(response);
+      assertEquals(eTag, "7F143552-AAF5-11DE-BBB0-0BC388ED913B");
       verify(connection);
    }
 

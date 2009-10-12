@@ -28,10 +28,13 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.jclouds.aws.s3.domain.CannedAccessPolicy;
 import org.jclouds.aws.s3.reference.S3Headers;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 import org.jclouds.util.DateService;
 import org.joda.time.DateTime;
@@ -39,8 +42,6 @@ import org.joda.time.DateTime;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import javax.inject.Inject;
-import javax.inject.Named;
 
 /**
  * Contains options supported in the REST API for the COPY object operation.
@@ -76,7 +77,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
 
    public static final CopyObjectOptions NONE = new CopyObjectOptions();
 
-   private Multimap<String, String> metadata;
+   private Map<String, String> metadata;
 
    private CannedAccessPolicy acl = CannedAccessPolicy.PRIVATE;
 
@@ -149,7 +150,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
     * This header can be used with x-amz-copy-source-if-unmodified-since, but cannot be used with
     * other conditional copy headers.
     * 
-    * @see CopyObjectOptions#ifSourceETagMatches(byte[])
+    * @see CopyObjectOptions#ifSourceETagMatches(String)
     */
    public String getIfMatch() {
       return getFirstHeaderOrNull("x-amz-copy-source-if-match");
@@ -164,7 +165,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
     * This header can be used with x-amz-copy-source-if-modified-since, but cannot be used with
     * other conditional copy headers.
     * 
-    * @see CopyObjectOptions#ifSourceETagDoesntMatch(byte[])
+    * @see CopyObjectOptions#ifSourceETagDoesntMatch(String)
     */
    public String getIfNoneMatch() {
       return getFirstHeaderOrNull("x-amz-copy-source-if-none-match");
@@ -176,14 +177,14 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
     * 
     * @see #overrideMetadataWith(Multimap)
     */
-   public Multimap<String, String> getMetadata() {
+   public Map<String, String> getMetadata() {
       return metadata;
    }
 
    /**
     * Only return the object if it has changed since this time.
     * <p/>
-    * Not compatible with {@link #ifSourceETagMatches(byte[])} or
+    * Not compatible with {@link #ifSourceETagMatches(String)} or
     * {@link #ifSourceUnmodifiedSince(DateTime)}
     */
    public CopyObjectOptions ifSourceModifiedSince(DateTime ifModifiedSince) {
@@ -198,7 +199,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
    /**
     * Only return the object if it hasn't changed since this time.
     * <p/>
-    * Not compatible with {@link #ifSourceETagDoesntMatch(byte[])} or
+    * Not compatible with {@link #ifSourceETagDoesntMatch(String)} or
     * {@link #ifSourceModifiedSince(DateTime)}
     */
    public CopyObjectOptions ifSourceUnmodifiedSince(DateTime ifUnmodifiedSince) {
@@ -215,26 +216,26 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
     * The object's eTag hash should match the parameter <code>eTag</code>.
     * <p/>
     * <p/>
-    * Not compatible with {@link #ifSourceETagDoesntMatch(byte[])} or
+    * Not compatible with {@link #ifSourceETagDoesntMatch(String)} or
     * {@link #ifSourceModifiedSince(DateTime)}
     * 
     * @param eTag
     *           hash representing the entity
     */
-   public CopyObjectOptions ifSourceETagMatches(byte[] eTag) throws UnsupportedEncodingException {
+   public CopyObjectOptions ifSourceETagMatches(String eTag) throws UnsupportedEncodingException {
       checkState(getIfNoneMatch() == null,
                "ifETagDoesntMatch() is not compatible with ifETagMatches()");
       checkState(getIfModifiedSince() == null,
                "ifModifiedSince() is not compatible with ifETagMatches()");
-      replaceHeader("x-amz-copy-source-if-match", String.format("\"%1$s\"", HttpUtils
-               .toHexString(checkNotNull(eTag, "eTag"))));
+      replaceHeader("x-amz-copy-source-if-match", String.format("\"%1$s\"", checkNotNull(eTag,
+               "eTag")));
       return this;
    }
 
    /**
     * The object should not have a eTag hash corresponding with the parameter <code>eTag</code>.
     * <p/>
-    * Not compatible with {@link #ifSourceETagMatches(byte[])} or
+    * Not compatible with {@link #ifSourceETagMatches(String)} or
     * {@link #ifSourceUnmodifiedSince(DateTime)}
     * 
     * @param eTag
@@ -242,13 +243,13 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
     * @throws UnsupportedEncodingException
     *            if there was a problem converting this into an S3 eTag string
     */
-   public CopyObjectOptions ifSourceETagDoesntMatch(byte[] eTag)
+   public CopyObjectOptions ifSourceETagDoesntMatch(String eTag)
             throws UnsupportedEncodingException {
       checkState(getIfMatch() == null, "ifETagMatches() is not compatible with ifETagDoesntMatch()");
       Preconditions.checkState(getIfUnmodifiedSince() == null,
                "ifUnmodifiedSince() is not compatible with ifETagDoesntMatch()");
-      replaceHeader("x-amz-copy-source-if-none-match", String.format("\"%1$s\"", HttpUtils
-               .toHexString(checkNotNull(eTag, "ifETagDoesntMatch"))));
+      replaceHeader("x-amz-copy-source-if-none-match", String.format("\"%1$s\"", checkNotNull(eTag,
+               "ifETagDoesntMatch")));
       return this;
    }
 
@@ -259,7 +260,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
       returnVal.putAll(headers);
       if (metadata != null) {
          for (String key : metadata.keySet()) {
-            returnVal.putAll(key.startsWith(metadataPrefix) ? key : metadataPrefix + key, metadata
+            returnVal.put(key.startsWith(metadataPrefix) ? key : metadataPrefix + key, metadata
                      .get(key));
          }
          returnVal.put("x-amz-metadata-directive", "REPLACE");
@@ -270,7 +271,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
    /**
     * Use the provided metadata instead of what is on the source object.
     */
-   public CopyObjectOptions overrideMetadataWith(Multimap<String, String> metadata) {
+   public CopyObjectOptions overrideMetadataWith(Map<String, String> metadata) {
       checkNotNull(metadata, "metadata");
       this.metadata = metadata;
       return this;
@@ -302,18 +303,18 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
       }
 
       /**
-       * @see CopyObjectOptions#ifSourceETagMatches(byte[])
+       * @see CopyObjectOptions#ifSourceETagMatches(String)
        */
-      public static CopyObjectOptions ifSourceETagMatches(byte[] eTag)
+      public static CopyObjectOptions ifSourceETagMatches(String eTag)
                throws UnsupportedEncodingException {
          CopyObjectOptions options = new CopyObjectOptions();
          return options.ifSourceETagMatches(eTag);
       }
 
       /**
-       * @see CopyObjectOptions#ifSourceETagDoesntMatch(byte[])
+       * @see CopyObjectOptions#ifSourceETagDoesntMatch(String)
        */
-      public static CopyObjectOptions ifSourceETagDoesntMatch(byte[] eTag)
+      public static CopyObjectOptions ifSourceETagDoesntMatch(String eTag)
                throws UnsupportedEncodingException {
          CopyObjectOptions options = new CopyObjectOptions();
          return options.ifSourceETagDoesntMatch(eTag);
@@ -322,7 +323,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
       /**
        * @see #overrideMetadataWith(Multimap)
        */
-      public static CopyObjectOptions overrideMetadataWith(Multimap<String, String> metadata) {
+      public static CopyObjectOptions overrideMetadataWith(Map<String, String> metadata) {
          CopyObjectOptions options = new CopyObjectOptions();
          return options.overrideMetadataWith(metadata);
       }

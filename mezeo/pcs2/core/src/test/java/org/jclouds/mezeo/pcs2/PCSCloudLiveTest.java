@@ -35,6 +35,8 @@ import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.logging.Logger;
+import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.mezeo.pcs2.PCSCloud.Response;
 import org.jclouds.rest.RestClientFactory;
 import org.jclouds.rest.config.RestModule;
@@ -81,6 +83,11 @@ public class PCSCloudLiveTest {
          @Override
          protected void configure() {
             bind(URI.class).annotatedWith(PCS.class).toInstance(endpoint);
+            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
+               public Logger getLogger(String category) {
+                  return Logger.NULL;
+               }
+            });
          }
 
          @SuppressWarnings("unused")

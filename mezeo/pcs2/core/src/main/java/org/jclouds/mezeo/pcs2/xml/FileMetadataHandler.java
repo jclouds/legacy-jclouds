@@ -24,6 +24,7 @@
 package org.jclouds.mezeo.pcs2.xml;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -40,8 +41,7 @@ import org.jclouds.util.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -50,7 +50,7 @@ import com.google.common.collect.Sets;
 public class FileMetadataHandler extends BaseFileMetadataHandler<FileMetadata> {
    private final PCSUtil util;
    private FileMetadata fileMetadata = null;
-   protected Multimap<String, String> userMetadata = HashMultimap.create();
+   protected Map<String, String> userMetadata = Maps.newHashMap();
    Set<Future<Void>> puts = Sets.newHashSet();
    /**
     * maximum duration of an blob Request
@@ -89,7 +89,7 @@ public class FileMetadataHandler extends BaseFileMetadataHandler<FileMetadata> {
          int index = attributes.getIndex("xlink:href");
          if (index != -1) {
             String key = attributes.getValue(index).replaceAll(".*/metadata/", "");
-            puts.add(util.addEntryToMultiMap(userMetadata, key.toLowerCase(), URI.create(attributes
+            puts.add(util.addEntryToMap(userMetadata, key.toLowerCase(), URI.create(attributes
                      .getValue(index))));
          }
       }

@@ -80,6 +80,7 @@ import org.jclouds.rest.annotations.HostPrefixParam;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.MapEntityParam;
 import org.jclouds.rest.annotations.MatrixParams;
+import org.jclouds.rest.annotations.OverrideRequestFilters;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -446,6 +447,8 @@ public class RestAnnotationProcessor<T> {
          }
       }
       if (method.isAnnotationPresent(RequestFilters.class)) {
+         if (method.isAnnotationPresent(OverrideRequestFilters.class))
+            request.getFilters().clear();
          for (Class<? extends HttpRequestFilter> clazz : method.getAnnotation(RequestFilters.class)
                   .value()) {
             HttpRequestFilter instance = injector.getInstance(clazz);

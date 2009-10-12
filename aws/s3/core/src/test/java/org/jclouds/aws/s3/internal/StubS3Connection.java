@@ -23,7 +23,6 @@
  */
 package org.jclouds.aws.s3.internal;
 
-import java.util.Arrays;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -54,7 +53,6 @@ import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.integration.internal.StubBlobStore;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.util.DateService;
 import org.joda.time.DateTime;
@@ -187,14 +185,14 @@ public class StubS3Connection extends StubBlobStore<BucketMetadata, ObjectMetada
             if (source.containsKey(sourceObject)) {
                S3Object object = source.get(sourceObject);
                if (options.getIfMatch() != null) {
-                  if (!Arrays.equals(object.getMetadata().getETag(), HttpUtils
-                           .fromHexString(options.getIfMatch().replaceAll("\"", ""))))
+                  if (!object.getMetadata().getETag().equals(
+                           options.getIfMatch()))
                      throwResponseException(412);
 
                }
                if (options.getIfNoneMatch() != null) {
-                  if (Arrays.equals(object.getMetadata().getETag(), HttpUtils.fromHexString(options
-                           .getIfNoneMatch().replaceAll("\"", ""))))
+                  if (object.getMetadata().getETag().equals(
+                           options.getIfNoneMatch()))
                      throwResponseException(412);
                }
                if (options.getIfModifiedSince() != null) {
@@ -226,7 +224,7 @@ public class StubS3Connection extends StubBlobStore<BucketMetadata, ObjectMetada
       };
    }
 
-   public Future<byte[]> putObject(final String bucketName, final S3Object object,
+   public Future<String> putObject(final String bucketName, final S3Object object,
             @Nullable PutObjectOptions nullableOptions) {
       final PutObjectOptions options = (nullableOptions == null) ? new PutObjectOptions()
                : nullableOptions;
@@ -313,7 +311,7 @@ public class StubS3Connection extends StubBlobStore<BucketMetadata, ObjectMetada
       return super.getBlob(bucketName, key, optionsList.length != 0 ? optionsList[0] : null);
    }
 
-   public Future<byte[]> putObject(String bucketName, S3Object object,
+   public Future<String> putObject(String bucketName, S3Object object,
             PutObjectOptions... optionsList) {
       return putObject(bucketName, object, optionsList.length != 0 ? optionsList[0] : null);
    }
