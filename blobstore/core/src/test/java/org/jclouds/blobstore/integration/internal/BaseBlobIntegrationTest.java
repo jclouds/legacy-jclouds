@@ -389,6 +389,14 @@ public class BaseBlobIntegrationTest<S, C extends ContainerMetadata, M extends B
 
          validateMetadata(metadata);
          validateMetadata(context.getBlobStore().blobMetadata(containerName, key));
+
+         // write 2 items with the same key to ensure that provider doesn't accept dupes
+         object.getMetadata().getUserMetadata().put("Adrian", "wonderpuff");
+         object.getMetadata().getUserMetadata().put("Adrian", "powderpuff");
+
+         addBlobToContainer(containerName, object);
+         validateMetadata(context.getBlobStore().blobMetadata(containerName, key));
+
       } finally {
          returnContainer(containerName);
       }
