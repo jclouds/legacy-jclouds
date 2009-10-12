@@ -39,10 +39,12 @@ import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.nirvanix.sdn.binders.BindMetadataToQueryParams;
 import org.jclouds.nirvanix.sdn.domain.UploadInfo;
 import org.jclouds.nirvanix.sdn.filters.AddSessionTokenToRequest;
+import org.jclouds.nirvanix.sdn.filters.InsertUserContextIntoPath;
 import org.jclouds.nirvanix.sdn.functions.ParseUploadInfoFromJsonResponse;
 import org.jclouds.nirvanix.sdn.reference.SDNQueryParams;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.OverrideRequestFilters;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
@@ -58,9 +60,9 @@ import com.google.common.collect.Multimap;
  * @author Adrian Cole
  */
 @Endpoint(SDN.class)
-@QueryParams(keys = SDNQueryParams.OUTPUT, values = "json")
 @RequestFilters(AddSessionTokenToRequest.class)
 @SkipEncoding( { '/', ':' })
+@QueryParams(keys = SDNQueryParams.OUTPUT, values = "json")
 public interface SDNConnection {
 
    /**
@@ -68,7 +70,7 @@ public interface SDNConnection {
     * to. It returns the host to upload to and an Upload Token that will be used to authenticate.
     */
    @GET
-   @Path("/IMFS/GetStorageNode.ashx")
+   @Path("/ws/IMFS/GetStorageNode.ashx")
    @ResponseParser(ParseUploadInfoFromJsonResponse.class)
    UploadInfo getStorageNode(@QueryParam(SDNQueryParams.DESTFOLDERPATH) String folderPath,
             @QueryParam(SDNQueryParams.SIZEBYTES) long size);
@@ -84,7 +86,7 @@ public interface SDNConnection {
     * The SetMetadata method is used to set specified metadata for a file or folder.
     */
    @PUT
-   @Path("/Metadata/SetMetadata.ashx")
+   @Path("/ws/Metadata/SetMetadata.ashx")
    @QueryParams(keys = SDNQueryParams.PATH, values = "{path}")
    Future<Void> setMetadata(@PathParam("path") String path,
             @BinderParam(BindMetadataToQueryParams.class) Multimap<String, String> metadata);
@@ -93,7 +95,17 @@ public interface SDNConnection {
     * The GetMetadata method is used to retrieve all metadata from a file or folder.
     */
    @GET
-   @Path("/Metadata/GetMetadata.ashx")
+   @Path("/ws/Metadata/GetMetadata.ashx")
    @QueryParams(keys = SDNQueryParams.PATH, values = "{path}")
    Future<String> getMetadata(@PathParam("path") String path);
+
+   /**
+    * Get the contents of a file
+    */
+   @GET
+   @Path("/{path}")
+   @OverrideRequestFilters
+   @RequestFilters(InsertUserContextIntoPath.class)
+   Future<String> getFile(@PathParam("path") String path);
+
 }

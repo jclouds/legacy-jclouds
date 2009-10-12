@@ -42,7 +42,8 @@
         <jclouds.test.initializer>org.jclouds.nirvanix.sdn.integration.SDNTestInitializer</jclouds.test.initializer>
         <jclouds.test.user>${jclouds.nirvanix.sdn.username}</jclouds.test.user>
         <jclouds.test.key>${jclouds.nirvanix.sdn.password}</jclouds.test.key>
-        <jclouds.test.app>${jclouds.nirvanix.sdn.appkey}</jclouds.test.app>
+        <jclouds.test.appname>${jclouds.nirvanix.sdn.appname}</jclouds.test.appname>
+        <jclouds.test.appid>${jclouds.nirvanix.sdn.appkey}</jclouds.test.appid>
     </properties>
     <dependencies>
         <dependency>

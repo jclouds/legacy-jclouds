@@ -44,10 +44,14 @@ import org.jclouds.http.functions.ReturnStringIf200;
 import org.jclouds.http.functions.ReturnVoidIf2xx;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
+import org.jclouds.nirvanix.sdn.filters.AddSessionTokenToRequest;
+import org.jclouds.nirvanix.sdn.filters.InsertUserContextIntoPath;
 import org.jclouds.nirvanix.sdn.functions.ParseUploadInfoFromJsonResponse;
+import org.jclouds.nirvanix.sdn.reference.SDNConstants;
 import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.util.Jsr330;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -76,13 +80,15 @@ public class SDNConnectionTest {
       GeneratedHttpRequest<?> httpMethod = processor.createRequest(method, new Object[] {
                "adriansmovies", 734859264 });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/IMFS/GetStorageNode.ashx");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/ws/IMFS/GetStorageNode.ashx");
       assertEquals(httpMethod.getEndpoint().getQuery(),
                "output=json&sizeBytes=734859264&destFolderPath=adriansmovies");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(RestAnnotationProcessor.getParserOrThrowException(method),
                ParseUploadInfoFromJsonResponse.class);
+      assertEquals(httpMethod.getFilters().size(), 1);
+      assertEquals(httpMethod.getFilters().get(0).getClass(), AddSessionTokenToRequest.class);
    }
 
    public void testUpload() throws SecurityException, NoSuchMethodException, IOException {
@@ -106,6 +112,8 @@ public class SDNConnectionTest {
                BindBlobToMultipartFormTest.EXPECTS);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnVoidIf2xx.class);
+      assertEquals(httpMethod.getFilters().size(), 1);
+      assertEquals(httpMethod.getFilters().get(0).getClass(), AddSessionTokenToRequest.class);
    }
 
    public void testSetMetadata() throws SecurityException, NoSuchMethodException, IOException {
@@ -114,7 +122,7 @@ public class SDNConnectionTest {
                .createRequest(method, new Object[] { "adriansmovies/sushi.avi",
                         ImmutableMultimap.of("Chef", "Kawasaki") });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/Metadata/SetMetadata.ashx");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/ws/Metadata/SetMetadata.ashx");
       assertEquals(httpMethod.getEndpoint().getQuery(),
                "output=json&path=adriansmovies/sushi.avi&metadata=chef:Kawasaki");
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
@@ -124,6 +132,8 @@ public class SDNConnectionTest {
       assertEquals(httpMethod.getEntity(), null);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnVoidIf2xx.class);
+      assertEquals(httpMethod.getFilters().size(), 1);
+      assertEquals(httpMethod.getFilters().get(0).getClass(), AddSessionTokenToRequest.class);
    }
 
    public void testGetMetadata() throws SecurityException, NoSuchMethodException, IOException {
@@ -131,13 +141,31 @@ public class SDNConnectionTest {
       GeneratedHttpRequest<SDNConnection> httpMethod = processor.createRequest(method,
                new Object[] { "adriansmovies/sushi.avi" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/Metadata/GetMetadata.ashx");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/ws/Metadata/GetMetadata.ashx");
       assertEquals(httpMethod.getEndpoint().getQuery(), "output=json&path=adriansmovies/sushi.avi");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(httpMethod.getEntity(), null);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnStringIf200.class);
+      assertEquals(httpMethod.getFilters().size(), 1);
+      assertEquals(httpMethod.getFilters().get(0).getClass(), AddSessionTokenToRequest.class);
+   }
+
+   public void testGetFile() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = SDNConnection.class.getMethod("getFile", String.class);
+      GeneratedHttpRequest<SDNConnection> httpMethod = processor.createRequest(method,
+               new Object[] { "adriansmovies/sushi.avi" });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/adriansmovies/sushi.avi");
+      assertEquals(httpMethod.getEndpoint().getQuery(), "output=json");
+      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
+      assertEquals(httpMethod.getHeaders().size(), 0);
+      assertEquals(httpMethod.getEntity(), null);
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+               ReturnStringIf200.class);
+      assertEquals(httpMethod.getFilters().size(), 1);
+      assertEquals(httpMethod.getFilters().get(0).getClass(), InsertUserContextIntoPath.class);
    }
 
    @BeforeClass
@@ -152,6 +180,12 @@ public class SDNConnectionTest {
                   return Logger.NULL;
                }
             });
+            bindConstant().annotatedWith(Jsr330.named(SDNConstants.PROPERTY_SDN_APPKEY)).to(
+                     "appKey");
+            bindConstant().annotatedWith(Jsr330.named(SDNConstants.PROPERTY_SDN_APPNAME)).to(
+                     "appname");
+            bindConstant().annotatedWith(Jsr330.named(SDNConstants.PROPERTY_SDN_USERNAME)).to(
+                     "username");
          }
 
          @SuppressWarnings("unused")

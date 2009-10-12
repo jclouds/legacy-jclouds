@@ -51,7 +51,8 @@ import com.google.inject.Provides;
  */
 @Test(groups = "live", testName = "sdn.SDNAuthenticationLiveTest")
 public class SDNAuthenticationLiveTest {
-   String app = checkNotNull(System.getProperty("jclouds.test.app"), "jclouds.test.app");
+   String appname = checkNotNull(System.getProperty("jclouds.test.appname"), "jclouds.test.appname");
+   String appid = checkNotNull(System.getProperty("jclouds.test.appid"), "jclouds.test.appid");
    String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
    String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
@@ -60,7 +61,7 @@ public class SDNAuthenticationLiveTest {
    @Test
    public void testAuthentication() throws Exception {
       SDNAuthentication authentication = injector.getInstance(SDNAuthentication.class);
-      String response = authentication.authenticate(app, user, password);
+      String response = authentication.authenticate(appid, user, password);
       assertNotNull(response);
    }
 
@@ -70,7 +71,7 @@ public class SDNAuthenticationLiveTest {
          @Override
          protected void configure() {
             bind(URI.class).annotatedWith(SDN.class).toInstance(
-                     URI.create("http://services.nirvanix.com/ws"));
+                     URI.create("http://services.nirvanix.com"));
          }
 
          @SuppressWarnings("unused")

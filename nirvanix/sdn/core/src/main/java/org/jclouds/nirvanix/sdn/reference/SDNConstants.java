@@ -33,4 +33,5 @@ public interface SDNConstants {
    public static final String PROPERTY_SDN_USERNAME = "jclouds.nirvanix.sdn.username";
    public static final String PROPERTY_SDN_PASSWORD = "jclouds.nirvanix.sdn.password";
    public static final String PROPERTY_SDN_APPKEY = "jclouds.nirvanix.sdn.appkey";
+   public static final String PROPERTY_SDN_APPNAME = "jclouds.nirvanix.sdn.appname";
 }

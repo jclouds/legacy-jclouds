@@ -51,7 +51,7 @@ public interface SDNAuthentication {
 
    @GET
    @ResponseParser(ParseSessionTokenFromJsonResponse.class)
-   @Path("/Authentication/Login.ashx")
+   @Path("/ws/Authentication/Login.ashx")
    String authenticate(@QueryParam(SDNQueryParams.APPKEY) String appKey,
             @QueryParam(SDNQueryParams.USERNAME) String user,
             @QueryParam(SDNQueryParams.PASSWORD) String password);

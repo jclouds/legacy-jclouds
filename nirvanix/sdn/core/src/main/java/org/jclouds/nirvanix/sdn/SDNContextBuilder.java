@@ -45,9 +45,14 @@ import com.google.inject.TypeLiteral;
  */
 public class SDNContextBuilder extends CloudContextBuilder<SDNConnection> {
 
-   public SDNContextBuilder(String apikey, String id, String secret) {
+   public SDNContextBuilder(String apikey, String appname, String password) {
       this(new Properties());
-      authenticate(this, apikey, id, secret);
+      authenticate(this, apikey, appname, appname, password);
+   }
+
+   public SDNContextBuilder(String apikey, String appname, String username, String password) {
+      this(new Properties());
+      authenticate(this, apikey, appname, username, password);
    }
 
    public SDNContextBuilder(Properties props) {
@@ -61,19 +66,21 @@ public class SDNContextBuilder extends CloudContextBuilder<SDNConnection> {
       addAuthenticationModule(this);
    }
 
-   public static void authenticate(SDNContextBuilder builder, String appkey, String id,
-            String secret) {
+   public static void authenticate(SDNContextBuilder builder, String appkey, String appname,
+            String username, String password) {
       builder.getProperties().setProperty(SDNConstants.PROPERTY_SDN_APPKEY,
                checkNotNull(appkey, "appkey"));
+      builder.getProperties().setProperty(SDNConstants.PROPERTY_SDN_APPNAME,
+               checkNotNull(appname, "appname"));
       builder.getProperties().setProperty(SDNConstants.PROPERTY_SDN_USERNAME,
-               checkNotNull(id, "user"));
+               checkNotNull(username, "username"));
       builder.getProperties().setProperty(SDNConstants.PROPERTY_SDN_PASSWORD,
-               checkNotNull(secret, "key"));
+               checkNotNull(password, "password"));
    }
 
    public static void initialize(SDNContextBuilder builder) {
       builder.getProperties().setProperty(SDNConstants.PROPERTY_SDN_ENDPOINT,
-               "http://services.nirvanix.com/ws");
+               "http://services.nirvanix.com");
    }
 
    public static void addAuthenticationModule(SDNContextBuilder builder) {

@@ -1,7 +1,7 @@
 package org.jclouds.nirvanix.sdn;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.*;
 
 import java.net.URI;
 import java.util.concurrent.ExecutionException;
@@ -15,9 +15,6 @@ import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.nirvanix.sdn.domain.UploadInfo;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 
 /**
  * Tests behavior of {@code SDNConnection}
@@ -35,12 +32,14 @@ public class SDNConnectionLiveTest {
 
    @BeforeGroups(groups = { "live" })
    public void setupConnection() {
-      String app = checkNotNull(System.getProperty("jclouds.test.app"), "jclouds.test.app");
+      String appname = checkNotNull(System.getProperty("jclouds.test.appname"),
+               "jclouds.test.appname");
+      String appid = checkNotNull(System.getProperty("jclouds.test.appid"), "jclouds.test.appid");
       String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
-      connection = new SDNContextBuilder(app, user, password).withModules(new Log4JLoggingModule())
-               .buildContext().getApi();
+      connection = new SDNContextBuilder(appid, appname, user, password).withModules(
+               new Log4JLoggingModule()).buildContext().getApi();
    }
 
    public void testUploadToken() throws InterruptedException, ExecutionException, TimeoutException {
@@ -51,16 +50,17 @@ public class SDNConnectionLiveTest {
       assertNotNull(uploadInfo.getToken());
 
       connection.upload(uploadInfo.getHost(), uploadInfo.getToken(), containerName,
-               new Blob<BlobMetadata>("key", "value")).get(30, TimeUnit.SECONDS);
+               new Blob<BlobMetadata>("test.txt", "value")).get(30, TimeUnit.SECONDS);
 
-      
-      String metadataS = connection.getMetadata(containerName).get(30, TimeUnit.SECONDS);
+      String metadataS = connection.getMetadata(containerName + "/test.txt").get(30,
+               TimeUnit.SECONDS);
       System.err.println(metadataS);
-      
-      Multimap<String, String> metadata = ImmutableMultimap.of("chef", "sushi", "foo", "bar");
-      connection.setMetadata(containerName, metadata).get(30, TimeUnit.SECONDS);
-      metadataS = connection.getMetadata(containerName).get(30, TimeUnit.SECONDS);
-      System.err.println(metadataS);
+
+      String content = connection.getFile(containerName + "/test.txt").get(30, TimeUnit.SECONDS);
+      assertEquals(content, "value");
+
+      // Multimap<String, String> metadata = ImmutableMultimap.of("chef", "sushi", "foo", "bar");
+      // connection.setMetadata(containerName+"/test.txt", metadata).get(30, TimeUnit.SECONDS);
 
    }
 }

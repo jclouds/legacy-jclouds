@@ -64,7 +64,7 @@ public class SDNAuthenticationTest {
       HttpRequest httpMethod = processor.createRequest(method,
                new Object[] { "apple", "foo", "bar" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
-      assertEquals(httpMethod.getEndpoint().getPath(), "/Authentication/Login.ashx");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/ws/Authentication/Login.ashx");
       assertEquals(httpMethod.getEndpoint().getQuery(),
                "output=json&password=bar&username=foo&appKey=apple");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
