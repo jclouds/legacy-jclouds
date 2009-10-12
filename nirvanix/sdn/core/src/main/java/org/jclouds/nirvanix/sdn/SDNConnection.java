@@ -24,11 +24,11 @@
 package org.jclouds.nirvanix.sdn;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.concurrent.Future;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
@@ -49,8 +49,6 @@ import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
-
-import com.google.common.collect.Multimap;
 
 /**
  * Provides access to Nirvanix SDN resources via their REST API.
@@ -85,11 +83,11 @@ public interface SDNConnection {
    /**
     * The SetMetadata method is used to set specified metadata for a file or folder.
     */
-   @PUT
+   @GET
    @Path("/ws/Metadata/SetMetadata.ashx")
    @QueryParams(keys = SDNQueryParams.PATH, values = "{path}")
    Future<Void> setMetadata(@PathParam("path") String path,
-            @BinderParam(BindMetadataToQueryParams.class) Multimap<String, String> metadata);
+            @BinderParam(BindMetadataToQueryParams.class) Map<String, String> metadata);
 
    /**
     * The GetMetadata method is used to retrieve all metadata from a file or folder.

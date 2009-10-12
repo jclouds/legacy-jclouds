@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Collections;
+import java.util.Map;
 
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
@@ -56,8 +57,7 @@ import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -117,18 +117,16 @@ public class SDNConnectionTest {
    }
 
    public void testSetMetadata() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SDNConnection.class.getMethod("setMetadata", String.class, Multimap.class);
+      Method method = SDNConnection.class.getMethod("setMetadata", String.class, Map.class);
       GeneratedHttpRequest<SDNConnection> httpMethod = processor
                .createRequest(method, new Object[] { "adriansmovies/sushi.avi",
-                        ImmutableMultimap.of("Chef", "Kawasaki") });
+                        ImmutableMap.of("Chef", "Kawasaki") });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/ws/Metadata/SetMetadata.ashx");
       assertEquals(httpMethod.getEndpoint().getQuery(),
                "output=json&path=adriansmovies/sushi.avi&metadata=chef:Kawasaki");
-      assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
-      assertEquals(httpMethod.getHeaders().size(), 1);
-      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(0 + ""));
+      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
+      assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(httpMethod.getEntity(), null);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnVoidIf2xx.class);

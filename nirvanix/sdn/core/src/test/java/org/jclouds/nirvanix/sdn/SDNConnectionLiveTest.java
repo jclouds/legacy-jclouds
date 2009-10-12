@@ -1,9 +1,11 @@
 package org.jclouds.nirvanix.sdn;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -15,6 +17,8 @@ import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.nirvanix.sdn.domain.UploadInfo;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Tests behavior of {@code SDNConnection}
@@ -59,8 +63,8 @@ public class SDNConnectionLiveTest {
       String content = connection.getFile(containerName + "/test.txt").get(30, TimeUnit.SECONDS);
       assertEquals(content, "value");
 
-      // Multimap<String, String> metadata = ImmutableMultimap.of("chef", "sushi", "foo", "bar");
-      // connection.setMetadata(containerName+"/test.txt", metadata).get(30, TimeUnit.SECONDS);
+       Map<String, String> metadata = ImmutableMap.of("chef", "sushi", "foo", "bar");
+       connection.setMetadata(containerName+"/test.txt", metadata).get(30, TimeUnit.SECONDS);
 
    }
 }
