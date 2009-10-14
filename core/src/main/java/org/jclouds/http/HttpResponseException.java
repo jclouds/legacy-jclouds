@@ -51,27 +51,26 @@ public class HttpResponseException extends RuntimeException {
       this.content = content;
    }
 
-   public HttpResponseException(HttpCommand command, HttpResponse response,
+   public HttpResponseException(HttpCommand command, HttpResponse response, Throwable cause) {
+      this(String.format("command: %1$s failed with response: %2$s", command.getRequest()
+               .getRequestLine(), response.getStatusLine()), command, response, cause);
+   }
+
+   public HttpResponseException(HttpCommand command, HttpResponse response, String content,
             Throwable cause) {
-      this(String.format("command: %1$s failed with response: %2$s", command, response), command,
-               response, cause);
+      this(String.format("command: %1$s failed with response: %2$s; content: [%3$s]", command
+               .getRequest().getRequestLine(), response.getStatusLine()), command, response,
+               content, cause);
    }
 
-   public HttpResponseException(HttpCommand command, HttpResponse response,
-            String content, Throwable cause) {
-      this(String.format("command: %1$s failed with response: %2$s; content: [%3$s]", command,
-               response), command, response, content, cause);
-   }
-
-   public HttpResponseException(String message, HttpCommand command,
-            HttpResponse response) {
+   public HttpResponseException(String message, HttpCommand command, HttpResponse response) {
       super(message);
       this.command = command;
       this.response = response;
    }
 
-   public HttpResponseException(String message, HttpCommand command,
-            HttpResponse response, String content) {
+   public HttpResponseException(String message, HttpCommand command, HttpResponse response,
+            String content) {
       super(message);
       this.command = command;
       this.response = response;
@@ -79,14 +78,14 @@ public class HttpResponseException extends RuntimeException {
    }
 
    public HttpResponseException(HttpCommand command, HttpResponse response) {
-      this(String.format("command: %1$s failed with response: %2$s", command, response), command,
-               response);
+      this(String.format("command: %1$s failed with response: %2$s", command.getRequest()
+               .getRequestLine(), response.getStatusLine()), command, response);
    }
 
-   public HttpResponseException(HttpCommand command, HttpResponse response,
-            String content) {
-      this(String.format("command: %1$s failed with response: %2$s; content: [%3$s]", command,
-               response, content), command, response, content);
+   public HttpResponseException(HttpCommand command, HttpResponse response, String content) {
+      this(String.format("command: %1$s failed with response: %2$s; content: [%3$s]", command
+               .getRequest().getRequestLine(), response.getStatusLine(), content), command,
+               response, content);
    }
 
    public HttpCommand getCommand() {
