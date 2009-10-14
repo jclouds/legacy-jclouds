@@ -50,7 +50,6 @@ import org.jclouds.util.DateService;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 /**
@@ -128,11 +127,11 @@ public class StubAzureBlobConnection extends StubBlobStore<ContainerMetadata, Bl
       throw new UnsupportedOperationException();
    }
 
-   public void setContainerMetadata(String container, Multimap<String, String> metadata) {
+   public void setContainerMetadata(String container, Map<String, String> metadata) {
       throw new UnsupportedOperationException();
    }
 
-   public void setBlobMetadata(String container, String key, Multimap<String, String> metadata) {
+   public void setBlobMetadata(String container, String key, Map<String, String> metadata) {
       throw new UnsupportedOperationException();
    }
 }

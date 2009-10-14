@@ -31,6 +31,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.Collections;
+import java.util.Map;
 
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
@@ -62,8 +63,8 @@ import org.jclouds.util.Jsr330;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -301,10 +302,10 @@ public class AzureBlobConnectionTest {
 
    public void testSetContainerMetadata() throws SecurityException, NoSuchMethodException {
       Method method = AzureBlobConnection.class.getMethod("setContainerMetadata", String.class,
-               Multimap.class);
+               Map.class);
 
       GeneratedHttpRequest<AzureBlobConnection> httpMethod = processor.createRequest(method,
-               new Object[] { "container", ImmutableMultimap.of("key", "value") });
+               new Object[] { "container", ImmutableMap.of("key", "value") });
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/container");
       assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container&comp=metadata");
@@ -323,9 +324,9 @@ public class AzureBlobConnectionTest {
 
    public void testSetBlobMetadata() throws SecurityException, NoSuchMethodException {
       Method method = AzureBlobConnection.class.getMethod("setBlobMetadata", String.class,
-               String.class, Multimap.class);
+               String.class, Map.class);
       GeneratedHttpRequest<AzureBlobConnection> httpMethod = processor.createRequest(method,
-               new Object[] { "container", "blob", ImmutableMultimap.of("key", "value") });
+               new Object[] { "container", "blob", ImmutableMap.of("key", "value") });
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/container/blob");
       assertEquals(httpMethod.getEndpoint().getQuery(), "comp=metadata");

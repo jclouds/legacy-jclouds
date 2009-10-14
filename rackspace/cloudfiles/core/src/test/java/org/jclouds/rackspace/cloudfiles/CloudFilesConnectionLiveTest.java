@@ -30,6 +30,7 @@ import static org.testng.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
@@ -52,9 +53,8 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.Maps;
 
 /**
  * Tests behavior of {@code JaxrsAnnotationProcessor}
@@ -307,7 +307,7 @@ public class CloudFilesConnectionLiveTest {
       assertEquals(metadata.getUserMetadata().get("metadata"), "metadata-value");
 
       // // Test POST to update object's metadata
-      Multimap<String, String> userMetadata = HashMultimap.create();
+      Map<String, String> userMetadata = Maps.newHashMap();
       userMetadata.put("New-Metadata-1", "value-1");
       userMetadata.put("New-Metadata-2", "value-2");
       assertTrue(connection.setObjectMetadata(containerName, object.getKey(), userMetadata));

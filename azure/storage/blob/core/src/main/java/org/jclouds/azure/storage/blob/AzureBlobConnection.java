@@ -23,6 +23,7 @@
  */
 package org.jclouds.azure.storage.blob;
 
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -51,7 +52,7 @@ import org.jclouds.azure.storage.filters.SharedKeyAuthentication;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.reference.AzureStorageHeaders;
 import org.jclouds.blobstore.binders.BindBlobToEntity;
-import org.jclouds.blobstore.binders.BindMultimapToHeadersWithPrefix;
+import org.jclouds.blobstore.binders.BindMapToHeadersWithPrefix;
 import org.jclouds.blobstore.functions.BlobKey;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
@@ -68,8 +69,6 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.XMLResponseParser;
-
-import com.google.common.collect.Multimap;
 
 /**
  * Provides access to Azure Blob via their REST API.
@@ -144,7 +143,7 @@ public interface AzureBlobConnection {
    @Path("{container}")
    @QueryParams(keys = { "restype", "comp" }, values = { "container", "metadata" })
    void setContainerMetadata(@PathParam("container") String container,
-            @BinderParam(BindMultimapToHeadersWithPrefix.class) Multimap<String, String> metadata);
+            @BinderParam(BindMapToHeadersWithPrefix.class) Map<String, String> metadata);
 
    /**
     * The Delete Container operation marks the specified container for deletion. The container and
@@ -302,7 +301,7 @@ public interface AzureBlobConnection {
    @Path("{container}/{key}")
    @QueryParams(keys = { "comp" }, values = { "metadata" })
    void setBlobMetadata(@PathParam("container") String container, @PathParam("key") String key,
-            @BinderParam(BindMultimapToHeadersWithPrefix.class) Multimap<String, String> metadata);
+            @BinderParam(BindMapToHeadersWithPrefix.class) Map<String, String> metadata);
 
    /**
     * The Delete Blob operation marks the specified blob for deletion. The blob is later deleted

@@ -25,6 +25,7 @@ package org.jclouds.blobstore.binders;
 
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 
+import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.inject.Inject;
@@ -33,20 +34,18 @@ import javax.inject.Named;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
 
-import com.google.common.collect.Multimap;
-
-public class BindMultimapToHeadersWithPrefix implements Binder {
+public class BindMapToHeadersWithPrefix implements Binder {
    private final String metadataPrefix;
 
    @Inject
-   public BindMultimapToHeadersWithPrefix(@Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix) {
+   public BindMapToHeadersWithPrefix(@Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix) {
       this.metadataPrefix = metadataPrefix;
    }
 
    @SuppressWarnings("unchecked")
    public void bindToRequest(HttpRequest request, Object entity) {
-      Multimap<String, String> userMetadata = (Multimap<String, String>) entity;
-      for (Entry<String, String> entry : userMetadata.entries()) {
+      Map<String, String> userMetadata = (Map<String, String>) entity;
+      for (Entry<String, String> entry : userMetadata.entrySet()) {
          if (entry.getKey().startsWith(metadataPrefix)) {
             request.getHeaders().put(entry.getKey().toLowerCase(), entry.getValue());
          } else {

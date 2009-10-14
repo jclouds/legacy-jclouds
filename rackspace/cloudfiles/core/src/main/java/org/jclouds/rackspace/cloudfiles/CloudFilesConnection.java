@@ -23,6 +23,7 @@
  */
 package org.jclouds.rackspace.cloudfiles;
 
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -37,7 +38,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.jclouds.blobstore.binders.BindBlobToEntity;
-import org.jclouds.blobstore.binders.BindMultimapToHeadersWithPrefix;
+import org.jclouds.blobstore.binders.BindMapToHeadersWithPrefix;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.BlobKey;
@@ -73,8 +74,6 @@ import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
-
-import com.google.common.collect.Multimap;
 
 /**
  * Provides access to Cloud Files via their REST API.
@@ -142,7 +141,7 @@ public interface CloudFilesConnection {
    boolean setObjectMetadata(
             @PathParam("container") String container,
             @PathParam("key") String key,
-            @BinderParam(BindMultimapToHeadersWithPrefix.class) Multimap<String, String> userMetadata);
+            @BinderParam(BindMapToHeadersWithPrefix.class) Map<String, String> userMetadata);
 
    @GET
    @ResponseParser(ParseContainerCDNMetadataListFromGsonResponse.class)

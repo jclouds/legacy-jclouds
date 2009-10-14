@@ -43,8 +43,6 @@ import org.jclouds.rackspace.cloudfiles.options.ListCdnContainerOptions;
 import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
 import org.jclouds.util.DateService;
 
-import com.google.common.collect.Multimap;
-
 /**
  * Implementation of {@link CloudFilesBlobStore} which keeps all data in a local Map object.
  * 
@@ -71,8 +69,7 @@ public class StubCloudFilesConnection extends
       throw new UnsupportedOperationException();
    }
 
-   public boolean setObjectMetadata(String container, String key,
-            Multimap<String, String> userMetadata) {
+   public boolean setObjectMetadata(String container, String key, Map<String, String> userMetadata) {
       throw new UnsupportedOperationException();
    }
 
