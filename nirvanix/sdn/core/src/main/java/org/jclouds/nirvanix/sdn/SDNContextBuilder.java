@@ -32,6 +32,7 @@ import java.util.concurrent.ExecutorService;
 
 import org.jclouds.cloud.CloudContextBuilder;
 import org.jclouds.nirvanix.sdn.config.RestSDNAuthenticationModule;
+import org.jclouds.nirvanix.sdn.config.RestSDNConnectionModule;
 import org.jclouds.nirvanix.sdn.config.SDNContextModule;
 import org.jclouds.nirvanix.sdn.reference.SDNConstants;
 
@@ -85,6 +86,7 @@ public class SDNContextBuilder extends CloudContextBuilder<SDNConnection> {
 
    public static void addAuthenticationModule(SDNContextBuilder builder) {
       builder.withModule(new RestSDNAuthenticationModule());
+      builder.withModule(new RestSDNConnectionModule());
    }
 
    public static SDNContextBuilder withEndpoint(SDNContextBuilder builder, URI endpoint) {

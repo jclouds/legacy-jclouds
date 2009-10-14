@@ -23,16 +23,8 @@
  */
 package org.jclouds.nirvanix.sdn.config;
 
-import java.net.URI;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
-
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.nirvanix.sdn.SDN;
-import org.jclouds.nirvanix.sdn.SDNAuthentication;
-import org.jclouds.nirvanix.sdn.SessionToken;
-import org.jclouds.nirvanix.sdn.reference.SDNConstants;
+import org.jclouds.nirvanix.sdn.SDNConnection;
 import org.jclouds.rest.RestClientFactory;
 
 import com.google.inject.AbstractModule;
@@ -44,26 +36,25 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 @RequiresHttp
-public class RestSDNAuthenticationModule extends AbstractModule {
+public class RestSDNConnectionModule extends AbstractModule {
 
    @Override
    protected void configure() {
+      bindErrorHandlers();
+      bindRetryHandlers();
    }
 
    @Provides
-   @Singleton
-   @SDN
-   protected URI provideAuthenticationURI(@Named(SDNConstants.PROPERTY_SDN_ENDPOINT) String endpoint) {
-      return URI.create(endpoint);
+   protected SDNConnection provideConnection(RestClientFactory factory) {
+      return factory.create(SDNConnection.class);
+   }
+   
+   protected void bindErrorHandlers() {
+      // TODO
    }
 
-   @Provides
-   @SessionToken
-   protected String provideSessionToken(RestClientFactory factory,
-            @Named(SDNConstants.PROPERTY_SDN_APPKEY) String appKey,
-            @Named(SDNConstants.PROPERTY_SDN_USERNAME) String username,
-            @Named(SDNConstants.PROPERTY_SDN_PASSWORD) String password) {
-      return factory.create(SDNAuthentication.class).authenticate(appKey, username, password);
+   protected void bindRetryHandlers() {
+      // TODO retry on 401 by AuthenticateRequest.update()
    }
 
 }
