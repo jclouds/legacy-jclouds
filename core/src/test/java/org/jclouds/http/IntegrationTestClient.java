@@ -23,6 +23,7 @@
  */
 package org.jclouds.http;
 
+import java.util.Map;
 import java.util.concurrent.Future;
 
 import javax.ws.rs.GET;
@@ -33,6 +34,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
+import org.apache.commons.io.IOUtils;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.rest.annotations.BinderParam;
@@ -42,6 +44,7 @@ import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.MapEntityParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.rest.binders.BindMapToMatrixParams;
 import org.jclouds.rest.binders.BindToJsonEntity;
 import org.jclouds.rest.binders.BindToStringEntity;
 import org.jclouds.rest.internal.RestAnnotationProcessorTest.Localhost;
@@ -98,8 +101,26 @@ public interface IntegrationTestClient {
 
    @POST
    @Path("objects/{id}")
+   Future<String> postAsInputStream(@PathParam("id") String id,
+            @BinderParam(BindToInputStreamEntity.class) String toPut);
+   
+   static class BindToInputStreamEntity extends BindToStringEntity {
+      @Override
+      public void bindToRequest(HttpRequest request, Object entity) {
+         super.bindToRequest(request, entity);
+         request.setEntity(IOUtils.toInputStream(entity.toString()));
+      }
+   }
+   
+   @POST
+   @Path("objects/{id}")
    @MapBinder(BindToJsonEntity.class)
    Future<String> postJson(@PathParam("id") String id, @MapEntityParam("key") String toPut);
+   
+   @POST
+   @Path("objects/{id}/action/{action}")
+   Future<String> action(@PathParam("id") String id, @PathParam("action") String action,
+            @BinderParam(BindMapToMatrixParams.class) Map<String, String> options);
 
    @GET
    @Path("objects/{id}")

@@ -23,6 +23,8 @@
  */
 package org.jclouds.gae;
 
+import static org.testng.Assert.assertEquals;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.Map;
@@ -53,6 +55,29 @@ public class GaeHttpCommandExecutorServiceIntegrationTest extends
 
    @Override
    @Test(invocationCount = 50, timeOut = 3000)
+   public void testKillRobotSlowly() throws MalformedURLException, ExecutionException,
+            InterruptedException, TimeoutException {
+      setupApiProxy();
+      super.testKillRobotSlowly();
+   }
+
+   @Override
+   @Test(invocationCount = 50, timeOut = 3000)
+   public void testPostAsInputStream() throws MalformedURLException, ExecutionException,
+            InterruptedException, TimeoutException {
+      setupApiProxy();
+      super.testPostAsInputStream();
+   }
+
+   @Override
+   @Test(dependsOnMethods = "testPostAsInputStream")
+   public void testPostResults() {
+      // GAE converts everything to byte arrays and so failures are not gonna happen
+      assertEquals(postFailures.get(), 0);
+   }
+
+   @Override
+   @Test(invocationCount = 50, timeOut = 3000)
    public void testPostBinder() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
       setupApiProxy();
@@ -61,10 +86,11 @@ public class GaeHttpCommandExecutorServiceIntegrationTest extends
 
    @BeforeTest
    void validateExecutor() {
-//      ExecutorService executorService = injector.getInstance(ExecutorService.class);
-//      assert executorService.getClass().isAnnotationPresent(SingleThreadCompatible.class) : Arrays
-//               .asList(executorService.getClass().getAnnotations()).toString()
-//               + executorService.getClass().getName();
+      // ExecutorService executorService = injector.getInstance(ExecutorService.class);
+      // assert executorService.getClass().isAnnotationPresent(SingleThreadCompatible.class) :
+      // Arrays
+      // .asList(executorService.getClass().getAnnotations()).toString()
+      // + executorService.getClass().getName();
 
    }
 

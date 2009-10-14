@@ -30,10 +30,14 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jclouds.http.options.GetOptions;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Tests for functionality all HttpCommandExecutorServices must express. These tests will operate
@@ -117,6 +121,30 @@ public abstract class BaseHttpCommandExecutorServiceTest extends BaseJettyTest {
       assertEquals(put.get(10, TimeUnit.SECONDS).trim(), "fooPOST");
    }
 
+   @Test(invocationCount = 50, timeOut = 10000)
+   public void testPostAsInputStream() throws MalformedURLException, ExecutionException,
+            InterruptedException, TimeoutException {
+      try {
+         Future<String> put = client.postAsInputStream("", "foo");
+         assertEquals(put.get(10, TimeUnit.SECONDS).trim(), "fooPOST");
+      } catch (Exception e) {
+         postFailures.incrementAndGet();
+      }
+   }
+
+   protected AtomicInteger postFailures = new AtomicInteger();
+
+   @BeforeTest
+   void resetCounters() {
+      postFailures.set(0);
+   }
+
+   @Test(dependsOnMethods = "testPostAsInputStream")
+   public void testPostResults() {
+      // failures happen when trying to replay inputstreams
+      assert postFailures.get() > 0;
+   }
+
    @Test(invocationCount = 50, timeOut = 5000)
    public void testPostBinder() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
@@ -136,6 +164,13 @@ public abstract class BaseHttpCommandExecutorServiceTest extends BaseJettyTest {
             InterruptedException, TimeoutException {
       Future<String> put = client.upload("redirect", "foo");
       assertEquals(put.get(10, TimeUnit.SECONDS).trim(), "fooPUTREDIRECT");
+   }
+
+   @Test(invocationCount = 50, timeOut = 5000)
+   public void testKillRobotSlowly() throws MalformedURLException, ExecutionException,
+            InterruptedException, TimeoutException {
+      Future<String> dead = client.action("robot", "kill", ImmutableMap.of("death", "slow"));
+      assertEquals(dead.get(10, TimeUnit.SECONDS).trim(), "robot->kill:{death=slow}");
    }
 
    @Test(invocationCount = 50, timeOut = 5000)

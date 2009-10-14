@@ -26,8 +26,11 @@ package org.jclouds.http;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Singleton;
 import javax.servlet.ServletException;
@@ -53,6 +56,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 
+import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -111,10 +115,13 @@ public abstract class BaseJettyTest {
    private AtomicInteger cycle = new AtomicInteger(0);
    private Server server2;
    private CloudContext<IntegrationTestClient> context;
+   private int testPort;
+   static final Pattern actionPattern = Pattern.compile("/objects/(.*)/action/([a-z]*);?(.*)");
 
    @BeforeTest
    @Parameters( { "test-jetty-port" })
    public void setUpJetty(@Optional("8123") final int testPort) throws Exception {
+      this.testPort = testPort;
       Handler server1Handler = new AbstractHandler() {
          public void handle(String target, HttpServletRequest request,
                   HttpServletResponse response, int dispatch) throws IOException, ServletException {
@@ -131,12 +138,16 @@ public abstract class BaseJettyTest {
                   response.sendError(500, "no content");
                }
             } else if (request.getMethod().equals("POST")) {
+               if (redirectEveryTwentyRequests(request, response))
+                  return;
+               if (failEveryTenRequests(request, response))
+                  return;
                if (request.getContentLength() > 0) {
                   response.setStatus(HttpServletResponse.SC_OK);
                   response.getWriter().println(
                            Utils.toStringAndClose(request.getInputStream()) + "POST");
                } else {
-                  response.sendError(500, "no content");
+                  handleAction(request, response);
                }
             } else if (request.getHeader("Range") != null) {
                response.sendError(404, "no content");
@@ -145,7 +156,7 @@ public abstract class BaseJettyTest {
                response.setStatus(HttpServletResponse.SC_OK);
                response.getWriter().println("test");
             } else {
-               if (failOnRequest(request, response))
+               if (failEveryTenRequests(request, response))
                   return;
                response.setContentType("text/xml");
                response.setStatus(HttpServletResponse.SC_OK);
@@ -153,6 +164,7 @@ public abstract class BaseJettyTest {
             }
             ((Request) request).setHandled(true);
          }
+
       };
 
       server = new Server(testPort);
@@ -167,8 +179,14 @@ public abstract class BaseJettyTest {
                   response.setStatus(HttpServletResponse.SC_OK);
                   response.getWriter().println(
                            Utils.toStringAndClose(request.getInputStream()) + "PUTREDIRECT");
+               }
+            } else if (request.getMethod().equals("POST")) {
+               if (request.getContentLength() > 0) {
+                  response.setStatus(HttpServletResponse.SC_OK);
+                  response.getWriter().println(
+                           Utils.toStringAndClose(request.getInputStream()) + "POST");
                } else {
-                  response.sendError(500, "no content");
+                  handleAction(request, response);
                }
             } else {
                response.setContentType("text/xml");
@@ -227,10 +245,20 @@ public abstract class BaseJettyTest {
     * @return
     * @throws IOException
     */
-   protected boolean failOnRequest(HttpServletRequest request, HttpServletResponse response)
+   protected boolean failEveryTenRequests(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
       if (cycle.incrementAndGet() % 10 == 0) {
          response.sendError(500);
+         ((Request) request).setHandled(true);
+         return true;
+      }
+      return false;
+   }
+
+   protected boolean redirectEveryTwentyRequests(HttpServletRequest request,
+            HttpServletResponse response) throws IOException {
+      if (cycle.incrementAndGet() % 20 == 0) {
+         response.sendRedirect("http://localhost:" + (testPort + 1));
          ((Request) request).setHandled(true);
          return true;
       }
@@ -247,4 +275,27 @@ public abstract class BaseJettyTest {
       return false;
    }
 
+   private void handleAction(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+      final Matcher matcher = actionPattern.matcher(request.getRequestURI());
+      boolean matchFound = matcher.find();
+      if (matchFound) {
+         String objectId = matcher.group(1);
+         String action = matcher.group(2);
+         Map<String, String> options = Maps.newHashMap();
+         if (matcher.groupCount() == 3) {
+            String optionsGroup = matcher.group(3);
+            for (String entry : optionsGroup.split(";")) {
+               if (entry.indexOf('=') >= 0) {
+                  String[] keyValue = entry.split("=");
+                  options.put(keyValue[0], keyValue[1]);
+               }
+            }
+         }
+         response.setStatus(HttpServletResponse.SC_OK);
+         response.getWriter().println(objectId + "->" + action + ":" + options);
+      } else {
+         response.sendError(500, "no content");
+      }
+   }
 }

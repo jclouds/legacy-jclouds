@@ -66,6 +66,12 @@ public class GeneratedHttpRequest<T> extends HttpRequest {
       return processor;
    }
 
+   public void replaceMatrixParam(String name, Object... values) {
+      UriBuilder builder = UriBuilder.fromUri(getEndpoint());
+      builder.replaceMatrixParam(name, values);
+      replacePath(builder.build().getPath());
+   }
+   
    public void replaceQueryParam(String name, Object... values) {
       UriBuilder builder = UriBuilder.fromUri(getEndpoint());
       builder.replaceQueryParam(name, values);

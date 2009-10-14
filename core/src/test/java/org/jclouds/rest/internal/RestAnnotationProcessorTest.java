@@ -87,6 +87,7 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.VirtualHost;
+import org.jclouds.rest.binders.BindMapToMatrixParams;
 import org.jclouds.rest.binders.BindToJsonEntity;
 import org.jclouds.rest.binders.BindToStringEntity;
 import org.jclouds.rest.config.RestModule;
@@ -100,6 +101,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.google.inject.AbstractModule;
@@ -737,6 +739,24 @@ public class RestAnnotationProcessorTest {
       String query = factory(TestQueryReplace.class).createRequest(oneQuery,
                new Object[] { "robot", new TestReplaceQueryOptions() }).getEndpoint().getQuery();
       assertEquals(query, "x-amz-copy-source=/robot");
+   }
+
+   @Endpoint(Localhost.class)
+   private interface TestMapMatrixParams {
+      @POST
+      @Path("objects/{id}/action/{action}")
+      Future<String> action(@PathParam("id") String id, @PathParam("action") String action,
+               @BinderParam(BindMapToMatrixParams.class) Map<String, String> options);
+   }
+
+   public void testTestMapMatrixParams() throws SecurityException, NoSuchMethodException,
+            UnsupportedEncodingException {
+      Method method = TestMapMatrixParams.class.getMethod("action", String.class, String.class,
+               Map.class);
+      GeneratedHttpRequest<TestMapMatrixParams> httpMethod = factory(TestMapMatrixParams.class).createRequest(method,
+               new Object[] { "robot", "kill", ImmutableMap.of("death", "slow") });
+      assertEquals(httpMethod.getRequestLine(), "POST http://localhost:8080/objects/robot/action/kill;death=slow HTTP/1.1");
+      assertEquals(httpMethod.getHeaders().size(), 0);
    }
 
    @Endpoint(Localhost.class)

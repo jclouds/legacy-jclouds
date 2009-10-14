@@ -66,7 +66,7 @@ public class BackoffLimitedRetryJavaIntegrationTest extends BaseJettyTest {
    }
 
    @Override
-   protected boolean failOnRequest(HttpServletRequest request, HttpServletResponse response)
+   protected boolean failEveryTenRequests(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
       requestCount++;
       boolean shouldFail = requestCount >= beginToFailOnRequestNumber
