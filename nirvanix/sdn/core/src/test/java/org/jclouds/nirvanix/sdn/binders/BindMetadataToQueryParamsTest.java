@@ -14,7 +14,7 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RuntimeDelegateImpl;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Tests behavior of {@code BindMetadataToQueryParams}
@@ -41,7 +41,7 @@ public class BindMetadataToQueryParamsTest {
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       request.replaceQueryParam("metadata", "imagename:foo", "serverid:2");
       replay(request);
-      binder.bindToRequest(request, ImmutableMultimap.of("imageName", "foo", "serverId", "2"));
+      binder.bindToRequest(request, ImmutableMap.of("imageName", "foo", "serverId", "2"));
    }
 
    @Test(expectedExceptions = { NullPointerException.class, IllegalStateException.class })
