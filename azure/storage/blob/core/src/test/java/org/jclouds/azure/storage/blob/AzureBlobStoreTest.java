@@ -37,6 +37,7 @@ import javax.ws.rs.core.HttpHeaders;
 import org.jclouds.azure.storage.AzureBlob;
 import org.jclouds.azure.storage.blob.domain.Blob;
 import org.jclouds.azure.storage.blob.functions.ReturnTrueIfContainerAlreadyExists;
+import org.jclouds.azure.storage.config.RestAzureStorageConnectionModule;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
@@ -75,7 +76,8 @@ public class AzureBlobStoreTest {
    public void testListContainers() throws SecurityException, NoSuchMethodException {
       Method method = AzureBlobStore.class.getMethod("listContainers");
 
-      GeneratedHttpRequest<AzureBlobStore> httpMethod = processor.createRequest(method, new Object[] {});
+      GeneratedHttpRequest<AzureBlobStore> httpMethod = processor.createRequest(method,
+               new Object[] {});
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/");
       assertEquals(httpMethod.getEndpoint().getQuery(), "comp=list");
@@ -83,8 +85,7 @@ public class AzureBlobStoreTest {
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
                .singletonList("2009-07-17"));
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               ParseSax.class);
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(), ParseSax.class);
       // TODO check generic type of response parser
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
@@ -92,7 +93,8 @@ public class AzureBlobStoreTest {
    public void testCreateContainer() throws SecurityException, NoSuchMethodException {
       Method method = AzureBlobStore.class.getMethod("createContainer", String.class);
 
-      GeneratedHttpRequest<AzureBlobStore> httpMethod = processor.createRequest(method, new Object[] { "container" });
+      GeneratedHttpRequest<AzureBlobStore> httpMethod = processor.createRequest(method,
+               new Object[] { "container" });
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/container");
       assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container");
@@ -111,7 +113,8 @@ public class AzureBlobStoreTest {
    public void testDeleteContainer() throws SecurityException, NoSuchMethodException {
       Method method = AzureBlobStore.class.getMethod("deleteContainer", String.class);
 
-      GeneratedHttpRequest<AzureBlobStore> httpMethod = processor.createRequest(method, new Object[] { "container" });
+      GeneratedHttpRequest<AzureBlobStore> httpMethod = processor.createRequest(method,
+               new Object[] { "container" });
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/container");
       assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container");
@@ -129,7 +132,8 @@ public class AzureBlobStoreTest {
    public void testListBlobs() throws SecurityException, NoSuchMethodException {
       Method method = AzureBlobStore.class.getMethod("listBlobs", String.class);
 
-      GeneratedHttpRequest<AzureBlobStore> httpMethod = processor.createRequest(method, new Object[] { "container" });
+      GeneratedHttpRequest<AzureBlobStore> httpMethod = processor.createRequest(method,
+               new Object[] { "container" });
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/container");
       assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container&comp=list");
@@ -137,8 +141,7 @@ public class AzureBlobStoreTest {
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
                .singletonList("2009-07-17"));
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               ParseSax.class);
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(), ParseSax.class);
       // TODO check generic type of response parser
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
@@ -148,8 +151,8 @@ public class AzureBlobStoreTest {
 
       Blob blob = new Blob("test");
       blob.setData("test");
-      GeneratedHttpRequest<AzureBlobStore> httpMethod = processor
-               .createRequest(method, new Object[] { "mycontainer", blob });
+      GeneratedHttpRequest<AzureBlobStore> httpMethod = processor.createRequest(method,
+               new Object[] { "mycontainer", blob });
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/mycontainer/test");
       assertEquals(httpMethod.getEndpoint().getQuery(), null);
@@ -188,6 +191,9 @@ public class AzureBlobStoreTest {
                   return Logger.NULL;
                }
             });
+            bindConstant().annotatedWith(
+                     Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_SESSIONINTERVAL)).to(
+                     1l);
          }
 
          @SuppressWarnings("unused")
@@ -202,8 +208,8 @@ public class AzureBlobStoreTest {
             };
          }
 
-      }, new RestModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
-               new JavaUrlHttpCommandExecutorServiceModule());
+      }, new RestAzureStorageConnectionModule(), new RestModule(), new ExecutorServiceModule(
+               new WithinThreadExecutorService()), new JavaUrlHttpCommandExecutorServiceModule());
       processor = injector.getInstance(Key
                .get(new TypeLiteral<RestAnnotationProcessor<AzureBlobStore>>() {
                }));

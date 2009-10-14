@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.jclouds.aws.domain.AWSError;
+import org.jclouds.aws.s3.config.RestS3ConnectionModule;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.aws.s3.reference.S3Headers;
 import org.jclouds.http.HttpCommand;
@@ -59,17 +60,22 @@ public class S3UtilsTest {
 
    @BeforeTest
    protected void setUpInjector() {
-      Injector injector = Guice.createInjector(new ParserModule(), new AbstractModule() {
+      Injector injector = Guice.createInjector(new RestS3ConnectionModule(), new ParserModule(),
+               new AbstractModule() {
 
-         @Override
-         protected void configure() {
-            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to(
-                     "user");
-            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY))
-                     .to("key");
-         }
+                  @Override
+                  protected void configure() {
+                     bindConstant().annotatedWith(
+                              Jsr330.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to("user");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY)).to("key");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(S3Constants.PROPERTY_S3_SESSIONINTERVAL)).to("2");
+                     bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_S3_ENDPOINT))
+                              .to("https://s3.amazonaws.com");
+                  }
 
-      });
+               });
       utils = injector.getInstance(S3Utils.class);
       response = new HttpResponse();
       response.setStatusCode(400);

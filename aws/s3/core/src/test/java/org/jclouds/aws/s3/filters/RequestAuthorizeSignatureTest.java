@@ -30,9 +30,10 @@ import java.net.URI;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.aws.s3.config.RestS3ConnectionModule;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.util.DateService;
+import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.util.Jsr330;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -132,36 +133,26 @@ public class RequestAuthorizeSignatureTest {
       assertEquals(builder.toString(), "/adriancole.s3int5");
    }
 
-   @Test
-   void testUpdatesOnlyOncePerSecond() throws NoSuchMethodException, InterruptedException {
-      // filter.createNewStamp();
-      String timeStamp = filter.timestampAsHeaderString();
-      // replay(filter);
-      for (int i = 0; i < 10; i++)
-         filter.updateIfTimeOut();
-      assert timeStamp.equals(filter.timestampAsHeaderString());
-      Thread.sleep(1000);
-      assert !timeStamp.equals(filter.timestampAsHeaderString());
-      // verify(filter);
-   }
-
    /**
     * before class, as we need to ensure that the filter is threadsafe.
     * 
     */
    @BeforeClass
    protected void createFilter() {
-      injector = Guice.createInjector(new AbstractModule() {
+      injector = Guice.createInjector(new RestS3ConnectionModule(), new ParserModule(),
+               new AbstractModule() {
 
-         protected void configure() {
-            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to(
-                     "foo");
-            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY))
-                     .to("bar");
-            bind(DateService.class);
-
-         }
-      });
+                  protected void configure() {
+                     bindConstant().annotatedWith(
+                              Jsr330.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to("foo");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY)).to("bar");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(S3Constants.PROPERTY_S3_SESSIONINTERVAL)).to("2");
+                     bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_S3_ENDPOINT))
+                              .to("https://s3.amazonaws.com");
+                  }
+               });
       filter = injector.getInstance(RequestAuthorizeSignature.class);
    }
 

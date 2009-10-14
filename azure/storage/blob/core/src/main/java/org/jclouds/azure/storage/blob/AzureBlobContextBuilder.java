@@ -24,6 +24,7 @@
 package org.jclouds.azure.storage.blob;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY_AZURESTORAGE_SESSIONINTERVAL;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 
 import java.net.URI;
@@ -76,13 +77,9 @@ public class AzureBlobContextBuilder extends
       properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "x-ms-meta-");
       properties.setProperty(AzureBlobConstants.PROPERTY_AZUREBLOB_ENDPOINT,
                "https://{account}.blob.core.windows.net");
+      if (!properties.containsKey(PROPERTY_AZURESTORAGE_SESSIONINTERVAL))
+         this.withTimeStampExpiration(60);
    }
-
-   // @Override
-   // protected void addBlobStoreModule(List<Module> modules) {
-   // modules.add(BlobStoreMapsModule.Builder.newBuilder(containerMetadataType, blobMetadataType,
-   // blobType).withClearContainerStrategy(RecreateClearContainerStrategy.class).build());
-   // }
 
    public AzureBlobContextBuilder(String id, String secret) {
       this(new Properties());
@@ -173,4 +170,8 @@ public class AzureBlobContextBuilder extends
       modules.add(new RestAzureBlobStoreModule());
    }
 
+   public AzureBlobContextBuilder withTimeStampExpiration(long seconds) {
+      getProperties().setProperty(PROPERTY_AZURESTORAGE_SESSIONINTERVAL, seconds + "");
+      return this;
+   }
 }

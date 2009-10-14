@@ -21,19 +21,24 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.nirvanix.sdn;
+package org.jclouds.util;
 
-import org.jclouds.cloud.CloudContext;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import javax.inject.Qualifier;
 
 /**
- * Represents an authenticated context to Nirvanix SDN.
+ * Related to a TimeStamp
  * 
- * @see <a href="http://developer.nirvanix.com/sitefiles/1000/API.html" />
- * @see SDNConnection
- * @see CloudContext
  * @author Adrian Cole
  * 
  */
-public interface SDNContext extends CloudContext<SDNConnection> {
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Qualifier
+public @interface TimeStamp {
 
 }

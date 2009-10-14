@@ -24,6 +24,8 @@
 package org.jclouds.aws.s3.config;
 
 import java.net.URI;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -48,7 +50,11 @@ import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.rest.RestClientFactory;
+import org.jclouds.util.DateService;
+import org.jclouds.util.TimeStamp;
 
+import com.google.common.base.Function;
+import com.google.common.collect.MapMaker;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
@@ -61,6 +67,28 @@ import com.google.inject.Scopes;
 @ConfiguresCloudConnection
 @RequiresHttp
 public class RestS3ConnectionModule extends AbstractModule {
+
+   @Provides
+   @TimeStamp
+   protected String provideTimeStamp(@TimeStamp ConcurrentMap<String, String> cache) {
+      return cache.get("doesn't matter");
+   }
+
+   /**
+    * borrowing concurrency code to ensure that caching takes place properly
+    */
+   @Provides
+   @TimeStamp
+   ConcurrentMap<String, String> provideTimeStampCache(
+            @Named(S3Constants.PROPERTY_S3_SESSIONINTERVAL) long seconds,
+            final DateService dateService) {
+      return new MapMaker().expiration(seconds, TimeUnit.SECONDS).makeComputingMap(
+               new Function<String, String>() {
+                  public String apply(String key) {
+                     return dateService.rfc822DateFormat();
+                  }
+               });
+   }
 
    @Override
    protected void configure() {
@@ -78,7 +106,8 @@ public class RestS3ConnectionModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected BlobStore<BucketMetadata, ObjectMetadata, S3Object> provideS3BlobStore(RestClientFactory factory) {
+   protected BlobStore<BucketMetadata, ObjectMetadata, S3Object> provideS3BlobStore(
+            RestClientFactory factory) {
       return factory.create(S3BlobStore.class);
    }
 

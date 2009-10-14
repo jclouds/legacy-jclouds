@@ -28,6 +28,7 @@ import static org.testng.Assert.assertEquals;
 import org.jclouds.azure.storage.blob.handlers.AzureBlobClientErrorRetryHandler;
 import org.jclouds.azure.storage.blob.reference.AzureBlobConstants;
 import org.jclouds.azure.storage.handlers.ParseAzureStorageErrorFromXmlContent;
+import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
@@ -60,6 +61,9 @@ public class RestAzureBlobConnectionModuleTest {
                      bindConstant().annotatedWith(
                               Jsr330.named(AzureBlobConstants.PROPERTY_AZUREBLOB_ENDPOINT)).to(
                               "http://localhost");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_SESSIONINTERVAL)).to(
+                              1l);
                   }
                });
    }

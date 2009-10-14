@@ -40,6 +40,7 @@ import org.jclouds.azure.storage.blob.functions.ParseContainerMetadataFromHeader
 import org.jclouds.azure.storage.blob.functions.ReturnTrueIfContainerAlreadyExists;
 import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
 import org.jclouds.azure.storage.blob.options.ListBlobsOptions;
+import org.jclouds.azure.storage.config.RestAzureStorageConnectionModule;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
@@ -81,7 +82,8 @@ public class AzureBlobConnectionTest {
       Method method = AzureBlobConnection.class.getMethod("listContainers", Array.newInstance(
                ListOptions.class, 0).getClass());
 
-      GeneratedHttpRequest<AzureBlobConnection> httpMethod = processor.createRequest(method, new Object[] {});
+      GeneratedHttpRequest<AzureBlobConnection> httpMethod = processor.createRequest(method,
+               new Object[] {});
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/");
       assertEquals(httpMethod.getEndpoint().getQuery(), "comp=list");
@@ -89,8 +91,7 @@ public class AzureBlobConnectionTest {
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
                .singletonList("2009-07-17"));
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               ParseSax.class);
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(), ParseSax.class);
       // TODO check generic type of response parser
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
@@ -99,8 +100,8 @@ public class AzureBlobConnectionTest {
       Method method = AzureBlobConnection.class.getMethod("listContainers", Array.newInstance(
                ListOptions.class, 0).getClass());
 
-      GeneratedHttpRequest<AzureBlobConnection> httpMethod = processor.createRequest(method, new Object[] { maxResults(1).marker(
-               "marker").prefix("prefix") });
+      GeneratedHttpRequest<AzureBlobConnection> httpMethod = processor.createRequest(method,
+               new Object[] { maxResults(1).marker("marker").prefix("prefix") });
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/");
       assert httpMethod.getEndpoint().getQuery().contains("comp=list");
@@ -111,8 +112,7 @@ public class AzureBlobConnectionTest {
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
                .singletonList("2009-07-17"));
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               ParseSax.class);
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(), ParseSax.class);
       // TODO check generic type of response parser
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
@@ -121,7 +121,8 @@ public class AzureBlobConnectionTest {
       Method method = AzureBlobConnection.class.getMethod("createContainer", String.class, Array
                .newInstance(CreateContainerOptions.class, 0).getClass());
 
-      GeneratedHttpRequest<AzureBlobConnection> httpMethod = processor.createRequest(method, new Object[] { "container" });
+      GeneratedHttpRequest<AzureBlobConnection> httpMethod = processor.createRequest(method,
+               new Object[] { "container" });
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/container");
       assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container");
@@ -140,7 +141,8 @@ public class AzureBlobConnectionTest {
    public void testDeleteContainer() throws SecurityException, NoSuchMethodException {
       Method method = AzureBlobConnection.class.getMethod("deleteContainer", String.class);
 
-      GeneratedHttpRequest<AzureBlobConnection> httpMethod = processor.createRequest(method, new Object[] { "container" });
+      GeneratedHttpRequest<AzureBlobConnection> httpMethod = processor.createRequest(method,
+               new Object[] { "container" });
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/container");
       assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container");
@@ -159,8 +161,9 @@ public class AzureBlobConnectionTest {
       Method method = AzureBlobConnection.class.getMethod("createContainer", String.class, Array
                .newInstance(CreateContainerOptions.class, 0).getClass());
 
-      GeneratedHttpRequest<AzureBlobConnection> httpMethod = processor.createRequest(method, new Object[] { "container",
-               withPublicAcl().withMetadata(ImmutableMultimap.of("foo", "bar")) });
+      GeneratedHttpRequest<AzureBlobConnection> httpMethod = processor.createRequest(method,
+               new Object[] { "container",
+                        withPublicAcl().withMetadata(ImmutableMultimap.of("foo", "bar")) });
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/container");
       assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container");
@@ -183,7 +186,8 @@ public class AzureBlobConnectionTest {
       Method method = AzureBlobConnection.class.getMethod("createRootContainer", Array.newInstance(
                CreateContainerOptions.class, 0).getClass());
 
-      GeneratedHttpRequest<AzureBlobConnection> httpMethod = processor.createRequest(method, new Object[] {});
+      GeneratedHttpRequest<AzureBlobConnection> httpMethod = processor.createRequest(method,
+               new Object[] {});
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/$root");
       assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container");
@@ -202,7 +206,8 @@ public class AzureBlobConnectionTest {
    public void testDeleteRootContainer() throws SecurityException, NoSuchMethodException {
       Method method = AzureBlobConnection.class.getMethod("deleteRootContainer");
 
-      GeneratedHttpRequest<AzureBlobConnection> httpMethod = processor.createRequest(method, new Object[] {});
+      GeneratedHttpRequest<AzureBlobConnection> httpMethod = processor.createRequest(method,
+               new Object[] {});
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/$root");
       assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container");
@@ -221,8 +226,8 @@ public class AzureBlobConnectionTest {
       Method method = AzureBlobConnection.class.getMethod("createRootContainer", Array.newInstance(
                CreateContainerOptions.class, 0).getClass());
 
-      GeneratedHttpRequest<AzureBlobConnection> httpMethod = processor.createRequest(method, new Object[] { withPublicAcl()
-               .withMetadata(ImmutableMultimap.of("foo", "bar")) });
+      GeneratedHttpRequest<AzureBlobConnection> httpMethod = processor.createRequest(method,
+               new Object[] { withPublicAcl().withMetadata(ImmutableMultimap.of("foo", "bar")) });
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/$root");
       assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container");
@@ -245,7 +250,8 @@ public class AzureBlobConnectionTest {
       Method method = AzureBlobConnection.class.getMethod("listBlobs", String.class, Array
                .newInstance(ListBlobsOptions.class, 0).getClass());
 
-      GeneratedHttpRequest<AzureBlobConnection> httpMethod = processor.createRequest(method, new Object[] { "container" });
+      GeneratedHttpRequest<AzureBlobConnection> httpMethod = processor.createRequest(method,
+               new Object[] { "container" });
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/container");
       assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container&comp=list");
@@ -253,8 +259,7 @@ public class AzureBlobConnectionTest {
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
                .singletonList("2009-07-17"));
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               ParseSax.class);
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(), ParseSax.class);
       // TODO check generic type of response parser
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
@@ -263,7 +268,8 @@ public class AzureBlobConnectionTest {
       Method method = AzureBlobConnection.class.getMethod("listBlobs", Array.newInstance(
                ListBlobsOptions.class, 0).getClass());
 
-      GeneratedHttpRequest<AzureBlobConnection> httpMethod = processor.createRequest(method, new Object[] {});
+      GeneratedHttpRequest<AzureBlobConnection> httpMethod = processor.createRequest(method,
+               new Object[] {});
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/$root");
       assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container&comp=list");
@@ -271,8 +277,7 @@ public class AzureBlobConnectionTest {
       assertEquals(httpMethod.getHeaders().size(), 1);
       assertEquals(httpMethod.getHeaders().get("x-ms-version"), Collections
                .singletonList("2009-07-17"));
-      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               ParseSax.class);
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(), ParseSax.class);
       // TODO check generic type of response parser
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
@@ -280,7 +285,8 @@ public class AzureBlobConnectionTest {
    public void testContainerProperties() throws SecurityException, NoSuchMethodException {
       Method method = AzureBlobConnection.class.getMethod("getContainerProperties", String.class);
 
-      GeneratedHttpRequest<AzureBlobConnection> httpMethod = processor.createRequest(method, new Object[] { "container" });
+      GeneratedHttpRequest<AzureBlobConnection> httpMethod = processor.createRequest(method,
+               new Object[] { "container" });
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/container");
       assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container");
@@ -297,8 +303,8 @@ public class AzureBlobConnectionTest {
       Method method = AzureBlobConnection.class.getMethod("setContainerMetadata", String.class,
                Multimap.class);
 
-      GeneratedHttpRequest<AzureBlobConnection> httpMethod = processor.createRequest(method, new Object[] { "container",
-               ImmutableMultimap.of("key", "value") });
+      GeneratedHttpRequest<AzureBlobConnection> httpMethod = processor.createRequest(method,
+               new Object[] { "container", ImmutableMultimap.of("key", "value") });
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/container");
       assertEquals(httpMethod.getEndpoint().getQuery(), "restype=container&comp=metadata");
@@ -318,8 +324,8 @@ public class AzureBlobConnectionTest {
    public void testSetBlobMetadata() throws SecurityException, NoSuchMethodException {
       Method method = AzureBlobConnection.class.getMethod("setBlobMetadata", String.class,
                String.class, Multimap.class);
-      GeneratedHttpRequest<AzureBlobConnection> httpMethod = processor.createRequest(method, new Object[] { "container", "blob",
-               ImmutableMultimap.of("key", "value") });
+      GeneratedHttpRequest<AzureBlobConnection> httpMethod = processor.createRequest(method,
+               new Object[] { "container", "blob", ImmutableMultimap.of("key", "value") });
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/container/blob");
       assertEquals(httpMethod.getEndpoint().getQuery(), "comp=metadata");
@@ -357,9 +363,12 @@ public class AzureBlobConnectionTest {
                   return Logger.NULL;
                }
             });
+            bindConstant().annotatedWith(
+                     Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_SESSIONINTERVAL)).to(
+                     1l);
          }
-      }, new RestModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
-               new JavaUrlHttpCommandExecutorServiceModule());
+      }, new RestAzureStorageConnectionModule(), new RestModule(), new ExecutorServiceModule(
+               new WithinThreadExecutorService()), new JavaUrlHttpCommandExecutorServiceModule());
       processor = injector.getInstance(Key
                .get(new TypeLiteral<RestAnnotationProcessor<AzureBlobConnection>>() {
                }));

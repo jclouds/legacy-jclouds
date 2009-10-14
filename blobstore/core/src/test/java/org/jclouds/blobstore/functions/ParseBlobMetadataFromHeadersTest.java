@@ -38,7 +38,6 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.DateService;
 import org.testng.annotations.BeforeTest;

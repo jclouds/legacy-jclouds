@@ -32,6 +32,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 import org.jclouds.azure.storage.AzureBlob;
+import org.jclouds.azure.storage.config.RestAzureStorageConnectionModule;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
@@ -85,19 +86,29 @@ public class SharedKeyAuthenticationLiveTest {
                "jclouds.test.user");
       final String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
       uri = "http://" + account + ".blob.core.windows.net";
-      injector = Guice.createInjector(new AbstractModule() {
+      injector = Guice.createInjector(
+               new AbstractModule() {
 
-         @Override
-         protected void configure() {
-            bind(URI.class).annotatedWith(AzureBlob.class).toInstance(URI.create(uri));
-            bindConstant().annotatedWith(
-                     Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT)).to(account);
-            bindConstant().annotatedWith(
-                     Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY)).to(key);
-         }
+                  @Override
+                  protected void configure() {
+                     bind(URI.class).annotatedWith(AzureBlob.class).toInstance(URI.create(uri));
+                     bindConstant().annotatedWith(
+                              Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT))
+                              .to(account);
+                     bindConstant().annotatedWith(
+                              Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY))
+                              .to(key);
+                     bindConstant()
+                              .annotatedWith(
+                                       Jsr330
+                                                .named(AzureStorageConstants.PROPERTY_AZURESTORAGE_SESSIONINTERVAL))
+                              .to(1l);
+                  }
 
-      }, new RestModule(), new Log4JLoggingModule(), new ExecutorServiceModule(
-               new WithinThreadExecutorService()), new JavaUrlHttpCommandExecutorServiceModule());
+               }, new RestAzureStorageConnectionModule(), new RestModule(),
+               new Log4JLoggingModule(),
+               new ExecutorServiceModule(new WithinThreadExecutorService()),
+               new JavaUrlHttpCommandExecutorServiceModule());
       RestClientFactory factory = injector.getInstance(RestClientFactory.class);
       client = factory.create(IntegrationTestClient.class);
    }

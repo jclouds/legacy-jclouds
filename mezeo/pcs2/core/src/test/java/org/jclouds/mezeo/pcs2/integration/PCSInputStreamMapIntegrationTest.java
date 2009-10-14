@@ -41,30 +41,35 @@ import org.testng.annotations.Test;
 public class PCSInputStreamMapIntegrationTest extends
          BaseInputStreamMapIntegrationTest<PCSConnection, ContainerMetadata, FileMetadata, PCSFile> {
 
+   @Test(enabled = false)
    @Override
    public void testEntrySet() throws IOException, InterruptedException, ExecutionException,
             TimeoutException {
       // fails on 400 errors
    }
-   
+
+   @Test(enabled = false)
    @Override
    public void testContainsBytesValue() throws InterruptedException, ExecutionException,
             TimeoutException {
       // not supported
    }
 
+   @Test(enabled = false)
    @Override
    public void testContainsFileValue() throws InterruptedException, ExecutionException,
             TimeoutException {
       // not supported
    }
 
+   @Test(enabled = false)
    @Override
    public void testContainsInputStreamValue() throws InterruptedException, ExecutionException,
             TimeoutException {
       // not supported
    }
 
+   @Test(enabled = false)
    @Override
    public void testContainsStringValue() throws InterruptedException, ExecutionException,
             TimeoutException {

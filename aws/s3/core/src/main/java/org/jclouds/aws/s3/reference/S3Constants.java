@@ -42,7 +42,10 @@ public interface S3Constants extends AWSConstants, S3Headers, BlobStoreConstants
    public static final String MARKER = "marker";
    public static final String MAX_KEYS = "max-keys";
    public static final String DELIMITER = "delimiter";
-   public static final String PROPERTY_S3_ENDPOINT = "https://s3.amazonaws.com";
-
+   public static final String PROPERTY_S3_ENDPOINT = "jclouds.s3.endpoint";
+   /**
+    * how long do we wait before obtaining a new timestamp for requests.
+    */
+   public static final String PROPERTY_S3_SESSIONINTERVAL = "jclouds.s3.sessioninterval";
 
 }

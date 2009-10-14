@@ -34,6 +34,7 @@ import java.util.Collections;
 import javax.ws.rs.HttpMethod;
 
 import org.jclouds.azure.storage.AzureQueue;
+import org.jclouds.azure.storage.config.RestAzureStorageConnectionModule;
 import org.jclouds.azure.storage.options.CreateOptions;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
@@ -184,9 +185,12 @@ public class AzureQueueConnectionTest {
                   return Logger.NULL;
                }
             });
+            bindConstant().annotatedWith(
+                     Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_SESSIONINTERVAL)).to(
+                     1l);
          }
-      }, new RestModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
-               new JavaUrlHttpCommandExecutorServiceModule());
+      }, new RestAzureStorageConnectionModule(), new RestModule(), new ExecutorServiceModule(
+               new WithinThreadExecutorService()), new JavaUrlHttpCommandExecutorServiceModule());
       processor = injector.getInstance(Key
                .get(new TypeLiteral<RestAnnotationProcessor<AzureQueueConnection>>() {
                }));

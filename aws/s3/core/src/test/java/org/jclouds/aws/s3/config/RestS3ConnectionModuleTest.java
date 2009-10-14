@@ -24,6 +24,9 @@
 package org.jclouds.aws.s3.config;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+
+import java.util.concurrent.ConcurrentMap;
 
 import org.jclouds.aws.s3.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.s3.handlers.AWSRedirectionRetryHandler;
@@ -32,6 +35,7 @@ import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
+import org.jclouds.util.DateService;
 import org.jclouds.util.Jsr330;
 import org.testng.annotations.Test;
 
@@ -46,17 +50,33 @@ import com.google.inject.Injector;
 public class RestS3ConnectionModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new RestS3ConnectionModule(), new ParserModule(), new AbstractModule() {
-         @Override
-         protected void configure() {
-            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to(
-                     "user");
-            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY))
-                     .to("key");
-            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_S3_ENDPOINT)).to(
-                     "http://localhost");
-         }
-      });
+      return Guice.createInjector(new RestS3ConnectionModule(), new ParserModule(),
+               new AbstractModule() {
+                  @Override
+                  protected void configure() {
+                     bindConstant().annotatedWith(
+                              Jsr330.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to("user");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY)).to("key");
+                     bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_S3_ENDPOINT))
+                              .to("http://localhost");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(S3Constants.PROPERTY_S3_SESSIONINTERVAL)).to("2");
+                  }
+               });
+   }
+
+   @Test
+   void testUpdatesOnlyOncePerSecond() throws NoSuchMethodException, InterruptedException {
+      RestS3ConnectionModule module = new RestS3ConnectionModule();
+
+      ConcurrentMap<String, String> map = module.provideTimeStampCache(1, new DateService());
+      String timeStamp = map.get("foo");
+      for (int i = 0; i < 10; i++)
+         map.get("foo");
+      assertEquals(timeStamp, map.get("foo"));
+      Thread.sleep(1001);
+      assertFalse(timeStamp.equals(map.get("foo")));
    }
 
    @Test

@@ -29,11 +29,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
@@ -42,12 +41,12 @@ import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
-import org.jclouds.util.DateService;
+import org.jclouds.util.TimeStamp;
 
 import com.google.common.annotations.VisibleForTesting;
 
 /**
- * Signs the S3 request. This will update timestamps at most once per second.
+ * Signs the S3 request.
  * 
  * @see <a href= "http://docs.amazonwebservices.com/AmazonS3/latest/RESTAuthentication.html" />
  * @author Adrian Cole
@@ -60,46 +59,15 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
 
    private final String accessKey;
    private final String secretKey;
-   private final DateService dateService;
-
-   public final long BILLION = 1000000000;
-   private final AtomicReference<String> timeStamp;
-   private final AtomicLong trigger = new AtomicLong(System.nanoTime() + 1 * BILLION);
-
-   /**
-    * Start the time update service. Amazon clocks need to be within 900 seconds of the request
-    * time. This method updates the clock every second. This is not performed per-request, as
-    * creation of the date object is a slow, synchronized command.
-    */
-   synchronized void updateIfTimeOut() {
-
-      if (trigger.get() - System.nanoTime() <= 0) {
-         timeStamp.set(createNewStamp());
-         trigger.set(System.nanoTime() + 1 * BILLION);
-      }
-
-   }
-
-   // this is a hotspot when submitted concurrently, so be lazy.
-   // amazon is ok with up to 15 minutes off their time, so let's
-   // be as lazy as possible.
-   String createNewStamp() {
-      return dateService.rfc822DateFormat();
-   }
-
-   public String timestampAsHeaderString() {
-      updateIfTimeOut();
-      return timeStamp.get();
-   }
+   private final Provider<String> timeStampProvider;
 
    @Inject
    public RequestAuthorizeSignature(@Named(S3Constants.PROPERTY_AWS_ACCESSKEYID) String accessKey,
             @Named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY) String secretKey,
-            DateService dateService) {
+            @TimeStamp Provider<String> timeStampProvider) {
       this.accessKey = accessKey;
       this.secretKey = secretKey;
-      this.dateService = dateService;
-      timeStamp = new AtomicReference<String>(createNewStamp());
+      this.timeStampProvider = timeStampProvider;
    }
 
    public void filter(HttpRequest request) throws HttpException {
@@ -142,7 +110,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
 
    private void replaceDateHeader(HttpRequest request) {
       request.getHeaders().replaceValues(HttpHeaders.DATE,
-               Collections.singletonList(timestampAsHeaderString()));
+               Collections.singletonList(timeStampProvider.get()));
    }
 
    private void appendAmzHeaders(HttpRequest request, StringBuilder toSign) {

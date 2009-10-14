@@ -23,6 +23,7 @@
  */
 package org.jclouds.azure.storage.filters;
 
+import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY_AZURESTORAGE_SESSIONINTERVAL;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
@@ -30,10 +31,11 @@ import java.net.URI;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.azure.storage.config.RestAzureStorageConnectionModule;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpUtils;
-import org.jclouds.util.DateService;
+import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.util.Jsr330;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -127,36 +129,27 @@ public class SharedKeyAuthenticationTest {
       assertEquals(builder.toString(), "/mycontainer?comp=list");
    }
 
-   @Test
-   void testUpdatesOnlyOncePerSecond() throws NoSuchMethodException, InterruptedException {
-      // filter.createNewStamp();
-      String timeStamp = filter.timestampAsHeaderString();
-      // replay(filter);
-      for (int i = 0; i < 10; i++)
-         filter.updateIfTimeOut();
-      assert timeStamp.equals(filter.timestampAsHeaderString());
-      Thread.sleep(1000);
-      assert !timeStamp.equals(filter.timestampAsHeaderString());
-      // verify(filter);
-   }
-
    /**
     * before class, as we need to ensure that the filter is threadsafe.
     * 
     */
    @BeforeClass
    protected void createFilter() {
-      injector = Guice.createInjector(new AbstractModule() {
+      injector = Guice.createInjector(new ParserModule(), new RestAzureStorageConnectionModule(),
+               new AbstractModule() {
 
-         protected void configure() {
-            bindConstant().annotatedWith(
-                     Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT)).to(ACCOUNT);
-            bindConstant().annotatedWith(
-                     Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY)).to(KEY);
-            bind(DateService.class);
+                  protected void configure() {
+                     bindConstant().annotatedWith(
+                              Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT))
+                              .to(ACCOUNT);
+                     bindConstant().annotatedWith(
+                              Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY))
+                              .to(KEY);
+                     bindConstant().annotatedWith(
+                              Jsr330.named(PROPERTY_AZURESTORAGE_SESSIONINTERVAL)).to("1");
+                  }
 
-         }
-      });
+               });
       filter = injector.getInstance(SharedKeyAuthentication.class);
    }
 

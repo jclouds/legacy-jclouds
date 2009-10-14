@@ -26,6 +26,7 @@ package org.jclouds.aws.s3;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_ACCESSKEYID;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_SECRETACCESSKEY;
+import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_SESSIONINTERVAL;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 
 import java.net.URI;
@@ -76,6 +77,8 @@ public class S3ContextBuilder extends
       }, props);
       properties.setProperty(S3Constants.PROPERTY_S3_ENDPOINT, "https://s3.amazonaws.com");
       properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "x-amz-meta-");
+      if (!properties.containsKey(PROPERTY_S3_SESSIONINTERVAL))
+         this.withTimeStampExpiration(60);
    }
 
    public S3ContextBuilder(String id, String secret) {
@@ -162,4 +165,8 @@ public class S3ContextBuilder extends
       modules.add(new RestS3ConnectionModule());
    }
 
+   public S3ContextBuilder withTimeStampExpiration(long seconds) {
+      getProperties().setProperty(PROPERTY_S3_SESSIONINTERVAL, seconds + "");
+      return this;
+   }
 }

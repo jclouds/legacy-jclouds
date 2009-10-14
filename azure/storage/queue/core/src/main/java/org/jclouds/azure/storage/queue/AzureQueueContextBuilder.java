@@ -24,6 +24,7 @@
 package org.jclouds.azure.storage.queue;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY_AZURESTORAGE_SESSIONINTERVAL;
 
 import java.net.URI;
 import java.util.List;
@@ -68,6 +69,8 @@ public class AzureQueueContextBuilder extends CloudContextBuilder<AzureQueueConn
       String endpoint = properties.getProperty(AzureQueueConstants.PROPERTY_AZUREQUEUE_ENDPOINT);
       properties.setProperty(AzureQueueConstants.PROPERTY_AZUREQUEUE_ENDPOINT, endpoint.replaceAll(
                "\\{account\\}", id));
+      if (!properties.containsKey(PROPERTY_AZURESTORAGE_SESSIONINTERVAL))
+         this.withTimeStampExpiration(60);
    }
 
    public AzureQueueContextBuilder(Properties properties) {
@@ -160,5 +163,10 @@ public class AzureQueueContextBuilder extends CloudContextBuilder<AzureQueueConn
    public AzureQueueContextBuilder withPoolRequestInvokerThreads(int poolRequestInvokerThreads) {
       return (AzureQueueContextBuilder) super
                .withPoolRequestInvokerThreads(poolRequestInvokerThreads);
+   }
+
+   public AzureQueueContextBuilder withTimeStampExpiration(long seconds) {
+      getProperties().setProperty(PROPERTY_AZURESTORAGE_SESSIONINTERVAL, seconds + "");
+      return this;
    }
 }

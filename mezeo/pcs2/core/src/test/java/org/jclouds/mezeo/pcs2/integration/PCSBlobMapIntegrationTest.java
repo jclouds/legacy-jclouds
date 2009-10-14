@@ -40,13 +40,14 @@ import org.testng.annotations.Test;
 @Test(groups = { "integration", "live" }, testName = "cloudfiles.PCSBlobMapIntegrationTest")
 public class PCSBlobMapIntegrationTest extends
          BaseBlobMapIntegrationTest<PCSConnection, ContainerMetadata, FileMetadata, PCSFile> {
-
+   @Test(enabled = false)
    @Override
    public void testEntrySet() throws IOException, InterruptedException, ExecutionException,
             TimeoutException {
       // fails on 400 errors
    }
 
+   @Test(enabled = false)
    @Override
    public void testContains() throws InterruptedException, ExecutionException, TimeoutException {
       // not supported
