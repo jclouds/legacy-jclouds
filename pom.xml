@@ -47,6 +47,7 @@
         <module>rackspace</module>
         <module>mezeo</module>
         <module>nirvanix</module>
+        <module>vcloudx</module>
     </modules>
     <build>
         <plugins>
