@@ -62,7 +62,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
-import org.jclouds.http.functions.ParseURIList;
+import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
 import org.jclouds.http.functions.ReturnInputStream;
 import org.jclouds.http.functions.ReturnStringIf200;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
@@ -991,7 +991,7 @@ public class RestAnnotationProcessorTest {
       Method method = TestTransformers.class.getMethod("uri");
       Class<? extends Function<HttpResponse, ?>> transformer = factory(TestTransformers.class)
                .getParserOrThrowException(method);
-      assertEquals(transformer, ParseURIList.class);
+      assertEquals(transformer, ParseURIFromListOrLocationHeaderIf20x.class);
    }
 
    @SuppressWarnings("static-access")
@@ -999,7 +999,7 @@ public class RestAnnotationProcessorTest {
       Method method = TestTransformers.class.getMethod("futureUri");
       Class<? extends Function<HttpResponse, ?>> transformer = factory(TestTransformers.class)
                .getParserOrThrowException(method);
-      assertEquals(transformer, ParseURIList.class);
+      assertEquals(transformer, ParseURIFromListOrLocationHeaderIf20x.class);
    }
 
    public static class ReturnStringIf200Context extends ReturnStringIf200 implements

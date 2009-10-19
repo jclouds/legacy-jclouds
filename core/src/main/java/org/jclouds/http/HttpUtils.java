@@ -86,6 +86,11 @@ public class HttpUtils {
    }
 
    private static String hmacBase64(String toEncode, byte[] key, Digest digest) {
+      byte[] resBuf = hmac(toEncode, key, digest);
+      return toBase64String(resBuf);
+   }
+
+   public static byte[] hmac(String toEncode, byte[] key, Digest digest) {
       HMac hmac = new HMac(digest);
       byte[] resBuf = new byte[hmac.getMacSize()];
       byte[] plainBytes = Utils.encodeString(toEncode);
@@ -93,7 +98,7 @@ public class HttpUtils {
       hmac.init(new KeyParameter(keyBytes));
       hmac.update(plainBytes, 0, plainBytes.length);
       hmac.doFinal(resBuf, 0);
-      return toBase64String(resBuf);
+      return resBuf;
    }
 
    public static String hmacSha1Base64(String toEncode, byte[] key)
