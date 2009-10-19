@@ -50,7 +50,7 @@ import org.jclouds.azure.storage.filters.SharedKeyAuthentication;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.reference.AzureStorageHeaders;
 import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.functions.BlobKey;
+import org.jclouds.blobstore.functions.BlobName;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.functions.ParseETagHeader;
@@ -149,7 +149,7 @@ public interface AzureBlobStore extends BlobStore<ContainerMetadata, BlobMetadat
    @ResponseParser(ParseETagHeader.class)
    Future<String> putBlob(
             @PathParam("container") String container,
-            @PathParam("key") @ParamParser(BlobKey.class) @BinderParam(GenerateMD5AndBindBlobToEntity.class) Blob object);
+            @PathParam("key") @ParamParser(BlobName.class) @BinderParam(GenerateMD5AndBindBlobToEntity.class) Blob object);
 
    @GET
    @ResponseParser(ParseBlobFromHeadersAndHttpContent.class)

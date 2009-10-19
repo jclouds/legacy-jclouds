@@ -140,7 +140,7 @@ public abstract class BaseBlobMap<C extends ContainerMetadata, M extends BlobMet
    public Set<String> keySet() {
       Set<String> keys = Sets.newHashSet();
       for (BlobMetadata object : getAllBlobMetadata.execute(connection, containerName))
-         keys.add(object.getKey());
+         keys.add(object.getName());
       return keys;
    }
 

@@ -28,7 +28,7 @@ package org.jclouds.rackspace.cloudfiles.domain;
  * @author James Murty
  * 
  */
-public class ContainerCDNMetadata extends org.jclouds.blobstore.domain.ContainerMetadata {
+public class ContainerCDNMetadata extends org.jclouds.blobstore.internal.ContainerMetadataImpl {
 
    private long ttl;
    private boolean cdn_enabled;

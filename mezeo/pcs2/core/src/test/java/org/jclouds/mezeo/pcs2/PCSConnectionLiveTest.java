@@ -133,7 +133,7 @@ public class PCSConnectionLiveTest {
       connection.deleteFile(objectURI).get(10, TimeUnit.SECONDS);
 
       // try sending it in 2 parts
-      object.getMetadata().setKey("sad");
+      object.getMetadata().setName("sad");
       objectURI = connection.createFile(container, object).get(30, TimeUnit.SECONDS);
 
       object.setData(data.substring(0, 2));

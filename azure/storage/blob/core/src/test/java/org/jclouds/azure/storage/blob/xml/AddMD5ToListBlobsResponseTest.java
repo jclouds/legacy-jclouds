@@ -122,7 +122,7 @@ public class AddMD5ToListBlobsResponseTest extends BaseHandlerTest {
                         ), null, null, 4, "newblob2.txt", null, "myfolder/");
 
       BoundedSortedSet<ListBlobsResponse> result = (BoundedSortedSet<ListBlobsResponse>) factory
-               .create(injector.getInstance(ContainerNameEnumerationResultsHandler.class))
+               .create(injector.getInstance(AddMD5ToListBlobsResponse.class))
                .parse(is);
 
       assertEquals(result, list);

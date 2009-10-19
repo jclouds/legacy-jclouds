@@ -36,7 +36,7 @@ import com.google.common.collect.Multimap;
  * @author Adrian Cole
  * 
  */
-public class ContainerMetadata extends org.jclouds.blobstore.domain.ContainerMetadata {
+public class ContainerMetadata extends org.jclouds.blobstore.internal.ContainerMetadataImpl {
    private URI url;
    private DateTime lastModified;
    private byte[] eTag;

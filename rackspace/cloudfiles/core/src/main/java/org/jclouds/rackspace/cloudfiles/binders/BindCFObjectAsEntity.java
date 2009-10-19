@@ -30,12 +30,12 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.blobstore.binders.BindBlobToEntity;
+import org.jclouds.blobstore.binders.BindBlobToEntityAndUserMetadataToHeadersWithPrefix;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpUtils;
 
-public class BindCFObjectAsEntity extends BindBlobToEntity {
+public class BindCFObjectAsEntity extends BindBlobToEntityAndUserMetadataToHeadersWithPrefix {
    @Inject
    public BindCFObjectAsEntity(@Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix) {
       super(metadataPrefix);

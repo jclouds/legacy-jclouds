@@ -21,43 +21,18 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.s3.domain;
+package org.jclouds.blobstore.functions;
 
-import javax.inject.Inject;
+import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobMetadata;
 
-import org.jclouds.blobstore.internal.BlobImpl;
+import com.google.common.base.Function;
 
-/**
- * Amazon S3 is designed to store objects. Objects are stored in {@link S3Bucket buckets} and
- * consist of a {@link org.jclouds.aws.s3.domain.S3Object#getData() value}, a
- * {@link S3Object#getKey key}, {@link S3Object.Metadata#getUserMetadata() metadata}, and an access
- * control policy.
- * 
- * @author Adrian Cole
- * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?UsingObjects.html"
- *      />
- */
-public class S3Object extends BlobImpl<ObjectMetadata> {
+public class BlobName implements Function<Object, String> {
 
-   public S3Object(ObjectMetadata metadata, Object data) {
-      super(metadata, data);
-   }
-
-   public S3Object(ObjectMetadata metadata) {
-      super(metadata);
-   }
-
-   public S3Object(String key, Object data) {
-      this(new ObjectMetadata(key), data);
-   }
-
-   @Inject
-   public S3Object() {
-      this(new ObjectMetadata());
-   }
-
-   public S3Object(String key) {
-      this(new ObjectMetadata(key));
+   @SuppressWarnings("unchecked")
+   public String apply(Object from) {
+      return ((Blob<BlobMetadata>) from).getName();
    }
 
 }

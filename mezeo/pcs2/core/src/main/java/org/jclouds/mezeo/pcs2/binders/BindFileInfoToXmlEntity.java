@@ -42,7 +42,7 @@ public class BindFileInfoToXmlEntity implements Binder {
 
    public void bindToRequest(HttpRequest request, Object toBind) {
       Blob<?> blob = (Blob<?>) toBind;
-      String bareKey = BlobStoreUtils.parseKey(new Key("trash", blob.getKey())).getKey();
+      String bareKey = BlobStoreUtils.parseKey(new Key("trash", blob.getName())).getKey();
       String file = String.format(
                "<file><name>%s</name><mime_type>%s</mime_type><public>false</public></file>",
                bareKey, blob.getMetadata().getContentType());

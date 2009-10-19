@@ -43,6 +43,7 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ContainerMetadata;
+import org.jclouds.blobstore.internal.ContainerMetadataImpl;
 import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.util.Utils;
@@ -166,10 +167,10 @@ public class BaseBlobStoreIntegrationTest<S, C extends ContainerMetadata, M exte
             throws Exception {
       try {
          for (int i = 0; i < 2; i++) {
-            Iterable<ContainerMetadata> testContainers = Iterables.filter(
-                     (SortedSet<ContainerMetadata>) context.getBlobStore().listContainers(),
-                     new Predicate<ContainerMetadata>() {
-                        public boolean apply(ContainerMetadata input) {
+            Iterable<ContainerMetadataImpl> testContainers = Iterables.filter(
+                     (SortedSet<ContainerMetadataImpl>) context.getBlobStore().listContainers(),
+                     new Predicate<ContainerMetadataImpl>() {
+                        public boolean apply(ContainerMetadataImpl input) {
                            return input.getName().startsWith(CONTAINER_PREFIX.toLowerCase());
                         }
                      });

@@ -25,7 +25,7 @@ package org.jclouds.aws.s3.domain;
 
 import java.io.Serializable;
 
-import org.jclouds.blobstore.domain.BlobMetadata;
+import org.jclouds.blobstore.internal.BlobMetadataImpl;
 
 /**
  * /** Amazon S3 is designed to store objects. Objects are stored in {@link S3BucketListing buckets}
@@ -38,7 +38,7 @@ import org.jclouds.blobstore.domain.BlobMetadata;
  * 
  * @see <a href= "http://docs.amazonwebservices.com/AmazonS3/2006-03-01/UsingMetadata.html" />
  */
-public class ObjectMetadata extends BlobMetadata implements Serializable {
+public class ObjectMetadata extends BlobMetadataImpl implements Serializable {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = -4415449798024051115L;
@@ -51,7 +51,7 @@ public class ObjectMetadata extends BlobMetadata implements Serializable {
                dataDisposition).append(", owner=").append(owner).append(", storageClass=").append(
                storageClass).append(", allHeaders=").append(allHeaders).append(", dataEncoding=")
                .append(dataEncoding).append(", dataType=").append(dataType).append(", eTag=")
-               .append(eTag).append(", key=").append(key).append(", lastModified=").append(
+               .append(eTag).append(", key=").append(name).append(", lastModified=").append(
                         lastModified).append(", size=").append(size).append(", userMetadata=")
                .append(userMetadata).append("]");
       return builder.toString();
@@ -186,7 +186,7 @@ public class ObjectMetadata extends BlobMetadata implements Serializable {
    }
 
    public int compareTo(ObjectMetadata o) {
-      return (this == o) ? 0 : getKey().compareTo(o.getKey());
+      return (this == o) ? 0 : getName().compareTo(o.getName());
    }
 
    public void setContentEncoding(String dataEncoding) {

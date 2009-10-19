@@ -49,7 +49,7 @@ import org.jclouds.aws.s3.xml.ListAllMyBucketsHandler;
 import org.jclouds.aws.s3.xml.ListBucketHandler;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.functions.BlobKey;
+import org.jclouds.blobstore.functions.BlobName;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.functions.ParseETagHeader;
@@ -181,7 +181,7 @@ public interface S3BlobStore extends BlobStore<BucketMetadata, ObjectMetadata, S
    @ResponseParser(ParseETagHeader.class)
    Future<String> putBlob(
             @HostPrefixParam String bucketName,
-            @PathParam("key") @ParamParser(BlobKey.class) @BinderParam(BindS3ObjectToEntity.class) S3Object object);
+            @PathParam("key") @ParamParser(BlobName.class) @BinderParam(BindS3ObjectToEntity.class) S3Object object);
 
    @PUT
    @Path("/")

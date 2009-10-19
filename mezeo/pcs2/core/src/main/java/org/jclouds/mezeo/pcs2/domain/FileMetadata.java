@@ -25,6 +25,7 @@ package org.jclouds.mezeo.pcs2.domain;
 
 import java.net.URI;
 
+import org.jclouds.blobstore.internal.BlobMetadataImpl;
 import org.jclouds.mezeo.pcs2.util.PCSUtils;
 import org.joda.time.DateTime;
 
@@ -33,7 +34,7 @@ import org.joda.time.DateTime;
  * @author Adrian Cole
  * 
  */
-public class FileMetadata extends org.jclouds.blobstore.domain.BlobMetadata {
+public class FileMetadata extends BlobMetadataImpl {
    /** The serialVersionUID */
    private static final long serialVersionUID = 1L;
    private URI url;
@@ -47,7 +48,7 @@ public class FileMetadata extends org.jclouds.blobstore.domain.BlobMetadata {
 
    @Override
    public String toString() {
-      return "FileMetadata [key=" + key + ", created=" + created + ", isInProject=" + isInProject
+      return "FileMetadata [key=" + name + ", created=" + created + ", isInProject=" + isInProject
                + ", isPublic=" + isPublic + ", isShared=" + isShared + ", owner=" + owner
                + ", url=" + url + ", version=" + version + ", allHeaders=" + allHeaders
                + ", dataType=" + dataType + ", eTag=" + eTag + ", accessed="

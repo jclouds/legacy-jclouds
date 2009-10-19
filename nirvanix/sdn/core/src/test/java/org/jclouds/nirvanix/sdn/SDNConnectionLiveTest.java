@@ -33,9 +33,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
+import org.jclouds.blobstore.internal.BlobImpl;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.nirvanix.sdn.domain.UploadInfo;
 import org.testng.annotations.BeforeGroups;
@@ -77,7 +77,7 @@ public class SDNConnectionLiveTest {
       assertNotNull(uploadInfo.getToken());
 
       connection.upload(uploadInfo.getHost(), uploadInfo.getToken(), containerName,
-               new Blob<BlobMetadata>("test.txt", "value")).get(30, TimeUnit.SECONDS);
+               new BlobImpl<BlobMetadata>("test.txt", "value")).get(30, TimeUnit.SECONDS);
 
       String metadataS = connection.getMetadata(containerName + "/test.txt").get(30,
                TimeUnit.SECONDS);

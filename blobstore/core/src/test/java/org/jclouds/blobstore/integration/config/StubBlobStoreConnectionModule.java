@@ -46,8 +46,11 @@ public class StubBlobStoreConnectionModule extends AbstractModule {
    protected void configure() {
       bind(new TypeLiteral<Map<String, Map<String, Blob<BlobMetadata>>>>() {
       }).toInstance(map);
-      bind(new TypeLiteral<BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
-      }).to(new TypeLiteral<StubBlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
-      }).asEagerSingleton();
+      bind(
+               new TypeLiteral<BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
+               })
+               .to(
+                        new TypeLiteral<StubBlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
+                        }).asEagerSingleton();
    }
 }

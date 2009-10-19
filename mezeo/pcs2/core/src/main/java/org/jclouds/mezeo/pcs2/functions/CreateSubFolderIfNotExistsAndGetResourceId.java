@@ -87,7 +87,7 @@ public class CreateSubFolderIfNotExistsAndGetResourceId implements Function<Obje
       Object[] args = (Object[]) from;
       checkArgument(args[0] instanceof String, "arg[0] must be a container name");
       checkArgument(args[1] instanceof Blob, "arg[1] must be a pcsfile");
-      Key key = BlobStoreUtils.parseKey(new Key(args[0].toString(), ((Blob) args[1]).getKey()));
+      Key key = BlobStoreUtils.parseKey(new Key(args[0].toString(), ((Blob) args[1]).getName()));
       try {
          return finder.get(key.getContainer());
       } catch (ComputationException e) {

@@ -34,6 +34,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
+import org.jclouds.blobstore.internal.BlobImpl;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
@@ -55,7 +56,7 @@ public class BindBlobToMultipartFormTest {
       addData(BOUNDRY, "hello", builder);
       builder.append("--").append(BOUNDRY).append("--").append("\r\n");
       EXPECTS = builder.toString();
-      TEST_BLOB = new Blob<BlobMetadata>("hello");
+      TEST_BLOB = new BlobImpl<BlobMetadata>("hello");
       TEST_BLOB.setData("hello");
       TEST_BLOB.getMetadata().setContentType(MediaType.TEXT_PLAIN);
    }

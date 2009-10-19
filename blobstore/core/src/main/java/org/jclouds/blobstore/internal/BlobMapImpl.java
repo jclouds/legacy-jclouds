@@ -79,7 +79,7 @@ public class BlobMapImpl<C extends ContainerMetadata, M extends BlobMetadata, B 
    public Set<java.util.Map.Entry<String, B>> entrySet() {
       Set<Map.Entry<String, B>> entrySet = new HashSet<Map.Entry<String, B>>();
       for (B value : values()) {
-         Map.Entry<String, B> entry = new Entry(value.getKey(), value);
+         Map.Entry<String, B> entry = new Entry(value.getName(), value);
          entrySet.add(entry);
       }
       return entrySet;

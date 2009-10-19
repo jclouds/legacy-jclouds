@@ -47,7 +47,7 @@ public class GenerateMD5AndBindBlobToEntity extends BindBlobToEntity {
          try {
             object.generateMD5();
          } catch (IOException e) {
-            throw new RuntimeException("Could not generate MD5 for " + object.getKey(), e);
+            throw new RuntimeException("Could not generate MD5 for " + object.getName(), e);
          }
       }
       super.bindToRequest(request, entity);

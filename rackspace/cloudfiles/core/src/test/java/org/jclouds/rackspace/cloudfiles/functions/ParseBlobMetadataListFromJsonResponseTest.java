@@ -29,6 +29,8 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.jclouds.blobstore.domain.BlobMetadata;
+import org.jclouds.blobstore.internal.BlobMetadataImpl;
+import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.config.ParserModule;
 import org.joda.time.DateTime;
 import org.testng.annotations.Test;
@@ -51,14 +53,16 @@ public class ParseBlobMetadataListFromJsonResponseTest {
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/test_list_container.json");
       List<BlobMetadata> expects = Lists.newArrayList();
-      BlobMetadata one = new BlobMetadata("test_obj_1");
+      BlobMetadata one = new BlobMetadataImpl("test_obj_1");
       one.setETag("4281c348eaf83e70ddce0e07221c3d28");
+      one.setContentMD5(HttpUtils.fromHexString(one.getETag()));
       one.setSize(14);
       one.setContentType("application/octet-stream");
       one.setLastModified(new DateTime("2009-02-03T05:26:32.612278"));
       expects.add(one);
-      BlobMetadata two = new BlobMetadata("test_obj_2");
+      BlobMetadata two = new BlobMetadataImpl("test_obj_2");
       two.setETag("b039efe731ad111bc1b0ef221c3849d0");
+      two.setContentMD5(HttpUtils.fromHexString(two.getETag()));
       two.setSize(64);
       two.setContentType("application/octet-stream");
       two.setLastModified(new DateTime("2009-02-03T05:26:32.612278"));

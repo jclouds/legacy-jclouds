@@ -31,11 +31,11 @@ import javax.inject.Named;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.blobstore.binders.BindBlobToEntity;
+import org.jclouds.blobstore.binders.BindBlobToEntityAndUserMetadataToHeadersWithPrefix;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.http.HttpRequest;
 
-public class BindS3ObjectToEntity extends BindBlobToEntity {
+public class BindS3ObjectToEntity extends BindBlobToEntityAndUserMetadataToHeadersWithPrefix {
    @Inject
    public BindS3ObjectToEntity(@Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix) {
       super(metadataPrefix);

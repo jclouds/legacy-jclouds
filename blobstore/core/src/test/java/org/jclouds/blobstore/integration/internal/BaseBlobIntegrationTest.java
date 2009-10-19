@@ -357,7 +357,7 @@ public class BaseBlobIntegrationTest<S, C extends ContainerMetadata, M extends B
       try {
          assertNotNull(context.getBlobStore().putBlob(containerName, object).get(30,
                   TimeUnit.SECONDS));
-         object = context.getBlobStore().getBlob(containerName, object.getKey()).get(30,
+         object = context.getBlobStore().getBlob(containerName, object.getName()).get(30,
                   TimeUnit.SECONDS);
          String returnedString = BlobStoreUtils.getContentAsStringAndClose(object);
          assertEquals(returnedString, realObject);

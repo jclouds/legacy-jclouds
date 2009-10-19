@@ -53,8 +53,8 @@ public class AddMD5ToListBlobsResponse extends ContainerNameEnumerationResultsHa
       ListBlobsResponse response = super.getResult();
       checkNotNull(response.getContainerUrl(), "containerUrl");
       for (BlobMetadata md : response) {
-         checkNotNull(md.getKey(), "key");
-         md.setContentMD5(util.getMD5(response.getContainerUrl(), md.getKey()));
+         checkNotNull(md.getName(), "key");
+         md.setContentMD5(util.getMD5(response.getContainerUrl(), md.getName()));
       }
       return response;
    }

@@ -21,45 +21,44 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudfiles.domain;
+package org.jclouds.blobstore.internal;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import org.jclouds.blobstore.domain.ContainerMetadata;
 
 /**
+ * System metadata of the Container
  * 
  * @author Adrian Cole
- * 
  */
-public class ContainerMetadata extends org.jclouds.blobstore.internal.ContainerMetadataImpl {
-   private long count;
-   private long bytes;
+public class ContainerMetadataImpl implements ContainerMetadata, Comparable<ContainerMetadata> {
 
-   public ContainerMetadata() {
+   protected String name;
+
+   /**
+    * @see #getName()
+    */
+   public ContainerMetadataImpl(String name) {
+      this.name = checkNotNull(name, "name");
+   }
+
+   public ContainerMetadataImpl() {
       super();
    }
 
-   public ContainerMetadata(String name) {
-      super(name);
+   public void setName(String name) {
+      this.name = checkNotNull(name, "name");
    }
 
-   public ContainerMetadata(String name, long count, long bytes) {
-      super(name);
-      this.count = count;
-      this.bytes = bytes;
-   }
-
-   @Override
-   public String toString() {
-      StringBuilder builder = new StringBuilder();
-      builder.append("ContainerMetadata [bytes=").append(bytes).append(", count=").append(count)
-               .append(", name=").append(name).append("]");
-      return builder.toString();
+   public String getName() {
+      return name;
    }
 
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + (int) (bytes ^ (bytes >>> 32));
-      result = prime * result + (int) (count ^ (count >>> 32));
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       return result;
    }
@@ -72,11 +71,7 @@ public class ContainerMetadata extends org.jclouds.blobstore.internal.ContainerM
          return false;
       if (getClass() != obj.getClass())
          return false;
-      ContainerMetadata other = (ContainerMetadata) obj;
-      if (bytes != other.bytes)
-         return false;
-      if (count != other.count)
-         return false;
+      ContainerMetadataImpl other = (ContainerMetadataImpl) obj;
       if (name == null) {
          if (other.name != null)
             return false;
@@ -85,16 +80,7 @@ public class ContainerMetadata extends org.jclouds.blobstore.internal.ContainerM
       return true;
    }
 
-   public String getName() {
-      return name;
+   public int compareTo(ContainerMetadata o) {
+      return (this == o) ? 0 : getName().compareTo(o.getName());
    }
-
-   public long getCount() {
-      return count;
-   }
-
-   public long getBytes() {
-      return bytes;
-   }
-
 }

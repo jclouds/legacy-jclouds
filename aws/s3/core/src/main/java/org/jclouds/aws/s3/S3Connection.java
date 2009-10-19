@@ -55,7 +55,7 @@ import org.jclouds.aws.s3.xml.CopyObjectHandler;
 import org.jclouds.aws.s3.xml.ListAllMyBucketsHandler;
 import org.jclouds.aws.s3.xml.ListBucketHandler;
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.functions.BlobKey;
+import org.jclouds.blobstore.functions.BlobName;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
@@ -206,7 +206,7 @@ public interface S3Connection {
    @ResponseParser(ParseETagHeader.class)
    Future<String> putObject(
             @HostPrefixParam String bucketName,
-            @PathParam("key") @ParamParser(BlobKey.class) @BinderParam(BindS3ObjectToEntity.class) S3Object object,
+            @PathParam("key") @ParamParser(BlobName.class) @BinderParam(BindS3ObjectToEntity.class) S3Object object,
             PutObjectOptions... options);
 
    /**

@@ -23,7 +23,7 @@
  */
 package org.jclouds.aws.s3.domain;
 
-import org.jclouds.blobstore.domain.ContainerMetadata;
+import org.jclouds.blobstore.internal.ContainerMetadataImpl;
 import org.joda.time.DateTime;
 
 /**
@@ -31,7 +31,7 @@ import org.joda.time.DateTime;
  * 
  * @author Adrian Cole
  */
-public class BucketMetadata extends ContainerMetadata {
+public class BucketMetadata extends ContainerMetadataImpl {
    protected DateTime creationDate;
 
    public DateTime getCreationDate() {

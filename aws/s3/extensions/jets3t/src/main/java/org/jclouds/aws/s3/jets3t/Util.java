@@ -96,7 +96,7 @@ public class Util {
    }
 
    public static S3Object convertObjectHead(org.jclouds.aws.s3.domain.ObjectMetadata jcObjectMD) {
-      S3Object jsObject = new S3Object(jcObjectMD.getKey());
+      S3Object jsObject = new S3Object(jcObjectMD.getName());
       if (jcObjectMD.getOwner() != null) {
          jsObject.setOwner(new S3Owner(jcObjectMD.getOwner().getId(), jcObjectMD.getOwner()
                   .getDisplayName()));

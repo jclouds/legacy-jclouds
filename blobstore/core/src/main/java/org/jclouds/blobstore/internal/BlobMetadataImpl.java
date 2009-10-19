@@ -1,0 +1,247 @@
+/**
+ *
+ * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ *
+ * ====================================================================
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ * ====================================================================
+ */
+package org.jclouds.blobstore.internal;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.ws.rs.core.MediaType;
+
+import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobMetadata;
+import org.joda.time.DateTime;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+
+/**
+ * System and user Metadata for the {@link Blob}.
+ * 
+ * @author Adrian Cole
+ */
+public class BlobMetadataImpl implements Serializable, BlobMetadata, Comparable<BlobMetadata> {
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      BlobMetadataImpl other = (BlobMetadataImpl) obj;
+      if (!Arrays.equals(contentMD5, other.contentMD5))
+         return false;
+      if (dataType == null) {
+         if (other.dataType != null)
+            return false;
+      } else if (!dataType.equals(other.dataType))
+         return false;
+      if (eTag == null) {
+         if (other.eTag != null)
+            return false;
+      } else if (!eTag.equals(other.eTag))
+         return false;
+      if (name == null) {
+         if (other.name != null)
+            return false;
+      } else if (!name.equals(other.name))
+         return false;
+      if (lastModified == null) {
+         if (other.lastModified != null)
+            return false;
+      } else if (!lastModified.equals(other.lastModified))
+         return false;
+      if (size != other.size)
+         return false;
+      if (userMetadata == null) {
+         if (other.userMetadata != null)
+            return false;
+      } else if (!userMetadata.equals(other.userMetadata))
+         return false;
+      return true;
+   }
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -5932618957134612231L;
+
+   protected String name;
+   protected String eTag;
+   protected volatile long size = -1;
+   private byte[] contentMD5;
+
+   protected Multimap<String, String> allHeaders = HashMultimap.create();
+   protected Map<String, String> userMetadata = Maps.newHashMap();
+   protected DateTime lastModified;
+   protected String dataType = MediaType.APPLICATION_OCTET_STREAM;
+
+   @Override
+   public String toString() {
+      StringBuilder builder = new StringBuilder();
+      builder.append("BlobMetadata [name=").append(name).append(", eTag=").append(eTag).append(
+               ", lastModified=").append(lastModified).append(", size=").append(size).append(
+               ", dataType=").append(dataType).append(", userMetadata=").append(userMetadata)
+               .append("]");
+      return builder.toString();
+   }
+
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + Arrays.hashCode(contentMD5);
+      result = prime * result + ((dataType == null) ? 0 : dataType.hashCode());
+      result = prime * result + ((eTag == null) ? 0 : eTag.hashCode());
+      result = prime * result + ((name == null) ? 0 : name.hashCode());
+      result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
+      result = prime * result + (int) (size ^ (size >>> 32));
+      result = prime * result + ((userMetadata == null) ? 0 : userMetadata.hashCode());
+      return result;
+   }
+
+   @Inject
+   public BlobMetadataImpl() {
+      super();
+   }
+
+   /**
+    * @param name
+    * @see #getKey()
+    */
+   public BlobMetadataImpl(String name) {
+      setName(name);
+   }
+
+   public void setName(String name) {
+      checkNotNull(name, "name");
+      checkArgument(!name.startsWith("/"), "names cannot start with /");
+      this.name = name;
+   }
+
+   /**
+    * The name is the handle that you assign to an object that allows you retrieve it later. A name
+    * is a sequence of Unicode characters whose UTF-8 encoding is at most 1024 bytes long. Each
+    * object in a bucket must have a unique name.
+    * 
+    * @see <a href= "http://docs.amazonwebservices.com/AmazonHTTP/2006-03-01/UsingKeys.html" />
+    */
+   public String getName() {
+      return name;
+   }
+
+   public DateTime getLastModified() {
+      return lastModified;
+   }
+
+   public void setLastModified(DateTime lastModified) {
+      this.lastModified = lastModified;
+   }
+
+   /**
+    * The size of the object, in bytes.
+    * 
+    * @see <a href= "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html?sec14.13." />
+    */
+   public long getSize() {
+      return size;
+   }
+
+   public void setSize(long size) {
+      this.size = size;
+   }
+
+   /**
+    * A standard MIME type describing the format of the contents. If none is provided, the default
+    * is binary/octet-stream.
+    * 
+    * @see <a href= "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html?sec14.17." />
+    */
+   public String getContentType() {
+      return dataType;
+   }
+
+   public void setContentType(String dataType) {
+      this.dataType = dataType;
+   }
+
+   public void setContentMD5(byte[] contentMD5) {
+      if (contentMD5 != null) {
+         this.contentMD5 = new byte[contentMD5.length];
+         System.arraycopy(contentMD5, 0, this.contentMD5, 0, contentMD5.length);
+      }
+   }
+
+   public byte[] getContentMD5() {
+      if (contentMD5 != null) {
+         byte[] retval = new byte[contentMD5.length];
+         System.arraycopy(this.contentMD5, 0, retval, 0, contentMD5.length);
+         return retval;
+      } else {
+         return null;
+      }
+   }
+
+   public void setETag(String eTag) {
+      this.eTag = eTag;
+   }
+
+   /**
+    * @return the eTag value stored in the Etag header returned by HTTP.
+    */
+   public String getETag() {
+      return eTag;
+   }
+
+   public void setUserMetadata(Map<String, String> userMetadata) {
+      this.userMetadata = userMetadata;
+   }
+
+   /**
+    * Any key-value pairs associated with the object.
+    */
+   public Map<String, String> getUserMetadata() {
+      return userMetadata;
+   }
+
+   public void setAllHeaders(Multimap<String, String> allHeaders) {
+      this.allHeaders = allHeaders;
+   }
+
+   /**
+    * @return all http response headers associated with this Value
+    */
+   public Multimap<String, String> getAllHeaders() {
+      return allHeaders;
+   }
+
+   public int compareTo(BlobMetadata o) {
+      return (this == o) ? 0 : getName().compareTo(o.getName());
+   }
+}

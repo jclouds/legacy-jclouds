@@ -144,7 +144,7 @@ public class InputStreamMapImpl<C extends ContainerMetadata, M extends BlobMetad
    public Set<Map.Entry<String, InputStream>> entrySet() {
       Set<Map.Entry<String, InputStream>> entrySet = new HashSet<Map.Entry<String, InputStream>>();
       for (B object : this.getAllBlobs.execute(connection, containerName)) {
-         entrySet.add(new Entry(object.getKey(), (InputStream) object.getData()));
+         entrySet.add(new Entry(object.getName(), (InputStream) object.getData()));
       }
       return entrySet;
    }
@@ -226,7 +226,7 @@ public class InputStreamMapImpl<C extends ContainerMetadata, M extends BlobMetad
          Set<Future<String>> puts = Sets.newHashSet();
          for (Map.Entry<? extends String, ? extends Object> entry : map.entrySet()) {
             B object = blobFactory.get();
-            object.getMetadata().setKey(entry.getKey());
+            object.getMetadata().setName(entry.getKey());
             object.setData(entry.getValue());
             object.generateMD5();
             puts.add(connection.putBlob(containerName, object));
@@ -288,7 +288,7 @@ public class InputStreamMapImpl<C extends ContainerMetadata, M extends BlobMetad
    @VisibleForTesting
    InputStream putInternal(String s, Object o) {
       B object = blobFactory.get();
-      object.getMetadata().setKey(s);
+      object.getMetadata().setName(s);
       try {
          InputStream returnVal = containsKey(s) ? get(s) : null;
          object.setData(o);

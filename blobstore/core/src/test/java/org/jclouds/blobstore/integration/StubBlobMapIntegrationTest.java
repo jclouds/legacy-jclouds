@@ -26,8 +26,8 @@ package org.jclouds.blobstore.integration;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ContainerMetadata;
 import org.jclouds.blobstore.integration.internal.BaseBlobMapIntegrationTest;
+import org.jclouds.blobstore.internal.ContainerMetadataImpl;
 import org.testng.annotations.Test;
 
 /**
@@ -36,6 +36,6 @@ import org.testng.annotations.Test;
 
 @Test(groups = { "integration", "live" }, testName = "blobstore.StubBlobMapIntegrationTest")
 public class StubBlobMapIntegrationTest extends
-         BaseBlobMapIntegrationTest<BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> {
+         BaseBlobMapIntegrationTest<BlobStore<ContainerMetadataImpl, BlobMetadata, Blob<BlobMetadata>>, ContainerMetadataImpl, BlobMetadata, Blob<BlobMetadata>> {
  
 }

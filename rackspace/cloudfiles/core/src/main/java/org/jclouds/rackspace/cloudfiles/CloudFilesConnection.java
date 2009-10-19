@@ -37,11 +37,11 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import org.jclouds.blobstore.binders.BindBlobToEntity;
+import org.jclouds.blobstore.binders.BindBlobToEntityAndUserMetadataToHeadersWithPrefix;
 import org.jclouds.blobstore.binders.BindMapToHeadersWithPrefix;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.functions.BlobKey;
+import org.jclouds.blobstore.functions.BlobName;
 import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.functions.ParseETagHeader;
@@ -205,7 +205,7 @@ public interface CloudFilesConnection {
    @ResponseParser(ParseETagHeader.class)
    Future<String> putObject(
             @PathParam("container") String container,
-            @PathParam("key") @ParamParser(BlobKey.class) @BinderParam(BindBlobToEntity.class) Blob<BlobMetadata> object);
+            @PathParam("key") @ParamParser(BlobName.class) @BinderParam(BindBlobToEntityAndUserMetadataToHeadersWithPrefix.class) Blob<BlobMetadata> object);
 
    @GET
    @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)

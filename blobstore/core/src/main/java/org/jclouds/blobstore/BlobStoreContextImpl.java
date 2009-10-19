@@ -66,7 +66,7 @@ public class BlobStoreContextImpl<S, C extends ContainerMetadata, M extends Blob
    public B newBlob(String key) {
       Object object = blobProvider.get();
       B blob = (B) object;
-      blob.getMetadata().setKey(key);
+      blob.getMetadata().setName(key);
       return blob;
    }
 

@@ -23,11 +23,13 @@
  */
 package org.jclouds.mezeo.pcs2.domain;
 
+import org.jclouds.blobstore.internal.BlobImpl;
+
 
 /**
  * @author Adrian Cole
  */
-public class PCSFile extends org.jclouds.blobstore.domain.Blob<FileMetadata> {
+public class PCSFile extends BlobImpl<FileMetadata> {
 
    public PCSFile(FileMetadata metadata, FileMetadata data) {
       super(metadata, data);

@@ -27,6 +27,7 @@ import java.net.URI;
 
 import javax.inject.Inject;
 
+import org.jclouds.blobstore.internal.BlobMetadataImpl;
 import org.joda.time.DateTime;
 
 import com.google.inject.internal.Nullable;
@@ -36,7 +37,7 @@ import com.google.inject.internal.Nullable;
  * @author Adrian Cole
  * 
  */
-public class BlobMetadata extends org.jclouds.blobstore.domain.BlobMetadata {
+public class BlobMetadata extends BlobMetadataImpl {
    /** The serialVersionUID */
    private static final long serialVersionUID = 1L;
    private URI url;

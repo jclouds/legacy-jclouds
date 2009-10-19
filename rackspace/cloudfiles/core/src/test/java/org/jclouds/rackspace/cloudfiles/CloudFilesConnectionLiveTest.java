@@ -40,6 +40,7 @@ import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
+import org.jclouds.blobstore.internal.BlobImpl;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.options.GetOptions;
@@ -277,7 +278,7 @@ public class CloudFilesConnectionLiveTest {
       assertTrue(connection.createContainer(containerName).get(10, TimeUnit.SECONDS));
 
       // Test PUT with string data, ETag hash, and a piece of metadata
-      Blob<BlobMetadata> object = new Blob<BlobMetadata>("object");
+      Blob<BlobMetadata> object = new BlobImpl<BlobMetadata>("object");
       object.setData(data);
       object.setContentLength(data.length());
       object.generateMD5();
@@ -296,8 +297,8 @@ public class CloudFilesConnectionLiveTest {
       }
 
       // Test HEAD of object
-      BlobMetadata metadata = connection.getObjectMetadata(containerName, object.getKey());
-      // TODO assertEquals(metadata.getKey(), object.getKey());
+      BlobMetadata metadata = connection.getObjectMetadata(containerName, object.getName());
+      // TODO assertEquals(metadata.getName(), object.getName());
       assertEquals(metadata.getSize(), data.length());
       assertEquals(metadata.getContentType(), "text/plain");
       assertEquals(HttpUtils.toHexString(md5), HttpUtils.toHexString(object.getMetadata()
@@ -310,7 +311,7 @@ public class CloudFilesConnectionLiveTest {
       Map<String, String> userMetadata = Maps.newHashMap();
       userMetadata.put("New-Metadata-1", "value-1");
       userMetadata.put("New-Metadata-2", "value-2");
-      assertTrue(connection.setObjectMetadata(containerName, object.getKey(), userMetadata));
+      assertTrue(connection.setObjectMetadata(containerName, object.getName(), userMetadata));
 
       // Test GET of missing object
       try {
@@ -319,10 +320,10 @@ public class CloudFilesConnectionLiveTest {
       } catch (KeyNotFoundException e) {
       }
       // Test GET of object (including updated metadata)
-      Blob<BlobMetadata> getBlob = connection.getObject(containerName, object.getKey()).get(120,
+      Blob<BlobMetadata> getBlob = connection.getObject(containerName, object.getName()).get(120,
                TimeUnit.SECONDS);
       assertEquals(IOUtils.toString((InputStream) getBlob.getData()), data);
-      // TODO assertEquals(getBlob.getKey(), object.getKey());
+      // TODO assertEquals(getBlob.getName(), object.getName());
       assertEquals(getBlob.getContentLength(), data.length());
       assertEquals(getBlob.getMetadata().getContentType(), "text/plain");
       assertEquals(HttpUtils.toHexString(md5), HttpUtils.toHexString(getBlob.getMetadata()
@@ -345,7 +346,7 @@ public class CloudFilesConnectionLiveTest {
 
       // Test PUT chunked/streamed upload with data of "unknown" length
       ByteArrayInputStream bais = new ByteArrayInputStream(data.getBytes("UTF-8"));
-      object = new Blob<BlobMetadata>("chunked-object");
+      object = new BlobImpl<BlobMetadata>("chunked-object");
       object.setData(bais);
       newEtag = connection.putObject(containerName, object).get(10, TimeUnit.SECONDS);
       assertEquals(HttpUtils.toHexString(md5), HttpUtils.toHexString(getBlob.getMetadata()
@@ -354,7 +355,7 @@ public class CloudFilesConnectionLiveTest {
       // Test GET with options
       // Non-matching ETag
       try {
-         connection.getObject(containerName, object.getKey(),
+         connection.getObject(containerName, object.getName(),
                   GetOptions.Builder.ifETagDoesntMatch(newEtag)).get(120, TimeUnit.SECONDS);
       } catch (Exception e) {
          assertEquals(e.getCause().getClass(), HttpResponseException.class);
@@ -362,11 +363,12 @@ public class CloudFilesConnectionLiveTest {
       }
 
       // Matching ETag
-      getBlob = connection.getObject(containerName, object.getKey(),
+      getBlob = connection.getObject(containerName, object.getName(),
                GetOptions.Builder.ifETagMatches(newEtag)).get(120, TimeUnit.SECONDS);
       assertEquals(getBlob.getMetadata().getETag(), newEtag);
-      getBlob = connection.getObject(containerName, object.getKey(), GetOptions.Builder.startAt(8))
-               .get(120, TimeUnit.SECONDS);
+      getBlob = connection
+               .getObject(containerName, object.getName(), GetOptions.Builder.startAt(8)).get(120,
+                        TimeUnit.SECONDS);
       assertEquals(IOUtils.toString((InputStream) getBlob.getData()), data.substring(8));
 
       assertTrue(connection.removeObject(containerName, "object").get(10, TimeUnit.SECONDS));

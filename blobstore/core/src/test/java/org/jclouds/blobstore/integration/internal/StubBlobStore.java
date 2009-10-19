@@ -35,6 +35,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
@@ -146,14 +147,22 @@ public class StubBlobStore<C extends ContainerMetadata, M extends BlobMetadata, 
 
             if (realContents == null)
                throw new ContainerNotFoundException(name);
-            SortedSet<M> contents = Sets.newTreeSet(Iterables.transform(realContents.keySet(),
+            SortedSet<M> contents = Sets.newTreeSet(new Comparator<M>() {
+
+               public int compare(M o1, M o2) {
+                  return (o1 == o2) ? 0 : o1.getName().compareTo(o2.getName());
+               }
+
+            });
+
+            Iterables.addAll(contents, Iterables.transform(realContents.keySet(),
                      new Function<String, M>() {
                         public M apply(String key) {
                            return realContents.get(key).getMetadata();
                         }
                      }));
 
-            return Sets.newTreeSet(contents);
+            return contents;
          }
       };
    }
@@ -184,7 +193,7 @@ public class StubBlobStore<C extends ContainerMetadata, M extends BlobMetadata, 
 
    public M copy(M in, String newKey) {
       M newMd = copy(in);
-      newMd.setKey(newKey);
+      newMd.setName(newKey);
       return newMd;
    }
 
@@ -257,7 +266,14 @@ public class StubBlobStore<C extends ContainerMetadata, M extends BlobMetadata, 
    }
 
    public SortedSet<C> listContainers() {
-      return Sets.newTreeSet(Iterables.transform(getContainerToBlobs().keySet(),
+      SortedSet<C> returnVal = Sets.newTreeSet(new Comparator<C>() {
+
+         public int compare(C o1, C o2) {
+            return (o1 == o2) ? 0 : o1.getName().compareTo(o2.getName());
+         }
+
+      });
+      Iterables.addAll(returnVal, Iterables.transform(getContainerToBlobs().keySet(),
                new Function<String, C>() {
                   public C apply(String name) {
                      C cmd = containerMetaProvider.get();
@@ -266,6 +282,7 @@ public class StubBlobStore<C extends ContainerMetadata, M extends BlobMetadata, 
                   }
 
                }));
+      return returnVal;
    }
 
    public Future<Boolean> createContainer(final String name) {
@@ -297,9 +314,9 @@ public class StubBlobStore<C extends ContainerMetadata, M extends BlobMetadata, 
 
       public boolean apply(M metadata) {
          if (prefix == null)
-            return metadata.getKey().indexOf(delimiter) == -1;
-         if (metadata.getKey().startsWith(prefix))
-            return metadata.getKey().replaceFirst(prefix, "").indexOf(delimiter) == -1;
+            return metadata.getName().indexOf(delimiter) == -1;
+         if (metadata.getName().startsWith(prefix))
+            return metadata.getName().replaceFirst(prefix, "").indexOf(delimiter) == -1;
          return false;
       }
    }
@@ -315,7 +332,7 @@ public class StubBlobStore<C extends ContainerMetadata, M extends BlobMetadata, 
       }
 
       public String apply(M metadata) {
-         String working = metadata.getKey();
+         String working = metadata.getName();
 
          if (prefix != null) {
             if (working.startsWith(prefix)) {
@@ -401,7 +418,7 @@ public class StubBlobStore<C extends ContainerMetadata, M extends BlobMetadata, 
          B blob = blobProvider.get();
          blob.setMetadata(newMd);
          blob.setData(data);
-         container.put(object.getKey(), blob);
+         container.put(object.getName(), blob);
 
          // Set HTTP headers to match metadata
          newMd.getAllHeaders().put(HttpHeaders.LAST_MODIFIED,

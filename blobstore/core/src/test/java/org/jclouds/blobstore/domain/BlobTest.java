@@ -29,6 +29,7 @@ import java.io.File;
 
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.blobstore.internal.BlobImpl;
 import org.testng.annotations.Test;
 
 @Test(groups = "unit", testName = "blobstore.BlobTest")
@@ -36,7 +37,7 @@ public class BlobTest {
 
    @Test
    void testSetNoContentType() {
-      Blob<BlobMetadata> object = new Blob<BlobMetadata>("test");
+      Blob<BlobMetadata> object = new BlobImpl<BlobMetadata>("test");
       File file = new File("hello.txt");
       object.setData(file);
       assertEquals(object.getMetadata().getContentType(), MediaType.APPLICATION_OCTET_STREAM);

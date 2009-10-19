@@ -23,6 +23,7 @@
  */
 package org.jclouds.blobstore.strategy.internal;
 
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -78,10 +79,16 @@ public class RetryOnNotFoundGetAllBlobsStrategy<C extends ContainerMetadata, M e
    }
 
    public SortedSet<B> execute(BlobStore<C, M, B> connection, String container) {
-      SortedSet<B> objects = Sets.<B> newTreeSet();
+      SortedSet<B> objects = Sets.<B> newTreeSet(new Comparator<B>() {
+
+         public int compare(B o1, B o2) {
+            return (o1 == o2) ? 0 : o1.getName().compareTo(o2.getName());
+         }
+
+      });
       Map<String, Future<B>> futureObjects = Maps.newHashMap();
       for (M md : getAllBlobMetadata.execute(connection, container)) {
-         futureObjects.put(md.getKey(), connection.getBlob(container, md.getKey()));
+         futureObjects.put(md.getName(), connection.getBlob(container, md.getName()));
       }
       for (Entry<String, Future<B>> futureObjectEntry : futureObjects.entrySet()) {
          try {
@@ -103,7 +110,7 @@ public class RetryOnNotFoundGetAllBlobsStrategy<C extends ContainerMetadata, M e
       for (int i = 0; i < 3; i++) {
          try {
             B object = value.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
-            object.getMetadata().setKey(key);
+            object.getMetadata().setName(key);
             objects.add(object);
             return;
          } catch (KeyNotFoundException e) {

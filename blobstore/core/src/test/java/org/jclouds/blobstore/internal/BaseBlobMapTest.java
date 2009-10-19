@@ -30,7 +30,6 @@ import java.util.Map;
 import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextImpl;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ContainerMetadata;
@@ -86,14 +85,14 @@ public class BaseBlobMapTest {
 
       assertEquals(type4, type5);
 
-      TypeLiteral type6 = new TypeLiteral<BlobStoreContextImpl<BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
+      TypeLiteral type6 = new TypeLiteral<BlobStoreContext<BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
       };
 
-      TypeLiteral type7 = TypeLiteral.get(Types.newParameterizedType(BlobStoreContextImpl.class,
-               Types.newParameterizedType(BlobStore.class, ContainerMetadata.class,
-                        BlobMetadata.class, Types.newParameterizedType(Blob.class,
-                                 BlobMetadata.class)), ContainerMetadata.class, BlobMetadata.class,
-               Types.newParameterizedType(Blob.class, BlobMetadata.class)));
+      TypeLiteral type7 = TypeLiteral.get(Types.newParameterizedType(BlobStoreContext.class, Types
+               .newParameterizedType(BlobStore.class, ContainerMetadata.class, BlobMetadata.class,
+                        Types.newParameterizedType(Blob.class, BlobMetadata.class)),
+               ContainerMetadata.class, BlobMetadata.class, Types.newParameterizedType(Blob.class,
+                        BlobMetadata.class)));
       assertEquals(type6, type7);
 
    }

@@ -23,10 +23,12 @@
  */
 package org.jclouds.azure.storage.blob.domain;
 
+import org.jclouds.blobstore.internal.BlobImpl;
+
 /**
  * @author Adrian Cole
  */
-public class Blob extends org.jclouds.blobstore.domain.Blob<BlobMetadata> {
+public class Blob extends BlobImpl<BlobMetadata> {
 
    public Blob(BlobMetadata metadata, BlobMetadata data) {
       super(metadata, data);

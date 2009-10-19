@@ -23,17 +23,12 @@
  */
 package org.jclouds.blobstore.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
-
 import java.awt.Container;
 import java.io.IOException;
-import java.io.InputStream;
 
-import javax.inject.Inject;
+import org.jclouds.blobstore.internal.BlobImpl;
 
-import org.jclouds.http.HttpUtils;
-import org.jclouds.http.HttpUtils.MD5InputStreamResult;
+import com.google.inject.ImplementedBy;
 
 /**
  * Value type for an HTTP Blob service. Blobs are stored in {@link Container containers} and consist
@@ -43,81 +38,13 @@ import org.jclouds.http.HttpUtils.MD5InputStreamResult;
  * 
  * @author Adrian Cole
  */
-public class Blob<M extends BlobMetadata> implements Comparable<Blob<M>> {
-
-   @SuppressWarnings("unchecked")
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      Blob<M> other = (Blob<M>) obj;
-      if (contentLength != other.contentLength)
-         return false;
-      if (contentRange == null) {
-         if (other.contentRange != null)
-            return false;
-      } else if (!contentRange.equals(other.contentRange))
-         return false;
-      if (data == null) {
-         if (other.data != null)
-            return false;
-      } else if (!data.equals(other.data))
-         return false;
-      if (getMetadata() == null) {
-         if (other.getMetadata() != null)
-            return false;
-      } else if (!getMetadata().equals(other.getMetadata()))
-         return false;
-      return true;
-   }
-
-   @Override
-   public String toString() {
-      return "Blob [contentLength=" + contentLength + ", contentRange=" + contentRange + ", data="
-               + data + ", metadata=" + getMetadata() + "]";
-   }
-
-   protected Object data;
-   private M metadata;
-   protected long contentLength = -1;
-   protected String contentRange;
-
-   @SuppressWarnings("unchecked")
-   public Blob(String key) {
-      // TODO: why are we getting a generic warning here?
-      this((M) new BlobMetadata(key));
-   }
-
-   @SuppressWarnings("unchecked")
-   @Inject
-   public Blob() {
-      this((M) new BlobMetadata());
-   }
-
-   public Blob(M metadata) {
-      this.setMetadata(metadata);
-   }
-
-   public Blob(M metadata, Object data) {
-      this(metadata);
-      setData(data);
-   }
-
-   public Blob(String key, Object data) {
-      this(key);
-      setData(data);
-   }
+@ImplementedBy(BlobImpl.class)
+public interface Blob<M extends BlobMetadata> {
 
    /**
-    * @see BlobMetadata#getKey()
+    * @see BlobMetadata#getName()
     */
-   public String getKey() {
-      return getMetadata().getKey();
-   }
+   String getName();
 
    /**
     * Sets entity for the request or the content from the response. If size isn't set, this will
@@ -127,11 +54,7 @@ public class Blob<M extends BlobMetadata> implements Comparable<Blob<M>> {
     *           typically InputStream for downloads, or File, byte [], String, or InputStream for
     *           uploads.
     */
-   public void setData(Object data) {
-      this.data = checkNotNull(data, "data");
-      if (getMetadata().getSize() == -1)
-         this.getMetadata().setSize(HttpUtils.calculateSize(data));
-   }
+   void setData(Object data);
 
    /**
     * generate an MD5 Hash for the current data.
@@ -143,46 +66,19 @@ public class Blob<M extends BlobMetadata> implements Comparable<Blob<M>> {
     * @throws IOException
     *            if there is a problem generating the hash.
     */
-   public void generateMD5() throws IOException {
-      checkState(data != null, "data");
-      if (data instanceof InputStream) {
-         MD5InputStreamResult result = HttpUtils.generateMD5Result((InputStream) data);
-         getMetadata().setSize(result.length);
-         getMetadata().setContentMD5(result.eTag);
-         setData(result.data);
-      } else {
-         getMetadata().setContentMD5(HttpUtils.md5(data));
-      }
-   }
+   void generateMD5() throws IOException;
 
    /**
     * @return InputStream, if downloading, or whatever was set during {@link #setData(Object)}
     */
-   public Object getData() {
-      return data;
-   }
+   Object getData();
 
    /**
     * @return System and User metadata relevant to this object.
     */
-   public M getMetadata() {
-      return metadata;
-   }
+   M getMetadata();
 
-   @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + (int) (contentLength ^ (contentLength >>> 32));
-      result = prime * result + ((contentRange == null) ? 0 : contentRange.hashCode());
-      result = prime * result + ((data == null) ? 0 : data.hashCode());
-      result = prime * result + ((getMetadata() == null) ? 0 : getMetadata().hashCode());
-      return result;
-   }
-
-   public void setContentLength(long contentLength) {
-      this.contentLength = contentLength;
-   }
+   void setContentLength(long contentLength);
 
    /**
     * Returns the total size of the downloaded object, or the chunk that's available.
@@ -194,13 +90,9 @@ public class Blob<M extends BlobMetadata> implements Comparable<Blob<M>> {
     * @see org.jclouds.http.HttpHeaders#CONTENT_LENGTH
     * @see GetObjectOptions
     */
-   public long getContentLength() {
-      return contentLength;
-   }
+   long getContentLength();
 
-   public void setContentRange(String contentRange) {
-      this.contentRange = contentRange;
-   }
+   void setContentRange(String contentRange);
 
    /**
     * If this is not-null, {@link #getContentLength() } will the size of chunk of the Value available
@@ -209,16 +101,8 @@ public class Blob<M extends BlobMetadata> implements Comparable<Blob<M>> {
     * @see org.jclouds.http.HttpHeaders#CONTENT_RANGE
     * @see GetObjectOptions
     */
-   public String getContentRange() {
-      return contentRange;
-   }
+   String getContentRange();
 
-   public void setMetadata(M metadata) {
-      this.metadata = metadata;
-   }
-
-   public int compareTo(Blob<M> o) {
-      return (this == o) ? 0 : getKey().compareTo(o.getKey());
-   }
+   void setMetadata(M metadata);
 
 }

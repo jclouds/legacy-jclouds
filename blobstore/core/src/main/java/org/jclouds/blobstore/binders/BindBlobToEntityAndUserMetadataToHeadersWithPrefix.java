@@ -21,18 +21,32 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.blobstore.functions;
+package org.jclouds.blobstore.binders;
+
+import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
+import org.jclouds.http.HttpRequest;
 
-import com.google.common.base.Function;
+public class BindBlobToEntityAndUserMetadataToHeadersWithPrefix extends BindBlobToEntity {
+   private final String metadataPrefix;
 
-public class BlobKey implements Function<Object, String> {
-
-   @SuppressWarnings("unchecked")
-   public String apply(Object from) {
-      return ((Blob<BlobMetadata>) from).getKey();
+   @Inject
+   public BindBlobToEntityAndUserMetadataToHeadersWithPrefix(
+            @Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix) {
+      this.metadataPrefix = metadataPrefix;
    }
 
+   public void bindToRequest(HttpRequest request, Object entity) {
+      Blob<?> object = (Blob<?>) entity;
+
+      for (String key : object.getMetadata().getUserMetadata().keySet()) {
+         request.getHeaders().put(key.startsWith(metadataPrefix) ? key : metadataPrefix + key,
+                  object.getMetadata().getUserMetadata().get(key));
+      }
+      super.bindToRequest(request, entity);
+   }
 }

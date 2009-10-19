@@ -59,7 +59,7 @@ public class AssembleBlobFromBlobMetadataCallTest {
       replay(response);
       PCSFile file = callable.apply(response);
       assertEquals(file.getMetadata(), metadata);
-      assertEquals(file.getKey(), "blob");
+      assertEquals(file.getName(), "blob");
       assertEquals(file.getData(), data);
       assertEquals(file.getContentLength(), metadata.getSize());
    }

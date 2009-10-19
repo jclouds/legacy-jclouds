@@ -36,6 +36,7 @@ import javax.ws.rs.core.HttpHeaders;
 import org.apache.commons.io.IOUtils;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
+import org.jclouds.blobstore.internal.BlobImpl;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.testng.annotations.Test;
@@ -65,7 +66,7 @@ public class ParseBlobFromHeadersAndHttpContentTest {
    private Provider<Blob<BlobMetadata>> blobProvider = new Provider<Blob<BlobMetadata>>() {
 
       public Blob<BlobMetadata> get() {
-         return new Blob<BlobMetadata>("key");
+         return new BlobImpl<BlobMetadata>("key");
       }
 
    };

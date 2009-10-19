@@ -47,7 +47,7 @@ import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.http.functions.ParseURIList;
+import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
 import org.jclouds.http.functions.ReturnInputStream;
 import org.jclouds.http.functions.ReturnVoidIf2xx;
 import org.jclouds.logging.Logger;
@@ -108,7 +108,7 @@ public class PCSConnectionTest {
                .singletonList("application/vnd.csp.container-info+xml"));
       assertEquals(httpMethod.getEntity(), "<container><name>container</name></container>");
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               ParseURIList.class);
+               ParseURIFromListOrLocationHeaderIf20x.class);
       // TODO check generic type of response parser
    }
 
@@ -181,7 +181,7 @@ public class PCSConnectionTest {
       assertEquals(Utils.toStringAndClose((InputStream) httpMethod.getEntity()),
                BindBlobToMultipartFormTest.EXPECTS);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
-               ParseURIList.class);
+               ParseURIFromListOrLocationHeaderIf20x.class);
    }
 
    public void testDownloadFile() throws SecurityException, NoSuchMethodException, IOException {

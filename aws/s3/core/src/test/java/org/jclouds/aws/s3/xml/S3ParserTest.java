@@ -132,7 +132,7 @@ public class S3ParserTest extends PerformanceTest {
       assert container.getBucketName().equals("adrianjbosstest");
       assert container.size() == 1;
       ObjectMetadata object = container.iterator().next();
-      assert object.getKey().equals("3366");
+      assert object.getName().equals("3366");
       DateTime expected = new DateTime("2009-03-12T02:00:13.000Z");
       assert object.getLastModified().equals(expected) : String.format(
                "expected %1$s, but got %1$s", expected, object.getLastModified());

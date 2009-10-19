@@ -29,6 +29,7 @@ import static org.testng.Assert.assertNotNull;
 import javax.inject.Provider;
 
 import org.jclouds.blobstore.domain.BlobMetadata;
+import org.jclouds.blobstore.internal.BlobMetadataImpl;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.util.DateService;
 import org.testng.annotations.Test;
@@ -45,7 +46,7 @@ public class ParseObjectMetadataFromHeadersTest {
    public void testEtagCaseIssue() {
       ParseObjectMetadataFromHeaders parser = new ParseObjectMetadataFromHeaders(
                createNiceMock(DateService.class), "", createNiceMock(Provider.class));
-      BlobMetadata md = new BlobMetadata("hello");
+      BlobMetadata md = new BlobMetadataImpl("hello");
       HttpResponse response = new HttpResponse();
       response.getHeaders().put("Etag", "feb1");
       parser.addETagTo(response, md);

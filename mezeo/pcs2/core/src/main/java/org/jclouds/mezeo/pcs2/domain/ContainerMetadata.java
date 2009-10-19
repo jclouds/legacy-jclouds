@@ -32,7 +32,7 @@ import org.joda.time.DateTime;
  * @author Adrian Cole
  * 
  */
-public class ContainerMetadata extends org.jclouds.blobstore.domain.ContainerMetadata implements
+public class ContainerMetadata extends org.jclouds.blobstore.internal.ContainerMetadataImpl implements
          PCSObject {
    private URI url;
    private URI parent;

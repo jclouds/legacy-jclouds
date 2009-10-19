@@ -202,7 +202,7 @@ public class PCSBlobStoreTest {
          return new StubBlobStore.FutureBase<URI>() {
 
             public URI get() throws InterruptedException, ExecutionException {
-               return URI.create("http://localhost/" + object.getKey());
+               return URI.create("http://localhost/" + object.getName());
             }
          };
       }

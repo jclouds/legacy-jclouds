@@ -65,7 +65,7 @@ public class DeleteAllKeysClearContainerStrategy<C extends ContainerMetadata, M 
    public void execute(BlobStore<C, M, B> connection, final String containerName) {
       Set<Future<Void>> deletes = Sets.newHashSet();
       for (M md : getAllBlobMetadata.execute(connection, containerName)) {
-         deletes.add(connection.removeBlob(containerName, md.getKey()));
+         deletes.add(connection.removeBlob(containerName, md.getName()));
       }
       for (Future<Void> isdeleted : deletes) {
          try {

@@ -121,7 +121,7 @@ public class StubS3Connection extends StubBlobStore<BucketMetadata, ObjectMetada
                ObjectMetadata lastMarkerMetadata = Iterables.find(contents,
                         new Predicate<ObjectMetadata>() {
                            public boolean apply(ObjectMetadata metadata) {
-                              return metadata.getKey().equals(finalMarker);
+                              return metadata.getName().equals(finalMarker);
                            }
                         });
                contents = contents.tailSet(lastMarkerMetadata);
@@ -133,7 +133,7 @@ public class StubS3Connection extends StubBlobStore<BucketMetadata, ObjectMetada
                contents = Sets.newTreeSet(Iterables.filter(contents,
                         new Predicate<ObjectMetadata>() {
                            public boolean apply(ObjectMetadata o) {
-                              return (o != null && o.getKey().startsWith(prefix));
+                              return (o != null && o.getName().startsWith(prefix));
                            }
                         }));
             }
@@ -161,7 +161,7 @@ public class StubS3Connection extends StubBlobStore<BucketMetadata, ObjectMetada
                if (!contentsSlice.contains(contents.last())) {
                   // Partial listing
                   truncated = true;
-                  marker = contentsSlice.last().getKey();
+                  marker = contentsSlice.last().getName();
                } else {
                   marker = null;
                }
@@ -229,7 +229,7 @@ public class StubS3Connection extends StubBlobStore<BucketMetadata, ObjectMetada
       final PutObjectOptions options = (nullableOptions == null) ? new PutObjectOptions()
                : nullableOptions;
       if (options.getAcl() != null)
-         keyToAcl.put(bucketName + "/" + object.getKey(), options.getAcl());
+         keyToAcl.put(bucketName + "/" + object.getName(), options.getAcl());
       return super.putBlob(bucketName, object);
    }
 

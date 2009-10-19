@@ -25,7 +25,6 @@ package org.jclouds.blobstore.strategy.internal;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.createNiceMock;
 import static org.easymock.classextension.EasyMock.replay;
 
 import java.util.HashSet;
@@ -40,6 +39,7 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ContainerMetadata;
 import org.jclouds.blobstore.integration.StubBlobStoreContextBuilder;
+import org.jclouds.blobstore.internal.BlobImpl;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -73,7 +73,7 @@ public class RetryOnNotFoundGetAllBlobsStrategyTest {
    public void testIfNotFoundRetryOtherwiseAddToSet() throws InterruptedException,
             ExecutionException, TimeoutException {
       Future<Blob<BlobMetadata>> futureObject = createMock(Future.class);
-      Blob<BlobMetadata> object = new Blob<BlobMetadata>("key");
+      Blob<BlobMetadata> object = new BlobImpl<BlobMetadata>("key");
       expect(futureObject.get(map.requestTimeoutMilliseconds, TimeUnit.MILLISECONDS)).andThrow(
                new KeyNotFoundException());
       expect(futureObject.get(map.requestTimeoutMilliseconds, TimeUnit.MILLISECONDS)).andReturn(
@@ -92,7 +92,7 @@ public class RetryOnNotFoundGetAllBlobsStrategyTest {
    public void testIfNotFoundRetryOtherwiseAddToSetButNeverGetsIt() throws InterruptedException,
             ExecutionException, TimeoutException {
       Future<Blob<BlobMetadata>> futureObject = createMock(Future.class);
-      Blob object = createNiceMock(Blob.class);
+      Blob object = createMock(Blob.class);
       expect(futureObject.get(map.requestTimeoutMilliseconds, TimeUnit.MILLISECONDS)).andThrow(
                new KeyNotFoundException()).atLeastOnce();
       replay(futureObject);

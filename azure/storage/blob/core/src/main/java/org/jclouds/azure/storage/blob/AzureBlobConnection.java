@@ -51,9 +51,9 @@ import org.jclouds.azure.storage.domain.BoundedSortedSet;
 import org.jclouds.azure.storage.filters.SharedKeyAuthentication;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.reference.AzureStorageHeaders;
-import org.jclouds.blobstore.binders.BindBlobToEntity;
+import org.jclouds.blobstore.binders.BindBlobToEntityAndUserMetadataToHeadersWithPrefix;
 import org.jclouds.blobstore.binders.BindMapToHeadersWithPrefix;
-import org.jclouds.blobstore.functions.BlobKey;
+import org.jclouds.blobstore.functions.BlobName;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.functions.ParseETagHeader;
@@ -271,7 +271,7 @@ public interface AzureBlobConnection {
    @Path("{container}/{key}")
    @ResponseParser(ParseETagHeader.class)
    Future<String> putBlob(@PathParam("container") String container,
-            @PathParam("key") @ParamParser(BlobKey.class) @BinderParam(BindBlobToEntity.class) Blob object);
+            @PathParam("key") @ParamParser(BlobName.class) @BinderParam(BindBlobToEntityAndUserMetadataToHeadersWithPrefix.class) Blob object);
 
    /**
     * The Get Blob operation reads or downloads a blob from the system, including its metadata and

@@ -27,11 +27,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
+import java.util.Comparator;
 import java.util.SortedSet;
 
 import javax.inject.Inject;
 
 import org.jclouds.blobstore.domain.BlobMetadata;
+import org.jclouds.blobstore.internal.BlobMetadataImpl;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseJson;
 import org.joda.time.DateTime;
@@ -76,10 +78,17 @@ public class ParseBlobMetadataListFromJsonResponse extends ParseJson<SortedSet<B
       try {
          SortedSet<CloudFilesMetadata> list = gson.fromJson(new InputStreamReader(stream, "UTF-8"),
                   listType);
-         return Sets.newTreeSet(Iterables.transform(list,
+         SortedSet<BlobMetadata> returnVal = Sets.newTreeSet(new Comparator<BlobMetadata>() {
+
+            public int compare(BlobMetadata o1, BlobMetadata o2) {
+               return (o1 == o2) ? 0 : o1.getName().compareTo(o2.getName());
+            }
+
+         });
+         Iterables.addAll(returnVal, Iterables.transform(list,
                   new Function<CloudFilesMetadata, BlobMetadata>() {
                      public BlobMetadata apply(CloudFilesMetadata from) {
-                        BlobMetadata metadata = new BlobMetadata(from.name);
+                        BlobMetadata metadata = new BlobMetadataImpl(from.name);
                         metadata.setSize(from.bytes);
                         metadata.setLastModified(from.last_modified);
                         metadata.setContentType(from.content_type);
@@ -88,6 +97,7 @@ public class ParseBlobMetadataListFromJsonResponse extends ParseJson<SortedSet<B
                         return metadata;
                      }
                   }));
+         return returnVal;
 
       } catch (UnsupportedEncodingException e) {
          throw new RuntimeException("jclouds requires UTF-8 encoding", e);

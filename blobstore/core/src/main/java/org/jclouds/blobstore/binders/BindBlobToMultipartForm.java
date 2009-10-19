@@ -52,7 +52,7 @@ public class BindBlobToMultipartForm implements Binder {
 
    public void bindToRequest(HttpRequest request, Object entity) {
       Blob<?> object = (Blob<?>) entity;
-      Key key = BlobStoreUtils.parseKey(new Key("junk", object.getKey()));
+      Key key = BlobStoreUtils.parseKey(new Key("junk", object.getName()));
       Multimap<String, String> partHeaders = ImmutableMultimap.of("Content-Disposition", String
                .format("form-data; name=\"%s\"; filename=\"%s\"", key.getKey(), key.getKey()),
                HttpHeaders.CONTENT_TYPE, checkNotNull(object.getMetadata().getContentType(),

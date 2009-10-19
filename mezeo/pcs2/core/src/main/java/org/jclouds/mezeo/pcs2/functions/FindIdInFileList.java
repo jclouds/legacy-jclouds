@@ -67,7 +67,7 @@ public class FindIdInFileList implements Function<Key, String> {
    String idForNameInListOrException(String container, String toFind,
             SortedSet<FileMetadata> response) {
       for (FileMetadata data : response) {
-         if (toFind.equals(data.getKey())) {
+         if (toFind.equals(data.getName())) {
             String path = data.getUrl().getPath();
             int indexAfterContainersSlash = path.indexOf("files/") + "files/".length();
             return path.substring(indexAfterContainersSlash);

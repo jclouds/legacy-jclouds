@@ -34,7 +34,7 @@ import org.jclouds.azure.storage.blob.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.http.HttpRequest;
 
-public class BindBlobToEntity extends org.jclouds.blobstore.binders.BindBlobToEntity {
+public class BindBlobToEntity extends org.jclouds.blobstore.binders.BindBlobToEntityAndUserMetadataToHeadersWithPrefix {
    @Inject
    public BindBlobToEntity(@Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix) {
       super(metadataPrefix);

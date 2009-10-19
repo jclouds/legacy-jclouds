@@ -89,7 +89,7 @@ public class AddMetadataAndReturnId implements Function<HttpResponse, String>,
       String container = request.getArgs()[0].toString();
       PCSFile file = (PCSFile) request.getArgs()[1];
 
-      Key key = new Key(container, file.getKey());
+      Key key = new Key(container, file.getName());
       String id = checkNotNull(fileCache.get(key), String.format(
                "file %s should have an id in cache by now", key));
 

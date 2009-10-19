@@ -251,8 +251,8 @@ public class AzureBlobConnectionLiveTest {
       }
 
       // Test HEAD of object
-      BlobMetadata metadata = connection.getBlobProperties(privateContainer, object.getKey());
-      // TODO assertEquals(metadata.getKey(), object.getKey());
+      BlobMetadata metadata = connection.getBlobProperties(privateContainer, object.getName());
+      // TODO assertEquals(metadata.getName(), object.getName());
       // we can't check this while hacking around lack of content-md5, as GET of the first byte will
       // show incorrect length 1, the returned size, as opposed to the real length. This is an ok
       // tradeoff, as a container list will contain the correct size of the objects in an
@@ -271,7 +271,7 @@ public class AzureBlobConnectionLiveTest {
       // Multimap<String, String> userMetadata = HashMultimap.create();
       // userMetadata.put("New-Metadata-1", "value-1");
       // userMetadata.put("New-Metadata-2", "value-2");
-      // assertTrue(connection.setObjectMetadata(privateContainer, object.getKey(), userMetadata));
+      // assertTrue(connection.setObjectMetadata(privateContainer, object.getName(), userMetadata));
 
       // Test GET of missing object
       try {
@@ -281,10 +281,10 @@ public class AzureBlobConnectionLiveTest {
          e.printStackTrace();
       }
       // Test GET of object (including updated metadata)
-      Blob getBlob = connection.getBlob(privateContainer, object.getKey()).get(120,
+      Blob getBlob = connection.getBlob(privateContainer, object.getName()).get(120,
                TimeUnit.SECONDS);
       assertEquals(IOUtils.toString((InputStream) getBlob.getData()), data);
-      // TODO assertEquals(getBlob.getKey(), object.getKey());
+      // TODO assertEquals(getBlob.getName(), object.getName());
       assertEquals(getBlob.getContentLength(), data.length());
       assertEquals(getBlob.getMetadata().getContentType(), "text/plain");
       assertEquals(HttpUtils.toHexString(md5), HttpUtils.toHexString(getBlob.getMetadata()
@@ -323,7 +323,7 @@ public class AzureBlobConnectionLiveTest {
       // Test GET with options
       // Non-matching ETag
       try {
-         connection.getBlob(privateContainer, object.getKey(),
+         connection.getBlob(privateContainer, object.getName(),
                   GetOptions.Builder.ifETagDoesntMatch(newEtag)).get(120, TimeUnit.SECONDS);
       } catch (Exception e) {
          assertEquals(e.getCause().getClass(), HttpResponseException.class);
@@ -331,7 +331,7 @@ public class AzureBlobConnectionLiveTest {
       }
 
       // Matching ETag
-      getBlob = connection.getBlob(privateContainer, object.getKey(),
+      getBlob = connection.getBlob(privateContainer, object.getName(),
                GetOptions.Builder.ifETagMatches(newEtag)).get(120, TimeUnit.SECONDS);
       assertEquals(getBlob.getMetadata().getETag(), newEtag);
 
@@ -339,7 +339,7 @@ public class AzureBlobConnectionLiveTest {
       // doesn't work per
       // http://social.msdn.microsoft.com/Forums/en-US/windowsazure/thread/479fa63f-51df-4b66-96b5-33ae362747b6
       // getBlob = connection
-      // .getBlob(privateContainer, object.getKey(), GetOptions.Builder.startAt(8)).get(120,
+      // .getBlob(privateContainer, object.getName(), GetOptions.Builder.startAt(8)).get(120,
       // TimeUnit.SECONDS);
       // assertEquals(IOUtils.toString((InputStream) getBlob.getData()), data.substring(8));
 

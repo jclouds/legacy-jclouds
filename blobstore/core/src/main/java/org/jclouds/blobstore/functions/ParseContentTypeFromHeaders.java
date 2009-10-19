@@ -52,7 +52,7 @@ public class ParseContentTypeFromHeaders<M extends BlobMetadata> implements
    public M apply(HttpResponse from) {
       String objectKey = getKeyFor(from);
       M to = metadataFactory.get();
-      to.setKey(objectKey);
+      to.setName(objectKey);
       addAllHeadersTo(from, to);
       setContentTypeOrThrowException(from, to);
       return to;

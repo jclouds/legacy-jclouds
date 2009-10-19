@@ -93,7 +93,7 @@ public class CreateSubFolderIfNotExistsAndNewFileResource implements Function<Ob
          URI newFile = connection.createFile(containerUri, file).get(
                   this.requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
          String id = PCSUtils.getFileId(newFile);
-         fileCache.put(new Key(container, file.getKey()), id);
+         fileCache.put(new Key(container, file.getName()), id);
          return id;
       } catch (Exception e) {
          Utils.<ContainerNotFoundException> rethrowIfRuntimeOrSameType(e);

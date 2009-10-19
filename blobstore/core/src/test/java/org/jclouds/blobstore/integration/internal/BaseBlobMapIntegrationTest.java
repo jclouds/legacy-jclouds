@@ -168,11 +168,11 @@ public class BaseBlobMapIntegrationTest<S, C extends ContainerMetadata, M extend
          B object = context.newBlob("one");
          object.setData(IOUtils.toInputStream("apple"));
          object.generateMD5();
-         B old = map.put(object.getKey(), object);
+         B old = map.put(object.getName(), object);
          getOneReturnsAppleAndOldValueIsNull(map, old);
          object.setData(IOUtils.toInputStream("bear"));
          object.generateMD5();
-         B apple = map.put(object.getKey(), object);
+         B apple = map.put(object.getName(), object);
          getOneReturnsBearAndOldValueIsApple(map, apple);
       } finally {
          returnContainer(bucketName);
