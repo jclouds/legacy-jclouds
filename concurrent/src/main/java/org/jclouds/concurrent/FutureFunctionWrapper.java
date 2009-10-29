@@ -23,45 +23,62 @@
  */
 package org.jclouds.concurrent;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
 
 /**
- * Transforms the result of a future as soon as it is available.
+ * Transforms the result of a future once requested via get().
  * 
  * @author Adrian Cole
  */
-public class FutureFunctionCallable<F, T> implements Callable<T> {
+public class FutureFunctionWrapper<F, T> implements Future<T>, Function<F, T> {
 
-   private final Future<F> future;
+   private final Future<? extends F> future;
    private final Function<F, T> function;
    private final Logger logger;
 
-   public FutureFunctionCallable(Future<F> future, Function<F, T> function) {
+   public FutureFunctionWrapper(Future<? extends F> future, Function<F, T> function) {
       this(future, function, Logger.NULL);
    }
 
-   public FutureFunctionCallable(Future<F> future, Function<F, T> function, Logger logger) {
+   public FutureFunctionWrapper(Future<? extends F> future, Function<F, T> function, Logger logger) {
       this.future = future;
       this.function = function;
       this.logger = logger;
    }
 
-   public T call() throws Exception {
-      try {
-         F input = future.get();
-         logger.debug("Processing intermediate result for: %s", input);
-         T result = function.apply(input);
-         logger.debug("Processed intermediate result for: %s", input);
-         return result;
-      } catch (ExecutionException e) {
-         throw (Exception) e.getCause();
-      }
+   public T apply(F input) {
+      logger.debug("Processing intermediate result for: %s", input);
+      T result = function.apply(input);
+      logger.debug("Processed intermediate result for: %s", input);
+      return result;
+   }
+
+   public boolean cancel(boolean mayInterruptIfRunning) {
+      return future.cancel(mayInterruptIfRunning);
+   }
+
+   public T get() throws InterruptedException, ExecutionException {
+      return apply(future.get());
+   }
+
+   public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException,
+            TimeoutException {
+      return apply(future.get(timeout, unit));
+   }
+
+   public boolean isCancelled() {
+      return future.isCancelled();
+   }
+
+   public boolean isDone() {
+      return future.isDone();
    }
 
 }
