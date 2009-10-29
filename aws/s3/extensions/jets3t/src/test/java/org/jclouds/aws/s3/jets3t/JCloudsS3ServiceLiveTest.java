@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -44,12 +44,11 @@ import java.util.concurrent.TimeoutException;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.aws.s3.S3Connection;
-import org.jclouds.aws.s3.domain.BucketMetadata;
+import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
-import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.AccessControlList.GroupGranteeURI;
 import org.jclouds.aws.s3.domain.AccessControlList.Permission;
+import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jets3t.service.S3ObjectsChunk;
 import org.jets3t.service.S3Service;
@@ -78,9 +77,7 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Test(groups = { "live" }, testName = "jets3t.JCloudsS3ServiceIntegrationTest")
-public class JCloudsS3ServiceLiveTest
-         extends
-         BaseBlobStoreIntegrationTest<S3Connection, BucketMetadata, ObjectMetadata, org.jclouds.aws.s3.domain.S3Object> {
+public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
    AWSCredentials credentials;
    S3Service service;
 
@@ -121,7 +118,7 @@ public class JCloudsS3ServiceLiveTest
             ExecutionException, TimeoutException {
       final String bucketName = getContainerName();
       service.deleteBucket(bucketName);
-      assertEventually(new Runnable() {
+      assertConsistencyAware(new Runnable() {
          public void run() {
             assertFalse(context.getApi().bucketExists(bucketName));
          }
@@ -135,10 +132,10 @@ public class JCloudsS3ServiceLiveTest
       try {
          String objectKey = "key-testDeleteObjectImpl";
          String objectValue = "test";
-
-         org.jclouds.aws.s3.domain.S3Object s3Object = new org.jclouds.aws.s3.domain.S3Object(
-                  objectKey, objectValue);
-         addBlobToContainer(bucketName, s3Object);
+         Blob blob = context.getBlobStore().newBlob();
+         blob.getMetadata().setName(objectKey);
+         blob.setData(objectValue);
+         addBlobToContainer(bucketName, blob);
 
          service.deleteObject(bucketName, objectKey);
       } finally {
@@ -156,10 +153,11 @@ public class JCloudsS3ServiceLiveTest
          String metadataName = "metadata-name-1";
          String metadataValue = "metadata-value-1";
 
-         org.jclouds.aws.s3.domain.S3Object s3Object = new org.jclouds.aws.s3.domain.S3Object(
-                  objectKey, objectValue);
-         s3Object.getMetadata().getUserMetadata().put("x-amz-meta-" + metadataName, metadataValue);
-         addBlobToContainer(bucketName, s3Object);
+         Blob blob = context.getBlobStore().newBlob();
+         blob.getMetadata().setName(objectKey);
+         blob.setData(objectValue);
+         blob.getMetadata().getUserMetadata().put(metadataName, metadataValue);
+         addBlobToContainer(bucketName, blob);
 
          S3Object objectDetails = service.getObjectDetails(new S3Bucket(bucketName), objectKey);
 
@@ -182,10 +180,11 @@ public class JCloudsS3ServiceLiveTest
          String metadataName = "metadata-name-2";
          String metadataValue = "metadata-value-2";
 
-         org.jclouds.aws.s3.domain.S3Object s3Object = new org.jclouds.aws.s3.domain.S3Object(
-                  objectKey, objectValue);
-         s3Object.getMetadata().getUserMetadata().put("x-amz-meta-" + metadataName, metadataValue);
-         addBlobToContainer(bucketName, s3Object);
+         Blob blob = context.getBlobStore().newBlob();
+         blob.getMetadata().setName(objectKey);
+         blob.setData(objectValue);
+         blob.getMetadata().getUserMetadata().put(metadataName, metadataValue);
+         addBlobToContainer(bucketName, blob);
 
          S3Object object = service.getObject(new S3Bucket(bucketName), objectKey);
 
@@ -210,7 +209,7 @@ public class JCloudsS3ServiceLiveTest
          S3Bucket[] jsBuckets = service.listAllBuckets();
 
          SortedSet<org.jclouds.aws.s3.domain.BucketMetadata> jcBuckets = context.getApi()
-                  .listOwnedBuckets();
+                  .listOwnedBuckets().get(10, TimeUnit.SECONDS);
 
          assert jsBuckets.length == jcBuckets.size();
 
@@ -363,7 +362,7 @@ public class JCloudsS3ServiceLiveTest
          jsResultObject = service.putObject(new S3Bucket(bucketName), requestObject);
          jcObject = context.getApi().getObject(bucketName, objectKey).get(10, TimeUnit.SECONDS);
          // TODO null keys from s3object! assertEquals(jcObject.getKey(), objectKey);
-         assertEquals(jcObject.getMetadata().getSize(), 0);
+         assertEquals(jcObject.getMetadata().getSize(), new Long(0));
          assertEquals(jcObject.getMetadata().getContentType(), MediaType.APPLICATION_OCTET_STREAM);
          assertEquals(jsResultObject.getKey(), requestObject.getKey());
          assertEquals(jsResultObject.getContentLength(), 0);
@@ -375,7 +374,7 @@ public class JCloudsS3ServiceLiveTest
          jcObject = context.getApi().getObject(bucketName, requestObject.getKey()).get(10,
                   TimeUnit.SECONDS);
          // TODO null keys from s3object! assertEquals(jcObject.getKey(), requestObject.getKey());
-         assertEquals(jcObject.getMetadata().getSize(), 0);
+         assertEquals(jcObject.getMetadata().getSize(), new Long(0));
          assertEquals(jcObject.getMetadata().getContentType(), MediaType.APPLICATION_OCTET_STREAM);
          assertEquals(jsResultObject.getKey(), requestObject.getKey());
          assertEquals(jsResultObject.getContentLength(), 0);
@@ -386,7 +385,7 @@ public class JCloudsS3ServiceLiveTest
          requestObject = new S3Object(objectKey, data);
          jsResultObject = service.putObject(new S3Bucket(bucketName), requestObject);
          jcObject = context.getApi().getObject(bucketName, objectKey).get(10, TimeUnit.SECONDS);
-         assertEquals(jcObject.getMetadata().getSize(), data.getBytes("UTF-8").length);
+         assertEquals(jcObject.getMetadata().getSize(), new Long(data.getBytes("UTF-8").length));
          assertTrue(jcObject.getMetadata().getContentType().startsWith("text/plain"));
          assertEquals(jsResultObject.getContentLength(), data.getBytes("UTF-8").length);
          assertTrue(jsResultObject.getContentType().startsWith("text/plain"));
@@ -412,7 +411,7 @@ public class JCloudsS3ServiceLiveTest
          // TODO : Any way to test a URL lookup that works for live and stub testing?
          // URL publicUrl = new URL(
          // "http://" + bucketName + ".s3.amazonaws.com:80/" + requestObject.getKey());
-         // assertEquals(((HttpURLConnection) publicUrl.openConnection()).getResponseCode(), 200);
+         // assertEquals(((HttpURLClient) publicUrl.openClient()).getResponseCode(), 200);
 
          // Upload object and check MD5
          requestObject = new S3Object(objectKey);
@@ -441,11 +440,11 @@ public class JCloudsS3ServiceLiveTest
          String sourceMetadataValue = "souce-metadata-value";
          String destinationMetadataValue = "destination-metadata-value";
 
-         org.jclouds.aws.s3.domain.S3Object sourceObject = new org.jclouds.aws.s3.domain.S3Object(
-                  sourceObjectKey, data);
-         sourceObject.getMetadata().getUserMetadata().put("x-amz-meta-" + metadataName,
-                  sourceMetadataValue);
-         addBlobToContainer(bucketName, sourceObject);
+         Blob blob = context.getBlobStore().newBlob();
+         blob.getMetadata().setName(sourceObjectKey);
+         blob.setData(data);
+         blob.getMetadata().getUserMetadata().put(metadataName, sourceMetadataValue);
+         addBlobToContainer(bucketName, blob);
 
          S3Object destinationObject;
          Map copyResult;

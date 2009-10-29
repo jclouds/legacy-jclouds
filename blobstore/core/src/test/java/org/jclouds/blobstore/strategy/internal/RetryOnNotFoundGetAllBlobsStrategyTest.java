@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -26,7 +26,10 @@ package org.jclouds.blobstore.strategy.internal;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
+import static org.testng.Assert.assertEquals;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -34,18 +37,18 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.commons.io.IOUtils;
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.KeyNotFoundException;
+import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ContainerMetadata;
+import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.blobstore.integration.StubBlobStoreContextBuilder;
-import org.jclouds.blobstore.internal.BlobImpl;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
 
 /**
  * 
@@ -55,53 +58,56 @@ import com.google.inject.TypeLiteral;
  */
 @Test(groups = { "unit" }, testName = "blobstore.RetryOnNotFoundGetAllBlobsStrategyTest")
 public class RetryOnNotFoundGetAllBlobsStrategyTest {
+   private Factory blobProvider;
 
-   Injector context;
-
-   RetryOnNotFoundGetAllBlobsStrategy<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> map;
-
-   @BeforeClass
-   void addDefaultObjectsSoThatTestsWillPass() {
-      context = new StubBlobStoreContextBuilder().buildInjector();
-      map = context
-               .getInstance(Key
-                        .get(new TypeLiteral<RetryOnNotFoundGetAllBlobsStrategy<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
-                        }));
+   @BeforeTest
+   void setUp() {
+      blobProvider = Guice.createInjector(new BlobStoreObjectModule()).getInstance(Blob.Factory.class);
    }
 
    @SuppressWarnings("unchecked")
    public void testIfNotFoundRetryOtherwiseAddToSet() throws InterruptedException,
-            ExecutionException, TimeoutException {
-      Future<Blob<BlobMetadata>> futureObject = createMock(Future.class);
-      Blob<BlobMetadata> object = new BlobImpl<BlobMetadata>("key");
+            ExecutionException, TimeoutException, IOException {
+      Injector context = new StubBlobStoreContextBuilder().buildInjector();
+      GetAllBlobsInListAndRetryOnFailure map = context
+               .getInstance(GetAllBlobsInListAndRetryOnFailure.class);
+      context.getInstance(BlobStore.class).createContainer("container").get();
+
+      Future<Blob> futureObject = createMock(Future.class);
+      Blob object = blobProvider.create(null);
+      object.getMetadata().setName("key");
+      object.setData("goo");
       expect(futureObject.get(map.requestTimeoutMilliseconds, TimeUnit.MILLISECONDS)).andThrow(
                new KeyNotFoundException());
-      expect(futureObject.get(map.requestTimeoutMilliseconds, TimeUnit.MILLISECONDS)).andReturn(
-               object);
+      context.getInstance(BlobStore.class).putBlob("container", object).get();
       replay(futureObject);
-      Set<Blob<BlobMetadata>> objects = new HashSet<Blob<BlobMetadata>>();
+      Set<Blob> objects = new HashSet<Blob>();
       long time = System.currentTimeMillis();
-      map.ifNotFoundRetryOtherwiseAddToSet("key", futureObject, objects);
+      map.ifNotFoundRetryOtherwiseAddToSet("container", "key", futureObject, objects);
       // should have retried once
       assert System.currentTimeMillis() >= time + map.requestRetryMilliseconds;
-      assert objects.contains(object);
+      assertEquals(IOUtils.toString((InputStream) objects.iterator().next().getData()), "goo");
       assert !objects.contains(null);
    }
 
    @SuppressWarnings("unchecked")
    public void testIfNotFoundRetryOtherwiseAddToSetButNeverGetsIt() throws InterruptedException,
             ExecutionException, TimeoutException {
-      Future<Blob<BlobMetadata>> futureObject = createMock(Future.class);
+      Injector context = new StubBlobStoreContextBuilder().buildInjector();
+      GetAllBlobsInListAndRetryOnFailure map = context
+               .getInstance(GetAllBlobsInListAndRetryOnFailure.class);
+      context.getInstance(BlobStore.class).createContainer("container").get();
+
+      Future<Blob> futureObject = createMock(Future.class);
       Blob object = createMock(Blob.class);
       expect(futureObject.get(map.requestTimeoutMilliseconds, TimeUnit.MILLISECONDS)).andThrow(
                new KeyNotFoundException()).atLeastOnce();
       replay(futureObject);
-      Set<Blob<BlobMetadata>> objects = new HashSet<Blob<BlobMetadata>>();
+      Set<Blob> objects = new HashSet<Blob>();
       long time = System.currentTimeMillis();
-      map.ifNotFoundRetryOtherwiseAddToSet("key", futureObject, objects);
+      map.ifNotFoundRetryOtherwiseAddToSet("container", "key1", futureObject, objects);
       // should have retried thrice
       assert System.currentTimeMillis() >= time + map.requestRetryMilliseconds * 3;
-
       assert !objects.contains(object);
       assert !objects.contains(null);
    }

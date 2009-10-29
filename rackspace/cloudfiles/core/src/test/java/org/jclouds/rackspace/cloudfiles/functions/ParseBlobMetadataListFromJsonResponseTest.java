@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,20 +23,24 @@
  */
 package org.jclouds.rackspace.cloudfiles.functions;
 
+import static org.easymock.EasyMock.expect;
+import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.util.List;
 
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.internal.BlobMetadataImpl;
+import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.joda.time.DateTime;
 import org.testng.annotations.Test;
 import org.testng.collections.Lists;
 
-import com.google.gson.Gson;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -53,22 +57,30 @@ public class ParseBlobMetadataListFromJsonResponseTest {
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/test_list_container.json");
       List<BlobMetadata> expects = Lists.newArrayList();
-      BlobMetadata one = new BlobMetadataImpl("test_obj_1");
+      MutableBlobMetadata one = i.getInstance(MutableBlobMetadata.class);
+      one.setName("test_obj_1");
       one.setETag("4281c348eaf83e70ddce0e07221c3d28");
       one.setContentMD5(HttpUtils.fromHexString(one.getETag()));
-      one.setSize(14);
+      one.setSize(14l);
       one.setContentType("application/octet-stream");
       one.setLastModified(new DateTime("2009-02-03T05:26:32.612278"));
       expects.add(one);
-      BlobMetadata two = new BlobMetadataImpl("test_obj_2");
+      MutableBlobMetadata two = i.getInstance(MutableBlobMetadata.class);
+      two.setName("test_obj_2");
       two.setETag("b039efe731ad111bc1b0ef221c3849d0");
       two.setContentMD5(HttpUtils.fromHexString(two.getETag()));
-      two.setSize(64);
+      two.setSize(64l);
       two.setContentType("application/octet-stream");
       two.setLastModified(new DateTime("2009-02-03T05:26:32.612278"));
       expects.add(two);
-      ParseBlobMetadataListFromJsonResponse parser = new ParseBlobMetadataListFromJsonResponse(i
-               .getInstance(Gson.class));
+      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      ListContainerOptions options = new ListContainerOptions();
+      expect(request.getArgs()).andReturn(
+               new Object[] { "containter", new ListContainerOptions[] { options } }).atLeastOnce();
+      replay(request);
+      ParseBlobMetadataListFromJsonResponse parser = i
+               .getInstance(ParseBlobMetadataListFromJsonResponse.class);
+      parser.setContext(request);
       assertEquals(parser.apply(is), expects);
    }
 }

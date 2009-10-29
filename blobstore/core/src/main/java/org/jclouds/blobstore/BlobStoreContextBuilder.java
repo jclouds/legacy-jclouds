@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,15 +23,10 @@
  */
 package org.jclouds.blobstore;
 
-import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ContainerMetadata;
-import org.jclouds.blobstore.reference.BlobStoreConstants;
-import org.jclouds.cloud.CloudContextBuilder;
+import org.jclouds.rest.RestContextBuilder;
 
 import com.google.inject.Key;
 import com.google.inject.Module;
@@ -41,119 +36,32 @@ import com.google.inject.util.Types;
 /**
  * @author Adrian Cole
  */
-public abstract class BlobStoreContextBuilder<S, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
-         extends CloudContextBuilder<S> {
-   @SuppressWarnings("unchecked")
+public abstract class BlobStoreContextBuilder<S> extends RestContextBuilder<S> {
    @Override
-   public BlobStoreContextBuilder<S, C, M, B> withExecutorService(ExecutorService service) {
-      return (BlobStoreContextBuilder<S, C, M, B>) super.withExecutorService(service);
+   public BlobStoreContextBuilder<S> withExecutorService(ExecutorService service) {
+      return (BlobStoreContextBuilder<S>) super.withExecutorService(service);
    }
 
-   @SuppressWarnings("unchecked")
    @Override
-   public BlobStoreContextBuilder<S, C, M, B> withHttpMaxRedirects(int httpMaxRedirects) {
-      return (BlobStoreContextBuilder<S, C, M, B>) super.withHttpMaxRedirects(httpMaxRedirects);
+   public BlobStoreContextBuilder<S> withModules(Module... modules) {
+      return (BlobStoreContextBuilder<S>) super.withModules(modules);
    }
 
-   /**
-    * longest time a single synchronous operation can take before throwing an exception.
-    */
-   public BlobStoreContextBuilder<S, C, M, B> withRequestTimeout(long milliseconds) {
-      properties.setProperty(BlobStoreConstants.PROPERTY_BLOBSTORE_TIMEOUT, Long
-               .toString(milliseconds));
-      return this;
+   public BlobStoreContextBuilder(TypeLiteral<S> connectionType) {
+      this(connectionType, new Properties());
    }
 
-   @SuppressWarnings("unchecked")
-   @Override
-   public BlobStoreContextBuilder<S, C, M, B> withHttpMaxRetries(int httpMaxRetries) {
-      return (BlobStoreContextBuilder<S, C, M, B>) super.withHttpMaxRetries(httpMaxRetries);
-   }
-
-   @SuppressWarnings("unchecked")
-   @Override
-   public BlobStoreContextBuilder<S, C, M, B> withModule(Module module) {
-      return (BlobStoreContextBuilder<S, C, M, B>) super.withModule(module);
-   }
-
-   @SuppressWarnings("unchecked")
-   @Override
-   public BlobStoreContextBuilder<S, C, M, B> withModules(Module... modules) {
-      return (BlobStoreContextBuilder<S, C, M, B>) super.withModules(modules);
-   }
-
-   @SuppressWarnings("unchecked")
-   @Override
-   public BlobStoreContextBuilder<S, C, M, B> withPoolIoWorkerThreads(int poolIoWorkerThreads) {
-      return (BlobStoreContextBuilder<S, C, M, B>) super
-               .withPoolIoWorkerThreads(poolIoWorkerThreads);
-   }
-
-   @SuppressWarnings("unchecked")
-   @Override
-   public BlobStoreContextBuilder<S, C, M, B> withPoolMaxConnectionReuse(int poolMaxConnectionReuse) {
-      return (BlobStoreContextBuilder<S, C, M, B>) super
-               .withPoolMaxConnectionReuse(poolMaxConnectionReuse);
-   }
-
-   @SuppressWarnings("unchecked")
-   @Override
-   public BlobStoreContextBuilder<S, C, M, B> withPoolMaxConnections(int poolMaxConnections) {
-      return (BlobStoreContextBuilder<S, C, M, B>) super.withPoolMaxConnections(poolMaxConnections);
-   }
-
-   @SuppressWarnings("unchecked")
-   @Override
-   public BlobStoreContextBuilder<S, C, M, B> withPoolMaxSessionFailures(int poolMaxSessionFailures) {
-      return (BlobStoreContextBuilder<S, C, M, B>) super
-               .withPoolMaxSessionFailures(poolMaxSessionFailures);
-   }
-
-   @SuppressWarnings("unchecked")
-   @Override
-   public BlobStoreContextBuilder<S, C, M, B> withPoolRequestInvokerThreads(
-            int poolRequestInvokerThreads) {
-      return (BlobStoreContextBuilder<S, C, M, B>) super
-               .withPoolRequestInvokerThreads(poolRequestInvokerThreads);
-   }
-
-   @SuppressWarnings("unchecked")
-   @Override
-   public BlobStoreContextBuilder<S, C, M, B> relaxSSLHostname() {
-      return (BlobStoreContextBuilder<S, C, M, B>) super.relaxSSLHostname();
-   }
-
-   protected final TypeLiteral<C> containerMetadataType;
-   protected final TypeLiteral<M> blobMetadataType;
-   protected final TypeLiteral<B> blobType;
-
-   public BlobStoreContextBuilder(TypeLiteral<S> connectionType,
-            TypeLiteral<C> containerMetadataType, TypeLiteral<M> blobMetadataType,
-            TypeLiteral<B> blobType) {
-      this(connectionType, containerMetadataType, blobMetadataType, blobType, new Properties());
-   }
-
-   public BlobStoreContextBuilder(TypeLiteral<S> connectionType,
-            TypeLiteral<C> containerMetadataType, TypeLiteral<M> blobMetadataType,
-            TypeLiteral<B> blobType, Properties properties) {
+   public BlobStoreContextBuilder(TypeLiteral<S> connectionType, Properties properties) {
       super(connectionType, properties);
-      this.containerMetadataType = containerMetadataType;
-      this.blobMetadataType = blobMetadataType;
-      this.blobType = blobType;
-      addBlobStoreModule(modules);
-   }
 
-   protected void addBlobStoreModule(List<Module> modules) {
-      modules.add(BlobStoreMapsModule.Builder.newBuilder(containerMetadataType, blobMetadataType,
-               blobType).build());
    }
 
    @SuppressWarnings("unchecked")
    @Override
-   public BlobStoreContext<S, C, M, B> buildContext() {
-      return (BlobStoreContext<S, C, M, B>) this.buildInjector().getInstance(
-               Key.get(Types.newParameterizedType(BlobStoreContext.class, connectionType.getType(),
-                        containerMetadataType.getType(), blobMetadataType.getType(), blobType
+   public BlobStoreContext<S> buildContext() {
+      return (BlobStoreContext<S>) this.buildInjector().getInstance(
+               Key
+                        .get(Types.newParameterizedType(BlobStoreContext.class, connectionType
                                  .getType())));
    }
 }

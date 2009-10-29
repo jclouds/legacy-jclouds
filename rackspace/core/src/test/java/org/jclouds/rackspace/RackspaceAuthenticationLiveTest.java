@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -35,9 +35,6 @@ import java.util.List;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.cloud.CloudContext;
-import org.jclouds.cloud.ConfiguresCloudConnection;
-import org.jclouds.cloud.internal.CloudContextImpl;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpResponseException;
@@ -45,8 +42,13 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rackspace.RackspaceAuthentication.AuthenticationResponse;
+import org.jclouds.rackspace.config.RackspaceAuthenticationRestModule;
 import org.jclouds.rackspace.reference.RackspaceConstants;
+import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.RestContextBuilder;
+import org.jclouds.rest.internal.RestContextImpl;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -63,14 +65,14 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "live", testName = "rackspace.RackspaceAuthenticationLiveTest")
 public class RackspaceAuthenticationLiveTest {
 
-   @ConfiguresCloudConnection
+   @ConfiguresRestClient
    @RequiresHttp
-   private final class RestRackspaceAuthenticationConnectionModule extends AbstractModule {
+   private final class RestRackspaceAuthenticationClientModule extends AbstractModule {
 
       @SuppressWarnings("unused")
       @Provides
       @Singleton
-      RackspaceAuthentication provideConnection(RestClientFactory factory) {
+      RackspaceAuthentication provideClient(RestClientFactory factory) {
          return factory.create(RackspaceAuthentication.class);
       }
 
@@ -86,10 +88,10 @@ public class RackspaceAuthenticationLiveTest {
       @SuppressWarnings( { "unused" })
       @Provides
       @Singleton
-      CloudContext<RackspaceAuthentication> provideContext(Closer closer, RackspaceAuthentication api,
+      RestContext<RackspaceAuthentication> provideContext(Closer closer, RackspaceAuthentication api,
                @Authentication URI endPoint,
                @Named(RackspaceConstants.PROPERTY_RACKSPACE_USER) String account) {
-         return new CloudContextImpl<RackspaceAuthentication>(closer, api, endPoint, account);
+         return new RestContextImpl<RackspaceAuthentication>(closer, api, endPoint, account);
       }
 
       @Override
@@ -101,7 +103,7 @@ public class RackspaceAuthenticationLiveTest {
    String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
    String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
-   private CloudContext<RackspaceAuthentication> context;
+   private RestContext<RackspaceAuthentication> context;
 
    @Test
    public void testAuthentication() throws Exception {
@@ -129,13 +131,13 @@ public class RackspaceAuthenticationLiveTest {
 
    @BeforeClass
    void setupFactory() {
-      context = new RackspaceContextBuilder<RackspaceAuthentication>(
+      context = new RestContextBuilder<RackspaceAuthentication>(
                new TypeLiteral<RackspaceAuthentication>() {
-               }, account, key) {
+               }, new RackspacePropertiesBuilder(account, key).build()) {
          @Override
-         protected void addConnectionModule(List<Module> modules) {
-            super.addConnectionModule(modules);
-            modules.add(new RestRackspaceAuthenticationConnectionModule());
+         protected void addClientModule(List<Module> modules) {
+            modules.add(new RestRackspaceAuthenticationClientModule());
+            modules.add(new RackspaceAuthenticationRestModule());
          }
 
          public void addContextModule(List<Module> modules) {

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -36,8 +36,6 @@ import javax.inject.Named;
 
 import org.jclouds.http.HttpCommandRendezvous;
 import org.jclouds.lifecycle.BaseLifeCycle;
-
-import com.google.inject.assistedinject.Assisted;
 
 /**
  * // TODO: Adrian: Document this!
@@ -75,8 +73,8 @@ public abstract class HttpCommandConnectionPool<C> extends BaseLifeCycle {
 
    public HttpCommandConnectionPool(ExecutorService executor, Semaphore allConnections,
             BlockingQueue<HttpCommandRendezvous<?>> rendezvousQueue, BlockingQueue<C> available,
-            @Assisted URI endPoint, BaseLifeCycle... dependencies) {
-      super(executor, dependencies);
+            URI endPoint) {
+      super(executor);
       this.allConnections = allConnections;
       this.resubmitQueue = rendezvousQueue;
       this.available = available;

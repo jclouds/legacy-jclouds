@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,18 +23,18 @@
  */
 package org.jclouds.blobstore.strategy;
 
-import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ContainerMetadata;
+import org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList;
+
+import com.google.inject.ImplementedBy;
 
 /**
  * Clears a container
  * 
  * @author Adrian Cole
  */
-public interface ClearContainerStrategy<C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>> {
+@ImplementedBy(DeleteAllKeysInList.class)
+public interface ClearContainerStrategy {
 
-   void execute(BlobStore<C, M, B> connection, String containerName);
+   void execute(String containerName);
 
 }

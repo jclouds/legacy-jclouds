@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -31,7 +31,7 @@ import java.net.URI;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.azure.storage.config.RestAzureStorageConnectionModule;
+import org.jclouds.azure.storage.config.AzureStorageRestClientModule;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpUtils;
@@ -135,7 +135,7 @@ public class SharedKeyAuthenticationTest {
     */
    @BeforeClass
    protected void createFilter() {
-      injector = Guice.createInjector(new ParserModule(), new RestAzureStorageConnectionModule(),
+      injector = Guice.createInjector(new ParserModule(), new AzureStorageRestClientModule(),
                new AbstractModule() {
 
                   protected void configure() {

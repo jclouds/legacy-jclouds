@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -28,25 +28,25 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.aws.s3.S3Context;
-import org.jclouds.aws.s3.S3ContextFactory;
-import org.jclouds.aws.s3.domain.BucketMetadata;
-import org.jclouds.blobstore.BlobMap;
+import org.jclouds.aws.s3.blobstore.S3BlobStoreContextFactory;
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.ResourceMetadata;
+import org.jclouds.blobstore.domain.ResourceType;
 
 /**
- * This the Main class of an Application that demonstrates the use of the CreateListOwnedBuckets
+ * This the Main class of an Application that demonstrates the use of the CreateListOwnedContainers
  * class.
  * 
- * Usage is: java MainApp \"accesskeyid\" \"secretekey\" \"bucketName\"
+ * Usage is: java MainApp \"accesskeyid\" \"secretekey\" \"ContainerName\"
  * 
  * @author Carlos Fernandes
  */
 public class MainApp {
 
    public static int PARAMETERS = 3;
-   public static String INVALID_SYNTAX = "Invalid number of parameters. Syntax is: \"accesskeyid\" \"secretekey\" \"bucketName\" ";
+   public static String INVALID_SYNTAX = "Invalid number of parameters. Syntax is: \"accesskeyid\" \"secretekey\" \"ContainerName\" ";
 
    @SuppressWarnings("unchecked")
    public static void main(String[] args) throws InterruptedException, ExecutionException,
@@ -58,25 +58,29 @@ public class MainApp {
       // Args
       String accesskeyid = args[0];
       String secretkey = args[1];
-      String bucketName = args[2];
+      String ContainerName = args[2];
 
       // Init
-      BlobStoreContext context = S3ContextFactory.createContext(accesskeyid, secretkey);
+      BlobStoreContext context = S3BlobStoreContextFactory.createContext(accesskeyid, secretkey);
 
       try {
 
-         // Create Bucket
-         ((S3Context) context).getApi().putBucketIfNotExists(bucketName).get(10, TimeUnit.SECONDS);
-         BlobMap blobMap = context.createBlobMap(bucketName);
-         Blob blob = context.newBlob("test");
+         // Create Container
+         BlobStore blobStore = context.getBlobStore();
+         blobStore.createContainer(ContainerName).get(10, TimeUnit.SECONDS);
+         
+         Blob blob = context.getBlobStore().newBlob();
+         blob.getMetadata().setName("test");
          blob.setData("testdata");
-         blobMap.put("test", blob);
+         blobStore.putBlob("test", blob).get(10, TimeUnit.SECONDS);;
 
-         // List bucket
-         for (BucketMetadata bucketObj : ((S3Context) context).getApi().listOwnedBuckets()) {
-            System.out.println(String.format("  %1$s", bucketObj));
-            System.out.println(String.format(": %1$s entries%n", context.createInputStreamMap(
-                     bucketObj.getName()).size()));
+         // List Container
+         for (ResourceMetadata resourceMd : blobStore.list().get(10, TimeUnit.SECONDS)) {
+            System.out.println(String.format("  %1$s", resourceMd));
+            if (resourceMd.getType() == ResourceType.CONTAINER ||resourceMd.getType() == ResourceType.FOLDER){
+               System.out.println(String.format(": %1$s entries%n", context.createInputStreamMap(
+                        resourceMd.getName()).size()));
+            }
          }
 
       } finally {

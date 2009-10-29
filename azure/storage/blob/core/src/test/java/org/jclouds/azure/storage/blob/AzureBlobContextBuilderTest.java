@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -31,17 +31,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jclouds.azure.storage.blob.config.AzureBlobContextModule;
-import org.jclouds.azure.storage.blob.config.RestAzureBlobStoreModule;
-import org.jclouds.azure.storage.blob.config.StubAzureBlobStoreModule;
-import org.jclouds.azure.storage.blob.config.AzureBlobContextModule.AzureBlobContextImpl;
-import org.jclouds.azure.storage.blob.internal.StubAzureBlobConnection;
+import org.jclouds.azure.storage.blob.config.AzureBlobRestClientModule;
+import org.jclouds.azure.storage.blob.config.AzureBlobStubClientModule;
+import org.jclouds.azure.storage.blob.domain.AzureBlob;
+import org.jclouds.azure.storage.blob.internal.StubAzureBlobClient;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
-import org.jclouds.blobstore.integration.internal.StubBlobStore;
-import org.jclouds.http.HttpUtils;
+import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.RestContextImpl;
 import org.testng.annotations.Test;
 
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of modules configured in AzureBlobContextBuilder
@@ -52,8 +55,8 @@ import com.google.inject.Module;
 public class AzureBlobContextBuilderTest {
 
    public void testNewBuilder() {
-      AzureBlobContextBuilder builder = new AzureBlobContextBuilder("id", "secret")
-               .withModules(new StubAzureBlobStoreModule());
+      AzureBlobContextBuilder builder = new AzureBlobContextBuilder(new AzureBlobPropertiesBuilder(
+               "id", "secret").build()).withModules(new AzureBlobStubClientModule());
       assertEquals(builder.getProperties().getProperty(PROPERTY_USER_METADATA_PREFIX), "x-ms-meta-");
       assertEquals(builder.getProperties().getProperty(
                AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT), "id");
@@ -62,38 +65,38 @@ public class AzureBlobContextBuilderTest {
    }
 
    public void testBuildContext() {
-      AzureBlobContext context = new AzureBlobContextBuilder("id", HttpUtils
-               .toBase64String("secret".getBytes())).withModules(new StubAzureBlobStoreModule())
-               .buildContext();
-      assertEquals(context.getClass(), AzureBlobContextImpl.class);
-      assertEquals(context.getApi().getClass(), StubAzureBlobConnection.class);
-      assertEquals(context.getBlobStore().getClass(), StubBlobStore.class);
+      RestContext<AzureBlobClient> context = new AzureBlobContextBuilder(new AzureBlobPropertiesBuilder("id",
+               "secret").build()).withModules(new AzureBlobStubClientModule()).buildContext();
+      assertEquals(context.getClass(), RestContextImpl.class);
+      assertEquals(context.getApi().getClass(), StubAzureBlobClient.class);
       assertEquals(context.getAccount(), "id");
-      assertEquals(context.getEndPoint(), URI.create("https://id.blob.core.windows.net"));
+      assertEquals(context.getEndPoint(), URI.create("https://localhost/azurestub"));
    }
 
    public void testBuildInjector() {
-      Injector i = new AzureBlobContextBuilder("id", HttpUtils.toBase64String("secret".getBytes()))
-               .withModules(new StubAzureBlobStoreModule()).buildInjector();
-      assert i.getInstance(AzureBlobContext.class) != null;
-   }
+      Injector i = new AzureBlobContextBuilder(new AzureBlobPropertiesBuilder("id", "secret")
+               .build()).withModules(new AzureBlobStubClientModule()).buildInjector();
+      assert i.getInstance(Key.get(new TypeLiteral<RestContext<AzureBlobClient>>() {
+      })) != null;
+      assert i.getInstance(AzureBlob.class) != null;
+      assert i.getInstance(Blob.class) != null;   }
 
    protected void testAddContextModule() {
       List<Module> modules = new ArrayList<Module>();
-      AzureBlobContextBuilder builder = new AzureBlobContextBuilder("id", HttpUtils
-               .toBase64String("secret".getBytes()));
+      AzureBlobContextBuilder builder = new AzureBlobContextBuilder(new AzureBlobPropertiesBuilder(
+               "id", "secret").build());
       builder.addContextModule(modules);
       assertEquals(modules.size(), 1);
       assertEquals(modules.get(0).getClass(), AzureBlobContextModule.class);
    }
 
-   protected void addConnectionModule() {
+   protected void addClientModule() {
       List<Module> modules = new ArrayList<Module>();
-      AzureBlobContextBuilder builder = new AzureBlobContextBuilder("id", HttpUtils
-               .toBase64String("secret".getBytes()));
-      builder.addConnectionModule(modules);
+      AzureBlobContextBuilder builder = new AzureBlobContextBuilder(new AzureBlobPropertiesBuilder(
+               "id", "secret").build());
+      builder.addClientModule(modules);
       assertEquals(modules.size(), 1);
-      assertEquals(modules.get(0).getClass(), RestAzureBlobStoreModule.class);
+      assertEquals(modules.get(0).getClass(), AzureBlobRestClientModule.class);
    }
 
 }

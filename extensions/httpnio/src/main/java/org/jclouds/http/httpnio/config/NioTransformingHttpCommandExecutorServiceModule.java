@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,9 +23,14 @@
  */
 package org.jclouds.http.httpnio.config;
 
+import java.io.Closeable;
+import java.io.IOException;
+import java.net.URI;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.Semaphore;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -36,6 +41,7 @@ import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor;
 import org.apache.http.nio.NHttpConnection;
 import org.apache.http.nio.entity.BufferingNHttpEntity;
+import org.apache.http.nio.entity.ConsumingNHttpEntity;
 import org.apache.http.nio.protocol.AsyncNHttpClientHandler;
 import org.apache.http.nio.protocol.NHttpRequestExecutionHandler;
 import org.apache.http.nio.reactor.IOReactorException;
@@ -57,13 +63,13 @@ import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.http.httpnio.pool.NioHttpCommandConnectionPool;
 import org.jclouds.http.httpnio.pool.NioHttpCommandExecutionHandler;
 import org.jclouds.http.httpnio.pool.NioTransformingHttpCommandExecutorService;
+import org.jclouds.http.httpnio.pool.NioHttpCommandExecutionHandler.ConsumingNHttpEntityFactory;
 import org.jclouds.http.pool.config.ConnectionPoolCommandExecutorServiceModule;
+import org.jclouds.lifecycle.Closer;
 
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
-import com.google.inject.assistedinject.Assisted;
-import com.google.inject.assistedinject.FactoryProvider;
 
 /**
  * 
@@ -75,9 +81,9 @@ public class NioTransformingHttpCommandExecutorServiceModule extends
 
    @Provides
    // @Singleton per uri...
-   public AsyncNHttpClientHandler provideAsyncNttpClientHandler(BasicHttpProcessor httpProcessor,
-            NHttpRequestExecutionHandler execHandler, ConnectionReuseStrategy connStrategy,
-            ByteBufferAllocator allocator, HttpParams params) {
+   public AsyncNHttpClientHandler provideAsyncNttpConnectionHandler(
+            BasicHttpProcessor httpProcessor, NHttpRequestExecutionHandler execHandler,
+            ConnectionReuseStrategy connStrategy, ByteBufferAllocator allocator, HttpParams params) {
       return new AsyncNHttpClientHandler(httpProcessor, execHandler, connStrategy, allocator,
                params);
 
@@ -85,7 +91,7 @@ public class NioTransformingHttpCommandExecutorServiceModule extends
 
    @Provides
    @Singleton
-   public BasicHttpProcessor provideClientProcessor() {
+   public BasicHttpProcessor provideConnectionProcessor() {
       BasicHttpProcessor httpproc = new BasicHttpProcessor();
       httpproc.addInterceptor(new RequestContent());
       httpproc.addInterceptor(new RequestTargetHost());
@@ -114,26 +120,64 @@ public class NioTransformingHttpCommandExecutorServiceModule extends
       bind(new TypeLiteral<BlockingQueue<HttpCommandRendezvous<?>>>() {
       }).to(new TypeLiteral<LinkedBlockingQueue<HttpCommandRendezvous<?>>>() {
       }).in(Scopes.SINGLETON);
-      bind(NioHttpCommandExecutionHandler.ConsumingNHttpEntityFactory.class).toProvider(
-               FactoryProvider.newFactory(
-                        NioHttpCommandExecutionHandler.ConsumingNHttpEntityFactory.class,
-                        InjectableBufferingNHttpEntity.class));// .in(Scopes.SINGLETON); but per URI
+      bind(NioHttpCommandExecutionHandler.ConsumingNHttpEntityFactory.class).to(
+               ConsumingNHttpEntityFactoryImpl.class).in(Scopes.SINGLETON);
       bind(NHttpRequestExecutionHandler.class).to(NioHttpCommandExecutionHandler.class).in(
                Scopes.SINGLETON);
       bind(ConnectionReuseStrategy.class).to(DefaultConnectionReuseStrategy.class).in(
                Scopes.SINGLETON);
       bind(ByteBufferAllocator.class).to(HeapByteBufferAllocator.class);
-      bind(NioHttpCommandConnectionPool.Factory.class).toProvider(
-               FactoryProvider.newFactory(new TypeLiteral<NioHttpCommandConnectionPool.Factory>() {
-               }, new TypeLiteral<NioHttpCommandConnectionPool>() {
-               }));
+      bind(NioHttpCommandConnectionPool.Factory.class).to(Factory.class).in(Scopes.SINGLETON);
    }
 
-   static class InjectableBufferingNHttpEntity extends BufferingNHttpEntity {
+   private static class Factory implements NioHttpCommandConnectionPool.Factory {
+
       @Inject
-      public InjectableBufferingNHttpEntity(@Assisted HttpEntity httpEntity,
-               ByteBufferAllocator allocator) {
-         super(httpEntity, allocator);
+      Closer closer;
+      @Inject
+      ExecutorService executor;
+      @Inject
+      javax.inject.Provider<Semaphore> allConnections;
+      @Inject
+      javax.inject.Provider<BlockingQueue<HttpCommandRendezvous<?>>> commandQueue;
+      @Inject
+      javax.inject.Provider<BlockingQueue<NHttpConnection>> available;
+      @Inject
+      javax.inject.Provider<AsyncNHttpClientHandler> clientHandler;
+      @Inject
+      javax.inject.Provider<DefaultConnectingIOReactor> ioReactor;
+      @Inject
+      HttpParams params;
+
+      public NioHttpCommandConnectionPool create(URI endPoint) {
+         NioHttpCommandConnectionPool pool = new NioHttpCommandConnectionPool(executor,
+                  allConnections.get(), commandQueue.get(), available.get(), clientHandler.get(),
+                  ioReactor.get(), params, endPoint);
+         pool.start();
+         closer.addToClose(new PoolCloser(pool));
+         return pool;
+      }
+
+      private static class PoolCloser implements Closeable {
+         private final NioHttpCommandConnectionPool pool;
+
+         protected PoolCloser(NioHttpCommandConnectionPool pool) {
+            this.pool = pool;
+         }
+
+         public void close() throws IOException {
+            pool.shutdown();
+         }
+      }
+
+   }
+
+   private static class ConsumingNHttpEntityFactoryImpl implements ConsumingNHttpEntityFactory {
+      @Inject
+      javax.inject.Provider<ByteBufferAllocator> allocatorProvider;
+
+      public ConsumingNHttpEntity create(HttpEntity httpEntity) {
+         return new BufferingNHttpEntity(httpEntity, allocatorProvider.get());
       }
    }
 
@@ -143,7 +187,7 @@ public class NioTransformingHttpCommandExecutorServiceModule extends
    }
 
    @Provides
-   // @Singleton per uri...
+   // uri scope
    public DefaultConnectingIOReactor provideDefaultConnectingIOReactor(HttpParams params)
             throws IOReactorException {
       return new DefaultConnectingIOReactor(maxWorkerThreads, params);

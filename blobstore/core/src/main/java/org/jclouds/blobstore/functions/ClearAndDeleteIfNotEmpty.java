@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -30,9 +30,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ContainerMetadata;
 import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.ClearContainerStrategy;
@@ -43,8 +40,7 @@ import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
 
-public class ClearAndDeleteIfNotEmpty<C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
-         implements Function<Exception, Void>, InvocationContext {
+public class ClearAndDeleteIfNotEmpty implements Function<Exception, Void>, InvocationContext {
    static final Void v;
    static {
       Constructor<Void> cv;
@@ -63,14 +59,13 @@ public class ClearAndDeleteIfNotEmpty<C extends ContainerMetadata, M extends Blo
    @Named(BlobStoreConstants.PROPERTY_BLOBSTORE_TIMEOUT)
    protected long requestTimeoutMilliseconds = 30000;
 
-   private final ClearContainerStrategy<C, M, B> clear;
-   private final BlobStore<C, M, B> connection;
+   private final ClearContainerStrategy clear;
+   private final BlobStore connection;
 
    private GeneratedHttpRequest<?> request;
 
    @Inject
-   protected
-   ClearAndDeleteIfNotEmpty(ClearContainerStrategy<C, M, B> clear, BlobStore<C, M, B> connection) {
+   protected ClearAndDeleteIfNotEmpty(ClearContainerStrategy clear, BlobStore connection) {
       this.clear = clear;
       this.connection = connection;
    }
@@ -81,19 +76,21 @@ public class ClearAndDeleteIfNotEmpty<C extends ContainerMetadata, M extends Blo
          if (responseException.getResponse().getStatusCode() == 404) {
             return v;
          } else if (responseException.getResponse().getStatusCode() == 409) {
-            clear.execute(connection, request.getArgs()[0].toString());
+            clear.execute(request.getArgs()[0].toString());
             try {
-               connection.deleteContainer(request.getArgs()[0].toString()).get(requestTimeoutMilliseconds,
-                        TimeUnit.MILLISECONDS);
+               connection.deleteContainer(request.getArgs()[0].toString()).get(
+                        requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
                return v;
             } catch (Exception e) {
                Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
-               throw new BlobRuntimeException("Error deleting container: " + request.getArgs()[0].toString(), e);
+               throw new BlobRuntimeException("Error deleting container: "
+                        + request.getArgs()[0].toString(), e);
             }
          }
       }
       return null;
    }
+
    public void setContext(GeneratedHttpRequest<?> request) {
       this.request = request;
    }

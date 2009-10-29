@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,34 +23,45 @@
  */
 package org.jclouds.rest.config;
 
+import javax.inject.Inject;
 import javax.ws.rs.ext.RuntimeDelegate;
 
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
 import org.jclouds.http.TransformingHttpCommand;
+import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.TransformingHttpCommandImpl;
 import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.rest.internal.RestClientProxy;
 import org.jclouds.rest.internal.RuntimeDelegateImpl;
 
+import com.google.common.base.Function;
 import com.google.inject.AbstractModule;
-import com.google.inject.TypeLiteral;
-import com.google.inject.assistedinject.FactoryProvider;
+import com.google.inject.Scopes;
 
 /**
  * 
  * @author Adrian Cole
  */
 public class RestModule extends AbstractModule {
-   private final static TypeLiteral<TransformingHttpCommand.Factory> httpCommandFactoryLiteral = new TypeLiteral<TransformingHttpCommand.Factory>() {
-   };
 
    @Override
    protected void configure() {
       install(new ParserModule());
       RuntimeDelegate.setInstance(new RuntimeDelegateImpl());
-      bind(httpCommandFactoryLiteral).toProvider(
-               FactoryProvider.newFactory(httpCommandFactoryLiteral,
-                        new TypeLiteral<TransformingHttpCommandImpl<?>>() {
-                        }));
-
+      bind(RestClientProxy.Factory.class).to(Factory.class).in(Scopes.SINGLETON);
    }
 
+   private static class Factory implements RestClientProxy.Factory {
+      @Inject
+      private TransformingHttpCommandExecutorService executorService;
+
+      @SuppressWarnings("unchecked")
+      public TransformingHttpCommand<?> create(HttpRequest request,
+               Function<HttpResponse, ?> transformer, Function<Exception, ?> exceptionTransformer) {
+         return new TransformingHttpCommandImpl(executorService, request, transformer,
+                  exceptionTransformer);
+      }
+
+   }
 }

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -27,17 +27,18 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.net.URI;
+import java.util.SortedSet;
 
-import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
-import org.jclouds.azure.storage.domain.BoundedSortedSet;
-import org.jclouds.azure.storage.domain.BoundedTreeSet;
-import org.jclouds.http.HttpUtils;
+import org.jclouds.azure.storage.blob.domain.ListableContainerProperties;
+import org.jclouds.azure.storage.blob.domain.internal.ListableContainerPropertiesImpl;
+import org.jclouds.azure.storage.domain.BoundedList;
+import org.jclouds.azure.storage.domain.internal.BoundedTreeSet;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.util.DateService;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Sets;
 
 /**
  * Tests behavior of {@code ParseFlavorListFromGsonResponseTest}
@@ -57,46 +58,44 @@ public class AccountNameEnumerationResultsHandlerTest extends BaseHandlerTest {
       assert dateService != null;
    }
 
-   @SuppressWarnings("unchecked")
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/test_list_containers.xml");
-      BoundedSortedSet<ContainerMetadata> list = new BoundedTreeSet<ContainerMetadata>(
-               ImmutableSortedSet.of(new ContainerMetadata(URI
-                        .create("http://myaccount.blob.core.windows.net/audio"), dateService
-                        .rfc822DateParse("Wed, 13 Aug 2008 20:39:39 GMT"), HttpUtils
-                        .fromHexString("0x8CACB9BD7C6B1B2")), new ContainerMetadata(URI
-                        .create("http://myaccount.blob.core.windows.net/images"), dateService
-                        .rfc822DateParse("Wed, 14 Aug 2008 20:39:39 GMT"), HttpUtils
-                        .fromHexString("0x8CACB9BD7C1EEEC")), new ContainerMetadata(URI
-                        .create("http://myaccount.blob.core.windows.net/textfiles"), dateService
-                        .rfc822DateParse("Wed, 15 Aug 2008 20:39:39 GMT"), HttpUtils
-                        .fromHexString("0x8CACB9BD7BACAC3"))
+      SortedSet<ListableContainerProperties> contents = Sets.newTreeSet();
+      contents.add(new ListableContainerPropertiesImpl(URI
+               .create("http://myaccount.blob.core.windows.net/audio"), dateService
+               .rfc822DateParse("Wed, 13 Aug 2008 20:39:39 GMT"), "0x8CACB9BD7C6B1B2"));
+      contents.add(new ListableContainerPropertiesImpl(URI
+               .create("http://myaccount.blob.core.windows.net/images"), dateService
+               .rfc822DateParse("Wed, 14 Aug 2008 20:39:39 GMT"), "0x8CACB9BD7C1EEEC"));
+      contents.add(new ListableContainerPropertiesImpl(URI
+               .create("http://myaccount.blob.core.windows.net/textfiles"), dateService
+               .rfc822DateParse("Wed, 15 Aug 2008 20:39:39 GMT"), "0x8CACB9BD7BACAC3"));
+      BoundedList<ListableContainerProperties> list = new BoundedTreeSet<ListableContainerProperties>(
+               contents, URI.create("http://myaccount.blob.core.windows.net/"), null, null, 3,
+               "video");
 
-               ), null, null, 3, "video");
-
-      BoundedSortedSet<ContainerMetadata> result = (BoundedSortedSet<ContainerMetadata>) factory
+      BoundedList<ListableContainerProperties> result = (BoundedList<ListableContainerProperties>) factory
                .create(injector.getInstance(AccountNameEnumerationResultsHandler.class)).parse(is);
 
       assertEquals(result, list);
    }
 
-   @SuppressWarnings("unchecked")
    public void testApplyInputStreamWithOptions() {
+      SortedSet<ListableContainerProperties> contents = Sets.newTreeSet();
+      contents.add(new ListableContainerPropertiesImpl(URI
+               .create("http://myaccount.blob.core.windows.net/audio"), dateService
+               .rfc822DateParse("Wed, 13 Aug 2008 20:39:39 GMT"), "0x8CACB9BD7C6B1B2"));
+      contents.add(new ListableContainerPropertiesImpl(URI
+               .create("http://myaccount.blob.core.windows.net/images"), dateService
+               .rfc822DateParse("Wed, 14 Aug 2008 20:39:39 GMT"), "0x8CACB9BD7C1EEEC"));
+      contents.add(new ListableContainerPropertiesImpl(URI
+               .create("http://myaccount.blob.core.windows.net/textfiles"), dateService
+               .rfc822DateParse("Wed, 15 Aug 2008 20:39:39 GMT"), "0x8CACB9BD7BACAC3"));
       InputStream is = getClass().getResourceAsStream("/test_list_containers_options.xml");
-      BoundedSortedSet<ContainerMetadata> list = new BoundedTreeSet<ContainerMetadata>(
-               ImmutableSortedSet.of(new ContainerMetadata(URI
-                        .create("http://myaccount.blob.core.windows.net/audio"), dateService
-                        .rfc822DateParse("Wed, 13 Aug 2008 20:39:39 GMT"), HttpUtils
-                        .fromHexString("0x8CACB9BD7C6B1B2")), new ContainerMetadata(URI
-                        .create("http://myaccount.blob.core.windows.net/images"), dateService
-                        .rfc822DateParse("Wed, 14 Aug 2008 20:39:39 GMT"), HttpUtils
-                        .fromHexString("0x8CACB9BD7C1EEEC")), new ContainerMetadata(URI
-                        .create("http://myaccount.blob.core.windows.net/textfiles"), dateService
-                        .rfc822DateParse("Wed, 15 Aug 2008 20:39:39 GMT"), HttpUtils
-                        .fromHexString("0x8CACB9BD7BACAC3"))
-
-               ), "prefix", "marker", 1, "video");
-      BoundedSortedSet<ContainerMetadata> result = (BoundedSortedSet<ContainerMetadata>) factory
+      BoundedList<ListableContainerProperties> list = new BoundedTreeSet<ListableContainerProperties>(
+               contents, URI.create("http://myaccount.blob.core.windows.net"), "prefix", "marker",
+               1, "video");
+      BoundedList<ListableContainerProperties> result = (BoundedList<ListableContainerProperties>) factory
                .create(injector.getInstance(AccountNameEnumerationResultsHandler.class)).parse(is);
       assertEquals(result, list);
    }

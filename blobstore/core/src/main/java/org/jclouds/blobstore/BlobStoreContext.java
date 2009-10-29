@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,10 +23,8 @@
  */
 package org.jclouds.blobstore;
 
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ContainerMetadata;
-import org.jclouds.cloud.CloudContext;
+import org.jclouds.blobstore.internal.BlobStoreContextImpl;
+import org.jclouds.rest.RestContext;
 
 import com.google.inject.ImplementedBy;
 
@@ -38,24 +36,22 @@ import com.google.inject.ImplementedBy;
  * 
  */
 @ImplementedBy(BlobStoreContextImpl.class)
-public interface BlobStoreContext<S, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
-         extends CloudContext<S> {
+public interface BlobStoreContext<S> extends RestContext<S> {
 
    /**
     * Creates a <code>Map<String,InputStream></code> view of the specified container.
     * 
     * @param container
     */
-   InputStreamMap<M> createInputStreamMap(String container);
+   InputStreamMap createInputStreamMap(String container);
 
    /**
     * Creates a <code>Map<String,B></code> view of the specified container.
     * 
     * @param container
     */
-   BlobMap<M, B> createBlobMap(String container);
+   BlobMap createBlobMap(String container);
 
-   BlobStore<C, M, B> getBlobStore();
+   BlobStore getBlobStore();
 
-   B newBlob(String key);
 }

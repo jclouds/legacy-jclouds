@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -32,12 +32,14 @@ import java.net.URI;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.internal.BlobImpl;
+import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
+
+import com.google.inject.Guice;
 
 /**
  * Tests parsing of a request
@@ -46,17 +48,21 @@ import org.testng.annotations.Test;
  */
 @Test(testName = "blobstore.BindBlobToMultipartFormTest")
 public class BindBlobToMultipartFormTest {
+   private static Factory blobProvider;
 
    public static String BOUNDRY = BindBlobToMultipartForm.BOUNDARY;
    public static final String EXPECTS;
-   public static final Blob<BlobMetadata> TEST_BLOB;
+   public static final Blob TEST_BLOB;
 
    static {
+      blobProvider = Guice.createInjector(new BlobStoreObjectModule()).getInstance(
+               Blob.Factory.class);
       StringBuilder builder = new StringBuilder("--");
       addData(BOUNDRY, "hello", builder);
       builder.append("--").append(BOUNDRY).append("--").append("\r\n");
       EXPECTS = builder.toString();
-      TEST_BLOB = new BlobImpl<BlobMetadata>("hello");
+      TEST_BLOB = blobProvider.create(null);
+      TEST_BLOB.getMetadata().setName("hello");
       TEST_BLOB.setData("hello");
       TEST_BLOB.getMetadata().setContentType(MediaType.TEXT_PLAIN);
    }

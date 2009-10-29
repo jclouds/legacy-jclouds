@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -38,9 +38,9 @@ import com.google.common.collect.Multimap;
  * <p/>
  * <code>
  * import static org.jclouds.azure.storage.options.CreateOptions.Builder.*
- * import org.jclouds.azure.storage.queue.AzureQueueConnection;
+ * import org.jclouds.azure.storage.queue.AzureQueueClient;
  * <p/>
- * AzureQueueConnection connection = // get connection
+ * AzureQueueClient connection = // get connection
  * Multimap<String,String> metadata = // ...
  * boolean createdWithPublicAcl = connection.createQueue("containerName", withMetdata(metadata));
  * <code> *

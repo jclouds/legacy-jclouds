@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -22,7 +22,7 @@
  * ====================================================================
  */
 /**
- * This package contains modules who manage the dependencies of the S3Context, S3Connection, and S3 Map views.
+ * This package contains modules who manage the dependencies of the S3Context, S3Client, and S3 Map views.
  * @author Adrian Cole
  */
 package org.jclouds.aws.s3.config;

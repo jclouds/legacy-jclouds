@@ -2,7 +2,7 @@
 <!--
 
 
-    Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+    Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
 
     ====================================================================
     Licensed to the Apache Software Foundation (ASF) under one
@@ -97,14 +97,13 @@
     <category name="jclouds.http.headers">
         <priority value="DEBUG" />
         <appender-ref ref="ASYNCWIRE" />
-    </category><!--
-
+    </category>
     <category name="jclouds.http.wire">
         <priority value="DEBUG" />
         <appender-ref ref="ASYNCWIRE" />
     </category>
     
-    --><!-- ======================= -->
+    <!-- ======================= -->
 	<!-- Setup the Root category -->
 	<!-- ======================= -->
 

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -63,7 +63,7 @@ public class Utils {
    /**
     * Content stream may need to be read. However, we should always close the http stream.
     */
-   public static byte[] closeConnectionButKeepContentStream(HttpResponse response) {
+   public static byte[] closeClientButKeepContentStream(HttpResponse response) {
       if (response.getContent() != null) {
          try {
             byte[] data = IOUtils.toByteArray(response.getContent());
@@ -127,7 +127,7 @@ public class Utils {
     * @throws E
     */
    @SuppressWarnings("unchecked")
-   public static <E extends Exception> void rethrowIfRuntimeOrSameType(Exception e) throws E {
+   public static <E extends Exception> Exception rethrowIfRuntimeOrSameType(Exception e) throws E {
       if (e instanceof ExecutionException || e instanceof ComputationException) {
          Throwable nested = e.getCause();
          if (nested instanceof Error)
@@ -144,6 +144,7 @@ public class Utils {
             // using cce as there's no way to do instanceof E in current java
          }
       }
+      return e;
    }
 
    public static String toStringAndClose(InputStream input) throws IOException {

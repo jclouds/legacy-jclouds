@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -28,9 +28,10 @@ import java.util.SortedSet;
 
 import javax.inject.Inject;
 
-import org.jclouds.azure.storage.blob.domain.BlobMetadata;
 import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
-import org.jclouds.azure.storage.blob.domain.TreeSetListBlobsResponse;
+import org.jclouds.azure.storage.blob.domain.ListableBlobProperties;
+import org.jclouds.azure.storage.blob.domain.internal.ListableBlobPropertiesImpl;
+import org.jclouds.azure.storage.blob.domain.internal.TreeSetListBlobsResponse;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.DateService;
 import org.joda.time.DateTime;
@@ -50,7 +51,7 @@ import com.google.common.collect.Sets;
 public class ContainerNameEnumerationResultsHandler extends
          ParseSax.HandlerWithResult<ListBlobsResponse> {
 
-   private SortedSet<BlobMetadata> blobMetadata = Sets.newTreeSet();
+   private SortedSet<ListableBlobProperties> blobMetadata = Sets.newTreeSet();
    private String prefix;
    private String marker;
    private int maxResults;
@@ -64,7 +65,6 @@ public class ContainerNameEnumerationResultsHandler extends
 
    private final DateService dateParser;
    private String delimiter;
-   private String blobPrefix;
    private String currentName;
    private long currentSize;
    private String currentContentType;
@@ -72,6 +72,7 @@ public class ContainerNameEnumerationResultsHandler extends
    private String currentContentLanguage;
    private boolean inBlob;
    private boolean inBlobPrefix;
+   private SortedSet<String> blobPrefixes = Sets.newTreeSet();
 
    @Inject
    public ContainerNameEnumerationResultsHandler(DateService dateParser) {
@@ -79,8 +80,8 @@ public class ContainerNameEnumerationResultsHandler extends
    }
 
    public ListBlobsResponse getResult() {
-      return new TreeSetListBlobsResponse(containerUrl, blobMetadata, prefix, marker, maxResults,
-               nextMarker, delimiter, blobPrefix);
+      return new TreeSetListBlobsResponse(blobMetadata, containerUrl, prefix, marker, maxResults,
+               nextMarker, delimiter, blobPrefixes);
    }
 
    @Override
@@ -113,9 +114,9 @@ public class ContainerNameEnumerationResultsHandler extends
          nextMarker = currentText.toString().trim();
          nextMarker = (nextMarker.equals("")) ? null : nextMarker;
       } else if (qName.equals("Blob")) {
-         BlobMetadata md = new BlobMetadata(currentName, currentUrl, currentLastModified,
-                  currentETag, currentSize, currentContentType, null, currentContentEncoding,
-                  currentContentLanguage);
+         ListableBlobProperties md = new ListableBlobPropertiesImpl(currentName, currentUrl,
+                  currentLastModified, currentETag, currentSize, currentContentType,
+                  currentContentEncoding, currentContentLanguage);
          blobMetadata.add(md);
          currentName = null;
          currentUrl = null;
@@ -135,7 +136,7 @@ public class ContainerNameEnumerationResultsHandler extends
          if (inBlob)
             currentName = currentText.toString().trim();
          else if (inBlobPrefix)
-            blobPrefix = currentText.toString().trim();
+            blobPrefixes.add(currentText.toString().trim());
       } else if (qName.equals("Size")) {
          currentSize = Long.parseLong(currentText.toString().trim());
       } else if (qName.equals("ContentType")) {

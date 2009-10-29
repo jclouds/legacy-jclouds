@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,15 +23,11 @@
  */
 package org.jclouds.blobstore.integration.internal;
 
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ContainerMetadata;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class BaseContainerLiveTest<S, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
-         extends BaseBlobStoreIntegrationTest<S, C, M, B> {
+public class BaseContainerLiveTest<S> extends BaseBlobStoreIntegrationTest<S> {
 
 }

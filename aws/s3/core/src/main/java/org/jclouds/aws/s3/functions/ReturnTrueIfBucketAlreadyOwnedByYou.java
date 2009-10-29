@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,6 +23,8 @@
  */
 package org.jclouds.aws.s3.functions;
 
+import javax.inject.Singleton;
+
 import org.jclouds.aws.AWSResponseException;
 
 import com.google.common.base.Function;
@@ -31,6 +33,7 @@ import com.google.common.base.Function;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class ReturnTrueIfBucketAlreadyOwnedByYou implements Function<Exception, Boolean> {
 
    public Boolean apply(Exception from) {

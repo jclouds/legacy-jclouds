@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,7 +23,6 @@
  */
 package org.jclouds.aws.s3.domain;
 
-import org.jclouds.blobstore.internal.ContainerMetadataImpl;
 import org.joda.time.DateTime;
 
 /**
@@ -31,36 +30,41 @@ import org.joda.time.DateTime;
  * 
  * @author Adrian Cole
  */
-public class BucketMetadata extends ContainerMetadataImpl {
-   protected DateTime creationDate;
-
-   public DateTime getCreationDate() {
-      return creationDate;
-   }
-
-   public void setCreationDate(DateTime creationDate) {
-      this.creationDate = creationDate;
-   }
+public class BucketMetadata implements Comparable<BucketMetadata> {
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -6965068835316857535L;
+   private final DateTime creationDate;
+   private final CanonicalUser owner;
+   private final String name;
 
    /**
     * Location constraint of the bucket.
     * 
     * @author Adrian Cole
-    * @see <a href=
-    *      "http://docs.amazonwebservices.com/AmazonS3/latest/RESTBucketLocationGET.html" />
+    * @see <a href= "http://docs.amazonwebservices.com/AmazonS3/latest/RESTBucketLocationGET.html"
+    *      />
     */
    public static enum LocationConstraint {
       EU
    }
 
-   private CanonicalUser canonicalUser;
-
-   public BucketMetadata(String name) {
-      super(name);
+   public BucketMetadata(String name, DateTime creationDate, CanonicalUser owner) {
+      this.name = name;
+      this.creationDate = creationDate;
+      this.owner = owner;
    }
 
-   public BucketMetadata() {
-      super();
+   /**
+    * Every bucket and object in Amazon S3 has an owner, the user that created the bucket or object.
+    * The owner of a bucket or object cannot be changed. However, if the object is overwritten by
+    * another user (deleted and rewritten), the new object will have a new owner.
+    */
+   public CanonicalUser getOwner() {
+      return owner;
+   }
+
+   public DateTime getCreationDate() {
+      return creationDate;
    }
 
    /**
@@ -74,40 +78,20 @@ public class BucketMetadata extends ContainerMetadataImpl {
     * <p/>
     * Not be in an IP address style (e.g., "192.168.5.4")
     */
-   @Override
-   public void setName(String name) {
-      // note that we cannot enforce this, as invalid buckets may already exist
-      super.setName(name);
-   }
-
    public String getName() {
       return name;
    }
 
-   @Override
-   public String toString() {
-      return "BucketMetadata [canonicalUser=" + canonicalUser + ", creationDate=" + creationDate
-               + ", name=" + name + "]";
-   }
-
-   /**
-    * Every bucket and object in Amazon S3 has an owner, the user that created the bucket or
-    * object. The owner of a bucket or object cannot be changed. However, if the object is
-    * overwritten by another user (deleted and rewritten), the new object will have a new owner.
-    */
-   public CanonicalUser getOwner() {
-      return canonicalUser;
-   }
-
-   public void setOwner(CanonicalUser canonicalUser) {
-      this.canonicalUser = canonicalUser;
+   public int compareTo(BucketMetadata o) {
+      return (this == o) ? 0 : getName().compareTo(o.getName());
    }
 
    @Override
    public int hashCode() {
       final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ((canonicalUser == null) ? 0 : canonicalUser.hashCode());
+      int result = 1;
+      result = prime * result + ((name == null) ? 0 : name.hashCode());
+      result = prime * result + ((owner == null) ? 0 : owner.hashCode());
       return result;
    }
 
@@ -115,17 +99,21 @@ public class BucketMetadata extends ContainerMetadataImpl {
    public boolean equals(Object obj) {
       if (this == obj)
          return true;
-      if (!super.equals(obj))
+      if (obj == null)
          return false;
       if (getClass() != obj.getClass())
          return false;
       BucketMetadata other = (BucketMetadata) obj;
-      if (canonicalUser == null) {
-         if (other.canonicalUser != null)
+      if (name == null) {
+         if (other.name != null)
             return false;
-      } else if (!canonicalUser.equals(other.canonicalUser))
+      } else if (!name.equals(other.name))
+         return false;
+      if (owner == null) {
+         if (other.owner != null)
+            return false;
+      } else if (!owner.equals(other.owner))
          return false;
       return true;
    }
-
 }

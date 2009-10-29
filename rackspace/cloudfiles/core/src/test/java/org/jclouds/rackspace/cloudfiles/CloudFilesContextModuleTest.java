@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -25,20 +25,20 @@ package org.jclouds.rackspace.cloudfiles;
 
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.blobstore.BlobStoreMapsModule;
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
+import org.jclouds.concurrent.WithinThreadExecutorService;
+import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.rackspace.StubRackspaceAuthenticationModule;
 import org.jclouds.rackspace.cloudfiles.config.CloudFilesContextModule;
-import org.jclouds.rackspace.cloudfiles.config.CloudFilesContextModule.CloudFilesContextImpl;
-import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
-import org.jclouds.rackspace.cloudfiles.integration.StubCloudFilesBlobStoreModule;
+import org.jclouds.rackspace.cloudfiles.config.StubCloudFilesClientModule;
 import org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.util.Jsr330;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -48,12 +48,9 @@ import com.google.inject.TypeLiteral;
 public class CloudFilesContextModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new StubCloudFilesBlobStoreModule(),
-               new StubRackspaceAuthenticationModule(), BlobStoreMapsModule.Builder.newBuilder(
-                        new TypeLiteral<ContainerMetadata>() {
-                        }, new TypeLiteral<BlobMetadata>() {
-                        }, new TypeLiteral<Blob<BlobMetadata>>() {
-                        }).build(), new CloudFilesContextModule() {
+      return Guice.createInjector(new ExecutorServiceModule(new WithinThreadExecutorService()),
+               new StubCloudFilesClientModule(), new StubRackspaceAuthenticationModule(),
+               new CloudFilesContextModule() {
                   @Override
                   protected void configure() {
                      bindConstant().annotatedWith(
@@ -67,8 +64,10 @@ public class CloudFilesContextModuleTest {
 
    @Test
    void testContextImpl() {
-      CloudFilesContext context = createInjector().getInstance(CloudFilesContext.class);
-      assertEquals(context.getClass(), CloudFilesContextImpl.class);
+      RestContext<CloudFilesClient> context = createInjector().getInstance(
+               Key.get(new TypeLiteral<RestContext<CloudFilesClient>>() {
+               }));
+      assertEquals(context.getClass(), RestContextImpl.class);
    }
 
 }

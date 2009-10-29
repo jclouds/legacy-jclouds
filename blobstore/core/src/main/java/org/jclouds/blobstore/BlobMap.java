@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -24,7 +24,10 @@
 package org.jclouds.blobstore;
 
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
+import org.jclouds.blobstore.internal.BlobMapImpl;
+import org.jclouds.blobstore.options.ListOptions;
+
+import com.google.inject.ImplementedBy;
 
 /**
  * This allows you to access the underlying {@link Blob} so that you can manually set metadata such
@@ -33,9 +36,9 @@ import org.jclouds.blobstore.domain.BlobMetadata;
  * @author Adrian Cole
  * 
  */
-public interface BlobMap<M extends BlobMetadata, B extends Blob<M>> extends
-         ListableMap<M, String, B> {
-   public static interface Factory<M extends BlobMetadata, B extends Blob<M>> {
-      BlobMap<M, B> create(String containerName);
+@ImplementedBy(BlobMapImpl.class)
+public interface BlobMap extends ListableMap<String, Blob> {
+   public static interface Factory {
+      BlobMap create(String containerName, ListOptions listOptions);
    }
 }

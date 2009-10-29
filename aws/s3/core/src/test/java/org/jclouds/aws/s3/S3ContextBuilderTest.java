@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -25,23 +25,28 @@ package org.jclouds.aws.s3;
 
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_ACCESSKEYID;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_SECRETACCESSKEY;
-import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jclouds.aws.s3.config.RestS3ConnectionModule;
 import org.jclouds.aws.s3.config.S3ContextModule;
-import org.jclouds.aws.s3.config.StubS3BlobStoreModule;
-import org.jclouds.aws.s3.config.S3ContextModule.S3ContextImpl;
-import org.jclouds.aws.s3.internal.StubS3Connection;
-import org.jclouds.blobstore.integration.internal.StubBlobStore;
+import org.jclouds.aws.s3.config.S3RestClientModule;
+import org.jclouds.aws.s3.config.S3StubClientModule;
+import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.s3.domain.internal.S3ObjectImpl;
+import org.jclouds.aws.s3.internal.StubS3Client;
+import org.jclouds.aws.s3.reference.S3Constants;
+import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.RestContextImpl;
 import org.testng.annotations.Test;
 
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of modules configured in S3ContextBuilder
@@ -52,43 +57,49 @@ import com.google.inject.Module;
 public class S3ContextBuilderTest {
 
    public void testNewBuilder() {
-      S3ContextBuilder builder = new S3ContextBuilder("id", "secret");
-      assertEquals(builder.getProperties().getProperty(PROPERTY_USER_METADATA_PREFIX),
+      S3ContextBuilder builder = new S3ContextBuilder(new S3PropertiesBuilder("id", "secret")
+               .build());
+      assertEquals(builder.getProperties().getProperty(S3Constants.PROPERTY_S3_METADATA_PREFIX),
                "x-amz-meta-");
       assertEquals(builder.getProperties().getProperty(PROPERTY_AWS_ACCESSKEYID), "id");
       assertEquals(builder.getProperties().getProperty(PROPERTY_AWS_SECRETACCESSKEY), "secret");
    }
 
    public void testBuildContext() {
-      S3Context context = new S3ContextBuilder("id", "secret").withModules(
-               new StubS3BlobStoreModule()).buildContext();
-      assertEquals(context.getClass(), S3ContextImpl.class);
-      assertEquals(context.getApi().getClass(), StubS3Connection.class);
-      assertEquals(context.getBlobStore().getClass(), StubBlobStore.class);
+      RestContext<S3Client> context = new S3ContextBuilder(new S3PropertiesBuilder("id", "secret")
+               .build()).withModules(new S3StubClientModule()).buildContext();
+      assertEquals(context.getClass(), RestContextImpl.class);
+      assertEquals(context.getApi().getClass(), StubS3Client.class);
+      assertEquals(context.getApi().newS3Object().getClass(), S3ObjectImpl.class);
       assertEquals(context.getAccount(), "id");
       assertEquals(context.getEndPoint(), URI.create("https://localhost/s3stub"));
    }
 
    public void testBuildInjector() {
-      Injector i = new S3ContextBuilder("id", "secret").withModules(new StubS3BlobStoreModule())
-               .buildInjector();
-      assert i.getInstance(S3Context.class) != null;
+      Injector i = new S3ContextBuilder(new S3PropertiesBuilder("id", "secret").build())
+               .withModules(new S3StubClientModule()).buildInjector();
+      assert i.getInstance(Key.get(new TypeLiteral<RestContext<S3Client>>() {
+      })) != null;
+      assert i.getInstance(S3Object.class) != null;
+      assert i.getInstance(Blob.class) != null;
    }
 
    protected void testAddContextModule() {
       List<Module> modules = new ArrayList<Module>();
-      S3ContextBuilder builder = new S3ContextBuilder("id", "secret");
+      S3ContextBuilder builder = new S3ContextBuilder(new S3PropertiesBuilder("id", "secret")
+               .build());
       builder.addContextModule(modules);
       assertEquals(modules.size(), 1);
       assertEquals(modules.get(0).getClass(), S3ContextModule.class);
    }
 
-   protected void addConnectionModule() {
+   protected void addClientModule() {
       List<Module> modules = new ArrayList<Module>();
-      S3ContextBuilder builder = new S3ContextBuilder("id", "secret");
-      builder.addConnectionModule(modules);
+      S3ContextBuilder builder = new S3ContextBuilder(new S3PropertiesBuilder("id", "secret")
+               .build());
+      builder.addClientModule(modules);
       assertEquals(modules.size(), 1);
-      assertEquals(modules.get(0).getClass(), RestS3ConnectionModule.class);
+      assertEquals(modules.get(0).getClass(), S3RestClientModule.class);
    }
 
 }

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -24,11 +24,10 @@
 package org.jclouds.blobstore.functions;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
+import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.InvocationContext;
@@ -43,14 +42,14 @@ import com.google.common.base.Function;
  * @see ParseSystemAndUserMetadataFromHeaders
  * @author Adrian Cole
  */
-public class ParseBlobFromHeadersAndHttpContent<M extends BlobMetadata, B extends Blob<M>>
-         implements Function<HttpResponse, B>, InvocationContext {
-   private final ParseContentTypeFromHeaders<M> metadataParser;
-   private final Provider<B> blobFactory;
+public class ParseBlobFromHeadersAndHttpContent implements Function<HttpResponse, Blob>,
+         InvocationContext {
+   private final ParseSystemAndUserMetadataFromHeaders metadataParser;
+   private final Blob.Factory blobFactory;
 
    @Inject
-   public ParseBlobFromHeadersAndHttpContent(ParseContentTypeFromHeaders<M> metadataParser,
-            Provider<B> blobFactory) {
+   public ParseBlobFromHeadersAndHttpContent(ParseSystemAndUserMetadataFromHeaders metadataParser,
+            Blob.Factory blobFactory) {
       this.metadataParser = metadataParser;
       this.blobFactory = blobFactory;
    }
@@ -63,10 +62,10 @@ public class ParseBlobFromHeadersAndHttpContent<M extends BlobMetadata, B extend
     * 
     * @throws org.jclouds.http.HttpException
     */
-   public B apply(HttpResponse from) {
-      M metadata = metadataParser.apply(from);
-      B object = blobFactory.get();
-      object.setMetadata(metadata);
+   public Blob apply(HttpResponse from) {
+      MutableBlobMetadata metadata = metadataParser.apply(from);
+      Blob object = blobFactory.create(metadata);
+      addAllHeadersTo(from, object);
       object.setData(from.getContent());
       assert object.getMetadata() == metadata;
       attemptToParseSizeAndRangeFromHeaders(from, object);
@@ -74,7 +73,7 @@ public class ParseBlobFromHeadersAndHttpContent<M extends BlobMetadata, B extend
    }
 
    @VisibleForTesting
-   void attemptToParseSizeAndRangeFromHeaders(HttpResponse from, B object) throws HttpException {
+   void attemptToParseSizeAndRangeFromHeaders(HttpResponse from, Blob object) throws HttpException {
       String contentLength = from.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH);
       String contentRange = from.getFirstHeaderOrNull("Content-Range");
 
@@ -85,10 +84,14 @@ public class ParseBlobFromHeadersAndHttpContent<M extends BlobMetadata, B extend
       if (contentRange == null && contentLength != null) {
          object.getMetadata().setSize(object.getContentLength());
       } else if (contentRange != null) {
-         object.setContentRange(contentRange);
          object.getMetadata().setSize(
                   Long.parseLong(contentRange.substring(contentRange.lastIndexOf('/') + 1)));
       }
+   }
+
+   @VisibleForTesting
+   void addAllHeadersTo(HttpResponse from, Blob object) {
+      object.getAllHeaders().putAll(from.getHeaders());
    }
 
    public void setContext(GeneratedHttpRequest<?> request) {

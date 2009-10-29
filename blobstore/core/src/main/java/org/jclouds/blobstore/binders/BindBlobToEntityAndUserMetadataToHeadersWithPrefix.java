@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -41,7 +41,7 @@ public class BindBlobToEntityAndUserMetadataToHeadersWithPrefix extends BindBlob
    }
 
    public void bindToRequest(HttpRequest request, Object entity) {
-      Blob<?> object = (Blob<?>) entity;
+      Blob object = (Blob) entity;
 
       for (String key : object.getMetadata().getUserMetadata().keySet()) {
          request.getHeaders().put(key.startsWith(metadataPrefix) ? key : metadataPrefix + key,

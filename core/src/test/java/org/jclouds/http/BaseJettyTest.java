@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -38,12 +38,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.cloud.CloudContext;
-import org.jclouds.cloud.CloudContextBuilder;
-import org.jclouds.cloud.ConfiguresCloudConnection;
-import org.jclouds.cloud.internal.CloudContextImpl;
 import org.jclouds.lifecycle.Closer;
+import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.RestContextBuilder;
+import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.rest.internal.RestAnnotationProcessorTest.Localhost;
 import org.jclouds.util.Jsr330;
 import org.jclouds.util.Utils;
@@ -65,9 +65,9 @@ import com.google.inject.TypeLiteral;
 
 public abstract class BaseJettyTest {
 
-   @ConfiguresCloudConnection
+   @ConfiguresRestClient
    @RequiresHttp
-   private final class RestIntegrationTestConnectionModule extends AbstractModule {
+   private final class RestIntegrationTestClientModule extends AbstractModule {
       @Override
       protected void configure() {
 
@@ -76,7 +76,7 @@ public abstract class BaseJettyTest {
       @SuppressWarnings("unused")
       @Provides
       @Singleton
-      public IntegrationTestClient provideConnection(RestClientFactory factory) {
+      public IntegrationTestClient provideClient(RestClientFactory factory) {
          return factory.create(IntegrationTestClient.class);
       }
    }
@@ -100,9 +100,9 @@ public abstract class BaseJettyTest {
       @SuppressWarnings( { "unchecked", "unused" })
       @Provides
       @Singleton
-      CloudContext<IntegrationTestClient> provideContext(Closer closer,
+      RestContext<IntegrationTestClient> provideContext(Closer closer,
                IntegrationTestClient client, @Localhost URI endPoint) {
-         return new CloudContextImpl(closer, client, endPoint, System.getProperty("user.name"));
+         return new RestContextImpl(closer, client, endPoint, System.getProperty("user.name"));
       }
    }
 
@@ -114,7 +114,7 @@ public abstract class BaseJettyTest {
    protected Injector injector;
    private AtomicInteger cycle = new AtomicInteger(0);
    private Server server2;
-   private CloudContext<IntegrationTestClient> context;
+   private RestContext<IntegrationTestClient> context;
    private int testPort;
    static final Pattern actionPattern = Pattern.compile("/objects/(.*)/action/([a-z]*);?(.*)");
 
@@ -203,14 +203,9 @@ public abstract class BaseJettyTest {
 
       final Properties properties = new Properties();
       addConnectionProperties(properties);
-      context = new CloudContextBuilder<IntegrationTestClient>(
+      context = new RestContextBuilder<IntegrationTestClient>(
                new TypeLiteral<IntegrationTestClient>() {
                }, properties) {
-
-         @Override
-         public CloudContextBuilder<IntegrationTestClient> withEndpoint(URI endpoint) {
-            return this;
-         }
 
          @Override
          protected void addContextModule(List<Module> modules) {
@@ -218,12 +213,14 @@ public abstract class BaseJettyTest {
          }
 
          @Override
-         protected void addConnectionModule(List<Module> modules) {
-            modules.add(new RestIntegrationTestConnectionModule());
+         protected void addClientModule(List<Module> modules) {
+            modules.add(new RestIntegrationTestClientModule());
          }
-      }.withModules(createClientModule()).buildContext();
+      }.withModules(createConnectionModule()).buildContext();
       client = context.getApi();
       assert client != null;
+
+      assert client.newStringBuffer() != null;
    }
 
    @AfterTest
@@ -235,7 +232,7 @@ public abstract class BaseJettyTest {
 
    protected abstract void addConnectionProperties(Properties props);
 
-   protected abstract Module createClientModule();
+   protected abstract Module createConnectionModule();
 
    /**
     * Fails every 10 requests.

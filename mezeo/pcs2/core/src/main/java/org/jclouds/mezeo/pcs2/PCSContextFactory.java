@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -24,14 +24,16 @@
 package org.jclouds.mezeo.pcs2;
 
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.rest.RestContext;
 
 import com.google.inject.Module;
 
 /**
- * Creates {@link PCSContext} instances based on the most commonly requested arguments.
+ * Creates {@link RestContext<PCSClient>} instances based on the most commonly requested arguments.
  * <p/>
  * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
  * <p/>
@@ -40,12 +42,19 @@ import com.google.inject.Module;
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
  * @author Adrian Cole
- * @see PCSContext
+ * @see RestContext<PCSClient>
  */
 public class PCSContextFactory {
 
-   public static PCSContext createContext(URI endpoint, String user, String key, Module... modules) {
-      return new PCSContextBuilder(endpoint, user, key).withEndpoint(endpoint).withModules(modules)
-               .buildContext();
+   public static RestContext<PCSClient> createContext(URI endpoint, String user, String key,
+            Module... modules) {
+      return new PCSContextBuilder(new PCSPropertiesBuilder(endpoint, user, key).build())
+               .withModules(modules).buildContext();
    }
+
+   public static RestContext<PCSClient> createContext(Properties properties, Module... modules) {
+      return new PCSContextBuilder(new PCSPropertiesBuilder(properties).build()).withModules(
+               modules).buildContext();
+   }
+
 }

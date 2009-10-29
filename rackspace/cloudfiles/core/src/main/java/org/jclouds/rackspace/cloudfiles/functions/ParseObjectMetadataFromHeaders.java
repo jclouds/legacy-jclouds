@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,16 +23,15 @@
  */
 package org.jclouds.rackspace.cloudfiles.functions;
 
-import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 
-import org.jclouds.blobstore.domain.BlobMetadata;
+import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
+import org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants;
 import org.jclouds.util.DateService;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -40,21 +39,20 @@ import com.google.common.annotations.VisibleForTesting;
 /**
  * @author Adrian Cole
  */
-public class ParseObjectMetadataFromHeaders extends
-         ParseSystemAndUserMetadataFromHeaders<BlobMetadata> {
+public class ParseObjectMetadataFromHeaders extends ParseSystemAndUserMetadataFromHeaders {
 
    @Inject
-   public ParseObjectMetadataFromHeaders(DateService dateParser,
-            @Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix,
-            Provider<BlobMetadata> metadataFactory) {
-      super(dateParser, metadataPrefix, metadataFactory);
+   public ParseObjectMetadataFromHeaders(Provider<MutableBlobMetadata> metadataFactory,
+            DateService dateParser,
+            @Named(CloudFilesConstants.PROPERTY_CLOUDFILES_METADATA_PREFIX) String metadataPrefix) {
+      super(metadataFactory, dateParser, metadataPrefix);
    }
 
    @VisibleForTesting
    /**
     * ETag == Content-MD5
     */
-   protected void addETagTo(HttpResponse from, BlobMetadata metadata) {
+   protected void addETagTo(HttpResponse from, MutableBlobMetadata metadata) {
       super.addETagTo(from, metadata);
       if (metadata.getETag() == null) {
          // etag comes back incorrect case

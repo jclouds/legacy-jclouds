@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -39,9 +39,6 @@ import java.util.concurrent.TimeoutException;
 import org.apache.commons.io.IOUtils;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.InputStreamMap;
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ContainerMetadata;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
@@ -50,8 +47,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-public class BaseInputStreamMapIntegrationTest<S, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
-         extends BaseMapIntegrationTest<S, C, M, B, InputStream> {
+public class BaseInputStreamMapIntegrationTest<S> extends BaseMapIntegrationTest<S, InputStream> {
 
    @Override
    @Test(groups = { "integration", "live" })
@@ -62,7 +58,7 @@ public class BaseInputStreamMapIntegrationTest<S, C extends ContainerMetadata, M
          Map<String, InputStream> map = createMap(context, bucketName);
          map.putAll(this.fiveInputs);
          // this will cause us to block until the bucket updates.
-         assertEventuallyKeySize(map, 5);
+         assertConsistencyAwareKeySize(map, 5);
          Collection<InputStream> values = map.values();
          assertEquals(values.size(), 5);
          Set<String> valuesAsString = new HashSet<String>();
@@ -70,7 +66,7 @@ public class BaseInputStreamMapIntegrationTest<S, C extends ContainerMetadata, M
             valuesAsString.add(Utils.toStringAndClose(stream));
          }
          valuesAsString.removeAll(fiveStrings.values());
-         assert valuesAsString.size() == 0;
+         assertEquals(valuesAsString.size(), 0);
       } finally {
          returnContainer(bucketName);
       }
@@ -89,13 +85,12 @@ public class BaseInputStreamMapIntegrationTest<S, C extends ContainerMetadata, M
          assert old == null;
          old = map.get("one");
          assert old == null;
-         assertEventuallyKeySize(map, 0);
+         assertConsistencyAwareKeySize(map, 0);
       } finally {
          returnContainer(bucketName);
       }
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    @Test(groups = { "integration", "live" })
    public void testEntrySet() throws IOException, InterruptedException, ExecutionException,
@@ -105,14 +100,14 @@ public class BaseInputStreamMapIntegrationTest<S, C extends ContainerMetadata, M
          Map<String, InputStream> map = createMap(context, bucketName);
          ((InputStreamMap) map).putAllStrings(this.fiveStrings);
          // this will cause us to block until the bucket updates.
-         assertEventuallyKeySize(map, 5);
+         assertConsistencyAwareKeySize(map, 5);
          Set<Entry<String, InputStream>> entries = map.entrySet();
          assertEquals(entries.size(), 5);
          for (Entry<String, InputStream> entry : entries) {
             assertEquals(fiveStrings.get(entry.getKey()), IOUtils.toString(entry.getValue()));
             entry.setValue(IOUtils.toInputStream(""));
          }
-         assertEventuallyMapSize(map, 5);
+         assertConsistencyAwareMapSize(map, 5);
          for (InputStream value : map.values()) {
             assertEquals(IOUtils.toString(value), "");
          }
@@ -121,57 +116,53 @@ public class BaseInputStreamMapIntegrationTest<S, C extends ContainerMetadata, M
       }
    }
 
-   @SuppressWarnings("unchecked")
    @Test(groups = { "integration", "live" })
    public void testContainsStringValue() throws InterruptedException, ExecutionException,
             TimeoutException {
       String bucketName = getContainerName();
       try {
          Map<String, InputStream> map = createMap(context, bucketName);
-         ((InputStreamMap) map).putString("one", "apple");
-         assertEventuallyContainsValue(map, fiveStrings.get("one"));
+         ((InputStreamMap) map).putString("one", String.format(XML_STRING_FORMAT, "apple"));
+         assertConsistencyAwareContainsValue(map, fiveStrings.get("one"));
       } finally {
          returnContainer(bucketName);
       }
    }
 
-   @SuppressWarnings("unchecked")
    @Test(groups = { "integration", "live" })
    public void testContainsFileValue() throws InterruptedException, ExecutionException,
             TimeoutException {
       String bucketName = getContainerName();
       try {
          Map<String, InputStream> map = createMap(context, bucketName);
-         ((InputStreamMap) map).putString("one", "apple");
-         assertEventuallyContainsValue(map, fiveFiles.get("one"));
+         ((InputStreamMap) map).putString("one", String.format(XML_STRING_FORMAT, "apple"));
+         assertConsistencyAwareContainsValue(map, fiveFiles.get("one"));
       } finally {
          returnContainer(bucketName);
       }
    }
 
-   @SuppressWarnings("unchecked")
    @Test(groups = { "integration", "live" })
    public void testContainsInputStreamValue() throws InterruptedException, ExecutionException,
             TimeoutException {
       String bucketName = getContainerName();
       try {
          Map<String, InputStream> map = createMap(context, bucketName);
-         ((InputStreamMap) map).putString("one", "apple");
-         assertEventuallyContainsValue(map, this.fiveInputs.get("one"));
+         ((InputStreamMap) map).putString("one", String.format(XML_STRING_FORMAT, "apple"));
+         assertConsistencyAwareContainsValue(map, this.fiveInputs.get("one"));
       } finally {
          returnContainer(bucketName);
       }
    }
 
-   @SuppressWarnings("unchecked")
    @Test(groups = { "integration", "live" })
    public void testContainsBytesValue() throws InterruptedException, ExecutionException,
             TimeoutException {
       String bucketName = getContainerName();
       try {
          Map<String, InputStream> map = createMap(context, bucketName);
-         ((InputStreamMap) map).putString("one", "apple");
-         assertEventuallyContainsValue(map, this.fiveBytes.get("one"));
+         ((InputStreamMap) map).putString("one", String.format(XML_STRING_FORMAT, "apple"));
+         assertConsistencyAwareContainsValue(map, this.fiveBytes.get("one"));
       } finally {
          returnContainer(bucketName);
       }
@@ -184,15 +175,14 @@ public class BaseInputStreamMapIntegrationTest<S, C extends ContainerMetadata, M
       try {
          Map<String, InputStream> map = createMap(context, bucketName);
          map.putAll(this.fiveInputs);
-         assertEventuallyMapSize(map, 5);
-         assertEventuallyKeySetEquals(map, new TreeSet<String>(fiveInputs.keySet()));
+         assertConsistencyAwareMapSize(map, 5);
+         assertConsistencyAwareKeySetEquals(map, new TreeSet<String>(fiveInputs.keySet()));
          fourLeftRemovingOne(map);
       } finally {
          returnContainer(bucketName);
       }
    }
 
-   @SuppressWarnings("unchecked")
    @Test(groups = { "integration", "live" })
    public void testPutAllBytes() throws InterruptedException, ExecutionException, TimeoutException {
       String bucketName = getContainerName();
@@ -200,15 +190,14 @@ public class BaseInputStreamMapIntegrationTest<S, C extends ContainerMetadata, M
          Map<String, InputStream> map = createMap(context, bucketName);
 
          ((InputStreamMap) map).putAllBytes(this.fiveBytes);
-         assertEventuallyMapSize(map, 5);
-         assertEventuallyKeySetEquals(map, new TreeSet<String>(fiveBytes.keySet()));
+         assertConsistencyAwareMapSize(map, 5);
+         assertConsistencyAwareKeySetEquals(map, new TreeSet<String>(fiveBytes.keySet()));
          fourLeftRemovingOne(map);
       } finally {
          returnContainer(bucketName);
       }
    }
 
-   @SuppressWarnings("unchecked")
    @Test(groups = { "integration", "live" })
    public void testPutAllFiles() throws InterruptedException, ExecutionException, TimeoutException {
       String bucketName = getContainerName();
@@ -216,15 +205,14 @@ public class BaseInputStreamMapIntegrationTest<S, C extends ContainerMetadata, M
          Map<String, InputStream> map = createMap(context, bucketName);
 
          ((InputStreamMap) map).putAllFiles(this.fiveFiles);
-         assertEventuallyMapSize(map, 5);
-         assertEventuallyKeySetEquals(map, new TreeSet<String>(fiveFiles.keySet()));
+         assertConsistencyAwareMapSize(map, 5);
+         assertConsistencyAwareKeySetEquals(map, new TreeSet<String>(fiveFiles.keySet()));
          fourLeftRemovingOne(map);
       } finally {
          returnContainer(bucketName);
       }
    }
 
-   @SuppressWarnings("unchecked")
    @Test(groups = { "integration", "live" })
    public void testPutAllStrings() throws InterruptedException, ExecutionException,
             TimeoutException {
@@ -233,15 +221,14 @@ public class BaseInputStreamMapIntegrationTest<S, C extends ContainerMetadata, M
          Map<String, InputStream> map = createMap(context, bucketName);
 
          ((InputStreamMap) map).putAllStrings(this.fiveStrings);
-         assertEventuallyMapSize(map, 5);
-         assertEventuallyKeySetEquals(map, new TreeSet<String>(fiveStrings.keySet()));
+         assertConsistencyAwareMapSize(map, 5);
+         assertConsistencyAwareKeySetEquals(map, new TreeSet<String>(fiveStrings.keySet()));
          fourLeftRemovingOne(map);
       } finally {
          returnContainer(bucketName);
       }
    }
 
-   @SuppressWarnings("unchecked")
    @Test(groups = { "integration", "live" })
    public void testPutString() throws IOException, InterruptedException, ExecutionException,
             TimeoutException {
@@ -249,9 +236,9 @@ public class BaseInputStreamMapIntegrationTest<S, C extends ContainerMetadata, M
       try {
          Map<String, InputStream> map = createMap(context, bucketName);
 
-         InputStream old = ((InputStreamMap) map).putString("one", "apple");
+         InputStream old = ((InputStreamMap) map).putString("one", fiveStrings.get("one"));
          getOneReturnsAppleAndOldValueIsNull(map, old);
-         InputStream apple = ((InputStreamMap) map).putString("one", "bear");
+         InputStream apple = ((InputStreamMap) map).putString("one", fiveStrings.get("two"));
          getOneReturnsBearAndOldValueIsApple(map, apple);
       } finally {
          returnContainer(bucketName);
@@ -261,18 +248,18 @@ public class BaseInputStreamMapIntegrationTest<S, C extends ContainerMetadata, M
    void getOneReturnsAppleAndOldValueIsNull(Map<String, InputStream> map, InputStream old)
             throws IOException, InterruptedException, ExecutionException, TimeoutException {
       assert old == null;
-      assertEquals(Utils.toStringAndClose(map.get("one")), "apple");
-      assertEventuallyMapSize(map, 1);
+      assertEquals(Utils.toStringAndClose(map.get("one")), String
+               .format(XML_STRING_FORMAT, "apple"));
+      assertConsistencyAwareMapSize(map, 1);
    }
 
    void getOneReturnsBearAndOldValueIsApple(Map<String, InputStream> map, InputStream oldValue)
             throws IOException, InterruptedException, ExecutionException, TimeoutException {
-      assertEquals(Utils.toStringAndClose(map.get("one")), "bear");
-      assertEquals(Utils.toStringAndClose(oldValue), "apple");
-      assertEventuallyMapSize(map, 1);
+      assertEquals(Utils.toStringAndClose(map.get("one")), String.format(XML_STRING_FORMAT, "bear"));
+      assertEquals(Utils.toStringAndClose(oldValue), String.format(XML_STRING_FORMAT, "apple"));
+      assertConsistencyAwareMapSize(map, 1);
    }
 
-   @SuppressWarnings("unchecked")
    @Test(groups = { "integration", "live" })
    public void testPutFile() throws IOException, InterruptedException, ExecutionException,
             TimeoutException {
@@ -289,7 +276,6 @@ public class BaseInputStreamMapIntegrationTest<S, C extends ContainerMetadata, M
       }
    }
 
-   @SuppressWarnings("unchecked")
    @Test(groups = { "integration", "live" })
    public void testPutBytes() throws IOException, InterruptedException, ExecutionException,
             TimeoutException {
@@ -297,9 +283,9 @@ public class BaseInputStreamMapIntegrationTest<S, C extends ContainerMetadata, M
       try {
          Map<String, InputStream> map = createMap(context, bucketName);
 
-         InputStream old = ((InputStreamMap) map).putBytes("one", "apple".getBytes());
+         InputStream old = ((InputStreamMap) map).putBytes("one", fiveBytes.get("one"));
          getOneReturnsAppleAndOldValueIsNull(map, old);
-         InputStream apple = ((InputStreamMap) map).putBytes("one", "bear".getBytes());
+         InputStream apple = ((InputStreamMap) map).putBytes("one", fiveBytes.get("two"));
          getOneReturnsBearAndOldValueIsApple(map, apple);
       } finally {
          returnContainer(bucketName);
@@ -313,24 +299,22 @@ public class BaseInputStreamMapIntegrationTest<S, C extends ContainerMetadata, M
       try {
          Map<String, InputStream> map = createMap(context, bucketName);
 
-         InputStream old = map.put("one", IOUtils.toInputStream("apple"));
+         InputStream old = map.put("one", fiveInputs.get("one"));
          getOneReturnsAppleAndOldValueIsNull(map, old);
-         InputStream apple = map.put("one", IOUtils.toInputStream("bear"));
+         InputStream apple = map.put("one", fiveInputs.get("two"));
          getOneReturnsBearAndOldValueIsApple(map, apple);
       } finally {
          returnContainer(bucketName);
       }
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    protected void putString(Map<String, InputStream> map, String key, String value)
             throws InterruptedException, ExecutionException, TimeoutException {
       ((InputStreamMap) map).putString(key, value);
    }
 
-   @SuppressWarnings("unchecked")
-   protected Map<String, InputStream> createMap(BlobStoreContext context, String bucket) {
+   protected Map<String, InputStream> createMap(BlobStoreContext<?> context, String bucket) {
       InputStreamMap map = context.createInputStreamMap(bucket);
       return (Map<String, InputStream>) map;
    }

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -62,7 +62,7 @@ public class AWSClientErrorRetryHandler implements HttpRetryHandler {
       if (command.getFailureCount() > retryCountLimit)
          return false;
       if (response.getStatusCode() == 400 || response.getStatusCode() == 409) {
-         byte[] content = Utils.closeConnectionButKeepContentStream(response);
+         byte[] content = Utils.closeClientButKeepContentStream(response);
          command.incrementFailureCount();
          try {
             AWSError error = utils.parseAWSErrorFromContent(command, response, new String(content));

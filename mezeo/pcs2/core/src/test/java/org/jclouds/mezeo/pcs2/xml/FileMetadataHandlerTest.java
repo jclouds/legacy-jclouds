@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,26 +23,19 @@
  */
 package org.jclouds.mezeo.pcs2.xml;
 
-import static org.easymock.classextension.EasyMock.createMock;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Map;
-import java.util.concurrent.Future;
-
-import javax.inject.Singleton;
-import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.mezeo.pcs2.PCSUtil;
-import org.jclouds.mezeo.pcs2.domain.FileMetadata;
+import org.jclouds.mezeo.pcs2.domain.FileInfoWithMetadata;
+import org.jclouds.mezeo.pcs2.domain.internal.FileInfoWithMetadataImpl;
 import org.jclouds.util.DateService;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
+import com.google.common.collect.ImmutableMap;
 
 /**
  * Tests behavior of {@code FileListToFileMetadataListHandler}
@@ -58,31 +51,6 @@ public class FileMetadataHandlerTest extends BaseHandlerTest {
    @Override
    protected void setUpInjector() {
       super.setUpInjector();
-      injector = injector.createChildInjector(new AbstractModule() {
-
-         @Override
-         protected void configure() {
-         }
-
-         @SuppressWarnings( { "unused", "unchecked" })
-         @Singleton
-         @Provides
-         PCSUtil provideUtil() {
-            final Future<Void> voidF = createMock(Future.class);
-            return new PCSUtil() {
-               public Future<Void> addEntryToMap(Map<String, String> map, String key,
-                        URI value) {
-                  map.put(key.toLowerCase(), "bar");
-                  return voidF;
-               }
-
-               public Future<Void> putMetadata(String resourceId, String key, String value) {
-                  return null;
-               }
-            };
-         }
-
-      });
       dateService = injector.getInstance(DateService.class);
       assert dateService != null;
    }
@@ -90,15 +58,42 @@ public class FileMetadataHandlerTest extends BaseHandlerTest {
    public void testFileMetadata() {
       InputStream is = getClass().getResourceAsStream("/test_file_metadata.xml");
 
-      FileMetadata expects = new FileMetadata("testfile.txt", URI
-               .create("https://pcsbeta.mezeo.net/v2/files/9E4C5AFA-A98B-11DE-8B4C-C3884B4A2DA3"),
-               dateService.fromSeconds(1254000180), dateService.fromSeconds(1254000181),
-               dateService.fromSeconds(1254000182), "adrian@jclouds.org", false, true, 3, 5,
-               MediaType.TEXT_PLAIN, false);
-      // Note that we should convert uppercase to lowercase, since most clouds do anyway
-      expects.getUserMetadata().put("foo", "bar");
-      FileMetadata result = (FileMetadata) factory.create(
-               injector.getInstance(FileMetadataHandler.class)).parse(is);
+      FileInfoWithMetadata expects = new FileInfoWithMetadataImpl(
+               URI
+                        .create("https://pcsbeta.mezeo.net/v2/files/9E4C5AFA-A98B-11DE-8B4C-C3884B4A2DA3"),
+               "testfile.txt",
+               dateService.fromSeconds(1254000180),
+               true,
+               dateService.fromSeconds(1254000181),
+               "adrian@jclouds.org",
+               3,
+               false,
+               dateService.fromSeconds(1254000182),
+               false,
+               "text/plain",
+               5,
+               URI
+                        .create("https://pcsbeta.mezeo.net/v2/files/9E4C5AFA-A98B-11DE-8B4C-C3884B4A2DA3/content"),
+               URI
+                        .create("https://pcsbeta.mezeo.net/v2/containers/C4DA95C2-B298-11DE-8D7C-2B1FE4F2B99C"),
+               URI
+                        .create("https://pcsbeta.mezeo.net/v2/files/9E4C5AFA-A98B-11DE-8B4C-C3884B4A2DA3/permissions"),
+               URI
+                        .create("https://pcsbeta.mezeo.net/v2/files/9E4C5AFA-A98B-11DE-8B4C-C3884B4A2DA3/tags"),
+               URI
+                        .create("https://pcsbeta.mezeo.net/v2/files/9E4C5AFA-A98B-11DE-8B4C-C3884B4A2DA3/metadata"),
+               // Note that we should convert uppercase to lowercase, since most clouds do anyway
+
+               ImmutableMap
+                        .<String, URI> of(
+                                 "foo",
+                                 URI
+                                          .create("https://pcsbeta.mezeo.net/v2/files/9E4C5AFA-A98B-11DE-8B4C-C3884B4A2DA3/metadata/Foo")),
+               URI
+                        .create("https://pcsbeta.mezeo.net/v2/files/9E4C5AFA-A98B-11DE-8B4C-C3884B4A2DA3/thumbnail"));
+
+      FileInfoWithMetadata result = (FileInfoWithMetadata) factory.create(
+               injector.getInstance(FileHandler.class)).parse(is);
 
       assertEquals(result, expects);
    }

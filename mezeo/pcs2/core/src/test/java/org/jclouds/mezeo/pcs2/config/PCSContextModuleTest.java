@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -25,7 +25,6 @@ package org.jclouds.mezeo.pcs2.config;
 
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.blobstore.BlobStoreMapsModule;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
@@ -36,9 +35,6 @@ import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.handlers.RedirectionRetryHandler;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
-import org.jclouds.mezeo.pcs2.domain.ContainerMetadata;
-import org.jclouds.mezeo.pcs2.domain.FileMetadata;
-import org.jclouds.mezeo.pcs2.domain.PCSFile;
 import org.jclouds.mezeo.pcs2.handlers.PCSClientErrorRetryHandler;
 import org.jclouds.mezeo.pcs2.reference.PCSConstants;
 import org.jclouds.util.Jsr330;
@@ -46,20 +42,15 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.TypeLiteral;
 
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "pcs2.PCSContextModuleTest")
+@Test(groups = "unit", testName = "pcs2.RestContext<PCSClient>ModuleTest")
 public class PCSContextModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new RestPCSBlobStoreModule(), BlobStoreMapsModule.Builder
-               .newBuilder(new TypeLiteral<ContainerMetadata>() {
-               }, new TypeLiteral<FileMetadata>() {
-               }, new TypeLiteral<PCSFile>() {
-               }).build(), new PCSContextModule() {
+      return Guice.createInjector(new PCSRestClientModule(), new PCSContextModule() {
          @Override
          protected void configure() {
             bindConstant().annotatedWith(Jsr330.named(PCSConstants.PROPERTY_PCS2_USER)).to("user");

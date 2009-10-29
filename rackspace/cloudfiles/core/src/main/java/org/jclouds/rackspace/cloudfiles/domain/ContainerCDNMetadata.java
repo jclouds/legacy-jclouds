@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,13 +23,17 @@
  */
 package org.jclouds.rackspace.cloudfiles.domain;
 
+import org.jclouds.blobstore.domain.internal.MutableResourceMetadataImpl;
+
 /**
  * 
  * @author James Murty
  * 
  */
-public class ContainerCDNMetadata extends org.jclouds.blobstore.internal.ContainerMetadataImpl {
+public class ContainerCDNMetadata extends MutableResourceMetadataImpl {
 
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 8373435988423605652L;
    private long ttl;
    private boolean cdn_enabled;
    private String cdn_uri;
@@ -44,62 +48,13 @@ public class ContainerCDNMetadata extends org.jclouds.blobstore.internal.Contain
    public ContainerCDNMetadata() {
    }
 
-   @Override
-   public String toString() {
-      StringBuilder builder = new StringBuilder();
-      builder.append("ContainerCDNMetadata [name=").append(name).append(", cdn_enabled=").append(
-               cdn_enabled).append(", ttl=").append(ttl).append(", cdn_uri=").append(cdn_uri)
-               .append("]");
-      return builder.toString();
-   }
-
-   @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + (cdn_enabled ? 1 : 0);
-      result = prime * result + (int) (ttl ^ (ttl >>> 32));
-      result = prime * result + ((cdn_uri == null) ? 0 : cdn_uri.hashCode());
-      return result;
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      ContainerCDNMetadata other = (ContainerCDNMetadata) obj;
-      if (cdn_enabled != other.cdn_enabled)
-         return false;
-      if (ttl != other.ttl)
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (cdn_uri == null) {
-         if (other.cdn_uri != null)
-            return false;
-      } else if (!cdn_uri.equals(other.cdn_uri))
-         return false;
-      return true;
-   }
-
-   public void setName(String name) {
-      this.name = name;
-   }
-
    /**
     * Beware: The container name is not available from HEAD CDN responses and will be null. return
     * the name of the container to which these CDN settings apply.
     */
+   @Override
    public String getName() {
-      return name;
+      return super.getName();
    }
 
    public void setCdnUri(String cdnUri) {
@@ -124,6 +79,37 @@ public class ContainerCDNMetadata extends org.jclouds.blobstore.internal.Contain
 
    public boolean isCdnEnabled() {
       return cdn_enabled;
+   }
+
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = super.hashCode();
+      result = prime * result + (cdn_enabled ? 1231 : 1237);
+      result = prime * result + ((cdn_uri == null) ? 0 : cdn_uri.hashCode());
+      result = prime * result + (int) (ttl ^ (ttl >>> 32));
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (!super.equals(obj))
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      ContainerCDNMetadata other = (ContainerCDNMetadata) obj;
+      if (cdn_enabled != other.cdn_enabled)
+         return false;
+      if (cdn_uri == null) {
+         if (other.cdn_uri != null)
+            return false;
+      } else if (!cdn_uri.equals(other.cdn_uri))
+         return false;
+      if (ttl != other.ttl)
+         return false;
+      return true;
    }
 
 }

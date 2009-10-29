@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -24,9 +24,11 @@
 package org.jclouds.aws.s3;
 
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.rest.RestContext;
 
 import com.google.inject.Module;
 
@@ -39,20 +41,25 @@ import com.google.inject.Module;
  * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
- * @author Adrian Cole, Andrew Newdigate
- * @see S3Context
+ * @author Adrian Cole
+ * @see S3Client
  */
 public class S3ContextFactory {
 
-   public static S3Context createContext(
-            String awsAccessKeyId, String awsSecretAccessKey, Module... modules) {
-      return new S3ContextBuilder(awsAccessKeyId, awsSecretAccessKey).withModules(modules)
+   public static RestContext<S3Client> createContext(Properties properties, Module... modules) {
+      return new S3ContextBuilder(new S3PropertiesBuilder(properties).build()).withModules(modules)
                .buildContext();
    }
 
-   public static S3Context createContext(
-            URI endpoint, String awsAccessKeyId, String awsSecretAccessKey, Module... modules) {
-      return new S3ContextBuilder(awsAccessKeyId, awsSecretAccessKey).withEndpoint(endpoint)
-               .withModules(modules).buildContext();
+   public static RestContext<S3Client> createContext(String awsAccessKeyId,
+            String awsSecretAccessKey, Module... modules) {
+      return new S3ContextBuilder(new S3PropertiesBuilder(awsAccessKeyId, awsSecretAccessKey)
+               .build()).withModules(modules).buildContext();
+   }
+
+   public static RestContext<S3Client> createContext(URI endpoint, String awsAccessKeyId,
+            String awsSecretAccessKey, Module... modules) {
+      return new S3ContextBuilder(new S3PropertiesBuilder(awsAccessKeyId, awsSecretAccessKey)
+               .withEndpoint(endpoint).build()).withModules(modules).buildContext();
    }
 }

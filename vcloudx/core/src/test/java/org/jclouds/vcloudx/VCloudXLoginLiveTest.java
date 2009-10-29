@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -36,13 +36,13 @@ import java.util.Properties;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.cloud.CloudContext;
-import org.jclouds.cloud.CloudContextBuilder;
-import org.jclouds.cloud.internal.CloudContextImpl;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.RestContextBuilder;
+import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.vcloudx.VCloudXLogin.VCloudXSession;
 import org.jclouds.vcloudx.config.RestVCloudXAuthenticationModule;
 import org.jclouds.vcloudx.endpoints.VCloudX;
@@ -68,12 +68,11 @@ public class VCloudXLoginLiveTest {
       @SuppressWarnings( { "unused" })
       @Provides
       @Singleton
-      CloudContext<VCloudXLogin> provideContext(Closer closer, VCloudXLogin api,
-               @VCloudX URI endPoint,
-               @Named(VCloudXConstants.PROPERTY_VCLOUDX_USER) String account) {
-         return new CloudContextImpl<VCloudXLogin>(closer, api, endPoint, account);
+      RestContext<VCloudXLogin> provideContext(Closer closer, VCloudXLogin api,
+               @VCloudX URI endPoint, @Named(VCloudXConstants.PROPERTY_VCLOUDX_USER) String account) {
+         return new RestContextImpl<VCloudXLogin>(closer, api, endPoint, account);
       }
-      
+
       @Override
       protected void configure() {
 
@@ -85,7 +84,7 @@ public class VCloudXLoginLiveTest {
    String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
    String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
-   private CloudContext<VCloudXLogin> context;
+   private RestContext<VCloudXLogin> context;
 
    @Test
    public void testLogin() throws Exception {
@@ -100,7 +99,7 @@ public class VCloudXLoginLiveTest {
 
    @BeforeClass
    void setupFactory() {
-      context = new CloudContextBuilder<VCloudXLogin>(new TypeLiteral<VCloudXLogin>() {
+      context = new RestContextBuilder<VCloudXLogin>(new TypeLiteral<VCloudXLogin>() {
       }, new Properties()) {
 
          public void addContextModule(List<Module> modules) {
@@ -109,7 +108,7 @@ public class VCloudXLoginLiveTest {
          }
 
          @Override
-         protected void addConnectionModule(List<Module> modules) {
+         protected void addClientModule(List<Module> modules) {
             properties.setProperty(VCloudXConstants.PROPERTY_VCLOUDX_ENDPOINT, checkNotNull(
                      endpoint, "endpoint").toString());
             properties.setProperty(PROPERTY_VCLOUDX_USER, checkNotNull(account, "user"));
@@ -118,10 +117,6 @@ public class VCloudXLoginLiveTest {
             modules.add(new RestVCloudXAuthenticationModule());
          }
 
-         @Override
-         public CloudContextBuilder<VCloudXLogin> withEndpoint(URI endpoint) {
-            return this;
-         }
       }.withModules(new Log4JLoggingModule(),
                new ExecutorServiceModule(new WithinThreadExecutorService())).buildContext();
    }

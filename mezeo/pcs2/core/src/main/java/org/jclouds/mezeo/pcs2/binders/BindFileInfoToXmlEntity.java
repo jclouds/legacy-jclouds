@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,14 +23,13 @@
  */
 package org.jclouds.mezeo.pcs2.binders;
 
+import java.io.File;
 import java.util.Collections;
 
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.Key;
-import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.mezeo.pcs2.domain.PCSFile;
 import org.jclouds.rest.Binder;
 
 /**
@@ -41,11 +40,10 @@ import org.jclouds.rest.Binder;
 public class BindFileInfoToXmlEntity implements Binder {
 
    public void bindToRequest(HttpRequest request, Object toBind) {
-      Blob<?> blob = (Blob<?>) toBind;
-      String bareKey = BlobStoreUtils.parseKey(new Key("trash", blob.getName())).getKey();
+      PCSFile blob = (PCSFile) toBind;
       String file = String.format(
                "<file><name>%s</name><mime_type>%s</mime_type><public>false</public></file>",
-               bareKey, blob.getMetadata().getContentType());
+               new File(blob.getMetadata().getName()).getName(), blob.getMetadata().getMimeType());
       request.setEntity(file);
       request.getHeaders().replaceValues(HttpHeaders.CONTENT_LENGTH,
                Collections.singletonList(file.getBytes().length + ""));

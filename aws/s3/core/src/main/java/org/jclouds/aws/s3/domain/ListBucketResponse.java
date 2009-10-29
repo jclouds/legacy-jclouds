@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -48,7 +48,40 @@ import java.util.SortedSet;
  * @author Adrian Cole
  * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html" />
  */
-public interface ListBucketResponse extends org.jclouds.rest.internal.BoundedSortedSet<ObjectMetadata> {
+public interface ListBucketResponse extends SortedSet<ObjectMetadata> {
+
+   /**
+    * Limits the response to keys which begin with the indicated prefix. You can use prefixes to
+    * separate a bucket into different sets of keys in a way similar to how a file system uses
+    * folders.
+    */
+   String getPrefix();
+
+   /**
+    * Indicates where in the bucket to begin listing. The list will only include keys that occur
+    * lexicographically after marker. This is convenient for pagination: To get the next page of
+    * results use the last key of the current page as the marker.
+    */
+   String getMarker();
+
+   /**
+    * The maximum number of keys you'd like to see in the response body. The server might return
+    * fewer than this many keys, but will not return more.
+    */
+   int getMaxKeys();
+
+   /**
+    * There are more then maxKeys available
+    */
+   boolean isTruncated();
+
+   /**
+    * Causes keys that contain the same string between the prefix and the first occurrence of the
+    * delimiter to be rolled up into a single result element in the CommonPrefixes collection. These
+    * rolled-up keys are not returned elsewhere in the response.
+    * 
+    */
+   String getDelimiter();
 
    /**
     * Example:
@@ -65,12 +98,12 @@ public interface ListBucketResponse extends org.jclouds.rest.internal.BoundedSor
     * 
     * @see org.jclouds.aws.s3.options.ListBucketOptions#getPrefix()
     */
-   public SortedSet<String> getCommonPrefixes();
+   SortedSet<String> getCommonPrefixes();
 
-   public String getBucketName();
-
-   public String getDelimiter();
-
-   public boolean isTruncated();
-
+   /**
+    * name of the Bucket FIXME Comment this
+    * 
+    * @return
+    */
+   String getName();
 }

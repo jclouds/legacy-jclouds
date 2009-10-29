@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -25,50 +25,37 @@ package org.jclouds.azure.storage.blob.config;
 
 import java.net.URI;
 
-import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Provider;
+import javax.inject.Singleton;
 
 import org.jclouds.azure.storage.AzureBlob;
-import org.jclouds.azure.storage.blob.AzureBlobConnection;
-import org.jclouds.azure.storage.blob.AzureBlobContext;
-import org.jclouds.azure.storage.blob.AzureBlobStore;
-import org.jclouds.azure.storage.blob.domain.Blob;
-import org.jclouds.azure.storage.blob.domain.BlobMetadata;
-import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
+import org.jclouds.azure.storage.blob.AzureBlobClient;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
-import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.BlobStoreContextImpl;
-import org.jclouds.blobstore.BlobMap.Factory;
+import org.jclouds.blobstore.config.BlobStoreObjectModule;
+import org.jclouds.http.RequiresHttp;
 import org.jclouds.lifecycle.Closer;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Scopes;
+import com.google.inject.Provides;
 
-/**
- * Configures the {@link AzureBlobContext}; requires {@link AzureBlobStore} bound.
- * 
- * @author Adrian Cole
- */
+@RequiresHttp
 public class AzureBlobContextModule extends AbstractModule {
+
    @Override
    protected void configure() {
-      bind(AzureBlobContext.class).to(AzureBlobContextImpl.class).in(Scopes.SINGLETON);
+      // for converters
+      install(new BlobStoreObjectModule());
+      install(new AzureBlobModule());
    }
 
-   public static class AzureBlobContextImpl extends
-            BlobStoreContextImpl<AzureBlobConnection, ContainerMetadata, BlobMetadata, Blob>
-            implements AzureBlobContext {
-      @Inject
-      AzureBlobContextImpl(Factory<BlobMetadata, Blob> blobMapFactory,
-               org.jclouds.blobstore.InputStreamMap.Factory<BlobMetadata> inputStreamMapFactory,
-               Closer closer, Provider<Blob> blobProvider,
-               BlobStore<ContainerMetadata, BlobMetadata, Blob> blobStore,
-               AzureBlobConnection defaultApi, @AzureBlob URI endPoint,
-               @Named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT) String account) {
-         super(blobMapFactory, inputStreamMapFactory, closer, blobProvider, blobStore, defaultApi,
-                  endPoint, account);
-      }
-
+   @Provides
+   @Singleton
+   RestContext<AzureBlobClient> provideContext(Closer closer, AzureBlobClient defaultApi,
+            @AzureBlob URI endPoint,
+            @Named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT) String account) {
+      return new RestContextImpl<AzureBlobClient>(closer, defaultApi, endPoint, account);
    }
+
 }

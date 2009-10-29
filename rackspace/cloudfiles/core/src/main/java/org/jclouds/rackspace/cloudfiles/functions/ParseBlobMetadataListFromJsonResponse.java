@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,19 +23,27 @@
  */
 package org.jclouds.rackspace.cloudfiles.functions;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
-import java.util.Comparator;
 import java.util.SortedSet;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.internal.BlobMetadataImpl;
+import org.jclouds.blobstore.domain.BoundedSortedSet;
+import org.jclouds.blobstore.domain.MutableBlobMetadata;
+import org.jclouds.blobstore.domain.internal.BoundedTreeSet;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseJson;
+import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
+import org.jclouds.rest.InvocationContext;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Function;
@@ -49,11 +57,17 @@ import com.google.gson.reflect.TypeToken;
  * 
  * @author Adrian Cole
  */
-public class ParseBlobMetadataListFromJsonResponse extends ParseJson<SortedSet<BlobMetadata>> {
+public class ParseBlobMetadataListFromJsonResponse extends
+         ParseJson<BoundedSortedSet<BlobMetadata>> implements InvocationContext {
+
+   private final Provider<MutableBlobMetadata> metadataFactory;
+   private GeneratedHttpRequest<?> request;
 
    @Inject
-   public ParseBlobMetadataListFromJsonResponse(Gson gson) {
+   public ParseBlobMetadataListFromJsonResponse(Provider<MutableBlobMetadata> metadataFactory,
+            Gson gson) {
       super(gson);
+      this.metadataFactory = metadataFactory;
    }
 
    public static class CloudFilesMetadata implements Comparable<CloudFilesMetadata> {
@@ -71,24 +85,26 @@ public class ParseBlobMetadataListFromJsonResponse extends ParseJson<SortedSet<B
       }
    }
 
-   public SortedSet<BlobMetadata> apply(InputStream stream) {
+   public BoundedSortedSet<BlobMetadata> apply(InputStream stream) {
+      checkState(request != null, "request should be initialized at this point");
+      checkState(request.getArgs() != null, "request.getArgs() should be initialized at this point");
+      checkArgument(request.getArgs()[0] instanceof String, "arg[0] must be a container name");
+      checkArgument(request.getArgs()[1] instanceof ListContainerOptions[],
+               "arg[1] must be an array of ListContainerOptions");
+      ListContainerOptions[] optionsList = (ListContainerOptions[]) request.getArgs()[1];
+      ListContainerOptions options = optionsList.length > 0 ? optionsList[0]
+               : ListContainerOptions.NONE;
       Type listType = new TypeToken<SortedSet<CloudFilesMetadata>>() {
       }.getType();
 
       try {
          SortedSet<CloudFilesMetadata> list = gson.fromJson(new InputStreamReader(stream, "UTF-8"),
                   listType);
-         SortedSet<BlobMetadata> returnVal = Sets.newTreeSet(new Comparator<BlobMetadata>() {
-
-            public int compare(BlobMetadata o1, BlobMetadata o2) {
-               return (o1 == o2) ? 0 : o1.getName().compareTo(o2.getName());
-            }
-
-         });
-         Iterables.addAll(returnVal, Iterables.transform(list,
+         SortedSet<BlobMetadata> returnVal = Sets.newTreeSet(Iterables.transform(list,
                   new Function<CloudFilesMetadata, BlobMetadata>() {
                      public BlobMetadata apply(CloudFilesMetadata from) {
-                        BlobMetadata metadata = new BlobMetadataImpl(from.name);
+                        MutableBlobMetadata metadata = metadataFactory.get();
+                        metadata.setName(from.name);
                         metadata.setSize(from.bytes);
                         metadata.setLastModified(from.last_modified);
                         metadata.setContentType(from.content_type);
@@ -97,10 +113,17 @@ public class ParseBlobMetadataListFromJsonResponse extends ParseJson<SortedSet<B
                         return metadata;
                      }
                   }));
-         return returnVal;
+         boolean truncated = options.getMaxResults() == returnVal.size();
+         String marker = truncated ? returnVal.last().getName() : null;
+         return new BoundedTreeSet<BlobMetadata>(returnVal, options.getPath(), marker, options
+                  .getMaxResults(), truncated);
 
       } catch (UnsupportedEncodingException e) {
          throw new RuntimeException("jclouds requires UTF-8 encoding", e);
       }
+   }
+
+   public void setContext(GeneratedHttpRequest<?> request) {
+      this.request = request;
    }
 }

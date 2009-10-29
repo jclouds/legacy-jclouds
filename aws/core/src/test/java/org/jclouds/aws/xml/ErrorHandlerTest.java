@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -27,7 +27,6 @@ import static org.testng.Assert.assertEquals;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.domain.AWSError;
-import org.jclouds.aws.xml.ErrorHandler;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
@@ -37,7 +36,6 @@ import org.testng.annotations.Test;
 public class ErrorHandlerTest extends BaseHandlerTest {
    public static final String errorFromAmazonIfYouDontRemoveTransferEncodingHeader = "<Error><Code>NotImplemented</Code><Message>A header you provided implies functionality that is not implemented</Message><Header>Transfer-Encoding</Header><RequestId>7C59925D75D15561</RequestId><HostId>fbskVU51OZJg2yZS/wNIxoE2PmCf0ZqFd0iH6Vrzw0uKG3KmokswBytL/Bfp/GWb</HostId></Error>";
 
-   @SuppressWarnings("unchecked")
    ParseSax<AWSError> createParser() {
       ParseSax<AWSError> parser = (ParseSax<AWSError>) factory.create(injector
                .getInstance(ErrorHandler.class));

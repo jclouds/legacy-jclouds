@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -39,9 +39,9 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
  * <code>
  * import static org.jclouds.aws.s3.commands.options.PutBucketOptions.Builder.*
  * import static org.jclouds.aws.s3.domain.S3Bucket.Metadata.LocationConstraint.*;
- * import org.jclouds.aws.s3.S3Connection;
+ * import org.jclouds.aws.s3.S3Client;
  * <p/>
- * S3Connection connection = // get connection
+ * S3Client connection = // get connection
  * Future<Boolean> createdInEu = connection.putBucketIfNotExists("bucketName",createIn(EU));
  * <code>
  *

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -25,9 +25,6 @@ package org.jclouds.blobstore.integration;
 
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ContainerMetadata;
 import org.jclouds.blobstore.integration.internal.BaseTestInitializer;
 
 import com.google.inject.Module;
@@ -36,18 +33,16 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class StubTestInitializer
-         extends
-         BaseTestInitializer<BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> {
+public class StubTestInitializer extends BaseTestInitializer<BlobStore> {
 
    @Override
-   protected BlobStoreContext<BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> createLiveContext(
-            Module configurationModule, String url, String app, String account, String key) {
+   protected BlobStoreContext<BlobStore> createLiveContext(Module configurationModule, String url,
+            String app, String account, String key) {
       return createStubContext();
    }
 
    @Override
-   protected BlobStoreContext<BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> createStubContext() {
+   protected BlobStoreContext<BlobStore> createStubContext() {
       return new StubBlobStoreContextBuilder().buildContext();
    }
 

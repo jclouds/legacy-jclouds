@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -41,7 +41,6 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.google.common.base.Function;
-import com.google.inject.assistedinject.Assisted;
 
 /**
  * This object will parse the body of an HttpResponse and return the result of type <T> back to the
@@ -57,12 +56,11 @@ public class ParseSax<T> implements Function<HttpResponse, T> {
    protected Logger logger = Logger.NULL;
 
    public static interface Factory {
-      ParseSax<?> create(HandlerWithResult<?> handler);
+      <T> ParseSax<T> create(HandlerWithResult<T> handler);
    }
 
    @Inject
-   public ParseSax(XMLReader parser, @Assisted HandlerWithResult<T> handler) {
-      super();
+   public ParseSax(XMLReader parser, HandlerWithResult<T> handler) {
       this.parser = checkNotNull(parser, "parser");
       this.handler = checkNotNull(handler, "handler");
    }

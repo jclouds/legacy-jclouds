@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,13 +23,11 @@
  */
 package org.jclouds.blobstore.integration.internal;
 
-import static org.jclouds.http.options.GetOptions.Builder.ifETagDoesntMatch;
-import static org.jclouds.http.options.GetOptions.Builder.ifETagMatches;
-import static org.jclouds.http.options.GetOptions.Builder.ifModifiedSince;
-import static org.jclouds.http.options.GetOptions.Builder.ifUnmodifiedSince;
-import static org.jclouds.http.options.GetOptions.Builder.range;
-import static org.jclouds.http.options.GetOptions.Builder.startAt;
-import static org.jclouds.http.options.GetOptions.Builder.tail;
+import static org.jclouds.blobstore.options.GetOptions.Builder.ifETagDoesntMatch;
+import static org.jclouds.blobstore.options.GetOptions.Builder.ifETagMatches;
+import static org.jclouds.blobstore.options.GetOptions.Builder.ifModifiedSince;
+import static org.jclouds.blobstore.options.GetOptions.Builder.ifUnmodifiedSince;
+import static org.jclouds.blobstore.options.GetOptions.Builder.range;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -46,7 +44,7 @@ import org.apache.commons.io.IOUtils;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ContainerMetadata;
+import org.jclouds.blobstore.domain.ResourceMetadata;
 import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.HttpUtils;
@@ -57,8 +55,7 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-public class BaseBlobIntegrationTest<S, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
-         extends BaseBlobStoreIntegrationTest<S, C, M, B> {
+public class BaseBlobIntegrationTest<S> extends BaseBlobStoreIntegrationTest<S> {
 
    @Test(groups = { "integration", "live" })
    public void testGetIfModifiedSince() throws InterruptedException, ExecutionException,
@@ -206,12 +203,12 @@ public class BaseBlobIntegrationTest<S, C extends ContainerMetadata, M extends B
          String key = "apples";
 
          addObjectAndValidateContent(containerName, key);
-         B object1 = context.getBlobStore().getBlob(containerName, key, range(0, 5)).get(30,
+         Blob object1 = context.getBlobStore().getBlob(containerName, key, range(0, 5)).get(30,
                   TimeUnit.SECONDS);
          assertEquals(BlobStoreUtils.getContentAsStringAndClose(object1), TEST_STRING.substring(0,
                   6));
 
-         B object2 = context.getBlobStore().getBlob(containerName, key,
+         Blob object2 = context.getBlobStore().getBlob(containerName, key,
                   range(6, TEST_STRING.length())).get(15, TimeUnit.SECONDS);
          assertEquals(BlobStoreUtils.getContentAsStringAndClose(object2), TEST_STRING.substring(6,
                   TEST_STRING.length()));
@@ -229,7 +226,7 @@ public class BaseBlobIntegrationTest<S, C extends ContainerMetadata, M extends B
          String key = "apples";
 
          addObjectAndValidateContent(containerName, key);
-         B object = context.getBlobStore().getBlob(containerName, key,
+         Blob object = context.getBlobStore().getBlob(containerName, key,
                   range(0, 5).range(6, TEST_STRING.length())).get(15, TimeUnit.SECONDS);
 
          assertEquals(BlobStoreUtils.getContentAsStringAndClose(object), TEST_STRING);
@@ -238,44 +235,45 @@ public class BaseBlobIntegrationTest<S, C extends ContainerMetadata, M extends B
       }
    }
 
-   @Test(groups = { "integration", "live" })
-   public void testGetTail() throws InterruptedException, ExecutionException, TimeoutException,
-            IOException {
-      String containerName = getContainerName();
-      try {
+   // @Test(groups = { "integration", "live" })
+   // public void testGetTail() throws InterruptedException, ExecutionException, TimeoutException,
+   // IOException {
+   // String containerName = getContainerName();
+   // try {
+   //
+   // String key = "apples";
+   //
+   // addObjectAndValidateContent(containerName, key);
+   // Blob object = context.getBlobStore().getBlob(containerName, key, tail(5)).get(30,
+   // TimeUnit.SECONDS);
+   // assertEquals(BlobStoreUtils.getContentAsStringAndClose(object), TEST_STRING
+   // .substring(TEST_STRING.length() - 5));
+   // assertEquals(object.getContentLength(), 5);
+   // assertEquals(object.getMetadata().getSize(), TEST_STRING.length());
+   // } finally {
+   // returnContainer(containerName);
+   // }
+   // }
 
-         String key = "apples";
-
-         addObjectAndValidateContent(containerName, key);
-         B object = context.getBlobStore().getBlob(containerName, key, tail(5)).get(30,
-                  TimeUnit.SECONDS);
-         assertEquals(BlobStoreUtils.getContentAsStringAndClose(object), TEST_STRING
-                  .substring(TEST_STRING.length() - 5));
-         assertEquals(object.getContentLength(), 5);
-         assertEquals(object.getMetadata().getSize(), TEST_STRING.length());
-      } finally {
-         returnContainer(containerName);
-      }
-   }
-
-   @Test(groups = { "integration", "live" })
-   public void testGetStartAt() throws InterruptedException, ExecutionException, TimeoutException,
-            IOException {
-      String containerName = getContainerName();
-      try {
-         String key = "apples";
-
-         addObjectAndValidateContent(containerName, key);
-         B object = context.getBlobStore().getBlob(containerName, key, startAt(5)).get(30,
-                  TimeUnit.SECONDS);
-         assertEquals(BlobStoreUtils.getContentAsStringAndClose(object), TEST_STRING.substring(5,
-                  TEST_STRING.length()));
-         assertEquals(object.getContentLength(), TEST_STRING.length() - 5);
-         assertEquals(object.getMetadata().getSize(), TEST_STRING.length());
-      } finally {
-         returnContainer(containerName);
-      }
-   }
+   // @Test(groups = { "integration", "live" })
+   // public void testGetStartAt() throws InterruptedException, ExecutionException,
+   // TimeoutException,
+   // IOException {
+   // String containerName = getContainerName();
+   // try {
+   // String key = "apples";
+   //
+   // addObjectAndValidateContent(containerName, key);
+   // Blob object = context.getBlobStore().getBlob(containerName, key, startAt(5)).get(30,
+   // TimeUnit.SECONDS);
+   // assertEquals(BlobStoreUtils.getContentAsStringAndClose(object), TEST_STRING.substring(5,
+   // TEST_STRING.length()));
+   // assertEquals(object.getContentLength(), TEST_STRING.length() - 5);
+   // assertEquals(object.getMetadata().getSize(), TEST_STRING.length());
+   // } finally {
+   // returnContainer(containerName);
+   // }
+   // }
 
    private String addObjectAndValidateContent(String sourcecontainerName, String sourceKey)
             throws InterruptedException, ExecutionException, TimeoutException, IOException {
@@ -316,8 +314,8 @@ public class BaseBlobIntegrationTest<S, C extends ContainerMetadata, M extends B
 
    private void assertContainerEmptyDeleting(String containerName, String key)
             throws InterruptedException, ExecutionException, TimeoutException {
-      SortedSet<M> listing = context.getBlobStore().listBlobs(containerName).get(30,
-               TimeUnit.SECONDS);
+      SortedSet<? extends ResourceMetadata> listing = context.getBlobStore().list(containerName)
+               .get(30, TimeUnit.SECONDS);
       assertEquals(listing.size(), 0, String.format(
                "deleting %s, we still have %s left in container %s, using encoding %s", key,
                listing.size(), containerName, LOCAL_ENCODING));
@@ -347,7 +345,7 @@ public class BaseBlobIntegrationTest<S, C extends ContainerMetadata, M extends B
    @Test(groups = { "integration", "live" }, dataProvider = "putTests")
    public void testPutObject(String key, String type, Object content, Object realObject)
             throws Exception {
-      B object = context.newBlob(key);
+      Blob object = newBlob(key);
       object.getMetadata().setContentType(type);
       object.setData(content);
       if (content instanceof InputStream) {
@@ -357,12 +355,12 @@ public class BaseBlobIntegrationTest<S, C extends ContainerMetadata, M extends B
       try {
          assertNotNull(context.getBlobStore().putBlob(containerName, object).get(30,
                   TimeUnit.SECONDS));
-         object = context.getBlobStore().getBlob(containerName, object.getName()).get(30,
-                  TimeUnit.SECONDS);
+         object = context.getBlobStore().getBlob(containerName, object.getMetadata().getName())
+                  .get(30, TimeUnit.SECONDS);
          String returnedString = BlobStoreUtils.getContentAsStringAndClose(object);
          assertEquals(returnedString, realObject);
-         assertEquals(context.getBlobStore().listBlobs(containerName).get(15, TimeUnit.SECONDS)
-                  .size(), 1);
+         assertEquals(context.getBlobStore().list(containerName).get(15, TimeUnit.SECONDS).size(),
+                  1);
       } finally {
          returnContainer(containerName);
       }
@@ -372,10 +370,10 @@ public class BaseBlobIntegrationTest<S, C extends ContainerMetadata, M extends B
    public void testMetadata() throws Exception {
       String key = "hello";
 
-      B object = context.newBlob(key);
+      Blob object = newBlob(key);
       object.setData(TEST_STRING);
       object.getMetadata().setContentType("text/plain");
-      object.getMetadata().setSize(TEST_STRING.length());
+      object.getMetadata().setSize(new Long(TEST_STRING.length()));
       // NOTE all metadata in jclouds comes out as lowercase, in an effort to normalize the
       // providers.
       object.getMetadata().getUserMetadata().put("Adrian", "powderpuff");
@@ -383,9 +381,9 @@ public class BaseBlobIntegrationTest<S, C extends ContainerMetadata, M extends B
       String containerName = getContainerName();
       try {
          addBlobToContainer(containerName, object);
-         B newObject = validateContent(containerName, key);
+         Blob newObject = validateContent(containerName, key);
 
-         M metadata = newObject.getMetadata();
+         BlobMetadata metadata = newObject.getMetadata();
 
          validateMetadata(metadata);
          validateMetadata(context.getBlobStore().blobMetadata(containerName, key));
@@ -402,9 +400,10 @@ public class BaseBlobIntegrationTest<S, C extends ContainerMetadata, M extends B
       }
    }
 
-   protected void validateMetadata(M metadata) {
+
+   protected void validateMetadata(BlobMetadata metadata) {
       assertEquals(metadata.getContentType(), "text/plain");
-      assertEquals(metadata.getSize(), TEST_STRING.length());
+      assertEquals(metadata.getSize(), new Long(TEST_STRING.length()));
       assertEquals(metadata.getUserMetadata().get("adrian"), "powderpuff");
       assertEquals(metadata.getContentMD5(), HttpUtils.md5(TEST_STRING.getBytes()));
    }

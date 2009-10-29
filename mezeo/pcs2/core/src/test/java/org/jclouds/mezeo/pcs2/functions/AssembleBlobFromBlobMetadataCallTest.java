@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,45 +23,31 @@
  */
 package org.jclouds.mezeo.pcs2.functions;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.testng.Assert.assertEquals;
-
-import java.io.InputStream;
-import java.util.concurrent.ConcurrentMap;
-
-import org.jclouds.blobstore.domain.Key;
-import org.jclouds.http.HttpException;
-import org.jclouds.http.HttpResponse;
-import org.jclouds.mezeo.pcs2.domain.FileMetadata;
-import org.jclouds.mezeo.pcs2.domain.PCSFile;
-import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
 public class AssembleBlobFromBlobMetadataCallTest {
 
-   @SuppressWarnings("unchecked")
-   @Test(expectedExceptions = NullPointerException.class)
-   public void testCall() throws HttpException {
-      FileMetadata metadata = new FileMetadata("blob");
-      metadata.setSize(103);
-      ConcurrentMap<Key, FileMetadata> mdCache = createMock(ConcurrentMap.class);
-      InputStream data = createMock(InputStream.class);
-      AssembleBlobFromContentAndMetadataCache callable = new AssembleBlobFromContentAndMetadataCache(
-               mdCache);
-      HttpResponse response = createMock(HttpResponse.class);
-      expect(mdCache.get(new Key("container", "blob"))).andReturn(metadata);
-      expect(response.getContent()).andReturn(data);
-      replay(mdCache);
-      replay(response);
-      PCSFile file = callable.apply(response);
-      assertEquals(file.getMetadata(), metadata);
-      assertEquals(file.getName(), "blob");
-      assertEquals(file.getData(), data);
-      assertEquals(file.getContentLength(), metadata.getSize());
-   }
+//   @SuppressWarnings("unchecked")
+//   @Test(expectedExceptions = NullPointerException.class)
+//   public void testCall() throws HttpException {
+//      FileMetadata metadata = new FileMetadata("blob");
+//      metadata.setSize(103);
+//      ConcurrentMap<Key, FileMetadata> mdCache = createMock(ConcurrentMap.class);
+//      InputStream data = createMock(InputStream.class);
+//      AssembleBlobFromContentAndMetadataCache callable = new AssembleBlobFromContentAndMetadataCache(
+//               mdCache);
+//      HttpResponse response = createMock(HttpResponse.class);
+//      expect(mdCache.get(new Key("container", "blob"))).andReturn(metadata);
+//      expect(response.getContent()).andReturn(data);
+//      replay(mdCache);
+//      replay(response);
+//      PCSFile file = callable.apply(response);
+//      assertEquals(file.getMetadata(), metadata);
+//      assertEquals(file.getName(), "blob");
+//      assertEquals(file.getData(), data);
+//      assertEquals(file.getContentLength(), metadata.getSize());
+//   }
 
 }

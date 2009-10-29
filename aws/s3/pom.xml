@@ -43,7 +43,7 @@
         <module>samples</module>
     </modules>
     <properties>
-        <jclouds.test.initializer>org.jclouds.aws.s3.integration.S3TestInitializer</jclouds.test.initializer>
+        <jclouds.test.initializer>org.jclouds.aws.s3.blobstore.integration.S3TestInitializer</jclouds.test.initializer>
     </properties>
     <dependencies>
         <dependency>

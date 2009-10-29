@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -24,9 +24,11 @@
 package org.jclouds.rackspace.cloudfiles;
 
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.rest.RestContext;
 
 import com.google.inject.Module;
 
@@ -39,18 +41,26 @@ import com.google.inject.Module;
  * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
- * @author Adrian Cole, Andrew Newdigate
- * @see CloudFilesContext
+ * @author Adrian Cole
+ * @see CloudFilesClient
  */
 public class CloudFilesContextFactory {
 
-   public static CloudFilesContext createContext(String user, String key, Module... modules) {
-      return new CloudFilesContextBuilder(user, key).withModules(modules).buildContext();
+   public static RestContext<CloudFilesClient> createContext(Properties properties,
+            Module... modules) {
+      return new CloudFilesContextBuilder(new CloudFilesPropertiesBuilder(properties).build())
+               .withModules(modules).buildContext();
    }
 
-   public static CloudFilesContext createContext(URI endpoint, String user, String key,
+   public static RestContext<CloudFilesClient> createContext(String id, String key,
             Module... modules) {
-      return new CloudFilesContextBuilder(user, key).withEndpoint(endpoint).withModules(modules)
-               .buildContext();
+      return new CloudFilesContextBuilder(new CloudFilesPropertiesBuilder(id, key).build())
+               .withModules(modules).buildContext();
+   }
+
+   public static RestContext<CloudFilesClient> createContext(URI endpoint, String id, String key,
+            Module... modules) {
+      return new CloudFilesContextBuilder(new CloudFilesPropertiesBuilder(id, key).withEndpoint(
+               endpoint).build()).withModules(modules).buildContext();
    }
 }

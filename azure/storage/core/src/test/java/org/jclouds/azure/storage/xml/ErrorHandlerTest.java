@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -40,7 +40,6 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "azurestorage.ErrorHandlerTest")
 public class ErrorHandlerTest extends BaseHandlerTest {
 
-   @SuppressWarnings("unchecked")
    ParseSax<AzureStorageError> createParser() {
       ParseSax<AzureStorageError> parser = (ParseSax<AzureStorageError>) factory.create(injector
                .getInstance(ErrorHandler.class));

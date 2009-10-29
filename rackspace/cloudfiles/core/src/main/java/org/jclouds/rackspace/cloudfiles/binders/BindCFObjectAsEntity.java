@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -24,7 +24,6 @@
 package org.jclouds.rackspace.cloudfiles.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -34,30 +33,33 @@ import org.jclouds.blobstore.binders.BindBlobToEntityAndUserMetadataToHeadersWit
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpUtils;
+import org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants;
 
 public class BindCFObjectAsEntity extends BindBlobToEntityAndUserMetadataToHeadersWithPrefix {
    @Inject
-   public BindCFObjectAsEntity(@Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix) {
+   public BindCFObjectAsEntity(
+            @Named(CloudFilesConstants.PROPERTY_CLOUDFILES_METADATA_PREFIX) String metadataPrefix) {
       super(metadataPrefix);
    }
 
    public void bindToRequest(HttpRequest request, Object entity) {
-      Blob<?> object = (Blob<?>) entity;
-      if (object.getMetadata().getSize() >= 0) {
+      Blob object = (Blob) entity;
+      if (object.getContentLength() >= 0) {
          checkArgument(object.getContentLength() <= 5 * 1024 * 1024 * 1024,
                   "maximum size for put object is 5GB");
-         request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, object.getMetadata().getSize() + "");
+         request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, object.getContentLength() + "");
       } else {
          // Enable "chunked"/"streamed" data, where the size needn't be known in advance.
          request.getHeaders().put("Transfer-Encoding", "chunked");
       }
       /**
-       * rackspace uses ETag header instead of Content-MD5
+       * rackspace uses ETag header instead of Content-MD5.
        */
       if (object.getMetadata().getContentMD5() != null) {
-         request.getHeaders().put(HttpHeaders.ETAG,
-                  HttpUtils.toBase64String(object.getMetadata().getContentMD5()));
+         request.getHeaders().put(HttpHeaders.ETAG,// note it needs to be in hex!
+                  HttpUtils.toHexString(object.getMetadata().getContentMD5()));
       }
       super.bindToRequest(request, entity);
+      request.getHeaders().removeAll("Content-MD5");
    }
 }

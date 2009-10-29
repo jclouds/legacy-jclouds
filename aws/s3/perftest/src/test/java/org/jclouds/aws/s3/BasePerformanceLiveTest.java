@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -40,9 +40,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Provider;
 
-import org.jclouds.aws.s3.domain.BucketMetadata;
-import org.jclouds.aws.s3.domain.ObjectMetadata;
-import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.BucketMetadata.LocationConstraint;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.testng.annotations.AfterClass;
@@ -54,8 +51,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-public abstract class BasePerformanceLiveTest extends
-         BaseBlobStoreIntegrationTest<S3Connection, BucketMetadata, ObjectMetadata, S3Object> {
+public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
    protected int timeoutSeconds = 10;
    protected int loopCount = 100;
    protected ExecutorService exec;

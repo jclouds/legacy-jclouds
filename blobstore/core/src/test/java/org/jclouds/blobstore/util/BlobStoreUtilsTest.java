@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -25,7 +25,6 @@ package org.jclouds.blobstore.util;
 
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.blobstore.domain.Key;
 import org.testng.annotations.Test;
 
 /**
@@ -36,16 +35,22 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "blobstore.BlobStoreUtilsTest")
 public class BlobStoreUtilsTest {
 
-   public void testParseKey() {
-      Key key = BlobStoreUtils.parseKey(new Key("container", "key"));
-      assertEquals(key.getContainer(), "container");
-      assertEquals(key.getKey(), "key");
-      key = BlobStoreUtils.parseKey(new Key("container", "container/key"));
-      assertEquals(key.getContainer(), "container/container");
-      assertEquals(key.getKey(), "key");
-      key = BlobStoreUtils.parseKey(new Key("container", "/container/key"));
-      assertEquals(key.getContainer(), "container/container");
-      assertEquals(key.getKey(), "key");
-
+   public void testGetContainer() {
+      String container = BlobStoreUtils.parseContainerFromPath("foo");
+      assertEquals(container, "foo");
+      container = BlobStoreUtils.parseContainerFromPath("foo/");
+      assertEquals(container, "foo");
+      container = BlobStoreUtils.parseContainerFromPath("foo/bar");
+      assertEquals(container, "foo");
    }
+
+   public void testGetPrefix() {
+      String prefix = BlobStoreUtils.parsePrefixFromPath("foo");
+      assertEquals(prefix, null);
+      prefix = BlobStoreUtils.parsePrefixFromPath("foo/");
+      assertEquals(prefix, null);
+      prefix = BlobStoreUtils.parsePrefixFromPath("foo/bar");
+      assertEquals(prefix, "bar");
+   }
+
 }

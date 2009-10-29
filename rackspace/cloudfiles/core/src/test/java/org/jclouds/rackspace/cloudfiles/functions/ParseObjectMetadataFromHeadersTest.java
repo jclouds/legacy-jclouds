@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,16 +23,18 @@
  */
 package org.jclouds.rackspace.cloudfiles.functions;
 
-import static org.easymock.classextension.EasyMock.createNiceMock;
 import static org.testng.Assert.assertNotNull;
 
-import javax.inject.Provider;
-
-import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.internal.BlobMetadataImpl;
+import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.util.DateService;
+import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants;
 import org.testng.annotations.Test;
+
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.util.Jsr330;
 
 /**
  * Tests behavior of {@code ParseContainerListFromJsonResponse}
@@ -41,12 +43,19 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "unit", testName = "cloudfiles.ParseObjectMetadataFromHeadersTest")
 public class ParseObjectMetadataFromHeadersTest {
+   Injector i = Guice.createInjector(new ParserModule(), new AbstractModule() {
 
-   @SuppressWarnings("unchecked")
+      @Override
+      protected void configure() {
+         bindConstant().annotatedWith(
+                  Jsr330.named(CloudFilesConstants.PROPERTY_CLOUDFILES_METADATA_PREFIX)).to("sdf");
+      }
+
+   });
+
    public void testEtagCaseIssue() {
-      ParseObjectMetadataFromHeaders parser = new ParseObjectMetadataFromHeaders(
-               createNiceMock(DateService.class), "", createNiceMock(Provider.class));
-      BlobMetadata md = new BlobMetadataImpl("hello");
+      ParseObjectMetadataFromHeaders parser = i.getInstance(ParseObjectMetadataFromHeaders.class);
+      MutableBlobMetadata md = i.getInstance(MutableBlobMetadata.class);
       HttpResponse response = new HttpResponse();
       response.getHeaders().put("Etag", "feb1");
       parser.addETagTo(response, md);

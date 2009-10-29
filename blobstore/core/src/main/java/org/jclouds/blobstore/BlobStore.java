@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -28,16 +28,34 @@ import java.util.concurrent.Future;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ContainerMetadata;
-import org.jclouds.http.options.GetOptions;
+import org.jclouds.blobstore.domain.BoundedSortedSet;
+import org.jclouds.blobstore.domain.ResourceMetadata;
+import org.jclouds.blobstore.options.GetOptions;
+import org.jclouds.blobstore.options.ListOptions;
 
 /**
  * Provides hooks needed to run a blob store
  */
-public interface BlobStore<C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>> {
-   SortedSet<C> listContainers();
+public interface BlobStore {
+   
+   Blob newBlob();
+   
+   /**
+    * Lists all root-level resources available to the account.
+    */
+   Future<? extends SortedSet<? extends ResourceMetadata>> list();
 
-   boolean containerExists(String container);
+   /**
+    * Lists all resources available at the specified path. Note that path may be a container, or a
+    * path within it delimited by {@code /} characters.
+    * 
+    * @param parent
+    *           - base path to list; non-recursive
+    */
+   Future<? extends BoundedSortedSet<? extends ResourceMetadata>> list(String container,
+            ListOptions... options);
+
+   boolean exists(String container);
 
    Future<Boolean> createContainer(String container);
 
@@ -48,15 +66,18 @@ public interface BlobStore<C extends ContainerMetadata, M extends BlobMetadata, 
     */
    Future<Void> deleteContainer(String container);
 
-   Future<? extends SortedSet<M>> listBlobs(String container);
+   /**
+    * This will delete the contents of a container without removing it
+    * 
+    * @param container
+    */
+   Future<Void> clearContainer(String container);
 
-   Future<String> putBlob(String container, B blob);
+   Future<String> putBlob(String container, Blob blob);
 
-   Future<B> getBlob(String container, String key);
+   Future<? extends Blob> getBlob(String container, String key, GetOptions... options);
 
-   Future<B> getBlob(String container, String key, GetOptions options);
-
-   M blobMetadata(String container, String key);
+   BlobMetadata blobMetadata(String container, String key);
 
    Future<Void> removeBlob(String container, String key);
 

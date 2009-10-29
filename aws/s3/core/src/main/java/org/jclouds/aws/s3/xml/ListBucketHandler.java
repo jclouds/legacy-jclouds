@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -30,10 +30,13 @@ import javax.inject.Inject;
 import org.jclouds.aws.s3.domain.CanonicalUser;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
-import org.jclouds.aws.s3.domain.TreeSetListBucketResponse;
+import org.jclouds.aws.s3.domain.ObjectMetadata.StorageClass;
+import org.jclouds.aws.s3.domain.internal.BucketListObjectMetadata;
+import org.jclouds.aws.s3.domain.internal.TreeSetListBucketResponse;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.DateService;
+import org.joda.time.DateTime;
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.Sets;
@@ -51,7 +54,6 @@ import com.google.common.collect.Sets;
 public class ListBucketHandler extends ParseSax.HandlerWithResult<ListBucketResponse> {
    private SortedSet<ObjectMetadata> contents;
    private SortedSet<String> commonPrefixes;
-   private ObjectMetadata currentObjectMetadata;
    private CanonicalUser currentOwner;
    private StringBuilder currentText = new StringBuilder();
 
@@ -76,6 +78,12 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<ListBucketResp
    }
 
    private boolean inCommonPrefixes;
+   private String currentKey;
+   private DateTime currentLastModified;
+   private String currentETag;
+   private byte[] currentMD5;
+   private long currentSize;
+   private StorageClass currentStorageClass;
 
    public void startElement(String uri, String name, String qName, Attributes attrs) {
       if (qName.equals("CommonPrefixes")) {
@@ -85,27 +93,26 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<ListBucketResp
 
    public void endElement(String uri, String name, String qName) {
       if (qName.equals("ID")) {
-         currentOwner = new CanonicalUser(currentText.toString());
+         currentOwner = new CanonicalUser(currentText.toString().trim());
       } else if (qName.equals("DisplayName")) {
-         currentOwner.setDisplayName(currentText.toString());
+         currentOwner.setDisplayName(currentText.toString().trim());
       } else if (qName.equals("Key")) { // content stuff
-         currentObjectMetadata = new ObjectMetadata(currentText.toString());
+         currentKey = currentText.toString().trim();
       } else if (qName.equals("LastModified")) {
-         currentObjectMetadata.setLastModified(dateParser.iso8601DateParse(currentText.toString()));
+         currentLastModified = dateParser.iso8601DateParse(currentText.toString().trim());
       } else if (qName.equals("ETag")) {
-         currentObjectMetadata.setETag(currentText.toString());
-         currentObjectMetadata.setContentMD5(HttpUtils.fromHexString(currentObjectMetadata
-                  .getETag().replaceAll("\"", "")));
+         currentETag = currentText.toString().trim();
+         currentMD5 = HttpUtils.fromHexString(currentETag.replaceAll("\"", ""));
       } else if (qName.equals("Size")) {
-         currentObjectMetadata.setSize(Long.parseLong(currentText.toString()));
+         currentSize = new Long(currentText.toString().trim());
       } else if (qName.equals("Owner")) {
-         currentObjectMetadata.setOwner(currentOwner);
       } else if (qName.equals("StorageClass")) {
-         currentObjectMetadata.setStorageClass(currentText.toString());
+         currentStorageClass = ObjectMetadata.StorageClass.valueOf(currentText.toString().trim());
       } else if (qName.equals("Contents")) {
-         contents.add(currentObjectMetadata);
+         contents.add(new BucketListObjectMetadata(currentKey, currentLastModified, currentETag,
+                  currentMD5, currentSize, currentOwner, currentStorageClass));
       } else if (qName.equals("Name")) {
-         this.bucketName = currentText.toString();
+         this.bucketName = currentText.toString().trim();
       } else if (qName.equals("Prefix")) {
          String prefix = currentText.toString().trim();
          if (inCommonPrefixes)
@@ -117,11 +124,11 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<ListBucketResp
             this.delimiter = currentText.toString().trim();
       } else if (qName.equals("Marker")) {
          if (!currentText.toString().equals(""))
-            this.marker = currentText.toString();
+            this.marker = currentText.toString().trim();
       } else if (qName.equals("MaxKeys")) {
-         this.maxResults = Integer.parseInt(currentText.toString());
+         this.maxResults = Integer.parseInt(currentText.toString().trim());
       } else if (qName.equals("IsTruncated")) {
-         this.isTruncated = Boolean.parseBoolean(currentText.toString());
+         this.isTruncated = Boolean.parseBoolean(currentText.toString().trim());
       }
       currentText = new StringBuilder();
    }

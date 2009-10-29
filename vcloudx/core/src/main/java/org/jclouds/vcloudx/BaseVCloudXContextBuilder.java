@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,22 +23,24 @@
  */
 package org.jclouds.vcloudx;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
 
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.vcloudx.config.BaseRestVCloudXConnectionModule;
+import org.jclouds.rest.RestContextBuilder;
+import org.jclouds.vcloudx.config.BaseVCloudXRestClientModule;
 import org.jclouds.vcloudx.config.BaseVCloudXContextModule;
+import org.jclouds.vcloudx.config.RestVCloudXAuthenticationModule;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
 /**
- * Creates {@link VCloudXContext} or {@link Injector} instances based on the most commonly
- * requested arguments.
+ * Creates {@link VCloudXContext} or {@link Injector} instances based on the most commonly requested
+ * arguments.
  * <p/>
  * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
  * <p/>
@@ -49,26 +51,32 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  * @see CloudFilesContext
  */
-public class BaseVCloudXContextBuilder extends VCloudXContextBuilder<VCloudXConnection> {
+public class BaseVCloudXContextBuilder extends RestContextBuilder<VCloudXClient> {
 
-   public BaseVCloudXContextBuilder(URI endpoint, String id, String secret) {
-      super(new TypeLiteral<VCloudXConnection>(){}, endpoint, id, secret);
-
-   }
    public BaseVCloudXContextBuilder(Properties props) {
-      super(new TypeLiteral<VCloudXConnection>(){}, props);
-
+      super(new TypeLiteral<VCloudXClient>() {
+      }, props);
    }
 
    @Override
-   protected void addConnectionModule(List<Module> modules) {
-      addAuthenticationModule(this);
-      modules.add(new BaseRestVCloudXConnectionModule());
+   protected void addClientModule(List<Module> modules) {
+      modules.add(new RestVCloudXAuthenticationModule());
+      modules.add(new BaseVCloudXRestClientModule());
    }
 
    @Override
    protected void addContextModule(List<Module> modules) {
       modules.add(new BaseVCloudXContextModule());
+   }
+
+   @Override
+   public BaseVCloudXContextBuilder withExecutorService(ExecutorService service) {
+      return (BaseVCloudXContextBuilder) super.withExecutorService(service);
+   }
+
+   @Override
+   public BaseVCloudXContextBuilder withModules(Module... modules) {
+      return (BaseVCloudXContextBuilder) super.withModules(modules);
    }
 
 }

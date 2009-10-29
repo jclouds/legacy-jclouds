@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -36,16 +36,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jclouds.aws.s3.S3Context;
+import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
+import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.logging.Logger;
 
 import com.google.common.collect.Sets;
 
 /**
- * Shows an example of how to use @{link S3Connection} injected with Guice.
+ * Shows an example of how to use @{link S3Client} injected with Guice.
  * 
  * @author Adrian Cole
  */
@@ -65,7 +66,7 @@ public class JCloudsServlet extends HttpServlet {
    }
 
    @Inject
-   S3Context context;
+   BlobStoreContext<S3Client> context;
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -108,7 +109,8 @@ public class JCloudsServlet extends HttpServlet {
    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
       try {
-         SortedSet<BucketMetadata> myBucketMetadata = context.getApi().listOwnedBuckets();
+         SortedSet<BucketMetadata> myBucketMetadata = context.getApi().listOwnedBuckets().get(10,
+                  TimeUnit.SECONDS);
          SortedSet<BucketResult> myBuckets = Sets.newTreeSet();
          for (BucketMetadata metadata : myBucketMetadata) {
             BucketResult result = new BucketResult();

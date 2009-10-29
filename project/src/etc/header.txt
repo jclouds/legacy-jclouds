@@ -1,5 +1,5 @@
 
-Copyright (C) ${year} Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+Copyright (C) ${year} Cloud Conscious, LLC. <info@cloudconscious.com>
 
 ====================================================================
 Licensed to the Apache Software Foundation (ASF) under one

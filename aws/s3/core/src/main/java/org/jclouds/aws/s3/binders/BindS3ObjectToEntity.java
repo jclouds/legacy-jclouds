@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -24,45 +24,49 @@
 package org.jclouds.aws.s3.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.aws.s3.blobstore.functions.ObjectToBlob;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.blobstore.binders.BindBlobToEntityAndUserMetadataToHeadersWithPrefix;
-import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.rest.Binder;
 
-public class BindS3ObjectToEntity extends BindBlobToEntityAndUserMetadataToHeadersWithPrefix {
+public class BindS3ObjectToEntity implements Binder {
+   private final BindBlobToEntityAndUserMetadataToHeadersWithPrefix blobBinder;
+   private final ObjectToBlob object2Blob;
+
    @Inject
-   public BindS3ObjectToEntity(@Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix) {
-      super(metadataPrefix);
+   public BindS3ObjectToEntity(ObjectToBlob object2Blob,
+            BindBlobToEntityAndUserMetadataToHeadersWithPrefix blobBinder) {
+      this.blobBinder = blobBinder;
+      this.object2Blob = object2Blob;
    }
 
    public void bindToRequest(HttpRequest request, Object entity) {
-      Blob<?> object = (Blob<?>) entity;
-      checkArgument(object.getMetadata().getSize() >= 0, "size must be set");
-      checkArgument(object.getContentLength() <= 5 * 1024 * 1024 * 1024,
+      S3Object s3Object = (S3Object) entity;
+      checkNotNull(s3Object.getContentLength(), "contentLength");
+      checkArgument(s3Object.getContentLength() <= 5 * 1024 * 1024 * 1024,
                "maximum size for put object is 5GB");
-      if (object instanceof S3Object) {
-         S3Object s3Object = (S3Object) object;
-         if (s3Object.getMetadata().getCacheControl() != null) {
-            request.getHeaders().put(HttpHeaders.CACHE_CONTROL,
-                     s3Object.getMetadata().getCacheControl());
-         }
+      blobBinder.bindToRequest(request, object2Blob.apply(s3Object));
 
-         if (s3Object.getMetadata().getContentDisposition() != null) {
-            request.getHeaders().put("Content-Disposition",
-                     s3Object.getMetadata().getContentDisposition());
-         }
-
-         if (s3Object.getMetadata().getContentEncoding() != null) {
-            request.getHeaders().put(HttpHeaders.CONTENT_ENCODING,
-                     s3Object.getMetadata().getContentEncoding());
-         }
+      if (s3Object.getMetadata().getCacheControl() != null) {
+         request.getHeaders().put(HttpHeaders.CACHE_CONTROL,
+                  s3Object.getMetadata().getCacheControl());
       }
-      super.bindToRequest(request, entity);
+
+      if (s3Object.getMetadata().getContentDisposition() != null) {
+         request.getHeaders().put("Content-Disposition",
+                  s3Object.getMetadata().getContentDisposition());
+      }
+
+      if (s3Object.getMetadata().getContentEncoding() != null) {
+         request.getHeaders().put(HttpHeaders.CONTENT_ENCODING,
+                  s3Object.getMetadata().getContentEncoding());
+      }
+
    }
 }

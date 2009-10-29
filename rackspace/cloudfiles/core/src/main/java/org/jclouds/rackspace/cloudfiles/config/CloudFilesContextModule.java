@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -25,46 +25,39 @@ package org.jclouds.rackspace.cloudfiles.config;
 
 import java.net.URI;
 
-import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Provider;
+import javax.inject.Singleton;
 
-import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.BlobStoreContextImpl;
-import org.jclouds.blobstore.BlobMap.Factory;
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
+import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.rackspace.CloudFiles;
-import org.jclouds.rackspace.cloudfiles.CloudFilesConnection;
-import org.jclouds.rackspace.cloudfiles.CloudFilesContext;
-import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
+import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
 import org.jclouds.rackspace.reference.RackspaceConstants;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Scopes;
+import com.google.inject.Provides;
 
+/**
+ * Configures the {@link CloudFilesContextModule}; requires {@link CloudFilesClient} bound.
+ * 
+ * @author Adrian Cole
+ */
 public class CloudFilesContextModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      bind(CloudFilesContext.class).to(CloudFilesContextImpl.class).in(Scopes.SINGLETON);
+      // for converters to work.
+      install(new BlobStoreObjectModule());
    }
 
-   public static class CloudFilesContextImpl
-            extends
-            BlobStoreContextImpl<CloudFilesConnection, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>
-            implements CloudFilesContext {
-      @Inject
-      CloudFilesContextImpl(Factory<BlobMetadata, Blob<BlobMetadata>> blobMapFactory,
-               org.jclouds.blobstore.InputStreamMap.Factory<BlobMetadata> inputStreamMapFactory,
-               Closer closer, Provider<Blob<BlobMetadata>> blobProvider,
-               BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> blobStore,
-               CloudFilesConnection defaultApi, @CloudFiles URI endPoint,
-               @Named(RackspaceConstants.PROPERTY_RACKSPACE_USER) String account) {
-         super(blobMapFactory, inputStreamMapFactory, closer, blobProvider, blobStore, defaultApi,
-                  endPoint, account);
-      }
-
+   @Provides
+   @Singleton
+   RestContext<CloudFilesClient> provideContext(Closer closer, CloudFilesClient defaultApi,
+            @CloudFiles URI endPoint,
+            @Named(RackspaceConstants.PROPERTY_RACKSPACE_USER) String account) {
+      return new RestContextImpl<CloudFilesClient>(closer, defaultApi, endPoint, account);
    }
+
 }

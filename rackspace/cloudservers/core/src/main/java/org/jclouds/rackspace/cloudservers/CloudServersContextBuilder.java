@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,18 +23,18 @@
  */
 package org.jclouds.rackspace.cloudservers;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.rackspace.RackspaceContextBuilder;
 import org.jclouds.rackspace.cloudservers.config.CloudServersContextModule;
-import org.jclouds.rackspace.cloudservers.config.RestCloudServersConnectionModule;
+import org.jclouds.rackspace.cloudservers.config.CloudServersRestClientModule;
+import org.jclouds.rackspace.config.RackspaceAuthenticationRestModule;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.RestContextBuilder;
 
-import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
@@ -47,20 +47,15 @@ import com.google.inject.TypeLiteral;
  * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
- * @author Adrian Cole, Andrew Newdigate
- * @see CloudServersContext
+ * @author Adrian Cole
+ * @see RestContext
+ * @see CloudServersClient
  */
-public class CloudServersContextBuilder extends RackspaceContextBuilder<CloudServersConnection> {
-
-   private static final TypeLiteral<CloudServersConnection> connectionType = new TypeLiteral<CloudServersConnection>() {
-   };
-
-   public CloudServersContextBuilder(String id, String secret) {
-      super(connectionType, id, secret);
-   }
+public class CloudServersContextBuilder extends RestContextBuilder<CloudServersClient> {
 
    public CloudServersContextBuilder(Properties properties) {
-      super(connectionType, properties);
+      super(new TypeLiteral<CloudServersClient>() {
+      }, properties);
    }
 
    @Override
@@ -69,27 +64,9 @@ public class CloudServersContextBuilder extends RackspaceContextBuilder<CloudSer
    }
 
    @Override
-   protected void addConnectionModule(List<Module> modules) {
-      super.addConnectionModule(modules);
-      modules.add(new RestCloudServersConnectionModule());
-   }
-
-   // below is to cast the builder to the correct type so that chained builder methods end correctly
-
-   @Override
-   public CloudServersContextBuilder withEndpoint(URI endpoint) {
-      return (CloudServersContextBuilder) super.withEndpoint(endpoint);
-   }
-
-   @Override
-   public CloudServersContext buildContext() {
-      Injector injector = buildInjector();
-      return injector.getInstance(CloudServersContext.class);
-   }
-
-   @Override
-   public CloudServersContextBuilder relaxSSLHostname() {
-      return (CloudServersContextBuilder) super.relaxSSLHostname();
+   protected void addClientModule(List<Module> modules) {
+      modules.add(new RackspaceAuthenticationRestModule());
+      modules.add(new CloudServersRestClientModule());
    }
 
    @Override
@@ -98,49 +75,7 @@ public class CloudServersContextBuilder extends RackspaceContextBuilder<CloudSer
    }
 
    @Override
-   public CloudServersContextBuilder withHttpMaxRedirects(int httpMaxRedirects) {
-      return (CloudServersContextBuilder) super.withHttpMaxRedirects(httpMaxRedirects);
-   }
-
-   @Override
-   public CloudServersContextBuilder withHttpMaxRetries(int httpMaxRetries) {
-      return (CloudServersContextBuilder) super.withHttpMaxRetries(httpMaxRetries);
-   }
-
-   @Override
-   public CloudServersContextBuilder withModule(Module module) {
-      return (CloudServersContextBuilder) super.withModule(module);
-   }
-
-   @Override
    public CloudServersContextBuilder withModules(Module... modules) {
       return (CloudServersContextBuilder) super.withModules(modules);
    }
-
-   @Override
-   public CloudServersContextBuilder withPoolIoWorkerThreads(int poolIoWorkerThreads) {
-      return (CloudServersContextBuilder) super.withPoolIoWorkerThreads(poolIoWorkerThreads);
-   }
-
-   @Override
-   public CloudServersContextBuilder withPoolMaxConnectionReuse(int poolMaxConnectionReuse) {
-      return (CloudServersContextBuilder) super.withPoolMaxConnectionReuse(poolMaxConnectionReuse);
-   }
-
-   @Override
-   public CloudServersContextBuilder withPoolMaxConnections(int poolMaxConnections) {
-      return (CloudServersContextBuilder) super.withPoolMaxConnections(poolMaxConnections);
-   }
-
-   @Override
-   public CloudServersContextBuilder withPoolMaxSessionFailures(int poolMaxSessionFailures) {
-      return (CloudServersContextBuilder) super.withPoolMaxSessionFailures(poolMaxSessionFailures);
-   }
-
-   @Override
-   public CloudServersContextBuilder withPoolRequestInvokerThreads(int poolRequestInvokerThreads) {
-      return (CloudServersContextBuilder) super
-               .withPoolRequestInvokerThreads(poolRequestInvokerThreads);
-   }
-
 }

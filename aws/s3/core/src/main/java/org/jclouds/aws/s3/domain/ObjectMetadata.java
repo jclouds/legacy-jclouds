@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,9 +23,9 @@
  */
 package org.jclouds.aws.s3.domain;
 
-import java.io.Serializable;
+import java.util.Map;
 
-import org.jclouds.blobstore.internal.BlobMetadataImpl;
+import org.joda.time.DateTime;
 
 /**
  * /** Amazon S3 is designed to store objects. Objects are stored in {@link S3BucketListing buckets}
@@ -38,160 +38,46 @@ import org.jclouds.blobstore.internal.BlobMetadataImpl;
  * 
  * @see <a href= "http://docs.amazonwebservices.com/AmazonS3/2006-03-01/UsingMetadata.html" />
  */
-public class ObjectMetadata extends BlobMetadataImpl implements Serializable {
+public interface ObjectMetadata extends Comparable<ObjectMetadata> {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -4415449798024051115L;
-
-   @Override
-   public String toString() {
-      StringBuilder builder = new StringBuilder();
-      builder.append("Metadata [accessControlList=").append(accessControlList).append(
-               ", cacheControl=").append(cacheControl).append(", dataDisposition=").append(
-               dataDisposition).append(", owner=").append(owner).append(", storageClass=").append(
-               storageClass).append(", allHeaders=").append(allHeaders).append(", dataEncoding=")
-               .append(dataEncoding).append(", dataType=").append(dataType).append(", eTag=")
-               .append(eTag).append(", key=").append(name).append(", lastModified=").append(
-                        lastModified).append(", size=").append(size).append(", userMetadata=")
-               .append(userMetadata).append("]");
-      return builder.toString();
-   }
-
-   private String cacheControl;
-   private String dataDisposition;
-   private AccessControlList accessControlList;
-
-   // only parsed on list
-   private CanonicalUser owner = null;
-   private String storageClass = null;
-   protected String dataEncoding;
-
-   public ObjectMetadata() {
-      super();
+   public enum StorageClass {
+      STANDARD
    }
 
    /**
-    * @param key
-    * @see #getKey()
+    * The key is the handle that you assign to an object that allows you retrieve it later. A key is
+    * a sequence of Unicode characters whose UTF-8 encoding is at most 1024 bytes long. Each object
+    * in a bucket must have a unique key.
+    * 
+    * @see <a href= "http://docs.amazonwebservices.com/AmazonHTTP/2006-03-01/UsingKeys.html" />
     */
-   public ObjectMetadata(String key) {
-      super(key);
-   }
-
-   public void setOwner(CanonicalUser owner) {
-      this.owner = owner;
-   }
+   String getKey();
 
    /**
     * Every bucket and object in Amazon S3 has an owner, the user that created the bucket or object.
     * The owner of a bucket or object cannot be changed. However, if the object is overwritten by
     * another user (deleted and rewritten), the new object will have a new owner.
     */
-   public CanonicalUser getOwner() {
-      return owner;
-   }
-
-   public void setStorageClass(String storageClass) {
-      this.storageClass = storageClass;
-   }
+   CanonicalUser getOwner();
 
    /**
     * Currently defaults to 'STANDARD' and not used.
     */
-   public String getStorageClass() {
-      return storageClass;
-   }
-
-   public void setCacheControl(String cacheControl) {
-      this.cacheControl = cacheControl;
-   }
+   StorageClass getStorageClass();
 
    /**
     * Can be used to specify caching behavior along the request/reply chain.
     * 
     * @link http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html?sec14.9.
     */
-   public String getCacheControl() {
-      return cacheControl;
-   }
-
-   public void setContentDisposition(String dataDisposition) {
-      this.dataDisposition = dataDisposition;
-   }
+   String getCacheControl();
 
    /**
     * Specifies presentational information for the object.
     * 
     * @see <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec19.html?sec19.5.1."/>
     */
-   public String getContentDisposition() {
-      return dataDisposition;
-   }
-
-   public void setAccessControlList(AccessControlList acl) {
-      this.accessControlList = acl;
-   }
-
-   public AccessControlList getAccessControlList() {
-      return this.accessControlList;
-   }
-
-   @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ((accessControlList == null) ? 0 : accessControlList.hashCode());
-      result = prime * result + ((cacheControl == null) ? 0 : cacheControl.hashCode());
-      result = prime * result + ((dataDisposition == null) ? 0 : dataDisposition.hashCode());
-      result = prime * result + ((owner == null) ? 0 : owner.hashCode());
-      result = prime * result + ((storageClass == null) ? 0 : storageClass.hashCode());
-      return result;
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (!super.equals(obj))
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      ObjectMetadata other = (ObjectMetadata) obj;
-      if (accessControlList == null) {
-         if (other.accessControlList != null)
-            return false;
-      } else if (!accessControlList.equals(other.accessControlList))
-         return false;
-      if (cacheControl == null) {
-         if (other.cacheControl != null)
-            return false;
-      } else if (!cacheControl.equals(other.cacheControl))
-         return false;
-      if (dataDisposition == null) {
-         if (other.dataDisposition != null)
-            return false;
-      } else if (!dataDisposition.equals(other.dataDisposition))
-         return false;
-      if (owner == null) {
-         if (other.owner != null)
-            return false;
-      } else if (!owner.equals(other.owner))
-         return false;
-      if (storageClass == null) {
-         if (other.storageClass != null)
-            return false;
-      } else if (!storageClass.equals(other.storageClass))
-         return false;
-      return true;
-   }
-
-   public int compareTo(ObjectMetadata o) {
-      return (this == o) ? 0 : getName().compareTo(o.getName());
-   }
-
-   public void setContentEncoding(String dataEncoding) {
-      this.dataEncoding = dataEncoding;
-   }
+   String getContentDisposition();
 
    /**
     * Specifies what content encodings have been applied to the object and thus what decoding
@@ -200,8 +86,33 @@ public class ObjectMetadata extends BlobMetadataImpl implements Serializable {
     * 
     * @see <a href= "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html?sec14.11" />
     */
-   public String getContentEncoding() {
-      return dataEncoding;
-   }
+   String getContentEncoding();
+
+   /**
+    * 
+    * A standard MIME type describing the format of the contents. If none is provided, the default
+    * is binary/octet-stream.
+    * 
+    * @see <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17"/>
+    */
+   String getContentType();
+
+   /**
+    * The base64 decoded 128-bit MD5 digest of the message (without the headers) according to RFC
+    * 1864. This header can be used as a message integrity check to verify that the data is the same
+    * data that was originally sent. Although it is optional, we recommend using the Content-MD5
+    * mechanism as an end-to-end integrity check.
+    * 
+    * @see <a href="http://docs.amazonwebservices.com/AmazonS3/latest/RESTAuthentication.html"/>
+    */
+   byte[] getContentMD5();
+
+   DateTime getLastModified();
+
+   String getETag();
+
+   Long getSize();
+
+   Map<String, String> getUserMetadata();
 
 }

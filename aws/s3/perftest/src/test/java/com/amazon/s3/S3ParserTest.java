@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,10 +23,6 @@
  */
 package com.amazon.s3;
 
-import org.apache.commons.io.IOUtils;
-import org.joda.time.DateTime;
-import org.testng.annotations.Test;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -37,6 +33,10 @@ import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 
+import org.apache.commons.io.IOUtils;
+import org.joda.time.DateTime;
+import org.testng.annotations.Test;
+
 /**
  * Compares performance of xml parsing apis.
  * 
@@ -45,7 +45,7 @@ import java.util.concurrent.ExecutorCompletionService;
 @Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "s3.S3ParserTest")
 public class S3ParserTest extends org.jclouds.aws.s3.xml.S3ParserTest {
 
-   class MockHttpURLConnection extends HttpURLConnection {
+   class MockHttpURLClient extends HttpURLConnection {
       private String content;
 
       @Override
@@ -53,7 +53,7 @@ public class S3ParserTest extends org.jclouds.aws.s3.xml.S3ParserTest {
          return IOUtils.toInputStream(content);
       }
 
-      protected MockHttpURLConnection(String content) {
+      protected MockHttpURLClient(String content) {
          super(null);
          this.content = content;
       }
@@ -115,7 +115,7 @@ public class S3ParserTest extends org.jclouds.aws.s3.xml.S3ParserTest {
    }
 
    private ListAllMyBucketsResponse runAmazonParseListAllMyBuckets() throws IOException {
-      ListAllMyBucketsResponse response = new ListAllMyBucketsResponse(new MockHttpURLConnection(
+      ListAllMyBucketsResponse response = new ListAllMyBucketsResponse(new MockHttpURLClient(
                listAllMyBucketsResultOn200));
       return response;
    }
@@ -135,7 +135,7 @@ public class S3ParserTest extends org.jclouds.aws.s3.xml.S3ParserTest {
    }
 
    private ListBucketResponse runAmazonParseListBucketResult() throws IOException {
-      ListBucketResponse response = new ListBucketResponse(new MockHttpURLConnection(
+      ListBucketResponse response = new ListBucketResponse(new MockHttpURLClient(
                listAllMyBucketsResultOn200));
       return response;
    }

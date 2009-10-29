@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -37,7 +37,7 @@ import java.util.Properties;
 @Test
 public class JavaUrlHttpCommandExecutorServiceTest extends BaseHttpCommandExecutorServiceTest {
 
-   protected Module createClientModule() {
+   protected Module createConnectionModule() {
       return new JavaUrlHttpCommandExecutorServiceModule();
    }
 

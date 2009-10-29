@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -63,7 +63,7 @@ public class AzureBlobClientErrorRetryHandler implements HttpRetryHandler {
    }
 
    public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
-      byte[] content = Utils.closeConnectionButKeepContentStream(response);
+      byte[] content = Utils.closeClientButKeepContentStream(response);
       command.incrementFailureCount();
       if (!command.isReplayable()) {
          logger.warn("Cannot retry after server error, command is not replayable: %1$s", command);

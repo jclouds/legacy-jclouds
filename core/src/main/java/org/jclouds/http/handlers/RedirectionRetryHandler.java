@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -63,7 +63,7 @@ public class RedirectionRetryHandler implements HttpRetryHandler {
    }
 
    public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
-      closeConnectionButKeepContentStream(response);
+      closeClientButKeepContentStream(response);
 
       String hostHeader = response.getFirstHeaderOrNull(HttpHeaders.LOCATION);
       if (hostHeader != null && command.incrementRedirectCount() < retryCountLimit) {
@@ -84,7 +84,7 @@ public class RedirectionRetryHandler implements HttpRetryHandler {
     * Content stream may need to be read. However, we should always close the http stream.
     */
    @VisibleForTesting
-   void closeConnectionButKeepContentStream(HttpResponse response) {
+   void closeClientButKeepContentStream(HttpResponse response) {
       if (response.getContent() != null) {
          try {
             byte[] data = IOUtils.toByteArray(response.getContent());

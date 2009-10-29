@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -26,6 +26,7 @@ package org.jclouds.samples.googleappengine;
 import java.io.IOException;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
@@ -38,8 +39,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jclouds.aws.s3.S3Context;
+import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.domain.BucketMetadata;
+import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.logging.Logger;
 import org.jclouds.samples.googleappengine.domain.BucketResult;
 import org.jclouds.samples.googleappengine.functions.MetadataToBucketResult;
@@ -48,7 +50,7 @@ import com.google.appengine.repackaged.com.google.common.collect.Sets;
 import com.google.common.collect.Iterables;
 
 /**
- * Shows an example of how to use @{link S3Connection} injected with Guice.
+ * Shows an example of how to use @{link S3Client} injected with Guice.
  * 
  * @author Adrian Cole
  */
@@ -56,14 +58,14 @@ import com.google.common.collect.Iterables;
 public class GetAllBucketsController extends HttpServlet {
    private static final long serialVersionUID = 1L;
 
-   private final S3Context context;
+   private final BlobStoreContext<S3Client> context;
    private final Provider<MetadataToBucketResult> metadataToBucketResultProvider;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public GetAllBucketsController(S3Context context,
+   public GetAllBucketsController(BlobStoreContext<S3Client> context,
             Provider<MetadataToBucketResult> metadataToBucketResultProvider) {
       this.context = context;
       this.metadataToBucketResultProvider = metadataToBucketResultProvider;
@@ -86,7 +88,8 @@ public class GetAllBucketsController extends HttpServlet {
    private void addMyBucketsToRequest(HttpServletRequest request) throws InterruptedException,
             ExecutionException, TimeoutException {
       System.err.println(context.getAccount() + ":" + context.getEndPoint());
-      SortedSet<BucketMetadata> myBucketMetadata = context.getApi().listOwnedBuckets();
+      SortedSet<BucketMetadata> myBucketMetadata = context.getApi().listOwnedBuckets().get(10,
+               TimeUnit.SECONDS);
       SortedSet<BucketResult> myBuckets = Sets.newTreeSet(Iterables.transform(myBucketMetadata,
                metadataToBucketResultProvider.get()));
       request.setAttribute("buckets", myBuckets);

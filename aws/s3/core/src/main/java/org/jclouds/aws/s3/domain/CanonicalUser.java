@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -24,10 +24,9 @@
 package org.jclouds.aws.s3.domain;
 
 /**
- * Every bucket and object in Amazon S3 has an owner, the user that created the
- * bucket or object. The owner of a bucket or object cannot be changed. However,
- * if the object is overwritten by another user (deleted and rewritten), the new
- * object will have a new owner.
+ * Every bucket and object in Amazon S3 has an owner, the user that created the bucket or object.
+ * The owner of a bucket or object cannot be changed. However, if the object is overwritten by
+ * another user (deleted and rewritten), the new object will have a new owner.
  * <p/>
  * 
  * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?
@@ -35,66 +34,61 @@ package org.jclouds.aws.s3.domain;
  * @author Adrian Cole
  */
 public class CanonicalUser {
-    private final String id;
-    private String displayName;
+   private final String id;
+   private String displayName;
 
-    public CanonicalUser(String id) {
-	this.id = id;
-    }
+   public CanonicalUser(String id) {
+      this.id = id;
+   }
 
-    @Override
-    public String toString() {
-	final StringBuilder sb = new StringBuilder();
-	sb.append("S3Owner");
-	sb.append("{id='").append(id).append('\'');
-	sb.append(", displayName='").append(displayName).append('\'');
-	sb.append('}');
-	return sb.toString();
-    }
+   public CanonicalUser(String id, String displayName) {
+      this(id);
+      this.displayName = displayName;
+   }
 
-    /**
-     * To locate the CanonicalUser ID for a user, the user must perform the
-     * {@link org.jclouds.aws.s3.S3BlobStore#listBlobs(String)} and retrieve
-     * {@link BucketMetadata#getOwner()}
-     */
-    public String getId() {
-	return id;
-    }
+   /**
+    * To locate the CanonicalUser ID for a user, the user must perform the
+    * {@link org.jclouds.aws.s3.blobstore.S3BlobStore#list(String)} and retrieve
+    * {@link BucketMetadata#getOwner()}
+    */
+   public String getId() {
+      return id;
+   }
 
-    /**
-     * read-only as is maintained by Amazon.
-     */
-    public String getDisplayName() {
-	return displayName;
-    }
+   /**
+    * read-only as is maintained by Amazon.
+    */
+   public String getDisplayName() {
+      return displayName;
+   }
 
-    public void setDisplayName(String displayName) {
-	this.displayName = displayName;
-    }
+   public void setDisplayName(String displayName) {
+      this.displayName = displayName;
+   }
 
-    @Override
-    public boolean equals(Object o) {
-	if (this == o)
-	    return true;
-	if (!(o instanceof CanonicalUser))
-	    return false;
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((id == null) ? 0 : id.hashCode());
+      return result;
+   }
 
-	CanonicalUser s3Owner = (CanonicalUser) o;
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      CanonicalUser other = (CanonicalUser) obj;
+      if (id == null) {
+         if (other.id != null)
+            return false;
+      } else if (!id.equals(other.id))
+         return false;
+      return true;
+   }
 
-	if (displayName != null ? !displayName.equals(s3Owner.displayName)
-		: s3Owner.displayName != null)
-	    return false;
-	if (!id.equals(s3Owner.id))
-	    return false;
-
-	return true;
-    }
-
-    @Override
-    public int hashCode() {
-	int result = id.hashCode();
-	result = 31 * result
-		+ (displayName != null ? displayName.hashCode() : 0);
-	return result;
-    }
 }

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -46,6 +46,16 @@ public class BaseHttpRequestOptions implements HttpRequestOptions {
       return entity;
    }
 
+   protected String getFirstMatrixOrNull(String string) {
+      Collection<String> values = matrixParameters.get(string);
+      return (values != null && values.size() >= 1) ? values.iterator().next() : null;
+   }
+   
+   protected String getFirstQueryOrNull(String string) {
+      Collection<String> values = queryParameters.get(string);
+      return (values != null && values.size() >= 1) ? values.iterator().next() : null;
+   }
+   
    protected String getFirstHeaderOrNull(String string) {
       Collection<String> values = headers.get(string);
       return (values != null && values.size() >= 1) ? values.iterator().next() : null;

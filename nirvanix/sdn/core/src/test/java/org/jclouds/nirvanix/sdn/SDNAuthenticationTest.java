@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -65,8 +65,13 @@ public class SDNAuthenticationTest {
                new Object[] { "apple", "foo", "bar" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/ws/Authentication/Login.ashx");
-      assertEquals(httpMethod.getEndpoint().getQuery(),
-               "output=json&password=bar&username=foo&appKey=apple");
+      try {
+         assertEquals(httpMethod.getEndpoint().getQuery(),
+                  "output=json&password=bar&username=foo&appKey=apple");
+      } catch (AssertionError e) {// TODO JDK 6 orders differently
+         assertEquals(httpMethod.getEndpoint().getQuery(),
+                  "output=json&username=foo&password=bar&appKey=apple");
+      }
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(RestAnnotationProcessor.getParserOrThrowException(method),

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -26,20 +26,18 @@ package org.jclouds.blobstore.integration;
 import java.net.URI;
 import java.util.List;
 
-import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextBuilder;
-import org.jclouds.blobstore.BlobStoreContextImpl;
 import org.jclouds.blobstore.InputStreamMap;
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ContainerMetadata;
-import org.jclouds.blobstore.integration.config.StubBlobStoreConnectionModule;
-import org.jclouds.cloud.CloudContextBuilder;
+import org.jclouds.blobstore.config.BlobStoreMapModule;
+import org.jclouds.blobstore.config.BlobStoreObjectModule;
+import org.jclouds.blobstore.integration.config.StubBlobStoreModule;
+import org.jclouds.blobstore.integration.internal.StubBlobStore;
+import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.lifecycle.Closer;
 
 import com.google.inject.AbstractModule;
@@ -50,51 +48,39 @@ import com.google.inject.TypeLiteral;
 /**
  * @author Adrian Cole
  */
-public class StubBlobStoreContextBuilder
-         extends
-         BlobStoreContextBuilder<BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> {
+public class StubBlobStoreContextBuilder extends BlobStoreContextBuilder<BlobStore> {
 
    public StubBlobStoreContextBuilder() {
-      super(new TypeLiteral<BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>>() {
-      }, new TypeLiteral<ContainerMetadata>() {
-      }, new TypeLiteral<BlobMetadata>() {
-      }, new TypeLiteral<Blob<BlobMetadata>>() {
+      super(new TypeLiteral<BlobStore>() {
       });
    }
 
    @Override
    public void addContextModule(List<Module> modules) {
+      modules.add(new BlobStoreObjectModule());
+      modules.add(new BlobStoreMapModule());
       modules.add(new AbstractModule() {
 
          @Override
          protected void configure() {
+            bind(BlobStore.class).to(StubBlobStore.class).asEagerSingleton();
          }
 
          @SuppressWarnings("unused")
          @Provides
          @Singleton
-         BlobStoreContext<BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> provideContext(
-                  BlobMap.Factory<BlobMetadata, Blob<BlobMetadata>> blobMapFactory,
-                  InputStreamMap.Factory<BlobMetadata> inputStreamMapFactory, Closer closer,
-                  Provider<Blob<BlobMetadata>> blobProvider,
-                  BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>> api) {
-            return new BlobStoreContextImpl<BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>, ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>(
-                     blobMapFactory, inputStreamMapFactory, closer, blobProvider, api, api, URI
-                              .create("http://localhost/blobstub"), "foo");
+         BlobStoreContext<BlobStore> provideContext(BlobMap.Factory blobMapFactory,
+                  InputStreamMap.Factory inputStreamMapFactory, Closer closer, BlobStore api) {
+            return new BlobStoreContextImpl<BlobStore>(blobMapFactory, inputStreamMapFactory,
+                     closer, api, api, URI.create("http://localhost/blobstub"), "foo");
          }
 
       });
    }
 
    @Override
-   public CloudContextBuilder<BlobStore<ContainerMetadata, BlobMetadata, Blob<BlobMetadata>>> withEndpoint(
-            URI endpoint) {
-      return null;
-   }
-
-   @Override
-   protected void addConnectionModule(List<Module> modules) {
-      modules.add(new StubBlobStoreConnectionModule());
+   protected void addClientModule(List<Module> modules) {
+      modules.add(new StubBlobStoreModule());
    }
 
 }

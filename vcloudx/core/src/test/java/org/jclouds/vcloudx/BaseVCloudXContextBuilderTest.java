@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -30,12 +30,12 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jclouds.cloud.CloudContext;
-import org.jclouds.cloud.CloudContextBuilder;
-import org.jclouds.cloud.ConfiguresCloudConnection;
-import org.jclouds.vcloudx.config.BaseRestVCloudXConnectionModule;
+import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.RestContextBuilder;
+import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.vcloudx.config.BaseVCloudXContextModule;
-import org.jclouds.vcloudx.config.BaseVCloudXContextModule.VCloudXContextImpl;
+import org.jclouds.vcloudx.config.BaseVCloudXRestClientModule;
 import org.jclouds.vcloudx.endpoints.Org;
 import org.jclouds.vcloudx.reference.VCloudXConstants;
 import org.testng.annotations.Test;
@@ -53,19 +53,19 @@ import com.google.inject.TypeLiteral;
  */
 @Test(groups = "unit", testName = "vcloudx.BaseVCloudXContextBuilderTest")
 public class BaseVCloudXContextBuilderTest {
-   VCloudXConnection connection = createMock(VCloudXConnection.class);
+   VCloudXClient connection = createMock(VCloudXClient.class);
 
-   @ConfiguresCloudConnection
-   private final class StubConnectionModule extends AbstractModule {
+   @ConfiguresRestClient
+   private final class StubClientModule extends AbstractModule {
       @Override
       protected void configure() {
          bind(URI.class).annotatedWith(Org.class).toInstance(URI.create("http://org"));
-         bind(VCloudXConnection.class).toInstance(connection);
+         bind(VCloudXClient.class).toInstance(connection);
       }
    }
 
    public void testNewBuilder() {
-      CloudContextBuilder<VCloudXConnection> builder = builder();
+      RestContextBuilder<VCloudXClient> builder = builder();
 
       assertEquals(builder.getProperties().getProperty(VCloudXConstants.PROPERTY_VCLOUDX_ENDPOINT),
                "http://localhost");
@@ -78,42 +78,41 @@ public class BaseVCloudXContextBuilderTest {
    }
 
    public void testBuildContext() {
-      CloudContextBuilder<VCloudXConnection> builder = builder();
-      CloudContext<VCloudXConnection> context = builder.buildContext();
-      assertEquals(context.getClass(), VCloudXContextImpl.class);
+      RestContextBuilder<VCloudXClient> builder = builder();
+      RestContext<VCloudXClient> context = builder.buildContext();
+      assertEquals(context.getClass(), RestContextImpl.class);
       assertEquals(context.getApi(), connection);
       assertEquals(context.getAccount(), "id");
       assertEquals(context.getEndPoint(), URI.create("http://org"));
    }
 
-   public CloudContextBuilder<VCloudXConnection> builder() {
-      return new BaseVCloudXContextBuilder(URI.create("http://localhost"), "id", "secret")
-               .withModule(new StubConnectionModule());
+   public BaseVCloudXContextBuilder builder() {
+      return new BaseVCloudXContextBuilder(new VCloudXPropertiesBuilder(URI
+               .create("http://localhost"), "id", "secret").build())
+               .withModules(new StubClientModule());
    }
 
    public void testBuildInjector() {
-      CloudContextBuilder<VCloudXConnection> builder = builder();
+      RestContextBuilder<VCloudXClient> builder = builder();
       Injector i = builder.buildInjector();
-      assert i.getInstance(Key.get(new TypeLiteral<VCloudXContext<VCloudXConnection>>() {
+      assert i.getInstance(Key.get(new TypeLiteral<RestContext<VCloudXClient>>() {
       })) != null;
    }
 
    protected void testAddContextModule() {
       List<Module> modules = new ArrayList<Module>();
-      BaseVCloudXContextBuilder builder = new BaseVCloudXContextBuilder(URI
-               .create("http://localhost"), "id", "secret");
+      BaseVCloudXContextBuilder builder = builder();
       builder.addContextModule(modules);
       assertEquals(modules.size(), 1);
       assertEquals(modules.get(0).getClass(), BaseVCloudXContextModule.class);
    }
 
-   protected void addConnectionModule() {
+   protected void addClientModule() {
       List<Module> modules = new ArrayList<Module>();
-      BaseVCloudXContextBuilder builder = new BaseVCloudXContextBuilder(URI
-               .create("http://localhost"), "id", "secret");
-      builder.addConnectionModule(modules);
+      BaseVCloudXContextBuilder builder = builder();
+      builder.addClientModule(modules);
       assertEquals(modules.size(), 1);
-      assertEquals(modules.get(0).getClass(), BaseRestVCloudXConnectionModule.class);
+      assertEquals(modules.get(0).getClass(), BaseVCloudXRestClientModule.class);
    }
 
 }

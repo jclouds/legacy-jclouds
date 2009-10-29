@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -25,18 +25,19 @@ package org.jclouds.aws.s3.config;
 
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.aws.s3.S3Context;
-import org.jclouds.aws.s3.config.S3ContextModule.S3ContextImpl;
-import org.jclouds.aws.s3.domain.BucketMetadata;
-import org.jclouds.aws.s3.domain.ObjectMetadata;
-import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.reference.S3Constants;
-import org.jclouds.blobstore.BlobStoreMapsModule;
+import org.jclouds.concurrent.WithinThreadExecutorService;
+import org.jclouds.concurrent.config.ExecutorServiceModule;
+import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.util.Jsr330;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -46,28 +47,26 @@ import com.google.inject.TypeLiteral;
 public class S3ContextModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new StubS3BlobStoreModule(), BlobStoreMapsModule.Builder
-               .newBuilder(new TypeLiteral<BucketMetadata>() {
-               }, new TypeLiteral<ObjectMetadata>() {
-               }, new TypeLiteral<S3Object>() {
-               }).build(), new S3ContextModule() {
-         @Override
-         protected void configure() {
-            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to(
-                     "user");
-            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY))
-                     .to("key");
-            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_S3_ENDPOINT)).to(
-                     "http://localhost");
-            super.configure();
-         }
-      });
+      return Guice.createInjector(new ExecutorServiceModule(new WithinThreadExecutorService()),
+               new S3StubClientModule(), new JDKLoggingModule(), new S3ContextModule() {
+                  @Override
+                  protected void configure() {
+                     bindConstant().annotatedWith(
+                              Jsr330.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to("user");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY)).to("key");
+                     bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_S3_ENDPOINT))
+                              .to("http://localhost");
+                     super.configure();
+                  }
+               });
    }
 
    @Test
    void testContextImpl() {
-      S3Context handler = createInjector().getInstance(S3Context.class);
-      assertEquals(handler.getClass(), S3ContextImpl.class);
+      RestContext<S3Client> handler = createInjector().getInstance(Key.get(new TypeLiteral<RestContext<S3Client>>() {
+      }));
+      assertEquals(handler.getClass(), RestContextImpl.class);
    }
 
 }

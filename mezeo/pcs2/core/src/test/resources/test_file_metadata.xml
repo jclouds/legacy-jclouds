@@ -1,4 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+
+    Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+
+    ====================================================================
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+    ====================================================================
+
+-->
 <file xmlns:xlink="http://www.w3.org/1999/xlink">
   <name>testfile.txt</name>
   <created>1254000180</created>
@@ -12,7 +37,7 @@
   <mime_type>text/plain</mime_type>
   <bytes>5</bytes>
   <content xlink:href="https://pcsbeta.mezeo.net/v2/files/9E4C5AFA-A98B-11DE-8B4C-C3884B4A2DA3/content" xlink:type="simple"/>
-  <parent xlink:href="https://pcsbeta.mezeo.net/v2/containers/0B5C8F50-8E72-11DE-A1D4-D73479DA6257" xlink:type="simple"/>
+  <parent xlink:href="https://pcsbeta.mezeo.net/v2/containers/C4DA95C2-B298-11DE-8D7C-2B1FE4F2B99C" xlink:type="simple"/>
   <permissions xlink:href="https://pcsbeta.mezeo.net/v2/files/9E4C5AFA-A98B-11DE-8B4C-C3884B4A2DA3/permissions" xlink:type="simple"/>
   <tags xlink:href="https://pcsbeta.mezeo.net/v2/files/9E4C5AFA-A98B-11DE-8B4C-C3884B4A2DA3/tags" xlink:type="simple"/>
   <metadata xlink:href="https://pcsbeta.mezeo.net/v2/files/9E4C5AFA-A98B-11DE-8B4C-C3884B4A2DA3/metadata" xlink:type="simple">

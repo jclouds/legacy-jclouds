@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -35,6 +35,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
@@ -48,6 +49,10 @@ import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.util.encoders.Base64;
 import org.jclouds.util.Utils;
 
+import com.google.common.collect.Multimap;
+import com.google.common.collect.SortedSetMultimap;
+import com.google.common.collect.TreeMultimap;
+
 public class HttpUtils {
 
    public static final Pattern IP_PATTERN = Pattern
@@ -57,7 +62,7 @@ public class HttpUtils {
             (byte) '4', (byte) '5', (byte) '6', (byte) '7', (byte) '8', (byte) '9', (byte) 'a',
             (byte) 'b', (byte) 'c', (byte) 'd', (byte) 'e', (byte) 'f' };
 
-   public static String toHexString(byte[] raw) throws UnsupportedEncodingException {
+   public static String toHexString(byte[] raw) {
       byte[] hex = new byte[2 * raw.length];
       int index = 0;
 
@@ -66,7 +71,11 @@ public class HttpUtils {
          hex[index++] = HEX_CHAR_TABLE[v >>> 4];
          hex[index++] = HEX_CHAR_TABLE[v & 0xF];
       }
-      return new String(hex, "ASCII");
+      try {
+         return new String(hex, "ASCII");
+      } catch (UnsupportedEncodingException e) {
+         throw new RuntimeException(e);
+      }
    }
 
    public static byte[] fromHexString(String hex) {
@@ -127,19 +136,22 @@ public class HttpUtils {
       return resBuf;
    }
 
-   public static byte[] md5(File toEncode) throws IOException {
+   public static byte[] md5(File toEncode) {
       MD5Digest eTag = new MD5Digest();
       byte[] resBuf = new byte[eTag.getDigestSize()];
       byte[] buffer = new byte[1024];
       int numRead = -1;
-      InputStream i = new FileInputStream(toEncode);
+      InputStream i = null;
       try {
+         i = new FileInputStream(toEncode);
          do {
             numRead = i.read(buffer);
             if (numRead > 0) {
                eTag.update(buffer, 0, numRead);
             }
          } while (numRead != -1);
+      } catch (IOException e) {
+         throw new RuntimeException(e);
       } finally {
          IOUtils.closeQuietly(i);
       }
@@ -151,12 +163,12 @@ public class HttpUtils {
       return new String(Base64.encode(resBuf));
    }
 
-   public static long calculateSize(Object data) {
-      long size = -1;
+   public static Long calculateSize(Object data) {
+      Long size = null;
       if (data instanceof byte[]) {
-         size = ((byte[]) data).length;
+         size = new Long(((byte[]) data).length);
       } else if (data instanceof String) {
-         size = ((String) data).length();
+         size = new Long(((String) data).length());
       } else if (data instanceof File) {
          size = ((File) data).length();
       }
@@ -166,7 +178,7 @@ public class HttpUtils {
    /**
     * @throws IOException
     */
-   public static byte[] md5(Object data) throws IOException {
+   public static byte[] md5(Object data) {
       checkNotNull(data, "data must be set before calling generateETag()");
       byte[] md5 = null;
       if (data == null) {
@@ -176,6 +188,8 @@ public class HttpUtils {
          md5 = md5(((String) data).getBytes());
       } else if (data instanceof File) {
          md5 = md5(((File) data));
+      } else if (data instanceof InputStream) {
+         md5 = generateMD5Result(((InputStream) data)).md5;
       } else {
          throw new UnsupportedOperationException("Content not supported " + data.getClass());
       }
@@ -183,7 +197,45 @@ public class HttpUtils {
 
    }
 
-   
+   public static MD5InputStreamResult generateMD5Result(InputStream toEncode) {
+      MD5Digest eTag = new MD5Digest();
+      byte[] resBuf = new byte[eTag.getDigestSize()];
+      byte[] buffer = new byte[1024];
+      ByteArrayOutputStream out = new ByteArrayOutputStream();
+      long length = 0;
+      int numRead = -1;
+      try {
+         do {
+            numRead = toEncode.read(buffer);
+            if (numRead > 0) {
+               length += numRead;
+               eTag.update(buffer, 0, numRead);
+               out.write(buffer, 0, numRead);
+            }
+         } while (numRead != -1);
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      } finally {
+         IOUtils.closeQuietly(out);
+         IOUtils.closeQuietly(toEncode);
+      }
+      eTag.doFinal(resBuf, 0);
+      return new MD5InputStreamResult(out.toByteArray(), resBuf, length);
+   }
+
+   public static class MD5InputStreamResult {
+      public final byte[] data;
+      public final byte[] md5;
+      public final long length;
+
+      MD5InputStreamResult(byte[] data, byte[] eTag, long length) {
+         this.data = checkNotNull(data, "data");
+         this.md5 = checkNotNull(eTag, "eTag");
+         checkArgument(length >= 0, "length cannot me negative");
+         this.length = length;
+      }
+
+   }
 
    public static void copy(InputStream input, OutputStream output) throws IOException {
       byte[] buffer = new byte[1024];
@@ -202,43 +254,16 @@ public class HttpUtils {
          IOUtils.closeQuietly(input);
       }
    }
-   
-   public static MD5InputStreamResult generateMD5Result(InputStream toEncode) throws IOException {
-      MD5Digest eTag = new MD5Digest();
-      byte[] resBuf = new byte[eTag.getDigestSize()];
-      byte[] buffer = new byte[1024];
-      ByteArrayOutputStream out = new ByteArrayOutputStream();
-      long length = 0;
-      int numRead = -1;
-      try {
-         do {
-            numRead = toEncode.read(buffer);
-            if (numRead > 0) {
-               length += numRead;
-               eTag.update(buffer, 0, numRead);
-               out.write(buffer, 0, numRead);
-            }
-         } while (numRead != -1);
-      } finally {
-         out.close();
-         IOUtils.closeQuietly(toEncode);
+
+   public static String sortAndConcatHeadersIntoString(Multimap<String, String> headers) {
+      StringBuffer buffer = new StringBuffer();
+      SortedSetMultimap<String, String> sortedMap = TreeMultimap.create();
+      sortedMap.putAll(headers);
+      for (Entry<String, String> header : sortedMap.entries()) {
+         if (header.getKey() != null)
+            buffer.append(String.format("%s: %s%n", header.getKey(), header.getValue()));
       }
-      eTag.doFinal(resBuf, 0);
-      return new MD5InputStreamResult(out.toByteArray(), resBuf, length);
-   }
-
-   public static class MD5InputStreamResult {
-      public final byte[] data;
-      public final byte[] eTag;
-      public final long length;
-
-      MD5InputStreamResult(byte[] data, byte[] eTag, long length) {
-         this.data = checkNotNull(data, "data");
-         this.eTag = checkNotNull(eTag, "eTag");
-         checkArgument(length >= 0, "length cannot me negative");
-         this.length = length;
-      }
-
+      return buffer.toString();
    }
 
    public static byte[] fromBase64String(String encoded) {

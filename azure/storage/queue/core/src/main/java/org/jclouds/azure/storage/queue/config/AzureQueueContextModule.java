@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -25,37 +25,33 @@ package org.jclouds.azure.storage.queue.config;
 
 import java.net.URI;
 
-import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.jclouds.azure.storage.AzureQueue;
-import org.jclouds.azure.storage.queue.AzureQueueConnection;
-import org.jclouds.azure.storage.queue.AzureQueueContext;
+import org.jclouds.azure.storage.queue.AzureQueueClient;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
-import org.jclouds.cloud.internal.CloudContextImpl;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.lifecycle.Closer;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Scopes;
+import com.google.inject.Provides;
 
 @RequiresHttp
 public class AzureQueueContextModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      bind(AzureQueueContext.class).to(AzureQueueContextImpl.class).in(Scopes.SINGLETON);
    }
 
-   public static class AzureQueueContextImpl extends CloudContextImpl<AzureQueueConnection>
-            implements AzureQueueContext {
-      @Inject
-      public AzureQueueContextImpl(Closer closer, AzureQueueConnection defaultApi,
-               @AzureQueue URI endPoint,
-               @Named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT) String account) {
-         super(closer, defaultApi, endPoint, account);
-      }
-
+   @Provides
+   @Singleton
+   RestContext<AzureQueueClient> provideContext(Closer closer, AzureQueueClient defaultApi,
+            @AzureQueue URI endPoint,
+            @Named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT) String account) {
+      return new RestContextImpl<AzureQueueClient>(closer, defaultApi, endPoint, account);
    }
 
 }

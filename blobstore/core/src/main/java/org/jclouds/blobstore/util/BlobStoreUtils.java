@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -29,8 +29,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.Key;
 import org.jclouds.util.Utils;
 
 /**
@@ -40,29 +38,26 @@ import org.jclouds.util.Utils;
  */
 public class BlobStoreUtils {
 
-   public static Key parseKey(Key key) {
-
-      if (key.getKey().indexOf('/') != -1) {
-         String container = key.getContainer() + '/'
-                  + key.getKey().substring(0, key.getKey().lastIndexOf('/'));
-         String newKey = key.getKey().substring(key.getKey().lastIndexOf('/') + 1);
-         key = new Key(container.replaceAll("//", "/"), newKey);
-      }
-      return key;
+   public static String parseContainerFromPath(String path) {
+      String container = path;
+      if (path.indexOf('/') != -1)
+         container = path.substring(0, path.indexOf('/'));
+      return container;
    }
 
-   public static String getContentAsStringAndClose(Blob<? extends BlobMetadata> object)
-            throws IOException {
-      checkNotNull(object, "s3Object");
-      checkNotNull(object.getData(), "s3Object.content");
-      Object o = object.getData();
+   public static String parsePrefixFromPath(String path) {
+      String prefix = null;
+      if (path.indexOf('/') != -1)
+         prefix = path.substring(path.indexOf('/') + 1);
+      return "".equals(prefix) ? null : prefix;
+   }
 
+   public static String getContentAsStringAndClose(Blob blob) throws IOException {
+      checkNotNull(blob, "blob");
+      checkNotNull(blob.getData(), "blob.data");
+      Object o = blob.getData();
       if (o instanceof InputStream) {
-         String returnVal = Utils.toStringAndClose((InputStream) o);
-         if (object.getMetadata().getContentType().indexOf("xml") >= 0) {
-
-         }
-         return returnVal;
+         return Utils.toStringAndClose((InputStream) o);
       } else {
          throw new IllegalArgumentException("Object type not supported: " + o.getClass().getName());
       }

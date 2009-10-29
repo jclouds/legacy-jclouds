@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -185,9 +185,9 @@ public class RestAnnotationProcessor<T> {
 
    @VisibleForTesting
    public Function<HttpResponse, ?> createResponseParser(Method method,
-            GeneratedHttpRequest<T> request, Object... args) {
+            GeneratedHttpRequest<T> request) {
       Function<HttpResponse, ?> transformer;
-      Class<? extends HandlerWithResult<?>> handler = getXMLTransformerOrNull(method);
+      Class<? extends HandlerWithResult<?>> handler = getSaxResponseParserClassOrNull(method);
       if (handler != null) {
          transformer = parserFactory.create(injector.getInstance(handler));
       } else {
@@ -249,7 +249,7 @@ public class RestAnnotationProcessor<T> {
             bindConstant(method);
          } else if (!method.getDeclaringClass().equals(declaring)) {
             logger.debug("skipping potentially overridden method %s", method);
-         } else {
+         } else if (!method.getName().startsWith("new")) {
             throw new RuntimeException("Method is not annotated as either http or constant: "
                      + method);
          }
@@ -542,7 +542,7 @@ public class RestAnnotationProcessor<T> {
       return annotation.value();
    }
 
-   public static Class<? extends HandlerWithResult<?>> getXMLTransformerOrNull(Method method) {
+   public static Class<? extends HandlerWithResult<?>> getSaxResponseParserClassOrNull(Method method) {
       XMLResponseParser annotation = method.getAnnotation(XMLResponseParser.class);
       if (annotation != null) {
          return annotation.value();

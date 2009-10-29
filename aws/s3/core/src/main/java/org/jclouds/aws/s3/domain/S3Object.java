@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,41 +23,76 @@
  */
 package org.jclouds.aws.s3.domain;
 
-import javax.inject.Inject;
+import java.io.IOException;
 
-import org.jclouds.blobstore.internal.BlobImpl;
+import com.google.common.collect.Multimap;
+import com.google.inject.internal.Nullable;
 
 /**
- * Amazon S3 is designed to store objects. Objects are stored in {@link S3Bucket buckets} and
- * consist of a {@link org.jclouds.aws.s3.domain.S3Object#getData() value}, a
- * {@link S3Object#getKey key}, {@link S3Object.Metadata#getUserMetadata() metadata}, and an access
- * control policy.
+ * Amazon S3 is designed to store objects. Objects are stored in buckets and consist of a
+ * {@link ObjectMetadataS3Object#getData() value}, a {@link ObjectMetadata#getKey key},
+ * {@link ObjectMetadata#getUserMetadata() metadata}, and an access control policy.
  * 
  * @author Adrian Cole
  * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?UsingObjects.html"
  *      />
  */
-public class S3Object extends BlobImpl<ObjectMetadata> {
-
-   public S3Object(ObjectMetadata metadata, Object data) {
-      super(metadata, data);
+public interface S3Object extends Comparable<S3Object> {
+   public interface Factory {
+      S3Object create(@Nullable MutableObjectMetadata metadata);
    }
 
-   public S3Object(ObjectMetadata metadata) {
-      super(metadata);
-   }
+   /**
+    * Sets entity for the request or the content from the response. If size isn't set, this will
+    * attempt to discover it.
+    * 
+    * @param data
+    *           typically InputStream for downloads, or File, byte [], String, or InputStream for
+    *           uploads.
+    */
+   void setData(Object data);
 
-   public S3Object(String key, Object data) {
-      this(new ObjectMetadata(key), data);
-   }
+   /**
+    * @return InputStream, if downloading, or whatever was set during {@link #setData(Object)}
+    */
+   Object getData();
 
-   @Inject
-   public S3Object() {
-      this(new ObjectMetadata());
-   }
+   /**
+    * generate an MD5 Hash for the current data.
+    * <p/>
+    * <h2>Note</h2>
+    * <p/>
+    * If this is an InputStream, it will be converted to a byte array first.
+    * 
+    * @throws IOException
+    *            if there is a problem generating the hash.
+    */
+   void generateMD5() throws IOException;
 
-   public S3Object(String key) {
-      this(new ObjectMetadata(key));
-   }
+   void setContentLength(long contentLength);
 
+   /**
+    * Returns the total size of the downloaded object, or the chunk that's available.
+    * <p/>
+    * Chunking is only used when org.jclouds.http.GetOptions is called with options like tail,
+    * range, or startAt.
+    * 
+    * @return the length in bytes that can be be obtained from {@link #getData()}
+    * @see org.jclouds.http.HttpHeaders#CONTENT_LENGTH
+    * @see GetObjectOptions
+    */
+   Long getContentLength();
+
+   /**
+    * @return System and User metadata relevant to this object.
+    */
+   MutableObjectMetadata getMetadata();
+
+   Multimap<String, String> getAllHeaders();
+
+   void setAccessControlList(AccessControlList acl);
+
+   AccessControlList getAccessControlList();
+
+   void setAllHeaders(Multimap<String, String> allHeaders);
 }

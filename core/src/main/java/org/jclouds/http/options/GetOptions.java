@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -172,7 +172,7 @@ public class GetOptions extends BaseHttpRequestOptions {
     * @throws UnsupportedEncodingException
     *            if there was a problem converting this into an S3 eTag string
     */
-   public GetOptions ifETagMatches(String eTag) throws UnsupportedEncodingException {
+   public GetOptions ifETagMatches(String eTag) {
       checkArgument(getIfNoneMatch() == null,
                "ifETagDoesntMatch() is not compatible with ifETagMatches()");
       checkArgument(getIfModifiedSince() == null,
@@ -203,7 +203,7 @@ public class GetOptions extends BaseHttpRequestOptions {
     * @throws UnsupportedEncodingException
     *            if there was a problem converting this into an S3 eTag string
     */
-   public GetOptions ifETagDoesntMatch(String eTag) throws UnsupportedEncodingException {
+   public GetOptions ifETagDoesntMatch(String eTag) {
       checkArgument(getIfMatch() == null,
                "ifETagMatches() is not compatible with ifETagDoesntMatch()");
       checkArgument(getIfUnmodifiedSince() == null,
@@ -223,6 +223,10 @@ public class GetOptions extends BaseHttpRequestOptions {
     */
    public String getIfNoneMatch() {
       return this.getFirstHeaderOrNull(HttpHeaders.IF_NONE_MATCH);
+   }
+
+   public List<String> getRanges() {
+      return ranges;
    }
 
    public static class Builder {
@@ -270,7 +274,7 @@ public class GetOptions extends BaseHttpRequestOptions {
       /**
        * @see GetOptions#ifETagMatches(String)
        */
-      public static GetOptions ifETagMatches(String eTag) throws UnsupportedEncodingException {
+      public static GetOptions ifETagMatches(String eTag) {
          GetOptions options = new GetOptions();
          return options.ifETagMatches(eTag);
       }
@@ -278,7 +282,7 @@ public class GetOptions extends BaseHttpRequestOptions {
       /**
        * @see GetOptions#ifETagDoesntMatch(String)
        */
-      public static GetOptions ifETagDoesntMatch(String eTag) throws UnsupportedEncodingException {
+      public static GetOptions ifETagDoesntMatch(String eTag) {
          GetOptions options = new GetOptions();
          return options.ifETagDoesntMatch(eTag);
       }

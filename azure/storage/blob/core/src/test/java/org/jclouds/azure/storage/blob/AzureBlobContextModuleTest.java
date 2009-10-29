@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -26,18 +26,16 @@ package org.jclouds.azure.storage.blob;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.azure.storage.blob.config.AzureBlobContextModule;
-import org.jclouds.azure.storage.blob.config.StubAzureBlobStoreModule;
-import org.jclouds.azure.storage.blob.config.AzureBlobContextModule.AzureBlobContextImpl;
-import org.jclouds.azure.storage.blob.domain.Blob;
-import org.jclouds.azure.storage.blob.domain.BlobMetadata;
-import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
+import org.jclouds.azure.storage.blob.config.AzureBlobStubClientModule;
 import org.jclouds.azure.storage.blob.reference.AzureBlobConstants;
-import org.jclouds.blobstore.BlobStoreMapsModule;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.util.Jsr330;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -47,11 +45,7 @@ import com.google.inject.TypeLiteral;
 public class AzureBlobContextModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new StubAzureBlobStoreModule(), BlobStoreMapsModule.Builder
-               .newBuilder(new TypeLiteral<ContainerMetadata>() {
-               }, new TypeLiteral<BlobMetadata>() {
-               }, new TypeLiteral<Blob>() {
-               }).build(), new AzureBlobContextModule() {
+      return Guice.createInjector(new AzureBlobStubClientModule(), new AzureBlobContextModule() {
          @Override
          protected void configure() {
             bindConstant().annotatedWith(
@@ -69,8 +63,12 @@ public class AzureBlobContextModuleTest {
 
    @Test
    void testContextImpl() {
-      AzureBlobContext handler = createInjector().getInstance(AzureBlobContext.class);
-      assertEquals(handler.getClass(), AzureBlobContextImpl.class);
+
+      RestContext<AzureBlobClient> handler = createInjector().getInstance(
+               Key.get(new TypeLiteral<RestContext<AzureBlobClient>>() {
+               }));
+      assertEquals(handler.getClass(), RestContextImpl.class);
+
    }
 
 }

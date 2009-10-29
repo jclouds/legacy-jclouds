@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,16 +23,20 @@
  */
 package org.jclouds.blobstore.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
 
 import com.google.common.base.Function;
 
+/**
+ * 
+ * @author Adrian Cole
+ */
 public class BlobName implements Function<Object, String> {
 
-   @SuppressWarnings("unchecked")
    public String apply(Object from) {
-      return ((Blob<BlobMetadata>) from).getName();
+      return checkNotNull(((Blob) from).getMetadata().getName(), "blobName");
    }
 
 }

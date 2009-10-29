@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -26,8 +26,10 @@ package org.jclouds.aws.s3.xml;
 import javax.inject.Inject;
 
 import org.jclouds.aws.s3.domain.ObjectMetadata;
+import org.jclouds.aws.s3.domain.internal.CopyObjectResult;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.DateService;
+import org.joda.time.DateTime;
 
 /**
  * Parses the response from Amazon S3 COPY Object command.
@@ -39,10 +41,12 @@ import org.jclouds.util.DateService;
  */
 public class CopyObjectHandler extends ParseSax.HandlerWithResult<ObjectMetadata> {
 
-   private ObjectMetadata metadata = new ObjectMetadata();
+   private CopyObjectResult metadata;
    private StringBuilder currentText = new StringBuilder();
    @Inject
    private DateService dateParser;
+   private DateTime currentLastModified;
+   private String currentETag;
 
    public ObjectMetadata getResult() {
       return metadata;
@@ -50,9 +54,11 @@ public class CopyObjectHandler extends ParseSax.HandlerWithResult<ObjectMetadata
 
    public void endElement(String uri, String name, String qName) {
       if (qName.equals("ETag")) {
-         metadata.setETag(currentText.toString());
+         this.currentETag = currentText.toString().trim();
       } else if (qName.equals("LastModified")) {
-         metadata.setLastModified(dateParser.iso8601DateParse(currentText.toString()));
+         this.currentLastModified = dateParser.iso8601DateParse(currentText.toString().trim());
+      } else if (qName.equals("CopyObjectResult")) {
+         metadata = new CopyObjectResult(currentLastModified, currentETag);
       }
       currentText = new StringBuilder();
    }

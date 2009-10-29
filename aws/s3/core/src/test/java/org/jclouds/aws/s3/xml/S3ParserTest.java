@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -39,6 +39,7 @@ import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.CanonicalUser;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
+import org.jclouds.aws.s3.domain.ObjectMetadata.StorageClass;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.ParserModule;
@@ -82,7 +83,6 @@ public class S3ParserTest extends PerformanceTest {
          runParseListAllMyBuckets();
    }
 
-   @SuppressWarnings("unchecked")
    private SortedSet<BucketMetadata> runParseListAllMyBuckets() throws HttpException {
       return (SortedSet<BucketMetadata>) factory.create(
                injector.getInstance(ListAllMyBucketsHandler.class)).parse(
@@ -129,10 +129,10 @@ public class S3ParserTest extends PerformanceTest {
    public void testCanParseListContainerResult() throws HttpException, UnsupportedEncodingException {
       ListBucketResponse container = runParseListContainerResult();
       assert !container.isTruncated();
-      assert container.getBucketName().equals("adrianjbosstest");
+      assert container.getName().equals("adrianjbosstest");
       assert container.size() == 1;
       ObjectMetadata object = container.iterator().next();
-      assert object.getName().equals("3366");
+      assert object.getKey().equals("3366");
       DateTime expected = new DateTime("2009-03-12T02:00:13.000Z");
       assert object.getLastModified().equals(expected) : String.format(
                "expected %1$s, but got %1$s", expected, object.getLastModified());
@@ -142,7 +142,7 @@ public class S3ParserTest extends PerformanceTest {
                "e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0");
       owner.setDisplayName("ferncam");
       assert object.getOwner().equals(owner);
-      assert object.getStorageClass().equals("STANDARD");
+      assert object.getStorageClass().equals(StorageClass.STANDARD);
    }
 
    private ListBucketResponse runParseListContainerResult() throws HttpException {

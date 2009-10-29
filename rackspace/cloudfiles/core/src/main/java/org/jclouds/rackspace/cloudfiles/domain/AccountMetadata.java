@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -41,7 +41,7 @@ public class AccountMetadata {
    @Override
    public String toString() {
       StringBuilder builder = new StringBuilder();
-      builder.append("ContainerMetadata [bytes=").append(bytes)
+      builder.append("ResourceMetadata [bytes=").append(bytes)
                .append(", containerCount=").append(containerCount).append("]");
       return builder.toString();
    }

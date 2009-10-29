@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -25,28 +25,22 @@ package org.jclouds.aws.s3.config;
 
 import java.net.URI;
 
-import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Provider;
+import javax.inject.Singleton;
 
 import org.jclouds.aws.reference.AWSConstants;
 import org.jclouds.aws.s3.S3;
-import org.jclouds.aws.s3.S3BlobStore;
-import org.jclouds.aws.s3.S3Connection;
-import org.jclouds.aws.s3.S3Context;
-import org.jclouds.aws.s3.domain.BucketMetadata;
-import org.jclouds.aws.s3.domain.ObjectMetadata;
-import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.BlobStoreContextImpl;
-import org.jclouds.blobstore.BlobMap.Factory;
+import org.jclouds.aws.s3.S3Client;
+import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.lifecycle.Closer;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Scopes;
+import com.google.inject.Provides;
 
 /**
- * Configures the {@link S3Context}; requires {@link S3BlobStore} bound.
+ * Configures the {@link S3ContextModule}; requires {@link S3Client} bound.
  * 
  * @author Adrian Cole
  */
@@ -54,23 +48,16 @@ public class S3ContextModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      bind(S3Context.class).to(S3ContextImpl.class).in(Scopes.SINGLETON);
+      // for converters
+      install(new BlobStoreObjectModule());
+      install(new S3ObjectModule());
    }
 
-   public static class S3ContextImpl extends
-            BlobStoreContextImpl<S3Connection, BucketMetadata, ObjectMetadata, S3Object> implements
-            S3Context {
-      @Inject
-      S3ContextImpl(Factory<ObjectMetadata, S3Object> blobMapFactory,
-               org.jclouds.blobstore.InputStreamMap.Factory<ObjectMetadata> inputStreamMapFactory,
-               Closer closer, Provider<S3Object> blobProvider,
-               BlobStore<BucketMetadata, ObjectMetadata, S3Object> blobStore,
-               S3Connection defaultApi, @S3 URI endPoint,
-               @Named(AWSConstants.PROPERTY_AWS_ACCESSKEYID) String account) {
-         super(blobMapFactory, inputStreamMapFactory, closer, blobProvider, blobStore, defaultApi,
-                  endPoint, account);
-      }
-
+   @Provides
+   @Singleton
+   RestContext<S3Client> provideContext(Closer closer, S3Client defaultApi, @S3 URI endPoint,
+            @Named(AWSConstants.PROPERTY_AWS_ACCESSKEYID) String account) {
+      return new RestContextImpl<S3Client>(closer, defaultApi, endPoint, account);
    }
 
 }

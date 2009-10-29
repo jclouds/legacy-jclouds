@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -196,16 +196,15 @@ public class RestAnnotationProcessorTest {
    }
 
    @Endpoint(Localhost.class)
-   public class TestEntityParamVarargs {
+   public interface TestEntityParamVarargs {
       @POST
-      public void varargs(HttpRequestOptions... options) {
-      }
+      public void varargs(HttpRequestOptions... options);
 
       @POST
-      public void post(HttpRequestOptions options) {
-      }
+      public void post(HttpRequestOptions options);
+      
    }
-
+   
    public void testHttpRequestOptionsEntityParam() throws SecurityException, NoSuchMethodException {
       Method method = TestEntityParamVarargs.class.getMethod("post", HttpRequestOptions.class);
       verifyTestPostOptions(method);

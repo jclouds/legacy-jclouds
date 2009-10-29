@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -25,33 +25,34 @@ package org.jclouds.nirvanix.sdn.config;
 
 import java.net.URI;
 
-import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
-import org.jclouds.cloud.internal.CloudContextImpl;
+import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.nirvanix.sdn.SDN;
-import org.jclouds.nirvanix.sdn.SDNConnection;
-import org.jclouds.nirvanix.sdn.SDNContext;
+import org.jclouds.nirvanix.sdn.SDNClient;
 import org.jclouds.nirvanix.sdn.reference.SDNConstants;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Scopes;
+import com.google.inject.Provides;
 
 @RequiresHttp
 public class SDNContextModule extends AbstractModule {
    @Override
    protected void configure() {
-      bind(SDNContext.class).to(SDNContextImpl.class).in(Scopes.SINGLETON);
+      // for converters to work.
+      install(new BlobStoreObjectModule());
    }
 
-   public static class SDNContextImpl extends CloudContextImpl<SDNConnection> implements SDNContext {
-      @Inject
-      public SDNContextImpl(Closer closer, SDNConnection defaultApi, @SDN URI endPoint,
-               @Named(SDNConstants.PROPERTY_SDN_USERNAME) String account) {
-         super(closer, defaultApi, endPoint, account);
-      }
+   @Provides
+   @Singleton
+   RestContext<SDNClient> provideContext(Closer closer, SDNClient defaultApi, @SDN URI endPoint,
+            @Named(SDNConstants.PROPERTY_SDN_USERNAME) String account) {
+      return new RestContextImpl<SDNClient>(closer, defaultApi, endPoint, account);
    }
 
 }

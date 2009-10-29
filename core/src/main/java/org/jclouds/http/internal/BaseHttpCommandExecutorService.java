@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -85,7 +85,7 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
                for (HttpRequestFilter filter : request.getFilters()) {
                   filter.filter(request);
                }
-               logger.debug("Sending request: %s", request.getRequestLine());
+               logger.debug("Sending request %s: %s", request.hashCode(), request.getRequestLine());
                if (request.getEntity() != null && wire.enabled())
                   request.setEntity(wire.output(request.getEntity()));
                nativeRequest = convert(request);
@@ -97,7 +97,8 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
                   }
                }
                response = invoke(nativeRequest);
-               logger.debug("Receiving response: " + response.getStatusLine());
+               logger.debug("Receiving response %s: %s", request.hashCode(), response
+                        .getStatusLine());
                if (headerLog.isDebugEnabled()) {
                   headerLog.debug("<< " + response.getStatusLine().toString());
                   for (Entry<String, String> header : response.getHeaders().entries()) {

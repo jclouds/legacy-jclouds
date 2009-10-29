@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -30,8 +30,11 @@ import java.net.URI;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.http.HttpRequest;
+import org.jclouds.mezeo.pcs2.config.PCSObjectModule;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
 import org.testng.annotations.Test;
+
+import com.google.inject.Guice;
 
 /**
  * Tests behavior of {@code BindFileInfoToXmlEntity}
@@ -40,11 +43,14 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "unit", testName = "pcs2.BindFileInfoToXmlEntityTest")
 public class BindFileInfoToXmlEntityTest {
+   PCSFile.Factory factory = Guice.createInjector(new PCSObjectModule()).getInstance(
+            PCSFile.Factory.class);
 
    public void test() {
       BindFileInfoToXmlEntity binder = new BindFileInfoToXmlEntity();
       HttpRequest request = new HttpRequest("GET", URI.create("http://localhost"));
-      PCSFile file = new PCSFile("foo");
+      PCSFile file = factory.create(null);
+      file.getMetadata().setName("foo");
       binder.bindToRequest(request, file);
       assertEquals(
                request.getEntity(),
@@ -62,7 +68,9 @@ public class BindFileInfoToXmlEntityTest {
    public void testCompound() {
       BindFileInfoToXmlEntity binder = new BindFileInfoToXmlEntity();
       HttpRequest request = new HttpRequest("GET", URI.create("http://localhost"));
-      PCSFile file = new PCSFile("subdir/foo");
+
+      PCSFile file = factory.create(null);
+      file.getMetadata().setName("subdir/foo");
       binder.bindToRequest(request, file);
       assertEquals(
                request.getEntity(),

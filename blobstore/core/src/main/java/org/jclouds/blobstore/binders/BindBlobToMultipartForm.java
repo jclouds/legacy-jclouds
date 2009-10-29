@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -32,8 +32,6 @@ import java.io.InputStream;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.Key;
-import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.MultipartForm;
 import org.jclouds.http.MultipartForm.Part;
@@ -51,10 +49,10 @@ public class BindBlobToMultipartForm implements Binder {
    public static final String BOUNDARY = "--JCLOUDS--";
 
    public void bindToRequest(HttpRequest request, Object entity) {
-      Blob<?> object = (Blob<?>) entity;
-      Key key = BlobStoreUtils.parseKey(new Key("junk", object.getName()));
+      Blob object = (Blob) entity;
+      File file = new File(object.getMetadata().getName());
       Multimap<String, String> partHeaders = ImmutableMultimap.of("Content-Disposition", String
-               .format("form-data; name=\"%s\"; filename=\"%s\"", key.getKey(), key.getKey()),
+               .format("form-data; name=\"%s\"; filename=\"%s\"", file.getName(), file.getName()),
                HttpHeaders.CONTENT_TYPE, checkNotNull(object.getMetadata().getContentType(),
                         "object.metadata.contentType()"));
       Object data = checkNotNull(object.getData(), "object.getData()");

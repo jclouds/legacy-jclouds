@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,18 +23,17 @@
  */
 package org.jclouds.azure.storage.blob.domain;
 
-import java.net.URI;
+import java.util.SortedSet;
 
-import org.jclouds.azure.storage.domain.BoundedSortedSet;
+import org.jclouds.azure.storage.domain.BoundedList;
 
 /**
  * 
  * @author Adrian Cole
  */
-public interface ListBlobsResponse extends BoundedSortedSet<BlobMetadata> {
-   public URI getContainerUrl();
+public interface ListBlobsResponse extends BoundedList<ListableBlobProperties> {
 
-   public String getBlobPrefix();
+   String getDelimiter();
 
-   public String getDelimiter();
+   SortedSet<String> getBlobPrefixes();
 }

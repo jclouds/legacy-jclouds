@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -25,19 +25,18 @@ package org.jclouds.vcloudx.config;
 
 import java.net.URI;
 
-import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
-import org.jclouds.cloud.internal.CloudContextImpl;
 import org.jclouds.lifecycle.Closer;
-import org.jclouds.vcloudx.VCloudXConnection;
-import org.jclouds.vcloudx.VCloudXContext;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.RestContextImpl;
+import org.jclouds.vcloudx.VCloudXClient;
 import org.jclouds.vcloudx.endpoints.Org;
 import org.jclouds.vcloudx.reference.VCloudXConstants;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Scopes;
-import com.google.inject.TypeLiteral;
+import com.google.inject.Provides;
 
 /**
  * @author Adrian Cole
@@ -45,17 +44,13 @@ import com.google.inject.TypeLiteral;
 public class BaseVCloudXContextModule extends AbstractModule {
    @Override
    protected void configure() {
-      bind(new TypeLiteral<VCloudXContext<VCloudXConnection>>() {
-      }).to(VCloudXContextImpl.class).in(Scopes.SINGLETON);
    }
 
-   public static class VCloudXContextImpl extends CloudContextImpl<VCloudXConnection> implements
-            VCloudXContext<VCloudXConnection> {
-      @Inject
-      public VCloudXContextImpl(Closer closer, VCloudXConnection defaultApi, @Org URI endPoint,
-               @Named(VCloudXConstants.PROPERTY_VCLOUDX_USER) String account) {
-         super(closer, defaultApi, endPoint, account);
-      }
+   @Provides
+   @Singleton
+   RestContext<VCloudXClient> provideContext(Closer closer, VCloudXClient defaultApi,
+            @Org URI endPoint, @Named(VCloudXConstants.PROPERTY_VCLOUDX_USER) String account) {
+      return new RestContextImpl<VCloudXClient>(closer, defaultApi, endPoint, account);
    }
 
 }

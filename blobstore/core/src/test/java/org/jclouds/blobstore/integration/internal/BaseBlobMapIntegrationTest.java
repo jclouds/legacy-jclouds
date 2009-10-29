@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -39,8 +39,6 @@ import java.util.concurrent.TimeoutException;
 import org.apache.commons.io.IOUtils;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ContainerMetadata;
 import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.testng.annotations.Test;
 
@@ -49,8 +47,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-public class BaseBlobMapIntegrationTest<S, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
-         extends BaseMapIntegrationTest<S, C, M, B, B> {
+public class BaseBlobMapIntegrationTest<S> extends BaseMapIntegrationTest<S, Blob> {
 
    @Override
    @Test(groups = { "integration", "live" })
@@ -58,13 +55,15 @@ public class BaseBlobMapIntegrationTest<S, C extends ContainerMetadata, M extend
             TimeoutException {
       String bucketName = getContainerName();
       try {
-         Map<String, B> map = createMap(context, bucketName);
+         Map<String, Blob> map = createMap(context, bucketName);
 
          putFiveStrings(map);
-         Collection<B> values = map.values();
-         assertEventuallyMapSize(map, 5);
+         putFiveStringsUnderPath(map);
+
+         Collection<Blob> values = map.values();
+         assertConsistencyAwareMapSize(map, 5);
          Set<String> valuesAsString = new HashSet<String>();
-         for (B object : values) {
+         for (Blob object : values) {
             valuesAsString.add(BlobStoreUtils.getContentAsStringAndClose(object));
          }
          valuesAsString.removeAll(fiveStrings.values());
@@ -78,23 +77,23 @@ public class BaseBlobMapIntegrationTest<S, C extends ContainerMetadata, M extend
    public void testRemove() throws InterruptedException, ExecutionException, TimeoutException {
       String bucketName = getContainerName();
       try {
-         Map<String, B> map = createMap(context, bucketName);
+         Map<String, Blob> map = createMap(context, bucketName);
          putString(map, "one", "two");
-         assertEventuallyContentEquals(map, "one", "two");
+         assertConsistencyAwareContentEquals(map, "one", "two");
          // TODO track how often this occurs and potentially update map implementation
-         assertEventuallyRemoveEquals(map, "one", null);
-         assertEventuallyGetEquals(map, "one", null);
-         assertEventuallyKeySize(map, 0);
+         assertConsistencyAwareRemoveEquals(map, "one", null);
+         assertConsistencyAwareGetEquals(map, "one", null);
+         assertConsistencyAwareKeySize(map, 0);
       } finally {
          returnContainer(bucketName);
       }
    }
 
-   private void assertEventuallyContentEquals(final Map<String, B> map, final String key,
+   private void assertConsistencyAwareContentEquals(final Map<String, Blob> map, final String key,
             final String value) throws InterruptedException {
-      assertEventually(new Runnable() {
+      assertConsistencyAware(new Runnable() {
          public void run() {
-            B old = map.remove(key);
+            Blob old = map.remove(key);
             try {
                assertEquals(BlobStoreUtils.getContentAsStringAndClose(old), value);
             } catch (IOException e) {
@@ -110,20 +109,20 @@ public class BaseBlobMapIntegrationTest<S, C extends ContainerMetadata, M extend
             TimeoutException {
       String bucketName = getContainerName();
       try {
-         Map<String, B> map = createMap(context, bucketName);
+         Map<String, Blob> map = createMap(context, bucketName);
          putFiveStrings(map);
-         Set<Entry<String, B>> entries = map.entrySet();
+         Set<Entry<String, Blob>> entries = map.entrySet();
          assertEquals(entries.size(), 5);
-         for (Entry<String, B> entry : entries) {
+         for (Entry<String, Blob> entry : entries) {
             assertEquals(fiveStrings.get(entry.getKey()), BlobStoreUtils
                      .getContentAsStringAndClose(entry.getValue()));
-            B value = entry.getValue();
+            Blob value = entry.getValue();
             value.setData("");
             value.generateMD5();
             entry.setValue(value);
          }
-         assertEventuallyMapSize(map, 5);
-         for (B value : map.values()) {
+         assertConsistencyAwareMapSize(map, 5);
+         for (Blob value : map.values()) {
             assertEquals(BlobStoreUtils.getContentAsStringAndClose(value), "");
          }
       } finally {
@@ -135,28 +134,28 @@ public class BaseBlobMapIntegrationTest<S, C extends ContainerMetadata, M extend
    public void testContains() throws InterruptedException, ExecutionException, TimeoutException {
       String bucketName = getContainerName();
       try {
-         Map<String, B> map = createMap(context, bucketName);
+         Map<String, Blob> map = createMap(context, bucketName);
          putString(map, "one", "apple");
-         B object = context.newBlob("one");
+         Blob object = newBlob("one");
          object.setData("apple");
-         assertEventuallyContainsValue(map, object);
+         assertConsistencyAwareContainsValue(map, object);
       } finally {
          returnContainer(bucketName);
       }
    }
 
-   void getOneReturnsAppleAndOldValueIsNull(Map<String, B> map, B old) throws IOException,
+   void getOneReturnsAppleAndOldValueIsNull(Map<String, Blob> map, Blob old) throws IOException,
             InterruptedException {
       assert old == null;
       assertEquals(BlobStoreUtils.getContentAsStringAndClose(map.get("one")), "apple");
-      assertEventuallyMapSize(map, 1);
+      assertConsistencyAwareMapSize(map, 1);
    }
 
-   void getOneReturnsBearAndOldValueIsApple(Map<String, B> map, B oldValue) throws IOException,
-            InterruptedException {
+   void getOneReturnsBearAndOldValueIsApple(Map<String, Blob> map, Blob oldValue)
+            throws IOException, InterruptedException {
       assertEquals(BlobStoreUtils.getContentAsStringAndClose(map.get("one")), "bear");
       assertEquals(BlobStoreUtils.getContentAsStringAndClose(oldValue), "apple");
-      assertEventuallyMapSize(map, 1);
+      assertConsistencyAwareMapSize(map, 1);
    }
 
    @Test(groups = { "integration", "live" })
@@ -164,15 +163,15 @@ public class BaseBlobMapIntegrationTest<S, C extends ContainerMetadata, M extend
             TimeoutException {
       String bucketName = getContainerName();
       try {
-         Map<String, B> map = createMap(context, bucketName);
-         B object = context.newBlob("one");
+         Map<String, Blob> map = createMap(context, bucketName);
+         Blob object = newBlob("one");
          object.setData(IOUtils.toInputStream("apple"));
          object.generateMD5();
-         B old = map.put(object.getName(), object);
+         Blob old = map.put(object.getMetadata().getName(), object);
          getOneReturnsAppleAndOldValueIsNull(map, old);
          object.setData(IOUtils.toInputStream("bear"));
          object.generateMD5();
-         B apple = map.put(object.getName(), object);
+         Blob apple = map.put(object.getMetadata().getName(), object);
          getOneReturnsBearAndOldValueIsApple(map, apple);
       } finally {
          returnContainer(bucketName);
@@ -183,17 +182,17 @@ public class BaseBlobMapIntegrationTest<S, C extends ContainerMetadata, M extend
    public void testPutAll() throws InterruptedException, ExecutionException, TimeoutException {
       String bucketName = getContainerName();
       try {
-         Map<String, B> map = createMap(context, bucketName);
-         Map<String, B> newMap = new HashMap<String, B>();
+         Map<String, Blob> map = createMap(context, bucketName);
+         Map<String, Blob> newMap = new HashMap<String, Blob>();
          for (String key : fiveInputs.keySet()) {
-            B object = context.newBlob(key);
+            Blob object = newBlob(key);
             object.setData(fiveInputs.get(key));
-            object.getMetadata().setSize(fiveBytes.get(key).length);
+            object.setContentLength(new Long(fiveBytes.get(key).length));
             newMap.put(key, object);
          }
          map.putAll(newMap);
-         assertEventuallyMapSize(map, 5);
-         assertEventuallyKeySetEquals(map, new TreeSet<String>(fiveInputs.keySet()));
+         assertConsistencyAwareMapSize(map, 5);
+         assertConsistencyAwareKeySetEquals(map, new TreeSet<String>(fiveInputs.keySet()));
          fourLeftRemovingOne(map);
       } finally {
          returnContainer(bucketName);
@@ -201,16 +200,26 @@ public class BaseBlobMapIntegrationTest<S, C extends ContainerMetadata, M extend
    }
 
    @Override
-   protected void putString(Map<String, B> map, String key, String value) {
-      B object = context.newBlob(key);
+   protected void putString(Map<String, Blob> map, String key, String value) {
+      Blob object = newBlob(key);
       object.setData(value);
       map.put(key, object);
    }
 
-   protected void putFiveStrings(Map<String, B> map) {
-      Map<String, B> newMap = new HashMap<String, B>();
+   protected void putFiveStrings(Map<String, Blob> map) {
+      Map<String, Blob> newMap = new HashMap<String, Blob>();
       for (Map.Entry<String, String> entry : fiveStrings.entrySet()) {
-         B object = context.newBlob(entry.getKey());
+         Blob object = newBlob(entry.getKey());
+         object.setData(entry.getValue());
+         newMap.put(entry.getKey(), object);
+      }
+      map.putAll(newMap);
+   }
+
+   protected void putFiveStringsUnderPath(Map<String, Blob> map) {
+      Map<String, Blob> newMap = new HashMap<String, Blob>();
+      for (Map.Entry<String, String> entry : fiveStringsUnderPath.entrySet()) {
+         Blob object = newBlob(entry.getKey());
          object.setData(entry.getValue());
          newMap.put(entry.getKey(), object);
       }
@@ -218,7 +227,7 @@ public class BaseBlobMapIntegrationTest<S, C extends ContainerMetadata, M extend
    }
 
    @SuppressWarnings("unchecked")
-   protected Map<String, B> createMap(BlobStoreContext context, String bucket) {
+   protected Map<String, Blob> createMap(BlobStoreContext context, String bucket) {
       return context.createBlobMap(bucket);
    }
 

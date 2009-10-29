@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -32,7 +32,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 import org.jclouds.azure.storage.AzureBlob;
-import org.jclouds.azure.storage.config.RestAzureStorageConnectionModule;
+import org.jclouds.azure.storage.config.AzureStorageRestClientModule;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
@@ -105,7 +105,7 @@ public class SharedKeyAuthenticationLiveTest {
                               .to(1l);
                   }
 
-               }, new RestAzureStorageConnectionModule(), new RestModule(),
+               }, new AzureStorageRestClientModule(), new RestModule(),
                new Log4JLoggingModule(),
                new ExecutorServiceModule(new WithinThreadExecutorService()),
                new JavaUrlHttpCommandExecutorServiceModule());

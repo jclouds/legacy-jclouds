@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -25,20 +25,14 @@ package org.jclouds.mezeo.pcs2;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.ExecutorService;
 
-import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.mezeo.pcs2.config.PCSContextModule;
-import org.jclouds.mezeo.pcs2.config.RestPCSBlobStoreModule;
-import org.jclouds.mezeo.pcs2.domain.ContainerMetadata;
-import org.jclouds.mezeo.pcs2.domain.FileMetadata;
-import org.jclouds.mezeo.pcs2.domain.PCSFile;
+import org.jclouds.mezeo.pcs2.config.PCSRestClientModule;
 import org.jclouds.mezeo.pcs2.reference.PCSConstants;
+import org.jclouds.rest.RestContextBuilder;
 
-import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
@@ -46,32 +40,18 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-public class PCSContextBuilder extends
-         BlobStoreContextBuilder<PCSConnection, ContainerMetadata, FileMetadata, PCSFile> {
+public class PCSContextBuilder extends RestContextBuilder<PCSClient> {
 
    public PCSContextBuilder(Properties props) {
-      super(new TypeLiteral<PCSConnection>() {
-      }, new TypeLiteral<ContainerMetadata>() {
-      }, new TypeLiteral<FileMetadata>() {
-      }, new TypeLiteral<PCSFile>() {
+      super(new TypeLiteral<PCSClient>() {
       }, props);
+      checkNotNull(properties.getProperty(PCSConstants.PROPERTY_PCS2_USER));
+      checkNotNull(properties.getProperty(PCSConstants.PROPERTY_PCS2_PASSWORD));
       checkNotNull(properties.getProperty(PCSConstants.PROPERTY_PCS2_ENDPOINT));
    }
 
-   public PCSContextBuilder(URI endpoint, String id, String secret) {
-      this(addEndpointTo(endpoint, new Properties()));
-      properties.setProperty(PCSConstants.PROPERTY_PCS2_USER, checkNotNull(id, "user"));
-      properties.setProperty(PCSConstants.PROPERTY_PCS2_PASSWORD, checkNotNull(secret, "key"));
-   }
-
-   private static Properties addEndpointTo(URI endpoint, Properties properties) {
-      properties.setProperty(PCSConstants.PROPERTY_PCS2_ENDPOINT,
-               checkNotNull(endpoint, "endpoint").toString());
-      return properties;
-   }
-
-   protected void addConnectionModule(List<Module> modules) {
-      modules.add(new RestPCSBlobStoreModule());
+   protected void addClientModule(List<Module> modules) {
+      modules.add(new PCSRestClientModule());
    }
 
    @Override
@@ -79,77 +59,4 @@ public class PCSContextBuilder extends
       modules.add(new PCSContextModule());
    }
 
-   @Override
-   public PCSContextBuilder withEndpoint(URI endpoint) {
-      addEndpointTo(endpoint, properties);
-      return this;
-   }
-
-   // below is to cast the builder to the correct type so that chained builder methods end correctly
-
-   @Override
-   public PCSContext buildContext() {
-      Injector injector = buildInjector();
-      return injector.getInstance(PCSContext.class);
-   }
-
-   @Override
-   public PCSContextBuilder relaxSSLHostname() {
-      return (PCSContextBuilder) super.relaxSSLHostname();
-   }
-
-   @Override
-   public PCSContextBuilder withExecutorService(ExecutorService service) {
-      return (PCSContextBuilder) super.withExecutorService(service);
-   }
-
-   @Override
-   public PCSContextBuilder withHttpMaxRedirects(int httpMaxRedirects) {
-      return (PCSContextBuilder) super.withHttpMaxRedirects(httpMaxRedirects);
-   }
-
-   @Override
-   public PCSContextBuilder withHttpMaxRetries(int httpMaxRetries) {
-      return (PCSContextBuilder) super.withHttpMaxRetries(httpMaxRetries);
-   }
-
-   @Override
-   public PCSContextBuilder withModule(Module module) {
-      return (PCSContextBuilder) super.withModule(module);
-   }
-
-   @Override
-   public PCSContextBuilder withRequestTimeout(long milliseconds) {
-      return (PCSContextBuilder) super.withRequestTimeout(milliseconds);
-   }
-
-   @Override
-   public PCSContextBuilder withModules(Module... modules) {
-      return (PCSContextBuilder) super.withModules(modules);
-   }
-
-   @Override
-   public PCSContextBuilder withPoolIoWorkerThreads(int poolIoWorkerThreads) {
-      return (PCSContextBuilder) super.withPoolIoWorkerThreads(poolIoWorkerThreads);
-   }
-
-   @Override
-   public PCSContextBuilder withPoolMaxConnectionReuse(int poolMaxConnectionReuse) {
-      return (PCSContextBuilder) super.withPoolMaxConnectionReuse(poolMaxConnectionReuse);
-   }
-
-   @Override
-   public PCSContextBuilder withPoolMaxConnections(int poolMaxConnections) {
-      return (PCSContextBuilder) super.withPoolMaxConnections(poolMaxConnections);
-   }
-
-   @Override
-   public PCSContextBuilder withPoolMaxSessionFailures(int poolMaxSessionFailures) {
-      return (PCSContextBuilder) super.withPoolMaxSessionFailures(poolMaxSessionFailures);
-   }
-
-   @Override
-   public PCSContextBuilder withPoolRequestInvokerThreads(int poolRequestInvokerThreads) {
-      return (PCSContextBuilder) super.withPoolRequestInvokerThreads(poolRequestInvokerThreads);
-   }
 }

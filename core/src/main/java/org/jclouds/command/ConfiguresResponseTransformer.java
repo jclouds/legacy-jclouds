@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -30,7 +30,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * designates the module configures a Connection to a cloud.
+ * designates the module configures a Client to a cloud.
  * 
  * @author Adrian Cole
  * 

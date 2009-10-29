@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -51,9 +51,11 @@ public class ParseContainerListFromJsonResponseTest {
    public void testApplyInputStream() {
       InputStream is = IOUtils
                .toInputStream("[ {\"name\":\"test_container_1\",\"count\":2,\"bytes\":78}, {\"name\":\"test_container_2\",\"count\":1,\"bytes\":17} ]   ");
+
       List<ContainerMetadata> expects = ImmutableList.of(new ContainerMetadata("test_container_1",
                2, 78), new ContainerMetadata("test_container_2", 1, 17));
-      ParseContainerListFromJsonResponse parser = new ParseContainerListFromJsonResponse(i.getInstance(Gson.class));
+      ParseContainerListFromJsonResponse parser = new ParseContainerListFromJsonResponse(i
+               .getInstance(Gson.class));
       assertEquals(parser.apply(is), expects);
    }
 

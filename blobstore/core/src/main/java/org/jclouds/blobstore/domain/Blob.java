@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,28 +23,21 @@
  */
 package org.jclouds.blobstore.domain;
 
-import java.awt.Container;
-import java.io.IOException;
-
-import org.jclouds.blobstore.internal.BlobImpl;
-
-import com.google.inject.ImplementedBy;
+import com.google.common.collect.Multimap;
+import com.google.inject.internal.Nullable;
 
 /**
- * Value type for an HTTP Blob service. Blobs are stored in {@link Container containers} and consist
+ * Value type for an HTTP Blob service. Blobs are stored in containers and consist
  * of a {@link org.jclouds.blobstore.domain.Value#getData() value}, a {@link Blob#getKey key and
  * 
  * @link Blob.Metadata#getUserMetadata() metadata}
  * 
  * @author Adrian Cole
  */
-@ImplementedBy(BlobImpl.class)
-public interface Blob<M extends BlobMetadata> {
-
-   /**
-    * @see BlobMetadata#getName()
-    */
-   String getName();
+public interface Blob extends Comparable<Blob> {
+   public interface Factory {
+      Blob create(@Nullable MutableBlobMetadata metadata);
+   }
 
    /**
     * Sets entity for the request or the content from the response. If size isn't set, this will
@@ -57,26 +50,18 @@ public interface Blob<M extends BlobMetadata> {
    void setData(Object data);
 
    /**
-    * generate an MD5 Hash for the current data.
-    * <p/>
-    * <h2>Note</h2>
-    * <p/>
-    * If this is an InputStream, it will be converted to a byte array first.
-    * 
-    * @throws IOException
-    *            if there is a problem generating the hash.
-    */
-   void generateMD5() throws IOException;
-
-   /**
     * @return InputStream, if downloading, or whatever was set during {@link #setData(Object)}
     */
    Object getData();
 
    /**
-    * @return System and User metadata relevant to this object.
+    * generate an MD5 Hash for the current data.
+    * <p/>
+    * <h2>Note</h2>
+    * <p/>
+    * If this is an InputStream, it will be converted to a byte array first.
     */
-   M getMetadata();
+   void generateMD5();
 
    void setContentLength(long contentLength);
 
@@ -90,19 +75,15 @@ public interface Blob<M extends BlobMetadata> {
     * @see org.jclouds.http.HttpHeaders#CONTENT_LENGTH
     * @see GetObjectOptions
     */
-   long getContentLength();
-
-   void setContentRange(String contentRange);
+   Long getContentLength();
 
    /**
-    * If this is not-null, {@link #getContentLength() } will the size of chunk of the Value available
-    * via {@link #getData()}
-    * 
-    * @see org.jclouds.http.HttpHeaders#CONTENT_RANGE
-    * @see GetObjectOptions
+    * @return System and User metadata relevant to this object.
     */
-   String getContentRange();
+   MutableBlobMetadata getMetadata();
 
-   void setMetadata(M metadata);
+   Multimap<String, String> getAllHeaders();
+
+   void setAllHeaders(Multimap<String, String> allHeaders);
 
 }

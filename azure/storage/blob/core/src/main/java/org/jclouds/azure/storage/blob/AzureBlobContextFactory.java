@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -24,9 +24,11 @@
 package org.jclouds.azure.storage.blob;
 
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.rest.RestContext;
 
 import com.google.inject.Module;
 
@@ -40,18 +42,25 @@ import com.google.inject.Module;
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
  * @author Adrian Cole
- * @see AzureBlobContext
+ * @see AzureBlobClient
  */
 public class AzureBlobContextFactory {
 
-   public static AzureBlobContext createContext(String account, String encodedKey,
+   public static RestContext<AzureBlobClient> createContext(Properties properties,
             Module... modules) {
-      return new AzureBlobContextBuilder(account, encodedKey).withModules(modules).buildContext();
+      return new AzureBlobContextBuilder(new AzureBlobPropertiesBuilder(properties).build())
+               .withModules(modules).buildContext();
    }
 
-   public static AzureBlobContext createContext(URI endpoint, String account, String encodedKey,
+   public static RestContext<AzureBlobClient> createContext(String account, String encodedKey,
             Module... modules) {
-      return new AzureBlobContextBuilder(account, encodedKey).withEndpoint(endpoint).withModules(
-               modules).buildContext();
+      return new AzureBlobContextBuilder(new AzureBlobPropertiesBuilder(account, encodedKey)
+               .build()).withModules(modules).buildContext();
+   }
+
+   public static RestContext<AzureBlobClient> createContext(URI endpoint, String account,
+            String encodedKey, Module... modules) {
+      return new AzureBlobContextBuilder(new AzureBlobPropertiesBuilder(account, encodedKey)
+               .withEndpoint(endpoint).build()).withModules(modules).buildContext();
    }
 }

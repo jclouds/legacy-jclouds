@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,6 +23,9 @@
  */
 package org.jclouds.blobstore.integration.internal;
 
+import static org.jclouds.blobstore.options.ListOptions.Builder.afterMarker;
+import static org.jclouds.blobstore.options.ListOptions.Builder.maxResults;
+import static org.jclouds.blobstore.options.ListOptions.Builder.underPath;
 import static org.testng.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
@@ -32,20 +35,19 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ContainerMetadata;
+import org.jclouds.blobstore.domain.BoundedSortedSet;
+import org.jclouds.blobstore.domain.ResourceMetadata;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
-public class BaseContainerIntegrationTest<S, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
-         extends BaseBlobStoreIntegrationTest<S, C, M, B> {
+public class BaseContainerIntegrationTest<S> extends BaseBlobStoreIntegrationTest<S> {
 
    @Test(groups = { "integration", "live" })
    public void containerDoesntExist() throws Exception {
-      assert !context.getBlobStore().containerExists("forgetaboutit");
+      assert !context.getBlobStore().exists("forgetaboutit");
    }
 
    @Test(groups = { "integration", "live" })
@@ -60,10 +62,100 @@ public class BaseContainerIntegrationTest<S, C extends ContainerMetadata, M exte
    }
 
    @Test(groups = { "integration", "live" })
+   public void testClearWhenContentsUnderPath() throws Exception {
+      String containerName = getContainerName();
+      try {
+         add5BlobsUnderPathAnd5UnderRootToContainer(containerName);
+         context.getBlobStore().clearContainer(containerName).get(60, TimeUnit.SECONDS);
+         assertConsistencyAwareContainerSize(containerName, 0);
+      } finally {
+         returnContainer(containerName);
+      }
+   }
+
+   public void testListContainerMarker() throws InterruptedException, ExecutionException,
+            TimeoutException, UnsupportedEncodingException {
+      String containerName = getContainerName();
+      try {
+         addAlphabetUnderRoot(containerName);
+         BoundedSortedSet<? extends ResourceMetadata> container = context.getBlobStore().list(
+                  containerName, afterMarker("y")).get(10, TimeUnit.SECONDS);
+         assertEquals(container.getMarker(), "y");
+         assert !container.isTruncated();
+         assertEquals(container.size(), 1);
+      } finally {
+         returnContainer(containerName);
+      }
+   }
+
+   public void testListContainerDelimiter() throws InterruptedException, ExecutionException,
+            TimeoutException, UnsupportedEncodingException {
+      String containerName = getContainerName();
+      try {
+         String prefix = "apps";
+         addTenObjectsUnderPrefix(containerName, prefix);
+         add15UnderRoot(containerName);
+         BoundedSortedSet<? extends ResourceMetadata> container = context.getBlobStore().list(
+                  containerName).get(10, TimeUnit.SECONDS);
+         assert !container.isTruncated();
+         assertEquals(container.size(), 16);
+      } finally {
+         returnContainer(containerName);
+      }
+
+   }
+
+   public void testListContainerPrefix() throws InterruptedException, ExecutionException,
+            TimeoutException, UnsupportedEncodingException {
+      String containerName = getContainerName();
+      try {
+         String prefix = "apps";
+         addTenObjectsUnderPrefix(containerName, prefix);
+         add15UnderRoot(containerName);
+
+         BoundedSortedSet<? extends ResourceMetadata> container = context.getBlobStore().list(
+                  containerName, underPath("apps/")).get(10, TimeUnit.SECONDS);
+         assert !container.isTruncated();
+         assertEquals(container.size(), 10);
+         assertEquals(container.getPath(), "apps/");
+      } finally {
+         returnContainer(containerName);
+      }
+
+   }
+
+   public void testListContainerMaxResults() throws InterruptedException, ExecutionException,
+            TimeoutException, UnsupportedEncodingException {
+      String containerName = getContainerName();
+      try {
+         addAlphabetUnderRoot(containerName);
+         BoundedSortedSet<? extends ResourceMetadata> container = context.getBlobStore().list(
+                  containerName, maxResults(5)).get(10, TimeUnit.SECONDS);
+         assertEquals(container.getMaxResults(), 5);
+         assert container.isTruncated();
+         assertEquals(container.size(), 5);
+      } finally {
+         returnContainer(containerName);
+      }
+   }
+
+   @Test(groups = { "integration", "live" })
+   public void testListWhenContentsUnderPath() throws Exception {
+      String containerName = getContainerName();
+      try {
+         add5BlobsUnderPathAnd5UnderRootToContainer(containerName);
+         context.getBlobStore().clearContainer(containerName).get(60, TimeUnit.SECONDS);
+         assertConsistencyAwareContainerSize(containerName, 0);
+      } finally {
+         returnContainer(containerName);
+      }
+   }
+
+   @Test(groups = { "integration", "live" })
    public void containerExists() throws Exception {
       String containerName = getContainerName();
       try {
-         assert context.getBlobStore().containerExists(containerName);
+         assert context.getBlobStore().exists(containerName);
       } finally {
          returnContainer(containerName);
       }
@@ -94,11 +186,11 @@ public class BaseContainerIntegrationTest<S, C extends ContainerMetadata, M exte
    }
 
    private void assertNotExists(final String containerName) throws InterruptedException {
-      assertEventually(new Runnable() {
+      assertConsistencyAware(new Runnable() {
          public void run() {
             try {
-               assert !context.getBlobStore().containerExists(containerName) : "container "
-                        + containerName + " still exists";
+               assert !context.getBlobStore().exists(containerName) : "container " + containerName
+                        + " still exists";
             } catch (Exception e) {
                Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
             }
@@ -112,8 +204,8 @@ public class BaseContainerIntegrationTest<S, C extends ContainerMetadata, M exte
       String containerName = getContainerName();
       try {
          add15UnderRoot(containerName);
-         SortedSet<M> container = context.getBlobStore().listBlobs(containerName).get(60,
-                  TimeUnit.SECONDS);
+         SortedSet<? extends ResourceMetadata> container = context.getBlobStore().list(
+                  containerName).get(60, TimeUnit.SECONDS);
          assertEquals(container.size(), 15);
       } finally {
          returnContainer(containerName);
@@ -124,7 +216,7 @@ public class BaseContainerIntegrationTest<S, C extends ContainerMetadata, M exte
    protected void addAlphabetUnderRoot(String containerName) throws InterruptedException,
             ExecutionException, TimeoutException {
       for (char letter = 'a'; letter <= 'z'; letter++) {
-         B blob = context.newBlob(letter + "");
+         Blob blob = newBlob(letter + "");
          blob.setData(letter + "content");
          context.getBlobStore().putBlob(containerName, blob).get(60, TimeUnit.SECONDS);
       }
@@ -133,7 +225,7 @@ public class BaseContainerIntegrationTest<S, C extends ContainerMetadata, M exte
    protected void add15UnderRoot(String containerName) throws InterruptedException,
             ExecutionException, TimeoutException {
       for (int i = 0; i < 15; i++) {
-         B blob = context.newBlob(i + "");
+         Blob blob = newBlob(i + "");
          blob.setData(i + "content");
          context.getBlobStore().putBlob(containerName, blob).get(60, TimeUnit.SECONDS);
       }
@@ -142,7 +234,7 @@ public class BaseContainerIntegrationTest<S, C extends ContainerMetadata, M exte
    protected void addTenObjectsUnderPrefix(String containerName, String prefix)
             throws InterruptedException, ExecutionException, TimeoutException {
       for (int i = 0; i < 10; i++) {
-         B blob = context.newBlob(prefix + "/" + i);
+         Blob blob = newBlob(prefix + "/" + i);
          blob.setData(i + "content");
          context.getBlobStore().putBlob(containerName, blob).get(60, TimeUnit.SECONDS);
       }

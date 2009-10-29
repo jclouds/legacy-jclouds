@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -31,24 +31,28 @@ import java.util.SortedSet;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Provider;
 
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ContainerMetadata;
+import org.jclouds.blobstore.domain.BoundedSortedSet;
+import org.jclouds.blobstore.domain.MutableBlobMetadata;
+import org.jclouds.blobstore.domain.ResourceMetadata;
+import org.jclouds.blobstore.domain.ResourceType;
+import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
+import org.jclouds.blobstore.options.ListOptions;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
-import org.jclouds.blobstore.strategy.ClearContainerStrategy;
-import org.jclouds.blobstore.strategy.ContainerCountStrategy;
-import org.jclouds.blobstore.strategy.ContainsValueStrategy;
-import org.jclouds.blobstore.strategy.GetAllBlobMetadataStrategy;
-import org.jclouds.blobstore.strategy.GetAllBlobsStrategy;
-import org.jclouds.rest.internal.BoundedSortedSet;
+import org.jclouds.blobstore.strategy.ClearListStrategy;
+import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
+import org.jclouds.blobstore.strategy.CountListStrategy;
+import org.jclouds.blobstore.strategy.GetBlobsInListStrategy;
+import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
 import org.jclouds.util.Utils;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
-import com.google.inject.assistedinject.Assisted;
 
 /**
  * Implements core Map functionality with an {@link BlobStore}
@@ -60,16 +64,52 @@ import com.google.inject.assistedinject.Assisted;
  * @param <V>
  *           value of the map
  */
-public abstract class BaseBlobMap<C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>, V> {
+public abstract class BaseBlobMap<V> {
 
-   protected final BlobStore<C, M, B> connection;
+   protected final BlobStore connection;
    protected final String containerName;
-   protected final Provider<B> blobFactory;
-   protected final GetAllBlobsStrategy<C, M, B> getAllBlobs;
-   protected final GetAllBlobMetadataStrategy<C, M, B> getAllBlobMetadata;
-   protected final ContainsValueStrategy<C, M, B> containsValueStrategy;
-   protected final ClearContainerStrategy<C, M, B> clearContainerStrategy;
-   protected final ContainerCountStrategy<C, M, B> containerCountStrategy;
+   protected final Function<String, String> prefixer;
+   protected final Function<String, String> pathStripper;
+   protected final ListOptions options;
+   protected final GetBlobsInListStrategy getAllBlobs;
+   protected final ListBlobMetadataStrategy getAllBlobMetadata;
+   protected final ContainsValueInListStrategy containsValueStrategy;
+   protected final ClearListStrategy deleteBlobsStrategy;
+   protected final CountListStrategy countStrategy;
+
+   static class StripPath implements Function<String, String> {
+      private final String prefix;
+      private final String delimiter;
+
+      StripPath(String prefix, String delimiter) {
+         this.prefix = checkNotNull(prefix, "prefix");
+         this.delimiter = checkNotNull(delimiter, "delimiter");
+      }
+
+      public String apply(String from) {
+         return from.replaceFirst(prefix + delimiter, "");
+      }
+   }
+
+   static class PrefixKey implements Function<String, String> {
+      private final String prefix;
+      private final String delimiter;
+
+      PrefixKey(String prefix, String delimiter) {
+         this.prefix = checkNotNull(prefix, "prefix");
+         this.delimiter = checkNotNull(delimiter, "delimiter");
+      }
+
+      public String apply(String from) {
+         return prefix + delimiter + from;
+      }
+   }
+
+   static class PassThrough<T> implements Function<T, T> {
+      public T apply(T from) {
+         return from;
+      }
+   }
 
    /**
     * maximum duration of an blob Request
@@ -86,20 +126,27 @@ public abstract class BaseBlobMap<C extends ContainerMetadata, M extends BlobMet
    protected long requestRetryMilliseconds = 10;
 
    @Inject
-   public BaseBlobMap(BlobStore<C, M, B> connection, Provider<B> blobFactory,
-            GetAllBlobsStrategy<C, M, B> getAllBlobs,
-            GetAllBlobMetadataStrategy<C, M, B> getAllBlobMetadata,
-            ContainsValueStrategy<C, M, B> containsValueStrategy,
-            ClearContainerStrategy<C, M, B> clearContainerStrategy,
-            ContainerCountStrategy<C, M, B> containerCountStrategy, @Assisted String containerName) {
+   public BaseBlobMap(BlobStore connection, GetBlobsInListStrategy getAllBlobs,
+            ListBlobMetadataStrategy getAllBlobMetadata,
+            ContainsValueInListStrategy containsValueStrategy,
+            ClearListStrategy deleteBlobsStrategy, CountListStrategy countStrategy,
+            String containerName, ListOptions options) {
       this.connection = checkNotNull(connection, "connection");
       this.containerName = checkNotNull(containerName, "container");
-      this.blobFactory = checkNotNull(blobFactory, "blobFactory");
+      this.options = options;
+      if (options.getPath() == null) {
+         prefixer = new PassThrough<String>();
+         pathStripper = prefixer;
+      } else {
+         prefixer = new PrefixKey(options.getPath(), "/");
+         pathStripper = new StripPath(options.getPath(), "/");
+      }
+
       this.getAllBlobs = checkNotNull(getAllBlobs, "getAllBlobs");
       this.getAllBlobMetadata = checkNotNull(getAllBlobMetadata, "getAllBlobMetadata");
       this.containsValueStrategy = checkNotNull(containsValueStrategy, "containsValueStrategy");
-      this.clearContainerStrategy = checkNotNull(clearContainerStrategy, "clearContainerStrategy");
-      this.containerCountStrategy = checkNotNull(containerCountStrategy, "containerCountStrategy");
+      this.deleteBlobsStrategy = checkNotNull(deleteBlobsStrategy, "deleteBlobsStrategy");
+      this.countStrategy = checkNotNull(countStrategy, "countStrategy");
       checkArgument(!containerName.equals(""), "container name must not be a blank string!");
    }
 
@@ -111,7 +158,7 @@ public abstract class BaseBlobMap<C extends ContainerMetadata, M extends BlobMet
     * @see BoundedSortedSet#getContents()
     */
    public int size() {
-      return (int) containerCountStrategy.execute(connection, containerName);
+      return (int) countStrategy.execute(containerName, options);
    }
 
    /**
@@ -119,8 +166,19 @@ public abstract class BaseBlobMap<C extends ContainerMetadata, M extends BlobMet
     * 
     * @see BlobStore#getBlob(String, String)
     */
-   protected Set<B> getAllBlobs() {
-      return getAllBlobs.execute(connection, containerName);
+   protected Set<? extends Blob> getAllBlobs() {
+      SortedSet<? extends Blob> returnVal = getAllBlobs.execute(containerName, options);
+      if (options != null) {
+         for (Blob from : returnVal)
+            stripPrefix(from);
+      }
+      return returnVal;
+
+   }
+
+   protected Blob stripPrefix(Blob from) {
+      from.getMetadata().setName(pathStripper.apply(from.getMetadata().getName()));
+      return from;
    }
 
    /**
@@ -130,29 +188,31 @@ public abstract class BaseBlobMap<C extends ContainerMetadata, M extends BlobMet
     * method. To reuse data from InputStreams, pass {@link java.io.InputStream}s inside {@link Blob}s
     */
    public boolean containsValue(Object value) {
-      return containsValueStrategy.execute(connection, containerName, value);
+      return containsValueStrategy.execute(containerName, value, options);
    }
 
    public void clear() {
-      clearContainerStrategy.execute(connection, containerName);
+      deleteBlobsStrategy.execute(containerName, options);
    }
 
    public Set<String> keySet() {
       Set<String> keys = Sets.newHashSet();
-      for (BlobMetadata object : getAllBlobMetadata.execute(connection, containerName))
-         keys.add(object.getName());
+      for (ResourceMetadata object : getAllBlobMetadata.execute(containerName, options))
+         if (object.getType() == ResourceType.BLOB)
+            keys.add(pathStripper.apply(object.getName()));
       return keys;
    }
 
    public boolean containsKey(Object key) {
+      String realKey = prefixer.apply(key.toString());
       try {
-         return connection.blobMetadata(containerName, key.toString()) != null;
+         return connection.blobMetadata(containerName, realKey) != null;
       } catch (KeyNotFoundException e) {
          return false;
       } catch (Exception e) {
          Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
          throw new BlobRuntimeException(String.format("Error searching for %1$s:%2$s",
-                  containerName, key), e);
+                  containerName, realKey), e);
       }
    }
 
@@ -160,8 +220,22 @@ public abstract class BaseBlobMap<C extends ContainerMetadata, M extends BlobMet
       return size() == 0;
    }
 
-   public SortedSet<M> listContainer() {
-      return getAllBlobMetadata.execute(connection, containerName);
+   public SortedSet<? extends BlobMetadata> list() {
+      SortedSet<? extends BlobMetadata> returnVal = getAllBlobMetadata.execute(containerName,
+               options);
+      if (options.getPath() != null) {
+         returnVal = Sets.newTreeSet(Iterables.transform(returnVal,
+                  new Function<BlobMetadata, BlobMetadata>() {
+
+                     public BlobMetadata apply(BlobMetadata from) {
+                        MutableBlobMetadata md = new MutableBlobMetadataImpl(from);
+                        md.setName(pathStripper.apply(from.getName()));
+                        return md;
+                     }
+
+                  }));
+      }
+      return returnVal;
    }
 
 }

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -33,25 +33,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.ListableMap;
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ContainerMetadata;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 
-public abstract class BaseMapIntegrationTest<S, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>, V>
-         extends BaseBlobStoreIntegrationTest<S, C, M, B> {
+public abstract class BaseMapIntegrationTest<S, V> extends BaseBlobStoreIntegrationTest<S> {
 
    public abstract void testPutAll() throws InterruptedException, ExecutionException,
             TimeoutException;
@@ -62,28 +61,26 @@ public abstract class BaseMapIntegrationTest<S, C extends ContainerMetadata, M e
    public abstract void testValues() throws IOException, InterruptedException, ExecutionException,
             TimeoutException;
 
-   protected Map<String, String> fiveStrings = ImmutableMap.of("one", "apple", "two", "bear",
-            "three", "candy", "four", "dogma", "five", "emma");
-
-   // IMPORTANT: Java 5 struggles to correctly infer types in some cases which affects
-   // this ImmutableMap. The explicit typing works around the issue. Java 6 seems to cope.
-   // http://groups.google.com/group/google-collections-users/browse_thread/thread/df70c482c93a25d8
-   protected Map<String, byte[]> fiveBytes = ImmutableMap.<String, byte[]> of("one",
-            "apple".getBytes(), // Explicit cast necessary for Java 5
-            "two", "bear".getBytes(), "three", "candy".getBytes(), "four", "dogma".getBytes(),
-            "five", "emma".getBytes());
+   protected Map<String, byte[]> fiveBytes = Maps.transformValues(fiveStrings,
+            new Function<String, byte[]>() {
+               public byte[] apply(String from) {
+                  return from.getBytes();
+               }
+            });
    protected Map<String, InputStream> fiveInputs;
    protected Map<String, File> fiveFiles;
    String tmpDirectory;
 
    @BeforeMethod(groups = { "integration", "live" })
    protected void setUpInputStreams() {
-      fiveInputs = ImmutableMap.of("one", IOUtils.toInputStream("apple"), "two", IOUtils
-               .toInputStream("bear"), "three", IOUtils.toInputStream("candy"), "four", IOUtils
-               .toInputStream("dogma"), "five", IOUtils.toInputStream("emma"));
+      fiveInputs = Maps.transformValues(fiveStrings, new Function<String, InputStream>() {
+         public InputStream apply(String from) {
+            return IOUtils.toInputStream(from);
+         }
+      });
    }
 
-   @BeforeMethod(groups = { "integration", "live" })
+   @BeforeClass(groups = { "integration", "live" })
    @Parameters( { "basedir" })
    protected void setUpTempDir(@Optional String basedir) throws InterruptedException,
             ExecutionException, FileNotFoundException, IOException, TimeoutException {
@@ -93,29 +90,26 @@ public abstract class BaseMapIntegrationTest<S, C extends ContainerMetadata, M e
       tmpDirectory = basedir + File.separator + "target" + File.separator + "testFiles"
                + File.separator + getClass().getSimpleName();
       new File(tmpDirectory).mkdirs();
-
-      fiveFiles = ImmutableMap.of("one", new File(tmpDirectory, "apple"), "two", new File(
-               tmpDirectory, "bear"), "three", new File(tmpDirectory, "candy"), "four", new File(
-               tmpDirectory, "dogma"), "five", new File(tmpDirectory, "emma"));
-
-      for (File file : fiveFiles.values()) {
-         IOUtils.write(file.getName(), new FileOutputStream(file));
+      fiveFiles = Maps.newHashMap();
+      for (Entry<String, String> entry : fiveStrings.entrySet()) {
+         File file = new File(tmpDirectory, entry.getKey());
+         IOUtils.write(entry.getValue().getBytes(), new FileOutputStream(file));
+         fiveFiles.put(entry.getKey(), file);
       }
-
    }
 
-   protected abstract Map<String, V> createMap(BlobStoreContext<?, ?, ?, ?> context, String bucket);
+   protected abstract Map<String, V> createMap(BlobStoreContext<?> context, String bucket);
 
    @Test(groups = { "integration", "live" })
    public void testClear() throws InterruptedException, ExecutionException, TimeoutException {
       String bucketName = getContainerName();
       try {
          Map<String, V> map = createMap(context, bucketName);
-         assertEventuallyMapSize(map, 0);
+         assertConsistencyAwareMapSize(map, 0);
          putString(map, "one", "apple");
-         assertEventuallyMapSize(map, 1);
+         assertConsistencyAwareMapSize(map, 1);
          map.clear();
-         assertEventuallyMapSize(map, 0);
+         assertConsistencyAwareMapSize(map, 0);
       } finally {
          returnContainer(bucketName);
       }
@@ -130,45 +124,45 @@ public abstract class BaseMapIntegrationTest<S, C extends ContainerMetadata, M e
       String bucketName = getContainerName();
       try {
          Map<String, V> map = createMap(context, bucketName);
-         assertEventuallyKeySize(map, 0);
+         assertConsistencyAwareKeySize(map, 0);
          putString(map, "one", "two");
-         assertEventuallyKeySize(map, 1);
-         assertEventuallyKeySetEquals(map, ImmutableSet.of("one"));
+         assertConsistencyAwareKeySize(map, 1);
+         assertConsistencyAwareKeySetEquals(map, ImmutableSet.of("one"));
       } finally {
          returnContainer(bucketName);
       }
    }
 
-   protected void assertEventuallyKeySetEquals(final Map<String, V> map, final Object toEqual)
+   protected void assertConsistencyAwareKeySetEquals(final Map<String, V> map, final Object toEqual)
             throws InterruptedException {
-      assertEventually(new Runnable() {
+      assertConsistencyAware(new Runnable() {
          public void run() {
             assertEquals(map.keySet(), toEqual);
          }
       });
    }
 
-   protected void assertEventuallyRemoveEquals(final Map<String, V> map, final String key,
+   protected void assertConsistencyAwareRemoveEquals(final Map<String, V> map, final String key,
             final Object equals) throws InterruptedException {
-      assertEventually(new Runnable() {
+      assertConsistencyAware(new Runnable() {
          public void run() {
             assertEquals(map.remove(key), equals);
          }
       });
    }
 
-   protected void assertEventuallyGetEquals(final Map<String, V> map, final String key,
+   protected void assertConsistencyAwareGetEquals(final Map<String, V> map, final String key,
             final Object equals) throws InterruptedException {
-      assertEventually(new Runnable() {
+      assertConsistencyAware(new Runnable() {
          public void run() {
             assertEquals(map.get(key), equals);
          }
       });
    }
 
-   protected void assertEventuallyKeySize(final Map<String, V> map, final int size)
+   protected void assertConsistencyAwareKeySize(final Map<String, V> map, final int size)
             throws InterruptedException {
-      assertEventually(new Runnable() {
+      assertConsistencyAware(new Runnable() {
          public void run() {
             assertEquals(map.keySet().size(), size);
          }
@@ -180,9 +174,9 @@ public abstract class BaseMapIntegrationTest<S, C extends ContainerMetadata, M e
       String bucketName = getContainerName();
       try {
          Map<String, V> map = createMap(context, bucketName);
-         assertEventuallyDoesntContainKey(map);
+         assertConsistencyAwareDoesntContainKey(map);
          putString(map, "one", "apple");
-         assertEventuallyContainsKey(map);
+         assertConsistencyAwareContainsKey(map);
       } finally {
          returnContainer(bucketName);
       }
@@ -192,26 +186,27 @@ public abstract class BaseMapIntegrationTest<S, C extends ContainerMetadata, M e
     * containsValue() uses eTag comparison to bucket contents, so this can be subject to eventual
     * consistency problems.
     */
-   protected void assertEventuallyContainsValue(final Map<String, V> map, final Object value)
+   protected void assertConsistencyAwareContainsValue(final Map<String, V> map, final Object value)
             throws InterruptedException {
-      assertEventually(new Runnable() {
+      assertConsistencyAware(new Runnable() {
          public void run() {
             assert map.containsValue(value);
          }
       });
    }
 
-   protected void assertEventuallyContainsKey(final Map<String, V> map) throws InterruptedException {
-      assertEventually(new Runnable() {
+   protected void assertConsistencyAwareContainsKey(final Map<String, V> map)
+            throws InterruptedException {
+      assertConsistencyAware(new Runnable() {
          public void run() {
             assert map.containsKey("one");
          }
       });
    }
 
-   protected void assertEventuallyDoesntContainKey(final Map<String, V> map)
+   protected void assertConsistencyAwareDoesntContainKey(final Map<String, V> map)
             throws InterruptedException {
-      assertEventually(new Runnable() {
+      assertConsistencyAware(new Runnable() {
          public void run() {
             assert !map.containsKey("one");
          }
@@ -223,24 +218,25 @@ public abstract class BaseMapIntegrationTest<S, C extends ContainerMetadata, M e
       String bucketName = getContainerName();
       try {
          Map<String, V> map = createMap(context, bucketName);
-         assertEventuallyEmpty(map);
+         assertConsistencyAwareEmpty(map);
          putString(map, "one", "apple");
-         assertEventuallyNotEmpty(map);
+         assertConsistencyAwareNotEmpty(map);
       } finally {
          returnContainer(bucketName);
       }
    }
 
-   protected void assertEventuallyNotEmpty(final Map<String, V> map) throws InterruptedException {
-      assertEventually(new Runnable() {
+   protected void assertConsistencyAwareNotEmpty(final Map<String, V> map)
+            throws InterruptedException {
+      assertConsistencyAware(new Runnable() {
          public void run() {
             assert !map.isEmpty();
          }
       });
    }
 
-   protected void assertEventuallyEmpty(final Map<String, V> map) throws InterruptedException {
-      assertEventually(new Runnable() {
+   protected void assertConsistencyAwareEmpty(final Map<String, V> map) throws InterruptedException {
+      assertConsistencyAware(new Runnable() {
          public void run() {
             assert map.isEmpty();
          }
@@ -253,14 +249,14 @@ public abstract class BaseMapIntegrationTest<S, C extends ContainerMetadata, M e
    protected void fourLeftRemovingOne(Map<String, V> map) throws InterruptedException,
             ExecutionException, TimeoutException {
       map.remove("one");
-      assertEventuallyMapSize(map, 4);
-      assertEventuallyKeySetEquals(map, new TreeSet<String>(ImmutableSet.of("two", "three", "four",
-               "five")));
+      assertConsistencyAwareMapSize(map, 4);
+      assertConsistencyAwareKeySetEquals(map, new TreeSet<String>(ImmutableSet.of("two", "three",
+               "four", "five")));
    }
 
-   protected void assertEventuallyMapSize(final Map<String, V> map, final int size)
+   protected void assertConsistencyAwareMapSize(final Map<String, V> map, final int size)
             throws InterruptedException {
-      assertEventually(new Runnable() {
+      assertConsistencyAware(new Runnable() {
          public void run() {
             assertEquals(map.size(), size);
          }
@@ -276,18 +272,18 @@ public abstract class BaseMapIntegrationTest<S, C extends ContainerMetadata, M e
             TimeoutException {
       String bucketName = getContainerName();
       try {
-         ListableMap<?, ?, ?> map = (ListableMap<?, ?, ?>) createMap(context, bucketName);
-         assertEventuallyListContainer(map, bucketName);
+         ListableMap<?, ?> map = (ListableMap<?, ?>) createMap(context, bucketName);
+         assertConsistencyAwareListContainer(map, bucketName);
       } finally {
          returnContainer(bucketName);
       }
    }
 
-   protected void assertEventuallyListContainer(final ListableMap<?, ?, ?> map,
+   protected void assertConsistencyAwareListContainer(final ListableMap<?, ?> map,
             final String bucketName) throws InterruptedException {
-      assertEventually(new Runnable() {
+      assertConsistencyAware(new Runnable() {
          public void run() {
-            assertTrue(map.listContainer().size() >= 0);
+            assertTrue(map.list().size() >= 0);
          }
       });
    }

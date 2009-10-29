@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -29,30 +29,39 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
+import java.util.Collections;
 
-import javax.inject.Provider;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.apache.commons.io.IOUtils;
+import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.internal.BlobImpl;
+import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
+import com.google.inject.Guice;
 
 /**
  * @author Adrian Cole
  */
 public class ParseBlobFromHeadersAndHttpContentTest {
 
-   @SuppressWarnings("unchecked")
+   @BeforeTest
+   void setUp() {
+
+      blobProvider = Guice.createInjector(new BlobStoreObjectModule()).getInstance(
+               Blob.Factory.class);
+   }
+
    @Test(expectedExceptions = NullPointerException.class)
    public void testCall() throws HttpException {
-      ParseSystemAndUserMetadataFromHeaders<BlobMetadata> metadataParser = createMock(ParseSystemAndUserMetadataFromHeaders.class);
-      ParseBlobFromHeadersAndHttpContent<BlobMetadata, Blob<BlobMetadata>> callable = new ParseBlobFromHeadersAndHttpContent(
+      ParseSystemAndUserMetadataFromHeaders metadataParser = createMock(ParseSystemAndUserMetadataFromHeaders.class);
+      ParseBlobFromHeadersAndHttpContent callable = new ParseBlobFromHeadersAndHttpContent(
                metadataParser, blobProvider);
       HttpResponse response = createMock(HttpResponse.class);
       expect(response.getFirstHeaderOrNull("Content-Length")).andReturn("100");
@@ -63,23 +72,29 @@ public class ParseBlobFromHeadersAndHttpContentTest {
       callable.apply(response);
    }
 
-   private Provider<Blob<BlobMetadata>> blobProvider = new Provider<Blob<BlobMetadata>>() {
+   @Test
+   public void testAddAllHeadersTo() {
+      ParseSystemAndUserMetadataFromHeaders metadataParser = createMock(ParseSystemAndUserMetadataFromHeaders.class);
+      ParseBlobFromHeadersAndHttpContent callable = new ParseBlobFromHeadersAndHttpContent(
+               metadataParser, blobProvider);
+      Multimap<String, String> allHeaders = ImmutableMultimap.of("key", "value");
+      HttpResponse from = new HttpResponse();
+      from.setHeaders(allHeaders);
+      Blob object = blobProvider.create(null);
+      callable.addAllHeadersTo(from, object);
+      assertEquals(object.getAllHeaders().get("key"), Collections.singletonList("value"));
+   }
 
-      public Blob<BlobMetadata> get() {
-         return new BlobImpl<BlobMetadata>("key");
-      }
+   private Blob.Factory blobProvider;
 
-   };
-
-   @SuppressWarnings("unchecked")
    @Test(enabled = false)
    // TODO.. very complicated test.
    public void testParseContentLengthWhenContentRangeSet() throws HttpException {
-      ParseSystemAndUserMetadataFromHeaders<BlobMetadata> metadataParser = createMock(ParseSystemAndUserMetadataFromHeaders.class);
-      ParseBlobFromHeadersAndHttpContent<BlobMetadata, Blob<BlobMetadata>> callable = new ParseBlobFromHeadersAndHttpContent(
+      ParseSystemAndUserMetadataFromHeaders metadataParser = createMock(ParseSystemAndUserMetadataFromHeaders.class);
+      ParseBlobFromHeadersAndHttpContent callable = new ParseBlobFromHeadersAndHttpContent(
                metadataParser, blobProvider);
       HttpResponse response = createMock(HttpResponse.class);
-      BlobMetadata meta = createMock(BlobMetadata.class);
+      MutableBlobMetadata meta = createMock(MutableBlobMetadata.class);
       expect(metadataParser.apply(response)).andReturn(meta);
       InputStream test = IOUtils.toInputStream("test");
 
@@ -92,7 +107,7 @@ public class ParseBlobFromHeadersAndHttpContentTest {
       expect(response.getHeaders()).andReturn(
                ImmutableMultimap.of("Content-Length", "10485760", "Content-Range",
                         "0-10485759/20232760"));
-      meta.setSize(20232760l);
+      meta.setSize(20232760);
 
       expect(response.getStatusCode()).andReturn(200).atLeastOnce();
       expect(response.getContent()).andReturn(test);
@@ -101,10 +116,11 @@ public class ParseBlobFromHeadersAndHttpContentTest {
       replay(response);
       replay(metadataParser);
 
-      Blob<BlobMetadata> object = callable.apply(response);
-      assertEquals(object.getContentLength(), 10485760);
-      assertEquals(object.getMetadata().getSize(), 20232760);
-      assertEquals(object.getContentRange(), "0-10485759/20232760");
+      Blob object = callable.apply(response);
+      assertEquals(object.getContentLength(), new Long(10485760));
+      assertEquals(object.getMetadata().getSize(), new Long(20232760));
+      assertEquals(object.getAllHeaders().get("Content-Range"), Collections
+               .singletonList("0-10485759/20232760"));
 
    }
 

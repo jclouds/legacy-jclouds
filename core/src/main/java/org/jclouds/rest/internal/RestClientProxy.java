@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -42,19 +42,23 @@ import javax.inject.Singleton;
 
 import org.jclouds.concurrent.FutureExceptionParser;
 import org.jclouds.http.HttpConstants;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.TransformingHttpCommand;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.InvocationContext;
 
 import com.google.common.base.Function;
+import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
+import com.google.inject.internal.Nullable;
 
 @Singleton
 public class RestClientProxy<T> implements InvocationHandler {
+   private final Injector injector;
    private final RestAnnotationProcessor<T> util;
    private final Class<T> declaring;
-   private final TransformingHttpCommand.Factory commandFactory;
+   private final Factory commandFactory;
 
    /**
     * maximum duration of an unwrapped http Request
@@ -68,8 +72,9 @@ public class RestClientProxy<T> implements InvocationHandler {
 
    @SuppressWarnings("unchecked")
    @Inject
-   public RestClientProxy(TransformingHttpCommand.Factory factory, RestAnnotationProcessor<T> util,
-            TypeLiteral<T> typeLiteral) {
+   public RestClientProxy(Injector injector, Factory factory,
+            RestAnnotationProcessor<T> util, TypeLiteral<T> typeLiteral) {
+      this.injector = injector;
       this.util = util;
       this.declaring = (Class<T>) typeLiteral.getRawType();
       this.commandFactory = factory;
@@ -81,6 +86,8 @@ public class RestClientProxy<T> implements InvocationHandler {
          return this.equals(o);
       } else if (method.getName().equals("hashCode")) {
          return this.hashCode();
+      } else if (method.getName().startsWith("new")) {
+         return injector.getInstance(method.getReturnType());
       } else if (util.getDelegateOrNull(method) != null) {
          method = util.getDelegateOrNull(method);
          logger.trace("Converting %s.%s", declaring.getSimpleName(), method.getName());
@@ -135,7 +142,7 @@ public class RestClientProxy<T> implements InvocationHandler {
          logger.debug("Converted %s.%s to %s", declaring.getSimpleName(), method.getName(), request
                   .getRequestLine());
 
-         Function<HttpResponse, ?> transformer = util.createResponseParser(method, request, args);
+         Function<HttpResponse, ?> transformer = util.createResponseParser(method, request);
          logger.trace("Response from %s.%s is parsed by %s", declaring.getSimpleName(), method
                   .getName(), transformer.getClass().getSimpleName());
 
@@ -160,6 +167,12 @@ public class RestClientProxy<T> implements InvocationHandler {
       }
    }
 
+   public static interface Factory {
+      public TransformingHttpCommand<?> create(HttpRequest request,
+               Function<HttpResponse, ?> transformer,
+               @Nullable Function<Exception, ?> exceptionTransformer);
+   }
+   
    @Override
    public boolean equals(Object obj) {
       if (obj == null || !(obj instanceof RestClientProxy<?>))

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -27,9 +27,11 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.jclouds.aws.domain.AWSError;
-import org.jclouds.aws.s3.config.RestS3ConnectionModule;
+import org.jclouds.aws.s3.config.S3RestClientModule;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.aws.s3.reference.S3Headers;
 import org.jclouds.http.HttpCommand;
@@ -60,11 +62,13 @@ public class S3UtilsTest {
 
    @BeforeTest
    protected void setUpInjector() {
-      Injector injector = Guice.createInjector(new RestS3ConnectionModule(), new ParserModule(),
+      Injector injector = Guice.createInjector(new S3RestClientModule(), new ParserModule(),
                new AbstractModule() {
 
                   @Override
                   protected void configure() {
+                     bind(ExecutorService.class).toInstance(Executors.newCachedThreadPool());
+//                     bind(new TypeLiteral<ClearListStrategy<S3Object>>(){}).to
                      bindConstant().annotatedWith(
                               Jsr330.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to("user");
                      bindConstant().annotatedWith(

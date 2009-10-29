@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -27,31 +27,29 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ContainerMetadata;
-import org.jclouds.blobstore.strategy.ClearContainerStrategy;
-import org.jclouds.blobstore.strategy.ContainerCountStrategy;
-import org.jclouds.blobstore.strategy.ContainsValueStrategy;
-import org.jclouds.blobstore.strategy.GetAllBlobMetadataStrategy;
-import org.jclouds.blobstore.strategy.GetAllBlobsStrategy;
+import org.jclouds.blobstore.options.ListOptions;
+import org.jclouds.blobstore.strategy.ClearListStrategy;
+import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
+import org.jclouds.blobstore.strategy.CountListStrategy;
+import org.jclouds.blobstore.strategy.GetBlobsInListStrategy;
+import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
 import org.jclouds.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
-import com.google.inject.assistedinject.Assisted;
 
 /**
  * Map representation of a live connection to S3. All put operations will result in ETag
@@ -62,52 +60,52 @@ import com.google.inject.assistedinject.Assisted;
  * @see InputStreamMap
  * @see BaseBlobMap
  */
-public class InputStreamMapImpl<C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
-         extends BaseBlobMap<C, M, B, InputStream> implements InputStreamMap<M> {
+public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements InputStreamMap {
 
    @Inject
-   public InputStreamMapImpl(BlobStore<C, M, B> connection, Provider<B> blobFactory,
-            GetAllBlobsStrategy<C, M, B> getAllBlobs,
-            GetAllBlobMetadataStrategy<C, M, B> getAllBlobMetadata,
-            ContainsValueStrategy<C, M, B> containsValueStrategy,
-            ClearContainerStrategy<C, M, B> clearContainerStrategy,
-            ContainerCountStrategy<C, M, B> containerCountStrategy, @Assisted String containerName) {
-      super(connection, blobFactory, getAllBlobs, getAllBlobMetadata, containsValueStrategy,
-               clearContainerStrategy, containerCountStrategy, containerName);
+   public InputStreamMapImpl(BlobStore connection, Blob.Factory blobFactory,
+            GetBlobsInListStrategy getAllBlobs, ListBlobMetadataStrategy getAllBlobMetadata,
+            ContainsValueInListStrategy containsValueStrategy,
+            ClearListStrategy clearContainerStrategy, CountListStrategy containerCountStrategy,
+            String containerName, ListOptions listOptions) {
+      super(connection, getAllBlobs, getAllBlobMetadata, containsValueStrategy,
+               clearContainerStrategy, containerCountStrategy, containerName, listOptions);
    }
 
    /**
     * {@inheritDoc}
     * 
-    * @see S3Connection#getBlob(String, String)
+    * @see S3Client#getBlob(String, String)
     */
    public InputStream get(Object o) {
+      String realKey = prefixer.apply(o.toString());
       try {
-         return (InputStream) (connection.getBlob(containerName, o.toString()).get(
+         return (InputStream) (connection.getBlob(containerName, realKey).get(
                   requestTimeoutMilliseconds, TimeUnit.MILLISECONDS)).getData();
       } catch (KeyNotFoundException e) {
          return null;
       } catch (Exception e) {
          Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
          throw new BlobRuntimeException(String.format("Error geting object %1$s:%2$s",
-                  containerName, o), e);
+                  containerName, realKey), e);
       }
    }
 
    /**
     * {@inheritDoc}
     * 
-    * @see S3Connection#removeBlob(String, String)
+    * @see S3Client#removeBlob(String, String)
     */
    public InputStream remove(Object o) {
       InputStream old = getLastValue(o);
+      String realKey = prefixer.apply(o.toString());
       try {
-         connection.removeBlob(containerName, o.toString()).get(requestTimeoutMilliseconds,
+         connection.removeBlob(containerName, realKey).get(requestTimeoutMilliseconds,
                   TimeUnit.MILLISECONDS);
       } catch (Exception e) {
          Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
          throw new BlobRuntimeException(String.format("Error removing object %1$s:%2$s",
-                  containerName, o), e);
+                  containerName, realKey), e);
       }
       return old;
    }
@@ -128,12 +126,12 @@ public class InputStreamMapImpl<C extends ContainerMetadata, M extends BlobMetad
     * @see #getAllObjects()
     */
    public Collection<InputStream> values() {
-      Collection<InputStream> values = new LinkedList<InputStream>();
-      Set<B> objects = this.getAllBlobs.execute(connection, containerName);
-      for (B object : objects) {
-         values.add((InputStream) object.getData());
-      }
-      return values;
+      return Collections2.transform(getAllBlobs.execute(containerName, options),
+               new Function<Blob, InputStream>() {
+                  public InputStream apply(Blob from) {
+                     return (InputStream) from.getData();
+                  }
+               });
    }
 
    /**
@@ -143,8 +141,9 @@ public class InputStreamMapImpl<C extends ContainerMetadata, M extends BlobMetad
     */
    public Set<Map.Entry<String, InputStream>> entrySet() {
       Set<Map.Entry<String, InputStream>> entrySet = new HashSet<Map.Entry<String, InputStream>>();
-      for (B object : this.getAllBlobs.execute(connection, containerName)) {
-         entrySet.add(new Entry(object.getName(), (InputStream) object.getData()));
+      for (Blob object : this.getAllBlobs.execute(containerName, options)) {
+         entrySet.add(new Entry(pathStripper.apply(object.getMetadata().getName()),
+                  (InputStream) object.getData()));
       }
       return entrySet;
    }
@@ -218,15 +217,15 @@ public class InputStreamMapImpl<C extends ContainerMetadata, M extends BlobMetad
     * submits requests to add all objects and collects the results later. All values will have eTag
     * calculated first. As a side-effect of this, the content will be copied into a byte [].
     * 
-    * @see S3Connection#put(String, B)
+    * @see S3Client#put(String, Blob)
     */
    @VisibleForTesting
    void putAllInternal(Map<? extends String, ? extends Object> map) {
       try {
          Set<Future<String>> puts = Sets.newHashSet();
          for (Map.Entry<? extends String, ? extends Object> entry : map.entrySet()) {
-            B object = blobFactory.get();
-            object.getMetadata().setName(entry.getKey());
+            Blob object = connection.newBlob();
+            object.getMetadata().setName(prefixer.apply(entry.getKey()));
             object.setData(entry.getValue());
             object.generateMD5();
             puts.add(connection.putBlob(containerName, object));
@@ -283,12 +282,12 @@ public class InputStreamMapImpl<C extends ContainerMetadata, M extends BlobMetad
     * calculates eTag before adding the object to s3. As a side-effect of this, the content will be
     * copied into a byte []. *
     * 
-    * @see S3Connection#put(String, B)
+    * @see S3Client#put(String, Blob)
     */
    @VisibleForTesting
    InputStream putInternal(String s, Object o) {
-      B object = blobFactory.get();
-      object.getMetadata().setName(s);
+      Blob object = connection.newBlob();
+      object.getMetadata().setName(prefixer.apply(s));
       try {
          InputStream returnVal = containsKey(s) ? get(s) : null;
          object.setData(o);

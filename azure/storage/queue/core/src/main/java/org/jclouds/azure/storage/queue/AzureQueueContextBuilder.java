@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,21 +23,15 @@
  */
 package org.jclouds.azure.storage.queue;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY_AZURESTORAGE_SESSIONINTERVAL;
-
-import java.net.URI;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 
 import org.jclouds.azure.storage.queue.config.AzureQueueContextModule;
-import org.jclouds.azure.storage.queue.config.RestAzureQueueConnectionModule;
-import org.jclouds.azure.storage.queue.reference.AzureQueueConstants;
-import org.jclouds.azure.storage.reference.AzureStorageConstants;
-import org.jclouds.cloud.CloudContextBuilder;
+import org.jclouds.azure.storage.queue.config.AzureQueueRestClientModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.rest.RestContextBuilder;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -56,27 +50,12 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  * @see AzureQueueContext
  */
-public class AzureQueueContextBuilder extends CloudContextBuilder<AzureQueueConnection> {
-   private static final TypeLiteral<AzureQueueConnection> connectionType = new TypeLiteral<AzureQueueConnection>() {
+public class AzureQueueContextBuilder extends RestContextBuilder<AzureQueueClient> {
+   private static final TypeLiteral<AzureQueueClient> connectionType = new TypeLiteral<AzureQueueClient>() {
    };
-
-   public AzureQueueContextBuilder(String id, String secret) {
-      this(new Properties());
-      properties.setProperty(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT, checkNotNull(id,
-               "azureStorageAccount"));
-      properties.setProperty(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY, checkNotNull(secret,
-               "azureStorageKey"));
-      String endpoint = properties.getProperty(AzureQueueConstants.PROPERTY_AZUREQUEUE_ENDPOINT);
-      properties.setProperty(AzureQueueConstants.PROPERTY_AZUREQUEUE_ENDPOINT, endpoint.replaceAll(
-               "\\{account\\}", id));
-      if (!properties.containsKey(PROPERTY_AZURESTORAGE_SESSIONINTERVAL))
-         this.withTimeStampExpiration(60);
-   }
 
    public AzureQueueContextBuilder(Properties properties) {
       super(connectionType, properties);
-      properties.setProperty(AzureQueueConstants.PROPERTY_AZUREQUEUE_ENDPOINT,
-               "https://{account}.queue.core.windows.net");
    }
 
    @Override
@@ -85,34 +64,11 @@ public class AzureQueueContextBuilder extends CloudContextBuilder<AzureQueueConn
    }
 
    @Override
-   protected void addConnectionModule(List<Module> modules) {
-      modules.add(new RestAzureQueueConnectionModule());
-   }
-
-   @Override
-   public AzureQueueContextBuilder withEndpoint(URI endpoint) {
-      String account = checkNotNull(properties
-               .getProperty(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT),
-               "azureStorageAccount");
-      properties.setProperty(AzureQueueConstants.PROPERTY_AZUREQUEUE_ENDPOINT, checkNotNull(
-               endpoint, "endpoint").toString());
-      properties.setProperty(AzureQueueConstants.PROPERTY_AZUREQUEUE_ENDPOINT, endpoint.toString()
-               .replaceAll("\\{account\\}", account));
-      return this;
+   protected void addClientModule(List<Module> modules) {
+      modules.add(new AzureQueueRestClientModule());
    }
 
    // below is to cast the builder to the correct type so that chained builder methods end correctly
-
-   @Override
-   public AzureQueueContext buildContext() {
-      Injector injector = buildInjector();
-      return injector.getInstance(AzureQueueContext.class);
-   }
-
-   @Override
-   public AzureQueueContextBuilder relaxSSLHostname() {
-      return (AzureQueueContextBuilder) super.relaxSSLHostname();
-   }
 
    @Override
    public AzureQueueContextBuilder withExecutorService(ExecutorService service) {
@@ -120,53 +76,8 @@ public class AzureQueueContextBuilder extends CloudContextBuilder<AzureQueueConn
    }
 
    @Override
-   public AzureQueueContextBuilder withHttpMaxRedirects(int httpMaxRedirects) {
-      return (AzureQueueContextBuilder) super.withHttpMaxRedirects(httpMaxRedirects);
-   }
-
-   @Override
-   public AzureQueueContextBuilder withHttpMaxRetries(int httpMaxRetries) {
-      return (AzureQueueContextBuilder) super.withHttpMaxRetries(httpMaxRetries);
-   }
-
-   @Override
-   public AzureQueueContextBuilder withModule(Module module) {
-      return (AzureQueueContextBuilder) super.withModule(module);
-   }
-
-   @Override
    public AzureQueueContextBuilder withModules(Module... modules) {
       return (AzureQueueContextBuilder) super.withModules(modules);
    }
 
-   @Override
-   public AzureQueueContextBuilder withPoolIoWorkerThreads(int poolIoWorkerThreads) {
-      return (AzureQueueContextBuilder) super.withPoolIoWorkerThreads(poolIoWorkerThreads);
-   }
-
-   @Override
-   public AzureQueueContextBuilder withPoolMaxConnectionReuse(int poolMaxConnectionReuse) {
-      return (AzureQueueContextBuilder) super.withPoolMaxConnectionReuse(poolMaxConnectionReuse);
-   }
-
-   @Override
-   public AzureQueueContextBuilder withPoolMaxConnections(int poolMaxConnections) {
-      return (AzureQueueContextBuilder) super.withPoolMaxConnections(poolMaxConnections);
-   }
-
-   @Override
-   public AzureQueueContextBuilder withPoolMaxSessionFailures(int poolMaxSessionFailures) {
-      return (AzureQueueContextBuilder) super.withPoolMaxSessionFailures(poolMaxSessionFailures);
-   }
-
-   @Override
-   public AzureQueueContextBuilder withPoolRequestInvokerThreads(int poolRequestInvokerThreads) {
-      return (AzureQueueContextBuilder) super
-               .withPoolRequestInvokerThreads(poolRequestInvokerThreads);
-   }
-
-   public AzureQueueContextBuilder withTimeStampExpiration(long seconds) {
-      getProperties().setProperty(PROPERTY_AZURESTORAGE_SESSIONINTERVAL, seconds + "");
-      return this;
-   }
 }

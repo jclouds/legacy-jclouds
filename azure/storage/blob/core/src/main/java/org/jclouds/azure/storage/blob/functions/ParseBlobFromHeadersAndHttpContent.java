@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -24,24 +24,78 @@
 package org.jclouds.azure.storage.blob.functions;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
+import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.azure.storage.blob.domain.Blob;
-import org.jclouds.azure.storage.blob.domain.BlobMetadata;
+import org.jclouds.azure.storage.blob.domain.AzureBlob;
 import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
+import org.jclouds.http.HttpException;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.rest.InvocationContext;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
+
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
 
 /**
- * Parses response headers and creates a new Azure Blob from them and the HTTP content.
+ * Parses response headers and creates a new AzureBlob from them and the HTTP content.
  * 
- * @see ParseSystemAndUserMetadataFromHeaders
+ * @see ParseMetadataFromHeaders
  * @author Adrian Cole
  */
-public class ParseBlobFromHeadersAndHttpContent extends
-         org.jclouds.blobstore.functions.ParseBlobFromHeadersAndHttpContent<BlobMetadata, Blob> {
+public class ParseBlobFromHeadersAndHttpContent implements Function<HttpResponse, AzureBlob>,
+         InvocationContext {
+
+   private final ParseBlobPropertiesFromHeaders metadataParser;
+   private final AzureBlob.Factory objectProvider;
+
    @Inject
-   public ParseBlobFromHeadersAndHttpContent(
-            ParseSystemAndUserMetadataFromHeaders<BlobMetadata> metadataParser,
-            Provider<Blob> blobFactory) {
-      super(metadataParser, blobFactory);
+   public ParseBlobFromHeadersAndHttpContent(ParseBlobPropertiesFromHeaders metadataParser,
+            AzureBlob.Factory objectProvider) {
+      this.metadataParser = metadataParser;
+      this.objectProvider = objectProvider;
    }
+
+   /**
+    * First, calls {@link ParseSystemAndUserMetadataFromHeaders}.
+    * 
+    * Then, sets the object size based on the Content-Length header and adds the content to the
+    * {@link AzureBlob} result.
+    * 
+    * @throws org.jclouds.http.HttpException
+    */
+   public AzureBlob apply(HttpResponse from) {
+      AzureBlob object = objectProvider.create(metadataParser.apply(from));
+      addAllHeadersTo(from, object);
+      object.setData(from.getContent());
+      attemptToParseSizeAndRangeFromHeaders(from, object);
+      return object;
+   }
+
+   @VisibleForTesting
+   void attemptToParseSizeAndRangeFromHeaders(HttpResponse from, AzureBlob object)
+            throws HttpException {
+      String contentLength = from.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH);
+      String contentRange = from.getFirstHeaderOrNull("Content-Range");
+
+      if (contentLength != null) {
+         object.setContentLength(Long.parseLong(contentLength));
+      }
+
+      if (contentRange == null && contentLength != null) {
+         object.getProperties().setSize(object.getContentLength());
+      } else if (contentRange != null) {
+         object.getProperties().setSize(
+                  Long.parseLong(contentRange.substring(contentRange.lastIndexOf('/') + 1)));
+      }
+   }
+
+   @VisibleForTesting
+   void addAllHeadersTo(HttpResponse from, AzureBlob object) {
+      object.getAllHeaders().putAll(from.getHeaders());
+   }
+
+   public void setContext(GeneratedHttpRequest<?> request) {
+      metadataParser.setContext(request);
+   }
+
 }

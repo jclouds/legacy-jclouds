@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -32,32 +32,40 @@ import javax.inject.Named;
 import javax.inject.Provider;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.blobstore.domain.BlobMetadata;
+import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
+import org.jclouds.rest.InvocationContext;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.DateService;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
 
 /**
  * @author Adrian Cole
  */
-public class ParseSystemAndUserMetadataFromHeaders<M extends BlobMetadata> extends
-         ParseContentTypeFromHeaders<M> {
+public class ParseSystemAndUserMetadataFromHeaders implements Function<HttpResponse, MutableBlobMetadata>,
+         InvocationContext {
    private final String metadataPrefix;
    private final DateService dateParser;
+   private final Provider<MutableBlobMetadata> metadataFactory;
+   private GeneratedHttpRequest<?> request;
 
    @Inject
-   public ParseSystemAndUserMetadataFromHeaders(DateService dateParser,
-            @Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix, Provider<M> metadataFactory) {
-      super(metadataFactory);
+   public ParseSystemAndUserMetadataFromHeaders(Provider<MutableBlobMetadata> metadataFactory,
+            DateService dateParser, @Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix) {
+      this.metadataFactory = metadataFactory;
       this.dateParser = dateParser;
       this.metadataPrefix = metadataPrefix;
    }
 
-   public M apply(HttpResponse from) {
-      M to = super.apply(from);
+   public MutableBlobMetadata apply(HttpResponse from) {
+      String objectKey = getKeyFor(from);
+      MutableBlobMetadata to = metadataFactory.get();
+      to.setName(objectKey);
+      setContentTypeOrThrowException(from, to);
       addETagTo(from, to);
       addContentMD5To(from, to);
       parseLastModifiedOrThrowException(from, to);
@@ -67,7 +75,7 @@ public class ParseSystemAndUserMetadataFromHeaders<M extends BlobMetadata> exten
    }
 
    @VisibleForTesting
-   void addUserMetadataTo(HttpResponse from, M metadata) {
+   void addUserMetadataTo(HttpResponse from, MutableBlobMetadata metadata) {
       for (Entry<String, String> header : from.getHeaders().entries()) {
          if (header.getKey() != null && header.getKey().startsWith(metadataPrefix))
             metadata.getUserMetadata().put(
@@ -77,7 +85,8 @@ public class ParseSystemAndUserMetadataFromHeaders<M extends BlobMetadata> exten
    }
 
    @VisibleForTesting
-   void setContentLengthOrThrowException(HttpResponse from, M metadata) throws HttpException {
+   void setContentLengthOrThrowException(HttpResponse from, MutableBlobMetadata metadata)
+            throws HttpException {
       String contentLength = from.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH);
       if (contentLength == null)
          throw new HttpException(HttpHeaders.CONTENT_LENGTH + " not found in headers");
@@ -86,7 +95,8 @@ public class ParseSystemAndUserMetadataFromHeaders<M extends BlobMetadata> exten
    }
 
    @VisibleForTesting
-   void parseLastModifiedOrThrowException(HttpResponse from, M metadata) throws HttpException {
+   void parseLastModifiedOrThrowException(HttpResponse from, MutableBlobMetadata metadata)
+            throws HttpException {
       String lastModified = from.getFirstHeaderOrNull(HttpHeaders.LAST_MODIFIED);
       if (lastModified == null)
          throw new HttpException(HttpHeaders.LAST_MODIFIED + " header not present in response: "
@@ -98,7 +108,7 @@ public class ParseSystemAndUserMetadataFromHeaders<M extends BlobMetadata> exten
    }
 
    @VisibleForTesting
-   protected void addETagTo(HttpResponse from, M metadata) {
+   protected void addETagTo(HttpResponse from, MutableBlobMetadata metadata) {
       String eTag = from.getFirstHeaderOrNull(HttpHeaders.ETAG);
       if (metadata.getETag() == null && eTag != null) {
          metadata.setETag(eTag);
@@ -106,10 +116,33 @@ public class ParseSystemAndUserMetadataFromHeaders<M extends BlobMetadata> exten
    }
 
    @VisibleForTesting
-   protected void addContentMD5To(HttpResponse from, M metadata) {
+   protected void addContentMD5To(HttpResponse from, MutableBlobMetadata metadata) {
       String contentMD5 = from.getFirstHeaderOrNull("Content-MD5");
       if (contentMD5 != null) {
          metadata.setContentMD5(HttpUtils.fromBase64String(contentMD5));
       }
+   }
+
+   protected String getKeyFor(HttpResponse from) {
+      String objectKey = request.getEndpoint().getPath();
+      if (objectKey.startsWith("/")) {
+         // Trim initial slash from object key name.
+         objectKey = objectKey.substring(1);
+      }
+      return objectKey;
+   }
+
+   @VisibleForTesting
+   void setContentTypeOrThrowException(HttpResponse from, MutableBlobMetadata metadata)
+            throws HttpException {
+      String contentType = from.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE);
+      if (contentType == null)
+         throw new HttpException(HttpHeaders.CONTENT_TYPE + " not found in headers");
+      else
+         metadata.setContentType(contentType);
+   }
+
+   public void setContext(GeneratedHttpRequest<?> request) {
+      this.request = request;
    }
 }

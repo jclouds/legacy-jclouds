@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -31,9 +31,11 @@ import javax.inject.Inject;
 import javax.servlet.ServletContextEvent;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.aws.s3.S3Context;
-import org.jclouds.aws.s3.S3ContextBuilder;
+import org.jclouds.aws.s3.S3Client;
+import org.jclouds.aws.s3.blobstore.S3BlobStoreContextBuilder;
+import org.jclouds.aws.s3.blobstore.S3BlobStorePropertiesBuilder;
 import org.jclouds.aws.s3.reference.S3Constants;
+import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.gae.config.GaeHttpCommandExecutorServiceModule;
 import org.jclouds.samples.googleappengine.GetAllBucketsController;
 
@@ -48,7 +50,7 @@ import com.google.inject.servlet.ServletModule;
  */
 public class GuiceServletConfig extends GuiceServletContextListener {
    @Inject
-   S3Context context;
+   BlobStoreContext<S3Client> context;
    String accessKeyId;
    String secretAccessKey;
 
@@ -76,8 +78,9 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 
    @Override
    protected Injector getInjector() {
-      return new S3ContextBuilder(accessKeyId, secretAccessKey).withModules(
-               new GaeHttpCommandExecutorServiceModule(), new ServletModule() {
+      return new S3BlobStoreContextBuilder(new S3BlobStorePropertiesBuilder(accessKeyId,
+               secretAccessKey).build()).withModules(new GaeHttpCommandExecutorServiceModule(),
+               new ServletModule() {
                   @Override
                   protected void configureServlets() {
                      serve("*.s3").with(GetAllBucketsController.class);

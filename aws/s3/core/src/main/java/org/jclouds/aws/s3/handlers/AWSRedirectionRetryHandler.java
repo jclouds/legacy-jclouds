@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -55,7 +55,7 @@ public class AWSRedirectionRetryHandler extends RedirectionRetryHandler {
    public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
       if (response.getFirstHeaderOrNull(HttpHeaders.LOCATION) == null
                && (response.getStatusCode() == 301 || response.getStatusCode() == 307)) {
-         byte[] content = Utils.closeConnectionButKeepContentStream(response);
+         byte[] content = Utils.closeClientButKeepContentStream(response);
          if (command.getRequest().getMethod() == HttpMethod.HEAD) {
             command.setMethod(HttpMethod.GET);
             return true;

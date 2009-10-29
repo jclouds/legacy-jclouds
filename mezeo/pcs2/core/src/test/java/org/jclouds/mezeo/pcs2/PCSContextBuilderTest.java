@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -29,20 +29,20 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jclouds.blobstore.integration.internal.StubBlobStore;
 import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.mezeo.pcs2.config.RestPCSBlobStoreModule;
-import org.jclouds.mezeo.pcs2.config.StubPCSBlobStoreModule;
-import org.jclouds.mezeo.pcs2.config.PCSContextModule.PCSContextImpl;
-import org.jclouds.mezeo.pcs2.internal.StubPCSConnection;
+import org.jclouds.mezeo.pcs2.config.PCSRestClientModule;
 import org.jclouds.mezeo.pcs2.reference.PCSConstants;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.RestContextImpl;
 import org.testng.annotations.Test;
 
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
 
 /**
- * Tests behavior of modules configured in PCSContextBuilder
+ * Tests behavior of modules configured in RestContext<PCSClient>Builder
  * 
  * @author Adrian Cole
  */
@@ -50,8 +50,7 @@ import com.google.inject.Module;
 public class PCSContextBuilderTest {
 
    public void testNewBuilder() {
-      PCSContextBuilder builder = new PCSContextBuilder(URI.create("https://localhost/pcsblob"),
-               "id", "secret");
+      PCSContextBuilder builder = newBuilder();
       assertEquals(builder.getProperties().getProperty(PCSConstants.PROPERTY_PCS2_ENDPOINT),
                "https://localhost/pcsblob");
       assertEquals(builder.getProperties().getProperty(PCSConstants.PROPERTY_PCS2_USER), "id");
@@ -60,39 +59,39 @@ public class PCSContextBuilderTest {
    }
 
    public void testBuildContext() {
-      PCSContext context = new PCSContextBuilder(URI.create("https://localhost/pcsblob"), "id",
-               "secret").withModule(new StubPCSBlobStoreModule()).buildContext();
-      assertEquals(context.getClass(), PCSContextImpl.class);
-      assertEquals(context.getApi().getClass(), StubPCSConnection.class);
-      assertEquals(context.getBlobStore().getClass(), StubBlobStore.class);
+      RestContext<PCSClient> context = newBuilder().buildContext();
+      assertEquals(context.getClass(), RestContextImpl.class);
       assertEquals(context.getAccount(), "id");
       assertEquals(context.getEndPoint(), URI.create("https://localhost/pcsblob"));
    }
 
    public void testBuildInjector() {
-      Injector i = new PCSContextBuilder(URI.create("https://localhost/pcsblob"), "id", "secret")
-               .buildInjector();
-      assert i.getInstance(PCSContext.class) != null;
-      // TODO: test all things taken from context
+      Injector i = newBuilder().buildInjector();
+      assert i.getInstance(Key.get(new TypeLiteral<RestContext<PCSClient>>() {
+      })) != null; // TODO: test all things taken from context
       assert i.getInstance(BasicAuthentication.class) != null;
    }
 
    protected void testAddContextModule() {
       List<Module> modules = new ArrayList<Module>();
-      PCSContextBuilder builder = new PCSContextBuilder(URI.create("https://localhost/pcsblob"),
-               "id", "secret");
+      PCSContextBuilder builder = newBuilder();
       builder.addContextModule(modules);
       assertEquals(modules.size(), 1);
-      assertEquals(modules.get(0).getClass(), RestPCSBlobStoreModule.class);
+      assertEquals(modules.get(0).getClass(), PCSRestClientModule.class);
    }
 
-   protected void addConnectionModule() {
+   private PCSContextBuilder newBuilder() {
+      PCSContextBuilder builder = new PCSContextBuilder(new PCSPropertiesBuilder(URI
+               .create("https://localhost/pcsblob"), "id", "secret").build());
+      return builder;
+   }
+
+   protected void addClientModule() {
       List<Module> modules = new ArrayList<Module>();
-      PCSContextBuilder builder = new PCSContextBuilder(URI.create("https://localhost/pcsblob"),
-               "id", "secret");
-      builder.addConnectionModule(modules);
+      PCSContextBuilder builder = newBuilder();
+      builder.addClientModule(modules);
       assertEquals(modules.size(), 1);
-      assertEquals(modules.get(0).getClass(), RestPCSBlobStoreModule.class);
+      assertEquals(modules.get(0).getClass(), PCSRestClientModule.class);
    }
 
 }

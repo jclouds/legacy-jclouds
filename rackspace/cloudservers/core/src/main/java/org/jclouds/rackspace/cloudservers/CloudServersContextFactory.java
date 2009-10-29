@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -24,10 +24,12 @@
 package org.jclouds.rackspace.cloudservers;
 
 import java.net.URI;
+import java.util.Properties;
 
-import org.jclouds.cloud.CloudContext;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.rackspace.RackspacePropertiesBuilder;
+import org.jclouds.rest.RestContext;
 
 import com.google.inject.Module;
 
@@ -45,14 +47,21 @@ import com.google.inject.Module;
  */
 public class CloudServersContextFactory {
 
-   public static CloudContext<CloudServersConnection> createContext(String user,
-            String key, Module... modules) {
-      return new CloudServersContextBuilder(user, key).withModules(modules).buildContext();
+   public static RestContext<CloudServersClient> createContext(String user, String key,
+            Module... modules) {
+      return new CloudServersContextBuilder(new RackspacePropertiesBuilder(user, key).build())
+               .withModules(modules).buildContext();
    }
 
-   public static CloudContext<CloudServersConnection> createContext(URI endpoint,
-            String user, String key, Module... modules) {
-      return new CloudServersContextBuilder(user, key).withEndpoint(endpoint).withModules(modules)
-               .buildContext();
+   public static RestContext<CloudServersClient> createContext(URI endpoint, String user,
+            String key, Module... modules) {
+      return new CloudServersContextBuilder(new RackspacePropertiesBuilder(user, key).withEndpoint(
+               endpoint).build()).withModules(modules).buildContext();
    }
+
+   public static RestContext<CloudServersClient> createContext(Properties props, Module... modules) {
+      return new CloudServersContextBuilder(new RackspacePropertiesBuilder(props).build())
+               .withModules(modules).buildContext();
+   }
+
 }

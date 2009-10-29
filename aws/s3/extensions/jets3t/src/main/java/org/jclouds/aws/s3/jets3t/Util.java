@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -27,7 +27,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -40,6 +39,8 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.aws.s3.domain.CannedAccessPolicy;
 import org.jclouds.aws.s3.domain.CanonicalUser;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
+import org.jclouds.aws.s3.domain.ObjectMetadata;
+import org.jclouds.aws.s3.domain.ObjectMetadata.StorageClass;
 import org.jclouds.aws.s3.options.CopyObjectOptions;
 import org.jclouds.aws.s3.options.ListBucketOptions;
 import org.jclouds.aws.s3.options.PutObjectOptions;
@@ -59,7 +60,6 @@ import org.jets3t.service.model.S3Owner;
 import org.jets3t.service.utils.RestUtils;
 import org.joda.time.DateTime;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 /**
@@ -89,39 +89,26 @@ public class Util {
 
    public static S3Object[] convertObjectHeads(ListBucketResponse jcBucket) {
       List<S3Object> jsObjects = new ArrayList<S3Object>(jcBucket.size());
-      for (org.jclouds.aws.s3.domain.ObjectMetadata jcObjectMD : jcBucket) {
+      for (ObjectMetadata jcObjectMD : jcBucket) {
          jsObjects.add(convertObjectHead(jcObjectMD));
       }
       return (S3Object[]) jsObjects.toArray(new S3Object[jsObjects.size()]);
    }
 
-   public static S3Object convertObjectHead(org.jclouds.aws.s3.domain.ObjectMetadata jcObjectMD) {
-      S3Object jsObject = new S3Object(jcObjectMD.getName());
+   public static S3Object convertObjectHead(ObjectMetadata jcObjectMD) {
+      S3Object jsObject = new S3Object(jcObjectMD.getKey());
       if (jcObjectMD.getOwner() != null) {
          jsObject.setOwner(new S3Owner(jcObjectMD.getOwner().getId(), jcObjectMD.getOwner()
                   .getDisplayName()));
       }
-      DateService dateService = new DateService();
-
-      for (Entry<String, Collection<String>> entry : jcObjectMD.getAllHeaders().asMap().entrySet()) {
-         String key = entry.getKey();
-         if (key != null) { // TODO: Why is there a null-keyed item in the map?
-            Object value = Iterables.get(entry.getValue(), 0);
-
-            // Work around JetS3t bug when adding date items as Strings
-            if (S3Object.METADATA_HEADER_LAST_MODIFIED_DATE.equals(key)) {
-               value = dateService.rfc822DateParse(value.toString()).toDate();
-            } else if (S3Object.METADATA_HEADER_DATE.equals(key)) {
-               value = dateService.rfc822DateParse(value.toString()).toDate();
-            }
-
-            if (key.startsWith("x-amz-meta-")) {
-               key = key.substring("x-amz-meta-".length());
-            }
-
-            jsObject.addMetadata(key, value);
-         }
-      }
+      jsObject.setContentLength(jcObjectMD.getSize());
+      jsObject.setContentDisposition(jcObjectMD.getContentDisposition());
+      jsObject.setContentEncoding(jcObjectMD.getContentEncoding());
+      jsObject.setLastModifiedDate(jcObjectMD.getLastModified().toDate());
+      jsObject.setETag(jcObjectMD.getETag());
+      jsObject.setMd5Hash(jcObjectMD.getContentMD5());
+      jsObject.addAllMetadata(jcObjectMD.getUserMetadata());
+      jsObject.addMetadata(S3Object.METADATA_HEADER_DATE, jcObjectMD.getLastModified().toDate());
       return jsObject;
    }
 
@@ -142,17 +129,16 @@ public class Util {
    }
 
    @SuppressWarnings("unchecked")
-   public static org.jclouds.aws.s3.domain.S3Object convertObject(S3Object jsObject)
-            throws S3ServiceException {
-      org.jclouds.aws.s3.domain.S3Object jcObject = new org.jclouds.aws.s3.domain.S3Object(jsObject
-               .getKey());
-
+   public static org.jclouds.aws.s3.domain.S3Object convertObject(S3Object jsObject,
+            org.jclouds.aws.s3.domain.S3Object jcObject) throws S3ServiceException {
+      jcObject.getMetadata().setKey(jsObject.getKey());
       jcObject.getMetadata().setCacheControl((String) jsObject.getMetadata("Cache-Control"));
       jcObject.getMetadata().setContentDisposition(jsObject.getContentDisposition());
       jcObject.getMetadata().setContentEncoding(jsObject.getContentEncoding());
       jcObject.getMetadata().setLastModified(new DateTime(jsObject.getLastModifiedDate()));
-      jcObject.getMetadata().setSize(jsObject.getContentLength());
-      jcObject.getMetadata().setStorageClass(jsObject.getStorageClass());
+      jcObject.setContentLength(jsObject.getContentLength());
+      if (jsObject.getStorageClass() != null)
+         jcObject.getMetadata().setStorageClass(StorageClass.valueOf(jsObject.getStorageClass()));
 
       if (jsObject.getMd5HashAsHex() != null) {
          jcObject.getMetadata().setETag(jsObject.getMd5HashAsHex());
@@ -214,7 +200,7 @@ public class Util {
    }
 
    public static ListBucketOptions convertListObjectOptions(String prefix, String marker,
-            String delimiter, Long maxKeys) throws UnsupportedEncodingException {
+            String delimiter, Integer maxKeys) throws UnsupportedEncodingException {
       ListBucketOptions options = new ListBucketOptions();
       if (prefix != null) {
          options.withPrefix(prefix);

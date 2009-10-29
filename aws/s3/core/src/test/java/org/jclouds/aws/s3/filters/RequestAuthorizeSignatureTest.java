@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -30,7 +30,7 @@ import java.net.URI;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.aws.s3.config.RestS3ConnectionModule;
+import org.jclouds.aws.s3.config.S3RestClientModule;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.config.ParserModule;
@@ -139,7 +139,7 @@ public class RequestAuthorizeSignatureTest {
     */
    @BeforeClass
    protected void createFilter() {
-      injector = Guice.createInjector(new RestS3ConnectionModule(), new ParserModule(),
+      injector = Guice.createInjector(new S3RestClientModule(), new ParserModule(),
                new AbstractModule() {
 
                   protected void configure() {

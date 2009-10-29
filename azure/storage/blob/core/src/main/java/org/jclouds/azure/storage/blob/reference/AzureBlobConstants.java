@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -32,4 +32,6 @@ import org.jclouds.azure.storage.reference.AzureStorageConstants;
  */
 public interface AzureBlobConstants extends AzureStorageConstants {
    public static final String PROPERTY_AZUREBLOB_ENDPOINT = "jclouds.azureblob.endpoint";
+   public static final String PROPERTY_AZUREBLOB_METADATA_PREFIX = "jclouds.azureblob.metaprefix";
+
 }

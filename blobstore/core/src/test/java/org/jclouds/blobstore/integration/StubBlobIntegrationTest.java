@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -24,10 +24,7 @@
 package org.jclouds.blobstore.integration;
 
 import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
-import org.jclouds.blobstore.internal.ContainerMetadataImpl;
 import org.testng.annotations.Test;
 
 /**
@@ -35,8 +32,7 @@ import org.testng.annotations.Test;
  * @author James Murty
  * @author Adrian Cole
  */
-@Test(groups = { "integration"}, testName = "blobstore.StubBlobIntegrationTest")
-public class StubBlobIntegrationTest extends
-         BaseBlobIntegrationTest<BlobStore<ContainerMetadataImpl, BlobMetadata, Blob<BlobMetadata>>, ContainerMetadataImpl, BlobMetadata, Blob<BlobMetadata>> {
- 
+@Test(groups = { "integration" }, testName = "blobstore.StubBlobIntegrationTest")
+public class StubBlobIntegrationTest extends BaseBlobIntegrationTest<BlobStore> {
+
 }

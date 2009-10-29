@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,25 +23,15 @@
  */
 package org.jclouds.azure.storage.blob;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY_AZURESTORAGE_SESSIONINTERVAL;
-import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
-
-import java.net.URI;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 
 import org.jclouds.azure.storage.blob.config.AzureBlobContextModule;
-import org.jclouds.azure.storage.blob.config.RestAzureBlobStoreModule;
-import org.jclouds.azure.storage.blob.domain.Blob;
-import org.jclouds.azure.storage.blob.domain.BlobMetadata;
-import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
-import org.jclouds.azure.storage.blob.reference.AzureBlobConstants;
-import org.jclouds.azure.storage.reference.AzureStorageConstants;
-import org.jclouds.blobstore.BlobStoreContextBuilder;
+import org.jclouds.azure.storage.blob.config.AzureBlobRestClientModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.rest.RestContextBuilder;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -57,107 +47,15 @@ import com.google.inject.TypeLiteral;
  * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
- * @author Adrian Cole, Andrew Newdigate
- * @see AzureBlobContext
+ * @author Adrian Cole
+ * @see AzureBlobClient
  */
-public class AzureBlobContextBuilder extends
-         BlobStoreContextBuilder<AzureBlobConnection, ContainerMetadata, BlobMetadata, Blob> {
+public class AzureBlobContextBuilder extends RestContextBuilder<AzureBlobClient> {
+   private static final TypeLiteral<AzureBlobClient> connectionType = new TypeLiteral<AzureBlobClient>() {
+   };
 
-   @Override
-   public AzureBlobContext buildContext() {
-      return this.buildInjector().getInstance(AzureBlobContext.class);
-   }
-
-   public AzureBlobContextBuilder(Properties props) {
-      super(new TypeLiteral<AzureBlobConnection>() {
-      }, new TypeLiteral<ContainerMetadata>() {
-      }, new TypeLiteral<BlobMetadata>() {
-      }, new TypeLiteral<Blob>() {
-      }, props);
-      properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "x-ms-meta-");
-      properties.setProperty(AzureBlobConstants.PROPERTY_AZUREBLOB_ENDPOINT,
-               "https://{account}.blob.core.windows.net");
-      if (!properties.containsKey(PROPERTY_AZURESTORAGE_SESSIONINTERVAL))
-         this.withTimeStampExpiration(60);
-   }
-
-   public AzureBlobContextBuilder(String id, String secret) {
-      this(new Properties());
-      properties.setProperty(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT, checkNotNull(id,
-               "azureStorageAccount"));
-      properties.setProperty(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY, checkNotNull(secret,
-               "azureStorageKey"));
-      String endpoint = properties.getProperty(AzureBlobConstants.PROPERTY_AZUREBLOB_ENDPOINT);
-      properties.setProperty(AzureBlobConstants.PROPERTY_AZUREBLOB_ENDPOINT, endpoint.replaceAll(
-               "\\{account\\}", id));
-   }
-
-   @Override
-   public AzureBlobContextBuilder relaxSSLHostname() {
-      return (AzureBlobContextBuilder) super.relaxSSLHostname();
-   }
-
-   @Override
-   public AzureBlobContextBuilder withExecutorService(ExecutorService service) {
-      return (AzureBlobContextBuilder) super.withExecutorService(service);
-   }
-
-   @Override
-   public AzureBlobContextBuilder withHttpMaxRedirects(int httpMaxRedirects) {
-      return (AzureBlobContextBuilder) super.withHttpMaxRedirects(httpMaxRedirects);
-   }
-
-   @Override
-   public AzureBlobContextBuilder withHttpMaxRetries(int httpMaxRetries) {
-      return (AzureBlobContextBuilder) super.withHttpMaxRetries(httpMaxRetries);
-   }
-
-   @Override
-   public AzureBlobContextBuilder withModule(Module module) {
-      return (AzureBlobContextBuilder) super.withModule(module);
-   }
-
-   @Override
-   public AzureBlobContextBuilder withModules(Module... modules) {
-      return (AzureBlobContextBuilder) super.withModules(modules);
-   }
-
-   @Override
-   public AzureBlobContextBuilder withPoolIoWorkerThreads(int poolIoWorkerThreads) {
-      return (AzureBlobContextBuilder) super.withPoolIoWorkerThreads(poolIoWorkerThreads);
-   }
-
-   @Override
-   public AzureBlobContextBuilder withPoolMaxConnectionReuse(int poolMaxConnectionReuse) {
-      return (AzureBlobContextBuilder) super.withPoolMaxConnectionReuse(poolMaxConnectionReuse);
-   }
-
-   @Override
-   public AzureBlobContextBuilder withPoolMaxConnections(int poolMaxConnections) {
-      return (AzureBlobContextBuilder) super.withPoolMaxConnections(poolMaxConnections);
-   }
-
-   @Override
-   public AzureBlobContextBuilder withRequestTimeout(long milliseconds) {
-      return (AzureBlobContextBuilder) super.withRequestTimeout(milliseconds);
-   }
-
-   @Override
-   public AzureBlobContextBuilder withPoolMaxSessionFailures(int poolMaxSessionFailures) {
-      return (AzureBlobContextBuilder) super.withPoolMaxSessionFailures(poolMaxSessionFailures);
-   }
-
-   @Override
-   public AzureBlobContextBuilder withPoolRequestInvokerThreads(int poolRequestInvokerThreads) {
-      return (AzureBlobContextBuilder) super
-               .withPoolRequestInvokerThreads(poolRequestInvokerThreads);
-   }
-
-   @Override
-   public AzureBlobContextBuilder withEndpoint(URI endpoint) {
-      properties.setProperty(AzureBlobConstants.PROPERTY_AZUREBLOB_ENDPOINT, checkNotNull(endpoint,
-               "endpoint").toString());
-      return (AzureBlobContextBuilder) this;
+   public AzureBlobContextBuilder(Properties properties) {
+      super(connectionType, properties);
    }
 
    @Override
@@ -166,12 +64,20 @@ public class AzureBlobContextBuilder extends
    }
 
    @Override
-   protected void addConnectionModule(List<Module> modules) {
-      modules.add(new RestAzureBlobStoreModule());
+   protected void addClientModule(List<Module> modules) {
+      modules.add(new AzureBlobRestClientModule());
    }
 
-   public AzureBlobContextBuilder withTimeStampExpiration(long seconds) {
-      getProperties().setProperty(PROPERTY_AZURESTORAGE_SESSIONINTERVAL, seconds + "");
-      return this;
+   // below is to cast the builder to the correct type so that chained builder methods end correctly
+
+   @Override
+   public AzureBlobContextBuilder withExecutorService(ExecutorService service) {
+      return (AzureBlobContextBuilder) super.withExecutorService(service);
    }
+
+   @Override
+   public AzureBlobContextBuilder withModules(Module... modules) {
+      return (AzureBlobContextBuilder) super.withModules(modules);
+   }
+
 }

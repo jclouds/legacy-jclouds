@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -27,7 +27,10 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Map;
 
-import org.jclouds.blobstore.domain.BlobMetadata;
+import org.jclouds.blobstore.internal.InputStreamMapImpl;
+import org.jclouds.blobstore.options.ListOptions;
+
+import com.google.inject.ImplementedBy;
 
 /**
  * Map view of an {@link org.jclouds.aws.s3.domain.S3Bucket}. Provides additional methods for
@@ -41,9 +44,10 @@ import org.jclouds.blobstore.domain.BlobMetadata;
  * 
  * @author Adrian Cole
  */
-public interface InputStreamMap<M extends BlobMetadata> extends ListableMap<M, String, InputStream> {
-   public static interface Factory<M extends BlobMetadata> {
-      InputStreamMap<M> create(String containerName);
+@ImplementedBy(InputStreamMapImpl.class)
+public interface InputStreamMap extends ListableMap<String, InputStream> {
+   public static interface Factory {
+      InputStreamMap create(String containerName, ListOptions listOptions);
    }
 
    InputStream putString(String key, String value);

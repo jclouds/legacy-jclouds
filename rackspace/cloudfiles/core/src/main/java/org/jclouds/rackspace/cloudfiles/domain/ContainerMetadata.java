@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,35 +23,51 @@
  */
 package org.jclouds.rackspace.cloudfiles.domain;
 
+
 /**
  * 
  * @author Adrian Cole
  * 
  */
-public class ContainerMetadata extends org.jclouds.blobstore.internal.ContainerMetadataImpl {
+public class ContainerMetadata implements Comparable<ContainerMetadata> {
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 2925863715029426128L;
+   private String name;
    private long count;
    private long bytes;
 
    public ContainerMetadata() {
-      super();
-   }
-
-   public ContainerMetadata(String name) {
-      super(name);
    }
 
    public ContainerMetadata(String name, long count, long bytes) {
-      super(name);
+      this();
+      setName(name);
+      setBytes(bytes);
+      setCount(count);
+   }
+
+   public long getCount() {
+      return count;
+   }
+
+   public void setCount(long count) {
       this.count = count;
+   }
+
+   public void setName(String name) {
+      this.name = name;
+   }
+
+   public String getName() {
+      return name;
+   }
+
+   public void setBytes(long bytes) {
       this.bytes = bytes;
    }
 
-   @Override
-   public String toString() {
-      StringBuilder builder = new StringBuilder();
-      builder.append("ContainerMetadata [bytes=").append(bytes).append(", count=").append(count)
-               .append(", name=").append(name).append("]");
-      return builder.toString();
+   public long getBytes() {
+      return bytes;
    }
 
    @Override
@@ -85,16 +101,10 @@ public class ContainerMetadata extends org.jclouds.blobstore.internal.ContainerM
       return true;
    }
 
-   public String getName() {
-      return name;
-   }
-
-   public long getCount() {
-      return count;
-   }
-
-   public long getBytes() {
-      return bytes;
+   public int compareTo(ContainerMetadata o) {
+      if (getName() == null)
+         return -1;
+      return (this == o) ? 0 : getName().compareTo(o.getName());
    }
 
 }

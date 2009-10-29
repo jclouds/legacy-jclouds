@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -29,8 +29,8 @@ import java.util.TreeSet;
 
 import javax.inject.Inject;
 
-import org.jclouds.azure.storage.domain.BoundedSortedSet;
-import org.jclouds.azure.storage.domain.BoundedTreeSet;
+import org.jclouds.azure.storage.domain.BoundedList;
+import org.jclouds.azure.storage.domain.internal.BoundedTreeSet;
 import org.jclouds.azure.storage.queue.domain.QueueMetadata;
 import org.jclouds.http.functions.ParseSax;
 
@@ -43,15 +43,15 @@ import org.jclouds.http.functions.ParseSax;
  * @author Adrian Cole
  */
 public class AccountNameEnumerationResultsHandler extends
-         ParseSax.HandlerWithResult<BoundedSortedSet<QueueMetadata>> {
+         ParseSax.HandlerWithResult<BoundedList<QueueMetadata>> {
 
    private SortedSet<QueueMetadata> metadata = new TreeSet<QueueMetadata>();
+   private URI currentUrl;
    private String prefix;
    private String marker;
    private int maxResults;
    private String nextMarker;
    private String currentName;
-   private URI currentUrl;
 
    private StringBuilder currentText = new StringBuilder();
 
@@ -59,8 +59,9 @@ public class AccountNameEnumerationResultsHandler extends
    public AccountNameEnumerationResultsHandler() {
    }
 
-   public BoundedSortedSet<QueueMetadata> getResult() {
-      return new BoundedTreeSet<QueueMetadata>(metadata, prefix, marker, maxResults, nextMarker);
+   public BoundedList<QueueMetadata> getResult() {
+      return new BoundedTreeSet<QueueMetadata>(metadata, currentUrl, prefix, marker, maxResults,
+               nextMarker);
    }
 
    public void endElement(String uri, String name, String qName) {

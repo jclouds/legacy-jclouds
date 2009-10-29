@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -37,9 +37,9 @@ import com.google.common.collect.Multimap;
  * <p/>
  * <code>
  * import static org.jclouds.mezeo.pcs2.options.PutFileOptions.Builder.*
- * import org.jclouds.mezeo.pcs2.PCSConnection;
+ * import org.jclouds.mezeo.pcs2.PCSClient;
  * <p/>
- * PCSConnection connection = // get connection
+ * PCSClient connection = // get connection
  * Future<Void> added = connection.appendFile("container",range(0,3));
  * <code>
  * 

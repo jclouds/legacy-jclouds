@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -24,16 +24,13 @@
 package org.jclouds.blobstore.integration.internal;
 
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ContainerMetadata;
 import org.testng.ITestContext;
 
 import com.google.inject.Module;
 
-public abstract class BaseTestInitializer<S, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>> {
+public abstract class BaseTestInitializer<S> {
 
-   public BlobStoreContext<S, C, M, B> init(Module configurationModule, ITestContext testContext)
+   public BlobStoreContext<S> init(Module configurationModule, ITestContext testContext)
             throws Exception {
       String endpoint = System.getProperty("jclouds.test.endpoint");
       String app = System.getProperty("jclouds.test.app");
@@ -54,8 +51,8 @@ public abstract class BaseTestInitializer<S, C extends ContainerMetadata, M exte
       }
    }
 
-   protected abstract BlobStoreContext<S, C, M, B> createStubContext();
+   protected abstract BlobStoreContext<S> createStubContext();
 
-   protected abstract BlobStoreContext<S, C, M, B> createLiveContext(Module configurationModule,
-            String url, String app, String account, String key);
+   protected abstract BlobStoreContext<S> createLiveContext(Module configurationModule, String url,
+            String app, String account, String key);
 }

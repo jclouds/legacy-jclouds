@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,41 +23,31 @@
  */
 package org.jclouds.blobstore.functions;
 
-import java.io.IOException;
-
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.internal.BlobRuntimeException;
 
 import com.google.common.base.Function;
 
-public class ObjectMD5<M extends BlobMetadata, B extends Blob<M>> implements
-         Function<Object, byte[]> {
+public class ObjectMD5 implements Function<Object, byte[]> {
 
-   protected final Provider<B> blobFactory;
+   protected final Blob.Factory blobFactory;
 
    @Inject
-   ObjectMD5(Provider<B> blobFactory) {
+   ObjectMD5(Blob.Factory blobFactory) {
       this.blobFactory = blobFactory;
    }
 
    public byte[] apply(Object from) {
-      Blob<?> object;
-      if (from instanceof Blob<?>) {
-         object = (Blob<?>) from;
+      Blob object;
+      if (from instanceof Blob) {
+         object = (Blob) from;
       } else {
-         object = blobFactory.get();
+         object = blobFactory.create(null);
          object.setData(from);
       }
       if (object.getMetadata().getContentMD5() == null)
-         try {
-            object.generateMD5();
-         } catch (IOException e) {
-            throw new BlobRuntimeException("couldn't get MD5 for: " + from, e);
-         }
+         object.generateMD5();
       return object.getMetadata().getContentMD5();
    }
 

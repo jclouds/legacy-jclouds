@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -35,9 +35,9 @@ import com.google.common.collect.Multimap;
  * <p/>
  * <code>
  * import static org.jclouds.azure.storage.blob.options.CreateContainerOptions.Builder.*
- * import org.jclouds.azure.storage.blob.AzureBlobConnection;
+ * import org.jclouds.azure.storage.blob.AzureBlobClient;
  * <p/>
- * AzureBlobConnection connection = // get connection
+ * AzureBlobClient connection = // get connection
  * boolean createdWithPublicAcl = connection.createContainer("containerName", withPublicAcl());
  * <code> *
  * 

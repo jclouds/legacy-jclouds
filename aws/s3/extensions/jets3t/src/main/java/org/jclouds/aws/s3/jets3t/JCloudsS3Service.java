@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -32,10 +32,9 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.aws.s3.S3BlobStore;
-import org.jclouds.aws.s3.S3Connection;
-import org.jclouds.aws.s3.S3ContextFactory;
-import org.jclouds.aws.s3.domain.BucketMetadata;
+import org.jclouds.aws.s3.S3Client;
+import org.jclouds.aws.s3.blobstore.S3BlobStore;
+import org.jclouds.aws.s3.blobstore.S3BlobStoreContextFactory;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.options.CopyObjectOptions;
@@ -65,8 +64,8 @@ public class JCloudsS3Service extends S3Service {
 
    private static final long serialVersionUID = 1L;
 
-   private final BlobStoreContext<S3Connection, BucketMetadata, ObjectMetadata, org.jclouds.aws.s3.domain.S3Object> context;
-   private final S3Connection connection;
+   private final BlobStoreContext<S3Client> context;
+   private final S3Client connection;
 
    private final long requestTimeoutMilliseconds = 10000;
 
@@ -83,8 +82,8 @@ public class JCloudsS3Service extends S3Service {
    protected JCloudsS3Service(AWSCredentials awsCredentials, Module... modules)
             throws S3ServiceException {
       super(awsCredentials);
-      context = S3ContextFactory.createContext(awsCredentials.getAccessKey(), awsCredentials
-               .getSecretKey(), modules);
+      context = S3BlobStoreContextFactory.createContext(awsCredentials.getAccessKey(),
+               awsCredentials.getSecretKey(), modules);
       connection = context.getApi();
    }
 
@@ -106,9 +105,9 @@ public class JCloudsS3Service extends S3Service {
       try {
          CopyObjectOptions options = Util.convertCopyObjectOptions(acl, destinationMetadata,
                   ifModifiedSince, ifUnmodifiedSince, ifMatchTags, ifNoneMatchTags);
-         org.jclouds.aws.s3.domain.ObjectMetadata jcObjectMetadata = connection.copyObject(
-                  sourceBucketName, sourceObjectKey, destinationBucketName, destinationObjectKey,
-                  options).get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
+         ObjectMetadata jcObjectMetadata = connection.copyObject(sourceBucketName, sourceObjectKey,
+                  destinationBucketName, destinationObjectKey, options).get(
+                  requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
 
          Map map = new HashMap();
          // Result fields returned when copy is successful.
@@ -266,7 +265,7 @@ public class JCloudsS3Service extends S3Service {
    protected S3Bucket[] listAllBucketsImpl() throws S3ServiceException {
       try {
          SortedSet<org.jclouds.aws.s3.domain.BucketMetadata> jcBucketList = connection
-                  .listOwnedBuckets();
+                  .listOwnedBuckets().get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
          return Util.convertBuckets(jcBucketList);
       } catch (Exception e) {
          Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
@@ -284,7 +283,7 @@ public class JCloudsS3Service extends S3Service {
          ListBucketResponse jcBucket = null;
          do {
             ListBucketOptions options = Util.convertListObjectOptions(prefix, priorLastKey,
-                     delimiter, maxListingLength);
+                     delimiter, (int) maxListingLength);
 
             jcBucket = connection.listBucket(bucketName, options).get(requestTimeoutMilliseconds,
                      TimeUnit.MILLISECONDS);
@@ -351,7 +350,7 @@ public class JCloudsS3Service extends S3Service {
    protected S3Object putObjectImpl(String bucketName, S3Object jsObject) throws S3ServiceException {
       try {
          PutObjectOptions options = Util.convertPutObjectOptions(jsObject.getAcl());
-         org.jclouds.aws.s3.domain.S3Object jcObject = Util.convertObject(jsObject);
+         org.jclouds.aws.s3.domain.S3Object jcObject = Util.convertObject(jsObject, connection.newS3Object());
          String eTag = connection.putObject(bucketName, jcObject, options).get(
                   requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
          jsObject.setETag(eTag);

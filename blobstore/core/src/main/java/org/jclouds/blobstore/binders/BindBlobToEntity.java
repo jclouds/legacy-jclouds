@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -35,7 +35,7 @@ import org.jclouds.rest.Binder;
 public class BindBlobToEntity implements Binder {
 
    public void bindToRequest(HttpRequest request, Object entity) {
-      Blob<?> object = (Blob<?>) entity;
+      Blob object = (Blob) entity;
 
       request.setEntity(checkNotNull(object.getData(), "object.getContent()"));
       request.getHeaders()
@@ -44,7 +44,7 @@ public class BindBlobToEntity implements Binder {
                         checkNotNull(object.getMetadata().getContentType(),
                                  "object.metadata.contentType()"));
 
-      request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, object.getMetadata().getSize() + "");
+      request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, object.getContentLength() + "");
 
       if (object.getMetadata().getContentMD5() != null) {
          request.getHeaders().put("Content-MD5",

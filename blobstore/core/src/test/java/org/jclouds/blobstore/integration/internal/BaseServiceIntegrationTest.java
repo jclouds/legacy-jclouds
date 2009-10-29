@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -24,24 +24,23 @@
 package org.jclouds.blobstore.integration.internal;
 
 import java.util.SortedSet;
+import java.util.concurrent.TimeUnit;
 
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ContainerMetadata;
-import org.jclouds.blobstore.internal.ContainerMetadataImpl;
+import org.jclouds.blobstore.domain.ResourceMetadata;
+import org.jclouds.blobstore.domain.internal.MutableResourceMetadataImpl;
 import org.testng.annotations.Test;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class BaseServiceIntegrationTest<S, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
-         extends BaseBlobStoreIntegrationTest<S, C, M, B> {
+public class BaseServiceIntegrationTest<S> extends BaseBlobStoreIntegrationTest<S> {
 
    @Test(groups = { "integration", "live" })
    void containerDoesntExist() throws Exception {
-      SortedSet<C> list = context.getBlobStore().listContainers();
-      assert !list.contains(new ContainerMetadataImpl("shouldntexist"));
+      SortedSet<? extends ResourceMetadata> list = context.getBlobStore().list().get(30,
+               TimeUnit.SECONDS);
+      assert !list.contains(new MutableResourceMetadataImpl());
    }
 
 }

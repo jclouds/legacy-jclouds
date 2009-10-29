@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -40,7 +40,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.IOUtils;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.http.HttpUtils;
-import org.jclouds.http.HttpUtils.MD5InputStreamResult;
 import org.jclouds.logging.Logger;
 import org.testng.annotations.Test;
 
@@ -66,10 +65,9 @@ public class WireLiveTest {
          InputStream in = wire.input(fromServer);
          ByteArrayOutputStream out = new ByteArrayOutputStream();
          IOUtils.copy(in, out);
-         MD5InputStreamResult compare = HttpUtils.generateMD5Result(new ByteArrayInputStream(out
-                  .toByteArray()));
+         byte[] compare = HttpUtils.md5(new ByteArrayInputStream(out.toByteArray()));
          Thread.sleep(100);
-         assertEquals(HttpUtils.toHexString(compare.eTag), checkNotNull(sysHttpStreamMd5,
+         assertEquals(HttpUtils.toHexString(compare), checkNotNull(sysHttpStreamMd5,
                   sysHttpStreamMd5));
          assertEquals(((BufferLogger) wire.wireLog).buff.toString().getBytes().length, 3331484);
          return null;
@@ -149,10 +147,9 @@ public class WireLiveTest {
       URLConnection connection = url.openConnection();
       Wire wire = setUp();
       InputStream in = wire.input(connection.getInputStream());
-      MD5InputStreamResult compare = HttpUtils.generateMD5Result(in);
+      byte[] compare = HttpUtils.md5(in);
       Thread.sleep(100);
-      assertEquals(HttpUtils.toHexString(compare.eTag), checkNotNull(sysHttpStreamMd5,
-               sysHttpStreamMd5));
+      assertEquals(HttpUtils.toHexString(compare), checkNotNull(sysHttpStreamMd5, sysHttpStreamMd5));
       assertEquals(((BufferLogger) wire.wireLog).buff.toString().getBytes().length, 3331484);
    }
 
@@ -171,10 +168,9 @@ public class WireLiveTest {
       URLConnection connection = url.openConnection();
       Wire wire = setUpSynch();
       InputStream in = wire.input(connection.getInputStream());
-      MD5InputStreamResult compare = HttpUtils.generateMD5Result(in);
+      byte[] compare = HttpUtils.md5(in);
       Thread.sleep(100);
-      assertEquals(HttpUtils.toHexString(compare.eTag), checkNotNull(sysHttpStreamMd5,
-               sysHttpStreamMd5));
+      assertEquals(HttpUtils.toHexString(compare), checkNotNull(sysHttpStreamMd5, sysHttpStreamMd5));
       assertEquals(((BufferLogger) wire.wireLog).buff.toString().getBytes().length, 3331484);
    }
 

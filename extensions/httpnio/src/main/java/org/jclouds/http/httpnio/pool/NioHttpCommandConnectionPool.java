@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.nio.charset.UnmappableCharacterException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutorService;
@@ -58,7 +60,6 @@ import org.jclouds.http.pool.HttpCommandConnectionHandle;
 import org.jclouds.http.pool.HttpCommandConnectionPool;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.inject.assistedinject.Assisted;
 
 /**
  * Connection Pool for HTTP requests that utilizes Apache HTTPNio
@@ -87,14 +88,19 @@ public class NioHttpCommandConnectionPool extends HttpCommandConnectionPool<NHtt
    public NioHttpCommandConnectionPool(ExecutorService executor, Semaphore allConnections,
             BlockingQueue<HttpCommandRendezvous<?>> commandQueue,
             BlockingQueue<NHttpConnection> available, AsyncNHttpClientHandler clientHandler,
-            DefaultConnectingIOReactor ioReactor, HttpParams params, @Assisted URI endPoint)
-            throws Exception {
+            DefaultConnectingIOReactor ioReactor, HttpParams params, URI endPoint) {
       super(executor, allConnections, commandQueue, available, endPoint);
       String host = checkNotNull(checkNotNull(endPoint, "endPoint").getHost(), String.format(
                "Host null for endpoint %s", endPoint));
       int port = endPoint.getPort();
       if (endPoint.getScheme().equals("https")) {
-         this.dispatch = provideSSLClientEventDispatch(clientHandler, params);
+         try {
+            this.dispatch = provideSSLClientEventDispatch(clientHandler, params);
+         } catch (KeyManagementException e) {
+            throw new RuntimeException("SSL error creating a connection to " + endPoint, e);
+         } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("SSL error creating a connection to " + endPoint, e);
+         }
          if (port == -1)
             port = 443;
       } else {
@@ -111,14 +117,14 @@ public class NioHttpCommandConnectionPool extends HttpCommandConnectionPool<NHtt
    }
 
    public static IOEventDispatch provideSSLClientEventDispatch(AsyncNHttpClientHandler handler,
-            HttpParams params) throws Exception {
+            HttpParams params) throws NoSuchAlgorithmException, KeyManagementException {
       SSLContext context = SSLContext.getInstance("TLS");
       context.init(null, null, null);
       return new SSLClientIOEventDispatch(handler, context, params);
    }
 
    public static IOEventDispatch provideClientEventDispatch(AsyncNHttpClientHandler handler,
-            HttpParams params) throws Exception {
+            HttpParams params) {
       return new DefaultClientIOEventDispatch(handler, params);
    }
 

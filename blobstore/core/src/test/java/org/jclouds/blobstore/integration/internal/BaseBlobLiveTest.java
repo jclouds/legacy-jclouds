@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -32,8 +32,6 @@ import java.net.URLConnection;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ContainerMetadata;
 import org.jclouds.http.HttpUtils;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
@@ -47,8 +45,7 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = { "live" }, testName = "blobstore.BlobLiveTest")
-public class BaseBlobLiveTest<S, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>>
-         extends BaseBlobStoreIntegrationTest<S, C, M, B> {
+public class BaseBlobLiveTest<S> extends BaseBlobStoreIntegrationTest<S> {
 
    private static final String sysHttpStreamUrl = System
             .getProperty("jclouds.blobstore.httpstream.url");
@@ -74,11 +71,11 @@ public class BaseBlobLiveTest<S, C extends ContainerMetadata, M extends BlobMeta
       int length = connection.getContentLength();
       InputStream input = connection.getInputStream();
 
-      B object = context.newBlob(key);
+      Blob object = newBlob(key);
       object.setData(input);
       object.setContentLength(length);
       object.getMetadata().setContentMD5(md5);
-      object.getMetadata().setSize(length);
+      object.getMetadata().setSize(new Long(length));
       String bucketName = getContainerName();
       try {
          context.getBlobStore().putBlob(bucketName, object).get(180, TimeUnit.SECONDS);

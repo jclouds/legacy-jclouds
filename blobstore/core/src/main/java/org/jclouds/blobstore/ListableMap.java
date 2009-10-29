@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -26,7 +26,7 @@ package org.jclouds.blobstore;
 import java.util.Map;
 import java.util.SortedSet;
 
-import org.jclouds.blobstore.domain.BlobMetadata;
+import org.jclouds.blobstore.domain.ResourceMetadata;
 
 /**
  * All Map views of {@link ContainerListing}s provide means to access the underlying Blob.
@@ -34,12 +34,12 @@ import org.jclouds.blobstore.domain.BlobMetadata;
  * @author Adrian Cole
  * 
  */
-public interface ListableMap<M extends BlobMetadata, K, V> extends Map<K, V> {
+public interface ListableMap<K, V> extends Map<K, V> {
 
    /**
     * 
     * @return blob listing that this map represents
     */
-   SortedSet<M> listContainer();
+   SortedSet<? extends ResourceMetadata> list();
 
 }

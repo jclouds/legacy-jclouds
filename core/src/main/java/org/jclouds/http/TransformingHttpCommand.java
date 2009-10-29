@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -26,22 +26,12 @@ package org.jclouds.http;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import com.google.common.base.Function;
-import com.google.inject.assistedinject.Assisted;
-import com.google.inject.internal.Nullable;
-
 /**
  * Command that utilizes RESTFul apis and extracts <code>T</code> from the HttpResponse.
  * 
  * @author Adrian Cole
  */
 public interface TransformingHttpCommand<T> extends HttpCommand {
-
-   public static interface Factory {
-      public TransformingHttpCommand<?> create(HttpRequest request,
-               @Assisted Function<HttpResponse, ?> transformer,
-               @Assisted @Nullable Function<Exception, ?> exceptionTransformer);
-   }
 
    /**
     * invoke and transform the response {@code <R>} into value type {@code <T>}

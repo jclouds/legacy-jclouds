@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -26,16 +26,17 @@ package org.jclouds.samples.googleappengine.functions;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 
-import org.jclouds.aws.s3.S3BlobStore;
+import org.jclouds.aws.s3.blobstore.S3BlobStore;
 import org.jclouds.aws.s3.domain.BucketMetadata;
-import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.blobstore.ContainerNotFoundException;
+import org.jclouds.blobstore.domain.BoundedSortedSet;
+import org.jclouds.blobstore.domain.ResourceMetadata;
 import org.jclouds.logging.Logger;
 import org.jclouds.samples.googleappengine.domain.BucketResult;
 
 import com.google.common.base.Function;
-import javax.inject.Inject;
 
 public class MetadataToBucketResult implements Function<BucketMetadata, BucketResult> {
    private final S3BlobStore connection;
@@ -53,7 +54,7 @@ public class MetadataToBucketResult implements Function<BucketMetadata, BucketRe
       result.setName(from.getName());
       try {
          try {
-            ListBucketResponse bucket = connection.listBlobs(from.getName()).get(10,
+            BoundedSortedSet<? extends ResourceMetadata> bucket = connection.list(from.getName()).get(10,
                      TimeUnit.SECONDS);
             result.setSize(bucket.size() + "");
          } catch (ContainerNotFoundException ex) {

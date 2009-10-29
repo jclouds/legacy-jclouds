@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -32,21 +32,16 @@ import org.apache.http.nio.NHttpConnection;
 import org.jclouds.http.HttpCommandRendezvous;
 import org.jclouds.http.pool.HttpCommandConnectionHandle;
 
-import com.google.inject.assistedinject.Assisted;
-
 /**
  * // TODO: Adrian: Document this!
  * 
  * @author Adrian Cole
  */
-public class NioHttpCommandConnectionHandle extends
-         HttpCommandConnectionHandle<NHttpConnection> {
+public class NioHttpCommandConnectionHandle extends HttpCommandConnectionHandle<NHttpConnection> {
 
-   // currently not injected as we want to ensure we share the correct objects with the pool
    public NioHttpCommandConnectionHandle(Semaphore maxConnections,
-            BlockingQueue<NHttpConnection> available, @Assisted URI endPoint,
-            @Assisted HttpCommandRendezvous<?> command, @Assisted NHttpConnection conn)
-            throws InterruptedException {
+            BlockingQueue<NHttpConnection> available, URI endPoint,
+            HttpCommandRendezvous<?> command, NHttpConnection conn) throws InterruptedException {
       super(maxConnections, available, endPoint, command, conn);
    }
 

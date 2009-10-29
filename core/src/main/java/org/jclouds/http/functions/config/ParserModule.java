@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -27,11 +27,15 @@ import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.inject.Singleton;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.util.DateService;
 import org.joda.time.DateTime;
 import org.xml.sax.SAXException;
@@ -48,9 +52,7 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import javax.inject.Singleton;
-import com.google.inject.TypeLiteral;
-import com.google.inject.assistedinject.FactoryProvider;
+import com.google.inject.Scopes;
 
 /**
  * Contains logic for parsing objects from Strings.
@@ -58,13 +60,18 @@ import com.google.inject.assistedinject.FactoryProvider;
  * @author Adrian Cole
  */
 public class ParserModule extends AbstractModule {
-   private final static TypeLiteral<ParseSax.Factory> parseSaxFactoryLiteral = new TypeLiteral<ParseSax.Factory>() {
-   };
 
    protected void configure() {
-      bind(parseSaxFactoryLiteral).toProvider(
-               FactoryProvider.newFactory(parseSaxFactoryLiteral, new TypeLiteral<ParseSax<?>>() {
-               }));
+      bind(ParseSax.Factory.class).to(Factory.class).in(Scopes.SINGLETON);
+   }
+
+   private static class Factory implements ParseSax.Factory {
+      @Inject
+      private Provider<XMLReader> parser;
+
+      public <T> ParseSax<T> create(HandlerWithResult<T> handler) {
+         return new ParseSax<T>(parser.get(), handler);
+      }
    }
 
    static class DateTimeAdapter implements JsonSerializer<DateTime>, JsonDeserializer<DateTime> {
@@ -109,6 +116,7 @@ public class ParserModule extends AbstractModule {
    }
 
    @Provides
+   @Singleton
    SAXParserFactory provideSAXParserFactory() {
       SAXParserFactory factory = SAXParserFactory.newInstance();
       factory.setNamespaceAware(false);

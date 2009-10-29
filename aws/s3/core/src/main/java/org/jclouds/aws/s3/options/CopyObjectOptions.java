@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -53,7 +53,7 @@ import com.google.common.collect.Multimap;
  * <code>
  * import static org.jclouds.aws.s3.commands.options.CopyObjectOptions.Builder.*
  * <p/>
- * S3Connection connection = // get connection
+ * S3Client connection = // get connection
  * <p/>
  * Multimap<String,String> metadata = HashMultimap.create();
  * metadata.put("x-amz-meta-adrian", "foo");

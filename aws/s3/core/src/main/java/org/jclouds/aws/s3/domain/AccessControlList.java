@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -409,5 +409,36 @@ public class AccessControlList {
       sb.append(", grants=").append(grants);
       sb.append('}');
       return sb.toString();
+   }
+
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((grants == null) ? 0 : grants.hashCode());
+      result = prime * result + ((owner == null) ? 0 : owner.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      AccessControlList other = (AccessControlList) obj;
+      if (grants == null) {
+         if (other.grants != null)
+            return false;
+      } else if (!grants.equals(other.grants))
+         return false;
+      if (owner == null) {
+         if (other.owner != null)
+            return false;
+      } else if (!owner.equals(other.owner))
+         return false;
+      return true;
    }
 }

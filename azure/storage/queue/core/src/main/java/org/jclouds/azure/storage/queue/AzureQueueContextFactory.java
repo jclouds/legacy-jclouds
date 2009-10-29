@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -24,9 +24,11 @@
 package org.jclouds.azure.storage.queue;
 
 import java.net.URI;
+import java.util.Properties;
 
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.rest.RestContext;
 
 import com.google.inject.Module;
 
@@ -40,18 +42,25 @@ import com.google.inject.Module;
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
  * @author Adrian Cole
- * @see AzureQueueContext
+ * @see AzureQueueClient
  */
 public class AzureQueueContextFactory {
 
-   public static AzureQueueContext createContext(String account, String encodedKey,
+   public static RestContext<AzureQueueClient> createContext(Properties properties,
             Module... modules) {
-      return new AzureQueueContextBuilder(account, encodedKey).withModules(modules).buildContext();
+      return new AzureQueueContextBuilder(new AzureQueuePropertiesBuilder(properties).build())
+               .withModules(modules).buildContext();
    }
 
-   public static AzureQueueContext createContext(URI endpoint, String account, String encodedKey,
+   public static RestContext<AzureQueueClient> createContext(String account, String encodedKey,
             Module... modules) {
-      return new AzureQueueContextBuilder(account, encodedKey).withEndpoint(endpoint).withModules(
-               modules).buildContext();
+      return new AzureQueueContextBuilder(new AzureQueuePropertiesBuilder(account, encodedKey)
+               .build()).withModules(modules).buildContext();
+   }
+
+   public static RestContext<AzureQueueClient> createContext(URI endpoint, String account,
+            String encodedKey, Module... modules) {
+      return new AzureQueueContextBuilder(new AzureQueuePropertiesBuilder(account, encodedKey)
+               .withEndpoint(endpoint).build()).withModules(modules).buildContext();
    }
 }

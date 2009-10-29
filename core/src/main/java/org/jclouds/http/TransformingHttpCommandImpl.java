@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -36,7 +36,6 @@ import javax.ws.rs.core.UriBuilder;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
-import com.google.inject.assistedinject.Assisted;
 import com.google.inject.internal.Nullable;
 
 /**
@@ -62,24 +61,10 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
    private volatile int redirectCount;
    protected volatile Exception exception;
 
-   @Override
-   public String toString() {
-      final StringBuilder sb = new StringBuilder();
-      sb.append("HttpCommand");
-      sb.append("{request='").append(request).append('\'');
-      sb.append(", transformer='").append(transformer).append('\'');
-      sb.append(", exceptionTransformer='").append(exceptionTransformer).append('\'');
-      sb.append(", failureCount=").append(failureCount);
-      sb.append(", redirectCount=").append(redirectCount);
-      sb.append(", exception=").append(exception);
-      sb.append('}');
-      return sb.toString();
-   }
-
    @Inject
    public TransformingHttpCommandImpl(TransformingHttpCommandExecutorService executorService,
-            @Assisted HttpRequest request, @Assisted Function<HttpResponse, T> transformer,
-            @Nullable @Assisted Function<Exception, T> exceptionTransformer) {
+            HttpRequest request, Function<HttpResponse, T> transformer,
+            @Nullable Function<Exception, T> exceptionTransformer) {
       this.request = request;
       this.executorService = executorService;
       this.transformer = transformer;

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,12 +23,8 @@
  */
 package org.jclouds.blobstore.domain;
 
-import java.util.Map;
+import org.jclouds.blobstore.domain.internal.BlobMetadataImpl;
 
-import org.jclouds.blobstore.internal.BlobMetadataImpl;
-import org.joda.time.DateTime;
-
-import com.google.common.collect.Multimap;
 import com.google.inject.ImplementedBy;
 
 /**
@@ -37,31 +33,7 @@ import com.google.inject.ImplementedBy;
  * @author Adrian Cole
  */
 @ImplementedBy(BlobMetadataImpl.class)
-public interface BlobMetadata {
-
-   void setName(String key);
-
-   /**
-    * The key is the handle that you assign to an object that allows you retrieve it later. A key is
-    * a sequence of Unicode characters whose UTF-8 encoding is at most 1024 bytes long. Each object
-    * in a bucket must have a unique key.
-    * 
-    * @see <a href= "http://docs.amazonwebservices.com/AmazonHTTP/2006-03-01/UsingKeys.html" />
-    */
-   String getName();
-
-   DateTime getLastModified();
-
-   void setLastModified(DateTime lastModified);
-
-   /**
-    * The size of the object, in bytes.
-    * 
-    * @see <a href= "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html?sec14.13." />
-    */
-   long getSize();
-
-   void setSize(long size);
+public interface BlobMetadata extends ResourceMetadata {
 
    /**
     * A standard MIME type describing the format of the contents. If none is provided, the default
@@ -71,26 +43,6 @@ public interface BlobMetadata {
     */
    String getContentType();
 
-   void setContentType(String dataType);
-
-   void setContentMD5(byte[] contentMD5);
-
    byte[] getContentMD5();
-
-   void setETag(String eTag);
-
-   /**
-    * @return the eTag value stored in the Etag header returned by HTTP.
-    */
-   String getETag();
-
-   void setUserMetadata(Map<String, String> userMetadata);
-
-   /**
-    * Any key-value pairs associated with the object.
-    */
-   Map<String, String> getUserMetadata();
-
-   Multimap<String, String> getAllHeaders();
 
 }

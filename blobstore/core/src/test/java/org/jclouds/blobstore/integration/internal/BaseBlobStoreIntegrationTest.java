@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -27,8 +27,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.Map.Entry;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
@@ -40,10 +42,11 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.attr.ConsistencyModel;
+import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ContainerMetadata;
-import org.jclouds.blobstore.internal.ContainerMetadataImpl;
+import org.jclouds.blobstore.domain.ResourceMetadata;
+import org.jclouds.blobstore.domain.ResourceType;
 import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.util.Utils;
@@ -52,19 +55,33 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.inject.Module;
 
-public class BaseBlobStoreIntegrationTest<S, C extends ContainerMetadata, M extends BlobMetadata, B extends Blob<M>> {
+public class BaseBlobStoreIntegrationTest<S> {
    protected static final String LOCAL_ENCODING = System.getProperty("file.encoding");
-   protected static final String TEST_STRING = "<apples><apple name=\"fuji\"></apple> </apples>";
+   protected static final String XML_STRING_FORMAT = "<apples><apple name=\"%s\"></apple> </apples>";
+   protected static final String TEST_STRING = String.format(XML_STRING_FORMAT, "apple");
+
+   protected Map<String, String> fiveStrings = ImmutableMap.of("one", String.format(
+            XML_STRING_FORMAT, "apple"), "two", String.format(XML_STRING_FORMAT, "bear"), "three",
+            String.format(XML_STRING_FORMAT, "candy"), "four", String.format(XML_STRING_FORMAT,
+                     "dogma"), "five", String.format(XML_STRING_FORMAT, "emma"));
+
+   protected Map<String, String> fiveStringsUnderPath = ImmutableMap.of("path/1", String.format(
+            XML_STRING_FORMAT, "apple"), "path/2", String.format(XML_STRING_FORMAT, "bear"),
+            "path/3", String.format(XML_STRING_FORMAT, "candy"), "path/4", String.format(
+                     XML_STRING_FORMAT, "dogma"), "path/5", String
+                     .format(XML_STRING_FORMAT, "emma"));
 
    public static long INCONSISTENCY_WINDOW = 5000;
    protected static volatile AtomicInteger containerIndex = new AtomicInteger(0);
 
-   protected volatile BlobStoreContext<S, C, M, B> context;
+   protected volatile BlobStoreContext<S> context;
    protected static volatile int containerCount = 20;
    public static final String CONTAINER_PREFIX = System.getProperty("user.name") + "-blobstore";
    /**
@@ -82,14 +99,14 @@ public class BaseBlobStoreIntegrationTest<S, C extends ContainerMetadata, M exte
    }
 
    @SuppressWarnings("unchecked")
-   private BlobStoreContext<S, C, M, B> getCloudResources(ITestContext testContext)
+   private BlobStoreContext<S> getCloudResources(ITestContext testContext)
             throws ClassNotFoundException, InstantiationException, IllegalAccessException,
             Exception {
       String initializerClass = checkNotNull(System.getProperty("jclouds.test.initializer"),
                "jclouds.test.initializer");
-      Class<BaseTestInitializer<S, C, M, B>> clazz = (Class<BaseTestInitializer<S, C, M, B>>) Class
+      Class<BaseTestInitializer<S>> clazz = (Class<BaseTestInitializer<S>>) Class
                .forName(initializerClass);
-      BaseTestInitializer<S, C, M, B> initializer = clazz.newInstance();
+      BaseTestInitializer<S> initializer = clazz.newInstance();
       return initializer.init(createHttpModule(), testContext);
    }
 
@@ -116,7 +133,13 @@ public class BaseBlobStoreIntegrationTest<S, C extends ContainerMetadata, M exte
 
    private static volatile boolean initialized = false;
 
-   protected void createContainersSharedByAllThreads(BlobStoreContext<S, C, M, B> context,
+   protected Blob newBlob(String key) {
+      Blob object = context.getBlobStore().newBlob();
+      object.getMetadata().setName(key);
+      return object;
+   }
+
+   protected void createContainersSharedByAllThreads(BlobStoreContext<S> context,
             ITestContext testContext) throws Exception {
       while (!initialized) {
          synchronized (BaseBlobStoreIntegrationTest.class) {
@@ -147,7 +170,7 @@ public class BaseBlobStoreIntegrationTest<S, C extends ContainerMetadata, M exte
       }
    }
 
-   private static void deleteContainerOrWarnIfUnable(BlobStoreContext<?, ?, ?, ?> context,
+   private static void deleteContainerOrWarnIfUnable(BlobStoreContext<?> context,
             String containerName) {
       try {
          deleteContainer(context, containerName);
@@ -162,21 +185,20 @@ public class BaseBlobStoreIntegrationTest<S, C extends ContainerMetadata, M exte
    /**
     * Tries to delete all containers, runs up to two times
     */
-   @SuppressWarnings("unchecked")
-   protected static void deleteEverything(final BlobStoreContext<?, ?, ?, ?> context)
-            throws Exception {
+   protected static void deleteEverything(final BlobStoreContext<?> context) throws Exception {
       try {
          for (int i = 0; i < 2; i++) {
-            Iterable<ContainerMetadataImpl> testContainers = Iterables.filter(
-                     (SortedSet<ContainerMetadataImpl>) context.getBlobStore().listContainers(),
-                     new Predicate<ContainerMetadataImpl>() {
-                        public boolean apply(ContainerMetadataImpl input) {
-                           return input.getName().startsWith(CONTAINER_PREFIX.toLowerCase());
+            Iterable<? extends ResourceMetadata> testContainers = Iterables.filter(context
+                     .getBlobStore().list().get(30, TimeUnit.SECONDS),
+                     new Predicate<ResourceMetadata>() {
+                        public boolean apply(ResourceMetadata input) {
+                           return (input.getType() == ResourceType.CONTAINER || input.getType() == ResourceType.FOLDER)
+                                    && input.getName().startsWith(CONTAINER_PREFIX.toLowerCase());
                         }
                      });
             if (testContainers.iterator().hasNext()) {
                ExecutorService executor = Executors.newCachedThreadPool();
-               for (final ContainerMetadata metaDatum : testContainers) {
+               for (final ResourceMetadata metaDatum : testContainers) {
                   executor.execute(new Runnable() {
                      public void run() {
                         deleteContainerOrWarnIfUnable(context, metaDatum.getName());
@@ -202,26 +224,41 @@ public class BaseBlobStoreIntegrationTest<S, C extends ContainerMetadata, M exte
     * Due to eventual consistency, container commands may not return correctly immediately. Hence,
     * we will try up to the inconsistency window to see if the assertion completes.
     */
-   protected static void assertEventually(Runnable assertion) throws InterruptedException {
-      AssertionError error = null;
-      for (int i = 0; i < 30; i++) {
-         try {
-            assertion.run();
-            return;
-         } catch (AssertionError e) {
-            error = e;
+   protected static void assertConsistencyAware(BlobStoreContext<?> context, Runnable assertion)
+            throws InterruptedException {
+      ConsistencyModel consistencyModel = context.getBlobStore().getClass().getAnnotation(
+               ConsistencyModel.class);
+      if (consistencyModel.value() == ConsistencyModels.STRICT) {
+         assertion.run();
+         return;
+      } else {
+
+         AssertionError error = null;
+         for (int i = 0; i < 30; i++) {
+            try {
+               assertion.run();
+               return;
+            } catch (AssertionError e) {
+               error = e;
+            }
+            Thread.sleep(INCONSISTENCY_WINDOW / 30);
          }
-         Thread.sleep(INCONSISTENCY_WINDOW / 30);
+         if (error != null)
+            throw error;
       }
-      if (error != null)
-         throw error;
    }
 
-   protected static void createContainerAndEnsureEmpty(BlobStoreContext<?, ?, ?, ?> context,
+   protected void assertConsistencyAware(Runnable assertion) throws InterruptedException {
+      assertConsistencyAware(context, assertion);
+   }
+
+   protected static void createContainerAndEnsureEmpty(BlobStoreContext<?> context,
             final String containerName) throws InterruptedException, ExecutionException,
             TimeoutException {
       context.getBlobStore().createContainer(containerName).get(30, TimeUnit.SECONDS);
-      context.createInputStreamMap(containerName).clear();
+      if (context.getBlobStore().getClass().getAnnotation(ConsistencyModel.class).value() == ConsistencyModels.EVENTUAL)
+         Thread.sleep(1000);
+      context.getBlobStore().clearContainer(containerName).get(30, TimeUnit.SECONDS);
    }
 
    protected void createContainerAndEnsureEmpty(String containerName) throws InterruptedException,
@@ -231,33 +268,54 @@ public class BaseBlobStoreIntegrationTest<S, C extends ContainerMetadata, M exte
 
    protected String addBlobToContainer(String sourceContainer, String key)
             throws InterruptedException, ExecutionException, TimeoutException, IOException {
-      B sourceObject = context.newBlob(key);
+      Blob sourceObject = newBlob(key);
       sourceObject.getMetadata().setContentType("text/xml");
       sourceObject.setData(TEST_STRING);
       return addBlobToContainer(sourceContainer, sourceObject);
    }
 
-   protected String addBlobToContainer(String sourceContainer, B object)
+   protected void add5BlobsUnderPathAnd5UnderRootToContainer(String sourceContainer)
+            throws InterruptedException, ExecutionException, TimeoutException, IOException {
+      for (Entry<String, String> entry : Iterables.concat(fiveStrings.entrySet(),
+               fiveStringsUnderPath.entrySet())) {
+         Blob sourceObject = newBlob(entry.getKey());
+         sourceObject.getMetadata().setContentType("text/xml");
+         sourceObject.setData(entry.getValue());
+         addBlobToContainer(sourceContainer, sourceObject);
+      }
+   }
+
+   protected String addBlobToContainer(String sourceContainer, Blob object)
             throws InterruptedException, ExecutionException, TimeoutException, IOException {
       return context.getBlobStore().putBlob(sourceContainer, object).get(30, TimeUnit.SECONDS);
    }
 
-   protected B validateContent(String sourceContainer, String key) throws InterruptedException,
+   protected Blob validateContent(String sourceContainer, String key) throws InterruptedException,
             ExecutionException, TimeoutException, IOException {
-      assertEventuallyContainerSize(sourceContainer, 1);
-      B newObject = context.getBlobStore().getBlob(sourceContainer, key).get(30, TimeUnit.SECONDS);
+      assertConsistencyAwareContainerSize(sourceContainer, 1);
+      Blob newObject = context.getBlobStore().getBlob(sourceContainer, key).get(30,
+               TimeUnit.SECONDS);
       assert newObject != null;
       assertEquals(BlobStoreUtils.getContentAsStringAndClose(newObject), TEST_STRING);
       return newObject;
    }
 
-   protected void assertEventuallyContainerSize(final String containerName, final int count)
+   protected void assertConsistencyAwareContainerSize(final String containerName, final int count)
             throws InterruptedException {
-      assertEventually(new Runnable() {
+      assertConsistencyAware(new Runnable() {
          public void run() {
             try {
-               assertEquals(context.getBlobStore().listBlobs(containerName).get(30,
-                        TimeUnit.SECONDS).size(), count);
+               SortedSet<? extends ResourceMetadata> list = context.getBlobStore().list(
+                        containerName).get(30, TimeUnit.SECONDS);
+               assert list.size() == count : String.format("expected only %d values in %s: %s",
+                        count, containerName, Sets.newHashSet(Iterables.transform(list,
+                                 new Function<ResourceMetadata, String>() {
+
+                                    public String apply(ResourceMetadata from) {
+                                       return from.getName();
+                                    }
+
+                                 })));
             } catch (Exception e) {
                Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
             }
@@ -296,9 +354,9 @@ public class BaseBlobStoreIntegrationTest<S, C extends ContainerMetadata, M exte
           * *substantially* slow down tests on a real server over a network.
           */
          if (SANITY_CHECK_RETURNED_BUCKET_NAME) {
-            if (!Iterables.any(context.getBlobStore().listContainers(),
-                     new Predicate<ContainerMetadata>() {
-                        public boolean apply(ContainerMetadata md) {
+            if (!Iterables.any(context.getBlobStore().list().get(30, TimeUnit.SECONDS),
+                     new Predicate<ResourceMetadata>() {
+                        public boolean apply(ResourceMetadata md) {
                            return containerName.equals(md.getName());
                         }
                      })) {
@@ -347,15 +405,15 @@ public class BaseBlobStoreIntegrationTest<S, C extends ContainerMetadata, M exte
       return new JavaUrlHttpCommandExecutorServiceModule();
    }
 
-   protected static void deleteContainer(final BlobStoreContext<?, ?, ?, ?> context,
-            final String name) throws InterruptedException, ExecutionException, TimeoutException {
-      if (context.getBlobStore().containerExists(name)) {
+   protected static void deleteContainer(final BlobStoreContext<?> context, final String name)
+            throws InterruptedException, ExecutionException, TimeoutException {
+      if (context.getBlobStore().exists(name)) {
          System.err.printf("*** deleting container %s...%n", name);
          context.getBlobStore().deleteContainer(name).get(30, TimeUnit.SECONDS);
-         assertEventually(new Runnable() {
+         assertConsistencyAware(context, new Runnable() {
             public void run() {
                try {
-                  assert !context.getBlobStore().containerExists(name) : "container " + name
+                  assert !context.getBlobStore().exists(name) : "container " + name
                            + " still exists";
                } catch (Exception e) {
                   Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -31,6 +31,7 @@ import java.util.SortedSet;
 
 import javax.inject.Inject;
 
+import org.jclouds.blobstore.domain.ResourceMetadata;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
 
@@ -38,7 +39,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 /**
- * This parses {@link ContainerMetadata} from a gson string.
+ * This parses {@link ResourceMetadata} from a gson string.
  * 
  * @author Adrian Cole
  */

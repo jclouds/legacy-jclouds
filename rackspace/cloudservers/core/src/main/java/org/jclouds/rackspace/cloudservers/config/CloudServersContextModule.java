@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -26,33 +26,32 @@ package org.jclouds.rackspace.cloudservers.config;
 import java.net.URI;
 
 import javax.inject.Named;
+import javax.inject.Singleton;
 
-import org.jclouds.cloud.internal.CloudContextImpl;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.rackspace.CloudServers;
-import org.jclouds.rackspace.cloudservers.CloudServersConnection;
-import org.jclouds.rackspace.cloudservers.CloudServersContext;
+import org.jclouds.rackspace.cloudservers.CloudServersClient;
 import org.jclouds.rackspace.reference.RackspaceConstants;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Scopes;
+import com.google.inject.Provides;
 
 @RequiresHttp
 public class CloudServersContextModule extends AbstractModule {
+
    @Override
    protected void configure() {
-      bind(CloudServersContext.class).to(CloudServersContextImpl.class).in(Scopes.SINGLETON);
    }
 
-   public static class CloudServersContextImpl extends CloudContextImpl<CloudServersConnection>
-            implements CloudServersContext {
-
-      public CloudServersContextImpl(Closer closer, CloudServersConnection defaultApi,
-               @CloudServers URI endPoint,
-               @Named(RackspaceConstants.PROPERTY_RACKSPACE_USER) String account) {
-         super(closer, defaultApi, endPoint, account);
-      }
+   @Provides
+   @Singleton
+   RestContext<CloudServersClient> provideContext(Closer closer, CloudServersClient defaultApi,
+            @CloudServers URI endPoint,
+            @Named(RackspaceConstants.PROPERTY_RACKSPACE_USER) String account) {
+      return new RestContextImpl<CloudServersClient>(closer, defaultApi, endPoint, account);
    }
 
 }

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -57,11 +57,13 @@ public class DateServiceTest extends PerformanceTest {
 
    protected class TestData {
       public final String iso8601DateString;
+      public final String iso8601SecondsDateString;
       public final String rfc822DateString;
       public final DateTime date;
 
-      TestData(String iso8601, String rfc822, DateTime dateTime) {
+      TestData(String iso8601, String iso8601Seconds, String rfc822, DateTime dateTime) {
          this.iso8601DateString = iso8601;
+         this.iso8601SecondsDateString = iso8601Seconds;
          this.rfc822DateString = rfc822;
          this.date = dateTime;
       }
@@ -70,21 +72,27 @@ public class DateServiceTest extends PerformanceTest {
    public DateServiceTest() {
       // Constant time test values, each TestData item must contain matching times!
       testData = new TestData[] {
-               new TestData("2009-03-12T02:00:07.000Z", "Thu, 12 Mar 2009 02:00:07 GMT",
-                        new DateTime(1236823207000l)),
-               new TestData("2009-03-14T04:00:07.000Z", "Sat, 14 Mar 2009 04:00:07 GMT",
-                        new DateTime(1237003207000l)),
-               new TestData("2009-03-16T06:00:07.000Z", "Mon, 16 Mar 2009 06:00:07 GMT",
-                        new DateTime(1237183207000l)),
-               new TestData("2009-03-18T08:00:07.000Z", "Wed, 18 Mar 2009 08:00:07 GMT",
-                        new DateTime(1237363207000l)),
-               new TestData("2009-03-20T10:00:07.000Z", "Fri, 20 Mar 2009 10:00:07 GMT",
-                        new DateTime(1237543207000l)) };
+               new TestData("2009-03-12T02:00:07.000Z", "2009-03-12T02:00:07Z",
+                        "Thu, 12 Mar 2009 02:00:07 GMT", new DateTime(1236823207000l)),
+               new TestData("2009-03-14T04:00:07.000Z", "2009-03-14T04:00:07Z",
+                        "Sat, 14 Mar 2009 04:00:07 GMT", new DateTime(1237003207000l)),
+               new TestData("2009-03-16T06:00:07.000Z", "2009-03-16T06:00:07Z",
+                        "Mon, 16 Mar 2009 06:00:07 GMT", new DateTime(1237183207000l)),
+               new TestData("2009-03-18T08:00:07.000Z", "2009-03-18T08:00:07Z",
+                        "Wed, 18 Mar 2009 08:00:07 GMT", new DateTime(1237363207000l)),
+               new TestData("2009-03-20T10:00:07.000Z", "2009-03-20T10:00:07Z",
+                        "Fri, 20 Mar 2009 10:00:07 GMT", new DateTime(1237543207000l)) };
    }
 
    @Test
    public void testIso8601DateParse() throws ExecutionException, InterruptedException {
       DateTime dsDate = dateService.iso8601DateParse(testData[0].iso8601DateString);
+      assertEquals(dsDate, testData[0].date);
+   }
+
+   @Test
+   public void testIso8601SecondsDateParse() throws ExecutionException, InterruptedException {
+      DateTime dsDate = dateService.iso8601SecondsDateParse(testData[0].iso8601SecondsDateString);
       assertEquals(dsDate, testData[0].date);
    }
 
@@ -98,6 +106,12 @@ public class DateServiceTest extends PerformanceTest {
    public void testIso8601DateFormat() throws ExecutionException, InterruptedException {
       String dsString = dateService.iso8601DateFormat(testData[0].date);
       assertEquals(dsString, testData[0].iso8601DateString);
+   }
+
+   @Test
+   public void testIso8601SecondsDateFormat() throws ExecutionException, InterruptedException {
+      String dsString = dateService.iso8601SecondsDateFormat(testData[0].date);
+      assertEquals(dsString, testData[0].iso8601SecondsDateString);
    }
 
    @Test

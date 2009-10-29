@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,7 +23,6 @@
  */
 package org.jclouds.rackspace.cloudfiles.reference;
 
-import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.rackspace.reference.RackspaceConstants;
 
 /**
@@ -31,8 +30,26 @@ import org.jclouds.rackspace.reference.RackspaceConstants;
  * 
  * @author Adrian Cole
  */
-public interface CloudFilesConstants extends BlobStoreConstants, RackspaceConstants {
+public interface CloudFilesConstants extends RackspaceConstants {
 
+   /**
+    * For an integer value N, limits the number of results to at most N values.
+    */
+   String LIMIT = "limit";
+   /**
+    * Given a string value X, return Object names greater in value than the speciﬁed marker.
+    */
+   String MARKER = "marker";
+   /**
+    * For a string value X, causes the results to be limited to Object names beginning with the
+    * substring X.
+    */
+   String PREFIX = "prefix";
+   /**
+    * For a string value X, return the Object names nested in the pseudo path.
+    */
+   String PATH = "path";
 
+   String PROPERTY_CLOUDFILES_METADATA_PREFIX = "jclouds.cloudfiles.metaprefix";
 
 }

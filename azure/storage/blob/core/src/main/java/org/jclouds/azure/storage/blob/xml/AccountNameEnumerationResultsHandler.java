@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -28,10 +28,10 @@ import java.util.SortedSet;
 
 import javax.inject.Inject;
 
-import org.jclouds.azure.storage.blob.domain.ContainerMetadata;
-import org.jclouds.azure.storage.domain.BoundedSortedSet;
-import org.jclouds.azure.storage.domain.BoundedTreeSet;
-import org.jclouds.http.HttpUtils;
+import org.jclouds.azure.storage.blob.domain.ListableContainerProperties;
+import org.jclouds.azure.storage.blob.domain.internal.ListableContainerPropertiesImpl;
+import org.jclouds.azure.storage.domain.BoundedList;
+import org.jclouds.azure.storage.domain.internal.BoundedTreeSet;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.DateService;
 import org.joda.time.DateTime;
@@ -47,16 +47,16 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 public class AccountNameEnumerationResultsHandler extends
-         ParseSax.HandlerWithResult<BoundedSortedSet<ContainerMetadata>> {
+         ParseSax.HandlerWithResult<BoundedList<ListableContainerProperties>> {
 
-   private SortedSet<ContainerMetadata> containerMetadata = Sets.newTreeSet();
+   private SortedSet<ListableContainerProperties> containerMetadata = Sets.newTreeSet();
    private String prefix;
    private String marker;
    private int maxResults;
    private String nextMarker;
    private URI currentUrl;
    private DateTime currentLastModified;
-   private byte[] currentETag;
+   private String currentETag;
 
    private StringBuilder currentText = new StringBuilder();
 
@@ -67,9 +67,9 @@ public class AccountNameEnumerationResultsHandler extends
       this.dateParser = dateParser;
    }
 
-   public BoundedSortedSet<ContainerMetadata> getResult() {
-      return new BoundedTreeSet<ContainerMetadata>(containerMetadata, prefix, marker, maxResults,
-               nextMarker);
+   public BoundedList<ListableContainerProperties> getResult() {
+      return new BoundedTreeSet<ListableContainerProperties>(containerMetadata, currentUrl, prefix, marker,
+               maxResults, nextMarker);
    }
 
    public void endElement(String uri, String name, String qName) {
@@ -85,7 +85,8 @@ public class AccountNameEnumerationResultsHandler extends
          nextMarker = currentText.toString().trim();
          nextMarker = (nextMarker.equals("")) ? null : nextMarker;
       } else if (qName.equals("Container")) {
-         containerMetadata.add(new ContainerMetadata(currentUrl, currentLastModified, currentETag));
+         containerMetadata.add(new ListableContainerPropertiesImpl(currentUrl, currentLastModified,
+                  currentETag));
          currentUrl = null;
          currentLastModified = null;
          currentETag = null;
@@ -94,7 +95,7 @@ public class AccountNameEnumerationResultsHandler extends
       } else if (qName.equals("LastModified")) {
          currentLastModified = dateParser.rfc822DateParse(currentText.toString().trim());
       } else if (qName.equals("Etag")) {
-         currentETag = HttpUtils.fromHexString(currentText.toString().trim());
+         currentETag = currentText.toString().trim();
       }
       currentText = new StringBuilder();
    }

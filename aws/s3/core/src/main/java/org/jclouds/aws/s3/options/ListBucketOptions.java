@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -37,7 +37,7 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
  * <code>
  * import static org.jclouds.aws.s3.commands.options.GetBucketOptions.Builder.*
  * <p/>
- * S3Connection connection = // get connection
+ * S3Client connection = // get connection
  * Future<S3Bucket> bucket = connection.listBucket("bucketName",withPrefix("home/users").maxKeys(1000));
  * <code>
  * 
@@ -60,6 +60,10 @@ public class ListBucketOptions extends BaseHttpRequestOptions {
       return this;
    }
 
+   public String getPrefix() {
+      return getFirstQueryOrNull("prefix");
+   }
+
    /**
     * Indicates where in the bucket to begin listing. The list will only include keys that occur
     * lexicographically after marker. This is convenient for pagination: To get the next page of
@@ -70,15 +74,23 @@ public class ListBucketOptions extends BaseHttpRequestOptions {
       return this;
    }
 
+   public String getMarker() {
+      return getFirstQueryOrNull("marker");
+   }
 
    /**
     * The maximum number of keys you'd like to see in the response body. The server might return
     * fewer than this many keys, but will not return more.
     */
-   public ListBucketOptions maxResults(long maxKeys) {
+   public ListBucketOptions maxResults(int maxKeys) {
       checkState(maxKeys >= 0, "maxKeys must be >= 0");
       queryParameters.put("max-keys", Long.toString(maxKeys));
       return this;
+   }
+
+   public Integer getMaxResults() {
+      String returnVal = getFirstQueryOrNull("max-keys");
+      return (returnVal != null) ? new Integer(returnVal) : null;
    }
 
    /**
@@ -90,6 +102,10 @@ public class ListBucketOptions extends BaseHttpRequestOptions {
    public ListBucketOptions delimiter(String delimiter) {
       queryParameters.put("delimiter", checkNotNull(delimiter, "delimiter"));
       return this;
+   }
+
+   public String getDelimiter() {
+      return getFirstQueryOrNull("delimiter");
    }
 
    public static class Builder {
@@ -111,9 +127,9 @@ public class ListBucketOptions extends BaseHttpRequestOptions {
       }
 
       /**
-       * @see ListBucketOptions#maxResults(long)
+       * @see ListBucketOptions#maxResults(int)
        */
-      public static ListBucketOptions maxResults(long maxKeys) {
+      public static ListBucketOptions maxResults(int maxKeys) {
          ListBucketOptions options = new ListBucketOptions();
          return options.maxResults(maxKeys);
       }

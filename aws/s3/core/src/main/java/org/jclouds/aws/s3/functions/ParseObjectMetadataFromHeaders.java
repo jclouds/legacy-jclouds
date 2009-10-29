@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,45 +23,50 @@
  */
 package org.jclouds.aws.s3.functions;
 
-import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
-
 import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.aws.s3.domain.ObjectMetadata;
+import org.jclouds.aws.s3.blobstore.functions.BlobToObjectMetadata;
+import org.jclouds.aws.s3.domain.MutableObjectMetadata;
 import org.jclouds.aws.s3.reference.S3Headers;
+import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
-import org.jclouds.util.DateService;
+import org.jclouds.rest.InvocationContext;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
 
 /**
- * This parses @{link {@link org.jclouds.aws.s3.domain.ObjectMetadata} from HTTP headers.
+ * This parses @{link {@link org.jclouds.aws.s3.domain.internal.MutableObjectMetadata} from HTTP
+ * headers.
  * 
  * @see <a href="http://docs.amazonwebservices.com/AmazonS3/latest/RESTObjectGET.html" />
  * @author Adrian Cole
  */
-public class ParseObjectMetadataFromHeaders extends
-         ParseSystemAndUserMetadataFromHeaders<ObjectMetadata> {
+public class ParseObjectMetadataFromHeaders implements
+         Function<HttpResponse, MutableObjectMetadata>, InvocationContext {
+   private final ParseSystemAndUserMetadataFromHeaders blobMetadataParser;
+   private final BlobToObjectMetadata blobToObjectMetadata;
 
    @Inject
-   public ParseObjectMetadataFromHeaders(DateService dateParser,
-            @Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix,
-            Provider<ObjectMetadata> metadataFactory) {
-      super(dateParser, metadataPrefix, metadataFactory);
+   public ParseObjectMetadataFromHeaders(ParseSystemAndUserMetadataFromHeaders blobMetadataParser,
+            BlobToObjectMetadata blobToObjectMetadata) {
+      this.blobMetadataParser = blobMetadataParser;
+      this.blobToObjectMetadata = blobToObjectMetadata;
    }
 
    /**
     * parses the http response headers to create a new
-    * {@link org.jclouds.aws.s3.domain.ObjectMetadata} object.
+    * {@link org.jclouds.aws.s3.domain.internal.MutableObjectMetadata} object.
     */
-   @Override
-   public ObjectMetadata apply(HttpResponse from) {
-      ObjectMetadata to = super.apply(from);
+   public MutableObjectMetadata apply(HttpResponse from) {
+      BlobMetadata base = blobMetadataParser.apply(from);
+      MutableObjectMetadata to = blobToObjectMetadata.apply(base);
+      addETagTo(from, to);
+      to.setContentMD5(HttpUtils.fromHexString(to.getETag().replaceAll("\"", "")));
       to.setCacheControl(from.getFirstHeaderOrNull(HttpHeaders.CACHE_CONTROL));
       to.setContentDisposition(from.getFirstHeaderOrNull("Content-Disposition"));
       to.setContentEncoding(from.getFirstHeaderOrNull(HttpHeaders.CONTENT_ENCODING));
@@ -72,15 +77,17 @@ public class ParseObjectMetadataFromHeaders extends
     * ETag == Content-MD5
     */
    @VisibleForTesting
-   protected void addETagTo(HttpResponse from, ObjectMetadata metadata) {
-      super.addETagTo(from, metadata);
+   protected void addETagTo(HttpResponse from, MutableObjectMetadata metadata) {
       if (metadata.getETag() == null) {
          String eTagHeader = from.getFirstHeaderOrNull(S3Headers.AMZ_MD5);
          if (eTagHeader != null) {
             metadata.setETag(eTagHeader);
          }
       }
-      metadata.setContentMD5(HttpUtils.fromHexString(metadata.getETag().replaceAll("\"", "")));
+   }
+
+   public void setContext(GeneratedHttpRequest<?> request) {
+      blobMetadataParser.setContext(request);
    }
 
 }
