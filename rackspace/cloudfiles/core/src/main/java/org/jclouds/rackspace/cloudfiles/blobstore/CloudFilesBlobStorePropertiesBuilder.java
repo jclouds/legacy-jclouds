@@ -21,31 +21,35 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudfiles.functions;
+package org.jclouds.rackspace.cloudfiles.blobstore;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.Properties;
 
-import java.net.URI;
-
-import org.jclouds.http.HttpResponse;
-import org.jclouds.rackspace.cloudfiles.domain.AccountMetadata;
-import org.jclouds.rackspace.cloudfiles.reference.CloudFilesHeaders;
-
-import com.google.common.base.Function;
+import org.jclouds.blobstore.reference.BlobStoreConstants;
+import org.jclouds.rackspace.cloudfiles.CloudFilesPropertiesBuilder;
 
 /**
- * This parses {@link AccountMetadata} from HTTP headers.
+ * Builds properties used in CloudFiles Blob Stores
  * 
- * @author James Murty
+ * @author Adrian Cole, Andrew Newdigate
  */
-public class ParseCdnUriFromHeaders implements Function<HttpResponse, URI> {
+public class CloudFilesBlobStorePropertiesBuilder extends CloudFilesPropertiesBuilder {
+
+   public CloudFilesBlobStorePropertiesBuilder(String id, String secret) {
+      super(id, secret);
+   }
+
+   public CloudFilesBlobStorePropertiesBuilder(Properties properties) {
+      super(properties);
+   }
 
    /**
-    * parses the http response headers to provide the CDN URI string.
+    * longest time a single synchronous operation can take before throwing an exception.
     */
-   public URI apply(final HttpResponse from) {
-      String cdnUri = checkNotNull(from.getFirstHeaderOrNull(CloudFilesHeaders.CDN_URI),
-               CloudFilesHeaders.CDN_URI);
-      return URI.create(cdnUri);
+   public CloudFilesBlobStorePropertiesBuilder withRequestTimeout(long milliseconds) {
+      properties.setProperty(BlobStoreConstants.PROPERTY_BLOBSTORE_TIMEOUT, Long
+               .toString(milliseconds));
+      return this;
    }
+
 }

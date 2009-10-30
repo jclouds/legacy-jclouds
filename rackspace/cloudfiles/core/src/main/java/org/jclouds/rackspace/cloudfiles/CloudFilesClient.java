@@ -23,6 +23,7 @@
  */
 package org.jclouds.rackspace.cloudfiles;
 
+import java.net.URI;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
@@ -58,11 +59,11 @@ import org.jclouds.rackspace.cloudfiles.functions.ObjectName;
 import org.jclouds.rackspace.cloudfiles.functions.ParseAccountMetadataResponseFromHeaders;
 import org.jclouds.rackspace.cloudfiles.functions.ParseCdnUriFromHeaders;
 import org.jclouds.rackspace.cloudfiles.functions.ParseContainerCDNMetadataFromHeaders;
-import org.jclouds.rackspace.cloudfiles.functions.ParseContainerCDNMetadataListFromGsonResponse;
+import org.jclouds.rackspace.cloudfiles.functions.ParseContainerCDNMetadataListFromJsonResponse;
 import org.jclouds.rackspace.cloudfiles.functions.ParseContainerListFromJsonResponse;
 import org.jclouds.rackspace.cloudfiles.functions.ParseObjectFromHeadersAndHttpContent;
+import org.jclouds.rackspace.cloudfiles.functions.ParseObjectInfoFromHeaders;
 import org.jclouds.rackspace.cloudfiles.functions.ParseObjectInfoListFromJsonResponse;
-import org.jclouds.rackspace.cloudfiles.functions.ParseObjectMetadataFromHeaders;
 import org.jclouds.rackspace.cloudfiles.functions.ReturnTrueOn404FalseOn409;
 import org.jclouds.rackspace.cloudfiles.options.ListCdnContainerOptions;
 import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
@@ -140,16 +141,15 @@ public interface CloudFilesClient {
    @ResponseParser(ParseContainerListFromJsonResponse.class)
    @QueryParams(keys = "format", values = "json")
    @Path("/")
-   SortedSet<ContainerMetadata> listContainers(ListContainerOptions... options);
+   Future<? extends SortedSet<ContainerMetadata>> listContainers(ListContainerOptions... options);
 
    @POST
    @Path("{container}/{name}")
-   boolean setObjectMetadata(@PathParam("container") String container,
-            @PathParam("name") String name,
+   boolean setObjectInfo(@PathParam("container") String container, @PathParam("name") String name,
             @BinderParam(BindMapToHeadersWithPrefix.class) Map<String, String> userMetadata);
 
    @GET
-   @ResponseParser(ParseContainerCDNMetadataListFromGsonResponse.class)
+   @ResponseParser(ParseContainerCDNMetadataListFromJsonResponse.class)
    @QueryParams(keys = "format", values = "json")
    @Path("/")
    @Endpoint(CloudFilesCDN.class)
@@ -168,20 +168,20 @@ public interface CloudFilesClient {
    @Path("{container}")
    @ResponseParser(ParseCdnUriFromHeaders.class)
    @Endpoint(CloudFilesCDN.class)
-   String enableCDN(@PathParam("container") String container,
+   URI enableCDN(@PathParam("container") String container,
             @HeaderParam(CloudFilesHeaders.CDN_TTL) Long ttl);
 
    @PUT
    @Path("{container}")
    @ResponseParser(ParseCdnUriFromHeaders.class)
    @Endpoint(CloudFilesCDN.class)
-   String enableCDN(@PathParam("container") String container);
+   URI enableCDN(@PathParam("container") String container);
 
    @POST
    @Path("{container}")
    @ResponseParser(ParseCdnUriFromHeaders.class)
    @Endpoint(CloudFilesCDN.class)
-   String updateCDN(@PathParam("container") String container,
+   URI updateCDN(@PathParam("container") String container,
             @HeaderParam(CloudFilesHeaders.CDN_TTL) Long ttl);
 
    @POST
@@ -222,18 +222,20 @@ public interface CloudFilesClient {
    @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)
    @ExceptionParser(ThrowKeyNotFoundOn404.class)
    @Path("{container}/{name}")
-   Future<CFObject> getObject(@PathParam("container") String container, @PathParam("name") String name,
-            GetOptions... options);
+   Future<CFObject> getObject(@PathParam("container") String container,
+            @PathParam("name") String name, GetOptions... options);
 
    @HEAD
-   @ResponseParser(ParseObjectMetadataFromHeaders.class)
+   @ResponseParser(ParseObjectInfoFromHeaders.class)
    @ExceptionParser(ThrowKeyNotFoundOn404.class)
    @Path("{container}/{name}")
-   MutableObjectInfoWithMetadata getObjectInfo(@PathParam("container") String container, @PathParam("name") String name);
+   MutableObjectInfoWithMetadata getObjectInfo(@PathParam("container") String container,
+            @PathParam("name") String name);
 
    @DELETE
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    @Path("{container}/{name}")
-   Future<Void> removeObject(@PathParam("container") String container, @PathParam("name") String name);
+   Future<Void> removeObject(@PathParam("container") String container,
+            @PathParam("name") String name);
 
 }

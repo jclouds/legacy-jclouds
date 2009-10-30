@@ -29,7 +29,7 @@ import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
-import org.jclouds.rackspace.cloudfiles.blobstore.functions.BlobToObjectInfo;
+import org.jclouds.rackspace.cloudfiles.blobstore.functions.ResourceToObjectInfo;
 import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -41,16 +41,16 @@ import com.google.common.base.Function;
  * 
  * @author Adrian Cole
  */
-public class ParseObjectMetadataFromHeaders implements
+public class ParseObjectInfoFromHeaders implements
          Function<HttpResponse, MutableObjectInfoWithMetadata>, InvocationContext {
    private final ParseSystemAndUserMetadataFromHeaders blobMetadataParser;
-   private final BlobToObjectInfo blobToObjectInfo;
+   private final ResourceToObjectInfo blobToObjectInfo;
 
    @Inject
-   public ParseObjectMetadataFromHeaders(ParseSystemAndUserMetadataFromHeaders blobMetadataParser,
-            BlobToObjectInfo blobToObjectMetadata) {
+   public ParseObjectInfoFromHeaders(ParseSystemAndUserMetadataFromHeaders blobMetadataParser,
+            ResourceToObjectInfo blobToObjectInfo) {
       this.blobMetadataParser = blobMetadataParser;
-      this.blobToObjectInfo = blobToObjectMetadata;
+      this.blobToObjectInfo = blobToObjectInfo;
    }
 
    /**

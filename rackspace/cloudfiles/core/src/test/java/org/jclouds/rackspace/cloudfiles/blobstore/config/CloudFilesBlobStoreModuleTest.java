@@ -21,19 +21,19 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudfiles;
+package org.jclouds.rackspace.cloudfiles.blobstore.config;
 
 import static org.testng.Assert.assertEquals;
 
+import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.rackspace.StubRackspaceAuthenticationModule;
-import org.jclouds.rackspace.cloudfiles.config.CloudFilesContextModule;
+import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
 import org.jclouds.rackspace.cloudfiles.config.CloudFilesStubClientModule;
-import org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants;
-import org.jclouds.rest.RestContext;
-import org.jclouds.rest.internal.RestContextImpl;
+import org.jclouds.rackspace.reference.RackspaceConstants;
 import org.jclouds.util.Jsr330;
 import org.testng.annotations.Test;
 
@@ -45,19 +45,22 @@ import com.google.inject.TypeLiteral;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "azureblob.CloudFilesContextModuleTest")
-public class CloudFilesContextModuleTest {
+@Test(groups = "unit", testName = "cloudfiles.CloudFilesBlobStoreModuleTest")
+public class CloudFilesBlobStoreModuleTest {
 
    Injector createInjector() {
       return Guice.createInjector(new ExecutorServiceModule(new WithinThreadExecutorService()),
-               new CloudFilesStubClientModule(), new JDKLoggingModule(),
-               new StubRackspaceAuthenticationModule(), new CloudFilesContextModule() {
+               new JDKLoggingModule(), new CloudFilesStubClientModule(),
+               new StubRackspaceAuthenticationModule(), new CloudFilesBlobStoreContextModule() {
                   @Override
                   protected void configure() {
                      bindConstant().annotatedWith(
-                              Jsr330.named(CloudFilesConstants.PROPERTY_RACKSPACE_USER)).to("user");
+                              Jsr330.named(RackspaceConstants.PROPERTY_RACKSPACE_USER)).to("user");
                      bindConstant().annotatedWith(
-                              Jsr330.named(CloudFilesConstants.PROPERTY_RACKSPACE_KEY)).to("key");
+                              Jsr330.named(RackspaceConstants.PROPERTY_RACKSPACE_KEY)).to("key");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(RackspaceConstants.PROPERTY_RACKSPACE_ENDPOINT)).to(
+                              "http://localhost");
                      super.configure();
                   }
                });
@@ -65,10 +68,10 @@ public class CloudFilesContextModuleTest {
 
    @Test
    void testContextImpl() {
-      RestContext<CloudFilesClient> context = createInjector().getInstance(
-               Key.get(new TypeLiteral<RestContext<CloudFilesClient>>() {
+      BlobStoreContext<CloudFilesClient> context = createInjector().getInstance(
+               Key.get(new TypeLiteral<BlobStoreContext<CloudFilesClient>>() {
                }));
-      assertEquals(context.getClass(), RestContextImpl.class);
+      assertEquals(context.getClass(), BlobStoreContextImpl.class);
    }
 
 }

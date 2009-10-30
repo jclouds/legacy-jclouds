@@ -47,8 +47,8 @@ import com.google.inject.util.Jsr330;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "cloudfiles.ParseObjectMetadataFromHeadersTest")
-public class ParseObjectMetadataFromHeadersTest {
+@Test(groups = "unit", testName = "cloudfiles.ParseObjectInfoFromHeadersTest")
+public class ParseObjectInfoFromHeadersTest {
    Injector i = Guice.createInjector(new ParserModule(), new AbstractModule() {
 
       @Override
@@ -60,7 +60,7 @@ public class ParseObjectMetadataFromHeadersTest {
    });
 
    public void testEtagCaseIssue() {
-      ParseObjectMetadataFromHeaders parser = i.getInstance(ParseObjectMetadataFromHeaders.class);
+      ParseObjectInfoFromHeaders parser = i.getInstance(ParseObjectInfoFromHeaders.class);
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/test")).atLeastOnce();
       replay(request);

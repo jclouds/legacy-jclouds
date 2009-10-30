@@ -21,31 +21,29 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudfiles.functions;
+package org.jclouds.rackspace.cloudfiles.blobstore.integration;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
-import java.net.URI;
-
-import org.jclouds.http.HttpResponse;
-import org.jclouds.rackspace.cloudfiles.domain.AccountMetadata;
-import org.jclouds.rackspace.cloudfiles.reference.CloudFilesHeaders;
-
-import com.google.common.base.Function;
+import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
+import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
+import org.testng.annotations.Test;
 
 /**
- * This parses {@link AccountMetadata} from HTTP headers.
  * 
  * @author James Murty
+ * @author Adrian Cole
  */
-public class ParseCdnUriFromHeaders implements Function<HttpResponse, URI> {
+@Test(groups = { "integration", "live" }, testName = "cloudfiles.CloudFilesBlobIntegrationTest")
+public class CloudFilesBlobIntegrationTest extends BaseBlobIntegrationTest<CloudFilesClient> {
 
-   /**
-    * parses the http response headers to provide the CDN URI string.
-    */
-   public URI apply(final HttpResponse from) {
-      String cdnUri = checkNotNull(from.getFirstHeaderOrNull(CloudFilesHeaders.CDN_URI),
-               CloudFilesHeaders.CDN_URI);
-      return URI.create(cdnUri);
+   @Override
+   @Test(enabled = false)
+   public void testGetTwoRanges() throws InterruptedException, ExecutionException,
+            TimeoutException, IOException {
+      // not supported in cloud files
    }
+
 }

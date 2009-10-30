@@ -1,0 +1,5 @@
+[
+{"name":"adriancole-blobstore.testCDNOperationsContainerWithCDN","cdn_enabled":"false","ttl":3600,"cdn_uri":"http://c0354712.cdn.cloudfiles.rackspacecloud.com,"referrer_acl":"","useragent_acl":"", "log_retention":"false"},
+{"name":"adriancole-blobstore5","cdn_enabled":"true","ttl":28800,"cdn_uri":"http://c0404671.cdn.cloudfiles.rackspacecloud.com,"referrer_acl":"","useragent_acl":"", "log_retention":"false"},
+{"name":"adriancole-cfcdnint.testCDNOperationsContainerWithCDN","cdn_enabled":"false","ttl":3600,"cdn_uri":"http://c0320431.cdn.cloudfiles.rackspacecloud.com,"referrer_acl":"","useragent_acl":"", "log_retention":"false"}
+]

@@ -45,11 +45,11 @@ import com.google.common.base.Function;
 public class ParseObjectFromHeadersAndHttpContent implements Function<HttpResponse, CFObject>,
          InvocationContext {
 
-   private final ParseObjectMetadataFromHeaders infoParser;
+   private final ParseObjectInfoFromHeaders infoParser;
    private final CFObject.Factory objectProvider;
 
    @Inject
-   public ParseObjectFromHeadersAndHttpContent(ParseObjectMetadataFromHeaders infoParser,
+   public ParseObjectFromHeadersAndHttpContent(ParseObjectInfoFromHeaders infoParser,
             CFObject.Factory objectProvider) {
       this.infoParser = infoParser;
       this.objectProvider = objectProvider;

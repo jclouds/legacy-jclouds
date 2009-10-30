@@ -21,31 +21,37 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudfiles.functions;
+package org.jclouds.rackspace.cloudfiles.blobstore.functions;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import javax.inject.Singleton;
 
-import java.net.URI;
-
-import org.jclouds.http.HttpResponse;
-import org.jclouds.rackspace.cloudfiles.domain.AccountMetadata;
-import org.jclouds.rackspace.cloudfiles.reference.CloudFilesHeaders;
+import org.jclouds.blobstore.options.ListOptions;
+import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
 
 import com.google.common.base.Function;
 
 /**
- * This parses {@link AccountMetadata} from HTTP headers.
- * 
- * @author James Murty
+ * @author Adrian Cole
  */
-public class ParseCdnUriFromHeaders implements Function<HttpResponse, URI> {
-
-   /**
-    * parses the http response headers to provide the CDN URI string.
-    */
-   public URI apply(final HttpResponse from) {
-      String cdnUri = checkNotNull(from.getFirstHeaderOrNull(CloudFilesHeaders.CDN_URI),
-               CloudFilesHeaders.CDN_URI);
-      return URI.create(cdnUri);
+@Singleton
+public class ListContainerOptionsToListOptions implements
+         Function<ListContainerOptions[], ListOptions> {
+   public ListOptions apply(ListContainerOptions[] optionsList) {
+      ListOptions options = new ListOptions();
+      if (optionsList.length != 0) {
+         if (optionsList[0].getPath() != null) {
+            options.underPath(optionsList[0].getPath());
+         }
+         if (optionsList[0].getPrefix() != null) {
+            options.underPath(optionsList[0].getPrefix());
+            options.recursive();
+         }
+         if (optionsList[0].getMarker() != null) {
+            options.afterMarker(optionsList[0].getMarker());
+         }
+         options.maxResults(optionsList[0].getMaxResults());
+      }
+      return options;
    }
+
 }

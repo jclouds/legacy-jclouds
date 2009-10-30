@@ -25,10 +25,14 @@ package org.jclouds.rackspace.cloudfiles.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.net.URI;
+
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rackspace.cloudfiles.domain.AccountMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerCDNMetadata;
 import org.jclouds.rackspace.cloudfiles.reference.CloudFilesHeaders;
+import org.jclouds.rest.InvocationContext;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.base.Function;
 
@@ -38,14 +42,14 @@ import com.google.common.base.Function;
  * @author James Murty
  */
 public class ParseContainerCDNMetadataFromHeaders implements
-         Function<HttpResponse, ContainerCDNMetadata> {
+         Function<HttpResponse, ContainerCDNMetadata>, InvocationContext {
+
+   private GeneratedHttpRequest<?> request;
 
    /**
     * parses the http response headers to create a new {@link ContainerCDNMetadata} object.
     */
    public ContainerCDNMetadata apply(final HttpResponse from) {
-      // TODO: The container name is not returned as a header, hopefully one day it will be
-
       String cdnUri = checkNotNull(from.getFirstHeaderOrNull(CloudFilesHeaders.CDN_URI),
                CloudFilesHeaders.CDN_URI);
       String cdnTTL = checkNotNull(from.getFirstHeaderOrNull(CloudFilesHeaders.CDN_TTL),
@@ -56,8 +60,12 @@ public class ParseContainerCDNMetadataFromHeaders implements
          // CDN is not, and has never, been enabled for this container.
          return null;
       } else {
-         return new ContainerCDNMetadata(Boolean.parseBoolean(cdnEnabled), Long.parseLong(cdnTTL),
-                  cdnUri);
+         return new ContainerCDNMetadata(request.getEndpoint().getPath(), Boolean
+                  .parseBoolean(cdnEnabled), Long.parseLong(cdnTTL), URI.create(cdnUri));
       }
+   }
+
+   public void setContext(GeneratedHttpRequest<?> request) {
+      this.request = request;
    }
 }

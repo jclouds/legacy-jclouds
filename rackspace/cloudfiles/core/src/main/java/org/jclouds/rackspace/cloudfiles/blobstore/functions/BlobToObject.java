@@ -13,11 +13,11 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class BlobToObject implements Function<Blob, CFObject> {
-   private final BlobToObjectInfo blob2ObjectMd;
+   private final ResourceToObjectInfo blob2ObjectMd;
    private final CFObject.Factory objectProvider;
 
    @Inject
-   BlobToObject(BlobToObjectInfo blob2ObjectMd, CFObject.Factory objectProvider) {
+   BlobToObject(ResourceToObjectInfo blob2ObjectMd, CFObject.Factory objectProvider) {
       this.blob2ObjectMd = blob2ObjectMd;
       this.objectProvider = objectProvider;
    }

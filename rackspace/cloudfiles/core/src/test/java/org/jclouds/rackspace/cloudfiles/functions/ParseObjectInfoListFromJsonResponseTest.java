@@ -44,12 +44,12 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 /**
- * Tests behavior of {@code ParseBlobMetadataListFromJsonResponseTest}
+ * Tests behavior of {@code ParseObjectInfoListFromJsonResponseTest}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "cloudfiles.ParseBlobMetadataListFromJsonResponseTest")
-public class ParseBlobMetadataListFromJsonResponseTest {
+@Test(groups = "unit", testName = "cloudfiles.ParseObjectInfoListFromJsonResponseTest")
+public class ParseObjectInfoListFromJsonResponseTest {
 
    Injector i = Guice.createInjector(new ParserModule());
 

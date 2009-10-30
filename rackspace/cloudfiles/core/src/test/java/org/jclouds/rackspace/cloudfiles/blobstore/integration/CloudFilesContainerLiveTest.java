@@ -21,33 +21,17 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudfiles.config;
+package org.jclouds.rackspace.cloudfiles.blobstore.integration;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
-import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.integration.internal.BaseContainerLiveTest;
 import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
-import org.jclouds.rackspace.cloudfiles.internal.StubCloudFilesClient;
-import org.jclouds.rest.ConfiguresRestClient;
+import org.testng.annotations.Test;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.TypeLiteral;
-
-@ConfiguresRestClient
-public class StubCloudFilesClientModule extends AbstractModule {
-   // must be singleton for all threads and all objects or tests may fail;
-   static final ConcurrentHashMap<String, ConcurrentMap<String, Blob>> map = new ConcurrentHashMap<String, ConcurrentMap<String, Blob>>();
-
-   @Override
-   protected void configure() {
-
-      bind(new TypeLiteral<ConcurrentMap<String, ConcurrentMap<String, Blob>>>() {
-      }).toInstance(map);
-
-      bind(new TypeLiteral<CloudFilesClient>() {
-      }).to(new TypeLiteral<StubCloudFilesClient>() {
-      }).asEagerSingleton();
-   }
+/**
+ * @author James Murty
+ * @author Adrian Cole
+ */
+@Test(groups = { "live" }, testName = "cloudfiles.CloudFilesContainerLiveTest")
+public class CloudFilesContainerLiveTest extends BaseContainerLiveTest<CloudFilesClient> {
 
 }

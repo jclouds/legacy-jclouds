@@ -40,7 +40,7 @@
         <module>core</module>
     </modules>
     <properties>
-        <jclouds.test.initializer>org.jclouds.rackspace.cloudfiles.integration.CloudFilesTestInitializer</jclouds.test.initializer>
+        <jclouds.test.initializer>org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesTestInitializer</jclouds.test.initializer>
     </properties>
     <dependencies>
         <dependency>

@@ -21,31 +21,27 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudfiles.functions;
+package org.jclouds.rackspace.cloudfiles.blobstore.functions;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import javax.inject.Singleton;
 
-import java.net.URI;
-
-import org.jclouds.http.HttpResponse;
-import org.jclouds.rackspace.cloudfiles.domain.AccountMetadata;
-import org.jclouds.rackspace.cloudfiles.reference.CloudFilesHeaders;
+import org.jclouds.blobstore.domain.MutableResourceMetadata;
+import org.jclouds.blobstore.domain.ResourceMetadata;
+import org.jclouds.blobstore.domain.ResourceType;
+import org.jclouds.blobstore.domain.internal.MutableResourceMetadataImpl;
+import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
 
 import com.google.common.base.Function;
 
 /**
- * This parses {@link AccountMetadata} from HTTP headers.
- * 
- * @author James Murty
+ * @author Adrian Cole
  */
-public class ParseCdnUriFromHeaders implements Function<HttpResponse, URI> {
-
-   /**
-    * parses the http response headers to provide the CDN URI string.
-    */
-   public URI apply(final HttpResponse from) {
-      String cdnUri = checkNotNull(from.getFirstHeaderOrNull(CloudFilesHeaders.CDN_URI),
-               CloudFilesHeaders.CDN_URI);
-      return URI.create(cdnUri);
+@Singleton
+public class ContainerToResourceMetadata implements Function<ContainerMetadata, ResourceMetadata> {
+   public ResourceMetadata apply(ContainerMetadata from) {
+      MutableResourceMetadata to = new MutableResourceMetadataImpl();
+      to.setName(from.getName());
+      to.setType(ResourceType.CONTAINER);
+      return to;
    }
 }

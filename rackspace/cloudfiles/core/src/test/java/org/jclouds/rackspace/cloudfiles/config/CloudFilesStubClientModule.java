@@ -21,31 +21,32 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudfiles.functions;
+package org.jclouds.rackspace.cloudfiles.config;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
-import java.net.URI;
+import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
+import org.jclouds.rackspace.cloudfiles.internal.StubCloudFilesClient;
+import org.jclouds.rest.ConfiguresRestClient;
 
-import org.jclouds.http.HttpResponse;
-import org.jclouds.rackspace.cloudfiles.domain.AccountMetadata;
-import org.jclouds.rackspace.cloudfiles.reference.CloudFilesHeaders;
+import com.google.inject.AbstractModule;
+import com.google.inject.TypeLiteral;
 
-import com.google.common.base.Function;
+@ConfiguresRestClient
+public class CloudFilesStubClientModule extends AbstractModule {
+   // must be singleton for all threads and all objects or tests may fail;
+   static final ConcurrentHashMap<String, ConcurrentMap<String, Blob>> map = new ConcurrentHashMap<String, ConcurrentMap<String, Blob>>();
 
-/**
- * This parses {@link AccountMetadata} from HTTP headers.
- * 
- * @author James Murty
- */
-public class ParseCdnUriFromHeaders implements Function<HttpResponse, URI> {
+   @Override
+   protected void configure() {
 
-   /**
-    * parses the http response headers to provide the CDN URI string.
-    */
-   public URI apply(final HttpResponse from) {
-      String cdnUri = checkNotNull(from.getFirstHeaderOrNull(CloudFilesHeaders.CDN_URI),
-               CloudFilesHeaders.CDN_URI);
-      return URI.create(cdnUri);
+      bind(new TypeLiteral<ConcurrentMap<String, ConcurrentMap<String, Blob>>>() {
+      }).toInstance(map);
+      bind(new TypeLiteral<CloudFilesClient>() {
+      }).to(new TypeLiteral<StubCloudFilesClient>() {
+      }).asEagerSingleton();
    }
+
 }

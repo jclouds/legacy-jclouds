@@ -21,22 +21,28 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudfiles;
+package org.jclouds.rackspace.cloudfiles.blobstore;
 
+import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.internal.BlobImpl;
+import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.rackspace.StubRackspaceAuthenticationModule;
+import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
+import org.jclouds.rackspace.cloudfiles.blobstore.config.CloudFilesBlobStoreContextModule;
+import org.jclouds.rackspace.cloudfiles.config.CloudFilesRestClientModule;
 import org.jclouds.rackspace.cloudfiles.config.CloudFilesStubClientModule;
+import org.jclouds.rackspace.cloudfiles.domain.CFObject;
+import org.jclouds.rackspace.cloudfiles.domain.internal.CFObjectImpl;
 import org.jclouds.rackspace.cloudfiles.internal.StubCloudFilesClient;
-import org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants;
-import org.jclouds.rackspace.config.RackspaceAuthenticationRestModule;
 import org.jclouds.rackspace.reference.RackspaceConstants;
-import org.jclouds.rest.RestContext;
-import org.jclouds.rest.internal.RestContextImpl;
 import org.testng.annotations.Test;
 
 import com.google.inject.Injector;
@@ -50,49 +56,57 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "cloudfiles.CloudFilesContextBuilderTest")
-public class CloudFilesContextBuilderTest {
+public class CloudFilesBlobStoreContextBuilderTest {
 
    public void testNewBuilder() {
-      CloudFilesContextBuilder builder = newBuilder();
-      assertEquals(builder.getProperties().getProperty(
-               CloudFilesConstants.PROPERTY_CLOUDFILES_METADATA_PREFIX), "X-Object-Meta-");
-      assertEquals(builder.getProperties().getProperty(
-               RackspaceConstants.PROPERTY_RACKSPACE_ENDPOINT), "https://api.mosso.com");
+      CloudFilesBlobStoreContextBuilder builder = newBuilder();
+      assertEquals(builder.getProperties().getProperty(PROPERTY_USER_METADATA_PREFIX),
+               "X-Object-Meta-");
       assertEquals(builder.getProperties().getProperty(RackspaceConstants.PROPERTY_RACKSPACE_USER),
                "id");
       assertEquals(builder.getProperties().getProperty(RackspaceConstants.PROPERTY_RACKSPACE_KEY),
                "secret");
    }
 
-   private CloudFilesContextBuilder newBuilder() {
-      CloudFilesContextBuilder builder = new CloudFilesContextBuilder(
-               new CloudFilesPropertiesBuilder("id", "secret").build());
-      return builder;
+   private CloudFilesBlobStoreContextBuilder newBuilder() {
+      return new CloudFilesBlobStoreContextBuilder(new CloudFilesBlobStorePropertiesBuilder("id",
+               "secret").build()).withModules(new CloudFilesStubClientModule(),
+               new StubRackspaceAuthenticationModule());
    }
 
    public void testBuildContext() {
-      RestContext<CloudFilesClient> context = newBuilder().withModules(
-               new CloudFilesStubClientModule(), new StubRackspaceAuthenticationModule())
-               .buildContext();
-      assertEquals(context.getClass(), RestContextImpl.class);
+      BlobStoreContext<CloudFilesClient> context = newBuilder().buildContext();
+      assertEquals(context.getClass(), BlobStoreContextImpl.class);
       assertEquals(context.getApi().getClass(), StubCloudFilesClient.class);
+      assertEquals(context.getBlobStore().getClass(), CloudFilesBlobStore.class);
+      assertEquals(context.getApi().newCFObject().getClass(), CFObjectImpl.class);
+      assertEquals(context.getBlobStore().newBlob().getClass(), BlobImpl.class);
       assertEquals(context.getAccount(), "id");
       assertEquals(context.getEndPoint(), URI.create("http://localhost/rackspacestub/cloudfiles"));
    }
 
    public void testBuildInjector() {
-      Injector i = newBuilder().withModules(new CloudFilesStubClientModule(),
-               new StubRackspaceAuthenticationModule()).buildInjector();
-      assert i.getInstance(Key.get(new TypeLiteral<RestContext<CloudFilesClient>>() {
+      Injector i = newBuilder().buildInjector();
+      assert i.getInstance(Key.get(new TypeLiteral<BlobStoreContext<CloudFilesClient>>() {
       })) != null;
+      assert i.getInstance(CFObject.class) != null;
+      assert i.getInstance(Blob.class) != null;
    }
 
    protected void testAddContextModule() {
       List<Module> modules = new ArrayList<Module>();
-      CloudFilesContextBuilder builder = newBuilder();
+      CloudFilesBlobStoreContextBuilder builder = newBuilder();
       builder.addContextModule(modules);
       assertEquals(modules.size(), 1);
-      assertEquals(modules.get(0).getClass(), RackspaceAuthenticationRestModule.class);
+      assertEquals(modules.get(0).getClass(), CloudFilesBlobStoreContextModule.class);
+   }
+
+   protected void addClientModule() {
+      List<Module> modules = new ArrayList<Module>();
+      CloudFilesBlobStoreContextBuilder builder = newBuilder();
+      builder.addClientModule(modules);
+      assertEquals(modules.size(), 1);
+      assertEquals(modules.get(0).getClass(), CloudFilesRestClientModule.class);
    }
 
 }

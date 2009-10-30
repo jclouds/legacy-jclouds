@@ -23,23 +23,28 @@
  */
 package org.jclouds.rackspace.cloudfiles.domain;
 
-import org.jclouds.blobstore.domain.internal.MutableResourceMetadataImpl;
+import java.net.URI;
+
 
 /**
  * 
  * @author James Murty
  * 
  */
-public class ContainerCDNMetadata extends MutableResourceMetadataImpl {
+public class ContainerCDNMetadata implements Comparable<ContainerCDNMetadata> {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 8373435988423605652L;
-   private long ttl;
+   private String name;
    private boolean cdn_enabled;
-   private String cdn_uri;
+   private long ttl;
+   private URI cdn_uri;
+   private String referrer_acl;
+   private String useragent_acl;
+   private boolean log_retention;
 
-   public ContainerCDNMetadata(boolean cdnEnabled, long ttl, String cdnUri) {
-      super();
+   public ContainerCDNMetadata(String name, boolean cdnEnabled, long ttl, URI cdnUri) {
+      this.name = name;
       this.cdn_enabled = cdnEnabled;
       this.ttl = ttl;
       this.cdn_uri = cdnUri;
@@ -52,41 +57,36 @@ public class ContainerCDNMetadata extends MutableResourceMetadataImpl {
     * Beware: The container name is not available from HEAD CDN responses and will be null. return
     * the name of the container to which these CDN settings apply.
     */
-   @Override
    public String getName() {
-      return super.getName();
+      return name;
    }
 
-   public void setCdnUri(String cdnUri) {
-      this.cdn_uri = cdnUri;
-   }
-
-   public String getCdnUri() {
+   public URI getCDNUri() {
       return cdn_uri;
    }
 
-   public void setTtl(long ttl) {
-      this.ttl = ttl;
-   }
-
-   public long getTtl() {
+   public long getTTL() {
       return ttl;
    }
 
-   public void setCdnEnabled(boolean cdnEnabled) {
-      this.cdn_enabled = cdnEnabled;
+   public boolean isCDNEnabled() {
+      return cdn_enabled;
    }
 
-   public boolean isCdnEnabled() {
-      return cdn_enabled;
+   public int compareTo(ContainerCDNMetadata o) {
+      if (getName() == null)
+         return -1;
+      return (this == o) ? 0 : getName().compareTo(o.getName());
    }
 
    @Override
    public int hashCode() {
       final int prime = 31;
-      int result = super.hashCode();
+      int result = 1;
       result = prime * result + (cdn_enabled ? 1231 : 1237);
       result = prime * result + ((cdn_uri == null) ? 0 : cdn_uri.hashCode());
+      result = prime * result + (log_retention ? 1231 : 1237);
+      result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + (int) (ttl ^ (ttl >>> 32));
       return result;
    }
@@ -95,7 +95,7 @@ public class ContainerCDNMetadata extends MutableResourceMetadataImpl {
    public boolean equals(Object obj) {
       if (this == obj)
          return true;
-      if (!super.equals(obj))
+      if (obj == null)
          return false;
       if (getClass() != obj.getClass())
          return false;
@@ -107,9 +107,25 @@ public class ContainerCDNMetadata extends MutableResourceMetadataImpl {
             return false;
       } else if (!cdn_uri.equals(other.cdn_uri))
          return false;
-      if (ttl != other.ttl)
+      if (log_retention != other.log_retention)
+         return false;
+      if (name == null) {
+         if (other.name != null)
+            return false;
+      } else if (!name.equals(other.name))
          return false;
       return true;
    }
 
+   public String getReferrerACL() {
+      return referrer_acl;
+   }
+
+   public String getUseragentACL() {
+      return useragent_acl;
+   }
+
+   public boolean isLogRetention() {
+      return log_retention;
+   }
 }
