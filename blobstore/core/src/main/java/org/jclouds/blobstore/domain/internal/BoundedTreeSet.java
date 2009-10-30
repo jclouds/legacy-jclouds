@@ -23,10 +23,11 @@
  */
 package org.jclouds.blobstore.domain.internal;
 
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.jclouds.blobstore.domain.BoundedSortedSet;
+
+import com.google.common.collect.Iterables;
 
 public class BoundedTreeSet<T> extends TreeSet<T> implements BoundedSortedSet<T> {
 
@@ -37,8 +38,9 @@ public class BoundedTreeSet<T> extends TreeSet<T> implements BoundedSortedSet<T>
    protected final Integer maxResults;
    protected final boolean truncated;
 
-   public BoundedTreeSet(SortedSet<T> contents, String path, String marker, Integer maxResults, boolean isTruncated) {
-      this.addAll(contents);
+   public BoundedTreeSet(Iterable<T> contents, String path, String marker, Integer maxResults,
+            boolean isTruncated) {
+      Iterables.addAll(this, contents);
       this.path = path;
       this.marker = marker;
       this.maxResults = maxResults;

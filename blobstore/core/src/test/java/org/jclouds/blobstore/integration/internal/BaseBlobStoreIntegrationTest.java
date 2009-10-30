@@ -176,6 +176,7 @@ public class BaseBlobStoreIntegrationTest<S> {
          deleteContainer(context, containerName);
       } catch (Throwable ex) {
          System.err.printf("unable to delete container %s, ignoring...%n", containerName);
+         ex.printStackTrace();
          blackListContainers.add(containerName);
       }
    }

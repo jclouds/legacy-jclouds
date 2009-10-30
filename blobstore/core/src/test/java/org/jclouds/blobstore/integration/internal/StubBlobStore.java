@@ -195,7 +195,7 @@ public class StubBlobStore implements BlobStore {
             int maxResults = contents.size();
             boolean truncated = false;
             String marker = null;
-            if (options.getMaxResults() != null) {
+            if (options.getMaxResults() != null && contents.size() > 0) {
                SortedSet<ResourceMetadata> contentsSlice = firstSliceOfSize(contents, options
                         .getMaxResults().intValue());
                maxResults = options.getMaxResults();
@@ -209,7 +209,7 @@ public class StubBlobStore implements BlobStore {
                contents = contentsSlice;
             }
 
-            final String delimiter = options.getRecursive() ? null : "/";
+            final String delimiter = options.isRecursive() ? null : "/";
             if (delimiter != null) {
                SortedSet<String> commonPrefixes = null;
                Iterable<String> iterable = Iterables.transform(contents, new CommonPrefixes(

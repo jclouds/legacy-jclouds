@@ -42,13 +42,13 @@ public class ListOptionsTest {
    public void testRecursive() {
       ListOptions options = new ListOptions();
       options.recursive();
-      assertTrue(options.getRecursive());
+      assertTrue(options.isRecursive());
    }
 
    @Test
    public void testRecursiveStatic() {
       ListOptions options = recursive();
-      assertTrue(options.getRecursive());
+      assertTrue(options.isRecursive());
    }
 
    @Test

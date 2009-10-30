@@ -59,7 +59,7 @@ public class ListOptions {
       return marker;
    }
 
-   public boolean getRecursive() {
+   public boolean isRecursive() {
       return recursive;
    }
 
@@ -96,7 +96,7 @@ public class ListOptions {
     * return a listing of all objects inside the store, recursively.
     */
    public ListOptions recursive() {
-      checkArgument(path == null, "path and recursive combination currently not supported");
+//      checkArgument(path == null, "path and recursive combination currently not supported");
       this.recursive = true;
       return this;
    }

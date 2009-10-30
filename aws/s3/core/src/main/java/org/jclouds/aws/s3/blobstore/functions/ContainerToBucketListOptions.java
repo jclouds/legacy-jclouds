@@ -38,7 +38,7 @@ public class ContainerToBucketListOptions implements Function<ListOptions[], Lis
    public ListBucketOptions apply(ListOptions[] optionsList) {
       ListBucketOptions httpOptions = new ListBucketOptions();
       if (optionsList.length != 0) {
-         if (!optionsList[0].getRecursive()) {
+         if (!optionsList[0].isRecursive()) {
             httpOptions.delimiter("/");
          }
          if (optionsList[0].getPath() != null) {
