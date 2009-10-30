@@ -1,0 +1,11 @@
+POST
+application/octet-stream
+
+Thu, 05 Jun 2008 16:38:19 GMT
+/rest/objects
+x-emc-date:Thu, 05 Jun 2008 16:38:19 GMT
+x-emc-groupacl:other=NONE
+x-emc-listable-meta:part4/part7/part8=quick
+x-emc-meta:part1=buy
+x-emc-uid:6039ac182f194e15b9261d73ce044939/user1
+x-emc-useracl:john=FULL_CONTROL,mary=WRITE

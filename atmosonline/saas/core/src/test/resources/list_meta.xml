@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+
+    Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+
+    ====================================================================
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+    ====================================================================
+
+-->
+<ListObjectsResponse xmlns='http://www.emc.com/cos/'>
+    <Object>
+        <ObjectID>499ad542a2a8bc200499ad5a7099940499b44f51e97d
+        </ObjectID>
+        <SystemMetadataList>
+            <Metadata>
+                <Name>atime</Name>
+                <Value>2009-02-17T23:15:01Z</Value>
+            </Metadata>
+            <Metadata>
+                <Name>mtime</Name>
+                <Value>2009-02-17T23:15:01Z</Value>
+            </Metadata>
+            <Metadata>
+                <Name>ctime</Name>
+                <Value>2009-02-17T23:15:01Z</Value>
+            </Metadata>
+            <Metadata>
+                <Name>itime</Name>
+                <Value>2009-02-17T23:15:01Z</Value>
+            </Metadata>
+            <Metadata>
+                <Name>type</Name>
+                <Value>regular</Value>
+            </Metadata>
+            <Metadata>
+                <Name>uid</Name>
+                <Value>user1</Value>
+            </Metadata>
+            <Metadata>
+                <Name>gid</Name>
+                <Value>apache</Value>
+            </Metadata>
+            <Metadata>
+                <Name>objectid</Name>
+                <Value>499ad542a2a8bc200499ad5a7099940499b44f51e97d
+                </Value>
+            </Metadata>
+            <Metadata>
+                <Name>objname</Name>
+                <Value></Value>
+            </Metadata>
+            <Metadata>
+                <Name>size</Name>
+                <Value>7589</Value>
+            </Metadata>
+            <Metadata>
+                <Name>nlink</Name>
+                <Value>0</Value>
+            </Metadata>
+            <Metadata>
+                <Name>policyname</Name>
+                <Value>default</Value>
+            </Metadata>
+        </SystemMetadataList>
+        <UserMetadataList>
+            <Metadata>
+                <Name>part1</Name>
+                <Value>order</Value>
+                <Listable>false</Listable>
+            </Metadata>
+            <Metadata>
+                <Name>part4/part7/part8</Name>
+                <Value>quick</Value>
+                <Listable>true</Listable>
+            </Metadata>
+        </UserMetadataList>
+    </Object>
+</ListObjectsResponse>
