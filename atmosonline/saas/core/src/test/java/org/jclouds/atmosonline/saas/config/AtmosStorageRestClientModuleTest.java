@@ -32,6 +32,8 @@ import org.bouncycastle.util.encoders.Base64;
 import org.jclouds.atmosonline.saas.handlers.AtmosStorageClientErrorRetryHandler;
 import org.jclouds.atmosonline.saas.handlers.ParseAtmosStorageErrorFromXmlContent;
 import org.jclouds.atmosonline.saas.reference.AtmosStorageConstants;
+import org.jclouds.concurrent.WithinThreadExecutorService;
+import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
@@ -51,23 +53,21 @@ import com.google.inject.Injector;
 public class AtmosStorageRestClientModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new AtmosStorageRestClientModule(), new ParserModule(),
-               new AbstractModule() {
-                  @Override
-                  protected void configure() {
-                     bindConstant().annotatedWith(
-                              Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_ENDPOINT)).to(
-                              "http://localhost");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_UID)).to("uid");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_KEY)).to(
-                              new String(Base64.encode("key".getBytes())));
-                     bindConstant().annotatedWith(
-                              Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_SESSIONINTERVAL))
-                              .to("2");
-                  }
-               });
+      return Guice.createInjector(new AtmosStorageRestClientModule(), new ExecutorServiceModule(
+               new WithinThreadExecutorService()), new ParserModule(), new AbstractModule() {
+         @Override
+         protected void configure() {
+            bindConstant().annotatedWith(
+                     Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_ENDPOINT)).to(
+                     "http://localhost");
+            bindConstant().annotatedWith(Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_UID))
+                     .to("uid");
+            bindConstant().annotatedWith(Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_KEY))
+                     .to(new String(Base64.encode("key".getBytes())));
+            bindConstant().annotatedWith(
+                     Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_SESSIONINTERVAL)).to("2");
+         }
+      });
    }
 
    @Test
