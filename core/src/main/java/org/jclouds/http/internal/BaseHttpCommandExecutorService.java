@@ -54,10 +54,10 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
    @Named(HttpConstants.HTTP_HEADERS_LOGGER)
    protected Logger headerLog = Logger.NULL;
 
-   private final Wire wire;
+   private final HttpWire wire;
 
    protected BaseHttpCommandExecutorService(ExecutorService executorService,
-            DelegatingRetryHandler retryHandler, DelegatingErrorHandler errorHandler, Wire wire) {
+            DelegatingRetryHandler retryHandler, DelegatingErrorHandler errorHandler, HttpWire wire) {
       this.retryHandler = retryHandler;
       this.errorHandler = errorHandler;
       this.executorService = executorService;

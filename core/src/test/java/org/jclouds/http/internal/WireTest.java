@@ -31,6 +31,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.jclouds.concurrent.WithinThreadExecutorService;
+import org.jclouds.http.internal.HttpWire;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
@@ -93,57 +94,57 @@ public class WireTest {
 
    }
 
-   public Wire setUp() throws Exception {
+   public HttpWire setUp() throws Exception {
       ExecutorService service = Executors.newCachedThreadPool();
       BufferLogger bufferLogger = new BufferLogger();
-      Wire wire = new Wire(service);
-      wire.wireLog = bufferLogger;
+      HttpWire wire = new HttpWire(service);
+      wire.wireLog = (bufferLogger);
       return wire;
    }
 
-   public Wire setUpSynch() throws Exception {
+   public HttpWire setUpSynch() throws Exception {
       ExecutorService service = new WithinThreadExecutorService();
       BufferLogger bufferLogger = new BufferLogger();
-      Wire wire = new Wire(service);
-      wire.wireLog = bufferLogger;
+      HttpWire wire = new HttpWire(service);
+      wire.wireLog = (bufferLogger);
       return wire;
    }
 
    public void testInputInputStream() throws Exception {
-      Wire wire = setUp();
+      HttpWire wire = setUp();
       InputStream in = wire.input(new ByteArrayInputStream("foo".getBytes()));
       String compare = Utils.toStringAndClose(in);
       Thread.sleep(100);
       assertEquals(compare, "foo");
-      assertEquals(((BufferLogger) wire.wireLog).buff.toString(), "<< \"foo\"");
+      assertEquals(((BufferLogger) wire.getWireLog()).buff.toString(), "<< \"foo\"");
    }
 
    public void testInputInputStreamSynch() throws Exception {
-      Wire wire = setUpSynch();
+      HttpWire wire = setUpSynch();
       InputStream in = wire.input(new ByteArrayInputStream("foo".getBytes()));
       String compare = Utils.toStringAndClose(in);
       assertEquals(compare, "foo");
-      assertEquals(((BufferLogger) wire.wireLog).buff.toString(), "<< \"foo\"");
+      assertEquals(((BufferLogger) wire.getWireLog()).buff.toString(), "<< \"foo\"");
    }
 
    public void testOutputInputStream() throws Exception {
-      Wire wire = setUp();
+      HttpWire wire = setUp();
       InputStream in = wire.output(new ByteArrayInputStream("foo".getBytes()));
       String compare = Utils.toStringAndClose(in);
       Thread.sleep(100);
       assertEquals(compare, "foo");
-      assertEquals(((BufferLogger) wire.wireLog).buff.toString(), ">> \"foo\"");
+      assertEquals(((BufferLogger) wire.getWireLog()).buff.toString(), ">> \"foo\"");
    }
 
    public void testOutputBytes() throws Exception {
-      Wire wire = setUp();
+      HttpWire wire = setUp();
       wire.output("foo".getBytes());
-      assertEquals(((BufferLogger) wire.wireLog).buff.toString(), ">> \"foo\"");
+      assertEquals(((BufferLogger) wire.getWireLog()).buff.toString(), ">> \"foo\"");
    }
 
    public void testOutputString() throws Exception {
-      Wire wire = setUp();
+      HttpWire wire = setUp();
       wire.output("foo");
-      assertEquals(((BufferLogger) wire.wireLog).buff.toString(), ">> \"foo\"");
+      assertEquals(((BufferLogger) wire.getWireLog()).buff.toString(), ">> \"foo\"");
    }
 }

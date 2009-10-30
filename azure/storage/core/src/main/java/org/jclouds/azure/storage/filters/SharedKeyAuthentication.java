@@ -34,11 +34,13 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.apache.commons.io.IOUtils;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
+import org.jclouds.http.internal.SignatureWire;
 import org.jclouds.util.TimeStamp;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -55,15 +57,17 @@ public class SharedKeyAuthentication implements HttpRequestFilter {
    private final String[] firstHeadersToSign = new String[] { "Content-MD5",
             HttpHeaders.CONTENT_TYPE, HttpHeaders.DATE };
 
+   private final SignatureWire signatureWire;
    private final String account;
    private final byte[] key;
    private final Provider<String> timeStampProvider;
 
    @Inject
-   public SharedKeyAuthentication(
+   public SharedKeyAuthentication(SignatureWire signatureWire,
             @Named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT) String account,
             @Named(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY) String encodedKey,
             @TimeStamp Provider<String> timeStampProvider) {
+      this.signatureWire = signatureWire;
       this.account = account;
       this.key = HttpUtils.fromBase64String(encodedKey);
       this.timeStampProvider = timeStampProvider;
@@ -82,12 +86,16 @@ public class SharedKeyAuthentication implements HttpRequestFilter {
       appendHttpHeaders(request, buffer);
       appendCanonicalizedHeaders(request, buffer);
       appendCanonicalizedResource(request, buffer);
+      if (signatureWire.enabled())
+         signatureWire.output(buffer.toString());
       return buffer.toString();
    }
 
    private void calculateAndReplaceAuthHeader(HttpRequest request, String toSign)
             throws HttpException {
       String signature = signString(toSign);
+      if (signatureWire.enabled())
+         signatureWire.input(IOUtils.toInputStream(signature));
       request.getHeaders().replaceValues(HttpHeaders.AUTHORIZATION,
                Collections.singletonList("SharedKey " + account + ":" + signature));
    }

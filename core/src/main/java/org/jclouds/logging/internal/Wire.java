@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.http.internal;
+package org.jclouds.logging.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -37,34 +37,28 @@ import java.util.concurrent.ExecutorService;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.TeeInputStream;
 import org.jclouds.concurrent.SingleThreaded;
-import org.jclouds.http.HttpConstants;
 import org.jclouds.logging.Logger;
-
 /**
  * Logs data to the wire LOG.
  * 
  * @author Adrian Cole
- * @see org.apache.http.impl.conn.Wire
+ * @see org.apache.HttpWire.impl.conn.Wire
  */
-public class Wire {
+public abstract class Wire {
 
-   @Resource
-   @Named(HttpConstants.HTTP_WIRE_LOGGER)
-   protected Logger wireLog = Logger.NULL;
    @Resource
    protected Logger logger = Logger.NULL;
-
-   private final ExecutorService exec;
+   protected final ExecutorService exec;
 
    @Inject
    public Wire(ExecutorService exec) {
       this.exec = checkNotNull(exec, "executor");
    }
+   protected abstract Logger getWireLog();
 
    private void wire(String header, InputStream instream) {
       StringBuilder buffer = new StringBuilder();
@@ -77,7 +71,7 @@ public class Wire {
                buffer.append("[\\n]\"");
                buffer.insert(0, "\"");
                buffer.insert(0, header);
-               wireLog.debug(buffer.toString());
+               getWireLog().debug(buffer.toString());
                buffer.setLength(0);
             } else if ((ch < 32) || (ch > 127)) {
                buffer.append("[0x");
@@ -91,7 +85,7 @@ public class Wire {
             buffer.append('\"');
             buffer.insert(0, '\"');
             buffer.insert(0, header);
-            wireLog.debug(buffer.toString());
+            getWireLog().debug(buffer.toString());
          }
       } catch (IOException e) {
          logger.error(e, "Error tapping line");
@@ -99,7 +93,7 @@ public class Wire {
    }
 
    public boolean enabled() {
-      return wireLog.isDebugEnabled();
+      return getWireLog().isDebugEnabled();
    }
 
    public InputStream copy(final String header, InputStream instream) {
@@ -141,7 +135,7 @@ public class Wire {
 
    @SuppressWarnings("unchecked")
    public <T> T output(T data) {
-      checkNotNull(data, "data must be set before calling generateETag()");
+      checkNotNull(data, "data");
       if (data instanceof InputStream) {
          if (exec.getClass().isAnnotationPresent(SingleThreaded.class))
             return (T) copy(">> ", (InputStream) data);

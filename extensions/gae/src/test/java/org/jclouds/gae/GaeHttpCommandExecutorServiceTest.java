@@ -47,7 +47,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
-import org.jclouds.http.internal.Wire;
+import org.jclouds.http.internal.HttpWire;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -71,7 +71,7 @@ public class GaeHttpCommandExecutorServiceTest {
       endPoint = URI.create("http://localhost:80/foo");
       client = new GaeHttpCommandExecutorService(createNiceMock(URLFetchService.class),
                createNiceMock(ExecutorService.class), createNiceMock(DelegatingRetryHandler.class),
-               createNiceMock(DelegatingErrorHandler.class), createNiceMock(Wire.class));
+               createNiceMock(DelegatingErrorHandler.class), createNiceMock(HttpWire.class));
    }
 
    @Test

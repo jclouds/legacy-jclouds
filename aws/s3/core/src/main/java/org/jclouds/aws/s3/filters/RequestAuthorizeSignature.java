@@ -36,11 +36,13 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
+import org.jclouds.http.internal.SignatureWire;
 import org.jclouds.util.TimeStamp;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -57,14 +59,16 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
    private final String[] firstHeadersToSign = new String[] { "Content-MD5",
             HttpHeaders.CONTENT_TYPE, HttpHeaders.DATE };
 
+   private final SignatureWire signatureWire;
    private final String accessKey;
    private final String secretKey;
    private final Provider<String> timeStampProvider;
 
    @Inject
-   public RequestAuthorizeSignature(@Named(S3Constants.PROPERTY_AWS_ACCESSKEYID) String accessKey,
+   public RequestAuthorizeSignature(SignatureWire signatureWire, @Named(S3Constants.PROPERTY_AWS_ACCESSKEYID) String accessKey,
             @Named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY) String secretKey,
             @TimeStamp Provider<String> timeStampProvider) {
+      this.signatureWire = signatureWire;
       this.accessKey = accessKey;
       this.secretKey = secretKey;
       this.timeStampProvider = timeStampProvider;
@@ -84,12 +88,16 @@ public class RequestAuthorizeSignature implements HttpRequestFilter {
       appendAmzHeaders(request, buffer);
       appendBucketName(request, buffer);
       appendUriPath(request, buffer);
+      if(signatureWire.enabled())
+         signatureWire.output(buffer.toString());
       return buffer.toString();
    }
 
    private void calculateAndReplaceAuthHeader(HttpRequest request, String toSign)
             throws HttpException {
       String signature = signString(toSign);
+      if (signatureWire.enabled())
+         signatureWire.input(IOUtils.toInputStream(signature));
       request.getHeaders().replaceValues(HttpHeaders.AUTHORIZATION,
                Collections.singletonList("AWS " + accessKey + ":" + signature));
    }

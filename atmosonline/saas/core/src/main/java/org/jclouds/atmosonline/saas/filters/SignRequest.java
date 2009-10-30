@@ -34,12 +34,14 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.apache.commons.io.IOUtils;
 import org.jclouds.atmosonline.saas.reference.AtmosStorageConstants;
 import org.jclouds.atmosonline.saas.reference.AtmosStorageHeaders;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
+import org.jclouds.http.internal.SignatureWire;
 import org.jclouds.util.TimeStamp;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -54,14 +56,17 @@ import com.google.common.annotations.VisibleForTesting;
 @Singleton
 public class SignRequest implements HttpRequestFilter {
 
+   private final SignatureWire signatureWire;
    private final String uid;
    private final byte[] key;
    private final Provider<String> timeStampProvider;
 
    @Inject
-   public SignRequest(@Named(AtmosStorageConstants.PROPERTY_EMCSAAS_UID) String uid,
+   public SignRequest(SignatureWire signatureWire,
+            @Named(AtmosStorageConstants.PROPERTY_EMCSAAS_UID) String uid,
             @Named(AtmosStorageConstants.PROPERTY_EMCSAAS_KEY) String encodedKey,
             @TimeStamp Provider<String> timeStampProvider) {
+      this.signatureWire = signatureWire;
       this.uid = uid;
       this.key = HttpUtils.fromBase64String(encodedKey);
       this.timeStampProvider = timeStampProvider;
@@ -80,12 +85,16 @@ public class SignRequest implements HttpRequestFilter {
       appendHttpHeaders(request, buffer);
       appendCanonicalizedResource(request, buffer);
       appendCanonicalizedHeaders(request, buffer);
+      if (signatureWire.enabled())
+         signatureWire.output(buffer.toString());
       return buffer.toString();
    }
 
    private void calculateAndReplaceAuthHeader(HttpRequest request, String toSign)
             throws HttpException {
       String signature = signString(toSign);
+      if (signatureWire.enabled())
+         signatureWire.input(IOUtils.toInputStream(signature));
       request.getHeaders().replaceValues(AtmosStorageHeaders.SIGNATURE,
                Collections.singletonList(signature));
    }

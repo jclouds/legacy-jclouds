@@ -21,26 +21,37 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.http;
+package org.jclouds.http.internal;
+
+import java.util.concurrent.ExecutorService;
+
+import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.jclouds.http.HttpConstants;
+import org.jclouds.logging.Logger;
+import org.jclouds.logging.internal.Wire;
 
 /**
- * // TODO: Adrian: Document this!
+ * Logs data to the wire LOG.
  * 
  * @author Adrian Cole
+ * @see org.apache.HttpWire.impl.conn.Wire
  */
-public interface HttpConstants {
-   public static final String PROPERTY_HTTP_MAX_RETRIES = "jclouds.http.max-retries";
-   public static final String PROPERTY_HTTP_MAX_REDIRECTS = "jclouds.http.max-redirects";
-   public static final String HTTP_HEADERS_LOGGER = "jclouds.http.headers";
-   public static final String HTTP_WIRE_LOGGER = "jclouds.http.wire";
-   public static final String SIGNATURE_WIRE_LOGGER = "jclouds.signature.wire";
+public class HttpWire extends Wire {
 
-   /**
-    * longest time a single request can take before throwing an exception.
-    */
-   public static final String PROPERTY_HTTP_REQUEST_TIMEOUT = "jclouds.http.request.timeout";
-   /**
-    * allow mismatch between hostname and ssl cerificate.
-    */
-   public static final String PROPERTY_HTTP_RELAX_HOSTNAME = "jclouds.http.relax-hostname";
+   @Resource
+   @Named(HttpConstants.HTTP_WIRE_LOGGER)
+   Logger wireLog = Logger.NULL;
+   
+   @Inject
+   public HttpWire(ExecutorService exec) {
+      super(exec);
+   }
+
+   public Logger getWireLog() {
+      return wireLog;
+   }
+
 }

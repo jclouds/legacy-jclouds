@@ -40,6 +40,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.io.IOUtils;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.http.HttpUtils;
+import org.jclouds.http.internal.HttpWire;
 import org.jclouds.logging.Logger;
 import org.testng.annotations.Test;
 
@@ -61,7 +62,7 @@ public class WireLiveTest {
       }
 
       public Void call() throws Exception {
-         Wire wire = setUp();
+         HttpWire wire = setUp();
          InputStream in = wire.input(fromServer);
          ByteArrayOutputStream out = new ByteArrayOutputStream();
          IOUtils.copy(in, out);
@@ -69,7 +70,7 @@ public class WireLiveTest {
          Thread.sleep(100);
          assertEquals(HttpUtils.toHexString(compare), checkNotNull(sysHttpStreamMd5,
                   sysHttpStreamMd5));
-         assertEquals(((BufferLogger) wire.wireLog).buff.toString().getBytes().length, 3331484);
+         assertEquals(((BufferLogger) wire.getWireLog()).buff.toString().getBytes().length, 3331484);
          return null;
       }
    }
@@ -125,19 +126,19 @@ public class WireLiveTest {
 
    }
 
-   public static Wire setUp() throws Exception {
+   public static HttpWire setUp() throws Exception {
       ExecutorService service = Executors.newCachedThreadPool();
       BufferLogger bufferLogger = new BufferLogger();
-      Wire wire = new Wire(service);
-      wire.wireLog = bufferLogger;
+      HttpWire wire = new HttpWire(service);
+      wire.wireLog = (bufferLogger);
       return wire;
    }
 
-   public Wire setUpSynch() throws Exception {
+   public HttpWire setUpSynch() throws Exception {
       ExecutorService service = new WithinThreadExecutorService();
       BufferLogger bufferLogger = new BufferLogger();
-      Wire wire = new Wire(service);
-      wire.wireLog = bufferLogger;
+      HttpWire wire = new HttpWire(service);
+      wire.wireLog = (bufferLogger);
       return wire;
    }
 
@@ -145,12 +146,12 @@ public class WireLiveTest {
    public void testRemoteInputInputStream() throws Exception {
       URL url = new URL(checkNotNull(sysHttpStreamUrl, "sysHttpStreamUrl"));
       URLConnection connection = url.openConnection();
-      Wire wire = setUp();
+      HttpWire wire = setUp();
       InputStream in = wire.input(connection.getInputStream());
       byte[] compare = HttpUtils.md5(in);
       Thread.sleep(100);
       assertEquals(HttpUtils.toHexString(compare), checkNotNull(sysHttpStreamMd5, sysHttpStreamMd5));
-      assertEquals(((BufferLogger) wire.wireLog).buff.toString().getBytes().length, 3331484);
+      assertEquals(((BufferLogger) wire.getWireLog()).buff.toString().getBytes().length, 3331484);
    }
 
    @Test(groups = "live")
@@ -166,12 +167,12 @@ public class WireLiveTest {
    public void testRemoteInputInputStreamSynch() throws Exception {
       URL url = new URL(checkNotNull(sysHttpStreamUrl, "sysHttpStreamUrl"));
       URLConnection connection = url.openConnection();
-      Wire wire = setUpSynch();
+      HttpWire wire = setUpSynch();
       InputStream in = wire.input(connection.getInputStream());
       byte[] compare = HttpUtils.md5(in);
       Thread.sleep(100);
       assertEquals(HttpUtils.toHexString(compare), checkNotNull(sysHttpStreamMd5, sysHttpStreamMd5));
-      assertEquals(((BufferLogger) wire.wireLog).buff.toString().getBytes().length, 3331484);
+      assertEquals(((BufferLogger) wire.getWireLog()).buff.toString().getBytes().length, 3331484);
    }
 
 }

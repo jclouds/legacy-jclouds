@@ -39,7 +39,7 @@ import org.jclouds.http.TransformingHttpCommandExecutorServiceImpl;
 import org.jclouds.http.TransformingHttpCommandImpl;
 import org.jclouds.http.functions.ReturnStringIf200;
 import org.jclouds.http.internal.JavaUrlHttpCommandExecutorService;
-import org.jclouds.http.internal.Wire;
+import org.jclouds.http.internal.HttpWire;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.testng.annotations.BeforeTest;
@@ -93,7 +93,7 @@ public class BackoffLimitedRetryHandlerTest {
    void setupExecutorService() throws Exception {
       ExecutorService execService = Executors.newCachedThreadPool();
       JavaUrlHttpCommandExecutorService httpService = new JavaUrlHttpCommandExecutorService(
-               execService, new DelegatingRetryHandler(), new DelegatingErrorHandler(), new Wire(
+               execService, new DelegatingRetryHandler(), new DelegatingErrorHandler(), new HttpWire(
                         Executors.newCachedThreadPool()));
       executorService = new TransformingHttpCommandExecutorServiceImpl(httpService, execService,
                new LoggerFactory() {

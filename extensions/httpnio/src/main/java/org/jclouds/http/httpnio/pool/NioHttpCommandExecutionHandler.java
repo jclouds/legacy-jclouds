@@ -45,7 +45,7 @@ import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.httpnio.util.NioHttpUtils;
-import org.jclouds.http.internal.Wire;
+import org.jclouds.http.internal.HttpWire;
 import org.jclouds.logging.Logger;
 
 /**
@@ -57,7 +57,7 @@ public class NioHttpCommandExecutionHandler implements NHttpRequestExecutionHand
    private final ConsumingNHttpEntityFactory entityFactory;
    private final DelegatingRetryHandler retryHandler;
    private final DelegatingErrorHandler errorHandler;
-   private final Wire wire;
+   private final HttpWire wire;
 
    /**
     * inputOnly: nothing is taken from this queue.
@@ -73,7 +73,7 @@ public class NioHttpCommandExecutionHandler implements NHttpRequestExecutionHand
    @Inject
    public NioHttpCommandExecutionHandler(ConsumingNHttpEntityFactory entityFactory,
             BlockingQueue<HttpCommandRendezvous<?>> resubmitQueue,
-            DelegatingRetryHandler retryHandler, DelegatingErrorHandler errorHandler, Wire wire) {
+            DelegatingRetryHandler retryHandler, DelegatingErrorHandler errorHandler, HttpWire wire) {
       this.entityFactory = entityFactory;
       this.resubmitQueue = resubmitQueue;
       this.retryHandler = retryHandler;

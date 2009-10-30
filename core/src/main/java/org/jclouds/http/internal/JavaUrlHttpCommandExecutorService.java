@@ -66,7 +66,7 @@ public class JavaUrlHttpCommandExecutorService extends
 
    @Inject
    public JavaUrlHttpCommandExecutorService(ExecutorService executorService,
-            DelegatingRetryHandler retryHandler, DelegatingErrorHandler errorHandler, Wire wire) {
+            DelegatingRetryHandler retryHandler, DelegatingErrorHandler errorHandler, HttpWire wire) {
       super(executorService, retryHandler, errorHandler, wire);
       sslMap = Maps.newHashMap();
    }
