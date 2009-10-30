@@ -70,8 +70,10 @@ public class ParseURIFromListOrLocationHeaderIf20x implements Function<HttpRespo
             if (locationUri.getHost() != null)
                return locationUri;
             checkState(request != null, "request should have been initialized");
-
-            UriBuilder builder = UriBuilder.fromUri(URI.create("http://localhost/"+locationUri));
+            if (!location.startsWith("/"))
+               location = "/" + location;
+            UriBuilder builder = UriBuilder.fromUri(URI.create("http://localhost"
+                     + locationUri.getPath()));
             builder.host(request.getEndpoint().getHost());
             builder.port(request.getEndpoint().getPort());
             builder.scheme(request.getEndpoint().getScheme());
