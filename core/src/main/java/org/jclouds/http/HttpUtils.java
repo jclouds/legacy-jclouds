@@ -47,6 +47,7 @@ import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.util.encoders.Base64;
+import org.jclouds.logging.Logger;
 import org.jclouds.util.Utils;
 
 import com.google.common.collect.Multimap;
@@ -75,6 +76,25 @@ public class HttpUtils {
          return new String(hex, "ASCII");
       } catch (UnsupportedEncodingException e) {
          throw new RuntimeException(e);
+      }
+   }
+
+   public static void logRequest(Logger logger, HttpRequest request, String prefix) {
+      if (logger.isDebugEnabled()) {
+         logger.debug("%s %s", prefix, request.getRequestLine().toString());
+         for (Entry<String, String> header : request.getHeaders().entries()) {
+            if (header.getKey() != null)
+               logger.debug("%s %s: %s", prefix, header.getKey(), header.getValue());
+         }
+      }
+   }
+
+   public static void logResponse(Logger logger, HttpResponse response, String prefix) {
+      if (logger.isDebugEnabled()) {
+         logger.debug("%s %s", prefix, response.getStatusLine().toString());
+         for (Entry<String, String> header : response.getHeaders().entries()) {
+            logger.debug("%s %s: %s", prefix, header.getKey(), header.getValue());
+         }
       }
    }
 

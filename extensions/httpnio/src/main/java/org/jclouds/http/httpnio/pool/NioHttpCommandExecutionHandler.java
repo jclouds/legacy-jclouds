@@ -24,7 +24,6 @@
 package org.jclouds.http.httpnio.pool;
 
 import java.io.IOException;
-import java.util.Map.Entry;
 import java.util.concurrent.BlockingQueue;
 
 import javax.annotation.Resource;
@@ -42,6 +41,7 @@ import org.jclouds.http.HttpCommandRendezvous;
 import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
+import org.jclouds.http.HttpUtils;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.httpnio.util.NioHttpUtils;
@@ -100,12 +100,7 @@ public class NioHttpCommandExecutionHandler implements NHttpRequestExecutionHand
          if (request.getEntity() != null && wire.enabled())
             request.setEntity(wire.output(request.getEntity()));
          HttpEntityEnclosingRequest nativeRequest = NioHttpUtils.convertToApacheRequest(request);
-         if (headerLog.isDebugEnabled()) {
-            headerLog.debug(">> %s", request.getRequestLine().toString());
-            for (Entry<String, String> header : request.getHeaders().entries()) {
-               headerLog.debug(">> %s: %s", header.getKey(), header.getValue());
-            }
-         }
+         HttpUtils.logRequest(headerLog, request, ">>");
          return nativeRequest;
       }
       return null;
@@ -128,12 +123,7 @@ public class NioHttpCommandExecutionHandler implements NHttpRequestExecutionHand
             logger
                      .debug("Receiving response %s: %s", response.hashCode(), response
                               .getStatusLine());
-            if (headerLog.isDebugEnabled()) {
-               headerLog.debug("<< %s", response.getStatusLine().toString());
-               for (Entry<String, String> header : response.getHeaders().entries()) {
-                  headerLog.debug("<< %s: %s", header.getKey(), header.getValue());
-               }
-            }
+            HttpUtils.logResponse(headerLog, response, "<<");
             if (response.getContent() != null && wire.enabled())
                response.setContent(wire.input(response.getContent()));
             int statusCode = response.getStatusCode();

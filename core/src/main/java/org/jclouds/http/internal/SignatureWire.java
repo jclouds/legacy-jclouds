@@ -42,8 +42,8 @@ import org.jclouds.logging.internal.Wire;
 public class SignatureWire extends Wire {
 
    @Resource
-   @Named(HttpConstants.SIGNATURE_WIRE_LOGGER)
-   Logger wireLog = Logger.NULL;
+   @Named(HttpConstants.SIGNATURE_LOGGER)
+   Logger signatureLog = Logger.NULL;
    
    @Inject
    public SignatureWire(ExecutorService exec) {
@@ -51,7 +51,7 @@ public class SignatureWire extends Wire {
    }
 
    public Logger getWireLog() {
-      return wireLog;
+      return signatureLog;
    }
 
 }

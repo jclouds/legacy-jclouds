@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
@@ -36,11 +37,13 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
+import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
+import org.jclouds.logging.Logger;
 import org.jclouds.util.TimeStamp;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -61,6 +64,9 @@ public class SharedKeyAuthentication implements HttpRequestFilter {
    private final String account;
    private final byte[] key;
    private final Provider<String> timeStampProvider;
+   @Resource
+   @Named(HttpConstants.SIGNATURE_LOGGER)
+   Logger signatureLog = Logger.NULL;
 
    @Inject
    public SharedKeyAuthentication(SignatureWire signatureWire,
@@ -77,9 +83,11 @@ public class SharedKeyAuthentication implements HttpRequestFilter {
       replaceDateHeader(request);
       String toSign = createStringToSign(request);
       calculateAndReplaceAuthHeader(request, toSign);
+      HttpUtils.logRequest(signatureLog, request, "<<");
    }
 
    public String createStringToSign(HttpRequest request) {
+      HttpUtils.logRequest(signatureLog, request, ">>");
       StringBuilder buffer = new StringBuilder();
       // re-sign the request
       appendMethod(request, buffer);

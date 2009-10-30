@@ -102,7 +102,7 @@
         <appender-ref ref="ASYNCWIRE" />
     </category>
     
-    <category name="jclouds.signature.wire">
+    <category name="jclouds.signature">
         <priority value="DEBUG" />
         <appender-ref ref="ASYNCWIRE" />
     </category>
