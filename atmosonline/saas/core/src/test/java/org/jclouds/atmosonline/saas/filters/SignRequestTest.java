@@ -35,6 +35,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.atmosonline.saas.reference.AtmosStorageConstants;
 import org.jclouds.atmosonline.saas.reference.AtmosStorageHeaders;
+import org.jclouds.concurrent.WithinThreadExecutorService;
+import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.util.Jsr330;
 import org.jclouds.util.TimeStamp;
@@ -82,22 +84,23 @@ public class SignRequestTest {
 
    @BeforeClass
    protected void createFilter() {
-      injector = Guice.createInjector(new AbstractModule() {
+      injector = Guice.createInjector(new ExecutorServiceModule(new WithinThreadExecutorService()),
+               new AbstractModule() {
 
-         protected void configure() {
-            bindConstant().annotatedWith(Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_UID))
-                     .to("user");
-            bindConstant().annotatedWith(Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_KEY))
-                     .to(KEY);
-         }
+                  protected void configure() {
+                     bindConstant().annotatedWith(
+                              Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_UID)).to("user");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_KEY)).to(KEY);
+                  }
 
-         @SuppressWarnings("unused")
-         @Provides
-         @TimeStamp
-         String getDate() {
-            return "Thu, 05 Jun 2008 16:38:19 GMT";
-         }
-      });
+                  @SuppressWarnings("unused")
+                  @Provides
+                  @TimeStamp
+                  String getDate() {
+                     return "Thu, 05 Jun 2008 16:38:19 GMT";
+                  }
+               });
       filter = injector.getInstance(SignRequest.class);
 
    }

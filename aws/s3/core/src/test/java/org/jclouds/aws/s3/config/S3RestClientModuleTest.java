@@ -32,6 +32,8 @@ import org.jclouds.aws.s3.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.s3.handlers.AWSRedirectionRetryHandler;
 import org.jclouds.aws.s3.handlers.ParseAWSErrorFromXmlContent;
 import org.jclouds.aws.s3.reference.S3Constants;
+import org.jclouds.concurrent.WithinThreadExecutorService;
+import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
@@ -50,20 +52,20 @@ import com.google.inject.Injector;
 public class S3RestClientModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new S3RestClientModule(), new ParserModule(),
-               new AbstractModule() {
-                  @Override
-                  protected void configure() {
-                     bindConstant().annotatedWith(
-                              Jsr330.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to("user");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY)).to("key");
-                     bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_S3_ENDPOINT))
-                              .to("http://localhost");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(S3Constants.PROPERTY_S3_SESSIONINTERVAL)).to("2");
-                  }
-               });
+      return Guice.createInjector(new S3RestClientModule(), new ExecutorServiceModule(
+               new WithinThreadExecutorService()), new ParserModule(), new AbstractModule() {
+         @Override
+         protected void configure() {
+            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to(
+                     "user");
+            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY))
+                     .to("key");
+            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_S3_ENDPOINT)).to(
+                     "http://localhost");
+            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_S3_SESSIONINTERVAL)).to(
+                     "2");
+         }
+      });
    }
 
    @Test

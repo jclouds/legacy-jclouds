@@ -33,6 +33,8 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.azure.storage.config.AzureStorageRestClientModule;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
+import org.jclouds.concurrent.WithinThreadExecutorService;
+import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.config.ParserModule;
@@ -135,7 +137,8 @@ public class SharedKeyAuthenticationTest {
     */
    @BeforeClass
    protected void createFilter() {
-      injector = Guice.createInjector(new ParserModule(), new AzureStorageRestClientModule(),
+      injector = Guice.createInjector(new ParserModule(), new ExecutorServiceModule(
+               new WithinThreadExecutorService()), new AzureStorageRestClientModule(),
                new AbstractModule() {
 
                   protected void configure() {

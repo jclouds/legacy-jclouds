@@ -32,6 +32,8 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.aws.s3.config.S3RestClientModule;
 import org.jclouds.aws.s3.reference.S3Constants;
+import org.jclouds.concurrent.WithinThreadExecutorService;
+import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.util.Jsr330;
@@ -139,20 +141,20 @@ public class RequestAuthorizeSignatureTest {
     */
    @BeforeClass
    protected void createFilter() {
-      injector = Guice.createInjector(new S3RestClientModule(), new ParserModule(),
-               new AbstractModule() {
+      injector = Guice.createInjector(new S3RestClientModule(), new ExecutorServiceModule(
+               new WithinThreadExecutorService()), new ParserModule(), new AbstractModule() {
 
-                  protected void configure() {
-                     bindConstant().annotatedWith(
-                              Jsr330.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to("foo");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY)).to("bar");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(S3Constants.PROPERTY_S3_SESSIONINTERVAL)).to("2");
-                     bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_S3_ENDPOINT))
-                              .to("https://s3.amazonaws.com");
-                  }
-               });
+         protected void configure() {
+            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to(
+                     "foo");
+            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY))
+                     .to("bar");
+            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_S3_SESSIONINTERVAL)).to(
+                     "2");
+            bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_S3_ENDPOINT)).to(
+                     "https://s3.amazonaws.com");
+         }
+      });
       filter = injector.getInstance(RequestAuthorizeSignature.class);
    }
 

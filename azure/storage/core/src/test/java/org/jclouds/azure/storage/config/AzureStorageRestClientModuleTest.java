@@ -32,6 +32,8 @@ import static org.testng.Assert.assertFalse;
 import java.util.concurrent.ConcurrentMap;
 
 import org.jclouds.azure.storage.handlers.ParseAzureStorageErrorFromXmlContent;
+import org.jclouds.concurrent.WithinThreadExecutorService;
+import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
@@ -52,18 +54,16 @@ import com.google.inject.Injector;
 public class AzureStorageRestClientModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new AzureStorageRestClientModule(), new ParserModule(),
-               new AbstractModule() {
-                  @Override
-                  protected void configure() {
-                     bindConstant().annotatedWith(Jsr330.named(PROPERTY_AZURESTORAGE_ACCOUNT)).to(
-                              "user");
-                     bindConstant().annotatedWith(Jsr330.named(PROPERTY_AZURESTORAGE_KEY)).to(
-                              "secret");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(PROPERTY_AZURESTORAGE_SESSIONINTERVAL)).to("2");
-                  }
-               });
+      return Guice.createInjector(new AzureStorageRestClientModule(), new ExecutorServiceModule(
+               new WithinThreadExecutorService()), new ParserModule(), new AbstractModule() {
+         @Override
+         protected void configure() {
+            bindConstant().annotatedWith(Jsr330.named(PROPERTY_AZURESTORAGE_ACCOUNT)).to("user");
+            bindConstant().annotatedWith(Jsr330.named(PROPERTY_AZURESTORAGE_KEY)).to("secret");
+            bindConstant().annotatedWith(Jsr330.named(PROPERTY_AZURESTORAGE_SESSIONINTERVAL)).to(
+                     "2");
+         }
+      });
    }
 
    @Test
@@ -102,8 +102,7 @@ public class AzureStorageRestClientModuleTest {
    @Test
    void testRedirectionRetryHandler() {
       DelegatingRetryHandler handler = createInjector().getInstance(DelegatingRetryHandler.class);
-      assertEquals(handler.getRedirectionRetryHandler().getClass(),
-               RedirectionRetryHandler.class);
+      assertEquals(handler.getRedirectionRetryHandler().getClass(), RedirectionRetryHandler.class);
    }
 
 }
