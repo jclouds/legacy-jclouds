@@ -40,7 +40,6 @@ public class ContainerMetadata implements Comparable<ContainerMetadata> {
    }
 
    public ContainerMetadata(String name, long count, long bytes) {
-      this();
       setName(name);
       setBytes(bytes);
       setCount(count);

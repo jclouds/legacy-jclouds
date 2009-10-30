@@ -50,6 +50,7 @@ public class CloudFilesContextModule extends AbstractModule {
    protected void configure() {
       // for converters to work.
       install(new BlobStoreObjectModule());
+      install(new CFObjectModule());
    }
 
    @Provides

@@ -24,43 +24,50 @@
 package org.jclouds.rackspace.cloudfiles.functions;
 
 import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
 
-import org.jclouds.blobstore.domain.MutableBlobMetadata;
+import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
-import org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants;
-import org.jclouds.util.DateService;
+import org.jclouds.rackspace.cloudfiles.blobstore.functions.BlobToObjectInfo;
+import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
+import org.jclouds.rest.InvocationContext;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
 
 /**
+ * This parses @{link {@link MutableObjectInfoWithMetadata} from HTTP headers.
+ * 
  * @author Adrian Cole
  */
-public class ParseObjectMetadataFromHeaders extends ParseSystemAndUserMetadataFromHeaders {
+public class ParseObjectMetadataFromHeaders implements
+         Function<HttpResponse, MutableObjectInfoWithMetadata>, InvocationContext {
+   private final ParseSystemAndUserMetadataFromHeaders blobMetadataParser;
+   private final BlobToObjectInfo blobToObjectInfo;
 
    @Inject
-   public ParseObjectMetadataFromHeaders(Provider<MutableBlobMetadata> metadataFactory,
-            DateService dateParser,
-            @Named(CloudFilesConstants.PROPERTY_CLOUDFILES_METADATA_PREFIX) String metadataPrefix) {
-      super(metadataFactory, dateParser, metadataPrefix);
+   public ParseObjectMetadataFromHeaders(ParseSystemAndUserMetadataFromHeaders blobMetadataParser,
+            BlobToObjectInfo blobToObjectMetadata) {
+      this.blobMetadataParser = blobMetadataParser;
+      this.blobToObjectInfo = blobToObjectMetadata;
    }
 
-   @VisibleForTesting
    /**
-    * ETag == Content-MD5
+    * parses the http response headers to create a new {@link MutableObjectInfoWithMetadata} object.
     */
-   protected void addETagTo(HttpResponse from, MutableBlobMetadata metadata) {
-      super.addETagTo(from, metadata);
-      if (metadata.getETag() == null) {
-         // etag comes back incorrect case
-         String eTagHeader = from.getFirstHeaderOrNull("Etag");
-         if (eTagHeader != null) {
-            metadata.setETag(eTagHeader);
-         }
+   public MutableObjectInfoWithMetadata apply(HttpResponse from) {
+      BlobMetadata base = blobMetadataParser.apply(from);
+      MutableObjectInfoWithMetadata to = blobToObjectInfo.apply(base);
+      String eTagHeader = from.getFirstHeaderOrNull("Etag");
+      if (eTagHeader != null) {
+         to.setHash(HttpUtils.fromHexString(eTagHeader.replaceAll("\"", "")));
       }
-      metadata.setContentMD5(HttpUtils.fromHexString(metadata.getETag()));
+      return to;
    }
+
+   public void setContext(GeneratedHttpRequest<?> request) {
+      blobMetadataParser.setContext(request);
+   }
+
 }

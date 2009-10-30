@@ -21,24 +21,21 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudfiles.functions;
+package org.jclouds.rackspace.cloudfiles.domain;
 
-import javax.inject.Inject;
-
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
+import org.joda.time.DateTime;
 
 /**
- * Parses response headers and creates a new Rackspace Blob from them and the HTTP content.
  * 
- * @see ParseSystemAndUserMetadataFromHeaders
  * @author Adrian Cole
+ * 
  */
-public class ParseBlobFromHeadersAndHttpContent extends
-         org.jclouds.blobstore.functions.ParseBlobFromHeadersAndHttpContent {
-   @Inject
-   public ParseBlobFromHeadersAndHttpContent(ParseObjectMetadataFromHeaders metadataParser,
-            Blob.Factory blobFactory) {
-      super(metadataParser, blobFactory);
-   }
+public interface ObjectInfo extends Comparable<ObjectInfo> {
+
+   String getName();
+   byte [] getHash();
+   Long getBytes();
+   String getContentType();
+   DateTime getLastModified();
+
 }

@@ -31,10 +31,9 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.util.List;
 
-import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.MutableBlobMetadata;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
+import org.jclouds.rackspace.cloudfiles.functions.ParseObjectInfoListFromJsonResponse.ObjectInfoImpl;
 import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.joda.time.DateTime;
@@ -56,30 +55,28 @@ public class ParseBlobMetadataListFromJsonResponseTest {
 
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/test_list_container.json");
-      List<BlobMetadata> expects = Lists.newArrayList();
-      MutableBlobMetadata one = i.getInstance(MutableBlobMetadata.class);
-      one.setName("test_obj_1");
-      one.setETag("4281c348eaf83e70ddce0e07221c3d28");
-      one.setContentMD5(HttpUtils.fromHexString(one.getETag()));
-      one.setSize(14l);
-      one.setContentType("application/octet-stream");
-      one.setLastModified(new DateTime("2009-02-03T05:26:32.612278"));
+      List<ObjectInfo> expects = Lists.newArrayList();
+      ObjectInfoImpl one = i.getInstance(ObjectInfoImpl.class);
+      one.name = "test_obj_1";
+      one.hash = "4281c348eaf83e70ddce0e07221c3d28";
+      one.bytes  = 14l;
+      one.content_type = "application/octet-stream";
+      one.last_modified = new DateTime("2009-02-03T05:26:32.612278");
       expects.add(one);
-      MutableBlobMetadata two = i.getInstance(MutableBlobMetadata.class);
-      two.setName("test_obj_2");
-      two.setETag("b039efe731ad111bc1b0ef221c3849d0");
-      two.setContentMD5(HttpUtils.fromHexString(two.getETag()));
-      two.setSize(64l);
-      two.setContentType("application/octet-stream");
-      two.setLastModified(new DateTime("2009-02-03T05:26:32.612278"));
+      ObjectInfoImpl two = i.getInstance(ObjectInfoImpl.class);
+      two.name = ("test_obj_2");
+      two.hash = ("b039efe731ad111bc1b0ef221c3849d0");
+      two.bytes = (64l);
+      two.content_type = ("application/octet-stream");
+      two.last_modified =(new DateTime("2009-02-03T05:26:32.612278"));
       expects.add(two);
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       ListContainerOptions options = new ListContainerOptions();
       expect(request.getArgs()).andReturn(
                new Object[] { "containter", new ListContainerOptions[] { options } }).atLeastOnce();
       replay(request);
-      ParseBlobMetadataListFromJsonResponse parser = i
-               .getInstance(ParseBlobMetadataListFromJsonResponse.class);
+      ParseObjectInfoListFromJsonResponse parser = i
+               .getInstance(ParseObjectInfoListFromJsonResponse.class);
       parser.setContext(request);
       assertEquals(parser.apply(is), expects);
    }

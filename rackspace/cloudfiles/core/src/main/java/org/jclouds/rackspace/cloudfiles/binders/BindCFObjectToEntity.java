@@ -26,25 +26,29 @@ package org.jclouds.rackspace.cloudfiles.binders;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.blobstore.binders.BindBlobToEntityAndUserMetadataToHeadersWithPrefix;
-import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpUtils;
-import org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants;
+import org.jclouds.rackspace.cloudfiles.blobstore.functions.ObjectToBlob;
+import org.jclouds.rackspace.cloudfiles.domain.CFObject;
+import org.jclouds.rest.Binder;
 
-public class BindCFObjectAsEntity extends BindBlobToEntityAndUserMetadataToHeadersWithPrefix {
+public class BindCFObjectToEntity implements Binder {
+   private final BindBlobToEntityAndUserMetadataToHeadersWithPrefix blobBinder;
+   private final ObjectToBlob object2Blob;
+
    @Inject
-   public BindCFObjectAsEntity(
-            @Named(CloudFilesConstants.PROPERTY_CLOUDFILES_METADATA_PREFIX) String metadataPrefix) {
-      super(metadataPrefix);
+   public BindCFObjectToEntity(ObjectToBlob object2Blob,
+            BindBlobToEntityAndUserMetadataToHeadersWithPrefix blobBinder) {
+      this.blobBinder = blobBinder;
+      this.object2Blob = object2Blob;
    }
 
    public void bindToRequest(HttpRequest request, Object entity) {
-      Blob object = (Blob) entity;
-      if (object.getContentLength() >= 0) {
+      CFObject object = (CFObject) entity;
+      if (object.getContentLength() != null && object.getContentLength() >= 0) {
          checkArgument(object.getContentLength() <= 5 * 1024 * 1024 * 1024,
                   "maximum size for put object is 5GB");
          request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, object.getContentLength() + "");
@@ -52,14 +56,14 @@ public class BindCFObjectAsEntity extends BindBlobToEntityAndUserMetadataToHeade
          // Enable "chunked"/"streamed" data, where the size needn't be known in advance.
          request.getHeaders().put("Transfer-Encoding", "chunked");
       }
-      /**
-       * rackspace uses ETag header instead of Content-MD5.
-       */
-      if (object.getMetadata().getContentMD5() != null) {
-         request.getHeaders().put(HttpHeaders.ETAG,// note it needs to be in hex!
-                  HttpUtils.toHexString(object.getMetadata().getContentMD5()));
+
+      blobBinder.bindToRequest(request, object2Blob.apply(object));
+      if (object.getInfo().getHash() != null) {
+         request.getHeaders().put(HttpHeaders.ETAG,
+                  HttpUtils.toHexString(object.getInfo().getHash()));
+         request.getHeaders().removeAll("Content-MD5");
       }
-      super.bindToRequest(request, entity);
-      request.getHeaders().removeAll("Content-MD5");
+
    }
+
 }

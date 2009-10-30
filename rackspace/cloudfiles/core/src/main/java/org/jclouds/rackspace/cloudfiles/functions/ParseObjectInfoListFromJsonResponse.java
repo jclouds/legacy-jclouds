@@ -33,14 +33,12 @@ import java.lang.reflect.Type;
 import java.util.SortedSet;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
-import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.BoundedSortedSet;
-import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.internal.BoundedTreeSet;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseJson;
+import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
 import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -53,39 +51,103 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 /**
- * This parses {@link BlobMetadata} from a gson string.
+ * This parses {@link ObjectInfo} from a gson string.
  * 
  * @author Adrian Cole
  */
-public class ParseBlobMetadataListFromJsonResponse extends
-         ParseJson<BoundedSortedSet<BlobMetadata>> implements InvocationContext {
+public class ParseObjectInfoListFromJsonResponse extends ParseJson<BoundedSortedSet<ObjectInfo>>
+         implements InvocationContext {
 
-   private final Provider<MutableBlobMetadata> metadataFactory;
    private GeneratedHttpRequest<?> request;
 
    @Inject
-   public ParseBlobMetadataListFromJsonResponse(Provider<MutableBlobMetadata> metadataFactory,
-            Gson gson) {
+   public ParseObjectInfoListFromJsonResponse(Gson gson) {
       super(gson);
-      this.metadataFactory = metadataFactory;
    }
 
-   public static class CloudFilesMetadata implements Comparable<CloudFilesMetadata> {
-      public CloudFilesMetadata() {
-      }
-
+   public static class ObjectInfoImpl implements ObjectInfo {
       String name;
       String hash;
       long bytes;
       String content_type;
       DateTime last_modified;
 
-      public int compareTo(CloudFilesMetadata o) {
+      public int compareTo(ObjectInfoImpl o) {
          return (this == o) ? 0 : name.compareTo(o.name);
+      }
+
+      public Long getBytes() {
+         return bytes;
+      }
+
+      public String getContentType() {
+         return content_type;
+      }
+
+      public byte[] getHash() {
+         return HttpUtils.fromHexString(hash);
+      }
+
+      public DateTime getLastModified() {
+         return last_modified;
+      }
+
+      public String getName() {
+         return name;
+      }
+
+      @Override
+      public int hashCode() {
+         final int prime = 31;
+         int result = 1;
+         result = prime * result + (int) (bytes ^ (bytes >>> 32));
+         result = prime * result + ((content_type == null) ? 0 : content_type.hashCode());
+         result = prime * result + ((hash == null) ? 0 : hash.hashCode());
+         result = prime * result + ((last_modified == null) ? 0 : last_modified.hashCode());
+         result = prime * result + ((name == null) ? 0 : name.hashCode());
+         return result;
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+         if (this == obj)
+            return true;
+         if (obj == null)
+            return false;
+         if (getClass() != obj.getClass())
+            return false;
+         ObjectInfoImpl other = (ObjectInfoImpl) obj;
+         if (bytes != other.bytes)
+            return false;
+         if (content_type == null) {
+            if (other.content_type != null)
+               return false;
+         } else if (!content_type.equals(other.content_type))
+            return false;
+         if (hash == null) {
+            if (other.hash != null)
+               return false;
+         } else if (!hash.equals(other.hash))
+            return false;
+         if (last_modified == null) {
+            if (other.last_modified != null)
+               return false;
+         } else if (!last_modified.equals(other.last_modified))
+            return false;
+         if (name == null) {
+            if (other.name != null)
+               return false;
+         } else if (!name.equals(other.name))
+            return false;
+         return true;
+      }
+
+      public int compareTo(ObjectInfo o) {
+         return (this == o) ? 0 : getName().compareTo(o.getName());
       }
    }
 
-   public BoundedSortedSet<BlobMetadata> apply(InputStream stream) {
+   public BoundedSortedSet<ObjectInfo> apply(InputStream stream) {
       checkState(request != null, "request should be initialized at this point");
       checkState(request.getArgs() != null, "request.getArgs() should be initialized at this point");
       checkArgument(request.getArgs()[0] instanceof String, "arg[0] must be a container name");
@@ -94,28 +156,21 @@ public class ParseBlobMetadataListFromJsonResponse extends
       ListContainerOptions[] optionsList = (ListContainerOptions[]) request.getArgs()[1];
       ListContainerOptions options = optionsList.length > 0 ? optionsList[0]
                : ListContainerOptions.NONE;
-      Type listType = new TypeToken<SortedSet<CloudFilesMetadata>>() {
+      Type listType = new TypeToken<SortedSet<ObjectInfoImpl>>() {
       }.getType();
 
       try {
-         SortedSet<CloudFilesMetadata> list = gson.fromJson(new InputStreamReader(stream, "UTF-8"),
+         SortedSet<ObjectInfoImpl> list = gson.fromJson(new InputStreamReader(stream, "UTF-8"),
                   listType);
-         SortedSet<BlobMetadata> returnVal = Sets.newTreeSet(Iterables.transform(list,
-                  new Function<CloudFilesMetadata, BlobMetadata>() {
-                     public BlobMetadata apply(CloudFilesMetadata from) {
-                        MutableBlobMetadata metadata = metadataFactory.get();
-                        metadata.setName(from.name);
-                        metadata.setSize(from.bytes);
-                        metadata.setLastModified(from.last_modified);
-                        metadata.setContentType(from.content_type);
-                        metadata.setETag(from.hash);
-                        metadata.setContentMD5(HttpUtils.fromHexString(from.hash));
-                        return metadata;
+         SortedSet<ObjectInfo> returnVal = Sets.newTreeSet(Iterables.transform(list,
+                  new Function<ObjectInfoImpl, ObjectInfo>() {
+                     public ObjectInfo apply(ObjectInfoImpl from) {
+                        return from;
                      }
                   }));
          boolean truncated = options.getMaxResults() == returnVal.size();
          String marker = truncated ? returnVal.last().getName() : null;
-         return new BoundedTreeSet<BlobMetadata>(returnVal, options.getPath(), marker, options
+         return new BoundedTreeSet<ObjectInfo>(returnVal, options.getPath(), marker, options
                   .getMaxResults(), truncated);
 
       } catch (UnsupportedEncodingException e) {

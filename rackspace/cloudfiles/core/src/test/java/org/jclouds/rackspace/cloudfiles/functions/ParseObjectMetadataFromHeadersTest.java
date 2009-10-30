@@ -23,12 +23,18 @@
  */
 package org.jclouds.rackspace.cloudfiles.functions;
 
+import static org.easymock.EasyMock.expect;
+import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertNotNull;
 
-import org.jclouds.blobstore.domain.MutableBlobMetadata;
+import java.net.URI;
+
+import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.config.ParserModule;
-import org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants;
+import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
@@ -48,17 +54,24 @@ public class ParseObjectMetadataFromHeadersTest {
       @Override
       protected void configure() {
          bindConstant().annotatedWith(
-                  Jsr330.named(CloudFilesConstants.PROPERTY_CLOUDFILES_METADATA_PREFIX)).to("sdf");
+                  Jsr330.named(BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX)).to("sdf");
       }
 
    });
 
    public void testEtagCaseIssue() {
       ParseObjectMetadataFromHeaders parser = i.getInstance(ParseObjectMetadataFromHeaders.class);
-      MutableBlobMetadata md = i.getInstance(MutableBlobMetadata.class);
+      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      expect(request.getEndpoint()).andReturn(URI.create("http://localhost/test")).atLeastOnce();
+      replay(request);
+      parser.setContext(request);
       HttpResponse response = new HttpResponse();
+      response.getHeaders().put("Content-Type", "text/plain");
+      response.getHeaders().put("Last-Modified", "Fri, 12 Jun 2007 13:40:18 GMT");
+      response.getHeaders().put("Content-Length", "0");
+
       response.getHeaders().put("Etag", "feb1");
-      parser.addETagTo(response, md);
-      assertNotNull(md.getETag());
+      MutableObjectInfoWithMetadata md = parser.apply(response);
+      assertNotNull(md.getHash());
    }
 }

@@ -31,40 +31,54 @@ import java.net.URI;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.rackspace.cloudfiles.CloudFilesContextBuilder;
+import org.jclouds.rackspace.cloudfiles.CloudFilesPropertiesBuilder;
+import org.jclouds.rackspace.cloudfiles.blobstore.functions.BlobToObject;
+import org.jclouds.rackspace.cloudfiles.domain.CFObject;
 import org.testng.annotations.Test;
 
-import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.Provider;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests parsing of a request
  * 
  * @author Adrian Cole
  */
-@Test(testName = "cloudfiles.BindCFObjectAsEntityTest")
-public class BindCFObjectAsEntityTest {
+@Test(testName = "cloudfiles.BindCFObjectToEntityTest")
+public class BindCFObjectToEntityTest {
    private Factory blobProvider;
+   private Provider<BindCFObjectToEntity> binderProvider;
+   private BlobToObject blob2Object;
 
-   public BindCFObjectAsEntityTest() {
-      blobProvider = Guice.createInjector(new BlobStoreObjectModule()).getInstance(
-               Blob.Factory.class);
+   public BindCFObjectToEntityTest() {
+      Injector injector = new CloudFilesContextBuilder(new CloudFilesPropertiesBuilder("id",
+               "secret").build()).buildInjector();
+
+      blobProvider = injector.getInstance(Blob.Factory.class);
+      binderProvider = injector.getInstance(Key
+               .get(new TypeLiteral<Provider<BindCFObjectToEntity>>() {
+               }));
+      blob2Object = injector.getInstance(BlobToObject.class);
    }
 
-   public Blob testBlob() {
+   public CFObject testBlob() {
 
       Blob TEST_BLOB = blobProvider.create(null);
       TEST_BLOB.getMetadata().setName("hello");
       TEST_BLOB.setData("hello");
       TEST_BLOB.getMetadata().setContentType(MediaType.TEXT_PLAIN);
-      return TEST_BLOB;
+      return blob2Object.apply(TEST_BLOB);
    }
 
    public void testNormal() throws IOException {
 
-      BindCFObjectAsEntity binder = new BindCFObjectAsEntity("test");
+      BindCFObjectToEntity binder = binderProvider.get();
 
       HttpRequest request = new HttpRequest("GET", URI.create("http://localhost:8001"));
       binder.bindToRequest(request, testBlob());
@@ -76,9 +90,9 @@ public class BindCFObjectAsEntityTest {
 
    public void testMD5InHex() throws IOException {
 
-      BindCFObjectAsEntity binder = new BindCFObjectAsEntity("test");
+      BindCFObjectToEntity binder = binderProvider.get();
 
-      Blob blob = testBlob();
+      CFObject blob = testBlob();
       blob.generateMD5();
       HttpRequest request = new HttpRequest("GET", URI.create("http://localhost:8001"));
       binder.bindToRequest(request, blob);

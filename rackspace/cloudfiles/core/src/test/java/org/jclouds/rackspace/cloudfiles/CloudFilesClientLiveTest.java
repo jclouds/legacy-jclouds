@@ -41,8 +41,6 @@ import java.util.concurrent.TimeoutException;
 import org.apache.commons.io.IOUtils;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.KeyNotFoundException;
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.BoundedSortedSet;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jclouds.http.HttpResponseException;
@@ -50,8 +48,11 @@ import org.jclouds.http.HttpUtils;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rackspace.cloudfiles.domain.AccountMetadata;
+import org.jclouds.rackspace.cloudfiles.domain.CFObject;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerCDNMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
+import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
+import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
 import org.jclouds.rackspace.cloudfiles.options.ListCdnContainerOptions;
 import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
 import org.testng.annotations.BeforeGroups;
@@ -283,10 +284,10 @@ public class CloudFilesClientLiveTest {
 
          String data = "foo";
 
-         connection.putObject(containerName, newBlob(data, "foo")).get(10, TimeUnit.SECONDS);
-         connection.putObject(containerName, newBlob(data, "path/bar")).get(10, TimeUnit.SECONDS);
+         connection.putObject(containerName, newCFObject(data, "foo")).get(10, TimeUnit.SECONDS);
+         connection.putObject(containerName, newCFObject(data, "path/bar")).get(10, TimeUnit.SECONDS);
 
-         BoundedSortedSet<BlobMetadata> container = connection.listObjects(containerName,
+         BoundedSortedSet<ObjectInfo> container = connection.listObjects(containerName,
                   underPath("")).get(10, TimeUnit.SECONDS);
          assert !container.isTruncated();
          assertEquals(container.size(), 1);
@@ -314,36 +315,36 @@ public class CloudFilesClientLiveTest {
       // Test PUT with string data, ETag hash, and a piece of metadata
       String data = "Here is my data";
       String key = "object";
-      Blob object = newBlob(data, key);
-      byte[] md5 = object.getMetadata().getContentMD5();
+      CFObject object = newCFObject(data, key);
+      byte[] md5 = object.getInfo().getHash();
       String newEtag = connection.putObject(containerName, object).get(10, TimeUnit.SECONDS);
-      assertEquals(HttpUtils.toHexString(md5), HttpUtils.toHexString(object.getMetadata()
-               .getContentMD5()));
+      assertEquals(HttpUtils.toHexString(md5), HttpUtils.toHexString(object.getInfo()
+               .getHash()));
 
       // Test HEAD of missing object
       try {
-         connection.getObjectMetadata(containerName, "non-existent-object");
+         connection.getObjectInfo(containerName, "non-existent-object");
          assert false;
       } catch (KeyNotFoundException e) {
       }
 
       // Test HEAD of object
-      BlobMetadata metadata = connection.getObjectMetadata(containerName, object.getMetadata()
+      MutableObjectInfoWithMetadata metadata = connection.getObjectInfo(containerName, object.getInfo()
                .getName());
       // TODO assertEquals(metadata.getName(), object.getMetadata().getName());
-      assertEquals(metadata.getSize(), new Long(data.length()));
+      assertEquals(metadata.getBytes(), new Long(data.length()));
       assertEquals(metadata.getContentType(), "text/plain");
-      assertEquals(HttpUtils.toHexString(md5), HttpUtils.toHexString(object.getMetadata()
-               .getContentMD5()));
-      assertEquals(metadata.getETag(), newEtag);
-      assertEquals(metadata.getUserMetadata().entrySet().size(), 1);
-      assertEquals(metadata.getUserMetadata().get("metadata"), "metadata-value");
+      assertEquals(HttpUtils.toHexString(md5), HttpUtils.toHexString(object.getInfo()
+               .getHash()));
+      assertEquals(metadata.getHash(), HttpUtils.fromHexString(newEtag));
+      assertEquals(metadata.getMetadata().entrySet().size(), 1);
+      assertEquals(metadata.getMetadata().get("metadata"), "metadata-value");
 
       // // Test POST to update object's metadata
       Map<String, String> userMetadata = Maps.newHashMap();
       userMetadata.put("New-Metadata-1", "value-1");
       userMetadata.put("New-Metadata-2", "value-2");
-      assertTrue(connection.setObjectMetadata(containerName, object.getMetadata().getName(),
+      assertTrue(connection.setObjectMetadata(containerName, object.getInfo().getName(),
                userMetadata));
 
       // Test GET of missing object
@@ -353,23 +354,23 @@ public class CloudFilesClientLiveTest {
       } catch (KeyNotFoundException e) {
       }
       // Test GET of object (including updated metadata)
-      Blob getBlob = connection.getObject(containerName, object.getMetadata().getName()).get(120,
+      CFObject getBlob = connection.getObject(containerName, object.getInfo().getName()).get(120,
                TimeUnit.SECONDS);
       assertEquals(IOUtils.toString((InputStream) getBlob.getData()), data);
       // TODO assertEquals(getBlob.getName(), object.getMetadata().getName());
       assertEquals(getBlob.getContentLength(), new Long(data.length()));
-      assertEquals(getBlob.getMetadata().getContentType(), "text/plain");
-      assertEquals(HttpUtils.toHexString(md5), HttpUtils.toHexString(getBlob.getMetadata()
-               .getContentMD5()));
-      assertEquals(newEtag, getBlob.getMetadata().getETag());
-      assertEquals(getBlob.getMetadata().getUserMetadata().entrySet().size(), 2);
-      assertEquals(getBlob.getMetadata().getUserMetadata().get("new-metadata-1"), "value-1");
-      assertEquals(getBlob.getMetadata().getUserMetadata().get("new-metadata-2"), "value-2");
+      assertEquals(getBlob.getInfo().getContentType(), "text/plain");
+      assertEquals(HttpUtils.toHexString(md5), HttpUtils.toHexString(getBlob.getInfo()
+               .getHash()));
+      assertEquals(HttpUtils.fromHexString(newEtag), getBlob.getInfo().getHash());
+      assertEquals(getBlob.getInfo().getMetadata().entrySet().size(), 2);
+      assertEquals(getBlob.getInfo().getMetadata().get("new-metadata-1"), "value-1");
+      assertEquals(getBlob.getInfo().getMetadata().get("new-metadata-2"), "value-2");
 
       // Test PUT with invalid ETag (as if object's data was corrupted in transit)
       String correctEtag = newEtag;
       String incorrectEtag = "0" + correctEtag.substring(1);
-      object.getMetadata().setETag(incorrectEtag);
+      object.getInfo().setHash(HttpUtils.fromHexString(incorrectEtag));
       try {
          connection.putObject(containerName, object).get(10, TimeUnit.SECONDS);
       } catch (Throwable e) {
@@ -379,17 +380,17 @@ public class CloudFilesClientLiveTest {
 
       // Test PUT chunked/streamed upload with data of "unknown" length
       ByteArrayInputStream bais = new ByteArrayInputStream(data.getBytes("UTF-8"));
-      Blob blob = connection.newBlob();
-      blob.getMetadata().setName("chunked-object");
-      object.setData(bais);
-      newEtag = connection.putObject(containerName, object).get(10, TimeUnit.SECONDS);
-      assertEquals(HttpUtils.toHexString(md5), HttpUtils.toHexString(getBlob.getMetadata()
-               .getContentMD5()));
+      CFObject blob = connection.newCFObject();
+      blob.getInfo().setName("chunked-object");
+      blob.setData(bais);
+      newEtag = connection.putObject(containerName, blob).get(10, TimeUnit.SECONDS);
+      assertEquals(HttpUtils.toHexString(md5), HttpUtils.toHexString(getBlob.getInfo()
+               .getHash()));
 
       // Test GET with options
       // Non-matching ETag
       try {
-         connection.getObject(containerName, object.getMetadata().getName(),
+         connection.getObject(containerName, object.getInfo().getName(),
                   GetOptions.Builder.ifETagDoesntMatch(newEtag)).get(120, TimeUnit.SECONDS);
       } catch (Exception e) {
          assertEquals(e.getCause().getClass(), HttpResponseException.class);
@@ -397,10 +398,10 @@ public class CloudFilesClientLiveTest {
       }
 
       // Matching ETag
-      getBlob = connection.getObject(containerName, object.getMetadata().getName(),
+      getBlob = connection.getObject(containerName, object.getInfo().getName(),
                GetOptions.Builder.ifETagMatches(newEtag)).get(120, TimeUnit.SECONDS);
-      assertEquals(getBlob.getMetadata().getETag(), newEtag);
-      getBlob = connection.getObject(containerName, object.getMetadata().getName(),
+      assertEquals(getBlob.getInfo().getHash(), HttpUtils.fromHexString(newEtag));
+      getBlob = connection.getObject(containerName, object.getInfo().getName(),
                GetOptions.Builder.startAt(8)).get(120, TimeUnit.SECONDS);
       assertEquals(IOUtils.toString((InputStream) getBlob.getData()), data.substring(8));
 
@@ -410,14 +411,13 @@ public class CloudFilesClientLiveTest {
       assertTrue(connection.deleteContainerIfEmpty(containerName).get(10, TimeUnit.SECONDS));
    }
 
-   private Blob newBlob(String data, String key) throws IOException {
-      Blob object = connection.newBlob();
-      object.getMetadata().setName(key);
+   private CFObject newCFObject(String data, String key) throws IOException {
+      CFObject object = connection.newCFObject();
+      object.getInfo().setName(key);
       object.setData(data);
-      object.setContentLength(data.length());
       object.generateMD5();
-      object.getMetadata().setContentType("text/plain");
-      object.getMetadata().getUserMetadata().put("Metadata", "metadata-value");
+      object.getInfo().setContentType("text/plain");
+      object.getInfo().getMetadata().put("Metadata", "metadata-value");
       return object;
    }
 

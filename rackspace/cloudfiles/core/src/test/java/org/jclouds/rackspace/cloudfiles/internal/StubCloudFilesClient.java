@@ -27,14 +27,15 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.concurrent.Future;
 
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.BoundedSortedSet;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
 import org.jclouds.rackspace.cloudfiles.domain.AccountMetadata;
+import org.jclouds.rackspace.cloudfiles.domain.CFObject;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerCDNMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
+import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
+import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
 import org.jclouds.rackspace.cloudfiles.options.ListCdnContainerOptions;
 import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
 
@@ -77,11 +78,11 @@ public class StubCloudFilesClient implements CloudFilesClient {
       throw new UnsupportedOperationException();
    }
 
-   public Future<Blob> getObject(String container, String key, GetOptions... options) {
+   public Future<CFObject> getObject(String container, String key, GetOptions... options) {
       throw new UnsupportedOperationException();
    }
 
-   public BlobMetadata getObjectMetadata(String container, String key) {
+   public MutableObjectInfoWithMetadata getObjectInfo(String container, String key) {
       throw new UnsupportedOperationException();
    }
 
@@ -93,16 +94,12 @@ public class StubCloudFilesClient implements CloudFilesClient {
       throw new UnsupportedOperationException();
    }
 
-   public Future<BoundedSortedSet<BlobMetadata>> listObjects(String container,
+   public Future<BoundedSortedSet<ObjectInfo>> listObjects(String container,
             ListContainerOptions... options) {
       throw new UnsupportedOperationException();
    }
 
-   public Blob newBlob() {
-      throw new UnsupportedOperationException();
-   }
-
-   public Future<String> putObject(String container, Blob object) {
+   public Future<String> putObject(String container, CFObject object) {
       throw new UnsupportedOperationException();
    }
 
@@ -115,6 +112,10 @@ public class StubCloudFilesClient implements CloudFilesClient {
    }
 
    public String updateCDN(String container, Long ttl) {
+      throw new UnsupportedOperationException();
+   }
+
+   public CFObject newCFObject() {
       throw new UnsupportedOperationException();
    }
 

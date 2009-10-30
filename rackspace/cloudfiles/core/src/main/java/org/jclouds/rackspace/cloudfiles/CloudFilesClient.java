@@ -38,10 +38,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.jclouds.blobstore.binders.BindMapToHeadersWithPrefix;
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.BoundedSortedSet;
-import org.jclouds.blobstore.functions.BlobName;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
@@ -50,17 +47,21 @@ import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rackspace.CloudFiles;
 import org.jclouds.rackspace.CloudFilesCDN;
-import org.jclouds.rackspace.cloudfiles.binders.BindCFObjectAsEntity;
+import org.jclouds.rackspace.cloudfiles.binders.BindCFObjectToEntity;
 import org.jclouds.rackspace.cloudfiles.domain.AccountMetadata;
+import org.jclouds.rackspace.cloudfiles.domain.CFObject;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerCDNMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
+import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
+import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
+import org.jclouds.rackspace.cloudfiles.functions.ObjectName;
 import org.jclouds.rackspace.cloudfiles.functions.ParseAccountMetadataResponseFromHeaders;
-import org.jclouds.rackspace.cloudfiles.functions.ParseBlobFromHeadersAndHttpContent;
-import org.jclouds.rackspace.cloudfiles.functions.ParseBlobMetadataListFromJsonResponse;
 import org.jclouds.rackspace.cloudfiles.functions.ParseCdnUriFromHeaders;
 import org.jclouds.rackspace.cloudfiles.functions.ParseContainerCDNMetadataFromHeaders;
 import org.jclouds.rackspace.cloudfiles.functions.ParseContainerCDNMetadataListFromGsonResponse;
 import org.jclouds.rackspace.cloudfiles.functions.ParseContainerListFromJsonResponse;
+import org.jclouds.rackspace.cloudfiles.functions.ParseObjectFromHeadersAndHttpContent;
+import org.jclouds.rackspace.cloudfiles.functions.ParseObjectInfoListFromJsonResponse;
 import org.jclouds.rackspace.cloudfiles.functions.ParseObjectMetadataFromHeaders;
 import org.jclouds.rackspace.cloudfiles.functions.ReturnTrueOn404FalseOn409;
 import org.jclouds.rackspace.cloudfiles.options.ListCdnContainerOptions;
@@ -91,7 +92,7 @@ import org.jclouds.rest.annotations.SkipEncoding;
 @Endpoint(CloudFiles.class)
 public interface CloudFilesClient {
 
-   Blob newBlob();
+   CFObject newCFObject();
 
    /**
     * HEAD operations against an account are performed to retrieve the number of Containers and the
@@ -142,9 +143,9 @@ public interface CloudFilesClient {
    SortedSet<ContainerMetadata> listContainers(ListContainerOptions... options);
 
    @POST
-   @Path("{container}/{key}")
+   @Path("{container}/{name}")
    boolean setObjectMetadata(@PathParam("container") String container,
-            @PathParam("key") String key,
+            @PathParam("name") String name,
             @BinderParam(BindMapToHeadersWithPrefix.class) Map<String, String> userMetadata);
 
    @GET
@@ -200,9 +201,9 @@ public interface CloudFilesClient {
 
    @GET
    @QueryParams(keys = "format", values = "json")
-   @ResponseParser(ParseBlobMetadataListFromJsonResponse.class)
+   @ResponseParser(ParseObjectInfoListFromJsonResponse.class)
    @Path("{container}")
-   Future<BoundedSortedSet<BlobMetadata>> listObjects(@PathParam("container") String container,
+   Future<BoundedSortedSet<ObjectInfo>> listObjects(@PathParam("container") String container,
             ListContainerOptions... options);
 
    @HEAD
@@ -211,29 +212,28 @@ public interface CloudFilesClient {
    boolean containerExists(@PathParam("container") String container);
 
    @PUT
-   @Path("{container}/{key}")
+   @Path("{container}/{name}")
    @ResponseParser(ParseETagHeader.class)
    Future<String> putObject(
             @PathParam("container") String container,
-            @PathParam("key") @ParamParser(BlobName.class) @BinderParam(BindCFObjectAsEntity.class) Blob object);
+            @PathParam("name") @ParamParser(ObjectName.class) @BinderParam(BindCFObjectToEntity.class) CFObject object);
 
    @GET
-   @ResponseParser(ParseBlobFromHeadersAndHttpContent.class)
+   @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)
    @ExceptionParser(ThrowKeyNotFoundOn404.class)
-   @Path("{container}/{key}")
-   Future<Blob> getObject(@PathParam("container") String container, @PathParam("key") String key,
+   @Path("{container}/{name}")
+   Future<CFObject> getObject(@PathParam("container") String container, @PathParam("name") String name,
             GetOptions... options);
 
    @HEAD
    @ResponseParser(ParseObjectMetadataFromHeaders.class)
    @ExceptionParser(ThrowKeyNotFoundOn404.class)
-   @Path("{container}/{key}")
-   BlobMetadata getObjectMetadata(@PathParam("container") String container,
-            @PathParam("key") String key);
+   @Path("{container}/{name}")
+   MutableObjectInfoWithMetadata getObjectInfo(@PathParam("container") String container, @PathParam("name") String name);
 
    @DELETE
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   @Path("{container}/{key}")
-   Future<Void> removeObject(@PathParam("container") String container, @PathParam("key") String key);
+   @Path("{container}/{name}")
+   Future<Void> removeObject(@PathParam("container") String container, @PathParam("name") String name);
 
 }
