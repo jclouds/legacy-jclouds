@@ -106,7 +106,7 @@ public abstract class BaseMapIntegrationTest<S, V> extends BaseBlobStoreIntegrat
       try {
          Map<String, V> map = createMap(context, bucketName);
          assertConsistencyAwareMapSize(map, 0);
-         putString(map, "one", "apple");
+         putStringWithMD5(map, "one", "apple");
          assertConsistencyAwareMapSize(map, 1);
          map.clear();
          assertConsistencyAwareMapSize(map, 0);
@@ -125,7 +125,7 @@ public abstract class BaseMapIntegrationTest<S, V> extends BaseBlobStoreIntegrat
       try {
          Map<String, V> map = createMap(context, bucketName);
          assertConsistencyAwareKeySize(map, 0);
-         putString(map, "one", "two");
+         putStringWithMD5(map, "one", "two");
          assertConsistencyAwareKeySize(map, 1);
          assertConsistencyAwareKeySetEquals(map, ImmutableSet.of("one"));
       } finally {
@@ -175,7 +175,7 @@ public abstract class BaseMapIntegrationTest<S, V> extends BaseBlobStoreIntegrat
       try {
          Map<String, V> map = createMap(context, bucketName);
          assertConsistencyAwareDoesntContainKey(map);
-         putString(map, "one", "apple");
+         putStringWithMD5(map, "one", "apple");
          assertConsistencyAwareContainsKey(map);
       } finally {
          returnContainer(bucketName);
@@ -219,7 +219,7 @@ public abstract class BaseMapIntegrationTest<S, V> extends BaseBlobStoreIntegrat
       try {
          Map<String, V> map = createMap(context, bucketName);
          assertConsistencyAwareEmpty(map);
-         putString(map, "one", "apple");
+         putStringWithMD5(map, "one", "apple");
          assertConsistencyAwareNotEmpty(map);
       } finally {
          returnContainer(bucketName);
@@ -243,7 +243,7 @@ public abstract class BaseMapIntegrationTest<S, V> extends BaseBlobStoreIntegrat
       });
    }
 
-   abstract protected void putString(Map<String, V> map, String key, String value)
+   abstract protected void putStringWithMD5(Map<String, V> map, String key, String value)
             throws InterruptedException, ExecutionException, TimeoutException;
 
    protected void fourLeftRemovingOne(Map<String, V> map) throws InterruptedException,

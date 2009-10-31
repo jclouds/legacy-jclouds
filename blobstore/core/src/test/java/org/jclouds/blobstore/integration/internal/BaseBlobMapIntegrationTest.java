@@ -78,7 +78,7 @@ public class BaseBlobMapIntegrationTest<S> extends BaseMapIntegrationTest<S, Blo
       String bucketName = getContainerName();
       try {
          Map<String, Blob> map = createMap(context, bucketName);
-         putString(map, "one", "two");
+         putStringWithMD5(map, "one", "two");
          assertConsistencyAwareContentEquals(map, "one", "two");
          // TODO track how often this occurs and potentially update map implementation
          assertConsistencyAwareRemoveEquals(map, "one", null);
@@ -135,9 +135,10 @@ public class BaseBlobMapIntegrationTest<S> extends BaseMapIntegrationTest<S, Blo
       String bucketName = getContainerName();
       try {
          Map<String, Blob> map = createMap(context, bucketName);
-         putString(map, "one", "apple");
+         putStringWithMD5(map, "one", "apple");
          Blob object = newBlob("one");
          object.setData("apple");
+         object.generateMD5();
          assertConsistencyAwareContainsValue(map, object);
       } finally {
          returnContainer(bucketName);
@@ -200,9 +201,10 @@ public class BaseBlobMapIntegrationTest<S> extends BaseMapIntegrationTest<S, Blo
    }
 
    @Override
-   protected void putString(Map<String, Blob> map, String key, String value) {
+   protected void putStringWithMD5(Map<String, Blob> map, String key, String value) {
       Blob object = newBlob(key);
       object.setData(value);
+      object.generateMD5();
       map.put(key, object);
    }
 

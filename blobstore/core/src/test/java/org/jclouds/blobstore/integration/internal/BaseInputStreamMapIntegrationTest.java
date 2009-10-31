@@ -78,7 +78,7 @@ public class BaseInputStreamMapIntegrationTest<S> extends BaseMapIntegrationTest
       String bucketName = getContainerName();
       try {
          Map<String, InputStream> map = createMap(context, bucketName);
-         putString(map, "one", "two");
+         putStringWithMD5(map, "one", "two");
          InputStream old = map.remove("one");
          assertEquals(Utils.toStringAndClose(old), "two");
          old = map.remove("one");
@@ -309,7 +309,7 @@ public class BaseInputStreamMapIntegrationTest<S> extends BaseMapIntegrationTest
    }
 
    @Override
-   protected void putString(Map<String, InputStream> map, String key, String value)
+   protected void putStringWithMD5(Map<String, InputStream> map, String key, String value)
             throws InterruptedException, ExecutionException, TimeoutException {
       ((InputStreamMap) map).putString(key, value);
    }
