@@ -40,7 +40,7 @@
         <module>core</module>
     </modules>
     <properties>
-        <jclouds.test.initializer>org.jclouds.azure.storage.blob.integration.AzureBlobTestInitializer</jclouds.test.initializer>
+        <jclouds.test.initializer>org.jclouds.azure.storage.blob.blobstore.integration.AzureBlobTestInitializer</jclouds.test.initializer>
     </properties>
     <dependencies>
         <dependency>

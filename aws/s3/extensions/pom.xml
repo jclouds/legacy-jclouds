@@ -52,13 +52,6 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>xstream</groupId>
-            <artifactId>xstream</artifactId>
-            <version>1.2</version>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 
 </project>

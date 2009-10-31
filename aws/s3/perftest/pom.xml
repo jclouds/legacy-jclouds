@@ -61,12 +61,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>xstream</groupId>
-			<artifactId>xstream</artifactId>
-			<version>1.2</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>jclouds-httpnio</artifactId>
 			<version>${project.version}</version>
@@ -135,8 +129,10 @@
             </goals>
             <configuration>
           <!-- to keep garbage from previous tests from affecting the performance of the next -->
+<!--
           <forkMode>pertest</forkMode>
               <parallel>classes</parallel>
+-->
               <threadCount>1</threadCount>
             </configuration>
           </execution>
