@@ -21,25 +21,17 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.azure.storage.domain;
+package org.jclouds.azure.storage.blob.blobstore.integration;
 
-import java.net.URI;
-import java.util.SortedSet;
+import org.jclouds.azure.storage.blob.AzureBlobClient;
+import org.jclouds.blobstore.integration.internal.BaseInputStreamMapIntegrationTest;
+import org.testng.annotations.Test;
 
 /**
- * 
  * @author Adrian Cole
- * 
  */
-public interface BoundedList<T> extends SortedSet<T> {
-   URI getUrl();
-
-   String getPrefix();
-
-   String getMarker();
-
-   int getMaxResults();
-
-   String getNextMarker();
+@Test(groups = { "integration", "live" }, testName = "azureblob.AzureBlobInputStreamMapIntegrationTest")
+public class AzureBlobInputStreamMapIntegrationTest extends
+         BaseInputStreamMapIntegrationTest<AzureBlobClient> {
 
 }

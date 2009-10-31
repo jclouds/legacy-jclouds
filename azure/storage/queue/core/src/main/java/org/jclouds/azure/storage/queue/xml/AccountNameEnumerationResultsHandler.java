@@ -29,7 +29,7 @@ import java.util.TreeSet;
 
 import javax.inject.Inject;
 
-import org.jclouds.azure.storage.domain.BoundedList;
+import org.jclouds.azure.storage.domain.BoundedSortedSet;
 import org.jclouds.azure.storage.domain.internal.BoundedTreeSet;
 import org.jclouds.azure.storage.queue.domain.QueueMetadata;
 import org.jclouds.http.functions.ParseSax;
@@ -43,7 +43,7 @@ import org.jclouds.http.functions.ParseSax;
  * @author Adrian Cole
  */
 public class AccountNameEnumerationResultsHandler extends
-         ParseSax.HandlerWithResult<BoundedList<QueueMetadata>> {
+         ParseSax.HandlerWithResult<BoundedSortedSet<QueueMetadata>> {
 
    private SortedSet<QueueMetadata> metadata = new TreeSet<QueueMetadata>();
    private URI currentUrl;
@@ -59,7 +59,7 @@ public class AccountNameEnumerationResultsHandler extends
    public AccountNameEnumerationResultsHandler() {
    }
 
-   public BoundedList<QueueMetadata> getResult() {
+   public BoundedSortedSet<QueueMetadata> getResult() {
       return new BoundedTreeSet<QueueMetadata>(metadata, currentUrl, prefix, marker, maxResults,
                nextMarker);
    }

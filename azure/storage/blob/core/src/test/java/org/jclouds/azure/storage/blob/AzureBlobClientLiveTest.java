@@ -43,7 +43,7 @@ import org.jclouds.azure.storage.blob.domain.BlobProperties;
 import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
 import org.jclouds.azure.storage.blob.domain.ListableContainerProperties;
 import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
-import org.jclouds.azure.storage.domain.BoundedList;
+import org.jclouds.azure.storage.domain.BoundedSortedSet;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.HttpUtils;
@@ -78,7 +78,8 @@ public class AzureBlobClientLiveTest {
    @Test
    public void testListContainers() throws Exception {
 
-      SortedSet<ListableContainerProperties> response = connection.listContainers();
+      SortedSet<ListableContainerProperties> response = connection.listContainers().get(10,
+               TimeUnit.SECONDS);
       assert null != response;
       long initialContainerCount = response.size();
       assertTrue(initialContainerCount >= 0);
@@ -107,7 +108,8 @@ public class AzureBlobClientLiveTest {
             throw e;
          }
       }
-      SortedSet<ListableContainerProperties> response = connection.listContainers();
+      SortedSet<ListableContainerProperties> response = connection.listContainers().get(10,
+               TimeUnit.SECONDS);
       assert null != response;
       long containerCount = response.size();
       assertTrue(containerCount >= 1);
@@ -175,8 +177,9 @@ public class AzureBlobClientLiveTest {
    @Test
    public void testListContainersWithOptions() throws Exception {
 
-      BoundedList<ListableContainerProperties> response = connection
-               .listContainers(ListOptions.Builder.prefix(privateContainer).maxResults(1));
+      BoundedSortedSet<ListableContainerProperties> response = connection.listContainers(
+               ListOptions.Builder.prefix(privateContainer).maxResults(1))
+               .get(10, TimeUnit.SECONDS);
       assert null != response;
       long initialContainerCount = response.size();
       assertTrue(initialContainerCount >= 0);
@@ -195,18 +198,22 @@ public class AzureBlobClientLiveTest {
    public void testListOwnedContainers() throws Exception {
 
       // Test default listing
-      SortedSet<ListableContainerProperties> response = connection.listContainers();
+      SortedSet<ListableContainerProperties> response = connection.listContainers().get(10,
+               TimeUnit.SECONDS);
       // assertEquals(response.size(), initialContainerCount + 2);// if the containers already
       // exist, this will fail
 
       // Test listing with options
-      response = connection.listContainers(ListOptions.Builder.prefix(
-               privateContainer.substring(0, privateContainer.length() - 1)).maxResults(1));
+      response = connection
+               .listContainers(
+                        ListOptions.Builder.prefix(
+                                 privateContainer.substring(0, privateContainer.length() - 1))
+                                 .maxResults(1)).get(10, TimeUnit.SECONDS);
       assertEquals(response.size(), 1);
       assertEquals(response.first().getName(), privateContainer);
 
-      response = connection.listContainers(ListOptions.Builder.prefix(publicContainer)
-               .maxResults(1));
+      response = connection.listContainers(
+               ListOptions.Builder.prefix(publicContainer).maxResults(1)).get(10, TimeUnit.SECONDS);
       assertEquals(response.size(), 1);
       assertEquals(response.first().getName(), publicContainer);
 
@@ -273,7 +280,7 @@ public class AzureBlobClientLiveTest {
       // Multimap<String, String> userMetadata = HashMultimap.create();
       // userMetadata.put("New-Metadata-1", "value-1");
       // userMetadata.put("New-Metadata-2", "value-2");
-      // assertTrue(connection.setObjectMetadata(privateContainer, object.getProperties().getName(),
+      // assertTrue(connection.setBlobProperties(privateContainer, object.getProperties().getName(),
       // userMetadata));
 
       // Test GET of missing object

@@ -1,4 +1,4 @@
-package org.jclouds.azure.storage.blob.blobstore.functions;
+package org.jclouds.azure.storage.blob.functions;
 
 import org.jclouds.azure.storage.blob.domain.AzureBlob;
 

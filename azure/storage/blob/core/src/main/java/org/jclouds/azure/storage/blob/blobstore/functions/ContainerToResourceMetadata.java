@@ -21,19 +21,30 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.azure.storage.blob.domain;
+package org.jclouds.azure.storage.blob.blobstore.functions;
 
-import java.util.SortedSet;
+import javax.inject.Singleton;
 
-import org.jclouds.azure.storage.domain.BoundedSortedSet;
+import org.jclouds.azure.storage.blob.domain.ListableContainerProperties;
+import org.jclouds.blobstore.domain.MutableResourceMetadata;
+import org.jclouds.blobstore.domain.ResourceMetadata;
+import org.jclouds.blobstore.domain.ResourceType;
+import org.jclouds.blobstore.domain.internal.MutableResourceMetadataImpl;
+
+import com.google.common.base.Function;
 
 /**
- * 
  * @author Adrian Cole
  */
-public interface ListBlobsResponse extends BoundedSortedSet<ListableBlobProperties> {
-
-   String getDelimiter();
-
-   SortedSet<String> getBlobPrefixes();
+@Singleton
+public class ContainerToResourceMetadata implements Function<ListableContainerProperties, ResourceMetadata> {
+   public ResourceMetadata apply(ListableContainerProperties from) {
+      MutableResourceMetadata to = new MutableResourceMetadataImpl();
+      to.setName(from.getName());
+      to.setETag(from.getETag());
+      to.setLastModified(from.getLastModified());
+      to.setLocation(from.getUrl());
+      to.setType(ResourceType.CONTAINER);
+      return to;
+   }
 }

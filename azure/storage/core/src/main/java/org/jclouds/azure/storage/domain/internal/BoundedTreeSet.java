@@ -24,17 +24,18 @@
 package org.jclouds.azure.storage.domain.internal;
 
 import java.net.URI;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.jclouds.azure.storage.domain.BoundedList;
+import org.jclouds.azure.storage.domain.BoundedSortedSet;
+
+import com.google.common.collect.Iterables;
 
 /**
  * 
  * @author Adrian Cole
  * 
  */
-public class BoundedTreeSet<T> extends TreeSet<T> implements BoundedList<T> {
+public class BoundedTreeSet<T> extends TreeSet<T> implements BoundedSortedSet<T> {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = -7133632087734650835L;
@@ -44,9 +45,9 @@ public class BoundedTreeSet<T> extends TreeSet<T> implements BoundedList<T> {
    protected final Integer maxResults;
    protected final String nextMarker;
 
-   public BoundedTreeSet(SortedSet<T> contents, URI url, String prefix, String marker,
+   public BoundedTreeSet(Iterable<T> contents, URI url, String prefix, String marker,
             Integer maxResults, String nextMarker) {
-      this.addAll(contents);
+      Iterables.addAll(this, contents);
       this.url = url;
       this.prefix = prefix;
       this.nextMarker = nextMarker;

@@ -21,19 +21,36 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.azure.storage.blob.domain;
+package org.jclouds.azure.storage.blob.blobstore.functions;
 
-import java.util.SortedSet;
+import javax.inject.Singleton;
 
-import org.jclouds.azure.storage.domain.BoundedSortedSet;
+import org.jclouds.azure.storage.blob.options.ListBlobsOptions;
+import org.jclouds.blobstore.options.ListOptions;
+
+import com.google.common.base.Function;
 
 /**
- * 
  * @author Adrian Cole
  */
-public interface ListBlobsResponse extends BoundedSortedSet<ListableBlobProperties> {
-
-   String getDelimiter();
-
-   SortedSet<String> getBlobPrefixes();
+@Singleton
+public class ListOptionsToListBlobsOptions implements Function<ListOptions[], ListBlobsOptions> {
+   public ListBlobsOptions apply(ListOptions[] optionsList) {
+      ListBlobsOptions httpOptions = new ListBlobsOptions();
+      if (optionsList.length != 0) {
+         if (!optionsList[0].isRecursive()) {
+            httpOptions.delimiter("/");
+         }
+         if (optionsList[0].getPath() != null) {
+            httpOptions.prefix(optionsList[0].getPath());
+         }
+         if (optionsList[0].getMarker() != null) {
+            httpOptions.marker(optionsList[0].getMarker());
+         }
+         if (optionsList[0].getMaxResults() != null) {
+            httpOptions.maxResults(optionsList[0].getMaxResults());
+         }
+      }
+      return httpOptions;
+   }
 }

@@ -45,6 +45,10 @@ public class ListOptions extends BaseHttpRequestOptions {
       return this;
    }
 
+   public String getPrefix() {
+      return getFirstQueryOrNull("prefix");
+   }
+
    /**
     * A string value that identifies the portion of the list to be returned with the next list
     * operation. The operation returns a marker value within the response body if the list returned
@@ -58,6 +62,10 @@ public class ListOptions extends BaseHttpRequestOptions {
       return this;
    }
 
+   public String getMarker() {
+      return getFirstQueryOrNull("marker");
+   }
+
    /**
     * Specifies the maximum number of containers to return. If maxresults is not specified, the
     * server will return up to 5,000 items. If the parameter is set to a value greater than 5,000,
@@ -68,6 +76,11 @@ public class ListOptions extends BaseHttpRequestOptions {
       checkState(maxresults <= 10000, "maxresults must be <= 5000");
       queryParameters.put("maxresults", Integer.toString(maxresults));
       return this;
+   }
+
+   public Integer getMaxResults() {
+      String maxresults = getFirstQueryOrNull("maxresults");
+      return (maxresults != null) ? new Integer(maxresults) : null;
    }
 
    public static class Builder {

@@ -36,10 +36,10 @@ import javax.ws.rs.PathParam;
 
 import org.jclouds.azure.storage.AzureBlob;
 import org.jclouds.azure.storage.blob.binders.BindAzureBlobToEntity;
-import org.jclouds.azure.storage.blob.blobstore.functions.BlobName;
 import org.jclouds.azure.storage.blob.domain.BlobProperties;
 import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
 import org.jclouds.azure.storage.blob.domain.ListableContainerProperties;
+import org.jclouds.azure.storage.blob.functions.BlobName;
 import org.jclouds.azure.storage.blob.functions.ParseBlobFromHeadersAndHttpContent;
 import org.jclouds.azure.storage.blob.functions.ParseBlobPropertiesFromHeaders;
 import org.jclouds.azure.storage.blob.functions.ParseContainerPropertiesFromHeaders;
@@ -48,7 +48,7 @@ import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
 import org.jclouds.azure.storage.blob.options.ListBlobsOptions;
 import org.jclouds.azure.storage.blob.xml.AccountNameEnumerationResultsHandler;
 import org.jclouds.azure.storage.blob.xml.ContainerNameEnumerationResultsHandler;
-import org.jclouds.azure.storage.domain.BoundedList;
+import org.jclouds.azure.storage.domain.BoundedSortedSet;
 import org.jclouds.azure.storage.filters.SharedKeyAuthentication;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.reference.AzureStorageHeaders;
@@ -56,6 +56,7 @@ import org.jclouds.blobstore.binders.BindMapToHeadersWithPrefix;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.functions.ParseETagHeader;
+import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.functions.ReturnTrueOn404;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rest.annotations.BinderParam;
@@ -98,7 +99,8 @@ public interface AzureBlobClient {
    @XMLResponseParser(AccountNameEnumerationResultsHandler.class)
    @Path("/")
    @QueryParams(keys = "comp", values = "list")
-   BoundedList<ListableContainerProperties> listContainers(ListOptions... listOptions);
+   Future<? extends BoundedSortedSet<ListableContainerProperties>> listContainers(
+            ListOptions... listOptions);
 
    /**
     * The Create Container operation creates a new container under the specified account. If the
@@ -126,6 +128,15 @@ public interface AzureBlobClient {
    @QueryParams(keys = "restype", values = "container")
    @ResponseParser(ParseContainerPropertiesFromHeaders.class)
    ListableContainerProperties getContainerProperties(@PathParam("container") String container);
+
+   /**
+    * Issues a HEAD command to determine if the container exists or not.
+    */
+   @HEAD
+   @Path("{container}")
+   @QueryParams(keys = "restype", values = "container")
+   @ExceptionParser(ReturnFalseOn404.class)
+   boolean containerExists(@PathParam("container") String container);
 
    /**
     * The Set Container Metadata operation sets one or more user-defined name/value pairs for the
@@ -290,15 +301,13 @@ public interface AzureBlobClient {
     * The Get Blob Properties operation returns all user-defined metadata, standard HTTP properties,
     * and system properties for the blob. It does not return the content of the blob.
     */
-   @GET
-   @Headers(keys = "Range", values = "bytes=0-0")
-   // should use HEAD, this is a hack per http://code.google.com/p/jclouds/issues/detail?id=92
+   @HEAD
    @ResponseParser(ParseBlobPropertiesFromHeaders.class)
    @ExceptionParser(ThrowKeyNotFoundOn404.class)
    @Path("{container}/{name}")
    BlobProperties getBlobProperties(@PathParam("container") String container,
             @PathParam("name") String name);
-
+   
    @PUT
    @Path("{container}/{name}")
    @QueryParams(keys = { "comp" }, values = { "metadata" })

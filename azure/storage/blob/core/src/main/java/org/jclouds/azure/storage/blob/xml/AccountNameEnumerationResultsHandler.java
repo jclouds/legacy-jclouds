@@ -30,7 +30,7 @@ import javax.inject.Inject;
 
 import org.jclouds.azure.storage.blob.domain.ListableContainerProperties;
 import org.jclouds.azure.storage.blob.domain.internal.ListableContainerPropertiesImpl;
-import org.jclouds.azure.storage.domain.BoundedList;
+import org.jclouds.azure.storage.domain.BoundedSortedSet;
 import org.jclouds.azure.storage.domain.internal.BoundedTreeSet;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.DateService;
@@ -47,7 +47,7 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 public class AccountNameEnumerationResultsHandler extends
-         ParseSax.HandlerWithResult<BoundedList<ListableContainerProperties>> {
+         ParseSax.HandlerWithResult<BoundedSortedSet<ListableContainerProperties>> {
 
    private SortedSet<ListableContainerProperties> containerMetadata = Sets.newTreeSet();
    private String prefix;
@@ -67,7 +67,7 @@ public class AccountNameEnumerationResultsHandler extends
       this.dateParser = dateParser;
    }
 
-   public BoundedList<ListableContainerProperties> getResult() {
+   public BoundedSortedSet<ListableContainerProperties> getResult() {
       return new BoundedTreeSet<ListableContainerProperties>(containerMetadata, currentUrl, prefix, marker,
                maxResults, nextMarker);
    }

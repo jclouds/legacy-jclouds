@@ -21,19 +21,16 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.azure.storage.blob.domain;
+package org.jclouds.azure.storage.blob.blobstore.integration;
 
-import java.util.SortedSet;
-
-import org.jclouds.azure.storage.domain.BoundedSortedSet;
+import org.jclouds.azure.storage.blob.AzureBlobClient;
+import org.jclouds.blobstore.integration.internal.BaseBlobMapIntegrationTest;
+import org.testng.annotations.Test;
 
 /**
- * 
  * @author Adrian Cole
  */
-public interface ListBlobsResponse extends BoundedSortedSet<ListableBlobProperties> {
+@Test(groups = { "integration", "live" }, testName = "azureblob.AzureBlobMapIntegrationTest")
+public class AzureBlobMapIntegrationTest extends BaseBlobMapIntegrationTest<AzureBlobClient> {
 
-   String getDelimiter();
-
-   SortedSet<String> getBlobPrefixes();
 }

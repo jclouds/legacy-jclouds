@@ -21,13 +21,13 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.azure.storage.blob;
+package org.jclouds.azure.storage.blob.config;
 
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.azure.storage.blob.config.AzureBlobContextModule;
-import org.jclouds.azure.storage.blob.config.AzureBlobStubClientModule;
+import org.jclouds.azure.storage.blob.AzureBlobClient;
 import org.jclouds.azure.storage.blob.reference.AzureBlobConstants;
+import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.util.Jsr330;
@@ -45,27 +45,28 @@ import com.google.inject.TypeLiteral;
 public class AzureBlobContextModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new AzureBlobStubClientModule(), new AzureBlobContextModule() {
-         @Override
-         protected void configure() {
-            bindConstant().annotatedWith(
-                     Jsr330.named(AzureBlobConstants.PROPERTY_AZURESTORAGE_ACCOUNT)).to("user");
-            bindConstant()
-                     .annotatedWith(Jsr330.named(AzureBlobConstants.PROPERTY_AZURESTORAGE_KEY)).to(
-                              "key");
-            bindConstant().annotatedWith(
-                     Jsr330.named(AzureBlobConstants.PROPERTY_AZUREBLOB_ENDPOINT)).to(
-                     "http://localhost");
-            super.configure();
-         }
-      });
+      return Guice.createInjector(new AzureBlobStubClientModule(), new JDKLoggingModule(),
+               new AzureBlobContextModule() {
+                  @Override
+                  protected void configure() {
+                     bindConstant().annotatedWith(
+                              Jsr330.named(AzureBlobConstants.PROPERTY_AZURESTORAGE_ACCOUNT)).to(
+                              "user");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(AzureBlobConstants.PROPERTY_AZURESTORAGE_KEY)).to("key");
+                     bindConstant().annotatedWith(
+                              Jsr330.named(AzureBlobConstants.PROPERTY_AZUREBLOB_ENDPOINT)).to(
+                              "http://localhost");
+                     super.configure();
+                  }
+               });
    }
 
    @Test
    void testContextImpl() {
-
-      RestContext<AzureBlobClient> handler = createInjector().getInstance(
-               Key.get(new TypeLiteral<RestContext<AzureBlobClient>>() {
+      Injector injector = createInjector();
+      RestContext<AzureBlobClient> handler = injector.getInstance(Key
+               .get(new TypeLiteral<RestContext<AzureBlobClient>>() {
                }));
       assertEquals(handler.getClass(), RestContextImpl.class);
 

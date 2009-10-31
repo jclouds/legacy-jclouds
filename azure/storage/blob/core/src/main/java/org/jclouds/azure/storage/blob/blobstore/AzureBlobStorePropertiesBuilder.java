@@ -21,19 +21,35 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.azure.storage.blob.domain;
+package org.jclouds.azure.storage.blob.blobstore;
 
-import java.util.SortedSet;
+import java.util.Properties;
 
-import org.jclouds.azure.storage.domain.BoundedSortedSet;
+import org.jclouds.azure.storage.blob.AzureBlobPropertiesBuilder;
+import org.jclouds.blobstore.reference.BlobStoreConstants;
 
 /**
+ * Builds properties used in AzureBlob Blob Stores
  * 
- * @author Adrian Cole
+ * @author Adrian Cole, Andrew Newdigate
  */
-public interface ListBlobsResponse extends BoundedSortedSet<ListableBlobProperties> {
+public class AzureBlobStorePropertiesBuilder extends AzureBlobPropertiesBuilder {
 
-   String getDelimiter();
+   public AzureBlobStorePropertiesBuilder(String id, String secret) {
+      super(id, secret);
+   }
 
-   SortedSet<String> getBlobPrefixes();
+   public AzureBlobStorePropertiesBuilder(Properties properties) {
+      super(properties);
+   }
+
+   /**
+    * longest time a single synchronous operation can take before throwing an exception.
+    */
+   public AzureBlobStorePropertiesBuilder withRequestTimeout(long milliseconds) {
+      properties.setProperty(BlobStoreConstants.PROPERTY_BLOBSTORE_TIMEOUT, Long
+               .toString(milliseconds));
+      return this;
+   }
+
 }

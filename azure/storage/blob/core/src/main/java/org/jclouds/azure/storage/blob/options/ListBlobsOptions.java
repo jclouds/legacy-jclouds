@@ -56,7 +56,11 @@ public class ListBlobsOptions extends ListOptions {
       this.queryParameters.put("delimiter", delimiter);
       return this;
    }
-
+   
+   public String getDelimiter() {
+      return this.getFirstQueryOrNull("delimiter");
+   }
+   
    public static class Builder {
 
       /**

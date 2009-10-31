@@ -109,7 +109,7 @@ public class ContainerNameEnumerationResultsHandler extends
          prefix = (prefix.equals("")) ? null : prefix;
       } else if (qName.equals("Delimiter")) {
          delimiter = currentText.toString().trim();
-         delimiter = (prefix.equals("")) ? null : delimiter;
+         delimiter = (delimiter.equals("")) ? null : delimiter;
       } else if (qName.equals("NextMarker")) {
          nextMarker = currentText.toString().trim();
          nextMarker = (nextMarker.equals("")) ? null : nextMarker;

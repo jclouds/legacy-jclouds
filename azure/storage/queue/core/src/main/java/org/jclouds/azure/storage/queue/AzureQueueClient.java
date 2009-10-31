@@ -33,7 +33,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.jclouds.azure.storage.AzureQueue;
-import org.jclouds.azure.storage.domain.BoundedList;
+import org.jclouds.azure.storage.domain.BoundedSortedSet;
 import org.jclouds.azure.storage.filters.SharedKeyAuthentication;
 import org.jclouds.azure.storage.options.CreateOptions;
 import org.jclouds.azure.storage.options.ListOptions;
@@ -85,7 +85,7 @@ public interface AzureQueueClient {
    @XMLResponseParser(AccountNameEnumerationResultsHandler.class)
    @Path("/")
    @QueryParams(keys = "comp", values = "list")
-   BoundedList<QueueMetadata> listQueues(ListOptions... listOptions);
+   BoundedSortedSet<QueueMetadata> listQueues(ListOptions... listOptions);
 
    /**
     * The Create Queue operation creates a new queue under the specified account.

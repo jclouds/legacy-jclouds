@@ -21,41 +21,25 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.azure.storage.blob.domain.internal;
+package org.jclouds.azure.storage.domain;
 
 import java.net.URI;
 import java.util.SortedSet;
-
-import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
-import org.jclouds.azure.storage.blob.domain.ListableBlobProperties;
-import org.jclouds.azure.storage.domain.internal.BoundedTreeSet;
 
 /**
  * 
  * @author Adrian Cole
  * 
  */
-public class TreeSetListBlobsResponse extends BoundedTreeSet<ListableBlobProperties> implements
-         ListBlobsResponse {
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -4475709781001190244L;
+public interface BoundedSortedSet<T> extends SortedSet<T> {
+   URI getUrl();
 
-   public TreeSetListBlobsResponse(Iterable<ListableBlobProperties> contents, URI url, String prefix,
-            String marker, Integer maxResults, String nextMarker, String delimiter,
-            SortedSet<String> blobPrefixes) {
-      super(contents, url, prefix, marker, maxResults, nextMarker);
-      this.delimiter = delimiter;
-      this.blobPrefixes = blobPrefixes;
-   }
+   String getPrefix();
 
-   protected final String delimiter;
-   protected final SortedSet<String> blobPrefixes;
+   String getMarker();
 
-   public String getDelimiter() {
-      return delimiter;
-   }
+   int getMaxResults();
 
-   public SortedSet<String> getBlobPrefixes() {
-      return blobPrefixes;
-   }
+   String getNextMarker();
+
 }

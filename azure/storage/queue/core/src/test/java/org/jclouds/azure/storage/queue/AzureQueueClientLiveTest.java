@@ -29,7 +29,7 @@ import static org.testng.Assert.assertTrue;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.security.SecureRandom;
 
-import org.jclouds.azure.storage.domain.BoundedList;
+import org.jclouds.azure.storage.domain.BoundedSortedSet;
 import org.jclouds.azure.storage.options.CreateOptions;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.queue.domain.QueueMetadata;
@@ -67,7 +67,7 @@ public class AzureQueueClientLiveTest {
    @Test
    public void testListQueues() throws Exception {
 
-      BoundedList<QueueMetadata> response = connection.listQueues();
+      BoundedSortedSet<QueueMetadata> response = connection.listQueues();
       assert null != response;
       long initialQueueCount = response.size();
       assertTrue(initialQueueCount >= 0);
@@ -93,7 +93,7 @@ public class AzureQueueClientLiveTest {
             throw e;
          }
       }
-      BoundedList<QueueMetadata> response = connection.listQueues();
+      BoundedSortedSet<QueueMetadata> response = connection.listQueues();
       assert null != response;
       long queueCount = response.size();
       assertTrue(queueCount >= 1);
@@ -103,7 +103,7 @@ public class AzureQueueClientLiveTest {
    @Test
    public void testListQueuesWithOptions() throws Exception {
 
-      BoundedList<QueueMetadata> response = connection.listQueues(ListOptions.Builder.prefix(
+      BoundedSortedSet<QueueMetadata> response = connection.listQueues(ListOptions.Builder.prefix(
                privateQueue).maxResults(1));
       assert null != response;
       long initialQueueCount = response.size();
