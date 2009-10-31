@@ -49,6 +49,7 @@
         <module>nirvanix</module>
         <module>vcloudx</module>
         <module>atmosonline</module>
+        <module>twitter</module>
     </modules>
     <build>
         <plugins>

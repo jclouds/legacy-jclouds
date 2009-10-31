@@ -67,6 +67,18 @@ public class DateService {
    private static final SimpleDateFormat rfc822SimpleDateFormat = new SimpleDateFormat(
             "EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
 
+   private static final DateTimeFormatter rfc822DateTimeFormatter = DateTimeFormat.forPattern(
+            "EEE, dd MMM yyyy HH:mm:ss 'GMT'").withLocale(Locale.US).withZone(
+            DateTimeZone.forID("GMT"));
+
+   @GuardedBy("this")
+   private static final SimpleDateFormat cSimpleDateFormat = new SimpleDateFormat(
+            "EEE MMM dd HH:mm:ss '+0000' yyyy", Locale.US);
+
+   private static final DateTimeFormatter cDateTimeFormatter = DateTimeFormat.forPattern(
+            "EEE MMM dd HH:mm:ss '+0000' yyyy").withLocale(Locale.US).withZone(
+            DateTimeZone.forID("GMT"));
+
    private static final DateTimeFormatter iso8601SecondsDateTimeFormatter = DateTimeFormat
             .forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'").withLocale(Locale.US).withZone(
                      DateTimeZone.forID("GMT"));
@@ -75,18 +87,37 @@ public class DateService {
             "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withLocale(Locale.US).withZone(
             DateTimeZone.forID("GMT"));
 
-   private static final DateTimeFormatter rfc822DateTimeFormatter = DateTimeFormat.forPattern(
-            "EEE, dd MMM yyyy HH:mm:ss 'GMT'").withLocale(Locale.US).withZone(
-            DateTimeZone.forID("GMT"));
-
    static {
       iso8601SimpleDateFormat.setTimeZone(new SimpleTimeZone(0, "GMT"));
       iso8601SecondsSimpleDateFormat.setTimeZone(new SimpleTimeZone(0, "GMT"));
       rfc822SimpleDateFormat.setTimeZone(new SimpleTimeZone(0, "GMT"));
+      cSimpleDateFormat.setTimeZone(new SimpleTimeZone(0, "GMT"));
    }
 
    public final DateTime fromSeconds(long seconds) {
       return new DateTime(seconds * 1000);
+   }
+
+   public final String cDateFormat(DateTime dateTime) {
+      return cDateTimeFormatter.print(dateTime);
+   }
+
+   public final String cDateFormat(Date date) {
+      return cDateFormat(new DateTime(date));
+   }
+
+   public final String cDateFormat() {
+      return cDateFormat(new DateTime());
+   }
+
+   public final DateTime cDateParse(String toParse) {
+      synchronized (cSimpleDateFormat) {
+         try {
+            return new DateTime(cSimpleDateFormat.parse(toParse));
+         } catch (ParseException e) {
+            throw new RuntimeException(e);
+         }
+      }
    }
 
    public final String rfc822DateFormat(DateTime dateTime) {
