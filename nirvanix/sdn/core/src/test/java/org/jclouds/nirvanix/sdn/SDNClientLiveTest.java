@@ -35,6 +35,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
+import org.jclouds.http.HttpUtils;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.nirvanix.sdn.domain.UploadInfo;
 import org.testng.annotations.BeforeGroups;
@@ -78,19 +79,24 @@ public class SDNClientLiveTest {
       Blob blob = connection.newBlob();
       blob.getMetadata().setName("test.txt");
       blob.setData("value");
+      blob.generateMD5();
 
+      byte[] md5 = blob.getMetadata().getContentMD5();
       connection.upload(uploadInfo.getHost(), uploadInfo.getToken(), containerName, blob).get(30,
                TimeUnit.SECONDS);
 
-      String metadataS = connection.getMetadata(containerName + "/test.txt").get(30,
+      Map<String, String> metadata = connection.getMetadata(containerName + "/test.txt").get(30,
                TimeUnit.SECONDS);
-      System.err.println(metadataS);
+      assertEquals(metadata, ImmutableMap.of("MD5", HttpUtils.toBase64String(md5)));
 
       String content = connection.getFile(containerName + "/test.txt").get(30, TimeUnit.SECONDS);
       assertEquals(content, "value");
 
-      Map<String, String> metadata = ImmutableMap.of("chef", "sushi", "foo", "bar");
+      metadata = ImmutableMap.of("chef", "sushi", "foo", "bar");
       connection.setMetadata(containerName + "/test.txt", metadata).get(30, TimeUnit.SECONDS);
 
+      metadata = connection.getMetadata(containerName + "/test.txt").get(30, TimeUnit.SECONDS);
+      assertEquals(metadata, ImmutableMap.<String, String> builder().putAll(metadata).put("MD5",
+               HttpUtils.toBase64String(md5)).build());
    }
 }

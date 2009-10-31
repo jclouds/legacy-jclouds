@@ -39,6 +39,7 @@ import org.jclouds.nirvanix.sdn.binders.BindMetadataToQueryParams;
 import org.jclouds.nirvanix.sdn.domain.UploadInfo;
 import org.jclouds.nirvanix.sdn.filters.AddSessionTokenToRequest;
 import org.jclouds.nirvanix.sdn.filters.InsertUserContextIntoPath;
+import org.jclouds.nirvanix.sdn.functions.ParseMetadataFromJsonResponse;
 import org.jclouds.nirvanix.sdn.functions.ParseUploadInfoFromJsonResponse;
 import org.jclouds.nirvanix.sdn.reference.SDNQueryParams;
 import org.jclouds.rest.annotations.BinderParam;
@@ -63,7 +64,7 @@ import org.jclouds.rest.annotations.SkipEncoding;
 public interface SDNClient {
 
    public Blob newBlob();
-   
+
    /**
     * The GetStorageNode method is used to determine which storage node a file should be uploaded
     * to. It returns the host to upload to and an Upload Token that will be used to authenticate.
@@ -95,8 +96,9 @@ public interface SDNClient {
     */
    @GET
    @Path("/ws/Metadata/GetMetadata.ashx")
+   @ResponseParser(ParseMetadataFromJsonResponse.class)
    @QueryParams(keys = SDNQueryParams.PATH, values = "{path}")
-   Future<String> getMetadata(@PathParam("path") String path);
+   Future<Map<String, String>> getMetadata(@PathParam("path") String path);
 
    /**
     * Get the contents of a file
