@@ -25,8 +25,11 @@ package org.jclouds.rackspace.cloudservers.functions;
 
 import java.net.InetAddress;
 
+import javax.inject.Singleton;
+
 import com.google.common.base.Function;
 
+@Singleton
 public class IpAddress implements Function<Object, String> {
 
    public String apply(Object from) {

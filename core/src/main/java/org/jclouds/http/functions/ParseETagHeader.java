@@ -23,6 +23,7 @@
  */
 package org.jclouds.http.functions;
 
+import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.apache.commons.io.IOUtils;
@@ -36,6 +37,7 @@ import com.google.common.base.Function;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class ParseETagHeader implements Function<HttpResponse, String> {
 
    public String apply(HttpResponse from) {

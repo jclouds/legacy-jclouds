@@ -25,6 +25,8 @@ package org.jclouds.http.functions;
 
 import java.io.InputStream;
 
+import javax.inject.Singleton;
+
 import org.jclouds.http.HttpResponse;
 
 import com.google.common.base.Function;
@@ -34,6 +36,7 @@ import com.google.common.base.Function;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class ReturnInputStream implements Function<HttpResponse, InputStream> {
 
    public InputStream apply(HttpResponse from) {

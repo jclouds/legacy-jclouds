@@ -32,12 +32,14 @@ import org.jclouds.rackspace.cloudservers.domain.Flavor;
 
 import com.google.gson.Gson;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * This parses {@link Flavor} from a gson string.
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class ParseFlavorFromJsonResponse extends ParseJson<Flavor> {
 
    @Inject

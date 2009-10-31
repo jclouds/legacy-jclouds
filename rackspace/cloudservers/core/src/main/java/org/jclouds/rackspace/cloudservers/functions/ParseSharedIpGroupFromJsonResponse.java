@@ -32,12 +32,14 @@ import org.jclouds.rackspace.cloudservers.domain.SharedIpGroup;
 
 import com.google.gson.Gson;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * This parses {@link SharedIpGroup} from a gson string.
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class ParseSharedIpGroupFromJsonResponse extends ParseJson<SharedIpGroup> {
 
    @Inject

@@ -23,10 +23,13 @@
  */
 package org.jclouds.http.functions;
 
+import javax.inject.Singleton;
+
 import org.jclouds.http.HttpResponseException;
 
 import com.google.common.base.Function;
 
+@Singleton
 public class ReturnTrueOn404 implements Function<Exception, Boolean> {
 
    public Boolean apply(Exception from) {

@@ -33,6 +33,8 @@ import org.jclouds.rackspace.cloudservers.domain.Image;
 
 import com.google.gson.Gson;
 import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import com.google.inject.internal.Lists;
 
 /**
@@ -40,6 +42,7 @@ import com.google.inject.internal.Lists;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class ParseImageListFromJsonResponse extends ParseJson<List<Image>> {
 
    @Inject

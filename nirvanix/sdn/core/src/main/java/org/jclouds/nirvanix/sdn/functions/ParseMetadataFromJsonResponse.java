@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jclouds.http.functions.ParseJson;
 
@@ -41,6 +42,7 @@ import com.google.gson.Gson;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class ParseMetadataFromJsonResponse extends ParseJson<Map<String, String>> {
 
    @Inject

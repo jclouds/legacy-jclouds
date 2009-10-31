@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.BlobMetadata;
@@ -47,6 +48,7 @@ import com.google.common.collect.Sets;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class ListBlobMetadataInContainer implements ListBlobMetadataStrategy {
    /**
     * maximum duration of an blob Request

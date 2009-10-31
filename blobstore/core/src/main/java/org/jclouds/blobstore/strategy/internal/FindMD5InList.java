@@ -26,6 +26,7 @@ package org.jclouds.blobstore.strategy.internal;
 import java.util.Arrays;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.ObjectMD5;
@@ -40,6 +41,7 @@ import org.jclouds.util.Utils;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class FindMD5InList implements ContainsValueInListStrategy {
 
    protected final ObjectMD5 objectMD5;

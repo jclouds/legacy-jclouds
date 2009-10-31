@@ -32,12 +32,14 @@ import org.jclouds.rackspace.cloudservers.domain.Addresses;
 
 import com.google.gson.Gson;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * This parses {@link Addresses} from a gson string.
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class ParseAddressesFromJsonResponse extends ParseJson<Addresses> {
 
    @Inject

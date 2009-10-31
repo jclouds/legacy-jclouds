@@ -34,6 +34,7 @@ import java.util.concurrent.TimeoutException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.KeyNotFoundException;
@@ -56,6 +57,7 @@ import com.google.common.collect.Sets;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class GetAllBlobsInListAndRetryOnFailure implements GetBlobsInListStrategy {
    /**
     * maximum duration of an blob Request

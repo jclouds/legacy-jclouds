@@ -95,4 +95,13 @@ public interface AtmosStorageClient {
    @ExceptionParser(ThrowKeyNotFoundOn404.class)
    @Path("/rest/namespace/{path}")
    Future<AtmosObject> readFile(@PathParam("path") String path, GetOptions... options);
+
+   // signature currently doesn't work
+   // @POST
+   // @QueryParams(keys = "acl")
+   // @Headers(keys = { "x-emc-useracl", "x-emc-groupacl" }, values = { "root=FULL_CONTROL",
+   // "other=READ" })
+   // @Consumes(MediaType.WILDCARD)
+   // void makePublic(@Endpoint URI url);
+
 }

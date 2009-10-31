@@ -23,6 +23,8 @@
  */
 package org.jclouds.blobstore.functions.impl;
 
+import javax.inject.Singleton;
+
 import org.jclouds.blobstore.functions.GenerateMD5;
 import org.jclouds.http.HttpUtils;
 
@@ -30,6 +32,7 @@ import org.jclouds.http.HttpUtils;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class BouncyCastleGenerateMD5 implements GenerateMD5 {
 
    public byte[] apply(Object from) {

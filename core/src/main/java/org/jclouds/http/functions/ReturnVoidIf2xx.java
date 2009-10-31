@@ -25,6 +25,8 @@ package org.jclouds.http.functions;
 
 import java.lang.reflect.Constructor;
 
+import javax.inject.Singleton;
+
 import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpResponse;
 
@@ -35,6 +37,7 @@ import com.google.common.base.Function;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class ReturnVoidIf2xx implements Function<HttpResponse, Void> {
    static final Void v;
    static {

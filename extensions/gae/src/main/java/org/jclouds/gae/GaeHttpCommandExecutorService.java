@@ -35,6 +35,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.apache.commons.io.IOUtils;
@@ -62,6 +63,7 @@ import com.google.common.annotations.VisibleForTesting;
  * @author Adrian Cole
  */
 @SingleThreaded
+@Singleton
 public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorService<HTTPRequest> {
    private final URLFetchService urlFetchService;
 

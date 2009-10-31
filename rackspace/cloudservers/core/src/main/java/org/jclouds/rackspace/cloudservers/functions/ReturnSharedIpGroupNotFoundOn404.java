@@ -23,6 +23,8 @@
  */
 package org.jclouds.rackspace.cloudservers.functions;
 
+import javax.inject.Singleton;
+
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.rackspace.cloudservers.domain.SharedIpGroup;
 
@@ -33,6 +35,7 @@ import com.google.common.base.Function;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class ReturnSharedIpGroupNotFoundOn404 implements Function<Exception, SharedIpGroup> {
 
    public SharedIpGroup apply(Exception from) {

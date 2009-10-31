@@ -36,12 +36,14 @@ import org.jclouds.http.functions.ParseJson;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * This parses a list of {@link InetAddress} from a gson string.
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class ParseInetAddressListFromJsonResponse extends ParseJson<List<InetAddress>> {
 
    @Inject

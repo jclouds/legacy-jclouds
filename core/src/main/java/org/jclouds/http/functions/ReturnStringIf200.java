@@ -26,6 +26,8 @@ package org.jclouds.http.functions;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.inject.Singleton;
+
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.util.Utils;
@@ -36,6 +38,7 @@ import com.google.common.base.Function;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class ReturnStringIf200 implements Function<HttpResponse,String> {
 
    public String apply(HttpResponse from) {

@@ -30,6 +30,7 @@ import java.net.URI;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.nirvanix.sdn.domain.UploadInfo;
@@ -42,6 +43,7 @@ import com.google.gson.Gson;
  * @see UploadInfo
  * @author Adrian Cole
  */
+@Singleton
 public class ParseUploadInfoFromJsonResponse extends ParseJson<UploadInfo> {
 
    @Inject

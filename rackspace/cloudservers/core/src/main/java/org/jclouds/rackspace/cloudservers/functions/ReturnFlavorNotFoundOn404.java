@@ -23,6 +23,8 @@
  */
 package org.jclouds.rackspace.cloudservers.functions;
 
+import javax.inject.Singleton;
+
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.rackspace.cloudservers.domain.Flavor;
 
@@ -33,6 +35,7 @@ import com.google.common.base.Function;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class ReturnFlavorNotFoundOn404 implements Function<Exception, Flavor> {
 
    public Flavor apply(Exception from) {

@@ -28,6 +28,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jclouds.atmosonline.saas.domain.FileType;
 import org.jclouds.atmosonline.saas.domain.SystemMetadata;
@@ -41,6 +42,7 @@ import com.google.common.collect.Maps;
 /**
  * @author Adrian Cole
  */
+@Singleton
 public class ParseSystemMetadataFromHeaders implements Function<HttpResponse, SystemMetadata> {
    private final DateService dateService;
 

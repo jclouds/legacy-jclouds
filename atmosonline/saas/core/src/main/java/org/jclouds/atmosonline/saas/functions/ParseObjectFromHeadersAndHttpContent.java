@@ -1,6 +1,7 @@
 package org.jclouds.atmosonline.saas.functions;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.atmosonline.saas.domain.AtmosObject;
@@ -16,6 +17,7 @@ import com.google.common.base.Function;
  * @see ParseMetadataFromHeaders
  * @author Adrian Cole
  */
+@Singleton
 public class ParseObjectFromHeadersAndHttpContent implements Function<HttpResponse, AtmosObject> {
 
    private final ParseSystemMetadataFromHeaders systemMetadataParser;

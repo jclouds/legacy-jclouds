@@ -31,6 +31,8 @@ import static org.jclouds.rackspace.reference.RackspaceHeaders.STORAGE_URL;
 
 import java.net.URI;
 
+import javax.inject.Singleton;
+
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rackspace.RackspaceAuthentication.AuthenticationResponse;
 
@@ -41,6 +43,7 @@ import com.google.common.base.Function;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class ParseAuthenticationResponseFromHeaders implements
          Function<HttpResponse, AuthenticationResponse> {
 

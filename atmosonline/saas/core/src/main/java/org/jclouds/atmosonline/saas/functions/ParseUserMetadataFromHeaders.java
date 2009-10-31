@@ -28,6 +28,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Singleton;
+
 import org.jclouds.atmosonline.saas.domain.UserMetadata;
 import org.jclouds.atmosonline.saas.reference.AtmosStorageHeaders;
 import org.jclouds.http.HttpResponse;
@@ -40,6 +42,7 @@ import com.google.inject.internal.ImmutableSet;
 /**
  * @author Adrian Cole
  */
+@Singleton
 public class ParseUserMetadataFromHeaders implements Function<HttpResponse, UserMetadata> {
    private final Set<String> sysKeys = ImmutableSet.of("atime", "ctime", "gid", "itime", "mtime",
             "nlink", "policyname", "size", "uid");

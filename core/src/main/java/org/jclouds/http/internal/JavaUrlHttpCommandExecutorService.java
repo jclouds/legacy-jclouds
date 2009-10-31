@@ -36,6 +36,7 @@ import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
@@ -56,6 +57,7 @@ import com.google.common.collect.Maps;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class JavaUrlHttpCommandExecutorService extends
          BaseHttpCommandExecutorService<HttpURLConnection> {
 

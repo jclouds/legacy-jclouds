@@ -23,6 +23,8 @@
  */
 package org.jclouds.http.functions;
 
+import javax.inject.Singleton;
+
 import org.jclouds.http.HttpResponseException;
 
 import com.google.common.base.Function;
@@ -30,8 +32,8 @@ import com.google.common.base.Function;
 /**
  * 
  * @author Adrian Cole
- * @since 4.0
  */
+@Singleton
 public class ReturnFalseOn404 implements Function<Exception, Boolean> {
 
    public Boolean apply(Exception from) {

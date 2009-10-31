@@ -28,6 +28,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jclouds.http.functions.ParseJson;
 
@@ -38,6 +39,7 @@ import com.google.gson.Gson;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class ParseSessionTokenFromJsonResponse extends ParseJson<String> {
 
    @Inject

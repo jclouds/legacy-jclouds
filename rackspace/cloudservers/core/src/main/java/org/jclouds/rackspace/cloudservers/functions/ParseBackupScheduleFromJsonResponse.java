@@ -32,12 +32,14 @@ import org.jclouds.rackspace.cloudservers.domain.BackupSchedule;
 
 import com.google.gson.Gson;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * This parses {@link BackupSchedule} from a gson string.
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class ParseBackupScheduleFromJsonResponse extends ParseJson<BackupSchedule> {
 
    @Inject

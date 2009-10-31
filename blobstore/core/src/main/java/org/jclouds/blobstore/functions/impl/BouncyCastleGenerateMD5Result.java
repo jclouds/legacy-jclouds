@@ -26,6 +26,8 @@ package org.jclouds.blobstore.functions.impl;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.inject.Singleton;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.bouncycastle.crypto.digests.MD5Digest;
@@ -37,6 +39,7 @@ import org.jclouds.blobstore.internal.BlobRuntimeException;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class BouncyCastleGenerateMD5Result implements GenerateMD5Result {
    public MD5InputStreamResult apply(InputStream toEncode) {
       MD5Digest eTag = new MD5Digest();

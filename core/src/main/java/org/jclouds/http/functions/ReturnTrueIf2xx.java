@@ -23,6 +23,8 @@
  */
 package org.jclouds.http.functions;
 
+import javax.inject.Singleton;
+
 import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpResponse;
 
@@ -33,6 +35,7 @@ import com.google.common.base.Function;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class ReturnTrueIf2xx implements Function<HttpResponse, Boolean> {
 
    public Boolean apply(HttpResponse from) {

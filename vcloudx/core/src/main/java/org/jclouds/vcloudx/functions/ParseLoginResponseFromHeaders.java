@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.http.HttpResponse;
@@ -49,6 +50,7 @@ import com.google.common.base.Function;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class ParseLoginResponseFromHeaders implements Function<HttpResponse, VCloudXSession> {
    static final Pattern pattern = Pattern.compile("vcloud-token=(.*); path=.*");
 

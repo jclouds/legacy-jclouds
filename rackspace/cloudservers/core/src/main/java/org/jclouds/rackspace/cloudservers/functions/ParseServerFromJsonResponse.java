@@ -32,12 +32,14 @@ import org.jclouds.rackspace.cloudservers.domain.Server;
 
 import com.google.gson.Gson;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * This parses {@link Server} from a gson string.
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class ParseServerFromJsonResponse extends ParseJson<Server> {
 
    @Inject

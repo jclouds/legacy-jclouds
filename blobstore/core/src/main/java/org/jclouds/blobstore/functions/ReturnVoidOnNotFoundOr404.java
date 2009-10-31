@@ -25,12 +25,16 @@ package org.jclouds.blobstore.functions;
 
 import java.lang.reflect.Constructor;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.http.functions.ReturnTrueOn404;
 
 import com.google.common.base.Function;
 
+@Singleton
 public class ReturnVoidOnNotFoundOr404 implements Function<Exception, Void> {
 
    static final Void v;
@@ -45,7 +49,12 @@ public class ReturnVoidOnNotFoundOr404 implements Function<Exception, Void> {
       }
    }
 
-   ReturnTrueOn404 rto404 = new ReturnTrueOn404();
+   private final ReturnTrueOn404 rto404;
+   
+   @Inject
+   private ReturnVoidOnNotFoundOr404(ReturnTrueOn404 rto404) {
+      this.rto404 = rto404;
+   }
 
    public Void apply(Exception from) {
       if (from instanceof KeyNotFoundException || from instanceof ContainerNotFoundException) {

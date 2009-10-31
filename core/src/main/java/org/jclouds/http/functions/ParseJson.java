@@ -26,6 +26,7 @@ package org.jclouds.http.functions;
 import java.io.InputStream;
 
 import javax.annotation.Resource;
+import javax.inject.Singleton;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpResponse;
@@ -41,6 +42,7 @@ import com.google.gson.Gson;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public abstract class ParseJson<T> implements Function<HttpResponse, T> {
 
    @Resource

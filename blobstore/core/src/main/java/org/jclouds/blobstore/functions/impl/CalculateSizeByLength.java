@@ -23,6 +23,8 @@
  */
 package org.jclouds.blobstore.functions.impl;
 
+import javax.inject.Singleton;
+
 import org.jclouds.blobstore.functions.CalculateSize;
 import org.jclouds.http.HttpUtils;
 
@@ -30,6 +32,7 @@ import org.jclouds.http.HttpUtils;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class CalculateSizeByLength implements CalculateSize {
 
    public Long apply(Object from) {

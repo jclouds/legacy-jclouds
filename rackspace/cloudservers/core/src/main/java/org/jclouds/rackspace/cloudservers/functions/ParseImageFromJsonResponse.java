@@ -32,12 +32,14 @@ import org.jclouds.rackspace.cloudservers.domain.Image;
 
 import com.google.gson.Gson;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * This parses {@link Image} from a gson string.
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class ParseImageFromJsonResponse extends ParseJson<Image> {
 
    @Inject
