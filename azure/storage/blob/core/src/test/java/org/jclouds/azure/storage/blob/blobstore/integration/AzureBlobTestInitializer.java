@@ -24,9 +24,9 @@
 package org.jclouds.azure.storage.blob.blobstore.integration;
 
 import org.jclouds.azure.storage.blob.AzureBlobClient;
+import org.jclouds.azure.storage.blob.AzureBlobPropertiesBuilder;
 import org.jclouds.azure.storage.blob.blobstore.AzureBlobStoreContextBuilder;
 import org.jclouds.azure.storage.blob.blobstore.AzureBlobStoreContextFactory;
-import org.jclouds.azure.storage.blob.blobstore.AzureBlobStorePropertiesBuilder;
 import org.jclouds.azure.storage.blob.config.AzureBlobStubClientModule;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.integration.internal.BaseTestInitializer;
@@ -43,7 +43,7 @@ public class AzureBlobTestInitializer extends BaseTestInitializer<AzureBlobClien
    @Override
    protected BlobStoreContext<AzureBlobClient> createLiveContext(Module configurationModule,
             String url, String app, String account, String key) {
-      return new AzureBlobStoreContextBuilder(new AzureBlobStorePropertiesBuilder(
+      return new AzureBlobStoreContextBuilder(new AzureBlobPropertiesBuilder(
                account, key).relaxSSLHostname().build()).withModules(configurationModule,
                new Log4JLoggingModule()).buildContext();
    }

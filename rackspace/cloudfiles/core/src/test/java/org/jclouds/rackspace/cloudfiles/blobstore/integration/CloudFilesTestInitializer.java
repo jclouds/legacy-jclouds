@@ -28,9 +28,9 @@ import org.jclouds.blobstore.integration.internal.BaseTestInitializer;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rackspace.StubRackspaceAuthenticationModule;
 import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
+import org.jclouds.rackspace.cloudfiles.CloudFilesPropertiesBuilder;
 import org.jclouds.rackspace.cloudfiles.blobstore.CloudFilesBlobStoreContextBuilder;
 import org.jclouds.rackspace.cloudfiles.blobstore.CloudFilesBlobStoreContextFactory;
-import org.jclouds.rackspace.cloudfiles.blobstore.CloudFilesBlobStorePropertiesBuilder;
 import org.jclouds.rackspace.cloudfiles.config.CloudFilesStubClientModule;
 
 import com.google.inject.Module;
@@ -44,8 +44,8 @@ public class CloudFilesTestInitializer extends BaseTestInitializer<CloudFilesCli
    @Override
    protected BlobStoreContext<CloudFilesClient> createLiveContext(Module configurationModule,
             String url, String app, String account, String key) {
-      return new CloudFilesBlobStoreContextBuilder(new CloudFilesBlobStorePropertiesBuilder(
-               account, key).relaxSSLHostname().build()).withModules(configurationModule,
+      return new CloudFilesBlobStoreContextBuilder(new CloudFilesPropertiesBuilder(account, key)
+               .relaxSSLHostname().build()).withModules(configurationModule,
                new Log4JLoggingModule()).buildContext();
    }
 

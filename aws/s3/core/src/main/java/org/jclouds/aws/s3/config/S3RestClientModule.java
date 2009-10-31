@@ -24,7 +24,6 @@
 package org.jclouds.aws.s3.config;
 
 import java.net.URI;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
@@ -37,6 +36,7 @@ import org.jclouds.aws.s3.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.s3.handlers.AWSRedirectionRetryHandler;
 import org.jclouds.aws.s3.handlers.ParseAWSErrorFromXmlContent;
 import org.jclouds.aws.s3.reference.S3Constants;
+import org.jclouds.concurrent.ExpirableSupplier;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
@@ -48,8 +48,7 @@ import org.jclouds.rest.RestClientFactory;
 import org.jclouds.util.DateService;
 import org.jclouds.util.TimeStamp;
 
-import com.google.common.base.Function;
-import com.google.common.collect.MapMaker;
+import com.google.common.base.Supplier;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
@@ -65,8 +64,8 @@ public class S3RestClientModule extends AbstractModule {
 
    @Provides
    @TimeStamp
-   protected String provideTimeStamp(@TimeStamp ConcurrentMap<String, String> cache) {
-      return cache.get("doesn't matter");
+   protected String provideTimeStamp(@TimeStamp Supplier<String> cache) {
+      return cache.get();
    }
 
    /**
@@ -74,15 +73,14 @@ public class S3RestClientModule extends AbstractModule {
     */
    @Provides
    @TimeStamp
-   ConcurrentMap<String, String> provideTimeStampCache(
+   Supplier<String> provideTimeStampCache(
             @Named(S3Constants.PROPERTY_S3_SESSIONINTERVAL) long seconds,
             final DateService dateService) {
-      return new MapMaker().expiration(seconds, TimeUnit.SECONDS).makeComputingMap(
-               new Function<String, String>() {
-                  public String apply(String key) {
-                     return dateService.rfc822DateFormat();
-                  }
-               });
+      return new ExpirableSupplier<String>(new Supplier<String>() {
+         public String get() {
+            return dateService.rfc822DateFormat();
+         }
+      }, seconds, TimeUnit.SECONDS);
    }
 
    @Override

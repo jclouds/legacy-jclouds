@@ -149,7 +149,7 @@ public abstract class BaseJettyTest {
                } else {
                   handleAction(request, response);
                }
-            } else if (request.getHeader("Range") != null) {
+            } else if (request.getHeader("range") != null) {
                response.sendError(404, "no content");
             } else if (request.getHeader("test") != null) {
                response.setContentType("text/plain");

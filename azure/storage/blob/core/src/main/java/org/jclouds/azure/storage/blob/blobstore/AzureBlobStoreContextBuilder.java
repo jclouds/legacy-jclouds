@@ -23,8 +23,15 @@
  */
 package org.jclouds.azure.storage.blob.blobstore;
 
+import static org.jclouds.azure.storage.blob.reference.AzureBlobConstants.PROPERTY_AZUREBLOB_METADATA_PREFIX;
+import static org.jclouds.azure.storage.blob.reference.AzureBlobConstants.PROPERTY_AZUREBLOB_RETRY;
+import static org.jclouds.azure.storage.blob.reference.AzureBlobConstants.PROPERTY_AZUREBLOB_TIMEOUT;
+import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_BLOBSTORE_RETRY;
+import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
+
 import java.util.List;
 import java.util.Properties;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 
 import org.jclouds.azure.storage.blob.AzureBlobClient;
@@ -34,6 +41,7 @@ import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
@@ -55,7 +63,17 @@ public class AzureBlobStoreContextBuilder extends BlobStoreContextBuilder<AzureB
 
    public AzureBlobStoreContextBuilder(Properties props) {
       super(new TypeLiteral<AzureBlobClient>() {
-      }, props);
+      }, convert(props));
+   }
+
+   private static Properties convert(Properties props) {
+      for (Entry<String, String> entry : ImmutableMap.of(PROPERTY_AZUREBLOB_METADATA_PREFIX,
+               PROPERTY_USER_METADATA_PREFIX, PROPERTY_AZUREBLOB_RETRY, PROPERTY_BLOBSTORE_RETRY,
+               PROPERTY_AZUREBLOB_TIMEOUT, PROPERTY_USER_METADATA_PREFIX).entrySet()) {
+         if (props.containsKey(entry.getKey()))
+            props.setProperty(entry.getValue(), props.getProperty(entry.getKey()));
+      }
+      return props;
    }
 
    @Override

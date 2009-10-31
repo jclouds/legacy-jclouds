@@ -26,8 +26,11 @@ package org.jclouds.aws.s3;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_ACCESSKEYID;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_SECRETACCESSKEY;
+import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_ENDPOINT;
 import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_METADATA_PREFIX;
+import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_RETRY;
 import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_SESSIONINTERVAL;
+import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_TIMEOUT;
 
 import java.net.URI;
 import java.util.Properties;
@@ -44,7 +47,7 @@ public class S3PropertiesBuilder extends HttpPropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(S3Constants.PROPERTY_S3_ENDPOINT, "https://s3.amazonaws.com");
+      properties.setProperty(PROPERTY_S3_ENDPOINT, "https://s3.amazonaws.com");
       properties.setProperty(PROPERTY_S3_METADATA_PREFIX, "x-amz-meta-");
       properties.setProperty(PROPERTY_S3_SESSIONINTERVAL, "60");
       return properties;
@@ -77,4 +80,24 @@ public class S3PropertiesBuilder extends HttpPropertiesBuilder {
       return this;
    }
 
+   /**
+    * longest time a single synchronous operation can take before throwing an exception.
+    */
+   public S3PropertiesBuilder withRequestTimeout(long milliseconds) {
+      properties.setProperty(PROPERTY_S3_TIMEOUT, Long.toString(milliseconds));
+      return this;
+   }
+
+   /**
+    * longest time a single synchronous operation can take before throwing an exception.
+    */
+   public S3PropertiesBuilder withMaxRetries(int retries) {
+      properties.setProperty(PROPERTY_S3_RETRY, Integer.toString(retries));
+      return this;
+   }
+
+   protected S3PropertiesBuilder withMetaPrefix(String prefix) {
+      properties.setProperty(PROPERTY_S3_METADATA_PREFIX, prefix);
+      return this;
+   }
 }

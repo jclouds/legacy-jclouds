@@ -25,12 +25,12 @@ package org.jclouds.azure.storage.config;
 
 import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY_AZURESTORAGE_SESSIONINTERVAL;
 
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 
 import org.jclouds.azure.storage.handlers.ParseAzureStorageErrorFromXmlContent;
+import org.jclouds.concurrent.ExpirableSupplier;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
@@ -40,8 +40,7 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.util.DateService;
 import org.jclouds.util.TimeStamp;
 
-import com.google.common.base.Function;
-import com.google.common.collect.MapMaker;
+import com.google.common.base.Supplier;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
@@ -56,8 +55,8 @@ public class AzureStorageRestClientModule extends AbstractModule {
 
    @Provides
    @TimeStamp
-   protected String provideTimeStamp(@TimeStamp ConcurrentMap<String, String> cache) {
-      return cache.get("doesn't matter");
+   protected String provideTimeStamp(@TimeStamp Supplier<String> cache) {
+      return cache.get();
    }
 
    /**
@@ -65,15 +64,14 @@ public class AzureStorageRestClientModule extends AbstractModule {
     */
    @Provides
    @TimeStamp
-   ConcurrentMap<String, String> provideTimeStampCache(
+   Supplier<String> provideTimeStampCache(
             @Named(PROPERTY_AZURESTORAGE_SESSIONINTERVAL) long seconds,
             final DateService dateService) {
-      return new MapMaker().expiration(seconds, TimeUnit.SECONDS).makeComputingMap(
-               new Function<String, String>() {
-                  public String apply(String key) {
-                     return dateService.rfc822DateFormat();
-                  }
-               });
+      return new ExpirableSupplier<String>(new Supplier<String>() {
+         public String get() {
+            return dateService.rfc822DateFormat();
+         }
+      }, seconds, TimeUnit.SECONDS);
    }
 
    @Override

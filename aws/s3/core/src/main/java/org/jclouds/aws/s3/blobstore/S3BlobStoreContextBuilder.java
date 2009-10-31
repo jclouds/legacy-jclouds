@@ -23,8 +23,11 @@
  */
 package org.jclouds.aws.s3.blobstore;
 
+import static org.jclouds.aws.s3.reference.S3Constants.*;
+import static org.jclouds.blobstore.reference.BlobStoreConstants.*;
 import java.util.List;
 import java.util.Properties;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 
 import org.jclouds.aws.s3.S3Client;
@@ -34,6 +37,7 @@ import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
@@ -55,7 +59,17 @@ public class S3BlobStoreContextBuilder extends BlobStoreContextBuilder<S3Client>
 
    public S3BlobStoreContextBuilder(Properties props) {
       super(new TypeLiteral<S3Client>() {
-      }, props);
+      }, convert(props));
+   }
+
+   private static Properties convert(Properties props) {
+      for (Entry<String, String> entry : ImmutableMap.of(PROPERTY_S3_METADATA_PREFIX,
+               PROPERTY_USER_METADATA_PREFIX, PROPERTY_S3_RETRY, PROPERTY_BLOBSTORE_RETRY,
+               PROPERTY_S3_TIMEOUT, PROPERTY_USER_METADATA_PREFIX).entrySet()) {
+         if (props.containsKey(entry.getKey()))
+            props.setProperty(entry.getValue(), props.getProperty(entry.getKey()));
+      }
+      return props;
    }
 
    @Override

@@ -32,6 +32,24 @@ import org.jclouds.azure.storage.reference.AzureStorageConstants;
  */
 public interface AzureBlobConstants extends AzureStorageConstants {
    public static final String PROPERTY_AZUREBLOB_ENDPOINT = "jclouds.azureblob.endpoint";
+
+   /**
+    * how long do we wait before obtaining a new timestamp for requests.
+    */
+   public static final String PROPERTY_AZUREBLOB_SESSIONINTERVAL = "jclouds.azureblob.sessioninterval";
+
+   /**
+    * longest time a single synchronous operation can take before throwing an exception.
+    */
+   public static final String PROPERTY_AZUREBLOB_TIMEOUT = "jclouds.azureblob.timeout";
+   /**
+    * time to pause before retrying a transient failure
+    */
+   public static final String PROPERTY_AZUREBLOB_RETRY = "jclouds.azureblob.retry";
+   /**
+    * Any header starting with this prefix is considered user metadata. It will be stored with the
+    * object and returned when you retrieve the object/
+    */
    public static final String PROPERTY_AZUREBLOB_METADATA_PREFIX = "jclouds.azureblob.metaprefix";
 
 }

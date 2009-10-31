@@ -29,8 +29,6 @@ import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
-import java.util.concurrent.ConcurrentMap;
-
 import org.jclouds.azure.storage.handlers.ParseAzureStorageErrorFromXmlContent;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
@@ -43,6 +41,7 @@ import org.jclouds.util.DateService;
 import org.jclouds.util.Jsr330;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Supplier;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -70,13 +69,13 @@ public class AzureStorageRestClientModuleTest {
    void testUpdatesOnlyOncePerSecond() throws NoSuchMethodException, InterruptedException {
       AzureStorageRestClientModule module = new AzureStorageRestClientModule();
 
-      ConcurrentMap<String, String> map = module.provideTimeStampCache(1, new DateService());
-      String timeStamp = map.get("foo");
+      Supplier<String> map = module.provideTimeStampCache(1, new DateService());
+      String timeStamp = map.get();
       for (int i = 0; i < 10; i++)
-         map.get("foo");
-      assertEquals(timeStamp, map.get("foo"));
+         map.get();
+      assertEquals(timeStamp, map.get());
       Thread.sleep(1001);
-      assertFalse(timeStamp.equals(map.get("foo")));
+      assertFalse(timeStamp.equals(map.get()));
    }
 
    @Test

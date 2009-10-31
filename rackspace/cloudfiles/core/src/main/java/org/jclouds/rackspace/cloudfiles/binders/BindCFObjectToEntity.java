@@ -26,6 +26,7 @@ package org.jclouds.rackspace.cloudfiles.binders;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.blobstore.binders.BindBlobToEntityAndUserMetadataToHeadersWithPrefix;
@@ -33,16 +34,15 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.ObjectToBlob;
 import org.jclouds.rackspace.cloudfiles.domain.CFObject;
-import org.jclouds.rest.Binder;
+import org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants;
 
-public class BindCFObjectToEntity implements Binder {
-   private final BindBlobToEntityAndUserMetadataToHeadersWithPrefix blobBinder;
+public class BindCFObjectToEntity extends BindBlobToEntityAndUserMetadataToHeadersWithPrefix {
    private final ObjectToBlob object2Blob;
 
    @Inject
    public BindCFObjectToEntity(ObjectToBlob object2Blob,
-            BindBlobToEntityAndUserMetadataToHeadersWithPrefix blobBinder) {
-      this.blobBinder = blobBinder;
+            @Named(CloudFilesConstants.PROPERTY_CLOUDFILES_METADATA_PREFIX) String prefix) {
+      super(prefix);
       this.object2Blob = object2Blob;
    }
 
@@ -57,7 +57,7 @@ public class BindCFObjectToEntity implements Binder {
          request.getHeaders().put("Transfer-Encoding", "chunked");
       }
 
-      blobBinder.bindToRequest(request, object2Blob.apply(object));
+      super.bindToRequest(request, object2Blob.apply(object));
       if (object.getInfo().getHash() != null) {
          request.getHeaders().put(HttpHeaders.ETAG,
                   HttpUtils.toHexString(object.getInfo().getHash()));

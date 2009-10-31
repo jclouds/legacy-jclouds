@@ -27,6 +27,7 @@ import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.azure.storage.blob.AzureBlobClient;
+import org.jclouds.azure.storage.blob.AzureBlobPropertiesBuilder;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
@@ -34,8 +35,7 @@ import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import com.google.inject.Module;
 
 /**
- * Creates {@link AzureBlobStoreContext} instances based on the most commonly requested
- * arguments.
+ * Creates {@link AzureBlobStoreContext} instances based on the most commonly requested arguments.
  * <p/>
  * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
  * <p/>
@@ -49,20 +49,19 @@ import com.google.inject.Module;
 public class AzureBlobStoreContextFactory {
    public static BlobStoreContext<AzureBlobClient> createContext(Properties properties,
             Module... modules) {
-      return new AzureBlobStoreContextBuilder(new AzureBlobStorePropertiesBuilder(
-               properties).build()).withModules(modules).buildContext();
+      return new AzureBlobStoreContextBuilder(new AzureBlobPropertiesBuilder(properties).build())
+               .withModules(modules).buildContext();
    }
 
-   public static BlobStoreContext<AzureBlobClient> createContext(String user,
+   public static BlobStoreContext<AzureBlobClient> createContext(String user, String encodedKey,
+            Module... modules) {
+      return new AzureBlobStoreContextBuilder(new AzureBlobPropertiesBuilder(user, encodedKey)
+               .build()).withModules(modules).buildContext();
+   }
+
+   public static BlobStoreContext<AzureBlobClient> createContext(URI endpoint, String user,
             String encodedKey, Module... modules) {
-      return new AzureBlobStoreContextBuilder(new AzureBlobStorePropertiesBuilder(
-               user, encodedKey).build()).withModules(modules).buildContext();
-   }
-
-   public static BlobStoreContext<AzureBlobClient> createContext(URI endpoint,
-            String user, String encodedKey, Module... modules) {
-      return new AzureBlobStoreContextBuilder(new AzureBlobStorePropertiesBuilder(
-               user, encodedKey).withEndpoint(endpoint).build()).withModules(
-               modules).buildContext();
+      return new AzureBlobStoreContextBuilder(new AzureBlobPropertiesBuilder(user, encodedKey)
+               .withEndpoint(endpoint).build()).withModules(modules).buildContext();
    }
 }

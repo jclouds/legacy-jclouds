@@ -36,6 +36,7 @@ import org.jclouds.blobstore.domain.internal.BlobImpl;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.rackspace.StubRackspaceAuthenticationModule;
 import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
+import org.jclouds.rackspace.cloudfiles.CloudFilesPropertiesBuilder;
 import org.jclouds.rackspace.cloudfiles.blobstore.config.CloudFilesBlobStoreContextModule;
 import org.jclouds.rackspace.cloudfiles.config.CloudFilesRestClientModule;
 import org.jclouds.rackspace.cloudfiles.config.CloudFilesStubClientModule;
@@ -69,7 +70,7 @@ public class CloudFilesBlobStoreContextBuilderTest {
    }
 
    private CloudFilesBlobStoreContextBuilder newBuilder() {
-      return new CloudFilesBlobStoreContextBuilder(new CloudFilesBlobStorePropertiesBuilder("id",
+      return new CloudFilesBlobStoreContextBuilder(new CloudFilesPropertiesBuilder("id",
                "secret").build()).withModules(new CloudFilesStubClientModule(),
                new StubRackspaceAuthenticationModule());
    }

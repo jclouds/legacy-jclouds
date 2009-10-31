@@ -71,7 +71,7 @@ public class HttpRequest extends HttpMessage implements Request<URI> {
     */
    public HttpRequest(String method, URI endPoint, Multimap<String, String> headers) {
       this(method, endPoint);
-      setHeaders(checkNotNull(headers, "headers"));
+      getHeaders().putAll(checkNotNull(headers, "headers"));
    }
 
    /**
@@ -84,7 +84,7 @@ public class HttpRequest extends HttpMessage implements Request<URI> {
    protected HttpRequest(String method, URI endPoint, Multimap<String, String> headers,
             @Nullable Object entity) {
       this(method, endPoint);
-      setHeaders(checkNotNull(headers, "headers"));
+      getHeaders().putAll(checkNotNull(headers, "headers"));
       setEntity(entity);
    }
 

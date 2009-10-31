@@ -47,13 +47,14 @@ public class HttpMessage {
       return headers;
    }
 
-   public void setHeaders(Multimap<String, String> headers) {
-      this.headers = Multimaps.synchronizedMultimap(headers);
-   }
-
+   /**
+    * try to get the value, then try as lowercase.
+    */
    public String getFirstHeaderOrNull(String string) {
       Collection<String> values = headers.get(string);
-      return (values != null && values.size() >= 1) ? values.iterator().next() : null;
+      if (values.size() == 0)
+         values = headers.get(string.toLowerCase());
+      return (values.size() >= 1) ? values.iterator().next() : null;
    }
 
 }

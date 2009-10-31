@@ -30,7 +30,6 @@ import static org.jclouds.vcloudx.reference.VCloudXConstants.PROPERTY_VCLOUDX_US
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jclouds.http.HttpRetryHandler;
@@ -44,6 +43,7 @@ import org.jclouds.vcloudx.VCloudXLogin;
 import org.jclouds.vcloudx.VCloudXLogin.VCloudXSession;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Supplier;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -91,12 +91,12 @@ public class RestVCloudXAuthenticationModuleTest {
          }
 
       };
-      ConcurrentMap<String, VCloudXSession> map = module.provideVCloudTokenCache(1, login);
+      Supplier<VCloudXSession> map = module.provideVCloudTokenCache(1, login);
       for (int i = 0; i < 10; i++)
-         map.get("foo");
-      assert "1".equals(map.get("foo").getVCloudToken());
+         map.get();
+      assert "1".equals(map.get().getVCloudToken());
       Thread.sleep(1001);
-      assert "2".equals(map.get("foo").getVCloudToken());
+      assert "2".equals(map.get().getVCloudToken());
    }
 
    @Test

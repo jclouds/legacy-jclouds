@@ -23,6 +23,8 @@
  */
 package org.jclouds.mezeo.pcs2.functions;
 
+import javax.inject.Singleton;
+
 import org.jclouds.blobstore.ContainerNotFoundException;
 
 import com.google.common.base.Function;
@@ -31,6 +33,7 @@ import com.google.common.base.Function;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class ReturnFalseIfContainerNotFound implements Function<Exception, Boolean> {
 
    public Boolean apply(Exception from) {

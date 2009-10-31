@@ -79,7 +79,7 @@ public class ParseBlobFromHeadersAndHttpContentTest {
                metadataParser, blobProvider);
       Multimap<String, String> allHeaders = ImmutableMultimap.of("key", "value");
       HttpResponse from = new HttpResponse();
-      from.setHeaders(allHeaders);
+      from.getHeaders().putAll(allHeaders);
       Blob object = blobProvider.create(null);
       callable.addAllHeadersTo(from, object);
       assertEquals(object.getAllHeaders().get("key"), Collections.singletonList("value"));

@@ -27,7 +27,6 @@ import static org.jclouds.atmosonline.saas.reference.AtmosStorageConstants.PROPE
 import static org.jclouds.atmosonline.saas.reference.AtmosStorageConstants.PROPERTY_EMCSAAS_SESSIONINTERVAL;
 
 import java.net.URI;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
@@ -37,6 +36,7 @@ import org.jclouds.atmosonline.saas.AtmosStorage;
 import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.atmosonline.saas.handlers.AtmosStorageClientErrorRetryHandler;
 import org.jclouds.atmosonline.saas.handlers.ParseAtmosStorageErrorFromXmlContent;
+import org.jclouds.concurrent.ExpirableSupplier;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
@@ -48,8 +48,7 @@ import org.jclouds.rest.RestClientFactory;
 import org.jclouds.util.DateService;
 import org.jclouds.util.TimeStamp;
 
-import com.google.common.base.Function;
-import com.google.common.collect.MapMaker;
+import com.google.common.base.Supplier;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
@@ -82,8 +81,8 @@ public class AtmosStorageRestClientModule extends AbstractModule {
 
    @Provides
    @TimeStamp
-   protected String provideTimeStamp(@TimeStamp ConcurrentMap<String, String> cache) {
-      return cache.get("doesn't matter");
+   protected String provideTimeStamp(@TimeStamp Supplier<String> cache) {
+      return cache.get();
    }
 
    /**
@@ -91,14 +90,13 @@ public class AtmosStorageRestClientModule extends AbstractModule {
     */
    @Provides
    @TimeStamp
-   ConcurrentMap<String, String> provideTimeStampCache(
-            @Named(PROPERTY_EMCSAAS_SESSIONINTERVAL) long seconds, final DateService dateService) {
-      return new MapMaker().expiration(seconds, TimeUnit.SECONDS).makeComputingMap(
-               new Function<String, String>() {
-                  public String apply(String key) {
-                     return dateService.rfc822DateFormat();
-                  }
-               });
+   Supplier<String> provideTimeStampCache(@Named(PROPERTY_EMCSAAS_SESSIONINTERVAL) long seconds,
+            final DateService dateService) {
+      return new ExpirableSupplier<String>(new Supplier<String>() {
+         public String get() {
+            return dateService.rfc822DateFormat();
+         }
+      }, seconds, TimeUnit.SECONDS);
    }
 
    protected void bindErrorHandlers() {

@@ -30,29 +30,27 @@ import static org.jclouds.vcloudx.reference.VCloudXConstants.PROPERTY_VCLOUDX_US
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.concurrent.ExpirableSupplier;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.RestClientFactory;
-import org.jclouds.vcloudx.VCloudXLogin;
 import org.jclouds.vcloudx.VCloudToken;
+import org.jclouds.vcloudx.VCloudXLogin;
 import org.jclouds.vcloudx.VCloudXLogin.VCloudXSession;
 import org.jclouds.vcloudx.endpoints.Org;
 import org.jclouds.vcloudx.endpoints.VCloudX;
 
-import com.google.common.base.Function;
-import com.google.common.collect.MapMaker;
+import com.google.common.base.Supplier;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
- * Configures the VCloudX authentication service connection, including logging and http
- * transport.
+ * Configures the VCloudX authentication service connection, including logging and http transport.
  * 
  * @author Adrian Cole
  */
@@ -65,28 +63,28 @@ public class RestVCloudXAuthenticationModule extends AbstractModule {
 
    @VCloudToken
    @Provides
-   String provideVCloudToken(ConcurrentMap<String, VCloudXSession> cache) {
-      return cache.get("doesn't matter").getVCloudToken();
+   String provideVCloudToken(Supplier<VCloudXSession> cache) {
+      return cache.get().getVCloudToken();
    }
-   
+
    @Provides
    @Org
-   protected URI provideOrg(ConcurrentMap<String, VCloudXSession> cache) {
-      return cache.get("doesn't matter").getOrg();
+   protected URI provideOrg(Supplier<VCloudXSession> cache) {
+      return cache.get().getOrg();
    }
 
    /**
     * borrowing concurrency code to ensure that caching takes place properly
     */
    @Provides
-   ConcurrentMap<String, VCloudXSession> provideVCloudTokenCache(
+   @Singleton
+   Supplier<VCloudXSession> provideVCloudTokenCache(
             @Named(PROPERTY_VCLOUDX_SESSIONINTERVAL) long seconds, final VCloudXLogin login) {
-      return new MapMaker().expiration(seconds, TimeUnit.SECONDS).makeComputingMap(
-               new Function<String, VCloudXSession>() {
-                  public VCloudXSession apply(String key) {
-                     return login.login();
-                  }
-               });
+      return new ExpirableSupplier<VCloudXSession>(new Supplier<VCloudXSession>() {
+         public VCloudXSession get() {
+            return login.login();
+         }
+      }, seconds, TimeUnit.SECONDS);
    }
 
    @Provides

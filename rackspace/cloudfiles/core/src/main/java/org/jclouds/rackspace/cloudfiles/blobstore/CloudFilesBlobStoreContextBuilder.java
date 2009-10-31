@@ -23,8 +23,15 @@
  */
 package org.jclouds.rackspace.cloudfiles.blobstore;
 
+import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_BLOBSTORE_RETRY;
+import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
+import static org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants.PROPERTY_CLOUDFILES_METADATA_PREFIX;
+import static org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants.PROPERTY_CLOUDFILES_RETRY;
+import static org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants.PROPERTY_CLOUDFILES_TIMEOUT;
+
 import java.util.List;
 import java.util.Properties;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 
 import org.jclouds.blobstore.BlobStoreContextBuilder;
@@ -35,13 +42,14 @@ import org.jclouds.rackspace.cloudfiles.blobstore.config.CloudFilesBlobStoreCont
 import org.jclouds.rackspace.cloudfiles.config.CloudFilesRestClientModule;
 import org.jclouds.rackspace.config.RackspaceAuthenticationRestModule;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
 /**
- * Creates {@link CloudFilesBlobStoreContext} or {@link Injector} instances based on the most commonly
- * requested arguments.
+ * Creates {@link CloudFilesBlobStoreContext} or {@link Injector} instances based on the most
+ * commonly requested arguments.
  * <p/>
  * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
  * <p/>
@@ -56,7 +64,17 @@ public class CloudFilesBlobStoreContextBuilder extends BlobStoreContextBuilder<C
 
    public CloudFilesBlobStoreContextBuilder(Properties props) {
       super(new TypeLiteral<CloudFilesClient>() {
-      }, props);
+      }, convert(props));
+   }
+
+   private static Properties convert(Properties props) {
+      for (Entry<String, String> entry : ImmutableMap.of(PROPERTY_CLOUDFILES_METADATA_PREFIX,
+               PROPERTY_USER_METADATA_PREFIX, PROPERTY_CLOUDFILES_RETRY, PROPERTY_BLOBSTORE_RETRY,
+               PROPERTY_CLOUDFILES_TIMEOUT, PROPERTY_USER_METADATA_PREFIX).entrySet()) {
+         if (props.containsKey(entry.getKey()))
+            props.setProperty(entry.getValue(), props.getProperty(entry.getKey()));
+      }
+      return props;
    }
 
    @Override

@@ -23,26 +23,27 @@
  */
 package org.jclouds.azure.storage.blob.binders;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.azure.storage.blob.blobstore.functions.AzureBlobToBlob;
 import org.jclouds.azure.storage.blob.domain.AzureBlob;
+import org.jclouds.azure.storage.blob.reference.AzureBlobConstants;
 import org.jclouds.blobstore.binders.BindBlobToEntityAndUserMetadataToHeadersWithPrefix;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.Binder;
 
-public class BindAzureBlobToEntity implements Binder {
+public class BindAzureBlobToEntity extends BindBlobToEntityAndUserMetadataToHeadersWithPrefix {
 
-   private final BindBlobToEntityAndUserMetadataToHeadersWithPrefix blobBinder;
    private final AzureBlobToBlob azureBlob2Blob;
 
    @Inject
    public BindAzureBlobToEntity(AzureBlobToBlob azureBlob2Blob,
-            BindBlobToEntityAndUserMetadataToHeadersWithPrefix blobBinder) {
-      this.blobBinder = blobBinder;
+            @Named(AzureBlobConstants.PROPERTY_AZUREBLOB_METADATA_PREFIX) String prefix) {
+      super(prefix);
       this.azureBlob2Blob = azureBlob2Blob;
    }
 
@@ -52,7 +53,7 @@ public class BindAzureBlobToEntity implements Binder {
       checkArgument(
                checkNotNull(object.getContentLength(), "object.getContentLength()") <= 64 * 1024 * 1024,
                "maximum size for put Blob is 64MB");
-      blobBinder.bindToRequest(request, azureBlob2Blob.apply(object));
+      super.bindToRequest(request, azureBlob2Blob.apply(object));
 
       if (object.getProperties().getContentLanguage() != null) {
          request.getHeaders().put(HttpHeaders.CONTENT_LANGUAGE,

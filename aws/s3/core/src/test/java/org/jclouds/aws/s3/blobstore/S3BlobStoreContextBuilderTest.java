@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jclouds.aws.s3.S3Client;
+import org.jclouds.aws.s3.S3PropertiesBuilder;
 import org.jclouds.aws.s3.blobstore.config.S3BlobStoreContextModule;
 import org.jclouds.aws.s3.config.S3RestClientModule;
 import org.jclouds.aws.s3.config.S3StubClientModule;
@@ -59,8 +60,8 @@ import com.google.inject.TypeLiteral;
 public class S3BlobStoreContextBuilderTest {
 
    public void testNewBuilder() {
-      S3BlobStoreContextBuilder builder = new S3BlobStoreContextBuilder(
-               new S3BlobStorePropertiesBuilder("id", "secret").build());
+      S3BlobStoreContextBuilder builder = new S3BlobStoreContextBuilder(new S3PropertiesBuilder(
+               "id", "secret").build());
       assertEquals(builder.getProperties().getProperty(PROPERTY_USER_METADATA_PREFIX),
                "x-amz-meta-");
       assertEquals(builder.getProperties().getProperty(PROPERTY_AWS_ACCESSKEYID), "id");
@@ -68,9 +69,8 @@ public class S3BlobStoreContextBuilderTest {
    }
 
    public void testBuildContext() {
-      BlobStoreContext<S3Client> context = new S3BlobStoreContextBuilder(
-               new S3BlobStorePropertiesBuilder("id", "secret").build()).withModules(
-               new S3StubClientModule()).buildContext();
+      BlobStoreContext<S3Client> context = new S3BlobStoreContextBuilder(new S3PropertiesBuilder(
+               "id", "secret").build()).withModules(new S3StubClientModule()).buildContext();
       assertEquals(context.getClass(), BlobStoreContextImpl.class);
       assertEquals(context.getApi().getClass(), StubS3Client.class);
       assertEquals(context.getBlobStore().getClass(), S3BlobStore.class);
@@ -81,8 +81,8 @@ public class S3BlobStoreContextBuilderTest {
    }
 
    public void testBuildInjector() {
-      Injector i = new S3BlobStoreContextBuilder(new S3BlobStorePropertiesBuilder("id", "secret")
-               .build()).withModules(new S3StubClientModule()).buildInjector();
+      Injector i = new S3BlobStoreContextBuilder(new S3PropertiesBuilder("id", "secret").build())
+               .withModules(new S3StubClientModule()).buildInjector();
       assert i.getInstance(Key.get(new TypeLiteral<BlobStoreContext<S3Client>>() {
       })) != null;
       assert i.getInstance(S3Object.class) != null;
@@ -91,8 +91,8 @@ public class S3BlobStoreContextBuilderTest {
 
    protected void testAddContextModule() {
       List<Module> modules = new ArrayList<Module>();
-      S3BlobStoreContextBuilder builder = new S3BlobStoreContextBuilder(
-               new S3BlobStorePropertiesBuilder("id", "secret").build());
+      S3BlobStoreContextBuilder builder = new S3BlobStoreContextBuilder(new S3PropertiesBuilder(
+               "id", "secret").build());
       builder.addContextModule(modules);
       assertEquals(modules.size(), 1);
       assertEquals(modules.get(0).getClass(), S3BlobStoreContextModule.class);
@@ -100,8 +100,8 @@ public class S3BlobStoreContextBuilderTest {
 
    protected void addClientModule() {
       List<Module> modules = new ArrayList<Module>();
-      S3BlobStoreContextBuilder builder = new S3BlobStoreContextBuilder(
-               new S3BlobStorePropertiesBuilder("id", "secret").build());
+      S3BlobStoreContextBuilder builder = new S3BlobStoreContextBuilder(new S3PropertiesBuilder(
+               "id", "secret").build());
       builder.addClientModule(modules);
       assertEquals(modules.size(), 1);
       assertEquals(modules.get(0).getClass(), S3RestClientModule.class);

@@ -142,7 +142,7 @@ public class ParseBlobMetadataFromHeadersTest {
    public void testAddUserMetadataTo() {
       Multimap<String, String> allHeaders = ImmutableMultimap.of("prefix" + "key", "value");
       HttpResponse from = new HttpResponse();
-      from.setHeaders(allHeaders);
+      from.getHeaders().putAll(allHeaders);
       MutableBlobMetadata metadata = blobMetadataProvider.get();
       parser.addUserMetadataTo(from, metadata);
       assertEquals(metadata.getUserMetadata().get("key"), "value");

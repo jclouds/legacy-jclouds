@@ -51,32 +51,27 @@ public class ParseAuthenticationResponseFromHeaders implements
     * parses the http response headers to create a new {@link AuthenticationResponse} object.
     */
    public AuthenticationResponse apply(final HttpResponse from) {
-
       return new AuthenticationResponse() {
 
          public String getAuthToken() {
-            return checkNotNull(from.getFirstHeaderOrNull(AUTH_TOKEN),
-                     AUTH_TOKEN);
+            return checkNotNull(from.getFirstHeaderOrNull(AUTH_TOKEN), AUTH_TOKEN);
          }
 
          public URI getCDNManagementUrl() {
-            String cdnManagementUrl = checkNotNull(from
-                     .getFirstHeaderOrNull(CDN_MANAGEMENT_URL),
+            String cdnManagementUrl = checkNotNull(from.getFirstHeaderOrNull(CDN_MANAGEMENT_URL),
                      CDN_MANAGEMENT_URL);
             return URI.create(cdnManagementUrl);
          }
 
          public URI getServerManagementUrl() {
             String serverManagementUrl = checkNotNull(from
-                     .getFirstHeaderOrNull(SERVER_MANAGEMENT_URL),
-                     SERVER_MANAGEMENT_URL);
+                     .getFirstHeaderOrNull(SERVER_MANAGEMENT_URL), SERVER_MANAGEMENT_URL);
             return URI.create(serverManagementUrl);
          }
-         
+
          public URI getStorageUrl() {
-            String storageUrl = checkNotNull(from
-                     .getFirstHeaderOrNull(STORAGE_URL),
-                     STORAGE_URL);
+            String storageUrl = checkNotNull(from.getFirstHeaderOrNull(STORAGE_URL), STORAGE_URL
+                     + " not found in headers:" + from.getStatusLine() + " - " + from.getHeaders());
             return URI.create(storageUrl);
          }
 

@@ -29,6 +29,11 @@ package org.jclouds.blobstore.reference;
  * @author Adrian Cole
  */
 public interface BlobStoreConstants {
+   /**
+    * comma-separated, fully qualified class names of implementations of BlobStoreContextBuilder
+    * 
+    */
+   public static final String PROPERTY_BLOBSTORE_CONTEXTBUILDERS = "jclouds.blobstore.contextbuilders";
 
    /**
     * longest time a single synchronous operation can take before throwing an exception.

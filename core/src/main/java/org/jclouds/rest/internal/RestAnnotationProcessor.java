@@ -354,7 +354,6 @@ public class RestAnnotationProcessor<T> {
 
       GeneratedHttpRequest<T> request = new GeneratedHttpRequest<T>(httpMethod, endPoint, this,
                declaring, method, args);
-      request.setHeaders(headers);
       addHostHeaderIfAnnotatedWithVirtualHost(headers, request.getEndpoint().getHost(), method);
       addFiltersIfAnnotated(method, request);
       if (stringEntity != null) {
@@ -362,6 +361,7 @@ public class RestAnnotationProcessor<T> {
          if (headers.get(HttpHeaders.CONTENT_TYPE) != null)
             headers.put(HttpHeaders.CONTENT_TYPE, "application/unknown");
       }
+      request.getHeaders().putAll(headers);
       decorateRequest(request);
       return request;
    }

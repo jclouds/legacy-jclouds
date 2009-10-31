@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jclouds.azure.storage.blob.AzureBlobClient;
+import org.jclouds.azure.storage.blob.AzureBlobPropertiesBuilder;
 import org.jclouds.azure.storage.blob.blobstore.config.AzureBlobStoreContextModule;
 import org.jclouds.azure.storage.blob.config.AzureBlobRestClientModule;
 import org.jclouds.azure.storage.blob.config.AzureBlobStubClientModule;
@@ -68,7 +69,7 @@ public class AzureBlobStoreContextBuilderTest {
    }
 
    private AzureBlobStoreContextBuilder newBuilder() {
-      return new AzureBlobStoreContextBuilder(new AzureBlobStorePropertiesBuilder("id",
+      return new AzureBlobStoreContextBuilder(new AzureBlobPropertiesBuilder("id",
                "secret").build()).withModules(new AzureBlobStubClientModule());
    }
 

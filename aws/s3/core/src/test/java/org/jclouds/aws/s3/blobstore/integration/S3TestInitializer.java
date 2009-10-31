@@ -24,9 +24,9 @@
 package org.jclouds.aws.s3.blobstore.integration;
 
 import org.jclouds.aws.s3.S3Client;
+import org.jclouds.aws.s3.S3PropertiesBuilder;
 import org.jclouds.aws.s3.blobstore.S3BlobStoreContextBuilder;
 import org.jclouds.aws.s3.blobstore.S3BlobStoreContextFactory;
-import org.jclouds.aws.s3.blobstore.S3BlobStorePropertiesBuilder;
 import org.jclouds.aws.s3.config.S3StubClientModule;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
@@ -45,9 +45,8 @@ public class S3TestInitializer extends BaseTestInitializer<S3Client> {
    protected BlobStoreContext<S3Client> createLiveContext(Module configurationModule, String url,
             String app, String account, String key) {
       BaseBlobStoreIntegrationTest.SANITY_CHECK_RETURNED_BUCKET_NAME = true;
-      return new S3BlobStoreContextBuilder(new S3BlobStorePropertiesBuilder(account, key)
-               .relaxSSLHostname().build()).withModules(configurationModule,
-               new Log4JLoggingModule()).buildContext();
+      return new S3BlobStoreContextBuilder(new S3PropertiesBuilder(account, key).relaxSSLHostname()
+               .build()).withModules(configurationModule, new Log4JLoggingModule()).buildContext();
    }
 
    @Override

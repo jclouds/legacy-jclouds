@@ -82,7 +82,7 @@ public class BaseBlobStoreIntegrationTest<S> {
    protected static volatile AtomicInteger containerIndex = new AtomicInteger(0);
 
    protected volatile BlobStoreContext<S> context;
-   protected static volatile int containerCount = 20;
+   protected static volatile int containerCount = 10;
    public static final String CONTAINER_PREFIX = System.getProperty("user.name") + "-blobstore";
    /**
     * two test groups integration and live.

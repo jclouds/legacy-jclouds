@@ -23,7 +23,6 @@
  */
 package org.jclouds.azure.storage.blob;
 
-import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
@@ -35,6 +34,7 @@ import org.jclouds.azure.storage.blob.config.AzureBlobRestClientModule;
 import org.jclouds.azure.storage.blob.config.AzureBlobStubClientModule;
 import org.jclouds.azure.storage.blob.domain.AzureBlob;
 import org.jclouds.azure.storage.blob.internal.StubAzureBlobClient;
+import org.jclouds.azure.storage.blob.reference.AzureBlobConstants;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.rest.RestContext;
@@ -57,7 +57,8 @@ public class AzureBlobContextBuilderTest {
    public void testNewBuilder() {
       AzureBlobContextBuilder builder = new AzureBlobContextBuilder(new AzureBlobPropertiesBuilder(
                "id", "secret").build()).withModules(new AzureBlobStubClientModule());
-      assertEquals(builder.getProperties().getProperty(PROPERTY_USER_METADATA_PREFIX), "x-ms-meta-");
+      assertEquals(builder.getProperties().getProperty(
+               AzureBlobConstants.PROPERTY_AZUREBLOB_METADATA_PREFIX), "x-ms-meta-");
       assertEquals(builder.getProperties().getProperty(
                AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT), "id");
       assertEquals(builder.getProperties().getProperty(
@@ -65,8 +66,9 @@ public class AzureBlobContextBuilderTest {
    }
 
    public void testBuildContext() {
-      RestContext<AzureBlobClient> context = new AzureBlobContextBuilder(new AzureBlobPropertiesBuilder("id",
-               "secret").build()).withModules(new AzureBlobStubClientModule()).buildContext();
+      RestContext<AzureBlobClient> context = new AzureBlobContextBuilder(
+               new AzureBlobPropertiesBuilder("id", "secret").build()).withModules(
+               new AzureBlobStubClientModule()).buildContext();
       assertEquals(context.getClass(), RestContextImpl.class);
       assertEquals(context.getApi().getClass(), StubAzureBlobClient.class);
       assertEquals(context.getAccount(), "id");
@@ -79,7 +81,8 @@ public class AzureBlobContextBuilderTest {
       assert i.getInstance(Key.get(new TypeLiteral<RestContext<AzureBlobClient>>() {
       })) != null;
       assert i.getInstance(AzureBlob.class) != null;
-      assert i.getInstance(Blob.class) != null;   }
+      assert i.getInstance(Blob.class) != null;
+   }
 
    protected void testAddContextModule() {
       List<Module> modules = new ArrayList<Module>();

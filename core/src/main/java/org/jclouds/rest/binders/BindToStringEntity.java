@@ -23,6 +23,8 @@
  */
 package org.jclouds.rest.binders;
 
+import java.util.Collections;
+
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
@@ -40,7 +42,7 @@ public class BindToStringEntity implements Binder {
       String stringEntity = entity.toString();
       if (request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE) == null)
          request.getHeaders().put(HttpHeaders.CONTENT_TYPE, "application/unknown");
-      request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, stringEntity.getBytes().length + "");
+      request.getHeaders().replaceValues(HttpHeaders.CONTENT_LENGTH,Collections.singletonList(stringEntity.getBytes().length + ""));
       request.setEntity(stringEntity);
    }
 }
