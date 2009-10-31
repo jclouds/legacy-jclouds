@@ -52,7 +52,10 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
-   protected int timeoutSeconds = 10;
+   static {
+      containerCount = 1;
+   }
+   protected int timeoutSeconds = 15;
    protected int loopCount = 100;
    protected ExecutorService exec;
    protected CompletionService<Boolean> completer;

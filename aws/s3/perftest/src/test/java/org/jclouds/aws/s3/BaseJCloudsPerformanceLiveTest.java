@@ -83,7 +83,7 @@ public abstract class BaseJCloudsPerformanceLiveTest extends BasePerformanceLive
       S3Object object = newObject(key);
       object.getMetadata().setContentType(contentType);
       object.setData(data);
-      object.getMetadata().setSize(new Long(data.available()));
+      object.setContentLength(new Long(data.available()));
       return context.getApi().putObject(bucket, object).get(120, TimeUnit.SECONDS) != null;
    }
 
