@@ -30,11 +30,12 @@
 <title>jclouds: anyweight cloudware for java</title>
 </head>
 <body>
-<h2>Bucket List</h2>
-<display:table name="buckets">
-	<display:column property="name" title="Bucket" />
-	<display:column property="size" title="Size" />
-    <display:column property="status" title="Status" />	
+<h2>Container List</h2>
+<display:table name="containers"  >
+	<display:column property="service"  title="Service" />
+	<display:column property="host"  title="Host" />
+	<display:column property="name"  title="Container" />
+    <display:column property="status"  title="Status" />	
 </display:table>
 </body>
 </html>

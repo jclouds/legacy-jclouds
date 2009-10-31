@@ -24,14 +24,12 @@
 package org.jclouds.samples.googleappengine;
 
 import java.io.IOException;
-import java.util.SortedSet;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -39,59 +37,52 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jclouds.aws.s3.S3Client;
-import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.logging.Logger;
-import org.jclouds.samples.googleappengine.domain.BucketResult;
-import org.jclouds.samples.googleappengine.functions.MetadataToBucketResult;
+import org.jclouds.samples.googleappengine.functions.BlobStoreContextToContainerResult;
 
-import com.google.appengine.repackaged.com.google.common.collect.Sets;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 /**
- * Shows an example of how to use @{link S3Client} injected with Guice.
+ * Shows an example of how to use @{link BlobStoreContext} injected with Guice.
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class GetAllBucketsController extends HttpServlet {
+public class GetAllContainersController extends HttpServlet {
    private static final long serialVersionUID = 1L;
 
-   private final BlobStoreContext<S3Client> context;
-   private final Provider<MetadataToBucketResult> metadataToBucketResultProvider;
+   private Map<String, BlobStoreContext<?>> contexts;
+   private final BlobStoreContextToContainerResult blobStoreContextToContainerResult;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public GetAllBucketsController(BlobStoreContext<S3Client> context,
-            Provider<MetadataToBucketResult> metadataToBucketResultProvider) {
-      this.context = context;
-      this.metadataToBucketResultProvider = metadataToBucketResultProvider;
+   public GetAllContainersController(Map<String, BlobStoreContext<?>> contexts,
+            BlobStoreContextToContainerResult blobStoreContextToContainerResult) {
+      this.contexts = contexts;
+      this.blobStoreContextToContainerResult = blobStoreContextToContainerResult;
    }
 
    @Override
    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
       try {
-         addMyBucketsToRequest(request);
+         addMyContainersToRequest(request);
          RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(
-                  "/WEB-INF/jsp/buckets.jsp");
+                  "/WEB-INF/jsp/containers.jsp");
          dispatcher.forward(request, response);
       } catch (Exception e) {
-         logger.error(e, "Error listing buckets");
+         logger.error(e, "Error listing containers");
          throw new ServletException(e);
       }
    }
 
-   private void addMyBucketsToRequest(HttpServletRequest request) throws InterruptedException,
+   private void addMyContainersToRequest(HttpServletRequest request) throws InterruptedException,
             ExecutionException, TimeoutException {
-      System.err.println(context.getAccount() + ":" + context.getEndPoint());
-      SortedSet<BucketMetadata> myBucketMetadata = context.getApi().listOwnedBuckets().get(10,
-               TimeUnit.SECONDS);
-      SortedSet<BucketResult> myBuckets = Sets.newTreeSet(Iterables.transform(myBucketMetadata,
-               metadataToBucketResultProvider.get()));
-      request.setAttribute("buckets", myBuckets);
+      request.setAttribute("containers", Sets.newTreeSet(Iterables.transform(contexts.keySet(),
+               blobStoreContextToContainerResult)));
    }
 }

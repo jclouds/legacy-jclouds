@@ -23,23 +23,28 @@
  */
 package org.jclouds.samples.googleappengine.config;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.util.Map;
 import java.util.Properties;
 
-import javax.inject.Inject;
 import javax.servlet.ServletContextEvent;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.aws.s3.S3Client;
-import org.jclouds.aws.s3.blobstore.S3BlobStoreContextBuilder;
-import org.jclouds.aws.s3.blobstore.S3BlobStorePropertiesBuilder;
-import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.BlobStoreContextBuilder;
+import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.gae.config.GaeHttpCommandExecutorServiceModule;
-import org.jclouds.samples.googleappengine.GetAllBucketsController;
+import org.jclouds.samples.googleappengine.GetAllContainersController;
 
+import com.google.appengine.repackaged.com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
+import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.TypeLiteral;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
 
@@ -49,16 +54,30 @@ import com.google.inject.servlet.ServletModule;
  * @author Adrian Cole
  */
 public class GuiceServletConfig extends GuiceServletContextListener {
-   @Inject
-   BlobStoreContext<S3Client> context;
-   String accessKeyId;
-   String secretAccessKey;
 
+   private Map<String, BlobStoreContext<?>> contexts;
+
+   @SuppressWarnings("unchecked")
    @Override
    public void contextInitialized(ServletContextEvent servletContextEvent) {
       Properties props = loadJCloudsProperties(servletContextEvent);
-      this.accessKeyId = props.getProperty(S3Constants.PROPERTY_AWS_ACCESSKEYID);
-      this.secretAccessKey = props.getProperty(S3Constants.PROPERTY_AWS_SECRETACCESSKEY);
+      ImmutableList<String> list = ImmutableList.<String> of(checkNotNull(
+               props.getProperty(BlobStoreConstants.PROPERTY_BLOBSTORE_CONTEXTBUILDERS),
+               BlobStoreConstants.PROPERTY_BLOBSTORE_CONTEXTBUILDERS).split(","));
+      contexts = Maps.newHashMap();
+      for (String className : list) {
+         try {
+            Class<BlobStoreContextBuilder<?>> builderClass;
+            builderClass = (Class<BlobStoreContextBuilder<?>>) Class.forName(className);
+            String name = builderClass.getSimpleName().replaceAll("BlobStoreContextBuilder", "");
+            Constructor<BlobStoreContextBuilder<?>> constructor = builderClass
+                     .getConstructor(Properties.class);
+            contexts.put(name, constructor.newInstance(props).withModules(
+                     new GaeHttpCommandExecutorServiceModule()).buildContext());
+         } catch (Exception e) {
+            throw new RuntimeException(e);
+         }
+      }
       super.contextInitialized(servletContextEvent);
    }
 
@@ -78,20 +97,24 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 
    @Override
    protected Injector getInjector() {
-      return new S3BlobStoreContextBuilder(new S3BlobStorePropertiesBuilder(accessKeyId,
-               secretAccessKey).build()).withModules(new GaeHttpCommandExecutorServiceModule(),
-               new ServletModule() {
-                  @Override
-                  protected void configureServlets() {
-                     serve("*.s3").with(GetAllBucketsController.class);
-                     requestInjection(this);
-                  }
-               }).buildInjector();
+      return Guice.createInjector(new ServletModule() {
+         @Override
+         protected void configureServlets() {
+            bind(new TypeLiteral<Map<String, BlobStoreContext<?>>>() {
+            }).toInstance(GuiceServletConfig.this.contexts);
+            serve("*.blobstore").with(GetAllContainersController.class);
+            requestInjection(this);
+         }
+      }
+
+      );
    }
 
    @Override
    public void contextDestroyed(ServletContextEvent servletContextEvent) {
-      context.close();
+      for (BlobStoreContext<?> context : contexts.values()) {
+         context.close();
+      }
       super.contextDestroyed(servletContextEvent);
    }
 }

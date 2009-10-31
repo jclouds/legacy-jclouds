@@ -24,6 +24,13 @@
 package org.jclouds.samples.googleappengine.functest;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_ACCESSKEYID;
+import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_SECRETACCESSKEY;
+import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT;
+import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY;
+import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_BLOBSTORE_CONTEXTBUILDERS;
+import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_KEY;
+import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_USER;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,7 +38,12 @@ import java.net.URL;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.aws.s3.reference.S3Constants;
+import org.jclouds.aws.s3.S3PropertiesBuilder;
+import org.jclouds.aws.s3.blobstore.S3BlobStoreContextBuilder;
+import org.jclouds.azure.storage.blob.AzureBlobPropertiesBuilder;
+import org.jclouds.azure.storage.blob.blobstore.AzureBlobStoreContextBuilder;
+import org.jclouds.rackspace.cloudfiles.CloudFilesPropertiesBuilder;
+import org.jclouds.rackspace.cloudfiles.blobstore.CloudFilesBlobStoreContextBuilder;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -52,16 +64,29 @@ public class GoogleAppEngineLiveTest {
    @Parameters( { "warfile", "devappserver.address", "devappserver.port" })
    public void startDevAppServer(final String warfile, final String address, final String port)
             throws Exception {
-      url = new URL(String.format("http://%1$s:%2$s", address, port));
-      String account = System.getProperty("jclouds.test.user");
-      String key = System.getProperty("jclouds.test.key");
-
-      checkNotNull(account, "account");
-      checkNotNull(key, "key");
-
+      url = new URL(String.format("http://%s:%s", address, port));
       Properties props = new Properties();
-      props.put(S3Constants.PROPERTY_AWS_ACCESSKEYID, account);
-      props.put(S3Constants.PROPERTY_AWS_SECRETACCESSKEY, key);
+
+      props.setProperty(PROPERTY_BLOBSTORE_CONTEXTBUILDERS, String.format("%s,%s,%s",
+               S3BlobStoreContextBuilder.class.getName(), CloudFilesBlobStoreContextBuilder.class
+                        .getName(), AzureBlobStoreContextBuilder.class.getName()));
+
+      props = new S3PropertiesBuilder(props)
+               .withCredentials(
+                        checkNotNull(System.getProperty(PROPERTY_AWS_ACCESSKEYID),
+                                 PROPERTY_AWS_ACCESSKEYID),
+                        System.getProperty(PROPERTY_AWS_SECRETACCESSKEY,
+                                 PROPERTY_AWS_SECRETACCESSKEY)).build();
+
+      props = new CloudFilesPropertiesBuilder(props).withCredentials(
+               checkNotNull(System.getProperty(PROPERTY_RACKSPACE_USER), PROPERTY_RACKSPACE_USER),
+               System.getProperty(PROPERTY_RACKSPACE_KEY, PROPERTY_RACKSPACE_KEY)).build();
+
+      props = new AzureBlobPropertiesBuilder(props).withCredentials(
+               checkNotNull(System.getProperty(PROPERTY_AZURESTORAGE_ACCOUNT),
+                        PROPERTY_AZURESTORAGE_ACCOUNT),
+               System.getProperty(PROPERTY_AZURESTORAGE_KEY, PROPERTY_AZURESTORAGE_KEY)).build();
+
       server = new GoogleDevServer();
       server.writePropertiesAndStartServer(address, port, warfile, props);
    }
@@ -75,15 +100,15 @@ public class GoogleAppEngineLiveTest {
 
    @Test(invocationCount = 5, enabled = true)
    public void testGuiceJCloudsSerial() throws InterruptedException, IOException {
-      URL gurl = new URL(url, "/guice/listbuckets.s3");
+      URL gurl = new URL(url, "/guice/containers.blobstore");
       InputStream i = gurl.openStream();
       String string = IOUtils.toString(i);
       assert string.indexOf("List") >= 0 : string;
    }
 
-   @Test(invocationCount = 50, enabled = true, threadPoolSize = 10)
+   @Test(invocationCount = 10, enabled = true, threadPoolSize = 3)
    public void testGuiceJCloudsParallel() throws InterruptedException, IOException {
-      URL gurl = new URL(url, "/guice/listbuckets.s3");
+      URL gurl = new URL(url, "/guice/containers.blobstore");
       InputStream i = gurl.openStream();
       String string = IOUtils.toString(i);
       assert string.indexOf("List") >= 0 : string;

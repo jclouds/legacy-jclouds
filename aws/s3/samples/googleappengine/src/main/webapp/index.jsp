@@ -30,7 +30,7 @@
 <body>
 <h2>Welcome!</h2>
 Click
-<a href="/guice/listbuckets.s3">here</a>
-to list my buckets.
+<a href="/guice/containers.blobstore">here</a>
+to list my containers.
 </body>
 </html>
