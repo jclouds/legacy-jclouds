@@ -53,8 +53,8 @@ public class Status implements Comparable<Status> {
    }
 
    public Status(DateTime createdAt, boolean favorited, String geo, long id,
-            String inReplyToScreenName, Integer inReplyToStatusId, Integer inReplyToUserId, String source,
-            String text, boolean truncated, User user) {
+            String inReplyToScreenName, Integer inReplyToStatusId, Integer inReplyToUserId,
+            String source, String text, boolean truncated, User user) {
       this.createdAt = createdAt;
       this.favorited = favorited;
       this.geo = geo;
@@ -72,7 +72,9 @@ public class Status implements Comparable<Status> {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
+      result = prime * result + ((createdAt == null) ? 0 : createdAt.hashCode());
       result = prime * result + (int) (id ^ (id >>> 32));
+      result = prime * result + ((text == null) ? 0 : text.hashCode());
       result = prime * result + ((user == null) ? 0 : user.hashCode());
       return result;
    }
@@ -86,7 +88,17 @@ public class Status implements Comparable<Status> {
       if (getClass() != obj.getClass())
          return false;
       Status other = (Status) obj;
+      if (createdAt == null) {
+         if (other.createdAt != null)
+            return false;
+      } else if (!createdAt.equals(other.createdAt))
+         return false;
       if (id != other.id)
+         return false;
+      if (text == null) {
+         if (other.text != null)
+            return false;
+      } else if (!text.equals(other.text))
          return false;
       if (user == null) {
          if (other.user != null)
@@ -177,7 +189,7 @@ public class Status implements Comparable<Status> {
    }
 
    public int compareTo(Status o) {
-      return (int) ((this == o) ? 0 : id - id);
+      return (int) ((this == o) ? 0 : id + "".compareTo(o.id + ""));
    }
 
    public void setGeo(String geo) {

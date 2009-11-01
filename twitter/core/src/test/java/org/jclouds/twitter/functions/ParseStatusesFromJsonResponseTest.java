@@ -42,6 +42,39 @@ public class ParseStatusesFromJsonResponseTest {
                .of(
 
                         new Status(
+                                 dateService.cDateParse("Sat Oct 31 01:45:14 +0000 2009"),
+                                 false,
+                                 null,
+                                 5303839785l,
+                                 null,
+                                 null,
+                                 null,
+                                 "<a href=\"http://www.tweetdeck.com/\" rel=\"nofollow\">TweetDeck</a>",
+                                 "RT @jclouds: come find out about #cloud storage and how to access it from #java in palo alto this Tuesday: http://is.gd/4IFA9",
+                                 false,
+                                 new User(
+                                          dateService.cDateParse("Sat Apr 26 06:13:08 +0000 2008"),
+                                          "Jack of All Trades: Dad to anZel and Arden, VMware, vCloud, Security, Compliance, Former Developer",
+                                          0,
+                                          474,
+                                          false,
+                                          199,
+                                          false,
+                                          14540593,
+                                          "Bay Area, CA",
+                                          "Jian Zhen",
+                                          false,
+                                          "C6E2EE",
+                                          URI
+                                                   .create("http://s.twimg.com/a/1256778767/images/themes/theme2/bg.gif"),
+                                          false,
+                                          URI
+                                                   .create("http://a3.twimg.com/profile_images/64445411/30b8b19_bigger_normal.jpg"),
+                                          "1F98C7", "C6E2EE", "DAECF4", "663B12", false, "zhenjl",
+                                          1981, "Pacific Time (US & Canada)", URI
+                                                   .create("http://zhen.org"), -28800, false)),
+
+                        new Status(
                                  dateService.cDateParse("Sat Oct 31 09:35:27 +0000 2009"),
                                  false,
                                  null,
@@ -80,39 +113,7 @@ public class ParseStatusesFromJsonResponseTest {
                                           "Pacific Time (US & Canada)",
                                           URI
                                                    .create("http://siliconangle.net/ver2/author/jwatters/"),
-                                          -28800, false)),
-                        new Status(
-                                 dateService.cDateParse("Sat Oct 31 01:45:14 +0000 2009"),
-                                 false,
-                                 null,
-                                 5303839785l,
-                                 null,
-                                 null,
-                                 null,
-                                 "<a href=\"http://www.tweetdeck.com/\" rel=\"nofollow\">TweetDeck</a>",
-                                 "RT @jclouds: come find out about #cloud storage and how to access it from #java in palo alto this Tuesday: http://is.gd/4IFA9",
-                                 false,
-                                 new User(
-                                          dateService.cDateParse("Sat Apr 26 06:13:08 +0000 2008"),
-                                          "Jack of All Trades: Dad to anZel and Arden, VMware, vCloud, Security, Compliance, Former Developer",
-                                          0,
-                                          474,
-                                          false,
-                                          199,
-                                          false,
-                                          14540593,
-                                          "Bay Area, CA",
-                                          "Jian Zhen",
-                                          false,
-                                          "C6E2EE",
-                                          URI
-                                                   .create("http://s.twimg.com/a/1256778767/images/themes/theme2/bg.gif"),
-                                          false,
-                                          URI
-                                                   .create("http://a3.twimg.com/profile_images/64445411/30b8b19_bigger_normal.jpg"),
-                                          "1F98C7", "C6E2EE", "DAECF4", "663B12", false, "zhenjl",
-                                          1981, "Pacific Time (US & Canada)", URI
-                                                   .create("http://zhen.org"), -28800, false))
+                                          -28800, false))
 
                );
 
@@ -121,5 +122,4 @@ public class ParseStatusesFromJsonResponseTest {
       SortedSet<Status> response = parser.apply(is);
       assertEquals(response, expects);
    }
-
 }

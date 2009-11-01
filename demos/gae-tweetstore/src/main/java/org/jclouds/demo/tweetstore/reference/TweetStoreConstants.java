@@ -21,28 +21,14 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.blobstore;
-
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.internal.BlobMapImpl;
-import org.jclouds.blobstore.options.ListOptions;
-
-import com.google.inject.ImplementedBy;
+package org.jclouds.demo.tweetstore.reference;
 
 /**
- * This allows you to access the underlying {@link Blob} so that you can manually set metadata such
- * as length, content-type, or eTag hash.
+ * Configuration properties and constants used in TweetStore connections.
  * 
  * @author Adrian Cole
- * 
  */
-@ImplementedBy(BlobMapImpl.class)
-public interface BlobMap extends ListableMap<String, Blob> {
-   
-   Blob newBlob();
-   
-   public static interface Factory {
-      BlobMap create(String containerName, ListOptions listOptions);
-   }
-   
+public interface TweetStoreConstants {
+   public static final String PROPERTY_TWEETSTORE_CONTAINER = "jclouds.tweetstore.container";
+   public static final String SENDER_NAME = "jclouds.tweetstore.sendername";
 }

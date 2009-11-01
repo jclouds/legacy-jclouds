@@ -126,6 +126,7 @@ public class User implements Comparable<User> {
       int result = 1;
       result = prime * result + (int) (id ^ (id >>> 32));
       result = prime * result + ((name == null) ? 0 : name.hashCode());
+      result = prime * result + ((screenName == null) ? 0 : screenName.hashCode());
       return result;
    }
 
@@ -144,6 +145,11 @@ public class User implements Comparable<User> {
          if (other.name != null)
             return false;
       } else if (!name.equals(other.name))
+         return false;
+      if (screenName == null) {
+         if (other.screenName != null)
+            return false;
+      } else if (!screenName.equals(other.screenName))
          return false;
       return true;
    }

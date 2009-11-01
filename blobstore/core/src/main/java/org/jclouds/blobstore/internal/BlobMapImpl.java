@@ -218,4 +218,8 @@ public class BlobMapImpl extends BaseBlobMap<Blob> implements BlobMap {
                });
    }
 
+   public Blob newBlob() {
+      return connection.newBlob();
+   }
+
 }
