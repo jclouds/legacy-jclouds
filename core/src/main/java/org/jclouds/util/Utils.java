@@ -39,6 +39,7 @@ import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.logging.Logger;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.ComputationException;
 
 /**
@@ -48,6 +49,19 @@ import com.google.common.collect.ComputationException;
  */
 public class Utils {
    public static final String UTF8_ENCODING = "UTF-8";
+
+   public static boolean enventuallyTrue(Supplier<Boolean> assertion, long inconsistencyMillis) throws InterruptedException {
+
+      for (int i = 0; i < 30; i++) {
+         if (!assertion.get()) {
+            Thread.sleep(inconsistencyMillis / 30);
+            continue;
+         }
+         return true;
+      }
+      return false;
+
+   }
 
    @Resource
    protected static Logger logger = Logger.NULL;
