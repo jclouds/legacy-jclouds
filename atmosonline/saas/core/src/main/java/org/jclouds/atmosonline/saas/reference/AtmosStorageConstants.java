@@ -36,4 +36,13 @@ public interface AtmosStorageConstants {
     * how long do we wait before obtaining a new timestamp for requests.  Clocks must be within 5m of Atmos.
     */
    public static final String PROPERTY_EMCSAAS_SESSIONINTERVAL = "jclouds.emcsaas.sessioninterval";
+   
+   /**
+    * longest time a single synchronous operation can take before throwing an exception.
+    */
+   public static final String PROPERTY_EMCSAAS_TIMEOUT = "jclouds.emcsaas.timeout";
+   /**
+    * time to pause before retrying a transient failure
+    */
+   public static final String PROPERTY_EMCSAAS_RETRY = "jclouds.emcsaas.retry";
 }

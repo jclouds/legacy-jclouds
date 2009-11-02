@@ -20,8 +20,12 @@ public interface AtmosObject extends Comparable<AtmosObject> {
       AtmosObject create(@Nullable MutableContentMetadata contentMetadata);
 
       AtmosObject create(SystemMetadata systemMetadata, UserMetadata userMetadata);
+
+      AtmosObject create(MutableContentMetadata contentMetadata, SystemMetadata systemMetadata,
+               UserMetadata userMetadata);
+
    }
-   
+
    /**
     * generate an MD5 Hash for the current data.
     * <p/>
@@ -50,7 +54,7 @@ public interface AtmosObject extends Comparable<AtmosObject> {
    Object getData();
 
    MutableContentMetadata getContentMetadata();
-   
+
    /**
     * @return System and User metadata relevant to this object.
     */

@@ -39,7 +39,7 @@
         <module>core</module>
     </modules>
     <properties>
-        <jclouds.test.initializer>org.jclouds.atmosonline.saas.integration.AtmosStorageTestInitializer</jclouds.test.initializer>
+        <jclouds.test.initializer>org.jclouds.atmosonline.saas.blobstore.integration.AtmosStorageTestInitializer</jclouds.test.initializer>
         <jclouds.test.user>${jclouds.emcsaas.uid}</jclouds.test.user>
         <jclouds.test.key>${jclouds.emcsaas.key}</jclouds.test.key>
     </properties>

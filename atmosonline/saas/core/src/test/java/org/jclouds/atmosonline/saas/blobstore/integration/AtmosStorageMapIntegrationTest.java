@@ -21,49 +21,16 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.atmosonline.saas.domain;
+package org.jclouds.atmosonline.saas.blobstore.integration;
+
+import org.jclouds.atmosonline.saas.AtmosStorageClient;
+import org.jclouds.blobstore.integration.internal.BaseBlobMapIntegrationTest;
+import org.testng.annotations.Test;
 
 /**
- * When an Atmos Storage request is in error, the client receives an error response.
- * 
- * Provides access to EMC Atmos Online Storage resources via their REST API.
- * 
  * @author Adrian Cole
- * 
  */
-public class AtmosStorageError {
-   private final int code;
-   private final String message;
-   private String stringSigned;
-
-   @Override
-   public String toString() {
-      return "AtmosStorageError [code=" + code + ", message=" + message
-               + (stringSigned != null ? (", stringSigned=" + stringSigned) : "") + "]";
-   }
-
-   public AtmosStorageError(int code, String message) {
-      this.code = code;
-      this.message = message;
-   }
-
-   public int getCode() {
-      return code;
-   }
-
-   public String getMessage() {
-      return message;
-   }
-
-   public void setStringSigned(String stringSigned) {
-      this.stringSigned = stringSigned;
-   }
-
-   /**
-    * @return what jclouds signed before sending the request.
-    */
-   public String getStringSigned() {
-      return stringSigned;
-   }
+@Test(groups = { "integration", "live" }, testName = "emcsaas.AtmosStorageMapIntegrationTest")
+public class AtmosStorageMapIntegrationTest extends BaseBlobMapIntegrationTest<AtmosStorageClient> {
 
 }

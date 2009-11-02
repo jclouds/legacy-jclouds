@@ -34,10 +34,6 @@ public class ObjectToBlobMetadata implements Function<AtmosObject, MutableBlobMe
       to.setSize(from.getSystemMetadata().getSize());
       to.setType(ResourceType.BLOB);
       to.setUserMetadata(from.getUserMetadata().getMetadata());
-      if (from.getContentMetadata().getContentType() != null
-               && from.getContentMetadata().getContentType().equals("application/directory")) {
-         to.setType(ResourceType.RELATIVE_PATH);
-      }
       return to;
    }
 }

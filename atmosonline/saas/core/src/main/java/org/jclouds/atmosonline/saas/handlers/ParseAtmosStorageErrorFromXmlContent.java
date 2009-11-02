@@ -23,12 +23,15 @@
  */
 package org.jclouds.atmosonline.saas.handlers;
 
+import java.io.File;
+
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
 import org.jclouds.atmosonline.saas.AtmosStorageResponseException;
 import org.jclouds.atmosonline.saas.domain.AtmosStorageError;
 import org.jclouds.atmosonline.saas.util.AtmosStorageUtils;
+import org.jclouds.blobstore.KeyAlreadyExistsException;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpResponse;
@@ -64,7 +67,15 @@ public class ParseAtmosStorageErrorFromXmlContent implements HttpErrorHandler {
                if (content.indexOf('<') >= 0) {
                   AtmosStorageError error = utils.parseAtmosStorageErrorFromContent(command,
                            response, content);
-                  command.setException(new AtmosStorageResponseException(command, response, error));
+                  AtmosStorageResponseException exception = new AtmosStorageResponseException(
+                           command, response, error);
+                  if (error.getCode() == 1016) {
+                     File file = new File(command.getRequest().getEndpoint().getPath());
+                     command.setException(new KeyAlreadyExistsException(file.getParentFile()
+                              .getAbsolutePath(), file.getName(), exception));
+                  } else {
+                     command.setException(exception);
+                  }
                } else {
                   command.setException(new HttpResponseException(command, response, content));
                }

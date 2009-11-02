@@ -51,6 +51,12 @@ public class AtmosObjectModule extends AbstractModule {
          return new AtmosObjectImpl(generateMD5Result, generateMD5, calculateSize, metadataProvider
                   .get(), systemMetadata, userMetadata);
       }
+
+      public AtmosObject create(MutableContentMetadata contentMetadata,
+               SystemMetadata systemMetadata, UserMetadata userMetadata) {
+         return new AtmosObjectImpl(generateMD5Result, generateMD5, calculateSize, contentMetadata,
+                  systemMetadata, userMetadata);
+      }
    }
 
    @Provides

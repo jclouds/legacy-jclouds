@@ -41,4 +41,6 @@ public interface AtmosStorageHeaders {
    public static final String DATE = "x-emc-date";
    public static final String GROUP_ACL = "x-emc-groupacl";
    public static final String UID = "x-emc-uid";
+   public static final String TOKEN = "x-emc-token";
+   
 }
