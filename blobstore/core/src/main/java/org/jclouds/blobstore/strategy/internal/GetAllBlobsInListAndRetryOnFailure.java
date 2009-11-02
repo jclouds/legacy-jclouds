@@ -41,7 +41,7 @@ import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.internal.BlobRuntimeException;
-import org.jclouds.blobstore.options.ListOptions;
+import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.GetBlobsInListStrategy;
 import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
@@ -82,7 +82,7 @@ public class GetAllBlobsInListAndRetryOnFailure implements GetBlobsInListStrateg
       this.getAllBlobMetadata = getAllBlobMetadata;
    }
 
-   public SortedSet<? extends Blob> execute(String container, ListOptions options) {
+   public SortedSet<? extends Blob> execute(String container, ListContainerOptions options) {
       SortedSet<Blob> objects = Sets.newTreeSet();
       Map<String, Future<? extends Blob>> futureObjects = Maps.newHashMap();
       for (BlobMetadata md : getAllBlobMetadata.execute(container, options)) {

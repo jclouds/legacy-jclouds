@@ -39,7 +39,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.jclouds.blobstore.binders.BindMapToHeadersWithPrefix;
-import org.jclouds.blobstore.domain.BoundedSortedSet;
+import org.jclouds.blobstore.domain.ListContainerResponse;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
@@ -203,7 +203,7 @@ public interface CloudFilesClient {
    @QueryParams(keys = "format", values = "json")
    @ResponseParser(ParseObjectInfoListFromJsonResponse.class)
    @Path("{container}")
-   Future<BoundedSortedSet<ObjectInfo>> listObjects(@PathParam("container") String container,
+   Future<ListContainerResponse<ObjectInfo>> listObjects(@PathParam("container") String container,
             ListContainerOptions... options);
 
    @HEAD

@@ -60,16 +60,18 @@ import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.BoundedSortedSet;
+import org.jclouds.blobstore.domain.ListResponse;
+import org.jclouds.blobstore.domain.ListContainerResponse;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.MutableResourceMetadata;
 import org.jclouds.blobstore.domain.ResourceMetadata;
 import org.jclouds.blobstore.domain.ResourceType;
-import org.jclouds.blobstore.domain.internal.BoundedTreeSet;
+import org.jclouds.blobstore.domain.internal.ListResponseImpl;
+import org.jclouds.blobstore.domain.internal.ListContainerResponseImpl;
 import org.jclouds.blobstore.domain.internal.MutableResourceMetadataImpl;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
 import org.jclouds.blobstore.options.GetOptions;
-import org.jclouds.blobstore.options.ListOptions;
+import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -152,11 +154,11 @@ public class StubBlobStore implements BlobStore {
       };
    }
 
-   public Future<? extends BoundedSortedSet<? extends ResourceMetadata>> list(final String name,
-            ListOptions... optionsList) {
-      final ListOptions options = (optionsList.length == 0) ? new ListOptions() : optionsList[0];
-      return new FutureBase<BoundedSortedSet<ResourceMetadata>>() {
-         public BoundedSortedSet<ResourceMetadata> get() throws InterruptedException,
+   public Future<? extends ListContainerResponse<? extends ResourceMetadata>> list(final String name,
+            ListContainerOptions... optionsList) {
+      final ListContainerOptions options = (optionsList.length == 0) ? new ListContainerOptions() : optionsList[0];
+      return new FutureBase<ListContainerResponse<ResourceMetadata>>() {
+         public ListContainerResponse<ResourceMetadata> get() throws InterruptedException,
                   ExecutionException {
             final Map<String, Blob> realContents = getContainerToBlobs().get(name);
 
@@ -231,7 +233,7 @@ public class StubBlobStore implements BlobStore {
                            }
                         }));
             }
-            return new BoundedTreeSet<ResourceMetadata>(contents, prefix, marker, maxResults,
+            return new ListContainerResponseImpl<ResourceMetadata>(contents, prefix, marker, maxResults,
                      truncated);
          }
       };
@@ -334,11 +336,12 @@ public class StubBlobStore implements BlobStore {
       }
    }
 
-   public Future<? extends SortedSet<? extends ResourceMetadata>> list() {
-      return new FutureBase<SortedSet<? extends ResourceMetadata>>() {
+   public Future<? extends ListResponse<? extends ResourceMetadata>> list() {
+      return new FutureBase<ListResponse<? extends ResourceMetadata>>() {
 
-         public TreeSet<ResourceMetadata> get() throws InterruptedException, ExecutionException {
-            return Sets.newTreeSet(Iterables.transform(getContainerToBlobs().keySet(),
+         public ListResponse<ResourceMetadata> get() throws InterruptedException,
+                  ExecutionException {
+            return new ListResponseImpl<ResourceMetadata>(Iterables.transform(getContainerToBlobs().keySet(),
                      new Function<String, ResourceMetadata>() {
                         public ResourceMetadata apply(String name) {
                            MutableResourceMetadata cmd = create();
@@ -347,7 +350,7 @@ public class StubBlobStore implements BlobStore {
                            return cmd;
                         }
 
-                     }));
+                     }), null, null, false);
          }
 
       };

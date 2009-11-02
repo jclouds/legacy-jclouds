@@ -128,11 +128,6 @@
               <goal>test</goal>
             </goals>
             <configuration>
-          <!-- to keep garbage from previous tests from affecting the performance of the next -->
-<!--
-          <forkMode>pertest</forkMode>
-              <parallel>classes</parallel>
--->
               <threadCount>1</threadCount>
             </configuration>
           </execution>

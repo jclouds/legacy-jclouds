@@ -36,12 +36,12 @@ import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.BoundedSortedSet;
+import org.jclouds.blobstore.domain.ListResponse;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.ResourceMetadata;
 import org.jclouds.blobstore.domain.ResourceType;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
-import org.jclouds.blobstore.options.ListOptions;
+import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
@@ -70,7 +70,7 @@ public abstract class BaseBlobMap<V> {
    protected final String containerName;
    protected final Function<String, String> prefixer;
    protected final Function<String, String> pathStripper;
-   protected final ListOptions options;
+   protected final ListContainerOptions options;
    protected final GetBlobsInListStrategy getAllBlobs;
    protected final ListBlobMetadataStrategy getAllBlobMetadata;
    protected final ContainsValueInListStrategy containsValueStrategy;
@@ -130,7 +130,7 @@ public abstract class BaseBlobMap<V> {
             ListBlobMetadataStrategy getAllBlobMetadata,
             ContainsValueInListStrategy containsValueStrategy,
             ClearListStrategy deleteBlobsStrategy, CountListStrategy countStrategy,
-            String containerName, ListOptions options) {
+            String containerName, ListContainerOptions options) {
       this.connection = checkNotNull(connection, "connection");
       this.containerName = checkNotNull(containerName, "container");
       this.options = options;
@@ -153,9 +153,9 @@ public abstract class BaseBlobMap<V> {
    /**
     * {@inheritDoc}
     * <p/>
-    * This returns the number of keys in the {@link BoundedSortedSet}
+    * This returns the number of keys in the {@link ListResponse}
     * 
-    * @see BoundedSortedSet#getContents()
+    * @see ListResponse#getContents()
     */
    public int size() {
       return (int) countStrategy.execute(containerName, options);

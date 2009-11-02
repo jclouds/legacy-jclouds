@@ -33,7 +33,7 @@ import org.jclouds.azure.storage.blob.domain.ListableBlobProperties;
 import org.jclouds.azure.storage.blob.domain.MutableBlobProperties;
 import org.jclouds.azure.storage.blob.domain.internal.TreeSetListBlobsResponse;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.BoundedSortedSet;
+import org.jclouds.blobstore.domain.ListContainerResponse;
 import org.jclouds.blobstore.domain.ResourceMetadata;
 import org.jclouds.blobstore.domain.ResourceType;
 
@@ -47,7 +47,7 @@ import com.google.common.collect.Sets;
  */
 @Singleton
 public class ResourceToListBlobsResponse implements
-         Function<BoundedSortedSet<? extends ResourceMetadata>, ListBlobsResponse> {
+         Function<ListContainerResponse<? extends ResourceMetadata>, ListBlobsResponse> {
    private final BlobMetadataToBlobProperties blob2ObjectMd;
 
    @Inject
@@ -55,7 +55,7 @@ public class ResourceToListBlobsResponse implements
       this.blob2ObjectMd = blob2ObjectMd;
    }
 
-   public ListBlobsResponse apply(BoundedSortedSet<? extends ResourceMetadata> list) {
+   public ListBlobsResponse apply(ListContainerResponse<? extends ResourceMetadata> list) {
 
       Iterable<ListableBlobProperties> contents = Iterables.transform(Iterables.filter(list,
                new Predicate<ResourceMetadata>() {

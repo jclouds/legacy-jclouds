@@ -23,7 +23,7 @@
  */
 package org.jclouds.blobstore.strategy;
 
-import org.jclouds.blobstore.options.ListOptions;
+import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.internal.CountBlobTypeInList;
 
 import com.google.inject.ImplementedBy;
@@ -36,6 +36,6 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(CountBlobTypeInList.class)
 public interface CountListStrategy {
 
-   long execute(String containerName, ListOptions options);
+   long execute(String containerName, ListContainerOptions options);
 
 }

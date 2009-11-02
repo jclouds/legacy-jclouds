@@ -34,8 +34,8 @@ import java.util.SortedSet;
 
 import javax.inject.Inject;
 
-import org.jclouds.blobstore.domain.BoundedSortedSet;
-import org.jclouds.blobstore.domain.internal.BoundedTreeSet;
+import org.jclouds.blobstore.domain.ListContainerResponse;
+import org.jclouds.blobstore.domain.internal.ListContainerResponseImpl;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
@@ -55,7 +55,7 @@ import com.google.gson.reflect.TypeToken;
  * 
  * @author Adrian Cole
  */
-public class ParseObjectInfoListFromJsonResponse extends ParseJson<BoundedSortedSet<ObjectInfo>>
+public class ParseObjectInfoListFromJsonResponse extends ParseJson<ListContainerResponse<ObjectInfo>>
          implements InvocationContext {
 
    private GeneratedHttpRequest<?> request;
@@ -147,7 +147,7 @@ public class ParseObjectInfoListFromJsonResponse extends ParseJson<BoundedSorted
       }
    }
 
-   public BoundedSortedSet<ObjectInfo> apply(InputStream stream) {
+   public ListContainerResponse<ObjectInfo> apply(InputStream stream) {
       checkState(request != null, "request should be initialized at this point");
       checkState(request.getArgs() != null, "request.getArgs() should be initialized at this point");
       checkArgument(request.getArgs()[0] instanceof String, "arg[0] must be a container name");
@@ -170,7 +170,7 @@ public class ParseObjectInfoListFromJsonResponse extends ParseJson<BoundedSorted
                   }));
          boolean truncated = options.getMaxResults() == returnVal.size();
          String marker = truncated ? returnVal.last().getName() : null;
-         return new BoundedTreeSet<ObjectInfo>(returnVal, options.getPath(), marker, options
+         return new ListContainerResponseImpl<ObjectInfo>(returnVal, options.getPath(), marker, options
                   .getMaxResults(), truncated);
 
       } catch (UnsupportedEncodingException e) {

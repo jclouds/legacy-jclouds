@@ -25,8 +25,7 @@ package org.jclouds.rackspace.cloudfiles.blobstore.functions;
 
 import javax.inject.Singleton;
 
-import org.jclouds.blobstore.options.ListOptions;
-import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
+import org.jclouds.blobstore.options.ListContainerOptions;
 
 import com.google.common.base.Function;
 
@@ -34,10 +33,12 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Singleton
-public class ListOptionsToListContainerOptions implements
-         Function<ListOptions[], ListContainerOptions> {
-   public ListContainerOptions apply(ListOptions[] optionsList) {
-      ListContainerOptions options = new ListContainerOptions();
+public class BlobStoreListContainerOptionsToListContainerOptions
+         implements
+         Function<ListContainerOptions[], org.jclouds.rackspace.cloudfiles.options.ListContainerOptions> {
+   public org.jclouds.rackspace.cloudfiles.options.ListContainerOptions apply(
+            ListContainerOptions[] optionsList) {
+      org.jclouds.rackspace.cloudfiles.options.ListContainerOptions options = new org.jclouds.rackspace.cloudfiles.options.ListContainerOptions();
       if (optionsList.length != 0) {
 
          if ((optionsList[0].getPath() == null) && (optionsList[0].isRecursive())) {

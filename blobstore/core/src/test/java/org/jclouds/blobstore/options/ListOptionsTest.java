@@ -23,10 +23,10 @@
  */
 package org.jclouds.blobstore.options;
 
-import static org.jclouds.blobstore.options.ListOptions.Builder.afterMarker;
-import static org.jclouds.blobstore.options.ListOptions.Builder.maxResults;
-import static org.jclouds.blobstore.options.ListOptions.Builder.recursive;
-import static org.jclouds.blobstore.options.ListOptions.Builder.underPath;
+import static org.jclouds.blobstore.options.ListContainerOptions.Builder.afterMarker;
+import static org.jclouds.blobstore.options.ListContainerOptions.Builder.maxResults;
+import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
+import static org.jclouds.blobstore.options.ListContainerOptions.Builder.underPath;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -40,33 +40,33 @@ import org.testng.annotations.Test;
 public class ListOptionsTest {
    @Test
    public void testRecursive() {
-      ListOptions options = new ListOptions();
+      ListContainerOptions options = new ListContainerOptions();
       options.recursive();
       assertTrue(options.isRecursive());
    }
 
    @Test
    public void testRecursiveStatic() {
-      ListOptions options = recursive();
+      ListContainerOptions options = recursive();
       assertTrue(options.isRecursive());
    }
 
    @Test
    public void testPath() {
-      ListOptions options = new ListOptions();
+      ListContainerOptions options = new ListContainerOptions();
       options.underPath("test");
       assertEquals(options.getPath(), "test");
    }
 
    @Test
    public void testPathStatic() {
-      ListOptions options = underPath("test");
+      ListContainerOptions options = underPath("test");
       assertEquals(options.getPath(), "test");
    }
 
    @Test
    public void testTwoOptions() {
-      ListOptions options = new ListOptions();
+      ListContainerOptions options = new ListContainerOptions();
       options.underPath("test").maxResults(1);
       assertEquals(options.getPath(), "test");
       assertEquals(options.getMaxResults(), new Integer(1));
@@ -75,7 +75,7 @@ public class ListOptionsTest {
 
    @Test
    public void testNullPath() {
-      ListOptions options = new ListOptions();
+      ListContainerOptions options = new ListContainerOptions();
       assertEquals(options.getPath(), null);
    }
 
@@ -86,7 +86,7 @@ public class ListOptionsTest {
 
    @Test
    public void testMarker() {
-      ListOptions options = new ListOptions();
+      ListContainerOptions options = new ListContainerOptions();
       options.afterMarker("test");
       assertEquals(options.getMarker(), "test");
 
@@ -94,13 +94,13 @@ public class ListOptionsTest {
 
    @Test
    public void testNullMarker() {
-      ListOptions options = new ListOptions();
+      ListContainerOptions options = new ListContainerOptions();
       assertEquals(options.getMarker(), null);
    }
 
    @Test
    public void testMarkerStatic() {
-      ListOptions options = afterMarker("test");
+      ListContainerOptions options = afterMarker("test");
       assertEquals(options.getMarker(), "test");
    }
 
@@ -111,20 +111,20 @@ public class ListOptionsTest {
 
    @Test
    public void testMaxResults() {
-      ListOptions options = new ListOptions();
+      ListContainerOptions options = new ListContainerOptions();
       options.maxResults(1000);
       assertEquals(options.getMaxResults(), new Integer(1000));
    }
 
    @Test
    public void testNullMaxResults() {
-      ListOptions options = new ListOptions();
+      ListContainerOptions options = new ListContainerOptions();
       assertEquals(options.getMaxResults(), null);
    }
 
    @Test
    public void testMaxResultsStatic() {
-      ListOptions options = maxResults(1000);
+      ListContainerOptions options = maxResults(1000);
       assertEquals(options.getMaxResults(), new Integer(1000));
    }
 

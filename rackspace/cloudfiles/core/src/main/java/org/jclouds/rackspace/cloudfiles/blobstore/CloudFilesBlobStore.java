@@ -24,7 +24,7 @@
 package org.jclouds.rackspace.cloudfiles.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.blobstore.options.ListOptions.Builder.recursive;
+import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
 
 import java.util.SortedSet;
 import java.util.concurrent.Callable;
@@ -38,29 +38,29 @@ import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.BoundedSortedSet;
+import org.jclouds.blobstore.domain.ListContainerResponse;
+import org.jclouds.blobstore.domain.ListResponse;
 import org.jclouds.blobstore.domain.ResourceMetadata;
-import org.jclouds.blobstore.options.ListOptions;
+import org.jclouds.blobstore.domain.internal.ListResponseImpl;
+import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
 import org.jclouds.concurrent.FutureFunctionWrapper;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
+import org.jclouds.rackspace.cloudfiles.blobstore.functions.BlobStoreListContainerOptionsToListContainerOptions;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.BlobToObject;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.BlobToObjectGetOptions;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.ContainerToResourceList;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.ContainerToResourceMetadata;
-import org.jclouds.rackspace.cloudfiles.blobstore.functions.ListOptionsToListContainerOptions;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.ObjectToBlob;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.ObjectToBlobMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.CFObject;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
-import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 
 @ConsistencyModel(ConsistencyModels.STRICT)
 public class CloudFilesBlobStore implements BlobStore {
@@ -71,20 +71,20 @@ public class CloudFilesBlobStore implements BlobStore {
    private final ObjectToBlobMetadata object2BlobMd;
    private final ObjectToBlob object2Blob;
    private final BlobToObject blob2Object;
-   private final ListOptionsToListContainerOptions container2ContainerListOptions;
+   private final BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions;
    private final BlobToObjectGetOptions blob2ObjectGetOptions;
    private final ContainerToResourceMetadata container2ResourceMd;
    private final ContainerToResourceList container2ResourceList;
    private final ExecutorService service;
 
    @Inject
-   private CloudFilesBlobStore(CloudFilesClient connection, Blob.Factory blobFactory, LoggerFactory logFactory,
-            ClearListStrategy clearContainerStrategy, ObjectToBlobMetadata object2BlobMd,
-            ObjectToBlob object2Blob, BlobToObject blob2Object,
-            ListOptionsToListContainerOptions container2ContainerListOptions,
+   private CloudFilesBlobStore(CloudFilesClient connection, Blob.Factory blobFactory,
+            LoggerFactory logFactory, ClearListStrategy clearContainerStrategy,
+            ObjectToBlobMetadata object2BlobMd, ObjectToBlob object2Blob, BlobToObject blob2Object,
+            BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,
             BlobToObjectGetOptions blob2ObjectGetOptions,
-            ContainerToResourceMetadata container2ResourceMd, ContainerToResourceList container2ResourceList,
-            ExecutorService service) {
+            ContainerToResourceMetadata container2ResourceMd,
+            ContainerToResourceList container2ResourceList, ExecutorService service) {
       this.connection = checkNotNull(connection, "connection");
       this.blobFactory = checkNotNull(blobFactory, "blobFactory");
       this.logFactory = checkNotNull(logFactory, "logFactory");
@@ -150,19 +150,24 @@ public class CloudFilesBlobStore implements BlobStore {
       return wrapFuture(returnVal, object2Blob);
    }
 
-   public Future<? extends SortedSet<? extends ResourceMetadata>> list() {
-      return wrapFuture(connection.listContainers(),
-               new Function<SortedSet<ContainerMetadata>, SortedSet<? extends ResourceMetadata>>() {
-                  public SortedSet<? extends ResourceMetadata> apply(SortedSet<ContainerMetadata> from) {
-                     return Sets.newTreeSet(Iterables.transform(from, container2ResourceMd));
+   public Future<? extends ListResponse<? extends ResourceMetadata>> list() {
+      return wrapFuture(
+               connection.listContainers(),
+               new Function<SortedSet<ContainerMetadata>, org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata>>() {
+                  public org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata> apply(
+                           SortedSet<ContainerMetadata> from) {
+                     return new ListResponseImpl<ResourceMetadata>(Iterables.transform(from,
+                              container2ResourceMd), null, null, false);
                   }
                });
    }
 
-   public Future<? extends BoundedSortedSet<? extends ResourceMetadata>> list(String container,
-            ListOptions... optionsList) {
-      ListContainerOptions httpOptions = container2ContainerListOptions.apply(optionsList);
-      Future<BoundedSortedSet<ObjectInfo>> returnVal = connection.listObjects(container, httpOptions);
+   public Future<? extends ListContainerResponse<? extends ResourceMetadata>> list(
+            String container, ListContainerOptions... optionsList) {
+      org.jclouds.rackspace.cloudfiles.options.ListContainerOptions httpOptions = container2ContainerListOptions
+               .apply(optionsList);
+      Future<ListContainerResponse<ObjectInfo>> returnVal = connection.listObjects(container,
+               httpOptions);
       return wrapFuture(returnVal, container2ResourceList);
    }
 

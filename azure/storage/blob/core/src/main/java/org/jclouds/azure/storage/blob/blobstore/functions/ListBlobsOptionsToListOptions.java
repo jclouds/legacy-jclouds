@@ -26,7 +26,7 @@ package org.jclouds.azure.storage.blob.blobstore.functions;
 import javax.inject.Singleton;
 
 import org.jclouds.azure.storage.blob.options.ListBlobsOptions;
-import org.jclouds.blobstore.options.ListOptions;
+import org.jclouds.blobstore.options.ListContainerOptions;
 
 import com.google.common.base.Function;
 
@@ -34,9 +34,9 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Singleton
-public class ListBlobsOptionsToListOptions implements Function<ListBlobsOptions[], ListOptions> {
-   public ListOptions apply(ListBlobsOptions[] optionsList) {
-      ListOptions options = new ListOptions();
+public class ListBlobsOptionsToListOptions implements Function<ListBlobsOptions[], ListContainerOptions> {
+   public ListContainerOptions apply(ListBlobsOptions[] optionsList) {
+      ListContainerOptions options = new ListContainerOptions();
       if (optionsList.length != 0) {
          if (optionsList[0].getDelimiter() == null) {
             options.recursive();

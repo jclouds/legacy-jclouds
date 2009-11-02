@@ -29,9 +29,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.s3.domain.ListBucketResponse;
-import org.jclouds.blobstore.domain.BoundedSortedSet;
+import org.jclouds.blobstore.domain.ListContainerResponse;
 import org.jclouds.blobstore.domain.ResourceMetadata;
-import org.jclouds.blobstore.domain.internal.BoundedTreeSet;
+import org.jclouds.blobstore.domain.internal.ListContainerResponseImpl;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -42,7 +42,7 @@ import com.google.common.collect.Sets;
  */
 @Singleton
 public class BucketToResourceList implements
-         Function<ListBucketResponse, BoundedSortedSet<? extends ResourceMetadata>> {
+         Function<ListBucketResponse, ListContainerResponse<? extends ResourceMetadata>> {
    private final ObjectToBlobMetadata object2blobMd;
    private final CommonPrefixesToResourceMetadata prefix2ResourceMd;
 
@@ -53,10 +53,10 @@ public class BucketToResourceList implements
       this.prefix2ResourceMd = prefix2ResourceMd;
    }
 
-   public BoundedSortedSet<? extends ResourceMetadata> apply(ListBucketResponse from) {
+   public ListContainerResponse<? extends ResourceMetadata> apply(ListBucketResponse from) {
       SortedSet<ResourceMetadata> contents = Sets.newTreeSet(Iterables.concat(Iterables.transform(
                from, object2blobMd), prefix2ResourceMd.apply(from.getCommonPrefixes())));
-      return new BoundedTreeSet<ResourceMetadata>(contents, from.getPrefix(), from.getMarker(),
+      return new ListContainerResponseImpl<ResourceMetadata>(contents, from.getPrefix(), from.getMarker(),
                from.getMaxKeys(), from.isTruncated());
 
    }

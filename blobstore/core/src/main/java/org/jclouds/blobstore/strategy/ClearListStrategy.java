@@ -23,7 +23,7 @@
  */
 package org.jclouds.blobstore.strategy;
 
-import org.jclouds.blobstore.options.ListOptions;
+import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.internal.DeleteAllKeysInList;
 
 import com.google.inject.ImplementedBy;
@@ -36,5 +36,5 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(DeleteAllKeysInList.class)
 public interface ClearListStrategy {
 
-   void execute(String containerName, ListOptions options);
+   void execute(String containerName, ListContainerOptions options);
 }

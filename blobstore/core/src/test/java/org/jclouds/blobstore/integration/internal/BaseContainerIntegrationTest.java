@@ -23,9 +23,9 @@
  */
 package org.jclouds.blobstore.integration.internal;
 
-import static org.jclouds.blobstore.options.ListOptions.Builder.afterMarker;
-import static org.jclouds.blobstore.options.ListOptions.Builder.maxResults;
-import static org.jclouds.blobstore.options.ListOptions.Builder.underPath;
+import static org.jclouds.blobstore.options.ListContainerOptions.Builder.afterMarker;
+import static org.jclouds.blobstore.options.ListContainerOptions.Builder.maxResults;
+import static org.jclouds.blobstore.options.ListContainerOptions.Builder.underPath;
 import static org.testng.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
@@ -35,7 +35,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BoundedSortedSet;
+import org.jclouds.blobstore.domain.ListResponse;
+import org.jclouds.blobstore.domain.ListContainerResponse;
 import org.jclouds.blobstore.domain.ResourceMetadata;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
@@ -78,7 +79,7 @@ public class BaseContainerIntegrationTest<S> extends BaseBlobStoreIntegrationTes
       String containerName = getContainerName();
       try {
          addAlphabetUnderRoot(containerName);
-         BoundedSortedSet<? extends ResourceMetadata> container = context.getBlobStore().list(
+         ListResponse<? extends ResourceMetadata> container = context.getBlobStore().list(
                   containerName, afterMarker("y")).get(10, TimeUnit.SECONDS);
          assertEquals(container.getMarker(), "y");
          assert !container.isTruncated();
@@ -95,7 +96,7 @@ public class BaseContainerIntegrationTest<S> extends BaseBlobStoreIntegrationTes
          String prefix = "apps";
          addTenObjectsUnderPrefix(containerName, prefix);
          add15UnderRoot(containerName);
-         BoundedSortedSet<? extends ResourceMetadata> container = context.getBlobStore().list(
+         ListResponse<? extends ResourceMetadata> container = context.getBlobStore().list(
                   containerName).get(10, TimeUnit.SECONDS);
          assert !container.isTruncated();
          assertEquals(container.size(), 16);
@@ -113,7 +114,7 @@ public class BaseContainerIntegrationTest<S> extends BaseBlobStoreIntegrationTes
          addTenObjectsUnderPrefix(containerName, prefix);
          add15UnderRoot(containerName);
 
-         BoundedSortedSet<? extends ResourceMetadata> container = context.getBlobStore().list(
+         ListContainerResponse<? extends ResourceMetadata> container = context.getBlobStore().list(
                   containerName, underPath("apps/")).get(10, TimeUnit.SECONDS);
          assert !container.isTruncated();
          assertEquals(container.size(), 10);
@@ -129,23 +130,11 @@ public class BaseContainerIntegrationTest<S> extends BaseBlobStoreIntegrationTes
       String containerName = getContainerName();
       try {
          addAlphabetUnderRoot(containerName);
-         BoundedSortedSet<? extends ResourceMetadata> container = context.getBlobStore().list(
+         ListResponse<? extends ResourceMetadata> container = context.getBlobStore().list(
                   containerName, maxResults(5)).get(10, TimeUnit.SECONDS);
          assertEquals(container.getMaxResults(), 5);
          assert container.isTruncated();
          assertEquals(container.size(), 5);
-      } finally {
-         returnContainer(containerName);
-      }
-   }
-
-   @Test(groups = { "integration", "live" })
-   public void testListWhenContentsUnderPath() throws Exception {
-      String containerName = getContainerName();
-      try {
-         add5BlobsUnderPathAnd5UnderRootToContainer(containerName);
-         context.getBlobStore().clearContainer(containerName).get(60, TimeUnit.SECONDS);
-         assertConsistencyAwareContainerSize(containerName, 0);
       } finally {
          returnContainer(containerName);
       }

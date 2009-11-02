@@ -28,7 +28,7 @@ import java.io.InputStream;
 import java.util.Map;
 
 import org.jclouds.blobstore.internal.InputStreamMapImpl;
-import org.jclouds.blobstore.options.ListOptions;
+import org.jclouds.blobstore.options.ListContainerOptions;
 
 import com.google.inject.ImplementedBy;
 
@@ -47,7 +47,7 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(InputStreamMapImpl.class)
 public interface InputStreamMap extends ListableMap<String, InputStream> {
    public static interface Factory {
-      InputStreamMap create(String containerName, ListOptions listOptions);
+      InputStreamMap create(String containerName, ListContainerOptions listOptions);
    }
 
    InputStream putString(String key, String value);

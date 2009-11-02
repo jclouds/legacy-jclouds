@@ -35,7 +35,7 @@ import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.ResourceMetadata;
 import org.jclouds.blobstore.domain.ResourceType;
 import org.jclouds.blobstore.internal.BlobRuntimeException;
-import org.jclouds.blobstore.options.ListOptions;
+import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.ClearContainerStrategy;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
@@ -70,7 +70,7 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
       execute(containerName, null);
    }
 
-   public void execute(final String containerName, ListOptions options) {
+   public void execute(final String containerName, ListContainerOptions options) {
       Set<Future<Void>> deletes = Sets.newHashSet();
       for (ResourceMetadata md : getAllBlobMetadata.execute(containerName, options)) {
          if (md.getType() == ResourceType.BLOB)

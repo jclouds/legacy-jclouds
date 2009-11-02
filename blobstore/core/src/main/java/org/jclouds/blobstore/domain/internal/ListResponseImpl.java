@@ -25,30 +25,24 @@ package org.jclouds.blobstore.domain.internal;
 
 import java.util.TreeSet;
 
-import org.jclouds.blobstore.domain.BoundedSortedSet;
+import org.jclouds.blobstore.domain.ListResponse;
 
 import com.google.common.collect.Iterables;
 
-public class BoundedTreeSet<T> extends TreeSet<T> implements BoundedSortedSet<T> {
+public class ListResponseImpl<T> extends TreeSet<T> implements ListResponse<T> {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = -7133632087734650835L;
-   protected final String path;
    protected final String marker;
    protected final Integer maxResults;
    protected final boolean truncated;
 
-   public BoundedTreeSet(Iterable<T> contents, String path, String marker, Integer maxResults,
+   public ListResponseImpl(Iterable<T> contents, String marker, Integer maxResults,
             boolean isTruncated) {
       Iterables.addAll(this, contents);
-      this.path = path;
       this.marker = marker;
       this.maxResults = maxResults;
       this.truncated = isTruncated;
-   }
-
-   public String getPath() {
-      return path;
    }
 
    public String getMarker() {

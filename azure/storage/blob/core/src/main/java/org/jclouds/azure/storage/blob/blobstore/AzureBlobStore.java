@@ -24,7 +24,7 @@
 package org.jclouds.azure.storage.blob.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.blobstore.options.ListOptions.Builder.recursive;
+import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
 
 import java.util.SortedSet;
 import java.util.concurrent.Callable;
@@ -37,7 +37,6 @@ import org.jclouds.azure.storage.blob.AzureBlobClient;
 import org.jclouds.azure.storage.blob.blobstore.functions.AzureBlobToBlob;
 import org.jclouds.azure.storage.blob.blobstore.functions.BlobPropertiesToBlobMetadata;
 import org.jclouds.azure.storage.blob.blobstore.functions.BlobToAzureBlob;
-import org.jclouds.azure.storage.blob.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.azure.storage.blob.blobstore.functions.ContainerToResourceMetadata;
 import org.jclouds.azure.storage.blob.blobstore.functions.ListBlobsResponseToResourceList;
 import org.jclouds.azure.storage.blob.blobstore.functions.ListOptionsToListBlobsOptions;
@@ -50,9 +49,11 @@ import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.BoundedSortedSet;
+import org.jclouds.blobstore.domain.ListContainerResponse;
 import org.jclouds.blobstore.domain.ResourceMetadata;
-import org.jclouds.blobstore.options.ListOptions;
+import org.jclouds.blobstore.domain.internal.ListResponseImpl;
+import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
+import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
 import org.jclouds.concurrent.FutureFunctionWrapper;
 import org.jclouds.http.options.GetOptions;
@@ -60,7 +61,6 @@ import org.jclouds.logging.Logger.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 
 @ConsistencyModel(ConsistencyModels.STRICT)
 public class AzureBlobStore implements BlobStore {
@@ -78,13 +78,14 @@ public class AzureBlobStore implements BlobStore {
    private final ExecutorService service;
 
    @Inject
-   private AzureBlobStore(AzureBlobClient connection, Blob.Factory blobFactory, LoggerFactory logFactory,
-            ClearListStrategy clearContainerStrategy, BlobPropertiesToBlobMetadata object2BlobMd,
-            AzureBlobToBlob object2Blob, BlobToAzureBlob blob2Object,
+   private AzureBlobStore(AzureBlobClient connection, Blob.Factory blobFactory,
+            LoggerFactory logFactory, ClearListStrategy clearContainerStrategy,
+            BlobPropertiesToBlobMetadata object2BlobMd, AzureBlobToBlob object2Blob,
+            BlobToAzureBlob blob2Object,
             ListOptionsToListBlobsOptions container2ContainerListOptions,
             BlobToHttpGetOptions blob2ObjectGetOptions,
-            ContainerToResourceMetadata container2ResourceMd, ListBlobsResponseToResourceList container2ResourceList,
-            ExecutorService service) {
+            ContainerToResourceMetadata container2ResourceMd,
+            ListBlobsResponseToResourceList container2ResourceList, ExecutorService service) {
       this.connection = checkNotNull(connection, "connection");
       this.blobFactory = checkNotNull(blobFactory, "blobFactory");
       this.logFactory = checkNotNull(logFactory, "logFactory");
@@ -143,17 +144,20 @@ public class AzureBlobStore implements BlobStore {
       return wrapFuture(returnVal, object2Blob);
    }
 
-   public Future<? extends SortedSet<? extends ResourceMetadata>> list() {
-      return wrapFuture(connection.listContainers(),
-               new Function<SortedSet<ListableContainerProperties>, SortedSet<? extends ResourceMetadata>>() {
-                  public SortedSet<? extends ResourceMetadata> apply(SortedSet<ListableContainerProperties> from) {
-                     return Sets.newTreeSet(Iterables.transform(from, container2ResourceMd));
+   public Future<? extends org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata>> list() {
+      return wrapFuture(
+               connection.listContainers(),
+               new Function<SortedSet<ListableContainerProperties>, org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata>>() {
+                  public org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata> apply(
+                           SortedSet<ListableContainerProperties> from) {
+                     return new ListResponseImpl<ResourceMetadata>(Iterables.transform(from,
+                              container2ResourceMd), null, null, false);
                   }
                });
    }
 
-   public Future<? extends BoundedSortedSet<? extends ResourceMetadata>> list(String container,
-            ListOptions... optionsList) {
+   public Future<? extends ListContainerResponse<? extends ResourceMetadata>> list(String container,
+            ListContainerOptions... optionsList) {
       ListBlobsOptions httpOptions = container2ContainerListOptions.apply(optionsList);
       Future<ListBlobsResponse> returnVal = connection.listBlobs(container, httpOptions);
       return wrapFuture(returnVal, container2ResourceList);

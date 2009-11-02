@@ -123,7 +123,7 @@ public class StubAzureBlobClient implements AzureBlobClient {
    }
 
    public Future<ListBlobsResponse> listBlobs(String container, ListBlobsOptions... optionsList) {
-      org.jclouds.blobstore.options.ListOptions options = container2ContainerListOptions
+      org.jclouds.blobstore.options.ListContainerOptions options = container2ContainerListOptions
                .apply(optionsList);
       return wrapFuture(blobStore.list(container, options), resource2ObjectList);
    }

@@ -26,7 +26,7 @@ package org.jclouds.blobstore.strategy;
 import java.util.SortedSet;
 
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.options.ListOptions;
+import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.internal.ListBlobMetadataInContainer;
 
 import com.google.inject.ImplementedBy;
@@ -39,6 +39,6 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(ListBlobMetadataInContainer.class)
 public interface ListBlobMetadataStrategy {
 
-   SortedSet<? extends BlobMetadata> execute(String containerName, ListOptions options);
+   SortedSet<? extends BlobMetadata> execute(String containerName, ListContainerOptions options);
 
 }

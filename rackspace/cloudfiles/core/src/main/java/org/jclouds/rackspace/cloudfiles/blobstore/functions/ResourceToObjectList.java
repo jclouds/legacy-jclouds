@@ -26,9 +26,9 @@ package org.jclouds.rackspace.cloudfiles.blobstore.functions;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.blobstore.domain.BoundedSortedSet;
+import org.jclouds.blobstore.domain.ListContainerResponse;
 import org.jclouds.blobstore.domain.ResourceMetadata;
-import org.jclouds.blobstore.domain.internal.BoundedTreeSet;
+import org.jclouds.blobstore.domain.internal.ListContainerResponseImpl;
 import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
 
 import com.google.common.base.Function;
@@ -39,7 +39,7 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class ResourceToObjectList implements
-         Function<BoundedSortedSet<? extends ResourceMetadata>, BoundedSortedSet<ObjectInfo>> {
+         Function<ListContainerResponse<? extends ResourceMetadata>, ListContainerResponse<ObjectInfo>> {
    private final ResourceToObjectInfo resource2ObjectMd;
 
    @Inject
@@ -47,9 +47,9 @@ public class ResourceToObjectList implements
       this.resource2ObjectMd = resource2ObjectMd;
    }
 
-   public BoundedSortedSet<ObjectInfo> apply(BoundedSortedSet<? extends ResourceMetadata> list) {
+   public ListContainerResponse<ObjectInfo> apply(ListContainerResponse<? extends ResourceMetadata> list) {
 
-      return new BoundedTreeSet<ObjectInfo>(Iterables.transform(list,
+      return new ListContainerResponseImpl<ObjectInfo>(Iterables.transform(list,
                new Function<ResourceMetadata, ObjectInfo>() {
 
                   public ObjectInfo apply(ResourceMetadata from) {

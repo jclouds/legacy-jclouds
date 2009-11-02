@@ -35,17 +35,17 @@ import java.util.concurrent.Future;
 import javax.inject.Inject;
 
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BoundedSortedSet;
+import org.jclouds.blobstore.domain.ListContainerResponse;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
 import org.jclouds.blobstore.integration.internal.StubBlobStore;
 import org.jclouds.blobstore.integration.internal.StubBlobStore.FutureBase;
-import org.jclouds.blobstore.options.ListOptions;
+import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.concurrent.FutureFunctionWrapper;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.BlobToObject;
-import org.jclouds.rackspace.cloudfiles.blobstore.functions.ListContainerOptionsToListOptions;
+import org.jclouds.rackspace.cloudfiles.blobstore.functions.ListContainerOptionsToBlobStoreListContainerOptions;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.ObjectToBlob;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.ResourceToObjectInfo;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.ResourceToObjectList;
@@ -56,7 +56,6 @@ import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
 import org.jclouds.rackspace.cloudfiles.options.ListCdnContainerOptions;
-import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -75,7 +74,7 @@ public class StubCloudFilesClient implements CloudFilesClient {
    private final ObjectToBlob object2Blob;
    private final BlobToObject blob2Object;
    private final ResourceToObjectInfo blob2ObjectInfo;
-   private final ListContainerOptionsToListOptions container2ContainerListOptions;
+   private final ListContainerOptionsToBlobStoreListContainerOptions container2ContainerListOptions;
    private final ResourceToObjectList resource2ObjectList;
 
    @Inject
@@ -84,7 +83,7 @@ public class StubCloudFilesClient implements CloudFilesClient {
             CFObject.Factory objectProvider,
             HttpGetOptionsListToGetOptions httpGetOptionsConverter, ObjectToBlob object2Blob,
             BlobToObject blob2Object, ResourceToObjectInfo blob2ObjectInfo,
-            ListContainerOptionsToListOptions container2ContainerListOptions,
+            ListContainerOptionsToBlobStoreListContainerOptions container2ContainerListOptions,
             ResourceToObjectList resource2ContainerList) {
       this.blobStore = blobStore;
       this.logFactory = logFactory;
@@ -149,7 +148,7 @@ public class StubCloudFilesClient implements CloudFilesClient {
    }
 
    public Future<? extends SortedSet<ContainerMetadata>> listContainers(
-            ListContainerOptions... options) {
+            org.jclouds.rackspace.cloudfiles.options.ListContainerOptions... options) {
       return new FutureBase<SortedSet<ContainerMetadata>>() {
 
          public SortedSet<ContainerMetadata> get() throws InterruptedException, ExecutionException {
@@ -164,9 +163,9 @@ public class StubCloudFilesClient implements CloudFilesClient {
       };
    }
 
-   public Future<BoundedSortedSet<ObjectInfo>> listObjects(String container,
-            ListContainerOptions... optionsList) {
-      ListOptions options = container2ContainerListOptions.apply(optionsList);
+   public Future<ListContainerResponse<ObjectInfo>> listObjects(String container,
+            org.jclouds.rackspace.cloudfiles.options.ListContainerOptions... optionsList) {
+      ListContainerOptions options = container2ContainerListOptions.apply(optionsList);
       return wrapFuture(blobStore.list(container, options), resource2ObjectList);
    }
 

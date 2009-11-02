@@ -21,21 +21,41 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.blobstore.strategy;
-
-import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.blobstore.strategy.internal.FindMD5InList;
-
-import com.google.inject.ImplementedBy;
+package org.jclouds.blobstore;
 
 /**
- * Determines whether a value exists in the store
+ * Thrown when a blob was attempted to be replaced while it already exists
  * 
  * @author Adrian Cole
  */
-@ImplementedBy(FindMD5InList.class)
-public interface ContainsValueInListStrategy {
+public class KeyAlreadyExistsException extends RuntimeException {
 
-   boolean execute(String containerName, Object value, ListContainerOptions options);
+   private String container;
+   private String key;
+
+   public KeyAlreadyExistsException() {
+      super();
+   }
+
+   public KeyAlreadyExistsException(String container, String key, Exception from) {
+      super(String.format("%s already exists in container %s", key, container), from);
+      this.container = container;
+      this.key = key;
+   }
+
+   public KeyAlreadyExistsException(Exception from) {
+      super(from);
+   }
+
+   public String getContainer() {
+      return container;
+   }
+
+   public String getKey() {
+      return key;
+   }
+
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -2272965726680821281L;
 
 }

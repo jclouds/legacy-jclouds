@@ -24,7 +24,7 @@
 package org.jclouds.aws.s3.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.blobstore.options.ListOptions.Builder.recursive;
+import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
 
 import java.util.SortedSet;
 import java.util.concurrent.Callable;
@@ -50,9 +50,11 @@ import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.BoundedSortedSet;
+import org.jclouds.blobstore.domain.ListResponse;
+import org.jclouds.blobstore.domain.ListContainerResponse;
 import org.jclouds.blobstore.domain.ResourceMetadata;
-import org.jclouds.blobstore.options.ListOptions;
+import org.jclouds.blobstore.domain.internal.ListResponseImpl;
+import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
 import org.jclouds.concurrent.FutureFunctionWrapper;
 import org.jclouds.http.options.GetOptions;
@@ -60,7 +62,6 @@ import org.jclouds.logging.Logger.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 
 @ConsistencyModel(ConsistencyModels.EVENTUAL)
 public class S3BlobStore implements BlobStore {
@@ -150,17 +151,20 @@ public class S3BlobStore implements BlobStore {
       return wrapFuture(returnVal, object2Blob);
    }
 
-   public Future<? extends SortedSet<? extends ResourceMetadata>> list() {
-      return wrapFuture(connection.listOwnedBuckets(),
-               new Function<SortedSet<BucketMetadata>, SortedSet<? extends ResourceMetadata>>() {
-                  public SortedSet<? extends ResourceMetadata> apply(SortedSet<BucketMetadata> from) {
-                     return Sets.newTreeSet(Iterables.transform(from, bucket2ResourceMd));
+   public Future<? extends ListResponse<? extends ResourceMetadata>> list() {
+      return wrapFuture(
+               connection.listOwnedBuckets(),
+               new Function<SortedSet<BucketMetadata>, org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata>>() {
+                  public org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata> apply(
+                           SortedSet<BucketMetadata> from) {
+                     return new ListResponseImpl<ResourceMetadata>(Iterables.transform(from,
+                              bucket2ResourceMd), null, null, false);
                   }
                });
    }
 
-   public Future<? extends BoundedSortedSet<? extends ResourceMetadata>> list(String container,
-            ListOptions... optionsList) {
+   public Future<? extends ListContainerResponse<? extends ResourceMetadata>> list(String container,
+            ListContainerOptions... optionsList) {
       ListBucketOptions httpOptions = container2BucketListOptions.apply(optionsList);
       Future<ListBucketResponse> returnVal = connection.listBucket(container, httpOptions);
       return wrapFuture(returnVal, bucket2ResourceList);

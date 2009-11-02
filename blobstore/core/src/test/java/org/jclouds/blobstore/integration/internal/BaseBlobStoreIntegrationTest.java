@@ -154,6 +154,7 @@ public class BaseBlobStoreIntegrationTest<S> {
                         createContainerAndEnsureEmpty(context, containerName);
                         containerJsr330.put(containerName);
                      } catch (Throwable e) {
+                        e.printStackTrace();
                         // throw away the container and try again with the next index
                         deleteContainerOrWarnIfUnable(context, containerName);
                         containerCount++;

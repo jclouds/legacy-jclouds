@@ -31,7 +31,7 @@ import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.InputStreamMap;
-import org.jclouds.blobstore.options.ListOptions;
+import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.rest.internal.RestContextImpl;
@@ -57,7 +57,7 @@ public class BlobStoreContextImpl<S> extends RestContextImpl<S> implements BlobS
       checkNotNull(path, "path");
       String container = BlobStoreUtils.parseContainerFromPath(path);
       String prefix = BlobStoreUtils.parsePrefixFromPath(path);
-      ListOptions options = new ListOptions();
+      ListContainerOptions options = new ListContainerOptions();
       if (prefix != null)
          options.underPath(prefix);
       return blobMapFactory.create(container, options);
@@ -67,7 +67,7 @@ public class BlobStoreContextImpl<S> extends RestContextImpl<S> implements BlobS
       checkNotNull(path, "path");
       String container = BlobStoreUtils.parseContainerFromPath(path);
       String prefix = BlobStoreUtils.parsePrefixFromPath(path);
-      ListOptions options = new ListOptions();
+      ListContainerOptions options = new ListContainerOptions();
       if (prefix != null)
          options.underPath(prefix);
       return inputStreamMapFactory.create(container, options);

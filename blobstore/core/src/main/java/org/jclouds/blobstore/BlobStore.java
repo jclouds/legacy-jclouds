@@ -23,15 +23,15 @@
  */
 package org.jclouds.blobstore;
 
-import java.util.SortedSet;
 import java.util.concurrent.Future;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.BoundedSortedSet;
+import org.jclouds.blobstore.domain.ListResponse;
+import org.jclouds.blobstore.domain.ListContainerResponse;
 import org.jclouds.blobstore.domain.ResourceMetadata;
 import org.jclouds.blobstore.options.GetOptions;
-import org.jclouds.blobstore.options.ListOptions;
+import org.jclouds.blobstore.options.ListContainerOptions;
 
 /**
  * Provides hooks needed to run a blob store
@@ -43,7 +43,7 @@ public interface BlobStore {
    /**
     * Lists all root-level resources available to the account.
     */
-   Future<? extends SortedSet<? extends ResourceMetadata>> list();
+   Future<? extends ListResponse<? extends ResourceMetadata>> list();
 
    /**
     * Lists all resources available at the specified path. Note that path may be a container, or a
@@ -52,8 +52,8 @@ public interface BlobStore {
     * @param parent
     *           - base path to list; non-recursive
     */
-   Future<? extends BoundedSortedSet<? extends ResourceMetadata>> list(String container,
-            ListOptions... options);
+   Future<? extends ListContainerResponse<? extends ResourceMetadata>> list(String container,
+            ListContainerOptions... options);
 
    boolean exists(String container);
 

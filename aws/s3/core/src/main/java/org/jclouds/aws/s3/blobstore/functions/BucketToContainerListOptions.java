@@ -26,7 +26,7 @@ package org.jclouds.aws.s3.blobstore.functions;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.s3.options.ListBucketOptions;
-import org.jclouds.blobstore.options.ListOptions;
+import org.jclouds.blobstore.options.ListContainerOptions;
 
 import com.google.common.base.Function;
 
@@ -34,9 +34,9 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Singleton
-public class BucketToContainerListOptions implements Function<ListBucketOptions[], ListOptions> {
-   public ListOptions apply(ListBucketOptions[] optionsList) {
-      ListOptions options = new ListOptions();
+public class BucketToContainerListOptions implements Function<ListBucketOptions[], ListContainerOptions> {
+   public ListContainerOptions apply(ListBucketOptions[] optionsList) {
+      ListContainerOptions options = new ListContainerOptions();
       if (optionsList.length != 0) {
          if (optionsList[0].getDelimiter() == null) {
             options.recursive();

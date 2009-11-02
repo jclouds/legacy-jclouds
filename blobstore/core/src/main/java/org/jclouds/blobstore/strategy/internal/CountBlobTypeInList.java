@@ -26,7 +26,7 @@ package org.jclouds.blobstore.strategy.internal;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.blobstore.options.ListOptions;
+import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.CountListStrategy;
 import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
 
@@ -44,7 +44,7 @@ public class CountBlobTypeInList implements CountListStrategy {
       this.getAllBlobMetadata = getAllBlobMetadata;
    }
 
-   public long execute(String container, ListOptions options) {
+   public long execute(String container, ListContainerOptions options) {
       return getAllBlobMetadata.execute(container, options).size();
    }
 

@@ -21,11 +21,11 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.azure.storage.blob.blobstore.functions;
+package org.jclouds.rackspace.cloudfiles.blobstore.functions;
 
 import javax.inject.Singleton;
 
-import org.jclouds.http.options.GetOptions;
+import org.jclouds.blobstore.options.ListContainerOptions;
 
 import com.google.common.base.Function;
 
@@ -33,28 +33,26 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Singleton
-public class BlobToHttpGetOptions implements
-         Function<org.jclouds.blobstore.options.GetOptions[], GetOptions> {
-   public GetOptions apply(org.jclouds.blobstore.options.GetOptions[] from) {
-      GetOptions httpOptions = new GetOptions();
-      if (from.length != 0) {
-         if (from[0].getIfMatch() != null) {
-            httpOptions.ifETagMatches(from[0].getIfMatch());
+public class ListContainerOptionsToBlobStoreListContainerOptions
+         implements
+         Function<org.jclouds.rackspace.cloudfiles.options.ListContainerOptions[], ListContainerOptions> {
+   public ListContainerOptions apply(
+            org.jclouds.rackspace.cloudfiles.options.ListContainerOptions[] optionsList) {
+      ListContainerOptions options = new ListContainerOptions();
+      if (optionsList.length != 0) {
+         if (optionsList[0].getPath() != null) {
+            options.underPath(optionsList[0].getPath());
          }
-         if (from[0].getIfModifiedSince() != null) {
-            httpOptions.ifModifiedSince(from[0].getIfModifiedSince());
+         if (optionsList[0].getPrefix() != null) {
+            options.underPath(optionsList[0].getPrefix());
+            options.recursive();
          }
-         if (from[0].getIfNoneMatch() != null) {
-            httpOptions.ifETagDoesntMatch(from[0].getIfNoneMatch());
+         if (optionsList[0].getMarker() != null) {
+            options.afterMarker(optionsList[0].getMarker());
          }
-         if (from[0].getIfUnmodifiedSince() != null) {
-            httpOptions.ifUnmodifiedSince(from[0].getIfUnmodifiedSince());
-         }
-         for (String range : from[0].getRanges()) {
-            String[] firstLast = range.split("\\-");
-            httpOptions.range(Long.parseLong(firstLast[0]), Long.parseLong(firstLast[1]));
-         }
+         options.maxResults(optionsList[0].getMaxResults());
       }
-      return httpOptions;
+      return options;
    }
+
 }

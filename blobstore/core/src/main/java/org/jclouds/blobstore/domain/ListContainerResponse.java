@@ -21,21 +21,16 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.blobstore.strategy;
+package org.jclouds.blobstore.domain;
 
-import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.blobstore.strategy.internal.FindMD5InList;
-
-import com.google.inject.ImplementedBy;
 
 /**
- * Determines whether a value exists in the store
  * 
  * @author Adrian Cole
+ * 
  */
-@ImplementedBy(FindMD5InList.class)
-public interface ContainsValueInListStrategy {
+public interface ListContainerResponse<T> extends ListResponse<T> {
 
-   boolean execute(String containerName, Object value, ListContainerOptions options);
+   String getPath();
 
 }

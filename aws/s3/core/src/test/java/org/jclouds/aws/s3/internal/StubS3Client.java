@@ -62,7 +62,7 @@ import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
 import org.jclouds.blobstore.integration.internal.StubBlobStore;
 import org.jclouds.blobstore.integration.internal.StubBlobStore.FutureBase;
-import org.jclouds.blobstore.options.ListOptions;
+import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.concurrent.FutureFunctionWrapper;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.logging.Logger.LoggerFactory;
@@ -141,7 +141,7 @@ public class StubS3Client implements S3Client {
    }
 
    public Future<ListBucketResponse> listBucket(final String name, ListBucketOptions... optionsList) {
-      ListOptions options = bucket2ContainerListOptions.apply(optionsList);
+      ListContainerOptions options = bucket2ContainerListOptions.apply(optionsList);
       return wrapFuture(blobStore.list(name, options), resource2BucketList);
    }
 

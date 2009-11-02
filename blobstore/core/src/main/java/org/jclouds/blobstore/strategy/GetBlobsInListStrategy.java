@@ -26,7 +26,7 @@ package org.jclouds.blobstore.strategy;
 import java.util.SortedSet;
 
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.options.ListOptions;
+import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.internal.GetAllBlobsInListAndRetryOnFailure;
 
 import com.google.inject.ImplementedBy;
@@ -39,6 +39,6 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(GetAllBlobsInListAndRetryOnFailure.class)
 public interface GetBlobsInListStrategy {
 
-   SortedSet<? extends Blob> execute(String containerName, ListOptions options);
+   SortedSet<? extends Blob> execute(String containerName, ListContainerOptions options);
 
 }

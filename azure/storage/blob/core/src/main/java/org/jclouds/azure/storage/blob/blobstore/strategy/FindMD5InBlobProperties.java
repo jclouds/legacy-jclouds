@@ -10,7 +10,7 @@ import org.jclouds.azure.storage.blob.domain.BlobProperties;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.ObjectMD5;
 import org.jclouds.blobstore.internal.BlobRuntimeException;
-import org.jclouds.blobstore.options.ListOptions;
+import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
 import org.jclouds.util.Utils;
@@ -35,7 +35,7 @@ public class FindMD5InBlobProperties implements ContainsValueInListStrategy {
       this.client = client;
    }
 
-   public boolean execute(String containerName, Object value, ListOptions options) {
+   public boolean execute(String containerName, Object value, ListContainerOptions options) {
       try {
          byte[] toSearch = objectMD5.apply(value);
          for (BlobMetadata metadata : getAllBlobMetadata.execute(containerName, options)) {

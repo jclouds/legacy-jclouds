@@ -8,7 +8,7 @@ import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.internal.BlobMapImpl;
 import org.jclouds.blobstore.internal.InputStreamMapImpl;
-import org.jclouds.blobstore.options.ListOptions;
+import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.blobstore.strategy.CountListStrategy;
@@ -49,7 +49,7 @@ public class BlobStoreMapModule extends AbstractModule {
       @Inject
       CountListStrategy containerCountStrategy;
 
-      public BlobMap create(String containerName, ListOptions listOptions) {
+      public BlobMap create(String containerName, ListContainerOptions listOptions) {
          return new BlobMapImpl(connection, getAllBlobs, getAllBlobMetadata, containsValueStrategy,
                   clearContainerStrategy, containerCountStrategy, containerName, listOptions);
       }
@@ -72,7 +72,7 @@ public class BlobStoreMapModule extends AbstractModule {
       @Inject
       CountListStrategy containerCountStrategy;
 
-      public InputStreamMap create(String containerName, ListOptions listOptions) {
+      public InputStreamMap create(String containerName, ListContainerOptions listOptions) {
          return new InputStreamMapImpl(connection, blobFactory, getAllBlobs, getAllBlobMetadata,
                   containsValueStrategy, clearContainerStrategy, containerCountStrategy,
                   containerName, listOptions);

@@ -21,23 +21,24 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.blobstore.domain;
+package org.jclouds.blobstore.domain.internal;
 
-import java.util.SortedSet;
+import org.jclouds.blobstore.domain.ListContainerResponse;
 
-/**
- * 
- * @author Adrian Cole
- * 
- */
-public interface BoundedSortedSet<T> extends SortedSet<T> {
+public class ListContainerResponseImpl<T> extends ListResponseImpl<T> implements ListContainerResponse<T> {
 
-   String getPath();
+   /** The serialVersionUID */
+   private static final long serialVersionUID = -7133632087734650835L;
+   protected final String path;
 
-   String getMarker();
+   public ListContainerResponseImpl(Iterable<T> contents, String path, String marker,
+            Integer maxResults, boolean isTruncated) {
+      super(contents, marker, maxResults, isTruncated);
+      this.path = path;
+   }
 
-   int getMaxResults();
-
-   boolean isTruncated();
+   public String getPath() {
+      return path;
+   }
 
 }

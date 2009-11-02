@@ -25,7 +25,7 @@ package org.jclouds.blobstore;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.internal.BlobMapImpl;
-import org.jclouds.blobstore.options.ListOptions;
+import org.jclouds.blobstore.options.ListContainerOptions;
 
 import com.google.inject.ImplementedBy;
 
@@ -42,7 +42,7 @@ public interface BlobMap extends ListableMap<String, Blob> {
    Blob newBlob();
    
    public static interface Factory {
-      BlobMap create(String containerName, ListOptions listOptions);
+      BlobMap create(String containerName, ListContainerOptions listOptions);
    }
    
 }

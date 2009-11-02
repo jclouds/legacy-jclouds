@@ -38,7 +38,7 @@ import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.options.ListOptions;
+import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.blobstore.strategy.CountListStrategy;
@@ -67,7 +67,7 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
             GetBlobsInListStrategy getAllBlobs, ListBlobMetadataStrategy getAllBlobMetadata,
             ContainsValueInListStrategy containsValueStrategy,
             ClearListStrategy clearContainerStrategy, CountListStrategy containerCountStrategy,
-            String containerName, ListOptions listOptions) {
+            String containerName, ListContainerOptions listOptions) {
       super(connection, getAllBlobs, getAllBlobMetadata, containsValueStrategy,
                clearContainerStrategy, containerCountStrategy, containerName, listOptions);
    }

@@ -33,7 +33,7 @@ import org.jclouds.aws.s3.domain.MutableObjectMetadata;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.internal.TreeSetListBucketResponse;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.BoundedSortedSet;
+import org.jclouds.blobstore.domain.ListContainerResponse;
 import org.jclouds.blobstore.domain.ResourceMetadata;
 import org.jclouds.blobstore.domain.ResourceType;
 
@@ -47,7 +47,7 @@ import com.google.common.collect.Sets;
  */
 @Singleton
 public class ResourceToBucketList implements
-         Function<BoundedSortedSet<? extends ResourceMetadata>, ListBucketResponse> {
+         Function<ListContainerResponse<? extends ResourceMetadata>, ListBucketResponse> {
    private final BlobToObjectMetadata blob2ObjectMd;
 
    @Inject
@@ -55,9 +55,9 @@ public class ResourceToBucketList implements
       this.blob2ObjectMd = blob2ObjectMd;
    }
 
-   public ListBucketResponse apply(BoundedSortedSet<? extends ResourceMetadata> list) {
+   public ListBucketResponse apply(ListContainerResponse<? extends ResourceMetadata> list) {
 
-      SortedSet<ObjectMetadata> contents = Sets.newTreeSet(Iterables.transform(Iterables.filter(
+      Iterable<ObjectMetadata> contents = Iterables.transform(Iterables.filter(
                list, new Predicate<ResourceMetadata>() {
 
                   public boolean apply(ResourceMetadata input) {
@@ -70,7 +70,7 @@ public class ResourceToBucketList implements
             return blob2ObjectMd.apply((BlobMetadata) from);
          }
 
-      }));
+      });
 
       SortedSet<String> commonPrefixes = Sets.newTreeSet(Iterables.transform(Iterables.filter(list,
                new Predicate<ResourceMetadata>() {
@@ -87,6 +87,6 @@ public class ResourceToBucketList implements
 
       }));
       return new TreeSetListBucketResponse(null, contents, list.getPath(), list.getMarker(), list
-               .getMaxResults(), "/", contents.size() == list.getMaxResults(), commonPrefixes);
+               .getMaxResults(), "/", Iterables.size(contents) == list.getMaxResults(), commonPrefixes);
    }
 }

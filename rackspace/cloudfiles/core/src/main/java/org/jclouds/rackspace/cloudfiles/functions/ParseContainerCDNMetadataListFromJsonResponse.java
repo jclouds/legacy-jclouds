@@ -23,7 +23,6 @@
  */
 package org.jclouds.rackspace.cloudfiles.functions;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -32,7 +31,6 @@ import java.util.SortedSet;
 
 import javax.inject.Inject;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerCDNMetadata;
 
@@ -44,23 +42,15 @@ import com.google.gson.reflect.TypeToken;
  * 
  * @author James Murty
  */
-public class ParseContainerCDNMetadataListFromJsonResponse extends ParseJson<SortedSet<ContainerCDNMetadata>>
-    {
-   
+public class ParseContainerCDNMetadataListFromJsonResponse extends
+         ParseJson<SortedSet<ContainerCDNMetadata>> {
+
    @Inject
    public ParseContainerCDNMetadataListFromJsonResponse(Gson gson) {
       super(gson);
    }
 
    public SortedSet<ContainerCDNMetadata> apply(InputStream stream) {
-      String toParse;
-      try {
-          toParse = IOUtils.toString(stream);
-      } catch (IOException e1) {
-         throw new RuntimeException(e1);
-      }
-      // Ticket #1871 bad quoting on cdn uri
-      stream = IOUtils.toInputStream(toParse.replaceAll("m,","m\","));
       Type listType = new TypeToken<SortedSet<ContainerCDNMetadata>>() {
       }.getType();
       try {

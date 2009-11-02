@@ -32,11 +32,11 @@ import javax.inject.Singleton;
 
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.BoundedSortedSet;
+import org.jclouds.blobstore.domain.ListResponse;
 import org.jclouds.blobstore.domain.ResourceMetadata;
 import org.jclouds.blobstore.domain.ResourceType;
 import org.jclouds.blobstore.internal.BlobRuntimeException;
-import org.jclouds.blobstore.options.ListOptions;
+import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
 import org.jclouds.util.Utils;
@@ -63,9 +63,9 @@ public class ListBlobMetadataInContainer implements ListBlobMetadataStrategy {
       this.connection = connection;
    }
 
-   public SortedSet<? extends BlobMetadata> execute(String container, ListOptions options) {
+   public SortedSet<? extends BlobMetadata> execute(String container, ListContainerOptions options) {
       try {
-         BoundedSortedSet<? extends ResourceMetadata> resources = connection.list(container,
+         ListResponse<? extends ResourceMetadata> resources = connection.list(container,
                   options).get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
          SortedSet<BlobMetadata> blobM = Sets.newTreeSet();
          for (ResourceMetadata from : resources) {
