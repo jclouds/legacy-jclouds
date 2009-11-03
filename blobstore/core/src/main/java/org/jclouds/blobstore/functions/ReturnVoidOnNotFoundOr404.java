@@ -23,6 +23,8 @@
  */
 package org.jclouds.blobstore.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.lang.reflect.Constructor;
 
 import javax.inject.Inject;
@@ -50,10 +52,10 @@ public class ReturnVoidOnNotFoundOr404 implements Function<Exception, Void> {
    }
 
    private final ReturnTrueOn404 rto404;
-   
+
    @Inject
    private ReturnVoidOnNotFoundOr404(ReturnTrueOn404 rto404) {
-      this.rto404 = rto404;
+      this.rto404 = checkNotNull(rto404, "rto404");
    }
 
    public Void apply(Exception from) {

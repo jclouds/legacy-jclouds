@@ -411,7 +411,7 @@ public class BaseBlobStoreIntegrationTest<S> {
             throws InterruptedException, ExecutionException, TimeoutException {
       if (context.getBlobStore().exists(name)) {
          System.err.printf("*** deleting container %s...%n", name);
-         context.getBlobStore().deleteContainer(name).get(30, TimeUnit.SECONDS);
+         context.getBlobStore().deleteContainer(name).get(60, TimeUnit.SECONDS);
          assertConsistencyAware(context, new Runnable() {
             public void run() {
                try {

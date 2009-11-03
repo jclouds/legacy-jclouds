@@ -400,9 +400,8 @@ public class BaseBlobIntegrationTest<S> extends BaseBlobStoreIntegrationTest<S> 
       }
    }
 
-
    protected void validateMetadata(BlobMetadata metadata) {
-      assertEquals(metadata.getContentType(), "text/plain");
+      assert metadata.getContentType().startsWith("text/plain") : metadata.getContentType();
       assertEquals(metadata.getSize(), new Long(TEST_STRING.length()));
       assertEquals(metadata.getUserMetadata().get("adrian"), "powderpuff");
       assertEquals(metadata.getContentMD5(), HttpUtils.md5(TEST_STRING.getBytes()));
