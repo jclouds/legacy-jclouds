@@ -61,6 +61,11 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
+			<artifactId>jclouds-emcsaas</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>jclouds-s3</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -131,6 +136,12 @@
 			<artifactId>geronimo-servlet_2.5_spec</artifactId>
 			<version>1.2</version>
 			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.appengine</groupId>
+			<artifactId>appengine-api-labs</artifactId>
+			<version>1.2.5</version>
 		</dependency>
 
 		<dependency>
@@ -244,6 +255,14 @@
 										<property>
 											<name>jclouds.rackspace.key</name>
 											<value>${jclouds.rackspace.key}</value>
+										</property>
+										<property>
+											<name>jclouds.emcsaas.uid</name>
+											<value>${jclouds.emcsaas.uid}</value>
+										</property>
+										<property>
+											<name>jclouds.emcsaas.key</name>
+											<value>${jclouds.emcsaas.key}</value>
 										</property>
 										<property>
 											<name>jclouds.aws.accesskeyid</name>

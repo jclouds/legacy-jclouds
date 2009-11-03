@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<queue-entries>
+  <queue>
+    <name>twitter</name>
+    <rate>1/m</rate>
+  </queue>
+</queue-entries>

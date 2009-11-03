@@ -23,6 +23,7 @@
  */
 package org.jclouds.demo.tweetstore.config;
 
+import static com.google.appengine.api.labs.taskqueue.TaskOptions.Builder.url;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_BLOBSTORE_CONTEXTBUILDERS;
 import static org.jclouds.demo.tweetstore.reference.TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER;
@@ -44,6 +45,9 @@ import org.jclouds.gae.config.GaeHttpCommandExecutorServiceModule;
 import org.jclouds.twitter.TwitterClient;
 import org.jclouds.twitter.TwitterContextFactory;
 
+import com.google.appengine.api.labs.taskqueue.Queue;
+import com.google.appengine.api.labs.taskqueue.QueueFactory;
+import com.google.appengine.api.labs.taskqueue.TaskOptions.Method;
 import com.google.appengine.repackaged.com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.inject.Guice;
@@ -68,6 +72,8 @@ public class GuiceServletConfig extends GuiceServletContextListener {
    @Override
    public void contextInitialized(ServletContextEvent servletContextEvent) {
       Properties props = loadJCloudsProperties(servletContextEvent);
+      Queue queue = QueueFactory.getQueue("twitter");
+
       container = checkNotNull(props.getProperty(PROPERTY_TWEETSTORE_CONTAINER),
                PROPERTY_TWEETSTORE_CONTAINER);
       ImmutableList<String> list = ImmutableList.<String> of(checkNotNull(
@@ -84,6 +90,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
          try {
             builderClass = (Class<BlobStoreContextBuilder<?>>) Class.forName(className);
             name = builderClass.getSimpleName().replaceAll("BlobStoreContextBuilder", "");
+            queue.add(url("/store/do").header("context", name).method(Method.GET));
             constructor = builderClass.getConstructor(Properties.class);
             context = constructor.newInstance(props).withModules(
                      new GaeHttpCommandExecutorServiceModule()).buildContext();
@@ -119,7 +126,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
             }).toInstance(GuiceServletConfig.this.contexts);
             bind(TwitterClient.class).toInstance(client);
             bindConstant().annotatedWith(Jsr330.named(PROPERTY_TWEETSTORE_CONTAINER)).to(container);
-            serve("/cron/*").with(StoreTweetsController.class);
+            serve("/store/*").with(StoreTweetsController.class);
             serve("/tweets/*").with(AddTweetsController.class);
             requestInjection(this);
          }

@@ -23,9 +23,10 @@
  */
 package org.jclouds.demo.tweetstore.controller;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.IOException;
 import java.util.Map;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
@@ -49,8 +50,6 @@ import org.jclouds.twitter.domain.Status;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 
 /**
  * Grab tweets related to me and store them into blobstores
@@ -81,35 +80,34 @@ public class StoreTweetsController extends HttpServlet {
    /** The serialVersionUID */
    private static final long serialVersionUID = 7215420527854203714L;
 
-   private final Set<BlobMap> maps;
+   private final Map<String, BlobStoreContext<?>> contexts;
    private final TwitterClient client;
+   private final String container;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
+   @VisibleForTesting
    StoreTweetsController(Map<String, BlobStoreContext<?>> contexts,
             @Named(TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER) final String container,
             TwitterClient client) {
-      this(Sets.newHashSet(Iterables.transform(contexts.values(),
-               new Function<BlobStoreContext<?>, BlobMap>() {
-                  public BlobMap apply(BlobStoreContext<?> from) {
-                     return from.createBlobMap(container);
-                  }
-               })), client);
-   }
-
-   @VisibleForTesting
-   StoreTweetsController(Set<BlobMap> maps, TwitterClient client) {
-      this.maps = maps;
+      this.container = container;
+      this.contexts = contexts;
       this.client = client;
    }
 
    @VisibleForTesting
-   void addMyTweets(SortedSet<Status> allAboutMe) {
-      for (BlobMap map : maps) {
-         for (Status status : allAboutMe) {
+   void addMyTweets(String contextName, SortedSet<Status> allAboutMe) {
+      BlobStoreContext<?> context = checkNotNull(contexts.get(contextName), "no context for "
+               + contextName + " in " + contexts.keySet());
+      BlobMap map = context.createBlobMap(container);
+      for (Status status : allAboutMe) {
+         try {
             map.put(status.getId() + "", new StatusToBlob(map).apply(status));
+         } catch (Exception e) {
+            logger.error(e, "Error storing tweet %s on map %s/%s", status.getId(), context,
+                     container);
          }
       }
    }
@@ -117,11 +115,13 @@ public class StoreTweetsController extends HttpServlet {
    @Override
    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-      if (request.getHeader("X-AppEngine-Cron") != null
-               && request.getHeader("X-AppEngine-Cron").equals("true")) {
+      if (request.getHeader("X-AppEngine-QueueName") != null
+               && request.getHeader("X-AppEngine-QueueName").equals("twitter")) {
          try {
+            String contextName = checkNotNull(request.getHeader("context"),
+                     "missing header context");
             logger.info("retrieving tweets");
-            addMyTweets(client.getMyMentions().get(1, TimeUnit.SECONDS));
+            addMyTweets(contextName, client.getMyMentions().get(1, TimeUnit.SECONDS));
             logger.debug("done storing tweets");
             response.setContentType(MediaType.TEXT_PLAIN);
             response.getWriter().println("Done!");
@@ -133,5 +133,4 @@ public class StoreTweetsController extends HttpServlet {
          response.sendError(401);
       }
    }
-
 }

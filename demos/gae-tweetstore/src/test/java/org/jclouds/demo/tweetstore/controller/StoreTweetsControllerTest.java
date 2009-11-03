@@ -5,13 +5,13 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Set;
+import java.util.Map;
 import java.util.SortedSet;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.blobstore.BlobMap;
-import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.integration.StubBlobStoreContextBuilder;
@@ -21,7 +21,7 @@ import org.jclouds.twitter.domain.Status;
 import org.jclouds.twitter.domain.User;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 
 /**
@@ -32,21 +32,25 @@ import com.google.common.collect.Sets;
 @Test(groups = "unit", testName = "tweetstore.StoreTweetsControllerTest")
 public class StoreTweetsControllerTest {
 
-
    TwitterClient createTwitterClient() {
       return createMock(TwitterClient.class);
    }
 
-   Set<BlobMap> createMaps() throws InterruptedException, ExecutionException {
-      BlobStoreContext<BlobStore> context = new StubBlobStoreContextBuilder().buildContext();
-      context.getBlobStore().createContainer("test1").get();
-      context.getBlobStore().createContainer("test2").get();
-      return ImmutableSet.of(context.createBlobMap("test1"), context.createBlobMap("test2"));
+   Map<String, BlobStoreContext<?>> createBlobStores() throws InterruptedException,
+            ExecutionException {
+      Map<String, BlobStoreContext<?>> contexts = ImmutableMap.<String, BlobStoreContext<?>> of(
+               "test1", new StubBlobStoreContextBuilder().buildContext(), "test2",
+               new StubBlobStoreContextBuilder().buildContext());
+      for (BlobStoreContext<?> blobstore : contexts.values()) {
+         blobstore.getBlobStore().createContainer("favo").get();
+      }
+      return contexts;
    }
 
    public void testStoreTweets() throws IOException, InterruptedException, ExecutionException {
-      Set<BlobMap> maps = createMaps();
-      StoreTweetsController function = new StoreTweetsController(maps, createTwitterClient());
+      Map<String, BlobStoreContext<?>> stores = createBlobStores();
+      StoreTweetsController function = new StoreTweetsController(stores, "favo",
+               createTwitterClient());
 
       SortedSet<Status> allAboutMe = Sets.newTreeSet();
       User frank = new User();
@@ -66,16 +70,18 @@ public class StoreTweetsControllerTest {
       allAboutMe.add(frankStatus);
       allAboutMe.add(jimmyStatus);
 
-      function.addMyTweets(allAboutMe);
+      function.addMyTweets("test1", allAboutMe);
+      function.addMyTweets("test2", allAboutMe);
 
-      for (BlobMap map : maps) {
+      for (Entry<String, BlobStoreContext<?>> entry : stores.entrySet()) {
+         BlobMap map = entry.getValue().createBlobMap("favo");
          Blob frankBlob = map.get("1");
          assertEquals(frankBlob.getMetadata().getName(), "1");
          assertEquals(frankBlob.getMetadata().getUserMetadata()
                   .get(TweetStoreConstants.SENDER_NAME), "frank");
          assertEquals(frankBlob.getMetadata().getContentType(), "text/plain");
          assertEquals(IOUtils.toString((InputStream) frankBlob.getData()), "I love beans!");
-         
+
          Blob jimmyBlob = map.get("2");
          assertEquals(jimmyBlob.getMetadata().getName(), "2");
          assertEquals(jimmyBlob.getMetadata().getUserMetadata()
