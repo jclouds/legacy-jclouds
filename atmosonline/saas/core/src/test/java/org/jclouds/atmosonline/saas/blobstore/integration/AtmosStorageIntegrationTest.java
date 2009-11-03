@@ -23,8 +23,13 @@
  */
 package org.jclouds.atmosonline.saas.blobstore.integration;
 
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+
 import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
@@ -33,5 +38,47 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "integration", "live" }, testName = "emcsaas.AtmosStorageIntegrationTest")
 public class AtmosStorageIntegrationTest extends BaseBlobIntegrationTest<AtmosStorageClient> {
+
+   @DataProvider(name = "delete")
+   // no unicode support
+   @Override
+   public Object[][] createData() {
+      return new Object[][] { { "normal" } };
+   }
+
+   @Override
+   @Test(enabled = false)
+   public void testGetIfMatch() throws InterruptedException, ExecutionException, TimeoutException,
+            IOException {
+      // no etag support
+   }
+
+   @Override
+   @Test(enabled = false)
+   public void testGetIfModifiedSince() throws InterruptedException, ExecutionException,
+            TimeoutException, IOException {
+      // not supported
+   }
+
+   @Override
+   @Test(enabled = false)
+   public void testGetIfNoneMatch() throws InterruptedException, ExecutionException,
+            TimeoutException, IOException {
+      // no etag support
+   }
+
+   @Override
+   @Test(enabled = false)
+   public void testGetIfUnmodifiedSince() throws InterruptedException, ExecutionException,
+            TimeoutException, IOException {
+      // not supported
+   }
+
+   @Override
+   @Test(enabled = false)
+   public void testGetTwoRanges() throws InterruptedException, ExecutionException,
+            TimeoutException, IOException {
+      // not supported
+   }
 
 }

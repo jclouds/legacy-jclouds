@@ -27,8 +27,8 @@ public class FindMD5InUserMetadata implements ContainsValueInListStrategy {
    private final AtmosStorageClient client;
 
    @Inject
-   private FindMD5InUserMetadata(ObjectMD5 objectMD5,
-            ListBlobMetadataStrategy getAllBlobMetadata, AtmosStorageClient client) {
+   private FindMD5InUserMetadata(ObjectMD5 objectMD5, ListBlobMetadataStrategy getAllBlobMetadata,
+            AtmosStorageClient client) {
       this.objectMD5 = objectMD5;
       this.getAllBlobMetadata = getAllBlobMetadata;
       this.client = client;
@@ -39,7 +39,8 @@ public class FindMD5InUserMetadata implements ContainsValueInListStrategy {
          byte[] toSearch = objectMD5.apply(value);
          String hex = HttpUtils.toHexString(toSearch);
          for (BlobMetadata metadata : getAllBlobMetadata.execute(containerName, options)) {
-            UserMetadata properties = client.getUserMetadata(containerName+"/"+metadata.getName());
+            UserMetadata properties = client.headFile(containerName + "/" + metadata.getName())
+                     .getUserMetadata();
             if (hex.equals(properties.getMetadata().get("content-md5")))
                return true;
          }

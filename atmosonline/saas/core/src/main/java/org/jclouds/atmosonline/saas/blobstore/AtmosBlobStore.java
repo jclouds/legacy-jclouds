@@ -77,11 +77,11 @@ public class AtmosBlobStore implements BlobStore {
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
    private final DirectoryEntryListToResourceMetadataList container2ResourceList;
    private final ExecutorService service;
-   
+
    @Inject(optional = true)
    @Named(BlobStoreConstants.PROPERTY_BLOBSTORE_TIMEOUT)
    protected long requestTimeoutMilliseconds = 30000;
-   
+
    @Inject
    private AtmosBlobStore(AtmosStorageClient connection, Blob.Factory blobFactory,
             LoggerFactory logFactory, ClearListStrategy clearContainerStrategy,
@@ -125,7 +125,7 @@ public class AtmosBlobStore implements BlobStore {
 
       });
    }
-   
+
    public Future<Boolean> createContainer(String container) {
       return wrapFuture(connection.createDirectory(container), new Function<URI, Boolean>() {
 
@@ -173,7 +173,7 @@ public class AtmosBlobStore implements BlobStore {
    public Future<? extends ListContainerResponse<? extends ResourceMetadata>> list(
             String container, org.jclouds.blobstore.options.ListContainerOptions... optionsList) {
       if (optionsList.length == 1) {
-         if (!optionsList[0].isRecursive()) {
+         if (optionsList[0].isRecursive()) {
             throw new UnsupportedOperationException("recursive not currently supported in emcsaas");
          }
          if (optionsList[0].getPath() != null) {
@@ -184,6 +184,9 @@ public class AtmosBlobStore implements BlobStore {
       return wrapFuture(connection.listDirectory(container, nativeOptions), container2ResourceList);
    }
 
+   /**
+    * Since there is no etag support in atmos, we just return the path.
+    */
    public Future<String> putBlob(final String container, final Blob blob) {
       final String path = container + "/" + blob.getMetadata().getName();
 
@@ -191,19 +194,24 @@ public class AtmosBlobStore implements BlobStore {
                .deletePath(path), new Function<Void, String>() {
 
          public String apply(Void from) {
-            boolean exists = connection.pathExists(path);
-            if (!exists)
-               try {
-                  if (blob.getMetadata().getContentMD5() != null)
-                     blob.getMetadata().getUserMetadata().put("content-md5",
-                              HttpUtils.toHexString(blob.getMetadata().getContentMD5()));
-                  connection.createFile(container, blob2Object.apply(blob)).get();
-               } catch (InterruptedException e) {
-                  throw new RuntimeException(e);
-               } catch (ExecutionException e) {
-                  throw new RuntimeException(e);
+            try {
+               if (!Utils.enventuallyTrue(new Supplier<Boolean>() {
+                  public Boolean get() {
+                     return !connection.pathExists(path);
+                  }
+               }, requestTimeoutMilliseconds)) {
+                  throw new IllegalStateException(path + " still exists after deleting!");
                }
-            return null;
+               if (blob.getMetadata().getContentMD5() != null)
+                  blob.getMetadata().getUserMetadata().put("content-md5",
+                           HttpUtils.toHexString(blob.getMetadata().getContentMD5()));
+               connection.createFile(container, blob2Object.apply(blob)).get();
+               return path;
+            } catch (InterruptedException e) {
+               throw new RuntimeException(e);
+            } catch (ExecutionException e) {
+               throw new RuntimeException(e);
+            }
          }
 
       });

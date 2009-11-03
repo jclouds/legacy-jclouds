@@ -195,7 +195,7 @@ public class AtmosStorageClientLiveTest {
 
       // loop to gather metrics
       for (boolean stream : new Boolean[] { true, false }) {
-         for (int i = 0; i < 30; i++) {
+         for (int i = 0; i < 10; i++) {
             System.err.printf("upload/delete/create attempt %d type %s%n", i + 1, stream ? "stream"
                      : "string");
             // try updating
