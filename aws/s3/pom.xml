@@ -38,7 +38,6 @@
     <name>jclouds s3 aggregator</name>
     <modules>
         <module>core</module>
-        <module>perftest</module>
         <module>extensions</module>
         <module>samples</module>
     </modules>

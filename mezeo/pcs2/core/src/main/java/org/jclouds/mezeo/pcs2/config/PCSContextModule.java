@@ -28,6 +28,7 @@ import java.net.URI;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.mezeo.pcs2.PCS;
 import org.jclouds.mezeo.pcs2.PCSClient;
@@ -46,6 +47,7 @@ import com.google.inject.Provides;
 public class PCSContextModule extends AbstractModule {
    @Override
    protected void configure() {
+      install(new BlobStoreObjectModule());
       install(new PCSObjectModule());
    }
 

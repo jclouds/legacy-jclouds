@@ -39,7 +39,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "vcloudx.VCloudXClientLiveTest")
+@Test(groups = "live", sequential = true, testName = "vcloudx.VCloudXClientLiveTest")
 public class VCloudXClientLiveTest {
 
    private VCloudXClient connection;

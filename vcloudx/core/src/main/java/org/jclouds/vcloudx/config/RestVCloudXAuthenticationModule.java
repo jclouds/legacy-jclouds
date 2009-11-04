@@ -69,8 +69,8 @@ public class RestVCloudXAuthenticationModule extends AbstractModule {
 
    @Provides
    @Org
-   protected URI provideOrg(Supplier<VCloudXSession> cache) {
-      return cache.get().getOrg();
+   protected URI provideOrg(VCloudXLogin login) {
+      return login.login().getOrg();
    }
 
    /**

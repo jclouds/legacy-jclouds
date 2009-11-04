@@ -72,6 +72,7 @@ public class SDNClientLiveTest {
    public void testUploadToken() throws InterruptedException, ExecutionException, TimeoutException {
       String containerName = containerPrefix + ".testObjectOperations";
       long size = 1024;
+      
       UploadInfo uploadInfo = connection.getStorageNode(containerName, size);
       assertNotNull(uploadInfo.getHost());
       assertNotNull(uploadInfo.getToken());
@@ -87,7 +88,7 @@ public class SDNClientLiveTest {
 
       Map<String, String> metadata = connection.getMetadata(containerName + "/test.txt").get(30,
                TimeUnit.SECONDS);
-      assertEquals(metadata, ImmutableMap.of("MD5", HttpUtils.toBase64String(md5)));
+      assertEquals(metadata.get("MD5"), HttpUtils.toBase64String(md5));
 
       String content = connection.getFile(containerName + "/test.txt").get(30, TimeUnit.SECONDS);
       assertEquals(content, "value");
@@ -96,7 +97,7 @@ public class SDNClientLiveTest {
       connection.setMetadata(containerName + "/test.txt", metadata).get(30, TimeUnit.SECONDS);
 
       metadata = connection.getMetadata(containerName + "/test.txt").get(30, TimeUnit.SECONDS);
-      assertEquals(metadata, ImmutableMap.<String, String> builder().putAll(metadata).put("MD5",
-               HttpUtils.toBase64String(md5)).build());
+      assertEquals(metadata.get("MD5"), HttpUtils.toBase64String(md5));
+
    }
 }
