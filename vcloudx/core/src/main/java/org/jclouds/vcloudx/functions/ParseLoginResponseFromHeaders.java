@@ -60,7 +60,6 @@ public class ParseLoginResponseFromHeaders implements Function<HttpResponse, VCl
    @Inject
    private ParseLoginResponseFromHeaders(Factory factory,
             Provider<OrgListToOrgUriHandler> orgHandlerProvider) {
-      super();
       this.factory = factory;
       this.orgHandlerProvider = orgHandlerProvider;
    }

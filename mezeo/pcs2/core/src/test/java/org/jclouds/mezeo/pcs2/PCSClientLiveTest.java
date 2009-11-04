@@ -113,7 +113,7 @@ public class PCSClientLiveTest {
 
          validateMetadataItemNameEquals(containerURI, container);
 
-         connection.deleteContainer(containerURI).get(10, TimeUnit.SECONDS);
+         connection.deleteContainer(containerURI).get(30, TimeUnit.SECONDS);
       }
    }
 

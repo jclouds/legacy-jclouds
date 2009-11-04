@@ -28,9 +28,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.inject.Singleton;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -38,7 +36,6 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.util.DateService;
 import org.joda.time.DateTime;
-import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import com.google.gson.Gson;
@@ -68,10 +65,18 @@ public class ParserModule extends AbstractModule {
 
    private static class Factory implements ParseSax.Factory {
       @Inject
-      private Provider<XMLReader> parser;
+      private SAXParserFactory factory;
 
       public <T> ParseSax<T> create(HandlerWithResult<T> handler) {
-         return new ParseSax<T>(parser.get(), handler);
+         SAXParser saxParser;
+         try {
+            saxParser = factory.newSAXParser();
+            XMLReader parser = saxParser.getXMLReader();
+            return new ParseSax<T>(parser, handler);
+         } catch (Exception e) {
+            throw new RuntimeException(e);
+         }
+
       }
    }
 
@@ -90,14 +95,6 @@ public class ParserModule extends AbstractModule {
          }
       }
 
-   }
-
-   @Provides
-   XMLReader provideXMLReader(SAXParserFactory factory) throws ParserConfigurationException,
-            SAXException {
-      SAXParser saxParser = factory.newSAXParser();
-      XMLReader parser = saxParser.getXMLReader();
-      return parser;
    }
 
    @Provides

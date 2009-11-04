@@ -98,13 +98,13 @@
         <priority value="DEBUG" />
         <appender-ref ref="ASYNCWIRE" />
     </category>
-
+<!--
     <category name="jclouds.http.wire">
         <priority value="DEBUG" />
         <appender-ref ref="ASYNCWIRE" />
     </category>
     
-    <!-- ======================= -->
+    --><!-- ======================= -->
 	<!-- Setup the Root category -->
 	<!-- ======================= -->
 
