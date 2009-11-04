@@ -100,8 +100,7 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest<Cloud
          // Confirm CDN is enabled via HEAD request and has default TTL
          cdnMetadata = context.getApi().getCDNMetadata(containerNameWithCDN);
 
-         // Ticket #2213 this should be true, but it is false
-         // assertTrue(!cdnMetadata.isCDNEnabled());
+         assertTrue(cdnMetadata.isCDNEnabled());
 
          assertEquals(cdnMetadata.getCDNUri(), cdnUri);
          final long initialTTL = cdnMetadata.getTTL();
@@ -148,8 +147,7 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest<Cloud
 
          cdnMetadata = context.getApi().getCDNMetadata(containerNameWithCDN);
 
-         // Ticket #2213 this should be true, but it is false
-         // assertTrue(!cdnMetadata.isCDNEnabled());
+         assertTrue(cdnMetadata.isCDNEnabled());
 
          assertEquals(cdnMetadata.getTTL(), ttl);
 
@@ -158,8 +156,7 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest<Cloud
          context.getApi().updateCDN(containerNameWithCDN, minimumTTL);
 
          cdnMetadata = context.getApi().getCDNMetadata(containerNameWithCDN);
-         // Ticket #2213 this should be true, but it is false
-         // assertTrue(!cdnMetadata.isCDNEnabled());
+         assertTrue(cdnMetadata.isCDNEnabled());
 
          assertEquals(cdnMetadata.getTTL(), minimumTTL);
 

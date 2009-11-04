@@ -164,15 +164,17 @@ public interface CloudFilesClient {
    @Endpoint(CloudFilesCDN.class)
    ContainerCDNMetadata getCDNMetadata(@PathParam("container") String container);
 
-   @PUT
+   @POST
    @Path("{container}")
+   @Headers(keys = CloudFilesHeaders.CDN_ENABLED, values = "True")
    @ResponseParser(ParseCdnUriFromHeaders.class)
    @Endpoint(CloudFilesCDN.class)
    URI enableCDN(@PathParam("container") String container,
             @HeaderParam(CloudFilesHeaders.CDN_TTL) Long ttl);
 
-   @PUT
+   @POST
    @Path("{container}")
+   @Headers(keys = CloudFilesHeaders.CDN_ENABLED, values = "True")
    @ResponseParser(ParseCdnUriFromHeaders.class)
    @Endpoint(CloudFilesCDN.class)
    URI enableCDN(@PathParam("container") String container);
