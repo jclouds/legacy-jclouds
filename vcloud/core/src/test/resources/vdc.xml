@@ -1,0 +1,10 @@
+<Vdc href="https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32" type="application/vnd.vmware.vcloud.vdc+xml" name="Miami Environment 1" xmlns="http://www.vmware.com/vcloud/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Link rel="down" href="https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32/catalog" type="application/vnd.vmware.vcloud.catalog+xml" name="Miami Environment 1"/>
+  <Link rel="down" href="https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32/publicIps" type="application/xml" name="Public IPs"/>
+  <Link rel="down" href="https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32/internetServices" type="application/xml" name="Internet Services"/>
+  <Description/>
+  <ResourceEntities/>
+  <AvailableNetworks>
+    <Network href="https://services.vcloudexpress.terremark.com/api/v0.8/network/1708" type="application/vnd.vmware.vcloud.network+xml" name="10.114.34.128/26"/>
+  </AvailableNetworks>
+</Vdc>

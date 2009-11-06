@@ -1,0 +1,27 @@
+<Catalog href="https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32/catalog" type="application/vnd.vmware.vcloud.catalog+xml" name="Miami Environment 1" xmlns="http://www.vmware.com/vcloud/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <CatalogItems>
+    <CatalogItem href="https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/5" type="application/vnd.vmware.vcloud.catalogItem+xml" name="CentOS 5.3 (32-bit)"/>
+    <CatalogItem href="https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/6" type="application/vnd.vmware.vcloud.catalogItem+xml" name="CentOS 5.3 (64-bit)"/>
+    <CatalogItem href="https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/7" type="application/vnd.vmware.vcloud.catalogItem+xml" name="RHEL 5.3 (32-bit)"/>
+    <CatalogItem href="https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/8" type="application/vnd.vmware.vcloud.catalogItem+xml" name="RHEL 5.3 (64-bit)"/>
+    <CatalogItem href="https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/11" type="application/vnd.vmware.vcloud.catalogItem+xml" name="Ubuntu JeOS 9.04 (32-bit)"/>
+    <CatalogItem href="https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/12" type="application/vnd.vmware.vcloud.catalogItem+xml" name="Ubuntu JeOS 9.04 (64-bit)"/>
+    <CatalogItem href="https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/9" type="application/vnd.vmware.vcloud.catalogItem+xml" name="Ubuntu Server 9.04 (32-bit)"/>
+    <CatalogItem href="https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/10" type="application/vnd.vmware.vcloud.catalogItem+xml" name="Ubuntu Server 9.04 (64-bit)"/>
+    <CatalogItem href="https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/1" type="application/vnd.vmware.vcloud.catalogItem+xml" name="Windows 2003 Enterprise R2 (32-bit)"/>
+    <CatalogItem href="https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/2" type="application/vnd.vmware.vcloud.catalogItem+xml" name="Windows 2003 Enterprise R2 (64-bit)"/>
+    <CatalogItem href="https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/3" type="application/vnd.vmware.vcloud.catalogItem+xml" name="Windows 2003 Standard R2 (32-bit)"/>
+    <CatalogItem href="https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/4" type="application/vnd.vmware.vcloud.catalogItem+xml" name="Windows 2003 Standard R2 (64-bit)"/>
+    <CatalogItem href="https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/23" type="application/vnd.vmware.vcloud.catalogItem+xml" name="Windows 2003 Standard R2 w.SQL 2008 Web (64-bit)"/>
+    <CatalogItem href="https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/13" type="application/vnd.vmware.vcloud.catalogItem+xml" name="Windows Server 2008 Enterprise (32-bit)"/>
+    <CatalogItem href="https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/15" type="application/vnd.vmware.vcloud.catalogItem+xml" name="Windows Server 2008 Enterprise (64-bit)"/>
+    <CatalogItem href="https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/16" type="application/vnd.vmware.vcloud.catalogItem+xml" name="Windows Server 2008 Enterprise R2 (64-bit)"/>
+    <CatalogItem href="https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/17" type="application/vnd.vmware.vcloud.catalogItem+xml" name="Windows Server 2008 Standard (32-bit)"/>
+    <CatalogItem href="https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/18" type="application/vnd.vmware.vcloud.catalogItem+xml" name="Windows Server 2008 Standard (64-bit)"/>
+    <CatalogItem href="https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/19" type="application/vnd.vmware.vcloud.catalogItem+xml" name="Windows Server 2008 Standard R2 (64-bit)"/>
+    <CatalogItem href="https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/14" type="application/vnd.vmware.vcloud.catalogItem+xml" name="Windows Server 2008 Standard w.SQL 2008 Web (64-bit)"/>
+    <CatalogItem href="https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/20" type="application/vnd.vmware.vcloud.catalogItem+xml" name="Windows Web Server 2008 (32-bit)"/>
+    <CatalogItem href="https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/21" type="application/vnd.vmware.vcloud.catalogItem+xml" name="Windows Web Server 2008 (64-bit)"/>
+    <CatalogItem href="https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/22" type="application/vnd.vmware.vcloud.catalogItem+xml" name="Windows Web Server 2008 R2 (64-bit)"/>
+  </CatalogItems>
+</Catalog>
