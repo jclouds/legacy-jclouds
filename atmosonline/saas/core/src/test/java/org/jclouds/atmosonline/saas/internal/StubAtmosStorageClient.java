@@ -22,12 +22,14 @@ import org.jclouds.atmosonline.saas.options.ListOptions;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.attr.ConsistencyModels;
+import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
 import org.jclouds.blobstore.integration.internal.StubBlobStore;
 import org.jclouds.concurrent.FutureFunctionWrapper;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.logging.Logger.LoggerFactory;
+import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
 
@@ -98,7 +100,8 @@ public class StubAtmosStorageClient implements AtmosStorageClient {
          if (!path.equals(""))
             object.getContentMetadata().setName(path + "/" + file);
       }
-      return wrapFuture(blobStore.putBlob(container, object2Blob.apply(object)),
+      Blob blob = object2Blob.apply(object);
+      return wrapFuture(blobStore.putBlob(container, blob),
                new Function<String, URI>() {
 
                   public URI apply(String from) {
@@ -150,6 +153,7 @@ public class StubAtmosStorageClient implements AtmosStorageClient {
       try {
          return this.blob2Object.apply(blobStore.getBlob(container, path).get());
       } catch (Exception e) {
+         Utils.<KeyNotFoundException> rethrowIfRuntimeOrSameType(e);
          throw new RuntimeException(e);
       }
    }

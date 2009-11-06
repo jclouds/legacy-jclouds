@@ -95,12 +95,12 @@
     <category name="jclouds.http.headers">
         <priority value="DEBUG" />
         <appender-ref ref="ASYNCWIRE" />
-    </category>
+    </category><!--
     <category name="jclouds.http.wire">
         <priority value="DEBUG" />
         <appender-ref ref="ASYNCWIRE" />
     </category>
-    <!--
+    --><!--
 
         <category name="jclouds.http.wire"> <priority value="DEBUG" />
         <appender-ref ref="ASYNCWIRE" /> </category> <category
