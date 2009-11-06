@@ -47,12 +47,12 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-blobstore-core</artifactId>
+            <artifactId>jclouds-blobstore</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-blobstore-core</artifactId>
+            <artifactId>jclouds-blobstore</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
