@@ -83,7 +83,7 @@ public class StoreTweetsController extends HttpServlet {
    private final Map<String, BlobStoreContext<?>> contexts;
    private final TwitterClient client;
    private final String container;
-
+   
    @Resource
    protected Logger logger = Logger.NULL;
 

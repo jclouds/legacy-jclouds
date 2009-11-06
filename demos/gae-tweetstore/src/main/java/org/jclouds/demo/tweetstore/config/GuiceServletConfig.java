@@ -64,25 +64,30 @@ import com.google.inject.util.Jsr330;
  */
 public class GuiceServletConfig extends GuiceServletContextListener {
 
-   private Map<String, BlobStoreContext<?>> contexts;
-   private TwitterClient client;
+   private Map<String, BlobStoreContext<?>> providerTypeToBlobStoreMap;
+   private TwitterClient twitterClient;
    private String container;
 
    @SuppressWarnings("unchecked")
    @Override
    public void contextInitialized(ServletContextEvent servletContextEvent) {
-      Properties props = loadJCloudsProperties(servletContextEvent);
-      Queue queue = QueueFactory.getQueue("twitter");
 
+      Properties props = loadJCloudsProperties(servletContextEvent);
+
+      // shared across all blobstores and used to retrieve tweets
+      twitterClient = TwitterContextFactory.createContext(props,
+               new GaeHttpCommandExecutorServiceModule()).getApi();
+
+      // common namespace for storing tweets.
       container = checkNotNull(props.getProperty(PROPERTY_TWEETSTORE_CONTAINER),
                PROPERTY_TWEETSTORE_CONTAINER);
-      ImmutableList<String> list = ImmutableList.<String> of(checkNotNull(
+      ImmutableList<String> contextBuilderClassNames = ImmutableList.<String> of(checkNotNull(
                props.getProperty(PROPERTY_BLOBSTORE_CONTEXTBUILDERS),
                PROPERTY_BLOBSTORE_CONTEXTBUILDERS).split(","));
-      contexts = Maps.newHashMap();
-      client = TwitterContextFactory
-               .createContext(props, new GaeHttpCommandExecutorServiceModule()).getApi();
-      for (String className : list) {
+
+      // instantiate and store references to all blobstores by provider name
+      providerTypeToBlobStoreMap = Maps.newHashMap();
+      for (String className : contextBuilderClassNames) {
          Class<BlobStoreContextBuilder<?>> builderClass;
          Constructor<BlobStoreContextBuilder<?>> constructor;
          String name;
@@ -90,14 +95,20 @@ public class GuiceServletConfig extends GuiceServletContextListener {
          try {
             builderClass = (Class<BlobStoreContextBuilder<?>>) Class.forName(className);
             name = builderClass.getSimpleName().replaceAll("BlobStoreContextBuilder", "");
-            queue.add(url("/store/do").header("context", name).method(Method.GET));
             constructor = builderClass.getConstructor(Properties.class);
             context = constructor.newInstance(props).withModules(
                      new GaeHttpCommandExecutorServiceModule()).buildContext();
          } catch (Exception e) {
             throw new RuntimeException("error instantiating " + className, e);
          }
-         contexts.put(name, context);
+         providerTypeToBlobStoreMap.put(name, context);
+      }
+
+      // get a queue for submitting store tweet requests
+      Queue queue = QueueFactory.getQueue("twitter");
+      // submit a job to store tweets for each configured blobstore
+      for (String name : providerTypeToBlobStoreMap.keySet()) {
+         queue.add(url("/store/do").header("context", name).method(Method.GET));
       }
 
       super.contextInitialized(servletContextEvent);
@@ -123,21 +134,20 @@ public class GuiceServletConfig extends GuiceServletContextListener {
          @Override
          protected void configureServlets() {
             bind(new TypeLiteral<Map<String, BlobStoreContext<?>>>() {
-            }).toInstance(GuiceServletConfig.this.contexts);
-            bind(TwitterClient.class).toInstance(client);
+            }).toInstance(GuiceServletConfig.this.providerTypeToBlobStoreMap);
+            bind(TwitterClient.class).toInstance(twitterClient);
             bindConstant().annotatedWith(Jsr330.named(PROPERTY_TWEETSTORE_CONTAINER)).to(container);
             serve("/store/*").with(StoreTweetsController.class);
             serve("/tweets/*").with(AddTweetsController.class);
             requestInjection(this);
          }
       }
-
       );
    }
 
    @Override
    public void contextDestroyed(ServletContextEvent servletContextEvent) {
-      for (BlobStoreContext<?> context : contexts.values()) {
+      for (BlobStoreContext<?> context : providerTypeToBlobStoreMap.values()) {
          context.close();
       }
       super.contextDestroyed(servletContextEvent);
