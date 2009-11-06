@@ -113,8 +113,6 @@ public interface CloudServersClient {
    @ResponseParser(ParseServerListFromJsonResponse.class)
    @QueryParams(keys = "format", values = "json")
    @Path("/servers")
-   // TODO: Error Response Code(s): cloudServersFault (400, 500), serviceUnavailable (503),
-   // unauthorized (401), badRequest (400), overLimit (413)
    List<Server> listServers(ListOptions... options);
 
    /**
@@ -129,8 +127,6 @@ public interface CloudServersClient {
    @QueryParams(keys = "format", values = "json")
    @ExceptionParser(ReturnServerNotFoundOn404.class)
    @Path("/servers/{id}")
-   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
-   // (400)
    Server getServer(@PathParam("id") int id);
 
    /**
@@ -145,8 +141,6 @@ public interface CloudServersClient {
    @DELETE
    @ExceptionParser(ReturnFalseOn404.class)
    @Path("/servers/{id}")
-   // TODO:cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
-   // (400), itemNotFound (404), buildInProgress (409), overLimit (413)
    boolean deleteServer(@PathParam("id") int id);
 
    /**
@@ -167,8 +161,6 @@ public interface CloudServersClient {
    @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/action")
    @ExceptionParser(ReturnFalseOn404.class)
-   // TODO:cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
-   // (400), badMediaType(415),buildInProgress (409), overLimit (403)
    boolean rebootServer(@PathParam("id") int id,
             @BinderParam(BindRebootTypeToJsonEntity.class) RebootType rebootType);
 
@@ -189,9 +181,6 @@ public interface CloudServersClient {
    @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/action")
    @ExceptionParser(ReturnFalseOn404.class)
-   // TODO:cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
-   // (400), badMediaType(415), itemNotFound (404), buildInProgress (409), serverCapacityUnavailable
-   // (503), overLimit (413), resizeNotAllowed (403)
    boolean resizeServer(@PathParam("id") int id,
             @BinderParam(BindResizeFlavorToJsonEntity.class) int flavorId);
 
@@ -210,9 +199,6 @@ public interface CloudServersClient {
    @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/action")
    @ExceptionParser(ReturnFalseOn404.class)
-   // TODO:cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
-   // (400), badMediaType(415), itemNotFound (404), buildInProgress (409), serverCapacityUnavailable
-   // (503), overLimit (413), resizeNotAllowed (403)
    boolean confirmResizeServer(
             @PathParam("id") @BinderParam(BindConfirmResizeToJsonEntity.class) int id);
 
@@ -231,9 +217,6 @@ public interface CloudServersClient {
    @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/action")
    @ExceptionParser(ReturnFalseOn404.class)
-   // TODO:cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
-   // (400), badMediaType(415), itemNotFound (404), buildInProgress (409), serverCapacityUnavailable
-   // (503), overLimit (413), resizeNotAllowed (403)
    boolean revertResizeServer(
             @PathParam("id") @BinderParam(BindRevertResizeToJsonEntity.class) int id);
 
@@ -253,8 +236,6 @@ public interface CloudServersClient {
    @QueryParams(keys = "format", values = "json")
    @Path("/servers")
    @MapBinder(CreateServerOptions.class)
-   // TODO:cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401),
-   // badMediaType(415), badRequest (400), serverCapacityUnavailable (503), overLimit (413)
    Server createServer(@MapEntityParam("name") String name, @MapEntityParam("imageId") int imageId,
             @MapEntityParam("flavorId") int flavorId, CreateServerOptions... options);
 
@@ -278,9 +259,6 @@ public interface CloudServersClient {
    @Path("/servers/{id}/action")
    @ExceptionParser(ReturnFalseOn404.class)
    @MapBinder(RebuildServerOptions.class)
-   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
-   // (400), badMediaType(415), itemNotFound (404), buildInProgress (409), serverCapacityUnavailable
-   // (503), overLimit (413)
    boolean rebuildServer(@PathParam("id") int id, RebuildServerOptions... options);
 
    /**
@@ -308,8 +286,6 @@ public interface CloudServersClient {
    @ExceptionParser(ReturnFalseOn404.class)
    @Path("/servers/{id}/ips/public/{address}")
    @MapBinder(BindSharedIpGroupToJsonEntity.class)
-   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
-   // (400), badMediaType(415), buildInProgress (409), overLimit (413)
    boolean shareIp(@PathParam("address") @ParamParser(IpAddress.class) InetAddress addressToShare,
             @PathParam("id") int serverToTosignBindressTo,
             @MapEntityParam("sharedIpGroupId") int sharedIpGroup,
@@ -327,9 +303,6 @@ public interface CloudServersClient {
    @DELETE
    @ExceptionParser(ReturnFalseOn404.class)
    @Path("/servers/{id}/ips/public/{address}")
-   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized(401), badRequest
-   // (400),
-   // badMediaType(415), overLimit (413)
    boolean unshareIp(
             @PathParam("address") @ParamParser(IpAddress.class) InetAddress addressToShare,
             @PathParam("id") int serverToTosignBindressTo);
@@ -344,8 +317,6 @@ public interface CloudServersClient {
    @PUT
    @ExceptionParser(ReturnFalseOn404.class)
    @Path("/servers/{id}")
-   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
-   // (400), badMediaType(415), buildInProgress (409), overLimit (413)
    boolean changeAdminPass(@PathParam("id") int id,
             @BinderParam(BindAdminPassToJsonEntity.class) String adminPass);
 
@@ -360,8 +331,6 @@ public interface CloudServersClient {
    @PUT
    @ExceptionParser(ReturnFalseOn404.class)
    @Path("/servers/{id}")
-   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
-   // (400), badMediaType(415), buildInProgress (409), overLimit (413)
    boolean renameServer(@PathParam("id") int id,
             @BinderParam(BindServerNameToJsonEntity.class) String newName);
 
@@ -376,8 +345,6 @@ public interface CloudServersClient {
    @ResponseParser(ParseFlavorListFromJsonResponse.class)
    @QueryParams(keys = "format", values = "json")
    @Path("/flavors")
-   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
-   // (400)
    List<Flavor> listFlavors(ListOptions... options);
 
    /**
@@ -392,8 +359,6 @@ public interface CloudServersClient {
    @QueryParams(keys = "format", values = "json")
    @ExceptionParser(ReturnFlavorNotFoundOn404.class)
    @Path("/flavors/{id}")
-   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
-   // (400)
    Flavor getFlavor(@PathParam("id") int id);
 
    /**
@@ -407,8 +372,6 @@ public interface CloudServersClient {
    @ResponseParser(ParseImageListFromJsonResponse.class)
    @QueryParams(keys = "format", values = "json")
    @Path("/images")
-   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
-   // (400)
    List<Image> listImages(ListOptions... options);
 
    /**
@@ -423,8 +386,6 @@ public interface CloudServersClient {
    @QueryParams(keys = "format", values = "json")
    @ExceptionParser(ReturnImageNotFoundOn404.class)
    @Path("/images/{id}")
-   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
-   // (400)
    Image getImage(@PathParam("id") int id);
 
    /**
@@ -452,9 +413,6 @@ public interface CloudServersClient {
    @ExceptionParser(ReturnImageNotFoundOn404.class)
    @MapBinder(BindCreateImageToJsonEntity.class)
    @Path("/images")
-   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
-   // (400), badMediaType(415), buildInProgress (409), serverCapacityUnavailable (503), overLimit
-   // (413), resizeNotAllowed (403), backupOrResizeInProgress (409)
    Image createImageFromServer(@MapEntityParam("imageName") String imageName,
             @MapEntityParam("serverId") int serverId);
 
@@ -469,8 +427,6 @@ public interface CloudServersClient {
    @ResponseParser(ParseSharedIpGroupListFromJsonResponse.class)
    @QueryParams(keys = "format", values = "json")
    @Path("/shared_ip_groups")
-   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
-   // (400)
    List<SharedIpGroup> listSharedIpGroups(ListOptions... options);
 
    /**
@@ -485,8 +441,6 @@ public interface CloudServersClient {
    @QueryParams(keys = "format", values = "json")
    @ExceptionParser(ReturnSharedIpGroupNotFoundOn404.class)
    @Path("/shared_ip_groups/{id}")
-   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
-   // (400)
    SharedIpGroup getSharedIpGroup(@PathParam("id") int id);
 
    /**
@@ -500,8 +454,6 @@ public interface CloudServersClient {
    @QueryParams(keys = "format", values = "json")
    @Path("/shared_ip_groups")
    @MapBinder(CreateSharedIpGroupOptions.class)
-   // TODO: cloudSharedIpGroupsFault (400, 500), serviceUnavailable (503), unauthorized (401),
-   // badRequest (400), badMediaType(415), overLimit (413)
    SharedIpGroup createSharedIpGroup(@MapEntityParam("name") String name,
             CreateSharedIpGroupOptions... options);
 
@@ -516,8 +468,6 @@ public interface CloudServersClient {
    @DELETE
    @ExceptionParser(ReturnFalseOn404.class)
    @Path("/shared_ip_groups/{id}")
-   // TODO:cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
-   // (400)
    boolean deleteSharedIpGroup(@PathParam("id") int id);
 
    /**
@@ -527,8 +477,6 @@ public interface CloudServersClient {
    @ResponseParser(ParseBackupScheduleFromJsonResponse.class)
    @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/backup_schedule")
-   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
-   // (400), itemNotFound (404)
    BackupSchedule listBackupSchedule(@PathParam("id") int serverId);
 
    /**
@@ -541,8 +489,6 @@ public interface CloudServersClient {
    @DELETE
    @ExceptionParser(ReturnFalseOn404.class)
    @Path("/servers/{id}/backup_schedule")
-   // TODO:cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
-   // (400), buildInProgress (409), serverCapacityUnavailable (503), backupOrResizeInProgress(409)
    boolean deleteBackupSchedule(@PathParam("id") int serverId);
 
    /**
@@ -553,9 +499,6 @@ public interface CloudServersClient {
    @POST
    @ExceptionParser(ReturnFalseOn404.class)
    @Path("/servers/{id}/backup_schedule")
-   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
-   // (400), badMediaType(415), buildInProgress (409), serverCapacityUnavailable (503),
-   // backupOrResizeInProgress(409), resizeNotAllowed (403). overLimit (413)
    boolean replaceBackupSchedule(@PathParam("id") int id,
             @BinderParam(BindBackupScheduleToJsonEntity.class) BackupSchedule backupSchedule);
 
@@ -566,8 +509,6 @@ public interface CloudServersClient {
    @ResponseParser(ParseAddressesFromJsonResponse.class)
    @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/ips")
-   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
-   // (400), overLimit (413)
    Addresses listAddresses(@PathParam("id") int serverId);
 
    /**
@@ -577,8 +518,6 @@ public interface CloudServersClient {
    @ResponseParser(ParseInetAddressListFromJsonResponse.class)
    @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/ips/public")
-   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
-   // (400), overLimit (413)
    List<InetAddress> listPublicAddresses(@PathParam("id") int serverId);
 
    /**
@@ -588,8 +527,6 @@ public interface CloudServersClient {
    @ResponseParser(ParseInetAddressListFromJsonResponse.class)
    @QueryParams(keys = "format", values = "json")
    @Path("/servers/{id}/ips/private")
-   // TODO: cloudServersFault (400, 500), serviceUnavailable (503), unauthorized (401), badRequest
-   // (400), overLimit (413)
    List<InetAddress> listPrivateAddresses(@PathParam("id") int serverId);
 
 }
