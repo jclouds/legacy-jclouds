@@ -36,17 +36,17 @@ import org.jclouds.blobstore.domain.ResourceMetadata;
 import org.jclouds.blobstore.domain.ResourceType;
 
 /**
- * This the Main class of an Application that demonstrates the use of the CreateListOwnedContainers
- * class.
+ * This the Main class of an Application that demonstrates the use of the blobstore.
  * 
- * Usage is: java MainApp \"accesskeyid\" \"secretekey\" \"ContainerName\"
+ * Usage is: java MainApp \"accesskeyid\" \"secretkey\" \"bucketName\"
  * 
  * @author Carlos Fernandes
+ * @author Adrian Cole
  */
 public class MainApp {
 
    public static int PARAMETERS = 3;
-   public static String INVALID_SYNTAX = "Invalid number of parameters. Syntax is: \"accesskeyid\" \"secretekey\" \"ContainerName\" ";
+   public static String INVALID_SYNTAX = "Invalid number of parameters. Syntax is: \"accesskeyid\" \"secretkey\" \"bucketName\" ";
 
    @SuppressWarnings("unchecked")
    public static void main(String[] args) throws InterruptedException, ExecutionException,
@@ -58,7 +58,7 @@ public class MainApp {
       // Args
       String accesskeyid = args[0];
       String secretkey = args[1];
-      String ContainerName = args[2];
+      String containerName = args[2];
 
       // Init
       BlobStoreContext context = S3BlobStoreContextFactory.createContext(accesskeyid, secretkey);
@@ -67,27 +67,27 @@ public class MainApp {
 
          // Create Container
          BlobStore blobStore = context.getBlobStore();
-         blobStore.createContainer(ContainerName).get(10, TimeUnit.SECONDS);
-         
+         blobStore.createContainer(containerName).get(10, TimeUnit.SECONDS);
+
          Blob blob = context.getBlobStore().newBlob();
          blob.getMetadata().setName("test");
          blob.setData("testdata");
-         blobStore.putBlob("test", blob).get(10, TimeUnit.SECONDS);;
+         blobStore.putBlob(containerName, blob).get(10, TimeUnit.SECONDS);
 
          // List Container
          for (ResourceMetadata resourceMd : blobStore.list().get(10, TimeUnit.SECONDS)) {
-            System.out.println(String.format("  %1$s", resourceMd));
-            if (resourceMd.getType() == ResourceType.CONTAINER ||resourceMd.getType() == ResourceType.FOLDER){
-               System.out.println(String.format(": %1$s entries%n", context.createInputStreamMap(
-                        resourceMd.getName()).size()));
+            if (resourceMd.getType() == ResourceType.CONTAINER
+                     || resourceMd.getType() == ResourceType.FOLDER) {
+               System.out.printf("  %s: %s entries%n", resourceMd.getName(), context
+                        .createInputStreamMap(resourceMd.getName()).size());
             }
          }
 
       } finally {
          // Close connecton
          context.close();
+         System.exit(0);
       }
 
    }
-
 }
