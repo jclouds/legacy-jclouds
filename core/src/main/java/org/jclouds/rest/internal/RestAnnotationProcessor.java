@@ -390,11 +390,20 @@ public class RestAnnotationProcessor<T> {
       return request;
    }
 
+   public URI replaceQuery(URI in, String newQuery,
+            @Nullable Comparator<Entry<String, String>> sorter) {
+      return replaceQuery(in, newQuery, sorter, skips);
+   }
+
    public static URI replaceQuery(URI in, String newQuery,
             @Nullable Comparator<Entry<String, String>> sorter, char... skips) {
       UriBuilder builder = UriBuilder.fromUri(in);
       builder.replaceQuery(makeQueryLine(parseQueryToMap(newQuery), sorter, skips));
       return builder.build();
+   }
+
+   public URI addQueryParam(URI in, String key, String[] values) {
+      return addQueryParam(in, key, values, skips);
    }
 
    public static URI addQueryParam(URI in, String key, String[] values, char... skips) {
@@ -405,6 +414,10 @@ public class RestAnnotationProcessor<T> {
       return builder.build();
    }
 
+   public String addFormParam(String in, String key, String[] values) {
+      return addFormParam(in, key, values, skips);
+   }
+
    public static String addFormParam(String in, String key, String[] values, char... skips) {
       Multimap<String, String> map = parseQueryToMap(in);
       map.putAll(key, Arrays.asList(values));
@@ -413,10 +426,15 @@ public class RestAnnotationProcessor<T> {
 
    public static Multimap<String, String> parseQueryToMap(String in) {
       Multimap<String, String> map = LinkedListMultimap.create();
-      String[] parts = Utils.urlDecode(in).split("&");
-      for (int partIndex = 0; partIndex < parts.length; partIndex++) {
-         String[] keyValue = parts[partIndex].split("=");
-         map.put(keyValue[0], keyValue.length == 2 ? keyValue[1] : null);
+      if (in == null) {
+      } else if (in.indexOf('&') == -1) {
+         map.put(in, null);
+      } else {
+         String[] parts = Utils.urlDecode(in).split("&");
+         for (int partIndex = 0; partIndex < parts.length; partIndex++) {
+            String[] keyValue = parts[partIndex].split("=");
+            map.put(keyValue[0], keyValue.length == 2 ? keyValue[1] : null);
+         }
       }
       return map;
    }

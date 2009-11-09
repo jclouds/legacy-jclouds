@@ -49,7 +49,7 @@ import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.util.Utils;
-import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -59,9 +59,11 @@ import com.google.inject.Injector;
 /**
  * Follows the book Cloud Application Architectures ISBN: 978-0-596-15636-7
  * 
+ * Generally disabled, as it incurs higher fees.
+ * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "ec2.ExpensiveEC2ClientLiveTest")
+@Test(groups = "live", enabled = false, sequential = true, testName = "ec2.ExpensiveEC2ClientLiveTest")
 public class ExpensiveEC2ClientLiveTest {
 
    private EC2Client client;
@@ -85,7 +87,7 @@ public class ExpensiveEC2ClientLiveTest {
       sshFactory = injector.getInstance(SshClient.Factory.class);
    }
 
-   @Test
+   @Test(enabled=false)
    void testCreateSecurityGroupIngressCidr() throws InterruptedException, ExecutionException,
             TimeoutException {
       securityGroupName = serverPrefix + "ingress";
@@ -105,7 +107,7 @@ public class ExpensiveEC2ClientLiveTest {
                .get(30, TimeUnit.SECONDS);
    }
 
-   @Test
+   @Test(enabled=false)
    void testCreateKeyPair() throws InterruptedException, ExecutionException, TimeoutException {
       String keyName = serverPrefix + "1";
       try {
@@ -123,7 +125,7 @@ public class ExpensiveEC2ClientLiveTest {
 
    }
 
-   @Test(dependsOnMethods = { "testCreateKeyPair", "testCreateSecurityGroupIngressCidr" })
+   @Test(enabled = false, dependsOnMethods = { "testCreateKeyPair", "testCreateSecurityGroupIngressCidr" })
    public void testCreateRunningInstance() throws Exception {
       String imageId = "ami-1fd73376";
       RunningInstance server = null;
@@ -192,7 +194,7 @@ public class ExpensiveEC2ClientLiveTest {
       return currentDetails;
    }
 
-   @AfterClass
+   @AfterTest
    void cleanup() {
       if (serverId != null)
          client.terminateInstances(serverId);

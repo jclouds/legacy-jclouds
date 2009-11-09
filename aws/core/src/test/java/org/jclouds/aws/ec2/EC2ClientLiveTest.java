@@ -35,7 +35,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.aws.ec2.domain.Image;
-import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.domain.IpPermission;
 import org.jclouds.aws.ec2.domain.IpProtocol;
 import org.jclouds.aws.ec2.domain.KeyPair;
@@ -91,17 +90,16 @@ public class EC2ClientLiveTest {
       assertNotNull(allResults);
       assert allResults.size() >= 0 : allResults.size();
       if (allResults.size() >= 2) {
-         Iterator<RunningInstance> iterator = allResults.iterator().next().getRunningInstances()
-                  .iterator();
-         String id1 = iterator.next().getInstanceId();
-         String id2 = iterator.next().getInstanceId();
+         Iterator<Reservation> iterator = allResults.iterator();
+         String id1 = iterator.next().getRunningInstances().first().getInstanceId();
+         String id2 = iterator.next().getRunningInstances().first().getInstanceId();
          SortedSet<Reservation> twoResults = client.describeInstances(id1, id2).get(30,
                   TimeUnit.SECONDS);
          assertNotNull(twoResults);
          assertEquals(twoResults.size(), 2);
-         iterator = twoResults.iterator().next().getRunningInstances().iterator();
-         assertEquals(iterator.next().getInstanceId(), id1);
-         assertEquals(iterator.next().getInstanceId(), id2);
+         iterator = allResults.iterator();
+         assertEquals(iterator.next().getRunningInstances().first().getInstanceId(), id1);
+         assertEquals(iterator.next().getRunningInstances().first().getInstanceId(), id2);
       }
    }
 

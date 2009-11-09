@@ -77,11 +77,11 @@ public class GeneratedHttpRequest<T> extends HttpRequest {
    }
 
    public void addQueryParam(String name, String... values) {
-      setEndpoint(RestAnnotationProcessor.addQueryParam(getEndpoint(), name, values));
+      setEndpoint(processor.addQueryParam(getEndpoint(), name, values));
    }
 
    public void replaceQuery(String query, @Nullable Comparator<Entry<String, String>> sorter) {
-      setEndpoint(RestAnnotationProcessor.replaceQuery(getEndpoint(), query, sorter));
+      setEndpoint(processor.replaceQuery(getEndpoint(), query, sorter));
    }
 
    public void replacePath(String path) {
@@ -91,6 +91,6 @@ public class GeneratedHttpRequest<T> extends HttpRequest {
    }
 
    public void addFormParam(String name, String... values) {
-      this.setEntity(RestAnnotationProcessor.addFormParam(getEntity().toString(), name, values));
+      this.setEntity(processor.addFormParam(getEntity().toString(), name, values));
    }
 }

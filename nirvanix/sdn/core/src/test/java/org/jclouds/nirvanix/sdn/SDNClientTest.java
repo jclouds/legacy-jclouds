@@ -69,7 +69,7 @@ public class SDNClientTest extends RestClientTest<SDNClient> {
 
       assertRequestLineEquals(
                httpMethod,
-               "GET http://stub:8080/ws/IMFS/GetStorageNode.ashx?output=json&sizeBytes=734859264&destFolderPath=adriansmovies HTTP/1.1");
+               "GET http://stub:8080/ws/IMFS/GetStorageNode.ashx?output=json&destFolderPath=adriansmovies&sizeBytes=734859264 HTTP/1.1");
       assertHeadersEqual(httpMethod, "");
       assertEntityEquals(httpMethod, null);
 
@@ -90,7 +90,7 @@ public class SDNClientTest extends RestClientTest<SDNClient> {
 
       assertRequestLineEquals(
                httpMethod,
-               "POST http://uploader/Upload.ashx?output=json&uploadToken=token&destFolderPath=adriansmovies HTTP/1.1");
+               "POST http://uploader/Upload.ashx?output=json&destFolderPath=adriansmovies&uploadToken=token HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 131\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\n");
       StringBuffer expects = new StringBuffer();

@@ -17,36 +17,37 @@ import com.google.inject.internal.Nullable;
  */
 public class RunningInstance implements Comparable<RunningInstance> {
    private final String amiLaunchIndex;
-   private final @Nullable
-   String dnsName;
+   @Nullable
+   private final String dnsName;
    private final String imageId;
    private final String instanceId;
    private final InstanceState instanceState;
    private final InstanceType instanceType;
-   private final @Nullable
-   InetAddress ipAddress;
-   private final @Nullable
-   String kernelId;
-   private final @Nullable
-   String keyName;
+   @Nullable
+   private final InetAddress ipAddress;
+   @Nullable
+   private final String kernelId;
+   @Nullable
+   private final String keyName;
    private final DateTime launchTime;
    private final boolean monitoring;
+   @Nullable
    private final String availabilityZone;
-   private final @Nullable
-   String platform;
-   private final @Nullable
-   String privateDnsName;
-   private final @Nullable
-   InetAddress privateIpAddress;
+   @Nullable
+   private final String platform;
+   @Nullable
+   private final String privateDnsName;
+   @Nullable
+   private final InetAddress privateIpAddress;
    private final Set<String> productCodes;
-   private final @Nullable
-   String ramdiskId;
-   private final @Nullable
-   String reason;
-   private final @Nullable
-   String subnetId;
-   private final @Nullable
-   String vpcId;
+   @Nullable
+   private final String ramdiskId;
+   @Nullable
+   private final String reason;
+   @Nullable
+   private final String subnetId;
+   @Nullable
+   private final String vpcId;
 
    public int compareTo(RunningInstance o) {
       return (this == o) ? 0 : getInstanceId().compareTo(o.getInstanceId());
@@ -55,7 +56,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
    public RunningInstance(String amiLaunchIndex, @Nullable String dnsName, String imageId,
             String instanceId, InstanceState instanceState, InstanceType instanceType,
             @Nullable InetAddress ipAddress, @Nullable String kernelId, @Nullable String keyName,
-            DateTime launchTime, boolean monitoring, String availabilityZone,
+            DateTime launchTime, boolean monitoring, @Nullable String availabilityZone,
             @Nullable String platform, @Nullable String privateDnsName,
             @Nullable InetAddress privateIpAddress, Set<String> productCodes,
             @Nullable String ramdiskId, @Nullable String reason, @Nullable String subnetId,
@@ -71,7 +72,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
       this.keyName = keyName;
       this.launchTime = checkNotNull(launchTime, "launchTime");
       this.monitoring = checkNotNull(monitoring, "monitoring");
-      this.availabilityZone = checkNotNull(availabilityZone, "availabilityZone");
+      this.availabilityZone = availabilityZone;
       this.platform = platform;
       this.privateDnsName = privateDnsName; // nullable on runinstances.
       this.privateIpAddress = privateIpAddress;

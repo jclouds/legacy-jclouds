@@ -65,13 +65,8 @@ public class SDNAuthenticationTest {
                new Object[] { "apple", "foo", "bar" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/ws/Authentication/Login.ashx");
-      try {
-         assertEquals(httpMethod.getEndpoint().getQuery(),
-                  "output=json&password=bar&username=foo&appKey=apple");
-      } catch (AssertionError e) {// TODO JDK 6 orders differently
-         assertEquals(httpMethod.getEndpoint().getQuery(),
-                  "output=json&username=foo&password=bar&appKey=apple");
-      }
+      assertEquals(httpMethod.getEndpoint().getQuery(),
+               "output=json&appKey=apple&password=bar&username=foo");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(RestAnnotationProcessor.getParserOrThrowException(method),
