@@ -210,8 +210,8 @@ public class CloudServersClientTest {
                new Object[] { changesSince(now).maxResults(1).startAt(2) });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json" + "&limit=1&changes-since="
-               + now.getMillis() / 1000 + "&offset=2");
+      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json&changes-since="
+               + now.getMillis() / 1000 + "&limit=1&offset=2");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
@@ -272,8 +272,8 @@ public class CloudServersClientTest {
                new Object[] { changesSince(now).maxResults(1).startAt(2) });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/flavors");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json" + "&limit=1&changes-since="
-               + now.getMillis() / 1000 + "&offset=2");
+      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json&changes-since="
+               + now.getMillis() / 1000 + "&limit=1&offset=2");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
@@ -303,8 +303,8 @@ public class CloudServersClientTest {
                new Object[] { withDetails().changesSince(now).maxResults(1).startAt(2) });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/flavors/detail");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json" + "&limit=1&changes-since="
-               + now.getMillis() / 1000 + "&offset=2");
+      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json&changes-since="
+               + now.getMillis() / 1000 + "&limit=1&offset=2");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
@@ -365,8 +365,8 @@ public class CloudServersClientTest {
                new Object[] { changesSince(now).maxResults(1).startAt(2) });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/images");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json" + "&limit=1&changes-since="
-               + now.getMillis() / 1000 + "&offset=2");
+      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json&changes-since="
+               + now.getMillis() / 1000 + "&limit=1&offset=2");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
@@ -381,8 +381,8 @@ public class CloudServersClientTest {
                new Object[] { withDetails().changesSince(now).maxResults(1).startAt(2) });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/images/detail");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json" + "&limit=1&changes-since="
-               + now.getMillis() / 1000 + "&offset=2");
+      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json&changes-since="
+               + now.getMillis() / 1000 + "&limit=1&offset=2");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
@@ -585,8 +585,8 @@ public class CloudServersClientTest {
                new Object[] { changesSince(now).maxResults(1).startAt(2) });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/shared_ip_groups");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json" + "&limit=1&changes-since="
-               + now.getMillis() / 1000 + "&offset=2");
+      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json&changes-since="
+               + now.getMillis() / 1000 + "&limit=1&offset=2");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
@@ -619,8 +619,8 @@ public class CloudServersClientTest {
                new Object[] { withDetails().changesSince(now).maxResults(1).startAt(2) });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/shared_ip_groups/detail");
-      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json" + "&limit=1&changes-since="
-               + now.getMillis() / 1000 + "&offset=2");
+      assertEquals(httpMethod.getEndpoint().getQuery(), "format=json&changes-since="
+               + now.getMillis() / 1000 + "&limit=1&offset=2");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
