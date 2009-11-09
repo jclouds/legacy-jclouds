@@ -46,7 +46,7 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "cloudfiles.TwitterContextBuilderTest")
+@Test(groups = "unit", testName = "twitter.TwitterContextBuilderTest")
 public class TwitterContextBuilderTest {
 
    public void testNewBuilder() {
@@ -54,15 +54,15 @@ public class TwitterContextBuilderTest {
       assertEquals(builder.getProperties().getProperty(TwitterConstants.PROPERTY_TWITTER_ENDPOINT),
                "http://twitter.com");
       assertEquals(builder.getProperties().getProperty(TwitterConstants.PROPERTY_TWITTER_USER),
-               "id");
+               "user");
       assertEquals(builder.getProperties().getProperty(TwitterConstants.PROPERTY_TWITTER_PASSWORD),
-               "secret");
+               "password");
    }
 
    public void testBuildContext() {
       RestContext<TwitterClient> context = newBuilder().buildContext();
       assertEquals(context.getClass(), RestContextImpl.class);
-      assertEquals(context.getAccount(), "id");
+      assertEquals(context.getAccount(), "user");
       assertEquals(context.getEndPoint(), URI.create("http://twitter.com"));
    }
 
@@ -82,8 +82,8 @@ public class TwitterContextBuilderTest {
    }
 
    private TwitterContextBuilder newBuilder() {
-      TwitterContextBuilder builder = new TwitterContextBuilder(new TwitterPropertiesBuilder("id",
-               "secret").build());
+      TwitterContextBuilder builder = new TwitterContextBuilder(new TwitterPropertiesBuilder("user",
+               "password").build());
       return builder;
    }
 

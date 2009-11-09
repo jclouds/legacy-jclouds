@@ -58,7 +58,7 @@ public class TwitterContextModuleTest {
             bindConstant().annotatedWith(Jsr330.named(TwitterConstants.PROPERTY_TWITTER_USER)).to(
                      "user");
             bindConstant().annotatedWith(Jsr330.named(TwitterConstants.PROPERTY_TWITTER_PASSWORD))
-                     .to("key");
+                     .to("password");
             bindConstant().annotatedWith(Jsr330.named(TwitterConstants.PROPERTY_TWITTER_ENDPOINT))
                      .to("http://localhost");
             bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {

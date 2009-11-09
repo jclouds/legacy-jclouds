@@ -32,8 +32,8 @@ import org.jclouds.rest.RestContext;
 import com.google.inject.Module;
 
 /**
- * Creates {@link RestContext<TwitterClient>} instances based on the most commonly requested
- * arguments.
+ * Creates {@link RestContext} for {@link TwitterClient} instances based on the most commonly
+ * requested arguments.
  * <p/>
  * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
  * <p/>
@@ -42,13 +42,14 @@ import com.google.inject.Module;
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
  * @author Adrian Cole
- * @see RestContext<TwitterClient>
+ * @see RestContext
+ * @see TwitterClient
  */
 public class TwitterContextFactory {
 
-   public static RestContext<TwitterClient> createContext(String user, String key,
+   public static RestContext<TwitterClient> createContext(String user, String password,
             Module... modules) {
-      return new TwitterContextBuilder(new TwitterPropertiesBuilder(user, key).build())
+      return new TwitterContextBuilder(new TwitterPropertiesBuilder(user, password).build())
                .withModules(modules).buildContext();
    }
 

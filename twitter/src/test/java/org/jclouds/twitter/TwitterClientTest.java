@@ -58,7 +58,7 @@ public class TwitterClientTest extends RestClientTest<TwitterClient> {
       Method method = TwitterClient.class.getMethod("getMyMentions");
       GeneratedHttpRequest<TwitterClient> httpMethod = processor.createRequest(method);
 
-      assertRequestLineEquals(httpMethod, "GET http://localhost/tweettest/statuses/mentions.json HTTP/1.1");
+      assertRequestLineEquals(httpMethod, "GET http://twitter.com/statuses/mentions.json HTTP/1.1");
       assertHeadersEqual(httpMethod, "");
       assertEntityEquals(httpMethod, null);
 
@@ -87,7 +87,7 @@ public class TwitterClientTest extends RestClientTest<TwitterClient> {
          @Override
          protected void configure() {
             bind(URI.class).annotatedWith(Twitter.class).toInstance(
-                     URI.create("http://localhost/tweettest"));
+                     URI.create("http://twitter.com"));
             bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
                public Logger getLogger(String category) {
                   return Logger.NULL;

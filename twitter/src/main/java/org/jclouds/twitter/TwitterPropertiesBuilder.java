@@ -57,7 +57,7 @@ public class TwitterPropertiesBuilder extends HttpPropertiesBuilder {
 
    public TwitterPropertiesBuilder withCredentials(String id, String secret) {
       properties.setProperty(PROPERTY_TWITTER_USER, checkNotNull(id, "user"));
-      properties.setProperty(PROPERTY_TWITTER_PASSWORD, checkNotNull(secret, "key"));
+      properties.setProperty(PROPERTY_TWITTER_PASSWORD, checkNotNull(secret, "password"));
       return this;
    }
 

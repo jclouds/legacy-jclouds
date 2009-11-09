@@ -39,7 +39,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 /**
- * This parses {@link Status} from a gson string.
+ * This parses {@link Status} from a json string.
  * 
  * @author Adrian Cole
  */
