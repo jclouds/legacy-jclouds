@@ -57,7 +57,7 @@ public class TwitterClientLiveTest {
    @Test
    public void testGetMyMentions() throws Exception {
       SortedSet<Status> response = connection.getMyMentions().get(1, TimeUnit.SECONDS);
-      assert(response.size() >0);
+      assert (response.size() > 0);
    }
 
 }

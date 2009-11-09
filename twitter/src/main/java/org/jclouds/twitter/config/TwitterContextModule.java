@@ -53,8 +53,8 @@ public class TwitterContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<TwitterClient> provideContext(Closer closer, TwitterClient defaultApi, @Twitter URI endPoint,
-            @Named(TwitterConstants.PROPERTY_TWITTER_USER) String account) {
+   RestContext<TwitterClient> provideContext(Closer closer, TwitterClient defaultApi,
+            @Twitter URI endPoint, @Named(TwitterConstants.PROPERTY_TWITTER_USER) String account) {
       return new RestContextImpl<TwitterClient>(closer, defaultApi, endPoint, account);
    }
 

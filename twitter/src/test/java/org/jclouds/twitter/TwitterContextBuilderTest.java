@@ -82,8 +82,8 @@ public class TwitterContextBuilderTest {
    }
 
    private TwitterContextBuilder newBuilder() {
-      TwitterContextBuilder builder = new TwitterContextBuilder(new TwitterPropertiesBuilder("user",
-               "password").build());
+      TwitterContextBuilder builder = new TwitterContextBuilder(new TwitterPropertiesBuilder(
+               "user", "password").build());
       return builder;
    }
 

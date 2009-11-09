@@ -32,7 +32,6 @@ import com.google.gson.annotations.SerializedName;
 /**
  * 
  * @author Adrian Cole
- * 
  */
 public class User implements Comparable<User> {
    @SerializedName("created_at")
