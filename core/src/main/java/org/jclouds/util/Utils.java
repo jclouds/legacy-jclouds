@@ -30,7 +30,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
@@ -39,8 +41,10 @@ import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.logging.Logger;
 
+import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ComputationException;
+import com.google.common.collect.MapMaker;
 
 /**
  * // TODO: Adrian: Document this!
@@ -50,7 +54,8 @@ import com.google.common.collect.ComputationException;
 public class Utils {
    public static final String UTF8_ENCODING = "UTF-8";
 
-   public static boolean enventuallyTrue(Supplier<Boolean> assertion, long inconsistencyMillis) throws InterruptedException {
+   public static boolean enventuallyTrue(Supplier<Boolean> assertion, long inconsistencyMillis)
+            throws InterruptedException {
 
       for (int i = 0; i < 30; i++) {
          if (!assertion.get()) {
@@ -66,9 +71,36 @@ public class Utils {
    @Resource
    protected static Logger logger = Logger.NULL;
 
-   public static String urlEncode(String in) {
+   /**
+    * Web browsers do not always handle '+' characters well, use the well-supported '%20' instead.
+    */
+   public static String urlEncode(String in, char... skipEncode) {
       try {
-         return URLEncoder.encode(in, "UTF-8");
+         String returnVal = URLEncoder.encode(in, "UTF-8").replaceAll("\\+", "%20").replaceAll(
+                  "\\*", "%2A").replaceAll("%7E", "~");
+         for (char c : skipEncode) {
+            returnVal = returnVal.replaceAll(plainToEncodedChars.get(c+""), c + "");
+         }
+         return returnVal;
+      } catch (UnsupportedEncodingException e) {
+         throw new IllegalStateException("Bad encoding on input: " + in, e);
+      }
+   }
+
+   static Map<String, String> plainToEncodedChars = new MapMaker()
+            .makeComputingMap(new Function<String, String>() {
+               public String apply(String plain) {
+                  try {
+                     return URLEncoder.encode(plain, "UTF-8");
+                  } catch (UnsupportedEncodingException e) {
+                     throw new IllegalStateException("Bad encoding on input: " + plain, e);
+                  }
+               }
+            });
+
+   public static String urlDecode(String in) {
+      try {
+         return URLDecoder.decode(in, "UTF-8");
       } catch (UnsupportedEncodingException e) {
          throw new IllegalStateException("Bad encoding on input: " + in, e);
       }

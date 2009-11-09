@@ -25,7 +25,7 @@ package org.jclouds.http.options;
 
 import java.util.Collection;
 
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 
 /**
@@ -36,9 +36,10 @@ import com.google.common.collect.Multimap;
  */
 public class BaseHttpRequestOptions implements HttpRequestOptions {
 
-   protected Multimap<String, String> matrixParameters = HashMultimap.create();
-   protected Multimap<String, String> queryParameters = HashMultimap.create();
-   protected Multimap<String, String> headers = HashMultimap.create();
+   protected Multimap<String, String> matrixParameters = LinkedHashMultimap.create();
+   protected Multimap<String, String> formParameters = LinkedHashMultimap.create();
+   protected Multimap<String, String> queryParameters = LinkedHashMultimap.create();
+   protected Multimap<String, String> headers = LinkedHashMultimap.create();
    protected String entity;
    protected String pathSuffix;
 
@@ -50,12 +51,17 @@ public class BaseHttpRequestOptions implements HttpRequestOptions {
       Collection<String> values = matrixParameters.get(string);
       return (values != null && values.size() >= 1) ? values.iterator().next() : null;
    }
-   
+
    protected String getFirstQueryOrNull(String string) {
       Collection<String> values = queryParameters.get(string);
       return (values != null && values.size() >= 1) ? values.iterator().next() : null;
    }
-   
+
+   protected String getFirstFormOrNull(String string) {
+      Collection<String> values = formParameters.get(string);
+      return (values != null && values.size() >= 1) ? values.iterator().next() : null;
+   }
+
    protected String getFirstHeaderOrNull(String string) {
       Collection<String> values = headers.get(string);
       return (values != null && values.size() >= 1) ? values.iterator().next() : null;
@@ -89,6 +95,10 @@ public class BaseHttpRequestOptions implements HttpRequestOptions {
 
    public String buildPathSuffix() {
       return pathSuffix;
+   }
+
+   public Multimap<String, String> buildFormParameters() {
+      return formParameters;
    }
 
 }

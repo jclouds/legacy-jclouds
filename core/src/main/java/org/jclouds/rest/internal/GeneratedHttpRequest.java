@@ -25,10 +25,14 @@ package org.jclouds.rest.internal;
 
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.Comparator;
+import java.util.Map.Entry;
 
 import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.http.HttpRequest;
+
+import com.google.inject.internal.Nullable;
 
 /**
  * Represents a request generated from annotations
@@ -71,17 +75,22 @@ public class GeneratedHttpRequest<T> extends HttpRequest {
       builder.replaceMatrixParam(name, values);
       replacePath(builder.build().getPath());
    }
-   
-   public void replaceQueryParam(String name, Object... values) {
-      UriBuilder builder = UriBuilder.fromUri(getEndpoint());
-      builder.replaceQueryParam(name, values);
-      URI newEndpoint = processor.replaceQuery(getEndpoint(), builder.build().getQuery());
-      setEndpoint(newEndpoint);
+
+   public void addQueryParam(String name, String... values) {
+      setEndpoint(RestAnnotationProcessor.addQueryParam(getEndpoint(), name, values));
+   }
+
+   public void replaceQuery(String query, @Nullable Comparator<Entry<String, String>> sorter) {
+      setEndpoint(RestAnnotationProcessor.replaceQuery(getEndpoint(), query, sorter));
    }
 
    public void replacePath(String path) {
       UriBuilder builder = UriBuilder.fromUri(getEndpoint());
       builder.replacePath(path);
       setEndpoint(builder.build());
+   }
+
+   public void addFormParam(String name, String... values) {
+      this.setEntity(RestAnnotationProcessor.addFormParam(getEntity().toString(), name, values));
    }
 }

@@ -21,33 +21,30 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.ssh;
+package org.jclouds.rest.annotations;
 
-import java.io.InputStream;
-import java.net.InetSocketAddress;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import javax.ws.rs.FormParam;
 
 /**
+ * Designates that a url encoded form will be added to the request.
+ * 
+ * @see FormParam
  * @author Adrian Cole
  */
-public interface SshClient {
+@Target( { TYPE, METHOD })
+@Retention(RUNTIME)
+public @interface FormParams {
 
-   interface Factory {
-      SshClient create(InetSocketAddress socket, String username, String password);
+   public static final String NULL = "FORM_NULL";
 
-      SshClient create(InetSocketAddress socket, String username, byte[] privateKey);
-   }
+   String[] keys();
 
-   InputStream get(String path);
-
-   ExecResponse exec(String command);
-
-   @PostConstruct
-   void connect();
-
-   @PreDestroy
-   void disconnect();
-
+   String[] values() default NULL;
 }

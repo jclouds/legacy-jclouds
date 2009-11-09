@@ -150,6 +150,10 @@ public class DateService {
       return iso8601SecondsDateTimeFormatter.print(dateTime);
    }
 
+   public final String iso8601SecondsDateFormat() {
+      return iso8601SecondsDateFormat(new DateTime());
+   }
+
    public final String iso8601DateFormat(Date date) {
       return iso8601DateFormat(new DateTime(date));
    }

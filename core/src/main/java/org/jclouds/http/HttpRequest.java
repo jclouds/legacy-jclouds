@@ -29,6 +29,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.List;
 
+import javax.ws.rs.core.HttpHeaders;
+
 import org.jclouds.command.Request;
 
 import com.google.common.collect.Multimap;
@@ -107,6 +109,10 @@ public class HttpRequest extends HttpMessage implements Request<URI> {
    }
 
    public void setEntity(Object content) {
+      if (content instanceof String
+               && this.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH) == null) {
+         getHeaders().put(HttpHeaders.CONTENT_LENGTH, content.toString().getBytes().length + "");
+      }
       this.entity = content;
    }
 

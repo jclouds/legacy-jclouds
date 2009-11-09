@@ -72,8 +72,8 @@ public class RestClientProxy<T> implements InvocationHandler {
 
    @SuppressWarnings("unchecked")
    @Inject
-   public RestClientProxy(Injector injector, Factory factory,
-            RestAnnotationProcessor<T> util, TypeLiteral<T> typeLiteral) {
+   public RestClientProxy(Injector injector, Factory factory, RestAnnotationProcessor<T> util,
+            TypeLiteral<T> typeLiteral) {
       this.injector = injector;
       this.util = util;
       this.declaring = (Class<T>) typeLiteral.getRawType();
@@ -172,7 +172,7 @@ public class RestClientProxy<T> implements InvocationHandler {
                Function<HttpResponse, ?> transformer,
                @Nullable Function<Exception, ?> exceptionTransformer);
    }
-   
+
    @Override
    public boolean equals(Object obj) {
       if (obj == null || !(obj instanceof RestClientProxy<?>))

@@ -43,9 +43,16 @@ public interface HttpRequestOptions {
    /**
     * Builds query parameters representing options.
     * 
-    * @return multimap that may contain query parameters.
+    * @return map that may contain query parameters.
     */
    Multimap<String, String> buildQueryParameters();
+
+   /**
+    * Builds form parameters representing options.
+    * 
+    * @return map that may contain query parameters.
+    */
+   Multimap<String, String> buildFormParameters();
 
    /**
     * Builds matrix parameters representing options.

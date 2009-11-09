@@ -28,18 +28,20 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.net.URI;
-import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
@@ -48,12 +50,14 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.MatrixParam;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
 
@@ -75,6 +79,7 @@ import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.HostPrefixParam;
 import org.jclouds.rest.annotations.MapBinder;
@@ -88,12 +93,15 @@ import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -101,7 +109,7 @@ import com.google.common.collect.Sets;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
-import com.google.inject.internal.Lists;
+import com.google.inject.internal.Nullable;
 
 /**
  * Tests behavior of JaxrsUtil
@@ -121,6 +129,7 @@ public class RestAnnotationProcessor<T> {
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToHostPrefixParamAnnotations = createMethodToIndexOfParamToAnnotation(HostPrefixParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToEndpointAnnotations = createMethodToIndexOfParamToAnnotation(Endpoint.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToMatrixParamAnnotations = createMethodToIndexOfParamToAnnotation(MatrixParam.class);
+   private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToFormParamAnnotations = createMethodToIndexOfParamToAnnotation(FormParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToQueryParamAnnotations = createMethodToIndexOfParamToAnnotation(QueryParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToPathParamAnnotations = createMethodToIndexOfParamToAnnotation(PathParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToPostParamAnnotations = createMethodToIndexOfParamToAnnotation(MapEntityParam.class);
@@ -183,6 +192,8 @@ public class RestAnnotationProcessor<T> {
 
    private final ParseSax.Factory parserFactory;
 
+   private char[] skips;
+
    @VisibleForTesting
    public Function<HttpResponse, ?> createResponseParser(Method method,
             GeneratedHttpRequest<T> request) {
@@ -217,9 +228,9 @@ public class RestAnnotationProcessor<T> {
       this.parserFactory = parserFactory;
       seedCache(declaring);
       if (declaring.isAnnotationPresent(SkipEncoding.class)) {
-         skipEncode = declaring.getAnnotation(SkipEncoding.class).value();
+         skips = declaring.getAnnotation(SkipEncoding.class).value();
       } else {
-         skipEncode = new char[] {};
+         skips = new char[] {};
       }
    }
 
@@ -237,6 +248,7 @@ public class RestAnnotationProcessor<T> {
                methodToIndexOfParamToHeaderParamAnnotations.get(method).get(index);
                methodToIndexOfParamToHostPrefixParamAnnotations.get(method).get(index);
                methodToindexOfParamToMatrixParamAnnotations.get(method).get(index);
+               methodToindexOfParamToFormParamAnnotations.get(method).get(index);
                methodToindexOfParamToQueryParamAnnotations.get(method).get(index);
                methodToindexOfParamToEndpointAnnotations.get(method).get(index);
                methodToindexOfParamToPathParamAnnotations.get(method).get(index);
@@ -297,7 +309,6 @@ public class RestAnnotationProcessor<T> {
    }
 
    final Injector injector;
-   final char[] skipEncode;
 
    public GeneratedHttpRequest<T> createRequest(Method method, Object... args) {
       URI endpoint = getEndpointFor(method, args);
@@ -309,9 +320,11 @@ public class RestAnnotationProcessor<T> {
       builder.path(method);
 
       Multimap<String, String> tokenValues = encodeValues(getPathParamKeyValues(method, args),
-               skipEncode);
+               skips);
 
-      addQueryParams(builder, tokenValues.entries(), method, args);
+      Multimap<String, String> formParams = addFormParams(tokenValues.entries(), method, args);
+      Multimap<String, String> queryParams = addQueryParams(tokenValues.entries(), method, args);
+
       addMatrixParams(builder, tokenValues.entries(), method, args);
 
       Multimap<String, String> headers = buildHeaders(tokenValues.entries(), method, args);
@@ -323,22 +336,26 @@ public class RestAnnotationProcessor<T> {
          for (Entry<String, String> header : options.buildRequestHeaders().entries()) {
             headers.put(header.getKey(), replaceTokens(header.getValue(), tokenValues.entries()));
          }
-         for (Entry<String, String> query : options.buildQueryParameters().entries()) {
-            builder.queryParam(query.getKey(), replaceTokens(query.getValue(), tokenValues
-                     .entries()));
-         }
          for (Entry<String, String> matrix : options.buildMatrixParameters().entries()) {
             builder.matrixParam(matrix.getKey(), replaceTokens(matrix.getValue(), tokenValues
                      .entries()));
          }
+         for (Entry<String, String> query : options.buildQueryParameters().entries()) {
+            queryParams.put(query.getKey(), replaceTokens(query.getValue(), tokenValues.entries()));
+         }
+         for (Entry<String, String> form : options.buildFormParameters().entries()) {
+            formParams.put(form.getKey(), replaceTokens(form.getValue(), tokenValues.entries()));
+         }
+
          String pathSuffix = options.buildPathSuffix();
          if (pathSuffix != null) {
             builder.path(pathSuffix);
          }
          stringEntity = options.buildStringEntity();
-         if (stringEntity != null) {
-            headers.put(HttpHeaders.CONTENT_LENGTH, stringEntity.getBytes().length + "");
-         }
+      }
+
+      if (queryParams.size() > 0) {
+         builder.replaceQuery(makeQueryLine(queryParams, null, skips));
       }
 
       URI endPoint;
@@ -350,14 +367,21 @@ public class RestAnnotationProcessor<T> {
          throw new IllegalStateException(e);
       }
 
-      endPoint = replaceQuery(endPoint, endPoint.getQuery());
-
       GeneratedHttpRequest<T> request = new GeneratedHttpRequest<T>(httpMethod, endPoint, this,
                declaring, method, args);
       addHostHeaderIfAnnotatedWithVirtualHost(headers, request.getEndpoint().getHost(), method);
       addFiltersIfAnnotated(method, request);
+
+      if (formParams.size() > 0) {
+         if (headers.get(HttpHeaders.CONTENT_TYPE) != null)
+            headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);
+         request.setEntity(makeQueryLine(formParams, null, skips));
+      }
+
       if (stringEntity != null) {
          request.setEntity(stringEntity);
+         if (headers.get(HttpHeaders.CONTENT_LENGTH) != null)
+            headers.put(HttpHeaders.CONTENT_LENGTH, stringEntity.getBytes().length + "");
          if (headers.get(HttpHeaders.CONTENT_TYPE) != null)
             headers.put(HttpHeaders.CONTENT_TYPE, "application/unknown");
       }
@@ -366,18 +390,61 @@ public class RestAnnotationProcessor<T> {
       return request;
    }
 
-   @VisibleForTesting
-   URI replaceQuery(URI endPoint, String query) {
-      return replaceQuery(endPoint, query, skipEncode);
+   public static URI replaceQuery(URI in, String newQuery,
+            @Nullable Comparator<Entry<String, String>> sorter, char... skips) {
+      UriBuilder builder = UriBuilder.fromUri(in);
+      builder.replaceQuery(makeQueryLine(parseQueryToMap(newQuery), sorter, skips));
+      return builder.build();
    }
 
-   @VisibleForTesting
-   static URI replaceQuery(URI endPoint, String query, char... skipEncode) {
-      UriBuilder qbuilder = UriBuilder.fromUri(endPoint);
-      String unencodedQuery = query == null ? null : unEncode(query, skipEncode);
-      qbuilder.replaceQuery(unencodedQuery);
-      endPoint = qbuilder.build();
-      return endPoint;
+   public static URI addQueryParam(URI in, String key, String[] values, char... skips) {
+      UriBuilder builder = UriBuilder.fromUri(in);
+      Multimap<String, String> map = parseQueryToMap(in.getQuery());
+      map.putAll(key, Arrays.asList(values));
+      builder.replaceQuery(makeQueryLine(map, null, skips));
+      return builder.build();
+   }
+
+   public static String addFormParam(String in, String key, String[] values, char... skips) {
+      Multimap<String, String> map = parseQueryToMap(in);
+      map.putAll(key, Arrays.asList(values));
+      return makeQueryLine(map, null, skips);
+   }
+
+   public static Multimap<String, String> parseQueryToMap(String in) {
+      Multimap<String, String> map = LinkedListMultimap.create();
+      String[] parts = Utils.urlDecode(in).split("&");
+      for (int partIndex = 0; partIndex < parts.length; partIndex++) {
+         String[] keyValue = parts[partIndex].split("=");
+         map.put(keyValue[0], keyValue.length == 2 ? keyValue[1] : null);
+      }
+      return map;
+   }
+
+   public static SortedSet<Entry<String, String>> sortEntries(
+            Collection<Map.Entry<String, String>> in, Comparator<Map.Entry<String, String>> sorter) {
+      SortedSet<Entry<String, String>> entries = Sets.newTreeSet(sorter);
+      entries.addAll(in);
+      return entries;
+   }
+
+   public static String makeQueryLine(Multimap<String, String> params,
+            @Nullable Comparator<Map.Entry<String, String>> sorter, char... skips) {
+
+      Iterator<Map.Entry<String, String>> pairs = ((sorter == null) ? params.entries()
+               : sortEntries(params.entries(), sorter)).iterator();
+      StringBuilder formBuilder = new StringBuilder();
+      while (pairs.hasNext()) {
+         Map.Entry<String, String> pair = pairs.next();
+         formBuilder.append(Utils.urlEncode(pair.getKey(), skips));
+         if (pair.getValue() != null && !pair.getValue().equals("")) {
+            formBuilder.append("=");
+            formBuilder.append(Utils.urlEncode(pair.getValue(), skips));
+         }
+         if (pairs.hasNext())
+            formBuilder.append("&");
+      }
+      return formBuilder.toString();
    }
 
    private void addMatrixParams(UriBuilder builder, Collection<Entry<String, String>> tokenValues,
@@ -397,30 +464,64 @@ public class RestAnnotationProcessor<T> {
       }
    }
 
-   private void addQueryParams(UriBuilder builder, Collection<Entry<String, String>> tokenValues,
+   private Multimap<String, String> addFormParams(Collection<Entry<String, String>> tokenValues,
             Method method, Object... args) {
+      Multimap<String, String> formMap = LinkedListMultimap.create();
+      if (declaring.isAnnotationPresent(FormParams.class)) {
+         FormParams form = declaring.getAnnotation(FormParams.class);
+         addForm(formMap, form, tokenValues);
+      }
+
+      if (method.isAnnotationPresent(FormParams.class)) {
+         FormParams form = method.getAnnotation(FormParams.class);
+         addForm(formMap, form, tokenValues);
+      }
+
+      for (Entry<String, String> form : getFormParamKeyValues(method, args).entries()) {
+         formMap.put(form.getKey(), replaceTokens(form.getValue(), tokenValues));
+      }
+      return formMap;
+   }
+
+   private Multimap<String, String> addQueryParams(Collection<Entry<String, String>> tokenValues,
+            Method method, Object... args) {
+      Multimap<String, String> queryMap = LinkedListMultimap.create();
       if (declaring.isAnnotationPresent(QueryParams.class)) {
          QueryParams query = declaring.getAnnotation(QueryParams.class);
-         addQuery(builder, query, tokenValues);
+         addQuery(queryMap, query, tokenValues);
       }
 
       if (method.isAnnotationPresent(QueryParams.class)) {
          QueryParams query = method.getAnnotation(QueryParams.class);
-         addQuery(builder, query, tokenValues);
+         addQuery(queryMap, query, tokenValues);
       }
 
       for (Entry<String, String> query : getQueryParamKeyValues(method, args).entries()) {
-         builder.queryParam(query.getKey(), replaceTokens(query.getValue(), tokenValues));
+         queryMap.put(query.getKey(), replaceTokens(query.getValue(), tokenValues));
+      }
+      return queryMap;
+   }
+
+   private void addForm(Multimap<String, String> formParams, FormParams form,
+            Collection<Entry<String, String>> tokenValues) {
+      for (int i = 0; i < form.keys().length; i++) {
+         if (form.values()[i].equals(FormParams.NULL)) {
+            formParams.removeAll(form.keys()[i]);
+            formParams.put(form.keys()[i], null);
+         } else {
+            formParams.put(form.keys()[i], replaceTokens(form.values()[i], tokenValues));
+         }
       }
    }
 
-   private void addQuery(UriBuilder builder, QueryParams query,
+   private void addQuery(Multimap<String, String> queryParams, QueryParams query,
             Collection<Entry<String, String>> tokenValues) {
       for (int i = 0; i < query.keys().length; i++) {
          if (query.values()[i].equals(QueryParams.NULL)) {
-            builder.replaceQuery(query.keys()[i]);
+            queryParams.removeAll(query.keys()[i]);
+            queryParams.put(query.keys()[i], null);
          } else {
-            builder.queryParam(query.keys()[i], replaceTokens(query.values()[i], tokenValues));
+            queryParams.put(query.keys()[i], replaceTokens(query.values()[i], tokenValues));
          }
       }
    }
@@ -583,7 +684,7 @@ public class RestAnnotationProcessor<T> {
       return null;
    }
 
-   private Multimap<String, String> constants = HashMultimap.create();
+   private Multimap<String, String> constants = LinkedHashMultimap.create();
 
    public boolean isHttpMethod(Method method) {
       return IsHttpMethod.getHttpMethods(method) != null;
@@ -629,25 +730,45 @@ public class RestAnnotationProcessor<T> {
          return;
       }
 
-      for (Entry<Integer, Set<Annotation>> entry : Maps.filterValues(
+      OUTER: for (Entry<Integer, Set<Annotation>> entry : Maps.filterValues(
                methodToIndexOfParamToDecoratorParamAnnotation.get(request.getJavaMethod()),
                new Predicate<Set<Annotation>>() {
                   public boolean apply(Set<Annotation> input) {
                      return input.size() >= 1;
                   }
                }).entrySet()) {
+         boolean shouldBreak = false;
          BinderParam entityAnnotation = (BinderParam) entry.getValue().iterator().next();
          Binder binder = injector.getInstance(entityAnnotation.value());
-         Object input = request.getArgs()[entry.getKey()];
-         if (input.getClass().isArray()) {
-            Object[] entityArray = (Object[]) input;
-            input = entityArray.length > 0 ? entityArray[0] : null;
-         }
-         Object oldEntity = request.getEntity();
-         binder.bindToRequest(request, input);
-         if (oldEntity != null && !oldEntity.equals(request.getEntity())) {
-            throw new IllegalStateException(String.format(
-                     "binder %s replaced the previous entity on request: %s", binder, request));
+         if (request.getArgs().length != 0) {
+            Object input;
+            Class<?> parameterType = request.getJavaMethod().getParameterTypes()[entry.getKey()];
+            Class<? extends Object> argType = request.getArgs()[entry.getKey()].getClass();
+            if (!argType.isArray() && request.getJavaMethod().isVarArgs()
+                     && parameterType.isArray()) {
+               int arrayLength = request.getArgs().length
+                        - request.getJavaMethod().getParameterTypes().length + 1;
+               if (arrayLength == 0)
+                  break OUTER;
+               input = (Object[]) Array.newInstance(request.getArgs()[entry.getKey()].getClass(),
+                        arrayLength);
+               System.arraycopy(request.getArgs(), entry.getKey(), input, 0, arrayLength);
+               shouldBreak = true;
+            } else if (argType.isArray() && request.getJavaMethod().isVarArgs()
+                     && parameterType.isArray()) {
+               input = request.getArgs()[entry.getKey()];
+            } else {
+               input = request.getArgs()[entry.getKey()];
+               if (input.getClass().isArray()) {
+                  Object[] entityArray = (Object[]) input;
+                  input = entityArray.length > 0 ? entityArray[0] : null;
+               }
+            }
+            if (input != null) {
+               binder.bindToRequest(request, input);
+            }
+            if (shouldBreak)
+               break OUTER;
          }
       }
       if (request.getMethod().equals("PUT") && request.getEntity() == null) {
@@ -702,7 +823,7 @@ public class RestAnnotationProcessor<T> {
 
    public Multimap<String, String> buildHeaders(Collection<Entry<String, String>> tokenValues,
             Method method, final Object... args) {
-      Multimap<String, String> headers = HashMultimap.create();
+      Multimap<String, String> headers = LinkedHashMultimap.create();
       addHeaderIfAnnotationPresentOnMethod(headers, method, tokenValues);
       Map<Integer, Set<Annotation>> indexToHeaderParam = methodToIndexOfParamToHeaderParamAnnotations
                .get(method);
@@ -770,7 +891,7 @@ public class RestAnnotationProcessor<T> {
    }
 
    private Map<String, String> convertUnsafe(Multimap<String, String> in) {
-      Map<String, String> out = Maps.newHashMap();
+      Map<String, String> out = Maps.newLinkedHashMap();
       for (Entry<String, String> entry : in.entries()) {
          out.put(entry.getKey(), entry.getValue());
       }
@@ -778,7 +899,7 @@ public class RestAnnotationProcessor<T> {
    }
 
    private Multimap<String, String> getPathParamKeyValues(Method method, Object... args) {
-      Multimap<String, String> pathParamValues = HashMultimap.create();
+      Multimap<String, String> pathParamValues = LinkedHashMultimap.create();
       pathParamValues.putAll(constants);
       Map<Integer, Set<Annotation>> indexToPathParam = methodToindexOfParamToPathParamAnnotations
                .get(method);
@@ -811,58 +932,45 @@ public class RestAnnotationProcessor<T> {
       return pathParamValues;
    }
 
-   private Multimap<String, String> encodeValues(Multimap<String, String> unencoded,
-            final char... skipEncode) {
-      Multimap<String, String> encoded = HashMultimap.create();
+   private Multimap<String, String> encodeValues(Multimap<String, String> unencoded, char... skips) {
+      Multimap<String, String> encoded = LinkedHashMultimap.create();
       for (Entry<String, String> entry : unencoded.entries()) {
-         try {
-            String value = URLEncoder.encode(entry.getValue(), "UTF-8");
-            // Web browsers do not always handle '+' characters well, use the well-supported
-            // '%20' instead.
-            value = value.replaceAll("\\+", "%20");
-            if (skipEncode.length > 0) {
-               value = unEncode(value, skipEncode);
-            }
-            encoded.put(entry.getKey(), value);
-         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("jclouds only supports UTF-8", e);
-         }
+         encoded.put(entry.getKey(), Utils.urlEncode(entry.getValue(), skips));
       }
       return encoded;
    }
 
-   @VisibleForTesting
-   static String unEncode(String value, final char... skipEncode) {
-      for (char c : skipEncode) {
-         String toSkip = Character.toString(c);
-         try {
-            String encodedValueToSkip = URLEncoder.encode(toSkip, "UTF-8");
-            value = value.replaceAll(encodedValueToSkip, toSkip);
-         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("jclouds only supports UTF-8", e);
-         }
-      }
-      return value;
-   }
-
    private Multimap<String, String> getMatrixParamKeyValues(Method method, Object... args) {
-      Multimap<String, String> queryParamValues = HashMultimap.create();
-      queryParamValues.putAll(constants);
+      Multimap<String, String> matrixParamValues = LinkedHashMultimap.create();
+      matrixParamValues.putAll(constants);
       Map<Integer, Set<Annotation>> indexToMatrixParam = methodToindexOfParamToMatrixParamAnnotations
                .get(method);
       for (Entry<Integer, Set<Annotation>> entry : indexToMatrixParam.entrySet()) {
          for (Annotation key : entry.getValue()) {
             String paramKey = ((MatrixParam) key).value();
             String paramValue = args[entry.getKey()].toString();
-            queryParamValues.put(paramKey, paramValue);
+            matrixParamValues.put(paramKey, paramValue);
          }
       }
-      return queryParamValues;
+      return matrixParamValues;
+   }
+
+   private Multimap<String, String> getFormParamKeyValues(Method method, Object... args) {
+      Multimap<String, String> formParamValues = LinkedHashMultimap.create();
+      Map<Integer, Set<Annotation>> indexToFormParam = methodToindexOfParamToFormParamAnnotations
+               .get(method);
+      for (Entry<Integer, Set<Annotation>> entry : indexToFormParam.entrySet()) {
+         for (Annotation key : entry.getValue()) {
+            String paramKey = ((FormParam) key).value();
+            String paramValue = args[entry.getKey()].toString();
+            formParamValues.put(paramKey, paramValue);
+         }
+      }
+      return formParamValues;
    }
 
    private Multimap<String, String> getQueryParamKeyValues(Method method, Object... args) {
-      Multimap<String, String> queryParamValues = HashMultimap.create();
-      queryParamValues.putAll(constants);
+      Multimap<String, String> queryParamValues = LinkedHashMultimap.create();
       Map<Integer, Set<Annotation>> indexToQueryParam = methodToindexOfParamToQueryParamAnnotations
                .get(method);
       for (Entry<Integer, Set<Annotation>> entry : indexToQueryParam.entrySet()) {
