@@ -30,8 +30,8 @@ import java.io.InputStream;
 import java.net.URI;
 
 import org.jclouds.http.functions.BaseHandlerTest;
+import org.jclouds.rest.domain.internal.LinkImpl;
 import org.jclouds.vcloud.domain.Catalog;
-import org.jclouds.vcloud.domain.internal.LinkImpl;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 

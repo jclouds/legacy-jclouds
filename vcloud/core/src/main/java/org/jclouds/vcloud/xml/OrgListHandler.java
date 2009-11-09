@@ -23,13 +23,13 @@
  */
 package org.jclouds.vcloud.xml;
 
+import static org.jclouds.rest.util.Utils.putLink;
 import static org.jclouds.vcloud.VCloudMediaType.ORG_XML;
-import static org.jclouds.vcloud.util.Utils.putLink;
 
 import java.util.Map;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.vcloud.domain.Link;
+import org.jclouds.rest.domain.Link;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 

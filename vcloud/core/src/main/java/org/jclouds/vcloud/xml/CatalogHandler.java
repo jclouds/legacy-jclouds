@@ -23,16 +23,16 @@
  */
 package org.jclouds.vcloud.xml;
 
-import static org.jclouds.vcloud.util.Utils.putLink;
+import static org.jclouds.rest.util.Utils.putLink;
 
 import java.net.URI;
 import java.util.Map;
 
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.rest.domain.Link;
+import org.jclouds.rest.domain.internal.LinkImpl;
 import org.jclouds.vcloud.domain.Catalog;
-import org.jclouds.vcloud.domain.Link;
 import org.jclouds.vcloud.domain.internal.CatalogImpl;
-import org.jclouds.vcloud.domain.internal.LinkImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 

@@ -32,9 +32,9 @@ import java.io.InputStream;
 import java.net.URI;
 
 import org.jclouds.http.functions.BaseHandlerTest;
+import org.jclouds.rest.domain.internal.LinkImpl;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Organization;
-import org.jclouds.vcloud.domain.internal.LinkImpl;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -63,8 +63,8 @@ public class OrgHandlerTest extends BaseHandlerTest {
       assertEquals(result.getLocation(), URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"));
       assertEquals(result.getType(), ORG_XML);
-      assertEquals(result.getCatalog(), new LinkImpl("Miami Environment 1 Catalog", CATALOG_XML, URI
-               .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32/catalog")));
+      assertEquals(result.getCatalog(), new LinkImpl("Miami Environment 1 Catalog", CATALOG_XML,
+               URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32/catalog")));
       assertEquals(result.getVDCs(), ImmutableMap.of("Miami Environment 1", new LinkImpl(
                "Miami Environment 1", VCloudMediaType.VDC_XML, URI
                         .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32"))));

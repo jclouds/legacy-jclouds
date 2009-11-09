@@ -25,32 +25,49 @@ package org.jclouds.vcloud.config;
 
 import java.net.URI;
 
-import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.lifecycle.Closer;
-import org.jclouds.rest.RestContext;
-import org.jclouds.rest.internal.RestContextImpl;
+import org.jclouds.http.RequiresHttp;
+import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.RestClientFactory;
 import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.endpoints.Org;
-import org.jclouds.vcloud.reference.VCloudConstants;
+import org.jclouds.vcloud.VCloudDiscovery;
+import org.jclouds.vcloud.endpoints.Catalog;
+import org.jclouds.vcloud.endpoints.VDC;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
+ * Configures the VCloud authentication service connection, including logging and http transport.
+ * 
  * @author Adrian Cole
  */
-public class BaseVCloudContextModule extends AbstractModule {
+@RequiresHttp
+@ConfiguresRestClient
+public class VCloudRestClientModule extends AbstractModule {
+
    @Override
    protected void configure() {
    }
 
    @Provides
    @Singleton
-   RestContext<VCloudClient> provideContext(Closer closer, VCloudClient defaultApi,
-            @Org URI endPoint, @Named(VCloudConstants.PROPERTY_VCLOUD_USER) String account) {
-      return new RestContextImpl<VCloudClient>(closer, defaultApi, endPoint, account);
+   protected VCloudClient provideVCloudClient(RestClientFactory factory) {
+      return factory.create(VCloudClient.class);
    }
 
+   @Provides
+   @Catalog
+   @Singleton
+   protected URI provideCatalog(VCloudDiscovery discovery) {
+      return discovery.getOrganization().getCatalog().getLocation();
+   }
+
+   @Provides
+   @VDC
+   @Singleton
+   protected URI provideDefaultVDC(VCloudDiscovery discovery) {
+      return discovery.getOrganization().getVDCs().values().iterator().next().getLocation();
+   }
 }

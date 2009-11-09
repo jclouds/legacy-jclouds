@@ -50,13 +50,12 @@ public interface VCloudClient {
    @Consumes(CATALOG_XML)
    @XMLResponseParser(CatalogHandler.class)
    Future<Catalog> getCatalog();
-   
-   
+
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.VDC.class)
    @Consumes(VDC_XML)
    String getDefaultVDC();
-   
+
    //   
    // @GET
    // @Endpoint(vDC.class)

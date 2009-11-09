@@ -38,9 +38,9 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
+import org.jclouds.rest.domain.Link;
 import org.jclouds.vcloud.VCloudToken;
 import org.jclouds.vcloud.VCloudLogin.VCloudSession;
-import org.jclouds.vcloud.domain.Link;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.xml.OrgListHandler;
 

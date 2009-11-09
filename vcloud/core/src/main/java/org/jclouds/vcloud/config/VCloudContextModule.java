@@ -21,27 +21,36 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.domain;
+package org.jclouds.vcloud.config;
 
 import java.net.URI;
 
-import org.jclouds.vcloud.domain.internal.LinkImpl;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
-import com.google.inject.ImplementedBy;
+import org.jclouds.lifecycle.Closer;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.internal.RestContextImpl;
+import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.endpoints.Org;
+import org.jclouds.vcloud.reference.VCloudConstants;
+
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
 
 /**
- * Location of a vCloud resource
- * 
  * @author Adrian Cole
- * 
  */
-@ImplementedBy(LinkImpl.class)
-public interface Link {
+public class VCloudContextModule extends AbstractModule {
+   @Override
+   protected void configure() {
+   }
 
-   String getName();
-
-   String getType();
-
-   URI getLocation();
+   @Provides
+   @Singleton
+   RestContext<VCloudClient> provideContext(Closer closer, VCloudClient defaultApi,
+            @Org URI endPoint, @Named(VCloudConstants.PROPERTY_VCLOUD_USER) String account) {
+      return new RestContextImpl<VCloudClient>(closer, defaultApi, endPoint, account);
+   }
 
 }

@@ -25,6 +25,7 @@ package org.jclouds.vcloud.domain;
 
 import java.util.Map;
 
+import org.jclouds.rest.domain.Link;
 import org.jclouds.vcloud.domain.internal.OrganizationImpl;
 import org.jclouds.vcloud.endpoints.Catalog;
 import org.jclouds.vcloud.endpoints.Org;

@@ -21,14 +21,14 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.domain.internal;
+package org.jclouds.rest.domain.internal;
 
 import java.net.URI;
 
-import org.jclouds.vcloud.domain.Link;
+import org.jclouds.rest.domain.Link;
 
 /**
- * Location of a vCloud resource
+ * Location of a Rest resource
  * 
  * @author Adrian Cole
  * 

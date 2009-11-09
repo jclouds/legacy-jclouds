@@ -29,18 +29,18 @@ import java.util.concurrent.ExecutorService;
 
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextBuilder;
-import org.jclouds.vcloud.config.BaseVCloudContextModule;
-import org.jclouds.vcloud.config.BaseVCloudRestClientModule;
+import org.jclouds.vcloud.config.VCloudContextModule;
+import org.jclouds.vcloud.config.VCloudRestClientModule;
 import org.jclouds.vcloud.config.VCloudDiscoveryRestClientModule;
 
-import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
 /**
- * Creates {@link VCloudContext} or {@link Injector} instances based on the most commonly requested
- * arguments.
+ * Creates {@link RestContext} for {@link VCloudClient} instances based on the most commonly
+ * requested arguments.
  * <p/>
  * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
  * <p/>
@@ -49,11 +49,12 @@ import com.google.inject.TypeLiteral;
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
  * @author Adrian Cole
- * @see CloudFilesContext
+ * @see RestContext
+ * @see VCloudClient
  */
-public class BaseVCloudContextBuilder extends RestContextBuilder<VCloudClient> {
+public class VCloudContextBuilder extends RestContextBuilder<VCloudClient> {
 
-   public BaseVCloudContextBuilder(Properties props) {
+   public VCloudContextBuilder(Properties props) {
       super(new TypeLiteral<VCloudClient>() {
       }, props);
    }
@@ -61,22 +62,22 @@ public class BaseVCloudContextBuilder extends RestContextBuilder<VCloudClient> {
    @Override
    protected void addClientModule(List<Module> modules) {
       modules.add(new VCloudDiscoveryRestClientModule());
-      modules.add(new BaseVCloudRestClientModule());
+      modules.add(new VCloudRestClientModule());
    }
 
    @Override
    protected void addContextModule(List<Module> modules) {
-      modules.add(new BaseVCloudContextModule());
+      modules.add(new VCloudContextModule());
    }
 
    @Override
-   public BaseVCloudContextBuilder withExecutorService(ExecutorService service) {
-      return (BaseVCloudContextBuilder) super.withExecutorService(service);
+   public VCloudContextBuilder withExecutorService(ExecutorService service) {
+      return (VCloudContextBuilder) super.withExecutorService(service);
    }
 
    @Override
-   public BaseVCloudContextBuilder withModules(Module... modules) {
-      return (BaseVCloudContextBuilder) super.withModules(modules);
+   public VCloudContextBuilder withModules(Module... modules) {
+      return (VCloudContextBuilder) super.withModules(modules);
    }
 
 }

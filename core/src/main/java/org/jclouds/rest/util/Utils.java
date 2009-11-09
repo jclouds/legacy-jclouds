@@ -21,13 +21,13 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.util;
+package org.jclouds.rest.util;
 
 import java.net.URI;
 import java.util.Map;
 
-import org.jclouds.vcloud.domain.Link;
-import org.jclouds.vcloud.domain.internal.LinkImpl;
+import org.jclouds.rest.domain.Link;
+import org.jclouds.rest.domain.internal.LinkImpl;
 import org.xml.sax.Attributes;
 
 /**

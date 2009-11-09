@@ -21,20 +21,27 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.domain;
+package org.jclouds.rest.domain;
 
-import java.util.Map;
+import java.net.URI;
 
-import org.jclouds.rest.domain.Link;
-import org.jclouds.vcloud.domain.internal.CatalogImpl;
+import org.jclouds.rest.domain.internal.LinkImpl;
 
 import com.google.inject.ImplementedBy;
 
 /**
+ * Location of a Rest resource
+ * 
  * @author Adrian Cole
+ * 
  */
-@org.jclouds.vcloud.endpoints.Catalog
-@ImplementedBy(CatalogImpl.class)
-public interface Catalog extends Link, Map<String, Link> {
+@ImplementedBy(LinkImpl.class)
+public interface Link {
+
+   String getName();
+
+   String getType();
+
+   URI getLocation();
 
 }

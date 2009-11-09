@@ -26,7 +26,8 @@ package org.jclouds.vcloud.domain.internal;
 import java.net.URI;
 import java.util.Map;
 
-import org.jclouds.vcloud.domain.Link;
+import org.jclouds.rest.domain.Link;
+import org.jclouds.rest.domain.internal.LinkImpl;
 import org.jclouds.vcloud.domain.Organization;
 import org.jclouds.vcloud.endpoints.Catalog;
 import org.jclouds.vcloud.endpoints.TasksList;

@@ -4,7 +4,7 @@
    $Revision$
    $Date$
 
-   Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
+   Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
 
    ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one
@@ -34,7 +34,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jclouds</groupId>
-    <artifactId>jclouds-vcloud-core</artifactId>
+    <artifactId>jclouds-vcloud</artifactId>
     <name>jclouds vcloud Components Core</name>
     <packaging>jar</packaging>
     <description>jclouds Core components to access vcloud</description>

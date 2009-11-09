@@ -38,10 +38,10 @@ import org.jclouds.http.handlers.CloseContentAndSetExceptionErrorHandler;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.handlers.RedirectionRetryHandler;
+import org.jclouds.rest.domain.Link;
 import org.jclouds.util.Jsr330;
 import org.jclouds.vcloud.VCloudLogin;
 import org.jclouds.vcloud.VCloudLogin.VCloudSession;
-import org.jclouds.vcloud.domain.Link;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;

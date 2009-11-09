@@ -68,6 +68,7 @@ public class VCloudDiscoveryLiveTest {
             "jclouds.test.endpoint");
    String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
    String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+
    private final class VCloudDiscoveryContextModule extends AbstractModule {
 
       @SuppressWarnings( { "unused" })
@@ -83,7 +84,7 @@ public class VCloudDiscoveryLiveTest {
 
       }
    }
-   
+
    private RestContext<VCloudDiscovery> context;
 
    @Test

@@ -38,8 +38,8 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextBuilder;
 import org.jclouds.rest.internal.RestContextImpl;
-import org.jclouds.vcloud.config.BaseVCloudContextModule;
-import org.jclouds.vcloud.config.BaseVCloudRestClientModule;
+import org.jclouds.vcloud.config.VCloudContextModule;
+import org.jclouds.vcloud.config.VCloudRestClientModule;
 import org.jclouds.vcloud.endpoints.Org;
 import org.testng.annotations.Test;
 
@@ -50,12 +50,12 @@ import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests behavior of modules configured in BaseVCloudContextBuilder
+ * Tests behavior of modules configured in VCloudContextBuilder
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.BaseVCloudContextBuilderTest")
-public class BaseVCloudContextBuilderTest {
+@Test(groups = "unit", testName = "vcloud.VCloudContextBuilderTest")
+public class VCloudContextBuilderTest {
    VCloudClient connection = createMock(VCloudClient.class);
 
    @ConfiguresRestClient
@@ -86,10 +86,9 @@ public class BaseVCloudContextBuilderTest {
       assertEquals(context.getEndPoint(), URI.create("http://org"));
    }
 
-   public BaseVCloudContextBuilder builder() {
-      return new BaseVCloudContextBuilder(new VCloudPropertiesBuilder(URI
-               .create("http://localhost"), "id", "secret").build())
-               .withModules(new StubClientModule());
+   public VCloudContextBuilder builder() {
+      return new VCloudContextBuilder(new VCloudPropertiesBuilder(URI.create("http://localhost"),
+               "id", "secret").build()).withModules(new StubClientModule());
    }
 
    public void testBuildInjector() {
@@ -102,18 +101,18 @@ public class BaseVCloudContextBuilderTest {
 
    protected void testAddContextModule() {
       List<Module> modules = new ArrayList<Module>();
-      BaseVCloudContextBuilder builder = builder();
+      VCloudContextBuilder builder = builder();
       builder.addContextModule(modules);
       assertEquals(modules.size(), 1);
-      assertEquals(modules.get(0).getClass(), BaseVCloudContextModule.class);
+      assertEquals(modules.get(0).getClass(), VCloudContextModule.class);
    }
 
    protected void addClientModule() {
       List<Module> modules = new ArrayList<Module>();
-      BaseVCloudContextBuilder builder = builder();
+      VCloudContextBuilder builder = builder();
       builder.addClientModule(modules);
       assertEquals(modules.size(), 1);
-      assertEquals(modules.get(0).getClass(), BaseVCloudRestClientModule.class);
+      assertEquals(modules.get(0).getClass(), VCloudRestClientModule.class);
    }
 
 }

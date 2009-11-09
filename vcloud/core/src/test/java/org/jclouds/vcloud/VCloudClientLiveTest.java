@@ -55,12 +55,12 @@ public class VCloudClientLiveTest {
       assertEquals(response.getType(), "application/vnd.vmware.vcloud.catalog+xml");
       assert response.size() > 0;
    }
-   
+
    @Test
    public void testDefaultVDC() throws Exception {
       String response = connection.getDefaultVDC();
       assertNotNull(response);
-System.err.println(response);
+      System.err.println(response);
    }
 
    @BeforeGroups(groups = { "live" })
@@ -69,7 +69,7 @@ System.err.println(response);
                "jclouds.test.endpoint");
       account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      connection = new BaseVCloudContextBuilder(new VCloudPropertiesBuilder(URI.create(endpoint),
+      connection = new VCloudContextBuilder(new VCloudPropertiesBuilder(URI.create(endpoint),
                account, key).build()).withModules(new Log4JLoggingModule()).buildContext().getApi();
    }
 

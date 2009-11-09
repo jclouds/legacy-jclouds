@@ -69,8 +69,8 @@ public class VCloudLoginLiveTest {
       @SuppressWarnings( { "unused" })
       @Provides
       @Singleton
-      RestContext<VCloudLogin> provideContext(Closer closer, VCloudLogin api,
-               @VCloud URI endPoint, @Named(VCloudConstants.PROPERTY_VCLOUD_USER) String account) {
+      RestContext<VCloudLogin> provideContext(Closer closer, VCloudLogin api, @VCloud URI endPoint,
+               @Named(VCloudConstants.PROPERTY_VCLOUD_USER) String account) {
          return new RestContextImpl<VCloudLogin>(closer, api, endPoint, account);
       }
 
@@ -110,8 +110,8 @@ public class VCloudLoginLiveTest {
 
          @Override
          protected void addClientModule(List<Module> modules) {
-            properties.setProperty(VCloudConstants.PROPERTY_VCLOUD_ENDPOINT, checkNotNull(
-                     endpoint, "endpoint").toString());
+            properties.setProperty(VCloudConstants.PROPERTY_VCLOUD_ENDPOINT, checkNotNull(endpoint,
+                     "endpoint").toString());
             properties.setProperty(PROPERTY_VCLOUD_USER, checkNotNull(account, "user"));
             properties.setProperty(PROPERTY_VCLOUD_KEY, checkNotNull(key, "key"));
             properties.setProperty(PROPERTY_VCLOUD_SESSIONINTERVAL, "4");

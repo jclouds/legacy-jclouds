@@ -29,8 +29,9 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jclouds.rest.domain.Link;
+import org.jclouds.rest.domain.internal.LinkImpl;
 import org.jclouds.vcloud.domain.Catalog;
-import org.jclouds.vcloud.domain.Link;
 
 /**
  * Locations of resources in vCloud
