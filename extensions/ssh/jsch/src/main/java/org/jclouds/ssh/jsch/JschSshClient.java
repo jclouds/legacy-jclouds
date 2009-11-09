@@ -79,9 +79,12 @@ public class JschSshClient implements SshClient {
    private final int port;
    private final String username;
    private final String password;
+
    @Resource
    protected Logger logger = Logger.NULL;
    private Session session;
+   private final byte[] privateKey;
+   final byte[] emptyPassPhrase = new byte[0];
 
    @Inject
    public JschSshClient(InetSocketAddress socket, String username, String password) {
@@ -90,6 +93,17 @@ public class JschSshClient implements SshClient {
       this.port = socket.getPort();
       this.username = checkNotNull(username, "username");
       this.password = checkNotNull(password, "password");
+      this.privateKey = null;
+   }
+
+   @Inject
+   public JschSshClient(InetSocketAddress socket, String username, byte[] privateKey) {
+      this.host = checkNotNull(socket, "socket").getAddress();
+      checkArgument(socket.getPort() > 0, "ssh port must be greater then zero" + socket.getPort());
+      this.port = socket.getPort();
+      this.username = checkNotNull(username, "username");
+      this.password = null;
+      this.privateKey = checkNotNull(privateKey, "privateKey");
    }
 
    public InputStream get(String path) {
@@ -125,12 +139,16 @@ public class JschSshClient implements SshClient {
       session = null;
       try {
          session = jsch.getSession(username, host.getHostAddress(), port);
+         logger.debug("%s@%s:%d: Session created.", username, host.getHostAddress(), port);
+         if (password != null) {
+            session.setPassword(password);
+         } else {
+            jsch.addIdentity(username, privateKey, null, emptyPassPhrase);
+         }
       } catch (JSchException e) {
          throw new SshException(String.format("%s@%s:%d: Error creating session.", username, host
                   .getHostAddress(), port), e);
       }
-      logger.debug("%s@%s:%d: Session created.", username, host.getHostAddress(), port);
-      session.setPassword(password);
       java.util.Properties config = new java.util.Properties();
       config.put("StrictHostKeyChecking", "no");
       session.setConfig(config);

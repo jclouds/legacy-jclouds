@@ -44,6 +44,7 @@
         <jclouds.test.ssh.port>22</jclouds.test.ssh.port>
         <jclouds.test.ssh.username />
         <jclouds.test.ssh.password />
+        <jclouds.test.ssh.keyfile />
     </properties>
     <profiles>
         <profile>
@@ -88,6 +89,10 @@
                                         <property>
                                             <name>jclouds.test.ssh.username</name>
                                             <value>${jclouds.test.ssh.username}</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.test.ssh.keyfile</name>
+                                            <value>${jclouds.test.ssh.keyfile}</value>
                                         </property>
                                         <property>
                                             <name>jclouds.test.ssh.password</name>

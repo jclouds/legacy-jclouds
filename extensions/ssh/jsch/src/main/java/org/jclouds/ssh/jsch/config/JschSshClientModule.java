@@ -49,5 +49,9 @@ public class JschSshClientModule extends AbstractModule {
          return new JschSshClient(socket, username, password);
       }
 
+      public SshClient create(InetSocketAddress socket, String username, byte[] privateKey) {
+         return new JschSshClient(socket, username, privateKey);
+      }
+
    }
 }

@@ -25,6 +25,8 @@ package org.jclouds.ssh.jsch;
 
 import static org.testng.Assert.assertEquals;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
@@ -53,14 +55,16 @@ public class JschSshClientLiveTest {
    protected static final String sshPort = System.getProperty("jclouds.test.ssh.port");
    protected static final String sshUser = System.getProperty("jclouds.test.ssh.username");
    protected static final String sshPass = System.getProperty("jclouds.test.ssh.password");
+   protected static final String sshKeyFile = System.getProperty("jclouds.test.ssh.keyfile");
 
    @BeforeGroups(groups = { "live" })
-   public SshClient setupClient() throws NumberFormatException, UnknownHostException {
+   public SshClient setupClient() throws NumberFormatException, FileNotFoundException, IOException {
       int port = (sshPort != null) ? Integer.parseInt(sshPort) : 22;
       InetAddress host = (sshHost != null) ? InetAddress.getByName(sshHost) : InetAddress
                .getLocalHost();
-      if (sshUser == null || sshPass == null || sshUser.trim().equals("")
-               || sshPass.trim().equals("")) {
+      if (sshUser == null
+               || ((sshPass == null || sshPass.trim().equals("")) && (sshKeyFile == null || sshKeyFile
+                        .trim().equals(""))) || sshUser.trim().equals("")) {
          System.err.println("ssh credentials not present.  Tests will be lame");
          return new SshClient() {
 
@@ -92,7 +96,13 @@ public class JschSshClientLiveTest {
       } else {
          Injector i = Guice.createInjector(new JschSshClientModule());
          SshClient.Factory factory = i.getInstance(SshClient.Factory.class);
-         SshClient connection = factory.create(new InetSocketAddress(host, port), sshUser, sshPass);
+         SshClient connection;
+         if (sshKeyFile != null && !sshKeyFile.trim().equals("")) {
+            connection = factory.create(new InetSocketAddress(host, port), sshUser, Utils
+                     .toStringAndClose(new FileInputStream(sshKeyFile)).getBytes());
+         } else {
+            connection = factory.create(new InetSocketAddress(host, port), sshUser, sshPass);
+         }
          connection.connect();
          return connection;
       }
