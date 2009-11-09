@@ -25,24 +25,25 @@
    under the License.
    ====================================================================
  -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>org.jclouds</groupId>
-        <artifactId>jclouds-aws-project</artifactId>
+        <artifactId>jclouds-aws-extensions-project</artifactId>
         <version>1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jclouds</groupId>
-    <artifactId>jclouds-aws</artifactId>
-    <name>jclouds Amazon AWS Components Core</name>
+    <artifactId>jclouds-s3-suncloud</artifactId>
+    <name>jclouds s3 Sun Cloud Storage Adapter</name>
     <packaging>jar</packaging>
-    <description>jclouds Core components to access Amazon AWS</description>
+    <description>jclouds s3 Sun Cloud Storage Adapter</description>
 
     <scm>
-        <connection>scm:svn:http://jclouds.googlecode.com/svn/trunk</connection>
-        <developerConnection>scm:svn:https://jclouds.googlecode.com/svn/trunk</developerConnection>
-        <url>http://jclouds.googlecode.com/svn/trunk</url>
+        <connection>scm:svn:http://jclouds.googlecode.com/svn/trunk/aws/extensions/suncloud</connection>
+        <developerConnection>scm:svn:https://jclouds.googlecode.com/svn/trunk/aws/extensions/suncloud</developerConnection>
+        <url>http://jclouds.googlecode.com/svn/trunk/aws/extensions/suncloud</url>
     </scm>
 
 </project>

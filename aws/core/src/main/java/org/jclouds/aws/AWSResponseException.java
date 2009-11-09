@@ -44,7 +44,7 @@ public class AWSResponseException extends HttpResponseException {
    private AWSError error = new AWSError();
 
    public AWSResponseException(HttpCommand command, HttpResponse response, AWSError error) {
-      super(String.format("command %s failed with code %s, error: %s", command.toString(), response
+      super(String.format("request %s failed with code %s, error: %s", command.getRequest().getRequestLine(), response
                .getStatusCode(), error.toString()), command, response);
       this.setError(error);
 
@@ -52,7 +52,7 @@ public class AWSResponseException extends HttpResponseException {
 
    public AWSResponseException(HttpCommand command, HttpResponse response, AWSError error,
             Throwable cause) {
-      super(String.format("command %1$s failed with error: %2$s", command.toString(), error
+      super(String.format("request %1$s failed with error: %2$s", command.getRequest().getRequestLine(), error
                .toString()), command, response, cause);
       this.setError(error);
 

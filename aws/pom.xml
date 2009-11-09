@@ -38,13 +38,39 @@
     <name>jclouds aws project</name>
     <modules>
         <module>core</module>
-        <module>s3</module>
+        <module>extensions</module>
+        <module>perftest</module>
+        <module>demos</module>
     </modules>
     <properties>
         <jclouds.test.user>${jclouds.aws.accesskeyid}</jclouds.test.user>
         <jclouds.test.key>${jclouds.aws.secretaccesskey}</jclouds.test.key>
+        <jclouds.test.initializer>org.jclouds.aws.s3.blobstore.integration.S3TestInitializer</jclouds.test.initializer>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-jsch</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-blobstore</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-blobstore</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.jamesmurty.utils</groupId>
+            <artifactId>java-xmlbuilder</artifactId>
+            <version>0.3</version>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>jclouds-core</artifactId>

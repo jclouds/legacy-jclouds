@@ -24,25 +24,35 @@
    specific language governing permissions and limitations
    under the License.
    ====================================================================
- -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+ --><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
-        <groupId>org.jclouds</groupId>
         <artifactId>jclouds-aws-project</artifactId>
+        <groupId>org.jclouds</groupId>
         <version>1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jclouds</groupId>
-    <artifactId>jclouds-aws</artifactId>
-    <name>jclouds Amazon AWS Components Core</name>
-    <packaging>jar</packaging>
-    <description>jclouds Core components to access Amazon AWS</description>
-
-    <scm>
-        <connection>scm:svn:http://jclouds.googlecode.com/svn/trunk</connection>
-        <developerConnection>scm:svn:https://jclouds.googlecode.com/svn/trunk</developerConnection>
-        <url>http://jclouds.googlecode.com/svn/trunk</url>
-    </scm>
-
+    <artifactId>jclouds-aws-demos-project</artifactId>
+    <packaging>pom</packaging>
+    <name>jclouds aws demos aggregator</name>
+    <modules>
+        <!-- as this has a dependency on something you can't get from maven, excluding
+                <module>googleappengine</module>
+        -->
+       <module>createandlistbuckets</module>
+    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-aws</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-aws</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 </project>

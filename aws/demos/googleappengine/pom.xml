@@ -23,16 +23,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
-		<artifactId>jclouds-demos-project</artifactId>
+		<artifactId>jclouds-aws-demos-project</artifactId>
 		<groupId>org.jclouds</groupId>
 		<version>1.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>jclouds-gae-tweetstore</artifactId>
+	<artifactId>jclouds-gae-s3-example</artifactId>
 	<packaging>war</packaging>
-	<name>JClouds TweetStore for Google App Engine</name>
-	<description>JClouds TweetStore for Google App Engine</description>
+	<name>JClouds Sample for Google App Engine</name>
+	<description>JClouds Sample for Google App Engine</description>
 
 	<properties>
 		<!--
@@ -40,40 +40,12 @@
 			extraction of appengine-java-sdk
 		-->
 		<appengine.home>/Users/adriancole/Desktop/appengine-java-sdk-1.2.5</appengine.home>
-		<appengine.applicationid>jclouds-tweetstore</appengine.applicationid>
+		<appengine.applicationid>jclouds-s3-example</appengine.applicationid>
 		<devappserver.address>localhost</devappserver.address>
 		<devappserver.port>8088</devappserver.port>
-                <jclouds.tweetstore.container>jclouds-tweetstore</jclouds.tweetstore.container>
 	</properties>
 
 	<dependencies>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>jclouds-blobstore</artifactId>
-                    <version>${project.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>jclouds-blobstore</artifactId>
-                    <version>${project.version}</version>
-                    <type>test-jar</type>
-                    <scope>test</scope>
-                </dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>jclouds-twitter</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>jclouds-emcsaas</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>jclouds-aws</artifactId>
-			<version>${project.version}</version>
-		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>jclouds-azureblob</artifactId>
@@ -141,12 +113,6 @@
 			<artifactId>geronimo-servlet_2.5_spec</artifactId>
 			<version>1.2</version>
 			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.google.appengine</groupId>
-			<artifactId>appengine-api-labs</artifactId>
-			<version>1.2.5</version>
 		</dependency>
 
 		<dependency>
@@ -238,14 +204,6 @@
 								<configuration>
 									<systemProperties>
 										<property>
-											<name>jclouds.twitter.user</name>
-											<value>${jclouds.twitter.user}</value>
-										</property>
-										<property>
-											<name>jclouds.twitter.password</name>
-											<value>${jclouds.twitter.password}</value>
-										</property>
-										<property>
 											<name>jclouds.azure.storage.account</name>
 											<value>${jclouds.azure.storage.account}</value>
 										</property>
@@ -260,14 +218,6 @@
 										<property>
 											<name>jclouds.rackspace.key</name>
 											<value>${jclouds.rackspace.key}</value>
-										</property>
-										<property>
-											<name>jclouds.emcsaas.uid</name>
-											<value>${jclouds.emcsaas.uid}</value>
-										</property>
-										<property>
-											<name>jclouds.emcsaas.key</name>
-											<value>${jclouds.emcsaas.key}</value>
 										</property>
 										<property>
 											<name>jclouds.aws.accesskeyid</name>
@@ -288,10 +238,6 @@
 										<property>
 											<name>devappserver.port</name>
 											<value>${devappserver.port}</value>
-										</property>
-										<property>
-											<name>jclouds.tweetstore.container</name>
-											<value>${jclouds.tweetstore.container}</value>
 										</property>
 										<property>
 											<name>warfile</name>

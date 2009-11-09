@@ -32,7 +32,7 @@ import org.jclouds.http.pool.PoolConstants;
  * @author Adrian Cole
  */
 public interface AWSConstants extends HttpConstants, PoolConstants {
-
+   public static final String ENDPOINT = "Endpoint";
    public static final String PROPERTY_AWS_SECRETACCESSKEY = "jclouds.aws.secretaccesskey";
    public static final String PROPERTY_AWS_ACCESSKEYID = "jclouds.aws.accesskeyid";
 
