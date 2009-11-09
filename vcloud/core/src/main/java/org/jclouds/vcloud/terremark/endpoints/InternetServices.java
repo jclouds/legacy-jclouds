@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.endpoints;
+package org.jclouds.vcloud.terremark.endpoints;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -31,14 +31,14 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 /**
- * Related to a VCloud express Catalog.
+ * Related to Terremark Internet Services.
  * 
  * @author Adrian Cole
  * 
  */
 @Retention(value = RetentionPolicy.RUNTIME)
-@Target(value = {ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Target(value = { ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
 @Qualifier
-public @interface VDC {
+public @interface InternetServices {
 
 }

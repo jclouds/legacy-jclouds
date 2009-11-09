@@ -21,24 +21,24 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.endpoints;
+package org.jclouds.vcloud.domain;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.Map;
 
-import javax.inject.Qualifier;
+import org.jclouds.rest.domain.Link;
+import org.jclouds.vcloud.domain.internal.VDCImpl;
+
+import com.google.inject.ImplementedBy;
 
 /**
- * Related to a VCloud express Catalog.
- * 
  * @author Adrian Cole
- * 
  */
-@Retention(value = RetentionPolicy.RUNTIME)
-@Target(value = {ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
-@Qualifier
-public @interface VDC {
+@org.jclouds.vcloud.endpoints.VDC
+@ImplementedBy(VDCImpl.class)
+public interface VDC extends Link {
+
+   Map<String, Link> getAvailableNetworks();
+
+   Map<String, Link> getResourceEntities();
 
 }

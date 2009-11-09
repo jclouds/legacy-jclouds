@@ -23,8 +23,11 @@
  */
 package org.jclouds.vcloud;
 
+import static org.jclouds.vcloud.VCloudMediaType.CATALOG_XML;
+import static org.jclouds.vcloud.VCloudMediaType.VDC_XML;
+
 import java.util.concurrent.Future;
-import static org.jclouds.vcloud.VCloudMediaType.*;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 
@@ -32,8 +35,10 @@ import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.vcloud.domain.Catalog;
+import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.xml.CatalogHandler;
+import org.jclouds.vcloud.xml.VDCHandler;
 
 /**
  * Provides access to VCloud resources via their REST API.
@@ -53,8 +58,9 @@ public interface VCloudClient {
 
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.VDC.class)
+   @XMLResponseParser(VDCHandler.class)
    @Consumes(VDC_XML)
-   String getDefaultVDC();
+   VDC getDefaultVDC();
 
    //   
    // @GET

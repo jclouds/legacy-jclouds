@@ -21,24 +21,32 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.endpoints;
+package org.jclouds.vcloud.terremark.domain;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.jclouds.rest.domain.Link;
+import org.jclouds.vcloud.domain.VDC;
+import org.jclouds.vcloud.endpoints.Catalog;
+import org.jclouds.vcloud.terremark.domain.internal.TerremarkVDCImpl;
+import org.jclouds.vcloud.terremark.endpoints.InternetServices;
+import org.jclouds.vcloud.terremark.endpoints.PublicIPs;
 
-import javax.inject.Qualifier;
+import com.google.inject.ImplementedBy;
 
 /**
- * Related to a VCloud express Catalog.
- * 
  * @author Adrian Cole
- * 
  */
-@Retention(value = RetentionPolicy.RUNTIME)
-@Target(value = {ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
-@Qualifier
-public @interface VDC {
+@org.jclouds.vcloud.endpoints.VDC
+@ImplementedBy(TerremarkVDCImpl.class)
+public interface TerremarkVDC extends VDC {
 
+   @Catalog
+   Link getCatalog();
+
+   @PublicIPs
+   Link getPublicIps();
+
+   @InternetServices
+   Link getInternetServices();
+
+   // TODO getDescription() // what is the type?
 }

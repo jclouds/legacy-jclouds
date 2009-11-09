@@ -32,7 +32,6 @@ import java.net.URI;
 import javax.inject.Provider;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.http.functions.ReturnStringIf200;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
@@ -42,6 +41,7 @@ import org.jclouds.vcloud.endpoints.Catalog;
 import org.jclouds.vcloud.endpoints.VDC;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.xml.CatalogHandler;
+import org.jclouds.vcloud.xml.VDCHandler;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
@@ -79,8 +79,8 @@ public class VCloudClientTest extends RestClientTest<VCloudClient> {
       assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.vdc+xml\n");
       assertEntityEquals(httpMethod, null);
 
-      assertResponseParserClassEquals(method, httpMethod, ReturnStringIf200.class);
-      assertSaxResponseParserClassEquals(method, null);
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, VDCHandler.class);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpMethod);

@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.vcloud.domain.Catalog;
+import org.jclouds.vcloud.domain.VDC;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -58,9 +59,13 @@ public class VCloudClientLiveTest {
 
    @Test
    public void testDefaultVDC() throws Exception {
-      String response = connection.getDefaultVDC();
+      VDC response = connection.getDefaultVDC();
       assertNotNull(response);
-      System.err.println(response);
+      assertNotNull(response.getName());
+      assertNotNull(response.getLocation());
+      assertEquals(response.getType(), "application/vnd.vmware.vcloud.vdc+xml");
+      assertNotNull(response.getResourceEntities());
+      assertNotNull(response.getAvailableNetworks());
    }
 
    @BeforeGroups(groups = { "live" })
