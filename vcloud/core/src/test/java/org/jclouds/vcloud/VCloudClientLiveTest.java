@@ -59,13 +59,23 @@ public class VCloudClientLiveTest {
 
    @Test
    public void testDefaultVDC() throws Exception {
-      VDC response = connection.getDefaultVDC();
+      VDC response = connection.getDefaultVDC().get(10, TimeUnit.SECONDS);
       assertNotNull(response);
       assertNotNull(response.getName());
       assertNotNull(response.getLocation());
       assertEquals(response.getType(), "application/vnd.vmware.vcloud.vdc+xml");
       assertNotNull(response.getResourceEntities());
       assertNotNull(response.getAvailableNetworks());
+   }
+
+   @Test
+   public void testDefaultTasksList() throws Exception {
+      org.jclouds.vcloud.domain.TasksList response = connection.getDefaultTasksList().get(10,
+               TimeUnit.SECONDS);
+      assertNotNull(response);
+      assertNotNull(response.getLocation());
+      assertNotNull(response.getTasks());
+
    }
 
    @BeforeGroups(groups = { "live" })

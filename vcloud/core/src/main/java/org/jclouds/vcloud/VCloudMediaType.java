@@ -82,4 +82,24 @@ public class VCloudMediaType {
    public final static MediaType CATALOGITEM_XML_TYPE = new MediaType("application",
             "vnd.vmware.vcloud.catalogItem+xml");
 
+   /**
+    * "application/vnd.vmware.vcloud.task+xml"
+    */
+   public final static String TASK_XML = "application/vnd.vmware.vcloud.task+xml";
+   /**
+    * "application/vnd.vmware.vcloud.task+xml"
+    */
+   public final static MediaType TASK_XML_TYPE = new MediaType("application",
+            "vnd.vmware.vcloud.task+xml");
+
+   /**
+    * "application/vnd.vmware.vcloud.vApp+xml"
+    */
+   public final static String VAPP_XML = "application/vnd.vmware.vcloud.vApp+xml";
+   /**
+    * "application/vnd.vmware.vcloud.vApp+xml"
+    */
+   public final static MediaType VAPP_XML_TYPE = new MediaType("application",
+            "vnd.vmware.vcloud.vApp+xml");
+
 }

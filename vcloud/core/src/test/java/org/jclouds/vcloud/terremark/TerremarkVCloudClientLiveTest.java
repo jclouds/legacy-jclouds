@@ -26,6 +26,8 @@ package org.jclouds.vcloud.terremark;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertNotNull;
 
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.vcloud.VCloudClientLiveTest;
 import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
@@ -43,7 +45,7 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
    @Test
    public void testDefaultVDC() throws Exception {
       super.testDefaultVDC();
-      TerremarkVDC response = (TerremarkVDC) connection.getDefaultVDC();
+      TerremarkVDC response = (TerremarkVDC) connection.getDefaultVDC().get(10, TimeUnit.SECONDS);
       assertNotNull(response);
       assertNotNull(response.getCatalog());
       assertNotNull(response.getInternetServices());

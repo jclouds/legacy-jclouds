@@ -21,24 +21,32 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.endpoints;
+package org.jclouds.vcloud.domain;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.net.URI;
 
-import javax.inject.Qualifier;
+import org.jclouds.rest.domain.Link;
+import org.jclouds.vcloud.domain.internal.TaskImpl;
+import org.joda.time.DateTime;
+
+import com.google.inject.ImplementedBy;
 
 /**
- * Related to a VCloud express Task List.
- * 
  * @author Adrian Cole
- * 
  */
-@Retention(value = RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
-@Qualifier
-public @interface TasksList {
+@ImplementedBy(TaskImpl.class)
+public interface Task extends Comparable<Task> {
+   String getType();
 
+   URI getLocation();
+
+   TaskStatus getStatus();
+
+   DateTime getStartTime();
+
+   DateTime getEndTime();
+
+   Link getOwner();
+
+   Link getResult();
 }

@@ -33,6 +33,7 @@ import org.jclouds.rest.RestClientFactory;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudDiscovery;
 import org.jclouds.vcloud.endpoints.Catalog;
+import org.jclouds.vcloud.endpoints.TasksList;
 import org.jclouds.vcloud.endpoints.VDC;
 
 import com.google.inject.AbstractModule;
@@ -69,5 +70,12 @@ public class VCloudRestClientModule extends AbstractModule {
    @Singleton
    protected URI provideDefaultVDC(VCloudDiscovery discovery) {
       return discovery.getOrganization().getVDCs().values().iterator().next().getLocation();
+   }
+
+   @Provides
+   @TasksList
+   @Singleton
+   protected URI provideDefaultTasksList(VCloudDiscovery discovery) {
+      return discovery.getOrganization().getTasksLists().values().iterator().next().getLocation();
    }
 }

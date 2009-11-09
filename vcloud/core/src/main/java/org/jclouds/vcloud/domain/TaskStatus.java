@@ -21,24 +21,26 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.endpoints;
+package org.jclouds.vcloud.domain;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-import javax.inject.Qualifier;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Related to a VCloud express Task List.
- * 
  * @author Adrian Cole
- * 
  */
-@Retention(value = RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
-@Qualifier
-public @interface TasksList {
+public enum TaskStatus {
+   SUCCESS, FAILED, RUNNING, QUEUED, ERROR, CANCELLED;
+   public String value() {
+      return name().toLowerCase();
+   }
+
+   @Override
+   public String toString() {
+      return value();
+   }
+
+   public static TaskStatus fromValue(String status) {
+      return valueOf(checkNotNull(status, "status").toUpperCase());
+   }
 
 }

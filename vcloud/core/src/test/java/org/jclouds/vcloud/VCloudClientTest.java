@@ -38,9 +38,11 @@ import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.vcloud.endpoints.Catalog;
+import org.jclouds.vcloud.endpoints.TasksList;
 import org.jclouds.vcloud.endpoints.VDC;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.xml.CatalogHandler;
+import org.jclouds.vcloud.xml.TasksListHandler;
 import org.jclouds.vcloud.xml.VDCHandler;
 import org.testng.annotations.Test;
 
@@ -86,6 +88,22 @@ public class VCloudClientTest extends RestClientTest<VCloudClient> {
       checkFilters(httpMethod);
    }
 
+   public void testGetDefaultTasksList() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = VCloudClient.class.getMethod("getDefaultTasksList");
+      GeneratedHttpRequest<VCloudClient> httpMethod = processor.createRequest(method);
+
+      assertRequestLineEquals(httpMethod, "GET http://tasksList HTTP/1.1");
+      assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.tasksList+xml\n");
+      assertEntityEquals(httpMethod, null);
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, TasksListHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
    @Override
    protected void checkFilters(GeneratedHttpRequest<VCloudClient> httpMethod) {
       assertEquals(httpMethod.getFilters().size(), 1);
@@ -105,6 +123,8 @@ public class VCloudClientTest extends RestClientTest<VCloudClient> {
          protected void configure() {
             bind(URI.class).annotatedWith(Catalog.class).toInstance(URI.create("http://catalog"));
             bind(URI.class).annotatedWith(VDC.class).toInstance(URI.create("http://vdc"));
+            bind(URI.class).annotatedWith(TasksList.class).toInstance(
+                     URI.create("http://tasksList"));
             bind(SetVCloudTokenCookie.class).toInstance(
                      new SetVCloudTokenCookie(new Provider<String>() {
 

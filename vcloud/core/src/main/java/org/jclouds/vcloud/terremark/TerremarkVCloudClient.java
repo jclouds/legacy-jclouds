@@ -25,6 +25,8 @@ package org.jclouds.vcloud.terremark;
 
 import static org.jclouds.vcloud.VCloudMediaType.VDC_XML;
 
+import java.util.concurrent.Future;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 
@@ -51,7 +53,7 @@ public interface TerremarkVCloudClient extends VCloudClient {
    @Endpoint(org.jclouds.vcloud.endpoints.VDC.class)
    @XMLResponseParser(TerremarkVDCHandler.class)
    @Consumes(VDC_XML)
-   VDC getDefaultVDC();
+   Future<? extends VDC> getDefaultVDC();
 
    //   
    // @GET

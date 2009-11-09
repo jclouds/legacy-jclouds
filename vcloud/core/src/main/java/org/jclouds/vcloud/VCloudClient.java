@@ -24,6 +24,7 @@
 package org.jclouds.vcloud;
 
 import static org.jclouds.vcloud.VCloudMediaType.CATALOG_XML;
+import static org.jclouds.vcloud.VCloudMediaType.TASKSLIST_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VDC_XML;
 
 import java.util.concurrent.Future;
@@ -36,8 +37,10 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.VDC;
+import org.jclouds.vcloud.endpoints.TasksList;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.xml.CatalogHandler;
+import org.jclouds.vcloud.xml.TasksListHandler;
 import org.jclouds.vcloud.xml.VDCHandler;
 
 /**
@@ -54,21 +57,24 @@ public interface VCloudClient {
    @Endpoint(org.jclouds.vcloud.endpoints.Catalog.class)
    @Consumes(CATALOG_XML)
    @XMLResponseParser(CatalogHandler.class)
-   Future<Catalog> getCatalog();
+   Future<? extends Catalog> getCatalog();
 
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.VDC.class)
    @XMLResponseParser(VDCHandler.class)
    @Consumes(VDC_XML)
-   VDC getDefaultVDC();
+   Future<? extends VDC> getDefaultVDC();
+
+   @GET
+   @Endpoint(TasksList.class)
+   @Consumes(TASKSLIST_XML)
+   @XMLResponseParser(TasksListHandler.class)
+   Future<? extends org.jclouds.vcloud.domain.TasksList> getDefaultTasksList();
 
    //   
    // @GET
    // @Endpoint(vDC.class)
    // public Set<String> getvDCs();
    //
-   // @GET
-   // @Endpoint(TasksList.class)
-   // public Set<String> getTasksLists();
 
 }
