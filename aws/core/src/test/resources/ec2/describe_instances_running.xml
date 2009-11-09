@@ -1,0 +1,44 @@
+<DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2009-08-15/">
+    <requestId>ae75a8cc-b707-4a20-b130-61ad6f20de61</requestId>
+    <reservationSet>
+        <item>
+            <reservationId>r-a3c508cb</reservationId>
+            <ownerId>993194456877</ownerId>
+            <groupSet>
+                <item>
+                    <groupId>adriancole.ec2ingress</groupId>
+                </item>
+            </groupSet>
+            <instancesSet>
+                <item>
+                    <instanceId>i-0799056f</instanceId>
+                    <imageId>ami-1fd73376</imageId>
+                    <instanceState>
+                        <code>16</code>
+                        <name>running</name>
+                    </instanceState>
+                    <privateDnsName>ip-10-243-42-70.ec2.internal
+                    </privateDnsName>
+                    <dnsName>ec2-174-129-81-68.compute-1.amazonaws.com
+                    </dnsName>
+                    <reason />
+                    <keyName>adriancole.ec21</keyName>
+                    <amiLaunchIndex>0</amiLaunchIndex>
+                    <productCodes />
+                    <instanceType>m1.small</instanceType>
+                    <launchTime>2009-11-09T03:00:34.000Z</launchTime>
+                    <placement>
+                        <availabilityZone>us-east-1c</availabilityZone>
+                    </placement>
+                    <kernelId>aki-a71cf9ce</kernelId>
+                    <ramdiskId>ari-a51cf9cc</ramdiskId>
+                    <monitoring>
+                        <state>disabled</state>
+                    </monitoring>
+                    <privateIpAddress>10.243.42.70</privateIpAddress>
+                    <ipAddress>174.129.81.68</ipAddress>
+                </item>
+            </instancesSet>
+        </item>
+    </reservationSet>
+</DescribeInstancesResponse>
