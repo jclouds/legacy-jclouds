@@ -21,61 +21,42 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud;
+package org.jclouds.vcloud.terremark;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-import java.net.URI;
-import java.util.concurrent.TimeUnit;
-
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.vcloud.domain.Catalog;
-import org.jclouds.vcloud.domain.VDC;
+import org.jclouds.vcloud.VCloudClientLiveTest;
+import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 /**
- * Tests behavior of {@code VCloudClient}
+ * Tests behavior of {@code TerremarkVCloudClient}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "vcloud.VCloudClientLiveTest")
-public class VCloudClientLiveTest {
-
-   protected VCloudClient connection;
-   protected String account;
-
-   @Test
-   public void testOrganization() throws Exception {
-      Catalog response = connection.getCatalog().get(10, TimeUnit.SECONDS);
-      assertNotNull(response);
-      assertNotNull(response.getName());
-      assertNotNull(response.getLocation());
-      assertEquals(response.getType(), "application/vnd.vmware.vcloud.catalog+xml");
-      assert response.size() > 0;
-   }
+@Test(groups = "live", sequential = true, testName = "vcloud.TerremarkVCloudClientLiveTest")
+public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
 
    @Test
    public void testDefaultVDC() throws Exception {
-      VDC response = connection.getDefaultVDC();
+      super.testDefaultVDC();
+      TerremarkVDC response = (TerremarkVDC) connection.getDefaultVDC();
       assertNotNull(response);
-      assertNotNull(response.getName());
-      assertNotNull(response.getLocation());
-      assertEquals(response.getType(), "application/vnd.vmware.vcloud.vdc+xml");
-      assertNotNull(response.getResourceEntities());
-      assertNotNull(response.getAvailableNetworks());
+      assertNotNull(response.getCatalog());
+      assertNotNull(response.getInternetServices());
+      assertNotNull(response.getPublicIps());
    }
 
    @BeforeGroups(groups = { "live" })
+   @Override
    public void setupClient() {
-      String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"),
-               "jclouds.test.endpoint");
       account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      connection = new VCloudContextBuilder(new VCloudPropertiesBuilder(URI.create(endpoint),
-               account, key).build()).withModules(new Log4JLoggingModule()).buildContext().getApi();
+      connection = new TerremarkVCloudContextBuilder(new TerremarkVCloudPropertiesBuilder(account,
+               key).build()).withModules(new Log4JLoggingModule()).buildContext().getApi();
    }
 
 }
