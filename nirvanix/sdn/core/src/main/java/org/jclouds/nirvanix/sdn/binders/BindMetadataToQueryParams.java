@@ -49,7 +49,6 @@ public class BindMetadataToQueryParams implements Binder {
       for (Entry<String, String> entry : userMetadata.entrySet()) {
          metadata.add(String.format("%s:%s", entry.getKey().toLowerCase(), entry.getValue()));
       }
-      ((GeneratedHttpRequest) request).replaceQueryParam("metadata", metadata.toArray());
+      ((GeneratedHttpRequest) request).addQueryParam("metadata", metadata.toArray(new String[] {}));
    }
-
 }

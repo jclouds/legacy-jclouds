@@ -93,7 +93,7 @@ public class AddSessionTokenToRequest implements HttpRequestFilter {
    public void filter(HttpRequest request) throws HttpException {
       checkArgument(checkNotNull(request, "input") instanceof GeneratedHttpRequest<?>,
                "this decorator is only valid for GeneratedHttpRequests!");
-      ((GeneratedHttpRequest<?>) request).replaceQueryParam(SDNQueryParams.SESSIONTOKEN,
+      ((GeneratedHttpRequest<?>) request).addQueryParam(SDNQueryParams.SESSIONTOKEN,
                getSessionToken());
 
    }

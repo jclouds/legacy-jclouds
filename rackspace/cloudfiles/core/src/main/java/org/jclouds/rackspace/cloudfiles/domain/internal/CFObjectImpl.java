@@ -37,7 +37,7 @@ import org.jclouds.blobstore.functions.GenerateMD5Result;
 import org.jclouds.rackspace.cloudfiles.domain.CFObject;
 import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
 
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 
 /**
@@ -51,7 +51,7 @@ public class CFObjectImpl implements CFObject, Comparable<CFObject> {
    private final CalculateSize calculateSize;
    private final MutableObjectInfoWithMetadata info;
    private Object data;
-   private Multimap<String, String> allHeaders = HashMultimap.create();
+   private Multimap<String, String> allHeaders = LinkedHashMultimap.create();
    private Long contentLength;
 
    @Inject

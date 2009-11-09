@@ -38,7 +38,7 @@ import org.jclouds.blobstore.functions.CalculateSize;
 import org.jclouds.blobstore.functions.GenerateMD5;
 import org.jclouds.blobstore.functions.GenerateMD5Result;
 
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 
 /**
@@ -55,7 +55,7 @@ public class BlobImpl implements Blob, Comparable<Blob> {
    private final CalculateSize calculateSize;
    private final MutableBlobMetadata metadata;
    private Object data;
-   private Multimap<String, String> allHeaders = HashMultimap.create();
+   private Multimap<String, String> allHeaders = LinkedHashMultimap.create();
    private Long contentLength;
 
    @Inject

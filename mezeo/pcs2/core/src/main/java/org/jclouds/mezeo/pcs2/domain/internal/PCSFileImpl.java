@@ -31,7 +31,7 @@ import org.jclouds.blobstore.functions.CalculateSize;
 import org.jclouds.mezeo.pcs2.domain.MutableFileInfo;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
 
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 
 /**
@@ -44,7 +44,7 @@ public class PCSFileImpl implements PCSFile, Comparable<PCSFile> {
    private final CalculateSize calculateSize;
    private final MutableFileInfo metadata;
    private Object data;
-   private Multimap<String, String> allHeaders = HashMultimap.create();
+   private Multimap<String, String> allHeaders = LinkedHashMultimap.create();
    private Long contentLength;
 
    @Inject

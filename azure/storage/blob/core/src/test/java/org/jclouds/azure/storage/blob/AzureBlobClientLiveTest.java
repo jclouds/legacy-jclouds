@@ -277,7 +277,7 @@ public class AzureBlobClientLiveTest {
       assertEquals(metadata.getMetadata().get("metadata"), "metadata-value");
 
       // // Test POST to update object's metadata
-      // Multimap<String, String> userMetadata = HashMultimap.create();
+      // Multimap<String, String> userMetadata = LinkedHashMultimap.create();
       // userMetadata.put("New-Metadata-1", "value-1");
       // userMetadata.put("New-Metadata-2", "value-2");
       // assertTrue(connection.setBlobProperties(privateContainer, object.getProperties().getName(),

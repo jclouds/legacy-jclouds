@@ -62,7 +62,7 @@ public class BindMetadataToQueryParamsTest {
       BindMetadataToQueryParams binder = new BindMetadataToQueryParams();
 
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
-      request.replaceQueryParam("metadata", "imagename:foo", "serverid:2");
+      request.addQueryParam("metadata", "imagename:foo", "serverid:2");
       replay(request);
       binder.bindToRequest(request, ImmutableMap.of("imageName", "foo", "serverId", "2"));
    }
