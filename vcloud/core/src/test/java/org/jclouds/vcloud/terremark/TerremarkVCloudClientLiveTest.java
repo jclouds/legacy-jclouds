@@ -26,7 +26,10 @@ package org.jclouds.vcloud.terremark;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertNotNull;
 
+import java.net.URI;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.vcloud.VCloudClientLiveTest;
@@ -41,15 +44,33 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live", sequential = true, testName = "vcloud.TerremarkVCloudClientLiveTest")
 public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
+   TerremarkVCloudClient tmClient;
+
+   public static final String PREFIX = System.getProperty("user.name") + "-terremark";
 
    @Test
    public void testDefaultVDC() throws Exception {
       super.testDefaultVDC();
-      TerremarkVDC response = (TerremarkVDC) connection.getDefaultVDC().get(10, TimeUnit.SECONDS);
+      TerremarkVDC response = (TerremarkVDC) tmClient.getDefaultVDC().get(10, TimeUnit.SECONDS);
       assertNotNull(response);
       assertNotNull(response.getCatalog());
       assertNotNull(response.getInternetServices());
       assertNotNull(response.getPublicIps());
+   }
+
+   @Test(enabled = false)
+   // disabled until stop functionality is added
+   public void testInstantiate() throws InterruptedException, ExecutionException, TimeoutException {
+      URI template = tmClient.getCatalog().get(10, TimeUnit.SECONDS).get(
+               "Ubuntu Server 9.04 (32-bit)").getLocation();
+      
+      URI network = tmClient.getDefaultVDC().get(10, TimeUnit.SECONDS).getAvailableNetworks()
+               .values().iterator().next().getLocation();
+      
+      String response = tmClient.instantiateVAppTemplate("adriantest", template, 1, 512, network);
+      
+      
+      System.out.println(response);
    }
 
    @BeforeGroups(groups = { "live" })
@@ -57,8 +78,9 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
    public void setupClient() {
       account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      connection = new TerremarkVCloudContextBuilder(new TerremarkVCloudPropertiesBuilder(account,
-               key).build()).withModules(new Log4JLoggingModule()).buildContext().getApi();
+      connection = tmClient = new TerremarkVCloudContextBuilder(
+               new TerremarkVCloudPropertiesBuilder(account, key).build()).withModules(
+               new Log4JLoggingModule()).buildContext().getApi();
    }
 
 }

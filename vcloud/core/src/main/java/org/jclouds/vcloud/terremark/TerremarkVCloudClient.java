@@ -25,17 +25,24 @@ package org.jclouds.vcloud.terremark;
 
 import static org.jclouds.vcloud.VCloudMediaType.VDC_XML;
 
+import java.net.URI;
 import java.util.concurrent.Future;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 
 import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.MapBinder;
+import org.jclouds.rest.annotations.MapEntityParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
+import org.jclouds.vcloud.terremark.binders.BindInstantiateVAppTemplateParamsToXmlEntity;
 import org.jclouds.vcloud.terremark.xml.TerremarkVDCHandler;
 
 /**
@@ -48,20 +55,19 @@ import org.jclouds.vcloud.terremark.xml.TerremarkVDCHandler;
 @RequestFilters(SetVCloudTokenCookie.class)
 public interface TerremarkVCloudClient extends VCloudClient {
 
-
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.VDC.class)
    @XMLResponseParser(TerremarkVDCHandler.class)
    @Consumes(VDC_XML)
    Future<? extends VDC> getDefaultVDC();
 
-   //   
-   // @GET
-   // @Endpoint(vDC.class)
-   // public Set<String> getvDCs();
-   //
-   // @GET
-   // @Endpoint(TasksList.class)
-   // public Set<String> getTasksLists();
+   @POST
+   @Endpoint(org.jclouds.vcloud.endpoints.VDC.class)
+   @Path("/action/instantiatevAppTemplate")
+   @Produces("application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml")
+   @MapBinder(BindInstantiateVAppTemplateParamsToXmlEntity.class)
+   String instantiateVAppTemplate(@MapEntityParam("name") String appName,
+            @MapEntityParam("template") URI vAppTemplate, @MapEntityParam("count") int cpuCount,
+            @MapEntityParam("megabytes") int megabytesMemory, @MapEntityParam("network") URI network);
 
 }

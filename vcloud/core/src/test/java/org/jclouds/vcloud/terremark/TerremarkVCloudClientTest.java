@@ -26,17 +26,23 @@ package org.jclouds.vcloud.terremark;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.URI;
 
+import javax.inject.Named;
 import javax.inject.Provider;
+import javax.inject.Singleton;
 
+import org.apache.commons.io.IOUtils;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.ReturnStringIf200;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.util.Utils;
 import org.jclouds.vcloud.endpoints.Catalog;
 import org.jclouds.vcloud.endpoints.VDC;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
@@ -45,6 +51,7 @@ import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
+import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -65,6 +72,30 @@ public class TerremarkVCloudClientTest extends RestClientTest<TerremarkVCloudCli
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, TerremarkVDCHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testInstantiateVAppTemplate() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = TerremarkVCloudClient.class.getMethod("instantiateVAppTemplate",
+
+      String.class, URI.class, int.class, int.class, URI.class
+
+      );
+      GeneratedHttpRequest<TerremarkVCloudClient> httpMethod = processor.createRequest(method,
+               "name", URI.create("http://template"), 1, 512, URI.create("http://network"));
+
+      assertRequestLineEquals(httpMethod, "POST http://vdc/action/instantiatevAppTemplate HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 2242\nContent-Type: application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml\n");
+      assertEntityEquals(httpMethod, IOUtils.toString(getClass().getResourceAsStream(
+               "/terremark/InstantiateVAppTemplateParams-test.xml")));
+
+      assertResponseParserClassEquals(method, httpMethod, ReturnStringIf200.class);
+      assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpMethod);
@@ -105,6 +136,15 @@ public class TerremarkVCloudClientTest extends RestClientTest<TerremarkVCloudCli
             });
          }
 
+         @SuppressWarnings("unused")
+         @Singleton
+         @Provides
+         @Named("InstantiateVAppTemplateParams")
+         String provideInstantiateVAppTemplateParams() throws IOException {
+            InputStream is = getClass().getResourceAsStream(
+                     "/terremark/InstantiateVAppTemplateParams.xml");
+            return Utils.toStringAndClose(is);
+         }
       };
    }
 

@@ -23,11 +23,16 @@
  */
 package org.jclouds.vcloud.terremark.config;
 
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
+import org.jclouds.util.Utils;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.config.VCloudRestClientModule;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
@@ -52,6 +57,15 @@ public class TerremarkVCloudRestClientModule extends VCloudRestClientModule {
    @Override
    protected VCloudClient provideVCloudClient(RestClientFactory factory) {
       return factory.create(TerremarkVCloudClient.class);
+   }
+
+   @Singleton
+   @Provides
+   @Named("InstantiateVAppTemplateParams")
+   String provideInstantiateVAppTemplateParams() throws IOException {
+      InputStream is = getClass().getResourceAsStream(
+               "/terremark/InstantiateVAppTemplateParams.xml");
+      return Utils.toStringAndClose(is);
    }
 
 }

@@ -78,8 +78,9 @@ public class TasksListHandler extends ParseSax.HandlerWithResult<TasksList> {
          status = TaskStatus.fromValue(attributes.getValue(attributes.getIndex("status")));
          startTime = dateService.iso8601DateParse(attributes.getValue(attributes
                   .getIndex("startTime")));
-         endTime = dateService
-                  .iso8601DateParse(attributes.getValue(attributes.getIndex("endTime")));
+         if (attributes.getIndex("endTime") != -1)
+            endTime = dateService.iso8601DateParse(attributes.getValue(attributes
+                     .getIndex("endTime")));
       } else if (qName.equals("Owner")) {
          owner = Utils.newLink(attributes);
       } else if (qName.equals("Result")) {

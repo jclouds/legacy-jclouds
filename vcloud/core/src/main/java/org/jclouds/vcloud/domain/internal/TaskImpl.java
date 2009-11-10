@@ -32,6 +32,8 @@ import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
 import org.joda.time.DateTime;
 
+import com.google.inject.internal.Nullable;
+
 /**
  * Locations of resources in vCloud
  * 
@@ -43,19 +45,21 @@ public class TaskImpl implements Task {
    private final URI location;
    private final TaskStatus status;
    private final DateTime startTime;
+   @Nullable
    private final DateTime endTime;
    private final Link owner;
+   @Nullable
    private final Link result;
 
    public TaskImpl(String type, URI location, TaskStatus status, DateTime startTime,
-            DateTime endTime, Link owner, Link result) {
+            @Nullable DateTime endTime, Link owner, @Nullable Link result) {
       this.type = checkNotNull(type, "type");
       this.location = checkNotNull(location, "location");
       this.status = checkNotNull(status, "status");
       this.startTime = checkNotNull(startTime, "startTime");
-      this.endTime = checkNotNull(endTime, "endTime");
+      this.endTime = endTime;
       this.owner = checkNotNull(owner, "owner");
-      this.result = checkNotNull(result, "result");
+      this.result = result;
    }
 
    public TaskStatus getStatus() {
