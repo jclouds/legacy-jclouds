@@ -23,9 +23,7 @@
  */
 package org.jclouds.rest.domain;
 
-import java.net.URI;
-
-import org.jclouds.rest.domain.internal.LinkImpl;
+import org.jclouds.rest.domain.internal.NamedLinkImpl;
 
 import com.google.inject.ImplementedBy;
 
@@ -35,11 +33,9 @@ import com.google.inject.ImplementedBy;
  * @author Adrian Cole
  * 
  */
-@ImplementedBy(LinkImpl.class)
-public interface Link {
+@ImplementedBy(NamedLinkImpl.class)
+public interface NamedLink extends Link {
 
-   String getType();
-
-   URI getLocation();
+   String getName();
 
 }

@@ -27,7 +27,9 @@ import java.net.URI;
 import java.util.Map;
 
 import org.jclouds.rest.domain.Link;
+import org.jclouds.rest.domain.NamedLink;
 import org.jclouds.rest.domain.internal.LinkImpl;
+import org.jclouds.rest.domain.internal.NamedLinkImpl;
 import org.xml.sax.Attributes;
 
 /**
@@ -36,12 +38,17 @@ import org.xml.sax.Attributes;
  */
 public class Utils {
 
-   public static void putLink(Map<String, Link> map, Attributes attributes) {
-      map.put(attributes.getValue(attributes.getIndex("name")), newLink(attributes));
+   public static void putNamedLink(Map<String, NamedLink> map, Attributes attributes) {
+      map.put(attributes.getValue(attributes.getIndex("name")), newNamedLink(attributes));
    }
 
    public static Link newLink(Attributes attributes) {
-      return new LinkImpl(attributes.getValue(attributes.getIndex("name")), attributes
+      return new LinkImpl(attributes.getValue(attributes.getIndex("type")), URI.create(attributes
+               .getValue(attributes.getIndex("href"))));
+   }
+
+   public static NamedLink newNamedLink(Attributes attributes) {
+      return new NamedLinkImpl(attributes.getValue(attributes.getIndex("name")), attributes
                .getValue(attributes.getIndex("type")), URI.create(attributes.getValue(attributes
                .getIndex("href"))));
    }
