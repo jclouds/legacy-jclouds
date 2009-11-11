@@ -23,7 +23,7 @@
  */
 package org.jclouds.vcloud.terremark.xml;
 
-import org.jclouds.rest.domain.Link;
+import org.jclouds.rest.domain.NamedLink;
 import org.jclouds.rest.util.Utils;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.VDC;
@@ -38,9 +38,9 @@ import org.xml.sax.SAXException;
  */
 public class TerremarkVDCHandler extends VDCHandler {
 
-   private Link catalog;
-   private Link publicIps;
-   private Link internetServices;
+   private NamedLink catalog;
+   private NamedLink publicIps;
+   private NamedLink internetServices;
 
    public TerremarkVDC getResult() {
       VDC vDC = super.getResult();
@@ -56,13 +56,13 @@ public class TerremarkVDCHandler extends VDCHandler {
       if (qName.equals("Link")) {
          String name = attributes.getValue(attributes.getIndex("name"));
          if (name.equals("Internet Services")) {
-            internetServices = Utils.newLink(attributes);
+            internetServices = Utils.newNamedLink(attributes);
          } else if (name.equals("Public IPs")) {
-            publicIps = Utils.newLink(attributes);
+            publicIps = Utils.newNamedLink(attributes);
          } else {
             String type = attributes.getValue(attributes.getIndex("type"));
             if (type.equals(VCloudMediaType.CATALOG_XML)) {
-               catalog = Utils.newLink(attributes);
+               catalog = Utils.newNamedLink(attributes);
             }
          }
       }

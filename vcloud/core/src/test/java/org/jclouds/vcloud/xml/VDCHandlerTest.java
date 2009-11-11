@@ -29,8 +29,8 @@ import java.io.InputStream;
 import java.net.URI;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.rest.domain.Link;
-import org.jclouds.rest.domain.internal.LinkImpl;
+import org.jclouds.rest.domain.NamedLink;
+import org.jclouds.rest.domain.internal.NamedLinkImpl;
 import org.jclouds.vcloud.domain.VDC;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -59,9 +59,16 @@ public class VDCHandlerTest extends BaseHandlerTest {
       assertEquals(result.getLocation(), URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32"));
       assertEquals(result.getType(), "application/vnd.vmware.vcloud.vdc+xml");
-      assertEquals(result.getResourceEntities(), ImmutableMap.<String, Link> of());
-      assertEquals(result.getAvailableNetworks(), ImmutableMap.of("10.114.34.128/26", new LinkImpl(
-               "10.114.34.128/26", "application/vnd.vmware.vcloud.network+xml",
-               URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/network/1708"))));
+      assertEquals(result.getResourceEntities(), ImmutableMap.<String, NamedLink> of());
+      assertEquals(
+               result.getAvailableNetworks(),
+               ImmutableMap
+                        .of(
+                                 "10.114.34.128/26",
+                                 new NamedLinkImpl(
+                                          "10.114.34.128/26",
+                                          "application/vnd.vmware.vcloud.network+xml",
+                                          URI
+                                                   .create("https://services.vcloudexpress.terremark.com/api/v0.8/network/1708"))));
    }
 }

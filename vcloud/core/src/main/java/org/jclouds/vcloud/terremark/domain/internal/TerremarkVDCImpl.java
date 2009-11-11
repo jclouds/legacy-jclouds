@@ -28,7 +28,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.Map;
 
-import org.jclouds.rest.domain.Link;
+import org.jclouds.rest.domain.NamedLink;
 import org.jclouds.vcloud.domain.internal.VDCImpl;
 import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
 
@@ -40,31 +40,31 @@ import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
  */
 public class TerremarkVDCImpl extends VDCImpl implements TerremarkVDC {
 
-   private final Link catalog;
-   private final Link publicIps;
-   private final Link internetServices;
+   private final NamedLink catalog;
+   private final NamedLink publicIps;
+   private final NamedLink internetServices;
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
 
    public TerremarkVDCImpl(String name, String type, URI location,
-            Map<String, Link> availableNetworks, Map<String, Link> resourceEntities, Link catalog,
-            Link publicIps, Link internetServices) {
+            Map<String, NamedLink> availableNetworks, Map<String, NamedLink> resourceEntities, NamedLink catalog,
+            NamedLink publicIps, NamedLink internetServices) {
       super(name, type, location, availableNetworks, resourceEntities);
       this.catalog = checkNotNull(catalog, "catalog");
       this.publicIps = checkNotNull(publicIps, "publicIps");
       this.internetServices = checkNotNull(internetServices, "internetServices");
    }
 
-   public Link getCatalog() {
+   public NamedLink getCatalog() {
       return catalog;
    }
 
-   public Link getPublicIps() {
+   public NamedLink getPublicIps() {
       return publicIps;
    }
 
-   public Link getInternetServices() {
+   public NamedLink getInternetServices() {
       return internetServices;
    }
 

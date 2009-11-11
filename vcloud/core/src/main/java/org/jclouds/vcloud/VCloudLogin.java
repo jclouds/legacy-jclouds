@@ -34,7 +34,7 @@ import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
-import org.jclouds.rest.domain.Link;
+import org.jclouds.rest.domain.NamedLink;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.endpoints.VCloud;
 import org.jclouds.vcloud.functions.ParseLoginResponseFromHeaders;
@@ -55,7 +55,7 @@ public interface VCloudLogin {
       String getVCloudToken();
 
       @Org
-      Map<String, Link> getOrgs();
+      Map<String, NamedLink> getOrgs();
    }
 
    /**

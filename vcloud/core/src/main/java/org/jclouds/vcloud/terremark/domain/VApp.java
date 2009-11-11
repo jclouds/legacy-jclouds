@@ -21,24 +21,24 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.domain;
+package org.jclouds.vcloud.terremark.domain;
 
-import java.util.Map;
-
+import org.jclouds.rest.domain.Link;
 import org.jclouds.rest.domain.NamedLink;
-import org.jclouds.vcloud.domain.internal.VDCImpl;
+import org.jclouds.vcloud.terremark.domain.internal.VAppImpl;
 
 import com.google.inject.ImplementedBy;
 
 /**
  * @author Adrian Cole
  */
-@org.jclouds.vcloud.endpoints.VDC
-@ImplementedBy(VDCImpl.class)
-public interface VDC extends NamedLink {
+@ImplementedBy(VAppImpl.class)
+public interface VApp extends NamedLink {
 
-   Map<String, NamedLink> getAvailableNetworks();
+   int getStatus();
 
-   Map<String, NamedLink> getResourceEntities();
+   int getSize();
+
+   Link getVDC();
 
 }

@@ -26,6 +26,7 @@ package org.jclouds.vcloud.domain;
 import java.util.Map;
 
 import org.jclouds.rest.domain.Link;
+import org.jclouds.rest.domain.NamedLink;
 import org.jclouds.vcloud.domain.internal.OrganizationImpl;
 import org.jclouds.vcloud.endpoints.Catalog;
 import org.jclouds.vcloud.endpoints.Org;
@@ -39,15 +40,15 @@ import com.google.inject.ImplementedBy;
  */
 @Org
 @ImplementedBy(OrganizationImpl.class)
-public interface Organization extends Link {
+public interface Organization extends NamedLink {
 
    @Catalog
    Link getCatalog();
 
    @VDC
-   Map<String, Link> getVDCs();
+   Map<String, NamedLink> getVDCs();
 
    @TasksList
-   Map<String, Link> getTasksLists();
+   Map<String, NamedLink> getTasksLists();
 
 }

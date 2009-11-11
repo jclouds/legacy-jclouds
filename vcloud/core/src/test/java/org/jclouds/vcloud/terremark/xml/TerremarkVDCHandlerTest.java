@@ -30,8 +30,8 @@ import java.io.InputStream;
 import java.net.URI;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.rest.domain.Link;
-import org.jclouds.rest.domain.internal.LinkImpl;
+import org.jclouds.rest.domain.NamedLink;
+import org.jclouds.rest.domain.internal.NamedLinkImpl;
 import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -61,17 +61,17 @@ public class TerremarkVDCHandlerTest extends BaseHandlerTest {
       assertEquals(result.getLocation(), URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32"));
       assertEquals(result.getType(), "application/vnd.vmware.vcloud.vdc+xml");
-      assertEquals(result.getResourceEntities(), ImmutableMap.<String, Link> of());
-      assertEquals(result.getAvailableNetworks(), ImmutableMap.of("10.114.34.128/26", new LinkImpl(
+      assertEquals(result.getResourceEntities(), ImmutableMap.<String, NamedLink> of());
+      assertEquals(result.getAvailableNetworks(), ImmutableMap.of("10.114.34.128/26", new NamedLinkImpl(
                "10.114.34.128/26", "application/vnd.vmware.vcloud.network+xml",
                URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/network/1708"))));
-      assertEquals(result.getCatalog(), new LinkImpl("Miami Environment 1", CATALOG_XML,
+      assertEquals(result.getCatalog(), new NamedLinkImpl("Miami Environment 1", CATALOG_XML,
                URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32/catalog")));
-      assertEquals(result.getPublicIps(), new LinkImpl("Public IPs", "application/xml", URI
+      assertEquals(result.getPublicIps(), new NamedLinkImpl("Public IPs", "application/xml", URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32/publicIps")));
       assertEquals(
                result.getInternetServices(),
-               new LinkImpl(
+               new NamedLinkImpl(
                         "Internet Services",
                         "application/xml",
                         URI

@@ -26,8 +26,8 @@ package org.jclouds.vcloud.domain.internal;
 import java.net.URI;
 import java.util.Map;
 
-import org.jclouds.rest.domain.Link;
-import org.jclouds.rest.domain.internal.LinkImpl;
+import org.jclouds.rest.domain.NamedLink;
+import org.jclouds.rest.domain.internal.NamedLinkImpl;
 import org.jclouds.vcloud.domain.Organization;
 import org.jclouds.vcloud.endpoints.Catalog;
 import org.jclouds.vcloud.endpoints.TasksList;
@@ -39,14 +39,14 @@ import org.jclouds.vcloud.endpoints.VDC;
  * @author Adrian Cole
  * 
  */
-public class OrganizationImpl extends LinkImpl implements Organization {
+public class OrganizationImpl extends NamedLinkImpl implements Organization {
 
-   private final Link catalog;
-   private final Map<String, Link> vdcs;
-   private final Map<String, Link> tasksLists;
+   private final NamedLink catalog;
+   private final Map<String, NamedLink> vdcs;
+   private final Map<String, NamedLink> tasksLists;
 
-   public OrganizationImpl(String name, String type, URI location, Link catalog,
-            Map<String, Link> vdcs, Map<String, Link> tasksLists) {
+   public OrganizationImpl(String name, String type, URI location, NamedLink catalog,
+            Map<String, NamedLink> vdcs, Map<String, NamedLink> tasksLists) {
       super(name, type, location);
       this.catalog = catalog;
       this.vdcs = vdcs;
@@ -54,17 +54,17 @@ public class OrganizationImpl extends LinkImpl implements Organization {
    }
 
    @Catalog
-   public Link getCatalog() {
+   public NamedLink getCatalog() {
       return catalog;
    }
 
    @VDC
-   public Map<String, Link> getVDCs() {
+   public Map<String, NamedLink> getVDCs() {
       return vdcs;
    }
 
    @TasksList
-   public Map<String, Link> getTasksLists() {
+   public Map<String, NamedLink> getTasksLists() {
       return tasksLists;
    }
 

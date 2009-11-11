@@ -31,7 +31,7 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.rest.domain.internal.LinkImpl;
+import org.jclouds.rest.domain.internal.NamedLinkImpl;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.VCloudLogin.VCloudSession;
 import org.testng.annotations.BeforeTest;
@@ -64,7 +64,7 @@ public class ParseLoginResponseFromHeadersTest extends BaseHandlerTest {
                "Content-Type: application/xml; charset=utf-8");
       VCloudSession reply = parser.apply(response);
       assertEquals(reply.getVCloudToken(), "9er4d061-4bff-48fa-84b1-5da7166764d2");
-      assertEquals(reply.getOrgs(), ImmutableMap.of("adrian@jclouds.org", new LinkImpl(
+      assertEquals(reply.getOrgs(), ImmutableMap.of("adrian@jclouds.org", new NamedLinkImpl(
                "adrian@jclouds.org", VCloudMediaType.ORG_XML, URI
                         .create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
 

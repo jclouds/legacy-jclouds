@@ -43,6 +43,8 @@ import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.terremark.binders.BindInstantiateVAppTemplateParamsToXmlEntity;
+import org.jclouds.vcloud.terremark.domain.VApp;
+import org.jclouds.vcloud.terremark.xml.TerremarkVAppHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkVDCHandler;
 
 /**
@@ -65,8 +67,9 @@ public interface TerremarkVCloudClient extends VCloudClient {
    @Endpoint(org.jclouds.vcloud.endpoints.VDC.class)
    @Path("/action/instantiatevAppTemplate")
    @Produces("application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml")
+   @XMLResponseParser(TerremarkVAppHandler.class)
    @MapBinder(BindInstantiateVAppTemplateParamsToXmlEntity.class)
-   String instantiateVAppTemplate(@MapEntityParam("name") String appName,
+   Future<? extends VApp> instantiateVAppTemplate(@MapEntityParam("name") String appName,
             @MapEntityParam("template") URI vAppTemplate, @MapEntityParam("count") int cpuCount,
             @MapEntityParam("megabytes") int megabytesMemory, @MapEntityParam("network") URI network);
 

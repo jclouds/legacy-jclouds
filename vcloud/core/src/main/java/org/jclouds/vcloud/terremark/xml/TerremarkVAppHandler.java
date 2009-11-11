@@ -21,44 +21,41 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.xml;
-
-import static org.jclouds.rest.util.Utils.putNamedLink;
-
-import java.net.URI;
-import java.util.Map;
+package org.jclouds.vcloud.terremark.xml;
 
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.rest.domain.Link;
 import org.jclouds.rest.domain.NamedLink;
-import org.jclouds.rest.domain.internal.NamedLinkImpl;
-import org.jclouds.vcloud.domain.Catalog;
-import org.jclouds.vcloud.domain.internal.CatalogImpl;
+import org.jclouds.rest.util.Utils;
+import org.jclouds.vcloud.terremark.domain.VApp;
+import org.jclouds.vcloud.terremark.domain.internal.VAppImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-
-import com.google.common.collect.Maps;
 
 /**
  * @author Adrian Cole
  */
-public class CatalogHandler extends ParseSax.HandlerWithResult<Catalog> {
-   private NamedLink Catalog;
-   private Map<String, NamedLink> contents = Maps.newHashMap();
+public class TerremarkVAppHandler extends ParseSax.HandlerWithResult<VApp> {
 
-   public Catalog getResult() {
-      return new CatalogImpl(Catalog.getName(), Catalog.getType(), Catalog.getLocation(), contents);
+   private NamedLink vApp;
+   private Link vDC;
+   private int status;
+   private int size;
+
+   public VApp getResult() {
+      return new VAppImpl(vApp.getName(), vApp.getType(), vApp.getLocation(), status, size, vDC);
    }
 
-   @Override
    public void startElement(String uri, String localName, String qName, Attributes attributes)
             throws SAXException {
-      if (qName.equals("Catalog")) {
-         Catalog = new NamedLinkImpl(attributes.getValue(attributes.getIndex("name")), attributes
-                  .getValue(attributes.getIndex("type")), URI.create(attributes.getValue(attributes
-                  .getIndex("href"))));
-      } else if (qName.equals("CatalogItem")) {
-         putNamedLink(contents, attributes);
+      if (qName.equals("Link")) {
+         vDC = Utils.newLink(attributes);
+      } else if (qName.equals("VApp")) {
+         vApp = Utils.newNamedLink(attributes);
+         status = Integer.parseInt(attributes.getValue(attributes.getIndex("status")));
+         size = Integer.parseInt(attributes.getValue(attributes.getIndex("size")));
       }
+
    }
 
 }

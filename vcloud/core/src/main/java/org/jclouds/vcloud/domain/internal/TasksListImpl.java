@@ -29,6 +29,12 @@ import java.util.SortedSet;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TasksList;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multimaps;
+
 /**
  * Locations of resources in vCloud
  * 
@@ -38,6 +44,9 @@ import org.jclouds.vcloud.domain.TasksList;
 public class TasksListImpl implements TasksList {
 
    private final SortedSet<Task> tasks;
+   private final ListMultimap<URI, Task> tasksByResult;
+   private final ListMultimap<URI, Task> tasksByOwner;
+
    private final URI location;
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
@@ -45,6 +54,28 @@ public class TasksListImpl implements TasksList {
    public TasksListImpl(URI location, SortedSet<Task> tasks) {
       this.location = location;
       this.tasks = tasks;
+      this.tasksByResult = Multimaps.index(Iterables.filter(tasks, new Predicate<Task>() {
+
+         public boolean apply(Task input) {
+            return input.getResult() != null;
+         }
+
+      }), new Function<Task, URI>() {
+
+         public URI apply(Task input) {
+
+            return input.getResult().getLocation();
+         }
+
+      });
+      this.tasksByOwner = Multimaps.index(tasks, new Function<Task, URI>() {
+
+         public URI apply(Task in) {
+
+            return in.getOwner().getLocation();
+         }
+
+      });
    }
 
    public SortedSet<Task> getTasks() {
@@ -61,6 +92,7 @@ public class TasksListImpl implements TasksList {
       int result = 1;
       result = prime * result + ((location == null) ? 0 : location.hashCode());
       result = prime * result + ((tasks == null) ? 0 : tasks.hashCode());
+      result = prime * result + ((tasksByResult == null) ? 0 : tasksByResult.hashCode());
       return result;
    }
 
@@ -83,6 +115,19 @@ public class TasksListImpl implements TasksList {
             return false;
       } else if (!tasks.equals(other.tasks))
          return false;
+      if (tasksByResult == null) {
+         if (other.tasksByResult != null)
+            return false;
+      } else if (!tasksByResult.equals(other.tasksByResult))
+         return false;
       return true;
+   }
+
+   public ListMultimap<URI, Task> getTasksByResult() {
+      return tasksByResult;
+   }
+
+   public ListMultimap<URI, Task> getTasksByOwner() {
+      return tasksByOwner;
    }
 }

@@ -30,7 +30,7 @@ import java.io.InputStream;
 import java.net.URI;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.rest.domain.internal.LinkImpl;
+import org.jclouds.rest.domain.internal.NamedLinkImpl;
 import org.jclouds.vcloud.domain.Catalog;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -59,77 +59,77 @@ public class CatalogHandlerTest extends BaseHandlerTest {
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32/catalog"));
       assertEquals(result.getType(), "application/vnd.vmware.vcloud.catalog+xml");
 
-      assertEquals(result.get("CentOS 5.3 (32-bit)"), new LinkImpl("CentOS 5.3 (32-bit)",
+      assertEquals(result.get("CentOS 5.3 (32-bit)"), new NamedLinkImpl("CentOS 5.3 (32-bit)",
                CATALOGITEM_XML,
                URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/5")));
-      assertEquals(result.get("CentOS 5.3 (64-bit)"), new LinkImpl("CentOS 5.3 (64-bit)",
+      assertEquals(result.get("CentOS 5.3 (64-bit)"), new NamedLinkImpl("CentOS 5.3 (64-bit)",
                CATALOGITEM_XML,
                URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/6")));
-      assertEquals(result.get("RHEL 5.3 (32-bit)"), new LinkImpl("RHEL 5.3 (32-bit)",
+      assertEquals(result.get("RHEL 5.3 (32-bit)"), new NamedLinkImpl("RHEL 5.3 (32-bit)",
                CATALOGITEM_XML,
                URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/7")));
-      assertEquals(result.get("RHEL 5.3 (64-bit)"), new LinkImpl("RHEL 5.3 (64-bit)",
+      assertEquals(result.get("RHEL 5.3 (64-bit)"), new NamedLinkImpl("RHEL 5.3 (64-bit)",
                CATALOGITEM_XML,
                URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/8")));
-      assertEquals(result.get("Ubuntu JeOS 9.04 (32-bit)"), new LinkImpl(
+      assertEquals(result.get("Ubuntu JeOS 9.04 (32-bit)"), new NamedLinkImpl(
                "Ubuntu JeOS 9.04 (32-bit)", CATALOGITEM_XML,
                URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/11")));
-      assertEquals(result.get("Ubuntu JeOS 9.04 (64-bit)"), new LinkImpl(
+      assertEquals(result.get("Ubuntu JeOS 9.04 (64-bit)"), new NamedLinkImpl(
                "Ubuntu JeOS 9.04 (64-bit)", CATALOGITEM_XML,
                URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/12")));
-      assertEquals(result.get("Ubuntu Server 9.04 (32-bit)"), new LinkImpl(
+      assertEquals(result.get("Ubuntu Server 9.04 (32-bit)"), new NamedLinkImpl(
                "Ubuntu Server 9.04 (32-bit)", CATALOGITEM_XML,
                URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/9")));
-      assertEquals(result.get("Ubuntu Server 9.04 (64-bit)"), new LinkImpl(
+      assertEquals(result.get("Ubuntu Server 9.04 (64-bit)"), new NamedLinkImpl(
                "Ubuntu Server 9.04 (64-bit)", CATALOGITEM_XML,
                URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/10")));
-      assertEquals(result.get("Windows 2003 Enterprise R2 (32-bit)"), new LinkImpl(
+      assertEquals(result.get("Windows 2003 Enterprise R2 (32-bit)"), new NamedLinkImpl(
                "Windows 2003 Enterprise R2 (32-bit)", CATALOGITEM_XML,
                URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/1")));
-      assertEquals(result.get("Windows 2003 Enterprise R2 (64-bit)"), new LinkImpl(
+      assertEquals(result.get("Windows 2003 Enterprise R2 (64-bit)"), new NamedLinkImpl(
                "Windows 2003 Enterprise R2 (64-bit)", CATALOGITEM_XML,
                URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/2")));
-      assertEquals(result.get("Windows 2003 Standard R2 (32-bit)"), new LinkImpl(
+      assertEquals(result.get("Windows 2003 Standard R2 (32-bit)"), new NamedLinkImpl(
                "Windows 2003 Standard R2 (32-bit)", CATALOGITEM_XML,
                URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/3")));
-      assertEquals(result.get("Windows 2003 Standard R2 (64-bit)"), new LinkImpl(
+      assertEquals(result.get("Windows 2003 Standard R2 (64-bit)"), new NamedLinkImpl(
                "Windows 2003 Standard R2 (64-bit)", CATALOGITEM_XML,
                URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/4")));
-      assertEquals(result.get("Windows 2003 Standard R2 w.SQL 2008 Web (64-bit)"), new LinkImpl(
+      assertEquals(result.get("Windows 2003 Standard R2 w.SQL 2008 Web (64-bit)"), new NamedLinkImpl(
                "Windows 2003 Standard R2 w.SQL 2008 Web (64-bit)", CATALOGITEM_XML,
                URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/23")));
-      assertEquals(result.get("Windows Server 2008 Enterprise (32-bit)"), new LinkImpl(
+      assertEquals(result.get("Windows Server 2008 Enterprise (32-bit)"), new NamedLinkImpl(
                "Windows Server 2008 Enterprise (32-bit)", CATALOGITEM_XML,
                URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/13")));
-      assertEquals(result.get("Windows Server 2008 Enterprise (64-bit)"), new LinkImpl(
+      assertEquals(result.get("Windows Server 2008 Enterprise (64-bit)"), new NamedLinkImpl(
                "Windows Server 2008 Enterprise (64-bit)", CATALOGITEM_XML,
                URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/15")));
-      assertEquals(result.get("Windows Server 2008 Enterprise R2 (64-bit)"), new LinkImpl(
+      assertEquals(result.get("Windows Server 2008 Enterprise R2 (64-bit)"), new NamedLinkImpl(
                "Windows Server 2008 Enterprise R2 (64-bit)", CATALOGITEM_XML,
                URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/16")));
-      assertEquals(result.get("Windows Server 2008 Standard (32-bit)"), new LinkImpl(
+      assertEquals(result.get("Windows Server 2008 Standard (32-bit)"), new NamedLinkImpl(
                "Windows Server 2008 Standard (32-bit)", CATALOGITEM_XML,
                URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/17")));
-      assertEquals(result.get("Windows Server 2008 Standard (64-bit)"), new LinkImpl(
+      assertEquals(result.get("Windows Server 2008 Standard (64-bit)"), new NamedLinkImpl(
                "Windows Server 2008 Standard (64-bit)", CATALOGITEM_XML,
                URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/18")));
-      assertEquals(result.get("Windows Server 2008 Standard R2 (64-bit)"), new LinkImpl(
+      assertEquals(result.get("Windows Server 2008 Standard R2 (64-bit)"), new NamedLinkImpl(
                "Windows Server 2008 Standard R2 (64-bit)", CATALOGITEM_XML,
                URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/19")));
       assertEquals(
                result.get("Windows Server 2008 Standard w.SQL 2008 Web (64-bit)"),
-               new LinkImpl(
+               new NamedLinkImpl(
                         "Windows Server 2008 Standard w.SQL 2008 Web (64-bit)",
                         CATALOGITEM_XML,
                         URI
                                  .create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/14")));
-      assertEquals(result.get("Windows Web Server 2008 (32-bit)"), new LinkImpl(
+      assertEquals(result.get("Windows Web Server 2008 (32-bit)"), new NamedLinkImpl(
                "Windows Web Server 2008 (32-bit)", CATALOGITEM_XML,
                URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/20")));
-      assertEquals(result.get("Windows Web Server 2008 (64-bit)"), new LinkImpl(
+      assertEquals(result.get("Windows Web Server 2008 (64-bit)"), new NamedLinkImpl(
                "Windows Web Server 2008 (64-bit)", CATALOGITEM_XML,
                URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/21")));
-      assertEquals(result.get("Windows Web Server 2008 R2 (64-bit)"), new LinkImpl(
+      assertEquals(result.get("Windows Web Server 2008 R2 (64-bit)"), new NamedLinkImpl(
                "Windows Web Server 2008 R2 (64-bit)", CATALOGITEM_XML,
                URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/22")));
 

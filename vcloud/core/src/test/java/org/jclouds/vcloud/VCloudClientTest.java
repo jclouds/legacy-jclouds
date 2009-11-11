@@ -32,6 +32,7 @@ import java.net.URI;
 import javax.inject.Provider;
 
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.ReturnVoidIf2xx;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
@@ -42,6 +43,7 @@ import org.jclouds.vcloud.endpoints.TasksList;
 import org.jclouds.vcloud.endpoints.VDC;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.xml.CatalogHandler;
+import org.jclouds.vcloud.xml.TaskHandler;
 import org.jclouds.vcloud.xml.TasksListHandler;
 import org.jclouds.vcloud.xml.VDCHandler;
 import org.testng.annotations.Test;
@@ -99,6 +101,176 @@ public class VCloudClientTest extends RestClientTest<VCloudClient> {
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, TasksListHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testDeployVApp() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudClient.class.getMethod("deploy", URI.class);
+      GeneratedHttpRequest<VCloudClient> httpMethod = processor.createRequest(method, URI
+               .create("https://services.vcloudexpress.terremark.com/vapp/1"));
+
+      assertRequestLineEquals(httpMethod,
+               "POST https://services.vcloudexpress.terremark.com/vapp/1/action/deploy HTTP/1.1");
+      assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.task+xml\n");
+      assertEntityEquals(httpMethod, null);
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, TaskHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testUndeployVApp() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudClient.class.getMethod("undeploy", URI.class);
+      GeneratedHttpRequest<VCloudClient> httpMethod = processor.createRequest(method, URI
+               .create("https://services.vcloudexpress.terremark.com/vapp/1"));
+
+      assertRequestLineEquals(httpMethod,
+               "POST https://services.vcloudexpress.terremark.com/vapp/1/action/undeploy HTTP/1.1");
+      assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.task+xml\n");
+      assertEntityEquals(httpMethod, null);
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, TaskHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testDeleteVApp() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudClient.class.getMethod("delete", URI.class);
+      GeneratedHttpRequest<VCloudClient> httpMethod = processor.createRequest(method, URI
+               .create("https://services.vcloudexpress.terremark.com/vapp/1"));
+
+      assertRequestLineEquals(httpMethod,
+               "DELETE https://services.vcloudexpress.terremark.com/vapp/1 HTTP/1.1");
+      assertHeadersEqual(httpMethod, "");
+      assertEntityEquals(httpMethod, null);
+
+      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testPowerOn() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudClient.class.getMethod("powerOn", URI.class);
+      GeneratedHttpRequest<VCloudClient> httpMethod = processor.createRequest(method, URI
+               .create("https://services.vcloudexpress.terremark.com/vapp/1"));
+
+      assertRequestLineEquals(httpMethod,
+               "POST https://services.vcloudexpress.terremark.com/vapp/1/power/action/powerOn HTTP/1.1");
+      assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.task+xml\n");
+      assertEntityEquals(httpMethod, null);
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, TaskHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testPowerOff() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudClient.class.getMethod("powerOff", URI.class);
+      GeneratedHttpRequest<VCloudClient> httpMethod = processor.createRequest(method, URI
+               .create("https://services.vcloudexpress.terremark.com/vapp/1"));
+
+      assertRequestLineEquals(httpMethod,
+               "POST https://services.vcloudexpress.terremark.com/vapp/1/power/action/powerOff HTTP/1.1");
+      assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.task+xml\n");
+      assertEntityEquals(httpMethod, null);
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, TaskHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testReset() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudClient.class.getMethod("reset", URI.class);
+      GeneratedHttpRequest<VCloudClient> httpMethod = processor.createRequest(method, URI
+               .create("https://services.vcloudexpress.terremark.com/vapp/1"));
+
+      assertRequestLineEquals(httpMethod,
+               "POST https://services.vcloudexpress.terremark.com/vapp/1/power/action/reset HTTP/1.1");
+      assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.task+xml\n");
+      assertEntityEquals(httpMethod, null);
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, TaskHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testSuspend() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudClient.class.getMethod("suspend", URI.class);
+      GeneratedHttpRequest<VCloudClient> httpMethod = processor.createRequest(method, URI
+               .create("https://services.vcloudexpress.terremark.com/vapp/1"));
+
+      assertRequestLineEquals(httpMethod,
+               "POST https://services.vcloudexpress.terremark.com/vapp/1/power/action/suspend HTTP/1.1");
+      assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.task+xml\n");
+      assertEntityEquals(httpMethod, null);
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, TaskHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testShutdown() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudClient.class.getMethod("shutdown", URI.class);
+      GeneratedHttpRequest<VCloudClient> httpMethod = processor.createRequest(method, URI
+               .create("https://services.vcloudexpress.terremark.com/vapp/1"));
+
+      assertRequestLineEquals(httpMethod,
+               "POST https://services.vcloudexpress.terremark.com/vapp/1/power/action/shutdown HTTP/1.1");
+      assertHeadersEqual(httpMethod, "");
+      assertEntityEquals(httpMethod, null);
+
+      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testGetTask() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudClient.class.getMethod("getTask", URI.class);
+      GeneratedHttpRequest<VCloudClient> httpMethod = processor.createRequest(method, URI
+               .create("https://services.vcloudexpress.terremark.com/task/1"));
+
+      assertRequestLineEquals(httpMethod,
+               "GET https://services.vcloudexpress.terremark.com/task/1 HTTP/1.1");
+      assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.task+xml\n");
+      assertEntityEquals(httpMethod, null);
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, TaskHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testCancelTask() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudClient.class.getMethod("cancelTask", URI.class);
+      GeneratedHttpRequest<VCloudClient> httpMethod = processor.createRequest(method, URI
+               .create("https://services.vcloudexpress.terremark.com/task/1"));
+
+      assertRequestLineEquals(httpMethod,
+               "POST https://services.vcloudexpress.terremark.com/task/1/action/cancel HTTP/1.1");
+      assertHeadersEqual(httpMethod, "");
+      assertEntityEquals(httpMethod, null);
+
+      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpMethod);

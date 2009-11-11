@@ -36,7 +36,6 @@ import javax.inject.Singleton;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.http.functions.ReturnStringIf200;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
@@ -46,6 +45,7 @@ import org.jclouds.util.Utils;
 import org.jclouds.vcloud.endpoints.Catalog;
 import org.jclouds.vcloud.endpoints.VDC;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
+import org.jclouds.vcloud.terremark.xml.TerremarkVAppHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkVDCHandler;
 import org.testng.annotations.Test;
 
@@ -94,8 +94,8 @@ public class TerremarkVCloudClientTest extends RestClientTest<TerremarkVCloudCli
       assertEntityEquals(httpMethod, IOUtils.toString(getClass().getResourceAsStream(
                "/terremark/InstantiateVAppTemplateParams-test.xml")));
 
-      assertResponseParserClassEquals(method, httpMethod, ReturnStringIf200.class);
-      assertSaxResponseParserClassEquals(method, null);
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, TerremarkVAppHandler.class);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpMethod);

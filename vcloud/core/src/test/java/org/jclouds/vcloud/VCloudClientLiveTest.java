@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.vcloud.domain.Catalog;
+import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VDC;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -75,7 +76,19 @@ public class VCloudClientLiveTest {
       assertNotNull(response);
       assertNotNull(response.getLocation());
       assertNotNull(response.getTasks());
+   }
 
+   @Test
+   public void testGetTask() throws Exception {
+      org.jclouds.vcloud.domain.TasksList response = connection.getDefaultTasksList().get(10,
+               TimeUnit.SECONDS);
+      assertNotNull(response);
+      assertNotNull(response.getLocation());
+      assertNotNull(response.getTasks());
+      for (Task t : response.getTasks()) {
+         assertEquals(connection.getTask(t.getLocation()).get(10, TimeUnit.SECONDS).getLocation(),
+                  t.getLocation());
+      }
    }
 
    @BeforeGroups(groups = { "live" })

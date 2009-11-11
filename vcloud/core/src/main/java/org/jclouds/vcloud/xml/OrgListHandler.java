@@ -23,13 +23,13 @@
  */
 package org.jclouds.vcloud.xml;
 
-import static org.jclouds.rest.util.Utils.putLink;
+import static org.jclouds.rest.util.Utils.putNamedLink;
 import static org.jclouds.vcloud.VCloudMediaType.ORG_XML;
 
 import java.util.Map;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.domain.Link;
+import org.jclouds.rest.domain.NamedLink;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -38,11 +38,11 @@ import com.google.common.collect.Maps;
 /**
  * @author Adrian Cole
  */
-public class OrgListHandler extends ParseSax.HandlerWithResult<Map<String, Link>> {
+public class OrgListHandler extends ParseSax.HandlerWithResult<Map<String, NamedLink>> {
 
-   private Map<String, Link> org = Maps.newHashMap();
+   private Map<String, NamedLink> org = Maps.newHashMap();
 
-   public Map<String, Link> getResult() {
+   public Map<String, NamedLink> getResult() {
       return org;
    }
 
@@ -53,7 +53,7 @@ public class OrgListHandler extends ParseSax.HandlerWithResult<Map<String, Link>
          int typeIndex = attributes.getIndex("type");
          if (typeIndex != -1) {
             if (attributes.getValue(typeIndex).equals(ORG_XML)) {
-               putLink(org, attributes);
+               putNamedLink(org, attributes);
             }
          }
       }

@@ -25,7 +25,7 @@ package org.jclouds.vcloud.domain;
 
 import java.util.Map;
 
-import org.jclouds.rest.domain.Link;
+import org.jclouds.rest.domain.NamedLink;
 import org.jclouds.vcloud.domain.internal.CatalogImpl;
 
 import com.google.inject.ImplementedBy;
@@ -35,6 +35,6 @@ import com.google.inject.ImplementedBy;
  */
 @org.jclouds.vcloud.endpoints.Catalog
 @ImplementedBy(CatalogImpl.class)
-public interface Catalog extends Link, Map<String, Link> {
+public interface Catalog extends NamedLink, Map<String, NamedLink> {
 
 }

@@ -28,8 +28,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.Map;
 
-import org.jclouds.rest.domain.Link;
-import org.jclouds.rest.domain.internal.LinkImpl;
+import org.jclouds.rest.domain.NamedLink;
+import org.jclouds.rest.domain.internal.NamedLinkImpl;
 import org.jclouds.vcloud.domain.VDC;
 
 /**
@@ -38,24 +38,24 @@ import org.jclouds.vcloud.domain.VDC;
  * @author Adrian Cole
  * 
  */
-public class VDCImpl extends LinkImpl implements VDC {
-   private final Map<String, Link> availableNetworks;
-   private final Map<String, Link> resourceEntities;
+public class VDCImpl extends NamedLinkImpl implements VDC {
+   private final Map<String, NamedLink> availableNetworks;
+   private final Map<String, NamedLink> resourceEntities;
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
 
-   public VDCImpl(String name, String type, URI location, Map<String, Link> resourceEntities,
-            Map<String, Link> availableNetworks) {
+   public VDCImpl(String name, String type, URI location, Map<String, NamedLink> resourceEntities,
+            Map<String, NamedLink> availableNetworks) {
       super(name, type, location);
       this.availableNetworks = checkNotNull(availableNetworks, "availableNetworks");
       this.resourceEntities = checkNotNull(resourceEntities, "resourceEntities");
    }
 
-   public Map<String, Link> getAvailableNetworks() {
+   public Map<String, NamedLink> getAvailableNetworks() {
       return availableNetworks;
    }
 
-   public Map<String, Link> getResourceEntities() {
+   public Map<String, NamedLink> getResourceEntities() {
       return resourceEntities;
    }
 

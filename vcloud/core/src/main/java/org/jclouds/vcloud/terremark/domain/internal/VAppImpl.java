@@ -21,24 +21,48 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.domain;
+package org.jclouds.vcloud.terremark.domain.internal;
 
-import java.util.Map;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.rest.domain.NamedLink;
-import org.jclouds.vcloud.domain.internal.VDCImpl;
+import java.net.URI;
 
-import com.google.inject.ImplementedBy;
+import org.jclouds.rest.domain.Link;
+import org.jclouds.rest.domain.internal.NamedLinkImpl;
+import org.jclouds.vcloud.terremark.domain.VApp;
 
 /**
+ * Locations of resources in vCloud
+ * 
  * @author Adrian Cole
+ * 
  */
-@org.jclouds.vcloud.endpoints.VDC
-@ImplementedBy(VDCImpl.class)
-public interface VDC extends NamedLink {
+public class VAppImpl extends NamedLinkImpl implements VApp {
 
-   Map<String, NamedLink> getAvailableNetworks();
+   private final int status;
+   private final int size;
+   private final Link vDC;
 
-   Map<String, NamedLink> getResourceEntities();
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 8464716396538298809L;
+
+   public VAppImpl(String name, String type, URI location, int status, int size, Link vDC) {
+      super(name, type, location);
+      this.status = status;
+      this.size = size;
+      this.vDC = checkNotNull(vDC, "vDC");
+   }
+
+   public int getStatus() {
+      return status;
+   }
+
+   public int getSize() {
+      return size;
+   }
+
+   public Link getVDC() {
+      return vDC;
+   }
 
 }

@@ -29,8 +29,8 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jclouds.rest.domain.Link;
-import org.jclouds.rest.domain.internal.LinkImpl;
+import org.jclouds.rest.domain.NamedLink;
+import org.jclouds.rest.domain.internal.NamedLinkImpl;
 import org.jclouds.vcloud.domain.Catalog;
 
 /**
@@ -39,15 +39,15 @@ import org.jclouds.vcloud.domain.Catalog;
  * @author Adrian Cole
  * 
  */
-public class CatalogImpl extends HashMap<String, Link> implements Catalog {
+public class CatalogImpl extends HashMap<String, NamedLink> implements Catalog {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
-   private final Link catalog;
+   private final NamedLink catalog;
 
-   public CatalogImpl(String name, String type, URI location, Map<String, Link> contents) {
+   public CatalogImpl(String name, String type, URI location, Map<String, NamedLink> contents) {
       super(contents.size());
-      this.catalog = new LinkImpl(checkNotNull(name, "name"), checkNotNull(type, "type"),
+      this.catalog = new NamedLinkImpl(checkNotNull(name, "name"), checkNotNull(type, "type"),
                checkNotNull(location, "location"));
       putAll(checkNotNull(contents, "contents"));
    }

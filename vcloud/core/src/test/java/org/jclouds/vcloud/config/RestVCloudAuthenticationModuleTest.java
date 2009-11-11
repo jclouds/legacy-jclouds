@@ -38,7 +38,7 @@ import org.jclouds.http.handlers.CloseContentAndSetExceptionErrorHandler;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.handlers.RedirectionRetryHandler;
-import org.jclouds.rest.domain.Link;
+import org.jclouds.rest.domain.NamedLink;
 import org.jclouds.util.Jsr330;
 import org.jclouds.vcloud.VCloudLogin;
 import org.jclouds.vcloud.VCloudLogin.VCloudSession;
@@ -80,7 +80,7 @@ public class RestVCloudAuthenticationModuleTest {
          public VCloudSession login() {
             return new VCloudSession() {
 
-               public Map<String, Link> getOrgs() {
+               public Map<String, NamedLink> getOrgs() {
                   return null;
                }
 

@@ -23,14 +23,14 @@
  */
 package org.jclouds.vcloud.xml;
 
-import static org.jclouds.rest.util.Utils.putLink;
+import static org.jclouds.rest.util.Utils.putNamedLink;
 
 import java.net.URI;
 import java.util.Map;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.domain.Link;
-import org.jclouds.rest.domain.internal.LinkImpl;
+import org.jclouds.rest.domain.NamedLink;
+import org.jclouds.rest.domain.internal.NamedLinkImpl;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.domain.internal.VDCImpl;
 import org.xml.sax.Attributes;
@@ -42,9 +42,9 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  */
 public class VDCHandler extends ParseSax.HandlerWithResult<VDC> {
-   private Link vDC;
-   private Map<String, Link> resourceEntities = Maps.newHashMap();
-   private Map<String, Link> availableNetworks = Maps.newHashMap();
+   private NamedLink vDC;
+   private Map<String, NamedLink> resourceEntities = Maps.newHashMap();
+   private Map<String, NamedLink> availableNetworks = Maps.newHashMap();
 
    public VDC getResult() {
       return new VDCImpl(vDC.getName(), vDC.getType(), vDC.getLocation(), resourceEntities,
@@ -55,13 +55,13 @@ public class VDCHandler extends ParseSax.HandlerWithResult<VDC> {
    public void startElement(String uri, String localName, String qName, Attributes attributes)
             throws SAXException {
       if (qName.equals("Vdc")) {
-         vDC = new LinkImpl(attributes.getValue(attributes.getIndex("name")), attributes
+         vDC = new NamedLinkImpl(attributes.getValue(attributes.getIndex("name")), attributes
                   .getValue(attributes.getIndex("type")), URI.create(attributes.getValue(attributes
                   .getIndex("href"))));
       } else if (qName.equals("Network")) {
-         putLink(availableNetworks, attributes);
+         putNamedLink(availableNetworks, attributes);
       } else if (qName.equals("ResourceEntity")) {
-         putLink(resourceEntities, attributes);
+         putNamedLink(resourceEntities, attributes);
       }
    }
 

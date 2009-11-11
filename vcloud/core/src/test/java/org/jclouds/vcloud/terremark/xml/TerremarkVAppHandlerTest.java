@@ -21,30 +21,26 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.xml;
+package org.jclouds.vcloud.terremark.xml;
 
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Map;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.rest.domain.NamedLink;
-import org.jclouds.rest.domain.internal.NamedLinkImpl;
-import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.rest.domain.internal.LinkImpl;
+import org.jclouds.vcloud.terremark.domain.VApp;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMap;
-
 /**
- * Tests behavior of {@code OrgListHandler}
+ * Tests behavior of {@code TerremarkVAppHandler}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.OrgListHandlerTest")
-public class OrgListHandlerTest extends BaseHandlerTest {
+@Test(groups = "unit", testName = "vcloud.TerremarkVAppHandlerTest")
+public class TerremarkVAppHandlerTest extends BaseHandlerTest {
 
    @BeforeTest
    @Override
@@ -53,12 +49,20 @@ public class OrgListHandlerTest extends BaseHandlerTest {
    }
 
    public void testApplyInputStream() {
-      InputStream is = getClass().getResourceAsStream("/orglist.xml");
+      InputStream is = getClass().getResourceAsStream("/terremark/launched_vapp.xml");
 
-      Map<String, NamedLink> result = factory.create(injector.getInstance(OrgListHandler.class))
-               .parse(is);
-      assertEquals(result, ImmutableMap.of("adrian@jclouds.org", new NamedLinkImpl(
-               "adrian@jclouds.org", VCloudMediaType.ORG_XML, URI
-                        .create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
+      VApp result = (VApp) factory.create(injector.getInstance(TerremarkVAppHandler.class)).parse(
+               is);
+      assertEquals(result.getName(), "adriantest");
+      assertEquals(result.getStatus(), 0);
+
+      assertEquals(result.getSize(), 4);
+
+      assertEquals(result.getLocation(), URI
+               .create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/13775"));
+      assertEquals(result.getType(), "application/vnd.vmware.vcloud.vApp+xml");
+      assertEquals(result.getVDC(), new LinkImpl("application/vnd.vmware.vcloud.vdc+xml", URI
+               .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32")));
+
    }
 }

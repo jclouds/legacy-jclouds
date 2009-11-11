@@ -38,7 +38,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
-import org.jclouds.rest.domain.Link;
+import org.jclouds.rest.domain.NamedLink;
 import org.jclouds.vcloud.VCloudToken;
 import org.jclouds.vcloud.VCloudLogin.VCloudSession;
 import org.jclouds.vcloud.endpoints.Org;
@@ -76,7 +76,7 @@ public class ParseLoginResponseFromHeaders implements Function<HttpResponse, VCl
       boolean matchFound = matcher.find();
 
       if (matchFound) {
-         final Map<String, Link> org = factory.create(orgHandlerProvider.get()).parse(
+         final Map<String, NamedLink> org = factory.create(orgHandlerProvider.get()).parse(
                   from.getContent());
 
          return new VCloudSession() {
@@ -86,7 +86,7 @@ public class ParseLoginResponseFromHeaders implements Function<HttpResponse, VCl
             }
 
             @Org
-            public Map<String, Link> getOrgs() {
+            public Map<String, NamedLink> getOrgs() {
                return org;
             }
          };

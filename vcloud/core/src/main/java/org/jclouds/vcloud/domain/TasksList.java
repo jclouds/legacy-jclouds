@@ -28,6 +28,7 @@ import java.util.SortedSet;
 
 import org.jclouds.vcloud.domain.internal.TasksListImpl;
 
+import com.google.common.collect.ListMultimap;
 import com.google.inject.ImplementedBy;
 
 /**
@@ -39,5 +40,9 @@ public interface TasksList {
    URI getLocation();
 
    SortedSet<Task> getTasks();
+
+   ListMultimap<URI, Task> getTasksByResult();
+
+   ListMultimap<URI, Task> getTasksByOwner();
 
 }

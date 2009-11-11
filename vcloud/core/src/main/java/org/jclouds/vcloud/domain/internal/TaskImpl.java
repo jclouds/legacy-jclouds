@@ -27,7 +27,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 
-import org.jclouds.rest.domain.Link;
+import org.jclouds.rest.domain.NamedLink;
+import org.jclouds.rest.domain.internal.LinkImpl;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
 import org.joda.time.DateTime;
@@ -40,21 +41,18 @@ import com.google.inject.internal.Nullable;
  * @author Adrian Cole
  * 
  */
-public class TaskImpl implements Task {
-   private final String type;
-   private final URI location;
+public class TaskImpl extends LinkImpl implements Task {
    private final TaskStatus status;
    private final DateTime startTime;
    @Nullable
    private final DateTime endTime;
-   private final Link owner;
+   private final NamedLink owner;
    @Nullable
-   private final Link result;
+   private final NamedLink result;
 
    public TaskImpl(String type, URI location, TaskStatus status, DateTime startTime,
-            @Nullable DateTime endTime, Link owner, @Nullable Link result) {
-      this.type = checkNotNull(type, "type");
-      this.location = checkNotNull(location, "location");
+            @Nullable DateTime endTime, NamedLink owner, @Nullable NamedLink result) {
+      super(type, location);
       this.status = checkNotNull(status, "status");
       this.startTime = checkNotNull(startTime, "startTime");
       this.endTime = endTime;
@@ -70,11 +68,11 @@ public class TaskImpl implements Task {
       return startTime;
    }
 
-   public Link getOwner() {
+   public NamedLink getOwner() {
       return owner;
    }
 
-   public Link getResult() {
+   public NamedLink getResult() {
       return result;
    }
 
@@ -86,25 +84,15 @@ public class TaskImpl implements Task {
       return (this == o) ? 0 : getStartTime().compareTo(o.getStartTime());
    }
 
-   public String getType() {
-      return type;
-   }
-
-   public URI getLocation() {
-      return location;
-   }
-
    @Override
    public int hashCode() {
       final int prime = 31;
-      int result = 1;
+      int result = super.hashCode();
       result = prime * result + ((endTime == null) ? 0 : endTime.hashCode());
-      result = prime * result + ((location == null) ? 0 : location.hashCode());
       result = prime * result + ((owner == null) ? 0 : owner.hashCode());
       result = prime * result + ((this.result == null) ? 0 : this.result.hashCode());
       result = prime * result + ((startTime == null) ? 0 : startTime.hashCode());
       result = prime * result + ((status == null) ? 0 : status.hashCode());
-      result = prime * result + ((type == null) ? 0 : type.hashCode());
       return result;
    }
 
@@ -112,7 +100,7 @@ public class TaskImpl implements Task {
    public boolean equals(Object obj) {
       if (this == obj)
          return true;
-      if (obj == null)
+      if (!super.equals(obj))
          return false;
       if (getClass() != obj.getClass())
          return false;
@@ -121,11 +109,6 @@ public class TaskImpl implements Task {
          if (other.endTime != null)
             return false;
       } else if (!endTime.equals(other.endTime))
-         return false;
-      if (location == null) {
-         if (other.location != null)
-            return false;
-      } else if (!location.equals(other.location))
          return false;
       if (owner == null) {
          if (other.owner != null)
@@ -147,12 +130,13 @@ public class TaskImpl implements Task {
             return false;
       } else if (!status.equals(other.status))
          return false;
-      if (type == null) {
-         if (other.type != null)
-            return false;
-      } else if (!type.equals(other.type))
-         return false;
       return true;
+   }
+
+   @Override
+   public String toString() {
+      return "TaskImpl [endTime=" + endTime + ", owner=" + owner + ", result=" + result
+               + ", startTime=" + startTime + ", status=" + status + "]";
    }
 
 }

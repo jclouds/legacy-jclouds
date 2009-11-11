@@ -32,7 +32,7 @@ import java.io.InputStream;
 import java.net.URI;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.rest.domain.internal.LinkImpl;
+import org.jclouds.rest.domain.internal.NamedLinkImpl;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Organization;
 import org.testng.annotations.BeforeTest;
@@ -63,9 +63,9 @@ public class OrgHandlerTest extends BaseHandlerTest {
       assertEquals(result.getLocation(), URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"));
       assertEquals(result.getType(), ORG_XML);
-      assertEquals(result.getCatalog(), new LinkImpl("Miami Environment 1 Catalog", CATALOG_XML,
+      assertEquals(result.getCatalog(), new NamedLinkImpl("Miami Environment 1 Catalog", CATALOG_XML,
                URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32/catalog")));
-      assertEquals(result.getVDCs(), ImmutableMap.of("Miami Environment 1", new LinkImpl(
+      assertEquals(result.getVDCs(), ImmutableMap.of("Miami Environment 1", new NamedLinkImpl(
                "Miami Environment 1", VCloudMediaType.VDC_XML, URI
                         .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32"))));
       assertEquals(
@@ -73,7 +73,7 @@ public class OrgHandlerTest extends BaseHandlerTest {
                ImmutableMap
                         .of(
                                  "Miami Environment 1 Tasks List",
-                                 new LinkImpl(
+                                 new NamedLinkImpl(
                                           "Miami Environment 1 Tasks List",
                                           TASKSLIST_XML,
                                           URI

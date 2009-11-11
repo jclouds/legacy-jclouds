@@ -21,24 +21,32 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.domain;
+package org.jclouds.vcloud.xml;
 
-import java.util.Map;
+import javax.inject.Inject;
 
-import org.jclouds.rest.domain.NamedLink;
-import org.jclouds.vcloud.domain.internal.VDCImpl;
-
-import com.google.inject.ImplementedBy;
+import org.jclouds.util.DateService;
+import org.jclouds.vcloud.domain.Task;
 
 /**
  * @author Adrian Cole
  */
-@org.jclouds.vcloud.endpoints.VDC
-@ImplementedBy(VDCImpl.class)
-public interface VDC extends NamedLink {
+public class TaskHandler extends BaseTaskHandler<Task> {
 
-   Map<String, NamedLink> getAvailableNetworks();
+   @Inject
+   public TaskHandler(DateService dateService) {
+      super(dateService);
+   }
 
-   Map<String, NamedLink> getResourceEntities();
+   private Task task;
+
+   public Task getResult() {
+      return task;
+   }
+
+   @Override
+   protected void newTask(Task task) {
+      this.task = task;
+   }
 
 }
