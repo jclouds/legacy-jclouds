@@ -4,7 +4,7 @@
    $Revision$
    $Date$
 
-   Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
+   Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
 
    ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one
@@ -27,18 +27,31 @@
  -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
-        <artifactId>jclouds-project</artifactId>
         <groupId>org.jclouds</groupId>
+        <artifactId>jclouds-project</artifactId>
         <version>1.0-SNAPSHOT</version>
         <relativePath>../project/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>jclouds-azure-project</artifactId>
-    <packaging>pom</packaging>
-    <name>jclouds azure project</name>
-    <modules>
-        <module>storage</module>
-    </modules>
+    <groupId>org.jclouds</groupId>
+    <artifactId>jclouds-azure</artifactId>
+    <name>jclouds azure services core</name>
+    <packaging>jar</packaging>
+    <description>jclouds core components to access azure services</description>
+
+   <properties>
+        <jclouds.test.user>${jclouds.azure.storage.account}</jclouds.test.user>
+        <jclouds.test.key>${jclouds.azure.storage.key}</jclouds.test.key>
+        <jclouds.test.initializer>org.jclouds.azure.storage.blob.blobstore.integration.AzureBlobTestInitializer</jclouds.test.initializer>
+    </properties>
+
+
+    <scm>
+        <connection>scm:svn:http://jclouds.googlecode.com/svn/trunk/azure</connection>
+        <developerConnection>scm:svn:https://jclouds.googlecode.com/svn/trunk/azure</developerConnection>
+        <url>http://jclouds.googlecode.com/svn/trunk/azure</url>
+    </scm>
+
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -53,10 +66,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-           <groupId>log4j</groupId>
-           <artifactId>log4j</artifactId>
-           <version>1.2.14</version>
-           <scope>test</scope>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.14</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
