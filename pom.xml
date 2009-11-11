@@ -47,7 +47,7 @@
         <module>mezeo</module>
         <module>nirvanix</module>
         <module>vcloud</module>
-        <module>atmosonline</module>
+        <module>atmos</module>
         <module>twitter</module>
     </modules>
     <build>

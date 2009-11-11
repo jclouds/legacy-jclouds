@@ -54,7 +54,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-cloudfiles</artifactId>
+            <artifactId>jclouds-rackspace</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

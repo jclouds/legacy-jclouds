@@ -67,7 +67,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-emcsaas</artifactId>
+            <artifactId>jclouds-atmos</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -82,7 +82,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-cloudfiles</artifactId>
+            <artifactId>jclouds-rackspace</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
