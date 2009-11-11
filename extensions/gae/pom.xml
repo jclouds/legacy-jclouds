@@ -69,12 +69,14 @@
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
+<!--
             <exclusions>
                 <exclusion>
                     <groupId>org.mortbay.jetty</groupId>
                     <artifactId>jetty</artifactId>
                 </exclusion>
             </exclusions>
+-->
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
