@@ -95,6 +95,10 @@
             <id>jboss</id>
             <url>http://repository.jboss.org/maven2/</url>
         </repository>
+        <repository>
+            <id>googlecode.java-xmlbuilder</id>
+            <url>http://java-xmlbuilder.googlecode.com/svn/repo</url>       
+        </repository>
     </repositories>
 
     <distributionManagement>
