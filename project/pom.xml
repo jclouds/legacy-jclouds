@@ -140,8 +140,8 @@
 
     <properties>
         <parent-basedir>${basedir}</parent-basedir>
-        <maven.compile.source>1.5</maven.compile.source>
-        <maven.compile.target>1.5</maven.compile.target>
+        <maven.compile.source>1.6</maven.compile.source>
+        <maven.compile.target>1.6</maven.compile.target>
         <maven.compile.optimize>true</maven.compile.optimize>
         <maven.compile.deprecation>true</maven.compile.deprecation>
         <jclouds.blobstore.httpstream.url>http://mirror.cloudera.com/apache/maven/binaries/apache-maven-2.2.1-bin.tar.bz2</jclouds.blobstore.httpstream.url>
@@ -265,8 +265,7 @@
                         <configuration>
                             <quiet>true</quiet>
                             <links>
-                                <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
-                                <link>http://java.sun.com/javaee/5/docs/api/</link>
+                                <link>http://java.sun.com/javase/6/docs/api/</link>
                             </links>
                             <footer><![CDATA[
                      <!-- Google Analytics -->
@@ -340,7 +339,6 @@ pageTracker._trackPageview();
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
             </plugin>
-            <!-- enforce java 1.5 and maven 2.2.1 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
@@ -353,7 +351,7 @@ pageTracker._trackPageview();
                         <configuration>
                             <rules>
                                 <requireJavaVersion>
-                                    <version>[1.5,)</version>
+                                    <version>[1.6,)</version>
                                 </requireJavaVersion>
                                 <requireMavenVersion>
                                     <version>[2.2.1,)</version>
