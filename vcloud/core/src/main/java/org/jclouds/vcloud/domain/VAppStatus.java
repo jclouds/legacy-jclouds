@@ -21,44 +21,44 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.terremark.domain;
+package org.jclouds.vcloud.domain;
 
-import java.net.InetAddress;
-import java.util.Map;
-import java.util.SortedSet;
-
-import org.jclouds.rest.domain.Link;
-import org.jclouds.rest.domain.NamedLink;
-import org.jclouds.vcloud.domain.VAppStatus;
-import org.jclouds.vcloud.terremark.domain.internal.VAppImpl;
-
-import com.google.common.collect.ListMultimap;
-import com.google.inject.ImplementedBy;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * @author Adrian Cole
  */
-@ImplementedBy(VAppImpl.class)
-public interface VApp extends NamedLink {
+public enum VAppStatus {
+   CREATING, OFF, ON;
 
-   VAppStatus getStatus();
+   public String value() {
+      switch (this) {
+         case CREATING:
+            return "0";
+         case OFF:
+            return "2";
+         case ON:
+            return "4";
+         default:
+            throw new IllegalArgumentException("invalid status:" + this);
+      }
+   }
 
-   long getSize();
+   public static VAppStatus fromValue(String status) {
+      return fromValue(Integer.parseInt(checkNotNull(status, "status")));
+   }
 
-   Link getVDC();
-
-   Link getComputeOptions();
-
-   Link getCustomizationOptions();
-
-   ListMultimap<String, InetAddress> getNetworkToAddresses();
-
-   String getOperatingSystemDescription();
-
-   VirtualSystem getSystem();
-
-   SortedSet<ResourceAllocation> getResourceAllocations();
-
-   Map<ResourceType, ResourceAllocation> getResourceAllocationByType();
+   public static VAppStatus fromValue(int v) {
+      switch (v) {
+         case 0:
+            return CREATING;
+         case 2:
+            return OFF;
+         case 4:
+            return ON;
+         default:
+            throw new IllegalArgumentException("invalid status:" + v);
+      }
+   }
 
 }

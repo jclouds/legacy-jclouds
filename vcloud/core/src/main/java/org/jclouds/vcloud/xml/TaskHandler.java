@@ -23,30 +23,82 @@
  */
 package org.jclouds.vcloud.xml;
 
+import java.text.ParseException;
+
 import javax.inject.Inject;
 
+import org.jclouds.http.functions.ParseSax;
+import org.jclouds.rest.domain.Link;
+import org.jclouds.rest.domain.NamedLink;
+import org.jclouds.rest.util.Utils;
 import org.jclouds.util.DateService;
 import org.jclouds.vcloud.domain.Task;
+import org.jclouds.vcloud.domain.TaskStatus;
+import org.jclouds.vcloud.domain.internal.TaskImpl;
+import org.joda.time.DateTime;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
 /**
  * @author Adrian Cole
  */
-public class TaskHandler extends BaseTaskHandler<Task> {
+public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
+   protected final DateService dateService;
+
+   private Link taskLink;
+   private NamedLink owner;
+   private NamedLink result;
+   private TaskStatus status;
+   private DateTime startTime;
+   private DateTime endTime;
+   private Task task;
 
    @Inject
    public TaskHandler(DateService dateService) {
-      super(dateService);
+      this.dateService = dateService;
    }
-
-   private Task task;
 
    public Task getResult() {
       return task;
    }
 
    @Override
-   protected void newTask(Task task) {
-      this.task = task;
+   public void startElement(String uri, String localName, String qName, Attributes attributes)
+            throws SAXException {
+      if (qName.equals("Task")) {
+         taskLink = Utils.newLink(attributes);
+         status = TaskStatus.fromValue(attributes.getValue(attributes.getIndex("status")));
+         startTime = dateService.iso8601DateParse(attributes.getValue(attributes
+                  .getIndex("startTime")));
+         if (attributes.getIndex("endTime") != -1) {
+            try {
+               endTime = dateService.iso8601DateParse(attributes.getValue(attributes
+                        .getIndex("endTime")));
+            } catch (RuntimeException e) {
+               if (!(e.getCause() instanceof ParseException)) // TODO.. format doesn't parse
+                  // endTime="2009-11-11T02:27:25Z"
+                  throw e;
+            }
+         }
+      } else if (qName.equals("Owner")) {
+         owner = Utils.newNamedLink(attributes);
+      } else if (qName.equals("Result")) {
+         result = Utils.newNamedLink(attributes);
+      }
+   }
+
+   @Override
+   public void endElement(String uri, String localName, String qName) throws SAXException {
+      if (qName.equals("Task")) {
+         this.task = new TaskImpl(taskLink.getType(), taskLink.getLocation(), status, startTime,
+                  endTime, owner, result);
+         taskLink = null;
+         status = null;
+         startTime = null;
+         endTime = null;
+         owner = null;
+         result = null;
+      }
    }
 
 }

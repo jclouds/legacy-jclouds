@@ -46,6 +46,8 @@ import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TasksList;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
+import org.jclouds.vcloud.terremark.domain.VApp;
+import org.jclouds.vcloud.terremark.xml.TerremarkVAppHandler;
 import org.jclouds.vcloud.xml.CatalogHandler;
 import org.jclouds.vcloud.xml.TaskHandler;
 import org.jclouds.vcloud.xml.TasksListHandler;
@@ -148,13 +150,7 @@ public interface VCloudClient {
 
    @GET
    @Consumes(VAPP_XML)
-   // TODO parse
-   String getVApp(@Endpoint URI vApp);
-
-   //   
-   // @GET
-   // @Endpoint(vDC.class)
-   // public Set<String> getvDCs();
-   //
+   @XMLResponseParser(TerremarkVAppHandler.class)
+   Future<? extends VApp> getVApp(@Endpoint URI vApp);
 
 }

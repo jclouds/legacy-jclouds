@@ -28,8 +28,8 @@ import java.util.SortedSet;
 
 import javax.inject.Inject;
 
+import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.util.Utils;
-import org.jclouds.util.DateService;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TasksList;
 import org.jclouds.vcloud.domain.internal.TasksListImpl;
@@ -41,22 +41,19 @@ import com.google.common.collect.Sets;
 /**
  * @author Adrian Cole
  */
-public class TasksListHandler extends BaseTaskHandler<TasksList> {
+public class TasksListHandler extends ParseSax.HandlerWithResult<TasksList> {
 
    private SortedSet<Task> tasks = Sets.newTreeSet();
+   private final TaskHandler taskHandler;
    private URI location;
 
    @Inject
-   public TasksListHandler(DateService dateService) {
-      super(dateService);
+   public TasksListHandler(TaskHandler taskHandler) {
+      this.taskHandler = taskHandler;
    }
 
    public TasksList getResult() {
       return new TasksListImpl(location, tasks);
-   }
-
-   protected void newTask(Task task) {
-      this.tasks.add(task);
    }
 
    @Override
@@ -65,7 +62,15 @@ public class TasksListHandler extends BaseTaskHandler<TasksList> {
       if (qName.equals("TasksList")) {
          location = Utils.newLink(attributes).getLocation();
       } else {
-         super.startElement(uri, localName, qName, attributes);
+         taskHandler.startElement(uri, localName, qName, attributes);
+      }
+   }
+
+   @Override
+   public void endElement(String uri, String localName, String qName) throws SAXException {
+      taskHandler.endElement(uri, localName, qName);
+      if (qName.equals("Task")) {
+         this.tasks.add(taskHandler.getResult());
       }
    }
 

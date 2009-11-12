@@ -23,39 +23,140 @@
  */
 package org.jclouds.vcloud.terremark.xml;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.SortedSet;
+
+import javax.annotation.Resource;
+import javax.inject.Inject;
+
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.logging.Logger;
 import org.jclouds.rest.domain.Link;
 import org.jclouds.rest.domain.NamedLink;
 import org.jclouds.rest.util.Utils;
+import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.terremark.domain.ResourceAllocation;
 import org.jclouds.vcloud.terremark.domain.VApp;
+import org.jclouds.vcloud.terremark.domain.VirtualSystem;
 import org.jclouds.vcloud.terremark.domain.internal.VAppImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Sets;
 
 /**
  * @author Adrian Cole
  */
 public class TerremarkVAppHandler extends ParseSax.HandlerWithResult<VApp> {
 
+   private final VirtualSystemHandler systemHandler;
+   private final ResourceAllocationHandler allocationHandler;
+   @Resource
+   protected Logger logger = Logger.NULL;
+
+   @Inject
+   public TerremarkVAppHandler(VirtualSystemHandler systemHandler,
+            ResourceAllocationHandler allocationHandler) {
+      this.systemHandler = systemHandler;
+      this.allocationHandler = allocationHandler;
+   }
+
+   private VirtualSystem system;
+   private SortedSet<ResourceAllocation> allocations = Sets.newTreeSet();
    private NamedLink vApp;
    private Link vDC;
-   private int status;
+   private VAppStatus status;
    private int size;
+   private boolean skip;
+   private Link computeOptions;
+   private Link customizationOptions;
+   private final ListMultimap<String, InetAddress> networkToAddresses = ArrayListMultimap.create();
+   private StringBuilder currentText = new StringBuilder();
+   private String operatingSystemDescription;
+   private boolean inOs;
+   private String networkName;
 
    public VApp getResult() {
-      return new VAppImpl(vApp.getName(), vApp.getType(), vApp.getLocation(), status, size, vDC);
+      return new VAppImpl(vApp.getName(), vApp.getType(), vApp.getLocation(), status, size, vDC,
+               computeOptions, customizationOptions, networkToAddresses,
+               operatingSystemDescription, system, allocations);
    }
 
    public void startElement(String uri, String localName, String qName, Attributes attributes)
             throws SAXException {
+      if (attributes.getIndex("xsi:nil") != -1) {
+         skip = true;
+         return;
+      } else {
+         skip = false;
+      }
       if (qName.equals("Link")) {
-         vDC = Utils.newLink(attributes);
+         if (attributes.getValue(attributes.getIndex("type")).equals(VCloudMediaType.VDC_XML)) {
+            vDC = Utils.newLink(attributes);
+         } else if (attributes.getValue(attributes.getIndex("name")).equals("Compute Options")) {
+            this.computeOptions = Utils.newLink(attributes);
+         } else if (attributes.getValue(attributes.getIndex("name"))
+                  .equals("Customization Options")) {
+            this.customizationOptions = Utils.newLink(attributes);
+         }
       } else if (qName.equals("VApp")) {
          vApp = Utils.newNamedLink(attributes);
-         status = Integer.parseInt(attributes.getValue(attributes.getIndex("status")));
+         status = VAppStatus.fromValue(attributes.getValue(attributes.getIndex("status")));
          size = Integer.parseInt(attributes.getValue(attributes.getIndex("size")));
+      } else if (qName.equals("OperatingSystemSection")) {
+         inOs = true;
+      } else if (qName.equals("q1:NetworkConnection")) {
+         networkName = attributes.getValue(attributes.getIndex("Network"));
+      } else {
+         systemHandler.startElement(uri, localName, qName, attributes);
+         allocationHandler.startElement(uri, localName, qName, attributes);
       }
 
    }
 
+   @Override
+   public void endElement(String uri, String localName, String qName) throws SAXException {
+      if (qName.equals("OperatingSystemSection")) {
+         inOs = false;
+      } else if (inOs && qName.equals("Description")) {
+         operatingSystemDescription = currentText.toString().trim();
+      } else if (qName.equals("q1:IpAddress")) {
+         networkToAddresses.put(networkName, parseInetAddress(currentText.toString().trim()));
+      } else if (qName.equals("q2:System")) {
+         systemHandler.endElement(uri, localName, qName);
+         system = systemHandler.getResult();
+      } else if (qName.equals("q2:Item")) {
+         allocationHandler.endElement(uri, localName, qName);
+         allocations.add(allocationHandler.getResult());
+      } else if (!skip) {
+         systemHandler.endElement(uri, localName, qName);
+         allocationHandler.endElement(uri, localName, qName);
+      }
+      currentText = new StringBuilder();
+   }
+
+   @Override
+   public void characters(char ch[], int start, int length) {
+      currentText.append(ch, start, length);
+      systemHandler.characters(ch, start, length);
+      allocationHandler.characters(ch, start, length);
+   }
+
+   private InetAddress parseInetAddress(String string) {
+      String[] byteStrings = string.split("\\.");
+      byte[] bytes = new byte[4];
+      for (int i = 0; i < 4; i++) {
+         bytes[i] = (byte) Integer.parseInt(byteStrings[i]);
+      }
+      try {
+         return InetAddress.getByAddress(bytes);
+      } catch (UnknownHostException e) {
+         logger.warn(e, "error parsing ipAddress", currentText);
+      }
+      return null;
+   }
 }

@@ -37,6 +37,8 @@ import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.vcloud.VCloudClientLiveTest;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
+import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.terremark.domain.ResourceType;
 import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
 import org.jclouds.vcloud.terremark.domain.VApp;
 import org.testng.annotations.BeforeGroups;
@@ -66,18 +68,24 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
    }
 
    @Test
-   // disabled until stop functionality is added
    public void testInstantiate() throws InterruptedException, ExecutionException, TimeoutException {
-      URI template = tmClient.getCatalog().get(45, TimeUnit.SECONDS).get(
-               "Ubuntu Server 9.04 (32-bit)").getLocation();
+      String serverName = "adriantest4";
+      int processorCount = 1;
+      int memory = 512;
+      String catalogOs = "Ubuntu Server 9.04 (32-bit)";
+      String expectedOs = "Ubuntu Linux (32-bit)";
+
+      URI template = tmClient.getCatalog().get(45, TimeUnit.SECONDS).get(catalogOs).getLocation();
 
       URI network = tmClient.getDefaultVDC().get(45, TimeUnit.SECONDS).getAvailableNetworks()
                .values().iterator().next().getLocation();
 
-      VApp vApp = tmClient.instantiateVAppTemplate("adriantest1", template, 1, 512, network).get(
-               45, TimeUnit.SECONDS);
+      VApp vApp = tmClient.instantiateVAppTemplate(serverName, template, processorCount, memory,
+               network).get(45, TimeUnit.SECONDS);
+      assertEquals(vApp.getStatus(), VAppStatus.CREATING);
 
       Task instantiateTask = getLastTaskFor(vApp.getVDC().getLocation());
+      assertEquals(instantiateTask.getStatus(), TaskStatus.QUEUED);
 
       // in terremark, this should be a no-op, as it should simply return the above task, which is
       // already deploying
@@ -88,6 +96,9 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
       deployTask = tmClient.deploy(vApp.getLocation()).get(45, TimeUnit.SECONDS);
       assertEquals(deployTask.getLocation(), instantiateTask.getLocation());
 
+      vApp = tmClient.getVApp(vApp.getLocation()).get(45, TimeUnit.SECONDS);
+      assertEquals(vApp.getStatus(), VAppStatus.CREATING);
+
       try {// per docs, this is not supported
          tmClient.cancelTask(deployTask.getLocation()).get(45, TimeUnit.SECONDS);
       } catch (ExecutionException e) {
@@ -96,7 +107,11 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
       }
 
       deployTask = blockUntilSuccess(deployTask);
-      // TODO verify from vapp status
+
+      vApp = tmClient.getVApp(vApp.getLocation()).get(45, TimeUnit.SECONDS);
+      verifyConfigurationOfVApp(vApp, serverName, expectedOs, processorCount, memory);
+      assertEquals(vApp.getStatus(), VAppStatus.OFF);
+
       try {// per docs, this is not supported
          tmClient.undeploy(deployTask.getResult().getLocation()).get(45, TimeUnit.SECONDS);
       } catch (ExecutionException e) {
@@ -106,7 +121,8 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
 
       deployTask = blockUntilSuccess(tmClient.powerOn(deployTask.getResult().getLocation()).get(45,
                TimeUnit.SECONDS));
-      // TODO verify from vapp status
+      vApp = tmClient.getVApp(vApp.getLocation()).get(45, TimeUnit.SECONDS);
+      assertEquals(vApp.getStatus(), VAppStatus.ON);
 
       try {// per docs, this is not supported
          tmClient.suspend(deployTask.getResult().getLocation()).get(45, TimeUnit.SECONDS);
@@ -117,18 +133,37 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
 
       deployTask = blockUntilSuccess(tmClient.reset(deployTask.getResult().getLocation()).get(45,
                TimeUnit.SECONDS));
-      // TODO verify from vapp status
+      vApp = tmClient.getVApp(vApp.getLocation()).get(45, TimeUnit.SECONDS);
+      assertEquals(vApp.getStatus(), VAppStatus.ON);
 
       tmClient.shutdown(deployTask.getResult().getLocation()).get(45, TimeUnit.SECONDS);
-      // TODO verify from vapp status
+      vApp = tmClient.getVApp(vApp.getLocation()).get(45, TimeUnit.SECONDS);
+      assertEquals(vApp.getStatus(), VAppStatus.ON);
 
       deployTask = blockUntilSuccess(tmClient.powerOff(deployTask.getResult().getLocation()).get(
                45, TimeUnit.SECONDS));
-      // TODO verify from vapp status
+      vApp = tmClient.getVApp(vApp.getLocation()).get(45, TimeUnit.SECONDS);
+      assertEquals(vApp.getStatus(), VAppStatus.OFF);
 
       tmClient.delete(deployTask.getResult().getLocation()).get(45, TimeUnit.SECONDS);
-      // TODO verify from vapp status
+      //TODO verify not present anymore
+   }
 
+   private void verifyConfigurationOfVApp(VApp vApp, String serverName, String expectedOs,
+            int processorCount, int memory) {
+      assertEquals(vApp.getName(), serverName);
+      assertEquals(vApp.getOperatingSystemDescription(), expectedOs);
+      assertEquals(vApp.getResourceAllocationByType().get(ResourceType.VIRTUAL_CPU)
+               .getVirtualQuantity(), processorCount);
+      assertEquals(vApp.getResourceAllocationByType().get(ResourceType.SCSI_CONTROLLER)
+               .getVirtualQuantity(), 1);
+      assertEquals(
+               vApp.getResourceAllocationByType().get(ResourceType.MEMORY).getVirtualQuantity(),
+               memory);
+      assertEquals(vApp.getResourceAllocationByType().get(ResourceType.VIRTUAL_DISK)
+               .getVirtualQuantity(), memory * 8192);
+      assertEquals(vApp.getSize(), vApp.getResourceAllocationByType()
+               .get(ResourceType.VIRTUAL_DISK).getVirtualQuantity());
    }
 
    private Task blockUntilSuccess(Task task) throws InterruptedException, ExecutionException,
