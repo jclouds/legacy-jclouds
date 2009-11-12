@@ -34,7 +34,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>jclouds-aws-demos-project</artifactId>
     <packaging>pom</packaging>
-    <name>jclouds aws demos aggregator</name>
+    <name>jclouds AWS demos aggregator</name>
     <modules>
         <!-- as this has a dependency on something you can't get from maven, excluding
                 <module>googleappengine</module>
