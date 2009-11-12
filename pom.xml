@@ -39,6 +39,7 @@
     <modules>
         <module>project</module>
         <module>thirdparty</module>
+        <module>archetypes</module>        
         <module>core</module>
         <module>extensions</module>
         <module>aws</module>
@@ -53,13 +54,22 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>javadoc</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>aggregate</goal>
+                        </goals>
+                    </execution>
+                </executions>                
                 <configuration>
+                    <encoding>UTF-8</encoding>                        
                     <quiet>true</quiet>
                     <links>
-                        <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
-                        <link>http://java.sun.com/javaee/5/docs/api/</link>
+                        <link>http://java.sun.com/javase/6/docs/api/</link>
+                        <link>http://java.sun.com/javaee/6/docs/api/</link>
                     </links>
                     <footer><![CDATA[
                      <!-- Google Analytics -->
@@ -74,15 +84,6 @@ pageTracker._trackPageview();
 } catch(err) {}</script>
                      ]]></footer>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>javadoc</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>aggregate</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>com.google.code.maven-license-plugin</groupId>
