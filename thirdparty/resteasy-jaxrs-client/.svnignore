@@ -1,0 +1,7 @@
+target
+.settings
+.classpath
+.project
+resteasy-jaxrs-client.iml
+resteasy-jaxrs-client.ipr
+resteasy-jaxrs-client.iws
