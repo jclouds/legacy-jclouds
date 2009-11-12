@@ -468,17 +468,17 @@ public class RestAnnotationProcessor<T> {
    private void addMatrixParams(UriBuilder builder, Collection<Entry<String, String>> tokenValues,
             Method method, Object... args) {
       if (declaring.isAnnotationPresent(MatrixParams.class)) {
-         MatrixParams query = declaring.getAnnotation(MatrixParams.class);
-         addMatrix(builder, query, tokenValues);
+         MatrixParams matrix = declaring.getAnnotation(MatrixParams.class);
+         addMatrix(builder, matrix, tokenValues);
       }
 
       if (method.isAnnotationPresent(MatrixParams.class)) {
-         MatrixParams query = method.getAnnotation(MatrixParams.class);
-         addMatrix(builder, query, tokenValues);
+         MatrixParams matrix = method.getAnnotation(MatrixParams.class);
+         addMatrix(builder, matrix, tokenValues);
       }
 
-      for (Entry<String, String> query : getMatrixParamKeyValues(method, args).entries()) {
-         builder.queryParam(query.getKey(), replaceTokens(query.getValue(), tokenValues));
+      for (Entry<String, String> matrix : getMatrixParamKeyValues(method, args).entries()) {
+         builder.matrixParam(matrix.getKey(), replaceTokens(matrix.getValue(), tokenValues));
       }
    }
 
@@ -963,40 +963,99 @@ public class RestAnnotationProcessor<T> {
       matrixParamValues.putAll(constants);
       Map<Integer, Set<Annotation>> indexToMatrixParam = methodToindexOfParamToMatrixParamAnnotations
                .get(method);
+
+      Map<Integer, Set<Annotation>> indexToParamExtractor = methodToindexOfParamToParamParserAnnotations
+               .get(method);
       for (Entry<Integer, Set<Annotation>> entry : indexToMatrixParam.entrySet()) {
          for (Annotation key : entry.getValue()) {
+            Set<Annotation> extractors = indexToParamExtractor.get(entry.getKey());
             String paramKey = ((MatrixParam) key).value();
-            String paramValue = args[entry.getKey()].toString();
+            String paramValue;
+            if (extractors != null && extractors.size() > 0) {
+               ParamParser extractor = (ParamParser) extractors.iterator().next();
+               paramValue = injector.getInstance(extractor.value()).apply(args[entry.getKey()]);
+            } else {
+               paramValue = args[entry.getKey()].toString();
+            }
             matrixParamValues.put(paramKey, paramValue);
          }
+      }
+
+      if (method.isAnnotationPresent(MatrixParam.class)
+               && method.isAnnotationPresent(ParamParser.class)) {
+         String paramKey = method.getAnnotation(MatrixParam.class).value();
+         String paramValue = injector.getInstance(method.getAnnotation(ParamParser.class).value())
+                  .apply(args);
+         matrixParamValues.put(paramKey, paramValue);
+
       }
       return matrixParamValues;
    }
 
    private Multimap<String, String> getFormParamKeyValues(Method method, Object... args) {
       Multimap<String, String> formParamValues = LinkedHashMultimap.create();
+      formParamValues.putAll(constants);
       Map<Integer, Set<Annotation>> indexToFormParam = methodToindexOfParamToFormParamAnnotations
+               .get(method);
+
+      Map<Integer, Set<Annotation>> indexToParamExtractor = methodToindexOfParamToParamParserAnnotations
                .get(method);
       for (Entry<Integer, Set<Annotation>> entry : indexToFormParam.entrySet()) {
          for (Annotation key : entry.getValue()) {
+            Set<Annotation> extractors = indexToParamExtractor.get(entry.getKey());
             String paramKey = ((FormParam) key).value();
-            String paramValue = args[entry.getKey()].toString();
+            String paramValue;
+            if (extractors != null && extractors.size() > 0) {
+               ParamParser extractor = (ParamParser) extractors.iterator().next();
+               paramValue = injector.getInstance(extractor.value()).apply(args[entry.getKey()]);
+            } else {
+               paramValue = args[entry.getKey()].toString();
+            }
             formParamValues.put(paramKey, paramValue);
          }
+      }
+
+      if (method.isAnnotationPresent(FormParam.class)
+               && method.isAnnotationPresent(ParamParser.class)) {
+         String paramKey = method.getAnnotation(FormParam.class).value();
+         String paramValue = injector.getInstance(method.getAnnotation(ParamParser.class).value())
+                  .apply(args);
+         formParamValues.put(paramKey, paramValue);
+
       }
       return formParamValues;
    }
 
    private Multimap<String, String> getQueryParamKeyValues(Method method, Object... args) {
       Multimap<String, String> queryParamValues = LinkedHashMultimap.create();
+      queryParamValues.putAll(constants);
       Map<Integer, Set<Annotation>> indexToQueryParam = methodToindexOfParamToQueryParamAnnotations
+               .get(method);
+
+      Map<Integer, Set<Annotation>> indexToParamExtractor = methodToindexOfParamToParamParserAnnotations
                .get(method);
       for (Entry<Integer, Set<Annotation>> entry : indexToQueryParam.entrySet()) {
          for (Annotation key : entry.getValue()) {
+            Set<Annotation> extractors = indexToParamExtractor.get(entry.getKey());
             String paramKey = ((QueryParam) key).value();
-            String paramValue = args[entry.getKey()].toString();
+            String paramValue;
+            if (extractors != null && extractors.size() > 0) {
+               ParamParser extractor = (ParamParser) extractors.iterator().next();
+               paramValue = injector.getInstance(extractor.value()).apply(args[entry.getKey()]);
+            } else {
+               paramValue = args[entry.getKey()].toString();
+            }
             queryParamValues.put(paramKey, paramValue);
          }
+      }
+
+      if (method.isAnnotationPresent(QueryParam.class)
+               && method.isAnnotationPresent(ParamParser.class)) {
+         String paramKey = method.getAnnotation(QueryParam.class).value();
+         String paramValue = injector.getInstance(method.getAnnotation(ParamParser.class).value())
+                  .apply(args);
+         queryParamValues.put(paramKey, paramValue);
+
       }
       return queryParamValues;
    }

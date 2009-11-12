@@ -46,9 +46,11 @@ import java.util.concurrent.Future;
 import javax.inject.Named;
 import javax.inject.Qualifier;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.HttpMethod;
+import javax.ws.rs.MatrixParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -614,6 +616,24 @@ public class RestAnnotationProcessorTest {
       }
 
       @GET
+      @Path("/")
+      public void oneQueryParamExtractor(
+               @QueryParam("one") @ParamParser(FirstCharacter.class) String one) {
+      }
+
+      @POST
+      @Path("/")
+      public void oneFormParamExtractor(
+               @FormParam("one") @ParamParser(FirstCharacter.class) String one) {
+      }
+
+      @GET
+      @Path("/")
+      public void oneMatrixParamExtractor(
+               @MatrixParam("one") @ParamParser(FirstCharacter.class) String one) {
+      }
+
+      @GET
       @Path("{path}")
       @PathParam("path")
       @ParamParser(FirstCharacterFirstElement.class)
@@ -622,13 +642,48 @@ public class RestAnnotationProcessorTest {
    }
 
    @Test
-   public void testParamExtractor() throws SecurityException, NoSuchMethodException {
+   public void testPathParamExtractor() throws SecurityException, NoSuchMethodException,
+            IOException {
       Method method = TestPath.class.getMethod("onePathParamExtractor", String.class);
       GeneratedHttpRequest<?> httpMethod = factory(TestPath.class).createRequest(method,
                new Object[] { "localhost" });
-      assertEquals(httpMethod.getEndpoint().getPath(), "/l");
-      assertEquals(httpMethod.getMethod(), HttpMethod.GET);
-      assertEquals(httpMethod.getHeaders().size(), 0);
+      assertRequestLineEquals(httpMethod, "GET http://localhost:8080/l HTTP/1.1");
+      assertHeadersEqual(httpMethod, "");
+      assertEntityEquals(httpMethod, null);
+   }
+
+   @Test
+   public void testQueryParamExtractor() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = TestPath.class.getMethod("oneQueryParamExtractor", String.class);
+      GeneratedHttpRequest<?> httpMethod = factory(TestPath.class).createRequest(method,
+               "localhost");
+      assertRequestLineEquals(httpMethod, "GET http://localhost:8080/?one=l HTTP/1.1");
+      assertHeadersEqual(httpMethod, "");
+      assertEntityEquals(httpMethod, null);
+   }
+
+   @Test
+   public void testMatrixParamExtractor() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = TestPath.class.getMethod("oneMatrixParamExtractor", String.class);
+      GeneratedHttpRequest<?> httpMethod = factory(TestPath.class).createRequest(method,
+               new Object[] { "localhost" });
+      assertRequestLineEquals(httpMethod, "GET http://localhost:8080/;one=l HTTP/1.1");
+      assertHeadersEqual(httpMethod, "");
+      assertEntityEquals(httpMethod, null);
+   }
+
+   @Test
+   public void testFormParamExtractor() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = TestPath.class.getMethod("oneFormParamExtractor", String.class);
+      GeneratedHttpRequest<?> httpMethod = factory(TestPath.class).createRequest(method,
+               new Object[] { "localhost" });
+      assertRequestLineEquals(httpMethod, "POST http://localhost:8080/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 5\nContent-Type: application/x-www-form-urlencoded\n");
+      assertEntityEquals(httpMethod, "one=l");
    }
 
    @Test
