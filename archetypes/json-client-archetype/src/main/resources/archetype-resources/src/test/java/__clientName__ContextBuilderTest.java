@@ -57,7 +57,7 @@ public class ${clientName}ContextBuilderTest {
    public void testNewBuilder() {
       ${clientName}ContextBuilder builder = newBuilder();
       assertEquals(builder.getProperties().getProperty(${clientName}Constants.PROPERTY_${ucaseClientName}_ENDPOINT),
-               "${endpoint}");
+               "${clientEndpoint}");
       assertEquals(builder.getProperties().getProperty(${clientName}Constants.PROPERTY_${ucaseClientName}_USER),
                "user");
       assertEquals(builder.getProperties().getProperty(${clientName}Constants.PROPERTY_${ucaseClientName}_PASSWORD),
@@ -68,7 +68,7 @@ public class ${clientName}ContextBuilderTest {
       RestContext<${clientName}Client> context = newBuilder().buildContext();
       assertEquals(context.getClass(), RestContextImpl.class);
       assertEquals(context.getAccount(), "user");
-      assertEquals(context.getEndPoint(), URI.create("${endpoint}"));
+      assertEquals(context.getEndPoint(), URI.create("${clientEndpoint}"));
    }
 
    public void testBuildInjector() {

@@ -8,8 +8,7 @@
       <defaultValue>Adrian Cole</defaultValue>
     </requiredProperty>
     <requiredProperty key="clientName" />
-    <requiredProperty key="artifactId" />
-    <requiredProperty key="endpoint" />
+    <requiredProperty key="clientEndpoint" />
     <requiredProperty key="clientUser" />
     <requiredProperty key="clientPassword" />    
   </requiredProperties>

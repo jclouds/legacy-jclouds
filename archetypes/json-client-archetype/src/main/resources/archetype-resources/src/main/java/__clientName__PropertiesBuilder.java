@@ -46,7 +46,7 @@ public class ${clientName}PropertiesBuilder extends HttpPropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_${ucaseClientName}_ENDPOINT, "${endpoint}");
+      properties.setProperty(PROPERTY_${ucaseClientName}_ENDPOINT, "${clientEndpoint}");
       return properties;
    }
 

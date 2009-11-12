@@ -91,7 +91,7 @@ public class ${clientName}ClientTest extends RestClientTest<${clientName}Client>
          @Override
          protected void configure() {
             bind(URI.class).annotatedWith(${clientName}.class).toInstance(
-                     URI.create("${endpoint}"));
+                     URI.create("${clientEndpoint}"));
             bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
                public Logger getLogger(String category) {
                   return Logger.NULL;

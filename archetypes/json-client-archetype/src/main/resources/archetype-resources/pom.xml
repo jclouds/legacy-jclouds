@@ -36,7 +36,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>${groupId}</groupId>
-    <artifactId>${artifactId}</artifactId>
+    <artifactId>jclouds-${artifactId}</artifactId>
     <name>jclouds ${clientName} core</name>
     <packaging>jar</packaging>
     <description>jclouds components to access ${clientName}</description>
