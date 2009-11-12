@@ -68,22 +68,28 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
       if (qName.equals("Task")) {
          taskLink = Utils.newLink(attributes);
          status = TaskStatus.fromValue(attributes.getValue(attributes.getIndex("status")));
-         startTime = dateService.iso8601DateParse(attributes.getValue(attributes
-                  .getIndex("startTime")));
+         startTime = parseDate(attributes, "startTime");
          if (attributes.getIndex("endTime") != -1) {
-            try {
-               endTime = dateService.iso8601DateParse(attributes.getValue(attributes
-                        .getIndex("endTime")));
-            } catch (RuntimeException e) {
-               if (!(e.getCause() instanceof ParseException)) // TODO.. format doesn't parse
-                  // endTime="2009-11-11T02:27:25Z"
-                  throw e;
-            }
+            endTime = parseDate(attributes, "endTime");
          }
       } else if (qName.equals("Owner")) {
          owner = Utils.newNamedLink(attributes);
       } else if (qName.equals("Result")) {
          result = Utils.newNamedLink(attributes);
+      }
+   }
+
+   private DateTime parseDate(Attributes attributes, String attribute) {
+      try {
+         return dateService.iso8601DateParse(attributes.getValue(attributes.getIndex(attribute)));
+
+      } catch (RuntimeException e) {
+         if (e.getCause() instanceof ParseException) {
+            return dateService.iso8601SecondsDateParse(attributes.getValue(attributes
+                     .getIndex(attribute)));
+         } else {
+            throw e;
+         }
       }
    }
 

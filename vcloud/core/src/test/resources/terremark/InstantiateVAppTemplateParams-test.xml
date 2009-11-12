@@ -1,6 +1,6 @@
 <InstantiateVAppTemplateParams name="name"
     xml:lang="en" xmlns="http://www.vmware.com/vcloud/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <VAppTemplate href="http://template" />
+    <VAppTemplate href="http://catalogItem/3" />
     <InstantiationParams>
         <ProductSection xmlns:q1="http://www.vmware.com/vcloud/v1"
             xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1">

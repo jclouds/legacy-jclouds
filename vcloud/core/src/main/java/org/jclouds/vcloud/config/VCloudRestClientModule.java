@@ -24,6 +24,9 @@
 package org.jclouds.vcloud.config;
 
 import java.net.URI;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.inject.Singleton;
 
@@ -33,8 +36,11 @@ import org.jclouds.rest.RestClientFactory;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudDiscovery;
 import org.jclouds.vcloud.endpoints.Catalog;
+import org.jclouds.vcloud.endpoints.Network;
 import org.jclouds.vcloud.endpoints.TasksList;
+import org.jclouds.vcloud.endpoints.VCloud;
 import org.jclouds.vcloud.endpoints.VDC;
+import org.jclouds.vcloud.endpoints.internal.CatalogItemRoot;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -66,10 +72,28 @@ public class VCloudRestClientModule extends AbstractModule {
    }
 
    @Provides
+   @CatalogItemRoot
+   @Singleton
+   String provideCatalogItemRoot(@VCloud URI vcloudUri) {
+      return vcloudUri.toASCIIString()+"/catalogItem";
+   }
+
+   
+   
+   @Provides
    @VDC
    @Singleton
    protected URI provideDefaultVDC(VCloudDiscovery discovery) {
       return discovery.getOrganization().getVDCs().values().iterator().next().getLocation();
+   }
+
+   @Provides
+   @Network
+   @Singleton
+   protected URI provideDefaultNetwork(VCloudClient client) throws InterruptedException,
+            ExecutionException, TimeoutException {
+      return client.getDefaultVDC().get(45, TimeUnit.SECONDS).getAvailableNetworks().values()
+               .iterator().next().getLocation();
    }
 
    @Provides

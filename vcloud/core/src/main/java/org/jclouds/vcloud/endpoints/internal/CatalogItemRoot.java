@@ -21,20 +21,24 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.domain;
+package org.jclouds.vcloud.endpoints.internal;
 
-import java.util.Map;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.jclouds.rest.domain.NamedLink;
-import org.jclouds.vcloud.domain.internal.CatalogImpl;
-
-import com.google.inject.ImplementedBy;
+import javax.inject.Qualifier;
 
 /**
+ * Root path where all catalog items exist.
+ * 
  * @author Adrian Cole
+ * 
  */
-@org.jclouds.vcloud.endpoints.Catalog
-@ImplementedBy(CatalogImpl.class)
-public interface Catalog extends NamedLink, Map<String, NamedResource> {
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Qualifier
+public @interface CatalogItemRoot {
 
 }

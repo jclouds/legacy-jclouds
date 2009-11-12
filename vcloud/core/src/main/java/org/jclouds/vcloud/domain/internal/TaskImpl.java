@@ -50,7 +50,7 @@ public class TaskImpl extends LinkImpl implements Task {
    @Nullable
    private final NamedLink result;
 
-   public TaskImpl(String type, URI location, TaskStatus status, DateTime startTime,
+   public TaskImpl(String type, URI location, TaskStatus status,  DateTime startTime,
             @Nullable DateTime endTime, NamedLink owner, @Nullable NamedLink result) {
       super(type, location);
       this.status = checkNotNull(status, "status");

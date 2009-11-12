@@ -69,19 +69,17 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
 
    @Test
    public void testInstantiate() throws InterruptedException, ExecutionException, TimeoutException {
-      String serverName = "adriantest4";
+      String serverName = "adriantest";
       int processorCount = 1;
       int memory = 512;
       String catalogOs = "Ubuntu Server 9.04 (32-bit)";
       String expectedOs = "Ubuntu Linux (32-bit)";
 
-      URI template = tmClient.getCatalog().get(45, TimeUnit.SECONDS).get(catalogOs).getLocation();
+      int templateId = tmClient.getCatalog().get(45, TimeUnit.SECONDS).get(catalogOs).getId();
 
-      URI network = tmClient.getDefaultVDC().get(45, TimeUnit.SECONDS).getAvailableNetworks()
-               .values().iterator().next().getLocation();
+      VApp vApp = tmClient.instantiateVAppTemplate(serverName, templateId)
+               .get(45, TimeUnit.SECONDS);
 
-      VApp vApp = tmClient.instantiateVAppTemplate(serverName, template, processorCount, memory,
-               network).get(45, TimeUnit.SECONDS);
       assertEquals(vApp.getStatus(), VAppStatus.CREATING);
 
       Task instantiateTask = getLastTaskFor(vApp.getVDC().getLocation());
@@ -146,7 +144,7 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
       assertEquals(vApp.getStatus(), VAppStatus.OFF);
 
       tmClient.delete(deployTask.getResult().getLocation()).get(45, TimeUnit.SECONDS);
-      //TODO verify not present anymore
+      // TODO verify not present anymore
    }
 
    private void verifyConfigurationOfVApp(VApp vApp, String serverName, String expectedOs,

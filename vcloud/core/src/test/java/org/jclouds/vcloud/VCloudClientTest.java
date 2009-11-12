@@ -41,6 +41,7 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.vcloud.endpoints.Catalog;
 import org.jclouds.vcloud.endpoints.TasksList;
 import org.jclouds.vcloud.endpoints.VDC;
+import org.jclouds.vcloud.endpoints.internal.CatalogItemRoot;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.xml.CatalogHandler;
 import org.jclouds.vcloud.xml.TaskHandler;
@@ -294,6 +295,8 @@ public class VCloudClientTest extends RestClientTest<VCloudClient> {
          @Override
          protected void configure() {
             bind(URI.class).annotatedWith(Catalog.class).toInstance(URI.create("http://catalog"));
+            bind(String.class).annotatedWith(CatalogItemRoot.class)
+                     .toInstance("http://catalogItem");
             bind(URI.class).annotatedWith(VDC.class).toInstance(URI.create("http://vdc"));
             bind(URI.class).annotatedWith(TasksList.class).toInstance(
                      URI.create("http://tasksList"));

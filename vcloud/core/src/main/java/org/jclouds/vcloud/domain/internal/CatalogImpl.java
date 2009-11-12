@@ -26,12 +26,13 @@ package org.jclouds.vcloud.domain.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.jclouds.rest.domain.NamedLink;
 import org.jclouds.rest.domain.internal.NamedLinkImpl;
 import org.jclouds.vcloud.domain.Catalog;
+import org.jclouds.vcloud.domain.NamedResource;
 
 /**
  * Locations of resources in vCloud
@@ -39,14 +40,15 @@ import org.jclouds.vcloud.domain.Catalog;
  * @author Adrian Cole
  * 
  */
-public class CatalogImpl extends HashMap<String, NamedLink> implements Catalog {
+public class CatalogImpl extends TreeMap<String, NamedResource> implements Catalog {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
    private final NamedLink catalog;
 
-   public CatalogImpl(String name, String type, URI location, Map<String, NamedLink> contents) {
-      super(contents.size());
+   public CatalogImpl(String name, String type, URI location,
+            SortedMap<String, NamedResource> contents) {
+      super();
       this.catalog = new NamedLinkImpl(checkNotNull(name, "name"), checkNotNull(type, "type"),
                checkNotNull(location, "location"));
       putAll(checkNotNull(contents, "contents"));

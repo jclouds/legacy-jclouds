@@ -25,7 +25,6 @@ package org.jclouds.vcloud.terremark;
 
 import static org.jclouds.vcloud.VCloudMediaType.VDC_XML;
 
-import java.net.URI;
 import java.util.concurrent.Future;
 
 import javax.ws.rs.Consumes;
@@ -37,13 +36,15 @@ import javax.ws.rs.Produces;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.MapEntityParam;
+import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
-import org.jclouds.vcloud.terremark.binders.BindInstantiateVAppTemplateParamsToXmlEntity;
+import org.jclouds.vcloud.functions.CatalogIdToUri;
 import org.jclouds.vcloud.terremark.domain.VApp;
+import org.jclouds.vcloud.terremark.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.terremark.xml.TerremarkVAppHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkVDCHandler;
 
@@ -68,9 +69,8 @@ public interface TerremarkVCloudClient extends VCloudClient {
    @Path("/action/instantiatevAppTemplate")
    @Produces("application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml")
    @XMLResponseParser(TerremarkVAppHandler.class)
-   @MapBinder(BindInstantiateVAppTemplateParamsToXmlEntity.class)
+   @MapBinder(InstantiateVAppTemplateOptions.class)
    Future<? extends VApp> instantiateVAppTemplate(@MapEntityParam("name") String appName,
-            @MapEntityParam("template") URI vAppTemplate, @MapEntityParam("count") int cpuCount,
-            @MapEntityParam("megabytes") int megabytesMemory, @MapEntityParam("network") URI network);
+            @MapEntityParam("template") @ParamParser(CatalogIdToUri.class) int templateId);
 
 }

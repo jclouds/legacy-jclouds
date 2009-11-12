@@ -52,8 +52,8 @@ import com.google.inject.Injector;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.RestVCloudAuthenticationModuleTest")
-public class RestVCloudAuthenticationModuleTest {
+@Test(groups = "unit", testName = "vcloud.VCloudDiscoveryRestClientModuleTest")
+public class VCloudDiscoveryRestClientModuleTest {
 
    Injector createInjector() {
       return Guice.createInjector(new VCloudDiscoveryRestClientModule(), new ParserModule(),

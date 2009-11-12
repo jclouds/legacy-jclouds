@@ -43,7 +43,9 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Utils;
 import org.jclouds.vcloud.endpoints.Catalog;
+import org.jclouds.vcloud.endpoints.Network;
 import org.jclouds.vcloud.endpoints.VDC;
+import org.jclouds.vcloud.endpoints.internal.CatalogItemRoot;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.terremark.xml.TerremarkVAppHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkVDCHandler;
@@ -80,17 +82,14 @@ public class TerremarkVCloudClientTest extends RestClientTest<TerremarkVCloudCli
    public void testInstantiateVAppTemplate() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = TerremarkVCloudClient.class.getMethod("instantiateVAppTemplate",
-
-      String.class, URI.class, int.class, int.class, URI.class
-
-      );
+               String.class, int.class);
       GeneratedHttpRequest<TerremarkVCloudClient> httpMethod = processor.createRequest(method,
-               "name", URI.create("http://template"), 1, 512, URI.create("http://network"));
+               "name", 3);
 
       assertRequestLineEquals(httpMethod, "POST http://vdc/action/instantiatevAppTemplate HTTP/1.1");
       assertHeadersEqual(
                httpMethod,
-               "Content-Length: 2242\nContent-Type: application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml\n");
+               "Content-Length: 2247\nContent-Type: application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml\n");
       assertEntityEquals(httpMethod, IOUtils.toString(getClass().getResourceAsStream(
                "/terremark/InstantiateVAppTemplateParams-test.xml")));
 
@@ -119,7 +118,10 @@ public class TerremarkVCloudClientTest extends RestClientTest<TerremarkVCloudCli
          @Override
          protected void configure() {
             bind(URI.class).annotatedWith(Catalog.class).toInstance(URI.create("http://catalog"));
+            bind(String.class).annotatedWith(CatalogItemRoot.class)
+                     .toInstance("http://catalogItem");
             bind(URI.class).annotatedWith(VDC.class).toInstance(URI.create("http://vdc"));
+            bind(URI.class).annotatedWith(Network.class).toInstance(URI.create("http://network"));
             bind(SetVCloudTokenCookie.class).toInstance(
                      new SetVCloudTokenCookie(new Provider<String>() {
 
