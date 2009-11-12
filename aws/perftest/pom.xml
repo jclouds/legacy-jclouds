@@ -41,7 +41,7 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>jclouds-s3-perftest</artifactId>
+	<artifactId>jclouds-aws-perftest</artifactId>
 	<name>jclouds Performance test verses Amazon samples implementation</name>
 	<packaging>jar</packaging>
 

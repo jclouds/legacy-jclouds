@@ -28,9 +28,9 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>jclouds-s3-sample-createandlistbuckets</artifactId>
-	<name>jclouds s3 sample that creates a bucket then lists all owned buckets</name>
-	<description>jclouds s3 sample that creates a bucket then lists all owned buckets</description>
+	<artifactId>jclouds-aws-sample-createandlistbuckets</artifactId>
+	<name>jclouds S3 sample that creates a bucket then lists all owned buckets</name>
+	<description>jclouds S3 sample that creates a bucket then lists all owned buckets</description>
 
 	<build>
 		<finalName>${project.artifactId}</finalName>
