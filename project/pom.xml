@@ -56,25 +56,15 @@
     <mailingLists>
         <mailingList>
             <name>Contributors</name>
-            <subscribe>
-                http://groups.google.com/group/jclouds-contributors
-            </subscribe>
-            <unsubscribe>
-                http://groups.google.com/group/jclouds-contributors
-            </unsubscribe>
+            <subscribe>http://groups.google.com/group/jclouds-contributors</subscribe>
+            <unsubscribe>http://groups.google.com/group/jclouds-contributors</unsubscribe>
             <post>jclouds-contributors@googlegroups.com</post>
-            <archive>
-                http://groups.google.com/group/jclouds-contributors
-            </archive>
+            <archive>http://groups.google.com/group/jclouds-contributors</archive>
         </mailingList>
         <mailingList>
             <name>SVN Commits</name>
-            <subscribe>
-                http://groups.google.com/group/jclouds-commits
-            </subscribe>
-            <unsubscribe>
-                http://groups.google.com/group/jclouds-commits
-            </unsubscribe>
+            <subscribe>http://groups.google.com/group/jclouds-commits</subscribe>
+            <unsubscribe>http://groups.google.com/group/jclouds-commits</unsubscribe>
             <post>jclouds-commits@googlegroups.com</post>
             <archive>http://groups.google.com/group/jclouds-commits</archive>
         </mailingList>
@@ -140,6 +130,15 @@
             <url>http://www.jclouds.org</url>
             <timezone>+0</timezone>
         </developer>
+        <developer>
+            <name>Andrew Phillips</name>
+            <id>sharedocs1</id>
+            <email>aphillips -at- qrmedia.com</email>
+            <roles>
+                <role>Apprentice</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>          
     </developers>
 
     <properties>
@@ -172,10 +171,9 @@
     </dependencies>
 
     <build>
-
+    
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <executions>
                     <execution>
@@ -244,7 +242,6 @@
             </plugin>
             <!-- Make sure we generate src jars too -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <inherited>true</inherited>
                 <executions>
@@ -257,7 +254,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <executions>
                     <execution>
@@ -266,12 +262,16 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
-                        <configuration>
-                            <quiet>true</quiet>
-                            <links>
-                                <link>http://java.sun.com/javase/6/docs/api/</link>
-                            </links>
-                            <footer><![CDATA[
+                    </execution>
+                </executions>
+                <configuration>
+                    <encoding>UTF-8</encoding>                        
+                    <quiet>true</quiet>
+                    <links>
+                        <link>http://java.sun.com/javase/6/docs/api/</link>
+                        <link>http://java.sun.com/javaee/6/docs/api/</link>
+                    </links>
+                    <footer><![CDATA[
                      <!-- Google Analytics -->
 <script type='text/javascript'>
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
@@ -283,12 +283,9 @@ var pageTracker = _gat._getTracker("UA-8638379-1");
 pageTracker._trackPageview();
 } catch(err) {}</script>
                      ]]></footer>
-                        </configuration>
-                    </execution>
-                </executions>
+                </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <executions>
                     <execution>
@@ -300,22 +297,44 @@ pageTracker._trackPageview();
                             <rules>
                                 <bannedDependencies>
                                     <excludes>
-                                        <exclude>:maven-depedency-plugin</exclude>
+                                        <exclude>:maven-dependency-plugin</exclude>
                                     </excludes>
                                 </bannedDependencies>
                             </rules>
-                            <fail>true</fail>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>enforce-java</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>[1.6,)</version>
+                                </requireJavaVersion>
+                                <requireMavenVersion>
+                                    <version>[2.2.1,)</version>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                    </execution>                    
                 </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
+                    <encoding>UTF-8</encoding>
                     <source>${maven.compile.source}</source>
                     <target>${maven.compile.target}</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>                
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>
@@ -340,30 +359,7 @@ pageTracker._trackPageview();
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>enforce-java</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <requireJavaVersion>
-                                    <version>[1.6,)</version>
-                                </requireJavaVersion>
-                                <requireMavenVersion>
-                                    <version>[2.2.1,)</version>
-                                </requireMavenVersion>
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
         <extensions>
@@ -380,7 +376,6 @@ pageTracker._trackPageview();
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <executions>
                             <execution>
@@ -458,7 +453,6 @@ pageTracker._trackPageview();
     <reporting>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
                 <reportSets>
                     <reportSet>
@@ -492,7 +486,6 @@ pageTracker._trackPageview();
                 <inherited>true</inherited>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
                 <configuration>
                     <targetJdk>${maven.compile.source}</targetJdk>
