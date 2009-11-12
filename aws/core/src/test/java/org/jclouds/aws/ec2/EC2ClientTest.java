@@ -31,6 +31,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.net.URI;
 
+import org.jclouds.aws.ec2.domain.ImageAttribute;
 import org.jclouds.aws.ec2.domain.IpProtocol;
 import org.jclouds.aws.ec2.domain.UserIdGroupPair;
 import org.jclouds.aws.ec2.filters.FormSigner;
@@ -46,6 +47,7 @@ import org.jclouds.aws.ec2.xml.RunInstancesResponseHandler;
 import org.jclouds.aws.ec2.xml.TerminateInstancesResponseHandler;
 import org.jclouds.aws.reference.AWSConstants;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.ReturnStringIf200;
 import org.jclouds.http.functions.ReturnVoidIf2xx;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
@@ -107,6 +109,30 @@ public class EC2ClientTest extends RestClientTest<EC2Client> {
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeImagesResponseHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testDescribeImageAttribute() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = EC2Client.class.getMethod("describeImageAttribute", String.class,
+               ImageAttribute.class);
+      GeneratedHttpRequest<EC2Client> httpMethod = processor.createRequest(method, "imageId",
+               ImageAttribute.BLOCK_DEVICE_MAPPING);
+
+      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 93\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertEntityEquals(httpMethod,
+               "Version=2009-08-15&Action=DescribeImageAttribute&ImageId=imageId&Attribute=blockDeviceMapping");
+      filter.filter(httpMethod);
+      assertEntityEquals(
+               httpMethod,
+               "Action=DescribeImageAttribute&Attribute=blockDeviceMapping&ImageId=imageId&Signature=IiyxXwoOmpLiPC%2BbfBdqJwE758bvbs8kXCL71FefStY%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2009-11-08T15%3A54%3A08.897Z&Version=2009-08-15&AWSAccessKeyId=user");
+
+      assertResponseParserClassEquals(method, httpMethod, ReturnStringIf200.class);
+      assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpMethod);

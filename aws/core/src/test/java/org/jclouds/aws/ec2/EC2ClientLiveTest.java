@@ -35,6 +35,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.aws.ec2.domain.Image;
+import org.jclouds.aws.ec2.domain.ImageAttribute;
 import org.jclouds.aws.ec2.domain.IpPermission;
 import org.jclouds.aws.ec2.domain.IpProtocol;
 import org.jclouds.aws.ec2.domain.KeyPair;
@@ -58,6 +59,7 @@ public class EC2ClientLiveTest {
 
    private EC2Client client;
    private String user;
+   private String imageId = "ami-d7fe1fbe";
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException {
@@ -82,6 +84,25 @@ public class EC2ClientLiveTest {
       iterator = twoResults.iterator();
       assertEquals(iterator.next().getImageId(), id1);
       assertEquals(iterator.next().getImageId(), id2);
+   }
+
+   @Test(dependsOnMethods = "testDescribeImages", enabled=false)
+   void testDescribeImageAttribute() throws InterruptedException, ExecutionException,
+            TimeoutException {
+      SortedSet<Image> oneResult = client.describeImages(imageIds(imageId)).get(30,
+               TimeUnit.SECONDS);
+      @SuppressWarnings("unused")
+      Image expects = oneResult.last();
+
+      System.out.println(client.describeImageAttribute(imageId, ImageAttribute.PRODUCT_CODES));
+
+      System.out.println(client.describeImageAttribute(imageId, ImageAttribute.PRODUCT_CODES));
+      System.out.println(client.describeImageAttribute(imageId, ImageAttribute.RAMDISK));
+      System.out.println(client.describeImageAttribute(imageId, ImageAttribute.KERNEL));
+      System.out.println(client.describeImageAttribute(imageId, ImageAttribute.PLATFORM));
+      System.out.println(client.describeImageAttribute(imageId, ImageAttribute.LAUNCH_PERMISSION));
+      System.out.println(client
+               .describeImageAttribute(imageId, ImageAttribute.BLOCK_DEVICE_MAPPING));
    }
 
    @Test

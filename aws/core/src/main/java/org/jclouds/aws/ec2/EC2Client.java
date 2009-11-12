@@ -38,6 +38,7 @@ import org.jclouds.aws.ec2.binders.BindInstanceIdsToIndexedFormParams;
 import org.jclouds.aws.ec2.binders.BindKeyNameToIndexedFormParams;
 import org.jclouds.aws.ec2.binders.BindUserIdGroupPairToSourceSecurityGroupFormParams;
 import org.jclouds.aws.ec2.domain.Image;
+import org.jclouds.aws.ec2.domain.ImageAttribute;
 import org.jclouds.aws.ec2.domain.IpProtocol;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.Reservation;
@@ -92,6 +93,27 @@ public interface EC2Client {
    @FormParams(keys = ACTION, values = "DescribeImages")
    @XMLResponseParser(DescribeImagesResponseHandler.class)
    Future<? extends SortedSet<Image>> describeImages(DescribeImagesOptions... options);
+
+   /**
+    * Returns information about an attribute of an AMI. Only one attribute can be specified per
+    * call.
+    * 
+    * @param imageId
+    *           The ID of the AMI for which an attribute will be described
+    * @param attribute
+    *           the attribute to describe
+    * @see #describeImages
+    * @see #modifyImageAttribute
+    * @see #resetImageAttribute
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeImageAttribute.html"
+    *      />
+    * @see DescribeImagesOptions
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "DescribeImageAttribute")
+   String describeImageAttribute(@FormParam("ImageId") String imageId,
+            @FormParam("Attribute") ImageAttribute attribute);
 
    /**
     * Returns information about instances that you own.
