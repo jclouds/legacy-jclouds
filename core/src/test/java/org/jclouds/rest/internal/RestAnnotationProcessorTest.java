@@ -1220,7 +1220,7 @@ public class RestAnnotationProcessorTest {
 
    @DataProvider(name = "strings")
    public Object[][] createData() {
-      return new Object[][] { { "apples" }, { "sp ace" }, { "unic¿de" }, { "qu?stion" } };
+      return new Object[][] { { "apples" }, { "sp ace" }, { "unicâ‚ªde" }, { "qu?stion" } };
    }
 
    @Test(dataProvider = "strings")

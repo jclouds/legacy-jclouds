@@ -99,7 +99,7 @@ pageTracker._trackPageview();
                     </excludes>
                     <properties>
                         <year>${project.inceptionYear}</year>
-                        <email>adrian@jclouds.org</email>
+                        <email>info@cloudconscious.com</email>
                     </properties>
                 </configuration>
             </plugin>

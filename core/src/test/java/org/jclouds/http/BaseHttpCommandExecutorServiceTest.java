@@ -73,7 +73,7 @@ public abstract class BaseHttpCommandExecutorServiceTest extends BaseJettyTest {
 
    @DataProvider(name = "gets")
    public Object[][] createData() {
-      return new Object[][] { { "object" }, { "/path" }, { "sp ace" }, { "unic¿de" },
+      return new Object[][] { { "object" }, { "/path" }, { "sp ace" }, { "unicâ‚ªde" },
                { "qu?stion" } };
    }
 

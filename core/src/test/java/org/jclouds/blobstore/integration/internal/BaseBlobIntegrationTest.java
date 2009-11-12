@@ -295,7 +295,7 @@ public class BaseBlobIntegrationTest<S> extends BaseBlobStoreIntegrationTest<S> 
 
    @DataProvider(name = "delete")
    public Object[][] createData() {
-      return new Object[][] { { "normal" }, { "sp ace" }, { "qu?stion" }, { "unic¿de" },
+      return new Object[][] { { "normal" }, { "sp ace" }, { "qu?stion" }, { "unicâ‚ªde" },
                { "path/foo" }, { "colon:" }, { "asteri*k" }, { "quote\"" }, { "{great<r}" },
                { "lesst>en" }, { "p|pe" } };
    }

@@ -37,6 +37,6 @@
     <packaging>pom</packaging>
     <name>jclouds Maven archetypes</name>
     <modules>
-        <module>jclouds-json-client-archetype</module>
+        <module>json-client-archetype</module>
     </modules>
 </project>
