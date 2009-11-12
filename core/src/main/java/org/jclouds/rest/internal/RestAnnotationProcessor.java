@@ -1069,16 +1069,17 @@ public class RestAnnotationProcessor<T> {
       for (Entry<Integer, Set<Annotation>> entry : indexToPathParam.entrySet()) {
          for (Annotation key : entry.getValue()) {
             Set<Annotation> extractors = indexToParamExtractor.get(entry.getKey());
-
+            String paramKey = ((MapEntityParam) key).value();
+            String paramValue;
             if (extractors != null && extractors.size() > 0) {
                ParamParser extractor = (ParamParser) extractors.iterator().next();
-               postParams.put(((PathParam) key).value(), injector.getInstance(extractor.value())
-                        .apply(args[entry.getKey()]));
+               paramValue = injector.getInstance(extractor.value()).apply(args[entry.getKey()]);
+
             } else {
-               String paramKey = ((MapEntityParam) key).value();
-               String paramValue = args[entry.getKey()].toString();
-               postParams.put(paramKey, paramValue);
+               paramValue = args[entry.getKey()].toString();
             }
+            postParams.put(paramKey, paramValue);
+
          }
       }
       return postParams;
