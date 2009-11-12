@@ -39,6 +39,7 @@ import org.jclouds.aws.ec2.domain.ImageAttribute;
 import org.jclouds.aws.ec2.domain.IpPermission;
 import org.jclouds.aws.ec2.domain.IpProtocol;
 import org.jclouds.aws.ec2.domain.KeyPair;
+import org.jclouds.aws.ec2.domain.PublicIpInstanceIdPair;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.SecurityGroup;
 import org.jclouds.aws.ec2.domain.UserIdGroupPair;
@@ -71,7 +72,7 @@ public class EC2ClientLiveTest {
 
    @Test
    void testDescribeImages() throws InterruptedException, ExecutionException, TimeoutException {
-      SortedSet<Image> allResults = client.describeImages().get(30, TimeUnit.SECONDS);
+      SortedSet<Image> allResults = client.describeImages().get(120, TimeUnit.SECONDS);
       assertNotNull(allResults);
       assert allResults.size() >= 2 : allResults.size();
       Iterator<Image> iterator = allResults.iterator();
@@ -86,7 +87,22 @@ public class EC2ClientLiveTest {
       assertEquals(iterator.next().getImageId(), id2);
    }
 
-   @Test(dependsOnMethods = "testDescribeImages", enabled=false)
+   @Test
+   void testDescribeAddresses() throws InterruptedException, ExecutionException, TimeoutException {
+      SortedSet<PublicIpInstanceIdPair> allResults = client.describeAddresses().get(30,
+               TimeUnit.SECONDS);
+      assertNotNull(allResults);
+      if (allResults.size() >= 1) {
+         PublicIpInstanceIdPair pair = allResults.last();
+         SortedSet<PublicIpInstanceIdPair> result = client.describeAddresses(pair.getPublicIp())
+                  .get(30, TimeUnit.SECONDS);
+         assertNotNull(result);
+         PublicIpInstanceIdPair compare = result.last();
+         assertEquals(compare, pair);
+      }
+   }
+
+   @Test(dependsOnMethods = "testDescribeImages", enabled = false)
    void testDescribeImageAttribute() throws InterruptedException, ExecutionException,
             TimeoutException {
       SortedSet<Image> oneResult = client.describeImages(imageIds(imageId)).get(30,

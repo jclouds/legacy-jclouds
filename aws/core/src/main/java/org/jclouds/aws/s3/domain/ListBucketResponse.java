@@ -39,7 +39,7 @@ import java.util.SortedSet;
  * any way you like and the bucket will remain yours for as long as you like and as long as you have
  * the Amazon S3 account.
  * <p/>
- * The similarities between buckets and domain names is not a coincidence—there is a direct mapping
+ * The similarities between buckets and domain names is not a coincidence there is a direct mapping
  * between Amazon S3 buckets and subdomains of s3.amazonaws.com. Objects stored in Amazon S3 are
  * addressable using the REST API under the domain bucketname.s3.amazonaws.com. For example, if the
  * object homepage.html?is stored in the Amazon S3 bucket mybucket its address would be

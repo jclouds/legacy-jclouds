@@ -26,6 +26,7 @@ package org.jclouds.aws.ec2;
 import static org.jclouds.aws.ec2.reference.EC2Parameters.ACTION;
 import static org.jclouds.aws.ec2.reference.EC2Parameters.VERSION;
 
+import java.net.InetAddress;
 import java.util.SortedSet;
 import java.util.concurrent.Future;
 
@@ -34,6 +35,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import org.jclouds.aws.ec2.binders.BindGroupNameToIndexedFormParams;
+import org.jclouds.aws.ec2.binders.BindInetAddressesToIndexedFormParams;
 import org.jclouds.aws.ec2.binders.BindInstanceIdsToIndexedFormParams;
 import org.jclouds.aws.ec2.binders.BindKeyNameToIndexedFormParams;
 import org.jclouds.aws.ec2.binders.BindUserIdGroupPairToSourceSecurityGroupFormParams;
@@ -41,14 +43,18 @@ import org.jclouds.aws.ec2.domain.Image;
 import org.jclouds.aws.ec2.domain.ImageAttribute;
 import org.jclouds.aws.ec2.domain.IpProtocol;
 import org.jclouds.aws.ec2.domain.KeyPair;
+import org.jclouds.aws.ec2.domain.PublicIpInstanceIdPair;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.SecurityGroup;
 import org.jclouds.aws.ec2.domain.TerminatedInstance;
 import org.jclouds.aws.ec2.domain.UserIdGroupPair;
 import org.jclouds.aws.ec2.filters.FormSigner;
+import org.jclouds.aws.ec2.functions.InetAddressToHostAddress;
 import org.jclouds.aws.ec2.functions.ReturnVoidOnGroupNotFound;
 import org.jclouds.aws.ec2.options.DescribeImagesOptions;
 import org.jclouds.aws.ec2.options.RunInstancesOptions;
+import org.jclouds.aws.ec2.xml.AllocateAddressResponseHandler;
+import org.jclouds.aws.ec2.xml.DescribeAddressesResponseHandler;
 import org.jclouds.aws.ec2.xml.DescribeImagesResponseHandler;
 import org.jclouds.aws.ec2.xml.DescribeInstancesResponseHandler;
 import org.jclouds.aws.ec2.xml.DescribeKeyPairsResponseHandler;
@@ -60,6 +66,7 @@ import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.FormParams;
+import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
@@ -116,6 +123,101 @@ public interface EC2Client {
             @FormParam("Attribute") ImageAttribute attribute);
 
    /**
+    * Acquires an elastic IP address for use with your account.
+    * 
+    * @see #describeAddresses
+    * @see #releaseAddress
+    * @see #associateAddress
+    * @see #disassociateAddress
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-AllocateAddress.html"
+    */
+   @POST
+   @Path("/")
+   @XMLResponseParser(AllocateAddressResponseHandler.class)
+   @FormParams(keys = ACTION, values = "AllocateAddress")
+   Future<InetAddress> allocateAddress();
+
+   /**
+    * Associates an elastic IP address with an instance. If the IP address is currently assigned to
+    * another instance, the IP address is assigned to the new instance. This is an idempotent
+    * operation. If you enter it more than once, Amazon EC2 does not return an error.
+    * 
+    * @param publicIp
+    *           IP address that you are assigning to the instance.
+    * @param instanceId
+    *           The instance to associate with the IP address.
+    * 
+    * @see #allocateAddress
+    * @see #describeAddresses
+    * @see #releaseAddress
+    * @see #disassociateAddress
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/index.html?ApiReference-query-AssociateAddress.html"
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "AssociateAddress")
+   Future<Void> associateAddress(
+            @FormParam("PublicIp") @ParamParser(InetAddressToHostAddress.class) InetAddress publicIp,
+            @FormParam("InstanceId") String instanceId);
+
+   /**
+    * Disassociates the specified elastic IP address from the instance to which it is assigned. This
+    * is an idempotent operation. If you enter it more than once, Amazon EC2 does not return an
+    * error.
+    * 
+    * @param publicIp
+    *           IP address that you are assigning to the instance.
+    * 
+    * @see #allocateAddress
+    * @see #describeAddresses
+    * @see #releaseAddress
+    * @see #associateAddress
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/index.html?ApiReference-query-DisdisassociateAddress.html"
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "DisassociateAddress")
+   Future<Void> disassociateAddress(
+            @FormParam("PublicIp") @ParamParser(InetAddressToHostAddress.class) InetAddress publicIp);
+
+   /**
+    * Releases an elastic IP address associated with your account.
+    * 
+    * @param publicIp
+    *           The IP address that you are releasing from your account.
+    * @see #allocateAddress
+    * @see #describeAddresses
+    * @see #associateAddress
+    * @see #disassociateAddress
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/index.html?ApiReference-query-ReleaseAddress.html"
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "ReleaseAddress")
+   Future<Void> releaseAddress(
+            @FormParam("PublicIp") @ParamParser(InetAddressToHostAddress.class) InetAddress publicIp);
+
+   /**
+    * Lists elastic IP addresses assigned to your account or provides information about a specific
+    * address.
+    * 
+    * @param publicIps
+    *           Elastic IP address to describe.
+    * @throws AWSResponseException
+    *            if the requested publicIp is not found
+    * @see #allocateAddress
+    * @see #releaseAddress
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeAddresses.html"
+    *      />
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "DescribeAddresses")
+   @XMLResponseParser(DescribeAddressesResponseHandler.class)
+   Future<? extends SortedSet<PublicIpInstanceIdPair>> describeAddresses(
+            @BinderParam(BindInetAddressesToIndexedFormParams.class) InetAddress... publicIps);
+
+   /**
     * Returns information about instances that you own.
     * <p/>
     * 
@@ -131,7 +233,6 @@ public interface EC2Client {
     * @see #terminateInstances
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeInstances.html"
     *      />
-    * @see DescribeInstancesOptions
     */
    @POST
    @Path("/")

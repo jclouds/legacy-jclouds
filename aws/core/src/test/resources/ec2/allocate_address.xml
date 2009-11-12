@@ -1,0 +1,3 @@
+<AllocateAddressResponse xmlns="http://ec2.amazonaws.com/doc/2009-08-15/">
+  <publicIp>67.202.55.255</publicIp>
+</AllocateAddressResponse>

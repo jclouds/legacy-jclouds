@@ -29,6 +29,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.net.InetAddress;
 import java.net.URI;
 
 import org.jclouds.aws.ec2.domain.ImageAttribute;
@@ -38,6 +39,8 @@ import org.jclouds.aws.ec2.filters.FormSigner;
 import org.jclouds.aws.ec2.functions.ReturnVoidOnGroupNotFound;
 import org.jclouds.aws.ec2.options.DescribeImagesOptions;
 import org.jclouds.aws.ec2.options.RunInstancesOptions;
+import org.jclouds.aws.ec2.xml.AllocateAddressResponseHandler;
+import org.jclouds.aws.ec2.xml.DescribeAddressesResponseHandler;
 import org.jclouds.aws.ec2.xml.DescribeImagesResponseHandler;
 import org.jclouds.aws.ec2.xml.DescribeInstancesResponseHandler;
 import org.jclouds.aws.ec2.xml.DescribeKeyPairsResponseHandler;
@@ -243,6 +246,96 @@ public class EC2ClientTest extends RestClientTest<EC2Client> {
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, KeyPairResponseHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testDisassociateAddress() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = EC2Client.class.getMethod("disassociateAddress", InetAddress.class);
+      GeneratedHttpRequest<EC2Client> httpMethod = processor.createRequest(method, InetAddress
+               .getByAddress(new byte[] { 127, 0, 0, 1 }));
+
+      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 64\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertEntityEquals(httpMethod,
+               "Version=2009-08-15&Action=DisassociateAddress&PublicIp=127.0.0.1");
+
+      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testAssociateAddress() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = EC2Client.class
+               .getMethod("associateAddress", InetAddress.class, String.class);
+      GeneratedHttpRequest<EC2Client> httpMethod = processor.createRequest(method, InetAddress
+               .getByAddress(new byte[] { 127, 0, 0, 1 }), "me");
+
+      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 75\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertEntityEquals(httpMethod,
+               "Version=2009-08-15&Action=AssociateAddress&PublicIp=127.0.0.1&InstanceId=me");
+
+      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testReleaseAddress() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = EC2Client.class.getMethod("releaseAddress", InetAddress.class);
+      GeneratedHttpRequest<EC2Client> httpMethod = processor.createRequest(method, InetAddress
+               .getByAddress(new byte[] { 127, 0, 0, 1 }));
+
+      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 59\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertEntityEquals(httpMethod, "Version=2009-08-15&Action=ReleaseAddress&PublicIp=127.0.0.1");
+
+      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testDescribeAddresses() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = EC2Client.class.getMethod("describeAddresses", Array.newInstance(
+               InetAddress.class, 0).getClass());
+      GeneratedHttpRequest<EC2Client> httpMethod = processor.createRequest(method, InetAddress
+               .getByAddress(new byte[] { 127, 0, 0, 1 }));
+
+      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 43\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertEntityEquals(httpMethod,
+               "Version=2009-08-15&Action=DescribeAddresses&PublicIp.1=127.0.0.1");
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, DescribeAddressesResponseHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testAllocateAddress() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = EC2Client.class.getMethod("allocateAddress");
+      GeneratedHttpRequest<EC2Client> httpMethod = processor.createRequest(method);
+
+      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 41\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertEntityEquals(httpMethod, "Version=2009-08-15&Action=AllocateAddress");
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, AllocateAddressResponseHandler.class);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpMethod);
