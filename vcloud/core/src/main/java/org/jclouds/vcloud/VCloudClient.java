@@ -97,7 +97,7 @@ public interface VCloudClient {
    Future<? extends Task> undeploy(@Endpoint URI vApp);
 
    /**
-    * This call powers on the vApp, as specified in the vApp’s ovf:Startup element.
+    * This call powers on the vApp, as specified in the vApp's ovf:Startup element.
     */
    @POST
    @Consumes(TASK_XML)
@@ -106,7 +106,7 @@ public interface VCloudClient {
    Future<? extends Task> powerOn(@Endpoint URI vApp);
 
    /**
-    * This call powers off the vApp, as specified in the vApp’s ovf:Startup element.
+    * This call powers off the vApp, as specified in the vApp's ovf:Startup element.
     */
    @POST
    @Consumes(TASK_XML)

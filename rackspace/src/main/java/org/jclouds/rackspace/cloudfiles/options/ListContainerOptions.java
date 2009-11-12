@@ -83,13 +83,13 @@ public class ListContainerOptions extends BaseHttpRequestOptions {
     * For a string value X, return the Object names nested in the pseudo path.
     * <p/>
     * Users will be able to simulate a hierarchical structure in Cloud Files by following a few
-    * guidelines. Object names must contain the forward slash character ‘/’ as a path element
-    * separator and also create “directory marker” Objects, then they will be able to traverse this
-    * nested structure with the new “path” query parameter.
+    * guidelines. Object names must contain the forward slash character / as a path element
+    * separator and also create directory marker Objects, then they will be able to traverse this
+    * nested structure with the new path query parameter.
     * <p/>
     * To take advantage of this feature, the directory marker Objects must also be created to
     * represent the appropriate directories. The following additional Objects need to be created. A
-    * good convention would be to create these as zero or one byte ﬁles with a Content-Type of
+    * good convention would be to create these as zero or one byte files with a Content-Type of
     * application/directory
     */
    public ListContainerOptions underPath(String path) {

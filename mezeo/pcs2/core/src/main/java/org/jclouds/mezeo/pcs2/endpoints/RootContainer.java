@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 /**
- * Related to a resource of type Container, which is the user’s root Container
+ * Related to a resource of type Container, which is the user's root Container
  * 
  * @author Adrian Cole
  * 

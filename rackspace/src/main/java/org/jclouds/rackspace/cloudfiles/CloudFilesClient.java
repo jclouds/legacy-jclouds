@@ -101,7 +101,7 @@ public interface CloudFilesClient {
     * <p/>
     * Determine the number of Containers within the account and the total bytes stored. Since the
     * storage system is designed to store large amounts of data, care should be taken when
-    * representing the total bytes response as an “integer”; when possible, convert it to a 64-bit
+    * representing the total bytes response as an integer; when possible, convert it to a 64-bit
     * unsigned integer if your platform supports that primitive type.
     */
    @HEAD
@@ -117,21 +117,21 @@ public interface CloudFilesClient {
     * are supported with this request.
     * <ul>
     * <li>limit - For an integer value N, limits the number of results to at most N values.</li>
-    * <li>marker - Given a string value X, return Object names greater in value than the speciﬁed
+    * <li>marker - Given a string value X, return Object names greater in value than the specied
     * marker.</li>
     * <li>format - Specify either json or xml to return the respective serialized response.</li>
     * </ul>
     * <p/>
-    * At this time, a “preﬁx” query parameter is not supported at the Account level.
+    * At this time, a prex query parameter is not supported at the Account level.
     * 
     *<h4>Large Container Lists</h4>
     * The system will return a maximum of 10,000 Container names per request. To retrieve subsequent
-    * container names, another request must be made with a ‘marker’ parameter. The marker indicates
+    * container names, another request must be made with a marker parameter. The marker indicates
     * where the last list left off and the system will return container names greater than this
-    * marker, up to 10,000 again. Note that the ‘marker’ value should be URL encoded prior to
+    * marker, up to 10,000 again. Note that the marker value should be URL encoded prior to
     * sending the HTTP request.
     * <p/>
-    * If 10,000 is larger than desired, a ‘limit’ parameter may be given.
+    * If 10,000 is larger than desired, a limit parameter may be given.
     * <p/>
     * If the number of container names returned equals the limit given (or 10,000 if no limit is
     * given), it can be assumed there are more container names to be listed. If the container name

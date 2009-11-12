@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 /**
- * Related to a resource of type Contacts, which represents the user’s contact list.
+ * Related to a resource of type Contacts, which represents the user's contact list.
  * 
  * @author Adrian Cole
  * 

@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 /**
- * Related to a resource of type RecycleBin, which contains the user’s deleted files.
+ * Related to a resource of type RecycleBin, which contains the user's deleted files.
  * 
  * @author Adrian Cole
  * 

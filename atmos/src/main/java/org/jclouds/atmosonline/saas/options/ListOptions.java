@@ -51,7 +51,7 @@ public class ListOptions extends BaseHttpRequestOptions {
    }
 
    /**
-    * the maximum number of items  that should be returned. If this is  not specified, there is no
+    * the maximum number of items that should be returned. If this is not specified, there is no
     * limit.
     */
    public ListOptions limit(int maxresults) {

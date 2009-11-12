@@ -37,7 +37,7 @@ public interface CloudFilesConstants extends RackspaceConstants {
     */
    String LIMIT = "limit";
    /**
-    * Given a string value X, return Object names greater in value than the speciﬁed marker.
+    * Given a string value X, return Object names greater in value than the specified marker.
     */
    String MARKER = "marker";
    /**

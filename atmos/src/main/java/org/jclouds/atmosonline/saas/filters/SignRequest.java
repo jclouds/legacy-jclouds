@@ -133,39 +133,39 @@ public class SignRequest implements HttpRequestFilter {
    }
 
    private void appendCanonicalizedHeaders(HttpRequest request, StringBuilder toSign) {
-      // TreeSet == Sort the headers alphabetically.
+      // TreeSet == Sort the headers alphabetically.
       Set<String> headers = new TreeSet<String>(request.getHeaders().keySet());
       for (String header : headers) {
          if (header.startsWith("x-emc-")) {
-            // Convert all header names to lowercase.
+            // Convert all header names to lowercase.
             toSign.append(header.toLowerCase()).append(":");
-            // For headers with values that span multiple lines, convert them into one line by replacing any 
-            // newline characters and extra embedded white spaces in the value.
+            // For headers with values that span multiple lines, convert them into one line by replacing any 
+            // newline characters and extra embedded white spaces in the value.
             for (String value : request.getHeaders().get(header))
                toSign.append(value.replaceAll("\r?\n", "").replaceAll("  ", " ")).append(" ");
             toSign.deleteCharAt(toSign.lastIndexOf(" "));
-            // Concatenate all headers together, using newlines (\n) separating each header from the next one. 
+            // Concatenate all headers together, using newlines (\n) separating each header from the next one. 
             toSign.append("\n");
          }
       }
-      // There should be no terminating newline character at the end of the last header.
+      // There should be no terminating newline character at the end of the last header.
       if (toSign.charAt(toSign.length() - 1) == '\n')
          toSign.deleteCharAt(toSign.length() - 1);
    }
 
    @VisibleForTesting
    void appendHttpHeaders(HttpRequest request, StringBuilder toSign) {
-      // Only the value is used, not the header 
-      // name. If a request does not include the header, this is an empty string.
+      // Only the value is used, not the header 
+      // name. If a request does not include the header, this is an empty string.
       for (String header : new String[] { HttpHeaders.CONTENT_TYPE, "Range" })
          toSign.append(valueOrEmpty(request.getHeaders().get(header)).toLowerCase()).append("\n");
-      // Standard HTTP header, in UTC format. Only the date value is used, not the header name.
+      // Standard HTTP header, in UTC format. Only the date value is used, not the header name.
       toSign.append(request.getHeaders().get(HttpHeaders.DATE).iterator().next()).append("\n");
    }
 
    @VisibleForTesting
    void appendCanonicalizedResource(HttpRequest request, StringBuilder toSign) {
-      // Path portion of the HTTP request URI, in lowercase.
+      // Path portion of the HTTP request URI, in lowercase.
       toSign.append(request.getEndpoint().getRawPath().toLowerCase()).append("\n");
    }
 

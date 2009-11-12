@@ -44,7 +44,7 @@ import com.google.common.collect.ImmutableMultimap;
 public class NioHttpUtilsTest {
    @DataProvider(name = "gets")
    public Object[][] createData() {
-      return new Object[][] { { "object" }, { "/path" }, { "sp%20ace" }, { "unic¿de" },
+      return new Object[][] { { "object" }, { "/path" }, { "sp%20ace" }, { "unicâ‚ªde" },
                { "qu?stion" } };
    }
 

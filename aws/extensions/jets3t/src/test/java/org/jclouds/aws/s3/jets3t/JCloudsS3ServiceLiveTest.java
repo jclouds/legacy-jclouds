@@ -369,7 +369,7 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest<S3Cli
          assertEquals(jsResultObject.getContentType(), MediaType.APPLICATION_OCTET_STREAM);
 
          // Upload unicode-named object
-         requestObject = new S3Object("Ÿn’˜dŽ-object");
+         requestObject = new S3Object("â‚ªnâ‚ªâ‚ªâ‚ªdâ‚ª-object");
          jsResultObject = service.putObject(new S3Bucket(bucketName), requestObject);
          jcObject = context.getApi().getObject(bucketName, requestObject.getKey()).get(10,
                   TimeUnit.SECONDS);
@@ -381,7 +381,7 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest<S3Cli
          assertEquals(jsResultObject.getContentType(), MediaType.APPLICATION_OCTET_STREAM);
 
          // Upload string object
-         String data = "This is my Ÿn’˜dŽ data";
+         String data = "This is my â‚ªnâ‚ªâ‚ªâ‚ªdâ‚ª data";
          requestObject = new S3Object(objectKey, data);
          jsResultObject = service.putObject(new S3Bucket(bucketName), requestObject);
          jcObject = context.getApi().getObject(bucketName, objectKey).get(10, TimeUnit.SECONDS);
@@ -415,7 +415,7 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest<S3Cli
 
          // Upload object and check MD5
          requestObject = new S3Object(objectKey);
-         data = "Here is some d‡tˆ for you";
+         data = "Here is some dâ‚ªtâ‚ª for you";
          requestObject.setDataInputStream(new ByteArrayInputStream(data.getBytes("UTF-8")));
          jsResultObject = service.putObject(new S3Bucket(bucketName), requestObject);
          jcObject = context.getApi().getObject(bucketName, objectKey).get(10, TimeUnit.SECONDS);
@@ -434,8 +434,8 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest<S3Cli
       String bucketName = getContainerName();
       try {
          String data = "This is my data";
-         String sourceObjectKey = "šriginalObject"; // Notice the use of non-ASCII
-         String destinationObjectKey = "dŽstinationObject"; // characters here.
+         String sourceObjectKey = "â‚ªriginalObject"; // Notice the use of non-ASCII
+         String destinationObjectKey = "dâ‚ªstinationObject"; // characters here.
          String metadataName = "metadata-name";
          String sourceMetadataValue = "souce-metadata-value";
          String destinationMetadataValue = "destination-metadata-value";
