@@ -71,6 +71,7 @@ public interface TerremarkVCloudClient extends VCloudClient {
    @XMLResponseParser(TerremarkVAppHandler.class)
    @MapBinder(InstantiateVAppTemplateOptions.class)
    Future<? extends VApp> instantiateVAppTemplate(@MapEntityParam("name") String appName,
-            @MapEntityParam("template") @ParamParser(CatalogIdToUri.class) int templateId);
+            @MapEntityParam("template") @ParamParser(CatalogIdToUri.class) int templateId,
+            InstantiateVAppTemplateOptions... options);
 
 }

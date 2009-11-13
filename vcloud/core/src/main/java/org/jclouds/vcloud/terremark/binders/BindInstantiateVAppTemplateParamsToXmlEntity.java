@@ -19,11 +19,12 @@ import org.jclouds.rest.binders.BindToStringEntity;
  */
 @Singleton
 public class BindInstantiateVAppTemplateParamsToXmlEntity implements MapBinder {
+
    @Inject
    @Named("InstantiateVAppTemplateParams")
-   String xmlTemplate;
+   private String xmlTemplate;
    @Inject
-   BindToStringEntity stringBinder;
+   private BindToStringEntity stringBinder;
 
    public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
 
