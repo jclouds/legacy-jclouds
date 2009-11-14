@@ -21,29 +21,34 @@
  * under the License.
  * ====================================================================
  */
+package org.jclouds.vcloud.terremark.xml;
 
-package org.jclouds.aws.ec2.functions;
+import static org.testng.Assert.assertEquals;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-
+import java.io.InputStream;
 import java.net.InetAddress;
+import java.net.URI;
+import java.net.UnknownHostException;
 
-import javax.inject.Singleton;
-
-import com.google.common.base.Function;
+import org.jclouds.http.functions.BaseHandlerTest;
+import org.jclouds.vcloud.terremark.domain.Node;
+import org.testng.annotations.Test;
 
 /**
+ * Tests behavior of {@code NodeServiceHandler}
+ * 
  * @author Adrian Cole
  */
-@Singleton
-public class InetAddressToHostAddress implements Function<Object, String> {
+@Test(groups = "unit", testName = "vcloud.NodeServiceHandlerTest")
+public class NodeHandlerTest extends BaseHandlerTest {
 
-   @Override
-   public String apply(Object from) {
-      checkArgument(checkNotNull(from, "from") instanceof InetAddress,
-               "this binder is only valid for InetAddress!");
-      return ((InetAddress) from).getHostAddress();
+   public void test1() throws UnknownHostException {
+      InputStream is = getClass().getResourceAsStream("/terremark/NodeService.xml");
+
+      Node result = (Node) factory.create(
+               injector.getInstance(NodeHandler.class)).parse(is);
+      assertEquals(result, new Node(242, "Node for Jim", URI
+               .create("https://services.vcloudexpress.terremark.com/api/v0.8/NodeServices/242"),
+               InetAddress.getByName("172.16.20.3"), 80, false, "Some test node"));
    }
-
 }

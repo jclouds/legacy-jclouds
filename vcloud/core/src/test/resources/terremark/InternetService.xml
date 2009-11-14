@@ -1,0 +1,16 @@
+<InternetService xmlns="urn:tmrk:vCloudExpress-1.0"
+    xmlns:i="http://www.w3.org/2001/XMLSchema-Instance">
+    <Id>523</Id>
+    <Href i:nil="true" />
+    <Name>IS_for_Jim</Name>
+    <PublicIpAddress>
+        <Id>4208</Id>
+        <Href i:nil="true" />
+        <Name>10.1.22.159</Name>
+    </PublicIpAddress>
+    <Port>80</Port>
+    <Protocol>HTTP</Protocol>
+    <Enabled>false</Enabled>
+    <Timeout>1</Timeout>
+    <Description>Some test service</Description>
+</InternetService> 

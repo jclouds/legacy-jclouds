@@ -21,35 +21,60 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.ec2.xml;
+package org.jclouds.vcloud.terremark.xml;
 
 import java.net.InetAddress;
+import java.net.URI;
 import java.net.UnknownHostException;
 
 import javax.annotation.Resource;
 
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.logging.Logger;
+import org.jclouds.vcloud.terremark.domain.Node;
 
 /**
  * @author Adrian Cole
  */
-public class AllocateAddressResponseHandler extends HandlerWithResult<InetAddress> {
+public class NodeHandler extends HandlerWithResult<Node> {
 
    @Resource
    protected Logger logger = Logger.NULL;
-
-   private InetAddress ipAddress;
    private StringBuilder currentText = new StringBuilder();
+
+   private int id;
+   private URI location;
+   private String serviceName;
+   private InetAddress address;
+   private int port;
+   private String description;
+   private boolean enabled;
 
    protected String currentOrNull() {
       String returnVal = currentText.toString().trim();
       return returnVal.equals("") ? null : returnVal;
    }
 
+   @Override
+   public Node getResult() {
+      return new Node(id, serviceName, location, address, port, enabled, description);
+   }
+
    public void endElement(String uri, String name, String qName) {
-      if (qName.equals("publicIp")) {
-         ipAddress = parseInetAddress(currentOrNull());
+      if (qName.equals("Id")) {
+         id = Integer.parseInt(currentOrNull());
+      } else if (qName.equals("Href") && currentOrNull() != null) {
+         location = URI.create(currentOrNull());
+      } else if (qName.equals("Name")) {
+         serviceName = currentOrNull();
+      } else if (qName.equals("Port")) {
+         port = Integer.parseInt(currentOrNull());
+      } else if (qName.equals("Enabled")) {
+         enabled = Boolean.parseBoolean(currentOrNull());
+      } else if (qName.equals("IpAddress")) {
+         address = parseInetAddress(currentOrNull());
+      } else if (qName.equals("Description")) {
+         description = currentOrNull();
       }
       currentText = new StringBuilder();
    }
@@ -70,11 +95,6 @@ public class AllocateAddressResponseHandler extends HandlerWithResult<InetAddres
 
    public void characters(char ch[], int start, int length) {
       currentText.append(ch, start, length);
-   }
-
-   @Override
-   public InetAddress getResult() {
-      return ipAddress;
    }
 
 }

@@ -139,6 +139,7 @@ public class JschSshClient implements SshClient {
       session = null;
       try {
          session = jsch.getSession(username, host.getHostAddress(), port);
+         session.setTimeout(120 * 1000);
          logger.debug("%s@%s:%d: Session created.", username, host.getHostAddress(), port);
          if (password != null) {
             session.setPassword(password);

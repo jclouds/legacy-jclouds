@@ -21,44 +21,24 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.terremark.domain;
+package org.jclouds.vcloud.endpoints.internal;
 
-import java.net.InetAddress;
-import java.util.Map;
-import java.util.SortedSet;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.jclouds.rest.domain.Link;
-import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.domain.VAppStatus;
-import org.jclouds.vcloud.terremark.domain.internal.VAppImpl;
-
-import com.google.common.collect.ListMultimap;
-import com.google.inject.ImplementedBy;
+import javax.inject.Qualifier;
 
 /**
+ * Root path where all vApps exist.
+ * 
  * @author Adrian Cole
+ * 
  */
-@ImplementedBy(VAppImpl.class)
-public interface VApp extends NamedResource {
-
-   VAppStatus getStatus();
-
-   long getSize();
-
-   Link getVDC();
-
-   Link getComputeOptions();
-
-   Link getCustomizationOptions();
-
-   ListMultimap<String, InetAddress> getNetworkToAddresses();
-
-   String getOperatingSystemDescription();
-
-   VirtualSystem getSystem();
-
-   SortedSet<ResourceAllocation> getResourceAllocations();
-
-   Map<ResourceType, ResourceAllocation> getResourceAllocationByType();
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Qualifier
+public @interface VAppRoot {
 
 }

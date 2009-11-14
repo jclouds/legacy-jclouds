@@ -21,44 +21,29 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.terremark.domain;
+
+package org.jclouds.rest.functions;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.InetAddress;
-import java.util.Map;
-import java.util.SortedSet;
 
-import org.jclouds.rest.domain.Link;
-import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.domain.VAppStatus;
-import org.jclouds.vcloud.terremark.domain.internal.VAppImpl;
+import javax.inject.Singleton;
 
-import com.google.common.collect.ListMultimap;
-import com.google.inject.ImplementedBy;
+import com.google.common.base.Function;
 
 /**
  * @author Adrian Cole
  */
-@ImplementedBy(VAppImpl.class)
-public interface VApp extends NamedResource {
+@Singleton
+public class InetAddressToHostAddress implements Function<Object, String> {
 
-   VAppStatus getStatus();
-
-   long getSize();
-
-   Link getVDC();
-
-   Link getComputeOptions();
-
-   Link getCustomizationOptions();
-
-   ListMultimap<String, InetAddress> getNetworkToAddresses();
-
-   String getOperatingSystemDescription();
-
-   VirtualSystem getSystem();
-
-   SortedSet<ResourceAllocation> getResourceAllocations();
-
-   Map<ResourceType, ResourceAllocation> getResourceAllocationByType();
+   @Override
+   public String apply(Object from) {
+      checkArgument(checkNotNull(from, "from") instanceof InetAddress,
+               "this binder is only valid for InetAddress!");
+      return ((InetAddress) from).getHostAddress();
+   }
 
 }

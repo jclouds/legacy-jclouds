@@ -29,8 +29,8 @@ import java.util.Map;
 import java.util.SortedSet;
 
 import org.jclouds.rest.domain.Link;
-import org.jclouds.rest.domain.internal.NamedLinkImpl;
 import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.jclouds.vcloud.terremark.domain.ResourceAllocation;
 import org.jclouds.vcloud.terremark.domain.ResourceType;
 import org.jclouds.vcloud.terremark.domain.VApp;
@@ -46,7 +46,7 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  * 
  */
-public class VAppImpl extends NamedLinkImpl implements VApp {
+public class VAppImpl extends NamedResourceImpl implements VApp {
 
    private final VAppStatus status;
    private final long size;
@@ -62,12 +62,12 @@ public class VAppImpl extends NamedLinkImpl implements VApp {
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
 
-   public VAppImpl(String name, String type, URI location, VAppStatus status, long size, Link vDC,
-            Link computeOptions, Link customizationOptions,
+   public VAppImpl(int id, String name, String type, URI location, VAppStatus status, long size,
+            Link vDC, Link computeOptions, Link customizationOptions,
             ListMultimap<String, InetAddress> networkToAddresses,
             String operatingSystemDescription, VirtualSystem system,
             SortedSet<ResourceAllocation> resourceAllocations) {
-      super(name, type, location);
+      super(id, name, type, location);
       this.status = status;
       this.size = size;
       this.vDC = vDC;

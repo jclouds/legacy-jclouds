@@ -49,7 +49,6 @@ import org.jclouds.aws.ec2.domain.SecurityGroup;
 import org.jclouds.aws.ec2.domain.TerminatedInstance;
 import org.jclouds.aws.ec2.domain.UserIdGroupPair;
 import org.jclouds.aws.ec2.filters.FormSigner;
-import org.jclouds.aws.ec2.functions.InetAddressToHostAddress;
 import org.jclouds.aws.ec2.functions.ReturnVoidOnGroupNotFound;
 import org.jclouds.aws.ec2.options.DescribeImagesOptions;
 import org.jclouds.aws.ec2.options.RunInstancesOptions;
@@ -70,6 +69,7 @@ import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.rest.functions.InetAddressToHostAddress;
 
 /**
  * Provides access to EC2 via their REST API.

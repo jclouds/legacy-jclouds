@@ -33,9 +33,12 @@ import java.net.UnknownHostException;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.functions.BaseHandlerTest;
+import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rest.domain.internal.LinkImpl;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.endpoints.internal.VAppRoot;
 import org.jclouds.vcloud.terremark.domain.ResourceAllocation;
 import org.jclouds.vcloud.terremark.domain.ResourceType;
 import org.jclouds.vcloud.terremark.domain.VApp;
@@ -45,6 +48,9 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Provides;
 
 /**
  * Tests behavior of {@code TerremarkVAppHandler}
@@ -57,7 +63,21 @@ public class TerremarkVAppHandlerTest extends BaseHandlerTest {
    @BeforeTest
    @Override
    protected void setUpInjector() {
-      super.setUpInjector();
+      injector = Guice.createInjector(new ParserModule(), new AbstractModule() {
+
+         @Override
+         protected void configure() {
+         }
+
+         @SuppressWarnings("unused")
+         @Provides
+         @VAppRoot
+         String provide() {
+            return "https://services.vcloudexpress.terremark.com/api/v0.8/vapp";
+         }
+
+      });
+      factory = injector.getInstance(ParseSax.Factory.class);
    }
 
    public void testApplyInputStream() {
@@ -65,6 +85,8 @@ public class TerremarkVAppHandlerTest extends BaseHandlerTest {
 
       VApp result = (VApp) factory.create(injector.getInstance(TerremarkVAppHandler.class)).parse(
                is);
+      assertEquals(result.getId(), 13775);
+
       assertEquals(result.getName(), "adriantest");
       assertEquals(result.getStatus(), VAppStatus.CREATING);
 
@@ -83,6 +105,8 @@ public class TerremarkVAppHandlerTest extends BaseHandlerTest {
 
       VApp result = (VApp) factory.create(injector.getInstance(TerremarkVAppHandler.class)).parse(
                is);
+      assertEquals(result.getId(), 13850);
+
       assertEquals(result.getName(), "adriantest1");
       assertEquals(result.getStatus(), VAppStatus.OFF);
 

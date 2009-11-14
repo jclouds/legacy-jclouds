@@ -68,4 +68,19 @@ public class TerremarkVCloudRestClientModule extends VCloudRestClientModule {
       return Utils.toStringAndClose(is);
    }
 
+   @Singleton
+   @Provides
+   @Named("CreateInternetService")
+   String provideCreateInternetService() throws IOException {
+      return Utils.toStringAndClose(getClass().getResourceAsStream(
+               "/terremark/CreateInternetService.xml"));
+   }
+
+   @Singleton
+   @Provides
+   @Named("CreateNodeService")
+   String provideCreateNodeService() throws IOException {
+      return Utils.toStringAndClose(getClass().getResourceAsStream(
+               "/terremark/CreateNodeService.xml"));
+   }
 }

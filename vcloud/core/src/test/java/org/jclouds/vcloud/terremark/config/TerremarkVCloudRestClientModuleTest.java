@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.config;
+package org.jclouds.vcloud.terremark.config;
 
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_ENDPOINT;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_KEY;
@@ -29,10 +29,13 @@ import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_SESSI
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_USER;
 import static org.testng.Assert.assertEquals;
 
+import java.io.IOException;
+
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.util.Jsr330;
-import org.jclouds.vcloud.endpoints.internal.CatalogItemRoot;
-import org.jclouds.vcloud.endpoints.internal.VAppRoot;
+import org.jclouds.util.Utils;
+import org.jclouds.vcloud.config.VCloudDiscoveryRestClientModule;
+import org.jclouds.vcloud.config.VCloudRestClientModuleTest;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
@@ -43,11 +46,12 @@ import com.google.inject.Key;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.VCloudRestClientModuleTest")
-public class VCloudRestClientModuleTest extends VCloudDiscoveryRestClientModuleTest {
+@Test(groups = "unit", testName = "vcloud.TerremarkVCloudRestClientModuleTest")
+public class TerremarkVCloudRestClientModuleTest extends VCloudRestClientModuleTest {
 
+   @Override
    protected Injector createInjector() {
-      return Guice.createInjector(new VCloudRestClientModule(),
+      return Guice.createInjector(new TerremarkVCloudRestClientModule(),
                new VCloudDiscoveryRestClientModule(), new ParserModule(), new AbstractModule() {
                   @Override
                   protected void configure() {
@@ -62,11 +66,19 @@ public class VCloudRestClientModuleTest extends VCloudDiscoveryRestClientModuleT
    }
 
    @Test
-   void testCatalogItemRoot() {
-      assertEquals(createInjector().getInstance(Key.get(String.class, CatalogItemRoot.class)),
-               "http://localhost/catalogItem");
-      assertEquals(createInjector().getInstance(Key.get(String.class, VAppRoot.class)),
-               "http://localhost/vapp");
+   void postStrings() throws IOException {
+      assertEquals(createInjector().getInstance(
+               Key.get(String.class, Jsr330.named("InstantiateVAppTemplateParams"))), Utils
+               .toStringAndClose(getClass().getResourceAsStream(
+                        "/terremark/InstantiateVAppTemplateParams.xml")));
+      assertEquals(createInjector().getInstance(
+               Key.get(String.class, Jsr330.named("CreateInternetService"))), Utils
+               .toStringAndClose(getClass().getResourceAsStream(
+                        "/terremark/CreateInternetService.xml")));
+      assertEquals(createInjector().getInstance(
+               Key.get(String.class, Jsr330.named("CreateNodeService"))),
+               Utils.toStringAndClose(getClass().getResourceAsStream(
+                        "/terremark/CreateNodeService.xml")));
    }
 
 }

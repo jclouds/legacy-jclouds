@@ -41,6 +41,7 @@ import org.jclouds.vcloud.endpoints.TasksList;
 import org.jclouds.vcloud.endpoints.VCloud;
 import org.jclouds.vcloud.endpoints.VDC;
 import org.jclouds.vcloud.endpoints.internal.CatalogItemRoot;
+import org.jclouds.vcloud.endpoints.internal.VAppRoot;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -78,7 +79,12 @@ public class VCloudRestClientModule extends AbstractModule {
       return vcloudUri.toASCIIString()+"/catalogItem";
    }
 
-   
+   @Provides
+   @VAppRoot
+   @Singleton
+   String provideVAppRoot(@VCloud URI vcloudUri) {
+      return vcloudUri.toASCIIString()+"/vapp";
+   }
    
    @Provides
    @VDC

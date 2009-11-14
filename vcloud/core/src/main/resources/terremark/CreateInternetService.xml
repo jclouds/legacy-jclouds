@@ -1,0 +1,7 @@
+<InternetService xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="urn:tmrk:vCloudExpress-1.0:request:createInternetService">
+    <Name>{name}</Name>
+    <Protocol>{protocol}</Protocol>
+    <Port>{port}</Port>
+    <Enabled>{enabled}</Enabled>{description}
+</InternetService>
