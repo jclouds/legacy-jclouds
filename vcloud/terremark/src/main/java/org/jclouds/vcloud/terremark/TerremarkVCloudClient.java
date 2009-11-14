@@ -23,6 +23,7 @@
  */
 package org.jclouds.vcloud.terremark;
 
+import static org.jclouds.vcloud.VCloudMediaType.VAPP_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VDC_XML;
 
 import java.net.InetAddress;
@@ -141,4 +142,10 @@ public interface TerremarkVCloudClient extends VCloudClient {
    @Path("/nodeServices/{nodeId}")
    Future<Void> deleteNode(@PathParam("nodeId") int nodeId);
 
+   @GET
+   @Consumes(VAPP_XML)
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloud.class)
+   @Path("/vapp/{vAppId}")
+   @XMLResponseParser(TerremarkVAppHandler.class)
+   Future<? extends VApp> getVApp(@PathParam("vAppId") int vAppId);
 }

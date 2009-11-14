@@ -26,7 +26,6 @@ package org.jclouds.vcloud;
 import static org.jclouds.vcloud.VCloudMediaType.CATALOG_XML;
 import static org.jclouds.vcloud.VCloudMediaType.TASKSLIST_XML;
 import static org.jclouds.vcloud.VCloudMediaType.TASK_XML;
-import static org.jclouds.vcloud.VCloudMediaType.VAPP_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VDC_XML;
 
 import java.net.URI;
@@ -48,8 +47,6 @@ import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TasksList;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
-import org.jclouds.vcloud.terremark.domain.VApp;
-import org.jclouds.vcloud.terremark.xml.TerremarkVAppHandler;
 import org.jclouds.vcloud.xml.CatalogHandler;
 import org.jclouds.vcloud.xml.TaskHandler;
 import org.jclouds.vcloud.xml.TasksListHandler;
@@ -159,12 +156,5 @@ public interface VCloudClient {
    @POST
    @Path("/action/cancel")
    Future<Void> cancelTask(@Endpoint URI task);
-
-   @GET
-   @Consumes(VAPP_XML)
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloud.class)
-   @Path("/vapp/{vAppId}")
-   @XMLResponseParser(TerremarkVAppHandler.class)
-   Future<? extends VApp> getVApp(@PathParam("vAppId") int vAppId);
 
 }
