@@ -29,14 +29,20 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.net.URI;
 
-import org.jclouds.http.functions.BaseHandlerTest;
+import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.ParseSax.Factory;
+import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rest.domain.NamedLink;
 import org.jclouds.rest.domain.internal.NamedLinkImpl;
+import org.jclouds.vcloud.endpoints.VCloud;
 import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Provides;
 
 /**
  * Tests behavior of {@code TerremarkVDCHandler}
@@ -44,29 +50,44 @@ import com.google.common.collect.ImmutableMap;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "vcloud.TerremarkVDCHandlerTest")
-public class TerremarkVDCHandlerTest extends BaseHandlerTest {
-
-   @BeforeTest
-   @Override
-   protected void setUpInjector() {
-      super.setUpInjector();
-   }
+public class TerremarkVDCHandlerTest {
 
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/terremark/vdc.xml");
+      Injector injector = Guice.createInjector(new ParserModule(), new AbstractModule() {
+
+         @Override
+         protected void configure() {
+         }
+
+         @SuppressWarnings("unused")
+         @Provides
+         @VCloud
+         URI provide() {
+            return URI.create("https://services.vcloudexpress.terremark.com/api/v0.8");
+         }
+
+      });
+      Factory factory = injector.getInstance(ParseSax.Factory.class);
 
       TerremarkVDC result = (TerremarkVDC) factory.create(
                injector.getInstance(TerremarkVDCHandler.class)).parse(is);
       assertEquals(result.getName(), "Miami Environment 1");
       assertEquals(result.getLocation(), URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32"));
-      assertEquals(result.getType(), "application/vnd.vmware.vcloud.vdc+xml");
       assertEquals(result.getResourceEntities(), ImmutableMap.<String, NamedLink> of());
-      assertEquals(result.getAvailableNetworks(), ImmutableMap.of("10.114.34.128/26", new NamedLinkImpl(
-               "10.114.34.128/26", "application/vnd.vmware.vcloud.network+xml",
-               URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/network/1708"))));
-      assertEquals(result.getCatalog(), new NamedLinkImpl("Miami Environment 1", CATALOG_XML,
-               URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32/catalog")));
+      assertEquals(
+               result.getAvailableNetworks(),
+               ImmutableMap
+                        .of(
+                                 "10.114.34.128/26",
+                                 new NamedLinkImpl(
+                                          "10.114.34.128/26",
+                                          "application/vnd.vmware.vcloud.network+xml",
+                                          URI
+                                                   .create("https://services.vcloudexpress.terremark.com/api/v0.8/network/1708"))));
+      assertEquals(result.getCatalog(), new NamedLinkImpl("Miami Environment 1", CATALOG_XML, URI
+               .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32/catalog")));
       assertEquals(result.getPublicIps(), new NamedLinkImpl("Public IPs", "application/xml", URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32/publicIps")));
       assertEquals(

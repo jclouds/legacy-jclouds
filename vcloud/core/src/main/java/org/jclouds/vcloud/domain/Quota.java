@@ -23,41 +23,49 @@
  */
 package org.jclouds.vcloud.domain;
 
-import java.net.URI;
-import java.util.Map;
-
-import org.jclouds.rest.domain.NamedLink;
-import org.jclouds.vcloud.domain.internal.VDCImpl;
-
-import com.google.inject.ImplementedBy;
-
 /**
  * @author Adrian Cole
  */
-@org.jclouds.vcloud.endpoints.VDC
-@ImplementedBy(VDCImpl.class)
-public interface VDC {
+public class Quota {
 
-   String getName();
+   private final int limit;
+   private final int used;
 
-   int getId();
+   public Quota(int limit, int used) {
+      this.limit = limit;
+      this.used = used;
+   }
 
-   URI getLocation();
+   public int getLimit() {
+      return limit;
+   }
 
-   String getDescription();
+   public int getUsed() {
+      return used;
+   }
 
-   Capacity getStorageCapacity();
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + limit;
+      result = prime * result + used;
+      return result;
+   }
 
-   Capacity getCpuCapacity();
-
-   Capacity getMemoryCapacity();
-
-   Quota getInstantiatedVmsQuota();
-
-   Quota getDeployedVmsQuota();
-
-   Map<String, NamedLink> getAvailableNetworks();
-
-   Map<String, NamedLink> getResourceEntities();
-
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      Quota other = (Quota) obj;
+      if (limit != other.limit)
+         return false;
+      if (used != other.used)
+         return false;
+      return true;
+   }
 }

@@ -47,6 +47,7 @@ import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.endpoints.VCloud;
 
 import com.google.common.base.Supplier;
+import com.google.common.collect.Iterables;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
@@ -72,7 +73,7 @@ public class VCloudDiscoveryRestClientModule extends AbstractModule {
    @Org
    @Singleton
    protected URI provideOrg(Supplier<VCloudSession> cache, @Named(PROPERTY_VCLOUD_USER) String user) {
-      return cache.get().getOrgs().get(user).getLocation();
+      return Iterables.getLast(cache.get().getOrgs().values()).getLocation();
    }
 
    /**

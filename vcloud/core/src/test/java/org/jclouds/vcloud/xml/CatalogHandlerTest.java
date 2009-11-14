@@ -29,17 +29,17 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.net.URI;
 
-import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.jclouds.vcloud.endpoints.internal.CatalogItemRoot;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.google.inject.Provides;
 
 /**
@@ -48,11 +48,14 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "vcloud.CatalogHandlerTest")
-public class CatalogHandlerTest extends BaseHandlerTest {
+public class CatalogHandlerTest {
 
-   @BeforeTest
-   @Override
-   protected void setUpInjector() {
+   private Injector injector;
+
+   private Factory factory;
+
+   public void testApplyInputStream() {
+      InputStream is = getClass().getResourceAsStream("/catalog.xml");
       injector = Guice.createInjector(new ParserModule(), new AbstractModule() {
 
          @Override
@@ -68,17 +71,13 @@ public class CatalogHandlerTest extends BaseHandlerTest {
 
       });
       factory = injector.getInstance(ParseSax.Factory.class);
-   }
-
-   public void testApplyInputStream() {
-      InputStream is = getClass().getResourceAsStream("/catalog.xml");
-
       Catalog result = (Catalog) factory.create(injector.getInstance(CatalogHandler.class)).parse(
                is);
       assertEquals(result.getName(), "Miami Environment 1");
+      assert result.getDescription() == null;
+
       assertEquals(result.getLocation(), URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32/catalog"));
-      assertEquals(result.getType(), "application/vnd.vmware.vcloud.catalog+xml");
 
       assertEquals(result.get("CentOS 5.3 (32-bit)"), new NamedResourceImpl(5,
                "CentOS 5.3 (32-bit)", CATALOGITEM_XML,
@@ -160,5 +159,46 @@ public class CatalogHandlerTest extends BaseHandlerTest {
                "Windows Web Server 2008 R2 (64-bit)", CATALOGITEM_XML,
                URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/22")));
 
+   }
+
+   public void testHosting() {
+      InputStream is = getClass().getResourceAsStream("/catalog-hosting.xml");
+      injector = Guice.createInjector(new ParserModule(), new AbstractModule() {
+
+         @Override
+         protected void configure() {
+         }
+
+         @SuppressWarnings("unused")
+         @Provides
+         @CatalogItemRoot
+         String provide() {
+            return "https://vcloud.safesecureweb.com/api/v0.8/catalogItem";
+         }
+
+      });
+      factory = injector.getInstance(ParseSax.Factory.class);
+      Catalog result = (Catalog) factory.create(injector.getInstance(CatalogHandler.class)).parse(
+               is);
+      assertEquals(result.getName(), "HMSCatalog");
+      assertEquals(result.getDescription(), "HMS Shared Catalog");
+      assertEquals(result.getLocation(), URI
+               .create("https://vcloud.safesecureweb.com/api/v0.8/catalog/1"));
+
+      assertEquals(result.get("Plesk (Linux) 64-bit Template"), new NamedResourceImpl(1,
+               "Plesk (Linux) 64-bit Template", CATALOGITEM_XML, URI
+                        .create("https://vcloud.safesecureweb.com/api/v0.8/catalogItem/1")));
+
+      assertEquals(result.get("Windows 2008 Datacenter 64 Bit Template"), new NamedResourceImpl(2,
+               "Windows 2008 Datacenter 64 Bit Template", CATALOGITEM_XML, URI
+                        .create("https://vcloud.safesecureweb.com/api/v0.8/catalogItem/2")));
+
+      assertEquals(result.get("Cent OS 64 Bit Template"), new NamedResourceImpl(3,
+               "Cent OS 64 Bit Template", CATALOGITEM_XML, URI
+                        .create("https://vcloud.safesecureweb.com/api/v0.8/catalogItem/3")));
+
+      assertEquals(result.get("cPanel (Linux) 64 Bit Template"), new NamedResourceImpl(4,
+               "cPanel (Linux) 64 Bit Template", CATALOGITEM_XML, URI
+                        .create("https://vcloud.safesecureweb.com/api/v0.8/catalogItem/4")));
    }
 }

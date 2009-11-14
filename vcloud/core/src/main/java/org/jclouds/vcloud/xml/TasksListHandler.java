@@ -61,6 +61,9 @@ public class TasksListHandler extends ParseSax.HandlerWithResult<TasksList> {
             throws SAXException {
       if (qName.equals("TasksList")) {
          location = Utils.newLink(attributes).getLocation();
+      } else if (qName.equals("Link") && attributes.getIndex("rel") != -1
+               && attributes.getValue(attributes.getIndex("rel")).equals("self")) {
+         location = Utils.newLink(attributes).getLocation();
       } else {
          taskHandler.startElement(uri, localName, qName, attributes);
       }

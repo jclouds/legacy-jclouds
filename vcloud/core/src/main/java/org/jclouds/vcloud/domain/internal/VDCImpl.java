@@ -29,7 +29,8 @@ import java.net.URI;
 import java.util.Map;
 
 import org.jclouds.rest.domain.NamedLink;
-import org.jclouds.rest.domain.internal.NamedLinkImpl;
+import org.jclouds.vcloud.domain.Capacity;
+import org.jclouds.vcloud.domain.Quota;
 import org.jclouds.vcloud.domain.VDC;
 
 /**
@@ -38,17 +39,54 @@ import org.jclouds.vcloud.domain.VDC;
  * @author Adrian Cole
  * 
  */
-public class VDCImpl extends NamedLinkImpl implements VDC {
+public class VDCImpl implements VDC {
+
+   private final int id;
+   private final String name;
+   private final URI location;
+   private final String description;
+   private final Capacity storageCapacity;
+   private final Capacity cpuCapacity;
+   private final Capacity memoryCapacity;
+   private final Quota instantiatedVmsQuota;
+   private final Quota deployedVmsQuota;
    private final Map<String, NamedLink> availableNetworks;
    private final Map<String, NamedLink> resourceEntities;
+
+   public VDCImpl(int id, String name, URI location, String description, Capacity storageCapacity,
+            Capacity cpuCapacity, Capacity memoryCapacity, Quota instantiatedVmsQuota,
+            Quota deployedVmsQuota, Map<String, NamedLink> resourceEntities,
+            Map<String, NamedLink> availableNetworks) {
+      this.id = id;
+      this.name = checkNotNull(name, "name");
+      ;
+      this.location = checkNotNull(location, "location");
+      ;
+      this.description = description;
+      this.storageCapacity = storageCapacity;
+      this.cpuCapacity = cpuCapacity;
+      this.memoryCapacity = memoryCapacity;
+      this.instantiatedVmsQuota = instantiatedVmsQuota;
+      this.deployedVmsQuota = deployedVmsQuota;
+      this.availableNetworks = checkNotNull(availableNetworks, "availableNetworks");
+      ;
+      this.resourceEntities = checkNotNull(resourceEntities, "resourceEntities");
+      ;
+   }
+
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
 
-   public VDCImpl(String name, String type, URI location, Map<String, NamedLink> resourceEntities,
-            Map<String, NamedLink> availableNetworks) {
-      super(name, type, location);
-      this.availableNetworks = checkNotNull(availableNetworks, "availableNetworks");
-      this.resourceEntities = checkNotNull(resourceEntities, "resourceEntities");
+   public int getId() {
+      return id;
+   }
+
+   public String getName() {
+      return name;
+   }
+
+   public URI getLocation() {
+      return location;
    }
 
    public Map<String, NamedLink> getAvailableNetworks() {
@@ -62,9 +100,19 @@ public class VDCImpl extends NamedLinkImpl implements VDC {
    @Override
    public int hashCode() {
       final int prime = 31;
-      int result = super.hashCode();
+      int result = 1;
       result = prime * result + ((availableNetworks == null) ? 0 : availableNetworks.hashCode());
+      result = prime * result + ((cpuCapacity == null) ? 0 : cpuCapacity.hashCode());
+      result = prime * result + ((deployedVmsQuota == null) ? 0 : deployedVmsQuota.hashCode());
+      result = prime * result + ((description == null) ? 0 : description.hashCode());
+      result = prime * result + id;
+      result = prime * result
+               + ((instantiatedVmsQuota == null) ? 0 : instantiatedVmsQuota.hashCode());
+      result = prime * result + ((location == null) ? 0 : location.hashCode());
+      result = prime * result + ((memoryCapacity == null) ? 0 : memoryCapacity.hashCode());
+      result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((resourceEntities == null) ? 0 : resourceEntities.hashCode());
+      result = prime * result + ((storageCapacity == null) ? 0 : storageCapacity.hashCode());
       return result;
    }
 
@@ -72,7 +120,7 @@ public class VDCImpl extends NamedLinkImpl implements VDC {
    public boolean equals(Object obj) {
       if (this == obj)
          return true;
-      if (!super.equals(obj))
+      if (obj == null)
          return false;
       if (getClass() != obj.getClass())
          return false;
@@ -82,12 +130,77 @@ public class VDCImpl extends NamedLinkImpl implements VDC {
             return false;
       } else if (!availableNetworks.equals(other.availableNetworks))
          return false;
+      if (cpuCapacity == null) {
+         if (other.cpuCapacity != null)
+            return false;
+      } else if (!cpuCapacity.equals(other.cpuCapacity))
+         return false;
+      if (deployedVmsQuota == null) {
+         if (other.deployedVmsQuota != null)
+            return false;
+      } else if (!deployedVmsQuota.equals(other.deployedVmsQuota))
+         return false;
+      if (description == null) {
+         if (other.description != null)
+            return false;
+      } else if (!description.equals(other.description))
+         return false;
+      if (id != other.id)
+         return false;
+      if (instantiatedVmsQuota == null) {
+         if (other.instantiatedVmsQuota != null)
+            return false;
+      } else if (!instantiatedVmsQuota.equals(other.instantiatedVmsQuota))
+         return false;
+      if (location == null) {
+         if (other.location != null)
+            return false;
+      } else if (!location.equals(other.location))
+         return false;
+      if (memoryCapacity == null) {
+         if (other.memoryCapacity != null)
+            return false;
+      } else if (!memoryCapacity.equals(other.memoryCapacity))
+         return false;
+      if (name == null) {
+         if (other.name != null)
+            return false;
+      } else if (!name.equals(other.name))
+         return false;
       if (resourceEntities == null) {
          if (other.resourceEntities != null)
             return false;
       } else if (!resourceEntities.equals(other.resourceEntities))
          return false;
+      if (storageCapacity == null) {
+         if (other.storageCapacity != null)
+            return false;
+      } else if (!storageCapacity.equals(other.storageCapacity))
+         return false;
       return true;
    }
 
+   public String getDescription() {
+      return description;
+   }
+
+   public Capacity getStorageCapacity() {
+      return storageCapacity;
+   }
+
+   public Capacity getCpuCapacity() {
+      return cpuCapacity;
+   }
+
+   public Capacity getMemoryCapacity() {
+      return memoryCapacity;
+   }
+
+   public Quota getInstantiatedVmsQuota() {
+      return instantiatedVmsQuota;
+   }
+
+   public Quota getDeployedVmsQuota() {
+      return deployedVmsQuota;
+   }
 }

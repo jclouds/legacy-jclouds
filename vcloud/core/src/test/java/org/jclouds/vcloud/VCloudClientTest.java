@@ -68,7 +68,9 @@ public class VCloudClientTest extends RestClientTest<VCloudClient> {
       GeneratedHttpRequest<VCloudClient> httpMethod = processor.createRequest(method);
 
       assertRequestLineEquals(httpMethod, "GET http://catalog HTTP/1.1");
-      assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.catalog+xml\n");
+      assertHeadersEqual(
+               httpMethod,
+               "Accept: application/vnd.vmware.vcloud.catalog+xml\nContent-Type: application/vnd.vmware.vcloud.catalog+xml\n");
       assertEntityEquals(httpMethod, null);
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);

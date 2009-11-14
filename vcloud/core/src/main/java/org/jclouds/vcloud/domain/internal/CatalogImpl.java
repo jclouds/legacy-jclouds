@@ -29,10 +29,10 @@ import java.net.URI;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.jclouds.rest.domain.NamedLink;
-import org.jclouds.rest.domain.internal.NamedLinkImpl;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.NamedResource;
+
+import com.google.inject.internal.Nullable;
 
 /**
  * Locations of resources in vCloud
@@ -44,33 +44,34 @@ public class CatalogImpl extends TreeMap<String, NamedResource> implements Catal
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
-   private final NamedLink catalog;
+   private final String name;
+   private final String description;
+   private final URI location;
 
-   public CatalogImpl(String name, String type, URI location,
+   public CatalogImpl(String name, URI location, @Nullable String description,
             SortedMap<String, NamedResource> contents) {
       super();
-      this.catalog = new NamedLinkImpl(checkNotNull(name, "name"), checkNotNull(type, "type"),
-               checkNotNull(location, "location"));
+      this.name = checkNotNull(name, "name");
+      this.description = description;
+      this.location = checkNotNull(location, "location");
       putAll(checkNotNull(contents, "contents"));
    }
 
    public URI getLocation() {
-      return catalog.getLocation();
+      return location;
    }
 
    public String getName() {
-      return catalog.getName();
-   }
-
-   public String getType() {
-      return catalog.getType();
+      return name;
    }
 
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result + ((catalog == null) ? 0 : catalog.hashCode());
+      result = prime * result + ((description == null) ? 0 : description.hashCode());
+      result = prime * result + ((location == null) ? 0 : location.hashCode());
+      result = prime * result + ((name == null) ? 0 : name.hashCode());
       return result;
    }
 
@@ -83,12 +84,26 @@ public class CatalogImpl extends TreeMap<String, NamedResource> implements Catal
       if (getClass() != obj.getClass())
          return false;
       CatalogImpl other = (CatalogImpl) obj;
-      if (catalog == null) {
-         if (other.catalog != null)
+      if (description == null) {
+         if (other.description != null)
             return false;
-      } else if (!catalog.equals(other.catalog))
+      } else if (!description.equals(other.description))
+         return false;
+      if (location == null) {
+         if (other.location != null)
+            return false;
+      } else if (!location.equals(other.location))
+         return false;
+      if (name == null) {
+         if (other.name != null)
+            return false;
+      } else if (!name.equals(other.name))
          return false;
       return true;
+   }
+
+   public String getDescription() {
+      return description;
    }
 
 }

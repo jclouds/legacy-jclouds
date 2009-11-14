@@ -44,7 +44,9 @@ public class TerremarkVDCHandler extends VDCHandler {
 
    public TerremarkVDC getResult() {
       VDC vDC = super.getResult();
-      return new TerremarkVDCImpl(vDC.getName(), vDC.getType(), vDC.getLocation(), vDC
+      return new TerremarkVDCImpl(vDC.getId(), vDC.getName(), vDC.getLocation(), vDC
+               .getDescription(), vDC.getStorageCapacity(), vDC.getCpuCapacity(), vDC
+               .getMemoryCapacity(), vDC.getInstantiatedVmsQuota(), vDC.getDeployedVmsQuota(), vDC
                .getResourceEntities(), vDC.getAvailableNetworks(), catalog, publicIps,
                internetServices);
    }

@@ -38,12 +38,14 @@ import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.vcloud.endpoints.Org;
+import org.jclouds.vcloud.endpoints.VCloud;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.xml.OrgHandler;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
+import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -102,7 +104,12 @@ public class VCloudDiscoveryTest extends RestClientTest<VCloudDiscovery> {
                }
             });
          }
-
+         @SuppressWarnings("unused")
+         @Provides
+         @VCloud
+         URI provide() {
+            return URI.create("https://services.vcloudexpress.terremark.com/api/v0.8");
+         }
       };
    }
 

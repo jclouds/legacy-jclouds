@@ -92,7 +92,6 @@ public class VCloudDiscoveryLiveTest {
       Organization response = context.getApi().getOrganization();
       assertNotNull(response);
       assertEquals(response.getName(), account);
-      assertEquals(response.getType(), VCloudMediaType.ORG_XML);
       assertNotNull(response.getCatalog());
       assertEquals(response.getTasksLists().size(), 1);
       assertEquals(response.getVDCs().size(), 1);

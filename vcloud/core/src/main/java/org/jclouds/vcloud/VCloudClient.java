@@ -38,6 +38,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -67,6 +68,7 @@ public interface VCloudClient {
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.Catalog.class)
    @Consumes(CATALOG_XML)
+   @Produces(CATALOG_XML)// required for hosting.com to operate
    @XMLResponseParser(CatalogHandler.class)
    Future<? extends Catalog> getCatalog();
 

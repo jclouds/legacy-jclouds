@@ -100,4 +100,14 @@ public class TasksListHandlerTest extends BaseHandlerTest {
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/1"), task2, URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/1"), task1));
    }
+
+   public void testApplyInputStreamHosting() {
+      InputStream is = getClass().getResourceAsStream("/taskslist-hosting.xml");
+
+      TasksList result = factory.create(injector.getInstance(TasksListHandler.class)).parse(is);
+      assertEquals(result.getLocation(), URI
+               .create("https://vcloud.safesecureweb.com/api/v0.8/tasksList/188849"));
+
+   }
+
 }

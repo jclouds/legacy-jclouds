@@ -54,7 +54,6 @@ public class VCloudClientLiveTest {
       assertNotNull(response);
       assertNotNull(response.getName());
       assertNotNull(response.getLocation());
-      assertEquals(response.getType(), "application/vnd.vmware.vcloud.catalog+xml");
       assert response.size() > 0;
    }
 
@@ -64,7 +63,6 @@ public class VCloudClientLiveTest {
       assertNotNull(response);
       assertNotNull(response.getName());
       assertNotNull(response.getLocation());
-      assertEquals(response.getType(), "application/vnd.vmware.vcloud.vdc+xml");
       assertNotNull(response.getResourceEntities());
       assertNotNull(response.getAvailableNetworks());
    }

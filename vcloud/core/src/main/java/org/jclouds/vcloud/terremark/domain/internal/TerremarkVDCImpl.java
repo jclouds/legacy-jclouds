@@ -29,6 +29,8 @@ import java.net.URI;
 import java.util.Map;
 
 import org.jclouds.rest.domain.NamedLink;
+import org.jclouds.vcloud.domain.Capacity;
+import org.jclouds.vcloud.domain.Quota;
 import org.jclouds.vcloud.domain.internal.VDCImpl;
 import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
 
@@ -47,10 +49,13 @@ public class TerremarkVDCImpl extends VDCImpl implements TerremarkVDC {
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
 
-   public TerremarkVDCImpl(String name, String type, URI location,
-            Map<String, NamedLink> availableNetworks, Map<String, NamedLink> resourceEntities, NamedLink catalog,
-            NamedLink publicIps, NamedLink internetServices) {
-      super(name, type, location, availableNetworks, resourceEntities);
+   public TerremarkVDCImpl(int id, String name, URI location, String description,
+            Capacity storageCapacity, Capacity cpuCapacity, Capacity memoryCapacity,
+            Quota instantiatedVmsQuota, Quota deployedVmsQuota,
+            Map<String, NamedLink> availableNetworks, Map<String, NamedLink> resourceEntities,
+            NamedLink catalog, NamedLink publicIps, NamedLink internetServices) {
+      super(id, name, location, description, storageCapacity, cpuCapacity, memoryCapacity,
+               instantiatedVmsQuota, deployedVmsQuota, availableNetworks, resourceEntities);
       this.catalog = checkNotNull(catalog, "catalog");
       this.publicIps = checkNotNull(publicIps, "publicIps");
       this.internetServices = checkNotNull(internetServices, "internetServices");

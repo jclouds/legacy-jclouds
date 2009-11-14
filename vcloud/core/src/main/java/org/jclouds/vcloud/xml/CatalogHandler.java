@@ -46,14 +46,18 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  */
 public class CatalogHandler extends ParseSax.HandlerWithResult<Catalog> {
+   private StringBuilder currentText = new StringBuilder();
+
    private NamedLink Catalog;
    private SortedMap<String, NamedResource> contents = Maps.newTreeMap();
    @Inject
    @CatalogItemRoot
    private String catalogItemRoot;
 
+   private String description;
+
    public Catalog getResult() {
-      return new CatalogImpl(Catalog.getName(), Catalog.getType(), Catalog.getLocation(), contents);
+      return new CatalogImpl(Catalog.getName(), Catalog.getLocation(), description, contents);
    }
 
    @Override
@@ -68,15 +72,31 @@ public class CatalogHandler extends ParseSax.HandlerWithResult<Catalog> {
       }
    }
 
+   public void endElement(String uri, String name, String qName) {
+      if (qName.equals("Description")) {
+         description = currentOrNull();
+      }
+      currentText = new StringBuilder();
+   }
+
+   public void characters(char ch[], int start, int length) {
+      currentText.append(ch, start, length);
+   }
+
    public NamedResource newNamedResource(Attributes attributes) {
       return new NamedResourceImpl(Integer.parseInt(attributes
-               .getValue(attributes.getIndex("href")).replace(catalogItemRoot+"/", "")), attributes
-               .getValue(attributes.getIndex("name")), attributes.getValue(attributes
-               .getIndex("type")), URI.create(attributes.getValue(attributes.getIndex("href"))));
+               .getValue(attributes.getIndex("href")).replace(catalogItemRoot + "/", "")),
+               attributes.getValue(attributes.getIndex("name")), attributes.getValue(attributes
+                        .getIndex("type")), URI.create(attributes.getValue(attributes
+                        .getIndex("href"))));
    }
 
    public void putNamedResource(Map<String, NamedResource> map, Attributes attributes) {
       map.put(attributes.getValue(attributes.getIndex("name")), newNamedResource(attributes));
    }
 
+   protected String currentOrNull() {
+      String returnVal = currentText.toString().trim();
+      return returnVal.equals("") ? null : returnVal;
+   }
 }

@@ -23,6 +23,7 @@
  */
 package org.jclouds.vcloud.domain;
 
+import java.net.URI;
 import java.util.Map;
 
 import org.jclouds.rest.domain.Link;
@@ -40,7 +41,12 @@ import com.google.inject.ImplementedBy;
  */
 @Org
 @ImplementedBy(OrganizationImpl.class)
-public interface Organization extends NamedLink {
+public interface Organization {
+   String getName();
+
+   int getId();
+
+   URI getLocation();
 
    @Catalog
    Link getCatalog();

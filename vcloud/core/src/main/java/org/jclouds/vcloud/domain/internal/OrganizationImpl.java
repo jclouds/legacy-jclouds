@@ -27,7 +27,6 @@ import java.net.URI;
 import java.util.Map;
 
 import org.jclouds.rest.domain.NamedLink;
-import org.jclouds.rest.domain.internal.NamedLinkImpl;
 import org.jclouds.vcloud.domain.Organization;
 import org.jclouds.vcloud.endpoints.Catalog;
 import org.jclouds.vcloud.endpoints.TasksList;
@@ -39,20 +38,36 @@ import org.jclouds.vcloud.endpoints.VDC;
  * @author Adrian Cole
  * 
  */
-public class OrganizationImpl extends NamedLinkImpl implements Organization {
-
+public class OrganizationImpl implements Organization {
+   private final int id;
+   private final String name;
+   private final URI location;
    private final NamedLink catalog;
    private final Map<String, NamedLink> vdcs;
    private final Map<String, NamedLink> tasksLists;
 
-   public OrganizationImpl(String name, String type, URI location, NamedLink catalog,
+   public OrganizationImpl(int id, String name, URI location, NamedLink catalog,
             Map<String, NamedLink> vdcs, Map<String, NamedLink> tasksLists) {
-      super(name, type, location);
+      this.id = id;
+      this.name = name;
+      this.location = location;
       this.catalog = catalog;
       this.vdcs = vdcs;
       this.tasksLists = tasksLists;
    }
 
+   public int getId() {
+      return id;
+   }
+
+   public String getName() {
+      return name;
+   }
+
+   public URI getLocation() {
+      return location;
+   }
+   
    @Catalog
    public NamedLink getCatalog() {
       return catalog;
@@ -71,8 +86,11 @@ public class OrganizationImpl extends NamedLinkImpl implements Organization {
    @Override
    public int hashCode() {
       final int prime = 31;
-      int result = super.hashCode();
+      int result = 1;
       result = prime * result + ((catalog == null) ? 0 : catalog.hashCode());
+      result = prime * result + id;
+      result = prime * result + ((location == null) ? 0 : location.hashCode());
+      result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((tasksLists == null) ? 0 : tasksLists.hashCode());
       result = prime * result + ((vdcs == null) ? 0 : vdcs.hashCode());
       return result;
@@ -82,7 +100,7 @@ public class OrganizationImpl extends NamedLinkImpl implements Organization {
    public boolean equals(Object obj) {
       if (this == obj)
          return true;
-      if (!super.equals(obj))
+      if (obj == null)
          return false;
       if (getClass() != obj.getClass())
          return false;
@@ -91,6 +109,18 @@ public class OrganizationImpl extends NamedLinkImpl implements Organization {
          if (other.catalog != null)
             return false;
       } else if (!catalog.equals(other.catalog))
+         return false;
+      if (id != other.id)
+         return false;
+      if (location == null) {
+         if (other.location != null)
+            return false;
+      } else if (!location.equals(other.location))
+         return false;
+      if (name == null) {
+         if (other.name != null)
+            return false;
+      } else if (!name.equals(other.name))
          return false;
       if (tasksLists == null) {
          if (other.tasksLists != null)
@@ -104,5 +134,6 @@ public class OrganizationImpl extends NamedLinkImpl implements Organization {
          return false;
       return true;
    }
+
 
 }
