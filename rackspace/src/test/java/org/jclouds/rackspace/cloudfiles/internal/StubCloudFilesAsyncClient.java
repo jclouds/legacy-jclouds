@@ -35,15 +35,16 @@ import java.util.concurrent.Future;
 import javax.inject.Inject;
 
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ListContainerResponse;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
-import org.jclouds.blobstore.integration.internal.StubBlobStore;
-import org.jclouds.blobstore.integration.internal.StubBlobStore.FutureBase;
+import org.jclouds.blobstore.integration.internal.StubAsyncBlobStore;
+import org.jclouds.blobstore.integration.internal.StubAsyncBlobStore.FutureBase;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.concurrent.FutureFunctionWrapper;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.logging.Logger.LoggerFactory;
-import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
+import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.BlobToObject;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.ListContainerOptionsToBlobStoreListContainerOptions;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.ObjectToBlob;
@@ -62,13 +63,13 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 /**
- * Implementation of {@link CloudFilesClient} which keeps all data in a local Map object.
+ * Implementation of {@link CloudFilesAsyncClient} which keeps all data in a local Map object.
  * 
  * @author Adrian Cole
  */
-public class StubCloudFilesClient implements CloudFilesClient {
+public class StubCloudFilesAsyncClient implements CloudFilesAsyncClient {
    private final HttpGetOptionsListToGetOptions httpGetOptionsConverter;
-   private final StubBlobStore blobStore;
+   private final StubAsyncBlobStore blobStore;
    private final LoggerFactory logFactory;
    private final CFObject.Factory objectProvider;
    private final ObjectToBlob object2Blob;
@@ -78,7 +79,7 @@ public class StubCloudFilesClient implements CloudFilesClient {
    private final ResourceToObjectList resource2ObjectList;
 
    @Inject
-   private StubCloudFilesClient(StubBlobStore blobStore, LoggerFactory logFactory,
+   private StubCloudFilesAsyncClient(StubAsyncBlobStore blobStore, LoggerFactory logFactory,
             ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs,
             CFObject.Factory objectProvider,
             HttpGetOptionsListToGetOptions httpGetOptionsConverter, ObjectToBlob object2Blob,
@@ -102,8 +103,12 @@ public class StubCloudFilesClient implements CloudFilesClient {
                .getClass().getName()));
    }
 
-   public boolean containerExists(String container) {
-      return blobStore.getContainerToBlobs().containsKey(container);
+   public Future<Boolean> containerExists(final String container) {
+      return new FutureBase<Boolean>() {
+         public Boolean get() throws InterruptedException, ExecutionException {
+            return blobStore.getContainerToBlobs().containsKey(container);
+         }
+      };
    }
 
    public Future<Boolean> createContainer(String container) {
@@ -114,23 +119,23 @@ public class StubCloudFilesClient implements CloudFilesClient {
       return blobStore.deleteContainerImpl(container);
    }
 
-   public boolean disableCDN(String container) {
+   public Future<Boolean> disableCDN(String container) {
       throw new UnsupportedOperationException();
    }
 
-   public URI enableCDN(String container, Long ttl) {
+   public Future<URI> enableCDN(String container, long ttl) {
       throw new UnsupportedOperationException();
    }
 
-   public URI enableCDN(String container) {
+   public Future<URI> enableCDN(String container) {
       throw new UnsupportedOperationException();
    }
 
-   public AccountMetadata getAccountStatistics() {
+   public Future<AccountMetadata> getAccountStatistics() {
       throw new UnsupportedOperationException();
    }
 
-   public ContainerCDNMetadata getCDNMetadata(String container) {
+   public Future<ContainerCDNMetadata> getCDNMetadata(String container) {
       throw new UnsupportedOperationException();
    }
 
@@ -139,11 +144,21 @@ public class StubCloudFilesClient implements CloudFilesClient {
       return wrapFuture(blobStore.getBlob(container, key, getOptions), blob2Object);
    }
 
-   public MutableObjectInfoWithMetadata getObjectInfo(String container, String key) {
-      return blob2ObjectInfo.apply(blobStore.blobMetadata(container, key));
+   public Future<MutableObjectInfoWithMetadata> getObjectInfo(String container, String key) {
+      return wrapFuture(blobStore.blobMetadata(container, key),
+               new Function<BlobMetadata, MutableObjectInfoWithMetadata>() {
+
+                  @Override
+                  public MutableObjectInfoWithMetadata apply(BlobMetadata from) {
+
+                     return blob2ObjectInfo.apply(from);
+                  }
+
+               });
    }
 
-   public SortedSet<ContainerCDNMetadata> listCDNContainers(ListCdnContainerOptions... options) {
+   public Future<? extends SortedSet<ContainerCDNMetadata>> listCDNContainers(
+            ListCdnContainerOptions... options) {
       throw new UnsupportedOperationException();
    }
 
@@ -177,11 +192,12 @@ public class StubCloudFilesClient implements CloudFilesClient {
       return blobStore.removeBlob(container, key);
    }
 
-   public boolean setObjectInfo(String container, String key, Map<String, String> userMetadata) {
+   public Future<Boolean> setObjectInfo(String container, String key,
+            Map<String, String> userMetadata) {
       throw new UnsupportedOperationException();
    }
 
-   public URI updateCDN(String container, Long ttl) {
+   public Future<URI> updateCDN(String container, long ttl) {
       throw new UnsupportedOperationException();
    }
 

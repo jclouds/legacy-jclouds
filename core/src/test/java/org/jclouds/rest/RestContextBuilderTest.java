@@ -44,7 +44,7 @@ import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests behavior of modules configured in RestContextBuilder<String>
+ * Tests behavior of modules configured in RestContextBuilder<String,String>
  * 
  * @author Adrian Cole
  */
@@ -60,13 +60,17 @@ public class RestContextBuilderTest {
       }
    }
 
-   class TestRestContext implements RestContext<String> {
+   class TestRestContext implements RestContext<String, String> {
 
       public void close() {
 
       }
 
       public String getApi() {
+         return "";
+      }
+
+      public String getAsyncApi() {
          return "";
       }
 
@@ -85,10 +89,11 @@ public class RestContextBuilderTest {
 
    }
 
-   class TestRestContextBuilder extends RestContextBuilder<String> {
+   class TestRestContextBuilder extends RestContextBuilder<String, String> {
 
       protected TestRestContextBuilder(Properties properties) {
          super(new TypeLiteral<String>() {
+         }, new TypeLiteral<String>() {
          }, properties);
       }
 

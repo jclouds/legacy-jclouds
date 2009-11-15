@@ -59,7 +59,7 @@ public class RetryablePredicate<T> implements Predicate<T> {
                   .sleep(checkInterval)) {
             if (predicate.apply(input)) {
                return true;
-            } else if (!before(end)){
+            } else if (atOrAfter(end)) {
                return false;
             }
          }
@@ -69,7 +69,11 @@ public class RetryablePredicate<T> implements Predicate<T> {
       return false;
    }
 
-   boolean before(DateTime end){
-      return new DateTime().compareTo(end) < 1;
+   boolean before(DateTime end) {
+      return new DateTime().compareTo(end) <= 1;
+   }
+
+   boolean atOrAfter(DateTime end) {
+      return new DateTime().compareTo(end) >= 0;
    }
 }

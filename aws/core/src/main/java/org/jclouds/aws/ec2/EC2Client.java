@@ -23,22 +23,11 @@
  */
 package org.jclouds.aws.ec2;
 
-import static org.jclouds.aws.ec2.reference.EC2Parameters.ACTION;
-import static org.jclouds.aws.ec2.reference.EC2Parameters.VERSION;
-
 import java.net.InetAddress;
 import java.util.SortedSet;
-import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
-import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-
-import org.jclouds.aws.ec2.binders.BindGroupNameToIndexedFormParams;
-import org.jclouds.aws.ec2.binders.BindInetAddressesToIndexedFormParams;
-import org.jclouds.aws.ec2.binders.BindInstanceIdsToIndexedFormParams;
-import org.jclouds.aws.ec2.binders.BindKeyNameToIndexedFormParams;
-import org.jclouds.aws.ec2.binders.BindUserIdGroupPairToSourceSecurityGroupFormParams;
+import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.ec2.domain.Image;
 import org.jclouds.aws.ec2.domain.ImageAttribute;
 import org.jclouds.aws.ec2.domain.IpProtocol;
@@ -48,28 +37,9 @@ import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.SecurityGroup;
 import org.jclouds.aws.ec2.domain.TerminatedInstance;
 import org.jclouds.aws.ec2.domain.UserIdGroupPair;
-import org.jclouds.aws.ec2.filters.FormSigner;
-import org.jclouds.aws.ec2.functions.ReturnVoidOnGroupNotFound;
 import org.jclouds.aws.ec2.options.DescribeImagesOptions;
 import org.jclouds.aws.ec2.options.RunInstancesOptions;
-import org.jclouds.aws.ec2.xml.AllocateAddressResponseHandler;
-import org.jclouds.aws.ec2.xml.DescribeAddressesResponseHandler;
-import org.jclouds.aws.ec2.xml.DescribeImagesResponseHandler;
-import org.jclouds.aws.ec2.xml.DescribeInstancesResponseHandler;
-import org.jclouds.aws.ec2.xml.DescribeKeyPairsResponseHandler;
-import org.jclouds.aws.ec2.xml.DescribeSecurityGroupsResponseHandler;
-import org.jclouds.aws.ec2.xml.KeyPairResponseHandler;
-import org.jclouds.aws.ec2.xml.RunInstancesResponseHandler;
-import org.jclouds.aws.ec2.xml.TerminateInstancesResponseHandler;
-import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.Endpoint;
-import org.jclouds.rest.annotations.ExceptionParser;
-import org.jclouds.rest.annotations.FormParams;
-import org.jclouds.rest.annotations.ParamParser;
-import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.VirtualHost;
-import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.functions.InetAddressToHostAddress;
+import org.jclouds.concurrent.Timeout;
 
 /**
  * Provides access to EC2 via their REST API.
@@ -77,10 +47,7 @@ import org.jclouds.rest.functions.InetAddressToHostAddress;
  * 
  * @author Adrian Cole
  */
-@Endpoint(EC2.class)
-@RequestFilters(FormSigner.class)
-@FormParams(keys = VERSION, values = "2009-08-15")
-@VirtualHost
+@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface EC2Client {
 
    /**
@@ -95,11 +62,7 @@ public interface EC2Client {
     *      />
     * @see DescribeImagesOptions
     */
-   @POST
-   @Path("/")
-   @FormParams(keys = ACTION, values = "DescribeImages")
-   @XMLResponseParser(DescribeImagesResponseHandler.class)
-   Future<? extends SortedSet<Image>> describeImages(DescribeImagesOptions... options);
+   SortedSet<Image> describeImages(DescribeImagesOptions... options);
 
    /**
     * Returns information about an attribute of an AMI. Only one attribute can be specified per
@@ -116,11 +79,7 @@ public interface EC2Client {
     *      />
     * @see DescribeImagesOptions
     */
-   @POST
-   @Path("/")
-   @FormParams(keys = ACTION, values = "DescribeImageAttribute")
-   String describeImageAttribute(@FormParam("ImageId") String imageId,
-            @FormParam("Attribute") ImageAttribute attribute);
+   String describeImageAttribute(String imageId, ImageAttribute attribute);
 
    /**
     * Acquires an elastic IP address for use with your account.
@@ -131,11 +90,7 @@ public interface EC2Client {
     * @see #disassociateAddress
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-AllocateAddress.html"
     */
-   @POST
-   @Path("/")
-   @XMLResponseParser(AllocateAddressResponseHandler.class)
-   @FormParams(keys = ACTION, values = "AllocateAddress")
-   Future<InetAddress> allocateAddress();
+   InetAddress allocateAddress();
 
    /**
     * Associates an elastic IP address with an instance. If the IP address is currently assigned to
@@ -153,12 +108,7 @@ public interface EC2Client {
     * @see #disassociateAddress
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/index.html?ApiReference-query-AssociateAddress.html"
     */
-   @POST
-   @Path("/")
-   @FormParams(keys = ACTION, values = "AssociateAddress")
-   Future<Void> associateAddress(
-            @FormParam("PublicIp") @ParamParser(InetAddressToHostAddress.class) InetAddress publicIp,
-            @FormParam("InstanceId") String instanceId);
+   void associateAddress(InetAddress publicIp, String instanceId);
 
    /**
     * Disassociates the specified elastic IP address from the instance to which it is assigned. This
@@ -174,11 +124,7 @@ public interface EC2Client {
     * @see #associateAddress
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/index.html?ApiReference-query-DisdisassociateAddress.html"
     */
-   @POST
-   @Path("/")
-   @FormParams(keys = ACTION, values = "DisassociateAddress")
-   Future<Void> disassociateAddress(
-            @FormParam("PublicIp") @ParamParser(InetAddressToHostAddress.class) InetAddress publicIp);
+   void disassociateAddress(InetAddress publicIp);
 
    /**
     * Releases an elastic IP address associated with your account.
@@ -191,11 +137,7 @@ public interface EC2Client {
     * @see #disassociateAddress
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/index.html?ApiReference-query-ReleaseAddress.html"
     */
-   @POST
-   @Path("/")
-   @FormParams(keys = ACTION, values = "ReleaseAddress")
-   Future<Void> releaseAddress(
-            @FormParam("PublicIp") @ParamParser(InetAddressToHostAddress.class) InetAddress publicIp);
+   void releaseAddress(InetAddress publicIp);
 
    /**
     * Lists elastic IP addresses assigned to your account or provides information about a specific
@@ -210,12 +152,7 @@ public interface EC2Client {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeAddresses.html"
     *      />
     */
-   @POST
-   @Path("/")
-   @FormParams(keys = ACTION, values = "DescribeAddresses")
-   @XMLResponseParser(DescribeAddressesResponseHandler.class)
-   Future<? extends SortedSet<PublicIpInstanceIdPair>> describeAddresses(
-            @BinderParam(BindInetAddressesToIndexedFormParams.class) InetAddress... publicIps);
+   SortedSet<PublicIpInstanceIdPair> describeAddresses(InetAddress... publicIps);
 
    /**
     * Returns information about instances that you own.
@@ -234,12 +171,7 @@ public interface EC2Client {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeInstances.html"
     *      />
     */
-   @POST
-   @Path("/")
-   @FormParams(keys = ACTION, values = "DescribeInstances")
-   @XMLResponseParser(DescribeInstancesResponseHandler.class)
-   Future<? extends SortedSet<Reservation>> describeInstances(
-            @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
+   SortedSet<Reservation> describeInstances(String... instanceIds);
 
    /**
     * Launches a specified number of instances of an AMI for which you have permissions.
@@ -305,12 +237,7 @@ public interface EC2Client {
     *      />
     * @see RunInstancesOptions
     */
-   @POST
-   @Path("/")
-   @FormParams(keys = ACTION, values = "RunInstances")
-   @XMLResponseParser(RunInstancesResponseHandler.class)
-   Future<Reservation> runInstances(@FormParam("ImageId") String imageId,
-            @FormParam("MinCount") int minCount, @FormParam("MaxCount") int maxCount,
+   Reservation runInstances(String imageId, int minCount, int maxCount,
             RunInstancesOptions... options);
 
    /**
@@ -325,13 +252,7 @@ public interface EC2Client {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-TerminateInstances.html"
     *      />
     */
-   @POST
-   @Path("/")
-   @FormParams(keys = ACTION, values = "TerminateInstances")
-   @XMLResponseParser(TerminateInstancesResponseHandler.class)
-   Future<? extends SortedSet<TerminatedInstance>> terminateInstances(
-            @FormParam("InstanceId.0") String instanceId,
-            @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
+   SortedSet<TerminatedInstance> terminateInstances(String instanceId, String... instanceIds);
 
    /**
     * Creates a new 2048-bit RSA key pair with the specified name. The public key is stored by
@@ -347,11 +268,7 @@ public interface EC2Client {
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateKeyPair.html"
     *      />
     */
-   @POST
-   @Path("/")
-   @FormParams(keys = ACTION, values = "CreateKeyPair")
-   @XMLResponseParser(KeyPairResponseHandler.class)
-   Future<KeyPair> createKeyPair(@FormParam("KeyName") String keyName);
+   KeyPair createKeyPair(String keyName);
 
    /**
     * Returns information about key pairs available to you. If you specify key pairs, information
@@ -365,12 +282,7 @@ public interface EC2Client {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeKeyPairs.html"
     *      />
     */
-   @POST
-   @Path("/")
-   @FormParams(keys = ACTION, values = "DescribeKeyPairs")
-   @XMLResponseParser(DescribeKeyPairsResponseHandler.class)
-   Future<? extends SortedSet<KeyPair>> describeKeyPairs(
-            @BinderParam(BindKeyNameToIndexedFormParams.class) String... keyPairNames);
+   SortedSet<KeyPair> describeKeyPairs(String... keyPairNames);
 
    /**
     * Deletes the specified key pair, by removing the public key from Amazon EC2. You must own the
@@ -383,10 +295,8 @@ public interface EC2Client {
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DeleteKeyPair.html"
     *      />
     */
-   @POST
-   @Path("/")
-   @FormParams(keys = ACTION, values = "DeleteKeyPair")
-   Future<Void> deleteKeyPair(@FormParam("KeyName") String keyName);
+
+   void deleteKeyPair(String keyName);
 
    /**
     * Creates a new security group. Group names must be unique per account.
@@ -407,11 +317,7 @@ public interface EC2Client {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateSecurityGroup.html"
     *      />
     */
-   @POST
-   @Path("/")
-   @FormParams(keys = ACTION, values = "CreateSecurityGroup")
-   Future<Void> createSecurityGroup(@FormParam("GroupName") String name,
-            @FormParam("GroupDescription") String description);
+   void createSecurityGroup(String name, String description);
 
    /**
     * Deletes a security group that you own.
@@ -427,11 +333,7 @@ public interface EC2Client {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DeleteSecurityGroup.html"
     *      />
     */
-   @POST
-   @Path("/")
-   @FormParams(keys = ACTION, values = "DeleteSecurityGroup")
-   @ExceptionParser(ReturnVoidOnGroupNotFound.class)
-   Future<Void> deleteSecurityGroup(@FormParam("GroupName") String name);
+   void deleteSecurityGroup(String name);
 
    /**
     * Returns information about security groups that you own.
@@ -447,12 +349,7 @@ public interface EC2Client {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeSecurityGroups.html"
     *      />
     */
-   @POST
-   @Path("/")
-   @FormParams(keys = ACTION, values = "DescribeSecurityGroups")
-   @XMLResponseParser(DescribeSecurityGroupsResponseHandler.class)
-   Future<? extends SortedSet<SecurityGroup>> describeSecurityGroups(
-            @BinderParam(BindGroupNameToIndexedFormParams.class) String... securityGroupNames);
+   SortedSet<SecurityGroup> describeSecurityGroups(String... securityGroupNames);
 
    /**
     * 
@@ -471,12 +368,7 @@ public interface EC2Client {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-AuthorizeSecurityGroupIngress.html"
     * 
     */
-   @POST
-   @Path("/")
-   @FormParams(keys = ACTION, values = "AuthorizeSecurityGroupIngress")
-   Future<Void> authorizeSecurityGroupIngress(
-            @FormParam("GroupName") String groupName,
-            @BinderParam(BindUserIdGroupPairToSourceSecurityGroupFormParams.class) UserIdGroupPair sourceSecurityGroup);
+   void authorizeSecurityGroupIngress(String groupName, UserIdGroupPair sourceSecurityGroup);
 
    /**
     * 
@@ -510,12 +402,8 @@ public interface EC2Client {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-AuthorizeSecurityGroupIngress.html"
     * 
     */
-   @POST
-   @Path("/")
-   @FormParams(keys = ACTION, values = "AuthorizeSecurityGroupIngress")
-   Future<Void> authorizeSecurityGroupIngress(@FormParam("GroupName") String groupName,
-            @FormParam("IpProtocol") IpProtocol ipProtocol, @FormParam("FromPort") int fromPort,
-            @FormParam("ToPort") int toPort, @FormParam("CidrIp") String cidrIp);
+   void authorizeSecurityGroupIngress(String groupName, IpProtocol ipProtocol, int fromPort,
+            int toPort, String cidrIp);
 
    /**
     * 
@@ -535,12 +423,7 @@ public interface EC2Client {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-RevokeSecurityGroupIngress.html"
     * 
     */
-   @POST
-   @Path("/")
-   @FormParams(keys = ACTION, values = "RevokeSecurityGroupIngress")
-   Future<Void> revokeSecurityGroupIngress(
-            @FormParam("GroupName") String groupName,
-            @BinderParam(BindUserIdGroupPairToSourceSecurityGroupFormParams.class) UserIdGroupPair sourceSecurityGroup);
+   void revokeSecurityGroupIngress(String groupName, UserIdGroupPair sourceSecurityGroup);
 
    /**
     * 
@@ -575,10 +458,6 @@ public interface EC2Client {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-RevokeSecurityGroupIngress.html"
     * 
     */
-   @POST
-   @Path("/")
-   @FormParams(keys = ACTION, values = "RevokeSecurityGroupIngress")
-   Future<Void> revokeSecurityGroupIngress(@FormParam("GroupName") String groupName,
-            @FormParam("IpProtocol") IpProtocol ipProtocol, @FormParam("FromPort") int fromPort,
-            @FormParam("ToPort") int toPort, @FormParam("CidrIp") String cidrIp);
+   void revokeSecurityGroupIngress(String groupName, IpProtocol ipProtocol, int fromPort,
+            int toPort, String cidrIp);
 }

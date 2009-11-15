@@ -25,6 +25,7 @@ package org.jclouds.aws.ec2.config;
 
 import static org.testng.Assert.assertEquals;
 
+import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.reference.EC2Constants;
 import org.jclouds.concurrent.WithinThreadExecutorService;
@@ -70,8 +71,8 @@ public class EC2ContextModuleTest {
 
    @Test
    void testContextImpl() {
-      RestContext<EC2Client> handler = createInjector().getInstance(
-               Key.get(new TypeLiteral<RestContext<EC2Client>>() {
+      RestContext<EC2AsyncClient, EC2Client> handler = createInjector().getInstance(
+               Key.get(new TypeLiteral<RestContext<EC2AsyncClient, EC2Client>>() {
                }));
       assertEquals(handler.getClass(), RestContextImpl.class);
    }

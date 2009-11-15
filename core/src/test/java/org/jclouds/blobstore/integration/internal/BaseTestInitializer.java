@@ -28,9 +28,9 @@ import org.testng.ITestContext;
 
 import com.google.inject.Module;
 
-public abstract class BaseTestInitializer<S> {
+public abstract class BaseTestInitializer<A, S> {
 
-   public BlobStoreContext<S> init(Module configurationModule, ITestContext testContext)
+   public BlobStoreContext<A, S> init(Module configurationModule, ITestContext testContext)
             throws Exception {
       String endpoint = System.getProperty("jclouds.test.endpoint");
       String app = System.getProperty("jclouds.test.app");
@@ -51,8 +51,8 @@ public abstract class BaseTestInitializer<S> {
       }
    }
 
-   protected abstract BlobStoreContext<S> createStubContext();
+   protected abstract BlobStoreContext<A, S> createStubContext();
 
-   protected abstract BlobStoreContext<S> createLiveContext(Module configurationModule, String url,
-            String app, String account, String key);
+   protected abstract BlobStoreContext<A, S> createLiveContext(Module configurationModule,
+            String url, String app, String account, String key);
 }

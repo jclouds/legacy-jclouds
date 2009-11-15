@@ -25,6 +25,7 @@ package org.jclouds.aws.s3.blobstore.config;
 
 import static org.testng.Assert.assertEquals;
 
+import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.config.S3StubClientModule;
 import org.jclouds.aws.s3.reference.S3Constants;
@@ -65,8 +66,8 @@ public class S3BlobStoreModuleTest {
 
    @Test
    void testContextImpl() {
-      BlobStoreContext<S3Client> context = createInjector().getInstance(
-               Key.get(new TypeLiteral<BlobStoreContext<S3Client>>() {
+      BlobStoreContext<S3AsyncClient, S3Client> context = createInjector().getInstance(
+               Key.get(new TypeLiteral<BlobStoreContext<S3AsyncClient, S3Client>>() {
                }));
       assertEquals(context.getClass(), BlobStoreContextImpl.class);
    }

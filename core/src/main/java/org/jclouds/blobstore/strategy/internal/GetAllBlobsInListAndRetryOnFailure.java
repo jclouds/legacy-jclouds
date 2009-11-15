@@ -36,7 +36,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
@@ -66,7 +66,7 @@ public class GetAllBlobsInListAndRetryOnFailure implements GetBlobsInListStrateg
    @Named(BlobStoreConstants.PROPERTY_BLOBSTORE_TIMEOUT)
    public long requestTimeoutMilliseconds = 30000;
    protected final ListBlobMetadataStrategy getAllBlobMetadata;
-   protected final BlobStore connection;
+   protected final AsyncBlobStore connection;
 
    /**
     * time to pause before retrying a transient failure
@@ -76,7 +76,7 @@ public class GetAllBlobsInListAndRetryOnFailure implements GetBlobsInListStrateg
    protected long requestRetryMilliseconds = 10;
 
    @Inject
-   GetAllBlobsInListAndRetryOnFailure(BlobStore connection,
+   GetAllBlobsInListAndRetryOnFailure(AsyncBlobStore connection,
             ListBlobMetadataStrategy getAllBlobMetadata) {
       this.connection = connection;
       this.getAllBlobMetadata = getAllBlobMetadata;

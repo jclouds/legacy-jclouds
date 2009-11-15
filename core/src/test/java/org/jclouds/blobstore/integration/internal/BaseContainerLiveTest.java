@@ -23,11 +23,10 @@
  */
 package org.jclouds.blobstore.integration.internal;
 
-
 /**
  * 
  * @author Adrian Cole
  */
-public class BaseContainerLiveTest<S> extends BaseBlobStoreIntegrationTest<S> {
+public class BaseContainerLiveTest<A, S> extends BaseBlobStoreIntegrationTest<A, S> {
 
 }

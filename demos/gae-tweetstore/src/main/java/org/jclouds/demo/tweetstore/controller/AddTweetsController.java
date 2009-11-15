@@ -59,14 +59,14 @@ public class AddTweetsController extends HttpServlet implements
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 3888348023150822683L;
-   private final Map<String, BlobStoreContext<?>> contexts;
+   private final Map<String, BlobStoreContext<?, ?>> contexts;
    private final ServiceToStoredTweetStatuses blobStoreContextToContainerResult;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   AddTweetsController(Map<String, BlobStoreContext<?>> contexts,
+   AddTweetsController(Map<String, BlobStoreContext<?, ?>> contexts,
             ServiceToStoredTweetStatuses blobStoreContextToContainerResult) {
       this.contexts = contexts;
       this.blobStoreContextToContainerResult = blobStoreContextToContainerResult;

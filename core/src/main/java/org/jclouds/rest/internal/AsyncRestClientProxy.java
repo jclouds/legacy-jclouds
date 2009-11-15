@@ -54,7 +54,7 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.internal.Nullable;
 
 @Singleton
-public class RestClientProxy<T> implements InvocationHandler {
+public class AsyncRestClientProxy<T> implements InvocationHandler {
    private final Injector injector;
    private final RestAnnotationProcessor<T> util;
    private final Class<T> declaring;
@@ -72,7 +72,7 @@ public class RestClientProxy<T> implements InvocationHandler {
 
    @SuppressWarnings("unchecked")
    @Inject
-   public RestClientProxy(Injector injector, Factory factory, RestAnnotationProcessor<T> util,
+   public AsyncRestClientProxy(Injector injector, Factory factory, RestAnnotationProcessor<T> util,
             TypeLiteral<T> typeLiteral) {
       this.injector = injector;
       this.util = util;
@@ -88,7 +88,7 @@ public class RestClientProxy<T> implements InvocationHandler {
          return this.hashCode();
       } else if (method.getName().startsWith("new")) {
          return injector.getInstance(method.getReturnType());
-      } else if (util.getDelegateOrNull(method) != null) {
+      } else if (util.getDelegateOrNull(method) != null &&Future.class.isAssignableFrom(method.getReturnType())) {
          method = util.getDelegateOrNull(method);
          logger.trace("Converting %s.%s", declaring.getSimpleName(), method.getName());
          Function<Exception, ?> exceptionParser = util
@@ -175,9 +175,9 @@ public class RestClientProxy<T> implements InvocationHandler {
 
    @Override
    public boolean equals(Object obj) {
-      if (obj == null || !(obj instanceof RestClientProxy<?>))
+      if (obj == null || !(obj instanceof AsyncRestClientProxy<?>))
          return false;
-      RestClientProxy<?> other = (RestClientProxy<?>) obj;
+      AsyncRestClientProxy<?> other = (AsyncRestClientProxy<?>) obj;
       if (other == this)
          return true;
       if (other.declaring != this.declaring)

@@ -28,7 +28,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.net.URI;
-import java.util.concurrent.TimeUnit;
 
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.vcloud.domain.Catalog;
@@ -50,7 +49,7 @@ public class VCloudClientLiveTest {
 
    @Test
    public void testOrganization() throws Exception {
-      Catalog response = connection.getCatalog().get(10, TimeUnit.SECONDS);
+      Catalog response = connection.getCatalog();
       assertNotNull(response);
       assertNotNull(response.getName());
       assertNotNull(response.getLocation());
@@ -59,7 +58,7 @@ public class VCloudClientLiveTest {
 
    @Test
    public void testDefaultVDC() throws Exception {
-      VDC response = connection.getDefaultVDC().get(10, TimeUnit.SECONDS);
+      VDC response = connection.getDefaultVDC();
       assertNotNull(response);
       assertNotNull(response.getName());
       assertNotNull(response.getLocation());
@@ -69,8 +68,7 @@ public class VCloudClientLiveTest {
 
    @Test
    public void testDefaultTasksList() throws Exception {
-      org.jclouds.vcloud.domain.TasksList response = connection.getDefaultTasksList().get(10,
-               TimeUnit.SECONDS);
+      org.jclouds.vcloud.domain.TasksList response = connection.getDefaultTasksList();
       assertNotNull(response);
       assertNotNull(response.getLocation());
       assertNotNull(response.getTasks());
@@ -78,20 +76,19 @@ public class VCloudClientLiveTest {
 
    @Test
    public void testGetTask() throws Exception {
-      org.jclouds.vcloud.domain.TasksList response = connection.getDefaultTasksList().get(10,
-               TimeUnit.SECONDS);
+      org.jclouds.vcloud.domain.TasksList response = connection.getDefaultTasksList();
       assertNotNull(response);
       assertNotNull(response.getLocation());
       assertNotNull(response.getTasks());
       for (Task t : response.getTasks()) {
-         assertEquals(connection.getTask(t.getLocation()).get(30, TimeUnit.SECONDS).getLocation(),
+         assertEquals(connection.getTask(t.getLocation()).getLocation(),
                   t.getLocation());
       }
    }
 
    @Test(enabled = false)
    public void testGetVApp() throws Exception {
-      String response = connection.getVApp("188849-2");
+      String response = connection.getVAppString("188849-2");
       assertNotNull(response);
       System.out.println(response);
    }

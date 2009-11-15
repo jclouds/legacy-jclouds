@@ -30,7 +30,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ListResponse;
 import org.jclouds.blobstore.domain.ResourceMetadata;
@@ -56,10 +56,10 @@ public class ListBlobMetadataInContainer implements ListBlobMetadataStrategy {
    @Inject(optional = true)
    @Named(BlobStoreConstants.PROPERTY_BLOBSTORE_TIMEOUT)
    protected long requestTimeoutMilliseconds = 30000;
-   protected final BlobStore connection;
+   protected final AsyncBlobStore connection;
 
    @Inject
-   ListBlobMetadataInContainer(BlobStore connection) {
+   ListBlobMetadataInContainer(AsyncBlobStore connection) {
       this.connection = connection;
    }
 

@@ -25,6 +25,7 @@ package org.jclouds.aws.s3.config;
 
 import static org.testng.Assert.assertEquals;
 
+import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.concurrent.WithinThreadExecutorService;
@@ -64,8 +65,9 @@ public class S3ContextModuleTest {
 
    @Test
    void testContextImpl() {
-      RestContext<S3Client> handler = createInjector().getInstance(Key.get(new TypeLiteral<RestContext<S3Client>>() {
-      }));
+      RestContext<S3AsyncClient, S3Client> handler = createInjector().getInstance(
+               Key.get(new TypeLiteral<RestContext<S3AsyncClient, S3Client>>() {
+               }));
       assertEquals(handler.getClass(), RestContextImpl.class);
    }
 

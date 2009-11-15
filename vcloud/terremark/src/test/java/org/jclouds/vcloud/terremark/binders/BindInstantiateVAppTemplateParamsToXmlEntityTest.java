@@ -71,7 +71,7 @@ public class BindInstantiateVAppTemplateParamsToXmlEntityTest {
 
    public void testApplyInputStream() throws IOException {
       String expected = IOUtils.toString(getClass().getResourceAsStream(
-               "/terremark/InstantiateVAppTemplateParams-test.xml"));
+               "/terremark/InstantiateVAppTemplateParams-test-2.xml"));
       HttpRequest request = new HttpRequest("GET", URI.create("http://test"));
       BindInstantiateVAppTemplateParamsToXmlEntity binder = injector
                .getInstance(BindInstantiateVAppTemplateParamsToXmlEntity.class);

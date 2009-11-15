@@ -33,8 +33,8 @@ import org.jclouds.rest.RestContext;
 import com.google.inject.Module;
 
 /**
- * Creates {@link RestContext} instances bound with generic type {@link EC2Client} based on the most
- * commonly requested arguments.
+ * Creates {@link RestContext} instances bound with generic type {@link EC2AsyncClient} based on the
+ * most commonly requested arguments.
  * <p/>
  * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
  * <p/>
@@ -46,19 +46,20 @@ import com.google.inject.Module;
  * @see RestContext
  */
 public class EC2ContextFactory {
-   public static RestContext<EC2Client> createContext(Properties properties, Module... modules) {
+   public static RestContext<EC2AsyncClient, EC2Client> createContext(Properties properties,
+            Module... modules) {
       return new EC2ContextBuilder(new EC2PropertiesBuilder(properties).build()).withModules(
                modules).buildContext();
    }
 
-   public static RestContext<EC2Client> createContext(String awsAccessKeyId,
+   public static RestContext<EC2AsyncClient, EC2Client> createContext(String awsAccessKeyId,
             String awsSecretAccessKey, Module... modules) {
       return new EC2ContextBuilder(new EC2PropertiesBuilder(awsAccessKeyId, awsSecretAccessKey)
                .build()).withModules(modules).buildContext();
    }
 
-   public static RestContext<EC2Client> createContext(URI endpoint, String awsAccessKeyId,
-            String awsSecretAccessKey, Module... modules) {
+   public static RestContext<EC2AsyncClient, EC2Client> createContext(URI endpoint,
+            String awsAccessKeyId, String awsSecretAccessKey, Module... modules) {
       return new EC2ContextBuilder(new EC2PropertiesBuilder(awsAccessKeyId, awsSecretAccessKey)
                .withEndpoint(endpoint).build()).withModules(modules).buildContext();
    }

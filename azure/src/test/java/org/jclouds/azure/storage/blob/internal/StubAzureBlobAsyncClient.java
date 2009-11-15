@@ -33,7 +33,7 @@ import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 
-import org.jclouds.azure.storage.blob.AzureBlobClient;
+import org.jclouds.azure.storage.blob.AzureBlobAsyncClient;
 import org.jclouds.azure.storage.blob.blobstore.functions.AzureBlobToBlob;
 import org.jclouds.azure.storage.blob.blobstore.functions.BlobMetadataToBlobProperties;
 import org.jclouds.azure.storage.blob.blobstore.functions.BlobToAzureBlob;
@@ -52,9 +52,10 @@ import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
-import org.jclouds.blobstore.integration.internal.StubBlobStore;
-import org.jclouds.blobstore.integration.internal.StubBlobStore.FutureBase;
+import org.jclouds.blobstore.integration.internal.StubAsyncBlobStore;
+import org.jclouds.blobstore.integration.internal.StubAsyncBlobStore.FutureBase;
 import org.jclouds.concurrent.FutureFunctionWrapper;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.logging.Logger.LoggerFactory;
@@ -64,14 +65,14 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
 /**
- * Implementation of {@link AzureBlobClient} which keeps all data in a local Map object.
+ * Implementation of {@link AzureBlobAsyncClient} which keeps all data in a local Map object.
  * 
  * @author Adrian Cole
  */
 @ConsistencyModel(ConsistencyModels.STRICT)
-public class StubAzureBlobClient implements AzureBlobClient {
+public class StubAzureBlobAsyncClient implements AzureBlobAsyncClient {
    private final HttpGetOptionsListToGetOptions httpGetOptionsConverter;
-   private final StubBlobStore blobStore;
+   private final StubAsyncBlobStore blobStore;
    private final LoggerFactory logFactory;
    private final AzureBlob.Factory objectProvider;
    private final AzureBlobToBlob object2Blob;
@@ -82,7 +83,7 @@ public class StubAzureBlobClient implements AzureBlobClient {
    private final ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs;
 
    @Inject
-   private StubAzureBlobClient(StubBlobStore blobStore, LoggerFactory logFactory,
+   private StubAzureBlobAsyncClient(StubAsyncBlobStore blobStore, LoggerFactory logFactory,
             ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs,
             AzureBlob.Factory objectProvider,
             HttpGetOptionsListToGetOptions httpGetOptionsConverter, AzureBlobToBlob object2Blob,
@@ -122,7 +123,7 @@ public class StubAzureBlobClient implements AzureBlobClient {
    public Future<Void> deleteContainer(final String container) {
       return new FutureBase<Void>() {
          public Void get() throws InterruptedException, ExecutionException {
-            StubAzureBlobClient.this.containerToBlobs.remove(container);
+            StubAzureBlobAsyncClient.this.containerToBlobs.remove(container);
             return null;
          }
       };
@@ -137,11 +138,20 @@ public class StubAzureBlobClient implements AzureBlobClient {
       return wrapFuture(blobStore.getBlob(container, key, getOptions), blob2Object);
    }
 
-   public BlobProperties getBlobProperties(String container, String key) {
-      return blob2ObjectInfo.apply(blobStore.blobMetadata(container, key));
+   public Future<BlobProperties> getBlobProperties(String container, String key) {
+      return wrapFuture(blobStore.blobMetadata(container, key),
+               new Function<BlobMetadata, BlobProperties>() {
+
+                  @Override
+                  public BlobProperties apply(BlobMetadata from) {
+
+                     return blob2ObjectInfo.apply(from);
+                  }
+
+               });
    }
 
-   public ListableContainerProperties getContainerProperties(String container) {
+   public Future<ListableContainerProperties> getContainerProperties(String container) {
       throw new UnsupportedOperationException();
    }
 
@@ -182,16 +192,20 @@ public class StubAzureBlobClient implements AzureBlobClient {
       return blobStore.putBlob(container, object2Blob.apply(object));
    }
 
-   public void setBlobMetadata(String container, String key, Map<String, String> metadata) {
+   public Future<Void> setBlobMetadata(String container, String key, Map<String, String> metadata) {
       throw new UnsupportedOperationException();
    }
 
-   public void setResourceMetadata(String container, Map<String, String> metadata) {
+   public Future<Void> setResourceMetadata(String container, Map<String, String> metadata) {
       throw new UnsupportedOperationException();
    }
 
-   public boolean containerExists(String container) {
-      return blobStore.getContainerToBlobs().containsKey(container);
+   public Future<Boolean> containerExists(final String container) {
+      return new FutureBase<Boolean>() {
+         public Boolean get() throws InterruptedException, ExecutionException {
+            return blobStore.getContainerToBlobs().containsKey(container);
+         }
+      };
    }
 
 }

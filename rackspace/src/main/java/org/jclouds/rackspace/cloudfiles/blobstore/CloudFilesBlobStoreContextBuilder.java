@@ -37,6 +37,7 @@ import java.util.concurrent.ExecutorService;
 import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
 import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
 import org.jclouds.rackspace.cloudfiles.blobstore.config.CloudFilesBlobStoreContextModule;
 import org.jclouds.rackspace.cloudfiles.config.CloudFilesRestClientModule;
@@ -60,10 +61,12 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole, Andrew Newdigate
  * @see CloudFilesBlobStoreContext
  */
-public class CloudFilesBlobStoreContextBuilder extends BlobStoreContextBuilder<CloudFilesClient> {
+public class CloudFilesBlobStoreContextBuilder extends
+         BlobStoreContextBuilder<CloudFilesAsyncClient, CloudFilesClient> {
 
    public CloudFilesBlobStoreContextBuilder(Properties props) {
-      super(new TypeLiteral<CloudFilesClient>() {
+      super(new TypeLiteral<CloudFilesAsyncClient>() {
+      }, new TypeLiteral<CloudFilesClient>() {
       }, convert(props));
    }
 

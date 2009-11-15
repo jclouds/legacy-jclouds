@@ -21,40 +21,29 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.nirvanix.sdn.config;
+package org.jclouds.concurrent;
 
-import org.jclouds.http.RequiresHttp;
-import org.jclouds.nirvanix.sdn.SDNClient;
-import org.jclouds.rest.RestClientFactory;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+import java.util.concurrent.TimeUnit;
 
 /**
- * Configures the SDN authentication service connection, including logging and http transport.
  * 
+ * This class or method has a timeout used for synchronous calls.
+ * 
+ * @see SyncClient
+ * @see TimeUnit
+ * @see Future#get(long,TimeUnit)
  * @author Adrian Cole
  */
-@RequiresHttp
-public class RestSDNClientModule extends AbstractModule {
+@Target( { TYPE, METHOD })
+@Retention(RUNTIME)
+public @interface Timeout {
+   long duration();
 
-   @Override
-   protected void configure() {
-      bindErrorHandlers();
-      bindRetryHandlers();
-   }
-
-   @Provides
-   protected SDNClient provideClient(RestClientFactory factory) {
-      return factory.create(SDNClient.class);
-   }
-   
-   protected void bindErrorHandlers() {
-      // TODO
-   }
-
-   protected void bindRetryHandlers() {
-      // TODO retry on 401 by AuthenticateRequest.update()
-   }
-
+   TimeUnit timeUnit();
 }

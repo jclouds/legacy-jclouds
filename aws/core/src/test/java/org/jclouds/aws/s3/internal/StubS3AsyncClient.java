@@ -34,8 +34,8 @@ import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 
-import org.jclouds.aws.s3.S3Client;
-import org.jclouds.aws.s3.blobstore.S3BlobStore;
+import org.jclouds.aws.s3.S3AsyncClient;
+import org.jclouds.aws.s3.blobstore.S3AsyncBlobStore;
 import org.jclouds.aws.s3.blobstore.functions.BlobToObject;
 import org.jclouds.aws.s3.blobstore.functions.BlobToObjectMetadata;
 import org.jclouds.aws.s3.blobstore.functions.BucketToContainerListOptions;
@@ -58,10 +58,11 @@ import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
-import org.jclouds.blobstore.integration.internal.StubBlobStore;
-import org.jclouds.blobstore.integration.internal.StubBlobStore.FutureBase;
+import org.jclouds.blobstore.integration.internal.StubAsyncBlobStore;
+import org.jclouds.blobstore.integration.internal.StubAsyncBlobStore.FutureBase;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.concurrent.FutureFunctionWrapper;
 import org.jclouds.http.options.GetOptions;
@@ -74,16 +75,16 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 /**
- * Implementation of {@link S3BlobStore} which keeps all data in a local Map object.
+ * Implementation of {@link S3AsyncBlobStore} which keeps all data in a local Map object.
  * 
  * @author Adrian Cole
  * @author James Murty
  */
 @ConsistencyModel(ConsistencyModels.STRICT)
-public class StubS3Client implements S3Client {
+public class StubS3AsyncClient implements S3AsyncClient {
    private final DateService dateService;
    private final HttpGetOptionsListToGetOptions httpGetOptionsConverter;
-   private final StubBlobStore blobStore;
+   private final StubAsyncBlobStore blobStore;
    private final LoggerFactory logFactory;
    private final S3Object.Factory objectProvider;
    private final Blob.Factory blobProvider;
@@ -94,7 +95,7 @@ public class StubS3Client implements S3Client {
    private final ResourceToBucketList resource2BucketList;
 
    @Inject
-   private StubS3Client(StubBlobStore blobStore, LoggerFactory logFactory,
+   private StubS3AsyncClient(StubAsyncBlobStore blobStore, LoggerFactory logFactory,
             ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs,
             DateService dateService, S3Object.Factory objectProvider, Blob.Factory blobProvider,
             HttpGetOptionsListToGetOptions httpGetOptionsConverter, ObjectToBlob object2Blob,
@@ -279,8 +280,12 @@ public class StubS3Client implements S3Client {
       };
    }
 
-   public boolean bucketExists(String bucketName) {
-      return blobStore.getContainerToBlobs().containsKey(bucketName);
+   public Future<Boolean> bucketExists(final String bucketName) {
+      return new FutureBase<Boolean>() {
+         public Boolean get() throws InterruptedException, ExecutionException {
+            return blobStore.getContainerToBlobs().containsKey(bucketName);
+         }
+      };
    }
 
    public Future<Boolean> deleteBucketIfEmpty(String bucketName) {
@@ -297,8 +302,17 @@ public class StubS3Client implements S3Client {
       return wrapFuture(blobStore.getBlob(bucketName, key, getOptions), blob2Object);
    }
 
-   public ObjectMetadata headObject(String bucketName, String key) {
-      return blob2ObjectMetadata.apply(blobStore.blobMetadata(bucketName, key));
+   public Future<ObjectMetadata> headObject(String bucketName, String key) {
+      return wrapFuture(blobStore.blobMetadata(bucketName, key),
+               new Function<BlobMetadata, ObjectMetadata>() {
+
+                  @Override
+                  public ObjectMetadata apply(BlobMetadata from) {
+
+                     return blob2ObjectMetadata.apply(from);
+                  }
+
+               });
    }
 
    public Future<? extends SortedSet<BucketMetadata>> listOwnedBuckets() {

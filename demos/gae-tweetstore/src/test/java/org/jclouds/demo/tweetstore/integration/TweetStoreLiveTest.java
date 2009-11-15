@@ -24,8 +24,6 @@
 package org.jclouds.demo.tweetstore.integration;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.atmosonline.saas.reference.AtmosStorageConstants.PROPERTY_EMCSAAS_KEY;
-import static org.jclouds.atmosonline.saas.reference.AtmosStorageConstants.PROPERTY_EMCSAAS_UID;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_ACCESSKEYID;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AWS_SECRETACCESSKEY;
 import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT;
@@ -43,13 +41,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.atmosonline.saas.AtmosStoragePropertiesBuilder;
-import org.jclouds.atmosonline.saas.blobstore.AtmosBlobStoreContextBuilder;
-import org.jclouds.atmosonline.saas.blobstore.AtmosBlobStoreContextFactory;
 import org.jclouds.aws.s3.S3PropertiesBuilder;
 import org.jclouds.aws.s3.blobstore.S3BlobStoreContextBuilder;
 import org.jclouds.aws.s3.blobstore.S3BlobStoreContextFactory;
@@ -57,7 +51,6 @@ import org.jclouds.azure.storage.blob.AzureBlobPropertiesBuilder;
 import org.jclouds.azure.storage.blob.blobstore.AzureBlobStoreContextBuilder;
 import org.jclouds.azure.storage.blob.blobstore.AzureBlobStoreContextFactory;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rackspace.cloudfiles.CloudFilesPropertiesBuilder;
 import org.jclouds.rackspace.cloudfiles.blobstore.CloudFilesBlobStoreContextBuilder;
 import org.jclouds.rackspace.cloudfiles.blobstore.CloudFilesBlobStoreContextFactory;
@@ -80,7 +73,7 @@ public class TweetStoreLiveTest {
 
    GoogleDevServer server;
    private URL url;
-   private ImmutableSet<BlobStoreContext<? extends Object>> contexts;
+   private ImmutableSet<BlobStoreContext<? extends Object, ? extends Object>> contexts;
    private String container;
 
    @BeforeTest
@@ -91,19 +84,20 @@ public class TweetStoreLiveTest {
       Properties props = new Properties();
       props.setProperty(PROPERTY_TWEETSTORE_CONTAINER, checkNotNull(System
                .getProperty(PROPERTY_TWEETSTORE_CONTAINER)));
-      props.setProperty(PROPERTY_BLOBSTORE_CONTEXTBUILDERS, String.format(
-               "%s,%s,%s,%s", // WATCH THIS.. when adding a new context, you must update the string
+      props.setProperty(PROPERTY_BLOBSTORE_CONTEXTBUILDERS, String.format("%s,%s,%s", // WATCH
+               // THIS.. when
+               // adding a
+               // new
+               // context,
+               // you must
+               // update the
+               // string
                S3BlobStoreContextBuilder.class.getName(), CloudFilesBlobStoreContextBuilder.class
-                        .getName(), AzureBlobStoreContextBuilder.class.getName(),
-               AtmosBlobStoreContextBuilder.class.getName()));
+                        .getName(), AzureBlobStoreContextBuilder.class.getName()));
 
       props = new TwitterPropertiesBuilder(props).withCredentials(
                checkNotNull(System.getProperty(PROPERTY_TWITTER_USER), PROPERTY_TWITTER_USER),
                System.getProperty(PROPERTY_TWITTER_PASSWORD, PROPERTY_TWITTER_PASSWORD)).build();
-
-      props = new AtmosStoragePropertiesBuilder(props).withCredentials(
-               checkNotNull(System.getProperty(PROPERTY_EMCSAAS_UID), PROPERTY_EMCSAAS_UID),
-               System.getProperty(PROPERTY_EMCSAAS_KEY, PROPERTY_EMCSAAS_KEY)).build();
 
       props = new S3PropertiesBuilder(props)
                .withCredentials(
@@ -129,27 +123,24 @@ public class TweetStoreLiveTest {
    void clearAndCreateContainers() throws InterruptedException, ExecutionException,
             TimeoutException {
       container = checkNotNull(System.getProperty(PROPERTY_TWEETSTORE_CONTAINER));
-      BlobStoreContext<?> s3Context = S3BlobStoreContextFactory.createContext(checkNotNull(System
-               .getProperty(PROPERTY_AWS_ACCESSKEYID), PROPERTY_AWS_ACCESSKEYID), System
+      BlobStoreContext<?, ?> s3Context = S3BlobStoreContextFactory.createContext(checkNotNull(
+               System.getProperty(PROPERTY_AWS_ACCESSKEYID), PROPERTY_AWS_ACCESSKEYID), System
                .getProperty(PROPERTY_AWS_SECRETACCESSKEY, PROPERTY_AWS_SECRETACCESSKEY));
 
-      BlobStoreContext<?> cfContext = CloudFilesBlobStoreContextFactory.createContext(checkNotNull(
-               System.getProperty(PROPERTY_RACKSPACE_USER), PROPERTY_RACKSPACE_USER), System
-               .getProperty(PROPERTY_RACKSPACE_KEY, PROPERTY_RACKSPACE_KEY));
+      BlobStoreContext<?, ?> cfContext = CloudFilesBlobStoreContextFactory.createContext(
+               checkNotNull(System.getProperty(PROPERTY_RACKSPACE_USER), PROPERTY_RACKSPACE_USER),
+               System.getProperty(PROPERTY_RACKSPACE_KEY, PROPERTY_RACKSPACE_KEY));
 
-      BlobStoreContext<?> azContext = AzureBlobStoreContextFactory.createContext(checkNotNull(
+      BlobStoreContext<?, ?> azContext = AzureBlobStoreContextFactory.createContext(checkNotNull(
                System.getProperty(PROPERTY_AZURESTORAGE_ACCOUNT), PROPERTY_AZURESTORAGE_ACCOUNT),
                System.getProperty(PROPERTY_AZURESTORAGE_KEY, PROPERTY_AZURESTORAGE_KEY));
 
-      BlobStoreContext<?> emcContext = AtmosBlobStoreContextFactory.createContext(checkNotNull(
-               System.getProperty(PROPERTY_EMCSAAS_UID), PROPERTY_EMCSAAS_UID), System.getProperty(
-               PROPERTY_EMCSAAS_KEY, PROPERTY_EMCSAAS_KEY), new Log4JLoggingModule());
-      this.contexts = ImmutableSet.of(s3Context, cfContext, azContext, emcContext);
+      this.contexts = ImmutableSet.of(s3Context, cfContext, azContext);
       boolean deleted = false;
-      for (BlobStoreContext<?> context : contexts) {
+      for (BlobStoreContext<?, ?> context : contexts) {
          if (context.getBlobStore().exists(container)) {
             System.err.printf("deleting container %s at %s%n", container, context.getEndPoint());
-            context.getBlobStore().deleteContainer(container).get(30, TimeUnit.SECONDS);
+            context.getBlobStore().deleteContainer(container);
             deleted = true;
          }
       }
@@ -157,9 +148,9 @@ public class TweetStoreLiveTest {
          System.err.println("sleeping 30 seconds to allow containers to clear");
          Thread.sleep(30000);
       }
-      for (BlobStoreContext<?> context : contexts) {
+      for (BlobStoreContext<?, ?> context : contexts) {
          System.err.printf("creating container %s at %s%n", container, context.getEndPoint());
-         context.getBlobStore().createContainer(container).get(30, TimeUnit.SECONDS);
+         context.getBlobStore().createContainer(container);
       }
       if (deleted) {
          System.err.println("sleeping 5 seconds to allow containers to create");
@@ -183,7 +174,7 @@ public class TweetStoreLiveTest {
    public void testPrimeContainers() throws IOException, InterruptedException {
       URL gurl = new URL(url, "/store/do");
 
-      for (String context : new String[] { "S3", "Azure", "CloudFiles", "Atmos" }) {
+      for (String context : new String[] { "S3", "Azure", "CloudFiles" }) {
          System.out.println("storing at context: " + context);
          HttpURLConnection connection = (HttpURLConnection) gurl.openConnection();
          connection.addRequestProperty("X-AppEngine-QueueName", "twitter");
@@ -196,7 +187,7 @@ public class TweetStoreLiveTest {
 
       System.err.println("sleeping 10 seconds to allow for eventual consistency delay");
       Thread.sleep(10000);
-      for (BlobStoreContext<?> context : contexts) {
+      for (BlobStoreContext<?, ?> context : contexts) {
 
          assert context.createInputStreamMap(container).size() > 0 : context.getEndPoint();
       }

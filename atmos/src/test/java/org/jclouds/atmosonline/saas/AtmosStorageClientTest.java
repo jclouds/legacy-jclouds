@@ -70,14 +70,14 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "emcsaas.AtmosStorageClientTest")
-public class AtmosStorageClientTest extends RestClientTest<AtmosStorageClient> {
+public class AtmosStorageClientTest extends RestClientTest<AtmosStorageAsyncClient> {
 
    private BlobToObject blobToObject;
 
    public void testListDirectories() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AtmosStorageClient.class.getMethod("listDirectories", Array.newInstance(
+      Method method = AtmosStorageAsyncClient.class.getMethod("listDirectories", Array.newInstance(
                ListOptions.class, 0).getClass());
-      GeneratedHttpRequest<AtmosStorageClient> httpMethod = processor.createRequest(method);
+      GeneratedHttpRequest<AtmosStorageAsyncClient> httpMethod = processor.createRequest(method);
 
       assertRequestLineEquals(httpMethod,
                "GET http://accesspoint.emccis.com/rest/namespace HTTP/1.1");
@@ -93,9 +93,9 @@ public class AtmosStorageClientTest extends RestClientTest<AtmosStorageClient> {
    }
 
    public void testListDirectory() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AtmosStorageClient.class.getMethod("listDirectory", String.class, Array
+      Method method = AtmosStorageAsyncClient.class.getMethod("listDirectory", String.class, Array
                .newInstance(ListOptions.class, 0).getClass());
-      GeneratedHttpRequest<AtmosStorageClient> httpMethod = processor.createRequest(method,
+      GeneratedHttpRequest<AtmosStorageAsyncClient> httpMethod = processor.createRequest(method,
                "directory");
 
       assertRequestLineEquals(httpMethod,
@@ -113,9 +113,9 @@ public class AtmosStorageClientTest extends RestClientTest<AtmosStorageClient> {
 
    public void testListDirectoriesOptions() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = AtmosStorageClient.class.getMethod("listDirectories", Array.newInstance(
+      Method method = AtmosStorageAsyncClient.class.getMethod("listDirectories", Array.newInstance(
                ListOptions.class, 0).getClass());
-      GeneratedHttpRequest<AtmosStorageClient> httpMethod = processor.createRequest(method,
+      GeneratedHttpRequest<AtmosStorageAsyncClient> httpMethod = processor.createRequest(method,
                new ListOptions().limit(1).token("asda"));
 
       assertRequestLineEquals(httpMethod,
@@ -134,9 +134,9 @@ public class AtmosStorageClientTest extends RestClientTest<AtmosStorageClient> {
 
    public void testListDirectoryOptions() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = AtmosStorageClient.class.getMethod("listDirectory", String.class, Array
+      Method method = AtmosStorageAsyncClient.class.getMethod("listDirectory", String.class, Array
                .newInstance(ListOptions.class, 0).getClass());
-      GeneratedHttpRequest<AtmosStorageClient> httpMethod = processor.createRequest(method,
+      GeneratedHttpRequest<AtmosStorageAsyncClient> httpMethod = processor.createRequest(method,
                "directory", new ListOptions().limit(1).token("asda"));
 
       assertRequestLineEquals(httpMethod,
@@ -154,8 +154,9 @@ public class AtmosStorageClientTest extends RestClientTest<AtmosStorageClient> {
    }
 
    public void testCreateDirectory() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AtmosStorageClient.class.getMethod("createDirectory", String.class);
-      GeneratedHttpRequest<AtmosStorageClient> httpMethod = processor.createRequest(method, "dir");
+      Method method = AtmosStorageAsyncClient.class.getMethod("createDirectory", String.class);
+      GeneratedHttpRequest<AtmosStorageAsyncClient> httpMethod = processor.createRequest(method,
+               "dir");
 
       assertRequestLineEquals(httpMethod,
                "POST http://accesspoint.emccis.com/rest/namespace/dir/ HTTP/1.1");
@@ -171,10 +172,10 @@ public class AtmosStorageClientTest extends RestClientTest<AtmosStorageClient> {
    }
 
    public void testCreateFile() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AtmosStorageClient.class.getMethod("createFile", String.class,
+      Method method = AtmosStorageAsyncClient.class.getMethod("createFile", String.class,
                AtmosObject.class);
-      GeneratedHttpRequest<AtmosStorageClient> httpMethod = processor.createRequest(method, "dir",
-               blobToObject.apply(BindBlobToMultipartFormTest.TEST_BLOB));
+      GeneratedHttpRequest<AtmosStorageAsyncClient> httpMethod = processor.createRequest(method,
+               "dir", blobToObject.apply(BindBlobToMultipartFormTest.TEST_BLOB));
 
       assertRequestLineEquals(httpMethod,
                "POST http://accesspoint.emccis.com/rest/namespace/dir/hello HTTP/1.1");
@@ -191,10 +192,10 @@ public class AtmosStorageClientTest extends RestClientTest<AtmosStorageClient> {
    }
 
    public void testUpdateFile() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AtmosStorageClient.class.getMethod("updateFile", String.class,
+      Method method = AtmosStorageAsyncClient.class.getMethod("updateFile", String.class,
                AtmosObject.class);
-      GeneratedHttpRequest<AtmosStorageClient> httpMethod = processor.createRequest(method, "dir",
-               blobToObject.apply(BindBlobToMultipartFormTest.TEST_BLOB));
+      GeneratedHttpRequest<AtmosStorageAsyncClient> httpMethod = processor.createRequest(method,
+               "dir", blobToObject.apply(BindBlobToMultipartFormTest.TEST_BLOB));
 
       assertRequestLineEquals(httpMethod,
                "PUT http://accesspoint.emccis.com/rest/namespace/dir/hello HTTP/1.1");
@@ -210,9 +211,9 @@ public class AtmosStorageClientTest extends RestClientTest<AtmosStorageClient> {
    }
 
    public void testReadFile() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AtmosStorageClient.class.getMethod("readFile", String.class, Array
+      Method method = AtmosStorageAsyncClient.class.getMethod("readFile", String.class, Array
                .newInstance(GetOptions.class, 0).getClass());
-      GeneratedHttpRequest<AtmosStorageClient> httpMethod = processor.createRequest(method,
+      GeneratedHttpRequest<AtmosStorageAsyncClient> httpMethod = processor.createRequest(method,
                "dir/file");
 
       assertRequestLineEquals(httpMethod,
@@ -229,8 +230,8 @@ public class AtmosStorageClientTest extends RestClientTest<AtmosStorageClient> {
    }
 
    public void testGetSystemMetadata() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AtmosStorageClient.class.getMethod("getSystemMetadata", String.class);
-      GeneratedHttpRequest<AtmosStorageClient> httpMethod = processor.createRequest(method,
+      Method method = AtmosStorageAsyncClient.class.getMethod("getSystemMetadata", String.class);
+      GeneratedHttpRequest<AtmosStorageAsyncClient> httpMethod = processor.createRequest(method,
                "dir/file");
 
       assertRequestLineEquals(httpMethod,
@@ -246,8 +247,8 @@ public class AtmosStorageClientTest extends RestClientTest<AtmosStorageClient> {
    }
 
    public void testDeletePath() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AtmosStorageClient.class.getMethod("deletePath", String.class);
-      GeneratedHttpRequest<AtmosStorageClient> httpMethod = processor.createRequest(method,
+      Method method = AtmosStorageAsyncClient.class.getMethod("deletePath", String.class);
+      GeneratedHttpRequest<AtmosStorageAsyncClient> httpMethod = processor.createRequest(method,
                "dir/file");
 
       assertRequestLineEquals(httpMethod,
@@ -263,19 +264,19 @@ public class AtmosStorageClientTest extends RestClientTest<AtmosStorageClient> {
    }
 
    public void testNewObject() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AtmosStorageClient.class.getMethod("newObject");
+      Method method = AtmosStorageAsyncClient.class.getMethod("newObject");
       assertEquals(method.getReturnType(), AtmosObject.class);
    }
 
    @Override
-   protected void checkFilters(GeneratedHttpRequest<AtmosStorageClient> httpMethod) {
+   protected void checkFilters(GeneratedHttpRequest<AtmosStorageAsyncClient> httpMethod) {
       assertEquals(httpMethod.getFilters().size(), 1);
       assertEquals(httpMethod.getFilters().get(0).getClass(), SignRequest.class);
    }
 
    @Override
-   protected TypeLiteral<RestAnnotationProcessor<AtmosStorageClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<AtmosStorageClient>>() {
+   protected TypeLiteral<RestAnnotationProcessor<AtmosStorageAsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<AtmosStorageAsyncClient>>() {
       };
    }
 

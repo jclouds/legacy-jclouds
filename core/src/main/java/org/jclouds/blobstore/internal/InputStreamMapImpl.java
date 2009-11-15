@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
@@ -56,14 +56,14 @@ import com.google.common.collect.Sets;
  * calculation. If this is not desired, use {@link LiveBMap} instead.
  * 
  * @author Adrian Cole
- * @see BlobStore
+ * @see AsyncBlobStore
  * @see InputStreamMap
  * @see BaseBlobMap
  */
 public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements InputStreamMap {
 
    @Inject
-   public InputStreamMapImpl(BlobStore connection, Blob.Factory blobFactory,
+   public InputStreamMapImpl(AsyncBlobStore connection, Blob.Factory blobFactory,
             GetBlobsInListStrategy getAllBlobs, ListBlobMetadataStrategy getAllBlobMetadata,
             ContainsValueInListStrategy containsValueStrategy,
             ClearListStrategy clearContainerStrategy, CountListStrategy containerCountStrategy,

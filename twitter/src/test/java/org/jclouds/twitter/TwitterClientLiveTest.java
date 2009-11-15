@@ -27,7 +27,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -56,7 +55,7 @@ public class TwitterClientLiveTest {
 
    @Test
    public void testGetMyMentions() throws Exception {
-      SortedSet<Status> response = connection.getMyMentions().get(1, TimeUnit.SECONDS);
+      SortedSet<Status> response = connection.getMyMentions();
       assert (response.size() > 0);
    }
 

@@ -28,7 +28,7 @@ import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.Future;
 
-import org.jclouds.mezeo.pcs2.PCSClient;
+import org.jclouds.mezeo.pcs2.PCSAsyncClient;
 import org.jclouds.mezeo.pcs2.domain.ContainerList;
 import org.jclouds.mezeo.pcs2.domain.FileInfoWithMetadata;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
@@ -39,7 +39,7 @@ import org.jclouds.mezeo.pcs2.options.PutBlockOptions;
  * 
  * @author Adrian Cole
  */
-public class PCSStubClient implements PCSClient {
+public class StubPCSAsyncClient implements PCSAsyncClient {
    public Future<? extends ContainerList> list() {
       throw new UnsupportedOperationException();
    }
@@ -84,7 +84,7 @@ public class PCSStubClient implements PCSClient {
       throw new UnsupportedOperationException();
    }
 
-   public FileInfoWithMetadata getFileInfo(URI file) {
+   public Future<FileInfoWithMetadata> getFileInfo(URI file) {
       throw new UnsupportedOperationException();
    }
 

@@ -59,7 +59,7 @@ public class PCSContextBuilderTest {
    }
 
    public void testBuildContext() {
-      RestContext<PCSClient> context = newBuilder().buildContext();
+      RestContext<PCSAsyncClient,PCSClient> context = newBuilder().buildContext();
       assertEquals(context.getClass(), RestContextImpl.class);
       assertEquals(context.getAccount(), "id");
       assertEquals(context.getEndPoint(), URI.create("https://localhost/pcsblob"));
@@ -67,7 +67,7 @@ public class PCSContextBuilderTest {
 
    public void testBuildInjector() {
       Injector i = newBuilder().buildInjector();
-      assert i.getInstance(Key.get(new TypeLiteral<RestContext<PCSClient>>() {
+      assert i.getInstance(Key.get(new TypeLiteral<RestContext<PCSAsyncClient,PCSClient>>() {
       })) != null; // TODO: test all things taken from context
       assert i.getInstance(BasicAuthentication.class) != null;
    }

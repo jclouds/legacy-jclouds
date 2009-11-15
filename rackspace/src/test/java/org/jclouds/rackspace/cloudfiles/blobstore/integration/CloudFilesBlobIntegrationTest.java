@@ -23,11 +23,8 @@
  */
 package org.jclouds.rackspace.cloudfiles.blobstore.integration;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
-
 import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
+import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
 import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
 import org.testng.annotations.Test;
 
@@ -37,12 +34,12 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = { "integration", "live" }, testName = "cloudfiles.CloudFilesBlobIntegrationTest")
-public class CloudFilesBlobIntegrationTest extends BaseBlobIntegrationTest<CloudFilesClient> {
+public class CloudFilesBlobIntegrationTest extends
+         BaseBlobIntegrationTest<CloudFilesAsyncClient, CloudFilesClient> {
 
    @Override
    @Test(enabled = false)
-   public void testGetTwoRanges() throws InterruptedException, ExecutionException,
-            TimeoutException, IOException {
+   public void testGetTwoRanges() {
       // not supported in cloud files
    }
 

@@ -61,11 +61,11 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "vcloud.VCloudClientTest")
-public class VCloudClientTest extends RestClientTest<VCloudClient> {
+public class VCloudClientTest extends RestClientTest<VCloudAsyncClient> {
 
    public void testCatalog() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudClient.class.getMethod("getCatalog");
-      GeneratedHttpRequest<VCloudClient> httpMethod = processor.createRequest(method);
+      Method method = VCloudAsyncClient.class.getMethod("getCatalog");
+      GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method);
 
       assertRequestLineEquals(httpMethod, "GET http://catalog HTTP/1.1");
       assertHeadersEqual(
@@ -81,8 +81,8 @@ public class VCloudClientTest extends RestClientTest<VCloudClient> {
    }
 
    public void testGetDefaultVDC() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudClient.class.getMethod("getDefaultVDC");
-      GeneratedHttpRequest<VCloudClient> httpMethod = processor.createRequest(method);
+      Method method = VCloudAsyncClient.class.getMethod("getDefaultVDC");
+      GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method);
 
       assertRequestLineEquals(httpMethod, "GET http://vdc HTTP/1.1");
       assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.vdc+xml\n");
@@ -97,8 +97,8 @@ public class VCloudClientTest extends RestClientTest<VCloudClient> {
 
    public void testGetDefaultTasksList() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = VCloudClient.class.getMethod("getDefaultTasksList");
-      GeneratedHttpRequest<VCloudClient> httpMethod = processor.createRequest(method);
+      Method method = VCloudAsyncClient.class.getMethod("getDefaultTasksList");
+      GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method);
 
       assertRequestLineEquals(httpMethod, "GET http://tasksList HTTP/1.1");
       assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.tasksList+xml\n");
@@ -112,8 +112,8 @@ public class VCloudClientTest extends RestClientTest<VCloudClient> {
    }
 
    public void testDeployVApp() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudClient.class.getMethod("deployVApp", int.class);
-      GeneratedHttpRequest<VCloudClient> httpMethod = processor.createRequest(method, 1);
+      Method method = VCloudAsyncClient.class.getMethod("deployVApp", int.class);
+      GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, 1);
 
       assertRequestLineEquals(httpMethod, "POST http://vcloud/vapp/1/action/deploy HTTP/1.1");
       assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.task+xml\n");
@@ -127,8 +127,8 @@ public class VCloudClientTest extends RestClientTest<VCloudClient> {
    }
 
    public void testUndeployVApp() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudClient.class.getMethod("undeployVApp", int.class);
-      GeneratedHttpRequest<VCloudClient> httpMethod = processor.createRequest(method, 1);
+      Method method = VCloudAsyncClient.class.getMethod("undeployVApp", int.class);
+      GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, 1);
 
       assertRequestLineEquals(httpMethod, "POST http://vcloud/vapp/1/action/undeploy HTTP/1.1");
       assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.task+xml\n");
@@ -142,8 +142,8 @@ public class VCloudClientTest extends RestClientTest<VCloudClient> {
    }
 
    public void testDeleteVApp() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudClient.class.getMethod("deleteVApp", int.class);
-      GeneratedHttpRequest<VCloudClient> httpMethod = processor.createRequest(method, 1);
+      Method method = VCloudAsyncClient.class.getMethod("deleteVApp", int.class);
+      GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, 1);
 
       assertRequestLineEquals(httpMethod, "DELETE http://vcloud/vapp/1 HTTP/1.1");
       assertHeadersEqual(httpMethod, "");
@@ -157,8 +157,8 @@ public class VCloudClientTest extends RestClientTest<VCloudClient> {
    }
 
    public void testPowerOn() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudClient.class.getMethod("powerOnVApp", int.class);
-      GeneratedHttpRequest<VCloudClient> httpMethod = processor.createRequest(method, 1);
+      Method method = VCloudAsyncClient.class.getMethod("powerOnVApp", int.class);
+      GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, 1);
 
       assertRequestLineEquals(httpMethod, "POST http://vcloud/vapp/1/power/action/powerOn HTTP/1.1");
       assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.task+xml\n");
@@ -172,8 +172,8 @@ public class VCloudClientTest extends RestClientTest<VCloudClient> {
    }
 
    public void testPowerOff() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudClient.class.getMethod("powerOffVApp", int.class);
-      GeneratedHttpRequest<VCloudClient> httpMethod = processor.createRequest(method, 1);
+      Method method = VCloudAsyncClient.class.getMethod("powerOffVApp", int.class);
+      GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, 1);
 
       assertRequestLineEquals(httpMethod,
                "POST http://vcloud/vapp/1/power/action/powerOff HTTP/1.1");
@@ -188,8 +188,8 @@ public class VCloudClientTest extends RestClientTest<VCloudClient> {
    }
 
    public void testReset() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudClient.class.getMethod("resetVApp", int.class);
-      GeneratedHttpRequest<VCloudClient> httpMethod = processor.createRequest(method, 1);
+      Method method = VCloudAsyncClient.class.getMethod("resetVApp", int.class);
+      GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, 1);
 
       assertRequestLineEquals(httpMethod, "POST http://vcloud/vapp/1/power/action/reset HTTP/1.1");
       assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.task+xml\n");
@@ -203,8 +203,8 @@ public class VCloudClientTest extends RestClientTest<VCloudClient> {
    }
 
    public void testSuspend() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudClient.class.getMethod("suspendVApp", int.class);
-      GeneratedHttpRequest<VCloudClient> httpMethod = processor.createRequest(method, 1);
+      Method method = VCloudAsyncClient.class.getMethod("suspendVApp", int.class);
+      GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, 1);
 
       assertRequestLineEquals(httpMethod, "POST http://vcloud/vapp/1/power/action/suspend HTTP/1.1");
       assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.task+xml\n");
@@ -218,8 +218,8 @@ public class VCloudClientTest extends RestClientTest<VCloudClient> {
    }
 
    public void testShutdown() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudClient.class.getMethod("shutdownVApp", int.class);
-      GeneratedHttpRequest<VCloudClient> httpMethod = processor.createRequest(method, 1);
+      Method method = VCloudAsyncClient.class.getMethod("shutdownVApp", int.class);
+      GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, 1);
 
       assertRequestLineEquals(httpMethod,
                "POST http://vcloud/vapp/1/power/action/shutdown HTTP/1.1");
@@ -234,8 +234,8 @@ public class VCloudClientTest extends RestClientTest<VCloudClient> {
    }
 
    public void testGetTask() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudClient.class.getMethod("getTask", URI.class);
-      GeneratedHttpRequest<VCloudClient> httpMethod = processor.createRequest(method, URI
+      Method method = VCloudAsyncClient.class.getMethod("getTask", URI.class);
+      GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, URI
                .create("http://vcloud/task/1"));
 
       assertRequestLineEquals(httpMethod, "GET http://vcloud/task/1 HTTP/1.1");
@@ -250,8 +250,8 @@ public class VCloudClientTest extends RestClientTest<VCloudClient> {
    }
 
    public void testCancelTask() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudClient.class.getMethod("cancelTask", URI.class);
-      GeneratedHttpRequest<VCloudClient> httpMethod = processor.createRequest(method, URI
+      Method method = VCloudAsyncClient.class.getMethod("cancelTask", URI.class);
+      GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, URI
                .create("http://vcloud/task/1"));
 
       assertRequestLineEquals(httpMethod, "POST http://vcloud/task/1/action/cancel HTTP/1.1");
@@ -266,14 +266,14 @@ public class VCloudClientTest extends RestClientTest<VCloudClient> {
    }
 
    @Override
-   protected void checkFilters(GeneratedHttpRequest<VCloudClient> httpMethod) {
+   protected void checkFilters(GeneratedHttpRequest<VCloudAsyncClient> httpMethod) {
       assertEquals(httpMethod.getFilters().size(), 1);
       assertEquals(httpMethod.getFilters().get(0).getClass(), SetVCloudTokenCookie.class);
    }
 
    @Override
-   protected TypeLiteral<RestAnnotationProcessor<VCloudClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<VCloudClient>>() {
+   protected TypeLiteral<RestAnnotationProcessor<VCloudAsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<VCloudAsyncClient>>() {
       };
    }
 

@@ -113,13 +113,9 @@ public class Image {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((created == null) ? 0 : created.hashCode());
       result = prime * result + id;
       result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((progress == null) ? 0 : progress.hashCode());
       result = prime * result + ((serverId == null) ? 0 : serverId.hashCode());
-      result = prime * result + ((status == null) ? 0 : status.hashCode());
-      result = prime * result + ((updated == null) ? 0 : updated.hashCode());
       return result;
    }
 
@@ -132,11 +128,6 @@ public class Image {
       if (getClass() != obj.getClass())
          return false;
       Image other = (Image) obj;
-      if (created == null) {
-         if (other.created != null)
-            return false;
-      } else if (!created.equals(other.created))
-         return false;
       if (id != other.id)
          return false;
       if (name == null) {
@@ -144,34 +135,18 @@ public class Image {
             return false;
       } else if (!name.equals(other.name))
          return false;
-      if (progress == null) {
-         if (other.progress != null)
-            return false;
-      } else if (!progress.equals(other.progress))
-         return false;
       if (serverId == null) {
          if (other.serverId != null)
             return false;
       } else if (!serverId.equals(other.serverId))
-         return false;
-      if (status == null) {
-         if (other.status != null)
-            return false;
-      } else if (!status.equals(other.status))
-         return false;
-      if (updated == null) {
-         if (other.updated != null)
-            return false;
-      } else if (!updated.equals(other.updated))
          return false;
       return true;
    }
 
    @Override
    public String toString() {
-      return "Image [created=" + created + ", id=" + id + ", name=" + name + ", progress="
-               + progress + ", serverId=" + serverId + ", status=" + status + ", updated="
-               + updated + "]";
+      return "Image [created=" + created + ", id=" + id + ", name=" + name + ", serverId="
+               + serverId + "]";
    }
 
 }

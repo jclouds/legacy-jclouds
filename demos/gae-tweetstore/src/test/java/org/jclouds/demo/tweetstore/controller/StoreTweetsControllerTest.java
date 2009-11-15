@@ -59,19 +59,19 @@ public class StoreTweetsControllerTest {
       return createMock(TwitterClient.class);
    }
 
-   Map<String, BlobStoreContext<?>> createBlobStores() throws InterruptedException,
+   Map<String, BlobStoreContext<?, ?>> createBlobStores() throws InterruptedException,
             ExecutionException {
-      Map<String, BlobStoreContext<?>> contexts = ImmutableMap.<String, BlobStoreContext<?>> of(
-               "test1", new StubBlobStoreContextBuilder().buildContext(), "test2",
-               new StubBlobStoreContextBuilder().buildContext());
-      for (BlobStoreContext<?> blobstore : contexts.values()) {
-         blobstore.getBlobStore().createContainer("favo").get();
+      Map<String, BlobStoreContext<?, ?>> contexts = ImmutableMap
+               .<String, BlobStoreContext<?, ?>> of("test1", new StubBlobStoreContextBuilder()
+                        .buildContext(), "test2", new StubBlobStoreContextBuilder().buildContext());
+      for (BlobStoreContext<?, ?> blobstore : contexts.values()) {
+         blobstore.getAsyncBlobStore().createContainer("favo").get();
       }
       return contexts;
    }
 
    public void testStoreTweets() throws IOException, InterruptedException, ExecutionException {
-      Map<String, BlobStoreContext<?>> stores = createBlobStores();
+      Map<String, BlobStoreContext<?, ?>> stores = createBlobStores();
       StoreTweetsController function = new StoreTweetsController(stores, "favo",
                createTwitterClient());
 
@@ -96,7 +96,7 @@ public class StoreTweetsControllerTest {
       function.addMyTweets("test1", allAboutMe);
       function.addMyTweets("test2", allAboutMe);
 
-      for (Entry<String, BlobStoreContext<?>> entry : stores.entrySet()) {
+      for (Entry<String, BlobStoreContext<?, ?>> entry : stores.entrySet()) {
          BlobMap map = entry.getValue().createBlobMap("favo");
          Blob frankBlob = map.get("1");
          assertEquals(frankBlob.getMetadata().getName(), "1");

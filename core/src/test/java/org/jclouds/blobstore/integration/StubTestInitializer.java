@@ -23,6 +23,7 @@
  */
 package org.jclouds.blobstore.integration;
 
+import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.integration.internal.BaseTestInitializer;
@@ -33,16 +34,16 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class StubTestInitializer extends BaseTestInitializer<BlobStore> {
+public class StubTestInitializer extends BaseTestInitializer<AsyncBlobStore, BlobStore> {
 
    @Override
-   protected BlobStoreContext<BlobStore> createLiveContext(Module configurationModule, String url,
-            String app, String account, String key) {
+   protected BlobStoreContext<AsyncBlobStore, BlobStore> createLiveContext(
+            Module configurationModule, String url, String app, String account, String key) {
       return createStubContext();
    }
 
    @Override
-   protected BlobStoreContext<BlobStore> createStubContext() {
+   protected BlobStoreContext<AsyncBlobStore, BlobStore> createStubContext() {
       return new StubBlobStoreContextBuilder().buildContext();
    }
 

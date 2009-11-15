@@ -60,7 +60,7 @@ public class EC2ContextBuilderTest {
    }
 
    public void testBuildContext() {
-      RestContext<EC2Client> context = newBuilder().buildContext();
+      RestContext<EC2AsyncClient, EC2Client> context = newBuilder().buildContext();
       assertEquals(context.getClass(), RestContextImpl.class);
       assertEquals(context.getAccount(), "id");
       assertEquals(context.getEndPoint(), URI.create("http://ec2.amazonaws.com"));
@@ -68,7 +68,7 @@ public class EC2ContextBuilderTest {
 
    public void testBuildInjector() {
       Injector i = newBuilder().buildInjector();
-      assert i.getInstance(Key.get(new TypeLiteral<RestContext<EC2Client>>() {
+      assert i.getInstance(Key.get(new TypeLiteral<RestContext<EC2AsyncClient, EC2Client>>() {
       })) != null; // TODO: test all things taken from context
       assert i.getInstance(FormSigner.class) != null;
    }

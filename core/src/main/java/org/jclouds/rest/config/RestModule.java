@@ -32,7 +32,7 @@ import org.jclouds.http.TransformingHttpCommand;
 import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.TransformingHttpCommandImpl;
 import org.jclouds.http.functions.config.ParserModule;
-import org.jclouds.rest.internal.RestClientProxy;
+import org.jclouds.rest.internal.AsyncRestClientProxy;
 import org.jclouds.rest.internal.RuntimeDelegateImpl;
 
 import com.google.common.base.Function;
@@ -49,10 +49,10 @@ public class RestModule extends AbstractModule {
    protected void configure() {
       install(new ParserModule());
       RuntimeDelegate.setInstance(new RuntimeDelegateImpl());
-      bind(RestClientProxy.Factory.class).to(Factory.class).in(Scopes.SINGLETON);
+      bind(AsyncRestClientProxy.Factory.class).to(Factory.class).in(Scopes.SINGLETON);
    }
 
-   private static class Factory implements RestClientProxy.Factory {
+   private static class Factory implements AsyncRestClientProxy.Factory {
       @Inject
       private TransformingHttpCommandExecutorService executorService;
 

@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.integration.internal.StubBlobStore;
+import org.jclouds.blobstore.integration.internal.StubAsyncBlobStore;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;
@@ -41,6 +41,6 @@ public class StubBlobStoreModule extends AbstractModule {
    protected void configure() {
       bind(new TypeLiteral<ConcurrentMap<String, ConcurrentMap<String, Blob>>>() {
       }).toInstance(map);
-      bind(StubBlobStore.class).asEagerSingleton();
+      bind(StubAsyncBlobStore.class).asEagerSingleton();
    }
 }

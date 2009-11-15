@@ -23,13 +23,18 @@
  */
 package org.jclouds.aws.s3.blobstore;
 
-import static org.jclouds.aws.s3.reference.S3Constants.*;
-import static org.jclouds.blobstore.reference.BlobStoreConstants.*;
+import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_METADATA_PREFIX;
+import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_RETRY;
+import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_TIMEOUT;
+import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_BLOBSTORE_RETRY;
+import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
+
 import java.util.List;
 import java.util.Properties;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 
+import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.blobstore.config.S3BlobStoreContextModule;
 import org.jclouds.aws.s3.config.S3RestClientModule;
@@ -55,10 +60,11 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole, Andrew Newdigate
  * @see S3BlobStoreContext
  */
-public class S3BlobStoreContextBuilder extends BlobStoreContextBuilder<S3Client> {
+public class S3BlobStoreContextBuilder extends BlobStoreContextBuilder<S3AsyncClient, S3Client> {
 
    public S3BlobStoreContextBuilder(Properties props) {
-      super(new TypeLiteral<S3Client>() {
+      super(new TypeLiteral<S3AsyncClient>() {
+      }, new TypeLiteral<S3Client>() {
       }, convert(props));
    }
 

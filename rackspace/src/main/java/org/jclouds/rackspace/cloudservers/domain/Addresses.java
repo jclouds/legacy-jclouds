@@ -24,38 +24,48 @@
 package org.jclouds.rackspace.cloudservers.domain;
 
 import java.net.InetAddress;
-import java.util.List;
+import java.util.Comparator;
+import java.util.SortedSet;
 
+import com.google.common.collect.Sets;
 import com.google.gson.annotations.SerializedName;
-import com.google.inject.internal.Lists;
 
 public class Addresses {
+   private static final Comparator<InetAddress> ADDRESS_COMPARATOR = new Comparator<InetAddress>() {
+
+      @Override
+      public int compare(InetAddress o1, InetAddress o2) {
+         return (o1 == o2) ? 0 : o1.getHostAddress().compareTo(o2.getHostAddress());
+      }
+
+   };
+
    @SerializedName("public")
-   private List<InetAddress> publicAddresses = Lists.newArrayList();
+   private SortedSet<InetAddress> publicAddresses = Sets.newTreeSet(ADDRESS_COMPARATOR);
    @SerializedName("private")
-   private List<InetAddress> privateAddresses = Lists.newArrayList();
+   private SortedSet<InetAddress> privateAddresses = Sets.newTreeSet(ADDRESS_COMPARATOR);
 
    public Addresses() {
    }
 
-   public Addresses(List<InetAddress> publicAddresses, List<InetAddress> privateAddresses) {
+   public Addresses(SortedSet<InetAddress> publicAddresses, SortedSet<InetAddress> privateAddresses) {
       this.publicAddresses = publicAddresses;
       this.privateAddresses = privateAddresses;
    }
 
-   public void setPublicAddresses(List<InetAddress> publicAddresses) {
+   public void setPublicAddresses(SortedSet<InetAddress> publicAddresses) {
       this.publicAddresses = publicAddresses;
    }
 
-   public List<InetAddress> getPublicAddresses() {
+   public SortedSet<InetAddress> getPublicAddresses() {
       return publicAddresses;
    }
 
-   public void setPrivateAddresses(List<InetAddress> privateAddresses) {
+   public void setPrivateAddresses(SortedSet<InetAddress> privateAddresses) {
       this.privateAddresses = privateAddresses;
    }
 
-   public List<InetAddress> getPrivateAddresses() {
+   public SortedSet<InetAddress> getPrivateAddresses() {
       return privateAddresses;
    }
 

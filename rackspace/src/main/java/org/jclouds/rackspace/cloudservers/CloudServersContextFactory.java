@@ -47,19 +47,19 @@ import com.google.inject.Module;
  */
 public class CloudServersContextFactory {
 
-   public static RestContext<CloudServersClient> createContext(String user, String key,
+   public static RestContext<CloudServersAsyncClient, CloudServersClient> createContext(String user, String key,
             Module... modules) {
       return new CloudServersContextBuilder(new RackspacePropertiesBuilder(user, key).build())
                .withModules(modules).buildContext();
    }
 
-   public static RestContext<CloudServersClient> createContext(URI endpoint, String user,
+   public static RestContext<CloudServersAsyncClient, CloudServersClient> createContext(URI endpoint, String user,
             String key, Module... modules) {
       return new CloudServersContextBuilder(new RackspacePropertiesBuilder(user, key).withEndpoint(
                endpoint).build()).withModules(modules).buildContext();
    }
 
-   public static RestContext<CloudServersClient> createContext(Properties props, Module... modules) {
+   public static RestContext<CloudServersAsyncClient, CloudServersClient> createContext(Properties props, Module... modules) {
       return new CloudServersContextBuilder(new RackspacePropertiesBuilder(props).build())
                .withModules(modules).buildContext();
    }

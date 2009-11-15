@@ -26,39 +26,13 @@ package org.jclouds.mezeo.pcs2;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
-import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-
-import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
-import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
-import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.mezeo.pcs2.binders.BindContainerNameToXmlEntity;
-import org.jclouds.mezeo.pcs2.binders.BindDataToEntity;
-import org.jclouds.mezeo.pcs2.binders.BindFileInfoToXmlEntity;
-import org.jclouds.mezeo.pcs2.binders.BindPCSFileToMultipartForm;
+import org.jclouds.concurrent.Timeout;
 import org.jclouds.mezeo.pcs2.domain.ContainerList;
 import org.jclouds.mezeo.pcs2.domain.FileInfoWithMetadata;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
-import org.jclouds.mezeo.pcs2.endpoints.RootContainer;
-import org.jclouds.mezeo.pcs2.functions.AddMetadataItemIntoMap;
 import org.jclouds.mezeo.pcs2.options.PutBlockOptions;
-import org.jclouds.mezeo.pcs2.xml.ContainerHandler;
-import org.jclouds.mezeo.pcs2.xml.FileHandler;
-import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.Endpoint;
-import org.jclouds.rest.annotations.ExceptionParser;
-import org.jclouds.rest.annotations.Headers;
-import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.ResponseParser;
-import org.jclouds.rest.annotations.SkipEncoding;
-import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.binders.BindToStringEntity;
 
 /**
  * Provides access to Mezeo PCS v2 via their REST API.
@@ -69,75 +43,33 @@ import org.jclouds.rest.binders.BindToStringEntity;
  *      />
  * @author Adrian Cole
  */
-@SkipEncoding('/')
-@RequestFilters(BasicAuthentication.class)
+@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface PCSClient {
    PCSFile newFile();
 
-   @GET
-   @XMLResponseParser(ContainerHandler.class)
-   @Headers(keys = "X-Cloud-Depth", values = "2")
-   @Endpoint(RootContainer.class)
-   Future<? extends ContainerList> list();
+   ContainerList list();
 
-   @GET
-   @XMLResponseParser(ContainerHandler.class)
-   @Headers(keys = "X-Cloud-Depth", values = "2")
-   Future<? extends ContainerList> list(@Endpoint URI container);
+   ContainerList list(URI container);
 
-   @POST
-   @Path("/contents")
-   @Endpoint(RootContainer.class)
-   Future<URI> createContainer(@BinderParam(BindContainerNameToXmlEntity.class) String container);
+   URI createContainer(String container);
 
-   @POST
-   @Path("/contents")
-   Future<URI> createContainer(@Endpoint URI parent,
-            @BinderParam(BindContainerNameToXmlEntity.class) String container);
+   URI createContainer(URI parent, String container);
 
-   @DELETE
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   Future<Void> deleteContainer(@Endpoint URI container);
+   void deleteContainer(URI container);
 
-   @POST
-   @Path("/contents")
-   Future<URI> uploadFile(@Endpoint URI container,
-            @BinderParam(BindPCSFileToMultipartForm.class) PCSFile object);
+   URI uploadFile(URI container, PCSFile object);
 
-   @POST
-   @Path("/contents")
-   Future<URI> createFile(@Endpoint URI container,
-            @BinderParam(BindFileInfoToXmlEntity.class) PCSFile object);
+   URI createFile(URI container, PCSFile object);
 
-   @PUT
-   @Path("/content")
-   Future<Void> uploadBlock(@Endpoint URI file,
-            @BinderParam(BindDataToEntity.class) PCSFile object, PutBlockOptions... options);
+   void uploadBlock(URI file, PCSFile object, PutBlockOptions... options);
 
-   @DELETE
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   Future<Void> deleteFile(@Endpoint URI file);
+   void deleteFile(URI file);
 
-   @GET
-   @ExceptionParser(ThrowKeyNotFoundOn404.class)
-   @Path("/content")
-   Future<InputStream> downloadFile(@Endpoint URI file);
+   InputStream downloadFile(URI file);
 
-   @GET
-   @ExceptionParser(ThrowKeyNotFoundOn404.class)
-   @XMLResponseParser(FileHandler.class)
-   @Headers(keys = "X-Cloud-Depth", values = "2")
-   FileInfoWithMetadata getFileInfo(@Endpoint URI file);
-   
-   
-   @PUT
-   @Path("/metadata/{key}")
-   Future<Void> putMetadataItem(@Endpoint URI resource, @PathParam("key") String key,
-            @BinderParam(BindToStringEntity.class) String value);
+   FileInfoWithMetadata getFileInfo(URI file);
 
-   @GET
-   @ResponseParser(AddMetadataItemIntoMap.class)
-   @Path("/metadata/{key}")
-   Future<Void> addMetadataItemToMap(@Endpoint URI resource, @PathParam("key") String key,
-            Map<String, String> map);
+   void putMetadataItem(URI resource, String key, String value);
+
+   void addMetadataItemToMap(URI resource, String key, Map<String, String> map);
 }

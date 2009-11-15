@@ -23,8 +23,8 @@
  */
 package org.jclouds.aws.s3;
 
-import static org.jclouds.aws.s3.internal.StubS3Client.TEST_ACL_EMAIL;
-import static org.jclouds.aws.s3.internal.StubS3Client.TEST_ACL_ID;
+import static org.jclouds.aws.s3.internal.StubS3AsyncClient.TEST_ACL_EMAIL;
+import static org.jclouds.aws.s3.internal.StubS3AsyncClient.TEST_ACL_ID;
 import static org.jclouds.aws.s3.options.CopyObjectOptions.Builder.ifSourceETagDoesntMatch;
 import static org.jclouds.aws.s3.options.CopyObjectOptions.Builder.ifSourceETagMatches;
 import static org.jclouds.aws.s3.options.CopyObjectOptions.Builder.ifSourceModifiedSince;
@@ -49,7 +49,6 @@ import java.net.URL;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.aws.s3.domain.AccessControlList;
@@ -78,14 +77,14 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  */
 @Test(groups = { "integration", "live" }, testName = "s3.S3ClientLiveTest")
-public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
+public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient, S3Client> {
 
    /**
     * this method overrides containerName to ensure it isn't found
     */
    @Test(groups = { "integration", "live" })
    public void deleteContainerIfEmptyNotFound() throws Exception {
-      assert context.getApi().deleteBucketIfEmpty("dbienf").get(10, TimeUnit.SECONDS);
+      assert context.getApi().deleteBucketIfEmpty("dbienf");
    }
 
    @Test(groups = { "integration", "live" })
@@ -93,7 +92,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
       String containerName = getContainerName();
       try {
          addBlobToContainer(containerName, "test");
-         assert !context.getApi().deleteBucketIfEmpty(containerName).get(10, TimeUnit.SECONDS);
+         assert !context.getApi().deleteBucketIfEmpty(containerName);
       } finally {
          returnContainer(containerName);
       }
@@ -108,7 +107,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
          object.setData(TEST_STRING);
          context.getApi().putObject(containerName, object,
 
-         withAcl(CannedAccessPolicy.PUBLIC_READ)).get(10, TimeUnit.SECONDS);
+         withAcl(CannedAccessPolicy.PUBLIC_READ));
 
          URL url = new URL(String.format("http://%1$s.s3.amazonaws.com/%2$s", containerName, key));
          Utils.toStringAndClose(url.openStream());
@@ -126,8 +125,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
          validateContent(containerName, sourceKey);
 
          context.getApi().copyObject(containerName, sourceKey, destinationContainer,
-                  destinationKey, overrideAcl(CannedAccessPolicy.PUBLIC_READ)).get(10,
-                  TimeUnit.SECONDS);
+                  destinationKey, overrideAcl(CannedAccessPolicy.PUBLIC_READ));
 
          validateContent(destinationContainer, destinationKey);
 
@@ -154,14 +152,13 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
          object.setData("");
          // Public Read-Write object
          context.getApi().putObject(containerName, object,
-                  new PutObjectOptions().withAcl(CannedAccessPolicy.PUBLIC_READ_WRITE)).get(10,
-                  TimeUnit.SECONDS);
+                  new PutObjectOptions().withAcl(CannedAccessPolicy.PUBLIC_READ_WRITE));
 
          assertConsistencyAware(new Runnable() {
             public void run() {
                try {
                   AccessControlList acl = context.getApi().getObjectACL(containerName,
-                           publicReadWriteObjectKey).get(10, TimeUnit.SECONDS);
+                           publicReadWriteObjectKey);
                   assertEquals(acl.getGrants().size(), 3);
                   assertEquals(acl.getPermissions(GroupGranteeURI.ALL_USERS).size(), 2);
                   assertTrue(acl.getOwner() != null);
@@ -191,8 +188,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
 
          // Private object
          addBlobToContainer(containerName, objectKey);
-         AccessControlList acl = context.getApi().getObjectACL(containerName, objectKey).get(10,
-                  TimeUnit.SECONDS);
+         AccessControlList acl = context.getApi().getObjectACL(containerName, objectKey);
          String ownerId = acl.getOwner().getId();
 
          assertEquals(acl.getGrants().size(), 1);
@@ -200,11 +196,10 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
 
          addGrantsToACL(acl);
          assertEquals(acl.getGrants().size(), 4);
-         assertTrue(context.getApi().putObjectACL(containerName, objectKey, acl).get(10,
-                  TimeUnit.SECONDS));
+         assertTrue(context.getApi().putObjectACL(containerName, objectKey, acl));
 
          // Confirm that the updated ACL has stuck.
-         acl = context.getApi().getObjectACL(containerName, objectKey).get(10, TimeUnit.SECONDS);
+         acl = context.getApi().getObjectACL(containerName, objectKey);
          checkGrants(acl);
 
          /*
@@ -218,11 +213,10 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
          assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ));
 
          // Update the object's ACL settings
-         assertTrue(context.getApi().putObjectACL(containerName, objectKey, acl).get(10,
-                  TimeUnit.SECONDS));
+         assertTrue(context.getApi().putObjectACL(containerName, objectKey, acl));
 
          // Confirm that the updated ACL has stuck
-         acl = context.getApi().getObjectACL(containerName, objectKey).get(10, TimeUnit.SECONDS);
+         acl = context.getApi().getObjectACL(containerName, objectKey);
          assertEquals(acl.getGrants().size(), 1);
          assertEquals(acl.getPermissions(ownerId).size(), 0);
          assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ), acl.toString());
@@ -239,8 +233,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
       try {
          // Private object
          addBlobToContainer(containerName, privateObjectKey);
-         AccessControlList acl = context.getApi().getObjectACL(containerName, privateObjectKey)
-                  .get(10, TimeUnit.SECONDS);
+         AccessControlList acl = context.getApi().getObjectACL(containerName, privateObjectKey);
 
          assertEquals(acl.getGrants().size(), 1);
          assertTrue(acl.getOwner() != null);
@@ -261,14 +254,13 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
          object.getMetadata().setKey(publicReadObjectKey);
          object.setData("");
          context.getApi().putObject(containerName, object,
-                  new PutObjectOptions().withAcl(CannedAccessPolicy.PUBLIC_READ)).get(10,
-                  TimeUnit.SECONDS);
+                  new PutObjectOptions().withAcl(CannedAccessPolicy.PUBLIC_READ));
 
          assertConsistencyAware(new Runnable() {
             public void run() {
                try {
                   AccessControlList acl = context.getApi().getObjectACL(containerName,
-                           publicReadObjectKey).get(10, TimeUnit.SECONDS);
+                           publicReadObjectKey);
 
                   assertEquals(acl.getGrants().size(), 2);
                   assertEquals(acl.getPermissions(GroupGranteeURI.ALL_USERS).size(), 1);
@@ -288,20 +280,18 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
 
    }
 
-   protected String addBlobToContainer(String sourceContainer, String key)
-            throws InterruptedException, ExecutionException, TimeoutException, IOException {
+   protected String addBlobToContainer(String sourceContainer, String key) {
       S3Object sourceObject = context.getApi().newS3Object();
       sourceObject.getMetadata().setKey(key);
       sourceObject.getMetadata().setContentType("text/xml");
       sourceObject.setData(TEST_STRING);
-      return context.getApi().putObject(sourceContainer, sourceObject).get(10, TimeUnit.SECONDS);
+      return context.getApi().putObject(sourceContainer, sourceObject);
    }
 
    protected S3Object validateObject(String sourceContainer, String key)
             throws InterruptedException, ExecutionException, TimeoutException, IOException {
       assertConsistencyAwareContainerSize(sourceContainer, 1);
-      S3Object newObject = context.getApi().getObject(sourceContainer, key).get(30,
-               TimeUnit.SECONDS);
+      S3Object newObject = context.getApi().getObject(sourceContainer, key);
       assert newObject != null;
       assertEquals(Utils.toStringAndClose((InputStream) newObject.getData()), TEST_STRING);
       return newObject;
@@ -317,7 +307,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
       object.getMetadata().setContentDisposition("attachment; filename=hello.txt");
       String containerName = getContainerName();
       try {
-         context.getApi().putObject(containerName, object).get(10, TimeUnit.SECONDS);
+         context.getApi().putObject(containerName, object);
 
          S3Object newObject = validateObject(containerName, key);
 
@@ -339,7 +329,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
       object.getMetadata().setContentEncoding("x-compress");
       String containerName = getContainerName();
       try {
-         context.getApi().putObject(containerName, object).get(10, TimeUnit.SECONDS);
+         context.getApi().putObject(containerName, object);
          S3Object newObject = validateObject(containerName, key);
 
          assertEquals(newObject.getMetadata().getContentEncoding(), "x-compress");
@@ -356,8 +346,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
          addToContainerAndValidate(containerName, sourceKey);
 
          context.getApi()
-                  .copyObject(containerName, sourceKey, destinationContainer, destinationKey).get(
-                           10, TimeUnit.SECONDS);
+                  .copyObject(containerName, sourceKey, destinationContainer, destinationKey);
 
          validateContent(destinationContainer, destinationKey);
       } finally {
@@ -385,19 +374,14 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
          DateTime after = new DateTime().plusSeconds(1);
 
          context.getApi().copyObject(containerName, sourceKey + "mod", destinationContainer,
-                  destinationKey, ifSourceModifiedSince(before)).get(10, TimeUnit.SECONDS);
+                  destinationKey, ifSourceModifiedSince(before));
          validateContent(destinationContainer, destinationKey);
 
          try {
             context.getApi().copyObject(containerName, sourceKey + "mod", destinationContainer,
-                     destinationKey, ifSourceModifiedSince(after)).get(10, TimeUnit.SECONDS);
-         } catch (ExecutionException e) {
-            if (e.getCause() instanceof HttpResponseException) {
-               HttpResponseException ex = (HttpResponseException) e.getCause();
-               assertEquals(ex.getResponse().getStatusCode(), 412);
-            } else {
-               throw e;
-            }
+                     destinationKey, ifSourceModifiedSince(after));
+         } catch (HttpResponseException ex) {
+            assertEquals(ex.getResponse().getStatusCode(), 412);
          }
       } finally {
          returnContainer(containerName);
@@ -417,14 +401,13 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
          DateTime after = new DateTime().plusSeconds(1);
 
          context.getApi().copyObject(containerName, sourceKey + "un", destinationContainer,
-                  destinationKey, ifSourceUnmodifiedSince(after)).get(10, TimeUnit.SECONDS);
+                  destinationKey, ifSourceUnmodifiedSince(after));
          validateContent(destinationContainer, destinationKey);
 
          try {
             context.getApi().copyObject(containerName, sourceKey + "un", destinationContainer,
-                     destinationKey, ifSourceModifiedSince(before)).get(10, TimeUnit.SECONDS);
-         } catch (ExecutionException e) {
-            HttpResponseException ex = (HttpResponseException) e.getCause();
+                     destinationKey, ifSourceModifiedSince(before));
+         } catch (HttpResponseException ex) {
             assertEquals(ex.getResponse().getStatusCode(), 412);
          }
       } finally {
@@ -441,14 +424,13 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
          String goodETag = addToContainerAndValidate(containerName, sourceKey);
 
          context.getApi().copyObject(containerName, sourceKey, destinationContainer,
-                  destinationKey, ifSourceETagMatches(goodETag)).get(10, TimeUnit.SECONDS);
+                  destinationKey, ifSourceETagMatches(goodETag));
          validateContent(destinationContainer, destinationKey);
 
          try {
             context.getApi().copyObject(containerName, sourceKey, destinationContainer,
-                     destinationKey, ifSourceETagMatches("setsds")).get(10, TimeUnit.SECONDS);
-         } catch (ExecutionException e) {
-            HttpResponseException ex = (HttpResponseException) e.getCause();
+                     destinationKey, ifSourceETagMatches("setsds"));
+         } catch (HttpResponseException ex) {
             assertEquals(ex.getResponse().getStatusCode(), 412);
          }
       } finally {
@@ -465,14 +447,13 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
          String goodETag = addToContainerAndValidate(containerName, sourceKey);
 
          context.getApi().copyObject(containerName, sourceKey, destinationContainer,
-                  destinationKey, ifSourceETagDoesntMatch("asfasdf")).get(10, TimeUnit.SECONDS);
+                  destinationKey, ifSourceETagDoesntMatch("asfasdf"));
          validateContent(destinationContainer, destinationKey);
 
          try {
             context.getApi().copyObject(containerName, sourceKey, destinationContainer,
-                     destinationKey, ifSourceETagDoesntMatch(goodETag)).get(10, TimeUnit.SECONDS);
-         } catch (ExecutionException e) {
-            HttpResponseException ex = (HttpResponseException) e.getCause();
+                     destinationKey, ifSourceETagDoesntMatch(goodETag));
+         } catch (HttpResponseException ex) {
             assertEquals(ex.getResponse().getStatusCode(), 412);
          }
       } finally {
@@ -493,7 +474,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
          metadata.put("adrian", "cole");
 
          context.getApi().copyObject(containerName, sourceKey, destinationContainer,
-                  destinationKey, overrideMetadataWith(metadata)).get(10, TimeUnit.SECONDS);
+                  destinationKey, overrideMetadataWith(metadata));
 
          validateContent(destinationContainer, destinationKey);
 
@@ -512,8 +493,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
             ExecutionException, TimeoutException, IOException {
       String containerName = getContainerName();
       try {
-         AccessControlList acl = context.getApi().getBucketACL(containerName).get(10,
-                  TimeUnit.SECONDS);
+         AccessControlList acl = context.getApi().getBucketACL(containerName);
          assertEquals(acl.getGrants().size(), 1);
          assertTrue(acl.getOwner() != null);
          String ownerId = acl.getOwner().getId();
@@ -529,18 +509,17 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
       String containerName = getContainerName();
       try {
          // Confirm the container is private
-         AccessControlList acl = context.getApi().getBucketACL(containerName).get(10,
-                  TimeUnit.SECONDS);
+         AccessControlList acl = context.getApi().getBucketACL(containerName);
          String ownerId = acl.getOwner().getId();
          assertEquals(acl.getGrants().size(), 1);
          assertTrue(acl.hasPermission(ownerId, Permission.FULL_CONTROL));
 
          addGrantsToACL(acl);
          assertEquals(acl.getGrants().size(), 4);
-         assertTrue(context.getApi().putBucketACL(containerName, acl).get(10, TimeUnit.SECONDS));
+         assertTrue(context.getApi().putBucketACL(containerName, acl));
 
          // Confirm that the updated ACL has stuck.
-         acl = context.getApi().getBucketACL(containerName).get(10, TimeUnit.SECONDS);
+         acl = context.getApi().getBucketACL(containerName);
          checkGrants(acl);
       } finally {
          destroyContainer(containerName);
@@ -571,9 +550,8 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
       String containerName = getScratchContainerName();
       try {
          context.getApi().putBucketIfNotExists(containerName,
-                  withBucketAcl(CannedAccessPolicy.PUBLIC_READ)).get(10, TimeUnit.SECONDS);
-         AccessControlList acl = context.getApi().getBucketACL(containerName).get(10,
-                  TimeUnit.SECONDS);
+                  withBucketAcl(CannedAccessPolicy.PUBLIC_READ));
+         AccessControlList acl = context.getApi().getBucketACL(containerName);
          assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ), acl.toString());
          // TODO: I believe that the following should work based on the above acl assertion passing.
          // However, it fails on 403
@@ -603,13 +581,11 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
       final String containerName = getScratchContainerName();
       try {
          context.getApi().putBucketIfNotExists(containerName + "eu",
-                  createIn(LocationConstraint.EU).withBucketAcl(CannedAccessPolicy.PUBLIC_READ))
-                  .get(30, TimeUnit.SECONDS);
+                  createIn(LocationConstraint.EU).withBucketAcl(CannedAccessPolicy.PUBLIC_READ));
          assertConsistencyAware(new Runnable() {
             public void run() {
                try {
-                  AccessControlList acl = context.getApi().getBucketACL(containerName + "eu").get(
-                           30, TimeUnit.SECONDS);
+                  AccessControlList acl = context.getApi().getBucketACL(containerName + "eu");
                   assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ), acl
                            .toString());
                } catch (Exception e) {
@@ -629,8 +605,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
    void containerExists() throws Exception {
       String containerName = getContainerName();
       try {
-         SortedSet<BucketMetadata> list = context.getApi().listOwnedBuckets().get(10,
-                  TimeUnit.SECONDS);
+         SortedSet<BucketMetadata> list = context.getApi().listOwnedBuckets();
          BucketMetadata firstContainer = list.first();
          BucketMetadata toMatch = new BucketMetadata(containerName, new DateTime(), firstContainer
                   .getOwner());
@@ -640,23 +615,22 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
       }
    }
 
-   protected void addAlphabetUnderRoot(String containerName) throws InterruptedException,
-            ExecutionException, TimeoutException {
+   protected void addAlphabetUnderRoot(String containerName) {
       for (char letter = 'a'; letter <= 'z'; letter++) {
          S3Object blob = context.getApi().newS3Object();
          blob.getMetadata().setKey(letter + "");
          blob.setData(letter + "content");
-         context.getApi().putObject(containerName, blob).get(10, TimeUnit.SECONDS);
+         context.getApi().putObject(containerName, blob);
       }
    }
 
    public void testListContainerMarker() throws InterruptedException, ExecutionException,
-            TimeoutException, UnsupportedEncodingException {
+            TimeoutException {
       String containerName = getContainerName();
       try {
          addAlphabetUnderRoot(containerName);
          ListBucketResponse container = context.getApi()
-                  .listBucket(containerName, afterMarker("y")).get(10, TimeUnit.SECONDS);
+                  .listBucket(containerName, afterMarker("y"));
          assertEquals(container.getMarker(), "y");
          assert !container.isTruncated();
          assertEquals(container.size(), 1);
@@ -672,8 +646,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
          String prefix = "apps";
          addTenObjectsUnderPrefix(containerName, prefix);
          add15UnderRoot(containerName);
-         ListBucketResponse container = context.getApi().listBucket(containerName, delimiter("/"))
-                  .get(10, TimeUnit.SECONDS);
+         ListBucketResponse container = context.getApi().listBucket(containerName, delimiter("/"));
          assertEquals(container.getDelimiter(), "/");
          assert !container.isTruncated();
          assertEquals(container.size(), 15);
@@ -693,7 +666,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
          add15UnderRoot(containerName);
 
          ListBucketResponse container = context.getApi().listBucket(containerName,
-                  withPrefix("apps/")).get(10, TimeUnit.SECONDS);
+                  withPrefix("apps/"));
          assert !container.isTruncated();
          assertEquals(container.size(), 10);
          assertEquals(container.getPrefix(), "apps/");
@@ -708,8 +681,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
       String containerName = getContainerName();
       try {
          addAlphabetUnderRoot(containerName);
-         ListBucketResponse container = context.getApi().listBucket(containerName, maxResults(5))
-                  .get(10, TimeUnit.SECONDS);
+         ListBucketResponse container = context.getApi().listBucket(containerName, maxResults(5));
          assertEquals(container.getMaxKeys(), 5);
          assert container.isTruncated();
          assertEquals(container.size(), 5);
@@ -718,23 +690,21 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
       }
    }
 
-   protected void add15UnderRoot(String containerName) throws InterruptedException,
-            ExecutionException, TimeoutException {
+   protected void add15UnderRoot(String containerName) {
       for (int i = 0; i < 15; i++) {
          S3Object blob = context.getApi().newS3Object();
          blob.getMetadata().setKey(i + "");
          blob.setData(i + "content");
-         context.getApi().putObject(containerName, blob).get(10, TimeUnit.SECONDS);
+         context.getApi().putObject(containerName, blob);
       }
    }
 
-   protected void addTenObjectsUnderPrefix(String containerName, String prefix)
-            throws InterruptedException, ExecutionException, TimeoutException {
+   protected void addTenObjectsUnderPrefix(String containerName, String prefix) {
       for (int i = 0; i < 10; i++) {
          S3Object blob = context.getApi().newS3Object();
          blob.getMetadata().setKey(prefix + "/" + i);
          blob.setData(i + "content");
-         context.getApi().putObject(containerName, blob).get(10, TimeUnit.SECONDS);
+         context.getApi().putObject(containerName, blob);
       }
    }
 }

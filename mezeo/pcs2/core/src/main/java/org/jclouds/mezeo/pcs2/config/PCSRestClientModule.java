@@ -25,15 +25,20 @@ package org.jclouds.mezeo.pcs2.config;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.mezeo.pcs2.PCS;
+import org.jclouds.mezeo.pcs2.PCSAsyncClient;
 import org.jclouds.mezeo.pcs2.PCSClient;
 import org.jclouds.mezeo.pcs2.PCSCloud;
 import org.jclouds.mezeo.pcs2.PCSCloud.Response;
@@ -80,14 +85,22 @@ public class PCSRestClientModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected Response provideCloudResponse(RestClientFactory factory, @PCS URI authenticationUri) {
-      return factory.create(PCSCloud.class).authenticate();
+   protected Response provideCloudResponse(RestClientFactory factory, @PCS URI authenticationUri)
+            throws InterruptedException, ExecutionException, TimeoutException {
+      return factory.create(PCSCloud.class).authenticate().get(10, TimeUnit.SECONDS);
    }
 
    @Provides
    @Singleton
-   protected PCSClient provideClient(RestClientFactory factory) {
-      return factory.create(PCSClient.class);
+   protected PCSAsyncClient provideAsyncClient(RestClientFactory factory) {
+      return factory.create(PCSAsyncClient.class);
+   }
+
+   @Provides
+   @Singleton
+   public PCSClient provideClient(PCSAsyncClient client) throws IllegalArgumentException,
+            SecurityException, NoSuchMethodException {
+      return SyncProxy.create(PCSClient.class, client);
    }
 
    @Provides

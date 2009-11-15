@@ -29,6 +29,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.azure.storage.AzureBlob;
+import org.jclouds.azure.storage.blob.AzureBlobAsyncClient;
 import org.jclouds.azure.storage.blob.AzureBlobClient;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.blobstore.config.BlobStoreObjectModule;
@@ -52,10 +53,11 @@ public class AzureBlobContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<AzureBlobClient> provideContext(Closer closer, AzureBlobClient defaultApi,
-            @AzureBlob URI endPoint,
+   RestContext<AzureBlobAsyncClient, AzureBlobClient> provideContext(Closer closer,
+            AzureBlobAsyncClient asyncApi, AzureBlobClient defaultApi, @AzureBlob URI endPoint,
             @Named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT) String account) {
-      return new RestContextImpl<AzureBlobClient>(closer, defaultApi, endPoint, account);
+      return new RestContextImpl<AzureBlobAsyncClient, AzureBlobClient>(closer, asyncApi,
+               defaultApi, endPoint, account);
    }
 
 }

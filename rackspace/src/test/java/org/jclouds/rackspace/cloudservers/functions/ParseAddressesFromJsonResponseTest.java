@@ -58,8 +58,8 @@ public class ParseAddressesFromJsonResponseTest {
                .getInstance(Gson.class));
       Addresses response = parser.apply(is);
       List<InetAddress> publicAddresses = ImmutableList.of(InetAddress.getByAddress(new byte[] {
-               67, 23, 10, (byte) 132 }), InetAddress.getByAddress(new byte[] { 67, 23, 10,
-               (byte) 131 }));
+               67, 23, 10, (byte) 131 }), InetAddress.getByAddress(new byte[] { 67, 23, 10,
+               (byte) 132 }));
 
       List<InetAddress> privateAddresses = ImmutableList.of(InetAddress.getByAddress(new byte[] {
                10, (byte) 176, 42, 16 }));

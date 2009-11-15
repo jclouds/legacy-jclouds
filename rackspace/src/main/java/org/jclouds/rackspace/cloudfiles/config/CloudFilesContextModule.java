@@ -31,6 +31,7 @@ import javax.inject.Singleton;
 import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.rackspace.CloudFiles;
+import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
 import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
 import org.jclouds.rackspace.reference.RackspaceConstants;
 import org.jclouds.rest.RestContext;
@@ -40,7 +41,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
- * Configures the {@link CloudFilesContextModule}; requires {@link CloudFilesClient} bound.
+ * Configures the {@link CloudFilesContextModule}; requires {@link CloudFilesAsyncClient} bound.
  * 
  * @author Adrian Cole
  */
@@ -55,10 +56,11 @@ public class CloudFilesContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<CloudFilesClient> provideContext(Closer closer, CloudFilesClient defaultApi,
-            @CloudFiles URI endPoint,
+   RestContext<CloudFilesAsyncClient, CloudFilesClient> provideContext(Closer closer,
+            CloudFilesAsyncClient asyncApi, CloudFilesClient defaultApi, @CloudFiles URI endPoint,
             @Named(RackspaceConstants.PROPERTY_RACKSPACE_USER) String account) {
-      return new RestContextImpl<CloudFilesClient>(closer, defaultApi, endPoint, account);
+      return new RestContextImpl<CloudFilesAsyncClient, CloudFilesClient>(closer, asyncApi,
+               defaultApi, endPoint, account);
    }
 
 }

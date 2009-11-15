@@ -31,6 +31,7 @@ import javax.inject.Singleton;
 import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.mezeo.pcs2.PCS;
+import org.jclouds.mezeo.pcs2.PCSAsyncClient;
 import org.jclouds.mezeo.pcs2.PCSClient;
 import org.jclouds.mezeo.pcs2.reference.PCSConstants;
 import org.jclouds.rest.RestContext;
@@ -53,9 +54,11 @@ public class PCSContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<PCSClient> provideContext(Closer closer, PCSClient defaultApi, @PCS URI endPoint,
+   RestContext<PCSAsyncClient, PCSClient> provideContext(Closer closer, PCSAsyncClient async,
+            PCSClient defaultApi, @PCS URI endPoint,
             @Named(PCSConstants.PROPERTY_PCS2_USER) String account) {
-      return new RestContextImpl<PCSClient>(closer, defaultApi, endPoint, account);
+      return new RestContextImpl<PCSAsyncClient, PCSClient>(closer, async, defaultApi, endPoint,
+               account);
    }
 
 }

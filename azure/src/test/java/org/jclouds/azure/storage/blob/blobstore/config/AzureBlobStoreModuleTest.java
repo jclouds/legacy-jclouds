@@ -25,6 +25,7 @@ package org.jclouds.azure.storage.blob.blobstore.config;
 
 import static org.testng.Assert.assertEquals;
 
+import org.jclouds.azure.storage.blob.AzureBlobAsyncClient;
 import org.jclouds.azure.storage.blob.AzureBlobClient;
 import org.jclouds.azure.storage.blob.blobstore.strategy.FindMD5InBlobProperties;
 import org.jclouds.azure.storage.blob.config.AzureBlobStubClientModule;
@@ -74,8 +75,8 @@ public class AzureBlobStoreModuleTest {
    void testContextImpl() {
 
       Injector injector = createInjector();
-      BlobStoreContext<AzureBlobClient> handler = injector.getInstance(Key
-               .get(new TypeLiteral<BlobStoreContext<AzureBlobClient>>() {
+      BlobStoreContext<AzureBlobAsyncClient, AzureBlobClient> handler = injector.getInstance(Key
+               .get(new TypeLiteral<BlobStoreContext<AzureBlobAsyncClient, AzureBlobClient>>() {
                }));
       assertEquals(handler.getClass(), BlobStoreContextImpl.class);
       ContainsValueInListStrategy valueList = injector

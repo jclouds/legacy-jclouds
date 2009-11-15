@@ -40,10 +40,11 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-public class TwitterContextBuilder extends RestContextBuilder<TwitterClient> {
+public class TwitterContextBuilder extends RestContextBuilder<TwitterAsyncClient, TwitterClient> {
 
    public TwitterContextBuilder(Properties props) {
-      super(new TypeLiteral<TwitterClient>() {
+      super(new TypeLiteral<TwitterAsyncClient>() {
+      }, new TypeLiteral<TwitterClient>() {
       }, props);
       checkNotNull(properties.getProperty(TwitterConstants.PROPERTY_TWITTER_USER));
       checkNotNull(properties.getProperty(TwitterConstants.PROPERTY_TWITTER_PASSWORD));

@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.blobstore.domain.Blob;
@@ -71,7 +71,7 @@ public class RetryOnNotFoundGetAllBlobsStrategyTest {
       Injector context = new StubBlobStoreContextBuilder().buildInjector();
       GetAllBlobsInListAndRetryOnFailure map = context
                .getInstance(GetAllBlobsInListAndRetryOnFailure.class);
-      context.getInstance(BlobStore.class).createContainer("container").get();
+      context.getInstance(AsyncBlobStore.class).createContainer("container").get();
 
       Future<Blob> futureObject = createMock(Future.class);
       Blob object = blobProvider.create(null);
@@ -79,7 +79,7 @@ public class RetryOnNotFoundGetAllBlobsStrategyTest {
       object.setData("goo");
       expect(futureObject.get(map.requestTimeoutMilliseconds, TimeUnit.MILLISECONDS)).andThrow(
                new KeyNotFoundException());
-      context.getInstance(BlobStore.class).putBlob("container", object).get();
+      context.getInstance(AsyncBlobStore.class).putBlob("container", object).get();
       replay(futureObject);
       Set<Blob> objects = new HashSet<Blob>();
       long time = System.currentTimeMillis();
@@ -96,7 +96,7 @@ public class RetryOnNotFoundGetAllBlobsStrategyTest {
       Injector context = new StubBlobStoreContextBuilder().buildInjector();
       GetAllBlobsInListAndRetryOnFailure map = context
                .getInstance(GetAllBlobsInListAndRetryOnFailure.class);
-      context.getInstance(BlobStore.class).createContainer("container").get();
+      context.getInstance(AsyncBlobStore.class).createContainer("container").get();
 
       Future<Blob> futureObject = createMock(Future.class);
       Blob object = createMock(Blob.class);

@@ -47,12 +47,12 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-public class BaseInputStreamMapIntegrationTest<S> extends BaseMapIntegrationTest<S, InputStream> {
+public class BaseInputStreamMapIntegrationTest<A, S> extends
+         BaseMapIntegrationTest<A, S, InputStream> {
 
    @Override
    @Test(groups = { "integration", "live" })
-   public void testValues() throws IOException, InterruptedException, ExecutionException,
-            TimeoutException {
+   public void testValues() throws InterruptedException, IOException {
       String bucketName = getContainerName();
       try {
          Map<String, InputStream> map = createMap(context, bucketName);
@@ -73,8 +73,7 @@ public class BaseInputStreamMapIntegrationTest<S> extends BaseMapIntegrationTest
    }
 
    @Test(groups = { "integration", "live" })
-   public void testRemove() throws IOException, InterruptedException, ExecutionException,
-            TimeoutException {
+   public void testRemove() throws InterruptedException, IOException {
       String bucketName = getContainerName();
       try {
          Map<String, InputStream> map = createMap(context, bucketName);
@@ -93,8 +92,7 @@ public class BaseInputStreamMapIntegrationTest<S> extends BaseMapIntegrationTest
 
    @Override
    @Test(groups = { "integration", "live" })
-   public void testEntrySet() throws IOException, InterruptedException, ExecutionException,
-            TimeoutException {
+   public void testEntrySet() throws InterruptedException, IOException {
       String bucketName = getContainerName();
       try {
          Map<String, InputStream> map = createMap(context, bucketName);
@@ -170,7 +168,7 @@ public class BaseInputStreamMapIntegrationTest<S> extends BaseMapIntegrationTest
 
    @Override
    @Test(groups = { "integration", "live" })
-   public void testPutAll() throws InterruptedException, ExecutionException, TimeoutException {
+   public void testPutAll() throws InterruptedException {
       String bucketName = getContainerName();
       try {
          Map<String, InputStream> map = createMap(context, bucketName);
@@ -184,7 +182,7 @@ public class BaseInputStreamMapIntegrationTest<S> extends BaseMapIntegrationTest
    }
 
    @Test(groups = { "integration", "live" })
-   public void testPutAllBytes() throws InterruptedException, ExecutionException, TimeoutException {
+   public void testPutAllBytes() throws InterruptedException {
       String bucketName = getContainerName();
       try {
          Map<String, InputStream> map = createMap(context, bucketName);
@@ -199,7 +197,7 @@ public class BaseInputStreamMapIntegrationTest<S> extends BaseMapIntegrationTest
    }
 
    @Test(groups = { "integration", "live" })
-   public void testPutAllFiles() throws InterruptedException, ExecutionException, TimeoutException {
+   public void testPutAllFiles() throws InterruptedException{
       String bucketName = getContainerName();
       try {
          Map<String, InputStream> map = createMap(context, bucketName);
@@ -214,8 +212,7 @@ public class BaseInputStreamMapIntegrationTest<S> extends BaseMapIntegrationTest
    }
 
    @Test(groups = { "integration", "live" })
-   public void testPutAllStrings() throws InterruptedException, ExecutionException,
-            TimeoutException {
+   public void testPutAllStrings() throws InterruptedException {
       String bucketName = getContainerName();
       try {
          Map<String, InputStream> map = createMap(context, bucketName);
@@ -230,8 +227,7 @@ public class BaseInputStreamMapIntegrationTest<S> extends BaseMapIntegrationTest
    }
 
    @Test(groups = { "integration", "live" })
-   public void testPutString() throws IOException, InterruptedException, ExecutionException,
-            TimeoutException {
+   public void testPutString() throws InterruptedException, IOException {
       String bucketName = getContainerName();
       try {
          Map<String, InputStream> map = createMap(context, bucketName);
@@ -246,7 +242,8 @@ public class BaseInputStreamMapIntegrationTest<S> extends BaseMapIntegrationTest
    }
 
    void getOneReturnsAppleAndOldValueIsNull(Map<String, InputStream> map, InputStream old)
-            throws IOException, InterruptedException, ExecutionException, TimeoutException {
+            throws IOException, InterruptedException
+       {
       assert old == null;
       assertEquals(Utils.toStringAndClose(map.get("one")), String
                .format(XML_STRING_FORMAT, "apple"));
@@ -254,15 +251,14 @@ public class BaseInputStreamMapIntegrationTest<S> extends BaseMapIntegrationTest
    }
 
    void getOneReturnsBearAndOldValueIsApple(Map<String, InputStream> map, InputStream oldValue)
-            throws IOException, InterruptedException, ExecutionException, TimeoutException {
+   throws IOException, InterruptedException{
       assertEquals(Utils.toStringAndClose(map.get("one")), String.format(XML_STRING_FORMAT, "bear"));
       assertEquals(Utils.toStringAndClose(oldValue), String.format(XML_STRING_FORMAT, "apple"));
       assertConsistencyAwareMapSize(map, 1);
    }
 
    @Test(groups = { "integration", "live" })
-   public void testPutFile() throws IOException, InterruptedException, ExecutionException,
-            TimeoutException {
+   public void testPutFile() throws IOException, InterruptedException {
       String bucketName = getContainerName();
       try {
          Map<String, InputStream> map = createMap(context, bucketName);
@@ -277,8 +273,7 @@ public class BaseInputStreamMapIntegrationTest<S> extends BaseMapIntegrationTest
    }
 
    @Test(groups = { "integration", "live" })
-   public void testPutBytes() throws IOException, InterruptedException, ExecutionException,
-            TimeoutException {
+   public void testPutBytes() throws InterruptedException, IOException {
       String bucketName = getContainerName();
       try {
          Map<String, InputStream> map = createMap(context, bucketName);
@@ -293,8 +288,7 @@ public class BaseInputStreamMapIntegrationTest<S> extends BaseMapIntegrationTest
    }
 
    @Test(groups = { "integration", "live" })
-   public void testPut() throws IOException, InterruptedException, ExecutionException,
-            TimeoutException {
+   public void testPut() throws InterruptedException, IOException {
       String bucketName = getContainerName();
       try {
          Map<String, InputStream> map = createMap(context, bucketName);
@@ -310,11 +304,11 @@ public class BaseInputStreamMapIntegrationTest<S> extends BaseMapIntegrationTest
 
    @Override
    protected void putStringWithMD5(Map<String, InputStream> map, String key, String value)
-            throws InterruptedException, ExecutionException, TimeoutException {
+            throws InterruptedException {
       ((InputStreamMap) map).putString(key, value);
    }
 
-   protected Map<String, InputStream> createMap(BlobStoreContext<?> context, String bucket) {
+   protected Map<String, InputStream> createMap(BlobStoreContext<?, ?> context, String bucket) {
       InputStreamMap map = context.createInputStreamMap(bucket);
       return (Map<String, InputStream>) map;
    }

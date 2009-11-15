@@ -50,12 +50,13 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  * @see AzureQueueContext
  */
-public class AzureQueueContextBuilder extends RestContextBuilder<AzureQueueClient> {
-   private static final TypeLiteral<AzureQueueClient> connectionType = new TypeLiteral<AzureQueueClient>() {
-   };
+public class AzureQueueContextBuilder extends
+         RestContextBuilder<AzureQueueAsyncClient, AzureQueueClient> {
 
    public AzureQueueContextBuilder(Properties properties) {
-      super(connectionType, properties);
+      super(new TypeLiteral<AzureQueueAsyncClient>() {
+      }, new TypeLiteral<AzureQueueClient>() {
+      }, properties);
    }
 
    @Override

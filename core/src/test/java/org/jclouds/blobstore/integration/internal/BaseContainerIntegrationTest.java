@@ -31,12 +31,11 @@ import static org.testng.Assert.assertEquals;
 import java.io.UnsupportedEncodingException;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.ListResponse;
 import org.jclouds.blobstore.domain.ListContainerResponse;
+import org.jclouds.blobstore.domain.ListResponse;
 import org.jclouds.blobstore.domain.ResourceMetadata;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
@@ -44,43 +43,42 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-public class BaseContainerIntegrationTest<S> extends BaseBlobStoreIntegrationTest<S> {
+public class BaseContainerIntegrationTest<A, S> extends BaseBlobStoreIntegrationTest<A, S> {
 
    @Test(groups = { "integration", "live" })
-   public void containerDoesntExist() throws Exception {
+   public void containerDoesntExist() {
       assert !context.getBlobStore().exists("forgetaboutit");
    }
 
    @Test(groups = { "integration", "live" })
-   public void testPutTwiceIsOk() throws Exception {
+   public void testPutTwiceIsOk() throws InterruptedException {
       String containerName = getContainerName();
       try {
-         context.getBlobStore().createContainer(containerName).get(60, TimeUnit.SECONDS);
-         context.getBlobStore().createContainer(containerName).get(60, TimeUnit.SECONDS);
+         context.getBlobStore().createContainer(containerName);
+         context.getBlobStore().createContainer(containerName);
       } finally {
          returnContainer(containerName);
       }
    }
 
    @Test(groups = { "integration", "live" })
-   public void testClearWhenContentsUnderPath() throws Exception {
+   public void testClearWhenContentsUnderPath() throws InterruptedException {
       String containerName = getContainerName();
       try {
          add5BlobsUnderPathAnd5UnderRootToContainer(containerName);
-         context.getBlobStore().clearContainer(containerName).get(60, TimeUnit.SECONDS);
+         context.getBlobStore().clearContainer(containerName);
          assertConsistencyAwareContainerSize(containerName, 0);
       } finally {
          returnContainer(containerName);
       }
    }
 
-   public void testListContainerMarker() throws InterruptedException, ExecutionException,
-            TimeoutException, UnsupportedEncodingException {
+   public void testListContainerMarker() throws InterruptedException, UnsupportedEncodingException {
       String containerName = getContainerName();
       try {
          addAlphabetUnderRoot(containerName);
          ListResponse<? extends ResourceMetadata> container = context.getBlobStore().list(
-                  containerName, afterMarker("y")).get(10, TimeUnit.SECONDS);
+                  containerName, afterMarker("y"));
          assertEquals(container.getMarker(), "y");
          assert !container.isTruncated();
          assertEquals(container.size(), 1);
@@ -89,15 +87,15 @@ public class BaseContainerIntegrationTest<S> extends BaseBlobStoreIntegrationTes
       }
    }
 
-   public void testListContainerDelimiter() throws InterruptedException, ExecutionException,
-            TimeoutException, UnsupportedEncodingException {
+   public void testListContainerDelimiter() throws InterruptedException,
+            UnsupportedEncodingException {
       String containerName = getContainerName();
       try {
          String prefix = "apps";
          addTenObjectsUnderPrefix(containerName, prefix);
          add15UnderRoot(containerName);
          ListResponse<? extends ResourceMetadata> container = context.getBlobStore().list(
-                  containerName).get(10, TimeUnit.SECONDS);
+                  containerName);
          assert !container.isTruncated();
          assertEquals(container.size(), 16);
       } finally {
@@ -106,8 +104,7 @@ public class BaseContainerIntegrationTest<S> extends BaseBlobStoreIntegrationTes
 
    }
 
-   public void testListContainerPrefix() throws InterruptedException, ExecutionException,
-            TimeoutException, UnsupportedEncodingException {
+   public void testListContainerPrefix() throws InterruptedException, UnsupportedEncodingException {
       String containerName = getContainerName();
       try {
          String prefix = "apps";
@@ -115,7 +112,7 @@ public class BaseContainerIntegrationTest<S> extends BaseBlobStoreIntegrationTes
          add15UnderRoot(containerName);
 
          ListContainerResponse<? extends ResourceMetadata> container = context.getBlobStore().list(
-                  containerName, underPath("apps/")).get(10, TimeUnit.SECONDS);
+                  containerName, underPath("apps/"));
          assert !container.isTruncated();
          assertEquals(container.size(), 10);
          assertEquals(container.getPath(), "apps/");
@@ -125,13 +122,13 @@ public class BaseContainerIntegrationTest<S> extends BaseBlobStoreIntegrationTes
 
    }
 
-   public void testListContainerMaxResults() throws InterruptedException, ExecutionException,
-            TimeoutException, UnsupportedEncodingException {
+   public void testListContainerMaxResults() throws InterruptedException,
+            UnsupportedEncodingException {
       String containerName = getContainerName();
       try {
          addAlphabetUnderRoot(containerName);
          ListResponse<? extends ResourceMetadata> container = context.getBlobStore().list(
-                  containerName, maxResults(5)).get(10, TimeUnit.SECONDS);
+                  containerName, maxResults(5));
          assertEquals(container.getMaxResults(), 5);
          assert container.isTruncated();
          assertEquals(container.size(), 5);
@@ -141,7 +138,7 @@ public class BaseContainerIntegrationTest<S> extends BaseBlobStoreIntegrationTes
    }
 
    @Test(groups = { "integration", "live" })
-   public void containerExists() throws Exception {
+   public void containerExists() throws InterruptedException {
       String containerName = getContainerName();
       try {
          assert context.getBlobStore().exists(containerName);
@@ -151,11 +148,11 @@ public class BaseContainerIntegrationTest<S> extends BaseBlobStoreIntegrationTes
    }
 
    @Test(groups = { "integration", "live" })
-   public void deleteContainerWithContents() throws Exception {
+   public void deleteContainerWithContents() throws InterruptedException {
       String containerName = getContainerName();
       try {
          addBlobToContainer(containerName, "test");
-         context.getBlobStore().deleteContainer(containerName).get(60, TimeUnit.SECONDS);
+         context.getBlobStore().deleteContainer(containerName);
          assertNotExists(containerName);
       } finally {
          recycleContainer(containerName);
@@ -163,10 +160,10 @@ public class BaseContainerIntegrationTest<S> extends BaseBlobStoreIntegrationTes
    }
 
    @Test(groups = { "integration", "live" })
-   public void deleteContainerIfEmpty() throws Exception {
+   public void deleteContainerIfEmpty() throws InterruptedException {
       final String containerName = getContainerName();
       try {
-         context.getBlobStore().deleteContainer(containerName).get(60, TimeUnit.SECONDS);
+         context.getBlobStore().deleteContainer(containerName);
          assertNotExists(containerName);
       } finally {
          // this container is now deleted, so we can't reuse it directly
@@ -194,7 +191,7 @@ public class BaseContainerIntegrationTest<S> extends BaseBlobStoreIntegrationTes
       try {
          add15UnderRoot(containerName);
          SortedSet<? extends ResourceMetadata> container = context.getBlobStore().list(
-                  containerName).get(60, TimeUnit.SECONDS);
+                  containerName);
          assertEquals(container.size(), 15);
       } finally {
          returnContainer(containerName);
@@ -202,30 +199,28 @@ public class BaseContainerIntegrationTest<S> extends BaseBlobStoreIntegrationTes
 
    }
 
-   protected void addAlphabetUnderRoot(String containerName) throws InterruptedException,
-            ExecutionException, TimeoutException {
+   protected void addAlphabetUnderRoot(String containerName) throws InterruptedException {
       for (char letter = 'a'; letter <= 'z'; letter++) {
          Blob blob = newBlob(letter + "");
          blob.setData(letter + "content");
-         context.getBlobStore().putBlob(containerName, blob).get(60, TimeUnit.SECONDS);
+         context.getBlobStore().putBlob(containerName, blob);
       }
    }
 
-   protected void add15UnderRoot(String containerName) throws InterruptedException,
-            ExecutionException, TimeoutException {
+   protected void add15UnderRoot(String containerName) throws InterruptedException {
       for (int i = 0; i < 15; i++) {
          Blob blob = newBlob(i + "");
          blob.setData(i + "content");
-         context.getBlobStore().putBlob(containerName, blob).get(60, TimeUnit.SECONDS);
+         context.getBlobStore().putBlob(containerName, blob);
       }
    }
 
    protected void addTenObjectsUnderPrefix(String containerName, String prefix)
-            throws InterruptedException, ExecutionException, TimeoutException {
+            throws InterruptedException {
       for (int i = 0; i < 10; i++) {
          Blob blob = newBlob(prefix + "/" + i);
          blob.setData(i + "content");
-         context.getBlobStore().putBlob(containerName, blob).get(60, TimeUnit.SECONDS);
+         context.getBlobStore().putBlob(containerName, blob);
       }
    }
 }

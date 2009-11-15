@@ -53,14 +53,14 @@ import com.google.common.collect.Sets;
 public class GetAllContainersController extends HttpServlet {
    private static final long serialVersionUID = 1L;
 
-   private Map<String, BlobStoreContext<?>> contexts;
+   private Map<String, BlobStoreContext<?,?>> contexts;
    private final BlobStoreContextToContainerResult blobStoreContextToContainerResult;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public GetAllContainersController(Map<String, BlobStoreContext<?>> contexts,
+   public GetAllContainersController(Map<String, BlobStoreContext<?,?>> contexts,
             BlobStoreContextToContainerResult blobStoreContextToContainerResult) {
       this.contexts = contexts;
       this.blobStoreContextToContainerResult = blobStoreContextToContainerResult;

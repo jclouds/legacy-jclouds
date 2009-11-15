@@ -31,7 +31,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.domain.ResourceMetadata;
 import org.jclouds.blobstore.domain.ResourceType;
 import org.jclouds.blobstore.internal.BlobRuntimeException;
@@ -58,10 +58,10 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
    @Named(BlobStoreConstants.PROPERTY_BLOBSTORE_TIMEOUT)
    protected long requestTimeoutMilliseconds = 30000;
    protected final ListBlobMetadataStrategy getAllBlobMetadata;
-   protected final BlobStore connection;
+   protected final AsyncBlobStore connection;
 
    @Inject
-   DeleteAllKeysInList(BlobStore connection, ListBlobMetadataStrategy getAllBlobMetadata) {
+   DeleteAllKeysInList(AsyncBlobStore connection, ListBlobMetadataStrategy getAllBlobMetadata) {
       this.connection = connection;
       this.getAllBlobMetadata = getAllBlobMetadata;
    }

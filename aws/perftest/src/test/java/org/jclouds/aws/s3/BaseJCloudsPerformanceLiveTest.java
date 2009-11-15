@@ -25,7 +25,6 @@ package org.jclouds.aws.s3;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.concurrent.TimeUnit;
 
 import org.jclouds.aws.s3.domain.S3Object;
 
@@ -59,7 +58,7 @@ public abstract class BaseJCloudsPerformanceLiveTest extends BasePerformanceLive
       S3Object object = newObject(key);
       object.getMetadata().setContentType(contentType);
       object.setData(data);
-      return context.getApi().putObject(bucket, object).get(120, TimeUnit.SECONDS) != null;
+      return context.getApi().putObject(bucket, object) != null;
    }
 
    @Override
@@ -68,7 +67,7 @@ public abstract class BaseJCloudsPerformanceLiveTest extends BasePerformanceLive
       S3Object object = newObject(key);
       object.getMetadata().setContentType(contentType);
       object.setData(data);
-      return context.getApi().putObject(bucket, object).get(120, TimeUnit.SECONDS) != null;
+      return context.getApi().putObject(bucket, object) != null;
    }
 
    private S3Object newObject(String key) {
@@ -84,7 +83,7 @@ public abstract class BaseJCloudsPerformanceLiveTest extends BasePerformanceLive
       object.getMetadata().setContentType(contentType);
       object.setData(data);
       object.setContentLength(new Long(data.available()));
-      return context.getApi().putObject(bucket, object).get(120, TimeUnit.SECONDS) != null;
+      return context.getApi().putObject(bucket, object) != null;
    }
 
    @Override
@@ -93,6 +92,6 @@ public abstract class BaseJCloudsPerformanceLiveTest extends BasePerformanceLive
       S3Object object = newObject(key);
       object.getMetadata().setContentType(contentType);
       object.setData(data);
-      return context.getApi().putObject(bucket, object).get(120, TimeUnit.SECONDS) != null;
+      return context.getApi().putObject(bucket, object) != null;
    }
 }

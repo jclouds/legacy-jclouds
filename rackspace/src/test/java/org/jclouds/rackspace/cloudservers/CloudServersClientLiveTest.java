@@ -23,10 +23,10 @@
  */
 package org.jclouds.rackspace.cloudservers;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.rackspace.cloudservers.options.CreateServerOptions.Builder.withFile;
 import static org.jclouds.rackspace.cloudservers.options.CreateSharedIpGroupOptions.Builder.withServer;
 import static org.jclouds.rackspace.cloudservers.options.ListOptions.Builder.withDetails;
-import static org.jclouds.rackspace.cloudservers.options.RebuildServerOptions.Builder.withImage;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
@@ -39,32 +39,28 @@ import java.net.InetSocketAddress;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
-import org.jclouds.concurrent.WithinThreadExecutorService;
-import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rackspace.RackspacePropertiesBuilder;
-import org.jclouds.rackspace.cloudservers.domain.BackupSchedule;
-import org.jclouds.rackspace.cloudservers.domain.DailyBackup;
 import org.jclouds.rackspace.cloudservers.domain.Flavor;
 import org.jclouds.rackspace.cloudservers.domain.Image;
-import org.jclouds.rackspace.cloudservers.domain.ImageStatus;
-import org.jclouds.rackspace.cloudservers.domain.RebootType;
 import org.jclouds.rackspace.cloudservers.domain.Server;
 import org.jclouds.rackspace.cloudservers.domain.ServerStatus;
 import org.jclouds.rackspace.cloudservers.domain.SharedIpGroup;
-import org.jclouds.rackspace.cloudservers.domain.WeeklyBackup;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.util.Utils;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 /**
@@ -73,30 +69,30 @@ import com.google.inject.Injector;
  * @author Adrian Cole
  */
 // disabled [Web Hosting #129069
-@Test(groups = "live", enabled = false, sequential = true, testName = "cloudservers.CloudServersClientLiveTest")
+@Test(groups = "live", sequential = true, testName = "cloudservers.CloudServersClientLiveTest")
 public class CloudServersClientLiveTest {
 
-   protected CloudServersClient connection;
+   protected CloudServersClient client;
    protected SshClient.Factory sshFactory;
+   private RetryablePredicate<InetSocketAddress> socketTester;
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
-      String account = System.getProperty("jclouds.test.user");
-      String key = System.getProperty("jclouds.test.key");
-
-      connection = new CloudServersContextBuilder(new RackspacePropertiesBuilder(account, key)
-               .build()).withModules(new Log4JLoggingModule()).buildContext().getApi();
-
-      Injector injector = Guice.createInjector(new Log4JLoggingModule(), new JschSshClientModule(),
-               new ExecutorServiceModule(new WithinThreadExecutorService()));
-
+      String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
+      String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+      Injector injector = new CloudServersContextBuilder(new RackspacePropertiesBuilder(user,
+               password).build()).withModules(new Log4JLoggingModule(), new JschSshClientModule())
+               .buildInjector();
+      client = injector.getInstance(CloudServersClient.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
-
+      SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
+      socketTester = new RetryablePredicate<InetSocketAddress>(socketOpen, 120, 1, TimeUnit.SECONDS);
+      injector.injectMembers(socketOpen); // add logger
    }
 
    public void testListServers() throws Exception {
 
-      List<Server> response = connection.listServers();
+      List<Server> response = client.listServers();
       assert null != response;
       long initialContainerCount = response.size();
       assertTrue(initialContainerCount >= 0);
@@ -104,14 +100,14 @@ public class CloudServersClientLiveTest {
    }
 
    public void testListServersDetail() throws Exception {
-      List<Server> response = connection.listServers(withDetails());
+      List<Server> response = client.listServers(withDetails());
       assert null != response;
       long initialContainerCount = response.size();
       assertTrue(initialContainerCount >= 0);
    }
 
    public void testListImages() throws Exception {
-      List<Image> response = connection.listImages();
+      List<Image> response = client.listImages();
       assert null != response;
       long imageCount = response.size();
       assertTrue(imageCount >= 1);
@@ -123,55 +119,58 @@ public class CloudServersClientLiveTest {
    }
 
    public void testListImagesDetail() throws Exception {
-      List<Image> response = connection.listImages(withDetails());
+      List<Image> response = client.listImages(withDetails());
       assert null != response;
       long imageCount = response.size();
       assertTrue(imageCount >= 0);
       for (Image image : response) {
          assertTrue(image.getId() >= 1);
          assert null != image.getName() : image;
-         assert null != image.getCreated() : image;
-         assert null != image.getUpdated() : image;
-         assert null != image.getStatus() : image;
+         // bug in image id: 14362 assert null != image.getCreated() : image;
+         // bug in image id: 14362 assert null != image.getUpdated() : image;
+         // bug in image id: 14362 assert null != image.getStatus() : image;
       }
    }
 
    // Rackspace Web Hosting issue #118856
    public void testGetImagesDetail() throws Exception {
-      List<Image> response = connection.listImages(withDetails());
+      List<Image> response = client.listImages(withDetails());
       assert null != response;
       long imageCount = response.size();
       assertTrue(imageCount >= 0);
       for (Image image : response) {
-         Image newDetails = connection.getImage(image.getId());
-         assertEquals(image, newDetails);
+         Image newDetails = client.getImage(image.getId());
+         assertEquals(image.getId(), newDetails.getId());
+         assertEquals(image.getName(), newDetails.getName());
+         // don't check created,serverId, status or last updated! these can change during testing
       }
    }
 
    // Rackspace Web Hosting issue #118856
    public void testGetImageDetailsNotFound() throws Exception {
-      Image newDetails = connection.getImage(12312987);
+      Image newDetails = client.getImage(12312987);
       assertEquals(Image.NOT_FOUND, newDetails);
    }
 
    public void testGetServerDetailsNotFound() throws Exception {
-      Server newDetails = connection.getServer(12312987);
+      Server newDetails = client.getServer(12312987);
       assertEquals(Server.NOT_FOUND, newDetails);
    }
 
    public void testGetServersDetail() throws Exception {
-      List<Server> response = connection.listServers(withDetails());
+      List<Server> response = client.listServers(withDetails());
       assert null != response;
       long serverCount = response.size();
       assertTrue(serverCount >= 0);
       for (Server server : response) {
-         Server newDetails = connection.getServer(server.getId());
-         assertEquals(server, newDetails);
+         Server newDetails = client.getServer(server.getId());
+         assertEquals(newDetails.getId(), server.getId());
+         // other verifications might fail due to other testing
       }
    }
 
    public void testListFlavors() throws Exception {
-      List<Flavor> response = connection.listFlavors();
+      List<Flavor> response = client.listFlavors();
       assert null != response;
       long flavorCount = response.size();
       assertTrue(flavorCount >= 1);
@@ -183,7 +182,7 @@ public class CloudServersClientLiveTest {
    }
 
    public void testListFlavorsDetail() throws Exception {
-      List<Flavor> response = connection.listFlavors(withDetails());
+      List<Flavor> response = client.listFlavors(withDetails());
       assert null != response;
       long flavorCount = response.size();
       assertTrue(flavorCount >= 0);
@@ -196,23 +195,23 @@ public class CloudServersClientLiveTest {
    }
 
    public void testGetFlavorsDetail() throws Exception {
-      List<Flavor> response = connection.listFlavors(withDetails());
+      List<Flavor> response = client.listFlavors(withDetails());
       assert null != response;
       long flavorCount = response.size();
       assertTrue(flavorCount >= 0);
       for (Flavor flavor : response) {
-         Flavor newDetails = connection.getFlavor(flavor.getId());
+         Flavor newDetails = client.getFlavor(flavor.getId());
          assertEquals(flavor, newDetails);
       }
    }
 
    public void testGetFlavorDetailsNotFound() throws Exception {
-      Flavor newDetails = connection.getFlavor(12312987);
+      Flavor newDetails = client.getFlavor(12312987);
       assertEquals(Flavor.NOT_FOUND, newDetails);
    }
 
    public void testListSharedIpGroups() throws Exception {
-      List<SharedIpGroup> response = connection.listSharedIpGroups();
+      List<SharedIpGroup> response = client.listSharedIpGroups();
       assert null != response;
       long sharedIpGroupCount = response.size();
       assertTrue(sharedIpGroupCount >= 0);
@@ -224,7 +223,7 @@ public class CloudServersClientLiveTest {
    }
 
    public void testListSharedIpGroupsDetail() throws Exception {
-      List<SharedIpGroup> response = connection.listSharedIpGroups(withDetails());
+      List<SharedIpGroup> response = client.listSharedIpGroups(withDetails());
       assert null != response;
       long sharedIpGroupCount = response.size();
       assertTrue(sharedIpGroupCount >= 0);
@@ -236,29 +235,29 @@ public class CloudServersClientLiveTest {
    }
 
    public void testGetSharedIpGroupsDetail() throws Exception {
-      List<SharedIpGroup> response = connection.listSharedIpGroups(withDetails());
+      List<SharedIpGroup> response = client.listSharedIpGroups(withDetails());
       assert null != response;
       long sharedIpGroupCount = response.size();
       assertTrue(sharedIpGroupCount >= 0);
       for (SharedIpGroup sharedIpGroup : response) {
-         SharedIpGroup newDetails = connection.getSharedIpGroup(sharedIpGroup.getId());
+         SharedIpGroup newDetails = client.getSharedIpGroup(sharedIpGroup.getId());
          assertEquals(sharedIpGroup, newDetails);
       }
    }
 
    public void testGetSharedIpGroupDetailsNotFound() throws Exception {
-      SharedIpGroup newDetails = connection.getSharedIpGroup(12312987);
+      SharedIpGroup newDetails = client.getSharedIpGroup(12312987);
       assertEquals(SharedIpGroup.NOT_FOUND, newDetails);
    }
 
-   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateServer")
+   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testServerDetails")
    public void testCreateSharedIpGroup() throws Exception {
       SharedIpGroup sharedIpGroup = null;
       while (sharedIpGroup == null) {
          String sharedIpGroupName = serverPrefix + "createSharedIpGroup"
                   + new SecureRandom().nextInt();
          try {
-            sharedIpGroup = connection.createSharedIpGroup(sharedIpGroupName, withServer(serverId));
+            sharedIpGroup = client.createSharedIpGroup(sharedIpGroupName, withServer(serverId));
          } catch (UndeclaredThrowableException e) {
             HttpResponseException htpe = (HttpResponseException) e.getCause().getCause();
             if (htpe.getResponse().getStatusCode() == 400)
@@ -281,7 +280,6 @@ public class CloudServersClientLiveTest {
    private InetAddress ip;
    private int serverId2;
    private String adminPass2;
-   private int imageId;
 
    public void testCreateServer() throws Exception {
       int imageId = 2;
@@ -290,7 +288,8 @@ public class CloudServersClientLiveTest {
       while (server == null) {
          String serverName = serverPrefix + "createserver" + new SecureRandom().nextInt();
          try {
-            server = connection.createServer(serverName, imageId, flavorId, withFile(
+            System.out.printf("%d: running instance%n", System.currentTimeMillis());
+            server = client.createServer(serverName, imageId, flavorId, withFile(
                      "/etc/jclouds.txt", "rackspace".getBytes()).withMetadata(metadata));
          } catch (UndeclaredThrowableException e) {
             HttpResponseException htpe = (HttpResponseException) e.getCause().getCause();
@@ -309,44 +308,22 @@ public class CloudServersClientLiveTest {
 
    private void blockUntilServerActive(int serverId) throws InterruptedException {
       Server currentDetails = null;
-      for (currentDetails = connection.getServer(serverId); currentDetails.getStatus() != ServerStatus.ACTIVE; currentDetails = connection
+      for (currentDetails = client.getServer(serverId); currentDetails.getStatus() != ServerStatus.ACTIVE; currentDetails = client
                .getServer(serverId)) {
          System.out.printf("blocking on status active%n%s%n", currentDetails);
-         Thread.sleep(5 * 1000);
+         Thread.sleep(1 * 1000);
       }
-      /**
-       * [Web Hosting #119335]
-       */
-      System.out.printf("awaiting daemons to start %n%s%n", currentDetails);
-      Thread.sleep(10 * 1000);
-   }
-
-   private void blockUntilServerVerifyResize(int serverId) throws InterruptedException {
-      Server currentDetails = null;
-      for (currentDetails = connection.getServer(serverId); currentDetails.getStatus() != ServerStatus.VERIFY_RESIZE; currentDetails = connection
-               .getServer(serverId)) {
-         System.out.printf("blocking on status verify resize%n%s%n", currentDetails);
-         Thread.sleep(5 * 1000);
-      }
-      /**
-       * [Web Hosting #119335]
-       */
-      System.out.printf("awaiting daemons to  verify resize %n%s%n", currentDetails);
-      Thread.sleep(10 * 1000);
-   }
-
-   private void blockUntilImageActive(int imageId) throws InterruptedException {
-      Image currentDetails = null;
-      for (currentDetails = connection.getImage(imageId); currentDetails.getStatus() != ImageStatus.ACTIVE; currentDetails = connection
-               .getImage(imageId)) {
-         System.out.printf("blocking on status active%n%s%n", currentDetails);
-         Thread.sleep(5 * 1000);
-      }
+      System.out.printf("%d: %s awaiting ssh service to start%n", System.currentTimeMillis(),
+               currentDetails.getAddresses().getPublicAddresses().first());
+      assert socketTester.apply(new InetSocketAddress(currentDetails.getAddresses()
+               .getPublicAddresses().first(), 22));
+      System.out.printf("%d: %s ssh service started%n", System.currentTimeMillis(), currentDetails
+               .getAddresses().getPublicAddresses().first());
    }
 
    @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateServer")
    public void testServerDetails() throws Exception {
-      Server server = connection.getServer(serverId);
+      Server server = client.getServer(serverId);
 
       assertNotNull(server.getHostId());
       assertEquals(server.getStatus(), ServerStatus.ACTIVE);
@@ -355,12 +332,11 @@ public class CloudServersClientLiveTest {
       assertEquals(new Integer(1), server.getFlavorId());
       assertNotNull(server.getAddresses());
       // listAddresses tests..
-      assertEquals(connection.listAddresses(serverId), server.getAddresses());
+      assertEquals(client.listAddresses(serverId), server.getAddresses());
       assertEquals(server.getAddresses().getPublicAddresses().size(), 1);
-      assertEquals(connection.listPublicAddresses(serverId), server.getAddresses()
-               .getPublicAddresses());
+      assertEquals(client.listPublicAddresses(serverId), server.getAddresses().getPublicAddresses());
       assertEquals(server.getAddresses().getPrivateAddresses().size(), 1);
-      assertEquals(connection.listPrivateAddresses(serverId), server.getAddresses()
+      assertEquals(client.listPrivateAddresses(serverId), server.getAddresses()
                .getPrivateAddresses());
 
       // check metadata
@@ -386,7 +362,7 @@ public class CloudServersClientLiveTest {
 
    private void doCheckPass(Server newDetails, String pass) throws IOException {
       SshClient connection = sshFactory.create(new InetSocketAddress(newDetails.getAddresses()
-               .getPublicAddresses().get(0), 22), "root", pass);
+               .getPublicAddresses().first(), 22), "root", pass);
       try {
          connection.connect();
          InputStream etcPasswd = connection.get("/etc/jclouds.txt");
@@ -400,7 +376,7 @@ public class CloudServersClientLiveTest {
 
    private ExecResponse exec(Server details, String pass, String command) throws IOException {
       SshClient connection = sshFactory.create(new InetSocketAddress(details.getAddresses()
-               .getPublicAddresses().get(0), 22), "root", pass);
+               .getPublicAddresses().first(), 22), "root", pass);
       try {
          connection.connect();
          return connection.exec(command);
@@ -408,23 +384,6 @@ public class CloudServersClientLiveTest {
          if (connection != null)
             connection.disconnect();
       }
-   }
-
-   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateServer")
-   public void testRenameServer() throws Exception {
-      Server server = connection.getServer(serverId);
-      String oldName = server.getName();
-      assertTrue(connection.renameServer(serverId, oldName + "new"));
-      blockUntilServerActive(serverId);
-      assertEquals(oldName + "new", connection.getServer(serverId).getName());
-   }
-
-   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateServer")
-   public void testChangePassword() throws Exception {
-      assertTrue(connection.changeAdminPass(serverId, "elmo"));
-      blockUntilServerActive(serverId);
-      checkPassOk(connection.getServer(serverId), "elmo");
-      this.adminPass = "elmo";
    }
 
    @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateSharedIpGroup")
@@ -435,7 +394,7 @@ public class CloudServersClientLiveTest {
       while (server == null) {
          String serverName = serverPrefix + "createserver" + new SecureRandom().nextInt();
          try {
-            server = connection.createServer(serverName, imageId, flavorId, withFile(
+            server = client.createServer(serverName, imageId, flavorId, withFile(
                      "/etc/jclouds.txt", "rackspace".getBytes()).withMetadata(metadata)
                      .withSharedIpGroup(sharedIpGroupId).withSharedIp(ip));
          } catch (UndeclaredThrowableException e) {
@@ -467,16 +426,6 @@ public class CloudServersClientLiveTest {
       }
    }
 
-   // [Web Hosting #129069
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testCreateServerIp")
-   public void testUnshare() throws Exception {
-      connection.unshareIp(ip, serverId2);
-      blockUntilServerActive(serverId2);
-      Server server = connection.getServer(serverId2);
-      assert !server.getAddresses().getPublicAddresses().contains(ip) : server.getAddresses();
-      assertIpNotConfigured(server, adminPass2);
-   }
-
    private void assertIpNotConfigured(Server server, String password) {
       try {
          ExecResponse response = exec(server, password, "ifconfig -a");
@@ -489,108 +438,44 @@ public class CloudServersClientLiveTest {
       }
    }
 
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testUnshare")
+   @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testUnshare")
    public void testShareConfig() throws Exception {
-      connection.shareIp(ip, serverId2, sharedIpGroupId, true);
+      client.shareIp(ip, serverId2, sharedIpGroupId, true);
       blockUntilServerActive(serverId2);
-      Server server = connection.getServer(serverId2);
+      Server server = client.getServer(serverId2);
       assert server.getAddresses().getPublicAddresses().contains(ip) : server.getAddresses();
       assertIpConfigured(server, adminPass2);
-      testUnshare();
+      unshare();
    }
 
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testShareConfig")
+   @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testShareConfig")
    public void testShareNoConfig() throws Exception {
-      connection.shareIp(ip, serverId2, sharedIpGroupId, false);
+      client.shareIp(ip, serverId2, sharedIpGroupId, false);
       blockUntilServerActive(serverId2);
-      Server server = connection.getServer(serverId2);
+      Server server = client.getServer(serverId2);
       assert server.getAddresses().getPublicAddresses().contains(ip) : server.getAddresses();
       assertIpNotConfigured(server, adminPass2);
-      testUnshare();
+      unshare();
    }
 
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testShareNoConfig")
-   public void testBackup() throws Exception {
-      assertEquals(new BackupSchedule(), connection.listBackupSchedule(serverId));
-      BackupSchedule dailyWeekly = new BackupSchedule();
-      dailyWeekly.setEnabled(true);
-      dailyWeekly.setWeekly(WeeklyBackup.FRIDAY);
-      dailyWeekly.setDaily(DailyBackup.H_0400_0600);
-      assertEquals(true, connection.replaceBackupSchedule(serverId, dailyWeekly));
-      connection.deleteBackupSchedule(serverId);
-      // disables, doesn't delete: Web Hosting #119571
-      assertEquals(connection.listBackupSchedule(serverId).isEnabled(), false);
-   }
-
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testBackup")
-   public void testCreateImage() throws Exception {
-      Image image = connection.createImageFromServer("hoofie", serverId);
-      assertEquals("hoofie", image.getName());
-      assertEquals(new Integer(serverId), image.getServerId());
-      imageId = image.getId();
-      blockUntilImageActive(imageId);
-   }
-
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testCreateImage")
-   public void testRebuildServer() throws Exception {
-      assertTrue(connection.rebuildServer(serverId, withImage(imageId)));
-      blockUntilServerActive(serverId);
-      // issue Web Hosting #119580 imageId comes back incorrect after rebuild
-      // assertEquals(new Integer(imageId), connection.getServer(serverId).getImageId());
-   }
-
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebuildServer")
-   public void testRebootHard() throws Exception {
-      assertTrue(connection.rebootServer(serverId, RebootType.HARD));
-      blockUntilServerActive(serverId);
-   }
-
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebootHard")
-   public void testRebootSoft() throws Exception {
-      assertTrue(connection.rebootServer(serverId, RebootType.SOFT));
-      blockUntilServerActive(serverId);
-   }
-
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebootSoft")
-   public void testRevertResize() throws Exception {
-      assertTrue(connection.resizeServer(serverId, 2));
-      blockUntilServerVerifyResize(serverId);
-      assertTrue(connection.revertResizeServer(serverId));
-      blockUntilServerActive(serverId);
-      assertEquals(new Integer(1), connection.getServer(serverId).getFlavorId());
-   }
-
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebootSoft")
-   public void testConfirmResize() throws Exception {
-      assertTrue(connection.resizeServer(serverId2, 2));
-      blockUntilServerVerifyResize(serverId2);
-      assertTrue(connection.confirmResizeServer(serverId2));
+   private void unshare() throws Exception {
+      client.unshareIp(ip, serverId2);
       blockUntilServerActive(serverId2);
-      assertEquals(new Integer(2), connection.getServer(serverId2).getFlavorId());
+      Server server = client.getServer(serverId2);
+      assert !server.getAddresses().getPublicAddresses().contains(ip) : server.getAddresses();
+      assertIpNotConfigured(server, adminPass2);
    }
 
-   // must be last!. do not rely on positional order.
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = { "testRebootSoft", "testRevertResize",
-            "testConfirmResize" })
+   @AfterTest
    void deleteServers() {
       if (serverId > 0) {
-         connection.deleteServer(serverId);
-         Server server = connection.getServer(serverId);
-         assertEquals(server, Server.NOT_FOUND);
+         client.deleteServer(serverId);
       }
       if (serverId2 > 0) {
-         connection.deleteServer(serverId2);
-         Server server = connection.getServer(serverId2);
-         assertEquals(server, Server.NOT_FOUND);
+         client.deleteServer(serverId2);
       }
-   }
-
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = { "deleteServers" })
-   void testDeleteSharedIpGroup() {
       if (sharedIpGroupId > 0) {
-         connection.deleteSharedIpGroup(sharedIpGroupId);
-         SharedIpGroup server = connection.getSharedIpGroup(sharedIpGroupId);
-         assertEquals(server, SharedIpGroup.NOT_FOUND);
+         client.deleteSharedIpGroup(sharedIpGroupId);
       }
    }
 }

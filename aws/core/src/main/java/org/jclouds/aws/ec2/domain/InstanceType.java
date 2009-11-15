@@ -2,16 +2,16 @@ package org.jclouds.aws.ec2.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.aws.ec2.EC2Client;
+import org.jclouds.aws.ec2.EC2AsyncClient;
 
 /**
  * 
  * The type of the instance. Description accurate as of 8-15-2009 release.
  * 
  * @author Adrian Cole
- * @see EC2Client#describeInstances
- * @see EC2Client#runInstances
- * @see EC2Client#terminateInstances
+ * @see EC2AsyncClient#describeInstances
+ * @see EC2AsyncClient#runInstances
+ * @see EC2AsyncClient#terminateInstances
  * 
  */
 public enum InstanceType {

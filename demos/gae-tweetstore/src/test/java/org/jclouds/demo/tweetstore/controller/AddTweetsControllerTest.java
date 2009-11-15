@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
@@ -51,17 +52,18 @@ import com.google.common.collect.ImmutableSet;
 @Test(groups = "unit", testName = "tweetstore.AddTweetsControllerTest")
 public class AddTweetsControllerTest {
 
-   Map<String, BlobStoreContext<?>> createServices(String container) throws InterruptedException,
-            ExecutionException {
-      Map<String, BlobStoreContext<?>> services = Maps.newHashMap();
+   Map<String, BlobStoreContext<?, ?>> createServices(String container)
+            throws InterruptedException, ExecutionException {
+      Map<String, BlobStoreContext<?, ?>> services = Maps.newHashMap();
       for (String name : new String[] { "1", "2" }) {
-         BlobStoreContext<BlobStore> context = new StubBlobStoreContextBuilder().buildContext();
-         context.getBlobStore().createContainer(container).get();
-         Blob blob = context.getBlobStore().newBlob();
+         BlobStoreContext<AsyncBlobStore, BlobStore> context = new StubBlobStoreContextBuilder()
+                  .buildContext();
+         context.getAsyncBlobStore().createContainer(container).get();
+         Blob blob = context.getAsyncBlobStore().newBlob();
          blob.getMetadata().setName("1");
          blob.getMetadata().getUserMetadata().put(TweetStoreConstants.SENDER_NAME, "frank");
          blob.setData("I love beans!");
-         context.getBlobStore().putBlob(container, blob).get();
+         context.getAsyncBlobStore().putBlob(container, blob).get();
          services.put(name, context);
       }
       return services;
@@ -69,7 +71,7 @@ public class AddTweetsControllerTest {
 
    public void testStoreTweets() throws IOException, InterruptedException, ExecutionException {
       String container = "container";
-      Map<String, BlobStoreContext<?>> contexts = createServices(container);
+      Map<String, BlobStoreContext<?, ?>> contexts = createServices(container);
 
       ServiceToStoredTweetStatuses function = new ServiceToStoredTweetStatuses(contexts, container);
       AddTweetsController controller = new AddTweetsController(contexts, function);

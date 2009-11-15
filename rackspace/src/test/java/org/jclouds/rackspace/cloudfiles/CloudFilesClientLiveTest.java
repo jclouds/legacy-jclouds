@@ -36,7 +36,6 @@ import java.net.URI;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.io.IOUtils;
@@ -67,14 +66,15 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  */
 @Test(groups = "live", testName = "cloudfiles.CloudFilesClientLiveTest")
-public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest<CloudFilesClient> {
+public class CloudFilesClientLiveTest extends
+         BaseBlobStoreIntegrationTest<CloudFilesAsyncClient, CloudFilesClient> {
 
    /**
     * this method overrides containerName to ensure it isn't found
     */
    @Test(groups = { "integration", "live" })
    public void deleteContainerIfEmptyNotFound() throws Exception {
-      assert context.getApi().deleteContainerIfEmpty("dbienf").get(10, TimeUnit.SECONDS);
+      assert context.getApi().deleteContainerIfEmpty("dbienf");
    }
 
    @Test
@@ -180,8 +180,7 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest<Cloud
    public void testListOwnedContainers() throws Exception {
       String containerPrefix = getContainerName();
       try {
-         SortedSet<ContainerMetadata> response = context.getApi().listContainers().get(10,
-                  TimeUnit.SECONDS);
+         SortedSet<ContainerMetadata> response = context.getApi().listContainers();
          assertNotNull(response);
          long initialContainerCount = response.size();
          assertTrue(initialContainerCount >= 0);
@@ -189,11 +188,11 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest<Cloud
          // Create test containers
          String[] containerJsr330 = new String[] { containerPrefix + ".testListOwnedContainers1",
                   containerPrefix + ".testListOwnedContainers2" };
-         assertTrue(context.getApi().createContainer(containerJsr330[0]).get(10, TimeUnit.SECONDS));
-         assertTrue(context.getApi().createContainer(containerJsr330[1]).get(10, TimeUnit.SECONDS));
+         assertTrue(context.getApi().createContainer(containerJsr330[0]));
+         assertTrue(context.getApi().createContainer(containerJsr330[1]));
 
          // Test default listing
-         response = context.getApi().listContainers().get(10, TimeUnit.SECONDS);
+         response = context.getApi().listContainers();
          // assertEquals(response.size(), initialContainerCount + 2);// if the containers already
          // exist, this will fail
 
@@ -201,22 +200,19 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest<Cloud
          response = context.getApi().listContainers(
                   ListContainerOptions.Builder.afterMarker(
                            containerJsr330[0].substring(0, containerJsr330[0].length() - 1))
-                           .maxResults(1)).get(10, TimeUnit.SECONDS);
+                           .maxResults(1));
          assertEquals(response.size(), 1);
          assertEquals(response.first().getName(), containerJsr330[0]);
 
          response = context.getApi().listContainers(
-                  ListContainerOptions.Builder.afterMarker(containerJsr330[0]).maxResults(1)).get(
-                  10, TimeUnit.SECONDS);
+                  ListContainerOptions.Builder.afterMarker(containerJsr330[0]).maxResults(1));
          assertEquals(response.size(), 1);
          assertEquals(response.first().getName(), containerJsr330[1]);
 
          // Cleanup and test containers have been removed
-         assertTrue(context.getApi().deleteContainerIfEmpty(containerJsr330[0]).get(10,
-                  TimeUnit.SECONDS));
-         assertTrue(context.getApi().deleteContainerIfEmpty(containerJsr330[1]).get(10,
-                  TimeUnit.SECONDS));
-         response = context.getApi().listContainers().get(10, TimeUnit.SECONDS);
+         assertTrue(context.getApi().deleteContainerIfEmpty(containerJsr330[0]));
+         assertTrue(context.getApi().deleteContainerIfEmpty(containerJsr330[1]));
+         response = context.getApi().listContainers();
          // assertEquals(response.size(), initialContainerCount + 2);// if the containers already
          // exist, this will fail
       } finally {
@@ -233,14 +229,13 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest<Cloud
          assertNotNull(metadata);
          long initialContainerCount = metadata.getContainerCount();
 
-         assertTrue(context.getApi().createContainer(containerName).get(10, TimeUnit.SECONDS));
+         assertTrue(context.getApi().createContainer(containerName));
 
          metadata = context.getApi().getAccountStatistics();
          assertNotNull(metadata);
          assertTrue(metadata.getContainerCount() >= initialContainerCount);
 
-         assertTrue(context.getApi().deleteContainerIfEmpty(containerName)
-                  .get(10, TimeUnit.SECONDS));
+         assertTrue(context.getApi().deleteContainerIfEmpty(containerName));
       } finally {
          returnContainer(containerPrefix);
       }
@@ -251,34 +246,26 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest<Cloud
       String containerName = getContainerName();
       try {
          String containerName1 = containerName + ".hello";
-         assertTrue(context.getApi().createContainer(containerName1).get(10, TimeUnit.SECONDS));
+         assertTrue(context.getApi().createContainer(containerName1));
          // List only the container just created, using a marker with the container name less 1 char
          SortedSet<ContainerMetadata> response = context.getApi().listContainers(
                   ListContainerOptions.Builder.afterMarker(
-                           containerName1.substring(0, containerName1.length() - 1)).maxResults(1))
-                  .get(10, TimeUnit.SECONDS);
+                           containerName1.substring(0, containerName1.length() - 1)).maxResults(1));
          assertNotNull(response);
          assertEquals(response.size(), 1);
          assertEquals(response.first().getName(), containerName + ".hello");
 
          String containerName2 = containerName + "?should-be-illegal-question-char";
-         try {
-            context.getApi().createContainer(containerName2).get(10, TimeUnit.MILLISECONDS);
-            fail("Should not be able to create container with illegal '?' character");
-         } catch (Exception e) {
-         }
+         assert context.getApi().createContainer(containerName2);
 
          // TODO: Should throw a specific exception, not UndeclaredThrowableException
          try {
-            context.getApi().createContainer(containerName + "/illegal-slash-char").get(10,
-                     TimeUnit.MILLISECONDS);
+            context.getApi().createContainer(containerName + "/illegal-slash-char");
             fail("Should not be able to create container with illegal '/' character");
          } catch (Exception e) {
          }
-         assertTrue(context.getApi().deleteContainerIfEmpty(containerName1).get(10,
-                  TimeUnit.SECONDS));
-         assertTrue(context.getApi().deleteContainerIfEmpty(containerName2).get(10,
-                  TimeUnit.SECONDS));
+         assertTrue(context.getApi().deleteContainerIfEmpty(containerName1));
+         assertTrue(context.getApi().deleteContainerIfEmpty(containerName2));
       } finally {
          returnContainer(containerName);
       }
@@ -291,18 +278,15 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest<Cloud
 
          String data = "foo";
 
-         context.getApi().putObject(containerName, newCFObject(data, "foo")).get(10,
-                  TimeUnit.SECONDS);
-         context.getApi().putObject(containerName, newCFObject(data, "path/bar")).get(10,
-                  TimeUnit.SECONDS);
+         context.getApi().putObject(containerName, newCFObject(data, "foo"));
+         context.getApi().putObject(containerName, newCFObject(data, "path/bar"));
 
          ListResponse<ObjectInfo> container = context.getApi().listObjects(containerName,
-                  underPath("")).get(10, TimeUnit.SECONDS);
+                  underPath(""));
          assert !container.isTruncated();
          assertEquals(container.size(), 1);
          assertEquals(container.first().getName(), "foo");
-         container = context.getApi().listObjects(containerName, underPath("path")).get(10,
-                  TimeUnit.SECONDS);
+         container = context.getApi().listObjects(containerName, underPath("path"));
          assert !container.isTruncated();
          assertEquals(container.size(), 1);
          assertEquals(container.first().getName(), "path/bar");
@@ -321,8 +305,7 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest<Cloud
          String key = "object";
          CFObject object = newCFObject(data, key);
          byte[] md5 = object.getInfo().getHash();
-         String newEtag = context.getApi().putObject(containerName, object).get(10,
-                  TimeUnit.SECONDS);
+         String newEtag = context.getApi().putObject(containerName, object);
          assertEquals(HttpUtils.toHexString(md5), HttpUtils.toHexString(object.getInfo().getHash()));
 
          // Test HEAD of missing object
@@ -352,14 +335,12 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest<Cloud
 
          // Test GET of missing object
          try {
-            context.getApi().getObject(containerName, "non-existent-object").get(10,
-                     TimeUnit.SECONDS);
+            context.getApi().getObject(containerName, "non-existent-object");
             assert false;
          } catch (KeyNotFoundException e) {
          }
          // Test GET of object (including updated metadata)
-         CFObject getBlob = context.getApi().getObject(containerName, object.getInfo().getName())
-                  .get(120, TimeUnit.SECONDS);
+         CFObject getBlob = context.getApi().getObject(containerName, object.getInfo().getName());
          assertEquals(IOUtils.toString((InputStream) getBlob.getData()), data);
          // TODO assertEquals(getBlob.getName(), object.getMetadata().getName());
          assertEquals(getBlob.getContentLength(), new Long(data.length()));
@@ -376,10 +357,9 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest<Cloud
          String incorrectEtag = "0" + correctEtag.substring(1);
          object.getInfo().setHash(HttpUtils.fromHexString(incorrectEtag));
          try {
-            context.getApi().putObject(containerName, object).get(10, TimeUnit.SECONDS);
-         } catch (Throwable e) {
-            assertEquals(e.getCause().getClass(), HttpResponseException.class);
-            assertEquals(((HttpResponseException) e.getCause()).getResponse().getStatusCode(), 422);
+            context.getApi().putObject(containerName, object);
+         } catch (HttpResponseException e) {
+            assertEquals(e.getResponse().getStatusCode(), 422);
          }
 
          // Test PUT chunked/streamed upload with data of "unknown" length
@@ -387,7 +367,7 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest<Cloud
          CFObject blob = context.getApi().newCFObject();
          blob.getInfo().setName("chunked-object");
          blob.setData(bais);
-         newEtag = context.getApi().putObject(containerName, blob).get(10, TimeUnit.SECONDS);
+         newEtag = context.getApi().putObject(containerName, blob);
          assertEquals(HttpUtils.toHexString(md5), HttpUtils
                   .toHexString(getBlob.getInfo().getHash()));
 
@@ -395,18 +375,17 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest<Cloud
          // Non-matching ETag
          try {
             context.getApi().getObject(containerName, object.getInfo().getName(),
-                     GetOptions.Builder.ifETagDoesntMatch(newEtag)).get(120, TimeUnit.SECONDS);
-         } catch (Exception e) {
-            assertEquals(e.getCause().getClass(), HttpResponseException.class);
-            assertEquals(((HttpResponseException) e.getCause()).getResponse().getStatusCode(), 304);
+                     GetOptions.Builder.ifETagDoesntMatch(newEtag));
+         } catch (HttpResponseException e) {
+            assertEquals(e.getResponse().getStatusCode(), 304);
          }
 
          // Matching ETag
          getBlob = context.getApi().getObject(containerName, object.getInfo().getName(),
-                  GetOptions.Builder.ifETagMatches(newEtag)).get(120, TimeUnit.SECONDS);
+                  GetOptions.Builder.ifETagMatches(newEtag));
          assertEquals(getBlob.getInfo().getHash(), HttpUtils.fromHexString(newEtag));
          getBlob = context.getApi().getObject(containerName, object.getInfo().getName(),
-                  GetOptions.Builder.startAt(8)).get(120, TimeUnit.SECONDS);
+                  GetOptions.Builder.startAt(8));
          assertEquals(IOUtils.toString((InputStream) getBlob.getData()), data.substring(8));
 
       } finally {

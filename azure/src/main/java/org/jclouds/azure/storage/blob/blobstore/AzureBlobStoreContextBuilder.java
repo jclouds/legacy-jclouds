@@ -34,6 +34,7 @@ import java.util.Properties;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 
+import org.jclouds.azure.storage.blob.AzureBlobAsyncClient;
 import org.jclouds.azure.storage.blob.AzureBlobClient;
 import org.jclouds.azure.storage.blob.blobstore.config.AzureBlobStoreContextModule;
 import org.jclouds.azure.storage.blob.config.AzureBlobRestClientModule;
@@ -59,10 +60,12 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole, Andrew Newdigate
  * @see AzureBlobStoreContext
  */
-public class AzureBlobStoreContextBuilder extends BlobStoreContextBuilder<AzureBlobClient> {
+public class AzureBlobStoreContextBuilder extends
+         BlobStoreContextBuilder<AzureBlobAsyncClient, AzureBlobClient> {
 
    public AzureBlobStoreContextBuilder(Properties props) {
-      super(new TypeLiteral<AzureBlobClient>() {
+      super(new TypeLiteral<AzureBlobAsyncClient>() {
+      }, new TypeLiteral<AzureBlobClient>() {
       }, convert(props));
    }
 

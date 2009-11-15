@@ -26,7 +26,6 @@ package org.jclouds.azure.storage.queue;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-import java.lang.reflect.UndeclaredThrowableException;
 import java.security.SecureRandom;
 
 import org.jclouds.azure.storage.domain.BoundedSortedSet;
@@ -84,13 +83,12 @@ public class AzureQueueClientLiveTest {
          try {
             created = connection.createQueue(privateQueue, CreateOptions.Builder
                      .withMetadata(ImmutableMultimap.of("foo", "bar")));
-         } catch (UndeclaredThrowableException e) {
-            if (e.getCause().getCause() instanceof HttpResponseException) {
-               HttpResponseException htpe = (HttpResponseException) e.getCause().getCause();
-               if (htpe.getResponse().getStatusCode() == 409)
-                  continue;
+         } catch (HttpResponseException htpe) {
+            if (htpe.getResponse().getStatusCode() == 409) {
+               continue;
+            } else {
+               throw htpe;
             }
-            throw e;
          }
       }
       BoundedSortedSet<QueueMetadata> response = connection.listQueues();

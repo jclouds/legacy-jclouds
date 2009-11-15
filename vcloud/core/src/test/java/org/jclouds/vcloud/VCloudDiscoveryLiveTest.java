@@ -75,9 +75,11 @@ public class VCloudDiscoveryLiveTest {
       @SuppressWarnings( { "unused" })
       @Provides
       @Singleton
-      RestContext<VCloudDiscovery> provideContext(Closer closer, VCloudDiscovery api,
-               @VCloud URI endPoint, @Named(VCloudConstants.PROPERTY_VCLOUD_USER) String account) {
-         return new RestContextImpl<VCloudDiscovery>(closer, api, endPoint, account);
+      RestContext<VCloudDiscovery, VCloudDiscovery> provideContext(Closer closer,
+               VCloudDiscovery api, @VCloud URI endPoint,
+               @Named(VCloudConstants.PROPERTY_VCLOUD_USER) String account) {
+         return new RestContextImpl<VCloudDiscovery, VCloudDiscovery>(closer, api, api, endPoint,
+                  account);
       }
 
       @Override
@@ -86,11 +88,11 @@ public class VCloudDiscoveryLiveTest {
       }
    }
 
-   private RestContext<VCloudDiscovery> context;
+   private RestContext<VCloudDiscovery, VCloudDiscovery> context;
 
    @Test
    public void testOrganization() throws Exception {
-      Organization response = context.getApi().getOrganization().get(45, TimeUnit.SECONDS);
+      Organization response = context.getAsyncApi().getOrganization().get(45, TimeUnit.SECONDS);
       assertNotNull(response);
       assertNotNull(account);
       assertNotNull(response.getCatalog());
@@ -100,8 +102,10 @@ public class VCloudDiscoveryLiveTest {
 
    @BeforeClass
    void setupFactory() {
-      context = new RestContextBuilder<VCloudDiscovery>(new TypeLiteral<VCloudDiscovery>() {
-      }, new Properties()) {
+      context = new RestContextBuilder<VCloudDiscovery, VCloudDiscovery>(
+               new TypeLiteral<VCloudDiscovery>() {
+               }, new TypeLiteral<VCloudDiscovery>() {
+               }, new Properties()) {
 
          public void addContextModule(List<Module> modules) {
 

@@ -69,7 +69,9 @@ public class ParseServerFromJsonResponseTest {
                InetAddress.getByName("67.23.10.131"));
       List<InetAddress> privateAddresses = Lists
                .newArrayList(InetAddress.getByName("10.176.42.16"));
-      Addresses addresses1 = new Addresses(publicAddresses, privateAddresses);
+      Addresses addresses1 = new Addresses();
+      addresses1.getPrivateAddresses().addAll(privateAddresses);
+      addresses1.getPublicAddresses().addAll(publicAddresses);
       assertEquals(response.getAddresses(), addresses1);
       assertEquals(response.getMetadata(), ImmutableMap.of("Server Label", "Web Head 1",
                "Image Version", "2.1"));

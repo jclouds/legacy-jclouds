@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
@@ -76,8 +77,16 @@ public abstract class BaseJettyTest {
       @SuppressWarnings("unused")
       @Provides
       @Singleton
-      public IntegrationTestClient provideClient(RestClientFactory factory) {
-         return factory.create(IntegrationTestClient.class);
+      public IntegrationTestAsyncClient provideAsyncClient(RestClientFactory factory) {
+         return factory.create(IntegrationTestAsyncClient.class);
+      }
+
+      @SuppressWarnings("unused")
+      @Provides
+      @Singleton
+      public IntegrationTestClient provideClient(IntegrationTestAsyncClient client)
+               throws IllegalArgumentException, SecurityException, NoSuchMethodException {
+         return SyncProxy.create(IntegrationTestClient.class, client);
       }
    }
 
@@ -100,9 +109,11 @@ public abstract class BaseJettyTest {
       @SuppressWarnings( { "unchecked", "unused" })
       @Provides
       @Singleton
-      RestContext<IntegrationTestClient> provideContext(Closer closer,
-               IntegrationTestClient client, @Localhost URI endPoint) {
-         return new RestContextImpl(closer, client, endPoint, System.getProperty("user.name"));
+      RestContext<IntegrationTestAsyncClient, IntegrationTestClient> provideContext(Closer closer,
+               IntegrationTestAsyncClient aclient, IntegrationTestClient client,
+               @Localhost URI endPoint) {
+         return new RestContextImpl(closer, aclient, client, endPoint, System
+                  .getProperty("user.name"));
       }
    }
 
@@ -114,7 +125,7 @@ public abstract class BaseJettyTest {
    protected Injector injector;
    private AtomicInteger cycle = new AtomicInteger(0);
    private Server server2;
-   private RestContext<IntegrationTestClient> context;
+   private RestContext<IntegrationTestAsyncClient, IntegrationTestClient> context;
    private int testPort;
    static final Pattern actionPattern = Pattern.compile("/objects/(.*)/action/([a-z]*);?(.*)");
 
@@ -203,8 +214,9 @@ public abstract class BaseJettyTest {
 
       final Properties properties = new Properties();
       addConnectionProperties(properties);
-      context = new RestContextBuilder<IntegrationTestClient>(
-               new TypeLiteral<IntegrationTestClient>() {
+      context = new RestContextBuilder<IntegrationTestAsyncClient, IntegrationTestClient>(
+               new TypeLiteral<IntegrationTestAsyncClient>() {
+               }, new TypeLiteral<IntegrationTestClient>() {
                }, properties) {
 
          @Override

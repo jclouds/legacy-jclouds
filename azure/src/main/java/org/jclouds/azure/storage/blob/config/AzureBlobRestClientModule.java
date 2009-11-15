@@ -29,10 +29,12 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.azure.storage.AzureBlob;
+import org.jclouds.azure.storage.blob.AzureBlobAsyncClient;
 import org.jclouds.azure.storage.blob.AzureBlobClient;
 import org.jclouds.azure.storage.blob.handlers.AzureBlobClientErrorRetryHandler;
 import org.jclouds.azure.storage.blob.reference.AzureBlobConstants;
 import org.jclouds.azure.storage.config.AzureStorageRestClientModule;
+import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
@@ -60,8 +62,15 @@ public class AzureBlobRestClientModule extends AzureStorageRestClientModule {
 
    @Provides
    @Singleton
-   protected AzureBlobClient provideAzureStorageClient(RestClientFactory factory) {
-      return factory.create(AzureBlobClient.class);
+   protected AzureBlobAsyncClient provideAsyncClient(RestClientFactory factory) {
+      return factory.create(AzureBlobAsyncClient.class);
+   }
+
+   @Provides
+   @Singleton
+   public AzureBlobClient provideClient(AzureBlobAsyncClient client)
+            throws IllegalArgumentException, SecurityException, NoSuchMethodException {
+      return SyncProxy.create(AzureBlobClient.class, client);
    }
 
    @Override

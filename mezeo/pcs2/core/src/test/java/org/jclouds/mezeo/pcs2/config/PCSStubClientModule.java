@@ -27,14 +27,19 @@ import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.inject.Singleton;
+
+import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.mezeo.pcs2.PCS;
+import org.jclouds.mezeo.pcs2.PCSAsyncClient;
 import org.jclouds.mezeo.pcs2.PCSClient;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
 import org.jclouds.mezeo.pcs2.endpoints.RootContainer;
-import org.jclouds.mezeo.pcs2.internal.PCSStubClient;
+import org.jclouds.mezeo.pcs2.internal.StubPCSAsyncClient;
 import org.jclouds.rest.ConfiguresRestClient;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -50,9 +55,16 @@ public class PCSStubClientModule extends AbstractModule {
    protected void configure() {
       bind(new TypeLiteral<Map<String, Map<String, PCSFile>>>() {
       }).toInstance(map);
-      bind(PCSClient.class).to(PCSStubClient.class).asEagerSingleton();
+      bind(PCSAsyncClient.class).to(StubPCSAsyncClient.class).asEagerSingleton();
       bind(URI.class).annotatedWith(PCS.class).toInstance(URI.create("https://localhost/pcsblob"));
       bind(URI.class).annotatedWith(RootContainer.class).toInstance(
                URI.create("http://localhost/root"));
+   }
+
+   @Provides
+   @Singleton
+   public PCSClient provideClient(PCSAsyncClient client) throws IllegalArgumentException,
+            SecurityException, NoSuchMethodException {
+      return SyncProxy.create(PCSClient.class, client);
    }
 }

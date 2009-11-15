@@ -26,7 +26,7 @@ package org.jclouds.blobstore.config;
 import javax.inject.Inject;
 
 import org.jclouds.blobstore.BlobMap;
-import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.internal.BlobMapImpl;
@@ -60,7 +60,7 @@ public class BlobStoreMapModule extends AbstractModule {
 
    private static class BlobMapFactory implements BlobMap.Factory {
       @Inject
-      BlobStore connection;
+      AsyncBlobStore connection;
       @Inject
       GetBlobsInListStrategy getAllBlobs;
       @Inject
@@ -81,7 +81,7 @@ public class BlobStoreMapModule extends AbstractModule {
 
    private static class InputStreamMapFactory implements InputStreamMap.Factory {
       @Inject
-      BlobStore connection;
+      AsyncBlobStore connection;
       @Inject
       Blob.Factory blobFactory;
       @Inject

@@ -41,10 +41,11 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-public class EC2ContextBuilder extends RestContextBuilder<EC2Client> {
+public class EC2ContextBuilder extends RestContextBuilder<EC2AsyncClient, EC2Client> {
 
    public EC2ContextBuilder(Properties props) {
-      super(new TypeLiteral<EC2Client>() {
+      super(new TypeLiteral<EC2AsyncClient>() {
+      }, new TypeLiteral<EC2Client>() {
       }, props);
       checkNotNull(properties.getProperty(PROPERTY_AWS_ACCESSKEYID));
       checkNotNull(properties.getProperty(PROPERTY_AWS_SECRETACCESSKEY));

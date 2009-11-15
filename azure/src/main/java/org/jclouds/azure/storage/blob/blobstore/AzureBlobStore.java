@@ -23,16 +23,14 @@
  */
 package org.jclouds.azure.storage.blob.blobstore;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
 
 import java.util.SortedSet;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 
+import org.jclouds.azure.storage.blob.AzureBlobAsyncClient;
 import org.jclouds.azure.storage.blob.AzureBlobClient;
 import org.jclouds.azure.storage.blob.blobstore.functions.AzureBlobToBlob;
 import org.jclouds.azure.storage.blob.blobstore.functions.BlobPropertiesToBlobMetadata;
@@ -40,45 +38,30 @@ import org.jclouds.azure.storage.blob.blobstore.functions.BlobToAzureBlob;
 import org.jclouds.azure.storage.blob.blobstore.functions.ContainerToResourceMetadata;
 import org.jclouds.azure.storage.blob.blobstore.functions.ListBlobsResponseToResourceList;
 import org.jclouds.azure.storage.blob.blobstore.functions.ListOptionsToListBlobsOptions;
-import org.jclouds.azure.storage.blob.domain.AzureBlob;
-import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
+import org.jclouds.azure.storage.blob.blobstore.internal.BaseAzureBlobStore;
 import org.jclouds.azure.storage.blob.domain.ListableContainerProperties;
 import org.jclouds.azure.storage.blob.options.ListBlobsOptions;
 import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.attr.ConsistencyModel;
-import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ListContainerResponse;
+import org.jclouds.blobstore.domain.ListResponse;
 import org.jclouds.blobstore.domain.ResourceMetadata;
+import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.blobstore.domain.internal.ListResponseImpl;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
-import org.jclouds.concurrent.FutureFunctionWrapper;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.logging.Logger.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
-@ConsistencyModel(ConsistencyModels.STRICT)
-public class AzureBlobStore implements BlobStore {
-   private final AzureBlobClient connection;
-   private final Blob.Factory blobFactory;
-   private final LoggerFactory logFactory;
-   private final ClearListStrategy clearContainerStrategy;
-   private final BlobPropertiesToBlobMetadata object2BlobMd;
-   private final AzureBlobToBlob object2Blob;
-   private final BlobToAzureBlob blob2Object;
-   private final ListOptionsToListBlobsOptions container2ContainerListOptions;
-   private final BlobToHttpGetOptions blob2ObjectGetOptions;
-   private final ContainerToResourceMetadata container2ResourceMd;
-   private final ListBlobsResponseToResourceList container2ResourceList;
-   private final ExecutorService service;
+public class AzureBlobStore extends BaseAzureBlobStore implements BlobStore {
 
    @Inject
-   private AzureBlobStore(AzureBlobClient connection, Blob.Factory blobFactory,
+   public AzureBlobStore(AzureBlobAsyncClient async, AzureBlobClient sync, Factory blobFactory,
             LoggerFactory logFactory, ClearListStrategy clearContainerStrategy,
             BlobPropertiesToBlobMetadata object2BlobMd, AzureBlobToBlob object2Blob,
             BlobToAzureBlob blob2Object,
@@ -86,93 +69,62 @@ public class AzureBlobStore implements BlobStore {
             BlobToHttpGetOptions blob2ObjectGetOptions,
             ContainerToResourceMetadata container2ResourceMd,
             ListBlobsResponseToResourceList container2ResourceList, ExecutorService service) {
-      this.connection = checkNotNull(connection, "connection");
-      this.blobFactory = checkNotNull(blobFactory, "blobFactory");
-      this.logFactory = checkNotNull(logFactory, "logFactory");
-      this.clearContainerStrategy = checkNotNull(clearContainerStrategy, "clearContainerStrategy");
-      this.object2BlobMd = checkNotNull(object2BlobMd, "object2BlobMd");
-      this.object2Blob = checkNotNull(object2Blob, "object2Blob");
-      this.blob2Object = checkNotNull(blob2Object, "blob2Object");
-      this.container2ContainerListOptions = checkNotNull(container2ContainerListOptions,
-               "container2ContainerListOptions");
-      this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
-      this.container2ResourceMd = checkNotNull(container2ResourceMd, "container2ResourceMd");
-      this.container2ResourceList = checkNotNull(container2ResourceList, "container2ResourceList");
-      this.service = checkNotNull(service, "service");
-   }
-
-   protected <F, T> Future<T> wrapFuture(Future<? extends F> future, Function<F, T> function) {
-      return new FutureFunctionWrapper<F, T>(future, function, logFactory.getLogger(function
-               .getClass().getName()));
+      super(async, sync, blobFactory, logFactory, clearContainerStrategy, object2BlobMd,
+               object2Blob, blob2Object, container2ContainerListOptions, blob2ObjectGetOptions,
+               container2ResourceMd, container2ResourceList, service);
    }
 
    /**
     * This implementation uses the AzureBlob HEAD Object command to return the result
     */
    public BlobMetadata blobMetadata(String container, String key) {
-      return object2BlobMd.apply(connection.getBlobProperties(container, key));
+      return object2BlobMd.apply(sync.getBlobProperties(container, key));
    }
 
-   public Future<Void> clearContainer(final String container) {
-      return service.submit(new Callable<Void>() {
-
-         public Void call() throws Exception {
-            clearContainerStrategy.execute(container, recursive());
-            return null;
-         }
-
-      });
+   public void clearContainer(final String container) {
+      clearContainerStrategy.execute(container, recursive());
    }
 
-   public Future<Boolean> createContainer(String container) {
-      return connection.createContainer(container);
+   public boolean createContainer(String container) {
+      return sync.createContainer(container);
    }
 
-   public Future<Void> deleteContainer(final String container) {
-      return connection.deleteContainer(container);
-
+   public void deleteContainer(final String container) {
+      sync.deleteContainer(container);
    }
 
    public boolean exists(String container) {
-      return connection.containerExists(container);
+      return sync.containerExists(container);
    }
 
-   public Future<Blob> getBlob(String container, String key,
+   public Blob getBlob(String container, String key,
             org.jclouds.blobstore.options.GetOptions... optionsList) {
       GetOptions httpOptions = blob2ObjectGetOptions.apply(optionsList);
-      Future<AzureBlob> returnVal = connection.getBlob(container, key, httpOptions);
-      return wrapFuture(returnVal, object2Blob);
+      return object2Blob.apply(sync.getBlob(container, key, httpOptions));
    }
 
-   public Future<? extends org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata>> list() {
-      return wrapFuture(
-               connection.listContainers(),
-               new Function<SortedSet<ListableContainerProperties>, org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata>>() {
-                  public org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata> apply(
-                           SortedSet<ListableContainerProperties> from) {
-                     return new ListResponseImpl<ResourceMetadata>(Iterables.transform(from,
-                              container2ResourceMd), null, null, false);
-                  }
-               });
+   public ListResponse<? extends ResourceMetadata> list() {
+      return new Function<SortedSet<ListableContainerProperties>, org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata>>() {
+         public org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata> apply(
+                  SortedSet<ListableContainerProperties> from) {
+            return new ListResponseImpl<ResourceMetadata>(Iterables.transform(from,
+                     container2ResourceMd), null, null, false);
+         }
+      }.apply(sync.listContainers());
    }
 
-   public Future<? extends ListContainerResponse<? extends ResourceMetadata>> list(String container,
+   public ListContainerResponse<? extends ResourceMetadata> list(String container,
             ListContainerOptions... optionsList) {
       ListBlobsOptions httpOptions = container2ContainerListOptions.apply(optionsList);
-      Future<ListBlobsResponse> returnVal = connection.listBlobs(container, httpOptions);
-      return wrapFuture(returnVal, container2ResourceList);
+      return container2ResourceList.apply(sync.listBlobs(container, httpOptions));
    }
 
-   public Future<String> putBlob(String container, Blob blob) {
-      return connection.putBlob(container, blob2Object.apply(blob));
+   public String putBlob(String container, Blob blob) {
+      return sync.putBlob(container, blob2Object.apply(blob));
    }
 
-   public Future<Void> removeBlob(String container, String key) {
-      return connection.deleteBlob(container, key);
-   }
-
-   public Blob newBlob() {
-      return blobFactory.create(null);
+   public void removeBlob(String container, String key) {
+      sync.deleteBlob(container, key);
    }
 
 }

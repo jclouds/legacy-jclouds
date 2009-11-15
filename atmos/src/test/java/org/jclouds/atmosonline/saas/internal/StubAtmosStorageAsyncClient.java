@@ -26,11 +26,12 @@ package org.jclouds.atmosonline.saas.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 
-import org.jclouds.atmosonline.saas.AtmosStorageClient;
+import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
 import org.jclouds.atmosonline.saas.blobstore.functions.BlobMetadataToObject;
 import org.jclouds.atmosonline.saas.blobstore.functions.BlobToObject;
 import org.jclouds.atmosonline.saas.blobstore.functions.ListOptionsToBlobStoreListOptions;
@@ -48,7 +49,8 @@ import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
-import org.jclouds.blobstore.integration.internal.StubBlobStore;
+import org.jclouds.blobstore.integration.internal.StubAsyncBlobStore;
+import org.jclouds.blobstore.integration.internal.StubAsyncBlobStore.FutureBase;
 import org.jclouds.concurrent.FutureFunctionWrapper;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.logging.Logger.LoggerFactory;
@@ -57,14 +59,14 @@ import org.jclouds.util.Utils;
 import com.google.common.base.Function;
 
 /**
- * Implementation of {@link AtmosStorageClient} which keeps all data in a local Map object.
+ * Implementation of {@link AtmosStorageAsyncClient} which keeps all data in a local Map object.
  * 
  * @author Adrian Cole
  */
 @ConsistencyModel(ConsistencyModels.STRICT)
-public class StubAtmosStorageClient implements AtmosStorageClient {
+public class StubAtmosStorageAsyncClient implements AtmosStorageAsyncClient {
    private final HttpGetOptionsListToGetOptions httpGetOptionsConverter;
-   private final StubBlobStore blobStore;
+   private final StubAsyncBlobStore blobStore;
    private final LoggerFactory logFactory;
    private final AtmosObject.Factory objectProvider;
    private final ObjectToBlob object2Blob;
@@ -74,7 +76,7 @@ public class StubAtmosStorageClient implements AtmosStorageClient {
    private final ResourceMetadataListToDirectoryEntryList resource2ObjectList;
 
    @Inject
-   private StubAtmosStorageClient(StubBlobStore blobStore, LoggerFactory logFactory,
+   private StubAtmosStorageAsyncClient(StubAsyncBlobStore blobStore, LoggerFactory logFactory,
             AtmosObject.Factory objectProvider,
             HttpGetOptionsListToGetOptions httpGetOptionsConverter, ObjectToBlob object2Blob,
             BlobToObject blob2Object, BlobMetadataToObject blob2ObjectInfo,
@@ -124,14 +126,13 @@ public class StubAtmosStorageClient implements AtmosStorageClient {
             object.getContentMetadata().setName(path + "/" + file);
       }
       Blob blob = object2Blob.apply(object);
-      return wrapFuture(blobStore.putBlob(container, blob),
-               new Function<String, URI>() {
+      return wrapFuture(blobStore.putBlob(container, blob), new Function<String, URI>() {
 
-                  public URI apply(String from) {
-                     return URI.create(uri);
-                  }
+         public URI apply(String from) {
+            return URI.create(uri);
+         }
 
-               });
+      });
    }
 
    public Future<Void> deletePath(String path) {
@@ -150,31 +151,30 @@ public class StubAtmosStorageClient implements AtmosStorageClient {
       }
    }
 
-   public SystemMetadata getSystemMetadata(String path) {
+   public Future<SystemMetadata> getSystemMetadata(String path) {
       throw new UnsupportedOperationException();
    }
 
-   public UserMetadata getUserMetadata(String path) {
+   public Future<UserMetadata> getUserMetadata(String path) {
       if (path.indexOf('/') == -1)
          throw new UnsupportedOperationException();
       else {
          String container = path.substring(0, path.indexOf('/'));
          path = path.substring(path.indexOf('/') + 1);
-         return new Function<BlobMetadata, UserMetadata>() {
-
-            public UserMetadata apply(BlobMetadata from) {
-               return blob2ObjectInfo.apply(from).getUserMetadata();
-            }
-
-         }.apply(blobStore.blobMetadata(container, path));
+         return wrapFuture(blobStore.blobMetadata(container, path),
+                  new Function<BlobMetadata, UserMetadata>() {
+                     public UserMetadata apply(BlobMetadata from) {
+                        return blob2ObjectInfo.apply(from).getUserMetadata();
+                     }
+                  });
       }
    }
 
-   public AtmosObject headFile(String path) {
+   public Future<AtmosObject> headFile(String path) {
       String container = path.substring(0, path.indexOf('/'));
       path = path.substring(path.indexOf('/') + 1);
       try {
-         return this.blob2Object.apply(blobStore.getBlob(container, path).get());
+         return wrapFuture(blobStore.getBlob(container, path), blob2Object);
       } catch (Exception e) {
          Utils.<KeyNotFoundException> rethrowIfRuntimeOrSameType(e);
          throw new RuntimeException(e);
@@ -206,18 +206,23 @@ public class StubAtmosStorageClient implements AtmosStorageClient {
       return this.objectProvider.create(null);
    }
 
-   public boolean pathExists(String path) {
+   public Future<Boolean> pathExists(final String path) {
       if (path.indexOf('/') == -1 || (path.endsWith("/")))
          return blobStore.exists(path);
       else {
-         String container = path.substring(0, path.indexOf('/'));
-         String blobName = path.substring(path.indexOf('/') + 1);
-         try {
-            blobStore.blobMetadata(container, blobName);
-            return true;
-         } catch (KeyNotFoundException e) {
-            return false;
-         }
+         return new FutureBase<Boolean>() {
+            public Boolean get() throws InterruptedException, ExecutionException {
+               String container = path.substring(0, path.indexOf('/'));
+               String blobName = path.substring(path.indexOf('/') + 1);
+               try {
+                  blobStore.blobMetadata(container, blobName);
+                  return true;
+               } catch (KeyNotFoundException e) {
+                  return false;
+               }
+            }
+         };
+
       }
    }
 

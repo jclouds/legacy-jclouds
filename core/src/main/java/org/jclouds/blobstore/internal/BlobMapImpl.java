@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 import org.jclouds.blobstore.BlobMap;
-import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.options.ListContainerOptions;
@@ -51,7 +51,7 @@ import com.google.common.collect.Sets;
 /**
  * Map representation of a live connection to a Blob Service.
  * 
- * @see BlobStore
+ * @see AsyncBlobStore
  * @see BaseBlobMap
  * 
  * @author Adrian Cole
@@ -59,7 +59,7 @@ import com.google.common.collect.Sets;
 public class BlobMapImpl extends BaseBlobMap<Blob> implements BlobMap {
 
    @Inject
-   public BlobMapImpl(BlobStore connection, GetBlobsInListStrategy getAllBlobs,
+   public BlobMapImpl(AsyncBlobStore connection, GetBlobsInListStrategy getAllBlobs,
             ListBlobMetadataStrategy getAllBlobMetadata,
             ContainsValueInListStrategy containsValueStrategy,
             ClearListStrategy clearContainerStrategy, CountListStrategy containerCountStrategy,

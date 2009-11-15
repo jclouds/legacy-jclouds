@@ -2,14 +2,14 @@ package org.jclouds.vcloud.terremark.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.VCloudAsyncClient;
 
 /**
  * 
  * VirtualResource such as disks or CPU
  * 
  * @author Adrian Cole
- * @see VCloudClient#getVApp
+ * @see VCloudAsyncClient#getVApp
  * 
  * 
  */

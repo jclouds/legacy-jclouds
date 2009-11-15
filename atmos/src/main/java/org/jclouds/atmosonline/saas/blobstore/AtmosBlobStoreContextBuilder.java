@@ -33,6 +33,7 @@ import java.util.Properties;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 
+import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
 import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.atmosonline.saas.blobstore.config.AtmosBlobStoreContextModule;
 import org.jclouds.atmosonline.saas.config.AtmosStorageRestClientModule;
@@ -58,10 +59,12 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole, Andrew Newdigate
  * @see AtmosBlobStoreContext
  */
-public class AtmosBlobStoreContextBuilder extends BlobStoreContextBuilder<AtmosStorageClient> {
+public class AtmosBlobStoreContextBuilder extends
+         BlobStoreContextBuilder<AtmosStorageAsyncClient, AtmosStorageClient> {
 
    public AtmosBlobStoreContextBuilder(Properties props) {
-      super(new TypeLiteral<AtmosStorageClient>() {
+      super(new TypeLiteral<AtmosStorageAsyncClient>() {
+      }, new TypeLiteral<AtmosStorageClient>() {
       }, convert(props));
    }
 

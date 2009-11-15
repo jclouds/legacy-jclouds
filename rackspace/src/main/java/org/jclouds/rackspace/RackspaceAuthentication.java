@@ -24,6 +24,7 @@
 package org.jclouds.rackspace;
 
 import java.net.URI;
+import java.util.concurrent.Future;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -61,6 +62,7 @@ public interface RackspaceAuthentication {
    @GET
    @ResponseParser(ParseAuthenticationResponseFromHeaders.class)
    @Path("/auth")
-   AuthenticationResponse authenticate(@HeaderParam(RackspaceHeaders.AUTH_USER) String user,
+   Future<AuthenticationResponse> authenticate(
+            @HeaderParam(RackspaceHeaders.AUTH_USER) String user,
             @HeaderParam(RackspaceHeaders.AUTH_KEY) String key);
 }

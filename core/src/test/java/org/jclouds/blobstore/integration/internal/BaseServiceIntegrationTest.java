@@ -24,7 +24,6 @@
 package org.jclouds.blobstore.integration.internal;
 
 import java.util.SortedSet;
-import java.util.concurrent.TimeUnit;
 
 import org.jclouds.blobstore.domain.ResourceMetadata;
 import org.jclouds.blobstore.domain.internal.MutableResourceMetadataImpl;
@@ -34,12 +33,11 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-public class BaseServiceIntegrationTest<S> extends BaseBlobStoreIntegrationTest<S> {
+public class BaseServiceIntegrationTest<A, S> extends BaseBlobStoreIntegrationTest<A, S> {
 
    @Test(groups = { "integration", "live" })
-   void containerDoesntExist() throws Exception {
-      SortedSet<? extends ResourceMetadata> list = context.getBlobStore().list().get(30,
-               TimeUnit.SECONDS);
+   void containerDoesntExist() {
+      SortedSet<? extends ResourceMetadata> list = context.getBlobStore().list();
       assert !list.contains(new MutableResourceMetadataImpl());
    }
 

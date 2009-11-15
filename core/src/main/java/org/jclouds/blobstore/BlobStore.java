@@ -23,27 +23,27 @@
  */
 package org.jclouds.blobstore;
 
-import java.util.concurrent.Future;
-
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ListResponse;
 import org.jclouds.blobstore.domain.ListContainerResponse;
+import org.jclouds.blobstore.domain.ListResponse;
 import org.jclouds.blobstore.domain.ResourceMetadata;
 import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
 
 /**
  * Provides hooks needed to run a blob store
+ * 
+ * @see AsyncBlobStore
  */
 public interface BlobStore {
-   
+
    Blob newBlob();
-   
+
    /**
     * Lists all root-level resources available to the account.
     */
-   Future<? extends ListResponse<? extends ResourceMetadata>> list();
+   ListResponse<? extends ResourceMetadata> list();
 
    /**
     * Lists all resources available at the specified path. Note that path may be a container, or a
@@ -52,33 +52,33 @@ public interface BlobStore {
     * @param parent
     *           - base path to list; non-recursive
     */
-   Future<? extends ListContainerResponse<? extends ResourceMetadata>> list(String container,
+   ListContainerResponse<? extends ResourceMetadata> list(String container,
             ListContainerOptions... options);
 
    boolean exists(String container);
 
-   Future<Boolean> createContainer(String container);
+   boolean createContainer(String container);
 
    /**
     * This will delete a container recursively.
     * 
     * @param container
     */
-   Future<Void> deleteContainer(String container);
+   void deleteContainer(String container);
 
    /**
     * This will delete the contents of a container without removing it
     * 
     * @param container
     */
-   Future<Void> clearContainer(String container);
+   void clearContainer(String container);
 
-   Future<String> putBlob(String container, Blob blob);
+   String putBlob(String container, Blob blob);
 
-   Future<? extends Blob> getBlob(String container, String key, GetOptions... options);
+   Blob getBlob(String container, String key, GetOptions... options);
 
    BlobMetadata blobMetadata(String container, String key);
 
-   Future<Void> removeBlob(String container, String key);
+   void removeBlob(String container, String key);
 
 }

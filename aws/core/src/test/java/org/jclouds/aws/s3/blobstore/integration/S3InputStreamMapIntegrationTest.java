@@ -23,6 +23,7 @@
  */
 package org.jclouds.aws.s3.blobstore.integration;
 
+import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.blobstore.integration.internal.BaseInputStreamMapIntegrationTest;
 import org.testng.annotations.Test;
@@ -32,6 +33,6 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "integration", "live" }, testName = "s3.S3InputStreamMapIntegrationTest")
 public class S3InputStreamMapIntegrationTest extends
-         BaseInputStreamMapIntegrationTest<S3Client> {
+         BaseInputStreamMapIntegrationTest<S3AsyncClient, S3Client> {
 
 }

@@ -42,24 +42,24 @@ import com.google.inject.Module;
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
  * @author Adrian Cole
- * @see AzureBlobClient
+ * @see AzureBlobAsyncClient
  */
 public class AzureBlobContextFactory {
 
-   public static RestContext<AzureBlobClient> createContext(Properties properties,
-            Module... modules) {
+   public static RestContext<AzureBlobAsyncClient, AzureBlobClient> createContext(
+            Properties properties, Module... modules) {
       return new AzureBlobContextBuilder(new AzureBlobPropertiesBuilder(properties).build())
                .withModules(modules).buildContext();
    }
 
-   public static RestContext<AzureBlobClient> createContext(String account, String encodedKey,
-            Module... modules) {
+   public static RestContext<AzureBlobAsyncClient, AzureBlobClient> createContext(String account,
+            String encodedKey, Module... modules) {
       return new AzureBlobContextBuilder(new AzureBlobPropertiesBuilder(account, encodedKey)
                .build()).withModules(modules).buildContext();
    }
 
-   public static RestContext<AzureBlobClient> createContext(URI endpoint, String account,
-            String encodedKey, Module... modules) {
+   public static RestContext<AzureBlobAsyncClient, AzureBlobClient> createContext(URI endpoint,
+            String account, String encodedKey, Module... modules) {
       return new AzureBlobContextBuilder(new AzureBlobPropertiesBuilder(account, encodedKey)
                .withEndpoint(endpoint).build()).withModules(modules).buildContext();
    }

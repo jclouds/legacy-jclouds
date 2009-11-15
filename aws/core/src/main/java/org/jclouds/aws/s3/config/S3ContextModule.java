@@ -30,6 +30,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.aws.reference.AWSConstants;
 import org.jclouds.aws.s3.S3;
+import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.lifecycle.Closer;
@@ -40,7 +41,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
- * Configures the {@link S3ContextModule}; requires {@link S3Client} bound.
+ * Configures the {@link S3ContextModule}; requires {@link S3AsyncClient} bound.
  * 
  * @author Adrian Cole
  */
@@ -55,9 +56,11 @@ public class S3ContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<S3Client> provideContext(Closer closer, S3Client defaultApi, @S3 URI endPoint,
+   RestContext<S3AsyncClient, S3Client> provideContext(Closer closer, S3AsyncClient defaultApi,
+            S3Client syncApi, @S3 URI endPoint,
             @Named(AWSConstants.PROPERTY_AWS_ACCESSKEYID) String account) {
-      return new RestContextImpl<S3Client>(closer, defaultApi, endPoint, account);
+      return new RestContextImpl<S3AsyncClient, S3Client>(closer, defaultApi, syncApi, endPoint,
+               account);
    }
 
 }

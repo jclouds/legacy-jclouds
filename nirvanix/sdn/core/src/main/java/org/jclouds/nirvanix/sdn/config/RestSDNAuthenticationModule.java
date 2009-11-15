@@ -24,6 +24,9 @@
 package org.jclouds.nirvanix.sdn.config;
 
 import java.net.URI;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -62,8 +65,10 @@ public class RestSDNAuthenticationModule extends AbstractModule {
    protected String provideSessionToken(RestClientFactory factory,
             @Named(SDNConstants.PROPERTY_SDN_APPKEY) String appKey,
             @Named(SDNConstants.PROPERTY_SDN_USERNAME) String username,
-            @Named(SDNConstants.PROPERTY_SDN_PASSWORD) String password) {
-      return factory.create(SDNAuthentication.class).authenticate(appKey, username, password);
+            @Named(SDNConstants.PROPERTY_SDN_PASSWORD) String password)
+            throws InterruptedException, ExecutionException, TimeoutException {
+      return factory.create(SDNAuthentication.class).authenticate(appKey, username, password).get(
+               20, TimeUnit.SECONDS);
    }
 
 }

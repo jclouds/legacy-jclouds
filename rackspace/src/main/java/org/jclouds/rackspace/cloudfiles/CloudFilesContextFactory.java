@@ -42,24 +42,24 @@ import com.google.inject.Module;
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
  * @author Adrian Cole
- * @see CloudFilesClient
+ * @see CloudFilesAsyncClient
  */
 public class CloudFilesContextFactory {
 
-   public static RestContext<CloudFilesClient> createContext(Properties properties,
-            Module... modules) {
+   public static RestContext<CloudFilesAsyncClient, CloudFilesClient> createContext(
+            Properties properties, Module... modules) {
       return new CloudFilesContextBuilder(new CloudFilesPropertiesBuilder(properties).build())
                .withModules(modules).buildContext();
    }
 
-   public static RestContext<CloudFilesClient> createContext(String id, String key,
-            Module... modules) {
+   public static RestContext<CloudFilesAsyncClient, CloudFilesClient> createContext(String id,
+            String key, Module... modules) {
       return new CloudFilesContextBuilder(new CloudFilesPropertiesBuilder(id, key).build())
                .withModules(modules).buildContext();
    }
 
-   public static RestContext<CloudFilesClient> createContext(URI endpoint, String id, String key,
-            Module... modules) {
+   public static RestContext<CloudFilesAsyncClient, CloudFilesClient> createContext(URI endpoint,
+            String id, String key, Module... modules) {
       return new CloudFilesContextBuilder(new CloudFilesPropertiesBuilder(id, key).withEndpoint(
                endpoint).build()).withModules(modules).buildContext();
    }

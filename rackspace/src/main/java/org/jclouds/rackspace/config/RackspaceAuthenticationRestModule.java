@@ -28,6 +28,9 @@ import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSP
 import static org.jclouds.rackspace.reference.RackspaceConstants.PROPERTY_RACKSPACE_USER;
 
 import java.net.URI;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -66,15 +69,16 @@ public class RackspaceAuthenticationRestModule extends AbstractModule {
    @Provides
    @Singleton
    protected AuthenticationResponse provideAuthenticationResponse(RestClientFactory factory,
-            @Named(PROPERTY_RACKSPACE_USER) String user, @Named(PROPERTY_RACKSPACE_KEY) String key) {
-      return factory.create(RackspaceAuthentication.class).authenticate(user, key);
+            @Named(PROPERTY_RACKSPACE_USER) String user, @Named(PROPERTY_RACKSPACE_KEY) String key)
+            throws InterruptedException, ExecutionException, TimeoutException {
+      return factory.create(RackspaceAuthentication.class).authenticate(user, key).get(10,TimeUnit.SECONDS);
    }
 
    @Provides
    @Authentication
    protected String provideAuthenticationToken(RestClientFactory factory,
-            @Named(PROPERTY_RACKSPACE_USER) String user, @Named(PROPERTY_RACKSPACE_KEY) String key) {
-      return factory.create(RackspaceAuthentication.class).authenticate(user, key).getAuthToken();
+            @Named(PROPERTY_RACKSPACE_USER) String user, @Named(PROPERTY_RACKSPACE_KEY) String key) throws InterruptedException, ExecutionException, TimeoutException {
+      return factory.create(RackspaceAuthentication.class).authenticate(user, key).get(10,TimeUnit.SECONDS).getAuthToken();
    }
 
    @Provides

@@ -35,10 +35,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.SortedSet;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.blobstore.ContainerNotFoundException;
@@ -55,11 +53,10 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-public class BaseBlobIntegrationTest<S> extends BaseBlobStoreIntegrationTest<S> {
+public class BaseBlobIntegrationTest<A, S> extends BaseBlobStoreIntegrationTest<A, S> {
 
    @Test(groups = { "integration", "live" })
-   public void testGetIfModifiedSince() throws InterruptedException, ExecutionException,
-            TimeoutException, IOException {
+   public void testGetIfModifiedSince() throws InterruptedException {
       String containerName = getContainerName();
       try {
          String key = "apples";
@@ -71,23 +68,14 @@ public class BaseBlobIntegrationTest<S> extends BaseBlobStoreIntegrationTest<S> 
          addObjectAndValidateContent(containerName, key);
          DateTime after = new DateTime().plusSeconds(1);
 
-         context.getBlobStore().getBlob(containerName, key, ifModifiedSince(before)).get(30,
-                  TimeUnit.SECONDS);
+         context.getBlobStore().getBlob(containerName, key, ifModifiedSince(before));
          validateContent(containerName, key);
 
          try {
-            context.getBlobStore().getBlob(containerName, key, ifModifiedSince(after)).get(30,
-                     TimeUnit.SECONDS);
+            context.getBlobStore().getBlob(containerName, key, ifModifiedSince(after));
             validateContent(containerName, key);
-         } catch (ExecutionException e) {
-            if (e.getCause() instanceof HttpResponseException) {
-               HttpResponseException ex = (HttpResponseException) e.getCause();
-               assertEquals(ex.getResponse().getStatusCode(), 304);
-            } else if (e.getCause() instanceof RuntimeException) {
-               // TODO enhance stub connection so that it throws the correct error
-            } else {
-               throw e;
-            }
+         } catch (HttpResponseException ex) {
+            assertEquals(ex.getResponse().getStatusCode(), 304);
          }
       } finally {
          returnContainer(containerName);
@@ -96,8 +84,7 @@ public class BaseBlobIntegrationTest<S> extends BaseBlobStoreIntegrationTest<S> 
    }
 
    @Test(groups = { "integration", "live" })
-   public void testGetIfUnmodifiedSince() throws InterruptedException, ExecutionException,
-            TimeoutException, IOException {
+   public void testGetIfUnmodifiedSince() throws InterruptedException {
       String containerName = getContainerName();
       try {
 
@@ -107,23 +94,14 @@ public class BaseBlobIntegrationTest<S> extends BaseBlobStoreIntegrationTest<S> 
          addObjectAndValidateContent(containerName, key);
          DateTime after = new DateTime().plusSeconds(1);
 
-         context.getBlobStore().getBlob(containerName, key, ifUnmodifiedSince(after)).get(30,
-                  TimeUnit.SECONDS);
+         context.getBlobStore().getBlob(containerName, key, ifUnmodifiedSince(after));
          validateContent(containerName, key);
 
          try {
-            context.getBlobStore().getBlob(containerName, key, ifUnmodifiedSince(before)).get(30,
-                     TimeUnit.SECONDS);
+            context.getBlobStore().getBlob(containerName, key, ifUnmodifiedSince(before));
             validateContent(containerName, key);
-         } catch (ExecutionException e) {
-            if (e.getCause() instanceof HttpResponseException) {
-               HttpResponseException ex = (HttpResponseException) e.getCause();
-               assertEquals(ex.getResponse().getStatusCode(), 412);
-            } else if (e.getCause() instanceof RuntimeException) {
-               // TODO enhance stub connection so that it throws the correct error
-            } else {
-               throw e;
-            }
+         } catch (HttpResponseException ex) {
+            assertEquals(ex.getResponse().getStatusCode(), 412);
          }
       } finally {
          returnContainer(containerName);
@@ -131,8 +109,7 @@ public class BaseBlobIntegrationTest<S> extends BaseBlobStoreIntegrationTest<S> 
    }
 
    @Test(groups = { "integration", "live" })
-   public void testGetIfMatch() throws InterruptedException, ExecutionException, TimeoutException,
-            IOException {
+   public void testGetIfMatch() throws InterruptedException, UnsupportedEncodingException {
       String containerName = getContainerName();
       try {
 
@@ -140,23 +117,14 @@ public class BaseBlobIntegrationTest<S> extends BaseBlobStoreIntegrationTest<S> 
 
          String goodETag = addObjectAndValidateContent(containerName, key);
 
-         context.getBlobStore().getBlob(containerName, key, ifETagMatches(goodETag)).get(30,
-                  TimeUnit.SECONDS);
+         context.getBlobStore().getBlob(containerName, key, ifETagMatches(goodETag));
          validateContent(containerName, key);
 
          try {
-            context.getBlobStore().getBlob(containerName, key, ifETagMatches("powerfrisbee")).get(
-                     30, TimeUnit.SECONDS);
+            context.getBlobStore().getBlob(containerName, key, ifETagMatches("powerfrisbee"));
             validateContent(containerName, key);
-         } catch (ExecutionException e) {
-            if (e.getCause() instanceof HttpResponseException) {
-               HttpResponseException ex = (HttpResponseException) e.getCause();
-               assertEquals(ex.getResponse().getStatusCode(), 412);
-            } else if (e.getCause() instanceof RuntimeException) {
-               // TODO enhance stub connection so that it throws the correct error
-            } else {
-               throw e;
-            }
+         } catch (HttpResponseException ex) {
+            assertEquals(ex.getResponse().getStatusCode(), 412);
          }
       } finally {
          returnContainer(containerName);
@@ -164,8 +132,7 @@ public class BaseBlobIntegrationTest<S> extends BaseBlobStoreIntegrationTest<S> 
    }
 
    @Test(groups = { "integration", "live" })
-   public void testGetIfNoneMatch() throws InterruptedException, ExecutionException,
-            TimeoutException, IOException {
+   public void testGetIfNoneMatch() throws InterruptedException, UnsupportedEncodingException {
       String containerName = getContainerName();
       try {
 
@@ -173,21 +140,14 @@ public class BaseBlobIntegrationTest<S> extends BaseBlobStoreIntegrationTest<S> 
 
          String goodETag = addObjectAndValidateContent(containerName, key);
 
-         context.getBlobStore().getBlob(containerName, key, ifETagDoesntMatch("powerfrisbee")).get(
-                  30, TimeUnit.SECONDS);
+         context.getBlobStore().getBlob(containerName, key, ifETagDoesntMatch("powerfrisbee"));
          validateContent(containerName, key);
 
          try {
-            context.getBlobStore().getBlob(containerName, key, ifETagDoesntMatch(goodETag)).get(30,
-                     TimeUnit.SECONDS);
+            context.getBlobStore().getBlob(containerName, key, ifETagDoesntMatch(goodETag));
             validateContent(containerName, key);
-         } catch (ExecutionException e) {
-            if (e.getCause() instanceof HttpResponseException) {
-               HttpResponseException ex = (HttpResponseException) e.getCause();
-               assertEquals(ex.getResponse().getStatusCode(), 304);
-            } else {
-               throw e;
-            }
+         } catch (HttpResponseException ex) {
+            assertEquals(ex.getResponse().getStatusCode(), 304);
          }
       } finally {
          returnContainer(containerName);
@@ -195,21 +155,19 @@ public class BaseBlobIntegrationTest<S> extends BaseBlobStoreIntegrationTest<S> 
    }
 
    @Test(groups = { "integration", "live" })
-   public void testGetRange() throws InterruptedException, ExecutionException, TimeoutException,
-            IOException {
+   public void testGetRange() throws InterruptedException, IOException {
       String containerName = getContainerName();
       try {
 
          String key = "apples";
 
          addObjectAndValidateContent(containerName, key);
-         Blob object1 = context.getBlobStore().getBlob(containerName, key, range(0, 5)).get(30,
-                  TimeUnit.SECONDS);
+         Blob object1 = context.getBlobStore().getBlob(containerName, key, range(0, 5));
          assertEquals(BlobStoreUtils.getContentAsStringAndClose(object1), TEST_STRING.substring(0,
                   6));
 
          Blob object2 = context.getBlobStore().getBlob(containerName, key,
-                  range(6, TEST_STRING.length())).get(15, TimeUnit.SECONDS);
+                  range(6, TEST_STRING.length()));
          assertEquals(BlobStoreUtils.getContentAsStringAndClose(object2), TEST_STRING.substring(6,
                   TEST_STRING.length()));
       } finally {
@@ -218,8 +176,7 @@ public class BaseBlobIntegrationTest<S> extends BaseBlobStoreIntegrationTest<S> 
    }
 
    @Test(groups = { "integration", "live" })
-   public void testGetTwoRanges() throws InterruptedException, ExecutionException,
-            TimeoutException, IOException {
+   public void testGetTwoRanges() throws InterruptedException, IOException {
       String containerName = getContainerName();
       try {
 
@@ -227,7 +184,7 @@ public class BaseBlobIntegrationTest<S> extends BaseBlobStoreIntegrationTest<S> 
 
          addObjectAndValidateContent(containerName, key);
          Blob object = context.getBlobStore().getBlob(containerName, key,
-                  range(0, 5).range(6, TEST_STRING.length())).get(15, TimeUnit.SECONDS);
+                  range(0, 5).range(6, TEST_STRING.length()));
 
          assertEquals(BlobStoreUtils.getContentAsStringAndClose(object), TEST_STRING);
       } finally {
@@ -276,18 +233,18 @@ public class BaseBlobIntegrationTest<S> extends BaseBlobStoreIntegrationTest<S> 
    // }
 
    private String addObjectAndValidateContent(String sourcecontainerName, String sourceKey)
-            throws InterruptedException, ExecutionException, TimeoutException, IOException {
+            throws InterruptedException {
       String eTag = addBlobToContainer(sourcecontainerName, sourceKey);
       validateContent(sourcecontainerName, sourceKey);
       return eTag;
    }
 
    @Test(groups = { "integration", "live" })
-   public void deleteObjectNotFound() throws Exception {
+   public void deleteObjectNotFound() throws InterruptedException {
       String containerName = getContainerName();
       String key = "test";
       try {
-         context.getBlobStore().removeBlob(containerName, key).get(15, TimeUnit.SECONDS);
+         context.getBlobStore().removeBlob(containerName, key);
       } finally {
          returnContainer(containerName);
       }
@@ -301,35 +258,33 @@ public class BaseBlobIntegrationTest<S> extends BaseBlobStoreIntegrationTest<S> 
    }
 
    @Test(groups = { "integration", "live" }, dataProvider = "delete")
-   public void deleteObject(String key) throws Exception {
+   public void deleteObject(String key) throws InterruptedException {
       String containerName = getContainerName();
       try {
          addBlobToContainer(containerName, key);
-         context.getBlobStore().removeBlob(containerName, key).get(15, TimeUnit.SECONDS);
+         context.getBlobStore().removeBlob(containerName, key);
          assertContainerEmptyDeleting(containerName, key);
       } finally {
          returnContainer(containerName);
       }
    }
 
-   private void assertContainerEmptyDeleting(String containerName, String key)
-            throws InterruptedException, ExecutionException, TimeoutException {
-      SortedSet<? extends ResourceMetadata> listing = context.getBlobStore().list(containerName)
-               .get(30, TimeUnit.SECONDS);
+   private void assertContainerEmptyDeleting(String containerName, String key) {
+      SortedSet<? extends ResourceMetadata> listing = context.getBlobStore().list(containerName);
       assertEquals(listing.size(), 0, String.format(
                "deleting %s, we still have %s left in container %s, using encoding %s", key,
                listing.size(), containerName, LOCAL_ENCODING));
    }
 
    @Test(groups = { "integration", "live" })
-   public void deleteObjectNoContainer() throws Exception {
+   public void deleteObjectNoContainer() {
       try {
-         context.getBlobStore().removeBlob("donb", "test").get(15, TimeUnit.SECONDS);
-      } catch (ExecutionException e) {
-         assert (e.getCause() instanceof HttpResponseException || e.getCause() instanceof ContainerNotFoundException);
-         if (e.getCause() instanceof HttpResponseException)
-            assertEquals(((HttpResponseException) e.getCause()).getResponse().getStatusCode(), 404);
+         context.getBlobStore().removeBlob("donb", "test");
+      } catch (HttpResponseException e) {
+         assertEquals(e.getResponse().getStatusCode(), 404);
+      } catch (ContainerNotFoundException e) {
       }
+
    }
 
    @DataProvider(name = "putTests")
@@ -344,7 +299,7 @@ public class BaseBlobIntegrationTest<S> extends BaseBlobStoreIntegrationTest<S> 
 
    @Test(groups = { "integration", "live" }, dataProvider = "putTests")
    public void testPutObject(String key, String type, Object content, Object realObject)
-            throws Exception {
+            throws InterruptedException, IOException {
       Blob object = newBlob(key);
       object.getMetadata().setContentType(type);
       object.setData(content);
@@ -353,21 +308,18 @@ public class BaseBlobIntegrationTest<S> extends BaseBlobStoreIntegrationTest<S> 
       }
       String containerName = getContainerName();
       try {
-         assertNotNull(context.getBlobStore().putBlob(containerName, object).get(30,
-                  TimeUnit.SECONDS));
-         object = context.getBlobStore().getBlob(containerName, object.getMetadata().getName())
-                  .get(30, TimeUnit.SECONDS);
+         assertNotNull(context.getBlobStore().putBlob(containerName, object));
+         object = context.getBlobStore().getBlob(containerName, object.getMetadata().getName());
          String returnedString = BlobStoreUtils.getContentAsStringAndClose(object);
          assertEquals(returnedString, realObject);
-         assertEquals(context.getBlobStore().list(containerName).get(15, TimeUnit.SECONDS).size(),
-                  1);
+         assertEquals(context.getBlobStore().list(containerName).size(), 1);
       } finally {
          returnContainer(containerName);
       }
    }
 
    @Test(groups = { "integration", "live" })
-   public void testMetadata() throws Exception {
+   public void testMetadata() throws InterruptedException {
       String key = "hello";
 
       Blob object = newBlob(key);

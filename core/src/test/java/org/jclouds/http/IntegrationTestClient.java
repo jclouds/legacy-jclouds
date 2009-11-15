@@ -24,152 +24,45 @@
 package org.jclouds.http;
 
 import java.util.Map;
-import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.HEAD;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-
-import org.apache.commons.io.IOUtils;
-import org.jclouds.http.functions.ParseSax;
+import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.options.HttpRequestOptions;
-import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.Endpoint;
-import org.jclouds.rest.annotations.ExceptionParser;
-import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.MapEntityParam;
-import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.binders.BindMapToMatrixParams;
-import org.jclouds.rest.binders.BindToJsonEntity;
-import org.jclouds.rest.binders.BindToStringEntity;
-import org.jclouds.rest.internal.RestAnnotationProcessorTest.Localhost;
-
-import com.google.common.base.Function;
 
 /**
  * Sample test for the behaviour of our Integration Test jetty server.
  * 
  * @author Adrian Cole
  */
-@Endpoint(Localhost.class)
+@Timeout(duration = 4, timeUnit = TimeUnit.SECONDS)
 public interface IntegrationTestClient {
 
-   @HEAD
-   @Path("objects/{id}")
-   boolean exists(@PathParam("id") String path);
+   boolean exists(String path);
 
-   @GET
-   @Path("objects/{id}")
-   Future<String> download(@PathParam("id") String id);
+   String synch(String id);
 
-   @GET
-   @Path("{path}")
-   String synch(@PathParam("path") String id);
+   String download(String id);
 
-   @GET
-   @Path("objects/{id}")
-   @ExceptionParser(FooOnException.class)
-   Future<String> downloadException(@PathParam("id") String id, HttpRequestOptions options);
+   String downloadException(String id, HttpRequestOptions options);
 
-   static class FooOnException implements Function<Exception, String> {
+   String synchException(String id, String header);
 
-      public String apply(Exception from) {
-         return "foo";
-      }
+   String upload(String id, String toPut);
 
-   }
+   String post(String id, String toPut);
 
-   @GET
-   @Path("objects/{id}")
-   @ExceptionParser(FooOnException.class)
-   String synchException(@PathParam("id") String id, @HeaderParam("Range") String header);
+   String postAsInputStream(String id, String toPut);
 
-   @PUT
-   @Path("objects/{id}")
-   Future<String> upload(@PathParam("id") String id,
-            @BinderParam(BindToStringEntity.class) String toPut);
+   String postJson(String id, String toPut);
 
-   @POST
-   @Path("objects/{id}")
-   Future<String> post(@PathParam("id") String id,
-            @BinderParam(BindToStringEntity.class) String toPut);
+   String action(String id, String action, Map<String, String> options);
 
-   @POST
-   @Path("objects/{id}")
-   Future<String> postAsInputStream(@PathParam("id") String id,
-            @BinderParam(BindToInputStreamEntity.class) String toPut);
-   
-   static class BindToInputStreamEntity extends BindToStringEntity {
-      @Override
-      public void bindToRequest(HttpRequest request, Object entity) {
-         super.bindToRequest(request, entity);
-         request.setEntity(IOUtils.toInputStream(entity.toString()));
-      }
-   }
-   
-   @POST
-   @Path("objects/{id}")
-   @MapBinder(BindToJsonEntity.class)
-   Future<String> postJson(@PathParam("id") String id, @MapEntityParam("key") String toPut);
-   
-   @POST
-   @Path("objects/{id}/action/{action}")
-   Future<String> action(@PathParam("id") String id, @PathParam("action") String action,
-            @BinderParam(BindMapToMatrixParams.class) Map<String, String> options);
+   String downloadFilter(String id, String header);
 
-   @GET
-   @Path("objects/{id}")
-   @RequestFilters(Filter.class)
-   Future<String> downloadFilter(@PathParam("id") String id, @HeaderParam("filterme") String header);
+   String download(String id, String header);
 
-   static class Filter implements HttpRequestFilter {
-      public void filter(HttpRequest request) throws HttpException {
-         if (request.getHeaders().containsKey("filterme")) {
-            request.getHeaders().put("test", "test");
-         }
-      }
-   }
+   String downloadAndParse(String id);
 
-   @GET
-   @Path("objects/{id}")
-   Future<String> download(@PathParam("id") String id, @HeaderParam("test") String header);
-
-   @GET
-   @Path("objects/{id}")
-   @XMLResponseParser(BarHandler.class)
-   Future<String> downloadAndParse(@PathParam("id") String id);
-
-   public static class BarHandler extends ParseSax.HandlerWithResult<String> {
-
-      private String bar = null;
-      private StringBuilder currentText = new StringBuilder();
-
-      @Override
-      public void endElement(String uri, String name, String qName) {
-         if (qName.equals("bar")) {
-            bar = currentText.toString();
-         }
-         currentText = new StringBuilder();
-      }
-
-      @Override
-      public void characters(char ch[], int start, int length) {
-         currentText.append(ch, start, length);
-
-      }
-
-      @Override
-      public String getResult() {
-         return bar;
-      }
-
-   }
-   
    StringBuffer newStringBuffer();
 
 }

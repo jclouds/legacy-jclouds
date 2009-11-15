@@ -27,6 +27,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.Map;
 
+import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
@@ -46,7 +47,7 @@ import com.google.inject.util.Types;
 @Test(groups = { "unit" }, testName = "blobstore.BaseBlobMapTest")
 public class BaseBlobMapTest {
 
-   BlobStoreContext<BlobStore> context;
+   BlobStoreContext<AsyncBlobStore, BlobStore> context;
 
    InputStreamMapImpl map;
 

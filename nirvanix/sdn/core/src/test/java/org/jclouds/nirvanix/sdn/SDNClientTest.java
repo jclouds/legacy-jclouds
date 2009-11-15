@@ -60,12 +60,12 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "sdn.SDNClient")
-public class SDNClientTest extends RestClientTest<SDNClient> {
+public class SDNClientTest extends RestClientTest<SDNAsyncClient> {
 
    public void testGetStorageNode() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SDNClient.class.getMethod("getStorageNode", String.class, long.class);
-      GeneratedHttpRequest<SDNClient> httpMethod = processor.createRequest(method, new Object[] {
-               "adriansmovies", 734859264 });
+      Method method = SDNAsyncClient.class.getMethod("getStorageNode", String.class, long.class);
+      GeneratedHttpRequest<SDNAsyncClient> httpMethod = processor.createRequest(method,
+               new Object[] { "adriansmovies", 734859264 });
 
       assertRequestLineEquals(
                httpMethod,
@@ -82,11 +82,11 @@ public class SDNClientTest extends RestClientTest<SDNClient> {
    }
 
    public void testUpload() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SDNClient.class.getMethod("upload", URI.class, String.class, String.class,
-               Blob.class);
+      Method method = SDNAsyncClient.class.getMethod("upload", URI.class, String.class,
+               String.class, Blob.class);
       Blob blob = BindBlobToMultipartFormTest.TEST_BLOB;
-      GeneratedHttpRequest<SDNClient> httpMethod = processor.createRequest(method, new Object[] {
-               URI.create("http://uploader"), "token", "adriansmovies", blob });
+      GeneratedHttpRequest<SDNAsyncClient> httpMethod = processor.createRequest(method,
+               new Object[] { URI.create("http://uploader"), "token", "adriansmovies", blob });
 
       assertRequestLineEquals(
                httpMethod,
@@ -110,9 +110,9 @@ public class SDNClientTest extends RestClientTest<SDNClient> {
    }
 
    public void testSetMetadata() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SDNClient.class.getMethod("setMetadata", String.class, Map.class);
-      GeneratedHttpRequest<SDNClient> httpMethod = processor.createRequest(method, new Object[] {
-               "adriansmovies/sushi.avi", ImmutableMap.of("Chef", "Kawasaki") });
+      Method method = SDNAsyncClient.class.getMethod("setMetadata", String.class, Map.class);
+      GeneratedHttpRequest<SDNAsyncClient> httpMethod = processor.createRequest(method,
+               new Object[] { "adriansmovies/sushi.avi", ImmutableMap.of("Chef", "Kawasaki") });
 
       assertRequestLineEquals(
                httpMethod,
@@ -128,8 +128,8 @@ public class SDNClientTest extends RestClientTest<SDNClient> {
    }
 
    public void testGetMetadata() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SDNClient.class.getMethod("getMetadata", String.class);
-      GeneratedHttpRequest<SDNClient> httpMethod = processor.createRequest(method,
+      Method method = SDNAsyncClient.class.getMethod("getMetadata", String.class);
+      GeneratedHttpRequest<SDNAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "adriansmovies/sushi.avi" });
 
       assertRequestLineEquals(
@@ -146,8 +146,8 @@ public class SDNClientTest extends RestClientTest<SDNClient> {
    }
 
    public void testGetFile() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SDNClient.class.getMethod("getFile", String.class);
-      GeneratedHttpRequest<SDNClient> httpMethod = processor.createRequest(method,
+      Method method = SDNAsyncClient.class.getMethod("getFile", String.class);
+      GeneratedHttpRequest<SDNAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "adriansmovies/sushi.avi" });
 
       assertRequestLineEquals(httpMethod,
@@ -165,14 +165,14 @@ public class SDNClientTest extends RestClientTest<SDNClient> {
    }
 
    @Override
-   protected void checkFilters(GeneratedHttpRequest<SDNClient> httpMethod) {
+   protected void checkFilters(GeneratedHttpRequest<SDNAsyncClient> httpMethod) {
       assertEquals(httpMethod.getFilters().size(), 1);
       assertEquals(httpMethod.getFilters().get(0).getClass(), AddSessionTokenToRequest.class);
    }
 
    @Override
-   protected TypeLiteral<RestAnnotationProcessor<SDNClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<SDNClient>>() {
+   protected TypeLiteral<RestAnnotationProcessor<SDNAsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<SDNAsyncClient>>() {
       };
    }
 

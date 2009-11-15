@@ -33,10 +33,12 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.atmosonline.saas.AtmosStorage;
+import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
 import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.atmosonline.saas.handlers.AtmosStorageClientErrorRetryHandler;
 import org.jclouds.atmosonline.saas.handlers.ParseAtmosStorageErrorFromXmlContent;
 import org.jclouds.concurrent.ExpirableSupplier;
+import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
@@ -75,8 +77,16 @@ public class AtmosStorageRestClientModule extends AbstractModule {
    }
 
    @Provides
-   protected AtmosStorageClient provideClient(RestClientFactory factory) {
-      return factory.create(AtmosStorageClient.class);
+   @Singleton
+   protected AtmosStorageAsyncClient provideAsyncClient(RestClientFactory factory) {
+      return factory.create(AtmosStorageAsyncClient.class);
+   }
+
+   @Provides
+   @Singleton
+   public AtmosStorageClient provideClient(AtmosStorageAsyncClient client)
+            throws IllegalArgumentException, SecurityException, NoSuchMethodException {
+      return SyncProxy.create(AtmosStorageClient.class, client);
    }
 
    @Provides

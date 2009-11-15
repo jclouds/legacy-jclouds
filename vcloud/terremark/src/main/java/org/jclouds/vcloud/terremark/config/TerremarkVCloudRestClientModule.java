@@ -29,12 +29,15 @@ import java.io.InputStream;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
 import org.jclouds.util.Utils;
+import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.config.VCloudRestClientModule;
+import org.jclouds.vcloud.terremark.TerremarkVCloudAsyncClient;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 
 import com.google.inject.Provides;
@@ -50,13 +53,26 @@ public class TerremarkVCloudRestClientModule extends VCloudRestClientModule {
 
    @Provides
    @Singleton
+   protected TerremarkVCloudAsyncClient provideTerremarkVCloudAsyncClient(VCloudAsyncClient in) {
+      return (TerremarkVCloudAsyncClient) in;
+   }
+
+
+   @Override
+   protected VCloudAsyncClient provideAsyncClient(RestClientFactory factory) {
+      return factory.create(TerremarkVCloudAsyncClient.class);
+   }
+
+   @Provides
+   @Singleton
    protected TerremarkVCloudClient provideTerremarkVCloudClient(VCloudClient in) {
       return (TerremarkVCloudClient) in;
    }
 
    @Override
-   protected VCloudClient provideVCloudClient(RestClientFactory factory) {
-      return factory.create(TerremarkVCloudClient.class);
+   public VCloudClient provideClient(VCloudAsyncClient client) throws IllegalArgumentException,
+            SecurityException, NoSuchMethodException {
+      return SyncProxy.create(TerremarkVCloudClient.class, client);
    }
 
    @Singleton

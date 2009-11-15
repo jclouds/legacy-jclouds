@@ -162,7 +162,7 @@ public class Server {
       result = prime * result + id;
       result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
       result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
-      result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
+      result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((sharedIpGroupId == null) ? 0 : sharedIpGroupId.hashCode());
       return result;
    }
@@ -208,10 +208,10 @@ public class Server {
             return false;
       } else if (!metadata.equals(other.metadata))
          return false;
-      if (getName() == null) {
-         if (other.getName() != null)
+      if (name == null) {
+         if (other.name != null)
             return false;
-      } else if (!getName().equals(other.getName()))
+      } else if (!name.equals(other.name))
          return false;
       if (sharedIpGroupId == null) {
          if (other.sharedIpGroupId != null)
@@ -221,16 +221,16 @@ public class Server {
       return true;
    }
 
-   @Override
-   public String toString() {
-      return "Server [addresses=" + addresses + ", isAdminPassSet=" + (adminPass != null)
-               + ", flavorId=" + flavorId + ", hostId=" + hostId + ", id=" + id + ", imageId="
-               + imageId + ", metadata=" + metadata + ", name=" + getName() + ", progress="
-               + progress + ", sharedIpGroupId=" + sharedIpGroupId + ", status=" + status + "]";
-   }
-
    public void setName(String name) {
       this.name = name;
+   }
+
+   @Override
+   public String toString() {
+      return "Server [addresses=" + addresses + ", adminPass=" + adminPass + ", flavorId="
+               + flavorId + ", hostId=" + hostId + ", id=" + id + ", imageId=" + imageId
+               + ", metadata=" + metadata + ", name=" + name + ", sharedIpGroupId="
+               + sharedIpGroupId + "]";
    }
 
 }

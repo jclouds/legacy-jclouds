@@ -30,10 +30,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
-import java.util.concurrent.TimeUnit;
 
+import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
-import org.jclouds.aws.s3.blobstore.S3BlobStore;
+import org.jclouds.aws.s3.blobstore.S3AsyncBlobStore;
 import org.jclouds.aws.s3.blobstore.S3BlobStoreContextFactory;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
@@ -64,10 +64,8 @@ public class JCloudsS3Service extends S3Service {
 
    private static final long serialVersionUID = 1L;
 
-   private final BlobStoreContext<S3Client> context;
+   private final BlobStoreContext<S3AsyncClient, S3Client> context;
    private final S3Client connection;
-
-   private final long requestTimeoutMilliseconds = 10000;
 
    /**
     * Initializes a JClouds context to S3.
@@ -106,8 +104,7 @@ public class JCloudsS3Service extends S3Service {
          CopyObjectOptions options = Util.convertCopyObjectOptions(acl, destinationMetadata,
                   ifModifiedSince, ifUnmodifiedSince, ifMatchTags, ifNoneMatchTags);
          ObjectMetadata jcObjectMetadata = connection.copyObject(sourceBucketName, sourceObjectKey,
-                  destinationBucketName, destinationObjectKey, options).get(
-                  requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
+                  destinationBucketName, destinationObjectKey, options);
 
          Map map = new HashMap();
          // Result fields returned when copy is successful.
@@ -129,8 +126,7 @@ public class JCloudsS3Service extends S3Service {
          throw new UnsupportedOperationException("Bucket ACL is not yet supported");
 
       try {
-         if (connection.putBucketIfNotExists(bucketName).get(requestTimeoutMilliseconds,
-                  TimeUnit.MILLISECONDS)) {
+         if (connection.putBucketIfNotExists(bucketName)) {
             // Bucket created.
          }
       } catch (Exception e) {
@@ -143,13 +139,12 @@ public class JCloudsS3Service extends S3Service {
    /**
     * {@inheritDoc}
     * 
-    * @see S3BlobStore#deleteContainer(String)
+    * @see S3AsyncBlobStore#deleteContainer(String)
     */
    @Override
    protected void deleteBucketImpl(String bucketName) throws S3ServiceException {
       try {
-         connection.deleteBucketIfEmpty(bucketName).get(requestTimeoutMilliseconds,
-                  TimeUnit.MILLISECONDS);
+         connection.deleteBucketIfEmpty(bucketName);
       } catch (Exception e) {
          Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
          throw new S3ServiceException("error deleting bucket: " + bucketName, e);
@@ -159,13 +154,12 @@ public class JCloudsS3Service extends S3Service {
    /**
     * {@inheritDoc}
     * 
-    * @see S3BlobStore#removeBlob(String, String)
+    * @see S3AsyncBlobStore#removeBlob(String, String)
     */
    @Override
    protected void deleteObjectImpl(String bucketName, String objectKey) throws S3ServiceException {
       try {
-         connection.deleteObject(bucketName, objectKey).get(requestTimeoutMilliseconds,
-                  TimeUnit.MILLISECONDS);
+         connection.deleteObject(bucketName, objectKey);
       } catch (Exception e) {
          Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
          throw new S3ServiceException(String.format("error deleting object: %1$s:%2$s", bucketName,
@@ -176,8 +170,7 @@ public class JCloudsS3Service extends S3Service {
    @Override
    protected AccessControlList getBucketAclImpl(String bucketName) throws S3ServiceException {
       try {
-         org.jclouds.aws.s3.domain.AccessControlList jcACL = connection.getBucketACL(bucketName)
-                  .get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
+         org.jclouds.aws.s3.domain.AccessControlList jcACL = connection.getBucketACL(bucketName);
          return Util.convertAccessControlList(jcACL);
       } catch (Exception e) {
          Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
@@ -203,7 +196,7 @@ public class JCloudsS3Service extends S3Service {
             throws S3ServiceException {
       try {
          org.jclouds.aws.s3.domain.AccessControlList jcACL = connection.getObjectACL(bucketName,
-                  objectKey).get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
+                  objectKey);
          return Util.convertAccessControlList(jcACL);
       } catch (Exception e) {
          Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
@@ -240,8 +233,7 @@ public class JCloudsS3Service extends S3Service {
       try {
          GetOptions options = Util.convertGetObjectOptions(ifModifiedSince, ifUnmodifiedSince,
                   ifMatchTags, ifNoneMatchTags);
-         return Util.convertObject(connection.getObject(bucketName, objectKey, options).get(
-                  requestTimeoutMilliseconds, TimeUnit.MILLISECONDS));
+         return Util.convertObject(connection.getObject(bucketName, objectKey, options));
       } catch (Exception e) {
          Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
          throw new S3ServiceException(String.format("error retrieving object: %1$s:%2$s",
@@ -265,7 +257,7 @@ public class JCloudsS3Service extends S3Service {
    protected S3Bucket[] listAllBucketsImpl() throws S3ServiceException {
       try {
          SortedSet<org.jclouds.aws.s3.domain.BucketMetadata> jcBucketList = connection
-                  .listOwnedBuckets().get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
+                  .listOwnedBuckets();
          return Util.convertBuckets(jcBucketList);
       } catch (Exception e) {
          Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
@@ -285,8 +277,7 @@ public class JCloudsS3Service extends S3Service {
             ListBucketOptions options = Util.convertListObjectOptions(prefix, priorLastKey,
                      delimiter, (int) maxListingLength);
 
-            jcBucket = connection.listBucket(bucketName, options).get(requestTimeoutMilliseconds,
-                     TimeUnit.MILLISECONDS);
+            jcBucket = connection.listBucket(bucketName, options);
 
             jsObjects.addAll(Arrays.asList(Util.convertObjectHeads(jcBucket)));
             commonPrefixes.addAll(jcBucket.getCommonPrefixes());
@@ -325,8 +316,7 @@ public class JCloudsS3Service extends S3Service {
             throws S3ServiceException {
       try {
          org.jclouds.aws.s3.domain.AccessControlList jcACL = Util.convertAccessControlList(jsACL);
-         connection.putBucketACL(bucketName, jcACL).get(requestTimeoutMilliseconds,
-                  TimeUnit.MILLISECONDS);
+         connection.putBucketACL(bucketName, jcACL);
       } catch (Exception e) {
          Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
          throw new S3ServiceException("error putting bucket's ACL: " + bucketName, e);
@@ -338,8 +328,7 @@ public class JCloudsS3Service extends S3Service {
             throws S3ServiceException {
       try {
          org.jclouds.aws.s3.domain.AccessControlList jcACL = Util.convertAccessControlList(jsACL);
-         connection.putObjectACL(bucketName, objectKey, jcACL).get(requestTimeoutMilliseconds,
-                  TimeUnit.MILLISECONDS);
+         connection.putObjectACL(bucketName, objectKey, jcACL);
       } catch (Exception e) {
          Utils.<S3ServiceException> rethrowIfRuntimeOrSameType(e);
          throw new S3ServiceException("error putting object's ACL", e);
@@ -350,9 +339,9 @@ public class JCloudsS3Service extends S3Service {
    protected S3Object putObjectImpl(String bucketName, S3Object jsObject) throws S3ServiceException {
       try {
          PutObjectOptions options = Util.convertPutObjectOptions(jsObject.getAcl());
-         org.jclouds.aws.s3.domain.S3Object jcObject = Util.convertObject(jsObject, connection.newS3Object());
-         String eTag = connection.putObject(bucketName, jcObject, options).get(
-                  requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
+         org.jclouds.aws.s3.domain.S3Object jcObject = Util.convertObject(jsObject, connection
+                  .newS3Object());
+         String eTag = connection.putObject(bucketName, jcObject, options);
          jsObject.setETag(eTag);
          return jsObject;
       } catch (Exception e) {

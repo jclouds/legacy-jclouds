@@ -31,6 +31,7 @@ import javax.inject.Singleton;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.rackspace.CloudServers;
+import org.jclouds.rackspace.cloudservers.CloudServersAsyncClient;
 import org.jclouds.rackspace.cloudservers.CloudServersClient;
 import org.jclouds.rackspace.reference.RackspaceConstants;
 import org.jclouds.rest.RestContext;
@@ -48,10 +49,12 @@ public class CloudServersContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<CloudServersClient> provideContext(Closer closer, CloudServersClient defaultApi,
+   RestContext<CloudServersAsyncClient, CloudServersClient> provideContext(Closer closer,
+            CloudServersAsyncClient asynchApi, CloudServersClient defaultApi,
             @CloudServers URI endPoint,
             @Named(RackspaceConstants.PROPERTY_RACKSPACE_USER) String account) {
-      return new RestContextImpl<CloudServersClient>(closer, defaultApi, endPoint, account);
+      return new RestContextImpl<CloudServersAsyncClient, CloudServersClient>(closer, asynchApi,
+               defaultApi, endPoint, account);
    }
 
 }

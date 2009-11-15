@@ -38,10 +38,12 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-public class AtmosStorageContextBuilder extends RestContextBuilder<AtmosStorageClient> {
+public class AtmosStorageContextBuilder extends
+         RestContextBuilder<AtmosStorageAsyncClient, AtmosStorageClient> {
 
    public AtmosStorageContextBuilder(Properties props) {
-      super(new TypeLiteral<AtmosStorageClient>() {
+      super(new TypeLiteral<AtmosStorageAsyncClient>() {
+      }, new TypeLiteral<AtmosStorageClient>() {
       }, props);
    }
 

@@ -25,13 +25,18 @@ package org.jclouds.azure.storage.blob.config;
 
 import java.net.URI;
 
+import javax.inject.Singleton;
+
 import org.jclouds.azure.storage.AzureBlob;
+import org.jclouds.azure.storage.blob.AzureBlobAsyncClient;
 import org.jclouds.azure.storage.blob.AzureBlobClient;
-import org.jclouds.azure.storage.blob.internal.StubAzureBlobClient;
+import org.jclouds.azure.storage.blob.internal.StubAzureBlobAsyncClient;
 import org.jclouds.blobstore.integration.config.StubBlobStoreModule;
+import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.rest.ConfiguresRestClient;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
 
 /**
  * adds a stub alternative to invoking AzureBlob
@@ -43,7 +48,15 @@ public class AzureBlobStubClientModule extends AbstractModule {
 
    protected void configure() {
       install(new StubBlobStoreModule());
-      bind(AzureBlobClient.class).to(StubAzureBlobClient.class).asEagerSingleton();
-      bind(URI.class).annotatedWith(AzureBlob.class).toInstance(URI.create("https://localhost/azurestub"));
+      bind(AzureBlobAsyncClient.class).to(StubAzureBlobAsyncClient.class).asEagerSingleton();
+      bind(URI.class).annotatedWith(AzureBlob.class).toInstance(
+               URI.create("https://localhost/azurestub"));
+   }
+
+   @Provides
+   @Singleton
+   public AzureBlobClient provideClient(AzureBlobAsyncClient client)
+            throws IllegalArgumentException, SecurityException, NoSuchMethodException {
+      return SyncProxy.create(AzureBlobClient.class, client);
    }
 }

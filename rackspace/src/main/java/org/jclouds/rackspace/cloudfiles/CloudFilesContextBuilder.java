@@ -48,12 +48,14 @@ import com.google.inject.TypeLiteral;
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
  * @author Adrian Cole
- * @see CloudFilesClient
+ * @see CloudFilesAsyncClient
  */
-public class CloudFilesContextBuilder extends RestContextBuilder<CloudFilesClient> {
+public class CloudFilesContextBuilder extends
+         RestContextBuilder<CloudFilesAsyncClient, CloudFilesClient> {
 
    public CloudFilesContextBuilder(Properties props) {
-      super(new TypeLiteral<CloudFilesClient>() {
+      super(new TypeLiteral<CloudFilesAsyncClient>() {
+      }, new TypeLiteral<CloudFilesClient>() {
       }, props);
 
    }

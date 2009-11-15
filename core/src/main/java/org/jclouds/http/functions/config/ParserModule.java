@@ -26,6 +26,8 @@ package org.jclouds.http.functions.config;
 import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Comparator;
+import java.util.SortedSet;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -38,8 +40,10 @@ import org.jclouds.util.DateService;
 import org.joda.time.DateTime;
 import org.xml.sax.XMLReader;
 
+import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.InstanceCreator;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -47,6 +51,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.google.gson.reflect.TypeToken;
 import com.google.inject.AbstractModule;
 import com.google.inject.ImplementedBy;
 import com.google.inject.Provides;
@@ -80,6 +85,24 @@ public class ParserModule extends AbstractModule {
       }
    }
 
+   private static final Comparator<InetAddress> ADDRESS_COMPARATOR = new Comparator<InetAddress>() {
+
+      @Override
+      public int compare(InetAddress o1, InetAddress o2) {
+         return (o1 == o2) ? 0 : o1.getHostAddress().compareTo(o2.getHostAddress());
+      }
+
+   };
+
+   static class SortedSetOfInetAddressCreator implements InstanceCreator<SortedSet<InetAddress>> {
+
+      @Override
+      public SortedSet<InetAddress> createInstance(Type arg0) {
+         return Sets.newTreeSet(ADDRESS_COMPARATOR);
+      }
+
+   }
+
    static class InetAddressAdapter implements JsonSerializer<InetAddress>,
             JsonDeserializer<InetAddress> {
       public JsonElement serialize(InetAddress src, Type typeOfSrc, JsonSerializationContext context) {
@@ -109,10 +132,12 @@ public class ParserModule extends AbstractModule {
 
    @Provides
    @Singleton
-   Gson provideGson(DateTimeAdapter adapter) {
+   Gson provideGson(DateTimeAdapter adapter, SortedSetOfInetAddressCreator addressSetCreator) {
       GsonBuilder gson = new GsonBuilder();
       gson.registerTypeAdapter(InetAddress.class, new InetAddressAdapter());
       gson.registerTypeAdapter(DateTime.class, adapter);
+      gson.registerTypeAdapter(new TypeToken<SortedSet<InetAddress>>() {
+      }.getType(), addressSetCreator);
       return gson.create();
    }
 

@@ -48,14 +48,15 @@ import com.google.inject.TypeLiteral;
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
  * @author Adrian Cole
- * @see AzureBlobClient
+ * @see AzureBlobAsyncClient
  */
-public class AzureBlobContextBuilder extends RestContextBuilder<AzureBlobClient> {
-   private static final TypeLiteral<AzureBlobClient> connectionType = new TypeLiteral<AzureBlobClient>() {
-   };
+public class AzureBlobContextBuilder extends
+         RestContextBuilder<AzureBlobAsyncClient, AzureBlobClient> {
 
    public AzureBlobContextBuilder(Properties properties) {
-      super(connectionType, properties);
+      super(new TypeLiteral<AzureBlobAsyncClient>() {
+      }, new TypeLiteral<AzureBlobClient>() {
+      }, properties);
    }
 
    @Override

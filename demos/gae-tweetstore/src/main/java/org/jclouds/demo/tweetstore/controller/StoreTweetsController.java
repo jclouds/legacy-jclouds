@@ -28,7 +28,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.IOException;
 import java.util.Map;
 import java.util.SortedSet;
-import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -80,16 +79,16 @@ public class StoreTweetsController extends HttpServlet {
    /** The serialVersionUID */
    private static final long serialVersionUID = 7215420527854203714L;
 
-   private final Map<String, BlobStoreContext<?>> contexts;
+   private final Map<String, BlobStoreContext<?, ?>> contexts;
    private final TwitterClient client;
    private final String container;
-   
+
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
    @VisibleForTesting
-   StoreTweetsController(Map<String, BlobStoreContext<?>> contexts,
+   StoreTweetsController(Map<String, BlobStoreContext<?, ?>> contexts,
             @Named(TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER) final String container,
             TwitterClient client) {
       this.container = container;
@@ -99,7 +98,7 @@ public class StoreTweetsController extends HttpServlet {
 
    @VisibleForTesting
    void addMyTweets(String contextName, SortedSet<Status> allAboutMe) {
-      BlobStoreContext<?> context = checkNotNull(contexts.get(contextName), "no context for "
+      BlobStoreContext<?, ?> context = checkNotNull(contexts.get(contextName), "no context for "
                + contextName + " in " + contexts.keySet());
       BlobMap map = context.createBlobMap(container);
       for (Status status : allAboutMe) {
@@ -121,7 +120,7 @@ public class StoreTweetsController extends HttpServlet {
             String contextName = checkNotNull(request.getHeader("context"),
                      "missing header context");
             logger.info("retrieving tweets");
-            addMyTweets(contextName, client.getMyMentions().get(1, TimeUnit.SECONDS));
+            addMyTweets(contextName, client.getMyMentions());
             logger.debug("done storing tweets");
             response.setContentType(MediaType.TEXT_PLAIN);
             response.getWriter().println("Done!");

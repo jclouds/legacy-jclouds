@@ -31,7 +31,7 @@ import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextBuilder;
-import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.config.VCloudDiscoveryRestClientModule;
 import org.jclouds.vcloud.terremark.config.TerremarkVCloudContextModule;
 import org.jclouds.vcloud.terremark.config.TerremarkVCloudRestClientModule;
@@ -40,7 +40,7 @@ import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
 /**
- * Creates {@link RestContext} for {@link VCloudClient} instances based on the most commonly
+ * Creates {@link RestContext} for {@link VCloudAsyncClient} instances based on the most commonly
  * requested arguments.
  * <p/>
  * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
@@ -51,12 +51,14 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  * @see RestContext
- * @see VCloudClient
+ * @see VCloudAsyncClient
  */
-public class TerremarkVCloudContextBuilder extends RestContextBuilder<TerremarkVCloudClient> {
+public class TerremarkVCloudContextBuilder extends
+         RestContextBuilder<TerremarkVCloudAsyncClient, TerremarkVCloudClient> {
 
    public TerremarkVCloudContextBuilder(Properties props) {
-      super(new TypeLiteral<TerremarkVCloudClient>() {
+      super(new TypeLiteral<TerremarkVCloudAsyncClient>() {
+      }, new TypeLiteral<TerremarkVCloudClient>() {
       }, props);
    }
 

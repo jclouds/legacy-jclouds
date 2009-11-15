@@ -34,6 +34,7 @@ import org.jclouds.lifecycle.Closer;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.twitter.Twitter;
+import org.jclouds.twitter.TwitterAsyncClient;
 import org.jclouds.twitter.TwitterClient;
 import org.jclouds.twitter.reference.TwitterConstants;
 
@@ -53,9 +54,11 @@ public class TwitterContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<TwitterClient> provideContext(Closer closer, TwitterClient defaultApi,
-            @Twitter URI endPoint, @Named(TwitterConstants.PROPERTY_TWITTER_USER) String account) {
-      return new RestContextImpl<TwitterClient>(closer, defaultApi, endPoint, account);
+   RestContext<TwitterAsyncClient, TwitterClient> provideContext(Closer closer,
+            TwitterAsyncClient asyncApi, TwitterClient syncApi, @Twitter URI endPoint,
+            @Named(TwitterConstants.PROPERTY_TWITTER_USER) String account) {
+      return new RestContextImpl<TwitterAsyncClient, TwitterClient>(closer, asyncApi, syncApi,
+               endPoint, account);
    }
 
 }

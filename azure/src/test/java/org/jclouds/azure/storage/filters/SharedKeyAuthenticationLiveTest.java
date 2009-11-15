@@ -27,6 +27,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -66,7 +68,7 @@ public class SharedKeyAuthenticationLiveTest {
       @GET
       @Path("/")
       @QueryParams(keys = "comp", values = "list")
-      String authenticate();
+      Future<String> authenticate();
 
    }
 
@@ -76,7 +78,7 @@ public class SharedKeyAuthenticationLiveTest {
 
    @Test
    public void testAuthentication() throws Exception {
-      String response = client.authenticate();
+      String response = client.authenticate().get(10, TimeUnit.SECONDS);
       assertTrue(response.contains(uri), String.format("expected %s to contain %s", response, uri));
    }
 
@@ -105,8 +107,7 @@ public class SharedKeyAuthenticationLiveTest {
                               .to(1l);
                   }
 
-               }, new AzureStorageRestClientModule(), new RestModule(),
-               new Log4JLoggingModule(),
+               }, new AzureStorageRestClientModule(), new RestModule(), new Log4JLoggingModule(),
                new ExecutorServiceModule(new WithinThreadExecutorService()),
                new JavaUrlHttpCommandExecutorServiceModule());
       RestClientFactory factory = injector.getInstance(RestClientFactory.class);

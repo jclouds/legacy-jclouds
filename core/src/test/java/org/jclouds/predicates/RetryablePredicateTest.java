@@ -33,9 +33,9 @@ public class RetryablePredicateTest {
       DateTime start = new DateTime();
       predicate.apply("");
       DateTime now = new DateTime();
-      assert now.compareTo(start.plusSeconds(3)) > 0 : String.format("%s should be less than %s",
+      assert now.compareTo(start.plusSeconds(3)) >= 0 : String.format("%s should be less than %s",
                start.plusSeconds(3), now);
-      assert now.compareTo(start.plusSeconds(6)) <= 0 : String.format(
+      assert now.compareTo(start.plusSeconds(4)) <= 0 : String.format(
                "%s should be greater than %s", start.plusSeconds(6), now);
 
    }
@@ -59,7 +59,7 @@ public class RetryablePredicateTest {
       DateTime start = new DateTime();
       predicate.apply("");
       DateTime now = new DateTime();
-      assert now.compareTo(start.plusSeconds(1)) > 0 : String.format("%s should be greater than %s",
+      assert now.compareTo(start.plusSeconds(1)) >= 0 : String.format("%s should be greater than %s",
                 now,start.plusSeconds(1));
       assert now.compareTo(start.plusSeconds(2)) <= 0 : String.format(
                "%s should be greater than %s", start.plusSeconds(2), now);

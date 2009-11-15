@@ -11,7 +11,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
 
@@ -26,7 +26,7 @@ import com.google.common.base.Predicate;
 @Singleton
 public class TaskSuccess implements Predicate<URI> {
 
-   private final VCloudClient client;
+   private final VCloudAsyncClient client;
 
    @Inject(optional = true)
    @Named("org.jclouds.vcloud.timeout")
@@ -36,7 +36,7 @@ public class TaskSuccess implements Predicate<URI> {
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public TaskSuccess(VCloudClient client) {
+   public TaskSuccess(VCloudAsyncClient client) {
       this.client = client;
    }
 

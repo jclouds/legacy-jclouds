@@ -30,9 +30,11 @@ import java.util.concurrent.TimeoutException;
 
 import javax.inject.Singleton;
 
+import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
+import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudDiscovery;
 import org.jclouds.vcloud.endpoints.Catalog;
@@ -61,8 +63,15 @@ public class VCloudRestClientModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected VCloudClient provideVCloudClient(RestClientFactory factory) {
-      return factory.create(VCloudClient.class);
+   protected VCloudAsyncClient provideAsyncClient(RestClientFactory factory) {
+      return factory.create(VCloudAsyncClient.class);
+   }
+
+   @Provides
+   @Singleton
+   public VCloudClient provideClient(VCloudAsyncClient client) throws IllegalArgumentException,
+            SecurityException, NoSuchMethodException {
+      return SyncProxy.create(VCloudClient.class, client);
    }
 
    @Provides
@@ -97,7 +106,7 @@ public class VCloudRestClientModule extends AbstractModule {
    @Provides
    @Network
    @Singleton
-   protected URI provideDefaultNetwork(VCloudClient client) throws InterruptedException,
+   protected URI provideDefaultNetwork(VCloudAsyncClient client) throws InterruptedException,
             ExecutionException, TimeoutException {
       return client.getDefaultVDC().get(45, TimeUnit.SECONDS).getAvailableNetworks().values()
                .iterator().next().getLocation();

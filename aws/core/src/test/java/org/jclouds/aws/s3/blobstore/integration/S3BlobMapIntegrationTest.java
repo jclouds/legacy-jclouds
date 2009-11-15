@@ -23,6 +23,7 @@
  */
 package org.jclouds.aws.s3.blobstore.integration;
 
+import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.blobstore.integration.internal.BaseBlobMapIntegrationTest;
 import org.testng.annotations.Test;
@@ -31,6 +32,6 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = { "integration", "live" }, testName = "s3.S3BlobMapIntegrationTest")
-public class S3BlobMapIntegrationTest extends BaseBlobMapIntegrationTest<S3Client> {
+public class S3BlobMapIntegrationTest extends BaseBlobMapIntegrationTest<S3AsyncClient, S3Client> {
 
 }

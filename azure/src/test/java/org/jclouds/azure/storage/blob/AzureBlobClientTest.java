@@ -81,10 +81,10 @@ import com.google.inject.TypeLiteral;
 public class AzureBlobClientTest {
 
    public void testListContainers() throws SecurityException, NoSuchMethodException {
-      Method method = AzureBlobClient.class.getMethod("listContainers", Array.newInstance(
+      Method method = AzureBlobAsyncClient.class.getMethod("listContainers", Array.newInstance(
                ListOptions.class, 0).getClass());
 
-      GeneratedHttpRequest<AzureBlobClient> httpMethod = processor.createRequest(method,
+      GeneratedHttpRequest<AzureBlobAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] {});
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/");
@@ -99,10 +99,10 @@ public class AzureBlobClientTest {
    }
 
    public void testListContainersOptions() throws SecurityException, NoSuchMethodException {
-      Method method = AzureBlobClient.class.getMethod("listContainers", Array.newInstance(
+      Method method = AzureBlobAsyncClient.class.getMethod("listContainers", Array.newInstance(
                ListOptions.class, 0).getClass());
 
-      GeneratedHttpRequest<AzureBlobClient> httpMethod = processor.createRequest(method,
+      GeneratedHttpRequest<AzureBlobAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { maxResults(1).marker("marker").prefix("prefix") });
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/");
@@ -120,10 +120,10 @@ public class AzureBlobClientTest {
    }
 
    public void testCreateContainer() throws SecurityException, NoSuchMethodException {
-      Method method = AzureBlobClient.class.getMethod("createContainer", String.class, Array
+      Method method = AzureBlobAsyncClient.class.getMethod("createContainer", String.class, Array
                .newInstance(CreateContainerOptions.class, 0).getClass());
 
-      GeneratedHttpRequest<AzureBlobClient> httpMethod = processor.createRequest(method,
+      GeneratedHttpRequest<AzureBlobAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "container" });
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/container");
@@ -141,9 +141,9 @@ public class AzureBlobClientTest {
    }
 
    public void testDeleteContainer() throws SecurityException, NoSuchMethodException {
-      Method method = AzureBlobClient.class.getMethod("deleteContainer", String.class);
+      Method method = AzureBlobAsyncClient.class.getMethod("deleteContainer", String.class);
 
-      GeneratedHttpRequest<AzureBlobClient> httpMethod = processor.createRequest(method,
+      GeneratedHttpRequest<AzureBlobAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "container" });
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/container");
@@ -160,10 +160,10 @@ public class AzureBlobClientTest {
    }
 
    public void testCreateContainerOptions() throws SecurityException, NoSuchMethodException {
-      Method method = AzureBlobClient.class.getMethod("createContainer", String.class, Array
+      Method method = AzureBlobAsyncClient.class.getMethod("createContainer", String.class, Array
                .newInstance(CreateContainerOptions.class, 0).getClass());
 
-      GeneratedHttpRequest<AzureBlobClient> httpMethod = processor.createRequest(method,
+      GeneratedHttpRequest<AzureBlobAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "container",
                         withPublicAcl().withMetadata(ImmutableMultimap.of("foo", "bar")) });
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
@@ -185,10 +185,10 @@ public class AzureBlobClientTest {
    }
 
    public void testCreateRootContainer() throws SecurityException, NoSuchMethodException {
-      Method method = AzureBlobClient.class.getMethod("createRootContainer", Array.newInstance(
-               CreateContainerOptions.class, 0).getClass());
+      Method method = AzureBlobAsyncClient.class.getMethod("createRootContainer", Array
+               .newInstance(CreateContainerOptions.class, 0).getClass());
 
-      GeneratedHttpRequest<AzureBlobClient> httpMethod = processor.createRequest(method,
+      GeneratedHttpRequest<AzureBlobAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] {});
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/$root");
@@ -206,9 +206,9 @@ public class AzureBlobClientTest {
    }
 
    public void testDeleteRootContainer() throws SecurityException, NoSuchMethodException {
-      Method method = AzureBlobClient.class.getMethod("deleteRootContainer");
+      Method method = AzureBlobAsyncClient.class.getMethod("deleteRootContainer");
 
-      GeneratedHttpRequest<AzureBlobClient> httpMethod = processor.createRequest(method,
+      GeneratedHttpRequest<AzureBlobAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] {});
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/$root");
@@ -225,10 +225,10 @@ public class AzureBlobClientTest {
    }
 
    public void testCreateRootContainerOptions() throws SecurityException, NoSuchMethodException {
-      Method method = AzureBlobClient.class.getMethod("createRootContainer", Array.newInstance(
-               CreateContainerOptions.class, 0).getClass());
+      Method method = AzureBlobAsyncClient.class.getMethod("createRootContainer", Array
+               .newInstance(CreateContainerOptions.class, 0).getClass());
 
-      GeneratedHttpRequest<AzureBlobClient> httpMethod = processor.createRequest(method,
+      GeneratedHttpRequest<AzureBlobAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { withPublicAcl().withMetadata(ImmutableMultimap.of("foo", "bar")) });
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/$root");
@@ -249,10 +249,10 @@ public class AzureBlobClientTest {
    }
 
    public void testListBlobs() throws SecurityException, NoSuchMethodException {
-      Method method = AzureBlobClient.class.getMethod("listBlobs", String.class, Array.newInstance(
-               ListBlobsOptions.class, 0).getClass());
+      Method method = AzureBlobAsyncClient.class.getMethod("listBlobs", String.class, Array
+               .newInstance(ListBlobsOptions.class, 0).getClass());
 
-      GeneratedHttpRequest<AzureBlobClient> httpMethod = processor.createRequest(method,
+      GeneratedHttpRequest<AzureBlobAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "container" });
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/container");
@@ -267,10 +267,10 @@ public class AzureBlobClientTest {
    }
 
    public void testListRootBlobs() throws SecurityException, NoSuchMethodException {
-      Method method = AzureBlobClient.class.getMethod("listBlobs", Array.newInstance(
+      Method method = AzureBlobAsyncClient.class.getMethod("listBlobs", Array.newInstance(
                ListBlobsOptions.class, 0).getClass());
 
-      GeneratedHttpRequest<AzureBlobClient> httpMethod = processor.createRequest(method,
+      GeneratedHttpRequest<AzureBlobAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] {});
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/$root");
@@ -285,9 +285,9 @@ public class AzureBlobClientTest {
    }
 
    public void testContainerProperties() throws SecurityException, NoSuchMethodException {
-      Method method = AzureBlobClient.class.getMethod("getContainerProperties", String.class);
+      Method method = AzureBlobAsyncClient.class.getMethod("getContainerProperties", String.class);
 
-      GeneratedHttpRequest<AzureBlobClient> httpMethod = processor.createRequest(method,
+      GeneratedHttpRequest<AzureBlobAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "container" });
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/container");
@@ -302,10 +302,10 @@ public class AzureBlobClientTest {
    }
 
    public void testSetResourceMetadata() throws SecurityException, NoSuchMethodException {
-      Method method = AzureBlobClient.class.getMethod("setResourceMetadata", String.class,
+      Method method = AzureBlobAsyncClient.class.getMethod("setResourceMetadata", String.class,
                Map.class);
 
-      GeneratedHttpRequest<AzureBlobClient> httpMethod = processor.createRequest(method,
+      GeneratedHttpRequest<AzureBlobAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "container", ImmutableMap.of("key", "value") });
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/container");
@@ -324,9 +324,9 @@ public class AzureBlobClientTest {
    }
 
    public void testSetBlobMetadata() throws SecurityException, NoSuchMethodException {
-      Method method = AzureBlobClient.class.getMethod("setBlobMetadata", String.class,
+      Method method = AzureBlobAsyncClient.class.getMethod("setBlobMetadata", String.class,
                String.class, Map.class);
-      GeneratedHttpRequest<AzureBlobClient> httpMethod = processor.createRequest(method,
+      GeneratedHttpRequest<AzureBlobAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "container", "blob", ImmutableMap.of("key", "value") });
       assertEquals(httpMethod.getEndpoint().getHost(), "myaccount.blob.core.windows.net");
       assertEquals(httpMethod.getEndpoint().getPath(), "/container/blob");
@@ -375,9 +375,9 @@ public class AzureBlobClientTest {
       }, new AzureStorageRestClientModule(), new RestModule(), new ExecutorServiceModule(
                new WithinThreadExecutorService()), new JavaUrlHttpCommandExecutorServiceModule());
       processor = injector.getInstance(Key
-               .get(new TypeLiteral<RestAnnotationProcessor<AzureBlobClient>>() {
+               .get(new TypeLiteral<RestAnnotationProcessor<AzureBlobAsyncClient>>() {
                }));
    }
 
-   RestAnnotationProcessor<AzureBlobClient> processor;
+   RestAnnotationProcessor<AzureBlobAsyncClient> processor;
 }

@@ -25,13 +25,18 @@ package org.jclouds.atmosonline.saas.config;
 
 import java.net.URI;
 
+import javax.inject.Singleton;
+
 import org.jclouds.atmosonline.saas.AtmosStorage;
+import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
 import org.jclouds.atmosonline.saas.AtmosStorageClient;
-import org.jclouds.atmosonline.saas.internal.StubAtmosStorageClient;
+import org.jclouds.atmosonline.saas.internal.StubAtmosStorageAsyncClient;
 import org.jclouds.blobstore.integration.config.StubBlobStoreModule;
+import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.rest.ConfiguresRestClient;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
 
 /**
  * adds a stub alternative to invoking AtmosStorage
@@ -43,7 +48,15 @@ public class AtmosStorageStubClientModule extends AbstractModule {
 
    protected void configure() {
       install(new StubBlobStoreModule());
-      bind(AtmosStorageClient.class).to(StubAtmosStorageClient.class).asEagerSingleton();
-      bind(URI.class).annotatedWith(AtmosStorage.class).toInstance(URI.create("https://localhost/azurestub"));
+      bind(AtmosStorageAsyncClient.class).to(StubAtmosStorageAsyncClient.class).asEagerSingleton();
+      bind(URI.class).annotatedWith(AtmosStorage.class).toInstance(
+               URI.create("https://localhost/azurestub"));
+   }
+
+   @Provides
+   @Singleton
+   public AtmosStorageClient provideClient(AtmosStorageAsyncClient client)
+            throws IllegalArgumentException, SecurityException, NoSuchMethodException {
+      return SyncProxy.create(AtmosStorageClient.class, client);
    }
 }

@@ -44,7 +44,6 @@ import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextBuilder;
 import org.jclouds.rest.internal.RestContextImpl;
-import org.jclouds.vcloud.VCloudLogin;
 import org.jclouds.vcloud.VCloudLogin.VCloudSession;
 import org.jclouds.vcloud.config.VCloudDiscoveryRestClientModule;
 import org.jclouds.vcloud.endpoints.VCloud;
@@ -70,9 +69,9 @@ public class VCloudLoginLiveTest {
       @SuppressWarnings( { "unused" })
       @Provides
       @Singleton
-      RestContext<VCloudLogin> provideContext(Closer closer, VCloudLogin api, @VCloud URI endPoint,
-               @Named(VCloudConstants.PROPERTY_VCLOUD_USER) String account) {
-         return new RestContextImpl<VCloudLogin>(closer, api, endPoint, account);
+      RestContext<VCloudLogin, VCloudLogin> provideContext(Closer closer, VCloudLogin api,
+               @VCloud URI endPoint, @Named(VCloudConstants.PROPERTY_VCLOUD_USER) String account) {
+         return new RestContextImpl<VCloudLogin, VCloudLogin>(closer, api, api, endPoint, account);
       }
 
       @Override
@@ -86,11 +85,11 @@ public class VCloudLoginLiveTest {
    String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
    String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
-   private RestContext<VCloudLogin> context;
+   private RestContext<VCloudLogin, VCloudLogin> context;
 
    @Test
    public void testLogin() throws Exception {
-      VCloudLogin authentication = context.getApi();
+      VCloudLogin authentication = context.getAsyncApi();
       for (int i = 0; i < 5; i++) {
          VCloudSession response = authentication.login().get(45, TimeUnit.SECONDS);
          assertNotNull(response);
@@ -101,7 +100,8 @@ public class VCloudLoginLiveTest {
 
    @BeforeClass
    void setupFactory() {
-      context = new RestContextBuilder<VCloudLogin>(new TypeLiteral<VCloudLogin>() {
+      context = new RestContextBuilder<VCloudLogin, VCloudLogin>(new TypeLiteral<VCloudLogin>() {
+      }, new TypeLiteral<VCloudLogin>() {
       }, new Properties()) {
 
          public void addContextModule(List<Module> modules) {

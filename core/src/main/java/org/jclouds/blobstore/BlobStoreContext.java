@@ -23,6 +23,7 @@
  */
 package org.jclouds.blobstore;
 
+import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.rest.RestContext;
 
@@ -36,7 +37,7 @@ import com.google.inject.ImplementedBy;
  * 
  */
 @ImplementedBy(BlobStoreContextImpl.class)
-public interface BlobStoreContext<S> extends RestContext<S> {
+public interface BlobStoreContext<A, S> extends RestContext<A, S> {
 
    /**
     * Creates a <code>Map<String,InputStream></code> view of the specified container.
@@ -52,6 +53,9 @@ public interface BlobStoreContext<S> extends RestContext<S> {
     */
    BlobMap createBlobMap(String container);
 
+   AsyncBlobStore getAsyncBlobStore();
+
    BlobStore getBlobStore();
 
+   ConsistencyModels getConsistencyModel();
 }

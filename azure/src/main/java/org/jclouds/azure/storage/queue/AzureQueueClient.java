@@ -25,27 +25,15 @@ package org.jclouds.azure.storage.queue;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import org.jclouds.azure.storage.AzureQueue;
 import org.jclouds.azure.storage.domain.BoundedSortedSet;
-import org.jclouds.azure.storage.filters.SharedKeyAuthentication;
 import org.jclouds.azure.storage.options.CreateOptions;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.queue.domain.QueueMetadata;
-import org.jclouds.azure.storage.queue.xml.AccountNameEnumerationResultsHandler;
-import org.jclouds.azure.storage.reference.AzureStorageHeaders;
-import org.jclouds.rest.annotations.Endpoint;
-import org.jclouds.rest.annotations.Headers;
-import org.jclouds.rest.annotations.QueryParams;
-import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.SkipEncoding;
-import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.concurrent.Timeout;
 
 /**
  * Provides access to Azure Queue via their REST API.
@@ -63,13 +51,11 @@ import org.jclouds.rest.annotations.XMLResponseParser;
  * All commands return a Future of the result from Azure Queue. Any exceptions incurred during
  * processing will be wrapped in an {@link ExecutionException} as documented in {@link Future#get()}.
  * 
+ * @see AzureQueueAsyncClient
  * @see <a href="http://msdn.microsoft.com/en-us/library/dd135733.aspx" />
  * @author Adrian Cole
  */
-@SkipEncoding('/')
-@RequestFilters(SharedKeyAuthentication.class)
-@Headers(keys = AzureStorageHeaders.VERSION, values = "2009-07-17")
-@Endpoint(AzureQueue.class)
+@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface AzureQueueClient {
 
    /**
@@ -81,10 +67,6 @@ public interface AzureQueueClient {
     *           controls the number or type of results requested
     * @see ListOptions
     */
-   @GET
-   @XMLResponseParser(AccountNameEnumerationResultsHandler.class)
-   @Path("/")
-   @QueryParams(keys = "comp", values = "list")
    BoundedSortedSet<QueueMetadata> listQueues(ListOptions... listOptions);
 
    /**
@@ -104,9 +86,6 @@ public interface AzureQueueClient {
     * @see CreateQueueOptions
     * 
     */
-   @PUT
-   @Path("{queue}")
-   @QueryParams(keys = "restype", values = "queue")
    boolean createQueue(@PathParam("queue") String queue, CreateOptions... options);
 
    /**
@@ -118,9 +97,6 @@ public interface AzureQueueClient {
     * collection.
     * 
     */
-   @DELETE
-   @Path("{queue}")
-   @QueryParams(keys = "restype", values = "queue")
    boolean deleteQueue(@PathParam("queue") String queue);
 
 }

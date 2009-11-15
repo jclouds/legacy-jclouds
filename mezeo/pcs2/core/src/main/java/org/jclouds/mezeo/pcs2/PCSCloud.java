@@ -24,6 +24,7 @@
 package org.jclouds.mezeo.pcs2;
 
 import java.net.URI;
+import java.util.concurrent.Future;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -77,5 +78,5 @@ public interface PCSCloud {
    @GET
    @XMLResponseParser(CloudXlinkHandler.class)
    @Path("/")
-   Response authenticate();
+   Future<Response> authenticate();
 }

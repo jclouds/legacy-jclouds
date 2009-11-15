@@ -29,6 +29,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.azure.storage.AzureQueue;
+import org.jclouds.azure.storage.queue.AzureQueueAsyncClient;
 import org.jclouds.azure.storage.queue.AzureQueueClient;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.http.RequiresHttp;
@@ -48,10 +49,11 @@ public class AzureQueueContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<AzureQueueClient> provideContext(Closer closer, AzureQueueClient defaultApi,
-            @AzureQueue URI endPoint,
+   RestContext<AzureQueueAsyncClient, AzureQueueClient> provideContext(Closer closer,
+            AzureQueueAsyncClient asynchApi, AzureQueueClient defaultApi, @AzureQueue URI endPoint,
             @Named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT) String account) {
-      return new RestContextImpl<AzureQueueClient>(closer, defaultApi, endPoint, account);
+      return new RestContextImpl<AzureQueueAsyncClient, AzureQueueClient>(closer, asynchApi,
+               defaultApi, endPoint, account);
    }
 
 }

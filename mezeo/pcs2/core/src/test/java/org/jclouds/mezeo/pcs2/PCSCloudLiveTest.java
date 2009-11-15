@@ -28,6 +28,7 @@ import static org.testng.Assert.assertNotNull;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
@@ -66,7 +67,7 @@ public class PCSCloudLiveTest {
    @Test
    public void testAuthentication() throws Exception {
       PCSCloud authentication = injector.getInstance(PCSCloud.class);
-      Response response = authentication.authenticate();
+      Response response = authentication.authenticate().get(10, TimeUnit.SECONDS);
       assertNotNull(response);
       assertNotNull(response.getContactsUrl());
       assertNotNull(response.getMetacontainersUrl());

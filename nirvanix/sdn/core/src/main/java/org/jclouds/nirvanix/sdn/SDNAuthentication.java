@@ -23,6 +23,8 @@
  */
 package org.jclouds.nirvanix.sdn;
 
+import java.util.concurrent.Future;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -34,7 +36,7 @@ import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.ResponseParser;
 
 /**
- * Provides access to Nirvanix SDN resources via their REST API.
+ * Provides asynchronous access to Nirvanix SDN resources via their REST API.
  * <p/>
  * 
  * @see <a href="http://developer.nirvanix.com/sitefiles/1000/API.html" />
@@ -52,7 +54,7 @@ public interface SDNAuthentication {
    @GET
    @ResponseParser(ParseSessionTokenFromJsonResponse.class)
    @Path("/ws/Authentication/Login.ashx")
-   String authenticate(@QueryParam(SDNQueryParams.APPKEY) String appKey,
+   Future<String> authenticate(@QueryParam(SDNQueryParams.APPKEY) String appKey,
             @QueryParam(SDNQueryParams.USERNAME) String user,
             @QueryParam(SDNQueryParams.PASSWORD) String password);
 }

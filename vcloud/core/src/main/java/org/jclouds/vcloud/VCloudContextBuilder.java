@@ -39,7 +39,7 @@ import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
 /**
- * Creates {@link RestContext} for {@link VCloudClient} instances based on the most commonly
+ * Creates {@link RestContext} for {@link VCloudAsyncClient} instances based on the most commonly
  * requested arguments.
  * <p/>
  * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
@@ -50,12 +50,13 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  * @see RestContext
- * @see VCloudClient
+ * @see VCloudAsyncClient
  */
-public class VCloudContextBuilder extends RestContextBuilder<VCloudClient> {
+public class VCloudContextBuilder extends RestContextBuilder<VCloudAsyncClient, VCloudClient> {
 
    public VCloudContextBuilder(Properties props) {
-      super(new TypeLiteral<VCloudClient>() {
+      super(new TypeLiteral<VCloudAsyncClient>() {
+      }, new TypeLiteral<VCloudClient>() {
       }, props);
    }
 

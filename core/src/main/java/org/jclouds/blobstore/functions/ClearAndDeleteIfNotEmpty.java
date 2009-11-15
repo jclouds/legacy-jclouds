@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.ClearContainerStrategy;
@@ -60,12 +60,12 @@ public class ClearAndDeleteIfNotEmpty implements Function<Exception, Void>, Invo
    protected long requestTimeoutMilliseconds = 30000;
 
    private final ClearContainerStrategy clear;
-   private final BlobStore connection;
+   private final AsyncBlobStore connection;
 
    private GeneratedHttpRequest<?> request;
 
    @Inject
-   protected ClearAndDeleteIfNotEmpty(ClearContainerStrategy clear, BlobStore connection) {
+   protected ClearAndDeleteIfNotEmpty(ClearContainerStrategy clear, AsyncBlobStore connection) {
       this.clear = clear;
       this.connection = connection;
    }

@@ -23,10 +23,7 @@
  */
 package org.jclouds.atmosonline.saas.blobstore.integration;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
-
+import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
 import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
 import org.testng.annotations.DataProvider;
@@ -37,7 +34,8 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = { "integration", "live" }, testName = "emcsaas.AtmosStorageIntegrationTest")
-public class AtmosStorageIntegrationTest extends BaseBlobIntegrationTest<AtmosStorageClient> {
+public class AtmosStorageIntegrationTest extends
+         BaseBlobIntegrationTest<AtmosStorageAsyncClient, AtmosStorageClient> {
 
    @DataProvider(name = "delete")
    // no unicode support
@@ -48,42 +46,37 @@ public class AtmosStorageIntegrationTest extends BaseBlobIntegrationTest<AtmosSt
 
    @Override
    @Test(enabled = false)
-   public void testGetIfMatch() throws InterruptedException, ExecutionException, TimeoutException,
-            IOException {
+   public void testGetIfMatch() {
       // no etag support
    }
 
    @Override
    @Test(enabled = false)
-   public void testGetIfModifiedSince() throws InterruptedException, ExecutionException,
-            TimeoutException, IOException {
+   public void testGetIfModifiedSince() {
       // not supported
    }
 
    @Override
    @Test(enabled = false)
-   public void testGetIfNoneMatch() throws InterruptedException, ExecutionException,
-            TimeoutException, IOException {
+   public void testGetIfNoneMatch() {
       // no etag support
    }
 
    @Override
    @Test(enabled = false)
-   public void testGetIfUnmodifiedSince() throws InterruptedException, ExecutionException,
-            TimeoutException, IOException {
+   public void testGetIfUnmodifiedSince() {
       // not supported
    }
 
    @Override
    @Test(enabled = false)
-   public void testGetTwoRanges() throws InterruptedException, ExecutionException,
-            TimeoutException, IOException {
+   public void testGetTwoRanges() {
       // not supported
    }
 
    @Test(enabled = false)
    // problem with the stub and md5, live is fine
-   public void testMetadata() throws Exception {
+   public void testMetadata() {
       // TODO
    }
 

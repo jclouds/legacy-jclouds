@@ -23,11 +23,6 @@
  */
 package org.jclouds.aws.s3.samples;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
 import org.jclouds.aws.s3.blobstore.S3BlobStoreContextFactory;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -49,8 +44,7 @@ public class MainApp {
    public static String INVALID_SYNTAX = "Invalid number of parameters. Syntax is: \"accesskeyid\" \"secretkey\" \"bucketName\" ";
 
    @SuppressWarnings("unchecked")
-   public static void main(String[] args) throws InterruptedException, ExecutionException,
-            TimeoutException, IOException {
+   public static void main(String[] args) {
 
       if (args.length < PARAMETERS)
          throw new IllegalArgumentException(INVALID_SYNTAX);
@@ -67,15 +61,15 @@ public class MainApp {
 
          // Create Container
          BlobStore blobStore = context.getBlobStore();
-         blobStore.createContainer(containerName).get(10, TimeUnit.SECONDS);
+         blobStore.createContainer(containerName);
 
-         Blob blob = context.getBlobStore().newBlob();
+         Blob blob = blobStore.newBlob();
          blob.getMetadata().setName("test");
          blob.setData("testdata");
-         blobStore.putBlob(containerName, blob).get(10, TimeUnit.SECONDS);
+         blobStore.putBlob(containerName, blob);
 
          // List Container
-         for (ResourceMetadata resourceMd : blobStore.list().get(10, TimeUnit.SECONDS)) {
+         for (ResourceMetadata resourceMd : blobStore.list()) {
             if (resourceMd.getType() == ResourceType.CONTAINER
                      || resourceMd.getType() == ResourceType.FOLDER) {
                System.out.printf("  %s: %s entries%n", resourceMd.getName(), context

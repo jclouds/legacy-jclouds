@@ -28,7 +28,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.net.InetAddress;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -111,7 +110,7 @@ public class CreateServerOptions extends BindToJsonEntity {
          server.sharedIpGroupId = this.sharedIpGroupId;
       if (publicIp != null) {
          server.addresses = new Addresses();
-         server.addresses.setPublicAddresses(Collections.singletonList(publicIp));
+         server.addresses.getPublicAddresses().add(publicIp);
          server.addresses.setPrivateAddresses(null);
       }
       bindToRequest(request, ImmutableMap.of("server", server));

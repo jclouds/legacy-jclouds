@@ -26,6 +26,7 @@ package org.jclouds.atmosonline.saas.blobstore;
 import java.net.URI;
 import java.util.Properties;
 
+import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
 import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.atmosonline.saas.AtmosStoragePropertiesBuilder;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -47,20 +48,20 @@ import com.google.inject.Module;
  * @see AtmosBlobStoreContext
  */
 public class AtmosBlobStoreContextFactory {
-   public static BlobStoreContext<AtmosStorageClient> createContext(Properties properties,
-            Module... modules) {
+   public static BlobStoreContext<AtmosStorageAsyncClient, AtmosStorageClient> createContext(
+            Properties properties, Module... modules) {
       return new AtmosBlobStoreContextBuilder(new AtmosStoragePropertiesBuilder(properties).build())
                .withModules(modules).buildContext();
    }
 
-   public static BlobStoreContext<AtmosStorageClient> createContext(String uid, String key,
-            Module... modules) {
+   public static BlobStoreContext<AtmosStorageAsyncClient, AtmosStorageClient> createContext(
+            String uid, String key, Module... modules) {
       return new AtmosBlobStoreContextBuilder(new AtmosStoragePropertiesBuilder(uid, key).build())
                .withModules(modules).buildContext();
    }
 
-   public static BlobStoreContext<AtmosStorageClient> createContext(URI endpoint, String uid,
-            String key, Module... modules) {
+   public static BlobStoreContext<AtmosStorageAsyncClient, AtmosStorageClient> createContext(
+            URI endpoint, String uid, String key, Module... modules) {
       return new AtmosBlobStoreContextBuilder(new AtmosStoragePropertiesBuilder(uid, key)
                .withEndpoint(endpoint).build()).withModules(modules).buildContext();
    }

@@ -24,32 +24,22 @@
 package org.jclouds.twitter;
 
 import java.util.SortedSet;
-import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-
-import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.rest.annotations.Endpoint;
-import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.concurrent.Timeout;
 import org.jclouds.twitter.domain.Status;
-import org.jclouds.twitter.functions.ParseStatusesFromJsonResponse;
 
 /**
  * Provides access to Twitter via their REST API.
  * <p/>
  * 
  * @see <a href= "http://apiwiki.twitter.com/Twitter-REST-API-Method" />
+ * @see TwitterAsyncClient
  * @author Adrian Cole
  */
-@Endpoint(Twitter.class)
-@RequestFilters(BasicAuthentication.class)
+@Timeout(duration = 4, timeUnit = TimeUnit.SECONDS)
 public interface TwitterClient {
 
-   @GET
-   @ResponseParser(ParseStatusesFromJsonResponse.class)
-   @Path("/statuses/mentions.json")
-   Future<SortedSet<Status>> getMyMentions();
+   SortedSet<Status> getMyMentions();
 
 }

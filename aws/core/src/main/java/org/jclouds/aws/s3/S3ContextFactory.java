@@ -42,22 +42,23 @@ import com.google.inject.Module;
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
  * @author Adrian Cole
- * @see S3Client
+ * @see S3AsyncClient
  */
 public class S3ContextFactory {
 
-   public static RestContext<S3Client> createContext(Properties properties, Module... modules) {
+   public static RestContext<S3AsyncClient, S3Client> createContext(Properties properties,
+            Module... modules) {
       return new S3ContextBuilder(new S3PropertiesBuilder(properties).build()).withModules(modules)
                .buildContext();
    }
 
-   public static RestContext<S3Client> createContext(String awsAccessKeyId,
+   public static RestContext<S3AsyncClient, S3Client> createContext(String awsAccessKeyId,
             String awsSecretAccessKey, Module... modules) {
       return new S3ContextBuilder(new S3PropertiesBuilder(awsAccessKeyId, awsSecretAccessKey)
                .build()).withModules(modules).buildContext();
    }
 
-   public static RestContext<S3Client> createContext(URI endpoint, String awsAccessKeyId,
+   public static RestContext<S3AsyncClient, S3Client> createContext(URI endpoint, String awsAccessKeyId,
             String awsSecretAccessKey, Module... modules) {
       return new S3ContextBuilder(new S3PropertiesBuilder(awsAccessKeyId, awsSecretAccessKey)
                .withEndpoint(endpoint).build()).withModules(modules).buildContext();

@@ -73,9 +73,9 @@ public class AzureQueueClientTest {
             .getClass();
 
    public void testListQueues() throws SecurityException, NoSuchMethodException {
-      Method method = AzureQueueClient.class.getMethod("listQueues", listOptionsVarargsClass);
+      Method method = AzureQueueAsyncClient.class.getMethod("listQueues", listOptionsVarargsClass);
 
-      GeneratedHttpRequest<AzureQueueClient> httpMethod = processor.createRequest(method,
+      GeneratedHttpRequest<AzureQueueAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] {});
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/");
@@ -90,9 +90,9 @@ public class AzureQueueClientTest {
    }
 
    public void testListQueuesOptions() throws SecurityException, NoSuchMethodException {
-      Method method = AzureQueueClient.class.getMethod("listQueues", listOptionsVarargsClass);
+      Method method = AzureQueueAsyncClient.class.getMethod("listQueues", listOptionsVarargsClass);
 
-      GeneratedHttpRequest<AzureQueueClient> httpMethod = processor.createRequest(method,
+      GeneratedHttpRequest<AzureQueueAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { maxResults(1).marker("marker").prefix("prefix") });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/");
@@ -110,10 +110,10 @@ public class AzureQueueClientTest {
    }
 
    public void testCreateQueue() throws SecurityException, NoSuchMethodException {
-      Method method = AzureQueueClient.class.getMethod("createQueue", String.class,
+      Method method = AzureQueueAsyncClient.class.getMethod("createQueue", String.class,
                createOptionsVarargsClass);
 
-      GeneratedHttpRequest<AzureQueueClient> httpMethod = processor.createRequest(method,
+      GeneratedHttpRequest<AzureQueueAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "queue" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/queue");
@@ -130,9 +130,9 @@ public class AzureQueueClientTest {
    }
 
    public void testDeleteQueue() throws SecurityException, NoSuchMethodException {
-      Method method = AzureQueueClient.class.getMethod("deleteQueue", String.class);
+      Method method = AzureQueueAsyncClient.class.getMethod("deleteQueue", String.class);
 
-      GeneratedHttpRequest<AzureQueueClient> httpMethod = processor.createRequest(method,
+      GeneratedHttpRequest<AzureQueueAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "queue" });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/queue");
@@ -148,10 +148,10 @@ public class AzureQueueClientTest {
    }
 
    public void testCreateQueueOptions() throws SecurityException, NoSuchMethodException {
-      Method method = AzureQueueClient.class.getMethod("createQueue", String.class,
+      Method method = AzureQueueAsyncClient.class.getMethod("createQueue", String.class,
                createOptionsVarargsClass);
 
-      GeneratedHttpRequest<AzureQueueClient> httpMethod = processor.createRequest(method,
+      GeneratedHttpRequest<AzureQueueAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "queue", withMetadata(ImmutableMultimap.of("foo", "bar")) });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/queue");
@@ -192,9 +192,9 @@ public class AzureQueueClientTest {
       }, new AzureStorageRestClientModule(), new RestModule(), new ExecutorServiceModule(
                new WithinThreadExecutorService()), new JavaUrlHttpCommandExecutorServiceModule());
       processor = injector.getInstance(Key
-               .get(new TypeLiteral<RestAnnotationProcessor<AzureQueueClient>>() {
+               .get(new TypeLiteral<RestAnnotationProcessor<AzureQueueAsyncClient>>() {
                }));
    }
 
-   RestAnnotationProcessor<AzureQueueClient> processor;
+   RestAnnotationProcessor<AzureQueueAsyncClient> processor;
 }

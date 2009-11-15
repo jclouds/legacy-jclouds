@@ -27,8 +27,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.MalformedURLException;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -51,8 +49,7 @@ public abstract class BaseHttpCommandExecutorServiceTest extends BaseJettyTest {
    @Test(invocationCount = 50, timeOut = 5000)
    public void testRequestFilter() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
-      Future<String> get = client.downloadFilter("", "filterme");
-      assertEquals(get.get(10, TimeUnit.SECONDS).trim(), "test");
+      assertEquals(client.downloadFilter("", "filterme").trim(), "test");
    }
 
    // TODO: filtering redirect test
@@ -60,15 +57,13 @@ public abstract class BaseHttpCommandExecutorServiceTest extends BaseJettyTest {
    @Test(invocationCount = 50, timeOut = 5000)
    public void testGetStringWithHeader() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
-      Future<String> get = client.download("", "test");
-      assertEquals(get.get(10, TimeUnit.SECONDS).trim(), "test");
+      assertEquals(client.download("", "test").trim(), "test");
    }
 
    @Test(invocationCount = 50, timeOut = 5000)
    public void testGetString() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
-      Future<String> get = client.download("");
-      assertEquals(get.get(10, TimeUnit.SECONDS).trim(), XML);
+      assertEquals(client.download("").trim(), XML);
    }
 
    @DataProvider(name = "gets")
@@ -87,8 +82,7 @@ public abstract class BaseHttpCommandExecutorServiceTest extends BaseJettyTest {
    @Test(invocationCount = 50, timeOut = 5000)
    public void testGetException() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
-      Future<String> get = client.downloadException("", GetOptions.Builder.tail(1));
-      assertEquals(get.get(10, TimeUnit.SECONDS).trim(), "foo");
+      assertEquals(client.downloadException("", GetOptions.Builder.tail(1)).trim(), "foo");
    }
 
    @Test(invocationCount = 50, timeOut = 5000)
@@ -100,8 +94,7 @@ public abstract class BaseHttpCommandExecutorServiceTest extends BaseJettyTest {
    @Test(invocationCount = 50, timeOut = 5000)
    public void testGetStringRedirect() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
-      Future<String> get = client.download("redirect");
-      assertEquals(get.get(60, TimeUnit.SECONDS).trim(), XML2);
+      assertEquals(client.download("redirect").trim(), XML2);
    }
 
    @Test(enabled = false, invocationCount = 50, timeOut = 5000)
@@ -117,16 +110,14 @@ public abstract class BaseHttpCommandExecutorServiceTest extends BaseJettyTest {
    @Test(invocationCount = 50, timeOut = 5000)
    public void testPost() throws MalformedURLException, ExecutionException, InterruptedException,
             TimeoutException {
-      Future<String> put = client.post("", "foo");
-      assertEquals(put.get(10, TimeUnit.SECONDS).trim(), "fooPOST");
+      assertEquals(client.post("", "foo").trim(), "fooPOST");
    }
 
    @Test(invocationCount = 50, timeOut = 10000)
    public void testPostAsInputStream() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
       try {
-         Future<String> put = client.postAsInputStream("", "foo");
-         assertEquals(put.get(10, TimeUnit.SECONDS).trim(), "fooPOST");
+         assertEquals(client.postAsInputStream("", "foo").trim(), "fooPOST");
       } catch (Exception e) {
          postFailures.incrementAndGet();
       }
@@ -148,29 +139,26 @@ public abstract class BaseHttpCommandExecutorServiceTest extends BaseJettyTest {
    @Test(invocationCount = 50, timeOut = 5000)
    public void testPostBinder() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
-      Future<String> put = client.postJson("", "foo");
-      assertEquals(put.get(10, TimeUnit.SECONDS).trim(), "{\"key\":\"foo\"}POST");
+      assertEquals(client.postJson("", "foo").trim(), "{\"key\":\"foo\"}POST");
    }
 
    @Test(invocationCount = 50, timeOut = 5000)
    public void testPut() throws MalformedURLException, ExecutionException, InterruptedException,
             TimeoutException {
-      Future<String> put = client.upload("", "foo");
-      assertEquals(put.get(10, TimeUnit.SECONDS).trim(), "fooPUT");
+      assertEquals(client.upload("", "foo").trim(), "fooPUT");
    }
 
    @Test(invocationCount = 50, timeOut = 5000)
    public void testPutRedirect() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
-      Future<String> put = client.upload("redirect", "foo");
-      assertEquals(put.get(10, TimeUnit.SECONDS).trim(), "fooPUTREDIRECT");
+      assertEquals(client.upload("redirect", "foo").trim(), "fooPUTREDIRECT");
    }
 
    @Test(invocationCount = 50, timeOut = 5000)
    public void testKillRobotSlowly() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
-      Future<String> dead = client.action("robot", "kill", ImmutableMap.of("death", "slow"));
-      assertEquals(dead.get(10, TimeUnit.SECONDS).trim(), "robot->kill:{death=slow}");
+      assertEquals(client.action("robot", "kill", ImmutableMap.of("death", "slow")).trim(),
+               "robot->kill:{death=slow}");
    }
 
    @Test(invocationCount = 50, timeOut = 5000)
@@ -182,7 +170,6 @@ public abstract class BaseHttpCommandExecutorServiceTest extends BaseJettyTest {
    @Test(invocationCount = 50, timeOut = 5000)
    public void testGetAndParseSax() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
-      Future<String> getAndParseSax = client.downloadAndParse("");
-      assertEquals(getAndParseSax.get(10, TimeUnit.SECONDS), "whoppers");
+      assertEquals(client.downloadAndParse(""), "whoppers");
    }
 }

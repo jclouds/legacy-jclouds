@@ -26,12 +26,17 @@ package org.jclouds.rackspace.cloudfiles.config;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import javax.inject.Singleton;
+
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.concurrent.internal.SyncProxy;
+import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
 import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
-import org.jclouds.rackspace.cloudfiles.internal.StubCloudFilesClient;
+import org.jclouds.rackspace.cloudfiles.internal.StubCloudFilesAsyncClient;
 import org.jclouds.rest.ConfiguresRestClient;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 @ConfiguresRestClient
@@ -44,9 +49,15 @@ public class CloudFilesStubClientModule extends AbstractModule {
 
       bind(new TypeLiteral<ConcurrentMap<String, ConcurrentMap<String, Blob>>>() {
       }).toInstance(map);
-      bind(new TypeLiteral<CloudFilesClient>() {
-      }).to(new TypeLiteral<StubCloudFilesClient>() {
+      bind(new TypeLiteral<CloudFilesAsyncClient>() {
+      }).to(new TypeLiteral<StubCloudFilesAsyncClient>() {
       }).asEagerSingleton();
    }
 
+   @Provides
+   @Singleton
+   public CloudFilesClient provideClient(CloudFilesAsyncClient client)
+            throws IllegalArgumentException, SecurityException, NoSuchMethodException {
+      return SyncProxy.create(CloudFilesClient.class, client);
+   }
 }

@@ -73,12 +73,12 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "ec2.EC2ClientTest")
-public class EC2ClientTest extends RestClientTest<EC2Client> {
+public class EC2ClientTest extends RestClientTest<EC2AsyncClient> {
 
    public void testDescribeImages() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = EC2Client.class.getMethod("describeImages", Array.newInstance(
+      Method method = EC2AsyncClient.class.getMethod("describeImages", Array.newInstance(
                DescribeImagesOptions.class, 0).getClass());
-      GeneratedHttpRequest<EC2Client> httpMethod = processor.createRequest(method);
+      GeneratedHttpRequest<EC2AsyncClient> httpMethod = processor.createRequest(method);
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -98,9 +98,9 @@ public class EC2ClientTest extends RestClientTest<EC2Client> {
 
    public void testDescribeImagesOptions() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = EC2Client.class.getMethod("describeImages", Array.newInstance(
+      Method method = EC2AsyncClient.class.getMethod("describeImages", Array.newInstance(
                DescribeImagesOptions.class, 0).getClass());
-      GeneratedHttpRequest<EC2Client> httpMethod = processor.createRequest(method, executableBy(
+      GeneratedHttpRequest<EC2AsyncClient> httpMethod = processor.createRequest(method, executableBy(
                "me").ownedBy("fred", "nancy").imageIds("1", "2"));
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
@@ -119,9 +119,9 @@ public class EC2ClientTest extends RestClientTest<EC2Client> {
 
    public void testDescribeImageAttribute() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = EC2Client.class.getMethod("describeImageAttribute", String.class,
+      Method method = EC2AsyncClient.class.getMethod("describeImageAttribute", String.class,
                ImageAttribute.class);
-      GeneratedHttpRequest<EC2Client> httpMethod = processor.createRequest(method, "imageId",
+      GeneratedHttpRequest<EC2AsyncClient> httpMethod = processor.createRequest(method, "imageId",
                ImageAttribute.BLOCK_DEVICE_MAPPING);
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
@@ -142,9 +142,9 @@ public class EC2ClientTest extends RestClientTest<EC2Client> {
    }
 
    public void testDescribeInstances() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = EC2Client.class.getMethod("describeInstances", Array.newInstance(
+      Method method = EC2AsyncClient.class.getMethod("describeInstances", Array.newInstance(
                String.class, 0).getClass());
-      GeneratedHttpRequest<EC2Client> httpMethod = processor.createRequest(method);
+      GeneratedHttpRequest<EC2AsyncClient> httpMethod = processor.createRequest(method);
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -160,9 +160,9 @@ public class EC2ClientTest extends RestClientTest<EC2Client> {
 
    public void testDescribeInstancesArgs() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = EC2Client.class.getMethod("describeInstances", Array.newInstance(
+      Method method = EC2AsyncClient.class.getMethod("describeInstances", Array.newInstance(
                String.class, 0).getClass());
-      GeneratedHttpRequest<EC2Client> httpMethod = processor.createRequest(method, "1", "2");
+      GeneratedHttpRequest<EC2AsyncClient> httpMethod = processor.createRequest(method, "1", "2");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -179,9 +179,9 @@ public class EC2ClientTest extends RestClientTest<EC2Client> {
 
    public void testTerminateInstances() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = EC2Client.class.getMethod("terminateInstances", String.class, Array
+      Method method = EC2AsyncClient.class.getMethod("terminateInstances", String.class, Array
                .newInstance(String.class, 0).getClass());
-      GeneratedHttpRequest<EC2Client> httpMethod = processor.createRequest(method, "1", "2");
+      GeneratedHttpRequest<EC2AsyncClient> httpMethod = processor.createRequest(method, "1", "2");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -197,9 +197,9 @@ public class EC2ClientTest extends RestClientTest<EC2Client> {
    }
 
    public void testRunInstances() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = EC2Client.class.getMethod("runInstances", String.class, int.class, int.class,
+      Method method = EC2AsyncClient.class.getMethod("runInstances", String.class, int.class, int.class,
                Array.newInstance(RunInstancesOptions.class, 0).getClass());
-      GeneratedHttpRequest<EC2Client> httpMethod = processor.createRequest(method, "ami-voo", 1, 1);
+      GeneratedHttpRequest<EC2AsyncClient> httpMethod = processor.createRequest(method, "ami-voo", 1, 1);
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -216,9 +216,9 @@ public class EC2ClientTest extends RestClientTest<EC2Client> {
 
    public void testRunInstancesOptions() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = EC2Client.class.getMethod("runInstances", String.class, int.class, int.class,
+      Method method = EC2AsyncClient.class.getMethod("runInstances", String.class, int.class, int.class,
                Array.newInstance(RunInstancesOptions.class, 0).getClass());
-      GeneratedHttpRequest<EC2Client> httpMethod = processor.createRequest(method, "ami-voo", 1, 5,
+      GeneratedHttpRequest<EC2AsyncClient> httpMethod = processor.createRequest(method, "ami-voo", 1, 5,
                new RunInstancesOptions().withKernelId("kernelId").enableMonitoring());
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
@@ -236,8 +236,8 @@ public class EC2ClientTest extends RestClientTest<EC2Client> {
    }
 
    public void testCreateKeyPair() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = EC2Client.class.getMethod("createKeyPair", String.class);
-      GeneratedHttpRequest<EC2Client> httpMethod = processor.createRequest(method, "mykey");
+      Method method = EC2AsyncClient.class.getMethod("createKeyPair", String.class);
+      GeneratedHttpRequest<EC2AsyncClient> httpMethod = processor.createRequest(method, "mykey");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -253,8 +253,8 @@ public class EC2ClientTest extends RestClientTest<EC2Client> {
 
    public void testDisassociateAddress() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = EC2Client.class.getMethod("disassociateAddress", InetAddress.class);
-      GeneratedHttpRequest<EC2Client> httpMethod = processor.createRequest(method, InetAddress
+      Method method = EC2AsyncClient.class.getMethod("disassociateAddress", InetAddress.class);
+      GeneratedHttpRequest<EC2AsyncClient> httpMethod = processor.createRequest(method, InetAddress
                .getByAddress(new byte[] { 127, 0, 0, 1 }));
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
@@ -271,9 +271,9 @@ public class EC2ClientTest extends RestClientTest<EC2Client> {
    }
 
    public void testAssociateAddress() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = EC2Client.class
+      Method method = EC2AsyncClient.class
                .getMethod("associateAddress", InetAddress.class, String.class);
-      GeneratedHttpRequest<EC2Client> httpMethod = processor.createRequest(method, InetAddress
+      GeneratedHttpRequest<EC2AsyncClient> httpMethod = processor.createRequest(method, InetAddress
                .getByAddress(new byte[] { 127, 0, 0, 1 }), "me");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
@@ -290,8 +290,8 @@ public class EC2ClientTest extends RestClientTest<EC2Client> {
    }
 
    public void testReleaseAddress() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = EC2Client.class.getMethod("releaseAddress", InetAddress.class);
-      GeneratedHttpRequest<EC2Client> httpMethod = processor.createRequest(method, InetAddress
+      Method method = EC2AsyncClient.class.getMethod("releaseAddress", InetAddress.class);
+      GeneratedHttpRequest<EC2AsyncClient> httpMethod = processor.createRequest(method, InetAddress
                .getByAddress(new byte[] { 127, 0, 0, 1 }));
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
@@ -307,9 +307,9 @@ public class EC2ClientTest extends RestClientTest<EC2Client> {
    }
 
    public void testDescribeAddresses() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = EC2Client.class.getMethod("describeAddresses", Array.newInstance(
+      Method method = EC2AsyncClient.class.getMethod("describeAddresses", Array.newInstance(
                InetAddress.class, 0).getClass());
-      GeneratedHttpRequest<EC2Client> httpMethod = processor.createRequest(method, InetAddress
+      GeneratedHttpRequest<EC2AsyncClient> httpMethod = processor.createRequest(method, InetAddress
                .getByAddress(new byte[] { 127, 0, 0, 1 }));
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
@@ -326,8 +326,8 @@ public class EC2ClientTest extends RestClientTest<EC2Client> {
    }
 
    public void testAllocateAddress() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = EC2Client.class.getMethod("allocateAddress");
-      GeneratedHttpRequest<EC2Client> httpMethod = processor.createRequest(method);
+      Method method = EC2AsyncClient.class.getMethod("allocateAddress");
+      GeneratedHttpRequest<EC2AsyncClient> httpMethod = processor.createRequest(method);
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -342,8 +342,8 @@ public class EC2ClientTest extends RestClientTest<EC2Client> {
    }
 
    public void testDeleteKeyPair() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = EC2Client.class.getMethod("deleteKeyPair", String.class);
-      GeneratedHttpRequest<EC2Client> httpMethod = processor.createRequest(method, "mykey");
+      Method method = EC2AsyncClient.class.getMethod("deleteKeyPair", String.class);
+      GeneratedHttpRequest<EC2AsyncClient> httpMethod = processor.createRequest(method, "mykey");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -358,9 +358,9 @@ public class EC2ClientTest extends RestClientTest<EC2Client> {
    }
 
    public void testDescribeKeyPairs() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = EC2Client.class.getMethod("describeKeyPairs", Array.newInstance(String.class,
+      Method method = EC2AsyncClient.class.getMethod("describeKeyPairs", Array.newInstance(String.class,
                0).getClass());
-      GeneratedHttpRequest<EC2Client> httpMethod = processor.createRequest(method);
+      GeneratedHttpRequest<EC2AsyncClient> httpMethod = processor.createRequest(method);
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -376,9 +376,9 @@ public class EC2ClientTest extends RestClientTest<EC2Client> {
 
    public void testDescribeKeyPairsArgs() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = EC2Client.class.getMethod("describeKeyPairs", Array.newInstance(String.class,
+      Method method = EC2AsyncClient.class.getMethod("describeKeyPairs", Array.newInstance(String.class,
                0).getClass());
-      GeneratedHttpRequest<EC2Client> httpMethod = processor.createRequest(method, "1", "2");
+      GeneratedHttpRequest<EC2AsyncClient> httpMethod = processor.createRequest(method, "1", "2");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -395,8 +395,8 @@ public class EC2ClientTest extends RestClientTest<EC2Client> {
 
    public void testDeleteSecurityGroup() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = EC2Client.class.getMethod("deleteSecurityGroup", String.class);
-      GeneratedHttpRequest<EC2Client> httpMethod = processor.createRequest(method, "name");
+      Method method = EC2AsyncClient.class.getMethod("deleteSecurityGroup", String.class);
+      GeneratedHttpRequest<EC2AsyncClient> httpMethod = processor.createRequest(method, "name");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -412,8 +412,8 @@ public class EC2ClientTest extends RestClientTest<EC2Client> {
 
    public void testCreateSecurityGroup() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = EC2Client.class.getMethod("createSecurityGroup", String.class, String.class);
-      GeneratedHttpRequest<EC2Client> httpMethod = processor.createRequest(method, "name",
+      Method method = EC2AsyncClient.class.getMethod("createSecurityGroup", String.class, String.class);
+      GeneratedHttpRequest<EC2AsyncClient> httpMethod = processor.createRequest(method, "name",
                "description");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
@@ -431,9 +431,9 @@ public class EC2ClientTest extends RestClientTest<EC2Client> {
 
    public void testDescribeSecurityGroups() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = EC2Client.class.getMethod("describeSecurityGroups", Array.newInstance(
+      Method method = EC2AsyncClient.class.getMethod("describeSecurityGroups", Array.newInstance(
                String.class, 0).getClass());
-      GeneratedHttpRequest<EC2Client> httpMethod = processor.createRequest(method);
+      GeneratedHttpRequest<EC2AsyncClient> httpMethod = processor.createRequest(method);
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -449,9 +449,9 @@ public class EC2ClientTest extends RestClientTest<EC2Client> {
 
    public void testDescribeSecurityGroupsArgs() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = EC2Client.class.getMethod("describeSecurityGroups", Array.newInstance(
+      Method method = EC2AsyncClient.class.getMethod("describeSecurityGroups", Array.newInstance(
                String.class, 0).getClass());
-      GeneratedHttpRequest<EC2Client> httpMethod = processor.createRequest(method, "1", "2");
+      GeneratedHttpRequest<EC2AsyncClient> httpMethod = processor.createRequest(method, "1", "2");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -468,9 +468,9 @@ public class EC2ClientTest extends RestClientTest<EC2Client> {
 
    public void testAuthorizeSecurityGroupIngressGroup() throws SecurityException,
             NoSuchMethodException, IOException {
-      Method method = EC2Client.class.getMethod("authorizeSecurityGroupIngress", String.class,
+      Method method = EC2AsyncClient.class.getMethod("authorizeSecurityGroupIngress", String.class,
                UserIdGroupPair.class);
-      GeneratedHttpRequest<EC2Client> httpMethod = processor.createRequest(method, "group",
+      GeneratedHttpRequest<EC2AsyncClient> httpMethod = processor.createRequest(method, "group",
                new UserIdGroupPair("sourceUser", "sourceGroup"));
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
@@ -489,9 +489,9 @@ public class EC2ClientTest extends RestClientTest<EC2Client> {
 
    public void testAuthorizeSecurityGroupIngressCidr() throws SecurityException,
             NoSuchMethodException, IOException {
-      Method method = EC2Client.class.getMethod("authorizeSecurityGroupIngress", String.class,
+      Method method = EC2AsyncClient.class.getMethod("authorizeSecurityGroupIngress", String.class,
                IpProtocol.class, int.class, int.class, String.class);
-      GeneratedHttpRequest<EC2Client> httpMethod = processor.createRequest(method, "group",
+      GeneratedHttpRequest<EC2AsyncClient> httpMethod = processor.createRequest(method, "group",
                IpProtocol.TCP, 6000, 7000, "0.0.0.0/0");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
@@ -510,9 +510,9 @@ public class EC2ClientTest extends RestClientTest<EC2Client> {
 
    public void testRevokeSecurityGroupIngressGroup() throws SecurityException,
             NoSuchMethodException, IOException {
-      Method method = EC2Client.class.getMethod("revokeSecurityGroupIngress", String.class,
+      Method method = EC2AsyncClient.class.getMethod("revokeSecurityGroupIngress", String.class,
                UserIdGroupPair.class);
-      GeneratedHttpRequest<EC2Client> httpMethod = processor.createRequest(method, "group",
+      GeneratedHttpRequest<EC2AsyncClient> httpMethod = processor.createRequest(method, "group",
                new UserIdGroupPair("sourceUser", "sourceGroup"));
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
@@ -531,9 +531,9 @@ public class EC2ClientTest extends RestClientTest<EC2Client> {
 
    public void testRevokeSecurityGroupIngressCidr() throws SecurityException,
             NoSuchMethodException, IOException {
-      Method method = EC2Client.class.getMethod("revokeSecurityGroupIngress", String.class,
+      Method method = EC2AsyncClient.class.getMethod("revokeSecurityGroupIngress", String.class,
                IpProtocol.class, int.class, int.class, String.class);
-      GeneratedHttpRequest<EC2Client> httpMethod = processor.createRequest(method, "group",
+      GeneratedHttpRequest<EC2AsyncClient> httpMethod = processor.createRequest(method, "group",
                IpProtocol.TCP, 6000, 7000, "0.0.0.0/0");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
@@ -551,14 +551,14 @@ public class EC2ClientTest extends RestClientTest<EC2Client> {
    }
 
    @Override
-   protected void checkFilters(GeneratedHttpRequest<EC2Client> httpMethod) {
+   protected void checkFilters(GeneratedHttpRequest<EC2AsyncClient> httpMethod) {
       assertEquals(httpMethod.getFilters().size(), 1);
       assertEquals(httpMethod.getFilters().get(0).getClass(), FormSigner.class);
    }
 
    @Override
-   protected TypeLiteral<RestAnnotationProcessor<EC2Client>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<EC2Client>>() {
+   protected TypeLiteral<RestAnnotationProcessor<EC2AsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<EC2AsyncClient>>() {
       };
    }
 

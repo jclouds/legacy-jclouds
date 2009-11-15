@@ -30,8 +30,10 @@ import javax.inject.Singleton;
 
 import org.jclouds.azure.storage.AzureQueue;
 import org.jclouds.azure.storage.config.AzureStorageRestClientModule;
+import org.jclouds.azure.storage.queue.AzureQueueAsyncClient;
 import org.jclouds.azure.storage.queue.AzureQueueClient;
 import org.jclouds.azure.storage.queue.reference.AzureQueueConstants;
+import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
@@ -57,8 +59,15 @@ public class AzureQueueRestClientModule extends AzureStorageRestClientModule {
 
    @Provides
    @Singleton
-   protected AzureQueueClient provideAzureStorageClient(RestClientFactory factory) {
-      return factory.create(AzureQueueClient.class);
+   protected AzureQueueAsyncClient provideAsyncClient(RestClientFactory factory) {
+      return factory.create(AzureQueueAsyncClient.class);
+   }
+
+   @Provides
+   @Singleton
+   public AzureQueueClient provideClient(AzureQueueAsyncClient client)
+            throws IllegalArgumentException, SecurityException, NoSuchMethodException {
+      return SyncProxy.create(AzureQueueClient.class, client);
    }
 
 }

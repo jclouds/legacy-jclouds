@@ -55,7 +55,7 @@ import com.google.inject.servlet.ServletModule;
  */
 public class GuiceServletConfig extends GuiceServletContextListener {
 
-   private Map<String, BlobStoreContext<?>> contexts;
+   private Map<String, BlobStoreContext<?, ?>> contexts;
 
    @SuppressWarnings("unchecked")
    @Override
@@ -67,10 +67,10 @@ public class GuiceServletConfig extends GuiceServletContextListener {
       contexts = Maps.newHashMap();
       for (String className : list) {
          try {
-            Class<BlobStoreContextBuilder<?>> builderClass;
-            builderClass = (Class<BlobStoreContextBuilder<?>>) Class.forName(className);
+            Class<BlobStoreContextBuilder<?, ?>> builderClass;
+            builderClass = (Class<BlobStoreContextBuilder<?, ?>>) Class.forName(className);
             String name = builderClass.getSimpleName().replaceAll("BlobStoreContextBuilder", "");
-            Constructor<BlobStoreContextBuilder<?>> constructor = builderClass
+            Constructor<BlobStoreContextBuilder<?, ?>> constructor = builderClass
                      .getConstructor(Properties.class);
             contexts.put(name, constructor.newInstance(props).withModules(
                      new GaeHttpCommandExecutorServiceModule()).buildContext());
@@ -100,7 +100,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
       return Guice.createInjector(new ServletModule() {
          @Override
          protected void configureServlets() {
-            bind(new TypeLiteral<Map<String, BlobStoreContext<?>>>() {
+            bind(new TypeLiteral<Map<String, BlobStoreContext<?, ?>>>() {
             }).toInstance(GuiceServletConfig.this.contexts);
             serve("*.blobstore").with(GetAllContainersController.class);
             requestInjection(this);
@@ -112,7 +112,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 
    @Override
    public void contextDestroyed(ServletContextEvent servletContextEvent) {
-      for (BlobStoreContext<?> context : contexts.values()) {
+      for (BlobStoreContext<?, ?> context : contexts.values()) {
          context.close();
       }
       super.contextDestroyed(servletContextEvent);

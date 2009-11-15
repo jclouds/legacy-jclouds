@@ -47,12 +47,11 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-public class BaseBlobMapIntegrationTest<S> extends BaseMapIntegrationTest<S, Blob> {
+public class BaseBlobMapIntegrationTest<A, S> extends BaseMapIntegrationTest<A, S, Blob> {
 
    @Override
    @Test(groups = { "integration", "live" })
-   public void testValues() throws IOException, InterruptedException, ExecutionException,
-            TimeoutException {
+   public void testValues() throws IOException, InterruptedException {
       String bucketName = getContainerName();
       try {
          Map<String, Blob> map = createMap(context, bucketName);
@@ -105,8 +104,7 @@ public class BaseBlobMapIntegrationTest<S> extends BaseMapIntegrationTest<S, Blo
 
    @Override
    @Test(groups = { "integration", "live" })
-   public void testEntrySet() throws IOException, InterruptedException, ExecutionException,
-            TimeoutException {
+   public void testEntrySet() throws IOException, InterruptedException {
       String bucketName = getContainerName();
       try {
          Map<String, Blob> map = createMap(context, bucketName);
@@ -160,8 +158,7 @@ public class BaseBlobMapIntegrationTest<S> extends BaseMapIntegrationTest<S, Blo
    }
 
    @Test(groups = { "integration", "live" })
-   public void testPut() throws IOException, InterruptedException, ExecutionException,
-            TimeoutException {
+   public void testPut() throws IOException, InterruptedException {
       String bucketName = getContainerName();
       try {
          Map<String, Blob> map = createMap(context, bucketName);

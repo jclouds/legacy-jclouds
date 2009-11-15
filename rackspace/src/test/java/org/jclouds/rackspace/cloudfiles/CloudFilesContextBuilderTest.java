@@ -31,7 +31,7 @@ import java.util.List;
 
 import org.jclouds.rackspace.StubRackspaceAuthenticationModule;
 import org.jclouds.rackspace.cloudfiles.config.CloudFilesStubClientModule;
-import org.jclouds.rackspace.cloudfiles.internal.StubCloudFilesClient;
+import org.jclouds.rackspace.cloudfiles.internal.StubCloudFilesAsyncClient;
 import org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants;
 import org.jclouds.rackspace.config.RackspaceAuthenticationRestModule;
 import org.jclouds.rackspace.reference.RackspaceConstants;
@@ -71,11 +71,11 @@ public class CloudFilesContextBuilderTest {
    }
 
    public void testBuildContext() {
-      RestContext<CloudFilesClient> context = newBuilder().withModules(
+      RestContext<CloudFilesAsyncClient, CloudFilesClient> context = newBuilder().withModules(
                new CloudFilesStubClientModule(), new StubRackspaceAuthenticationModule())
                .buildContext();
       assertEquals(context.getClass(), RestContextImpl.class);
-      assertEquals(context.getApi().getClass(), StubCloudFilesClient.class);
+      assertEquals(context.getAsyncApi().getClass(), StubCloudFilesAsyncClient.class);
       assertEquals(context.getAccount(), "id");
       assertEquals(context.getEndPoint(), URI.create("http://localhost/rackspacestub/cloudfiles"));
    }
@@ -83,8 +83,9 @@ public class CloudFilesContextBuilderTest {
    public void testBuildInjector() {
       Injector i = newBuilder().withModules(new CloudFilesStubClientModule(),
                new StubRackspaceAuthenticationModule()).buildInjector();
-      assert i.getInstance(Key.get(new TypeLiteral<RestContext<CloudFilesClient>>() {
-      })) != null;
+      assert i.getInstance(Key
+               .get(new TypeLiteral<RestContext<CloudFilesAsyncClient, CloudFilesClient>>() {
+               })) != null;
    }
 
    protected void testAddContextModule() {

@@ -31,6 +31,7 @@ import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.rackspace.StubRackspaceAuthenticationModule;
+import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
 import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
 import org.jclouds.rackspace.cloudfiles.config.CloudFilesStubClientModule;
 import org.jclouds.rackspace.reference.RackspaceConstants;
@@ -68,9 +69,11 @@ public class CloudFilesBlobStoreModuleTest {
 
    @Test
    void testContextImpl() {
-      BlobStoreContext<CloudFilesClient> context = createInjector().getInstance(
-               Key.get(new TypeLiteral<BlobStoreContext<CloudFilesClient>>() {
-               }));
+      BlobStoreContext<CloudFilesAsyncClient, CloudFilesClient> context = createInjector()
+               .getInstance(
+                        Key
+                                 .get(new TypeLiteral<BlobStoreContext<CloudFilesAsyncClient, CloudFilesClient>>() {
+                                 }));
       assertEquals(context.getClass(), BlobStoreContextImpl.class);
    }
 

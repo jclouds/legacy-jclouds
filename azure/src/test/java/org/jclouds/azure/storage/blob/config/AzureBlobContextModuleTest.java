@@ -25,6 +25,7 @@ package org.jclouds.azure.storage.blob.config;
 
 import static org.testng.Assert.assertEquals;
 
+import org.jclouds.azure.storage.blob.AzureBlobAsyncClient;
 import org.jclouds.azure.storage.blob.AzureBlobClient;
 import org.jclouds.azure.storage.blob.reference.AzureBlobConstants;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
@@ -65,8 +66,8 @@ public class AzureBlobContextModuleTest {
    @Test
    void testContextImpl() {
       Injector injector = createInjector();
-      RestContext<AzureBlobClient> handler = injector.getInstance(Key
-               .get(new TypeLiteral<RestContext<AzureBlobClient>>() {
+      RestContext<AzureBlobAsyncClient, AzureBlobClient> handler = injector.getInstance(Key
+               .get(new TypeLiteral<RestContext<AzureBlobAsyncClient, AzureBlobClient>>() {
                }));
       assertEquals(handler.getClass(), RestContextImpl.class);
 

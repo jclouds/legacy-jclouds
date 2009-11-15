@@ -29,6 +29,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.EC2;
+import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.filters.FormSigner;
 import org.jclouds.aws.ec2.reference.EC2Constants;
@@ -36,6 +37,7 @@ import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.handlers.AWSRedirectionRetryHandler;
 import org.jclouds.aws.handlers.ParseAWSErrorFromXmlContent;
 import org.jclouds.aws.util.RequestSigner;
+import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
@@ -81,8 +83,15 @@ public class EC2RestClientModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected EC2Client provideClient(RestClientFactory factory) {
-      return factory.create(EC2Client.class);
+   protected EC2AsyncClient provideAsyncClient(RestClientFactory factory) {
+      return factory.create(EC2AsyncClient.class);
+   }
+
+   @Provides
+   @Singleton
+   public EC2Client provideClient(EC2AsyncClient client) throws IllegalArgumentException,
+            SecurityException, NoSuchMethodException {
+      return SyncProxy.create(EC2Client.class, client);
    }
 
    @Provides

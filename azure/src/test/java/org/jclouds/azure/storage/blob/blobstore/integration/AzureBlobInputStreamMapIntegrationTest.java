@@ -23,6 +23,7 @@
  */
 package org.jclouds.azure.storage.blob.blobstore.integration;
 
+import org.jclouds.azure.storage.blob.AzureBlobAsyncClient;
 import org.jclouds.azure.storage.blob.AzureBlobClient;
 import org.jclouds.blobstore.integration.internal.BaseInputStreamMapIntegrationTest;
 import org.testng.annotations.Test;
@@ -32,6 +33,6 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "integration", "live" }, testName = "azureblob.AzureBlobInputStreamMapIntegrationTest")
 public class AzureBlobInputStreamMapIntegrationTest extends
-         BaseInputStreamMapIntegrationTest<AzureBlobClient> {
+         BaseInputStreamMapIntegrationTest<AzureBlobAsyncClient, AzureBlobClient> {
 
 }

@@ -29,6 +29,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.EC2;
+import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.reference.AWSConstants;
 import org.jclouds.http.functions.config.ParserModule.CDateTimeAdapter;
@@ -53,9 +54,11 @@ public class EC2ContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<EC2Client> provideContext(Closer closer, EC2Client defaultApi, @EC2 URI endPoint,
+   RestContext<EC2AsyncClient, EC2Client> provideContext(Closer closer, EC2AsyncClient defaultApi,
+            EC2Client synchApi, @EC2 URI endPoint,
             @Named(AWSConstants.PROPERTY_AWS_ACCESSKEYID) String account) {
-      return new RestContextImpl<EC2Client>(closer, defaultApi, endPoint, account);
+      return new RestContextImpl<EC2AsyncClient, EC2Client>(closer, defaultApi, synchApi, endPoint,
+               account);
    }
 
 }

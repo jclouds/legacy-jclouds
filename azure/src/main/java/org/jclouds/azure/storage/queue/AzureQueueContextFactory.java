@@ -42,23 +42,23 @@ import com.google.inject.Module;
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
  * @author Adrian Cole
- * @see AzureQueueClient
+ * @see AzureQueueAsyncClient
  */
 public class AzureQueueContextFactory {
 
-   public static RestContext<AzureQueueClient> createContext(Properties properties,
+   public static RestContext<AzureQueueAsyncClient, AzureQueueClient> createContext(Properties properties,
             Module... modules) {
       return new AzureQueueContextBuilder(new AzureQueuePropertiesBuilder(properties).build())
                .withModules(modules).buildContext();
    }
 
-   public static RestContext<AzureQueueClient> createContext(String account, String encodedKey,
+   public static RestContext<AzureQueueAsyncClient, AzureQueueClient> createContext(String account, String encodedKey,
             Module... modules) {
       return new AzureQueueContextBuilder(new AzureQueuePropertiesBuilder(account, encodedKey)
                .build()).withModules(modules).buildContext();
    }
 
-   public static RestContext<AzureQueueClient> createContext(URI endpoint, String account,
+   public static RestContext<AzureQueueAsyncClient, AzureQueueClient> createContext(URI endpoint, String account,
             String encodedKey, Module... modules) {
       return new AzureQueueContextBuilder(new AzureQueuePropertiesBuilder(account, encodedKey)
                .withEndpoint(endpoint).build()).withModules(modules).buildContext();

@@ -32,7 +32,6 @@ import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
 import java.security.SecureRandom;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.io.IOUtils;
@@ -49,6 +48,7 @@ import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jclouds.blobstore.strategy.ClearContainerStrategy;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.rest.RestContext;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -118,20 +118,22 @@ public class AtmosStorageClientLiveTest {
       String uid = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
-      connection = new AtmosStorageContextBuilder(new AtmosStoragePropertiesBuilder(uid, key)
-               .build()).withModules(new Log4JLoggingModule()).buildContext().getApi();
-      ClearContainerStrategy clearer = new RecursiveRemove(connection);
-      for (DirectoryEntry entry : connection.listDirectories().get(10, TimeUnit.SECONDS)) {
+      RestContext<AtmosStorageAsyncClient, AtmosStorageClient> context = new AtmosStorageContextBuilder(
+               new AtmosStoragePropertiesBuilder(uid, key).build()).withModules(
+               new Log4JLoggingModule()).buildContext();
+      connection = context.getApi();
+      ClearContainerStrategy clearer = new RecursiveRemove(context.getAsyncApi(), connection);
+      for (DirectoryEntry entry : connection.listDirectories()) {
          if (entry.getObjectName().startsWith(containerPrefix)) {
             clearer.execute(entry.getObjectName());
             deleteConfirmed(entry.getObjectName());
          }
       }
    }
+
    @Test
    public void testListDirectorys() throws Exception {
-      BoundedSortedSet<? extends DirectoryEntry> response = connection.listDirectories().get(10,
-               TimeUnit.SECONDS);
+      BoundedSortedSet<? extends DirectoryEntry> response = connection.listDirectories();
       assert null != response;
    }
 
@@ -145,7 +147,7 @@ public class AtmosStorageClientLiveTest {
       while (!created) {
          privateDirectory = containerPrefix + new SecureRandom().nextInt();
          try {
-            created = connection.createDirectory(privateDirectory).get(10, TimeUnit.SECONDS) != null;
+            created = connection.createDirectory(privateDirectory) != null;
          } catch (UndeclaredThrowableException e) {
             HttpResponseException htpe = (HttpResponseException) e.getCause().getCause();
             if (htpe.getResponse().getStatusCode() == 409)
@@ -153,11 +155,10 @@ public class AtmosStorageClientLiveTest {
             throw e;
          }
       }
-      BoundedSortedSet<? extends DirectoryEntry> response = connection.listDirectories().get(10,
-               TimeUnit.SECONDS);
+      BoundedSortedSet<? extends DirectoryEntry> response = connection.listDirectories();
       for (DirectoryEntry id : response) {
-         BoundedSortedSet<? extends DirectoryEntry> r2 = connection.listDirectory(id.getObjectName()).get(10,
-                  TimeUnit.SECONDS);
+         BoundedSortedSet<? extends DirectoryEntry> r2 = connection.listDirectory(id
+                  .getObjectName());
          assert r2 != null;
       }
    }
@@ -168,7 +169,7 @@ public class AtmosStorageClientLiveTest {
       createOrReplaceObject("object3", "here is my data!", "meta-value1");
       createOrReplaceObject("object4", "here is my data!", "meta-value1");
       BoundedSortedSet<? extends DirectoryEntry> r2 = connection.listDirectory(privateDirectory,
-               ListOptions.Builder.limit(1)).get(10, TimeUnit.SECONDS);
+               ListOptions.Builder.limit(1));
       // test bug exists:
       assertEquals(r2.size(), 3);
       // assertEquals(r2.size(), 1);
@@ -279,7 +280,7 @@ public class AtmosStorageClientLiveTest {
    private static void verifyObject(AtmosStorageClient connection, String path, String compare,
             String metadataValue) throws InterruptedException, ExecutionException,
             TimeoutException, IOException {
-      AtmosObject getBlob = connection.readFile(path).get(120, TimeUnit.SECONDS);
+      AtmosObject getBlob = connection.readFile(path);
       assertEquals(getBlob.getData() instanceof String ? getBlob.getData() : IOUtils
                .toString((InputStream) getBlob.getData()), compare);
       verifyMetadata(metadataValue, getBlob);
@@ -323,7 +324,7 @@ public class AtmosStorageClientLiveTest {
       deleteConfirmed(privateDirectory + "/" + object.getContentMetadata().getName());
       long time = System.currentTimeMillis();
       try {
-         connection.createFile(privateDirectory, object).get(30, TimeUnit.SECONDS);
+         connection.createFile(privateDirectory, object);
          System.err.printf("%s %s; %dms%n", "created",
                   object.getData() instanceof InputStream ? "stream" : "string", System
                            .currentTimeMillis()
@@ -349,7 +350,7 @@ public class AtmosStorageClientLiveTest {
    private void deleteImmediateAndVerifyWithHead(final String path) throws InterruptedException,
             ExecutionException, TimeoutException {
       try {
-         connection.deletePath(path).get(10, TimeUnit.SECONDS);
+         connection.deletePath(path);
       } catch (KeyNotFoundException ex) {
       }
       assert !connection.pathExists(path);
@@ -358,7 +359,7 @@ public class AtmosStorageClientLiveTest {
    protected void deleteConsistencyAware(final String path) throws InterruptedException,
             ExecutionException, TimeoutException {
       try {
-         connection.deletePath(path).get(10, TimeUnit.SECONDS);
+         connection.deletePath(path);
       } catch (KeyNotFoundException ex) {
       }
       assert Utils.enventuallyTrue(new Supplier<Boolean>() {
@@ -399,9 +400,9 @@ public class AtmosStorageClientLiveTest {
       }
       try {
          if (update)
-            connection.updateFile(privateDirectory, object).get(30, TimeUnit.SECONDS);
+            connection.updateFile(privateDirectory, object);
          else
-            connection.createFile(privateDirectory, object).get(30, TimeUnit.SECONDS);
+            connection.createFile(privateDirectory, object);
          System.err.printf("%s %s; %dms%n", update ? "updated" : "created",
                   object.getData() instanceof InputStream ? "stream" : "string", System
                            .currentTimeMillis()

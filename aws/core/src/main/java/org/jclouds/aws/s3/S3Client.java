@@ -23,59 +23,22 @@
  */
 package org.jclouds.aws.s3;
 
-import static org.jclouds.blobstore.attr.BlobScopes.CONTAINER;
-
 import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HEAD;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-
-import org.jclouds.aws.s3.binders.BindACLToXMLEntity;
-import org.jclouds.aws.s3.binders.BindS3ObjectToEntity;
 import org.jclouds.aws.s3.domain.AccessControlList;
 import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.aws.s3.filters.RequestAuthorizeSignature;
-import org.jclouds.aws.s3.functions.ObjectKey;
-import org.jclouds.aws.s3.functions.ParseObjectFromHeadersAndHttpContent;
-import org.jclouds.aws.s3.functions.ParseObjectMetadataFromHeaders;
-import org.jclouds.aws.s3.functions.ReturnTrueIfBucketAlreadyOwnedByYou;
-import org.jclouds.aws.s3.functions.ReturnTrueOn404FalseIfNotEmpty;
 import org.jclouds.aws.s3.options.CopyObjectOptions;
 import org.jclouds.aws.s3.options.ListBucketOptions;
 import org.jclouds.aws.s3.options.PutBucketOptions;
 import org.jclouds.aws.s3.options.PutObjectOptions;
-import org.jclouds.aws.s3.xml.AccessControlListHandler;
-import org.jclouds.aws.s3.xml.CopyObjectHandler;
-import org.jclouds.aws.s3.xml.ListAllMyBucketsHandler;
-import org.jclouds.aws.s3.xml.ListBucketHandler;
-import org.jclouds.blobstore.attr.BlobScope;
-import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
-import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
-import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
-import org.jclouds.http.functions.ParseETagHeader;
-import org.jclouds.http.functions.ReturnFalseOn404;
+import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.Endpoint;
-import org.jclouds.rest.annotations.ExceptionParser;
-import org.jclouds.rest.annotations.Headers;
-import org.jclouds.rest.annotations.HostPrefixParam;
-import org.jclouds.rest.annotations.ParamParser;
-import org.jclouds.rest.annotations.QueryParams;
-import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.ResponseParser;
-import org.jclouds.rest.annotations.SkipEncoding;
-import org.jclouds.rest.annotations.VirtualHost;
-import org.jclouds.rest.annotations.XMLResponseParser;
 
 /**
  * Provides access to S3 via their REST API.
@@ -87,11 +50,7 @@ import org.jclouds.rest.annotations.XMLResponseParser;
  * @author James Murty
  * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/RESTAPI.html" />
  */
-@VirtualHost
-@SkipEncoding('/')
-@RequestFilters(RequestAuthorizeSignature.class)
-@Endpoint(S3.class)
-@BlobScope(CONTAINER)
+@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface S3Client {
 
    /**
@@ -109,7 +68,7 @@ public interface S3Client {
     * <p />
     * This command allows you to specify {@link GetObjectOptions} to control delivery of content.
     * 
-    * <h2>Note</h2> If you specify any of the below options, you will receive partial content:
+    * <h2>Note</h2 If you specify any of the below options, you will receive partial content:
     * <ul>
     * <li>{@link GetObjectOptions#range}</li>
     * <li>{@link GetObjectOptions#startAt}</li>
@@ -128,12 +87,7 @@ public interface S3Client {
     * @see #getObject(String, String)
     * @see GetObjectOptions
     */
-   @GET
-   @Path("{key}")
-   @ExceptionParser(ThrowKeyNotFoundOn404.class)
-   @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)
-   Future<S3Object> getObject(@HostPrefixParam String bucketName, @PathParam("key") String key,
-            GetOptions... options);
+   S3Object getObject(String bucketName, String key, GetOptions... options);
 
    /**
     * Retrieves the {@link org.jclouds.aws.s3.domain.internal.BucketListObjectMetadata metadata} of
@@ -159,11 +113,7 @@ public interface S3Client {
     *      href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTObjectHEAD.html"
     *      />
     */
-   @HEAD
-   @Path("{key}")
-   @ExceptionParser(ThrowKeyNotFoundOn404.class)
-   @ResponseParser(ParseObjectMetadataFromHeaders.class)
-   ObjectMetadata headObject(@HostPrefixParam String bucketName, @PathParam("key") String key);
+   ObjectMetadata headObject(String bucketName, String key);
 
    /**
     * Removes the object and metadata associated with the key.
@@ -182,15 +132,12 @@ public interface S3Client {
     * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?
     *      RESTObjectDELETE.html" />
     */
-   @DELETE
-   @Path("{key}")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   Future<Void> deleteObject(@HostPrefixParam String bucketName, @PathParam("key") String key);
+   void deleteObject(String bucketName, String key);
 
    /**
     * Store data by creating or overwriting an object.
     * <p/>
-    * This method will store the object with the default <code>private</code> acl.
+    * This method will store the object with the default <code>private</code acl.
     * 
     * <p/>
     * This returns a byte[] of the eTag hash of what Amazon S3 received
@@ -210,13 +157,7 @@ public interface S3Client {
     *      href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTObjectPUT.html"
     *      />
     */
-   @PUT
-   @Path("{key}")
-   @ResponseParser(ParseETagHeader.class)
-   Future<String> putObject(
-            @HostPrefixParam String bucketName,
-            @PathParam("key") @ParamParser(ObjectKey.class) @BinderParam(BindS3ObjectToEntity.class) S3Object object,
-            PutObjectOptions... options);
+   String putObject(String bucketName, S3Object object, PutObjectOptions... options);
 
    /**
     * Create and name your own bucket in which to store your objects.
@@ -239,11 +180,7 @@ public interface S3Client {
     *      />
     * 
     */
-   @PUT
-   @Path("/")
-   @ExceptionParser(ReturnTrueIfBucketAlreadyOwnedByYou.class)
-   Future<Boolean> putBucketIfNotExists(@HostPrefixParam String bucketName,
-            PutBucketOptions... options);
+   boolean putBucketIfNotExists(String bucketName, PutBucketOptions... options);
 
    /**
     * Deletes the bucket, if it is empty.
@@ -262,22 +199,15 @@ public interface S3Client {
     *      "http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTBucketDELETE.html"
     *      />
     */
-   @DELETE
-   @Path("/")
-   @ExceptionParser(ReturnTrueOn404FalseIfNotEmpty.class)
-   Future<Boolean> deleteBucketIfEmpty(@HostPrefixParam String bucketName);
+   boolean deleteBucketIfEmpty(String bucketName);
 
    /**
     * Issues a HEAD command to determine if the bucket exists or not.
     */
-   @HEAD
-   @Path("/")
-   @QueryParams(keys = "max-keys", values = "0")
-   @ExceptionParser(ReturnFalseOn404.class)
-   boolean bucketExists(@HostPrefixParam String bucketName);
+   boolean bucketExists(String bucketName);
 
    /**
-    * Retrieve a <code>S3Bucket</code> listing. A GET request operation using a bucket URI lists
+    * Retrieve a <code>S3Bucket</code listing. A GET request operation using a bucket URI lists
     * information about the objects in the bucket. You can use {@link ListBucketOptions} to control
     * the amount of S3Objects to return.
     * <p />
@@ -294,11 +224,7 @@ public interface S3Client {
     *      href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTBucketGET.html"
     *      />
     */
-   @GET
-   @Path("/")
-   @XMLResponseParser(ListBucketHandler.class)
-   Future<ListBucketResponse> listBucket(@HostPrefixParam String bucketName,
-            ListBucketOptions... options);
+   ListBucketResponse listBucket(String bucketName, ListBucketOptions... options);
 
    /**
     * Returns a list of all of the buckets owned by the authenticated sender of the request.
@@ -309,10 +235,7 @@ public interface S3Client {
     *      />
     * 
     */
-   @GET
-   @XMLResponseParser(ListAllMyBucketsHandler.class)
-   @Path("/")
-   Future<? extends SortedSet<BucketMetadata>> listOwnedBuckets();
+   SortedSet<BucketMetadata> listOwnedBuckets();
 
    /**
     * Copies one object to another bucket, retaining UserMetadata from the source. The destination
@@ -336,14 +259,8 @@ public interface S3Client {
     * @see CopyObjectOptions
     * @see org.jclouds.aws.s3.domain.CannedAccessPolicy
     */
-   @PUT
-   @Path("{destinationObject}")
-   @Headers(keys = "x-amz-copy-source", values = "/{sourceBucket}/{sourceObject}")
-   @XMLResponseParser(CopyObjectHandler.class)
-   Future<ObjectMetadata> copyObject(@PathParam("sourceBucket") String sourceBucket,
-            @PathParam("sourceObject") String sourceObject,
-            @HostPrefixParam String destinationBucket,
-            @PathParam("destinationObject") String destinationObject, CopyObjectOptions... options);
+   ObjectMetadata copyObject(String sourceBucket, String sourceObject, String destinationBucket,
+            String destinationObject, CopyObjectOptions... options);
 
    /**
     * 
@@ -356,12 +273,7 @@ public interface S3Client {
     * 
     * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/RESTAccessPolicy.html"/>
     */
-   @GET
-   @QueryParams(keys = "acl")
-   @XMLResponseParser(AccessControlListHandler.class)
-   @ExceptionParser(ThrowContainerNotFoundOn404.class)
-   @Path("/")
-   Future<AccessControlList> getBucketACL(@HostPrefixParam String bucketName);
+   AccessControlList getBucketACL(String bucketName);
 
    /**
     * Update a bucket's Access Control List settings.
@@ -374,17 +286,13 @@ public interface S3Client {
     * @param bucketName
     *           the bucket whose Access Control List settings will be updated.
     * @param acl
-    *           the ACL to apply to the bucket. This acl object <strong>must</strong> include a
-    *           valid owner identifier string in {@link AccessControlList#getOwner()}.
+    *           the ACL to apply to the bucket. This acl object <strong>must</strong include a valid
+    *           owner identifier string in {@link AccessControlList#getOwner()}.
     * @return true if the bucket's Access Control List was updated successfully.
     * 
     * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/RESTAccessPolicy.html"/>
     */
-   @PUT
-   @Path("/")
-   @QueryParams(keys = "acl")
-   Future<Boolean> putBucketACL(@HostPrefixParam String bucketName,
-            @BinderParam(BindACLToXMLEntity.class) AccessControlList acl);
+   boolean putBucketACL(String bucketName, AccessControlList acl);
 
    /**
     * A GET request operation directed at an object or bucket URI with the "acl" parameter retrieves
@@ -396,13 +304,7 @@ public interface S3Client {
     * 
     * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/RESTAccessPolicy.html"/>
     */
-   @GET
-   @QueryParams(keys = "acl")
-   @Path("{key}")
-   @XMLResponseParser(AccessControlListHandler.class)
-   @ExceptionParser(ThrowKeyNotFoundOn404.class)
-   Future<AccessControlList> getObjectACL(@HostPrefixParam String bucketName,
-            @PathParam("key") String key);
+   AccessControlList getObjectACL(String bucketName, String key);
 
    /**
     * Update an object's Access Control List settings.
@@ -417,16 +319,12 @@ public interface S3Client {
     * @param objectKey
     *           the key of the object whose Access Control List settings will be updated.
     * @param acl
-    *           the ACL to apply to the object. This acl object <strong>must</strong> include a
-    *           valid owner identifier string in {@link AccessControlList#getOwner()}.
+    *           the ACL to apply to the object. This acl object <strong>must</strong include a valid
+    *           owner identifier string in {@link AccessControlList#getOwner()}.
     * @return true if the object's Access Control List was updated successfully.
     * 
     * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/RESTAccessPolicy.html"/>
     */
-   @PUT
-   @QueryParams(keys = "acl")
-   @Path("{key}")
-   Future<Boolean> putObjectACL(@HostPrefixParam String bucketName, @PathParam("key") String key,
-            @BinderParam(BindACLToXMLEntity.class) AccessControlList acl);
+   boolean putObjectACL(String bucketName, String key, AccessControlList acl);
 
 }

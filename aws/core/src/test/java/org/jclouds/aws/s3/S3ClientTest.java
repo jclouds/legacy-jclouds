@@ -82,12 +82,12 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "s3.S3ClientTest")
-public class S3ClientTest extends RestClientTest<S3Client> {
+public class S3ClientTest extends RestClientTest<S3AsyncClient> {
 
    public void testListBucket() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = S3Client.class.getMethod("listBucket", String.class, Array.newInstance(
+      Method method = S3AsyncClient.class.getMethod("listBucket", String.class, Array.newInstance(
                ListBucketOptions.class, 0).getClass());
-      GeneratedHttpRequest<S3Client> httpMethod = processor.createRequest(method, "bucket");
+      GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method, "bucket");
 
       assertRequestLineEquals(httpMethod, "GET http://bucket.stub:8080/ HTTP/1.1");
       assertHeadersEqual(httpMethod, "Host: bucket.stub\n");
@@ -101,8 +101,8 @@ public class S3ClientTest extends RestClientTest<S3Client> {
    }
 
    public void testBucketExists() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = S3Client.class.getMethod("bucketExists", String.class);
-      GeneratedHttpRequest<S3Client> httpMethod = processor.createRequest(method, "bucket");
+      Method method = S3AsyncClient.class.getMethod("bucketExists", String.class);
+      GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method, "bucket");
 
       assertRequestLineEquals(httpMethod, "HEAD http://bucket.stub:8080/?max-keys=0 HTTP/1.1");
       assertHeadersEqual(httpMethod, "Host: bucket.stub\n");
@@ -117,10 +117,10 @@ public class S3ClientTest extends RestClientTest<S3Client> {
 
    public void testCopyObject() throws ArrayIndexOutOfBoundsException, SecurityException,
             IllegalArgumentException, NoSuchMethodException, IOException {
-      Method method = S3Client.class
+      Method method = S3AsyncClient.class
                .getMethod("copyObject", String.class, String.class, String.class, String.class,
                         Array.newInstance(CopyObjectOptions.class, 0).getClass());
-      GeneratedHttpRequest<S3Client> httpMethod = processor.createRequest(method, "sourceBucket",
+      GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method, "sourceBucket",
                "sourceObject", "destinationBucket", "destinationObject");
 
       assertRequestLineEquals(httpMethod,
@@ -138,8 +138,8 @@ public class S3ClientTest extends RestClientTest<S3Client> {
 
    public void testDeleteBucketIfEmpty() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = S3Client.class.getMethod("deleteBucketIfEmpty", String.class);
-      GeneratedHttpRequest<S3Client> httpMethod = processor.createRequest(method, "bucket");
+      Method method = S3AsyncClient.class.getMethod("deleteBucketIfEmpty", String.class);
+      GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method, "bucket");
 
       assertRequestLineEquals(httpMethod, "DELETE http://bucket.stub:8080/ HTTP/1.1");
       assertHeadersEqual(httpMethod, "Host: bucket.stub\n");
@@ -153,8 +153,8 @@ public class S3ClientTest extends RestClientTest<S3Client> {
    }
 
    public void testDeleteObject() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = S3Client.class.getMethod("deleteObject", String.class, String.class);
-      GeneratedHttpRequest<S3Client> httpMethod = processor.createRequest(method, "bucket",
+      Method method = S3AsyncClient.class.getMethod("deleteObject", String.class, String.class);
+      GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method, "bucket",
                "object");
 
       assertRequestLineEquals(httpMethod, "DELETE http://bucket.stub:8080/object HTTP/1.1");
@@ -170,8 +170,8 @@ public class S3ClientTest extends RestClientTest<S3Client> {
 
    public void testGetBucketACL() throws SecurityException, NoSuchMethodException, IOException {
 
-      Method method = S3Client.class.getMethod("getBucketACL", String.class);
-      GeneratedHttpRequest<S3Client> httpMethod = processor.createRequest(method, "bucket");
+      Method method = S3AsyncClient.class.getMethod("getBucketACL", String.class);
+      GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method, "bucket");
 
       assertRequestLineEquals(httpMethod, "GET http://bucket.stub:8080/?acl HTTP/1.1");
       assertHeadersEqual(httpMethod, "Host: bucket.stub\n");
@@ -186,9 +186,9 @@ public class S3ClientTest extends RestClientTest<S3Client> {
 
    public void testGetObject() throws ArrayIndexOutOfBoundsException, SecurityException,
             IllegalArgumentException, NoSuchMethodException, IOException {
-      Method method = S3Client.class.getMethod("getObject", String.class, String.class, Array
+      Method method = S3AsyncClient.class.getMethod("getObject", String.class, String.class, Array
                .newInstance(GetOptions.class, 0).getClass());
-      GeneratedHttpRequest<S3Client> httpMethod = processor.createRequest(method, "bucket",
+      GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method, "bucket",
                "object");
 
       assertRequestLineEquals(httpMethod, "GET http://bucket.stub:8080/object HTTP/1.1");
@@ -205,8 +205,8 @@ public class S3ClientTest extends RestClientTest<S3Client> {
 
    public void testGetObjectACL() throws SecurityException, NoSuchMethodException, IOException {
 
-      Method method = S3Client.class.getMethod("getObjectACL", String.class, String.class);
-      GeneratedHttpRequest<S3Client> httpMethod = processor.createRequest(method, "bucket",
+      Method method = S3AsyncClient.class.getMethod("getObjectACL", String.class, String.class);
+      GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method, "bucket",
                "object");
 
       assertRequestLineEquals(httpMethod, "GET http://bucket.stub:8080/object?acl HTTP/1.1");
@@ -222,8 +222,8 @@ public class S3ClientTest extends RestClientTest<S3Client> {
 
    public void testHeadObject() throws SecurityException, NoSuchMethodException, IOException {
 
-      Method method = S3Client.class.getMethod("headObject", String.class, String.class);
-      GeneratedHttpRequest<S3Client> httpMethod = processor.createRequest(method, "bucket",
+      Method method = S3AsyncClient.class.getMethod("headObject", String.class, String.class);
+      GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method, "bucket",
                "object");
 
       assertRequestLineEquals(httpMethod, "HEAD http://bucket.stub:8080/object HTTP/1.1");
@@ -238,8 +238,8 @@ public class S3ClientTest extends RestClientTest<S3Client> {
    }
 
    public void testListOwnedBuckets() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = S3Client.class.getMethod("listOwnedBuckets");
-      GeneratedHttpRequest<S3Client> httpMethod = processor.createRequest(method);
+      Method method = S3AsyncClient.class.getMethod("listOwnedBuckets");
+      GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method);
 
       assertRequestLineEquals(httpMethod, "GET http://stub:8080/ HTTP/1.1");
       assertHeadersEqual(httpMethod, "Host: stub\n");
@@ -253,14 +253,14 @@ public class S3ClientTest extends RestClientTest<S3Client> {
    }
 
    public void testNewS3Object() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = S3Client.class.getMethod("newS3Object");
+      Method method = S3AsyncClient.class.getMethod("newS3Object");
       assertEquals(method.getReturnType(), S3Object.class);
    }
 
    public void testPutBucketACL() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = S3Client.class.getMethod("putBucketACL", String.class,
+      Method method = S3AsyncClient.class.getMethod("putBucketACL", String.class,
                AccessControlList.class);
-      GeneratedHttpRequest<S3Client> httpMethod = processor.createRequest(method, "bucket",
+      GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method, "bucket",
                AccessControlList.fromCannedAccessPolicy(CannedAccessPolicy.PRIVATE, "1234"));
 
       assertRequestLineEquals(httpMethod, "PUT http://bucket.stub:8080/?acl HTTP/1.1");
@@ -279,9 +279,9 @@ public class S3ClientTest extends RestClientTest<S3Client> {
 
    public void testPutBucketIfNotExists() throws ArrayIndexOutOfBoundsException, SecurityException,
             IllegalArgumentException, NoSuchMethodException, IOException {
-      Method method = S3Client.class.getMethod("putBucketIfNotExists", String.class, Array
+      Method method = S3AsyncClient.class.getMethod("putBucketIfNotExists", String.class, Array
                .newInstance(PutBucketOptions.class, 0).getClass());
-      GeneratedHttpRequest<S3Client> httpMethod = processor.createRequest(method, "bucket");
+      GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method, "bucket");
 
       assertRequestLineEquals(httpMethod, "PUT http://bucket.stub:8080/ HTTP/1.1");
       assertHeadersEqual(httpMethod, "Content-Length: 0\nHost: bucket.stub\n");
@@ -297,9 +297,9 @@ public class S3ClientTest extends RestClientTest<S3Client> {
    public void testPutObject() throws ArrayIndexOutOfBoundsException, SecurityException,
             IllegalArgumentException, NoSuchMethodException, IOException {
 
-      Method method = S3Client.class.getMethod("putObject", String.class, S3Object.class, Array
+      Method method = S3AsyncClient.class.getMethod("putObject", String.class, S3Object.class, Array
                .newInstance(PutObjectOptions.class, 0).getClass());
-      GeneratedHttpRequest<S3Client> httpMethod = processor.createRequest(method, "bucket",
+      GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method, "bucket",
                blobToS3Object.apply(BindBlobToMultipartFormTest.TEST_BLOB));
 
       assertRequestLineEquals(httpMethod, "PUT http://bucket.stub:8080/hello HTTP/1.1");
@@ -315,9 +315,9 @@ public class S3ClientTest extends RestClientTest<S3Client> {
    }
 
    public void testPutObjectACL() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = S3Client.class.getMethod("putObjectACL", String.class, String.class,
+      Method method = S3AsyncClient.class.getMethod("putObjectACL", String.class, String.class,
                AccessControlList.class);
-      GeneratedHttpRequest<S3Client> httpMethod = processor.createRequest(method, "bucket", "key",
+      GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method, "bucket", "key",
                AccessControlList.fromCannedAccessPolicy(CannedAccessPolicy.PRIVATE, "1234"));
 
       assertRequestLineEquals(httpMethod, "PUT http://bucket.stub:8080/key?acl HTTP/1.1");
@@ -337,14 +337,14 @@ public class S3ClientTest extends RestClientTest<S3Client> {
    BlobToObject blobToS3Object;
 
    @Override
-   protected void checkFilters(GeneratedHttpRequest<S3Client> httpMethod) {
+   protected void checkFilters(GeneratedHttpRequest<S3AsyncClient> httpMethod) {
       assertEquals(httpMethod.getFilters().size(), 1);
       assertEquals(httpMethod.getFilters().get(0).getClass(), RequestAuthorizeSignature.class);
    }
 
    @Override
-   protected TypeLiteral<RestAnnotationProcessor<S3Client>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<S3Client>>() {
+   protected TypeLiteral<RestAnnotationProcessor<S3AsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<S3AsyncClient>>() {
       };
    }
 

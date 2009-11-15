@@ -34,6 +34,9 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Singleton;
+
+import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextBuilder;
@@ -47,6 +50,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
+import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -56,19 +60,26 @@ import com.google.inject.TypeLiteral;
  */
 @Test(groups = "unit", testName = "vcloud.VCloudContextBuilderTest")
 public class VCloudContextBuilderTest {
-   VCloudClient connection = createMock(VCloudClient.class);
+   VCloudAsyncClient connection = createMock(VCloudAsyncClient.class);
 
    @ConfiguresRestClient
    private final class StubClientModule extends AbstractModule {
       @Override
       protected void configure() {
          bind(URI.class).annotatedWith(Org.class).toInstance(URI.create("http://org"));
-         bind(VCloudClient.class).toInstance(connection);
+         bind(VCloudAsyncClient.class).toInstance(connection);
+      }
+      @SuppressWarnings("unused")
+      @Provides
+      @Singleton
+      public VCloudClient provideClient(VCloudAsyncClient client) throws IllegalArgumentException,
+               SecurityException, NoSuchMethodException {
+         return SyncProxy.create(VCloudClient.class, client);
       }
    }
 
    public void testNewBuilder() {
-      RestContextBuilder<VCloudClient> builder = builder();
+      RestContextBuilder<VCloudAsyncClient, VCloudClient> builder = builder();
 
       assertEquals(builder.getProperties().getProperty(PROPERTY_VCLOUD_ENDPOINT),
                "http://localhost");
@@ -78,10 +89,10 @@ public class VCloudContextBuilderTest {
    }
 
    public void testBuildContext() {
-      RestContextBuilder<VCloudClient> builder = builder();
-      RestContext<VCloudClient> context = builder.buildContext();
+      RestContextBuilder<VCloudAsyncClient, VCloudClient> builder = builder();
+      RestContext<VCloudAsyncClient, VCloudClient> context = builder.buildContext();
       assertEquals(context.getClass(), RestContextImpl.class);
-      assertEquals(context.getApi(), connection);
+      assertEquals(context.getAsyncApi(), connection);
       assertEquals(context.getAccount(), "id");
       assertEquals(context.getEndPoint(), URI.create("http://org"));
    }
@@ -92,10 +103,10 @@ public class VCloudContextBuilderTest {
    }
 
    public void testBuildInjector() {
-      RestContextBuilder<VCloudClient> builder = builder();
+      RestContextBuilder<VCloudAsyncClient, VCloudClient> builder = builder();
       Injector i = builder.buildInjector();
       assert i.getInstance(Key.get(URI.class, Org.class)) != null;
-      assert i.getInstance(Key.get(new TypeLiteral<RestContext<VCloudClient>>() {
+      assert i.getInstance(Key.get(new TypeLiteral<RestContext<VCloudAsyncClient, VCloudClient>>() {
       })) != null;
    }
 

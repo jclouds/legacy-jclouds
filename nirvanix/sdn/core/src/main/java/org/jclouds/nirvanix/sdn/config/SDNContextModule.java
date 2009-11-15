@@ -32,6 +32,7 @@ import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.nirvanix.sdn.SDN;
+import org.jclouds.nirvanix.sdn.SDNAsyncClient;
 import org.jclouds.nirvanix.sdn.SDNClient;
 import org.jclouds.nirvanix.sdn.reference.SDNConstants;
 import org.jclouds.rest.RestContext;
@@ -50,9 +51,11 @@ public class SDNContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<SDNClient> provideContext(Closer closer, SDNClient defaultApi, @SDN URI endPoint,
+   RestContext<SDNAsyncClient, SDNClient> provideContext(Closer closer, SDNAsyncClient async,
+            SDNClient defaultApi, @SDN URI endPoint,
             @Named(SDNConstants.PROPERTY_SDN_USERNAME) String account) {
-      return new RestContextImpl<SDNClient>(closer, defaultApi, endPoint, account);
+      return new RestContextImpl<SDNAsyncClient, SDNClient>(closer, async, defaultApi, endPoint,
+               account);
    }
 
 }

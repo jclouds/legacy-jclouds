@@ -40,10 +40,11 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-public class PCSContextBuilder extends RestContextBuilder<PCSClient> {
+public class PCSContextBuilder extends RestContextBuilder<PCSAsyncClient, PCSClient> {
 
    public PCSContextBuilder(Properties props) {
-      super(new TypeLiteral<PCSClient>() {
+      super(new TypeLiteral<PCSAsyncClient>() {
+      }, new TypeLiteral<PCSClient>() {
       }, props);
       checkNotNull(properties.getProperty(PCSConstants.PROPERTY_PCS2_USER));
       checkNotNull(properties.getProperty(PCSConstants.PROPERTY_PCS2_PASSWORD));

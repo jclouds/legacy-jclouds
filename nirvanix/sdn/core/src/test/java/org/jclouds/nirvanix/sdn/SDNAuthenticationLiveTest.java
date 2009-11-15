@@ -27,6 +27,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertNotNull;
 
 import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
@@ -61,7 +62,8 @@ public class SDNAuthenticationLiveTest {
    @Test
    public void testAuthentication() throws Exception {
       SDNAuthentication authentication = injector.getInstance(SDNAuthentication.class);
-      String response = authentication.authenticate(appid, user, password);
+      String response = authentication.authenticate(appid, user, password)
+               .get(10, TimeUnit.SECONDS);
       assertNotNull(response);
    }
 

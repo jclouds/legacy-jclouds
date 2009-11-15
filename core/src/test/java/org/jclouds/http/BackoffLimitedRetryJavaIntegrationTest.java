@@ -24,13 +24,11 @@
 package org.jclouds.http;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.fail;
 
 import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -81,9 +79,7 @@ public class BackoffLimitedRetryJavaIntegrationTest extends BaseJettyTest {
    }
 
    protected String submitGetRequest() throws InterruptedException, ExecutionException {
-      Future<String> get = client.download("");
-      assertNotNull(get);
-      return get.get();
+      return client.download("");
    }
 
    @Test
@@ -122,15 +118,14 @@ public class BackoffLimitedRetryJavaIntegrationTest extends BaseJettyTest {
       try {
          submitGetRequest();
          fail("Request should not succeed within " + endFailuresOnRequestNumber + " requests");
-      } catch (ExecutionException e) {
-         assertEquals(e.getCause().getClass(), HttpResponseException.class);
-         HttpResponseException responseException = (HttpResponseException) e.getCause();
-         assertEquals(responseException.getResponse().getStatusCode(), 500);
+      } catch (HttpResponseException e) {
+         assertEquals(e.getResponse().getStatusCode(), 500);
       }
    }
 
    @Test
-   public void testInterleavedSuccessesAndFailures() throws InterruptedException, ExecutionException {
+   public void testInterleavedSuccessesAndFailures() throws InterruptedException,
+            ExecutionException {
       beginToFailOnRequestNumber = 3;
       endFailuresOnRequestNumber = 3 + 5; // Force third request to fail completely
       requestCount = 0;
@@ -141,10 +136,8 @@ public class BackoffLimitedRetryJavaIntegrationTest extends BaseJettyTest {
       try {
          submitGetRequest();
          fail("Third request should not succeed by attempt number " + requestCount);
-      } catch (ExecutionException e) {
-         assertEquals(e.getCause().getClass(), HttpResponseException.class);
-         HttpResponseException responseException = (HttpResponseException) e.getCause();
-         assertEquals(responseException.getResponse().getStatusCode(), 500);
+      } catch (HttpResponseException e) {
+         assertEquals(e.getResponse().getStatusCode(), 500);
       }
 
       assertEquals(submitGetRequest().trim(), XML);

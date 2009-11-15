@@ -1,15 +1,15 @@
 package org.jclouds.aws.ec2.domain;
 
-import org.jclouds.aws.ec2.EC2Client;
+import org.jclouds.aws.ec2.EC2AsyncClient;
 
 /**
  * 
  * An attribute of an AMI.
  * 
  * @author Adrian Cole
- * @see EC2Client#modifyImageAttribute
- * @see EC2Client#resetImageAttribute
- * @see EC2Client#describeImageAttribute
+ * @see EC2AsyncClient#modifyImageAttribute
+ * @see EC2AsyncClient#resetImageAttribute
+ * @see EC2AsyncClient#describeImageAttribute
  * 
  */
 public enum ImageAttribute {

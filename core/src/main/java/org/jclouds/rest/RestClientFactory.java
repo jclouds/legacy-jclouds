@@ -28,7 +28,7 @@ import java.lang.reflect.Proxy;
 
 import javax.inject.Inject;
 
-import org.jclouds.rest.internal.RestClientProxy;
+import org.jclouds.rest.internal.AsyncRestClientProxy;
 
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -47,7 +47,7 @@ public class RestClientFactory {
    public <T> T create(Class<T> clazz) {
       return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[] { clazz },
                (InvocationHandler) injector.getInstance(Key.get(TypeLiteral.get(Types
-                        .newParameterizedType(RestClientProxy.class, clazz)))));
+                        .newParameterizedType(AsyncRestClientProxy.class, clazz)))));
    }
 
 }

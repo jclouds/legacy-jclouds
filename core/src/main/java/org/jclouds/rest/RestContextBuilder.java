@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (A) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -69,23 +69,26 @@ import com.google.inject.util.Types;
  * @author Adrian Cole, Andrew Newdigate
  * @see RestContext
  */
-public abstract class RestContextBuilder<C> {
+public abstract class RestContextBuilder<A, S> {
 
    protected final Properties properties;
    protected final List<Module> modules = new ArrayList<Module>(3);
-   protected final TypeLiteral<C> connectionType;
+   protected final TypeLiteral<A> asyncClientType;
+   protected final TypeLiteral<S> syncClientType;
 
-   protected RestContextBuilder(TypeLiteral<C> connectionTypeLiteral, Properties properties) {
-      this.connectionType = connectionTypeLiteral;
+   protected RestContextBuilder(TypeLiteral<A> asyncClientType, TypeLiteral<S> syncClientType,
+            Properties properties) {
+      this.asyncClientType = asyncClientType;
+      this.syncClientType = syncClientType;
       this.properties = properties;
    }
 
-   public RestContextBuilder<C> withExecutorService(ExecutorService service) {
+   public RestContextBuilder<A, S> withExecutorService(ExecutorService service) {
       modules.add(new ExecutorServiceModule(service));
       return this;
    }
 
-   public RestContextBuilder<C> withModules(Module... modules) {
+   public RestContextBuilder<A, S> withModules(Module... modules) {
       this.modules.addAll(Arrays.asList(modules));
       return this;
    }
@@ -185,9 +188,9 @@ public abstract class RestContextBuilder<C> {
    }
 
    @SuppressWarnings("unchecked")
-   public RestContext<C> buildContext() {
+   public RestContext<A, S> buildContext() {
       Injector injector = buildInjector();
-      return (RestContext<C>) injector.getInstance(Key.get(Types.newParameterizedType(
-               RestContext.class, connectionType.getType())));
+      return (RestContext<A, S>) injector.getInstance(Key.get(Types.newParameterizedType(
+               RestContext.class, asyncClientType.getType(), syncClientType.getType())));
    }
 }

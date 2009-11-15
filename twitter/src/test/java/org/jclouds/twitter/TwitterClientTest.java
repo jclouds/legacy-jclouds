@@ -52,11 +52,11 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "twitter.TwitterClientTest")
-public class TwitterClientTest extends RestClientTest<TwitterClient> {
+public class TwitterClientTest extends RestClientTest<TwitterAsyncClient> {
 
    public void testGetMyMentions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = TwitterClient.class.getMethod("getMyMentions");
-      GeneratedHttpRequest<TwitterClient> httpMethod = processor.createRequest(method);
+      Method method = TwitterAsyncClient.class.getMethod("getMyMentions");
+      GeneratedHttpRequest<TwitterAsyncClient> httpMethod = processor.createRequest(method);
 
       assertRequestLineEquals(httpMethod, "GET http://twitter.com/statuses/mentions.json HTTP/1.1");
       assertHeadersEqual(httpMethod, "");
@@ -70,14 +70,14 @@ public class TwitterClientTest extends RestClientTest<TwitterClient> {
    }
 
    @Override
-   protected void checkFilters(GeneratedHttpRequest<TwitterClient> httpMethod) {
+   protected void checkFilters(GeneratedHttpRequest<TwitterAsyncClient> httpMethod) {
       assertEquals(httpMethod.getFilters().size(), 1);
       assertEquals(httpMethod.getFilters().get(0).getClass(), BasicAuthentication.class);
    }
 
    @Override
-   protected TypeLiteral<RestAnnotationProcessor<TwitterClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<TwitterClient>>() {
+   protected TypeLiteral<RestAnnotationProcessor<TwitterAsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<TwitterAsyncClient>>() {
       };
    }
 

@@ -26,6 +26,7 @@ package org.jclouds.azure.storage.blob.blobstore;
 import java.net.URI;
 import java.util.Properties;
 
+import org.jclouds.azure.storage.blob.AzureBlobAsyncClient;
 import org.jclouds.azure.storage.blob.AzureBlobClient;
 import org.jclouds.azure.storage.blob.AzureBlobPropertiesBuilder;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -47,20 +48,20 @@ import com.google.inject.Module;
  * @see AzureBlobStoreContext
  */
 public class AzureBlobStoreContextFactory {
-   public static BlobStoreContext<AzureBlobClient> createContext(Properties properties,
-            Module... modules) {
+   public static BlobStoreContext<AzureBlobAsyncClient, AzureBlobClient> createContext(
+            Properties properties, Module... modules) {
       return new AzureBlobStoreContextBuilder(new AzureBlobPropertiesBuilder(properties).build())
                .withModules(modules).buildContext();
    }
 
-   public static BlobStoreContext<AzureBlobClient> createContext(String user, String encodedKey,
-            Module... modules) {
+   public static BlobStoreContext<AzureBlobAsyncClient, AzureBlobClient> createContext(String user,
+            String encodedKey, Module... modules) {
       return new AzureBlobStoreContextBuilder(new AzureBlobPropertiesBuilder(user, encodedKey)
                .build()).withModules(modules).buildContext();
    }
 
-   public static BlobStoreContext<AzureBlobClient> createContext(URI endpoint, String user,
-            String encodedKey, Module... modules) {
+   public static BlobStoreContext<AzureBlobAsyncClient, AzureBlobClient> createContext(
+            URI endpoint, String user, String encodedKey, Module... modules) {
       return new AzureBlobStoreContextBuilder(new AzureBlobPropertiesBuilder(user, encodedKey)
                .withEndpoint(endpoint).build()).withModules(modules).buildContext();
    }

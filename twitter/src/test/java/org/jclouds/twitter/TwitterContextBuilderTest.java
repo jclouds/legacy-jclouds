@@ -60,7 +60,7 @@ public class TwitterContextBuilderTest {
    }
 
    public void testBuildContext() {
-      RestContext<TwitterClient> context = newBuilder().buildContext();
+      RestContext<TwitterAsyncClient, TwitterClient> context = newBuilder().buildContext();
       assertEquals(context.getClass(), RestContextImpl.class);
       assertEquals(context.getAccount(), "user");
       assertEquals(context.getEndPoint(), URI.create("http://twitter.com"));
@@ -68,8 +68,9 @@ public class TwitterContextBuilderTest {
 
    public void testBuildInjector() {
       Injector i = newBuilder().buildInjector();
-      assert i.getInstance(Key.get(new TypeLiteral<RestContext<TwitterClient>>() {
-      })) != null; // TODO: test all things taken from context
+      assert i.getInstance(Key
+               .get(new TypeLiteral<RestContext<TwitterAsyncClient, TwitterClient>>() {
+               })) != null; // TODO: test all things taken from context
       assert i.getInstance(BasicAuthentication.class) != null;
    }
 

@@ -29,11 +29,13 @@ import java.net.URI;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
 import org.jclouds.twitter.Twitter;
+import org.jclouds.twitter.TwitterAsyncClient;
 import org.jclouds.twitter.TwitterClient;
 import org.jclouds.twitter.reference.TwitterConstants;
 
@@ -66,8 +68,15 @@ public class TwitterRestClientModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected TwitterClient provideClient(RestClientFactory factory) {
-      return factory.create(TwitterClient.class);
+   protected TwitterAsyncClient provideAsyncClient(RestClientFactory factory) {
+      return factory.create(TwitterAsyncClient.class);
+   }
+
+   @Provides
+   @Singleton
+   public TwitterClient provideClient(TwitterAsyncClient client) throws IllegalArgumentException,
+            SecurityException, NoSuchMethodException {
+      return SyncProxy.create(TwitterClient.class, client);
    }
 
    @Provides

@@ -24,6 +24,7 @@
 package org.jclouds.rackspace.cloudfiles.blobstore.integration;
 
 import org.jclouds.blobstore.integration.internal.BaseContainerIntegrationTest;
+import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
 import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
 import org.testng.annotations.Test;
 
@@ -32,6 +33,7 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = { "integration", "live" }, testName = "cloudfiles.CloudFilesContainerIntegrationTest")
-public class CloudFilesContainerIntegrationTest extends BaseContainerIntegrationTest<CloudFilesClient> {
+public class CloudFilesContainerIntegrationTest extends
+         BaseContainerIntegrationTest<CloudFilesAsyncClient, CloudFilesClient> {
 
 }

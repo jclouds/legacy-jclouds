@@ -23,6 +23,7 @@
  */
 package org.jclouds.blobstore.integration;
 
+import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.integration.internal.BaseServiceIntegrationTest;
 import org.testng.annotations.Test;
@@ -31,6 +32,7 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = { "integration", "live" }, testName = "blobstore.StubServiceIntegrationTest")
-public class StubServiceIntegrationTest extends BaseServiceIntegrationTest<BlobStore> {
+public class StubServiceIntegrationTest extends
+         BaseServiceIntegrationTest<AsyncBlobStore, BlobStore> {
 
 }

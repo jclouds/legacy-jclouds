@@ -36,7 +36,7 @@ import org.jclouds.aws.s3.config.S3RestClientModule;
 import org.jclouds.aws.s3.config.S3StubClientModule;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.internal.S3ObjectImpl;
-import org.jclouds.aws.s3.internal.StubS3Client;
+import org.jclouds.aws.s3.internal.StubS3AsyncClient;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.rest.RestContext;
@@ -66,11 +66,11 @@ public class S3ContextBuilderTest {
    }
 
    public void testBuildContext() {
-      RestContext<S3Client> context = new S3ContextBuilder(new S3PropertiesBuilder("id", "secret")
-               .build()).withModules(new S3StubClientModule()).buildContext();
+      RestContext<S3AsyncClient, S3Client> context = new S3ContextBuilder(new S3PropertiesBuilder(
+               "id", "secret").build()).withModules(new S3StubClientModule()).buildContext();
       assertEquals(context.getClass(), RestContextImpl.class);
-      assertEquals(context.getApi().getClass(), StubS3Client.class);
-      assertEquals(context.getApi().newS3Object().getClass(), S3ObjectImpl.class);
+      assertEquals(context.getAsyncApi().getClass(), StubS3AsyncClient.class);
+      assertEquals(context.getAsyncApi().newS3Object().getClass(), S3ObjectImpl.class);
       assertEquals(context.getAccount(), "id");
       assertEquals(context.getEndPoint(), URI.create("https://localhost/s3stub"));
    }
@@ -78,7 +78,7 @@ public class S3ContextBuilderTest {
    public void testBuildInjector() {
       Injector i = new S3ContextBuilder(new S3PropertiesBuilder("id", "secret").build())
                .withModules(new S3StubClientModule()).buildInjector();
-      assert i.getInstance(Key.get(new TypeLiteral<RestContext<S3Client>>() {
+      assert i.getInstance(Key.get(new TypeLiteral<RestContext<S3AsyncClient, S3Client>>() {
       })) != null;
       assert i.getInstance(S3Object.class) != null;
       assert i.getInstance(Blob.class) != null;

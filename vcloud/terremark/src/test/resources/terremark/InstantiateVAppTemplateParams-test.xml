@@ -7,9 +7,9 @@
             <Property xmlns="http://schemas.dmtf.org/ovf/envelope/1"
                 ovf:key="password" ovf:value="password" />
             <Property xmlns="http://schemas.dmtf.org/ovf/envelope/1"
-                ovf:key="row" ovf:value="row" />
+                ovf:key="row" ovf:value="default" />
             <Property xmlns="http://schemas.dmtf.org/ovf/envelope/1"
-                ovf:key="group" ovf:value="group" />
+                ovf:key="group" ovf:value="default" />
         </ProductSection>
         <VirtualHardwareSection xmlns:q1="http://www.vmware.com/vcloud/v1">
             <Item xmlns="http://schemas.dmtf.org/ovf/envelope/1">

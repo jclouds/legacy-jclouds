@@ -50,11 +50,11 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole, Andrew Newdigate
  * @see S3Context
  */
-public class S3ContextBuilder extends RestContextBuilder<S3Client> {
+public class S3ContextBuilder extends RestContextBuilder<S3AsyncClient, S3Client> {
 
- 
    public S3ContextBuilder(Properties props) {
-      super(new TypeLiteral<S3Client>() {
+      super(new TypeLiteral<S3AsyncClient>() {
+      }, new TypeLiteral<S3Client>() {
       }, props);
    }
 
@@ -67,7 +67,7 @@ public class S3ContextBuilder extends RestContextBuilder<S3Client> {
    protected void addClientModule(List<Module> modules) {
       modules.add(new S3RestClientModule());
    }
-   
+
    @Override
    public S3ContextBuilder withExecutorService(ExecutorService service) {
       return (S3ContextBuilder) super.withExecutorService(service);

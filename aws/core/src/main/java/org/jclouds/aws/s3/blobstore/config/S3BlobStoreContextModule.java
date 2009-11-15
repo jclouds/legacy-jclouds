@@ -30,9 +30,12 @@ import javax.inject.Singleton;
 
 import org.jclouds.aws.reference.AWSConstants;
 import org.jclouds.aws.s3.S3;
+import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
+import org.jclouds.aws.s3.blobstore.S3AsyncBlobStore;
 import org.jclouds.aws.s3.blobstore.S3BlobStore;
 import org.jclouds.aws.s3.config.S3ObjectModule;
+import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -46,7 +49,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
- * Configures the {@link S3BlobStoreContext}; requires {@link S3BlobStore} bound.
+ * Configures the {@link S3BlobStoreContext}; requires {@link S3AsyncBlobStore} bound.
  * 
  * @author Adrian Cole
  */
@@ -57,17 +60,20 @@ public class S3BlobStoreContextModule extends AbstractModule {
       install(new BlobStoreObjectModule());
       install(new BlobStoreMapModule());
       install(new S3ObjectModule());
+      bind(AsyncBlobStore.class).to(S3AsyncBlobStore.class).asEagerSingleton();
       bind(BlobStore.class).to(S3BlobStore.class).asEagerSingleton();
    }
 
    @Provides
    @Singleton
-   BlobStoreContext<S3Client> provideContext(BlobMap.Factory blobMapFactory,
-            InputStreamMap.Factory inputStreamMapFactory, Closer closer, BlobStore blobStore,
+   BlobStoreContext<S3AsyncClient, S3Client> provideContext(BlobMap.Factory blobMapFactory,
+            InputStreamMap.Factory inputStreamMapFactory, Closer closer,
+            AsyncBlobStore asyncBlobstore, BlobStore blobStore, S3AsyncClient asynchApi,
             S3Client defaultApi, @S3 URI endPoint,
             @Named(AWSConstants.PROPERTY_AWS_ACCESSKEYID) String account) {
-      return new BlobStoreContextImpl<S3Client>(blobMapFactory, inputStreamMapFactory, closer,
-               blobStore, defaultApi, endPoint, account);
+      return new BlobStoreContextImpl<S3AsyncClient, S3Client>(blobMapFactory,
+               inputStreamMapFactory, closer, asyncBlobstore, blobStore, asynchApi, defaultApi,
+               endPoint, account);
    }
 
 }

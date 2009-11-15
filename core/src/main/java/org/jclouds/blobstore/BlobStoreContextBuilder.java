@@ -36,32 +36,32 @@ import com.google.inject.util.Types;
 /**
  * @author Adrian Cole
  */
-public abstract class BlobStoreContextBuilder<S> extends RestContextBuilder<S> {
+public abstract class BlobStoreContextBuilder<A, S> extends RestContextBuilder<A, S> {
    @Override
-   public BlobStoreContextBuilder<S> withExecutorService(ExecutorService service) {
-      return (BlobStoreContextBuilder<S>) super.withExecutorService(service);
+   public BlobStoreContextBuilder<A, S> withExecutorService(ExecutorService service) {
+      return (BlobStoreContextBuilder<A, S>) super.withExecutorService(service);
    }
 
    @Override
-   public BlobStoreContextBuilder<S> withModules(Module... modules) {
-      return (BlobStoreContextBuilder<S>) super.withModules(modules);
+   public BlobStoreContextBuilder<A, S> withModules(Module... modules) {
+      return (BlobStoreContextBuilder<A, S>) super.withModules(modules);
    }
 
-   public BlobStoreContextBuilder(TypeLiteral<S> connectionType) {
-      this(connectionType, new Properties());
+   public BlobStoreContextBuilder(TypeLiteral<A> asyncClientType, TypeLiteral<S> syncClientType) {
+      this(asyncClientType, syncClientType, new Properties());
    }
 
-   public BlobStoreContextBuilder(TypeLiteral<S> connectionType, Properties properties) {
-      super(connectionType, properties);
+   public BlobStoreContextBuilder(TypeLiteral<A> asyncClientType, TypeLiteral<S> syncClientType,
+            Properties properties) {
+      super(asyncClientType, syncClientType, properties);
 
    }
 
    @SuppressWarnings("unchecked")
    @Override
-   public BlobStoreContext<S> buildContext() {
-      return (BlobStoreContext<S>) this.buildInjector().getInstance(
-               Key
-                        .get(Types.newParameterizedType(BlobStoreContext.class, connectionType
-                                 .getType())));
+   public BlobStoreContext<A, S> buildContext() {
+      return (BlobStoreContext<A, S>) this.buildInjector().getInstance(
+               Key.get(Types.newParameterizedType(BlobStoreContext.class,
+                        asyncClientType.getType(), syncClientType.getType())));
    }
 }

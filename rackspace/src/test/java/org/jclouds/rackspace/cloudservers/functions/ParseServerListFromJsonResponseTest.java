@@ -65,7 +65,8 @@ public class ParseServerListFromJsonResponseTest {
    }
 
    public void testApplyInputStreamDetails() throws UnknownHostException {
-      InputStream is = getClass().getResourceAsStream("/cloudservers/test_list_servers_detail.json");
+      InputStream is = getClass()
+               .getResourceAsStream("/cloudservers/test_list_servers_detail.json");
 
       ParseServerListFromJsonResponse parser = new ParseServerListFromJsonResponse(i
                .getInstance(Gson.class));
@@ -81,11 +82,12 @@ public class ParseServerListFromJsonResponseTest {
                InetAddress.getByName("67.23.10.131"));
       List<InetAddress> privateAddresses = Lists
                .newArrayList(InetAddress.getByName("10.176.42.16"));
-      Addresses addresses1 = new Addresses(publicAddresses, privateAddresses);
+      Addresses addresses1 = new Addresses();
+      addresses1.getPrivateAddresses().addAll(privateAddresses);
+      addresses1.getPublicAddresses().addAll(publicAddresses);
       assertEquals(response.get(0).getAddresses(), addresses1);
       assertEquals(response.get(0).getMetadata(), ImmutableMap.of("Server Label", "Web Head 1",
                "Image Version", "2.1"));
-
       assertEquals(response.get(1).getId(), 5678);
       assertEquals(response.get(1).getName(), "sample-server2");
       assertEquals(response.get(1).getImageId(), new Integer(2));
@@ -97,7 +99,9 @@ public class ParseServerListFromJsonResponseTest {
                .newArrayList(InetAddress.getByName("67.23.10.133"));
       List<InetAddress> privateAddresses2 = Lists.newArrayList(InetAddress
                .getByName("10.176.42.17"));
-      Addresses addresses2 = new Addresses(publicAddresses2, privateAddresses2);
+      Addresses addresses2 = new Addresses();
+      addresses2.getPrivateAddresses().addAll(privateAddresses2);
+      addresses2.getPublicAddresses().addAll(publicAddresses2);
       assertEquals(response.get(1).getAddresses(), addresses2);
       assertEquals(response.get(1).getMetadata(), ImmutableMap.of("Server Label", "DB 1"));
 

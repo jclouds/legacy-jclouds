@@ -29,7 +29,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.concurrent.TimeUnit;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.http.HttpUtils;
@@ -45,7 +44,7 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = { "live" }, testName = "blobstore.BlobLiveTest")
-public class BaseBlobLiveTest<S> extends BaseBlobStoreIntegrationTest<S> {
+public class BaseBlobLiveTest<A, S> extends BaseBlobStoreIntegrationTest<A, S> {
 
    private static final String sysHttpStreamUrl = System
             .getProperty("jclouds.blobstore.httpstream.url");
@@ -78,7 +77,7 @@ public class BaseBlobLiveTest<S> extends BaseBlobStoreIntegrationTest<S> {
       object.getMetadata().setSize(new Long(length));
       String bucketName = getContainerName();
       try {
-         context.getBlobStore().putBlob(bucketName, object).get(180, TimeUnit.SECONDS);
+         context.getBlobStore().putBlob(bucketName, object);
          assertEquals(context.getBlobStore().blobMetadata(bucketName, key).getContentMD5(), md5);
       } finally {
          returnContainer(bucketName);

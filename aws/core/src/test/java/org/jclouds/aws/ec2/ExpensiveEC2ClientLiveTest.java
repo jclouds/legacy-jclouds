@@ -31,7 +31,6 @@ import static org.testng.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutionException;
@@ -45,8 +44,6 @@ import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.PublicIpInstanceIdPair;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RunningInstance;
-import org.jclouds.concurrent.WithinThreadExecutorService;
-import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
@@ -59,7 +56,6 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 /**
@@ -86,13 +82,9 @@ public class ExpensiveEC2ClientLiveTest {
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException {
       String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-
-      client = new EC2ContextBuilder(new EC2PropertiesBuilder(user, password).build()).withModules(
-               new Log4JLoggingModule()).buildContext().getApi();
-
-      Injector injector = Guice.createInjector(new Log4JLoggingModule(), new JschSshClientModule(),
-               new ExecutorServiceModule(new WithinThreadExecutorService()));
-      client = EC2ContextFactory.createContext(user, password, new Log4JLoggingModule()).getApi();
+      Injector injector = new EC2ContextBuilder(new EC2PropertiesBuilder(user, password).build())
+               .withModules(new Log4JLoggingModule(), new JschSshClientModule()).buildInjector();
+      client = injector.getInstance(EC2Client.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
       socketTester = new RetryablePredicate<InetSocketAddress>(socketOpen, 60, 1, TimeUnit.SECONDS);
@@ -105,31 +97,29 @@ public class ExpensiveEC2ClientLiveTest {
       securityGroupName = serverPrefix + "ingress";
 
       try {
-         client.deleteSecurityGroup(securityGroupName).get(30, TimeUnit.SECONDS);
+         client.deleteSecurityGroup(securityGroupName);
       } catch (Exception e) {
       }
 
-      client.createSecurityGroup(securityGroupName, securityGroupName).get(30, TimeUnit.SECONDS);
-      client.authorizeSecurityGroupIngress(securityGroupName, IpProtocol.TCP, 80, 80, "0.0.0.0/0")
-               .get(30, TimeUnit.SECONDS);
+      client.createSecurityGroup(securityGroupName, securityGroupName);
+      client.authorizeSecurityGroupIngress(securityGroupName, IpProtocol.TCP, 80, 80, "0.0.0.0/0");
       client
                .authorizeSecurityGroupIngress(securityGroupName, IpProtocol.TCP, 443, 443,
-                        "0.0.0.0/0").get(30, TimeUnit.SECONDS);
-      client.authorizeSecurityGroupIngress(securityGroupName, IpProtocol.TCP, 22, 22, "0.0.0.0/0")
-               .get(30, TimeUnit.SECONDS);
+                        "0.0.0.0/0");
+      client.authorizeSecurityGroupIngress(securityGroupName, IpProtocol.TCP, 22, 22, "0.0.0.0/0");
    }
 
    @Test(enabled = true)
    void testCreateKeyPair() throws InterruptedException, ExecutionException, TimeoutException {
       String keyName = serverPrefix + "1";
       try {
-         client.deleteKeyPair(keyName).get(30, TimeUnit.SECONDS);
+         client.deleteKeyPair(keyName);
       } catch (Exception e) {
 
       }
-      client.deleteKeyPair(keyName).get(30, TimeUnit.SECONDS);
+      client.deleteKeyPair(keyName);
 
-      keyPair = client.createKeyPair(keyName).get(30, TimeUnit.SECONDS);
+      keyPair = client.createKeyPair(keyName);
       assertNotNull(keyPair);
       assertNotNull(keyPair.getKeyMaterial());
       assertNotNull(keyPair.getKeyFingerprint());
@@ -143,18 +133,18 @@ public class ExpensiveEC2ClientLiveTest {
       RunningInstance server = null;
       while (server == null) {
          try {
+            System.out.printf("%d: running instance%n", System.currentTimeMillis());
             server = client.runInstances(
                      imageId,
                      1,
                      1,
                      withKeyName(keyPair.getKeyName()).asType(InstanceType.M1_SMALL)
-                              .withSecurityGroup(securityGroupName)).get(30, TimeUnit.SECONDS)
-                     .getRunningInstances().iterator().next();
-         } catch (UndeclaredThrowableException e) {
-            HttpResponseException htpe = (HttpResponseException) e.getCause().getCause();
+                              .withSecurityGroup(securityGroupName)).getRunningInstances()
+                     .iterator().next();
+         } catch (HttpResponseException htpe) {
             if (htpe.getResponse().getStatusCode() == 400)
                continue;
-            throw e;
+            throw htpe;
          }
       }
       assertNotNull(server.getInstanceId());
@@ -163,42 +153,43 @@ public class ExpensiveEC2ClientLiveTest {
       server = blockUntilRunningInstanceActive(serverId);
 
       sshPing(server);
+      System.out.printf("%d: %s ssh connection made%n", System.currentTimeMillis(), serverId);
+
    }
 
    @Test(enabled = true, dependsOnMethods = "testCreateRunningInstance")
    void testElasticIpAddress() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
-      address = client.allocateAddress().get(30, TimeUnit.SECONDS);
+      address = client.allocateAddress();
       assertNotNull(address);
 
-      PublicIpInstanceIdPair compare = client.describeAddresses(address).get(30, TimeUnit.SECONDS)
-               .last();
+      PublicIpInstanceIdPair compare = client.describeAddresses(address).last();
 
       assertEquals(compare.getPublicIp(), address);
       assert compare.getInstanceId() == null;
 
-      client.associateAddress(address, serverId).get(30, TimeUnit.SECONDS);
+      client.associateAddress(address, serverId);
 
-      compare = client.describeAddresses(address).get(30, TimeUnit.SECONDS).last();
+      compare = client.describeAddresses(address).last();
 
       assertEquals(compare.getPublicIp(), address);
       assertEquals(compare.getInstanceId(), serverId);
 
-      Reservation reservation = client.describeInstances(serverId).get(30, TimeUnit.SECONDS).last();
+      Reservation reservation = client.describeInstances(serverId).last();
 
       assertNotNull(reservation.getRunningInstances().last().getIpAddress());
       assertFalse(reservation.getRunningInstances().last().getIpAddress().equals(address));
 
       doCheckKey(address);
 
-      client.disassociateAddress(address).get(30, TimeUnit.SECONDS);
+      client.disassociateAddress(address);
 
-      compare = client.describeAddresses(address).get(30, TimeUnit.SECONDS).last();
+      compare = client.describeAddresses(address).last();
 
       assertEquals(compare.getPublicIp(), address);
       assert compare.getInstanceId() == null;
 
-      reservation = client.describeInstances(serverId).get(30, TimeUnit.SECONDS).last();
+      reservation = client.describeInstances(serverId).last();
       // assert reservation.getRunningInstances().last().getIpAddress() == null; TODO
    }
 
@@ -242,28 +233,30 @@ public class ExpensiveEC2ClientLiveTest {
                   .getInstanceId(), currentDetails.getInstanceState());
          Thread.sleep(5 * 1000);
       }
-      System.out.printf("%s awaiting ssh service to start%n", currentDetails.getInstanceId());
+
+      System.out.printf("%d: %s awaiting ssh service to start%n", System.currentTimeMillis(),
+               currentDetails.getDnsName());
       assert socketTester.apply(new InetSocketAddress(currentDetails.getDnsName(), 22));
-      System.out.printf("%s ssh service started%n", currentDetails.getInstanceId());
+      System.out.printf("%d: %s ssh service started%n", System.currentTimeMillis(), currentDetails
+               .getDnsName());
       return currentDetails;
    }
 
    @AfterTest
    void cleanup() throws InterruptedException, ExecutionException, TimeoutException {
       if (address != null)
-         client.releaseAddress(address).get(30, TimeUnit.SECONDS);
+         client.releaseAddress(address);
       if (serverId != null)
-         client.terminateInstances(serverId).get(30, TimeUnit.SECONDS);
+         client.terminateInstances(serverId);
       if (keyPair != null)
-         client.deleteKeyPair(keyPair.getKeyName()).get(30, TimeUnit.SECONDS);
+         client.deleteKeyPair(keyPair.getKeyName());
       if (securityGroupName != null)
-         client.deleteSecurityGroup(securityGroupName).get(30, TimeUnit.SECONDS);
+         client.deleteSecurityGroup(securityGroupName);
    }
 
    private RunningInstance getRunningInstance(String serverId) throws InterruptedException,
             ExecutionException, TimeoutException {
-      return client.describeInstances(serverId).get(15, TimeUnit.SECONDS).first()
-               .getRunningInstances().first();
+      return client.describeInstances(serverId).first().getRunningInstances().first();
    }
 
 }

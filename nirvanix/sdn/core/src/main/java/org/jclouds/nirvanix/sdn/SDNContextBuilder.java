@@ -28,7 +28,7 @@ import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 
 import org.jclouds.nirvanix.sdn.config.RestSDNAuthenticationModule;
-import org.jclouds.nirvanix.sdn.config.RestSDNClientModule;
+import org.jclouds.nirvanix.sdn.config.SDNRestClientModule;
 import org.jclouds.nirvanix.sdn.config.SDNContextModule;
 import org.jclouds.rest.RestContextBuilder;
 
@@ -39,17 +39,18 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-public class SDNContextBuilder extends RestContextBuilder<SDNClient> {
+public class SDNContextBuilder extends RestContextBuilder<SDNAsyncClient, SDNClient> {
 
    public SDNContextBuilder(Properties props) {
-      super(new TypeLiteral<SDNClient>() {
+      super(new TypeLiteral<SDNAsyncClient>() {
+      }, new TypeLiteral<SDNClient>() {
       }, props);
    }
 
    @Override
    protected void addClientModule(List<Module> modules) {
       modules.add(new RestSDNAuthenticationModule());
-      modules.add(new RestSDNClientModule());
+      modules.add(new SDNRestClientModule());
    }
 
    @Override

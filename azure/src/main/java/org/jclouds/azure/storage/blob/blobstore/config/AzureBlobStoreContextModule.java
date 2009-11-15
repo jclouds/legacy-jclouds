@@ -29,11 +29,14 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.azure.storage.AzureBlob;
+import org.jclouds.azure.storage.blob.AzureBlobAsyncClient;
 import org.jclouds.azure.storage.blob.AzureBlobClient;
+import org.jclouds.azure.storage.blob.blobstore.AzureAsyncBlobStore;
 import org.jclouds.azure.storage.blob.blobstore.AzureBlobStore;
 import org.jclouds.azure.storage.blob.blobstore.strategy.FindMD5InBlobProperties;
 import org.jclouds.azure.storage.blob.config.AzureBlobModule;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
+import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -48,7 +51,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
- * Configures the {@link AzureBlobStoreContext}; requires {@link AzureBlobStore} bound.
+ * Configures the {@link AzureBlobStoreContext}; requires {@link AzureAsyncBlobStore} bound.
  * 
  * @author Adrian Cole
  */
@@ -59,18 +62,21 @@ public class AzureBlobStoreContextModule extends AbstractModule {
       install(new BlobStoreObjectModule());
       install(new BlobStoreMapModule());
       install(new AzureBlobModule());
+      bind(AsyncBlobStore.class).to(AzureAsyncBlobStore.class).asEagerSingleton();
       bind(BlobStore.class).to(AzureBlobStore.class).asEagerSingleton();
       bind(ContainsValueInListStrategy.class).to(FindMD5InBlobProperties.class);
    }
 
    @Provides
    @Singleton
-   BlobStoreContext<AzureBlobClient> provideContext(BlobMap.Factory blobMapFactory,
-            InputStreamMap.Factory inputStreamMapFactory, Closer closer, BlobStore blobStore,
-            AzureBlobClient defaultApi, @AzureBlob URI endPoint,
+   BlobStoreContext<AzureBlobAsyncClient, AzureBlobClient> provideContext(
+            BlobMap.Factory blobMapFactory, InputStreamMap.Factory inputStreamMapFactory,
+            Closer closer, AsyncBlobStore asyncBlobStore, BlobStore blobStore,
+            AzureBlobAsyncClient asyncApi, AzureBlobClient defaultApi, @AzureBlob URI endPoint,
             @Named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT) String account) {
-      return new BlobStoreContextImpl<AzureBlobClient>(blobMapFactory, inputStreamMapFactory,
-               closer, blobStore, defaultApi, endPoint, account);
+      return new BlobStoreContextImpl<AzureBlobAsyncClient, AzureBlobClient>(blobMapFactory,
+               inputStreamMapFactory, closer, asyncBlobStore, blobStore, asyncApi, defaultApi,
+               endPoint, account);
    }
 
 }

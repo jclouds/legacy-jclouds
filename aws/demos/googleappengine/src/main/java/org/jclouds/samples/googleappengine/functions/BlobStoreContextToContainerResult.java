@@ -24,7 +24,6 @@
 package org.jclouds.samples.googleappengine.functions;
 
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -46,10 +45,10 @@ import com.google.common.collect.Sets;
 public class BlobStoreContextToContainerResult implements Function<String, ContainerResult> {
    private final class BuildContainerResult implements Function<ResourceMetadata, ContainerResult> {
       private final String host;
-      private final BlobStoreContext<?> context;
+      private final BlobStoreContext<?, ?> context;
       private final String contextName;
 
-      private BuildContainerResult(String host, BlobStoreContext<?> context, String contextName) {
+      private BuildContainerResult(String host, BlobStoreContext<?, ?> context, String contextName) {
          this.host = host;
          this.context = context;
          this.contextName = contextName;
@@ -74,24 +73,23 @@ public class BlobStoreContextToContainerResult implements Function<String, Conta
    }
 
    @Inject
-   private Map<String, BlobStoreContext<?>> contexts;
+   private Map<String, BlobStoreContext<?, ?>> contexts;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    public ContainerResult apply(final String contextName) {
-      final BlobStoreContext<?> context = contexts.get(contextName);
+      final BlobStoreContext<?, ?> context = contexts.get(contextName);
       final String host = context.getEndPoint().getHost();
       try {
          ResourceMetadata md = Iterables.getLast(Sets.newTreeSet(Iterables.filter(context
-                  .getBlobStore().list().get(10, TimeUnit.SECONDS),
-                  new Predicate<ResourceMetadata>() {
+                  .getBlobStore().list(), new Predicate<ResourceMetadata>() {
 
-                     public boolean apply(ResourceMetadata input) {
-                        return input.getType() == ResourceType.CONTAINER;
-                     }
+            public boolean apply(ResourceMetadata input) {
+               return input.getType() == ResourceType.CONTAINER;
+            }
 
-                  })));
+         })));
          return new BuildContainerResult(host, context, contextName).apply(md);
       } catch (Exception e) {
          ContainerResult result = new ContainerResult(contextName, host, null, e.getMessage());

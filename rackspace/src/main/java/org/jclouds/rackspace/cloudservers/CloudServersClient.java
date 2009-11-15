@@ -27,25 +27,11 @@ import java.net.InetAddress;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import org.jclouds.http.functions.ReturnFalseOn404;
-import org.jclouds.rackspace.CloudServers;
-import org.jclouds.rackspace.cloudservers.binders.BindAdminPassToJsonEntity;
-import org.jclouds.rackspace.cloudservers.binders.BindBackupScheduleToJsonEntity;
-import org.jclouds.rackspace.cloudservers.binders.BindConfirmResizeToJsonEntity;
-import org.jclouds.rackspace.cloudservers.binders.BindCreateImageToJsonEntity;
-import org.jclouds.rackspace.cloudservers.binders.BindRebootTypeToJsonEntity;
-import org.jclouds.rackspace.cloudservers.binders.BindResizeFlavorToJsonEntity;
-import org.jclouds.rackspace.cloudservers.binders.BindRevertResizeToJsonEntity;
-import org.jclouds.rackspace.cloudservers.binders.BindServerNameToJsonEntity;
-import org.jclouds.rackspace.cloudservers.binders.BindSharedIpGroupToJsonEntity;
+import org.jclouds.concurrent.Timeout;
 import org.jclouds.rackspace.cloudservers.domain.Addresses;
 import org.jclouds.rackspace.cloudservers.domain.BackupSchedule;
 import org.jclouds.rackspace.cloudservers.domain.Flavor;
@@ -53,37 +39,10 @@ import org.jclouds.rackspace.cloudservers.domain.Image;
 import org.jclouds.rackspace.cloudservers.domain.RebootType;
 import org.jclouds.rackspace.cloudservers.domain.Server;
 import org.jclouds.rackspace.cloudservers.domain.SharedIpGroup;
-import org.jclouds.rackspace.cloudservers.functions.IpAddress;
-import org.jclouds.rackspace.cloudservers.functions.ParseAddressesFromJsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ParseBackupScheduleFromJsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ParseFlavorFromJsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ParseFlavorListFromJsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ParseImageFromJsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ParseImageListFromJsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ParseInetAddressListFromJsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ParseServerFromJsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ParseServerListFromJsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ParseSharedIpGroupFromJsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ParseSharedIpGroupListFromJsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ReturnFlavorNotFoundOn404;
-import org.jclouds.rackspace.cloudservers.functions.ReturnImageNotFoundOn404;
-import org.jclouds.rackspace.cloudservers.functions.ReturnServerNotFoundOn404;
-import org.jclouds.rackspace.cloudservers.functions.ReturnSharedIpGroupNotFoundOn404;
 import org.jclouds.rackspace.cloudservers.options.CreateServerOptions;
 import org.jclouds.rackspace.cloudservers.options.CreateSharedIpGroupOptions;
 import org.jclouds.rackspace.cloudservers.options.ListOptions;
 import org.jclouds.rackspace.cloudservers.options.RebuildServerOptions;
-import org.jclouds.rackspace.filters.AuthenticateRequest;
-import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.Endpoint;
-import org.jclouds.rest.annotations.ExceptionParser;
-import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.MapEntityParam;
-import org.jclouds.rest.annotations.ParamParser;
-import org.jclouds.rest.annotations.QueryParams;
-import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.ResponseParser;
-import org.jclouds.rest.annotations.SkipEncoding;
 
 /**
  * Provides access to Cloud Servers via their REST API.
@@ -91,12 +50,11 @@ import org.jclouds.rest.annotations.SkipEncoding;
  * All commands return a Future of the result from Cloud Servers. Any exceptions incurred during
  * processing will be wrapped in an {@link ExecutionException} as documented in {@link Future#get()}.
  * 
+ * @see CloudServersAsyncClient
  * @see <a href="http://docs.rackspacecloud.com/servers/api/cs-devguide-latest.pdf" />
  * @author Adrian Cole
  */
-@SkipEncoding('/')
-@RequestFilters(AuthenticateRequest.class)
-@Endpoint(CloudServers.class)
+@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface CloudServersClient {
 
    /**
@@ -109,10 +67,6 @@ public interface CloudServersClient {
     * in order to retrieve all details, pass the option {@link ListOptions#withDetails()
     * withDetails()}
     */
-   @GET
-   @ResponseParser(ParseServerListFromJsonResponse.class)
-   @QueryParams(keys = "format", values = "json")
-   @Path("/servers")
    List<Server> listServers(ListOptions... options);
 
    /**
@@ -122,11 +76,6 @@ public interface CloudServersClient {
     * @return {@link Server#NOT_FOUND} if the server is not found
     * @see Server
     */
-   @GET
-   @ResponseParser(ParseServerFromJsonResponse.class)
-   @QueryParams(keys = "format", values = "json")
-   @ExceptionParser(ReturnServerNotFoundOn404.class)
-   @Path("/servers/{id}")
    Server getServer(@PathParam("id") int id);
 
    /**
@@ -138,9 +87,6 @@ public interface CloudServersClient {
     * @return false if the server is not found
     * @see Server
     */
-   @DELETE
-   @ExceptionParser(ReturnFalseOn404.class)
-   @Path("/servers/{id}")
    boolean deleteServer(@PathParam("id") int id);
 
    /**
@@ -157,12 +103,7 @@ public interface CloudServersClient {
     *           graceful shutdown of all processes. A hard reboot is the equivalent of power cycling
     *           the server.
     */
-   @POST
-   @QueryParams(keys = "format", values = "json")
-   @Path("/servers/{id}/action")
-   @ExceptionParser(ReturnFalseOn404.class)
-   boolean rebootServer(@PathParam("id") int id,
-            @BinderParam(BindRebootTypeToJsonEntity.class) RebootType rebootType);
+   boolean rebootServer(int id, RebootType rebootType);
 
    /**
     * The resize function converts an existing server to a different flavor, in essence, scaling the
@@ -177,12 +118,7 @@ public interface CloudServersClient {
     * <p/>
     * ACTIVE - QUEUE_RESIZE - ACTIVE (on error)
     */
-   @POST
-   @QueryParams(keys = "format", values = "json")
-   @Path("/servers/{id}/action")
-   @ExceptionParser(ReturnFalseOn404.class)
-   boolean resizeServer(@PathParam("id") int id,
-            @BinderParam(BindResizeFlavorToJsonEntity.class) int flavorId);
+   boolean resizeServer(int id, int flavorId);
 
    /**
     * The resize function converts an existing server to a different flavor, in essence, scaling the
@@ -195,12 +131,7 @@ public interface CloudServersClient {
     * <p/>
     * VERIFY_RESIZE - ACTIVE
     */
-   @POST
-   @QueryParams(keys = "format", values = "json")
-   @Path("/servers/{id}/action")
-   @ExceptionParser(ReturnFalseOn404.class)
-   boolean confirmResizeServer(
-            @PathParam("id") @BinderParam(BindConfirmResizeToJsonEntity.class) int id);
+   boolean confirmResizeServer(int id);
 
    /**
     * The resize function converts an existing server to a different flavor, in essence, scaling the
@@ -213,12 +144,7 @@ public interface CloudServersClient {
     * <p/>
     * VERIFY_RESIZE - ACTIVE
     */
-   @POST
-   @QueryParams(keys = "format", values = "json")
-   @Path("/servers/{id}/action")
-   @ExceptionParser(ReturnFalseOn404.class)
-   boolean revertResizeServer(
-            @PathParam("id") @BinderParam(BindRevertResizeToJsonEntity.class) int id);
+   boolean revertResizeServer(int id);
 
    /**
     * This operation asynchronously provisions a new server. The progress of this operation depends
@@ -231,13 +157,7 @@ public interface CloudServersClient {
     * @param options
     *           - used to specify extra files, metadata, or ip parameters during server creation.
     */
-   @POST
-   @ResponseParser(ParseServerFromJsonResponse.class)
-   @QueryParams(keys = "format", values = "json")
-   @Path("/servers")
-   @MapBinder(CreateServerOptions.class)
-   Server createServer(@MapEntityParam("name") String name, @MapEntityParam("imageId") int imageId,
-            @MapEntityParam("flavorId") int flavorId, CreateServerOptions... options);
+   Server createServer(String name, int imageId, int flavorId, CreateServerOptions... options);
 
    /**
     * The rebuild function removes all data on the server and replaces it with the specified image.
@@ -254,12 +174,7 @@ public interface CloudServersClient {
     *           - imageId is an optional argument. If it is not specified, the server is rebuilt
     *           with the original imageId.
     */
-   @POST
-   @QueryParams(keys = "format", values = "json")
-   @Path("/servers/{id}/action")
-   @ExceptionParser(ReturnFalseOn404.class)
-   @MapBinder(RebuildServerOptions.class)
-   boolean rebuildServer(@PathParam("id") int id, RebuildServerOptions... options);
+   boolean rebuildServer(int id, RebuildServerOptions... options);
 
    /**
     * /** This operation allows you share an IP address to the specified server
@@ -282,14 +197,8 @@ public interface CloudServersClient {
     *           manage IP failover.
     * @return false if the server is not found
     */
-   @PUT
-   @ExceptionParser(ReturnFalseOn404.class)
-   @Path("/servers/{id}/ips/public/{address}")
-   @MapBinder(BindSharedIpGroupToJsonEntity.class)
-   boolean shareIp(@PathParam("address") @ParamParser(IpAddress.class) InetAddress addressToShare,
-            @PathParam("id") int serverToTosignBindressTo,
-            @MapEntityParam("sharedIpGroupId") int sharedIpGroup,
-            @MapEntityParam("configureServer") boolean configureServer);
+   boolean shareIp(InetAddress addressToShare, int serverToTosignBindressTo, int sharedIpGroup,
+            boolean configureServer);
 
    /**
     * This operation removes a shared IP address from the specified server.
@@ -300,12 +209,7 @@ public interface CloudServersClient {
     * @param serverToTosignBindressTo
     * @return
     */
-   @DELETE
-   @ExceptionParser(ReturnFalseOn404.class)
-   @Path("/servers/{id}/ips/public/{address}")
-   boolean unshareIp(
-            @PathParam("address") @ParamParser(IpAddress.class) InetAddress addressToShare,
-            @PathParam("id") int serverToTosignBindressTo);
+   boolean unshareIp(InetAddress addressToShare, int serverToTosignBindressTo);
 
    /**
     * This operation allows you to change the administrative password.
@@ -314,11 +218,7 @@ public interface CloudServersClient {
     * 
     * @return false if the server is not found
     */
-   @PUT
-   @ExceptionParser(ReturnFalseOn404.class)
-   @Path("/servers/{id}")
-   boolean changeAdminPass(@PathParam("id") int id,
-            @BinderParam(BindAdminPassToJsonEntity.class) String adminPass);
+   boolean changeAdminPass(int id, String adminPass);
 
    /**
     * This operation allows you to update the name of the server. This operation changes the name of
@@ -328,11 +228,7 @@ public interface CloudServersClient {
     * 
     * @return false if the server is not found
     */
-   @PUT
-   @ExceptionParser(ReturnFalseOn404.class)
-   @Path("/servers/{id}")
-   boolean renameServer(@PathParam("id") int id,
-            @BinderParam(BindServerNameToJsonEntity.class) String newName);
+   boolean renameServer(int id, String newName);
 
    /**
     * 
@@ -341,10 +237,6 @@ public interface CloudServersClient {
     * in order to retrieve all details, pass the option {@link ListOptions#withDetails()
     * withDetails()}
     */
-   @GET
-   @ResponseParser(ParseFlavorListFromJsonResponse.class)
-   @QueryParams(keys = "format", values = "json")
-   @Path("/flavors")
    List<Flavor> listFlavors(ListOptions... options);
 
    /**
@@ -354,12 +246,7 @@ public interface CloudServersClient {
     * @return {@link Flavor#NOT_FOUND} if the flavor is not found
     * @see Flavor
     */
-   @GET
-   @ResponseParser(ParseFlavorFromJsonResponse.class)
-   @QueryParams(keys = "format", values = "json")
-   @ExceptionParser(ReturnFlavorNotFoundOn404.class)
-   @Path("/flavors/{id}")
-   Flavor getFlavor(@PathParam("id") int id);
+   Flavor getFlavor(int id);
 
    /**
     * 
@@ -368,10 +255,6 @@ public interface CloudServersClient {
     * in order to retrieve all details, pass the option {@link ListOptions#withDetails()
     * withDetails()}
     */
-   @GET
-   @ResponseParser(ParseImageListFromJsonResponse.class)
-   @QueryParams(keys = "format", values = "json")
-   @Path("/images")
    List<Image> listImages(ListOptions... options);
 
    /**
@@ -381,12 +264,7 @@ public interface CloudServersClient {
     * @return {@link Image#NOT_FOUND} if the image is not found
     * @see Image
     */
-   @GET
-   @ResponseParser(ParseImageFromJsonResponse.class)
-   @QueryParams(keys = "format", values = "json")
-   @ExceptionParser(ReturnImageNotFoundOn404.class)
-   @Path("/images/{id}")
-   Image getImage(@PathParam("id") int id);
+   Image getImage(int id);
 
    /**
     * 
@@ -407,14 +285,7 @@ public interface CloudServersClient {
     * @return {@link Image#NOT_FOUND} if the server is not found
     * @see Image
     */
-   @POST
-   @ResponseParser(ParseImageFromJsonResponse.class)
-   @QueryParams(keys = "format", values = "json")
-   @ExceptionParser(ReturnImageNotFoundOn404.class)
-   @MapBinder(BindCreateImageToJsonEntity.class)
-   @Path("/images")
-   Image createImageFromServer(@MapEntityParam("imageName") String imageName,
-            @MapEntityParam("serverId") int serverId);
+   Image createImageFromServer(String imageName, int serverId);
 
    /**
     * 
@@ -423,10 +294,6 @@ public interface CloudServersClient {
     * in order to retrieve all details, pass the option {@link ListOptions#withDetails()
     * withDetails()}
     */
-   @GET
-   @ResponseParser(ParseSharedIpGroupListFromJsonResponse.class)
-   @QueryParams(keys = "format", values = "json")
-   @Path("/shared_ip_groups")
    List<SharedIpGroup> listSharedIpGroups(ListOptions... options);
 
    /**
@@ -436,12 +303,7 @@ public interface CloudServersClient {
     * @return {@link SharedIpGroup#NOT_FOUND} if the shared IP group is not found
     * @see SharedIpGroup
     */
-   @GET
-   @ResponseParser(ParseSharedIpGroupFromJsonResponse.class)
-   @QueryParams(keys = "format", values = "json")
-   @ExceptionParser(ReturnSharedIpGroupNotFoundOn404.class)
-   @Path("/shared_ip_groups/{id}")
-   SharedIpGroup getSharedIpGroup(@PathParam("id") int id);
+   SharedIpGroup getSharedIpGroup(int id);
 
    /**
     * This operation creates a new shared IP group. Please note, all responses to requests for
@@ -449,13 +311,7 @@ public interface CloudServersClient {
     * can be created empty or can be initially populated with a single server. Use
     * {@link CreateSharedIpGroupOptions} to specify an server.
     */
-   @POST
-   @ResponseParser(ParseSharedIpGroupFromJsonResponse.class)
-   @QueryParams(keys = "format", values = "json")
-   @Path("/shared_ip_groups")
-   @MapBinder(CreateSharedIpGroupOptions.class)
-   SharedIpGroup createSharedIpGroup(@MapEntityParam("name") String name,
-            CreateSharedIpGroupOptions... options);
+   SharedIpGroup createSharedIpGroup(String name, CreateSharedIpGroupOptions... options);
 
    /**
     * This operation deletes the specified shared IP group. This operation will ONLY succeed if 1)
@@ -465,19 +321,12 @@ public interface CloudServersClient {
     * @return false if the shared ip group is not found
     * @see SharedIpGroup
     */
-   @DELETE
-   @ExceptionParser(ReturnFalseOn404.class)
-   @Path("/shared_ip_groups/{id}")
-   boolean deleteSharedIpGroup(@PathParam("id") int id);
+   boolean deleteSharedIpGroup(int id);
 
    /**
     * List the backup schedule for the specified server
     */
-   @GET
-   @ResponseParser(ParseBackupScheduleFromJsonResponse.class)
-   @QueryParams(keys = "format", values = "json")
-   @Path("/servers/{id}/backup_schedule")
-   BackupSchedule listBackupSchedule(@PathParam("id") int serverId);
+   BackupSchedule listBackupSchedule(int serverId);
 
    /**
     * Delete backup schedule for the specified server.
@@ -486,47 +335,28 @@ public interface CloudServersClient {
     * 
     * @return false if the server is not found
     */
-   @DELETE
-   @ExceptionParser(ReturnFalseOn404.class)
-   @Path("/servers/{id}/backup_schedule")
-   boolean deleteBackupSchedule(@PathParam("id") int serverId);
+   boolean deleteBackupSchedule(int serverId);
 
    /**
     * Enable/update the backup schedule for the specified server
     * 
     * @return false if the server is not found
     */
-   @POST
-   @ExceptionParser(ReturnFalseOn404.class)
-   @Path("/servers/{id}/backup_schedule")
-   boolean replaceBackupSchedule(@PathParam("id") int id,
-            @BinderParam(BindBackupScheduleToJsonEntity.class) BackupSchedule backupSchedule);
+   boolean replaceBackupSchedule(int id, BackupSchedule backupSchedule);
 
    /**
     * List all server addresses
     */
-   @GET
-   @ResponseParser(ParseAddressesFromJsonResponse.class)
-   @QueryParams(keys = "format", values = "json")
-   @Path("/servers/{id}/ips")
-   Addresses listAddresses(@PathParam("id") int serverId);
+   Addresses listAddresses(int serverId);
 
    /**
     * List all public server addresses
     */
-   @GET
-   @ResponseParser(ParseInetAddressListFromJsonResponse.class)
-   @QueryParams(keys = "format", values = "json")
-   @Path("/servers/{id}/ips/public")
-   List<InetAddress> listPublicAddresses(@PathParam("id") int serverId);
+   List<InetAddress> listPublicAddresses(int serverId);
 
    /**
     * List all private server addresses
     */
-   @GET
-   @ResponseParser(ParseInetAddressListFromJsonResponse.class)
-   @QueryParams(keys = "format", values = "json")
-   @Path("/servers/{id}/ips/private")
-   List<InetAddress> listPrivateAddresses(@PathParam("id") int serverId);
+   List<InetAddress> listPrivateAddresses(int serverId);
 
 }

@@ -23,6 +23,7 @@
  */
 package org.jclouds.azure.storage.blob.blobstore.integration;
 
+import org.jclouds.azure.storage.blob.AzureBlobAsyncClient;
 import org.jclouds.azure.storage.blob.AzureBlobClient;
 import org.jclouds.azure.storage.blob.AzureBlobPropertiesBuilder;
 import org.jclouds.azure.storage.blob.blobstore.AzureBlobStoreContextBuilder;
@@ -38,20 +39,21 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class AzureBlobTestInitializer extends BaseTestInitializer<AzureBlobClient> {
+public class AzureBlobTestInitializer extends
+         BaseTestInitializer<AzureBlobAsyncClient, AzureBlobClient> {
 
    @Override
-   protected BlobStoreContext<AzureBlobClient> createLiveContext(Module configurationModule,
-            String url, String app, String account, String key) {
-      return new AzureBlobStoreContextBuilder(new AzureBlobPropertiesBuilder(
-               account, key).relaxSSLHostname().build()).withModules(configurationModule,
+   protected BlobStoreContext<AzureBlobAsyncClient, AzureBlobClient> createLiveContext(
+            Module configurationModule, String url, String app, String account, String key) {
+      return new AzureBlobStoreContextBuilder(new AzureBlobPropertiesBuilder(account, key)
+               .relaxSSLHostname().build()).withModules(configurationModule,
                new Log4JLoggingModule()).buildContext();
    }
 
    @Override
-   protected BlobStoreContext<AzureBlobClient> createStubContext() {
+   protected BlobStoreContext<AzureBlobAsyncClient, AzureBlobClient> createStubContext() {
       return AzureBlobStoreContextFactory.createContext("user", "pass",
-                new AzureBlobStubClientModule());
+               new AzureBlobStubClientModule());
    }
 
 }

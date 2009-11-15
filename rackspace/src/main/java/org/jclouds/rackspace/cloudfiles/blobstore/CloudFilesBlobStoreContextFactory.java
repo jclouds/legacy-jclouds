@@ -29,6 +29,7 @@ import java.util.Properties;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
 import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
 import org.jclouds.rackspace.cloudfiles.CloudFilesPropertiesBuilder;
 
@@ -48,20 +49,20 @@ import com.google.inject.Module;
  * @see CloudFilesBlobStoreContext
  */
 public class CloudFilesBlobStoreContextFactory {
-   public static BlobStoreContext<CloudFilesClient> createContext(Properties properties,
-            Module... modules) {
+   public static BlobStoreContext<CloudFilesAsyncClient, CloudFilesClient> createContext(
+            Properties properties, Module... modules) {
       return new CloudFilesBlobStoreContextBuilder(new CloudFilesPropertiesBuilder(properties)
                .build()).withModules(modules).buildContext();
    }
 
-   public static BlobStoreContext<CloudFilesClient> createContext(String user, String key,
-            Module... modules) {
+   public static BlobStoreContext<CloudFilesAsyncClient, CloudFilesClient> createContext(
+            String user, String key, Module... modules) {
       return new CloudFilesBlobStoreContextBuilder(new CloudFilesPropertiesBuilder(user, key)
                .build()).withModules(modules).buildContext();
    }
 
-   public static BlobStoreContext<CloudFilesClient> createContext(URI endpoint, String user,
-            String key, Module... modules) {
+   public static BlobStoreContext<CloudFilesAsyncClient, CloudFilesClient> createContext(
+            URI endpoint, String user, String key, Module... modules) {
       return new CloudFilesBlobStoreContextBuilder(new CloudFilesPropertiesBuilder(user, key)
                .withEndpoint(endpoint).build()).withModules(modules).buildContext();
    }

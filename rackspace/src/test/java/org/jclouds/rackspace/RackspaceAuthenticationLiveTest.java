@@ -24,20 +24,18 @@
 package org.jclouds.rackspace;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.fail;
 
-import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
-import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -76,7 +74,6 @@ public class RackspaceAuthenticationLiveTest {
          return factory.create(RackspaceAuthentication.class);
       }
 
-
       @Override
       protected void configure() {
 
@@ -88,10 +85,11 @@ public class RackspaceAuthenticationLiveTest {
       @SuppressWarnings( { "unused" })
       @Provides
       @Singleton
-      RestContext<RackspaceAuthentication> provideContext(Closer closer, RackspaceAuthentication api,
-               @Authentication URI endPoint,
+      RestContext<RackspaceAuthentication, RackspaceAuthentication> provideContext(Closer closer,
+               RackspaceAuthentication api, @Authentication URI endPoint,
                @Named(RackspaceConstants.PROPERTY_RACKSPACE_USER) String account) {
-         return new RestContextImpl<RackspaceAuthentication>(closer, api, endPoint, account);
+         return new RestContextImpl<RackspaceAuthentication, RackspaceAuthentication>(closer, api,
+                  api, endPoint, account);
       }
 
       @Override
@@ -103,12 +101,13 @@ public class RackspaceAuthenticationLiveTest {
    String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
    String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
-   private RestContext<RackspaceAuthentication> context;
+   private RestContext<RackspaceAuthentication, RackspaceAuthentication> context;
 
    @Test
    public void testAuthentication() throws Exception {
-      RackspaceAuthentication authentication = context.getApi();
-      AuthenticationResponse response = authentication.authenticate(account, key);
+      RackspaceAuthentication authentication = context.getAsyncApi();
+      AuthenticationResponse response = authentication.authenticate(account, key).get(10,
+               TimeUnit.SECONDS);
       assertNotNull(response);
       assertNotNull(response.getStorageUrl());
       assertNotNull(response.getCDNManagementUrl());
@@ -116,23 +115,17 @@ public class RackspaceAuthenticationLiveTest {
       assertNotNull(response.getAuthToken());
    }
 
-   @Test(expectedExceptions = HttpResponseException.class)
+   @Test(expectedExceptions = ExecutionException.class)
    public void testBadAuthentication() throws Exception {
-      RackspaceAuthentication authentication = context.getApi();
-      try {
-         authentication.authenticate("foo", "bar");
-      } catch (UndeclaredThrowableException e) {
-         HttpResponseException ew = (HttpResponseException) e.getCause().getCause();
-         assertEquals(ew.getResponse().getStatusCode(), 401);
-         throw ew;
-      }
-      fail();
+      RackspaceAuthentication authentication = context.getAsyncApi();
+      authentication.authenticate("foo", "bar").get(10, TimeUnit.SECONDS);
    }
 
    @BeforeClass
    void setupFactory() {
-      context = new RestContextBuilder<RackspaceAuthentication>(
+      context = new RestContextBuilder<RackspaceAuthentication, RackspaceAuthentication>(
                new TypeLiteral<RackspaceAuthentication>() {
+               }, new TypeLiteral<RackspaceAuthentication>() {
                }, new RackspacePropertiesBuilder(account, key).build()) {
          @Override
          protected void addClientModule(List<Module> modules) {

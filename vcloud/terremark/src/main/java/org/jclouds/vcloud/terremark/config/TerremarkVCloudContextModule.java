@@ -33,6 +33,7 @@ import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.reference.VCloudConstants;
+import org.jclouds.vcloud.terremark.TerremarkVCloudAsyncClient;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 
 import com.google.inject.AbstractModule;
@@ -48,10 +49,11 @@ public class TerremarkVCloudContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<TerremarkVCloudClient> provideContext(Closer closer,
-            TerremarkVCloudClient defaultApi, @Org URI endPoint,
-            @Named(VCloudConstants.PROPERTY_VCLOUD_USER) String account) {
-      return new RestContextImpl<TerremarkVCloudClient>(closer, defaultApi, endPoint, account);
+   RestContext<TerremarkVCloudAsyncClient, TerremarkVCloudClient> provideContext(Closer closer,
+            TerremarkVCloudAsyncClient asynchApi, TerremarkVCloudClient defaultApi,
+            @Org URI endPoint, @Named(VCloudConstants.PROPERTY_VCLOUD_USER) String account) {
+      return new RestContextImpl<TerremarkVCloudAsyncClient, TerremarkVCloudClient>(closer,
+               asynchApi, defaultApi, endPoint, account);
    }
 
 }

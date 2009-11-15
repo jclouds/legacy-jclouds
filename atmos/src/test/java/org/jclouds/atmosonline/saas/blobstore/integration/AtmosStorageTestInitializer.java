@@ -23,6 +23,7 @@
  */
 package org.jclouds.atmosonline.saas.blobstore.integration;
 
+import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
 import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.atmosonline.saas.AtmosStoragePropertiesBuilder;
 import org.jclouds.atmosonline.saas.blobstore.AtmosBlobStoreContextBuilder;
@@ -38,20 +39,21 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class AtmosStorageTestInitializer extends BaseTestInitializer<AtmosStorageClient> {
+public class AtmosStorageTestInitializer extends
+         BaseTestInitializer<AtmosStorageAsyncClient, AtmosStorageClient> {
 
    @Override
-   protected BlobStoreContext<AtmosStorageClient> createLiveContext(Module configurationModule,
-            String url, String app, String account, String key) {
-      return new AtmosBlobStoreContextBuilder(new AtmosStoragePropertiesBuilder(
-               account, key).relaxSSLHostname().build()).withModules(configurationModule,
+   protected BlobStoreContext<AtmosStorageAsyncClient, AtmosStorageClient> createLiveContext(
+            Module configurationModule, String url, String app, String account, String key) {
+      return new AtmosBlobStoreContextBuilder(new AtmosStoragePropertiesBuilder(account, key)
+               .relaxSSLHostname().build()).withModules(configurationModule,
                new Log4JLoggingModule()).buildContext();
    }
 
    @Override
-   protected BlobStoreContext<AtmosStorageClient> createStubContext() {
+   protected BlobStoreContext<AtmosStorageAsyncClient, AtmosStorageClient> createStubContext() {
       return AtmosBlobStoreContextFactory.createContext("user", "pass",
-                new AtmosStorageStubClientModule());
+               new AtmosStorageStubClientModule());
    }
 
 }

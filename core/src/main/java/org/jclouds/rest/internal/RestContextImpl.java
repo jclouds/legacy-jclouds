@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (A) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -35,17 +35,19 @@ import org.jclouds.rest.RestContext;
 /**
  * @author Adrian Cole
  */
-public class RestContextImpl<C> implements RestContext<C> {
+public class RestContextImpl<A, S> implements RestContext<A, S> {
 
    @Resource
    private Logger logger = Logger.NULL;
-   private final C defaultApi;
+   private final A asyncApi;
+   private final S syncApi;
    private final Closer closer;
    private final URI endPoint;
    private final String account;
 
-   public RestContextImpl(Closer closer, C defaultApi, URI endPoint, String account) {
-      this.defaultApi = defaultApi;
+   public RestContextImpl(Closer closer, A asyncApi, S syncApi, URI endPoint, String account) {
+      this.asyncApi = asyncApi;
+      this.syncApi = syncApi;
       this.closer = closer;
       this.endPoint = endPoint;
       this.account = account;
@@ -68,8 +70,12 @@ public class RestContextImpl<C> implements RestContext<C> {
       return account;
    }
 
-   public C getApi() {
-      return defaultApi;
+   public A getAsyncApi() {
+      return asyncApi;
+   }
+
+   public S getApi() {
+      return syncApi;
    }
 
    public URI getEndPoint() {

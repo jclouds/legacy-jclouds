@@ -50,7 +50,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
-public abstract class BaseMapIntegrationTest<S, V> extends BaseBlobStoreIntegrationTest<S> {
+public abstract class BaseMapIntegrationTest<A, S, V> extends BaseBlobStoreIntegrationTest<A, S> {
 
    public abstract void testPutAll() throws InterruptedException, ExecutionException,
             TimeoutException;
@@ -98,7 +98,7 @@ public abstract class BaseMapIntegrationTest<S, V> extends BaseBlobStoreIntegrat
       }
    }
 
-   protected abstract Map<String, V> createMap(BlobStoreContext<?> context, String bucket);
+   protected abstract Map<String, V> createMap(BlobStoreContext<?, ?> context, String bucket);
 
    @Test(groups = { "integration", "live" })
    public void testClear() throws InterruptedException, ExecutionException, TimeoutException {
@@ -246,8 +246,7 @@ public abstract class BaseMapIntegrationTest<S, V> extends BaseBlobStoreIntegrat
    abstract protected void putStringWithMD5(Map<String, V> map, String key, String value)
             throws InterruptedException, ExecutionException, TimeoutException;
 
-   protected void fourLeftRemovingOne(Map<String, V> map) throws InterruptedException,
-            ExecutionException, TimeoutException {
+   protected void fourLeftRemovingOne(Map<String, V> map) throws InterruptedException {
       map.remove("one");
       assertConsistencyAwareMapSize(map, 4);
       assertConsistencyAwareKeySetEquals(map, new TreeSet<String>(ImmutableSet.of("two", "three",

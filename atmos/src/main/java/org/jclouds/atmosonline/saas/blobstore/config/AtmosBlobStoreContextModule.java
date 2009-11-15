@@ -29,12 +29,15 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.atmosonline.saas.AtmosStorage;
+import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
 import org.jclouds.atmosonline.saas.AtmosStorageClient;
+import org.jclouds.atmosonline.saas.blobstore.AtmosAsyncBlobStore;
 import org.jclouds.atmosonline.saas.blobstore.AtmosBlobStore;
 import org.jclouds.atmosonline.saas.blobstore.strategy.FindMD5InUserMetadata;
 import org.jclouds.atmosonline.saas.blobstore.strategy.RecursiveRemove;
 import org.jclouds.atmosonline.saas.config.AtmosObjectModule;
 import org.jclouds.atmosonline.saas.reference.AtmosStorageConstants;
+import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -51,7 +54,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
- * Configures the {@link AtmosBlobStoreContext}; requires {@link AtmosBlobStore} bound.
+ * Configures the {@link AtmosBlobStoreContext}; requires {@link AtmosAsyncBlobStore} bound.
  * 
  * @author Adrian Cole
  */
@@ -62,6 +65,7 @@ public class AtmosBlobStoreContextModule extends AbstractModule {
       install(new BlobStoreObjectModule());
       install(new BlobStoreMapModule());
       install(new AtmosObjectModule());
+      bind(AsyncBlobStore.class).to(AtmosAsyncBlobStore.class).asEagerSingleton();
       bind(BlobStore.class).to(AtmosBlobStore.class).asEagerSingleton();
       bind(ContainsValueInListStrategy.class).to(FindMD5InUserMetadata.class);
       bind(ClearListStrategy.class).to(RecursiveRemove.class);
@@ -70,12 +74,13 @@ public class AtmosBlobStoreContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   BlobStoreContext<AtmosStorageClient> provideContext(BlobMap.Factory blobMapFactory,
-            InputStreamMap.Factory inputStreamMapFactory, Closer closer, BlobStore blobStore,
+   BlobStoreContext<AtmosStorageAsyncClient, AtmosStorageClient> provideContext(
+            BlobMap.Factory blobMapFactory, InputStreamMap.Factory inputStreamMapFactory,
+            Closer closer, AsyncBlobStore asynchBlobStore, BlobStore blobStore, AtmosStorageAsyncClient async,
             AtmosStorageClient defaultApi, @AtmosStorage URI endPoint,
             @Named(AtmosStorageConstants.PROPERTY_EMCSAAS_UID) String account) {
-      return new BlobStoreContextImpl<AtmosStorageClient>(blobMapFactory, inputStreamMapFactory,
-               closer, blobStore, defaultApi, endPoint, account);
+      return new BlobStoreContextImpl<AtmosStorageAsyncClient, AtmosStorageClient>(blobMapFactory,
+               inputStreamMapFactory, closer, asynchBlobStore, blobStore, async, defaultApi, endPoint, account);
    }
 
 }

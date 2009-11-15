@@ -23,155 +23,105 @@
  */
 package org.jclouds.atmosonline.saas.blobstore;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
 
-import java.net.URI;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
+import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
 import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.atmosonline.saas.blobstore.functions.BlobStoreListOptionsToListOptions;
 import org.jclouds.atmosonline.saas.blobstore.functions.BlobToObject;
 import org.jclouds.atmosonline.saas.blobstore.functions.DirectoryEntryListToResourceMetadataList;
 import org.jclouds.atmosonline.saas.blobstore.functions.ObjectToBlob;
 import org.jclouds.atmosonline.saas.blobstore.functions.ObjectToBlobMetadata;
-import org.jclouds.atmosonline.saas.domain.AtmosObject;
+import org.jclouds.atmosonline.saas.blobstore.internal.BaseAtmosBlobStore;
 import org.jclouds.atmosonline.saas.options.ListOptions;
 import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.attr.ConsistencyModel;
-import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ListContainerResponse;
 import org.jclouds.blobstore.domain.ListResponse;
 import org.jclouds.blobstore.domain.ResourceMetadata;
+import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
-import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
-import org.jclouds.concurrent.FutureFunctionCallable;
-import org.jclouds.concurrent.FutureFunctionWrapper;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.util.Utils;
 
-import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 
-@ConsistencyModel(ConsistencyModels.EVENTUAL)
-public class AtmosBlobStore implements BlobStore {
-   private final AtmosStorageClient connection;
-   private final Blob.Factory blobFactory;
-   private final LoggerFactory logFactory;
-   private final ClearListStrategy clearContainerStrategy;
-   private final ObjectToBlobMetadata object2BlobMd;
-   private final ObjectToBlob object2Blob;
-   private final BlobToObject blob2Object;
-   private final BlobStoreListOptionsToListOptions container2ContainerListOptions;
-   private final BlobToHttpGetOptions blob2ObjectGetOptions;
-   private final DirectoryEntryListToResourceMetadataList container2ResourceList;
-   private final ExecutorService service;
-
-   @Inject(optional = true)
-   @Named(BlobStoreConstants.PROPERTY_BLOBSTORE_TIMEOUT)
-   protected long requestTimeoutMilliseconds = 30000;
+public class AtmosBlobStore extends BaseAtmosBlobStore implements BlobStore {
 
    @Inject
-   private AtmosBlobStore(AtmosStorageClient connection, Blob.Factory blobFactory,
-            LoggerFactory logFactory, ClearListStrategy clearContainerStrategy,
-            ObjectToBlobMetadata object2BlobMd, ObjectToBlob object2Blob, BlobToObject blob2Object,
+   public AtmosBlobStore(AtmosStorageAsyncClient async, AtmosStorageClient sync,
+            Factory blobFactory, LoggerFactory logFactory,
+            ClearListStrategy clearContainerStrategy, ObjectToBlobMetadata object2BlobMd,
+            ObjectToBlob object2Blob, BlobToObject blob2Object,
             BlobStoreListOptionsToListOptions container2ContainerListOptions,
             BlobToHttpGetOptions blob2ObjectGetOptions,
             DirectoryEntryListToResourceMetadataList container2ResourceList, ExecutorService service) {
-      this.connection = checkNotNull(connection, "connection");
-      this.blobFactory = checkNotNull(blobFactory, "blobFactory");
-      this.logFactory = checkNotNull(logFactory, "logFactory");
-      this.clearContainerStrategy = checkNotNull(clearContainerStrategy, "clearContainerStrategy");
-      this.object2BlobMd = checkNotNull(object2BlobMd, "object2BlobMd");
-      this.object2Blob = checkNotNull(object2Blob, "object2Blob");
-      this.blob2Object = checkNotNull(blob2Object, "blob2Object");
-      this.container2ContainerListOptions = checkNotNull(container2ContainerListOptions,
-               "container2ContainerListOptions");
-      this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
-      this.container2ResourceList = checkNotNull(container2ResourceList, "container2ResourceList");
-      this.service = checkNotNull(service, "service");
-   }
-
-   protected <F, T> Future<T> wrapFuture(Future<? extends F> future, Function<F, T> function) {
-      return new FutureFunctionWrapper<F, T>(future, function, logFactory.getLogger(function
-               .getClass().getName()));
+      super(async, sync, blobFactory, logFactory, clearContainerStrategy, object2BlobMd,
+               object2Blob, blob2Object, container2ContainerListOptions, blob2ObjectGetOptions,
+               container2ResourceList, service);
    }
 
    /**
     * This implementation uses the AtmosStorage HEAD Object command to return the result
     */
    public BlobMetadata blobMetadata(String container, String key) {
-      return object2BlobMd.apply(connection.headFile(container + "/" + key));
+      return object2BlobMd.apply(sync.headFile(container + "/" + key));
    }
 
-   public Future<Void> clearContainer(final String container) {
-      return service.submit(new Callable<Void>() {
+   public void clearContainer(final String container) {
 
-         public Void call() throws Exception {
-            clearContainerStrategy.execute(container, recursive());
-            return null;
-         }
-
-      });
+      clearContainerStrategy.execute(container, recursive());
    }
 
-   public Future<Boolean> createContainer(String container) {
-      return wrapFuture(connection.createDirectory(container), new Function<URI, Boolean>() {
-
-         public Boolean apply(URI from) {
-            return true;// no etag
-         }
-
-      });
+   public boolean createContainer(String container) {
+      sync.createDirectory(container);
+      return true;// no etag
    }
 
-   public Future<Void> deleteContainer(final String container) {
-      return service.submit(new Callable<Void>() {
+   public void deleteContainer(final String container) {
+      clearContainerStrategy.execute(container, recursive());
+      deleteAndEnsurePathGone(container);
+   }
 
-         public Void call() throws Exception {
-            clearContainerStrategy.execute(container, recursive());
-            connection.deletePath(container).get();
-            if (!Utils.enventuallyTrue(new Supplier<Boolean>() {
-               public Boolean get() {
-                  return !connection.pathExists(container);
-               }
-            }, requestTimeoutMilliseconds)) {
-               throw new IllegalStateException(container + " still exists after deleting!");
+   private void deleteAndEnsurePathGone(final String path) {
+      sync.deletePath(path);
+      try {
+         if (!Utils.enventuallyTrue(new Supplier<Boolean>() {
+            public Boolean get() {
+               return !sync.pathExists(path);
             }
-            return null;
+         }, 30000)) {
+            throw new IllegalStateException(path + " still exists after deleting!");
          }
-
-      });
+      } catch (InterruptedException e) {
+         new IllegalStateException(path + " interrupted during deletion!", e);
+      }
    }
 
    public boolean exists(String container) {
-      return connection.pathExists(container);
+      return sync.pathExists(container);
    }
 
-   public Future<Blob> getBlob(String container, String key,
+   public Blob getBlob(String container, String key,
             org.jclouds.blobstore.options.GetOptions... optionsList) {
       GetOptions httpOptions = blob2ObjectGetOptions.apply(optionsList);
-      Future<AtmosObject> returnVal = connection.readFile(container + "/" + key, httpOptions);
-      return wrapFuture(returnVal, object2Blob);
+      return object2Blob.apply(sync.readFile(container + "/" + key, httpOptions));
    }
 
-   public Future<? extends ListResponse<? extends ResourceMetadata>> list() {
-      return wrapFuture(connection.listDirectories(), container2ResourceList);
+   public ListResponse<? extends ResourceMetadata> list() {
+      return container2ResourceList.apply(sync.listDirectories());
    }
 
-   public Future<? extends ListContainerResponse<? extends ResourceMetadata>> list(
-            String container, org.jclouds.blobstore.options.ListContainerOptions... optionsList) {
+   public ListContainerResponse<? extends ResourceMetadata> list(String container,
+            org.jclouds.blobstore.options.ListContainerOptions... optionsList) {
       if (optionsList.length == 1) {
          if (optionsList[0].isRecursive()) {
             throw new UnsupportedOperationException("recursive not currently supported in emcsaas");
@@ -181,50 +131,24 @@ public class AtmosBlobStore implements BlobStore {
          }
       }
       ListOptions nativeOptions = container2ContainerListOptions.apply(optionsList);
-      return wrapFuture(connection.listDirectory(container, nativeOptions), container2ResourceList);
+      return container2ResourceList.apply(sync.listDirectory(container, nativeOptions));
    }
 
    /**
     * Since there is no etag support in atmos, we just return the path.
     */
-   public Future<String> putBlob(final String container, final Blob blob) {
+   public String putBlob(final String container, final Blob blob) {
       final String path = container + "/" + blob.getMetadata().getName();
-
-      Callable<String> valueCallable = new FutureFunctionCallable<Void, String>(connection
-               .deletePath(path), new Function<Void, String>() {
-
-         public String apply(Void from) {
-            try {
-               if (!Utils.enventuallyTrue(new Supplier<Boolean>() {
-                  public Boolean get() {
-                     return !connection.pathExists(path);
-                  }
-               }, requestTimeoutMilliseconds)) {
-                  throw new IllegalStateException(path + " still exists after deleting!");
-               }
-               if (blob.getMetadata().getContentMD5() != null)
-                  blob.getMetadata().getUserMetadata().put("content-md5",
-                           HttpUtils.toHexString(blob.getMetadata().getContentMD5()));
-               connection.createFile(container, blob2Object.apply(blob)).get();
-               return path;
-            } catch (InterruptedException e) {
-               throw new RuntimeException(e);
-            } catch (ExecutionException e) {
-               throw new RuntimeException(e);
-            }
-         }
-
-      });
-      return service.submit(valueCallable);
-
+      deleteAndEnsurePathGone(path);
+      if (blob.getMetadata().getContentMD5() != null)
+         blob.getMetadata().getUserMetadata().put("content-md5",
+                  HttpUtils.toHexString(blob.getMetadata().getContentMD5()));
+      sync.createFile(container, blob2Object.apply(blob));
+      return path;
    }
 
-   public Future<Void> removeBlob(String container, String key) {
-      return connection.deletePath(container + "/" + key);
-   }
-
-   public Blob newBlob() {
-      return blobFactory.create(null);
+   public void removeBlob(String container, String key) {
+      sync.deletePath(container + "/" + key);
    }
 
 }

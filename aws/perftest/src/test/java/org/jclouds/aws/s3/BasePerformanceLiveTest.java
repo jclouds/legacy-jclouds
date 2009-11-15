@@ -51,7 +51,8 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTest<S3Client> {
+public abstract class BasePerformanceLiveTest extends
+         BaseBlobStoreIntegrationTest<S3AsyncClient, S3Client> {
    static {
       containerCount = 1;
    }
@@ -93,8 +94,7 @@ public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTe
    protected String createScratchContainerInEU() throws InterruptedException, ExecutionException,
             TimeoutException {
       String containerName = getScratchContainerName();
-      context.getApi().putBucketIfNotExists(containerName, createIn(LocationConstraint.EU)).get(30,
-               TimeUnit.SECONDS);
+      context.getApi().putBucketIfNotExists(containerName, createIn(LocationConstraint.EU));
       return containerName;
    }
 

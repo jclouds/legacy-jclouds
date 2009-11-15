@@ -32,7 +32,7 @@ import org.jclouds.rest.RestContext;
 import com.google.inject.Module;
 
 /**
- * Creates {@link RestContext} for {@link TwitterClient} instances based on the most commonly
+ * Creates {@link RestContext} for {@link TwitterAsyncClient} instances based on the most commonly
  * requested arguments.
  * <p/>
  * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
@@ -43,17 +43,18 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  * @see RestContext
- * @see TwitterClient
+ * @see TwitterAsyncClient
  */
 public class TwitterContextFactory {
 
-   public static RestContext<TwitterClient> createContext(String user, String password,
-            Module... modules) {
+   public static RestContext<TwitterAsyncClient, TwitterClient> createContext(String user,
+            String password, Module... modules) {
       return new TwitterContextBuilder(new TwitterPropertiesBuilder(user, password).build())
                .withModules(modules).buildContext();
    }
 
-   public static RestContext<TwitterClient> createContext(Properties properties, Module... modules) {
+   public static RestContext<TwitterAsyncClient, TwitterClient> createContext(
+            Properties properties, Module... modules) {
       return new TwitterContextBuilder(new TwitterPropertiesBuilder(properties).build())
                .withModules(modules).buildContext();
    }

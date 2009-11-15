@@ -25,7 +25,9 @@ package org.jclouds.rackspace.cloudservers.config;
 
 import javax.inject.Singleton;
 
+import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.http.RequiresHttp;
+import org.jclouds.rackspace.cloudservers.CloudServersAsyncClient;
 import org.jclouds.rackspace.cloudservers.CloudServersClient;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
@@ -47,7 +49,14 @@ public class CloudServersRestClientModule extends AbstractModule {
 
    @Provides
    @Singleton
-   public CloudServersClient provideClient(RestClientFactory factory) {
-      return factory.create(CloudServersClient.class);
+   protected CloudServersAsyncClient provideAsyncClient(RestClientFactory factory) {
+      return factory.create(CloudServersAsyncClient.class);
+   }
+
+   @Provides
+   @Singleton
+   public CloudServersClient provideClient(CloudServersAsyncClient client)
+            throws IllegalArgumentException, SecurityException, NoSuchMethodException {
+      return SyncProxy.create(CloudServersClient.class, client);
    }
 }

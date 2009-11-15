@@ -33,11 +33,13 @@ import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.handlers.AWSRedirectionRetryHandler;
 import org.jclouds.aws.handlers.ParseAWSErrorFromXmlContent;
 import org.jclouds.aws.s3.S3;
+import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.filters.RequestAuthorizeSignature;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.aws.util.RequestSigner;
 import org.jclouds.concurrent.ExpirableSupplier;
+import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
@@ -68,13 +70,12 @@ public class S3RestClientModule extends AbstractModule {
    protected String provideTimeStamp(@TimeStamp Supplier<String> cache) {
       return cache.get();
    }
-   
+
    @Provides
    @Singleton
-   RequestSigner provideRequestSigner(RequestAuthorizeSignature in){
+   RequestSigner provideRequestSigner(RequestAuthorizeSignature in) {
       return in;
    }
-   
 
    /**
     * borrowing concurrency code to ensure that caching takes place properly
@@ -107,8 +108,15 @@ public class S3RestClientModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected S3Client provideS3Client(RestClientFactory factory) {
-      return factory.create(S3Client.class);
+   protected S3AsyncClient provideAsyncClient(RestClientFactory factory) {
+      return factory.create(S3AsyncClient.class);
+   }
+
+   @Provides
+   @Singleton
+   public S3Client provideClient(S3AsyncClient client) throws IllegalArgumentException,
+            SecurityException, NoSuchMethodException {
+      return SyncProxy.create(S3Client.class, client);
    }
 
    protected void bindErrorHandlers() {

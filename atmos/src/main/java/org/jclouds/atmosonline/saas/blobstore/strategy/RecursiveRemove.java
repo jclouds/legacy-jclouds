@@ -34,6 +34,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
 import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.atmosonline.saas.domain.DirectoryEntry;
 import org.jclouds.atmosonline.saas.domain.FileType;
@@ -63,14 +64,16 @@ public class RecursiveRemove implements ClearListStrategy, ClearContainerStrateg
    @Inject(optional = true)
    @Named(BlobStoreConstants.PROPERTY_BLOBSTORE_TIMEOUT)
    protected long requestTimeoutMilliseconds = 30000;
-   protected final AtmosStorageClient connection;
+   protected final AtmosStorageAsyncClient async;
+   protected final AtmosStorageClient sync;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public RecursiveRemove(AtmosStorageClient connection) {
-      this.connection = connection;
+   public RecursiveRemove(AtmosStorageAsyncClient connection, AtmosStorageClient sync) {
+      this.async = connection;
+      this.sync = sync;
    }
 
    public void execute(String containerName) {
@@ -83,28 +86,30 @@ public class RecursiveRemove implements ClearListStrategy, ClearContainerStrateg
             throws InterruptedException, ExecutionException, TimeoutException {
       Set<Future<Void>> deletes = Sets.newHashSet();
       if ((type == FileType.DIRECTORY) && recursive) {
-         for (DirectoryEntry child : connection.listDirectory(fullPath).get(10, TimeUnit.SECONDS)) {
+         for (DirectoryEntry child : async.listDirectory(fullPath).get(10, TimeUnit.SECONDS)) {
             deletes.add(rm(fullPath + "/" + child.getObjectName(), child.getType(), true));
          }
       }
       for (Future<Void> isdeleted : deletes) {
          isdeleted.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
       }
-      return new FutureFunctionWrapper<Void, Void>(connection.deletePath(fullPath),
+      return new FutureFunctionWrapper<Void, Void>(async.deletePath(fullPath),
                new Function<Void, Void>() {
 
                   public Void apply(Void from) {
                      try {
                         if (!Utils.enventuallyTrue(new Supplier<Boolean>() {
                            public Boolean get() {
-                              return !connection.pathExists(fullPath);
+                              return !sync.pathExists(fullPath);
                            }
                         }, requestTimeoutMilliseconds)) {
-                           throw new IllegalStateException(fullPath + " still exists after deleting!");
+                           throw new IllegalStateException(fullPath
+                                    + " still exists after deleting!");
                         }
                         return null;
                      } catch (InterruptedException e) {
-                        throw new IllegalStateException(fullPath + " still exists after deleting!",e);
+                        throw new IllegalStateException(fullPath + " still exists after deleting!",
+                                 e);
                      }
                   }
 
@@ -117,7 +122,7 @@ public class RecursiveRemove implements ClearListStrategy, ClearContainerStrateg
          path += "/" + options.getPath();
       Set<Future<Void>> deletes = Sets.newHashSet();
       try {
-         for (DirectoryEntry md : connection.listDirectory(path).get(requestTimeoutMilliseconds,
+         for (DirectoryEntry md : async.listDirectory(path).get(requestTimeoutMilliseconds,
                   TimeUnit.MILLISECONDS)) {
             deletes.add(rm(path + "/" + md.getObjectName(), md.getType(), options.isRecursive()));
          }

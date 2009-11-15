@@ -27,10 +27,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 
+import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.InputStreamMap;
+import org.jclouds.blobstore.attr.ConsistencyModel;
+import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.lifecycle.Closer;
@@ -39,17 +42,32 @@ import org.jclouds.rest.internal.RestContextImpl;
 /**
  * @author Adrian Cole
  */
-public class BlobStoreContextImpl<S> extends RestContextImpl<S> implements BlobStoreContext<S> {
+public class BlobStoreContextImpl<A, S> extends RestContextImpl<A, S> implements
+         BlobStoreContext<A, S> {
    private final BlobMap.Factory blobMapFactory;
    private final InputStreamMap.Factory inputStreamMapFactory;
+   private final AsyncBlobStore ablobStore;
    private final BlobStore blobStore;
+   private final ConsistencyModels consistencyModel;
 
    public BlobStoreContextImpl(BlobMap.Factory blobMapFactory,
-            InputStreamMap.Factory inputStreamMapFactory, Closer closer, BlobStore blobStore,
-            S defaultApi, URI endPoint, String account) {
-      super(closer, defaultApi, endPoint, account);
+            InputStreamMap.Factory inputStreamMapFactory, Closer closer, AsyncBlobStore ablobStore,
+            BlobStore blobStore, A asyncApi, S syncApi, URI endPoint, String account) {
+      super(closer, asyncApi, syncApi, endPoint, account);
+      Class<?> type;
+      if (asyncApi.getClass().isAnnotationPresent(ConsistencyModel.class)) {
+         type = asyncApi.getClass();
+      } else if (asyncApi.getClass().getInterfaces().length > 0
+               && asyncApi.getClass().getInterfaces()[0]
+                        .isAnnotationPresent(ConsistencyModel.class)) {
+         type = asyncApi.getClass().getInterfaces()[0];
+      } else {
+         throw new IllegalStateException("@ConsistencyModel needed on " + asyncApi.getClass());
+      }
+      this.consistencyModel = type.getAnnotation(ConsistencyModel.class).value();
       this.blobMapFactory = checkNotNull(blobMapFactory, "blobMapFactory");
       this.inputStreamMapFactory = checkNotNull(inputStreamMapFactory, "inputStreamMapFactory");
+      this.ablobStore = checkNotNull(ablobStore, "ablobStore");
       this.blobStore = checkNotNull(blobStore, "blobStore");
    }
 
@@ -75,5 +93,14 @@ public class BlobStoreContextImpl<S> extends RestContextImpl<S> implements BlobS
 
    public BlobStore getBlobStore() {
       return blobStore;
+   }
+
+   public AsyncBlobStore getAsyncBlobStore() {
+      return ablobStore;
+   }
+
+   @Override
+   public ConsistencyModels getConsistencyModel() {
+      return consistencyModel;
    }
 }

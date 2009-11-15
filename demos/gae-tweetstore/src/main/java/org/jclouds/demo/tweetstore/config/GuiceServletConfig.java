@@ -42,7 +42,7 @@ import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.demo.tweetstore.controller.AddTweetsController;
 import org.jclouds.demo.tweetstore.controller.StoreTweetsController;
 import org.jclouds.gae.config.GaeHttpCommandExecutorServiceModule;
-import org.jclouds.twitter.TwitterClient;
+import org.jclouds.twitter.TwitterAsyncClient;
 import org.jclouds.twitter.TwitterContextFactory;
 
 import com.google.appengine.api.labs.taskqueue.Queue;
@@ -64,8 +64,8 @@ import com.google.inject.util.Jsr330;
  */
 public class GuiceServletConfig extends GuiceServletContextListener {
 
-   private Map<String, BlobStoreContext<?>> providerTypeToBlobStoreMap;
-   private TwitterClient twitterClient;
+   private Map<String, BlobStoreContext<?,?>> providerTypeToBlobStoreMap;
+   private TwitterAsyncClient twitterClient;
    private String container;
 
    @SuppressWarnings("unchecked")
@@ -76,7 +76,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 
       // shared across all blobstores and used to retrieve tweets
       twitterClient = TwitterContextFactory.createContext(props,
-               new GaeHttpCommandExecutorServiceModule()).getApi();
+               new GaeHttpCommandExecutorServiceModule()).getAsyncApi();
 
       // common namespace for storing tweets.
       container = checkNotNull(props.getProperty(PROPERTY_TWEETSTORE_CONTAINER),
@@ -88,12 +88,12 @@ public class GuiceServletConfig extends GuiceServletContextListener {
       // instantiate and store references to all blobstores by provider name
       providerTypeToBlobStoreMap = Maps.newHashMap();
       for (String className : contextBuilderClassNames) {
-         Class<BlobStoreContextBuilder<?>> builderClass;
-         Constructor<BlobStoreContextBuilder<?>> constructor;
+         Class<BlobStoreContextBuilder<?,?>> builderClass;
+         Constructor<BlobStoreContextBuilder<?,?>> constructor;
          String name;
-         BlobStoreContext<?> context;
+         BlobStoreContext<?,?> context;
          try {
-            builderClass = (Class<BlobStoreContextBuilder<?>>) Class.forName(className);
+            builderClass = (Class<BlobStoreContextBuilder<?,?>>) Class.forName(className);
             name = builderClass.getSimpleName().replaceAll("BlobStoreContextBuilder", "");
             constructor = builderClass.getConstructor(Properties.class);
             context = constructor.newInstance(props).withModules(
@@ -133,9 +133,9 @@ public class GuiceServletConfig extends GuiceServletContextListener {
       return Guice.createInjector(new ServletModule() {
          @Override
          protected void configureServlets() {
-            bind(new TypeLiteral<Map<String, BlobStoreContext<?>>>() {
+            bind(new TypeLiteral<Map<String, BlobStoreContext<?,?>>>() {
             }).toInstance(GuiceServletConfig.this.providerTypeToBlobStoreMap);
-            bind(TwitterClient.class).toInstance(twitterClient);
+            bind(TwitterAsyncClient.class).toInstance(twitterClient);
             bindConstant().annotatedWith(Jsr330.named(PROPERTY_TWEETSTORE_CONTAINER)).to(container);
             serve("/store/*").with(StoreTweetsController.class);
             serve("/tweets/*").with(AddTweetsController.class);
@@ -147,7 +147,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
 
    @Override
    public void contextDestroyed(ServletContextEvent servletContextEvent) {
-      for (BlobStoreContext<?> context : providerTypeToBlobStoreMap.values()) {
+      for (BlobStoreContext<?,?> context : providerTypeToBlobStoreMap.values()) {
          context.close();
       }
       super.contextDestroyed(servletContextEvent);

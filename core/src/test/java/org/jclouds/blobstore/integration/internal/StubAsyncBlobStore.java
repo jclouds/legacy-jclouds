@@ -53,21 +53,21 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
-import org.jclouds.blobstore.domain.ListResponse;
 import org.jclouds.blobstore.domain.ListContainerResponse;
+import org.jclouds.blobstore.domain.ListResponse;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.MutableResourceMetadata;
 import org.jclouds.blobstore.domain.ResourceMetadata;
 import org.jclouds.blobstore.domain.ResourceType;
-import org.jclouds.blobstore.domain.internal.ListResponseImpl;
 import org.jclouds.blobstore.domain.internal.ListContainerResponseImpl;
+import org.jclouds.blobstore.domain.internal.ListResponseImpl;
 import org.jclouds.blobstore.domain.internal.MutableResourceMetadataImpl;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
 import org.jclouds.blobstore.options.GetOptions;
@@ -97,7 +97,7 @@ import com.google.inject.internal.Nullable;
  * @author James Murty
  */
 @ConsistencyModel(ConsistencyModels.STRICT)
-public class StubBlobStore implements BlobStore {
+public class StubAsyncBlobStore implements AsyncBlobStore {
 
    protected final DateService dateService;
    private final ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs;
@@ -105,7 +105,8 @@ public class StubBlobStore implements BlobStore {
    protected final HttpGetOptionsListToGetOptions httpGetOptionsConverter;
 
    @Inject
-   protected StubBlobStore(ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs,
+   protected StubAsyncBlobStore(
+            ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs,
             DateService dateService, Blob.Factory blobProvider,
             HttpGetOptionsListToGetOptions httpGetOptionsConverter) {
       this.dateService = checkNotNull(dateService, "dateService");
@@ -154,9 +155,10 @@ public class StubBlobStore implements BlobStore {
       };
    }
 
-   public Future<? extends ListContainerResponse<? extends ResourceMetadata>> list(final String name,
-            ListContainerOptions... optionsList) {
-      final ListContainerOptions options = (optionsList.length == 0) ? new ListContainerOptions() : optionsList[0];
+   public Future<? extends ListContainerResponse<? extends ResourceMetadata>> list(
+            final String name, ListContainerOptions... optionsList) {
+      final ListContainerOptions options = (optionsList.length == 0) ? new ListContainerOptions()
+               : optionsList[0];
       return new FutureBase<ListContainerResponse<ResourceMetadata>>() {
          public ListContainerResponse<ResourceMetadata> get() throws InterruptedException,
                   ExecutionException {
@@ -233,8 +235,8 @@ public class StubBlobStore implements BlobStore {
                            }
                         }));
             }
-            return new ListContainerResponseImpl<ResourceMetadata>(contents, prefix, marker, maxResults,
-                     truncated);
+            return new ListContainerResponseImpl<ResourceMetadata>(contents, prefix, marker,
+                     maxResults, truncated);
          }
       };
    }
@@ -313,8 +315,12 @@ public class StubBlobStore implements BlobStore {
       };
    }
 
-   public boolean exists(final String container) {
-      return getContainerToBlobs().containsKey(container);
+   public Future<Boolean> exists(final String container) {
+      return new FutureBase<Boolean>() {
+         public Boolean get() throws InterruptedException, ExecutionException {
+            return getContainerToBlobs().containsKey(container);
+         }
+      };
    }
 
    public static abstract class FutureBase<V> implements Future<V> {
@@ -341,16 +347,16 @@ public class StubBlobStore implements BlobStore {
 
          public ListResponse<ResourceMetadata> get() throws InterruptedException,
                   ExecutionException {
-            return new ListResponseImpl<ResourceMetadata>(Iterables.transform(getContainerToBlobs().keySet(),
-                     new Function<String, ResourceMetadata>() {
-                        public ResourceMetadata apply(String name) {
-                           MutableResourceMetadata cmd = create();
-                           cmd.setName(name);
-                           cmd.setType(ResourceType.CONTAINER);
-                           return cmd;
-                        }
+            return new ListResponseImpl<ResourceMetadata>(Iterables.transform(getContainerToBlobs()
+                     .keySet(), new Function<String, ResourceMetadata>() {
+               public ResourceMetadata apply(String name) {
+                  MutableResourceMetadata cmd = create();
+                  cmd.setName(name);
+                  cmd.setType(ResourceType.CONTAINER);
+                  return cmd;
+               }
 
-                     }), null, null, false);
+            }), null, null, false);
          }
 
       };
@@ -539,18 +545,24 @@ public class StubBlobStore implements BlobStore {
             }
             if (options.getIfModifiedSince() != null) {
                DateTime modifiedSince = options.getIfModifiedSince();
-               if (object.getMetadata().getLastModified().isBefore(modifiedSince))
-                  throw new ExecutionException(new RuntimeException(String.format(
+               if (object.getMetadata().getLastModified().isBefore(modifiedSince)) {
+                  HttpResponse response = new HttpResponse();
+                  response.setStatusCode(304);
+                  throw new ExecutionException(new HttpResponseException(String.format(
                            "%1$s is before %2$s", object.getMetadata().getLastModified(),
-                           modifiedSince)));
+                           modifiedSince), null, response));
+               }
 
             }
             if (options.getIfUnmodifiedSince() != null) {
                DateTime unmodifiedSince = options.getIfUnmodifiedSince();
-               if (object.getMetadata().getLastModified().isAfter(unmodifiedSince))
-                  throw new ExecutionException(new RuntimeException(String.format(
+               if (object.getMetadata().getLastModified().isAfter(unmodifiedSince)) {
+                  HttpResponse response = new HttpResponse();
+                  response.setStatusCode(412);
+                  throw new ExecutionException(new HttpResponseException(String.format(
                            "%1$s is after %2$s", object.getMetadata().getLastModified(),
-                           unmodifiedSince)));
+                           unmodifiedSince), null, response));
+               }
             }
             Blob returnVal = copyBlob(object);
 
@@ -585,14 +597,18 @@ public class StubBlobStore implements BlobStore {
       };
    }
 
-   public BlobMetadata blobMetadata(String container, String key) {
-      try {
-         return copy(getBlob(container, key).get().getMetadata());
-      } catch (Exception e) {
-         Utils.<ContainerNotFoundException> rethrowIfRuntimeOrSameType(e);
-         Utils.<KeyNotFoundException> rethrowIfRuntimeOrSameType(e);
-         throw new RuntimeException(e);// TODO
-      }
+   public Future<BlobMetadata> blobMetadata(final String container, final String key) {
+      return new FutureBase<BlobMetadata>() {
+         public BlobMetadata get() throws InterruptedException, ExecutionException {
+            try {
+               return copy(getBlob(container, key).get().getMetadata());
+            } catch (Exception e) {
+               Utils.<ContainerNotFoundException> rethrowIfRuntimeOrSameType(e);
+               Utils.<KeyNotFoundException> rethrowIfRuntimeOrSameType(e);
+               throw new RuntimeException(e);// TODO
+            }
+         }
+      };
    }
 
    private Blob copyBlob(Blob object) {

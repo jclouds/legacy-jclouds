@@ -49,12 +49,14 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  * @see RestContext
- * @see CloudServersClient
+ * @see CloudServersAsyncClient
  */
-public class CloudServersContextBuilder extends RestContextBuilder<CloudServersClient> {
+public class CloudServersContextBuilder extends
+         RestContextBuilder<CloudServersAsyncClient, CloudServersClient> {
 
    public CloudServersContextBuilder(Properties properties) {
-      super(new TypeLiteral<CloudServersClient>() {
+      super(new TypeLiteral<CloudServersAsyncClient>() {
+      }, new TypeLiteral<CloudServersClient>() {
       }, properties);
    }
 

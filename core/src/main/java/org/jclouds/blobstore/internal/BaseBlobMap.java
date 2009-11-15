@@ -28,11 +28,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
@@ -55,7 +56,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 /**
- * Implements core Map functionality with an {@link BlobStore}
+ * Implements core Map functionality with an {@link AsyncBlobStore}
  * <p/>
  * All commands will wait a maximum of ${jclouds.blobstore.timeout} milliseconds to complete before
  * throwing an exception.
@@ -66,7 +67,7 @@ import com.google.common.collect.Sets;
  */
 public abstract class BaseBlobMap<V> {
 
-   protected final BlobStore connection;
+   protected final AsyncBlobStore connection;
    protected final String containerName;
    protected final Function<String, String> prefixer;
    protected final Function<String, String> pathStripper;
@@ -126,7 +127,7 @@ public abstract class BaseBlobMap<V> {
    protected long requestRetryMilliseconds = 10;
 
    @Inject
-   public BaseBlobMap(BlobStore connection, GetBlobsInListStrategy getAllBlobs,
+   public BaseBlobMap(AsyncBlobStore connection, GetBlobsInListStrategy getAllBlobs,
             ListBlobMetadataStrategy getAllBlobMetadata,
             ContainsValueInListStrategy containsValueStrategy,
             ClearListStrategy deleteBlobsStrategy, CountListStrategy countStrategy,
@@ -164,7 +165,7 @@ public abstract class BaseBlobMap<V> {
    /**
     * attempts asynchronous gets on all objects.
     * 
-    * @see BlobStore#getBlob(String, String)
+    * @see AsyncBlobStore#getBlob(String, String)
     */
    protected Set<? extends Blob> getAllBlobs() {
       SortedSet<? extends Blob> returnVal = getAllBlobs.execute(containerName, options);
@@ -206,7 +207,8 @@ public abstract class BaseBlobMap<V> {
    public boolean containsKey(Object key) {
       String realKey = prefixer.apply(key.toString());
       try {
-         return connection.blobMetadata(containerName, realKey) != null;
+         return connection.blobMetadata(containerName, realKey).get(requestTimeoutMilliseconds,
+                  TimeUnit.MILLISECONDS) != null;
       } catch (KeyNotFoundException e) {
          return false;
       } catch (Exception e) {

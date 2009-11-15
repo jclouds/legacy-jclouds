@@ -31,7 +31,6 @@ import static org.testng.Assert.assertNotNull;
 import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.aws.ec2.domain.Image;
@@ -63,7 +62,7 @@ public class EC2ClientLiveTest {
    private String imageId = "ami-d7fe1fbe";
 
    @BeforeGroups(groups = { "live" })
-   public void setupClient() throws InterruptedException, ExecutionException, TimeoutException {
+   public void setupClient() {
       user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
@@ -71,15 +70,14 @@ public class EC2ClientLiveTest {
    }
 
    @Test
-   void testDescribeImages() throws InterruptedException, ExecutionException, TimeoutException {
-      SortedSet<Image> allResults = client.describeImages().get(120, TimeUnit.SECONDS);
+   void testDescribeImages() {
+      SortedSet<Image> allResults = client.describeImages();
       assertNotNull(allResults);
       assert allResults.size() >= 2 : allResults.size();
       Iterator<Image> iterator = allResults.iterator();
       String id1 = iterator.next().getImageId();
       String id2 = iterator.next().getImageId();
-      SortedSet<Image> twoResults = client.describeImages(imageIds(id1, id2)).get(30,
-               TimeUnit.SECONDS);
+      SortedSet<Image> twoResults = client.describeImages(imageIds(id1, id2));
       assertNotNull(twoResults);
       assertEquals(twoResults.size(), 2);
       iterator = twoResults.iterator();
@@ -88,14 +86,12 @@ public class EC2ClientLiveTest {
    }
 
    @Test
-   void testDescribeAddresses() throws InterruptedException, ExecutionException, TimeoutException {
-      SortedSet<PublicIpInstanceIdPair> allResults = client.describeAddresses().get(30,
-               TimeUnit.SECONDS);
+   void testDescribeAddresses() {
+      SortedSet<PublicIpInstanceIdPair> allResults = client.describeAddresses();
       assertNotNull(allResults);
       if (allResults.size() >= 1) {
          PublicIpInstanceIdPair pair = allResults.last();
-         SortedSet<PublicIpInstanceIdPair> result = client.describeAddresses(pair.getPublicIp())
-                  .get(30, TimeUnit.SECONDS);
+         SortedSet<PublicIpInstanceIdPair> result = client.describeAddresses(pair.getPublicIp());
          assertNotNull(result);
          PublicIpInstanceIdPair compare = result.last();
          assertEquals(compare, pair);
@@ -105,8 +101,7 @@ public class EC2ClientLiveTest {
    @Test(dependsOnMethods = "testDescribeImages", enabled = false)
    void testDescribeImageAttribute() throws InterruptedException, ExecutionException,
             TimeoutException {
-      SortedSet<Image> oneResult = client.describeImages(imageIds(imageId)).get(30,
-               TimeUnit.SECONDS);
+      SortedSet<Image> oneResult = client.describeImages(imageIds(imageId));
       @SuppressWarnings("unused")
       Image expects = oneResult.last();
 
@@ -122,16 +117,15 @@ public class EC2ClientLiveTest {
    }
 
    @Test
-   void testDescribeInstances() throws InterruptedException, ExecutionException, TimeoutException {
-      SortedSet<Reservation> allResults = client.describeInstances().get(30, TimeUnit.SECONDS);
+   void testDescribeInstances() {
+      SortedSet<Reservation> allResults = client.describeInstances();
       assertNotNull(allResults);
       assert allResults.size() >= 0 : allResults.size();
       if (allResults.size() >= 2) {
          Iterator<Reservation> iterator = allResults.iterator();
          String id1 = iterator.next().getRunningInstances().first().getInstanceId();
          String id2 = iterator.next().getRunningInstances().first().getInstanceId();
-         SortedSet<Reservation> twoResults = client.describeInstances(id1, id2).get(30,
-                  TimeUnit.SECONDS);
+         SortedSet<Reservation> twoResults = client.describeInstances(id1, id2);
          assertNotNull(twoResults);
          assertEquals(twoResults.size(), 2);
          iterator = allResults.iterator();
@@ -141,16 +135,15 @@ public class EC2ClientLiveTest {
    }
 
    @Test
-   void testDescribeKeyPairs() throws InterruptedException, ExecutionException, TimeoutException {
-      SortedSet<KeyPair> allResults = client.describeKeyPairs().get(30, TimeUnit.SECONDS);
+   void testDescribeKeyPairs() {
+      SortedSet<KeyPair> allResults = client.describeKeyPairs();
       assertNotNull(allResults);
       assert allResults.size() >= 0 : allResults.size();
       if (allResults.size() >= 2) {
          Iterator<KeyPair> iterator = allResults.iterator();
          String id1 = iterator.next().getKeyName();
          String id2 = iterator.next().getKeyName();
-         SortedSet<KeyPair> twoResults = client.describeKeyPairs(id1, id2)
-                  .get(30, TimeUnit.SECONDS);
+         SortedSet<KeyPair> twoResults = client.describeKeyPairs(id1, id2);
          assertNotNull(twoResults);
          assertEquals(twoResults.size(), 2);
          iterator = twoResults.iterator();
@@ -162,16 +155,14 @@ public class EC2ClientLiveTest {
    @Test
    void testDescribeSecurityGroups() throws InterruptedException, ExecutionException,
             TimeoutException {
-      SortedSet<SecurityGroup> allResults = client.describeSecurityGroups().get(30,
-               TimeUnit.SECONDS);
+      SortedSet<SecurityGroup> allResults = client.describeSecurityGroups();
       assertNotNull(allResults);
       assert allResults.size() >= 0 : allResults.size();
       if (allResults.size() >= 2) {
          Iterator<SecurityGroup> iterator = allResults.iterator();
          String id1 = iterator.next().getName();
          String id2 = iterator.next().getName();
-         SortedSet<SecurityGroup> twoResults = client.describeSecurityGroups(id1, id2).get(30,
-                  TimeUnit.SECONDS);
+         SortedSet<SecurityGroup> twoResults = client.describeSecurityGroups(id1, id2);
          assertNotNull(twoResults);
          assertEquals(twoResults.size(), 2);
          iterator = twoResults.iterator();
@@ -183,22 +174,22 @@ public class EC2ClientLiveTest {
    public static final String PREFIX = System.getProperty("user.name") + "-ec2";
 
    @Test
-   void testCreateKeyPair() throws InterruptedException, ExecutionException, TimeoutException {
+   void testCreateKeyPair() {
       String keyName = PREFIX + "1";
       try {
-         client.deleteKeyPair(keyName).get(30, TimeUnit.SECONDS);
+         client.deleteKeyPair(keyName);
       } catch (Exception e) {
 
       }
-      client.deleteKeyPair(keyName).get(30, TimeUnit.SECONDS);
+      client.deleteKeyPair(keyName);
 
-      KeyPair result = client.createKeyPair(keyName).get(30, TimeUnit.SECONDS);
+      KeyPair result = client.createKeyPair(keyName);
       assertNotNull(result);
       assertNotNull(result.getKeyMaterial());
       assertNotNull(result.getKeyFingerprint());
       assertEquals(result.getKeyName(), keyName);
 
-      SortedSet<KeyPair> twoResults = client.describeKeyPairs(keyName).get(30, TimeUnit.SECONDS);
+      SortedSet<KeyPair> twoResults = client.describeKeyPairs(keyName);
       assertNotNull(twoResults);
       assertEquals(twoResults.size(), 1);
       KeyPair listPair = twoResults.iterator().next();
@@ -207,17 +198,17 @@ public class EC2ClientLiveTest {
    }
 
    @Test
-   void testCreateSecurityGroup() throws InterruptedException, ExecutionException, TimeoutException {
+   void testCreateSecurityGroup() {
       String groupName = PREFIX + "1";
       String groupDescription = PREFIX + "1 description";
       try {
-         client.deleteSecurityGroup(groupName).get(30, TimeUnit.SECONDS);
+         client.deleteSecurityGroup(groupName);
       } catch (Exception e) {
 
       }
-      client.deleteSecurityGroup(groupName).get(30, TimeUnit.SECONDS);
+      client.deleteSecurityGroup(groupName);
 
-      client.createSecurityGroup(groupName, groupDescription).get(30, TimeUnit.SECONDS);
+      client.createSecurityGroup(groupName, groupDescription);
 
       verifySecurityGroup(groupName, groupDescription);
    }
@@ -228,26 +219,22 @@ public class EC2ClientLiveTest {
       String groupName = PREFIX + "ingress";
 
       try {
-         client.deleteSecurityGroup(groupName).get(30, TimeUnit.SECONDS);
+         client.deleteSecurityGroup(groupName);
       } catch (Exception e) {
       }
 
-      client.createSecurityGroup(groupName, groupName).get(30, TimeUnit.SECONDS);
-      client.authorizeSecurityGroupIngress(groupName, IpProtocol.TCP, 80, 80, "0.0.0.0/0").get(30,
-               TimeUnit.SECONDS);
+      client.createSecurityGroup(groupName, groupName);
+      client.authorizeSecurityGroupIngress(groupName, IpProtocol.TCP, 80, 80, "0.0.0.0/0");
       assertEventually(new GroupHasPermission(client, groupName, new IpPermission(80, 80, Sets
                .<UserIdGroupPair> newTreeSet(), IpProtocol.TCP, ImmutableSortedSet.of("0.0.0.0/0"))));
 
-      client.revokeSecurityGroupIngress(groupName, IpProtocol.TCP, 80, 80, "0.0.0.0/0").get(30,
-               TimeUnit.SECONDS);
+      client.revokeSecurityGroupIngress(groupName, IpProtocol.TCP, 80, 80, "0.0.0.0/0");
       assertEventually(new GroupHasNoPermissions(client, groupName));
 
    }
 
-   private void verifySecurityGroup(String groupName, String description)
-            throws InterruptedException, ExecutionException, TimeoutException {
-      SortedSet<SecurityGroup> oneResult = client.describeSecurityGroups(groupName).get(30,
-               TimeUnit.SECONDS);
+   private void verifySecurityGroup(String groupName, String description) {
+      SortedSet<SecurityGroup> oneResult = client.describeSecurityGroups(groupName);
       assertNotNull(oneResult);
       assertEquals(oneResult.size(), 1);
       SecurityGroup listPair = oneResult.iterator().next();
@@ -257,44 +244,41 @@ public class EC2ClientLiveTest {
 
    @Test(enabled = false)
    // TODO
-   void testAuthorizeSecurityGroupIngressSourceGroup() throws InterruptedException,
-            ExecutionException, TimeoutException {
+   void testAuthorizeSecurityGroupIngressSourceGroup() throws InterruptedException {
       String group1Name = PREFIX + "ingress1";
       String group2Name = PREFIX + "ingress2";
 
       try {
-         client.deleteSecurityGroup(group1Name).get(30, TimeUnit.SECONDS);
+         client.deleteSecurityGroup(group1Name);
       } catch (Exception e) {
 
       }
       try {
-         client.deleteSecurityGroup(group2Name).get(30, TimeUnit.SECONDS);
+         client.deleteSecurityGroup(group2Name);
       } catch (Exception e) {
 
       }
 
-      client.createSecurityGroup(group1Name, group1Name).get(30, TimeUnit.SECONDS);
-      client.createSecurityGroup(group2Name, group2Name).get(30, TimeUnit.SECONDS);
+      client.createSecurityGroup(group1Name, group1Name);
+      client.createSecurityGroup(group2Name, group2Name);
       ensureGroupsExist(group1Name, group2Name);
-      client.authorizeSecurityGroupIngress(group1Name, IpProtocol.TCP, 80, 80, "0.0.0.0/0").get(30,
-               TimeUnit.SECONDS);
+      client.authorizeSecurityGroupIngress(group1Name, IpProtocol.TCP, 80, 80, "0.0.0.0/0");
       assertEventually(new GroupHasPermission(client, group2Name, new IpPermission(80, 80, Sets
                .<UserIdGroupPair> newTreeSet(), IpProtocol.TCP, ImmutableSortedSet.of("0.0.0.0/0"))));
 
-      SortedSet<SecurityGroup> oneResult = client.describeSecurityGroups(group1Name).get(30,
-               TimeUnit.SECONDS);
+      SortedSet<SecurityGroup> oneResult = client.describeSecurityGroups(group1Name);
       assertNotNull(oneResult);
       assertEquals(oneResult.size(), 1);
       SecurityGroup group = oneResult.iterator().next();
       assertEquals(group.getName(), group1Name);
 
-      client.authorizeSecurityGroupIngress(group2Name,
-               new UserIdGroupPair(group.getOwnerId(), group1Name)).get(30, TimeUnit.SECONDS);
+      client.authorizeSecurityGroupIngress(group2Name, new UserIdGroupPair(group.getOwnerId(),
+               group1Name));
       assertEventually(new GroupHasPermission(client, group2Name, new IpPermission(80, 80, Sets
                .<UserIdGroupPair> newTreeSet(), IpProtocol.TCP, ImmutableSortedSet.of("0.0.0.0/0"))));
 
-      client.revokeSecurityGroupIngress(group2Name,
-               new UserIdGroupPair(group.getOwnerId(), group1Name)).get(30, TimeUnit.SECONDS);
+      client.revokeSecurityGroupIngress(group2Name, new UserIdGroupPair(group.getOwnerId(),
+               group1Name));
       assertEventually(new GroupHasNoPermissions(client, group2Name));
    }
 
@@ -311,8 +295,7 @@ public class EC2ClientLiveTest {
 
       public void run() {
          try {
-            SortedSet<SecurityGroup> oneResult = client.describeSecurityGroups(group).get(30,
-                     TimeUnit.SECONDS);
+            SortedSet<SecurityGroup> oneResult = client.describeSecurityGroups(group);
             assertNotNull(oneResult);
             assertEquals(oneResult.size(), 1);
             SecurityGroup listPair = oneResult.iterator().next();
@@ -334,8 +317,7 @@ public class EC2ClientLiveTest {
 
       public void run() {
          try {
-            SortedSet<SecurityGroup> oneResult = client.describeSecurityGroups(group).get(30,
-                     TimeUnit.SECONDS);
+            SortedSet<SecurityGroup> oneResult = client.describeSecurityGroups(group);
             assertNotNull(oneResult);
             assertEquals(oneResult.size(), 1);
             SecurityGroup listPair = oneResult.iterator().next();
@@ -346,10 +328,8 @@ public class EC2ClientLiveTest {
       }
    }
 
-   private void ensureGroupsExist(String group1Name, String group2Name)
-            throws InterruptedException, ExecutionException, TimeoutException {
-      SortedSet<SecurityGroup> twoResults = client.describeSecurityGroups(group1Name, group2Name)
-               .get(30, TimeUnit.SECONDS);
+   private void ensureGroupsExist(String group1Name, String group2Name) {
+      SortedSet<SecurityGroup> twoResults = client.describeSecurityGroups(group1Name, group2Name);
       assertNotNull(twoResults);
       assertEquals(twoResults.size(), 2);
       Iterator<SecurityGroup> iterator = twoResults.iterator();

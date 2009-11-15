@@ -24,6 +24,7 @@
 package org.jclouds.rest;
 
 import java.net.URI;
+import java.util.concurrent.Future;
 
 /**
  * Represents an authenticated context to the cloud.
@@ -35,14 +36,22 @@ import java.net.URI;
  * @author Adrian Cole
  * 
  */
-public interface RestContext<C> {
+public interface RestContext<A, S> {
 
    /**
     * low-level api to the cloud. Threadsafe implementations will return a singleton.
     * 
-    * @return a connection to the cloud
+    * @return a connection to the cloud where all methods return {@link Future}s
     */
-   C getApi();
+   A getAsyncApi();
+
+   /**
+    * reflects a tuned connection to the cloud which calls {@link #getAsyncApi()} with predetermined
+    * timeouts.
+    * 
+    * @return a connection to the cloud where all methods block
+    */
+   S getApi();
 
    URI getEndPoint();
 

@@ -25,9 +25,11 @@ package org.jclouds.blobstore.integration;
 
 import java.net.URI;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
+import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -36,8 +38,10 @@ import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.blobstore.integration.config.StubBlobStoreModule;
-import org.jclouds.blobstore.integration.internal.StubBlobStore;
+import org.jclouds.blobstore.integration.internal.StubAsyncBlobStore;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.lifecycle.Closer;
 
 import com.google.inject.AbstractModule;
@@ -48,11 +52,17 @@ import com.google.inject.TypeLiteral;
 /**
  * @author Adrian Cole
  */
-public class StubBlobStoreContextBuilder extends BlobStoreContextBuilder<BlobStore> {
+public class StubBlobStoreContextBuilder extends BlobStoreContextBuilder<AsyncBlobStore, BlobStore> {
 
    public StubBlobStoreContextBuilder() {
-      super(new TypeLiteral<BlobStore>() {
+      super(new TypeLiteral<AsyncBlobStore>() {
+      }, new TypeLiteral<BlobStore>() {
       });
+   }
+
+   @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
+   private static interface StubBlobStore extends BlobStore {
+
    }
 
    @Override
@@ -63,16 +73,26 @@ public class StubBlobStoreContextBuilder extends BlobStoreContextBuilder<BlobSto
 
          @Override
          protected void configure() {
-            bind(BlobStore.class).to(StubBlobStore.class).asEagerSingleton();
+            bind(AsyncBlobStore.class).to(StubAsyncBlobStore.class).asEagerSingleton();
          }
 
          @SuppressWarnings("unused")
          @Provides
          @Singleton
-         BlobStoreContext<BlobStore> provideContext(BlobMap.Factory blobMapFactory,
-                  InputStreamMap.Factory inputStreamMapFactory, Closer closer, BlobStore api) {
-            return new BlobStoreContextImpl<BlobStore>(blobMapFactory, inputStreamMapFactory,
-                     closer, api, api, URI.create("http://localhost/blobstub"), "foo");
+         public BlobStore provideClient(AsyncBlobStore client) throws IllegalArgumentException,
+                  SecurityException, NoSuchMethodException {
+            return SyncProxy.create(StubBlobStore.class, client);
+         }
+
+         @SuppressWarnings("unused")
+         @Provides
+         @Singleton
+         BlobStoreContext<AsyncBlobStore, BlobStore> provideContext(BlobMap.Factory blobMapFactory,
+                  InputStreamMap.Factory inputStreamMapFactory, Closer closer,
+                  AsyncBlobStore asynch, BlobStore synch) {
+            return new BlobStoreContextImpl<AsyncBlobStore, BlobStore>(blobMapFactory,
+                     inputStreamMapFactory, closer, asynch, synch, asynch, synch, URI
+                              .create("http://localhost/blobstub"), "foo");
          }
 
       });

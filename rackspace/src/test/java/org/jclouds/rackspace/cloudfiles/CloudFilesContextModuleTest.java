@@ -65,8 +65,8 @@ public class CloudFilesContextModuleTest {
 
    @Test
    void testContextImpl() {
-      RestContext<CloudFilesClient> context = createInjector().getInstance(
-               Key.get(new TypeLiteral<RestContext<CloudFilesClient>>() {
+      RestContext<CloudFilesAsyncClient, CloudFilesClient> context = createInjector().getInstance(
+               Key.get(new TypeLiteral<RestContext<CloudFilesAsyncClient, CloudFilesClient>>() {
                }));
       assertEquals(context.getClass(), RestContextImpl.class);
    }

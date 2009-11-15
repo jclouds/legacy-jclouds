@@ -29,6 +29,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.atmosonline.saas.AtmosStorage;
+import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
 import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.atmosonline.saas.reference.AtmosStorageConstants;
 import org.jclouds.blobstore.config.BlobStoreObjectModule;
@@ -52,10 +53,12 @@ public class AtmosStorageContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<AtmosStorageClient> provideContext(Closer closer, AtmosStorageClient defaultApi,
+   RestContext<AtmosStorageAsyncClient, AtmosStorageClient> provideContext(Closer closer,
+            AtmosStorageAsyncClient async, AtmosStorageClient defaultApi,
             @AtmosStorage URI endPoint,
             @Named(AtmosStorageConstants.PROPERTY_EMCSAAS_UID) String account) {
-      return new RestContextImpl<AtmosStorageClient>(closer, defaultApi, endPoint, account);
+      return new RestContextImpl<AtmosStorageAsyncClient, AtmosStorageClient>(closer, async,
+               defaultApi, endPoint, account);
    }
 
 }
