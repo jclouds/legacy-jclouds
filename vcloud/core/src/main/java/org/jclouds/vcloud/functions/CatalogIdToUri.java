@@ -18,12 +18,11 @@ public class CatalogIdToUri implements Function<Object, String> {
    @Inject
    @CatalogItemRoot
    private String catalogItemRoot;
-   
-   @Override
+
    public String apply(Object from) {
       checkArgument(checkNotNull(from, "from") instanceof Integer,
                "this binder is only valid for Integers!");
-      return String.format("%s/%d",catalogItemRoot,from);
+      return String.format("%s/%d", catalogItemRoot, from);
    }
 
 }

@@ -18,12 +18,11 @@ public class VAppIdToUri implements Function<Object, String> {
    @Inject
    @VAppRoot
    private String vAppRoot;
-   
-   @Override
+
    public String apply(Object from) {
       checkArgument(checkNotNull(from, "from") instanceof Integer,
                "this binder is only valid for Integers!");
-      return String.format("%s/%d",vAppRoot,from);
+      return String.format("%s/%d", vAppRoot, from);
    }
 
 }

@@ -30,6 +30,10 @@ import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_USER;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jclouds.http.HttpRetryHandler;
@@ -70,6 +74,25 @@ public class VCloudDiscoveryRestClientModuleTest {
                });
    }
 
+   public static abstract class FutureBase<V> implements Future<V> {
+      public boolean cancel(boolean b) {
+         return false;
+      }
+
+      public boolean isCancelled() {
+         return false;
+      }
+
+      public boolean isDone() {
+         return true;
+      }
+
+      public V get(long l, TimeUnit timeUnit) throws InterruptedException, ExecutionException,
+               TimeoutException {
+         return get();
+      }
+   }
+
    @Test
    void testUpdatesOnlyOncePerSecond() throws NoSuchMethodException, InterruptedException {
       VCloudDiscoveryRestClientModule module = new VCloudDiscoveryRestClientModule();
@@ -77,18 +100,24 @@ public class VCloudDiscoveryRestClientModuleTest {
 
          private final AtomicInteger token = new AtomicInteger();
 
-         public VCloudSession login() {
-            return new VCloudSession() {
+         public Future<VCloudSession> login() {
+            return new FutureBase<VCloudSession>() {
+               @Override
+               public VCloudSession get() throws InterruptedException, ExecutionException {
+                  return new VCloudSession() {
 
-               public Map<String, NamedLink> getOrgs() {
-                  return null;
+                     public Map<String, NamedLink> getOrgs() {
+                        return null;
+                     }
+
+                     public String getVCloudToken() {
+                        return token.incrementAndGet() + "";
+                     }
+
+                  };
                }
-
-               public String getVCloudToken() {
-                  return token.incrementAndGet() + "";
-               }
-
             };
+
          }
 
       };

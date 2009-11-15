@@ -33,6 +33,7 @@ import static org.testng.Assert.assertNotNull;
 import java.net.URI;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -89,7 +90,7 @@ public class VCloudDiscoveryLiveTest {
 
    @Test
    public void testOrganization() throws Exception {
-      Organization response = context.getApi().getOrganization();
+      Organization response = context.getApi().getOrganization().get(45, TimeUnit.SECONDS);
       assertNotNull(response);
       assertNotNull(account);
       assertNotNull(response.getCatalog());

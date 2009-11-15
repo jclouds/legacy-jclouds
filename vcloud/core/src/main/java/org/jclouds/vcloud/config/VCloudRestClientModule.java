@@ -68,29 +68,30 @@ public class VCloudRestClientModule extends AbstractModule {
    @Provides
    @Catalog
    @Singleton
-   protected URI provideCatalog(VCloudDiscovery discovery) {
-      return discovery.getOrganization().getCatalog().getLocation();
+   protected URI provideCatalog(VCloudDiscovery discovery) throws InterruptedException, ExecutionException, TimeoutException {
+      return discovery.getOrganization().get(45, TimeUnit.SECONDS).getCatalog().getLocation();
    }
 
    @Provides
    @CatalogItemRoot
    @Singleton
    String provideCatalogItemRoot(@VCloud URI vcloudUri) {
-      return vcloudUri.toASCIIString()+"/catalogItem";
+      return vcloudUri.toASCIIString() + "/catalogItem";
    }
 
    @Provides
    @VAppRoot
    @Singleton
    String provideVAppRoot(@VCloud URI vcloudUri) {
-      return vcloudUri.toASCIIString()+"/vapp";
+      return vcloudUri.toASCIIString() + "/vapp";
    }
-   
+
    @Provides
    @VDC
    @Singleton
-   protected URI provideDefaultVDC(VCloudDiscovery discovery) {
-      return discovery.getOrganization().getVDCs().values().iterator().next().getLocation();
+   protected URI provideDefaultVDC(VCloudDiscovery discovery) throws InterruptedException, ExecutionException, TimeoutException {
+      return discovery.getOrganization().get(45, TimeUnit.SECONDS).getVDCs().values().iterator()
+               .next().getLocation();
    }
 
    @Provides
@@ -105,7 +106,7 @@ public class VCloudRestClientModule extends AbstractModule {
    @Provides
    @TasksList
    @Singleton
-   protected URI provideDefaultTasksList(VCloudDiscovery discovery) {
-      return discovery.getOrganization().getTasksLists().values().iterator().next().getLocation();
+   protected URI provideDefaultTasksList(VCloudDiscovery discovery) throws InterruptedException, ExecutionException, TimeoutException {
+      return discovery.getOrganization().get(45, TimeUnit.SECONDS).getTasksLists().values().iterator().next().getLocation();
    }
 }

@@ -36,10 +36,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.concurrent.WithinThreadExecutorService;
-import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.predicates.SocketOpen;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshClient.Factory;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
@@ -48,6 +48,7 @@ import org.jclouds.vcloud.VCloudClientLiveTest;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
 import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.predicates.TaskSuccess;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Node;
 import org.jclouds.vcloud.terremark.domain.ResourceType;
@@ -58,7 +59,6 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
-import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 /**
@@ -76,6 +76,10 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
    private InternetService is;
    private Node node;
    private VApp vApp;
+
+   private RetryablePredicate<InetSocketAddress> socketTester;
+
+   private RetryablePredicate<URI> successTester;
 
    public static final String PREFIX = System.getProperty("user.name") + "-terremark";
 
@@ -95,12 +99,16 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
       String serverName = "adriantest";
       int processorCount = 1;
       int memory = 512;
-      long hardDisk = 4194304;
-      String catalogOs = "Ubuntu JeOS 9.04 (32-bit)";
-      String expectedOs = "Ubuntu Linux (32-bit)";
+      // long hardDisk = 4194304;
+      // String catalogOs = "Ubuntu JeOS 9.04 (32-bit)";
+      // String expectedOs = "Ubuntu Linux (32-bit)";
+      long hardDisk = 4194304 / 4 * 10;
+      String catalogOs = "CentOS 5.3 (32-bit)";
+      String expectedOs = "Red Hat Enterprise Linux 5 (32-bit)";
 
       int templateId = tmClient.getCatalog().get(45, TimeUnit.SECONDS).get(catalogOs).getId();
 
+      System.out.printf("%d: instantiating vApp%n", System.currentTimeMillis());
       vApp = tmClient.instantiateVAppTemplate(serverName, templateId).get(45, TimeUnit.SECONDS);
 
       assertEquals(vApp.getStatus(), VAppStatus.CREATING);
@@ -127,13 +135,17 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
          assertEquals(((HttpResponseException) e.getCause()).getResponse().getStatusCode(), 501);
       }
 
-      deployTask = blockUntilSuccess(deployTask);
+      assert successTester.apply(deployTask.getLocation());
+      System.out.printf("%d: done deploying vApp%n", System.currentTimeMillis());
 
       vApp = tmClient.getVApp(vApp.getId()).get(45, TimeUnit.SECONDS);
       verifyConfigurationOfVApp(vApp, serverName, expectedOs, processorCount, memory, hardDisk);
       assertEquals(vApp.getStatus(), VAppStatus.OFF);
 
-      deployTask = blockUntilSuccess(tmClient.powerOnVApp(vApp.getId()).get(45, TimeUnit.SECONDS));
+      assert successTester.apply(tmClient.powerOnVApp(vApp.getId()).get(45, TimeUnit.SECONDS)
+               .getLocation());
+      System.out.printf("%d: done powering on vApp%n", System.currentTimeMillis());
+
       vApp = tmClient.getVApp(vApp.getId()).get(45, TimeUnit.SECONDS);
       assertEquals(vApp.getStatus(), VAppStatus.ON);
 
@@ -151,13 +163,7 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
       node = tmClient.addNode(is.getId(), vApp.getNetworkToAddresses().values().iterator().next(),
                vApp.getName() + "-SSH", 22).get(45, TimeUnit.SECONDS);
       publicIp = is.getPublicIpAddress().getAddress();
-      try {
-         doCheckPass(publicIp);
-      } catch (Exception e) {
-         // TODO - harden this up, when we stop hanging
-         System.err.printf("%s:22 -> %s:22%n%s%n", vApp.getNetworkToAddresses().values().iterator()
-                  .next(), publicIp, e.getMessage());
-      }
+      doCheckPass(publicIp);
    }
 
    @Test(dependsOnMethods = "testPublicIp")
@@ -178,15 +184,20 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
          assertEquals(((HttpResponseException) e.getCause()).getResponse().getStatusCode(), 501);
       }
 
-      blockUntilSuccess(tmClient.resetVApp(vApp.getId()).get(45, TimeUnit.SECONDS));
+      assert successTester.apply(tmClient.resetVApp(vApp.getId()).get(45, TimeUnit.SECONDS)
+               .getLocation());
+
       vApp = tmClient.getVApp(vApp.getId()).get(45, TimeUnit.SECONDS);
       assertEquals(vApp.getStatus(), VAppStatus.ON);
 
-      tmClient.shutdownVApp(vApp.getId()).get(45, TimeUnit.SECONDS);
-      vApp = tmClient.getVApp(vApp.getId()).get(45, TimeUnit.SECONDS);
-      assertEquals(vApp.getStatus(), VAppStatus.ON);
+      // TODO we need to determine whether shutdown is supported before invoking it.
+      // tmClient.shutdownVApp(vApp.getId()).get(45, TimeUnit.SECONDS);
+      // vApp = tmClient.getVApp(vApp.getId()).get(45, TimeUnit.SECONDS);
+      // assertEquals(vApp.getStatus(), VAppStatus.ON);
 
-      blockUntilSuccess(tmClient.powerOffVApp(vApp.getId()).get(45, TimeUnit.SECONDS));
+      assert successTester.apply(tmClient.powerOffVApp(vApp.getId()).get(45, TimeUnit.SECONDS)
+               .getLocation());
+
       vApp = tmClient.getVApp(vApp.getId()).get(45, TimeUnit.SECONDS);
       assertEquals(vApp.getStatus(), VAppStatus.OFF);
    }
@@ -208,18 +219,6 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
                .get(ResourceType.VIRTUAL_DISK).getVirtualQuantity());
    }
 
-   private Task blockUntilSuccess(Task task) throws InterruptedException, ExecutionException,
-            TimeoutException {
-      for (task = tmClient.getTask(task.getLocation()).get(30, TimeUnit.SECONDS); task.getStatus() != TaskStatus.SUCCESS; task = tmClient
-               .getTask(task.getLocation()).get(30, TimeUnit.SECONDS)) {
-         System.out.printf("%s blocking on status active: currently: %s%n", task.getOwner()
-                  .getName(), task.getStatus());
-         Thread.sleep(5 * 1000);
-      }
-      System.out.printf("%s complete%n", task.getResult().getName());
-      return task;
-   }
-
    private Task getLastTaskFor(URI owner) throws InterruptedException, ExecutionException,
             TimeoutException {
       return Iterables.getLast(tmClient.getDefaultTasksList().get(45, TimeUnit.SECONDS)
@@ -227,11 +226,17 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
    }
 
    private void doCheckPass(InetAddress address) throws IOException {
-      System.out.printf("%s:%s%n", address, 22);
-      SshClient connection = sshFactory.create(new InetSocketAddress(address, 22), "vcloud",
-               "p4ssw0rd");
+      InetSocketAddress socket = new InetSocketAddress(address, 22);
+
+      System.out.printf("%d: %s awaiting ssh service to start%n", System.currentTimeMillis(),
+               socket);
+      assert socketTester.apply(socket);
+      System.out.printf("%d: %s ssh service started%n", System.currentTimeMillis(), socket);
+
+      SshClient connection = sshFactory.create(socket, "vcloud", "p4ssw0rd");
       try {
          connection.connect();
+         System.out.printf("%d: %s ssh connection made%n", System.currentTimeMillis(), socket);
          InputStream etcPasswd = connection.get("/etc/passwd");
          Utils.toStringAndClose(etcPasswd);
       } finally {
@@ -248,8 +253,10 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
          tmClient.deleteInternetService(is.getId()).get(30, TimeUnit.SECONDS);
       if (vApp != null) {
          try {
-            blockUntilSuccess(tmClient.powerOffVApp(vApp.getId()).get(45, TimeUnit.SECONDS));
+            successTester.apply(tmClient.powerOffVApp(vApp.getId()).get(45, TimeUnit.SECONDS)
+                     .getLocation());
          } catch (Exception e) {
+
          }
          tmClient.deleteVApp(vApp.getId()).get(45, TimeUnit.SECONDS);
       }
@@ -260,13 +267,19 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
    public void setupClient() {
       account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      connection = tmClient = new TerremarkVCloudContextBuilder(
-               new TerremarkVCloudPropertiesBuilder(account, key).build()).withModules(
-               new Log4JLoggingModule()).buildContext().getApi();
-      Injector injector = Guice.createInjector(new Log4JLoggingModule(), new JschSshClientModule(),
-               new ExecutorServiceModule(new WithinThreadExecutorService()));
-      sshFactory = injector.getInstance(SshClient.Factory.class);
+      Injector injector = new TerremarkVCloudContextBuilder(new TerremarkVCloudPropertiesBuilder(
+               account, key).build()).withModules(new Log4JLoggingModule(),
+               new JschSshClientModule()).buildInjector();
 
+      connection = tmClient = injector.getInstance(TerremarkVCloudClient.class);
+
+      sshFactory = injector.getInstance(SshClient.Factory.class);
+      socketTester = new RetryablePredicate<InetSocketAddress>(injector
+               .getInstance(SocketOpen.class), 130, 10, TimeUnit.SECONDS);// make it longer then
+      // default internet
+      // service timeout
+      successTester = new RetryablePredicate<URI>(injector.getInstance(TaskSuccess.class), 300, 10,
+               TimeUnit.SECONDS);
    }
 
 }

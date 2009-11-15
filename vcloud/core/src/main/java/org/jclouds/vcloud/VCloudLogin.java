@@ -24,6 +24,7 @@
 package org.jclouds.vcloud;
 
 import java.util.Map;
+import java.util.concurrent.Future;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -66,5 +67,5 @@ public interface VCloudLogin {
    @ResponseParser(ParseLoginResponseFromHeaders.class)
    @Path("/login")
    @Consumes(MediaType.APPLICATION_XML)
-   VCloudSession login();
+   Future<VCloudSession> login();
 }

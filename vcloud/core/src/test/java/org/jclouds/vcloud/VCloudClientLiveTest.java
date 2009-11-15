@@ -89,6 +89,13 @@ public class VCloudClientLiveTest {
       }
    }
 
+   @Test(enabled = false)
+   public void testGetVApp() throws Exception {
+      String response = connection.getVApp("188849-2");
+      assertNotNull(response);
+      System.out.println(response);
+   }
+
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
       String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"),

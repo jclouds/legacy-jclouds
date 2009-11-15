@@ -29,6 +29,10 @@ public class BindInstantiateVAppTemplateParamsToXmlEntity implements MapBinder {
    public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
 
       String name = checkNotNull(postParams.get("name"), "name parameter not present");
+      String password = checkNotNull(postParams.get("password"), "password parameter not present");
+      String row = checkNotNull(postParams.get("row"), "row parameter not present");
+      String group = checkNotNull(postParams.get("group"), "group parameter not present");
+
       String template = checkNotNull(postParams.get("template"), "template parameter not present");
       String count = checkNotNull(postParams.get("count"), "count parameter not present");
       String megabytes = checkNotNull(postParams.get("megabytes"),
@@ -36,6 +40,9 @@ public class BindInstantiateVAppTemplateParamsToXmlEntity implements MapBinder {
       String network = checkNotNull(postParams.get("network"), "network parameter not present");
 
       String entity = xmlTemplate.replaceAll("\\{name\\}", name);
+      entity = entity.replaceAll("\\{password\\}", password);
+      entity = entity.replaceAll("\\{row\\}", row);
+      entity = entity.replaceAll("\\{group\\}", group);
       entity = entity.replaceAll("\\{template\\}", template);
       entity = entity.replaceAll("\\{count\\}", count);
       entity = entity.replaceAll("\\{megabytes\\}", megabytes);

@@ -26,6 +26,7 @@ package org.jclouds.vcloud;
 import static org.jclouds.vcloud.VCloudMediaType.CATALOG_XML;
 import static org.jclouds.vcloud.VCloudMediaType.TASKSLIST_XML;
 import static org.jclouds.vcloud.VCloudMediaType.TASK_XML;
+import static org.jclouds.vcloud.VCloudMediaType.VAPP_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VDC_XML;
 
 import java.net.URI;
@@ -157,4 +158,9 @@ public interface VCloudClient {
    @Path("/action/cancel")
    Future<Void> cancelTask(@Endpoint URI task);
 
+   @GET
+   @Consumes(VAPP_XML)
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloud.class)
+   @Path("/vapp/{vAppId}")
+   String getVApp(@PathParam("vAppId") String appId);
 }

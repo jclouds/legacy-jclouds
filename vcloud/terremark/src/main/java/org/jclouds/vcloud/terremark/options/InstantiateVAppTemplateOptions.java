@@ -25,6 +25,13 @@ public class InstantiateVAppTemplateOptions extends BindInstantiateVAppTemplateP
    private URI defaultNetwork;
 
    @VisibleForTesting
+   String password = "password";
+   @VisibleForTesting
+   String group = "default";
+   @VisibleForTesting
+   String row = "default";
+
+   @VisibleForTesting
    String cpuCount = "1";
    @VisibleForTesting
    String megabytes = "512";
@@ -35,6 +42,9 @@ public class InstantiateVAppTemplateOptions extends BindInstantiateVAppTemplateP
       Map<String, String> copy = Maps.newHashMap();
       copy.putAll(postParams);
       copy.put("count", cpuCount);
+      copy.put("password", password);
+      copy.put("group", group);
+      copy.put("row", row);
       copy.put("megabytes", megabytes);
       copy.put("network", network != null ? network : defaultNetwork.toASCIIString());
       super.bindToRequest(request, copy);
@@ -54,6 +64,21 @@ public class InstantiateVAppTemplateOptions extends BindInstantiateVAppTemplateP
 
    public InstantiateVAppTemplateOptions inNetwork(URI networkLocation) {
       this.network = networkLocation.toASCIIString();
+      return this;
+   }
+
+   public InstantiateVAppTemplateOptions withPassword(String password) {
+      this.password = password;
+      return this;
+   }
+
+   public InstantiateVAppTemplateOptions inGroup(String group) {
+      this.group = group;
+      return this;
+   }
+
+   public InstantiateVAppTemplateOptions inRow(String row) {
+      this.row = row;
       return this;
    }
 
@@ -82,5 +107,30 @@ public class InstantiateVAppTemplateOptions extends BindInstantiateVAppTemplateP
          InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
          return options.inNetwork(networkLocation);
       }
+
+      /**
+       * @see InstantiateVAppTemplateOptions#withPassword(String)
+       */
+      public static InstantiateVAppTemplateOptions withPassword(String password) {
+         InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+         return options.withPassword(password);
+      }
+
+      /**
+       * @see InstantiateVAppTemplateOptions#inGroup(String)
+       */
+      public static InstantiateVAppTemplateOptions inGroup(String group) {
+         InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+         return options.inGroup(group);
+      }
+
+      /**
+       * @see InstantiateVAppTemplateOptions#inRow(String)
+       */
+      public static InstantiateVAppTemplateOptions inRow(String row) {
+         InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+         return options.inRow(row);
+      }
+
    }
 }

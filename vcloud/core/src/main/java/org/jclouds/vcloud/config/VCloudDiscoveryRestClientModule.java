@@ -39,6 +39,7 @@ import org.jclouds.concurrent.ExpirableSupplier;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.RestClientFactory;
+import org.jclouds.util.Utils;
 import org.jclouds.vcloud.VCloudDiscovery;
 import org.jclouds.vcloud.VCloudLogin;
 import org.jclouds.vcloud.VCloudToken;
@@ -85,7 +86,12 @@ public class VCloudDiscoveryRestClientModule extends AbstractModule {
             @Named(PROPERTY_VCLOUD_SESSIONINTERVAL) long seconds, final VCloudLogin login) {
       return new ExpirableSupplier<VCloudSession>(new Supplier<VCloudSession>() {
          public VCloudSession get() {
-            return login.login();
+            try {
+               return login.login().get(45, TimeUnit.SECONDS);
+            } catch (Exception e) {
+               Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
+               throw new RuntimeException("Error logging in", e);
+            }
          }
       }, seconds, TimeUnit.SECONDS);
    }

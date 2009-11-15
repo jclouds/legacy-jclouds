@@ -78,13 +78,16 @@ public class BindInstantiateVAppTemplateParamsToXmlEntityTest {
 
       Map<String, String> map = Maps.newHashMap();
       map.put("name", "name");
+      map.put("password", "password");
+      map.put("row", "row");
+      map.put("group", "group");
       map.put("template", "http://catalogItem/3");
       map.put("count", "1");
       map.put("megabytes", "512");
       map.put("network", "http://network");
       binder.bindToRequest(request, map);
       assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE), "application/unknown");
-      assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH), "2247");
+      assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH), "2239");
       assertEquals(request.getEntity(), expected);
 
    }

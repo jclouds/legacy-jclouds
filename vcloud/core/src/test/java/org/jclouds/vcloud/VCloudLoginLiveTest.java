@@ -32,6 +32,7 @@ import static org.testng.Assert.assertNotNull;
 import java.net.URI;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -91,7 +92,7 @@ public class VCloudLoginLiveTest {
    public void testLogin() throws Exception {
       VCloudLogin authentication = context.getApi();
       for (int i = 0; i < 5; i++) {
-         VCloudSession response = authentication.login();
+         VCloudSession response = authentication.login().get(45, TimeUnit.SECONDS);
          assertNotNull(response);
          assertNotNull(response.getVCloudToken());
          assertNotNull(response.getOrgs());

@@ -5,11 +5,11 @@
         <ProductSection xmlns:q1="http://www.vmware.com/vcloud/v1"
             xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1">
             <Property xmlns="http://schemas.dmtf.org/ovf/envelope/1"
-                ovf:key="password" ovf:value="secretPassword" />
+                ovf:key="password" ovf:value="password" />
             <Property xmlns="http://schemas.dmtf.org/ovf/envelope/1"
-                ovf:key="row" ovf:value="Row1" />
+                ovf:key="row" ovf:value="row" />
             <Property xmlns="http://schemas.dmtf.org/ovf/envelope/1"
-                ovf:key="group" ovf:value="Group1" />
+                ovf:key="group" ovf:value="group" />
         </ProductSection>
         <VirtualHardwareSection xmlns:q1="http://www.vmware.com/vcloud/v1">
             <Item xmlns="http://schemas.dmtf.org/ovf/envelope/1">

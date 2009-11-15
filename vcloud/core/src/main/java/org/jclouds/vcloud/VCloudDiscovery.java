@@ -23,6 +23,8 @@
  */
 package org.jclouds.vcloud;
 
+import java.util.concurrent.Future;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 
@@ -52,5 +54,5 @@ public interface VCloudDiscovery {
    @Endpoint(Org.class)
    @Consumes(VCloudMediaType.ORG_XML)
    @XMLResponseParser(OrgHandler.class)
-   Organization getOrganization();
+   Future<? extends Organization> getOrganization();
 }
