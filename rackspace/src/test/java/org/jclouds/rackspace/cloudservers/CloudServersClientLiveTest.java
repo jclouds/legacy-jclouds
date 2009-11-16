@@ -162,11 +162,6 @@ public class CloudServersClientLiveTest {
       assert null != response;
       long serverCount = response.size();
       assertTrue(serverCount >= 0);
-      for (Server server : response) {
-         Server newDetails = client.getServer(server.getId());
-         assertEquals(newDetails.getId(), server.getId());
-         // other verifications might fail due to other testing
-      }
    }
 
    public void testListFlavors() throws Exception {

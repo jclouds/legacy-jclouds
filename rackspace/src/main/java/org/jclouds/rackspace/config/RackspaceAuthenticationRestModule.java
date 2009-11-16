@@ -71,14 +71,17 @@ public class RackspaceAuthenticationRestModule extends AbstractModule {
    protected AuthenticationResponse provideAuthenticationResponse(RestClientFactory factory,
             @Named(PROPERTY_RACKSPACE_USER) String user, @Named(PROPERTY_RACKSPACE_KEY) String key)
             throws InterruptedException, ExecutionException, TimeoutException {
-      return factory.create(RackspaceAuthentication.class).authenticate(user, key).get(10,TimeUnit.SECONDS);
+      return factory.create(RackspaceAuthentication.class).authenticate(user, key).get(30,
+               TimeUnit.SECONDS);
    }
 
    @Provides
    @Authentication
    protected String provideAuthenticationToken(RestClientFactory factory,
-            @Named(PROPERTY_RACKSPACE_USER) String user, @Named(PROPERTY_RACKSPACE_KEY) String key) throws InterruptedException, ExecutionException, TimeoutException {
-      return factory.create(RackspaceAuthentication.class).authenticate(user, key).get(10,TimeUnit.SECONDS).getAuthToken();
+            @Named(PROPERTY_RACKSPACE_USER) String user, @Named(PROPERTY_RACKSPACE_KEY) String key)
+            throws InterruptedException, ExecutionException, TimeoutException {
+      return factory.create(RackspaceAuthentication.class).authenticate(user, key).get(30,
+               TimeUnit.SECONDS).getAuthToken();
    }
 
    @Provides

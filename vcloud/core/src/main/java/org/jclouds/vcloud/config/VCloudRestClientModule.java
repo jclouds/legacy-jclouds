@@ -37,6 +37,7 @@ import org.jclouds.rest.RestClientFactory;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudDiscovery;
+import org.jclouds.vcloud.domain.Organization;
 import org.jclouds.vcloud.endpoints.Catalog;
 import org.jclouds.vcloud.endpoints.Network;
 import org.jclouds.vcloud.endpoints.TasksList;
@@ -75,13 +76,6 @@ public class VCloudRestClientModule extends AbstractModule {
    }
 
    @Provides
-   @Catalog
-   @Singleton
-   protected URI provideCatalog(VCloudDiscovery discovery) throws InterruptedException, ExecutionException, TimeoutException {
-      return discovery.getOrganization().get(45, TimeUnit.SECONDS).getCatalog().getLocation();
-   }
-
-   @Provides
    @CatalogItemRoot
    @Singleton
    String provideCatalogItemRoot(@VCloud URI vcloudUri) {
@@ -96,11 +90,24 @@ public class VCloudRestClientModule extends AbstractModule {
    }
 
    @Provides
+   @Singleton
+   protected Organization provideOrganization(VCloudDiscovery discovery) throws ExecutionException,
+            TimeoutException, InterruptedException {
+      return discovery.getOrganization().get(60, TimeUnit.SECONDS);
+   }
+
+   @Provides
    @VDC
    @Singleton
-   protected URI provideDefaultVDC(VCloudDiscovery discovery) throws InterruptedException, ExecutionException, TimeoutException {
-      return discovery.getOrganization().get(45, TimeUnit.SECONDS).getVDCs().values().iterator()
-               .next().getLocation();
+   protected URI provideDefaultVDC(Organization org) {
+      return org.getVDCs().values().iterator().next().getLocation();
+   }
+
+   @Provides
+   @Catalog
+   @Singleton
+   protected URI provideCatalog(Organization org) {
+      return org.getCatalog().getLocation();
    }
 
    @Provides
@@ -108,14 +115,14 @@ public class VCloudRestClientModule extends AbstractModule {
    @Singleton
    protected URI provideDefaultNetwork(VCloudAsyncClient client) throws InterruptedException,
             ExecutionException, TimeoutException {
-      return client.getDefaultVDC().get(45, TimeUnit.SECONDS).getAvailableNetworks().values()
+      return client.getDefaultVDC().get(60, TimeUnit.SECONDS).getAvailableNetworks().values()
                .iterator().next().getLocation();
    }
 
    @Provides
    @TasksList
    @Singleton
-   protected URI provideDefaultTasksList(VCloudDiscovery discovery) throws InterruptedException, ExecutionException, TimeoutException {
-      return discovery.getOrganization().get(45, TimeUnit.SECONDS).getTasksLists().values().iterator().next().getLocation();
+   protected URI provideDefaultTasksList(Organization org) {
+      return org.getTasksLists().values().iterator().next().getLocation();
    }
 }

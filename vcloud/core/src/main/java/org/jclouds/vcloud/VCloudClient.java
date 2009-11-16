@@ -41,11 +41,14 @@ import org.jclouds.vcloud.domain.VDC;
  */
 @Timeout(duration = 45, timeUnit = TimeUnit.SECONDS)
 public interface VCloudClient {
-
+   
+   @Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)
    Catalog getCatalog();
-
+   
+   @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
    VDC getDefaultVDC();
-
+   
+   @Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)
    TasksList getDefaultTasksList();
 
    Task deployVApp(int vAppId);

@@ -49,6 +49,8 @@ import org.jclouds.atmosonline.saas.functions.ParseObjectFromHeadersAndHttpConte
 import org.jclouds.atmosonline.saas.functions.ParseSystemMetadataFromHeaders;
 import org.jclouds.atmosonline.saas.functions.ReturnEndpointIfAlreadyExists;
 import org.jclouds.atmosonline.saas.options.ListOptions;
+import org.jclouds.blobstore.attr.ConsistencyModel;
+import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.functions.ReturnFalseOn404;
@@ -73,6 +75,7 @@ import org.jclouds.rest.annotations.SkipEncoding;
 @Endpoint(AtmosStorage.class)
 @RequestFilters(SignRequest.class)
 @SkipEncoding( { '/' })
+@ConsistencyModel(ConsistencyModels.EVENTUAL)
 public interface AtmosStorageAsyncClient {
 
    AtmosObject newObject();

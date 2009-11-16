@@ -110,14 +110,15 @@ public class CloudFilesClientLiveTest extends
             assert cdnMetadata == null || !cdnMetadata.isCDNEnabled() : containerNameWithoutCDN
                      + " should not have metadata";
          } catch (ContainerNotFoundException e) {
+         } catch (HttpResponseException e) {
          }
 
          try {
             cdnMetadata = context.getApi().getCDNMetadata("DoesNotExist");
             assert false : "should not exist";
          } catch (ContainerNotFoundException e) {
+         } catch (HttpResponseException e) {
          }
-
          // List CDN metadata for containers, and ensure all CDN info is available for enabled
          // container
          SortedSet<ContainerCDNMetadata> cdnMetadataList = context.getApi().listCDNContainers();
@@ -169,7 +170,7 @@ public class CloudFilesClientLiveTest extends
          assertTrue(context.getApi().disableCDN(containerNameWithCDN));
 
          cdnMetadata = context.getApi().getCDNMetadata(containerNameWithCDN);
-         assertEquals(cdnMetadata.isCDNEnabled(), false);
+         assertEquals(cdnMetadata.isCDNEnabled(), false); 
       } finally {
          recycleContainer(containerNameWithCDN);
          recycleContainer(containerNameWithoutCDN);

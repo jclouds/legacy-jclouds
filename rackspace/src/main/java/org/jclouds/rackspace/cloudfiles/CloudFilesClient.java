@@ -115,12 +115,15 @@ public interface CloudFilesClient {
 
    boolean deleteContainerIfEmpty(String container);
 
+   @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
    ListContainerResponse<ObjectInfo> listObjects(String container, ListContainerOptions... options);
 
    boolean containerExists(String container);
 
+   @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
    String putObject(String container, CFObject object);
 
+   @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
    CFObject getObject(String container, String name, GetOptions... options);
 
    MutableObjectInfoWithMetadata getObjectInfo(String container, String name);
