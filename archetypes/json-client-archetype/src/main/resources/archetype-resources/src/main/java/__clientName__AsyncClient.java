@@ -27,22 +27,33 @@
 package ${package};
 
 import java.util.SortedSet;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Future;
 
-import org.jclouds.concurrent.Timeout;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+
+import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.ResponseParser;
 import ${package}.domain.Status;
+import ${package}.functions.ParseStatusesFromJsonResponse;
 
 /**
- * Provides synchronous access to ${clientName}.
+ * Provides asynchronous access to ${clientName} via their REST API.
  * <p/>
- * 
- * @see ${clientName}AsyncClient
+ *
+ * @see ${clientName}Client
  * @see <a href="TODO: insert URL of client documentation" />
  * @author ${author}
  */
-@Timeout(duration = 4, timeUnit = TimeUnit.SECONDS)
-public interface ${clientName}Client {
+@Endpoint(${clientName}.class)
+@RequestFilters(BasicAuthentication.class)
+public interface ${clientName}AsyncClient {
 
-   SortedSet<Status> getMyMentions();
+   @GET
+   @ResponseParser(ParseStatusesFromJsonResponse.class)
+   @Path("/statuses/mentions.json")
+   Future<SortedSet<Status>> getMyMentions();
 
 }

@@ -65,7 +65,7 @@ public class ${clientName}ContextBuilderTest {
    }
 
    public void testBuildContext() {
-      RestContext<${clientName}Client> context = newBuilder().buildContext();
+      RestContext<${clientName}AsyncClient, ${clientName}Client> context = newBuilder().buildContext();
       assertEquals(context.getClass(), RestContextImpl.class);
       assertEquals(context.getAccount(), "user");
       assertEquals(context.getEndPoint(), URI.create("${clientEndpoint}"));
@@ -73,7 +73,7 @@ public class ${clientName}ContextBuilderTest {
 
    public void testBuildInjector() {
       Injector i = newBuilder().buildInjector();
-      assert i.getInstance(Key.get(new TypeLiteral<RestContext<${clientName}Client>>() {
+      assert i.getInstance(Key.get(new TypeLiteral<RestContext<${clientName}AsyncClient, ${clientName}Client>>() {
       })) != null; // TODO: test all things taken from context
       assert i.getInstance(BasicAuthentication.class) != null;
    }

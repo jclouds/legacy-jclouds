@@ -30,12 +30,15 @@ import java.net.URI;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
+
 import ${package}.${clientName};
 import ${package}.${clientName}Client;
+import ${package}.${clientName}AsyncClient;
 import ${package}.reference.${clientName}Constants;
 
 import com.google.inject.AbstractModule;
@@ -67,10 +70,17 @@ public class ${clientName}RestClientModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected ${clientName}Client provideClient(RestClientFactory factory) {
-      return factory.create(${clientName}Client.class);
+   protected ${clientName}AsyncClient provideClient(RestClientFactory factory) {
+      return factory.create(${clientName}AsyncClient.class);
    }
 
+   @Provides
+   @Singleton
+   public ${clientName}Client provideClient(${clientName}AsyncClient client) throws IllegalArgumentException,
+            SecurityException, NoSuchMethodException {
+      return SyncProxy.create(${clientName}Client.class, client);
+   }
+   
    @Provides
    @Singleton
    @${clientName}

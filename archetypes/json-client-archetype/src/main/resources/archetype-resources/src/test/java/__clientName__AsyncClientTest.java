@@ -51,18 +51,18 @@ import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests behavior of {@code ${clientName}Client}
+ * Tests annotation parsing of {@code ${clientName}AsyncClient}
  * 
  * @author ${author}
  */
-@Test(groups = "unit", testName = "${lcaseClientName}.${clientName}ClientTest")
-public class ${clientName}ClientTest extends RestClientTest<${clientName}Client> {
+@Test(groups = "unit", testName = "${lcaseClientName}.${clientName}AsyncClientTest")
+public class ${clientName}AsyncClientTest extends RestClientTest<${clientName}AsyncClient> {
 
    public void testGetMyMentions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ${clientName}Client.class.getMethod(""<-- (remove '"') TODO: insert test method name");
-      GeneratedHttpRequest<${clientName}Client> httpMethod = processor.createRequest(method);
+      Method method = ${clientName}AsyncClient.class.getMethod("TODO: insert test method name");
+      GeneratedHttpRequest<${clientName}AsyncClient> httpMethod = processor.createRequest(method);
 
-      assertRequestLineEquals(httpMethod, ""<-- (remove '"') TODO: insert expected request");
+      assertRequestLineEquals(httpMethod, "TODO: insert expected request");
       assertHeadersEqual(httpMethod, "");
       assertEntityEquals(httpMethod, null);
 
@@ -74,14 +74,14 @@ public class ${clientName}ClientTest extends RestClientTest<${clientName}Client>
    }
 
    @Override
-   protected void checkFilters(GeneratedHttpRequest<${clientName}Client> httpMethod) {
+   protected void checkFilters(GeneratedHttpRequest<${clientName}AsyncClient> httpMethod) {
       assertEquals(httpMethod.getFilters().size(), 1);
       assertEquals(httpMethod.getFilters().get(0).getClass(), BasicAuthentication.class);
    }
 
    @Override
-   protected TypeLiteral<RestAnnotationProcessor<${clientName}Client>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<${clientName}Client>>() {
+   protected TypeLiteral<RestAnnotationProcessor<${clientName}AsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<${clientName}AsyncClient>>() {
       };
    }
 

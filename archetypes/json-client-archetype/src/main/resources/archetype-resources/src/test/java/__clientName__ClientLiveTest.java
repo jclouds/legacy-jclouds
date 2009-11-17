@@ -30,9 +30,6 @@ package ${package};
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.SortedSet;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import ${package}.domain.Status;
@@ -50,7 +47,7 @@ public class ${clientName}ClientLiveTest {
    private ${clientName}Client connection;
 
    @BeforeGroups(groups = { "live" })
-   public void setupClient() throws InterruptedException, ExecutionException, TimeoutException {
+   public void setupClient() {
       String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
@@ -59,8 +56,8 @@ public class ${clientName}ClientLiveTest {
    }
 
    @Test
-   public void testGetMyMentions() throws Exception {
-      SortedSet<Status> response = connection.getMyMentions().get(1, TimeUnit.SECONDS);
+   public void testGetMyMentions() {
+      SortedSet<Status> response = connection.getMyMentions();
       assert (response.size() > 0);
    }
 

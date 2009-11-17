@@ -44,10 +44,11 @@ import com.google.inject.TypeLiteral;
  * 
  * @author ${author}
  */
-public class ${clientName}ContextBuilder extends RestContextBuilder<${clientName}Client> {
+public class ${clientName}ContextBuilder extends RestContextBuilder<${clientName}AsyncClient, ${clientName}Client> {
 
    public ${clientName}ContextBuilder(Properties props) {
-      super(new TypeLiteral<${clientName}Client>() {
+      super(new TypeLiteral<${clientName}AsyncClient>() {
+      }, new TypeLiteral<${clientName}Client>() {
       }, props);
       checkNotNull(properties.getProperty(${clientName}Constants.PROPERTY_${ucaseClientName}_USER));
       checkNotNull(properties.getProperty(${clientName}Constants.PROPERTY_${ucaseClientName}_PASSWORD));

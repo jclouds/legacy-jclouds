@@ -35,6 +35,7 @@ import org.jclouds.lifecycle.Closer;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 import ${package}.${clientName};
+import ${package}.${clientName}AsyncClient;
 import ${package}.${clientName}Client;
 import ${package}.reference.${clientName}Constants;
 
@@ -54,9 +55,9 @@ public class ${clientName}ContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   RestContext<${clientName}Client> provideContext(Closer closer, ${clientName}Client defaultApi,
-            @${clientName} URI endPoint, @Named(${clientName}Constants.PROPERTY_${ucaseClientName}_USER) String account) {
-      return new RestContextImpl<${clientName}Client>(closer, defaultApi, endPoint, account);
+   RestContext<${clientName}AsyncClient, ${clientName}Client> provideContext(Closer closer, ${clientName}AsyncClient asyncApi,
+            ${clientName}Client syncApi, @${clientName} URI endPoint, @Named(${clientName}Constants.PROPERTY_${ucaseClientName}_USER) String account) {
+      return new RestContextImpl<${clientName}AsyncClient, ${clientName}Client>(closer, asyncApi, syncApi, endPoint, account);
    }
 
 }

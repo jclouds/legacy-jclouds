@@ -47,16 +47,17 @@ import com.google.inject.Module;
  * @author ${author}
  * @see RestContext
  * @see ${clientName}Client
+ * @see ${clientName}AsyncClient
  */
 public class ${clientName}ContextFactory {
 
-   public static RestContext<${clientName}Client> createContext(String user, String password,
+   public static RestContext<${clientName}AsyncClient, ${clientName}Client> createContext(String user, String password,
             Module... modules) {
       return new ${clientName}ContextBuilder(new ${clientName}PropertiesBuilder(user, password).build())
                .withModules(modules).buildContext();
    }
 
-   public static RestContext<${clientName}Client> createContext(Properties properties, Module... modules) {
+   public static RestContext<${clientName}AsyncClient, ${clientName}Client> createContext(Properties properties, Module... modules) {
       return new ${clientName}ContextBuilder(new ${clientName}PropertiesBuilder(properties).build())
                .withModules(modules).buildContext();
    }
