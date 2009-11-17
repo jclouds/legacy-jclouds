@@ -86,18 +86,10 @@ public class TerremarkVCloudComputeClientLiveTest {
 
    private Map<Image, Expectation> expectationMap = ImmutableMap.<Image, Expectation> builder()
             .put(Image.CENTOS_53,
-                     new Expectation(4194304 / 4 * 10, "Red Hat Enterprise Linux 5 (32-bit)")).put(
+                     new Expectation(4194304 / 4 * 10, "Red Hat Enterprise Linux 5 (64-bit)")).put(
                      Image.RHEL_53,
-                     new Expectation(4194304 / 4 * 10, "Red Hat Enterprise Linux 5 (32-bit)")).put(
-                     Image.UMBUNTU_SERVER_90, new Expectation(4194304, "Ubuntu Linux (32-bit)"))
-            .put(Image.UMBUNTU_JEOS_90, new Expectation(4194304, "Ubuntu Linux (32-bit)")).put(
-                     Image.CENTOS_53_64,
                      new Expectation(4194304 / 4 * 10, "Red Hat Enterprise Linux 5 (64-bit)")).put(
-                     Image.RHEL_53_64,
-                     new Expectation(4194304 / 4 * 10, "Red Hat Enterprise Linux 5 (64-bit)")).put(
-                     Image.UMBUNTU_SERVER_90_64, new Expectation(4194304, "Ubuntu Linux (64-bit)"))
-            .put(Image.UMBUNTU_JEOS_90_64, new Expectation(4194304, "Ubuntu Linux (64-bit)"))
-            .build();
+                     Image.UMBUNTU_90, new Expectation(4194304, "Ubuntu Linux (64-bit)")).build();
 
    private InternetService is;
    private Node node;
@@ -107,7 +99,7 @@ public class TerremarkVCloudComputeClientLiveTest {
    @Test
    public void testPowerOn() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
-      Image toTest = Image.CENTOS_53;
+      Image toTest = Image.UMBUNTU_90;
 
       String serverName = getCompatibleServerName(toTest);
       int processorCount = 1;
@@ -139,8 +131,8 @@ public class TerremarkVCloudComputeClientLiveTest {
       is = tmClient.addInternetService("SSH", "TCP", 22);
       node = tmClient.addNode(is.getId(), privateAddress, id + "-SSH", 22);
       publicIp = is.getPublicIpAddress().getAddress();
-      assert addressTester.apply(publicIp);
-      client.testSsh(publicIp);
+      // assert addressTester.apply(publicIp);
+      client.exec(publicIp, "uname -a");
    }
 
    private void verifyConfigurationOfVApp(VApp vApp, String serverName, String expectedOs,
@@ -192,8 +184,8 @@ public class TerremarkVCloudComputeClientLiveTest {
 
                   @SuppressWarnings("unused")
                   @Provides
-                  private Predicate<InetAddress> addressTester(AddressReachable open) {
-                     return open;
+                  private Predicate<InetAddress> addressTester(AddressReachable reachable) {
+                     return new RetryablePredicate<InetAddress>(reachable, 60, 5, TimeUnit.SECONDS);
                   }
 
                   @SuppressWarnings("unused")

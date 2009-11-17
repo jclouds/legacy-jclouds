@@ -34,6 +34,7 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 
 import org.jclouds.logging.Logger;
+import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshClient.Factory;
 import org.jclouds.vcloud.domain.Task;
@@ -41,11 +42,9 @@ import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.terremark.domain.VApp;
 import org.jclouds.vcloud.terremark.options.InstantiateVAppTemplateOptions;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.MapMaker;
 
 /**
  * 
@@ -71,31 +70,18 @@ public class VCloudComputeClient {
    private final Factory sshFactory;
 
    public enum Image {
-      CENTOS_53, CENTOS_53_64, RHEL_53, RHEL_53_64, UMBUNTU_JEOS_90, UMBUNTU_JEOS_90_64, UMBUNTU_SERVER_90, UMBUNTU_SERVER_90_64
+      CENTOS_53, RHEL_53, UMBUNTU_90
    }
 
-   private Map<Image, String> imageCatalogNameMap = ImmutableMap.<Image, String> builder().put(
-            Image.CENTOS_53, "CentOS 5.3 (32-bit)").put(Image.RHEL_53, "RHEL 5.3 (32-bit)").put(
-            Image.UMBUNTU_JEOS_90, "Ubuntu JeOS 9.04 (32-bit)").put(Image.UMBUNTU_SERVER_90,
-            "Ubuntu Server 9.04 (64-bit)").put(Image.CENTOS_53_64, "CentOS 5.3 (64-bit)").put(
-            Image.RHEL_53_64, "RHEL 5.3 (64-bit)").put(Image.UMBUNTU_JEOS_90_64,
-            "Ubuntu JeOS 9.04 (64-bit)").put(Image.UMBUNTU_SERVER_90_64,
-            "Ubuntu Server 9.04 (64-bit)").build();
-
-   private Map<String, String> catalogNameTemplateIdMap = new MapMaker()
-            .makeComputingMap(new Function<String, String>() {
-               @Override
-               public String apply(String from) {
-                  return tmClient.getCatalog().get(from).getId();
-               }
-            });
+   private Map<Image, String> imageCatalogIdMap = ImmutableMap.<Image, String> builder().put(
+            Image.CENTOS_53, "6").put(Image.RHEL_53, "8").put(Image.UMBUNTU_90, "10").build();
 
    public String start(String name, int minCores, int minMegs, Image image) {
-      checkArgument(imageCatalogNameMap.containsKey(image), "image not configured: " + image);
-      String templateId = catalogNameTemplateIdMap.get(imageCatalogNameMap.get(image));
+      checkArgument(imageCatalogIdMap.containsKey(image), "image not configured: " + image);
+      String templateId = imageCatalogIdMap.get(image);
 
-      logger.debug(">> instantiating vApp name(%s) minCores(%d) minMegs(%d) image(%s)", name,
-               minCores, minMegs, image);
+      logger.debug(">> instantiating vApp name(%s) minCores(%d) minMegs(%d) template(%s)", name,
+               minCores, minMegs, templateId);
       VApp vApp = tmClient.instantiateVAppTemplate(name, templateId,
                InstantiateVAppTemplateOptions.Builder.cpuCount(minCores).megabytes(minMegs));
       logger.debug("<< instantiated VApp(%s)", vApp.getId());
@@ -123,11 +109,14 @@ public class VCloudComputeClient {
       return Iterables.getLast(vApp.getNetworkToAddresses().values());
    }
 
-   public void testSsh(InetAddress address) {
+   public ExecResponse exec(InetAddress address, String command) {
       InetSocketAddress sshSocket = new InetSocketAddress(address, 22);
-      logger.debug(">> sshConnect socket(%s)", sshSocket);
-      checkSsh(sshSocket, "vcloud", "p4ssw0rd");
-      logger.debug("<< sshOk socket(%s)", sshSocket);
+      String username = "vcloud";
+      String password = "p4ssw0rd";
+      logger.debug(">> exec ssh://%s@%s/%s", username, sshSocket, command);
+      ExecResponse exec = exec(sshSocket, username, password, command);
+      logger.debug("<< output(%s) error(%s)", exec.getOutput(), exec.getError());
+      return exec;
    }
 
    public void reboot(String id) {
@@ -151,13 +140,15 @@ public class VCloudComputeClient {
       logger.debug("<< deleted vApp(%s)", vApp.getId());
    }
 
-   private void checkSsh(InetSocketAddress socket, String username, String password) {
+   private ExecResponse exec(InetSocketAddress socket, String username, String password,
+            String command) {
       if (!socketTester.apply(socket)) {
          throw new SocketNotOpenException(socket);
       }
       SshClient connection = sshFactory.create(socket, username, password);
       try {
          connection.connect();
+         return connection.exec(command);
       } finally {
          if (connection != null)
             connection.disconnect();
