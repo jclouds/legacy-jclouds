@@ -34,7 +34,7 @@ import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rest.domain.NamedLink;
 import org.jclouds.rest.domain.internal.NamedLinkImpl;
-import org.jclouds.vcloud.endpoints.VCloud;
+import org.jclouds.vcloud.endpoints.VCloudApi;
 import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
 import org.testng.annotations.Test;
 
@@ -62,7 +62,7 @@ public class TerremarkVDCHandlerTest {
 
          @SuppressWarnings("unused")
          @Provides
-         @VCloud
+         @VCloudApi
          URI provide() {
             return URI.create("https://services.vcloudexpress.terremark.com/api/v0.8");
          }

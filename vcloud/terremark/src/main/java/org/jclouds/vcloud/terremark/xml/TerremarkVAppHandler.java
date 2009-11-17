@@ -168,10 +168,10 @@ public class TerremarkVAppHandler extends ParseSax.HandlerWithResult<VApp> {
    }
 
    public NamedResource newNamedResource(Attributes attributes) {
-      return new NamedResourceImpl(Integer.parseInt(attributes
-               .getValue(attributes.getIndex("href")).replace(vAppRoot + "/", "")), attributes
-               .getValue(attributes.getIndex("name")), attributes.getValue(attributes
-               .getIndex("type")), URI.create(attributes.getValue(attributes.getIndex("href"))));
+      return new NamedResourceImpl(attributes.getValue(attributes.getIndex("href")).replace(
+               vAppRoot + "/", ""), attributes.getValue(attributes.getIndex("name")), attributes
+               .getValue(attributes.getIndex("type")), URI.create(attributes.getValue(attributes
+               .getIndex("href"))));
    }
 
    public void putNamedResource(Map<String, NamedResource> map, Attributes attributes) {

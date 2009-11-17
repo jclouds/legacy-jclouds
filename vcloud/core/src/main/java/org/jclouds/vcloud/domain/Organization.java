@@ -44,7 +44,7 @@ import com.google.inject.ImplementedBy;
 public interface Organization {
    String getName();
 
-   int getId();
+   String getId();
 
    URI getLocation();
 

@@ -29,7 +29,7 @@ import java.net.URI;
  * @author Adrian Cole
  */
 public class InternetService implements Comparable<InternetService> {
-   private final int id;
+   private final String id;
    private final String name;
    private final URI location;
    private final PublicIpAddress publicIpAddress;
@@ -39,7 +39,7 @@ public class InternetService implements Comparable<InternetService> {
    private final int timeout;
    private final String description;
 
-   public InternetService(int id, String name, URI location, PublicIpAddress publicIpAddress,
+   public InternetService(String id, String name, URI location, PublicIpAddress publicIpAddress,
             int port, String protocol, boolean enabled, int timeout, String description) {
       this.id = id;
       this.name = name;
@@ -82,7 +82,7 @@ public class InternetService implements Comparable<InternetService> {
       int result = 1;
       result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + (enabled ? 1231 : 1237);
-      result = prime * result + id;
+      result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result + ((location == null) ? 0 : location.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + port;
@@ -108,7 +108,10 @@ public class InternetService implements Comparable<InternetService> {
          return false;
       if (enabled != other.enabled)
          return false;
-      if (id != other.id)
+      if (id == null) {
+         if (other.id != null)
+            return false;
+      } else if (!id.equals(other.id))
          return false;
       if (location == null) {
          if (other.location != null)
@@ -138,21 +141,10 @@ public class InternetService implements Comparable<InternetService> {
    }
 
    public int compareTo(InternetService that) {
-      final int BEFORE = -1;
-      final int EQUAL = 0;
-      final int AFTER = 1;
-
-      if (this == that)
-         return EQUAL;
-
-      if (this.getId() < that.getId())
-         return BEFORE;
-      if (this.getId() > that.getId())
-         return AFTER;
-      return EQUAL;
+      return (this == that) ? 0 : this.getId().compareTo(that.getId());
    }
 
-   public int getId() {
+   public String getId() {
       return id;
    }
 

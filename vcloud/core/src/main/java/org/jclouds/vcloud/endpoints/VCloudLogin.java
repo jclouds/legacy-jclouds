@@ -21,20 +21,25 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.reference;
+package org.jclouds.vcloud.endpoints;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import javax.inject.Qualifier;
 
 /**
- * Configuration properties and constants used in VCloud connections.
+ * Represents a component related to vCloud.
  * 
+ * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx" />
  * @author Adrian Cole
+ * 
  */
-public interface VCloudConstants {
-   public static final String PROPERTY_VCLOUD_VERSION = "jclouds.vcloud.version";
-   public static final String PROPERTY_VCLOUD_ENDPOINT = "jclouds.vcloud.endpoint";
-   public static final String PROPERTY_VCLOUD_USER = "jclouds.vcloud.user";
-   public static final String PROPERTY_VCLOUD_KEY = "jclouds.vcloud.key";
-   /**
-    * automatically renew vcloud token before this interval expires.
-    */
-   public static final String PROPERTY_VCLOUD_SESSIONINTERVAL = "jclouds.vcloud.sessioninterval";
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.TYPE, ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Qualifier
+public @interface VCloudLogin {
+
 }

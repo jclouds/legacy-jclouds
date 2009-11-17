@@ -40,7 +40,7 @@ public interface VDC {
 
    String getName();
 
-   int getId();
+   String getId();
 
    URI getLocation();
 

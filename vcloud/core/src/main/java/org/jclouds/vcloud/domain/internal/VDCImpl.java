@@ -41,7 +41,7 @@ import org.jclouds.vcloud.domain.VDC;
  */
 public class VDCImpl implements VDC {
 
-   private final int id;
+   private final String id;
    private final String name;
    private final URI location;
    private final String description;
@@ -53,15 +53,13 @@ public class VDCImpl implements VDC {
    private final Map<String, NamedLink> availableNetworks;
    private final Map<String, NamedLink> resourceEntities;
 
-   public VDCImpl(int id, String name, URI location, String description, Capacity storageCapacity,
+   public VDCImpl(String id, String name, URI location, String description, Capacity storageCapacity,
             Capacity cpuCapacity, Capacity memoryCapacity, Quota instantiatedVmsQuota,
             Quota deployedVmsQuota, Map<String, NamedLink> resourceEntities,
             Map<String, NamedLink> availableNetworks) {
       this.id = id;
       this.name = checkNotNull(name, "name");
-      ;
       this.location = checkNotNull(location, "location");
-      ;
       this.description = description;
       this.storageCapacity = storageCapacity;
       this.cpuCapacity = cpuCapacity;
@@ -69,15 +67,13 @@ public class VDCImpl implements VDC {
       this.instantiatedVmsQuota = instantiatedVmsQuota;
       this.deployedVmsQuota = deployedVmsQuota;
       this.availableNetworks = checkNotNull(availableNetworks, "availableNetworks");
-      ;
       this.resourceEntities = checkNotNull(resourceEntities, "resourceEntities");
-      ;
    }
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
 
-   public int getId() {
+   public String getId() {
       return id;
    }
 
@@ -105,7 +101,7 @@ public class VDCImpl implements VDC {
       result = prime * result + ((cpuCapacity == null) ? 0 : cpuCapacity.hashCode());
       result = prime * result + ((deployedVmsQuota == null) ? 0 : deployedVmsQuota.hashCode());
       result = prime * result + ((description == null) ? 0 : description.hashCode());
-      result = prime * result + id;
+      result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result
                + ((instantiatedVmsQuota == null) ? 0 : instantiatedVmsQuota.hashCode());
       result = prime * result + ((location == null) ? 0 : location.hashCode());
@@ -145,7 +141,10 @@ public class VDCImpl implements VDC {
             return false;
       } else if (!description.equals(other.description))
          return false;
-      if (id != other.id)
+      if (id == null) {
+         if (other.id != null)
+            return false;
+      } else if (!id.equals(other.id))
          return false;
       if (instantiatedVmsQuota == null) {
          if (other.instantiatedVmsQuota != null)

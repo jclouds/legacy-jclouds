@@ -9,8 +9,6 @@ import org.jclouds.vcloud.VCloudAsyncClient;
  * VirtualResource such as disks or CPU
  * 
  * @author Adrian Cole
- * @see VCloudAsyncClient#getVApp
- * 
  * 
  */
 public enum ResourceType {

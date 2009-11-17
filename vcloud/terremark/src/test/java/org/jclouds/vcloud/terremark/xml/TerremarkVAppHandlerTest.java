@@ -85,7 +85,7 @@ public class TerremarkVAppHandlerTest extends BaseHandlerTest {
 
       VApp result = (VApp) factory.create(injector.getInstance(TerremarkVAppHandler.class)).parse(
                is);
-      assertEquals(result.getId(), 13775);
+      assertEquals(result.getId(), 13775+"");
 
       assertEquals(result.getName(), "adriantest");
       assertEquals(result.getStatus(), VAppStatus.CREATING);
@@ -105,7 +105,7 @@ public class TerremarkVAppHandlerTest extends BaseHandlerTest {
 
       VApp result = (VApp) factory.create(injector.getInstance(TerremarkVAppHandler.class)).parse(
                is);
-      assertEquals(result.getId(), 13850);
+      assertEquals(result.getId(), 13850+"");
 
       assertEquals(result.getName(), "adriantest1");
       assertEquals(result.getStatus(), VAppStatus.OFF);

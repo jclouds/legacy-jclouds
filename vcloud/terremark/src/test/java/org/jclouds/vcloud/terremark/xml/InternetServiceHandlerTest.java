@@ -55,8 +55,8 @@ public class InternetServiceHandlerTest extends BaseHandlerTest {
 
       InternetService result = (InternetService) factory.create(
                injector.getInstance(InternetServiceHandler.class)).parse(is);
-      assertEquals(result, new InternetService(523, "IS_for_Jim", null, new PublicIpAddress(4208,
-               InetAddress.getByName("10.1.22.159"), null), 80, "HTTP", false, 1,
+      assertEquals(result, new InternetService(523 + "", "IS_for_Jim", null, new PublicIpAddress(
+               4208, InetAddress.getByName("10.1.22.159"), null), 80, "HTTP", false, 1,
                "Some test service"));
    }
 
@@ -68,7 +68,7 @@ public class InternetServiceHandlerTest extends BaseHandlerTest {
       assertEquals(
                result,
                new InternetService(
-                        524,
+                        524 + "",
                         "IS_for_Jim2",
                         URI
                                  .create("https://services.vcloudexpress.terremark.com/api/v0.8/InternetServices/524"),

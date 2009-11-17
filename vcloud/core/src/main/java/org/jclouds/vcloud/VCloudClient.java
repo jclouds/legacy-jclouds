@@ -51,36 +51,36 @@ public interface VCloudClient {
    @Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)
    TasksList getDefaultTasksList();
 
-   Task deployVApp(int vAppId);
+   Task deployVApp(String vAppId);
 
-   void deleteVApp(int vAppId);
+   void deleteVApp(String vAppId);
 
-   Task undeployVApp(int vAppId);
+   Task undeployVApp(String vAppId);
 
    /**
     * This call powers on the vApp, as specified in the vApp's ovf:Startup element.
     */
-   Task powerOnVApp(int vAppId);
+   Task powerOnVApp(String vAppId);
 
    /**
     * This call powers off the vApp, as specified in the vApp's ovf:Startup element.
     */
-   Task powerOffVApp(int vAppId);
+   Task powerOffVApp(String vAppId);
 
    /**
     * This call shuts down the vApp.
     */
-   void shutdownVApp(int vAppId);
+   void shutdownVApp(String vAppId);
 
    /**
     * This call resets the vApp.
     */
-   Task resetVApp(int vAppId);
+   Task resetVApp(String vAppId);
 
    /**
     * This call suspends the vApp.
     */
-   Task suspendVApp(int vAppId);
+   Task suspendVApp(String vAppId);
 
    Task getTask(URI task);
 

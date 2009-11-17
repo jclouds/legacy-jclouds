@@ -38,7 +38,7 @@ import org.jclouds.vcloud.domain.Quota;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.jclouds.vcloud.domain.internal.VDCImpl;
-import org.jclouds.vcloud.endpoints.VCloud;
+import org.jclouds.vcloud.endpoints.VCloudApi;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -54,7 +54,7 @@ public class VDCHandler extends ParseSax.HandlerWithResult<VDC> {
    private Map<String, NamedLink> resourceEntities = Maps.newHashMap();
    private Map<String, NamedLink> availableNetworks = Maps.newHashMap();
    @Inject
-   @VCloud
+   @VCloudApi
    URI vcloudUri;
 
    private String description;
@@ -125,11 +125,10 @@ public class VDCHandler extends ParseSax.HandlerWithResult<VDC> {
    }
 
    public NamedResource newNamedResource(Attributes attributes) {
-      return new NamedResourceImpl(Integer.parseInt(attributes
-               .getValue(attributes.getIndex("href")).replace(vcloudUri.toASCIIString() + "/vdc/",
-                        "")), attributes.getValue(attributes.getIndex("name")), attributes
-               .getValue(attributes.getIndex("type")), URI.create(attributes.getValue(attributes
-               .getIndex("href"))));
+      return new NamedResourceImpl(attributes.getValue(attributes.getIndex("href")).replace(
+               vcloudUri.toASCIIString() + "/vdc/", ""), attributes.getValue(attributes
+               .getIndex("name")), attributes.getValue(attributes.getIndex("type")), URI
+               .create(attributes.getValue(attributes.getIndex("href"))));
    }
 
    protected String currentOrNull() {

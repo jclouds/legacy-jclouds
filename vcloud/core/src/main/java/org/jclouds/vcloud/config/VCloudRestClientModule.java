@@ -41,7 +41,7 @@ import org.jclouds.vcloud.domain.Organization;
 import org.jclouds.vcloud.endpoints.Catalog;
 import org.jclouds.vcloud.endpoints.Network;
 import org.jclouds.vcloud.endpoints.TasksList;
-import org.jclouds.vcloud.endpoints.VCloud;
+import org.jclouds.vcloud.endpoints.VCloudLogin;
 import org.jclouds.vcloud.endpoints.VDC;
 import org.jclouds.vcloud.endpoints.internal.CatalogItemRoot;
 import org.jclouds.vcloud.endpoints.internal.VAppRoot;
@@ -78,15 +78,15 @@ public class VCloudRestClientModule extends AbstractModule {
    @Provides
    @CatalogItemRoot
    @Singleton
-   String provideCatalogItemRoot(@VCloud URI vcloudUri) {
-      return vcloudUri.toASCIIString() + "/catalogItem";
+   String provideCatalogItemRoot(@VCloudLogin URI vcloudUri) {
+      return vcloudUri.toASCIIString().replace("/login", "/catalogItem");
    }
 
    @Provides
    @VAppRoot
    @Singleton
-   String provideVAppRoot(@VCloud URI vcloudUri) {
-      return vcloudUri.toASCIIString() + "/vapp";
+   String provideVAppRoot(@VCloudLogin URI vcloudUri) {
+      return vcloudUri.toASCIIString().replace("/login", "/vapp");
    }
 
    @Provides

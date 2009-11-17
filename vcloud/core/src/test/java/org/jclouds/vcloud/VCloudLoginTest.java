@@ -39,7 +39,6 @@ import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.vcloud.endpoints.VCloud;
 import org.jclouds.vcloud.functions.ParseLoginResponseFromHeaders;
 import org.testng.annotations.Test;
 
@@ -87,8 +86,8 @@ public class VCloudLoginTest extends RestClientTest<VCloudLogin> {
       return new AbstractModule() {
          @Override
          protected void configure() {
-            bind(URI.class).annotatedWith(VCloud.class).toInstance(
-                     URI.create("http://localhost:8080"));
+            bind(URI.class).annotatedWith(org.jclouds.vcloud.endpoints.VCloudLogin.class)
+                     .toInstance(URI.create("http://localhost:8080/login"));
             try {
                bind(BasicAuthentication.class).toInstance(new BasicAuthentication("user", "pass"));
             } catch (UnsupportedEncodingException e) {

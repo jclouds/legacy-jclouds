@@ -38,7 +38,7 @@ import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rest.domain.internal.NamedLinkImpl;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Organization;
-import org.jclouds.vcloud.endpoints.VCloud;
+import org.jclouds.vcloud.endpoints.VCloudApi;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -68,7 +68,7 @@ public class OrgHandlerTest {
          @SuppressWarnings("unused")
          @Provides
          @Singleton
-         @VCloud
+         @VCloudApi
          URI provide(){
             return URI.create("https://services.vcloudexpress.terremark.com/api/v0.8");
          }
@@ -79,7 +79,7 @@ public class OrgHandlerTest {
       Organization result = (Organization) factory.create(injector.getInstance(OrgHandler.class))
                .parse(is);
       assertEquals(result.getName(), "adrian@jclouds.org");
-      assertEquals(result.getId(), 48);
+      assertEquals(result.getId(), 48+"");
       assertEquals(result.getLocation(), URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"));
       assertEquals(result.getCatalog(), new NamedLinkImpl("Miami Environment 1 Catalog",
@@ -111,7 +111,7 @@ public class OrgHandlerTest {
          @SuppressWarnings("unused")
          @Provides
          @Singleton
-         @VCloud
+         @VCloudApi
          URI provide(){
             return URI.create("https://vcloud.safesecureweb.com/api/v0.8");
          }
@@ -121,7 +121,7 @@ public class OrgHandlerTest {
       Organization result = (Organization) factory.create(injector.getInstance(OrgHandler.class))
                .parse(is);
       assertEquals(result.getName(), "Customer 188849");
-      assertEquals(result.getId(), 188849);
+      assertEquals(result.getId(), 188849+"");
       assertEquals(result.getLocation(), URI
                .create("https://vcloud.safesecureweb.com/api/v0.8/org/188849"));
       assertEquals(result.getCatalog(), new NamedLinkImpl("HMS Shared Catalog", CATALOG_XML, URI

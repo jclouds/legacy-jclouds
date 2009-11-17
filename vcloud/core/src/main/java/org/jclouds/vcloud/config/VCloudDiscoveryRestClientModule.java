@@ -27,10 +27,13 @@ import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_ENDPO
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_KEY;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_SESSIONINTERVAL;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_USER;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_VERSION;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -38,14 +41,17 @@ import javax.inject.Singleton;
 import org.jclouds.concurrent.ExpirableSupplier;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
 import org.jclouds.util.Utils;
 import org.jclouds.vcloud.VCloudDiscovery;
 import org.jclouds.vcloud.VCloudLogin;
 import org.jclouds.vcloud.VCloudToken;
+import org.jclouds.vcloud.VCloudVersions;
 import org.jclouds.vcloud.VCloudLogin.VCloudSession;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.endpoints.VCloud;
+import org.jclouds.vcloud.endpoints.VCloudApi;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
@@ -58,6 +64,7 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 @RequiresHttp
+@ConfiguresRestClient
 public class VCloudDiscoveryRestClientModule extends AbstractModule {
 
    @Override
@@ -75,6 +82,13 @@ public class VCloudDiscoveryRestClientModule extends AbstractModule {
    @Singleton
    protected URI provideOrg(Supplier<VCloudSession> cache, @Named(PROPERTY_VCLOUD_USER) String user) {
       return Iterables.getLast(cache.get().getOrgs().values()).getLocation();
+   }
+
+   @Provides
+   @VCloudApi
+   @Singleton
+   URI provideVCloudApi(@org.jclouds.vcloud.endpoints.VCloudLogin URI vcloudUri) {
+      return URI.create(vcloudUri.toASCIIString().replace("/login", ""));
    }
 
    /**
@@ -99,8 +113,17 @@ public class VCloudDiscoveryRestClientModule extends AbstractModule {
    @Provides
    @Singleton
    @VCloud
-   protected URI provideAuthenticationURI(@Named(PROPERTY_VCLOUD_ENDPOINT) String endpoint) {
+   protected URI provideBaseURI(@Named(PROPERTY_VCLOUD_ENDPOINT) String endpoint) {
       return URI.create(endpoint);
+   }
+
+   @Provides
+   @Singleton
+   @org.jclouds.vcloud.endpoints.VCloudLogin
+   protected URI provideAuthenticationURI(VCloudVersions versionService,
+            @Named(PROPERTY_VCLOUD_VERSION) String version) throws InterruptedException,
+            ExecutionException, TimeoutException {
+      return versionService.getSupportedVersions().get(30, TimeUnit.SECONDS).get(version);
    }
 
    @Provides
@@ -113,6 +136,12 @@ public class VCloudDiscoveryRestClientModule extends AbstractModule {
    @Singleton
    protected VCloudDiscovery provideVCloudDiscovery(RestClientFactory factory) {
       return factory.create(VCloudDiscovery.class);
+   }
+
+   @Provides
+   @Singleton
+   protected VCloudVersions provideVCloudVersions(RestClientFactory factory) {
+      return factory.create(VCloudVersions.class);
    }
 
    @Provides

@@ -47,7 +47,7 @@ public class InternetServiceHandler extends HandlerWithResult<InternetService> {
 
    private boolean inPublicIpAddress;
    private int addressId;
-   private int id;
+   private String id;
    private URI location;
    private URI addressLocation;
    private String serviceName;
@@ -83,7 +83,7 @@ public class InternetServiceHandler extends HandlerWithResult<InternetService> {
          if (inPublicIpAddress)
             addressId = Integer.parseInt(currentOrNull());
          else
-            id = Integer.parseInt(currentOrNull());
+            id = currentOrNull();
       } else if (qName.equals("Href") && currentOrNull() != null) {
          if (inPublicIpAddress)
             addressLocation = URI.create(currentOrNull());

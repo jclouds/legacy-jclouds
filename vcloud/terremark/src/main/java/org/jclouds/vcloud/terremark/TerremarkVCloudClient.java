@@ -45,26 +45,26 @@ import org.jclouds.vcloud.terremark.options.InstantiateVAppTemplateOptions;
 @Timeout(duration = 45, timeUnit = TimeUnit.SECONDS)
 public interface TerremarkVCloudClient extends VCloudClient {
 
-   VApp instantiateVAppTemplate(String appName, int templateId,
+   VApp instantiateVAppTemplate(String appName, String templateId,
             InstantiateVAppTemplateOptions... options);
 
    InternetService addInternetService(String serviceName, String protocol, int port,
             AddInternetServiceOptions... options);
 
-   InternetService addInternetServiceToExistingIp(int existingIpId, String serviceName,
+   InternetService addInternetServiceToExistingIp(String existingIpId, String serviceName,
             String protocol, int port, AddInternetServiceOptions... options);
 
-   void deleteInternetService(int internetServiceId);
+   void deleteInternetService(String internetServiceId);
 
-   InternetService getInternetService(int internetServiceId);
+   InternetService getInternetService(String internetServiceId);
 
-   Node addNode(int internetServiceId, InetAddress ipAddress, String name, int port,
+   Node addNode(String internetServiceId, InetAddress ipAddress, String name, int port,
             AddNodeOptions... options);
 
-   Node getNode(int nodeId);
+   Node getNode(String nodeId);
 
-   void deleteNode(int nodeId);
+   void deleteNode(String nodeId);
 
-   VApp getVApp(int vAppId);
+   VApp getVApp(String vAppId);
 
 }

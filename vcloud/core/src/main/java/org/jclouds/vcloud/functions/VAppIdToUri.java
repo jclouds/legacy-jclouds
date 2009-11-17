@@ -20,9 +20,9 @@ public class VAppIdToUri implements Function<Object, String> {
    private String vAppRoot;
 
    public String apply(Object from) {
-      checkArgument(checkNotNull(from, "from") instanceof Integer,
-               "this binder is only valid for Integers!");
-      return String.format("%s/%d", vAppRoot, from);
+      checkArgument(checkNotNull(from, "from") instanceof String,
+               "this binder is only valid for Strings!");
+      return String.format("%s/%s", vAppRoot, from);
    }
 
 }

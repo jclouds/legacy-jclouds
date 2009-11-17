@@ -42,7 +42,7 @@ public class NodeHandler extends HandlerWithResult<Node> {
    protected Logger logger = Logger.NULL;
    private StringBuilder currentText = new StringBuilder();
 
-   private int id;
+   private String id;
    private URI location;
    private String serviceName;
    private InetAddress address;
@@ -62,7 +62,7 @@ public class NodeHandler extends HandlerWithResult<Node> {
 
    public void endElement(String uri, String name, String qName) {
       if (qName.equals("Id")) {
-         id = Integer.parseInt(currentOrNull());
+         id = currentOrNull();
       } else if (qName.equals("Href") && currentOrNull() != null) {
          location = URI.create(currentOrNull());
       } else if (qName.equals("Name")) {

@@ -62,7 +62,7 @@ public class VAppImpl extends NamedResourceImpl implements VApp {
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
 
-   public VAppImpl(int id, String name, String type, URI location, VAppStatus status, long size,
+   public VAppImpl(String id, String name, String type, URI location, VAppStatus status, long size,
             Link vDC, Link computeOptions, Link customizationOptions,
             ListMultimap<String, InetAddress> networkToAddresses,
             String operatingSystemDescription, VirtualSystem system,

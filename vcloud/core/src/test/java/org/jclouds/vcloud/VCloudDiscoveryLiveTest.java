@@ -27,6 +27,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_KEY;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_SESSIONINTERVAL;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_USER;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_VERSION;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -116,6 +117,7 @@ public class VCloudDiscoveryLiveTest {
          protected void addClientModule(List<Module> modules) {
             properties.setProperty(VCloudConstants.PROPERTY_VCLOUD_ENDPOINT, checkNotNull(endpoint,
                      "endpoint").toString());
+            properties.setProperty(PROPERTY_VCLOUD_VERSION, "0.8");
             properties.setProperty(PROPERTY_VCLOUD_USER, checkNotNull(account, "user"));
             properties.setProperty(PROPERTY_VCLOUD_KEY, checkNotNull(key, "key"));
             properties.setProperty(PROPERTY_VCLOUD_SESSIONINTERVAL, "4");

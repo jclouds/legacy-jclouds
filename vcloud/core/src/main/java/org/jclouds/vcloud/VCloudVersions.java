@@ -21,20 +21,38 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.reference;
+package org.jclouds.vcloud;
+
+import java.net.URI;
+import java.util.SortedMap;
+import java.util.concurrent.Future;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
+
+import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.vcloud.endpoints.VCloud;
+import org.jclouds.vcloud.xml.SupportedVersionsHandler;
 
 /**
- * Configuration properties and constants used in VCloud connections.
+ * Establishes a context with a VCloud endpoint.
+ * <p/>
  * 
+ * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx" />
  * @author Adrian Cole
  */
-public interface VCloudConstants {
-   public static final String PROPERTY_VCLOUD_VERSION = "jclouds.vcloud.version";
-   public static final String PROPERTY_VCLOUD_ENDPOINT = "jclouds.vcloud.endpoint";
-   public static final String PROPERTY_VCLOUD_USER = "jclouds.vcloud.user";
-   public static final String PROPERTY_VCLOUD_KEY = "jclouds.vcloud.key";
+@Endpoint(VCloud.class)
+public interface VCloudVersions {
+
    /**
-    * automatically renew vcloud token before this interval expires.
+    * Retrieve information for supported versions
     */
-   public static final String PROPERTY_VCLOUD_SESSIONINTERVAL = "jclouds.vcloud.sessioninterval";
+   @GET
+   @XMLResponseParser(SupportedVersionsHandler.class)
+   @Path("/versions")
+   @Consumes(MediaType.APPLICATION_XML)
+   Future<SortedMap<String, URI>> getSupportedVersions();
 }

@@ -84,70 +84,70 @@ public interface VCloudAsyncClient {
 
    @POST
    @Consumes(TASK_XML)
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloud.class)
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/vapp/{vAppId}/action/deploy")
    @XMLResponseParser(TaskHandler.class)
-   Future<? extends Task> deployVApp(@PathParam("vAppId") int vAppId);
+   Future<? extends Task> deployVApp(@PathParam("vAppId") String vAppId);
 
    @DELETE
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloud.class)
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/vapp/{vAppId}")
-   Future<Void> deleteVApp(@PathParam("vAppId") int vAppId);
+   Future<Void> deleteVApp(@PathParam("vAppId") String vAppId);
 
    @POST
    @Consumes(TASK_XML)
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloud.class)
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/vapp/{vAppId}/action/undeploy")
    @XMLResponseParser(TaskHandler.class)
-   Future<? extends Task> undeployVApp(@PathParam("vAppId") int vAppId);
+   Future<? extends Task> undeployVApp(@PathParam("vAppId") String vAppId);
 
    /**
     * This call powers on the vApp, as specified in the vApp's ovf:Startup element.
     */
    @POST
    @Consumes(TASK_XML)
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloud.class)
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/vapp/{vAppId}/power/action/powerOn")
    @XMLResponseParser(TaskHandler.class)
-   Future<? extends Task> powerOnVApp(@PathParam("vAppId") int vAppId);
+   Future<? extends Task> powerOnVApp(@PathParam("vAppId") String vAppId);
 
    /**
     * This call powers off the vApp, as specified in the vApp's ovf:Startup element.
     */
    @POST
    @Consumes(TASK_XML)
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloud.class)
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/vapp/{vAppId}/power/action/powerOff")
    @XMLResponseParser(TaskHandler.class)
-   Future<? extends Task> powerOffVApp(@PathParam("vAppId") int vAppId);
+   Future<? extends Task> powerOffVApp(@PathParam("vAppId") String vAppId);
 
    /**
     * This call shuts down the vApp.
     */
    @POST
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloud.class)
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/vapp/{vAppId}/power/action/shutdown")
-   Future<Void> shutdownVApp(@PathParam("vAppId") int vAppId);
+   Future<Void> shutdownVApp(@PathParam("vAppId") String vAppId);
 
    /**
     * This call resets the vApp.
     */
    @POST
    @Consumes(TASK_XML)
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloud.class)
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/vapp/{vAppId}/power/action/reset")
    @XMLResponseParser(TaskHandler.class)
-   Future<? extends Task> resetVApp(@PathParam("vAppId") int vAppId);
+   Future<? extends Task> resetVApp(@PathParam("vAppId") String vAppId);
 
    /**
     * This call suspends the vApp.
     */
    @POST
    @Consumes(TASK_XML)
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloud.class)
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/vapp/{vAppId}/power/action/suspend")
    @XMLResponseParser(TaskHandler.class)
-   Future<? extends Task> suspendVApp(@PathParam("vAppId") int vAppId);
+   Future<? extends Task> suspendVApp(@PathParam("vAppId") String vAppId);
 
    @GET
    @Consumes(TASK_XML)
@@ -160,7 +160,7 @@ public interface VCloudAsyncClient {
 
    @GET
    @Consumes(VAPP_XML)
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloud.class)
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/vapp/{vAppId}")
    Future<String> getVAppString(@PathParam("vAppId") String appId);
 }

@@ -48,7 +48,7 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Utils;
 import org.jclouds.vcloud.endpoints.Catalog;
 import org.jclouds.vcloud.endpoints.Network;
-import org.jclouds.vcloud.endpoints.VCloud;
+import org.jclouds.vcloud.endpoints.VCloudApi;
 import org.jclouds.vcloud.endpoints.VDC;
 import org.jclouds.vcloud.endpoints.internal.CatalogItemRoot;
 import org.jclouds.vcloud.endpoints.internal.VAppRoot;
@@ -93,10 +93,10 @@ public class TerremarkVCloudClientTest extends RestClientTest<TerremarkVCloudAsy
    public void testInstantiateVAppTemplate() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = TerremarkVCloudAsyncClient.class.getMethod("instantiateVAppTemplate",
-               String.class, int.class, Array.newInstance(InstantiateVAppTemplateOptions.class, 0)
-                        .getClass());
+               String.class, String.class, Array.newInstance(InstantiateVAppTemplateOptions.class,
+                        0).getClass());
       GeneratedHttpRequest<TerremarkVCloudAsyncClient> httpMethod = processor.createRequest(method,
-               "name", 3);
+               "name", 3 + "");
 
       assertRequestLineEquals(httpMethod, "POST http://vdc/action/instantiatevAppTemplate HTTP/1.1");
       assertHeadersEqual(
@@ -115,10 +115,10 @@ public class TerremarkVCloudClientTest extends RestClientTest<TerremarkVCloudAsy
    public void testInstantiateVAppTemplateOptions() throws SecurityException,
             NoSuchMethodException, IOException {
       Method method = TerremarkVCloudAsyncClient.class.getMethod("instantiateVAppTemplate",
-               String.class, int.class, Array.newInstance(InstantiateVAppTemplateOptions.class, 0)
-                        .getClass());
+               String.class, String.class, Array.newInstance(InstantiateVAppTemplateOptions.class,
+                        0).getClass());
       GeneratedHttpRequest<TerremarkVCloudAsyncClient> httpMethod = processor.createRequest(method,
-               "name", 3, cpuCount(4).megabytes(1024).inNetwork(URI.create("http://newnet")));
+               "name", 3 + "", cpuCount(4).megabytes(1024).inNetwork(URI.create("http://newnet")));
 
       assertRequestLineEquals(httpMethod, "POST http://vdc/action/instantiatevAppTemplate HTTP/1.1");
       assertHeadersEqual(
@@ -136,9 +136,9 @@ public class TerremarkVCloudClientTest extends RestClientTest<TerremarkVCloudAsy
 
    public void testAddInternetService() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = TerremarkVCloudAsyncClient.class.getMethod("addInternetService", String.class,
-               String.class, int.class, Array.newInstance(AddInternetServiceOptions.class, 0)
-                        .getClass());
+      Method method = TerremarkVCloudAsyncClient.class.getMethod("addInternetService",
+               String.class, String.class, int.class, Array.newInstance(
+                        AddInternetServiceOptions.class, 0).getClass());
       GeneratedHttpRequest<TerremarkVCloudAsyncClient> httpMethod = processor.createRequest(method,
                "name", "tcp", 22);
 
@@ -156,9 +156,9 @@ public class TerremarkVCloudClientTest extends RestClientTest<TerremarkVCloudAsy
 
    public void testAddInternetServiceOptions() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = TerremarkVCloudAsyncClient.class.getMethod("addInternetService", String.class,
-               String.class, int.class, Array.newInstance(AddInternetServiceOptions.class, 0)
-                        .getClass());
+      Method method = TerremarkVCloudAsyncClient.class.getMethod("addInternetService",
+               String.class, String.class, int.class, Array.newInstance(
+                        AddInternetServiceOptions.class, 0).getClass());
       GeneratedHttpRequest<TerremarkVCloudAsyncClient> httpMethod = processor.createRequest(method,
                "name", "tcp", 22, disabled().withDescription("yahoo"));
 
@@ -175,8 +175,10 @@ public class TerremarkVCloudClientTest extends RestClientTest<TerremarkVCloudAsy
 
    public void testGetInternetService() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = TerremarkVCloudAsyncClient.class.getMethod("getInternetService", int.class);
-      GeneratedHttpRequest<TerremarkVCloudAsyncClient> httpMethod = processor.createRequest(method, 12);
+      Method method = TerremarkVCloudAsyncClient.class
+               .getMethod("getInternetService", String.class);
+      GeneratedHttpRequest<TerremarkVCloudAsyncClient> httpMethod = processor.createRequest(method,
+               12);
 
       assertRequestLineEquals(httpMethod, "GET http://vcloud/internetServices/12 HTTP/1.1");
       assertHeadersEqual(httpMethod, "");
@@ -191,8 +193,10 @@ public class TerremarkVCloudClientTest extends RestClientTest<TerremarkVCloudAsy
 
    public void testDeleteInternetService() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = TerremarkVCloudAsyncClient.class.getMethod("deleteInternetService", int.class);
-      GeneratedHttpRequest<TerremarkVCloudAsyncClient> httpMethod = processor.createRequest(method, 12);
+      Method method = TerremarkVCloudAsyncClient.class.getMethod("deleteInternetService",
+               String.class);
+      GeneratedHttpRequest<TerremarkVCloudAsyncClient> httpMethod = processor.createRequest(method,
+               12);
 
       assertRequestLineEquals(httpMethod, "DELETE http://vcloud/internetServices/12 HTTP/1.1");
       assertHeadersEqual(httpMethod, "");
@@ -208,10 +212,10 @@ public class TerremarkVCloudClientTest extends RestClientTest<TerremarkVCloudAsy
    public void testAddInternetServiceToExistingIp() throws SecurityException,
             NoSuchMethodException, IOException {
       Method method = TerremarkVCloudAsyncClient.class.getMethod("addInternetServiceToExistingIp",
-               int.class, String.class, String.class, int.class, Array.newInstance(
+               String.class, String.class, String.class, int.class, Array.newInstance(
                         AddInternetServiceOptions.class, 0).getClass());
-      GeneratedHttpRequest<TerremarkVCloudAsyncClient> httpMethod = processor.createRequest(method, 12,
-               "name", "tcp", 22);
+      GeneratedHttpRequest<TerremarkVCloudAsyncClient> httpMethod = processor.createRequest(method,
+               12, "name", "tcp", 22);
 
       assertRequestLineEquals(httpMethod,
                "POST http://vcloud/publicIps/12/InternetServices HTTP/1.1");
@@ -229,10 +233,10 @@ public class TerremarkVCloudClientTest extends RestClientTest<TerremarkVCloudAsy
    public void testAddInternetServiceToExistingIpOptions() throws SecurityException,
             NoSuchMethodException, IOException {
       Method method = TerremarkVCloudAsyncClient.class.getMethod("addInternetServiceToExistingIp",
-               int.class, String.class, String.class, int.class, Array.newInstance(
+               String.class, String.class, String.class, int.class, Array.newInstance(
                         AddInternetServiceOptions.class, 0).getClass());
-      GeneratedHttpRequest<TerremarkVCloudAsyncClient> httpMethod = processor.createRequest(method, 12,
-               "name", "tcp", 22, disabled().withDescription("yahoo"));
+      GeneratedHttpRequest<TerremarkVCloudAsyncClient> httpMethod = processor.createRequest(method,
+               12, "name", "tcp", 22, disabled().withDescription("yahoo"));
 
       assertRequestLineEquals(httpMethod,
                "POST http://vcloud/publicIps/12/InternetServices HTTP/1.1");
@@ -247,11 +251,11 @@ public class TerremarkVCloudClientTest extends RestClientTest<TerremarkVCloudAsy
    }
 
    public void testAddNode() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = TerremarkVCloudAsyncClient.class.getMethod("addNode", int.class,
+      Method method = TerremarkVCloudAsyncClient.class.getMethod("addNode", String.class,
                InetAddress.class, String.class, int.class, Array.newInstance(AddNodeOptions.class,
                         0).getClass());
-      GeneratedHttpRequest<TerremarkVCloudAsyncClient> httpMethod = processor.createRequest(method, 12,
-               InetAddress.getByName("10.2.2.2"), "name", 22);
+      GeneratedHttpRequest<TerremarkVCloudAsyncClient> httpMethod = processor.createRequest(method,
+               12, InetAddress.getByName("10.2.2.2"), "name", 22);
 
       assertRequestLineEquals(httpMethod, "POST http://vcloud/internetServices/12/nodes HTTP/1.1");
       assertHeadersEqual(httpMethod, "Content-Length: 298\nContent-Type: application/xml\n");
@@ -266,11 +270,11 @@ public class TerremarkVCloudClientTest extends RestClientTest<TerremarkVCloudAsy
    }
 
    public void testAddNodeOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = TerremarkVCloudAsyncClient.class.getMethod("addNode", int.class,
+      Method method = TerremarkVCloudAsyncClient.class.getMethod("addNode", String.class,
                InetAddress.class, String.class, int.class, Array.newInstance(AddNodeOptions.class,
                         0).getClass());
-      GeneratedHttpRequest<TerremarkVCloudAsyncClient> httpMethod = processor.createRequest(method, 12,
-               InetAddress.getByName("10.2.2.2"), "name", 22, AddNodeOptions.Builder.disabled()
+      GeneratedHttpRequest<TerremarkVCloudAsyncClient> httpMethod = processor.createRequest(method,
+               12, InetAddress.getByName("10.2.2.2"), "name", 22, AddNodeOptions.Builder.disabled()
                         .withDescription("yahoo"));
 
       assertRequestLineEquals(httpMethod, "POST http://vcloud/internetServices/12/nodes HTTP/1.1");
@@ -285,8 +289,9 @@ public class TerremarkVCloudClientTest extends RestClientTest<TerremarkVCloudAsy
    }
 
    public void testGetNode() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = TerremarkVCloudAsyncClient.class.getMethod("getNode", int.class);
-      GeneratedHttpRequest<TerremarkVCloudAsyncClient> httpMethod = processor.createRequest(method, 12);
+      Method method = TerremarkVCloudAsyncClient.class.getMethod("getNode", String.class);
+      GeneratedHttpRequest<TerremarkVCloudAsyncClient> httpMethod = processor.createRequest(method,
+               12);
 
       assertRequestLineEquals(httpMethod, "GET http://vcloud/nodeServices/12 HTTP/1.1");
       assertHeadersEqual(httpMethod, "");
@@ -300,8 +305,9 @@ public class TerremarkVCloudClientTest extends RestClientTest<TerremarkVCloudAsy
    }
 
    public void testDeleteNode() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = TerremarkVCloudAsyncClient.class.getMethod("deleteNode", int.class);
-      GeneratedHttpRequest<TerremarkVCloudAsyncClient> httpMethod = processor.createRequest(method, 12);
+      Method method = TerremarkVCloudAsyncClient.class.getMethod("deleteNode", String.class);
+      GeneratedHttpRequest<TerremarkVCloudAsyncClient> httpMethod = processor.createRequest(method,
+               12);
 
       assertRequestLineEquals(httpMethod, "DELETE http://vcloud/nodeServices/12 HTTP/1.1");
       assertHeadersEqual(httpMethod, "");
@@ -334,7 +340,7 @@ public class TerremarkVCloudClientTest extends RestClientTest<TerremarkVCloudAsy
             bind(URI.class).annotatedWith(Catalog.class).toInstance(URI.create("http://catalog"));
             bind(String.class).annotatedWith(CatalogItemRoot.class)
                      .toInstance("http://catalogItem");
-            bind(URI.class).annotatedWith(VCloud.class).toInstance(URI.create("http://vcloud"));
+            bind(URI.class).annotatedWith(VCloudApi.class).toInstance(URI.create("http://vcloud"));
             bind(String.class).annotatedWith(VAppRoot.class).toInstance("http://vapp");
             bind(URI.class).annotatedWith(VDC.class).toInstance(URI.create("http://vdc"));
             bind(URI.class).annotatedWith(Network.class).toInstance(URI.create("http://network"));

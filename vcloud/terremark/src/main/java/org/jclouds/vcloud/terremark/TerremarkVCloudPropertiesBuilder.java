@@ -40,7 +40,7 @@ public class TerremarkVCloudPropertiesBuilder extends VCloudPropertiesBuilder {
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_VCLOUD_ENDPOINT,
-               "https://services.vcloudexpress.terremark.com/api/v0.8");
+               "https://services.vcloudexpress.terremark.com/api");
       return properties;
    }
 
@@ -49,6 +49,6 @@ public class TerremarkVCloudPropertiesBuilder extends VCloudPropertiesBuilder {
    }
 
    public TerremarkVCloudPropertiesBuilder(String id, String secret) {
-      super(URI.create("https://services.vcloudexpress.terremark.com/api/v0.8"), id, secret);
+      super(URI.create("https://services.vcloudexpress.terremark.com/api"), id, secret);
    }
 }

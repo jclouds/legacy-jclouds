@@ -24,31 +24,27 @@
 package org.jclouds.vcloud;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_KEY;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_SESSIONINTERVAL;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_USER;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_VERSION;
 import static org.testng.Assert.assertNotNull;
 
 import java.net.URI;
 import java.util.List;
 import java.util.Properties;
+import java.util.SortedMap;
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
+import org.jclouds.http.RequiresHttp;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.RestClientFactory;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextBuilder;
 import org.jclouds.rest.internal.RestContextImpl;
-import org.jclouds.vcloud.VCloudLogin.VCloudSession;
-import org.jclouds.vcloud.config.VCloudDiscoveryRestClientModule;
 import org.jclouds.vcloud.endpoints.VCloud;
-import org.jclouds.vcloud.reference.VCloudConstants;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -58,21 +54,37 @@ import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests behavior of {@code VCloudLogin}
+ * Tests behavior of {@code VCloudVersions}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "vcloud.VCloudLoginLiveTest")
-public class VCloudLoginLiveTest {
+@Test(groups = "live", testName = "vcloud.VCloudVersionsLiveTest")
+public class VCloudVersionsLiveTest {
+  
+   @RequiresHttp
+   @ConfiguresRestClient
+   private static final class VCloudVersionsRestClientModule extends AbstractModule {
+      @SuppressWarnings("unused")
+      @Provides
+      @Singleton
+      protected VCloudVersions provideVCloudVersions(RestClientFactory factory) {
+         return factory.create(VCloudVersions.class);
+      }
 
-   private final class VCloudLoginContextModule extends AbstractModule {
+      @Override
+      protected void configure() {
+         bind(URI.class).annotatedWith(VCloud.class).toInstance(URI.create(endpoint));
+      }
+   }
+
+   private final class VCloudVersionsContextModule extends AbstractModule {
 
       @SuppressWarnings( { "unused" })
       @Provides
       @Singleton
-      RestContext<VCloudLogin, VCloudLogin> provideContext(Closer closer, VCloudLogin api,
-               @VCloud URI endPoint, @Named(VCloudConstants.PROPERTY_VCLOUD_USER) String account) {
-         return new RestContextImpl<VCloudLogin, VCloudLogin>(closer, api, api, endPoint, account);
+      RestContext<VCloudVersions, VCloudVersions> provideContext(Closer closer, VCloudVersions api,
+               @VCloud URI endPoint) {
+         return new RestContextImpl<VCloudVersions, VCloudVersions>(closer, api, api, endPoint, "");
       }
 
       @Override
@@ -81,44 +93,37 @@ public class VCloudLoginLiveTest {
       }
    }
 
-   String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"),
+   static String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"),
             "jclouds.test.endpoint");
-   String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-   String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
-   private RestContext<VCloudLogin, VCloudLogin> context;
+   private RestContext<VCloudVersions, VCloudVersions> context;
 
    @Test
-   public void testLogin() throws Exception {
-      VCloudLogin authentication = context.getAsyncApi();
+   public void testGetSupportedVersions() throws Exception {
+      VCloudVersions authentication = context.getAsyncApi();
       for (int i = 0; i < 5; i++) {
-         VCloudSession response = authentication.login().get(45, TimeUnit.SECONDS);
+         SortedMap<String, URI> response = authentication.getSupportedVersions().get(45,
+                  TimeUnit.SECONDS);
          assertNotNull(response);
-         assertNotNull(response.getVCloudToken());
-         assertNotNull(response.getOrgs());
+         assertNotNull(response.containsKey("0.8"));
       }
    }
 
    @BeforeClass
    void setupFactory() {
-      context = new RestContextBuilder<VCloudLogin, VCloudLogin>(new TypeLiteral<VCloudLogin>() {
-      }, new TypeLiteral<VCloudLogin>() {
-      }, new Properties()) {
+      context = new RestContextBuilder<VCloudVersions, VCloudVersions>(
+               new TypeLiteral<VCloudVersions>() {
+               }, new TypeLiteral<VCloudVersions>() {
+               }, new Properties()) {
 
          public void addContextModule(List<Module> modules) {
 
-            modules.add(new VCloudLoginContextModule());
+            modules.add(new VCloudVersionsContextModule());
          }
 
          @Override
          protected void addClientModule(List<Module> modules) {
-            properties.setProperty(VCloudConstants.PROPERTY_VCLOUD_ENDPOINT, checkNotNull(endpoint,
-                     "endpoint").toString());
-            properties.setProperty(PROPERTY_VCLOUD_VERSION, "0.8");
-            properties.setProperty(PROPERTY_VCLOUD_USER, checkNotNull(account, "user"));
-            properties.setProperty(PROPERTY_VCLOUD_KEY, checkNotNull(key, "key"));
-            properties.setProperty(PROPERTY_VCLOUD_SESSIONINTERVAL, "4");
-            modules.add(new VCloudDiscoveryRestClientModule());
+            modules.add(new VCloudVersionsRestClientModule());
          }
 
       }.withModules(new Log4JLoggingModule(),

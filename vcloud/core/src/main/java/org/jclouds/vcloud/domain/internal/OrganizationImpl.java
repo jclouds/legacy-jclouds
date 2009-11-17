@@ -39,14 +39,14 @@ import org.jclouds.vcloud.endpoints.VDC;
  * 
  */
 public class OrganizationImpl implements Organization {
-   private final int id;
+   private final String id;
    private final String name;
    private final URI location;
    private final NamedLink catalog;
    private final Map<String, NamedLink> vdcs;
    private final Map<String, NamedLink> tasksLists;
 
-   public OrganizationImpl(int id, String name, URI location, NamedLink catalog,
+   public OrganizationImpl(String id, String name, URI location, NamedLink catalog,
             Map<String, NamedLink> vdcs, Map<String, NamedLink> tasksLists) {
       this.id = id;
       this.name = name;
@@ -56,7 +56,7 @@ public class OrganizationImpl implements Organization {
       this.tasksLists = tasksLists;
    }
 
-   public int getId() {
+   public String getId() {
       return id;
    }
 
@@ -88,7 +88,7 @@ public class OrganizationImpl implements Organization {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((catalog == null) ? 0 : catalog.hashCode());
-      result = prime * result + id;
+      result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result + ((location == null) ? 0 : location.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((tasksLists == null) ? 0 : tasksLists.hashCode());
@@ -110,7 +110,10 @@ public class OrganizationImpl implements Organization {
             return false;
       } else if (!catalog.equals(other.catalog))
          return false;
-      if (id != other.id)
+      if (id == null) {
+         if (other.id != null)
+            return false;
+      } else if (!id.equals(other.id))
          return false;
       if (location == null) {
          if (other.location != null)

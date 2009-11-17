@@ -28,7 +28,6 @@ import java.util.concurrent.Future;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
-import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.filters.BasicAuthentication;
@@ -37,7 +36,6 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.domain.NamedLink;
 import org.jclouds.vcloud.endpoints.Org;
-import org.jclouds.vcloud.endpoints.VCloud;
 import org.jclouds.vcloud.functions.ParseLoginResponseFromHeaders;
 
 /**
@@ -47,7 +45,7 @@ import org.jclouds.vcloud.functions.ParseLoginResponseFromHeaders;
  * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx" />
  * @author Adrian Cole
  */
-@Endpoint(VCloud.class)
+@Endpoint(org.jclouds.vcloud.endpoints.VCloudLogin.class)
 @RequestFilters(BasicAuthentication.class)
 public interface VCloudLogin {
 
@@ -65,7 +63,6 @@ public interface VCloudLogin {
     */
    @POST
    @ResponseParser(ParseLoginResponseFromHeaders.class)
-   @Path("/login")
    @Consumes(MediaType.APPLICATION_XML)
    Future<VCloudSession> login();
 }

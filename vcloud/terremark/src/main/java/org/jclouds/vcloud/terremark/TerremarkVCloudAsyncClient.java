@@ -83,7 +83,7 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    @XMLResponseParser(TerremarkVAppHandler.class)
    @MapBinder(InstantiateVAppTemplateOptions.class)
    Future<? extends VApp> instantiateVAppTemplate(@MapEntityParam("name") String appName,
-            @MapEntityParam("template") @ParamParser(CatalogIdToUri.class) int templateId,
+            @MapEntityParam("template") @ParamParser(CatalogIdToUri.class) String templateId,
             InstantiateVAppTemplateOptions... options);
 
    @POST
@@ -97,61 +97,61 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
             AddInternetServiceOptions... options);
 
    @POST
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloud.class)
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/publicIps/{ipId}/InternetServices")
    @Produces(MediaType.APPLICATION_XML)
    @XMLResponseParser(InternetServiceHandler.class)
    @MapBinder(AddInternetServiceOptions.class)
    Future<? extends InternetService> addInternetServiceToExistingIp(
-            @PathParam("ipId") int existingIpId, @MapEntityParam("name") String serviceName,
+            @PathParam("ipId") String existingIpId, @MapEntityParam("name") String serviceName,
             @MapEntityParam("protocol") String protocol, @MapEntityParam("port") int port,
             AddInternetServiceOptions... options);
 
    @DELETE
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloud.class)
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/internetServices/{internetServiceId}")
-   Future<Void> deleteInternetService(@PathParam("internetServiceId") int internetServiceId);
+   Future<Void> deleteInternetService(@PathParam("internetServiceId") String internetServiceId);
 
    @GET
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloud.class)
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/internetServices/{internetServiceId}")
    @XMLResponseParser(InternetServiceHandler.class)
    Future<? extends InternetService> getInternetService(
-            @PathParam("internetServiceId") int internetServiceId);
+            @PathParam("internetServiceId") String internetServiceId);
 
    @POST
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloud.class)
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/internetServices/{internetServiceId}/nodes")
    @Produces(MediaType.APPLICATION_XML)
    @XMLResponseParser(NodeHandler.class)
    @MapBinder(AddNodeOptions.class)
    Future<? extends Node> addNode(
-            @PathParam("internetServiceId") int internetServiceId,
+            @PathParam("internetServiceId") String internetServiceId,
             @MapEntityParam("ipAddress") @ParamParser(InetAddressToHostAddress.class) InetAddress ipAddress,
             @MapEntityParam("name") String name, @MapEntityParam("port") int port,
             AddNodeOptions... options);
 
    @GET
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloud.class)
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/nodeServices/{nodeId}")
    @XMLResponseParser(NodeHandler.class)
-   Future<? extends Node> getNode(@PathParam("nodeId") int nodeId);
+   Future<? extends Node> getNode(@PathParam("nodeId") String nodeId);
 
    @DELETE
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloud.class)
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/nodeServices/{nodeId}")
-   Future<Void> deleteNode(@PathParam("nodeId") int nodeId);
+   Future<Void> deleteNode(@PathParam("nodeId") String nodeId);
 
    @GET
    @Consumes(VAPP_XML)
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloud.class)
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/vapp/{vAppId}")
    @XMLResponseParser(TerremarkVAppHandler.class)
-   Future<? extends VApp> getVApp(@PathParam("vAppId") int vAppId);
+   Future<? extends VApp> getVApp(@PathParam("vAppId") String vAppId);
 
    @GET
    @Consumes(VAPP_XML)
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloud.class)
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/vapp/{vAppId}")
-   Future<String> getVAppString(@PathParam("vAppId") int vAppId);
+   Future<String> getVAppString(@PathParam("vAppId") String vAppId);
 }

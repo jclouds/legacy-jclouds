@@ -49,7 +49,7 @@ public class TerremarkVDCImpl extends VDCImpl implements TerremarkVDC {
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
 
-   public TerremarkVDCImpl(int id, String name, URI location, String description,
+   public TerremarkVDCImpl(String id, String name, URI location, String description,
             Capacity storageCapacity, Capacity cpuCapacity, Capacity memoryCapacity,
             Quota instantiatedVmsQuota, Quota deployedVmsQuota,
             Map<String, NamedLink> availableNetworks, Map<String, NamedLink> resourceEntities,

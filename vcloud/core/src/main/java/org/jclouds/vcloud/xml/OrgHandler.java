@@ -40,7 +40,7 @@ import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Organization;
 import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.jclouds.vcloud.domain.internal.OrganizationImpl;
-import org.jclouds.vcloud.endpoints.VCloud;
+import org.jclouds.vcloud.endpoints.VCloudApi;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -55,7 +55,7 @@ public class OrgHandler extends ParseSax.HandlerWithResult<Organization> {
    private Map<String, NamedLink> tasksLists = Maps.newHashMap();
    private NamedLink catalog;
    @Inject
-   @VCloud
+   @VCloudApi
    URI vcloudUri;
 
    public Organization getResult() {
@@ -83,11 +83,10 @@ public class OrgHandler extends ParseSax.HandlerWithResult<Organization> {
    }
 
    public NamedResource newNamedResource(Attributes attributes) {
-      return new NamedResourceImpl(
-               Integer.parseInt(attributes.getValue(attributes.getIndex("href")).replace(
-                        vcloudUri.toASCIIString() + "/org/", "")), attributes.getValue(attributes
-                        .getIndex("name")), attributes.getValue(attributes.getIndex("type")), URI
-                        .create(attributes.getValue(attributes.getIndex("href"))));
+      return new NamedResourceImpl(attributes.getValue(attributes.getIndex("href")).replace(
+               vcloudUri.toASCIIString() + "/org/", ""), attributes.getValue(attributes
+               .getIndex("name")), attributes.getValue(attributes.getIndex("type")), URI
+               .create(attributes.getValue(attributes.getIndex("href"))));
    }
 
 }

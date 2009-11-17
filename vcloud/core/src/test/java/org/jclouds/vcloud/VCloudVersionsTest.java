@@ -29,7 +29,8 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URI;
 
-import javax.inject.Provider;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
@@ -37,49 +38,45 @@ import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.vcloud.endpoints.Org;
-import org.jclouds.vcloud.endpoints.VCloudApi;
-import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
-import org.jclouds.vcloud.xml.OrgHandler;
+import org.jclouds.vcloud.endpoints.VCloud;
+import org.jclouds.vcloud.xml.SupportedVersionsHandler;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
-import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests behavior of {@code VCloudDiscovery}
+ * Tests behavior of {@code VCloudVersions}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.VCloudDiscoveryTest")
-public class VCloudDiscoveryTest extends RestClientTest<VCloudDiscovery> {
+@Test(groups = "unit", testName = "vcloud.VCloudVersionsTest")
+public class VCloudVersionsTest extends RestClientTest<VCloudVersions> {
 
-   public void testOrganization() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudDiscovery.class.getMethod("getOrganization");
-      GeneratedHttpRequest<VCloudDiscovery> httpMethod = processor.createRequest(method);
+   public void testLogin() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudVersions.class.getMethod("getSupportedVersions");
+      GeneratedHttpRequest<VCloudVersions> httpMethod = processor.createRequest(method);
 
-      assertRequestLineEquals(httpMethod, "GET http://org HTTP/1.1");
-      assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.org+xml\n");
+      assertEquals(httpMethod.getRequestLine(), "GET http://localhost:8080/versions HTTP/1.1");
+      assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT + ": " + MediaType.APPLICATION_XML + "\n");
       assertEntityEquals(httpMethod, null);
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, OrgHandler.class);
+      assertSaxResponseParserClassEquals(method, SupportedVersionsHandler.class);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpMethod);
    }
 
    @Override
-   protected void checkFilters(GeneratedHttpRequest<VCloudDiscovery> httpMethod) {
-      assertEquals(httpMethod.getFilters().size(), 1);
-      assertEquals(httpMethod.getFilters().get(0).getClass(), SetVCloudTokenCookie.class);
+   protected void checkFilters(GeneratedHttpRequest<VCloudVersions> httpMethod) {
+      assertEquals(httpMethod.getFilters().size(), 0);
    }
 
    @Override
-   protected TypeLiteral<RestAnnotationProcessor<VCloudDiscovery>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<VCloudDiscovery>>() {
+   protected TypeLiteral<RestAnnotationProcessor<VCloudVersions>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<VCloudVersions>>() {
       };
    }
 
@@ -88,28 +85,15 @@ public class VCloudDiscoveryTest extends RestClientTest<VCloudDiscovery> {
       return new AbstractModule() {
          @Override
          protected void configure() {
-            bind(URI.class).annotatedWith(Org.class).toInstance(URI.create("http://org"));
-            bind(SetVCloudTokenCookie.class).toInstance(
-                     new SetVCloudTokenCookie(new Provider<String>() {
-
-                        public String get() {
-                           return "token";
-                        }
-
-                     }));
-
+            bind(URI.class).annotatedWith(VCloud.class).toInstance(
+                     URI.create("http://localhost:8080"));
             bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
                public Logger getLogger(String category) {
                   return Logger.NULL;
                }
             });
          }
-         @SuppressWarnings("unused")
-         @Provides
-         @VCloudApi
-         URI provide() {
-            return URI.create("https://services.vcloudexpress.terremark.com/api/v0.8");
-         }
+
       };
    }
 

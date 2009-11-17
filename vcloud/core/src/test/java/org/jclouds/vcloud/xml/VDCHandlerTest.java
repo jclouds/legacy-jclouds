@@ -36,7 +36,7 @@ import org.jclouds.rest.domain.internal.NamedLinkImpl;
 import org.jclouds.vcloud.domain.Capacity;
 import org.jclouds.vcloud.domain.Quota;
 import org.jclouds.vcloud.domain.VDC;
-import org.jclouds.vcloud.endpoints.VCloud;
+import org.jclouds.vcloud.endpoints.VCloudApi;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -63,7 +63,7 @@ public class VDCHandlerTest  {
 
          @SuppressWarnings("unused")
          @Provides
-         @VCloud
+         @VCloudApi
          URI provide() {
             return URI.create("https://services.vcloudexpress.terremark.com/api/v0.8");
          }
@@ -103,7 +103,7 @@ public class VDCHandlerTest  {
 
          @SuppressWarnings("unused")
          @Provides
-         @VCloud
+         @VCloudApi
          URI provide() {
             return URI.create("https://vcloud.safesecureweb.com/api/v0.8");
          }

@@ -21,33 +21,40 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.terremark.xml;
+package org.jclouds.vcloud.xml;
 
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.net.InetAddress;
 import java.net.URI;
-import java.net.UnknownHostException;
+import java.util.SortedMap;
 
-import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.vcloud.terremark.domain.Node;
+import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.ParseSax.Factory;
+import org.jclouds.http.functions.config.ParserModule;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSortedMap;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
 /**
- * Tests behavior of {@code NodeServiceHandler}
+ * Tests behavior of {@code SupportedVersionsHandler}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.NodeServiceHandlerTest")
-public class NodeHandlerTest extends BaseHandlerTest {
+@Test(groups = "unit", testName = "vcloud.SupportedVersionsHandlerTest")
+public class SupportedVersionsHandlerTest {
 
-   public void test1() throws UnknownHostException {
-      InputStream is = getClass().getResourceAsStream("/terremark/NodeService.xml");
+   public void testApplyInputStream() {
+      InputStream is = getClass().getResourceAsStream("/versions.xml");
 
-      Node result = (Node) factory.create(injector.getInstance(NodeHandler.class)).parse(is);
-      assertEquals(result, new Node(242 + "", "Node for Jim", URI
-               .create("https://services.vcloudexpress.terremark.com/api/v0.8/NodeServices/242"),
-               InetAddress.getByName("172.16.20.3"), 80, false, "Some test node"));
+      Injector injector = Guice.createInjector(new ParserModule());
+      Factory factory = injector.getInstance(ParseSax.Factory.class);
+
+      SortedMap<String, URI> result = factory.create(
+               injector.getInstance(SupportedVersionsHandler.class)).parse(is);
+      assertEquals(result, ImmutableSortedMap.of("0.8", URI
+               .create("https://services.vcloudexpress.terremark.com/api/v0.8/login")));
    }
 }

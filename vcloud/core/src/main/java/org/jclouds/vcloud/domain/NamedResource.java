@@ -13,5 +13,5 @@ import com.google.inject.ImplementedBy;
  */
 @ImplementedBy(NamedResourceImpl.class)
 public interface NamedResource extends NamedLink, Comparable<NamedResource> {
-   int getId();
+   String getId();
 }

@@ -84,11 +84,12 @@ public class CatalogHandler extends ParseSax.HandlerWithResult<Catalog> {
    }
 
    public NamedResource newNamedResource(Attributes attributes) {
-      return new NamedResourceImpl(Integer.parseInt(attributes
-               .getValue(attributes.getIndex("href")).replace(catalogItemRoot + "/", "")),
-               attributes.getValue(attributes.getIndex("name")), attributes.getValue(attributes
-                        .getIndex("type")), URI.create(attributes.getValue(attributes
-                        .getIndex("href"))));
+      String href = attributes.getValue(attributes.getIndex("href"));
+      String id = href.replace(catalogItemRoot + "/", "");
+      assert !id.contains("https://") : String.format(
+               "parse of %s should have stripped, but didn't %s", href, id);
+      return new NamedResourceImpl(id, attributes.getValue(attributes.getIndex("name")), attributes
+               .getValue(attributes.getIndex("type")), URI.create(href));
    }
 
    public void putNamedResource(Map<String, NamedResource> map, Attributes attributes) {
