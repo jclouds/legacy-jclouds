@@ -26,7 +26,6 @@ package org.jclouds.blobstore.strategy.internal;
 import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -42,6 +41,7 @@ import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
 import org.jclouds.util.Utils;
 
 import com.google.common.collect.Sets;
+import com.google.inject.Inject;
 
 /**
  * Retrieves all blobs in the blobstore by the most efficient means possible.
@@ -65,8 +65,8 @@ public class ListBlobMetadataInContainer implements ListBlobMetadataStrategy {
 
    public SortedSet<? extends BlobMetadata> execute(String container, ListContainerOptions options) {
       try {
-         ListResponse<? extends ResourceMetadata> resources = connection.list(container,
-                  options).get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
+         ListResponse<? extends ResourceMetadata> resources = connection.list(container, options)
+                  .get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
          SortedSet<BlobMetadata> blobM = Sets.newTreeSet();
          for (ResourceMetadata from : resources) {
             if (from.getType() == ResourceType.BLOB)

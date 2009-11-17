@@ -30,7 +30,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -50,6 +49,7 @@ import org.jclouds.util.Utils;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Sets;
+import com.google.inject.Inject;
 
 /**
  * Recursively remove a path.

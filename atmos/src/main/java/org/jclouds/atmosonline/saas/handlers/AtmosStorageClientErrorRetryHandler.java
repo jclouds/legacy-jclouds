@@ -24,7 +24,6 @@
 package org.jclouds.atmosonline.saas.handlers;
 
 import javax.annotation.Resource;
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jclouds.http.HttpCommand;
@@ -33,6 +32,8 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Utils;
+
+import com.google.inject.Inject;
 
 /**
  * Handles Retryable responses with error codes in the 4xx range

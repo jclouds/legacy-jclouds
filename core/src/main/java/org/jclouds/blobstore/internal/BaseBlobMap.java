@@ -30,7 +30,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jclouds.blobstore.AsyncBlobStore;
@@ -54,6 +53,7 @@ import org.jclouds.util.Utils;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import com.google.inject.Inject;
 
 /**
  * Implements core Map functionality with an {@link AsyncBlobStore}

@@ -31,11 +31,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jclouds.http.HttpCommandRendezvous;
 import org.jclouds.lifecycle.BaseLifeCycle;
+
+import com.google.inject.Inject;
 
 /**
  * // TODO: Adrian: Document this!

@@ -36,7 +36,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -49,6 +48,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.rest.InvocationContext;
 
 import com.google.common.base.Function;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
 import com.google.inject.internal.Nullable;
@@ -88,7 +88,8 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
          return this.hashCode();
       } else if (method.getName().startsWith("new")) {
          return injector.getInstance(method.getReturnType());
-      } else if (util.getDelegateOrNull(method) != null &&Future.class.isAssignableFrom(method.getReturnType())) {
+      } else if (util.getDelegateOrNull(method) != null
+               && Future.class.isAssignableFrom(method.getReturnType())) {
          method = util.getDelegateOrNull(method);
          logger.trace("Converting %s.%s", declaring.getSimpleName(), method.getName());
          Function<Exception, ?> exceptionParser = util

@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.net.URI;
 
 import javax.annotation.Resource;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriBuilder;
@@ -41,6 +40,7 @@ import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.logging.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.inject.Inject;
 
 /**
  * Handles Retryable responses with error codes in the 3xx range

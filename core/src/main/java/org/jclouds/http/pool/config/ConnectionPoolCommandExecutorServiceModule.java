@@ -27,13 +27,13 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jclouds.http.pool.PoolConstants;
 import org.jclouds.lifecycle.config.LifeCycleModule;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
 import com.google.inject.Provides;
 
 /**
@@ -45,11 +45,11 @@ public abstract class ConnectionPoolCommandExecutorServiceModule<C> extends Abst
    @Inject(optional = true)
    @Named(PoolConstants.PROPERTY_POOL_MAX_CONNECTIONS)
    protected int maxConnections = 12;
-   
+
    @Inject(optional = true)
    @Named(PoolConstants.PROPERTY_POOL_IO_WORKER_THREADS)
    protected int maxWorkerThreads = 12;
-   
+
    protected void configure() {
       install(new LifeCycleModule());
       bind(AtomicInteger.class).toInstance(new AtomicInteger());// max errors

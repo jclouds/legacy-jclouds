@@ -23,8 +23,6 @@
  */
 package org.jclouds.http.handlers;
 
-import javax.inject.Inject;
-
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
@@ -33,6 +31,7 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.inject.Inject;
 
 /**
  * Delegates to {@link HttpRetryHandler HttpRetryHandlers} who are annotated according to the

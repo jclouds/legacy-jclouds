@@ -24,7 +24,6 @@
 package org.jclouds.azure.storage.blob.handlers;
 
 import javax.annotation.Resource;
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jclouds.azure.storage.domain.AzureStorageError;
@@ -37,6 +36,8 @@ import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Utils;
+
+import com.google.inject.Inject;
 
 /**
  * Handles Retryable responses with error codes in the 4xx range

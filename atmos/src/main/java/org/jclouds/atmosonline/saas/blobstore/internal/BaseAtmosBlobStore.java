@@ -28,7 +28,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
@@ -46,6 +45,7 @@ import org.jclouds.concurrent.FutureFunctionWrapper;
 import org.jclouds.logging.Logger.LoggerFactory;
 
 import com.google.common.base.Function;
+import com.google.inject.Inject;
 
 public class BaseAtmosBlobStore {
    protected final AtmosStorageAsyncClient async;

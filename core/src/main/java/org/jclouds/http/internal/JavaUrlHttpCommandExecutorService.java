@@ -34,7 +34,6 @@ import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.net.ssl.HostnameVerifier;
@@ -51,6 +50,7 @@ import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
 
 /**
  * Basic implementation of a {@link HttpCommandExecutorService}.

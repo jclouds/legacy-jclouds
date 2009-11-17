@@ -27,7 +27,6 @@ import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -43,6 +42,7 @@ import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
 import org.jclouds.util.Utils;
 
 import com.google.common.collect.Sets;
+import com.google.inject.Inject;
 
 /**
  * Deletes all keys in the container

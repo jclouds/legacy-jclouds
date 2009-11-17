@@ -26,7 +26,6 @@ package org.jclouds.blobstore.functions;
 import java.lang.reflect.Constructor;
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jclouds.blobstore.AsyncBlobStore;
@@ -39,6 +38,7 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
+import com.google.inject.Inject;
 
 public class ClearAndDeleteIfNotEmpty implements Function<Exception, Void>, InvocationContext {
    static final Void v;

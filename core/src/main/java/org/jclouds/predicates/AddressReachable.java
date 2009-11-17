@@ -24,8 +24,7 @@
 package org.jclouds.predicates;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
+import java.net.InetAddress;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -38,42 +37,28 @@ import com.google.inject.Inject;
 
 /**
  * 
- * Tests to see if a socket is open.
+ * Tests to see if an address is reachable.
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class SocketOpen implements Predicate<InetSocketAddress> {
+public class AddressReachable implements Predicate<InetAddress> {
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject(optional = true)
-   @Named("org.jclouds.socket_timeout")
+   @Named("org.jclouds.address_timeout")
    private int timeout = 2000;
 
    @Override
-   public boolean apply(InetSocketAddress socketAddress) {
-      Socket socket = null;
+   public boolean apply(InetAddress address) {
       try {
-         logger.trace("testing socket %s", socketAddress);
-         socket = new Socket();
-         socket.setReuseAddress(false);
-         socket.setSoLinger(false, 1);
-         socket.setSoTimeout(timeout);
-         socket.connect(socketAddress, timeout);
+         logger.trace("testing address %s", address);
+         return address.isReachable(timeout);
       } catch (IOException e) {
          return false;
-      } finally {
-         if (socket != null) {
-            try {
-               socket.close();
-            } catch (IOException ioe) {
-               // no work to do
-            }
-         }
       }
-      return true;
    }
 
 }

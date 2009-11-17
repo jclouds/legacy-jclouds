@@ -143,6 +143,7 @@ public class ConnectionPoolTransformingHttpCommandExecutorService<C> extends Bas
       // should block and immediately parse the response on exit.
       Future<T> future = executorService.submit(new Callable<T>() {
          Logger transformerLogger = logFactory.getLogger(responseTransformer.getClass().getName());
+
          public T call() throws Exception {
             Object o = channel.take();
             if (o instanceof Exception) {
