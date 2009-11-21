@@ -281,7 +281,7 @@ public class HttpUtils {
       sortedMap.putAll(headers);
       for (Entry<String, String> header : sortedMap.entries()) {
          if (header.getKey() != null)
-            buffer.append(String.format("%s: %s%n", header.getKey(), header.getValue()));
+            buffer.append(String.format("%s: %s\n", header.getKey(), header.getValue()));
       }
       return buffer.toString();
    }
