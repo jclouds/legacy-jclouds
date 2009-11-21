@@ -127,13 +127,13 @@ public class RestAnnotationProcessor<T> {
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToDecoratorParamAnnotation = createMethodToIndexOfParamToAnnotation(BinderParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToHeaderParamAnnotations = createMethodToIndexOfParamToAnnotation(HeaderParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToHostPrefixParamAnnotations = createMethodToIndexOfParamToAnnotation(HostPrefixParam.class);
-   private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToEndpointAnnotations = createMethodToIndexOfParamToAnnotation(Endpoint.class);
-   private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToMatrixParamAnnotations = createMethodToIndexOfParamToAnnotation(MatrixParam.class);
-   private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToFormParamAnnotations = createMethodToIndexOfParamToAnnotation(FormParam.class);
-   private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToQueryParamAnnotations = createMethodToIndexOfParamToAnnotation(QueryParam.class);
-   private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToPathParamAnnotations = createMethodToIndexOfParamToAnnotation(PathParam.class);
-   private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToPostParamAnnotations = createMethodToIndexOfParamToAnnotation(MapEntityParam.class);
-   private final Map<Method, Map<Integer, Set<Annotation>>> methodToindexOfParamToParamParserAnnotations = createMethodToIndexOfParamToAnnotation(ParamParser.class);
+   private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToEndpointAnnotations = createMethodToIndexOfParamToAnnotation(Endpoint.class);
+   private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToMatrixParamAnnotations = createMethodToIndexOfParamToAnnotation(MatrixParam.class);
+   private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToFormParamAnnotations = createMethodToIndexOfParamToAnnotation(FormParam.class);
+   private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToQueryParamAnnotations = createMethodToIndexOfParamToAnnotation(QueryParam.class);
+   private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToPathParamAnnotations = createMethodToIndexOfParamToAnnotation(PathParam.class);
+   private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToPostParamAnnotations = createMethodToIndexOfParamToAnnotation(MapEntityParam.class);
+   private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToParamParserAnnotations = createMethodToIndexOfParamToAnnotation(ParamParser.class);
    private final Map<MethodKey, Method> delegationMap = Maps.newHashMap();
 
    static Map<Method, Map<Integer, Set<Annotation>>> createMethodToIndexOfParamToAnnotation(
@@ -247,13 +247,13 @@ public class RestAnnotationProcessor<T> {
                methodToIndexOfParamToDecoratorParamAnnotation.get(method).get(index);
                methodToIndexOfParamToHeaderParamAnnotations.get(method).get(index);
                methodToIndexOfParamToHostPrefixParamAnnotations.get(method).get(index);
-               methodToindexOfParamToMatrixParamAnnotations.get(method).get(index);
-               methodToindexOfParamToFormParamAnnotations.get(method).get(index);
-               methodToindexOfParamToQueryParamAnnotations.get(method).get(index);
-               methodToindexOfParamToEndpointAnnotations.get(method).get(index);
-               methodToindexOfParamToPathParamAnnotations.get(method).get(index);
-               methodToindexOfParamToPostParamAnnotations.get(method).get(index);
-               methodToindexOfParamToParamParserAnnotations.get(method).get(index);
+               methodToIndexOfParamToMatrixParamAnnotations.get(method).get(index);
+               methodToIndexOfParamToFormParamAnnotations.get(method).get(index);
+               methodToIndexOfParamToQueryParamAnnotations.get(method).get(index);
+               methodToIndexOfParamToEndpointAnnotations.get(method).get(index);
+               methodToIndexOfParamToPathParamAnnotations.get(method).get(index);
+               methodToIndexOfParamToPostParamAnnotations.get(method).get(index);
+               methodToIndexOfParamToParamParserAnnotations.get(method).get(index);
                methodToIndexesOfOptions.get(method);
             }
             delegationMap.put(new MethodKey(method), method);
@@ -581,7 +581,7 @@ public class RestAnnotationProcessor<T> {
    @VisibleForTesting
    URI getEndpointInParametersOrNull(Method method, Object... args) {
       Map<Integer, Set<Annotation>> map = indexWithOnlyOneAnnotation(method, "@Endpoint",
-               methodToindexOfParamToEndpointAnnotations);
+               methodToIndexOfParamToEndpointAnnotations);
       if (map.size() == 1 && args.length > 0) {
          Endpoint annotation = (Endpoint) map.values().iterator().next().iterator().next();
          int index = map.keySet().iterator().next();
@@ -919,10 +919,10 @@ public class RestAnnotationProcessor<T> {
    private Multimap<String, String> getPathParamKeyValues(Method method, Object... args) {
       Multimap<String, String> pathParamValues = LinkedHashMultimap.create();
       pathParamValues.putAll(constants);
-      Map<Integer, Set<Annotation>> indexToPathParam = methodToindexOfParamToPathParamAnnotations
+      Map<Integer, Set<Annotation>> indexToPathParam = methodToIndexOfParamToPathParamAnnotations
                .get(method);
 
-      Map<Integer, Set<Annotation>> indexToParamExtractor = methodToindexOfParamToParamParserAnnotations
+      Map<Integer, Set<Annotation>> indexToParamExtractor = methodToIndexOfParamToParamParserAnnotations
                .get(method);
       for (Entry<Integer, Set<Annotation>> entry : indexToPathParam.entrySet()) {
          for (Annotation key : entry.getValue()) {
@@ -961,10 +961,10 @@ public class RestAnnotationProcessor<T> {
    private Multimap<String, String> getMatrixParamKeyValues(Method method, Object... args) {
       Multimap<String, String> matrixParamValues = LinkedHashMultimap.create();
       matrixParamValues.putAll(constants);
-      Map<Integer, Set<Annotation>> indexToMatrixParam = methodToindexOfParamToMatrixParamAnnotations
+      Map<Integer, Set<Annotation>> indexToMatrixParam = methodToIndexOfParamToMatrixParamAnnotations
                .get(method);
 
-      Map<Integer, Set<Annotation>> indexToParamExtractor = methodToindexOfParamToParamParserAnnotations
+      Map<Integer, Set<Annotation>> indexToParamExtractor = methodToIndexOfParamToParamParserAnnotations
                .get(method);
       for (Entry<Integer, Set<Annotation>> entry : indexToMatrixParam.entrySet()) {
          for (Annotation key : entry.getValue()) {
@@ -995,10 +995,10 @@ public class RestAnnotationProcessor<T> {
    private Multimap<String, String> getFormParamKeyValues(Method method, Object... args) {
       Multimap<String, String> formParamValues = LinkedHashMultimap.create();
       formParamValues.putAll(constants);
-      Map<Integer, Set<Annotation>> indexToFormParam = methodToindexOfParamToFormParamAnnotations
+      Map<Integer, Set<Annotation>> indexToFormParam = methodToIndexOfParamToFormParamAnnotations
                .get(method);
 
-      Map<Integer, Set<Annotation>> indexToParamExtractor = methodToindexOfParamToParamParserAnnotations
+      Map<Integer, Set<Annotation>> indexToParamExtractor = methodToIndexOfParamToParamParserAnnotations
                .get(method);
       for (Entry<Integer, Set<Annotation>> entry : indexToFormParam.entrySet()) {
          for (Annotation key : entry.getValue()) {
@@ -1029,10 +1029,10 @@ public class RestAnnotationProcessor<T> {
    private Multimap<String, String> getQueryParamKeyValues(Method method, Object... args) {
       Multimap<String, String> queryParamValues = LinkedHashMultimap.create();
       queryParamValues.putAll(constants);
-      Map<Integer, Set<Annotation>> indexToQueryParam = methodToindexOfParamToQueryParamAnnotations
+      Map<Integer, Set<Annotation>> indexToQueryParam = methodToIndexOfParamToQueryParamAnnotations
                .get(method);
 
-      Map<Integer, Set<Annotation>> indexToParamExtractor = methodToindexOfParamToParamParserAnnotations
+      Map<Integer, Set<Annotation>> indexToParamExtractor = methodToIndexOfParamToParamParserAnnotations
                .get(method);
       for (Entry<Integer, Set<Annotation>> entry : indexToQueryParam.entrySet()) {
          for (Annotation key : entry.getValue()) {
@@ -1062,9 +1062,9 @@ public class RestAnnotationProcessor<T> {
 
    private Map<String, String> buildPostParams(Method method, Object... args) {
       Map<String, String> postParams = Maps.newHashMap();
-      Map<Integer, Set<Annotation>> indexToPathParam = methodToindexOfParamToPostParamAnnotations
+      Map<Integer, Set<Annotation>> indexToPathParam = methodToIndexOfParamToPostParamAnnotations
                .get(method);
-      Map<Integer, Set<Annotation>> indexToParamExtractor = methodToindexOfParamToParamParserAnnotations
+      Map<Integer, Set<Annotation>> indexToParamExtractor = methodToIndexOfParamToParamParserAnnotations
                .get(method);
       for (Entry<Integer, Set<Annotation>> entry : indexToPathParam.entrySet()) {
          for (Annotation key : entry.getValue()) {
