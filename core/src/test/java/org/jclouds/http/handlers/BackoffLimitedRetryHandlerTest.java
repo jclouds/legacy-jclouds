@@ -56,34 +56,34 @@ public class BackoffLimitedRetryHandlerTest {
    void testExponentialBackoffDelay() throws InterruptedException {
       long acceptableDelay = 25; // Delay to forgive if tests run long.
 
-      long startTime = System.currentTimeMillis();
+      long startTime = System.nanoTime();
       handler.imposeBackoffExponentialDelay(1, "TEST FAILURE: 1");
-      long elapsedTime = System.currentTimeMillis() - startTime;
+      long elapsedTime = (System.nanoTime() - startTime)/1000000;
       assertTrue(elapsedTime >= 50);
       assertTrue(elapsedTime < 50 + acceptableDelay);
 
-      startTime = System.currentTimeMillis();
+      startTime = System.nanoTime();
       handler.imposeBackoffExponentialDelay(2, "TEST FAILURE: 2");
-      elapsedTime = System.currentTimeMillis() - startTime;
+      elapsedTime = (System.nanoTime() - startTime)/1000000;
       assertTrue(elapsedTime >= 200);
       assertTrue(elapsedTime < 200 + acceptableDelay);
 
-      startTime = System.currentTimeMillis();
+      startTime = System.nanoTime();
       handler.imposeBackoffExponentialDelay(3, "TEST FAILURE: 3");
-      elapsedTime = System.currentTimeMillis() - startTime;
+      elapsedTime = (System.nanoTime() - startTime)/1000000;
       assertTrue(elapsedTime >= 450);
       assertTrue(elapsedTime < 450 + acceptableDelay);
 
-      startTime = System.currentTimeMillis();
+      startTime = System.nanoTime();
       handler.imposeBackoffExponentialDelay(4, "TEST FAILURE: 4");
-      elapsedTime = System.currentTimeMillis() - startTime;
+      elapsedTime = (System.nanoTime() - startTime)/1000000;
       assertTrue(elapsedTime >= 800);
       assertTrue(elapsedTime < 800 + acceptableDelay);
 
-      startTime = System.currentTimeMillis();
+      startTime = System.nanoTime();
       handler.imposeBackoffExponentialDelay(5, "TEST FAILURE: 5");
-      elapsedTime = System.currentTimeMillis() - startTime;
-      assertTrue(elapsedTime >= 1250);
+      elapsedTime = (System.nanoTime() - startTime)/1000000;
+      assert (elapsedTime >= 1249) : elapsedTime ;
       assertTrue(elapsedTime < 1250 + acceptableDelay);
    }
 
