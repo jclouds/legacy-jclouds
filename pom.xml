@@ -38,7 +38,6 @@
     <name>jclouds</name>
     <modules>
         <module>project</module>
-        <module>thirdparty</module>
         <module>archetypes</module>        
         <module>core</module>
         <module>extensions</module>
