@@ -104,6 +104,10 @@
             <id>jclouds-googlecode-deploy</id>
             <url>svn:https://jclouds.googlecode.com/svn/repo</url>
         </repository>
+        <snapshotRepository>
+      	    <id>jclouds-rimu-snapshots</id>
+            <url>dav:http://jclouds.rimuhosting.com/maven2/snapshots/</url>
+        </snapshotRepository>
         <site>
             <id>website</id>
             <name>website</name>
@@ -374,6 +378,11 @@ pageTracker._trackPageview();
                 <groupId>org.jvnet.wagon-svn</groupId>
                 <artifactId>wagon-svn</artifactId>
                 <version>1.9</version>
+            </extension>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-webdav</artifactId>
+                <version>1.0-beta-1</version>
             </extension>
         </extensions>
     </build>

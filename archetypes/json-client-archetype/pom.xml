@@ -72,6 +72,10 @@
       <id>jclouds-googlecode-deploy</id>
       <url>svn:https://jclouds.googlecode.com/svn/repo</url>
     </repository>
+    <snapshotRepository>
+      <id>jclouds-rimu-snapshots</id>
+      <url>dav:http://jclouds.rimuhosting.com/maven2/snapshots/</url>
+    </snapshotRepository>
     <site>
       <id>website</id>
       <name>website</name>
