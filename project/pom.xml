@@ -82,6 +82,13 @@
             <url>http://jclouds.googlecode.com/svn/repo</url>
         </repository>
         <repository>
+            <id>jclouds-rimu</id>
+            <url>http://jclouds.rimuhosting.com/maven2/snapshots</url>
+            <snapshots>
+               <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
             <id>jboss</id>
             <url>http://repository.jboss.org/maven2/</url>
         </repository>
