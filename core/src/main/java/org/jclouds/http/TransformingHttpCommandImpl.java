@@ -30,10 +30,12 @@ import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
+import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.base.Function;
 import com.google.inject.internal.Nullable;
@@ -52,7 +54,7 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
    private final Function<HttpResponse, T> transformer;
    private final Function<Exception, T> exceptionTransformer;
 
-   private HttpRequest request;
+   private GeneratedHttpRequest<?> request;
    private volatile int failureCount;
 
    @Resource
@@ -63,7 +65,7 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
 
    @Inject
    public TransformingHttpCommandImpl(TransformingHttpCommandExecutorService executorService,
-            HttpRequest request, Function<HttpResponse, T> transformer,
+            GeneratedHttpRequest<?> request, Function<HttpResponse, T> transformer,
             @Nullable Function<Exception, T> exceptionTransformer) {
       this.request = request;
       this.executorService = executorService;
@@ -91,13 +93,12 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
     * <p />
     * This also removes the Host header in order to avoid ssl problems.
     */
-   public HttpRequest setHostAndPort(String host, int port) {
+   public void redirect(String host, int port) {
       UriBuilder builder = UriBuilder.fromUri(request.getEndpoint());
       builder.host(host);
       builder.port(port);
       request.setEndpoint(builder.build());
       request.getHeaders().replaceValues(HttpHeaders.HOST, Collections.singletonList(host));
-      return request;
    }
 
    /**
@@ -105,9 +106,8 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
     * 
     * @param method
     */
-   public HttpRequest setMethod(String method) {
-      request.setMethod(method);
-      return request;
+   public void redirectAsGet() {
+      request.setMethod(HttpMethod.GET);
    }
 
    public void setException(Exception exception) {
@@ -143,6 +143,11 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
 
    public HttpRequest getRequest() {
       return request;
+   }
+
+   @Override
+   public void redirectPath(String newPath) {
+      request.replacePath(newPath);
    }
 
 }

@@ -43,10 +43,15 @@ public interface HttpCommand extends EndpointCommand<URI, HttpRequest, HttpRespo
    /**
     * to allow redirects to work
     */
-   HttpRequest setHostAndPort(String host, int port);
+   void redirect(String host, int port);
 
    /**
     * to allow redirects to work on methods that were HEAD
     */
-   HttpRequest setMethod(String method);
+   void redirectAsGet();
+
+   /**
+    * change the path of the service
+    */
+   void redirectPath(String newPath);
 }

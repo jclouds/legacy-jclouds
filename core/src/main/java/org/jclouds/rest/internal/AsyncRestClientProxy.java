@@ -41,7 +41,6 @@ import javax.inject.Singleton;
 
 import org.jclouds.concurrent.FutureExceptionParser;
 import org.jclouds.http.HttpConstants;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.TransformingHttpCommand;
 import org.jclouds.logging.Logger;
@@ -169,7 +168,7 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
    }
 
    public static interface Factory {
-      public TransformingHttpCommand<?> create(HttpRequest request,
+      public TransformingHttpCommand<?> create(GeneratedHttpRequest<?> request,
                Function<HttpResponse, ?> transformer,
                @Nullable Function<Exception, ?> exceptionTransformer);
    }

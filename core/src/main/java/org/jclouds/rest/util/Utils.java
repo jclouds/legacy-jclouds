@@ -28,8 +28,10 @@ import java.util.Map;
 
 import org.jclouds.rest.domain.Link;
 import org.jclouds.rest.domain.NamedLink;
+import org.jclouds.rest.domain.NamedResource;
 import org.jclouds.rest.domain.internal.LinkImpl;
 import org.jclouds.rest.domain.internal.NamedLinkImpl;
+import org.jclouds.rest.internal.NamedResourceImpl;
 import org.xml.sax.Attributes;
 
 /**
@@ -51,5 +53,16 @@ public class Utils {
       return new NamedLinkImpl(attributes.getValue(attributes.getIndex("name")), attributes
                .getValue(attributes.getIndex("type")), URI.create(attributes.getValue(attributes
                .getIndex("href"))));
+   }
+
+   public static NamedResource newNamedResource(Attributes attributes) {
+      String uri = attributes.getValue(attributes.getIndex("href"));
+      String id = uri.substring(uri.lastIndexOf('/') + 1);
+      return new NamedResourceImpl(id, attributes.getValue(attributes.getIndex("name")), attributes
+               .getValue(attributes.getIndex("type")), URI.create(uri));
+   }
+
+   public static void putNamedResource(Map<String, NamedResource> map, Attributes attributes) {
+      map.put(attributes.getValue(attributes.getIndex("name")), newNamedResource(attributes));
    }
 }

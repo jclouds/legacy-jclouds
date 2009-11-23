@@ -70,9 +70,13 @@ public class RedirectionRetryHandler implements HttpRetryHandler {
          URI redirectionUrl = UriBuilder.fromUri(hostHeader).build();
          if (redirectionUrl.getHost().equals(command.getRequest().getEndpoint().getHost())
                   && redirectionUrl.getPort() == command.getRequest().getEndpoint().getPort()) {
-            return backoffHandler.shouldRetryRequest(command, response);
+            if (!redirectionUrl.getPath().equals(command.getRequest().getEndpoint().getPath())) {
+               command.redirectPath(redirectionUrl.getPath());
+            } else {
+               return backoffHandler.shouldRetryRequest(command, response);
+            }
          } else {
-            command.setHostAndPort(redirectionUrl.getHost(), redirectionUrl.getPort());
+            command.redirect(redirectionUrl.getHost(), redirectionUrl.getPort());
          }
          return true;
       } else {

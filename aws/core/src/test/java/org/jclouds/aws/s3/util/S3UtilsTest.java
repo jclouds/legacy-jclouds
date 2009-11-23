@@ -68,7 +68,7 @@ public class S3UtilsTest {
                   @Override
                   protected void configure() {
                      bind(ExecutorService.class).toInstance(Executors.newCachedThreadPool());
-//                     bind(new TypeLiteral<ClearListStrategy<S3Object>>(){}).to
+                     // bind(new TypeLiteral<ClearListStrategy<S3Object>>(){}).to
                      bindConstant().annotatedWith(
                               Jsr330.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to("user");
                      bindConstant().annotatedWith(
@@ -99,12 +99,10 @@ public class S3UtilsTest {
             return false;
          }
 
-         public HttpRequest setHostAndPort(String host, int port) {
-            return null;
+         public void redirect(String host, int port) {
          }
 
-         public HttpRequest setMethod(String method) {
-            return null;
+         public void redirectAsGet() {
          }
 
          public Exception getException() {
@@ -125,6 +123,10 @@ public class S3UtilsTest {
 
          public void setException(Exception exception) {
 
+         }
+
+         @Override
+         public void redirectPath(String newPath) {
          }
       };
 

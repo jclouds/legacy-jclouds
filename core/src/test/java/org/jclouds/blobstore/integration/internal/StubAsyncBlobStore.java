@@ -452,12 +452,10 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
             return false;
          }
 
-         public HttpRequest setHostAndPort(String host, int port) {
-            return null;
+         public void redirect(String host, int port) {
          }
 
-         public HttpRequest setMethod(String method) {
-            return null;
+         public void redirectAsGet() {
          }
 
          public Exception getException() {
@@ -478,6 +476,10 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
 
          public void setException(Exception exception) {
 
+         }
+
+         @Override
+         public void redirectPath(String newPath) {
          }
       }, response));
    }

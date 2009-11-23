@@ -26,13 +26,13 @@ package org.jclouds.rest.config;
 import javax.inject.Inject;
 import javax.ws.rs.ext.RuntimeDelegate;
 
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.TransformingHttpCommand;
 import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.TransformingHttpCommandImpl;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rest.internal.AsyncRestClientProxy;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RuntimeDelegateImpl;
 
 import com.google.common.base.Function;
@@ -57,7 +57,7 @@ public class RestModule extends AbstractModule {
       private TransformingHttpCommandExecutorService executorService;
 
       @SuppressWarnings("unchecked")
-      public TransformingHttpCommand<?> create(HttpRequest request,
+      public TransformingHttpCommand<?> create(GeneratedHttpRequest<?> request,
                Function<HttpResponse, ?> transformer, Function<Exception, ?> exceptionTransformer) {
          return new TransformingHttpCommandImpl(executorService, request, transformer,
                   exceptionTransformer);

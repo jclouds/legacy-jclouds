@@ -66,22 +66,42 @@ import com.google.inject.TypeLiteral;
 
 public abstract class BaseJettyTest {
 
+   public static final class IntegrationContextBuilder extends
+            RestContextBuilder<IntegrationTestAsyncClient, IntegrationTestClient> {
+      private final int testPort;
+
+      public IntegrationContextBuilder(Properties properties, int testPort) {
+         super(new TypeLiteral<IntegrationTestAsyncClient>() {
+         }, new TypeLiteral<IntegrationTestClient>() {
+         }, properties);
+         this.testPort = testPort;
+      }
+
+      @Override
+      protected void addContextModule(List<Module> modules) {
+         modules.add(new JettyContextModule(properties, testPort));
+      }
+
+      @Override
+      protected void addClientModule(List<Module> modules) {
+         modules.add(new RestIntegrationTestClientModule());
+      }
+   }
+
    @ConfiguresRestClient
    @RequiresHttp
-   private final class RestIntegrationTestClientModule extends AbstractModule {
+   public static class RestIntegrationTestClientModule extends AbstractModule {
       @Override
       protected void configure() {
 
       }
 
-      @SuppressWarnings("unused")
       @Provides
       @Singleton
       public IntegrationTestAsyncClient provideAsyncClient(RestClientFactory factory) {
          return factory.create(IntegrationTestAsyncClient.class);
       }
 
-      @SuppressWarnings("unused")
       @Provides
       @Singleton
       public IntegrationTestClient provideClient(IntegrationTestAsyncClient client)
@@ -90,7 +110,7 @@ public abstract class BaseJettyTest {
       }
    }
 
-   private final class JettyContextModule extends AbstractModule {
+   public static class JettyContextModule extends AbstractModule {
       private final Properties properties;
       private final int testPort;
 
@@ -106,7 +126,7 @@ public abstract class BaseJettyTest {
                   URI.create("http://localhost:" + testPort));
       }
 
-      @SuppressWarnings( { "unchecked", "unused" })
+      @SuppressWarnings( { "unchecked" })
       @Provides
       @Singleton
       RestContext<IntegrationTestAsyncClient, IntegrationTestClient> provideContext(Closer closer,
@@ -214,25 +234,16 @@ public abstract class BaseJettyTest {
 
       final Properties properties = new Properties();
       addConnectionProperties(properties);
-      context = new RestContextBuilder<IntegrationTestAsyncClient, IntegrationTestClient>(
-               new TypeLiteral<IntegrationTestAsyncClient>() {
-               }, new TypeLiteral<IntegrationTestClient>() {
-               }, properties) {
-
-         @Override
-         protected void addContextModule(List<Module> modules) {
-            modules.add(new JettyContextModule(properties, testPort));
-         }
-
-         @Override
-         protected void addClientModule(List<Module> modules) {
-            modules.add(new RestIntegrationTestClientModule());
-         }
-      }.withModules(createConnectionModule()).buildContext();
+      context = newBuilder(testPort, properties, createConnectionModule()).buildContext();
       client = context.getApi();
       assert client != null;
 
       assert client.newStringBuffer() != null;
+   }
+
+   public static RestContextBuilder<IntegrationTestAsyncClient, IntegrationTestClient> newBuilder(
+            final int testPort, final Properties properties, Module connectionModule) {
+      return new IntegrationContextBuilder(properties, testPort).withModules(connectionModule);
    }
 
    @AfterTest
