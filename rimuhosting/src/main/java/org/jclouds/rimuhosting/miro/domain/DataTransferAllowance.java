@@ -27,6 +27,8 @@ import com.google.gson.annotations.SerializedName;
 
 /**
  * TODO: test
+ *
+ * @author Ivan Meredith
  */
 public class DataTransferAllowance implements Comparable<DataTransferAllowance>{
    @SerializedName("data_transfer_gb")

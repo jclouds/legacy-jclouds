@@ -26,6 +26,8 @@ package org.jclouds.rimuhosting.miro.domain.internal;
 
 /**
  * Jclouds is only interested in VPS.
+ *
+ * @author Ivan Meredith
  */
 public enum ServerType {
    PHYSICAL, VPS

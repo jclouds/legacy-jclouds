@@ -35,7 +35,9 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import java.net.InetSocketAddress;
 
-
+/**
+ * @author Ivan Meredith
+ */
 public class RimuHostingComputeClient {
    @Resource
    protected Logger logger = Logger.NULL;

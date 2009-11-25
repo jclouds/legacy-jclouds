@@ -29,7 +29,7 @@ import org.jclouds.rimuhosting.miro.domain.Image;
 /**
  * Some options we need to create a new server/VPS.
  *
- * @author Ivan Meredith <ivan@ivan.net.nz>
+ * @author Ivan Meredith
  */
 public class CreateOptions implements PostData{
    public CreateOptions(){}

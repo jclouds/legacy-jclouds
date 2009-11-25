@@ -27,6 +27,8 @@ import com.google.gson.annotations.SerializedName;
 
 /**
  * TODO: test
+ *
+ * @author Ivan Meredith
  */
 public class DataCenter implements Comparable<DataCenter> {
    @SerializedName("data_center_location_code")

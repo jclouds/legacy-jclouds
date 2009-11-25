@@ -38,6 +38,8 @@ import java.util.Map;
  * On non 2xx we have an error. RimuHosting using the same json base object.
  *
  * TODO: map exceptions out into something that suits jclouds.
+ *
+ * @author Ivan Meredith
  */
 @Singleton
 public class ParseRimuHostingException implements Function<Exception, Object> {

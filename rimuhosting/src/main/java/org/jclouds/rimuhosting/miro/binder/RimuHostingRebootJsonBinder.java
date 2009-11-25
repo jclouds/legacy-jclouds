@@ -30,6 +30,8 @@ import org.jclouds.http.HttpRequest;
  * Need to PUT a static string
  *
  * {"request":{"running_state":"RESTARTING"}
+ *
+ * @author Ivan Meredith
  */
 public class RimuHostingRebootJsonBinder extends RimuHostingJsonBinder{
       public void bindToRequest(HttpRequest request, Object toBind) {

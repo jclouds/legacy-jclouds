@@ -26,6 +26,9 @@ package org.jclouds.rimuhosting.miro.domain;
 import com.google.gson.annotations.SerializedName;
 import org.jclouds.rimuhosting.miro.domain.internal.ServerType;
 
+/**
+ * @author Ivan Meredith
+ */
 public class PricingPlan implements Comparable<PricingPlan>{
    @SerializedName("minimum_data_transfer_allowance_gb")
    private Long dataTransfer;

@@ -30,6 +30,8 @@ import java.sql.Timestamp;
 /**
  * Billing data. Need to make it inteface with jclouds.
  * TODO: test
+ *
+ * @author Ivan Meredith
  */
 public class BillingData {
    @SerializedName("cancellation_date")

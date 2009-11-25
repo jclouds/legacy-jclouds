@@ -38,6 +38,9 @@ import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.SortedSet;
 
+/**
+ * @author Ivan Meredith
+ */
 @Singleton
 public class ParsePricingPlansFromJsonResponse extends ParseJson<SortedSet<PricingPlan>> {
    @Inject

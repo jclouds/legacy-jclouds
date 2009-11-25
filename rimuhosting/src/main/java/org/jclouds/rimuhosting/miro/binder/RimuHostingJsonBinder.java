@@ -34,6 +34,8 @@ import java.util.Map;
  * Generic binder for RimuHosting POSTS/PUTS. In the form of
  *
  * {"request":{...}}
+ *
+ * @author Ivan Meredith
  */
 public class RimuHostingJsonBinder extends BindToJsonEntity {
   public void bindToRequest(HttpRequest request, Map<String, String> postParams) {

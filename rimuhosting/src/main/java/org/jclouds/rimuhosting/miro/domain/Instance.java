@@ -29,6 +29,8 @@ import org.jclouds.rimuhosting.miro.data.NewInstance;
 /**
  * Instance Object.
  * TODO: javadoc
+ *
+ * @author Ivan Meredith
  */
 public class Instance implements Comparable<Instance> {
 

@@ -29,6 +29,8 @@ import org.jclouds.rimuhosting.miro.data.NewInstance;
 /**
  * Wrapper object to get back all data from a Instance create. The Password has been populated the NewInstance
  * object.
+ *
+ * @author Ivan Meredith
  */
 public class NewInstanceResponse implements Comparable<NewInstanceResponse> {
    @SerializedName("about_order")

@@ -29,6 +29,8 @@ import java.util.SortedSet;
 
 /**
  * IpAddresses assigned to an Interface. Not rimuhosting doesnt have private IPs.
+ *
+ * @author Ivan Meredith
  */
 public class IpAddresses {
    @SerializedName("primary_ip")

@@ -37,6 +37,8 @@ import java.util.List;
  * RimuHosting Authentication is a Authorization Header.
  *
  * Authorization: rimuhosting apikey=&lt;key>
+ *
+ * @author Ivan Meredith
  */
 @Singleton
 public class RimuHostingAuthentication implements HttpRequestFilter {

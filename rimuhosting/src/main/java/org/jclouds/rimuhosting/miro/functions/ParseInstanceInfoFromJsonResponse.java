@@ -37,6 +37,9 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.util.Map;
 
+/**
+ * @author Ivan Meredith
+ */
 @Singleton
 public class ParseInstanceInfoFromJsonResponse extends ParseJson<InstanceInfo> {
    @Inject

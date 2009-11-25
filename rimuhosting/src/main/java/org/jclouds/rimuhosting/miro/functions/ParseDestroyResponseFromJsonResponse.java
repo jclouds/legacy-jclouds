@@ -37,6 +37,9 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @author Ivan Meredith
+ */
 
 @Singleton
 public class ParseDestroyResponseFromJsonResponse extends ParseJson<List<String>> {

@@ -27,6 +27,8 @@ import java.sql.Timestamp;
 
 /**
  * Handles a timestamp JSON object from rimuhosting
+ *
+ * @author Ivan Meredith
  */
 public class RimuHostingTimestamp {
    private Long ms_since_epoch;

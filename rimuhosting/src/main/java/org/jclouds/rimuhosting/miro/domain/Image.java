@@ -27,6 +27,8 @@ import com.google.gson.annotations.SerializedName;
 
 /**
  * Image object.
+ *
+ * @author Ivan Meredith
  */
 public class Image implements Comparable<Image> {
    @SerializedName("distro_code")

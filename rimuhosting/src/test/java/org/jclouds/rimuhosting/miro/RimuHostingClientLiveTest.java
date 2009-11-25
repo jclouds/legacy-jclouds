@@ -38,7 +38,7 @@ import java.util.SortedSet;
 /**
  * Tests behavior of {@code RimuHostingClient}
  *
- * @author Adrian Cole
+ * @author Ivan Meredith
  */
 @Test(groups = "live", testName = "rimuhosting.RimuHostingClientLiveTest")
 public class RimuHostingClientLiveTest {

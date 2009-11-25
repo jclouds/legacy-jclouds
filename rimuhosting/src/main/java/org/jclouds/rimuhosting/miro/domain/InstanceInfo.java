@@ -27,7 +27,9 @@ import com.google.gson.annotations.SerializedName;
 import org.jclouds.rimuhosting.miro.domain.internal.RimuHostingTimestamp;
 import org.jclouds.rimuhosting.miro.domain.internal.RunningState;
 
-
+/**
+ * @author Ivan Meredith
+ */
 public class InstanceInfo {
    /**
     * Whether the server pinged from the host server.

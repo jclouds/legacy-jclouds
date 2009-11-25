@@ -37,6 +37,10 @@ import java.lang.reflect.Type;
 import java.util.Map;
 
 
+/**
+ * @author Ivan Meredith
+ */
+
 @Singleton
 public class ParseNewInstanceResponseFromJsonResponse extends ParseJson<NewInstanceResponse> {
    @Inject

@@ -27,6 +27,8 @@ import com.google.gson.annotations.SerializedName;
 
 /**
  * Error Object from a response
+ *
+ * @author Ivan Meredith
  */
 public class RimuHostingError {
    @SerializedName("error_class")
