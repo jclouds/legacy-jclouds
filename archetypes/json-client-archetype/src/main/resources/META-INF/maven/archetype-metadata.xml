@@ -32,5 +32,11 @@
         <include>**/*.json</include>
       </includes>
     </fileSet>
+    <fileSet filtered="true" encoding="UTF-8">
+      <directory />
+      <includes>
+        <include>.svnignore</include>
+      </includes>
+    </fileSet>    
   </fileSets>
 </archetype-descriptor>
