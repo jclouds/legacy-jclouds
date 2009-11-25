@@ -1,0 +1,7 @@
+target
+.settings
+.classpath
+.project
+jclouds-hostingdotcom.iml
+jclouds-hostingdotcom.ipr
+jclouds-hostingdotcom.iws
