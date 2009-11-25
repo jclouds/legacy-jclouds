@@ -150,6 +150,15 @@
             </roles>
             <timezone>+1</timezone>
         </developer>          
+        <developer>
+            <name>Ivan Meredith</name>
+            <id>barefootnz</id>
+            <email>ivan -at- ivan.com</email>
+            <roles>
+                <role>Java Developer</role>
+            </roles>
+            <timezone>+13</timezone>
+        </developer>          
     </developers>
 
     <properties>
