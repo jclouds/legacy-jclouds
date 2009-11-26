@@ -80,8 +80,7 @@ public class RimuHostingClientLiveTest {
    @Test
    public void testLifeCycle() {
 	   //Get the first image, we dont really care what it is in this test.
-	   NewInstance inst = new NewInstance(new CreateOptions("test.jclouds.org",null,"lenny"),"MIRO1") ;
-      NewInstanceResponse instanceResponse = connection.createInstance(inst);
+	   NewInstanceResponse instanceResponse = connection.createInstance("test.jclouds.org", "lenny", "MIRO1B");
       Instance instance = instanceResponse.getInstance();
       //Now we have the instance, lets restart it
       assertNotNull(instance.getId());

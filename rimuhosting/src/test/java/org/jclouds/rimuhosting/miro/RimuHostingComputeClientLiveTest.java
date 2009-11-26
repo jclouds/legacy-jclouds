@@ -65,7 +65,7 @@ public class RimuHostingComputeClientLiveTest {
             IOException {
       String imageId = "lenny";
       String serverName = "test.jclouds.org";
-      String planId = "MIRO1";
+      String planId = "MIRO1B";
 
       id = client.start(serverName, planId, imageId);
       Instance instance = rhClient.getInstance(id);

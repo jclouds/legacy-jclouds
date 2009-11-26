@@ -58,7 +58,7 @@ public class RimuHostingComputeClient {
 
    public Long start(String name, String planId, String imageId) {
       logger.debug(">> instantiating RimuHosting VPS name(%s) plan(%s) image(%s)", name, planId, imageId);
-      NewInstanceResponse instanceRespone = rhClient.createInstance(new NewInstance(new CreateOptions(name,null,imageId), planId));
+      NewInstanceResponse instanceRespone = rhClient.createInstance(name, imageId, planId);
       logger.debug(">> VPS id(%d) started and running.", instanceRespone.getInstance().getId());
       return instanceRespone.getInstance().getId();
    }

@@ -26,6 +26,7 @@ package org.jclouds.rimuhosting.miro;
 import org.jclouds.rest.annotations.*;
 import org.jclouds.rimuhosting.miro.binder.RimuHostingJsonBinder;
 import org.jclouds.rimuhosting.miro.binder.RimuHostingRebootJsonBinder;
+import org.jclouds.rimuhosting.miro.binder.RimuHostingCreateInstanceBinder;
 import org.jclouds.rimuhosting.miro.data.NewInstance;
 import org.jclouds.rimuhosting.miro.domain.*;
 import org.jclouds.rimuhosting.miro.filters.RimuHostingAuthentication;
@@ -76,14 +77,21 @@ public interface RimuHostingAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ParseRimuHostingException.class)
    @ResponseParser(ParseNewInstanceResponseFromJsonResponse.class)
-   Future<NewInstanceResponse> createInstance(@BinderParam(RimuHostingJsonBinder.class) NewInstance newInstance);
+   @MapBinder(RimuHostingCreateInstanceBinder.class)
+   Future<NewInstanceResponse> createInstance(@MapEntityParam("name") String name, @MapEntityParam("imageId") String imageId, @MapEntityParam("planId") String planId);
 
+   @POST @Path("/orders/new-vps")
+   @Produces(MediaType.APPLICATION_JSON)
+   @Consumes(MediaType.APPLICATION_JSON)
+   @ExceptionParser(ParseRimuHostingException.class)
+   @ResponseParser(ParseNewInstanceResponseFromJsonResponse.class)
+   @MapBinder(RimuHostingCreateInstanceBinder.class)
+   Future<NewInstanceResponse> createInstance(@MapEntityParam("name") String name, @MapEntityParam("imageId") String imageId, @MapEntityParam("planId") String planId, @MapEntityParam("password") String password);
 
    @GET @Path("/orders/order-{id}-blah/vps")
    @Consumes(MediaType.APPLICATION_JSON)
    @ResponseParser(ParseInstanceInfoFromJsonResponse.class)
    Future<InstanceInfo> getInstanceInfo(@PathParam("id") Long id);
-
 
    @GET @Path("/orders/order-{id}-blah")
    @Consumes(MediaType.APPLICATION_JSON)
@@ -91,15 +99,6 @@ public interface RimuHostingAsyncClient {
    @ExceptionParser(ParseRimuHostingException.class)
    Future<Instance> getInstance(@PathParam("id") Long id);
 
-
-   //TODO fix this.
-   @PUT @Path("/orders/order-{id}-blah/vps/paramters")
-   @Produces(MediaType.APPLICATION_JSON)
-   @Consumes(MediaType.APPLICATION_JSON)
-   @ResponseParser(ParseResizeResponseFromJsonResponse.class)
-   @ExceptionParser(ParseRimuHostingException.class)
-   Future<ResizeResult> resizeInstance(@PathParam("id") Long id);
-   
    @PUT @Path("/orders/order-{id}-blah/vps/running-state")
    @Produces(MediaType.APPLICATION_JSON)
    @Consumes(MediaType.APPLICATION_JSON)
