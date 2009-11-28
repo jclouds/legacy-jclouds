@@ -23,6 +23,8 @@
  */
 package org.jclouds.initbuilder.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.net.URI;
 
 /**
@@ -45,15 +47,15 @@ public class InitMetadata {
 
    public InitMetadata(String name, String platformHome, URI endPoint, String startDir,
             String stopDir, String configDir, String dataDir, String logDir, String goldDir) {
-      this.name = name;
-      this.platformHome = platformHome;
+      this.name = checkNotNull(name, "name");
+      this.platformHome = checkNotNull(platformHome, "platformHome");
       this.endPoint = endPoint;
-      this.startDir = startDir;
-      this.stopDir = stopDir;
-      this.configDir = configDir;
-      this.dataDir = dataDir;
-      this.logDir = logDir;
-      this.goldDir = goldDir;
+      this.startDir = checkNotNull(startDir, "startDir");
+      this.stopDir = checkNotNull(stopDir, "stopDir");
+      this.configDir = checkNotNull(configDir, "configDir");
+      this.dataDir = checkNotNull(dataDir, "dataDir");
+      this.logDir = checkNotNull(logDir, "logDir");
+      this.goldDir = checkNotNull(goldDir, "goldDir");
    }
 
    /**
@@ -69,6 +71,7 @@ public class InitMetadata {
    public String getStopDir() {
       return stopDir;
    }
+
    /**
     * Where the platform that this process is an instance of is located. This is analogous to the
     * CATALINA_HOME on the tomcat platform.

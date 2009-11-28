@@ -97,4 +97,29 @@ public class Utils {
       }
       return initializers.toString();
    }
+
+   public static final Map<OsFamily, String> OS_TO_SWITCH_PATTERN = ImmutableMap.of(OsFamily.UNIX,
+            "case ${variable} in\n", OsFamily.WINDOWS, "goto CASE%{variable}\r\n");
+
+   public static final Map<OsFamily, String> OS_TO_END_SWITCH_PATTERN = ImmutableMap.of(
+            OsFamily.UNIX, "esac\n", OsFamily.WINDOWS, ":END_SWITCH\r\n");
+
+   public static final Map<OsFamily, String> OS_TO_CASE_PATTERN = ImmutableMap.of(OsFamily.UNIX,
+            "{value})\n   {action}\n   ;;\n", OsFamily.WINDOWS,
+            ":CASE_{value}\r\n   {action}\r\n   GOTO END_SWITCH\r\n");
+
+   public static String writeSwitch(String variable, Map<String, String> valueToActions,
+            OsFamily family) {
+      StringBuilder switchClause = new StringBuilder();
+      switchClause.append(replaceTokens(OS_TO_SWITCH_PATTERN.get(family), ImmutableMap.of(
+               "variable", CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, variable))));
+
+      for (Entry<String, String> entry : valueToActions.entrySet()) {
+         switchClause.append(replaceTokens(OS_TO_CASE_PATTERN.get(family), ImmutableMap.of("value",
+                  entry.getKey(), "action", entry.getValue())));
+      }
+
+      switchClause.append(OS_TO_END_SWITCH_PATTERN.get(family));
+      return switchClause.toString();
+   }
 }

@@ -33,7 +33,7 @@ import com.google.common.collect.ImmutableMap;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "jclouds.UtilsTest")
+@Test(groups = "unit", testName = "initbuilder.UtilsTest")
 public class UtilsTest {
 
    public void testReplaceTokens() throws UnsupportedEncodingException {
@@ -51,5 +51,18 @@ public class UtilsTest {
       assertEquals(Utils.writeVariableExporters(ImmutableMap.of("mavenOpts",
                "-Xms128m -Xmx256m -XX:+HeapDumpOnOutOfMemoryError"), OsFamily.WINDOWS),
                "set MAVEN_OPTS=-Xms128m -Xmx256m -XX:+HeapDumpOnOutOfMemoryError\r\n");
+   }
+
+   public void testWriteSwitchUNIX() {
+      assertEquals(Utils.writeSwitch("i", ImmutableMap.of("0", "echo hello zero", "1",
+               "echo hello one"), OsFamily.UNIX),
+               "case $I in\n0)\n   echo hello zero\n   ;;\n1)\n   echo hello one\n   ;;\nesac\n");
+   }
+
+   public void testWriteSwitchWindows() {
+      assertEquals(
+               Utils.writeSwitch("i", ImmutableMap
+                        .of("0", "echo hello zero", "1", "echo hello one"), OsFamily.WINDOWS),
+               "goto CASE%I\r\n:CASE_0\r\n   echo hello zero\r\n   GOTO END_SWITCH\r\n:CASE_1\r\n   echo hello one\r\n   GOTO END_SWITCH\r\n:END_SWITCH\r\n");
    }
 }
