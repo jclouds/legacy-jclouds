@@ -34,6 +34,8 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
@@ -79,7 +81,7 @@ public class Utils {
          String returnVal = URLEncoder.encode(in, "UTF-8").replaceAll("\\+", "%20").replaceAll(
                   "\\*", "%2A").replaceAll("%7E", "~");
          for (char c : skipEncode) {
-            returnVal = returnVal.replaceAll(plainToEncodedChars.get(c+""), c + "");
+            returnVal = returnVal.replaceAll(plainToEncodedChars.get(c + ""), c + "");
          }
          return returnVal;
       } catch (UnsupportedEncodingException e) {
@@ -264,6 +266,38 @@ public class Utils {
     */
    public static String decodeString(byte[] bytes) {
       return decodeString(bytes, UTF8_ENCODING);
+   }
+
+   public static final Pattern pattern = Pattern.compile("\\{(.+?)\\}");
+
+   /**
+    * replaces tokens that are expressed as <code>{token}</code>
+    * 
+    * <p/>
+    * ex. if input is "hello {where}"<br/>
+    * and replacements is "where" -> "world" <br/>
+    * then replaceTokens returns "hello world"
+    * 
+    * @param input
+    *           source to replace
+    * @param replacements
+    *           token/value pairs
+    */
+   public static String replaceTokens(String input, Map<String, String> replacements) {
+      Matcher matcher = pattern.matcher(input);
+      StringBuilder builder = new StringBuilder();
+      int i = 0;
+      while (matcher.find()) {
+         String replacement = replacements.get(matcher.group(1));
+         builder.append(input.substring(i, matcher.start()));
+         if (replacement == null)
+            builder.append(matcher.group(0));
+         else
+            builder.append(replacement);
+         i = matcher.end();
+      }
+      builder.append(input.substring(i, input.length()));
+      return builder.toString();
    }
 
 }

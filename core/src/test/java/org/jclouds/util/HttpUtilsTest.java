@@ -45,7 +45,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "performance", sequential = true, testName = "s3.S3UtilsTest")
+@Test(groups = "performance", sequential = true, testName = "jclouds.HttpUtils")
 public class HttpUtilsTest extends PerformanceTest {
 
    @Test(dataProvider = "hmacsha1")
