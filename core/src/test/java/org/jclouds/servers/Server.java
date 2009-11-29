@@ -8,14 +8,8 @@ import java.util.concurrent.Future;
 /**
  * @author Ivan Meredith
  */
-public interface Server extends Service {
+public interface Server  {
    public String getId();
-
-   public State rebootAndWait();
-
-   public Future<State> reboot();
-
-   public Boolean supportsPlatforms();
 
    public Platform createPlatform(String id/*, Archive archive  , mount? */);
 
@@ -24,4 +18,6 @@ public interface Server extends Service {
    public SortedSet<Platform> listPlatforms();
 
    public SortedSet<Instance> listInstances(/* platform("mybilling-1.0.1").tags("production"  */);
+
+   public Boolean destroyServer();
 }
