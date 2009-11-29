@@ -25,6 +25,7 @@ package org.jclouds.initbuilder;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -33,6 +34,9 @@ import org.jclouds.initbuilder.domain.ShellToken;
 import org.jclouds.initbuilder.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
@@ -47,6 +51,9 @@ public class InitBuilder {
 
    @VisibleForTesting
    Map<String, String> variables = Maps.newHashMap();
+
+   @VisibleForTesting
+   List<String> variablesToUnset = Lists.newArrayList("path", "javaHome", "libraryPath");
 
    /**
     * Adds a switch statement to the script. If its value is found, it will invoke the corresponding
@@ -74,6 +81,14 @@ public class InitBuilder {
    }
 
    /**
+    * Unsets a variable to ensure it is set within the script.
+    */
+   public InitBuilder unsetEnvironmentVariable(String name) {
+      variablesToUnset.add(checkNotNull(name, "name"));
+      return this;
+   }
+
+   /**
     * Exports a variable inside the script
     */
    public InitBuilder export(String name, String value) {
@@ -92,15 +107,26 @@ public class InitBuilder {
     * @param osFamily
     *           whether to write a cmd or bash script.
     */
-   public String build(OsFamily osFamily) {
+   public String build(final OsFamily osFamily) {
       StringBuilder builder = new StringBuilder();
       builder.append(ShellToken.SHEBANG.to(osFamily));
-      builder.append(ShellToken.ZERO_PATH.to(osFamily));
+      builder.append(Utils.writeUnsetVariables(Lists.newArrayList(Iterables.transform(
+               variablesToUnset, new Function<String, String>() {
+
+                  @Override
+                  public String apply(String from) {
+                     if (ShellToken.tokenValueMap(osFamily).containsKey(from + "Variable"))
+                        return Utils.FUNCTION_UPPER_UNDERSCORE_TO_LOWER_CAMEL.apply(ShellToken
+                                 .tokenValueMap(osFamily).get(from + "Variable"));
+                     return from;
+                  }
+
+               })), osFamily));
+      builder.append(Utils.writeZeroPath(osFamily));
       builder.append(Utils.writeVariableExporters(variables, osFamily));
       for (Entry<String, Map<String, String>> entry : switchExec.entrySet()) {
          builder.append(Utils.writeSwitch(entry.getKey(), entry.getValue(), osFamily));
       }
       return builder.toString();
    }
-
 }

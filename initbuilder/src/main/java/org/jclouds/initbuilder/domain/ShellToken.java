@@ -33,13 +33,13 @@ import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 
 /**
- * Constants used in operating suy
+ * Constants used in shell scripting.
  * 
  * @author Adrian Cole
  */
 public enum ShellToken {
 
-   FS, PS, LF, SH, SOURCE, REM, ARGS, VARSTART, VAREND, SHEBANG, ZERO_PATH, EXE;
+   FS, PS, LF, SH, SOURCE, REM, ARGS, VARSTART, VAREND, SHEBANG, LIBRARY_PATH_VARIABLE;
 
    private static final Map<OsFamily, Map<String, String>> familyToTokenValueMap = new MapMaker()
             .makeComputingMap(new Function<OsFamily, Map<String, String>>() {
@@ -91,6 +91,13 @@ public enum ShellToken {
                case UNIX:
                   return "bash";
             }
+         case LIBRARY_PATH_VARIABLE:
+            switch (family) {
+               case WINDOWS:
+                  return "PATH";
+               case UNIX:
+                  return "LD_LIBRARY_PATH";
+            }
          case SOURCE:
             switch (family) {
                case WINDOWS:
@@ -133,20 +140,7 @@ public enum ShellToken {
                case UNIX:
                   return "#!/bin/bash\n";
             }
-         case ZERO_PATH:
-            switch (family) {
-               case WINDOWS:
-                  return "set PATH=c:\\windows\\;C:\\windows\\system32\r\n";
-               case UNIX:
-                  return "export PATH=/usr/ucb/bin:/bin:/usr/bin:/usr/sbin\n";
-            }
-         case EXE:
-            switch (family) {
-               case WINDOWS:
-                  return ".exe";
-               case UNIX:
-                  return "";
-            }
+
          default:
             throw new UnsupportedOperationException("token " + this + " not configured");
       }

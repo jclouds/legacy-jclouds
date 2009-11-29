@@ -24,10 +24,13 @@
 package org.jclouds.initbuilder.util;
 
 import static org.testng.Assert.assertEquals;
+
 import java.io.UnsupportedEncodingException;
 
 import org.jclouds.initbuilder.domain.OsFamily;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -51,6 +54,26 @@ public class UtilsTest {
       assertEquals(Utils.writeVariableExporters(ImmutableMap.of("mavenOpts",
                "-Xms128m -Xmx256m -XX:+HeapDumpOnOutOfMemoryError"), OsFamily.WINDOWS),
                "set MAVEN_OPTS=-Xms128m -Xmx256m -XX:+HeapDumpOnOutOfMemoryError\r\n");
+   }
+
+   public void testWritePositionalVarsUNIX() {
+      assertEquals(Utils.writePositionalVars(ImmutableList.of("host", "port"), OsFamily.UNIX),
+               "set HOST=$1\nshift\nset PORT=$1\nshift\n");
+   }
+
+   public void testWritePositionalVarsWindows() {
+      assertEquals(Utils.writePositionalVars(ImmutableList.of("host", "port"), OsFamily.WINDOWS),
+               "set HOST=%1\r\nshift\r\nset PORT=%1\r\nshift\r\n");
+   }
+
+   public void testWriteUnsetVariablesUNIX() {
+      assertEquals(Utils.writeUnsetVariables(ImmutableList.of("host", "port"), OsFamily.UNIX),
+               "unset HOST PORT\n");
+   }
+
+   public void testWriteUnsetVariablesWindows() {
+      assertEquals(Utils.writeUnsetVariables(ImmutableList.of("host", "port"), OsFamily.WINDOWS),
+               "set HOST=\r\nset PORT=\r\n");
    }
 
    public void testWriteSwitchUNIX() {

@@ -40,9 +40,8 @@ public class ShellTokenTest {
    public void testTokenValueMapUNIX() {
       Map<String, String> expected = new ImmutableMap.Builder<String, String>().put("fs", "/").put(
                "ps", ":").put("lf", "\n").put("sh", "bash").put("source", ".").put("rem", "#").put(
-               "args", "$@").put("varstart", "$").put("varend", "").put("shebang", "#!/bin/bash\n")
-               .put("zeroPath", "export PATH=/usr/ucb/bin:/bin:/usr/bin:/usr/sbin\n")
-               .put("exe", "").build();
+               "args", "$@").put("varstart", "$").put("varend", "").put("libraryPathVariable",
+               "LD_LIBRARY_PATH").put("shebang", "#!/bin/bash\n").build();
 
       assertEquals(ShellToken.tokenValueMap(OsFamily.UNIX), expected);
    }
@@ -51,9 +50,7 @@ public class ShellTokenTest {
       Map<String, String> expected = new ImmutableMap.Builder<String, String>().put("fs", "\\")
                .put("ps", ";").put("lf", "\r\n").put("sh", "cmd").put("source", "@call").put("rem",
                         "@rem").put("args", "%*").put("varstart", "%").put("varend", "%").put(
-                        "shebang", "@echo off\r\n").put("zeroPath",
-                        "set PATH=c:\\windows\\;C:\\windows\\system32\r\n").put("exe", ".exe")
-               .build();
+                        "libraryPathVariable", "PATH").put("shebang", "@echo off\r\n").build();
 
       assertEquals(ShellToken.tokenValueMap(OsFamily.WINDOWS), expected);
    }
