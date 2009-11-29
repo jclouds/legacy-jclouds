@@ -40,8 +40,8 @@ public class ShellTokenTest {
    public void testTokenValueMapUNIX() {
       Map<String, String> expected = new ImmutableMap.Builder<String, String>().put("fs", "/").put(
                "ps", ":").put("lf", "\n").put("sh", "bash").put("source", ".").put("rem", "#").put(
-               "args", "$@").put("varstart", "$").put("varend", "").put("libraryPathVariable",
-               "LD_LIBRARY_PATH").put("shebang", "#!/bin/bash\n").build();
+               "args", "$@").put("varstart", "$").put("return", "return").put("varend", "").put(
+               "libraryPathVariable", "LD_LIBRARY_PATH").put("shebang", "#!/bin/bash\n").build();
 
       assertEquals(ShellToken.tokenValueMap(OsFamily.UNIX), expected);
    }
@@ -50,7 +50,8 @@ public class ShellTokenTest {
       Map<String, String> expected = new ImmutableMap.Builder<String, String>().put("fs", "\\")
                .put("ps", ";").put("lf", "\r\n").put("sh", "cmd").put("source", "@call").put("rem",
                         "@rem").put("args", "%*").put("varstart", "%").put("varend", "%").put(
-                        "libraryPathVariable", "PATH").put("shebang", "@echo off\r\n").build();
+                        "libraryPathVariable", "PATH").put("return", "exit /b").put("shebang",
+                        "@echo off\r\n").build();
 
       assertEquals(ShellToken.tokenValueMap(OsFamily.WINDOWS), expected);
    }

@@ -39,7 +39,7 @@ import com.google.common.collect.Maps;
  */
 public enum ShellToken {
 
-   FS, PS, LF, SH, SOURCE, REM, ARGS, VARSTART, VAREND, SHEBANG, LIBRARY_PATH_VARIABLE;
+   FS, PS, LF, SH, SOURCE, REM, RETURN, ARGS, VARSTART, VAREND, SHEBANG, LIBRARY_PATH_VARIABLE;
 
    private static final Map<OsFamily, Map<String, String>> familyToTokenValueMap = new MapMaker()
             .makeComputingMap(new Function<OsFamily, Map<String, String>>() {
@@ -76,6 +76,13 @@ public enum ShellToken {
                   return ";";
                case UNIX:
                   return ":";
+            }
+         case RETURN:
+            switch (family) {
+               case WINDOWS:
+                  return "exit /b";
+               case UNIX:
+                  return "return";
             }
          case LF:
             switch (family) {

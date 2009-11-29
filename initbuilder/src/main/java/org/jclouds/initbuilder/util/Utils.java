@@ -30,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jclouds.initbuilder.domain.OsFamily;
+import org.jclouds.initbuilder.domain.ShellToken;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
@@ -226,5 +227,9 @@ public class Utils {
 
       switchClause.append(OS_TO_END_SWITCH_PATTERN.get(family));
       return switchClause.toString();
+   }
+
+   public static String writeComment(String comment, OsFamily family) {
+      return String.format("%s%s%s", ShellToken.REM.to(family), comment, ShellToken.LF.to(family));
    }
 }
