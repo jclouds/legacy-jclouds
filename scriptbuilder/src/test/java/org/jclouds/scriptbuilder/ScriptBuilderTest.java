@@ -1,16 +1,18 @@
 package org.jclouds.scriptbuilder;
 
+import static org.jclouds.scriptbuilder.domain.Statements.*;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 
-import org.jclouds.scriptbuilder.ScriptBuilder;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.ShellToken;
+import org.jclouds.scriptbuilder.domain.Switch;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
@@ -22,9 +24,10 @@ import com.google.common.io.Resources;
  */
 public class ScriptBuilderTest {
 
-   ScriptBuilder testScriptBuilder = new ScriptBuilder().switchOn("1",
-            ImmutableMap.of("start", "echo started", "stop", "echo stopped"))
-            .addEnvironmentVariableScope("default", ImmutableMap.of("javaHome", "/apps/jdk1.6"));
+   ScriptBuilder testScriptBuilder = new ScriptBuilder().addStatement(
+            switchOn("1", ImmutableMap.of("start", interpret("echo started{lf}"), "stop",
+                     interpret("echo stopped{lf}")))).addEnvironmentVariableScope("default",
+            ImmutableMap.of("javaHome", "/apps/jdk1.6"));
 
    @Test
    public void testBuildSimpleWindows() throws MalformedURLException, IOException {
@@ -40,25 +43,44 @@ public class ScriptBuilderTest {
                         + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
    }
 
+   ScriptBuilder findPidBuilder = new ScriptBuilder().addStatement(findPid("{args}")).addStatement(
+            interpret("echo {varl}FOUND_PID{varr}{lf}"));
+
+   @Test
+   public void testFindPidWindows() throws MalformedURLException, IOException {
+      assertEquals(findPidBuilder.build(OsFamily.WINDOWS), CharStreams.toString(Resources
+               .newReaderSupplier(Resources.getResource("test_find_pid."
+                        + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8)));
+   }
+
+   @Test
+   public void testFindPidUNIX() throws MalformedURLException, IOException {
+      assertEquals(findPidBuilder.build(OsFamily.UNIX), CharStreams.toString(Resources
+               .newReaderSupplier(Resources.getResource("test_find_pid."
+                        + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
+   }
+
    @Test
    public void testSwitchOn() {
       ScriptBuilder builder = new ScriptBuilder();
-      builder.switchOn("1", ImmutableMap.of("start", "echo started", "stop", "echo stopped"));
-      assertEquals(builder.switchExec, ImmutableMap.of("1", ImmutableMap.of("start",
-               "echo started", "stop", "echo stopped")));
+      builder.addStatement(switchOn("1", ImmutableMap.of("start", interpret("echo started{lf}"),
+               "stop", interpret("echo stopped{lf}"))));
+      assertEquals(builder.statements, ImmutableList.of(new Switch("1", ImmutableMap.of("start",
+               interpret("echo started{lf}"), "stop", interpret("echo stopped{lf}")))));
    }
 
    @Test
    public void testNoSwitchOn() {
       ScriptBuilder builder = new ScriptBuilder();
-      assertEquals(builder.switchExec.size(), 0);
+      assertEquals(builder.statements.size(), 0);
    }
 
    @Test
    public void testExport() {
       ScriptBuilder builder = new ScriptBuilder();
       builder.addEnvironmentVariableScope("default", ImmutableMap.of("javaHome", "/apps/jdk1.6"));
-      assertEquals(builder.functions, ImmutableMap.of("default", "{fncl}default{fncr}   {export} JAVA_HOME={vq}/apps/jdk1.6{vq}{lf}{fnce}"));
+      assertEquals(builder.functions, ImmutableMap.of("default",
+               "{fncl}default{fncr}   {export} JAVA_HOME={vq}/apps/jdk1.6{vq}{lf}{fnce}"));
    }
 
    @Test

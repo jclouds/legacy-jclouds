@@ -141,8 +141,20 @@ public class Utils {
          return CharStreams.toString(Resources.newReaderSupplier(Resources.getResource(String
                   .format("functions/%s.%s", function, ShellToken.SH.to(family))), Charsets.UTF_8));
       } catch (IOException e) {
-         // TODO
-         throw new RuntimeException(e);
+         throw new FunctionNotFoundException(function, family, e);
+      }
+   }
+
+   public static class FunctionNotFoundException extends RuntimeException {
+      /** The serialVersionUID */
+      private static final long serialVersionUID = 1L;
+
+      public FunctionNotFoundException(String functionName, OsFamily family) {
+         super("function: " + functionName + " not found for famiy: " + family);
+      }
+
+      public FunctionNotFoundException(String functionName, OsFamily family, Throwable cause) {
+         super("function: " + functionName + " not found for famiy: " + family, cause);
       }
    }
 
@@ -212,50 +224,6 @@ public class Utils {
     */
    public static String writeZeroPath(OsFamily family) {
       return OS_TO_ZERO_PATH.get(family);
-   }
-
-   public static final Map<OsFamily, String> OS_TO_SWITCH_PATTERN = ImmutableMap.of(OsFamily.UNIX,
-            "case ${variable} in\n", OsFamily.WINDOWS, "goto CASE%{variable}\r\n");
-
-   public static final Map<OsFamily, String> OS_TO_END_SWITCH_PATTERN = ImmutableMap.of(
-            OsFamily.UNIX, "esac\n", OsFamily.WINDOWS, ":END_SWITCH\r\n");
-
-   public static final Map<OsFamily, String> OS_TO_CASE_PATTERN = ImmutableMap.of(OsFamily.UNIX,
-            "{value})\n   {action}\n   ;;\n", OsFamily.WINDOWS,
-            ":CASE_{value}\r\n   {action}\r\n   GOTO END_SWITCH\r\n");
-
-   /**
-    * Generates a switch statement based on {@code variable}. If its value is found to be a key in
-    * {@code valueToActions}, the corresponding action is invoked.
-    * 
-    * <p/>
-    * Ex. variable is {@code 1} - the first argument to the script<br/>
-    * and valueToActions is {"start" -> "echo hello", "stop" -> "echo goodbye"}<br/>
-    * the script created will respond accordingly:<br/>
-    * {@code ./script start }<br/>
-    * << returns hello<br/>
-    * {@code ./script stop }<br/>
-    * << returns goodbye<br/>
-    * 
-    * @param variable
-    *           - shell variable to switch on
-    * @param valueToActions
-    *           - case statements, if the value of the variable matches a key, the corresponding
-    *           value will be invoked.
-    */
-   public static String writeSwitch(String variable, Map<String, String> valueToActions,
-            OsFamily family) {
-      StringBuilder switchClause = new StringBuilder();
-      switchClause.append(replaceTokens(OS_TO_SWITCH_PATTERN.get(family), ImmutableMap.of(
-               "variable", CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, variable))));
-
-      for (Entry<String, String> entry : valueToActions.entrySet()) {
-         switchClause.append(replaceTokens(OS_TO_CASE_PATTERN.get(family), ImmutableMap.of("value",
-                  entry.getKey(), "action", entry.getValue())));
-      }
-
-      switchClause.append(OS_TO_END_SWITCH_PATTERN.get(family));
-      return switchClause.toString();
    }
 
    public static String writeComment(String comment, OsFamily family) {

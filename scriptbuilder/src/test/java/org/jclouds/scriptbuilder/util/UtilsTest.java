@@ -28,7 +28,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.UnsupportedEncodingException;
 
 import org.jclouds.scriptbuilder.domain.OsFamily;
-import org.jclouds.scriptbuilder.util.Utils;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -77,16 +76,4 @@ public class UtilsTest {
                "set HOST=\r\nset PORT=\r\n");
    }
 
-   public void testWriteSwitchUNIX() {
-      assertEquals(Utils.writeSwitch("i", ImmutableMap.of("0", "echo hello zero", "1",
-               "echo hello one"), OsFamily.UNIX),
-               "case $I in\n0)\n   echo hello zero\n   ;;\n1)\n   echo hello one\n   ;;\nesac\n");
-   }
-
-   public void testWriteSwitchWindows() {
-      assertEquals(
-               Utils.writeSwitch("i", ImmutableMap
-                        .of("0", "echo hello zero", "1", "echo hello one"), OsFamily.WINDOWS),
-               "goto CASE%I\r\n:CASE_0\r\n   echo hello zero\r\n   GOTO END_SWITCH\r\n:CASE_1\r\n   echo hello one\r\n   GOTO END_SWITCH\r\n:END_SWITCH\r\n");
-   }
 }

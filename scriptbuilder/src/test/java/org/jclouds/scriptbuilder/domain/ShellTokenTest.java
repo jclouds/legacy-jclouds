@@ -42,10 +42,10 @@ public class ShellTokenTest {
    public void testTokenValueMapUNIX() {
       Map<String, String> expected = new ImmutableMap.Builder<String, String>().put("fs", "/").put(
                "ps", ":").put("lf", "\n").put("sh", "bash").put("source", ".").put("rem", "#").put(
-               "args", "$@").put("varstart", "$").put("return", "return").put("varend", "").put(
-               "libraryPathVariable", "LD_LIBRARY_PATH").put("beginScript",
+               "args", "$@").put("varl", "$").put("return", "return").put("exit", "exit").put(
+               "varr", "").put("libraryPathVariable", "LD_LIBRARY_PATH").put("beginScript",
                "#!/bin/bash\nset +u\nshopt -s xpg_echo\nshopt -s expand_aliases\n").put(
-               "endScript", "set -u\nreturn 0\n").put("vq", "\"").put("beginFunctions", "").put(
+               "endScript", "exit 0\n").put("vq", "\"").put("beginFunctions", "").put(
                "endFunctions", "").put("fncl", "function ").put("fncr", " {\n").put("fnce",
                "   return 0\n}\n").put("export", "export").build();
 
@@ -55,11 +55,11 @@ public class ShellTokenTest {
    public void testTokenValueMapWindows() {
       Map<String, String> expected = new ImmutableMap.Builder<String, String>().put("fs", "\\")
                .put("ps", ";").put("lf", "\r\n").put("sh", "cmd").put("source", "@call").put("rem",
-                        "@rem").put("args", "%*").put("varstart", "%").put("varend", "%").put(
-                        "libraryPathVariable", "PATH").put("return", "exit /b").put("vq", "").put(
-                        "beginFunctions", "GOTO FUNCTION_END\r\n").put("endFunctions",
+                        "@rem").put("args", "%*").put("varl", "%").put("exit", "exit").put("varr",
+                        "%").put("libraryPathVariable", "PATH").put("return", "exit /b").put("vq",
+                        "").put("beginFunctions", "GOTO FUNCTION_END\r\n").put("endFunctions",
                         ":FUNCTION_END\r\n").put("beginScript", "@echo off\r\n").put("endScript",
-                        "exit /b 0\r\n").put("fncl", ":").put("fncr", "\r\n").put("fnce",
+                        "exit 0\r\n").put("fncl", ":").put("fncr", "\r\n").put("fnce",
                         "   exit /b 0\r\n").put("export", "set").build();
 
       assertEquals(ShellToken.tokenValueMap(OsFamily.WINDOWS), expected);

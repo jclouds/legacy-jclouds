@@ -1,3 +1,3 @@
 :abort
    echo aborting: %EXCEPTION%
-   exit /b 1
+   exit 1

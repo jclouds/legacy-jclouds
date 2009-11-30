@@ -27,10 +27,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.ShellToken;
+import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -47,7 +47,7 @@ import com.google.common.collect.Maps;
 public class ScriptBuilder {
 
    @VisibleForTesting
-   Map<String, Map<String, String>> switchExec = Maps.newHashMap();
+   List<Statement> statements = Lists.newArrayList();
 
    @VisibleForTesting
    List<String> variableScopes = Lists.newArrayList();
@@ -58,28 +58,8 @@ public class ScriptBuilder {
    @VisibleForTesting
    List<String> variablesToUnset = Lists.newArrayList("path", "javaHome", "libraryPath");
 
-   /**
-    * Adds a switch statement to the script. If its value is found, it will invoke the corresponding
-    * action.
-    * 
-    * <p/>
-    * Ex. variable is {@code 1} - the first argument to the script<br/>
-    * and valueToActions is {"start" -> "echo hello", "stop" -> "echo goodbye"}<br/>
-    * the script created will respond accordingly:<br/>
-    * {@code ./script start }<br/>
-    * << returns hello<br/>
-    * {@code ./script stop }<br/>
-    * << returns goodbye<br/>
-    * 
-    * @param variable
-    *           - shell variable to switch on
-    * @param valueToActions
-    *           - case statements, if the value of the variable matches a key, the corresponding
-    *           value will be invoked.
-    */
-   public ScriptBuilder switchOn(String variable, Map<String, String> valueToActions) {
-      switchExec.put(checkNotNull(variable, "variable"), checkNotNull(valueToActions,
-               "valueToActions"));
+   public ScriptBuilder addStatement(Statement statement) {
+      statements.add(checkNotNull(statement, "statement"));
       return this;
    }
 
@@ -127,6 +107,7 @@ public class ScriptBuilder {
                   }
 
                })), osFamily));
+      resolveFunctionDependencies(osFamily);
       if (functions.size() > 0) {
          builder.append(ShellToken.BEGIN_FUNCTIONS.to(osFamily));
          builder.append(Utils.writeFunctionFromResource("abort", osFamily));
@@ -136,10 +117,29 @@ public class ScriptBuilder {
          builder.append(ShellToken.END_FUNCTIONS.to(osFamily));
       }
       builder.append(Utils.writeZeroPath(osFamily));
-      for (Entry<String, Map<String, String>> entry : switchExec.entrySet()) {
-         builder.append(Utils.writeSwitch(entry.getKey(), entry.getValue(), osFamily));
+      StringBuilder statementBuilder = new StringBuilder();
+      for (Statement statement : statements) {
+         statementBuilder.append(statement.render(osFamily));
       }
+      builder.append(statementBuilder.toString().replaceAll(ShellToken.RETURN.to(osFamily),
+               ShellToken.EXIT.to(osFamily)));
       builder.append(ShellToken.END_SCRIPT.to(osFamily));
       return builder.toString();
+   }
+
+   @VisibleForTesting
+   void resolveFunctionDependencies(final OsFamily osFamily) {
+      Iterable<String> dependentFunctions = Iterables.concat(Iterables.transform(statements,
+               new Function<Statement, Iterable<String>>() {
+                  @Override
+                  public Iterable<String> apply(Statement from) {
+                     return from.functionDependecies();
+                  }
+               }));
+      List<String> unresolvedFunctions = Lists.newArrayList(dependentFunctions);
+      Iterables.removeAll(unresolvedFunctions, this.functions.keySet());
+      for (String functionName : dependentFunctions) {
+         functions.put(functionName, Utils.writeFunctionFromResource(functionName, osFamily));
+      }
    }
 }

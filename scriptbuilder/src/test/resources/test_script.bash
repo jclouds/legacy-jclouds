@@ -5,7 +5,7 @@ shopt -s expand_aliases
 unset PATH JAVA_HOME LD_LIBRARY_PATH
 function abort {
    echo "aborting: $@" 1>&2
-   set -u
+   exit 1
 }
 function default {
    export JAVA_HOME="/apps/jdk1.6"
@@ -20,5 +20,4 @@ stop)
    echo stopped
    ;;
 esac
-set -u
-return 0
+exit 0

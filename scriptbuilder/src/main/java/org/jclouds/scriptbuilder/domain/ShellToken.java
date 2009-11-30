@@ -58,7 +58,7 @@ public enum ShellToken {
    /**
     * End the function. exits successfully and closes the code block.
     */
-   FNCE, BEGIN_SCRIPT, END_SCRIPT, BEGIN_FUNCTIONS, END_FUNCTIONS, EXPORT, LF, SH, SOURCE, REM, RETURN, ARGS, VARSTART, VAREND, LIBRARY_PATH_VARIABLE;
+   FNCE, BEGIN_SCRIPT, END_SCRIPT, BEGIN_FUNCTIONS, EXIT, END_FUNCTIONS, EXPORT, LF, SH, SOURCE, REM, RETURN, ARGS, VARL, VARR, LIBRARY_PATH_VARIABLE;
 
    private static final Map<OsFamily, Map<String, String>> familyToTokenValueMap = new MapMaker()
             .makeComputingMap(new Function<OsFamily, Map<String, String>>() {
@@ -149,9 +149,9 @@ public enum ShellToken {
          case END_SCRIPT:
             switch (family) {
                case WINDOWS:
-                  return "exit /b 0\r\n";
+                  return "exit 0\r\n";
                case UNIX:
-                  return "set -u\nreturn 0\n";
+                  return "exit 0\n";
             }
          case EXPORT:
             switch (family) {
@@ -166,6 +166,13 @@ public enum ShellToken {
                   return "exit /b";
                case UNIX:
                   return "return";
+            }
+         case EXIT:
+            switch (family) {
+               case WINDOWS:
+                  return "exit";
+               case UNIX:
+                  return "exit";
             }
          case LF:
             switch (family) {
@@ -209,14 +216,14 @@ public enum ShellToken {
                case UNIX:
                   return "$@";
             }
-         case VARSTART:
+         case VARL:
             switch (family) {
                case WINDOWS:
                   return "%";
                case UNIX:
                   return "$";
             }
-         case VAREND:
+         case VARR:
             switch (family) {
                case WINDOWS:
                   return "%";
