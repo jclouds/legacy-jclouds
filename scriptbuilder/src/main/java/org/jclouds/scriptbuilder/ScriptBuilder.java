@@ -50,7 +50,10 @@ public class ScriptBuilder {
    Map<String, Map<String, String>> switchExec = Maps.newHashMap();
 
    @VisibleForTesting
-   Map<String, String> variables = Maps.newHashMap();
+   List<String> variableScopes = Lists.newArrayList();
+
+   @VisibleForTesting
+   Map<String, String> functions = Maps.newHashMap();
 
    @VisibleForTesting
    List<String> variablesToUnset = Lists.newArrayList("path", "javaHome", "libraryPath");
@@ -91,8 +94,10 @@ public class ScriptBuilder {
    /**
     * Exports a variable inside the script
     */
-   public ScriptBuilder export(String name, String value) {
-      variables.put(checkNotNull(name, "name"), checkNotNull(value, "value"));
+   public ScriptBuilder addEnvironmentVariableScope(String scopeName, Map<String, String> variables) {
+      variableScopes.add(checkNotNull(scopeName, "scopeName"));
+      functions.put(scopeName, Utils.writeFunction(scopeName, Utils
+               .writeVariableExporters(checkNotNull(variables, "variables"))));
       return this;
    }
 
@@ -108,22 +113,30 @@ public class ScriptBuilder {
     *           whether to write a cmd or bash script.
     */
    public String build(final OsFamily osFamily) {
+      final Map<String, String> tokenValueMap = ShellToken.tokenValueMap(osFamily);
       StringBuilder builder = new StringBuilder();
       builder.append(ShellToken.SHEBANG.to(osFamily));
+      builder.append(Utils.writeScriptInit(osFamily));
       builder.append(Utils.writeUnsetVariables(Lists.newArrayList(Iterables.transform(
                variablesToUnset, new Function<String, String>() {
-
                   @Override
                   public String apply(String from) {
-                     if (ShellToken.tokenValueMap(osFamily).containsKey(from + "Variable"))
-                        return Utils.FUNCTION_UPPER_UNDERSCORE_TO_LOWER_CAMEL.apply(ShellToken
-                                 .tokenValueMap(osFamily).get(from + "Variable"));
+                     if (tokenValueMap.containsKey(from + "Variable"))
+                        return Utils.FUNCTION_UPPER_UNDERSCORE_TO_LOWER_CAMEL.apply(tokenValueMap
+                                 .get(from + "Variable"));
                      return from;
                   }
 
                })), osFamily));
+      if (functions.size() > 0) {
+         builder.append(ShellToken.BEGIN_FUNCTIONS.to(osFamily));
+         builder.append(Utils.writeFunctionFromResource("abort", osFamily));
+         for (String function : functions.values()) {
+            builder.append(Utils.replaceTokens(function, tokenValueMap));
+         }
+         builder.append(ShellToken.END_FUNCTIONS.to(osFamily));
+      }
       builder.append(Utils.writeZeroPath(osFamily));
-      builder.append(Utils.writeVariableExporters(variables, osFamily));
       for (Entry<String, Map<String, String>> entry : switchExec.entrySet()) {
          builder.append(Utils.writeSwitch(entry.getKey(), entry.getValue(), osFamily));
       }

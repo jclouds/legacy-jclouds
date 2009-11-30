@@ -23,8 +23,8 @@ import com.google.common.io.Resources;
 public class ScriptBuilderTest {
 
    ScriptBuilder testScriptBuilder = new ScriptBuilder().switchOn("1",
-            ImmutableMap.of("start", "echo started", "stop", "echo stopped")).export("javaHome",
-            "/apps/jdk1.6");
+            ImmutableMap.of("start", "echo started", "stop", "echo stopped"))
+            .addEnvironmentVariableScope("default", ImmutableMap.of("javaHome", "/apps/jdk1.6"));
 
    @Test
    public void testBuildSimpleWindows() throws MalformedURLException, IOException {
@@ -57,20 +57,19 @@ public class ScriptBuilderTest {
    @Test
    public void testExport() {
       ScriptBuilder builder = new ScriptBuilder();
-      builder.export("javaHome", "/apps/jdk1.6");
-      assertEquals(builder.variables, ImmutableMap.of("javaHome", "/apps/jdk1.6"));
-
+      builder.addEnvironmentVariableScope("default", ImmutableMap.of("javaHome", "/apps/jdk1.6"));
+      assertEquals(builder.functions, ImmutableMap.of("default", "{fncl}default{fncr}   {export} JAVA_HOME={vq}/apps/jdk1.6{vq}{lf}{fnce}"));
    }
 
    @Test
    public void testNoExport() {
       ScriptBuilder builder = new ScriptBuilder();
-      assertEquals(builder.variables.size(), 0);
+      assertEquals(builder.functions.size(), 0);
    }
 
    @Test(expectedExceptions = NullPointerException.class)
    public void testExportNPE() {
-      new ScriptBuilder().export(null, null);
+      new ScriptBuilder().addEnvironmentVariableScope(null, null);
    }
 
 }

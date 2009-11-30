@@ -39,7 +39,26 @@ import com.google.common.collect.Maps;
  */
 public enum ShellToken {
 
-   FS, PS, LF, SH, SOURCE, REM, RETURN, ARGS, VARSTART, VAREND, SHEBANG, LIBRARY_PATH_VARIABLE;
+   FS, PS,
+
+   /**
+    * If variable values need to be quoted when they include spaces, this will contain quotation
+    * mark
+    */
+   VQ,
+   /**
+    * Left hand side of the function declaration directly before the name of the function.
+    */
+   FNCL,
+   /**
+    * Right hand side of the function declaration directly after the name of the function. opens the
+    * code block
+    */
+   FNCR,
+   /**
+    * End the function. exits successfully and closes the code block.
+    */
+   FNCE, BEGIN_FUNCTIONS, END_FUNCTIONS, EXPORT, LF, SH, SOURCE, REM, RETURN, ARGS, VARSTART, VAREND, SHEBANG, LIBRARY_PATH_VARIABLE;
 
    private static final Map<OsFamily, Map<String, String>> familyToTokenValueMap = new MapMaker()
             .makeComputingMap(new Function<OsFamily, Map<String, String>>() {
@@ -70,12 +89,62 @@ public enum ShellToken {
                case UNIX:
                   return "/";
             }
+         case FNCL:
+            switch (family) {
+               case WINDOWS:
+                  return ":";
+               case UNIX:
+                  return "function ";
+            }
+
+         case FNCR:
+            switch (family) {
+               case WINDOWS:
+                  return "\r\n";
+               case UNIX:
+                  return " {\n";
+            }
+         case FNCE:
+            switch (family) {
+               case WINDOWS:
+                  return "   exit /b 0\r\n";
+               case UNIX:
+                  return "   return 0\n}\n";
+            }
          case PS:
             switch (family) {
                case WINDOWS:
                   return ";";
                case UNIX:
                   return ":";
+            }
+         case VQ:
+            switch (family) {
+               case WINDOWS:
+                  return "";
+               case UNIX:
+                  return "\"";
+            }
+         case BEGIN_FUNCTIONS:
+            switch (family) {
+               case WINDOWS:
+                  return "GOTO FUNCTION_END\r\n";
+               case UNIX:
+                  return "";
+            }
+         case END_FUNCTIONS:
+            switch (family) {
+               case WINDOWS:
+                  return ":FUNCTION_END\r\n";
+               case UNIX:
+                  return "";
+            }
+         case EXPORT:
+            switch (family) {
+               case WINDOWS:
+                  return "set";
+               case UNIX:
+                  return "export";
             }
          case RETURN:
             switch (family) {

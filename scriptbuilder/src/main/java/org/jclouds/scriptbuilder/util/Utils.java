@@ -23,6 +23,7 @@
  */
 package org.jclouds.scriptbuilder.util;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -33,10 +34,13 @@ import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.ShellToken;
 
 import com.google.common.base.CaseFormat;
+import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.google.common.io.CharStreams;
+import com.google.common.io.Resources;
 
 /**
  * Utilities used to build init scripts.
@@ -95,9 +99,6 @@ public class Utils {
       return builder.toString();
    }
 
-   public static final Map<OsFamily, String> OS_TO_EXPORTER_PATTERN = ImmutableMap.of(
-            OsFamily.UNIX, "export {key}=\"{value}\"\n", OsFamily.WINDOWS, "set {key}={value}\r\n");
-
    /**
     * converts a map into variable exports relevant to the specified platform.
     * <p/>
@@ -112,13 +113,41 @@ public class Utils {
     */
    public static String writeVariableExporters(Map<String, String> variablesInLowerCamelCase,
             OsFamily family) {
+      return replaceTokens(writeVariableExporters(variablesInLowerCamelCase), ShellToken
+               .tokenValueMap(family));
+   }
+
+   /**
+    * converts a map into variable exporters in shell intermediate language.
+    * 
+    * @param variablesInLowerCamelCase
+    *           lower camel keys to values
+    */
+   public static String writeVariableExporters(Map<String, String> variablesInLowerCamelCase) {
       StringBuilder initializers = new StringBuilder();
       for (Entry<String, String> entry : variablesInLowerCamelCase.entrySet()) {
          String key = CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, entry.getKey());
-         initializers.append(replaceTokens(OS_TO_EXPORTER_PATTERN.get(family), ImmutableMap.of(
-                  "key", key, "value", entry.getValue())));
+         initializers.append(String.format("{export} %s={vq}%s{vq}{lf}", key, entry.getValue()));
       }
       return initializers.toString();
+   }
+
+   public static String writeFunction(String function, String source, OsFamily family) {
+      return replaceTokens(writeFunction(function, source), ShellToken.tokenValueMap(family));
+   }
+
+   public static String writeFunctionFromResource(String function, OsFamily family) {
+      try {
+         return CharStreams.toString(Resources.newReaderSupplier(Resources.getResource(String
+                  .format("functions/%s.%s", function, ShellToken.SH.to(family))), Charsets.UTF_8));
+      } catch (IOException e) {
+         // TODO
+         throw new RuntimeException(e);
+      }
+   }
+
+   public static String writeFunction(String function, String source) {
+      return String.format("{fncl}%s{fncr}%s{fnce}", function, source.replaceAll("^", "   "));
    }
 
    public static final Map<OsFamily, String> OS_TO_POSITIONAL_VAR_PATTERN = ImmutableMap.of(
@@ -183,6 +212,16 @@ public class Utils {
     */
    public static String writeZeroPath(OsFamily family) {
       return OS_TO_ZERO_PATH.get(family);
+   }
+
+   public static final Map<OsFamily, String> OS_TO_SCRIPT_INIT = ImmutableMap.of(OsFamily.UNIX,
+            "set +u\nshopt -s xpg_echo\nshopt -s expand_aliases\n", OsFamily.WINDOWS, "");
+
+   /**
+    * sets up shell options needed for script execution
+    */
+   public static String writeScriptInit(OsFamily family) {
+      return OS_TO_SCRIPT_INIT.get(family);
    }
 
    public static final Map<OsFamily, String> OS_TO_SWITCH_PATTERN = ImmutableMap.of(OsFamily.UNIX,
