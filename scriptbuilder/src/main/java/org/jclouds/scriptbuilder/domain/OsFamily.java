@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.initbuilder.domain;
+package org.jclouds.scriptbuilder.domain;
 
 /**
  * Type of an Operating System.

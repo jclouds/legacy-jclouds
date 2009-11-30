@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.initbuilder.util;
+package org.jclouds.scriptbuilder.util;
 
 import java.util.List;
 import java.util.Map;
@@ -29,8 +29,8 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jclouds.initbuilder.domain.OsFamily;
-import org.jclouds.initbuilder.domain.ShellToken;
+import org.jclouds.scriptbuilder.domain.OsFamily;
+import org.jclouds.scriptbuilder.domain.ShellToken;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;

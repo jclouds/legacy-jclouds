@@ -21,13 +21,14 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.initbuilder.util;
+package org.jclouds.scriptbuilder.util;
 
 import static org.testng.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
 
-import org.jclouds.initbuilder.domain.OsFamily;
+import org.jclouds.scriptbuilder.domain.OsFamily;
+import org.jclouds.scriptbuilder.util.Utils;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -36,7 +37,7 @@ import com.google.common.collect.ImmutableMap;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "initbuilder.UtilsTest")
+@Test(groups = "unit", testName = "scriptbuilder.UtilsTest")
 public class UtilsTest {
 
    public void testReplaceTokens() throws UnsupportedEncodingException {

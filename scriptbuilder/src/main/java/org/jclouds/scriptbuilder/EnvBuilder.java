@@ -21,15 +21,15 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.initbuilder;
+package org.jclouds.scriptbuilder;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Map;
 
-import org.jclouds.initbuilder.domain.OsFamily;
-import org.jclouds.initbuilder.domain.ShellToken;
-import org.jclouds.initbuilder.util.Utils;
+import org.jclouds.scriptbuilder.domain.OsFamily;
+import org.jclouds.scriptbuilder.domain.ShellToken;
+import org.jclouds.scriptbuilder.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableMap;

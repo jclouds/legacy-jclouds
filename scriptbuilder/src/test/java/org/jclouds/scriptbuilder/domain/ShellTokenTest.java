@@ -21,12 +21,14 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.initbuilder.domain;
+package org.jclouds.scriptbuilder.domain;
 
 import static org.testng.Assert.assertEquals;
 
 import java.util.Map;
 
+import org.jclouds.scriptbuilder.domain.OsFamily;
+import org.jclouds.scriptbuilder.domain.ShellToken;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -34,7 +36,7 @@ import com.google.common.collect.ImmutableMap;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "initbuilder.ShellTokenTest")
+@Test(groups = "unit", testName = "scriptbuilder.ShellTokenTest")
 public class ShellTokenTest {
 
    public void testTokenValueMapUNIX() {

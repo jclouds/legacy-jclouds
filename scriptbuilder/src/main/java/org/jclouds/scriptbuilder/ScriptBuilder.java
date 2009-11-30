@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.initbuilder;
+package org.jclouds.scriptbuilder;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -29,9 +29,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.jclouds.initbuilder.domain.OsFamily;
-import org.jclouds.initbuilder.domain.ShellToken;
-import org.jclouds.initbuilder.util.Utils;
+import org.jclouds.scriptbuilder.domain.OsFamily;
+import org.jclouds.scriptbuilder.domain.ShellToken;
+import org.jclouds.scriptbuilder.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -40,11 +40,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
- * Creates a start script.
+ * Creates a shell script.
  * 
  * @author Adrian Cole
  */
-public class InitBuilder {
+public class ScriptBuilder {
 
    @VisibleForTesting
    Map<String, Map<String, String>> switchExec = Maps.newHashMap();
@@ -74,7 +74,7 @@ public class InitBuilder {
     *           - case statements, if the value of the variable matches a key, the corresponding
     *           value will be invoked.
     */
-   public InitBuilder switchOn(String variable, Map<String, String> valueToActions) {
+   public ScriptBuilder switchOn(String variable, Map<String, String> valueToActions) {
       switchExec.put(checkNotNull(variable, "variable"), checkNotNull(valueToActions,
                "valueToActions"));
       return this;
@@ -83,7 +83,7 @@ public class InitBuilder {
    /**
     * Unsets a variable to ensure it is set within the script.
     */
-   public InitBuilder unsetEnvironmentVariable(String name) {
+   public ScriptBuilder unsetEnvironmentVariable(String name) {
       variablesToUnset.add(checkNotNull(name, "name"));
       return this;
    }
@@ -91,7 +91,7 @@ public class InitBuilder {
    /**
     * Exports a variable inside the script
     */
-   public InitBuilder export(String name, String value) {
+   public ScriptBuilder export(String name, String value) {
       variables.put(checkNotNull(name, "name"), checkNotNull(value, "value"));
       return this;
    }

@@ -49,7 +49,7 @@
         <module>vcloud</module>
         <module>twitter</module>
         <module>rimuhosting</module>
-        <module>initbuilder</module>
+        <module>scriptbuilder</module>
     </modules>
     <build>
         <plugins>

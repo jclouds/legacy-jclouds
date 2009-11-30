@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.initbuilder.domain;
+package org.jclouds.scriptbuilder.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

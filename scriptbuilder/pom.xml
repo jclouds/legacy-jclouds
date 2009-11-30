@@ -29,10 +29,10 @@
         <relativePath>../project/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>jclouds-initbuilder</artifactId>
-    <name>jclouds init builder</name>
+    <artifactId>jclouds-scriptbuilder</artifactId>
+    <name>jclouds script builder</name>
     <packaging>jar</packaging>
-    <description>creates init scripts that can be used to manage services</description>
+    <description>creates scripts that can be used to manage services</description>
     <properties>
         <jclouds.test.listener></jclouds.test.listener>
     </properties>
