@@ -1,4 +1,4 @@
-package org.jclouds.servers;
+package org.jclouds.compute;
 
 import com.google.common.base.Service;
 

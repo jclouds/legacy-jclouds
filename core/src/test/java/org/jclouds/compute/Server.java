@@ -1,9 +1,8 @@
-package org.jclouds.servers;
+package org.jclouds.compute;
 
 import com.google.common.base.Service;
 
 import java.util.SortedSet;
-import java.util.concurrent.Future;
 
 /**
  * @author Ivan Meredith

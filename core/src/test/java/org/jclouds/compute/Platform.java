@@ -1,4 +1,4 @@
-package org.jclouds.servers;
+package org.jclouds.compute;
 
 import java.util.SortedSet;
 import java.util.concurrent.Future;

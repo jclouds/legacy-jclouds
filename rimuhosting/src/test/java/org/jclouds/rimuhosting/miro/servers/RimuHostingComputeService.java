@@ -1,7 +1,7 @@
 package org.jclouds.rimuhosting.miro.servers;
 
-import org.jclouds.servers.ServerService;
-import org.jclouds.servers.Server;
+import org.jclouds.compute.ComputeService;
+import org.jclouds.compute.Server;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
 import org.jclouds.rimuhosting.miro.domain.Instance;
 import org.jclouds.rimuhosting.miro.domain.NewInstanceResponse;
@@ -16,11 +16,11 @@ import java.util.TreeSet;
  * @author Ivan Meredith
  */
 @Singleton
-public class RimuHostingServerService implements ServerService {
+public class RimuHostingComputeService implements ComputeService {
    RimuHostingClient rhClient;
 
    @Inject
-   public RimuHostingServerService(RimuHostingClient rhClient){
+   public RimuHostingComputeService(RimuHostingClient rhClient){
       this.rhClient = rhClient;
    }
 

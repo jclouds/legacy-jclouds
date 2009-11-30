@@ -1,12 +1,10 @@
 package org.jclouds.rimuhosting.miro.servers;
 
-import org.jclouds.servers.Server;
-import org.jclouds.servers.Platform;
-import org.jclouds.servers.Instance;
+import org.jclouds.compute.Server;
+import org.jclouds.compute.Platform;
+import org.jclouds.compute.Instance;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
-import com.google.common.base.Service;
 
-import java.util.concurrent.Future;
 import java.util.SortedSet;
 
 public class RimuHostingServer implements Server {
