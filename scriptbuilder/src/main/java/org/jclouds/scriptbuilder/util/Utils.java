@@ -214,16 +214,6 @@ public class Utils {
       return OS_TO_ZERO_PATH.get(family);
    }
 
-   public static final Map<OsFamily, String> OS_TO_SCRIPT_INIT = ImmutableMap.of(OsFamily.UNIX,
-            "set +u\nshopt -s xpg_echo\nshopt -s expand_aliases\n", OsFamily.WINDOWS, "");
-
-   /**
-    * sets up shell options needed for script execution
-    */
-   public static String writeScriptInit(OsFamily family) {
-      return OS_TO_SCRIPT_INIT.get(family);
-   }
-
    public static final Map<OsFamily, String> OS_TO_SWITCH_PATTERN = ImmutableMap.of(OsFamily.UNIX,
             "case ${variable} in\n", OsFamily.WINDOWS, "goto CASE%{variable}\r\n");
 

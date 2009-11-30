@@ -19,3 +19,4 @@ goto CASE%1
    echo stopped
    GOTO END_SWITCH
 :END_SWITCH
+exit /b 0

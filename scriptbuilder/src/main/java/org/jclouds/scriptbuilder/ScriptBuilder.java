@@ -115,8 +115,7 @@ public class ScriptBuilder {
    public String build(final OsFamily osFamily) {
       final Map<String, String> tokenValueMap = ShellToken.tokenValueMap(osFamily);
       StringBuilder builder = new StringBuilder();
-      builder.append(ShellToken.SHEBANG.to(osFamily));
-      builder.append(Utils.writeScriptInit(osFamily));
+      builder.append(ShellToken.BEGIN_SCRIPT.to(osFamily));
       builder.append(Utils.writeUnsetVariables(Lists.newArrayList(Iterables.transform(
                variablesToUnset, new Function<String, String>() {
                   @Override
@@ -140,6 +139,7 @@ public class ScriptBuilder {
       for (Entry<String, Map<String, String>> entry : switchExec.entrySet()) {
          builder.append(Utils.writeSwitch(entry.getKey(), entry.getValue(), osFamily));
       }
+      builder.append(ShellToken.END_SCRIPT.to(osFamily));
       return builder.toString();
    }
 }

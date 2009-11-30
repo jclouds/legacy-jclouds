@@ -20,3 +20,5 @@ stop)
    echo stopped
    ;;
 esac
+set -u
+return 0

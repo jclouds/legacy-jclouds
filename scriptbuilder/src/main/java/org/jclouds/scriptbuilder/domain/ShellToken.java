@@ -58,7 +58,7 @@ public enum ShellToken {
    /**
     * End the function. exits successfully and closes the code block.
     */
-   FNCE, BEGIN_FUNCTIONS, END_FUNCTIONS, EXPORT, LF, SH, SOURCE, REM, RETURN, ARGS, VARSTART, VAREND, SHEBANG, LIBRARY_PATH_VARIABLE;
+   FNCE, BEGIN_SCRIPT, END_SCRIPT, BEGIN_FUNCTIONS, END_FUNCTIONS, EXPORT, LF, SH, SOURCE, REM, RETURN, ARGS, VARSTART, VAREND, LIBRARY_PATH_VARIABLE;
 
    private static final Map<OsFamily, Map<String, String>> familyToTokenValueMap = new MapMaker()
             .makeComputingMap(new Function<OsFamily, Map<String, String>>() {
@@ -139,6 +139,20 @@ public enum ShellToken {
                case UNIX:
                   return "";
             }
+         case BEGIN_SCRIPT:
+            switch (family) {
+               case WINDOWS:
+                  return "@echo off\r\n";
+               case UNIX:
+                  return "#!/bin/bash\nset +u\nshopt -s xpg_echo\nshopt -s expand_aliases\n";
+            }
+         case END_SCRIPT:
+            switch (family) {
+               case WINDOWS:
+                  return "exit /b 0\r\n";
+               case UNIX:
+                  return "set -u\nreturn 0\n";
+            }
          case EXPORT:
             switch (family) {
                case WINDOWS:
@@ -209,14 +223,6 @@ public enum ShellToken {
                case UNIX:
                   return "";
             }
-         case SHEBANG:
-            switch (family) {
-               case WINDOWS:
-                  return "@echo off\r\n";
-               case UNIX:
-                  return "#!/bin/bash\n";
-            }
-
          default:
             throw new UnsupportedOperationException("token " + this + " not configured");
       }
