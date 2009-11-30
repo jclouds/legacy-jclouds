@@ -26,7 +26,7 @@ package org.jclouds.rimuhosting.miro.functions;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.jclouds.http.functions.ParseJson;
-import org.jclouds.rimuhosting.miro.domain.Instance;
+import org.jclouds.rimuhosting.miro.domain.Server;
 import org.jclouds.rimuhosting.miro.domain.internal.RimuHostingResponse;
 
 import javax.inject.Inject;
@@ -42,24 +42,24 @@ import java.util.Map;
  */
 
 @Singleton
-public class ParseInstanceFromJsonResponse extends ParseJson<Instance> {
+public class ParseInstanceFromJsonResponse extends ParseJson<Server> {
    @Inject
    public ParseInstanceFromJsonResponse(Gson gson) {
       super(gson);
    }
 
    private static class OrderResponse extends RimuHostingResponse {
-      private Instance about_order;
-      public Instance getAboutOrder() {
+      private Server about_order;
+      public Server getAboutOrder() {
          return about_order;
       }
 
-      public void setAboutOrder(Instance about_orders) {
+      public void setAboutOrder(Server about_orders) {
          this.about_order = about_orders;
       }
    }
    @Override
-   protected Instance apply(InputStream stream) {
+   protected Server apply(InputStream stream) {
       Type setType = new TypeToken<Map<String, OrderResponse>>() {
       }.getType();
       try {

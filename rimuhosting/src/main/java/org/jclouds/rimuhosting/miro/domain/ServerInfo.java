@@ -30,7 +30,7 @@ import org.jclouds.rimuhosting.miro.domain.internal.RunningState;
 /**
  * @author Ivan Meredith
  */
-public class InstanceInfo {
+public class ServerInfo {
    /**
     * Whether the server pinged from the host server.
     */

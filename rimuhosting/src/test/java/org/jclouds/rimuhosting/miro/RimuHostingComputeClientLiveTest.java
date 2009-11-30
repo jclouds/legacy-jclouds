@@ -30,7 +30,7 @@ import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.AddressReachable;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
-import org.jclouds.rimuhosting.miro.domain.Instance;
+import org.jclouds.rimuhosting.miro.domain.Server;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import static org.testng.Assert.assertEquals;
 import org.testng.annotations.AfterTest;
@@ -68,10 +68,10 @@ public class RimuHostingComputeClientLiveTest {
       String planId = "MIRO1B";
 
       id = client.start(serverName, planId, imageId);
-      Instance instance = rhClient.getInstance(id);
-      assertEquals(imageId, instance.getImageId());
-      assertEquals(serverName, instance.getName());
-      assertEquals(new Integer(160), instance.getInstanceParameters().getRam());
+      Server server = rhClient.getInstance(id);
+      assertEquals(imageId, server.getImageId());
+      assertEquals(serverName, server.getName());
+      assertEquals(new Integer(160), server.getInstanceParameters().getRam());
    }
 
    @AfterTest

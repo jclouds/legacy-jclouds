@@ -24,7 +24,7 @@
 package org.jclouds.rimuhosting.miro.domain;
 
 import com.google.gson.annotations.SerializedName;
-import org.jclouds.rimuhosting.miro.data.NewInstance;
+import org.jclouds.rimuhosting.miro.data.NewServerData;
 
 /**
  * Wrapper object to get back all data from a Instance create. The Password has been populated the NewInstance
@@ -32,42 +32,42 @@ import org.jclouds.rimuhosting.miro.data.NewInstance;
  *
  * @author Ivan Meredith
  */
-public class NewInstanceResponse implements Comparable<NewInstanceResponse> {
+public class NewServerResponse implements Comparable<NewServerResponse> {
    @SerializedName("about_order")
-   private Instance instance;
+   private Server server;
 
    @SerializedName("new_order_request")
-   private NewInstance newInstanceRequest;
+   private NewServerData newServerDataRequest;
 
    @SerializedName("running_vps_info")
-   private InstanceInfo instanceInfo;
+   private ServerInfo serverInfo;
 
-   public Instance getInstance() {
-      return instance;
+   public Server getInstance() {
+      return server;
    }
 
-   public void setInstance(Instance instaince) {
-      this.instance = instaince;
+   public void setInstance(Server instaince) {
+      this.server = instaince;
    }
 
-   public NewInstance getNewInstanceRequest() {
-      return newInstanceRequest;
+   public NewServerData getNewInstanceRequest() {
+      return newServerDataRequest;
    }
 
-   public void setNewInstanceRequest(NewInstance newInstanceRequest) {
-      this.newInstanceRequest = newInstanceRequest;
+   public void setNewInstanceRequest(NewServerData newServerDataRequest) {
+      this.newServerDataRequest = newServerDataRequest;
    }
 
-   public InstanceInfo getInstanceInfo() {
-      return instanceInfo;
+   public ServerInfo getInstanceInfo() {
+      return serverInfo;
    }
 
-   public void setInstanceInfo(InstanceInfo instanceInfo) {
-      this.instanceInfo = instanceInfo;
+   public void setInstanceInfo(ServerInfo serverInfo) {
+      this.serverInfo = serverInfo;
    }
 
    @Override
-   public int compareTo(NewInstanceResponse instance) {
-      return this.instance.getId().compareTo(instance.getInstance().getId());     
+   public int compareTo(NewServerResponse server) {
+      return this.server.getId().compareTo(server.getInstance().getId());
    }
 }

@@ -25,10 +25,8 @@ package org.jclouds.rimuhosting.miro;
 
 import com.google.common.base.Predicate;
 import org.jclouds.logging.Logger;
-import org.jclouds.rimuhosting.miro.data.CreateOptions;
-import org.jclouds.rimuhosting.miro.data.NewInstance;
-import org.jclouds.rimuhosting.miro.domain.Instance;
-import org.jclouds.rimuhosting.miro.domain.NewInstanceResponse;
+import org.jclouds.rimuhosting.miro.domain.Server;
+import org.jclouds.rimuhosting.miro.domain.NewServerResponse;
 import org.jclouds.ssh.SshClient.Factory;
 
 import javax.annotation.Resource;
@@ -58,23 +56,23 @@ public class RimuHostingComputeClient {
 
    public Long start(String name, String planId, String imageId) {
       logger.debug(">> instantiating RimuHosting VPS name(%s) plan(%s) image(%s)", name, planId, imageId);
-      NewInstanceResponse instanceRespone = rhClient.createInstance(name, imageId, planId);
-      logger.debug(">> VPS id(%d) started and running.", instanceRespone.getInstance().getId());
-      return instanceRespone.getInstance().getId();
+      NewServerResponse serverRespone = rhClient.createInstance(name, imageId, planId);
+      logger.debug(">> VPS id(%d) started and running.", serverRespone.getInstance().getId());
+      return serverRespone.getInstance().getId();
    }
 
 
 
    public void reboot(Long id) {
-      Instance instance = rhClient.getInstance(id);
-      logger.debug(">> rebooting VPS(%d)", instance.getId());
+      Server server = rhClient.getInstance(id);
+      logger.debug(">> rebooting VPS(%d)", server.getId());
       rhClient.restartInstance(id);
-      logger.debug("<< on VPS(%d)", instance.getId());
+      logger.debug("<< on VPS(%d)", server.getId());
    }
 
    public void destroy(Long id) {
-      Instance instance = rhClient.getInstance(id);
-      logger.debug(">> destroy VPS(%d)", instance.getId());
+      Server server = rhClient.getInstance(id);
+      logger.debug(">> destroy VPS(%d)", server.getId());
       rhClient.destroyInstance(id);
       logger.debug(">> destroyed VPS");
    }

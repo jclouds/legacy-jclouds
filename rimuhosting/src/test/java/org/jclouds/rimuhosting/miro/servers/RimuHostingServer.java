@@ -8,17 +8,17 @@ import org.jclouds.rimuhosting.miro.RimuHostingClient;
 import java.util.SortedSet;
 
 public class RimuHostingServer implements Server {
-   org.jclouds.rimuhosting.miro.domain.Instance rhInstance;
+   org.jclouds.rimuhosting.miro.domain.Server rhServer;
 
    RimuHostingClient rhClient;
 
-   public RimuHostingServer(org.jclouds.rimuhosting.miro.domain.Instance rhInstance, RimuHostingClient rhClient){
-      this.rhInstance = rhInstance;
+   public RimuHostingServer(org.jclouds.rimuhosting.miro.domain.Server rhServer, RimuHostingClient rhClient){
+      this.rhServer = rhServer;
       this.rhClient = rhClient;
    }
 
    public String getId() {
-      return rhInstance.toString();
+      return rhServer.toString();
    }
 
    public Platform createPlatform(String id) {
@@ -38,7 +38,7 @@ public class RimuHostingServer implements Server {
    }
 
    public Boolean destroyServer() {
-      rhClient.destroyInstance(rhInstance.getId());
+      rhClient.destroyInstance(rhServer.getId());
       return Boolean.TRUE;
    }
 }

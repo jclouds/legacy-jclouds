@@ -1,10 +1,9 @@
 package org.jclouds.rimuhosting.miro.servers;
 
 import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.Server;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
-import org.jclouds.rimuhosting.miro.domain.Instance;
-import org.jclouds.rimuhosting.miro.domain.NewInstanceResponse;
+import org.jclouds.rimuhosting.miro.domain.Server;
+import org.jclouds.rimuhosting.miro.domain.NewServerResponse;
 
 import javax.inject.Singleton;
 import javax.inject.Inject;
@@ -24,25 +23,25 @@ public class RimuHostingComputeService implements ComputeService {
       this.rhClient = rhClient;
    }
 
-   public Server createServerAndWait(String name, String profile, String image) {
-      NewInstanceResponse instanceResp = rhClient.createInstance(name, image, profile);
-      return new RimuHostingServer(instanceResp.getInstance(), rhClient);
+   public org.jclouds.compute.Server createServerAndWait(String name, String profile, String image) {
+      NewServerResponse serverResp = rhClient.createInstance(name, image, profile);
+      return new RimuHostingServer(serverResp.getInstance(), rhClient);
    }
 
-   public Future<Server> createServer(String name, String profile, String image) {
+   public Future<org.jclouds.compute.Server> createServer(String name, String profile, String image) {
       return null;  //To change body of implemented methods use File | Settings | File Templates.
    }
 
-   public SortedSet<Server> listServers() {
-      SortedSet<Server> servers = new TreeSet<Server>();
-      SortedSet<Instance> rhServers = rhClient.getInstanceList();
-      for(Instance rhServer : rhServers) {
+   public SortedSet<org.jclouds.compute.Server> listServers() {
+      SortedSet<org.jclouds.compute.Server> servers = new TreeSet<org.jclouds.compute.Server>();
+      SortedSet<Server> rhServers = rhClient.getInstanceList();
+      for(Server rhServer : rhServers) {
          servers.add(new RimuHostingServer(rhServer,rhClient));
       }
       return servers;
    }
 
-   public Server getServer(String id) {
+   public org.jclouds.compute.Server getServer(String id) {
       return new RimuHostingServer(rhClient.getInstance(Long.valueOf(id)), rhClient);
    }
 }

@@ -33,7 +33,7 @@ import org.jclouds.rimuhosting.miro.data.PostData;
  *
  * @author Ivan Meredith
  */
-public class InstanceParameters implements PostData {
+public class ServerParameters implements PostData {
    /**
     * File system image size.
     */

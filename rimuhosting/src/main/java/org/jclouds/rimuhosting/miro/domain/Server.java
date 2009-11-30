@@ -24,7 +24,7 @@
 package org.jclouds.rimuhosting.miro.domain;
 
 import com.google.gson.annotations.SerializedName;
-import org.jclouds.rimuhosting.miro.data.NewInstance;
+import org.jclouds.rimuhosting.miro.data.NewServerData;
 
 /**
  * Instance Object.
@@ -32,7 +32,7 @@ import org.jclouds.rimuhosting.miro.data.NewInstance;
  *
  * @author Ivan Meredith
  */
-public class Instance implements Comparable<Instance> {
+public class Server implements Comparable<Server> {
 
 
    @SerializedName("allocated_ips")
@@ -60,10 +60,10 @@ public class Instance implements Comparable<Instance> {
    private String type;
    private String slug;
    @SerializedName("vps_parameters")
-   private InstanceParameters instanceParameters;
+   private ServerParameters serverParameters;
 
    //Object returned back with
-   private transient NewInstance instanceRequest;
+   private transient NewServerData serverDataRequest;
 
 
    public IpAddresses getIpAddresses() {
@@ -162,24 +162,24 @@ public class Instance implements Comparable<Instance> {
       this.slug = slug;
    }
 
-   public InstanceParameters getInstanceParameters() {
-      return instanceParameters;
+   public ServerParameters getInstanceParameters() {
+      return serverParameters;
    }
 
-   public void setInstanceParameters(InstanceParameters instanceParameters) {
-      this.instanceParameters = instanceParameters;
+   public void setInstanceParameters(ServerParameters serverParameters) {
+      this.serverParameters = serverParameters;
    }
 
-   public NewInstance getInstanceRequest() {
-      return instanceRequest;
+   public NewServerData getInstanceRequest() {
+      return serverDataRequest;
    }
 
-   public void setInstanceRequest(NewInstance instanceRequest) {
-      this.instanceRequest = instanceRequest;
+   public void setInstanceRequest(NewServerData serverDataRequest) {
+      this.serverDataRequest = serverDataRequest;
    }
    
    @Override
-   public int compareTo(Instance instance) {
-      return name.compareTo(instance.getName());
+   public int compareTo(Server server) {
+      return name.compareTo(server.getName());
    }
 }

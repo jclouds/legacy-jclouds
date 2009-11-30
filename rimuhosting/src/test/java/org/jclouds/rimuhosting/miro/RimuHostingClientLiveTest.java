@@ -25,8 +25,6 @@ package org.jclouds.rimuhosting.miro;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rimuhosting.miro.data.CreateOptions;
-import org.jclouds.rimuhosting.miro.data.NewInstance;
 import org.jclouds.rimuhosting.miro.domain.*;
 import org.jclouds.rimuhosting.miro.domain.internal.RunningState;
 import static org.testng.Assert.*;
@@ -80,15 +78,15 @@ public class RimuHostingClientLiveTest {
    @Test
    public void testLifeCycle() {
 	   //Get the first image, we dont really care what it is in this test.
-	   NewInstanceResponse instanceResponse = connection.createInstance("test.jclouds.org", "lenny", "MIRO1B");
-      Instance instance = instanceResponse.getInstance();
-      //Now we have the instance, lets restart it
-      assertNotNull(instance.getId());
-      InstanceInfo instanceInfo =  connection.restartInstance(instance.getId());
-      connection.destroyInstance(instance.getId());
+	   NewServerResponse serverResponse = connection.createInstance("test.jclouds.org", "lenny", "MIRO1B");
+      Server server = serverResponse.getInstance();
+      //Now we have the server, lets restart it
+      assertNotNull(server.getId());
+      ServerInfo serverInfo =  connection.restartInstance(server.getId());
+      connection.destroyInstance(server.getId());
       //Should be running now.
-      assertEquals(instanceInfo.getState(), RunningState.RUNNING);
-      assertEquals(instance.getName(),"test.jclouds.org");
-      assertEquals(instance.getImageId(), "lenny");
+      assertEquals(serverInfo.getState(), RunningState.RUNNING);
+      assertEquals(server.getName(),"test.jclouds.org");
+      assertEquals(server.getImageId(), "lenny");
    }
 }

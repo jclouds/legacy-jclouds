@@ -26,7 +26,7 @@ package org.jclouds.rimuhosting.miro.functions;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.jclouds.http.functions.ParseJson;
-import org.jclouds.rimuhosting.miro.domain.Instance;
+import org.jclouds.rimuhosting.miro.domain.Server;
 import org.jclouds.rimuhosting.miro.domain.internal.RimuHostingResponse;
 
 import javax.inject.Inject;
@@ -42,24 +42,24 @@ import java.util.SortedSet;
  * @author Ivan Meredith
  */
 @Singleton
-public class ParseInstancesFromJsonResponse extends ParseJson<SortedSet<Instance>> {
+public class ParseInstancesFromJsonResponse extends ParseJson<SortedSet<Server>> {
    @Inject
    public ParseInstancesFromJsonResponse(Gson gson) {
       super(gson);
    }
 
    private static class OrderResponse extends RimuHostingResponse {
-      private SortedSet<Instance> about_orders;
-      public SortedSet<Instance> getAboutOrders() {
+      private SortedSet<Server> about_orders;
+      public SortedSet<Server> getAboutOrders() {
          return about_orders;
       }
 
-      public void setAboutOrders(SortedSet<Instance> about_orders) {
+      public void setAboutOrders(SortedSet<Server> about_orders) {
          this.about_orders = about_orders;
       }
    }
    @Override
-   protected SortedSet<Instance> apply(InputStream stream) {
+   protected SortedSet<Server> apply(InputStream stream) {
       Type setType = new TypeToken<Map<String, OrderResponse>>() {
       }.getType();
       try {

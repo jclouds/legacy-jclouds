@@ -24,7 +24,7 @@
 package org.jclouds.rimuhosting.miro.data;
 
 import com.google.gson.annotations.SerializedName;
-import org.jclouds.rimuhosting.miro.domain.InstanceParameters;
+import org.jclouds.rimuhosting.miro.domain.ServerParameters;
 import org.jclouds.rimuhosting.miro.domain.PricingPlan;
 
 /**
@@ -32,22 +32,22 @@ import org.jclouds.rimuhosting.miro.domain.PricingPlan;
  *
  * @author Ivan Meredith
  */
-public class NewInstance implements PostData{
-	public NewInstance(){}
+public class NewServerData implements PostData{
+   public NewServerData(){}
    
-   public NewInstance(CreateOptions createOptions, PricingPlan pricingPlan){
+   public NewServerData(CreateOptions createOptions, PricingPlan pricingPlan){
 		this.createOptions = createOptions;
 		if(pricingPlan != null){
 			this.planId = pricingPlan.getId();
 		}
 	}
 	
-	public NewInstance(CreateOptions createOptions, String pricingPlanId){
+	public NewServerData(CreateOptions createOptions, String pricingPlanId){
 		this.createOptions = createOptions;
 		this.planId = pricingPlanId;
 	}
 	
-	public NewInstance(CloneOptions cloneOptions){
+	public NewServerData(CloneOptions cloneOptions){
 		this.cloneOptions = cloneOptions;
 	}
    /**
@@ -91,7 +91,7 @@ public class NewInstance implements PostData{
     * most servers need).
     */
    @SerializedName("ip_request")
-   private IpRequest ipRequest;
+   private IpRequestData ipRequest;
    /**
     * The pricing plan code you want to use.&nbsp; Per the pricing plans
     * resource.
@@ -118,7 +118,7 @@ public class NewInstance implements PostData{
     * (that's not a problem on the bigger-, non-low contention-plans.
     */
    @SerializedName("vps_paramters")
-   private InstanceParameters instanceParameters;
+   private ServerParameters serverParameters;
 
    public Long getBillingId() {
       return billingId;
@@ -152,11 +152,11 @@ public class NewInstance implements PostData{
       this.cloneOptions = cloneOptions;
    }
 
-   public IpRequest getIpRequest() {
+   public IpRequestData getIpRequest() {
       return ipRequest;
    }
 
-   public void setIpRequest(IpRequest ipRequest) {
+   public void setIpRequest(IpRequestData ipRequest) {
       this.ipRequest = ipRequest;
    }
 
@@ -176,12 +176,12 @@ public class NewInstance implements PostData{
       this.userId = userId;
    }
 
-   public InstanceParameters getInstanceParameters() {
-      return instanceParameters;
+   public ServerParameters getInstanceParameters() {
+      return serverParameters;
    }
 
-   public void setInstanceParameters(InstanceParameters instanceParameters) {
-      this.instanceParameters = instanceParameters;
+   public void setInstanceParameters(ServerParameters serverParameters) {
+      this.serverParameters = serverParameters;
    }
    
    public void validate(){
@@ -199,8 +199,8 @@ public class NewInstance implements PostData{
 		   this.ipRequest.validate();
 	   }
 	   
-	   if(this.instanceParameters != null){
-		  this.instanceParameters.validate();
+	   if(this.serverParameters != null){
+		  this.serverParameters.validate();
 	   }
    }
 }

@@ -31,7 +31,7 @@ import com.google.gson.annotations.SerializedName;
  *
  * @author Ivan Meredith
  */
-public class IpRequest implements PostData {
+public class IpRequestData implements PostData {
    /**
     * How many IPs you need.&nbsp; Typically 1.&nbsp; Typically you
     * only need more than one IP if your server has SSL certs for more

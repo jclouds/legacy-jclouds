@@ -26,7 +26,7 @@ package org.jclouds.rimuhosting.miro.functions;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.jclouds.http.functions.ParseJson;
-import org.jclouds.rimuhosting.miro.domain.Instance;
+import org.jclouds.rimuhosting.miro.domain.Server;
 import org.jclouds.rimuhosting.miro.domain.internal.RimuHostingResponse;
 
 import javax.inject.Inject;
@@ -47,7 +47,7 @@ public class ParseResizeResponseFromJsonResponse extends ParseJson<ParseResizeRe
    }
 
    public static class ResizeResponse extends RimuHostingResponse {
-      private Instance about_order;
+      private Server about_order;
       private ResizeResponse resource_change_result;
 
       public ResizeResponse getResourceChangeResult() {
@@ -58,11 +58,11 @@ public class ParseResizeResponseFromJsonResponse extends ParseJson<ParseResizeRe
          this.resource_change_result = resource_change_result;
       }
 
-      public Instance getAboutOrder() {
+      public Server getAboutOrder() {
          return about_order;
       }
 
-      public void setAboutOrder(Instance about_orders) {
+      public void setAboutOrder(Server about_orders) {
          this.about_order = about_orders;
       }
    }

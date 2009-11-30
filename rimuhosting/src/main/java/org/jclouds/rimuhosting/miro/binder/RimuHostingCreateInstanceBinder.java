@@ -1,7 +1,7 @@
 package org.jclouds.rimuhosting.miro.binder;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rimuhosting.miro.data.NewInstance;
+import org.jclouds.rimuhosting.miro.data.NewServerData;
 import org.jclouds.rimuhosting.miro.data.CreateOptions;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -18,7 +18,7 @@ public class RimuHostingCreateInstanceBinder extends RimuHostingJsonBinder{
       String planId = checkNotNull(postParams.get("planId"));
       //There will be cases when the password is null.
       String password = postParams.get("password");
-      NewInstance newInstance = new NewInstance(new CreateOptions(name, password, imageId), planId);
-      bindToRequest(request, newInstance);
+      NewServerData newServerData = new NewServerData(new CreateOptions(name, password, imageId), planId);
+      bindToRequest(request, newServerData);
    }   
 }

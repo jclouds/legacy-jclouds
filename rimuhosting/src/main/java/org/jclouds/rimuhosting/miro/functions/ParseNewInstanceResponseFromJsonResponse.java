@@ -26,7 +26,7 @@ package org.jclouds.rimuhosting.miro.functions;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.jclouds.http.functions.ParseJson;
-import org.jclouds.rimuhosting.miro.domain.NewInstanceResponse;
+import org.jclouds.rimuhosting.miro.domain.NewServerResponse;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -42,18 +42,18 @@ import java.util.Map;
  */
 
 @Singleton
-public class ParseNewInstanceResponseFromJsonResponse extends ParseJson<NewInstanceResponse> {
+public class ParseNewInstanceResponseFromJsonResponse extends ParseJson<NewServerResponse> {
    @Inject
    public ParseNewInstanceResponseFromJsonResponse(Gson gson) {
       super(gson);
    }
 
    @Override
-   protected NewInstanceResponse apply(InputStream stream) {
-      Type setType = new TypeToken<Map<String, NewInstanceResponse>>() {
+   protected NewServerResponse apply(InputStream stream) {
+      Type setType = new TypeToken<Map<String, NewServerResponse>>() {
       }.getType();
       try {
-         Map<String, NewInstanceResponse> responseMap = gson.fromJson(new InputStreamReader(stream, "UTF-8"), setType);
+         Map<String, NewServerResponse> responseMap = gson.fromJson(new InputStreamReader(stream, "UTF-8"), setType);
          return responseMap.values().iterator().next();
       } catch (UnsupportedEncodingException e) {
          throw new RuntimeException("jclouds requires UTF-8 encoding", e);

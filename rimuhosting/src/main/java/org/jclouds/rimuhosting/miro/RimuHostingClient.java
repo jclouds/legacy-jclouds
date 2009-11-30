@@ -24,17 +24,11 @@
 package org.jclouds.rimuhosting.miro;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.MapEntityParam;
-import org.jclouds.rimuhosting.miro.binder.RimuHostingJsonBinder;
-import org.jclouds.rimuhosting.miro.data.NewInstance;
 import org.jclouds.rimuhosting.miro.domain.*;
 
-import javax.ws.rs.PathParam;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.Future;
 
 /**
  * Provides synchronous access to RimuHosting.
@@ -49,17 +43,17 @@ public interface RimuHostingClient {
 
    SortedSet<Image> getImageList();
 
-   SortedSet<Instance> getInstanceList();
+   SortedSet<Server> getInstanceList();
 
    SortedSet<PricingPlan> getPricingPlanList();
 
-   NewInstanceResponse createInstance(String name, String imageId, String planId);
+   NewServerResponse createInstance(String name, String imageId, String planId);
    
-   NewInstanceResponse createInstance(String name, String imageId, String planId, String password);
+   NewServerResponse createInstance(String name, String imageId, String planId, String password);
 
-   Instance getInstance(Long id);
+   Server getInstance(Long id);
    
-   InstanceInfo restartInstance(Long id);
+   ServerInfo restartInstance(Long id);
    
    List<String> destroyInstance(Long id);
 }
