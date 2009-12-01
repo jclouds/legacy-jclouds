@@ -1,6 +1,9 @@
 package org.jclouds.scriptbuilder;
 
-import static org.jclouds.scriptbuilder.domain.Statements.*;
+import static org.jclouds.scriptbuilder.domain.Statements.findPid;
+import static org.jclouds.scriptbuilder.domain.Statements.interpret;
+import static org.jclouds.scriptbuilder.domain.Statements.kill;
+import static org.jclouds.scriptbuilder.domain.Statements.switchOn;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -57,6 +60,23 @@ public class ScriptBuilderTest {
    public void testFindPidUNIX() throws MalformedURLException, IOException {
       assertEquals(findPidBuilder.build(OsFamily.UNIX), CharStreams.toString(Resources
                .newReaderSupplier(Resources.getResource("test_find_pid."
+                        + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
+   }
+
+   ScriptBuilder seekAndDestroyBuilder = new ScriptBuilder().addStatement(findPid("{args}"))
+            .addStatement(kill());
+
+   @Test
+   public void testSeekAndDestroyWindows() throws MalformedURLException, IOException {
+      assertEquals(seekAndDestroyBuilder.build(OsFamily.WINDOWS), CharStreams.toString(Resources
+               .newReaderSupplier(Resources.getResource("test_seek_and_destroy."
+                        + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8)));
+   }
+
+   @Test
+   public void testSeekAndDestroyUNIX() throws MalformedURLException, IOException {
+      assertEquals(seekAndDestroyBuilder.build(OsFamily.UNIX), CharStreams.toString(Resources
+               .newReaderSupplier(Resources.getResource("test_seek_and_destroy."
                         + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
    }
 

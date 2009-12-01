@@ -47,7 +47,7 @@ public class InterpretableStatement implements Statement {
    }
 
    @Override
-   public Iterable<String> functionDependecies() {
+   public Iterable<String> functionDependecies(OsFamily family) {
       return ImmutableList.of();
    }
 

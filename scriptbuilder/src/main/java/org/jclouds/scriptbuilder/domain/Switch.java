@@ -127,10 +127,10 @@ public class Switch implements Statement {
    }
 
    @Override
-   public Iterable<String> functionDependecies() {
+   public Iterable<String> functionDependecies(OsFamily family) {
       List<String> functions = Lists.newArrayList();
       for (Statement statement : valueToActions.values()) {
-         Iterables.addAll(functions, statement.functionDependecies());
+         Iterables.addAll(functions, statement.functionDependecies(family));
       }
       return functions;
    }

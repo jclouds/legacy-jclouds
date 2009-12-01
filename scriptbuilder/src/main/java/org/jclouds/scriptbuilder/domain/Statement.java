@@ -29,7 +29,7 @@ package org.jclouds.scriptbuilder.domain;
  * @author Adrian Cole
  */
 public interface Statement {
-   Iterable<String> functionDependecies();
+   Iterable<String> functionDependecies(OsFamily family);
 
    String render(OsFamily family);
 }

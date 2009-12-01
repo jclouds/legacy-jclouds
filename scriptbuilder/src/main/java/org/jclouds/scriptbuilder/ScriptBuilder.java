@@ -133,7 +133,7 @@ public class ScriptBuilder {
                new Function<Statement, Iterable<String>>() {
                   @Override
                   public Iterable<String> apply(Statement from) {
-                     return from.functionDependecies();
+                     return from.functionDependecies(osFamily);
                   }
                }));
       List<String> unresolvedFunctions = Lists.newArrayList(dependentFunctions);

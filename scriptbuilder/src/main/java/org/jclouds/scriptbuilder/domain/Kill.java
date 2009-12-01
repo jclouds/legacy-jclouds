@@ -23,45 +23,34 @@
  */
 package org.jclouds.scriptbuilder.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Map;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+
 /**
- * Statements used in shell scripts.
+ * Statement used in a shell script
  * 
  * @author Adrian Cole
  */
-public class Statements {
-   private static final Kill KILL = new Kill();
+public class Kill implements Statement {
 
-   public static Statement switchOn(String variable, Map<String, Statement> valueToActions) {
-      return new Switch(variable, valueToActions);
+   public static final Map<OsFamily, String> OS_TO_KILL = ImmutableMap.of(OsFamily.UNIX,
+            "[ -n \"$FOUND_PID\" ]  && {\n   echo stopping $FOUND_PID\n   kill -9 $FOUND_PID\n}\n",
+            OsFamily.WINDOWS,
+            "if defined FOUND_PID (\r\n   TASKKILL /F /T /PID %FOUND_PID% >NUL\r\n)\r\n");
+
+   public Kill() {
    }
 
-   public static Statement call(String function, String... args) {
-      return new Call(function, args);
+   public String render(OsFamily family) {
+      return OS_TO_KILL.get(checkNotNull(family, "family"));
    }
 
-   /**
-    * Stores the pid into the variable {@code FOUND_PID} if successful.
-    * 
-    * @param args
-    *           - what to search for in the process tree.
-    */
-   public static Statement findPid(String args) {
-      return new Call("findPid", args);
+   @Override
+   public Iterable<String> functionDependecies(OsFamily family) {
+      return ImmutableList.of();
    }
-
-   /**
-    * Kills the pid and subprocesses related to the variable {@code FOUND_PID} if set.
-    * 
-    * @see findPid
-    */
-   public static Statement kill() {
-      return KILL;
-   }
-
-   public static Statement interpret(String portableStatement) {
-      return new InterpretableStatement(portableStatement);
-   }
-
 }
