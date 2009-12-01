@@ -8,16 +8,21 @@ function abort {
    exit 1
 }
 function default {
-   export JAVA_HOME="/apps/jdk1.6"
+   export RUNTIME="Moo"
    return 0
 }
 export PATH=/usr/ucb/bin:/bin:/usr/bin:/usr/sbin
 case $1 in
 start)
-   echo started
+   default || exit 1
+echo start $RUNTIME
    ;;
 stop)
-   echo stopped
+   default || exit 1
+echo stop $RUNTIME
+   ;;
+status)
+   echo status ... the following should be empty, as we haven't sourced the variable"$RUNTIME"
    ;;
 esac
 exit 0

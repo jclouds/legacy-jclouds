@@ -23,49 +23,24 @@
  */
 package org.jclouds.scriptbuilder.domain;
 
-import java.util.Map;
+import static org.jclouds.scriptbuilder.domain.Statements.*;
+import static org.testng.Assert.assertEquals;
+
+import org.testng.annotations.Test;
 
 /**
- * Statements used in shell scripts.
- * 
  * @author Adrian Cole
  */
-public class Statements {
-   private static final Kill KILL = new Kill();
+@Test(groups = "unit", testName = "scriptbuilder.StatementListTest")
+public class StatementListTest {
+   Statement statement = newStatementList(call("default"), interpret("echo started{lf}"));
 
-   public static Statement newStatementList(Statement... statements) {
-      return new StatementList(statements);
+   public void testUNIX() {
+      assertEquals(statement.render(OsFamily.UNIX), "default || return 1\necho started\n");
    }
 
-   public static Statement switchOn(String variable, Map<String, Statement> valueToActions) {
-      return new Switch(variable, valueToActions);
+   public void testWINDOWS() {
+      assertEquals(statement.render(OsFamily.WINDOWS),
+               "call :default\r\nif errorlevel 1 goto abort\r\necho started\r\n");
    }
-
-   public static Statement call(String function, String... args) {
-      return new Call(function, args);
-   }
-
-   /**
-    * Stores the pid into the variable {@code FOUND_PID} if successful.
-    * 
-    * @param args
-    *           - what to search for in the process tree.
-    */
-   public static Statement findPid(String args) {
-      return new Call("findPid", args);
-   }
-
-   /**
-    * Kills the pid and subprocesses related to the variable {@code FOUND_PID} if set.
-    * 
-    * @see #findPid
-    */
-   public static Statement kill() {
-      return KILL;
-   }
-
-   public static Statement interpret(String portableStatement) {
-      return new InterpretableStatement(portableStatement);
-   }
-
 }

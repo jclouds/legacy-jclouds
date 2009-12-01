@@ -50,8 +50,8 @@ public class Switch implements Statement {
             OsFamily.UNIX, "esac\n", OsFamily.WINDOWS, ":END_SWITCH\r\n");
 
    public static final Map<OsFamily, String> OS_TO_CASE_PATTERN = ImmutableMap.of(OsFamily.UNIX,
-            "{value})\n   {action}   ;;\n", OsFamily.WINDOWS,
-            ":CASE_{value}\r\n   {action}   GOTO END_SWITCH\r\n");
+            "{value})\n{action}   ;;\n", OsFamily.WINDOWS,
+            ":CASE_{value}\r\n{action}   GOTO END_SWITCH\r\n");
 
    private final String variable;
 
@@ -88,7 +88,8 @@ public class Switch implements Statement {
 
       for (Entry<String, Statement> entry : valueToActions.entrySet()) {
          switchClause.append(Utils.replaceTokens(OS_TO_CASE_PATTERN.get(family), ImmutableMap.of(
-                  "value", entry.getKey(), "action", entry.getValue().render(family))));
+                  "value", entry.getKey(), "action", entry.getValue().render(family).replaceAll(
+                           "^", "   "))));
       }
 
       switchClause.append(OS_TO_END_SWITCH_PATTERN.get(family));

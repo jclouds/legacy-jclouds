@@ -27,6 +27,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.ShellToken;
@@ -50,10 +51,7 @@ public class ScriptBuilder {
    List<Statement> statements = Lists.newArrayList();
 
    @VisibleForTesting
-   List<String> variableScopes = Lists.newArrayList();
-
-   @VisibleForTesting
-   Map<String, String> functions = Maps.newHashMap();
+   Map<String, Map<String, String>> variableScopes = Maps.newLinkedHashMap();
 
    @VisibleForTesting
    List<String> variablesToUnset = Lists.newArrayList("path", "javaHome", "libraryPath");
@@ -75,9 +73,8 @@ public class ScriptBuilder {
     * Exports a variable inside the script
     */
    public ScriptBuilder addEnvironmentVariableScope(String scopeName, Map<String, String> variables) {
-      variableScopes.add(checkNotNull(scopeName, "scopeName"));
-      functions.put(scopeName, Utils.writeFunction(scopeName, Utils
-               .writeVariableExporters(checkNotNull(variables, "variables"))));
+      variableScopes
+               .put(checkNotNull(scopeName, "scopeName"), checkNotNull(variables, "variables"));
       return this;
    }
 
@@ -93,6 +90,13 @@ public class ScriptBuilder {
     *           whether to write a cmd or bash script.
     */
    public String build(final OsFamily osFamily) {
+      Map<String, String> functions = Maps.newLinkedHashMap();
+      functions.put("abort", Utils.writeFunctionFromResource("abort", osFamily));
+
+      for (Entry<String, Map<String, String>> entry : variableScopes.entrySet()) {
+         functions.put(entry.getKey(), Utils.writeFunction(entry.getKey(), Utils
+                  .writeVariableExporters(entry.getValue())));
+      }
       final Map<String, String> tokenValueMap = ShellToken.tokenValueMap(osFamily);
       StringBuilder builder = new StringBuilder();
       builder.append(ShellToken.BEGIN_SCRIPT.to(osFamily));
@@ -107,10 +111,9 @@ public class ScriptBuilder {
                   }
 
                })), osFamily));
-      resolveFunctionDependencies(osFamily);
+      resolveFunctionDependencies(functions, osFamily);
       if (functions.size() > 0) {
          builder.append(ShellToken.BEGIN_FUNCTIONS.to(osFamily));
-         builder.append(Utils.writeFunctionFromResource("abort", osFamily));
          for (String function : functions.values()) {
             builder.append(Utils.replaceTokens(function, tokenValueMap));
          }
@@ -128,7 +131,7 @@ public class ScriptBuilder {
    }
 
    @VisibleForTesting
-   void resolveFunctionDependencies(final OsFamily osFamily) {
+   void resolveFunctionDependencies(Map<String, String> functions, final OsFamily osFamily) {
       Iterable<String> dependentFunctions = Iterables.concat(Iterables.transform(statements,
                new Function<Statement, Iterable<String>>() {
                   @Override
@@ -137,8 +140,8 @@ public class ScriptBuilder {
                   }
                }));
       List<String> unresolvedFunctions = Lists.newArrayList(dependentFunctions);
-      Iterables.removeAll(unresolvedFunctions, this.functions.keySet());
-      for (String functionName : dependentFunctions) {
+      Iterables.removeAll(unresolvedFunctions, functions.keySet());
+      for (String functionName : unresolvedFunctions) {
          functions.put(functionName, Utils.writeFunctionFromResource(functionName, osFamily));
       }
    }

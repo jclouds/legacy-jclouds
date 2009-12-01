@@ -23,49 +23,44 @@
  */
 package org.jclouds.scriptbuilder.domain;
 
-import java.util.Map;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.List;
+
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 /**
- * Statements used in shell scripts.
+ * Statements used in a shell script
  * 
  * @author Adrian Cole
  */
-public class Statements {
-   private static final Kill KILL = new Kill();
+public class StatementList implements Statement {
 
-   public static Statement newStatementList(Statement... statements) {
-      return new StatementList(statements);
+   public final List<Statement> statements;
+
+   public StatementList(Statement... statements) {
+      this.statements = Lists.newArrayList(checkNotNull(statements, "statements"));
    }
 
-   public static Statement switchOn(String variable, Map<String, Statement> valueToActions) {
-      return new Switch(variable, valueToActions);
+   public StatementList(Iterable<Statement> statements) {
+      this.statements = Lists.newArrayList(checkNotNull(statements, "statements"));
    }
 
-   public static Statement call(String function, String... args) {
-      return new Call(function, args);
+   public String render(OsFamily family) {
+      StringBuilder statementsBuilder = new StringBuilder();
+      for (Statement statement : statements) {
+         statementsBuilder.append(statement.render(family));
+      }
+      return statementsBuilder.toString();
    }
 
-   /**
-    * Stores the pid into the variable {@code FOUND_PID} if successful.
-    * 
-    * @param args
-    *           - what to search for in the process tree.
-    */
-   public static Statement findPid(String args) {
-      return new Call("findPid", args);
+   @Override
+   public Iterable<String> functionDependecies(OsFamily family) {
+      List<String> functions = Lists.newArrayList();
+      for (Statement statement : statements) {
+         Iterables.addAll(functions, statement.functionDependecies(family));
+      }
+      return functions;
    }
-
-   /**
-    * Kills the pid and subprocesses related to the variable {@code FOUND_PID} if set.
-    * 
-    * @see #findPid
-    */
-   public static Statement kill() {
-      return KILL;
-   }
-
-   public static Statement interpret(String portableStatement) {
-      return new InterpretableStatement(portableStatement);
-   }
-
 }

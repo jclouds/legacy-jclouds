@@ -7,16 +7,23 @@ GOTO FUNCTION_END
    echo aborting: %EXCEPTION%
    exit /b 1
 :default
-   set JAVA_HOME=/apps/jdk1.6
+   set RUNTIME=Moo
    exit /b 0
 :FUNCTION_END
 set PATH=c:\windows\;C:\windows\system32;c:\windows\system32\wbem
 goto CASE%1
 :CASE_start
-   echo started
+   call :default
+if errorlevel 1 goto abort
+echo start %RUNTIME%
    GOTO END_SWITCH
 :CASE_stop
-   echo stopped
+   call :default
+if errorlevel 1 goto abort
+echo stop %RUNTIME%
+   GOTO END_SWITCH
+:CASE_status
+   echo status ... the following should be empty, as we haven't sourced the variable"%RUNTIME%"
    GOTO END_SWITCH
 :END_SWITCH
 exit /b 0
