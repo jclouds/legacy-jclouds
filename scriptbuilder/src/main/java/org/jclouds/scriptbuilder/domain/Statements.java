@@ -54,7 +54,7 @@ public class Statements {
    /**
     * Kills the pid and subprocesses related to the variable {@code FOUND_PID} if set.
     * 
-    * @see findPid
+    * @see #findPid
     */
    public static Statement kill() {
       return KILL;

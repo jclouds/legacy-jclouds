@@ -41,7 +41,7 @@ public class ShellTokenTest {
 
    public void testTokenValueMapUNIX() {
       Map<String, String> expected = new ImmutableMap.Builder<String, String>().put("fs", "/").put(
-               "ps", ":").put("lf", "\n").put("sh", "bash").put("source", ".").put("rem", "#").put(
+               "ps", ":").put("lf", "\n").put("sh", "sh").put("source", ".").put("rem", "#").put(
                "args", "$@").put("varl", "$").put("return", "return").put("exit", "exit").put(
                "varr", "").put("libraryPathVariable", "LD_LIBRARY_PATH").put("beginScript",
                "#!/bin/bash\nset +u\nshopt -s xpg_echo\nshopt -s expand_aliases\n").put(

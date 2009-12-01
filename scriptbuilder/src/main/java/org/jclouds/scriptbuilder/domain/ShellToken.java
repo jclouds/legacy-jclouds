@@ -186,7 +186,7 @@ public enum ShellToken {
                case WINDOWS:
                   return "cmd";
                case UNIX:
-                  return "bash";
+                  return "sh";
             }
          case LIBRARY_PATH_VARIABLE:
             switch (family) {
