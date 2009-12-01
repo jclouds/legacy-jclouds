@@ -37,8 +37,8 @@ public class Statements {
       return new StatementList(statements);
    }
 
-   public static Statement switchOn(String variable, Map<String, Statement> valueToActions) {
-      return new Switch(variable, valueToActions);
+   public static Statement switchArg(int arg, Map<String, Statement> valueToActions) {
+      return new SwitchArg(arg, valueToActions);
    }
 
    public static Statement call(String function, String... args) {

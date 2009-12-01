@@ -32,19 +32,19 @@ import com.google.common.collect.ImmutableMap;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "scriptbuilder.SwitchTest")
-public class SwitchTest {
+@Test(groups = "unit", testName = "scriptbuilder.SwitchArgTest")
+public class SwitchArgTest {
 
-   public void testSwitchUNIX() {
-      assertEquals(new Switch("i", ImmutableMap.of("0", interpret("echo hello zero{lf}"), "1",
+   public void testSwitchArgUNIX() {
+      assertEquals(new SwitchArg(1, ImmutableMap.of("0", interpret("echo hello zero{lf}"), "1",
                interpret("echo hello one{lf}"))).render(OsFamily.UNIX),
-               "case $I in\n0)\n   echo hello zero\n   ;;\n1)\n   echo hello one\n   ;;\nesac\n");
+               "case $1 in\n0)\n   echo hello zero\n   ;;\n1)\n   echo hello one\n   ;;\nesac\n");
    }
 
-   public void testSwitchWindows() {
+   public void testSwitchArgWindows() {
       assertEquals(
-               new Switch("i", ImmutableMap.of("0", interpret("echo hello zero{lf}"), "1",
+               new SwitchArg(1, ImmutableMap.of("0", interpret("echo hello zero{lf}"), "1",
                         interpret("echo hello one{lf}"))).render(OsFamily.WINDOWS),
-               "goto CASE%I\r\n:CASE_0\r\n   echo hello zero\r\n   GOTO END_SWITCH\r\n:CASE_1\r\n   echo hello one\r\n   GOTO END_SWITCH\r\n:END_SWITCH\r\n");
+               "if not \"%1\" == \"0\" if not \"%1\" == \"1\" (\r\n   set EXCEPTION=bad argument: %1 not in 0 1\r\n   goto abort\r\n)\r\ngoto CASE_%1\r\n:CASE_0\r\n   echo hello zero\r\n   GOTO END_SWITCH\r\n:CASE_1\r\n   echo hello one\r\n   GOTO END_SWITCH\r\n:END_SWITCH\r\n");
    }
 }

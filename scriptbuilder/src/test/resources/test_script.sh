@@ -2,7 +2,7 @@
 set +u
 shopt -s xpg_echo
 shopt -s expand_aliases
-unset PATH JAVA_HOME LD_LIBRARY_PATH
+unset PATH JAVA_HOME LD_LIBRARY_PATH RUNTIME
 function abort {
    echo "aborting: $@" 1>&2
    exit 1
@@ -22,7 +22,7 @@ stop)
 echo stop $RUNTIME
    ;;
 status)
-   echo status ... the following should be empty, as we haven't sourced the variable"$RUNTIME"
+   echo "the following should be []: [$RUNTIME]"
    ;;
 esac
 exit 0

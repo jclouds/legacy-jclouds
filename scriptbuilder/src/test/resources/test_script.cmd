@@ -2,6 +2,7 @@
 set PATH=
 set JAVA_HOME=
 set PATH=
+set RUNTIME=
 GOTO FUNCTION_END
 :abort
    echo aborting: %EXCEPTION%
@@ -11,7 +12,11 @@ GOTO FUNCTION_END
    exit /b 0
 :FUNCTION_END
 set PATH=c:\windows\;C:\windows\system32;c:\windows\system32\wbem
-goto CASE%1
+if not "%1" == "start" if not "%1" == "stop" if not "%1" == "status" (
+   set EXCEPTION=bad argument: %1 not in start stop status
+   goto abort
+)
+goto CASE_%1
 :CASE_start
    call :default
 if errorlevel 1 goto abort
@@ -23,7 +28,7 @@ if errorlevel 1 goto abort
 echo stop %RUNTIME%
    GOTO END_SWITCH
 :CASE_status
-   echo status ... the following should be empty, as we haven't sourced the variable"%RUNTIME%"
+   echo the following should be []: [%RUNTIME%]
    GOTO END_SWITCH
 :END_SWITCH
 exit /b 0

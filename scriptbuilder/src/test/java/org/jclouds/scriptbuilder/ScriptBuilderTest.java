@@ -5,7 +5,7 @@ import static org.jclouds.scriptbuilder.domain.Statements.findPid;
 import static org.jclouds.scriptbuilder.domain.Statements.interpret;
 import static org.jclouds.scriptbuilder.domain.Statements.kill;
 import static org.jclouds.scriptbuilder.domain.Statements.newStatementList;
-import static org.jclouds.scriptbuilder.domain.Statements.switchOn;
+import static org.jclouds.scriptbuilder.domain.Statements.switchArg;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -13,7 +13,7 @@ import java.net.MalformedURLException;
 
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.ShellToken;
-import org.jclouds.scriptbuilder.domain.Switch;
+import org.jclouds.scriptbuilder.domain.SwitchArg;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
@@ -30,10 +30,11 @@ import com.google.common.io.Resources;
 public class ScriptBuilderTest {
 
    ScriptBuilder testScriptBuilder = new ScriptBuilder()
+            .unsetEnvironmentVariable("runtime")
             .addEnvironmentVariableScope("default", ImmutableMap.of("runtime", "Moo"))
             .addStatement(
-                     switchOn(
-                              "1",
+                     switchArg(
+                              1,
                               ImmutableMap
                                        .of(
                                                 "start",
@@ -45,7 +46,7 @@ public class ScriptBuilderTest {
                                                          call("default"),
                                                          interpret("echo stop {varl}RUNTIME{varr}{lf}")),
                                                 "status",
-                                                newStatementList(interpret("echo status ... the following should be empty, as we haven't sourced the variable\"{varl}RUNTIME{varr}\"{lf}")))));
+                                                newStatementList(interpret("echo {vq}the following should be []: [{varl}RUNTIME{varr}]{vq}{lf}")))));
 
    @Test
    public void testBuildSimpleWindows() throws MalformedURLException, IOException {
@@ -98,9 +99,9 @@ public class ScriptBuilderTest {
    @Test
    public void testSwitchOn() {
       ScriptBuilder builder = new ScriptBuilder();
-      builder.addStatement(switchOn("1", ImmutableMap.of("start", interpret("echo started{lf}"),
+      builder.addStatement(switchArg(1, ImmutableMap.of("start", interpret("echo started{lf}"),
                "stop", interpret("echo stopped{lf}"))));
-      assertEquals(builder.statements, ImmutableList.of(new Switch("1", ImmutableMap.of("start",
+      assertEquals(builder.statements, ImmutableList.of(new SwitchArg(1, ImmutableMap.of("start",
                interpret("echo started{lf}"), "stop", interpret("echo stopped{lf}")))));
    }
 
@@ -109,20 +110,20 @@ public class ScriptBuilderTest {
       ScriptBuilder builder = new ScriptBuilder();
       assertEquals(builder.statements.size(), 0);
    }
-//
-//   @Test
-//   public void testExport() {
-//      ScriptBuilder builder = new ScriptBuilder();
-//      builder.addEnvironmentVariableScope("default", ImmutableMap.of("javaHome", "/apps/jdk1.6"));
-//      assertEquals(builder.functions, ImmutableMap.of("default",
-//               "{fncl}default{fncr}   {export} JAVA_HOME={vq}/apps/jdk1.6{vq}{lf}{fnce}"));
-//   }
-//
-//   @Test
-//   public void testNoExport() {
-//      ScriptBuilder builder = new ScriptBuilder();
-//      assertEquals(builder.functions.size(), 0);
-//   }
+
+   @Test
+   public void testExport() {
+      ScriptBuilder builder = new ScriptBuilder();
+      builder.addEnvironmentVariableScope("default", ImmutableMap.of("javaHome", "/apps/jdk1.6"));
+      assertEquals(builder.variableScopes, ImmutableMap.of("default", ImmutableMap.of("javaHome",
+               "/apps/jdk1.6")));
+   }
+
+   @Test
+   public void testNoExport() {
+      ScriptBuilder builder = new ScriptBuilder();
+      assertEquals(builder.variableScopes.size(), 0);
+   }
 
    @Test(expectedExceptions = NullPointerException.class)
    public void testExportNPE() {
