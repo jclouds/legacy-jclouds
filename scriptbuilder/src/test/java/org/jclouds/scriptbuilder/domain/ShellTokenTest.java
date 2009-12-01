@@ -55,11 +55,11 @@ public class ShellTokenTest {
    public void testTokenValueMapWindows() {
       Map<String, String> expected = new ImmutableMap.Builder<String, String>().put("fs", "\\")
                .put("ps", ";").put("lf", "\r\n").put("sh", "cmd").put("source", "@call").put("rem",
-                        "@rem").put("args", "%*").put("varl", "%").put("exit", "exit").put("varr",
+                        "@rem").put("args", "%*").put("varl", "%").put("exit", "exit /b").put("varr",
                         "%").put("libraryPathVariable", "PATH").put("return", "exit /b").put("vq",
                         "").put("beginFunctions", "GOTO FUNCTION_END\r\n").put("endFunctions",
                         ":FUNCTION_END\r\n").put("beginScript", "@echo off\r\n").put("endScript",
-                        "exit 0\r\n").put("fncl", ":").put("fncr", "\r\n").put("fnce",
+                        "exit /b 0\r\n").put("fncl", ":").put("fncr", "\r\n").put("fnce",
                         "   exit /b 0\r\n").put("export", "set").build();
 
       assertEquals(ShellToken.tokenValueMap(OsFamily.WINDOWS), expected);

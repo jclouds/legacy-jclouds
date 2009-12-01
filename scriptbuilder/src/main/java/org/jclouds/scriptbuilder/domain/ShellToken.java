@@ -149,7 +149,7 @@ public enum ShellToken {
          case END_SCRIPT:
             switch (family) {
                case WINDOWS:
-                  return "exit 0\r\n";
+                  return "exit /b 0\r\n";
                case UNIX:
                   return "exit 0\n";
             }
@@ -170,7 +170,7 @@ public enum ShellToken {
          case EXIT:
             switch (family) {
                case WINDOWS:
-                  return "exit";
+                  return "exit /b";
                case UNIX:
                   return "exit";
             }

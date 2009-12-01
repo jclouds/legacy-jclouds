@@ -45,12 +45,12 @@ public class CallTest {
 
    public void testCallArgsUNIX() {
       Call call = new Call("help", "me", "rhonda");
-      assertEquals(call.render(OsFamily.UNIX), "help \"me\" \"rhonda\" || return 1\n");
+      assertEquals(call.render(OsFamily.UNIX), "help me rhonda || return 1\n");
    }
 
    public void testCallArgsWINDOWS() {
       Call call = new Call("help", "me", "rhonda");
       assertEquals(call.render(OsFamily.WINDOWS),
-               "call :help \"me\" \"rhonda\"\r\nif errorlevel 1 goto abort\r\n");
+               "call :help me rhonda\r\nif errorlevel 1 goto abort\r\n");
    }
 }

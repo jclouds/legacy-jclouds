@@ -23,6 +23,6 @@ function findPid {
    }
 }
 export PATH=/usr/ucb/bin:/bin:/usr/bin:/usr/sbin
-findPid "$@" || exit 1
+findPid $@ || exit 1
 echo $FOUND_PID
 exit 0

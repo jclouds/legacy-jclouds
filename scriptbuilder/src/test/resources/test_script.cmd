@@ -5,12 +5,12 @@ set PATH=
 GOTO FUNCTION_END
 :abort
    echo aborting: %EXCEPTION%
-   exit 1
+   exit /b 1
 :default
    set JAVA_HOME=/apps/jdk1.6
    exit /b 0
 :FUNCTION_END
-set PATH=c:\windows\;C:\windows\system32
+set PATH=c:\windows\;C:\windows\system32;c:\windows\system32\wbem
 goto CASE%1
 :CASE_start
    echo started
@@ -19,4 +19,4 @@ goto CASE%1
    echo stopped
    GOTO END_SWITCH
 :END_SWITCH
-exit 0
+exit /b 0

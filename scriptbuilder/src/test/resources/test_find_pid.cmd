@@ -5,26 +5,24 @@ set PATH=
 GOTO FUNCTION_END
 :abort
    echo aborting: %EXCEPTION%
-   exit 1
+   exit /b 1
 :findPid
    set FOUND_PID=
-   SETLOCAL
-   set _pid=
    set _expression=%1
    shift
-   set FIND_PROCESS=wmic process where (CommandLine like "%_expression%%%") get ProcessId
-   for /f "usebackq skip=1" %%a in (`cmd /c "%FIND_PROCESS% 2>NUL"`) do (
-      if not defined _proc (
-         set _pid=%%a
-         goto :done
-      )
+   set FIND_PROCESS=TASKLIST /FI "WINDOWTITLE eq %_expression%" /NH
+   FOR /F "usebackq tokens=2 delims= " %%A IN (`cmd /c "%FIND_PROCESS% 2>NUL"`) DO (
+      SET FOUND_PID=%%A
    )
-   :done
-   ENDLOCAL&SET FOUND_PID=%_pid%
-   exit /b 0
+   if defined FOUND_PID (
+      exit /b 0
+   ) else (
+      set EXCEPTION=%_expression% not found
+      exit /b 1
+   )
 :FUNCTION_END
-set PATH=c:\windows\;C:\windows\system32
-call :findPid "%*"
+set PATH=c:\windows\;C:\windows\system32;c:\windows\system32\wbem
+call :findPid %*
 if errorlevel 1 goto abort
 echo %FOUND_PID%
-exit 0
+exit /b 0

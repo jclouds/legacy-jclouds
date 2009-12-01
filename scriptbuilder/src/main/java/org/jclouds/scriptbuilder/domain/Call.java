@@ -55,8 +55,7 @@ public class Call implements Statement {
    public String render(OsFamily family) {
       StringBuilder args = new StringBuilder();
       for (String arg : this.args) {
-         args.append(String.format(" \"%s\"", Utils.replaceTokens(arg, ShellToken
-                  .tokenValueMap(family))));
+         args.append(" ").append(Utils.replaceTokens(arg, ShellToken.tokenValueMap(family)));
       }
       StringBuilder call = new StringBuilder();
       call.append(Utils.replaceTokens(OS_TO_CALL.get(family), ImmutableMap.of("function", function,
