@@ -15,11 +15,11 @@ export PATH=/usr/ucb/bin:/bin:/usr/bin:/usr/sbin
 case $1 in
 start)
    default || exit 1
-echo start $RUNTIME
+   echo start $RUNTIME
    ;;
 stop)
    default || exit 1
-echo stop $RUNTIME
+   echo stop $RUNTIME
    ;;
 status)
    echo "the following should be []: [$RUNTIME]"

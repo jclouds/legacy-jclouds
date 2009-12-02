@@ -39,7 +39,7 @@ import com.google.common.collect.Maps;
  */
 public enum ShellToken {
 
-   FS, PS,
+   FS, RM, CD, TMP, UID, ROOT, CLOSE_FD, PS, MD, ESCVAR,
 
    /**
     * If variable values need to be quoted when they include spaces, this will contain quotation
@@ -96,7 +96,6 @@ public enum ShellToken {
                case UNIX:
                   return "function ";
             }
-
          case FNCR:
             switch (family) {
                case WINDOWS:
@@ -111,12 +110,40 @@ public enum ShellToken {
                case UNIX:
                   return "   return 0\n}\n";
             }
+         case ESCVAR:
+            switch (family) {
+               case WINDOWS:
+                  return "%";
+               case UNIX:
+                  return "\\";
+            }
          case PS:
             switch (family) {
                case WINDOWS:
                   return ";";
                case UNIX:
                   return ":";
+            }
+         case CLOSE_FD:
+            switch (family) {
+               case WINDOWS:
+                  return ">NUL";
+               case UNIX:
+                  return ">&-";
+            }
+         case RM:
+            switch (family) {
+               case WINDOWS:
+                  return "del";
+               case UNIX:
+                  return "rm";
+            }
+         case MD:
+            switch (family) {
+               case WINDOWS:
+                  return "md";
+               case UNIX:
+                  return "mkdir -p";
             }
          case VQ:
             switch (family) {
@@ -174,6 +201,27 @@ public enum ShellToken {
                case UNIX:
                   return "exit";
             }
+         case ROOT:
+            switch (family) {
+               case WINDOWS:
+                  return "c:\\";
+               case UNIX:
+                  return "/";
+            }
+         case TMP:
+            switch (family) {
+               case WINDOWS:
+                  return "%TEMP%";
+               case UNIX:
+                  return "/tmp";
+            }
+         case UID:
+            switch (family) {
+               case WINDOWS:
+                  return "%USERNAME%";
+               case UNIX:
+                  return "$USER";
+            }
          case LF:
             switch (family) {
                case WINDOWS:
@@ -201,6 +249,13 @@ public enum ShellToken {
                   return "@call";
                case UNIX:
                   return ".";
+            }
+         case CD:
+            switch (family) {
+               case WINDOWS:
+                  return "cd /d";
+               case UNIX:
+                  return "cd";
             }
          case REM:
             switch (family) {

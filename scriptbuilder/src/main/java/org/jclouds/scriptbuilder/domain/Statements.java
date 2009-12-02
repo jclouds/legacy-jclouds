@@ -23,6 +23,7 @@
  */
 package org.jclouds.scriptbuilder.domain;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -43,6 +44,11 @@ public class Statements {
 
    public static Statement call(String function, String... args) {
       return new Call(function, args);
+   }
+
+   public static Statement createRunScript(String instanceName, List<String> exports, String pwd,
+            String execLine) {
+      return new CreateRunScript(instanceName, exports, pwd, execLine);
    }
 
    /**

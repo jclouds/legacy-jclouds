@@ -19,13 +19,13 @@ if not "%1" == "start" if not "%1" == "stop" if not "%1" == "status" (
 goto CASE_%1
 :CASE_start
    call :default
-if errorlevel 1 goto abort
-echo start %RUNTIME%
+   if errorlevel 1 goto abort
+   echo start %RUNTIME%
    GOTO END_SWITCH
 :CASE_stop
    call :default
-if errorlevel 1 goto abort
-echo stop %RUNTIME%
+   if errorlevel 1 goto abort
+   echo stop %RUNTIME%
    GOTO END_SWITCH
 :CASE_status
    echo the following should be []: [%RUNTIME%]

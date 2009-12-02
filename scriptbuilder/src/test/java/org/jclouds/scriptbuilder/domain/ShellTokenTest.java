@@ -47,20 +47,24 @@ public class ShellTokenTest {
                "#!/bin/bash\nset +u\nshopt -s xpg_echo\nshopt -s expand_aliases\n").put(
                "endScript", "exit 0\n").put("vq", "\"").put("beginFunctions", "").put(
                "endFunctions", "").put("fncl", "function ").put("fncr", " {\n").put("fnce",
-               "   return 0\n}\n").put("export", "export").build();
-
+               "   return 0\n}\n").put("export", "export").put("rm", "rm").put("cd", "cd").put(
+               "tmp", "/tmp").put("uid", "$USER").put("root", "/").put("closeFd", ">&-").put("md",
+               "mkdir -p").put("escvar", "\\").build();
       assertEquals(ShellToken.tokenValueMap(OsFamily.UNIX), expected);
    }
 
    public void testTokenValueMapWindows() {
       Map<String, String> expected = new ImmutableMap.Builder<String, String>().put("fs", "\\")
                .put("ps", ";").put("lf", "\r\n").put("sh", "cmd").put("source", "@call").put("rem",
-                        "@rem").put("args", "%*").put("varl", "%").put("exit", "exit /b").put("varr",
-                        "%").put("libraryPathVariable", "PATH").put("return", "exit /b").put("vq",
-                        "").put("beginFunctions", "GOTO FUNCTION_END\r\n").put("endFunctions",
+                        "@rem").put("args", "%*").put("varl", "%").put("exit", "exit /b").put(
+                        "varr", "%").put("libraryPathVariable", "PATH").put("return", "exit /b")
+               .put("vq", "").put("beginFunctions", "GOTO FUNCTION_END\r\n").put("endFunctions",
                         ":FUNCTION_END\r\n").put("beginScript", "@echo off\r\n").put("endScript",
                         "exit /b 0\r\n").put("fncl", ":").put("fncr", "\r\n").put("fnce",
-                        "   exit /b 0\r\n").put("export", "set").build();
+                        "   exit /b 0\r\n").put("export", "set").put("rm", "del")
+               .put("cd", "cd /d").put("tmp", "%TEMP%").put("uid", "%USERNAME%")
+               .put("root", "c:\\").put("closeFd", ">NUL").put("md", "md").put("escvar", "%")
+               .build();
 
       assertEquals(ShellToken.tokenValueMap(OsFamily.WINDOWS), expected);
    }
