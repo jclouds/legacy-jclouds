@@ -24,6 +24,8 @@
 package org.jclouds.vcloud;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULTCPUCOUNT;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULTMEMORY;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_ENDPOINT;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_KEY;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_SESSIONINTERVAL;
@@ -46,6 +48,8 @@ public class VCloudPropertiesBuilder extends HttpPropertiesBuilder {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_VCLOUD_VERSION, "0.8");
       properties.setProperty(PROPERTY_VCLOUD_SESSIONINTERVAL, 9 * 60 + "");
+      properties.setProperty(PROPERTY_VCLOUD_DEFAULTCPUCOUNT, "1");
+      properties.setProperty(PROPERTY_VCLOUD_DEFAULTMEMORY, "512");
       return properties;
    }
 

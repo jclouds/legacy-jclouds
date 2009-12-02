@@ -23,17 +23,21 @@
  */
 package org.jclouds.vcloud.config;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
+import org.jclouds.util.Utils;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudDiscovery;
@@ -45,6 +49,7 @@ import org.jclouds.vcloud.endpoints.VCloudLogin;
 import org.jclouds.vcloud.endpoints.VDC;
 import org.jclouds.vcloud.endpoints.internal.CatalogItemRoot;
 import org.jclouds.vcloud.endpoints.internal.VAppRoot;
+import org.jclouds.vcloud.endpoints.internal.VAppTemplateRoot;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -90,10 +95,17 @@ public class VCloudRestClientModule extends AbstractModule {
    }
 
    @Provides
+   @VAppTemplateRoot
+   @Singleton
+   String provideVAppTemplateRoot(@VCloudLogin URI vcloudUri) {
+      return vcloudUri.toASCIIString().replace("/login", "/vAppTemplate");
+   }
+
+   @Provides
    @Singleton
    protected Organization provideOrganization(VCloudDiscovery discovery) throws ExecutionException,
             TimeoutException, InterruptedException {
-      return discovery.getOrganization().get(60, TimeUnit.SECONDS);
+      return discovery.getOrganization().get(90, TimeUnit.SECONDS);
    }
 
    @Provides
@@ -108,6 +120,14 @@ public class VCloudRestClientModule extends AbstractModule {
    @Singleton
    protected URI provideCatalog(Organization org) {
       return org.getCatalog().getLocation();
+   }
+
+   @Singleton
+   @Provides
+   @Named("InstantiateVAppTemplateParams")
+   protected String provideInstantiateVAppTemplateParams() throws IOException {
+      InputStream is = getClass().getResourceAsStream("/InstantiateVAppTemplateParams.xml");
+      return Utils.toStringAndClose(is);
    }
 
    @Provides

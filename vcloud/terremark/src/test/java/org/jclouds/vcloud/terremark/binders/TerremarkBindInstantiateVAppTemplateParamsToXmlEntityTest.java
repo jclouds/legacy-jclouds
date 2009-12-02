@@ -46,12 +46,12 @@ import com.google.inject.Injector;
 import com.google.inject.Provides;
 
 /**
- * Tests behavior of {@code BindInstantiateVAppTemplateParamsToXmlEntity}
+ * Tests behavior of {@code TerremarkBindInstantiateVAppTemplateParamsToXmlEntity}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.BindInstantiateVAppTemplateParamsToXmlEntityTest")
-public class BindInstantiateVAppTemplateParamsToXmlEntityTest {
+@Test(groups = "unit", testName = "vcloud.TerremarkBindInstantiateVAppTemplateParamsToXmlEntityTest")
+public class TerremarkBindInstantiateVAppTemplateParamsToXmlEntityTest {
    Injector injector = Guice.createInjector(new AbstractModule() {
 
       @Override
@@ -73,8 +73,8 @@ public class BindInstantiateVAppTemplateParamsToXmlEntityTest {
       String expected = IOUtils.toString(getClass().getResourceAsStream(
                "/terremark/InstantiateVAppTemplateParams-test-2.xml"));
       HttpRequest request = new HttpRequest("GET", URI.create("http://test"));
-      BindInstantiateVAppTemplateParamsToXmlEntity binder = injector
-               .getInstance(BindInstantiateVAppTemplateParamsToXmlEntity.class);
+      TerremarkBindInstantiateVAppTemplateParamsToXmlEntity binder = injector
+               .getInstance(TerremarkBindInstantiateVAppTemplateParamsToXmlEntity.class);
 
       Map<String, String> map = Maps.newHashMap();
       map.put("name", "name");

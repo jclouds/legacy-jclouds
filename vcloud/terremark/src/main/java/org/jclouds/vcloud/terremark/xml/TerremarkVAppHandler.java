@@ -35,16 +35,16 @@ import javax.inject.Inject;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.domain.Link;
+import org.jclouds.rest.domain.NamedResource;
+import org.jclouds.rest.internal.NamedResourceImpl;
 import org.jclouds.rest.util.Utils;
 import org.jclouds.vcloud.VCloudMediaType;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.VAppStatus;
-import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
+import org.jclouds.vcloud.domain.TerremarkVirtualSystem;
 import org.jclouds.vcloud.endpoints.internal.VAppRoot;
-import org.jclouds.vcloud.terremark.domain.ResourceAllocation;
-import org.jclouds.vcloud.terremark.domain.VApp;
-import org.jclouds.vcloud.terremark.domain.VirtualSystem;
-import org.jclouds.vcloud.terremark.domain.internal.VAppImpl;
+import org.jclouds.vcloud.terremark.domain.TerremarkVApp;
+import org.jclouds.vcloud.terremark.domain.internal.TerremarkVAppImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -55,7 +55,7 @@ import com.google.common.collect.Sets;
 /**
  * @author Adrian Cole
  */
-public class TerremarkVAppHandler extends ParseSax.HandlerWithResult<VApp> {
+public class TerremarkVAppHandler extends ParseSax.HandlerWithResult<TerremarkVApp> {
 
    private final VirtualSystemHandler systemHandler;
    private final ResourceAllocationHandler allocationHandler;
@@ -69,7 +69,7 @@ public class TerremarkVAppHandler extends ParseSax.HandlerWithResult<VApp> {
       this.allocationHandler = allocationHandler;
    }
 
-   private VirtualSystem system;
+   private TerremarkVirtualSystem system;
    private SortedSet<ResourceAllocation> allocations = Sets.newTreeSet();
    private NamedResource vApp;
    private Link vDC;
@@ -87,8 +87,8 @@ public class TerremarkVAppHandler extends ParseSax.HandlerWithResult<VApp> {
    @VAppRoot
    private String vAppRoot;
 
-   public VApp getResult() {
-      return new VAppImpl(vApp.getId(), vApp.getName(), vApp.getType(), vApp.getLocation(), status,
+   public TerremarkVApp getResult() {
+      return new TerremarkVAppImpl(vApp.getId(), vApp.getName(), vApp.getType(), vApp.getLocation(), status,
                size, vDC, computeOptions, customizationOptions, networkToAddresses,
                operatingSystemDescription, system, allocations);
    }

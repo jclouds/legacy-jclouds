@@ -57,7 +57,6 @@ public class TerremarkVCloudRestClientModule extends VCloudRestClientModule {
       return (TerremarkVCloudAsyncClient) in;
    }
 
-
    @Override
    protected VCloudAsyncClient provideAsyncClient(RestClientFactory factory) {
       return factory.create(TerremarkVCloudAsyncClient.class);
@@ -75,10 +74,8 @@ public class TerremarkVCloudRestClientModule extends VCloudRestClientModule {
       return SyncProxy.create(TerremarkVCloudClient.class, client);
    }
 
-   @Singleton
-   @Provides
-   @Named("InstantiateVAppTemplateParams")
-   String provideInstantiateVAppTemplateParams() throws IOException {
+   @Override
+   protected String provideInstantiateVAppTemplateParams() throws IOException {
       InputStream is = getClass().getResourceAsStream(
                "/terremark/InstantiateVAppTemplateParams.xml");
       return Utils.toStringAndClose(is);

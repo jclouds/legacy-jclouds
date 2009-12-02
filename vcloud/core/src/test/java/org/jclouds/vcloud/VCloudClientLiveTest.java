@@ -30,8 +30,10 @@ import static org.testng.Assert.assertNotNull;
 import java.net.URI;
 
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.rest.domain.NamedResource;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.Task;
+import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VDC;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -81,16 +83,19 @@ public class VCloudClientLiveTest {
       assertNotNull(response.getLocation());
       assertNotNull(response.getTasks());
       for (Task t : response.getTasks()) {
-         assertEquals(connection.getTask(t.getLocation()).getLocation(),
-                  t.getLocation());
+         assertEquals(connection.getTask(t.getLocation()).getLocation(), t.getLocation());
       }
    }
 
-   @Test(enabled = false)
+   @Test(enabled = true)
    public void testGetVApp() throws Exception {
-      String response = connection.getVAppString("188849-2");
-      assertNotNull(response);
-      System.out.println(response);
+      VDC response = connection.getDefaultVDC();
+      for (NamedResource item : response.getResourceEntities().values()) {
+         if (item.getType().equals(VCloudMediaType.VAPP_XML)) {
+            VApp app = connection.getVApp(item.getId());
+            assertNotNull(app);
+         }
+      }
    }
 
    @BeforeGroups(groups = { "live" })

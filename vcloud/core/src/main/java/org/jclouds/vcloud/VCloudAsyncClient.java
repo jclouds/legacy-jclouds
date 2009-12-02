@@ -41,16 +41,24 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.MapBinder;
+import org.jclouds.rest.annotations.MapEntityParam;
+import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlEntity;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TasksList;
+import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
+import org.jclouds.vcloud.functions.VAppTemplateIdToUri;
+import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.xml.CatalogHandler;
 import org.jclouds.vcloud.xml.TaskHandler;
 import org.jclouds.vcloud.xml.TasksListHandler;
+import org.jclouds.vcloud.xml.VAppHandler;
 import org.jclouds.vcloud.xml.VDCHandler;
 
 /**
@@ -66,7 +74,6 @@ public interface VCloudAsyncClient {
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.Catalog.class)
    @Consumes(CATALOG_XML)
-   @Produces(CATALOG_XML)// required for hosting.com to operate
    @XMLResponseParser(CatalogHandler.class)
    Future<? extends Catalog> getCatalog();
 
@@ -162,5 +169,17 @@ public interface VCloudAsyncClient {
    @Consumes(VAPP_XML)
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/vapp/{vAppId}")
-   Future<String> getVAppString(@PathParam("vAppId") String appId);
+   @XMLResponseParser(VAppHandler.class)
+   Future<? extends VApp> getVApp(@PathParam("vAppId") String appId);
+
+   @POST
+   @Endpoint(org.jclouds.vcloud.endpoints.VDC.class)
+   @Path("/action/instantiateVAppTemplate")
+   @Produces("application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml")
+   @Consumes(VAPP_XML)
+   @XMLResponseParser(VAppHandler.class)
+   @MapBinder(BindInstantiateVAppTemplateParamsToXmlEntity.class)
+   Future<? extends VApp> instantiateVAppTemplate(@MapEntityParam("name") String appName,
+            @MapEntityParam("template") @ParamParser(VAppTemplateIdToUri.class) String templateId,
+            InstantiateVAppTemplateOptions... options);
 }

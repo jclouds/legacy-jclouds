@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VApp href="https://vcloud.safesecureweb.com/api/v0.8/vapp/188849-2"
+    name="188849-2" status="2" xsi:schemaLocation="http://www.vmware.com/vcloud/v0.8/vapp.xsd"
+    xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Item>
+        <rasd:AllocationUnits>hertz * 10^6</rasd:AllocationUnits>
+        <rasd:Description>Number of Virtual CPUs</rasd:Description>
+        <rasd:ElementName>1 virtual CPU(s)</rasd:ElementName>
+        <rasd:InstanceID>1</rasd:InstanceID>
+        <rasd:ResourceType>3</rasd:ResourceType>
+        <rasd:VirtualQuantity>1</rasd:VirtualQuantity>
+        <rasd:VirtualQuantityUnits>count</rasd:VirtualQuantityUnits>
+    </Item>
+</VApp>

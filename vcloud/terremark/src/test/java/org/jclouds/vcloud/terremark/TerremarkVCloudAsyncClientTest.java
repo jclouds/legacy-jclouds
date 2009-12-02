@@ -24,7 +24,7 @@
 package org.jclouds.vcloud.terremark;
 
 import static org.jclouds.vcloud.terremark.options.AddInternetServiceOptions.Builder.disabled;
-import static org.jclouds.vcloud.terremark.options.InstantiateVAppTemplateOptions.Builder.cpuCount;
+import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.cpuCount;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -55,7 +55,7 @@ import org.jclouds.vcloud.endpoints.internal.VAppRoot;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.terremark.options.AddInternetServiceOptions;
 import org.jclouds.vcloud.terremark.options.AddNodeOptions;
-import org.jclouds.vcloud.terremark.options.InstantiateVAppTemplateOptions;
+import org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.terremark.xml.InternetServiceHandler;
 import org.jclouds.vcloud.terremark.xml.NodeHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkVAppHandler;
@@ -68,12 +68,12 @@ import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests behavior of {@code TerremarkVCloudClient}
+ * Tests behavior of {@code TerremarkVCloudAsyncClient}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", sequential = true, testName = "vcloud.TerremarkVCloudClientTest")
-public class TerremarkVCloudClientTest extends RestClientTest<TerremarkVCloudAsyncClient> {
+@Test(groups = "unit", sequential = true, testName = "vcloud.TerremarkVCloudAsyncClientTest")
+public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVCloudAsyncClient> {
 
    public void testGetDefaultVDC() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TerremarkVCloudAsyncClient.class.getMethod("getDefaultVDC");
@@ -93,7 +93,7 @@ public class TerremarkVCloudClientTest extends RestClientTest<TerremarkVCloudAsy
    public void testInstantiateVAppTemplate() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = TerremarkVCloudAsyncClient.class.getMethod("instantiateVAppTemplate",
-               String.class, String.class, Array.newInstance(InstantiateVAppTemplateOptions.class,
+               String.class, String.class, Array.newInstance(TerremarkInstantiateVAppTemplateOptions.class,
                         0).getClass());
       GeneratedHttpRequest<TerremarkVCloudAsyncClient> httpMethod = processor.createRequest(method,
                "name", 3 + "");
@@ -115,7 +115,7 @@ public class TerremarkVCloudClientTest extends RestClientTest<TerremarkVCloudAsy
    public void testInstantiateVAppTemplateOptions() throws SecurityException,
             NoSuchMethodException, IOException {
       Method method = TerremarkVCloudAsyncClient.class.getMethod("instantiateVAppTemplate",
-               String.class, String.class, Array.newInstance(InstantiateVAppTemplateOptions.class,
+               String.class, String.class, Array.newInstance(TerremarkInstantiateVAppTemplateOptions.class,
                         0).getClass());
       GeneratedHttpRequest<TerremarkVCloudAsyncClient> httpMethod = processor.createRequest(method,
                "name", 3 + "", cpuCount(4).megabytes(1024).inNetwork(URI.create("http://newnet")));

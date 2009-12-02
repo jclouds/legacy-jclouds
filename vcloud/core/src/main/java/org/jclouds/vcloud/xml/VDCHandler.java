@@ -23,22 +23,17 @@
  */
 package org.jclouds.vcloud.xml;
 
-import static org.jclouds.rest.util.Utils.putNamedLink;
+import static org.jclouds.rest.util.Utils.newNamedResource;
+import static org.jclouds.rest.util.Utils.putNamedResource;
 
-import java.net.URI;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.domain.NamedLink;
+import org.jclouds.rest.domain.NamedResource;
 import org.jclouds.vcloud.domain.Capacity;
-import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Quota;
 import org.jclouds.vcloud.domain.VDC;
-import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.jclouds.vcloud.domain.internal.VDCImpl;
-import org.jclouds.vcloud.endpoints.VCloudApi;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -51,11 +46,8 @@ public class VDCHandler extends ParseSax.HandlerWithResult<VDC> {
    private StringBuilder currentText = new StringBuilder();
 
    private NamedResource vDC;
-   private Map<String, NamedLink> resourceEntities = Maps.newHashMap();
-   private Map<String, NamedLink> availableNetworks = Maps.newHashMap();
-   @Inject
-   @VCloudApi
-   URI vcloudUri;
+   private Map<String, NamedResource> resourceEntities = Maps.newHashMap();
+   private Map<String, NamedResource> availableNetworks = Maps.newHashMap();
 
    private String description;
 
@@ -89,9 +81,9 @@ public class VDCHandler extends ParseSax.HandlerWithResult<VDC> {
       if (qName.equals("Vdc")) {
          vDC = newNamedResource(attributes);
       } else if (qName.equals("Network")) {
-         putNamedLink(availableNetworks, attributes);
+         putNamedResource(availableNetworks, attributes);
       } else if (qName.equals("ResourceEntity")) {
-         putNamedLink(resourceEntities, attributes);
+         putNamedResource(resourceEntities, attributes);
       }
    }
 
@@ -122,13 +114,6 @@ public class VDCHandler extends ParseSax.HandlerWithResult<VDC> {
 
    public void characters(char ch[], int start, int length) {
       currentText.append(ch, start, length);
-   }
-
-   public NamedResource newNamedResource(Attributes attributes) {
-      return new NamedResourceImpl(attributes.getValue(attributes.getIndex("href")).replace(
-               vcloudUri.toASCIIString() + "/vdc/", ""), attributes.getValue(attributes
-               .getIndex("name")), attributes.getValue(attributes.getIndex("type")), URI
-               .create(attributes.getValue(attributes.getIndex("href"))));
    }
 
    protected String currentOrNull() {

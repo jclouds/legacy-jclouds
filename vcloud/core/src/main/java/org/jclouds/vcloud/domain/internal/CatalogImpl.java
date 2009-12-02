@@ -29,8 +29,8 @@ import java.net.URI;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.jclouds.rest.domain.NamedResource;
 import org.jclouds.vcloud.domain.Catalog;
-import org.jclouds.vcloud.domain.NamedResource;
 
 import com.google.inject.internal.Nullable;
 

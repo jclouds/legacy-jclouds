@@ -49,12 +49,13 @@ import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.functions.CatalogIdToUri;
+import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
+import org.jclouds.vcloud.terremark.binders.TerremarkBindInstantiateVAppTemplateParamsToXmlEntity;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Node;
-import org.jclouds.vcloud.terremark.domain.VApp;
+import org.jclouds.vcloud.terremark.domain.TerremarkVApp;
 import org.jclouds.vcloud.terremark.options.AddInternetServiceOptions;
 import org.jclouds.vcloud.terremark.options.AddNodeOptions;
-import org.jclouds.vcloud.terremark.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.terremark.xml.InternetServiceHandler;
 import org.jclouds.vcloud.terremark.xml.NodeHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkVAppHandler;
@@ -81,8 +82,9 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    @Path("/action/instantiatevAppTemplate")
    @Produces("application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml")
    @XMLResponseParser(TerremarkVAppHandler.class)
-   @MapBinder(InstantiateVAppTemplateOptions.class)
-   Future<? extends VApp> instantiateVAppTemplate(@MapEntityParam("name") String appName,
+   @MapBinder(TerremarkBindInstantiateVAppTemplateParamsToXmlEntity.class)
+   @Override
+   Future<? extends TerremarkVApp> instantiateVAppTemplate(@MapEntityParam("name") String appName,
             @MapEntityParam("template") @ParamParser(CatalogIdToUri.class) String templateId,
             InstantiateVAppTemplateOptions... options);
 
@@ -147,7 +149,8 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/vapp/{vAppId}")
    @XMLResponseParser(TerremarkVAppHandler.class)
-   Future<? extends VApp> getVApp(@PathParam("vAppId") String vAppId);
+   @Override
+   Future<? extends TerremarkVApp> getVApp(@PathParam("vAppId") String vAppId);
 
    @GET
    @Consumes(VAPP_XML)

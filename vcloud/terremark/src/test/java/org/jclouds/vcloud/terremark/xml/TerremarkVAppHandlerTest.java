@@ -37,12 +37,12 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rest.domain.internal.LinkImpl;
 import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.domain.ResourceAllocation;
+import org.jclouds.vcloud.domain.ResourceType;
+import org.jclouds.vcloud.domain.TerremarkVirtualSystem;
 import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.endpoints.internal.VAppRoot;
-import org.jclouds.vcloud.terremark.domain.ResourceAllocation;
-import org.jclouds.vcloud.terremark.domain.ResourceType;
-import org.jclouds.vcloud.terremark.domain.VApp;
-import org.jclouds.vcloud.terremark.domain.VirtualSystem;
+import org.jclouds.vcloud.terremark.domain.TerremarkVApp;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -83,9 +83,9 @@ public class TerremarkVAppHandlerTest extends BaseHandlerTest {
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/terremark/launched_vapp.xml");
 
-      VApp result = (VApp) factory.create(injector.getInstance(TerremarkVAppHandler.class)).parse(
-               is);
-      assertEquals(result.getId(), 13775+"");
+      TerremarkVApp result = (TerremarkVApp) factory.create(
+               injector.getInstance(TerremarkVAppHandler.class)).parse(is);
+      assertEquals(result.getId(), 13775 + "");
 
       assertEquals(result.getName(), "adriantest");
       assertEquals(result.getStatus(), VAppStatus.CREATING);
@@ -94,7 +94,6 @@ public class TerremarkVAppHandlerTest extends BaseHandlerTest {
 
       assertEquals(result.getLocation(), URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/13775"));
-      assertEquals(result.getType(), "application/vnd.vmware.vcloud.vApp+xml");
       assertEquals(result.getVDC(), new LinkImpl("application/vnd.vmware.vcloud.vdc+xml", URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32")));
 
@@ -103,9 +102,9 @@ public class TerremarkVAppHandlerTest extends BaseHandlerTest {
    public void testGetVApp() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/terremark/get_vapp.xml");
 
-      VApp result = (VApp) factory.create(injector.getInstance(TerremarkVAppHandler.class)).parse(
-               is);
-      assertEquals(result.getId(), 13850+"");
+      TerremarkVApp result = (TerremarkVApp) factory.create(
+               injector.getInstance(TerremarkVAppHandler.class)).parse(is);
+      assertEquals(result.getId(), 13850 + "");
 
       assertEquals(result.getName(), "adriantest1");
       assertEquals(result.getStatus(), VAppStatus.OFF);
@@ -115,7 +114,6 @@ public class TerremarkVAppHandlerTest extends BaseHandlerTest {
 
       assertEquals(result.getLocation(), URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/13850"));
-      assertEquals(result.getType(), "application/vnd.vmware.vcloud.vApp+xml");
       assertEquals(result.getVDC(), new LinkImpl(VCloudMediaType.VDC_XML, URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32")));
       assertEquals(
@@ -130,35 +128,34 @@ public class TerremarkVAppHandlerTest extends BaseHandlerTest {
                         MediaType.APPLICATION_XML,
                         URI
                                  .create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/13850/options/customization")));
-      assertEquals(result.getSystem(), new VirtualSystem(null, null, null, null, null, null, null,
-               null, null, null, null, "Virtual Hardware Family", 0, null, null, null, null, null,
-               "adriantest1", "vmx-07"));
+      assertEquals(result.getSystem(), new TerremarkVirtualSystem(null, null, null, null, null,
+               null, null, null, null, null, null, "Virtual Hardware Family", 0, null, null, null,
+               null, null, "adriantest1", "vmx-07"));
       assertEquals(result.getNetworkToAddresses().get("Internal"), ImmutableList.of(InetAddress
                .getByName("10.114.34.132")));
 
-      ResourceAllocation cpu = new ResourceAllocation(null, null, "hertz * 10^6", null, null, null,
-               null, "Number of Virtual CPUs", "1 virtual CPU(s)", null, 1, null, null, null, null,
-               null, null, null, ResourceType.VIRTUAL_CPU, 1, "count", null);
-      ResourceAllocation controller = new ResourceAllocation(0, null, null, null, null, null, null,
-               "SCSI Controller", "SCSI Controller 0", null, 3, null, null, null, null, null, null,
-               "lsilogic", ResourceType.SCSI_CONTROLLER, 1, null, null);
-      ResourceAllocation memory = new ResourceAllocation(null, null, "byte * 2^20", null, null,
-               null, null, "Memory Size", "512MB of memory", null, 2, null, null, null, null, null,
-               null, null, ResourceType.MEMORY, 512, "byte * 2^20", null);
-      ResourceAllocation disk = new ResourceAllocation(null, 0, null, null, null, null, null, null,
-               "Hard Disk 1", "4194304", 9, null, null, null, 3, null, null, null,
-               ResourceType.VIRTUAL_DISK, 4194304, null, null);
+      ResourceAllocation cpu = new ResourceAllocation(1, "1 virtual CPU(s)",
+               "Number of Virtual CPUs", ResourceType.PROCESSOR, null, null, null, null, null, 1,
+               "hertz * 10^6");
+
+      ResourceAllocation controller = new ResourceAllocation(3, "SCSI Controller 0",
+               "SCSI Controller", ResourceType.SCSI_CONTROLLER, "lsilogic", 0, null, null, null, 1,
+               null);
+      ResourceAllocation memory = new ResourceAllocation(2, "512MB of memory", "Memory Size",
+               ResourceType.MEMORY, null, null, null, null, null, 512, "byte * 2^20");
+      ResourceAllocation disk = new ResourceAllocation(9, "Hard Disk 1", null,
+               ResourceType.DISK_DRIVE, null, null, 0, 3, null, 4194304, null);
       assertEquals(result.getResourceAllocations(), ImmutableSortedSet.of(cpu, controller, memory,
                disk));
-      assertEquals(result.getResourceAllocationByType().get(ResourceType.VIRTUAL_CPU)
+      assertEquals(result.getResourceAllocationByType().get(ResourceType.PROCESSOR)
                .getVirtualQuantity(), 1);
       assertEquals(result.getResourceAllocationByType().get(ResourceType.SCSI_CONTROLLER)
                .getVirtualQuantity(), 1);
       assertEquals(result.getResourceAllocationByType().get(ResourceType.MEMORY)
                .getVirtualQuantity(), 512);
-      assertEquals(result.getResourceAllocationByType().get(ResourceType.VIRTUAL_DISK)
+      assertEquals(result.getResourceAllocationByType().get(ResourceType.DISK_DRIVE)
                .getVirtualQuantity(), 4194304);
       assertEquals(result.getSize(), result.getResourceAllocationByType().get(
-               ResourceType.VIRTUAL_DISK).getVirtualQuantity());
+               ResourceType.DISK_DRIVE).getVirtualQuantity());
    }
 }

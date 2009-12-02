@@ -30,7 +30,9 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TasksList;
+import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VDC;
+import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
 /**
  * Provides access to VCloud resources via their REST API.
@@ -41,13 +43,13 @@ import org.jclouds.vcloud.domain.VDC;
  */
 @Timeout(duration = 45, timeUnit = TimeUnit.SECONDS)
 public interface VCloudClient {
-   
+
    @Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)
    Catalog getCatalog();
-   
+
    @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
    VDC getDefaultVDC();
-   
+
    @Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)
    TasksList getDefaultTasksList();
 
@@ -86,5 +88,8 @@ public interface VCloudClient {
 
    void cancelTask(URI task);
 
-   String getVAppString(String appId);
+   VApp getVApp(String appId);
+
+   VApp instantiateVAppTemplate(String appName, String templateId,
+            InstantiateVAppTemplateOptions... options);
 }

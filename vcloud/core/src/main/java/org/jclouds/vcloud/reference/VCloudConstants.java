@@ -37,4 +37,8 @@ public interface VCloudConstants {
     * automatically renew vcloud token before this interval expires.
     */
    public static final String PROPERTY_VCLOUD_SESSIONINTERVAL = "jclouds.vcloud.sessioninterval";
+   public static final String PROPERTY_VCLOUD_DEFAULTCPUCOUNT = "jclouds.vcloud.defaults.cpucount";
+   public static final String PROPERTY_VCLOUD_DEFAULTMEMORY = "jclouds.vcloud.defaults.memory";
+   public static final String PROPERTY_VCLOUD_DEFAULTNETWORK = "jclouds.vcloud.defaults.network";
+
 }

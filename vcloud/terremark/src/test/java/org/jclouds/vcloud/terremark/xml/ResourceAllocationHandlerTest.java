@@ -28,8 +28,8 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.vcloud.terremark.domain.ResourceAllocation;
-import org.jclouds.vcloud.terremark.domain.ResourceType;
+import org.jclouds.vcloud.domain.ResourceAllocation;
+import org.jclouds.vcloud.domain.ResourceType;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -54,10 +54,10 @@ public class ResourceAllocationHandlerTest extends BaseHandlerTest {
                injector.getInstance(ResourceAllocationHandler.class)).parse(is);
       assertEquals(result.getAddress(), new Integer(0));
       assertEquals(result.getDescription(), "SCSI Controller");
-      assertEquals(result.getElementName(), "SCSI Controller 0");
-      assertEquals(result.getInstanceID(), 3);
-      assertEquals(result.getResourceSubType(), "lsilogic");
-      assertEquals(result.getResourceType(), ResourceType.SCSI_CONTROLLER);
+      assertEquals(result.getName(), "SCSI Controller 0");
+      assertEquals(result.getId(), 3);
+      assertEquals(result.getSubType(), "lsilogic");
+      assertEquals(result.getType(), ResourceType.SCSI_CONTROLLER);
       assertEquals(result.getVirtualQuantity(), 1);
 
    }

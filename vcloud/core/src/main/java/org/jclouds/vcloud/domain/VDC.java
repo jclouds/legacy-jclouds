@@ -26,7 +26,7 @@ package org.jclouds.vcloud.domain;
 import java.net.URI;
 import java.util.Map;
 
-import org.jclouds.rest.domain.NamedLink;
+import org.jclouds.rest.domain.NamedResource;
 import org.jclouds.vcloud.domain.internal.VDCImpl;
 
 import com.google.inject.ImplementedBy;
@@ -56,8 +56,8 @@ public interface VDC {
 
    Quota getDeployedVmsQuota();
 
-   Map<String, NamedLink> getAvailableNetworks();
+   Map<String, NamedResource> getAvailableNetworks();
 
-   Map<String, NamedLink> getResourceEntities();
+   Map<String, NamedResource> getResourceEntities();
 
 }

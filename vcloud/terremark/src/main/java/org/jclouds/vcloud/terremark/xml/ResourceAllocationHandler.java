@@ -24,8 +24,8 @@
 package org.jclouds.vcloud.terremark.xml;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.vcloud.terremark.domain.ResourceAllocation;
-import org.jclouds.vcloud.terremark.domain.ResourceType;
+import org.jclouds.vcloud.domain.ResourceAllocation;
+import org.jclouds.vcloud.domain.ResourceType;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -38,25 +38,14 @@ public class ResourceAllocationHandler extends ParseSax.HandlerWithResult<Resour
    private Integer address;
    private Integer addressOnParent;
    private String allocationUnits;
-   private String automaticAllocation;
-   private String automaticDeallocation;
-   private String caption;
-   private String consumerVisibility;
    private String description;
    private String elementName;
-   private String hostResource;
    private int instanceID;
-   private String limit;
-   private String mappingBehavior;
-   private String otherResourceType;
    private Integer parent;
-   private String poolID;
-   private String reservation;
    private String resourceSubType;
    private ResourceType resourceType;
    private long virtualQuantity = 1;
    private String virtualQuantityUnits;
-   private String weight;
 
    private ResourceAllocation item;
 
@@ -95,36 +84,16 @@ public class ResourceAllocationHandler extends ParseSax.HandlerWithResult<Resour
                this.addressOnParent = Integer.parseInt(addressOnParent);
          } else if (qName.equals("AllocationUnits")) {
             this.allocationUnits = currentText.toString().trim();
-         } else if (qName.equals("AutomaticAllocation")) {
-            this.automaticAllocation = currentText.toString().trim();
-         } else if (qName.equals("AutomaticDeallocation")) {
-            this.automaticDeallocation = currentText.toString().trim();
-         } else if (qName.equals("Caption")) {
-            this.caption = currentText.toString().trim();
-         } else if (qName.equals("ConsumerVisibility")) {
-            this.consumerVisibility = currentText.toString().trim();
          } else if (qName.equals("Description")) {
             this.description = currentText.toString().trim();
          } else if (qName.equals("ElementName")) {
             this.elementName = currentText.toString().trim();
-         } else if (qName.equals("HostResource")) {
-            this.hostResource = currentText.toString().trim();
          } else if (qName.equals("InstanceID")) {
             this.instanceID = Integer.parseInt(currentText.toString().trim());
-         } else if (qName.equals("Limit")) {
-            this.limit = currentText.toString().trim();
-         } else if (qName.equals("MappingBehavior")) {
-            this.mappingBehavior = currentText.toString().trim();
-         } else if (qName.equals("OtherResourceType")) {
-            this.otherResourceType = currentText.toString().trim();
          } else if (qName.equals("Parent")) {
             String parent = currentText.toString().trim();
             if (parent != null && !parent.equals(""))
                this.parent = Integer.parseInt(parent);
-         } else if (qName.equals("PoolID")) {
-            this.poolID = currentText.toString().trim();
-         } else if (qName.equals("Reservation")) {
-            this.reservation = currentText.toString().trim();
          } else if (qName.equals("ResourceSubType")) {
             this.resourceSubType = currentText.toString().trim();
          } else if (qName.equals("ResourceType")) {
@@ -135,36 +104,21 @@ public class ResourceAllocationHandler extends ParseSax.HandlerWithResult<Resour
                this.virtualQuantity = Long.parseLong(quantity);
          } else if (qName.equals("VirtualQuantityUnits")) {
             this.virtualQuantityUnits = currentText.toString().trim();
-         } else if (qName.equals("Weight")) {
-            this.weight = currentText.toString().trim();
          } else if (qName.equals("q2:Item")) {
-            this.item = new ResourceAllocation(address, addressOnParent, allocationUnits,
-                     automaticAllocation, automaticDeallocation, caption, consumerVisibility,
-                     description, elementName, hostResource, instanceID, limit, mappingBehavior,
-                     otherResourceType, parent, poolID, reservation, resourceSubType, resourceType,
-                     virtualQuantity, virtualQuantityUnits, weight);
+            this.item = new ResourceAllocation(instanceID, elementName, description, resourceType,
+                     resourceSubType, address, addressOnParent, parent, null, virtualQuantity,
+                     allocationUnits != null ? allocationUnits : virtualQuantityUnits);
             this.address = null;
             this.addressOnParent = null;
             this.allocationUnits = null;
-            this.automaticAllocation = null;
-            this.automaticDeallocation = null;
-            this.caption = null;
-            this.consumerVisibility = null;
             this.description = null;
             this.elementName = null;
-            this.hostResource = null;
             this.instanceID = -1;
-            this.limit = null;
-            this.mappingBehavior = null;
-            this.otherResourceType = null;
             this.parent = null;
-            this.poolID = null;
-            this.reservation = null;
             this.resourceSubType = null;
             this.resourceType = null;
             this.virtualQuantity = 1;
             this.virtualQuantityUnits = null;
-            this.weight = null;
          }
       }
       currentText = new StringBuilder();

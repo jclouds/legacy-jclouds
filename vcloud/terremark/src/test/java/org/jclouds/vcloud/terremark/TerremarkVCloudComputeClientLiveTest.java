@@ -40,13 +40,13 @@ import org.jclouds.predicates.AddressReachable;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.predicates.TaskSuccess;
 import org.jclouds.vcloud.terremark.VCloudComputeClient.Image;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Node;
-import org.jclouds.vcloud.terremark.domain.ResourceType;
-import org.jclouds.vcloud.terremark.domain.VApp;
+import org.jclouds.vcloud.terremark.domain.TerremarkVApp;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -89,7 +89,8 @@ public class TerremarkVCloudComputeClientLiveTest {
                      new Expectation(4194304 / 4 * 10, "Red Hat Enterprise Linux 5 (64-bit)")).put(
                      Image.RHEL_53,
                      new Expectation(4194304 / 4 * 10, "Red Hat Enterprise Linux 5 (64-bit)")).put(
-                     Image.UMBUNTU_90, new Expectation(4194304, "Ubuntu Linux (64-bit)")).build();
+                     Image.UMBUNTU_90, new Expectation(4194304, "Ubuntu Linux (64-bit)")).put(
+                     Image.UMBUNTU_JEOS, new Expectation(4194304, "Ubuntu Linux (32-bit)")).build();
 
    private InternetService is;
    private Node node;
@@ -99,7 +100,7 @@ public class TerremarkVCloudComputeClientLiveTest {
    @Test
    public void testPowerOn() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
-      Image toTest = Image.UMBUNTU_90;
+      Image toTest = Image.CENTOS_53;
 
       String serverName = getCompatibleServerName(toTest);
       int processorCount = 1;
@@ -108,7 +109,7 @@ public class TerremarkVCloudComputeClientLiveTest {
       id = client.start(serverName, processorCount, memory, toTest);
       Expectation expectation = expectationMap.get(toTest);
 
-      VApp vApp = tmClient.getVApp(id);
+      TerremarkVApp vApp = tmClient.getVApp(id);
       verifyConfigurationOfVApp(vApp, serverName, expectation.os, processorCount, memory,
                expectation.hardDisk);
       assertEquals(vApp.getStatus(), VAppStatus.ON);
@@ -135,21 +136,21 @@ public class TerremarkVCloudComputeClientLiveTest {
       client.exec(publicIp, "uname -a");
    }
 
-   private void verifyConfigurationOfVApp(VApp vApp, String serverName, String expectedOs,
+   private void verifyConfigurationOfVApp(TerremarkVApp vApp, String serverName, String expectedOs,
             int processorCount, int memory, long hardDisk) {
       assertEquals(vApp.getName(), serverName);
       assertEquals(vApp.getOperatingSystemDescription(), expectedOs);
-      assertEquals(vApp.getResourceAllocationByType().get(ResourceType.VIRTUAL_CPU)
+      assertEquals(vApp.getResourceAllocationByType().get(ResourceType.PROCESSOR)
                .getVirtualQuantity(), processorCount);
       assertEquals(vApp.getResourceAllocationByType().get(ResourceType.SCSI_CONTROLLER)
                .getVirtualQuantity(), 1);
       assertEquals(
                vApp.getResourceAllocationByType().get(ResourceType.MEMORY).getVirtualQuantity(),
                memory);
-      assertEquals(vApp.getResourceAllocationByType().get(ResourceType.VIRTUAL_DISK)
+      assertEquals(vApp.getResourceAllocationByType().get(ResourceType.DISK_DRIVE)
                .getVirtualQuantity(), hardDisk);
-      assertEquals(vApp.getSize(), vApp.getResourceAllocationByType()
-               .get(ResourceType.VIRTUAL_DISK).getVirtualQuantity());
+      assertEquals(vApp.getSize(), vApp.getResourceAllocationByType().get(ResourceType.DISK_DRIVE)
+               .getVirtualQuantity());
    }
 
    @AfterTest

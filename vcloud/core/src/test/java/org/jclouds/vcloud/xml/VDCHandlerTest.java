@@ -32,7 +32,7 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rest.domain.NamedLink;
-import org.jclouds.rest.domain.internal.NamedLinkImpl;
+import org.jclouds.rest.internal.NamedResourceImpl;
 import org.jclouds.vcloud.domain.Capacity;
 import org.jclouds.vcloud.domain.Quota;
 import org.jclouds.vcloud.domain.VDC;
@@ -51,7 +51,7 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "vcloud.VDCHandlerTest")
-public class VDCHandlerTest  {
+public class VDCHandlerTest {
 
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/vdc.xml");
@@ -86,7 +86,8 @@ public class VDCHandlerTest  {
                ImmutableMap
                         .of(
                                  "10.114.34.128/26",
-                                 new NamedLinkImpl(
+                                 new NamedResourceImpl(
+                                          "1708",
                                           "10.114.34.128/26",
                                           "application/vnd.vmware.vcloud.network+xml",
                                           URI
@@ -125,7 +126,8 @@ public class VDCHandlerTest  {
                new ImmutableMap.Builder<String, NamedLink>()
                         .put(
                                  "Plesk (Linux) 64-bit Template",
-                                 new NamedLinkImpl(
+                                 new NamedResourceImpl(
+                                          "1",
                                           "Plesk (Linux) 64-bit Template",
                                           "application/vnd.vmware.vcloud.vAppTemplate+xml",
                                           URI
@@ -133,35 +135,40 @@ public class VDCHandlerTest  {
                         .put(
 
                                  "Windows 2008 Datacenter 64 Bit Template",
-                                 new NamedLinkImpl(
+                                 new NamedResourceImpl(
+                                          "2",
                                           "Windows 2008 Datacenter 64 Bit Template",
                                           "application/vnd.vmware.vcloud.vAppTemplate+xml",
                                           URI
                                                    .create("https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/2")))
                         .put(
                                  "Cent OS 64 Bit Template",
-                                 new NamedLinkImpl(
+                                 new NamedResourceImpl(
+                                          "3",
                                           "Cent OS 64 Bit Template",
                                           "application/vnd.vmware.vcloud.vAppTemplate+xml",
                                           URI
                                                    .create("https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/3")))
                         .put(
                                  "cPanel (Linux) 64 Bit Template",
-                                 new NamedLinkImpl(
+                                 new NamedResourceImpl(
+                                          "4",
                                           "cPanel (Linux) 64 Bit Template",
                                           "application/vnd.vmware.vcloud.vAppTemplate+xml",
                                           URI
                                                    .create("https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/4")))
                         .put(
                                  "188849-1",
-                                 new NamedLinkImpl(
+                                 new NamedResourceImpl(
+                                          "188849-1",
                                           "188849-1",
                                           "application/vnd.vmware.vcloud.vApp+xml",
                                           URI
                                                    .create("https://vcloud.safesecureweb.com/api/v0.8/vApp/188849-1")))
                         .put(
                                  "188849-2",
-                                 new NamedLinkImpl(
+                                 new NamedResourceImpl(
+                                          "188849-2",
                                           "188849-2",
                                           "application/vnd.vmware.vcloud.vApp+xml",
                                           URI

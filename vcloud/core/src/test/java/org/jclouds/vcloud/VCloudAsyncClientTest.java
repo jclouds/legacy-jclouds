@@ -48,6 +48,7 @@ import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.xml.CatalogHandler;
 import org.jclouds.vcloud.xml.TaskHandler;
 import org.jclouds.vcloud.xml.TasksListHandler;
+import org.jclouds.vcloud.xml.VAppHandler;
 import org.jclouds.vcloud.xml.VDCHandler;
 import org.testng.annotations.Test;
 
@@ -56,12 +57,12 @@ import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests behavior of {@code VCloudClient}
+ * Tests behavior of {@code VCloudAsyncClient}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.VCloudClientTest")
-public class VCloudClientTest extends RestClientTest<VCloudAsyncClient> {
+@Test(groups = "unit", testName = "vcloud.VCloudAsyncClientTest")
+public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
    public void testCatalog() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VCloudAsyncClient.class.getMethod("getCatalog");
@@ -70,7 +71,7 @@ public class VCloudClientTest extends RestClientTest<VCloudAsyncClient> {
       assertRequestLineEquals(httpMethod, "GET http://catalog HTTP/1.1");
       assertHeadersEqual(
                httpMethod,
-               "Accept: application/vnd.vmware.vcloud.catalog+xml\nContent-Type: application/vnd.vmware.vcloud.catalog+xml\n");
+               "Accept: application/vnd.vmware.vcloud.catalog+xml\n");
       assertEntityEquals(httpMethod, null);
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
@@ -121,6 +122,21 @@ public class VCloudClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, TaskHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testGetVApp() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudAsyncClient.class.getMethod("getVApp", String.class);
+      GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, 1);
+
+      assertRequestLineEquals(httpMethod, "GET http://vcloud/vapp/1 HTTP/1.1");
+      assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.vApp+xml\n");
+      assertEntityEquals(httpMethod, null);
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, VAppHandler.class);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpMethod);

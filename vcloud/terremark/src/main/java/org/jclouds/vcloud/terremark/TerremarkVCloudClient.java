@@ -28,12 +28,12 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Node;
-import org.jclouds.vcloud.terremark.domain.VApp;
+import org.jclouds.vcloud.terremark.domain.TerremarkVApp;
 import org.jclouds.vcloud.terremark.options.AddInternetServiceOptions;
 import org.jclouds.vcloud.terremark.options.AddNodeOptions;
-import org.jclouds.vcloud.terremark.options.InstantiateVAppTemplateOptions;
 
 /**
  * Provides access to VCloud resources via their REST API.
@@ -45,7 +45,8 @@ import org.jclouds.vcloud.terremark.options.InstantiateVAppTemplateOptions;
 @Timeout(duration = 45, timeUnit = TimeUnit.SECONDS)
 public interface TerremarkVCloudClient extends VCloudClient {
 
-   VApp instantiateVAppTemplate(String appName, String templateId,
+   @Override
+   TerremarkVApp instantiateVAppTemplate(String appName, String templateId,
             InstantiateVAppTemplateOptions... options);
 
    InternetService addInternetService(String serviceName, String protocol, int port,
@@ -65,6 +66,7 @@ public interface TerremarkVCloudClient extends VCloudClient {
 
    void deleteNode(String nodeId);
 
-   VApp getVApp(String vAppId);
+   @Override
+   TerremarkVApp getVApp(String vAppId);
 
 }

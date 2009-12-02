@@ -39,8 +39,8 @@ import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshClient.Factory;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VAppStatus;
-import org.jclouds.vcloud.terremark.domain.VApp;
-import org.jclouds.vcloud.terremark.options.InstantiateVAppTemplateOptions;
+import org.jclouds.vcloud.terremark.domain.TerremarkVApp;
+import org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
@@ -70,11 +70,11 @@ public class VCloudComputeClient {
    private final Factory sshFactory;
 
    public enum Image {
-      CENTOS_53, RHEL_53, UMBUNTU_90
+      CENTOS_53, RHEL_53, UMBUNTU_90, UMBUNTU_JEOS
    }
 
    private Map<Image, String> imageCatalogIdMap = ImmutableMap.<Image, String> builder().put(
-            Image.CENTOS_53, "6").put(Image.RHEL_53, "8").put(Image.UMBUNTU_90, "10").build();
+            Image.CENTOS_53, "6").put(Image.RHEL_53, "8").put(Image.UMBUNTU_90, "10").put(Image.UMBUNTU_JEOS, "11").build();
 
    public String start(String name, int minCores, int minMegs, Image image) {
       checkArgument(imageCatalogIdMap.containsKey(image), "image not configured: " + image);
@@ -82,8 +82,8 @@ public class VCloudComputeClient {
 
       logger.debug(">> instantiating vApp name(%s) minCores(%d) minMegs(%d) template(%s)", name,
                minCores, minMegs, templateId);
-      VApp vApp = tmClient.instantiateVAppTemplate(name, templateId,
-               InstantiateVAppTemplateOptions.Builder.cpuCount(minCores).megabytes(minMegs));
+      TerremarkVApp vApp = tmClient.instantiateVAppTemplate(name, templateId,
+               TerremarkInstantiateVAppTemplateOptions.Builder.cpuCount(minCores).megabytes(minMegs));
       logger.debug("<< instantiated VApp(%s)", vApp.getId());
 
       logger.debug(">> deploying vApp(%s)", vApp.getId());
@@ -105,7 +105,7 @@ public class VCloudComputeClient {
     *            if no address is configured
     */
    public InetAddress getAnyPrivateAddress(String id) {
-      VApp vApp = tmClient.getVApp(id);
+      TerremarkVApp vApp = tmClient.getVApp(id);
       return Iterables.getLast(vApp.getNetworkToAddresses().values());
    }
 
@@ -120,7 +120,7 @@ public class VCloudComputeClient {
    }
 
    public void reboot(String id) {
-      VApp vApp = tmClient.getVApp(id);
+      TerremarkVApp vApp = tmClient.getVApp(id);
       logger.debug(">> rebooting vApp(%s)", vApp.getId());
       blockUntilVAppStatusOrThrowException(vApp, tmClient.resetVApp(vApp.getId()), "reset",
                VAppStatus.ON);
@@ -128,7 +128,7 @@ public class VCloudComputeClient {
    }
 
    public void stop(String id) {
-      VApp vApp = tmClient.getVApp(id);
+      TerremarkVApp vApp = tmClient.getVApp(id);
       if (vApp.getStatus() != VAppStatus.OFF) {
          logger.debug(">> powering off vApp(%s)", vApp.getId());
          blockUntilVAppStatusOrThrowException(vApp, tmClient.powerOffVApp(vApp.getId()),
@@ -155,7 +155,7 @@ public class VCloudComputeClient {
       }
    }
 
-   private VApp blockUntilVAppStatusOrThrowException(VApp vApp, Task deployTask, String taskType,
+   private TerremarkVApp blockUntilVAppStatusOrThrowException(TerremarkVApp vApp, Task deployTask, String taskType,
             VAppStatus expectedStatus) {
       if (!taskTester.apply(deployTask.getLocation())) {
          throw new TaskException(taskType, vApp, deployTask);
@@ -175,7 +175,7 @@ public class VCloudComputeClient {
       /** The serialVersionUID */
       private static final long serialVersionUID = 251801929573211256L;
 
-      public TaskException(String type, VApp vApp, Task task) {
+      public TaskException(String type, TerremarkVApp vApp, Task task) {
          super(String.format("failed to %s vApp %s status %s;task %s status %s", type,
                   vApp.getId(), vApp.getStatus(), task.getLocation(), task.getStatus()), vApp);
          this.task = task;
@@ -206,16 +206,16 @@ public class VCloudComputeClient {
 
    public static class VAppException extends RuntimeException {
 
-      private final VApp vApp;
+      private final TerremarkVApp vApp;
       /** The serialVersionUID */
       private static final long serialVersionUID = 251801929573211256L;
 
-      public VAppException(String message, VApp vApp) {
+      public VAppException(String message, TerremarkVApp vApp) {
          super(message);
          this.vApp = vApp;
       }
 
-      public VApp getvApp() {
+      public TerremarkVApp getvApp() {
          return vApp;
       }
 

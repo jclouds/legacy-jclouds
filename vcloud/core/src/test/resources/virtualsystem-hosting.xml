@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VApp href="https://vcloud.safesecureweb.com/api/v0.8/vapp/188849-2"
+    name="188849-2" status="2" xsi:schemaLocation="http://www.vmware.com/vcloud/v0.8/vapp.xsd"
+    xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <System>
+        <rasd:ElementName>Virtual Hardware Family</rasd:ElementName>
+        <rasd:InstanceID>0</rasd:InstanceID>
+        <rasd:VirtualSystemIdentifier>SimpleVM</rasd:VirtualSystemIdentifier>
+        <rasd:VirtualSystemType>vmx-04</rasd:VirtualSystemType>
+    </System>
+
+</VApp>

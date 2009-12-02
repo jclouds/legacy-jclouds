@@ -36,9 +36,9 @@ import javax.inject.Inject;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.domain.NamedLink;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.rest.domain.NamedResource;
+import org.jclouds.rest.internal.NamedResourceImpl;
 import org.jclouds.vcloud.domain.Organization;
-import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.jclouds.vcloud.domain.internal.OrganizationImpl;
 import org.jclouds.vcloud.endpoints.VCloudApi;
 import org.xml.sax.Attributes;

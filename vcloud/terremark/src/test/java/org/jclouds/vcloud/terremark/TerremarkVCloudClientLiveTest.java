@@ -45,14 +45,14 @@ import org.jclouds.ssh.SshClient.Factory;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.util.Utils;
 import org.jclouds.vcloud.VCloudClientLiveTest;
+import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.predicates.TaskSuccess;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Node;
-import org.jclouds.vcloud.terremark.domain.ResourceType;
+import org.jclouds.vcloud.terremark.domain.TerremarkVApp;
 import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
-import org.jclouds.vcloud.terremark.domain.VApp;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -73,7 +73,7 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
    private InetAddress publicIp;
    private InternetService is;
    private Node node;
-   private VApp vApp;
+   private TerremarkVApp vApp;
 
    private RetryablePredicate<InetSocketAddress> socketTester;
 
@@ -190,21 +190,21 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
       assertEquals(vApp.getStatus(), VAppStatus.OFF);
    }
 
-   private void verifyConfigurationOfVApp(VApp vApp, String serverName, String expectedOs,
+   private void verifyConfigurationOfVApp(TerremarkVApp vApp, String serverName, String expectedOs,
             int processorCount, int memory, long hardDisk) {
       assertEquals(vApp.getName(), serverName);
       assertEquals(vApp.getOperatingSystemDescription(), expectedOs);
-      assertEquals(vApp.getResourceAllocationByType().get(ResourceType.VIRTUAL_CPU)
+      assertEquals(vApp.getResourceAllocationByType().get(ResourceType.PROCESSOR)
                .getVirtualQuantity(), processorCount);
       assertEquals(vApp.getResourceAllocationByType().get(ResourceType.SCSI_CONTROLLER)
                .getVirtualQuantity(), 1);
       assertEquals(
                vApp.getResourceAllocationByType().get(ResourceType.MEMORY).getVirtualQuantity(),
                memory);
-      assertEquals(vApp.getResourceAllocationByType().get(ResourceType.VIRTUAL_DISK)
+      assertEquals(vApp.getResourceAllocationByType().get(ResourceType.DISK_DRIVE)
                .getVirtualQuantity(), hardDisk);
-      assertEquals(vApp.getSize(), vApp.getResourceAllocationByType()
-               .get(ResourceType.VIRTUAL_DISK).getVirtualQuantity());
+      assertEquals(vApp.getSize(), vApp.getResourceAllocationByType().get(ResourceType.DISK_DRIVE)
+               .getVirtualQuantity());
    }
 
    private void doCheckPass(InetAddress address) throws IOException {

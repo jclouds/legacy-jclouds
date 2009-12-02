@@ -28,7 +28,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.Map;
 
-import org.jclouds.rest.domain.NamedLink;
+import org.jclouds.rest.domain.NamedResource;
 import org.jclouds.vcloud.domain.Capacity;
 import org.jclouds.vcloud.domain.Quota;
 import org.jclouds.vcloud.domain.VDC;
@@ -50,13 +50,14 @@ public class VDCImpl implements VDC {
    private final Capacity memoryCapacity;
    private final Quota instantiatedVmsQuota;
    private final Quota deployedVmsQuota;
-   private final Map<String, NamedLink> availableNetworks;
-   private final Map<String, NamedLink> resourceEntities;
+   private final Map<String, NamedResource> availableNetworks;
+   private final Map<String, NamedResource> resourceEntities;
 
-   public VDCImpl(String id, String name, URI location, String description, Capacity storageCapacity,
-            Capacity cpuCapacity, Capacity memoryCapacity, Quota instantiatedVmsQuota,
-            Quota deployedVmsQuota, Map<String, NamedLink> resourceEntities,
-            Map<String, NamedLink> availableNetworks) {
+   public VDCImpl(String id, String name, URI location, String description,
+            Capacity storageCapacity, Capacity cpuCapacity, Capacity memoryCapacity,
+            Quota instantiatedVmsQuota, Quota deployedVmsQuota,
+            Map<String, NamedResource> resourceEntities,
+            Map<String, NamedResource> availableNetworks) {
       this.id = id;
       this.name = checkNotNull(name, "name");
       this.location = checkNotNull(location, "location");
@@ -85,11 +86,11 @@ public class VDCImpl implements VDC {
       return location;
    }
 
-   public Map<String, NamedLink> getAvailableNetworks() {
+   public Map<String, NamedResource> getAvailableNetworks() {
       return availableNetworks;
    }
 
-   public Map<String, NamedLink> getResourceEntities() {
+   public Map<String, NamedResource> getResourceEntities() {
       return resourceEntities;
    }
 

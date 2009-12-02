@@ -29,12 +29,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Adrian Cole
  */
 public enum VAppStatus {
-   CREATING, OFF, ON;
+   CREATING, TODO_I_DONT_KNOW, OFF, ON;
 
    public String value() {
       switch (this) {
          case CREATING:
             return "0";
+         case TODO_I_DONT_KNOW:
+            return "1";
          case OFF:
             return "2";
          case ON:
@@ -52,6 +54,8 @@ public enum VAppStatus {
       switch (v) {
          case 0:
             return CREATING;
+         case 1:
+            return TODO_I_DONT_KNOW;
          case 2:
             return OFF;
          case 4:
