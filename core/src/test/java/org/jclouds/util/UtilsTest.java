@@ -27,7 +27,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
 
-import org.jclouds.PerformanceTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -36,7 +35,7 @@ import com.google.common.collect.ImmutableMap;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "jclouds.UtilsTest")
-public class UtilsTest extends PerformanceTest {
+public class UtilsTest {
 
    public void testReplaceTokens() throws UnsupportedEncodingException {
       assertEquals(Utils.replaceTokens("hello {where}", ImmutableMap.of("where", "world")),
