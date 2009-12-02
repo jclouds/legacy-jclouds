@@ -46,8 +46,8 @@
         <url>http://jclouds.googlecode.com/svn/trunk/rimuhosting</url>
     </scm>
     <properties>
-        <jclouds.test.user></jclouds.test.user>
-        <jclouds.test.key></jclouds.test.key>
+        <jclouds.test.user>${jclouds.rimuhosting.apikey}</jclouds.test.user>
+        <jclouds.test.key>${jclouds.rimuhosting.apikey}</jclouds.test.key>
     </properties>
     <dependencies>
         <dependency>
