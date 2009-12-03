@@ -25,9 +25,11 @@ package org.jclouds.vcloud.xml;
 
 import java.text.ParseException;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
 
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.logging.Logger;
 import org.jclouds.rest.domain.Link;
 import org.jclouds.rest.domain.NamedLink;
 import org.jclouds.rest.util.Utils;
@@ -53,6 +55,9 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
    private DateTime endTime;
    private Task task;
 
+   @Resource
+   protected Logger logger = Logger.NULL;
+
    @Inject
    public TaskHandler(DateService dateService) {
       this.dateService = dateService;
@@ -65,15 +70,19 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attributes)
             throws SAXException {
-      if (qName.equals("Task")) {
-         taskLink = Utils.newLink(attributes);
+      if (qName.equalsIgnoreCase("Task")) {
+         if (attributes.getIndex("type") != -1)
+            taskLink = Utils.newLink(attributes);
          status = TaskStatus.fromValue(attributes.getValue(attributes.getIndex("status")));
-         startTime = parseDate(attributes, "startTime");
+         if (attributes.getIndex("startTime") != -1)
+            startTime = parseDate(attributes, "startTime");
          if (attributes.getIndex("endTime") != -1) {
             endTime = parseDate(attributes, "endTime");
          }
       } else if (qName.equals("Owner")) {
          owner = Utils.newNamedLink(attributes);
+      } else if (qName.equals("Link")) {
+         taskLink = Utils.newNamedLink(attributes);
       } else if (qName.equals("Result")) {
          result = Utils.newNamedLink(attributes);
       }
@@ -85,17 +94,22 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
 
       } catch (RuntimeException e) {
          if (e.getCause() instanceof ParseException) {
-            return dateService.iso8601SecondsDateParse(attributes.getValue(attributes
-                     .getIndex(attribute)));
+            try {
+               return dateService.iso8601SecondsDateParse(attributes.getValue(attributes
+                        .getIndex(attribute)));
+            } catch (RuntimeException ex) {
+               logger.error(e, "error parsing date");
+            }
          } else {
-            throw e;
+            logger.error(e, "error parsing date");
          }
       }
+      return null;
    }
 
    @Override
    public void endElement(String uri, String localName, String qName) throws SAXException {
-      if (qName.equals("Task")) {
+      if (qName.equalsIgnoreCase("Task")) {
          this.task = new TaskImpl(taskLink.getType(), taskLink.getLocation(), status, startTime,
                   endTime, owner, result);
          taskLink = null;

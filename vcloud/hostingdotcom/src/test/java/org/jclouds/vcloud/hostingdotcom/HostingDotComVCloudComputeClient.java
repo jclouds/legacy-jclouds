@@ -93,16 +93,9 @@ public class HostingDotComVCloudComputeClient {
                         minMegs));
       this.username = vAppResponse.getUsername();
       this.password = vAppResponse.getPassword();
-      try {
-         Thread.sleep(1000);
-      } catch (InterruptedException e) {
-    
-      }
-     tmClient.getVApp(vAppResponse.getId());
       logger.debug("<< instantiated VApp(%s)", vAppResponse.getId());
 
       logger.debug(">> deploying vApp(%s)", vAppResponse.getId());
-
       VApp vApp = blockUntilVAppStatusOrThrowException(vAppResponse, tmClient
                .deployVApp(vAppResponse.getId()), "deploy", VAppStatus.OFF);
       logger.debug("<< deployed vApp(%s)", vApp.getId());

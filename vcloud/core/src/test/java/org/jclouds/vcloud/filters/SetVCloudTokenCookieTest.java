@@ -46,7 +46,6 @@ public class SetVCloudTokenCookieTest {
    @BeforeTest
    void setUp() {
       filter = new SetVCloudTokenCookie(new Provider<String>() {
-
          public String get() {
             return "token";
          }

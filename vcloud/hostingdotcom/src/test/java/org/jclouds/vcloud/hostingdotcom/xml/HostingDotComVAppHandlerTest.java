@@ -54,12 +54,11 @@ public class HostingDotComVAppHandlerTest extends BaseHandlerTest {
       HostingDotComVApp result = (HostingDotComVApp) factory.create(
                injector.getInstance(HostingDotComVAppHandler.class)).parse(is);
 
-      HostingDotComVApp expects = new HostingDotComVAppImpl("188849-13", "188849-13", URI
-               .create("https://vcloud.safesecureweb.com/api/v0.8/vapp/188849-13"),
+      HostingDotComVApp expects = new HostingDotComVAppImpl("188849-33", "188849-33", URI
+               .create("https://vcloud.safesecureweb.com/api/v0.8/vapp/188849-33"),
                VAppStatus.TODO_I_DONT_KNOW, ImmutableListMultimap.<String, InetAddress> of(), null,
-               null, ImmutableSortedSet.<ResourceAllocation> of(), "root", "peoplearelovely");
+               null, ImmutableSortedSet.<ResourceAllocation> of(), "root", "meatisyummy");
 
       assertEquals(result, expects);
-
    }
 }

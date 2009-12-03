@@ -56,7 +56,7 @@ public class TaskHandlerTest extends BaseHandlerTest {
    }
 
    public void testApplyInputStream() {
-      InputStream is = getClass().getResourceAsStream("/taskslist.xml");
+      InputStream is = getClass().getResourceAsStream("/task.xml");
 
       Task result = factory.create(injector.getInstance(TaskHandler.class)).parse(is);
 
@@ -75,4 +75,31 @@ public class TaskHandlerTest extends BaseHandlerTest {
       assertEquals(result, expects);
 
    }
+
+   public void testApplyInputStream3() {
+      InputStream is = getClass().getResourceAsStream("/task-hosting-baddate.xml");
+
+      Task result = factory.create(injector.getInstance(TaskHandler.class)).parse(is);
+
+      Task expects = new TaskImpl(VCloudMediaType.TASK_XML, URI
+               .create("https://vcloud.safesecureweb.com/api/v0.8/task/d188849-37"),
+               TaskStatus.RUNNING, null, null, new NamedLinkImpl("188849", VCloudMediaType.VDC_XML,
+                        URI.create("https://vcloud.safesecureweb.com/api/v0.8/vdc/188849")), null
+      );
+      assertEquals(result, expects);
+
+   }
+
+   public void testApplyInputStream2() {
+      InputStream is = getClass().getResourceAsStream("/task-hosting.xml");
+
+      Task result = factory.create(injector.getInstance(TaskHandler.class)).parse(is);
+
+      Task expects = new TaskImpl(VCloudMediaType.TASK_XML, URI
+               .create("https://vcloud.safesecureweb.com/api/v0.8/task/d188849-34"),
+               TaskStatus.QUEUED, null, null, null, null);
+      assertEquals(result, expects);
+
+   }
+
 }
