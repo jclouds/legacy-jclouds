@@ -162,7 +162,8 @@
     </developers>
 
     <properties>
-        <parent-basedir>${basedir}</parent-basedir>
+        <parent.basedir>${basedir}</parent.basedir>
+        <sourceEncoding>UTF-8</sourceEncoding>
         <maven.compile.source>1.6</maven.compile.source>
         <maven.compile.target>1.6</maven.compile.target>
         <maven.compile.optimize>true</maven.compile.optimize>
@@ -285,7 +286,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <encoding>UTF-8</encoding>                        
+                    <encoding>${sourceEncoding}</encoding>                        
                     <quiet>true</quiet>
                     <links>
                         <link>http://java.sun.com/javase/6/docs/api/</link>
@@ -344,7 +345,7 @@ pageTracker._trackPageview();
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <encoding>UTF-8</encoding>
+                    <encoding>${sourceEncoding}</encoding>
                     <source>${maven.compile.source}</source>
                     <target>${maven.compile.target}</target>
                 </configuration>
@@ -352,7 +353,7 @@ pageTracker._trackPageview();
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <configuration>
-                    <encoding>UTF-8</encoding>
+                    <encoding>${sourceEncoding}</encoding>
                 </configuration>
             </plugin>                
             <plugin>
@@ -424,7 +425,7 @@ pageTracker._trackPageview();
                                     <systemProperties>
                                         <property>
                                             <name>file.encoding</name>
-                                            <value>UTF-8</value>
+                                            <value>${sourceEncoding}</value>
                                         </property>
                                         <property>
                                             <name>jclouds.test.initializer</name>
@@ -496,6 +497,22 @@ pageTracker._trackPageview();
                     </reportSet>
                 </reportSets>
             </plugin>
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.6.1</version>
+                <configuration>
+                    <encoding>${sourceEncoding}</encoding>
+                    <quiet>true</quiet>
+                </configuration>
+                <reportSets>
+                    <reportSet>
+                        <id>default</id>
+                        <reports>
+                            <report>aggregate</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>            
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>emma-maven-plugin</artifactId>
