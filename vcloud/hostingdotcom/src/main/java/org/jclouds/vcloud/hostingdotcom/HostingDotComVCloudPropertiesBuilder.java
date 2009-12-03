@@ -23,7 +23,6 @@
  */
 package org.jclouds.vcloud.hostingdotcom;
 
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULTNETWORK;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_ENDPOINT;
 
 import java.net.URI;
@@ -41,8 +40,6 @@ public class HostingDotComVCloudPropertiesBuilder extends VCloudPropertiesBuilde
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_VCLOUD_ENDPOINT, "https://vcloud.safesecureweb.com/api");
-      properties.setProperty(PROPERTY_VCLOUD_DEFAULTNETWORK,
-               "https://vcloud.safesecureweb.com/network/1990");
       return properties;
    }
 

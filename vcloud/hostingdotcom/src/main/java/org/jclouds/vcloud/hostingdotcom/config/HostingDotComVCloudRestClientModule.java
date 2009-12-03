@@ -46,6 +46,7 @@ public class HostingDotComVCloudRestClientModule extends VCloudRestClientModule 
             SecurityException, NoSuchMethodException {
       return SyncProxy.create(HostingDotComVCloudClient.class, client);
    }
+   
    @Override
    protected URI provideDefaultNetwork(VCloudAsyncClient client) {
       return URI.create("https://vcloud.safesecureweb.com/network/1990");

@@ -27,12 +27,6 @@ public class TerremarkInstantiateVAppTemplateOptionsTest {
    Injector injector = Guice.createInjector(new ParserModule());
 
    @Test
-   public void testInGroupDefault() {
-      TerremarkInstantiateVAppTemplateOptions options = new TerremarkInstantiateVAppTemplateOptions();
-      assertEquals(options.getGroup(), "default");
-   }
-
-   @Test
    public void testInGroup() {
       TerremarkInstantiateVAppTemplateOptions options = new TerremarkInstantiateVAppTemplateOptions();
       options.inGroup("group1");
@@ -46,12 +40,6 @@ public class TerremarkInstantiateVAppTemplateOptionsTest {
    }
 
    @Test
-   public void testInRowDefault() {
-      TerremarkInstantiateVAppTemplateOptions options = new TerremarkInstantiateVAppTemplateOptions();
-      assertEquals(options.getRow(), "default");
-   }
-
-   @Test
    public void testInRow() {
       TerremarkInstantiateVAppTemplateOptions options = new TerremarkInstantiateVAppTemplateOptions();
       options.inRow("row1");
@@ -62,12 +50,6 @@ public class TerremarkInstantiateVAppTemplateOptionsTest {
    public void testInRowStatic() {
       TerremarkInstantiateVAppTemplateOptions options = inRow("row1");
       assertEquals(options.getRow(), "row1");
-   }
-
-   @Test
-   public void testWithPasswordDefault() {
-      TerremarkInstantiateVAppTemplateOptions options = new TerremarkInstantiateVAppTemplateOptions();
-      assertEquals(options.getPassword(), "getPassword()");
    }
 
    @Test
@@ -98,9 +80,7 @@ public class TerremarkInstantiateVAppTemplateOptionsTest {
 
    @Test
    public void testCpuCount() {
-      TerremarkInstantiateVAppTemplateOptions options = new TerremarkInstantiateVAppTemplateOptions();
-      cpuCount(3);
-      assertEquals(options.getCpuCount(), "3");
+      assertEquals(cpuCount(3).getCpuCount(), "3");
    }
 
    @Test

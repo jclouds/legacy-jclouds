@@ -39,7 +39,7 @@ public class BindAddInternetServiceToXmlEntity implements MapBinder {
       entity = entity.replaceAll("\\{port\\}", port);
       entity = entity.replaceAll("\\{enabled\\}", enabled);
       entity = entity.replaceAll("\\{description\\}", description == null ? "" : String.format(
-               "%n    <Description>%s</Description>", description));
+               "\n    <Description>%s</Description>", description));
 
       stringBinder.bindToRequest(request, entity);
    }

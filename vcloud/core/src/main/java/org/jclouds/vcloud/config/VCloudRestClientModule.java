@@ -23,6 +23,8 @@
  */
 package org.jclouds.vcloud.config;
 
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULTNETWORK;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -55,7 +57,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
- * Configures the VCloud authentication service connection, including logging and http transport.
+ * Configures the VCloud authentication service connection, including logging
+ * and http transport.
  * 
  * @author Adrian Cole
  */
@@ -63,86 +66,96 @@ import com.google.inject.Provides;
 @ConfiguresRestClient
 public class VCloudRestClientModule extends AbstractModule {
 
-   @Override
-   protected void configure() {
-   }
+	@Override
+	protected void configure() {
+	}
 
-   @Provides
-   @Singleton
-   protected VCloudAsyncClient provideAsyncClient(RestClientFactory factory) {
-      return factory.create(VCloudAsyncClient.class);
-   }
+	@Provides
+	@Singleton
+	protected VCloudAsyncClient provideAsyncClient(RestClientFactory factory) {
+		return factory.create(VCloudAsyncClient.class);
+	}
 
-   @Provides
-   @Singleton
-   public VCloudClient provideClient(VCloudAsyncClient client) throws IllegalArgumentException,
-            SecurityException, NoSuchMethodException {
-      return SyncProxy.create(VCloudClient.class, client);
-   }
+	@Provides
+	@Singleton
+	public VCloudClient provideClient(VCloudAsyncClient client)
+			throws IllegalArgumentException, SecurityException,
+			NoSuchMethodException {
+		return SyncProxy.create(VCloudClient.class, client);
+	}
 
-   @Provides
-   @CatalogItemRoot
-   @Singleton
-   String provideCatalogItemRoot(@VCloudLogin URI vcloudUri) {
-      return vcloudUri.toASCIIString().replace("/login", "/catalogItem");
-   }
+	@Provides
+	@CatalogItemRoot
+	@Singleton
+	String provideCatalogItemRoot(@VCloudLogin URI vcloudUri) {
+		return vcloudUri.toASCIIString().replace("/login", "/catalogItem");
+	}
 
-   @Provides
-   @VAppRoot
-   @Singleton
-   String provideVAppRoot(@VCloudLogin URI vcloudUri) {
-      return vcloudUri.toASCIIString().replace("/login", "/vapp");
-   }
+	@Provides
+	@VAppRoot
+	@Singleton
+	String provideVAppRoot(@VCloudLogin URI vcloudUri) {
+		return vcloudUri.toASCIIString().replace("/login", "/vapp");
+	}
 
-   @Provides
-   @VAppTemplateRoot
-   @Singleton
-   String provideVAppTemplateRoot(@VCloudLogin URI vcloudUri) {
-      return vcloudUri.toASCIIString().replace("/login", "/vAppTemplate");
-   }
+	@Provides
+	@VAppTemplateRoot
+	@Singleton
+	String provideVAppTemplateRoot(@VCloudLogin URI vcloudUri) {
+		return vcloudUri.toASCIIString().replace("/login", "/vAppTemplate");
+	}
 
-   @Provides
-   @Singleton
-   protected Organization provideOrganization(VCloudDiscovery discovery) throws ExecutionException,
-            TimeoutException, InterruptedException {
-      return discovery.getOrganization().get(90, TimeUnit.SECONDS);
-   }
+	@Provides
+	@Singleton
+	protected Organization provideOrganization(VCloudDiscovery discovery)
+			throws ExecutionException, TimeoutException, InterruptedException {
+		return discovery.getOrganization().get(90, TimeUnit.SECONDS);
+	}
 
-   @Provides
-   @VDC
-   @Singleton
-   protected URI provideDefaultVDC(Organization org) {
-      return org.getVDCs().values().iterator().next().getLocation();
-   }
+	@Provides
+	@VDC
+	@Singleton
+	protected URI provideDefaultVDC(Organization org) {
+		return org.getVDCs().values().iterator().next().getLocation();
+	}
 
-   @Provides
-   @Catalog
-   @Singleton
-   protected URI provideCatalog(Organization org) {
-      return org.getCatalog().getLocation();
-   }
+	@Provides
+	@Catalog
+	@Singleton
+	protected URI provideCatalog(Organization org) {
+		return org.getCatalog().getLocation();
+	}
 
-   @Singleton
-   @Provides
-   @Named("InstantiateVAppTemplateParams")
-   protected String provideInstantiateVAppTemplateParams() throws IOException {
-      InputStream is = getClass().getResourceAsStream("/InstantiateVAppTemplateParams.xml");
-      return Utils.toStringAndClose(is);
-   }
+	@Singleton
+	@Provides
+	@Named("InstantiateVAppTemplateParams")
+	protected String provideInstantiateVAppTemplateParams() throws IOException {
+		InputStream is = getClass().getResourceAsStream(
+				"/InstantiateVAppTemplateParams.xml");
+		return Utils.toStringAndClose(is);
+	}
 
-   @Provides
-   @Network
-   @Singleton
-   protected URI provideDefaultNetwork(VCloudAsyncClient client) throws InterruptedException,
-            ExecutionException, TimeoutException {
-      return client.getDefaultVDC().get(60, TimeUnit.SECONDS).getAvailableNetworks().values()
-               .iterator().next().getLocation();
-   }
+	@Provides
+	@Network
+	@Singleton
+	protected URI provideDefaultNetwork(VCloudAsyncClient client)
+			throws InterruptedException, ExecutionException, TimeoutException {
+		return client.getDefaultVDC().get(60, TimeUnit.SECONDS)
+				.getAvailableNetworks().values().iterator().next()
+				.getLocation();
+	}
 
-   @Provides
-   @TasksList
-   @Singleton
-   protected URI provideDefaultTasksList(Organization org) {
-      return org.getTasksLists().values().iterator().next().getLocation();
-   }
+	@Provides
+	@Named(PROPERTY_VCLOUD_DEFAULTNETWORK)
+	@Singleton
+	String provideDefaultNetworkString(@Network URI network) {
+		return network.toASCIIString();
+	}
+
+	@Provides
+	@TasksList
+	@Singleton
+	protected URI provideDefaultTasksList(Organization org) {
+		return org.getTasksLists().values().iterator().next().getLocation();
+	}
 }

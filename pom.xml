@@ -48,6 +48,7 @@
         <module>nirvanix</module>
         <module>twitter</module>
         <module>rimuhosting</module>
+        <module>vcloud</module>
         <module>scriptbuilder</module>
     </modules>
     <build>

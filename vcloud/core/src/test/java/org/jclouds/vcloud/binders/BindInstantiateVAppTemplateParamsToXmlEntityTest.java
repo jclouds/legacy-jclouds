@@ -41,53 +41,93 @@ import com.google.inject.util.Providers;
  */
 @Test(groups = "unit", testName = "vcloud.BindInstantiateVAppTemplateParamsToXmlEntityTest")
 public class BindInstantiateVAppTemplateParamsToXmlEntityTest {
-   Injector injector = Guice.createInjector(new AbstractModule() {
+	Injector injector = Guice.createInjector(new AbstractModule() {
 
-      @Override
-      protected void configure() {
-         bind(String.class).annotatedWith(Jsr330.named(PROPERTY_VCLOUD_DEFAULTCPUCOUNT))
-                  .toProvider(Providers.<String> of(null));
-         bind(String.class).annotatedWith(Jsr330.named(PROPERTY_VCLOUD_DEFAULTMEMORY)).toProvider(
-                  Providers.<String> of(null));
-         bind(String.class).annotatedWith(Jsr330.named(PROPERTY_VCLOUD_DEFAULTNETWORK)).toProvider(
-                  Providers.<String> of(null));
-      }
+		@Override
+		protected void configure() {
+			bind(String.class).annotatedWith(
+					Jsr330.named(PROPERTY_VCLOUD_DEFAULTCPUCOUNT)).toProvider(
+					Providers.<String> of("1"));
+			bind(String.class).annotatedWith(
+					Jsr330.named(PROPERTY_VCLOUD_DEFAULTMEMORY)).toProvider(
+					Providers.<String> of("512"));
+			bind(String.class)
+					.annotatedWith(Jsr330.named(PROPERTY_VCLOUD_DEFAULTNETWORK))
+					.toProvider(
+							Providers
+									.<String> of("https://vcloud.safesecureweb.com/network/1990"));
+		}
 
-      @SuppressWarnings("unused")
-      @Singleton
-      @Provides
-      @Named("InstantiateVAppTemplateParams")
-      String provideInstantiateVAppTemplateParams() throws IOException {
-         InputStream is = getClass().getResourceAsStream("/InstantiateVAppTemplateParams.xml");
-         return Utils.toStringAndClose(is);
-      }
-   });
+		@SuppressWarnings("unused")
+		@Singleton
+		@Provides
+		@Named("InstantiateVAppTemplateParams")
+		String provideInstantiateVAppTemplateParams() throws IOException {
+			InputStream is = getClass().getResourceAsStream(
+					"/InstantiateVAppTemplateParams.xml");
+			return Utils.toStringAndClose(is);
+		}
+	});
 
-   public void testApplyInputStream() throws IOException {
-      String expected = IOUtils.toString(getClass().getResourceAsStream("/newvapp-hosting.xml"));
-      Multimap<String, String> headers = Multimaps.synchronizedMultimap(HashMultimap
-               .<String, String> create());
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
-      expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(new Object[] {}).atLeastOnce();
-      expect(request.getFirstHeaderOrNull("Content-Type")).andReturn(null).atLeastOnce();
-      expect(request.getHeaders()).andReturn(headers).atLeastOnce();
-      request.setEntity(expected);
-      replay(request);
+	public void testApplyInputStream1() throws IOException {
+		String expected = IOUtils.toString(getClass().getResourceAsStream(
+				"/newvapp-hosting.xml"));
+		Multimap<String, String> headers = Multimaps
+				.synchronizedMultimap(HashMultimap.<String, String> create());
+		GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+		expect(request.getEndpoint()).andReturn(
+				URI.create("http://localhost/key")).anyTimes();
+		expect(request.getArgs()).andReturn(new Object[] {}).atLeastOnce();
+		expect(request.getFirstHeaderOrNull("Content-Type")).andReturn(null)
+				.atLeastOnce();
+		expect(request.getHeaders()).andReturn(headers).atLeastOnce();
+		request.setEntity(expected);
+		replay(request);
 
-      BindInstantiateVAppTemplateParamsToXmlEntity binder = injector
-               .getInstance(BindInstantiateVAppTemplateParamsToXmlEntity.class);
+		BindInstantiateVAppTemplateParamsToXmlEntity binder = injector
+				.getInstance(BindInstantiateVAppTemplateParamsToXmlEntity.class);
 
-      Map<String, String> map = Maps.newHashMap();
-      map.put("name", "CentOS 01");
-      map.put("template", "https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/3");
-      map.put("count", "1");
-      map.put("megabytes", "512");
-      map.put("network", "https://vcloud.safesecureweb.com/network/1990");
-      binder.bindToRequest(request, map);
-      assertEquals(headers.get(HttpHeaders.CONTENT_TYPE), Collections
-               .singletonList("application/unknown"));
-      assertEquals(headers.get(HttpHeaders.CONTENT_LENGTH), Collections.singletonList("901"));
+		Map<String, String> map = Maps.newHashMap();
+		map.put("name", "CentOS 01");
+		map.put("template",
+				"https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/3");
+		map.put("count", "1");
+		map.put("megabytes", "512");
+		map.put("network", "https://vcloud.safesecureweb.com/network/1990");
+		binder.bindToRequest(request, map);
+		assertEquals(headers.get(HttpHeaders.CONTENT_TYPE), Collections
+				.singletonList("application/unknown"));
+		assertEquals(headers.get(HttpHeaders.CONTENT_LENGTH), Collections
+				.singletonList("901"));
+	}
 
-   }
+	public void testApplyInputStream2() throws IOException {
+		String expected = IOUtils.toString(getClass().getResourceAsStream(
+				"/newvapp-hosting.xml"));
+		Multimap<String, String> headers = Multimaps
+				.synchronizedMultimap(HashMultimap.<String, String> create());
+		GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+		expect(request.getEndpoint()).andReturn(
+				URI.create("http://localhost/key")).anyTimes();
+		expect(request.getArgs()).andReturn(new Object[] {}).atLeastOnce();
+		expect(request.getFirstHeaderOrNull("Content-Type")).andReturn(null)
+				.atLeastOnce();
+		expect(request.getHeaders()).andReturn(headers).atLeastOnce();
+		request.setEntity(expected);
+		replay(request);
+
+		BindInstantiateVAppTemplateParamsToXmlEntity binder = injector
+				.getInstance(BindInstantiateVAppTemplateParamsToXmlEntity.class);
+
+		Map<String, String> map = Maps.newHashMap();
+		map.put("name", "CentOS 01");
+		map.put("template",
+				"https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/3");
+		binder.bindToRequest(request, map);
+		assertEquals(headers.get(HttpHeaders.CONTENT_TYPE), Collections
+				.singletonList("application/unknown"));
+		assertEquals(headers.get(HttpHeaders.CONTENT_LENGTH), Collections
+				.singletonList("901"));
+
+	}
 }
