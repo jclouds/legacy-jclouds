@@ -49,6 +49,7 @@ public class VAppImpl implements VApp {
    private final String name;
    private final URI location;
    private final VAppStatus status;
+   private final Long size;
    private final ListMultimap<String, InetAddress> networkToAddresses;
    private final String operatingSystemDescription;
    private final VirtualSystem system;
@@ -58,7 +59,7 @@ public class VAppImpl implements VApp {
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
 
-   public VAppImpl(String id, String name, URI location, VAppStatus status,
+   public VAppImpl(String id, String name, URI location, VAppStatus status, Long size,
             ListMultimap<String, InetAddress> networkToAddresses,
             String operatingSystemDescription, VirtualSystem system,
             SortedSet<ResourceAllocation> resourceAllocations) {
@@ -66,6 +67,7 @@ public class VAppImpl implements VApp {
       this.name = name;
       this.location = location;
       this.status = status;
+      this.size = size;
       this.networkToAddresses = networkToAddresses;
       this.operatingSystemDescription = operatingSystemDescription;
       this.system = system;
@@ -117,6 +119,7 @@ public class VAppImpl implements VApp {
                + ((resourceAllocationByType == null) ? 0 : resourceAllocationByType.hashCode());
       result = prime * result
                + ((resourceAllocations == null) ? 0 : resourceAllocations.hashCode());
+      result = prime * result + ((size == null) ? 0 : size.hashCode());
       result = prime * result + ((status == null) ? 0 : status.hashCode());
       result = prime * result + ((system == null) ? 0 : system.hashCode());
       return result;
@@ -166,6 +169,11 @@ public class VAppImpl implements VApp {
             return false;
       } else if (!resourceAllocations.equals(other.resourceAllocations))
          return false;
+      if (size == null) {
+         if (other.size != null)
+            return false;
+      } else if (!size.equals(other.size))
+         return false;
       if (status == null) {
          if (other.status != null)
             return false;
@@ -191,13 +199,17 @@ public class VAppImpl implements VApp {
       return location;
    }
 
+   public Long getSize() {
+      return size;
+   }
+
    @Override
    public String toString() {
       return "VAppImpl [id=" + id + ", location=" + location + ", name=" + name
                + ", networkToAddresses=" + networkToAddresses + ", operatingSystemDescription="
                + operatingSystemDescription + ", resourceAllocationByType="
                + resourceAllocationByType + ", resourceAllocations=" + resourceAllocations
-               + ", status=" + status + ", system=" + system + "]";
+               + ", size=" + size + ", status=" + status + ", system=" + system + "]";
    }
 
 }

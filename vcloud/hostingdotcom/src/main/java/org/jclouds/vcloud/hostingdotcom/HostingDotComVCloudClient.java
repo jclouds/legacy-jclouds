@@ -41,7 +41,7 @@ import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 public interface HostingDotComVCloudClient extends VCloudClient {
 
    @Override
-   @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
+   @Timeout(duration = 240, timeUnit = TimeUnit.SECONDS)
    HostingDotComVApp instantiateVAppTemplate(String appName, String templateId,
             InstantiateVAppTemplateOptions... options);
 

@@ -26,13 +26,12 @@ public class HostingDotComVAppImpl extends VAppImpl implements HostingDotComVApp
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
 
-   public HostingDotComVAppImpl(String id, String name, URI location, VAppStatus status,
-
-   ListMultimap<String, InetAddress> networkToAddresses, String operatingSystemDescription,
-            VirtualSystem system, SortedSet<ResourceAllocation> resourceAllocations,
-            String username, String password) {
-      super(id, name, location, status, networkToAddresses, operatingSystemDescription, system,
-               resourceAllocations);
+   public HostingDotComVAppImpl(String id, String name, URI location, VAppStatus status, Long size,
+            ListMultimap<String, InetAddress> networkToAddresses,
+            String operatingSystemDescription, VirtualSystem system,
+            SortedSet<ResourceAllocation> resourceAllocations, String username, String password) {
+      super(id, name, location, status, size, networkToAddresses, operatingSystemDescription,
+               system, resourceAllocations);
       this.username = username;
       this.password = password;
 

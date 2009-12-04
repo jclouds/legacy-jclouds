@@ -35,8 +35,6 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(TerremarkVAppImpl.class)
 public interface TerremarkVApp extends VApp {
 
-   long getSize();
-
    Link getVDC();
 
    Link getComputeOptions();

@@ -5,10 +5,10 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
     <System>
-        <rasd:ElementName>Virtual Hardware Family</rasd:ElementName>
-        <rasd:InstanceID>0</rasd:InstanceID>
-        <rasd:VirtualSystemIdentifier>SimpleVM</rasd:VirtualSystemIdentifier>
-        <rasd:VirtualSystemType>vmx-04</rasd:VirtualSystemType>
+        <ElementName>Virtual Hardware Family</ElementName>
+        <InstanceID>0</InstanceID>
+        <VirtualSystemIdentifier>SimpleVM</VirtualSystemIdentifier>
+        <VirtualSystemType>vmx-04</VirtualSystemType>
     </System>
 
 </VApp>

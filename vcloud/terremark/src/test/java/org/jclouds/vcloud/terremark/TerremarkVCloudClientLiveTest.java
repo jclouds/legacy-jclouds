@@ -203,8 +203,8 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
                memory);
       assertEquals(vApp.getResourceAllocationByType().get(ResourceType.DISK_DRIVE)
                .getVirtualQuantity(), hardDisk);
-      assertEquals(vApp.getSize(), vApp.getResourceAllocationByType().get(ResourceType.DISK_DRIVE)
-               .getVirtualQuantity());
+      assertEquals(vApp.getSize().longValue(), vApp.getResourceAllocationByType().get(
+               ResourceType.DISK_DRIVE).getVirtualQuantity());
    }
 
    private void doCheckPass(InetAddress address) throws IOException {

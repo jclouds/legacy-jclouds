@@ -35,39 +35,41 @@ public class ResourceAllocationHandler extends ParseSax.HandlerWithResult<Resour
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attributes)
             throws SAXException {
-      if (qName.equals("rasd:Connection")) {
+      if (qName.equals("Connection")) {
          connected = new Boolean(attributes.getValue(attributes.getIndex("connected")));
-      } else if (qName.equals("rasd:HostResource")) {
-         virtualQuantity = Long.parseLong(attributes.getValue(attributes.getIndex("capacity")));
-         virtualQuantityUnits = "byte * 2^20";
       }
    }
 
    @Override
    public void endElement(String uri, String localName, String qName) throws SAXException {
-
-      if (qName.equals("rasd:Address")) {
-         address = Integer.parseInt(currentOrNull());
-      } else if (qName.equals("rasd:AddressOnParent")) {
-         addressOnParent = Integer.parseInt(currentOrNull());
-      } else if (qName.equals("rasd:AllocationUnits")) {
-         allocationUnits = currentOrNull();
-      } else if (qName.equals("rasd:Description")) {
-         description = currentOrNull();
-      } else if (qName.equals("rasd:ElementName")) {
-         elementName = currentOrNull();
-      } else if (qName.equals("rasd:InstanceID")) {
-         instanceID = Integer.parseInt(currentOrNull());
-      } else if (qName.equals("rasd:Parent")) {
-         parent = Integer.parseInt(currentOrNull());
-      } else if (qName.equals("rasd:ResourceSubType")) {
-         resourceSubType = currentOrNull();
-      } else if (qName.equals("rasd:ResourceType")) {
-         resourceType = ResourceType.fromValue(currentOrNull());
-      } else if (qName.equals("rasd:VirtualQuantity")) {
-         virtualQuantity = Long.parseLong(currentOrNull());
-      } else if (qName.equals("rasd:VirtualQuantityUnits")) {
-         virtualQuantityUnits = currentOrNull();
+      String current = currentOrNull();
+      if (current != null) {
+         if (qName.equals("Address")) {
+            address = Integer.parseInt(current);
+         } else if (qName.equals("AddressOnParent")) {
+            addressOnParent = Integer.parseInt(current);
+         } else if (qName.equals("AllocationUnits")) {
+            allocationUnits = current;
+         } else if (qName.equals("Description")) {
+            description = current;
+         } else if (qName.equals("ElementName")) {
+            elementName = current;
+         } else if (qName.equals("InstanceID")) {
+            instanceID = Integer.parseInt(current);
+         } else if (qName.equals("Parent")) {
+            parent = Integer.parseInt(current);
+         } else if (qName.equals("ResourceSubType")) {
+            resourceSubType = current;
+         } else if (qName.equals("ResourceType")) {
+            resourceType = ResourceType.fromValue(current);
+         } else if (qName.equals("VirtualQuantity")) {
+            virtualQuantity = Long.parseLong(current);
+         } else if (qName.equals("VirtualQuantityUnits")) {
+            virtualQuantityUnits = current;
+         } else if (qName.equals("HostResource")) {
+            virtualQuantity = Long.parseLong(current);
+            virtualQuantityUnits = "byte * 2^20";
+         }
       } else if (qName.equals("Item")) {
          if (allocationUnits != null)
             virtualQuantityUnits = allocationUnits;

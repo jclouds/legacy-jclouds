@@ -44,7 +44,6 @@ import com.google.common.collect.ListMultimap;
  */
 public class TerremarkVAppImpl extends VAppImpl implements TerremarkVApp {
 
-   private final long size;
    private final Link vDC;
    private final Link computeOptions;
    private final Link customizationOptions;
@@ -57,16 +56,11 @@ public class TerremarkVAppImpl extends VAppImpl implements TerremarkVApp {
             ListMultimap<String, InetAddress> networkToAddresses,
             String operatingSystemDescription, TerremarkVirtualSystem system,
             SortedSet<ResourceAllocation> resourceAllocations) {
-      super(id, name, location, status, networkToAddresses, operatingSystemDescription, system,
+      super(id, name, location, status, size, networkToAddresses, operatingSystemDescription, system,
                resourceAllocations);
-      this.size = size;
       this.vDC = vDC;
       this.computeOptions = computeOptions;
       this.customizationOptions = customizationOptions;
-   }
-
-   public long getSize() {
-      return size;
    }
 
    public Link getVDC() {
@@ -88,7 +82,6 @@ public class TerremarkVAppImpl extends VAppImpl implements TerremarkVApp {
       result = prime * result + ((computeOptions == null) ? 0 : computeOptions.hashCode());
       result = prime * result
                + ((customizationOptions == null) ? 0 : customizationOptions.hashCode());
-      result = prime * result + (int) (size ^ (size >>> 32));
       result = prime * result + ((vDC == null) ? 0 : vDC.hashCode());
       return result;
    }
@@ -111,8 +104,6 @@ public class TerremarkVAppImpl extends VAppImpl implements TerremarkVApp {
          if (other.customizationOptions != null)
             return false;
       } else if (!customizationOptions.equals(other.customizationOptions))
-         return false;
-      if (size != other.size)
          return false;
       if (vDC == null) {
          if (other.vDC != null)

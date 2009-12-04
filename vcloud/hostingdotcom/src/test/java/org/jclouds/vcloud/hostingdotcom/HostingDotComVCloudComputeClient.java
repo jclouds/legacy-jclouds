@@ -97,12 +97,14 @@ public class HostingDotComVCloudComputeClient {
 
       logger.debug(">> deploying vApp(%s)", vAppResponse.getId());
       VApp vApp = blockUntilVAppStatusOrThrowException(vAppResponse, tmClient
-               .deployVApp(vAppResponse.getId()), "deploy", VAppStatus.OFF);
-      logger.debug("<< deployed vApp(%s)", vApp.getId());
-
-      logger.debug(">> powering vApp(%s)", vApp.getId());
-      vApp = blockUntilVAppStatusOrThrowException(vApp, tmClient.powerOnVApp(vApp.getId()),
-               "powerOn", VAppStatus.ON);
+               .deployVApp(vAppResponse.getId()), "deploy", VAppStatus.ON);// TODO, I'm not sure
+                                                                           // this should be on
+                                                                           // already
+//      logger.debug("<< deployed vApp(%s)", vApp.getId());
+//
+//      logger.debug(">> powering vApp(%s)", vApp.getId());
+//      vApp = blockUntilVAppStatusOrThrowException(vApp, tmClient.powerOnVApp(vApp.getId()),
+//               "powerOn", VAppStatus.ON);
       logger.debug("<< on vApp(%s)", vApp.getId());
 
       return vApp.getId();

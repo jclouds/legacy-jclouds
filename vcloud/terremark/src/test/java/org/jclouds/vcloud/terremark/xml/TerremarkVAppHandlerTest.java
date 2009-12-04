@@ -90,7 +90,7 @@ public class TerremarkVAppHandlerTest extends BaseHandlerTest {
       assertEquals(result.getName(), "adriantest");
       assertEquals(result.getStatus(), VAppStatus.CREATING);
 
-      assertEquals(result.getSize(), 4);
+      assertEquals(result.getSize(), new Long(4));
 
       assertEquals(result.getLocation(), URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/13775"));
@@ -109,7 +109,7 @@ public class TerremarkVAppHandlerTest extends BaseHandlerTest {
       assertEquals(result.getName(), "adriantest1");
       assertEquals(result.getStatus(), VAppStatus.OFF);
 
-      assertEquals(result.getSize(), 4194304);
+      assertEquals(result.getSize().longValue(), 4194304l);
       assertEquals(result.getOperatingSystemDescription(), "Ubuntu Linux (32-bit)");
 
       assertEquals(result.getLocation(), URI
@@ -155,7 +155,7 @@ public class TerremarkVAppHandlerTest extends BaseHandlerTest {
                .getVirtualQuantity(), 512);
       assertEquals(result.getResourceAllocationByType().get(ResourceType.DISK_DRIVE)
                .getVirtualQuantity(), 4194304);
-      assertEquals(result.getSize(), result.getResourceAllocationByType().get(
+      assertEquals(result.getSize().longValue(), result.getResourceAllocationByType().get(
                ResourceType.DISK_DRIVE).getVirtualQuantity());
    }
 }

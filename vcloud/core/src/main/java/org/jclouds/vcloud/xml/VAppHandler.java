@@ -42,7 +42,8 @@ public class VAppHandler extends ParseSax.HandlerWithResult<VApp> {
    protected VirtualSystem system;
    protected SortedSet<ResourceAllocation> allocations = Sets.newTreeSet();
    protected VAppStatus status;
-   protected final ListMultimap<String, InetAddress> networkToAddresses = ArrayListMultimap.create();
+   protected final ListMultimap<String, InetAddress> networkToAddresses = ArrayListMultimap
+            .create();
    protected StringBuilder currentText = new StringBuilder();
    protected String operatingSystemDescription;
    protected boolean inOs;
@@ -50,9 +51,10 @@ public class VAppHandler extends ParseSax.HandlerWithResult<VApp> {
    protected String name;
    protected String id;
    protected URI location;
+   protected Long size;
 
    public VApp getResult() {
-      return new VAppImpl(id, name, location, status, networkToAddresses,
+      return new VAppImpl(id, name, location, status, size, networkToAddresses,
                operatingSystemDescription, system, allocations);
    }
 
@@ -62,9 +64,11 @@ public class VAppHandler extends ParseSax.HandlerWithResult<VApp> {
          name = id = attributes.getValue(attributes.getIndex("name"));
          location = URI.create(attributes.getValue(attributes.getIndex("href")));
          status = VAppStatus.fromValue(attributes.getValue(attributes.getIndex("status")));
-      } else if (qName.equals("ovf:OperatingSystemSection")) {
+         if (attributes.getIndex("size") != -1)
+            size = new Long(attributes.getValue(attributes.getIndex("size")));
+      } else if (qName.equals("OperatingSystemSection")) {
          inOs = true;
-      } else if (qName.equals("NetworkConfig")) {
+      } else if (qName.equals("NetworkConnection")) {
          networkName = attributes.getValue(attributes.getIndex("name"));
       } else {
          systemHandler.startElement(uri, localName, qName, attributes);
@@ -75,7 +79,7 @@ public class VAppHandler extends ParseSax.HandlerWithResult<VApp> {
 
    @Override
    public void endElement(String uri, String localName, String qName) throws SAXException {
-      if (qName.equals("ovf:OperatingSystemSection")) {
+      if (qName.equals("OperatingSystemSection")) {
          inOs = false;
       } else if (inOs && qName.equals("Description")) {
          operatingSystemDescription = currentText.toString().trim();

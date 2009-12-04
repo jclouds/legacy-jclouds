@@ -4,12 +4,12 @@
     xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <Item>
-        <rasd:AllocationUnits>hertz * 10^6</rasd:AllocationUnits>
-        <rasd:Description>Number of Virtual CPUs</rasd:Description>
-        <rasd:ElementName>1 virtual CPU(s)</rasd:ElementName>
-        <rasd:InstanceID>1</rasd:InstanceID>
-        <rasd:ResourceType>3</rasd:ResourceType>
-        <rasd:VirtualQuantity>1</rasd:VirtualQuantity>
-        <rasd:VirtualQuantityUnits>count</rasd:VirtualQuantityUnits>
+        <AllocationUnits>hertz * 10^6</AllocationUnits>
+        <Description>Number of Virtual CPUs</Description>
+        <ElementName>1 virtual CPU(s)</ElementName>
+        <InstanceID>1</InstanceID>
+        <ResourceType>3</ResourceType>
+        <VirtualQuantity>1</VirtualQuantity>
+        <VirtualQuantityUnits>count</VirtualQuantityUnits>
     </Item>
 </VApp>

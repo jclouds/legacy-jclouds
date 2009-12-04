@@ -39,6 +39,8 @@ public interface VApp {
 
    VAppStatus getStatus();
 
+   Long getSize();
+
    ListMultimap<String, InetAddress> getNetworkToAddresses();
 
    String getOperatingSystemDescription();

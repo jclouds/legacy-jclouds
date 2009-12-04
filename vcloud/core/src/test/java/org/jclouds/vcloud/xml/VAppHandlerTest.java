@@ -58,9 +58,9 @@ public class VAppHandlerTest extends BaseHandlerTest {
       VApp result = factory.create(injector.getInstance(VAppHandler.class)).parse(is);
 
       ListMultimap<String, InetAddress> networkToAddresses = ImmutableListMultimap
-               .<String, InetAddress> of("eth0", InetAddress.getByName("204.12.42.207"));
+               .<String, InetAddress> of("Network 1", InetAddress.getByName("204.12.55.199"));
 
-      VirtualSystem system = new VirtualSystem(0, "Virtual Hardware Family", "SimpleVM", "vmx-04");
+      VirtualSystem system = new VirtualSystem(0, "Virtual Hardware Family", "SimpleVM", "vmx-07");
 
       SortedSet<ResourceAllocation> resourceAllocations = ImmutableSortedSet
                .<ResourceAllocation> naturalOrder().add(
@@ -68,24 +68,19 @@ public class VAppHandlerTest extends BaseHandlerTest {
                                  ResourceType.PROCESSOR, null, null, null, null, null, 1,
                                  "hertz * 10^6"),
                         new ResourceAllocation(2, "512MB of memory", "Memory Size",
-                                 ResourceType.MEMORY, null, null, null, null, null, 1536,
+                                 ResourceType.MEMORY, null, null, null, null, null, 512,
                                  "byte * 2^20")).add(
 
                         new ResourceAllocation(3, "SCSI Controller 0", "SCSI Controller",
                                  ResourceType.SCSI_CONTROLLER, "lsilogic", 0, null, null, null, 1,
                                  null)).add(
 
-                        new ResourceAllocation(8, "Network Adapter 1",
-                                 "PCNet32 ethernet adapter on \"VLAN 536\" network",
-                                 ResourceType.ETHERNET_ADAPTER, "PCNet32", null, 7, null, true, 1,
-                                 null)).add(
+                        new ResourceAllocation(9, "Hard Disk 1", null, ResourceType.DISK_DRIVE,
+                                 null, null, 0, 3, null, 20971520, "byte * 2^20")).build();
 
-                        new ResourceAllocation(9, "Hard Disk 1", null, ResourceType.OTHER, null,
-                                 null, 0, 3, null, 20971520, "byte * 2^20")).build();
-
-      VApp expects = new VAppImpl("188849-2", "188849-2", URI
-               .create("https://vcloud.safesecureweb.com/api/v0.8/vapp/188849-2"), VAppStatus.OFF,
-               networkToAddresses, "", system, resourceAllocations);
+      VApp expects = new VAppImpl("188849-44", "188849-44", URI
+               .create("https://vcloud.safesecureweb.com/api/v0.8/vapp/188849-44"), VAppStatus.ON,
+               new Long(20971520), networkToAddresses, "", system, resourceAllocations);
 
       assertEquals(result, expects);
 
