@@ -46,7 +46,7 @@ import com.google.common.collect.ImmutableMap;
 @Test(threadPoolSize = 10)
 public abstract class BaseHttpCommandExecutorServiceTest extends BaseJettyTest {
 
-   @Test(invocationCount = 50, timeOut = 5000)
+   @Test(invocationCount = 25, timeOut = 5000)
    public void testRequestFilter() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
       assertEquals(client.downloadFilter("", "filterme").trim(), "test");
@@ -54,13 +54,13 @@ public abstract class BaseHttpCommandExecutorServiceTest extends BaseJettyTest {
 
    // TODO: filtering redirect test
 
-   @Test(invocationCount = 50, timeOut = 5000)
+   @Test(invocationCount = 25, timeOut = 5000)
    public void testGetStringWithHeader() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
       assertEquals(client.download("", "test").trim(), "test");
    }
 
-   @Test(invocationCount = 50, timeOut = 5000)
+   @Test(invocationCount = 25, timeOut = 5000)
    public void testGetString() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
       assertEquals(client.download("").trim(), XML);
@@ -72,32 +72,32 @@ public abstract class BaseHttpCommandExecutorServiceTest extends BaseJettyTest {
                { "qu?stion" } };
    }
 
-   @Test(invocationCount = 50, timeOut = 5000, dataProvider = "gets")
+   @Test(invocationCount = 25, timeOut = 5000, dataProvider = "gets")
    public void testGetStringSynch(String uri) throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
       // TODO why need trim?
       assertEquals(client.synch(uri).trim(), XML);
    }
 
-   @Test(invocationCount = 50, timeOut = 5000)
+   @Test(invocationCount = 25, timeOut = 5000)
    public void testGetException() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
       assertEquals(client.downloadException("", GetOptions.Builder.tail(1)).trim(), "foo");
    }
 
-   @Test(invocationCount = 50, timeOut = 5000)
+   @Test(invocationCount = 25, timeOut = 5000)
    public void testGetSynchException() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
       assertEquals(client.synchException("", "").trim(), "foo");
    }
 
-   @Test(invocationCount = 50, timeOut = 5000)
+   @Test(invocationCount = 25, timeOut = 5000)
    public void testGetStringRedirect() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
       assertEquals(client.download("redirect").trim(), XML2);
    }
 
-   @Test(enabled = false, invocationCount = 50, timeOut = 5000)
+   @Test(enabled = false, invocationCount = 25, timeOut = 5000)
    public void testGetStringPermanentRedirect() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
       // GetString get = factory.createGetString("permanentredirect");
@@ -107,13 +107,13 @@ public abstract class BaseHttpCommandExecutorServiceTest extends BaseJettyTest {
       // TODO assert misses are only one, as permanent redirects paths should be remembered.
    }
 
-   @Test(invocationCount = 50, timeOut = 5000)
+   @Test(invocationCount = 25, timeOut = 5000)
    public void testPost() throws MalformedURLException, ExecutionException, InterruptedException,
             TimeoutException {
       assertEquals(client.post("", "foo").trim(), "fooPOST");
    }
 
-   @Test(invocationCount = 50, timeOut = 10000)
+   @Test(invocationCount = 25, timeOut = 10000)
    public void testPostAsInputStream() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
       try {
@@ -136,38 +136,38 @@ public abstract class BaseHttpCommandExecutorServiceTest extends BaseJettyTest {
       assert postFailures.get() > 0;
    }
 
-   @Test(invocationCount = 50, timeOut = 5000)
+   @Test(invocationCount = 25, timeOut = 5000)
    public void testPostBinder() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
       assertEquals(client.postJson("", "foo").trim(), "{\"key\":\"foo\"}POST");
    }
 
-   @Test(invocationCount = 50, timeOut = 5000)
+   @Test(invocationCount = 25, timeOut = 5000)
    public void testPut() throws MalformedURLException, ExecutionException, InterruptedException,
             TimeoutException {
       assertEquals(client.upload("", "foo").trim(), "fooPUT");
    }
 
-   @Test(invocationCount = 50, timeOut = 5000)
+   @Test(invocationCount = 25, timeOut = 5000)
    public void testPutRedirect() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
       assertEquals(client.upload("redirect", "foo").trim(), "fooPUTREDIRECT");
    }
 
-   @Test(invocationCount = 50, timeOut = 5000)
+   @Test(invocationCount = 25, timeOut = 5000)
    public void testKillRobotSlowly() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
       assertEquals(client.action("robot", "kill", ImmutableMap.of("death", "slow")).trim(),
                "robot->kill:{death=slow}");
    }
 
-   @Test(invocationCount = 50, timeOut = 5000)
+   @Test(invocationCount = 25, timeOut = 5000)
    public void testHead() throws MalformedURLException, ExecutionException, InterruptedException,
             TimeoutException {
       assert client.exists("");
    }
 
-   @Test(invocationCount = 50, timeOut = 5000)
+   @Test(invocationCount = 25, timeOut = 5000)
    public void testGetAndParseSax() throws MalformedURLException, ExecutionException,
             InterruptedException, TimeoutException {
       assertEquals(client.downloadAndParse(""), "whoppers");
