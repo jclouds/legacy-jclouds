@@ -138,7 +138,7 @@ public class TweetStoreLiveTest {
       this.contexts = ImmutableSet.of(s3Context, cfContext, azContext);
       boolean deleted = false;
       for (BlobStoreContext<?, ?> context : contexts) {
-         if (context.getBlobStore().exists(container)) {
+         if (context.getBlobStore().containerExists(container)) {
             System.err.printf("deleting container %s at %s%n", container, context.getEndPoint());
             context.getBlobStore().deleteContainer(container);
             deleted = true;

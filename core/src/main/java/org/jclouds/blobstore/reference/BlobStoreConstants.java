@@ -30,6 +30,29 @@ package org.jclouds.blobstore.reference;
  */
 public interface BlobStoreConstants {
    /**
+    * <p/>
+    * To interoperate with other S3 tools, we also accept the following:
+    * <ul>
+    * <li>an object named '#{dirpath}_$folder$' or '#{dirpath}/' denoting a directory marker</li>
+    * <li>an object with content type set to 'application/directory' denoting a directory marker</li>
+    * <li>if there exists any objects with the prefix "#{dirpath}/", then the directory is said to
+    * exist</li>
+    * <li>if both a file with the name of a directory and a marker for that directory exists, then
+    * the *file masks the directory*, and the directory is never returned.</li>
+    * </ul>
+    */
+   public static final String DIRECTORY_SUFFIX_ROOT = "/";
+   public static final String DIRECTORY_SUFFIX_FOLDER = "_$folder$";
+   public static final String[] DIRECTORY_SUFFIXES = { DIRECTORY_SUFFIX_FOLDER,
+            DIRECTORY_SUFFIX_ROOT };
+
+   /**
+    * Key-value implementations of BlobStore, such as S3, do not have directories. We use an empty
+    * object '#{dirpath}_$folder$' with content type set to 'application/directory'.
+    */
+   public static final String PROPERTY_BLOBSTORE_DIRECTORY_SUFFIX = "jclouds.blobstore.directorysuffix";
+
+   /**
     * comma-separated, fully qualified class names of implementations of BlobStoreContextBuilder
     * 
     */

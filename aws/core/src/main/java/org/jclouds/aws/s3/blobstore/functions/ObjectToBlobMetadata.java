@@ -23,12 +23,14 @@
  */
 package org.jclouds.aws.s3.blobstore.functions;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.ResourceType;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
+import org.jclouds.blobstore.strategy.IsDirectoryStrategy;
 
 import com.google.common.base.Function;
 
@@ -37,6 +39,13 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class ObjectToBlobMetadata implements Function<ObjectMetadata, MutableBlobMetadata> {
+   private final IsDirectoryStrategy isDirectoryStrategy;
+
+   @Inject
+   public ObjectToBlobMetadata(IsDirectoryStrategy isDirectoryStrategy) {
+      this.isDirectoryStrategy = isDirectoryStrategy;
+   }
+
    public MutableBlobMetadata apply(ObjectMetadata from) {
       MutableBlobMetadata to = new MutableBlobMetadataImpl();
       to.setContentMD5(from.getContentMD5());
@@ -46,8 +55,9 @@ public class ObjectToBlobMetadata implements Function<ObjectMetadata, MutableBlo
       to.setName(from.getKey());
       to.setSize(from.getSize());
       to.setType(ResourceType.BLOB);
+      to.setLastModified(from.getLastModified());
       to.setUserMetadata(from.getUserMetadata());
-      if (from.getContentType() != null && from.getContentType().equals("application/directory")) {
+      if (isDirectoryStrategy.execute(to)) {
          to.setType(ResourceType.RELATIVE_PATH);
       }
       return to;

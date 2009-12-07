@@ -43,6 +43,7 @@ import org.jclouds.aws.s3.blobstore.internal.BaseS3BlobStore;
 import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.options.ListBucketOptions;
 import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ListContainerResponse;
@@ -52,6 +53,8 @@ import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.blobstore.domain.internal.ListResponseImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
+import org.jclouds.blobstore.strategy.GetDirectoryStrategy;
+import org.jclouds.blobstore.strategy.MkdirStrategy;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.logging.Logger.LoggerFactory;
 
@@ -59,18 +62,22 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
 public class S3BlobStore extends BaseS3BlobStore implements BlobStore {
+   private final S3AsyncBlobStore aBlobStore;
 
    @Inject
-   public S3BlobStore(S3AsyncClient async, S3Client sync, Factory blobFactory,
-            LoggerFactory logFactory, ClearListStrategy clearContainerStrategy,
-            ObjectToBlobMetadata object2BlobMd, ObjectToBlob object2Blob, BlobToObject blob2Object,
+   public S3BlobStore(S3AsyncBlobStore aBlobStore, S3AsyncClient async, S3Client sync,
+            Factory blobFactory, LoggerFactory logFactory,
+            ClearListStrategy clearContainerStrategy, ObjectToBlobMetadata object2BlobMd,
+            ObjectToBlob object2Blob, BlobToObject blob2Object,
             ContainerToBucketListOptions container2BucketListOptions,
             BlobToObjectGetOptions blob2ObjectGetOptions,
+            GetDirectoryStrategy getDirectoryStrategy, MkdirStrategy mkdirStrategy,
             BucketToResourceMetadata bucket2ResourceMd, BucketToResourceList bucket2ResourceList,
             ExecutorService service) {
       super(async, sync, blobFactory, logFactory, clearContainerStrategy, object2BlobMd,
                object2Blob, blob2Object, container2BucketListOptions, blob2ObjectGetOptions,
-               bucket2ResourceMd, bucket2ResourceList, service);
+               getDirectoryStrategy, mkdirStrategy, bucket2ResourceMd, bucket2ResourceList, service);
+      this.aBlobStore = aBlobStore;
    }
 
    /**
@@ -84,6 +91,10 @@ public class S3BlobStore extends BaseS3BlobStore implements BlobStore {
       clearContainerStrategy.execute(container, recursive());
    }
 
+   public boolean containerExists(String container) {
+      return sync.bucketExists(container);
+   }
+
    public boolean createContainer(String container) {
       return sync.putBucketIfNotExists(container);
    }
@@ -93,8 +104,17 @@ public class S3BlobStore extends BaseS3BlobStore implements BlobStore {
       sync.deleteBucketIfEmpty(container);
    }
 
-   public boolean exists(String container) {
-      return sync.bucketExists(container);
+   public boolean directoryExists(String containerName, String directory) {
+      try {
+         getDirectoryStrategy.execute(aBlobStore, containerName, directory);
+         return true;
+      } catch (KeyNotFoundException e) {
+         return false;
+      }
+   }
+
+   public void createDirectory(String containerName, String directory) {
+      mkdirStrategy.execute(aBlobStore, containerName, directory);
    }
 
    public Blob getBlob(String container, String key,

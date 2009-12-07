@@ -31,6 +31,7 @@ import java.util.concurrent.ExecutorService;
 import javax.inject.Inject;
 
 import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ListContainerResponse;
@@ -40,6 +41,9 @@ import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.blobstore.domain.internal.ListResponseImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
+import org.jclouds.blobstore.strategy.GetDirectoryStrategy;
+import org.jclouds.blobstore.strategy.MkdirStrategy;
+import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
@@ -58,19 +62,23 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
 public class CloudFilesBlobStore extends BaseCloudFilesBlobStore implements BlobStore {
+   private final CloudFilesAsyncBlobStore aBlobStore;
 
    @Inject
-   public CloudFilesBlobStore(CloudFilesAsyncClient async, CloudFilesClient sync,
-            Factory blobFactory, LoggerFactory logFactory,
+   public CloudFilesBlobStore(CloudFilesAsyncBlobStore aBlobStore, CloudFilesAsyncClient async,
+            CloudFilesClient sync, Factory blobFactory, LoggerFactory logFactory,
             ClearListStrategy clearContainerStrategy, ObjectToBlobMetadata object2BlobMd,
             ObjectToBlob object2Blob, BlobToObject blob2Object,
             BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,
             BlobToObjectGetOptions blob2ObjectGetOptions,
+            GetDirectoryStrategy getDirectoryStrategy, MkdirStrategy mkdirStrategy,
             ContainerToResourceMetadata container2ResourceMd,
             ContainerToResourceList container2ResourceList, ExecutorService service) {
       super(async, sync, blobFactory, logFactory, clearContainerStrategy, object2BlobMd,
                object2Blob, blob2Object, container2ContainerListOptions, blob2ObjectGetOptions,
-               container2ResourceMd, container2ResourceList, service);
+               getDirectoryStrategy, mkdirStrategy, container2ResourceMd, container2ResourceList,
+               service);
+      this.aBlobStore = aBlobStore;
    }
 
    /**
@@ -93,8 +101,8 @@ public class CloudFilesBlobStore extends BaseCloudFilesBlobStore implements Blob
       sync.deleteContainerIfEmpty(container);
    }
 
-   public boolean exists(String container) {
-      return sync.containerExists(container);
+   public boolean containerExists(String path) {
+      return sync.containerExists(BlobStoreUtils.parseContainerFromPath(path));
    }
 
    public Blob getBlob(String container, String key,
@@ -126,6 +134,19 @@ public class CloudFilesBlobStore extends BaseCloudFilesBlobStore implements Blob
 
    public void removeBlob(String container, String key) {
       sync.removeObject(container, key);
+   }
+
+   public boolean directoryExists(String containerName, String directory) {
+      try {
+         getDirectoryStrategy.execute(aBlobStore, containerName, directory);
+         return true;
+      } catch (KeyNotFoundException e) {
+         return false;
+      }
+   }
+
+   public void createDirectory(String containerName, String directory) {
+      mkdirStrategy.execute(aBlobStore, containerName, directory);
    }
 
 }

@@ -52,7 +52,12 @@ public class BlobToObjectGetOptions implements
          }
          for (String range : from[0].getRanges()) {
             String[] firstLast = range.split("\\-");
-            httpOptions.range(Long.parseLong(firstLast[0]), Long.parseLong(firstLast[1]));
+            if (firstLast.length == 2)
+               httpOptions.range(Long.parseLong(firstLast[0]), Long.parseLong(firstLast[1]));
+            else if (range.startsWith("-"))
+               httpOptions.tail(Long.parseLong(firstLast[0]));
+            else
+               httpOptions.startAt(Long.parseLong(firstLast[0]));
          }
       }
       return httpOptions;

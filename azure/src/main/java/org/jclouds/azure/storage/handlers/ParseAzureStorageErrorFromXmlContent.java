@@ -29,6 +29,7 @@ import javax.inject.Inject;
 import org.jclouds.azure.storage.AzureStorageResponseException;
 import org.jclouds.azure.storage.domain.AzureStorageError;
 import org.jclouds.azure.storage.util.AzureStorageUtils;
+import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpResponse;
@@ -64,7 +65,13 @@ public class ParseAzureStorageErrorFromXmlContent implements HttpErrorHandler {
                if (content.indexOf('<') >= 0) {
                   AzureStorageError error = utils.parseAzureStorageErrorFromContent(command,
                            response, content);
-                  command.setException(new AzureStorageResponseException(command, response, error));
+                  AzureStorageResponseException ex = new AzureStorageResponseException(command,
+                           response, error);
+                  if (error.getCode().equals("ContainerNotFound")) {
+                     command.setException(new ContainerNotFoundException(ex));
+                  } else {
+                     command.setException(ex);
+                  }
                } else {
                   command.setException(new HttpResponseException(command, response, content));
                }

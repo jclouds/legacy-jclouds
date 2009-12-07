@@ -46,8 +46,8 @@ import com.google.common.base.Function;
 /**
  * @author Adrian Cole
  */
-public class ParseSystemAndUserMetadataFromHeaders implements Function<HttpResponse, MutableBlobMetadata>,
-         InvocationContext {
+public class ParseSystemAndUserMetadataFromHeaders implements
+         Function<HttpResponse, MutableBlobMetadata>, InvocationContext {
    private final String metadataPrefix;
    private final DateService dateParser;
    private final Provider<MutableBlobMetadata> metadataFactory;
@@ -69,7 +69,7 @@ public class ParseSystemAndUserMetadataFromHeaders implements Function<HttpRespo
       addETagTo(from, to);
       addContentMD5To(from, to);
       parseLastModifiedOrThrowException(from, to);
-      setContentLengthOrThrowException(from, to);
+      setContentLength(from, to);
       addUserMetadataTo(from, to);
       return to;
    }
@@ -85,13 +85,9 @@ public class ParseSystemAndUserMetadataFromHeaders implements Function<HttpRespo
    }
 
    @VisibleForTesting
-   void setContentLengthOrThrowException(HttpResponse from, MutableBlobMetadata metadata)
-            throws HttpException {
+   void setContentLength(HttpResponse from, MutableBlobMetadata metadata) throws HttpException {
       String contentLength = from.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH);
-      if (contentLength == null)
-         throw new HttpException(HttpHeaders.CONTENT_LENGTH + " not found in headers");
-      else
-         metadata.setSize(Long.parseLong(contentLength));
+      metadata.setSize(contentLength == null ? 0 : Long.parseLong(contentLength));
    }
 
    @VisibleForTesting
@@ -100,7 +96,7 @@ public class ParseSystemAndUserMetadataFromHeaders implements Function<HttpRespo
       String lastModified = from.getFirstHeaderOrNull(HttpHeaders.LAST_MODIFIED);
       if (lastModified == null)
          throw new HttpException(HttpHeaders.LAST_MODIFIED + " header not present in response: "
-                  + from);
+                  + from.getStatusLine());
       metadata.setLastModified(dateParser.rfc822DateParse(lastModified));
       if (metadata.getLastModified() == null)
          throw new HttpException("could not parse: " + HttpHeaders.LAST_MODIFIED + ": "

@@ -32,6 +32,7 @@ import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
 import org.jclouds.azure.storage.blob.domain.ListableBlobProperties;
 import org.jclouds.azure.storage.blob.domain.internal.ListableBlobPropertiesImpl;
 import org.jclouds.azure.storage.blob.domain.internal.TreeSetListBlobsResponse;
+import org.jclouds.blobstore.internal.LocationAndCredentials;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.DateService;
 import org.joda.time.DateTime;
@@ -127,7 +128,7 @@ public class ContainerNameEnumerationResultsHandler extends
          currentContentEncoding = null;
          currentContentLanguage = null;
       } else if (qName.equals("Url")) {
-         currentUrl = URI.create(currentText.toString().trim());
+         currentUrl = LocationAndCredentials.parse(currentText.toString().trim()).uri;
       } else if (qName.equals("LastModified")) {
          currentLastModified = dateParser.rfc822DateParse(currentText.toString().trim());
       } else if (qName.equals("Etag")) {

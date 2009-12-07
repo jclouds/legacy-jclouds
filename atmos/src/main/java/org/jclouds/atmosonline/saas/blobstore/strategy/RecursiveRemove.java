@@ -118,8 +118,8 @@ public class RecursiveRemove implements ClearListStrategy, ClearContainerStrateg
 
    public void execute(final String containerName, ListContainerOptions options) {
       String path = containerName;
-      if (options.getPath() != null)
-         path += "/" + options.getPath();
+      if (options.getDir() != null)
+         path += "/" + options.getDir();
       Set<Future<Void>> deletes = Sets.newHashSet();
       try {
          for (DirectoryEntry md : async.listDirectory(path).get(requestTimeoutMilliseconds,

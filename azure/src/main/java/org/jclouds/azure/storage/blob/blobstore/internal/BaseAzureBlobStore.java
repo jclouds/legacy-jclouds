@@ -41,6 +41,8 @@ import org.jclouds.azure.storage.blob.blobstore.functions.ListOptionsToListBlobs
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
+import org.jclouds.blobstore.strategy.GetDirectoryStrategy;
+import org.jclouds.blobstore.strategy.MkdirStrategy;
 import org.jclouds.concurrent.FutureFunctionWrapper;
 import org.jclouds.logging.Logger.LoggerFactory;
 
@@ -60,6 +62,8 @@ public class BaseAzureBlobStore {
    protected final ContainerToResourceMetadata container2ResourceMd;
    protected final ListBlobsResponseToResourceList container2ResourceList;
    protected final ExecutorService service;
+   protected final GetDirectoryStrategy getDirectoryStrategy;
+   protected final MkdirStrategy mkdirStrategy;
 
    @Inject
    protected BaseAzureBlobStore(AzureBlobAsyncClient async, AzureBlobClient sync,
@@ -68,6 +72,7 @@ public class BaseAzureBlobStore {
             AzureBlobToBlob object2Blob, BlobToAzureBlob blob2Object,
             ListOptionsToListBlobsOptions container2ContainerListOptions,
             BlobToHttpGetOptions blob2ObjectGetOptions,
+            GetDirectoryStrategy getDirectoryStrategy, MkdirStrategy mkdirStrategy,
             ContainerToResourceMetadata container2ResourceMd,
             ListBlobsResponseToResourceList container2ResourceList, ExecutorService service) {
       this.async = checkNotNull(async, "async");
@@ -81,6 +86,9 @@ public class BaseAzureBlobStore {
       this.container2ContainerListOptions = checkNotNull(container2ContainerListOptions,
                "container2ContainerListOptions");
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
+      this.getDirectoryStrategy = checkNotNull(getDirectoryStrategy,
+               "getDirectoryStrategy");
+      this.mkdirStrategy = checkNotNull(mkdirStrategy, "mkdirStrategy");
       this.container2ResourceMd = checkNotNull(container2ResourceMd, "container2ResourceMd");
       this.container2ResourceList = checkNotNull(container2ResourceList, "container2ResourceList");
       this.service = checkNotNull(service, "service");

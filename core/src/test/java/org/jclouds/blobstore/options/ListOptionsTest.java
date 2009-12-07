@@ -26,7 +26,7 @@ package org.jclouds.blobstore.options;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.afterMarker;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.maxResults;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
-import static org.jclouds.blobstore.options.ListContainerOptions.Builder.underPath;
+import static org.jclouds.blobstore.options.ListContainerOptions.Builder.inDirectory;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -54,21 +54,21 @@ public class ListOptionsTest {
    @Test
    public void testPath() {
       ListContainerOptions options = new ListContainerOptions();
-      options.underPath("test");
-      assertEquals(options.getPath(), "test");
+      options.inDirectory("test");
+      assertEquals(options.getDir(), "test");
    }
 
    @Test
    public void testPathStatic() {
-      ListContainerOptions options = underPath("test");
-      assertEquals(options.getPath(), "test");
+      ListContainerOptions options = inDirectory("test");
+      assertEquals(options.getDir(), "test");
    }
 
    @Test
    public void testTwoOptions() {
       ListContainerOptions options = new ListContainerOptions();
-      options.underPath("test").maxResults(1);
-      assertEquals(options.getPath(), "test");
+      options.inDirectory("test").maxResults(1);
+      assertEquals(options.getDir(), "test");
       assertEquals(options.getMaxResults(), new Integer(1));
 
    }
@@ -76,12 +76,12 @@ public class ListOptionsTest {
    @Test
    public void testNullPath() {
       ListContainerOptions options = new ListContainerOptions();
-      assertEquals(options.getPath(), null);
+      assertEquals(options.getDir(), null);
    }
 
    @Test(expectedExceptions = NullPointerException.class)
    public void testPathNPE() {
-      underPath(null);
+      inDirectory(null);
    }
 
    @Test

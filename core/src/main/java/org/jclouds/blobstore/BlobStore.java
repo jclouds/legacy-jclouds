@@ -55,9 +55,13 @@ public interface BlobStore {
    ListContainerResponse<? extends ResourceMetadata> list(String container,
             ListContainerOptions... options);
 
-   boolean exists(String container);
+   boolean containerExists(String container);
+
+   boolean directoryExists(String container, String directory);
 
    boolean createContainer(String container);
+
+   void createDirectory(String container, String directory);
 
    /**
     * This will delete a container recursively.

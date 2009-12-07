@@ -66,6 +66,15 @@ public class GetOptions {
    }
 
    /**
+    * download the specified range of the object.
+    */
+   public GetOptions startAt(long start) {
+      checkArgument(start >= 0, "start must be >= 0");
+      getRanges().add(String.format("%d-", start));
+      return this;
+   }
+
+   /**
     * Only return the object if it has changed since this time.
     * <p />
     * Not compatible with {@link #ifETagMatches(String)} or {@link #ifUnmodifiedSince(DateTime)}

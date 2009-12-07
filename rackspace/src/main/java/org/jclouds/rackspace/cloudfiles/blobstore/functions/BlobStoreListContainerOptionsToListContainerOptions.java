@@ -41,17 +41,17 @@ public class BlobStoreListContainerOptionsToListContainerOptions
       org.jclouds.rackspace.cloudfiles.options.ListContainerOptions options = new org.jclouds.rackspace.cloudfiles.options.ListContainerOptions();
       if (optionsList.length != 0) {
 
-         if ((optionsList[0].getPath() == null) && (optionsList[0].isRecursive())) {
+         if ((optionsList[0].getDir() == null) && (optionsList[0].isRecursive())) {
             options.withPrefix("");
          }
-         if ((optionsList[0].getPath() == null) && (!optionsList[0].isRecursive())) {
+         if ((optionsList[0].getDir() == null) && (!optionsList[0].isRecursive())) {
             options.underPath("");
          }
-         if ((optionsList[0].getPath() != null) && (optionsList[0].isRecursive())) {
-            options.withPrefix(optionsList[0].getPath());
+         if ((optionsList[0].getDir() != null) && (optionsList[0].isRecursive())) {
+            options.withPrefix(optionsList[0].getDir());
          }
-         if ((optionsList[0].getPath() != null) && (!optionsList[0].isRecursive())) {
-            options.underPath(optionsList[0].getPath());
+         if ((optionsList[0].getDir() != null) && (!optionsList[0].isRecursive())) {
+            options.underPath(optionsList[0].getDir());
          }
          if (optionsList[0].getMarker() != null) {
             options.afterMarker(optionsList[0].getMarker());

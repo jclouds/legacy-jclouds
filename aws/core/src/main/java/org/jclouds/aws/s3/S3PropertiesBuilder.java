@@ -31,6 +31,8 @@ import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_METADATA_PREF
 import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_RETRY;
 import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_SESSIONINTERVAL;
 import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_TIMEOUT;
+import static org.jclouds.blobstore.reference.BlobStoreConstants.DIRECTORY_SUFFIX_FOLDER;
+import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_BLOBSTORE_DIRECTORY_SUFFIX;
 
 import java.net.URI;
 import java.util.Properties;
@@ -50,6 +52,7 @@ public class S3PropertiesBuilder extends HttpPropertiesBuilder {
       properties.setProperty(PROPERTY_S3_ENDPOINT, "https://s3.amazonaws.com");
       properties.setProperty(PROPERTY_S3_METADATA_PREFIX, "x-amz-meta-");
       properties.setProperty(PROPERTY_S3_SESSIONINTERVAL, "60");
+      properties.setProperty(PROPERTY_BLOBSTORE_DIRECTORY_SUFFIX, DIRECTORY_SUFFIX_FOLDER);
       return properties;
    }
 

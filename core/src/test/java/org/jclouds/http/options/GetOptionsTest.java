@@ -160,13 +160,13 @@ public class GetOptionsTest {
    public void testStartAt() {
       GetOptions options = new GetOptions();
       options.startAt(100);
-      assertEquals(options.getRange(), "bytes=100-");
+      assertEquals(options.getRange(), "bytes=100-9223372036854775807");
    }
 
    @Test
    public void testStartAtStatic() {
       GetOptions options = startAt(100);
-      assertEquals(options.getRange(), "bytes=100-");
+      assertEquals(options.getRange(), "bytes=100-9223372036854775807");
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)

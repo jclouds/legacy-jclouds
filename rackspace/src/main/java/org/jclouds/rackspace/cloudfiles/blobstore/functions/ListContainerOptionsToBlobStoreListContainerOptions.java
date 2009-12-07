@@ -41,10 +41,10 @@ public class ListContainerOptionsToBlobStoreListContainerOptions
       ListContainerOptions options = new ListContainerOptions();
       if (optionsList.length != 0) {
          if (optionsList[0].getPath() != null) {
-            options.underPath(optionsList[0].getPath());
+            options.inDirectory(optionsList[0].getPath());
          }
          if (optionsList[0].getPrefix() != null) {
-            options.underPath(optionsList[0].getPrefix());
+            options.inDirectory(optionsList[0].getPrefix());
             options.recursive();
          }
          if (optionsList[0].getMarker() != null) {

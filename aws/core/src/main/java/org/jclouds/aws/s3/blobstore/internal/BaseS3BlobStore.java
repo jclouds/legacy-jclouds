@@ -41,6 +41,8 @@ import org.jclouds.aws.s3.blobstore.functions.ObjectToBlob;
 import org.jclouds.aws.s3.blobstore.functions.ObjectToBlobMetadata;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
+import org.jclouds.blobstore.strategy.GetDirectoryStrategy;
+import org.jclouds.blobstore.strategy.MkdirStrategy;
 import org.jclouds.concurrent.FutureFunctionWrapper;
 import org.jclouds.logging.Logger.LoggerFactory;
 
@@ -60,6 +62,8 @@ public class BaseS3BlobStore {
    protected final BucketToResourceMetadata bucket2ResourceMd;
    protected final BucketToResourceList bucket2ResourceList;
    protected final ExecutorService service;
+   protected final GetDirectoryStrategy getDirectoryStrategy;
+   protected final MkdirStrategy mkdirStrategy;
 
    @Inject
    protected BaseS3BlobStore(S3AsyncClient async, S3Client sync, Blob.Factory blobFactory,
@@ -67,6 +71,7 @@ public class BaseS3BlobStore {
             ObjectToBlobMetadata object2BlobMd, ObjectToBlob object2Blob, BlobToObject blob2Object,
             ContainerToBucketListOptions container2BucketListOptions,
             BlobToObjectGetOptions blob2ObjectGetOptions,
+            GetDirectoryStrategy getDirectoryStrategy, MkdirStrategy mkdirStrategy,
             BucketToResourceMetadata bucket2ResourceMd, BucketToResourceList bucket2ResourceList,
             ExecutorService service) {
       this.async = checkNotNull(async, "async");
@@ -80,6 +85,9 @@ public class BaseS3BlobStore {
       this.container2BucketListOptions = checkNotNull(container2BucketListOptions,
                "container2BucketListOptions");
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
+      this.getDirectoryStrategy = checkNotNull(getDirectoryStrategy,
+               "getDirectoryStrategy");
+      this.mkdirStrategy = checkNotNull(mkdirStrategy, "mkdirStrategy");
       this.bucket2ResourceMd = checkNotNull(bucket2ResourceMd, "bucket2ResourceMd");
       this.bucket2ResourceList = checkNotNull(bucket2ResourceList, "bucket2ResourceList");
       this.service = checkNotNull(service, "service");

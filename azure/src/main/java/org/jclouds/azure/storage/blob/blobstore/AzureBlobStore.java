@@ -42,6 +42,7 @@ import org.jclouds.azure.storage.blob.blobstore.internal.BaseAzureBlobStore;
 import org.jclouds.azure.storage.blob.domain.ListableContainerProperties;
 import org.jclouds.azure.storage.blob.options.ListBlobsOptions;
 import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ListContainerResponse;
@@ -52,6 +53,8 @@ import org.jclouds.blobstore.domain.internal.ListResponseImpl;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
+import org.jclouds.blobstore.strategy.GetDirectoryStrategy;
+import org.jclouds.blobstore.strategy.MkdirStrategy;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.logging.Logger.LoggerFactory;
 
@@ -59,19 +62,22 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
 public class AzureBlobStore extends BaseAzureBlobStore implements BlobStore {
+   private final AzureAsyncBlobStore aBlobStore;
 
    @Inject
-   public AzureBlobStore(AzureBlobAsyncClient async, AzureBlobClient sync, Factory blobFactory,
-            LoggerFactory logFactory, ClearListStrategy clearContainerStrategy,
-            BlobPropertiesToBlobMetadata object2BlobMd, AzureBlobToBlob object2Blob,
-            BlobToAzureBlob blob2Object,
+   public AzureBlobStore(AzureAsyncBlobStore aBlobStore, AzureBlobAsyncClient async,
+            AzureBlobClient sync, Factory blobFactory, LoggerFactory logFactory,
+            ClearListStrategy clearContainerStrategy, BlobPropertiesToBlobMetadata object2BlobMd,
+            AzureBlobToBlob object2Blob, BlobToAzureBlob blob2Object,
             ListOptionsToListBlobsOptions container2ContainerListOptions,
-            BlobToHttpGetOptions blob2ObjectGetOptions,
-            ContainerToResourceMetadata container2ResourceMd,
+            BlobToHttpGetOptions blob2ObjectGetOptions, GetDirectoryStrategy getDirectoryStrategy,
+            MkdirStrategy mkdirStrategy, ContainerToResourceMetadata container2ResourceMd,
             ListBlobsResponseToResourceList container2ResourceList, ExecutorService service) {
       super(async, sync, blobFactory, logFactory, clearContainerStrategy, object2BlobMd,
                object2Blob, blob2Object, container2ContainerListOptions, blob2ObjectGetOptions,
-               container2ResourceMd, container2ResourceList, service);
+               getDirectoryStrategy, mkdirStrategy, container2ResourceMd, container2ResourceList,
+               service);
+      this.aBlobStore = aBlobStore;
    }
 
    /**
@@ -93,7 +99,20 @@ public class AzureBlobStore extends BaseAzureBlobStore implements BlobStore {
       sync.deleteContainer(container);
    }
 
-   public boolean exists(String container) {
+   public boolean directoryExists(String containerName, String directory) {
+      try {
+         getDirectoryStrategy.execute(aBlobStore, containerName, directory);
+         return true;
+      } catch (KeyNotFoundException e) {
+         return false;
+      }
+   }
+
+   public void createDirectory(String containerName, String directory) {
+      mkdirStrategy.execute(aBlobStore, containerName, directory);
+   }
+
+   public boolean containerExists(String container) {
       return sync.containerExists(container);
    }
 

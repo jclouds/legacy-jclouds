@@ -397,13 +397,13 @@ public class BaseBlobStoreIntegrationTest<A, S> {
 
    protected static void deleteContainer(final BlobStoreContext<?, ?> context, final String name)
             throws InterruptedException {
-      if (context.getBlobStore().exists(name)) {
+      if (context.getBlobStore().containerExists(name)) {
          System.err.printf("*** deleting container %s...%n", name);
          context.getBlobStore().deleteContainer(name);
          assertConsistencyAware(context, new Runnable() {
             public void run() {
                try {
-                  assert !context.getBlobStore().exists(name) : "container " + name
+                  assert !context.getBlobStore().containerExists(name) : "container " + name
                            + " still exists";
                } catch (Exception e) {
                   Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);

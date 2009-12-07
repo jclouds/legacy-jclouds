@@ -111,6 +111,17 @@ public class AtmosAsyncBlobStore extends BaseAtmosBlobStore implements AsyncBlob
       });
    }
 
+   public Future<Void> createDirectory(String container, String directory) {
+      return wrapFuture(async.createDirectory(container + "/" + directory),
+               new Function<URI, Void>() {
+
+                  public Void apply(URI from) {
+                     return null;// no etag
+                  }
+
+               });
+   }
+
    public Future<Void> deleteContainer(final String container) {
       return service.submit(new Callable<Void>() {
 
@@ -130,8 +141,12 @@ public class AtmosAsyncBlobStore extends BaseAtmosBlobStore implements AsyncBlob
       });
    }
 
-   public Future<Boolean> exists(String container) {
+   public Future<Boolean> containerExists(String container) {
       return async.pathExists(container);
+   }
+
+   public Future<Boolean> directoryExists(String container, String directory) {
+      return async.pathExists(container + "/" + directory);
    }
 
    public Future<Blob> getBlob(String container, String key,
@@ -151,8 +166,8 @@ public class AtmosAsyncBlobStore extends BaseAtmosBlobStore implements AsyncBlob
          if (optionsList[0].isRecursive()) {
             throw new UnsupportedOperationException("recursive not currently supported in emcsaas");
          }
-         if (optionsList[0].getPath() != null) {
-            container = container + "/" + optionsList[0].getPath();
+         if (optionsList[0].getDir() != null) {
+            container = container + "/" + optionsList[0].getDir();
          }
       }
       ListOptions nativeOptions = container2ContainerListOptions.apply(optionsList);

@@ -28,7 +28,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobMetadata;
+import org.jclouds.blobstore.domain.ResourceMetadata;
 import org.jclouds.util.Utils;
 
 /**
@@ -37,6 +40,26 @@ import org.jclouds.util.Utils;
  * @author Adrian Cole
  */
 public class BlobStoreUtils {
+   public static Blob newBlob(BlobStore blobStore, ResourceMetadata blobMeta) {
+      Blob blob = blobStore.newBlob();
+      if (blobMeta instanceof BlobMetadata) {
+         blob.getMetadata().setContentMD5(((BlobMetadata) blobMeta).getContentMD5());
+         blob.getMetadata().setContentType(((BlobMetadata) blobMeta).getContentType());
+      }
+      blob.getMetadata().setETag(blobMeta.getETag());
+      blob.getMetadata().setId(blobMeta.getId());
+      blob.getMetadata().setLastModified(blobMeta.getLastModified());
+      blob.getMetadata().setLocation(blobMeta.getLocation());
+      blob.getMetadata().setName(blobMeta.getName());
+      blob.getMetadata().setUserMetadata(blobMeta.getUserMetadata());
+      return blob;
+   }
+
+   public static Blob newBlob(BlobStore blobStore, String name) {
+      Blob blob = blobStore.newBlob();
+      blob.getMetadata().setName(name);
+      return blob;
+   }
 
    public static String parseContainerFromPath(String path) {
       String container = path;

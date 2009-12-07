@@ -23,12 +23,14 @@
  */
 package org.jclouds.azure.storage.blob.blobstore.functions;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.azure.storage.blob.domain.ListableBlobProperties;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.ResourceType;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
+import org.jclouds.blobstore.strategy.IsDirectoryStrategy;
 
 import com.google.common.base.Function;
 
@@ -38,15 +40,23 @@ import com.google.common.base.Function;
 @Singleton
 public class ListableBlobPropertiesToBlobMetadata<T extends ListableBlobProperties> implements
          Function<T, MutableBlobMetadata> {
+   private final IsDirectoryStrategy isDirectoryStrategy;
+
+   @Inject
+   public ListableBlobPropertiesToBlobMetadata(IsDirectoryStrategy isDirectoryStrategy) {
+      this.isDirectoryStrategy = isDirectoryStrategy;
+   }
+
    public MutableBlobMetadata apply(T from) {
       MutableBlobMetadata to = new MutableBlobMetadataImpl();
       if (from.getContentType() != null)
          to.setContentType(from.getContentType());
       to.setETag(from.getETag());
+      to.setLastModified(from.getLastModified());
       to.setName(from.getName());
       to.setSize(from.getSize());
       to.setType(ResourceType.BLOB);
-      if (from.getContentType() != null && from.getContentType().equals("application/directory")) {
+      if (isDirectoryStrategy.execute(to)) {
          to.setType(ResourceType.RELATIVE_PATH);
       }
       return to;

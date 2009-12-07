@@ -77,13 +77,16 @@ public class AtmosBlobStore extends BaseAtmosBlobStore implements BlobStore {
    }
 
    public void clearContainer(final String container) {
-
       clearContainerStrategy.execute(container, recursive());
    }
 
    public boolean createContainer(String container) {
       sync.createDirectory(container);
       return true;// no etag
+   }
+
+   public void createDirectory(String container, String directory) {
+      sync.createDirectory(container + "/" + directory);
    }
 
    public void deleteContainer(final String container) {
@@ -106,8 +109,12 @@ public class AtmosBlobStore extends BaseAtmosBlobStore implements BlobStore {
       }
    }
 
-   public boolean exists(String container) {
+   public boolean containerExists(String container) {
       return sync.pathExists(container);
+   }
+
+   public boolean directoryExists(String container, String directory) {
+      return sync.pathExists(container + "/" + directory);
    }
 
    public Blob getBlob(String container, String key,
@@ -126,8 +133,8 @@ public class AtmosBlobStore extends BaseAtmosBlobStore implements BlobStore {
          if (optionsList[0].isRecursive()) {
             throw new UnsupportedOperationException("recursive not currently supported in emcsaas");
          }
-         if (optionsList[0].getPath() != null) {
-            container = container + "/" + optionsList[0].getPath();
+         if (optionsList[0].getDir() != null) {
+            container = container + "/" + optionsList[0].getDir();
          }
       }
       ListOptions nativeOptions = container2ContainerListOptions.apply(optionsList);

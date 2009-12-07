@@ -25,7 +25,7 @@ package org.jclouds.blobstore.integration.internal;
 
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.afterMarker;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.maxResults;
-import static org.jclouds.blobstore.options.ListContainerOptions.Builder.underPath;
+import static org.jclouds.blobstore.options.ListContainerOptions.Builder.inDirectory;
 import static org.testng.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
@@ -47,7 +47,7 @@ public class BaseContainerIntegrationTest<A, S> extends BaseBlobStoreIntegration
 
    @Test(groups = { "integration", "live" })
    public void containerDoesntExist() {
-      assert !context.getBlobStore().exists("forgetaboutit");
+      assert !context.getBlobStore().containerExists("forgetaboutit");
    }
 
    @Test(groups = { "integration", "live" })
@@ -112,7 +112,7 @@ public class BaseContainerIntegrationTest<A, S> extends BaseBlobStoreIntegration
          add15UnderRoot(containerName);
 
          ListContainerResponse<? extends ResourceMetadata> container = context.getBlobStore().list(
-                  containerName, underPath("apps/"));
+                  containerName, inDirectory("apps/"));
          assert !container.isTruncated();
          assertEquals(container.size(), 10);
          assertEquals(container.getPath(), "apps/");
@@ -141,7 +141,7 @@ public class BaseContainerIntegrationTest<A, S> extends BaseBlobStoreIntegration
    public void containerExists() throws InterruptedException {
       String containerName = getContainerName();
       try {
-         assert context.getBlobStore().exists(containerName);
+         assert context.getBlobStore().containerExists(containerName);
       } finally {
          returnContainer(containerName);
       }
@@ -175,7 +175,7 @@ public class BaseContainerIntegrationTest<A, S> extends BaseBlobStoreIntegration
       assertConsistencyAware(new Runnable() {
          public void run() {
             try {
-               assert !context.getBlobStore().exists(containerName) : "container " + containerName
+               assert !context.getBlobStore().containerExists(containerName) : "container " + containerName
                         + " still exists";
             } catch (Exception e) {
                Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);

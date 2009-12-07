@@ -59,7 +59,7 @@ public class BlobStoreContextToContainerResult implements Function<String, Conta
          try {
             try {
                long start = System.currentTimeMillis();
-               context.getBlobStore().exists(from.getName());
+               context.getBlobStore().containerExists(from.getName());
                status = ((System.currentTimeMillis() - start) + "ms");
             } catch (ContainerNotFoundException ex) {
                status = ("not found");

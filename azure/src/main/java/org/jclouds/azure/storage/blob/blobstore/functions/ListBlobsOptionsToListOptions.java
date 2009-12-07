@@ -50,7 +50,7 @@ public class ListBlobsOptionsToListOptions implements Function<ListBlobsOptions[
             options.maxResults(optionsList[0].getMaxResults());
          }
          if (optionsList[0].getPrefix() != null) {
-            options.underPath(optionsList[0].getPrefix());
+            options.inDirectory(optionsList[0].getPrefix());
          }
       }
       return options;

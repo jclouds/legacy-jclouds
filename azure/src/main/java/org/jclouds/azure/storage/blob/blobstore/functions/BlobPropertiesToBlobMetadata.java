@@ -23,10 +23,12 @@
  */
 package org.jclouds.azure.storage.blob.blobstore.functions;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.azure.storage.blob.domain.BlobProperties;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
+import org.jclouds.blobstore.strategy.IsDirectoryStrategy;
 
 /**
  * @author Adrian Cole
@@ -34,6 +36,11 @@ import org.jclouds.blobstore.domain.MutableBlobMetadata;
 @Singleton
 public class BlobPropertiesToBlobMetadata extends
          ListableBlobPropertiesToBlobMetadata<BlobProperties> {
+   @Inject
+   public BlobPropertiesToBlobMetadata(IsDirectoryStrategy isDirectoryStrategy) {
+      super(isDirectoryStrategy);
+   }
+
    @Override
    public MutableBlobMetadata apply(BlobProperties from) {
       MutableBlobMetadata to = super.apply(from);

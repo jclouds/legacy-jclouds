@@ -85,15 +85,15 @@ public class ParseBlobMetadataFromHeadersTest {
       HttpResponse from = new HttpResponse();
       from.getHeaders().put(HttpHeaders.CONTENT_LENGTH, "100");
       MutableBlobMetadata metadata = blobMetadataProvider.get();
-      parser.setContentLengthOrThrowException(from, metadata);
+      parser.setContentLength(from, metadata);
       assertEquals(metadata.getSize(), new Long(100));
    }
 
-   @Test(expectedExceptions = HttpException.class)
-   public void testSetContentLengthException() {
+   public void testSetContentLengthNoHeader() {
       HttpResponse from = new HttpResponse();
       MutableBlobMetadata metadata = blobMetadataProvider.get();
-      parser.setContentLengthOrThrowException(from, metadata);
+      parser.setContentLength(from, metadata);
+      assertEquals(metadata.getSize(), new Long(0));
    }
 
    @Test

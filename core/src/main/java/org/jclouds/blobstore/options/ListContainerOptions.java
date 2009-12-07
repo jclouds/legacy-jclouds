@@ -29,26 +29,26 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Contains options supported in the list container operation. <h2>
  * Usage</h2> The recommended way to instantiate a ListOptions object is to statically import
- * ListContainerOptions.* and invoke a static creation method followed by an instance mutator (if needed):
+ * ListContainerOptions.* and invoke a static creation method followed by an instance mutator (if
+ * needed):
  * <p/>
  * <code>
  * import static org.jclouds.blobstore.options.ListContainerOptions.Builder.*
  * <p/>
  * BlobStore connection = // get connection
- * Future<ListResponse<ResourceMetadata>> list = connection.list("container",underPath("home/users").maxResults(1000));
+ * Future<ListResponse<ResourceMetadata>> list = connection.list("container",inDirectory("home/users").maxResults(1000));
  * <code>
  * 
  * @author Adrian Cole
  */
 public class ListContainerOptions extends ListOptions {
 
-   private String path;
+   private String dir;
 
    private boolean recursive;
 
-
-   public String getPath() {
-      return path;
+   public String getDir() {
+      return dir;
    }
 
    public boolean isRecursive() {
@@ -59,9 +59,10 @@ public class ListContainerOptions extends ListOptions {
     * Returns a pseudo-directory listing.
     * 
     */
-   public ListContainerOptions underPath(String path) {
-      checkArgument(!recursive, "path and recursive combination currently not supported");
-      this.path = checkNotNull(path, "path");
+   public ListContainerOptions inDirectory(String dir) {
+      checkArgument(!recursive, "dir and recursive combination currently not supported");
+      this.dir = checkNotNull(dir, "dir");
+      checkArgument(!dir.equals("/"), "dir must not be a slash");
       return this;
    }
 
@@ -83,7 +84,7 @@ public class ListContainerOptions extends ListOptions {
     * return a listing of all objects inside the store, recursively.
     */
    public ListContainerOptions recursive() {
-//      checkArgument(path == null, "path and recursive combination currently not supported");
+      // checkArgument(path == null, "path and recursive combination currently not supported");
       this.recursive = true;
       return this;
    }
@@ -91,11 +92,11 @@ public class ListContainerOptions extends ListOptions {
    public static class Builder {
 
       /**
-       * @see ListContainerOptions#underPath(String)
+       * @see ListContainerOptions#inDirectory(String)
        */
-      public static ListContainerOptions underPath(String path) {
+      public static ListContainerOptions inDirectory(String directory) {
          ListContainerOptions options = new ListContainerOptions();
-         return options.underPath(path);
+         return options.inDirectory(directory);
       }
 
       /**

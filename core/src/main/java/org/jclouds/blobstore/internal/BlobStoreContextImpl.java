@@ -77,7 +77,7 @@ public class BlobStoreContextImpl<A, S> extends RestContextImpl<A, S> implements
       String prefix = BlobStoreUtils.parsePrefixFromPath(path);
       ListContainerOptions options = new ListContainerOptions();
       if (prefix != null)
-         options.underPath(prefix);
+         options.inDirectory(prefix);
       return blobMapFactory.create(container, options);
    }
 
@@ -87,7 +87,7 @@ public class BlobStoreContextImpl<A, S> extends RestContextImpl<A, S> implements
       String prefix = BlobStoreUtils.parsePrefixFromPath(path);
       ListContainerOptions options = new ListContainerOptions();
       if (prefix != null)
-         options.underPath(prefix);
+         options.inDirectory(prefix);
       return inputStreamMapFactory.create(container, options);
    }
 

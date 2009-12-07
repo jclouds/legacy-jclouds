@@ -57,9 +57,13 @@ public interface AsyncBlobStore {
    Future<? extends ListContainerResponse<? extends ResourceMetadata>> list(String container,
             ListContainerOptions... options);
 
-   Future<Boolean> exists(String container);
+   Future<Boolean> containerExists(String container);
+
+   Future<Boolean> directoryExists(String container, String directory);
 
    Future<Boolean> createContainer(String container);
+
+   Future<Void> createDirectory(String container, String directory);
 
    /**
     * This will delete a container recursively.

@@ -33,6 +33,7 @@ import java.util.concurrent.Future;
 import javax.inject.Inject;
 
 import org.jclouds.blobstore.AsyncBlobStore;
+import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ListContainerResponse;
@@ -42,6 +43,8 @@ import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.blobstore.domain.internal.ListResponseImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
+import org.jclouds.blobstore.strategy.GetDirectoryStrategy;
+import org.jclouds.blobstore.strategy.MkdirStrategy;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
@@ -71,11 +74,13 @@ public class CloudFilesAsyncBlobStore extends BaseCloudFilesBlobStore implements
             ObjectToBlob object2Blob, BlobToObject blob2Object,
             BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,
             BlobToObjectGetOptions blob2ObjectGetOptions,
+            GetDirectoryStrategy getDirectoryStrategy, MkdirStrategy mkdirStrategy,
             ContainerToResourceMetadata container2ResourceMd,
             ContainerToResourceList container2ResourceList, ExecutorService service) {
       super(async, sync, blobFactory, logFactory, clearContainerStrategy, object2BlobMd,
                object2Blob, blob2Object, container2ContainerListOptions, blob2ObjectGetOptions,
-               container2ResourceMd, container2ResourceList, service);
+               getDirectoryStrategy, mkdirStrategy, container2ResourceMd, container2ResourceList,
+               service);
    }
 
    /**
@@ -121,7 +126,7 @@ public class CloudFilesAsyncBlobStore extends BaseCloudFilesBlobStore implements
       });
    }
 
-   public Future<Boolean> exists(String container) {
+   public Future<Boolean> containerExists(String container) {
       return async.containerExists(container);
    }
 
@@ -159,6 +164,32 @@ public class CloudFilesAsyncBlobStore extends BaseCloudFilesBlobStore implements
 
    public Future<Void> removeBlob(String container, String key) {
       return async.removeObject(container, key);
+   }
+
+   public Future<Void> createDirectory(final String container, final String directory) {
+      return service.submit(new Callable<Void>() {
+
+         public Void call() throws Exception {
+            mkdirStrategy.execute(CloudFilesAsyncBlobStore.this, container, directory);
+            return null;
+         }
+
+      });
+   }
+
+   public Future<Boolean> directoryExists(final String container, final String directory) {
+      return service.submit(new Callable<Boolean>() {
+
+         public Boolean call() throws Exception {
+            try {
+               getDirectoryStrategy.execute(CloudFilesAsyncBlobStore.this, container, directory);
+               return true;
+            } catch (KeyNotFoundException e) {
+               return false;
+            }
+         }
+
+      });
    }
 
 }

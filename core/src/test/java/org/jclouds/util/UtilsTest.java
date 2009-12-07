@@ -41,4 +41,15 @@ public class UtilsTest {
       assertEquals(Utils.replaceTokens("hello {where}", ImmutableMap.of("where", "world")),
                "hello world");
    }
+
+   public void testIsEncoded() {
+      assert Utils.isUrlEncoded("/read-tests/%73%6f%6d%65%20%66%69%6c%65");
+      assert !Utils.isUrlEncoded("/read-tests/ tep");
+   }
+
+   public void testNoDoubleEncode() {
+      assertEquals(Utils.urlEncode("/read-tests/%73%6f%6d%65%20%66%69%6c%65", '/'),
+               "/read-tests/%73%6f%6d%65%20%66%69%6c%65");
+      assertEquals(Utils.urlEncode("/read-tests/ tep", '/'), "/read-tests/%20tep");
+   }
 }

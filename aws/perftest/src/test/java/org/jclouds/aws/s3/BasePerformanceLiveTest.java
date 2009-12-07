@@ -57,7 +57,7 @@ public abstract class BasePerformanceLiveTest extends
       containerCount = 1;
    }
    protected int timeoutSeconds = 15;
-   protected int loopCount = 100;
+   protected int loopCount = 1000;
    protected ExecutorService exec;
    protected CompletionService<Boolean> completer;
 

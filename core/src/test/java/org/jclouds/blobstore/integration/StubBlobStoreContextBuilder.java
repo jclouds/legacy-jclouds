@@ -25,6 +25,7 @@ package org.jclouds.blobstore.integration;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
@@ -53,6 +54,14 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 public class StubBlobStoreContextBuilder extends BlobStoreContextBuilder<AsyncBlobStore, BlobStore> {
+
+   /**
+    * This is only to have the same syntax.
+    * 
+    */
+   public StubBlobStoreContextBuilder(Properties props) {
+      this();
+   }
 
    public StubBlobStoreContextBuilder() {
       super(new TypeLiteral<AsyncBlobStore>() {

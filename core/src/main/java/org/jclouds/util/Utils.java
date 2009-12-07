@@ -77,6 +77,8 @@ public class Utils {
     * Web browsers do not always handle '+' characters well, use the well-supported '%20' instead.
     */
    public static String urlEncode(String in, char... skipEncode) {
+      if (isUrlEncoded(in))
+         return in;
       try {
          String returnVal = URLEncoder.encode(in, "UTF-8").replaceAll("\\+", "%20").replaceAll(
                   "\\*", "%2A").replaceAll("%7E", "~");
@@ -87,6 +89,10 @@ public class Utils {
       } catch (UnsupportedEncodingException e) {
          throw new IllegalStateException("Bad encoding on input: " + in, e);
       }
+   }
+
+   public static boolean isUrlEncoded(String in) {
+      return in.matches(".*%[a-fA-F0-9][a-fA-F0-9].*");
    }
 
    static Map<String, String> plainToEncodedChars = new MapMaker()

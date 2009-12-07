@@ -41,8 +41,8 @@ public class ListOptionsToListBlobsOptions implements Function<ListContainerOpti
          if (!optionsList[0].isRecursive()) {
             httpOptions.delimiter("/");
          }
-         if (optionsList[0].getPath() != null) {
-            httpOptions.prefix(optionsList[0].getPath());
+         if (optionsList[0].getDir() != null) {
+            httpOptions.prefix(optionsList[0].getDir());
          }
          if (optionsList[0].getMarker() != null) {
             httpOptions.marker(optionsList[0].getMarker());

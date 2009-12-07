@@ -48,6 +48,7 @@ import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.options.ListBucketOptions;
 import org.jclouds.blobstore.AsyncBlobStore;
+import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ListContainerResponse;
@@ -57,6 +58,8 @@ import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.blobstore.domain.internal.ListResponseImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
+import org.jclouds.blobstore.strategy.GetDirectoryStrategy;
+import org.jclouds.blobstore.strategy.MkdirStrategy;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.logging.Logger.LoggerFactory;
 
@@ -71,11 +74,13 @@ public class S3AsyncBlobStore extends BaseS3BlobStore implements AsyncBlobStore 
             ObjectToBlobMetadata object2BlobMd, ObjectToBlob object2Blob, BlobToObject blob2Object,
             ContainerToBucketListOptions container2BucketListOptions,
             BlobToObjectGetOptions blob2ObjectGetOptions,
+            GetDirectoryStrategy getDirectoryStrategy, MkdirStrategy mkdirStrategy,
             BucketToResourceMetadata bucket2ResourceMd, BucketToResourceList bucket2ResourceList,
             ExecutorService service) {
       super(async, sync, blobFactory, logFactory, clearContainerStrategy, object2BlobMd,
                object2Blob, blob2Object, container2BucketListOptions, blob2ObjectGetOptions,
-               bucket2ResourceMd, bucket2ResourceList, service);
+               getDirectoryStrategy, mkdirStrategy, bucket2ResourceMd, bucket2ResourceList,
+               service);
    }
 
    /**
@@ -104,10 +109,6 @@ public class S3AsyncBlobStore extends BaseS3BlobStore implements AsyncBlobStore 
       });
    }
 
-   public Future<Boolean> createContainer(String container) {
-      return async.putBucketIfNotExists(container);
-   }
-
    public Future<Void> deleteContainer(final String container) {
       return service.submit(new Callable<Void>() {
 
@@ -120,8 +121,38 @@ public class S3AsyncBlobStore extends BaseS3BlobStore implements AsyncBlobStore 
       });
    }
 
-   public Future<Boolean> exists(String container) {
+   public Future<Boolean> createContainer(String container) {
+      return async.putBucketIfNotExists(container);
+   }
+
+   public Future<Boolean> containerExists(String container) {
       return async.bucketExists(container);
+   }
+
+   public Future<Void> createDirectory(final String container, final String directory) {
+      return service.submit(new Callable<Void>() {
+
+         public Void call() throws Exception {
+            mkdirStrategy.execute(S3AsyncBlobStore.this, container, directory);
+            return null;
+         }
+
+      });
+   }
+
+   public Future<Boolean> directoryExists(final String container, final String directory) {
+      return service.submit(new Callable<Boolean>() {
+
+         public Boolean call() throws Exception {
+            try {
+               getDirectoryStrategy.execute(S3AsyncBlobStore.this, container, directory);
+               return true;
+            } catch (KeyNotFoundException e) {
+               return false;
+            }
+         }
+
+      });
    }
 
    public Future<Blob> getBlob(String container, String key,

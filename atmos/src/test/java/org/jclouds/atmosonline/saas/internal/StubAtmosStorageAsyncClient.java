@@ -197,7 +197,7 @@ public class StubAtmosStorageAsyncClient implements AtmosStorageAsyncClient {
          container = directoryName.substring(0, directoryName.indexOf('/'));
          String path = directoryName.substring(directoryName.indexOf('/') + 1);
          if (!path.equals(""))
-            options.underPath(path);
+            options.inDirectory(path);
       }
       return wrapFuture(blobStore.list(container, options), resource2ObjectList);
    }
@@ -208,7 +208,7 @@ public class StubAtmosStorageAsyncClient implements AtmosStorageAsyncClient {
 
    public Future<Boolean> pathExists(final String path) {
       if (path.indexOf('/') == -1 || (path.endsWith("/")))
-         return blobStore.exists(path);
+         return blobStore.containerExists(path);
       else {
          return new FutureBase<Boolean>() {
             public Boolean get() throws InterruptedException, ExecutionException {

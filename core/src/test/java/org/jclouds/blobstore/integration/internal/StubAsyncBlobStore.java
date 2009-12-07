@@ -41,9 +41,11 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Map.Entry;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -72,6 +74,9 @@ import org.jclouds.blobstore.domain.internal.MutableResourceMetadataImpl;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
 import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.blobstore.strategy.GetDirectoryStrategy;
+import org.jclouds.blobstore.strategy.IsDirectoryStrategy;
+import org.jclouds.blobstore.strategy.MkdirStrategy;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -103,17 +108,29 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
    private final ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs;
    protected final Blob.Factory blobProvider;
    protected final HttpGetOptionsListToGetOptions httpGetOptionsConverter;
+   protected final GetDirectoryStrategy getDirectoryStrategy;
+   protected final MkdirStrategy mkdirStrategy;
+   private final IsDirectoryStrategy isDirectoryStrategy;
+
+   protected final ExecutorService service;
 
    @Inject
    protected StubAsyncBlobStore(
             ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs,
             DateService dateService, Blob.Factory blobProvider,
-            HttpGetOptionsListToGetOptions httpGetOptionsConverter) {
+            GetDirectoryStrategy getDirectoryStrategy, MkdirStrategy mkdirStrategy,
+            IsDirectoryStrategy isDirectoryStrategy,
+            HttpGetOptionsListToGetOptions httpGetOptionsConverter, ExecutorService service) {
       this.dateService = checkNotNull(dateService, "dateService");
       this.containerToBlobs = checkNotNull(containerToBlobs, "containerToBlobs");
       this.blobProvider = checkNotNull(blobProvider, "blobProvider");
+      this.getDirectoryStrategy = checkNotNull(getDirectoryStrategy, "getDirectoryStrategy");
+      this.mkdirStrategy = checkNotNull(mkdirStrategy, "mkdirStrategy");
+      this.isDirectoryStrategy = checkNotNull(isDirectoryStrategy, "isDirectoryStrategy");
       this.httpGetOptionsConverter = checkNotNull(httpGetOptionsConverter,
                "httpGetOptionsConverter");
+      this.service = checkNotNull(service, "service");
+      getContainerToBlobs().put("stub", new ConcurrentHashMap<String, Blob>());
    }
 
    /**
@@ -170,7 +187,10 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
             SortedSet<ResourceMetadata> contents = Sets.newTreeSet(Iterables.transform(realContents
                      .keySet(), new Function<String, ResourceMetadata>() {
                public ResourceMetadata apply(String key) {
-                  return copy(realContents.get(key).getMetadata());
+                  MutableBlobMetadata md = copy(realContents.get(key).getMetadata());
+                  if (isDirectoryStrategy.execute(md))
+                     md.setType(ResourceType.RELATIVE_PATH);
+                  return md;
                }
             }));
 
@@ -186,7 +206,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
                contents.remove(lastMarkerMetadata);
             }
 
-            final String prefix = options.getPath();
+            final String prefix = options.getDir();
             if (prefix != null) {
                contents = Sets.newTreeSet(Iterables.filter(contents,
                         new Predicate<ResourceMetadata>() {
@@ -315,7 +335,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
       };
    }
 
-   public Future<Boolean> exists(final String container) {
+   public Future<Boolean> containerExists(final String container) {
       return new FutureBase<Boolean>() {
          public Boolean get() throws InterruptedException, ExecutionException {
             return getContainerToBlobs().containsKey(container);
@@ -490,9 +510,10 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
          new RuntimeException("bucketName not found: " + bucketName);
       }
       try {
+         byte[] data = toByteArray(object.getData());
+         object.getMetadata().setSize(data.length);
          MutableBlobMetadata newMd = copy(object.getMetadata());
          newMd.setLastModified(new DateTime());
-         byte[] data = toByteArray(object.getData());
          final byte[] md5 = HttpUtils.md5(data);
          final String eTag = HttpUtils.toHexString(md5);
          newMd.setETag(eTag);
@@ -573,10 +594,10 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
                ByteArrayOutputStream out = new ByteArrayOutputStream();
                for (String s : options.getRanges()) {
                   if (s.startsWith("-")) {
-                     int length = Integer.parseInt(s);
+                     int length = Integer.parseInt(s.substring(1));
                      out.write(data, data.length - length, length);
                   } else if (s.endsWith("-")) {
-                     int offset = Integer.parseInt(s);
+                     int offset = Integer.parseInt(s.substring(0, s.length()-1));
                      out.write(data, offset, data.length - offset);
                   } else if (s.contains("-")) {
                      String[] firstLast = s.split("\\-");
@@ -630,6 +651,31 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
             return null;
          }
       };
+   }
+
+   public Future<Void> createDirectory(final String container, final String directory) {
+      return service.submit(new Callable<Void>() {
+
+         public Void call() throws Exception {
+            mkdirStrategy.execute(StubAsyncBlobStore.this, container, directory);
+            return null;
+         }
+
+      });
+   }
+
+   public Future<Boolean> directoryExists(final String container, final String directory) {
+      return service.submit(new Callable<Boolean>() {
+
+         public Boolean call() throws Exception {
+            try {
+               return getDirectoryStrategy.execute(StubAsyncBlobStore.this, container, directory) != null;
+            } catch (KeyNotFoundException e) {
+               return false;
+            }
+         }
+
+      });
    }
 
    public Blob newBlob() {

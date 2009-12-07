@@ -135,12 +135,12 @@ public abstract class BaseBlobMap<V> {
       this.connection = checkNotNull(connection, "connection");
       this.containerName = checkNotNull(containerName, "container");
       this.options = options;
-      if (options.getPath() == null) {
+      if (options.getDir() == null) {
          prefixer = new PassThrough<String>();
          pathStripper = prefixer;
       } else {
-         prefixer = new PrefixKey(options.getPath(), "/");
-         pathStripper = new StripPath(options.getPath(), "/");
+         prefixer = new PrefixKey(options.getDir(), "/");
+         pathStripper = new StripPath(options.getDir(), "/");
       }
 
       this.getAllBlobs = checkNotNull(getAllBlobs, "getAllBlobs");
@@ -225,7 +225,7 @@ public abstract class BaseBlobMap<V> {
    public SortedSet<? extends BlobMetadata> list() {
       SortedSet<? extends BlobMetadata> returnVal = getAllBlobMetadata.execute(containerName,
                options);
-      if (options.getPath() != null) {
+      if (options.getDir() != null) {
          returnVal = Sets.newTreeSet(Iterables.transform(returnVal,
                   new Function<BlobMetadata, BlobMetadata>() {
 
