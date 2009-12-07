@@ -28,13 +28,12 @@ import java.util.concurrent.Future;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
-import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
-import org.jclouds.rest.domain.NamedLink;
+import org.jclouds.rest.domain.NamedResource;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.functions.ParseLoginResponseFromHeaders;
 
@@ -54,7 +53,7 @@ public interface VCloudLogin {
       String getVCloudToken();
 
       @Org
-      Map<String, NamedLink> getOrgs();
+      Map<String, NamedResource> getOrgs();
    }
 
    /**
@@ -63,6 +62,6 @@ public interface VCloudLogin {
     */
    @POST
    @ResponseParser(ParseLoginResponseFromHeaders.class)
-   @Consumes(MediaType.APPLICATION_XML)
+   @Consumes(VCloudMediaType.ORGLIST_XML)
    Future<VCloudSession> login();
 }

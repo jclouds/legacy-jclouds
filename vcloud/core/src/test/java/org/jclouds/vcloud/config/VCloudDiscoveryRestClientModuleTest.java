@@ -44,7 +44,7 @@ import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.handlers.RedirectionRetryHandler;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.domain.NamedLink;
+import org.jclouds.rest.domain.NamedResource;
 import org.jclouds.util.Jsr330;
 import org.jclouds.vcloud.VCloudLogin;
 import org.jclouds.vcloud.VCloudLogin.VCloudSession;
@@ -109,7 +109,7 @@ public class VCloudDiscoveryRestClientModuleTest {
                public VCloudSession get() throws InterruptedException, ExecutionException {
                   return new VCloudSession() {
 
-                     public Map<String, NamedLink> getOrgs() {
+                     public Map<String, NamedResource> getOrgs() {
                         return null;
                      }
 

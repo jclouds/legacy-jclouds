@@ -30,7 +30,6 @@ import java.util.concurrent.Future;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.core.MediaType;
 
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.XMLResponseParser;
@@ -53,6 +52,6 @@ public interface VCloudVersions {
    @GET
    @XMLResponseParser(SupportedVersionsHandler.class)
    @Path("/versions")
-   @Consumes(MediaType.APPLICATION_XML)
+   @Consumes(VCloudMediaType.VCLOUD_XML)
    Future<SortedMap<String, URI>> getSupportedVersions();
 }

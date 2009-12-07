@@ -109,7 +109,7 @@ public class VCloudRestClientModule extends AbstractModule {
 	@Singleton
 	protected Organization provideOrganization(VCloudDiscovery discovery)
 			throws ExecutionException, TimeoutException, InterruptedException {
-		return discovery.getOrganization().get(90, TimeUnit.SECONDS);
+		return discovery.getOrganization().get(180, TimeUnit.SECONDS);
 	}
 
 	@Provides
@@ -140,7 +140,7 @@ public class VCloudRestClientModule extends AbstractModule {
 	@Singleton
 	protected URI provideDefaultNetwork(VCloudAsyncClient client)
 			throws InterruptedException, ExecutionException, TimeoutException {
-		return client.getDefaultVDC().get(60, TimeUnit.SECONDS)
+		return client.getDefaultVDC().get(180, TimeUnit.SECONDS)
 				.getAvailableNetworks().values().iterator().next()
 				.getLocation();
 	}

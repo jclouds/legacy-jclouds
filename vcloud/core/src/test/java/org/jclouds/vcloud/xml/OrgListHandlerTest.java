@@ -30,8 +30,8 @@ import java.net.URI;
 import java.util.Map;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.rest.domain.NamedLink;
-import org.jclouds.rest.domain.internal.NamedLinkImpl;
+import org.jclouds.rest.domain.NamedResource;
+import org.jclouds.rest.internal.NamedResourceImpl;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -55,9 +55,9 @@ public class OrgListHandlerTest extends BaseHandlerTest {
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/orglist.xml");
 
-      Map<String, NamedLink> result = factory.create(injector.getInstance(OrgListHandler.class))
+      Map<String, NamedResource> result = factory.create(injector.getInstance(OrgListHandler.class))
                .parse(is);
-      assertEquals(result, ImmutableMap.of("adrian@jclouds.org", new NamedLinkImpl(
+      assertEquals(result, ImmutableMap.of("adrian@jclouds.org", new NamedResourceImpl("48",
                "adrian@jclouds.org", VCloudMediaType.ORG_XML, URI
                         .create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
    }

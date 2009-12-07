@@ -41,16 +41,13 @@ import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
  * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx" />
  * @author Adrian Cole
  */
-@Timeout(duration = 45, timeUnit = TimeUnit.SECONDS)
+@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface VCloudClient {
 
-   @Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)
    Catalog getCatalog();
 
-   @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
    VDC getDefaultVDC();
 
-   @Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)
    TasksList getDefaultTasksList();
 
    Task deployVApp(String vAppId);

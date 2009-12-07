@@ -31,7 +31,26 @@ import javax.ws.rs.core.MediaType;
  * @see MediaType
  */
 public class VCloudMediaType {
-
+   /**
+    * "application/vnd.vmware.vcloud.organizationList+xml"
+    */
+   public final static String VCLOUD_XML = "application/vnd.vmware.vcloud.vcloud+xml";
+   
+   /**
+    * "application/vnd.vmware.vcloud.organizationList+xml"
+    */
+   public final static MediaType VCLOUD_XML_TYPE = new MediaType("application",
+	            "vnd.vmware.vcloud.vcloud+xml");
+   /**
+    * "application/vnd.vmware.vcloud.organizationList+xml"
+    */
+   public final static String ORGLIST_XML = "application/vnd.vmware.vcloud.organizationList+xml";
+   
+   /**
+    * "application/vnd.vmware.vcloud.organizationList+xml"
+    */
+   public final static MediaType ORGLIST_XML_TYPE = new MediaType("application",
+	            "vnd.vmware.vcloud.organizationList+xml");
    /**
     * "application/vnd.vmware.vcloud.org+xml"
     */

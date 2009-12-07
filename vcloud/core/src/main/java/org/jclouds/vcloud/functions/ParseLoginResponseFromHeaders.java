@@ -38,7 +38,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
-import org.jclouds.rest.domain.NamedLink;
+import org.jclouds.rest.domain.NamedResource;
 import org.jclouds.vcloud.VCloudToken;
 import org.jclouds.vcloud.VCloudLogin.VCloudSession;
 import org.jclouds.vcloud.endpoints.Org;
@@ -53,7 +53,7 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class ParseLoginResponseFromHeaders implements Function<HttpResponse, VCloudSession> {
-   static final Pattern pattern = Pattern.compile("vcloud-token=(.*); path=.*");
+   static final Pattern pattern = Pattern.compile("vcloud-token=(.*); [Pp]ath=.*");
 
    private final ParseSax.Factory factory;
    private final Provider<OrgListHandler> orgHandlerProvider;
@@ -76,7 +76,7 @@ public class ParseLoginResponseFromHeaders implements Function<HttpResponse, VCl
       boolean matchFound = matcher.find();
 
       if (matchFound) {
-         final Map<String, NamedLink> org = factory.create(orgHandlerProvider.get()).parse(
+         final Map<String, NamedResource> org = factory.create(orgHandlerProvider.get()).parse(
                   from.getContent());
 
          return new VCloudSession() {
@@ -86,7 +86,7 @@ public class ParseLoginResponseFromHeaders implements Function<HttpResponse, VCl
             }
 
             @Org
-            public Map<String, NamedLink> getOrgs() {
+            public Map<String, NamedResource> getOrgs() {
                return org;
             }
          };

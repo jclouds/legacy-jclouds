@@ -101,7 +101,7 @@ public class VCloudDiscoveryRestClientModule extends AbstractModule {
       return new ExpirableSupplier<VCloudSession>(new Supplier<VCloudSession>() {
          public VCloudSession get() {
             try {
-               return login.login().get(45, TimeUnit.SECONDS);
+               return login.login().get(180, TimeUnit.SECONDS);
             } catch (Exception e) {
                Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
                throw new RuntimeException("Error logging in", e);
@@ -123,7 +123,7 @@ public class VCloudDiscoveryRestClientModule extends AbstractModule {
    protected URI provideAuthenticationURI(VCloudVersions versionService,
             @Named(PROPERTY_VCLOUD_VERSION) String version) throws InterruptedException,
             ExecutionException, TimeoutException {
-      return versionService.getSupportedVersions().get(30, TimeUnit.SECONDS).get(version);
+      return versionService.getSupportedVersions().get(180, TimeUnit.SECONDS).get(version);
    }
 
    @Provides

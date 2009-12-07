@@ -23,13 +23,13 @@
  */
 package org.jclouds.vcloud.xml;
 
-import static org.jclouds.rest.util.Utils.putNamedLink;
+import static org.jclouds.rest.util.Utils.putNamedResource;
 import static org.jclouds.vcloud.VCloudMediaType.ORG_XML;
 
 import java.util.Map;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.domain.NamedLink;
+import org.jclouds.rest.domain.NamedResource;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -38,24 +38,25 @@ import com.google.common.collect.Maps;
 /**
  * @author Adrian Cole
  */
-public class OrgListHandler extends ParseSax.HandlerWithResult<Map<String, NamedLink>> {
+public class OrgListHandler extends
+		ParseSax.HandlerWithResult<Map<String, NamedResource>> {
 
-   private Map<String, NamedLink> org = Maps.newHashMap();
+	private Map<String, NamedResource> org = Maps.newHashMap();
 
-   public Map<String, NamedLink> getResult() {
-      return org;
-   }
+	public Map<String, NamedResource> getResult() {
+		return org;
+	}
 
-   @Override
-   public void startElement(String uri, String localName, String qName, Attributes attributes)
-            throws SAXException {
-      if (qName.equals("Org")) {
-         int typeIndex = attributes.getIndex("type");
-         if (typeIndex != -1) {
-            if (attributes.getValue(typeIndex).equals(ORG_XML)) {
-               putNamedLink(org, attributes);
-            }
-         }
-      }
-   }
+	@Override
+	public void startElement(String uri, String localName, String qName,
+			Attributes attributes) throws SAXException {
+		if (qName.equals("Org")) {
+			int typeIndex = attributes.getIndex("type");
+			if (typeIndex != -1) {
+				if (attributes.getValue(typeIndex).equals(ORG_XML)) {
+					putNamedResource(org, attributes);
+				}
+			}
+		}
+	}
 }

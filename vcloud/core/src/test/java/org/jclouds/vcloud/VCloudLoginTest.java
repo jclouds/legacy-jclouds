@@ -31,7 +31,6 @@ import java.lang.reflect.Method;
 import java.net.URI;
 
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.logging.Logger;
@@ -59,7 +58,7 @@ public class VCloudLoginTest extends RestClientTest<VCloudLogin> {
       GeneratedHttpRequest<VCloudLogin> httpMethod = processor.createRequest(method);
 
       assertEquals(httpMethod.getRequestLine(), "POST http://localhost:8080/login HTTP/1.1");
-      assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT + ": " + MediaType.APPLICATION_XML + "\n");
+      assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT + ": application/vnd.vmware.vcloud.organizationList+xml\n");
       assertEntityEquals(httpMethod, null);
 
       assertResponseParserClassEquals(method, httpMethod, ParseLoginResponseFromHeaders.class);
