@@ -46,6 +46,7 @@
         <module>rackspace</module>
         <module>mezeo</module>
         <module>nirvanix</module>
+        <module>thirdparty</module>
         <module>twitter</module>
         <module>rimuhosting</module>
         <module>vcloud</module>
