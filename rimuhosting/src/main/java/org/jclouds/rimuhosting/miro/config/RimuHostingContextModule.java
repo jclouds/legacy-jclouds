@@ -25,6 +25,7 @@ package org.jclouds.rimuhosting.miro.config;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.Scopes;
 import org.jclouds.http.functions.config.ParserModule.CDateTimeAdapter;
 import org.jclouds.http.functions.config.ParserModule.DateTimeAdapter;
 import org.jclouds.lifecycle.Closer;
@@ -33,7 +34,9 @@ import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.rimuhosting.miro.RimuHosting;
 import org.jclouds.rimuhosting.miro.RimuHostingAsyncClient;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
+import org.jclouds.rimuhosting.miro.servers.RimuHostingComputeService;
 import org.jclouds.rimuhosting.miro.reference.RimuHostingConstants;
+import org.jclouds.compute.ComputeService;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -48,6 +51,7 @@ public class RimuHostingContextModule extends AbstractModule {
    @Override
    protected void configure() {
       bind(DateTimeAdapter.class).to(CDateTimeAdapter.class);
+      bind(ComputeService.class).to(RimuHostingComputeService.class);
    }
 
    @Provides
@@ -56,5 +60,6 @@ public class RimuHostingContextModule extends AbstractModule {
                                                                          RimuHostingClient syncApi, @RimuHosting URI endPoint, @Named(RimuHostingConstants.PROPERTY_RIMUHOSTING_USER) String account) {
       return new RestContextImpl<RimuHostingAsyncClient, RimuHostingClient>(closer, asyncApi, syncApi, endPoint, account);
    }
+
 
 }

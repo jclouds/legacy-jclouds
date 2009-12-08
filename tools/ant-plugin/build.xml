@@ -33,7 +33,7 @@
 
    <typedef name="compute"  classname="org.jclouds.tools.ant.ComputeTask"  classpathref="jclouds.classpath" />
    <target name="demo">
-      <compute/>
+      <compute action="create"/>
 
 
    </target>
