@@ -24,17 +24,16 @@
 
 -->
 <project name="ex6" default="demo" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
-    <artifact:localRepository id="jclouds.repository" path="c:\\Users\\Ivan\\.m2\\repository" />
-<artifact:dependencies pathId="jclouds.classpath">
- <dependency groupId="org.jclouds" artifactId="jclouds-ant-plugin" version="1.0-SNAPSHOT" />
- <localRepository refid="jclouds.repository" />
-</artifact:dependencies>
+	<artifact:localRepository id="jclouds.repository" path="${user.home}/.m2/repository" />
+	<artifact:dependencies pathId="jclouds.classpath">
+		<dependency groupId="org.jclouds" artifactId="jclouds-ant-plugin" version="1.0-SNAPSHOT" />
+		<localRepository refid="jclouds.repository" />
+	</artifact:dependencies>
 
 
-   <typedef name="compute"  classname="org.jclouds.tools.ant.ComputeTask"  classpathref="jclouds.classpath" />
-   <target name="demo">
-      <compute action="create"/>
+	<typedef name="compute" classname="org.jclouds.tools.ant.ComputeTask" classpathref="jclouds.classpath" />
 
-
-   </target>
+	<target name="demo">
+		<compute action="create" provider="compute://accountkey:accountkey@rimuhosting" />
+	</target>
 </project>

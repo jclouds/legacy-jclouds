@@ -31,11 +31,12 @@ import java.util.Properties;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.jclouds.compute.ComputeService;
-import org.jclouds.rimuhosting.miro.RimuHostingContextBuilder;
-import org.jclouds.rimuhosting.miro.RimuHostingPropertiesBuilder;
+import org.jclouds.compute.ComputeServiceFactory;
+import org.jclouds.http.HttpUtils;
 
+import com.google.common.base.Function;
+import com.google.common.collect.MapMaker;
 import com.google.common.io.Resources;
-import com.google.inject.Injector;
 
 /**
  * @author Ivan Meredith
@@ -44,7 +45,7 @@ public class ComputeTask extends Task {
    private final Map<URI, ComputeService> computeMap;
 
    public ComputeTask() throws IOException {
-      this(null);//TODO MapMaker
+      this(buildComputeMap(loadDefaultProperties()));
    }
 
    static Properties loadDefaultProperties() throws IOException {
@@ -54,25 +55,33 @@ public class ComputeTask extends Task {
       return properties;
    }
 
+   static Map<URI, ComputeService> buildComputeMap(final Properties props) {
+      return new MapMaker().makeComputingMap(new Function<URI, ComputeService>() {
+
+         @Override
+         public ComputeService apply(URI from) {
+            return new ComputeServiceFactory(props).create(from);
+         }
+
+      });
+
+   }
+
    public ComputeTask(Map<URI, ComputeService> computeMap) {
       this.computeMap = computeMap;
    }
 
    private final String ACTION_CREATE = "create";
 
+   private String provider;
    private String action;
    private ServerElement serverElement;
 
    public void execute() throws BuildException {
       if (ACTION_CREATE.equalsIgnoreCase(action)) {
-         if (getServerElement() != null) {
-            Injector injector = new RimuHostingContextBuilder(new RimuHostingPropertiesBuilder(
-                     "test", "Test").relaxSSLHostname().build()).buildInjector();
-
-            ComputeService computeService = injector.getInstance(ComputeService.class);
-
-            computeService.createServerAndWait("test.com", "MIRO1B", "lenny");
-         }
+         ComputeService computeService = computeMap.get(HttpUtils.createUri(provider));
+         log("hello");
+         computeService.createServerAndWait("test.com", "MIRO1B", "lenny");
       }
    }
 
@@ -90,5 +99,13 @@ public class ComputeTask extends Task {
 
    public void setServerElement(ServerElement serverElement) {
       this.serverElement = serverElement;
+   }
+
+   public void setProvider(String provider) {
+      this.provider = provider;
+   }
+
+   public String getProvider() {
+      return provider;
    }
 }
