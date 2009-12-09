@@ -33,9 +33,9 @@ import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
+import org.jclouds.http.HttpUtils;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.logging.Logger;
-import org.jclouds.util.Utils;
 
 import com.google.inject.Inject;
 
@@ -64,7 +64,7 @@ public class AzureBlobClientErrorRetryHandler implements HttpRetryHandler {
    }
 
    public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
-      byte[] content = Utils.closeClientButKeepContentStream(response);
+      byte[] content = HttpUtils.closeClientButKeepContentStream(response);
       command.incrementFailureCount();
       if (!command.isReplayable()) {
          logger.warn("Cannot retry after server error, command is not replayable: %1$s", command);

@@ -65,6 +65,7 @@ import org.jboss.resteasy.util.IsHttpMethod;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
 import org.jclouds.http.functions.ReturnInputStream;
@@ -93,7 +94,6 @@ import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -430,7 +430,7 @@ public class RestAnnotationProcessor<T> {
       } else if (in.indexOf('&') == -1) {
          map.put(in, null);
       } else {
-         String[] parts = Utils.urlDecode(in).split("&");
+         String[] parts = HttpUtils.urlDecode(in).split("&");
          for (int partIndex = 0; partIndex < parts.length; partIndex++) {
             String[] keyValue = parts[partIndex].split("=");
             map.put(keyValue[0], keyValue.length == 2 ? keyValue[1] : null);
@@ -454,10 +454,10 @@ public class RestAnnotationProcessor<T> {
       StringBuilder formBuilder = new StringBuilder();
       while (pairs.hasNext()) {
          Map.Entry<String, String> pair = pairs.next();
-         formBuilder.append(Utils.urlEncode(pair.getKey(), skips));
+         formBuilder.append(HttpUtils.urlEncode(pair.getKey(), skips));
          if (pair.getValue() != null && !pair.getValue().equals("")) {
             formBuilder.append("=");
-            formBuilder.append(Utils.urlEncode(pair.getValue(), skips));
+            formBuilder.append(HttpUtils.urlEncode(pair.getValue(), skips));
          }
          if (pairs.hasNext())
             formBuilder.append("&");
@@ -953,7 +953,7 @@ public class RestAnnotationProcessor<T> {
    private Multimap<String, String> encodeValues(Multimap<String, String> unencoded, char... skips) {
       Multimap<String, String> encoded = LinkedHashMultimap.create();
       for (Entry<String, String> entry : unencoded.entries()) {
-         encoded.put(entry.getKey(), Utils.urlEncode(entry.getValue(), skips));
+         encoded.put(entry.getKey(), HttpUtils.urlEncode(entry.getValue(), skips));
       }
       return encoded;
    }

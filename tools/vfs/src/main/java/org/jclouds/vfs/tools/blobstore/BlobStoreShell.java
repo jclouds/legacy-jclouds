@@ -23,11 +23,13 @@
  */
 package org.jclouds.vfs.tools.blobstore;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
@@ -43,7 +45,7 @@ import org.apache.commons.vfs.Selectors;
 import org.apache.commons.vfs.VFS;
 import org.apache.commons.vfs.cache.SoftRefFilesCache;
 import org.apache.commons.vfs.impl.DefaultFileSystemManager;
-import org.jclouds.blobstore.internal.LocationAndCredentials;
+import org.jclouds.http.HttpUtils;
 import org.jclouds.vfs.provider.blobstore.BlobStoreFileProvider;
 
 import com.google.common.collect.Lists;
@@ -72,10 +74,10 @@ public class BlobStoreShell {
 
       if (args.length != 1)
          throw new IllegalArgumentException(INVALID_SYNTAX);
-      LocationAndCredentials locationAndCredentials;
+      URI location;
       try {
-         locationAndCredentials = LocationAndCredentials.parse(args[0]);
-         checkArgument(locationAndCredentials.uri.getScheme().equals("blobstore"), "wrong scheme");
+         location = HttpUtils.createUri(args[0]);
+         checkArgument(location.getScheme().equals("blobstore"), "wrong scheme");
       } catch (IllegalArgumentException e) {
          throw new IllegalArgumentException(String.format("%s%n%s", e.getMessage(), INVALID_SYNTAX));
       }

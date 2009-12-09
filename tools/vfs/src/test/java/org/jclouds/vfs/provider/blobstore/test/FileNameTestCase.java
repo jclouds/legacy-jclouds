@@ -35,37 +35,49 @@ public class FileNameTestCase extends AbstractVfsTestCase {
    /**
     * Tests parsing a URI into its parts.
     */
+   public void testParseUriNoCreds() throws Exception {
+      try {
+         // Simple name
+         BlobStoreFileName name = (BlobStoreFileName) BlobStoreFileNameParser.getInstance()
+                  .parseUri(null, null, "blobstore://service/container/file");
+         assertEquals("blobstore", name.getScheme());
+         assertNull(name.getUserName());
+         assertNull(name.getPassword());
+         assertEquals("service", name.getHostName());
+         assertEquals(443, name.getPort());
+         assertEquals(name.getDefaultPort(), name.getPort());
+         assertEquals("container", name.getContainer());
+         assertEquals("/file", name.getPath());
+         assertEquals("blobstore://service/container/", name.getRootURI());
+         assertEquals("blobstore://service/container/file", name.getURI());
+         fail();
+      } catch (NullPointerException e) {
+
+      }
+      try {
+
+         // Name with no path
+         BlobStoreFileName name = (BlobStoreFileName) BlobStoreFileNameParser.getInstance()
+                  .parseUri(null, null, "blobstore://service/container");
+         assertEquals("blobstore", name.getScheme());
+         assertNull(name.getUserName());
+         assertNull(name.getPassword());
+         assertEquals("service", name.getHostName());
+         assertEquals(443, name.getPort());
+         assertEquals("container", name.getContainer());
+         assertEquals("/", name.getPath());
+         assertEquals("blobstore://service/container/", name.getRootURI());
+         assertEquals("blobstore://service/container/", name.getURI());
+         fail();
+      } catch (NullPointerException e) {
+
+      }
+   }
+
    public void testParseUri() throws Exception {
-      // Simple name
-      BlobStoreFileName name = (BlobStoreFileName) BlobStoreFileNameParser.getInstance().parseUri(
-               null, null, "blobstore://service/container/file");
-      assertEquals("blobstore", name.getScheme());
-      assertNull(name.getUserName());
-      assertNull(name.getPassword());
-      assertEquals("service", name.getHostName());
-      assertEquals(443, name.getPort());
-      assertEquals(name.getDefaultPort(), name.getPort());
-      assertEquals("container", name.getContainer());
-      assertEquals("/file", name.getPath());
-      assertEquals("blobstore://service/container/", name.getRootURI());
-      assertEquals("blobstore://service/container/file", name.getURI());
-
-      // Name with no path
-      name = (BlobStoreFileName) BlobStoreFileNameParser.getInstance().parseUri(null, null,
-               "blobstore://service/container");
-      assertEquals("blobstore", name.getScheme());
-      assertNull(name.getUserName());
-      assertNull(name.getPassword());
-      assertEquals("service", name.getHostName());
-      assertEquals(443, name.getPort());
-      assertEquals("container", name.getContainer());
-      assertEquals("/", name.getPath());
-      assertEquals("blobstore://service/container/", name.getRootURI());
-      assertEquals("blobstore://service/container/", name.getURI());
-
       // Name with username
-      name = (BlobStoreFileName) BlobStoreFileNameParser.getInstance().parseUri(null, null,
-               "blobstore://user@service/container/file");
+      BlobStoreFileName name = (BlobStoreFileName) BlobStoreFileNameParser.getInstance().parseUri(
+               null, null, "blobstore://user@service/container/file");
       assertEquals("blobstore", name.getScheme());
       assertEquals("user", name.getUserName());
       assertNull(name.getPassword());

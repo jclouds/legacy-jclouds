@@ -37,15 +37,16 @@ import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
  * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx" />
  * @author Adrian Cole
  */
-@Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)
+@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface HostingDotComVCloudClient extends VCloudClient {
 
    @Override
-   @Timeout(duration = 240, timeUnit = TimeUnit.SECONDS)
+   @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
    HostingDotComVApp instantiateVAppTemplate(String appName, String templateId,
             InstantiateVAppTemplateOptions... options);
 
    @Override
+   @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
    HostingDotComVApp getVApp(String vAppId);
 
 }

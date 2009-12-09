@@ -23,13 +23,16 @@
  */
 package org.jclouds.vfs.provider.blobstore;
 
+import java.net.URI;
+
 import org.apache.commons.vfs.FileName;
 import org.apache.commons.vfs.FileSystemException;
 import org.apache.commons.vfs.FileType;
 import org.apache.commons.vfs.provider.URLFileNameParser;
 import org.apache.commons.vfs.provider.UriParser;
 import org.apache.commons.vfs.provider.VfsComponentContext;
-import org.jclouds.blobstore.internal.LocationAndCredentials;
+import org.jclouds.domain.Credentials;
+import org.jclouds.http.HttpUtils;
 
 /**
  * @author Adrian Cole
@@ -49,9 +52,11 @@ public class BlobStoreFileNameParser extends URLFileNameParser {
             throws FileSystemException {
 
       // if there are unencoded characters in the password, things break.
-      LocationAndCredentials creds = LocationAndCredentials.parse(filename);
+      URI uri = HttpUtils.createUri(filename);
 
-      filename = creds.uri.toASCIIString();
+      filename = uri.toASCIIString();
+
+      Credentials creds = Credentials.parse(uri);
 
       StringBuffer name = new StringBuffer();
 
@@ -73,7 +78,7 @@ public class BlobStoreFileNameParser extends URLFileNameParser {
       FileType fileType = UriParser.normalisePath(name);
       String path = name.toString();
 
-      return new BlobStoreFileName(auth.getHostName(), creds.acccount, creds.key, path, fileType,
+      return new BlobStoreFileName(auth.getHostName(), creds.account, creds.key, path, fileType,
                container);
    }
 

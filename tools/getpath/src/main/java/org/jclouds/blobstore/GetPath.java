@@ -23,7 +23,8 @@
  */
 package org.jclouds.blobstore;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -31,12 +32,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.Properties;
 import java.util.Map.Entry;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.blobstore.internal.LocationAndCredentials;
 import org.jclouds.blobstore.util.BlobStoreUtils;
+import org.jclouds.http.HttpUtils;
 
 import com.google.common.io.Resources;
 
@@ -53,10 +55,10 @@ public class GetPath {
    public static void main(String... args) throws IOException {
       if (args.length < 2)
          throw new IllegalArgumentException(INVALID_SYNTAX);
-      LocationAndCredentials locationAndCredentials;
+      URI locationAndCredentials;
       try {
-         locationAndCredentials = LocationAndCredentials.parse(args[0]);
-         checkArgument(locationAndCredentials.uri.getScheme().equals("blobstore"), "wrong scheme");
+         locationAndCredentials = HttpUtils.createUri(args[0]);
+         checkArgument(locationAndCredentials.getScheme().equals("blobstore"), "wrong scheme");
       } catch (IllegalArgumentException e) {
          throw new IllegalArgumentException(String.format("%s%n%s", e.getMessage(), INVALID_SYNTAX));
       }
@@ -67,14 +69,12 @@ public class GetPath {
       destinationDir.mkdirs();
 
       BlobStoreContext<?, ?> context = init(locationAndCredentials);
-      String path = locationAndCredentials.uri.getPath();
+      String path = locationAndCredentials.getPath();
       if (path.startsWith("/"))
          path = path.substring(1);
       String container = BlobStoreUtils.parseContainerFromPath(path);
       String directory = BlobStoreUtils.parsePrefixFromPath(path);
       copyDirectoryToDestination(context, container, directory, destinationDir);
-      context.close();
-
    }
 
    private static void copyDirectoryToDestination(BlobStoreContext<?, ?> context, String container,
@@ -107,12 +107,10 @@ public class GetPath {
       }
    }
 
-   private static BlobStoreContext<?, ?> init(LocationAndCredentials locationAndCredentials)
-            throws IOException {
+   private static BlobStoreContext<?, ?> init(URI locationAndCredentials) throws IOException {
       Properties properties = new Properties();
       properties.load(Resources.newInputStreamSupplier(Resources.getResource("jclouds.properties"))
                .getInput());
-      return new BlobStoreContextFactory(properties).createContext(locationAndCredentials.uri,
-               locationAndCredentials.acccount, locationAndCredentials.key);
+      return new BlobStoreContextFactory(properties).createContext(locationAndCredentials);
    }
 }

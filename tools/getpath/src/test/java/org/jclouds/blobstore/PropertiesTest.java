@@ -54,23 +54,23 @@ public class PropertiesTest {
    }
 
    public void testAzure() {
-      assertEquals(properties.getProperty("azureblob.contextBuilder"),
+      assertEquals(properties.getProperty("azureblob.contextbuilder"),
                AzureBlobStoreContextBuilder.class.getName());
-      assertEquals(properties.getProperty("azureblob.propertiesBuilder"),
+      assertEquals(properties.getProperty("azureblob.propertiesbuilder"),
                AzureBlobPropertiesBuilder.class.getName());
    }
 
    public void testCloudFiles() {
-      assertEquals(properties.getProperty("cloudfiles.contextBuilder"),
+      assertEquals(properties.getProperty("cloudfiles.contextbuilder"),
                CloudFilesBlobStoreContextBuilder.class.getName());
-      assertEquals(properties.getProperty("cloudfiles.propertiesBuilder"),
+      assertEquals(properties.getProperty("cloudfiles.propertiesbuilder"),
                CloudFilesPropertiesBuilder.class.getName());
    }
 
    public void testBlobStore() {
-      assertEquals(properties.getProperty("s3.contextBuilder"), S3BlobStoreContextBuilder.class
+      assertEquals(properties.getProperty("s3.contextbuilder"), S3BlobStoreContextBuilder.class
                .getName());
-      assertEquals(properties.getProperty("s3.propertiesBuilder"), S3PropertiesBuilder.class
+      assertEquals(properties.getProperty("s3.propertiesbuilder"), S3PropertiesBuilder.class
                .getName());
    }
 }

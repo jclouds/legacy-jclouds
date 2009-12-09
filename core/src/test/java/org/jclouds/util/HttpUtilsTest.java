@@ -26,6 +26,7 @@ package org.jclouds.util;
 import static org.testng.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -47,6 +48,53 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "performance", sequential = true, testName = "jclouds.HttpUtils")
 public class HttpUtilsTest extends PerformanceTest {
+
+   public void testIsEncoded() {
+      assert HttpUtils.isUrlEncoded("/read-tests/%73%6f%6d%65%20%66%69%6c%65");
+      assert !HttpUtils.isUrlEncoded("/read-tests/ tep");
+   }
+
+   public void testNoDoubleEncode() {
+      assertEquals(HttpUtils.urlEncode("/read-tests/%73%6f%6d%65%20%66%69%6c%65", '/'),
+               "/read-tests/%73%6f%6d%65%20%66%69%6c%65");
+      assertEquals(HttpUtils.urlEncode("/read-tests/ tep", '/'), "/read-tests/%20tep");
+   }
+
+   public void testAzure() {
+      URI creds = HttpUtils
+               .createUri("blobstore://account:Base64==@azureblob/container-hyphen/prefix");
+      assertEquals(creds, URI
+               .create("blobstore://account:Base64==@azureblob/container-hyphen/prefix"));
+   }
+
+   public void testCloudFiles() {
+      URI creds = HttpUtils.createUri("blobstore://account:h3c@cloudfiles/container-hyphen/prefix");
+      assertEquals(creds, URI.create("blobstore://account:h3c@cloudfiles/container-hyphen/prefix"));
+   }
+
+   public void testS3() {
+
+      URI creds = HttpUtils.createUri("blobstore://0AB:aA+/0@s3/buck-et/prefix");
+      assertEquals(creds, URI.create("blobstore://0AB:aA%2B%2F0@s3/buck-et/prefix"));
+   }
+
+   public void testS3Space() {
+
+      URI creds = HttpUtils.createUri("blobstore://0AB:aA+/0@s3/buck-et/pre fix");
+
+      assertEquals(creds, URI.create("blobstore://0AB:aA%2B%2F0@s3/buck-et/pre%20fix"));
+   }
+
+   public void testPercent() {
+      URI creds = HttpUtils
+               .createUri("https://jclouds.blob.core.windows.net/jclouds-getpath/write-tests/file1%.txt");
+
+      assertEquals(
+               creds,
+               URI
+                        .create("https://jclouds.blob.core.windows.net/jclouds-getpath/write-tests/file1%25.txt"));
+
+   }
 
    @Test(dataProvider = "hmacsha1")
    void testBouncyCastleDigestSerialResponseTime(byte[] key, String message, String base64Digest)

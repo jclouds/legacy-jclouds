@@ -21,25 +21,50 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.util;
+package org.jclouds.domain;
 
 import static org.testng.Assert.assertEquals;
 
-import java.io.UnsupportedEncodingException;
+import java.net.URI;
 
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableMap;
 
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "jclouds.UtilsTest")
-public class UtilsTest {
+@Test(groups = "unit", testName = "blobstore.CredentialsTest")
+public class CredentialsTest {
 
-   public void testReplaceTokens() throws UnsupportedEncodingException {
-      assertEquals(Utils.replaceTokens("hello {where}", ImmutableMap.of("where", "world")),
-               "hello world");
+   public void testAzure() {
+      Credentials creds = Credentials.parse(URI
+               .create("blobstore://account:Base64==@azureblob/container-hyphen/prefix"));
+      assertEquals(creds.account, "account");
+      assertEquals(creds.key, "Base64==");
+
+   }
+
+   public void testCloudFiles() {
+      Credentials creds = Credentials.parse(URI
+               .create("blobstore://account:h3c@cloudfiles/container-hyphen/prefix"));
+      assertEquals(creds.account, "account");
+      assertEquals(creds.key, "h3c");
+
+   }
+
+   public void testS3() {
+
+      Credentials creds = Credentials.parse(URI
+               .create("blobstore://0AB:aA%2B%2F0@s3/buck-et/prefix"));
+      assertEquals(creds.account, "0AB");
+      assertEquals(creds.key, "aA+/0");
+   }
+
+   public void testS3Space() {
+
+      Credentials creds = Credentials.parse(URI
+               .create("blobstore://0AB:aA%2B%2F0@s3/buck-et/pre%20fix"));
+      assertEquals(creds.account, "0AB");
+      assertEquals(creds.key, "aA+/0");
    }
 
 }

@@ -33,8 +33,8 @@ import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
+import org.jclouds.http.HttpUtils;
 import org.jclouds.logging.Logger;
-import org.jclouds.util.Utils;
 
 import com.google.inject.Inject;
 
@@ -64,7 +64,7 @@ public class AWSClientErrorRetryHandler implements HttpRetryHandler {
          return false;
       if (response.getStatusCode() == 400 || response.getStatusCode() == 403
                || response.getStatusCode() == 409) {
-         byte[] content = Utils.closeClientButKeepContentStream(response);
+         byte[] content = HttpUtils.closeClientButKeepContentStream(response);
          command.incrementFailureCount();
          try {
             AWSError error = utils.parseAWSErrorFromContent(command, response, new String(content));

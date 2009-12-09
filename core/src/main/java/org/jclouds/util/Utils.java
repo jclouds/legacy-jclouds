@@ -23,15 +23,9 @@
  */
 package org.jclouds.util;
 
-import static com.google.common.base.Preconditions.checkState;
-
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
@@ -40,13 +34,10 @@ import java.util.regex.Pattern;
 import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.http.HttpResponse;
 import org.jclouds.logging.Logger;
 
-import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ComputationException;
-import com.google.common.collect.MapMaker;
 
 /**
  * // TODO: Adrian: Document this!
@@ -72,84 +63,6 @@ public class Utils {
 
    @Resource
    protected static Logger logger = Logger.NULL;
-
-   /**
-    * Web browsers do not always handle '+' characters well, use the well-supported '%20' instead.
-    */
-   public static String urlEncode(String in, char... skipEncode) {
-      if (isUrlEncoded(in))
-         return in;
-      try {
-         String returnVal = URLEncoder.encode(in, "UTF-8").replaceAll("\\+", "%20").replaceAll(
-                  "\\*", "%2A").replaceAll("%7E", "~");
-         for (char c : skipEncode) {
-            returnVal = returnVal.replaceAll(plainToEncodedChars.get(c + ""), c + "");
-         }
-         return returnVal;
-      } catch (UnsupportedEncodingException e) {
-         throw new IllegalStateException("Bad encoding on input: " + in, e);
-      }
-   }
-
-   public static boolean isUrlEncoded(String in) {
-      return in.matches(".*%[a-fA-F0-9][a-fA-F0-9].*");
-   }
-
-   static Map<String, String> plainToEncodedChars = new MapMaker()
-            .makeComputingMap(new Function<String, String>() {
-               public String apply(String plain) {
-                  try {
-                     return URLEncoder.encode(plain, "UTF-8");
-                  } catch (UnsupportedEncodingException e) {
-                     throw new IllegalStateException("Bad encoding on input: " + plain, e);
-                  }
-               }
-            });
-
-   public static String urlDecode(String in) {
-      try {
-         return URLDecoder.decode(in, "UTF-8");
-      } catch (UnsupportedEncodingException e) {
-         throw new IllegalStateException("Bad encoding on input: " + in, e);
-      }
-   }
-
-   /**
-    * Content stream may need to be read. However, we should always close the http stream.
-    */
-   public static byte[] closeClientButKeepContentStream(HttpResponse response) {
-      if (response.getContent() != null) {
-         try {
-            byte[] data = IOUtils.toByteArray(response.getContent());
-            response.setContent(new ByteArrayInputStream(data));
-            return data;
-         } catch (IOException e) {
-            logger.error(e, "Error consuming input");
-         } finally {
-            IOUtils.closeQuietly(response.getContent());
-         }
-      }
-      return null;
-   }
-
-   public static URI parseEndPoint(String hostHeader) {
-      URI redirectURI = URI.create(hostHeader);
-      String scheme = redirectURI.getScheme();
-
-      checkState(redirectURI.getScheme().startsWith("http"), String.format(
-               "header %s didn't parse an http scheme: [%s]", hostHeader, scheme));
-      int port = redirectURI.getPort() > 0 ? redirectURI.getPort() : redirectURI.getScheme()
-               .equals("https") ? 443 : 80;
-      String host = redirectURI.getHost();
-      checkState(!host.matches("[/]"), String.format(
-               "header %s didn't parse an http host correctly: [%s]", hostHeader, host));
-      URI endPoint = URI.create(String.format("%s://%s:%d", scheme, host, port));
-      return endPoint;
-   }
-
-   public static URI replaceHostInEndPoint(URI endPoint, String host) {
-      return URI.create(endPoint.toString().replace(endPoint.getHost(), host));
-   }
 
    /**
     * 

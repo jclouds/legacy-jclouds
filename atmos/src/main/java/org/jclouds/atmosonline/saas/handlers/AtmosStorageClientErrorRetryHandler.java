@@ -30,8 +30,8 @@ import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
+import org.jclouds.http.HttpUtils;
 import org.jclouds.logging.Logger;
-import org.jclouds.util.Utils;
 
 import com.google.inject.Inject;
 
@@ -49,7 +49,7 @@ public class AtmosStorageClientErrorRetryHandler implements HttpRetryHandler {
    protected Logger logger = Logger.NULL;
 
    public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
-      Utils.closeClientButKeepContentStream(response);
+      HttpUtils.closeClientButKeepContentStream(response);
       command.incrementFailureCount();
       if (!command.isReplayable()) {
          logger.warn("Cannot retry after server error, command is not replayable: %1$s", command);

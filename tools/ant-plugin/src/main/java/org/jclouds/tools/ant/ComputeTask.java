@@ -23,30 +23,55 @@
  */
 package org.jclouds.tools.ant;
 
-import org.apache.tools.ant.Task;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Map;
+import java.util.Properties;
+
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
+import org.jclouds.compute.ComputeService;
 import org.jclouds.rimuhosting.miro.RimuHostingContextBuilder;
 import org.jclouds.rimuhosting.miro.RimuHostingPropertiesBuilder;
-import org.jclouds.compute.ComputeService;
+
+import com.google.common.io.Resources;
 import com.google.inject.Injector;
 
 /**
  * @author Ivan Meredith
  */
 public class ComputeTask extends Task {
+   private final Map<URI, ComputeService> computeMap;
+
+   public ComputeTask() throws IOException {
+      this(null);//TODO MapMaker
+   }
+
+   static Properties loadDefaultProperties() throws IOException {
+      Properties properties = new Properties();
+      properties.load(Resources.newInputStreamSupplier(Resources.getResource("compute.properties"))
+               .getInput());
+      return properties;
+   }
+
+   public ComputeTask(Map<URI, ComputeService> computeMap) {
+      this.computeMap = computeMap;
+   }
+
    private final String ACTION_CREATE = "create";
 
    private String action;
-
    private ServerElement serverElement;
+
    public void execute() throws BuildException {
-      if(ACTION_CREATE.equalsIgnoreCase(action)){
-         if(getServerElement() != null){
-            Injector injector = new RimuHostingContextBuilder(new RimuHostingPropertiesBuilder("test", "Test").relaxSSLHostname().build()).buildInjector();
+      if (ACTION_CREATE.equalsIgnoreCase(action)) {
+         if (getServerElement() != null) {
+            Injector injector = new RimuHostingContextBuilder(new RimuHostingPropertiesBuilder(
+                     "test", "Test").relaxSSLHostname().build()).buildInjector();
 
             ComputeService computeService = injector.getInstance(ComputeService.class);
 
-            computeService.createServerAndWait("test.com","MIRO1B","lenny");
+            computeService.createServerAndWait("test.com", "MIRO1B", "lenny");
          }
       }
    }

@@ -33,9 +33,9 @@ import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.HttpUtils;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.http.handlers.RedirectionRetryHandler;
-import org.jclouds.util.Utils;
 
 /**
  * Handles Retryable responses with error codes in the 3xx range
@@ -55,7 +55,7 @@ public class AWSRedirectionRetryHandler extends RedirectionRetryHandler {
    public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
       if (response.getFirstHeaderOrNull(HttpHeaders.LOCATION) == null
                && (response.getStatusCode() == 301 || response.getStatusCode() == 307)) {
-         byte[] content = Utils.closeClientButKeepContentStream(response);
+         byte[] content = HttpUtils.closeClientButKeepContentStream(response);
          if (command.getRequest().getMethod() == HttpMethod.HEAD) {
             command.redirectAsGet();
             return true;

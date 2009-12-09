@@ -30,10 +30,15 @@ import java.util.Properties;
 
 import javax.inject.Inject;
 
+import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpPropertiesBuilder;
 
 import com.google.inject.Module;
 
+/**
+ * 
+ * @author Adrian Cole
+ */
 public class BlobStoreContextFactory {
    private final Properties properties;
 
@@ -42,13 +47,15 @@ public class BlobStoreContextFactory {
       this.properties = properties;
    }
 
-   @SuppressWarnings("unchecked")
-   public BlobStoreContext<?, ?> createContext(URI blobStore, String account, String key,
-            Module... modules) {
-      String hint = checkNotNull(blobStore.getHost(), "host");
-      checkNotNull(account, "account");
-      checkNotNull(key, "key");
+   public BlobStoreContext<?, ?> createContext(URI blobStore, Module... modules) {
+      return createContext(blobStore, Credentials.parse(blobStore), modules);
+   }
 
+   @SuppressWarnings("unchecked")
+   public BlobStoreContext<?, ?> createContext(URI blobStore, Credentials creds, Module... modules) {
+      String hint = checkNotNull(blobStore.getHost(), "host");
+      String account = checkNotNull(creds.account, "account");
+      String key = creds.key;
       String propertiesBuilderKey = String.format("%s.propertiesbuilder", hint);
       String propertiesBuilderClassName = checkNotNull(
                properties.getProperty(propertiesBuilderKey), propertiesBuilderKey);

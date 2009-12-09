@@ -24,6 +24,7 @@
 package org.jclouds.vfs.provider.blobstore;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -41,7 +42,8 @@ import org.apache.commons.vfs.provider.http.HttpFileSystemConfigBuilder;
 import org.apache.commons.vfs.util.UserAuthenticatorUtils;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContextFactory;
-import org.jclouds.blobstore.internal.LocationAndCredentials;
+import org.jclouds.domain.Credentials;
+import org.jclouds.http.HttpUtils;
 
 import com.google.common.io.Resources;
 import com.google.inject.Module;
@@ -79,16 +81,17 @@ public class BlobStoreFileProvider extends AbstractOriginatingFileProvider {
          Properties properties = new Properties();
          properties.load(Resources.newInputStreamSupplier(
                   Resources.getResource("jclouds.properties")).getInput());
-         LocationAndCredentials locationAndCredentials = LocationAndCredentials.parse(uriToParse);
+         URI location = HttpUtils.createUri(uriToParse);
 
          blobStore = new BlobStoreContextFactory(properties).createContext(
-                  locationAndCredentials.uri,
-                  UserAuthenticatorUtils.toString(UserAuthenticatorUtils.getData(authData,
-                           UserAuthenticationData.USERNAME, UserAuthenticatorUtils.toChar(rootName
-                                    .getUserName()))),
-                  UserAuthenticatorUtils.toString(UserAuthenticatorUtils.getData(authData,
-                           UserAuthenticationData.PASSWORD, UserAuthenticatorUtils.toChar(rootName
-                                    .getPassword()))),modules).getBlobStore();
+                  location,
+                  new Credentials(UserAuthenticatorUtils.toString(UserAuthenticatorUtils.getData(
+                           authData, UserAuthenticationData.USERNAME, UserAuthenticatorUtils
+                                    .toChar(rootName.getUserName()))), UserAuthenticatorUtils
+                           .toString(UserAuthenticatorUtils.getData(authData,
+                                    UserAuthenticationData.PASSWORD, UserAuthenticatorUtils
+                                             .toChar(rootName.getPassword())))), modules)
+                  .getBlobStore();
       } catch (IOException e) {
          throw new FileSystemException("vfs.provider.blobstore/properties.error", name, e);
       } finally {
