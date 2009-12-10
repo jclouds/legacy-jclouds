@@ -37,6 +37,7 @@ import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.ProxyInputStream;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.jclouds.logging.Logger;
@@ -124,6 +125,30 @@ public class JschSshClient implements SshClient {
       } catch (SftpException e) {
          throw new SshException(String.format("%s@%s:%d: Error getting path: %s", username, host
                   .getHostAddress(), port, path), e);
+      }
+   }
+
+   public void put(String path, InputStream contents) {
+      checkNotNull(path, "path");
+      checkNotNull(contents, "contents");
+
+      checkConnected();
+      logger.debug("%s@%s:%d: Opening sftp Channel.", username, host.getHostAddress(), port);
+      ChannelSftp sftp = null;
+      try {
+         sftp = (ChannelSftp) session.openChannel("sftp");
+         sftp.connect();
+      } catch (JSchException e) {
+         throw new SshException(String.format("%s@%s:%d: Error connecting to sftp.", username, host
+                  .getHostAddress(), port), e);
+      }
+      try {
+         sftp.put(contents, path);
+      } catch (SftpException e) {
+         throw new SshException(String.format("%s@%s:%d: Error putting path: %s", username, host
+                  .getHostAddress(), port, path), e);
+      } finally {
+         IOUtils.closeQuietly(contents);
       }
    }
 

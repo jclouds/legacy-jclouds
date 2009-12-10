@@ -40,6 +40,8 @@ public interface SshClient {
       SshClient create(InetSocketAddress socket, String username, byte[] privateKey);
    }
 
+   void put(String path, InputStream contents);
+
    InputStream get(String path);
 
    ExecResponse exec(String command);

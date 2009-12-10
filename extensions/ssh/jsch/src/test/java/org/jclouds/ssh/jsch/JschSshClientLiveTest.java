@@ -25,6 +25,7 @@ package org.jclouds.ssh.jsch;
 
 import static org.testng.Assert.assertEquals;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -56,6 +57,7 @@ public class JschSshClientLiveTest {
    protected static final String sshUser = System.getProperty("jclouds.test.ssh.username");
    protected static final String sshPass = System.getProperty("jclouds.test.ssh.password");
    protected static final String sshKeyFile = System.getProperty("jclouds.test.ssh.keyfile");
+   private File temp;
 
    @BeforeGroups(groups = { "live" })
    public SshClient setupClient() throws NumberFormatException, FileNotFoundException, IOException {
@@ -77,6 +79,8 @@ public class JschSshClientLiveTest {
             public InputStream get(String path) {
                if (path.equals("/etc/passwd")) {
                   return IOUtils.toInputStream("root");
+               } else if (path.equals(temp.getAbsolutePath())) {
+                  return IOUtils.toInputStream("rabbit");
                }
                throw new RuntimeException("path " + path + " not stubbed");
             }
@@ -90,6 +94,11 @@ public class JschSshClientLiveTest {
                   }
                }
                throw new RuntimeException("command " + command + " not stubbed");
+            }
+
+            @Override
+            public void put(String path, InputStream contents) {
+
             }
 
          };
@@ -106,6 +115,16 @@ public class JschSshClientLiveTest {
          connection.connect();
          return connection;
       }
+   }
+
+   public void testPutAndGet() throws IOException {
+      temp = File.createTempFile("foo", "bar");
+      temp.deleteOnExit();
+      SshClient client = setupClient();
+      client.put(temp.getAbsolutePath(), IOUtils.toInputStream("rabbit"));
+      InputStream input = setupClient().get(temp.getAbsolutePath());
+      String contents = Utils.toStringAndClose(input);
+      assertEquals(contents, "rabbit");
    }
 
    public void testGetEtcPassword() throws IOException {
