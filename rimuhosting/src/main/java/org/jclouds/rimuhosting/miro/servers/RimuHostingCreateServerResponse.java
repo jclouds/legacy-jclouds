@@ -23,77 +23,48 @@
  */
 package org.jclouds.rimuhosting.miro.servers;
 
-import org.jclouds.compute.domain.CreateServerResponse;
-import org.jclouds.compute.domain.LoginType;
-import org.jclouds.domain.Credentials;
-import org.jclouds.rimuhosting.miro.domain.Server;
-import org.jclouds.rimuhosting.miro.domain.NewServerResponse;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.SortedSet;
-import java.util.TreeSet;
+
+import org.jclouds.compute.domain.LoginType;
+import org.jclouds.compute.domain.internal.CreateServerResponseImpl;
+import org.jclouds.domain.Credentials;
+import org.jclouds.rimuhosting.miro.domain.NewServerResponse;
+import org.jclouds.rimuhosting.miro.domain.Server;
+
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 
 /**
  * @author Ivan Meredith
  */
-public class RimuHostingCreateServerResponse implements CreateServerResponse {
-   private Server rhServer;
-   private NewServerResponse rhServerResponse;
+public class RimuHostingCreateServerResponse extends CreateServerResponseImpl {
 
-   public RimuHostingCreateServerResponse(NewServerResponse rhServerResponse){
-      this.rhServer = rhServerResponse.getServer();
-      this.rhServerResponse = rhServerResponse;   
-   }
-   public String getId() {
-      return rhServer.getId().toString();
+   public RimuHostingCreateServerResponse(NewServerResponse rhServerResponse) {
+      super(rhServerResponse.getServer().getId().toString(),
+               rhServerResponse.getServer().getName(), getPublicAddresses(rhServerResponse
+                        .getServer()), ImmutableList.<InetAddress> of(), 22, LoginType.SSH,
+               new Credentials("root", rhServerResponse.getNewInstanceRequest().getCreateOptions()
+                        .getPassword()));
    }
 
-   public String getName() {
-      return rhServer.getName();
-   }
+   @VisibleForTesting
+   static Iterable<InetAddress> getPublicAddresses(Server rhServer) {
+      Iterable<String> addresses = Iterables.concat(ImmutableList.of(rhServer.getIpAddresses()
+               .getPrimaryIp()), rhServer.getIpAddresses().getSecondaryIps());
+      return Iterables.transform(addresses, new Function<String, InetAddress>() {
 
-   public SortedSet<InetAddress> getPublicAddresses() {
-      SortedSet<InetAddress> ipAddresses = new TreeSet<InetAddress>();
-      try {
-         InetAddress address = InetAddress.getByName(rhServer.getIpAddresses().getPrimaryIp());
-         ipAddresses.add(address);
-      } catch (UnknownHostException e) {
-         //TODO: log the failure.
-      }
-
-      for(String ip : rhServer.getIpAddresses().getSecondaryIps()){
-         try {
-            InetAddress address = InetAddress.getByName(rhServer.getIpAddresses().getPrimaryIp());
-            ipAddresses.add(address);
-         } catch (UnknownHostException e) {
-            //TODO: log the failure.
+         @Override
+         public InetAddress apply(String from) {
+            try {
+               return InetAddress.getByName(from);
+            } catch (UnknownHostException e) {
+               // TODO: log the failure.
+               return null;
+            }
          }
-      }
-      return null;
-   }
-
-   /**
-    * Rimuhosting does not support private addressess at this time.
-    * @return  null
-    */
-   public SortedSet<InetAddress> getPrivateAddresses() {
-      return null;
-   }
-
-   /**
-    * Default port is always 22.
-    * @return 22
-    */
-   public int getLoginPort() {
-      return 22;
-   }
-
-   public LoginType getLoginType() {
-      return LoginType.SSH;
-   }
-
-   public Credentials getCredentials() {
-      return new Credentials("root",rhServerResponse.getNewInstanceRequest().getCreateOptions().getPassword());
+      });
    }
 }
