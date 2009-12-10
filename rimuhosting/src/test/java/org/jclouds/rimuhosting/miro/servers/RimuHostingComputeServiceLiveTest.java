@@ -26,6 +26,8 @@ package org.jclouds.rimuhosting.miro.servers;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertNotNull;
 
+import org.jclouds.compute.Image;
+import org.jclouds.compute.Profile;
 import org.jclouds.compute.domain.CreateServerResponse;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
@@ -58,7 +60,8 @@ public class RimuHostingComputeServiceLiveTest {
 
    @Test
    public void testServerCreate() {
-      CreateServerResponse server = rhServerService.createServer("test.com", "MIRO1B", "lenny");
+      CreateServerResponse server = rhServerService.createServer("test.com", Profile.SMALLEST,
+               Image.CENTOS_53);
       assertNotNull(rhClient.getInstance(Long.valueOf(server.getId())));
       rhServerService.getServerById(server.getId()).destroy();
    }

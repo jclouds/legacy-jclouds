@@ -28,6 +28,7 @@ import java.net.URI;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.compute.ComputeService;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
@@ -35,6 +36,7 @@ import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.reference.VCloudConstants;
 import org.jclouds.vcloud.terremark.TerremarkVCloudAsyncClient;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
+import org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeService;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -45,6 +47,7 @@ import com.google.inject.Provides;
 public class TerremarkVCloudContextModule extends AbstractModule {
    @Override
    protected void configure() {
+      bind(ComputeService.class).to(TerremarkVCloudComputeService.class);
    }
 
    @Provides

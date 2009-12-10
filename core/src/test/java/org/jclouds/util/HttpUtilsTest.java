@@ -67,6 +67,12 @@ public class HttpUtilsTest extends PerformanceTest {
                .create("blobstore://account:Base64==@azureblob/container-hyphen/prefix"));
    }
 
+   public void testTerremark() {
+      URI creds = HttpUtils.createUri("compute://user@domain:password@terremark");
+      assertEquals(creds.getUserInfo(), "user@domain:password");
+      assertEquals(creds, URI.create("compute://user%40domain:password@terremark"));
+   }
+
    public void testCloudFiles() {
       URI creds = HttpUtils.createUri("blobstore://account:h3c@cloudfiles/container-hyphen/prefix");
       assertEquals(creds, URI.create("blobstore://account:h3c@cloudfiles/container-hyphen/prefix"));

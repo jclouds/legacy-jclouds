@@ -27,6 +27,7 @@ import static org.jclouds.vcloud.VCloudMediaType.VAPP_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VDC_XML;
 
 import java.net.InetAddress;
+import java.util.SortedSet;
 import java.util.concurrent.Future;
 
 import javax.ws.rs.Consumes;
@@ -57,7 +58,9 @@ import org.jclouds.vcloud.terremark.domain.TerremarkVApp;
 import org.jclouds.vcloud.terremark.options.AddInternetServiceOptions;
 import org.jclouds.vcloud.terremark.options.AddNodeOptions;
 import org.jclouds.vcloud.terremark.xml.InternetServiceHandler;
+import org.jclouds.vcloud.terremark.xml.InternetServicesHandler;
 import org.jclouds.vcloud.terremark.xml.NodeHandler;
+import org.jclouds.vcloud.terremark.xml.NodesHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkVAppHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkVDCHandler;
 
@@ -98,6 +101,12 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
             @MapEntityParam("protocol") String protocol, @MapEntityParam("port") int port,
             AddInternetServiceOptions... options);
 
+   @GET
+   @Endpoint(org.jclouds.vcloud.endpoints.VDC.class)
+   @Path("/internetServices")
+   @XMLResponseParser(InternetServicesHandler.class)
+   Future<? extends SortedSet<InternetService>> getAllInternetServices();
+
    @POST
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/publicIps/{ipId}/InternetServices")
@@ -132,6 +141,13 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
             @MapEntityParam("ipAddress") @ParamParser(InetAddressToHostAddress.class) InetAddress ipAddress,
             @MapEntityParam("name") String name, @MapEntityParam("port") int port,
             AddNodeOptions... options);
+
+   @GET
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
+   @Path("/internetServices/{internetServiceId}/nodes")
+   @XMLResponseParser(NodesHandler.class)
+   Future<? extends SortedSet<InternetService>> getNodes(
+            @PathParam("internetServiceId") String internetServiceId);
 
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)

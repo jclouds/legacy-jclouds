@@ -24,6 +24,7 @@
 package org.jclouds.vcloud.terremark;
 
 import java.net.InetAddress;
+import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
@@ -68,5 +69,9 @@ public interface TerremarkVCloudClient extends VCloudClient {
 
    @Override
    TerremarkVApp getVApp(String vAppId);
+
+   SortedSet<InternetService> getAllInternetServices();
+
+   SortedSet<Node> getNodes(String internetServiceId);
 
 }

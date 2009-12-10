@@ -1,0 +1,13 @@
+<NodeServices xmlns="urn:tmrk:vCloudExpress-1.0"
+    xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+    <NodeService>
+        <Id>242</Id>
+        <Href>https://services.vcloudexpress.terremark.com/api/v0.8/NodeServices/242
+        </Href>
+        <Name>Node for Jim</Name>
+        <IpAddress>172.16.20.3</IpAddress>
+        <Port>80</Port>
+        <Enabled>false</Enabled>
+        <Description>Some test node</Description>
+    </NodeService>
+</NodeServices>

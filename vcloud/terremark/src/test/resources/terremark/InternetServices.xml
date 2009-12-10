@@ -1,0 +1,20 @@
+<InternetServices xmlns="urn:tmrk:vCloudExpress-1.0"
+    xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+    <InternetService>
+        <Id>524</Id>
+        <Href>https://services.vcloudexpress.terremark.com/api/v0.8/InternetServices/524
+        </Href>
+        <Name>IS_for_Jim2</Name>
+        <PublicIpAddress>
+            <Id>4208</Id>
+            <Href>https://services.vcloudexpress.terremark.com/api/v0.8/PublicIps/4208
+            </Href>
+            <Name>10.1.22.159</Name>
+        </PublicIpAddress>
+        <Port>45</Port>
+        <Protocol>HTTP</Protocol>
+        <Enabled>false</Enabled>
+        <Timeout>1</Timeout>
+        <Description>Some test service</Description>
+    </InternetService>
+</InternetServices>

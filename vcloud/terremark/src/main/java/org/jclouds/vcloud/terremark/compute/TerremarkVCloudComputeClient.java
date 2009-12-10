@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.terremark;
+package org.jclouds.vcloud.terremark.compute;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -29,16 +29,18 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.util.Map;
+import java.util.SortedSet;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
+import org.jclouds.compute.Image;
 import org.jclouds.logging.Logger;
-import org.jclouds.ssh.ExecResponse;
-import org.jclouds.ssh.SshClient;
-import org.jclouds.ssh.SshClient.Factory;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
+import org.jclouds.vcloud.terremark.domain.InternetService;
+import org.jclouds.vcloud.terremark.domain.Node;
 import org.jclouds.vcloud.terremark.domain.TerremarkVApp;
 import org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions;
 
@@ -50,31 +52,22 @@ import com.google.common.collect.Iterables;
  * 
  * @author Adrian Cole
  */
-public class VCloudComputeClient {
+public class TerremarkVCloudComputeClient {
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private final Predicate<InetSocketAddress> socketTester;
    private final Predicate<URI> taskTester;
    private final TerremarkVCloudClient tmClient;
 
    @Inject
-   public VCloudComputeClient(TerremarkVCloudClient tmClient, Factory sshFactory,
-            Predicate<InetSocketAddress> socketTester, Predicate<URI> successTester) {
+   public TerremarkVCloudComputeClient(TerremarkVCloudClient tmClient, Predicate<URI> successTester) {
       this.tmClient = tmClient;
-      this.sshFactory = sshFactory;
-      this.socketTester = socketTester;
       this.taskTester = successTester;
    }
 
-   private final Factory sshFactory;
-
-   public enum Image {
-      CENTOS_53, RHEL_53, UMBUNTU_90, UMBUNTU_JEOS
-   }
-
    private Map<Image, String> imageCatalogIdMap = ImmutableMap.<Image, String> builder().put(
-            Image.CENTOS_53, "6").put(Image.RHEL_53, "8").put(Image.UMBUNTU_90, "10").put(Image.UMBUNTU_JEOS, "11").build();
+            Image.CENTOS_53, "6").put(Image.RHEL_53, "8").put(Image.UMBUNTU_90, "10").put(
+            Image.UMBUNTU_JEOS, "11").build();
 
    public String start(String name, int minCores, int minMegs, Image image) {
       checkArgument(imageCatalogIdMap.containsKey(image), "image not configured: " + image);
@@ -83,7 +76,8 @@ public class VCloudComputeClient {
       logger.debug(">> instantiating vApp name(%s) minCores(%d) minMegs(%d) template(%s)", name,
                minCores, minMegs, templateId);
       TerremarkVApp vApp = tmClient.instantiateVAppTemplate(name, templateId,
-               TerremarkInstantiateVAppTemplateOptions.Builder.cpuCount(minCores).megabytes(minMegs));
+               TerremarkInstantiateVAppTemplateOptions.Builder.cpuCount(minCores)
+                        .megabytes(minMegs));
       logger.debug("<< instantiated VApp(%s)", vApp.getId());
 
       logger.debug(">> deploying vApp(%s)", vApp.getId());
@@ -109,16 +103,6 @@ public class VCloudComputeClient {
       return Iterables.getLast(vApp.getNetworkToAddresses().values());
    }
 
-   public ExecResponse exec(InetAddress address, String command) {
-      InetSocketAddress sshSocket = new InetSocketAddress(address, 22);
-      String username = "vcloud";
-      String password = "p4ssw0rd";
-      logger.debug(">> exec ssh://%s@%s/%s", username, sshSocket, command);
-      ExecResponse exec = exec(sshSocket, username, password, command);
-      logger.debug("<< output(%s) error(%s)", exec.getOutput(), exec.getError());
-      return exec;
-   }
-
    public void reboot(String id) {
       TerremarkVApp vApp = tmClient.getVApp(id);
       logger.debug(">> rebooting vApp(%s)", vApp.getId());
@@ -129,6 +113,24 @@ public class VCloudComputeClient {
 
    public void stop(String id) {
       TerremarkVApp vApp = tmClient.getVApp(id);
+
+      SERVICE: for (InternetService service : tmClient.getAllInternetServices()) {
+         for (Node node : tmClient.getNodes(service.getId())) {
+            if (vApp.getNetworkToAddresses().containsValue(node.getIpAddress())) {
+               logger.debug(">> deleting Node(%s)", node.getId());
+               tmClient.deleteNode(node.getId());
+               logger.debug("<< deleted Node(%s)", node.getId());
+               SortedSet<Node> nodes = tmClient.getNodes(service.getId());
+               if (nodes.size() == 0) {
+                  logger.debug(">> deleting InternetService(%s)", service.getId());
+                  tmClient.deleteInternetService(service.getId());
+                  logger.debug("<< deleted InternetService(%s)", service.getId());
+                  continue SERVICE;
+               }
+            }
+         }
+      }
+
       if (vApp.getStatus() != VAppStatus.OFF) {
          logger.debug(">> powering off vApp(%s)", vApp.getId());
          blockUntilVAppStatusOrThrowException(vApp, tmClient.powerOffVApp(vApp.getId()),
@@ -140,23 +142,8 @@ public class VCloudComputeClient {
       logger.debug("<< deleted vApp(%s)", vApp.getId());
    }
 
-   private ExecResponse exec(InetSocketAddress socket, String username, String password,
-            String command) {
-      if (!socketTester.apply(socket)) {
-         throw new SocketNotOpenException(socket);
-      }
-      SshClient connection = sshFactory.create(socket, username, password);
-      try {
-         connection.connect();
-         return connection.exec(command);
-      } finally {
-         if (connection != null)
-            connection.disconnect();
-      }
-   }
-
-   private TerremarkVApp blockUntilVAppStatusOrThrowException(TerremarkVApp vApp, Task deployTask, String taskType,
-            VAppStatus expectedStatus) {
+   private TerremarkVApp blockUntilVAppStatusOrThrowException(TerremarkVApp vApp, Task deployTask,
+            String taskType, VAppStatus expectedStatus) {
       if (!taskTester.apply(deployTask.getLocation())) {
          throw new TaskException(taskType, vApp, deployTask);
       }

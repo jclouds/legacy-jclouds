@@ -165,6 +165,9 @@ public class HttpUtils {
       if (uriPath.indexOf('@') != 1) {
          List<String> parts = Lists.newArrayList(Splitter.on('@').split(uriPath));
          String path = parts.remove(parts.size() - 1);
+         if (parts.size() == 2) {
+            parts = Lists.newArrayList(urlEncode(parts.get(0) + "@" + parts.get(1), '/', ':'));
+         }
          parts.add(urlEncode(path, '/', ':'));
          uriPath = Joiner.on('@').join(parts);
       } else {

@@ -82,6 +82,13 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
    public static final String PREFIX = System.getProperty("user.name") + "-terremark";
 
    @Test
+   public void testGetAllInternetServices() throws Exception {
+      for (InternetService service : tmClient.getAllInternetServices()) {
+         System.out.println(tmClient.getNodes(service.getId()));
+      }
+   }
+
+   @Test
    public void testDefaultVDC() throws Exception {
       super.testDefaultVDC();
       TerremarkVDC response = (TerremarkVDC) tmClient.getDefaultVDC();

@@ -23,17 +23,37 @@
     ====================================================================
 
 -->
-<project name="ex6" default="demo" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
-	<artifact:localRepository id="jclouds.repository" path="${user.home}/.m2/repository" />
+<project name="ex6" default="list" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+	<artifact:localRepository id="local.repository" path="${user.home}/.m2/repository" />
+        <artifact:remoteRepository id="jclouds-snapshot.repository" url="http://jclouds.rimuhosting.com/maven2/snapshots" />
+
 	<artifact:dependencies pathId="jclouds.classpath">
 		<dependency groupId="org.jclouds" artifactId="jclouds-ant-plugin" version="1.0-SNAPSHOT" />
-		<localRepository refid="jclouds.repository" />
+		<dependency groupId="org.jclouds" artifactId="jclouds-terremark" version="1.0-SNAPSHOT" />
+		<dependency groupId="org.jclouds" artifactId="jclouds-rimuhosting" version="1.0-SNAPSHOT" />
+		<localRepository refid="local.repository" />
+		<remoteRepository refid="jclouds-snapshot.repository" />
 	</artifact:dependencies>
-
 
 	<typedef name="compute" classname="org.jclouds.tools.ant.ComputeTask" classpathref="jclouds.classpath" />
 
-	<target name="demo">
-		<compute action="create" provider="compute://accountkey:accountkey@rimuhosting" />
+	<property name="jclouds.compute.provider" value="compute://${jclouds.compute.account}:${jclouds.compute.key}@${jclouds.compute.provider}" />
+	<property name="jclouds.compute.servername" value="testforjcloud2" />
+	
+	<target name="list">
+		<compute action="list" provider="${jclouds.compute.provider}" />
+        </target>
+
+	<target name="clean">
+		<compute action="destroy" provider="${jclouds.compute.provider}" >
+                   <server name="${jclouds.compute.servername}"/>
+                </compute>
+        </target>
+
+	<target name="create">
+		<compute action="create" provider="${jclouds.compute.provider}" >
+                   <server name="${jclouds.compute.servername}" image="CENTOS_53" profile="SMALLEST" />
+                </compute>
 	</target>
+	
 </project>

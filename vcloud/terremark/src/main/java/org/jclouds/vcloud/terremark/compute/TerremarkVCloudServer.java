@@ -21,28 +21,42 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.compute;
+package org.jclouds.vcloud.terremark.compute;
 
-import java.util.SortedSet;
-
-import org.jclouds.compute.domain.CreateServerResponse;
+import org.jclouds.compute.Server;
+import org.jclouds.vcloud.terremark.domain.TerremarkVApp;
 
 /**
- * TODO: better name?
  * 
- * @author Ivan Meredith
+ * @author Adrian Cole
  */
-public interface ComputeService {
-   SortedSet<Server> listServers();
+public class TerremarkVCloudServer implements Server {
 
-   /**
-    * 
-    * @see Image
-    */
-   CreateServerResponse createServer(String name, Profile profile, Image image);
+   private final TerremarkVCloudComputeClient computeClient;
 
-   Server getServerById(String id);
+   private final TerremarkVApp vApp;
 
-   SortedSet<Server> getServerByName(String id);
+   public TerremarkVCloudServer(TerremarkVCloudComputeClient computeClient, TerremarkVApp vApp) {
+      this.vApp = vApp;
+      this.computeClient = computeClient;
+   }
 
+   public String getId() {
+      return vApp.getId();
+   }
+
+   public Boolean destroy() {
+      computeClient.stop(getId());
+      return Boolean.TRUE;
+   }
+
+   @Override
+   public String getName() {
+      return vApp.getName();
+   }
+
+   @Override
+   public int compareTo(Server o) {
+      return (this == o) ? 0 : getId().compareTo(o.getId());
+   }
 }
