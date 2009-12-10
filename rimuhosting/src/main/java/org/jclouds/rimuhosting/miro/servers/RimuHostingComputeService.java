@@ -68,6 +68,10 @@ public class RimuHostingComputeService implements ComputeService {
 
    @Override
    public SortedSet<org.jclouds.compute.Server> getServerByName(String id) {
-      throw new UnsupportedOperationException();
+      SortedSet<org.jclouds.compute.Server> serverSet = new TreeSet<org.jclouds.compute.Server>();
+      for(Server rhServer : rhClient.getInstanceList()){
+         serverSet.add(new RimuHostingServer(rhServer, rhClient));         
+      }
+      return serverSet;
    }
 }
