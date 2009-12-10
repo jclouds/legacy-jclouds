@@ -81,7 +81,7 @@ public class ComputeTask extends Task {
       if (ACTION_CREATE.equalsIgnoreCase(action)) {
          ComputeService computeService = computeMap.get(HttpUtils.createUri(provider));
          log("hello");
-         computeService.createServerAndWait("test.com", "MIRO1B", "lenny");
+         computeService.createServer("test.com", "MIRO1B", "lenny");
       }
    }
 

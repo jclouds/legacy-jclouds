@@ -50,10 +50,10 @@ public class PropertiesTest {
                .getInput());
    }
 
-   public void testAzure() {
-      assertEquals(properties.getProperty("rimuhosting.contextBuilder"),
+   public void testRimu() {
+      assertEquals(properties.getProperty("rimuhosting.contextbuilder"),
                RimuHostingContextBuilder.class.getName());
-      assertEquals(properties.getProperty("rimuhosting.propertiesBuilder"),
+      assertEquals(properties.getProperty("rimuhosting.propertiesbuilder"),
                RimuHostingPropertiesBuilder.class.getName());
    }
 

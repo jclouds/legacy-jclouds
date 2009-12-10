@@ -24,20 +24,21 @@
 package org.jclouds.compute;
 
 import java.util.SortedSet;
-import java.util.concurrent.Future;
+
+import org.jclouds.compute.domain.CreateServerResponse;
 
 /**
  * TODO: better name?
- *
+ * 
  * @author Ivan Meredith
  */
 public interface ComputeService {
-   public Server createServerAndWait(String name, String profile, String image);
+   SortedSet<Server> listServers();
 
-   public Future<Server> createServer(String name, String profile, String image);
+   CreateServerResponse createServer(String name, String profile, String image);
 
-   public SortedSet<Server> listServers();
+   Server getServerById(String id);
 
-   public Server getServer(String id);
-   
+   SortedSet<Server> getServerByName(String id);
+
 }

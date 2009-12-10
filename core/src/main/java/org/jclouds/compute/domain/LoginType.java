@@ -21,15 +21,17 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.compute;
+package org.jclouds.compute.domain;
 
-import com.google.common.base.Service;
 
 /**
+ * The login type of the server.
+ * 
+ * @author Adrian Cole
  * @author Ivan Meredith
  */
-public interface Instance extends Service {
-   String getId();
+public enum LoginType {
 
-   String getTag();
+   RDP, SSH
+
 }
