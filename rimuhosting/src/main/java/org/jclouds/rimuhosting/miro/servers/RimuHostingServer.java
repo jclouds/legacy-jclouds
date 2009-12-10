@@ -48,7 +48,7 @@ public class RimuHostingServer implements Server {
 
    @Override
    public String getName() {
-      throw new UnsupportedOperationException();
+      return rhServer.getName();
    }
 
    @Override

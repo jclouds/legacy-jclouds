@@ -49,9 +49,8 @@ public class RimuHostingComputeService implements ComputeService {
 
    @Override
    public CreateServerResponse createServer(String name, String profile, String image) {
-      NewServerResponse serverResp = rhClient.createInstance(name, image, profile);
-      // return new RimuHostingServer(serverResp.getInstance(), rhClient);
-      throw new UnsupportedOperationException();
+      NewServerResponse serverResponse = rhClient.createInstance(name, image, profile);
+      return new RimuHostingCreateServerResponse(serverResponse);
    }
 
    public SortedSet<org.jclouds.compute.Server> listServers() {

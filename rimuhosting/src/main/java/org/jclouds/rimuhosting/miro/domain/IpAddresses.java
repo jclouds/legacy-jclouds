@@ -45,4 +45,12 @@ public class IpAddresses {
    public void setPrimaryIp(String primaryIp) {
       this.primaryIp = primaryIp;
    }
+
+   public SortedSet<String> getSecondaryIps() {
+      return secondaryIps;
+   }
+
+   public void setSecondaryIps(SortedSet<String> secondaryIps) {
+      this.secondaryIps = secondaryIps;
+   }
 }

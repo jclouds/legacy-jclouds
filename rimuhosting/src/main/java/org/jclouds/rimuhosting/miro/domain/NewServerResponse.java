@@ -42,12 +42,12 @@ public class NewServerResponse implements Comparable<NewServerResponse> {
    @SerializedName("running_vps_info")
    private ServerInfo serverInfo;
 
-   public Server getInstance() {
+   public Server getServer() {
       return server;
    }
 
-   public void setInstance(Server instaince) {
-      this.server = instaince;
+   public void setServer(Server server) {
+      this.server = server;
    }
 
    public NewServerData getNewInstanceRequest() {
@@ -58,16 +58,16 @@ public class NewServerResponse implements Comparable<NewServerResponse> {
       this.newServerDataRequest = newServerDataRequest;
    }
 
-   public ServerInfo getInstanceInfo() {
+   public ServerInfo getServerInfo() {
       return serverInfo;
    }
 
-   public void setInstanceInfo(ServerInfo serverInfo) {
+   public void setServerInfo(ServerInfo serverInfo) {
       this.serverInfo = serverInfo;
    }
 
    @Override
    public int compareTo(NewServerResponse server) {
-      return this.server.getId().compareTo(server.getInstance().getId());
+      return this.server.getId().compareTo(server.getServer().getId());
    }
 }

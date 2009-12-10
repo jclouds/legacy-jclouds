@@ -79,7 +79,7 @@ public class RimuHostingClientLiveTest {
    public void testLifeCycle() {
 	   //Get the first image, we dont really care what it is in this test.
 	   NewServerResponse serverResponse = connection.createInstance("test.jclouds.org", "lenny", "MIRO1B");
-      Server server = serverResponse.getInstance();
+      Server server = serverResponse.getServer();
       //Now we have the server, lets restart it
       assertNotNull(server.getId());
       ServerInfo serverInfo =  connection.restartInstance(server.getId());
