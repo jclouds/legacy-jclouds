@@ -26,31 +26,32 @@
    ====================================================================
  -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>jclouds-project</artifactId>
         <groupId>org.jclouds</groupId>
         <version>1.0-SNAPSHOT</version>
         <relativePath>project/pom.xml</relativePath>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
     <artifactId>jclouds-multi</artifactId>
-    <packaging>pom</packaging>
     <name>jclouds</name>
+    <packaging>pom</packaging>
     <modules>
         <module>project</module>
-        <module>archetypes</module>        
+        <module>archetypes</module>
+        <module>thirdparty</module>
         <module>core</module>
         <module>extensions</module>
+        <module>scriptbuilder</module>
+        <module>atmos</module>        
         <module>aws</module>
         <module>azure</module>
-        <module>rackspace</module>
-        <module>mezeo</module>
+        <module>mezeo</module>        
         <module>nirvanix</module>
-        <module>thirdparty</module>
+        <module>rackspace</module>
+        <module>rimuhosting</module>        
         <module>twitter</module>
-        <module>rimuhosting</module>
         <module>vcloud</module>
-        <module>scriptbuilder</module>
     </modules>
     <build>
         <plugins>
@@ -104,6 +105,25 @@ pageTracker._trackPageview();
                     </properties>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>create-package</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>jclouds-${project.version}</finalName>
+                            <descriptors>
+                                <descriptor>package.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>            
         </plugins>
     </build>
 </project>
