@@ -36,7 +36,6 @@
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-azure</artifactId>
     <name>jclouds azure services core</name>
-    <packaging>jar</packaging>
     <description>jclouds core components to access azure services</description>
 
    <properties>
@@ -44,7 +43,6 @@
         <jclouds.test.key>${jclouds.azure.storage.key}</jclouds.test.key>
         <jclouds.test.initializer>org.jclouds.azure.storage.blob.blobstore.integration.AzureBlobTestInitializer</jclouds.test.initializer>
     </properties>
-
 
     <scm>
         <connection>scm:svn:http://jclouds.googlecode.com/svn/trunk/azure</connection>
