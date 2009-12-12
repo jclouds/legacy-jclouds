@@ -77,7 +77,7 @@ public class TerremarkVCloudRestClientModule extends VCloudRestClientModule {
    @Provides
    @Singleton
    protected Predicate<URI> successTester(TaskSuccess success) {
-      return new RetryablePredicate<URI>(success, 300, 10, TimeUnit.SECONDS);
+      return new RetryablePredicate<URI>(success, 600, 10, TimeUnit.SECONDS);
    }
 
    @Provides
