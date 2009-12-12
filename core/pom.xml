@@ -40,11 +40,6 @@
         <url>http://jclouds.googlecode.com/svn/trunk</url>
     </scm>
 
-    <properties>
-        <jclouds.blobstore.httpstream.url>http://apache.multihomed.net/maven/binaries/apache-maven-2.2.0-bin.zip</jclouds.blobstore.httpstream.url>
-        <jclouds.blobstore.httpstream.md5>132bcde2aeca20acb0b16c1c66b74984</jclouds.blobstore.httpstream.md5>
-    </properties>
-
     <repositories>
         <repository>
             <id>gson</id>
@@ -122,64 +117,6 @@
     </dependencies>
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.4.3</version>
-                <executions>
-                    <execution>
-                        <id>integration</id>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                        <configuration>
-                            <!--
-                                note that the groups/excluded groups
-                                don't work due to some problem in
-                                surefire or testng. instead, we have to
-                                exclude via file path
-                                <groups>integration</groups>
-                                <excludedGroups>unit,performance,live</excludedGroups>
-                            -->
-                            <excludes>
-                                <exclude>**/*LiveTest.java</exclude>
-                                <exclude>**/Base*Test.java</exclude>
-                            </excludes>
-                            <includes>
-                                <include>**/*IntegrationTest.java</include>
-                            </includes>
-                            <systemProperties>
-                                <property>
-                                    <name>jclouds.test.initializer</name>
-                                    <value>org.jclouds.blobstore.integration.StubTestInitializer</value>
-                                </property>
-                                <property>
-                                    <name>jclouds.blobstore.httpstream.url</name>
-                                    <value>${jclouds.blobstore.httpstream.url}</value>
-                                </property>
-                                <property>
-                                    <name>jclouds.blobstore.httpstream.md5</name>
-                                    <value>${jclouds.blobstore.httpstream.md5}</value>
-                                </property>
-                            </systemProperties>
-                        </configuration>
-                    </execution>
-                </executions>
-                <configuration>
-                    <!--
-                        note that the groups/excluded groups don't work
-                        due to some problem in surefire or testng.
-                        instead, we have to exclude via file path
-                        <groups>unit,performance</groups>
-                        <excludedGroups>integration,live</excludedGroups>
-                    -->
-                    <excludes>
-                        <exclude>**/*IntegrationTest.java</exclude>
-                        <exclude>**/*LiveTest.java</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>

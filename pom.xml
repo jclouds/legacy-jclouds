@@ -41,6 +41,7 @@
         <module>archetypes</module>
         <module>thirdparty</module>
         <module>core</module>
+        <module>blobstore</module>
         <module>extensions</module>
         <module>scriptbuilder</module>
         <module>aws</module>
