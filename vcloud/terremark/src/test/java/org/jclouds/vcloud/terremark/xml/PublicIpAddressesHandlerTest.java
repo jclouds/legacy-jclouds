@@ -32,25 +32,38 @@ import java.net.UnknownHostException;
 import java.util.SortedSet;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.vcloud.terremark.domain.Node;
+import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSortedSet;
 
 /**
- * Tests behavior of {@code NodesHandler}
+ * Tests behavior of {@code PublicIpAddressesHandler}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.NodesHandlerTest")
-public class NodesHandlerTest extends BaseHandlerTest {
+@Test(groups = "unit", testName = "terremark.PublicIpAddressesHandlerTest")
+public class PublicIpAddressesHandlerTest extends BaseHandlerTest {
 
    public void test1() throws UnknownHostException {
-      InputStream is = getClass().getResourceAsStream("/terremark/NodeServices.xml");
+      InputStream is = getClass().getResourceAsStream("/terremark/PublicIpAddresses.xml");
 
-      SortedSet<Node> result = factory.create(injector.getInstance(NodesHandler.class)).parse(is);
-      assertEquals(result, ImmutableSortedSet.of(new Node(242, "Node for Jim", URI
-               .create("https://services.vcloudexpress.terremark.com/api/v0.8/NodeServices/242"),
-               InetAddress.getByName("172.16.20.3"), 80, false, "Some test node")));
+      SortedSet<PublicIpAddress> result = factory.create(
+               injector.getInstance(PublicIpAddressesHandler.class)).parse(is);
+      assertEquals(
+               result,
+               ImmutableSortedSet
+                        .of(
+                                 new PublicIpAddress(
+                                          8720,
+                                          InetAddress.getByName("204.51.112.91"),
+                                          URI
+                                                   .create("https://services.vcloudexpress.terremark.com/api/v0.8/PublicIps/8720")),
+                                 new PublicIpAddress(
+                                          14965,
+                                          InetAddress.getByName("204.51.114.79"),
+                                          URI
+                                                   .create("https://services.vcloudexpress.terremark.com/api/v0.8/PublicIps/14965"))));
+
    }
 }

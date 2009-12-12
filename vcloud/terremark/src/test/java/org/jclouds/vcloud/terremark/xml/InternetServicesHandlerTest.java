@@ -33,6 +33,7 @@ import java.util.SortedSet;
 
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.vcloud.terremark.domain.InternetService;
+import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
 import org.testng.annotations.Test;
 
@@ -55,7 +56,7 @@ public class InternetServicesHandlerTest extends BaseHandlerTest {
                result,
                ImmutableSortedSet
                         .of(new InternetService(
-                                 524 + "",
+                                 524,
                                  "IS_for_Jim2",
                                  URI
                                           .create("https://services.vcloudexpress.terremark.com/api/v0.8/InternetServices/524"),
@@ -64,6 +65,6 @@ public class InternetServicesHandlerTest extends BaseHandlerTest {
                                           InetAddress.getByName("10.1.22.159"),
                                           URI
                                                    .create("https://services.vcloudexpress.terremark.com/api/v0.8/PublicIps/4208")),
-                                 45, "HTTP", false, 1, "Some test service")));
+                                 45, Protocol.HTTP, false, 1, "Some test service")));
    }
 }

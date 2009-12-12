@@ -1,0 +1,13 @@
+<ComputeOptions xmlns="urn:tmrk:vCloudExpress-1.0"
+    xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+    <ComputeOption>
+        <ProcessorCount>1</ProcessorCount>
+        <Memory>512</Memory>
+        <CostPerHour>0.0390</CostPerHour>
+    </ComputeOption>
+    <ComputeOption>
+        <ProcessorCount>8</ProcessorCount>
+        <Memory>16384</Memory>
+        <CostPerHour>1.6100</CostPerHour>
+    </ComputeOption>
+</ComputeOptions>

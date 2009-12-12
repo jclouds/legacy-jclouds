@@ -26,31 +26,25 @@ package org.jclouds.vcloud.terremark.xml;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.net.InetAddress;
-import java.net.URI;
 import java.net.UnknownHostException;
-import java.util.SortedSet;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.vcloud.terremark.domain.Node;
+import org.jclouds.vcloud.terremark.domain.CustomizationParameters;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSortedSet;
-
 /**
- * Tests behavior of {@code NodesHandler}
+ * Tests behavior of {@code CustomizationParametersHandler}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.NodesHandlerTest")
-public class NodesHandlerTest extends BaseHandlerTest {
+@Test(groups = "unit", testName = "vcloud.CustomizationParametersHandlerTest")
+public class CustomizationParametersHandlerTest extends BaseHandlerTest {
 
    public void test1() throws UnknownHostException {
-      InputStream is = getClass().getResourceAsStream("/terremark/NodeServices.xml");
+      InputStream is = getClass().getResourceAsStream("/terremark/CustomizationParameters.xml");
 
-      SortedSet<Node> result = factory.create(injector.getInstance(NodesHandler.class)).parse(is);
-      assertEquals(result, ImmutableSortedSet.of(new Node(242, "Node for Jim", URI
-               .create("https://services.vcloudexpress.terremark.com/api/v0.8/NodeServices/242"),
-               InetAddress.getByName("172.16.20.3"), 80, false, "Some test node")));
+      CustomizationParameters result = (CustomizationParameters) factory.create(
+               injector.getInstance(CustomizationParametersHandler.class)).parse(is);
+      assertEquals(result, new CustomizationParameters(true, false));
    }
 }

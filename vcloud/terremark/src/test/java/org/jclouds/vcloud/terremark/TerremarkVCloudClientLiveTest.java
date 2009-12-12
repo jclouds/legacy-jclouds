@@ -51,6 +51,7 @@ import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.predicates.TaskSuccess;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Node;
+import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.TerremarkVApp;
 import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
 import org.testng.annotations.AfterTest;
@@ -127,6 +128,7 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
       assertEquals(deployTask.getLocation(), deployTask.getLocation());
 
       vApp = tmClient.getVApp(vApp.getId());
+
       assertEquals(vApp.getStatus(), VAppStatus.CREATING);
 
       try {// per docs, this is not supported
@@ -147,13 +149,14 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
 
       vApp = tmClient.getVApp(vApp.getId());
       assertEquals(vApp.getStatus(), VAppStatus.ON);
-
+      System.out.println(tmClient.getComputeOptions(vApp.getId()));
+      System.out.println(tmClient.getCustomizationOptions(vApp.getId()));
    }
 
    @Test
    public void testAddInternetService() throws InterruptedException, ExecutionException,
             TimeoutException, IOException {
-      is = tmClient.addInternetService("SSH", "TCP", 22);
+      is = tmClient.addInternetService("SSH", Protocol.TCP, 22);
    }
 
    @Test(dependsOnMethods = { "testInstantiateAndPowerOn", "testAddInternetService" })

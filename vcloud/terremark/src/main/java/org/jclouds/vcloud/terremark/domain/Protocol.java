@@ -21,33 +21,17 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.terremark.xml;
-
-import static org.testng.Assert.assertEquals;
-
-import java.io.InputStream;
-import java.net.InetAddress;
-import java.net.URI;
-import java.net.UnknownHostException;
-
-import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.vcloud.terremark.domain.Node;
-import org.testng.annotations.Test;
+package org.jclouds.vcloud.terremark.domain;
 
 /**
- * Tests behavior of {@code NodeServiceHandler}
+ * 
+ * Protocol for an {@link InternetService}
  * 
  * @author Adrian Cole
+ * 
  */
-@Test(groups = "unit", testName = "vcloud.NodeServiceHandlerTest")
-public class NodeHandlerTest extends BaseHandlerTest {
+public enum Protocol {
 
-   public void test1() throws UnknownHostException {
-      InputStream is = getClass().getResourceAsStream("/terremark/NodeService.xml");
+   FTP, HTTP, HTTPS, TCP, UDP;
 
-      Node result = (Node) factory.create(injector.getInstance(NodeHandler.class)).parse(is);
-      assertEquals(result, new Node(242, "Node for Jim", URI
-               .create("https://services.vcloudexpress.terremark.com/api/v0.8/NodeServices/242"),
-               InetAddress.getByName("172.16.20.3"), 80, false, "Some test node"));
-   }
 }

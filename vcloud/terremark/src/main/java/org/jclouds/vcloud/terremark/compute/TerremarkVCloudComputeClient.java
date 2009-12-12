@@ -30,6 +30,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 
 import javax.annotation.Resource;
@@ -43,6 +44,7 @@ import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Node;
+import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
 import org.jclouds.vcloud.terremark.domain.TerremarkVApp;
 import org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions;
@@ -50,6 +52,7 @@ import org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOpti
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 /**
  * 
@@ -115,23 +118,35 @@ public class TerremarkVCloudComputeClient {
    }
 
    public InetAddress createPublicAddressMappedToPorts(VApp vApp, int... ports) {
-      PublicIpAddress sshIp = null;
+      PublicIpAddress ip = null;
       InetAddress privateAddress = Iterables.getLast(vApp.getNetworkToAddresses().values());
       for (int port : ports) {
          InternetService is = null;
-         if (sshIp == null) {
+         Protocol protocol;
+         switch (port) {
+            case 22:
+               protocol = Protocol.TCP;
+            case 80:
+            case 8080:
+               protocol = Protocol.HTTP;
+            case 443:
+               protocol = Protocol.HTTPS;
+            default:
+               protocol = Protocol.HTTP;
+
+         }
+         if (ip == null) {
             logger.debug(">> creating InternetService %d", port);
-            is = tmClient.addInternetService(vApp.getName() + "-" + port, "TCP", port,
+            is = tmClient.addInternetService(vApp.getName() + "-" + port, protocol, port,
                      withDescription(String.format("port %d access to serverId: %s name: %s", port,
                               vApp.getId(), vApp.getName())));
-            sshIp = is.getPublicIpAddress();
+            ip = is.getPublicIpAddress();
          } else {
-            logger.debug(">> adding InternetService %s:%d", sshIp.getAddress().getHostAddress(),
-                     port);
-            is = tmClient.addInternetServiceToExistingIp(sshIp.getId() + "", vApp.getName() + "-"
-                     + port, "TCP", port,
-                     withDescription(String.format("port %d access to serverId: %s name: %s", port,
-                              vApp.getId(), vApp.getName())));
+            logger.debug(">> adding InternetService %s:%d", ip.getAddress().getHostAddress(), port);
+            is = tmClient.addInternetServiceToExistingIp(ip.getId(), vApp.getName() + "-" + port,
+                     protocol, port, withDescription(String.format(
+                              "port %d access to serverId: %s name: %s", port, vApp.getId(), vApp
+                                       .getName())));
          }
          logger.debug("<< created InternetService(%s) %s:%d", is.getId(), is.getPublicIpAddress()
                   .getAddress().getHostAddress(), is.getPort());
@@ -141,15 +156,33 @@ public class TerremarkVCloudComputeClient {
                   .addNode(is.getId(), privateAddress, vApp.getName() + "-" + port, port);
          logger.debug("<< added Node(%s)", node.getId());
       }
-      return sshIp.getAddress();
+      return ip.getAddress();
    }
 
    public void stop(String id) {
       TerremarkVApp vApp = tmClient.getVApp(id);
 
+      Set<PublicIpAddress> ipAddresses = deleteInternetServicesAndNodesAssociatedWithVApp(vApp);
+
+      deletePublicIpAddressesWithNoServicesAttached(ipAddresses);
+
+      if (vApp.getStatus() != VAppStatus.OFF) {
+         logger.debug(">> powering off vApp(%s)", vApp.getId());
+         blockUntilVAppStatusOrThrowException(vApp, tmClient.powerOffVApp(vApp.getId()),
+                  "powerOff", VAppStatus.OFF);
+         logger.debug("<< off vApp(%s)", vApp.getId());
+      }
+      logger.debug(">> deleting vApp(%s)", vApp.getId());
+      tmClient.deleteVApp(id);
+      logger.debug("<< deleted vApp(%s)", vApp.getId());
+   }
+
+   private Set<PublicIpAddress> deleteInternetServicesAndNodesAssociatedWithVApp(TerremarkVApp vApp) {
+      Set<PublicIpAddress> ipAddresses = Sets.newHashSet();
       SERVICE: for (InternetService service : tmClient.getAllInternetServices()) {
          for (Node node : tmClient.getNodes(service.getId())) {
             if (vApp.getNetworkToAddresses().containsValue(node.getIpAddress())) {
+               ipAddresses.add(service.getPublicIpAddress());
                logger.debug(">> deleting Node(%s) %s:%d -> %s:%d", node.getId(), service
                         .getPublicIpAddress().getAddress().getHostAddress(), service.getPort(),
                         node.getIpAddress().getHostAddress(), node.getPort());
@@ -166,16 +199,21 @@ public class TerremarkVCloudComputeClient {
             }
          }
       }
+      return ipAddresses;
+   }
 
-      if (vApp.getStatus() != VAppStatus.OFF) {
-         logger.debug(">> powering off vApp(%s)", vApp.getId());
-         blockUntilVAppStatusOrThrowException(vApp, tmClient.powerOffVApp(vApp.getId()),
-                  "powerOff", VAppStatus.OFF);
-         logger.debug("<< off vApp(%s)", vApp.getId());
+   private void deletePublicIpAddressesWithNoServicesAttached(Set<PublicIpAddress> ipAddresses) {
+      IPADDRESS: for (PublicIpAddress address : ipAddresses) {
+         SortedSet<InternetService> services = tmClient.getInternetServicesOnPublicIp(address
+                  .getId());
+         if (services.size() == 0) {
+            logger.debug(">> deleting PublicIpAddress(%s) %s", address.getId(), address
+                     .getAddress().getHostAddress());
+            tmClient.deleteInternetService(address.getId());
+            logger.debug("<< deleted PublicIpAddress(%s)", address.getId());
+            continue IPADDRESS;
+         }
       }
-      logger.debug(">> deleting vApp(%s)", vApp.getId());
-      tmClient.deleteVApp(id);
-      logger.debug("<< deleted vApp(%s)", vApp.getId());
    }
 
    private TerremarkVApp blockUntilVAppStatusOrThrowException(TerremarkVApp vApp, Task deployTask,

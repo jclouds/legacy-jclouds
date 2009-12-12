@@ -30,8 +30,12 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
+import org.jclouds.vcloud.terremark.domain.ComputeOption;
+import org.jclouds.vcloud.terremark.domain.CustomizationParameters;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Node;
+import org.jclouds.vcloud.terremark.domain.Protocol;
+import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
 import org.jclouds.vcloud.terremark.domain.TerremarkVApp;
 import org.jclouds.vcloud.terremark.options.AddInternetServiceOptions;
 import org.jclouds.vcloud.terremark.options.AddNodeOptions;
@@ -50,28 +54,89 @@ public interface TerremarkVCloudClient extends VCloudClient {
    TerremarkVApp instantiateVAppTemplate(String appName, String templateId,
             InstantiateVAppTemplateOptions... options);
 
-   InternetService addInternetService(String serviceName, String protocol, int port,
-            AddInternetServiceOptions... options);
-
-   InternetService addInternetServiceToExistingIp(String existingIpId, String serviceName,
-            String protocol, int port, AddInternetServiceOptions... options);
-
-   void deleteInternetService(String internetServiceId);
-
-   InternetService getInternetService(String internetServiceId);
-
-   Node addNode(String internetServiceId, InetAddress ipAddress, String name, int port,
-            AddNodeOptions... options);
-
-   Node getNode(String nodeId);
-
-   void deleteNode(String nodeId);
-
    @Override
    TerremarkVApp getVApp(String vAppId);
 
+   /**
+    * This call returns the compute options for the vApp. The compute options are the CPU and memory
+    * configurations supported by Terremark and by the guest operating system of the vApp. This call
+    * also returns the cost per hour for each configuration.
+    */
+   SortedSet<ComputeOption> getComputeOptions(String vAppId);
+
+   /**
+    * This call returns the customization options for the vApp. The response lists which
+    * customization options are supported for this particular vApp. The possible customization
+    * options are Network and Password.
+    */
+   CustomizationParameters getCustomizationOptions(String vAppId);
+
+   /**
+    * This call returns a list of public IP addresses.
+    */
+   SortedSet<PublicIpAddress> getPublicIpsAssociatedWithVDC();
+
+   void deletePublicIp(int ipId);
+
+   /**
+    * The call creates a new internet server, including protocol and port information. The public IP
+    * is dynamically allocated.
+    * 
+    * @param serviceName
+    * @param protocol
+    * @param port
+    * @param options
+    * @return
+    */
+   InternetService addInternetService(String serviceName, Protocol protocol, int port,
+            AddInternetServiceOptions... options);
+
+   /**
+    * This call adds an internet service to a known, existing public IP. This call is identical to
+    * Add Internet Service except you specify the public IP in the request.
+    * 
+    * @param existingIpId
+    * @param serviceName
+    * @param protocol
+    * @param port
+    * @param options
+    * @return
+    */
+   InternetService addInternetServiceToExistingIp(int existingIpId, String serviceName,
+            Protocol protocol, int port, AddInternetServiceOptions... options);
+
+   void deleteInternetService(int internetServiceId);
+
+   InternetService getInternetService(int internetServiceId);
+
    SortedSet<InternetService> getAllInternetServices();
 
-   SortedSet<Node> getNodes(String internetServiceId);
+   /**
+    * This call returns information about the internet service on a public IP.
+    */
+   SortedSet<InternetService> getInternetServicesOnPublicIp(int ipId);
+
+   /**
+    * This call adds a node to an existing internet service.
+    * <p/>
+    * Every vDC is assigned a network of 60 IP addresses that can be used as nodes. Each node can
+    * associated with multiple internet service. You can get a list of the available IP addresses by
+    * calling Get IP Addresses for a Network.
+    * 
+    * @param internetServiceId
+    * @param ipAddress
+    * @param name
+    * @param port
+    * @param options
+    * @return
+    */
+   Node addNode(int internetServiceId, InetAddress ipAddress, String name, int port,
+            AddNodeOptions... options);
+
+   Node getNode(int nodeId);
+
+   void deleteNode(int nodeId);
+
+   SortedSet<Node> getNodes(int internetServiceId);
 
 }

@@ -119,7 +119,8 @@ public class TerremarkVCloudComputeClientLiveTest {
    @Test(dependsOnMethods = "testGetAnyPrivateAddress")
    public void testSshLoadBalanceIp() {
 
-      InetAddress publicIp = client.createPublicAddressMappedToPorts(tmClient.getVApp(id), 22);
+      InetAddress publicIp = client.createPublicAddressMappedToPorts(tmClient.getVApp(id), 22, 80,
+               8080);
       assert addressTester.apply(publicIp);
       // client.exec(publicIp, "uname -a");
    }

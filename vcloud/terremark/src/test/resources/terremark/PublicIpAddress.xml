@@ -1,0 +1,7 @@
+<PublicIPAddress xmlns="urn:tmrk:vCloudExpress-1.0"
+    xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+    <Id>8720</Id>
+    <Href>https://services.vcloudexpress.terremark.com/api/v0.8/PublicIps/8720
+    </Href>
+    <Name>204.51.112.91</Name>
+</PublicIPAddress>

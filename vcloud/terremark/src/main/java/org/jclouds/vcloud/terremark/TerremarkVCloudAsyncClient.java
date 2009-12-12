@@ -40,6 +40,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.MapEntityParam;
 import org.jclouds.rest.annotations.ParamParser;
@@ -52,15 +53,23 @@ import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.functions.CatalogIdToUri;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.terremark.binders.TerremarkBindInstantiateVAppTemplateParamsToXmlEntity;
+import org.jclouds.vcloud.terremark.domain.ComputeOption;
+import org.jclouds.vcloud.terremark.domain.CustomizationParameters;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Node;
+import org.jclouds.vcloud.terremark.domain.Protocol;
+import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
 import org.jclouds.vcloud.terremark.domain.TerremarkVApp;
 import org.jclouds.vcloud.terremark.options.AddInternetServiceOptions;
 import org.jclouds.vcloud.terremark.options.AddNodeOptions;
+import org.jclouds.vcloud.terremark.options.ReturnVoidOnDeleteDefaultIp;
+import org.jclouds.vcloud.terremark.xml.ComputeOptionsHandler;
+import org.jclouds.vcloud.terremark.xml.CustomizationParametersHandler;
 import org.jclouds.vcloud.terremark.xml.InternetServiceHandler;
 import org.jclouds.vcloud.terremark.xml.InternetServicesHandler;
 import org.jclouds.vcloud.terremark.xml.NodeHandler;
 import org.jclouds.vcloud.terremark.xml.NodesHandler;
+import org.jclouds.vcloud.terremark.xml.PublicIpAddressesHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkVAppHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkVDCHandler;
 
@@ -73,13 +82,18 @@ import org.jclouds.vcloud.terremark.xml.TerremarkVDCHandler;
  */
 @RequestFilters(SetVCloudTokenCookie.class)
 public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
-
+   /**
+    * @see TerremarkVCloudClient#getDefaultVDC
+    */
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.VDC.class)
    @XMLResponseParser(TerremarkVDCHandler.class)
    @Consumes(VDC_XML)
    Future<? extends VDC> getDefaultVDC();
 
+   /**
+    * @see TerremarkVCloudClient#instantiateVAppTemplate
+    */
    @POST
    @Endpoint(org.jclouds.vcloud.endpoints.VDC.class)
    @Path("/action/instantiatevAppTemplate")
@@ -91,6 +105,9 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
             @MapEntityParam("template") @ParamParser(CatalogIdToUri.class) String templateId,
             InstantiateVAppTemplateOptions... options);
 
+   /**
+    * @see TerremarkVCloudClient#addInternetService
+    */
    @POST
    @Endpoint(org.jclouds.vcloud.endpoints.VDC.class)
    @Path("/internetServices")
@@ -98,15 +115,21 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    @XMLResponseParser(InternetServiceHandler.class)
    @MapBinder(AddInternetServiceOptions.class)
    Future<? extends InternetService> addInternetService(@MapEntityParam("name") String serviceName,
-            @MapEntityParam("protocol") String protocol, @MapEntityParam("port") int port,
+            @MapEntityParam("protocol") Protocol protocol, @MapEntityParam("port") int port,
             AddInternetServiceOptions... options);
 
+   /**
+    * @see TerremarkVCloudClient#getAllInternetServices
+    */
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.VDC.class)
    @Path("/internetServices")
    @XMLResponseParser(InternetServicesHandler.class)
    Future<? extends SortedSet<InternetService>> getAllInternetServices();
 
+   /**
+    * @see TerremarkVCloudClient#addInternetServiceToExistingIp
+    */
    @POST
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/publicIps/{ipId}/InternetServices")
@@ -114,22 +137,59 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    @XMLResponseParser(InternetServiceHandler.class)
    @MapBinder(AddInternetServiceOptions.class)
    Future<? extends InternetService> addInternetServiceToExistingIp(
-            @PathParam("ipId") String existingIpId, @MapEntityParam("name") String serviceName,
-            @MapEntityParam("protocol") String protocol, @MapEntityParam("port") int port,
+            @PathParam("ipId") int existingIpId, @MapEntityParam("name") String serviceName,
+            @MapEntityParam("protocol") Protocol protocol, @MapEntityParam("port") int port,
             AddInternetServiceOptions... options);
 
+   /**
+    * @see TerremarkVCloudClient#deletePublicIp
+    */
+   @DELETE
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
+   @Path("/PublicIps/{ipId}")
+   @ExceptionParser(ReturnVoidOnDeleteDefaultIp.class)
+   Future<Void> deletePublicIp(@PathParam("ipId") int ipId);
+
+   /**
+    * @see TerremarkVCloudClient#getInternetServicesOnPublicIP
+    */
+   @GET
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
+   @Path("/publicIps/{ipId}/InternetServices")
+   @XMLResponseParser(InternetServicesHandler.class)
+   Future<? extends SortedSet<InternetService>> getInternetServicesOnPublicIp(
+            @PathParam("ipId") int ipId);
+
+   /**
+    * @see TerremarkVCloudClient#getPublicIpsAssociatedWithVDC
+    */
+   @GET
+   @Endpoint(org.jclouds.vcloud.endpoints.VDC.class)
+   @Path("/publicIps")
+   @XMLResponseParser(PublicIpAddressesHandler.class)
+   Future<? extends SortedSet<PublicIpAddress>> getPublicIpsAssociatedWithVDC();
+
+   /**
+    * @see TerremarkVCloudClient#deleteInternetService
+    */
    @DELETE
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/internetServices/{internetServiceId}")
-   Future<Void> deleteInternetService(@PathParam("internetServiceId") String internetServiceId);
+   Future<Void> deleteInternetService(@PathParam("internetServiceId") int internetServiceId);
 
+   /**
+    * @see TerremarkVCloudClient#getInternetService
+    */
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/internetServices/{internetServiceId}")
    @XMLResponseParser(InternetServiceHandler.class)
    Future<? extends InternetService> getInternetService(
-            @PathParam("internetServiceId") String internetServiceId);
+            @PathParam("internetServiceId") int internetServiceId);
 
+   /**
+    * @see TerremarkVCloudClient#addNode
+    */
    @POST
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/internetServices/{internetServiceId}/nodes")
@@ -137,29 +197,40 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    @XMLResponseParser(NodeHandler.class)
    @MapBinder(AddNodeOptions.class)
    Future<? extends Node> addNode(
-            @PathParam("internetServiceId") String internetServiceId,
+            @PathParam("internetServiceId") int internetServiceId,
             @MapEntityParam("ipAddress") @ParamParser(InetAddressToHostAddress.class) InetAddress ipAddress,
             @MapEntityParam("name") String name, @MapEntityParam("port") int port,
             AddNodeOptions... options);
 
+   /**
+    * @see TerremarkVCloudClient#getNodes
+    */
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/internetServices/{internetServiceId}/nodes")
    @XMLResponseParser(NodesHandler.class)
-   Future<? extends SortedSet<InternetService>> getNodes(
-            @PathParam("internetServiceId") String internetServiceId);
+   Future<? extends SortedSet<Node>> getNodes(@PathParam("internetServiceId") int internetServiceId);
 
+   /**
+    * @see TerremarkVCloudClient#getNode
+    */
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/nodeServices/{nodeId}")
    @XMLResponseParser(NodeHandler.class)
-   Future<? extends Node> getNode(@PathParam("nodeId") String nodeId);
+   Future<? extends Node> getNode(@PathParam("nodeId") int nodeId);
 
+   /**
+    * @see TerremarkVCloudClient#deleteNode
+    */
    @DELETE
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/nodeServices/{nodeId}")
-   Future<Void> deleteNode(@PathParam("nodeId") String nodeId);
+   Future<Void> deleteNode(@PathParam("nodeId") int nodeId);
 
+   /**
+    * @see TerremarkVCloudClient#getVApp
+    */
    @GET
    @Consumes(VAPP_XML)
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
@@ -168,9 +239,22 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    @Override
    Future<? extends TerremarkVApp> getVApp(@PathParam("vAppId") String vAppId);
 
+   /**
+    * @see TerremarkVCloudClient#getComputeOptions
+    */
    @GET
-   @Consumes(VAPP_XML)
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
-   @Path("/vapp/{vAppId}")
-   Future<String> getVAppString(@PathParam("vAppId") String vAppId);
+   @Path("/vapp/{vAppId}/options/compute")
+   @XMLResponseParser(ComputeOptionsHandler.class)
+   Future<? extends SortedSet<ComputeOption>> getComputeOptions(@PathParam("vAppId") String vAppId);
+
+   /**
+    * @see TerremarkVCloudClient#getCustomizationOptions
+    */
+   @GET
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
+   @Path("/vapp/{vAppId}/options/customization")
+   @XMLResponseParser(CustomizationParametersHandler.class)
+   Future<? extends CustomizationParameters> getCustomizationOptions(
+            @PathParam("vAppId") String vAppId);
 }
