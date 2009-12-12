@@ -43,7 +43,6 @@
         <module>core</module>
         <module>extensions</module>
         <module>scriptbuilder</module>
-        <module>atmos</module>        
         <module>aws</module>
         <module>azure</module>
         <module>mezeo</module>        

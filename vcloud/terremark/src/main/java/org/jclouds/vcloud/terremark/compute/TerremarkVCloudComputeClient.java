@@ -24,6 +24,7 @@
 package org.jclouds.vcloud.terremark.compute;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static org.jclouds.vcloud.terremark.options.AddInternetServiceOptions.Builder.withDescription;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -37,10 +38,12 @@ import javax.inject.Inject;
 import org.jclouds.compute.Image;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.domain.Task;
+import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Node;
+import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
 import org.jclouds.vcloud.terremark.domain.TerremarkVApp;
 import org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions;
 
@@ -111,18 +114,51 @@ public class TerremarkVCloudComputeClient {
       logger.debug("<< on vApp(%s)", vApp.getId());
    }
 
+   public InetAddress createPublicAddressMappedToPorts(VApp vApp, int... ports) {
+      PublicIpAddress sshIp = null;
+      InetAddress privateAddress = Iterables.getLast(vApp.getNetworkToAddresses().values());
+      for (int port : ports) {
+         InternetService is = null;
+         if (sshIp == null) {
+            logger.debug(">> creating InternetService %d", port);
+            is = tmClient.addInternetService(vApp.getName() + "-" + port, "TCP", port,
+                     withDescription(String.format("port %d access to serverId: %s name: %s", port,
+                              vApp.getId(), vApp.getName())));
+            sshIp = is.getPublicIpAddress();
+         } else {
+            logger.debug(">> adding InternetService %s:%d", sshIp.getAddress().getHostAddress(),
+                     port);
+            is = tmClient.addInternetServiceToExistingIp(sshIp.getId() + "", vApp.getName() + "-"
+                     + port, "TCP", port,
+                     withDescription(String.format("port %d access to serverId: %s name: %s", port,
+                              vApp.getId(), vApp.getName())));
+         }
+         logger.debug("<< created InternetService(%s) %s:%d", is.getId(), is.getPublicIpAddress()
+                  .getAddress().getHostAddress(), is.getPort());
+         logger.debug(">> adding Node %s:%d -> %s:%d", is.getPublicIpAddress().getAddress()
+                  .getHostAddress(), is.getPort(), privateAddress.getHostAddress(), port);
+         Node node = tmClient
+                  .addNode(is.getId(), privateAddress, vApp.getName() + "-" + port, port);
+         logger.debug("<< added Node(%s)", node.getId());
+      }
+      return sshIp.getAddress();
+   }
+
    public void stop(String id) {
       TerremarkVApp vApp = tmClient.getVApp(id);
 
       SERVICE: for (InternetService service : tmClient.getAllInternetServices()) {
          for (Node node : tmClient.getNodes(service.getId())) {
             if (vApp.getNetworkToAddresses().containsValue(node.getIpAddress())) {
-               logger.debug(">> deleting Node(%s)", node.getId());
+               logger.debug(">> deleting Node(%s) %s:%d -> %s:%d", node.getId(), service
+                        .getPublicIpAddress().getAddress().getHostAddress(), service.getPort(),
+                        node.getIpAddress().getHostAddress(), node.getPort());
                tmClient.deleteNode(node.getId());
                logger.debug("<< deleted Node(%s)", node.getId());
                SortedSet<Node> nodes = tmClient.getNodes(service.getId());
                if (nodes.size() == 0) {
-                  logger.debug(">> deleting InternetService(%s)", service.getId());
+                  logger.debug(">> deleting InternetService(%s) %s:%d", service.getId(), service
+                           .getPublicIpAddress().getAddress().getHostAddress(), service.getPort());
                   tmClient.deleteInternetService(service.getId());
                   logger.debug("<< deleted InternetService(%s)", service.getId());
                   continue SERVICE;

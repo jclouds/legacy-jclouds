@@ -72,19 +72,10 @@ public class TerremarkVCloudComputeService implements ComputeService {
    public CreateServerResponse createServer(String name, Profile profile, Image image) {
       String id = computeClient.start(name, 1, 512, image);
       VApp vApp = tmClient.getVApp(id);
-      Iterable<InetAddress> privateAddresses = vApp.getNetworkToAddresses().values();
-
-      InetAddress sshIp = null;
-      InternetService is;
-      for (int port : new int[] { 22, 80, 8080 }) {
-         is = tmClient.addInternetService(id + "-" + port, "TCP", port);
-         tmClient.addNode(is.getId(), Iterables.getLast(privateAddresses), id + "-" + port, port);
-         if (port == 22) {
-            is.getPublicIpAddress().getAddress();
-         }
-      }
-      return new CreateServerResponseImpl(id, vApp.getName(), ImmutableSet.<InetAddress> of(sshIp),
-               privateAddresses, 22, LoginType.SSH, new Credentials("vcloud", "p4ssw0rd"));
+      InetAddress publicIp = computeClient.createPublicAddressMappedToPorts(vApp, 22, 80, 8080);
+      return new CreateServerResponseImpl(vApp.getId(), vApp.getName(), ImmutableSet
+               .<InetAddress> of(publicIp), vApp.getNetworkToAddresses().values(), 22, LoginType.SSH,
+               new Credentials("vcloud", "p4ssw0rd"));
    }
 
    @Override
