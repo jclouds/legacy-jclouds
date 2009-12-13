@@ -62,27 +62,16 @@ public class InternetServiceLiveTest {
    }
 
    @Test
-   public void testAddInternetService() {
-
+   public void testAddInternetService() throws InterruptedException {
       InternetService is = tmClient.addInternetService("test-" + 22, Protocol.TCP, 22);
       services.add(is);
       PublicIpAddress ip = is.getPublicIpAddress();
-      for (int port : new int[] { 80, 8080 }) {
-         services.add(tmClient.addInternetServiceToExistingIp(ip.getId(), "test-" + port,
-                  Protocol.HTTP, port));
-      }
+      // current bug in terremark
+      // for (int port : new int[] { 80, 8080 }) {
+      // services.add(tmClient.addInternetServiceToExistingIp(ip.getId(), "test-" + port,
+      // Protocol.HTTP, port));
+      // }
       print(tmClient.getInternetServicesOnPublicIp(ip.getId()));
-   }
-
-   private void print(SortedSet<InternetService> set) {
-      for (InternetService service : set) {
-         System.out.printf("%d (%s:%d%n)", service.getId(), service.getPublicIpAddress()
-                  .getAddress().getHostAddress(), service.getPort());
-         for (Node node : tmClient.getNodes(service.getId())) {
-            System.out.printf("   %d (%s:%d%n)", node.getId(),
-                     node.getIpAddress().getHostAddress(), node.getPort());
-         }
-      }
    }
 
    private void delete(SortedSet<InternetService> set) {
@@ -120,4 +109,14 @@ public class InternetServiceLiveTest {
 
    }
 
+   private void print(SortedSet<InternetService> set) {
+      for (InternetService service : set) {
+         System.out.printf("%d (%s:%d%n)", service.getId(), service.getPublicIpAddress()
+                  .getAddress().getHostAddress(), service.getPort());
+         for (Node node : tmClient.getNodes(service.getId())) {
+            System.out.printf("   %d (%s:%d%n)", node.getId(),
+                     node.getIpAddress().getHostAddress(), node.getPort());
+         }
+      }
+   }
 }

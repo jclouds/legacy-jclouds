@@ -56,11 +56,11 @@ public class ReturnVoidOnDeleteDefaultIp implements Function<Exception, Void> {
       if (from instanceof HttpResponseException) {
          HttpResponseException hre = (HttpResponseException) from;
          if (hre.getResponse().getStatusCode() == 503
+                  || hre.getResponse().getStatusCode() == 401
                   || hre.getMessage().matches(
                            ".*Cannot release this Public IP as it is default oubound IP.*"))
             return v;
       }
       return null;
    }
-
 }

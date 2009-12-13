@@ -3,7 +3,10 @@
   <Link rel="down" href="https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32/publicIps" type="application/xml" name="Public IPs"/>
   <Link rel="down" href="https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32/internetServices" type="application/xml" name="Internet Services"/>
   <Description/>
-  <ResourceEntities/>
+  <ResourceEntities>
+    <ResourceEntity href="https://services.vcloudexpress.terremark.com/api/v0.8/vapp/15124" type="application/vnd.vmware.vcloud.vApp+xml" name="adriantest"/>
+    <ResourceEntity href="https://services.vcloudexpress.terremark.com/api/v0.8/vapp/15120" type="application/vnd.vmware.vcloud.vApp+xml" name="centos-53"/>
+  </ResourceEntities>
   <AvailableNetworks>
     <Network href="https://services.vcloudexpress.terremark.com/api/v0.8/network/1708" type="application/vnd.vmware.vcloud.network+xml" name="10.114.34.128/26"/>
   </AvailableNetworks>
