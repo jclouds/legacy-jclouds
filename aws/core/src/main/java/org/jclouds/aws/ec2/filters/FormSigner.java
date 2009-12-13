@@ -57,6 +57,7 @@ import org.jclouds.http.internal.SignatureWire;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.util.EncryptionService;
 import org.jclouds.util.TimeStamp;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -80,19 +81,21 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
    private final String accessKey;
    private final String secretKey;
    private final Provider<String> dateService;
+   private final EncryptionService encryptionService;
    @Resource
    @Named(HttpConstants.SIGNATURE_LOGGER)
-   private final Logger signatureLog = Logger.NULL;
+   private Logger signatureLog = Logger.NULL;
 
    @Inject
    public FormSigner(SignatureWire signatureWire,
             @Named(AWSConstants.PROPERTY_AWS_ACCESSKEYID) String accessKey,
             @Named(AWSConstants.PROPERTY_AWS_SECRETACCESSKEY) String secretKey,
-            @TimeStamp Provider<String> dateService) {
+            @TimeStamp Provider<String> dateService, EncryptionService encryptionService) {
       this.signatureWire = signatureWire;
       this.accessKey = accessKey;
       this.secretKey = secretKey;
       this.dateService = dateService;
+      this.encryptionService = encryptionService;
    }
 
    public void filter(HttpRequest in) throws HttpException {
@@ -157,7 +160,7 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
    public String signString(String stringToSign) {
       String signature;
       try {
-         signature = HttpUtils.hmacSha256Base64(stringToSign, secretKey.getBytes());
+         signature = encryptionService.hmacSha256Base64(stringToSign, secretKey.getBytes());
          if (signatureWire.enabled())
             signatureWire.input(IOUtils.toInputStream(signature));
       } catch (Exception e) {

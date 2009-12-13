@@ -31,6 +31,7 @@ import java.net.URI;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.http.HttpRequest;
+import org.jclouds.util.internal.JCEEncryptionService;
 import org.testng.annotations.Test;
 
 /**
@@ -45,7 +46,7 @@ public class BasicAuthenticationTest {
 
 
    public void testAuth() throws UnsupportedEncodingException {
-      BasicAuthentication filter = new BasicAuthentication(USER, PASSWORD);
+      BasicAuthentication filter = new BasicAuthentication(USER, PASSWORD, new JCEEncryptionService());
       HttpRequest request = new HttpRequest("GET", URI.create("http://localhost"));
       filter.filter(request);
       assertEquals(request.getFirstHeaderOrNull(HttpHeaders.AUTHORIZATION),

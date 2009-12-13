@@ -54,6 +54,7 @@ import org.jclouds.mezeo.pcs2.handlers.PCSClientErrorRetryHandler;
 import org.jclouds.mezeo.pcs2.reference.PCSConstants;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
+import org.jclouds.util.EncryptionService;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -78,9 +79,9 @@ public class PCSRestClientModule extends AbstractModule {
    @Singleton
    public BasicAuthentication provideBasicAuthentication(
             @Named(PCSConstants.PROPERTY_PCS2_USER) String user,
-            @Named(PCSConstants.PROPERTY_PCS2_PASSWORD) String password)
-            throws UnsupportedEncodingException {
-      return new BasicAuthentication(user, password);
+            @Named(PCSConstants.PROPERTY_PCS2_PASSWORD) String password,
+            EncryptionService encryptionService) throws UnsupportedEncodingException {
+      return new BasicAuthentication(user, password, encryptionService);
    }
 
    @Provides

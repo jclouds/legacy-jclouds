@@ -23,7 +23,7 @@
  */
 package org.jclouds.blobstore.functions;
 
-import org.jclouds.blobstore.functions.impl.BouncyCastleGenerateMD5;
+import org.jclouds.blobstore.functions.impl.JCEGenerateMD5;
 
 import com.google.common.base.Function;
 import com.google.inject.ImplementedBy;
@@ -32,7 +32,7 @@ import com.google.inject.ImplementedBy;
  * 
  * @author Adrian Cole
  */
-@ImplementedBy(BouncyCastleGenerateMD5.class)
+@ImplementedBy(JCEGenerateMD5.class)
 public interface GenerateMD5 extends Function<Object, byte[]> {
 
 }

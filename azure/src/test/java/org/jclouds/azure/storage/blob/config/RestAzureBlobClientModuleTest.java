@@ -31,12 +31,12 @@ import org.jclouds.azure.storage.handlers.ParseAzureStorageErrorFromXmlContent;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.handlers.RedirectionRetryHandler;
 import org.jclouds.util.Jsr330;
+import org.jclouds.util.internal.Base64;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
@@ -58,7 +58,7 @@ public class RestAzureBlobClientModuleTest {
                      Jsr330.named(AzureBlobConstants.PROPERTY_AZURESTORAGE_ACCOUNT)).to("user");
             bindConstant()
                      .annotatedWith(Jsr330.named(AzureBlobConstants.PROPERTY_AZURESTORAGE_KEY)).to(
-                              HttpUtils.toBase64String("secret".getBytes()));
+                              Base64.encodeBytes("secret".getBytes()));
             bindConstant().annotatedWith(
                      Jsr330.named(AzureBlobConstants.PROPERTY_AZUREBLOB_ENDPOINT)).to(
                      "http://localhost");

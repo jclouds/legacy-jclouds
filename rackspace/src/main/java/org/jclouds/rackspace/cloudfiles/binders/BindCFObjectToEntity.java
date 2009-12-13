@@ -31,19 +31,22 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.blobstore.binders.BindBlobToEntityAndUserMetadataToHeadersWithPrefix;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.ObjectToBlob;
 import org.jclouds.rackspace.cloudfiles.domain.CFObject;
 import org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants;
+import org.jclouds.util.EncryptionService;
 
 public class BindCFObjectToEntity extends BindBlobToEntityAndUserMetadataToHeadersWithPrefix {
    private final ObjectToBlob object2Blob;
+   private final EncryptionService encryptionService;
 
    @Inject
    public BindCFObjectToEntity(ObjectToBlob object2Blob,
-            @Named(CloudFilesConstants.PROPERTY_CLOUDFILES_METADATA_PREFIX) String prefix) {
-      super(prefix);
+            @Named(CloudFilesConstants.PROPERTY_CLOUDFILES_METADATA_PREFIX) String prefix,
+            EncryptionService encryptionService) {
+      super(prefix, encryptionService);
       this.object2Blob = object2Blob;
+      this.encryptionService = encryptionService;
    }
 
    public void bindToRequest(HttpRequest request, Object entity) {
@@ -60,7 +63,7 @@ public class BindCFObjectToEntity extends BindBlobToEntityAndUserMetadataToHeade
       super.bindToRequest(request, object2Blob.apply(object));
       if (object.getInfo().getHash() != null) {
          request.getHeaders().put(HttpHeaders.ETAG,
-                  HttpUtils.toHexString(object.getInfo().getHash()));
+                  encryptionService.toHexString(object.getInfo().getHash()));
          request.getHeaders().removeAll("Content-MD5");
       }
 

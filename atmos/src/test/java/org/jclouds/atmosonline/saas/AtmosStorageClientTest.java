@@ -46,7 +46,6 @@ import org.jclouds.blobstore.binders.BindBlobToMultipartFormTest;
 import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
 import org.jclouds.http.functions.ReturnVoidIf2xx;
 import org.jclouds.http.options.GetOptions;
@@ -57,6 +56,7 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Jsr330;
 import org.jclouds.util.TimeStamp;
+import org.jclouds.util.internal.Base64;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -303,7 +303,7 @@ public class AtmosStorageClientTest extends RestClientTest<AtmosStorageAsyncClie
             bindConstant().annotatedWith(Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_UID))
                      .to("uid");
             bindConstant().annotatedWith(Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_KEY))
-                     .to(HttpUtils.toBase64String("key".getBytes()));
+                     .to(Base64.encodeBytes("key".getBytes()));
             bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
                public Logger getLogger(String category) {
                   return Logger.NULL;

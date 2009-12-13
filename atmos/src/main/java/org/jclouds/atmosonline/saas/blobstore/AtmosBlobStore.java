@@ -47,14 +47,15 @@ import org.jclouds.blobstore.domain.ResourceMetadata;
 import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.logging.Logger.LoggerFactory;
+import org.jclouds.util.EncryptionService;
 import org.jclouds.util.Utils;
 
 import com.google.common.base.Supplier;
 
 public class AtmosBlobStore extends BaseAtmosBlobStore implements BlobStore {
+   private final EncryptionService encryptionService;
 
    @Inject
    public AtmosBlobStore(AtmosStorageAsyncClient async, AtmosStorageClient sync,
@@ -63,10 +64,11 @@ public class AtmosBlobStore extends BaseAtmosBlobStore implements BlobStore {
             ObjectToBlob object2Blob, BlobToObject blob2Object,
             BlobStoreListOptionsToListOptions container2ContainerListOptions,
             BlobToHttpGetOptions blob2ObjectGetOptions,
-            DirectoryEntryListToResourceMetadataList container2ResourceList, ExecutorService service) {
+            DirectoryEntryListToResourceMetadataList container2ResourceList, ExecutorService service,EncryptionService encryptionService) {
       super(async, sync, blobFactory, logFactory, clearContainerStrategy, object2BlobMd,
                object2Blob, blob2Object, container2ContainerListOptions, blob2ObjectGetOptions,
                container2ResourceList, service);
+      this.encryptionService = encryptionService;
    }
 
    /**
@@ -149,7 +151,7 @@ public class AtmosBlobStore extends BaseAtmosBlobStore implements BlobStore {
       deleteAndEnsurePathGone(path);
       if (blob.getMetadata().getContentMD5() != null)
          blob.getMetadata().getUserMetadata().put("content-md5",
-                  HttpUtils.toHexString(blob.getMetadata().getContentMD5()));
+                  encryptionService.toHexString(blob.getMetadata().getContentMD5()));
       sync.createFile(container, blob2Object.apply(blob));
       return path;
    }

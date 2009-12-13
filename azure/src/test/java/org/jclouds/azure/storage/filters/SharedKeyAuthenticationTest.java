@@ -36,9 +36,9 @@ import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.util.Jsr330;
+import org.jclouds.util.internal.Base64;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -50,7 +50,7 @@ import com.google.inject.Injector;
 @Test(groups = "unit", testName = "azurestorage.SharedKeyAuthenticationTest")
 public class SharedKeyAuthenticationTest {
 
-   private static final String KEY = HttpUtils.toBase64String("bar".getBytes());
+   private static final String KEY = Base64.encodeBytes("bar".getBytes());
    private static final String ACCOUNT = "foo";
    private Injector injector;
    private SharedKeyAuthentication filter;

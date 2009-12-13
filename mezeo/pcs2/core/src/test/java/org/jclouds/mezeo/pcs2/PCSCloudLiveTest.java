@@ -41,6 +41,7 @@ import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.mezeo.pcs2.PCSCloud.Response;
 import org.jclouds.rest.RestClientFactory;
 import org.jclouds.rest.config.RestModule;
+import org.jclouds.util.EncryptionService;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -94,9 +95,9 @@ public class PCSCloudLiveTest {
          @SuppressWarnings("unused")
          @Provides
          @Singleton
-         public BasicAuthentication provideBasicAuthentication()
+         public BasicAuthentication provideBasicAuthentication(EncryptionService encryptionService)
                   throws UnsupportedEncodingException {
-            return new BasicAuthentication(user, password);
+            return new BasicAuthentication(user, password, encryptionService);
          }
 
          @SuppressWarnings("unused")

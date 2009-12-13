@@ -28,11 +28,11 @@ import javax.inject.Inject;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.ResourceToObjectInfo;
 import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.jclouds.util.EncryptionService;
 
 import com.google.common.base.Function;
 
@@ -45,12 +45,14 @@ public class ParseObjectInfoFromHeaders implements
          Function<HttpResponse, MutableObjectInfoWithMetadata>, InvocationContext {
    private final ParseSystemAndUserMetadataFromHeaders blobMetadataParser;
    private final ResourceToObjectInfo blobToObjectInfo;
+   private final EncryptionService encryptionService;
 
    @Inject
    public ParseObjectInfoFromHeaders(ParseSystemAndUserMetadataFromHeaders blobMetadataParser,
-            ResourceToObjectInfo blobToObjectInfo) {
+            ResourceToObjectInfo blobToObjectInfo, EncryptionService encryptionService) {
       this.blobMetadataParser = blobMetadataParser;
       this.blobToObjectInfo = blobToObjectInfo;
+      this.encryptionService = encryptionService;
    }
 
    /**
@@ -61,7 +63,7 @@ public class ParseObjectInfoFromHeaders implements
       MutableObjectInfoWithMetadata to = blobToObjectInfo.apply(base);
       String eTagHeader = from.getFirstHeaderOrNull("Etag");
       if (eTagHeader != null) {
-         to.setHash(HttpUtils.fromHexString(eTagHeader.replaceAll("\"", "")));
+         to.setHash(encryptionService.fromHexString(eTagHeader.replaceAll("\"", "")));
       }
       return to;
    }

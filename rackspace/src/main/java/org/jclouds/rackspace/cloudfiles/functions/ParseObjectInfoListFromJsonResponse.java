@@ -37,12 +37,12 @@ import javax.inject.Inject;
 
 import org.jclouds.blobstore.domain.ListContainerResponse;
 import org.jclouds.blobstore.domain.internal.ListContainerResponseImpl;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
 import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.jclouds.util.EncryptionService;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -59,10 +59,12 @@ public class ParseObjectInfoListFromJsonResponse extends
          ParseJson<ListContainerResponse<ObjectInfo>> implements InvocationContext {
 
    private GeneratedHttpRequest<?> request;
+   private static EncryptionService encryptionService;
 
    @Inject
-   public ParseObjectInfoListFromJsonResponse(Gson gson) {
+   public ParseObjectInfoListFromJsonResponse(Gson gson, EncryptionService encryptionService) {
       super(gson);
+      ParseObjectInfoListFromJsonResponse.encryptionService = encryptionService;
    }
 
    public static class ObjectInfoImpl implements ObjectInfo {
@@ -85,7 +87,7 @@ public class ParseObjectInfoListFromJsonResponse extends
       }
 
       public byte[] getHash() {
-         return HttpUtils.fromHexString(hash);
+         return encryptionService.fromHexString(hash);
       }
 
       public Date getLastModified() {

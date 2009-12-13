@@ -32,9 +32,9 @@ import org.jclouds.aws.s3.reference.S3Headers;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.jclouds.util.EncryptionService;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -50,12 +50,14 @@ public class ParseObjectMetadataFromHeaders implements
          Function<HttpResponse, MutableObjectMetadata>, InvocationContext {
    private final ParseSystemAndUserMetadataFromHeaders blobMetadataParser;
    private final BlobToObjectMetadata blobToObjectMetadata;
+   private final EncryptionService encryptionService;
 
    @Inject
    public ParseObjectMetadataFromHeaders(ParseSystemAndUserMetadataFromHeaders blobMetadataParser,
-            BlobToObjectMetadata blobToObjectMetadata) {
+            BlobToObjectMetadata blobToObjectMetadata, EncryptionService encryptionService) {
       this.blobMetadataParser = blobMetadataParser;
       this.blobToObjectMetadata = blobToObjectMetadata;
+      this.encryptionService = encryptionService;
    }
 
    /**
@@ -66,7 +68,7 @@ public class ParseObjectMetadataFromHeaders implements
       BlobMetadata base = blobMetadataParser.apply(from);
       MutableObjectMetadata to = blobToObjectMetadata.apply(base);
       addETagTo(from, to);
-      to.setContentMD5(HttpUtils.fromHexString(to.getETag().replaceAll("\"", "")));
+      to.setContentMD5(encryptionService.fromHexString(to.getETag().replaceAll("\"", "")));
       to.setCacheControl(from.getFirstHeaderOrNull(HttpHeaders.CACHE_CONTROL));
       to.setContentDisposition(from.getFirstHeaderOrNull("Content-Disposition"));
       to.setContentEncoding(from.getFirstHeaderOrNull(HttpHeaders.CONTENT_ENCODING));

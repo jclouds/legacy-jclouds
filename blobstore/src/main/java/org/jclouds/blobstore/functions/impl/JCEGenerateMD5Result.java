@@ -23,20 +23,26 @@
  */
 package org.jclouds.blobstore.functions.impl;
 
+import java.io.InputStream;
+
 import javax.inject.Singleton;
 
-import org.jclouds.blobstore.functions.GenerateMD5;
-import org.jclouds.http.HttpUtils;
+import org.jclouds.blobstore.domain.MD5InputStreamResult;
+import org.jclouds.blobstore.functions.GenerateMD5Result;
+import org.jclouds.util.EncryptionService;
+import org.jclouds.util.internal.JCEEncryptionService;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class BouncyCastleGenerateMD5 implements GenerateMD5 {
+public class JCEGenerateMD5Result implements GenerateMD5Result {
+   private static final EncryptionService encryptionService = new JCEEncryptionService();
 
-   public byte[] apply(Object from) {
-      return HttpUtils.md5(from);
+   public MD5InputStreamResult apply(InputStream toEncode) {
+      org.jclouds.util.EncryptionService.MD5InputStreamResult result = encryptionService
+               .generateMD5Result(toEncode);
+      return new MD5InputStreamResult(result.data, result.md5, result.length);
    }
-
 }

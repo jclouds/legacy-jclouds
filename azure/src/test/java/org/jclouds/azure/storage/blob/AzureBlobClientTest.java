@@ -49,7 +49,6 @@ import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
@@ -61,6 +60,7 @@ import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Jsr330;
+import org.jclouds.util.internal.Base64;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -356,7 +356,7 @@ public class AzureBlobClientTest {
                      "myaccount");
             bindConstant().annotatedWith(
                      Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY)).to(
-                     HttpUtils.toBase64String("key".getBytes()));
+                     Base64.encodeBytes("key".getBytes()));
             bindConstant().annotatedWith(
                      Jsr330.named(BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX)).to(
                      "x-ms-meta-");

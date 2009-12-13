@@ -34,9 +34,9 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.nirvanix.sdn.domain.UploadInfo;
+import org.jclouds.util.internal.Base64;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -85,7 +85,7 @@ public class SDNClientLiveTest {
       connection.upload(uploadInfo.getHost(), uploadInfo.getToken(), containerName, blob);
 
       Map<String, String> metadata = connection.getMetadata(containerName + "/test.txt");
-      assertEquals(metadata.get("MD5"), HttpUtils.toBase64String(md5));
+      assertEquals(metadata.get("MD5"), Base64.encodeBytes(md5));
 
       String content = connection.getFile(containerName + "/test.txt");
       assertEquals(content, "value");
@@ -94,7 +94,7 @@ public class SDNClientLiveTest {
       connection.setMetadata(containerName + "/test.txt", metadata);
 
       metadata = connection.getMetadata(containerName + "/test.txt");
-      assertEquals(metadata.get("MD5"), HttpUtils.toBase64String(md5));
+      assertEquals(metadata.get("MD5"), Base64.encodeBytes(md5));
 
    }
 }

@@ -38,6 +38,7 @@ import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.util.internal.JCEEncryptionService;
 import org.jclouds.vcloud.functions.ParseLoginResponseFromHeaders;
 import org.testng.annotations.Test;
 
@@ -58,7 +59,8 @@ public class VCloudLoginTest extends RestClientTest<VCloudLogin> {
       GeneratedHttpRequest<VCloudLogin> httpMethod = processor.createRequest(method);
 
       assertEquals(httpMethod.getRequestLine(), "POST http://localhost:8080/login HTTP/1.1");
-      assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT + ": application/vnd.vmware.vcloud.organizationList+xml\n");
+      assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT
+               + ": application/vnd.vmware.vcloud.organizationList+xml\n");
       assertEntityEquals(httpMethod, null);
 
       assertResponseParserClassEquals(method, httpMethod, ParseLoginResponseFromHeaders.class);
@@ -88,7 +90,8 @@ public class VCloudLoginTest extends RestClientTest<VCloudLogin> {
             bind(URI.class).annotatedWith(org.jclouds.vcloud.endpoints.VCloudLogin.class)
                      .toInstance(URI.create("http://localhost:8080/login"));
             try {
-               bind(BasicAuthentication.class).toInstance(new BasicAuthentication("user", "pass"));
+               bind(BasicAuthentication.class).toInstance(
+                        new BasicAuthentication("user", "pass", new JCEEncryptionService()));
             } catch (UnsupportedEncodingException e) {
                throw new RuntimeException(e);
             }

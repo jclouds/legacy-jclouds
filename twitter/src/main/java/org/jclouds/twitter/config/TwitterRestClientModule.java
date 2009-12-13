@@ -38,6 +38,7 @@ import org.jclouds.twitter.Twitter;
 import org.jclouds.twitter.TwitterAsyncClient;
 import org.jclouds.twitter.TwitterClient;
 import org.jclouds.twitter.reference.TwitterConstants;
+import org.jclouds.util.EncryptionService;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -61,9 +62,9 @@ public class TwitterRestClientModule extends AbstractModule {
    @Singleton
    public BasicAuthentication provideBasicAuthentication(
             @Named(TwitterConstants.PROPERTY_TWITTER_USER) String user,
-            @Named(TwitterConstants.PROPERTY_TWITTER_PASSWORD) String password)
-            throws UnsupportedEncodingException {
-      return new BasicAuthentication(user, password);
+            @Named(TwitterConstants.PROPERTY_TWITTER_PASSWORD) String password,
+            EncryptionService encryptionService) throws UnsupportedEncodingException {
+      return new BasicAuthentication(user, password, encryptionService);
    }
 
    @Provides

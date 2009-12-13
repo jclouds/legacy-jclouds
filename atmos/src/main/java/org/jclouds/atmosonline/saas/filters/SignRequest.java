@@ -45,6 +45,7 @@ import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
 import org.jclouds.logging.Logger;
+import org.jclouds.util.EncryptionService;
 import org.jclouds.util.TimeStamp;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -63,19 +64,22 @@ public class SignRequest implements HttpRequestFilter {
    private final String uid;
    private final byte[] key;
    private final Provider<String> timeStampProvider;
+   private final EncryptionService encryptionService;
+
    @Resource
    @Named(HttpConstants.SIGNATURE_LOGGER)
    Logger signatureLog = Logger.NULL;
-   
+
    @Inject
    public SignRequest(SignatureWire signatureWire,
             @Named(AtmosStorageConstants.PROPERTY_EMCSAAS_UID) String uid,
             @Named(AtmosStorageConstants.PROPERTY_EMCSAAS_KEY) String encodedKey,
-            @TimeStamp Provider<String> timeStampProvider) {
+            @TimeStamp Provider<String> timeStampProvider, EncryptionService encryptionService) {
       this.signatureWire = signatureWire;
       this.uid = uid;
-      this.key = HttpUtils.fromBase64String(encodedKey);
+      this.key = encryptionService.fromBase64String(encodedKey);
       this.timeStampProvider = timeStampProvider;
+      this.encryptionService = encryptionService;
    }
 
    public void filter(HttpRequest request) throws HttpException {
@@ -110,7 +114,7 @@ public class SignRequest implements HttpRequestFilter {
    public String signString(String toSign) {
       String signature;
       try {
-         signature = HttpUtils.hmacSha1Base64(toSign, key);
+         signature = encryptionService.hmacSha1Base64(toSign, key);
       } catch (Exception e) {
          throw new HttpException("error signing request", e);
       }
@@ -139,12 +143,14 @@ public class SignRequest implements HttpRequestFilter {
          if (header.startsWith("x-emc-")) {
             // Convert all header names to lowercase.
             toSign.append(header.toLowerCase()).append(":");
-            // For headers with values that span multiple lines, convert them into one line by replacing any 
+            // For headers with values that span multiple lines, convert them into one line by
+            // replacing any
             // newline characters and extra embedded white spaces in the value.
             for (String value : request.getHeaders().get(header))
                toSign.append(value.replaceAll("\r?\n", "").replaceAll("  ", " ")).append(" ");
             toSign.deleteCharAt(toSign.lastIndexOf(" "));
-            // Concatenate all headers together, using newlines (\n) separating each header from the next one. 
+            // Concatenate all headers together, using newlines (\n) separating each header from the
+            // next one.
             toSign.append("\n");
          }
       }
@@ -155,7 +161,7 @@ public class SignRequest implements HttpRequestFilter {
 
    @VisibleForTesting
    void appendHttpHeaders(HttpRequest request, StringBuilder toSign) {
-      // Only the value is used, not the header 
+      // Only the value is used, not the header
       // name. If a request does not include the header, this is an empty string.
       for (String header : new String[] { HttpHeaders.CONTENT_TYPE, "Range" })
          toSign.append(valueOrEmpty(request.getHeaders().get(header)).toLowerCase()).append("\n");

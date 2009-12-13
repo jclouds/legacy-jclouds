@@ -47,6 +47,7 @@ import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
 import org.jclouds.logging.Logger;
+import org.jclouds.util.EncryptionService;
 import org.jclouds.util.TimeStamp;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -67,6 +68,8 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
    private final String accessKey;
    private final String secretKey;
    private final Provider<String> timeStampProvider;
+   private final EncryptionService encryptionService;
+
    @Resource
    @Named(HttpConstants.SIGNATURE_LOGGER)
    Logger signatureLog = Logger.NULL;
@@ -75,11 +78,12 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
    public RequestAuthorizeSignature(SignatureWire signatureWire,
             @Named(S3Constants.PROPERTY_AWS_ACCESSKEYID) String accessKey,
             @Named(S3Constants.PROPERTY_AWS_SECRETACCESSKEY) String secretKey,
-            @TimeStamp Provider<String> timeStampProvider) {
+            @TimeStamp Provider<String> timeStampProvider, EncryptionService encryptionService) {
       this.signatureWire = signatureWire;
       this.accessKey = accessKey;
       this.secretKey = secretKey;
       this.timeStampProvider = timeStampProvider;
+      this.encryptionService = encryptionService;
    }
 
    public void filter(HttpRequest request) throws HttpException {
@@ -115,7 +119,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
    public String signString(String toSign) {
       String signature;
       try {
-         signature = HttpUtils.hmacSha1Base64(toSign, secretKey.getBytes());
+         signature = encryptionService.hmacSha1Base64(toSign, secretKey.getBytes());
       } catch (Exception e) {
          throw new HttpException("error signing request", e);
       }

@@ -43,6 +43,7 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
+import org.jclouds.util.EncryptionService;
 import org.jclouds.util.Utils;
 import org.jclouds.vcloud.VCloudDiscovery;
 import org.jclouds.vcloud.VCloudLogin;
@@ -147,8 +148,9 @@ public class VCloudDiscoveryRestClientModule extends AbstractModule {
    @Provides
    @Singleton
    public BasicAuthentication provideBasicAuthentication(@Named(PROPERTY_VCLOUD_USER) String user,
-            @Named(PROPERTY_VCLOUD_KEY) String key) throws UnsupportedEncodingException {
-      return new BasicAuthentication(user, key);
+            @Named(PROPERTY_VCLOUD_KEY) String key, EncryptionService encryptionService)
+            throws UnsupportedEncodingException {
+      return new BasicAuthentication(user, key, encryptionService);
    }
 
 }

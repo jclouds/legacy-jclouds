@@ -31,7 +31,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.http.HttpUtils;
+import org.jclouds.util.internal.JCEEncryptionService;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -64,7 +64,7 @@ public class BaseBlobLiveTest<A, S> extends BaseBlobStoreIntegrationTest<A, S> {
       String key = "hello";
 
       URL url = new URL(httpStreamUrl);
-      byte[] md5 = HttpUtils.fromHexString(httpStreamETag);
+      byte[] md5 = new JCEEncryptionService().fromHexString(httpStreamETag);
 
       URLConnection connection = url.openConnection();
       int length = connection.getContentLength();

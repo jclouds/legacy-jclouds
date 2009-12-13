@@ -82,9 +82,9 @@ import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.util.DateService;
+import org.jclouds.util.EncryptionService;
 import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
@@ -105,6 +105,7 @@ import com.google.inject.internal.Nullable;
 public class StubAsyncBlobStore implements AsyncBlobStore {
 
    protected final DateService dateService;
+   protected final EncryptionService encryptionService;
    private final ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs;
    protected final Blob.Factory blobProvider;
    protected final HttpGetOptionsListToGetOptions httpGetOptionsConverter;
@@ -117,11 +118,12 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
    @Inject
    protected StubAsyncBlobStore(
             ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs,
-            DateService dateService, Blob.Factory blobProvider,
-            GetDirectoryStrategy getDirectoryStrategy, MkdirStrategy mkdirStrategy,
-            IsDirectoryStrategy isDirectoryStrategy,
+            DateService dateService, EncryptionService encryptionService,
+            Blob.Factory blobProvider, GetDirectoryStrategy getDirectoryStrategy,
+            MkdirStrategy mkdirStrategy, IsDirectoryStrategy isDirectoryStrategy,
             HttpGetOptionsListToGetOptions httpGetOptionsConverter, ExecutorService service) {
       this.dateService = checkNotNull(dateService, "dateService");
+      this.encryptionService = checkNotNull(encryptionService, "encryptionService");
       this.containerToBlobs = checkNotNull(containerToBlobs, "containerToBlobs");
       this.blobProvider = checkNotNull(blobProvider, "blobProvider");
       this.getDirectoryStrategy = checkNotNull(getDirectoryStrategy, "getDirectoryStrategy");
@@ -514,8 +516,8 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
          object.getMetadata().setSize(data.length);
          MutableBlobMetadata newMd = copy(object.getMetadata());
          newMd.setLastModified(new Date());
-         final byte[] md5 = HttpUtils.md5(data);
-         final String eTag = HttpUtils.toHexString(md5);
+         final byte[] md5 = encryptionService.md5(data);
+         final String eTag = encryptionService.toHexString(md5);
          newMd.setETag(eTag);
          newMd.setContentMD5(md5);
          newMd.setContentType(object.getMetadata().getContentType());

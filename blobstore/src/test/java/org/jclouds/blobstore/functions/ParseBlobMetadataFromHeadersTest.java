@@ -40,6 +40,7 @@ import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.jclouds.util.internal.JCEEncryptionService;
 import org.jclouds.util.internal.SimpleDateFormatDateService;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -62,7 +63,7 @@ public class ParseBlobMetadataFromHeadersTest {
    void setUp() {
 
       parser = new ParseSystemAndUserMetadataFromHeaders(blobMetadataProvider,
-               new SimpleDateFormatDateService(), "prefix");
+               new SimpleDateFormatDateService(), "prefix", new JCEEncryptionService());
 
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();

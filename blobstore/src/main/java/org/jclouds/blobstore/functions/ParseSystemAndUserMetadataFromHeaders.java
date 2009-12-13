@@ -35,10 +35,10 @@ import javax.ws.rs.core.HttpHeaders;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.DateService;
+import org.jclouds.util.EncryptionService;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -51,14 +51,17 @@ public class ParseSystemAndUserMetadataFromHeaders implements
    private final String metadataPrefix;
    private final DateService dateParser;
    private final Provider<MutableBlobMetadata> metadataFactory;
+   private final EncryptionService encryptionService;
    private GeneratedHttpRequest<?> request;
 
    @Inject
    public ParseSystemAndUserMetadataFromHeaders(Provider<MutableBlobMetadata> metadataFactory,
-            DateService dateParser, @Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix) {
+            DateService dateParser, @Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix,
+            EncryptionService encryptionService) {
       this.metadataFactory = metadataFactory;
       this.dateParser = dateParser;
       this.metadataPrefix = metadataPrefix;
+      this.encryptionService = encryptionService;
    }
 
    public MutableBlobMetadata apply(HttpResponse from) {
@@ -115,7 +118,7 @@ public class ParseSystemAndUserMetadataFromHeaders implements
    protected void addContentMD5To(HttpResponse from, MutableBlobMetadata metadata) {
       String contentMD5 = from.getFirstHeaderOrNull("Content-MD5");
       if (contentMD5 != null) {
-         metadata.setContentMD5(HttpUtils.fromBase64String(contentMD5));
+         metadata.setContentMD5(encryptionService.fromBase64String(contentMD5));
       }
    }
 

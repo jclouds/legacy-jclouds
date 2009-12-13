@@ -42,6 +42,7 @@ import org.jclouds.mezeo.pcs2.xml.CloudXlinkHandler;
 import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.util.EncryptionService;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -66,7 +67,8 @@ public class PCSCloudTest {
       assertEquals(httpMethod.getRequestLine(), "GET http://localhost:8080/ HTTP/1.1");
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(), ParseSax.class);
-      assertEquals(RestAnnotationProcessor.getSaxResponseParserClassOrNull(method), CloudXlinkHandler.class);
+      assertEquals(RestAnnotationProcessor.getSaxResponseParserClassOrNull(method),
+               CloudXlinkHandler.class);
       assertEquals(httpMethod.getFilters().size(), 1);
       assertEquals(httpMethod.getFilters().get(0).getClass(), BasicAuthentication.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
@@ -92,9 +94,9 @@ public class PCSCloudTest {
          @SuppressWarnings("unused")
          @Provides
          @Singleton
-         public BasicAuthentication provideBasicAuthentication()
+         public BasicAuthentication provideBasicAuthentication(EncryptionService encryptionService)
                   throws UnsupportedEncodingException {
-            return new BasicAuthentication("foo", "bar");
+            return new BasicAuthentication("foo", "bar", encryptionService);
          }
       }, new RestModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
                new JavaUrlHttpCommandExecutorServiceModule());

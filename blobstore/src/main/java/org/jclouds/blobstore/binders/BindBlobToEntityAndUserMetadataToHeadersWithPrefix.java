@@ -30,13 +30,20 @@ import javax.inject.Named;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.util.EncryptionService;
 
+/**
+ * 
+ * @author Adrian Cole
+ */
 public class BindBlobToEntityAndUserMetadataToHeadersWithPrefix extends BindBlobToEntity {
    private final String metadataPrefix;
 
    @Inject
    public BindBlobToEntityAndUserMetadataToHeadersWithPrefix(
-            @Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix) {
+            @Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix,
+            EncryptionService encryptionService) {
+      super(encryptionService);
       this.metadataPrefix = metadataPrefix;
    }
 

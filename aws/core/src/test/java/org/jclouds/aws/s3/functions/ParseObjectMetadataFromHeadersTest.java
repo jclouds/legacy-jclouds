@@ -42,7 +42,8 @@ import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpUtils;
+import org.jclouds.util.EncryptionService;
+import org.jclouds.util.internal.JCEEncryptionService;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -53,6 +54,7 @@ import com.google.common.collect.ImmutableMap;
  */
 @Test(testName = "s3.ParseObjectMetadataFromHeadersTest")
 public class ParseObjectMetadataFromHeadersTest {
+   private static final EncryptionService encryptionService = new JCEEncryptionService();
 
    @Test
    void testNormal() throws Exception {
@@ -62,7 +64,7 @@ public class ParseObjectMetadataFromHeadersTest {
       http.getHeaders().put("Content-Disposition", "contentDisposition");
       http.getHeaders().put(HttpHeaders.CONTENT_ENCODING, "encoding");
       ParseObjectMetadataFromHeaders parser = new ParseObjectMetadataFromHeaders(blobParser(http,
-               "\"abc\""), blobToObjectMetadata);
+               "\"abc\""), blobToObjectMetadata, encryptionService);
       MutableObjectMetadata response = parser.apply(http);
       assertEquals(response, expects);
    }
@@ -76,7 +78,7 @@ public class ParseObjectMetadataFromHeadersTest {
       http.getHeaders().put(HttpHeaders.CONTENT_ENCODING, "encoding");
       http.getHeaders().put(S3Headers.AMZ_MD5, "\"abc\"");
       ParseObjectMetadataFromHeaders parser = new ParseObjectMetadataFromHeaders(blobParser(http,
-               null), blobToObjectMetadata);
+               null), blobToObjectMetadata, encryptionService);
       MutableObjectMetadata response = parser.apply(http);
       assertEquals(response, expects);
    }
@@ -107,7 +109,7 @@ public class ParseObjectMetadataFromHeadersTest {
       expects.setCacheControl("cacheControl");
       expects.setContentDisposition("contentDisposition");
       expects.setContentEncoding("encoding");
-      expects.setContentMD5(HttpUtils.fromHexString("abc"));
+      expects.setContentMD5(encryptionService.fromHexString("abc"));
       expects.setContentType("type");
       expects.setETag("\"abc\"");
       expects.setKey("key");

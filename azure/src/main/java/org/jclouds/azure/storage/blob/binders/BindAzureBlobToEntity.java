@@ -35,6 +35,7 @@ import org.jclouds.azure.storage.blob.domain.AzureBlob;
 import org.jclouds.azure.storage.blob.reference.AzureBlobConstants;
 import org.jclouds.blobstore.binders.BindBlobToEntityAndUserMetadataToHeadersWithPrefix;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.util.EncryptionService;
 
 public class BindAzureBlobToEntity extends BindBlobToEntityAndUserMetadataToHeadersWithPrefix {
 
@@ -42,8 +43,9 @@ public class BindAzureBlobToEntity extends BindBlobToEntityAndUserMetadataToHead
 
    @Inject
    public BindAzureBlobToEntity(AzureBlobToBlob azureBlob2Blob,
-            @Named(AzureBlobConstants.PROPERTY_AZUREBLOB_METADATA_PREFIX) String prefix) {
-      super(prefix);
+            @Named(AzureBlobConstants.PROPERTY_AZUREBLOB_METADATA_PREFIX) String prefix,
+            EncryptionService encryptionService) {
+      super(prefix, encryptionService);
       this.azureBlob2Blob = azureBlob2Blob;
    }
 

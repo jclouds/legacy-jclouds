@@ -44,6 +44,7 @@ import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
 import org.jclouds.logging.Logger;
+import org.jclouds.util.EncryptionService;
 import org.jclouds.util.TimeStamp;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -64,6 +65,7 @@ public class SharedKeyAuthentication implements HttpRequestFilter {
    private final String account;
    private final byte[] key;
    private final Provider<String> timeStampProvider;
+   private final EncryptionService encryptionService;
    @Resource
    @Named(HttpConstants.SIGNATURE_LOGGER)
    Logger signatureLog = Logger.NULL;
@@ -72,10 +74,11 @@ public class SharedKeyAuthentication implements HttpRequestFilter {
    public SharedKeyAuthentication(SignatureWire signatureWire,
             @Named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT) String account,
             @Named(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY) String encodedKey,
-            @TimeStamp Provider<String> timeStampProvider) {
+            @TimeStamp Provider<String> timeStampProvider, EncryptionService encryptionService) {
+      this.encryptionService = encryptionService;
       this.signatureWire = signatureWire;
       this.account = account;
-      this.key = HttpUtils.fromBase64String(encodedKey);
+      this.key = encryptionService.fromBase64String(encodedKey);
       this.timeStampProvider = timeStampProvider;
    }
 
@@ -111,7 +114,7 @@ public class SharedKeyAuthentication implements HttpRequestFilter {
    public String signString(String toSign) {
       String signature;
       try {
-         signature = HttpUtils.hmacSha256Base64(toSign, key);
+         signature = encryptionService.hmacSha256Base64(toSign, key);
       } catch (Exception e) {
          throw new HttpException("error signing request", e);
       }

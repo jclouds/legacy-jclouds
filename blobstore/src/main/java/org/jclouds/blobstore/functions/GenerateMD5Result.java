@@ -26,7 +26,7 @@ package org.jclouds.blobstore.functions;
 import java.io.InputStream;
 
 import org.jclouds.blobstore.domain.MD5InputStreamResult;
-import org.jclouds.blobstore.functions.impl.BouncyCastleGenerateMD5Result;
+import org.jclouds.blobstore.functions.impl.JCEGenerateMD5Result;
 
 import com.google.common.base.Function;
 import com.google.inject.ImplementedBy;
@@ -35,7 +35,7 @@ import com.google.inject.ImplementedBy;
  * 
  * @author Adrian Cole
  */
-@ImplementedBy(BouncyCastleGenerateMD5Result.class)
+@ImplementedBy(JCEGenerateMD5Result.class)
 public interface GenerateMD5Result extends Function<InputStream, MD5InputStreamResult> {
 
 }

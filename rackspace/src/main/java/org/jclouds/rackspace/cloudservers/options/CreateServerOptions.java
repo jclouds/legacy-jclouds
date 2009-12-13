@@ -33,9 +33,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.rackspace.cloudservers.domain.Addresses;
 import org.jclouds.rest.binders.BindToJsonEntity;
+import org.jclouds.util.internal.Base64;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.internal.Lists;
@@ -54,7 +54,7 @@ public class CreateServerOptions extends BindToJsonEntity {
 
       public File(String path, byte[] contents) {
          this.path = checkNotNull(path, "path");
-         this.contents = HttpUtils.toBase64String(checkNotNull(contents, "contents"));
+         this.contents = Base64.encodeBytes(checkNotNull(contents, "contents"));
          checkArgument(path.getBytes().length < 255, String.format(
                   "maximum length of path is 255 bytes.  Path specified %s is %d bytes", path, path
                            .getBytes().length));

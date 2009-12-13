@@ -27,17 +27,18 @@ import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.jclouds.util.internal.Base64;
 
 import com.google.common.base.Function;
 
 /**
  * @author Adrian Cole
  */
-public class ParseContentMD5FromHeaders implements Function<HttpResponse, byte[]>, InvocationContext {
+public class ParseContentMD5FromHeaders implements Function<HttpResponse, byte[]>,
+         InvocationContext {
 
    public static class NoContentMD5Exception extends RuntimeException {
 
@@ -69,7 +70,7 @@ public class ParseContentMD5FromHeaders implements Function<HttpResponse, byte[]
       IOUtils.closeQuietly(from.getContent());
       String contentMD5 = from.getFirstHeaderOrNull("Content-MD5");
       if (contentMD5 != null) {
-         return HttpUtils.fromBase64String(contentMD5);
+         return Base64.decode(contentMD5);
       }
       throw new NoContentMD5Exception(request, from);
    }

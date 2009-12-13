@@ -30,15 +30,18 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.atmosonline.saas.domain.AtmosObject;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.rest.Binder;
+import org.jclouds.util.EncryptionService;
 
 public class BindAtmosObjectToEntityAndMetadataToHeaders implements Binder {
    private final BindUserMetadataToHeaders metaBinder;
+   private final EncryptionService encryptionService;
 
    @Inject
-   protected BindAtmosObjectToEntityAndMetadataToHeaders(BindUserMetadataToHeaders metaBinder) {
+   protected BindAtmosObjectToEntityAndMetadataToHeaders(BindUserMetadataToHeaders metaBinder,
+            EncryptionService encryptionService) {
       this.metaBinder = metaBinder;
+      this.encryptionService = encryptionService;
    }
 
    public void bindToRequest(HttpRequest request, Object entity) {
@@ -55,7 +58,7 @@ public class BindAtmosObjectToEntityAndMetadataToHeaders implements Binder {
 
       if (object.getContentMetadata().getContentMD5() != null) {
          request.getHeaders().put("Content-MD5",
-                  HttpUtils.toBase64String(object.getContentMetadata().getContentMD5()));
+                  encryptionService.toBase64String(object.getContentMetadata().getContentMD5()));
       }
       metaBinder.bindToRequest(request, object.getUserMetadata());
    }

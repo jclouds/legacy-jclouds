@@ -102,9 +102,9 @@ public class ${clientName}AsyncClientTest extends RestClientTest<${clientName}As
          @SuppressWarnings("unused")
          @Provides
          @Singleton
-         public BasicAuthentication provideBasicAuthentication()
+         public BasicAuthentication provideBasicAuthentication(EncryptionService encryptionService)
                   throws UnsupportedEncodingException {
-            return new BasicAuthentication("foo", "bar");
+            return new BasicAuthentication("foo", "bar", encryptionService);
          }
 
       };

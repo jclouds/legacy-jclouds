@@ -35,7 +35,7 @@ import javax.ws.rs.core.HttpHeaders;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
-import org.jclouds.http.HttpUtils;
+import org.jclouds.util.EncryptionService;
 
 /**
  * Uses Basic Authentication to sign the request.
@@ -47,12 +47,14 @@ import org.jclouds.http.HttpUtils;
 @Singleton
 public class BasicAuthentication implements HttpRequestFilter {
 
-   private List<String> credentialList;
+   private final List<String> credentialList;
 
-   public BasicAuthentication(String user, String password) throws UnsupportedEncodingException {
+   public BasicAuthentication(String user, String password, EncryptionService encryptionService)
+            throws UnsupportedEncodingException {
       this.credentialList = Collections.singletonList("Basic "
-               + HttpUtils.toBase64String(String.format("%s:%s", checkNotNull(user, "user"),
-                        checkNotNull(password, "password")).getBytes("UTF-8")));
+               + encryptionService.toBase64String(String.format("%s:%s",
+                        checkNotNull(user, "user"), checkNotNull(password, "password")).getBytes(
+                        "UTF-8")));
    }
 
    public void filter(HttpRequest request) throws HttpException {

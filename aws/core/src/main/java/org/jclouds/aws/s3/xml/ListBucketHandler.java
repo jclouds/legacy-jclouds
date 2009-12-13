@@ -34,9 +34,9 @@ import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.ObjectMetadata.StorageClass;
 import org.jclouds.aws.s3.domain.internal.BucketListObjectMetadata;
 import org.jclouds.aws.s3.domain.internal.TreeSetListBucketResponse;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.DateService;
+import org.jclouds.util.EncryptionService;
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.Sets;
@@ -58,6 +58,8 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<ListBucketResp
    private StringBuilder currentText = new StringBuilder();
 
    private final DateService dateParser;
+   private final EncryptionService encryptionService;
+
    private String bucketName;
    private String prefix;
    private String marker;
@@ -66,8 +68,9 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<ListBucketResp
    private boolean isTruncated;
 
    @Inject
-   public ListBucketHandler(DateService dateParser) {
+   public ListBucketHandler(DateService dateParser, EncryptionService encryptionService) {
       this.dateParser = dateParser;
+      this.encryptionService = encryptionService;
       this.contents = Sets.newTreeSet();
       this.commonPrefixes = Sets.newTreeSet();
    }
@@ -102,7 +105,7 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<ListBucketResp
          currentLastModified = dateParser.iso8601DateParse(currentText.toString().trim());
       } else if (qName.equals("ETag")) {
          currentETag = currentText.toString().trim();
-         currentMD5 = HttpUtils.fromHexString(currentETag.replaceAll("\"", ""));
+         currentMD5 = encryptionService.fromHexString(currentETag.replaceAll("\"", ""));
       } else if (qName.equals("Size")) {
          currentSize = new Long(currentText.toString().trim());
       } else if (qName.equals("Owner")) {

@@ -59,6 +59,7 @@ import org.jclouds.mezeo.pcs2.xml.FileHandler;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.util.EncryptionService;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -303,9 +304,9 @@ public class PCSClientTest extends RestClientTest<PCSAsyncClient> {
          @SuppressWarnings("unused")
          @Provides
          @Singleton
-         public BasicAuthentication provideBasicAuthentication()
+         public BasicAuthentication provideBasicAuthentication(EncryptionService encryptionService)
                   throws UnsupportedEncodingException {
-            return new BasicAuthentication("foo", "bar");
+            return new BasicAuthentication("foo", "bar", encryptionService);
          }
 
       };

@@ -40,6 +40,7 @@
         <module>gae</module>
         <module>httpnio</module>
         <module>joda</module>
+        <module>bouncycastle</module>
         <module>log4j</module>
         <module>ssh</module>
     </modules>

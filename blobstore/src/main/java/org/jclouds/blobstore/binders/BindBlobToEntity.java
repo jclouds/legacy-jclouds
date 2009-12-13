@@ -25,14 +25,25 @@ package org.jclouds.blobstore.binders;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import javax.inject.Inject;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.rest.Binder;
+import org.jclouds.util.EncryptionService;
 
+/**
+ * 
+ * @author Adrian Cole
+ */
 public class BindBlobToEntity implements Binder {
+   private final EncryptionService encryptionService;
+
+   @Inject
+   public BindBlobToEntity(EncryptionService encryptionService) {
+      this.encryptionService = encryptionService;
+   }
 
    public void bindToRequest(HttpRequest request, Object entity) {
       Blob object = (Blob) entity;
@@ -48,7 +59,7 @@ public class BindBlobToEntity implements Binder {
 
       if (object.getMetadata().getContentMD5() != null) {
          request.getHeaders().put("Content-MD5",
-                  HttpUtils.toBase64String(object.getMetadata().getContentMD5()));
+                  encryptionService.toBase64String(object.getMetadata().getContentMD5()));
       }
    }
 }

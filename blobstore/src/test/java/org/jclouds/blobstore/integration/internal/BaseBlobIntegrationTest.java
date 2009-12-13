@@ -46,7 +46,7 @@ import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ResourceMetadata;
 import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.http.HttpResponseException;
-import org.jclouds.http.HttpUtils;
+import org.jclouds.util.internal.JCEEncryptionService;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -329,7 +329,7 @@ public class BaseBlobIntegrationTest<A, S> extends BaseBlobStoreIntegrationTest<
       // NOTE all metadata in jclouds comes out as lowercase, in an effort to normalize the
       // providers.
       object.getMetadata().getUserMetadata().put("Adrian", "powderpuff");
-      object.getMetadata().setContentMD5(HttpUtils.md5(TEST_STRING.getBytes()));
+      object.getMetadata().setContentMD5(new JCEEncryptionService().md5(TEST_STRING.getBytes()));
       String containerName = getContainerName();
       try {
          addBlobToContainer(containerName, object);
@@ -356,7 +356,7 @@ public class BaseBlobIntegrationTest<A, S> extends BaseBlobStoreIntegrationTest<
       assert metadata.getContentType().startsWith("text/plain") : metadata.getContentType();
       assertEquals(metadata.getSize(), new Long(TEST_STRING.length()));
       assertEquals(metadata.getUserMetadata().get("adrian"), "powderpuff");
-      assertEquals(metadata.getContentMD5(), HttpUtils.md5(TEST_STRING.getBytes()));
+      assertEquals(metadata.getContentMD5(), new JCEEncryptionService().md5(TEST_STRING.getBytes()));
    }
 
 }

@@ -39,6 +39,7 @@ import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.twitter.functions.ParseStatusesFromJsonResponse;
+import org.jclouds.util.EncryptionService;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
@@ -98,9 +99,9 @@ public class TwitterClientTest extends RestClientTest<TwitterAsyncClient> {
          @SuppressWarnings("unused")
          @Provides
          @Singleton
-         public BasicAuthentication provideBasicAuthentication()
+         public BasicAuthentication provideBasicAuthentication(EncryptionService encryptionService)
                   throws UnsupportedEncodingException {
-            return new BasicAuthentication("foo", "bar");
+            return new BasicAuthentication("foo", "bar", encryptionService);
          }
 
       };

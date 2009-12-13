@@ -30,9 +30,9 @@ import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.ResourceType;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.strategy.IsDirectoryStrategy;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
+import org.jclouds.util.EncryptionService;
 
 import com.google.common.base.Function;
 
@@ -42,10 +42,13 @@ import com.google.common.base.Function;
 @Singleton
 public class ObjectToBlobMetadata implements Function<ObjectInfo, MutableBlobMetadata> {
    private final IsDirectoryStrategy isDirectoryStrategy;
+   private final EncryptionService encryptionService;
 
    @Inject
-   public ObjectToBlobMetadata(IsDirectoryStrategy isDirectoryStrategy) {
+   public ObjectToBlobMetadata(IsDirectoryStrategy isDirectoryStrategy,
+            EncryptionService encryptionService) {
       this.isDirectoryStrategy = isDirectoryStrategy;
+      this.encryptionService = encryptionService;
    }
 
    public MutableBlobMetadata apply(ObjectInfo from) {
@@ -54,7 +57,7 @@ public class ObjectToBlobMetadata implements Function<ObjectInfo, MutableBlobMet
       if (from.getContentType() != null)
          to.setContentType(from.getContentType());
       if (from.getHash() != null)
-         to.setETag(HttpUtils.toHexString(from.getHash()));
+         to.setETag(encryptionService.toHexString(from.getHash()));
       to.setName(from.getName());
       if (from.getBytes() != null)
          to.setSize(from.getBytes());

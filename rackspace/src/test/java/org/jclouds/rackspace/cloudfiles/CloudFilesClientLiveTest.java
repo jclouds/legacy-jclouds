@@ -44,7 +44,6 @@ import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.ListResponse;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jclouds.http.HttpResponseException;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rackspace.cloudfiles.domain.AccountMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.CFObject;
@@ -54,6 +53,8 @@ import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
 import org.jclouds.rackspace.cloudfiles.options.ListCdnContainerOptions;
 import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
+import org.jclouds.util.EncryptionService;
+import org.jclouds.util.internal.JCEEncryptionService;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -68,6 +69,7 @@ import com.google.common.collect.Maps;
 @Test(groups = "live", testName = "cloudfiles.CloudFilesClientLiveTest")
 public class CloudFilesClientLiveTest extends
          BaseBlobStoreIntegrationTest<CloudFilesAsyncClient, CloudFilesClient> {
+   private static final EncryptionService encryptionService = new JCEEncryptionService();
 
    /**
     * this method overrides containerName to ensure it isn't found
@@ -170,7 +172,7 @@ public class CloudFilesClientLiveTest extends
          assertTrue(context.getApi().disableCDN(containerNameWithCDN));
 
          cdnMetadata = context.getApi().getCDNMetadata(containerNameWithCDN);
-         assertEquals(cdnMetadata.isCDNEnabled(), false); 
+         assertEquals(cdnMetadata.isCDNEnabled(), false);
       } finally {
          recycleContainer(containerNameWithCDN);
          recycleContainer(containerNameWithoutCDN);
@@ -307,7 +309,8 @@ public class CloudFilesClientLiveTest extends
          CFObject object = newCFObject(data, key);
          byte[] md5 = object.getInfo().getHash();
          String newEtag = context.getApi().putObject(containerName, object);
-         assertEquals(HttpUtils.toHexString(md5), HttpUtils.toHexString(object.getInfo().getHash()));
+         assertEquals(encryptionService.toHexString(md5), encryptionService.toHexString(object
+                  .getInfo().getHash()));
 
          // Test HEAD of missing object
          try {
@@ -322,8 +325,9 @@ public class CloudFilesClientLiveTest extends
          // TODO assertEquals(metadata.getName(), object.getMetadata().getName());
          assertEquals(metadata.getBytes(), new Long(data.length()));
          assertEquals(metadata.getContentType(), "text/plain");
-         assertEquals(HttpUtils.toHexString(md5), HttpUtils.toHexString(object.getInfo().getHash()));
-         assertEquals(metadata.getHash(), HttpUtils.fromHexString(newEtag));
+         assertEquals(encryptionService.toHexString(md5), encryptionService.toHexString(object
+                  .getInfo().getHash()));
+         assertEquals(metadata.getHash(), encryptionService.fromHexString(newEtag));
          assertEquals(metadata.getMetadata().entrySet().size(), 1);
          assertEquals(metadata.getMetadata().get("metadata"), "metadata-value");
 
@@ -346,9 +350,9 @@ public class CloudFilesClientLiveTest extends
          // TODO assertEquals(getBlob.getName(), object.getMetadata().getName());
          assertEquals(getBlob.getContentLength(), new Long(data.length()));
          assertEquals(getBlob.getInfo().getContentType(), "text/plain");
-         assertEquals(HttpUtils.toHexString(md5), HttpUtils
-                  .toHexString(getBlob.getInfo().getHash()));
-         assertEquals(HttpUtils.fromHexString(newEtag), getBlob.getInfo().getHash());
+         assertEquals(encryptionService.toHexString(md5), encryptionService.toHexString(getBlob
+                  .getInfo().getHash()));
+         assertEquals(encryptionService.fromHexString(newEtag), getBlob.getInfo().getHash());
          assertEquals(getBlob.getInfo().getMetadata().entrySet().size(), 2);
          assertEquals(getBlob.getInfo().getMetadata().get("new-metadata-1"), "value-1");
          assertEquals(getBlob.getInfo().getMetadata().get("new-metadata-2"), "value-2");
@@ -356,7 +360,7 @@ public class CloudFilesClientLiveTest extends
          // Test PUT with invalid ETag (as if object's data was corrupted in transit)
          String correctEtag = newEtag;
          String incorrectEtag = "0" + correctEtag.substring(1);
-         object.getInfo().setHash(HttpUtils.fromHexString(incorrectEtag));
+         object.getInfo().setHash(encryptionService.fromHexString(incorrectEtag));
          try {
             context.getApi().putObject(containerName, object);
          } catch (HttpResponseException e) {
@@ -369,8 +373,8 @@ public class CloudFilesClientLiveTest extends
          blob.getInfo().setName("chunked-object");
          blob.setData(bais);
          newEtag = context.getApi().putObject(containerName, blob);
-         assertEquals(HttpUtils.toHexString(md5), HttpUtils
-                  .toHexString(getBlob.getInfo().getHash()));
+         assertEquals(encryptionService.toHexString(md5), encryptionService.toHexString(getBlob
+                  .getInfo().getHash()));
 
          // Test GET with options
          // Non-matching ETag
@@ -384,7 +388,7 @@ public class CloudFilesClientLiveTest extends
          // Matching ETag
          getBlob = context.getApi().getObject(containerName, object.getInfo().getName(),
                   GetOptions.Builder.ifETagMatches(newEtag));
-         assertEquals(getBlob.getInfo().getHash(), HttpUtils.fromHexString(newEtag));
+         assertEquals(getBlob.getInfo().getHash(), encryptionService.fromHexString(newEtag));
          getBlob = context.getApi().getObject(containerName, object.getInfo().getName(),
                   GetOptions.Builder.startAt(8));
          assertEquals(IOUtils.toString((InputStream) getBlob.getData()), data.substring(8));

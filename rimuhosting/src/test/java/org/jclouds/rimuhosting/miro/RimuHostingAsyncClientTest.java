@@ -23,45 +23,50 @@
  */
 package org.jclouds.rimuhosting.miro;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Module;
-import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
+import static org.testng.Assert.assertEquals;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+
+import javax.inject.Singleton;
+
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import static org.testng.Assert.assertEquals;
+import org.jclouds.util.EncryptionService;
 import org.testng.annotations.Test;
 
-import javax.inject.Singleton;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
+import com.google.inject.AbstractModule;
+import com.google.inject.Module;
+import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests annotation parsing of {@code RimuHostingAsyncClient}
- *
+ * 
  * @author Ivan Meredith
  */
 @Test(groups = "unit", testName = "rimuhosting.RimuHostingAsyncClientTest")
 public class RimuHostingAsyncClientTest extends RestClientTest<RimuHostingAsyncClient> {
 
    public void testGetMyMentions() throws SecurityException, NoSuchMethodException, IOException {
-      /*  Method method = RimuHostingAsyncClient.class.getMethod("TODO: insert test method name");
-      GeneratedHttpRequest<RimuHostingAsyncClient> httpMethod = processor.createRequest(method);
-
-      assertRequestLineEquals(httpMethod, "TODO: insert expected request");
-      assertHeadersEqual(httpMethod, "");
-      assertEntityEquals(httpMethod, null);
-
-      assertResponseParserClassEquals(method, httpMethod, ParseStatusesFromJsonResponse.class);
-      assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
-
-      checkFilters(httpMethod);*/
+      /*
+       * Method method = RimuHostingAsyncClient.class.getMethod("TODO: insert test method name");
+       * GeneratedHttpRequest<RimuHostingAsyncClient> httpMethod = processor.createRequest(method);
+       * 
+       * assertRequestLineEquals(httpMethod, "TODO: insert expected request");
+       * assertHeadersEqual(httpMethod, ""); assertEntityEquals(httpMethod, null);
+       * 
+       * assertResponseParserClassEquals(method, httpMethod, ParseStatusesFromJsonResponse.class);
+       * assertSaxResponseParserClassEquals(method, null); assertExceptionParserClassEquals(method,
+       * null);
+       * 
+       * checkFilters(httpMethod);
+       */
    }
 
    @Override
@@ -82,7 +87,7 @@ public class RimuHostingAsyncClientTest extends RestClientTest<RimuHostingAsyncC
          @Override
          protected void configure() {
             bind(URI.class).annotatedWith(RimuHosting.class).toInstance(
-                    URI.create("https://rimuhosting.com/r"));
+                     URI.create("https://rimuhosting.com/r"));
             bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
                public Logger getLogger(String category) {
                   return Logger.NULL;
@@ -93,9 +98,9 @@ public class RimuHostingAsyncClientTest extends RestClientTest<RimuHostingAsyncC
          @SuppressWarnings("unused")
          @Provides
          @Singleton
-         public BasicAuthentication provideBasicAuthentication()
-                 throws UnsupportedEncodingException {
-            return new BasicAuthentication("foo", "bar");
+         public BasicAuthentication provideBasicAuthentication(EncryptionService encryptionService)
+                  throws UnsupportedEncodingException {
+            return new BasicAuthentication("foo", "bar", encryptionService);
          }
 
       };
