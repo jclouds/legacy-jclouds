@@ -23,16 +23,27 @@
  */
 package org.jclouds.aws.s3;
 
+import org.jclouds.date.joda.config.JodaDateServiceModule;
+import org.jclouds.encryption.bouncycastle.config.BouncyCastleEncryptionServiceModule;
+import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.http.httpnio.config.NioTransformingHttpCommandExecutorServiceModule;
 import org.testng.annotations.Test;
-
-import com.google.inject.Module;
 
 @Test(sequential = true, testName = "perftest.JCloudsNioPerformanceLiveTest", groups = { "live" })
 public class JCloudsNioPerformanceLiveTest extends BaseJCloudsPerformanceLiveTest {
 
+   @ConfiguresHttpCommandExecutorService
+   private static final class Module extends NioTransformingHttpCommandExecutorServiceModule {
+      @Override
+      protected void configure() {
+         super.configure();
+         install(new JodaDateServiceModule());
+         install(new BouncyCastleEncryptionServiceModule());
+      }
+   }
+
    @Override
    protected Module createHttpModule() {
-      return new NioTransformingHttpCommandExecutorServiceModule();
+      return new Module();
    }
 }
