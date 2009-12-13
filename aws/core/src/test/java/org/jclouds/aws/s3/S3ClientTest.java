@@ -55,6 +55,7 @@ import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
+import org.jclouds.date.TimeStamp;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReturnFalseOn404;
@@ -67,7 +68,6 @@ import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Jsr330;
-import org.jclouds.util.TimeStamp;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 

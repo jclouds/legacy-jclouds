@@ -33,8 +33,8 @@ import javax.inject.Singleton;
 import org.jclouds.atmosonline.saas.domain.FileType;
 import org.jclouds.atmosonline.saas.domain.SystemMetadata;
 import org.jclouds.atmosonline.saas.reference.AtmosStorageHeaders;
+import org.jclouds.date.DateService;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.util.DateService;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;

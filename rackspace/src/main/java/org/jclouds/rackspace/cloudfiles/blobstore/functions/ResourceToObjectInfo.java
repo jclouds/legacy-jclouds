@@ -29,9 +29,9 @@ import javax.inject.Singleton;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ResourceMetadata;
 import org.jclouds.blobstore.domain.ResourceType;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.internal.MutableObjectInfoWithMetadataImpl;
-import org.jclouds.util.EncryptionService;
 
 import com.google.common.base.Function;
 

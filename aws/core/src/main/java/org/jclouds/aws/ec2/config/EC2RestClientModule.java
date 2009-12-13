@@ -39,6 +39,8 @@ import org.jclouds.aws.handlers.AWSRedirectionRetryHandler;
 import org.jclouds.aws.handlers.ParseAWSErrorFromXmlContent;
 import org.jclouds.aws.util.RequestSigner;
 import org.jclouds.concurrent.internal.SyncProxy;
+import org.jclouds.date.DateService;
+import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
@@ -47,8 +49,6 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
-import org.jclouds.util.DateService;
-import org.jclouds.util.TimeStamp;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;

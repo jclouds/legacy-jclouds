@@ -28,10 +28,10 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.net.UnknownHostException;
 
+import org.jclouds.date.DateService;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rackspace.cloudservers.domain.Image;
 import org.jclouds.rackspace.cloudservers.domain.ImageStatus;
-import org.jclouds.util.DateService;
 import org.testng.annotations.Test;
 
 import com.google.gson.Gson;

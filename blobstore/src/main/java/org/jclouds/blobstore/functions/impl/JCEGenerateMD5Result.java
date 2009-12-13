@@ -29,8 +29,8 @@ import javax.inject.Singleton;
 
 import org.jclouds.blobstore.domain.MD5InputStreamResult;
 import org.jclouds.blobstore.functions.GenerateMD5Result;
-import org.jclouds.util.EncryptionService;
-import org.jclouds.util.internal.JCEEncryptionService;
+import org.jclouds.encryption.EncryptionService;
+import org.jclouds.encryption.internal.JCEEncryptionService;
 
 /**
  * 
@@ -41,7 +41,7 @@ public class JCEGenerateMD5Result implements GenerateMD5Result {
    private static final EncryptionService encryptionService = new JCEEncryptionService();
 
    public MD5InputStreamResult apply(InputStream toEncode) {
-      org.jclouds.util.EncryptionService.MD5InputStreamResult result = encryptionService
+      org.jclouds.encryption.EncryptionService.MD5InputStreamResult result = encryptionService
                .generateMD5Result(toEncode);
       return new MD5InputStreamResult(result.data, result.md5, result.length);
    }

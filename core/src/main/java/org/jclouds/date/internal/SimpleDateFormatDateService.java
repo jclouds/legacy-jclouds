@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.util.internal;
+package org.jclouds.date.internal;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -32,7 +32,7 @@ import java.util.SimpleTimeZone;
 import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
 
-import org.jclouds.util.DateService;
+import org.jclouds.date.DateService;
 
 /**
  * 

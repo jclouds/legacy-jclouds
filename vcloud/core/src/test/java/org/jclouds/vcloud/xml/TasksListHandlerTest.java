@@ -28,9 +28,9 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.net.URI;
 
+import org.jclouds.date.DateService;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.rest.domain.internal.NamedLinkImpl;
-import org.jclouds.util.DateService;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;

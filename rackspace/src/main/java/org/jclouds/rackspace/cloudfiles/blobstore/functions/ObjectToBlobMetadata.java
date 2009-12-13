@@ -30,9 +30,9 @@ import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.ResourceType;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.strategy.IsDirectoryStrategy;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
-import org.jclouds.util.EncryptionService;
 
 import com.google.common.base.Function;
 

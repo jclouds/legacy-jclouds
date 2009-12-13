@@ -33,9 +33,9 @@ import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
 import org.jclouds.azure.storage.blob.domain.ListableBlobProperties;
 import org.jclouds.azure.storage.blob.domain.internal.ListableBlobPropertiesImpl;
 import org.jclouds.azure.storage.blob.domain.internal.TreeSetListBlobsResponse;
+import org.jclouds.date.DateService;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.util.DateService;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 

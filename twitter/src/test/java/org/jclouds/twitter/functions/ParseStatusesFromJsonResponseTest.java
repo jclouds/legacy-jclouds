@@ -30,11 +30,11 @@ import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.SortedSet;
 
+import org.jclouds.date.DateService;
+import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.twitter.domain.Status;
 import org.jclouds.twitter.domain.User;
-import org.jclouds.util.DateService;
-import org.jclouds.util.internal.SimpleDateFormatDateService;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSortedSet;

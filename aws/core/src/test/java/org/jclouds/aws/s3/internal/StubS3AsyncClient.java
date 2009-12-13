@@ -66,9 +66,9 @@ import org.jclouds.blobstore.integration.internal.StubAsyncBlobStore;
 import org.jclouds.blobstore.integration.internal.StubAsyncBlobStore.FutureBase;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.concurrent.FutureFunctionWrapper;
+import org.jclouds.date.DateService;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.logging.Logger.LoggerFactory;
-import org.jclouds.util.DateService;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;

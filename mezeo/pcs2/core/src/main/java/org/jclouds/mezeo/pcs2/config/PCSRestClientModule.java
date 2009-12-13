@@ -33,6 +33,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.concurrent.internal.SyncProxy;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
@@ -54,7 +55,6 @@ import org.jclouds.mezeo.pcs2.handlers.PCSClientErrorRetryHandler;
 import org.jclouds.mezeo.pcs2.reference.PCSConstants;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
-import org.jclouds.util.EncryptionService;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;

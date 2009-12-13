@@ -31,7 +31,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.util.internal.JCEEncryptionService;
+import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;

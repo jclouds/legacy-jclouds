@@ -35,12 +35,12 @@ import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.ObjectMetadata.StorageClass;
 import org.jclouds.aws.s3.domain.internal.BucketListObjectMetadata;
 import org.jclouds.aws.s3.domain.internal.TreeSetListBucketResponse;
+import org.jclouds.date.DateService;
+import org.jclouds.encryption.EncryptionService;
+import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.util.DateService;
-import org.jclouds.util.EncryptionService;
-import org.jclouds.util.internal.JCEEncryptionService;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 

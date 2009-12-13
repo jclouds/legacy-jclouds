@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.util;
+package org.jclouds.date;
 
 import static org.testng.Assert.assertEquals;
 
@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import org.jclouds.PerformanceTest;
+import org.jclouds.date.DateService;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 

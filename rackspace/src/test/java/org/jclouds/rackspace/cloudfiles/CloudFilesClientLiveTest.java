@@ -43,6 +43,8 @@ import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.ListResponse;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
+import org.jclouds.encryption.EncryptionService;
+import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rackspace.cloudfiles.domain.AccountMetadata;
@@ -53,8 +55,6 @@ import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
 import org.jclouds.rackspace.cloudfiles.options.ListCdnContainerOptions;
 import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
-import org.jclouds.util.EncryptionService;
-import org.jclouds.util.internal.JCEEncryptionService;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;

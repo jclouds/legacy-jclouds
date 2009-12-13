@@ -33,6 +33,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.functions.ParseSax;
@@ -42,7 +43,6 @@ import org.jclouds.mezeo.pcs2.xml.CloudXlinkHandler;
 import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.util.EncryptionService;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 

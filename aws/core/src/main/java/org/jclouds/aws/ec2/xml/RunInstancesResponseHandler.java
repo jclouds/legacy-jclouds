@@ -26,7 +26,7 @@ package org.jclouds.aws.ec2.xml;
 import javax.inject.Inject;
 
 import org.jclouds.aws.ec2.domain.Reservation;
-import org.jclouds.util.DateService;
+import org.jclouds.date.DateService;
 
 /**
  * Parses the following XML document:

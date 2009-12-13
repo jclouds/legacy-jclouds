@@ -1,4 +1,4 @@
-package org.jclouds.util.internal;
+package org.jclouds.encryption.internal;
 
 import java.io.File;
 import java.io.FileInputStream;

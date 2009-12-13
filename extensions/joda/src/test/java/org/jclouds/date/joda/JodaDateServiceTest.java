@@ -21,24 +21,36 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.util;
+package org.jclouds.date.joda;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.jclouds.date.DateService;
+import org.jclouds.date.DateServiceTest;
+import org.jclouds.date.joda.config.JodaDateServiceModule;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
-import javax.inject.Qualifier;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
+/* 
+ * TODO: Scrap any non-DateService references (eg Joda & Amazon) if/when
+ * we confirm that the DateService is fast enough.
+ */
 
 /**
- * Related to a TimeStamp
+ * Compares performance of date operations
  * 
  * @author Adrian Cole
- * 
+ * @author James Murty
  */
-@Retention(value = RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
-@Qualifier
-public @interface TimeStamp {
+@Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "core.JodaDateServiceTest")
+public class JodaDateServiceTest extends DateServiceTest {
+   @Override
+   @BeforeTest
+   protected void createDateService() {
+      Injector i = Guice.createInjector(new JodaDateServiceModule());
+      dateService = i.getInstance(DateService.class);
+      assert dateService instanceof JodaDateService;
+   }
 
 }

@@ -32,13 +32,13 @@ import java.net.URI;
 
 import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.util.internal.JCEEncryptionService;
 import org.jclouds.vcloud.functions.ParseLoginResponseFromHeaders;
 import org.testng.annotations.Test;
 

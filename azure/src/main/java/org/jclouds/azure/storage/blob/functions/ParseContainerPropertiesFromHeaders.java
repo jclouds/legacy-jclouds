@@ -33,11 +33,11 @@ import org.jclouds.azure.storage.blob.domain.ContainerProperties;
 import org.jclouds.azure.storage.blob.domain.MutableContainerPropertiesWithMetadata;
 import org.jclouds.azure.storage.blob.domain.internal.MutableContainerPropertiesWithMetadataImpl;
 import org.jclouds.azure.storage.blob.reference.AzureBlobConstants;
+import org.jclouds.date.DateService;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.util.DateService;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;

@@ -37,12 +37,12 @@ import javax.inject.Inject;
 
 import org.jclouds.blobstore.domain.ListContainerResponse;
 import org.jclouds.blobstore.domain.internal.ListContainerResponseImpl;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
 import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.util.EncryptionService;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;

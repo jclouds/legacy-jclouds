@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.util.internal;
+package org.jclouds.encryption;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -33,12 +33,15 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 
-import org.bouncycastle.crypto.Digest;
+import org.jclouds.encryption.internal.JCEEncryptionService;
+
+import com.google.inject.ImplementedBy;
 
 /**
  * 
  * @author Adrian Cole
  */
+@ImplementedBy(JCEEncryptionService.class)
 public interface EncryptionService {
 
    String toHexString(byte[] raw);
@@ -47,8 +50,6 @@ public interface EncryptionService {
 
    String hmacSha256Base64(String toEncode, byte[] key) throws NoSuchAlgorithmException,
             NoSuchProviderException, InvalidKeyException;
-
-   byte[] hmac(String toEncode, byte[] key, Digest digest);
 
    String hmacSha1Base64(String toEncode, byte[] key) throws NoSuchAlgorithmException,
             NoSuchProviderException, InvalidKeyException;
@@ -65,8 +66,6 @@ public interface EncryptionService {
 
    String toBase64String(byte[] resBuf);
 
-   Long calculateSize(Object data);
-
    byte[] md5(Object data);
 
    MD5InputStreamResult generateMD5Result(InputStream toEncode);
@@ -76,7 +75,7 @@ public interface EncryptionService {
       public final byte[] md5;
       public final long length;
 
-      MD5InputStreamResult(byte[] data, byte[] eTag, long length) {
+      public MD5InputStreamResult(byte[] data, byte[] eTag, long length) {
          this.data = checkNotNull(data, "data");
          this.md5 = checkNotNull(eTag, "eTag");
          checkArgument(length >= 0, "length cannot me negative");

@@ -36,7 +36,7 @@ import static org.testng.Assert.assertNull;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
-import org.jclouds.util.internal.SimpleDateFormatDateService;
+import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 

@@ -46,6 +46,8 @@ import org.jclouds.blobstore.binders.BindBlobToMultipartFormTest;
 import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
+import org.jclouds.date.TimeStamp;
+import org.jclouds.encryption.internal.Base64;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
 import org.jclouds.http.functions.ReturnVoidIf2xx;
 import org.jclouds.http.options.GetOptions;
@@ -55,8 +57,6 @@ import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Jsr330;
-import org.jclouds.util.TimeStamp;
-import org.jclouds.util.internal.Base64;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 

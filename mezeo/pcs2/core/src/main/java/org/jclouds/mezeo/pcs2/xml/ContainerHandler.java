@@ -31,6 +31,7 @@ import java.util.SortedSet;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
+import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
 import org.jclouds.mezeo.pcs2.domain.ContainerList;
@@ -38,7 +39,6 @@ import org.jclouds.mezeo.pcs2.domain.ResourceInfo;
 import org.jclouds.mezeo.pcs2.domain.internal.ContainerInfoImpl;
 import org.jclouds.mezeo.pcs2.domain.internal.ContainerListImpl;
 import org.jclouds.mezeo.pcs2.domain.internal.FileInfoImpl;
-import org.jclouds.util.DateService;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 

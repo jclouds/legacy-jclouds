@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.util;
+package org.jclouds.encryption;
 
 import static org.testng.Assert.assertEquals;
 
@@ -35,7 +35,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 
 import org.jclouds.PerformanceTest;
-import org.jclouds.util.internal.Base64;
+import org.jclouds.encryption.EncryptionService;
+import org.jclouds.encryption.internal.Base64;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;

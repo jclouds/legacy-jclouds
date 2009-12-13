@@ -35,9 +35,9 @@ import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RunningInstance;
+import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.logging.Logger;
-import org.jclouds.util.DateService;
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.Sets;

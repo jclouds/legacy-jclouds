@@ -40,6 +40,7 @@ import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
+import org.jclouds.encryption.internal.Base64;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
@@ -49,7 +50,6 @@ import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Jsr330;
-import org.jclouds.util.internal.Base64;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 

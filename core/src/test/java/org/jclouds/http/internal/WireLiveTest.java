@@ -39,9 +39,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.concurrent.WithinThreadExecutorService;
+import org.jclouds.encryption.EncryptionService;
+import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.logging.Logger;
-import org.jclouds.util.EncryptionService;
-import org.jclouds.util.internal.JCEEncryptionService;
 import org.testng.annotations.Test;
 
 /**

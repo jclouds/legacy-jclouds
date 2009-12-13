@@ -28,13 +28,13 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.net.URI;
 
+import org.jclouds.date.DateService;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.mezeo.pcs2.domain.ContainerList;
 import org.jclouds.mezeo.pcs2.domain.ResourceInfo;
 import org.jclouds.mezeo.pcs2.domain.internal.ContainerInfoImpl;
 import org.jclouds.mezeo.pcs2.domain.internal.ContainerListImpl;
 import org.jclouds.mezeo.pcs2.domain.internal.FileInfoImpl;
-import org.jclouds.util.DateService;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 

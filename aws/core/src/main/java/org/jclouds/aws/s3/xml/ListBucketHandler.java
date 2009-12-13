@@ -34,9 +34,9 @@ import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.ObjectMetadata.StorageClass;
 import org.jclouds.aws.s3.domain.internal.BucketListObjectMetadata;
 import org.jclouds.aws.s3.domain.internal.TreeSetListBucketResponse;
+import org.jclouds.date.DateService;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.util.DateService;
-import org.jclouds.util.EncryptionService;
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.Sets;

@@ -33,8 +33,8 @@ import java.util.List;
 
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.util.DateService;
-import org.jclouds.util.internal.SimpleDateFormatDateService;
+import org.jclouds.date.DateService;
+import org.jclouds.date.internal.SimpleDateFormatDateService;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Multimap;

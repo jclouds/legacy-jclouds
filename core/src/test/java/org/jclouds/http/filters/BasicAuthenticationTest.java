@@ -30,8 +30,8 @@ import java.net.URI;
 
 import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.util.internal.JCEEncryptionService;
 import org.testng.annotations.Test;
 
 /**

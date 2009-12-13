@@ -30,8 +30,8 @@ import java.util.SortedSet;
 
 import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.TerminatedInstance;
+import org.jclouds.date.DateService;
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.util.DateService;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 

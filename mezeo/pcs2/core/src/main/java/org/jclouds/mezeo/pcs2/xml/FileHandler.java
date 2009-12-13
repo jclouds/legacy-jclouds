@@ -29,10 +29,10 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.mezeo.pcs2.domain.FileInfoWithMetadata;
 import org.jclouds.mezeo.pcs2.domain.internal.FileInfoWithMetadataImpl;
-import org.jclouds.util.DateService;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 

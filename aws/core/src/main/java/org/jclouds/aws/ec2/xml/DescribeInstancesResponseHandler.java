@@ -28,7 +28,7 @@ import java.util.SortedSet;
 import javax.inject.Inject;
 
 import org.jclouds.aws.ec2.domain.Reservation;
-import org.jclouds.util.DateService;
+import org.jclouds.date.DateService;
 
 import com.google.common.collect.Sets;
 

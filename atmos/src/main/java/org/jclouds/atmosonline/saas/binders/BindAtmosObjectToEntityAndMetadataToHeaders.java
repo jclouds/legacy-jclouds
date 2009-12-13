@@ -29,9 +29,9 @@ import javax.inject.Inject;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.atmosonline.saas.domain.AtmosObject;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
-import org.jclouds.util.EncryptionService;
 
 public class BindAtmosObjectToEntityAndMetadataToHeaders implements Binder {
    private final BindUserMetadataToHeaders metaBinder;

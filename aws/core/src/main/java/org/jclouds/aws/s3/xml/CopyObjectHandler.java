@@ -29,8 +29,8 @@ import javax.inject.Inject;
 
 import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.internal.CopyObjectResult;
+import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.util.DateService;
 
 /**
  * Parses the response from Amazon S3 COPY Object command.

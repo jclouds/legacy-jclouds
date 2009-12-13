@@ -33,8 +33,8 @@ import org.jclouds.azure.storage.blob.domain.ListableContainerProperties;
 import org.jclouds.azure.storage.blob.domain.internal.ListableContainerPropertiesImpl;
 import org.jclouds.azure.storage.domain.BoundedSortedSet;
 import org.jclouds.azure.storage.domain.internal.BoundedTreeSet;
+import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.util.DateService;
 
 import com.google.common.collect.Sets;
 

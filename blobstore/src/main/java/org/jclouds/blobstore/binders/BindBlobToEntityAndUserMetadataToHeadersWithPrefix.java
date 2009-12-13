@@ -29,8 +29,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.util.EncryptionService;
 
 /**
  * 

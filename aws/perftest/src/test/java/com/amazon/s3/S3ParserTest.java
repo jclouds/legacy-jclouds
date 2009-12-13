@@ -34,7 +34,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 
 import org.apache.commons.io.IOUtils;
-import org.jclouds.util.internal.SimpleDateFormatDateService;
+import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.testng.annotations.Test;
 
 /**

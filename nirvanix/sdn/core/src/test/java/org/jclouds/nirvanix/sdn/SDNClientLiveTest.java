@@ -34,9 +34,9 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
+import org.jclouds.encryption.internal.Base64;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.nirvanix.sdn.domain.UploadInfo;
-import org.jclouds.util.internal.Base64;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 

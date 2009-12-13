@@ -32,6 +32,7 @@ import java.net.URI;
 
 import javax.inject.Singleton;
 
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
@@ -39,7 +40,6 @@ import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.twitter.functions.ParseStatusesFromJsonResponse;
-import org.jclouds.util.EncryptionService;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;

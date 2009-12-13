@@ -35,7 +35,7 @@ import org.testng.annotations.Test;
  * @author James Murty
  */
 @Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "s3.DateTest")
-public class DateServiceTest extends org.jclouds.util.DateServiceTest {
+public class DateServiceTest extends org.jclouds.date.DateServiceTest {
 
    @Test
    void testAmazonParseDateSerialResponseTime() {

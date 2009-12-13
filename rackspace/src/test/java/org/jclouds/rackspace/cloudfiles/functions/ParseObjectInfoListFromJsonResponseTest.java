@@ -31,12 +31,12 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.util.List;
 
+import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
 import org.jclouds.rackspace.cloudfiles.functions.ParseObjectInfoListFromJsonResponse.ObjectInfoImpl;
 import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.util.internal.SimpleDateFormatDateService;
 import org.testng.annotations.Test;
 import org.testng.collections.Lists;
 

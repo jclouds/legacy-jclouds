@@ -33,6 +33,7 @@ import javax.ws.rs.ext.RuntimeDelegate;
 
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
+import org.jclouds.date.DateService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.Logger;
@@ -42,7 +43,6 @@ import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.rest.internal.RuntimeDelegateImpl;
-import org.jclouds.util.DateService;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;

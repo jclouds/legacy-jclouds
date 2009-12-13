@@ -27,8 +27,8 @@ import static org.testng.Assert.assertEquals;
 
 import org.jclouds.atmosonline.saas.domain.FileType;
 import org.jclouds.atmosonline.saas.domain.SystemMetadata;
+import org.jclouds.date.DateService;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.util.DateService;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;

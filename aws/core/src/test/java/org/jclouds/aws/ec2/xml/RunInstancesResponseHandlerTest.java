@@ -32,8 +32,8 @@ import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RunningInstance;
+import org.jclouds.date.DateService;
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.util.DateService;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 

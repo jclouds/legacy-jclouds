@@ -27,8 +27,8 @@ import java.util.Date;
 
 import javax.inject.Inject;
 
+import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.util.DateService;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 

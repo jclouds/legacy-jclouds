@@ -33,8 +33,8 @@ import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
 import org.jclouds.azure.storage.blob.domain.ListableBlobProperties;
 import org.jclouds.azure.storage.blob.domain.internal.ListableBlobPropertiesImpl;
 import org.jclouds.azure.storage.blob.domain.internal.TreeSetListBlobsResponse;
+import org.jclouds.date.DateService;
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.util.DateService;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 

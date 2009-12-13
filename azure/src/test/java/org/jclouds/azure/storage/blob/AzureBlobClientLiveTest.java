@@ -43,12 +43,12 @@ import org.jclouds.azure.storage.blob.domain.ListableContainerProperties;
 import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
 import org.jclouds.azure.storage.domain.BoundedSortedSet;
 import org.jclouds.azure.storage.options.ListOptions;
+import org.jclouds.encryption.EncryptionService;
+import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.util.EncryptionService;
 import org.jclouds.util.Utils;
-import org.jclouds.util.internal.JCEEncryptionService;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 

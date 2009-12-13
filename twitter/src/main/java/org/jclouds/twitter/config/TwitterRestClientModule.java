@@ -30,6 +30,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.concurrent.internal.SyncProxy;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.ConfiguresRestClient;
@@ -38,7 +39,6 @@ import org.jclouds.twitter.Twitter;
 import org.jclouds.twitter.TwitterAsyncClient;
 import org.jclouds.twitter.TwitterClient;
 import org.jclouds.twitter.reference.TwitterConstants;
-import org.jclouds.util.EncryptionService;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;

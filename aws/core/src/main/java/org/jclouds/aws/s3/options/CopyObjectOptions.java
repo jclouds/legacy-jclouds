@@ -36,9 +36,9 @@ import javax.inject.Named;
 
 import org.jclouds.aws.s3.domain.CannedAccessPolicy;
 import org.jclouds.aws.s3.reference.S3Headers;
+import org.jclouds.date.DateService;
+import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.options.BaseHttpRequestOptions;
-import org.jclouds.util.DateService;
-import org.jclouds.util.internal.SimpleDateFormatDateService;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.LinkedHashMultimap;

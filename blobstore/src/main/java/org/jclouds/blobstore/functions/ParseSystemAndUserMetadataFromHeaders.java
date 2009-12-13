@@ -33,12 +33,12 @@ import javax.inject.Provider;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
+import org.jclouds.date.DateService;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.util.DateService;
-import org.jclouds.util.EncryptionService;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;

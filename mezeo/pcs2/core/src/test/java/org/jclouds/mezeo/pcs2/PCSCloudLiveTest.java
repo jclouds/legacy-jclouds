@@ -34,6 +34,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.logging.Logger;
@@ -41,7 +42,6 @@ import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.mezeo.pcs2.PCSCloud.Response;
 import org.jclouds.rest.RestClientFactory;
 import org.jclouds.rest.config.RestModule;
-import org.jclouds.util.EncryptionService;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 

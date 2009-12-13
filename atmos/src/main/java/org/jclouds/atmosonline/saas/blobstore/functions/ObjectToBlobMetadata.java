@@ -35,7 +35,7 @@ import org.jclouds.atmosonline.saas.functions.AtmosObjectName;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.ResourceType;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
-import org.jclouds.util.EncryptionService;
+import org.jclouds.encryption.EncryptionService;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;

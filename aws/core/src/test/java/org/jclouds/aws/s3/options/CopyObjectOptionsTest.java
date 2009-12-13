@@ -39,7 +39,7 @@ import java.util.Map;
 
 import org.jclouds.aws.s3.domain.CannedAccessPolicy;
 import org.jclouds.aws.s3.reference.S3Headers;
-import org.jclouds.util.internal.SimpleDateFormatDateService;
+import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

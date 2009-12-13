@@ -32,11 +32,11 @@ import org.jclouds.aws.handlers.ParseAWSErrorFromXmlContent;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
+import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.util.Jsr330;
-import org.jclouds.util.internal.SimpleDateFormatDateService;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;

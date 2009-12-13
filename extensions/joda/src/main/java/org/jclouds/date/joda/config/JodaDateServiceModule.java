@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2009 Global Cloud Specialists, Inc. <info@globalcloudspecialists.com>
  *
  * ====================================================================
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -21,48 +21,24 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.util;
+package org.jclouds.date.joda.config;
 
-import java.util.Date;
+import org.jclouds.date.DateService;
+import org.jclouds.date.joda.JodaDateService;
 
-import org.jclouds.util.internal.SimpleDateFormatDateService;
-
-import com.google.inject.ImplementedBy;
+import com.google.inject.AbstractModule;
 
 /**
- * Parses and formats the ISO8601, C, and RFC822 date formats found in XML responses and HTTP
- * response headers.
+ * Configures DateService of type {@link JodaDateService}
  * 
  * @author Adrian Cole
- * @author James Murty
+ * 
  */
-@ImplementedBy(SimpleDateFormatDateService.class)
-public interface DateService {
+public class JodaDateServiceModule extends AbstractModule {
 
-   Date fromSeconds(long seconds);
-
-   String cDateFormat(Date date);
-
-   String cDateFormat();
-
-   Date cDateParse(String toParse);
-
-   String rfc822DateFormat(Date date);
-
-   String rfc822DateFormat();
-
-   Date rfc822DateParse(String toParse);
-
-   String iso8601SecondsDateFormat(Date dateTime);
-
-   String iso8601SecondsDateFormat();
-
-   String iso8601DateFormat(Date date);
-
-   String iso8601DateFormat();
-
-   Date iso8601DateParse(String toParse);
-
-   Date iso8601SecondsDateParse(String toParse);
+   @Override
+   protected void configure() {
+      bind(DateService.class).to(JodaDateService.class);
+   }
 
 }

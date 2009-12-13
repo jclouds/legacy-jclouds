@@ -21,14 +21,16 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.util.internal;
+package org.jclouds.date.joda;
 
 import java.util.Date;
 import java.util.Locale;
 
+import javax.inject.Singleton;
+
 import net.jcip.annotations.ThreadSafe;
 
-import org.jclouds.util.DateService;
+import org.jclouds.date.DateService;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
@@ -40,6 +42,7 @@ import org.joda.time.format.DateTimeFormatter;
  * @author James Murty
  */
 @ThreadSafe
+@Singleton
 public class JodaDateService implements DateService {
 
    private static final DateTimeFormatter rfc822DateFormatter = DateTimeFormat.forPattern(

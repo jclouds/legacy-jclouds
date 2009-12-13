@@ -29,9 +29,9 @@ import java.io.InputStream;
 
 import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.internal.CopyObjectResult;
+import org.jclouds.date.DateService;
+import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.util.DateService;
-import org.jclouds.util.internal.SimpleDateFormatDateService;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 

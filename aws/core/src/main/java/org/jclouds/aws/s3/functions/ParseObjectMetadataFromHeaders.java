@@ -31,10 +31,10 @@ import org.jclouds.aws.s3.domain.MutableObjectMetadata;
 import org.jclouds.aws.s3.reference.S3Headers;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.util.EncryptionService;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;

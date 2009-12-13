@@ -32,10 +32,10 @@ import java.util.List;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
-import org.jclouds.util.EncryptionService;
 
 /**
  * Uses Basic Authentication to sign the request.

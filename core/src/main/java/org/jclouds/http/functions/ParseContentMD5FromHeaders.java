@@ -26,11 +26,11 @@ package org.jclouds.http.functions;
 import javax.annotation.Resource;
 
 import org.apache.commons.io.IOUtils;
+import org.jclouds.encryption.internal.Base64;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.util.internal.Base64;
 
 import com.google.common.base.Function;
 

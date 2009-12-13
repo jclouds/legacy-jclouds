@@ -1,6 +1,8 @@
-package org.jclouds.util.internal;
+package org.jclouds.encryption.bouncycastle;
 
-import org.jclouds.util.EncryptionServiceTest;
+import org.jclouds.encryption.EncryptionService;
+import org.jclouds.encryption.EncryptionServiceTest;
+import org.jclouds.encryption.bouncycastle.config.BouncyCastleEncryptionServiceModule;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -17,7 +19,8 @@ public class BouncyCastleEncryptionServiceTest extends EncryptionServiceTest {
 
    @BeforeTest
    protected void createEncryptionService() {
-      Injector i = Guice.createInjector();
-      encryptionService = i.getInstance(BouncyCastleEncryptionService.class);
+      Injector i = Guice.createInjector(new BouncyCastleEncryptionServiceModule());
+      encryptionService = i.getInstance(EncryptionService.class);
+      assert encryptionService instanceof BouncyCastleEncryptionService;
    }
 }

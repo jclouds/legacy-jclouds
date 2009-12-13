@@ -52,9 +52,9 @@ import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
 import org.jclouds.concurrent.FutureFunctionCallable;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.logging.Logger.LoggerFactory;
-import org.jclouds.util.EncryptionService;
 import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;

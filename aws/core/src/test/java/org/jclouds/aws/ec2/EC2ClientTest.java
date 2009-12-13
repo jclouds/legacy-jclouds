@@ -49,6 +49,7 @@ import org.jclouds.aws.ec2.xml.KeyPairResponseHandler;
 import org.jclouds.aws.ec2.xml.RunInstancesResponseHandler;
 import org.jclouds.aws.ec2.xml.TerminateInstancesResponseHandler;
 import org.jclouds.aws.reference.AWSConstants;
+import org.jclouds.date.TimeStamp;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReturnStringIf200;
 import org.jclouds.http.functions.ReturnVoidIf2xx;
@@ -58,7 +59,6 @@ import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Jsr330;
-import org.jclouds.util.TimeStamp;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 

@@ -41,9 +41,9 @@ import org.jclouds.aws.s3.reference.S3Headers;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
+import org.jclouds.encryption.EncryptionService;
+import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.util.EncryptionService;
-import org.jclouds.util.internal.JCEEncryptionService;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 

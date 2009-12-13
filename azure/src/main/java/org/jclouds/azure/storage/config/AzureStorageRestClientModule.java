@@ -31,14 +31,14 @@ import javax.inject.Named;
 
 import org.jclouds.azure.storage.handlers.ParseAzureStorageErrorFromXmlContent;
 import org.jclouds.concurrent.ExpirableSupplier;
+import org.jclouds.date.DateService;
+import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.util.DateService;
-import org.jclouds.util.TimeStamp;
 
 import com.google.common.base.Supplier;
 import com.google.inject.AbstractModule;

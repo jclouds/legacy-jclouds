@@ -29,10 +29,10 @@ import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.util.List;
 
+import org.jclouds.date.DateService;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rackspace.cloudservers.domain.Image;
 import org.jclouds.rackspace.cloudservers.domain.ImageStatus;
-import org.jclouds.util.DateService;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;

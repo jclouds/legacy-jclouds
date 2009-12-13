@@ -26,8 +26,8 @@ package org.jclouds.blobstore.functions.impl;
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.functions.GenerateMD5;
-import org.jclouds.util.EncryptionService;
-import org.jclouds.util.internal.JCEEncryptionService;
+import org.jclouds.encryption.EncryptionService;
+import org.jclouds.encryption.internal.JCEEncryptionService;
 
 /**
  * 

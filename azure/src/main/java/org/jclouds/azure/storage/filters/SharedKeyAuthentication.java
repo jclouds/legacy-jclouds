@@ -37,6 +37,8 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.apache.commons.io.IOUtils;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
+import org.jclouds.date.TimeStamp;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
@@ -44,8 +46,6 @@ import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
 import org.jclouds.logging.Logger;
-import org.jclouds.util.EncryptionService;
-import org.jclouds.util.TimeStamp;
 
 import com.google.common.annotations.VisibleForTesting;
 

@@ -32,10 +32,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.jclouds.encryption.internal.Base64;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rackspace.cloudservers.domain.Addresses;
 import org.jclouds.rest.binders.BindToJsonEntity;
-import org.jclouds.util.internal.Base64;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.internal.Lists;

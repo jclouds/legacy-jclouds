@@ -29,12 +29,12 @@ import java.util.Date;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
+import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.domain.Link;
 import org.jclouds.rest.domain.NamedLink;
 import org.jclouds.rest.util.Utils;
-import org.jclouds.util.DateService;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
 import org.jclouds.vcloud.domain.internal.TaskImpl;

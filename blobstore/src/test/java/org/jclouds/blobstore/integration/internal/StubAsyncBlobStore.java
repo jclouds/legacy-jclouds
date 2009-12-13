@@ -78,13 +78,13 @@ import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.GetDirectoryStrategy;
 import org.jclouds.blobstore.strategy.IsDirectoryStrategy;
 import org.jclouds.blobstore.strategy.MkdirStrategy;
+import org.jclouds.date.DateService;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.options.HttpRequestOptions;
-import org.jclouds.util.DateService;
-import org.jclouds.util.EncryptionService;
 import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;

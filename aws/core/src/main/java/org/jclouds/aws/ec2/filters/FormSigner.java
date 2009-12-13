@@ -48,6 +48,8 @@ import javax.ws.rs.core.HttpHeaders;
 import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.reference.AWSConstants;
 import org.jclouds.aws.util.RequestSigner;
+import org.jclouds.date.TimeStamp;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
@@ -57,8 +59,6 @@ import org.jclouds.http.internal.SignatureWire;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.util.EncryptionService;
-import org.jclouds.util.TimeStamp;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;

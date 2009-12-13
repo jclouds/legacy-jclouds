@@ -37,11 +37,11 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
+import org.jclouds.date.internal.SimpleDateFormatDateService;
+import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.util.internal.JCEEncryptionService;
-import org.jclouds.util.internal.SimpleDateFormatDateService;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 

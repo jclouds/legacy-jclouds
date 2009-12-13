@@ -39,11 +39,11 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.concurrent.ExpirableSupplier;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
-import org.jclouds.util.EncryptionService;
 import org.jclouds.util.Utils;
 import org.jclouds.vcloud.VCloudDiscovery;
 import org.jclouds.vcloud.VCloudLogin;

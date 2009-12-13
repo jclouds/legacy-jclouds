@@ -1,4 +1,4 @@
-package org.jclouds.util.internal;
+package org.jclouds.encryption.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -10,7 +10,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 
-import org.jclouds.util.EncryptionService;
+import org.jclouds.encryption.EncryptionService;
 
 /**
  * 

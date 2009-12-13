@@ -30,11 +30,11 @@ import javax.inject.Named;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.blobstore.binders.BindBlobToEntityAndUserMetadataToHeadersWithPrefix;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.ObjectToBlob;
 import org.jclouds.rackspace.cloudfiles.domain.CFObject;
 import org.jclouds.rackspace.cloudfiles.reference.CloudFilesConstants;
-import org.jclouds.util.EncryptionService;
 
 public class BindCFObjectToEntity extends BindBlobToEntityAndUserMetadataToHeadersWithPrefix {
    private final ObjectToBlob object2Blob;

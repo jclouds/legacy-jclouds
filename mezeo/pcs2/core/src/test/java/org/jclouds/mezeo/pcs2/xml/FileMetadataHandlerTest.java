@@ -28,10 +28,10 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.net.URI;
 
+import org.jclouds.date.DateService;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.mezeo.pcs2.domain.FileInfoWithMetadata;
 import org.jclouds.mezeo.pcs2.domain.internal.FileInfoWithMetadataImpl;
-import org.jclouds.util.DateService;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 

@@ -28,7 +28,7 @@ import java.util.Date;
 import javax.inject.Inject;
 
 import org.jclouds.blobstore.options.GetOptions;
-import org.jclouds.util.DateService;
+import org.jclouds.date.DateService;
 
 import com.google.common.base.Function;
 

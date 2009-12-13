@@ -31,12 +31,12 @@ import org.jclouds.azure.storage.handlers.ParseAzureStorageErrorFromXmlContent;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
+import org.jclouds.encryption.internal.Base64;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.handlers.RedirectionRetryHandler;
 import org.jclouds.util.Jsr330;
-import org.jclouds.util.internal.Base64;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;

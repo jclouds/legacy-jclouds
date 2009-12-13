@@ -34,8 +34,8 @@ import org.jclouds.azure.storage.blob.blobstore.functions.AzureBlobToBlob;
 import org.jclouds.azure.storage.blob.domain.AzureBlob;
 import org.jclouds.azure.storage.blob.reference.AzureBlobConstants;
 import org.jclouds.blobstore.binders.BindBlobToEntityAndUserMetadataToHeadersWithPrefix;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.util.EncryptionService;
 
 public class BindAzureBlobToEntity extends BindBlobToEntityAndUserMetadataToHeadersWithPrefix {
 

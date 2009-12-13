@@ -45,8 +45,8 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ResourceMetadata;
 import org.jclouds.blobstore.util.BlobStoreUtils;
+import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.HttpResponseException;
-import org.jclouds.util.internal.JCEEncryptionService;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 

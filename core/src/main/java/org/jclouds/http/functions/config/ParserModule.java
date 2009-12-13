@@ -35,9 +35,9 @@ import javax.inject.Singleton;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
-import org.jclouds.util.DateService;
 import org.xml.sax.XMLReader;
 
 import com.google.common.collect.Sets;

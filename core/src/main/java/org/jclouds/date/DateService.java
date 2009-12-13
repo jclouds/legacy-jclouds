@@ -21,29 +21,48 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.util;
+package org.jclouds.date;
 
-import org.jclouds.util.internal.JodaDateService;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
+import java.util.Date;
 
-/* 
- * TODO: Scrap any non-DateService references (eg Joda & Amazon) if/when
- * we confirm that the DateService is fast enough.
- */
+import org.jclouds.date.internal.SimpleDateFormatDateService;
+
+import com.google.inject.ImplementedBy;
 
 /**
- * Compares performance of date operations
+ * Parses and formats the ISO8601, C, and RFC822 date formats found in XML responses and HTTP
+ * response headers.
  * 
  * @author Adrian Cole
  * @author James Murty
  */
-@Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "core.JodaDateServiceTest")
-public class JodaDateServiceTest extends DateServiceTest {
-   @Override
-   @BeforeTest
-   protected void createDateService() {
-      dateService = new JodaDateService();
-   }
+@ImplementedBy(SimpleDateFormatDateService.class)
+public interface DateService {
+
+   Date fromSeconds(long seconds);
+
+   String cDateFormat(Date date);
+
+   String cDateFormat();
+
+   Date cDateParse(String toParse);
+
+   String rfc822DateFormat(Date date);
+
+   String rfc822DateFormat();
+
+   Date rfc822DateParse(String toParse);
+
+   String iso8601SecondsDateFormat(Date dateTime);
+
+   String iso8601SecondsDateFormat();
+
+   String iso8601DateFormat(Date date);
+
+   String iso8601DateFormat();
+
+   Date iso8601DateParse(String toParse);
+
+   Date iso8601SecondsDateParse(String toParse);
 
 }

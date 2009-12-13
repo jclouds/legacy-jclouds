@@ -5,7 +5,7 @@
 //  http://iharder.sourceforge.net/current/java/base64/
 //
 
-package org.jclouds.util.internal;
+package org.jclouds.encryption.internal;
 
 
 /**
