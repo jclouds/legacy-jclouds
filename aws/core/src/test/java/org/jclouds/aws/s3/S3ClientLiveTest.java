@@ -43,7 +43,6 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.Date;
@@ -104,7 +103,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
          String key = "hello";
          S3Object object = context.getApi().newS3Object();
          object.getMetadata().setKey(key);
-         object.setData(TEST_STRING);
+         object.setPayload(TEST_STRING);
          context.getApi().putObject(containerName, object,
 
          withAcl(CannedAccessPolicy.PUBLIC_READ));
@@ -149,7 +148,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
       try {
          S3Object object = context.getApi().newS3Object();
          object.getMetadata().setKey(publicReadWriteObjectKey);
-         object.setData("");
+         object.setPayload("");
          // Public Read-Write object
          context.getApi().putObject(containerName, object,
                   new PutObjectOptions().withAcl(CannedAccessPolicy.PUBLIC_READ_WRITE));
@@ -252,7 +251,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
       try {
          S3Object object = context.getApi().newS3Object();
          object.getMetadata().setKey(publicReadObjectKey);
-         object.setData("");
+         object.setPayload("");
          context.getApi().putObject(containerName, object,
                   new PutObjectOptions().withAcl(CannedAccessPolicy.PUBLIC_READ));
 
@@ -284,7 +283,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
       S3Object sourceObject = context.getApi().newS3Object();
       sourceObject.getMetadata().setKey(key);
       sourceObject.getMetadata().setContentType("text/xml");
-      sourceObject.setData(TEST_STRING);
+      sourceObject.setPayload(TEST_STRING);
       return context.getApi().putObject(sourceContainer, sourceObject);
    }
 
@@ -293,7 +292,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
       assertConsistencyAwareContainerSize(sourceContainer, 1);
       S3Object newObject = context.getApi().getObject(sourceContainer, key);
       assert newObject != null;
-      assertEquals(Utils.toStringAndClose((InputStream) newObject.getData()), TEST_STRING);
+      assertEquals(Utils.toStringAndClose(newObject.getContent()), TEST_STRING);
       return newObject;
    }
 
@@ -302,7 +301,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
 
       S3Object object = context.getApi().newS3Object();
       object.getMetadata().setKey(key);
-      object.setData(TEST_STRING);
+      object.setPayload(TEST_STRING);
       object.getMetadata().setCacheControl("no-cache");
       object.getMetadata().setContentDisposition("attachment; filename=hello.txt");
       String containerName = getContainerName();
@@ -325,7 +324,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
 
       S3Object object = context.getApi().newS3Object();
       object.getMetadata().setKey(key);
-      object.setData(TEST_STRING);
+      object.setPayload(TEST_STRING);
       object.getMetadata().setContentEncoding("x-compress");
       String containerName = getContainerName();
       try {
@@ -619,7 +618,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
       for (char letter = 'a'; letter <= 'z'; letter++) {
          S3Object blob = context.getApi().newS3Object();
          blob.getMetadata().setKey(letter + "");
-         blob.setData(letter + "content");
+         blob.setPayload(letter + "content");
          context.getApi().putObject(containerName, blob);
       }
    }
@@ -694,7 +693,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
       for (int i = 0; i < 15; i++) {
          S3Object blob = context.getApi().newS3Object();
          blob.getMetadata().setKey(i + "");
-         blob.setData(i + "content");
+         blob.setPayload(i + "content");
          context.getApi().putObject(containerName, blob);
       }
    }
@@ -703,7 +702,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
       for (int i = 0; i < 10; i++) {
          S3Object blob = context.getApi().newS3Object();
          blob.getMetadata().setKey(prefix + "/" + i);
-         blob.setData(i + "content");
+         blob.setPayload(i + "content");
          context.getApi().putObject(containerName, blob);
       }
    }

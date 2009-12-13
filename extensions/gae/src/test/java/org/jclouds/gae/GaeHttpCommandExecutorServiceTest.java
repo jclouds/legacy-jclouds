@@ -45,6 +45,7 @@ import javax.ws.rs.core.HttpHeaders;
 import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payloads;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.internal.HttpWire;
@@ -145,28 +146,28 @@ public class GaeHttpCommandExecutorServiceTest {
    @Test
    void testConvertRequestStringContent() throws IOException {
       HttpRequest request = new HttpRequest(HttpMethod.GET, endPoint);
-      request.setEntity("hoot!");
+      request.setPayload("hoot!");
       testHoot(request);
    }
 
    @Test
    void testConvertRequestInputStreamContent() throws IOException {
       HttpRequest request = new HttpRequest(HttpMethod.GET, endPoint);
-      request.setEntity(IOUtils.toInputStream("hoot!"));
+      request.setPayload(IOUtils.toInputStream("hoot!"));
       testHoot(request);
    }
 
    @Test
    void testConvertRequestBytesContent() throws IOException {
       HttpRequest request = new HttpRequest(HttpMethod.GET, endPoint);
-      request.setEntity("hoot!".getBytes());
+      request.setPayload("hoot!".getBytes());
       testHoot(request);
    }
 
    @Test(expectedExceptions = UnsupportedOperationException.class)
    void testConvertRequestBadContent() throws IOException {
       HttpRequest request = new HttpRequest(HttpMethod.GET, endPoint);
-      request.setEntity(new Date());
+      request.setPayload(Payloads.newPayload(new Date()));
       client.convert(request);
    }
 
@@ -177,7 +178,7 @@ public class GaeHttpCommandExecutorServiceTest {
       File file = new File(basedir, "target/testfiles/hoot");
       file.getParentFile().mkdirs();
       IOUtils.write("hoot!", new FileOutputStream(file));
-      request.setEntity(file);
+      request.setPayload(file);
       testHoot(request);
    }
 

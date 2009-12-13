@@ -45,7 +45,7 @@ public class BlobToObject implements Function<Blob, AtmosObject> {
 
    public AtmosObject apply(Blob from) {
       AtmosObject object = blobMd2Object.apply(from.getMetadata());
-      object.setData(from.getData());
+      object.setPayload(from.getPayload());
       object.setAllHeaders(from.getAllHeaders());
       return object;
    }

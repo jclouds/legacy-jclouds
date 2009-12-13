@@ -36,7 +36,7 @@ import org.jclouds.blobstore.domain.ResourceType;
 import com.google.inject.internal.Nullable;
 
 /**
- * Identity of the object
+ * Idpayload of the object
  * 
  * @author Adrian Cole
  */

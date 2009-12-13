@@ -76,7 +76,7 @@ public class RetryOnNotFoundGetAllBlobsStrategyTest {
       Future<Blob> futureObject = createMock(Future.class);
       Blob object = blobProvider.create(null);
       object.getMetadata().setName("key");
-      object.setData("goo");
+      object.setPayload("goo");
       expect(futureObject.get(map.requestTimeoutMilliseconds, TimeUnit.MILLISECONDS)).andThrow(
                new KeyNotFoundException());
       context.getInstance(AsyncBlobStore.class).putBlob("container", object).get();
@@ -86,7 +86,7 @@ public class RetryOnNotFoundGetAllBlobsStrategyTest {
       map.ifNotFoundRetryOtherwiseAddToSet("container", "key", futureObject, objects);
       // should have retried once
       assert System.currentTimeMillis() >= time + map.requestRetryMilliseconds;
-      assertEquals(IOUtils.toString((InputStream) objects.iterator().next().getData()), "goo");
+      assertEquals(IOUtils.toString((InputStream) objects.iterator().next().getContent()), "goo");
       assert !objects.contains(null);
    }
 

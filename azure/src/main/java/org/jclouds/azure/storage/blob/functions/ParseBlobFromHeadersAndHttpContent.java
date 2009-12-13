@@ -66,7 +66,7 @@ public class ParseBlobFromHeadersAndHttpContent implements Function<HttpResponse
    public AzureBlob apply(HttpResponse from) {
       AzureBlob object = objectProvider.create(metadataParser.apply(from));
       addAllHeadersTo(from, object);
-      object.setData(from.getContent());
+      object.setPayload(from.getContent());
       attemptToParseSizeAndRangeFromHeaders(from, object);
       return object;
    }

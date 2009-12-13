@@ -61,7 +61,7 @@ public interface HttpRequestOptions {
     */
    Multimap<String, String> buildMatrixParameters();
 
-   String buildStringEntity();
+   String buildStringPayload();
 
    String buildPathSuffix();
 

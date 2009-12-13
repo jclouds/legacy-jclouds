@@ -27,7 +27,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Method;
 
 import org.apache.commons.io.IOUtils;
@@ -55,6 +54,7 @@ public abstract class RestClientTest<T> {
    protected abstract Module createModule();
 
    protected abstract void checkFilters(GeneratedHttpRequest<T> httpMethod);
+
    protected abstract TypeLiteral<RestAnnotationProcessor<T>> createTypeLiteral();
 
    @BeforeClass
@@ -63,18 +63,16 @@ public abstract class RestClientTest<T> {
       injector = Guice.createInjector(createModule(), new RestModule(), new ExecutorServiceModule(
                new WithinThreadExecutorService()), new JavaUrlHttpCommandExecutorServiceModule());
 
-      processor = injector.getInstance(Key
-               .get(createTypeLiteral()));
+      processor = injector.getInstance(Key.get(createTypeLiteral()));
    }
 
-   protected void assertEntityEquals(GeneratedHttpRequest<T> httpMethod, String toMatch)
+   protected void assertPayloadEquals(GeneratedHttpRequest<T> httpMethod, String toMatch)
             throws IOException {
-      if (httpMethod.getEntity() == null) {
+      if (httpMethod.getPayload() == null) {
          assertNull(toMatch);
       } else {
-         String entity = (httpMethod.getEntity() instanceof String) ? httpMethod.getEntity()
-                  .toString() : IOUtils.toString((InputStream) httpMethod.getEntity());
-         assertEquals(entity, toMatch);
+         String payload = IOUtils.toString(httpMethod.getPayload().getContent());
+         assertEquals(payload, toMatch);
       }
    }
 
@@ -82,8 +80,7 @@ public abstract class RestClientTest<T> {
       assertEquals(HttpUtils.sortAndConcatHeadersIntoString(httpMethod.getHeaders()), toMatch);
    }
 
-   protected void assertRequestLineEquals(GeneratedHttpRequest<T> httpMethod,
-            String toMatch) {
+   protected void assertRequestLineEquals(GeneratedHttpRequest<T> httpMethod, String toMatch) {
       assertEquals(httpMethod.getRequestLine(), toMatch);
    }
 

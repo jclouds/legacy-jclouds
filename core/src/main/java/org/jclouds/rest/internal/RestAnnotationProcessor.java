@@ -84,7 +84,7 @@ import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.HostPrefixParam;
 import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.MapEntityParam;
+import org.jclouds.rest.annotations.MapPayloadParam;
 import org.jclouds.rest.annotations.MatrixParams;
 import org.jclouds.rest.annotations.OverrideRequestFilters;
 import org.jclouds.rest.annotations.ParamParser;
@@ -132,7 +132,7 @@ public class RestAnnotationProcessor<T> {
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToFormParamAnnotations = createMethodToIndexOfParamToAnnotation(FormParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToQueryParamAnnotations = createMethodToIndexOfParamToAnnotation(QueryParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToPathParamAnnotations = createMethodToIndexOfParamToAnnotation(PathParam.class);
-   private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToPostParamAnnotations = createMethodToIndexOfParamToAnnotation(MapEntityParam.class);
+   private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToPostParamAnnotations = createMethodToIndexOfParamToAnnotation(MapPayloadParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToParamParserAnnotations = createMethodToIndexOfParamToAnnotation(ParamParser.class);
    private final Map<MethodKey, Method> delegationMap = Maps.newHashMap();
 
@@ -329,7 +329,7 @@ public class RestAnnotationProcessor<T> {
 
       Multimap<String, String> headers = buildHeaders(tokenValues.entries(), method, args);
 
-      String stringEntity = null;
+      String stringPayload = null;
       HttpRequestOptions options = findOptionsIn(method, args);
       if (options != null) {
          injector.injectMembers(options);// TODO test case
@@ -351,7 +351,7 @@ public class RestAnnotationProcessor<T> {
          if (pathSuffix != null) {
             builder.path(pathSuffix);
          }
-         stringEntity = options.buildStringEntity();
+         stringPayload = options.buildStringPayload();
       }
 
       if (queryParams.size() > 0) {
@@ -375,13 +375,13 @@ public class RestAnnotationProcessor<T> {
       if (formParams.size() > 0) {
          if (headers.get(HttpHeaders.CONTENT_TYPE) != null)
             headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);
-         request.setEntity(makeQueryLine(formParams, null, skips));
+         request.setPayload(makeQueryLine(formParams, null, skips));
       }
 
-      if (stringEntity != null) {
-         request.setEntity(stringEntity);
+      if (stringPayload != null) {
+         request.setPayload(stringPayload);
          if (headers.get(HttpHeaders.CONTENT_LENGTH) != null)
-            headers.put(HttpHeaders.CONTENT_LENGTH, stringEntity.getBytes().length + "");
+            headers.put(HttpHeaders.CONTENT_LENGTH, stringPayload.getBytes().length + "");
          if (headers.get(HttpHeaders.CONTENT_TYPE) != null)
             headers.put(HttpHeaders.CONTENT_TYPE, "application/unknown");
       }
@@ -669,7 +669,7 @@ public class RestAnnotationProcessor<T> {
       return null;
    }
 
-   public org.jclouds.rest.MapBinder getMapEntityBinderOrNull(Method method, Object... args) {
+   public org.jclouds.rest.MapBinder getMapPayloadBinderOrNull(Method method, Object... args) {
       if (args != null) {
          for (Object arg : args) {
             if (arg instanceof Object[]) {
@@ -737,11 +737,11 @@ public class RestAnnotationProcessor<T> {
    }
 
    public void decorateRequest(GeneratedHttpRequest<T> request) {
-      org.jclouds.rest.MapBinder mapBinder = getMapEntityBinderOrNull(request.getJavaMethod(),
+      org.jclouds.rest.MapBinder mapBinder = getMapPayloadBinderOrNull(request.getJavaMethod(),
                request.getArgs());
       Map<String, String> mapParams = buildPostParams(request.getJavaMethod(), request.getArgs());
-      // MapEntityBinder is only useful if there are parameters. We guard here in case the
-      // MapEntityBinder is also an EntityBinder. If so, it can be used with or without
+      // MapPayloadBinder is only useful if there are parameters. We guard here in case the
+      // MapPayloadBinder is also an PayloadBinder. If so, it can be used with or without
       // parameters.
       if (mapBinder != null) {
          mapBinder.bindToRequest(request, mapParams);
@@ -756,8 +756,8 @@ public class RestAnnotationProcessor<T> {
                   }
                }).entrySet()) {
          boolean shouldBreak = false;
-         BinderParam entityAnnotation = (BinderParam) entry.getValue().iterator().next();
-         Binder binder = injector.getInstance(entityAnnotation.value());
+         BinderParam payloadAnnotation = (BinderParam) entry.getValue().iterator().next();
+         Binder binder = injector.getInstance(payloadAnnotation.value());
          if (request.getArgs().length != 0) {
             Object input;
             Class<?> parameterType = request.getJavaMethod().getParameterTypes()[entry.getKey()];
@@ -778,8 +778,8 @@ public class RestAnnotationProcessor<T> {
             } else {
                input = request.getArgs()[entry.getKey()];
                if (input.getClass().isArray()) {
-                  Object[] entityArray = (Object[]) input;
-                  input = entityArray.length > 0 ? entityArray[0] : null;
+                  Object[] payloadArray = (Object[]) input;
+                  input = payloadArray.length > 0 ? payloadArray[0] : null;
                }
             }
             if (input != null) {
@@ -789,27 +789,29 @@ public class RestAnnotationProcessor<T> {
                break OUTER;
          }
       }
-      if (request.getMethod().equals("PUT") && request.getEntity() == null) {
+      if (request.getMethod().equals("PUT") && request.getPayload() == null) {
          request.getHeaders().replaceValues(HttpHeaders.CONTENT_LENGTH,
                   Collections.singletonList(0 + ""));
       }
+      if (request.getPayload() != null)
+         assert request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH) != null : "no content length";
    }
 
    protected Map<Integer, Set<Annotation>> indexWithOnlyOneAnnotation(Method method,
             String description, Map<Method, Map<Integer, Set<Annotation>>> toRefine) {
-      Map<Integer, Set<Annotation>> indexToEntityAnnotation = Maps.filterValues(toRefine
+      Map<Integer, Set<Annotation>> indexToPayloadAnnotation = Maps.filterValues(toRefine
                .get(method), new Predicate<Set<Annotation>>() {
          public boolean apply(Set<Annotation> input) {
             return input.size() == 1;
          }
       });
 
-      if (indexToEntityAnnotation.size() > 1) {
+      if (indexToPayloadAnnotation.size() > 1) {
          throw new IllegalStateException(String.format(
                   "You must not specify more than one %s annotation on: %s; found %s", description,
-                  method.toString(), indexToEntityAnnotation));
+                  method.toString(), indexToPayloadAnnotation));
       }
-      return indexToEntityAnnotation;
+      return indexToPayloadAnnotation;
    }
 
    private HttpRequestOptions findOptionsIn(Method method, Object... args) {
@@ -1069,7 +1071,7 @@ public class RestAnnotationProcessor<T> {
       for (Entry<Integer, Set<Annotation>> entry : indexToPathParam.entrySet()) {
          for (Annotation key : entry.getValue()) {
             Set<Annotation> extractors = indexToParamExtractor.get(entry.getKey());
-            String paramKey = ((MapEntityParam) key).value();
+            String paramKey = ((MapPayloadParam) key).value();
             String paramValue;
             if (extractors != null && extractors.size() > 0) {
                ParamParser extractor = (ParamParser) extractors.iterator().next();

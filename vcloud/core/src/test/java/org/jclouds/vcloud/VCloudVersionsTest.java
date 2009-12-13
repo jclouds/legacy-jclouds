@@ -59,7 +59,7 @@ public class VCloudVersionsTest extends RestClientTest<VCloudVersions> {
 
       assertEquals(httpMethod.getRequestLine(), "GET http://localhost:8080/versions HTTP/1.1");
       assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT + ": application/vnd.vmware.vcloud.vcloud+xml\n");
-      assertEntityEquals(httpMethod, null);
+      assertPayloadEquals(httpMethod, null);
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, SupportedVersionsHandler.class);

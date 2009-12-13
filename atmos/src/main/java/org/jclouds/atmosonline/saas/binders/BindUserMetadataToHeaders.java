@@ -35,8 +35,8 @@ import org.jclouds.rest.Binder;
 
 public class BindUserMetadataToHeaders implements Binder {
 
-   public void bindToRequest(HttpRequest request, Object entity) {
-      UserMetadata md = (UserMetadata) checkNotNull(entity, "entity");
+   public void bindToRequest(HttpRequest request, Object payload) {
+      UserMetadata md = (UserMetadata) checkNotNull(payload, "payload");
       if (md.getMetadata().size() > 0) {
          String header = join(md.getMetadata());
          request.getHeaders().put("x-emc-meta", header);

@@ -40,9 +40,9 @@ import com.google.common.collect.Collections2;
  * An Access Control List (ACL) describes the access control settings for a bucket or object in S3.
  * 
  * ACL settings comprise a set of {@link Grant}s, each of which specifies a {@link Permission} that
- * has been granted to a specific {@link Grantee}. If an entity tries to access or modify an item in
+ * has been granted to a specific {@link Grantee}. If an payload tries to access or modify an item in
  * S3, the operation will be denied unless the item has ACL settings that explicitly permit that
- * entity to perform that action.
+ * payload to perform that action.
  * 
  * 
  * @author James Murty

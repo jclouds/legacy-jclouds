@@ -66,7 +66,7 @@ public class ParseBlobFromHeadersAndHttpContent implements Function<HttpResponse
       MutableBlobMetadata metadata = metadataParser.apply(from);
       Blob object = blobFactory.create(metadata);
       addAllHeadersTo(from, object);
-      object.setData(from.getContent());
+      object.setPayload(from.getContent());
       assert object.getMetadata() == metadata;
       attemptToParseSizeAndRangeFromHeaders(from, object);
       return object;

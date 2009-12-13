@@ -26,7 +26,7 @@ package org.jclouds.vcloud.terremark.options;
 import java.util.Map;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.vcloud.terremark.binders.BindAddInternetServiceToXmlEntity;
+import org.jclouds.vcloud.terremark.binders.BindAddInternetServiceToXmlPayload;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
@@ -36,7 +36,7 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  * 
  */
-public class AddInternetServiceOptions extends BindAddInternetServiceToXmlEntity {
+public class AddInternetServiceOptions extends BindAddInternetServiceToXmlPayload {
 
    @VisibleForTesting
    String description = null;

@@ -91,6 +91,8 @@ public class GeneratedHttpRequest<T> extends HttpRequest {
    }
 
    public void addFormParam(String name, String... values) {
-      this.setEntity(processor.addFormParam(getEntity().toString(), name, values));
+      this
+               .setPayload(processor.addFormParam(getPayload().getRawContent().toString(), name,
+                        values));
    }
 }

@@ -44,8 +44,8 @@ public abstract class BaseJCloudsPerformanceLiveTest extends BasePerformanceLive
    // object.setKey(id + "");
    // //object.setContentType("text/plain");
    // object.setContentType("application/octetstream");
-   // //object.setData("this is a test");
-   // object.setData(test);
+   // //object.setPayload("this is a test");
+   // object.setPayload(test);
    // return context.getApi()Provider.getObject(s3Bucket,
    // object.getKey()).get(120,TimeUnit.SECONDS) !=
    // S3Object.NOT_FOUND;
@@ -57,7 +57,7 @@ public abstract class BaseJCloudsPerformanceLiveTest extends BasePerformanceLive
             throws Exception {
       S3Object object = newObject(key);
       object.getMetadata().setContentType(contentType);
-      object.setData(data);
+      object.setPayload(data);
       return context.getApi().putObject(bucket, object) != null;
    }
 
@@ -66,7 +66,7 @@ public abstract class BaseJCloudsPerformanceLiveTest extends BasePerformanceLive
             throws Exception {
       S3Object object = newObject(key);
       object.getMetadata().setContentType(contentType);
-      object.setData(data);
+      object.setPayload(data);
       return context.getApi().putObject(bucket, object) != null;
    }
 
@@ -81,7 +81,7 @@ public abstract class BaseJCloudsPerformanceLiveTest extends BasePerformanceLive
             throws Exception {
       S3Object object = newObject(key);
       object.getMetadata().setContentType(contentType);
-      object.setData(data);
+      object.setPayload(data);
       object.setContentLength(new Long(data.available()));
       return context.getApi().putObject(bucket, object) != null;
    }
@@ -91,7 +91,7 @@ public abstract class BaseJCloudsPerformanceLiveTest extends BasePerformanceLive
             throws Exception {
       S3Object object = newObject(key);
       object.getMetadata().setContentType(contentType);
-      object.setData(data);
+      object.setPayload(data);
       return context.getApi().putObject(bucket, object) != null;
    }
 }

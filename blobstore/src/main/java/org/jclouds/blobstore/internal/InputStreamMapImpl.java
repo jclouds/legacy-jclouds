@@ -44,6 +44,12 @@ import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.blobstore.strategy.CountListStrategy;
 import org.jclouds.blobstore.strategy.GetBlobsInListStrategy;
 import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
+import org.jclouds.http.Payload;
+import org.jclouds.http.Payloads;
+import org.jclouds.http.payloads.ByteArrayPayload;
+import org.jclouds.http.payloads.FilePayload;
+import org.jclouds.http.payloads.InputStreamPayload;
+import org.jclouds.http.payloads.StringPayload;
 import org.jclouds.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -81,7 +87,7 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
       String realKey = prefixer.apply(o.toString());
       try {
          return (InputStream) (connection.getBlob(containerName, realKey).get(
-                  requestTimeoutMilliseconds, TimeUnit.MILLISECONDS)).getData();
+                  requestTimeoutMilliseconds, TimeUnit.MILLISECONDS)).getContent();
       } catch (KeyNotFoundException e) {
          return null;
       } catch (Exception e) {
@@ -129,7 +135,7 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
       return Collections2.transform(getAllBlobs.execute(containerName, options),
                new Function<Blob, InputStream>() {
                   public InputStream apply(Blob from) {
-                     return (InputStream) from.getData();
+                     return (InputStream) from.getContent();
                   }
                });
    }
@@ -143,7 +149,7 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
       Set<Map.Entry<String, InputStream>> entrySet = new HashSet<Map.Entry<String, InputStream>>();
       for (Blob object : this.getAllBlobs.execute(containerName, options)) {
          entrySet.add(new Entry(pathStripper.apply(object.getMetadata().getName()),
-                  (InputStream) object.getData()));
+                  (InputStream) object.getContent()));
       }
       return entrySet;
    }
@@ -226,7 +232,7 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
          for (Map.Entry<? extends String, ? extends Object> entry : map.entrySet()) {
             Blob object = connection.newBlob();
             object.getMetadata().setName(prefixer.apply(entry.getKey()));
-            object.setData(entry.getValue());
+            object.setPayload(Payloads.newPayload(entry.getValue()));
             object.generateMD5();
             puts.add(connection.putBlob(containerName, object));
             // / ParamExtractor Funcion<?,String>
@@ -248,7 +254,7 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
     * @see #putInternal(String, Object)
     */
    public InputStream putString(String key, String value) {
-      return putInternal(key, value);
+      return putInternal(key, new StringPayload(value));
    }
 
    /**
@@ -257,7 +263,7 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
     * @see #putInternal(String, Object)
     */
    public InputStream putFile(String key, File value) {
-      return putInternal(key, value);
+      return putInternal(key, new FilePayload(value));
    }
 
    /**
@@ -266,7 +272,7 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
     * @see #putInternal(String, Object)
     */
    public InputStream putBytes(String key, byte[] value) {
-      return putInternal(key, value);
+      return putInternal(key, new ByteArrayPayload(value));
    }
 
    /**
@@ -275,7 +281,7 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
     * @see #putInternal(String, Object)
     */
    public InputStream put(String key, InputStream value) {
-      return putInternal(key, value);
+      return putInternal(key, new InputStreamPayload(value));
    }
 
    /**
@@ -285,12 +291,12 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
     * @see S3Client#put(String, Blob)
     */
    @VisibleForTesting
-   InputStream putInternal(String s, Object o) {
+   InputStream putInternal(String s, Payload payload) {
       Blob object = connection.newBlob();
       object.getMetadata().setName(prefixer.apply(s));
       try {
          InputStream returnVal = containsKey(s) ? get(s) : null;
-         object.setData(o);
+         object.setPayload(payload);
          object.generateMD5();
          connection.putBlob(containerName, object).get(requestTimeoutMilliseconds,
                   TimeUnit.MILLISECONDS);

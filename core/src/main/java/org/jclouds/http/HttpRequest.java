@@ -26,6 +26,8 @@ package org.jclouds.http;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.io.File;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
 
@@ -48,7 +50,7 @@ public class HttpRequest extends HttpMessage implements Request<URI> {
 
    private String method;
    private URI endpoint;
-   private Object entity;
+   private Payload payload;
 
    /**
     * 
@@ -84,10 +86,10 @@ public class HttpRequest extends HttpMessage implements Request<URI> {
     *           If the request is HEAD, this may change to GET due to redirects
     */
    protected HttpRequest(String method, URI endPoint, Multimap<String, String> headers,
-            @Nullable Object entity) {
+            @Nullable Payload payload) {
       this(method, endPoint);
       getHeaders().putAll(checkNotNull(headers, "headers"));
-      setEntity(entity);
+      setPayload(payload);
    }
 
    public String getRequestLine() {
@@ -104,16 +106,51 @@ public class HttpRequest extends HttpMessage implements Request<URI> {
       return method;
    }
 
-   public Object getEntity() {
-      return entity;
+   public Payload getPayload() {
+      return payload;
    }
 
-   public void setEntity(Object content) {
-      if (content instanceof String
-               && this.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH) == null) {
-         getHeaders().put(HttpHeaders.CONTENT_LENGTH, content.toString().getBytes().length + "");
+   /**
+    * {@inheritDoc}
+    */
+   public void setPayload(Payload data) {
+      this.payload = checkNotNull(data, "data");
+      setLength();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setPayload(InputStream data) {
+      setPayload(Payloads.newPayload(checkNotNull(data, "data")));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setPayload(byte[] data) {
+      setPayload(Payloads.newPayload(checkNotNull(data, "data")));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setPayload(String data) {
+      setPayload(Payloads.newPayload(checkNotNull(data, "data")));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setPayload(File data) {
+      setPayload(Payloads.newPayload(checkNotNull(data, "data")));
+   }
+
+   private void setLength() {
+      Long size = getPayload().calculateSize();
+      if (size != null && this.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH) == null) {
+         getHeaders().put(HttpHeaders.CONTENT_LENGTH, size.toString());
       }
-      this.entity = content;
    }
 
    public URI getEndpoint() {

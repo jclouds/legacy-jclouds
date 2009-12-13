@@ -42,6 +42,7 @@ import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
+import org.jclouds.http.Payloads;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.httpnio.util.NioHttpUtils;
@@ -54,7 +55,7 @@ import org.jclouds.logging.Logger;
  * @author Adrian Cole
  */
 public class NioHttpCommandExecutionHandler implements NHttpRequestExecutionHandler {
-   private final ConsumingNHttpEntityFactory entityFactory;
+   private final ConsumingNHttpEntityFactory EntityFactory;
    private final DelegatingRetryHandler retryHandler;
    private final DelegatingErrorHandler errorHandler;
    private final HttpWire wire;
@@ -71,10 +72,10 @@ public class NioHttpCommandExecutionHandler implements NHttpRequestExecutionHand
    protected Logger headerLog = Logger.NULL;
 
    @Inject
-   public NioHttpCommandExecutionHandler(ConsumingNHttpEntityFactory entityFactory,
+   public NioHttpCommandExecutionHandler(ConsumingNHttpEntityFactory EntityFactory,
             BlockingQueue<HttpCommandRendezvous<?>> resubmitQueue,
             DelegatingRetryHandler retryHandler, DelegatingErrorHandler errorHandler, HttpWire wire) {
-      this.entityFactory = entityFactory;
+      this.EntityFactory = EntityFactory;
       this.resubmitQueue = resubmitQueue;
       this.retryHandler = retryHandler;
       this.errorHandler = errorHandler;
@@ -97,8 +98,9 @@ public class NioHttpCommandExecutionHandler implements NHttpRequestExecutionHand
             filter.filter(request);
          }
          logger.debug("Sending request %s: %s", request.hashCode(), request.getRequestLine());
-         if (request.getEntity() != null && wire.enabled())
-            request.setEntity(wire.output(request.getEntity()));
+         if (request.getPayload() != null && wire.enabled())
+            request.setPayload(Payloads.newPayload(wire
+                     .output(request.getPayload().getRawContent())));
          HttpEntityEnclosingRequest nativeRequest = NioHttpUtils.convertToApacheRequest(request);
          HttpUtils.logRequest(headerLog, request, ">>");
          return nativeRequest;
@@ -108,7 +110,7 @@ public class NioHttpCommandExecutionHandler implements NHttpRequestExecutionHand
 
    public ConsumingNHttpEntity responseEntity(HttpResponse response, HttpContext context)
             throws IOException {
-      return entityFactory.create(response.getEntity());
+      return EntityFactory.create(response.getEntity());
    }
 
    public void handleResponse(HttpResponse apacheResponse, HttpContext context) throws IOException {
@@ -119,7 +121,7 @@ public class NioHttpCommandExecutionHandler implements NHttpRequestExecutionHand
             HttpCommandRendezvous<?> rendezvous = handle.getCommandRendezvous();
             HttpCommand command = rendezvous.getCommand();
             org.jclouds.http.HttpResponse response = NioHttpUtils
-                     .convertToJavaCloudsResponse(apacheResponse);
+                     .convertToJCloudsResponse(apacheResponse);
             logger
                      .debug("Receiving response %s: %s", response.hashCode(), response
                               .getStatusLine());

@@ -37,15 +37,15 @@ import javax.ws.rs.PathParam;
 
 import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.rackspace.CloudServers;
-import org.jclouds.rackspace.cloudservers.binders.BindAdminPassToJsonEntity;
-import org.jclouds.rackspace.cloudservers.binders.BindBackupScheduleToJsonEntity;
-import org.jclouds.rackspace.cloudservers.binders.BindConfirmResizeToJsonEntity;
-import org.jclouds.rackspace.cloudservers.binders.BindCreateImageToJsonEntity;
-import org.jclouds.rackspace.cloudservers.binders.BindRebootTypeToJsonEntity;
-import org.jclouds.rackspace.cloudservers.binders.BindResizeFlavorToJsonEntity;
-import org.jclouds.rackspace.cloudservers.binders.BindRevertResizeToJsonEntity;
-import org.jclouds.rackspace.cloudservers.binders.BindServerNameToJsonEntity;
-import org.jclouds.rackspace.cloudservers.binders.BindSharedIpGroupToJsonEntity;
+import org.jclouds.rackspace.cloudservers.binders.BindAdminPassToJsonPayload;
+import org.jclouds.rackspace.cloudservers.binders.BindBackupScheduleToJsonPayload;
+import org.jclouds.rackspace.cloudservers.binders.BindConfirmResizeToJsonPayload;
+import org.jclouds.rackspace.cloudservers.binders.BindCreateImageToJsonPayload;
+import org.jclouds.rackspace.cloudservers.binders.BindRebootTypeToJsonPayload;
+import org.jclouds.rackspace.cloudservers.binders.BindResizeFlavorToJsonPayload;
+import org.jclouds.rackspace.cloudservers.binders.BindRevertResizeToJsonPayload;
+import org.jclouds.rackspace.cloudservers.binders.BindServerNameToJsonPayload;
+import org.jclouds.rackspace.cloudservers.binders.BindSharedIpGroupToJsonPayload;
 import org.jclouds.rackspace.cloudservers.domain.Addresses;
 import org.jclouds.rackspace.cloudservers.domain.BackupSchedule;
 import org.jclouds.rackspace.cloudservers.domain.Flavor;
@@ -78,7 +78,7 @@ import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.MapEntityParam;
+import org.jclouds.rest.annotations.MapPayloadParam;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -135,7 +135,7 @@ public interface CloudServersAsyncClient {
    @Path("/servers/{id}/action")
    @ExceptionParser(ReturnFalseOn404.class)
    Future<Boolean> rebootServer(@PathParam("id") int id,
-            @BinderParam(BindRebootTypeToJsonEntity.class) RebootType rebootType);
+            @BinderParam(BindRebootTypeToJsonPayload.class) RebootType rebootType);
 
    /**
     * @see CloudServersClient#resizeServer
@@ -145,7 +145,7 @@ public interface CloudServersAsyncClient {
    @Path("/servers/{id}/action")
    @ExceptionParser(ReturnFalseOn404.class)
    Future<Boolean> resizeServer(@PathParam("id") int id,
-            @BinderParam(BindResizeFlavorToJsonEntity.class) int flavorId);
+            @BinderParam(BindResizeFlavorToJsonPayload.class) int flavorId);
 
    /**
     * @see CloudServersClient#confirmResizeServer
@@ -155,7 +155,7 @@ public interface CloudServersAsyncClient {
    @Path("/servers/{id}/action")
    @ExceptionParser(ReturnFalseOn404.class)
    Future<Boolean> confirmResizeServer(
-            @PathParam("id") @BinderParam(BindConfirmResizeToJsonEntity.class) int id);
+            @PathParam("id") @BinderParam(BindConfirmResizeToJsonPayload.class) int id);
 
    /**
     * @see CloudServersClient#revertResizeServer
@@ -165,7 +165,7 @@ public interface CloudServersAsyncClient {
    @Path("/servers/{id}/action")
    @ExceptionParser(ReturnFalseOn404.class)
    Future<Boolean> revertResizeServer(
-            @PathParam("id") @BinderParam(BindRevertResizeToJsonEntity.class) int id);
+            @PathParam("id") @BinderParam(BindRevertResizeToJsonPayload.class) int id);
 
    /**
     * @see CloudServersClient#createServer
@@ -175,8 +175,8 @@ public interface CloudServersAsyncClient {
    @QueryParams(keys = "format", values = "json")
    @Path("/servers")
    @MapBinder(CreateServerOptions.class)
-   Future<Server> createServer(@MapEntityParam("name") String name,
-            @MapEntityParam("imageId") int imageId, @MapEntityParam("flavorId") int flavorId,
+   Future<Server> createServer(@MapPayloadParam("name") String name,
+            @MapPayloadParam("imageId") int imageId, @MapPayloadParam("flavorId") int flavorId,
             CreateServerOptions... options);
 
    /**
@@ -195,12 +195,12 @@ public interface CloudServersAsyncClient {
    @PUT
    @ExceptionParser(ReturnFalseOn404.class)
    @Path("/servers/{id}/ips/public/{address}")
-   @MapBinder(BindSharedIpGroupToJsonEntity.class)
+   @MapBinder(BindSharedIpGroupToJsonPayload.class)
    Future<Boolean> shareIp(
             @PathParam("address") @ParamParser(IpAddress.class) InetAddress addressToShare,
             @PathParam("id") int serverToTosignBindressTo,
-            @MapEntityParam("sharedIpGroupId") int sharedIpGroup,
-            @MapEntityParam("configureServer") boolean configureServer);
+            @MapPayloadParam("sharedIpGroupId") int sharedIpGroup,
+            @MapPayloadParam("configureServer") boolean configureServer);
 
    /**
     * @see CloudServersClient#unshareIp
@@ -219,7 +219,7 @@ public interface CloudServersAsyncClient {
    @ExceptionParser(ReturnFalseOn404.class)
    @Path("/servers/{id}")
    Future<Boolean> changeAdminPass(@PathParam("id") int id,
-            @BinderParam(BindAdminPassToJsonEntity.class) String adminPass);
+            @BinderParam(BindAdminPassToJsonPayload.class) String adminPass);
 
    /**
     * @see CloudServersClient#renameServer
@@ -228,7 +228,7 @@ public interface CloudServersAsyncClient {
    @ExceptionParser(ReturnFalseOn404.class)
    @Path("/servers/{id}")
    Future<Boolean> renameServer(@PathParam("id") int id,
-            @BinderParam(BindServerNameToJsonEntity.class) String newName);
+            @BinderParam(BindServerNameToJsonPayload.class) String newName);
 
    /**
     * @see CloudServersClient#listFlavors
@@ -275,10 +275,10 @@ public interface CloudServersAsyncClient {
    @ResponseParser(ParseImageFromJsonResponse.class)
    @QueryParams(keys = "format", values = "json")
    @ExceptionParser(ReturnImageNotFoundOn404.class)
-   @MapBinder(BindCreateImageToJsonEntity.class)
+   @MapBinder(BindCreateImageToJsonPayload.class)
    @Path("/images")
-   Future<Image> createImageFromServer(@MapEntityParam("imageName") String imageName,
-            @MapEntityParam("serverId") int serverId);
+   Future<Image> createImageFromServer(@MapPayloadParam("imageName") String imageName,
+            @MapPayloadParam("serverId") int serverId);
 
    /**
     * @see CloudServersClient#listSharedIpGroups
@@ -307,7 +307,7 @@ public interface CloudServersAsyncClient {
    @QueryParams(keys = "format", values = "json")
    @Path("/shared_ip_groups")
    @MapBinder(CreateSharedIpGroupOptions.class)
-   Future<SharedIpGroup> createSharedIpGroup(@MapEntityParam("name") String name,
+   Future<SharedIpGroup> createSharedIpGroup(@MapPayloadParam("name") String name,
             CreateSharedIpGroupOptions... options);
 
    /**
@@ -342,7 +342,7 @@ public interface CloudServersAsyncClient {
    @ExceptionParser(ReturnFalseOn404.class)
    @Path("/servers/{id}/backup_schedule")
    Future<Boolean> replaceBackupSchedule(@PathParam("id") int id,
-            @BinderParam(BindBackupScheduleToJsonEntity.class) BackupSchedule backupSchedule);
+            @BinderParam(BindBackupScheduleToJsonPayload.class) BackupSchedule backupSchedule);
 
    /**
     * @see CloudServersClient#listAddresses

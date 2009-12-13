@@ -23,12 +23,9 @@
  */
 package org.jclouds.http.internal;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
@@ -133,23 +130,10 @@ public class JavaUrlHttpCommandExecutorService extends
          }
       }
       connection.setRequestProperty(HttpHeaders.HOST, request.getEndpoint().getHost());
-      if (request.getEntity() != null) {
+      if (request.getPayload() != null) {
          OutputStream out = connection.getOutputStream();
          try {
-            if (request.getEntity() instanceof String) {
-               OutputStreamWriter writer = new OutputStreamWriter(out);
-               writer.write((String) request.getEntity());
-               writer.close();
-            } else if (request.getEntity() instanceof InputStream) {
-               IOUtils.copy((InputStream) request.getEntity(), out);
-            } else if (request.getEntity() instanceof File) {
-               IOUtils.copy(new FileInputStream((File) request.getEntity()), out);
-            } else if (request.getEntity() instanceof byte[]) {
-               IOUtils.write((byte[]) request.getEntity(), out);
-            } else {
-               throw new UnsupportedOperationException("Content not supported "
-                        + request.getEntity().getClass());
-            }
+            request.getPayload().writeTo(out);
          } finally {
             IOUtils.closeQuietly(out);
          }

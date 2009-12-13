@@ -63,7 +63,7 @@ public class BindBlobToMultipartFormTest {
       EXPECTS = builder.toString();
       TEST_BLOB = blobProvider.create(null);
       TEST_BLOB.getMetadata().setName("hello");
-      TEST_BLOB.setData("hello");
+      TEST_BLOB.setPayload("hello");
       TEST_BLOB.getMetadata().setContentType(MediaType.TEXT_PLAIN);
    }
 
@@ -76,7 +76,7 @@ public class BindBlobToMultipartFormTest {
       HttpRequest request = new HttpRequest("GET", URI.create("http://localhost:8001"));
       binder.bindToRequest(request, TEST_BLOB);
 
-      assertEquals(Utils.toStringAndClose((InputStream) request.getEntity()), EXPECTS);
+      assertEquals(Utils.toStringAndClose((InputStream) request.getPayload().getRawContent()), EXPECTS);
       assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH), 131 + "");
 
       assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE),

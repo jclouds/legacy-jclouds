@@ -23,7 +23,6 @@
  */
 package org.jclouds.aws.s3.jets3t;
 
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -114,8 +113,8 @@ public class Util {
 
    public static S3Object convertObject(org.jclouds.aws.s3.domain.S3Object jcObject) {
       S3Object jsObject = convertObjectHead(jcObject.getMetadata());
-      if (jcObject.getData() != null) {
-         jsObject.setDataInputStream((InputStream) jcObject.getData());
+      if (jcObject.getContent() != null) {
+         jsObject.setDataInputStream(jcObject.getContent());
       }
       return jsObject;
    }
@@ -149,9 +148,9 @@ public class Util {
       }
 
       if (jsObject.getDataInputStream() != null) {
-         jcObject.setData(jsObject.getDataInputStream());
+         jcObject.setPayload(jsObject.getDataInputStream());
       } else {
-         jcObject.setData(""); // Must explicitly set data for empty jClouds objects.
+         jcObject.setPayload(""); // Must explicitly set data for empty jClouds objects.
       }
 
       if (jsObject.getContentType() != null) {

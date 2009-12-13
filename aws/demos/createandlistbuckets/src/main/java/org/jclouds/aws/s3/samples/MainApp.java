@@ -65,7 +65,7 @@ public class MainApp {
 
          Blob blob = blobStore.newBlob();
          blob.getMetadata().setName("test");
-         blob.setData("testdata");
+         blob.setPayload("testdata");
          blobStore.putBlob(containerName, blob);
 
          // List Container

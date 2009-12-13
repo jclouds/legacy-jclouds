@@ -28,7 +28,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import java.util.Map;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.binders.BindToJsonEntity;
+import org.jclouds.rest.binders.BindToJsonPayload;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.internal.Maps;
@@ -39,7 +39,7 @@ import com.google.inject.internal.Maps;
  * @author Adrian Cole
  * 
  */
-public class RebuildServerOptions extends BindToJsonEntity {
+public class RebuildServerOptions extends BindToJsonPayload {
    Integer imageId;
 
    @Override

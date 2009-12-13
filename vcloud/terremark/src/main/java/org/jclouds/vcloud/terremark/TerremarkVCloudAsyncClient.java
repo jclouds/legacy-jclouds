@@ -42,7 +42,7 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.MapEntityParam;
+import org.jclouds.rest.annotations.MapPayloadParam;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
@@ -52,7 +52,7 @@ import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.functions.CatalogIdToUri;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
-import org.jclouds.vcloud.terremark.binders.TerremarkBindInstantiateVAppTemplateParamsToXmlEntity;
+import org.jclouds.vcloud.terremark.binders.TerremarkBindInstantiateVAppTemplateParamsToXmlPayload;
 import org.jclouds.vcloud.terremark.domain.ComputeOption;
 import org.jclouds.vcloud.terremark.domain.CustomizationParameters;
 import org.jclouds.vcloud.terremark.domain.InternetService;
@@ -99,10 +99,10 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    @Path("/action/instantiatevAppTemplate")
    @Produces("application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml")
    @XMLResponseParser(TerremarkVAppHandler.class)
-   @MapBinder(TerremarkBindInstantiateVAppTemplateParamsToXmlEntity.class)
+   @MapBinder(TerremarkBindInstantiateVAppTemplateParamsToXmlPayload.class)
    @Override
-   Future<? extends TerremarkVApp> instantiateVAppTemplate(@MapEntityParam("name") String appName,
-            @MapEntityParam("template") @ParamParser(CatalogIdToUri.class) String templateId,
+   Future<? extends TerremarkVApp> instantiateVAppTemplate(@MapPayloadParam("name") String appName,
+            @MapPayloadParam("template") @ParamParser(CatalogIdToUri.class) String templateId,
             InstantiateVAppTemplateOptions... options);
 
    /**
@@ -114,8 +114,8 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    @Produces(MediaType.APPLICATION_XML)
    @XMLResponseParser(InternetServiceHandler.class)
    @MapBinder(AddInternetServiceOptions.class)
-   Future<? extends InternetService> addInternetService(@MapEntityParam("name") String serviceName,
-            @MapEntityParam("protocol") Protocol protocol, @MapEntityParam("port") int port,
+   Future<? extends InternetService> addInternetService(@MapPayloadParam("name") String serviceName,
+            @MapPayloadParam("protocol") Protocol protocol, @MapPayloadParam("port") int port,
             AddInternetServiceOptions... options);
 
    /**
@@ -137,8 +137,8 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    @XMLResponseParser(InternetServiceHandler.class)
    @MapBinder(AddInternetServiceOptions.class)
    Future<? extends InternetService> addInternetServiceToExistingIp(
-            @PathParam("ipId") int existingIpId, @MapEntityParam("name") String serviceName,
-            @MapEntityParam("protocol") Protocol protocol, @MapEntityParam("port") int port,
+            @PathParam("ipId") int existingIpId, @MapPayloadParam("name") String serviceName,
+            @MapPayloadParam("protocol") Protocol protocol, @MapPayloadParam("port") int port,
             AddInternetServiceOptions... options);
 
    /**
@@ -198,8 +198,8 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    @MapBinder(AddNodeOptions.class)
    Future<? extends Node> addNode(
             @PathParam("internetServiceId") int internetServiceId,
-            @MapEntityParam("ipAddress") @ParamParser(InetAddressToHostAddress.class) InetAddress ipAddress,
-            @MapEntityParam("name") String name, @MapEntityParam("port") int port,
+            @MapPayloadParam("ipAddress") @ParamParser(InetAddressToHostAddress.class) InetAddress ipAddress,
+            @MapPayloadParam("name") String name, @MapPayloadParam("port") int port,
             AddNodeOptions... options);
 
    /**

@@ -37,12 +37,12 @@ import javax.ws.rs.Produces;
 
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.MapEntityParam;
+import org.jclouds.rest.annotations.MapPayloadParam;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.vcloud.VCloudAsyncClient;
-import org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlEntity;
+import org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayload;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.functions.VAppTemplateIdToUri;
@@ -85,10 +85,10 @@ public interface HostingDotComVCloudAsyncClient extends VCloudAsyncClient {
    @Consumes(VAPP_XML)
    // required for hosting.com to operate
    @XMLResponseParser(HostingDotComVAppHandler.class)
-   @MapBinder(BindInstantiateVAppTemplateParamsToXmlEntity.class)
+   @MapBinder(BindInstantiateVAppTemplateParamsToXmlPayload.class)
    @Override
    Future<? extends HostingDotComVApp> instantiateVAppTemplate(
-            @MapEntityParam("name") String appName,
-            @MapEntityParam("template") @ParamParser(VAppTemplateIdToUri.class) String templateId,
+            @MapPayloadParam("name") String appName,
+            @MapPayloadParam("template") @ParamParser(VAppTemplateIdToUri.class) String templateId,
             InstantiateVAppTemplateOptions... options);
 }

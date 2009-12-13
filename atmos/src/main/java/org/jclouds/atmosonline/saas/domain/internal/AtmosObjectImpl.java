@@ -24,18 +24,13 @@
 package org.jclouds.atmosonline.saas.domain.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
-
-import java.io.InputStream;
 
 import org.jclouds.atmosonline.saas.domain.AtmosObject;
 import org.jclouds.atmosonline.saas.domain.MutableContentMetadata;
 import org.jclouds.atmosonline.saas.domain.SystemMetadata;
 import org.jclouds.atmosonline.saas.domain.UserMetadata;
-import org.jclouds.blobstore.domain.MD5InputStreamResult;
-import org.jclouds.blobstore.functions.CalculateSize;
-import org.jclouds.blobstore.functions.GenerateMD5;
-import org.jclouds.blobstore.functions.GenerateMD5Result;
+import org.jclouds.encryption.EncryptionService;
+import org.jclouds.http.internal.BasePayloadEnclosingImpl;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
@@ -45,65 +40,26 @@ import com.google.common.collect.Multimap;
  * 
  * @author Adrian Cole
  */
-public class AtmosObjectImpl implements AtmosObject, Comparable<AtmosObject> {
+public class AtmosObjectImpl extends BasePayloadEnclosingImpl implements AtmosObject,
+         Comparable<AtmosObject> {
    private final UserMetadata userMetadata;
-   private final GenerateMD5Result generateMD5Result;
-   private final GenerateMD5 generateMD5;
-   private final CalculateSize calculateSize;
    private final MutableContentMetadata contentMetadata;
    private final SystemMetadata systemMetadata;
-   private Object data;
 
    private Multimap<String, String> allHeaders = LinkedHashMultimap.create();
 
-   public AtmosObjectImpl(GenerateMD5Result generateMD5Result, GenerateMD5 generateMD5,
-            CalculateSize calculateSize, MutableContentMetadata contentMetadata) {
-      this(generateMD5Result, generateMD5, calculateSize, contentMetadata, null, new UserMetadata());
+   public AtmosObjectImpl(EncryptionService encryptionService,
+            MutableContentMetadata contentMetadata) {
+      this(encryptionService, contentMetadata, null, new UserMetadata());
    }
 
-   public AtmosObjectImpl(GenerateMD5Result generateMD5Result, GenerateMD5 generateMD5,
-            CalculateSize calculateSize, MutableContentMetadata contentMetadata,
-            SystemMetadata systemMetadata, UserMetadata userMetadata) {
-      this.generateMD5Result = generateMD5Result;
-      this.generateMD5 = generateMD5;
-      this.calculateSize = calculateSize;
+   public AtmosObjectImpl(EncryptionService encryptionService,
+            MutableContentMetadata contentMetadata, SystemMetadata systemMetadata,
+            UserMetadata userMetadata) {
+      super(encryptionService);
       this.contentMetadata = contentMetadata;
       this.systemMetadata = systemMetadata;
       this.userMetadata = userMetadata;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void generateMD5() {
-      checkState(data != null, "data");
-      if (data instanceof InputStream) {
-         MD5InputStreamResult result = generateMD5Result.apply((InputStream) data);
-         getContentMetadata().setContentMD5(result.md5);
-         getContentMetadata().setContentLength(result.length);
-         setData(result.data);
-      } else {
-         getContentMetadata().setContentMD5(generateMD5.apply(data));
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public Object getData() {
-      return data;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setData(Object data) {
-      this.data = checkNotNull(data, "data");
-      if (getContentMetadata().getContentLength() == null) {
-         Long size = calculateSize.apply(data);
-         if (size != null)
-            getContentMetadata().setContentLength(size);
-      }
    }
 
    /**
@@ -146,6 +102,21 @@ public class AtmosObjectImpl implements AtmosObject, Comparable<AtmosObject> {
 
    public UserMetadata getUserMetadata() {
       return userMetadata;
+   }
+
+   @Override
+   public Long getContentLength() {
+      return getContentMetadata().getContentLength();
+   }
+
+   @Override
+   public void setContentLength(long contentLength) {
+      getContentMetadata().setContentLength(contentLength);
+   }
+
+   @Override
+   protected void setContentMD5(byte[] md5) {
+      getContentMetadata().setContentMD5(md5);
    }
 
 }

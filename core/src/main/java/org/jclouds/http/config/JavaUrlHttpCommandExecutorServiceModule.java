@@ -23,6 +23,7 @@
  */
 package org.jclouds.http.config;
 
+import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.TransformingHttpCommandExecutorServiceImpl;
@@ -39,6 +40,7 @@ import com.google.inject.Scopes;
  * @author Adrian Cole
  */
 @ConfiguresHttpCommandExecutorService
+@SingleThreaded
 public class JavaUrlHttpCommandExecutorServiceModule extends AbstractModule {
 
    @Override

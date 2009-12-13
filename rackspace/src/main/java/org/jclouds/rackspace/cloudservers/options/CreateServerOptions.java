@@ -35,7 +35,7 @@ import java.util.Map.Entry;
 import org.jclouds.encryption.internal.Base64;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rackspace.cloudservers.domain.Addresses;
-import org.jclouds.rest.binders.BindToJsonEntity;
+import org.jclouds.rest.binders.BindToJsonPayload;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.internal.Lists;
@@ -46,7 +46,7 @@ import com.google.inject.internal.Maps;
  * @author Adrian Cole
  * 
  */
-public class CreateServerOptions extends BindToJsonEntity {
+public class CreateServerOptions extends BindToJsonPayload {
 
    static class File {
       private final String path;

@@ -26,9 +26,7 @@ package org.jclouds.rackspace.cloudfiles.config;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.jclouds.blobstore.functions.CalculateSize;
-import org.jclouds.blobstore.functions.GenerateMD5;
-import org.jclouds.blobstore.functions.GenerateMD5Result;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.rackspace.cloudfiles.domain.CFObject;
 import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.internal.CFObjectImpl;
@@ -44,7 +42,6 @@ import com.google.inject.Scopes;
  */
 public class CFObjectModule extends AbstractModule {
 
-
    /**
     * explicit factories are created here as it has been shown that Assisted Inject is extremely
     * inefficient. http://code.google.com/p/google-guice/issues/detail?id=435
@@ -56,17 +53,13 @@ public class CFObjectModule extends AbstractModule {
 
    private static class CFObjectFactory implements CFObject.Factory {
       @Inject
-      GenerateMD5Result generateMD5Result;
-      @Inject
-      GenerateMD5 generateMD5;
-      @Inject
-      CalculateSize calculateSize;
+      EncryptionService encryptionService;
       @Inject
       Provider<MutableObjectInfoWithMetadata> metadataProvider;
 
       public CFObject create(MutableObjectInfoWithMetadata metadata) {
-         return new CFObjectImpl(generateMD5Result, generateMD5, calculateSize,
-                  metadata != null ? metadata : metadataProvider.get());
+         return new CFObjectImpl(encryptionService, metadata != null ? metadata : metadataProvider
+                  .get());
       }
    }
 

@@ -77,7 +77,7 @@ public class BlobStoreRandomAccessContent extends AbstractRandomAccessStreamCont
 
       dis = new DataInputStream(new FilterInputStream((InputStream) fileSystem.blobStore.getBlob(
                fileSystem.container, fileObject.getNameTrimLeadingSlashes(),
-               new GetOptions().startAt(filePointer)).getData()) {
+               new GetOptions().startAt(filePointer)).getContent()) {
          public int read() throws IOException {
             int ret = super.read();
             if (ret > -1) {

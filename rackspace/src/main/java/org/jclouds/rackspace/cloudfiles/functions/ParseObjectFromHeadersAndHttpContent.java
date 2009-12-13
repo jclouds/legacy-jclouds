@@ -66,7 +66,7 @@ public class ParseObjectFromHeadersAndHttpContent implements Function<HttpRespon
    public CFObject apply(HttpResponse from) {
       CFObject object = objectProvider.create(infoParser.apply(from));
       addAllHeadersTo(from, object);
-      object.setData(from.getContent());
+      object.setPayload(from.getContent());
       attemptToParseSizeAndRangeFromHeaders(from, object);
       return object;
    }

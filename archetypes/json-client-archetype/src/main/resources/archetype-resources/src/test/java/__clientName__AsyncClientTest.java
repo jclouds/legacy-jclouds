@@ -64,7 +64,7 @@ public class ${clientName}AsyncClientTest extends RestClientTest<${clientName}As
 
       assertRequestLineEquals(httpMethod, "TODO: insert expected request");
       assertHeadersEqual(httpMethod, "");
-      assertEntityEquals(httpMethod, null);
+      assertPayloadEquals(httpMethod, null);
 
       assertResponseParserClassEquals(method, httpMethod, ParseStatusesFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);

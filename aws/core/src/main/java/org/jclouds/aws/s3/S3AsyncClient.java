@@ -36,8 +36,8 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import org.jclouds.aws.s3.binders.BindACLToXMLEntity;
-import org.jclouds.aws.s3.binders.BindS3ObjectToEntity;
+import org.jclouds.aws.s3.binders.BindACLToXMLPayload;
+import org.jclouds.aws.s3.binders.BindS3ObjectToPayload;
 import org.jclouds.aws.s3.domain.AccessControlList;
 import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
@@ -139,7 +139,7 @@ public interface S3AsyncClient {
    @ResponseParser(ParseETagHeader.class)
    Future<String> putObject(
             @HostPrefixParam String bucketName,
-            @PathParam("key") @ParamParser(ObjectKey.class) @BinderParam(BindS3ObjectToEntity.class) S3Object object,
+            @PathParam("key") @ParamParser(ObjectKey.class) @BinderParam(BindS3ObjectToPayload.class) S3Object object,
             PutObjectOptions... options);
 
    /**
@@ -214,7 +214,7 @@ public interface S3AsyncClient {
    @Path("/")
    @QueryParams(keys = "acl")
    Future<Boolean> putBucketACL(@HostPrefixParam String bucketName,
-            @BinderParam(BindACLToXMLEntity.class) AccessControlList acl);
+            @BinderParam(BindACLToXMLPayload.class) AccessControlList acl);
 
    /**
     * @see S3Client#getObjectACL
@@ -234,6 +234,6 @@ public interface S3AsyncClient {
    @QueryParams(keys = "acl")
    @Path("{key}")
    Future<Boolean> putObjectACL(@HostPrefixParam String bucketName, @PathParam("key") String key,
-            @BinderParam(BindACLToXMLEntity.class) AccessControlList acl);
+            @BinderParam(BindACLToXMLPayload.class) AccessControlList acl);
 
 }

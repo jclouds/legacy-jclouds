@@ -263,7 +263,7 @@ public class BaseBlobStoreIntegrationTest<A, S> {
    protected String addBlobToContainer(String sourceContainer, String key) {
       Blob sourceObject = newBlob(key);
       sourceObject.getMetadata().setContentType("text/xml");
-      sourceObject.setData(TEST_STRING);
+      sourceObject.setPayload(TEST_STRING);
       return addBlobToContainer(sourceContainer, sourceObject);
    }
 
@@ -272,7 +272,7 @@ public class BaseBlobStoreIntegrationTest<A, S> {
                fiveStringsUnderPath.entrySet())) {
          Blob sourceObject = newBlob(entry.getKey());
          sourceObject.getMetadata().setContentType("text/xml");
-         sourceObject.setData(entry.getValue());
+         sourceObject.setPayload(entry.getValue());
          addBlobToContainer(sourceContainer, sourceObject);
       }
    }

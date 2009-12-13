@@ -84,7 +84,7 @@ public class PCSClientTest extends RestClientTest<PCSAsyncClient> {
 
       assertRequestLineEquals(httpMethod, "GET http://localhost:8080/root HTTP/1.1");
       assertHeadersEqual(httpMethod, "X-Cloud-Depth: 2\n");
-      assertEntityEquals(httpMethod, null);
+      assertPayloadEquals(httpMethod, null);
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, ContainerHandler.class);
@@ -101,7 +101,7 @@ public class PCSClientTest extends RestClientTest<PCSAsyncClient> {
       assertRequestLineEquals(httpMethod, "POST http://localhost:8080/root/contents HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 45\nContent-Type: application/vnd.csp.container-info+xml\n");
-      assertEntityEquals(httpMethod, "<container><name>container</name></container>");
+      assertPayloadEquals(httpMethod, "<container><name>container</name></container>");
 
       assertResponseParserClassEquals(method, httpMethod,
                ParseURIFromListOrLocationHeaderIf20x.class);
@@ -167,7 +167,7 @@ public class PCSClientTest extends RestClientTest<PCSAsyncClient> {
       assertRequestLineEquals(httpMethod, "POST http://localhost/mycontainer/contents HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 131\nContent-Type: multipart/form-data; boundary=--JCLOUDS--\n");
-      assertEntityEquals(httpMethod, BindBlobToMultipartFormTest.EXPECTS);
+      assertPayloadEquals(httpMethod, BindBlobToMultipartFormTest.EXPECTS);
 
       assertResponseParserClassEquals(method, httpMethod,
                ParseURIFromListOrLocationHeaderIf20x.class);
@@ -187,7 +187,7 @@ public class PCSClientTest extends RestClientTest<PCSAsyncClient> {
 
       assertRequestLineEquals(httpMethod, "PUT http://localhost/mycontainer/content HTTP/1.1");
       assertHeadersEqual(httpMethod, "Content-Length: 5\n");
-      assertEntityEquals(httpMethod, "hello");
+      assertPayloadEquals(httpMethod, "hello");
 
       assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -203,7 +203,7 @@ public class PCSClientTest extends RestClientTest<PCSAsyncClient> {
 
       assertRequestLineEquals(httpMethod, "GET http://localhost/container/content HTTP/1.1");
       assertHeadersEqual(httpMethod, "");
-      assertEntityEquals(httpMethod, null);
+      assertPayloadEquals(httpMethod, null);
 
       assertResponseParserClassEquals(method, httpMethod, ReturnInputStream.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -238,10 +238,10 @@ public class PCSClientTest extends RestClientTest<PCSAsyncClient> {
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
       assertEquals(httpMethod.getHeaders().size(), 2);
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(httpMethod.getEntity().toString().getBytes().length + ""));
+               .singletonList(httpMethod.getPayload().toString().getBytes().length + ""));
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList("application/unknown"));
-      assertEquals("bar", httpMethod.getEntity());
+      assertEquals("bar", httpMethod.getPayload().getRawContent());
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnVoidIf2xx.class);

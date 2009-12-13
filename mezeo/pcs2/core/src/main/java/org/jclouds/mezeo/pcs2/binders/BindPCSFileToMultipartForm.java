@@ -44,8 +44,8 @@ public class BindPCSFileToMultipartForm implements Binder {
       this.file2Blob = file2Blob;
    }
 
-   public void bindToRequest(HttpRequest request, Object entity) {
-      PCSFile file = (PCSFile) entity;
+   public void bindToRequest(HttpRequest request, Object payload) {
+      PCSFile file = (PCSFile) payload;
       checkNotNull(file.getContentLength(), "contentLength");
       checkArgument(file.getContentLength() <= 5 * 1024 * 1024 * 1024,
                "maximum size for POST request is 2GB");

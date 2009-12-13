@@ -169,7 +169,7 @@ public class GetOptions extends BaseHttpRequestOptions {
     * Not compatible with {@link #ifETagDoesntMatch(byte[])} or {@link #ifModifiedSince(Date)}
     * 
     * @param eTag
-    *           hash representing the entity
+    *           hash representing the payload
     * @throws UnsupportedEncodingException
     *            if there was a problem converting this into an S3 eTag string
     */
@@ -185,7 +185,7 @@ public class GetOptions extends BaseHttpRequestOptions {
    /**
     * For use in the request header: If-Match
     * <p />
-    * Return the object only if its entity tag (ETag) is the same as the eTag specified, otherwise
+    * Return the object only if its payload tag (ETag) is the same as the eTag specified, otherwise
     * return a 412 (precondition failed).
     * 
     * @see GetOptions#ifETagMatches(byte[])
@@ -200,7 +200,7 @@ public class GetOptions extends BaseHttpRequestOptions {
     * Not compatible with {@link #ifETagMatches(String)} or {@link #ifUnmodifiedSince(Date)}
     * 
     * @param eTag
-    *           hash representing the entity
+    *           hash representing the payload
     * @throws UnsupportedEncodingException
     *            if there was a problem converting this into an S3 eTag string
     */
@@ -217,7 +217,7 @@ public class GetOptions extends BaseHttpRequestOptions {
    /**
     * For use in the request header: If-None-Match
     * <p />
-    * Return the object only if its entity tag (ETag) is different from the one specified, otherwise
+    * Return the object only if its payload tag (ETag) is different from the one specified, otherwise
     * return a 304 (not modified).
     * 
     * @see GetOptions#ifETagDoesntMatch(byte[])

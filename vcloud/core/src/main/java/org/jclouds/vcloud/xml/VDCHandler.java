@@ -82,7 +82,7 @@ public class VDCHandler extends ParseSax.HandlerWithResult<VDC> {
          vDC = newNamedResource(attributes);
       } else if (qName.equals("Network")) {
          putNamedResource(availableNetworks, attributes);
-      } else if (qName.equals("ResourceEntity")) {
+      } else if (qName.equals("ResourcePayload")) {
          putNamedResource(resourceEntities, attributes);
       }
    }

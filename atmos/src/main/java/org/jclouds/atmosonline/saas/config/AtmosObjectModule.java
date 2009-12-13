@@ -31,9 +31,7 @@ import org.jclouds.atmosonline.saas.domain.MutableContentMetadata;
 import org.jclouds.atmosonline.saas.domain.SystemMetadata;
 import org.jclouds.atmosonline.saas.domain.UserMetadata;
 import org.jclouds.atmosonline.saas.domain.internal.AtmosObjectImpl;
-import org.jclouds.blobstore.functions.CalculateSize;
-import org.jclouds.blobstore.functions.GenerateMD5;
-import org.jclouds.blobstore.functions.GenerateMD5Result;
+import org.jclouds.encryption.EncryptionService;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -57,28 +55,24 @@ public class AtmosObjectModule extends AbstractModule {
 
    private static class AtmosObjectFactory implements AtmosObject.Factory {
       @Inject
-      GenerateMD5Result generateMD5Result;
-      @Inject
-      GenerateMD5 generateMD5;
-      @Inject
-      CalculateSize calculateSize;
+      EncryptionService encryptionService;
       @Inject
       Provider<MutableContentMetadata> metadataProvider;
 
       public AtmosObject create(MutableContentMetadata contentMetadata) {
-         return new AtmosObjectImpl(generateMD5Result, generateMD5, calculateSize,
-                  contentMetadata != null ? contentMetadata : metadataProvider.get());
+         return new AtmosObjectImpl(encryptionService, contentMetadata != null ? contentMetadata
+                  : metadataProvider.get());
       }
 
       public AtmosObject create(SystemMetadata systemMetadata, UserMetadata userMetadata) {
-         return new AtmosObjectImpl(generateMD5Result, generateMD5, calculateSize, metadataProvider
-                  .get(), systemMetadata, userMetadata);
+         return new AtmosObjectImpl(encryptionService, metadataProvider.get(), systemMetadata,
+                  userMetadata);
       }
 
       public AtmosObject create(MutableContentMetadata contentMetadata,
                SystemMetadata systemMetadata, UserMetadata userMetadata) {
-         return new AtmosObjectImpl(generateMD5Result, generateMD5, calculateSize, contentMetadata,
-                  systemMetadata, userMetadata);
+         return new AtmosObjectImpl(encryptionService, contentMetadata, systemMetadata,
+                  userMetadata);
       }
    }
 

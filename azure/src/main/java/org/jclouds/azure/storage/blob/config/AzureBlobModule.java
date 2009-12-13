@@ -29,9 +29,7 @@ import javax.inject.Provider;
 import org.jclouds.azure.storage.blob.domain.AzureBlob;
 import org.jclouds.azure.storage.blob.domain.MutableBlobProperties;
 import org.jclouds.azure.storage.blob.domain.internal.AzureBlobImpl;
-import org.jclouds.blobstore.functions.CalculateSize;
-import org.jclouds.blobstore.functions.GenerateMD5;
-import org.jclouds.blobstore.functions.GenerateMD5Result;
+import org.jclouds.encryption.EncryptionService;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -44,7 +42,6 @@ import com.google.inject.Scopes;
  */
 public class AzureBlobModule extends AbstractModule {
 
-
    /**
     * explicit factories are created here as it has been shown that Assisted Inject is extremely
     * inefficient. http://code.google.com/p/google-guice/issues/detail?id=435
@@ -56,17 +53,13 @@ public class AzureBlobModule extends AbstractModule {
 
    private static class AzureBlobFactory implements AzureBlob.Factory {
       @Inject
-      GenerateMD5Result generateMD5Result;
-      @Inject
-      GenerateMD5 generateMD5;
-      @Inject
-      CalculateSize calculateSize;
+      EncryptionService encryptionService;
       @Inject
       Provider<MutableBlobProperties> metadataProvider;
 
       public AzureBlob create(MutableBlobProperties metadata) {
-         return new AzureBlobImpl(generateMD5Result, generateMD5, calculateSize,
-                  metadata != null ? metadata : metadataProvider.get());
+         return new AzureBlobImpl(encryptionService, metadata != null ? metadata : metadataProvider
+                  .get());
       }
    }
 

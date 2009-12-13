@@ -103,7 +103,7 @@ public class BlobStoreFileObject extends AbstractFileObject {
 
       protected void onClose() throws IOException {
          try {
-            blob.setData(file);
+            blob.setPayload(file);
             blob.generateMD5();
             logger.info(String.format(">> put: %s/%s %d bytes", getContainer(),
                      getNameTrimLeadingSlashes(), blob.getContentLength()));
@@ -138,7 +138,7 @@ public class BlobStoreFileObject extends AbstractFileObject {
       }
       logger.info(String.format(">> get: %s/%s", getContainer(), getNameTrimLeadingSlashes()));
       Blob blob = getBlobStore().getBlob(getContainer(), getNameTrimLeadingSlashes());
-      return (InputStream) blob.getData();
+      return (InputStream) blob.getContent();
    }
 
    String getNameTrimLeadingSlashes() {

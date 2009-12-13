@@ -168,7 +168,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
 
             Blob object = realContents.get(key);
             Blob returnVal = blobProvider.create(copy(object.getMetadata()));
-            returnVal.setData(new ByteArrayInputStream((byte[]) object.getData()));
+            returnVal.setPayload(object.getContent());
             return returnVal;
          }
       };
@@ -512,7 +512,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
          new RuntimeException("bucketName not found: " + bucketName);
       }
       try {
-         byte[] data = toByteArray(object.getData());
+         byte[] data = toByteArray(object.getPayload().getRawContent());
          object.getMetadata().setSize(data.length);
          MutableBlobMetadata newMd = copy(object.getMetadata());
          newMd.setLastModified(new Date());
@@ -523,7 +523,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
          newMd.setContentType(object.getMetadata().getContentType());
 
          Blob blob = blobProvider.create(newMd);
-         blob.setData(data);
+         blob.setPayload(data);
          container.put(blob.getMetadata().getName(), blob);
 
          // Set HTTP headers to match metadata
@@ -592,7 +592,12 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
             Blob returnVal = copyBlob(object);
 
             if (options.getRanges() != null && options.getRanges().size() > 0) {
-               byte[] data = (byte[]) returnVal.getData();
+               byte[] data;
+               try {
+                  data = IOUtils.toByteArray(returnVal.getPayload().getContent());
+               } catch (IOException e) {
+                  throw new RuntimeException(e);
+               }
                ByteArrayOutputStream out = new ByteArrayOutputStream();
                for (String s : options.getRanges()) {
                   if (s.startsWith("-")) {
@@ -612,11 +617,11 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
                   }
 
                }
-               returnVal.setData(out.toByteArray());
+               returnVal.setPayload(out.toByteArray());
                returnVal.setContentLength(out.size());
                returnVal.getMetadata().setSize(new Long(data.length));
             }
-            returnVal.setData(new ByteArrayInputStream((byte[]) returnVal.getData()));
+            returnVal.setPayload(returnVal.getPayload());
             return returnVal;
          }
       };
@@ -638,7 +643,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
 
    private Blob copyBlob(Blob object) {
       Blob returnVal = blobProvider.create(copy(object.getMetadata()));
-      returnVal.setData(object.getData());
+      returnVal.setPayload(object.getPayload());
       return returnVal;
    }
 

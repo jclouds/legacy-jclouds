@@ -38,22 +38,22 @@
         </DeployedVmsQuota>
     </ComputeCapacity>
     <ResourceEntities>
-        <ResourceEntity
+        <ResourcePayload
             href="https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/1"
             type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Plesk (Linux) 64-bit Template" />
-        <ResourceEntity
+        <ResourcePayload
             href="https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/2"
             type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Windows 2008 Datacenter 64 Bit Template" />
-        <ResourceEntity
+        <ResourcePayload
             href="https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/3"
             type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="Cent OS 64 Bit Template" />
-        <ResourceEntity
+        <ResourcePayload
             href="https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/4"
             type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="cPanel (Linux) 64 Bit Template" />
-        <ResourceEntity
+        <ResourcePayload
             href="https://vcloud.safesecureweb.com/api/v0.8/vApp/188849-1"
             type="application/vnd.vmware.vcloud.vApp+xml" name="188849-1" />
-        <ResourceEntity
+        <ResourcePayload
             href="https://vcloud.safesecureweb.com/api/v0.8/vApp/188849-2"
             type="application/vnd.vmware.vcloud.vApp+xml" name="188849-2" />
     </ResourceEntities>

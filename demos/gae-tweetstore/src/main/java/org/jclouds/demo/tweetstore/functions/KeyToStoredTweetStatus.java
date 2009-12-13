@@ -65,7 +65,7 @@ public class KeyToStoredTweetStatus implements Function<String, StoredTweetStatu
          Blob blob = map.get(id);
          status = ((System.currentTimeMillis() - start) + "ms");
          from = blob.getMetadata().getUserMetadata().get(TweetStoreConstants.SENDER_NAME);
-         tweet = Utils.toStringAndClose((InputStream) blob.getData());
+         tweet = Utils.toStringAndClose((InputStream) blob.getContent());
       } catch (Exception e) {
          logger.error(e, "Error listing container %s//%s/$s", service, container, id);
          status = (e.getMessage());

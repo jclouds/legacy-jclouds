@@ -40,6 +40,7 @@ import org.apache.http.nio.entity.NFileEntity;
 import org.apache.http.nio.entity.NStringEntity;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payload;
 
 public class NioHttpUtils {
    public static HttpEntityEnclosingRequest convertToApacheRequest(HttpRequest request) {
@@ -50,18 +51,18 @@ public class NioHttpUtils {
       BasicHttpEntityEnclosingRequest apacheRequest = new BasicHttpEntityEnclosingRequest(request
                .getMethod(), path, HttpVersion.HTTP_1_1);
 
-      Object content = request.getEntity();
+      Payload payload = request.getPayload();
 
       // Since we may remove headers, ensure they are added to the apache
       // request after this block
-      if (content != null) {
+      if (payload != null) {
          String lengthString = request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH);
          if (lengthString == null) {
             throw new IllegalStateException("no Content-Length header on request: " + apacheRequest);
          }
          long contentLength = Long.parseLong(lengthString);
          String contentType = request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE);
-         addEntityForContent(apacheRequest, content, contentType, contentLength);
+         addEntityForContent(apacheRequest, payload.getRawContent(), contentType, contentLength);
       }
 
       for (String header : request.getHeaders().keySet()) {
@@ -80,9 +81,9 @@ public class NioHttpUtils {
          if (length == -1)
             throw new IllegalArgumentException(
                      "you must specify size when content is an InputStream");
-         InputStreamEntity entity = new InputStreamEntity(inputStream, length);
-         entity.setContentType(contentType);
-         apacheRequest.setEntity(entity);
+         InputStreamEntity Entity = new InputStreamEntity(inputStream, length);
+         Entity.setContentType(contentType);
+         apacheRequest.setEntity(Entity);
       } else if (content instanceof String) {
          NStringEntity nStringEntity = null;
          try {
@@ -95,16 +96,17 @@ public class NioHttpUtils {
       } else if (content instanceof File) {
          apacheRequest.setEntity(new NFileEntity((File) content, contentType, true));
       } else if (content instanceof byte[]) {
-         NByteArrayEntity entity = new NByteArrayEntity((byte[]) content);
-         entity.setContentType(contentType);
-         apacheRequest.setEntity(entity);
+         NByteArrayEntity Entity = new NByteArrayEntity((byte[]) content);
+         Entity.setContentType(contentType);
+         apacheRequest.setEntity(Entity);
       } else {
          throw new UnsupportedOperationException("Content class not supported: "
                   + content.getClass().getName());
       }
+      assert (apacheRequest.getEntity() != null);
    }
 
-   public static HttpResponse convertToJavaCloudsResponse(
+   public static HttpResponse convertToJCloudsResponse(
             org.apache.http.HttpResponse apacheResponse) throws IOException {
       HttpResponse response = new HttpResponse();
       if (apacheResponse.getEntity() != null) {

@@ -72,7 +72,7 @@ public class HostingDotComVCloudAsyncClientTest extends
       assertHeadersEqual(
                httpMethod,
                "Accept: application/vnd.vmware.vcloud.catalog+xml\nContent-Type: application/vnd.vmware.vcloud.catalog+xml\n");
-      assertEntityEquals(httpMethod, null);
+      assertPayloadEquals(httpMethod, null);
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, CatalogHandler.class);

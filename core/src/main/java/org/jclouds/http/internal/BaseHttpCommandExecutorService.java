@@ -38,6 +38,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
+import org.jclouds.http.Payloads;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.logging.Logger;
@@ -86,8 +87,9 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
                   filter.filter(request);
                }
                logger.debug("Sending request %s: %s", request.hashCode(), request.getRequestLine());
-               if (request.getEntity() != null && wire.enabled())
-                  request.setEntity(wire.output(request.getEntity()));
+               if (request.getPayload() != null && wire.enabled())
+                  request.setPayload(Payloads.newPayload(wire.output(request.getPayload()
+                           .getRawContent())));
                nativeRequest = convert(request);
                HttpUtils.logRequest(headerLog, request, ">>");
                response = invoke(nativeRequest);

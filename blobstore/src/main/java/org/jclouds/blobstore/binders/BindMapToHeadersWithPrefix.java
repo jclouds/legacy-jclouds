@@ -43,8 +43,8 @@ public class BindMapToHeadersWithPrefix implements Binder {
    }
 
    @SuppressWarnings("unchecked")
-   public void bindToRequest(HttpRequest request, Object entity) {
-      Map<String, String> userMetadata = (Map<String, String>) entity;
+   public void bindToRequest(HttpRequest request, Object payload) {
+      Map<String, String> userMetadata = (Map<String, String>) payload;
       for (Entry<String, String> entry : userMetadata.entrySet()) {
          if (entry.getKey().startsWith(metadataPrefix)) {
             request.getHeaders().put(entry.getKey().toLowerCase(), entry.getValue());

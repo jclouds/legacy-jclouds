@@ -27,7 +27,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
 import java.security.SecureRandom;
@@ -47,6 +46,8 @@ import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jclouds.blobstore.strategy.ClearContainerStrategy;
 import org.jclouds.http.HttpResponseException;
+import org.jclouds.http.Payloads;
+import org.jclouds.http.payloads.InputStreamPayload;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.util.Utils;
@@ -225,7 +226,7 @@ public class AtmosStorageClientLiveTest {
       // Test PUT with string data, ETag hash, and a piece of metadata
       AtmosObject object = connection.newObject();
       object.getContentMetadata().setName(name);
-      object.setData(data);
+      object.setPayload(Payloads.newPayload(data));
       object.getContentMetadata().setContentLength(16);
       object.generateMD5();
       object.getContentMetadata().setContentType("text/plain");
@@ -273,7 +274,7 @@ public class AtmosStorageClientLiveTest {
             String metadataValue) throws InterruptedException, ExecutionException,
             TimeoutException, IOException {
       AtmosObject getBlob = connection.headFile(path);
-      assertEquals(IOUtils.toString((InputStream) getBlob.getData()), "");
+      assertEquals(IOUtils.toString(getBlob.getContent()), "");
       verifyMetadata(metadataValue, getBlob);
    }
 
@@ -281,8 +282,7 @@ public class AtmosStorageClientLiveTest {
             String metadataValue) throws InterruptedException, ExecutionException,
             TimeoutException, IOException {
       AtmosObject getBlob = connection.readFile(path);
-      assertEquals(getBlob.getData() instanceof String ? getBlob.getData() : IOUtils
-               .toString((InputStream) getBlob.getData()), compare);
+      assertEquals(IOUtils.toString(getBlob.getContent()), compare);
       verifyMetadata(metadataValue, getBlob);
    }
 
@@ -326,14 +326,14 @@ public class AtmosStorageClientLiveTest {
       try {
          connection.createFile(privateDirectory, object);
          System.err.printf("%s %s; %dms%n", "created",
-                  object.getData() instanceof InputStream ? "stream" : "string", System
+                  object.getPayload() instanceof InputStreamPayload ? "stream" : "string", System
                            .currentTimeMillis()
                            - time);
       } catch (Exception e) {
          String message = (e.getCause().getCause() != null) ? e.getCause().getCause().getMessage()
                   : e.getCause().getMessage();
          System.err.printf("failure %s %s; %dms: [%s]%n", "creating",
-                  object.getData() instanceof InputStream ? "stream" : "string", System
+                  object.getPayload() instanceof InputStreamPayload ? "stream" : "string", System
                            .currentTimeMillis()
                            - time, message);
          throw e;
@@ -386,7 +386,7 @@ public class AtmosStorageClientLiveTest {
       }
       if (failures > 0)
          System.err.printf("%d failures create/replacing %s%n", failures,
-                  object.getData() instanceof InputStream ? "stream" : "string");
+                  object.getPayload() instanceof InputStreamPayload ? "stream" : "string");
    }
 
    private void checkSystemMetadataAndPutIfPresentReplaceStrategy(AtmosObject object)
@@ -404,14 +404,14 @@ public class AtmosStorageClientLiveTest {
          else
             connection.createFile(privateDirectory, object);
          System.err.printf("%s %s; %dms%n", update ? "updated" : "created",
-                  object.getData() instanceof InputStream ? "stream" : "string", System
+                  object.getPayload() instanceof InputStreamPayload ? "stream" : "string", System
                            .currentTimeMillis()
                            - time);
       } catch (Exception e) {
          String message = (e.getCause().getCause() != null) ? e.getCause().getCause().getMessage()
                   : e.getCause().getMessage();
          System.err.printf("failure %s %s; %dms: [%s]%n", update ? "updating" : "creating", object
-                  .getData() instanceof InputStream ? "stream" : "string", System
+                  .getPayload() instanceof InputStreamPayload ? "stream" : "string", System
                   .currentTimeMillis()
                   - time, message);
          throw e;

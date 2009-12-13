@@ -27,7 +27,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
 import java.net.URL;
@@ -229,7 +228,7 @@ public class AzureBlobClientLiveTest {
       // Test PUT with string data, ETag hash, and a piece of metadata
       AzureBlob object = connection.newBlob();
       object.getProperties().setName("object");
-      object.setData(data);
+      object.setPayload(data);
       object.setContentLength(data.length());
       object.generateMD5();
       object.getProperties().setContentType("text/plain");
@@ -281,7 +280,7 @@ public class AzureBlobClientLiveTest {
       }
       // Test GET of object (including updated metadata)
       AzureBlob getBlob = connection.getBlob(privateContainer, object.getProperties().getName());
-      assertEquals(IOUtils.toString((InputStream) getBlob.getData()), data);
+      assertEquals(IOUtils.toString(getBlob.getContent()), data);
       // TODO assertEquals(getBlob.getName(), object.getProperties().getName());
       assertEquals(getBlob.getContentLength(), new Long(data.length()));
       assertEquals(getBlob.getProperties().getContentType(), "text/plain");
@@ -313,7 +312,7 @@ public class AzureBlobClientLiveTest {
       ByteArrayInputStream bais = new ByteArrayInputStream(data.getBytes("UTF-8"));
       object = connection.newBlob();
       object.getProperties().setName("chunked-object");
-      object.setData(bais);
+      object.setPayload(bais);
       object.setContentLength(new Long(data.getBytes().length));
       newEtag = connection.putBlob(privateContainer, object);
       assertEquals(encryptionService.toHexString(md5), encryptionService.toHexString(getBlob

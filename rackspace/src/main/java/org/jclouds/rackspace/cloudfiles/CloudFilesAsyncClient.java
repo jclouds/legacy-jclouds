@@ -50,7 +50,7 @@ import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rackspace.CloudFiles;
 import org.jclouds.rackspace.CloudFilesCDN;
-import org.jclouds.rackspace.cloudfiles.binders.BindCFObjectToEntity;
+import org.jclouds.rackspace.cloudfiles.binders.BindCFObjectToPayload;
 import org.jclouds.rackspace.cloudfiles.domain.AccountMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.CFObject;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerCDNMetadata;
@@ -229,7 +229,7 @@ public interface CloudFilesAsyncClient {
    @ResponseParser(ParseETagHeader.class)
    Future<String> putObject(
             @PathParam("container") String container,
-            @PathParam("name") @ParamParser(ObjectName.class) @BinderParam(BindCFObjectToEntity.class) CFObject object);
+            @PathParam("name") @ParamParser(ObjectName.class) @BinderParam(BindCFObjectToPayload.class) CFObject object);
 
    /**
     * @see CloudFilesClient#getObject

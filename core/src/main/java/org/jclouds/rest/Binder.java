@@ -26,7 +26,7 @@ package org.jclouds.rest;
 import org.jclouds.http.HttpRequest;
 
 /**
- * Adds an entity to a request.
+ * Adds an payload to a request.
  * 
  * @author Adrian Cole
  */

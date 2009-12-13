@@ -29,9 +29,7 @@ import javax.inject.Provider;
 import org.jclouds.aws.s3.domain.MutableObjectMetadata;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.internal.S3ObjectImpl;
-import org.jclouds.blobstore.functions.CalculateSize;
-import org.jclouds.blobstore.functions.GenerateMD5;
-import org.jclouds.blobstore.functions.GenerateMD5Result;
+import org.jclouds.encryption.EncryptionService;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -44,7 +42,6 @@ import com.google.inject.Scopes;
  */
 public class S3ObjectModule extends AbstractModule {
 
-
    /**
     * explicit factories are created here as it has been shown that Assisted Inject is extremely
     * inefficient. http://code.google.com/p/google-guice/issues/detail?id=435
@@ -56,17 +53,13 @@ public class S3ObjectModule extends AbstractModule {
 
    private static class S3ObjectFactory implements S3Object.Factory {
       @Inject
-      GenerateMD5Result generateMD5Result;
-      @Inject
-      GenerateMD5 generateMD5;
-      @Inject
-      CalculateSize calculateSize;
+      EncryptionService encryptionService;
       @Inject
       Provider<MutableObjectMetadata> metadataProvider;
 
       public S3Object create(MutableObjectMetadata metadata) {
-         return new S3ObjectImpl(generateMD5Result, generateMD5, calculateSize,
-                  metadata != null ? metadata : metadataProvider.get());
+         return new S3ObjectImpl(encryptionService, metadata != null ? metadata : metadataProvider
+                  .get());
       }
    }
 

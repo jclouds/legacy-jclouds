@@ -48,18 +48,17 @@ public class BindBlobToMultipartForm implements Binder {
 
    public static final String BOUNDARY = "--JCLOUDS--";
 
-   public void bindToRequest(HttpRequest request, Object entity) {
-      Blob object = (Blob) entity;
+   public void bindToRequest(HttpRequest request, Object payload) {
+      Blob object = (Blob) payload;
       File file = new File(object.getMetadata().getName());
       Multimap<String, String> partHeaders = ImmutableMultimap.of("Content-Disposition", String
                .format("form-data; name=\"%s\"; filename=\"%s\"", file.getName(), file.getName()),
                HttpHeaders.CONTENT_TYPE, checkNotNull(object.getMetadata().getContentType(),
                         "object.metadata.contentType()"));
-      Object data = checkNotNull(object.getData(), "object.getData()");
+      Object data = checkNotNull(object.getPayload(), "object.getPayload()").getRawContent();
 
       Part part;
       try {
-
          if (data instanceof byte[]) {
             part = new Part(partHeaders, (byte[]) data);
          } else if (data instanceof String) {
@@ -77,7 +76,7 @@ public class BindBlobToMultipartForm implements Binder {
       }
       MultipartForm form = new MultipartForm(BOUNDARY, part);
 
-      request.setEntity(form.getData());
+      request.setPayload(form.getData());
       request.getHeaders().put(HttpHeaders.CONTENT_TYPE,
                "multipart/form-data; boundary=" + BOUNDARY);
 

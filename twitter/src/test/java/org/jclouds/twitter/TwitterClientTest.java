@@ -61,7 +61,7 @@ public class TwitterClientTest extends RestClientTest<TwitterAsyncClient> {
 
       assertRequestLineEquals(httpMethod, "GET http://twitter.com/statuses/mentions.json HTTP/1.1");
       assertHeadersEqual(httpMethod, "");
-      assertEntityEquals(httpMethod, null);
+      assertPayloadEquals(httpMethod, null);
 
       assertResponseParserClassEquals(method, httpMethod, ParseStatusesFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);

@@ -26,7 +26,6 @@ package org.jclouds.http;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -57,18 +56,6 @@ import com.google.common.collect.TreeMultimap;
 public class HttpUtils {
    public static final Pattern URI_PATTERN = Pattern.compile("([a-z0-9]+)://([^:]*):(.*)@(.*)");
    public static final Pattern PATTERN_THAT_BREAKS_URI = Pattern.compile("[a-z0-9]+://.*/.*@.*"); // slash
-
-   public static Long calculateSize(Object data) {
-      Long size = null;
-      if (data instanceof byte[]) {
-         size = new Long(((byte[]) data).length);
-      } else if (data instanceof String) {
-         size = new Long(((String) data).length());
-      } else if (data instanceof File) {
-         size = ((File) data).length();
-      }
-      return size;
-   }
 
    @Resource
    protected static Logger logger = Logger.NULL;

@@ -47,6 +47,7 @@ import org.jclouds.blobstore.domain.ResourceMetadata;
 import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.HttpResponseException;
+import org.jclouds.http.Payloads;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -302,7 +303,7 @@ public class BaseBlobIntegrationTest<A, S> extends BaseBlobStoreIntegrationTest<
             throws InterruptedException, IOException {
       Blob object = newBlob(key);
       object.getMetadata().setContentType(type);
-      object.setData(content);
+      object.setPayload(Payloads.newPayload(content));
       if (content instanceof InputStream) {
          object.generateMD5();
       }
@@ -323,7 +324,7 @@ public class BaseBlobIntegrationTest<A, S> extends BaseBlobStoreIntegrationTest<
       String key = "hello";
 
       Blob object = newBlob(key);
-      object.setData(TEST_STRING);
+      object.setPayload(TEST_STRING);
       object.getMetadata().setContentType("text/plain");
       object.getMetadata().setSize(new Long(TEST_STRING.length()));
       // NOTE all metadata in jclouds comes out as lowercase, in an effort to normalize the

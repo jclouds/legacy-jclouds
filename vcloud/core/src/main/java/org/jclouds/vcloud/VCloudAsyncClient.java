@@ -42,11 +42,11 @@ import javax.ws.rs.Produces;
 
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.MapEntityParam;
+import org.jclouds.rest.annotations.MapPayloadParam;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlEntity;
+import org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayload;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TasksList;
@@ -178,8 +178,8 @@ public interface VCloudAsyncClient {
    @Produces("application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml")
    @Consumes(VAPP_XML)
    @XMLResponseParser(VAppHandler.class)
-   @MapBinder(BindInstantiateVAppTemplateParamsToXmlEntity.class)
-   Future<? extends VApp> instantiateVAppTemplate(@MapEntityParam("name") String appName,
-            @MapEntityParam("template") @ParamParser(VAppTemplateIdToUri.class) String templateId,
+   @MapBinder(BindInstantiateVAppTemplateParamsToXmlPayload.class)
+   Future<? extends VApp> instantiateVAppTemplate(@MapPayloadParam("name") String appName,
+            @MapPayloadParam("template") @ParamParser(VAppTemplateIdToUri.class) String templateId,
             InstantiateVAppTemplateOptions... options);
 }

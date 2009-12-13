@@ -54,11 +54,11 @@ public class PutBucketOptionsTest {
     }
 
     @Test
-    public void testEntity() {
+    public void testPayload() {
         PutBucketOptions options = new PutBucketOptions();
         options.createIn(LocationConstraint.EU);
         assertEquals(
-                options.buildStringEntity(),
+                options.buildStringPayload(),
                 "<CreateBucketConfiguration><LocationConstraint>EU</LocationConstraint></CreateBucketConfiguration>");
     }
 

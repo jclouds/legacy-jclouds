@@ -83,9 +83,9 @@ public class EC2ClientTest extends RestClientTest<EC2AsyncClient> {
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 40\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
-      assertEntityEquals(httpMethod, "Version=2009-08-15&Action=DescribeImages");
+      assertPayloadEquals(httpMethod, "Version=2009-08-15&Action=DescribeImages");
       filter.filter(httpMethod);
-      assertEntityEquals(
+      assertPayloadEquals(
                httpMethod,
                "Action=DescribeImages&Signature=wJmKTnrx5v3PSECZJjm%2BE1s8I%2FqHkVs2K1hJ6yxbpC0%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2009-11-08T15%3A54%3A08.897Z&Version=2009-08-15&AWSAccessKeyId=user");
 
@@ -106,7 +106,7 @@ public class EC2ClientTest extends RestClientTest<EC2AsyncClient> {
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 107\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
-      assertEntityEquals(
+      assertPayloadEquals(
                httpMethod,
                "Version=2009-08-15&Action=DescribeImages&ExecutableBy=me&Owner.1=fred&Owner.2=nancy&ImageId.1=1&ImageId.2=2");
 
@@ -127,10 +127,10 @@ public class EC2ClientTest extends RestClientTest<EC2AsyncClient> {
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 93\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
-      assertEntityEquals(httpMethod,
+      assertPayloadEquals(httpMethod,
                "Version=2009-08-15&Action=DescribeImageAttribute&ImageId=imageId&Attribute=blockDeviceMapping");
       filter.filter(httpMethod);
-      assertEntityEquals(
+      assertPayloadEquals(
                httpMethod,
                "Action=DescribeImageAttribute&Attribute=blockDeviceMapping&ImageId=imageId&Signature=IiyxXwoOmpLiPC%2BbfBdqJwE758bvbs8kXCL71FefStY%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2009-11-08T15%3A54%3A08.897Z&Version=2009-08-15&AWSAccessKeyId=user");
 
@@ -149,7 +149,7 @@ public class EC2ClientTest extends RestClientTest<EC2AsyncClient> {
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 43\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
-      assertEntityEquals(httpMethod, "Version=2009-08-15&Action=DescribeInstances");
+      assertPayloadEquals(httpMethod, "Version=2009-08-15&Action=DescribeInstances");
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeInstancesResponseHandler.class);
@@ -167,7 +167,7 @@ public class EC2ClientTest extends RestClientTest<EC2AsyncClient> {
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 43\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
-      assertEntityEquals(httpMethod,
+      assertPayloadEquals(httpMethod,
                "Version=2009-08-15&Action=DescribeInstances&InstanceId.1=1&InstanceId.2=2");
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
@@ -186,7 +186,7 @@ public class EC2ClientTest extends RestClientTest<EC2AsyncClient> {
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 59\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
-      assertEntityEquals(httpMethod,
+      assertPayloadEquals(httpMethod,
                "Version=2009-08-15&Action=TerminateInstances&InstanceId.0=1&InstanceId.1=2");
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
@@ -204,7 +204,7 @@ public class EC2ClientTest extends RestClientTest<EC2AsyncClient> {
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 76\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
-      assertEntityEquals(httpMethod,
+      assertPayloadEquals(httpMethod,
                "Version=2009-08-15&Action=RunInstances&ImageId=ami-voo&MaxCount=1&MinCount=1");
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
@@ -224,7 +224,7 @@ public class EC2ClientTest extends RestClientTest<EC2AsyncClient> {
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 118\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
-      assertEntityEquals(
+      assertPayloadEquals(
                httpMethod,
                "Version=2009-08-15&Action=RunInstances&ImageId=ami-voo&MaxCount=5&MinCount=1&KernelId=kernelId&Monitoring.Enabled=true");
 
@@ -242,7 +242,7 @@ public class EC2ClientTest extends RestClientTest<EC2AsyncClient> {
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 53\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
-      assertEntityEquals(httpMethod, "Version=2009-08-15&Action=CreateKeyPair&KeyName=mykey");
+      assertPayloadEquals(httpMethod, "Version=2009-08-15&Action=CreateKeyPair&KeyName=mykey");
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, KeyPairResponseHandler.class);
@@ -260,7 +260,7 @@ public class EC2ClientTest extends RestClientTest<EC2AsyncClient> {
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 64\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
-      assertEntityEquals(httpMethod,
+      assertPayloadEquals(httpMethod,
                "Version=2009-08-15&Action=DisassociateAddress&PublicIp=127.0.0.1");
 
       assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
@@ -279,7 +279,7 @@ public class EC2ClientTest extends RestClientTest<EC2AsyncClient> {
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 75\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
-      assertEntityEquals(httpMethod,
+      assertPayloadEquals(httpMethod,
                "Version=2009-08-15&Action=AssociateAddress&PublicIp=127.0.0.1&InstanceId=me");
 
       assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
@@ -297,7 +297,7 @@ public class EC2ClientTest extends RestClientTest<EC2AsyncClient> {
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 59\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
-      assertEntityEquals(httpMethod, "Version=2009-08-15&Action=ReleaseAddress&PublicIp=127.0.0.1");
+      assertPayloadEquals(httpMethod, "Version=2009-08-15&Action=ReleaseAddress&PublicIp=127.0.0.1");
 
       assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -315,7 +315,7 @@ public class EC2ClientTest extends RestClientTest<EC2AsyncClient> {
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 43\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
-      assertEntityEquals(httpMethod,
+      assertPayloadEquals(httpMethod,
                "Version=2009-08-15&Action=DescribeAddresses&PublicIp.1=127.0.0.1");
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
@@ -332,7 +332,7 @@ public class EC2ClientTest extends RestClientTest<EC2AsyncClient> {
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 41\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
-      assertEntityEquals(httpMethod, "Version=2009-08-15&Action=AllocateAddress");
+      assertPayloadEquals(httpMethod, "Version=2009-08-15&Action=AllocateAddress");
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, AllocateAddressResponseHandler.class);
@@ -348,7 +348,7 @@ public class EC2ClientTest extends RestClientTest<EC2AsyncClient> {
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 53\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
-      assertEntityEquals(httpMethod, "Version=2009-08-15&Action=DeleteKeyPair&KeyName=mykey");
+      assertPayloadEquals(httpMethod, "Version=2009-08-15&Action=DeleteKeyPair&KeyName=mykey");
 
       assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -365,7 +365,7 @@ public class EC2ClientTest extends RestClientTest<EC2AsyncClient> {
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 42\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
-      assertEntityEquals(httpMethod, "Version=2009-08-15&Action=DescribeKeyPairs");
+      assertPayloadEquals(httpMethod, "Version=2009-08-15&Action=DescribeKeyPairs");
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeKeyPairsResponseHandler.class);
@@ -383,7 +383,7 @@ public class EC2ClientTest extends RestClientTest<EC2AsyncClient> {
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 42\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
-      assertEntityEquals(httpMethod,
+      assertPayloadEquals(httpMethod,
                "Version=2009-08-15&Action=DescribeKeyPairs&KeyName.1=1&KeyName.2=2");
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
@@ -401,7 +401,7 @@ public class EC2ClientTest extends RestClientTest<EC2AsyncClient> {
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 60\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
-      assertEntityEquals(httpMethod, "Version=2009-08-15&Action=DeleteSecurityGroup&GroupName=name");
+      assertPayloadEquals(httpMethod, "Version=2009-08-15&Action=DeleteSecurityGroup&GroupName=name");
 
       assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -419,7 +419,7 @@ public class EC2ClientTest extends RestClientTest<EC2AsyncClient> {
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 89\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
-      assertEntityEquals(httpMethod,
+      assertPayloadEquals(httpMethod,
                "Version=2009-08-15&Action=CreateSecurityGroup&GroupName=name&GroupDescription=description");
 
       assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
@@ -438,7 +438,7 @@ public class EC2ClientTest extends RestClientTest<EC2AsyncClient> {
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 48\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
-      assertEntityEquals(httpMethod, "Version=2009-08-15&Action=DescribeSecurityGroups");
+      assertPayloadEquals(httpMethod, "Version=2009-08-15&Action=DescribeSecurityGroups");
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeSecurityGroupsResponseHandler.class);
@@ -456,7 +456,7 @@ public class EC2ClientTest extends RestClientTest<EC2AsyncClient> {
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 48\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
-      assertEntityEquals(httpMethod,
+      assertPayloadEquals(httpMethod,
                "Version=2009-08-15&Action=DescribeSecurityGroups&GroupName.1=1&GroupName.2=2");
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
@@ -476,7 +476,7 @@ public class EC2ClientTest extends RestClientTest<EC2AsyncClient> {
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 71\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
-      assertEntityEquals(
+      assertPayloadEquals(
                httpMethod,
                "Version=2009-08-15&Action=AuthorizeSecurityGroupIngress&GroupName=group&SourceSecurityGroupOwnerId=sourceUser&SourceSecurityGroupName=sourceGroup");
 
@@ -497,7 +497,7 @@ public class EC2ClientTest extends RestClientTest<EC2AsyncClient> {
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 131\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
-      assertEntityEquals(
+      assertPayloadEquals(
                httpMethod,
                "Version=2009-08-15&Action=AuthorizeSecurityGroupIngress&GroupName=group&FromPort=6000&IpProtocol=tcp&ToPort=7000&CidrIp=0.0.0.0%2F0");
 
@@ -518,7 +518,7 @@ public class EC2ClientTest extends RestClientTest<EC2AsyncClient> {
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 68\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
-      assertEntityEquals(
+      assertPayloadEquals(
                httpMethod,
                "Version=2009-08-15&Action=RevokeSecurityGroupIngress&GroupName=group&SourceSecurityGroupOwnerId=sourceUser&SourceSecurityGroupName=sourceGroup");
 
@@ -539,7 +539,7 @@ public class EC2ClientTest extends RestClientTest<EC2AsyncClient> {
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 128\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
-      assertEntityEquals(
+      assertPayloadEquals(
                httpMethod,
                "Version=2009-08-15&Action=RevokeSecurityGroupIngress&GroupName=group&FromPort=6000&IpProtocol=tcp&ToPort=7000&CidrIp=0.0.0.0%2F0");
 

@@ -26,7 +26,7 @@ package org.jclouds.vcloud.terremark.options;
 import java.util.Map;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.vcloud.terremark.binders.BindAddNodeServiceToXmlEntity;
+import org.jclouds.vcloud.terremark.binders.BindAddNodeServiceToXmlPayload;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
@@ -36,7 +36,7 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  * 
  */
-public class AddNodeOptions extends BindAddNodeServiceToXmlEntity {
+public class AddNodeOptions extends BindAddNodeServiceToXmlPayload {
 
    @VisibleForTesting
    String description = null;

@@ -29,9 +29,7 @@ import javax.inject.Provider;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.internal.BlobImpl;
-import org.jclouds.blobstore.functions.CalculateSize;
-import org.jclouds.blobstore.functions.GenerateMD5;
-import org.jclouds.blobstore.functions.GenerateMD5Result;
+import org.jclouds.encryption.EncryptionService;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -55,17 +53,13 @@ public class BlobStoreObjectModule extends AbstractModule {
 
    private static class BlobFactory implements Blob.Factory {
       @Inject
-      GenerateMD5Result generateMD5Result;
-      @Inject
-      GenerateMD5 generateMD5;
-      @Inject
-      CalculateSize calculateSize;
+      EncryptionService encryptionService;
       @Inject
       Provider<MutableBlobMetadata> metadataProvider;
 
       public Blob create(MutableBlobMetadata metadata) {
-         return new BlobImpl(generateMD5Result, generateMD5, calculateSize,
-                  metadata != null ? metadata : metadataProvider.get());
+         return new BlobImpl(encryptionService, metadata != null ? metadata : metadataProvider
+                  .get());
       }
    }
 

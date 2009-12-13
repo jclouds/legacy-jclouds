@@ -30,7 +30,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Designates that this parameter will hold the entity for a PUT or POST command.
+ * Designates that this parameter will hold the payload for a PUT or POST command.
  * 
  * @author Adrian Cole
  */
@@ -39,7 +39,7 @@ import java.lang.annotation.Target;
 public @interface MapBinder {
 
    /**
-    * How to bind {@link MapEntityParam} values, if there is no {@link MapBinder} in the method
+    * How to bind {@link MapPayloadParam} values, if there is no {@link MapBinder} in the method
     * definition
     */
    Class<? extends org.jclouds.rest.MapBinder> value();

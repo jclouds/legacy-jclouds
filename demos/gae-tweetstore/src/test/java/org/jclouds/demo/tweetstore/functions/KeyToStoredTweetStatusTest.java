@@ -58,7 +58,7 @@ public class KeyToStoredTweetStatusTest {
       Blob blob = map.newBlob();
       blob.getMetadata().setName("1");
       blob.getMetadata().getUserMetadata().put(TweetStoreConstants.SENDER_NAME, "frank");
-      blob.setData("I love beans!");
+      blob.setPayload("I love beans!");
       map.put("1", blob);
       String host = "localhost";
       String service = "stub";

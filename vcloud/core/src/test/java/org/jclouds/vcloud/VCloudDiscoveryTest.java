@@ -62,7 +62,7 @@ public class VCloudDiscoveryTest extends RestClientTest<VCloudDiscovery> {
 
       assertRequestLineEquals(httpMethod, "GET http://org HTTP/1.1");
       assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.org+xml\n");
-      assertEntityEquals(httpMethod, null);
+      assertPayloadEquals(httpMethod, null);
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, OrgHandler.class);

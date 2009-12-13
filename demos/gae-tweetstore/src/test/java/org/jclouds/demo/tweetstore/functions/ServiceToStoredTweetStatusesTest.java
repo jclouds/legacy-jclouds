@@ -59,7 +59,7 @@ public class ServiceToStoredTweetStatusesTest {
          Blob blob = context.getAsyncBlobStore().newBlob();
          blob.getMetadata().setName("1");
          blob.getMetadata().getUserMetadata().put(TweetStoreConstants.SENDER_NAME, "frank");
-         blob.setData("I love beans!");
+         blob.setPayload("I love beans!");
          context.getAsyncBlobStore().putBlob(container, blob).get();
          services.put(name, context);
       }

@@ -24,7 +24,6 @@
 package org.jclouds.mezeo.pcs2;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.http.HttpUtils.calculateSize;
 import static org.jclouds.mezeo.pcs2.options.PutBlockOptions.Builder.range;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -167,7 +166,7 @@ public class PCSClientLiveTest {
       PCSFile object = connection.newFile();
       object.getMetadata().setName("object");
       object.getMetadata().setMimeType("text/plain");
-      object.setData(data);
+      object.setPayload(data);
       object.setContentLength(data.length());
       URI objectURI = connection.uploadFile(container, object);
       connection.putMetadataItem(objectURI, "name", "object");
@@ -202,13 +201,11 @@ public class PCSClientLiveTest {
       objectURI = connection.createFile(container, object);
       validateFileInfoAndNameIsInMetadata(container, objectURI, name, new Long(0));
 
-      object.setData(data.substring(0, 2));
-      object.setContentLength(calculateSize(object.getData()));
+      object.setPayload(data.substring(0, 2));
       connection.uploadBlock(objectURI, object, range(0, 2));
       validateFileInfoAndNameIsInMetadata(container, objectURI, name, new Long(2));
 
-      object.setData(data.substring(2));
-      object.setContentLength(calculateSize(object.getData()));
+      object.setPayload(data.substring(2));
       connection.uploadBlock(objectURI, object, range(2, data.getBytes().length));
       validateFileInfoAndNameIsInMetadata(container, objectURI, name, new Long(data.length()));
 
@@ -217,8 +214,7 @@ public class PCSClientLiveTest {
 
       // change data in an existing file
       data = "Here is my datum";
-      object.setData(data.substring(2));
-      object.setContentLength(calculateSize(object.getData()));
+      object.setPayload(data.substring(2));
       connection.uploadBlock(objectURI, object, range(2, data.getBytes().length));
       validateFileInfoAndNameIsInMetadata(container, objectURI, name, new Long(data.length()));
 

@@ -36,7 +36,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.atmosonline.saas.binders.BindAtmosObjectToEntityAndMetadataToHeaders;
+import org.jclouds.atmosonline.saas.binders.BindAtmosObjectToPayloadAndMetadataToHeaders;
 import org.jclouds.atmosonline.saas.domain.AtmosObject;
 import org.jclouds.atmosonline.saas.domain.BoundedSortedSet;
 import org.jclouds.atmosonline.saas.domain.DirectoryEntry;
@@ -117,7 +117,7 @@ public interface AtmosStorageAsyncClient {
    @Consumes(MediaType.WILDCARD)
    Future<URI> createFile(
             @PathParam("parent") String parent,
-            @PathParam("name") @ParamParser(AtmosObjectName.class) @BinderParam(BindAtmosObjectToEntityAndMetadataToHeaders.class) AtmosObject object);
+            @PathParam("name") @ParamParser(AtmosObjectName.class) @BinderParam(BindAtmosObjectToPayloadAndMetadataToHeaders.class) AtmosObject object);
 
    /**
     * @see AtmosStorageClient#updateFile
@@ -128,7 +128,7 @@ public interface AtmosStorageAsyncClient {
    @Consumes(MediaType.WILDCARD)
    Future<Void> updateFile(
             @PathParam("parent") String parent,
-            @PathParam("name") @ParamParser(AtmosObjectName.class) @BinderParam(BindAtmosObjectToEntityAndMetadataToHeaders.class) AtmosObject object);
+            @PathParam("name") @ParamParser(AtmosObjectName.class) @BinderParam(BindAtmosObjectToPayloadAndMetadataToHeaders.class) AtmosObject object);
 
    /**
     * @see AtmosStorageClient#readFile

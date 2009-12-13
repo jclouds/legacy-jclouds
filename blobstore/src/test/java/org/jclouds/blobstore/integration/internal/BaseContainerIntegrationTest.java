@@ -202,7 +202,7 @@ public class BaseContainerIntegrationTest<A, S> extends BaseBlobStoreIntegration
    protected void addAlphabetUnderRoot(String containerName) throws InterruptedException {
       for (char letter = 'a'; letter <= 'z'; letter++) {
          Blob blob = newBlob(letter + "");
-         blob.setData(letter + "content");
+         blob.setPayload(letter + "content");
          context.getBlobStore().putBlob(containerName, blob);
       }
    }
@@ -210,7 +210,7 @@ public class BaseContainerIntegrationTest<A, S> extends BaseBlobStoreIntegration
    protected void add15UnderRoot(String containerName) throws InterruptedException {
       for (int i = 0; i < 15; i++) {
          Blob blob = newBlob(i + "");
-         blob.setData(i + "content");
+         blob.setPayload(i + "content");
          context.getBlobStore().putBlob(containerName, blob);
       }
    }
@@ -219,7 +219,7 @@ public class BaseContainerIntegrationTest<A, S> extends BaseBlobStoreIntegration
             throws InterruptedException {
       for (int i = 0; i < 10; i++) {
          Blob blob = newBlob(prefix + "/" + i);
-         blob.setData(i + "content");
+         blob.setPayload(i + "content");
          context.getBlobStore().putBlob(containerName, blob);
       }
    }

@@ -49,10 +49,10 @@ public class RebuildServerOptionsTest {
    Injector injector = Guice.createInjector(new ParserModule());
 
    @Test
-   public void testAddEntityToRequestMapOfStringStringHttpRequest() {
+   public void testAddPayloadToRequestMapOfStringStringHttpRequest() {
       RebuildServerOptions options = new RebuildServerOptions();
       HttpRequest request = buildRequest(options);
-      assertEquals("{\"rebuild\":{}}", request.getEntity());
+      assertEquals("{\"rebuild\":{}}", request.getPayload().getRawContent());
    }
 
    private HttpRequest buildRequest(RebuildServerOptions options) {
@@ -78,7 +78,7 @@ public class RebuildServerOptionsTest {
    }
 
    private void assertRebuild(HttpRequest request) {
-      assertEquals("{\"rebuild\":{\"imageId\":3}}", request.getEntity());
+      assertEquals("{\"rebuild\":{\"imageId\":3}}", request.getPayload().getRawContent());
    }
 
 }

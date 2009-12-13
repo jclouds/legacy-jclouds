@@ -187,7 +187,7 @@ public class StubS3AsyncClient implements S3AsyncClient {
 
                newMd.setLastModified(new Date());
                Blob newBlob = blobProvider.create(newMd);
-               newBlob.setData(sourceS3.getData());
+               newBlob.setPayload(sourceS3.getContent());
                dest.put(destinationObject, newBlob);
                return blob2ObjectMetadata.apply(blobStore.copy(newMd));
             }

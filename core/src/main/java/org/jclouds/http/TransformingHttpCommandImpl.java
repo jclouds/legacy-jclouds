@@ -23,7 +23,6 @@
  */
 package org.jclouds.http;
 
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -127,12 +126,7 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
    }
 
    public boolean isReplayable() {
-      Object content = request.getEntity();
-      if (content != null && content instanceof InputStream) {
-         logger.warn("%1$s: InputStreams are not replayable", toString());
-         return false;
-      }
-      return true;
+      return (request.getPayload() == null) ? true : request.getPayload().isRepeatable();
    }
 
    /**
@@ -140,7 +134,6 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
     * IOUtils.closeQuietly(getResponse().getContent()); throw new
     * IllegalStateException("incorrect code for this operation: " + getResponse()); } }
     **/
-
    public HttpRequest getRequest() {
       return request;
    }

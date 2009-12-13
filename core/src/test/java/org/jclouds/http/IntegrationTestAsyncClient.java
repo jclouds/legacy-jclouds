@@ -41,12 +41,12 @@ import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.MapEntityParam;
+import org.jclouds.rest.annotations.MapPayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.binders.BindMapToMatrixParams;
-import org.jclouds.rest.binders.BindToJsonEntity;
-import org.jclouds.rest.binders.BindToStringEntity;
+import org.jclouds.rest.binders.BindToJsonPayload;
+import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.internal.RestAnnotationProcessorTest.Localhost;
 
 import com.google.common.base.Function;
@@ -92,30 +92,30 @@ public interface IntegrationTestAsyncClient {
    @PUT
    @Path("objects/{id}")
    Future<String> upload(@PathParam("id") String id,
-            @BinderParam(BindToStringEntity.class) String toPut);
+            @BinderParam(BindToStringPayload.class) String toPut);
 
    @POST
    @Path("objects/{id}")
    Future<String> post(@PathParam("id") String id,
-            @BinderParam(BindToStringEntity.class) String toPut);
+            @BinderParam(BindToStringPayload.class) String toPut);
 
    @POST
    @Path("objects/{id}")
    Future<String> postAsInputStream(@PathParam("id") String id,
-            @BinderParam(BindToInputStreamEntity.class) String toPut);
+            @BinderParam(BindToInputStreamPayload.class) String toPut);
 
-   static class BindToInputStreamEntity extends BindToStringEntity {
+   static class BindToInputStreamPayload extends BindToStringPayload {
       @Override
-      public void bindToRequest(HttpRequest request, Object entity) {
-         super.bindToRequest(request, entity);
-         request.setEntity(IOUtils.toInputStream(entity.toString()));
+      public void bindToRequest(HttpRequest request, Object payload) {
+         super.bindToRequest(request, payload);
+         request.setPayload(IOUtils.toInputStream(payload.toString()));
       }
    }
 
    @POST
    @Path("objects/{id}")
-   @MapBinder(BindToJsonEntity.class)
-   Future<String> postJson(@PathParam("id") String id, @MapEntityParam("key") String toPut);
+   @MapBinder(BindToJsonPayload.class)
+   Future<String> postJson(@PathParam("id") String id, @MapPayloadParam("key") String toPut);
 
    @POST
    @Path("objects/{id}/action/{action}")

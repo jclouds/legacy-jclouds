@@ -50,7 +50,7 @@ public class ObjectToBlob implements Function<CFObject, Blob> {
       Blob blob = blobFactory.create(object2BlobMd.apply(from.getInfo()));
       if (from.getContentLength() != null)
          blob.setContentLength(from.getContentLength());
-      blob.setData(from.getData());
+      blob.setPayload(from.getPayload());
       blob.setAllHeaders(from.getAllHeaders());
       return blob;
    }

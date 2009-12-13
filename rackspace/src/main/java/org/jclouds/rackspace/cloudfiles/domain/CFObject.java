@@ -23,7 +23,7 @@
  */
 package org.jclouds.rackspace.cloudfiles.domain;
 
-import java.io.IOException;
+import org.jclouds.http.PayloadEnclosing;
 
 import com.google.common.collect.Multimap;
 import com.google.inject.internal.Nullable;
@@ -32,51 +32,10 @@ import com.google.inject.internal.Nullable;
  * 
  * @author Adrian Cole
  */
-public interface CFObject extends Comparable<CFObject> {
+public interface CFObject extends PayloadEnclosing, Comparable<CFObject> {
    public interface Factory {
       CFObject create(@Nullable MutableObjectInfoWithMetadata info);
    }
-
-   /**
-    * Sets entity for the request or the content from the response. If size isn't set, this will
-    * attempt to discover it.
-    * 
-    * @param data
-    *           typically InputStream for downloads, or File, byte [], String, or InputStream for
-    *           uploads.
-    */
-   void setData(Object data);
-
-   /**
-    * @return InputStream, if downloading, or whatever was set during {@link #setData(Object)}
-    */
-   Object getData();
-
-   /**
-    * generate an MD5 Hash for the current data.
-    * <p/>
-    * <h2>Note</h2>
-    * <p/>
-    * If this is an InputStream, it will be converted to a byte array first.
-    * 
-    * @throws IOException
-    *            if there is a problem generating the hash.
-    */
-   void generateMD5() throws IOException;
-
-   void setContentLength(long contentLength);
-
-   /**
-    * Returns the total size of the downloaded object, or the chunk that's available.
-    * <p/>
-    * Chunking is only used when org.jclouds.http.GetOptions is called with options like tail,
-    * range, or startAt.
-    * 
-    * @return the length in bytes that can be be obtained from {@link #getData()}
-    * @see org.jclouds.http.HttpHeaders#CONTENT_LENGTH
-    * @see GetObjectOptions
-    */
-   Long getContentLength();
 
    /**
     * @return System and User metadata relevant to this object.

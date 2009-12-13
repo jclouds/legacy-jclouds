@@ -35,7 +35,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.jclouds.azure.storage.AzureBlob;
-import org.jclouds.azure.storage.blob.binders.BindAzureBlobToEntity;
+import org.jclouds.azure.storage.blob.binders.BindAzureBlobToPayload;
 import org.jclouds.azure.storage.blob.domain.BlobProperties;
 import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
 import org.jclouds.azure.storage.blob.domain.ListableContainerProperties;
@@ -193,7 +193,7 @@ public interface AzureBlobAsyncClient {
    @ResponseParser(ParseETagHeader.class)
    Future<String> putBlob(
             @PathParam("container") String container,
-            @PathParam("name") @ParamParser(BlobName.class) @BinderParam(BindAzureBlobToEntity.class) org.jclouds.azure.storage.blob.domain.AzureBlob object);
+            @PathParam("name") @ParamParser(BlobName.class) @BinderParam(BindAzureBlobToPayload.class) org.jclouds.azure.storage.blob.domain.AzureBlob object);
 
    /**
     * @see AzureBlobClient#getBlob

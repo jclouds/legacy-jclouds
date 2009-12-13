@@ -40,6 +40,7 @@ import org.jclouds.util.Utils;
  * @author Adrian Cole
  */
 public class BlobStoreUtils {
+
    public static Blob newBlob(BlobStore blobStore, ResourceMetadata blobMeta) {
       Blob blob = blobStore.newBlob();
       if (blobMeta instanceof BlobMetadata) {
@@ -77,8 +78,8 @@ public class BlobStoreUtils {
 
    public static String getContentAsStringAndClose(Blob blob) throws IOException {
       checkNotNull(blob, "blob");
-      checkNotNull(blob.getData(), "blob.data");
-      Object o = blob.getData();
+      checkNotNull(blob.getContent(), "blob.data");
+      Object o = blob.getContent();
       if (o instanceof InputStream) {
          return Utils.toStringAndClose((InputStream) o);
       } else {

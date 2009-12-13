@@ -26,8 +26,6 @@ package org.jclouds.gae;
 import static com.google.appengine.api.urlfetch.FetchOptions.Builder.disallowTruncate;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -44,10 +42,15 @@ import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payload;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.internal.BaseHttpCommandExecutorService;
 import org.jclouds.http.internal.HttpWire;
+import org.jclouds.http.payloads.ByteArrayPayload;
+import org.jclouds.http.payloads.FilePayload;
+import org.jclouds.http.payloads.InputStreamPayload;
+import org.jclouds.http.payloads.StringPayload;
 
 import com.google.appengine.api.urlfetch.FetchOptions;
 import com.google.appengine.api.urlfetch.HTTPHeader;
@@ -87,17 +90,16 @@ public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorServic
     */
    @VisibleForTesting
    void changeRequestContentToBytes(HttpRequest request) throws IOException {
-      Object content = request.getEntity();
-      if (content == null || content instanceof byte[]) {
+      Payload content = request.getPayload();
+      if (content == null || content instanceof ByteArrayPayload) {
          return;
-      } else if (content instanceof String) {
-         String string = (String) content;
-         request.setEntity(string.getBytes());
-      } else if (content instanceof InputStream || content instanceof File) {
-         InputStream i = content instanceof InputStream ? (InputStream) content
-                  : new FileInputStream((File) content);
+      } else if (content instanceof StringPayload) {
+         String string = ((StringPayload) content).getRawContent();
+         request.setPayload(string.getBytes());
+      } else if (content instanceof InputStreamPayload || content instanceof FilePayload) {
+         InputStream i = content.getContent();
          try {
-            request.setEntity(IOUtils.toByteArray(i));
+            request.setPayload(IOUtils.toByteArray(i));
          } finally {
             IOUtils.closeQuietly(i);
          }
@@ -137,9 +139,9 @@ public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorServic
          }
       }
 
-      if (request.getEntity() != null) {
+      if (request.getPayload() != null) {
          changeRequestContentToBytes(request);
-         gaeRequest.setPayload((byte[]) request.getEntity());
+         gaeRequest.setPayload(((ByteArrayPayload) request.getPayload()).getRawContent());
       } else {
          gaeRequest.addHeader(new HTTPHeader(HttpHeaders.CONTENT_LENGTH, "0"));
       }

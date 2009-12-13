@@ -103,13 +103,13 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
       checkNotNull(request.getFirstHeaderOrNull(HttpHeaders.HOST),
                "request is not ready to sign; host not present");
       Multimap<String, String> decodedParams = RestAnnotationProcessor.parseQueryToMap(request
-               .getEntity().toString());
+               .getPayload().getRawContent().toString());
       addSigningParams(decodedParams);
       validateParams(decodedParams);
       String stringToSign = createStringToSign(request, decodedParams);
       String signature = signString(stringToSign);
       addSignature(decodedParams, signature);
-      setEntity(request, decodedParams);
+      setPayload(request, decodedParams);
       HttpUtils.logRequest(signatureLog, request, "<<");
    }
 
@@ -128,8 +128,8 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
       return parts;
    }
 
-   void setEntity(GeneratedHttpRequest<?> request, Multimap<String, String> decodedParams) {
-      request.setEntity(RestAnnotationProcessor.makeQueryLine(decodedParams,
+   void setPayload(GeneratedHttpRequest<?> request, Multimap<String, String> decodedParams) {
+      request.setPayload(RestAnnotationProcessor.makeQueryLine(decodedParams,
                new Comparator<Map.Entry<String, String>>() {
                   public int compare(Entry<String, String> o1, Entry<String, String> o2) {
                      if (o1.getKey().startsWith("Action")
@@ -209,8 +209,8 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
    }
 
    public String createStringToSign(HttpRequest input) {
-      return createStringToSign(input, RestAnnotationProcessor.parseQueryToMap(input.getEntity()
-               .toString()));
+      return createStringToSign(input, RestAnnotationProcessor.parseQueryToMap(input.getPayload()
+               .getRawContent().toString()));
    }
 
 }

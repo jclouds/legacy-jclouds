@@ -71,7 +71,7 @@ public class BaseBlobLiveTest<A, S> extends BaseBlobStoreIntegrationTest<A, S> {
       InputStream input = connection.getInputStream();
 
       Blob object = newBlob(key);
-      object.setData(input);
+      object.setPayload(input);
       object.setContentLength(length);
       object.getMetadata().setContentMD5(md5);
       object.getMetadata().setSize(new Long(length));

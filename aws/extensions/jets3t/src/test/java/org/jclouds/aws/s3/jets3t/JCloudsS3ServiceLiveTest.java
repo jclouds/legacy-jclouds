@@ -134,7 +134,7 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest<S3Asy
          String objectValue = "test";
          Blob blob = context.getAsyncBlobStore().newBlob();
          blob.getMetadata().setName(objectKey);
-         blob.setData(objectValue);
+         blob.setPayload(objectValue);
          addBlobToContainer(bucketName, blob);
 
          service.deleteObject(bucketName, objectKey);
@@ -155,7 +155,7 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest<S3Asy
 
          Blob blob = context.getAsyncBlobStore().newBlob();
          blob.getMetadata().setName(objectKey);
-         blob.setData(objectValue);
+         blob.setPayload(objectValue);
          blob.getMetadata().getUserMetadata().put(metadataName, metadataValue);
          addBlobToContainer(bucketName, blob);
 
@@ -182,7 +182,7 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest<S3Asy
 
          Blob blob = context.getAsyncBlobStore().newBlob();
          blob.getMetadata().setName(objectKey);
-         blob.setData(objectValue);
+         blob.setPayload(objectValue);
          blob.getMetadata().getUserMetadata().put(metadataName, metadataValue);
          addBlobToContainer(bucketName, blob);
 
@@ -441,7 +441,7 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest<S3Asy
 
          Blob blob = context.getAsyncBlobStore().newBlob();
          blob.getMetadata().setName(sourceObjectKey);
-         blob.setData(data);
+         blob.setPayload(data);
          blob.getMetadata().getUserMetadata().put(metadataName, sourceMetadataValue);
          addBlobToContainer(bucketName, blob);
 

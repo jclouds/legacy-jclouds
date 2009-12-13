@@ -23,7 +23,7 @@
  */
 package org.jclouds.mezeo.pcs2.domain;
 
-import java.io.File;
+import org.jclouds.http.PayloadEnclosing;
 
 import com.google.common.collect.Multimap;
 import com.google.inject.internal.Nullable;
@@ -32,39 +32,10 @@ import com.google.inject.internal.Nullable;
  * 
  * @author Adrian Cole
  */
-public interface PCSFile extends Comparable<PCSFile> {
+public interface PCSFile extends PayloadEnclosing, Comparable<PCSFile> {
    public interface Factory {
       PCSFile create(@Nullable MutableFileInfo metadata);
    }
-
-   /**
-    * Sets entity for the request or the content from the response. If size isn't set, this will
-    * attempt to discover it.
-    * 
-    * @param data
-    *           typically InputStream for downloads, or File, byte [], String, or InputStream for
-    *           uploads.
-    */
-   void setData(Object data);
-
-   /**
-    * @return InputStream, if downloading, or whatever was set during {@link #setData(File)}
-    */
-   Object getData();
-
-   void setContentLength(long contentLength);
-
-   /**
-    * Returns the total size of the downloaded object, or the chunk that's available.
-    * <p/>
-    * Chunking is only used when org.jclouds.http.GetOptions is called with options like tail,
-    * range, or startAt.
-    * 
-    * @return the length in bytes that can be be obtained from {@link #getData()}
-    * @see org.jclouds.http.HttpHeaders#CONTENT_LENGTH
-    * @see GetFileOptions
-    */
-   Long getContentLength();
 
    /**
     * @return System and User metadata relevant to this object.

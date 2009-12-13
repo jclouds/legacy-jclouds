@@ -40,11 +40,11 @@ public class BaseHttpRequestOptions implements HttpRequestOptions {
    protected Multimap<String, String> formParameters = LinkedHashMultimap.create();
    protected Multimap<String, String> queryParameters = LinkedHashMultimap.create();
    protected Multimap<String, String> headers = LinkedHashMultimap.create();
-   protected String entity;
+   protected String payload;
    protected String pathSuffix;
 
-   public String buildStringEntity() {
-      return entity;
+   public String buildStringPayload() {
+      return payload;
    }
 
    protected String getFirstMatrixOrNull(String string) {

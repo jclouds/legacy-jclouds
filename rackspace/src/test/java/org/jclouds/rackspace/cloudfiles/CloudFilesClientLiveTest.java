@@ -31,7 +31,6 @@ import static org.testng.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
 import java.util.SortedSet;
@@ -346,7 +345,7 @@ public class CloudFilesClientLiveTest extends
          }
          // Test GET of object (including updated metadata)
          CFObject getBlob = context.getApi().getObject(containerName, object.getInfo().getName());
-         assertEquals(IOUtils.toString((InputStream) getBlob.getData()), data);
+         assertEquals(IOUtils.toString(getBlob.getContent()), data);
          // TODO assertEquals(getBlob.getName(), object.getMetadata().getName());
          assertEquals(getBlob.getContentLength(), new Long(data.length()));
          assertEquals(getBlob.getInfo().getContentType(), "text/plain");
@@ -371,7 +370,7 @@ public class CloudFilesClientLiveTest extends
          ByteArrayInputStream bais = new ByteArrayInputStream(data.getBytes("UTF-8"));
          CFObject blob = context.getApi().newCFObject();
          blob.getInfo().setName("chunked-object");
-         blob.setData(bais);
+         blob.setPayload(bais);
          newEtag = context.getApi().putObject(containerName, blob);
          assertEquals(encryptionService.toHexString(md5), encryptionService.toHexString(getBlob
                   .getInfo().getHash()));
@@ -391,7 +390,7 @@ public class CloudFilesClientLiveTest extends
          assertEquals(getBlob.getInfo().getHash(), encryptionService.fromHexString(newEtag));
          getBlob = context.getApi().getObject(containerName, object.getInfo().getName(),
                   GetOptions.Builder.startAt(8));
-         assertEquals(IOUtils.toString((InputStream) getBlob.getData()), data.substring(8));
+         assertEquals(IOUtils.toString(getBlob.getContent()), data.substring(8));
 
       } finally {
          returnContainer(containerName);
@@ -401,7 +400,7 @@ public class CloudFilesClientLiveTest extends
    private CFObject newCFObject(String data, String key) throws IOException {
       CFObject object = context.getApi().newCFObject();
       object.getInfo().setName(key);
-      object.setData(data);
+      object.setPayload(data);
       object.generateMD5();
       object.getInfo().setContentType("text/plain");
       object.getInfo().getMetadata().put("Metadata", "metadata-value");

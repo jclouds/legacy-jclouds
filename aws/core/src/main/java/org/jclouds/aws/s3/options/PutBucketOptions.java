@@ -61,7 +61,7 @@ public class PutBucketOptions extends BaseHttpRequestOptions {
      */
     public PutBucketOptions createIn(LocationConstraint constraint) {
         this.constraint = checkNotNull(constraint, "constraint");
-        this.entity = String
+        this.payload = String
                 .format(
                         "<CreateBucketConfiguration><LocationConstraint>%1$s</LocationConstraint></CreateBucketConfiguration>",
                         constraint.toString());

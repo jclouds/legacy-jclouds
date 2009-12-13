@@ -91,7 +91,7 @@ public class S3ClientTest extends RestClientTest<S3AsyncClient> {
 
       assertRequestLineEquals(httpMethod, "GET http://bucket.stub:8080/ HTTP/1.1");
       assertHeadersEqual(httpMethod, "Host: bucket.stub\n");
-      assertEntityEquals(httpMethod, null);
+      assertPayloadEquals(httpMethod, null);
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, ListBucketHandler.class);
@@ -106,7 +106,7 @@ public class S3ClientTest extends RestClientTest<S3AsyncClient> {
 
       assertRequestLineEquals(httpMethod, "HEAD http://bucket.stub:8080/?max-keys=0 HTTP/1.1");
       assertHeadersEqual(httpMethod, "Host: bucket.stub\n");
-      assertEntityEquals(httpMethod, null);
+      assertPayloadEquals(httpMethod, null);
 
       assertResponseParserClassEquals(method, httpMethod, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -127,7 +127,7 @@ public class S3ClientTest extends RestClientTest<S3AsyncClient> {
                "PUT http://destinationBucket.stub:8080/destinationObject HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 0\nHost: destinationBucket.stub\nx-amz-copy-source: /sourceBucket/sourceObject\n");
-      assertEntityEquals(httpMethod, null);
+      assertPayloadEquals(httpMethod, null);
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, CopyObjectHandler.class);
@@ -143,7 +143,7 @@ public class S3ClientTest extends RestClientTest<S3AsyncClient> {
 
       assertRequestLineEquals(httpMethod, "DELETE http://bucket.stub:8080/ HTTP/1.1");
       assertHeadersEqual(httpMethod, "Host: bucket.stub\n");
-      assertEntityEquals(httpMethod, null);
+      assertPayloadEquals(httpMethod, null);
 
       assertResponseParserClassEquals(method, httpMethod, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -159,7 +159,7 @@ public class S3ClientTest extends RestClientTest<S3AsyncClient> {
 
       assertRequestLineEquals(httpMethod, "DELETE http://bucket.stub:8080/object HTTP/1.1");
       assertHeadersEqual(httpMethod, "Host: bucket.stub\n");
-      assertEntityEquals(httpMethod, null);
+      assertPayloadEquals(httpMethod, null);
 
       assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -175,7 +175,7 @@ public class S3ClientTest extends RestClientTest<S3AsyncClient> {
 
       assertRequestLineEquals(httpMethod, "GET http://bucket.stub:8080/?acl HTTP/1.1");
       assertHeadersEqual(httpMethod, "Host: bucket.stub\n");
-      assertEntityEquals(httpMethod, null);
+      assertPayloadEquals(httpMethod, null);
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, AccessControlListHandler.class);
@@ -193,7 +193,7 @@ public class S3ClientTest extends RestClientTest<S3AsyncClient> {
 
       assertRequestLineEquals(httpMethod, "GET http://bucket.stub:8080/object HTTP/1.1");
       assertHeadersEqual(httpMethod, "Host: bucket.stub\n");
-      assertEntityEquals(httpMethod, null);
+      assertPayloadEquals(httpMethod, null);
 
       assertResponseParserClassEquals(method, httpMethod,
                ParseObjectFromHeadersAndHttpContent.class);
@@ -211,7 +211,7 @@ public class S3ClientTest extends RestClientTest<S3AsyncClient> {
 
       assertRequestLineEquals(httpMethod, "GET http://bucket.stub:8080/object?acl HTTP/1.1");
       assertHeadersEqual(httpMethod, "Host: bucket.stub\n");
-      assertEntityEquals(httpMethod, null);
+      assertPayloadEquals(httpMethod, null);
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, AccessControlListHandler.class);
@@ -228,7 +228,7 @@ public class S3ClientTest extends RestClientTest<S3AsyncClient> {
 
       assertRequestLineEquals(httpMethod, "HEAD http://bucket.stub:8080/object HTTP/1.1");
       assertHeadersEqual(httpMethod, "Host: bucket.stub\n");
-      assertEntityEquals(httpMethod, null);
+      assertPayloadEquals(httpMethod, null);
 
       assertResponseParserClassEquals(method, httpMethod, ParseObjectMetadataFromHeaders.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -243,7 +243,7 @@ public class S3ClientTest extends RestClientTest<S3AsyncClient> {
 
       assertRequestLineEquals(httpMethod, "GET http://stub:8080/ HTTP/1.1");
       assertHeadersEqual(httpMethod, "Host: stub\n");
-      assertEntityEquals(httpMethod, null);
+      assertPayloadEquals(httpMethod, null);
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, ListAllMyBucketsHandler.class);
@@ -266,7 +266,7 @@ public class S3ClientTest extends RestClientTest<S3AsyncClient> {
       assertRequestLineEquals(httpMethod, "PUT http://bucket.stub:8080/?acl HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 321\nContent-Type: text/xml\nHost: bucket.stub\n");
-      assertEntityEquals(
+      assertPayloadEquals(
                httpMethod,
                "<AccessControlPolicy xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Owner><ID>1234</ID></Owner><AccessControlList><Grant><Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CanonicalUser\"><ID>1234</ID></Grantee><Permission>FULL_CONTROL</Permission></Grant></AccessControlList></AccessControlPolicy>");
 
@@ -285,7 +285,7 @@ public class S3ClientTest extends RestClientTest<S3AsyncClient> {
 
       assertRequestLineEquals(httpMethod, "PUT http://bucket.stub:8080/ HTTP/1.1");
       assertHeadersEqual(httpMethod, "Content-Length: 0\nHost: bucket.stub\n");
-      assertEntityEquals(httpMethod, null);
+      assertPayloadEquals(httpMethod, null);
 
       assertResponseParserClassEquals(method, httpMethod, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -305,7 +305,7 @@ public class S3ClientTest extends RestClientTest<S3AsyncClient> {
       assertRequestLineEquals(httpMethod, "PUT http://bucket.stub:8080/hello HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 5\nContent-Type: text/plain\nHost: bucket.stub\n");
-      assertEntityEquals(httpMethod, "hello");
+      assertPayloadEquals(httpMethod, "hello");
 
       assertResponseParserClassEquals(method, httpMethod, ParseETagHeader.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -323,7 +323,7 @@ public class S3ClientTest extends RestClientTest<S3AsyncClient> {
       assertRequestLineEquals(httpMethod, "PUT http://bucket.stub:8080/key?acl HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 321\nContent-Type: text/xml\nHost: bucket.stub\n");
-      assertEntityEquals(
+      assertPayloadEquals(
                httpMethod,
                "<AccessControlPolicy xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Owner><ID>1234</ID></Owner><AccessControlList><Grant><Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CanonicalUser\"><ID>1234</ID></Grantee><Permission>FULL_CONTROL</Permission></Grant></AccessControlList></AccessControlPolicy>");
 

@@ -133,7 +133,7 @@ public class GetOptions {
     * Not compatible with {@link #ifETagDoesntMatch(String)} or {@link #ifModifiedSince(Date)}
     * 
     * @param eTag
-    *           hash representing the entity
+    *           hash representing the payload
     */
    public GetOptions ifETagMatches(String eTag) {
       checkArgument(getIfNoneMatch() == null,
@@ -147,7 +147,7 @@ public class GetOptions {
    /**
     * For use in the request header: If-Match
     * <p />
-    * Return the object only if its entity tag (ETag) is the same as the eTag specified, otherwise
+    * Return the object only if its payload tag (ETag) is the same as the eTag specified, otherwise
     * return a 412 (precondition failed).
     * 
     * @see GetOptions#ifETagMatches(String)
@@ -162,7 +162,7 @@ public class GetOptions {
     * Not compatible with {@link #ifETagMatches(String)} or {@link #ifUnmodifiedSince(Date)}
     * 
     * @param eTag
-    *           hash representing the entity
+    *           hash representing the payload
     */
    public GetOptions ifETagDoesntMatch(String eTag) {
       checkArgument(getIfMatch() == null,
@@ -176,7 +176,7 @@ public class GetOptions {
    /**
     * For use in the request header: If-None-Match
     * <p />
-    * Return the object only if its entity tag (ETag) is different from the one specified, otherwise
+    * Return the object only if its payload tag (ETag) is different from the one specified, otherwise
     * return a 304 (not modified).
     * 
     * @see GetOptions#ifETagDoesntMatch(String)

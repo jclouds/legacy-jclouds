@@ -43,14 +43,14 @@ public class ReturnStringIf200 implements Function<HttpResponse,String> {
 
    public String apply(HttpResponse from) {
       if (from.getStatusCode() == 200) {
-         InputStream entity = from.getContent();
-         if (entity == null)
+         InputStream payload = from.getContent();
+         if (payload == null)
             throw new HttpException("no content");
          String toReturn = null;
          try {
-            toReturn = Utils.toStringAndClose(entity);
+            toReturn = Utils.toStringAndClose(payload);
          } catch (IOException e) {
-            throw new HttpException(String.format("Couldn't receive response %1$s, entity: %2$s ",
+            throw new HttpException(String.format("Couldn't receive response %1$s, payload: %2$s ",
                      from, toReturn), e);
          }
          return toReturn;

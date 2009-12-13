@@ -61,7 +61,7 @@ public class VCloudLoginTest extends RestClientTest<VCloudLogin> {
       assertEquals(httpMethod.getRequestLine(), "POST http://localhost:8080/login HTTP/1.1");
       assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT
                + ": application/vnd.vmware.vcloud.organizationList+xml\n");
-      assertEntityEquals(httpMethod, null);
+      assertPayloadEquals(httpMethod, null);
 
       assertResponseParserClassEquals(method, httpMethod, ParseLoginResponseFromHeaders.class);
       assertSaxResponseParserClassEquals(method, null);

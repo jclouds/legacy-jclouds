@@ -88,7 +88,7 @@ import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.HostPrefixParam;
 import org.jclouds.rest.annotations.MapBinder;
-import org.jclouds.rest.annotations.MapEntityParam;
+import org.jclouds.rest.annotations.MapPayloadParam;
 import org.jclouds.rest.annotations.MatrixParams;
 import org.jclouds.rest.annotations.OverrideRequestFilters;
 import org.jclouds.rest.annotations.ParamParser;
@@ -98,8 +98,8 @@ import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.binders.BindMapToMatrixParams;
-import org.jclouds.rest.binders.BindToJsonEntity;
-import org.jclouds.rest.binders.BindToStringEntity;
+import org.jclouds.rest.binders.BindToJsonPayload;
+import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.config.RestModule;
 import org.jclouds.util.Jsr330;
 import org.mortbay.jetty.HttpHeaders;
@@ -206,7 +206,7 @@ public class RestAnnotationProcessorTest {
    }
 
    @Endpoint(Localhost.class)
-   public interface TestEntityParamVarargs {
+   public interface TestPayloadParamVarargs {
       @POST
       public void varargs(HttpRequestOptions... options);
 
@@ -215,19 +215,19 @@ public class RestAnnotationProcessorTest {
 
    }
 
-   public void testHttpRequestOptionsEntityParam() throws SecurityException, NoSuchMethodException {
-      Method method = TestEntityParamVarargs.class.getMethod("post", HttpRequestOptions.class);
+   public void testHttpRequestOptionsPayloadParam() throws SecurityException, NoSuchMethodException {
+      Method method = TestPayloadParamVarargs.class.getMethod("post", HttpRequestOptions.class);
       verifyTestPostOptions(method);
    }
 
-   public void testEntityParamVarargs() throws SecurityException, NoSuchMethodException {
-      Method method = TestEntityParamVarargs.class.getMethod("varargs", Array.newInstance(
+   public void testPayloadParamVarargs() throws SecurityException, NoSuchMethodException {
+      Method method = TestPayloadParamVarargs.class.getMethod("varargs", Array.newInstance(
                HttpRequestOptions.class, 0).getClass());
       verifyTestPostOptions(method);
    }
 
    private void verifyTestPostOptions(Method method) {
-      GeneratedHttpRequest<?> httpMethod = factory(TestEntityParamVarargs.class).createRequest(
+      GeneratedHttpRequest<?> httpMethod = factory(TestPayloadParamVarargs.class).createRequest(
                method, new Object[] { new HttpRequestOptions() {
 
                   public Multimap<String, String> buildMatrixParameters() {
@@ -250,7 +250,7 @@ public class RestAnnotationProcessorTest {
                      return LinkedHashMultimap.create();
                   }
 
-                  public String buildStringEntity() {
+                  public String buildStringPayload() {
                      return "fooya";
                   }
 
@@ -263,7 +263,7 @@ public class RestAnnotationProcessorTest {
                .singletonList("application/unknown"));
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
                .singletonList("fooya".getBytes().length + ""));
-      assertEquals(httpMethod.getEntity(), "fooya");
+      assertEquals(httpMethod.getPayload().toString(), "fooya");
    }
 
    @Endpoint(Localhost.class)
@@ -338,23 +338,23 @@ public class RestAnnotationProcessorTest {
    @Endpoint(Localhost.class)
    public class TestPost {
       @POST
-      public void post(@BinderParam(BindToStringEntity.class) String content) {
+      public void post(@BinderParam(BindToStringPayload.class) String content) {
       }
 
       @POST
-      public void postAsJson(@BinderParam(BindToJsonEntity.class) String content) {
+      public void postAsJson(@BinderParam(BindToJsonPayload.class) String content) {
       }
 
       @POST
       @Path("{foo}")
-      public void postWithPath(@PathParam("foo") @MapEntityParam("fooble") String path,
+      public void postWithPath(@PathParam("foo") @MapPayloadParam("fooble") String path,
                MapBinder content) {
       }
 
       @POST
       @Path("{foo}")
-      @MapBinder(BindToJsonEntity.class)
-      public void postWithMethodBinder(@PathParam("foo") @MapEntityParam("fooble") String path) {
+      @MapBinder(BindToJsonPayload.class)
+      public void postWithMethodBinder(@PathParam("foo") @MapPayloadParam("fooble") String path) {
       }
    }
 
@@ -370,7 +370,7 @@ public class RestAnnotationProcessorTest {
                .singletonList("application/unknown"));
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
                .singletonList("data".getBytes().length + ""));
-      assertEquals(httpMethod.getEntity(), "data");
+      assertEquals(httpMethod.getPayload().toString(), "data");
    }
 
    public void testCreatePostJsonRequest() throws SecurityException, NoSuchMethodException {
@@ -385,7 +385,7 @@ public class RestAnnotationProcessorTest {
                .singletonList("application/json"));
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
                .singletonList("\"data\"".getBytes().length + ""));
-      assertEquals(httpMethod.getEntity(), "\"data\"");
+      assertEquals(httpMethod.getPayload().toString(), "\"data\"");
    }
 
    public void testCreatePostWithPathRequest() throws SecurityException, NoSuchMethodException {
@@ -393,7 +393,7 @@ public class RestAnnotationProcessorTest {
       GeneratedHttpRequest<?> httpMethod = factory(TestPost.class).createRequest(method,
                new Object[] { "data", new org.jclouds.rest.MapBinder() {
                   public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
-                     request.setEntity(postParams.get("fooble"));
+                     request.setPayload(postParams.get("fooble"));
                   }
 
                   public void bindToRequest(HttpRequest request, Object toBind) {
@@ -404,7 +404,7 @@ public class RestAnnotationProcessorTest {
       assertEquals(httpMethod.getEndpoint().getPath(), "/data");
       assertEquals(httpMethod.getMethod(), HttpMethod.POST);
       assertEquals(httpMethod.getHeaders().size(), 1);
-      assertEquals(httpMethod.getEntity(), "data");
+      assertEquals(httpMethod.getPayload().toString(), "data");
    }
 
    public void testCreatePostWithMethodBinder() throws SecurityException, NoSuchMethodException {
@@ -420,30 +420,30 @@ public class RestAnnotationProcessorTest {
       String expected = "{\"fooble\":\"data\"}";
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
                .singletonList(expected.getBytes().length + ""));
-      assertEquals(httpMethod.getEntity(), expected);
+      assertEquals(httpMethod.getPayload().toString(), expected);
    }
 
    @Endpoint(Localhost.class)
    public class TestPut {
       @PUT
       @Path("{foo}")
-      @MapBinder(BindToJsonEntity.class)
-      public void putWithMethodBinder(@PathParam("foo") @MapEntityParam("fooble") String path) {
+      @MapBinder(BindToJsonPayload.class)
+      public void putWithMethodBinder(@PathParam("foo") @MapPayloadParam("fooble") String path) {
       }
 
       @PUT
       @Path("{foo}")
       @Produces(MediaType.TEXT_PLAIN)
       public void putWithMethodBinderProduces(
-               @PathParam("foo") @BinderParam(BindToStringEntity.class) String path) {
+               @PathParam("foo") @BinderParam(BindToStringPayload.class) String path) {
       }
 
       @PUT
       @Path("{foo}")
-      @MapBinder(BindToJsonEntity.class)
+      @MapBinder(BindToJsonPayload.class)
       @Consumes(MediaType.APPLICATION_JSON)
       public void putWithMethodBinderConsumes(
-               @PathParam("foo") @MapEntityParam("fooble") String path) {
+               @PathParam("foo") @MapPayloadParam("fooble") String path) {
       }
    }
 
@@ -460,7 +460,7 @@ public class RestAnnotationProcessorTest {
       String expected = "{\"fooble\":\"data\"}";
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
                .singletonList(expected.getBytes().length + ""));
-      assertEquals(httpMethod.getEntity(), expected);
+      assertEquals(httpMethod.getPayload().toString(), expected);
    }
 
    public void testCreatePutWithMethodProduces() throws SecurityException, NoSuchMethodException {
@@ -475,7 +475,7 @@ public class RestAnnotationProcessorTest {
                .singletonList("text/plain"));
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
                .singletonList("data".getBytes().length + ""));
-      assertEquals(httpMethod.getEntity(), "data");
+      assertEquals(httpMethod.getPayload().toString(), "data");
    }
 
    public void testCreatePutWithMethodConsumes() throws SecurityException, NoSuchMethodException {
@@ -493,7 +493,7 @@ public class RestAnnotationProcessorTest {
       String expected = "{\"fooble\":\"data\"}";
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
                .singletonList(expected.getBytes().length + ""));
-      assertEquals(httpMethod.getEntity(), expected);
+      assertEquals(httpMethod.getPayload().toString(), expected);
    }
 
    static class TestRequestFilter1 implements HttpRequestFilter {
@@ -589,7 +589,7 @@ public class RestAnnotationProcessorTest {
       assertRequestLineEquals(httpMethod,
                "GET http://localhost:8080/v1/ralphie/1/localhost HTTP/1.1");
       assertHeadersEqual(httpMethod, "");
-      assertEntityEquals(httpMethod, null);
+      assertPayloadEquals(httpMethod, null);
    }
 
    @Endpoint(Localhost.class)
@@ -650,7 +650,7 @@ public class RestAnnotationProcessorTest {
                new Object[] { "localhost" });
       assertRequestLineEquals(httpMethod, "GET http://localhost:8080/l HTTP/1.1");
       assertHeadersEqual(httpMethod, "");
-      assertEntityEquals(httpMethod, null);
+      assertPayloadEquals(httpMethod, null);
    }
 
    @Test
@@ -661,7 +661,7 @@ public class RestAnnotationProcessorTest {
                "localhost");
       assertRequestLineEquals(httpMethod, "GET http://localhost:8080/?one=l HTTP/1.1");
       assertHeadersEqual(httpMethod, "");
-      assertEntityEquals(httpMethod, null);
+      assertPayloadEquals(httpMethod, null);
    }
 
    @Test
@@ -672,7 +672,7 @@ public class RestAnnotationProcessorTest {
                new Object[] { "localhost" });
       assertRequestLineEquals(httpMethod, "GET http://localhost:8080/;one=l HTTP/1.1");
       assertHeadersEqual(httpMethod, "");
-      assertEntityEquals(httpMethod, null);
+      assertPayloadEquals(httpMethod, null);
    }
 
    @Test
@@ -684,7 +684,7 @@ public class RestAnnotationProcessorTest {
       assertRequestLineEquals(httpMethod, "POST http://localhost:8080/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 5\nContent-Type: application/x-www-form-urlencoded\n");
-      assertEntityEquals(httpMethod, "one=l");
+      assertPayloadEquals(httpMethod, "one=l");
    }
 
    @Test
@@ -1149,7 +1149,7 @@ public class RestAnnotationProcessorTest {
       @PUT
       @Path("/{id}")
       public Future<String> put(@PathParam("id") @ParamParser(FirstCharacter.class) String id,
-               @BinderParam(BindToStringEntity.class) String payload) {
+               @BinderParam(BindToStringPayload.class) String payload) {
          return null;
       }
 
@@ -1165,7 +1165,7 @@ public class RestAnnotationProcessorTest {
       @Headers(keys = "foo", values = "--{id}--")
       @ResponseParser(ReturnTrueIf2xx.class)
       public Future<String> putHeader(@PathParam("id") String id,
-               @BinderParam(BindToStringEntity.class) String payload) {
+               @BinderParam(BindToStringPayload.class) String payload) {
          return null;
       }
    }
@@ -1221,7 +1221,7 @@ public class RestAnnotationProcessorTest {
                new Object[] { "1", options });
       assertRequestLineEquals(httpMethod, "GET http://localhost:8080/1?prefix=1 HTTP/1.1");
       assertHeadersEqual(httpMethod, "Host: localhost\n");
-      assertEntityEquals(httpMethod, null);
+      assertPayloadEquals(httpMethod, null);
    }
 
    public void testCreateGetQuery() throws SecurityException, NoSuchMethodException {
@@ -1247,16 +1247,16 @@ public class RestAnnotationProcessorTest {
    }
 
    @Endpoint(Localhost.class)
-   public class EntityOptions extends BaseHttpRequestOptions {
+   public class PayloadOptions extends BaseHttpRequestOptions {
       @Override
-      public String buildStringEntity() {
+      public String buildStringPayload() {
          return "foo";
       }
    }
 
-   public void testCreateGetOptionsThatProducesEntity() throws SecurityException,
+   public void testCreateGetOptionsThatProducesPayload() throws SecurityException,
             NoSuchMethodException {
-      EntityOptions options = new EntityOptions();
+      PayloadOptions options = new PayloadOptions();
       Method method = TestRequest.class.getMethod("putOptions", String.class,
                HttpRequestOptions.class);
       GeneratedHttpRequest<?> httpMethod = factory(TestRequest.class).createRequest(method,
@@ -1267,7 +1267,7 @@ public class RestAnnotationProcessorTest {
       assertEquals(httpMethod.getHeaders().size(), 3);
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.HOST), Collections
                .singletonList("localhost"));
-      assertEquals(httpMethod.getEntity(), "foo");
+      assertEquals(httpMethod.getPayload().toString(), "foo");
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList("application/unknown"));
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
@@ -1307,7 +1307,7 @@ public class RestAnnotationProcessorTest {
                .singletonList("application/unknown"));
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
                .singletonList("data".getBytes().length + ""));
-      assertEquals(httpMethod.getEntity(), "data");
+      assertEquals(httpMethod.getPayload().toString(), "data");
    }
 
    public void testCreatePutHeader() throws SecurityException, NoSuchMethodException {
@@ -1323,7 +1323,7 @@ public class RestAnnotationProcessorTest {
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
                .singletonList("data".getBytes().length + ""));
       assertEquals(httpMethod.getHeaders().get("foo"), Collections.singletonList("--1--"));
-      assertEquals(httpMethod.getEntity(), "data");
+      assertEquals(httpMethod.getPayload().toString(), "data");
    }
 
    @Endpoint(Localhost.class)
@@ -1480,28 +1480,28 @@ public class RestAnnotationProcessorTest {
    }
 
    @Endpoint(Localhost.class)
-   public interface TestEntity {
+   public interface TestPayload {
       @PUT
-      public void put(@BinderParam(BindToStringEntity.class) String content);
+      public void put(@BinderParam(BindToStringPayload.class) String content);
 
       @PUT
       @Path("{foo}")
       public Future<Void> putWithPath(@PathParam("foo") String path,
-               @BinderParam(BindToStringEntity.class) String content);
+               @BinderParam(BindToStringPayload.class) String content);
 
       @PUT
-      public void twoEntities(@BinderParam(BindToStringEntity.class) String entity1,
-               @BinderParam(BindToStringEntity.class) String entity2);
+      public void twoEntities(@BinderParam(BindToStringPayload.class) String payload1,
+               @BinderParam(BindToStringPayload.class) String payload2);
    }
 
    @Test
    public void testPut() throws SecurityException, NoSuchMethodException {
-      RestAnnotationProcessor<TestEntity> processor = factory(TestEntity.class);
-      Method method = TestEntity.class.getMethod("put", String.class);
-      GeneratedHttpRequest<TestEntity> request = new GeneratedHttpRequest<TestEntity>("GET", URI
-               .create("http://localhost"), processor, TestEntity.class, method, "test");
+      RestAnnotationProcessor<TestPayload> processor = factory(TestPayload.class);
+      Method method = TestPayload.class.getMethod("put", String.class);
+      GeneratedHttpRequest<TestPayload> request = new GeneratedHttpRequest<TestPayload>("GET", URI
+               .create("http://localhost"), processor, TestPayload.class, method, "test");
       processor.decorateRequest(request);
-      assertEquals(request.getEntity(), "test");
+      assertEquals(request.getPayload().toString(), "test");
       assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList("application/unknown"));
       assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
@@ -1513,12 +1513,12 @@ public class RestAnnotationProcessorTest {
    @Test
    public void putWithPath() throws SecurityException, NoSuchMethodException {
 
-      RestAnnotationProcessor<TestEntity> processor = factory(TestEntity.class);
-      Method method = TestEntity.class.getMethod("putWithPath", String.class, String.class);
-      GeneratedHttpRequest<TestEntity> request = new GeneratedHttpRequest<TestEntity>("GET", URI
-               .create("http://localhost"), processor, TestEntity.class, method, "rabble", "test");
+      RestAnnotationProcessor<TestPayload> processor = factory(TestPayload.class);
+      Method method = TestPayload.class.getMethod("putWithPath", String.class, String.class);
+      GeneratedHttpRequest<TestPayload> request = new GeneratedHttpRequest<TestPayload>("GET", URI
+               .create("http://localhost"), processor, TestPayload.class, method, "rabble", "test");
       processor.decorateRequest(request);
-      assertEquals(request.getEntity(), "test");
+      assertEquals(request.getPayload().toString(), "test");
       assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList("application/unknown"));
       assertEquals(request.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
@@ -1566,7 +1566,7 @@ public class RestAnnotationProcessorTest {
             UnsupportedEncodingException {
       Method oneForm = TestFormReplace.class.getMethod("twoForm", String.class);
       String form = factory(TestFormReplace.class).createRequest(oneForm, new Object[] { "robot" })
-               .getEntity().toString();
+               .getPayload().toString().toString();
       assertEquals(form, "slash=/robot&hyphen=-robot");
    }
 
@@ -1584,7 +1584,7 @@ public class RestAnnotationProcessorTest {
             UnsupportedEncodingException {
       Method oneForm = TestClassForm.class.getMethod("oneForm", String.class);
       String form = factory(TestClassForm.class).createRequest(oneForm, new Object[] { "robot" })
-               .getEntity().toString();
+               .getPayload().toString().toString();
       assertEquals(form, "x-amz-copy-source=/robot");
    }
 
@@ -1593,7 +1593,7 @@ public class RestAnnotationProcessorTest {
             UnsupportedEncodingException {
       Method oneForm = TestFormReplace.class.getMethod("oneForm", String.class);
       String form = factory(TestFormReplace.class).createRequest(oneForm, new Object[] { "robot" })
-               .getEntity().toString();
+               .getPayload().toString().toString();
       assertEquals(form, "x-amz-copy-source=/robot");
    }
 
@@ -1602,7 +1602,7 @@ public class RestAnnotationProcessorTest {
             UnsupportedEncodingException {
       Method twoForms = TestFormReplace.class.getMethod("twoForms", String.class, String.class);
       String form = factory(TestFormReplace.class).createRequest(twoForms,
-               new Object[] { "robot", "eggs" }).getEntity().toString();
+               new Object[] { "robot", "eggs" }).getPayload().toString().toString();
       assertEquals(form, "x-amz-copy-source=/robot/eggs");
    }
 
@@ -1612,7 +1612,7 @@ public class RestAnnotationProcessorTest {
       Method twoFormsOutOfOrder = TestFormReplace.class.getMethod("twoFormsOutOfOrder",
                String.class, String.class);
       String form = factory(TestFormReplace.class).createRequest(twoFormsOutOfOrder,
-               new Object[] { "robot", "eggs" }).getEntity().toString();
+               new Object[] { "robot", "eggs" }).getPayload().toString().toString();
       assertEquals(form, "x-amz-copy-source=/eggs/robot");
    }
 
@@ -1646,14 +1646,13 @@ public class RestAnnotationProcessorTest {
 
    }
 
-   protected void assertEntityEquals(GeneratedHttpRequest<?> httpMethod, String toMatch)
+   protected void assertPayloadEquals(GeneratedHttpRequest<?> httpMethod, String toMatch)
             throws IOException {
-      if (httpMethod.getEntity() == null) {
+      if (httpMethod.getPayload() == null) {
          assertNull(toMatch);
       } else {
-         String entity = (httpMethod.getEntity() instanceof String) ? httpMethod.getEntity()
-                  .toString() : IOUtils.toString((InputStream) httpMethod.getEntity());
-         assertEquals(entity, toMatch);
+         String payload = IOUtils.toString(httpMethod.getPayload().getContent());
+         assertEquals(payload, toMatch);
       }
    }
 

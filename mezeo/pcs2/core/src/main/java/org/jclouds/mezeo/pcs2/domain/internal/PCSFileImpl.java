@@ -27,7 +27,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Inject;
 
-import org.jclouds.blobstore.functions.CalculateSize;
+import org.jclouds.http.internal.BasePayloadEnclosingImpl;
 import org.jclouds.mezeo.pcs2.domain.MutableFileInfo;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
 
@@ -39,51 +39,25 @@ import com.google.common.collect.Multimap;
  * 
  * @author Adrian Cole
  */
-public class PCSFileImpl implements PCSFile, Comparable<PCSFile> {
+public class PCSFileImpl extends BasePayloadEnclosingImpl implements PCSFile, Comparable<PCSFile> {
 
-   private final CalculateSize calculateSize;
    private final MutableFileInfo metadata;
-   private Object data;
    private Multimap<String, String> allHeaders = LinkedHashMultimap.create();
-   private Long contentLength;
 
    @Inject
-   public PCSFileImpl(CalculateSize calculateSize, MutableFileInfo metadata) {
-      this.calculateSize = calculateSize;
+   public PCSFileImpl(MutableFileInfo metadata) {
+      super(null);// no MD5 support
       this.metadata = metadata;
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   public Object getData() {
-      return data;
+   @Override
+   public void generateMD5() {
+      throw new UnsupportedOperationException("Mezeo PCS2 does not support MD5");
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   public void setData(Object data) {
-      this.data = checkNotNull(data, "data");
-      if (getContentLength() == null) {
-         Long size = calculateSize.apply(data);
-         if (size != null)
-            this.setContentLength(size);
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public Long getContentLength() {
-      return contentLength;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setContentLength(long contentLength) {
-      this.contentLength = contentLength;
+   @Override
+   protected void setContentMD5(byte[] md5) {
+      // noOp;
    }
 
    /**
@@ -115,4 +89,5 @@ public class PCSFileImpl implements PCSFile, Comparable<PCSFile> {
          return -1;
       return (this == o) ? 0 : getMetadata().getName().compareTo(o.getMetadata().getName());
    }
+
 }

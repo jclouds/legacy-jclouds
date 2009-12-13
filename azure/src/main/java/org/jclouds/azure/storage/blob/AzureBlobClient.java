@@ -194,7 +194,7 @@ public interface AzureBlobClient {
     * it as a set of blocks. For more information, see the Put Block and Put Block List operations.
     * <p/>
     * If you attempt to upload a blob that is larger than 64 MB, the service returns status code 413
-    * (Request Entity Too Large). The Blob service also returns additional information about the
+    * (Request Payload Too Large). The Blob service also returns additional information about the
     * error in the response, including the maximum blob size permitted in bytes.
     * <p/>
     * A Put Blob operation is permitted 10 minutes per MB to complete. If the operation is taking

@@ -145,7 +145,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
    /**
     * For use in the request header: x-amz-copy-source-if-match
     * <p/>
-    * Copies the object if its entity tag (ETag) matches the specified tag; otherwise return a 412
+    * Copies the object if its payload tag (ETag) matches the specified tag; otherwise return a 412
     * (precondition failed).
     * <p/>
     * This header can be used with x-amz-copy-source-if-unmodified-since, but cannot be used with
@@ -160,7 +160,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
    /**
     * For use in the request header: x-amz-copy-source-if-none-match
     * <p/>
-    * Copies the object if its entity tag (ETag) is different than the specified Etag; otherwise
+    * Copies the object if its payload tag (ETag) is different than the specified Etag; otherwise
     * returns a 412 (failed condition).
     * <p/>
     * This header can be used with x-amz-copy-source-if-modified-since, but cannot be used with
@@ -221,7 +221,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
     * {@link #ifSourceModifiedSince(Date)}
     * 
     * @param eTag
-    *           hash representing the entity
+    *           hash representing the payload
     */
    public CopyObjectOptions ifSourceETagMatches(String eTag) throws UnsupportedEncodingException {
       checkState(getIfNoneMatch() == null,
@@ -240,7 +240,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
     * {@link #ifSourceUnmodifiedSince(Date)}
     * 
     * @param eTag
-    *           hash representing the entity
+    *           hash representing the payload
     * @throws UnsupportedEncodingException
     *            if there was a problem converting this into an S3 eTag string
     */

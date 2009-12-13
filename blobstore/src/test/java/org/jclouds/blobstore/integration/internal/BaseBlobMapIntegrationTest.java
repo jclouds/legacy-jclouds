@@ -115,7 +115,7 @@ public class BaseBlobMapIntegrationTest<A, S> extends BaseMapIntegrationTest<A, 
             assertEquals(fiveStrings.get(entry.getKey()), BlobStoreUtils
                      .getContentAsStringAndClose(entry.getValue()));
             Blob value = entry.getValue();
-            value.setData("");
+            value.setPayload("");
             value.generateMD5();
             entry.setValue(value);
          }
@@ -135,7 +135,7 @@ public class BaseBlobMapIntegrationTest<A, S> extends BaseMapIntegrationTest<A, 
          Map<String, Blob> map = createMap(context, bucketName);
          putStringWithMD5(map, "one", "apple");
          Blob object = newBlob("one");
-         object.setData("apple");
+         object.setPayload("apple");
          object.generateMD5();
          assertConsistencyAwareContainsValue(map, object);
       } finally {
@@ -163,11 +163,11 @@ public class BaseBlobMapIntegrationTest<A, S> extends BaseMapIntegrationTest<A, 
       try {
          Map<String, Blob> map = createMap(context, bucketName);
          Blob object = newBlob("one");
-         object.setData(IOUtils.toInputStream("apple"));
+         object.setPayload(IOUtils.toInputStream("apple"));
          object.generateMD5();
          Blob old = map.put(object.getMetadata().getName(), object);
          getOneReturnsAppleAndOldValueIsNull(map, old);
-         object.setData(IOUtils.toInputStream("bear"));
+         object.setPayload(IOUtils.toInputStream("bear"));
          object.generateMD5();
          Blob apple = map.put(object.getMetadata().getName(), object);
          getOneReturnsBearAndOldValueIsApple(map, apple);
@@ -184,7 +184,7 @@ public class BaseBlobMapIntegrationTest<A, S> extends BaseMapIntegrationTest<A, 
          Map<String, Blob> newMap = new HashMap<String, Blob>();
          for (String key : fiveInputs.keySet()) {
             Blob object = newBlob(key);
-            object.setData(fiveInputs.get(key));
+            object.setPayload(fiveInputs.get(key));
             object.setContentLength(new Long(fiveBytes.get(key).length));
             newMap.put(key, object);
          }
@@ -200,7 +200,7 @@ public class BaseBlobMapIntegrationTest<A, S> extends BaseMapIntegrationTest<A, 
    @Override
    protected void putStringWithMD5(Map<String, Blob> map, String key, String value) {
       Blob object = newBlob(key);
-      object.setData(value);
+      object.setPayload(value);
       object.generateMD5();
       map.put(key, object);
    }
@@ -209,7 +209,7 @@ public class BaseBlobMapIntegrationTest<A, S> extends BaseMapIntegrationTest<A, 
       Map<String, Blob> newMap = new HashMap<String, Blob>();
       for (Map.Entry<String, String> entry : fiveStrings.entrySet()) {
          Blob object = newBlob(entry.getKey());
-         object.setData(entry.getValue());
+         object.setPayload(entry.getValue());
          newMap.put(entry.getKey(), object);
       }
       map.putAll(newMap);
@@ -219,7 +219,7 @@ public class BaseBlobMapIntegrationTest<A, S> extends BaseMapIntegrationTest<A, 
       Map<String, Blob> newMap = new HashMap<String, Blob>();
       for (Map.Entry<String, String> entry : fiveStringsUnderPath.entrySet()) {
          Blob object = newBlob(entry.getKey());
-         object.setData(entry.getValue());
+         object.setPayload(entry.getValue());
          newMap.put(entry.getKey(), object);
       }
       map.putAll(newMap);

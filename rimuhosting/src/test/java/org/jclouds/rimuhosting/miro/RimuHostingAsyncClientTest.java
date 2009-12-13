@@ -59,7 +59,7 @@ public class RimuHostingAsyncClientTest extends RestClientTest<RimuHostingAsyncC
        * GeneratedHttpRequest<RimuHostingAsyncClient> httpMethod = processor.createRequest(method);
        * 
        * assertRequestLineEquals(httpMethod, "TODO: insert expected request");
-       * assertHeadersEqual(httpMethod, ""); assertEntityEquals(httpMethod, null);
+       * assertHeadersEqual(httpMethod, ""); assertPayloadEquals(httpMethod, null);
        * 
        * assertResponseParserClassEquals(method, httpMethod, ParseStatusesFromJsonResponse.class);
        * assertSaxResponseParserClassEquals(method, null); assertExceptionParserClassEquals(method,

@@ -71,7 +71,7 @@ public class SDNClientTest extends RestClientTest<SDNAsyncClient> {
                httpMethod,
                "GET http://stub:8080/ws/IMFS/GetStorageNode.ashx?output=json&destFolderPath=adriansmovies&sizeBytes=734859264 HTTP/1.1");
       assertHeadersEqual(httpMethod, "");
-      assertEntityEquals(httpMethod, null);
+      assertPayloadEquals(httpMethod, null);
 
       assertResponseParserClassEquals(method, httpMethod, ParseUploadInfoFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -100,7 +100,7 @@ public class SDNClientTest extends RestClientTest<SDNAsyncClient> {
       expects.append("hello\r\n");
       expects.append("----JCLOUDS----\r\n");
 
-      assertEntityEquals(httpMethod, expects.toString());
+      assertPayloadEquals(httpMethod, expects.toString());
 
       assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -118,7 +118,7 @@ public class SDNClientTest extends RestClientTest<SDNAsyncClient> {
                httpMethod,
                "GET http://stub:8080/ws/Metadata/SetMetadata.ashx?output=json&path=adriansmovies/sushi.avi&metadata=chef:Kawasaki HTTP/1.1");
       assertHeadersEqual(httpMethod, "");
-      assertEntityEquals(httpMethod, null);
+      assertPayloadEquals(httpMethod, null);
 
       assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -136,7 +136,7 @@ public class SDNClientTest extends RestClientTest<SDNAsyncClient> {
                httpMethod,
                "GET http://stub:8080/ws/Metadata/GetMetadata.ashx?output=json&path=adriansmovies/sushi.avi HTTP/1.1");
       assertHeadersEqual(httpMethod, "");
-      assertEntityEquals(httpMethod, null);
+      assertPayloadEquals(httpMethod, null);
 
       assertResponseParserClassEquals(method, httpMethod, ParseMetadataFromJsonResponse.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -153,7 +153,7 @@ public class SDNClientTest extends RestClientTest<SDNAsyncClient> {
       assertRequestLineEquals(httpMethod,
                "GET http://stub:8080/adriansmovies/sushi.avi?output=json HTTP/1.1");
       assertHeadersEqual(httpMethod, "");
-      assertEntityEquals(httpMethod, null);
+      assertPayloadEquals(httpMethod, null);
 
       assertResponseParserClassEquals(method, httpMethod, ReturnStringIf200.class);
       assertSaxResponseParserClassEquals(method, null);

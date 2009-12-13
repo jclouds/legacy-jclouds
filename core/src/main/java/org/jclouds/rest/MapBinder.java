@@ -28,7 +28,7 @@ import java.util.Map;
 import org.jclouds.http.HttpRequest;
 
 /**
- * Builds the entity of a Post request.
+ * Builds the payload of a Post request.
  * 
  * @author Adrian Cole
  * 
@@ -36,9 +36,9 @@ import org.jclouds.http.HttpRequest;
 public interface MapBinder extends Binder {
 
    /**
-    * creates and binds the POST entity to the request using parameters specified.
+    * creates and binds the POST payload to the request using parameters specified.
     * 
-    * @see MapEntityParam
+    * @see MapPayloadParam
     */
    public void bindToRequest(HttpRequest request, Map<String, String> postParams);
 

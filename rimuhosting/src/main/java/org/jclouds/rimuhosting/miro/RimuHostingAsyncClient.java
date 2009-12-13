@@ -76,7 +76,7 @@ public interface RimuHostingAsyncClient {
    @ExceptionParser(ParseRimuHostingException.class)
    @ResponseParser(ParseNewInstanceResponseFromJsonResponse.class)
    @MapBinder(RimuHostingCreateInstanceBinder.class)
-   Future<NewServerResponse> createInstance(@MapEntityParam("name") String name, @MapEntityParam("imageId") String imageId, @MapEntityParam("planId") String planId);
+   Future<NewServerResponse> createInstance(@MapPayloadParam("name") String name, @MapPayloadParam("imageId") String imageId, @MapPayloadParam("planId") String planId);
 
    @POST @Path("/orders/new-vps")
    @Produces(MediaType.APPLICATION_JSON)
@@ -84,7 +84,7 @@ public interface RimuHostingAsyncClient {
    @ExceptionParser(ParseRimuHostingException.class)
    @ResponseParser(ParseNewInstanceResponseFromJsonResponse.class)
    @MapBinder(RimuHostingCreateInstanceBinder.class)
-   Future<NewServerResponse> createInstance(@MapEntityParam("name") String name, @MapEntityParam("imageId") String imageId, @MapEntityParam("planId") String planId, @MapEntityParam("password") String password);
+   Future<NewServerResponse> createInstance(@MapPayloadParam("name") String name, @MapPayloadParam("imageId") String imageId, @MapPayloadParam("planId") String planId, @MapPayloadParam("password") String password);
 
    @GET @Path("/orders/order-{id}-blah/vps")
    @Consumes(MediaType.APPLICATION_JSON)

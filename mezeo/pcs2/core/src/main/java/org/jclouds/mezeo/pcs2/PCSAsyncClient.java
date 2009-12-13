@@ -38,9 +38,9 @@ import javax.ws.rs.PathParam;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.filters.BasicAuthentication;
-import org.jclouds.mezeo.pcs2.binders.BindContainerNameToXmlEntity;
-import org.jclouds.mezeo.pcs2.binders.BindDataToEntity;
-import org.jclouds.mezeo.pcs2.binders.BindFileInfoToXmlEntity;
+import org.jclouds.mezeo.pcs2.binders.BindContainerNameToXmlPayload;
+import org.jclouds.mezeo.pcs2.binders.BindDataToPayload;
+import org.jclouds.mezeo.pcs2.binders.BindFileInfoToXmlPayload;
 import org.jclouds.mezeo.pcs2.binders.BindPCSFileToMultipartForm;
 import org.jclouds.mezeo.pcs2.domain.ContainerList;
 import org.jclouds.mezeo.pcs2.domain.FileInfoWithMetadata;
@@ -58,7 +58,7 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.rest.binders.BindToStringEntity;
+import org.jclouds.rest.binders.BindToStringPayload;
 
 /**
  * Provides asynchronous access to Mezeo PCS v2 via their REST API.
@@ -98,7 +98,7 @@ public interface PCSAsyncClient {
    @POST
    @Path("/contents")
    @Endpoint(RootContainer.class)
-   Future<URI> createContainer(@BinderParam(BindContainerNameToXmlEntity.class) String container);
+   Future<URI> createContainer(@BinderParam(BindContainerNameToXmlPayload.class) String container);
 
    /**
     * @see PCSAsyncClient#createContainer
@@ -106,7 +106,7 @@ public interface PCSAsyncClient {
    @POST
    @Path("/contents")
    Future<URI> createContainer(@Endpoint URI parent,
-            @BinderParam(BindContainerNameToXmlEntity.class) String container);
+            @BinderParam(BindContainerNameToXmlPayload.class) String container);
 
    /**
     * @see PCSAsyncClient#deleteContainer
@@ -129,7 +129,7 @@ public interface PCSAsyncClient {
    @POST
    @Path("/contents")
    Future<URI> createFile(@Endpoint URI container,
-            @BinderParam(BindFileInfoToXmlEntity.class) PCSFile object);
+            @BinderParam(BindFileInfoToXmlPayload.class) PCSFile object);
 
    /**
     * @see PCSAsyncClient#uploadBlock
@@ -137,7 +137,7 @@ public interface PCSAsyncClient {
    @PUT
    @Path("/content")
    Future<Void> uploadBlock(@Endpoint URI file,
-            @BinderParam(BindDataToEntity.class) PCSFile object, PutBlockOptions... options);
+            @BinderParam(BindDataToPayload.class) PCSFile object, PutBlockOptions... options);
 
    /**
     * @see PCSAsyncClient#deleteFile
@@ -169,7 +169,7 @@ public interface PCSAsyncClient {
    @PUT
    @Path("/metadata/{key}")
    Future<Void> putMetadataItem(@Endpoint URI resource, @PathParam("key") String key,
-            @BinderParam(BindToStringEntity.class) String value);
+            @BinderParam(BindToStringPayload.class) String value);
 
    /**
     * @see PCSAsyncClient#addMetadataItemToMap

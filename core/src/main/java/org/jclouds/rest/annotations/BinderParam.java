@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
 import org.jclouds.rest.Binder;
 
 /**
- * Designates that this parameter will modify the request, possibly including adding an entity to
+ * Designates that this parameter will modify the request, possibly including adding an payload to
  * it.
  * 
  * @author Adrian Cole
@@ -42,7 +42,7 @@ import org.jclouds.rest.Binder;
 public @interface BinderParam {
 
    /**
-    * how to persist this entity.
+    * how to persist this payload.
     */
    Class<? extends Binder> value();
 }

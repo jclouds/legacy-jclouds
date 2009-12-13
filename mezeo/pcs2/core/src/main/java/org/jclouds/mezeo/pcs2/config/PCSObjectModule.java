@@ -26,7 +26,6 @@ package org.jclouds.mezeo.pcs2.config;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.jclouds.blobstore.functions.CalculateSize;
 import org.jclouds.mezeo.pcs2.domain.MutableFileInfo;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
 import org.jclouds.mezeo.pcs2.domain.internal.PCSFileImpl;
@@ -53,12 +52,10 @@ public class PCSObjectModule extends AbstractModule {
 
    private static class PCSFileFactory implements PCSFile.Factory {
       @Inject
-      CalculateSize calculateSize;
-      @Inject
       Provider<MutableFileInfo> metadataProvider;
 
       public PCSFile create(MutableFileInfo metadata) {
-         return new PCSFileImpl(calculateSize, metadata != null ? metadata : metadataProvider.get());
+         return new PCSFileImpl(metadata != null ? metadata : metadataProvider.get());
       }
    }
 

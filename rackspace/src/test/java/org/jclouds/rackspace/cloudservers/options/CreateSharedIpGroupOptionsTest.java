@@ -49,10 +49,10 @@ public class CreateSharedIpGroupOptionsTest {
    Injector injector = Guice.createInjector(new ParserModule());
 
    @Test
-   public void testAddEntityToRequestMapOfStringStringHttpRequest() {
+   public void testAddPayloadToRequestMapOfStringStringHttpRequest() {
       CreateSharedIpGroupOptions options = new CreateSharedIpGroupOptions();
       HttpRequest request = buildRequest(options);
-      assertEquals("{\"sharedIpGroup\":{\"name\":\"foo\"}}", request.getEntity());
+      assertEquals("{\"sharedIpGroup\":{\"name\":\"foo\"}}", request.getPayload().getRawContent());
    }
 
    private HttpRequest buildRequest(CreateSharedIpGroupOptions options) {
@@ -78,7 +78,8 @@ public class CreateSharedIpGroupOptionsTest {
    }
 
    private void assertSharedIpGroup(HttpRequest request) {
-      assertEquals("{\"sharedIpGroup\":{\"name\":\"foo\",\"server\":3}}", request.getEntity());
+      assertEquals("{\"sharedIpGroup\":{\"name\":\"foo\",\"server\":3}}", request.getPayload()
+               .getRawContent());
    }
 
 }

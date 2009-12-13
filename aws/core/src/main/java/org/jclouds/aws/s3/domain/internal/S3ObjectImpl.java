@@ -24,19 +24,14 @@
 package org.jclouds.aws.s3.domain.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
-
-import java.io.InputStream;
 
 import javax.inject.Inject;
 
 import org.jclouds.aws.s3.domain.AccessControlList;
 import org.jclouds.aws.s3.domain.MutableObjectMetadata;
 import org.jclouds.aws.s3.domain.S3Object;
-import org.jclouds.blobstore.domain.MD5InputStreamResult;
-import org.jclouds.blobstore.functions.CalculateSize;
-import org.jclouds.blobstore.functions.GenerateMD5;
-import org.jclouds.blobstore.functions.GenerateMD5Result;
+import org.jclouds.encryption.EncryptionService;
+import org.jclouds.http.internal.BasePayloadEnclosingImpl;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
@@ -46,25 +41,22 @@ import com.google.common.collect.Multimap;
  * 
  * @author Adrian Cole
  */
-public class S3ObjectImpl implements S3Object, Comparable<S3Object> {
-   private final GenerateMD5Result generateMD5Result;
-   private final GenerateMD5 generateMD5;
-   private final CalculateSize calculateSize;
+public class S3ObjectImpl extends BasePayloadEnclosingImpl implements S3Object,
+         Comparable<S3Object> {
    private final MutableObjectMetadata metadata;
-   private Object data;
    private Multimap<String, String> allHeaders = LinkedHashMultimap.create();
-   private Long contentLength;
+   private AccessControlList accessControlList;
 
    @Inject
-   public S3ObjectImpl(GenerateMD5Result generateMD5Result, GenerateMD5 generateMD5,
-            CalculateSize calculateSize, MutableObjectMetadata metadata) {
-      this.generateMD5Result = generateMD5Result;
-      this.generateMD5 = generateMD5;
-      this.calculateSize = calculateSize;
+   public S3ObjectImpl(EncryptionService encryptionService, MutableObjectMetadata metadata) {
+      super(encryptionService);
       this.metadata = metadata;
    }
 
-   private AccessControlList accessControlList;
+   @Override
+   protected void setContentMD5(byte[] md5) {
+      getMetadata().setContentMD5(md5);
+   }
 
    /**
     * {@inheritDoc}
@@ -78,54 +70,6 @@ public class S3ObjectImpl implements S3Object, Comparable<S3Object> {
     */
    public AccessControlList getAccessControlList() {
       return this.accessControlList;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void generateMD5() {
-      checkState(data != null, "data");
-      if (data instanceof InputStream) {
-         MD5InputStreamResult result = generateMD5Result.apply((InputStream) data);
-         getMetadata().setContentMD5(result.md5);
-         setContentLength(result.length);
-         setData(result.data);
-      } else {
-         getMetadata().setContentMD5(generateMD5.apply(data));
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public Object getData() {
-      return data;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setData(Object data) {
-      this.data = checkNotNull(data, "data");
-      if (getContentLength() == null) {
-         Long size = calculateSize.apply(data);
-         if (size != null)
-            this.setContentLength(size);
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public Long getContentLength() {
-      return contentLength;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setContentLength(long contentLength) {
-      this.contentLength = contentLength;
    }
 
    /**
@@ -165,7 +109,7 @@ public class S3ObjectImpl implements S3Object, Comparable<S3Object> {
       result = prime * result + ((accessControlList == null) ? 0 : accessControlList.hashCode());
       result = prime * result + ((allHeaders == null) ? 0 : allHeaders.hashCode());
       result = prime * result + ((contentLength == null) ? 0 : contentLength.hashCode());
-      result = prime * result + ((data == null) ? 0 : data.hashCode());
+      result = prime * result + ((payload == null) ? 0 : payload.hashCode());
       result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
       return result;
    }
@@ -194,10 +138,10 @@ public class S3ObjectImpl implements S3Object, Comparable<S3Object> {
             return false;
       } else if (!contentLength.equals(other.contentLength))
          return false;
-      if (data == null) {
-         if (other.data != null)
+      if (payload == null) {
+         if (other.payload != null)
             return false;
-      } else if (!data.equals(other.data))
+      } else if (!payload.equals(other.payload))
          return false;
       if (metadata == null) {
          if (other.metadata != null)

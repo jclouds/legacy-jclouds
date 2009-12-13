@@ -53,18 +53,18 @@ public class CreateServerOptionsTest {
    Injector injector = Guice.createInjector(new ParserModule());
 
    @Test
-   public void testAddEntityToRequestMapOfStringStringHttpRequest() {
+   public void testAddPayloadToRequestMapOfStringStringHttpRequest() {
       CreateServerOptions options = new CreateServerOptions();
       HttpRequest request = buildRequest(options);
       assertEquals("{\"server\":{\"name\":\"foo\",\"imageId\":1,\"flavorId\":2}}", request
-               .getEntity());
+               .getPayload().getRawContent());
    }
 
    private HttpRequest buildRequest(CreateServerOptions options) {
       injector.injectMembers(options);
       HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
-      options.bindToRequest(request, ImmutableMap.of("name", "foo", "imageId", "1", "flavorId",
-               "2"));
+      options.bindToRequest(request, ImmutableMap
+               .of("name", "foo", "imageId", "1", "flavorId", "2"));
       return request;
    }
 
@@ -86,7 +86,7 @@ public class CreateServerOptionsTest {
    private void assertFile(HttpRequest request) {
       assertEquals(
                "{\"server\":{\"name\":\"foo\",\"imageId\":1,\"flavorId\":2,\"personality\":[{\"path\":\"/tmp/rhubarb\",\"contents\":\"Zm9v\"}]}}",
-               request.getEntity());
+               request.getPayload().getRawContent());
    }
 
    @Test
@@ -107,7 +107,7 @@ public class CreateServerOptionsTest {
    private void assertSharedIpGroup(HttpRequest request) {
       assertEquals(
                "{\"server\":{\"name\":\"foo\",\"imageId\":1,\"flavorId\":2,\"sharedIpGroupId\":3}}",
-               request.getEntity());
+               request.getPayload().getRawContent());
    }
 
    @Test
@@ -134,7 +134,7 @@ public class CreateServerOptionsTest {
    private void assertSharedIp(HttpRequest request) {
       assertEquals(
                "{\"server\":{\"name\":\"foo\",\"imageId\":1,\"flavorId\":2,\"sharedIpGroupId\":3,\"addresses\":{\"public\":[\"127.0.0.1\"]}}}",
-               request.getEntity());
+               request.getPayload().getRawContent());
    }
 
    @Test(expectedExceptions = IllegalStateException.class)

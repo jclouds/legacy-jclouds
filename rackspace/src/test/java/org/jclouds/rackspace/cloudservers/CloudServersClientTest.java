@@ -109,7 +109,7 @@ public class CloudServersClientTest {
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "ralphie", 2, 1 });
       assertEquals("{\"server\":{\"name\":\"ralphie\",\"imageId\":2,\"flavorId\":1}}", httpMethod
-               .getEntity());
+               .getPayload().getRawContent());
       validateCreateServer(method, httpMethod, null);
    }
 
@@ -121,7 +121,7 @@ public class CloudServersClientTest {
                new Object[] { "ralphie", 2, 1, withSharedIpGroup(2) });
       assertEquals(
                "{\"server\":{\"name\":\"ralphie\",\"imageId\":2,\"flavorId\":1,\"sharedIpGroupId\":2}}",
-               httpMethod.getEntity());
+               httpMethod.getPayload().getRawContent());
       validateCreateServer(method, httpMethod, null);
    }
 
@@ -134,7 +134,7 @@ public class CloudServersClientTest {
                         new CreateServerOptions[] { withFile("/etc/jclouds", "foo".getBytes()) } });
       assertEquals(
                "{\"server\":{\"name\":\"ralphie\",\"imageId\":2,\"flavorId\":1,\"personality\":[{\"path\":\"/etc/jclouds\",\"contents\":\"Zm9v\"}]}}",
-               httpMethod.getEntity());
+               httpMethod.getPayload().getRawContent());
       validateCreateServer(method, httpMethod, null);
    }
 
@@ -146,7 +146,7 @@ public class CloudServersClientTest {
                new Object[] { "ralphie", 2, 1, withMetadata(ImmutableMap.of("foo", "bar")) });
       assertEquals(
                "{\"server\":{\"name\":\"ralphie\",\"imageId\":2,\"flavorId\":1,\"metadata\":{\"foo\":\"bar\"}}}",
-               httpMethod.getEntity());
+               httpMethod.getPayload().getRawContent());
       validateCreateServer(method, httpMethod, null);
    }
 
@@ -164,7 +164,7 @@ public class CloudServersClientTest {
                                  InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 })) });
       assertEquals(
                "{\"server\":{\"name\":\"ralphie\",\"imageId\":2,\"flavorId\":1,\"sharedIpGroupId\":2,\"addresses\":{\"public\":[\"127.0.0.1\"]}}}",
-               httpMethod.getEntity());
+               httpMethod.getPayload().getRawContent());
       validateCreateServer(method, httpMethod, null);
    }
 
@@ -176,13 +176,14 @@ public class CloudServersClientTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.POST);
       assertEquals(httpMethod.getHeaders().size(), 2);
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(httpMethod.getEntity().toString().getBytes().length + ""));
+               .singletonList(httpMethod.getPayload().getRawContent().toString().getBytes().length
+                        + ""));
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseServerFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
-      assertNotNull(processor.getMapEntityBinderOrNull(method, new Object[] { "", 1, 2,
+      assertNotNull(processor.getMapPayloadBinderOrNull(method, new Object[] { "", 1, 2,
                new CreateServerOptions[] { CreateServerOptions.Builder.withSharedIpGroup(1) } }));
    }
 
@@ -444,10 +445,11 @@ public class CloudServersClientTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
       assertEquals(httpMethod.getHeaders().size(), 2);
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(httpMethod.getEntity().toString().getBytes().length + ""));
+               .singletonList(httpMethod.getPayload().getRawContent().toString().getBytes().length
+                        + ""));
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
-      assertEquals("{\"shareIp\":{\"sharedIpGroupId\":3}}", httpMethod.getEntity());
+      assertEquals("{\"shareIp\":{\"sharedIpGroupId\":3}}", httpMethod.getPayload().getRawContent());
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnFalseOn404.class);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
@@ -466,11 +468,12 @@ public class CloudServersClientTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
       assertEquals(httpMethod.getHeaders().size(), 2);
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(httpMethod.getEntity().toString().getBytes().length + ""));
+               .singletonList(httpMethod.getPayload().getRawContent().toString().getBytes().length
+                        + ""));
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
       assertEquals("{\"shareIp\":{\"sharedIpGroupId\":3,\"configureServer\":true}}", httpMethod
-               .getEntity());
+               .getPayload().getRawContent());
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnFalseOn404.class);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
@@ -506,10 +509,11 @@ public class CloudServersClientTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.POST);
       assertEquals(httpMethod.getHeaders().size(), 2);
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(httpMethod.getEntity().toString().getBytes().length + ""));
+               .singletonList(httpMethod.getPayload().getRawContent().toString().getBytes().length
+                        + ""));
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
-      assertEquals(httpMethod.getEntity(),
+      assertEquals(httpMethod.getPayload().getRawContent(),
                "{\"backupSchedule\":{\"daily\":\"H_0800_1000\",\"enabled\":true,\"weekly\":\"MONDAY\"}}");
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnFalseOn404.class);
@@ -543,10 +547,11 @@ public class CloudServersClientTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
       assertEquals(httpMethod.getHeaders().size(), 2);
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(httpMethod.getEntity().toString().getBytes().length + ""));
+               .singletonList(httpMethod.getPayload().getRawContent().toString().getBytes().length
+                        + ""));
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
-      assertEquals("{\"server\":{\"adminPass\":\"foo\"}}", httpMethod.getEntity());
+      assertEquals("{\"server\":{\"adminPass\":\"foo\"}}", httpMethod.getPayload().getRawContent());
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnFalseOn404.class);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
@@ -564,10 +569,11 @@ public class CloudServersClientTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.PUT);
       assertEquals(httpMethod.getHeaders().size(), 2);
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(httpMethod.getEntity().toString().getBytes().length + ""));
+               .singletonList(httpMethod.getPayload().getRawContent().toString().getBytes().length
+                        + ""));
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
-      assertEquals("{\"server\":{\"name\":\"foo\"}}", httpMethod.getEntity());
+      assertEquals("{\"server\":{\"name\":\"foo\"}}", httpMethod.getPayload().getRawContent());
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnFalseOn404.class);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
@@ -666,7 +672,8 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "ralphie" });
-      assertEquals("{\"sharedIpGroup\":{\"name\":\"ralphie\"}}", httpMethod.getEntity());
+      assertEquals("{\"sharedIpGroup\":{\"name\":\"ralphie\"}}", httpMethod.getPayload()
+               .getRawContent());
       validateCreateSharedIpGroup(method, httpMethod);
    }
 
@@ -677,7 +684,7 @@ public class CloudServersClientTest {
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "ralphie", withServer(2) });
       assertEquals("{\"sharedIpGroup\":{\"name\":\"ralphie\",\"server\":2}}", httpMethod
-               .getEntity());
+               .getPayload().getRawContent());
       validateCreateSharedIpGroup(method, httpMethod);
    }
 
@@ -689,13 +696,14 @@ public class CloudServersClientTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.POST);
       assertEquals(httpMethod.getHeaders().size(), 2);
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(httpMethod.getEntity().toString().getBytes().length + ""));
+               .singletonList(httpMethod.getPayload().getRawContent().toString().getBytes().length
+                        + ""));
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseSharedIpGroupFromJsonResponse.class);
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
-      assertNotNull(processor.getMapEntityBinderOrNull(method, new Object[] { "",
+      assertNotNull(processor.getMapPayloadBinderOrNull(method, new Object[] { "",
                new CreateSharedIpGroupOptions[] { withServer(2) } }));
    }
 
@@ -776,20 +784,22 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "ralphie", 2 });
-      assertEquals("{\"image\":{\"serverId\":2,\"name\":\"ralphie\"}}", httpMethod.getEntity());
+      assertEquals("{\"image\":{\"serverId\":2,\"name\":\"ralphie\"}}", httpMethod.getPayload()
+               .getRawContent());
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/images");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json");
       assertEquals(httpMethod.getMethod(), HttpMethod.POST);
       assertEquals(httpMethod.getHeaders().size(), 2);
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(httpMethod.getEntity().toString().getBytes().length + ""));
+               .singletonList(httpMethod.getPayload().getRawContent().toString().getBytes().length
+                        + ""));
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseImageFromJsonResponse.class);
       assertNotNull(processor.createExceptionParserOrNullIfNotFound(method));
-      assertNotNull(processor.getMapEntityBinderOrNull(method, new Object[] { "", 2 }));
+      assertNotNull(processor.getMapPayloadBinderOrNull(method, new Object[] { "", 2 }));
    }
 
    private static final Class<? extends RebuildServerOptions[]> rebuildServerOptionsVarargsClass = new RebuildServerOptions[] {}
@@ -801,7 +811,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { 3 });
-      assertEquals("{\"rebuild\":{}}", httpMethod.getEntity());
+      assertEquals("{\"rebuild\":{}}", httpMethod.getPayload().getRawContent());
       validateRebuildServer(method, httpMethod);
    }
 
@@ -811,7 +821,7 @@ public class CloudServersClientTest {
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { 3, withImage(2) });
-      assertEquals("{\"rebuild\":{\"imageId\":2}}", httpMethod.getEntity());
+      assertEquals("{\"rebuild\":{\"imageId\":2}}", httpMethod.getPayload().getRawContent());
       validateRebuildServer(method, httpMethod);
    }
 
@@ -823,14 +833,15 @@ public class CloudServersClientTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.POST);
       assertEquals(httpMethod.getHeaders().size(), 2);
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(httpMethod.getEntity().toString().getBytes().length + ""));
+               .singletonList(httpMethod.getPayload().getRawContent().toString().getBytes().length
+                        + ""));
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnFalseOn404.class);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
-      assertNotNull(processor.getMapEntityBinderOrNull(method, new Object[] { "",
+      assertNotNull(processor.getMapPayloadBinderOrNull(method, new Object[] { "",
                new RebuildServerOptions[] { withImage(2) } }));
    }
 
@@ -845,10 +856,11 @@ public class CloudServersClientTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.POST);
       assertEquals(httpMethod.getHeaders().size(), 2);
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(httpMethod.getEntity().toString().getBytes().length + ""));
+               .singletonList(httpMethod.getPayload().getRawContent().toString().getBytes().length
+                        + ""));
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
-      assertEquals("{\"reboot\":{\"type\":\"HARD\"}}", httpMethod.getEntity());
+      assertEquals("{\"reboot\":{\"type\":\"HARD\"}}", httpMethod.getPayload().getRawContent());
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnFalseOn404.class);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
@@ -865,10 +877,11 @@ public class CloudServersClientTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.POST);
       assertEquals(httpMethod.getHeaders().size(), 2);
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(httpMethod.getEntity().toString().getBytes().length + ""));
+               .singletonList(httpMethod.getPayload().getRawContent().toString().getBytes().length
+                        + ""));
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
-      assertEquals("{\"resize\":{\"flavorId\":3}}", httpMethod.getEntity());
+      assertEquals("{\"resize\":{\"flavorId\":3}}", httpMethod.getPayload().getRawContent());
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnFalseOn404.class);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
@@ -885,10 +898,11 @@ public class CloudServersClientTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.POST);
       assertEquals(httpMethod.getHeaders().size(), 2);
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(httpMethod.getEntity().toString().getBytes().length + ""));
+               .singletonList(httpMethod.getPayload().getRawContent().toString().getBytes().length
+                        + ""));
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
-      assertEquals("{\"confirmResize\":null}", httpMethod.getEntity());
+      assertEquals("{\"confirmResize\":null}", httpMethod.getPayload().getRawContent());
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnFalseOn404.class);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
@@ -904,10 +918,11 @@ public class CloudServersClientTest {
       assertEquals(httpMethod.getMethod(), HttpMethod.POST);
       assertEquals(httpMethod.getHeaders().size(), 2);
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
-               .singletonList(httpMethod.getEntity().toString().getBytes().length + ""));
+               .singletonList(httpMethod.getPayload().getRawContent().toString().getBytes().length
+                        + ""));
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList(MediaType.APPLICATION_JSON));
-      assertEquals("{\"revertResize\":null}", httpMethod.getEntity());
+      assertEquals("{\"revertResize\":null}", httpMethod.getPayload().getRawContent());
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
                ReturnFalseOn404.class);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),

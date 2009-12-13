@@ -26,6 +26,7 @@ package org.jclouds.blobstore.functions;
 import javax.inject.Inject;
 
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.http.Payloads;
 
 import com.google.common.base.Function;
 
@@ -44,7 +45,7 @@ public class ObjectMD5 implements Function<Object, byte[]> {
          object = (Blob) from;
       } else {
          object = blobFactory.create(null);
-         object.setData(from);
+         object.setPayload(Payloads.newPayload(from));
       }
       if (object.getMetadata().getContentMD5() == null)
          object.generateMD5();
