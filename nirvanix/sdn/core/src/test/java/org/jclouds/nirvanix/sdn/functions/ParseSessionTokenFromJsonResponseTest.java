@@ -29,7 +29,6 @@ import java.io.InputStream;
 import java.net.UnknownHostException;
 
 import org.jclouds.http.functions.config.ParserModule;
-import org.jclouds.util.DateService;
 import org.testng.annotations.Test;
 
 import com.google.gson.Gson;
@@ -45,7 +44,6 @@ import com.google.inject.Injector;
 public class ParseSessionTokenFromJsonResponseTest {
 
    Injector i = Guice.createInjector(new ParserModule());
-   DateService dateService = new DateService();
 
    public void testApplyInputStreamDetails() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/login.json");

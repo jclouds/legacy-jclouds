@@ -23,186 +23,46 @@
  */
 package org.jclouds.util;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
-import java.util.SimpleTimeZone;
 
-import net.jcip.annotations.GuardedBy;
-import net.jcip.annotations.ThreadSafe;
+import org.jclouds.util.internal.SimpleDateFormatDateService;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
-import com.google.common.annotations.VisibleForTesting;
+import com.google.inject.ImplementedBy;
 
 /**
- * Parses and formats the ISO8601 and RFC822 date formats found in XML responses and HTTP response
- * headers.
- * <p>
- * Either {@link SimpleDateFormat} or {@link DateTimeFormatter} classes are used internally,
- * depending on which version gives the best performance.
+ * Parses and formats the ISO8601, C, and RFC822 date formats found in XML responses and HTTP
+ * response headers.
  * 
  * @author Adrian Cole
  * @author James Murty
  */
-@ThreadSafe
-public class DateService {
-   /*
-    * Use default Java Date/SimpleDateFormat classes for date manipulation, but be *very* careful to
-    * guard against the lack of thread safety.
-    */
-   @GuardedBy("this")
-   private static final SimpleDateFormat iso8601SecondsSimpleDateFormat = new SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
+@ImplementedBy(SimpleDateFormatDateService.class)
+public interface DateService {
 
-   @GuardedBy("this")
-   private static final SimpleDateFormat iso8601SimpleDateFormat = new SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+   Date fromSeconds(long seconds);
 
-   @GuardedBy("this")
-   private static final SimpleDateFormat rfc822SimpleDateFormat = new SimpleDateFormat(
-            "EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
+   String cDateFormat(Date date);
 
-   private static final DateTimeFormatter rfc822DateTimeFormatter = DateTimeFormat.forPattern(
-            "EEE, dd MMM yyyy HH:mm:ss 'GMT'").withLocale(Locale.US).withZone(
-            DateTimeZone.forID("GMT"));
+   String cDateFormat();
 
-   @GuardedBy("this")
-   private static final SimpleDateFormat cSimpleDateFormat = new SimpleDateFormat(
-            "EEE MMM dd HH:mm:ss '+0000' yyyy", Locale.US);
+   Date cDateParse(String toParse);
 
-   private static final DateTimeFormatter cDateTimeFormatter = DateTimeFormat.forPattern(
-            "EEE MMM dd HH:mm:ss '+0000' yyyy").withLocale(Locale.US).withZone(
-            DateTimeZone.forID("GMT"));
+   String rfc822DateFormat(Date date);
 
-   private static final DateTimeFormatter iso8601SecondsDateTimeFormatter = DateTimeFormat
-            .forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'").withLocale(Locale.US).withZone(
-                     DateTimeZone.forID("GMT"));
+   String rfc822DateFormat();
 
-   private static final DateTimeFormatter iso8601DateTimeFormatter = DateTimeFormat.forPattern(
-            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").withLocale(Locale.US).withZone(
-            DateTimeZone.forID("GMT"));
+   Date rfc822DateParse(String toParse);
 
-   static {
-      iso8601SimpleDateFormat.setTimeZone(new SimpleTimeZone(0, "GMT"));
-      iso8601SecondsSimpleDateFormat.setTimeZone(new SimpleTimeZone(0, "GMT"));
-      rfc822SimpleDateFormat.setTimeZone(new SimpleTimeZone(0, "GMT"));
-      cSimpleDateFormat.setTimeZone(new SimpleTimeZone(0, "GMT"));
-   }
+   String iso8601SecondsDateFormat(Date dateTime);
 
-   public final DateTime fromSeconds(long seconds) {
-      return new DateTime(seconds * 1000);
-   }
+   String iso8601SecondsDateFormat();
 
-   public final String cDateFormat(DateTime dateTime) {
-      return cDateTimeFormatter.print(dateTime);
-   }
+   String iso8601DateFormat(Date date);
 
-   public final String cDateFormat(Date date) {
-      return cDateFormat(new DateTime(date));
-   }
+   String iso8601DateFormat();
 
-   public final String cDateFormat() {
-      return cDateFormat(new DateTime());
-   }
+   Date iso8601DateParse(String toParse);
 
-   public final DateTime cDateParse(String toParse) {
-      synchronized (cSimpleDateFormat) {
-         try {
-            return new DateTime(cSimpleDateFormat.parse(toParse));
-         } catch (ParseException e) {
-            throw new RuntimeException(e);
-         }
-      }
-   }
+   Date iso8601SecondsDateParse(String toParse);
 
-   public final String rfc822DateFormat(DateTime dateTime) {
-      return rfc822DateTimeFormatter.print(dateTime);
-   }
-
-   public final String rfc822DateFormat(Date date) {
-      return rfc822DateFormat(new DateTime(date));
-   }
-
-   public final String rfc822DateFormat() {
-      return rfc822DateFormat(new DateTime());
-   }
-
-   public final DateTime rfc822DateParse(String toParse) {
-      synchronized (rfc822SimpleDateFormat) {
-         try {
-            return new DateTime(rfc822SimpleDateFormat.parse(toParse));
-         } catch (ParseException e) {
-            throw new RuntimeException(e);
-         }
-      }
-   }
-
-   public final String iso8601DateFormat(DateTime dateTime) {
-      return iso8601DateTimeFormatter.print(dateTime);
-   }
-
-   public final String iso8601SecondsDateFormat(DateTime dateTime) {
-      return iso8601SecondsDateTimeFormatter.print(dateTime);
-   }
-
-   public final String iso8601SecondsDateFormat() {
-      return iso8601SecondsDateFormat(new DateTime());
-   }
-
-   public final String iso8601DateFormat(Date date) {
-      return iso8601DateFormat(new DateTime(date));
-   }
-
-   public final String iso8601DateFormat() {
-      return iso8601DateFormat(new DateTime());
-   }
-
-   public final DateTime iso8601DateParse(String toParse) {
-      synchronized (iso8601SimpleDateFormat) {
-         try {
-            return new DateTime(iso8601SimpleDateFormat.parse(toParse));
-         } catch (ParseException e) {
-            throw new RuntimeException(e);
-         }
-      }
-   }
-
-   public final DateTime iso8601SecondsDateParse(String toParse) {
-      synchronized (iso8601SecondsSimpleDateFormat) {
-         try {
-            return new DateTime(iso8601SecondsSimpleDateFormat.parse(toParse));
-         } catch (ParseException e) {
-            throw new RuntimeException(e);
-         }
-      }
-   }
-
-   /*
-    * Alternative implementations of Format and Parse -- used to test relative speeds. TODO: Remove
-    * methods below once sufficient performance testing is complete.
-    */
-
-   @VisibleForTesting
-   public final DateTime jodaIso8601DateParse(String toParse) {
-      return new DateTime(toParse);
-   }
-
-   @VisibleForTesting
-   public final String sdfIso8601DateFormat(DateTime dateTime) {
-      synchronized (iso8601SimpleDateFormat) {
-         return iso8601SimpleDateFormat.format(dateTime.toDate());
-      }
-   }
-
-   @VisibleForTesting
-   public final String sdfIso8601SecondsDateFormat(DateTime dateTime) {
-      synchronized (iso8601SecondsSimpleDateFormat) {
-         return iso8601SecondsSimpleDateFormat.format(dateTime.toDate());
-      }
-   }
 }

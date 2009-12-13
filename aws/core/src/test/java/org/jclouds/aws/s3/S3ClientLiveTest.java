@@ -46,6 +46,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.util.Date;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
@@ -66,7 +67,6 @@ import org.jclouds.aws.s3.options.PutObjectOptions;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.util.Utils;
-import org.joda.time.DateTime;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Maps;
@@ -369,9 +369,9 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
       String containerName = getContainerName();
       String destinationContainer = getContainerName();
       try {
-         DateTime before = new DateTime();
+         Date before = new Date();
          addToContainerAndValidate(containerName, sourceKey + "mod");
-         DateTime after = new DateTime().plusSeconds(1);
+         Date after = new Date(System.currentTimeMillis() + 1000);
 
          context.getApi().copyObject(containerName, sourceKey + "mod", destinationContainer,
                   destinationKey, ifSourceModifiedSince(before));
@@ -396,9 +396,9 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
       String containerName = getContainerName();
       String destinationContainer = getContainerName();
       try {
-         DateTime before = new DateTime();
+         Date before = new Date();
          addToContainerAndValidate(containerName, sourceKey + "un");
-         DateTime after = new DateTime().plusSeconds(1);
+         Date after = new Date(System.currentTimeMillis() + 1000);
 
          context.getApi().copyObject(containerName, sourceKey + "un", destinationContainer,
                   destinationKey, ifSourceUnmodifiedSince(after));
@@ -607,7 +607,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
       try {
          SortedSet<BucketMetadata> list = context.getApi().listOwnedBuckets();
          BucketMetadata firstContainer = list.first();
-         BucketMetadata toMatch = new BucketMetadata(containerName, new DateTime(), firstContainer
+         BucketMetadata toMatch = new BucketMetadata(containerName, new Date(), firstContainer
                   .getOwner());
          assert list.contains(toMatch);
       } finally {

@@ -26,11 +26,11 @@ package org.jclouds.azure.storage.blob.domain.internal;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 
 import org.jclouds.azure.storage.blob.domain.ListableBlobProperties;
 import org.jclouds.azure.storage.blob.domain.MutableBlobProperties;
-import org.joda.time.DateTime;
 
 import com.google.common.collect.Maps;
 
@@ -46,7 +46,7 @@ public class MutableBlobPropertiesImpl implements Serializable, MutableBlobPrope
 
    private String name;
    private URI url;
-   private DateTime lastModified;
+   private Date lastModified;
    private String eTag;
    private long size;
    private String contentType;
@@ -82,7 +82,7 @@ public class MutableBlobPropertiesImpl implements Serializable, MutableBlobPrope
    /**
     *{@inheritDoc}
     */
-   public DateTime getLastModified() {
+   public Date getLastModified() {
       return lastModified;
    }
 
@@ -169,7 +169,7 @@ public class MutableBlobPropertiesImpl implements Serializable, MutableBlobPrope
    /**
     *{@inheritDoc}
     */
-   public void setLastModified(DateTime lastModified) {
+   public void setLastModified(Date lastModified) {
       this.lastModified = lastModified;
    }
 

@@ -23,13 +23,13 @@
  */
 package org.jclouds.blobstore.options;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-
-import org.joda.time.DateTime;
 
 /**
  * Contains options supported for HTTP GET operations. <h2>
@@ -42,7 +42,7 @@ import org.joda.time.DateTime;
  * 
  * 
  * // this will get the first megabyte of an object, provided it wasn't modified since yesterday
- * Future<S3Object> object = client.get("objectName",range(0,1024).ifUnmodifiedSince(new DateTime().minusDays(1)));
+ * Future<S3Object> object = client.get("objectName",range(0,1024).ifUnmodifiedSince(new Date().minusDays(1)));
  * <code>
  * 
  * @author Adrian Cole
@@ -50,8 +50,8 @@ import org.joda.time.DateTime;
  */
 public class GetOptions {
    private final List<String> ranges = new ArrayList<String>();
-   private DateTime ifModifiedSince;
-   private DateTime ifUnmodifiedSince;
+   private Date ifModifiedSince;
+   private Date ifUnmodifiedSince;
    private String ifMatch;
    private String ifNoneMatch;
 
@@ -77,9 +77,9 @@ public class GetOptions {
    /**
     * Only return the object if it has changed since this time.
     * <p />
-    * Not compatible with {@link #ifETagMatches(String)} or {@link #ifUnmodifiedSince(DateTime)}
+    * Not compatible with {@link #ifETagMatches(String)} or {@link #ifUnmodifiedSince(Date)}
     */
-   public GetOptions ifModifiedSince(DateTime ifModifiedSince) {
+   public GetOptions ifModifiedSince(Date ifModifiedSince) {
       checkArgument(getIfMatch() == null,
                "ifETagMatches() is not compatible with ifModifiedSince()");
       checkArgument(getIfUnmodifiedSince() == null,
@@ -94,18 +94,18 @@ public class GetOptions {
     * Return the object only if it has been modified since the specified time, otherwise return a
     * 304 (not modified).
     * 
-    * @see GetOptions#ifModifiedSince(DateTime)
+    * @see GetOptions#ifModifiedSince(Date)
     */
-   public DateTime getIfModifiedSince() {
+   public Date getIfModifiedSince() {
       return this.ifModifiedSince;
    }
 
    /**
     * Only return the object if it hasn't changed since this time.
     * <p />
-    * Not compatible with {@link #ifETagDoesntMatch(String)} or {@link #ifModifiedSince(DateTime)}
+    * Not compatible with {@link #ifETagDoesntMatch(String)} or {@link #ifModifiedSince(Date)}
     */
-   public GetOptions ifUnmodifiedSince(DateTime ifUnmodifiedSince) {
+   public GetOptions ifUnmodifiedSince(Date ifUnmodifiedSince) {
       checkArgument(getIfNoneMatch() == null,
                "ifETagDoesntMatch() is not compatible with ifUnmodifiedSince()");
       checkArgument(getIfModifiedSince() == null,
@@ -120,9 +120,9 @@ public class GetOptions {
     * Return the object only if it has not been modified since the specified time, otherwise return
     * a 412 (precondition failed).
     * 
-    * @see GetOptions#ifUnmodifiedSince(DateTime)
+    * @see GetOptions#ifUnmodifiedSince(Date)
     */
-   public DateTime getIfUnmodifiedSince() {
+   public Date getIfUnmodifiedSince() {
       return this.ifUnmodifiedSince;
    }
 
@@ -130,7 +130,7 @@ public class GetOptions {
     * The object's eTag hash should match the parameter <code>eTag</code>.
     * 
     * <p />
-    * Not compatible with {@link #ifETagDoesntMatch(String)} or {@link #ifModifiedSince(DateTime)}
+    * Not compatible with {@link #ifETagDoesntMatch(String)} or {@link #ifModifiedSince(Date)}
     * 
     * @param eTag
     *           hash representing the entity
@@ -159,7 +159,7 @@ public class GetOptions {
    /**
     * The object should not have a eTag hash corresponding with the parameter <code>eTag</code>.
     * <p />
-    * Not compatible with {@link #ifETagMatches(String)} or {@link #ifUnmodifiedSince(DateTime)}
+    * Not compatible with {@link #ifETagMatches(String)} or {@link #ifUnmodifiedSince(Date)}
     * 
     * @param eTag
     *           hash representing the entity
@@ -202,15 +202,15 @@ public class GetOptions {
       /**
        * @see GetOptions#getIfModifiedSince()
        */
-      public static GetOptions ifModifiedSince(DateTime ifModifiedSince) {
+      public static GetOptions ifModifiedSince(Date ifModifiedSince) {
          GetOptions options = new GetOptions();
          return options.ifModifiedSince(ifModifiedSince);
       }
 
       /**
-       * @see GetOptions#ifUnmodifiedSince(DateTime)
+       * @see GetOptions#ifUnmodifiedSince(Date)
        */
-      public static GetOptions ifUnmodifiedSince(DateTime ifUnmodifiedSince) {
+      public static GetOptions ifUnmodifiedSince(Date ifUnmodifiedSince) {
          GetOptions options = new GetOptions();
          return options.ifUnmodifiedSince(ifUnmodifiedSince);
       }

@@ -24,10 +24,10 @@
 package org.jclouds.mezeo.pcs2.domain;
 
 import java.net.URI;
+import java.util.Date;
 
 import org.jclouds.blobstore.domain.ResourceType;
 import org.jclouds.mezeo.pcs2.domain.internal.MutableResourceInfoImpl;
-import org.joda.time.DateTime;
 
 import com.google.inject.ImplementedBy;
 
@@ -44,11 +44,11 @@ public interface MutableResourceInfo extends ResourceInfo {
 
    void setName(String value);
 
-   void setCreated(DateTime value);
+   void setCreated(Date value);
 
    void setInProject(Boolean value);
 
-   void setModified(DateTime value);
+   void setModified(Date value);
 
    void setOwner(String value);
 
@@ -56,7 +56,7 @@ public interface MutableResourceInfo extends ResourceInfo {
 
    void setShared(Boolean value);
 
-   void setAccessed(DateTime value);
+   void setAccessed(Date value);
 
    void setBytes(Long value);
 

@@ -28,8 +28,8 @@ import java.net.URI;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.http.functions.config.ParserModule.CDateTimeAdapter;
-import org.jclouds.http.functions.config.ParserModule.DateTimeAdapter;
+import org.jclouds.http.functions.config.ParserModule.CDateAdapter;
+import org.jclouds.http.functions.config.ParserModule.DateAdapter;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
@@ -49,7 +49,7 @@ import com.google.inject.Provides;
 public class TwitterContextModule extends AbstractModule {
    @Override
    protected void configure() {
-      bind(DateTimeAdapter.class).to(CDateTimeAdapter.class);
+      bind(DateAdapter.class).to(CDateAdapter.class);
    }
 
    @Provides

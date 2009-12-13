@@ -23,11 +23,12 @@
  */
 package org.jclouds.blobstore.functions;
 
+import java.util.Date;
+
 import javax.inject.Inject;
 
 import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.util.DateService;
-import org.joda.time.DateTime;
 
 import com.google.common.base.Function;
 
@@ -47,14 +48,14 @@ public class HttpGetOptionsListToGetOptions implements
             to.ifETagMatches(from[0].getIfMatch().replaceAll("\"", ""));
          }
          if (from[0].getIfModifiedSince() != null) {
-            DateTime time = dateService.rfc822DateParse(from[0].getIfModifiedSince());
+            Date time = dateService.rfc822DateParse(from[0].getIfModifiedSince());
             to.ifModifiedSince(time);
          }
          if (from[0].getIfNoneMatch() != null) {
             to.ifETagDoesntMatch(from[0].getIfNoneMatch().replaceAll("\"", ""));
          }
          if (from[0].getIfUnmodifiedSince() != null) {
-            DateTime time = dateService.rfc822DateParse(from[0].getIfUnmodifiedSince());
+            Date time = dateService.rfc822DateParse(from[0].getIfUnmodifiedSince());
             to.ifUnmodifiedSince(time);
          }
          for (String range : from[0].getRanges()) {

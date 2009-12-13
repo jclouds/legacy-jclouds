@@ -23,11 +23,12 @@
  */
 package org.jclouds.vcloud.terremark.xml;
 
+import java.util.Date;
+
 import javax.inject.Inject;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.DateService;
-import org.joda.time.DateTime;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -49,7 +50,7 @@ public class VirtualSystemHandler extends
    private String configurationDataRoot;
    private String configurationFile;
    private String configurationID;
-   private DateTime creationTime;
+   private Date creationTime;
    private String description;
    private String elementName;
    private int instanceID;
@@ -77,7 +78,8 @@ public class VirtualSystemHandler extends
    public void startElement(String uri, String localName, String qName, Attributes attributes)
             throws SAXException {
       if (attributes.getIndex("xsi:nil") != -1
-               || attributes.getIndex("xmlns") == -1 || !"http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData"
+               || attributes.getIndex("xmlns") == -1
+               || !"http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData"
                         .equals(attributes.getValue("xmlns"))) {
          skip = true;
          return;
@@ -132,12 +134,13 @@ public class VirtualSystemHandler extends
          } else if (qName.equals("VirtualSystemType")) {
             this.virtualSystemType = currentText.toString().trim();
          } else if (qName.equals("q2:System")) {
-            this.system = new org.jclouds.vcloud.domain.TerremarkVirtualSystem(automaticRecoveryAction,
-                     automaticShutdownAction, automaticStartupAction, automaticStartupActionDelay,
-                     automaticStartupActionSequenceNumber, caption, configurationDataRoot,
-                     configurationFile, configurationID, creationTime, description, elementName,
-                     instanceID, logDataRoot, recoveryFile, snapshotDataRoot, suspendDataRoot,
-                     swapFileDataRoot, virtualSystemIdentifier, virtualSystemType);
+            this.system = new org.jclouds.vcloud.domain.TerremarkVirtualSystem(
+                     automaticRecoveryAction, automaticShutdownAction, automaticStartupAction,
+                     automaticStartupActionDelay, automaticStartupActionSequenceNumber, caption,
+                     configurationDataRoot, configurationFile, configurationID, creationTime,
+                     description, elementName, instanceID, logDataRoot, recoveryFile,
+                     snapshotDataRoot, suspendDataRoot, swapFileDataRoot, virtualSystemIdentifier,
+                     virtualSystemType);
             this.automaticRecoveryAction = null;
             this.automaticShutdownAction = null;
             this.automaticStartupAction = null;

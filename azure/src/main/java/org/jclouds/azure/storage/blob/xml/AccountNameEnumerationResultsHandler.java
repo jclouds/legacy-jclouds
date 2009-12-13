@@ -24,6 +24,7 @@
 package org.jclouds.azure.storage.blob.xml;
 
 import java.net.URI;
+import java.util.Date;
 import java.util.SortedSet;
 
 import javax.inject.Inject;
@@ -34,7 +35,6 @@ import org.jclouds.azure.storage.domain.BoundedSortedSet;
 import org.jclouds.azure.storage.domain.internal.BoundedTreeSet;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.DateService;
-import org.joda.time.DateTime;
 
 import com.google.common.collect.Sets;
 
@@ -55,7 +55,7 @@ public class AccountNameEnumerationResultsHandler extends
    private int maxResults;
    private String nextMarker;
    private URI currentUrl;
-   private DateTime currentLastModified;
+   private Date currentLastModified;
    private String currentETag;
 
    private StringBuilder currentText = new StringBuilder();
@@ -68,8 +68,8 @@ public class AccountNameEnumerationResultsHandler extends
    }
 
    public BoundedSortedSet<ListableContainerProperties> getResult() {
-      return new BoundedTreeSet<ListableContainerProperties>(containerMetadata, currentUrl, prefix, marker,
-               maxResults, nextMarker);
+      return new BoundedTreeSet<ListableContainerProperties>(containerMetadata, currentUrl, prefix,
+               marker, maxResults, nextMarker);
    }
 
    public void endElement(String uri, String name, String qName) {

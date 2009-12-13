@@ -38,6 +38,7 @@ import java.net.InetAddress;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.Collections;
+import java.util.Date;
 
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
@@ -78,7 +79,6 @@ import org.jclouds.rackspace.cloudservers.options.RebuildServerOptions;
 import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.joda.time.DateTime;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -103,8 +103,8 @@ public class CloudServersClientTest {
             .getClass();
 
    public void testCreateServer() throws SecurityException, NoSuchMethodException {
-      Method method = CloudServersAsyncClient.class.getMethod("createServer", String.class, int.class,
-               int.class, createServerOptionsVarargsClass);
+      Method method = CloudServersAsyncClient.class.getMethod("createServer", String.class,
+               int.class, int.class, createServerOptionsVarargsClass);
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "ralphie", 2, 1 });
@@ -114,8 +114,8 @@ public class CloudServersClientTest {
    }
 
    public void testCreateServerWithIpGroup() throws SecurityException, NoSuchMethodException {
-      Method method = CloudServersAsyncClient.class.getMethod("createServer", String.class, int.class,
-               int.class, createServerOptionsVarargsClass);
+      Method method = CloudServersAsyncClient.class.getMethod("createServer", String.class,
+               int.class, int.class, createServerOptionsVarargsClass);
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "ralphie", 2, 1, withSharedIpGroup(2) });
@@ -126,8 +126,8 @@ public class CloudServersClientTest {
    }
 
    public void testCreateServerWithFile() throws SecurityException, NoSuchMethodException {
-      Method method = CloudServersAsyncClient.class.getMethod("createServer", String.class, int.class,
-               int.class, createServerOptionsVarargsClass);
+      Method method = CloudServersAsyncClient.class.getMethod("createServer", String.class,
+               int.class, int.class, createServerOptionsVarargsClass);
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "ralphie", 2, 1,
@@ -139,8 +139,8 @@ public class CloudServersClientTest {
    }
 
    public void testCreateServerWithMetadata() throws SecurityException, NoSuchMethodException {
-      Method method = CloudServersAsyncClient.class.getMethod("createServer", String.class, int.class,
-               int.class, createServerOptionsVarargsClass);
+      Method method = CloudServersAsyncClient.class.getMethod("createServer", String.class,
+               int.class, int.class, createServerOptionsVarargsClass);
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "ralphie", 2, 1, withMetadata(ImmutableMap.of("foo", "bar")) });
@@ -152,8 +152,8 @@ public class CloudServersClientTest {
 
    public void testCreateServerWithIpGroupAndSharedIp() throws SecurityException,
             NoSuchMethodException, UnknownHostException {
-      Method method = CloudServersAsyncClient.class.getMethod("createServer", String.class, int.class,
-               int.class, createServerOptionsVarargsClass);
+      Method method = CloudServersAsyncClient.class.getMethod("createServer", String.class,
+               int.class, int.class, createServerOptionsVarargsClass);
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] {
@@ -187,7 +187,8 @@ public class CloudServersClientTest {
    }
 
    public void testListServers() throws SecurityException, NoSuchMethodException {
-      Method method = CloudServersAsyncClient.class.getMethod("listServers", listOptionsVarargsClass);
+      Method method = CloudServersAsyncClient.class.getMethod("listServers",
+               listOptionsVarargsClass);
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] {});
@@ -201,17 +202,18 @@ public class CloudServersClientTest {
       assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
    }
 
-   DateTime now = new DateTime();
+   Date now = new Date();
 
    public void testListServersOptions() throws SecurityException, NoSuchMethodException {
-      Method method = CloudServersAsyncClient.class.getMethod("listServers", listOptionsVarargsClass);
+      Method method = CloudServersAsyncClient.class.getMethod("listServers",
+               listOptionsVarargsClass);
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { changesSince(now).maxResults(1).startAt(2) });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/servers");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json&changes-since="
-               + now.getMillis() / 1000 + "&limit=1&offset=2");
+               + now.getTime() / 1000 + "&limit=1&offset=2");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
@@ -220,7 +222,8 @@ public class CloudServersClientTest {
    }
 
    public void testListServersDetail() throws SecurityException, NoSuchMethodException {
-      Method method = CloudServersAsyncClient.class.getMethod("listServers", listOptionsVarargsClass);
+      Method method = CloudServersAsyncClient.class.getMethod("listServers",
+               listOptionsVarargsClass);
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { withDetails() });
@@ -251,7 +254,8 @@ public class CloudServersClientTest {
    }
 
    public void testListFlavors() throws SecurityException, NoSuchMethodException {
-      Method method = CloudServersAsyncClient.class.getMethod("listFlavors", listOptionsVarargsClass);
+      Method method = CloudServersAsyncClient.class.getMethod("listFlavors",
+               listOptionsVarargsClass);
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] {});
@@ -266,14 +270,15 @@ public class CloudServersClientTest {
    }
 
    public void testListFlavorsOptions() throws SecurityException, NoSuchMethodException {
-      Method method = CloudServersAsyncClient.class.getMethod("listFlavors", listOptionsVarargsClass);
+      Method method = CloudServersAsyncClient.class.getMethod("listFlavors",
+               listOptionsVarargsClass);
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { changesSince(now).maxResults(1).startAt(2) });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/flavors");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json&changes-since="
-               + now.getMillis() / 1000 + "&limit=1&offset=2");
+               + now.getTime() / 1000 + "&limit=1&offset=2");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
@@ -282,7 +287,8 @@ public class CloudServersClientTest {
    }
 
    public void testListFlavorsDetail() throws SecurityException, NoSuchMethodException {
-      Method method = CloudServersAsyncClient.class.getMethod("listFlavors", listOptionsVarargsClass);
+      Method method = CloudServersAsyncClient.class.getMethod("listFlavors",
+               listOptionsVarargsClass);
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { withDetails() });
@@ -297,14 +303,15 @@ public class CloudServersClientTest {
    }
 
    public void testListFlavorsDetailOptions() throws SecurityException, NoSuchMethodException {
-      Method method = CloudServersAsyncClient.class.getMethod("listFlavors", listOptionsVarargsClass);
+      Method method = CloudServersAsyncClient.class.getMethod("listFlavors",
+               listOptionsVarargsClass);
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { withDetails().changesSince(now).maxResults(1).startAt(2) });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/flavors/detail");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json&changes-since="
-               + now.getMillis() / 1000 + "&limit=1&offset=2");
+               + now.getTime() / 1000 + "&limit=1&offset=2");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
@@ -329,7 +336,8 @@ public class CloudServersClientTest {
    }
 
    public void testListImages() throws SecurityException, NoSuchMethodException {
-      Method method = CloudServersAsyncClient.class.getMethod("listImages", listOptionsVarargsClass);
+      Method method = CloudServersAsyncClient.class
+               .getMethod("listImages", listOptionsVarargsClass);
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] {});
@@ -344,7 +352,8 @@ public class CloudServersClientTest {
    }
 
    public void testListImagesDetail() throws SecurityException, NoSuchMethodException {
-      Method method = CloudServersAsyncClient.class.getMethod("listImages", listOptionsVarargsClass);
+      Method method = CloudServersAsyncClient.class
+               .getMethod("listImages", listOptionsVarargsClass);
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { withDetails() });
@@ -359,14 +368,15 @@ public class CloudServersClientTest {
    }
 
    public void testListImagesOptions() throws SecurityException, NoSuchMethodException {
-      Method method = CloudServersAsyncClient.class.getMethod("listImages", listOptionsVarargsClass);
+      Method method = CloudServersAsyncClient.class
+               .getMethod("listImages", listOptionsVarargsClass);
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { changesSince(now).maxResults(1).startAt(2) });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/images");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json&changes-since="
-               + now.getMillis() / 1000 + "&limit=1&offset=2");
+               + now.getTime() / 1000 + "&limit=1&offset=2");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
@@ -375,14 +385,15 @@ public class CloudServersClientTest {
    }
 
    public void testListImagesDetailOptions() throws SecurityException, NoSuchMethodException {
-      Method method = CloudServersAsyncClient.class.getMethod("listImages", listOptionsVarargsClass);
+      Method method = CloudServersAsyncClient.class
+               .getMethod("listImages", listOptionsVarargsClass);
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { withDetails().changesSince(now).maxResults(1).startAt(2) });
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/images/detail");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json&changes-since="
-               + now.getMillis() / 1000 + "&limit=1&offset=2");
+               + now.getTime() / 1000 + "&limit=1&offset=2");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
@@ -423,8 +434,8 @@ public class CloudServersClientTest {
 
    public void testShareIpNoConfig() throws SecurityException, NoSuchMethodException,
             UnknownHostException {
-      Method method = CloudServersAsyncClient.class.getMethod("shareIp", InetAddress.class, int.class,
-               int.class, boolean.class);
+      Method method = CloudServersAsyncClient.class.getMethod("shareIp", InetAddress.class,
+               int.class, int.class, boolean.class);
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }), 2, 3, false });
@@ -445,8 +456,8 @@ public class CloudServersClientTest {
 
    public void testShareIpConfig() throws SecurityException, NoSuchMethodException,
             UnknownHostException {
-      Method method = CloudServersAsyncClient.class.getMethod("shareIp", InetAddress.class, int.class,
-               int.class, boolean.class);
+      Method method = CloudServersAsyncClient.class.getMethod("shareIp", InetAddress.class,
+               int.class, int.class, boolean.class);
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }), 2, 3, true });
@@ -468,7 +479,8 @@ public class CloudServersClientTest {
 
    public void testUnshareIpNoConfig() throws SecurityException, NoSuchMethodException,
             UnknownHostException {
-      Method method = CloudServersAsyncClient.class.getMethod("unshareIp", InetAddress.class, int.class);
+      Method method = CloudServersAsyncClient.class.getMethod("unshareIp", InetAddress.class,
+               int.class);
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }), 2, 3, false });
@@ -521,8 +533,8 @@ public class CloudServersClientTest {
    }
 
    public void testChangeAdminPass() throws SecurityException, NoSuchMethodException {
-      Method method = CloudServersAsyncClient.class
-               .getMethod("changeAdminPass", int.class, String.class);
+      Method method = CloudServersAsyncClient.class.getMethod("changeAdminPass", int.class,
+               String.class);
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { 2, "foo" });
@@ -542,7 +554,8 @@ public class CloudServersClientTest {
    }
 
    public void testChangeServerName() throws SecurityException, NoSuchMethodException {
-      Method method = CloudServersAsyncClient.class.getMethod("renameServer", int.class, String.class);
+      Method method = CloudServersAsyncClient.class.getMethod("renameServer", int.class,
+               String.class);
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { 2, "foo" });
@@ -586,7 +599,7 @@ public class CloudServersClientTest {
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/shared_ip_groups");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json&changes-since="
-               + now.getMillis() / 1000 + "&limit=1&offset=2");
+               + now.getTime() / 1000 + "&limit=1&offset=2");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
@@ -620,7 +633,7 @@ public class CloudServersClientTest {
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "/shared_ip_groups/detail");
       assertEquals(httpMethod.getEndpoint().getQuery(), "format=json&changes-since="
-               + now.getMillis() / 1000 + "&limit=1&offset=2");
+               + now.getTime() / 1000 + "&limit=1&offset=2");
       assertEquals(httpMethod.getMethod(), HttpMethod.GET);
       assertEquals(httpMethod.getHeaders().size(), 0);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
@@ -758,8 +771,8 @@ public class CloudServersClientTest {
    }
 
    public void testCreateImageWithIpGroup() throws SecurityException, NoSuchMethodException {
-      Method method = CloudServersAsyncClient.class.getMethod("createImageFromServer", String.class,
-               int.class);
+      Method method = CloudServersAsyncClient.class.getMethod("createImageFromServer",
+               String.class, int.class);
 
       GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
                new Object[] { "ralphie", 2 });

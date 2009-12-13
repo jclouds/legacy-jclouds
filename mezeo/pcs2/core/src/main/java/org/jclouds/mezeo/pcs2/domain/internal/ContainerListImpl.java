@@ -24,6 +24,7 @@
 package org.jclouds.mezeo.pcs2.domain.internal;
 
 import java.net.URI;
+import java.util.Date;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -31,7 +32,6 @@ import java.util.TreeSet;
 import org.jclouds.blobstore.domain.ResourceType;
 import org.jclouds.mezeo.pcs2.domain.ContainerList;
 import org.jclouds.mezeo.pcs2.domain.ResourceInfo;
-import org.joda.time.DateTime;
 
 /**
  * 
@@ -45,9 +45,9 @@ public class ContainerListImpl extends TreeSet<ResourceInfo> implements Containe
    private final ResourceInfo info;
    private final Map<String, URI> metadataItems;
 
-   public ContainerListImpl(URI url, String name, DateTime created, boolean inProject,
-            DateTime modified, String owner, int version, boolean shared, DateTime accessed,
-            long bytes, SortedSet<? extends ResourceInfo> contents, URI tags, URI metadata,
+   public ContainerListImpl(URI url, String name, Date created, boolean inProject, Date modified,
+            String owner, int version, boolean shared, Date accessed, long bytes,
+            SortedSet<? extends ResourceInfo> contents, URI tags, URI metadata,
             Map<String, URI> metadataItems, URI parent) {
       this.info = new ResourceInfoImpl(ResourceType.FOLDER, url, name, created, inProject,
                modified, owner, version, shared, accessed, bytes, tags, metadata, parent);
@@ -59,7 +59,7 @@ public class ContainerListImpl extends TreeSet<ResourceInfo> implements Containe
       return metadataItems;
    }
 
-   public DateTime getAccessed() {
+   public Date getAccessed() {
       return info.getAccessed();
    }
 
@@ -67,7 +67,7 @@ public class ContainerListImpl extends TreeSet<ResourceInfo> implements Containe
       return info.getBytes();
    }
 
-   public DateTime getCreated() {
+   public Date getCreated() {
       return info.getCreated();
    }
 
@@ -75,7 +75,7 @@ public class ContainerListImpl extends TreeSet<ResourceInfo> implements Containe
       return info.getMetadata();
    }
 
-   public DateTime getModified() {
+   public Date getModified() {
       return info.getModified();
    }
 

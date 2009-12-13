@@ -24,6 +24,7 @@
 package org.jclouds.aws.ec2.config;
 
 import java.net.URI;
+import java.util.Date;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -48,7 +49,6 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
 import org.jclouds.util.DateService;
 import org.jclouds.util.TimeStamp;
-import org.joda.time.DateTime;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -72,7 +72,8 @@ public class EC2RestClientModule extends AbstractModule {
    @TimeStamp
    protected String provideTimeStamp(final DateService dateService,
             @Named(EC2Constants.PROPERTY_EC2_EXPIREINTERVAL) final int expiration) {
-      return dateService.iso8601DateFormat(new DateTime().plusSeconds(expiration));
+      return dateService.iso8601DateFormat(new Date(System.currentTimeMillis()
+               + (expiration * 1000)));
    }
 
    @Provides

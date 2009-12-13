@@ -23,13 +23,13 @@
  */
 package org.jclouds.rimuhosting.miro.binder;
 
-import org.jclouds.http.HttpRequest;
-import org.jclouds.rimuhosting.miro.data.NewServerData;
-import org.jclouds.rimuhosting.miro.data.CreateOptions;
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
+
 import java.util.Map;
+
+import org.jclouds.http.HttpRequest;
+import org.jclouds.rimuhosting.miro.data.CreateOptions;
+import org.jclouds.rimuhosting.miro.data.NewServerData;
 
 /**
  * @author Ivan Meredith

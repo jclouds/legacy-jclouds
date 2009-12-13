@@ -39,6 +39,7 @@
     <modules>
         <module>gae</module>
         <module>httpnio</module>
+        <module>joda</module>
         <module>log4j</module>
         <module>ssh</module>
     </modules>

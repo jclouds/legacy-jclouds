@@ -23,7 +23,7 @@
  */
 package org.jclouds.twitter.domain;
 
-import org.joda.time.DateTime;
+import java.util.Date;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -34,7 +34,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Status implements Comparable<Status> {
    @SerializedName("created_at")
-   private DateTime createdAt;
+   private Date createdAt;
    private boolean favorited;
    private String geo;
    private long id;
@@ -52,7 +52,7 @@ public class Status implements Comparable<Status> {
    public Status() {
    }
 
-   public Status(DateTime createdAt, boolean favorited, String geo, long id,
+   public Status(Date createdAt, boolean favorited, String geo, long id,
             String inReplyToScreenName, Integer inReplyToStatusId, Integer inReplyToUserId,
             String source, String text, boolean truncated, User user) {
       this.createdAt = createdAt;
@@ -108,11 +108,11 @@ public class Status implements Comparable<Status> {
       return true;
    }
 
-   public DateTime getCreatedAt() {
+   public Date getCreatedAt() {
       return createdAt;
    }
 
-   public void setCreatedAt(DateTime createdAt) {
+   public void setCreatedAt(Date createdAt) {
       this.createdAt = createdAt;
    }
 

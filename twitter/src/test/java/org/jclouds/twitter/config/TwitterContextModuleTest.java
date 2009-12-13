@@ -30,8 +30,8 @@ import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.functions.config.ParserModule;
-import org.jclouds.http.functions.config.ParserModule.CDateTimeAdapter;
-import org.jclouds.http.functions.config.ParserModule.DateTimeAdapter;
+import org.jclouds.http.functions.config.ParserModule.CDateAdapter;
+import org.jclouds.http.functions.config.ParserModule.DateAdapter;
 import org.jclouds.http.handlers.CloseContentAndSetExceptionErrorHandler;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
@@ -80,9 +80,9 @@ public class TwitterContextModuleTest {
    }
 
    @Test
-   void testDateTimeAdapter() {
-      assertEquals(this.createInjector().getInstance(DateTimeAdapter.class).getClass(),
-               CDateTimeAdapter.class);
+   void testDateAdapter() {
+      assertEquals(this.createInjector().getInstance(DateAdapter.class).getClass(),
+               CDateAdapter.class);
    }
 
    @Test

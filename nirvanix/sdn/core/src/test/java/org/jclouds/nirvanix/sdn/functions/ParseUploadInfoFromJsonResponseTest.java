@@ -31,7 +31,6 @@ import java.net.UnknownHostException;
 
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.nirvanix.sdn.domain.UploadInfo;
-import org.jclouds.util.DateService;
 import org.testng.annotations.Test;
 
 import com.google.gson.Gson;
@@ -47,7 +46,6 @@ import com.google.inject.Injector;
 public class ParseUploadInfoFromJsonResponseTest {
 
    Injector i = Guice.createInjector(new ParserModule());
-   DateService dateService = new DateService();
 
    public void testApplyInputStreamDetails() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/authtoken.json");
@@ -56,7 +54,8 @@ public class ParseUploadInfoFromJsonResponseTest {
                .getInstance(Gson.class));
       UploadInfo response = parser.apply(is);
       assertEquals(response.getHost(), URI.create("https://node1.nirvanix.com"));
-      assertEquals(response.getToken(), "siR-ALYd~BEcJ8GR2tE~oX3SEHO8~2WXKT5xjFk~YLS5OvJyHI21TN34rQ");
+      assertEquals(response.getToken(),
+               "siR-ALYd~BEcJ8GR2tE~oX3SEHO8~2WXKT5xjFk~YLS5OvJyHI21TN34rQ");
    }
 
 }

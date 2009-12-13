@@ -46,6 +46,7 @@ import org.jclouds.aws.s3.options.ListBucketOptions;
 import org.jclouds.aws.s3.options.PutObjectOptions;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.util.DateService;
+import org.jclouds.util.internal.SimpleDateFormatDateService;
 import org.jets3t.service.S3ServiceException;
 import org.jets3t.service.acl.AccessControlList;
 import org.jets3t.service.acl.CanonicalGrantee;
@@ -58,7 +59,6 @@ import org.jets3t.service.model.S3Bucket;
 import org.jets3t.service.model.S3Object;
 import org.jets3t.service.model.S3Owner;
 import org.jets3t.service.utils.RestUtils;
-import org.joda.time.DateTime;
 
 import com.google.common.collect.Maps;
 
@@ -104,11 +104,11 @@ public class Util {
       jsObject.setContentLength(jcObjectMD.getSize());
       jsObject.setContentDisposition(jcObjectMD.getContentDisposition());
       jsObject.setContentEncoding(jcObjectMD.getContentEncoding());
-      jsObject.setLastModifiedDate(jcObjectMD.getLastModified().toDate());
+      jsObject.setLastModifiedDate(jcObjectMD.getLastModified());
       jsObject.setETag(jcObjectMD.getETag());
       jsObject.setMd5Hash(jcObjectMD.getContentMD5());
       jsObject.addAllMetadata(jcObjectMD.getUserMetadata());
-      jsObject.addMetadata(S3Object.METADATA_HEADER_DATE, jcObjectMD.getLastModified().toDate());
+      jsObject.addMetadata(S3Object.METADATA_HEADER_DATE, jcObjectMD.getLastModified());
       return jsObject;
    }
 
@@ -135,7 +135,7 @@ public class Util {
       jcObject.getMetadata().setCacheControl((String) jsObject.getMetadata("Cache-Control"));
       jcObject.getMetadata().setContentDisposition(jsObject.getContentDisposition());
       jcObject.getMetadata().setContentEncoding(jsObject.getContentEncoding());
-      jcObject.getMetadata().setLastModified(new DateTime(jsObject.getLastModifiedDate()));
+      jcObject.getMetadata().setLastModified(jsObject.getLastModifiedDate());
       jcObject.setContentLength(jsObject.getContentLength());
       if (jsObject.getStorageClass() != null)
          jcObject.getMetadata().setStorageClass(StorageClass.valueOf(jsObject.getStorageClass()));
@@ -163,7 +163,7 @@ public class Util {
       }
 
       // User metadata
-      DateService dateService = new DateService();
+      DateService dateService = new SimpleDateFormatDateService();
       for (Object maybeUserMetadataObj : jsObject.getMetadataMap().entrySet()) {
          String name = ((Entry<String, Object>) maybeUserMetadataObj).getKey();
          Object value = ((Entry<String, Object>) maybeUserMetadataObj).getValue();
@@ -183,10 +183,10 @@ public class Util {
             throws UnsupportedEncodingException {
       GetOptions options = new GetOptions();
       if (ifModifiedSince != null) {
-         options.ifModifiedSince(new DateTime(ifModifiedSince));
+         options.ifModifiedSince(ifModifiedSince.getTime());
       }
       if (ifUnmodifiedSince != null) {
-         options.ifUnmodifiedSince(new DateTime(ifUnmodifiedSince));
+         options.ifUnmodifiedSince(ifUnmodifiedSince.getTime());
       }
       // TODO: options.ifETagMatches should accept multiple match tags
       if (ifMatchTags != null && ifMatchTags.length > 0) {
@@ -331,10 +331,10 @@ public class Util {
          options.overrideAcl(convertACLToCannedAccessPolicy(acl));
       }
       if (ifModifiedSince != null) {
-         options.ifSourceModifiedSince(new DateTime(ifModifiedSince));
+         options.ifSourceModifiedSince(ifModifiedSince.getTime());
       }
       if (ifUnmodifiedSince != null) {
-         options.ifSourceUnmodifiedSince(new DateTime(ifUnmodifiedSince));
+         options.ifSourceUnmodifiedSince(ifUnmodifiedSince.getTime());
       }
       // TODO: options.ifETagMatches should accept multiple match tags
       if (ifMatchTags != null && ifMatchTags.length > 0) {

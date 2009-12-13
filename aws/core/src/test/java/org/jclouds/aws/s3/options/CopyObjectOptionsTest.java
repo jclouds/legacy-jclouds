@@ -34,12 +34,12 @@ import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 import java.util.Map;
 
 import org.jclouds.aws.s3.domain.CannedAccessPolicy;
 import org.jclouds.aws.s3.reference.S3Headers;
-import org.jclouds.util.DateService;
-import org.joda.time.DateTime;
+import org.jclouds.util.internal.SimpleDateFormatDateService;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -55,7 +55,7 @@ import com.google.common.collect.Multimap;
 public class CopyObjectOptionsTest {
 
    private String etag;
-   private DateTime now;
+   private Date now;
    private String nowExpected;
    private Map<String, String> goodMeta;
    private Map<String, String> badMeta;
@@ -66,9 +66,8 @@ public class CopyObjectOptionsTest {
       goodMeta.put("x-amz-meta-adrian", "foo");
       badMeta = Maps.newHashMap();
       badMeta.put("x-google-meta-adrian", "foo");
-
-      now = new DateTime();
-      nowExpected = new DateService().rfc822DateFormat(now);
+      now = new Date();
+      nowExpected = new SimpleDateFormatDateService().rfc822DateFormat(now);
       etag = "mama";
    }
 
@@ -288,7 +287,7 @@ public class CopyObjectOptionsTest {
 
       Multimap<String, String> headers = options.buildRequestHeaders();
       assertEquals(headers.get("x-amz-copy-source-if-modified-since").iterator().next(),
-               new DateService().rfc822DateFormat(now));
+               new SimpleDateFormatDateService().rfc822DateFormat(now));
       assertEquals(headers.get("x-amz-copy-source-if-none-match").iterator().next(), "\"" + etag
                + "\"");
       for (String value : goodMeta.values())

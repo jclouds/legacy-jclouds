@@ -23,10 +23,10 @@
  */
 package org.jclouds.aws.s3.domain;
 
+import java.util.Date;
 import java.util.Map;
 
 import org.jclouds.aws.s3.domain.internal.MutableObjectMetadataImpl;
-import org.joda.time.DateTime;
 
 import com.google.inject.ImplementedBy;
 
@@ -107,7 +107,7 @@ public interface MutableObjectMetadata extends ObjectMetadata {
     */
    void setContentMD5(byte[] md5);
 
-   void setLastModified(DateTime lastModified);
+   void setLastModified(Date lastModified);
 
    void setETag(String eTag);
 

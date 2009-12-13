@@ -30,7 +30,6 @@ import java.net.UnknownHostException;
 
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rackspace.cloudservers.domain.SharedIpGroup;
-import org.jclouds.util.DateService;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -47,7 +46,6 @@ import com.google.inject.Injector;
 public class ParseSharedIpGroupFromJsonResponseTest {
 
    Injector i = Guice.createInjector(new ParserModule());
-   DateService dateService = new DateService();
 
    public void testApplyInputStreamDetails() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/cloudservers/test_get_sharedipgroup_details.json");

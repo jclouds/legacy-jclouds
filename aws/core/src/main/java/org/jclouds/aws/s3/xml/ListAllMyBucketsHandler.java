@@ -23,6 +23,7 @@
  */
 package org.jclouds.aws.s3.xml;
 
+import java.util.Date;
 import java.util.SortedSet;
 
 import javax.inject.Inject;
@@ -31,7 +32,6 @@ import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.CanonicalUser;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.DateService;
-import org.joda.time.DateTime;
 
 import com.google.common.collect.Sets;
 
@@ -53,7 +53,7 @@ public class ListAllMyBucketsHandler extends ParseSax.HandlerWithResult<SortedSe
 
    private final DateService dateParser;
    private String currentName;
-   private DateTime currentCreationDate;
+   private Date currentCreationDate;
 
    @Inject
    public ListAllMyBucketsHandler(DateService dateParser) {

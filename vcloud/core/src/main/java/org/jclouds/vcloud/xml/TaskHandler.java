@@ -24,6 +24,7 @@
 package org.jclouds.vcloud.xml;
 
 import java.text.ParseException;
+import java.util.Date;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -37,7 +38,6 @@ import org.jclouds.util.DateService;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
 import org.jclouds.vcloud.domain.internal.TaskImpl;
-import org.joda.time.DateTime;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -51,8 +51,8 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
    private NamedLink owner;
    private NamedLink result;
    private TaskStatus status;
-   private DateTime startTime;
-   private DateTime endTime;
+   private Date startTime;
+   private Date endTime;
    private Task task;
 
    @Resource
@@ -88,7 +88,7 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
       }
    }
 
-   private DateTime parseDate(Attributes attributes, String attribute) {
+   private Date parseDate(Attributes attributes, String attribute) {
       try {
          return dateService.iso8601DateParse(attributes.getValue(attributes.getIndex(attribute)));
 

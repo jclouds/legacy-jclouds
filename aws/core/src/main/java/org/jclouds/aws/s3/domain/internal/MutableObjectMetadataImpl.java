@@ -25,12 +25,12 @@ package org.jclouds.aws.s3.domain.internal;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 
 import org.jclouds.aws.s3.domain.CanonicalUser;
 import org.jclouds.aws.s3.domain.MutableObjectMetadata;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
-import org.joda.time.DateTime;
 
 import com.google.common.collect.Maps;
 
@@ -45,7 +45,7 @@ public class MutableObjectMetadataImpl implements Serializable, MutableObjectMet
    private static final long serialVersionUID = -4648755473986695062L;
 
    private String key;
-   private DateTime lastModified;
+   private Date lastModified;
    private String eTag;
    private long size;
    private CanonicalUser owner;
@@ -113,7 +113,7 @@ public class MutableObjectMetadataImpl implements Serializable, MutableObjectMet
    /**
     *{@inheritDoc}
     */
-   public DateTime getLastModified() {
+   public Date getLastModified() {
       return lastModified;
    }
 
@@ -214,7 +214,7 @@ public class MutableObjectMetadataImpl implements Serializable, MutableObjectMet
    /**
     *{@inheritDoc}
     */
-   public void setLastModified(DateTime lastModified) {
+   public void setLastModified(Date lastModified) {
       this.lastModified = lastModified;
    }
 

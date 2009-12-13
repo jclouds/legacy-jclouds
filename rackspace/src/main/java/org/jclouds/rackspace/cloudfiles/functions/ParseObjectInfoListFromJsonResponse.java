@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
+import java.util.Date;
 import java.util.SortedSet;
 
 import javax.inject.Inject;
@@ -42,7 +43,6 @@ import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
 import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.joda.time.DateTime;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -55,8 +55,8 @@ import com.google.gson.reflect.TypeToken;
  * 
  * @author Adrian Cole
  */
-public class ParseObjectInfoListFromJsonResponse extends ParseJson<ListContainerResponse<ObjectInfo>>
-         implements InvocationContext {
+public class ParseObjectInfoListFromJsonResponse extends
+         ParseJson<ListContainerResponse<ObjectInfo>> implements InvocationContext {
 
    private GeneratedHttpRequest<?> request;
 
@@ -70,7 +70,7 @@ public class ParseObjectInfoListFromJsonResponse extends ParseJson<ListContainer
       String hash;
       long bytes;
       String content_type;
-      DateTime last_modified;
+      Date last_modified;
 
       public int compareTo(ObjectInfoImpl o) {
          return (this == o) ? 0 : name.compareTo(o.name);
@@ -88,7 +88,7 @@ public class ParseObjectInfoListFromJsonResponse extends ParseJson<ListContainer
          return HttpUtils.fromHexString(hash);
       }
 
-      public DateTime getLastModified() {
+      public Date getLastModified() {
          return last_modified;
       }
 
@@ -145,6 +145,12 @@ public class ParseObjectInfoListFromJsonResponse extends ParseJson<ListContainer
       public int compareTo(ObjectInfo o) {
          return (this == o) ? 0 : getName().compareTo(o.getName());
       }
+
+      @Override
+      public String toString() {
+         return "ObjectInfoImpl [bytes=" + bytes + ", content_type=" + content_type + ", hash="
+                  + hash + ", last_modified=" + last_modified.getTime() + ", name=" + name + "]";
+      }
    }
 
    public ListContainerResponse<ObjectInfo> apply(InputStream stream) {
@@ -170,8 +176,8 @@ public class ParseObjectInfoListFromJsonResponse extends ParseJson<ListContainer
                   }));
          boolean truncated = options.getMaxResults() == returnVal.size();
          String marker = truncated ? returnVal.last().getName() : null;
-         return new ListContainerResponseImpl<ObjectInfo>(returnVal, options.getPath(), marker, options
-                  .getMaxResults(), truncated);
+         return new ListContainerResponseImpl<ObjectInfo>(returnVal, options.getPath(), marker,
+                  options.getMaxResults(), truncated);
 
       } catch (UnsupportedEncodingException e) {
          throw new RuntimeException("jclouds requires UTF-8 encoding", e);

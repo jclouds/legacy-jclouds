@@ -37,8 +37,8 @@ import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.handlers.RedirectionRetryHandler;
-import org.jclouds.util.DateService;
 import org.jclouds.util.Jsr330;
+import org.jclouds.util.internal.SimpleDateFormatDateService;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
@@ -69,7 +69,7 @@ public class AzureStorageRestClientModuleTest {
    void testUpdatesOnlyOncePerSecond() throws NoSuchMethodException, InterruptedException {
       AzureStorageRestClientModule module = new AzureStorageRestClientModule();
 
-      Supplier<String> map = module.provideTimeStampCache(1, new DateService());
+      Supplier<String> map = module.provideTimeStampCache(1, new SimpleDateFormatDateService());
       String timeStamp = map.get();
       for (int i = 0; i < 10; i++)
          map.get();

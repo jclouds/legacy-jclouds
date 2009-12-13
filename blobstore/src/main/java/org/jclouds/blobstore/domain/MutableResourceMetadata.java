@@ -24,10 +24,10 @@
 package org.jclouds.blobstore.domain;
 
 import java.net.URI;
+import java.util.Date;
 import java.util.Map;
 
 import org.jclouds.blobstore.domain.internal.MutableResourceMetadataImpl;
-import org.joda.time.DateTime;
 
 import com.google.inject.ImplementedBy;
 
@@ -77,7 +77,7 @@ public interface MutableResourceMetadata extends ResourceMetadata {
     * @see org.jclouds.blobstore.attr.ContainerCapability#BLOB_LAST_MODIFIED
     * @see org.jclouds.blobstore.attr.ContainerCapability#MILLISECOND_PRECISION
     */
-   void setLastModified(DateTime lastModified);
+   void setLastModified(Date lastModified);
 
    /**
     * Any key-value pairs associated with the resource.

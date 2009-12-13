@@ -24,10 +24,10 @@
 package org.jclouds.azure.storage.blob.domain;
 
 import java.net.URI;
+import java.util.Date;
 import java.util.Map;
 
 import org.jclouds.azure.storage.blob.domain.internal.MutableBlobPropertiesImpl;
-import org.joda.time.DateTime;
 
 import com.google.inject.ImplementedBy;
 
@@ -51,7 +51,7 @@ public interface MutableBlobProperties extends BlobProperties {
    /**
     * @see ListableContainerProperties#setLastModified
     */
-   void setLastModified(DateTime lastModified);
+   void setLastModified(Date lastModified);
 
    /**
     * @see ListableContainerProperties#setETag

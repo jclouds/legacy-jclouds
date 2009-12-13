@@ -24,10 +24,10 @@
 package org.jclouds.mezeo.pcs2.domain.internal;
 
 import java.net.URI;
+import java.util.Date;
 
 import org.jclouds.blobstore.domain.ResourceType;
 import org.jclouds.mezeo.pcs2.domain.FileInfo;
-import org.joda.time.DateTime;
 
 /**
  * 
@@ -42,8 +42,9 @@ public class FileInfoImpl extends ResourceInfoImpl implements FileInfo {
    private final URI permissions;
    private final URI thumbnail;
 
-   public FileInfoImpl(URI url, String name, DateTime created, boolean inProject,
-            DateTime modified, String owner, int version, boolean shared, DateTime accessed,
+   public FileInfoImpl(URI url, String name, Date created, boolean inProject,
+ Date modified,
+            String owner, int version, boolean shared, Date accessed,
             boolean isPublic, String mimeType, long bytes, URI content, URI parent,
             URI permissions, URI tags, URI metadata, URI thumbnail) {
       super(ResourceType.BLOB, url, name, created, inProject, modified, owner, version, shared,

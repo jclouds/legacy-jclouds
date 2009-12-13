@@ -32,8 +32,8 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 
-import org.joda.time.DateTime;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -48,11 +48,11 @@ import com.google.common.collect.ImmutableList;
 public class GetOptionsTest {
 
    private String etag;
-   private DateTime now;
+   private Date now;
 
    @BeforeTest
    void setUp() {
-      now = new DateTime();
+      now = new Date();
       etag = "yrdy";
    }
 
@@ -144,7 +144,7 @@ public class GetOptionsTest {
    @Test
    public void testNoRange() {
       GetOptions options = new GetOptions();
-      assertEquals(options.getRanges().size(),0);
+      assertEquals(options.getRanges().size(), 0);
    }
 
    @Test

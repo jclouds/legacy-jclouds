@@ -25,12 +25,12 @@ package org.jclouds.blobstore.domain.internal;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.util.Date;
 import java.util.Map;
 
 import org.jclouds.blobstore.domain.MutableResourceMetadata;
 import org.jclouds.blobstore.domain.ResourceMetadata;
 import org.jclouds.blobstore.domain.ResourceType;
-import org.joda.time.DateTime;
 
 import com.google.common.collect.Maps;
 
@@ -50,7 +50,7 @@ public class MutableResourceMetadataImpl implements MutableResourceMetadata, Ser
    private URI location;
    private String eTag;
    private Long size;
-   private DateTime lastModified;
+   private Date lastModified;
    private Map<String, String> userMetadata;
 
    public MutableResourceMetadataImpl() {
@@ -98,7 +98,7 @@ public class MutableResourceMetadataImpl implements MutableResourceMetadata, Ser
       return size;
    }
 
-   public DateTime getLastModified() {
+   public Date getLastModified() {
       return lastModified;
    }
 
@@ -173,7 +173,7 @@ public class MutableResourceMetadataImpl implements MutableResourceMetadata, Ser
       return true;
    }
 
-   public void setLastModified(DateTime lastModified) {
+   public void setLastModified(Date lastModified) {
       this.lastModified = lastModified;
    }
 

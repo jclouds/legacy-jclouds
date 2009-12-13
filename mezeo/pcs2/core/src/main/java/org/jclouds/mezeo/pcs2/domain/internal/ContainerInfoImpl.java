@@ -24,10 +24,10 @@
 package org.jclouds.mezeo.pcs2.domain.internal;
 
 import java.net.URI;
+import java.util.Date;
 
 import org.jclouds.blobstore.domain.ResourceType;
 import org.jclouds.mezeo.pcs2.domain.ContainerInfo;
-import org.joda.time.DateTime;
 
 /**
  * 
@@ -37,9 +37,9 @@ import org.joda.time.DateTime;
 public class ContainerInfoImpl extends ResourceInfoImpl implements ContainerInfo {
    private final URI contents;
 
-   public ContainerInfoImpl(URI url, String name, DateTime created, boolean inProject,
-            DateTime modified, String owner, int version, boolean shared, DateTime accessed,
-            long bytes, URI contents, URI tags, URI metadata, URI parent) {
+   public ContainerInfoImpl(URI url, String name, Date created, boolean inProject, Date modified,
+            String owner, int version, boolean shared, Date accessed, long bytes, URI contents,
+            URI tags, URI metadata, URI parent) {
       super(ResourceType.FOLDER, url, name, created, inProject, modified, owner, version, shared,
                accessed, bytes, tags, metadata, parent);
       this.contents = contents;

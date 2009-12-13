@@ -23,13 +23,14 @@
  */
 package org.jclouds.aws.s3.xml;
 
+import java.util.Date;
+
 import javax.inject.Inject;
 
 import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.internal.CopyObjectResult;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.DateService;
-import org.joda.time.DateTime;
 
 /**
  * Parses the response from Amazon S3 COPY Object command.
@@ -45,7 +46,7 @@ public class CopyObjectHandler extends ParseSax.HandlerWithResult<ObjectMetadata
    private StringBuilder currentText = new StringBuilder();
    @Inject
    private DateService dateParser;
-   private DateTime currentLastModified;
+   private Date currentLastModified;
    private String currentETag;
 
    public ObjectMetadata getResult() {

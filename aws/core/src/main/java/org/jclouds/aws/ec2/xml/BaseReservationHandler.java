@@ -25,6 +25,7 @@ package org.jclouds.aws.ec2.xml;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Date;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -37,7 +38,6 @@ import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.DateService;
-import org.joda.time.DateTime;
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.Sets;
@@ -67,7 +67,7 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
    private InetAddress ipAddress;
    private String kernelId;
    private String keyName;
-   private DateTime launchTime;
+   private Date launchTime;
    private boolean monitoring;
    private String availabilityZone;
    private String platform;

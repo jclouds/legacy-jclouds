@@ -26,6 +26,7 @@ package org.jclouds.azure.storage.blob.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
@@ -59,7 +60,6 @@ import org.jclouds.blobstore.integration.internal.StubAsyncBlobStore.FutureBase;
 import org.jclouds.concurrent.FutureFunctionWrapper;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.logging.Logger.LoggerFactory;
-import org.joda.time.DateTime;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -176,7 +176,7 @@ public class StubAzureBlobAsyncClient implements AzureBlobAsyncClient {
                      new Function<String, ListableContainerProperties>() {
                         public ListableContainerProperties apply(String name) {
                            return new ListableContainerPropertiesImpl(URI.create("http://stub/"
-                                    + name), new DateTime(), "");
+                                    + name), new Date(), "");
                         }
 
                      }), null, null, null, null, null);

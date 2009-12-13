@@ -33,7 +33,6 @@ import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rackspace.cloudservers.domain.Image;
 import org.jclouds.rackspace.cloudservers.domain.ImageStatus;
 import org.jclouds.util.DateService;
-import org.joda.time.DateTime;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -50,7 +49,7 @@ import com.google.inject.Injector;
 public class ParseImageListFromJsonResponseTest {
 
    Injector i = Guice.createInjector(new ParserModule());
-   DateService dateService = new DateService();
+   DateService dateService = i.getInstance(DateService.class);
 
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/cloudservers/test_list_images.json");
@@ -70,20 +69,24 @@ public class ParseImageListFromJsonResponseTest {
       List<Image> response = parser.apply(is);
       assertEquals(response.get(0).getId(), 2);
       assertEquals(response.get(0).getName(), "CentOS 5.2");
-      assertEquals(response.get(0).getCreated(), new DateTime("2010-08-10T12:00:00Z"));
+      assertEquals(response.get(0).getCreated(), dateService
+               .iso8601SecondsDateParse("2010-08-10T12:00:00Z"));
       assertEquals(response.get(0).getProgress(), null);
       assertEquals(response.get(0).getServerId(), null);
       assertEquals(response.get(0).getStatus(), ImageStatus.ACTIVE);
-      assertEquals(response.get(0).getUpdated(), new DateTime("2010-10-10T12:00:00Z"));
+      assertEquals(response.get(0).getUpdated(), dateService
+               .iso8601SecondsDateParse("2010-10-10T12:00:00Z"));
 
       assertEquals(response.get(1).getId(), 743);
       assertEquals(response.get(1).getName(), "My Server Backup");
-      assertEquals(response.get(1).getCreated(), new DateTime("2009-07-07T09:56:16-05:00"));
+      assertEquals(response.get(1).getCreated(), dateService
+               .iso8601SecondsDateParse("2009-07-07T09:56:16-05:00"));
       ;
       assertEquals(response.get(1).getProgress(), new Integer(80));
       assertEquals(response.get(1).getServerId(), new Integer(12));
       assertEquals(response.get(1).getStatus(), ImageStatus.SAVING);
-      assertEquals(response.get(1).getUpdated(), new DateTime("2010-10-10T12:00:00Z"));
+      assertEquals(response.get(1).getUpdated(), dateService
+               .iso8601SecondsDateParse("2010-10-10T12:00:00Z"));
    }
 
 }

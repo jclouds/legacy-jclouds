@@ -49,6 +49,11 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-blobstore</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>jclouds-azure</artifactId>
             <version>${project.version}</version>
         </dependency>

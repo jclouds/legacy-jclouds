@@ -30,7 +30,6 @@ import java.net.UnknownHostException;
 
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rackspace.cloudservers.domain.Flavor;
-import org.jclouds.util.DateService;
 import org.testng.annotations.Test;
 
 import com.google.gson.Gson;
@@ -46,7 +45,6 @@ import com.google.inject.Injector;
 public class ParseFlavorFromJsonResponseTest {
 
    Injector i = Guice.createInjector(new ParserModule());
-   DateService dateService = new DateService();
 
    public void testApplyInputStreamDetails() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/cloudservers/test_get_flavor_details.json");

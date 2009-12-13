@@ -31,6 +31,7 @@ import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.internal.CopyObjectResult;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.util.DateService;
+import org.jclouds.util.internal.SimpleDateFormatDateService;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -54,8 +55,9 @@ public class CopyObjectHandlerTest extends BaseHandlerTest {
 
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/s3/copy_object.xml");
-      ObjectMetadata expected = new CopyObjectResult(new DateService()
-               .iso8601DateParse("2009-03-19T13:23:27.000Z"), "\"92836a3ea45a6984d1b4d23a747d46bb\"");
+      ObjectMetadata expected = new CopyObjectResult(new SimpleDateFormatDateService()
+               .iso8601DateParse("2009-03-19T13:23:27.000Z"),
+               "\"92836a3ea45a6984d1b4d23a747d46bb\"");
 
       ObjectMetadata result = (ObjectMetadata) factory.create(
                injector.getInstance(CopyObjectHandler.class)).parse(is);

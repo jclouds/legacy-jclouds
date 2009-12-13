@@ -34,9 +34,9 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 
-import org.jclouds.util.DateService;
-import org.joda.time.DateTime;
+import org.jclouds.util.internal.SimpleDateFormatDateService;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -49,13 +49,13 @@ import org.testng.annotations.Test;
 public class GetOptionsTest {
 
    private String etag;
-   private DateTime now;
+   private Date now;
    private String nowExpected;
 
    @BeforeTest
    void setUp() {
-      now = new DateTime();
-      nowExpected = new DateService().rfc822DateFormat(now);
+      now = new Date();
+      nowExpected = new SimpleDateFormatDateService().rfc822DateFormat(now);
       etag = "yrdy";
    }
 

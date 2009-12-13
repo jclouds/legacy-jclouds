@@ -24,6 +24,7 @@
 package org.jclouds.azure.storage.blob.xml;
 
 import java.net.URI;
+import java.util.Date;
 import java.util.SortedSet;
 
 import javax.inject.Inject;
@@ -35,7 +36,6 @@ import org.jclouds.azure.storage.blob.domain.internal.TreeSetListBlobsResponse;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.DateService;
-import org.joda.time.DateTime;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -59,7 +59,7 @@ public class ContainerNameEnumerationResultsHandler extends
    private String nextMarker;
    private URI currentUrl;
    private URI containerUrl;
-   private DateTime currentLastModified;
+   private Date currentLastModified;
    private String currentETag;
 
    private StringBuilder currentText = new StringBuilder();

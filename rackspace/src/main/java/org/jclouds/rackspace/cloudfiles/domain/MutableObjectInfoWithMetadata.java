@@ -23,10 +23,10 @@
  */
 package org.jclouds.rackspace.cloudfiles.domain;
 
+import java.util.Date;
 import java.util.Map;
 
 import org.jclouds.rackspace.cloudfiles.domain.internal.MutableObjectInfoWithMetadataImpl;
-import org.joda.time.DateTime;
 
 import com.google.inject.ImplementedBy;
 
@@ -44,7 +44,7 @@ public interface MutableObjectInfoWithMetadata extends ObjectInfo {
 
    void setBytes(long bytes);
 
-   void setLastModified(DateTime lastModified);
+   void setLastModified(Date lastModified);
 
    void setContentType(String contentType);
 

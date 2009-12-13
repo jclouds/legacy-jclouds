@@ -23,10 +23,14 @@
  */
 package org.jclouds.rackspace.cloudservers.options;
 
-import static org.jclouds.rackspace.cloudservers.options.ListOptions.Builder.*;
+import static org.jclouds.rackspace.cloudservers.options.ListOptions.Builder.changesSince;
+import static org.jclouds.rackspace.cloudservers.options.ListOptions.Builder.maxResults;
+import static org.jclouds.rackspace.cloudservers.options.ListOptions.Builder.startAt;
+import static org.jclouds.rackspace.cloudservers.options.ListOptions.Builder.withDetails;
 import static org.testng.Assert.assertEquals;
 
-import org.joda.time.DateTime;
+import java.util.Date;
+
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -50,9 +54,9 @@ public class ListOptionsTest {
    }
 
    public void testChangesSince() {
-      DateTime ifModifiedSince = new DateTime();
+      Date ifModifiedSince = new Date();
       ListOptions options = new ListOptions().changesSince(ifModifiedSince);
-      assertEquals(ImmutableList.of(ifModifiedSince.getMillis() / 1000 + ""), options
+      assertEquals(ImmutableList.of(ifModifiedSince.getTime() / 1000 + ""), options
                .buildQueryParameters().get("changes-since"));
    }
 
@@ -69,9 +73,9 @@ public class ListOptionsTest {
    }
 
    public void testChangesSinceStatic() {
-      DateTime ifModifiedSince = new DateTime();
+      Date ifModifiedSince = new Date();
       ListOptions options = changesSince(ifModifiedSince);
-      assertEquals(ImmutableList.of(ifModifiedSince.getMillis() / 1000 + ""), options
+      assertEquals(ImmutableList.of(ifModifiedSince.getTime() / 1000 + ""), options
                .buildQueryParameters().get("changes-since"));
    }
 

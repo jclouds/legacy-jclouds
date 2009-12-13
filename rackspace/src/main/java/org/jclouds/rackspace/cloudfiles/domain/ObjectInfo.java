@@ -23,7 +23,7 @@
  */
 package org.jclouds.rackspace.cloudfiles.domain;
 
-import org.joda.time.DateTime;
+import java.util.Date;
 
 /**
  * 
@@ -33,9 +33,13 @@ import org.joda.time.DateTime;
 public interface ObjectInfo extends Comparable<ObjectInfo> {
 
    String getName();
-   byte [] getHash();
+
+   byte[] getHash();
+
    Long getBytes();
+
    String getContentType();
-   DateTime getLastModified();
+
+   Date getLastModified();
 
 }

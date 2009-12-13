@@ -26,8 +26,9 @@ package org.jclouds.rackspace.options;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.util.Date;
+
 import org.jclouds.http.options.BaseHttpRequestOptions;
-import org.joda.time.DateTime;
 
 /**
  * Options used to control paginated results (aka list commands).
@@ -41,9 +42,9 @@ public class BaseListOptions extends BaseHttpRequestOptions {
    /**
     * Only return objects changed since this time.
     */
-   public BaseListOptions changesSince(DateTime ifModifiedSince) {
+   public BaseListOptions changesSince(Date ifModifiedSince) {
       this.queryParameters.put("changes-since", checkNotNull(ifModifiedSince, "ifModifiedSince")
-               .getMillis()
+               .getTime()
                / 1000 + "");
       return this;
    }
@@ -93,9 +94,9 @@ public class BaseListOptions extends BaseHttpRequestOptions {
       }
 
       /**
-       * @see BaseListOptions#changesSince(DateTime)
+       * @see BaseListOptions#changesSince(Date)
        */
-      public static BaseListOptions changesSince(DateTime since) {
+      public static BaseListOptions changesSince(Date since) {
          BaseListOptions options = new BaseListOptions();
          return options.changesSince(since);
       }

@@ -28,6 +28,7 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
+import java.util.Date;
 import java.util.Map;
 
 import javax.ws.rs.core.HttpHeaders;
@@ -42,7 +43,6 @@ import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
-import org.joda.time.DateTime;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -81,7 +81,7 @@ public class ParseObjectMetadataFromHeadersTest {
       assertEquals(response, expects);
    }
 
-   DateTime now = new DateTime();
+   Date now = new Date();
    Map<String, String> userMetadata = ImmutableMap.of("foo", "bar");
    private MutableObjectMetadataImpl expects;
    BlobToObjectMetadata blobToObjectMetadata;

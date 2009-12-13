@@ -26,12 +26,12 @@ package org.jclouds.vcloud.domain.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
+import java.util.Date;
 
 import org.jclouds.rest.domain.NamedLink;
 import org.jclouds.rest.domain.internal.LinkImpl;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
-import org.joda.time.DateTime;
 
 import com.google.inject.internal.Nullable;
 
@@ -43,15 +43,15 @@ import com.google.inject.internal.Nullable;
  */
 public class TaskImpl extends LinkImpl implements Task {
    private final TaskStatus status;
-   private final DateTime startTime;
+   private final Date startTime;
    @Nullable
-   private final DateTime endTime;
+   private final Date endTime;
    private final NamedLink owner;
    @Nullable
    private final NamedLink result;
 
-   public TaskImpl(String type, URI location, TaskStatus status, DateTime startTime,
-            @Nullable DateTime endTime, NamedLink owner, @Nullable NamedLink result) {
+   public TaskImpl(String type, URI location, TaskStatus status, Date startTime,
+            @Nullable Date endTime, NamedLink owner, @Nullable NamedLink result) {
       super(type, location);
       this.status = checkNotNull(status, "status");
       this.startTime = startTime;
@@ -64,7 +64,7 @@ public class TaskImpl extends LinkImpl implements Task {
       return status;
    }
 
-   public DateTime getStartTime() {
+   public Date getStartTime() {
       return startTime;
    }
 
@@ -76,7 +76,7 @@ public class TaskImpl extends LinkImpl implements Task {
       return result;
    }
 
-   public DateTime getEndTime() {
+   public Date getEndTime() {
       return endTime;
    }
 

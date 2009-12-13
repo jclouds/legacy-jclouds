@@ -24,10 +24,10 @@
 package org.jclouds.mezeo.pcs2.domain.internal;
 
 import java.net.URI;
+import java.util.Date;
 import java.util.Map;
 
 import org.jclouds.mezeo.pcs2.domain.FileInfoWithMetadata;
-import org.joda.time.DateTime;
 
 /**
  * 
@@ -37,8 +37,8 @@ import org.joda.time.DateTime;
 public class FileInfoWithMetadataImpl extends FileInfoImpl implements FileInfoWithMetadata {
    private final Map<String, URI> metadataItems;
 
-   public FileInfoWithMetadataImpl(URI url, String name, DateTime created, boolean inProject,
-            DateTime modified, String owner, int version, boolean shared, DateTime accessed,
+   public FileInfoWithMetadataImpl(URI url, String name, Date created, boolean inProject,
+            Date modified, String owner, int version, boolean shared, Date accessed,
             boolean isPublic, String mimeType, long bytes, URI content, URI parent,
             URI permissions, URI tags, URI metadata, Map<String, URI> metadataItems, URI thumbnail) {
       super(url, name, created, inProject, modified, owner, version, shared, accessed, isPublic,

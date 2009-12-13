@@ -24,11 +24,11 @@
 package org.jclouds.mezeo.pcs2.domain.internal;
 
 import java.net.URI;
+import java.util.Date;
 
 import org.jclouds.blobstore.domain.ResourceType;
 import org.jclouds.mezeo.pcs2.domain.MutableResourceInfo;
 import org.jclouds.mezeo.pcs2.domain.ResourceInfo;
-import org.joda.time.DateTime;
 
 /**
  * 
@@ -40,13 +40,13 @@ public class MutableResourceInfoImpl implements MutableResourceInfo {
    private ResourceType type;
    private URI url;
    private String name;
-   private DateTime created;
+   private Date created;
    private Boolean inProject;
-   private DateTime modified;
+   private Date modified;
    private String owner;
    private Integer version;
    private Boolean shared;
-   private DateTime accessed;
+   private Date accessed;
    private Long bytes;
    private URI tags;
    private URI metadata;
@@ -82,11 +82,11 @@ public class MutableResourceInfoImpl implements MutableResourceInfo {
       this.name = name;
    }
 
-   public DateTime getCreated() {
+   public Date getCreated() {
       return created;
    }
 
-   public void setCreated(DateTime created) {
+   public void setCreated(Date created) {
       this.created = created;
    }
 
@@ -98,11 +98,11 @@ public class MutableResourceInfoImpl implements MutableResourceInfo {
       this.inProject = inProject;
    }
 
-   public DateTime getModified() {
+   public Date getModified() {
       return modified;
    }
 
-   public void setModified(DateTime modified) {
+   public void setModified(Date modified) {
       this.modified = modified;
    }
 
@@ -130,11 +130,11 @@ public class MutableResourceInfoImpl implements MutableResourceInfo {
       this.shared = shared;
    }
 
-   public DateTime getAccessed() {
+   public Date getAccessed() {
       return accessed;
    }
 
-   public void setAccessed(DateTime accessed) {
+   public void setAccessed(Date accessed) {
       this.accessed = accessed;
    }
 

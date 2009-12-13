@@ -23,10 +23,11 @@
  */
 package org.jclouds.vcloud.domain;
 
+import java.util.Date;
+
 import org.jclouds.rest.domain.Link;
 import org.jclouds.rest.domain.NamedLink;
 import org.jclouds.vcloud.domain.internal.TaskImpl;
-import org.joda.time.DateTime;
 
 import com.google.inject.ImplementedBy;
 
@@ -38,9 +39,9 @@ public interface Task extends Link, Comparable<Task> {
 
    TaskStatus getStatus();
 
-   DateTime getStartTime();
+   Date getStartTime();
 
-   DateTime getEndTime();
+   Date getEndTime();
 
    NamedLink getOwner();
 

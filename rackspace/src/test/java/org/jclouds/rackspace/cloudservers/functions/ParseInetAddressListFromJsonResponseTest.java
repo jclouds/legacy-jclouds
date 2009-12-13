@@ -31,7 +31,6 @@ import java.net.UnknownHostException;
 import java.util.List;
 
 import org.jclouds.http.functions.config.ParserModule;
-import org.jclouds.util.DateService;
 import org.testng.annotations.Test;
 
 import com.google.gson.Gson;
@@ -48,10 +47,10 @@ import com.google.inject.internal.ImmutableList;
 public class ParseInetAddressListFromJsonResponseTest {
 
    Injector i = Guice.createInjector(new ParserModule());
-   DateService dateService = new DateService();
 
    public void testPublic() throws UnknownHostException {
-      InputStream is = getClass().getResourceAsStream("/cloudservers/test_list_addresses_public.json");
+      InputStream is = getClass().getResourceAsStream(
+               "/cloudservers/test_list_addresses_public.json");
 
       ParseInetAddressListFromJsonResponse parser = new ParseInetAddressListFromJsonResponse(i
                .getInstance(Gson.class));
@@ -61,7 +60,8 @@ public class ParseInetAddressListFromJsonResponseTest {
    }
 
    public void testPrivate() throws UnknownHostException {
-      InputStream is = getClass().getResourceAsStream("/cloudservers/test_list_addresses_private.json");
+      InputStream is = getClass().getResourceAsStream(
+               "/cloudservers/test_list_addresses_private.json");
 
       ParseInetAddressListFromJsonResponse parser = new ParseInetAddressListFromJsonResponse(i
                .getInstance(Gson.class));

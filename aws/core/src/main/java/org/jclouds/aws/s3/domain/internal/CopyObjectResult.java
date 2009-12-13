@@ -25,11 +25,11 @@ package org.jclouds.aws.s3.domain.internal;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 
 import org.jclouds.aws.s3.domain.CanonicalUser;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
-import org.joda.time.DateTime;
 
 /**
  * Returns the metadata parsable from a bucket listing
@@ -42,7 +42,7 @@ public class CopyObjectResult implements Serializable, ObjectMetadata {
    private static final long serialVersionUID = -4415449798024051115L;
 
    private final String key;
-   private final DateTime lastModified;
+   private final Date lastModified;
    private final String eTag;
    private final Long size;
    private final CanonicalUser owner;
@@ -54,7 +54,7 @@ public class CopyObjectResult implements Serializable, ObjectMetadata {
    private final String contentEncoding;
    private final Map<String, String> userMetadata;
 
-   public CopyObjectResult(DateTime lastModified, String eTag) {
+   public CopyObjectResult(Date lastModified, String eTag) {
       this.key = null;
       this.lastModified = lastModified;
       this.eTag = eTag;
@@ -121,7 +121,7 @@ public class CopyObjectResult implements Serializable, ObjectMetadata {
    /**
     *{@inheritDoc}
     */
-   public DateTime getLastModified() {
+   public Date getLastModified() {
       return lastModified;
    }
 
@@ -247,6 +247,5 @@ public class CopyObjectResult implements Serializable, ObjectMetadata {
          return false;
       return true;
    }
-
 
 }

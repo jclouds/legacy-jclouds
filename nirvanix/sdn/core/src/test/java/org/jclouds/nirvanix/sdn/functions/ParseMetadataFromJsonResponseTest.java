@@ -30,7 +30,6 @@ import java.net.UnknownHostException;
 import java.util.Map;
 
 import org.jclouds.http.functions.config.ParserModule;
-import org.jclouds.util.DateService;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -47,7 +46,6 @@ import com.google.inject.Injector;
 public class ParseMetadataFromJsonResponseTest {
 
    Injector i = Guice.createInjector(new ParserModule());
-   DateService dateService = new DateService();
 
    public void testApplyInputStreamDetails() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/metadata.json");
@@ -55,7 +53,7 @@ public class ParseMetadataFromJsonResponseTest {
       ParseMetadataFromJsonResponse parser = new ParseMetadataFromJsonResponse(i
                .getInstance(Gson.class));
       Map<String, String> response = parser.apply(is);
-      assertEquals(response, ImmutableMap.of("MD5","IGPBYI1uC6+AJJxC4r5YBA==","test","1"));
+      assertEquals(response, ImmutableMap.of("MD5", "IGPBYI1uC6+AJJxC4r5YBA==", "test", "1"));
    }
 
 }

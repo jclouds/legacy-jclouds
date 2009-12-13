@@ -27,9 +27,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.util.Date;
 
 import org.jclouds.azure.storage.blob.domain.ListableBlobProperties;
-import org.joda.time.DateTime;
 
 import com.google.inject.internal.Nullable;
 
@@ -45,14 +45,14 @@ public class ListableBlobPropertiesImpl implements Serializable, ListableBlobPro
 
    private final String name;
    private final URI url;
-   private final DateTime lastModified;
+   private final Date lastModified;
    private final String eTag;
    private final long size;
    private final String contentType;
    private final String contentEncoding;
    private final String contentLanguage;
 
-   public ListableBlobPropertiesImpl(String name, URI url, DateTime lastModified, String eTag,
+   public ListableBlobPropertiesImpl(String name, URI url, Date lastModified, String eTag,
             long size, String contentType, @Nullable String contentEncoding,
             @Nullable String contentLanguage) {
       this.name = checkNotNull(name, "name");
@@ -89,7 +89,7 @@ public class ListableBlobPropertiesImpl implements Serializable, ListableBlobPro
    /**
     *{@inheritDoc}
     */
-   public DateTime getLastModified() {
+   public Date getLastModified() {
       return lastModified;
    }
 

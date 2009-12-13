@@ -26,9 +26,8 @@ package org.jclouds.aws.ec2.domain;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.InetAddress;
+import java.util.Date;
 import java.util.Set;
-
-import org.joda.time.DateTime;
 
 import com.google.inject.internal.Nullable;
 
@@ -52,7 +51,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
    private final String kernelId;
    @Nullable
    private final String keyName;
-   private final DateTime launchTime;
+   private final Date launchTime;
    private final boolean monitoring;
    @Nullable
    private final String availabilityZone;
@@ -79,7 +78,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
    public RunningInstance(String amiLaunchIndex, @Nullable String dnsName, String imageId,
             String instanceId, InstanceState instanceState, InstanceType instanceType,
             @Nullable InetAddress ipAddress, @Nullable String kernelId, @Nullable String keyName,
-            DateTime launchTime, boolean monitoring, @Nullable String availabilityZone,
+            Date launchTime, boolean monitoring, @Nullable String availabilityZone,
             @Nullable String platform, @Nullable String privateDnsName,
             @Nullable InetAddress privateIpAddress, Set<String> productCodes,
             @Nullable String ramdiskId, @Nullable String reason, @Nullable String subnetId,
@@ -177,7 +176,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
    /**
     * The time the instance launched.
     */
-   public DateTime getLaunchTime() {
+   public Date getLaunchTime() {
       return launchTime;
    }
 

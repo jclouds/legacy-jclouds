@@ -32,7 +32,6 @@ import java.util.List;
 
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rackspace.cloudservers.domain.Addresses;
-import org.jclouds.util.DateService;
 import org.testng.annotations.Test;
 
 import com.google.gson.Gson;
@@ -49,7 +48,6 @@ import com.google.inject.internal.ImmutableList;
 public class ParseAddressesFromJsonResponseTest {
 
    Injector i = Guice.createInjector(new ParserModule());
-   DateService dateService = new DateService();
 
    public void testApplyInputStreamDetails() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/cloudservers/test_list_addresses.json");

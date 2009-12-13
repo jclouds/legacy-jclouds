@@ -36,6 +36,7 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.net.URI;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
@@ -85,7 +86,6 @@ import org.jclouds.http.HttpUtils;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.util.DateService;
 import org.jclouds.util.Utils;
-import org.joda.time.DateTime;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -513,7 +513,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
          byte[] data = toByteArray(object.getData());
          object.getMetadata().setSize(data.length);
          MutableBlobMetadata newMd = copy(object.getMetadata());
-         newMd.setLastModified(new DateTime());
+         newMd.setLastModified(new Date());
          final byte[] md5 = HttpUtils.md5(data);
          final String eTag = HttpUtils.toHexString(md5);
          newMd.setETag(eTag);
@@ -567,8 +567,8 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
                   throwResponseException(304);
             }
             if (options.getIfModifiedSince() != null) {
-               DateTime modifiedSince = options.getIfModifiedSince();
-               if (object.getMetadata().getLastModified().isBefore(modifiedSince)) {
+               Date modifiedSince = options.getIfModifiedSince();
+               if (object.getMetadata().getLastModified().before(modifiedSince)) {
                   HttpResponse response = new HttpResponse();
                   response.setStatusCode(304);
                   throw new ExecutionException(new HttpResponseException(String.format(
@@ -578,8 +578,8 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
 
             }
             if (options.getIfUnmodifiedSince() != null) {
-               DateTime unmodifiedSince = options.getIfUnmodifiedSince();
-               if (object.getMetadata().getLastModified().isAfter(unmodifiedSince)) {
+               Date unmodifiedSince = options.getIfUnmodifiedSince();
+               if (object.getMetadata().getLastModified().after(unmodifiedSince)) {
                   HttpResponse response = new HttpResponse();
                   response.setStatusCode(412);
                   throw new ExecutionException(new HttpResponseException(String.format(
@@ -597,7 +597,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
                      int length = Integer.parseInt(s.substring(1));
                      out.write(data, data.length - length, length);
                   } else if (s.endsWith("-")) {
-                     int offset = Integer.parseInt(s.substring(0, s.length()-1));
+                     int offset = Integer.parseInt(s.substring(0, s.length() - 1));
                      out.write(data, offset, data.length - offset);
                   } else if (s.contains("-")) {
                      String[] firstLast = s.split("\\-");

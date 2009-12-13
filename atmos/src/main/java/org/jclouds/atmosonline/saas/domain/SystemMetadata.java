@@ -23,7 +23,7 @@
  */
 package org.jclouds.atmosonline.saas.domain;
 
-import org.joda.time.DateTime;
+import java.util.Date;
 
 /**
  * Metadata of a Atmos Online object
@@ -32,19 +32,18 @@ import org.joda.time.DateTime;
  */
 public class SystemMetadata extends DirectoryEntry {
 
-   private final DateTime atime;
-   private final DateTime ctime;
+   private final Date atime;
+   private final Date ctime;
    private final String gid;
-   private final DateTime itime;
-   private final DateTime mtime;
+   private final Date itime;
+   private final Date mtime;
    private final int nlink;
    private final String policyname;
    private final long size;
    private final String uid;
 
-   public SystemMetadata(DateTime atime, DateTime ctime, String gid, DateTime itime,
-            DateTime mtime, int nlink, String objectid, String objname, String policyname,
-            long size, FileType type, String uid) {
+   public SystemMetadata(Date atime, Date ctime, String gid, Date itime, Date mtime, int nlink,
+            String objectid, String objname, String policyname, long size, FileType type, String uid) {
       super(objectid, type, objname);
       this.atime = atime;
       this.ctime = ctime;
@@ -65,19 +64,19 @@ public class SystemMetadata extends DirectoryEntry {
       return nlink;
    }
 
-   public DateTime getInceptionTime() {
+   public Date getInceptionTime() {
       return itime;
    }
 
-   public DateTime getLastAccessTime() {
+   public Date getLastAccessTime() {
       return atime;
    }
 
-   public DateTime getLastMetadataModification() {
+   public Date getLastMetadataModification() {
       return mtime;
    }
 
-   public DateTime getLastUserDataModification() {
+   public Date getLastUserDataModification() {
       return ctime;
    }
 

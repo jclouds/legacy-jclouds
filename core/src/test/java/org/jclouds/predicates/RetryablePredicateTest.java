@@ -23,9 +23,9 @@
  */
 package org.jclouds.predicates;
 
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import org.joda.time.DateTime;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -43,23 +43,25 @@ public class RetryablePredicateTest {
    void testAlwaysTrue() {
       RetryablePredicate<String> predicate = new RetryablePredicate<String>(Predicates
                .<String> alwaysTrue(), 3, 1, TimeUnit.SECONDS);
-      DateTime start = new DateTime();
+      Date startPlusSecond = new Date(System.currentTimeMillis() + 1000);
       predicate.apply("");
-      DateTime now = new DateTime();
-      assert now.compareTo(start.plusSeconds(1)) < 0 : String.format("%s should be less than %s",
-               now,  start.plusSeconds(1));   }
+      Date now = new Date();
+      assert now.compareTo(startPlusSecond) < 0 : String.format("%s should be less than %s", now,
+               startPlusSecond);
+   }
 
    @Test
    void testAlwaysFalseMillis() {
       RetryablePredicate<String> predicate = new RetryablePredicate<String>(Predicates
                .<String> alwaysFalse(), 3, 1, TimeUnit.SECONDS);
-      DateTime start = new DateTime();
+      Date startPlus3Seconds = new Date(System.currentTimeMillis() + 3000);
+      Date startPlus4Seconds = new Date(System.currentTimeMillis() + 4000);
       predicate.apply("");
-      DateTime now = new DateTime();
-      assert now.compareTo(start.plusSeconds(3)) >= 0 : String.format("%s should be less than %s",
-               start.plusSeconds(3), now);
-      assert now.compareTo(start.plusSeconds(4)) <= 0 : String.format(
-               "%s should be greater than %s", start.plusSeconds(6), now);
+      Date now = new Date();
+      assert now.compareTo(startPlus3Seconds) >= 0 : String.format("%s should be less than %s",
+               startPlus3Seconds, now);
+      assert now.compareTo(startPlus4Seconds) <= 0 : String.format("%s should be greater than %s",
+               startPlus4Seconds, now);
 
    }
 
@@ -79,13 +81,15 @@ public class RetryablePredicateTest {
       RetryablePredicate<String> predicate = new RetryablePredicate<String>(new SecondTimeTrue(),
                3, 1, TimeUnit.SECONDS);
 
-      DateTime start = new DateTime();
+      Date startPlusSecond = new Date(System.currentTimeMillis() + 1000);
+      Date startPlus2Seconds = new Date(System.currentTimeMillis() + 2000);
+
       predicate.apply("");
-      DateTime now = new DateTime();
-      assert now.compareTo(start.plusSeconds(1)) >= 0 : String.format("%s should be greater than %s",
-                now,start.plusSeconds(1));
-      assert now.compareTo(start.plusSeconds(2)) <= 0 : String.format(
-               "%s should be greater than %s", start.plusSeconds(2), now);
+      Date now = new Date();
+      assert now.compareTo(startPlusSecond) >= 0 : String.format("%s should be greater than %s",
+               now, startPlusSecond);
+      assert now.compareTo(startPlus2Seconds) <= 0 : String.format("%s should be greater than %s",
+               startPlus2Seconds, now);
    }
 
 }

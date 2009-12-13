@@ -26,11 +26,12 @@ package org.jclouds.util;
 import static org.testng.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import org.jclouds.PerformanceTest;
-import org.joda.time.DateTime;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
@@ -47,11 +48,15 @@ import com.google.inject.Injector;
  * @author Adrian Cole
  * @author James Murty
  */
-@Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "s3.DateTest")
+@Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "core.DateTest")
 public class DateServiceTest extends PerformanceTest {
-   Injector i = Guice.createInjector();
+   protected DateService dateService;
 
-   DateService dateService = i.getInstance(DateService.class);
+   @BeforeTest
+   protected void createDateService() {
+      Injector i = Guice.createInjector();
+      dateService = i.getInstance(DateService.class);
+   }
 
    protected TestData[] testData;
 
@@ -60,14 +65,15 @@ public class DateServiceTest extends PerformanceTest {
       public final String iso8601SecondsDateString;
       public final String rfc822DateString;
       public final String cDateString;
-      
-      public final DateTime date;
 
-      TestData(String iso8601, String iso8601Seconds, String rfc822, String cDateString, DateTime dateTime) {
+      public final Date date;
+
+      TestData(String iso8601, String iso8601Seconds, String rfc822, String cDateString,
+               Date dateTime) {
          this.iso8601DateString = iso8601;
          this.iso8601SecondsDateString = iso8601Seconds;
          this.rfc822DateString = rfc822;
-         this.cDateString= cDateString;
+         this.cDateString = cDateString;
          this.date = dateTime;
       }
    }
@@ -76,38 +82,43 @@ public class DateServiceTest extends PerformanceTest {
       // Constant time test values, each TestData item must contain matching times!
       testData = new TestData[] {
                new TestData("2009-03-12T02:00:07.000Z", "2009-03-12T02:00:07Z",
-                        "Thu, 12 Mar 2009 02:00:07 GMT", "Thu Mar 12 02:00:07 +0000 2009", new DateTime(1236823207000l)),
+                        "Thu, 12 Mar 2009 02:00:07 GMT", "Thu Mar 12 02:00:07 +0000 2009",
+                        new Date(1236823207000l)),
                new TestData("2009-03-14T04:00:07.000Z", "2009-03-14T04:00:07Z",
-                        "Sat, 14 Mar 2009 04:00:07 GMT",  "Thu Mar 14 04:00:07 +0000 2009",new DateTime(1237003207000l)),
+                        "Sat, 14 Mar 2009 04:00:07 GMT", "Thu Mar 14 04:00:07 +0000 2009",
+                        new Date(1237003207000l)),
                new TestData("2009-03-16T06:00:07.000Z", "2009-03-16T06:00:07Z",
-                        "Mon, 16 Mar 2009 06:00:07 GMT",  "Thu Mar 16 06:00:07 +0000 2009",new DateTime(1237183207000l)),
+                        "Mon, 16 Mar 2009 06:00:07 GMT", "Thu Mar 16 06:00:07 +0000 2009",
+                        new Date(1237183207000l)),
                new TestData("2009-03-18T08:00:07.000Z", "2009-03-18T08:00:07Z",
-                        "Wed, 18 Mar 2009 08:00:07 GMT",  "Thu Mar 18 08:00:07 +0000 2009",new DateTime(1237363207000l)),
+                        "Wed, 18 Mar 2009 08:00:07 GMT", "Thu Mar 18 08:00:07 +0000 2009",
+                        new Date(1237363207000l)),
                new TestData("2009-03-20T10:00:07.000Z", "2009-03-20T10:00:07Z",
-                        "Fri, 20 Mar 2009 10:00:07 GMT",  "Thu Mar 20 10:00:07 +0000 2009",new DateTime(1237543207000l)) };
+                        "Fri, 20 Mar 2009 10:00:07 GMT", "Thu Mar 20 10:00:07 +0000 2009",
+                        new Date(1237543207000l)) };
    }
 
    @Test
    public void testIso8601DateParse() throws ExecutionException, InterruptedException {
-      DateTime dsDate = dateService.iso8601DateParse(testData[0].iso8601DateString);
+      Date dsDate = dateService.iso8601DateParse(testData[0].iso8601DateString);
       assertEquals(dsDate, testData[0].date);
    }
 
    @Test
    public void testIso8601SecondsDateParse() throws ExecutionException, InterruptedException {
-      DateTime dsDate = dateService.iso8601SecondsDateParse(testData[0].iso8601SecondsDateString);
+      Date dsDate = dateService.iso8601SecondsDateParse(testData[0].iso8601SecondsDateString);
       assertEquals(dsDate, testData[0].date);
    }
 
    @Test
    public void testCDateParse() throws ExecutionException, InterruptedException {
-      DateTime dsDate = dateService.cDateParse(testData[0].cDateString);
+      Date dsDate = dateService.cDateParse(testData[0].cDateString);
       assertEquals(dsDate, testData[0].date);
    }
 
    @Test
    public void testRfc822DateParse() throws ExecutionException, InterruptedException {
-      DateTime dsDate = dateService.rfc822DateParse(testData[0].rfc822DateString);
+      Date dsDate = dateService.rfc822DateParse(testData[0].rfc822DateString);
       assertEquals(dsDate, testData[0].date);
    }
 
@@ -128,7 +139,7 @@ public class DateServiceTest extends PerformanceTest {
       String dsString = dateService.cDateFormat(testData[0].date);
       assertEquals(dsString, testData[0].cDateString);
    }
-   
+
    @Test
    public void testRfc822DateFormat() throws ExecutionException, InterruptedException {
       String dsString = dateService.rfc822DateFormat(testData[0].date);
@@ -144,7 +155,7 @@ public class DateServiceTest extends PerformanceTest {
    @Test
    void testFromSeconds() throws ExecutionException, InterruptedException {
       long seconds = 1254008225;
-      DateTime date = dateService.fromSeconds(seconds);
+      Date date = dateService.fromSeconds(seconds);
       assertEquals(dateService.rfc822DateFormat(date), "Sat, 26 Sep 2009 23:37:05 GMT");
    }
 
@@ -154,13 +165,12 @@ public class DateServiceTest extends PerformanceTest {
          dateService.rfc822DateFormat();
    }
 
-
    @Test
    void testCDateFormatResponseTime() throws ExecutionException, InterruptedException {
       for (int i = 0; i < LOOP_COUNT; i++)
          dateService.cDateFormat();
    }
-   
+
    @Test
    void testFormatIso8601DateCorrectnessInParallel() throws Throwable {
       List<Runnable> tasks = new ArrayList<Runnable>(testData.length);
@@ -189,30 +199,9 @@ public class DateServiceTest extends PerformanceTest {
    }
 
    @Test
-   void testFormatIso8601DatePerformanceInParallel_SdfAlternative() throws Throwable {
-      List<Runnable> tasks = new ArrayList<Runnable>(testData.length);
-      for (final TestData myData : testData) {
-         tasks.add(new Runnable() {
-            public void run() {
-               dateService.sdfIso8601DateFormat(myData.date);
-            }
-         });
-      }
-      executeMultiThreadedPerformanceTest(
-               "testFormatIso8601DatePerformanceInParallel_SdfAlternative", tasks);
-   }
-
-   @Test
    void testParseIso8601DateSerialResponseTime() throws ExecutionException, InterruptedException {
       for (int i = 0; i < LOOP_COUNT; i++)
          dateService.iso8601DateParse(testData[0].iso8601DateString);
-   }
-
-   @Test
-   void testParseIso8601DateSerialResponseTime_JodaAlternative() throws ExecutionException,
-            InterruptedException {
-      for (int i = 0; i < LOOP_COUNT; i++)
-         dateService.jodaIso8601DateParse(testData[0].iso8601DateString);
    }
 
    @Test
@@ -221,7 +210,7 @@ public class DateServiceTest extends PerformanceTest {
       for (final TestData myData : testData) {
          tasks.add(new Runnable() {
             public void run() {
-               DateTime dsDate = dateService.iso8601DateParse(myData.iso8601DateString);
+               Date dsDate = dateService.iso8601DateParse(myData.iso8601DateString);
                assertEquals(dsDate, myData.date);
             }
          });
@@ -240,20 +229,6 @@ public class DateServiceTest extends PerformanceTest {
          });
       }
       executeMultiThreadedPerformanceTest("testParseIso8601DatePerformanceInParallel", tasks);
-   }
-
-   @Test
-   void testParseIso8601DatePerformanceInParallel_JodaAlternative() throws Throwable {
-      List<Runnable> tasks = new ArrayList<Runnable>(testData.length);
-      for (final TestData myData : testData) {
-         tasks.add(new Runnable() {
-            public void run() {
-               dateService.jodaIso8601DateParse(myData.iso8601DateString);
-            }
-         });
-      }
-      executeMultiThreadedPerformanceTest(
-               "testParseIso8601DatePerformanceInParallel_JodaAlternative", tasks);
    }
 
 }

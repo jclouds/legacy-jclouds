@@ -23,7 +23,7 @@
  */
 package org.jclouds.vcloud.domain;
 
-import org.joda.time.DateTime;
+import java.util.Date;
 
 /**
  * @author Adrian Cole
@@ -39,7 +39,7 @@ public class TerremarkVirtualSystem extends VirtualSystem {
    private final String configurationDataRoot;
    private final String configurationFile;
    private final String configurationID;
-   private final DateTime creationTime;
+   private final Date creationTime;
    private final String description;
    private final String logDataRoot;
    private final String recoveryFile;
@@ -51,7 +51,7 @@ public class TerremarkVirtualSystem extends VirtualSystem {
             String automaticStartupAction, String automaticStartupActionDelay,
             String automaticStartupActionSequenceNumber, String caption,
             String configurationDataRoot, String configurationFile, String configurationID,
-            DateTime creationTime, String description, String elementName, int instanceID,
+            Date creationTime, String description, String elementName, int instanceID,
             String logDataRoot, String recoveryFile, String snapshotDataRoot,
             String suspendDataRoot, String swapFileDataRoot, String virtualSystemIdentifier,
             String virtualSystemType) {
@@ -110,7 +110,7 @@ public class TerremarkVirtualSystem extends VirtualSystem {
       return configurationID;
    }
 
-   public DateTime getCreationTime() {
+   public Date getCreationTime() {
       return creationTime;
    }
 

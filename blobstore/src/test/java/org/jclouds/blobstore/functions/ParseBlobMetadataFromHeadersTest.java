@@ -40,7 +40,7 @@ import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.util.DateService;
+import org.jclouds.util.internal.SimpleDateFormatDateService;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -61,8 +61,8 @@ public class ParseBlobMetadataFromHeadersTest {
    @BeforeTest
    void setUp() {
 
-      parser = new ParseSystemAndUserMetadataFromHeaders(blobMetadataProvider, new DateService(),
-               "prefix");
+      parser = new ParseSystemAndUserMetadataFromHeaders(blobMetadataProvider,
+               new SimpleDateFormatDateService(), "prefix");
 
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
@@ -118,7 +118,7 @@ public class ParseBlobMetadataFromHeadersTest {
       from.getHeaders().put(HttpHeaders.LAST_MODIFIED, "Wed, 09 Sep 2009 19:50:23 GMT");
       MutableBlobMetadata metadata = blobMetadataProvider.get();
       parser.parseLastModifiedOrThrowException(from, metadata);
-      assertEquals(metadata.getLastModified(), new DateService()
+      assertEquals(metadata.getLastModified(), new SimpleDateFormatDateService()
                .rfc822DateParse("Wed, 09 Sep 2009 19:50:23 GMT"));
    }
 

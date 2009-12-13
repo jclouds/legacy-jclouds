@@ -34,7 +34,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 
 import org.apache.commons.io.IOUtils;
-import org.joda.time.DateTime;
+import org.jclouds.util.internal.SimpleDateFormatDateService;
 import org.testng.annotations.Test;
 
 /**
@@ -103,12 +103,14 @@ public class S3ParserTest extends org.jclouds.aws.s3.xml.S3ParserTest {
       List<Bucket> buckets = response.entries;
       Bucket bucket1 = (Bucket) buckets.get(0);
       assert bucket1.name.equals("adrianjbosstest");
-      Date expectedDate1 = new DateTime("2009-03-12T02:00:07.000Z").toDate();
+      Date expectedDate1 = new SimpleDateFormatDateService()
+               .iso8601DateParse("2009-03-12T02:00:07.000Z");
       Date date1 = bucket1.creationDate;
       assert date1.toString().equals(expectedDate1.toString());
       Bucket bucket2 = (Bucket) buckets.get(1);
       assert bucket2.name.equals("adrianjbosstest2");
-      Date expectedDate2 = new DateTime("2009-03-12T02:00:09.000Z").toDate();
+      Date expectedDate2 = new SimpleDateFormatDateService()
+               .iso8601DateParse("2009-03-12T02:00:09.000Z");
       Date date2 = bucket2.creationDate;
       assert date2.toString().equals(expectedDate2.toString());
       assert buckets.size() == 2;
@@ -125,7 +127,8 @@ public class S3ParserTest extends org.jclouds.aws.s3.xml.S3ParserTest {
       ListBucketResponse response = runAmazonParseListBucketResult();
       ListEntry content = (ListEntry) response.entries.get(0);
       assert content.key.equals("3366");
-      assert content.lastModified.equals(new DateTime("2009-03-12T02:00:13.000Z").toDate());
+      assert content.lastModified.equals(new SimpleDateFormatDateService()
+               .iso8601DateParse("2009-03-12T02:00:13.000Z"));
       assert content.eTag.equals("\"9d7bb64e8e18ee34eec06dd2cf37b766\"");
       assert content.size == 136;
       assert content.owner.id

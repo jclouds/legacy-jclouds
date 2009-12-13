@@ -24,6 +24,7 @@
 package org.jclouds.mezeo.pcs2.xml;
 
 import java.net.URI;
+import java.util.Date;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -32,7 +33,6 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.mezeo.pcs2.domain.FileInfoWithMetadata;
 import org.jclouds.mezeo.pcs2.domain.internal.FileInfoWithMetadataImpl;
 import org.jclouds.util.DateService;
-import org.joda.time.DateTime;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -46,13 +46,13 @@ public class FileHandler extends ParseSax.HandlerWithResult<FileInfoWithMetadata
 
    protected URI currentUrl;
    private String currentName;
-   private DateTime currentCreated;
+   private Date currentCreated;
    private boolean currentInproject;
-   private DateTime currentModified;
+   private Date currentModified;
    private String currentOwner;
    private int currentVersion;
    private boolean currentShared;
-   private DateTime currentAccessed;
+   private Date currentAccessed;
    private long currentBytes;
    private String currentMimeType;
    private boolean currentPublic;

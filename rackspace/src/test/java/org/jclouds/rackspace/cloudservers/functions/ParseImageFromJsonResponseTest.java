@@ -32,7 +32,6 @@ import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rackspace.cloudservers.domain.Image;
 import org.jclouds.rackspace.cloudservers.domain.ImageStatus;
 import org.jclouds.util.DateService;
-import org.joda.time.DateTime;
 import org.testng.annotations.Test;
 
 import com.google.gson.Gson;
@@ -48,7 +47,7 @@ import com.google.inject.Injector;
 public class ParseImageFromJsonResponseTest {
 
    Injector i = Guice.createInjector(new ParserModule());
-   DateService dateService = new DateService();
+   DateService dateService = i.getInstance(DateService.class);
 
    public void testApplyInputStreamDetails() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/cloudservers/test_get_image_details.json");
@@ -57,11 +56,12 @@ public class ParseImageFromJsonResponseTest {
       Image response = parser.apply(is);
       assertEquals(response.getId(), 2);
       assertEquals(response.getName(), "CentOS 5.2");
-      assertEquals(response.getCreated(), new DateTime("2010-08-10T12:00:00Z"));
+      assertEquals(response.getCreated(), dateService
+               .iso8601SecondsDateParse("2010-08-10T12:00:00Z"));
       assertEquals(response.getProgress(), new Integer(80));
       assertEquals(response.getServerId(), new Integer(12));
       assertEquals(response.getStatus(), ImageStatus.SAVING);
-      assertEquals(response.getUpdated(), new DateTime("2010-10-10T12:00:00Z"));
+      assertEquals(response.getUpdated(), dateService
+               .iso8601SecondsDateParse(("2010-10-10T12:00:00Z")));
    }
-
 }

@@ -24,6 +24,7 @@
 package org.jclouds.mezeo.pcs2.xml;
 
 import java.net.URI;
+import java.util.Date;
 import java.util.Map;
 import java.util.SortedSet;
 
@@ -38,7 +39,6 @@ import org.jclouds.mezeo.pcs2.domain.internal.ContainerInfoImpl;
 import org.jclouds.mezeo.pcs2.domain.internal.ContainerListImpl;
 import org.jclouds.mezeo.pcs2.domain.internal.FileInfoImpl;
 import org.jclouds.util.DateService;
-import org.joda.time.DateTime;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -58,13 +58,13 @@ public class ContainerHandler extends ParseSax.HandlerWithResult<ContainerList> 
 
    private URI rootUrl;
    private String rootName;
-   private DateTime rootCreated;
+   private Date rootCreated;
    private boolean rootInproject;
-   private DateTime rootModified;
+   private Date rootModified;
    private String rootOwner;
    private int rootVersion;
    private boolean rootShared;
-   private DateTime rootAccessed;
+   private Date rootAccessed;
    private long rootBytes;
    private URI rootParent;
    private URI rootTags;
@@ -72,13 +72,13 @@ public class ContainerHandler extends ParseSax.HandlerWithResult<ContainerList> 
 
    private URI currentUrl;
    private String currentName;
-   private DateTime currentCreated;
+   private Date currentCreated;
    private boolean currentInproject;
-   private DateTime currentModified;
+   private Date currentModified;
    private String currentOwner;
    private int currentVersion;
    private boolean currentShared;
-   private DateTime currentAccessed;
+   private Date currentAccessed;
    private long currentBytes;
    private URI currentParent;
    private URI currentTags;
@@ -116,7 +116,7 @@ public class ContainerHandler extends ParseSax.HandlerWithResult<ContainerList> 
       if (qName.equals("contents") && attributes.getIndex("count") != -1) {
          int index = attributes.getIndex("xlink:href");
          if (index != -1) {
-            rootUrl = URI.create(attributes.getValue(index).replace("/contents",""));
+            rootUrl = URI.create(attributes.getValue(index).replace("/contents", ""));
          }
          inContents = true;
          return;

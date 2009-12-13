@@ -24,20 +24,19 @@
 package org.jclouds.azure.storage.blob.domain;
 
 import java.net.URI;
-
-import org.joda.time.DateTime;
+import java.util.Date;
 
 /**
  * 
  * @author Adrian Cole
  * 
  */
-public interface ListableContainerProperties extends Comparable<ListableContainerProperties>  {
+public interface ListableContainerProperties extends Comparable<ListableContainerProperties> {
    URI getUrl();
 
    String getName();
 
-   DateTime getLastModified();
+   Date getLastModified();
 
    String getETag();
 }

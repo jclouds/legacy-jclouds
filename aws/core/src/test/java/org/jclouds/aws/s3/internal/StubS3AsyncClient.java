@@ -25,6 +25,7 @@ package org.jclouds.aws.s3.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -68,7 +69,6 @@ import org.jclouds.concurrent.FutureFunctionWrapper;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.util.DateService;
-import org.joda.time.DateTime;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -168,16 +168,15 @@ public class StubS3AsyncClient implements S3AsyncClient {
                      blobStore.throwResponseException(412);
                }
                if (options.getIfModifiedSince() != null) {
-                  DateTime modifiedSince = dateService
-                           .rfc822DateParse(options.getIfModifiedSince());
-                  if (modifiedSince.isAfter(object.getMetadata().getLastModified()))
+                  Date modifiedSince = dateService.rfc822DateParse(options.getIfModifiedSince());
+                  if (modifiedSince.after(object.getMetadata().getLastModified()))
                      blobStore.throwResponseException(412);
 
                }
                if (options.getIfUnmodifiedSince() != null) {
-                  DateTime unmodifiedSince = dateService.rfc822DateParse(options
-                           .getIfUnmodifiedSince());
-                  if (unmodifiedSince.isBefore(object.getMetadata().getLastModified()))
+                  Date unmodifiedSince = dateService
+                           .rfc822DateParse(options.getIfUnmodifiedSince());
+                  if (unmodifiedSince.before(object.getMetadata().getLastModified()))
                      blobStore.throwResponseException(412);
                }
                Blob sourceS3 = source.get(sourceObject);
@@ -186,7 +185,7 @@ public class StubS3AsyncClient implements S3AsyncClient {
                if (options.getAcl() != null)
                   keyToAcl.put(destinationBucket + "/" + destinationObject, options.getAcl());
 
-               newMd.setLastModified(new DateTime());
+               newMd.setLastModified(new Date());
                Blob newBlob = blobProvider.create(newMd);
                newBlob.setData(sourceS3.getData());
                dest.put(destinationObject, newBlob);

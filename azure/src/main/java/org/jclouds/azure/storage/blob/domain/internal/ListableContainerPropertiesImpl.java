@@ -27,9 +27,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.util.Date;
 
 import org.jclouds.azure.storage.blob.domain.ListableContainerProperties;
-import org.joda.time.DateTime;
 
 /**
  * Allows you to manipulate metadata.
@@ -43,10 +43,10 @@ public class ListableContainerPropertiesImpl implements Serializable, ListableCo
 
    private final String name;
    private final URI url;
-   private final DateTime lastModified;
+   private final Date lastModified;
    private final String eTag;
 
-   public ListableContainerPropertiesImpl(URI url, DateTime lastModified, String eTag) {
+   public ListableContainerPropertiesImpl(URI url, Date lastModified, String eTag) {
       this.url = checkNotNull(url, "url");
       this.name = checkNotNull(url.getPath(), "url.getPath()").replaceFirst("/", "");
       this.lastModified = checkNotNull(lastModified, "lastModified");
@@ -63,7 +63,7 @@ public class ListableContainerPropertiesImpl implements Serializable, ListableCo
    /**
     *{@inheritDoc}
     */
-   public DateTime getLastModified() {
+   public Date getLastModified() {
       return lastModified;
    }
 

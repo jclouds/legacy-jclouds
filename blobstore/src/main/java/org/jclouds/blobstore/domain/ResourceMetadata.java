@@ -24,10 +24,10 @@
 package org.jclouds.blobstore.domain;
 
 import java.net.URI;
+import java.util.Date;
 import java.util.Map;
 
 import org.jclouds.blobstore.domain.internal.ResourceMetadataImpl;
-import org.joda.time.DateTime;
 
 import com.google.inject.ImplementedBy;
 
@@ -43,7 +43,7 @@ public interface ResourceMetadata extends Comparable<ResourceMetadata> {
     * Whether this resource is a container, file, etc.
     */
    ResourceType getType();
-   
+
    /**
     * Unique identifier of this resource within its enclosing namespace. In some scenarios, this id
     * is not user assignable. For files, this may be an system generated key, or the full path to
@@ -72,14 +72,14 @@ public interface ResourceMetadata extends Comparable<ResourceMetadata> {
     * @see org.jclouds.blobstore.attr.ContainerCapability#BLOB_ETAG
     */
    String getETag();
-   
+
    /**
     * Size of the resource in bytes
     * 
     * @see org.jclouds.blobstore.attr.ContainerCapability#CONTAINER_SIZE
     * @see org.jclouds.blobstore.attr.ContainerCapability#BLOB_SIZE
     */
-   public Long getSize();
+   Long getSize();
 
    /**
     * Last modification time of the resource
@@ -88,7 +88,7 @@ public interface ResourceMetadata extends Comparable<ResourceMetadata> {
     * @see org.jclouds.blobstore.attr.ContainerCapability#BLOB_LAST_MODIFIED
     * @see org.jclouds.blobstore.attr.ContainerCapability#MILLISECOND_PRECISION
     */
-   public DateTime getLastModified();
+   Date getLastModified();
 
    /**
     * Any key-value pairs associated with the resource.
@@ -97,7 +97,5 @@ public interface ResourceMetadata extends Comparable<ResourceMetadata> {
     * @see org.jclouds.blobstore.attr.ContainerCapability#BLOB_METADATA
     */
    Map<String, String> getUserMetadata();
-
-
 
 }

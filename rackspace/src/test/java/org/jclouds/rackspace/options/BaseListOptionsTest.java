@@ -28,7 +28,8 @@ import static org.jclouds.rackspace.options.BaseListOptions.Builder.maxResults;
 import static org.jclouds.rackspace.options.BaseListOptions.Builder.startAt;
 import static org.testng.Assert.assertEquals;
 
-import org.joda.time.DateTime;
+import java.util.Date;
+
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -42,9 +43,9 @@ import com.google.common.collect.ImmutableList;
 public class BaseListOptionsTest {
 
    public void testChangesSince() {
-      DateTime ifModifiedSince = new DateTime();
+      Date ifModifiedSince = new Date();
       BaseListOptions options = new BaseListOptions().changesSince(ifModifiedSince);
-      assertEquals(ImmutableList.of(ifModifiedSince.getMillis() / 1000 + ""), options
+      assertEquals(ImmutableList.of(ifModifiedSince.getTime() / 1000 + ""), options
                .buildQueryParameters().get("changes-since"));
    }
 
@@ -61,9 +62,9 @@ public class BaseListOptionsTest {
    }
 
    public void testChangesSinceStatic() {
-      DateTime ifModifiedSince = new DateTime();
+      Date ifModifiedSince = new Date();
       BaseListOptions options = changesSince(ifModifiedSince);
-      assertEquals(ImmutableList.of(ifModifiedSince.getMillis() / 1000 + ""), options
+      assertEquals(ImmutableList.of(ifModifiedSince.getTime() / 1000 + ""), options
                .buildQueryParameters().get("changes-since"));
    }
 

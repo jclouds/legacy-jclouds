@@ -25,13 +25,13 @@
 package org.jclouds.rackspace.cloudfiles.domain.internal;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
-import org.joda.time.DateTime;
 
 import com.google.common.collect.Maps;
 
@@ -45,7 +45,7 @@ public class MutableObjectInfoWithMetadataImpl implements MutableObjectInfoWithM
    private Long bytes;
    private byte[] hash;
    private String contentType = MediaType.APPLICATION_OCTET_STREAM;
-   private DateTime lastModified;
+   private Date lastModified;
    private final Map<String, String> metadata = Maps.newHashMap();
 
    public Map<String, String> getMetadata() {
@@ -80,7 +80,7 @@ public class MutableObjectInfoWithMetadataImpl implements MutableObjectInfoWithM
       return hash;
    }
 
-   public DateTime getLastModified() {
+   public Date getLastModified() {
       return lastModified;
    }
 
@@ -144,7 +144,7 @@ public class MutableObjectInfoWithMetadataImpl implements MutableObjectInfoWithM
       return (this == o) ? 0 : getName().compareTo(o.getName());
    }
 
-   public void setLastModified(DateTime lastModified) {
+   public void setLastModified(Date lastModified) {
       this.lastModified = lastModified;
    }
 

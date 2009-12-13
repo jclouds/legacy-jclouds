@@ -25,11 +25,11 @@ package org.jclouds.azure.storage.blob.domain.internal;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.util.Date;
 import java.util.Map;
 
 import org.jclouds.azure.storage.blob.domain.ListableContainerProperties;
 import org.jclouds.azure.storage.blob.domain.MutableContainerPropertiesWithMetadata;
-import org.joda.time.DateTime;
 
 import com.google.common.collect.Maps;
 
@@ -38,14 +38,15 @@ import com.google.common.collect.Maps;
  * 
  * @author Adrian Cole
  */
-public class MutableContainerPropertiesWithMetadataImpl implements Serializable, MutableContainerPropertiesWithMetadata {
+public class MutableContainerPropertiesWithMetadataImpl implements Serializable,
+         MutableContainerPropertiesWithMetadata {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = -4648755473986695062L;
 
    private String name;
    private URI url;
-   private DateTime lastModified;
+   private Date lastModified;
    private String eTag;
 
    private Map<String, String> metadata = Maps.newHashMap();
@@ -59,10 +60,11 @@ public class MutableContainerPropertiesWithMetadataImpl implements Serializable,
    public String getName() {
       return name;
    }
+
    /**
     *{@inheritDoc}
     */
-   public DateTime getLastModified() {
+   public Date getLastModified() {
       return lastModified;
    }
 
@@ -72,7 +74,6 @@ public class MutableContainerPropertiesWithMetadataImpl implements Serializable,
    public String getETag() {
       return eTag;
    }
-
 
    /**
     *{@inheritDoc}
@@ -105,7 +106,7 @@ public class MutableContainerPropertiesWithMetadataImpl implements Serializable,
    /**
     *{@inheritDoc}
     */
-   public void setLastModified(DateTime lastModified) {
+   public void setLastModified(Date lastModified) {
       this.lastModified = lastModified;
    }
 

@@ -27,11 +27,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.util.Date;
 import java.util.Map;
 
 import org.jclouds.blobstore.domain.ResourceMetadata;
 import org.jclouds.blobstore.domain.ResourceType;
-import org.joda.time.DateTime;
 
 import com.google.inject.internal.Nullable;
 
@@ -57,12 +57,12 @@ public class ResourceMetadataImpl implements ResourceMetadata, Serializable {
    private final @Nullable
    Long size;
    private final @Nullable
-   DateTime lastModified;
+   Date lastModified;
    private final Map<String, String> userMetadata;
 
    public ResourceMetadataImpl(ResourceType type, @Nullable String id, @Nullable String name,
             @Nullable URI location, @Nullable String eTag, @Nullable Long size,
-            @Nullable DateTime lastModified, Map<String, String> userMetadata) {
+            @Nullable Date lastModified, Map<String, String> userMetadata) {
       this.type = checkNotNull(type, "type");
       this.id = id;
       this.name = name;
@@ -103,7 +103,7 @@ public class ResourceMetadataImpl implements ResourceMetadata, Serializable {
       return size;
    }
 
-   public DateTime getLastModified() {
+   public Date getLastModified() {
       return lastModified;
    }
 

@@ -27,6 +27,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 import java.util.SortedSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
@@ -43,7 +44,7 @@ import org.jclouds.aws.s3.domain.ObjectMetadata.StorageClass;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.ParserModule;
-import org.joda.time.DateTime;
+import org.jclouds.util.internal.SimpleDateFormatDateService;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -109,13 +110,13 @@ public class S3ParserTest extends PerformanceTest {
       SortedSet<BucketMetadata> s3Buckets = runParseListAllMyBuckets();
       BucketMetadata container1 = s3Buckets.first();
       assert container1.getName().equals("adrianjbosstest");
-      DateTime expectedDate1 = new DateTime("2009-03-12T02:00:07.000Z");
-      DateTime date1 = container1.getCreationDate();
+      Date expectedDate1 = new SimpleDateFormatDateService().iso8601DateParse("2009-03-12T02:00:07.000Z");
+      Date date1 = container1.getCreationDate();
       assert date1.equals(expectedDate1);
       BucketMetadata container2 = (BucketMetadata) s3Buckets.toArray()[1];
       assert container2.getName().equals("adrianjbosstest2");
-      DateTime expectedDate2 = new DateTime("2009-03-12T02:00:09.000Z");
-      DateTime date2 = container2.getCreationDate();
+      Date expectedDate2 = new SimpleDateFormatDateService().iso8601DateParse("2009-03-12T02:00:09.000Z");
+      Date date2 = container2.getCreationDate();
       assert date2.equals(expectedDate2);
       assert s3Buckets.size() == 2;
       CanonicalUser owner = new CanonicalUser(
@@ -133,7 +134,7 @@ public class S3ParserTest extends PerformanceTest {
       assert container.size() == 1;
       ObjectMetadata object = container.iterator().next();
       assert object.getKey().equals("3366");
-      DateTime expected = new DateTime("2009-03-12T02:00:13.000Z");
+      Date expected = new SimpleDateFormatDateService().iso8601DateParse("2009-03-12T02:00:13.000Z");
       assert object.getLastModified().equals(expected) : String.format(
                "expected %1$s, but got %1$s", expected, object.getLastModified());
       assertEquals(object.getETag(), "\"9d7bb64e8e18ee34eec06dd2cf37b766\"");
@@ -159,7 +160,8 @@ public class S3ParserTest extends PerformanceTest {
 
    public void testCanParseCopyObjectResult() throws HttpException, UnsupportedEncodingException {
       ObjectMetadata metadata = runParseCopyObjectResult();
-      DateTime expected = new DateTime("2009-03-19T13:23:27.000Z");
+      Date expected = new SimpleDateFormatDateService()
+               .iso8601DateParse("2009-03-19T13:23:27.000Z");
       assertEquals(metadata.getLastModified(), expected);
       assertEquals(metadata.getETag(), "\"92836a3ea45a6984d1b4d23a747d46bb\"");
    }

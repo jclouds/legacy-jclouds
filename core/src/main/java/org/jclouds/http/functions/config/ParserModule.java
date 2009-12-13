@@ -27,6 +27,7 @@ import java.lang.reflect.Type;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.SortedSet;
 
 import javax.inject.Inject;
@@ -37,7 +38,6 @@ import javax.xml.parsers.SAXParserFactory;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.util.DateService;
-import org.joda.time.DateTime;
 import org.xml.sax.XMLReader;
 
 import com.google.common.collect.Sets;
@@ -132,60 +132,62 @@ public class ParserModule extends AbstractModule {
 
    @Provides
    @Singleton
-   Gson provideGson(DateTimeAdapter adapter, SortedSetOfInetAddressCreator addressSetCreator) {
+   Gson provideGson(DateAdapter adapter, SortedSetOfInetAddressCreator addressSetCreator) {
       GsonBuilder gson = new GsonBuilder();
       gson.registerTypeAdapter(InetAddress.class, new InetAddressAdapter());
-      gson.registerTypeAdapter(DateTime.class, adapter);
+      gson.registerTypeAdapter(Date.class, adapter);
       gson.registerTypeAdapter(new TypeToken<SortedSet<InetAddress>>() {
       }.getType(), addressSetCreator);
       return gson.create();
    }
 
-   @ImplementedBy(Iso8601DateTimeAdapter.class)
-   public static interface DateTimeAdapter extends JsonSerializer<DateTime>,
-            JsonDeserializer<DateTime> {
+   @ImplementedBy(Iso8601DateAdapter.class)
+   public static interface DateAdapter extends JsonSerializer<Date>, JsonDeserializer<Date> {
 
    }
 
    @Singleton
-   public static class Iso8601DateTimeAdapter implements DateTimeAdapter {
+   public static class Iso8601DateAdapter implements DateAdapter {
       private final DateService dateService;
 
       @Inject
-      private Iso8601DateTimeAdapter(DateService dateService) {
+      private Iso8601DateAdapter(DateService dateService) {
          this.dateService = dateService;
       }
 
-      public JsonElement serialize(DateTime src, Type typeOfSrc, JsonSerializationContext context) {
+      public JsonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {
          return new JsonPrimitive(dateService.iso8601DateFormat(src));
       }
 
-      public DateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+      public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
                throws JsonParseException {
          String toParse = json.getAsJsonPrimitive().getAsString();
-         DateTime toReturn = dateService.jodaIso8601DateParse(toParse);
-         return toReturn;
+         try {
+            return dateService.iso8601DateParse(toParse);
+         } catch (RuntimeException e) {
+            return dateService.iso8601SecondsDateParse(toParse);
+         }
       }
 
    }
 
    @Singleton
-   public static class CDateTimeAdapter implements DateTimeAdapter {
+   public static class CDateAdapter implements DateAdapter {
       private final DateService dateService;
 
       @Inject
-      private CDateTimeAdapter(DateService dateService) {
+      private CDateAdapter(DateService dateService) {
          this.dateService = dateService;
       }
 
-      public JsonElement serialize(DateTime src, Type typeOfSrc, JsonSerializationContext context) {
+      public JsonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {
          return new JsonPrimitive(dateService.cDateFormat(src));
       }
 
-      public DateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+      public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
                throws JsonParseException {
          String toParse = json.getAsJsonPrimitive().getAsString();
-         DateTime toReturn = dateService.cDateParse(toParse);
+         Date toReturn = dateService.cDateParse(toParse);
          return toReturn;
       }
 

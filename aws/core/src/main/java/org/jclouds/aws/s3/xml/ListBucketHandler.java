@@ -23,6 +23,7 @@
  */
 package org.jclouds.aws.s3.xml;
 
+import java.util.Date;
 import java.util.SortedSet;
 
 import javax.inject.Inject;
@@ -36,7 +37,6 @@ import org.jclouds.aws.s3.domain.internal.TreeSetListBucketResponse;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.DateService;
-import org.joda.time.DateTime;
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.Sets;
@@ -79,7 +79,7 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<ListBucketResp
 
    private boolean inCommonPrefixes;
    private String currentKey;
-   private DateTime currentLastModified;
+   private Date currentLastModified;
    private String currentETag;
    private byte[] currentMD5;
    private long currentSize;

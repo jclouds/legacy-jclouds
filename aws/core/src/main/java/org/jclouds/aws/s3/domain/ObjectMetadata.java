@@ -23,9 +23,8 @@
  */
 package org.jclouds.aws.s3.domain;
 
+import java.util.Date;
 import java.util.Map;
-
-import org.joda.time.DateTime;
 
 /**
  * /** Amazon S3 is designed to store objects. Objects are stored in {@link S3BucketListing buckets}
@@ -107,7 +106,7 @@ public interface ObjectMetadata extends Comparable<ObjectMetadata> {
     */
    byte[] getContentMD5();
 
-   DateTime getLastModified();
+   Date getLastModified();
 
    String getETag();
 

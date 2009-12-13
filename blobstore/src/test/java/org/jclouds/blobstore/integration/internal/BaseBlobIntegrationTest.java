@@ -36,6 +36,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 import java.util.SortedSet;
 
 import org.apache.commons.io.IOUtils;
@@ -46,7 +47,6 @@ import org.jclouds.blobstore.domain.ResourceMetadata;
 import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.HttpUtils;
-import org.joda.time.DateTime;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -61,12 +61,12 @@ public class BaseBlobIntegrationTest<A, S> extends BaseBlobStoreIntegrationTest<
       try {
          String key = "apples";
 
-         DateTime before = new DateTime().minusSeconds(1);
+         Date before = new Date(System.currentTimeMillis() - 1000);
          // first create the object
          addObjectAndValidateContent(containerName, key);
          // now, modify it
          addObjectAndValidateContent(containerName, key);
-         DateTime after = new DateTime().plusSeconds(1);
+         Date after = new Date(System.currentTimeMillis() + 1000);
 
          context.getBlobStore().getBlob(containerName, key, ifModifiedSince(before));
          validateContent(containerName, key);
@@ -90,9 +90,9 @@ public class BaseBlobIntegrationTest<A, S> extends BaseBlobStoreIntegrationTest<
 
          String key = "apples";
 
-         DateTime before = new DateTime().minusSeconds(1);
+         Date before = new Date(System.currentTimeMillis() - 1000);
          addObjectAndValidateContent(containerName, key);
-         DateTime after = new DateTime().plusSeconds(1);
+         Date after = new Date(System.currentTimeMillis() + 1000);
 
          context.getBlobStore().getBlob(containerName, key, ifUnmodifiedSince(after));
          validateContent(containerName, key);

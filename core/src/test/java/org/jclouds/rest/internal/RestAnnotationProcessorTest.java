@@ -40,6 +40,7 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.Future;
 
@@ -100,7 +101,7 @@ import org.jclouds.rest.binders.BindToStringEntity;
 import org.jclouds.rest.config.RestModule;
 import org.jclouds.util.DateService;
 import org.jclouds.util.Jsr330;
-import org.joda.time.DateTime;
+import org.jclouds.util.internal.SimpleDateFormatDateService;
 import org.mortbay.jetty.HttpHeaders;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -1171,7 +1172,7 @@ public class RestAnnotationProcessorTest {
 
    public void testCreateGetVarArgOptionsThatProducesHeaders() throws SecurityException,
             NoSuchMethodException {
-      DateTime date = new DateTime();
+      Date date = new Date();
       GetOptions options = GetOptions.Builder.ifModifiedSince(date);
       HttpRequestOptions[] optionsHolder = new HttpRequestOptions[] {};
       Method method = TestRequest.class.getMethod("get", String.class, optionsHolder.getClass());
@@ -1189,7 +1190,7 @@ public class RestAnnotationProcessorTest {
 
    public void testCreateGetOptionsThatProducesHeaders() throws SecurityException,
             NoSuchMethodException {
-      DateTime date = new DateTime();
+      Date date = new Date();
       GetOptions options = GetOptions.Builder.ifModifiedSince(date);
       Method method = TestRequest.class.getMethod("get", String.class, HttpRequestOptions.class);
       GeneratedHttpRequest<?> httpMethod = factory(TestRequest.class).createRequest(method,
@@ -1622,7 +1623,7 @@ public class RestAnnotationProcessorTest {
    }
 
    Injector injector;
-   DateService dateService = new DateService();
+   DateService dateService = new SimpleDateFormatDateService();
 
    @BeforeClass
    void setupFactory() {

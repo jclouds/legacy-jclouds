@@ -23,8 +23,9 @@
  */
 package org.jclouds.rackspace.cloudservers.options;
 
+import java.util.Date;
+
 import org.jclouds.rackspace.options.BaseListOptions;
-import org.joda.time.DateTime;
 
 /**
  * Options used to control the amount of detail in the request.
@@ -51,7 +52,7 @@ public class ListOptions extends BaseListOptions {
     * {@inheritDoc}
     */
    @Override
-   public ListOptions changesSince(DateTime ifModifiedSince) {
+   public ListOptions changesSince(Date ifModifiedSince) {
       super.changesSince(ifModifiedSince);
       return this;
    }
@@ -102,9 +103,9 @@ public class ListOptions extends BaseListOptions {
       }
 
       /**
-       * @see BaseListOptions#changesSince(DateTime)
+       * @see BaseListOptions#changesSince(Date)
        */
-      public static ListOptions changesSince(DateTime since) {
+      public static ListOptions changesSince(Date since) {
          ListOptions options = new ListOptions();
          return options.changesSince(since);
       }

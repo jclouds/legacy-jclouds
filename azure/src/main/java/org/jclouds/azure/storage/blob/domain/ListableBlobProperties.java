@@ -24,8 +24,7 @@
 package org.jclouds.azure.storage.blob.domain;
 
 import java.net.URI;
-
-import org.joda.time.DateTime;
+import java.util.Date;
 
 /**
  * 
@@ -37,7 +36,7 @@ public interface ListableBlobProperties extends Comparable<ListableBlobPropertie
 
    String getName();
 
-   DateTime getLastModified();
+   Date getLastModified();
 
    String getETag();
 

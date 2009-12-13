@@ -28,6 +28,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -37,7 +38,7 @@ import org.jclouds.aws.s3.domain.CannedAccessPolicy;
 import org.jclouds.aws.s3.reference.S3Headers;
 import org.jclouds.http.options.BaseHttpRequestOptions;
 import org.jclouds.util.DateService;
-import org.joda.time.DateTime;
+import org.jclouds.util.internal.SimpleDateFormatDateService;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.LinkedHashMultimap;
@@ -63,7 +64,7 @@ import com.google.common.collect.Multimap;
  * Future<S3Object.Metadata> object = connection.copyObject("sourceBucket", "objectName",
  * "destinationBucket", "destinationName",
  * overrideMetadataWith(meta).
- * ifSourceModifiedSince(new DateTime().minusDays(1))
+ * ifSourceModifiedSince(new Date().minusDays(1))
  * );
  * <code>
  * 
@@ -73,7 +74,7 @@ import com.google.common.collect.Multimap;
  *      />
  */
 public class CopyObjectOptions extends BaseHttpRequestOptions {
-   private final static DateService dateService = new DateService();
+   private final static DateService dateService = new SimpleDateFormatDateService();
 
    public static final CopyObjectOptions NONE = new CopyObjectOptions();
 
@@ -118,7 +119,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
     * 
     * @return valid HTTP date
     * @see <a href="http://rfc.net/rfc2616.html?s3.3"/>
-    * @see CopyObjectOptions#ifSourceModifiedSince(DateTime)
+    * @see CopyObjectOptions#ifSourceModifiedSince(Date)
     */
    public String getIfModifiedSince() {
       return getFirstHeaderOrNull("x-amz-copy-source-if-modified-since");
@@ -135,7 +136,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
     * 
     * @return valid HTTP date
     * @see <a href="http://rfc.net/rfc2616.html?s3.3"/>
-    * @see CopyObjectOptions#ifSourceUnmodifiedSince(DateTime)
+    * @see CopyObjectOptions#ifSourceUnmodifiedSince(Date)
     */
    public String getIfUnmodifiedSince() {
       return getFirstHeaderOrNull("x-amz-copy-source-if-unmodified-since");
@@ -185,9 +186,9 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
     * Only return the object if it has changed since this time.
     * <p/>
     * Not compatible with {@link #ifSourceETagMatches(String)} or
-    * {@link #ifSourceUnmodifiedSince(DateTime)}
+    * {@link #ifSourceUnmodifiedSince(Date)}
     */
-   public CopyObjectOptions ifSourceModifiedSince(DateTime ifModifiedSince) {
+   public CopyObjectOptions ifSourceModifiedSince(Date ifModifiedSince) {
       checkState(getIfMatch() == null, "ifETagMatches() is not compatible with ifModifiedSince()");
       checkState(getIfUnmodifiedSince() == null,
                "ifUnmodifiedSince() is not compatible with ifModifiedSince()");
@@ -200,9 +201,9 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
     * Only return the object if it hasn't changed since this time.
     * <p/>
     * Not compatible with {@link #ifSourceETagDoesntMatch(String)} or
-    * {@link #ifSourceModifiedSince(DateTime)}
+    * {@link #ifSourceModifiedSince(Date)}
     */
-   public CopyObjectOptions ifSourceUnmodifiedSince(DateTime ifUnmodifiedSince) {
+   public CopyObjectOptions ifSourceUnmodifiedSince(Date ifUnmodifiedSince) {
       checkState(getIfNoneMatch() == null,
                "ifETagDoesntMatch() is not compatible with ifUnmodifiedSince()");
       checkState(getIfModifiedSince() == null,
@@ -217,7 +218,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
     * <p/>
     * <p/>
     * Not compatible with {@link #ifSourceETagDoesntMatch(String)} or
-    * {@link #ifSourceModifiedSince(DateTime)}
+    * {@link #ifSourceModifiedSince(Date)}
     * 
     * @param eTag
     *           hash representing the entity
@@ -236,7 +237,7 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
     * The object should not have a eTag hash corresponding with the parameter <code>eTag</code>.
     * <p/>
     * Not compatible with {@link #ifSourceETagMatches(String)} or
-    * {@link #ifSourceUnmodifiedSince(DateTime)}
+    * {@link #ifSourceUnmodifiedSince(Date)}
     * 
     * @param eTag
     *           hash representing the entity
@@ -289,15 +290,15 @@ public class CopyObjectOptions extends BaseHttpRequestOptions {
       /**
        * @see CopyObjectOptions#getIfModifiedSince()
        */
-      public static CopyObjectOptions ifSourceModifiedSince(DateTime ifModifiedSince) {
+      public static CopyObjectOptions ifSourceModifiedSince(Date ifModifiedSince) {
          CopyObjectOptions options = new CopyObjectOptions();
          return options.ifSourceModifiedSince(ifModifiedSince);
       }
 
       /**
-       * @see CopyObjectOptions#ifSourceUnmodifiedSince(DateTime)
+       * @see CopyObjectOptions#ifSourceUnmodifiedSince(Date)
        */
-      public static CopyObjectOptions ifSourceUnmodifiedSince(DateTime ifUnmodifiedSince) {
+      public static CopyObjectOptions ifSourceUnmodifiedSince(Date ifUnmodifiedSince) {
          CopyObjectOptions options = new CopyObjectOptions();
          return options.ifSourceUnmodifiedSince(ifUnmodifiedSince);
       }

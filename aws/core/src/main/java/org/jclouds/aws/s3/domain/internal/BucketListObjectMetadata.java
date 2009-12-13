@@ -25,11 +25,11 @@ package org.jclouds.aws.s3.domain.internal;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
 
 import org.jclouds.aws.s3.domain.CanonicalUser;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
-import org.joda.time.DateTime;
 
 import com.google.common.collect.Maps;
 
@@ -44,7 +44,7 @@ public class BucketListObjectMetadata implements Serializable, ObjectMetadata {
    private static final long serialVersionUID = -4415449798024051115L;
 
    private final String key;
-   private final DateTime lastModified;
+   private final Date lastModified;
    private final String eTag;
    private final long size;
    private final CanonicalUser owner;
@@ -56,7 +56,7 @@ public class BucketListObjectMetadata implements Serializable, ObjectMetadata {
    private final String contentEncoding;
    private final Map<String, String> userMetadata;
 
-   public BucketListObjectMetadata(String key, DateTime lastModified, String eTag, byte[] md5,
+   public BucketListObjectMetadata(String key, Date lastModified, String eTag, byte[] md5,
             long size, CanonicalUser owner, StorageClass storageClass) {
       this.key = key;
       this.lastModified = lastModified;
@@ -124,7 +124,7 @@ public class BucketListObjectMetadata implements Serializable, ObjectMetadata {
    /**
     *{@inheritDoc}
     */
-   public DateTime getLastModified() {
+   public Date getLastModified() {
       return lastModified;
    }
 

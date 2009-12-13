@@ -23,7 +23,7 @@
  */
 package org.jclouds.aws.s3.domain;
 
-import org.joda.time.DateTime;
+import java.util.Date;
 
 /**
  * System metadata of the S3Bucket
@@ -33,7 +33,7 @@ import org.joda.time.DateTime;
 public class BucketMetadata implements Comparable<BucketMetadata> {
    /** The serialVersionUID */
    private static final long serialVersionUID = -6965068835316857535L;
-   private final DateTime creationDate;
+   private final Date creationDate;
    private final CanonicalUser owner;
    private final String name;
 
@@ -48,7 +48,7 @@ public class BucketMetadata implements Comparable<BucketMetadata> {
       EU
    }
 
-   public BucketMetadata(String name, DateTime creationDate, CanonicalUser owner) {
+   public BucketMetadata(String name, Date creationDate, CanonicalUser owner) {
       this.name = name;
       this.creationDate = creationDate;
       this.owner = owner;
@@ -63,7 +63,7 @@ public class BucketMetadata implements Comparable<BucketMetadata> {
       return owner;
    }
 
-   public DateTime getCreationDate() {
+   public Date getCreationDate() {
       return creationDate;
    }
 

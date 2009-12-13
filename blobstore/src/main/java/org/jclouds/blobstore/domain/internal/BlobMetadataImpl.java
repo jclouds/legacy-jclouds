@@ -25,12 +25,12 @@ package org.jclouds.blobstore.domain.internal;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.util.Date;
 import java.util.Map;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ResourceType;
-import org.joda.time.DateTime;
 
 /**
  * System and user Metadata for the {@link Blob}.
@@ -44,8 +44,8 @@ public class BlobMetadataImpl extends ResourceMetadataImpl implements Serializab
    private final String contentType;
    private final byte[] contentMD5;
 
-   public BlobMetadataImpl(String id, String name, URI location, String eTag,
-            Long size, DateTime lastModified, Map<String, String> userMetadata, String contentType,
+   public BlobMetadataImpl(String id, String name, URI location, String eTag, Long size,
+            Date lastModified, Map<String, String> userMetadata, String contentType,
             byte[] contentMD5) {
       super(ResourceType.BLOB, id, name, location, eTag, size, lastModified, userMetadata);
       this.contentType = contentType;

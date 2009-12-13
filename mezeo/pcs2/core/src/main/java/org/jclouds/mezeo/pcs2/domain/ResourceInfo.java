@@ -24,10 +24,10 @@
 package org.jclouds.mezeo.pcs2.domain;
 
 import java.net.URI;
+import java.util.Date;
 
 import org.jclouds.blobstore.domain.ResourceType;
 import org.jclouds.mezeo.pcs2.domain.internal.ResourceInfoImpl;
-import org.joda.time.DateTime;
 
 import com.google.inject.ImplementedBy;
 
@@ -44,11 +44,11 @@ public interface ResourceInfo extends Comparable<ResourceInfo> {
 
    String getName();
 
-   DateTime getCreated();
+   Date getCreated();
 
    Boolean isInProject();
 
-   DateTime getModified();
+   Date getModified();
 
    String getOwner();
 
@@ -56,7 +56,7 @@ public interface ResourceInfo extends Comparable<ResourceInfo> {
 
    Boolean isShared();
 
-   DateTime getAccessed();
+   Date getAccessed();
 
    Long getBytes();
 

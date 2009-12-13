@@ -23,12 +23,12 @@
  */
 package org.jclouds.predicates;
 
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 
 import org.jclouds.logging.Logger;
-import org.joda.time.DateTime;
 
 import com.google.common.base.Predicate;
 
@@ -55,7 +55,7 @@ public class RetryablePredicate<T> implements Predicate<T> {
    @Override
    public boolean apply(T input) {
       try {
-         for (DateTime end = new DateTime().plusMillis(maxWait); before(end); Thread
+         for (Date end = new Date(System.currentTimeMillis() + maxWait); before(end); Thread
                   .sleep(checkInterval)) {
             if (predicate.apply(input)) {
                return true;
@@ -69,11 +69,11 @@ public class RetryablePredicate<T> implements Predicate<T> {
       return false;
    }
 
-   boolean before(DateTime end) {
-      return new DateTime().compareTo(end) <= 1;
+   boolean before(Date end) {
+      return new Date().compareTo(end) <= 1;
    }
 
-   boolean atOrAfter(DateTime end) {
-      return new DateTime().compareTo(end) >= 0;
+   boolean atOrAfter(Date end) {
+      return new Date().compareTo(end) >= 0;
    }
 }

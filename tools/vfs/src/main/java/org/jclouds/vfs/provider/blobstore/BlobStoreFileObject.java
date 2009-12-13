@@ -342,7 +342,7 @@ public class BlobStoreFileObject extends AbstractFileObject {
       if (metadata == null || metadata.getLastModified() == null) {
          getMetadataAtPath(getNameTrimLeadingSlashes());
       }
-      return metadata.getLastModified() != null ? metadata.getLastModified().getMillis() : super
+      return metadata.getLastModified() != null ? metadata.getLastModified().getTime() : super
                .doGetLastModifiedTime();
    }
 

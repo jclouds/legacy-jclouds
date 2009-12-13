@@ -24,10 +24,10 @@
 package org.jclouds.mezeo.pcs2.domain.internal;
 
 import java.net.URI;
+import java.util.Date;
 
 import org.jclouds.blobstore.domain.ResourceType;
 import org.jclouds.mezeo.pcs2.domain.ResourceInfo;
-import org.joda.time.DateTime;
 
 /**
  * 
@@ -39,21 +39,21 @@ public class ResourceInfoImpl implements ResourceInfo {
    private final ResourceType type;
    private final URI url;
    private final String name;
-   private final DateTime created;
+   private final Date created;
    private final boolean inProject;
-   private final DateTime modified;
+   private final Date modified;
    private final String owner;
    private final int version;
    private final boolean shared;
-   private final DateTime accessed;
+   private final Date accessed;
    private final long bytes;
    private final URI tags;
    private final URI metadata;
    private final URI parent;
 
-   protected ResourceInfoImpl(ResourceType type, URI url, String name, DateTime created,
-            boolean inProject, DateTime modified, String owner, int version, boolean shared,
-            DateTime accessed, long bytes, URI tags, URI metadata, URI parent) {
+   protected ResourceInfoImpl(ResourceType type, URI url, String name, Date created,
+            boolean inProject, Date modified, String owner, int version, boolean shared,
+            Date accessed, long bytes, URI tags, URI metadata, URI parent) {
       super();
       this.type = type;
       this.url = url;
@@ -91,7 +91,7 @@ public class ResourceInfoImpl implements ResourceInfo {
       return name;
    }
 
-   public DateTime getCreated() {
+   public Date getCreated() {
       return created;
    }
 
@@ -99,7 +99,7 @@ public class ResourceInfoImpl implements ResourceInfo {
       return inProject;
    }
 
-   public DateTime getModified() {
+   public Date getModified() {
       return modified;
    }
 
@@ -115,7 +115,7 @@ public class ResourceInfoImpl implements ResourceInfo {
       return shared;
    }
 
-   public DateTime getAccessed() {
+   public Date getAccessed() {
       return accessed;
    }
 

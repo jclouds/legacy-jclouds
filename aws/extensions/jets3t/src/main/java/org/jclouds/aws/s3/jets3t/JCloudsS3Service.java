@@ -108,7 +108,7 @@ public class JCloudsS3Service extends S3Service {
 
          Map map = new HashMap();
          // Result fields returned when copy is successful.
-         map.put("Last-Modified", jcObjectMetadata.getLastModified().toDate());
+         map.put("Last-Modified", jcObjectMetadata.getLastModified());
          map.put("ETag", jcObjectMetadata.getETag());
          return map;
       } catch (Exception e) {
