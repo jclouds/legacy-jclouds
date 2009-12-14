@@ -118,7 +118,7 @@ pageTracker._trackPageview();
                         <configuration>
                             <finalName>jclouds-${project.version}</finalName>
                             <descriptors>
-                                <descriptor>package.xml</descriptor>
+                                <descriptor>package-descriptor.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </execution>
