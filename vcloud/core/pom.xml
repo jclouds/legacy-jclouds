@@ -31,9 +31,7 @@
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-vcloud-project</artifactId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
-    <groupId>org.jclouds</groupId>
     <artifactId>jclouds-vcloud</artifactId>
     <name>jclouds vcloud Components Core</name>
     <description>jclouds Core components to access vcloud</description>
