@@ -90,11 +90,11 @@
                     <systemProperties>
                         <property>
                             <name>test.basedir</name>
-                            <value>src/test/resources/test-data</value>
+                            <value>target/test-data</value>
                         </property>
                         <property>
                             <name>test.basedir.res</name>
-                            <value>test-data</value>
+                            <value>target/test-data</value>
                         </property>
                     </systemProperties>
                 </configuration>
@@ -111,23 +111,22 @@
             </plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <archive>
-                        <manifest>
-                            <mainClass>org.jclouds.vfs.tools.blobstore.BlobStoreShell</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
                 <executions>
                     <execution>
-                        <id>make-assembly</id>
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>
+                        <configuration>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <archive>
+                                <manifest>
+                                    <mainClass>org.jclouds.vfs.tools.blobstore.BlobStoreShell</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -145,7 +144,7 @@
                             <systemProperties>
                                 <property>
                                     <name>test.basedir</name>
-                                    <value>src/test/resources/test-data</value>
+                                    <value>target/test-data</value>
                                 </property>
                                 <property>
                                     <name>test.blobstore.uri</name>
