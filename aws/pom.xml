@@ -39,7 +39,6 @@
     <modules>
         <module>core</module>
         <module>extensions</module>
-        <module>perftest</module>
         <module>demos</module>
     </modules>
     <properties>
