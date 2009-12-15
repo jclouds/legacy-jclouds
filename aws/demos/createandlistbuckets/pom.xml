@@ -31,7 +31,6 @@
 	<artifactId>jclouds-aws-sample-createandlistbuckets</artifactId>
 	<name>jclouds S3 sample that creates a bucket then lists all owned buckets</name>
 	<description>jclouds S3 sample that creates a bucket then lists all owned buckets</description>
-
 	<build>
 		<finalName>${project.artifactId}</finalName>
 		<plugins>
@@ -42,7 +41,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>org.jclouds.aws.s3.demos.MainApp</mainClass>
+							<mainClass>org.jclouds.aws.s3.samples.MainApp</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
@@ -56,7 +55,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>org.jclouds.aws.s3.demos.MainApp</mainClass>
+							<mainClass>org.jclouds.aws.s3.samples.MainApp</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
