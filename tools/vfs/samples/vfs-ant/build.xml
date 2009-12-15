@@ -1,0 +1,43 @@
+<!--
+
+
+    Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+
+    ====================================================================
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+    ====================================================================
+
+-->
+<project name="test-copy" default="copy" basedir=".">
+
+        <!-- Note you need to have a copy of jclouds-vfs-1.0-SNAPSHOT-jar-with-dependencies.jar in an ant lib directory
+             Due to weird classloading issues, vfs will not work dynamically loaded -->
+        <taskdef resource="org/apache/commons/vfs/tasks/tasks.properties" />
+
+	<property name="jclouds.blobstore.url" value="blobstore://${jclouds.blobstore.account}:${jclouds.blobstore.key}@${jclouds.blobstore.provider}" />
+        <property name="jclouds.blobstore.container" value="jclouds-demo" />
+
+	<target name="copy">
+          <v-copy
+            destdir="${jclouds.blobstore.url}/${jclouds.blobstore.container}"
+            src="http://mirror.cc.columbia.edu/pub/software/apache/maven/binaries/apache-maven-2.2.1-bin.zip"
+            overwrite="true"
+            preservelastmodified="false"/>
+        </target>
+
+</project>
