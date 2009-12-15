@@ -46,6 +46,7 @@
         <module>scriptbuilder</module>
         <module>aws</module>
         <module>azure</module>
+        <module>atmos</module>
         <module>mezeo</module>        
         <module>nirvanix</module>
         <module>rackspace</module>

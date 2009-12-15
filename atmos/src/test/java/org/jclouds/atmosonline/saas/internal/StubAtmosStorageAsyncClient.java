@@ -215,7 +215,7 @@ public class StubAtmosStorageAsyncClient implements AtmosStorageAsyncClient {
                String container = path.substring(0, path.indexOf('/'));
                String blobName = path.substring(path.indexOf('/') + 1);
                try {
-                  blobStore.blobMetadata(container, blobName);
+                  blobStore.blobMetadata(container, blobName).get();
                   return true;
                } catch (KeyNotFoundException e) {
                   return false;

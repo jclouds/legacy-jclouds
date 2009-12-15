@@ -67,10 +67,10 @@ public class InternetServiceLiveTest {
       services.add(is);
       PublicIpAddress ip = is.getPublicIpAddress();
       // current bug in terremark
-      // for (int port : new int[] { 80, 8080 }) {
-      // services.add(tmClient.addInternetServiceToExistingIp(ip.getId(), "test-" + port,
-      // Protocol.HTTP, port));
-      // }
+//       for (int port : new int[] { 80, 8080 }) {
+//       services.add(tmClient.addInternetServiceToExistingIp(ip.getId(), "test-" + port,
+//       Protocol.HTTP, port));
+//       }
       print(tmClient.getInternetServicesOnPublicIp(ip.getId()));
    }
 

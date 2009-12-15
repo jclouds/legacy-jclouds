@@ -26,13 +26,13 @@ package org.jclouds.atmosonline.saas.config;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
-import org.bouncycastle.util.encoders.Base64;
 import org.jclouds.atmosonline.saas.handlers.AtmosStorageClientErrorRetryHandler;
 import org.jclouds.atmosonline.saas.handlers.ParseAtmosStorageErrorFromXmlContent;
 import org.jclouds.atmosonline.saas.reference.AtmosStorageConstants;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
+import org.jclouds.encryption.internal.Base64;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
@@ -62,7 +62,7 @@ public class AtmosStorageRestClientModuleTest {
             bindConstant().annotatedWith(Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_UID))
                      .to("uid");
             bindConstant().annotatedWith(Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_KEY))
-                     .to(new String(Base64.encode("key".getBytes())));
+                     .to(new String(Base64.encodeBytes("key".getBytes())));
             bindConstant().annotatedWith(
                      Jsr330.named(AtmosStorageConstants.PROPERTY_EMCSAAS_SESSIONINTERVAL)).to("2");
          }

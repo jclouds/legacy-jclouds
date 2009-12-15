@@ -50,6 +50,13 @@ public class HttpUtilsTest extends PerformanceTest {
       assertEquals(HttpUtils.urlEncode("/read-tests/ tep", '/'), "/read-tests/%20tep");
    }
 
+   public void testAtmos() {
+      URI creds = HttpUtils
+               .createUri("blobstore://domain/user:Base64==@azureblob/container-hyphen/prefix");
+      assertEquals(creds, URI
+               .create("blobstore://domain%2Fuser:Base64%3D%3D@azureblob/container-hyphen/prefix"));
+   }
+
    public void testAzure() {
       URI creds = HttpUtils
                .createUri("blobstore://account:Base64==@azureblob/container-hyphen/prefix");

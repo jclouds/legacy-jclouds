@@ -170,7 +170,7 @@ public class HttpUtils {
             String account = matcher.group(2);
             String key = matcher.group(3);
             return URI
-                     .create(String.format("%s://%s:%s@%s", scheme, account, urlEncode(key), rest));
+                     .create(String.format("%s://%s:%s@%s", scheme, urlEncode(account), urlEncode(key), rest));
          } else {
             throw new IllegalArgumentException("bad syntax");
          }
