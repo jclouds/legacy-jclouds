@@ -40,6 +40,9 @@ import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.vfs.provider.blobstore.BlobStoreFileObject;
 import org.jclouds.vfs.provider.blobstore.BlobStoreFileProvider;
 
+import com.google.common.collect.ImmutableList;
+import com.google.inject.Module;
+
 /**
  * @author Adrian Cole
  */
@@ -54,7 +57,8 @@ public class BlobStoreProviderTestCase extends AbstractProviderTestConfig {
     * Prepares the file system manager.
     */
    public void prepare(final DefaultFileSystemManager manager) throws Exception {
-      manager.addProvider("blobstore", new BlobStoreFileProvider(new Log4JLoggingModule()));
+      manager.addProvider("blobstore", new BlobStoreFileProvider(ImmutableList
+               .<Module>of(new Log4JLoggingModule())));
    }
 
    /**

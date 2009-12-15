@@ -45,6 +45,8 @@ import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpUtils;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.io.Resources;
 import com.google.inject.Module;
 
@@ -62,9 +64,13 @@ public class BlobStoreFileProvider extends AbstractOriginatingFileProvider {
    public final static UserAuthenticationData.Type[] AUTHENTICATOR_TYPES = new UserAuthenticationData.Type[] {
             UserAuthenticationData.USERNAME, UserAuthenticationData.PASSWORD };
 
-   private final Module[] modules;
+   private final Iterable<Module> modules;
 
-   public BlobStoreFileProvider(Module... modules) {
+   public BlobStoreFileProvider() {
+      this(ImmutableList.<Module> of());
+   }
+
+   public BlobStoreFileProvider(Iterable<Module> modules) {
       this.modules = modules;
       setFileNameParser(new BlobStoreFileNameParser());
    }
@@ -90,8 +96,8 @@ public class BlobStoreFileProvider extends AbstractOriginatingFileProvider {
                                     .toChar(rootName.getUserName()))), UserAuthenticatorUtils
                            .toString(UserAuthenticatorUtils.getData(authData,
                                     UserAuthenticationData.PASSWORD, UserAuthenticatorUtils
-                                             .toChar(rootName.getPassword())))), modules)
-                  .getBlobStore();
+                                             .toChar(rootName.getPassword())))),
+                  Iterables.toArray(modules, Module.class)).getBlobStore();
       } catch (IOException e) {
          throw new FileSystemException("vfs.provider.blobstore/properties.error", name, e);
       } finally {
