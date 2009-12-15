@@ -55,10 +55,13 @@ public interface AtmosStorageClient {
 
    URI createDirectory(String directoryName);
 
+   @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
    URI createFile(String parent, AtmosObject object);
 
+   @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
    void updateFile(String parent, AtmosObject object);
 
+   @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
    AtmosObject readFile(String path, GetOptions... options);
 
    AtmosObject headFile(String path);

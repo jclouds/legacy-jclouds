@@ -45,16 +45,16 @@ public class AtmosStorageResponseException extends HttpResponseException {
 
    public AtmosStorageResponseException(HttpCommand command, HttpResponse response,
             AtmosStorageError error) {
-      super(String.format("command %s failed with code %s, error: %s", command.toString(), response
-               .getStatusCode(), error.toString()), command, response);
+      super(String.format("command %s failed with code %s, error: %s", command.getRequest()
+               .getRequestLine(), response.getStatusCode(), error.toString()), command, response);
       this.setError(error);
 
    }
 
    public AtmosStorageResponseException(HttpCommand command, HttpResponse response,
             AtmosStorageError error, Throwable cause) {
-      super(String.format("command %1$s failed with error: %2$s", command.toString(), error
-               .toString()), command, response, cause);
+      super(String.format("command %1$s failed with error: %2$s", command.getRequest()
+               .getRequestLine(), error.toString()), command, response, cause);
       this.setError(error);
 
    }

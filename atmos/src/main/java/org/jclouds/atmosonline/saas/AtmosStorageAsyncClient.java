@@ -52,6 +52,7 @@ import org.jclouds.atmosonline.saas.options.ListOptions;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.attr.ConsistencyModels;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
+import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.functions.ReturnFalseOn404;
 import org.jclouds.http.options.GetOptions;
@@ -96,6 +97,7 @@ public interface AtmosStorageAsyncClient {
    @GET
    @Path("/rest/namespace/{directoryName}/")
    @ResponseParser(ParseDirectoryListFromContentAndHeaders.class)
+   @ExceptionParser(ThrowContainerNotFoundOn404.class)
    @Consumes(MediaType.TEXT_XML)
    Future<? extends BoundedSortedSet<? extends DirectoryEntry>> listDirectory(
             @PathParam("directoryName") String directoryName, ListOptions... options);
