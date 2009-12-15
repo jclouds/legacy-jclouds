@@ -44,6 +44,7 @@ import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpUtils;
+import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -67,7 +68,7 @@ public class BlobStoreFileProvider extends AbstractOriginatingFileProvider {
    private final Iterable<Module> modules;
 
    public BlobStoreFileProvider() {
-      this(ImmutableList.<Module> of());
+      this(ImmutableList.<Module> of(new Log4JLoggingModule()));
    }
 
    public BlobStoreFileProvider(Iterable<Module> modules) {

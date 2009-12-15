@@ -58,7 +58,7 @@ public class BlobStoreProviderTestCase extends AbstractProviderTestConfig {
     */
    public void prepare(final DefaultFileSystemManager manager) throws Exception {
       manager.addProvider("blobstore", new BlobStoreFileProvider(ImmutableList
-               .<Module>of(new Log4JLoggingModule())));
+               .<Module> of(new Log4JLoggingModule())));
    }
 
    /**
