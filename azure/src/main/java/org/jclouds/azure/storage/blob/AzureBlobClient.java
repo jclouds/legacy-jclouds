@@ -200,12 +200,14 @@ public interface AzureBlobClient {
     * A Put Blob operation is permitted 10 minutes per MB to complete. If the operation is taking
     * longer than 10 minutes per MB on average, the operation will timeout.
     */
+   @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
    String putBlob(String container, org.jclouds.azure.storage.blob.domain.AzureBlob object);
 
    /**
     * The Get Blob operation reads or downloads a blob from the system, including its metadata and
     * properties.
     */
+   @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
    org.jclouds.azure.storage.blob.domain.AzureBlob getBlob(String container, String name,
             GetOptions... options);
 

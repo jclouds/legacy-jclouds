@@ -87,6 +87,7 @@ public interface S3Client {
     * @see #getObject(String, String)
     * @see GetObjectOptions
     */
+   @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
    S3Object getObject(String bucketName, String key, GetOptions... options);
 
    /**
@@ -157,6 +158,7 @@ public interface S3Client {
     *      href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTObjectPUT.html"
     *      />
     */
+   @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
    String putObject(String bucketName, S3Object object, PutObjectOptions... options);
 
    /**
@@ -259,6 +261,7 @@ public interface S3Client {
     * @see CopyObjectOptions
     * @see org.jclouds.aws.s3.domain.CannedAccessPolicy
     */
+   @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
    ObjectMetadata copyObject(String sourceBucket, String sourceObject, String destinationBucket,
             String destinationObject, CopyObjectOptions... options);
 

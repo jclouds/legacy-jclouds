@@ -120,10 +120,10 @@ public interface CloudFilesClient {
 
    boolean containerExists(String container);
 
-   @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
+   @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
    String putObject(String container, CFObject object);
 
-   @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
+   @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
    CFObject getObject(String container, String name, GetOptions... options);
 
    MutableObjectInfoWithMetadata getObjectInfo(String container, String name);
