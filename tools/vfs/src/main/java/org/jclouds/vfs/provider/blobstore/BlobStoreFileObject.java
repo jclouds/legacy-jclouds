@@ -51,6 +51,7 @@ import org.apache.commons.vfs.util.MonitorOutputStream;
 import org.apache.commons.vfs.util.RandomAccessMode;
 import org.apache.log4j.Logger;
 import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
@@ -320,6 +321,9 @@ public class BlobStoreFileObject extends AbstractFileObject {
       } catch (NoSuchElementException nse) {
          metadata = null;
          logger.info(String.format("<< not found: %s/%s", getContainer(), name));
+      } catch (ContainerNotFoundException cnfe) {
+         metadata = null;
+         logger.info(String.format("<< not found: %s", getContainer()));
       }
    }
 
