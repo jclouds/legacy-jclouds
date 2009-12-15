@@ -43,6 +43,7 @@
         <module>core</module>
         <module>blobstore</module>
         <module>extensions</module>
+        <module>tools</module>
         <module>scriptbuilder</module>
         <module>aws</module>
         <module>azure</module>
