@@ -23,17 +23,11 @@
  */
 package org.jclouds.vcloud.predicates;
 
-import java.net.URI;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
 import javax.annotation.Resource;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.VCloudAsyncClient;
+import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
 
@@ -47,40 +41,25 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 @Singleton
-public class TaskSuccess implements Predicate<URI> {
+public class TaskSuccess implements Predicate<String> {
 
-   private final VCloudAsyncClient client;
+	private final VCloudClient client;
 
-   @Inject(optional = true)
-   @Named("org.jclouds.vcloud.timeout")
-   private long taskTimeout = 30000;
+	@Resource
+	protected Logger logger = Logger.NULL;
 
-   @Resource
-   protected Logger logger = Logger.NULL;
+	@Inject
+	public TaskSuccess(VCloudClient client) {
+		this.client = client;
+	}
 
-   @Inject
-   public TaskSuccess(VCloudAsyncClient client) {
-      this.client = client;
-   }
+	public boolean apply(String taskId) {
+		logger.trace("looking for status on task %s", taskId);
 
-   public boolean apply(URI taskUri) {
-      logger.trace("looking for status on task %s", taskUri);
-
-      Task task;
-      try {
-         task = client.getTask(taskUri).get(taskTimeout, TimeUnit.MILLISECONDS);
-         logger.trace("%s: looking for status %s: currently: %s", task, TaskStatus.SUCCESS, task
-                  .getStatus());
-         return task.getStatus() == TaskStatus.SUCCESS;
-      } catch (InterruptedException e) {
-         logger.warn(e, "%s interrupted, returning false", taskUri);
-      } catch (ExecutionException e) {
-         throw new RuntimeException(e.getCause());
-      } catch (TimeoutException e) {
-         logger.warn(e, "%s timeout, returning false", taskUri);
-      }
-
-      return false;
-   }
+		Task task = client.getTask(taskId);
+		logger.trace("%s: looking for status %s: currently: %s", task,
+				TaskStatus.SUCCESS, task.getStatus());
+		return task.getStatus() == TaskStatus.SUCCESS;
+	}
 
 }

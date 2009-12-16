@@ -29,7 +29,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Adrian Cole
  */
 public enum TaskStatus {
-   SUCCESS, FAILED, RUNNING, QUEUED, ERROR, CANCELLED;
+   SUCCESS, FAILED, RUNNING, QUEUED, ERROR, CANCELLED, COMPLETED;
    public String value() {
       return name().toLowerCase();
    }

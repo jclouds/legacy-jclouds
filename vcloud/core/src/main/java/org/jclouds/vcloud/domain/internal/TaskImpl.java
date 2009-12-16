@@ -29,8 +29,6 @@ import java.net.URI;
 import java.util.Date;
 
 import org.jclouds.rest.domain.NamedResource;
-import org.jclouds.rest.domain.internal.LinkImpl;
-import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
 
@@ -42,102 +40,130 @@ import com.google.inject.internal.Nullable;
  * @author Adrian Cole
  * 
  */
-public class TaskImpl extends LinkImpl implements Task {
-   private final TaskStatus status;
-   private final Date startTime;
-   @Nullable
-   private final Date endTime;
-   private final NamedResource owner;
-   @Nullable
-   private final NamedResource result;
+public class TaskImpl implements Task {
+	private final String id;
+	private final URI location;
+	private final TaskStatus status;
+	private final Date startTime;
+	@Nullable
+	private final Date endTime;
+	private final NamedResource owner;
+	@Nullable
+	private final NamedResource result;
 
-   public TaskImpl(URI location, TaskStatus status, Date startTime, @Nullable Date endTime,
-            NamedResource owner, @Nullable NamedResource result) {
-      super(VCloudMediaType.TASK_XML, location);
-      this.status = checkNotNull(status, "status");
-      this.startTime = startTime;
-      this.endTime = endTime;
-      this.owner = owner;
-      this.result = result;
-   }
+	public TaskImpl(String id, URI location, TaskStatus status, Date startTime,
+			@Nullable Date endTime, NamedResource owner,
+			@Nullable NamedResource result) {
+		this.id = checkNotNull(id, "id");
+		this.location = checkNotNull(location, "location");
+		this.status = checkNotNull(status, "status");
+		this.startTime = startTime;
+		this.endTime = endTime;
+		this.owner = owner;
+		this.result = result;
+	}
 
-   public TaskStatus getStatus() {
-      return status;
-   }
+	public TaskStatus getStatus() {
+		return status;
+	}
 
-   public Date getStartTime() {
-      return startTime;
-   }
+	public Date getStartTime() {
+		return startTime;
+	}
 
-   public NamedResource getOwner() {
-      return owner;
-   }
+	public NamedResource getOwner() {
+		return owner;
+	}
 
-   public NamedResource getResult() {
-      return result;
-   }
+	public NamedResource getResult() {
+		return result;
+	}
 
-   public Date getEndTime() {
-      return endTime;
-   }
+	public Date getEndTime() {
+		return endTime;
+	}
 
-   public int compareTo(Task o) {
-      return (this == o) ? 0 : getStartTime().compareTo(o.getStartTime());
-   }
+	public int compareTo(Task o) {
+		return (this == o) ? 0 : getId().compareTo(o.getId());
+	}
 
-   @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ((endTime == null) ? 0 : endTime.hashCode());
-      result = prime * result + ((owner == null) ? 0 : owner.hashCode());
-      result = prime * result + ((this.result == null) ? 0 : this.result.hashCode());
-      result = prime * result + ((startTime == null) ? 0 : startTime.hashCode());
-      result = prime * result + ((status == null) ? 0 : status.hashCode());
-      return result;
-   }
+	public String getId() {
+		return id;
+	}
 
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (!super.equals(obj))
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      TaskImpl other = (TaskImpl) obj;
-      if (endTime == null) {
-         if (other.endTime != null)
-            return false;
-      } else if (!endTime.equals(other.endTime))
-         return false;
-      if (owner == null) {
-         if (other.owner != null)
-            return false;
-      } else if (!owner.equals(other.owner))
-         return false;
-      if (result == null) {
-         if (other.result != null)
-            return false;
-      } else if (!result.equals(other.result))
-         return false;
-      if (startTime == null) {
-         if (other.startTime != null)
-            return false;
-      } else if (!startTime.equals(other.startTime))
-         return false;
-      if (status == null) {
-         if (other.status != null)
-            return false;
-      } else if (!status.equals(other.status))
-         return false;
-      return true;
-   }
+	public URI getLocation() {
+		return location;
+	}
 
-   @Override
-   public String toString() {
-      return "TaskImpl [endTime=" + endTime + ", owner=" + owner + ", result=" + result
-               + ", startTime=" + startTime + ", status=" + status + "]";
-   }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((endTime == null) ? 0 : endTime.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result
+				+ ((location == null) ? 0 : location.hashCode());
+		result = prime * result + ((owner == null) ? 0 : owner.hashCode());
+		result = prime * result
+				+ ((this.result == null) ? 0 : this.result.hashCode());
+		result = prime * result
+				+ ((startTime == null) ? 0 : startTime.hashCode());
+		result = prime * result + ((status == null) ? 0 : status.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TaskImpl other = (TaskImpl) obj;
+		if (endTime == null) {
+			if (other.endTime != null)
+				return false;
+		} else if (!endTime.equals(other.endTime))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (location == null) {
+			if (other.location != null)
+				return false;
+		} else if (!location.equals(other.location))
+			return false;
+		if (owner == null) {
+			if (other.owner != null)
+				return false;
+		} else if (!owner.equals(other.owner))
+			return false;
+		if (result == null) {
+			if (other.result != null)
+				return false;
+		} else if (!result.equals(other.result))
+			return false;
+		if (startTime == null) {
+			if (other.startTime != null)
+				return false;
+		} else if (!startTime.equals(other.startTime))
+			return false;
+		if (status == null) {
+			if (other.status != null)
+				return false;
+		} else if (!status.equals(other.status))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "TaskImpl [endTime=" + endTime + ", id=" + id + ", location="
+				+ location + ", owner=" + owner + ", result=" + result
+				+ ", startTime=" + startTime + ", status=" + status + "]";
+	}
 
 }

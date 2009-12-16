@@ -250,9 +250,8 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
    }
 
    public void testGetTask() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudAsyncClient.class.getMethod("getTask", URI.class);
-      GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, URI
-               .create("http://vcloud/task/1"));
+      Method method = VCloudAsyncClient.class.getMethod("getTask", String.class);
+      GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpMethod, "GET http://vcloud/task/1 HTTP/1.1");
       assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.task+xml\n");
@@ -266,9 +265,8 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
    }
 
    public void testCancelTask() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudAsyncClient.class.getMethod("cancelTask", URI.class);
-      GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, URI
-               .create("http://vcloud/task/1"));
+      Method method = VCloudAsyncClient.class.getMethod("cancelTask", String.class);
+      GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpMethod, "POST http://vcloud/task/1/action/cancel HTTP/1.1");
       assertHeadersEqual(httpMethod, "");

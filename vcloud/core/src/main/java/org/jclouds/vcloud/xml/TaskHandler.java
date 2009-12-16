@@ -32,7 +32,6 @@ import javax.inject.Inject;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
-import org.jclouds.rest.domain.Link;
 import org.jclouds.rest.domain.NamedResource;
 import org.jclouds.rest.util.Utils;
 import org.jclouds.vcloud.domain.Task;
@@ -47,7 +46,7 @@ import org.xml.sax.SAXException;
 public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
    protected final DateService dateService;
 
-   private Link taskLink;
+   private NamedResource taskLink;
    private NamedResource owner;
    private NamedResource result;
    private TaskStatus status;
@@ -72,7 +71,7 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
             throws SAXException {
       if (qName.equalsIgnoreCase("Task")) {
          if (attributes.getIndex("href") != -1)// queued tasks may not have an href yet
-            taskLink = Utils.newLink(attributes);
+            taskLink = Utils.newNamedResource(attributes);
          status = TaskStatus.fromValue(attributes.getValue(attributes.getIndex("status")));
          if (attributes.getIndex("startTime") != -1)
             startTime = parseDate(attributes, "startTime");
@@ -83,7 +82,7 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
          owner = Utils.newNamedResource(attributes);
       } else if (qName.equals("Link") && attributes.getIndex("rel") != -1
                && attributes.getValue(attributes.getIndex("rel")).equals("self")) {
-         taskLink = Utils.newNamedLink(attributes);
+         taskLink = Utils.newNamedResource(attributes);
       } else if (qName.equals("Result")) {
          result = Utils.newNamedResource(attributes);
       }
@@ -111,7 +110,7 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
    @Override
    public void endElement(String uri, String localName, String qName) throws SAXException {
       if (qName.equalsIgnoreCase("Task")) {
-         this.task = new TaskImpl(taskLink.getLocation(), status, startTime, endTime, owner, result);
+         this.task = new TaskImpl(taskLink.getId(), taskLink.getLocation(), status, startTime, endTime, owner, result);
          taskLink = null;
          status = null;
          startTime = null;

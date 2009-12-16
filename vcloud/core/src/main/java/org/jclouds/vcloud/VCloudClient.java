@@ -23,7 +23,6 @@
  */
 package org.jclouds.vcloud;
 
-import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
@@ -81,9 +80,9 @@ public interface VCloudClient {
     */
    Task suspendVApp(String vAppId);
 
-   Task getTask(URI task);
+   Task getTask(String taskId);
 
-   void cancelTask(URI task);
+   void cancelTask(String taskId);
 
    VApp getVApp(String appId);
 

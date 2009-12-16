@@ -83,7 +83,7 @@ public class VCloudClientLiveTest {
       assertNotNull(response.getLocation());
       assertNotNull(response.getTasks());
       for (Task t : response.getTasks()) {
-         assertEquals(connection.getTask(t.getLocation()).getLocation(), t.getLocation());
+         assertEquals(connection.getTask(t.getId()).getLocation(), t.getLocation());
       }
    }
 

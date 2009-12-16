@@ -69,8 +69,8 @@ public class HostingDotComVCloudRestClientModule extends VCloudRestClientModule 
 
    @Provides
    @Singleton
-   protected Predicate<URI> successTester(TaskSuccess success) {
-      return new RetryablePredicate<URI>(success, 600, 10, TimeUnit.SECONDS);
+   protected Predicate<String> successTester(TaskSuccess success) {
+      return new RetryablePredicate<String>(success, 600, 10, TimeUnit.SECONDS);
    }
 
    @Provides

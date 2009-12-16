@@ -60,7 +60,7 @@ public class TaskHandlerTest extends BaseHandlerTest {
 
       Task result = factory.create(injector.getInstance(TaskHandler.class)).parse(is);
 
-      Task expects = new TaskImpl(URI
+      Task expects = new TaskImpl("3299", URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/task/3299"),
                TaskStatus.SUCCESS, dateService.iso8601DateParse("2009-08-24T21:29:32.983Z"),
                dateService.iso8601DateParse("2009-08-24T21:29:44.65Z"), new NamedResourceImpl("1",
@@ -81,7 +81,7 @@ public class TaskHandlerTest extends BaseHandlerTest {
 
       Task result = factory.create(injector.getInstance(TaskHandler.class)).parse(is);
 
-      Task expects = new TaskImpl(URI
+      Task expects = new TaskImpl("d188849-78", URI
                .create("https://vcloud.safesecureweb.com/api/v0.8/task/d188849-78"),
                TaskStatus.QUEUED, null, null, null, null
       );
@@ -94,7 +94,7 @@ public class TaskHandlerTest extends BaseHandlerTest {
 
       Task result = factory.create(injector.getInstance(TaskHandler.class)).parse(is);
 
-      Task expects = new TaskImpl(URI
+      Task expects = new TaskImpl("d188849-72", URI
                .create("https://vcloud.safesecureweb.com/api/v0.8/task/d188849-72"),
                TaskStatus.RUNNING, dateService.iso8601SecondsDateParse("2001-01-01T05:00:00Z"),
                null, new NamedResourceImpl("188849", "188849", VCloudMediaType.VDC_XML, URI

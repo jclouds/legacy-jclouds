@@ -23,9 +23,9 @@
  */
 package org.jclouds.vcloud.domain;
 
+import java.net.URI;
 import java.util.Date;
 
-import org.jclouds.rest.domain.Link;
 import org.jclouds.rest.domain.NamedResource;
 import org.jclouds.vcloud.domain.internal.TaskImpl;
 
@@ -35,15 +35,18 @@ import com.google.inject.ImplementedBy;
  * @author Adrian Cole
  */
 @ImplementedBy(TaskImpl.class)
-public interface Task extends Link, Comparable<Task> {
+public interface Task extends Comparable<Task> {
+	String getId();
 
-   TaskStatus getStatus();
+	URI getLocation();
 
-   Date getStartTime();
+	TaskStatus getStatus();
 
-   Date getEndTime();
+	Date getStartTime();
 
-   NamedResource getOwner();
+	Date getEndTime();
 
-   NamedResource getResult();
+	NamedResource getOwner();
+
+	NamedResource getResult();
 }

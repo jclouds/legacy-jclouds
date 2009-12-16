@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
@@ -76,8 +75,8 @@ public class TerremarkVCloudRestClientModule extends VCloudRestClientModule {
 
    @Provides
    @Singleton
-   protected Predicate<URI> successTester(TaskSuccess success) {
-      return new RetryablePredicate<URI>(success, 600, 10, TimeUnit.SECONDS);
+   protected Predicate<String> successTester(TaskSuccess success) {
+      return new RetryablePredicate<String>(success, 600, 10, TimeUnit.SECONDS);
    }
 
    @Provides

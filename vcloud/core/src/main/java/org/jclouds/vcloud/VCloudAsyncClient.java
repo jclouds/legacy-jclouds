@@ -29,7 +29,6 @@ import static org.jclouds.vcloud.VCloudMediaType.TASK_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VAPP_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VDC_XML;
 
-import java.net.URI;
 import java.util.concurrent.Future;
 
 import javax.ws.rs.Consumes;
@@ -158,12 +157,15 @@ public interface VCloudAsyncClient {
 
    @GET
    @Consumes(TASK_XML)
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
+   @Path("/task/{taskId}")
    @XMLResponseParser(TaskHandler.class)
-   Future<? extends Task> getTask(@Endpoint URI task);
+   Future<? extends Task> getTask(@PathParam("taskId") String taskId);
 
    @POST
-   @Path("/action/cancel")
-   Future<Void> cancelTask(@Endpoint URI task);
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
+   @Path("/task/{taskId}/action/cancel")
+   Future<Void> cancelTask(@PathParam("taskId") String taskId);
 
    @GET
    @Consumes(VAPP_XML)

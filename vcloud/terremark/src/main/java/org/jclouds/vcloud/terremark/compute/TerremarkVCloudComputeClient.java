@@ -28,7 +28,6 @@ import static org.jclouds.vcloud.terremark.options.AddInternetServiceOptions.Bui
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -62,11 +61,11 @@ public class TerremarkVCloudComputeClient {
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private final Predicate<URI> taskTester;
+   private final Predicate<String> taskTester;
    private final TerremarkVCloudClient tmClient;
 
    @Inject
-   public TerremarkVCloudComputeClient(TerremarkVCloudClient tmClient, Predicate<URI> successTester) {
+   public TerremarkVCloudComputeClient(TerremarkVCloudClient tmClient, Predicate<String> successTester) {
       this.tmClient = tmClient;
       this.taskTester = successTester;
    }
@@ -218,7 +217,7 @@ public class TerremarkVCloudComputeClient {
 
    private TerremarkVApp blockUntilVAppStatusOrThrowException(TerremarkVApp vApp, Task deployTask,
             String taskType, VAppStatus expectedStatus) {
-      if (!taskTester.apply(deployTask.getLocation())) {
+      if (!taskTester.apply(deployTask.getId())) {
          throw new TaskException(taskType, vApp, deployTask);
       }
 

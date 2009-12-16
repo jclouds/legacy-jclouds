@@ -26,7 +26,6 @@ package org.jclouds.vcloud.hostingdotcom.compute;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.net.InetAddress;
-import java.net.URI;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -53,12 +52,12 @@ public class HostingDotComVCloudComputeClient {
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private final Predicate<URI> taskTester;
+   private final Predicate<String> taskTester;
    private final HostingDotComVCloudClient tmClient;
 
    @Inject
    public HostingDotComVCloudComputeClient(HostingDotComVCloudClient tmClient,
-            Predicate<URI> successTester) {
+            Predicate<String> successTester) {
       this.tmClient = tmClient;
       this.taskTester = successTester;
    }
@@ -127,7 +126,7 @@ public class HostingDotComVCloudComputeClient {
 
    private VApp blockUntilVAppStatusOrThrowException(VApp vApp, Task deployTask, String taskType,
             VAppStatus expectedStatus) {
-      if (!taskTester.apply(deployTask.getLocation())) {
+      if (!taskTester.apply(deployTask.getId())) {
          throw new TaskException(taskType, vApp, deployTask);
       }
 
