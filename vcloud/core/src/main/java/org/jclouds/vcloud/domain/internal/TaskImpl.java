@@ -28,8 +28,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.Date;
 
-import org.jclouds.rest.domain.NamedLink;
+import org.jclouds.rest.domain.NamedResource;
 import org.jclouds.rest.domain.internal.LinkImpl;
+import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
 
@@ -46,13 +47,13 @@ public class TaskImpl extends LinkImpl implements Task {
    private final Date startTime;
    @Nullable
    private final Date endTime;
-   private final NamedLink owner;
+   private final NamedResource owner;
    @Nullable
-   private final NamedLink result;
+   private final NamedResource result;
 
-   public TaskImpl(String type, URI location, TaskStatus status, Date startTime,
-            @Nullable Date endTime, NamedLink owner, @Nullable NamedLink result) {
-      super(type, location);
+   public TaskImpl(URI location, TaskStatus status, Date startTime, @Nullable Date endTime,
+            NamedResource owner, @Nullable NamedResource result) {
+      super(VCloudMediaType.TASK_XML, location);
       this.status = checkNotNull(status, "status");
       this.startTime = startTime;
       this.endTime = endTime;
@@ -68,11 +69,11 @@ public class TaskImpl extends LinkImpl implements Task {
       return startTime;
    }
 
-   public NamedLink getOwner() {
+   public NamedResource getOwner() {
       return owner;
    }
 
-   public NamedLink getResult() {
+   public NamedResource getResult() {
       return result;
    }
 

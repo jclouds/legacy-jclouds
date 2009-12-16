@@ -33,7 +33,7 @@ import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.domain.Link;
-import org.jclouds.rest.domain.NamedLink;
+import org.jclouds.rest.domain.NamedResource;
 import org.jclouds.rest.util.Utils;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
@@ -48,8 +48,8 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
    protected final DateService dateService;
 
    private Link taskLink;
-   private NamedLink owner;
-   private NamedLink result;
+   private NamedResource owner;
+   private NamedResource result;
    private TaskStatus status;
    private Date startTime;
    private Date endTime;
@@ -71,7 +71,7 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
    public void startElement(String uri, String localName, String qName, Attributes attributes)
             throws SAXException {
       if (qName.equalsIgnoreCase("Task")) {
-         if (attributes.getIndex("type") != -1)
+         if (attributes.getIndex("href") != -1)// queued tasks may not have an href yet
             taskLink = Utils.newLink(attributes);
          status = TaskStatus.fromValue(attributes.getValue(attributes.getIndex("status")));
          if (attributes.getIndex("startTime") != -1)
@@ -80,11 +80,12 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
             endTime = parseDate(attributes, "endTime");
          }
       } else if (qName.equals("Owner")) {
-         owner = Utils.newNamedLink(attributes);
-      } else if (qName.equals("Link")) {
+         owner = Utils.newNamedResource(attributes);
+      } else if (qName.equals("Link") && attributes.getIndex("rel") != -1
+               && attributes.getValue(attributes.getIndex("rel")).equals("self")) {
          taskLink = Utils.newNamedLink(attributes);
       } else if (qName.equals("Result")) {
-         result = Utils.newNamedLink(attributes);
+         result = Utils.newNamedResource(attributes);
       }
    }
 
@@ -110,8 +111,7 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
    @Override
    public void endElement(String uri, String localName, String qName) throws SAXException {
       if (qName.equalsIgnoreCase("Task")) {
-         this.task = new TaskImpl(taskLink.getType(), taskLink.getLocation(), status, startTime,
-                  endTime, owner, result);
+         this.task = new TaskImpl(taskLink.getLocation(), status, startTime, endTime, owner, result);
          taskLink = null;
          status = null;
          startTime = null;

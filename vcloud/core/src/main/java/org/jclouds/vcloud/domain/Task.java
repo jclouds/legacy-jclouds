@@ -26,7 +26,7 @@ package org.jclouds.vcloud.domain;
 import java.util.Date;
 
 import org.jclouds.rest.domain.Link;
-import org.jclouds.rest.domain.NamedLink;
+import org.jclouds.rest.domain.NamedResource;
 import org.jclouds.vcloud.domain.internal.TaskImpl;
 
 import com.google.inject.ImplementedBy;
@@ -43,7 +43,7 @@ public interface Task extends Link, Comparable<Task> {
 
    Date getEndTime();
 
-   NamedLink getOwner();
+   NamedResource getOwner();
 
-   NamedLink getResult();
+   NamedResource getResult();
 }

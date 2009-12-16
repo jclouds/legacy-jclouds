@@ -30,7 +30,7 @@ import java.net.URI;
 
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.rest.domain.internal.NamedLinkImpl;
+import org.jclouds.rest.internal.NamedResourceImpl;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
@@ -65,21 +65,21 @@ public class TasksListHandlerTest extends BaseHandlerTest {
       TasksList result = factory.create(injector.getInstance(TasksListHandler.class)).parse(is);
       assertEquals(result.getLocation(), URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/tasksList/1"));
-      Task task1 = new TaskImpl(VCloudMediaType.TASK_XML, URI
+      Task task1 = new TaskImpl(URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/task/3300"),
                TaskStatus.SUCCESS, dateService.iso8601DateParse("2009-08-24T21:30:19.587Z"),
-               dateService.iso8601DateParse("2009-08-24T21:30:32.63Z"), new NamedLinkImpl(
+               dateService.iso8601DateParse("2009-08-24T21:30:32.63Z"), new NamedResourceImpl("1",
                         "VDC Name", VCloudMediaType.VDC_XML,
                         URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/1")),
-               new NamedLinkImpl("Server1", VCloudMediaType.VAPP_XML, URI
+               new NamedResourceImpl("4012", "Server1", VCloudMediaType.VAPP_XML, URI
                         .create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/4012")));
-      Task task2 = new TaskImpl(VCloudMediaType.TASK_XML, URI
+      Task task2 = new TaskImpl(URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/task/3299"),
                TaskStatus.SUCCESS, dateService.iso8601DateParse("2009-08-24T21:29:32.983Z"),
-               dateService.iso8601DateParse("2009-08-24T21:29:44.65Z"), new NamedLinkImpl(
+               dateService.iso8601DateParse("2009-08-24T21:29:44.65Z"), new NamedResourceImpl("1",
                         "VDC Name", VCloudMediaType.VDC_XML,
                         URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/1")),
-               new NamedLinkImpl("Server1", VCloudMediaType.VAPP_XML, URI
+               new NamedResourceImpl("4012", "Server1", VCloudMediaType.VAPP_XML, URI
                         .create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/4012")
 
                )

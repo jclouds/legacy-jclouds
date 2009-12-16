@@ -92,7 +92,7 @@ public class VAppHandler extends ParseSax.HandlerWithResult<VApp> {
       } else if (qName.equals("OperatingSystemSection")) {
          inOs = true;
       } else if (qName.equals("NetworkConnection")) {
-         networkName = attributes.getValue(attributes.getIndex("name"));
+         networkName = attributes.getValue(attributes.getIndex("Network"));
       } else {
          systemHandler.startElement(uri, localName, qName, attributes);
          allocationHandler.startElement(uri, localName, qName, attributes);
@@ -106,7 +106,7 @@ public class VAppHandler extends ParseSax.HandlerWithResult<VApp> {
          inOs = false;
       } else if (inOs && qName.equals("Description")) {
          operatingSystemDescription = currentText.toString().trim();
-      } else if (qName.equals("IPAddress")) {
+      } else if (qName.equals("IpAddress")) {
          networkToAddresses.put(networkName, parseInetAddress(currentText.toString().trim()));
       } else if (qName.equals("System")) {
          systemHandler.endElement(uri, localName, qName);

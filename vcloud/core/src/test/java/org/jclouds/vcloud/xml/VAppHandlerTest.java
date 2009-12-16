@@ -58,7 +58,7 @@ public class VAppHandlerTest extends BaseHandlerTest {
       VApp result = factory.create(injector.getInstance(VAppHandler.class)).parse(is);
 
       ListMultimap<String, InetAddress> networkToAddresses = ImmutableListMultimap
-               .<String, InetAddress> of("Network 1", InetAddress.getByName("204.12.55.199"));
+               .<String, InetAddress> of("Network 1", InetAddress.getByName("204.12.59.147"));
 
       VirtualSystem system = new VirtualSystem(0, "Virtual Hardware Family", "SimpleVM", "vmx-07");
 
@@ -78,9 +78,9 @@ public class VAppHandlerTest extends BaseHandlerTest {
                         new ResourceAllocation(9, "Hard Disk 1", null, ResourceType.DISK_DRIVE,
                                  null, null, 0, 3, null, 20971520, "byte * 2^20")).build();
 
-      VApp expects = new VAppImpl("188849-44", "188849-44", URI
-               .create("https://vcloud.safesecureweb.com/api/v0.8/vapp/188849-44"), VAppStatus.ON,
-               new Long(20971520), networkToAddresses, "", system, resourceAllocations);
+      VApp expects = new VAppImpl("188849-74", "188849-74", URI
+               .create("https://vcloud.safesecureweb.com/api/v0.8/vapp/188849-74"), VAppStatus.ON,
+               new Long(20971520), networkToAddresses, null, system, resourceAllocations);
 
       assertEquals(result, expects);
 

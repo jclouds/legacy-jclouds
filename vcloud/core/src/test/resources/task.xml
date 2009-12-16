@@ -1,6 +1,5 @@
 <Task href="https://services.vcloudexpress.terremark.com/api/v0.8/task/3299"
-    type="application/vnd.vmware.vcloud.task+xml" status="success"
-    startTime="2009-08-24T21:29:32.983Z" endTime="2009-08-24T21:29:44.65Z">
+    status="success" startTime="2009-08-24T21:29:32.983Z" endTime="2009-08-24T21:29:44.65Z">
     <Owner href="https://services.vcloudexpress.terremark.com/api/v0.8/vdc/1"
         type="application/vnd.vmware.vcloud.vdc+xml" name="VDC Name" />
     <Result

@@ -1,144 +1,236 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<VApp href="https://vcloud.safesecureweb.com/api/v0.8/vapp/188849-44"
-    type="application/vnd.vmware.vcloud.vApp+xml"
-    name="188849-44"
-    status="4"
-    xsi:schemaLocation="http://www.vmware.com/vcloud/v0.8/vapp.xsd"
-    xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1"
-    xmlns="http://www.vmware.com/vcloud/v0.8"
+<VApp href="https://vcloud.safesecureweb.com/api/v0.8/vapp/188849-74"
+    type="application/vnd.vmware.vcloud.vApp+xml" name="188849-74"
+    status="4" xsi:schemaLocation="http://www.vmware.com/vcloud/v0.8 vapp.xsd"
+    xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns="http://www.vmware.com/vcloud/v0.8"
     xmlns:vmw="http://www.vmware.com/schema/ovf"
     xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData"
     xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    size="20971520">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="20971520">
 
-  <NetworkConnectionSection>
-    <NetworkConnection name="Network 1">
-      <IPAddress>204.12.55.199</IPAddress>
-    </NetworkConnection>
-  </NetworkConnectionSection>
+    <NetworkConnectionSection>
+        <Info xmlns="http://schemas.dmtf.org/ovf/envelope/1">Network Information about the vApp</Info>
+        <NetworkConnection Network="Network 1">
+            <IpAddress>204.12.59.147</IpAddress>
+        </NetworkConnection>
+    </NetworkConnectionSection>
 
-  <OperatingSystemSection d2p1:id="" xmlns="http://schemas.dmtf.org/ovf/envelope/1" xmlns:d2p1="http://schemas.dmtf.org/ovf/envelope/1">
-    <Info>The kind of installed guest operating system</Info>
-    <Description></Description>
-  </OperatingSystemSection>
-
-  <VirtualHardwareSection xmlns="http://schemas.dmtf.org/ovf/envelope/1">
-    <Info>Virtual hardware</Info>
-    <System>
-    <AutomaticRecoveryAction xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" /> 
-    <AutomaticShutdownAction xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" /> 
-    <AutomaticStartupAction xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" /> 
-    <AutomaticStartupActionDelay xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" /> 
-    <AutomaticStartupActionSequenceNumber xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" /> 
-    <Caption xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" /> 
-    <ConfigurationDataRoot xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" /> 
-    <ConfigurationFile xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" /> 
-    <ConfigurationID xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" /> 
-    <CreationTime xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" /> 
-    <Description xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" /> 
-    <LogDataRoot xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" /> 
-    <RecoveryFile xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" /> 
-    <SnapshotDataRoot xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" /> 
-    <SuspendDataRoot xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" /> 
-    <SwapFileDataRoot xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" /> 
-      <ElementName xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData">Virtual Hardware Family</ElementName>
-      <InstanceID xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData">0</InstanceID>
-      <VirtualSystemIdentifier xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData">SimpleVM</VirtualSystemIdentifier>
-      <VirtualSystemType xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData">vmx-07</VirtualSystemType>
-    </System>
-    <Item>
-      <Address xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <AddressOnParent xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <AutomaticAllocation xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <AutomaticDeallocation xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <Caption xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <ConsumerVisibility xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <Limit xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <MappingBehavior xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <OtherResourceType xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <Parent xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <PoolID xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <Reservation xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <ResourceSubType xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <Weight xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <AllocationUnits xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">hertz * 10^6</AllocationUnits>
-      <Description xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">Number of Virtual CPUs</Description>
-      <ElementName xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">1 virtual CPU(s)</ElementName>
-      <InstanceID xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">1</InstanceID>
-      <ResourceType xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">3</ResourceType>
-      <VirtualQuantity xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">1</VirtualQuantity>
-      <VirtualQuantityUnits xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">count</VirtualQuantityUnits>
-    </Item>
-    <Item>
-      <Address xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <AddressOnParent xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <AutomaticAllocation xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <AutomaticDeallocation xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <Caption xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <ConsumerVisibility xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <Limit xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <MappingBehavior xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <OtherResourceType xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <Parent xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <PoolID xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <Reservation xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <ResourceSubType xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <Weight xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <AllocationUnits xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">byte * 2^20</AllocationUnits>
-      <Description xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">Memory Size</Description>
-      <ElementName xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">512MB of memory</ElementName>
-      <InstanceID xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">2</InstanceID>
-      <ResourceType xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">4</ResourceType>
-      <VirtualQuantity xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">512</VirtualQuantity>
-      <VirtualQuantityUnits xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">byte * 2^20</VirtualQuantityUnits>
-    </Item>
-    <Item>
-      <AddressOnParent xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <AllocationUnits xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <AutomaticAllocation xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <AutomaticDeallocation xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <Caption xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <ConsumerVisibility xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <Limit xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <MappingBehavior xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <OtherResourceType xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <Parent xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <PoolID xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <Reservation xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <VirtualQuantity xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <VirtualQuantityUnits xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <Weight xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <Address xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">0</Address>
-      <Description xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">SCSI Controller</Description>
-      <ElementName xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">SCSI Controller 0</ElementName>
-      <InstanceID xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">3</InstanceID>
-      <ResourceSubType xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">lsilogic</ResourceSubType>
-      <ResourceType xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">6</ResourceType>
-    </Item>
-    <Item>
-      <Address xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <AllocationUnits xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <AutomaticAllocation xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <AutomaticDeallocation xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <Caption xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <ConsumerVisibility xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <Description xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <Limit xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <MappingBehavior xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <OtherResourceType xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <PoolID xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <Reservation xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <ResourceSubType xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <VirtualQuantityUnits xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <Weight xsi:nil="true" xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" /> 
-      <AddressOnParent xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">0</AddressOnParent>
-      <ElementName xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">Hard Disk 1</ElementName>
-      <HostResource xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">20971520</HostResource>
-      <InstanceID xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">9</InstanceID>
-      <Parent xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">3</Parent>
-      <ResourceType xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">17</ResourceType>
-      <VirtualQuantity xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">20971520</VirtualQuantity>
-    </Item>
-  </VirtualHardwareSection>
+    <VirtualHardwareSection xmlns="http://schemas.dmtf.org/ovf/envelope/1">
+        <Info>Virtual hardware</Info>
+        <System>
+            <AutomaticRecoveryAction xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" />
+            <AutomaticShutdownAction xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" />
+            <AutomaticStartupAction xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" />
+            <AutomaticStartupActionDelay
+                xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" />
+            <AutomaticStartupActionSequenceNumber
+                xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" />
+            <Caption xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" />
+            <ConfigurationDataRoot xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" />
+            <ConfigurationFile xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" />
+            <ConfigurationID xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" />
+            <CreationTime xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" />
+            <Description xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" />
+            <ElementName
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData">Virtual Hardware Family</ElementName>
+            <InstanceID
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData">0</InstanceID>
+            <LogDataRoot xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" />
+            <RecoveryFile xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" />
+            <SnapshotDataRoot xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" />
+            <SuspendDataRoot xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" />
+            <SwapFileDataRoot xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" />
+            <VirtualSystemIdentifier
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData">SimpleVM</VirtualSystemIdentifier>
+            <VirtualSystemType
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData">vmx-07</VirtualSystemType>
+        </System>
+        <Item>
+            <Address xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <AddressOnParent xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <AllocationUnits
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">hertz * 10^6</AllocationUnits>
+            <AutomaticAllocation xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <AutomaticDeallocation xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <Caption xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <ConsumerVisibility xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <Description
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">Number of Virtual CPUs</Description>
+            <ElementName
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">1 virtual CPU(s)</ElementName>
+            <InstanceID
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">1</InstanceID>
+            <Limit xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <MappingBehavior xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <OtherResourceType xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <Parent xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <PoolID xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <Reservation xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <ResourceSubType xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <ResourceType
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">3</ResourceType>
+            <VirtualQuantity
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">1</VirtualQuantity>
+            <Weight xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+        </Item>
+        <Item>
+            <Address xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <AddressOnParent xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <AllocationUnits
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">byte * 2^20</AllocationUnits>
+            <AutomaticAllocation xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <AutomaticDeallocation xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <Caption xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <ConsumerVisibility xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <Description
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">Memory Size</Description>
+            <ElementName
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">512MB of memory</ElementName>
+            <InstanceID
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">2</InstanceID>
+            <Limit xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <MappingBehavior xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <OtherResourceType xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <Parent xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <PoolID xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <Reservation xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <ResourceSubType xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <ResourceType
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">4</ResourceType>
+            <VirtualQuantity
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">512</VirtualQuantity>
+            <Weight xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+        </Item>
+        <Item>
+            <Address
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">0</Address>
+            <AddressOnParent xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <AllocationUnits xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <AutomaticAllocation xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <AutomaticDeallocation xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <Caption xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <ConsumerVisibility xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <Description
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">SCSI Controller</Description>
+            <ElementName
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">SCSI Controller 0</ElementName>
+            <InstanceID
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">3</InstanceID>
+            <Limit xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <MappingBehavior xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <OtherResourceType xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <Parent xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <PoolID xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <Reservation xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <ResourceSubType
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">lsilogic</ResourceSubType>
+            <ResourceType
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">6</ResourceType>
+            <VirtualQuantity xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <Weight xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+        </Item>
+        <Item>
+            <Address xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <AddressOnParent
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">0</AddressOnParent>
+            <AllocationUnits xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <AutomaticAllocation xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <AutomaticDeallocation xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <Caption xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <ConsumerVisibility xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <Description xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <ElementName
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">Hard Disk 1</ElementName>
+            <HostResource
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">20971520</HostResource>
+            <InstanceID
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">9</InstanceID>
+            <Limit xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <MappingBehavior xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <OtherResourceType xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <Parent
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">3</Parent>
+            <PoolID xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <Reservation xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <ResourceSubType xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+            <ResourceType
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">17</ResourceType>
+            <VirtualQuantity
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">20971520</VirtualQuantity>
+            <Weight xsi:nil="true"
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
+        </Item>
+    </VirtualHardwareSection>
 </VApp>
+

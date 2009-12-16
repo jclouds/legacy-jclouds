@@ -75,7 +75,7 @@ public class TaskSuccess implements Predicate<URI> {
       } catch (InterruptedException e) {
          logger.warn(e, "%s interrupted, returning false", taskUri);
       } catch (ExecutionException e) {
-         logger.warn(e, "%s exception, returning false", taskUri);
+         throw new RuntimeException(e.getCause());
       } catch (TimeoutException e) {
          logger.warn(e, "%s timeout, returning false", taskUri);
       }

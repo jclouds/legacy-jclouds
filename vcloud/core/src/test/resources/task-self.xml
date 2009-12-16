@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Task xmlns="http://www.vmware.com/vcloud/v0.8" xmlns:common="http://www/vmware.com/vcloud/common"
+    xsi:schemaLocation="http://www/vmware.com/vcloud/task
+        https://vcloud.safesecureweb.com/ns/vcloud/task-1.0.xsd
+        http://www.vmware.com/vcloud/common
+        https://vcloud.safesecureweb.com/ns/vcloud/common-1.0.xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" status="queued">
+    <Link rel="self"
+        href="https://vcloud.safesecureweb.com/api/v0.8/task/d188849-78"
+        type="application/vnd.vmware.vcloud.task+xml" />
+</Task>
