@@ -25,6 +25,7 @@ package org.jclouds.aws.ec2.config;
 
 import java.net.URI;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -32,7 +33,9 @@ import javax.inject.Singleton;
 import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
+import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.filters.FormSigner;
+import org.jclouds.aws.ec2.predicates.InstanceStateRunning;
 import org.jclouds.aws.ec2.reference.EC2Constants;
 import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.handlers.AWSRedirectionRetryHandler;
@@ -47,9 +50,11 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
+import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
 
+import com.google.common.base.Predicate;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
@@ -61,6 +66,11 @@ import com.google.inject.Provides;
 @RequiresHttp
 @ConfiguresRestClient
 public class EC2RestClientModule extends AbstractModule {
+   @Provides
+   @Singleton
+   protected Predicate<RunningInstance> instanceStateRunning(InstanceStateRunning stateRunning) {
+      return new RetryablePredicate<RunningInstance>(stateRunning, 600, 3, TimeUnit.SECONDS);
+   }
 
    @Override
    protected void configure() {

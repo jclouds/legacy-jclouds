@@ -31,7 +31,9 @@ import javax.inject.Singleton;
 import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
+import org.jclouds.aws.ec2.compute.EC2ComputeService;
 import org.jclouds.aws.reference.AWSConstants;
+import org.jclouds.compute.ComputeService;
 import org.jclouds.http.functions.config.ParserModule.CDateAdapter;
 import org.jclouds.http.functions.config.ParserModule.DateAdapter;
 import org.jclouds.lifecycle.Closer;
@@ -50,6 +52,7 @@ public class EC2ContextModule extends AbstractModule {
    @Override
    protected void configure() {
       bind(DateAdapter.class).to(CDateAdapter.class);
+      bind(ComputeService.class).to(EC2ComputeService.class);
    }
 
    @Provides

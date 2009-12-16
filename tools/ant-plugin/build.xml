@@ -30,6 +30,7 @@
 	<artifact:dependencies pathId="jclouds.classpath">
 		<dependency groupId="org.jclouds" artifactId="jclouds-ant-plugin" version="1.0-SNAPSHOT" />
 		<dependency groupId="org.jclouds" artifactId="jclouds-terremark" version="1.0-SNAPSHOT" />
+		<dependency groupId="org.jclouds" artifactId="jclouds-aws" version="1.0-SNAPSHOT" />
 		<dependency groupId="org.jclouds" artifactId="jclouds-hostingdotcom" version="1.0-SNAPSHOT" />
 		<dependency groupId="org.jclouds" artifactId="jclouds-rimuhosting" version="1.0-SNAPSHOT" />
 		<localRepository refid="local.repository" />

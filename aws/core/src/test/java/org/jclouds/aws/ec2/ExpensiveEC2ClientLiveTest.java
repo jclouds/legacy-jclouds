@@ -103,8 +103,7 @@ public class ExpensiveEC2ClientLiveTest {
 
       client.createSecurityGroup(securityGroupName, securityGroupName);
       client.authorizeSecurityGroupIngress(securityGroupName, IpProtocol.TCP, 80, 80, "0.0.0.0/0");
-      client
-               .authorizeSecurityGroupIngress(securityGroupName, IpProtocol.TCP, 443, 443,
+      client.authorizeSecurityGroupIngress(securityGroupName, IpProtocol.TCP, 443, 443,
                         "0.0.0.0/0");
       client.authorizeSecurityGroupIngress(securityGroupName, IpProtocol.TCP, 22, 22, "0.0.0.0/0");
    }

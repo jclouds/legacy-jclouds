@@ -80,8 +80,8 @@
     
     
     <!-- A time/date based rolling appender -->
-    <appender name="VCLOUDFILE" class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="File" value="target/test-data/jclouds-vcloud.log" />
+    <appender name="COMPUTEFILE" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="target/test-data/jclouds-compute.log" />
         <param name="Append" value="true" />
 
         <!-- Rollover at midnight each day -->
@@ -110,8 +110,8 @@
         <appender-ref ref="WIREFILE" />
     </appender>	
 
-    <appender name="ASYNCVCLOUD" class="org.apache.log4j.AsyncAppender">
-        <appender-ref ref="VCLOUDFILE" />
+    <appender name="ASYNCCOMPUTE" class="org.apache.log4j.AsyncAppender">
+        <appender-ref ref="COMPUTEFILE" />
     </appender> 
         
 	<!-- ================ -->
@@ -132,7 +132,7 @@
     
     <category name="org.jclouds.vcloud.hostingdotcom.compute.HostingDotComVCloudComputeClient">
         <priority value="TRACE" />
-        <appender-ref ref="ASYNCVCLOUD" />
+        <appender-ref ref="ASYNCCOMPUTE" />
     </category>
   
     
