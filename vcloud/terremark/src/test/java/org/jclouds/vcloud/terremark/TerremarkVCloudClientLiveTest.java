@@ -40,6 +40,7 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
+import org.jclouds.rest.domain.NamedResource;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshClient.Factory;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
@@ -58,6 +59,7 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.Iterables;
 import com.google.inject.Injector;
 
 /**
@@ -141,6 +143,10 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
       System.out.printf("%d: done deploying vApp%n", System.currentTimeMillis());
 
       vApp = tmClient.getVApp(vApp.getId());
+
+      NamedResource vAppResource = tmClient.getDefaultVDC().getResourceEntities().get(serverName);
+      assertEquals(vAppResource.getId(), vApp.getId());
+
       verifyConfigurationOfVApp(vApp, serverName, expectedOs, processorCount, memory, hardDisk);
       assertEquals(vApp.getStatus(), VAppStatus.OFF);
 
@@ -162,7 +168,7 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
    @Test(dependsOnMethods = { "testInstantiateAndPowerOn", "testAddInternetService" })
    public void testPublicIp() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
-      node = tmClient.addNode(is.getId(), vApp.getNetworkToAddresses().values().iterator().next(),
+      node = tmClient.addNode(is.getId(), Iterables.getLast(vApp.getNetworkToAddresses().values()),
                vApp.getName() + "-SSH", 22);
       publicIp = is.getPublicIpAddress().getAddress();
       doCheckPass(publicIp);
@@ -187,6 +193,7 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
       assert successTester.apply(tmClient.resetVApp(vApp.getId()).getLocation());
 
       vApp = tmClient.getVApp(vApp.getId());
+
       assertEquals(vApp.getStatus(), VAppStatus.ON);
 
       // TODO we need to determine whether shutdown is supported before invoking it.

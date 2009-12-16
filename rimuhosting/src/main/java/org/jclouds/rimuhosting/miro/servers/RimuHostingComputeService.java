@@ -33,9 +33,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.Image;
-import org.jclouds.compute.Profile;
 import org.jclouds.compute.domain.CreateServerResponse;
+import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.Profile;
+import org.jclouds.compute.domain.ServerMetadata;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
 import org.jclouds.rimuhosting.miro.domain.NewServerResponse;
 import org.jclouds.rimuhosting.miro.domain.Server;
@@ -67,8 +68,8 @@ public class RimuHostingComputeService implements ComputeService {
       return new RimuHostingCreateServerResponse(serverResponse);
    }
 
-   public SortedSet<org.jclouds.compute.Server> listServers() {
-      SortedSet<org.jclouds.compute.Server> servers = new TreeSet<org.jclouds.compute.Server>();
+   public SortedSet<org.jclouds.compute.domain.ServerIdentity> listServers() {
+      SortedSet<org.jclouds.compute.domain.ServerIdentity> servers = new TreeSet<org.jclouds.compute.domain.ServerIdentity>();
       SortedSet<Server> rhServers = rhClient.getInstanceList();
       for (Server rhServer : rhServers) {
          servers.add(new RimuHostingServer(rhServer, rhClient));
@@ -76,16 +77,21 @@ public class RimuHostingComputeService implements ComputeService {
       return servers;
    }
 
-   public org.jclouds.compute.Server getServerById(String id) {
-      return new RimuHostingServer(rhClient.getInstance(Long.valueOf(id)), rhClient);
+   public ServerMetadata getServerMetadata(String id) {
+      throw new UnsupportedOperationException("not yet implemented");
    }
 
    @Override
-   public SortedSet<org.jclouds.compute.Server> getServerByName(String id) {
-      SortedSet<org.jclouds.compute.Server> serverSet = new TreeSet<org.jclouds.compute.Server>();
+   public SortedSet<org.jclouds.compute.domain.ServerIdentity> getServerByName(String id) {
+      SortedSet<org.jclouds.compute.domain.ServerIdentity> serverSet = new TreeSet<org.jclouds.compute.domain.ServerIdentity>();
       for (Server rhServer : rhClient.getInstanceList()) {
          serverSet.add(new RimuHostingServer(rhServer, rhClient));
       }
       return serverSet;
+   }
+
+   @Override
+   public void destroyServer(String id) {
+      rhClient.destroyInstance(new Long(id));
    }
 }

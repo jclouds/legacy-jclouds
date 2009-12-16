@@ -23,59 +23,74 @@
  */
 package org.jclouds.compute.domain.internal;
 
-import java.net.InetAddress;
-
-import org.jclouds.compute.domain.CreateServerResponse;
-import org.jclouds.compute.domain.LoginType;
-import org.jclouds.domain.Credentials;
+import org.jclouds.compute.domain.ServerIdentity;
 
 /**
  * @author Adrian Cole
  * @author Ivan Meredith
  */
-public class CreateServerResponseImpl extends ServerMetadataImpl implements CreateServerResponse {
-  
-   private final Credentials credentials;
+public class ServerIdentityImpl implements ServerIdentity {
 
-
-   public CreateServerResponseImpl(String id, String name, Iterable<InetAddress> publicAddresses,
-            Iterable<InetAddress> privateAddresses, int loginPort, LoginType loginType,
-            Credentials credentials) {
-      super(id, name, publicAddresses, privateAddresses, loginPort, loginType);
-      this.credentials = credentials;
+   private final String id;
+   private final String name;
+   
+   public ServerIdentityImpl(String id, String name) {
+      this.id = id;
+      this.name = name;
    }
 
-
-   public Credentials getCredentials() {
-      return credentials;
+   /**
+    * {@inheritDoc}
+    */
+   public String getId() {
+      return id;
    }
-
+   
+   /**
+    * {@inheritDoc}
+    */
+   public String getName() {
+      return name;
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   public int compareTo(ServerIdentity o) {
+      if (getName() == null)
+         return -1;
+      return (this == o) ? 0 : getName().compareTo(o.getName());
+   }
 
    @Override
    public int hashCode() {
       final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ((credentials == null) ? 0 : credentials.hashCode());
+      int result = 1;
+      result = prime * result + ((id == null) ? 0 : id.hashCode());
+      result = prime * result + ((name == null) ? 0 : name.hashCode());
       return result;
    }
-
 
    @Override
    public boolean equals(Object obj) {
       if (this == obj)
          return true;
-      if (!super.equals(obj))
+      if (obj == null)
          return false;
       if (getClass() != obj.getClass())
          return false;
-      CreateServerResponseImpl other = (CreateServerResponseImpl) obj;
-      if (credentials == null) {
-         if (other.credentials != null)
+      ServerIdentityImpl other = (ServerIdentityImpl) obj;
+      if (id == null) {
+         if (other.id != null)
             return false;
-      } else if (!credentials.equals(other.credentials))
+      } else if (!id.equals(other.id))
+         return false;
+      if (name == null) {
+         if (other.name != null)
+            return false;
+      } else if (!name.equals(other.name))
          return false;
       return true;
    }
-
 
 }

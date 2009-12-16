@@ -21,42 +21,28 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.terremark.compute;
+package org.jclouds.compute.domain;
 
-import org.jclouds.compute.Server;
-import org.jclouds.vcloud.terremark.domain.TerremarkVApp;
+import java.net.InetAddress;
+import java.util.SortedSet;
+
+import org.jclouds.compute.domain.internal.ServerMetadataImpl;
+
+import com.google.inject.ImplementedBy;
 
 /**
- * 
  * @author Adrian Cole
+ * @author Ivan Meredith
  */
-public class TerremarkVCloudServer implements Server {
+@ImplementedBy(ServerMetadataImpl.class)
+public interface ServerMetadata extends ServerIdentity {
 
-   private final TerremarkVCloudComputeClient computeClient;
+   SortedSet<InetAddress> getPublicAddresses();
 
-   private final TerremarkVApp vApp;
+   SortedSet<InetAddress> getPrivateAddresses();
 
-   public TerremarkVCloudServer(TerremarkVCloudComputeClient computeClient, TerremarkVApp vApp) {
-      this.vApp = vApp;
-      this.computeClient = computeClient;
-   }
+   int getLoginPort();
 
-   public String getId() {
-      return vApp.getId();
-   }
+   LoginType getLoginType();
 
-   public Boolean destroy() {
-      computeClient.stop(getId());
-      return Boolean.TRUE;
-   }
-
-   @Override
-   public String getName() {
-      return vApp.getName();
-   }
-
-   @Override
-   public int compareTo(Server o) {
-      return (this == o) ? 0 : getId().compareTo(o.getId());
-   }
 }

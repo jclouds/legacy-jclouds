@@ -34,16 +34,17 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceFactory;
-import org.jclouds.compute.Image;
-import org.jclouds.compute.Profile;
-import org.jclouds.compute.Server;
 import org.jclouds.compute.domain.CreateServerResponse;
+import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.Profile;
+import org.jclouds.compute.domain.ServerIdentity;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.tools.ant.logging.config.AntLoggingModule;
 
 import com.google.common.base.Function;
 import com.google.common.collect.MapMaker;
 import com.google.common.io.Resources;
+import com.google.gson.Gson;
 import com.google.inject.Module;
 import com.google.inject.Provider;
 
@@ -94,7 +95,7 @@ public class ComputeTask extends Task {
    }
 
    public static enum Action {
-      CREATE, LIST, DESTROY
+      CREATE, GET, LIST, DESTROY
    }
 
    private String provider;
@@ -122,11 +123,15 @@ public class ComputeTask extends Task {
       ComputeService computeService = computeMap.get(HttpUtils.createUri(provider));
       switch (action) {
          case CREATE:
+         case GET:
          case DESTROY:
             if (serverElement != null) {
                switch (action) {
                   case CREATE:
                      create(computeService);
+                     break;
+                  case GET:
+                     get(computeService);
                      break;
                   case DESTROY:
                      destroy(computeService);
@@ -138,7 +143,7 @@ public class ComputeTask extends Task {
             break;
          case LIST:
             log("list");
-            for (Server server : computeService.listServers()) {
+            for (ServerIdentity server : computeService.listServers()) {
                log(String.format("   id=%s, name=%s", server.getId(), server.getName()));
             }
             break;
@@ -162,14 +167,25 @@ public class ComputeTask extends Task {
 
    private void destroy(ComputeService computeService) {
       log(String.format("destroy name: %s", serverElement.getName()));
-      SortedSet<Server> serversThatMatch = computeService.getServerByName(serverElement.getName());
+      SortedSet<ServerIdentity> serversThatMatch = computeService.getServerByName(serverElement
+               .getName());
       if (serversThatMatch.size() > 0) {
-         for (Server server : serversThatMatch) {
+         for (ServerIdentity server : serversThatMatch) {
             log(String.format("   destroying id=%s, name=%s", server.getId(), server.getName()));
-            if (!server.destroy()) {
-               log(String.format("   could not destroy id=%s, name=%s", server.getId(), server
-                        .getName()), Project.MSG_ERR);
-            }
+            computeService.destroyServer(server.getId());
+         }
+      }
+   }
+
+   private void get(ComputeService computeService) {
+      log(String.format("get name: %s", serverElement.getName()));
+      SortedSet<ServerIdentity> serversThatMatch = computeService.getServerByName(serverElement
+               .getName());
+      if (serversThatMatch.size() > 0) {
+         for (ServerIdentity server : serversThatMatch) {
+            log(String.format("   server id=%s, name=%s, value=%s", server.getId(), server
+                     .getName(), new Gson()
+                     .toJson(computeService.getServerMetadata(server.getId()))));
          }
       }
    }

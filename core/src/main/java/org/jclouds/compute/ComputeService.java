@@ -26,23 +26,42 @@ package org.jclouds.compute;
 import java.util.SortedSet;
 
 import org.jclouds.compute.domain.CreateServerResponse;
+import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.Profile;
+import org.jclouds.compute.domain.ServerIdentity;
+import org.jclouds.compute.domain.ServerMetadata;
 
 /**
- * TODO: better name?
  * 
  * @author Ivan Meredith
+ * @author Adrian Cole
  */
 public interface ComputeService {
-   SortedSet<Server> listServers();
 
    /**
+    * List all servers available to the current user
+    */
+   SortedSet<ServerIdentity> listServers();
+   
+   /**
+    * Find all servers matching the specified name
+    */
+   SortedSet<ServerIdentity> getServerByName(String name);
+   
+   /**
+    * Create a new server given the name, profile, and image.
     * 
-    * @see Image
     */
    CreateServerResponse createServer(String name, Profile profile, Image image);
 
-   Server getServerById(String id);
-
-   SortedSet<Server> getServerByName(String id);
+   /**
+    * destroy the server.
+    */
+   void destroyServer(String id);
+   
+   /**
+    * Find a server by its id
+    */
+   ServerMetadata getServerMetadata(String id);
 
 }

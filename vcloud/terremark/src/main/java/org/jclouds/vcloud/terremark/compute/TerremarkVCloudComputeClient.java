@@ -36,7 +36,7 @@ import java.util.SortedSet;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
-import org.jclouds.compute.Image;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;

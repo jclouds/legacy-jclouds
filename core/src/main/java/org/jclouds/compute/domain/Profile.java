@@ -21,11 +21,11 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.compute;
+package org.jclouds.compute.domain;
 
 /**
  * @author Adrian Cole
  */
-public enum Image {
-   CENTOS_53, RHEL_53, UMBUNTU_90, UMBUNTU_JEOS
+public enum Profile {
+   SMALLEST
 }

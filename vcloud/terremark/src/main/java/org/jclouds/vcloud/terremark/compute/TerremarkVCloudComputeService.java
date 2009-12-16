@@ -24,6 +24,7 @@
 package org.jclouds.vcloud.terremark.compute;
 
 import java.net.InetAddress;
+import java.util.Set;
 import java.util.SortedSet;
 
 import javax.annotation.Resource;
@@ -31,12 +32,14 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.Image;
-import org.jclouds.compute.Profile;
-import org.jclouds.compute.Server;
 import org.jclouds.compute.domain.CreateServerResponse;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.LoginType;
+import org.jclouds.compute.domain.Profile;
+import org.jclouds.compute.domain.ServerIdentity;
+import org.jclouds.compute.domain.ServerMetadata;
 import org.jclouds.compute.domain.internal.CreateServerResponseImpl;
+import org.jclouds.compute.domain.internal.ServerMetadataImpl;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.domain.NamedResource;
@@ -81,8 +84,12 @@ public class TerremarkVCloudComputeService implements ComputeService {
    }
 
    @Override
-   public Server getServerById(String id) {
-      return new TerremarkVCloudServer(computeClient, tmClient.getVApp(id));
+   public ServerMetadata getServerMetadata(String id) {
+      VApp vApp = tmClient.getVApp(id);
+      // TODO
+      Set<InetAddress> publicAddresses = ImmutableSet.<InetAddress> of();
+      return new ServerMetadataImpl(vApp.getId(), vApp.getName(), publicAddresses, vApp
+               .getNetworkToAddresses().values(), 22, LoginType.SSH);
    }
 
    public SortedSet<InternetService> getInternetServicesByName(final String name) {
@@ -96,23 +103,28 @@ public class TerremarkVCloudComputeService implements ComputeService {
    }
 
    @Override
-   public SortedSet<Server> getServerByName(final String name) {
-      return Sets.newTreeSet(Iterables.filter(listServers(), new Predicate<Server>() {
+   public SortedSet<ServerIdentity> getServerByName(final String name) {
+      return Sets.newTreeSet(Iterables.filter(listServers(), new Predicate<ServerIdentity>() {
          @Override
-         public boolean apply(Server input) {
+         public boolean apply(ServerIdentity input) {
             return input.getName().equalsIgnoreCase(name);
          }
       }));
    }
 
    @Override
-   public SortedSet<Server> listServers() {
-      SortedSet<Server> servers = Sets.newTreeSet();
+   public SortedSet<ServerIdentity> listServers() {
+      SortedSet<ServerIdentity> servers = Sets.newTreeSet();
       for (NamedResource resource : tmClient.getDefaultVDC().getResourceEntities().values()) {
          if (resource.getType().equals(VCloudMediaType.VAPP_XML)) {
-            servers.add(getServerById(resource.getId()));
+            servers.add(getServerMetadata(resource.getId()));
          }
       }
       return servers;
+   }
+
+   @Override
+   public void destroyServer(String id) {
+      computeClient.stop(id);
    }
 }

@@ -23,10 +23,10 @@
  */
 package org.jclouds.rimuhosting.miro.servers;
 
-import org.jclouds.compute.Server;
+import org.jclouds.compute.domain.ServerIdentity;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
 
-public class RimuHostingServer implements Server {
+public class RimuHostingServer implements ServerIdentity {
    org.jclouds.rimuhosting.miro.domain.Server rhServer;
 
    RimuHostingClient rhClient;
@@ -52,7 +52,7 @@ public class RimuHostingServer implements Server {
    }
 
    @Override
-   public int compareTo(Server o) {
+   public int compareTo(ServerIdentity o) {
       return (this == o) ? 0 : getId().compareTo(o.getId());
    }
 }
