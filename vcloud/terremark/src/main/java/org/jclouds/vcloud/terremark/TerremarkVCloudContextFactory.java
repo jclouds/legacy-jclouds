@@ -1,6 +1,5 @@
 package org.jclouds.vcloud.terremark;
 
-import java.net.URI;
 import java.util.Properties;
 
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
@@ -23,19 +22,14 @@ import com.google.inject.Module;
  */
 public class TerremarkVCloudContextFactory {
 
-   public static RestContext<TerremarkVCloudAsyncClient, TerremarkVCloudClient> createContext(String username, String password,
-            Module... modules) {
-      return new TerremarkVCloudContextBuilder(new TerremarkVCloudPropertiesBuilder(username, password).build())
-               .withModules(modules).buildContext();
+   public static RestContext<TerremarkVCloudAsyncClient, TerremarkVCloudClient> createContext(
+            String username, String password, Module... modules) {
+      return new TerremarkVCloudContextBuilder(new TerremarkVCloudPropertiesBuilder(username,
+               password).build()).withModules(modules).buildContext();
    }
 
-   public static RestContext<TerremarkVCloudAsyncClient, TerremarkVCloudClient> createContext(URI endpoint, String username,
-            String password, Module... modules) {
-      return new TerremarkVCloudContextBuilder(new TerremarkVCloudPropertiesBuilder(username, password).withEndpoint(
-               endpoint).build()).withModules(modules).buildContext();
-   }
-
-   public static RestContext<TerremarkVCloudAsyncClient, TerremarkVCloudClient> createContext(Properties props, Module... modules) {
+   public static RestContext<TerremarkVCloudAsyncClient, TerremarkVCloudClient> createContext(
+            Properties props, Module... modules) {
       return new TerremarkVCloudContextBuilder(new TerremarkVCloudPropertiesBuilder(props).build())
                .withModules(modules).buildContext();
    }

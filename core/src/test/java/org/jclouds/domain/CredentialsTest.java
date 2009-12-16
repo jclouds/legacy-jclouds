@@ -41,12 +41,19 @@ public class CredentialsTest {
       assertEquals(creds.account, "account");
       assertEquals(creds.key, "Base64==");
    }
-   
+
    public void testAtmos() {
       Credentials creds = Credentials.parse(URI
                .create("blobstore://domain%2Fuser:Base64%3D%3D@azureblob/container-hyphen/prefix"));
       assertEquals(creds.account, "domain/user");
       assertEquals(creds.key, "Base64==");
+   }
+
+   public void testHosting() {
+      Credentials creds = Credentials.parse(URI
+               .create("compute://user%40domain:pa%24sword@hostingdotcom"));
+      assertEquals(creds.account, "user@domain");
+      assertEquals(creds.key, "pa$sword");
    }
 
    public void testCloudFiles() {

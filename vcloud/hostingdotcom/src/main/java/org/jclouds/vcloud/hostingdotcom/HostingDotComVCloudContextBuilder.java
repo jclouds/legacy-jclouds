@@ -32,8 +32,8 @@ import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextBuilder;
 import org.jclouds.vcloud.VCloudAsyncClient;
-import org.jclouds.vcloud.config.VCloudContextModule;
 import org.jclouds.vcloud.config.VCloudDiscoveryRestClientModule;
+import org.jclouds.vcloud.hostingdotcom.config.HostingDotComVCloudContextModule;
 import org.jclouds.vcloud.hostingdotcom.config.HostingDotComVCloudRestClientModule;
 
 import com.google.inject.Module;
@@ -70,7 +70,7 @@ public class HostingDotComVCloudContextBuilder extends
 
    @Override
    protected void addContextModule(List<Module> modules) {
-      modules.add(new VCloudContextModule());
+      modules.add(new HostingDotComVCloudContextModule());
    }
 
    @Override
