@@ -68,13 +68,17 @@ public class TasksListImpl implements TasksList {
          }
 
       });
-      this.tasksByOwner = Multimaps.index(tasks, new Function<Task, URI>() {
+      this.tasksByOwner = Multimaps.index(Iterables.filter(tasks, new Predicate<Task>() {
 
-         public URI apply(Task in) {
-
-            return in.getOwner().getLocation();
+         @Override
+         public boolean apply(Task input) {
+            return input.getOwner() != null;
          }
 
+      }), new Function<Task, URI>() {
+         public URI apply(Task in) {
+            return in.getOwner().getLocation();
+         }
       });
    }
 

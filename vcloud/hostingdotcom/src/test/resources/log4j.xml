@@ -130,7 +130,7 @@
     
     
     
-    <category name="org.jclouds.vcloud.hostingdotcom.HostingDotComVCloudComputeClient">
+    <category name="org.jclouds.vcloud.hostingdotcom.compute.HostingDotComVCloudComputeClient">
         <priority value="TRACE" />
         <appender-ref ref="ASYNCVCLOUD" />
     </category>
