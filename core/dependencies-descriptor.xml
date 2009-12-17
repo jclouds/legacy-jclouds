@@ -40,6 +40,9 @@
         <exclude>javax.inject:inject</exclude>
         <exclude>org.jboss.resteasy:jaxrs-api</exclude>
         <exclude>com.google.code.findbugs:jsr305</exclude>
+        <exclude>com.google.common:google-guava</exclude>
+        <exclude>com.google.collections:google-collections</exclude>
+        <exclude>com.google.code.guice:guice</exclude>
       </excludes>
     </dependencySet>
   </dependencySets>
