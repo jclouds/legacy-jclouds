@@ -33,8 +33,6 @@ import java.util.List;
 
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.command.Request;
-
 import com.google.common.collect.Multimap;
 import com.google.inject.internal.Lists;
 import com.google.inject.internal.Nullable;
@@ -44,7 +42,7 @@ import com.google.inject.internal.Nullable;
  * 
  * @author Adrian Cole
  */
-public class HttpRequest extends HttpMessage implements Request<URI> {
+public class HttpRequest extends HttpMessage {
 
    private List<HttpRequestFilter> requestFilters = Lists.newArrayList();
 

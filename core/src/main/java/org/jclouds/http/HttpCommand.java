@@ -23,16 +23,14 @@
  */
 package org.jclouds.http;
 
-import java.net.URI;
 
-import org.jclouds.command.EndpointCommand;
 
 /**
  * Command whose endpoint is an http service.
  * 
  * @author Adrian Cole
  */
-public interface HttpCommand extends EndpointCommand<URI, HttpRequest, HttpResponse> {
+public interface HttpCommand {
 
    int incrementRedirectCount();
 
@@ -54,4 +52,23 @@ public interface HttpCommand extends EndpointCommand<URI, HttpRequest, HttpRespo
     * change the path of the service
     */
    void redirectPath(String newPath);
+
+   int incrementFailureCount();
+
+   int getFailureCount();
+
+   HttpRequest getRequest();
+
+   /**
+    * 
+    * Used to prevent a command from being re-executed.
+    * 
+    * Any calls to {@link execute} following this will return the below exception.
+    * 
+    * @param exception
+    */
+   void setException(Exception exception);
+   
+   Exception getException();
+
 }

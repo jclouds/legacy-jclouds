@@ -38,7 +38,7 @@ public interface MapBinder extends Binder {
    /**
     * creates and binds the POST payload to the request using parameters specified.
     * 
-    * @see MapPayloadParam
+    * @see org.jclouds.rest.annotations.MapPayloadParam
     */
    public void bindToRequest(HttpRequest request, Map<String, String> postParams);
 

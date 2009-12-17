@@ -23,12 +23,24 @@
  */
 package org.jclouds.http;
 
-import org.jclouds.command.EndpointCommandExecutorService;
+import java.util.concurrent.Future;
 
 /**
  * Capable of invoking http commands.
  * 
  * @author Adrian Cole
  */
-public interface HttpCommandExecutorService extends EndpointCommandExecutorService<HttpCommand, HttpResponse> {
+public interface HttpCommandExecutorService {
+
+   /**
+    * Asks the command to build a request relevant for an endpoint that produces responses of
+    * generic type {@code HttpResponse}. and invokes it on the endpoint, returning a future
+    * 
+    * @param <T>
+    *           type of result the command extracts from the return value
+    * @param command
+    *           that generates requests
+    * @return {@link Future} containing the response from the {@code endpoint}
+    */
+   Future<HttpResponse> submit(HttpCommand command);
 }
