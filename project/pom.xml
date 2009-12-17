@@ -175,6 +175,15 @@
         <jclouds.test.listener>org.jclouds.test.testng.UnitTestStatusListener</jclouds.test.listener>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>jetty</artifactId>
+                <version>7.0.0pre3</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>org.testng</groupId>
@@ -192,7 +201,6 @@
     </dependencies>
 
     <build>
-    
         <plugins>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>

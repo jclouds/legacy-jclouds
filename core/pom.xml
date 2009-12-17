@@ -94,7 +94,6 @@
         <dependency>
             <groupId>org.mortbay.jetty</groupId>
             <artifactId>jetty</artifactId>
-            <version>7.0.0pre3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -142,11 +141,15 @@
                                 <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask"/>
                                 <jarjar destfile="${build.directory}/${build.finalName}-jar-with-dependencies.jar"
                                         update="true">
-                                    <!-- Replace "javax.x.y.." with "org.jclouds.repackaged.javax.x.y..".
+                                    <!-- Replace "x.y.." with "org.jclouds.repackaged.x.y..". Note: can't deal with package-info.class files.
                                       See http://code.google.com/p/jarjar/wiki/CommandLineDocs for more informtion on jarjar rules. -->
                                     <rule pattern="javax.annotation.**" result="${groupId}.repackaged.@0"/>
                                     <rule pattern="javax.inject.**" result="${groupId}.repackaged.@0"/>
                                     <rule pattern="javax.ws.**" result="${groupId}.repackaged.@0"/>
+                                    <!-- google-guava and google-collections -->
+                                    <rule pattern="com.google.common.**" result="${groupId}.repackaged.@0"/>
+                                    <!-- guice -->
+                                    <rule pattern="com.google.inject.**" result="${groupId}.repackaged.@0"/>
                                 </jarjar>
                             </tasks>
                         </configuration>
