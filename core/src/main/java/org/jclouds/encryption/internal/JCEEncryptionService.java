@@ -12,8 +12,9 @@ import java.security.NoSuchProviderException;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.ByteArrayOutputStream;
+import java.io.ByteArrayOutputStream;
+
+import com.google.common.io.Closeables;
 
 /**
  * 
@@ -75,7 +76,7 @@ public class JCEEncryptionService extends BaseEncryptionService {
       } catch (IOException e) {
          throw new RuntimeException(e);
       } finally {
-         IOUtils.closeQuietly(i);
+         Closeables.closeQuietly(i);
       }
       return eTag.digest();
    }
@@ -102,8 +103,8 @@ public class JCEEncryptionService extends BaseEncryptionService {
       } catch (IOException e) {
          throw new RuntimeException(e);
       } finally {
-         IOUtils.closeQuietly(out);
-         IOUtils.closeQuietly(toEncode);
+         Closeables.closeQuietly(out);
+         Closeables.closeQuietly(toEncode);
       }
       return new MD5InputStreamResult(out.toByteArray(), eTag.digest(), length);
    }

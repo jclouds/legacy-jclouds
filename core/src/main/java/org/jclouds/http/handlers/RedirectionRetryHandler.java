@@ -32,7 +32,6 @@ import javax.inject.Named;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriBuilder;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpResponse;
@@ -40,6 +39,8 @@ import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.logging.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Closeables;
 import com.google.inject.Inject;
 
 /**
@@ -91,12 +92,12 @@ public class RedirectionRetryHandler implements HttpRetryHandler {
    void closeClientButKeepContentStream(HttpResponse response) {
       if (response.getContent() != null) {
          try {
-            byte[] data = IOUtils.toByteArray(response.getContent());
+            byte[] data = ByteStreams.toByteArray(response.getContent());
             response.setContent(new ByteArrayInputStream(data));
          } catch (IOException e) {
             logger.error(e, "Error consuming input");
          } finally {
-            IOUtils.closeQuietly(response.getContent());
+            Closeables.closeQuietly(response.getContent());
          }
       }
    }

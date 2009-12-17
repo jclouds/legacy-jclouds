@@ -26,14 +26,13 @@ package org.jclouds.aws.s3.xml;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.s3.domain.AccessControlList;
 import org.jclouds.aws.s3.domain.AccessControlList.GroupGranteeURI;
 import org.jclouds.aws.s3.domain.AccessControlList.Permission;
-import org.jclouds.aws.s3.xml.AccessControlListHandler;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
 @Test(groups = "unit", testName = "s3.AccessControlListHandlerTest")
@@ -50,7 +49,7 @@ public class AccessControlListHandlerTest extends BaseHandlerTest {
    @Test
    public void testAccessControlListOwnerOnly() throws HttpException {
       String ownerId = "1a405254c932b52e5b5caaa88186bc431a1bacb9ece631f835daddaf0c47677c";
-      AccessControlList acl = createParser().parse(IOUtils.toInputStream(aclOwnerOnly));
+      AccessControlList acl = createParser().parse(Utils.toInputStream(aclOwnerOnly));
       assertEquals(acl.getOwner().getId(), ownerId);
       assertEquals(acl.getOwner().getDisplayName(), "jamesmurty");
       assertEquals(acl.getPermissions(ownerId).size(), 1);
@@ -64,7 +63,7 @@ public class AccessControlListHandlerTest extends BaseHandlerTest {
    @Test
    public void testAccessControlListExtreme() throws HttpException {
       String ownerId = "1a405254c932b52e5b5caaa88186bc431a1bacb9ece631f835daddaf0c47677c";
-      AccessControlList acl = createParser().parse(IOUtils.toInputStream(aclExtreme));
+      AccessControlList acl = createParser().parse(Utils.toInputStream(aclExtreme));
       assertEquals(acl.getOwner().getId(), ownerId);
       assertEquals(acl.getOwner().getDisplayName(), "jamesmurty");
       assertEquals(acl.getPermissions(ownerId).size(), 3);

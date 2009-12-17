@@ -131,7 +131,7 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
 
    /**
     * public void checkCode() { int code = getResponse().getStatusCode(); if (code >= 300) {
-    * IOUtils.closeQuietly(getResponse().getContent()); throw new
+    * Closeables.closeQuietly(getResponse().getContent()); throw new
     * IllegalStateException("incorrect code for this operation: " + getResponse()); } }
     **/
    public HttpRequest getRequest() {

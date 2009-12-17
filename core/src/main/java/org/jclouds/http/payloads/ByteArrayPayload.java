@@ -30,13 +30,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.http.Payload;
+import org.jclouds.util.Utils;
+
+import com.google.common.io.ByteStreams;
 
 /**
  * @author Adrian Cole
  */
 public class ByteArrayPayload implements Payload {
+
    private final byte[] content;
 
    public ByteArrayPayload(byte[] content) {
@@ -68,7 +71,7 @@ public class ByteArrayPayload implements Payload {
     */
    @Override
    public void writeTo(OutputStream outstream) throws IOException {
-      IOUtils.write(content, outstream);
+      ByteStreams.write(content, Utils.newOutputStreamSupplier(outstream));
    }
 
    @Override

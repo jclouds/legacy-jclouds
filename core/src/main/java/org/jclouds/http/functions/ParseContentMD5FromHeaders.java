@@ -25,7 +25,6 @@ package org.jclouds.http.functions;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.encryption.internal.Base64;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.logging.Logger;
@@ -33,6 +32,7 @@ import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.base.Function;
+import com.google.common.io.Closeables;
 
 /**
  * @author Adrian Cole
@@ -67,7 +67,7 @@ public class ParseContentMD5FromHeaders implements Function<HttpResponse, byte[]
    private GeneratedHttpRequest<?> request;
 
    public byte[] apply(HttpResponse from) {
-      IOUtils.closeQuietly(from.getContent());
+      Closeables.closeQuietly(from.getContent());
       String contentMD5 = from.getFirstHeaderOrNull("Content-MD5");
       if (contentMD5 != null) {
          return Base64.decode(contentMD5);

@@ -23,6 +23,7 @@
  */
 package org.jclouds.encryption.bouncycastle;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -33,8 +34,6 @@ import java.security.NoSuchProviderException;
 
 import javax.inject.Singleton;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.bouncycastle.crypto.Digest;
 import org.bouncycastle.crypto.digests.MD5Digest;
 import org.bouncycastle.crypto.digests.SHA1Digest;
@@ -44,6 +43,8 @@ import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.util.encoders.Base64;
 import org.jclouds.encryption.internal.BaseEncryptionService;
 import org.jclouds.util.Utils;
+
+import com.google.common.io.Closeables;
 
 /**
  * 
@@ -104,7 +105,7 @@ public class BouncyCastleEncryptionService extends BaseEncryptionService {
       } catch (IOException e) {
          throw new RuntimeException(e);
       } finally {
-         IOUtils.closeQuietly(i);
+         Closeables.closeQuietly(i);
       }
       eTag.doFinal(resBuf, 0);
       return resBuf;
@@ -133,8 +134,8 @@ public class BouncyCastleEncryptionService extends BaseEncryptionService {
       } catch (IOException e) {
          throw new RuntimeException(e);
       } finally {
-         IOUtils.closeQuietly(out);
-         IOUtils.closeQuietly(toEncode);
+         Closeables.closeQuietly(out);
+         Closeables.closeQuietly(toEncode);
       }
       eTag.doFinal(resBuf, 0);
       return new MD5InputStreamResult(out.toByteArray(), resBuf, length);

@@ -36,10 +36,11 @@ import java.net.URI;
 import java.util.Properties;
 import java.util.Map.Entry;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.http.HttpUtils;
 
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Closeables;
 import com.google.common.io.Resources;
 
 /**
@@ -96,14 +97,14 @@ public class GetPath {
             input = entry.getValue();
             File file = new File(destinationDir, entry.getKey());
             OutputStream out = new FileOutputStream(file);
-            IOUtils.copyLarge(input, out);
+            ByteStreams.copy(input, out);
             out.flush();
             out.close();
          }
 
       } finally {
          // Close connecton
-         IOUtils.closeQuietly(input);
+         Closeables.closeQuietly(input);
       }
    }
 

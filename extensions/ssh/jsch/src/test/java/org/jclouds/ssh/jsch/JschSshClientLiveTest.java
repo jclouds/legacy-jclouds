@@ -34,7 +34,6 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
@@ -78,9 +77,9 @@ public class JschSshClientLiveTest {
 
             public InputStream get(String path) {
                if (path.equals("/etc/passwd")) {
-                  return IOUtils.toInputStream("root");
+                  return Utils.toInputStream("root");
                } else if (path.equals(temp.getAbsolutePath())) {
-                  return IOUtils.toInputStream("rabbit");
+                  return Utils.toInputStream("rabbit");
                }
                throw new RuntimeException("path " + path + " not stubbed");
             }
@@ -121,7 +120,7 @@ public class JschSshClientLiveTest {
       temp = File.createTempFile("foo", "bar");
       temp.deleteOnExit();
       SshClient client = setupClient();
-      client.put(temp.getAbsolutePath(), IOUtils.toInputStream("rabbit"));
+      client.put(temp.getAbsolutePath(), Utils.toInputStream("rabbit"));
       InputStream input = setupClient().get(temp.getAbsolutePath());
       String contents = Utils.toStringAndClose(input);
       assertEquals(contents, "rabbit");

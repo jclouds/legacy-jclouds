@@ -45,7 +45,6 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.reference.AWSConstants;
 import org.jclouds.aws.util.RequestSigner;
 import org.jclouds.date.TimeStamp;
@@ -59,6 +58,7 @@ import org.jclouds.http.internal.SignatureWire;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
@@ -162,7 +162,7 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
       try {
          signature = encryptionService.hmacSha256Base64(stringToSign, secretKey.getBytes());
          if (signatureWire.enabled())
-            signatureWire.input(IOUtils.toInputStream(signature));
+            signatureWire.input(Utils.toInputStream(signature));
       } catch (Exception e) {
          throw new HttpException("error signing request", e);
       }

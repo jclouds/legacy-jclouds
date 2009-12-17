@@ -33,7 +33,6 @@ import java.util.SortedSet;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
@@ -42,6 +41,7 @@ import org.jclouds.demo.tweetstore.reference.TweetStoreConstants;
 import org.jclouds.twitter.TwitterClient;
 import org.jclouds.twitter.domain.Status;
 import org.jclouds.twitter.domain.User;
+import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -103,14 +103,14 @@ public class StoreTweetsControllerTest {
          assertEquals(frankBlob.getMetadata().getUserMetadata()
                   .get(TweetStoreConstants.SENDER_NAME), "frank");
          assertEquals(frankBlob.getMetadata().getContentType(), "text/plain");
-         assertEquals(IOUtils.toString((InputStream) frankBlob.getContent()), "I love beans!");
+         assertEquals(Utils.toStringAndClose((InputStream) frankBlob.getContent()), "I love beans!");
 
          Blob jimmyBlob = map.get("2");
          assertEquals(jimmyBlob.getMetadata().getName(), "2");
          assertEquals(jimmyBlob.getMetadata().getUserMetadata()
                   .get(TweetStoreConstants.SENDER_NAME), "jimmy");
          assertEquals(jimmyBlob.getMetadata().getContentType(), "text/plain");
-         assertEquals(IOUtils.toString((InputStream) jimmyBlob.getContent()), "cloud is king");
+         assertEquals(Utils.toStringAndClose((InputStream) jimmyBlob.getContent()), "cloud is king");
       }
 
    }

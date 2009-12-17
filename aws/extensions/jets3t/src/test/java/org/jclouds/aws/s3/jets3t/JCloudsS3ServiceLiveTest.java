@@ -42,7 +42,6 @@ import java.util.concurrent.TimeoutException;
 
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
@@ -50,6 +49,7 @@ import org.jclouds.aws.s3.domain.AccessControlList.GroupGranteeURI;
 import org.jclouds.aws.s3.domain.AccessControlList.Permission;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
+import org.jclouds.util.Utils;
 import org.jets3t.service.S3ObjectsChunk;
 import org.jets3t.service.S3Service;
 import org.jets3t.service.S3ServiceException;
@@ -190,7 +190,7 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest<S3Asy
 
          // TODO null keys from s3object! assertEquals(object.getKey(), objectKey);
          assertNotNull(object.getDataInputStream());
-         assertEquals(IOUtils.toString(object.getDataInputStream()), objectValue);
+         assertEquals(Utils.toStringAndClose(object.getDataInputStream()), objectValue);
          assertEquals(object.getContentLength(), objectValue.length());
          assertEquals(object.getMetadata(metadataName), metadataValue);
 

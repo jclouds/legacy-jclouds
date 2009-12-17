@@ -37,13 +37,13 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.s3.S3PropertiesBuilder;
 import org.jclouds.aws.s3.blobstore.S3BlobStoreContextBuilder;
 import org.jclouds.azure.storage.blob.AzureBlobPropertiesBuilder;
 import org.jclouds.azure.storage.blob.blobstore.AzureBlobStoreContextBuilder;
 import org.jclouds.rackspace.cloudfiles.CloudFilesPropertiesBuilder;
 import org.jclouds.rackspace.cloudfiles.blobstore.CloudFilesBlobStoreContextBuilder;
+import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -94,7 +94,7 @@ public class GoogleAppEngineLiveTest {
    @Test
    public void shouldPass() throws InterruptedException, IOException {
       InputStream i = url.openStream();
-      String string = IOUtils.toString(i);
+      String string = Utils.toStringAndClose(i);
       assert string.indexOf("Welcome") >= 0 : string;
    }
 
@@ -102,7 +102,7 @@ public class GoogleAppEngineLiveTest {
    public void testGuiceJCloudsSerial() throws InterruptedException, IOException {
       URL gurl = new URL(url, "/guice/containers.blobstore");
       InputStream i = gurl.openStream();
-      String string = IOUtils.toString(i);
+      String string = Utils.toStringAndClose(i);
       assert string.indexOf("List") >= 0 : string;
    }
 
@@ -110,7 +110,7 @@ public class GoogleAppEngineLiveTest {
    public void testGuiceJCloudsParallel() throws InterruptedException, IOException {
       URL gurl = new URL(url, "/guice/containers.blobstore");
       InputStream i = gurl.openStream();
-      String string = IOUtils.toString(i);
+      String string = Utils.toStringAndClose(i);
       assert string.indexOf("List") >= 0 : string;
    }
 }

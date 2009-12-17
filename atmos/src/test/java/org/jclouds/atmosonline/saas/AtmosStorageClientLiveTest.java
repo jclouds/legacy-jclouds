@@ -33,7 +33,6 @@ import java.security.SecureRandom;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.atmosonline.saas.blobstore.strategy.RecursiveRemove;
 import org.jclouds.atmosonline.saas.domain.AtmosObject;
 import org.jclouds.atmosonline.saas.domain.BoundedSortedSet;
@@ -218,7 +217,7 @@ public class AtmosStorageClientLiveTest {
    }
 
    Object makeData(String in, boolean stream) {
-      return stream ? IOUtils.toInputStream(in) : in;
+      return stream ? Utils.toInputStream(in) : in;
    }
 
    private void createOrReplaceObject(String name, Object data, String metadataValue)
@@ -274,7 +273,7 @@ public class AtmosStorageClientLiveTest {
             String metadataValue) throws InterruptedException, ExecutionException,
             TimeoutException, IOException {
       AtmosObject getBlob = connection.headFile(path);
-      assertEquals(IOUtils.toString(getBlob.getContent()), "");
+      assertEquals(Utils.toStringAndClose(getBlob.getContent()), "");
       verifyMetadata(metadataValue, getBlob);
    }
 
@@ -282,7 +281,7 @@ public class AtmosStorageClientLiveTest {
             String metadataValue) throws InterruptedException, ExecutionException,
             TimeoutException, IOException {
       AtmosObject getBlob = connection.readFile(path);
-      assertEquals(IOUtils.toString(getBlob.getContent()), compare);
+      assertEquals(Utils.toStringAndClose(getBlob.getContent()), compare);
       verifyMetadata(metadataValue, getBlob);
    }
 

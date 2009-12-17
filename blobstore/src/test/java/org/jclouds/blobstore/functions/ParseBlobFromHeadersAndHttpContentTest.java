@@ -33,12 +33,12 @@ import java.util.Collections;
 
 import javax.ws.rs.core.HttpHeaders;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -96,7 +96,7 @@ public class ParseBlobFromHeadersAndHttpContentTest {
       HttpResponse response = createMock(HttpResponse.class);
       MutableBlobMetadata meta = createMock(MutableBlobMetadata.class);
       expect(metadataParser.apply(response)).andReturn(meta);
-      InputStream test = IOUtils.toInputStream("test");
+      InputStream test = Utils.toInputStream("test");
 
       expect(meta.getSize()).andReturn(-1l);
       meta.setSize(-1l);

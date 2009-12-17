@@ -30,8 +30,8 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Map.Entry;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.util.InputStreamChain;
+import org.jclouds.util.Utils;
 
 import com.google.common.collect.Multimap;
 
@@ -95,7 +95,7 @@ public class MultipartForm {
       }
 
       public Part(Multimap<String, String> headers, String data) {
-         this(headers, IOUtils.toInputStream(data), data.length());
+         this(headers, Utils.toInputStream(data), data.length());
       }
 
       public Part(Multimap<String, String> headers, File data) throws FileNotFoundException {

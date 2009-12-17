@@ -29,10 +29,10 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.codegen.ec2.queryapi.AmazonEC2QueryAPI;
 
 import com.google.gson.Gson;
+import com.google.common.io.Closeables;
 
 /**
  * Converts object models representing AWS API beans into Java classes.
@@ -65,7 +65,7 @@ public class AmazonEC2QueryAPIParser {
          validator.validateCategories().validateCommands().validateDomain();
          return validator.getModel();
       } finally {
-         IOUtils.closeQuietly(in);
+         Closeables.closeQuietly(in);
       }
    }
 

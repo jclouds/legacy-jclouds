@@ -28,7 +28,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.util.TreeSet;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.s3.domain.CanonicalUser;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
@@ -41,6 +40,7 @@ import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -135,7 +135,7 @@ public class ListBucketHandlerTest extends BaseHandlerTest {
    public void testListMyBucketsWithDelimiterSlashAndCommonPrefixesAppsSlash() throws HttpException {
 
       ListBucketResponse bucket = createParser().parse(
-               IOUtils.toInputStream(listBucketWithSlashDelimiterAndCommonPrefixApps));
+               Utils.toInputStream(listBucketWithSlashDelimiterAndCommonPrefixApps));
       assertEquals(bucket.getCommonPrefixes().iterator().next(), "apps/");
       assertEquals(bucket.getDelimiter(), "/");
       assert bucket.getMarker() == null;
@@ -145,7 +145,7 @@ public class ListBucketHandlerTest extends BaseHandlerTest {
    public void testListMyBucketsWithPrefixAppsSlash() throws HttpException {
 
       ListBucketResponse bucket = createParser().parse(
-               IOUtils.toInputStream(listBucketWithPrefixAppsSlash));
+               Utils.toInputStream(listBucketWithPrefixAppsSlash));
       assertEquals(bucket.getPrefix(), "apps/");
       assertEquals(bucket.getMaxKeys(), 1000);
       assert bucket.getMarker() == null;

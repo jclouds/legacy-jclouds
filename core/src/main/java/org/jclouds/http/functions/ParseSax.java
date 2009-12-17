@@ -30,7 +30,6 @@ import java.io.InputStream;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.logging.Logger;
@@ -41,6 +40,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.google.common.base.Function;
+import com.google.common.io.Closeables;
 
 /**
  * This object will parse the body of an HttpResponse and return the result of type <T> back to the
@@ -99,7 +99,7 @@ public class ParseSax<T> implements Function<HttpResponse, T> {
             Utils.<HttpException> rethrowIfRuntimeOrSameType(e);
          throw new HttpException(message.toString(), e);
       } finally {
-         IOUtils.closeQuietly(xml);
+         Closeables.closeQuietly(xml);
       }
    }
 

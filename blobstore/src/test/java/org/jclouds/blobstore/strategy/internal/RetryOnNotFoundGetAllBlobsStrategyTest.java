@@ -37,13 +37,13 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.blobstore.integration.StubBlobStoreContextBuilder;
+import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -86,7 +86,7 @@ public class RetryOnNotFoundGetAllBlobsStrategyTest {
       map.ifNotFoundRetryOtherwiseAddToSet("container", "key", futureObject, objects);
       // should have retried once
       assert System.currentTimeMillis() >= time + map.requestRetryMilliseconds;
-      assertEquals(IOUtils.toString((InputStream) objects.iterator().next().getContent()), "goo");
+      assertEquals(Utils.toStringAndClose((InputStream) objects.iterator().next().getContent()), "goo");
       assert !objects.contains(null);
    }
 

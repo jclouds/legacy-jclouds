@@ -28,12 +28,12 @@ import java.io.InputStream;
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
+import com.google.common.io.Closeables;
 import com.google.gson.Gson;
 
 /**
@@ -66,7 +66,7 @@ public abstract class ParseJson<T> implements Function<HttpResponse, T> {
          logger.error(e, message.toString());
          throw new HttpResponseException(message.toString() + "\n" + from, null, from, e);
       } finally {
-         IOUtils.closeQuietly(gson);
+         Closeables.closeQuietly(gson);
       }
 
    }

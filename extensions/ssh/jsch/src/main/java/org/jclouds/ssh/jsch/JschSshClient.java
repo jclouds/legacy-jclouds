@@ -37,7 +37,6 @@ import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.ProxyInputStream;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.jclouds.logging.Logger;
@@ -46,6 +45,7 @@ import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
 import org.jclouds.util.Utils;
 
+import com.google.common.io.Closeables;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
@@ -148,7 +148,7 @@ public class JschSshClient implements SshClient {
          throw new SshException(String.format("%s@%s:%d: Error putting path: %s", username, host
                   .getHostAddress(), port, path), e);
       } finally {
-         IOUtils.closeQuietly(contents);
+         Closeables.closeQuietly(contents);
       }
    }
 

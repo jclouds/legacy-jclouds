@@ -36,10 +36,10 @@ import java.util.concurrent.TimeoutException;
 
 import javax.ws.rs.ext.RuntimeDelegate;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RuntimeDelegateImpl;
+import org.jclouds.util.Utils;
 import org.mortbay.jetty.HttpHeaders;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -90,7 +90,7 @@ public class ParseURIFromListOrLocationHeaderIf20xTest {
       HttpResponse response = createMock(HttpResponse.class);
       expect(response.getStatusCode()).andReturn(200).atLeastOnce();
       expect(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE)).andReturn("text/uri-list");
-      expect(response.getContent()).andReturn(IOUtils.toInputStream("http://locahost"))
+      expect(response.getContent()).andReturn(Utils.toInputStream("http://locahost"))
                .atLeastOnce();
       replay(response);
       assertEquals(function.apply(response), URI.create("http://locahost"));

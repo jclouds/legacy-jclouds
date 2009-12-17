@@ -62,11 +62,6 @@
             <version>1.1.GA</version>
         </dependency>
         <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>1.4</version>
-        </dependency>
-        <dependency>
             <groupId>com.google.code.guice</groupId>
             <artifactId>guice</artifactId>
             <version>2.1-r1128</version>
@@ -79,7 +74,7 @@
         <dependency>
             <groupId>com.google.collections</groupId>
             <artifactId>google-collections</artifactId>
-            <version>1.0-rc4</version>
+            <version>1.0-rc5</version>
         </dependency>
         <dependency>
             <groupId>javax.annotation</groupId>

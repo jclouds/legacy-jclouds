@@ -37,7 +37,6 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.aws.util.RequestSigner;
 import org.jclouds.date.TimeStamp;
@@ -49,6 +48,7 @@ import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
 import org.jclouds.logging.Logger;
+import org.jclouds.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
 
@@ -111,7 +111,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
             throws HttpException {
       String signature = signString(toSign);
       if (signatureWire.enabled())
-         signatureWire.input(IOUtils.toInputStream(signature));
+         signatureWire.input(Utils.toInputStream(signature));
       request.getHeaders().replaceValues(HttpHeaders.AUTHORIZATION,
                Collections.singletonList("AWS " + accessKey + ":" + signature));
    }

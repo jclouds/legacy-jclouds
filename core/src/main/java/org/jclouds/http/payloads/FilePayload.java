@@ -33,8 +33,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.http.Payload;
+
+import com.google.common.io.Closeables;
+import com.google.common.io.Files;
 
 /**
  * @author Adrian Cole
@@ -78,9 +80,9 @@ public class FilePayload implements Payload {
    public void writeTo(OutputStream outstream) throws IOException {
       InputStream in = getContent();
       try {
-         IOUtils.copy(getContent(), outstream);
+         Files.copy(content, outstream);
       } finally {
-         IOUtils.closeQuietly(in);
+         Closeables.closeQuietly(in);
       }
    }
 

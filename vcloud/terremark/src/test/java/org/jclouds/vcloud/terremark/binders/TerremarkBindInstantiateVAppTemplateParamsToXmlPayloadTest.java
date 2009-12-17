@@ -41,7 +41,6 @@ import java.util.Map;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Jsr330;
 import org.jclouds.util.Utils;
@@ -104,7 +103,7 @@ public class TerremarkBindInstantiateVAppTemplateParamsToXmlPayloadTest {
 
 	public void testApplyInputStream() throws IOException {
 
-		String expected = IOUtils.toString(getClass().getResourceAsStream(
+		String expected = Utils.toStringAndClose(getClass().getResourceAsStream(
 				"/terremark/InstantiateVAppTemplateParams-test-2.xml"));
 		Multimap<String, String> headers = Multimaps
 				.synchronizedMultimap(HashMultimap.<String, String> create());
@@ -135,7 +134,7 @@ public class TerremarkBindInstantiateVAppTemplateParamsToXmlPayloadTest {
 
 	public void testApplyInputStream2() throws IOException {
 
-		String expected = IOUtils.toString(getClass().getResourceAsStream(
+		String expected = Utils.toStringAndClose(getClass().getResourceAsStream(
 				"/terremark/InstantiateVAppTemplateParams-test-2.xml"));
 		Multimap<String, String> headers = Multimaps
 				.synchronizedMultimap(HashMultimap.<String, String> create());

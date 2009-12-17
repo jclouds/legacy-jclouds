@@ -37,7 +37,6 @@ import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.ListResponse;
@@ -54,6 +53,7 @@ import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
 import org.jclouds.rackspace.cloudfiles.options.ListCdnContainerOptions;
 import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
+import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -345,7 +345,7 @@ public class CloudFilesClientLiveTest extends
          }
          // Test GET of object (including updated metadata)
          CFObject getBlob = context.getApi().getObject(containerName, object.getInfo().getName());
-         assertEquals(IOUtils.toString(getBlob.getContent()), data);
+         assertEquals(Utils.toStringAndClose(getBlob.getContent()), data);
          // TODO assertEquals(getBlob.getName(), object.getMetadata().getName());
          assertEquals(getBlob.getContentLength(), new Long(data.length()));
          assertEquals(getBlob.getInfo().getContentType(), "text/plain");
@@ -390,7 +390,7 @@ public class CloudFilesClientLiveTest extends
          assertEquals(getBlob.getInfo().getHash(), encryptionService.fromHexString(newEtag));
          getBlob = context.getApi().getObject(containerName, object.getInfo().getName(),
                   GetOptions.Builder.startAt(8));
-         assertEquals(IOUtils.toString(getBlob.getContent()), data.substring(8));
+         assertEquals(Utils.toStringAndClose(getBlob.getContent()), data.substring(8));
 
       } finally {
          returnContainer(containerName);

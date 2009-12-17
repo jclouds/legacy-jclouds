@@ -38,10 +38,12 @@ import java.util.concurrent.ExecutorService;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.input.TeeInputStream;
 import org.jclouds.concurrent.SingleThreaded;
+import org.jclouds.io.TeeInputStream;
 import org.jclouds.logging.Logger;
+
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Closeables;
 /**
  * Logs data to the wire LOG.
  * 
@@ -98,13 +100,13 @@ public abstract class Wire {
 
    public InputStream copy(final String header, InputStream instream) {
       try {
-         byte[] data = IOUtils.toByteArray(instream);
+         byte[] data = ByteStreams.toByteArray(instream);
          wire(header, new ByteArrayInputStream(data));
          return new ByteArrayInputStream(data);
       } catch (IOException e) {
          throw new RuntimeException("Error tapping line", e);
       } finally {
-         IOUtils.closeQuietly(instream);
+         Closeables.closeQuietly(instream);
       }
    }
 
@@ -119,7 +121,7 @@ public abstract class Wire {
                try {
                   wire(header, line);
                } finally {
-                  IOUtils.closeQuietly(line);
+                  Closeables.closeQuietly(line);
                }
             }
          });
@@ -166,7 +168,7 @@ public abstract class Wire {
             } catch (FileNotFoundException e) {
                logger.error(e, "Error tapping file: %s", out);
             } finally {
-               IOUtils.closeQuietly(in);
+               Closeables.closeQuietly(in);
             }
          }
       });

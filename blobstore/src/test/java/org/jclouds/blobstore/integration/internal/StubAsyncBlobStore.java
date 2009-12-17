@@ -26,6 +26,7 @@ package org.jclouds.blobstore.integration.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -54,8 +55,6 @@ import java.util.concurrent.TimeoutException;
 import javax.inject.Inject;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.KeyNotFoundException;
@@ -93,6 +92,8 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Closeables;
 import com.google.inject.internal.Nullable;
 
 /**
@@ -148,8 +149,8 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
       } else if (data instanceof File || data instanceof InputStream) {
          InputStream io = (data instanceof InputStream) ? (InputStream) data : new FileInputStream(
                   (File) data);
-         bytes = IOUtils.toByteArray(io);
-         IOUtils.closeQuietly(io);
+         bytes = ByteStreams.toByteArray(io);
+         Closeables.closeQuietly(io);
       } else {
          throw new UnsupportedOperationException("Content not supported " + data.getClass());
       }
@@ -594,7 +595,7 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
             if (options.getRanges() != null && options.getRanges().size() > 0) {
                byte[] data;
                try {
-                  data = IOUtils.toByteArray(returnVal.getPayload().getContent());
+                  data = ByteStreams.toByteArray(returnVal.getPayload().getContent());
                } catch (IOException e) {
                   throw new RuntimeException(e);
                }

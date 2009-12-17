@@ -34,7 +34,6 @@ import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.PerformanceTest;
 import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.CanonicalUser;
@@ -45,6 +44,7 @@ import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.util.Utils;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -87,7 +87,7 @@ public class S3ParserTest extends PerformanceTest {
    private SortedSet<BucketMetadata> runParseListAllMyBuckets() throws HttpException {
       return (SortedSet<BucketMetadata>) factory.create(
                injector.getInstance(ListAllMyBucketsHandler.class)).parse(
-               IOUtils.toInputStream(listAllMyBucketsResultOn200));
+               Utils.toInputStream(listAllMyBucketsResultOn200));
    }
 
    @Test
@@ -148,14 +148,14 @@ public class S3ParserTest extends PerformanceTest {
 
    private ListBucketResponse runParseListContainerResult() throws HttpException {
       return (ListBucketResponse) factory.create(injector.getInstance(ListBucketHandler.class))
-               .parse(IOUtils.toInputStream(listContainerResult));
+               .parse(Utils.toInputStream(listContainerResult));
    }
 
    public static final String successfulCopyObject200 = "<CopyObjectResult xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><LastModified>2009-03-19T13:23:27.000Z</LastModified><ETag>\"92836a3ea45a6984d1b4d23a747d46bb\"</ETag></CopyObjectResult>";
 
    private ObjectMetadata runParseCopyObjectResult() throws HttpException {
       return (ObjectMetadata) factory.create(injector.getInstance(CopyObjectHandler.class)).parse(
-               IOUtils.toInputStream(successfulCopyObject200));
+               Utils.toInputStream(successfulCopyObject200));
    }
 
    public void testCanParseCopyObjectResult() throws HttpException, UnsupportedEncodingException {

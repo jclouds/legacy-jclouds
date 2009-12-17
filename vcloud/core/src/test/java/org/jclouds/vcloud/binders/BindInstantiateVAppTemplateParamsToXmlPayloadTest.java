@@ -41,7 +41,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Jsr330;
 import org.jclouds.util.Utils;
@@ -93,7 +92,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
 	});
 
 	public void testApplyInputStream1() throws IOException {
-		String expected = IOUtils.toString(getClass().getResourceAsStream(
+		String expected = Utils.toStringAndClose(getClass().getResourceAsStream(
 				"/newvapp-hosting.xml"));
 		Multimap<String, String> headers = Multimaps
 				.synchronizedMultimap(HashMultimap.<String, String> create());
@@ -125,7 +124,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
 	}
 
 	public void testApplyInputStream2() throws IOException {
-		String expected = IOUtils.toString(getClass().getResourceAsStream(
+		String expected = Utils.toStringAndClose(getClass().getResourceAsStream(
 				"/newvapp-hosting.xml"));
 		Multimap<String, String> headers = Multimaps
 				.synchronizedMultimap(HashMultimap.<String, String> create());

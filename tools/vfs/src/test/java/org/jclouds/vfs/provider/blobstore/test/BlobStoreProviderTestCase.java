@@ -27,7 +27,6 @@ import java.io.IOException;
 
 import junit.framework.Test;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.vfs.AllFileSelector;
 import org.apache.commons.vfs.FileContent;
 import org.apache.commons.vfs.FileObject;
@@ -37,10 +36,13 @@ import org.apache.commons.vfs.impl.DefaultFileSystemManager;
 import org.apache.commons.vfs.test.AbstractProviderTestConfig;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.util.Utils;
 import org.jclouds.vfs.provider.blobstore.BlobStoreFileObject;
 import org.jclouds.vfs.provider.blobstore.BlobStoreFileProvider;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
+import com.google.common.io.CharStreams;
 import com.google.inject.Module;
 
 /**
@@ -111,7 +113,8 @@ public class BlobStoreProviderTestCase extends AbstractProviderTestConfig {
             IOException {
       FileObject file = base.resolveFile(name);
       FileContent content = file.getContent();
-      IOUtils.write(value, content.getOutputStream());
+      CharStreams.write(value, CharStreams.newWriterSupplier(Utils.newOutputStreamSupplier(content
+               .getOutputStream()), Charsets.UTF_8));
       content.close();
    }
 

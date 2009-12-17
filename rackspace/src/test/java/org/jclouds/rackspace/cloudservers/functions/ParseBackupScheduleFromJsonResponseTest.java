@@ -28,11 +28,11 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.net.UnknownHostException;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rackspace.cloudservers.domain.BackupSchedule;
 import org.jclouds.rackspace.cloudservers.domain.DailyBackup;
 import org.jclouds.rackspace.cloudservers.domain.WeeklyBackup;
+import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
 import com.google.gson.Gson;
@@ -63,7 +63,7 @@ public class ParseBackupScheduleFromJsonResponseTest {
 
       ParseBackupScheduleFromJsonResponse parser = new ParseBackupScheduleFromJsonResponse(i
                .getInstance(Gson.class));
-      BackupSchedule response = parser.apply(IOUtils
+      BackupSchedule response = parser.apply(Utils
                .toInputStream("{\"backupSchedule\":{\"enabled\" : false}}"));
       assertEquals(new BackupSchedule(), response);
    }

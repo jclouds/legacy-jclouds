@@ -23,8 +23,11 @@
  */
 package org.jclouds.util;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -33,11 +36,14 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.logging.Logger;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ComputationException;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Closeables;
+import com.google.common.io.OutputSupplier;
 
 /**
  * // TODO: Adrian: Document this!
@@ -46,6 +52,23 @@ import com.google.common.collect.ComputationException;
  */
 public class Utils {
    public static final String UTF8_ENCODING = "UTF-8";
+
+   /**
+    * Returns a factory that will supply instances of {@link OutputStream} that read from the given
+    * outputStream.
+    * 
+    * @param url
+    *           the URL to read from
+    * @return the factory
+    */
+   public static OutputSupplier<OutputStream> newOutputStreamSupplier(final OutputStream output) {
+      checkNotNull(output, "output");
+      return new OutputSupplier<OutputStream>() {
+         public OutputStream getOutput() throws IOException {
+            return output;
+         }
+      };
+   }
 
    public static boolean enventuallyTrue(Supplier<Boolean> assertion, long inconsistencyMillis)
             throws InterruptedException {
@@ -116,9 +139,18 @@ public class Utils {
 
    public static String toStringAndClose(InputStream input) throws IOException {
       try {
-         return IOUtils.toString(input);
+         return new String(ByteStreams.toByteArray(input), Charsets.UTF_8);
       } finally {
-         IOUtils.closeQuietly(input);
+         Closeables.closeQuietly(input);
+      }
+   }
+
+   public static InputStream toInputStream(String in) {
+      try {
+         return ByteStreams.newInputStreamSupplier(in.getBytes(Charsets.UTF_8)).getInput();
+      } catch (IOException e) {
+         logger.warn(e, "Failed to convert %s to an inputStream", in);
+         throw new RuntimeException(e);
       }
    }
 

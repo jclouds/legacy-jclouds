@@ -29,8 +29,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.http.Payload;
+import org.jclouds.util.Utils;
+
+import com.google.common.io.ByteStreams;
 
 /**
  * @author Adrian Cole
@@ -51,7 +53,7 @@ public class StringPayload implements Payload {
     */
    @Override
    public InputStream getContent() {
-      return IOUtils.toInputStream(content);
+      return Utils.toInputStream(content);
    }
 
    /**
@@ -67,7 +69,7 @@ public class StringPayload implements Payload {
     */
    @Override
    public void writeTo(OutputStream outstream) throws IOException {
-      IOUtils.write(content.getBytes(), outstream);
+      ByteStreams.copy(Utils.toInputStream(content), outstream);
    }
 
    /**

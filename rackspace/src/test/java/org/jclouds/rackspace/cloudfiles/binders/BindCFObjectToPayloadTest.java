@@ -31,7 +31,6 @@ import java.net.URI;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.http.HttpRequest;
@@ -39,6 +38,7 @@ import org.jclouds.rackspace.cloudfiles.CloudFilesContextBuilder;
 import org.jclouds.rackspace.cloudfiles.CloudFilesPropertiesBuilder;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.BlobToObject;
 import org.jclouds.rackspace.cloudfiles.domain.CFObject;
+import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
 import com.google.inject.Injector;
@@ -84,7 +84,7 @@ public class BindCFObjectToPayloadTest {
       HttpRequest request = new HttpRequest("GET", URI.create("http://localhost:8001"));
       binder.bindToRequest(request, testBlob());
 
-      assertEquals(IOUtils.toString(request.getPayload().getContent()), "hello");
+      assertEquals(Utils.toStringAndClose(request.getPayload().getContent()), "hello");
       assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH), 5 + "");
       assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE), MediaType.TEXT_PLAIN);
    }
@@ -98,7 +98,7 @@ public class BindCFObjectToPayloadTest {
       HttpRequest request = new HttpRequest("GET", URI.create("http://localhost:8001"));
       binder.bindToRequest(request, blob);
 
-      assertEquals(IOUtils.toString(request.getPayload().getContent()), "hello");
+      assertEquals(Utils.toStringAndClose(request.getPayload().getContent()), "hello");
       assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH), 5 + "");
       assertEquals(request.getFirstHeaderOrNull(HttpHeaders.ETAG),
                "5d41402abc4b2a76b9719d911017c592");

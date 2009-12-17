@@ -30,7 +30,6 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -42,13 +41,13 @@ import java.util.concurrent.ExecutorService;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.Payloads;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.internal.HttpWire;
+import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -57,6 +56,8 @@ import com.google.appengine.api.urlfetch.HTTPHeader;
 import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.api.urlfetch.HTTPResponse;
 import com.google.appengine.api.urlfetch.URLFetchService;
+import com.google.appengine.repackaged.com.google.common.base.Charsets;
+import com.google.common.io.Files;
 
 /**
  * 
@@ -107,7 +108,7 @@ public class GaeHttpCommandExecutorServiceTest {
       replay(gaeResponse);
       HttpResponse response = client.convert(gaeResponse);
       assertEquals(response.getStatusCode(), 200);
-      assertEquals(IOUtils.toString(response.getContent()), "hello");
+      assertEquals(Utils.toStringAndClose(response.getContent()), "hello");
       assertEquals(response.getHeaders().size(), 1);
       assertEquals(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE), "text/xml");
    }
@@ -153,7 +154,7 @@ public class GaeHttpCommandExecutorServiceTest {
    @Test
    void testConvertRequestInputStreamContent() throws IOException {
       HttpRequest request = new HttpRequest(HttpMethod.GET, endPoint);
-      request.setPayload(IOUtils.toInputStream("hoot!"));
+      request.setPayload(Utils.toInputStream("hoot!"));
       testHoot(request);
    }
 
@@ -177,7 +178,7 @@ public class GaeHttpCommandExecutorServiceTest {
       HttpRequest request = new HttpRequest(HttpMethod.GET, endPoint);
       File file = new File(basedir, "target/testfiles/hoot");
       file.getParentFile().mkdirs();
-      IOUtils.write("hoot!", new FileOutputStream(file));
+      Files.write("hoot!".getBytes(Charsets.UTF_8), file);
       request.setPayload(file);
       testHoot(request);
    }

@@ -26,7 +26,6 @@ package org.jclouds.http.handlers;
 import javax.annotation.Resource;
 import javax.inject.Named;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpResponse;
@@ -34,6 +33,7 @@ import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.TransformingHttpCommand;
 import org.jclouds.logging.Logger;
 
+import com.google.common.io.Closeables;
 import com.google.inject.Inject;
 
 /**
@@ -85,7 +85,7 @@ public class BackoffLimitedRetryHandler implements HttpRetryHandler {
    protected Logger logger = Logger.NULL;
 
    public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
-      IOUtils.closeQuietly(response.getContent());
+      Closeables.closeQuietly(response.getContent());
 
       command.incrementFailureCount();
 

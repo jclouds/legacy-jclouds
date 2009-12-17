@@ -34,7 +34,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.rest.annotations.BinderParam;
@@ -48,6 +47,7 @@ import org.jclouds.rest.binders.BindMapToMatrixParams;
 import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.internal.RestAnnotationProcessorTest.Localhost;
+import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
 
@@ -108,7 +108,7 @@ public interface IntegrationTestAsyncClient {
       @Override
       public void bindToRequest(HttpRequest request, Object payload) {
          super.bindToRequest(request, payload);
-         request.setPayload(IOUtils.toInputStream(payload.toString()));
+         request.setPayload(Utils.toInputStream(payload.toString()));
       }
    }
 

@@ -27,8 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
 
-import org.apache.commons.io.IOUtils;
-
 /**
  * {@link InputStream} implementation that allows chaining of various streams for seamless
  * sequential reading
@@ -83,7 +81,7 @@ public class InputStreamChain extends InputStream {
     * @return instance of self (for fluent calls)
     */
    public InputStreamChain addAsInputStream(final String value) {
-      return addInputStream(IOUtils.toInputStream(value));
+      return addInputStream(Utils.toInputStream(value));
    }
 
    @Override

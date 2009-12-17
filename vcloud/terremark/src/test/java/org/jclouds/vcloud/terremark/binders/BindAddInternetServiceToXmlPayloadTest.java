@@ -34,7 +34,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
@@ -69,7 +68,7 @@ public class BindAddInternetServiceToXmlPayloadTest {
    });
 
    public void testApplyInputStream() throws IOException {
-      String expected = IOUtils.toString(getClass().getResourceAsStream(
+      String expected = Utils.toStringAndClose(getClass().getResourceAsStream(
                "/terremark/CreateInternetService-test.xml"));
       HttpRequest request = new HttpRequest("GET", URI.create("http://test"));
       BindAddInternetServiceToXmlPayload binder = injector

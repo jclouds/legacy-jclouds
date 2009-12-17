@@ -38,7 +38,6 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSession;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.HttpConstants;
 import org.jclouds.http.HttpRequest;
@@ -47,6 +46,7 @@ import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 
 import com.google.common.collect.Maps;
+import com.google.common.io.Closeables;
 import com.google.inject.Inject;
 
 /**
@@ -135,7 +135,7 @@ public class JavaUrlHttpCommandExecutorService extends
          try {
             request.getPayload().writeTo(out);
          } finally {
-            IOUtils.closeQuietly(out);
+            Closeables.closeQuietly(out);
          }
       } else {
          connection.setRequestProperty(HttpHeaders.CONTENT_LENGTH, "0");

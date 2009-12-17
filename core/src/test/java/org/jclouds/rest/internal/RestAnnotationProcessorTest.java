@@ -60,7 +60,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.date.DateService;
@@ -102,6 +101,7 @@ import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.config.RestModule;
 import org.jclouds.util.Jsr330;
+import org.jclouds.util.Utils;
 import org.mortbay.jetty.HttpHeaders;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -1651,7 +1651,7 @@ public class RestAnnotationProcessorTest {
       if (httpMethod.getPayload() == null) {
          assertNull(toMatch);
       } else {
-         String payload = IOUtils.toString(httpMethod.getPayload().getContent());
+         String payload = Utils.toStringAndClose(httpMethod.getPayload().getContent());
          assertEquals(payload, toMatch);
       }
    }

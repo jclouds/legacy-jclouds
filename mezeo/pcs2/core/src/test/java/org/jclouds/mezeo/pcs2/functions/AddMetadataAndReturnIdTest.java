@@ -83,7 +83,7 @@ public class AddMetadataAndReturnIdTest {
 //      AddMetadataAndReturnId function = new AddMetadataAndReturnId(fileCache, connection);
 //      function.setContext(factory.createRequest(method, "container", new PCSFile("key"), URI
 //               .create("http://localhost:8080")));
-//      response.setContent(IOUtils
+//      response.setContent(Utils
 //               .toInputStream("http://localhost/contents/7F143552-AAF5-11DE-BBB0-0BC388ED913B"));
 //      String eTag = function.apply(response);
 //      assertEquals(eTag, "7F143552-AAF5-11DE-BBB0-0BC388ED913B");
@@ -98,7 +98,7 @@ public class AddMetadataAndReturnIdTest {
 //
 //      function.setContext(factory.createRequest(method, "container", pcsFile, URI
 //               .create("http://localhost:8080")));
-//      response.setContent(IOUtils
+//      response.setContent(Utils
 //               .toInputStream("http://localhost/contents/7F143552-AAF5-11DE-BBB0-0BC388ED913B"));
 //      String eTag = function.apply(response);
 //      assertEquals(eTag, "7F143552-AAF5-11DE-BBB0-0BC388ED913B");

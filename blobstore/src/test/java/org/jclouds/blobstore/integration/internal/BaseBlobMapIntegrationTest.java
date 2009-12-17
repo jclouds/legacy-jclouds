@@ -36,10 +36,10 @@ import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.util.BlobStoreUtils;
+import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
 /**
@@ -163,11 +163,11 @@ public class BaseBlobMapIntegrationTest<A, S> extends BaseMapIntegrationTest<A, 
       try {
          Map<String, Blob> map = createMap(context, bucketName);
          Blob object = newBlob("one");
-         object.setPayload(IOUtils.toInputStream("apple"));
+         object.setPayload(Utils.toInputStream("apple"));
          object.generateMD5();
          Blob old = map.put(object.getMetadata().getName(), object);
          getOneReturnsAppleAndOldValueIsNull(map, old);
-         object.setPayload(IOUtils.toInputStream("bear"));
+         object.setPayload(Utils.toInputStream("bear"));
          object.generateMD5();
          Blob apple = map.put(object.getMetadata().getName(), object);
          getOneReturnsBearAndOldValueIsApple(map, apple);

@@ -35,7 +35,6 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.atmosonline.saas.reference.AtmosStorageConstants;
 import org.jclouds.atmosonline.saas.reference.AtmosStorageHeaders;
 import org.jclouds.date.TimeStamp;
@@ -47,6 +46,7 @@ import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
 import org.jclouds.logging.Logger;
+import org.jclouds.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
 
@@ -65,6 +65,8 @@ public class SignRequest implements HttpRequestFilter {
    private final byte[] key;
    private final Provider<String> timeStampProvider;
    private final EncryptionService encryptionService;
+   @Resource
+   Logger logger = Logger.NULL;
 
    @Resource
    @Named(HttpConstants.SIGNATURE_LOGGER)
@@ -106,7 +108,7 @@ public class SignRequest implements HttpRequestFilter {
             throws HttpException {
       String signature = signString(toSign);
       if (signatureWire.enabled())
-         signatureWire.input(IOUtils.toInputStream(signature));
+         signatureWire.input(Utils.toInputStream(signature));
       request.getHeaders().replaceValues(AtmosStorageHeaders.SIGNATURE,
                Collections.singletonList(signature));
    }

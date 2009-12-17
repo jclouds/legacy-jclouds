@@ -35,7 +35,6 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.encryption.EncryptionService;
@@ -46,6 +45,7 @@ import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
 import org.jclouds.logging.Logger;
+import org.jclouds.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
 
@@ -106,7 +106,7 @@ public class SharedKeyAuthentication implements HttpRequestFilter {
             throws HttpException {
       String signature = signString(toSign);
       if (signatureWire.enabled())
-         signatureWire.input(IOUtils.toInputStream(signature));
+         signatureWire.input(Utils.toInputStream(signature));
       request.getHeaders().replaceValues(HttpHeaders.AUTHORIZATION,
                Collections.singletonList("SharedKey " + account + ":" + signature));
    }

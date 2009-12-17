@@ -37,12 +37,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.logging.Logger;
 import org.testng.annotations.Test;
+
+import com.google.common.io.ByteStreams;
 
 /**
  * 
@@ -66,8 +67,8 @@ public class WireLiveTest {
       public Void call() throws Exception {
          HttpWire wire = setUp();
          InputStream in = wire.input(fromServer);
-         ByteArrayOutputStream out = new ByteArrayOutputStream();
-         IOUtils.copy(in, out);
+         ByteArrayOutputStream out = new ByteArrayOutputStream();//TODO
+         ByteStreams.copy(in, out);
          byte[] compare = encryptionService.md5(new ByteArrayInputStream(out.toByteArray()));
          Thread.sleep(100);
          assertEquals(encryptionService.toHexString(compare), checkNotNull(sysHttpStreamMd5,

@@ -36,7 +36,6 @@ import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.util.Utils;
@@ -102,12 +101,12 @@ public class BaseInputStreamMapIntegrationTest<A, S> extends
          Set<Entry<String, InputStream>> entries = map.entrySet();
          assertEquals(entries.size(), 5);
          for (Entry<String, InputStream> entry : entries) {
-            assertEquals(fiveStrings.get(entry.getKey()), IOUtils.toString(entry.getValue()));
-            entry.setValue(IOUtils.toInputStream(""));
+            assertEquals(fiveStrings.get(entry.getKey()), Utils.toStringAndClose(entry.getValue()));
+            entry.setValue(Utils.toInputStream(""));
          }
          assertConsistencyAwareMapSize(map, 5);
          for (InputStream value : map.values()) {
-            assertEquals(IOUtils.toString(value), "");
+            assertEquals(Utils.toStringAndClose(value), "");
          }
       } finally {
          returnContainer(bucketName);

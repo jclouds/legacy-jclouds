@@ -29,7 +29,6 @@ import static org.testng.Assert.assertNull;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpUtils;
@@ -37,6 +36,7 @@ import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeClass;
 
 import com.google.inject.Guice;
@@ -71,7 +71,7 @@ public abstract class RestClientTest<T> {
       if (httpMethod.getPayload() == null) {
          assertNull(toMatch);
       } else {
-         String payload = IOUtils.toString(httpMethod.getPayload().getContent());
+         String payload = Utils.toStringAndClose(httpMethod.getPayload().getContent());
          assertEquals(payload, toMatch);
       }
    }

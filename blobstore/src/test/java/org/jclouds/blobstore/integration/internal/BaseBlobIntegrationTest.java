@@ -39,7 +39,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.SortedSet;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
@@ -48,6 +47,7 @@ import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.Payloads;
+import org.jclouds.util.Utils;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -291,7 +291,7 @@ public class BaseBlobIntegrationTest<A, S> extends BaseBlobStoreIntegrationTest<
    @DataProvider(name = "putTests")
    public Object[][] createData1() throws IOException {
 
-      String realObject = IOUtils.toString(new FileInputStream("pom.xml"));
+      String realObject = Utils.toStringAndClose(new FileInputStream("pom.xml"));
 
       return new Object[][] { { "file", "text/xml", new File("pom.xml"), realObject },
                { "string", "text/xml", realObject, realObject },

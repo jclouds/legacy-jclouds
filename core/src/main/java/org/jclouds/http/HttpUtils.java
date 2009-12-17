@@ -41,7 +41,6 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
@@ -52,6 +51,8 @@ import com.google.common.collect.MapMaker;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Closeables;
 
 public class HttpUtils {
    public static final Pattern URI_PATTERN = Pattern.compile("([a-z0-9]+)://([^:]*):(.*)@(.*)");
@@ -107,13 +108,13 @@ public class HttpUtils {
    public static byte[] closeClientButKeepContentStream(HttpResponse response) {
       if (response.getContent() != null) {
          try {
-            byte[] data = IOUtils.toByteArray(response.getContent());
+            byte[] data = ByteStreams.toByteArray(response.getContent());
             response.setContent(new ByteArrayInputStream(data));
             return data;
          } catch (IOException e) {
             logger.error(e, "Error consuming input");
          } finally {
-            IOUtils.closeQuietly(response.getContent());
+            Closeables.closeQuietly(response.getContent());
          }
       }
       return null;
@@ -216,7 +217,7 @@ public class HttpUtils {
          } while (numRead != -1);
       } finally {
          output.close();
-         IOUtils.closeQuietly(input);
+         Closeables.closeQuietly(input);
       }
    }
 

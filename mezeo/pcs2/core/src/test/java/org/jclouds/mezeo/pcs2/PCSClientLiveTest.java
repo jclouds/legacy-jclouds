@@ -38,7 +38,6 @@ import java.util.concurrent.TimeoutException;
 
 import javax.ws.rs.core.UriBuilder;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.ResourceType;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
@@ -48,6 +47,7 @@ import org.jclouds.mezeo.pcs2.domain.ContainerList;
 import org.jclouds.mezeo.pcs2.domain.FileInfoWithMetadata;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
 import org.jclouds.mezeo.pcs2.domain.ResourceInfo;
+import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -178,7 +178,7 @@ public class PCSClientLiveTest {
       }
       // Test GET of object (including updated metadata)
       InputStream file = connection.downloadFile(objectURI);
-      assertEquals(IOUtils.toString(file), data);
+      assertEquals(Utils.toStringAndClose(file), data);
       validateFileInfoAndNameIsInMetadata(container, objectURI, "object", new Long(data.length()));
 
       try {
@@ -210,7 +210,7 @@ public class PCSClientLiveTest {
       validateFileInfoAndNameIsInMetadata(container, objectURI, name, new Long(data.length()));
 
       file = connection.downloadFile(objectURI);
-      assertEquals(IOUtils.toString(file), data);
+      assertEquals(Utils.toStringAndClose(file), data);
 
       // change data in an existing file
       data = "Here is my datum";
@@ -219,7 +219,7 @@ public class PCSClientLiveTest {
       validateFileInfoAndNameIsInMetadata(container, objectURI, name, new Long(data.length()));
 
       file = connection.downloadFile(objectURI);
-      assertEquals(IOUtils.toString(file), data);
+      assertEquals(Utils.toStringAndClose(file), data);
 
       connection.deleteFile(objectURI);
       connection.deleteContainer(container);

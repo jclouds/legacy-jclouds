@@ -29,8 +29,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.http.Payload;
+
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Closeables;
 
 /**
  * @author Adrian Cole
@@ -69,9 +71,9 @@ public class InputStreamPayload implements Payload {
    public void writeTo(OutputStream outstream) throws IOException {
       InputStream in = getContent();
       try {
-         IOUtils.copy(getContent(), outstream);
+         ByteStreams.copy(getContent(), outstream);
       } finally {
-         IOUtils.closeQuietly(in);
+         Closeables.closeQuietly(in);
       }
    }
 

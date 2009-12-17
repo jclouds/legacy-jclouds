@@ -33,9 +33,8 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.ReturnStringIf200;
+import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
@@ -81,7 +80,7 @@ public class ReturnStringIf200Test {
       Function<HttpResponse, String> function = new ReturnStringIf200();
       HttpResponse response = createMock(HttpResponse.class);
       expect(response.getStatusCode()).andReturn(200).atLeastOnce();
-      expect(response.getContent()).andReturn(IOUtils.toInputStream("hello"));
+      expect(response.getContent()).andReturn(Utils.toInputStream("hello"));
       replay(response);
       assertEquals(function.apply(response), "hello");
       verify(response);

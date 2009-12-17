@@ -36,7 +36,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpCommandExecutorService;
@@ -59,6 +58,8 @@ import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.api.urlfetch.HTTPResponse;
 import com.google.appengine.api.urlfetch.URLFetchService;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Closeables;
 
 /**
  * Google App Engine version of {@link HttpCommandExecutorService}
@@ -99,9 +100,9 @@ public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorServic
       } else if (content instanceof InputStreamPayload || content instanceof FilePayload) {
          InputStream i = content.getContent();
          try {
-            request.setPayload(IOUtils.toByteArray(i));
+            request.setPayload(ByteStreams.toByteArray(i));
          } finally {
-            IOUtils.closeQuietly(i);
+            Closeables.closeQuietly(i);
          }
       } else {
          throw new UnsupportedOperationException("Content not supported " + content.getClass());

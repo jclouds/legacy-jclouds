@@ -33,7 +33,6 @@ import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.testng.annotations.Test;
 
@@ -50,7 +49,7 @@ public class S3ParserTest extends org.jclouds.aws.s3.xml.S3ParserTest {
 
       @Override
       public InputStream getInputStream() throws IOException {
-         return IOUtils.toInputStream(content);
+         return org.jclouds.util.Utils.toInputStream(content);
       }
 
       protected MockHttpURLClient(String content) {

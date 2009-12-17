@@ -28,7 +28,6 @@ import static org.testng.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -37,18 +36,20 @@ import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.ListableMap;
+import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
+import com.google.common.io.Files;
 
 public abstract class BaseMapIntegrationTest<A, S, V> extends BaseBlobStoreIntegrationTest<A, S> {
 
@@ -75,7 +76,7 @@ public abstract class BaseMapIntegrationTest<A, S, V> extends BaseBlobStoreInteg
    protected void setUpInputStreams() {
       fiveInputs = Maps.transformValues(fiveStrings, new Function<String, InputStream>() {
          public InputStream apply(String from) {
-            return IOUtils.toInputStream(from);
+            return Utils.toInputStream(from);
          }
       });
    }
@@ -93,7 +94,7 @@ public abstract class BaseMapIntegrationTest<A, S, V> extends BaseBlobStoreInteg
       fiveFiles = Maps.newHashMap();
       for (Entry<String, String> entry : fiveStrings.entrySet()) {
          File file = new File(tmpDirectory, entry.getKey());
-         IOUtils.write(entry.getValue().getBytes(), new FileOutputStream(file));
+         Files.write(entry.getValue().getBytes(Charsets.UTF_8), file);
          fiveFiles.put(entry.getKey(), file);
       }
    }

@@ -26,11 +26,11 @@ package org.jclouds.http.functions;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 
 import com.google.common.base.Function;
+import com.google.common.io.Closeables;
 
 /**
  * Parses an MD5 checksum from the header {@link HttpHeaders#ETAG}.
@@ -41,7 +41,7 @@ import com.google.common.base.Function;
 public class ParseETagHeader implements Function<HttpResponse, String> {
 
    public String apply(HttpResponse from) {
-      IOUtils.closeQuietly(from.getContent());
+      Closeables.closeQuietly(from.getContent());
 
       String eTag = from.getFirstHeaderOrNull(HttpHeaders.ETAG);
       if (eTag == null) {

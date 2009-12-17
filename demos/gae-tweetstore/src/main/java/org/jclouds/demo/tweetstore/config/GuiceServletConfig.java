@@ -36,7 +36,6 @@ import java.util.Properties;
 
 import javax.servlet.ServletContextEvent;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.demo.tweetstore.controller.AddTweetsController;
@@ -50,6 +49,7 @@ import com.google.appengine.api.labs.taskqueue.QueueFactory;
 import com.google.appengine.api.labs.taskqueue.TaskOptions.Method;
 import com.google.appengine.repackaged.com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
+import com.google.common.io.Closeables;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
@@ -123,7 +123,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
       } catch (IOException e) {
          throw new RuntimeException(e);
       } finally {
-         IOUtils.closeQuietly(input);
+         Closeables.closeQuietly(input);
       }
       return props;
    }

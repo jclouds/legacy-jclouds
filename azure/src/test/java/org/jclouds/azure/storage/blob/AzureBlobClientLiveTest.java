@@ -33,7 +33,6 @@ import java.net.URL;
 import java.security.SecureRandom;
 import java.util.SortedSet;
 
-import org.apache.commons.io.IOUtils;
 import org.jclouds.azure.storage.AzureStorageResponseException;
 import org.jclouds.azure.storage.blob.domain.AzureBlob;
 import org.jclouds.azure.storage.blob.domain.BlobProperties;
@@ -280,7 +279,7 @@ public class AzureBlobClientLiveTest {
       }
       // Test GET of object (including updated metadata)
       AzureBlob getBlob = connection.getBlob(privateContainer, object.getProperties().getName());
-      assertEquals(IOUtils.toString(getBlob.getContent()), data);
+      assertEquals(Utils.toStringAndClose(getBlob.getContent()), data);
       // TODO assertEquals(getBlob.getName(), object.getProperties().getName());
       assertEquals(getBlob.getContentLength(), new Long(data.length()));
       assertEquals(getBlob.getProperties().getContentType(), "text/plain");
@@ -340,7 +339,7 @@ public class AzureBlobClientLiveTest {
       // .getBlob(privateContainer, object.getProperties().getName(),
       // GetOptions.Builder.startAt(8)).get(120,
       // TimeUnit.SECONDS);
-      // assertEquals(IOUtils.toString((InputStream) getBlob.getData()), data.substring(8));
+      // assertEquals(Utils.toStringAndClose((InputStream) getBlob.getData()), data.substring(8));
 
       connection.deleteBlob(privateContainer, "object");
       connection.deleteBlob(privateContainer, "chunked-object");
