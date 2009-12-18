@@ -40,7 +40,7 @@
             note you must set the property ${appengine.home} to a valid
             extraction of appengine-java-sdk
         -->
-        <appengine.home>/Users/adriancole/Desktop/appengine-java-sdk-1.2.5</appengine.home>
+        <appengine.home>/Users/adriancole/Downloads/appengine-java-sdk-1.3.0</appengine.home>
         <appengine.applicationid>jclouds-s3-example</appengine.applicationid>
         <devappserver.address>localhost</devappserver.address>
         <devappserver.port>8088</devappserver.port>
@@ -124,7 +124,7 @@
         <dependency>
             <groupId>com.google.appengine</groupId>
             <artifactId>appengine-tools-api</artifactId>
-            <version>1.2.5</version>
+            <version>1.3.0</version>
             <scope>system</scope>
             <systemPath>${appengine.home}/lib/appengine-tools-api.jar</systemPath>
         </dependency>
