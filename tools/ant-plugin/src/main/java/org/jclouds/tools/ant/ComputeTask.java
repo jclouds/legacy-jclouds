@@ -24,6 +24,7 @@
 package org.jclouds.tools.ant;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
@@ -38,13 +39,14 @@ import org.jclouds.compute.domain.CreateServerResponse;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Profile;
 import org.jclouds.compute.domain.ServerIdentity;
+import org.jclouds.compute.domain.ServerMetadata;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.tools.ant.logging.config.AntLoggingModule;
 
+import com.google.common.base.CaseFormat;
 import com.google.common.base.Function;
 import com.google.common.collect.MapMaker;
 import com.google.common.io.Resources;
-import com.google.gson.Gson;
 import com.google.inject.Module;
 import com.google.inject.Provider;
 
@@ -66,6 +68,10 @@ public class ComputeTask extends Task {
       }
 
    };
+
+   public ComputeTask(Map<URI, ComputeService> computeMap) {
+      this.computeMap = computeMap;
+   }
 
    public ComputeTask() throws IOException {
       this(buildComputeMap(loadDefaultProperties()));
@@ -90,12 +96,8 @@ public class ComputeTask extends Task {
 
    }
 
-   public ComputeTask(Map<URI, ComputeService> computeMap) {
-      this.computeMap = computeMap;
-   }
-
    public static enum Action {
-      CREATE, GET, LIST, DESTROY
+      CREATE, GET, LIST, LIST_DETAILS, DESTROY
    }
 
    private String provider;
@@ -119,7 +121,8 @@ public class ComputeTask extends Task {
 
    public void execute() throws BuildException {
       ComputeTask.project = getProject();
-      Action action = Action.valueOf(this.action.toUpperCase());
+      Action action = Action.valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE,
+               this.action));
       ComputeService computeService = computeMap.get(HttpUtils.createUri(provider));
       switch (action) {
          case CREATE:
@@ -145,6 +148,12 @@ public class ComputeTask extends Task {
             log("list");
             for (ServerIdentity server : computeService.listServers()) {
                log(String.format("   id=%s, name=%s", server.getId(), server.getName()));
+            }
+            break;
+         case LIST_DETAILS:
+            log("list details");
+            for (ServerIdentity server : computeService.listServers()) {// TODO parallel
+               logDetails(computeService, server);
             }
             break;
          default:
@@ -183,10 +192,23 @@ public class ComputeTask extends Task {
                .getName());
       if (serversThatMatch.size() > 0) {
          for (ServerIdentity server : serversThatMatch) {
-            log(String.format("   server id=%s, name=%s, value=%s", server.getId(), server
-                     .getName(), new Gson()
-                     .toJson(computeService.getServerMetadata(server.getId()))));
+            logDetails(computeService, server);
          }
+      }
+   }
+
+   private void logDetails(ComputeService computeService, ServerIdentity server) {
+      ServerMetadata metadata = computeService.getServerMetadata(server.getId());
+      log(String.format("   server id=%s, name=%s, state=%s, publicIp=%s, privateIp=%s", metadata
+               .getId(), server.getName(), metadata.getState(), ipOrEmptyString(metadata
+               .getPublicAddresses()), ipOrEmptyString(metadata.getPrivateAddresses())));
+   }
+
+   public static String ipOrEmptyString(SortedSet<InetAddress> set) {
+      if (set.size() > 0) {
+         return set.last().getHostAddress();
+      } else {
+         return "";
       }
    }
 
