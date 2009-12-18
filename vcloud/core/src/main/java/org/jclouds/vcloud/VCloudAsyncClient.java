@@ -47,14 +47,17 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayload;
 import org.jclouds.vcloud.domain.Catalog;
+import org.jclouds.vcloud.domain.Organization;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TasksList;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VDC;
+import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.functions.VAppTemplateIdToUri;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.xml.CatalogHandler;
+import org.jclouds.vcloud.xml.OrgHandler;
 import org.jclouds.vcloud.xml.TaskHandler;
 import org.jclouds.vcloud.xml.TasksListHandler;
 import org.jclouds.vcloud.xml.VAppHandler;
@@ -69,6 +72,12 @@ import org.jclouds.vcloud.xml.VDCHandler;
  */
 @RequestFilters(SetVCloudTokenCookie.class)
 public interface VCloudAsyncClient {
+
+   @GET
+   @Endpoint(Org.class)
+   @Consumes(VCloudMediaType.ORG_XML)
+   @XMLResponseParser(OrgHandler.class)
+   Future<? extends Organization> getOrganization();
 
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.Catalog.class)
@@ -91,19 +100,19 @@ public interface VCloudAsyncClient {
    @POST
    @Consumes(TASK_XML)
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
-   @Path("/vapp/{vAppId}/action/deploy")
+   @Path("/vApp/{vAppId}/action/deploy")
    @XMLResponseParser(TaskHandler.class)
    Future<? extends Task> deployVApp(@PathParam("vAppId") String vAppId);
 
    @DELETE
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
-   @Path("/vapp/{vAppId}")
+   @Path("/vApp/{vAppId}")
    Future<Void> deleteVApp(@PathParam("vAppId") String vAppId);
 
    @POST
    @Consumes(TASK_XML)
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
-   @Path("/vapp/{vAppId}/action/undeploy")
+   @Path("/vApp/{vAppId}/action/undeploy")
    @XMLResponseParser(TaskHandler.class)
    Future<? extends Task> undeployVApp(@PathParam("vAppId") String vAppId);
 
@@ -113,7 +122,7 @@ public interface VCloudAsyncClient {
    @POST
    @Consumes(TASK_XML)
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
-   @Path("/vapp/{vAppId}/power/action/powerOn")
+   @Path("/vApp/{vAppId}/power/action/powerOn")
    @XMLResponseParser(TaskHandler.class)
    Future<? extends Task> powerOnVApp(@PathParam("vAppId") String vAppId);
 
@@ -123,7 +132,7 @@ public interface VCloudAsyncClient {
    @POST
    @Consumes(TASK_XML)
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
-   @Path("/vapp/{vAppId}/power/action/powerOff")
+   @Path("/vApp/{vAppId}/power/action/powerOff")
    @XMLResponseParser(TaskHandler.class)
    Future<? extends Task> powerOffVApp(@PathParam("vAppId") String vAppId);
 
@@ -132,7 +141,7 @@ public interface VCloudAsyncClient {
     */
    @POST
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
-   @Path("/vapp/{vAppId}/power/action/shutdown")
+   @Path("/vApp/{vAppId}/power/action/shutdown")
    Future<Void> shutdownVApp(@PathParam("vAppId") String vAppId);
 
    /**
@@ -141,7 +150,7 @@ public interface VCloudAsyncClient {
    @POST
    @Consumes(TASK_XML)
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
-   @Path("/vapp/{vAppId}/power/action/reset")
+   @Path("/vApp/{vAppId}/power/action/reset")
    @XMLResponseParser(TaskHandler.class)
    Future<? extends Task> resetVApp(@PathParam("vAppId") String vAppId);
 
@@ -151,7 +160,7 @@ public interface VCloudAsyncClient {
    @POST
    @Consumes(TASK_XML)
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
-   @Path("/vapp/{vAppId}/power/action/suspend")
+   @Path("/vApp/{vAppId}/power/action/suspend")
    @XMLResponseParser(TaskHandler.class)
    Future<? extends Task> suspendVApp(@PathParam("vAppId") String vAppId);
 
@@ -170,18 +179,18 @@ public interface VCloudAsyncClient {
    @GET
    @Consumes(VAPP_XML)
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
-   @Path("/vapp/{vAppId}")
+   @Path("/vApp/{vAppId}")
    @XMLResponseParser(VAppHandler.class)
    Future<? extends VApp> getVApp(@PathParam("vAppId") String appId);
 
    @POST
-   @Endpoint(org.jclouds.vcloud.endpoints.VDC.class)
-   @Path("/action/instantiateVAppTemplate")
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
+   @Path("/vdc/{vDCId}/action/instantiateVAppTemplate")
    @Produces("application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml")
    @Consumes(VAPP_XML)
    @XMLResponseParser(VAppHandler.class)
    @MapBinder(BindInstantiateVAppTemplateParamsToXmlPayload.class)
    Future<? extends VApp> instantiateVAppTemplate(@MapPayloadParam("name") String appName,
             @MapPayloadParam("template") @ParamParser(VAppTemplateIdToUri.class) String templateId,
-            InstantiateVAppTemplateOptions... options);
+            @PathParam("vDCId") String vDCId, InstantiateVAppTemplateOptions... options);
 }

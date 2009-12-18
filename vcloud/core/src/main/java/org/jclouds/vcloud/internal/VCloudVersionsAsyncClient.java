@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud;
+package org.jclouds.vcloud.internal;
 
 import java.net.URI;
 import java.util.SortedMap;
@@ -33,6 +33,7 @@ import javax.ws.rs.Path;
 
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.endpoints.VCloud;
 import org.jclouds.vcloud.xml.SupportedVersionsHandler;
 
@@ -44,7 +45,7 @@ import org.jclouds.vcloud.xml.SupportedVersionsHandler;
  * @author Adrian Cole
  */
 @Endpoint(VCloud.class)
-public interface VCloudVersions {
+public interface VCloudVersionsAsyncClient {
 
    /**
     * Retrieve information for supported versions

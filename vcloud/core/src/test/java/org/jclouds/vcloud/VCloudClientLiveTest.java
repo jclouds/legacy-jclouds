@@ -32,6 +32,7 @@ import java.net.URI;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.domain.NamedResource;
 import org.jclouds.vcloud.domain.Catalog;
+import org.jclouds.vcloud.domain.Organization;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VDC;
@@ -51,6 +52,16 @@ public class VCloudClientLiveTest {
 
    @Test
    public void testOrganization() throws Exception {
+      Organization response = connection.getOrganization();
+      assertNotNull(response);
+      assertNotNull(account);
+      assertNotNull(response.getCatalog());
+      assertEquals(response.getTasksLists().size(), 1);
+      assertEquals(response.getVDCs().size(), 1);
+   }
+
+   @Test
+   public void testCatalog() throws Exception {
       Catalog response = connection.getCatalog();
       assertNotNull(response);
       assertNotNull(response.getName());

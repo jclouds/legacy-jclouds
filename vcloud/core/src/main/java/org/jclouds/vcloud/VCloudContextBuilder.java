@@ -33,7 +33,6 @@ import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextBuilder;
 import org.jclouds.vcloud.config.VCloudContextModule;
 import org.jclouds.vcloud.config.VCloudRestClientModule;
-import org.jclouds.vcloud.config.VCloudDiscoveryRestClientModule;
 
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
@@ -62,7 +61,6 @@ public class VCloudContextBuilder extends RestContextBuilder<VCloudAsyncClient, 
 
    @Override
    protected void addClientModule(List<Module> modules) {
-      modules.add(new VCloudDiscoveryRestClientModule());
       modules.add(new VCloudRestClientModule());
    }
 

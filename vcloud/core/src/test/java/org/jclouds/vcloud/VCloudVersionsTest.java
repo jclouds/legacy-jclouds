@@ -38,6 +38,7 @@ import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.vcloud.endpoints.VCloud;
+import org.jclouds.vcloud.internal.VCloudVersionsAsyncClient;
 import org.jclouds.vcloud.xml.SupportedVersionsHandler;
 import org.testng.annotations.Test;
 
@@ -51,11 +52,11 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "vcloud.VCloudVersionsTest")
-public class VCloudVersionsTest extends RestClientTest<VCloudVersions> {
+public class VCloudVersionsTest extends RestClientTest<VCloudVersionsAsyncClient> {
 
    public void testLogin() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudVersions.class.getMethod("getSupportedVersions");
-      GeneratedHttpRequest<VCloudVersions> httpMethod = processor.createRequest(method);
+      Method method = VCloudVersionsAsyncClient.class.getMethod("getSupportedVersions");
+      GeneratedHttpRequest<VCloudVersionsAsyncClient> httpMethod = processor.createRequest(method);
 
       assertEquals(httpMethod.getRequestLine(), "GET http://localhost:8080/versions HTTP/1.1");
       assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT + ": application/vnd.vmware.vcloud.vcloud+xml\n");
@@ -69,13 +70,13 @@ public class VCloudVersionsTest extends RestClientTest<VCloudVersions> {
    }
 
    @Override
-   protected void checkFilters(GeneratedHttpRequest<VCloudVersions> httpMethod) {
+   protected void checkFilters(GeneratedHttpRequest<VCloudVersionsAsyncClient> httpMethod) {
       assertEquals(httpMethod.getFilters().size(), 0);
    }
 
    @Override
-   protected TypeLiteral<RestAnnotationProcessor<VCloudVersions>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<VCloudVersions>>() {
+   protected TypeLiteral<RestAnnotationProcessor<VCloudVersionsAsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<VCloudVersionsAsyncClient>>() {
       };
    }
 

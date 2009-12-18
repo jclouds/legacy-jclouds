@@ -69,12 +69,11 @@ public class HostingDotComVCloudComputeClient {
    public Map<String, String> start(String name, int minCores, int minMegs, Image image) {
       checkArgument(imageCatalogIdMap.containsKey(image), "image not configured: " + image);
       String templateId = imageCatalogIdMap.get(image);
-
-      logger.debug(">> instantiating vApp name(%s) minCores(%d) minMegs(%d) template(%s)", name,
-               minCores, minMegs, templateId);
-      HostingDotComVApp vAppResponse = (HostingDotComVApp) tmClient.instantiateVAppTemplate(name,
-               templateId, InstantiateVAppTemplateOptions.Builder.cpuCount(minCores).megabytes(
-                        minMegs));
+      String vDCId = tmClient.getDefaultVDC().getId();
+      logger.debug(">> instantiating vApp name(%s) minCores(%d) minMegs(%d) template(%s) vDC(%s)",
+               name, minCores, minMegs, templateId, vDCId);
+      HostingDotComVApp vAppResponse = tmClient.instantiateVAppTemplate(name, templateId, vDCId,
+               InstantiateVAppTemplateOptions.Builder.cpuCount(minCores).megabytes(minMegs));
       logger.debug("<< instantiated VApp(%s)", vAppResponse.getId());
 
       logger.debug(">> deploying vApp(%s)", vAppResponse.getId());

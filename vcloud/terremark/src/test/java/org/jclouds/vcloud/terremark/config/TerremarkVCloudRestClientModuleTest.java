@@ -35,7 +35,6 @@ import java.io.IOException;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.util.Jsr330;
 import org.jclouds.util.Utils;
-import org.jclouds.vcloud.config.VCloudDiscoveryRestClientModule;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
@@ -50,8 +49,8 @@ import com.google.inject.Key;
 public class TerremarkVCloudRestClientModuleTest {
 
    protected Injector createInjector() {
-      return Guice.createInjector(new TerremarkVCloudRestClientModule(),
-               new VCloudDiscoveryRestClientModule(), new ParserModule(), new AbstractModule() {
+      return Guice.createInjector(new TerremarkVCloudRestClientModule(), new ParserModule(),
+               new AbstractModule() {
                   @Override
                   protected void configure() {
                      bindConstant().annotatedWith(Jsr330.named(PROPERTY_VCLOUD_VERSION)).to("0.8");

@@ -45,6 +45,7 @@ import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextBuilder;
 import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.vcloud.endpoints.VCloud;
+import org.jclouds.vcloud.internal.VCloudVersionsAsyncClient;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -67,8 +68,8 @@ public class VCloudVersionsLiveTest {
       @SuppressWarnings("unused")
       @Provides
       @Singleton
-      protected VCloudVersions provideVCloudVersions(RestClientFactory factory) {
-         return factory.create(VCloudVersions.class);
+      protected VCloudVersionsAsyncClient provideVCloudVersions(RestClientFactory factory) {
+         return factory.create(VCloudVersionsAsyncClient.class);
       }
 
       @Override
@@ -82,9 +83,9 @@ public class VCloudVersionsLiveTest {
       @SuppressWarnings( { "unused" })
       @Provides
       @Singleton
-      RestContext<VCloudVersions, VCloudVersions> provideContext(Closer closer, VCloudVersions api,
+      RestContext<VCloudVersionsAsyncClient, VCloudVersionsAsyncClient> provideContext(Closer closer, VCloudVersionsAsyncClient api,
                @VCloud URI endPoint) {
-         return new RestContextImpl<VCloudVersions, VCloudVersions>(closer, api, api, endPoint, "");
+         return new RestContextImpl<VCloudVersionsAsyncClient, VCloudVersionsAsyncClient>(closer, api, api, endPoint, "");
       }
 
       @Override
@@ -96,11 +97,11 @@ public class VCloudVersionsLiveTest {
    static String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"),
             "jclouds.test.endpoint");
 
-   private RestContext<VCloudVersions, VCloudVersions> context;
+   private RestContext<VCloudVersionsAsyncClient, VCloudVersionsAsyncClient> context;
 
    @Test
    public void testGetSupportedVersions() throws Exception {
-      VCloudVersions authentication = context.getAsyncApi();
+      VCloudVersionsAsyncClient authentication = context.getAsyncApi();
       for (int i = 0; i < 5; i++) {
          SortedMap<String, URI> response = authentication.getSupportedVersions().get(45,
                   TimeUnit.SECONDS);
@@ -111,9 +112,9 @@ public class VCloudVersionsLiveTest {
 
    @BeforeClass
    void setupFactory() {
-      context = new RestContextBuilder<VCloudVersions, VCloudVersions>(
-               new TypeLiteral<VCloudVersions>() {
-               }, new TypeLiteral<VCloudVersions>() {
+      context = new RestContextBuilder<VCloudVersionsAsyncClient, VCloudVersionsAsyncClient>(
+               new TypeLiteral<VCloudVersionsAsyncClient>() {
+               }, new TypeLiteral<VCloudVersionsAsyncClient>() {
                }, new Properties()) {
 
          public void addContextModule(List<Module> modules) {

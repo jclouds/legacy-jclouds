@@ -30,6 +30,7 @@ import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_USER;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_VERSION;
 import static org.testng.Assert.assertNotNull;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.List;
 import java.util.Properties;
@@ -40,14 +41,19 @@ import javax.inject.Singleton;
 
 import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
+import org.jclouds.encryption.EncryptionService;
+import org.jclouds.http.RequiresHttp;
+import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.RestClientFactory;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextBuilder;
 import org.jclouds.rest.internal.RestContextImpl;
-import org.jclouds.vcloud.VCloudLogin.VCloudSession;
-import org.jclouds.vcloud.config.VCloudDiscoveryRestClientModule;
-import org.jclouds.vcloud.endpoints.VCloud;
+import org.jclouds.vcloud.endpoints.VCloudLogin;
+import org.jclouds.vcloud.internal.VCloudLoginAsyncClient;
+import org.jclouds.vcloud.internal.VCloudLoginAsyncClient.VCloudSession;
 import org.jclouds.vcloud.reference.VCloudConstants;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -65,14 +71,46 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "live", testName = "vcloud.VCloudLoginLiveTest")
 public class VCloudLoginLiveTest {
 
+   @RequiresHttp
+   @ConfiguresRestClient
+   private static final class VCloudLoginRestClientModule extends AbstractModule {
+      final String endpoint;
+
+      public VCloudLoginRestClientModule(String endpoint) {
+         this.endpoint = endpoint;
+      }
+
+      @SuppressWarnings("unused")
+      @Provides
+      @Singleton
+      protected VCloudLoginAsyncClient provideVCloudLogin(RestClientFactory factory) {
+         return factory.create(VCloudLoginAsyncClient.class);
+      }
+
+      @SuppressWarnings("unused")
+      @Provides
+      @Singleton
+      public BasicAuthentication provideBasicAuthentication(
+               @Named(PROPERTY_VCLOUD_USER) String user, @Named(PROPERTY_VCLOUD_KEY) String key,
+               EncryptionService encryptionService) throws UnsupportedEncodingException {
+         return new BasicAuthentication(user, key, encryptionService);
+      }
+
+      @Override
+      protected void configure() {
+         bind(URI.class).annotatedWith(VCloudLogin.class).toInstance(URI.create(endpoint));
+      }
+   }
+
    private final class VCloudLoginContextModule extends AbstractModule {
 
       @SuppressWarnings( { "unused" })
       @Provides
       @Singleton
-      RestContext<VCloudLogin, VCloudLogin> provideContext(Closer closer, VCloudLogin api,
-               @VCloud URI endPoint, @Named(VCloudConstants.PROPERTY_VCLOUD_USER) String account) {
-         return new RestContextImpl<VCloudLogin, VCloudLogin>(closer, api, api, endPoint, account);
+      RestContext<VCloudLoginAsyncClient, VCloudLoginAsyncClient> provideContext(Closer closer,
+               VCloudLoginAsyncClient api, @VCloudLogin URI endPoint) {
+         return new RestContextImpl<VCloudLoginAsyncClient, VCloudLoginAsyncClient>(closer, api,
+                  api, endPoint, "");
       }
 
       @Override
@@ -81,16 +119,11 @@ public class VCloudLoginLiveTest {
       }
    }
 
-   String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"),
-            "jclouds.test.endpoint");
-   String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
-   String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-
-   private RestContext<VCloudLogin, VCloudLogin> context;
+   private RestContext<VCloudLoginAsyncClient, VCloudLoginAsyncClient> context;
 
    @Test
    public void testLogin() throws Exception {
-      VCloudLogin authentication = context.getAsyncApi();
+      VCloudLoginAsyncClient authentication = context.getAsyncApi();
       for (int i = 0; i < 5; i++) {
          VCloudSession response = authentication.login().get(45, TimeUnit.SECONDS);
          assertNotNull(response);
@@ -101,9 +134,16 @@ public class VCloudLoginLiveTest {
 
    @BeforeClass
    void setupFactory() {
-      context = new RestContextBuilder<VCloudLogin, VCloudLogin>(new TypeLiteral<VCloudLogin>() {
-      }, new TypeLiteral<VCloudLogin>() {
-      }, new Properties()) {
+      final String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"),
+               "jclouds.test.endpoint");
+      final String account = checkNotNull(System.getProperty("jclouds.test.user"),
+               "jclouds.test.user");
+      final String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
+
+      context = new RestContextBuilder<VCloudLoginAsyncClient, VCloudLoginAsyncClient>(
+               new TypeLiteral<VCloudLoginAsyncClient>() {
+               }, new TypeLiteral<VCloudLoginAsyncClient>() {
+               }, new Properties()) {
 
          public void addContextModule(List<Module> modules) {
 
@@ -118,7 +158,7 @@ public class VCloudLoginLiveTest {
             properties.setProperty(PROPERTY_VCLOUD_USER, checkNotNull(account, "user"));
             properties.setProperty(PROPERTY_VCLOUD_KEY, checkNotNull(key, "key"));
             properties.setProperty(PROPERTY_VCLOUD_SESSIONINTERVAL, "4");
-            modules.add(new VCloudDiscoveryRestClientModule());
+            modules.add(new VCloudLoginRestClientModule(endpoint));
          }
 
       }.withModules(new Log4JLoggingModule(),

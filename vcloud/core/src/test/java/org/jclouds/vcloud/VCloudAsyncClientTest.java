@@ -39,6 +39,7 @@ import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.vcloud.endpoints.Catalog;
+import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.endpoints.TasksList;
 import org.jclouds.vcloud.endpoints.VCloudApi;
 import org.jclouds.vcloud.endpoints.VDC;
@@ -46,6 +47,7 @@ import org.jclouds.vcloud.endpoints.internal.CatalogItemRoot;
 import org.jclouds.vcloud.endpoints.internal.VAppRoot;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.xml.CatalogHandler;
+import org.jclouds.vcloud.xml.OrgHandler;
 import org.jclouds.vcloud.xml.TaskHandler;
 import org.jclouds.vcloud.xml.TasksListHandler;
 import org.jclouds.vcloud.xml.VAppHandler;
@@ -63,15 +65,27 @@ import com.google.inject.TypeLiteral;
  */
 @Test(groups = "unit", testName = "vcloud.VCloudAsyncClientTest")
 public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
+   public void testOrganization() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudAsyncClient.class.getMethod("getOrganization");
+      GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method);
+
+      assertRequestLineEquals(httpMethod, "GET http://org HTTP/1.1");
+      assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.org+xml\n");
+      assertPayloadEquals(httpMethod, null);
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, OrgHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
 
    public void testCatalog() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VCloudAsyncClient.class.getMethod("getCatalog");
       GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method);
 
       assertRequestLineEquals(httpMethod, "GET http://catalog HTTP/1.1");
-      assertHeadersEqual(
-               httpMethod,
-               "Accept: application/vnd.vmware.vcloud.catalog+xml\n");
+      assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.catalog+xml\n");
       assertPayloadEquals(httpMethod, null);
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
@@ -116,7 +130,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       Method method = VCloudAsyncClient.class.getMethod("deployVApp", String.class);
       GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, 1);
 
-      assertRequestLineEquals(httpMethod, "POST http://vcloud/vapp/1/action/deploy HTTP/1.1");
+      assertRequestLineEquals(httpMethod, "POST http://vcloud/vApp/1/action/deploy HTTP/1.1");
       assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.task+xml\n");
       assertPayloadEquals(httpMethod, null);
 
@@ -131,7 +145,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       Method method = VCloudAsyncClient.class.getMethod("getVApp", String.class);
       GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, 1);
 
-      assertRequestLineEquals(httpMethod, "GET http://vcloud/vapp/1 HTTP/1.1");
+      assertRequestLineEquals(httpMethod, "GET http://vcloud/vApp/1 HTTP/1.1");
       assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.vApp+xml\n");
       assertPayloadEquals(httpMethod, null);
 
@@ -146,7 +160,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       Method method = VCloudAsyncClient.class.getMethod("undeployVApp", String.class);
       GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, 1);
 
-      assertRequestLineEquals(httpMethod, "POST http://vcloud/vapp/1/action/undeploy HTTP/1.1");
+      assertRequestLineEquals(httpMethod, "POST http://vcloud/vApp/1/action/undeploy HTTP/1.1");
       assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.task+xml\n");
       assertPayloadEquals(httpMethod, null);
 
@@ -161,7 +175,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       Method method = VCloudAsyncClient.class.getMethod("deleteVApp", String.class);
       GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, 1);
 
-      assertRequestLineEquals(httpMethod, "DELETE http://vcloud/vapp/1 HTTP/1.1");
+      assertRequestLineEquals(httpMethod, "DELETE http://vcloud/vApp/1 HTTP/1.1");
       assertHeadersEqual(httpMethod, "");
       assertPayloadEquals(httpMethod, null);
 
@@ -176,7 +190,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       Method method = VCloudAsyncClient.class.getMethod("powerOnVApp", String.class);
       GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, 1);
 
-      assertRequestLineEquals(httpMethod, "POST http://vcloud/vapp/1/power/action/powerOn HTTP/1.1");
+      assertRequestLineEquals(httpMethod, "POST http://vcloud/vApp/1/power/action/powerOn HTTP/1.1");
       assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.task+xml\n");
       assertPayloadEquals(httpMethod, null);
 
@@ -192,7 +206,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, 1);
 
       assertRequestLineEquals(httpMethod,
-               "POST http://vcloud/vapp/1/power/action/powerOff HTTP/1.1");
+               "POST http://vcloud/vApp/1/power/action/powerOff HTTP/1.1");
       assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.task+xml\n");
       assertPayloadEquals(httpMethod, null);
 
@@ -207,7 +221,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       Method method = VCloudAsyncClient.class.getMethod("resetVApp", String.class);
       GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, 1);
 
-      assertRequestLineEquals(httpMethod, "POST http://vcloud/vapp/1/power/action/reset HTTP/1.1");
+      assertRequestLineEquals(httpMethod, "POST http://vcloud/vApp/1/power/action/reset HTTP/1.1");
       assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.task+xml\n");
       assertPayloadEquals(httpMethod, null);
 
@@ -222,7 +236,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       Method method = VCloudAsyncClient.class.getMethod("suspendVApp", String.class);
       GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, 1);
 
-      assertRequestLineEquals(httpMethod, "POST http://vcloud/vapp/1/power/action/suspend HTTP/1.1");
+      assertRequestLineEquals(httpMethod, "POST http://vcloud/vApp/1/power/action/suspend HTTP/1.1");
       assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.task+xml\n");
       assertPayloadEquals(httpMethod, null);
 
@@ -238,7 +252,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, 1);
 
       assertRequestLineEquals(httpMethod,
-               "POST http://vcloud/vapp/1/power/action/shutdown HTTP/1.1");
+               "POST http://vcloud/vApp/1/power/action/shutdown HTTP/1.1");
       assertHeadersEqual(httpMethod, "");
       assertPayloadEquals(httpMethod, null);
 
@@ -296,10 +310,11 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       return new AbstractModule() {
          @Override
          protected void configure() {
+            bind(URI.class).annotatedWith(Org.class).toInstance(URI.create("http://org"));
             bind(URI.class).annotatedWith(Catalog.class).toInstance(URI.create("http://catalog"));
             bind(String.class).annotatedWith(CatalogItemRoot.class)
                      .toInstance("http://catalogItem");
-            bind(String.class).annotatedWith(VAppRoot.class).toInstance("http://vapps");
+            bind(String.class).annotatedWith(VAppRoot.class).toInstance("http://vApps");
             bind(URI.class).annotatedWith(VDC.class).toInstance(URI.create("http://vdc"));
             bind(URI.class).annotatedWith(TasksList.class).toInstance(
                      URI.create("http://tasksList"));

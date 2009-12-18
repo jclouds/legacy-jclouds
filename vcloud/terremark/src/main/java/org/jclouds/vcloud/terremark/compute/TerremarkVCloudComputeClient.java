@@ -65,7 +65,8 @@ public class TerremarkVCloudComputeClient {
    private final TerremarkVCloudClient tmClient;
 
    @Inject
-   public TerremarkVCloudComputeClient(TerremarkVCloudClient tmClient, Predicate<String> successTester) {
+   public TerremarkVCloudComputeClient(TerremarkVCloudClient tmClient,
+            Predicate<String> successTester) {
       this.tmClient = tmClient;
       this.taskTester = successTester;
    }
@@ -77,10 +78,10 @@ public class TerremarkVCloudComputeClient {
    public String start(String name, int minCores, int minMegs, Image image) {
       checkArgument(imageCatalogIdMap.containsKey(image), "image not configured: " + image);
       String templateId = imageCatalogIdMap.get(image);
-
-      logger.debug(">> instantiating vApp name(%s) minCores(%d) minMegs(%d) template(%s)", name,
-               minCores, minMegs, templateId);
-      TerremarkVApp vApp = tmClient.instantiateVAppTemplate(name, templateId,
+      String vDCId = tmClient.getDefaultVDC().getId();
+      logger.debug(">> instantiating vApp name(%s) minCores(%d) minMegs(%d) template(%s) vDC(%s)",
+               name, minCores, minMegs, templateId, vDCId);
+      TerremarkVApp vApp = tmClient.instantiateVAppTemplate(name, templateId, vDCId,
                TerremarkInstantiateVAppTemplateOptions.Builder.cpuCount(minCores)
                         .megabytes(minMegs));
       logger.debug("<< instantiated VApp(%s)", vApp.getId());

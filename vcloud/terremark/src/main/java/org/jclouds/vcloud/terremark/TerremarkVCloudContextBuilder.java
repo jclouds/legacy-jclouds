@@ -32,7 +32,6 @@ import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextBuilder;
 import org.jclouds.vcloud.VCloudAsyncClient;
-import org.jclouds.vcloud.config.VCloudDiscoveryRestClientModule;
 import org.jclouds.vcloud.terremark.config.TerremarkVCloudContextModule;
 import org.jclouds.vcloud.terremark.config.TerremarkVCloudRestClientModule;
 
@@ -64,7 +63,6 @@ public class TerremarkVCloudContextBuilder extends
 
    @Override
    protected void addClientModule(List<Module> modules) {
-      modules.add(new VCloudDiscoveryRestClientModule());
       modules.add(new TerremarkVCloudRestClientModule());
    }
 

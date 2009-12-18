@@ -42,7 +42,7 @@ public interface HostingDotComVCloudClient extends VCloudClient {
 
    @Override
    @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
-   HostingDotComVApp instantiateVAppTemplate(String appName, String templateId,
+   HostingDotComVApp instantiateVAppTemplate(String appName, String templateId, String vDCId,
             InstantiateVAppTemplateOptions... options);
 
    @Override

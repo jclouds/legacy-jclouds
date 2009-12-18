@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud;
+package org.jclouds.vcloud.internal;
 
 import java.util.Map;
 import java.util.concurrent.Future;
@@ -34,6 +34,8 @@ import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.domain.NamedResource;
+import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.VCloudToken;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.functions.ParseLoginResponseFromHeaders;
 
@@ -46,7 +48,7 @@ import org.jclouds.vcloud.functions.ParseLoginResponseFromHeaders;
  */
 @Endpoint(org.jclouds.vcloud.endpoints.VCloudLogin.class)
 @RequestFilters(BasicAuthentication.class)
-public interface VCloudLogin {
+public interface VCloudLoginAsyncClient {
 
    public interface VCloudSession {
       @VCloudToken

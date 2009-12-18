@@ -31,12 +31,27 @@ import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_VERSI
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.http.handlers.CloseContentAndSetExceptionErrorHandler;
+import org.jclouds.http.handlers.DelegatingErrorHandler;
+import org.jclouds.http.handlers.DelegatingRetryHandler;
+import org.jclouds.http.handlers.RedirectionRetryHandler;
+import org.jclouds.rest.domain.NamedResource;
 import org.jclouds.util.Jsr330;
 import org.jclouds.util.Utils;
+import org.jclouds.vcloud.internal.VCloudLoginAsyncClient;
+import org.jclouds.vcloud.internal.VCloudLoginAsyncClient.VCloudSession;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Supplier;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -49,8 +64,8 @@ import com.google.inject.Key;
 public class VCloudRestClientModuleTest {
 
    protected Injector createInjector() {
-      return Guice.createInjector(new VCloudRestClientModule(),
-               new VCloudDiscoveryRestClientModule(), new ParserModule(), new AbstractModule() {
+      return Guice.createInjector(new VCloudRestClientModule(), new ParserModule(),
+               new AbstractModule() {
                   @Override
                   protected void configure() {
                      bindConstant().annotatedWith(Jsr330.named(PROPERTY_VCLOUD_VERSION)).to("0.8");
@@ -73,4 +88,86 @@ public class VCloudRestClientModuleTest {
 
    }
 
+   @Test
+   void testUpdatesOnlyOncePerSecond() throws NoSuchMethodException, InterruptedException {
+      VCloudRestClientModule module = new VCloudRestClientModule();
+      VCloudLoginAsyncClient login = new VCloudLoginAsyncClient() {
+
+         private final AtomicInteger token = new AtomicInteger();
+
+         public Future<VCloudSession> login() {
+            return new Future<VCloudSession>() {
+               @Override
+               public VCloudSession get() throws InterruptedException, ExecutionException {
+                  return new VCloudSession() {
+
+                     public Map<String, NamedResource> getOrgs() {
+                        return null;
+                     }
+
+                     public String getVCloudToken() {
+                        return token.incrementAndGet() + "";
+                     }
+
+                  };
+               }
+
+               @Override
+               public boolean cancel(boolean mayInterruptIfRunning) {
+                  return false;
+               }
+
+               @Override
+               public VCloudSession get(long timeout, TimeUnit unit) throws InterruptedException,
+                        ExecutionException, TimeoutException {
+                  return get();
+               }
+
+               @Override
+               public boolean isCancelled() {
+                  return false;
+               }
+
+               @Override
+               public boolean isDone() {
+                  return false;
+               }
+            };
+
+         }
+
+      };
+      Supplier<VCloudSession> map = module.provideVCloudTokenCache(1, login);
+      for (int i = 0; i < 10; i++)
+         map.get();
+      assert "1".equals(map.get().getVCloudToken());
+      Thread.sleep(1001);
+      assert "2".equals(map.get().getVCloudToken());
+   }
+
+   @Test
+   void testServerErrorHandler() {
+      DelegatingErrorHandler handler = createInjector().getInstance(DelegatingErrorHandler.class);
+      assertEquals(handler.getServerErrorHandler().getClass(),
+               CloseContentAndSetExceptionErrorHandler.class);
+   }
+
+   @Test
+   void testClientErrorHandler() {
+      DelegatingErrorHandler handler = createInjector().getInstance(DelegatingErrorHandler.class);
+      assertEquals(handler.getClientErrorHandler().getClass(),
+               CloseContentAndSetExceptionErrorHandler.class);
+   }
+
+   @Test
+   void testClientRetryHandler() {
+      DelegatingRetryHandler handler = createInjector().getInstance(DelegatingRetryHandler.class);
+      assertEquals(handler.getClientErrorRetryHandler(), HttpRetryHandler.NEVER_RETRY);
+   }
+
+   @Test
+   void testRedirectionRetryHandler() {
+      DelegatingRetryHandler handler = createInjector().getInstance(DelegatingRetryHandler.class);
+      assertEquals(handler.getRedirectionRetryHandler().getClass(), RedirectionRetryHandler.class);
+   }
 }

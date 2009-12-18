@@ -69,7 +69,7 @@ public interface HostingDotComVCloudAsyncClient extends VCloudAsyncClient {
    @XMLResponseParser(CatalogHandler.class)
    @Override
    Future<? extends Catalog> getCatalog();
-   
+
    @GET
    @Consumes(VAPP_XML)
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
@@ -79,8 +79,8 @@ public interface HostingDotComVCloudAsyncClient extends VCloudAsyncClient {
    Future<? extends HostingDotComVApp> getVApp(@PathParam("vAppId") String appId);
 
    @POST
-   @Endpoint(org.jclouds.vcloud.endpoints.VDC.class)
-   @Path("/action/instantiateVAppTemplate")
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
+   @Path("/vdc/{vDCId}/action/instantiateVAppTemplate")
    @Produces("application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml")
    @Consumes(VAPP_XML)
    // required for hosting.com to operate
@@ -90,5 +90,5 @@ public interface HostingDotComVCloudAsyncClient extends VCloudAsyncClient {
    Future<? extends HostingDotComVApp> instantiateVAppTemplate(
             @MapPayloadParam("name") String appName,
             @MapPayloadParam("template") @ParamParser(VAppTemplateIdToUri.class) String templateId,
-            InstantiateVAppTemplateOptions... options);
+            @PathParam("vDCId") String vDCId, InstantiateVAppTemplateOptions... options);
 }

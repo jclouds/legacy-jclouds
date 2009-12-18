@@ -84,10 +84,10 @@ public class VCloudComputeClient {
    public String start(String name, int minCores, int minMegs, Image image) {
       checkArgument(imageCatalogIdMap.containsKey(image), "image not configured: " + image);
       String templateId = imageCatalogIdMap.get(image);
-
-      logger.debug(">> instantiating vApp name(%s) minCores(%d) minMegs(%d) template(%s)", name,
-               minCores, minMegs, templateId);
-      VApp vAppResponse = tmClient.instantiateVAppTemplate(name, templateId,
+      String vDCId = tmClient.getDefaultVDC().getId();
+      logger.debug(">> instantiating vApp name(%s) minCores(%d) minMegs(%d) template(%s) vDC(%s)",
+               name, minCores, minMegs, templateId, vDCId);
+      VApp vAppResponse = tmClient.instantiateVAppTemplate(name, templateId, vDCId,
                InstantiateVAppTemplateOptions.Builder.cpuCount(minCores).megabytes(minMegs));
       tmClient.getVApp(vAppResponse.getId());
       logger.debug("<< instantiated VApp(%s)", vAppResponse.getId());

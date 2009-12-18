@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.domain.Catalog;
+import org.jclouds.vcloud.domain.Organization;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TasksList;
 import org.jclouds.vcloud.domain.VApp;
@@ -42,6 +43,11 @@ import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
 public interface VCloudClient {
+   /**
+    * This call returns a list of all vCloud Data Centers (vdcs), catalogs, and task lists within
+    * the organization.
+    */
+   Organization getOrganization();
 
    Catalog getCatalog();
 
@@ -86,6 +92,6 @@ public interface VCloudClient {
 
    VApp getVApp(String appId);
 
-   VApp instantiateVAppTemplate(String appName, String templateId,
+   VApp instantiateVAppTemplate(String appName, String templateId, String vDCId,
             InstantiateVAppTemplateOptions... options);
 }

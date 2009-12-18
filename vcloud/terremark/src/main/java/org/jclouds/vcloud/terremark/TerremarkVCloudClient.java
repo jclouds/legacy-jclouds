@@ -51,7 +51,7 @@ import org.jclouds.vcloud.terremark.options.AddNodeOptions;
 public interface TerremarkVCloudClient extends VCloudClient {
 
    @Override
-   TerremarkVApp instantiateVAppTemplate(String appName, String templateId,
+   TerremarkVApp instantiateVAppTemplate(String appName, String templateId, String vDCId,
             InstantiateVAppTemplateOptions... options);
 
    @Override

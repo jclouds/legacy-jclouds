@@ -105,12 +105,13 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
    public void testInstantiateVAppTemplate() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = TerremarkVCloudAsyncClient.class.getMethod("instantiateVAppTemplate",
-               String.class, String.class, Array.newInstance(InstantiateVAppTemplateOptions.class,
-                        0).getClass());
+               String.class, String.class, String.class, Array.newInstance(
+                        InstantiateVAppTemplateOptions.class, 0).getClass());
       GeneratedHttpRequest<TerremarkVCloudAsyncClient> httpMethod = processor.createRequest(method,
-               "name", 3 + "");
+               "name", 3 + "", "1");
 
-      assertRequestLineEquals(httpMethod, "POST http://vdc/action/instantiatevAppTemplate HTTP/1.1");
+      assertRequestLineEquals(httpMethod,
+               "POST http://vcloud/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
       assertHeadersEqual(
                httpMethod,
                "Content-Length: 2270\nContent-Type: application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml\n");
@@ -127,12 +128,14 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
    public void testInstantiateVAppTemplateOptions() throws SecurityException,
             NoSuchMethodException, IOException {
       Method method = TerremarkVCloudAsyncClient.class.getMethod("instantiateVAppTemplate",
-               String.class, String.class, Array.newInstance(InstantiateVAppTemplateOptions.class,
-                        0).getClass());
+               String.class, String.class, String.class, Array.newInstance(
+                        InstantiateVAppTemplateOptions.class, 0).getClass());
       GeneratedHttpRequest<TerremarkVCloudAsyncClient> httpMethod = processor.createRequest(method,
-               "name", 3 + "", cpuCount(4).megabytes(1024).inNetwork(URI.create("http://newnet")));
+               "name", 3 + "", "1", cpuCount(4).megabytes(1024).inNetwork(
+                        URI.create("http://newnet")));
 
-      assertRequestLineEquals(httpMethod, "POST http://vdc/action/instantiatevAppTemplate HTTP/1.1");
+      assertRequestLineEquals(httpMethod,
+               "POST http://vcloud/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
       assertHeadersEqual(
                httpMethod,
                "Content-Length: 2239\nContent-Type: application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml\n");

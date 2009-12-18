@@ -40,6 +40,7 @@ import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.vcloud.functions.ParseLoginResponseFromHeaders;
+import org.jclouds.vcloud.internal.VCloudLoginAsyncClient;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
@@ -52,11 +53,11 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "vcloud.VCloudLoginTest")
-public class VCloudLoginTest extends RestClientTest<VCloudLogin> {
+public class VCloudLoginTest extends RestClientTest<VCloudLoginAsyncClient> {
 
    public void testLogin() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudLogin.class.getMethod("login");
-      GeneratedHttpRequest<VCloudLogin> httpMethod = processor.createRequest(method);
+      Method method = VCloudLoginAsyncClient.class.getMethod("login");
+      GeneratedHttpRequest<VCloudLoginAsyncClient> httpMethod = processor.createRequest(method);
 
       assertEquals(httpMethod.getRequestLine(), "POST http://localhost:8080/login HTTP/1.1");
       assertHeadersEqual(httpMethod, HttpHeaders.ACCEPT
@@ -71,14 +72,14 @@ public class VCloudLoginTest extends RestClientTest<VCloudLogin> {
    }
 
    @Override
-   protected void checkFilters(GeneratedHttpRequest<VCloudLogin> httpMethod) {
+   protected void checkFilters(GeneratedHttpRequest<VCloudLoginAsyncClient> httpMethod) {
       assertEquals(httpMethod.getFilters().size(), 1);
       assertEquals(httpMethod.getFilters().get(0).getClass(), BasicAuthentication.class);
    }
 
    @Override
-   protected TypeLiteral<RestAnnotationProcessor<VCloudLogin>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<VCloudLogin>>() {
+   protected TypeLiteral<RestAnnotationProcessor<VCloudLoginAsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<VCloudLoginAsyncClient>>() {
       };
    }
 

@@ -114,9 +114,10 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
       String expectedOs = "Red Hat Enterprise Linux 5 (32-bit)";
 
       String templateId = tmClient.getCatalog().get(catalogOs).getId();
+      String vDCId = tmClient.getDefaultVDC().getId();
 
       System.out.printf("%d: instantiating vApp%n", System.currentTimeMillis());
-      vApp = tmClient.instantiateVAppTemplate(serverName, templateId);
+      vApp = tmClient.instantiateVAppTemplate(serverName, templateId, vDCId);
 
       assertEquals(vApp.getStatus(), VAppStatus.CREATING);
 
@@ -275,8 +276,8 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
                .getInstance(SocketOpen.class), 130, 10, TimeUnit.SECONDS);// make it longer then
       // default internet
       // service timeout
-      successTester = new RetryablePredicate<String>(injector.getInstance(TaskSuccess.class), 300, 10,
-               TimeUnit.SECONDS);
+      successTester = new RetryablePredicate<String>(injector.getInstance(TaskSuccess.class), 300,
+               10, TimeUnit.SECONDS);
    }
 
 }

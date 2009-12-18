@@ -95,15 +95,15 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
     * @see TerremarkVCloudClient#instantiateVAppTemplate
     */
    @POST
-   @Endpoint(org.jclouds.vcloud.endpoints.VDC.class)
-   @Path("/action/instantiatevAppTemplate")
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
+   @Path("/vdc/{vDCId}/action/instantiateVAppTemplate")
    @Produces("application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml")
    @XMLResponseParser(TerremarkVAppHandler.class)
    @MapBinder(TerremarkBindInstantiateVAppTemplateParamsToXmlPayload.class)
    @Override
    Future<? extends TerremarkVApp> instantiateVAppTemplate(@MapPayloadParam("name") String appName,
             @MapPayloadParam("template") @ParamParser(CatalogIdToUri.class) String templateId,
-            InstantiateVAppTemplateOptions... options);
+            @PathParam("vDCId") String vDCId, InstantiateVAppTemplateOptions... options);
 
    /**
     * @see TerremarkVCloudClient#addInternetService
@@ -114,7 +114,8 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    @Produces(MediaType.APPLICATION_XML)
    @XMLResponseParser(InternetServiceHandler.class)
    @MapBinder(AddInternetServiceOptions.class)
-   Future<? extends InternetService> addInternetService(@MapPayloadParam("name") String serviceName,
+   Future<? extends InternetService> addInternetService(
+            @MapPayloadParam("name") String serviceName,
             @MapPayloadParam("protocol") Protocol protocol, @MapPayloadParam("port") int port,
             AddInternetServiceOptions... options);
 
