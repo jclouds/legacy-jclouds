@@ -73,11 +73,14 @@ public class EC2ComputeService implements ComputeService {
    protected Logger logger = Logger.NULL;
    private final EC2Client ec2Client;
    private final Predicate<RunningInstance> instanceStateRunning;
+   private final RunningInstanceToServerMetadata runningInstanceToServerMetadata;
 
    @Inject
-   public EC2ComputeService(EC2Client tmClient, Predicate<RunningInstance> instanceStateRunning) {
+   public EC2ComputeService(EC2Client tmClient, Predicate<RunningInstance> instanceStateRunning,
+            RunningInstanceToServerMetadata runningInstanceToServerMetadata) {
       this.ec2Client = tmClient;
       this.instanceStateRunning = instanceStateRunning;
+      this.runningInstanceToServerMetadata = runningInstanceToServerMetadata;
    }
 
    private Map<Image, String> imageAmiIdMap = ImmutableMap.<Image, String> builder().put(
@@ -89,7 +92,7 @@ public class EC2ComputeService implements ComputeService {
    private Map<Profile, InstanceType> profileInstanceTypeMap = ImmutableMap
             .<Profile, InstanceType> builder().put(Profile.SMALLEST, InstanceType.M1_SMALL).build();
 
-   private Map<InstanceState, ServerState> instanceToServerState = ImmutableMap
+   private static Map<InstanceState, ServerState> instanceToServerState = ImmutableMap
             .<InstanceState, ServerState> builder().put(InstanceState.PENDING, ServerState.PENDING)
             .put(InstanceState.RUNNING, ServerState.RUNNING).put(InstanceState.SHUTTING_DOWN,
                      ServerState.PENDING).put(InstanceState.TERMINATED, ServerState.TERMINATED)
@@ -175,10 +178,27 @@ public class EC2ComputeService implements ComputeService {
    @Override
    public ServerMetadata getServerMetadata(String id) {
       RunningInstance runningInstance = getRunningInstance(id);
-      return new ServerMetadataImpl(runningInstance.getInstanceId(), runningInstance.getKeyName(),
-               instanceToServerState.get(runningInstance.getInstanceState()), ImmutableSet
-                        .<InetAddress> of(runningInstance.getIpAddress()), ImmutableSet
-                        .<InetAddress> of(runningInstance.getPrivateIpAddress()), 22, LoginType.SSH);
+      return runningInstanceToServerMetadata.apply(runningInstance);
+   }
+
+   @Singleton
+   private static class RunningInstanceToServerMetadata implements
+            Function<RunningInstance, ServerMetadata> {
+
+      @Override
+      public ServerMetadata apply(RunningInstance from) {
+         return new ServerMetadataImpl(from.getInstanceId(), from.getKeyName(),
+                  instanceToServerState.get(from.getInstanceState()), nullSafeSet(from
+                           .getIpAddress()), nullSafeSet(from.getPrivateIpAddress()), 22,
+                  LoginType.SSH);
+      }
+
+      Set<InetAddress> nullSafeSet(InetAddress in) {
+         if (in == null) {
+            return ImmutableSet.<InetAddress> of();
+         }
+         return ImmutableSet.<InetAddress> of(in);
+      }
    }
 
    private RunningInstance getRunningInstance(String id) {
