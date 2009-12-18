@@ -268,6 +268,18 @@ public interface CloudServersClient {
 
    /**
     * 
+    * This operation deletes an image from the system.
+    * <p/>
+    * Note: Images are immediately removed. Currently, there are no state transitions to track the
+    * delete operation.
+    * 
+    * @return false if the image is not found
+    * @see Image
+    */
+   boolean deleteImage(int id);
+
+   /**
+    * 
     * This operation creates a new image for the given server ID. Once complete, a new image will be
     * available that can be used to rebuild or create servers. Specifying the same image name as an
     * existing custom image replaces the image. The image creation status can be queried by

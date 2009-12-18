@@ -73,6 +73,7 @@ import org.jclouds.rackspace.cloudservers.options.CreateServerOptions;
 import org.jclouds.rackspace.cloudservers.options.CreateSharedIpGroupOptions;
 import org.jclouds.rackspace.cloudservers.options.ListOptions;
 import org.jclouds.rackspace.cloudservers.options.RebuildServerOptions;
+import org.jclouds.rackspace.filters.AddTimestampQuery;
 import org.jclouds.rackspace.filters.AuthenticateRequest;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
@@ -95,8 +96,8 @@ import org.jclouds.rest.annotations.SkipEncoding;
  * @see <a href="http://docs.rackspacecloud.com/servers/api/cs-devguide-latest.pdf" />
  * @author Adrian Cole
  */
-@SkipEncoding('/')
-@RequestFilters(AuthenticateRequest.class)
+@SkipEncoding( { '/', '=' })
+@RequestFilters( { AuthenticateRequest.class, AddTimestampQuery.class })
 @Endpoint(CloudServers.class)
 public interface CloudServersAsyncClient {
 
@@ -267,6 +268,14 @@ public interface CloudServersAsyncClient {
    @ExceptionParser(ReturnImageNotFoundOn404.class)
    @Path("/images/{id}")
    Future<Image> getImage(@PathParam("id") int id);
+
+   /**
+    * @see CloudServersClient#deleteImage
+    */
+   @DELETE
+   @ExceptionParser(ReturnFalseOn404.class)
+   @Path("/images/{id}")
+   Future<Boolean> deleteImage(@PathParam("id") int id);
 
    /**
     * @see CloudServersClient#createImageFromServer

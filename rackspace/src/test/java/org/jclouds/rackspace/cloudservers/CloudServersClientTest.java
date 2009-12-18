@@ -187,6 +187,21 @@ public class CloudServersClientTest {
                new CreateServerOptions[] { CreateServerOptions.Builder.withSharedIpGroup(1) } }));
    }
 
+   public void testDeleteImage() throws SecurityException, NoSuchMethodException {
+      Method method = CloudServersAsyncClient.class.getMethod("deleteImage", int.class);
+
+      GeneratedHttpRequest<CloudServersAsyncClient> httpMethod = processor.createRequest(method,
+               new Object[] { 2 });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "/images/2");
+      assertEquals(httpMethod.getMethod(), HttpMethod.DELETE);
+      assertEquals(httpMethod.getHeaders().size(), 0);
+      assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
+               ReturnFalseOn404.class);
+      assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
+               ReturnTrueIf2xx.class);
+   }
+
    public void testListServers() throws SecurityException, NoSuchMethodException {
       Method method = CloudServersAsyncClient.class.getMethod("listServers",
                listOptionsVarargsClass);

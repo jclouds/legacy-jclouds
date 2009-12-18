@@ -46,11 +46,17 @@ import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rackspace.RackspacePropertiesBuilder;
+import org.jclouds.rackspace.cloudservers.domain.BackupSchedule;
+import org.jclouds.rackspace.cloudservers.domain.DailyBackup;
 import org.jclouds.rackspace.cloudservers.domain.Flavor;
 import org.jclouds.rackspace.cloudservers.domain.Image;
+import org.jclouds.rackspace.cloudservers.domain.ImageStatus;
+import org.jclouds.rackspace.cloudservers.domain.RebootType;
 import org.jclouds.rackspace.cloudservers.domain.Server;
 import org.jclouds.rackspace.cloudservers.domain.ServerStatus;
 import org.jclouds.rackspace.cloudservers.domain.SharedIpGroup;
+import org.jclouds.rackspace.cloudservers.domain.WeeklyBackup;
+import org.jclouds.rackspace.cloudservers.options.RebuildServerOptions;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
@@ -126,30 +132,34 @@ public class CloudServersClientLiveTest {
       for (Image image : response) {
          assertTrue(image.getId() >= 1);
          assert null != image.getName() : image;
-         // bug in image id: 14362 assert null != image.getCreated() : image;
-         // bug in image id: 14362 assert null != image.getUpdated() : image;
-         // bug in image id: 14362 assert null != image.getStatus() : image;
+         assert null != image.getStatus() : image;
       }
    }
 
-   // Rackspace Web Hosting issue #118856
    public void testGetImagesDetail() throws Exception {
       List<Image> response = client.listImages(withDetails());
       assert null != response;
       long imageCount = response.size();
       assertTrue(imageCount >= 0);
       for (Image image : response) {
-         Image newDetails = client.getImage(image.getId());
-         assertEquals(image.getId(), newDetails.getId());
-         assertEquals(image.getName(), newDetails.getName());
-         // don't check created,serverId, status or last updated! these can change during testing
+         try {
+            Image newDetails = client.getImage(image.getId());
+            assertEquals(image, newDetails);
+         } catch (HttpResponseException e) {// Ticket #9867
+            if (e.getResponse().getStatusCode() != 400)
+               throw e;
+         }
       }
    }
 
-   // Rackspace Web Hosting issue #118856
    public void testGetImageDetailsNotFound() throws Exception {
-      Image newDetails = client.getImage(12312987);
-      assertEquals(Image.NOT_FOUND, newDetails);
+      try {
+         Image newDetails = client.getImage(12312987);
+         assertEquals(Image.NOT_FOUND, newDetails);
+      } catch (HttpResponseException e) {// Ticket #9867
+         if (e.getResponse().getStatusCode() != 400)
+            throw e;
+      }
    }
 
    public void testGetServerDetailsNotFound() throws Exception {
@@ -162,6 +172,10 @@ public class CloudServersClientLiveTest {
       assert null != response;
       long serverCount = response.size();
       assertTrue(serverCount >= 0);
+      for (Server server : response) {
+         Server newDetails = client.getServer(server.getId());
+         assertEquals(server, newDetails);
+      }
    }
 
    public void testListFlavors() throws Exception {
@@ -245,7 +259,7 @@ public class CloudServersClientLiveTest {
       assertEquals(SharedIpGroup.NOT_FOUND, newDetails);
    }
 
-   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testServerDetails")
+   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateServer")
    public void testCreateSharedIpGroup() throws Exception {
       SharedIpGroup sharedIpGroup = null;
       while (sharedIpGroup == null) {
@@ -275,15 +289,15 @@ public class CloudServersClientLiveTest {
    private InetAddress ip;
    private int serverId2;
    private String adminPass2;
+   private int imageId;
 
    public void testCreateServer() throws Exception {
-      int imageId = 2;
+      int imageId = 14362;
       int flavorId = 1;
       Server server = null;
       while (server == null) {
          String serverName = serverPrefix + "createserver" + new SecureRandom().nextInt();
          try {
-            System.out.printf("%d: running instance%n", System.currentTimeMillis());
             server = client.createServer(serverName, imageId, flavorId, withFile(
                      "/etc/jclouds.txt", "rackspace".getBytes()).withMetadata(metadata));
          } catch (UndeclaredThrowableException e) {
@@ -306,14 +320,26 @@ public class CloudServersClientLiveTest {
       for (currentDetails = client.getServer(serverId); currentDetails.getStatus() != ServerStatus.ACTIVE; currentDetails = client
                .getServer(serverId)) {
          System.out.printf("blocking on status active%n%s%n", currentDetails);
-         Thread.sleep(1 * 1000);
+         Thread.sleep(5 * 1000);
       }
-      System.out.printf("%d: %s awaiting ssh service to start%n", System.currentTimeMillis(),
-               currentDetails.getAddresses().getPublicAddresses().first());
-      assert socketTester.apply(new InetSocketAddress(currentDetails.getAddresses()
-               .getPublicAddresses().first(), 22));
-      System.out.printf("%d: %s ssh service started%n", System.currentTimeMillis(), currentDetails
-               .getAddresses().getPublicAddresses().first());
+   }
+
+   private void blockUntilServerVerifyResize(int serverId) throws InterruptedException {
+      Server currentDetails = null;
+      for (currentDetails = client.getServer(serverId); currentDetails.getStatus() != ServerStatus.VERIFY_RESIZE; currentDetails = client
+               .getServer(serverId)) {
+         System.out.printf("blocking on status verify resize%n%s%n", currentDetails);
+         Thread.sleep(5 * 1000);
+      }
+   }
+
+   private void blockUntilImageActive(int imageId) throws InterruptedException {
+      Image currentDetails = null;
+      for (currentDetails = client.getImage(imageId); currentDetails.getStatus() != ImageStatus.ACTIVE; currentDetails = client
+               .getImage(imageId)) {
+         System.out.printf("blocking on status active%n%s%n", currentDetails);
+         Thread.sleep(5 * 1000);
+      }
    }
 
    @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateServer")
@@ -323,7 +349,7 @@ public class CloudServersClientLiveTest {
       assertNotNull(server.getHostId());
       assertEquals(server.getStatus(), ServerStatus.ACTIVE);
       assert server.getProgress() >= 0 : "newDetails.getProgress()" + server.getProgress();
-      assertEquals(new Integer(2), server.getImageId());
+      assertEquals(new Integer(14362), server.getImageId());
       assertEquals(new Integer(1), server.getFlavorId());
       assertNotNull(server.getAddresses());
       // listAddresses tests..
@@ -356,34 +382,56 @@ public class CloudServersClientLiveTest {
    }
 
    private void doCheckPass(Server newDetails, String pass) throws IOException {
-      SshClient connection = sshFactory.create(new InetSocketAddress(newDetails.getAddresses()
-               .getPublicAddresses().first(), 22), "root", pass);
+      InetSocketAddress socket = new InetSocketAddress(newDetails.getAddresses()
+               .getPublicAddresses().first(), 22);
+      socketTester.apply(socket);
+
+      SshClient client = sshFactory.create(socket, "root", pass);
       try {
-         connection.connect();
-         InputStream etcPasswd = connection.get("/etc/jclouds.txt");
+         client.connect();
+         InputStream etcPasswd = client.get("/etc/jclouds.txt");
          String etcPasswdContents = Utils.toStringAndClose(etcPasswd);
          assertEquals("rackspace", etcPasswdContents.trim());
       } finally {
-         if (connection != null)
-            connection.disconnect();
+         if (client != null)
+            client.disconnect();
       }
    }
 
    private ExecResponse exec(Server details, String pass, String command) throws IOException {
-      SshClient connection = sshFactory.create(new InetSocketAddress(details.getAddresses()
-               .getPublicAddresses().first(), 22), "root", pass);
+      InetSocketAddress socket = new InetSocketAddress(details.getAddresses().getPublicAddresses()
+               .first(), 22);
+      socketTester.apply(socket);
+      SshClient client = sshFactory.create(socket, "root", pass);
       try {
-         connection.connect();
-         return connection.exec(command);
+         client.connect();
+         return client.exec(command);
       } finally {
-         if (connection != null)
-            connection.disconnect();
+         if (client != null)
+            client.disconnect();
       }
+   }
+
+   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateServer")
+   public void testRenameServer() throws Exception {
+      Server server = client.getServer(serverId);
+      String oldName = server.getName();
+      assertTrue(client.renameServer(serverId, oldName + "new"));
+      blockUntilServerActive(serverId);
+      assertEquals(oldName + "new", client.getServer(serverId).getName());
+   }
+
+   @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateServer")
+   public void testChangePassword() throws Exception {
+      assertTrue(client.changeAdminPass(serverId, "elmo"));
+      blockUntilServerActive(serverId);
+      checkPassOk(client.getServer(serverId), "elmo");
+      this.adminPass = "elmo";
    }
 
    @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateSharedIpGroup")
    public void testCreateServerIp() throws Exception {
-      int imageId = 2;
+      int imageId = 14362;
       int flavorId = 1;
       Server server = null;
       while (server == null) {
@@ -421,6 +469,15 @@ public class CloudServersClientLiveTest {
       }
    }
 
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testCreateServerIp")
+   public void testUnshare() throws Exception {
+      client.unshareIp(ip, serverId2);
+      blockUntilServerActive(serverId2);
+      Server server = client.getServer(serverId2);
+      assert !server.getAddresses().getPublicAddresses().contains(ip) : server.getAddresses();
+      assertIpNotConfigured(server, adminPass2);
+   }
+
    private void assertIpNotConfigured(Server server, String password) {
       try {
          ExecResponse response = exec(server, password, "ifconfig -a");
@@ -433,36 +490,125 @@ public class CloudServersClientLiveTest {
       }
    }
 
-   @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testUnshare")
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testUnshare")
    public void testShareConfig() throws Exception {
       client.shareIp(ip, serverId2, sharedIpGroupId, true);
       blockUntilServerActive(serverId2);
       Server server = client.getServer(serverId2);
       assert server.getAddresses().getPublicAddresses().contains(ip) : server.getAddresses();
       assertIpConfigured(server, adminPass2);
-      unshare();
+      testUnshare();
    }
 
-   @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testShareConfig")
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testShareConfig")
    public void testShareNoConfig() throws Exception {
       client.shareIp(ip, serverId2, sharedIpGroupId, false);
       blockUntilServerActive(serverId2);
       Server server = client.getServer(serverId2);
       assert server.getAddresses().getPublicAddresses().contains(ip) : server.getAddresses();
       assertIpNotConfigured(server, adminPass2);
-      unshare();
+      testUnshare();
    }
 
-   private void unshare() throws Exception {
-      client.unshareIp(ip, serverId2);
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testShareNoConfig")
+   public void testBackup() throws Exception {
+      assertEquals(new BackupSchedule(), client.listBackupSchedule(serverId));
+      BackupSchedule dailyWeekly = new BackupSchedule();
+      dailyWeekly.setEnabled(true);
+      dailyWeekly.setWeekly(WeeklyBackup.FRIDAY);
+      dailyWeekly.setDaily(DailyBackup.H_0400_0600);
+      assertEquals(true, client.replaceBackupSchedule(serverId, dailyWeekly));
+      client.deleteBackupSchedule(serverId);
+      // disables, doesn't delete: Web Hosting #119571
+      assertEquals(client.listBackupSchedule(serverId).isEnabled(), false);
+   }
+
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testBackup")
+   public void testCreateImage() throws Exception {
+      Image image = client.createImageFromServer("hoofie", serverId);
+      assertEquals("hoofie", image.getName());
+      assertEquals(new Integer(serverId), image.getServerId());
+      imageId = image.getId();
+      blockUntilImageActive(imageId);
+   }
+
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testCreateImage")
+   public void testRebuildServer() throws Exception {
+      assertTrue(client.rebuildServer(serverId, new RebuildServerOptions().withImage(imageId)));
+      blockUntilServerActive(serverId);
+      // issue Web Hosting #119580 imageId comes back incorrect after rebuild
+      // assertEquals(new Integer(imageId), client.getServer(serverId).getImageId());
+   }
+
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebuildServer")
+   public void testRebootHard() throws Exception {
+      assertTrue(client.rebootServer(serverId, RebootType.HARD));
+      blockUntilServerActive(serverId);
+   }
+
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebootHard")
+   public void testRebootSoft() throws Exception {
+      assertTrue(client.rebootServer(serverId, RebootType.SOFT));
+      blockUntilServerActive(serverId);
+   }
+
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebootSoft")
+   public void testRevertResize() throws Exception {
+      assertTrue(client.resizeServer(serverId, 2));
+      blockUntilServerVerifyResize(serverId);
+      assertTrue(client.revertResizeServer(serverId));
+      blockUntilServerActive(serverId);
+      assertEquals(new Integer(1), client.getServer(serverId).getFlavorId());
+   }
+
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebootSoft")
+   public void testConfirmResize() throws Exception {
+      assertTrue(client.resizeServer(serverId2, 2));
+      blockUntilServerVerifyResize(serverId2);
+      assertTrue(client.confirmResizeServer(serverId2));
       blockUntilServerActive(serverId2);
-      Server server = client.getServer(serverId2);
-      assert !server.getAddresses().getPublicAddresses().contains(ip) : server.getAddresses();
-      assertIpNotConfigured(server, adminPass2);
+      assertEquals(new Integer(2), client.getServer(serverId2).getFlavorId());
+   }
+
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = { "testRebootSoft", "testRevertResize",
+            "testConfirmResize" })
+   void deleteServer2() {
+      if (serverId2 > 0) {
+         client.deleteServer(serverId2);
+         Server server = client.getServer(serverId2);
+         assertEquals(server, Server.NOT_FOUND);
+      }
+   }
+
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "deleteServer2")
+   void testDeleteImage() {
+      if (imageId > 0) {
+         client.deleteImage(imageId);
+         Image image = client.getImage(imageId);
+         assertEquals(image, Image.NOT_FOUND);
+      }
+   }
+
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testDeleteImage")
+   void deleteServer1() {
+      if (serverId > 0) {
+         client.deleteServer(serverId);
+         Server server = client.getServer(serverId);
+         assertEquals(server, Server.NOT_FOUND);
+      }
+   }
+
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = { "deleteServer1" })
+   void testDeleteSharedIpGroup() {
+      if (sharedIpGroupId > 0) {
+         client.deleteSharedIpGroup(sharedIpGroupId);
+         SharedIpGroup server = client.getSharedIpGroup(sharedIpGroupId);
+         assertEquals(server, SharedIpGroup.NOT_FOUND);
+      }
    }
 
    @AfterTest
-   void deleteServers() {
+   void deleteServersOnEnd() {
       if (serverId > 0) {
          client.deleteServer(serverId);
       }
