@@ -24,26 +24,32 @@
     ====================================================================
 -->
 <assembly>
-    <id>dependencies</id>
+    <id>jar-with-dependencies</id>
     <formats>
-        <format>dir</format>
+        <format>jar</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
     <dependencySets>
         <dependencySet>
+            <unpack>true</unpack>
             <scope>runtime</scope>
-            <useProjectArtifact>false</useProjectArtifact>
-            <!-- exclude all the dependencies that are included in jar-with-dependencies and
-              JarJar-ed. See jar-with-dependencies-descriptor.xml. --> 
-            <excludes>
-                <exclude>javax.annotation:jsr250-api</exclude>
-                <exclude>javax.inject:inject</exclude>
-                <exclude>org.jboss.resteasy:jaxrs-api</exclude>
-                <exclude>com.google.code.findbugs:jsr305</exclude>
-                <exclude>com.google.common:google-guava</exclude>
-                <exclude>com.google.collections:google-collections</exclude>
-                <exclude>com.google.code.guice:guice</exclude>
-            </excludes>
+            <!-- only those dependencies that need to be JarJar-ed. See
+              dependencies-descriptor.xml. -->
+            <includes>
+                <include>javax.annotation:jsr250-api</include>
+                <include>javax.inject:inject</include>
+                <include>org.jboss.resteasy:jaxrs-api</include>
+                <include>com.google.code.findbugs:jsr305</include>
+                <include>com.google.common:google-guava</include>
+                <include>com.google.collections:google-collections</include>
+                <include>com.google.code.guice:guice</include>
+            </includes>
         </dependencySet>
     </dependencySets>
+    <fileSets>
+        <fileSet>
+            <directory>${project.build.outputDirectory}</directory>
+            <outputDirectory />
+        </fileSet>
+    </fileSets>
 </assembly>

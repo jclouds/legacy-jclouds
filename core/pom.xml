@@ -113,10 +113,10 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <descriptorRefs>
-                                <descriptorRef>jar-with-dependencies</descriptorRef>
-                            </descriptorRefs>
                             <descriptors>
+                                <!-- the first includes only those dependencies to be
+                                  JarJar-ed, the second the remainder -->
+                                <descriptor>jar-with-dependencies-descriptor.xml</descriptor>
                                 <descriptor>dependencies-descriptor.xml</descriptor>
                             </descriptors>
                         </configuration>
