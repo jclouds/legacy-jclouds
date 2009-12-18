@@ -27,6 +27,7 @@ import java.net.InetAddress;
 
 import org.jclouds.compute.domain.CreateServerResponse;
 import org.jclouds.compute.domain.LoginType;
+import org.jclouds.compute.domain.ServerState;
 import org.jclouds.domain.Credentials;
 
 /**
@@ -34,22 +35,19 @@ import org.jclouds.domain.Credentials;
  * @author Ivan Meredith
  */
 public class CreateServerResponseImpl extends ServerMetadataImpl implements CreateServerResponse {
-  
+
    private final Credentials credentials;
 
-
-   public CreateServerResponseImpl(String id, String name, Iterable<InetAddress> publicAddresses,
-            Iterable<InetAddress> privateAddresses, int loginPort, LoginType loginType,
-            Credentials credentials) {
-      super(id, name, publicAddresses, privateAddresses, loginPort, loginType);
+   public CreateServerResponseImpl(String id, String name, ServerState state,
+            Iterable<InetAddress> publicAddresses, Iterable<InetAddress> privateAddresses,
+            int loginPort, LoginType loginType, Credentials credentials) {
+      super(id, name, state, publicAddresses, privateAddresses, loginPort, loginType);
       this.credentials = credentials;
    }
-
 
    public Credentials getCredentials() {
       return credentials;
    }
-
 
    @Override
    public int hashCode() {
@@ -58,7 +56,6 @@ public class CreateServerResponseImpl extends ServerMetadataImpl implements Crea
       result = prime * result + ((credentials == null) ? 0 : credentials.hashCode());
       return result;
    }
-
 
    @Override
    public boolean equals(Object obj) {
@@ -76,6 +73,5 @@ public class CreateServerResponseImpl extends ServerMetadataImpl implements Crea
          return false;
       return true;
    }
-
 
 }

@@ -27,6 +27,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import org.jclouds.compute.domain.LoginType;
+import org.jclouds.compute.domain.ServerState;
 import org.jclouds.compute.domain.internal.CreateServerResponseImpl;
 import org.jclouds.domain.Credentials;
 import org.jclouds.rimuhosting.miro.domain.NewServerResponse;
@@ -44,10 +45,11 @@ public class RimuHostingCreateServerResponse extends CreateServerResponseImpl {
 
    public RimuHostingCreateServerResponse(NewServerResponse rhServerResponse) {
       super(rhServerResponse.getServer().getId().toString(),
-               rhServerResponse.getServer().getName(), getPublicAddresses(rhServerResponse
-                        .getServer()), ImmutableList.<InetAddress> of(), 22, LoginType.SSH,
-               new Credentials("root", rhServerResponse.getNewInstanceRequest().getCreateOptions()
-                        .getPassword()));
+               rhServerResponse.getServer().getName(),
+               ServerState.PENDING,// TODO need a real state!
+               getPublicAddresses(rhServerResponse.getServer()), ImmutableList.<InetAddress> of(),
+               22, LoginType.SSH, new Credentials("root", rhServerResponse.getNewInstanceRequest()
+                        .getCreateOptions().getPassword()));
    }
 
    @VisibleForTesting

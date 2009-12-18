@@ -36,6 +36,7 @@ import com.google.inject.ImplementedBy;
  */
 @ImplementedBy(ServerMetadataImpl.class)
 public interface ServerMetadata extends ServerIdentity {
+   ServerState getState();
 
    SortedSet<InetAddress> getPublicAddresses();
 

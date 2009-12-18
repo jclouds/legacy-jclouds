@@ -24,6 +24,7 @@
 package org.jclouds.vcloud.terremark.compute;
 
 import java.net.InetAddress;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -38,6 +39,7 @@ import org.jclouds.compute.domain.LoginType;
 import org.jclouds.compute.domain.Profile;
 import org.jclouds.compute.domain.ServerIdentity;
 import org.jclouds.compute.domain.ServerMetadata;
+import org.jclouds.compute.domain.ServerState;
 import org.jclouds.compute.domain.internal.CreateServerResponseImpl;
 import org.jclouds.compute.domain.internal.ServerMetadataImpl;
 import org.jclouds.domain.Credentials;
@@ -45,10 +47,12 @@ import org.jclouds.logging.Logger;
 import org.jclouds.rest.domain.NamedResource;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.VApp;
+import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.inject.internal.ImmutableSet;
@@ -62,6 +66,12 @@ public class TerremarkVCloudComputeService implements ComputeService {
    protected Logger logger = Logger.NULL;
    private final TerremarkVCloudComputeClient computeClient;
    private final TerremarkVCloudClient tmClient;
+
+   private static final Map<VAppStatus, ServerState> vAppStatusToServerState = ImmutableMap
+            .<VAppStatus, ServerState> builder().put(VAppStatus.OFF, ServerState.TERMINATED).put(
+                     VAppStatus.ON, ServerState.RUNNING).put(VAppStatus.RESOLVED,
+                     ServerState.PENDING).put(VAppStatus.SUSPENDED, ServerState.SUSPENDED).put(
+                     VAppStatus.UNRESOLVED, ServerState.PENDING).build();
 
    @Inject
    public TerremarkVCloudComputeService(TerremarkVCloudClient tmClient,
@@ -78,9 +88,10 @@ public class TerremarkVCloudComputeService implements ComputeService {
       // bug creating more than one internet service returns 503 or 500
       // InetAddress publicIp = computeClient.createPublicAddressMappedToPorts(vApp, 22, 80, 8080);
       InetAddress publicIp = computeClient.createPublicAddressMappedToPorts(vApp, 22);
-      return new CreateServerResponseImpl(vApp.getId(), vApp.getName(), ImmutableSet
-               .<InetAddress> of(publicIp), vApp.getNetworkToAddresses().values(), 22,
-               LoginType.SSH, new Credentials("vcloud", "p4ssw0rd"));
+      return new CreateServerResponseImpl(vApp.getId(), vApp.getName(), vAppStatusToServerState
+               .get(vApp.getStatus()), ImmutableSet.<InetAddress> of(publicIp), vApp
+               .getNetworkToAddresses().values(), 22, LoginType.SSH, new Credentials("vcloud",
+               "p4ssw0rd"));
    }
 
    @Override
@@ -88,8 +99,9 @@ public class TerremarkVCloudComputeService implements ComputeService {
       VApp vApp = tmClient.getVApp(id);
       // TODO
       Set<InetAddress> publicAddresses = ImmutableSet.<InetAddress> of();
-      return new ServerMetadataImpl(vApp.getId(), vApp.getName(), publicAddresses, vApp
-               .getNetworkToAddresses().values(), 22, LoginType.SSH);
+      return new ServerMetadataImpl(vApp.getId(), vApp.getName(), vAppStatusToServerState.get(vApp
+               .getStatus()), publicAddresses, vApp.getNetworkToAddresses().values(), 22,
+               LoginType.SSH);
    }
 
    public SortedSet<InternetService> getInternetServicesByName(final String name) {

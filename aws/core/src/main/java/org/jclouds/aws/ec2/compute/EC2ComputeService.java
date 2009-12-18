@@ -37,6 +37,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.ec2.EC2Client;
+import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.aws.ec2.domain.IpProtocol;
 import org.jclouds.aws.ec2.domain.KeyPair;
@@ -49,6 +50,7 @@ import org.jclouds.compute.domain.LoginType;
 import org.jclouds.compute.domain.Profile;
 import org.jclouds.compute.domain.ServerIdentity;
 import org.jclouds.compute.domain.ServerMetadata;
+import org.jclouds.compute.domain.ServerState;
 import org.jclouds.compute.domain.internal.CreateServerResponseImpl;
 import org.jclouds.compute.domain.internal.ServerIdentityImpl;
 import org.jclouds.compute.domain.internal.ServerMetadataImpl;
@@ -87,6 +89,12 @@ public class EC2ComputeService implements ComputeService {
    private Map<Profile, InstanceType> profileInstanceTypeMap = ImmutableMap
             .<Profile, InstanceType> builder().put(Profile.SMALLEST, InstanceType.M1_SMALL).build();
 
+   private Map<InstanceState, ServerState> instanceToServerState = ImmutableMap
+            .<InstanceState, ServerState> builder().put(InstanceState.PENDING, ServerState.PENDING)
+            .put(InstanceState.RUNNING, ServerState.RUNNING).put(InstanceState.SHUTTING_DOWN,
+                     ServerState.PENDING).put(InstanceState.TERMINATED, ServerState.TERMINATED)
+            .build();
+
    @Override
    public CreateServerResponse createServer(String name, Profile profile, Image image) {
       String ami = checkNotNull(imageAmiIdMap.get(image), "image not supported: " + image);
@@ -117,7 +125,8 @@ public class EC2ComputeService implements ComputeService {
       Set<InetAddress> privateAddresses = runningInstance.getPrivateIpAddress() == null ? ImmutableSet
                .<InetAddress> of()
                : ImmutableSet.<InetAddress> of(runningInstance.getPrivateIpAddress());
-      return new CreateServerResponseImpl(runningInstance.getInstanceId(), name, publicAddresses,
+      return new CreateServerResponseImpl(runningInstance.getInstanceId(), name,
+               instanceToServerState.get(runningInstance.getInstanceState()), publicAddresses,
                privateAddresses, 22, LoginType.SSH, new Credentials("root", keyPair
                         .getKeyMaterial()));
    }
@@ -166,10 +175,10 @@ public class EC2ComputeService implements ComputeService {
    @Override
    public ServerMetadata getServerMetadata(String id) {
       RunningInstance runningInstance = getRunningInstance(id);
-      return new ServerMetadataImpl(runningInstance.getInstanceId(), runningInstance
-               .getInstanceId(), ImmutableSet.<InetAddress> of(runningInstance.getIpAddress()),
-               ImmutableSet.<InetAddress> of(runningInstance.getPrivateIpAddress()), 22,
-               LoginType.SSH);
+      return new ServerMetadataImpl(runningInstance.getInstanceId(), runningInstance.getKeyName(),
+               instanceToServerState.get(runningInstance.getInstanceState()), ImmutableSet
+                        .<InetAddress> of(runningInstance.getIpAddress()), ImmutableSet
+                        .<InetAddress> of(runningInstance.getPrivateIpAddress()), 22, LoginType.SSH);
    }
 
    private RunningInstance getRunningInstance(String id) {

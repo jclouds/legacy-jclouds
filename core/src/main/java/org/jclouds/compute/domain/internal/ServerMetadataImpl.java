@@ -29,6 +29,7 @@ import java.util.SortedSet;
 
 import org.jclouds.compute.domain.LoginType;
 import org.jclouds.compute.domain.ServerMetadata;
+import org.jclouds.compute.domain.ServerState;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
@@ -46,14 +47,17 @@ public class ServerMetadataImpl extends ServerIdentityImpl implements ServerMeta
       }
 
    };
+   private final ServerState state;
    private final SortedSet<InetAddress> publicAddresses = Sets.newTreeSet(ADDRESS_COMPARATOR);
    private final SortedSet<InetAddress> privateAddresses = Sets.newTreeSet(ADDRESS_COMPARATOR);
    private final int loginPort;
    private final LoginType loginType;
 
-   public ServerMetadataImpl(String id, String name, Iterable<InetAddress> publicAddresses,
-            Iterable<InetAddress> privateAddresses, int loginPort, LoginType loginType) {
+   public ServerMetadataImpl(String id, String name, ServerState state,
+            Iterable<InetAddress> publicAddresses, Iterable<InetAddress> privateAddresses,
+            int loginPort, LoginType loginType) {
       super(id, name);
+      this.state = state;
       Iterables.addAll(this.publicAddresses, publicAddresses);
       Iterables.addAll(this.privateAddresses, privateAddresses);
       this.loginPort = loginPort;
@@ -126,6 +130,10 @@ public class ServerMetadataImpl extends ServerIdentityImpl implements ServerMeta
       } else if (!publicAddresses.equals(other.publicAddresses))
          return false;
       return true;
+   }
+
+   public ServerState getState() {
+      return state;
    }
 
 }
