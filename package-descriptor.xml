@@ -398,7 +398,34 @@
             </includes>
             <outputDirectory>providers/vcloud</outputDirectory>            
         </fileSet>
-        
+
+        <!-- extensions: bouncycastle -->
+        <fileSet>
+            <directory>extensions/bouncycastle/target</directory>
+            <includes>
+                <include>jclouds-bouncycastle-${project.version}.jar</include>
+            </includes>
+            <outputDirectory>extensions/bouncycastle/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>extensions/bouncycastle/target</directory>
+            <includes>
+                <include>jclouds-bouncycastle-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>extensions/bouncycastle/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>extensions/bouncycastle/target/apidocs</directory>
+            <outputDirectory>extensions/bouncycastle/docs</outputDirectory>            
+        </fileSet>
+        <fileSet>
+            <directory>extensions/bouncycastle</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>extensions/bouncycastle</outputDirectory>            
+        </fileSet>
+                
         <!-- extensions: gae -->
         <fileSet>
             <directory>extensions/gae/target</directory>
@@ -425,7 +452,34 @@
             </includes>
             <outputDirectory>extensions/gae</outputDirectory>            
         </fileSet>
-       
+
+        <!-- extensions: joda -->
+        <fileSet>
+            <directory>extensions/joda/target</directory>
+            <includes>
+                <include>jclouds-joda-${project.version}.jar</include>
+            </includes>
+            <outputDirectory>extensions/joda/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>extensions/joda/target</directory>
+            <includes>
+                <include>jclouds-joda-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>extensions/joda/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>extensions/joda/target/apidocs</directory>
+            <outputDirectory>extensions/joda/docs</outputDirectory>            
+        </fileSet>
+        <fileSet>
+            <directory>extensions/joda</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>extensions/joda</outputDirectory>            
+        </fileSet>
+
         <!-- extensions: httpnio -->
         <fileSet>
             <directory>extensions/httpnio/target</directory>
