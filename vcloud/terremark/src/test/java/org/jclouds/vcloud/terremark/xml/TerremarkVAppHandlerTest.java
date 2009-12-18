@@ -88,7 +88,7 @@ public class TerremarkVAppHandlerTest extends BaseHandlerTest {
       assertEquals(result.getId(), 13775 + "");
 
       assertEquals(result.getName(), "adriantest");
-      assertEquals(result.getStatus(), VAppStatus.CREATING);
+      assertEquals(result.getStatus(), VAppStatus.UNRESOLVED);
 
       assertEquals(result.getSize(), new Long(4));
 

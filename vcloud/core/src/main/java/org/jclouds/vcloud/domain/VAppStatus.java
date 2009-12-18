@@ -26,19 +26,42 @@ package org.jclouds.vcloud.domain;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
+ * Indicates the status of the VApp.
+ * 
  * @author Adrian Cole
  */
 public enum VAppStatus {
-   CREATING, TODO_I_DONT_KNOW, OFF, ON;
+   /**
+    * The vApp is unresolved (one or more file references are unavailable in the cloud)
+    */
+   UNRESOLVED,
+   /**
+    * The vApp is resolved (all file references are available in the cloud) but not deployed
+    */
+   RESOLVED,
+   /**
+    * The vApp is deployed and powered off
+    */
+   OFF,
+   /**
+    * The vApp is deployed and suspended
+    */
+   SUSPENDED,
+   /**
+    * The vApp is deployed and powered on
+    */
+   ON;
 
    public String value() {
       switch (this) {
-         case CREATING:
+         case UNRESOLVED:
             return "0";
-         case TODO_I_DONT_KNOW:
+         case RESOLVED:
             return "1";
          case OFF:
             return "2";
+         case SUSPENDED:
+            return "3";
          case ON:
             return "4";
          default:
@@ -53,11 +76,13 @@ public enum VAppStatus {
    public static VAppStatus fromValue(int v) {
       switch (v) {
          case 0:
-            return CREATING;
+            return UNRESOLVED;
          case 1:
-            return TODO_I_DONT_KNOW;
+            return RESOLVED;
          case 2:
             return OFF;
+         case 3:
+            return SUSPENDED;
          case 4:
             return ON;
          default:

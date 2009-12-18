@@ -119,7 +119,7 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
       System.out.printf("%d: instantiating vApp%n", System.currentTimeMillis());
       vApp = tmClient.instantiateVAppTemplate(serverName, templateId, vDCId);
 
-      assertEquals(vApp.getStatus(), VAppStatus.CREATING);
+      assertEquals(vApp.getStatus(), VAppStatus.UNRESOLVED);
 
       // in terremark, this should be a no-op, as it should simply return the above task, which is
       // already deploying
@@ -131,7 +131,7 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
 
       vApp = tmClient.getVApp(vApp.getId());
 
-      assertEquals(vApp.getStatus(), VAppStatus.CREATING);
+      assertEquals(vApp.getStatus(), VAppStatus.UNRESOLVED);
 
       try {// per docs, this is not supported
          tmClient.cancelTask(deployTask.getId());

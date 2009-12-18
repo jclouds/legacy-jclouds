@@ -56,7 +56,7 @@ public class HostingDotComVAppHandlerTest extends BaseHandlerTest {
 
       HostingDotComVApp expects = new HostingDotComVAppImpl("188849-33", "188849-33", URI
                .create("https://vcloud.safesecureweb.com/api/v0.8/vapp/188849-33"),
-               VAppStatus.TODO_I_DONT_KNOW, null, ImmutableListMultimap.<String, InetAddress> of(),
+               VAppStatus.RESOLVED, null, ImmutableListMultimap.<String, InetAddress> of(),
                null, null, ImmutableSortedSet.<ResourceAllocation> of(), "root", "meatisyummy");
 
       assertEquals(result, expects);
