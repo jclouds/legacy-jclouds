@@ -21,12 +21,11 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rest.internal;
+package org.jclouds.vcloud.domain.internal;
 
 import java.net.URI;
 
-import org.jclouds.rest.domain.NamedResource;
-import org.jclouds.rest.domain.internal.NamedLinkImpl;
+import org.jclouds.vcloud.domain.NamedResource;
 
 /**
  * Location of a Rest resource
@@ -34,16 +33,33 @@ import org.jclouds.rest.domain.internal.NamedLinkImpl;
  * @author Adrian Cole
  * 
  */
-public class NamedResourceImpl extends NamedLinkImpl implements NamedResource {
+public class NamedResourceImpl implements NamedResource {
    private final String id;
+   private final String name;
+   private final String type;
+   private final URI location;
 
    public NamedResourceImpl(String id, String name, String type, URI location) {
-      super(name, type, location);
       this.id = id;
+      this.name = name;
+      this.type = type;
+      this.location = location;
    }
 
    public String getId() {
       return id;
+   }
+
+   public String getName() {
+      return name;
+   }
+
+   public String getType() {
+      return type;
+   }
+
+   public URI getLocation() {
+      return location;
    }
 
    public int compareTo(NamedResource that) {
@@ -53,8 +69,11 @@ public class NamedResourceImpl extends NamedLinkImpl implements NamedResource {
    @Override
    public int hashCode() {
       final int prime = 31;
-      int result = super.hashCode();
+      int result = 1;
       result = prime * result + ((id == null) ? 0 : id.hashCode());
+      result = prime * result + ((location == null) ? 0 : location.hashCode());
+      result = prime * result + ((name == null) ? 0 : name.hashCode());
+      result = prime * result + ((type == null) ? 0 : type.hashCode());
       return result;
    }
 
@@ -62,7 +81,7 @@ public class NamedResourceImpl extends NamedLinkImpl implements NamedResource {
    public boolean equals(Object obj) {
       if (this == obj)
          return true;
-      if (!super.equals(obj))
+      if (obj == null)
          return false;
       if (getClass() != obj.getClass())
          return false;
@@ -72,12 +91,27 @@ public class NamedResourceImpl extends NamedLinkImpl implements NamedResource {
             return false;
       } else if (!id.equals(other.id))
          return false;
+      if (location == null) {
+         if (other.location != null)
+            return false;
+      } else if (!location.equals(other.location))
+         return false;
+      if (name == null) {
+         if (other.name != null)
+            return false;
+      } else if (!name.equals(other.name))
+         return false;
+      if (type == null) {
+         if (other.type != null)
+            return false;
+      } else if (!type.equals(other.type))
+         return false;
       return true;
    }
 
    @Override
    public String toString() {
-      return "NamedResourceImpl [id=" + id + ", name=" + getName() + ", location="
-               + getLocation() + ", type=" + getType() + "]";
+      return "NamedResourceImpl [id=" + id + ", name=" + name + ", type=" + type + ", location="
+               + location + "]";
    }
 }

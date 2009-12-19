@@ -30,8 +30,8 @@ import static org.testng.Assert.assertNotNull;
 import java.net.URI;
 
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.domain.NamedResource;
 import org.jclouds.vcloud.domain.Catalog;
+import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Organization;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
@@ -54,6 +54,7 @@ public class VCloudClientLiveTest {
    public void testOrganization() throws Exception {
       Organization response = connection.getOrganization();
       assertNotNull(response);
+      assertNotNull(response.getId());
       assertNotNull(account);
       assertNotNull(response.getCatalog());
       assertEquals(response.getTasksLists().size(), 1);
@@ -64,6 +65,7 @@ public class VCloudClientLiveTest {
    public void testCatalog() throws Exception {
       Catalog response = connection.getCatalog();
       assertNotNull(response);
+      assertNotNull(response.getId());
       assertNotNull(response.getName());
       assertNotNull(response.getLocation());
       assert response.size() > 0;
@@ -73,18 +75,22 @@ public class VCloudClientLiveTest {
    public void testDefaultVDC() throws Exception {
       VDC response = connection.getDefaultVDC();
       assertNotNull(response);
+      assertNotNull(response.getId());
       assertNotNull(response.getName());
       assertNotNull(response.getLocation());
       assertNotNull(response.getResourceEntities());
       assertNotNull(response.getAvailableNetworks());
+      assertEquals(connection.getVDC(response.getId()), response);
    }
 
    @Test
    public void testDefaultTasksList() throws Exception {
       org.jclouds.vcloud.domain.TasksList response = connection.getDefaultTasksList();
       assertNotNull(response);
+      assertNotNull(response.getId());
       assertNotNull(response.getLocation());
       assertNotNull(response.getTasks());
+      assertEquals(connection.getTasksList(response.getId()), response);
    }
 
    @Test

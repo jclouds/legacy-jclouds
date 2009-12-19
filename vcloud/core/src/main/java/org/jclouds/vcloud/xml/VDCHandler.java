@@ -23,14 +23,14 @@
  */
 package org.jclouds.vcloud.xml;
 
-import static org.jclouds.rest.util.Utils.newNamedResource;
-import static org.jclouds.rest.util.Utils.putNamedResource;
+import static org.jclouds.vcloud.util.Utils.newNamedResource;
+import static org.jclouds.vcloud.util.Utils.putNamedResource;
 
 import java.util.Map;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.domain.NamedResource;
 import org.jclouds.vcloud.domain.Capacity;
+import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Quota;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.domain.internal.VDCImpl;

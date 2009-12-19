@@ -30,13 +30,12 @@ import java.util.SortedMap;
 import javax.inject.Inject;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.domain.NamedLink;
-import org.jclouds.rest.domain.NamedResource;
-import org.jclouds.rest.domain.internal.NamedLinkImpl;
-import org.jclouds.rest.internal.NamedResourceImpl;
 import org.jclouds.vcloud.domain.Catalog;
+import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.internal.CatalogImpl;
+import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.jclouds.vcloud.endpoints.internal.CatalogItemRoot;
+import org.jclouds.vcloud.util.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -48,7 +47,7 @@ import com.google.common.collect.Maps;
 public class CatalogHandler extends ParseSax.HandlerWithResult<Catalog> {
    private StringBuilder currentText = new StringBuilder();
 
-   private NamedLink Catalog;
+   private NamedResource catalog;
    private SortedMap<String, NamedResource> contents = Maps.newTreeMap();
    @Inject
    @CatalogItemRoot
@@ -57,16 +56,15 @@ public class CatalogHandler extends ParseSax.HandlerWithResult<Catalog> {
    private String description;
 
    public Catalog getResult() {
-      return new CatalogImpl(Catalog.getName(), Catalog.getLocation(), description, contents);
+      return new CatalogImpl(catalog.getId(), catalog.getName(), catalog.getLocation(),
+               description, contents);
    }
 
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attributes)
             throws SAXException {
       if (qName.equals("Catalog")) {
-         Catalog = new NamedLinkImpl(attributes.getValue(attributes.getIndex("name")), attributes
-                  .getValue(attributes.getIndex("type")), URI.create(attributes.getValue(attributes
-                  .getIndex("href"))));
+         catalog = Utils.newNamedResource(attributes);
       } else if (qName.equals("CatalogItem")) {
          putNamedResource(contents, attributes);
       }

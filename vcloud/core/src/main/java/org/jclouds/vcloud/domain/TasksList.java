@@ -37,6 +37,8 @@ import com.google.inject.ImplementedBy;
 @org.jclouds.vcloud.endpoints.TasksList
 @ImplementedBy(TasksListImpl.class)
 public interface TasksList {
+   String getId();
+
    URI getLocation();
 
    SortedSet<Task> getTasks();

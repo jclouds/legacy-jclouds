@@ -32,11 +32,11 @@ import javax.inject.Inject;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
-import org.jclouds.rest.domain.NamedResource;
-import org.jclouds.rest.util.Utils;
+import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
 import org.jclouds.vcloud.domain.internal.TaskImpl;
+import org.jclouds.vcloud.util.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 

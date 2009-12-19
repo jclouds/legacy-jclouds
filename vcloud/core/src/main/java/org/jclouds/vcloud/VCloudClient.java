@@ -51,7 +51,11 @@ public interface VCloudClient {
 
    Catalog getCatalog();
 
+   VDC getVDC(String vDCId);
+
    VDC getDefaultVDC();
+
+   TasksList getTasksList(String tasksListId);
 
    TasksList getDefaultTasksList();
 

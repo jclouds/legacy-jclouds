@@ -23,24 +23,18 @@
  */
 package org.jclouds.vcloud.xml;
 
-import static org.jclouds.rest.util.Utils.newNamedLink;
-import static org.jclouds.rest.util.Utils.putNamedLink;
 import static org.jclouds.vcloud.VCloudMediaType.CATALOG_XML;
 import static org.jclouds.vcloud.VCloudMediaType.TASKSLIST_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VDC_XML;
+import static org.jclouds.vcloud.util.Utils.newNamedResource;
+import static org.jclouds.vcloud.util.Utils.putNamedResource;
 
-import java.net.URI;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.domain.NamedLink;
-import org.jclouds.rest.domain.NamedResource;
-import org.jclouds.rest.internal.NamedResourceImpl;
+import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Organization;
 import org.jclouds.vcloud.domain.internal.OrganizationImpl;
-import org.jclouds.vcloud.endpoints.VCloudApi;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -51,12 +45,9 @@ import com.google.common.collect.Maps;
  */
 public class OrgHandler extends ParseSax.HandlerWithResult<Organization> {
    private NamedResource org;
-   private Map<String, NamedLink> vdcs = Maps.newHashMap();
-   private Map<String, NamedLink> tasksLists = Maps.newHashMap();
-   private NamedLink catalog;
-   @Inject
-   @VCloudApi
-   URI vcloudUri;
+   private Map<String, NamedResource> vdcs = Maps.newHashMap();
+   private Map<String, NamedResource> tasksLists = Maps.newHashMap();
+   private NamedResource catalog;
 
    public Organization getResult() {
       return new OrganizationImpl(org.getId(), org.getName(), org.getLocation(), catalog, vdcs,
@@ -72,21 +63,13 @@ public class OrgHandler extends ParseSax.HandlerWithResult<Organization> {
          int typeIndex = attributes.getIndex("type");
          if (typeIndex != -1) {
             if (attributes.getValue(typeIndex).equals(VDC_XML)) {
-               putNamedLink(vdcs, attributes);
+               putNamedResource(vdcs, attributes);
             } else if (attributes.getValue(typeIndex).equals(CATALOG_XML)) {
-               catalog = newNamedLink(attributes);
+               catalog = newNamedResource(attributes);
             } else if (attributes.getValue(typeIndex).equals(TASKSLIST_XML)) {
-               putNamedLink(tasksLists, attributes);
+               putNamedResource(tasksLists, attributes);
             }
          }
       }
    }
-
-   public NamedResource newNamedResource(Attributes attributes) {
-      return new NamedResourceImpl(attributes.getValue(attributes.getIndex("href")).replace(
-               vcloudUri.toASCIIString() + "/org/", ""), attributes.getValue(attributes
-               .getIndex("name")), attributes.getValue(attributes.getIndex("type")), URI
-               .create(attributes.getValue(attributes.getIndex("href"))));
-   }
-
 }

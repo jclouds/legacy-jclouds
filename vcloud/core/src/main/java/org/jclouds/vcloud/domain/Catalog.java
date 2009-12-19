@@ -23,10 +23,8 @@
  */
 package org.jclouds.vcloud.domain;
 
-import java.net.URI;
 import java.util.Map;
 
-import org.jclouds.rest.domain.NamedResource;
 import org.jclouds.vcloud.domain.internal.CatalogImpl;
 
 import com.google.inject.ImplementedBy;
@@ -36,10 +34,8 @@ import com.google.inject.ImplementedBy;
  */
 @org.jclouds.vcloud.endpoints.Catalog
 @ImplementedBy(CatalogImpl.class)
-public interface Catalog extends Map<String, NamedResource> {
-   String getName();
+public interface Catalog extends NamedResource, Map<String, NamedResource> {
 
    String getDescription();
 
-   URI getLocation();
 }

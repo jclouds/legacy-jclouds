@@ -23,16 +23,16 @@
  */
 package org.jclouds.vcloud.xml;
 
-import java.net.URI;
 import java.util.SortedSet;
 
 import javax.inject.Inject;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.util.Utils;
+import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TasksList;
 import org.jclouds.vcloud.domain.internal.TasksListImpl;
+import org.jclouds.vcloud.util.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -45,7 +45,7 @@ public class TasksListHandler extends ParseSax.HandlerWithResult<TasksList> {
 
    private SortedSet<Task> tasks = Sets.newTreeSet();
    private final TaskHandler taskHandler;
-   private URI location;
+   private NamedResource resource;
 
    @Inject
    public TasksListHandler(TaskHandler taskHandler) {
@@ -53,17 +53,17 @@ public class TasksListHandler extends ParseSax.HandlerWithResult<TasksList> {
    }
 
    public TasksList getResult() {
-      return new TasksListImpl(location, tasks);
+      return new TasksListImpl(resource.getId(), resource.getLocation(), tasks);
    }
 
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attributes)
             throws SAXException {
       if (qName.equals("TasksList")) {
-         location = Utils.newLink(attributes).getLocation();
+         resource = Utils.newNamedResource(attributes);
       } else if (qName.equals("Link") && attributes.getIndex("rel") != -1
                && attributes.getValue(attributes.getIndex("rel")).equals("self")) {
-         location = Utils.newLink(attributes).getLocation();
+         resource = Utils.newNamedResource(attributes);
       } else {
          taskHandler.startElement(uri, localName, qName, attributes);
       }

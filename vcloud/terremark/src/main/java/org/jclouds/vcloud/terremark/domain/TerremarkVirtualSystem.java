@@ -21,9 +21,11 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.domain;
+package org.jclouds.vcloud.terremark.domain;
 
 import java.util.Date;
+
+import org.jclouds.vcloud.domain.VirtualSystem;
 
 /**
  * @author Adrian Cole

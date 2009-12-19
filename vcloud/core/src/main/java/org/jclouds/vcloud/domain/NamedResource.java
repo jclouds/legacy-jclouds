@@ -21,11 +21,11 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rest.domain;
+package org.jclouds.vcloud.domain;
 
 import java.net.URI;
 
-import org.jclouds.rest.domain.internal.LinkImpl;
+import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 
 import com.google.inject.ImplementedBy;
 
@@ -35,11 +35,13 @@ import com.google.inject.ImplementedBy;
  * @author Adrian Cole
  * 
  */
-@ImplementedBy(LinkImpl.class)
-public interface Link {
+@ImplementedBy(NamedResourceImpl.class)
+public interface NamedResource extends Comparable<NamedResource> {
+   String getId();
+
+   String getName();
 
    String getType();
 
    URI getLocation();
-
 }

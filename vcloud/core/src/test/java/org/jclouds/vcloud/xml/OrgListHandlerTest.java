@@ -30,9 +30,9 @@ import java.net.URI;
 import java.util.Map;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.rest.domain.NamedResource;
-import org.jclouds.rest.internal.NamedResourceImpl;
 import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 

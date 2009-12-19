@@ -23,13 +23,13 @@
  */
 package org.jclouds.vcloud.xml;
 
-import static org.jclouds.rest.util.Utils.putNamedResource;
 import static org.jclouds.vcloud.VCloudMediaType.ORG_XML;
+import static org.jclouds.vcloud.util.Utils.putNamedResource;
 
 import java.util.Map;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.domain.NamedResource;
+import org.jclouds.vcloud.domain.NamedResource;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 

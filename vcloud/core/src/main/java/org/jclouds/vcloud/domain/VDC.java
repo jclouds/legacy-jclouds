@@ -23,10 +23,8 @@
  */
 package org.jclouds.vcloud.domain;
 
-import java.net.URI;
 import java.util.Map;
 
-import org.jclouds.rest.domain.NamedResource;
 import org.jclouds.vcloud.domain.internal.VDCImpl;
 
 import com.google.inject.ImplementedBy;
@@ -36,13 +34,7 @@ import com.google.inject.ImplementedBy;
  */
 @org.jclouds.vcloud.endpoints.VDC
 @ImplementedBy(VDCImpl.class)
-public interface VDC {
-
-   String getName();
-
-   String getId();
-
-   URI getLocation();
+public interface VDC extends NamedResource {
 
    String getDescription();
 

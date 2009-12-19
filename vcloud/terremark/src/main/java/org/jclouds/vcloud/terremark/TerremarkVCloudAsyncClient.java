@@ -89,7 +89,19 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    @Endpoint(org.jclouds.vcloud.endpoints.VDC.class)
    @XMLResponseParser(TerremarkVDCHandler.class)
    @Consumes(VDC_XML)
+   @Override
    Future<? extends VDC> getDefaultVDC();
+
+   /**
+    * @see TerremarkVCloudClient#getVDC
+    */
+   @GET
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
+   @Path("/vdc/{vDCId}")
+   @XMLResponseParser(TerremarkVDCHandler.class)
+   @Consumes(VDC_XML)
+   @Override
+   Future<? extends VDC> getVDC(@PathParam("vDCId") String vDCId);
 
    /**
     * @see TerremarkVCloudClient#instantiateVAppTemplate

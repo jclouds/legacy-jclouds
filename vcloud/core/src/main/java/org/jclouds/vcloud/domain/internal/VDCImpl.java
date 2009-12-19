@@ -28,8 +28,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.Map;
 
-import org.jclouds.rest.domain.NamedResource;
+import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Capacity;
+import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Quota;
 import org.jclouds.vcloud.domain.VDC;
 
@@ -202,5 +203,15 @@ public class VDCImpl implements VDC {
 
    public Quota getDeployedVmsQuota() {
       return deployedVmsQuota;
+   }
+
+   @Override
+   public String getType() {
+      return VCloudMediaType.VDC_XML;
+   }
+
+   @Override
+   public int compareTo(NamedResource o) {
+      return (this == o) ? 0 : getId().compareTo(o.getId());
    }
 }

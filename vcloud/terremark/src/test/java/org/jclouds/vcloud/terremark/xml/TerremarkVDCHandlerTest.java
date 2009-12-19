@@ -32,10 +32,9 @@ import java.net.URI;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.ParserModule;
-import org.jclouds.rest.domain.NamedResource;
-import org.jclouds.rest.domain.internal.NamedLinkImpl;
-import org.jclouds.rest.internal.NamedResourceImpl;
 import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.jclouds.vcloud.endpoints.VCloudApi;
 import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
 import org.testng.annotations.Test;
@@ -107,13 +106,21 @@ public class TerremarkVDCHandlerTest {
                                           "application/vnd.vmware.vcloud.network+xml",
                                           URI
                                                    .create("https://services.vcloudexpress.terremark.com/api/v0.8/network/1708"))));
-      assertEquals(result.getCatalog(), new NamedLinkImpl("Miami Environment 1", CATALOG_XML, URI
-               .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32/catalog")));
-      assertEquals(result.getPublicIps(), new NamedLinkImpl("Public IPs", "application/xml", URI
-               .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32/publicIps")));
+      assertEquals(result.getCatalog(), new NamedResourceImpl("catalog", "Miami Environment 1",
+               CATALOG_XML,
+               URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32/catalog")));
+      assertEquals(
+               result.getPublicIps(),
+               new NamedResourceImpl(
+                        "publicIps",
+                        "Public IPs",
+                        "application/xml",
+                        URI
+                                 .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32/publicIps")));
       assertEquals(
                result.getInternetServices(),
-               new NamedLinkImpl(
+               new NamedResourceImpl(
+                        "internetServices",
                         "Internet Services",
                         "application/xml",
                         URI

@@ -24,18 +24,20 @@
 package org.jclouds.vcloud.domain;
 
 import java.net.InetAddress;
-import java.net.URI;
 import java.util.Map;
 import java.util.SortedSet;
 
+
 import com.google.common.collect.ListMultimap;
 
-public interface VApp {
-   String getId();
-
-   URI getLocation();
-
-   String getName();
+/**
+ * A virtual application (vApp) is a software solution, packaged in OVF containing one or more
+ * virtual machines. A vApp can be authored by Developers at ISVs and VARs or by IT Administrators
+ * in Enterprises and Service Providers.
+ * 
+ * @author Adrian Cole
+ */
+public interface VApp extends NamedResource {
 
    VAppStatus getStatus();
 

@@ -26,7 +26,8 @@ package org.jclouds.vcloud.domain.internal;
 import java.net.URI;
 import java.util.Map;
 
-import org.jclouds.rest.domain.NamedLink;
+import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Organization;
 import org.jclouds.vcloud.endpoints.Catalog;
 import org.jclouds.vcloud.endpoints.TasksList;
@@ -42,12 +43,12 @@ public class OrganizationImpl implements Organization {
    private final String id;
    private final String name;
    private final URI location;
-   private final NamedLink catalog;
-   private final Map<String, NamedLink> vdcs;
-   private final Map<String, NamedLink> tasksLists;
+   private final NamedResource catalog;
+   private final Map<String, NamedResource> vdcs;
+   private final Map<String, NamedResource> tasksLists;
 
-   public OrganizationImpl(String id, String name, URI location, NamedLink catalog,
-            Map<String, NamedLink> vdcs, Map<String, NamedLink> tasksLists) {
+   public OrganizationImpl(String id, String name, URI location, NamedResource catalog,
+            Map<String, NamedResource> vdcs, Map<String, NamedResource> tasksLists) {
       this.id = id;
       this.name = name;
       this.location = location;
@@ -67,19 +68,19 @@ public class OrganizationImpl implements Organization {
    public URI getLocation() {
       return location;
    }
-   
+
    @Catalog
-   public NamedLink getCatalog() {
+   public NamedResource getCatalog() {
       return catalog;
    }
 
    @VDC
-   public Map<String, NamedLink> getVDCs() {
+   public Map<String, NamedResource> getVDCs() {
       return vdcs;
    }
 
    @TasksList
-   public Map<String, NamedLink> getTasksLists() {
+   public Map<String, NamedResource> getTasksLists() {
       return tasksLists;
    }
 
@@ -138,5 +139,13 @@ public class OrganizationImpl implements Organization {
       return true;
    }
 
+   @Override
+   public String getType() {
+      return VCloudMediaType.ORG_XML;
+   }
+
+   public int compareTo(NamedResource o) {
+      return (this == o) ? 0 : getId().compareTo(o.getId());
+   }
 
 }

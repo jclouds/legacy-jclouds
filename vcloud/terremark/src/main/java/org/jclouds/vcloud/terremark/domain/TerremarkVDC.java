@@ -23,7 +23,7 @@
  */
 package org.jclouds.vcloud.terremark.domain;
 
-import org.jclouds.rest.domain.Link;
+import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.endpoints.Catalog;
 import org.jclouds.vcloud.terremark.domain.internal.TerremarkVDCImpl;
@@ -40,13 +40,13 @@ import com.google.inject.ImplementedBy;
 public interface TerremarkVDC extends VDC {
 
    @Catalog
-   Link getCatalog();
+   NamedResource getCatalog();
 
    @PublicIPs
-   Link getPublicIps();
+   NamedResource getPublicIps();
 
    @InternetServices
-   Link getInternetServices();
+   NamedResource getInternetServices();
 
    // TODO getDescription() // what is the type?
 }

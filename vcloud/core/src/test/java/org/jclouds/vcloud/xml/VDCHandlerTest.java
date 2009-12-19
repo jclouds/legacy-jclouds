@@ -31,11 +31,11 @@ import java.net.URI;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.ParserModule;
-import org.jclouds.rest.domain.NamedLink;
-import org.jclouds.rest.internal.NamedResourceImpl;
 import org.jclouds.vcloud.domain.Capacity;
+import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Quota;
 import org.jclouds.vcloud.domain.VDC;
+import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.jclouds.vcloud.endpoints.VCloudApi;
 import org.testng.annotations.Test;
 
@@ -80,7 +80,7 @@ public class VDCHandlerTest {
       assertEquals(result.getMemoryCapacity(), null);
       assertEquals(result.getInstantiatedVmsQuota(), null);
       assertEquals(result.getDeployedVmsQuota(), null);
-      assertEquals(result.getResourceEntities(), ImmutableMap.<String, NamedLink> of());
+      assertEquals(result.getResourceEntities(), ImmutableMap.<String, NamedResource> of());
       assertEquals(
                result.getAvailableNetworks(),
                ImmutableMap
@@ -123,7 +123,7 @@ public class VDCHandlerTest {
       assertEquals(result.getDeployedVmsQuota(), new Quota(0, 2));
       assertEquals(
                result.getResourceEntities(),
-               new ImmutableMap.Builder<String, NamedLink>()
+               new ImmutableMap.Builder<String, NamedResource>()
                         .put(
                                  "Plesk (Linux) 64-bit Template",
                                  new NamedResourceImpl(
@@ -175,6 +175,6 @@ public class VDCHandlerTest {
                                                    .create("https://vcloud.safesecureweb.com/api/v0.8/vApp/188849-2")))
                         .build());
 
-      assertEquals(result.getAvailableNetworks(), ImmutableMap.<String, NamedLink> of());
+      assertEquals(result.getAvailableNetworks(), ImmutableMap.<String, NamedResource> of());
    }
 }

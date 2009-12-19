@@ -28,6 +28,8 @@ import java.net.URI;
 import java.util.Map;
 import java.util.SortedSet;
 
+import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.VApp;
@@ -39,7 +41,6 @@ import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
 
 /**
- * Locations of resources in vCloud
  * 
  * @author Adrian Cole
  * 
@@ -212,4 +213,13 @@ public class VAppImpl implements VApp {
                + ", size=" + size + ", status=" + status + ", system=" + system + "]";
    }
 
+   @Override
+   public String getType() {
+      return VCloudMediaType.VAPP_XML;
+   }
+
+   @Override
+   public int compareTo(NamedResource o) {
+      return (this == o) ? 0 : getId().compareTo(o.getId());
+   }
 }

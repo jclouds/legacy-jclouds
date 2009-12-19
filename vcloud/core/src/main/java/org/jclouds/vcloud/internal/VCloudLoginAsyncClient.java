@@ -33,9 +33,9 @@ import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
-import org.jclouds.rest.domain.NamedResource;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.VCloudToken;
+import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.functions.ParseLoginResponseFromHeaders;
 

@@ -31,8 +31,8 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.rest.internal.NamedResourceImpl;
 import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.jclouds.vcloud.internal.VCloudLoginAsyncClient.VCloudSession;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;

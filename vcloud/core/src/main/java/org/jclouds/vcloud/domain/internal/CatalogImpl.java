@@ -29,8 +29,9 @@ import java.net.URI;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.jclouds.rest.domain.NamedResource;
+import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Catalog;
+import org.jclouds.vcloud.domain.NamedResource;
 
 import com.google.inject.internal.Nullable;
 
@@ -44,13 +45,14 @@ public class CatalogImpl extends TreeMap<String, NamedResource> implements Catal
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
+   private final String id;
    private final String name;
    private final String description;
    private final URI location;
 
-   public CatalogImpl(String name, URI location, @Nullable String description,
+   public CatalogImpl(String id, String name, URI location, @Nullable String description,
             SortedMap<String, NamedResource> contents) {
-      super();
+      this.id = checkNotNull(id, "id");
       this.name = checkNotNull(name, "name");
       this.description = description;
       this.location = checkNotNull(location, "location");
@@ -59,6 +61,10 @@ public class CatalogImpl extends TreeMap<String, NamedResource> implements Catal
 
    public URI getLocation() {
       return location;
+   }
+
+   public String getId() {
+      return id;
    }
 
    public String getName() {
@@ -104,6 +110,16 @@ public class CatalogImpl extends TreeMap<String, NamedResource> implements Catal
 
    public String getDescription() {
       return description;
+   }
+
+   @Override
+   public String getType() {
+      return VCloudMediaType.CATALOG_XML;
+   }
+
+   @Override
+   public int compareTo(NamedResource o) {
+      return (this == o) ? 0 : getId().compareTo(o.getId());
    }
 
 }

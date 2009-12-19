@@ -23,12 +23,12 @@
  */
 package org.jclouds.vcloud.terremark.xml;
 
-import org.jclouds.rest.domain.NamedLink;
-import org.jclouds.rest.util.Utils;
 import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
 import org.jclouds.vcloud.terremark.domain.internal.TerremarkVDCImpl;
+import org.jclouds.vcloud.util.Utils;
 import org.jclouds.vcloud.xml.VDCHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -38,9 +38,9 @@ import org.xml.sax.SAXException;
  */
 public class TerremarkVDCHandler extends VDCHandler {
 
-   private NamedLink catalog;
-   private NamedLink publicIps;
-   private NamedLink internetServices;
+   private NamedResource catalog;
+   private NamedResource publicIps;
+   private NamedResource internetServices;
 
    public TerremarkVDC getResult() {
       VDC vDC = super.getResult();
@@ -58,13 +58,13 @@ public class TerremarkVDCHandler extends VDCHandler {
       if (qName.equals("Link")) {
          String name = attributes.getValue(attributes.getIndex("name"));
          if (name.equals("Internet Services")) {
-            internetServices = Utils.newNamedLink(attributes);
+            internetServices = Utils.newNamedResource(attributes);
          } else if (name.equals("Public IPs")) {
-            publicIps = Utils.newNamedLink(attributes);
+            publicIps = Utils.newNamedResource(attributes);
          } else {
             String type = attributes.getValue(attributes.getIndex("type"));
             if (type.equals(VCloudMediaType.CATALOG_XML)) {
-               catalog = Utils.newNamedLink(attributes);
+               catalog = Utils.newNamedResource(attributes);
             }
          }
       }

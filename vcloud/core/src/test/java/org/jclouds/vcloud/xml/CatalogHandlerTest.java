@@ -32,8 +32,8 @@ import java.net.URI;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.ParserModule;
-import org.jclouds.rest.internal.NamedResourceImpl;
 import org.jclouds.vcloud.domain.Catalog;
+import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.jclouds.vcloud.endpoints.internal.CatalogItemRoot;
 import org.testng.annotations.Test;
 

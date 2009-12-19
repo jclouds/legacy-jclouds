@@ -21,19 +21,30 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rest.domain;
+package org.jclouds.vcloud.util;
 
-import org.jclouds.rest.internal.NamedResourceImpl;
+import java.net.URI;
+import java.util.Map;
 
-import com.google.inject.ImplementedBy;
+import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
+import org.xml.sax.Attributes;
 
 /**
- * Location of a Rest resource
  * 
  * @author Adrian Cole
- * 
  */
-@ImplementedBy(NamedResourceImpl.class)
-public interface NamedResource extends NamedLink, Comparable<NamedResource> {
-   String getId();
+public class Utils {
+
+
+   public static NamedResource newNamedResource(Attributes attributes) {
+      String uri = attributes.getValue(attributes.getIndex("href"));
+      String id = uri.substring(uri.lastIndexOf('/') + 1);
+      return new NamedResourceImpl(id, attributes.getValue(attributes.getIndex("name")), attributes
+               .getValue(attributes.getIndex("type")), URI.create(uri));
+   }
+
+   public static void putNamedResource(Map<String, NamedResource> map, Attributes attributes) {
+      map.put(attributes.getValue(attributes.getIndex("name")), newNamedResource(attributes));
+   }
 }

@@ -34,17 +34,16 @@ import javax.inject.Inject;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
-import org.jclouds.rest.domain.Link;
-import org.jclouds.rest.domain.NamedResource;
-import org.jclouds.rest.internal.NamedResourceImpl;
-import org.jclouds.rest.util.Utils;
 import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.VAppStatus;
-import org.jclouds.vcloud.domain.TerremarkVirtualSystem;
+import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.jclouds.vcloud.endpoints.internal.VAppRoot;
 import org.jclouds.vcloud.terremark.domain.TerremarkVApp;
+import org.jclouds.vcloud.terremark.domain.TerremarkVirtualSystem;
 import org.jclouds.vcloud.terremark.domain.internal.TerremarkVAppImpl;
+import org.jclouds.vcloud.util.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -72,12 +71,12 @@ public class TerremarkVAppHandler extends ParseSax.HandlerWithResult<TerremarkVA
    private TerremarkVirtualSystem system;
    private SortedSet<ResourceAllocation> allocations = Sets.newTreeSet();
    private NamedResource vApp;
-   private Link vDC;
+   private NamedResource vDC;
    private VAppStatus status;
    private int size;
    private boolean skip;
-   private Link computeOptions;
-   private Link customizationOptions;
+   private NamedResource computeOptions;
+   private NamedResource customizationOptions;
    private final ListMultimap<String, InetAddress> networkToAddresses = ArrayListMultimap.create();
    private StringBuilder currentText = new StringBuilder();
    private String operatingSystemDescription;
@@ -103,12 +102,12 @@ public class TerremarkVAppHandler extends ParseSax.HandlerWithResult<TerremarkVA
       }
       if (qName.equals("Link")) {
          if (attributes.getValue(attributes.getIndex("type")).equals(VCloudMediaType.VDC_XML)) {
-            vDC = Utils.newLink(attributes);
+            vDC = Utils.newNamedResource(attributes);
          } else if (attributes.getValue(attributes.getIndex("name")).equals("Compute Options")) {
-            this.computeOptions = Utils.newLink(attributes);
+            this.computeOptions = Utils.newNamedResource(attributes);
          } else if (attributes.getValue(attributes.getIndex("name"))
                   .equals("Customization Options")) {
-            this.customizationOptions = Utils.newLink(attributes);
+            this.customizationOptions = Utils.newNamedResource(attributes);
          }
       } else if (qName.equals("VApp")) {
          vApp = newNamedResource(attributes);

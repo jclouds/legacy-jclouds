@@ -42,7 +42,7 @@ import com.google.common.collect.Multimaps;
  * 
  */
 public class TasksListImpl implements TasksList {
-
+   private final String id;
    private final SortedSet<Task> tasks;
    private final ListMultimap<URI, Task> tasksByResult;
    private final ListMultimap<URI, Task> tasksByOwner;
@@ -51,7 +51,8 @@ public class TasksListImpl implements TasksList {
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
 
-   public TasksListImpl(URI location, SortedSet<Task> tasks) {
+   public TasksListImpl(String id, URI location, SortedSet<Task> tasks) {
+      this.id = id;
       this.location = location;
       this.tasks = tasks;
       this.tasksByResult = Multimaps.index(Iterables.filter(tasks, new Predicate<Task>() {
@@ -94,8 +95,10 @@ public class TasksListImpl implements TasksList {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
+      result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result + ((location == null) ? 0 : location.hashCode());
       result = prime * result + ((tasks == null) ? 0 : tasks.hashCode());
+      result = prime * result + ((tasksByOwner == null) ? 0 : tasksByOwner.hashCode());
       result = prime * result + ((tasksByResult == null) ? 0 : tasksByResult.hashCode());
       return result;
    }
@@ -109,6 +112,11 @@ public class TasksListImpl implements TasksList {
       if (getClass() != obj.getClass())
          return false;
       TasksListImpl other = (TasksListImpl) obj;
+      if (id == null) {
+         if (other.id != null)
+            return false;
+      } else if (!id.equals(other.id))
+         return false;
       if (location == null) {
          if (other.location != null)
             return false;
@@ -118,6 +126,11 @@ public class TasksListImpl implements TasksList {
          if (other.tasks != null)
             return false;
       } else if (!tasks.equals(other.tasks))
+         return false;
+      if (tasksByOwner == null) {
+         if (other.tasksByOwner != null)
+            return false;
+      } else if (!tasksByOwner.equals(other.tasksByOwner))
          return false;
       if (tasksByResult == null) {
          if (other.tasksByResult != null)
@@ -133,5 +146,10 @@ public class TasksListImpl implements TasksList {
 
    public ListMultimap<URI, Task> getTasksByOwner() {
       return tasksByOwner;
+   }
+
+   @Override
+   public String getId() {
+      return id;
    }
 }

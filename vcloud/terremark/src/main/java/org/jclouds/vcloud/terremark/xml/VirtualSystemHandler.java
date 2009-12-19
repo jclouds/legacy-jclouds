@@ -36,7 +36,7 @@ import org.xml.sax.SAXException;
  * @author Adrian Cole
  */
 public class VirtualSystemHandler extends
-         ParseSax.HandlerWithResult<org.jclouds.vcloud.domain.TerremarkVirtualSystem> {
+         ParseSax.HandlerWithResult<org.jclouds.vcloud.terremark.domain.TerremarkVirtualSystem> {
    private StringBuilder currentText = new StringBuilder();
 
    protected DateService dateService;
@@ -62,7 +62,7 @@ public class VirtualSystemHandler extends
    private String virtualSystemIdentifier;
    private String virtualSystemType;
 
-   private org.jclouds.vcloud.domain.TerremarkVirtualSystem system;
+   private org.jclouds.vcloud.terremark.domain.TerremarkVirtualSystem system;
 
    private boolean skip;
 
@@ -71,7 +71,7 @@ public class VirtualSystemHandler extends
       this.dateService = dateService;
    }
 
-   public org.jclouds.vcloud.domain.TerremarkVirtualSystem getResult() {
+   public org.jclouds.vcloud.terremark.domain.TerremarkVirtualSystem getResult() {
       return system;
    }
 
@@ -134,7 +134,7 @@ public class VirtualSystemHandler extends
          } else if (qName.equals("VirtualSystemType")) {
             this.virtualSystemType = currentText.toString().trim();
          } else if (qName.equals("q2:System")) {
-            this.system = new org.jclouds.vcloud.domain.TerremarkVirtualSystem(
+            this.system = new org.jclouds.vcloud.terremark.domain.TerremarkVirtualSystem(
                      automaticRecoveryAction, automaticShutdownAction, automaticStartupAction,
                      automaticStartupActionDelay, automaticStartupActionSequenceNumber, caption,
                      configurationDataRoot, configurationFile, configurationID, creationTime,

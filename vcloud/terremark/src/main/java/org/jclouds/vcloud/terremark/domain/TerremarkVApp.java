@@ -23,7 +23,7 @@
  */
 package org.jclouds.vcloud.terremark.domain;
 
-import org.jclouds.rest.domain.Link;
+import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.terremark.domain.internal.TerremarkVAppImpl;
 
@@ -35,10 +35,10 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(TerremarkVAppImpl.class)
 public interface TerremarkVApp extends VApp {
 
-   Link getVDC();
+   NamedResource getVDC();
 
-   Link getComputeOptions();
+   NamedResource getComputeOptions();
 
-   Link getCustomizationOptions();
+   NamedResource getCustomizationOptions();
 
 }

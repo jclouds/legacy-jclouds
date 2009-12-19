@@ -28,9 +28,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.Map;
 
-import org.jclouds.rest.domain.NamedLink;
-import org.jclouds.rest.domain.NamedResource;
 import org.jclouds.vcloud.domain.Capacity;
+import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Quota;
 import org.jclouds.vcloud.domain.internal.VDCImpl;
 import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
@@ -43,9 +42,9 @@ import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
  */
 public class TerremarkVDCImpl extends VDCImpl implements TerremarkVDC {
 
-   private final NamedLink catalog;
-   private final NamedLink publicIps;
-   private final NamedLink internetServices;
+   private final NamedResource catalog;
+   private final NamedResource publicIps;
+   private final NamedResource internetServices;
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
@@ -54,8 +53,8 @@ public class TerremarkVDCImpl extends VDCImpl implements TerremarkVDC {
             Capacity storageCapacity, Capacity cpuCapacity, Capacity memoryCapacity,
             Quota instantiatedVmsQuota, Quota deployedVmsQuota,
             Map<String, NamedResource> availableNetworks,
-            Map<String, NamedResource> resourceEntities, NamedLink catalog, NamedLink publicIps,
-            NamedLink internetServices) {
+            Map<String, NamedResource> resourceEntities, NamedResource catalog, NamedResource publicIps,
+            NamedResource internetServices) {
       super(id, name, location, description, storageCapacity, cpuCapacity, memoryCapacity,
                instantiatedVmsQuota, deployedVmsQuota, availableNetworks, resourceEntities);
       this.catalog = checkNotNull(catalog, "catalog");
@@ -63,15 +62,15 @@ public class TerremarkVDCImpl extends VDCImpl implements TerremarkVDC {
       this.internetServices = checkNotNull(internetServices, "internetServices");
    }
 
-   public NamedLink getCatalog() {
+   public NamedResource getCatalog() {
       return catalog;
    }
 
-   public NamedLink getPublicIps() {
+   public NamedResource getPublicIps() {
       return publicIps;
    }
 
-   public NamedLink getInternetServices() {
+   public NamedResource getInternetServices() {
       return internetServices;
    }
 

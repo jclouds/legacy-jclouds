@@ -27,12 +27,12 @@ import java.net.InetAddress;
 import java.net.URI;
 import java.util.SortedSet;
 
-import org.jclouds.rest.domain.Link;
+import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.ResourceAllocation;
-import org.jclouds.vcloud.domain.TerremarkVirtualSystem;
 import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.domain.internal.VAppImpl;
 import org.jclouds.vcloud.terremark.domain.TerremarkVApp;
+import org.jclouds.vcloud.terremark.domain.TerremarkVirtualSystem;
 
 import com.google.common.collect.ListMultimap;
 
@@ -44,15 +44,15 @@ import com.google.common.collect.ListMultimap;
  */
 public class TerremarkVAppImpl extends VAppImpl implements TerremarkVApp {
 
-   private final Link vDC;
-   private final Link computeOptions;
-   private final Link customizationOptions;
+   private final NamedResource vDC;
+   private final NamedResource computeOptions;
+   private final NamedResource customizationOptions;
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
 
    public TerremarkVAppImpl(String id, String name, String type, URI location, VAppStatus status,
-            long size, Link vDC, Link computeOptions, Link customizationOptions,
+            long size, NamedResource vDC, NamedResource computeOptions, NamedResource customizationOptions,
             ListMultimap<String, InetAddress> networkToAddresses,
             String operatingSystemDescription, TerremarkVirtualSystem system,
             SortedSet<ResourceAllocation> resourceAllocations) {
@@ -63,15 +63,15 @@ public class TerremarkVAppImpl extends VAppImpl implements TerremarkVApp {
       this.customizationOptions = customizationOptions;
    }
 
-   public Link getVDC() {
+   public NamedResource getVDC() {
       return vDC;
    }
 
-   public Link getComputeOptions() {
+   public NamedResource getComputeOptions() {
       return computeOptions;
    }
 
-   public Link getCustomizationOptions() {
+   public NamedResource getCustomizationOptions() {
       return customizationOptions;
    }
 

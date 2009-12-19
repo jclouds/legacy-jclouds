@@ -30,10 +30,10 @@ import java.net.URI;
 
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.rest.internal.NamedResourceImpl;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
+import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.jclouds.vcloud.domain.internal.TaskImpl;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;

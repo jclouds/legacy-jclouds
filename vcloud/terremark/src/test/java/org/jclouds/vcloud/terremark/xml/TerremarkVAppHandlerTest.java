@@ -35,14 +35,14 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.ParserModule;
-import org.jclouds.rest.domain.internal.LinkImpl;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.ResourceType;
-import org.jclouds.vcloud.domain.TerremarkVirtualSystem;
 import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.jclouds.vcloud.endpoints.internal.VAppRoot;
 import org.jclouds.vcloud.terremark.domain.TerremarkVApp;
+import org.jclouds.vcloud.terremark.domain.TerremarkVirtualSystem;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -94,8 +94,9 @@ public class TerremarkVAppHandlerTest extends BaseHandlerTest {
 
       assertEquals(result.getLocation(), URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/13775"));
-      assertEquals(result.getVDC(), new LinkImpl("application/vnd.vmware.vcloud.vdc+xml", URI
-               .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32")));
+      assertEquals(result.getVDC(), new NamedResourceImpl("32", null,
+               "application/vnd.vmware.vcloud.vdc+xml", URI
+                        .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32")));
 
    }
 
@@ -114,17 +115,21 @@ public class TerremarkVAppHandlerTest extends BaseHandlerTest {
 
       assertEquals(result.getLocation(), URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/13850"));
-      assertEquals(result.getVDC(), new LinkImpl(VCloudMediaType.VDC_XML, URI
+      assertEquals(result.getVDC(), new NamedResourceImpl("32", null, VCloudMediaType.VDC_XML, URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32")));
       assertEquals(
                result.getComputeOptions(),
-               new LinkImpl(
+               new NamedResourceImpl(
+                        "compute",
+                        "Compute Options",
                         MediaType.APPLICATION_XML,
                         URI
                                  .create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/13850/options/compute")));
       assertEquals(
                result.getCustomizationOptions(),
-               new LinkImpl(
+               new NamedResourceImpl(
+                        "customization",
+                        "Customization Options",
                         MediaType.APPLICATION_XML,
                         URI
                                  .create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/13850/options/customization")));

@@ -86,10 +86,24 @@ public interface VCloudAsyncClient {
    Future<? extends Catalog> getCatalog();
 
    @GET
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
+   @Path("/vdc/{vDCId}")
+   @XMLResponseParser(VDCHandler.class)
+   @Consumes(VDC_XML)
+   Future<? extends VDC> getVDC(@PathParam("vDCId") String vDCId);
+
+   @GET
    @Endpoint(org.jclouds.vcloud.endpoints.VDC.class)
    @XMLResponseParser(VDCHandler.class)
    @Consumes(VDC_XML)
    Future<? extends VDC> getDefaultVDC();
+
+   @GET
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
+   @Path("/tasksList/{tasksListId}")
+   @Consumes(TASKSLIST_XML)
+   @XMLResponseParser(TasksListHandler.class)
+   Future<? extends TasksList> getTasksList(@PathParam("tasksListId") String tasksListId);
 
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.TasksList.class)
