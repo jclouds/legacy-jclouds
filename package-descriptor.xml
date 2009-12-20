@@ -228,6 +228,10 @@
             <outputDirectory>providers/hostingdotcom/lib</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>vcloud/hostingdotcom/target/jclouds-hostingdotcom-${project.version}-dependencies.dir</directory>
+            <outputDirectory>providers/hostingdotcom/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
             <directory>vcloud/hostingdotcom/target</directory>
             <includes>
                 <include>jclouds-hostingdotcom-${project.version}-sources.jar</include>
@@ -375,6 +379,10 @@
             <outputDirectory>providers/terremark/lib</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>vcloud/terremark/target/jclouds-terremark-${project.version}-dependencies.dir</directory>
+            <outputDirectory>providers/terremark/lib</outputDirectory>
+        </fileSet>        
+        <fileSet>
             <directory>vcloud/terremark/target</directory>
             <includes>
                 <include>jclouds-terremark-${project.version}-sources.jar</include>
@@ -419,33 +427,6 @@
             </includes>
             <outputDirectory>providers/twitter</outputDirectory>            
         </fileSet> 
-        
-        <!-- providers: vcloud -->
-        <fileSet>
-            <directory>vcloud/core/target</directory>
-            <includes>
-                <include>jclouds-vcloud-${project.version}.jar</include>
-            </includes>
-            <outputDirectory>providers/vcloud/lib</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>vcloud/core/target</directory>
-            <includes>
-                <include>jclouds-vcloud-${project.version}-sources.jar</include>
-            </includes>
-            <outputDirectory>providers/vcloud/src</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>vcloud/core/target/apidocs</directory>
-            <outputDirectory>providers/vcloud/docs</outputDirectory>            
-        </fileSet>
-        <fileSet>
-            <directory>vcloud/core</directory>
-            <includes>
-                <include>README.txt</include>
-            </includes>
-            <outputDirectory>providers/vcloud</outputDirectory>            
-        </fileSet>
 
         <!-- extensions: bouncycastle -->
         <fileSet>

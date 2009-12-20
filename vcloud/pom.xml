@@ -26,13 +26,13 @@
    ====================================================================
  -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>jclouds-project</artifactId>
         <groupId>org.jclouds</groupId>
+        <artifactId>jclouds-project</artifactId>
         <version>1.0-SNAPSHOT</version>
         <relativePath>../project/pom.xml</relativePath>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
     <artifactId>jclouds-vcloud-project</artifactId>
     <packaging>pom</packaging>
     <name>jclouds vcloud project</name>
@@ -43,26 +43,16 @@
     </modules>
     <dependencies>
         <dependency>
-            <groupId>com.jamesmurty.utils</groupId>
-            <artifactId>java-xmlbuilder</artifactId>
-            <version>0.3</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-jsch</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>jclouds-core</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>    
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-jsch</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
