@@ -30,7 +30,6 @@ import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_USER;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_VERSION;
 import static org.testng.Assert.assertEquals;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -45,7 +44,6 @@ import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.handlers.RedirectionRetryHandler;
 import org.jclouds.util.Jsr330;
-import org.jclouds.util.Utils;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.internal.VCloudLoginAsyncClient;
 import org.jclouds.vcloud.internal.VCloudLoginAsyncClient.VCloudSession;
@@ -55,7 +53,6 @@ import com.google.common.base.Supplier;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.Key;
 
 /**
  * @author Adrian Cole
@@ -77,15 +74,6 @@ public class VCloudRestClientModuleTest {
                               .to("2");
                   }
                });
-   }
-
-   @Test
-   void postStrings() throws IOException {
-      assertEquals(createInjector().getInstance(
-               Key.get(String.class, Jsr330.named("InstantiateVAppTemplateParams"))), Utils
-               .toStringAndClose(getClass().getResourceAsStream(
-                        "/InstantiateVAppTemplateParams.xml")));
-
    }
 
    @Test

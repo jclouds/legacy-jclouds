@@ -31,6 +31,7 @@ import java.net.URI;
 
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.vcloud.domain.Catalog;
+import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Organization;
 import org.jclouds.vcloud.domain.Task;
@@ -71,6 +72,35 @@ public class VCloudClientLiveTest {
       assert response.size() > 0;
    }
 
+   @Test(enabled = true)
+   public void testGetCatalogItem() throws Exception {
+      Catalog response = connection.getCatalog();
+      for (NamedResource resource : response.values()) {
+         if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
+            CatalogItem item = connection.getCatalogItem(resource.getId());
+            assertNotNull(item);
+            assertNotNull(item.getEntity());
+            assertNotNull(item.getId());
+            assertNotNull(item.getLocation());
+            assertNotNull(item.getProperties());
+            assertNotNull(item.getType());
+         }
+      }
+   }
+
+   @Test(enabled = true)
+   public void testGetVAppTemplate() throws Exception {
+      Catalog response = connection.getCatalog();
+      for (NamedResource resource : response.values()) {
+         if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
+            CatalogItem item = connection.getCatalogItem(resource.getId());
+            if (item.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
+               assertNotNull(connection.getVAppTemplate(item.getEntity().getId()));
+            }
+         }
+      }
+   }
+
    @Test
    public void testDefaultVDC() throws Exception {
       VDC response = connection.getDefaultVDC();
@@ -99,9 +129,8 @@ public class VCloudClientLiveTest {
       assertNotNull(response);
       assertNotNull(response.getLocation());
       assertNotNull(response.getTasks());
-      for (Task t : response.getTasks()) {
-         assertEquals(connection.getTask(t.getId()).getLocation(), t.getLocation());
-      }
+      Task task = response.getTasks().last();
+      assertEquals(connection.getTask(task.getId()).getLocation(), task.getLocation());
    }
 
    @Test(enabled = true)

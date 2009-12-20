@@ -30,7 +30,7 @@ import java.net.UnknownHostException;
 import java.util.SortedSet;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.vcloud.terremark.domain.ComputeOption;
+import org.jclouds.vcloud.terremark.domain.ComputeOptions;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSortedSet;
@@ -46,9 +46,9 @@ public class ComputeOptionsHandlerTest extends BaseHandlerTest {
    public void test1() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/terremark/ComputeOptions.xml");
 
-      SortedSet<ComputeOption> result = factory.create(
+      SortedSet<ComputeOptions> result = factory.create(
                injector.getInstance(ComputeOptionsHandler.class)).parse(is);
-      assertEquals(result, ImmutableSortedSet.of(new ComputeOption(1, 512, 0.039f),
-               new ComputeOption(8, 16384, 1.61f)));
+      assertEquals(result, ImmutableSortedSet.of(new ComputeOptions(1, 512, 0.039f),
+               new ComputeOptions(8, 16384, 1.61f)));
    }
 }

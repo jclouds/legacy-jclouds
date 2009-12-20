@@ -23,11 +23,15 @@
  */
 package org.jclouds.vcloud;
 
+import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.processorCount;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.Properties;
 
 import javax.inject.Provider;
 
@@ -38,6 +42,8 @@ import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.util.Jsr330;
+import org.jclouds.util.Utils;
 import org.jclouds.vcloud.endpoints.Catalog;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.endpoints.TasksList;
@@ -45,12 +51,16 @@ import org.jclouds.vcloud.endpoints.VCloudApi;
 import org.jclouds.vcloud.endpoints.VDC;
 import org.jclouds.vcloud.endpoints.internal.CatalogItemRoot;
 import org.jclouds.vcloud.endpoints.internal.VAppRoot;
+import org.jclouds.vcloud.endpoints.internal.VAppTemplateRoot;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
+import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.xml.CatalogHandler;
+import org.jclouds.vcloud.xml.CatalogItemHandler;
 import org.jclouds.vcloud.xml.OrgHandler;
 import org.jclouds.vcloud.xml.TaskHandler;
 import org.jclouds.vcloud.xml.TasksListHandler;
 import org.jclouds.vcloud.xml.VAppHandler;
+import org.jclouds.vcloud.xml.VAppTemplateHandler;
 import org.jclouds.vcloud.xml.VDCHandler;
 import org.testng.annotations.Test;
 
@@ -65,6 +75,54 @@ import com.google.inject.TypeLiteral;
  */
 @Test(groups = "unit", testName = "vcloud.VCloudAsyncClientTest")
 public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
+
+   public void testInstantiateVAppTemplate() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = VCloudAsyncClient.class.getMethod("instantiateVAppTemplateInVDC",
+               String.class, String.class, String.class, Array.newInstance(
+                        InstantiateVAppTemplateOptions.class, 0).getClass());
+      GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, "1",
+               "CentOS 01", 3 + "");
+
+      assertRequestLineEquals(httpMethod,
+               "POST http://vcloud/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Accept: application/vnd.vmware.vcloud.vApp+xml\nContent-Length: 636\nContent-Type: application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml\n");
+      assertPayloadEquals(httpMethod, Utils.toStringAndClose(getClass().getResourceAsStream(
+               "/newvapp-hosting.xml")));
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, VAppHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testInstantiateVAppTemplateOptions() throws SecurityException,
+            NoSuchMethodException, IOException {
+      Method method = VCloudAsyncClient.class.getMethod("instantiateVAppTemplateInVDC",
+               String.class, String.class, String.class, Array.newInstance(
+                        InstantiateVAppTemplateOptions.class, 0).getClass());
+      GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, "1",
+               "CentOS 01", 3 + "", processorCount(1).memory(512).disk(1024)
+                        .inNetwork(URI.create("https://vcloud.safesecureweb.com/network/1990")));
+
+      assertRequestLineEquals(httpMethod,
+               "POST http://vcloud/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Accept: application/vnd.vmware.vcloud.vApp+xml\nContent-Length: 2018\nContent-Type: application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml\n");
+      assertPayloadEquals(httpMethod, Utils.toStringAndClose(getClass().getResourceAsStream(
+               "/newvapp-hostingcpumemdisk.xml")));
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, VAppHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
    public void testOrganization() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VCloudAsyncClient.class.getMethod("getOrganization");
       GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method);
@@ -90,6 +148,36 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, CatalogHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testCatalogItem() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudAsyncClient.class.getMethod("getCatalogItem", String.class);
+      GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, "2");
+
+      assertRequestLineEquals(httpMethod, "GET http://vcloud/catalogItem/2 HTTP/1.1");
+      assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.catalogItem+xml\n");
+      assertPayloadEquals(httpMethod, null);
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, CatalogItemHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testVAppTemplate() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudAsyncClient.class.getMethod("getVAppTemplate", String.class);
+      GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, "2");
+
+      assertRequestLineEquals(httpMethod, "GET http://vcloud/vAppTemplate/2 HTTP/1.1");
+      assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.vAppTemplate+xml\n");
+      assertPayloadEquals(httpMethod, null);
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, VAppTemplateHandler.class);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpMethod);
@@ -340,10 +428,16 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       return new AbstractModule() {
          @Override
          protected void configure() {
+            Properties props = new Properties();
+            props.put(PROPERTY_VCLOUD_DEFAULT_NETWORK,
+                     "https://vcloud.safesecureweb.com/network/1990");
+            Jsr330.bindProperties(binder(), new VCloudPropertiesBuilder(props).build());
             bind(URI.class).annotatedWith(Org.class).toInstance(URI.create("http://org"));
             bind(URI.class).annotatedWith(Catalog.class).toInstance(URI.create("http://catalog"));
             bind(String.class).annotatedWith(CatalogItemRoot.class)
                      .toInstance("http://catalogItem");
+            bind(String.class).annotatedWith(VAppTemplateRoot.class).toInstance(
+                     "https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate");
             bind(String.class).annotatedWith(VAppRoot.class).toInstance("http://vApps");
             bind(URI.class).annotatedWith(VDC.class).toInstance(URI.create("http://vdc"));
             bind(URI.class).annotatedWith(TasksList.class).toInstance(
@@ -364,7 +458,6 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
                }
             });
          }
-
       };
    }
 

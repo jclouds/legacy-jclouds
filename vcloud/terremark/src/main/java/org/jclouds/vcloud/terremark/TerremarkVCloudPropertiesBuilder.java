@@ -23,10 +23,10 @@
  */
 package org.jclouds.vcloud.terremark;
 
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_CPUCOUNT;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_MEMORY;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_ENDPOINT;
-import static org.jclouds.vcloud.terremark.reference.TerremarkVCloudConstants.PROPERTY_TERREMARK_DEFAULTGROUP;
-import static org.jclouds.vcloud.terremark.reference.TerremarkVCloudConstants.PROPERTY_TERREMARK_DEFAULTPASSWORD;
-import static org.jclouds.vcloud.terremark.reference.TerremarkVCloudConstants.PROPERTY_TERREMARK_DEFAULTROW;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_NAMESPACE;
 
 import java.net.URI;
 import java.util.Properties;
@@ -39,23 +39,22 @@ import org.jclouds.vcloud.VCloudPropertiesBuilder;
  * @author Adrian Cole
  */
 public class TerremarkVCloudPropertiesBuilder extends VCloudPropertiesBuilder {
-	@Override
+   @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_TERREMARK_DEFAULTGROUP, "group");
-      properties.setProperty(PROPERTY_TERREMARK_DEFAULTROW, "row");
-      properties.setProperty((PROPERTY_TERREMARK_DEFAULTPASSWORD), "password");
+      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_CPUCOUNT, "1");
+      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_MEMORY, "512");
+      properties.setProperty(PROPERTY_VCLOUD_XML_NAMESPACE, "http://www.vmware.com/vcloud/v1");
       properties.setProperty(PROPERTY_VCLOUD_ENDPOINT,
                "https://services.vcloudexpress.terremark.com/api");
       return properties;
    }
 
-	public TerremarkVCloudPropertiesBuilder(Properties properties) {
-		super(properties);
-	}
+   public TerremarkVCloudPropertiesBuilder(Properties properties) {
+      super(properties);
+   }
 
-	public TerremarkVCloudPropertiesBuilder(String id, String secret) {
-		super(URI.create("https://services.vcloudexpress.terremark.com/api"),
-				id, secret);
-	}
+   public TerremarkVCloudPropertiesBuilder(String id, String secret) {
+      super(URI.create("https://services.vcloudexpress.terremark.com/api"), id, secret);
+   }
 }

@@ -21,19 +21,24 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.terremark.reference;
+package org.jclouds.vcloud.domain;
 
-import org.jclouds.vcloud.reference.VCloudConstants;
+import java.util.SortedMap;
+
+import org.jclouds.vcloud.domain.internal.CatalogImpl;
+
+import com.google.inject.ImplementedBy;
 
 /**
- * Configuration properties and constants used in Terremark VCloud connections.
- * 
  * @author Adrian Cole
  */
-public interface TerremarkVCloudConstants extends VCloudConstants {
-  
-   public static final String PROPERTY_TERREMARK_DEFAULTGROUP = "jclouds.terremark.defaults.group";
-   public static final String PROPERTY_TERREMARK_DEFAULTROW = "jclouds.terremark.defaults.row";
-   public static final String PROPERTY_TERREMARK_DEFAULTPASSWORD = "jclouds.terremark.defaults.password";
+@ImplementedBy(CatalogImpl.class)
+public interface CatalogItem extends NamedResource {
+
+   String getDescription();
+
+   NamedResource getEntity();
+
+   SortedMap<String, String> getProperties();
 
 }

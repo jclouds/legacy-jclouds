@@ -23,9 +23,10 @@
  */
 package org.jclouds.vcloud.options;
 
-import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.cpuCount;
+import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.processorCount;
+import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.disk;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.inNetwork;
-import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.megabytes;
+import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.memory;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
@@ -62,31 +63,50 @@ public class InstantiateVAppTemplateOptionsTest {
    @Test
    public void testCpuCount() {
       InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
-      options.cpuCount(3);
+      options.processorCount(3);
       assertEquals(options.getCpuCount(), "3");
    }
 
    @Test
    public void testCpuCountStatic() {
-      InstantiateVAppTemplateOptions options = cpuCount(3);
+      InstantiateVAppTemplateOptions options = processorCount(3);
       assertEquals(options.getCpuCount(), "3");
    }
 
    @Test
-   public void testMegabytes() {
+   public void testRam() {
       InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
-      options.megabytes(512);
-      assertEquals(options.getMegabytes(), "512");
+      options.memory(512);
+      assertEquals(options.getMemorySizeMegabytes(), "512");
    }
 
    @Test
-   public void testMegabytesStatic() {
-      InstantiateVAppTemplateOptions options = megabytes(512);
-      assertEquals(options.getMegabytes(), "512");
+   public void testRamStatic() {
+      InstantiateVAppTemplateOptions options = memory(512);
+      assertEquals(options.getMemorySizeMegabytes(), "512");
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
-   public void testMegabytesStaticWrong() {
-      megabytes(511);
+   public void testRamStaticWrong() {
+      memory(511);
    }
+
+   @Test
+   public void testDisk() {
+      InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+      options.disk(512);
+      assertEquals(options.getDiskSizeKilobytes(), "512");
+   }
+
+   @Test
+   public void testDiskStatic() {
+      InstantiateVAppTemplateOptions options = disk(512);
+      assertEquals(options.getDiskSizeKilobytes(), "512");
+   }
+
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testDiskStaticWrong() {
+      disk(0);
+   }
+
 }

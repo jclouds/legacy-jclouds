@@ -27,10 +27,12 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.domain.Catalog;
+import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.Organization;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TasksList;
 import org.jclouds.vcloud.domain.VApp;
+import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
@@ -50,6 +52,10 @@ public interface VCloudClient {
    Organization getOrganization();
 
    Catalog getCatalog();
+
+   CatalogItem getCatalogItem(String catalogItemId);
+
+   VAppTemplate getVAppTemplate(String vAppTemplateId);
 
    VDC getVDC(String vDCId);
 
@@ -96,6 +102,6 @@ public interface VCloudClient {
 
    VApp getVApp(String appId);
 
-   VApp instantiateVAppTemplate(String appName, String templateId, String vDCId,
+   VApp instantiateVAppTemplateInVDC(String vDCId, String appName, String templateId,
             InstantiateVAppTemplateOptions... options);
 }

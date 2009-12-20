@@ -41,11 +41,11 @@ public class CustomizationParameters {
       this.customizePassword = customizePassword;
    }
 
-   public boolean isCustomizeNetwork() {
+   public boolean canCustomizeNetwork() {
       return customizeNetwork;
    }
 
-   public boolean isCustomizePassword() {
+   public boolean canCustomizePassword() {
       return customizePassword;
    }
 

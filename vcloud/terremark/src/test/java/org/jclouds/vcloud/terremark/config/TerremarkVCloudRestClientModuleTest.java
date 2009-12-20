@@ -67,10 +67,6 @@ public class TerremarkVCloudRestClientModuleTest {
    @Test
    void postStrings() throws IOException {
       assertEquals(createInjector().getInstance(
-               Key.get(String.class, Jsr330.named("InstantiateVAppTemplateParams"))), Utils
-               .toStringAndClose(getClass().getResourceAsStream(
-                        "/terremark/InstantiateVAppTemplateParams.xml")));
-      assertEquals(createInjector().getInstance(
                Key.get(String.class, Jsr330.named("CreateInternetService"))), Utils
                .toStringAndClose(getClass().getResourceAsStream(
                         "/terremark/CreateInternetService.xml")));

@@ -66,14 +66,18 @@ public class HostingDotComVCloudComputeClient {
             Image.CENTOS_53, "3").put(Image.RHEL_53, "8").put(Image.UMBUNTU_90, "10").put(
             Image.UMBUNTU_JEOS, "11").build();
 
-   public Map<String, String> start(String name, int minCores, int minMegs, Image image) {
+   public Map<String, String> start(String name, Image image, int minCores, int minMegs,
+            long diskSize, Map<String, String> properties) {
       checkArgument(imageCatalogIdMap.containsKey(image), "image not configured: " + image);
       String templateId = imageCatalogIdMap.get(image);
       String vDCId = tmClient.getDefaultVDC().getId();
-      logger.debug(">> instantiating vApp name(%s) minCores(%d) minMegs(%d) template(%s) vDC(%s)",
-               name, minCores, minMegs, templateId, vDCId);
-      HostingDotComVApp vAppResponse = tmClient.instantiateVAppTemplate(name, templateId, vDCId,
-               InstantiateVAppTemplateOptions.Builder.cpuCount(minCores).megabytes(minMegs));
+      logger
+               .debug(
+                        ">> instantiating vApp vDC(%s) name(%s) template(%s)  minCores(%d) minMegs(%d) diskSize(%d) properties(%s) ",
+                        vDCId, name, templateId, minCores, minMegs, diskSize, properties);
+      HostingDotComVApp vAppResponse = tmClient.instantiateVAppTemplateInVDC(vDCId, name,
+               templateId, InstantiateVAppTemplateOptions.Builder.processorCount(minCores)
+                        .memory(minMegs).disk(diskSize).productProperties(properties));
       logger.debug("<< instantiated VApp(%s)", vAppResponse.getId());
 
       logger.debug(">> deploying vApp(%s)", vAppResponse.getId());
@@ -113,7 +117,8 @@ public class HostingDotComVCloudComputeClient {
    public void stop(String id) {
       VApp vApp = tmClient.getVApp(id);
       if (vApp.getStatus() != VAppStatus.OFF) {
-         logger.debug(">> powering off vApp(%s)", vApp.getId());
+         logger.debug(">> powering off vApp(%s), current status: %s", vApp.getId(), vApp
+                  .getStatus());
          blockUntilVAppStatusOrThrowException(vApp, tmClient.powerOffVApp(vApp.getId()),
                   "powerOff", VAppStatus.OFF);
          logger.debug("<< off vApp(%s)", vApp.getId());

@@ -23,9 +23,11 @@
  */
 package org.jclouds.vcloud;
 
+import static org.jclouds.vcloud.VCloudMediaType.CATALOGITEM_XML;
 import static org.jclouds.vcloud.VCloudMediaType.CATALOG_XML;
 import static org.jclouds.vcloud.VCloudMediaType.TASKSLIST_XML;
 import static org.jclouds.vcloud.VCloudMediaType.TASK_XML;
+import static org.jclouds.vcloud.VCloudMediaType.VAPPTEMPLATE_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VAPP_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VDC_XML;
 
@@ -47,20 +49,24 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayload;
 import org.jclouds.vcloud.domain.Catalog;
+import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.Organization;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TasksList;
 import org.jclouds.vcloud.domain.VApp;
+import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.functions.VAppTemplateIdToUri;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.xml.CatalogHandler;
+import org.jclouds.vcloud.xml.CatalogItemHandler;
 import org.jclouds.vcloud.xml.OrgHandler;
 import org.jclouds.vcloud.xml.TaskHandler;
 import org.jclouds.vcloud.xml.TasksListHandler;
 import org.jclouds.vcloud.xml.VAppHandler;
+import org.jclouds.vcloud.xml.VAppTemplateHandler;
 import org.jclouds.vcloud.xml.VDCHandler;
 
 /**
@@ -84,6 +90,20 @@ public interface VCloudAsyncClient {
    @Consumes(CATALOG_XML)
    @XMLResponseParser(CatalogHandler.class)
    Future<? extends Catalog> getCatalog();
+
+   @GET
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
+   @Path("/vAppTemplate/{vAppTemplateId}")
+   @Consumes(VAPPTEMPLATE_XML)
+   @XMLResponseParser(VAppTemplateHandler.class)
+   Future<? extends VAppTemplate> getVAppTemplate(@PathParam("vAppTemplateId") String vAppTemplateId);
+
+   @GET
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
+   @Path("/catalogItem/{catalogItemId}")
+   @Consumes(CATALOGITEM_XML)
+   @XMLResponseParser(CatalogItemHandler.class)
+   Future<? extends CatalogItem> getCatalogItem(@PathParam("catalogItemId") String catalogItemId);
 
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
@@ -204,7 +224,8 @@ public interface VCloudAsyncClient {
    @Consumes(VAPP_XML)
    @XMLResponseParser(VAppHandler.class)
    @MapBinder(BindInstantiateVAppTemplateParamsToXmlPayload.class)
-   Future<? extends VApp> instantiateVAppTemplate(@MapPayloadParam("name") String appName,
+   Future<? extends VApp> instantiateVAppTemplateInVDC(@PathParam("vDCId") String vDCId,
+            @MapPayloadParam("name") String appName,
             @MapPayloadParam("template") @ParamParser(VAppTemplateIdToUri.class) String templateId,
-            @PathParam("vDCId") String vDCId, InstantiateVAppTemplateOptions... options);
+            InstantiateVAppTemplateOptions... options);
 }

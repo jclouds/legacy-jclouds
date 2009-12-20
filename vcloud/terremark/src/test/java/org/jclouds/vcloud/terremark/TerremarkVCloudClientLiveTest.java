@@ -24,6 +24,7 @@
 package org.jclouds.vcloud.terremark;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.processorCount;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -31,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -44,16 +46,22 @@ import org.jclouds.ssh.SshClient.Factory;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.util.Utils;
 import org.jclouds.vcloud.VCloudClientLiveTest;
+import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.domain.Catalog;
+import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.predicates.TaskSuccess;
+import org.jclouds.vcloud.terremark.domain.ComputeOptions;
+import org.jclouds.vcloud.terremark.domain.CustomizationParameters;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Node;
 import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.TerremarkVApp;
 import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
+import org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -85,8 +93,24 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
 
    @Test
    public void testGetAllInternetServices() throws Exception {
-      for (InternetService service : tmClient.getAllInternetServices()) {
-         System.out.println(tmClient.getNodes(service.getId()));
+      for (InternetService service : tmClient.getAllInternetServicesInVDC(tmClient.getDefaultVDC()
+               .getId())) {
+         assertNotNull(tmClient.getNodes(service.getId()));
+      }
+   }
+
+   @Test
+   public void testGetConfigCustomizationOptions() throws Exception {
+      Catalog response = connection.getCatalog();
+      for (NamedResource resource : response.values()) {
+         if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
+            CatalogItem item = connection.getCatalogItem(resource.getId());
+            SortedSet<ComputeOptions> options = tmClient
+                     .getComputeOptionsOfCatalogItem(item.getId());
+            assert options.size() == 32 || options.size() == 20 : item.getId() + ": "
+                     + options.size();
+            assert tmClient.getCustomizationOptionsOfCatalogItem(item.getId()) != null;
+         }
       }
    }
 
@@ -104,20 +128,39 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
    public void testInstantiateAndPowerOn() throws InterruptedException, ExecutionException,
             TimeoutException, IOException {
       String serverName = "adriantest";
-      int processorCount = 1;
-      int memory = 512;
-      // long hardDisk = 4194304;
-      // String catalogOs = "Ubuntu JeOS 9.04 (32-bit)";
-      // String expectedOs = "Ubuntu Linux (32-bit)";
-      long hardDisk = 4194304 / 4 * 10;
-      String catalogOs = "CentOS 5.3 (32-bit)";
-      String expectedOs = "Red Hat Enterprise Linux 5 (32-bit)";
+      long hardDisk = 4194304;
 
-      String templateId = tmClient.getCatalog().get(catalogOs).getId();
+      String expectedOs = "Ubuntu Linux (32-bit)";
+      // long hardDisk = 4194304 / 4 * 10;
+      // String catalogOs = "CentOS 5.3 (32-bit)";
+      // String expectedOs = "Red Hat Enterprise Linux 5 (32-bit)";
+
+      // lookup the id of the datacenter you are deploying into
       String vDCId = tmClient.getDefaultVDC().getId();
 
-      System.out.printf("%d: instantiating vApp%n", System.currentTimeMillis());
-      vApp = tmClient.instantiateVAppTemplate(serverName, templateId, vDCId);
+      // lookup the id of the item in the catalog you wish to deploy by name
+      String itemId = tmClient.getCatalog().get("Ubuntu JeOS 9.04 (32-bit)").getId();
+
+      // determine the cheapest configuration size
+      SortedSet<ComputeOptions> sizeOptions = tmClient.getComputeOptionsOfCatalogItem(itemId);
+      ComputeOptions cheapestOption = sizeOptions.first();
+
+      // create an options object to collect the configuration we want.
+      TerremarkInstantiateVAppTemplateOptions instantiateOptions = processorCount(
+               cheapestOption.getProcessorCount()).memory(cheapestOption.getMemory());
+
+      // if this template supports setting the root password, let's add it to our options
+      CustomizationParameters customizationOptions = tmClient
+               .getCustomizationOptionsOfCatalogItem(itemId);
+      if (customizationOptions.canCustomizePassword())
+         instantiateOptions.withPassword("robotsarefun");
+
+      // the vAppTemplateId tends to be the same as the itemId, but just in case, convert
+      String vAppTemplateId = tmClient.getCatalogItem(itemId).getEntity().getId();
+
+      // instantiate, noting vApp returned has minimal details
+      vApp = tmClient.instantiateVAppTemplateInVDC(vDCId, serverName, vAppTemplateId,
+               instantiateOptions);
 
       assertEquals(vApp.getStatus(), VAppStatus.UNRESOLVED);
 
@@ -147,6 +190,8 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
       NamedResource vAppResource = tmClient.getDefaultVDC().getResourceEntities().get(serverName);
       assertEquals(vAppResource.getId(), vApp.getId());
 
+      int processorCount = cheapestOption.getProcessorCount();
+      long memory = cheapestOption.getMemory();
       verifyConfigurationOfVApp(vApp, serverName, expectedOs, processorCount, memory, hardDisk);
       assertEquals(vApp.getStatus(), VAppStatus.OFF);
 
@@ -155,14 +200,15 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
 
       vApp = tmClient.getVApp(vApp.getId());
       assertEquals(vApp.getStatus(), VAppStatus.ON);
-      System.out.println(tmClient.getComputeOptions(vApp.getId()));
-      System.out.println(tmClient.getCustomizationOptions(vApp.getId()));
+      System.out.println(tmClient.getComputeOptionsOfVApp(vApp.getId()));
+      System.out.println(tmClient.getCustomizationOptionsOfVApp(vApp.getId()));
    }
 
    @Test
    public void testAddInternetService() throws InterruptedException, ExecutionException,
             TimeoutException, IOException {
-      is = tmClient.addInternetService("SSH", Protocol.TCP, 22);
+      is = tmClient.addInternetServiceToVDC(tmClient.getDefaultVDC().getId(), "SSH", Protocol.TCP,
+               22);
    }
 
    @Test(dependsOnMethods = { "testInstantiateAndPowerOn", "testAddInternetService" })
@@ -208,7 +254,7 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
    }
 
    private void verifyConfigurationOfVApp(TerremarkVApp vApp, String serverName, String expectedOs,
-            int processorCount, int memory, long hardDisk) {
+            int processorCount, long memory, long hardDisk) {
       assertEquals(vApp.getName(), serverName);
       assertEquals(vApp.getOperatingSystemDescription(), expectedOs);
       assertEquals(vApp.getResourceAllocationByType().get(ResourceType.PROCESSOR)

@@ -24,6 +24,7 @@
 package org.jclouds.vcloud.terremark.options;
 
 import java.net.URI;
+import java.util.Map;
 
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
@@ -34,41 +35,45 @@ import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
  */
 public class TerremarkInstantiateVAppTemplateOptions extends InstantiateVAppTemplateOptions {
 
-   private String password;
-   private String group;
-   private String row;
-
    public TerremarkInstantiateVAppTemplateOptions withPassword(String password) {
-      this.password = password;
+      productProperty("password", password);
       return this;
    }
 
    public TerremarkInstantiateVAppTemplateOptions inGroup(String group) {
-      this.group = group;
+      productProperty("group", group);
       return this;
    }
 
    public TerremarkInstantiateVAppTemplateOptions inRow(String row) {
-      this.row = row;
+      productProperty("row", row);
       return this;
    }
 
    public static class Builder {
 
       /**
-       * @see TerremarkInstantiateVAppTemplateOptions#cpuCount(int)
+       * @see TerremarkInstantiateVAppTemplateOptions#processorCount(int)
        */
-      public static TerremarkInstantiateVAppTemplateOptions cpuCount(int cpuCount) {
+      public static TerremarkInstantiateVAppTemplateOptions processorCount(int cpuCount) {
          TerremarkInstantiateVAppTemplateOptions options = new TerremarkInstantiateVAppTemplateOptions();
-         return options.cpuCount(cpuCount);
+         return options.processorCount(cpuCount);
       }
 
       /**
-       * @see TerremarkInstantiateVAppTemplateOptions#megabytes(int)
+       * @see TerremarkInstantiateVAppTemplateOptions#memory(long)
        */
-      public static TerremarkInstantiateVAppTemplateOptions megabytes(int megabytes) {
+      public static TerremarkInstantiateVAppTemplateOptions memory(long megabytes) {
          TerremarkInstantiateVAppTemplateOptions options = new TerremarkInstantiateVAppTemplateOptions();
-         return options.megabytes(megabytes);
+         return options.memory(megabytes);
+      }
+
+      /**
+       * @see TerremarkInstantiateVAppTemplateOptions#disk(long)
+       */
+      public static TerremarkInstantiateVAppTemplateOptions disk(long kilobytes) {
+         TerremarkInstantiateVAppTemplateOptions options = new TerremarkInstantiateVAppTemplateOptions();
+         return options.disk(kilobytes);
       }
 
       /**
@@ -103,11 +108,28 @@ public class TerremarkInstantiateVAppTemplateOptions extends InstantiateVAppTemp
          return options.inRow(row);
       }
 
+      /**
+       * @see TerremarkInstantiateVAppTemplateOptions#productProperty(String, String)
+       */
+      public static TerremarkInstantiateVAppTemplateOptions productProperty(String key, String value) {
+         TerremarkInstantiateVAppTemplateOptions options = new TerremarkInstantiateVAppTemplateOptions();
+         return (TerremarkInstantiateVAppTemplateOptions) options.productProperty(key, value);
+      }
+
+      /**
+       * @see TerremarkInstantiateVAppTemplateOptions#productProperties(Map<String, String>)
+       */
+      public static TerremarkInstantiateVAppTemplateOptions productProperties(
+               Map<String, String> properties) {
+         TerremarkInstantiateVAppTemplateOptions options = new TerremarkInstantiateVAppTemplateOptions();
+         return (TerremarkInstantiateVAppTemplateOptions) options.productProperties(properties);
+      }
+
    }
 
    @Override
-   public TerremarkInstantiateVAppTemplateOptions cpuCount(int cpuCount) {
-      return (TerremarkInstantiateVAppTemplateOptions) super.cpuCount(cpuCount);
+   public TerremarkInstantiateVAppTemplateOptions processorCount(int cpuCount) {
+      return (TerremarkInstantiateVAppTemplateOptions) super.processorCount(cpuCount);
    }
 
    @Override
@@ -116,19 +138,22 @@ public class TerremarkInstantiateVAppTemplateOptions extends InstantiateVAppTemp
    }
 
    @Override
-   public TerremarkInstantiateVAppTemplateOptions megabytes(int megabytes) {
-      return (TerremarkInstantiateVAppTemplateOptions) super.megabytes(megabytes);
+   public TerremarkInstantiateVAppTemplateOptions memory(long megabytes) {
+      return (TerremarkInstantiateVAppTemplateOptions) super.memory(megabytes);
    }
 
-   public String getPassword() {
-      return password;
+   @Override
+   public TerremarkInstantiateVAppTemplateOptions disk(long kilobytes) {
+      throw new IllegalArgumentException("changing the boot disk size is unsupported in terremark");
    }
 
-   public String getGroup() {
-      return group;
+   @Override
+   public TerremarkInstantiateVAppTemplateOptions productProperties(Map<String, String> properties) {
+      return (TerremarkInstantiateVAppTemplateOptions) super.productProperties(properties);
    }
 
-   public String getRow() {
-      return row;
+   @Override
+   public TerremarkInstantiateVAppTemplateOptions productProperty(String key, String value) {
+      return (TerremarkInstantiateVAppTemplateOptions) super.productProperty(key, value);
    }
 }

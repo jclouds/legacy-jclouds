@@ -27,6 +27,9 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
+import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 /**
  * 
@@ -36,18 +39,36 @@ import java.net.URI;
 public class InstantiateVAppTemplateOptions {
 
    private String cpuCount;
-   private String megabytes;
+   private String memorySizeMegabytes;
+   private String diskSizeKilobytes;
    private String network;
+   private Map<String, String> properties = Maps.newTreeMap();
 
-   public InstantiateVAppTemplateOptions cpuCount(int cpuCount) {
+   public InstantiateVAppTemplateOptions productProperty(String key, String value) {
+      properties.put(checkNotNull(key, "key"), checkNotNull(value, "value"));
+      return this;
+   }
+
+   public InstantiateVAppTemplateOptions productProperties(Map<String, String> properties) {
+      this.properties.putAll(checkNotNull(properties, "properties"));
+      return this;
+   }
+
+   public InstantiateVAppTemplateOptions processorCount(int cpuCount) {
       checkArgument(cpuCount >= 1, "cpuCount must be positive");
       this.cpuCount = cpuCount + "";
       return this;
    }
 
-   public InstantiateVAppTemplateOptions megabytes(int megabytes) {
+   public InstantiateVAppTemplateOptions memory(long megabytes) {
       checkArgument(megabytes % 512 == 0, "megabytes must be in an increment of 512");
-      this.megabytes = megabytes + "";
+      this.memorySizeMegabytes = megabytes + "";
+      return this;
+   }
+
+   public InstantiateVAppTemplateOptions disk(long kilobytes) {
+      checkArgument(kilobytes >= 1, "diskSizeKilobytes must be positive");
+      this.diskSizeKilobytes = kilobytes + "";
       return this;
    }
 
@@ -60,30 +81,46 @@ public class InstantiateVAppTemplateOptions {
       return cpuCount;
    }
 
-   public String getMegabytes() {
-      return megabytes;
+   public String getMemorySizeMegabytes() {
+      return memorySizeMegabytes;
+   }
+
+   public String getDiskSizeKilobytes() {
+      return diskSizeKilobytes;
    }
 
    public String getNetwork() {
       return network;
    }
 
+   public Map<String, String> getProperties() {
+      return properties;
+   }
+
    public static class Builder {
 
       /**
-       * @see InstantiateVAppTemplateOptions#cpuCount(int)
+       * @see InstantiateVAppTemplateOptions#processorCount(int)
        */
-      public static InstantiateVAppTemplateOptions cpuCount(int cpuCount) {
+      public static InstantiateVAppTemplateOptions processorCount(int cpuCount) {
          InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
-         return options.cpuCount(cpuCount);
+         return options.processorCount(cpuCount);
       }
 
       /**
-       * @see InstantiateVAppTemplateOptions#megabytes(int)
+       * @see InstantiateVAppTemplateOptions#memory(int)
        */
-      public static InstantiateVAppTemplateOptions megabytes(int megabytes) {
+      public static InstantiateVAppTemplateOptions memory(int megabytes) {
          InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
-         return options.megabytes(megabytes);
+         return options.memory(megabytes);
+      }
+
+      /**
+       * @see InstantiateVAppTemplateOptions#disk(int)
+       */
+      public static InstantiateVAppTemplateOptions disk(long kilobytes) {
+         InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+         return options.disk(kilobytes);
       }
 
       /**
@@ -93,5 +130,22 @@ public class InstantiateVAppTemplateOptions {
          InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
          return options.inNetwork(networkLocation);
       }
+
+      /**
+       * @see InstantiateVAppTemplateOptions#productProperty(String,String)
+       */
+      public static InstantiateVAppTemplateOptions productProperty(String key, String value) {
+         InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+         return options.productProperty(key, value);
+      }
+
+      /**
+       * @see InstantiateVAppTemplateOptions#setProperties(Map<String, String>)
+       */
+      public static InstantiateVAppTemplateOptions productProperties(Map<String, String> properties) {
+         InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+         return options.productProperties(properties);
+      }
    }
+
 }

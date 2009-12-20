@@ -23,11 +23,13 @@
  */
 package org.jclouds.vcloud.terremark.options;
 
-import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.cpuCount;
+import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.processorCount;
 import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.inGroup;
 import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.inNetwork;
 import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.inRow;
-import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.megabytes;
+import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.memory;
+import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.disk;
+
 import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.withPassword;
 import static org.testng.Assert.assertEquals;
 
@@ -53,39 +55,39 @@ public class TerremarkInstantiateVAppTemplateOptionsTest {
    public void testInGroup() {
       TerremarkInstantiateVAppTemplateOptions options = new TerremarkInstantiateVAppTemplateOptions();
       options.inGroup("group1");
-      assertEquals(options.getGroup(), "group1");
+      assertEquals(options.getProperties().get("group"), "group1");
    }
 
    @Test
    public void testInGroupStatic() {
       TerremarkInstantiateVAppTemplateOptions options = inGroup("group1");
-      assertEquals(options.getGroup(), "group1");
+      assertEquals(options.getProperties().get("group"), "group1");
    }
 
    @Test
    public void testInRow() {
       TerremarkInstantiateVAppTemplateOptions options = new TerremarkInstantiateVAppTemplateOptions();
       options.inRow("row1");
-      assertEquals(options.getRow(), "row1");
+      assertEquals(options.getProperties().get("row"), "row1");
    }
 
    @Test
    public void testInRowStatic() {
       TerremarkInstantiateVAppTemplateOptions options = inRow("row1");
-      assertEquals(options.getRow(), "row1");
+      assertEquals(options.getProperties().get("row"), "row1");
    }
 
    @Test
    public void testWithPassword() {
       TerremarkInstantiateVAppTemplateOptions options = new TerremarkInstantiateVAppTemplateOptions();
       options.withPassword("password1");
-      assertEquals(options.getPassword(), "password1");
+      assertEquals(options.getProperties().get("password"), "password1");
    }
 
    @Test
    public void testWithPasswordStatic() {
       TerremarkInstantiateVAppTemplateOptions options = withPassword("password1");
-      assertEquals(options.getPassword(), "password1");
+      assertEquals(options.getProperties().get("password"), "password1");
    }
 
    @Test
@@ -103,30 +105,42 @@ public class TerremarkInstantiateVAppTemplateOptionsTest {
 
    @Test
    public void testCpuCount() {
-      assertEquals(cpuCount(3).getCpuCount(), "3");
+      assertEquals(processorCount(3).getCpuCount(), "3");
    }
 
    @Test
    public void testCpuCountStatic() {
-      TerremarkInstantiateVAppTemplateOptions options = cpuCount(3);
+      TerremarkInstantiateVAppTemplateOptions options = processorCount(3);
       assertEquals(options.getCpuCount(), "3");
    }
 
    @Test
    public void testMegabytes() {
       TerremarkInstantiateVAppTemplateOptions options = new TerremarkInstantiateVAppTemplateOptions();
-      options.megabytes(512);
-      assertEquals(options.getMegabytes(), "512");
+      options.memory(512);
+      assertEquals(options.getMemorySizeMegabytes(), "512");
    }
 
    @Test
    public void testMegabytesStatic() {
-      TerremarkInstantiateVAppTemplateOptions options = megabytes(512);
-      assertEquals(options.getMegabytes(), "512");
+      TerremarkInstantiateVAppTemplateOptions options = memory(512);
+      assertEquals(options.getMemorySizeMegabytes(), "512");
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testMegabytesStaticWrong() {
-      megabytes(511);
+      memory(511);
    }
+
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testDiskSizeKilobytes() {
+      TerremarkInstantiateVAppTemplateOptions options = new TerremarkInstantiateVAppTemplateOptions();
+      options.disk(512);
+   }
+
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testDiskSizeKilobytesStatic() {
+      disk(512);
+   }
+
 }

@@ -43,6 +43,11 @@
     </modules>
     <dependencies>
         <dependency>
+            <groupId>com.jamesmurty.utils</groupId>
+            <artifactId>java-xmlbuilder</artifactId>
+            <version>0.3</version>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>jclouds-jsch</artifactId>
             <version>${project.version}</version>

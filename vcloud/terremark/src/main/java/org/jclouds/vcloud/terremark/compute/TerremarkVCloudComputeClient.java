@@ -38,7 +38,6 @@ import javax.inject.Inject;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.domain.Task;
-import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 import org.jclouds.vcloud.terremark.domain.InternetService;
@@ -75,15 +74,15 @@ public class TerremarkVCloudComputeClient {
             Image.CENTOS_53, "6").put(Image.RHEL_53, "8").put(Image.UMBUNTU_90, "10").put(
             Image.UMBUNTU_JEOS, "11").build();
 
-   public String start(String name, int minCores, int minMegs, Image image) {
+   public String start(String name, Image image, int minCores, int minMegs, Map<String, String> properties) {
       checkArgument(imageCatalogIdMap.containsKey(image), "image not configured: " + image);
       String templateId = imageCatalogIdMap.get(image);
       String vDCId = tmClient.getDefaultVDC().getId();
-      logger.debug(">> instantiating vApp name(%s) minCores(%d) minMegs(%d) template(%s) vDC(%s)",
-               name, minCores, minMegs, templateId, vDCId);
-      TerremarkVApp vApp = tmClient.instantiateVAppTemplate(name, templateId, vDCId,
-               TerremarkInstantiateVAppTemplateOptions.Builder.cpuCount(minCores)
-                        .megabytes(minMegs));
+      logger.debug(">> instantiating vApp vDC(%s) template(%s) name(%s) minCores(%d) minMegs(%d) properties(%s)",vDCId, templateId,
+               name, minCores, minMegs, properties);
+      TerremarkVApp vApp = tmClient.instantiateVAppTemplateInVDC(vDCId, name, templateId,
+               TerremarkInstantiateVAppTemplateOptions.Builder.processorCount(minCores)
+                        .memory(minMegs).productProperties(properties));
       logger.debug("<< instantiated VApp(%s)", vApp.getId());
 
       logger.debug(">> deploying vApp(%s)", vApp.getId());
@@ -117,7 +116,7 @@ public class TerremarkVCloudComputeClient {
       logger.debug("<< on vApp(%s)", vApp.getId());
    }
 
-   public InetAddress createPublicAddressMappedToPorts(VApp vApp, int... ports) {
+   public InetAddress createPublicAddressMappedToPorts(TerremarkVApp vApp, int... ports) {
       PublicIpAddress ip = null;
       InetAddress privateAddress = Iterables.getLast(vApp.getNetworkToAddresses().values());
       for (int port : ports) {
@@ -136,8 +135,10 @@ public class TerremarkVCloudComputeClient {
 
          }
          if (ip == null) {
-            logger.debug(">> creating InternetService %d", port);
-            is = tmClient.addInternetService(vApp.getName() + "-" + port, protocol, port,
+            logger.debug(">> creating InternetService in vDC %s; port %d", vApp.getVDC().getId(),
+                     port);
+            is = tmClient.addInternetServiceToVDC(vApp.getVDC().getId(), vApp.getName() + "-"
+                     + port, protocol, port,
                      withDescription(String.format("port %d access to serverId: %s name: %s", port,
                               vApp.getId(), vApp.getName())));
             ip = is.getPublicIpAddress();
@@ -167,7 +168,8 @@ public class TerremarkVCloudComputeClient {
       deletePublicIpAddressesWithNoServicesAttached(ipAddresses);
 
       if (vApp.getStatus() != VAppStatus.OFF) {
-         logger.debug(">> powering off vApp(%s)", vApp.getId());
+         logger.debug(">> powering off vApp(%s), current status: %s", vApp.getId(), vApp
+                  .getStatus());
          blockUntilVAppStatusOrThrowException(vApp, tmClient.powerOffVApp(vApp.getId()),
                   "powerOff", VAppStatus.OFF);
          logger.debug("<< off vApp(%s)", vApp.getId());
@@ -179,7 +181,8 @@ public class TerremarkVCloudComputeClient {
 
    private Set<PublicIpAddress> deleteInternetServicesAndNodesAssociatedWithVApp(TerremarkVApp vApp) {
       Set<PublicIpAddress> ipAddresses = Sets.newHashSet();
-      SERVICE: for (InternetService service : tmClient.getAllInternetServices()) {
+      SERVICE: for (InternetService service : tmClient.getAllInternetServicesInVDC(vApp.getVDC()
+               .getId())) {
          for (Node node : tmClient.getNodes(service.getId())) {
             if (vApp.getNetworkToAddresses().containsValue(node.getIpAddress())) {
                ipAddresses.add(service.getPublicIpAddress());

@@ -81,7 +81,8 @@ public class HostingDotComVCloudComputeService implements ComputeService {
 
    @Override
    public CreateServerResponse createServer(String name, Profile profile, Image image) {
-      Map<String, String> metaMap = computeClient.start(name, 1, 512, image);
+      Map<String, String> metaMap = computeClient.start(name, image, 1, 512, (10l * 1025 * 1024),
+               ImmutableMap.<String, String> of());
       VApp vApp = hostingClient.getVApp(metaMap.get("id"));
       return new CreateServerResponseImpl(vApp.getId(), vApp.getName(), vAppStatusToServerState
                .get(vApp.getStatus()), vApp.getNetworkToAddresses().values(), ImmutableSet

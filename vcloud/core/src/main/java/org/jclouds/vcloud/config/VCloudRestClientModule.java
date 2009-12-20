@@ -23,15 +23,13 @@
  */
 package org.jclouds.vcloud.config;
 
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULTNETWORK;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_ENDPOINT;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_KEY;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_SESSIONINTERVAL;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_USER;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_VERSION;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.concurrent.ExecutionException;
@@ -216,14 +214,6 @@ public class VCloudRestClientModule extends AbstractModule {
       return org.getCatalog().getLocation();
    }
 
-   @Singleton
-   @Provides
-   @Named("InstantiateVAppTemplateParams")
-   protected String provideInstantiateVAppTemplateParams() throws IOException {
-      InputStream is = getClass().getResourceAsStream("/InstantiateVAppTemplateParams.xml");
-      return Utils.toStringAndClose(is);
-   }
-
    @Provides
    @Network
    @Singleton
@@ -234,7 +224,7 @@ public class VCloudRestClientModule extends AbstractModule {
    }
 
    @Provides
-   @Named(PROPERTY_VCLOUD_DEFAULTNETWORK)
+   @Named(PROPERTY_VCLOUD_DEFAULT_NETWORK)
    @Singleton
    String provideDefaultNetworkString(@Network URI network) {
       return network.toASCIIString();

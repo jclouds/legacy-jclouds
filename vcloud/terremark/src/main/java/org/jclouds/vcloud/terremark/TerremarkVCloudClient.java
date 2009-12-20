@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
-import org.jclouds.vcloud.terremark.domain.ComputeOption;
+import org.jclouds.vcloud.terremark.domain.ComputeOptions;
 import org.jclouds.vcloud.terremark.domain.CustomizationParameters;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Node;
@@ -51,7 +51,7 @@ import org.jclouds.vcloud.terremark.options.AddNodeOptions;
 public interface TerremarkVCloudClient extends VCloudClient {
 
    @Override
-   TerremarkVApp instantiateVAppTemplate(String appName, String templateId, String vDCId,
+   TerremarkVApp instantiateVAppTemplateInVDC(String vDCId, String appName, String templateId,
             InstantiateVAppTemplateOptions... options);
 
    @Override
@@ -62,19 +62,23 @@ public interface TerremarkVCloudClient extends VCloudClient {
     * configurations supported by Terremark and by the guest operating system of the vApp. This call
     * also returns the cost per hour for each configuration.
     */
-   SortedSet<ComputeOption> getComputeOptions(String vAppId);
+   SortedSet<ComputeOptions> getComputeOptionsOfVApp(String vAppId);
+
+   SortedSet<ComputeOptions> getComputeOptionsOfCatalogItem(String catalogItemId);
 
    /**
     * This call returns the customization options for the vApp. The response lists which
     * customization options are supported for this particular vApp. The possible customization
     * options are Network and Password.
     */
-   CustomizationParameters getCustomizationOptions(String vAppId);
+   CustomizationParameters getCustomizationOptionsOfVApp(String vAppId);
+
+   CustomizationParameters getCustomizationOptionsOfCatalogItem(String catalogItemId);
 
    /**
     * This call returns a list of public IP addresses.
     */
-   SortedSet<PublicIpAddress> getPublicIpsAssociatedWithVDC();
+   SortedSet<PublicIpAddress> getPublicIpsAssociatedWithVDC(String vDCId);
 
    void deletePublicIp(int ipId);
 
@@ -82,25 +86,14 @@ public interface TerremarkVCloudClient extends VCloudClient {
     * The call creates a new internet server, including protocol and port information. The public IP
     * is dynamically allocated.
     * 
-    * @param serviceName
-    * @param protocol
-    * @param port
-    * @param options
-    * @return
     */
-   InternetService addInternetService(String serviceName, Protocol protocol, int port,
-            AddInternetServiceOptions... options);
+   InternetService addInternetServiceToVDC(String vDCId, String serviceName, Protocol protocol,
+            int port, AddInternetServiceOptions... options);
 
    /**
     * This call adds an internet service to a known, existing public IP. This call is identical to
     * Add Internet Service except you specify the public IP in the request.
     * 
-    * @param existingIpId
-    * @param serviceName
-    * @param protocol
-    * @param port
-    * @param options
-    * @return
     */
    InternetService addInternetServiceToExistingIp(int existingIpId, String serviceName,
             Protocol protocol, int port, AddInternetServiceOptions... options);
@@ -109,7 +102,7 @@ public interface TerremarkVCloudClient extends VCloudClient {
 
    InternetService getInternetService(int internetServiceId);
 
-   SortedSet<InternetService> getAllInternetServices();
+   SortedSet<InternetService> getAllInternetServicesInVDC(String vDCId);
 
    /**
     * This call returns information about the internet service on a public IP.

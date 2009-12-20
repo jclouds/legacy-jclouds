@@ -24,7 +24,6 @@
 package org.jclouds.vcloud.terremark.config;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
@@ -62,8 +61,8 @@ public class TerremarkVCloudRestClientModule extends VCloudRestClientModule {
    @Singleton
    protected Predicate<InetSocketAddress> socketTester(SocketOpen open) {
       return new RetryablePredicate<InetSocketAddress>(open, 130, 10, TimeUnit.SECONDS);// make it
-                                                                                        // longer
-                                                                                        // then
+      // longer
+      // then
       // default internet
    }
 
@@ -100,13 +99,6 @@ public class TerremarkVCloudRestClientModule extends VCloudRestClientModule {
    public VCloudClient provideClient(VCloudAsyncClient client) throws IllegalArgumentException,
             SecurityException, NoSuchMethodException {
       return SyncProxy.create(TerremarkVCloudClient.class, client);
-   }
-
-   @Override
-   protected String provideInstantiateVAppTemplateParams() throws IOException {
-      InputStream is = getClass().getResourceAsStream(
-               "/terremark/InstantiateVAppTemplateParams.xml");
-      return Utils.toStringAndClose(is);
    }
 
    @Singleton

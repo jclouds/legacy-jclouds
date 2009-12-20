@@ -57,20 +57,22 @@ public class InternetServiceLiveTest {
 
    @Test
    public void testGetAllInternetServices() throws Exception {
-      SortedSet<InternetService> set = tmClient.getAllInternetServices();
+      SortedSet<InternetService> set = tmClient.getAllInternetServicesInVDC(tmClient
+               .getDefaultVDC().getId());
       print(set);
    }
 
    @Test
    public void testAddInternetService() throws InterruptedException {
-      InternetService is = tmClient.addInternetService("test-" + 22, Protocol.TCP, 22);
+      InternetService is = tmClient.addInternetServiceToVDC(tmClient.getDefaultVDC().getId(),
+               "test-" + 22, Protocol.TCP, 22);
       services.add(is);
       PublicIpAddress ip = is.getPublicIpAddress();
       // current bug in terremark
-//       for (int port : new int[] { 80, 8080 }) {
-//       services.add(tmClient.addInternetServiceToExistingIp(ip.getId(), "test-" + port,
-//       Protocol.HTTP, port));
-//       }
+      // for (int port : new int[] { 80, 8080 }) {
+      // services.add(tmClient.addInternetServiceToExistingIp(ip.getId(), "test-" + port,
+      // Protocol.HTTP, port));
+      // }
       print(tmClient.getInternetServicesOnPublicIp(ip.getId()));
    }
 
@@ -86,7 +88,8 @@ public class InternetServiceLiveTest {
 
    @Test
    public void testGetAllPublicIps() throws Exception {
-      for (PublicIpAddress ip : tmClient.getPublicIpsAssociatedWithVDC()) {
+      for (PublicIpAddress ip : tmClient.getPublicIpsAssociatedWithVDC(tmClient.getDefaultVDC()
+               .getId())) {
          SortedSet<InternetService> set = tmClient.getInternetServicesOnPublicIp(ip.getId());
          print(set);
       }

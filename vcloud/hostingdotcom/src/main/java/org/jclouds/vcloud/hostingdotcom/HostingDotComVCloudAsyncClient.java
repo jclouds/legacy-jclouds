@@ -87,8 +87,8 @@ public interface HostingDotComVCloudAsyncClient extends VCloudAsyncClient {
    @XMLResponseParser(HostingDotComVAppHandler.class)
    @MapBinder(BindInstantiateVAppTemplateParamsToXmlPayload.class)
    @Override
-   Future<? extends HostingDotComVApp> instantiateVAppTemplate(
-            @MapPayloadParam("name") String appName,
+   Future<? extends HostingDotComVApp> instantiateVAppTemplateInVDC(
+            @PathParam("vDCId") String vDCId, @MapPayloadParam("name") String appName,
             @MapPayloadParam("template") @ParamParser(VAppTemplateIdToUri.class) String templateId,
-            @PathParam("vDCId") String vDCId, InstantiateVAppTemplateOptions... options);
+            InstantiateVAppTemplateOptions... options);
 }

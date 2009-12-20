@@ -29,7 +29,7 @@ import java.io.InputStream;
 import java.net.UnknownHostException;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.vcloud.terremark.domain.ComputeOption;
+import org.jclouds.vcloud.terremark.domain.ComputeOptions;
 import org.testng.annotations.Test;
 
 /**
@@ -43,8 +43,8 @@ public class ComputeOptionHandlerTest extends BaseHandlerTest {
    public void test1() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/terremark/ComputeOption.xml");
 
-      ComputeOption result = (ComputeOption) factory.create(
+      ComputeOptions result = (ComputeOptions) factory.create(
                injector.getInstance(ComputeOptionHandler.class)).parse(is);
-      assertEquals(result, new ComputeOption(1, 512, 0.039f));
+      assertEquals(result, new ComputeOptions(1, 512, 0.039f));
    }
 }

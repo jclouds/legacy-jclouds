@@ -120,5 +120,15 @@ public class VCloudMediaType {
     */
    public final static MediaType VAPP_XML_TYPE = new MediaType("application",
             "vnd.vmware.vcloud.vApp+xml");
+   
+   /**
+    * "application/vnd.vmware.vcloud.vAppTemplate+xml"
+    */
+   public final static String VAPPTEMPLATE_XML = "application/vnd.vmware.vcloud.vAppTemplate+xml";
+   /**
+    * "application/vnd.vmware.vcloud.vAppTemplate+xml"
+    */
+   public final static MediaType VAPPTEMPLATE_XML_TYPE = new MediaType("application",
+            "vnd.vmware.vcloud.vAppTemplate+xml");
 
 }

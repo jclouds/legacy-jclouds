@@ -45,6 +45,7 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.base.CaseFormat;
 import com.google.common.base.Predicate;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -94,8 +95,10 @@ public class HostingDotComVCloudComputeClientLiveTest {
       String serverName = getCompatibleServerName(toTest);
       int processorCount = 1;
       int memory = 512;
+      long disk = 10 * 1025 * 1024;
+      Map<String, String> properties = ImmutableMap.of("foo", "bar");
 
-      id = client.start(serverName, processorCount, memory, toTest).get("id");
+      id = client.start(serverName, toTest, processorCount, memory, disk, properties).get("id");
       Expectation expectation = expectationMap.get(toTest);
 
       VApp vApp = tmClient.getVApp(id);
@@ -105,8 +108,9 @@ public class HostingDotComVCloudComputeClientLiveTest {
    }
 
    private String getCompatibleServerName(Image toTest) {
-      String serverName = toTest.toString().toLowerCase().replaceAll("_", "-").substring(0,
-               toTest.toString().length() <= 15 ? toTest.toString().length() : 14);
+      String serverName = CaseFormat.UPPER_UNDERSCORE
+               .to(CaseFormat.LOWER_HYPHEN, toTest.toString()).substring(0,
+                        toTest.toString().length() <= 15 ? toTest.toString().length() : 14);
       return serverName;
    }
 

@@ -21,32 +21,16 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.hostingdotcom;
-
-import java.util.concurrent.TimeUnit;
-
-import org.jclouds.concurrent.Timeout;
-import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.hostingdotcom.domain.HostingDotComVApp;
-import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
+package org.jclouds.vcloud.domain;
 
 /**
- * Provides access to VCloud resources via their REST API.
- * <p/>
  * 
- * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx" />
  * @author Adrian Cole
  */
-@Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-public interface HostingDotComVCloudClient extends VCloudClient {
+public interface VAppTemplate extends NamedResource {
 
-   @Override
-   @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
-   HostingDotComVApp instantiateVAppTemplateInVDC(String vDCId, String appName, String templateId,
-            InstantiateVAppTemplateOptions... options);
+   VAppStatus getStatus();
 
-   @Override
-   @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-   HostingDotComVApp getVApp(String vAppId);
+   String getDescription();
 
 }

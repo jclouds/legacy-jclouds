@@ -26,9 +26,9 @@ package org.jclouds.vcloud.xml;
 import java.util.SortedMap;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.vcloud.domain.Catalog;
+import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.domain.internal.CatalogImpl;
+import org.jclouds.vcloud.domain.internal.CatalogItemImpl;
 import org.jclouds.vcloud.util.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -38,32 +38,39 @@ import com.google.common.collect.Maps;
 /**
  * @author Adrian Cole
  */
-public class CatalogHandler extends ParseSax.HandlerWithResult<Catalog> {
+public class CatalogItemHandler extends ParseSax.HandlerWithResult<CatalogItem> {
    private StringBuilder currentText = new StringBuilder();
 
    private NamedResource catalog;
-   private SortedMap<String, NamedResource> contents = Maps.newTreeMap();
+   private NamedResource entity;
 
    private String description;
+   private String key;
+   private SortedMap<String, String> properties = Maps.newTreeMap();
 
-   public Catalog getResult() {
-      return new CatalogImpl(catalog.getId(), catalog.getName(), catalog.getLocation(),
-               description, contents);
+   public CatalogItem getResult() {
+      return new CatalogItemImpl(catalog.getId(), catalog.getName(), catalog.getLocation(),
+               description, entity, properties);
    }
 
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attributes)
             throws SAXException {
-      if (qName.equals("Catalog")) {
+      if (qName.equals("CatalogItem")) {
          catalog = Utils.newNamedResource(attributes);
-      } else if (qName.equals("CatalogItem")) {
-         Utils.putNamedResource(contents, attributes);
+      } else if (qName.equals("Entity")) {
+         entity = Utils.newNamedResource(attributes);
+      } else if (qName.equals("Property")) {
+         key = attributes.getValue(attributes.getIndex("key"));
       }
    }
 
    public void endElement(String uri, String name, String qName) {
       if (qName.equals("Description")) {
          description = currentOrNull();
+      } else if (qName.equals("Property")) {
+         properties.put(key, currentOrNull());
+         key = null;
       }
       currentText = new StringBuilder();
    }

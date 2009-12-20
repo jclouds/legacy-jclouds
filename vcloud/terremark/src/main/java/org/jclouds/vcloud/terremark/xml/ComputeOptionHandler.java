@@ -24,12 +24,12 @@
 package org.jclouds.vcloud.terremark.xml;
 
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
-import org.jclouds.vcloud.terremark.domain.ComputeOption;
+import org.jclouds.vcloud.terremark.domain.ComputeOptions;
 
 /**
  * @author Adrian Cole
  */
-public class ComputeOptionHandler extends HandlerWithResult<ComputeOption> {
+public class ComputeOptionHandler extends HandlerWithResult<ComputeOptions> {
 
    private StringBuilder currentText = new StringBuilder();
 
@@ -43,8 +43,8 @@ public class ComputeOptionHandler extends HandlerWithResult<ComputeOption> {
    }
 
    @Override
-   public ComputeOption getResult() {
-      return new ComputeOption(processorCount, memory, costPerHour);
+   public ComputeOptions getResult() {
+      return new ComputeOptions(processorCount, memory, costPerHour);
    }
 
    public void endElement(String uri, String name, String qName) {

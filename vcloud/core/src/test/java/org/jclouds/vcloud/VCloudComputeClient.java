@@ -87,8 +87,8 @@ public class VCloudComputeClient {
       String vDCId = tmClient.getDefaultVDC().getId();
       logger.debug(">> instantiating vApp name(%s) minCores(%d) minMegs(%d) template(%s) vDC(%s)",
                name, minCores, minMegs, templateId, vDCId);
-      VApp vAppResponse = tmClient.instantiateVAppTemplate(name, templateId, vDCId,
-               InstantiateVAppTemplateOptions.Builder.cpuCount(minCores).megabytes(minMegs));
+      VApp vAppResponse = tmClient.instantiateVAppTemplateInVDC(name, templateId, vDCId,
+               InstantiateVAppTemplateOptions.Builder.processorCount(minCores).memory(minMegs));
       tmClient.getVApp(vAppResponse.getId());
       logger.debug("<< instantiated VApp(%s)", vAppResponse.getId());
 

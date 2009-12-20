@@ -49,7 +49,7 @@ import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
-import org.jclouds.vcloud.terremark.domain.InternetService;
+import org.jclouds.vcloud.terremark.domain.TerremarkVApp;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
@@ -83,8 +83,8 @@ public class TerremarkVCloudComputeService implements ComputeService {
 
    @Override
    public CreateServerResponse createServer(String name, Profile profile, Image image) {
-      String id = computeClient.start(name, 1, 512, image);
-      VApp vApp = tmClient.getVApp(id);
+      String id = computeClient.start(name, image, 1, 512, ImmutableMap.<String, String> of());
+      TerremarkVApp vApp = tmClient.getVApp(id);
       // bug creating more than one internet service returns 503 or 500
       // InetAddress publicIp = computeClient.createPublicAddressMappedToPorts(vApp, 22, 80, 8080);
       InetAddress publicIp = computeClient.createPublicAddressMappedToPorts(vApp, 22);
@@ -102,16 +102,6 @@ public class TerremarkVCloudComputeService implements ComputeService {
       return new ServerMetadataImpl(vApp.getId(), vApp.getName(), vAppStatusToServerState.get(vApp
                .getStatus()), publicAddresses, vApp.getNetworkToAddresses().values(), 22,
                LoginType.SSH);
-   }
-
-   public SortedSet<InternetService> getInternetServicesByName(final String name) {
-      return Sets.newTreeSet(Iterables.filter(tmClient.getAllInternetServices(),
-               new Predicate<InternetService>() {
-                  @Override
-                  public boolean apply(InternetService input) {
-                     return input.getName().equalsIgnoreCase(name);
-                  }
-               }));
    }
 
    @Override

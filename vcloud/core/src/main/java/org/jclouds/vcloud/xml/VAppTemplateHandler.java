@@ -21,56 +21,55 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.terremark.xml;
+package org.jclouds.vcloud.xml;
 
-import java.util.SortedSet;
-
-import javax.annotation.Resource;
-import javax.inject.Inject;
-
-import org.jclouds.http.functions.ParseSax.HandlerWithResult;
-import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.terremark.domain.ComputeOptions;
+import org.jclouds.http.functions.ParseSax;
+import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.domain.internal.VAppTemplateImpl;
+import org.jclouds.vcloud.util.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-
-import com.google.common.collect.Sets;
 
 /**
  * @author Adrian Cole
  */
-public class ComputeOptionsHandler extends HandlerWithResult<SortedSet<ComputeOptions>> {
+public class VAppTemplateHandler extends ParseSax.HandlerWithResult<VAppTemplate> {
+   private StringBuilder currentText = new StringBuilder();
 
-   @Resource
-   protected Logger logger = Logger.NULL;
-   private final ComputeOptionHandler handler;
-   SortedSet<ComputeOptions> result = Sets.newTreeSet();
+   private NamedResource catalog;
+   private String description;
+   private VAppStatus status;
 
-   @Inject
-   public ComputeOptionsHandler(ComputeOptionHandler handler) {
-      this.handler = handler;
-   }
-
-   @Override
-   public SortedSet<ComputeOptions> getResult() {
-      return result;
+   public VAppTemplate getResult() {
+      return new VAppTemplateImpl(catalog.getId(), catalog.getName(), catalog.getLocation(),
+               description, status);
    }
 
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attributes)
             throws SAXException {
-      handler.startElement(uri, localName, qName, attributes);
-   }
-
-   public void endElement(String uri, String name, String qName) {
-      handler.endElement(uri, name, qName);
-      if (qName.equals("ComputeOption")) {
-         result.add(handler.getResult());
+      if (qName.equals("VAppTemplate")) {
+         catalog = Utils.newNamedResource(attributes);
+         if (attributes.getIndex("status") != -1)
+            status = VAppStatus.fromValue(attributes.getValue(attributes.getIndex("status")));
       }
    }
 
-   public void characters(char ch[], int start, int length) {
-      handler.characters(ch, start, length);
+   public void endElement(String uri, String name, String qName) {
+      if (qName.equals("Description")) {
+         description = currentOrNull();
+      }
+      currentText = new StringBuilder();
    }
 
+   public void characters(char ch[], int start, int length) {
+      currentText.append(ch, start, length);
+   }
+
+   protected String currentOrNull() {
+      String returnVal = currentText.toString().trim();
+      return returnVal.equals("") ? null : returnVal;
+   }
 }

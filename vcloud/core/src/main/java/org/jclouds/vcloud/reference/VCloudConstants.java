@@ -37,8 +37,20 @@ public interface VCloudConstants {
     * automatically renew vcloud token before this interval expires.
     */
    public static final String PROPERTY_VCLOUD_SESSIONINTERVAL = "jclouds.vcloud.sessioninterval";
-   public static final String PROPERTY_VCLOUD_DEFAULTCPUCOUNT = "jclouds.vcloud.defaults.cpucount";
-   public static final String PROPERTY_VCLOUD_DEFAULTMEMORY = "jclouds.vcloud.defaults.memory";
-   public static final String PROPERTY_VCLOUD_DEFAULTNETWORK = "jclouds.vcloud.defaults.network";
+   /**
+    * cpus
+    */
+   public static final String PROPERTY_VCLOUD_DEFAULT_CPUCOUNT = "jclouds.vcloud.defaults.cpucount";
+   /**
+    * megabytes
+    */
+   public static final String PROPERTY_VCLOUD_DEFAULT_MEMORY = "jclouds.vcloud.defaults.memorysizemegabytes";
+   public static final String PROPERTY_VCLOUD_DEFAULT_NETWORK = "jclouds.vcloud.defaults.network";
+   /**
+    * kilobytes
+    */
+   public static final String PROPERTY_VCLOUD_DEFAULT_DISK = "jclouds.vcloud.defaults.getdisksizekilobytes";
+   public static final String PROPERTY_VCLOUD_XML_NAMESPACE = "jclouds.vcloud.xml.ns";
+   public static final String PROPERTY_VCLOUD_XML_SCHEMA = "jclouds.vcloud.xml.schema";
 
 }

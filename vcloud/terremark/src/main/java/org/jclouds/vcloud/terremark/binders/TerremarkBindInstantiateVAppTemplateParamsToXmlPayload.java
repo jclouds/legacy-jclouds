@@ -23,23 +23,27 @@
  */
 package org.jclouds.vcloud.terremark.binders;
 
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULTCPUCOUNT;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULTMEMORY;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULTNETWORK;
-import static org.jclouds.vcloud.terremark.reference.TerremarkVCloudConstants.PROPERTY_TERREMARK_DEFAULTGROUP;
-import static org.jclouds.vcloud.terremark.reference.TerremarkVCloudConstants.PROPERTY_TERREMARK_DEFAULTPASSWORD;
-import static org.jclouds.vcloud.terremark.reference.TerremarkVCloudConstants.PROPERTY_TERREMARK_DEFAULTROW;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_NAMESPACE;
+import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_SCHEMA;
 
 import java.util.Map;
+import java.util.SortedMap;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
 import org.jclouds.rest.binders.BindToStringPayload;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayload;
-import org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions;
+import org.jclouds.vcloud.domain.ResourceType;
+
+import com.jamesmurty.utils.XMLBuilder;
 
 /**
  * 
@@ -51,37 +55,36 @@ public class TerremarkBindInstantiateVAppTemplateParamsToXmlPayload extends
          BindInstantiateVAppTemplateParamsToXmlPayload {
 
    @Inject
-   public TerremarkBindInstantiateVAppTemplateParamsToXmlPayload(
-            @Named("InstantiateVAppTemplateParams") String xmlTemplate,
-            BindToStringPayload stringBinder,
-            @Named(PROPERTY_VCLOUD_DEFAULTNETWORK) String defaultNetwork,
-            @Named(PROPERTY_VCLOUD_DEFAULTCPUCOUNT) String defaultCpuCount,
-            @Named(PROPERTY_VCLOUD_DEFAULTMEMORY) String defaultMemory,
-            @Named(PROPERTY_TERREMARK_DEFAULTGROUP) String defaultGroup,
-            @Named(PROPERTY_TERREMARK_DEFAULTROW) String defaultRow,
-            @Named(PROPERTY_TERREMARK_DEFAULTPASSWORD) String defaultPassword) {
-      super(xmlTemplate, stringBinder, defaultNetwork, defaultCpuCount, defaultMemory);
-      this.defaultParams.put("group", defaultGroup);
-      this.defaultParams.put("row", defaultRow);
-      this.defaultParams.put("password", defaultPassword);
+   public TerremarkBindInstantiateVAppTemplateParamsToXmlPayload(BindToStringPayload stringBinder,
+            @Named(PROPERTY_VCLOUD_XML_NAMESPACE) String ns,
+            @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema,
+            @Named(PROPERTY_VCLOUD_DEFAULT_NETWORK) String network,
+            OptionalConstantsHolder optionalDefaults) {
+      super(stringBinder, ns, schema, network, optionalDefaults);
    }
 
    @Override
-   protected void addOptionsToMap(Map<String, String> postParams, GeneratedHttpRequest<?> gRequest) {
-      super.addOptionsToMap(postParams, gRequest);
-      for (Object arg : gRequest.getArgs()) {
-         if (arg instanceof TerremarkInstantiateVAppTemplateOptions) {
-            TerremarkInstantiateVAppTemplateOptions options = (TerremarkInstantiateVAppTemplateOptions) arg;
-            if (options.getGroup() != null) {
-               postParams.put("group", options.getGroup());
-            }
-            if (options.getRow() != null) {
-               postParams.put("row", options.getRow());
-            }
-            if (options.getPassword() != null) {
-               postParams.put("password", options.getPassword());
-            }
-         }
+   protected String generateXml(String name, String template, Map<String, String> properties,
+            SortedMap<ResourceType, String> virtualHardwareQuantity, String network)
+            throws ParserConfigurationException, FactoryConfigurationError, TransformerException {
+      checkNotNull(virtualHardwareQuantity.get(ResourceType.PROCESSOR),
+               "cpuCount must be present in instantiateVapp on terremark");
+      checkNotNull(virtualHardwareQuantity.get(ResourceType.MEMORY),
+               "memorySizeMegabytes must be present in instantiateVapp on terremark");
+      checkArgument(virtualHardwareQuantity.get(ResourceType.DISK_DRIVE) == null,
+               "diskSizeKilobytes no settable on instantiateVapp on terremark");
+      return super.generateXml(name, template, properties, virtualHardwareQuantity, network);
+   }
+
+   @Override
+   protected void addPropertiesifPresent(XMLBuilder instantiationParamsBuilder,
+            Map<String, String> properties) {
+      if (properties.size() == 0) { // terremark requires the product section.
+         instantiationParamsBuilder.e("ProductSection").a("xmlns:q1",
+                  "http://www.vmware.com/vcloud/v1").a("xmlns:ovf",
+                  "http://schemas.dmtf.org/ovf/envelope/1");
+      } else {
+         super.addPropertiesifPresent(instantiationParamsBuilder, properties);
       }
    }
 

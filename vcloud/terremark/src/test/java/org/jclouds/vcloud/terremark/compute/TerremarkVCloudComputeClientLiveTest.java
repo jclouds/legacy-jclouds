@@ -45,6 +45,7 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.base.CaseFormat;
 import com.google.common.base.Predicate;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -77,11 +78,9 @@ public class TerremarkVCloudComputeClientLiveTest {
    }
 
    private Map<Image, Expectation> expectationMap = ImmutableMap.<Image, Expectation> builder()
-            .put(Image.CENTOS_53,
-                     new Expectation(4194304 / 4 * 10, "Red Hat Enterprise Linux 5 (64-bit)")).put(
-                     Image.RHEL_53,
-                     new Expectation(4194304 / 4 * 10, "Red Hat Enterprise Linux 5 (64-bit)")).put(
-                     Image.UMBUNTU_90, new Expectation(4194304, "Ubuntu Linux (64-bit)")).put(
+            .put(Image.CENTOS_53, new Expectation(10485760, "Red Hat Enterprise Linux 5 (64-bit)"))
+            .put(Image.RHEL_53, new Expectation(10485760, "Red Hat Enterprise Linux 5 (64-bit)"))
+            .put(Image.UMBUNTU_90, new Expectation(4194304, "Ubuntu Linux (64-bit)")).put(
                      Image.UMBUNTU_JEOS, new Expectation(4194304, "Ubuntu Linux (32-bit)")).build();
 
    private Predicate<InetAddress> addressTester;
@@ -94,8 +93,9 @@ public class TerremarkVCloudComputeClientLiveTest {
       String serverName = getCompatibleServerName(toTest);
       int processorCount = 1;
       int memory = 512;
+      Map<String, String> properties = ImmutableMap.of();
 
-      id = client.start(serverName, processorCount, memory, toTest);
+      id = client.start(serverName, toTest, processorCount, memory, properties);
       Expectation expectation = expectationMap.get(toTest);
 
       TerremarkVApp vApp = tmClient.getVApp(id);
@@ -105,8 +105,9 @@ public class TerremarkVCloudComputeClientLiveTest {
    }
 
    private String getCompatibleServerName(Image toTest) {
-      String serverName = toTest.toString().toLowerCase().replaceAll("_", "-").substring(0,
-               toTest.toString().length() <= 15 ? toTest.toString().length() : 14);
+      String serverName = CaseFormat.UPPER_UNDERSCORE
+               .to(CaseFormat.LOWER_HYPHEN, toTest.toString()).substring(0,
+                        toTest.toString().length() <= 15 ? toTest.toString().length() : 14);
       return serverName;
    }
 
