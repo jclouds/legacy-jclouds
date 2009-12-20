@@ -1,0 +1,7 @@
+<VAppTemplate
+    href="https://services.vcloudexpress.terremark.com/api/v0.8/vAppTemplate/5"
+    type="application/vnd.vmware.vcloud.vAppTemplate+xml" name="CentOS 5.3 (32-bit)"
+    xmlns="http://www.vmware.com/vcloud/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <Description>description of CentOS 5.3 (32-bit)</Description>
+</VAppTemplate>
