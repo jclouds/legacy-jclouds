@@ -33,6 +33,10 @@
     <!-- 
       LICENSE.txt
       README.txt
+      core
+         + docs <- javadoc for core
+         + lib <- core jar and dependencies for core
+         + src <- expanded or source jar for core
       extensions
          + log4j
             + README.txt <- how to use the extension
@@ -45,17 +49,10 @@
             + lib <- not core
             + docs <- not core
             + src <- not core
-      samples <- includes samples, demos and tools
+      samples <- includes samples and demos
          + tweetstore
-            + README.txt <- how to use run the sample
-            + bin <- start script
-            + etc <- configuration
-            + lib <- all dependencies
-            + docs <- just demo
+            + README.txt <- how to build and run the sample
             + src <- just demo
-      docs <- javadoc for core
-      lib <- core jar and dependencies for core
-      src <- expanded or source jar for core
         
       see http://code.google.com/p/jclouds/issues/detail?id=127
     -->
@@ -84,22 +81,22 @@
             <includes>
                 <include>jclouds-core-${project.version}-jar-with-dependencies.jar</include>
             </includes>
-            <outputDirectory>lib</outputDirectory>
+            <outputDirectory>core/lib</outputDirectory>
         </fileSet>
         <fileSet>
             <directory>core/target/jclouds-core-${project.version}-dependencies.dir</directory>
-            <outputDirectory>lib</outputDirectory>
+            <outputDirectory>core/lib</outputDirectory>
         </fileSet>   
         <fileSet>
             <directory>core/target</directory>
             <includes>
                 <include>jclouds-core-${project.version}-sources.jar</include>
             </includes>
-            <outputDirectory>src</outputDirectory>
+            <outputDirectory>core/src</outputDirectory>
         </fileSet>
         <fileSet>
             <directory>core/target/apidocs</directory>
-            <outputDirectory>docs</outputDirectory>            
+            <outputDirectory>core/docs</outputDirectory>            
         </fileSet>    
         
         <!-- providers: atmos -->
@@ -110,6 +107,10 @@
             </includes>
             <outputDirectory>providers/atmos/lib</outputDirectory>
         </fileSet>
+        <fileSet>
+            <directory>atmos/target/jclouds-atmos-${project.version}-dependencies.dir</directory>
+            <outputDirectory>providers/atmos/lib</outputDirectory>
+        </fileSet>        
         <fileSet>
             <directory>atmos/target</directory>
             <includes>
@@ -131,31 +132,62 @@
          
         <!-- providers: aws -->
         <fileSet>
-            <directory>aws/target</directory>
+            <directory>aws/core/target</directory>
             <includes>
                 <include>jclouds-aws-${project.version}.jar</include>
             </includes>
             <outputDirectory>providers/aws/lib</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>aws/target</directory>
+            <directory>aws/core/target/jclouds-aws-${project.version}-dependencies.dir</directory>
+            <outputDirectory>providers/aws/lib</outputDirectory>
+        </fileSet>        
+        <fileSet>
+            <directory>aws/core/target</directory>
             <includes>
                 <include>jclouds-aws-${project.version}-sources.jar</include>
             </includes>
             <outputDirectory>providers/aws/src</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>aws/target/apidocs</directory>
+            <directory>aws/core/target/apidocs</directory>
             <outputDirectory>providers/aws/docs</outputDirectory>            
         </fileSet>
         <fileSet>
-            <directory>aws</directory>
+            <directory>aws/core</directory>
             <includes>
                 <include>README.txt</include>
             </includes>
             <outputDirectory>providers/aws</outputDirectory>            
         </fileSet>         
-        
+ 
+        <!-- aws extensions: jets3t -->
+        <fileSet>
+            <directory>aws/extensions/jets3t/target</directory>
+            <includes>
+                <include>jclouds-jets3t-${project.version}.jar</include>
+            </includes>
+            <outputDirectory>providers/aws/extensions/jets3t/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>aws/extensions/jets3t/target</directory>
+            <includes>
+                <include>jclouds-jets3t-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>providers/aws/extensions/jets3t/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>aws/extensions/jets3t/target/apidocs</directory>
+            <outputDirectory>providers/aws/extensions/jets3t/docs</outputDirectory>            
+        </fileSet>
+        <fileSet>
+            <directory>aws/extensions/jets3t</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>providers/aws/extensions/jets3t</outputDirectory>            
+        </fileSet>
+                
         <!-- providers: azure -->
         <fileSet>
             <directory>azure/target</directory>
@@ -164,6 +196,10 @@
             </includes>
             <outputDirectory>providers/azure/lib</outputDirectory>
         </fileSet>
+        <fileSet>
+            <directory>azure/target/jclouds-azure-${project.version}-dependencies.dir</directory>
+            <outputDirectory>providers/azure/lib</outputDirectory>
+        </fileSet>          
         <fileSet>
             <directory>azure/target</directory>
             <includes>
@@ -185,25 +221,25 @@
         
         <!-- providers: hostingdotcom -->
         <fileSet>
-            <directory>hostingdotcom/target</directory>
+            <directory>vcloud/hostingdotcom/target</directory>
             <includes>
                 <include>jclouds-hostingdotcom-${project.version}.jar</include>
             </includes>
             <outputDirectory>providers/hostingdotcom/lib</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>hostingdotcom/target</directory>
+            <directory>vcloud/hostingdotcom/target</directory>
             <includes>
                 <include>jclouds-hostingdotcom-${project.version}-sources.jar</include>
             </includes>
             <outputDirectory>providers/hostingdotcom/src</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>hostingdotcom/target/apidocs</directory>
+            <directory>vcloud/hostingdotcom/target/apidocs</directory>
             <outputDirectory>providers/hostingdotcom/docs</outputDirectory>            
         </fileSet>
         <fileSet>
-            <directory>hostingdotcom</directory>
+            <directory>vcloud/hostingdotcom</directory>
             <includes>
                 <include>README.txt</include>
             </includes>
@@ -218,6 +254,10 @@
             </includes>
             <outputDirectory>providers/mezeo/lib</outputDirectory>
         </fileSet>
+        <fileSet>
+            <directory>mezeo/pcs2/target/jclouds-pcs2-${project.version}-dependencies.dir</directory>
+            <outputDirectory>providers/pcs2/lib</outputDirectory>
+        </fileSet>     
         <fileSet>
             <directory>mezeo/pcs2/target</directory>
             <includes>
@@ -246,6 +286,10 @@
             <outputDirectory>providers/nirvanix/lib</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>nirvanix/sdn/target/jclouds-nirvanix-${project.version}-dependencies.dir</directory>
+            <outputDirectory>providers/nirvanix/lib</outputDirectory>
+        </fileSet>        
+        <fileSet>
             <directory>nirvanix/sdn/target</directory>
             <includes>
                 <include>jclouds-sdn-${project.version}-sources.jar</include>
@@ -272,6 +316,10 @@
             </includes>
             <outputDirectory>providers/rackspace/lib</outputDirectory>
         </fileSet>
+        <fileSet>
+            <directory>rackspace/target/jclouds-rackspace-${project.version}-dependencies.dir</directory>
+            <outputDirectory>providers/rackspace/lib</outputDirectory>
+        </fileSet>             
         <fileSet>
             <directory>rackspace/target</directory>
             <includes>
@@ -408,6 +456,10 @@
             <outputDirectory>extensions/bouncycastle/lib</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>extensions/bouncycastle/target/jclouds-bouncycastle-${project.version}-dependencies.dir</directory>
+            <outputDirectory>extensions/bouncycastle/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
             <directory>extensions/bouncycastle/target</directory>
             <includes>
                 <include>jclouds-bouncycastle-${project.version}-sources.jar</include>
@@ -462,6 +514,10 @@
             <outputDirectory>extensions/joda/lib</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>extensions/joda/target/jclouds-joda-${project.version}-dependencies.dir</directory>
+            <outputDirectory>extensions/joda/lib</outputDirectory>
+        </fileSet>           
+        <fileSet>
             <directory>extensions/joda/target</directory>
             <includes>
                 <include>jclouds-joda-${project.version}-sources.jar</include>
@@ -489,6 +545,10 @@
             <outputDirectory>extensions/httpnio/lib</outputDirectory>
         </fileSet>
         <fileSet>
+            <directory>extensions/httpnio/target/jclouds-httpnio-${project.version}-dependencies.dir</directory>
+            <outputDirectory>extensions/httpnio/lib</outputDirectory>
+        </fileSet>          
+        <fileSet>
             <directory>extensions/httpnio/target</directory>
             <includes>
                 <include>jclouds-httpnio-${project.version}-sources.jar</include>
@@ -515,6 +575,10 @@
             </includes>
             <outputDirectory>extensions/ssh/jsch/lib</outputDirectory>
         </fileSet>
+        <fileSet>
+            <directory>extensions/jsch/target/jclouds-jsch-${project.version}-dependencies.dir</directory>
+            <outputDirectory>extensions/ssh/jsch/lib</outputDirectory>
+        </fileSet>           
         <fileSet>
             <directory>extensions/jsch/target</directory>
             <includes>
@@ -561,51 +625,7 @@
             <outputDirectory>extensions/log4j</outputDirectory>            
         </fileSet>
         
-        <!-- extensions: jets3t -->
-        <fileSet>
-            <directory>aws/extensions/jets3t/target</directory>
-            <includes>
-                <include>jclouds-jets3t-${project.version}.jar</include>
-            </includes>
-            <outputDirectory>extensions/aws/jets3t/lib</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>aws/extensions/jets3t/target</directory>
-            <includes>
-                <include>jclouds-jets3t-${project.version}-sources.jar</include>
-            </includes>
-            <outputDirectory>extensions/aws/jets3t/src</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>aws/extensions/jets3t/target/apidocs</directory>
-            <outputDirectory>extensions/aws/jets3t/docs</outputDirectory>            
-        </fileSet>
-        <fileSet>
-            <directory>aws/extensions/jets3t</directory>
-            <includes>
-                <include>README.txt</include>
-            </includes>
-            <outputDirectory>extensions/aws/jets3t</outputDirectory>            
-        </fileSet>
-
-        <!-- samples and tools -->
-        <fileSet>
-            <directory>tools</directory>
-            <!-- XXX: should probably be replaced by a suitable source package that
-              each tools project builds -->
-            <excludes>
-                <exclude>**/.settings</exclude>
-                <exclude>**/.settings/**</exclude>
-                <exclude>**/.project</exclude>
-                <exclude>**/.classpath</exclude>
-                <exclude>**/target</exclude>
-                <exclude>**/target/**</exclude>
-                <exclude>**/.svnignore</exclude>
-                <!-- exclude only the *root* POM -->
-                <exclude>pom.xml</exclude>
-            </excludes>
-            <outputDirectory>samples</outputDirectory>
-        </fileSet>        
+        <!-- samples -->
         <fileSet>
             <directory>demos</directory>
             <!-- XXX: should probably be replaced by a suitable source package that

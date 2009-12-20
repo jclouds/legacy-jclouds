@@ -24,6 +24,8 @@
 #
 # The jclouds provider for Hosting.com's vCloud Express (http://www.hosting.com/vcloudexpress/) platform.
 #
+# Requires the jclouds-vcloud JAR to be on the classpath.
+#
 # TODO: Implementation status.
 # TODO: Supported features.
 # TODO: Usage example.

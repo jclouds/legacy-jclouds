@@ -23,7 +23,7 @@
 ====
 #
 # A JetS3t (http://jets3t.s3.amazonaws.com/) S3Service implementation using
-# jclouds.
+# jclouds. Can be used on Google App Engine.
 #
 # Expects jets3t to be present on your application's classpath.
 #

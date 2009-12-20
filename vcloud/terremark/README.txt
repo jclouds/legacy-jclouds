@@ -24,6 +24,8 @@
 #
 # The jclouds provider for Terremark's vCloud Express (http://vcloudexpress.terremark.com/) platform.
 #
+# Requires the jclouds-vcloud JAR to be on the classpath.
+#
 # TODO: Implementation status.
 # TODO: Supported features.
 # See http://code.google.com/p/jclouds/wiki/QuickStartTerremark for example usage.

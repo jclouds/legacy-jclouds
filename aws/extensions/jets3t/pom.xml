@@ -49,10 +49,5 @@
             <version>0.7.1</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-gae</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
 </project>
