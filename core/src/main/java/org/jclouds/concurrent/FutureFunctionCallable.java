@@ -60,6 +60,8 @@ public class FutureFunctionCallable<F, T> implements Callable<T> {
          logger.debug("Processed intermediate result for: %s", input);
          return result;
       } catch (ExecutionException e) {
+         if (e.getCause() instanceof Error)
+            throw (Error) e.getCause();
          throw (Exception) e.getCause();
       }
    }
