@@ -105,8 +105,8 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
       for (NamedResource resource : response.values()) {
          if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
             CatalogItem item = connection.getCatalogItem(resource.getId());
-            SortedSet<ComputeOptions> options = tmClient
-                     .getComputeOptionsOfCatalogItem(item.getId());
+            SortedSet<ComputeOptions> options = tmClient.getComputeOptionsOfCatalogItem(item
+                     .getId());
             assert options.size() == 32 || options.size() == 20 : item.getId() + ": "
                      + options.size();
             assert tmClient.getCustomizationOptionsOfCatalogItem(item.getId()) != null;

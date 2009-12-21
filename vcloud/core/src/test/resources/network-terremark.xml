@@ -1,0 +1,10 @@
+<Network href="https://services.vcloudexpress.terremark.com/api/v0.8/network/1708" type="application/vnd.vmware.vcloud.network+xml" name="10.114.34.128/26" xmlns="http://www.vmware.com/vcloud/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Link rel="down" href="https://services.vcloudexpress.terremark.com/api/v0.8/network/1708/ipAddresses" type="application/xml" name="IP Addresses"/>
+  <Configuration>
+    <Gateway>10.114.34.129</Gateway>
+    <Netmask>255.255.255.192</Netmask>
+  </Configuration>
+  <Features>
+    <FenceMode>isolated</FenceMode>
+  </Features>
+</Network>

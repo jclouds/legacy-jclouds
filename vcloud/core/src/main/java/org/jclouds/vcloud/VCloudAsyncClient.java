@@ -25,6 +25,7 @@ package org.jclouds.vcloud;
 
 import static org.jclouds.vcloud.VCloudMediaType.CATALOGITEM_XML;
 import static org.jclouds.vcloud.VCloudMediaType.CATALOG_XML;
+import static org.jclouds.vcloud.VCloudMediaType.NETWORK_XML;
 import static org.jclouds.vcloud.VCloudMediaType.TASKSLIST_XML;
 import static org.jclouds.vcloud.VCloudMediaType.TASK_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VAPPTEMPLATE_XML;
@@ -50,6 +51,7 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayload;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
+import org.jclouds.vcloud.domain.Network;
 import org.jclouds.vcloud.domain.Organization;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TasksList;
@@ -62,6 +64,7 @@ import org.jclouds.vcloud.functions.VAppTemplateIdToUri;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.xml.CatalogHandler;
 import org.jclouds.vcloud.xml.CatalogItemHandler;
+import org.jclouds.vcloud.xml.NetworkHandler;
 import org.jclouds.vcloud.xml.OrgHandler;
 import org.jclouds.vcloud.xml.TaskHandler;
 import org.jclouds.vcloud.xml.TasksListHandler;
@@ -107,16 +110,23 @@ public interface VCloudAsyncClient {
 
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
-   @Path("/vdc/{vDCId}")
-   @XMLResponseParser(VDCHandler.class)
-   @Consumes(VDC_XML)
-   Future<? extends VDC> getVDC(@PathParam("vDCId") String vDCId);
+   @Path("/network/{networkId}")
+   @Consumes(NETWORK_XML)
+   @XMLResponseParser(NetworkHandler.class)
+   Future<? extends Network> getNetwork(@PathParam("networkId") String networkId);
 
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.VDC.class)
    @XMLResponseParser(VDCHandler.class)
    @Consumes(VDC_XML)
    Future<? extends VDC> getDefaultVDC();
+
+   @GET
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
+   @Path("/vdc/{vDCId}")
+   @XMLResponseParser(VDCHandler.class)
+   @Consumes(VDC_XML)
+   Future<? extends VDC> getVDC(@PathParam("vDCId") String vDCId);
 
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)

@@ -33,6 +33,7 @@ import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.Network;
 import org.jclouds.vcloud.domain.Organization;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
@@ -72,7 +73,18 @@ public class VCloudClientLiveTest {
       assert response.size() > 0;
    }
 
-   @Test(enabled = true)
+   @Test
+   public void testGetNetwork() throws Exception {
+      VDC response = connection.getDefaultVDC();
+      for (NamedResource resource : response.getAvailableNetworks().values()) {
+         if (resource.getType().equals(VCloudMediaType.NETWORK_XML)) {
+            Network item = connection.getNetwork(resource.getId());
+            assertNotNull(item);
+         }
+      }
+   }
+
+   @Test
    public void testGetCatalogItem() throws Exception {
       Catalog response = connection.getCatalog();
       for (NamedResource resource : response.values()) {
@@ -88,7 +100,7 @@ public class VCloudClientLiveTest {
       }
    }
 
-   @Test(enabled = true)
+   @Test
    public void testGetVAppTemplate() throws Exception {
       Catalog response = connection.getCatalog();
       for (NamedResource resource : response.values()) {
@@ -133,7 +145,7 @@ public class VCloudClientLiveTest {
       assertEquals(connection.getTask(task.getId()).getLocation(), task.getLocation());
    }
 
-   @Test(enabled = true)
+   @Test
    public void testGetVApp() throws Exception {
       VDC response = connection.getDefaultVDC();
       for (NamedResource item : response.getResourceEntities().values()) {

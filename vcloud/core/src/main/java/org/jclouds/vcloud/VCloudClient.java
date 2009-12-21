@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
+import org.jclouds.vcloud.domain.Network;
 import org.jclouds.vcloud.domain.Organization;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TasksList;
@@ -56,6 +57,8 @@ public interface VCloudClient {
    CatalogItem getCatalogItem(String catalogItemId);
 
    VAppTemplate getVAppTemplate(String vAppTemplateId);
+
+   Network getNetwork(String networkId);
 
    VDC getVDC(String vDCId);
 

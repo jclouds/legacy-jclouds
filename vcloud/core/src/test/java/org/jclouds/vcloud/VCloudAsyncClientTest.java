@@ -56,6 +56,7 @@ import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.xml.CatalogHandler;
 import org.jclouds.vcloud.xml.CatalogItemHandler;
+import org.jclouds.vcloud.xml.NetworkHandler;
 import org.jclouds.vcloud.xml.OrgHandler;
 import org.jclouds.vcloud.xml.TaskHandler;
 import org.jclouds.vcloud.xml.TasksListHandler;
@@ -105,8 +106,8 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
                String.class, String.class, String.class, Array.newInstance(
                         InstantiateVAppTemplateOptions.class, 0).getClass());
       GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, "1",
-               "CentOS 01", 3 + "", processorCount(1).memory(512).disk(1024)
-                        .inNetwork(URI.create("https://vcloud.safesecureweb.com/network/1990")));
+               "CentOS 01", 3 + "", processorCount(1).memory(512).disk(1024).inNetwork(
+                        URI.create("https://vcloud.safesecureweb.com/network/1990")));
 
       assertRequestLineEquals(httpMethod,
                "POST http://vcloud/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
@@ -148,6 +149,21 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, CatalogHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testNetwork() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudAsyncClient.class.getMethod("getNetwork", String.class);
+      GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, "2");
+
+      assertRequestLineEquals(httpMethod, "GET http://vcloud/network/2 HTTP/1.1");
+      assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.network+xml\n");
+      assertPayloadEquals(httpMethod, null);
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, NetworkHandler.class);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpMethod);

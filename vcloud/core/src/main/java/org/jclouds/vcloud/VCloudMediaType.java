@@ -35,22 +35,22 @@ public class VCloudMediaType {
     * "application/vnd.vmware.vcloud.organizationList+xml"
     */
    public final static String VCLOUD_XML = "application/vnd.vmware.vcloud.vcloud+xml";
-   
+
    /**
     * "application/vnd.vmware.vcloud.organizationList+xml"
     */
    public final static MediaType VCLOUD_XML_TYPE = new MediaType("application",
-	            "vnd.vmware.vcloud.vcloud+xml");
+            "vnd.vmware.vcloud.vcloud+xml");
    /**
     * "application/vnd.vmware.vcloud.organizationList+xml"
     */
    public final static String ORGLIST_XML = "application/vnd.vmware.vcloud.organizationList+xml";
-   
+
    /**
     * "application/vnd.vmware.vcloud.organizationList+xml"
     */
    public final static MediaType ORGLIST_XML_TYPE = new MediaType("application",
-	            "vnd.vmware.vcloud.organizationList+xml");
+            "vnd.vmware.vcloud.organizationList+xml");
    /**
     * "application/vnd.vmware.vcloud.org+xml"
     */
@@ -120,7 +120,7 @@ public class VCloudMediaType {
     */
    public final static MediaType VAPP_XML_TYPE = new MediaType("application",
             "vnd.vmware.vcloud.vApp+xml");
-   
+
    /**
     * "application/vnd.vmware.vcloud.vAppTemplate+xml"
     */
@@ -130,5 +130,15 @@ public class VCloudMediaType {
     */
    public final static MediaType VAPPTEMPLATE_XML_TYPE = new MediaType("application",
             "vnd.vmware.vcloud.vAppTemplate+xml");
+
+   /**
+    * "application/vnd.vmware.vcloud.network+xml"
+    */
+   public final static String NETWORK_XML = "application/vnd.vmware.vcloud.network+xml";
+   /**
+    * "application/vnd.vmware.vcloud.network+xml"
+    */
+   public final static MediaType NETWORK_XML_TYPE = new MediaType("application",
+            "vnd.vmware.vcloud.network+xml");
 
 }
