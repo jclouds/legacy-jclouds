@@ -58,7 +58,7 @@ public class RimuHostingContextModule extends AbstractModule {
    @Provides
    @Singleton
    RestContext<RimuHostingAsyncClient, RimuHostingClient> provideContext(Closer closer, RimuHostingAsyncClient asyncApi,
-                                                                         RimuHostingClient syncApi, @RimuHosting URI endPoint, @Named(RimuHostingConstants.PROPERTY_RIMUHOSTING_USER) String account) {
+                                                                         RimuHostingClient syncApi, @RimuHosting URI endPoint, @Named(RimuHostingConstants.PROPERTY_RIMUHOSTING_APIKEY) String account) {
       return new RestContextImpl<RimuHostingAsyncClient, RimuHostingClient>(closer, asyncApi, syncApi, endPoint, account);
    }
 

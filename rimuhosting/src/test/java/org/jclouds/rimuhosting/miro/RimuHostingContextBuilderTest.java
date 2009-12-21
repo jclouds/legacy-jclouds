@@ -51,16 +51,14 @@ public class RimuHostingContextBuilderTest {
       RimuHostingContextBuilder builder = newBuilder();
       assertEquals(builder.getProperties().getProperty(RimuHostingConstants.PROPERTY_RIMUHOSTING_ENDPOINT),
               "https://rimuhosting.com/r");
-      assertEquals(builder.getProperties().getProperty(RimuHostingConstants.PROPERTY_RIMUHOSTING_USER),
-              "user");
-      assertEquals(builder.getProperties().getProperty(RimuHostingConstants.PROPERTY_RIMUHOSTING_PASSWORD),
+      assertEquals(builder.getProperties().getProperty(RimuHostingConstants.PROPERTY_RIMUHOSTING_APIKEY),
               "password");
    }
 
    public void testBuildContext() {
       RestContext<RimuHostingAsyncClient, RimuHostingClient> context = newBuilder().buildContext();
       assertEquals(context.getClass(), RestContextImpl.class);
-      assertEquals(context.getAccount(), "user");
+      assertEquals(context.getAccount(), "password");
       assertEquals(context.getEndPoint(), URI.create("https://rimuhosting.com/r"));
    }
 
@@ -80,8 +78,7 @@ public class RimuHostingContextBuilderTest {
    }
 
    private RimuHostingContextBuilder newBuilder() {
-      RimuHostingContextBuilder builder = new RimuHostingContextBuilder(new RimuHostingPropertiesBuilder(
-              "user", "password").build());
+      RimuHostingContextBuilder builder = new RimuHostingContextBuilder(new RimuHostingPropertiesBuilder("password").build());
       return builder;
    }
 

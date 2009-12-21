@@ -43,17 +43,17 @@ public interface RimuHostingClient {
 
    SortedSet<Image> getImageList();
 
-   SortedSet<Server> getInstanceList();
+   SortedSet<Server> getServerList();
 
    SortedSet<PricingPlan> getPricingPlanList();
 
-   NewServerResponse createInstance(String name, String imageId, String planId);
+   NewServerResponse createServer(String name, String imageId, String planId);
    
-   NewServerResponse createInstance(String name, String imageId, String planId, String password);
+   NewServerResponse createServer(String name, String imageId, String planId, String password);
 
-   Server getInstance(Long id);
+   Server getServer(Long id);
    
-   ServerInfo restartInstance(Long id);
+   ServerInfo restartServer(Long id);
    
-   List<String> destroyInstance(Long id);
+   List<String> destroyServer(Long id);
 }

@@ -68,7 +68,7 @@ public class RimuHostingComputeClientLiveTest {
       String planId = "MIRO1B";
 
       id = client.start(serverName, planId, imageId);
-      Server server = rhClient.getInstance(id);
+      Server server = rhClient.getServer(id);
       assertEquals(imageId, server.getImageId());
       assertEquals(serverName, server.getName());
       assertEquals(new Integer(160), server.getInstanceParameters().getRam());
@@ -82,10 +82,8 @@ public class RimuHostingComputeClientLiveTest {
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
-      String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      Injector injector = new RimuHostingContextBuilder(new RimuHostingPropertiesBuilder(
-               account, key).relaxSSLHostname().build()).withModules(new Log4JLoggingModule(),
+      Injector injector = new RimuHostingContextBuilder(new RimuHostingPropertiesBuilder(key).relaxSSLHostname().build()).withModules(new Log4JLoggingModule(),
                new JschSshClientModule(), new AbstractModule() {
 
                   @Override

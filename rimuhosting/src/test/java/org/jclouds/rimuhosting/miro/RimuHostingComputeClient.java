@@ -56,7 +56,7 @@ public class RimuHostingComputeClient {
 
    public Long start(String name, String planId, String imageId) {
       logger.debug(">> instantiating RimuHosting VPS name(%s) plan(%s) image(%s)", name, planId, imageId);
-      NewServerResponse serverRespone = rhClient.createInstance(name, imageId, planId);
+      NewServerResponse serverRespone = rhClient.createServer(name, imageId, planId);
       logger.debug(">> VPS id(%d) started and running.", serverRespone.getServer().getId());
       return serverRespone.getServer().getId();
    }
@@ -64,16 +64,16 @@ public class RimuHostingComputeClient {
 
 
    public void reboot(Long id) {
-      Server server = rhClient.getInstance(id);
+      Server server = rhClient.getServer(id);
       logger.debug(">> rebooting VPS(%d)", server.getId());
-      rhClient.restartInstance(id);
+      rhClient.restartServer(id);
       logger.debug("<< on VPS(%d)", server.getId());
    }
 
    public void destroy(Long id) {
-      Server server = rhClient.getInstance(id);
+      Server server = rhClient.getServer(id);
       logger.debug(">> destroy VPS(%d)", server.getId());
-      rhClient.destroyInstance(id);
+      rhClient.destroyServer(id);
       logger.debug(">> destroyed VPS");
    }
 }

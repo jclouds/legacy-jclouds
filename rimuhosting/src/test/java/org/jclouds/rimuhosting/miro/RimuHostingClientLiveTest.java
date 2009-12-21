@@ -45,10 +45,9 @@ public class RimuHostingClientLiveTest {
 
    @BeforeGroups(groups = {"live"})
    public void setupClient() {
-      String user = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
-      connection = RimuHostingContextFactory.createContext(user, password, new Log4JLoggingModule())
+      connection = RimuHostingContextFactory.createContext(password, new Log4JLoggingModule())
               .getApi();
    }
 
@@ -78,12 +77,12 @@ public class RimuHostingClientLiveTest {
    @Test
    public void testLifeCycle() {
 	   //Get the first image, we dont really care what it is in this test.
-	   NewServerResponse serverResponse = connection.createInstance("test.jclouds.org", "lenny", "MIRO1B");
+	   NewServerResponse serverResponse = connection.createServer("test.jclouds.org", "lenny", "MIRO1B");
       Server server = serverResponse.getServer();
       //Now we have the server, lets restart it
       assertNotNull(server.getId());
-      ServerInfo serverInfo =  connection.restartInstance(server.getId());
-      connection.destroyInstance(server.getId());
+      ServerInfo serverInfo =  connection.restartServer(server.getId());
+      connection.destroyServer(server.getId());
       //Should be running now.
       assertEquals(serverInfo.getState(), RunningState.RUNNING);
       assertEquals(server.getName(),"test.jclouds.org");

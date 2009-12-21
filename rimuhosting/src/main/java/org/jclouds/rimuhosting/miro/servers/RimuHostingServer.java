@@ -42,7 +42,7 @@ public class RimuHostingServer implements ServerIdentity {
    }
 
    public Boolean destroy() {
-      rhClient.destroyInstance(rhServer.getId());
+      rhClient.destroyServer(rhServer.getId());
       return Boolean.TRUE;
    }
 

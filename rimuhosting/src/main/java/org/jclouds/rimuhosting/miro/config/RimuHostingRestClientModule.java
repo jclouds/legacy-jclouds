@@ -58,7 +58,7 @@ public class RimuHostingRestClientModule extends AbstractModule {
    @Provides
    @Singleton
    public RimuHostingAuthentication provideRimuHostingAuthentication(
-              @Named(RimuHostingConstants.PROPERTY_RIMUHOSTING_PASSWORD) String apikey)
+              @Named(RimuHostingConstants.PROPERTY_RIMUHOSTING_APIKEY) String apikey)
            throws UnsupportedEncodingException {
       return new RimuHostingAuthentication(apikey);
    }

@@ -50,8 +50,7 @@ public class RimuHostingComputeServiceLiveTest {
    public void setupClient() {
       String account = "ddd";
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      Injector injector = new RimuHostingContextBuilder(new RimuHostingPropertiesBuilder(account,
-               key).relaxSSLHostname().build()).withModules(new Log4JLoggingModule())
+      Injector injector = new RimuHostingContextBuilder(new RimuHostingPropertiesBuilder(key).relaxSSLHostname().build()).withModules(new Log4JLoggingModule())
                .buildInjector();
 
       rhClient = injector.getInstance(RimuHostingClient.class);
@@ -62,7 +61,7 @@ public class RimuHostingComputeServiceLiveTest {
    public void testServerCreate() {
       CreateServerResponse server = rhServerService.createServer("test.com", Profile.SMALLEST,
                Image.CENTOS_53);
-      assertNotNull(rhClient.getInstance(Long.valueOf(server.getId())));
+      assertNotNull(rhClient.getServer(Long.valueOf(server.getId())));
       rhServerService.destroyServer(server.getId());
    }
 }

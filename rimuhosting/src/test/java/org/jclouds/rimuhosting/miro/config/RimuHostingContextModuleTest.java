@@ -57,11 +57,8 @@ public class RimuHostingContextModuleTest {
                   @Override
                   protected void configure() {
                      bindConstant().annotatedWith(
-                              Jsr330.named(RimuHostingConstants.PROPERTY_RIMUHOSTING_USER)).to(
-                              "user");
-                     bindConstant().annotatedWith(
-                              Jsr330.named(RimuHostingConstants.PROPERTY_RIMUHOSTING_PASSWORD)).to(
-                              "password");
+                              Jsr330.named(RimuHostingConstants.PROPERTY_RIMUHOSTING_APIKEY)).to(
+                              "apikey");
                      bindConstant().annotatedWith(
                               Jsr330.named(RimuHostingConstants.PROPERTY_RIMUHOSTING_ENDPOINT)).to(
                               "http://localhost");

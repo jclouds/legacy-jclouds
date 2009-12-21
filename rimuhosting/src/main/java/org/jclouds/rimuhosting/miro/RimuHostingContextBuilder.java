@@ -43,8 +43,7 @@ public class RimuHostingContextBuilder extends RestContextBuilder<RimuHostingAsy
       super(new TypeLiteral<RimuHostingAsyncClient>() {
       }, new TypeLiteral<RimuHostingClient>() {
       }, props);
-      checkNotNull(properties.getProperty(RimuHostingConstants.PROPERTY_RIMUHOSTING_USER));
-      checkNotNull(properties.getProperty(RimuHostingConstants.PROPERTY_RIMUHOSTING_PASSWORD));
+      checkNotNull(properties.getProperty(RimuHostingConstants.PROPERTY_RIMUHOSTING_APIKEY));
    }
 
    protected void addClientModule(List<Module> modules) {

@@ -46,7 +46,7 @@ public class RimuHostingCreateServerResponse extends CreateServerResponseImpl {
    public RimuHostingCreateServerResponse(NewServerResponse rhServerResponse) {
       super(rhServerResponse.getServer().getId().toString(),
                rhServerResponse.getServer().getName(),
-               ServerState.PENDING,// TODO need a real state!
+               ServerState.RUNNING,// TODO need a real state!
                getPublicAddresses(rhServerResponse.getServer()), ImmutableList.<InetAddress> of(),
                22, LoginType.SSH, new Credentials("root", rhServerResponse.getNewInstanceRequest()
                         .getCreateOptions().getPassword()));

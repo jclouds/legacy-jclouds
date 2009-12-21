@@ -30,6 +30,5 @@ package org.jclouds.rimuhosting.miro.reference;
  */
 public interface RimuHostingConstants {
    public static final String PROPERTY_RIMUHOSTING_ENDPOINT = "jclouds.rimuhosting.endpoint";
-   public static final String PROPERTY_RIMUHOSTING_USER = "jclouds.rimuhosting.user";
-   public static final String PROPERTY_RIMUHOSTING_PASSWORD = "jclouds.rimuhosting.password";
+   public static final String PROPERTY_RIMUHOSTING_APIKEY = "jclouds.rimuhosting.password";
 }

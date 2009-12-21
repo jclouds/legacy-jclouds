@@ -218,7 +218,7 @@ public class ComputeTask extends Task {
 
    public void setAction(String action) {
       this.action = action;
-   }
+   }                                                                                                                     
 
    public ServerElement getServerElement() {
       return serverElement;

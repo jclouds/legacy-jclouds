@@ -47,14 +47,13 @@ public class RimuHostingPropertiesBuilder extends HttpPropertiesBuilder {
       super(properties);
    }
 
-   public RimuHostingPropertiesBuilder(String id, String secret) {
+   public RimuHostingPropertiesBuilder(String secret) {
       super();
-      withCredentials(id, secret);
+      withCredentials(secret);
    }
 
-   public RimuHostingPropertiesBuilder withCredentials(String id, String secret) {
-      properties.setProperty(PROPERTY_RIMUHOSTING_USER, checkNotNull(id, "user"));
-      properties.setProperty(PROPERTY_RIMUHOSTING_PASSWORD, checkNotNull(secret, "password"));
+   public RimuHostingPropertiesBuilder withCredentials(String secret) {
+      properties.setProperty(PROPERTY_RIMUHOSTING_APIKEY, checkNotNull(secret, "password"));
       return this;
    }
 

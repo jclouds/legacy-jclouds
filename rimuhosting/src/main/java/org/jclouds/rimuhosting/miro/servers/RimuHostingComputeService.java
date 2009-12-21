@@ -62,7 +62,7 @@ public class RimuHostingComputeService implements ComputeService {
 
    @Override
    public CreateServerResponse createServer(String name, Profile profile, Image image) {
-      NewServerResponse serverResponse = rhClient.createInstance(name, checkNotNull(imageNameMap
+      NewServerResponse serverResponse = rhClient.createServer(name, checkNotNull(imageNameMap
                .get(image), "image not supported: " + image), checkNotNull(profileNameMap
                .get(profile), "profile not supported: " + profile));
       return new RimuHostingCreateServerResponse(serverResponse);
@@ -70,7 +70,7 @@ public class RimuHostingComputeService implements ComputeService {
 
    public SortedSet<org.jclouds.compute.domain.ServerIdentity> listServers() {
       SortedSet<org.jclouds.compute.domain.ServerIdentity> servers = new TreeSet<org.jclouds.compute.domain.ServerIdentity>();
-      SortedSet<Server> rhServers = rhClient.getInstanceList();
+      SortedSet<Server> rhServers = rhClient.getServerList();
       for (Server rhServer : rhServers) {
          servers.add(new RimuHostingServer(rhServer, rhClient));
       }
@@ -84,14 +84,16 @@ public class RimuHostingComputeService implements ComputeService {
    @Override
    public SortedSet<org.jclouds.compute.domain.ServerIdentity> getServerByName(String id) {
       SortedSet<org.jclouds.compute.domain.ServerIdentity> serverSet = new TreeSet<org.jclouds.compute.domain.ServerIdentity>();
-      for (Server rhServer : rhClient.getInstanceList()) {
-         serverSet.add(new RimuHostingServer(rhServer, rhClient));
+      for (Server rhServer : rhClient.getServerList()) {
+         if(rhServer.getName().equals(id)){
+            serverSet.add(new RimuHostingServer(rhServer, rhClient));
+         }
       }
       return serverSet;
    }
 
    @Override
    public void destroyServer(String id) {
-      rhClient.destroyInstance(new Long(id));
+      rhClient.destroyServer(new Long(id));
    }
 }

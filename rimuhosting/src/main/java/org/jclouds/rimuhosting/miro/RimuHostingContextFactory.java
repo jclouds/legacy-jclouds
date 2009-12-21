@@ -47,9 +47,9 @@ import java.util.Properties;
  */
 public class RimuHostingContextFactory {
 
-   public static RestContext<RimuHostingAsyncClient, RimuHostingClient> createContext(String user, String password,
+   public static RestContext<RimuHostingAsyncClient, RimuHostingClient> createContext(String apikey,
                                                                                       Module... modules) {
-      return new RimuHostingContextBuilder(new RimuHostingPropertiesBuilder(user, password).build())
+      return new RimuHostingContextBuilder(new RimuHostingPropertiesBuilder(apikey).build())
               .withModules(modules).buildContext();
    }
 
