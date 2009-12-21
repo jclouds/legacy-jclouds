@@ -24,6 +24,7 @@
 package org.jclouds.vcloud.terremark;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_XML;
+import static org.jclouds.vcloud.VCloudMediaType.TASK_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VAPP_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VDC_XML;
 
@@ -50,12 +51,16 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.InetAddressToHostAddress;
 import org.jclouds.vcloud.VCloudAsyncClient;
+import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.functions.CatalogIdToUri;
+import org.jclouds.vcloud.functions.VAppIdToUri;
+import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.terremark.binders.BindInternetServiceConfigurationToXmlPayload;
 import org.jclouds.vcloud.terremark.binders.BindNodeConfigurationToXmlPayload;
+import org.jclouds.vcloud.terremark.binders.TerremarkBindCloneVAppParamsToXmlPayload;
 import org.jclouds.vcloud.terremark.binders.TerremarkBindInstantiateVAppTemplateParamsToXmlPayload;
 import org.jclouds.vcloud.terremark.domain.ComputeOptions;
 import org.jclouds.vcloud.terremark.domain.CustomizationParameters;
@@ -80,6 +85,7 @@ import org.jclouds.vcloud.terremark.xml.NodesHandler;
 import org.jclouds.vcloud.terremark.xml.PublicIpAddressesHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkVAppHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkVDCHandler;
+import org.jclouds.vcloud.xml.TaskHandler;
 
 /**
  * Provides access to VCloud resources via their REST API.
@@ -363,5 +369,16 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    @XMLResponseParser(IpAddressesHandler.class)
    Future<? extends SortedSet<IpAddress>> getIpAddressesForNetwork(
             @PathParam("networkId") String networkId);
-
+   
+   @POST
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
+   @Path("/vdc/{vDCId}/action/cloneVApp")
+   @Produces("application/vnd.vmware.vcloud.cloneVAppParams+xml")
+   @Consumes(TASK_XML)
+   @XMLResponseParser(TaskHandler.class)
+   @MapBinder(TerremarkBindCloneVAppParamsToXmlPayload.class)
+   @Override
+   Future<? extends Task> cloneVAppInVDC(@PathParam("vDCId") String vDCId,
+            @MapPayloadParam("vApp") @ParamParser(VAppIdToUri.class) String vAppIdToClone,
+            @MapPayloadParam("newName") String newName, CloneVAppOptions... options);
 }

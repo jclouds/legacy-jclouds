@@ -212,7 +212,7 @@ public class TerremarkVCloudComputeClient {
          if (services.size() == 0) {
             logger.debug(">> deleting PublicIpAddress(%s) %s", address.getId(), address
                      .getAddress().getHostAddress());
-            tmClient.deleteInternetService(address.getId());
+            tmClient.deletePublicIp(address.getId());
             logger.debug("<< deleted PublicIpAddress(%s)", address.getId());
             continue IPADDRESS;
          }

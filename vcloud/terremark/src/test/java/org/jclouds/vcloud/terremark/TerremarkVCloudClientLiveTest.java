@@ -60,6 +60,7 @@ import org.jclouds.vcloud.predicates.TaskSuccess;
 import org.jclouds.vcloud.terremark.domain.ComputeOptions;
 import org.jclouds.vcloud.terremark.domain.CustomizationParameters;
 import org.jclouds.vcloud.terremark.domain.InternetService;
+import org.jclouds.vcloud.terremark.domain.InternetServiceConfiguration;
 import org.jclouds.vcloud.terremark.domain.IpAddress;
 import org.jclouds.vcloud.terremark.domain.Node;
 import org.jclouds.vcloud.terremark.domain.NodeConfiguration;
@@ -237,10 +238,20 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
             TimeoutException, IOException {
       is = tmClient.addInternetServiceToVDC(tmClient.getDefaultVDC().getId(), "SSH", Protocol.TCP,
                22);
+      publicIp = is.getPublicIpAddress().getAddress();
    }
-
-   // throws 500 errors
-   @Test(enabled = false, dependsOnMethods = { "testInstantiateAndPowerOn" })
+   
+   // 400 errors
+   @Test(dependsOnMethods = {  "testAddInternetService" }, expectedExceptions=HttpResponseException.class)
+   public void testConfigureInternetService() throws InterruptedException, ExecutionException,
+            TimeoutException, IOException {
+	  is = tmClient.configureInternetService(is.getId(), new InternetServiceConfiguration()
+          .changeDescriptionTo("holy cow"));
+      assertEquals(is.getDescription(), "holy cow");
+   }
+   
+   // 500 errors
+   @Test(dependsOnMethods = { "testInstantiateAndPowerOn" }, expectedExceptions=HttpResponseException.class)
    public void testCloneVApp() {
       // lookup the id of the datacenter you are deploying into
       String vDCId = tmClient.getDefaultVDC().getId();
@@ -273,12 +284,11 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
             IOException {
       node = tmClient.addNode(is.getId(), Iterables.getLast(vApp.getNetworkToAddresses().values()),
                vApp.getName() + "-SSH", 22);
-
-      publicIp = is.getPublicIpAddress().getAddress();
       doCheckPass(publicIp);
    }
-
-   @Test(dependsOnMethods = { "testPublicIp" })
+   
+   // 400 errors
+   @Test(dependsOnMethods = { "testPublicIp" }, expectedExceptions=HttpResponseException.class)
    public void testConfigureNode() throws InterruptedException, ExecutionException,
             TimeoutException, IOException {
       node = tmClient.configureNode(node.getId(), new NodeConfiguration()
