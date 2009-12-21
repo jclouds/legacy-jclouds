@@ -274,12 +274,16 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
       node = tmClient.addNode(is.getId(), Iterables.getLast(vApp.getNetworkToAddresses().values()),
                vApp.getName() + "-SSH", 22);
 
-      node = tmClient.configureNode(node.getId(), new NodeConfiguration().changeNameTo(vApp
-               .getName()
-               + "-ssh"));
-      assertEquals(node.getName(), vApp.getName() + "-ssh");
       publicIp = is.getPublicIpAddress().getAddress();
       doCheckPass(publicIp);
+   }
+
+   @Test(dependsOnMethods = { "testPublicIp" })
+   public void testConfigureNode() throws InterruptedException, ExecutionException,
+            TimeoutException, IOException {
+      node = tmClient.configureNode(node.getId(), new NodeConfiguration()
+               .changeDescriptionTo("holy cow"));
+      assertEquals(node.getDescription(), "holy cow");
    }
 
    @Test(dependsOnMethods = "testPublicIp")

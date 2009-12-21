@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.terremark.options;
+package org.jclouds.vcloud.terremark.functions;
 
 import java.lang.reflect.Constructor;
 
