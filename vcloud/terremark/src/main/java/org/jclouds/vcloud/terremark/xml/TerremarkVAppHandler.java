@@ -24,9 +24,7 @@
 package org.jclouds.vcloud.terremark.xml;
 
 import java.net.InetAddress;
-import java.net.URI;
 import java.net.UnknownHostException;
-import java.util.Map;
 import java.util.SortedSet;
 
 import javax.annotation.Resource;
@@ -38,8 +36,6 @@ import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.VAppStatus;
-import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
-import org.jclouds.vcloud.endpoints.internal.VAppRoot;
 import org.jclouds.vcloud.terremark.domain.TerremarkVApp;
 import org.jclouds.vcloud.terremark.domain.TerremarkVirtualSystem;
 import org.jclouds.vcloud.terremark.domain.internal.TerremarkVAppImpl;
@@ -82,14 +78,11 @@ public class TerremarkVAppHandler extends ParseSax.HandlerWithResult<TerremarkVA
    private String operatingSystemDescription;
    private boolean inOs;
    private String networkName;
-   @Inject
-   @VAppRoot
-   private String vAppRoot;
 
    public TerremarkVApp getResult() {
-      return new TerremarkVAppImpl(vApp.getId(), vApp.getName(), vApp.getType(), vApp.getLocation(), status,
-               size, vDC, computeOptions, customizationOptions, networkToAddresses,
-               operatingSystemDescription, system, allocations);
+      return new TerremarkVAppImpl(vApp.getId(), vApp.getName(), vApp.getType(),
+               vApp.getLocation(), status, size, vDC, computeOptions, customizationOptions,
+               networkToAddresses, operatingSystemDescription, system, allocations);
    }
 
    public void startElement(String uri, String localName, String qName, Attributes attributes)
@@ -110,7 +103,7 @@ public class TerremarkVAppHandler extends ParseSax.HandlerWithResult<TerremarkVA
             this.customizationOptions = Utils.newNamedResource(attributes);
          }
       } else if (qName.equals("VApp")) {
-         vApp = newNamedResource(attributes);
+         vApp = Utils.newNamedResource(attributes);
          status = VAppStatus.fromValue(attributes.getValue(attributes.getIndex("status")));
          size = Integer.parseInt(attributes.getValue(attributes.getIndex("size")));
       } else if (qName.equals("OperatingSystemSection")) {
@@ -166,14 +159,4 @@ public class TerremarkVAppHandler extends ParseSax.HandlerWithResult<TerremarkVA
       return null;
    }
 
-   public NamedResource newNamedResource(Attributes attributes) {
-      return new NamedResourceImpl(attributes.getValue(attributes.getIndex("href")).replace(
-               vAppRoot + "/", ""), attributes.getValue(attributes.getIndex("name")), attributes
-               .getValue(attributes.getIndex("type")), URI.create(attributes.getValue(attributes
-               .getIndex("href"))));
-   }
-
-   public void putNamedResource(Map<String, NamedResource> map, Attributes attributes) {
-      map.put(attributes.getValue(attributes.getIndex("name")), newNamedResource(attributes));
-   }
 }

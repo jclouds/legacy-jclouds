@@ -33,6 +33,7 @@ import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.terremark.domain.ComputeOptions;
 import org.jclouds.vcloud.terremark.domain.CustomizationParameters;
 import org.jclouds.vcloud.terremark.domain.InternetService;
+import org.jclouds.vcloud.terremark.domain.IpAddress;
 import org.jclouds.vcloud.terremark.domain.Node;
 import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
@@ -133,5 +134,7 @@ public interface TerremarkVCloudClient extends VCloudClient {
    void deleteNode(int nodeId);
 
    SortedSet<Node> getNodes(int internetServiceId);
+
+   SortedSet<IpAddress> getIpAddressesForNetwork(String networkId);
 
 }

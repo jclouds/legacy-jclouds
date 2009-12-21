@@ -54,11 +54,13 @@ import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.predicates.TaskSuccess;
 import org.jclouds.vcloud.terremark.domain.ComputeOptions;
 import org.jclouds.vcloud.terremark.domain.CustomizationParameters;
 import org.jclouds.vcloud.terremark.domain.InternetService;
+import org.jclouds.vcloud.terremark.domain.IpAddress;
 import org.jclouds.vcloud.terremark.domain.Node;
 import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
@@ -95,6 +97,17 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
    private TerremarkVApp clone;
 
    public static final String PREFIX = System.getProperty("user.name") + "-terremark";
+
+   @Test
+   public void testGetIpAddressesForNetwork() throws Exception {
+      VDC response = tmClient.getDefaultVDC();
+      for (NamedResource resource : response.getAvailableNetworks().values()) {
+         if (resource.getType().equals(VCloudMediaType.NETWORK_XML)) {
+            SortedSet<IpAddress> addresses = tmClient.getIpAddressesForNetwork(resource.getId());
+            assertNotNull(addresses);
+         }
+      }
+   }
 
    @Test
    public void testGetAllInternetServices() throws Exception {

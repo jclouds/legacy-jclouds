@@ -1,0 +1,13 @@
+<IpAddresses xmlns="urn:tmrk:vCloudExpress-1.0"
+    xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+    <IpAddress>
+        <Name>10.114.34.131</Name>
+        <Status>Assigned</Status>
+        <Server>testforjcloud2</Server>
+    </IpAddress>
+    <IpAddress>
+        <Name>10.114.34.132</Name>
+        <Status>Available</Status>
+        <Server i:nil="true" />
+    </IpAddress>
+</IpAddresses>

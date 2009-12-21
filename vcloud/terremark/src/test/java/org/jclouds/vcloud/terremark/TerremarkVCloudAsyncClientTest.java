@@ -63,6 +63,7 @@ import org.jclouds.vcloud.terremark.xml.ComputeOptionsHandler;
 import org.jclouds.vcloud.terremark.xml.CustomizationParametersHandler;
 import org.jclouds.vcloud.terremark.xml.InternetServiceHandler;
 import org.jclouds.vcloud.terremark.xml.InternetServicesHandler;
+import org.jclouds.vcloud.terremark.xml.IpAddressesHandler;
 import org.jclouds.vcloud.terremark.xml.NodeHandler;
 import org.jclouds.vcloud.terremark.xml.NodesHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkVAppHandler;
@@ -81,7 +82,24 @@ import com.google.inject.TypeLiteral;
  */
 @Test(groups = "unit", sequential = true, testName = "vcloud.TerremarkVCloudAsyncClientTest")
 public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVCloudAsyncClient> {
+   
 
+   public void testGetIpAddressesForNetwork() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TerremarkVCloudAsyncClient.class.getMethod("getIpAddressesForNetwork", String.class);
+      GeneratedHttpRequest<TerremarkVCloudAsyncClient> httpMethod = processor.createRequest(method, "2");
+
+      assertRequestLineEquals(httpMethod, "GET http://vcloud/network/2/ipAddresses HTTP/1.1");
+      assertHeadersEqual(httpMethod, "Accept: application/xml\n");
+      assertPayloadEquals(httpMethod, null);
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, IpAddressesHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   
    public void testGetDefaultVDC() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TerremarkVCloudAsyncClient.class.getMethod("getDefaultVDC");
       GeneratedHttpRequest<TerremarkVCloudAsyncClient> httpMethod = processor.createRequest(method);
