@@ -24,6 +24,7 @@
 package org.jclouds.vcloud.terremark;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.testng.Assert.assertEquals;
 
 import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
@@ -32,6 +33,7 @@ import java.util.concurrent.TimeoutException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.vcloud.terremark.domain.InternetService;
+import org.jclouds.vcloud.terremark.domain.InternetServiceConfiguration;
 import org.jclouds.vcloud.terremark.domain.Node;
 import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
@@ -57,23 +59,23 @@ public class InternetServiceLiveTest {
 
    @Test
    public void testGetAllInternetServices() throws Exception {
-      SortedSet<InternetService> set = tmClient.getAllInternetServicesInVDC(tmClient
-               .getDefaultVDC().getId());
-      print(set);
+      tmClient.getAllInternetServicesInVDC(tmClient.getDefaultVDC().getId());
    }
 
    @Test
-   public void testAddInternetService() throws InterruptedException {
+   public void testAddAndConfigureInternetService() throws InterruptedException {
       InternetService is = tmClient.addInternetServiceToVDC(tmClient.getDefaultVDC().getId(),
                "test-" + 22, Protocol.TCP, 22);
+      is = tmClient.configureInternetService(is.getId(), new InternetServiceConfiguration()
+               .changeNameTo("test-33"));
+      assertEquals(is.getName(), "test-33");
       services.add(is);
-      PublicIpAddress ip = is.getPublicIpAddress();
+      // PublicIpAddress ip = is.getPublicIpAddress();
       // current bug in terremark
       // for (int port : new int[] { 80, 8080 }) {
       // services.add(tmClient.addInternetServiceToExistingIp(ip.getId(), "test-" + port,
       // Protocol.HTTP, port));
       // }
-      print(tmClient.getInternetServicesOnPublicIp(ip.getId()));
    }
 
    private void delete(SortedSet<InternetService> set) {
@@ -90,8 +92,7 @@ public class InternetServiceLiveTest {
    public void testGetAllPublicIps() throws Exception {
       for (PublicIpAddress ip : tmClient.getPublicIpsAssociatedWithVDC(tmClient.getDefaultVDC()
                .getId())) {
-         SortedSet<InternetService> set = tmClient.getInternetServicesOnPublicIp(ip.getId());
-         print(set);
+         tmClient.getInternetServicesOnPublicIp(ip.getId());
       }
    }
 
@@ -112,7 +113,7 @@ public class InternetServiceLiveTest {
 
    }
 
-   private void print(SortedSet<InternetService> set) {
+   void print(SortedSet<InternetService> set) {
       for (InternetService service : set) {
          System.out.printf("%d (%s:%d%n)", service.getId(), service.getPublicIpAddress()
                   .getAddress().getHostAddress(), service.getPort());

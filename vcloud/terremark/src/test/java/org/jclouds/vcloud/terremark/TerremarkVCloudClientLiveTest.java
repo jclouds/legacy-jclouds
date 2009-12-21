@@ -62,6 +62,7 @@ import org.jclouds.vcloud.terremark.domain.CustomizationParameters;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.IpAddress;
 import org.jclouds.vcloud.terremark.domain.Node;
+import org.jclouds.vcloud.terremark.domain.NodeConfiguration;
 import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
 import org.jclouds.vcloud.terremark.domain.TerremarkVApp;
@@ -272,6 +273,11 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
             IOException {
       node = tmClient.addNode(is.getId(), Iterables.getLast(vApp.getNetworkToAddresses().values()),
                vApp.getName() + "-SSH", 22);
+
+      node = tmClient.configureNode(node.getId(), new NodeConfiguration().changeNameTo(vApp
+               .getName()
+               + "-ssh"));
+      assertEquals(node.getName(), vApp.getName() + "-ssh");
       publicIp = is.getPublicIpAddress().getAddress();
       doCheckPass(publicIp);
    }
