@@ -58,6 +58,8 @@ import com.google.inject.Inject;
 public class JavaUrlHttpCommandExecutorService extends
          BaseHttpCommandExecutorService<HttpURLConnection> {
 
+   public static final String USER_AGENT = "jclouds/1.0 java/" + System.getProperty("java.version");
+
    @Inject(optional = true)
    @Named(HttpConstants.PROPERTY_HTTP_RELAX_HOSTNAME)
    private boolean relaxHostname = false;
@@ -130,6 +132,8 @@ public class JavaUrlHttpCommandExecutorService extends
          }
       }
       connection.setRequestProperty(HttpHeaders.HOST, request.getEndpoint().getHost());
+      connection.setRequestProperty(HttpHeaders.USER_AGENT, USER_AGENT);
+
       if (request.getPayload() != null) {
          OutputStream out = connection.getOutputStream();
          try {

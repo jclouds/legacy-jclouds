@@ -69,6 +69,8 @@ import com.google.common.io.Closeables;
 @SingleThreaded
 @Singleton
 public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorService<HTTPRequest> {
+   public static final String USER_AGENT = "jclouds/1.0 urlfetch/1.3.0";
+
    private final URLFetchService urlFetchService;
 
    @Inject
@@ -139,6 +141,7 @@ public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorServic
             gaeRequest.addHeader(new HTTPHeader(header, value));
          }
       }
+      gaeRequest.addHeader(new HTTPHeader(HttpHeaders.USER_AGENT, USER_AGENT));
 
       if (request.getPayload() != null) {
          changeRequestContentToBytes(request);
@@ -157,7 +160,6 @@ public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorServic
     */
    @VisibleForTesting
    public static void convertHostHeaderToEndPoint(HttpCommand command) {
-
       HttpRequest request = command.getRequest();
       String hostHeader = request.getFirstHeaderOrNull(HttpHeaders.HOST);
       if (hostHeader != null) {

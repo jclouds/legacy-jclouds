@@ -42,7 +42,13 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.Payload;
 
+/**
+ * 
+ * @author Adrian Cole
+ */
 public class NioHttpUtils {
+   public static final String USER_AGENT = "jclouds/1.0 httpcore-nio/4.1-alpha1";
+
    public static HttpEntityEnclosingRequest convertToApacheRequest(HttpRequest request) {
 
       String path = request.getEndpoint().getRawPath();
@@ -71,6 +77,8 @@ public class NioHttpUtils {
             if (!header.equals(HttpHeaders.CONTENT_LENGTH))
                apacheRequest.addHeader(header, value);
       }
+      apacheRequest.addHeader(HttpHeaders.USER_AGENT, USER_AGENT);
+
       return apacheRequest;
    }
 
@@ -106,8 +114,8 @@ public class NioHttpUtils {
       assert (apacheRequest.getEntity() != null);
    }
 
-   public static HttpResponse convertToJCloudsResponse(
-            org.apache.http.HttpResponse apacheResponse) throws IOException {
+   public static HttpResponse convertToJCloudsResponse(org.apache.http.HttpResponse apacheResponse)
+            throws IOException {
       HttpResponse response = new HttpResponse();
       if (apacheResponse.getEntity() != null) {
          response.setContent(apacheResponse.getEntity().getContent());
