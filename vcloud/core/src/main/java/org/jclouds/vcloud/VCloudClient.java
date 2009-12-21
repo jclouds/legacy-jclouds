@@ -35,6 +35,7 @@ import org.jclouds.vcloud.domain.TasksList;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.VDC;
+import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
 /**
@@ -107,4 +108,7 @@ public interface VCloudClient {
 
    VApp instantiateVAppTemplateInVDC(String vDCId, String appName, String templateId,
             InstantiateVAppTemplateOptions... options);
+
+   Task cloneVAppInVDC(String vDCId, String vAppIdToClone, String newName,
+            CloneVAppOptions... options);
 }

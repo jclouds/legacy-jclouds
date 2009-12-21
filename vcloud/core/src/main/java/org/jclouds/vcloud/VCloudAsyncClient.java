@@ -48,6 +48,7 @@ import org.jclouds.rest.annotations.MapPayloadParam;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.vcloud.binders.BindCloneVAppParamsToXmlPayload;
 import org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayload;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
@@ -60,7 +61,9 @@ import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
+import org.jclouds.vcloud.functions.VAppIdToUri;
 import org.jclouds.vcloud.functions.VAppTemplateIdToUri;
+import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.xml.CatalogHandler;
 import org.jclouds.vcloud.xml.CatalogItemHandler;
@@ -238,4 +241,15 @@ public interface VCloudAsyncClient {
             @MapPayloadParam("name") String appName,
             @MapPayloadParam("template") @ParamParser(VAppTemplateIdToUri.class) String templateId,
             InstantiateVAppTemplateOptions... options);
+
+   @POST
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
+   @Path("/vdc/{vDCId}/action/cloneVApp")
+   @Produces("application/vnd.vmware.vcloud.cloneVAppParams+xml")
+   @Consumes(TASK_XML)
+   @XMLResponseParser(TaskHandler.class)
+   @MapBinder(BindCloneVAppParamsToXmlPayload.class)
+   Future<? extends Task> cloneVAppInVDC(@PathParam("vDCId") String vDCId,
+            @MapPayloadParam("vApp") @ParamParser(VAppIdToUri.class) String vAppIdToClone,
+            @MapPayloadParam("newName") String newName, CloneVAppOptions... options);
 }

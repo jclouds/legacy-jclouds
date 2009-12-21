@@ -48,6 +48,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.jclouds.vcloud.domain.FenceMode;
 import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
@@ -189,7 +190,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
       XMLBuilder networkConfigBuilder = instantiationParamsBuilder.e("NetworkConfigSection").e(
                "NetworkConfig").a("name", name);
       XMLBuilder featuresBuilder = networkConfigBuilder.e("Features");
-      featuresBuilder.e("FenceMode").t("allowInOut");
+      featuresBuilder.e("FenceMode").t(FenceMode.ALLOW_IN_OUT.value());
       featuresBuilder.e("Dhcp").t("false");
       networkConfigBuilder.e("NetworkAssociation").a("href", network);
    }

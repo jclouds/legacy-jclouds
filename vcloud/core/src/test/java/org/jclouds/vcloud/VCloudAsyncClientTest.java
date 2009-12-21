@@ -53,6 +53,7 @@ import org.jclouds.vcloud.endpoints.internal.CatalogItemRoot;
 import org.jclouds.vcloud.endpoints.internal.VAppRoot;
 import org.jclouds.vcloud.endpoints.internal.VAppTemplateRoot;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
+import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.xml.CatalogHandler;
 import org.jclouds.vcloud.xml.CatalogItemHandler;
@@ -119,6 +120,47 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, VAppHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testCloneVApp() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudAsyncClient.class.getMethod("cloneVAppInVDC", String.class,
+               String.class, String.class, Array.newInstance(CloneVAppOptions.class, 0).getClass());
+      GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, "1",
+               "4181", "New Name");
+
+      assertRequestLineEquals(httpMethod, "POST http://vcloud/vdc/1/action/cloneVApp HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Accept: application/vnd.vmware.vcloud.task+xml\nContent-Length: 396\nContent-Type: application/vnd.vmware.vcloud.cloneVAppParams+xml\n");
+      assertPayloadEquals(httpMethod, Utils.toStringAndClose(getClass().getResourceAsStream(
+               "/cloneVApp-default.xml")));
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, TaskHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testCloneVAppOptions() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudAsyncClient.class.getMethod("cloneVAppInVDC", String.class,
+               String.class, String.class, Array.newInstance(CloneVAppOptions.class, 0).getClass());
+      GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, "1",
+               "201", "New Linux Server", new CloneVAppOptions().deploy().powerOn()
+                        .withDescription("The description of the new vApp"));
+
+      assertRequestLineEquals(httpMethod, "POST http://vcloud/vdc/1/action/cloneVApp HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Accept: application/vnd.vmware.vcloud.task+xml\nContent-Length: 459\nContent-Type: application/vnd.vmware.vcloud.cloneVAppParams+xml\n");
+      assertPayloadEquals(httpMethod, Utils.toStringAndClose(getClass().getResourceAsStream(
+               "/cloneVApp.xml")));
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, TaskHandler.class);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpMethod);
@@ -454,7 +496,8 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
                      .toInstance("http://catalogItem");
             bind(String.class).annotatedWith(VAppTemplateRoot.class).toInstance(
                      "https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate");
-            bind(String.class).annotatedWith(VAppRoot.class).toInstance("http://vApps");
+            bind(String.class).annotatedWith(VAppRoot.class).toInstance(
+                     "https://services.vcloudexpress.terremark.com/api/vapp");
             bind(URI.class).annotatedWith(VDC.class).toInstance(URI.create("http://vdc"));
             bind(URI.class).annotatedWith(TasksList.class).toInstance(
                      URI.create("http://tasksList"));

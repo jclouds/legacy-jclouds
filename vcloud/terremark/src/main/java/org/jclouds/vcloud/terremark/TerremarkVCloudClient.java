@@ -109,6 +109,8 @@ public interface TerremarkVCloudClient extends VCloudClient {
     */
    SortedSet<InternetService> getInternetServicesOnPublicIp(int ipId);
 
+   SortedSet<InternetService> getPublicIp(int ipId);
+
    /**
     * This call adds a node to an existing internet service.
     * <p/>

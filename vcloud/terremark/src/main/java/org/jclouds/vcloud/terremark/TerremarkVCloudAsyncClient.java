@@ -176,6 +176,15 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
             @PathParam("ipId") int ipId);
 
    /**
+    * @see TerremarkVCloudClient#getPublicIp
+    */
+   @GET
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
+   @Path("/publicIps/{ipId}")
+   @XMLResponseParser(InternetServicesHandler.class)
+   Future<? extends SortedSet<InternetService>> getPublicIp(@PathParam("ipId") int ipId);
+
+   /**
     * @see TerremarkVCloudClient#getPublicIpsAssociatedWithVDC
     */
    @GET

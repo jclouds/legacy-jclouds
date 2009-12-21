@@ -24,6 +24,7 @@
 package org.jclouds.vcloud.terremark;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.vcloud.options.CloneVAppOptions.Builder.deploy;
 import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.processorCount;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -53,12 +54,14 @@ import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.predicates.TaskSuccess;
 import org.jclouds.vcloud.terremark.domain.ComputeOptions;
 import org.jclouds.vcloud.terremark.domain.CustomizationParameters;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Node;
 import org.jclouds.vcloud.terremark.domain.Protocol;
+import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
 import org.jclouds.vcloud.terremark.domain.TerremarkVApp;
 import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
 import org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions;
@@ -89,6 +92,8 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
 
    private RetryablePredicate<String> successTester;
 
+   private TerremarkVApp clone;
+
    public static final String PREFIX = System.getProperty("user.name") + "-terremark";
 
    @Test
@@ -96,6 +101,15 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
       for (InternetService service : tmClient.getAllInternetServicesInVDC(tmClient.getDefaultVDC()
                .getId())) {
          assertNotNull(tmClient.getNodes(service.getId()));
+      }
+   }
+
+   @Test
+   public void testGetPublicIpsAssociatedWithVDC() throws Exception {
+      for (PublicIpAddress ip : tmClient.getPublicIpsAssociatedWithVDC(tmClient.getDefaultVDC()
+               .getId())) {
+         assertNotNull(tmClient.getInternetServicesOnPublicIp(ip.getId()));
+         assertNotNull(tmClient.getPublicIp(ip.getId()));
       }
    }
 
@@ -211,6 +225,35 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
                22);
    }
 
+   // throws 500 errors
+   @Test(enabled = false, dependsOnMethods = { "testInstantiateAndPowerOn" })
+   public void testCloneVApp() {
+      // lookup the id of the datacenter you are deploying into
+      String vDCId = tmClient.getDefaultVDC().getId();
+
+      String vAppIdToClone = vApp.getId();
+
+      String newName = vApp.getName() + "clone";
+
+      CloneVAppOptions options = deploy().powerOn()
+               .withDescription("The description of " + newName);
+
+      System.out.printf("%d: cloning vApp%n", System.currentTimeMillis());
+      Task task = tmClient.cloneVAppInVDC(vDCId, vAppIdToClone, newName, options);
+
+      // wait for the task to complete
+      assert successTester.apply(task.getId());
+      System.out.printf("%d: done cloning vApp%n", System.currentTimeMillis());
+
+      // refresh task to get the new vApp location
+      task = tmClient.getTask(task.getId());
+
+      clone = tmClient.getVApp(task.getResult().getId());
+      assertEquals(clone.getStatus(), VAppStatus.ON);
+
+      assertEquals(clone.getName(), newName);
+   }
+
    @Test(dependsOnMethods = { "testInstantiateAndPowerOn", "testAddInternetService" })
    public void testPublicIp() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
@@ -304,6 +347,16 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
          }
          tmClient.deleteVApp(vApp.getId());
       }
+
+      if (clone != null) {
+         try {
+            successTester.apply(tmClient.powerOffVApp(clone.getId()).getId());
+         } catch (Exception e) {
+
+         }
+         tmClient.deleteVApp(clone.getId());
+      }
+
    }
 
    @BeforeGroups(groups = { "live" })
