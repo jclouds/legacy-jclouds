@@ -58,6 +58,7 @@ import org.jclouds.mezeo.pcs2.options.PutBlockOptions;
 import org.jclouds.mezeo.pcs2.xml.ContainerHandler;
 import org.jclouds.mezeo.pcs2.xml.FileHandler;
 import org.jclouds.rest.RestClientTest;
+import org.jclouds.rest.functions.ThrowResourceNotFoundOn404;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
@@ -123,7 +124,7 @@ public class PCSClientTest extends RestClientTest<PCSAsyncClient> {
       assertEquals(RestAnnotationProcessor.getSaxResponseParserClassOrNull(method), null);
       assertEquals(httpMethod.getFilters().size(), 1);
       assertEquals(httpMethod.getFilters().get(0).getClass(), BasicAuthentication.class);
-      assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
+      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
                ReturnVoidOnNotFoundOr404.class);
    }
 
@@ -139,7 +140,7 @@ public class PCSClientTest extends RestClientTest<PCSAsyncClient> {
                ContainerHandler.class);
       assertEquals(httpMethod.getFilters().size(), 1);
       assertEquals(httpMethod.getFilters().get(0).getClass(), BasicAuthentication.class);
-      assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
+      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(), ThrowResourceNotFoundOn404.class);
    }
 
    public void testGetFileInfo() throws SecurityException, NoSuchMethodException {
@@ -154,7 +155,7 @@ public class PCSClientTest extends RestClientTest<PCSAsyncClient> {
                FileHandler.class);
       assertEquals(httpMethod.getFilters().size(), 1);
       assertEquals(httpMethod.getFilters().get(0).getClass(), BasicAuthentication.class);
-      assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
+      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
                ThrowKeyNotFoundOn404.class);
    }
 
@@ -224,7 +225,7 @@ public class PCSClientTest extends RestClientTest<PCSAsyncClient> {
       assertEquals(RestAnnotationProcessor.getSaxResponseParserClassOrNull(method), null);
       assertEquals(httpMethod.getFilters().size(), 1);
       assertEquals(httpMethod.getFilters().get(0).getClass(), BasicAuthentication.class);
-      assertEquals(processor.createExceptionParserOrNullIfNotFound(method).getClass(),
+      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
                ReturnVoidOnNotFoundOr404.class);
    }
 
@@ -242,7 +243,7 @@ public class PCSClientTest extends RestClientTest<PCSAsyncClient> {
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE), Collections
                .singletonList("application/unknown"));
       assertEquals("bar", httpMethod.getPayload().getRawContent());
-      assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
+      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(), ThrowResourceNotFoundOn404.class);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnVoidIf2xx.class);
    }
@@ -257,7 +258,7 @@ public class PCSClientTest extends RestClientTest<PCSAsyncClient> {
       assertEquals(httpMethod.getRequestLine(), "GET http://localhost/pow/metadata/newkey HTTP/1.1");
 
       assertEquals(httpMethod.getHeaders().size(), 0);
-      assertEquals(processor.createExceptionParserOrNullIfNotFound(method), null);
+      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(), ThrowResourceNotFoundOn404.class);
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                AddMetadataItemIntoMap.class);
    }

@@ -94,6 +94,7 @@ import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.rest.functions.ThrowResourceNotFoundOn404;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -211,12 +212,12 @@ public class RestAnnotationProcessor<T> {
    }
 
    @VisibleForTesting
-   public Function<Exception, ?> createExceptionParserOrNullIfNotFound(Method method) {
+   public Function<Exception, ?> createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(Method method) {
       ExceptionParser annotation = method.getAnnotation(ExceptionParser.class);
       if (annotation != null) {
          return injector.getInstance(annotation.value());
       }
-      return null;
+      return injector.getInstance(ThrowResourceNotFoundOn404.class);
    }
 
    @SuppressWarnings("unchecked")

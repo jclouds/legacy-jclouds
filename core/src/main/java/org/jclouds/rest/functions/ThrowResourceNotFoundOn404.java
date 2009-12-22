@@ -21,43 +21,27 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.blobstore;
+package org.jclouds.rest.functions;
 
+import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.ResourceNotFoundException;
 
+import com.google.common.base.Function;
+
 /**
- * Thrown when a blob cannot be located in the container.
  * 
  * @author Adrian Cole
  */
-public class KeyNotFoundException extends ResourceNotFoundException {
+public class ThrowResourceNotFoundOn404 implements Function<Exception, Object> {
 
-   private String container;
-   private String key;
-
-   public KeyNotFoundException() {
-      super();
+   public Object apply(Exception from) {
+      if (from instanceof HttpResponseException) {
+         HttpResponseException responseException = (HttpResponseException) from;
+         if (responseException.getResponse().getStatusCode() == 404) {
+            throw new ResourceNotFoundException(from);
+         }
+      }
+      return null;
    }
-
-   public KeyNotFoundException(String container, String key) {
-      super(String.format("%s not found in container %s", key, container));
-      this.container = container;
-      this.key = key;
-   }
-
-   public KeyNotFoundException(Exception from) {
-      super(from);
-   }
-
-   public String getContainer() {
-      return container;
-   }
-
-   public String getKey() {
-      return key;
-   }
-
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -2272965726680821281L;
 
 }

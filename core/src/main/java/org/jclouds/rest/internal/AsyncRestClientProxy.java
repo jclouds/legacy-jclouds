@@ -92,7 +92,7 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
          method = util.getDelegateOrNull(method);
          logger.trace("Converting %s.%s", declaring.getSimpleName(), method.getName());
          Function<Exception, ?> exceptionParser = util
-                  .createExceptionParserOrNullIfNotFound(method);
+                  .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method);
          // in case there is an exception creating the request, we should at least pass in args
          if (exceptionParser instanceof InvocationContext) {
             ((InvocationContext) exceptionParser).setContext(null);

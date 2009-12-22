@@ -31,6 +31,8 @@ import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_USER;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_VERSION;
 
 import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.URI;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -44,6 +46,9 @@ import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.predicates.AddressReachable;
+import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
 import org.jclouds.util.Utils;
@@ -65,7 +70,9 @@ import org.jclouds.vcloud.endpoints.internal.VAppTemplateRoot;
 import org.jclouds.vcloud.internal.VCloudLoginAsyncClient;
 import org.jclouds.vcloud.internal.VCloudVersionsAsyncClient;
 import org.jclouds.vcloud.internal.VCloudLoginAsyncClient.VCloudSession;
+import org.jclouds.vcloud.predicates.TaskSuccess;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 import com.google.inject.AbstractModule;
@@ -79,6 +86,24 @@ import com.google.inject.Provides;
 @RequiresHttp
 @ConfiguresRestClient
 public class VCloudRestClientModule extends AbstractModule {
+
+   @Provides
+   @Singleton
+   protected Predicate<InetSocketAddress> socketTester(SocketOpen open) {
+      return new RetryablePredicate<InetSocketAddress>(open, 130, 10, TimeUnit.SECONDS);
+   }
+
+   @Provides
+   @Singleton
+   protected Predicate<InetAddress> addressTester(AddressReachable reachable) {
+      return new RetryablePredicate<InetAddress>(reachable, 60, 5, TimeUnit.SECONDS);
+   }
+
+   @Provides
+   @Singleton
+   protected Predicate<String> successTester(TaskSuccess success) {
+      return new RetryablePredicate<String>(success, 600, 10, TimeUnit.SECONDS);
+   }
 
    @Override
    protected void configure() {

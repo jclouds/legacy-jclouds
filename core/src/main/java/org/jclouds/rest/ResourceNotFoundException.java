@@ -21,43 +21,33 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.blobstore;
-
-import org.jclouds.rest.ResourceNotFoundException;
+package org.jclouds.rest;
 
 /**
- * Thrown when a blob cannot be located in the container.
+ * Thrown when a resource cannot be located.
  * 
  * @author Adrian Cole
  */
-public class KeyNotFoundException extends ResourceNotFoundException {
-
-   private String container;
-   private String key;
-
-   public KeyNotFoundException() {
-      super();
-   }
-
-   public KeyNotFoundException(String container, String key) {
-      super(String.format("%s not found in container %s", key, container));
-      this.container = container;
-      this.key = key;
-   }
-
-   public KeyNotFoundException(Exception from) {
-      super(from);
-   }
-
-   public String getContainer() {
-      return container;
-   }
-
-   public String getKey() {
-      return key;
-   }
+public class ResourceNotFoundException extends RuntimeException {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = -2272965726680821281L;
+   
+
+   public ResourceNotFoundException() {
+		super();
+	}
+
+	public ResourceNotFoundException(String arg0, Throwable arg1) {
+		super(arg0, arg1);
+	}
+
+	public ResourceNotFoundException(String arg0) {
+		super(arg0);
+	}
+
+	public ResourceNotFoundException(Throwable arg0) {
+		super(arg0);
+	}
 
 }

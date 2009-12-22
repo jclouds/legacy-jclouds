@@ -26,17 +26,13 @@ package org.jclouds.vcloud;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.URI;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
+import org.jclouds.compute.domain.Image;
 import org.jclouds.logging.Logger;
-import org.jclouds.ssh.ExecResponse;
-import org.jclouds.ssh.SshClient;
-import org.jclouds.ssh.SshClient.Factory;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
@@ -54,56 +50,47 @@ public class VCloudComputeClient {
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private final Predicate<InetSocketAddress> socketTester;
-   private final Predicate<URI> taskTester;
+   private final Predicate<String> taskTester;
    private final VCloudClient tmClient;
 
    @Inject
-   public VCloudComputeClient(VCloudClient tmClient, Factory sshFactory,
-            Predicate<InetSocketAddress> socketTester, Predicate<URI> successTester) {
+   public VCloudComputeClient(VCloudClient tmClient,
+            Predicate<String> successTester) {
       this.tmClient = tmClient;
-      this.sshFactory = sshFactory;
-      this.socketTester = socketTester;
       this.taskTester = successTester;
-   }
-
-   private final Factory sshFactory;
-
-   public enum Image {
-      CENTOS_53, RHEL_53, UMBUNTU_90, UMBUNTU_JEOS
    }
 
    private Map<Image, String> imageCatalogIdMap = ImmutableMap.<Image, String> builder().put(
             Image.CENTOS_53, "3").put(Image.RHEL_53, "8").put(Image.UMBUNTU_90, "10").put(
             Image.UMBUNTU_JEOS, "11").build();
 
-   private String username;
-
-   private String password;
-
-   public String start(String name, int minCores, int minMegs, Image image) {
+   public Map<String, String> start(String name, Image image, int minCores, int minMegs,
+            long diskSize, Map<String, String> properties) {
       checkArgument(imageCatalogIdMap.containsKey(image), "image not configured: " + image);
       String templateId = imageCatalogIdMap.get(image);
       String vDCId = tmClient.getDefaultVDC().getId();
-      logger.debug(">> instantiating vApp name(%s) minCores(%d) minMegs(%d) template(%s) vDC(%s)",
-               name, minCores, minMegs, templateId, vDCId);
-      VApp vAppResponse = tmClient.instantiateVAppTemplateInVDC(name, templateId, vDCId,
-               InstantiateVAppTemplateOptions.Builder.processorCount(minCores).memory(minMegs));
-      tmClient.getVApp(vAppResponse.getId());
+      logger
+               .debug(
+                        ">> instantiating vApp vDC(%s) name(%s) template(%s)  minCores(%d) minMegs(%d) diskSize(%d) properties(%s) ",
+                        vDCId, name, templateId, minCores, minMegs, diskSize, properties);
+      VApp vAppResponse = tmClient.instantiateVAppTemplateInVDC(vDCId, name,
+               templateId, InstantiateVAppTemplateOptions.Builder.processorCount(minCores)
+                        .memory(minMegs).disk(diskSize).productProperties(properties));
       logger.debug("<< instantiated VApp(%s)", vAppResponse.getId());
 
       logger.debug(">> deploying vApp(%s)", vAppResponse.getId());
-
       VApp vApp = blockUntilVAppStatusOrThrowException(vAppResponse, tmClient
-               .deployVApp(vAppResponse.getId()), "deploy", VAppStatus.OFF);
-      logger.debug("<< deployed vApp(%s)", vApp.getId());
-
-      logger.debug(">> powering vApp(%s)", vApp.getId());
-      vApp = blockUntilVAppStatusOrThrowException(vApp, tmClient.powerOnVApp(vApp.getId()),
-               "powerOn", VAppStatus.ON);
+               .deployVApp(vAppResponse.getId()), "deploy", VAppStatus.ON);// TODO, I'm not sure
+      // this should be on
+      // already
+      // logger.debug("<< deployed vApp(%s)", vApp.getId());
+      //
+      // logger.debug(">> powering vApp(%s)", vApp.getId());
+      // vApp = blockUntilVAppStatusOrThrowException(vApp, tmClient.powerOnVApp(vApp.getId()),
+      // "powerOn", VAppStatus.ON);
       logger.debug("<< on vApp(%s)", vApp.getId());
 
-      return vApp.getId();
+      return ImmutableMap.<String, String> of("id", vApp.getId(), "username", null, "password", null);
    }
 
    /**
@@ -114,14 +101,6 @@ public class VCloudComputeClient {
    public InetAddress getAnyPrivateAddress(String id) {
       VApp vApp = tmClient.getVApp(id);
       return Iterables.getLast(vApp.getNetworkToAddresses().values());
-   }
-
-   public ExecResponse exec(InetAddress address, String command) {
-      InetSocketAddress sshSocket = new InetSocketAddress(address, 22);
-      logger.debug(">> exec ssh://%s@%s/%s", username, sshSocket, command);
-      ExecResponse exec = exec(sshSocket, username, password, command);
-      logger.debug("<< output(%s) error(%s)", exec.getOutput(), exec.getError());
-      return exec;
    }
 
    public void reboot(String id) {
@@ -135,7 +114,8 @@ public class VCloudComputeClient {
    public void stop(String id) {
       VApp vApp = tmClient.getVApp(id);
       if (vApp.getStatus() != VAppStatus.OFF) {
-         logger.debug(">> powering off vApp(%s)", vApp.getId());
+         logger.debug(">> powering off vApp(%s), current status: %s", vApp.getId(), vApp
+                  .getStatus());
          blockUntilVAppStatusOrThrowException(vApp, tmClient.powerOffVApp(vApp.getId()),
                   "powerOff", VAppStatus.OFF);
          logger.debug("<< off vApp(%s)", vApp.getId());
@@ -145,24 +125,9 @@ public class VCloudComputeClient {
       logger.debug("<< deleted vApp(%s)", vApp.getId());
    }
 
-   private ExecResponse exec(InetSocketAddress socket, String username, String password,
-            String command) {
-      if (!socketTester.apply(socket)) {
-         throw new SocketNotOpenException(socket);
-      }
-      SshClient connection = sshFactory.create(socket, username, password);
-      try {
-         connection.connect();
-         return connection.exec(command);
-      } finally {
-         if (connection != null)
-            connection.disconnect();
-      }
-   }
-
    private VApp blockUntilVAppStatusOrThrowException(VApp vApp, Task deployTask, String taskType,
             VAppStatus expectedStatus) {
-      if (!taskTester.apply(deployTask.getLocation())) {
+      if (!taskTester.apply(deployTask.getId())) {
          throw new TaskException(taskType, vApp, deployTask);
       }
 
@@ -188,23 +153,6 @@ public class VCloudComputeClient {
 
       public Task getTask() {
          return task;
-      }
-
-   }
-
-   public static class SocketNotOpenException extends RuntimeException {
-
-      private final InetSocketAddress socket;
-      /** The serialVersionUID */
-      private static final long serialVersionUID = 251801929573211256L;
-
-      public SocketNotOpenException(InetSocketAddress socket) {
-         super("socket not open: " + socket);
-         this.socket = socket;
-      }
-
-      public InetSocketAddress getSocket() {
-         return socket;
       }
 
    }
