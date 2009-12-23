@@ -45,6 +45,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
@@ -122,14 +123,18 @@ public class VCloudComputeClientLiveTest {
             int processorCount, int memory, long hardDisk) {
       // assertEquals(vApp.getName(), serverName);
       // assertEquals(vApp.getOperatingSystemDescription(), expectedOs);
-      assertEquals(vApp.getResourceAllocationByType().get(ResourceType.PROCESSOR)
-               .getVirtualQuantity(), processorCount);
-      assertEquals(vApp.getResourceAllocationByType().get(ResourceType.SCSI_CONTROLLER)
-               .getVirtualQuantity(), 1);
       assertEquals(
-               vApp.getResourceAllocationByType().get(ResourceType.MEMORY).getVirtualQuantity(),
+               Iterables.getOnlyElement(
+                        vApp.getResourceAllocationByType().get(ResourceType.PROCESSOR))
+                        .getVirtualQuantity(), processorCount);
+      assertEquals(Iterables.getOnlyElement(
+               vApp.getResourceAllocationByType().get(ResourceType.SCSI_CONTROLLER))
+               .getVirtualQuantity(), 1);
+      assertEquals(Iterables.getOnlyElement(
+               vApp.getResourceAllocationByType().get(ResourceType.MEMORY)).getVirtualQuantity(),
                memory);
-      assertEquals(vApp.getResourceAllocationByType().get(ResourceType.DISK_DRIVE)
+      assertEquals(Iterables.getOnlyElement(
+               vApp.getResourceAllocationByType().get(ResourceType.DISK_DRIVE))
                .getVirtualQuantity(), hardDisk);
    }
 
@@ -141,12 +146,13 @@ public class VCloudComputeClientLiveTest {
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
-      String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"), "jclouds.test.endpoint");
+      String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"),
+               "jclouds.test.endpoint");
       String account = checkNotNull(System.getProperty("jclouds.test.user"), "jclouds.test.user");
       String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
-      Injector injector = new VCloudContextBuilder(
-               new VCloudPropertiesBuilder(URI.create(endpoint), account, key).relaxSSLHostname().build())
-               .withModules(new Log4JLoggingModule(), new JschSshClientModule()).buildInjector();
+      Injector injector = new VCloudContextBuilder(new VCloudPropertiesBuilder(
+               URI.create(endpoint), account, key).relaxSSLHostname().build()).withModules(
+               new Log4JLoggingModule(), new JschSshClientModule()).buildInjector();
       client = injector.getInstance(VCloudComputeClient.class);
       tmClient = injector.getInstance(VCloudClient.class);
       addressTester = injector.getInstance(Key.get(new TypeLiteral<Predicate<InetAddress>>() {

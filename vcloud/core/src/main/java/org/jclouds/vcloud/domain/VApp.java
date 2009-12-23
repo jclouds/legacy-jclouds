@@ -24,11 +24,10 @@
 package org.jclouds.vcloud.domain;
 
 import java.net.InetAddress;
-import java.util.Map;
 import java.util.SortedSet;
 
-
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multimap;
 
 /**
  * A virtual application (vApp) is a software solution, packaged in OVF containing one or more
@@ -51,6 +50,6 @@ public interface VApp extends NamedResource {
 
    SortedSet<ResourceAllocation> getResourceAllocations();
 
-   Map<ResourceType, ResourceAllocation> getResourceAllocationByType();
+   Multimap<ResourceType, ResourceAllocation> getResourceAllocationByType();
 
 }

@@ -25,7 +25,6 @@ package org.jclouds.vcloud.domain.internal;
 
 import java.net.InetAddress;
 import java.net.URI;
-import java.util.Map;
 import java.util.SortedSet;
 
 import org.jclouds.vcloud.VCloudMediaType;
@@ -38,7 +37,8 @@ import org.jclouds.vcloud.domain.VirtualSystem;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 
 /**
  * 
@@ -55,7 +55,7 @@ public class VAppImpl implements VApp {
    private final String operatingSystemDescription;
    private final VirtualSystem system;
    private final SortedSet<ResourceAllocation> resourceAllocations;
-   private final Map<ResourceType, ResourceAllocation> resourceAllocationByType;
+   private final ListMultimap<ResourceType, ResourceAllocation> resourceAllocationByType;
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
@@ -73,7 +73,7 @@ public class VAppImpl implements VApp {
       this.operatingSystemDescription = operatingSystemDescription;
       this.system = system;
       this.resourceAllocations = resourceAllocations;
-      resourceAllocationByType = Maps.uniqueIndex(resourceAllocations,
+      resourceAllocationByType = Multimaps.index(resourceAllocations,
                new Function<ResourceAllocation, ResourceType>() {
                   @Override
                   public ResourceType apply(ResourceAllocation from) {
@@ -102,7 +102,7 @@ public class VAppImpl implements VApp {
       return resourceAllocations;
    }
 
-   public Map<ResourceType, ResourceAllocation> getResourceAllocationByType() {
+   public Multimap<ResourceType, ResourceAllocation> getResourceAllocationByType() {
       return resourceAllocationByType;
    }
 
@@ -116,8 +116,6 @@ public class VAppImpl implements VApp {
       result = prime * result + ((networkToAddresses == null) ? 0 : networkToAddresses.hashCode());
       result = prime * result
                + ((operatingSystemDescription == null) ? 0 : operatingSystemDescription.hashCode());
-      result = prime * result
-               + ((resourceAllocationByType == null) ? 0 : resourceAllocationByType.hashCode());
       result = prime * result
                + ((resourceAllocations == null) ? 0 : resourceAllocations.hashCode());
       result = prime * result + ((size == null) ? 0 : size.hashCode());
@@ -159,11 +157,6 @@ public class VAppImpl implements VApp {
          if (other.operatingSystemDescription != null)
             return false;
       } else if (!operatingSystemDescription.equals(other.operatingSystemDescription))
-         return false;
-      if (resourceAllocationByType == null) {
-         if (other.resourceAllocationByType != null)
-            return false;
-      } else if (!resourceAllocationByType.equals(other.resourceAllocationByType))
          return false;
       if (resourceAllocations == null) {
          if (other.resourceAllocations != null)

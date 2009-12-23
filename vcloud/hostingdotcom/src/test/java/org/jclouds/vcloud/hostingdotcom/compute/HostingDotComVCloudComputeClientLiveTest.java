@@ -47,6 +47,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
@@ -124,14 +125,18 @@ public class HostingDotComVCloudComputeClientLiveTest {
             int processorCount, int memory, long hardDisk) {
       // assertEquals(vApp.getName(), serverName);
       // assertEquals(vApp.getOperatingSystemDescription(), expectedOs);
-      assertEquals(vApp.getResourceAllocationByType().get(ResourceType.PROCESSOR)
-               .getVirtualQuantity(), processorCount);
-      assertEquals(vApp.getResourceAllocationByType().get(ResourceType.SCSI_CONTROLLER)
-               .getVirtualQuantity(), 1);
       assertEquals(
-               vApp.getResourceAllocationByType().get(ResourceType.MEMORY).getVirtualQuantity(),
+               Iterables.getOnlyElement(
+                        vApp.getResourceAllocationByType().get(ResourceType.PROCESSOR))
+                        .getVirtualQuantity(), processorCount);
+      assertEquals(Iterables.getOnlyElement(
+               vApp.getResourceAllocationByType().get(ResourceType.SCSI_CONTROLLER))
+               .getVirtualQuantity(), 1);
+      assertEquals(Iterables.getOnlyElement(
+               vApp.getResourceAllocationByType().get(ResourceType.MEMORY)).getVirtualQuantity(),
                memory);
-      assertEquals(vApp.getResourceAllocationByType().get(ResourceType.DISK_DRIVE)
+      assertEquals(Iterables.getOnlyElement(
+               vApp.getResourceAllocationByType().get(ResourceType.DISK_DRIVE))
                .getVirtualQuantity(), hardDisk);
    }
 

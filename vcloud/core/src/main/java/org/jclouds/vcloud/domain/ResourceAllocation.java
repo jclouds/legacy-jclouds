@@ -36,6 +36,7 @@ public class ResourceAllocation implements Comparable<ResourceAllocation> {
    private final String description;
    private final ResourceType type;
    private final String subType;
+   private final String hostResource;
    private final Integer address;
    private final Integer addressOnParent;
    private final Integer parent;
@@ -44,13 +45,14 @@ public class ResourceAllocation implements Comparable<ResourceAllocation> {
    private final String virtualQuantityUnits;
 
    public ResourceAllocation(int id, String name, String description, ResourceType type,
-            String subType, Integer address, Integer addressOnParent, Integer parent,
+            String subType, String hostResource, Integer address, Integer addressOnParent, Integer parent,
             Boolean connected, long virtualQuantity, String virtualQuantityUnits) {
       this.id = id;
       this.name = checkNotNull(name, "name");
       this.description = description;
       this.type = checkNotNull(type, "type");
       this.subType = subType;
+      this.hostResource = hostResource;
       this.address = address;
       this.addressOnParent = addressOnParent;
       this.parent = parent;
@@ -71,7 +73,7 @@ public class ResourceAllocation implements Comparable<ResourceAllocation> {
          return BEFORE;
       if (this.id > that.id)
          return AFTER;
-      return EQUAL;
+      return 1;
    }
 
    public int getId() {
@@ -118,6 +120,10 @@ public class ResourceAllocation implements Comparable<ResourceAllocation> {
       return virtualQuantityUnits;
    }
 
+   public String getHostResource() {
+      return hostResource;
+   }
+
    @Override
    public int hashCode() {
       final int prime = 31;
@@ -126,6 +132,7 @@ public class ResourceAllocation implements Comparable<ResourceAllocation> {
       result = prime * result + ((addressOnParent == null) ? 0 : addressOnParent.hashCode());
       result = prime * result + ((connected == null) ? 0 : connected.hashCode());
       result = prime * result + ((description == null) ? 0 : description.hashCode());
+      result = prime * result + ((hostResource == null) ? 0 : hostResource.hashCode());
       result = prime * result + id;
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((parent == null) ? 0 : parent.hashCode());
@@ -166,6 +173,11 @@ public class ResourceAllocation implements Comparable<ResourceAllocation> {
             return false;
       } else if (!description.equals(other.description))
          return false;
+      if (hostResource == null) {
+         if (other.hostResource != null)
+            return false;
+      } else if (!hostResource.equals(other.hostResource))
+         return false;
       if (id != other.id)
          return false;
       if (name == null) {
@@ -201,10 +213,10 @@ public class ResourceAllocation implements Comparable<ResourceAllocation> {
    @Override
    public String toString() {
       return "ResourceAllocation [address=" + address + ", addressOnParent=" + addressOnParent
-               + ", connected=" + connected + ", description=" + description + ", id=" + id
-               + ", name=" + name + ", parent=" + parent + ", subType=" + subType + ", type="
-               + type + ", virtualQuantity=" + virtualQuantity + ", virtualQuantityUnits="
-               + virtualQuantityUnits + "]";
+               + ", connected=" + connected + ", description=" + description + ", hostResource="
+               + hostResource + ", id=" + id + ", name=" + name + ", parent=" + parent
+               + ", subType=" + subType + ", type=" + type + ", virtualQuantity=" + virtualQuantity
+               + ", virtualQuantityUnits=" + virtualQuantityUnits + "]";
    }
 
 }

@@ -47,8 +47,8 @@ public class ResourceAllocationHandlerTest extends BaseHandlerTest {
                injector.getInstance(ResourceAllocationHandler.class)).parse(is);
 
       ResourceAllocation expects = new ResourceAllocation(1, "1 virtual CPU(s)",
-               "Number of Virtual CPUs", ResourceType.PROCESSOR, null, null, null, null, null, 1,
-               "hertz * 10^6");
+               "Number of Virtual CPUs", ResourceType.PROCESSOR, null, null, null, null, null,
+               null, 1, "hertz * 10^6");
       assertEquals(result, expects);
 
    }

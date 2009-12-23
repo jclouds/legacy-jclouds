@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.terremark.domain.ComputeOptions;
 import org.jclouds.vcloud.terremark.domain.CustomizationParameters;
@@ -40,6 +41,7 @@ import org.jclouds.vcloud.terremark.domain.NodeConfiguration;
 import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
 import org.jclouds.vcloud.terremark.domain.TerremarkVApp;
+import org.jclouds.vcloud.terremark.domain.VAppConfiguration;
 import org.jclouds.vcloud.terremark.options.AddInternetServiceOptions;
 import org.jclouds.vcloud.terremark.options.AddNodeOptions;
 
@@ -143,5 +145,25 @@ public interface TerremarkVCloudClient extends VCloudClient {
    SortedSet<Node> getNodes(int internetServiceId);
 
    SortedSet<IpAddress> getIpAddressesForNetwork(String networkId);
+
+   /**
+    * This call configures the settings of an existing vApp by passing the new configuration. The
+    * existing vApp must be in a powered off state (status = 2).
+    * <p/>
+    * You can change the following items for a vApp.
+    * <ol>
+    * <li>vApp name Number of virtual CPUs</li>
+    * <li>Amount of virtual memory</li>
+    * <li>Add a virtual disk</li>
+    * <li>Delete a virtual disk</li>
+    * </ol>
+    * You can make more than one change in a single request. For example, you can increase the
+    * number of virtual CPUs and the amount of virtual memory in the same request.
+    * 
+    * @param vApp vApp to change in power state off
+    * @param configuration(s) to change
+    * @return task of configuration change
+    */
+   Task configureVApp(TerremarkVApp vApp, VAppConfiguration configuration);
 
 }

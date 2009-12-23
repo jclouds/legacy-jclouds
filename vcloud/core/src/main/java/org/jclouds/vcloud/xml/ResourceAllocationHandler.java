@@ -37,6 +37,7 @@ public class ResourceAllocationHandler extends ParseSax.HandlerWithResult<Resour
 
    Integer address;
    Integer addressOnParent;
+   String hostResource;
    String allocationUnits;
    String automaticAllocation;
    Boolean connected;
@@ -90,6 +91,7 @@ public class ResourceAllocationHandler extends ParseSax.HandlerWithResult<Resour
          } else if (qName.equals("VirtualQuantityUnits")) {
             virtualQuantityUnits = current;
          } else if (qName.equals("HostResource")) {
+            hostResource = currentText.toString().trim();
             virtualQuantity = Long.parseLong(current);
             virtualQuantityUnits = "byte * 2^20";
          }
@@ -97,8 +99,8 @@ public class ResourceAllocationHandler extends ParseSax.HandlerWithResult<Resour
          if (allocationUnits != null)
             virtualQuantityUnits = allocationUnits;
          this.allocation = new ResourceAllocation(instanceID, elementName, description,
-                  resourceType, resourceSubType, address, addressOnParent, parent, connected,
-                  virtualQuantity, virtualQuantityUnits);
+                  resourceType, resourceSubType, hostResource, address, addressOnParent, parent,
+                  connected, virtualQuantity, virtualQuantityUnits);
          address = null;
          addressOnParent = null;
          allocationUnits = null;
@@ -112,6 +114,7 @@ public class ResourceAllocationHandler extends ParseSax.HandlerWithResult<Resour
          resourceType = null;
          virtualQuantity = 1;
          virtualQuantityUnits = null;
+         hostResource = null;
       }
 
       currentText = new StringBuilder();

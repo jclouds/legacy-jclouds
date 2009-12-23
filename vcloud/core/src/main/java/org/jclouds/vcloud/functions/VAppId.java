@@ -21,58 +21,27 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.terremark.domain;
+package org.jclouds.vcloud.functions;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import javax.inject.Singleton;
+
+import org.jclouds.vcloud.domain.VApp;
+
+import com.google.common.base.Function;
+
 /**
- * 
- * VirtualResource such as disks or CPU
- * 
  * @author Adrian Cole
- * 
  */
-public enum ResourceType {
+@Singleton
+public class VAppId implements Function<Object, String> {
 
-   VIRTUAL_CPU,
-
-   MEMORY,
-
-   SCSI_CONTROLLER,
-
-   VIRTUAL_DISK;
-
-   public String value() {
-      switch (this) {
-         case VIRTUAL_CPU:
-            return "3";
-         case MEMORY:
-            return "4";
-         case SCSI_CONTROLLER:
-            return "6";
-         case VIRTUAL_DISK:
-            return "17";
-         default:
-            throw new IllegalArgumentException("invalid type:" + this);
-      }
+   public String apply(Object from) {
+      checkArgument(checkNotNull(from, "from") instanceof VApp,
+               "this binder is only valid for VApps!");
+      return ((VApp) from).getId();
    }
 
-   public static ResourceType fromValue(String type) {
-      return fromValue(Integer.parseInt(checkNotNull(type, "type")));
-   }
-
-   public static ResourceType fromValue(int v) {
-      switch (v) {
-         case 3:
-            return VIRTUAL_CPU;
-         case 4:
-            return MEMORY;
-         case 6:
-            return SCSI_CONTROLLER;
-         case 17:
-            return VIRTUAL_DISK;
-         default:
-            throw new IllegalArgumentException("invalid type:" + v);
-      }
-   }
 }

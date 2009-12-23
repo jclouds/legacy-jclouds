@@ -51,6 +51,7 @@ import com.google.common.collect.ImmutableSortedSet;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Provides;
+import com.google.inject.internal.Iterables;
 
 /**
  * Tests behavior of {@code TerremarkVAppHandler}
@@ -140,27 +141,32 @@ public class TerremarkVAppHandlerTest extends BaseHandlerTest {
                .getByName("10.114.34.132")));
 
       ResourceAllocation cpu = new ResourceAllocation(1, "1 virtual CPU(s)",
-               "Number of Virtual CPUs", ResourceType.PROCESSOR, null, null, null, null, null, 1,
-               "hertz * 10^6");
+               "Number of Virtual CPUs", ResourceType.PROCESSOR, null, null, null, null, null,
+               null, 1, "hertz * 10^6");
 
       ResourceAllocation controller = new ResourceAllocation(3, "SCSI Controller 0",
-               "SCSI Controller", ResourceType.SCSI_CONTROLLER, "lsilogic", 0, null, null, null, 1,
-               null);
+               "SCSI Controller", ResourceType.SCSI_CONTROLLER, "lsilogic", null, 0, null, null,
+               null, 1, null);
       ResourceAllocation memory = new ResourceAllocation(2, "512MB of memory", "Memory Size",
-               ResourceType.MEMORY, null, null, null, null, null, 512, "byte * 2^20");
+               ResourceType.MEMORY, null, null, null, null, null, null, 512, "byte * 2^20");
       ResourceAllocation disk = new ResourceAllocation(9, "Hard Disk 1", null,
-               ResourceType.DISK_DRIVE, null, null, 0, 3, null, 4194304, null);
+               ResourceType.DISK_DRIVE, null, "4194304", null, 0, 3, null, 4194304, null);
       assertEquals(result.getResourceAllocations(), ImmutableSortedSet.of(cpu, controller, memory,
                disk));
-      assertEquals(result.getResourceAllocationByType().get(ResourceType.PROCESSOR)
+      assertEquals(Iterables.getOnlyElement(
+               result.getResourceAllocationByType().get(ResourceType.PROCESSOR))
                .getVirtualQuantity(), 1);
-      assertEquals(result.getResourceAllocationByType().get(ResourceType.SCSI_CONTROLLER)
+      assertEquals(Iterables.getOnlyElement(
+               result.getResourceAllocationByType().get(ResourceType.SCSI_CONTROLLER))
                .getVirtualQuantity(), 1);
-      assertEquals(result.getResourceAllocationByType().get(ResourceType.MEMORY)
-               .getVirtualQuantity(), 512);
-      assertEquals(result.getResourceAllocationByType().get(ResourceType.DISK_DRIVE)
+      assertEquals(Iterables.getOnlyElement(
+               result.getResourceAllocationByType().get(ResourceType.MEMORY)).getVirtualQuantity(),
+               512);
+      assertEquals(Iterables.getOnlyElement(
+               result.getResourceAllocationByType().get(ResourceType.DISK_DRIVE))
                .getVirtualQuantity(), 4194304);
-      assertEquals(result.getSize().longValue(), result.getResourceAllocationByType().get(
-               ResourceType.DISK_DRIVE).getVirtualQuantity());
+      assertEquals(result.getSize().longValue(), Iterables.getOnlyElement(
+               result.getResourceAllocationByType().get(ResourceType.DISK_DRIVE))
+               .getVirtualQuantity());
    }
 }

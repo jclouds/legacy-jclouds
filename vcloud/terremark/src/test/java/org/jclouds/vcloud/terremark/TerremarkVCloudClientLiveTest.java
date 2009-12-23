@@ -25,6 +25,7 @@ package org.jclouds.vcloud.terremark;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.vcloud.options.CloneVAppOptions.Builder.deploy;
+import static org.jclouds.vcloud.terremark.domain.VAppConfiguration.Builder.changeNameTo;
 import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.processorCount;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -240,18 +241,18 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
                22);
       publicIp = is.getPublicIpAddress().getAddress();
    }
-   
+
    // 400 errors
-   @Test(dependsOnMethods = {  "testAddInternetService" }, expectedExceptions=HttpResponseException.class)
+   @Test(dependsOnMethods = { "testAddInternetService" }, expectedExceptions = HttpResponseException.class)
    public void testConfigureInternetService() throws InterruptedException, ExecutionException,
             TimeoutException, IOException {
-	  is = tmClient.configureInternetService(is.getId(), new InternetServiceConfiguration()
-          .changeDescriptionTo("holy cow"));
+      is = tmClient.configureInternetService(is.getId(), new InternetServiceConfiguration()
+               .changeDescriptionTo("holy cow"));
       assertEquals(is.getDescription(), "holy cow");
    }
-   
+
    // 500 errors
-   @Test(dependsOnMethods = { "testInstantiateAndPowerOn" }, expectedExceptions=HttpResponseException.class)
+   @Test(dependsOnMethods = { "testInstantiateAndPowerOn" }, expectedExceptions = HttpResponseException.class)
    public void testCloneVApp() {
       // lookup the id of the datacenter you are deploying into
       String vDCId = tmClient.getDefaultVDC().getId();
@@ -286,9 +287,9 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
                vApp.getName() + "-SSH", 22);
       doCheckPass(publicIp);
    }
-   
+
    // 400 errors
-   @Test(dependsOnMethods = { "testPublicIp" }, expectedExceptions=HttpResponseException.class)
+   @Test(dependsOnMethods = { "testPublicIp" }, expectedExceptions = HttpResponseException.class)
    public void testConfigureNode() throws InterruptedException, ExecutionException,
             TimeoutException, IOException {
       node = tmClient.configureNode(node.getId(), new NodeConfiguration()
@@ -329,21 +330,51 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
       assertEquals(vApp.getStatus(), VAppStatus.OFF);
    }
 
+   @Test(dependsOnMethods = "testLifeCycle")
+   public void testConfigure() throws InterruptedException, ExecutionException, TimeoutException,
+            IOException {
+
+      vApp = tmClient.getVApp(vApp.getId());
+
+      Task task = tmClient.configureVApp(vApp, changeNameTo("eduardo").changeMemoryTo(1024)
+               .changeProcessorCountTo(2).addDisk(1048576));
+
+      assert successTester.apply(task.getId());
+
+      vApp = tmClient.getVApp(vApp.getId());
+      assertEquals(vApp.getName(), "eduardo");
+      assertEquals(
+               Iterables.getOnlyElement(
+                        vApp.getResourceAllocationByType().get(ResourceType.PROCESSOR))
+                        .getVirtualQuantity(), 2);
+      assertEquals(Iterables.getOnlyElement(
+               vApp.getResourceAllocationByType().get(ResourceType.MEMORY)).getVirtualQuantity(),
+               1024);
+      assertEquals(vApp.getResourceAllocationByType().get(ResourceType.DISK_DRIVE).size(), 2);
+      assert successTester.apply(tmClient.powerOnVApp(vApp.getId()).getId());
+
+   }
+
    private void verifyConfigurationOfVApp(TerremarkVApp vApp, String serverName, String expectedOs,
             int processorCount, long memory, long hardDisk) {
       assertEquals(vApp.getName(), serverName);
       assertEquals(vApp.getOperatingSystemDescription(), expectedOs);
-      assertEquals(vApp.getResourceAllocationByType().get(ResourceType.PROCESSOR)
-               .getVirtualQuantity(), processorCount);
-      assertEquals(vApp.getResourceAllocationByType().get(ResourceType.SCSI_CONTROLLER)
-               .getVirtualQuantity(), 1);
       assertEquals(
-               vApp.getResourceAllocationByType().get(ResourceType.MEMORY).getVirtualQuantity(),
+               Iterables.getOnlyElement(
+                        vApp.getResourceAllocationByType().get(ResourceType.PROCESSOR))
+                        .getVirtualQuantity(), processorCount);
+      assertEquals(Iterables.getOnlyElement(
+               vApp.getResourceAllocationByType().get(ResourceType.SCSI_CONTROLLER))
+               .getVirtualQuantity(), 1);
+      assertEquals(Iterables.getOnlyElement(
+               vApp.getResourceAllocationByType().get(ResourceType.MEMORY)).getVirtualQuantity(),
                memory);
-      assertEquals(vApp.getResourceAllocationByType().get(ResourceType.DISK_DRIVE)
+      assertEquals(Iterables.getOnlyElement(
+               vApp.getResourceAllocationByType().get(ResourceType.DISK_DRIVE))
                .getVirtualQuantity(), hardDisk);
-      assertEquals(vApp.getSize().longValue(), vApp.getResourceAllocationByType().get(
-               ResourceType.DISK_DRIVE).getVirtualQuantity());
+      assertEquals(vApp.getSize().longValue(), Iterables.getOnlyElement(
+               vApp.getResourceAllocationByType().get(ResourceType.DISK_DRIVE))
+               .getVirtualQuantity());
    }
 
    private void doCheckPass(InetAddress address) throws IOException {

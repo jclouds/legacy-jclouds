@@ -37,6 +37,7 @@ public class ResourceAllocationHandler extends ParseSax.HandlerWithResult<Resour
 
    private Integer address;
    private Integer addressOnParent;
+   private String hostResource;
    private String allocationUnits;
    private String description;
    private String elementName;
@@ -50,6 +51,7 @@ public class ResourceAllocationHandler extends ParseSax.HandlerWithResult<Resour
    private ResourceAllocation item;
 
    private boolean skip;
+
 
    public ResourceAllocation getResult() {
       return item;
@@ -83,42 +85,45 @@ public class ResourceAllocationHandler extends ParseSax.HandlerWithResult<Resour
             if (addressOnParent != null && !addressOnParent.equals(""))
                this.addressOnParent = Integer.parseInt(addressOnParent);
          } else if (qName.equals("AllocationUnits")) {
-            this.allocationUnits = currentText.toString().trim();
+            allocationUnits = currentText.toString().trim();
          } else if (qName.equals("Description")) {
-            this.description = currentText.toString().trim();
+            description = currentText.toString().trim();
          } else if (qName.equals("ElementName")) {
-            this.elementName = currentText.toString().trim();
+            elementName = currentText.toString().trim();
+         } else if (qName.equals("HostResource")) {
+            hostResource = currentText.toString().trim();
          } else if (qName.equals("InstanceID")) {
-            this.instanceID = Integer.parseInt(currentText.toString().trim());
+            instanceID = Integer.parseInt(currentText.toString().trim());
          } else if (qName.equals("Parent")) {
             String parent = currentText.toString().trim();
             if (parent != null && !parent.equals(""))
                this.parent = Integer.parseInt(parent);
          } else if (qName.equals("ResourceSubType")) {
-            this.resourceSubType = currentText.toString().trim();
+            resourceSubType = currentText.toString().trim();
          } else if (qName.equals("ResourceType")) {
-            this.resourceType = ResourceType.fromValue(currentText.toString().trim());
+            resourceType = ResourceType.fromValue(currentText.toString().trim());
          } else if (qName.equals("VirtualQuantity")) {
             String quantity = currentText.toString().trim();
             if (quantity != null && !quantity.equals(""))
-               this.virtualQuantity = Long.parseLong(quantity);
+               virtualQuantity = Long.parseLong(quantity);
          } else if (qName.equals("VirtualQuantityUnits")) {
-            this.virtualQuantityUnits = currentText.toString().trim();
+            virtualQuantityUnits = currentText.toString().trim();
          } else if (qName.equals("q2:Item")) {
-            this.item = new ResourceAllocation(instanceID, elementName, description, resourceType,
-                     resourceSubType, address, addressOnParent, parent, null, virtualQuantity,
+            item = new ResourceAllocation(instanceID, elementName, description, resourceType,
+                     resourceSubType, hostResource, address, addressOnParent, parent, null, virtualQuantity,
                      allocationUnits != null ? allocationUnits : virtualQuantityUnits);
-            this.address = null;
-            this.addressOnParent = null;
-            this.allocationUnits = null;
-            this.description = null;
-            this.elementName = null;
-            this.instanceID = -1;
-            this.parent = null;
-            this.resourceSubType = null;
-            this.resourceType = null;
-            this.virtualQuantity = 1;
-            this.virtualQuantityUnits = null;
+            address = null;
+            addressOnParent = null;
+            allocationUnits = null;
+            description = null;
+            elementName = null;
+            instanceID = -1;
+            parent = null;
+            resourceSubType = null;
+            resourceType = null;
+            virtualQuantity = 1;
+            virtualQuantityUnits = null;
+            hostResource = null;
          }
       }
       currentText = new StringBuilder();

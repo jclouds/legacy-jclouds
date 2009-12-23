@@ -47,6 +47,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
@@ -119,7 +120,8 @@ public class TerremarkVCloudComputeClientLiveTest {
 
    @Test(dependsOnMethods = "testGetAnyPrivateAddress")
    public void testSshLoadBalanceIp() {
-      InetAddress publicIp = client.createPublicAddressMappedToPorts(tmClient.getVApp(id), 22, 80, 8080);
+      InetAddress publicIp = client.createPublicAddressMappedToPorts(tmClient.getVApp(id), 22, 80,
+               8080);
       assert addressTester.apply(publicIp);
       // client.exec(publicIp, "uname -a");
    }
@@ -128,17 +130,22 @@ public class TerremarkVCloudComputeClientLiveTest {
             int processorCount, int memory, long hardDisk) {
       assertEquals(vApp.getName(), serverName);
       assertEquals(vApp.getOperatingSystemDescription(), expectedOs);
-      assertEquals(vApp.getResourceAllocationByType().get(ResourceType.PROCESSOR)
-               .getVirtualQuantity(), processorCount);
-      assertEquals(vApp.getResourceAllocationByType().get(ResourceType.SCSI_CONTROLLER)
-               .getVirtualQuantity(), 1);
       assertEquals(
-               vApp.getResourceAllocationByType().get(ResourceType.MEMORY).getVirtualQuantity(),
+               Iterables.getOnlyElement(
+                        vApp.getResourceAllocationByType().get(ResourceType.PROCESSOR))
+                        .getVirtualQuantity(), processorCount);
+      assertEquals(Iterables.getOnlyElement(
+               vApp.getResourceAllocationByType().get(ResourceType.SCSI_CONTROLLER))
+               .getVirtualQuantity(), 1);
+      assertEquals(Iterables.getOnlyElement(
+               vApp.getResourceAllocationByType().get(ResourceType.MEMORY)).getVirtualQuantity(),
                memory);
-      assertEquals(vApp.getResourceAllocationByType().get(ResourceType.DISK_DRIVE)
+      assertEquals(Iterables.getOnlyElement(
+               vApp.getResourceAllocationByType().get(ResourceType.DISK_DRIVE))
                .getVirtualQuantity(), hardDisk);
-      assertEquals(vApp.getSize().longValue(), vApp.getResourceAllocationByType().get(
-               ResourceType.DISK_DRIVE).getVirtualQuantity());
+      assertEquals(vApp.getSize().longValue(), Iterables.getOnlyElement(
+               vApp.getResourceAllocationByType().get(ResourceType.DISK_DRIVE))
+               .getVirtualQuantity());
    }
 
    @AfterTest
