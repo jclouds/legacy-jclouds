@@ -26,6 +26,7 @@ package org.jclouds.vcloud.terremark;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.vcloud.options.CloneVAppOptions.Builder.deploy;
 import static org.jclouds.vcloud.terremark.domain.VAppConfiguration.Builder.changeNameTo;
+import static org.jclouds.vcloud.terremark.domain.VAppConfiguration.Builder.deleteDiskWithAddressOnParent;
 import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.processorCount;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -34,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -52,6 +54,7 @@ import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VAppStatus;
@@ -75,6 +78,7 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.inject.Injector;
 
 /**
@@ -351,6 +355,16 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
                vApp.getResourceAllocationByType().get(ResourceType.MEMORY)).getVirtualQuantity(),
                1024);
       assertEquals(vApp.getResourceAllocationByType().get(ResourceType.DISK_DRIVE).size(), 2);
+            
+      // extract the disks on the vApp sorted by addressOnParent
+      List<ResourceAllocation> disks = Lists.newArrayList(vApp.getResourceAllocationByType()
+               .get(ResourceType.DISK_DRIVE));
+      
+      // delete the second disk
+      task = tmClient.configureVApp(vApp, deleteDiskWithAddressOnParent(disks.get(1).getAddressOnParent()));
+
+      assert successTester.apply(task.getId());
+
       assert successTester.apply(tmClient.powerOnVApp(vApp.getId()).getId());
 
    }
@@ -439,7 +453,7 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
                .getInstance(SocketOpen.class), 130, 10, TimeUnit.SECONDS);// make it longer then
       // default internet
       // service timeout
-      successTester = new RetryablePredicate<String>(injector.getInstance(TaskSuccess.class), 300,
+      successTester = new RetryablePredicate<String>(injector.getInstance(TaskSuccess.class), 450,
                10, TimeUnit.SECONDS);
    }
 

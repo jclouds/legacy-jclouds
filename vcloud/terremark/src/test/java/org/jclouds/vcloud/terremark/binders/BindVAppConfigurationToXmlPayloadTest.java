@@ -77,16 +77,17 @@ public class BindVAppConfigurationToXmlPayloadTest {
       TerremarkVAppImpl vApp = new TerremarkVAppImpl("4213", "MyAppServer6",
                "application/vnd.vmware.vcloud.vApp+xml", URI
                         .create("https://services.vcloudexpress/terremark.com/api/v0.8/vapp/4213"),
-               VAppStatus.OFF, 4194304, null, null, null, ImmutableListMultimap
-                        .<String, InetAddress> of(), null, null, ImmutableSortedSet.of(
-                        new ResourceAllocation(1, "n/a", null, ResourceType.PROCESSOR, null, null,
-                                 null, null, null, null, 2, null), new ResourceAllocation(2, "n/a",
-                                 null, ResourceType.MEMORY, null, null, null, null, null, null,
-                                 1024, null), new ResourceAllocation(9, "n/a", null,
-                                 ResourceType.DISK_DRIVE, null, "1048576", null, 0, null, null,
-                                 209152, null)));
+               VAppStatus.OFF, 4194304, null, ImmutableListMultimap.<String, InetAddress> of(),
+               null, null, ImmutableSortedSet.of(new ResourceAllocation(1, "n/a", null,
+                        ResourceType.PROCESSOR, null, null, null, null, null, null, 2, null),
+                        new ResourceAllocation(2, "n/a", null, ResourceType.MEMORY, null, null,
+                                 null, null, null, null, 1024, null), new ResourceAllocation(9,
+                                 "n/a", null, ResourceType.DISK_DRIVE, null, "1048576", null, 0,
+                                 null, null, 209152, null)));
 
-      String expected = Utils.toStringAndClose(getClass().getResourceAsStream("/terremark/configureVApp.xml")).replace("eduardo", "roberto");
+      String expected = Utils.toStringAndClose(
+               getClass().getResourceAsStream("/terremark/configureVApp.xml")).replace("eduardo",
+               "roberto");
       Multimap<String, String> headers = Multimaps.synchronizedMultimap(HashMultimap
                .<String, String> create());
       VAppConfiguration config = new VAppConfiguration().changeNameTo("roberto");
@@ -106,4 +107,40 @@ public class BindVAppConfigurationToXmlPayloadTest {
       verify(request);
    }
 
+   public void testRemoveDisk() throws IOException {
+      TerremarkVAppImpl vApp = new TerremarkVAppImpl("4213", "MyAppServer6",
+               "application/vnd.vmware.vcloud.vApp+xml", URI
+                        .create("https://services.vcloudexpress/terremark.com/api/v0.8/vapp/4213"),
+               VAppStatus.OFF, 4194304, null, ImmutableListMultimap.<String, InetAddress> of(),
+               null, null, ImmutableSortedSet.of(new ResourceAllocation(1, "n/a", null,
+                        ResourceType.PROCESSOR, null, null, null, null, null, null, 2, null),
+                        new ResourceAllocation(2, "n/a", null, ResourceType.MEMORY, null, null,
+                                 null, null, null, null, 1024, null), new ResourceAllocation(9,
+                                 "n/a", null, ResourceType.DISK_DRIVE, null, "1048576", null, 0,
+                                 null, null, 209152, null),new ResourceAllocation(9,
+                                          "n/a", null, ResourceType.DISK_DRIVE, null, "1048576", null, 1,
+                                          null, null, 209152, null)));
+
+      String expected = Utils.toStringAndClose(
+               getClass().getResourceAsStream("/terremark/configureVApp.xml")).replace("eduardo",
+               "MyAppServer6");
+      Multimap<String, String> headers = Multimaps.synchronizedMultimap(HashMultimap
+               .<String, String> create());
+      VAppConfiguration config = new VAppConfiguration().deleteDiskWithAddressOnParent(1);
+      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
+      expect(request.getArgs()).andReturn(new Object[] { vApp, config }).atLeastOnce();
+      expect(request.getFirstHeaderOrNull("Content-Type")).andReturn(null).atLeastOnce();
+      expect(request.getHeaders()).andReturn(headers).atLeastOnce();
+      request.setPayload(expected);
+      replay(request);
+
+      BindVAppConfigurationToXmlPayload binder = injector
+               .getInstance(BindVAppConfigurationToXmlPayload.class);
+
+      Map<String, String> map = Maps.newHashMap();
+      binder.bindToRequest(request, map);
+      verify(request);
+   }
+   
 }

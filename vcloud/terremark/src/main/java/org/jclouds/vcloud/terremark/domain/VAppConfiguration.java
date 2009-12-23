@@ -39,6 +39,7 @@ public class VAppConfiguration {
    private Integer processorCount = null;
    private Long memory = null;
    private List<Long> disks = Lists.newArrayList();
+   private List<Integer> disksToDelete = Lists.newArrayList();
 
    /**
     * The vApp name has the following requirements: Name can use uppercase and/or lowercase letters.
@@ -97,6 +98,24 @@ public class VAppConfiguration {
       return this;
    }
 
+   /**
+    * To remove a disk, you specify its addressOnParent.
+    * 
+    * Ex.
+    * 
+    * <pre>
+    * SortedSet&lt;ResourceAllocation&gt; disks = Sets.newTreeSet(vApp.getResourceAllocationByType().get(
+    *          ResourceType.DISK_DRIVE));
+    * ResourceAllocation lastDisk = disks.last();
+    * VAppConfiguration config = deleteDiskWithAddressOnParent(lastDisk.getAddressOnParent());
+    * </pre>
+    */
+   public VAppConfiguration deleteDiskWithAddressOnParent(int addressOnParent) {
+      checkArgument(addressOnParent > 0, "you cannot delete the system disk");
+      disksToDelete.add(addressOnParent);
+      return this;
+   }
+
    public static class Builder {
 
       /**
@@ -131,6 +150,14 @@ public class VAppConfiguration {
          return options.addDisk(kilobytes);
       }
 
+      /**
+       * @see VAppConfiguration#deleteDiskWithAddressOnParent(int)
+       */
+      public static VAppConfiguration deleteDiskWithAddressOnParent(int addressOnParent) {
+         VAppConfiguration options = new VAppConfiguration();
+         return options.deleteDiskWithAddressOnParent(addressOnParent);
+      }
+
    }
 
    public Integer getProcessorCount() {
@@ -147,5 +174,9 @@ public class VAppConfiguration {
 
    public String getName() {
       return name;
+   }
+
+   public List<Integer> getDisksToDelete() {
+      return disksToDelete;
    }
 }

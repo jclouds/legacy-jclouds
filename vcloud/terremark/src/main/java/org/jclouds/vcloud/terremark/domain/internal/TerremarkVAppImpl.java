@@ -45,43 +45,27 @@ import com.google.common.collect.ListMultimap;
 public class TerremarkVAppImpl extends VAppImpl implements TerremarkVApp {
 
    private final NamedResource vDC;
-   private final NamedResource computeOptions;
-   private final NamedResource customizationOptions;
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
 
    public TerremarkVAppImpl(String id, String name, String type, URI location, VAppStatus status,
-            long size, NamedResource vDC, NamedResource computeOptions, NamedResource customizationOptions,
-            ListMultimap<String, InetAddress> networkToAddresses,
+            long size, NamedResource vDC, ListMultimap<String, InetAddress> networkToAddresses,
             String operatingSystemDescription, TerremarkVirtualSystem system,
             SortedSet<ResourceAllocation> resourceAllocations) {
-      super(id, name, location, status, size, networkToAddresses, operatingSystemDescription, system,
-               resourceAllocations);
+      super(id, name, location, status, size, networkToAddresses, operatingSystemDescription,
+               system, resourceAllocations);
       this.vDC = vDC;
-      this.computeOptions = computeOptions;
-      this.customizationOptions = customizationOptions;
    }
 
    public NamedResource getVDC() {
       return vDC;
    }
 
-   public NamedResource getComputeOptions() {
-      return computeOptions;
-   }
-
-   public NamedResource getCustomizationOptions() {
-      return customizationOptions;
-   }
-
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result + ((computeOptions == null) ? 0 : computeOptions.hashCode());
-      result = prime * result
-               + ((customizationOptions == null) ? 0 : customizationOptions.hashCode());
       result = prime * result + ((vDC == null) ? 0 : vDC.hashCode());
       return result;
    }
@@ -95,16 +79,6 @@ public class TerremarkVAppImpl extends VAppImpl implements TerremarkVApp {
       if (getClass() != obj.getClass())
          return false;
       TerremarkVAppImpl other = (TerremarkVAppImpl) obj;
-      if (computeOptions == null) {
-         if (other.computeOptions != null)
-            return false;
-      } else if (!computeOptions.equals(other.computeOptions))
-         return false;
-      if (customizationOptions == null) {
-         if (other.customizationOptions != null)
-            return false;
-      } else if (!customizationOptions.equals(other.customizationOptions))
-         return false;
       if (vDC == null) {
          if (other.vDC != null)
             return false;
@@ -112,5 +86,6 @@ public class TerremarkVAppImpl extends VAppImpl implements TerremarkVApp {
          return false;
       return true;
    }
+
 
 }

@@ -29,8 +29,7 @@ import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.UnknownHostException;
-
-import javax.ws.rs.core.MediaType;
+import java.util.List;
 
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
@@ -48,6 +47,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Lists;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Provides;
@@ -118,22 +118,7 @@ public class TerremarkVAppHandlerTest extends BaseHandlerTest {
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/13850"));
       assertEquals(result.getVDC(), new NamedResourceImpl("32", null, VCloudMediaType.VDC_XML, URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32")));
-      assertEquals(
-               result.getComputeOptions(),
-               new NamedResourceImpl(
-                        "compute",
-                        "Compute Options",
-                        MediaType.APPLICATION_XML,
-                        URI
-                                 .create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/13850/options/compute")));
-      assertEquals(
-               result.getCustomizationOptions(),
-               new NamedResourceImpl(
-                        "customization",
-                        "Customization Options",
-                        MediaType.APPLICATION_XML,
-                        URI
-                                 .create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/13850/options/customization")));
+
       assertEquals(result.getSystem(), new TerremarkVirtualSystem(null, null, null, null, null,
                null, null, null, null, null, null, "Virtual Hardware Family", 0, null, null, null,
                null, null, "adriantest1", "vmx-07"));
@@ -169,4 +154,64 @@ public class TerremarkVAppHandlerTest extends BaseHandlerTest {
                result.getResourceAllocationByType().get(ResourceType.DISK_DRIVE))
                .getVirtualQuantity());
    }
+
+   public void testGetVApp2disks() throws UnknownHostException {
+      InputStream is = getClass().getResourceAsStream("/terremark/get_vapp2disks.xml");
+
+      TerremarkVApp vApp = (TerremarkVApp) factory.create(
+               injector.getInstance(TerremarkVAppHandler.class)).parse(is);
+      assertEquals(vApp.getId(), 15639 + "");
+
+      assertEquals(vApp.getName(), "eduardo");
+      assertEquals(vApp.getStatus(), VAppStatus.OFF);
+
+      assertEquals(vApp.getSize().longValue(), 30408704);
+      assertEquals(vApp.getOperatingSystemDescription(), "Ubuntu Linux (32-bit)");
+
+      assertEquals(vApp.getLocation(), URI
+               .create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/15639"));
+      assertEquals(vApp.getVDC(), new NamedResourceImpl("32", null, VCloudMediaType.VDC_XML, URI
+               .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32")));
+
+      assertEquals(vApp.getSystem(), new TerremarkVirtualSystem(null, null, null, null, null,
+               null, null, null, null, null, null, "Virtual Hardware Family", 0, null, null, null,
+               null, null, "eduardo", "vmx-07"));
+      assertEquals(vApp.getNetworkToAddresses().get("Internal"), ImmutableList.of(InetAddress
+               .getByName("10.114.34.131")));
+
+      ResourceAllocation cpu = new ResourceAllocation(1, "2 virtual CPU(s)",
+               "Number of Virtual CPUs", ResourceType.PROCESSOR, null, null, null, null, null,
+               null, 2, "hertz * 10^6");
+
+      ResourceAllocation controller = new ResourceAllocation(3, "SCSI Controller 0",
+               "SCSI Controller", ResourceType.SCSI_CONTROLLER, "lsilogic", null, 0, null, null,
+               null, 1, null);
+      ResourceAllocation memory = new ResourceAllocation(2, "1024MB of memory", "Memory Size",
+               ResourceType.MEMORY, null, null, null, null, null, null, 1024, "byte * 2^20");
+      ResourceAllocation disk = new ResourceAllocation(9, "Hard Disk 1", null,
+               ResourceType.DISK_DRIVE, null, "4194304", null, 0, 3, null, 4194304, null);
+      ResourceAllocation disk2 = new ResourceAllocation(9, "Hard Disk 2", null,
+               ResourceType.DISK_DRIVE, null, "26214400", null, 1, 3, null, 26214400, null);
+
+      assertEquals(vApp.getResourceAllocations(), ImmutableSortedSet.of(cpu, controller, memory,
+               disk, disk2));
+      assertEquals(Iterables.getOnlyElement(
+               vApp.getResourceAllocationByType().get(ResourceType.PROCESSOR))
+               .getVirtualQuantity(), 2);
+      assertEquals(Iterables.getOnlyElement(
+               vApp.getResourceAllocationByType().get(ResourceType.SCSI_CONTROLLER))
+               .getVirtualQuantity(), 1);
+      assertEquals(Iterables.getOnlyElement(
+               vApp.getResourceAllocationByType().get(ResourceType.MEMORY)).getVirtualQuantity(),
+               1024);
+      
+      // extract the disks on the vApp sorted by addressOnParent
+      List<ResourceAllocation> disks = Lists.newArrayList(vApp.getResourceAllocationByType()
+               .get(ResourceType.DISK_DRIVE));
+
+      assertEquals(disks.get(0).getVirtualQuantity(), 4194304);
+      assertEquals(disks.get(1).getVirtualQuantity(), 26214400);
+
+   }
+
 }

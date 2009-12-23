@@ -37,8 +37,4 @@ public interface TerremarkVApp extends VApp {
 
    NamedResource getVDC();
 
-   NamedResource getComputeOptions();
-
-   NamedResource getCustomizationOptions();
-
 }

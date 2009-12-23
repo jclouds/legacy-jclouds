@@ -61,7 +61,7 @@ import com.jamesmurty.utils.XMLBuilder;
 public class BindVAppConfigurationToXmlPayload implements MapBinder {
 
    private static final String RESOURCE_ALLOCATION_NS = "http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData";
-   
+
    protected final String ns;
    protected final String schema;
    private final BindToStringPayload stringBinder;
@@ -141,7 +141,8 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder {
             VAppConfiguration configuration) {
       for (ResourceAllocation disk : vApp.getResourceAllocationByType()
                .get(ResourceType.DISK_DRIVE)) {
-         addDiskWithQuantity(sectionBuilder, disk);
+         if (!configuration.getDisksToDelete().contains(disk.getAddressOnParent()))
+            addDiskWithQuantity(sectionBuilder, disk);
       }
       for (Long quantity : configuration.getDisks()) {
          ResourceAllocation disk = new ResourceAllocation(9, "n/a", null, ResourceType.DISK_DRIVE,

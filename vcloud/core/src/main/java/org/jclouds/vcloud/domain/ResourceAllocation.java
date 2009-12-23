@@ -45,8 +45,8 @@ public class ResourceAllocation implements Comparable<ResourceAllocation> {
    private final String virtualQuantityUnits;
 
    public ResourceAllocation(int id, String name, String description, ResourceType type,
-            String subType, String hostResource, Integer address, Integer addressOnParent, Integer parent,
-            Boolean connected, long virtualQuantity, String virtualQuantityUnits) {
+            String subType, String hostResource, Integer address, Integer addressOnParent,
+            Integer parent, Boolean connected, long virtualQuantity, String virtualQuantityUnits) {
       this.id = id;
       this.name = checkNotNull(name, "name");
       this.description = description;
@@ -73,6 +73,12 @@ public class ResourceAllocation implements Comparable<ResourceAllocation> {
          return BEFORE;
       if (this.id > that.id)
          return AFTER;
+      if (this.addressOnParent != null && that.addressOnParent != null) {
+         if (this.addressOnParent < that.addressOnParent)
+            return BEFORE;
+         if (this.addressOnParent > that.addressOnParent)
+            return AFTER;
+      }
       return 1;
    }
 

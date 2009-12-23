@@ -71,8 +71,6 @@ public class TerremarkVAppHandler extends ParseSax.HandlerWithResult<TerremarkVA
    private VAppStatus status;
    private int size;
    private boolean skip;
-   private NamedResource computeOptions;
-   private NamedResource customizationOptions;
    private final ListMultimap<String, InetAddress> networkToAddresses = ArrayListMultimap.create();
    private StringBuilder currentText = new StringBuilder();
    private String operatingSystemDescription;
@@ -81,8 +79,8 @@ public class TerremarkVAppHandler extends ParseSax.HandlerWithResult<TerremarkVA
 
    public TerremarkVApp getResult() {
       return new TerremarkVAppImpl(vApp.getId(), vApp.getName(), vApp.getType(),
-               vApp.getLocation(), status, size, vDC, computeOptions, customizationOptions,
-               networkToAddresses, operatingSystemDescription, system, allocations);
+               vApp.getLocation(), status, size, vDC, networkToAddresses,
+               operatingSystemDescription, system, allocations);
    }
 
    public void startElement(String uri, String localName, String qName, Attributes attributes)
@@ -96,11 +94,6 @@ public class TerremarkVAppHandler extends ParseSax.HandlerWithResult<TerremarkVA
       if (qName.equals("Link")) {
          if (attributes.getValue(attributes.getIndex("type")).equals(VCloudMediaType.VDC_XML)) {
             vDC = Utils.newNamedResource(attributes);
-         } else if (attributes.getValue(attributes.getIndex("name")).equals("Compute Options")) {
-            this.computeOptions = Utils.newNamedResource(attributes);
-         } else if (attributes.getValue(attributes.getIndex("name"))
-                  .equals("Customization Options")) {
-            this.customizationOptions = Utils.newNamedResource(attributes);
          }
       } else if (qName.equals("VApp")) {
          vApp = Utils.newNamedResource(attributes);
