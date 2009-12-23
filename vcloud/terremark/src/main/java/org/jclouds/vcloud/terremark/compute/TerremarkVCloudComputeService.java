@@ -85,9 +85,7 @@ public class TerremarkVCloudComputeService implements ComputeService {
    public CreateServerResponse createServer(String name, Profile profile, Image image) {
       String id = computeClient.start(name, image, 1, 512, ImmutableMap.<String, String> of());
       TerremarkVApp vApp = tmClient.getVApp(id);
-      // bug creating more than one internet service returns 503 or 500
-      // InetAddress publicIp = computeClient.createPublicAddressMappedToPorts(vApp, 22, 80, 8080);
-      InetAddress publicIp = computeClient.createPublicAddressMappedToPorts(vApp, 22);
+      InetAddress publicIp = computeClient.createPublicAddressMappedToPorts(vApp, 22, 80, 443, 8080);
       return new CreateServerResponseImpl(vApp.getId(), vApp.getName(), vAppStatusToServerState
                .get(vApp.getStatus()), ImmutableSet.<InetAddress> of(publicIp), vApp
                .getNetworkToAddresses().values(), 22, LoginType.SSH, new Credentials("vcloud",
