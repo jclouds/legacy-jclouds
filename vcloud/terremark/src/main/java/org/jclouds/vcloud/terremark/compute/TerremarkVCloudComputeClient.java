@@ -74,15 +74,18 @@ public class TerremarkVCloudComputeClient {
             Image.CENTOS_53, "6").put(Image.RHEL_53, "8").put(Image.UMBUNTU_90, "10").put(
             Image.UMBUNTU_JEOS, "11").build();
 
-   public String start(String name, Image image, int minCores, int minMegs, Map<String, String> properties) {
+   public String start(String name, Image image, int minCores, int minMegs,
+            Map<String, String> properties) {
       checkArgument(imageCatalogIdMap.containsKey(image), "image not configured: " + image);
       String templateId = imageCatalogIdMap.get(image);
       String vDCId = tmClient.getDefaultVDC().getId();
-      logger.debug(">> instantiating vApp vDC(%s) template(%s) name(%s) minCores(%d) minMegs(%d) properties(%s)",vDCId, templateId,
-               name, minCores, minMegs, properties);
+      logger
+               .debug(
+                        ">> instantiating vApp vDC(%s) template(%s) name(%s) minCores(%d) minMegs(%d) properties(%s)",
+                        vDCId, templateId, name, minCores, minMegs, properties);
       TerremarkVApp vApp = tmClient.instantiateVAppTemplateInVDC(vDCId, name, templateId,
-               TerremarkInstantiateVAppTemplateOptions.Builder.processorCount(minCores)
-                        .memory(minMegs).productProperties(properties));
+               TerremarkInstantiateVAppTemplateOptions.Builder.processorCount(minCores).memory(
+                        minMegs).productProperties(properties));
       logger.debug("<< instantiated VApp(%s)", vApp.getId());
 
       logger.debug(">> deploying vApp(%s)", vApp.getId());
@@ -125,32 +128,37 @@ public class TerremarkVCloudComputeClient {
          switch (port) {
             case 22:
                protocol = Protocol.TCP;
+               break;
             case 80:
             case 8080:
                protocol = Protocol.HTTP;
+               break;
             case 443:
                protocol = Protocol.HTTPS;
+               break;
             default:
                protocol = Protocol.HTTP;
-
+               break;
          }
          if (ip == null) {
-            logger.debug(">> creating InternetService in vDC %s; port %d", vApp.getVDC().getId(),
-                     port);
+            logger.debug(">> creating InternetService in vDC %s:%s:%d", vApp.getVDC().getId(),
+                     protocol, port);
             is = tmClient.addInternetServiceToVDC(vApp.getVDC().getId(), vApp.getName() + "-"
                      + port, protocol, port,
                      withDescription(String.format("port %d access to serverId: %s name: %s", port,
                               vApp.getId(), vApp.getName())));
             ip = is.getPublicIpAddress();
          } else {
-            logger.debug(">> adding InternetService %s:%d", ip.getAddress().getHostAddress(), port);
+            logger.debug(">> adding InternetService %s:%s:%d", ip.getAddress().getHostAddress(),
+                     protocol, port);
             is = tmClient.addInternetServiceToExistingIp(ip.getId(), vApp.getName() + "-" + port,
                      protocol, port, withDescription(String.format(
                               "port %d access to serverId: %s name: %s", port, vApp.getId(), vApp
                                        .getName())));
          }
-         logger.debug("<< created InternetService(%s) %s:%d", is.getId(), is.getPublicIpAddress()
-                  .getAddress().getHostAddress(), is.getPort());
+         logger.debug("<< created InternetService(%s) %s:%s:%d", is.getId(), is
+                  .getPublicIpAddress().getAddress().getHostAddress(), is.getProtocol(), is
+                  .getPort());
          logger.debug(">> adding Node %s:%d -> %s:%d", is.getPublicIpAddress().getAddress()
                   .getHostAddress(), is.getPort(), privateAddress.getHostAddress(), port);
          Node node = tmClient

@@ -96,6 +96,7 @@ import org.jclouds.vcloud.terremark.xml.TerremarkVDCHandler;
  */
 @RequestFilters(SetVCloudTokenCookie.class)
 public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
+   
    /**
     * @see TerremarkVCloudClient#getDefaultVDC
     */
