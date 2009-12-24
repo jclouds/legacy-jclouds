@@ -1,0 +1,263 @@
+/**
+ *
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *
+ * ====================================================================
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ * ====================================================================
+ */
+package org.jclouds.aws.ec2.services;
+
+import static org.testng.Assert.assertEquals;
+
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.lang.reflect.Method;
+import java.net.URI;
+
+import org.jclouds.aws.ec2.EC2;
+import org.jclouds.aws.ec2.domain.IpProtocol;
+import org.jclouds.aws.ec2.domain.UserIdGroupPair;
+import org.jclouds.aws.ec2.filters.FormSigner;
+import org.jclouds.aws.ec2.functions.ReturnVoidOnGroupNotFound;
+import org.jclouds.aws.ec2.xml.DescribeSecurityGroupsResponseHandler;
+import org.jclouds.aws.reference.AWSConstants;
+import org.jclouds.date.TimeStamp;
+import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.ReturnVoidIf2xx;
+import org.jclouds.logging.Logger;
+import org.jclouds.logging.Logger.LoggerFactory;
+import org.jclouds.rest.RestClientTest;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.util.Jsr330;
+import org.testng.annotations.Test;
+
+import com.google.inject.AbstractModule;
+import com.google.inject.Module;
+import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
+
+/**
+ * Tests behavior of {@code SecurityGroupAsyncClient}
+ * 
+ * @author Adrian Cole
+ */
+@Test(groups = "unit", testName = "ec2.SecurityGroupAsyncClientTest")
+public class SecurityGroupAsyncClientTest extends RestClientTest<SecurityGroupAsyncClient> {
+
+   public void testDeleteSecurityGroup() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = SecurityGroupAsyncClient.class.getMethod("deleteSecurityGroup", String.class);
+      GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method,
+               "name");
+
+      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 60\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertPayloadEquals(httpMethod,
+               "Version=2009-11-30&Action=DeleteSecurityGroup&GroupName=name");
+
+      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnVoidOnGroupNotFound.class);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testCreateSecurityGroup() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = SecurityGroupAsyncClient.class.getMethod("createSecurityGroup", String.class,
+               String.class);
+      GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method,
+               "name", "description");
+
+      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 89\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertPayloadEquals(httpMethod,
+               "Version=2009-11-30&Action=CreateSecurityGroup&GroupName=name&GroupDescription=description");
+
+      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testDescribeSecurityGroups() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = SecurityGroupAsyncClient.class.getMethod("describeSecurityGroups", Array
+               .newInstance(String.class, 0).getClass());
+      GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method);
+
+      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 48\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertPayloadEquals(httpMethod, "Version=2009-11-30&Action=DescribeSecurityGroups");
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, DescribeSecurityGroupsResponseHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testDescribeSecurityGroupsArgs() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = SecurityGroupAsyncClient.class.getMethod("describeSecurityGroups", Array
+               .newInstance(String.class, 0).getClass());
+      GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method,
+               "1", "2");
+
+      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 48\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertPayloadEquals(httpMethod,
+               "Version=2009-11-30&Action=DescribeSecurityGroups&GroupName.1=1&GroupName.2=2");
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, DescribeSecurityGroupsResponseHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testAuthorizeSecurityGroupIngressGroup() throws SecurityException,
+            NoSuchMethodException, IOException {
+      Method method = SecurityGroupAsyncClient.class.getMethod("authorizeSecurityGroupIngress",
+               String.class, UserIdGroupPair.class);
+      GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method,
+               "group", new UserIdGroupPair("sourceUser", "sourceGroup"));
+
+      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 71\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertPayloadEquals(
+               httpMethod,
+               "Version=2009-11-30&Action=AuthorizeSecurityGroupIngress&GroupName=group&SourceSecurityGroupOwnerId=sourceUser&SourceSecurityGroupName=sourceGroup");
+
+      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testAuthorizeSecurityGroupIngressCidr() throws SecurityException,
+            NoSuchMethodException, IOException {
+      Method method = SecurityGroupAsyncClient.class.getMethod("authorizeSecurityGroupIngress",
+               String.class, IpProtocol.class, int.class, int.class, String.class);
+      GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method,
+               "group", IpProtocol.TCP, 6000, 7000, "0.0.0.0/0");
+
+      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 131\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertPayloadEquals(
+               httpMethod,
+               "Version=2009-11-30&Action=AuthorizeSecurityGroupIngress&GroupName=group&FromPort=6000&IpProtocol=tcp&ToPort=7000&CidrIp=0.0.0.0%2F0");
+
+      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testRevokeSecurityGroupIngressGroup() throws SecurityException,
+            NoSuchMethodException, IOException {
+      Method method = SecurityGroupAsyncClient.class.getMethod("revokeSecurityGroupIngress",
+               String.class, UserIdGroupPair.class);
+      GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method,
+               "group", new UserIdGroupPair("sourceUser", "sourceGroup"));
+
+      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 68\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertPayloadEquals(
+               httpMethod,
+               "Version=2009-11-30&Action=RevokeSecurityGroupIngress&GroupName=group&SourceSecurityGroupOwnerId=sourceUser&SourceSecurityGroupName=sourceGroup");
+
+      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testRevokeSecurityGroupIngressCidr() throws SecurityException,
+            NoSuchMethodException, IOException {
+      Method method = SecurityGroupAsyncClient.class.getMethod("revokeSecurityGroupIngress",
+               String.class, IpProtocol.class, int.class, int.class, String.class);
+      GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod = processor.createRequest(method,
+               "group", IpProtocol.TCP, 6000, 7000, "0.0.0.0/0");
+
+      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 128\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertPayloadEquals(
+               httpMethod,
+               "Version=2009-11-30&Action=RevokeSecurityGroupIngress&GroupName=group&FromPort=6000&IpProtocol=tcp&ToPort=7000&CidrIp=0.0.0.0%2F0");
+
+      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   @Override
+   protected void checkFilters(GeneratedHttpRequest<SecurityGroupAsyncClient> httpMethod) {
+      assertEquals(httpMethod.getFilters().size(), 1);
+      assertEquals(httpMethod.getFilters().get(0).getClass(), FormSigner.class);
+   }
+
+   @Override
+   protected TypeLiteral<RestAnnotationProcessor<SecurityGroupAsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<SecurityGroupAsyncClient>>() {
+      };
+   }
+
+   @Override
+   protected Module createModule() {
+      return new AbstractModule() {
+         @Override
+         protected void configure() {
+            bind(URI.class).annotatedWith(EC2.class).toInstance(
+                     URI.create("https://ec2.amazonaws.com"));
+            bindConstant().annotatedWith(Jsr330.named(AWSConstants.PROPERTY_AWS_ACCESSKEYID)).to(
+                     "user");
+            bindConstant().annotatedWith(Jsr330.named(AWSConstants.PROPERTY_AWS_SECRETACCESSKEY))
+                     .to("key");
+            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
+               public Logger getLogger(String category) {
+                  return Logger.NULL;
+               }
+            });
+         }
+
+         @SuppressWarnings("unused")
+         @Provides
+         @TimeStamp
+         String provide() {
+            return "2009-11-08T15:54:08.897Z";
+         }
+      };
+   }
+}

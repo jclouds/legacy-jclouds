@@ -31,12 +31,20 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.EC2;
-import org.jclouds.aws.ec2.EC2AsyncClient;
-import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.filters.FormSigner;
 import org.jclouds.aws.ec2.predicates.InstanceStateRunning;
 import org.jclouds.aws.ec2.reference.EC2Constants;
+import org.jclouds.aws.ec2.services.AMIAsyncClient;
+import org.jclouds.aws.ec2.services.AMIClient;
+import org.jclouds.aws.ec2.services.ElasticIPAddressAsyncClient;
+import org.jclouds.aws.ec2.services.ElasticIPAddressClient;
+import org.jclouds.aws.ec2.services.InstanceAsyncClient;
+import org.jclouds.aws.ec2.services.InstanceClient;
+import org.jclouds.aws.ec2.services.KeyPairAsyncClient;
+import org.jclouds.aws.ec2.services.KeyPairClient;
+import org.jclouds.aws.ec2.services.SecurityGroupAsyncClient;
+import org.jclouds.aws.ec2.services.SecurityGroupClient;
 import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.handlers.AWSRedirectionRetryHandler;
 import org.jclouds.aws.handlers.ParseAWSErrorFromXmlContent;
@@ -94,17 +102,67 @@ public class EC2RestClientModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected EC2AsyncClient provideAsyncClient(RestClientFactory factory) {
-      return factory.create(EC2AsyncClient.class);
+   protected AMIAsyncClient provideAMIAsyncClient(RestClientFactory factory) {
+      return factory.create(AMIAsyncClient.class);
    }
 
    @Provides
    @Singleton
-   public EC2Client provideClient(EC2AsyncClient client) throws IllegalArgumentException,
+   public AMIClient provideAMIClient(AMIAsyncClient client) throws IllegalArgumentException,
             SecurityException, NoSuchMethodException {
-      return SyncProxy.create(EC2Client.class, client);
+      return SyncProxy.create(AMIClient.class, client);
    }
 
+   
+   @Provides
+   @Singleton
+   protected  ElasticIPAddressAsyncClient provideElasticIPAddressAsyncClient(RestClientFactory factory) {
+      return factory.create( ElasticIPAddressAsyncClient.class);
+   }
+
+   @Provides
+   @Singleton
+   public  ElasticIPAddressClient provideElasticIPAddressClient( ElasticIPAddressAsyncClient client) throws IllegalArgumentException,
+            SecurityException, NoSuchMethodException {
+      return SyncProxy.create( ElasticIPAddressClient.class, client);
+   }
+   
+   @Provides
+   @Singleton
+   protected InstanceAsyncClient provideInstanceAsyncClient(RestClientFactory factory) {
+      return factory.create(InstanceAsyncClient.class);
+   }
+
+   @Provides
+   @Singleton
+   public InstanceClient provideInstanceClient(InstanceAsyncClient client) throws IllegalArgumentException,
+            SecurityException, NoSuchMethodException {
+      return SyncProxy.create(InstanceClient.class, client);
+   }
+   @Provides
+   @Singleton
+   protected KeyPairAsyncClient provideKeyPairAsyncClient(RestClientFactory factory) {
+      return factory.create(KeyPairAsyncClient.class);
+   }
+
+   @Provides
+   @Singleton
+   public KeyPairClient provideKeyPairClient(KeyPairAsyncClient client) throws IllegalArgumentException,
+            SecurityException, NoSuchMethodException {
+      return SyncProxy.create(KeyPairClient.class, client);
+   }
+   @Provides
+   @Singleton
+   protected SecurityGroupAsyncClient provideSecurityGroupAsyncClient(RestClientFactory factory) {
+      return factory.create(SecurityGroupAsyncClient.class);
+   }
+
+   @Provides
+   @Singleton
+   public SecurityGroupClient provideSecurityGroupClient(SecurityGroupAsyncClient client) throws IllegalArgumentException,
+            SecurityException, NoSuchMethodException {
+      return SyncProxy.create(SecurityGroupClient.class, client);
+   }
    @Provides
    @Singleton
    @EC2

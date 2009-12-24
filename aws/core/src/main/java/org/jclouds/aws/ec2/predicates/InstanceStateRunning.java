@@ -3,9 +3,9 @@ package org.jclouds.aws.ec2.predicates;
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.RunningInstance;
+import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Predicate;
@@ -21,13 +21,13 @@ import com.google.inject.Inject;
 @Singleton
 public class InstanceStateRunning implements Predicate<RunningInstance> {
 
-   private final EC2Client client;
+   private final InstanceClient client;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public InstanceStateRunning(EC2Client client) {
+   public InstanceStateRunning(InstanceClient client) {
       this.client = client;
    }
 
