@@ -38,6 +38,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>project</module>
+        <module>assemblies</module>
         <module>archetypes</module>
         <module>thirdparty</module>
         <module>core</module>
