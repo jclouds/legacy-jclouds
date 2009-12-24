@@ -4,7 +4,7 @@
    $Revision$
    $Date$
 
-   Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
+   Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
 
    ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one
@@ -29,12 +29,12 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
+    <version>1.0-SNAPSHOT</version>    
     <packaging>pom</packaging>
     <name>jclouds Project</name>
     <url>http://www.jclouds.org</url>
     <description>jclouds: Concurrent API for Cloud Services</description>
     <inceptionYear>2009</inceptionYear>
-    <version>1.0-SNAPSHOT</version>
 
     <licenses>
         <license>
@@ -162,7 +162,7 @@
     </developers>
 
     <properties>
-        <parent.basedir>${basedir}</parent.basedir>
+        <!--parent.basedir>${basedir}</parent.basedir-->
         <sourceEncoding>UTF-8</sourceEncoding>
         <maven.compile.source>1.6</maven.compile.source>
         <maven.compile.target>1.6</maven.compile.target>
@@ -269,15 +269,15 @@
                    </systemProperties>
                 </configuration>
             </plugin>
-            <!-- Make sure we generate src jars too -->
+            <!-- make sure we generate src jars too -->
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
-                <inherited>true</inherited>
+                <version>2.1.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
                         <goals>
-                            <goal>jar</goal>
+                            <goal>jar-no-fork</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -483,6 +483,78 @@ pageTracker._trackPageview();
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>distribution</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <!-- Can't use variables in outputDirectory in earlier versions.
+                          See http://jira.codehaus.org/browse/MASSEMBLY-142. -->
+                        <version>2.2-beta-3</version>
+                        <executions>
+                            <execution>
+                                <id>generate-distribution-files</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <!-- also default since 2.2-beta-3 -->
+                                    <ignoreDirFormatExtensions>true</ignoreDirFormatExtensions>                                
+                                    <descriptors>
+                                        <descriptor>src-descriptor.xml</descriptor>
+                                        <descriptor>jar-with-dependencies-descriptor.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>${project.groupId}</groupId>
+                                <artifactId>jclouds-assemblies</artifactId>
+                                <version>${project.version}</version>
+                            </dependency>
+                        </dependencies>                        
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>repackage-jar-with-dependencies</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask"/>
+                                        <jarjar destfile="${build.directory}/${build.finalName}-jar-with-dependencies.jar" update="true">
+                                            <!-- Replace "x.y.." with "org.jclouds.repackaged.x.y..". Note: can't deal with package-info.class files.
+                                              See http://code.google.com/p/jarjar/wiki/CommandLineDocs for more information on jarjar rules. -->
+                                            <rule pattern="javax.annotation.**" result="${project.groupId}.repackaged.@0"/>
+                                            <rule pattern="javax.inject.**" result="${project.groupId}.repackaged.@0"/>
+                                            <rule pattern="javax.ws.**" result="${project.groupId}.repackaged.@0"/>
+                                            <!-- google-guava and google-collections -->
+                                            <rule pattern="com.google.common.**" result="${project.groupId}.repackaged.@0"/>
+                                            <!-- guice -->
+                                            <rule pattern="com.google.inject.**" result="${project.groupId}.repackaged.@0"/>
+                                        </jarjar>
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.tonicsystems.jarjar</groupId>
+                                <artifactId>jarjar</artifactId>
+                                <version>1.0-rc8</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>        
     </profiles>
     <reporting>
         <plugins>

@@ -4,7 +4,7 @@
     $Revision$ 
     $Date$ 
     
-    Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
+    Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
 
     ====================================================================
     Licensed to the Apache Software Foundation (ASF) under one or
@@ -24,19 +24,22 @@
     ====================================================================
 -->
 <assembly>
-    <id>dependencies</id>
+    <id>src</id>
+    <includeBaseDirectory>false</includeBaseDirectory>
     <formats>
         <format>dir</format>
     </formats>
-    <includeBaseDirectory>false</includeBaseDirectory>
-    <dependencySets>
-        <dependencySet>
-            <scope>runtime</scope>
-            <useProjectArtifact>false</useProjectArtifact>
-            <useTransitiveDependencies>false</useTransitiveDependencies>
-            <excludes>
-                <exclude>org.jclouds:jclouds-core</exclude>
-            </excludes>
-        </dependencySet>
-    </dependencySets>
+    <fileSets>
+        <fileSet>
+            <includes>
+                <include>README*</include>
+                <include>LICENSE*</include>
+                <include>NOTICE*</include>
+                <include>pom.xml</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>src</directory>
+        </fileSet>
+    </fileSets>
 </assembly>

@@ -4,7 +4,7 @@
    $Revision$
    $Date$
 
-   Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
+   Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
 
    ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one
@@ -107,25 +107,36 @@ pageTracker._trackPageview();
                     </properties>
                 </configuration>
             </plugin>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <inherited>false</inherited>
-                <executions>
-                    <execution>
-                        <id>create-package</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <finalName>jclouds-${project.version}</finalName>
-                            <descriptors>
-                                <descriptor>package-descriptor.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>            
         </plugins>
     </build>
+    
+    <profiles>
+        <profile>
+            <id>distribution</id>
+            <build>
+                <plugins>
+                    <!-- top-level only -->
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <inherited>false</inherited>
+                        <executions>
+                            <execution>
+                                <id>create-distribution</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <finalName>jclouds-${project.version}</finalName>
+                                    <descriptors>
+                                        <descriptor>package-descriptor.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
+                            </execution>
+                        </executions>                               
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

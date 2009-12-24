@@ -4,7 +4,7 @@
     $Revision$ 
     $Date$ 
     
-    Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
+    Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
 
     ====================================================================
     Licensed to the Apache Software Foundation (ASF) under one or
@@ -24,19 +24,34 @@
     ====================================================================
 -->
 <assembly>
-    <id>dependencies</id>
+    <id>jar-with-dependencies</id>
     <formats>
-        <format>dir</format>
+        <format>jar</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
     <dependencySets>
         <dependencySet>
+            <unpack>true</unpack>
             <scope>runtime</scope>
-            <useProjectArtifact>false</useProjectArtifact>
-            <useTransitiveDependencies>false</useTransitiveDependencies>
             <excludes>
                 <exclude>org.jclouds:jclouds-core</exclude>
-            </excludes>            
+            </excludes>
+            <!-- exclude all transitive dependencies of core too -->
+            <useTransitiveFiltering>true</useTransitiveFiltering>
         </dependencySet>
     </dependencySets>
+    <fileSets>
+        <fileSet>
+            <directory>${project.build.outputDirectory}</directory>
+            <outputDirectory />
+        </fileSet>
+        <!-- Hack to get Maven assembly to build even if there are no files to include.
+          See http://jira.codehaus.org/browse/MASSEMBLY-457. -->
+        <fileSet>
+            <includes>
+                <include>pom.xml</include>
+            </includes>
+            <outputDirectory>META-INF/maven/${project.groupId}/${project.artifactId}</outputDirectory>
+        </fileSet>
+    </fileSets>
 </assembly>

@@ -4,7 +4,7 @@
    $Revision$
    $Date$
 
-   Copyright (C) 2009 Adrian Cole <adrian@jclouds.org>
+   Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
 
    ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one
@@ -80,24 +80,4 @@
         </dependency>
     </dependencies>
     
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <descriptors>
-                                <descriptor>dependencies-descriptor.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>   
-        </plugins>
-    </build>           
 </project>
