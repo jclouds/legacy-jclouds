@@ -113,10 +113,10 @@ sub build_categories {
             my $query = build_query($type);
 
             # add a dataTypes object for the response type
-            $dataTypes->{ $type . "Response" } =
-              build_item( $type . "Response", "Response" );
+            $dataTypes->{ $type . "ResponseType" } =
+              build_item( $type . "ResponseType", "ResponseType" );
 
-            $query->{responseType} = $type . "Response";
+            $query->{responseType} = $type . "ResponseType";
 
             $queries->{$type} = $query;
         }
