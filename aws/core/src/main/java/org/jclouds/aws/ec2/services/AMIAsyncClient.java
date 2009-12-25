@@ -37,6 +37,7 @@ import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.domain.Image;
 import org.jclouds.aws.ec2.domain.ImageAttribute;
 import org.jclouds.aws.ec2.filters.FormSigner;
+import org.jclouds.aws.ec2.options.CreateImageOptions;
 import org.jclouds.aws.ec2.options.DescribeImagesOptions;
 import org.jclouds.aws.ec2.xml.DescribeImagesResponseHandler;
 import org.jclouds.rest.annotations.Endpoint;
@@ -46,7 +47,7 @@ import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 
 /**
- * Provides access to EC2 via their REST API.
+ * Provides access to AMI Services.
  * <p/>
  * 
  * @author Adrian Cole
@@ -58,7 +59,7 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 public interface AMIAsyncClient {
 
    /**
-    * @see BaseEC2Client#describeImages
+    * @see AMIClient#describeImages
     */
    @POST
    @Path("/")
@@ -67,11 +68,20 @@ public interface AMIAsyncClient {
    Future<? extends SortedSet<Image>> describeImages(DescribeImagesOptions... options);
 
    /**
-    * @see BaseEC2Client#describeImages
+    * @see AMIClient#describeImages
     */
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeImageAttribute")
    Future<String> describeImageAttribute(@FormParam("ImageId") String imageId,
             @FormParam("Attribute") ImageAttribute attribute);
+
+   /**
+    * @see AMIClient#createImage
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "CreateImage")
+   Future<String> createImage(@FormParam("Name") String name,
+            @FormParam("InstanceId") String instanceId, CreateImageOptions... options);
 }

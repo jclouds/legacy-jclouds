@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.aws.ec2.domain.Image;
 import org.jclouds.aws.ec2.domain.ImageAttribute;
+import org.jclouds.aws.ec2.options.CreateImageOptions;
 import org.jclouds.aws.ec2.options.DescribeImagesOptions;
 import org.jclouds.concurrent.Timeout;
 
@@ -46,7 +47,7 @@ public interface AMIClient {
     * private images that you own, and private images owned by other users for which you have
     * explicit launch permissions.
     * 
-    * @see #describeInstances
+    * @see InstanceClient#describeInstances
     * @see #describeImageAttribute
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeImages.html"
     *      />
@@ -72,4 +73,19 @@ public interface AMIClient {
     */
    String describeImageAttribute(String imageId, ImageAttribute attribute);
 
+   /**
+    * Creates an AMI that uses an Amazon EBS root device from a "running" or "stopped" instance.
+    * 
+    * @param name The name of the AMI that was provided during image creation.  3-128 alphanumeric characters, parenthesis (()), commas (,), slashes (/), dashes (-), or underscores(_)
+    * @param instanceId The ID of the instance.
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeImages.html"
+    *      />
+    * @see CreateImageOptions
+    * @see InstanceClient#runInstances
+    * @see InstanceClient#describeInstances
+    * @see InstanceClient#terminateInstances
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateImage.html"
+    *      />
+    */
+   String createImage(String name, String instanceId, CreateImageOptions... options);
 }

@@ -34,6 +34,7 @@ import java.net.URI;
 import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.domain.ImageAttribute;
 import org.jclouds.aws.ec2.filters.FormSigner;
+import org.jclouds.aws.ec2.options.CreateImageOptions;
 import org.jclouds.aws.ec2.options.DescribeImagesOptions;
 import org.jclouds.aws.ec2.xml.DescribeImagesResponseHandler;
 import org.jclouds.aws.reference.AWSConstants;
@@ -61,6 +62,52 @@ import com.google.inject.TypeLiteral;
  */
 @Test(groups = "unit", testName = "ec2.AMIAsyncClientTest")
 public class AMIAsyncClientTest extends RestClientTest<AMIAsyncClient> {
+
+   public void testCreateImage() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = AMIAsyncClient.class.getMethod("createImage", String.class, String.class,
+               Array.newInstance(CreateImageOptions.class, 0).getClass());
+      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method, "name",
+               "instanceId");
+
+      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 69\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertPayloadEquals(httpMethod,
+               "Version=2009-11-30&Action=CreateImage&Name=name&InstanceId=instanceId");
+      filter.filter(httpMethod);
+      assertPayloadEquals(
+               httpMethod,
+               "Action=CreateImage&InstanceId=instanceId&Name=name&Signature=DPCvwvxdNmWXHfiIB%2BRy%2F4gJDAruu6i8dQVirzkFGOU%3D&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp=2009-11-08T15%3A54%3A08.897Z&Version=2009-11-30&AWSAccessKeyId=user");
+
+      assertResponseParserClassEquals(method, httpMethod, ReturnStringIf200.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testCreateImageOptions() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = AMIAsyncClient.class.getMethod("createImage", String.class, String.class,
+               Array.newInstance(CreateImageOptions.class, 0).getClass());
+      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method, "name",
+               "instanceId", new CreateImageOptions().withDescription("description").noReboot());
+
+      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 107\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertPayloadEquals(
+               httpMethod,
+               "Version=2009-11-30&Action=CreateImage&Name=name&InstanceId=instanceId&Description=description&NoReboot=true");
+
+      assertResponseParserClassEquals(method, httpMethod, ReturnStringIf200.class);
+      assertSaxResponseParserClassEquals(method, null);
+      // assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      // assertSaxResponseParserClassEquals(method, CreateImageResponseHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
 
    public void testDescribeImages() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AMIAsyncClient.class.getMethod("describeImages", Array.newInstance(

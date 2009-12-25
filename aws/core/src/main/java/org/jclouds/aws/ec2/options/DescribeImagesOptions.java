@@ -39,7 +39,7 @@ import org.jclouds.aws.ec2.options.internal.BaseEC2RequestOptions;
  * import static org.jclouds.aws.ec2.options.DescribeImagesOptions.Builder.*
  * <p/>
  * EC2Client connection = // get connection
- * Future<SortedSet<ImageMetadata>> images = connection.describeImages(executableBy("123125").imageIds(1000, 1004));
+ * Future<SortedSet<ImageMetadata>> images = connection.getAMIServices().describeImages(executableBy("123125").imageIds(1000, 1004));
  * <code>
  * 
  * @author Adrian Cole
