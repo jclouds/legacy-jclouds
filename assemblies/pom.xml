@@ -27,23 +27,15 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.jclouds</groupId>    
+    <parent>
+        <artifactId>jclouds-project</artifactId>
+        <groupId>org.jclouds</groupId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../project/pom.xml</relativePath>
+    </parent>    
     <artifactId>jclouds-assemblies</artifactId>
-    <version>1.0-SNAPSHOT</version>
     <name>jclouds shared Maven assembly descriptors</name>
-    
-    <properties>
-        <sourceEncoding>UTF-8</sourceEncoding>
-    </properties>
-    
-    <build>
-        <plugins>
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <configuration>
-                    <encoding>${sourceEncoding}</encoding>
-                </configuration>
-            </plugin>            
-        </plugins>
-    </build>
+
+    <!-- Cannot be run with '-Pdistribution' on a clean repo, because of a
+      self-dependency. Install into the local repo with 'mvn clean install' first. -->
 </project>
