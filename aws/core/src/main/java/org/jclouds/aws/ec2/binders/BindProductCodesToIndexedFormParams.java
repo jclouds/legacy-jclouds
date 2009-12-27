@@ -32,18 +32,18 @@ import org.jclouds.rest.Binder;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 /**
- * Binds the String [] to query parameters named with KeyName.index
+ * Binds the String [] to form parameters named with ProductCode.index
  * 
  * @author Adrian Cole
  * @since 4.0
  */
-public class BindKeyNameToIndexedFormParams implements Binder {
+public class BindProductCodesToIndexedFormParams implements Binder {
 
    @SuppressWarnings("unchecked")
    public void bindToRequest(HttpRequest request, Object input) {
       checkArgument(checkNotNull(request, "input") instanceof GeneratedHttpRequest,
                "this binder is only valid for GeneratedHttpRequests!");
-      EC2Utils.indexStringArrayToFormValuesWithPrefix((GeneratedHttpRequest<?>) request, "KeyName", input);
+      EC2Utils.indexIterableToFormValuesWithPrefix((GeneratedHttpRequest<?>) request, "ProductCode", input);
    }
 
 }

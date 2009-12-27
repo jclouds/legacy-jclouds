@@ -1,4 +1,4 @@
-<DescribeKeyPairsResponse xmlns="http://ec2.amazonaws.com/doc/2009-08-15/">
+<DescribeKeyPairsResponse xmlns="http://ec2.amazonaws.com/doc/2009-11-30/">
   <keySet>
     <item>
       <keyName>gsg-keypair</keyName>

@@ -23,41 +23,48 @@
  */
 package org.jclouds.aws.ec2.xml;
 
-import java.util.SortedSet;
+import java.util.Map;
 
-import org.jclouds.aws.ec2.domain.KeyPair;
+import org.jclouds.aws.ec2.domain.Image;
+import org.jclouds.aws.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.http.functions.ParseSax;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Maps;
 
 /**
- * Parses: DescribeKeyPairsResponse xmlns="http://ec2.amazonaws.com/doc/2009-11-30/"
  * 
- * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeKeyPairs.html"
- *      />
  * @author Adrian Cole
  */
-public class DescribeKeyPairsResponseHandler extends ParseSax.HandlerWithResult<SortedSet<KeyPair>> {
-
+public class BlockDeviceMappingHandler extends
+         ParseSax.HandlerWithResult<Map<String, EbsBlockDevice>> {
    private StringBuilder currentText = new StringBuilder();
-   private SortedSet<KeyPair> keyPairs = Sets.newTreeSet();
-   private String keyFingerprint;
-   private String keyName;
 
-   public SortedSet<KeyPair> getResult() {
-      return keyPairs;
+   private Map<String, EbsBlockDevice> ebsBlockDevices = Maps.newHashMap();
+   private String deviceName;
+   private String snapshotId;
+   private int volumeSize;
+   private boolean deleteOnTermination = true;// correct default is true.
+
+   public Map<String, EbsBlockDevice> getResult() {
+      return ebsBlockDevices;
    }
 
    public void endElement(String uri, String name, String qName) {
-
-      if (qName.equals("keyFingerprint")) {
-         this.keyFingerprint = currentText.toString().trim();
+      if (qName.equals("deviceName")) {
+         deviceName = currentText.toString().trim();
+      } else if (qName.equals("snapshotId")) {
+         snapshotId = currentText.toString().trim();
+      } else if (qName.equals("volumeSize")) {
+         volumeSize = Integer.parseInt(currentText.toString().trim());
+      } else if (qName.equals("deleteOnTermination")) {
+         deleteOnTermination = Boolean.parseBoolean(currentText.toString().trim());
       } else if (qName.equals("item")) {
-         keyPairs.add(new KeyPair(keyName, keyFingerprint, null));
-      } else if (qName.equals("keyName")) {
-         this.keyName = currentText.toString().trim();
+         ebsBlockDevices.put(deviceName, new Image.EbsBlockDevice(snapshotId, volumeSize,
+                  deleteOnTermination));
+         this.snapshotId = null;
+         this.volumeSize = 0;
+         this.deleteOnTermination = true;
       }
-
       currentText = new StringBuilder();
    }
 

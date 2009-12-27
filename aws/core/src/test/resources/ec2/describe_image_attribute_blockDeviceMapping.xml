@@ -1,0 +1,22 @@
+<DescribeImageAttributeResponse
+    xmlns="http://ec2.amazonaws.com/doc/2009-11-30/">
+    <imageId>ami-61a54008</imageId>
+    <blockDeviceMapping>
+        <item>
+            <deviceName>/dev/sda1</deviceName>
+            <ebs>
+                <snapshotId>snap-d01272b9</snapshotId>
+                <volumeSize>30</volumeSize>
+                <deleteOnTermination>true</deleteOnTermination>
+            </ebs>
+        </item>
+        <item>
+            <deviceName>xvdf</deviceName>
+            <ebs>
+                <snapshotId>snap-d31272ba</snapshotId>
+                <volumeSize>250</volumeSize>
+                <deleteOnTermination>false</deleteOnTermination>
+            </ebs>
+        </item>
+    </blockDeviceMapping>
+</DescribeImageAttributeResponse>

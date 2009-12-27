@@ -21,29 +21,38 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.ec2.binders;
+package org.jclouds.aws.ec2.xml;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.util.Set;
 
-import org.jclouds.aws.ec2.util.EC2Utils;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.Binder;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.jclouds.http.functions.ParseSax;
+
+import com.google.common.collect.Sets;
 
 /**
- * Binds the String [] to query parameters named with KeyName.index
  * 
+ * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/index.html?ApiReference-query-DescribeImageAttribute.html"
+ *      />
  * @author Adrian Cole
- * @since 4.0
  */
-public class BindKeyNameToIndexedFormParams implements Binder {
+public class ProductCodesHandler extends ParseSax.HandlerWithResult<Set<String>> {
 
-   @SuppressWarnings("unchecked")
-   public void bindToRequest(HttpRequest request, Object input) {
-      checkArgument(checkNotNull(request, "input") instanceof GeneratedHttpRequest,
-               "this binder is only valid for GeneratedHttpRequests!");
-      EC2Utils.indexStringArrayToFormValuesWithPrefix((GeneratedHttpRequest<?>) request, "KeyName", input);
+   private StringBuilder currentText = new StringBuilder();
+   private Set<String> productCodes = Sets.newHashSet();
+
+   public Set<String> getResult() {
+      return productCodes;
    }
 
+   public void endElement(String uri, String name, String qName) {
+
+      if (qName.equalsIgnoreCase("productCode")) {
+         productCodes.add(currentText.toString().trim());
+      }
+      currentText = new StringBuilder();
+   }
+
+   public void characters(char ch[], int start, int length) {
+      currentText.append(ch, start, length);
+   }
 }

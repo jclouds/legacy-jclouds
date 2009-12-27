@@ -1,0 +1,9 @@
+<DescribeImageAttributeResponse
+    xmlns="http://ec2.amazonaws.com/doc/2009-11-30/">
+    <imageId>ami-61a54008</imageId>
+    <productCodes>
+        <item>
+            <productCode>774F4FF8</productCode>
+        </item>
+    </productCodes>
+</DescribeImageAttributeResponse>

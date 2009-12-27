@@ -52,7 +52,7 @@ public class BindInetAddressesToIndexedFormParams implements Binder {
       for (int i = 0; i < addresses.length; i++) {
          addressStrings[i] = addresses[i].getHostAddress();
       }
-      EC2Utils.indexFormValuesWithPrefix((GeneratedHttpRequest<?>) request, "PublicIp",
+      EC2Utils.indexStringArrayToFormValuesWithPrefix((GeneratedHttpRequest<?>) request, "PublicIp",
                addressStrings);
    }
 

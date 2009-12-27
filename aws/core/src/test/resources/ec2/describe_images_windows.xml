@@ -1,0 +1,21 @@
+<DescribeImagesResponse xmlns="http://ec2.amazonaws.com/doc/2009-11-30/">
+    <imagesSet>
+        <item>
+            <imageId>ami-02eb086b</imageId>
+            <imageLocation>aws-solutions-amis/SqlSvrStd2003r2-x86_64-Win_SFWBasic5.1-v1.0.manifest.xml</imageLocation>
+            <imageState>available</imageState>
+            <imageOwnerId>771350841976</imageOwnerId>            
+            <isPublic>true</isPublic>
+            <productCodes>
+                <item>
+                    <productCode>5771E9A6</productCode>
+                </item>
+            </productCodes>
+            <architecture>x86_64</architecture>
+            <imageType>machine</imageType>
+            <platform>windows</platform>
+            <rootDeviceType>instance-store</rootDeviceType>
+            <blockDeviceMapping/>
+        </item>
+    </imagesSet>
+</DescribeImagesResponse>

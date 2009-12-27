@@ -110,7 +110,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
     * more information, go to the Metadata section of the Amazon Elastic Compute Cloud Developer
     * Guide.
     * 
-    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/2009-08-15/DeveloperGuide/" />
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/2009-11-30/DeveloperGuide/" />
     */
    public String getAmiLaunchIndex() {
       return amiLaunchIndex;

@@ -1,0 +1,11 @@
+<DescribeImageAttributeResponse xmlns="http://ec2.amazonaws.com/doc/2009-11-30/">
+  <imageId>ami-61a54008</imageId>
+  <launchPermission>
+    <item>
+      <group>all</group>
+    </item>
+    <item>
+      <userId>495219933132</userId>
+    </item>
+  </launchPermission>
+</DescribeImageAttributeResponse>

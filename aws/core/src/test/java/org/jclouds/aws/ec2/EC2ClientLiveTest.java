@@ -24,7 +24,6 @@
 package org.jclouds.aws.ec2;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.aws.ec2.options.DescribeImagesOptions.Builder.imageIds;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -33,8 +32,6 @@ import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.aws.ec2.domain.Image;
-import org.jclouds.aws.ec2.domain.ImageAttribute;
 import org.jclouds.aws.ec2.domain.IpPermission;
 import org.jclouds.aws.ec2.domain.IpProtocol;
 import org.jclouds.aws.ec2.domain.KeyPair;
@@ -59,7 +56,6 @@ public class EC2ClientLiveTest {
 
    private EC2Client client;
    private String user;
-   private String imageId = "ami-d7fe1fbe";
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
@@ -67,22 +63,6 @@ public class EC2ClientLiveTest {
       String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
       client = EC2ContextFactory.createContext(user, password, new Log4JLoggingModule()).getApi();
-   }
-
-   @Test
-   void testDescribeImages() {
-      SortedSet<Image> allResults = client.getAMIServices().describeImages();
-      assertNotNull(allResults);
-      assert allResults.size() >= 2 : allResults.size();
-      Iterator<Image> iterator = allResults.iterator();
-      String id1 = iterator.next().getImageId();
-      String id2 = iterator.next().getImageId();
-      SortedSet<Image> twoResults = client.getAMIServices().describeImages(imageIds(id1, id2));
-      assertNotNull(twoResults);
-      assertEquals(twoResults.size(), 2);
-      iterator = twoResults.iterator();
-      assertEquals(iterator.next().getImageId(), id1);
-      assertEquals(iterator.next().getImageId(), id2);
    }
 
    @Test
@@ -98,30 +78,6 @@ public class EC2ClientLiveTest {
          PublicIpInstanceIdPair compare = result.last();
          assertEquals(compare, pair);
       }
-   }
-
-   @Test(dependsOnMethods = "testDescribeImages", enabled = false)
-   void testDescribeImageAttribute() throws InterruptedException, ExecutionException,
-            TimeoutException {
-      SortedSet<Image> oneResult = client.getAMIServices().describeImages(imageIds(imageId));
-      @SuppressWarnings("unused")
-      Image expects = oneResult.last();
-
-      System.out.println(client.getAMIServices().describeImageAttribute(imageId,
-               ImageAttribute.PRODUCT_CODES));
-
-      System.out.println(client.getAMIServices().describeImageAttribute(imageId,
-               ImageAttribute.PRODUCT_CODES));
-      System.out.println(client.getAMIServices().describeImageAttribute(imageId,
-               ImageAttribute.RAMDISK));
-      System.out.println(client.getAMIServices().describeImageAttribute(imageId,
-               ImageAttribute.KERNEL));
-      System.out.println(client.getAMIServices().describeImageAttribute(imageId,
-               ImageAttribute.PLATFORM));
-      System.out.println(client.getAMIServices().describeImageAttribute(imageId,
-               ImageAttribute.LAUNCH_PERMISSION));
-      System.out.println(client.getAMIServices().describeImageAttribute(imageId,
-               ImageAttribute.BLOCK_DEVICE_MAPPING));
    }
 
    @Test

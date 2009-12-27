@@ -43,7 +43,7 @@ public class BindGroupNameToIndexedFormParams implements Binder {
    public void bindToRequest(HttpRequest request, Object input) {
       checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
                "this binder is only valid for GeneratedHttpRequests!");
-      EC2Utils.indexFormValuesWithPrefix((GeneratedHttpRequest<?>) request, "GroupName", input);
+      EC2Utils.indexStringArrayToFormValuesWithPrefix((GeneratedHttpRequest<?>) request, "GroupName", input);
    }
 
 }

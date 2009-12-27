@@ -43,7 +43,7 @@ public class BindInstanceIdsToIndexedFormParams implements Binder {
    public void bindToRequest(HttpRequest request, Object input) {
       checkArgument(checkNotNull(request, "input") instanceof GeneratedHttpRequest,
                "this binder is only valid for GeneratedHttpRequests!");
-      EC2Utils.indexFormValuesWithPrefix((GeneratedHttpRequest<?>) request, "InstanceId", input);
+      EC2Utils.indexStringArrayToFormValuesWithPrefix((GeneratedHttpRequest<?>) request, "InstanceId", input);
    }
 
 }

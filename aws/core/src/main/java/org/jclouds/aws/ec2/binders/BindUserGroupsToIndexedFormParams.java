@@ -31,19 +31,31 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 
+import com.google.common.collect.Iterables;
+
 /**
- * Binds the String [] to query parameters named with KeyName.index
+ * Binds the Iterable to query parameters named with UserGroup.index
  * 
  * @author Adrian Cole
- * @since 4.0
  */
-public class BindKeyNameToIndexedFormParams implements Binder {
+public class BindUserGroupsToIndexedFormParams implements Binder {
 
    @SuppressWarnings("unchecked")
    public void bindToRequest(HttpRequest request, Object input) {
-      checkArgument(checkNotNull(request, "input") instanceof GeneratedHttpRequest,
+      checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
                "this binder is only valid for GeneratedHttpRequests!");
-      EC2Utils.indexStringArrayToFormValuesWithPrefix((GeneratedHttpRequest<?>) request, "KeyName", input);
+      checkArgument(checkNotNull(input, "input") instanceof Iterable<?>,
+               "this binder is only valid for Iterable<?>: " + input.getClass());
+      checkValidUserGroup(input);
+      EC2Utils.indexIterableToFormValuesWithPrefix((GeneratedHttpRequest<?>) request, "UserGroup",
+               input);
+   }
+
+   private void checkValidUserGroup(Object input) {
+      Iterable<?> values = (Iterable<?>) input;
+      long size = Iterables.size(values);
+      checkArgument(size == 0 || (size == 1 && Iterables.getOnlyElement(values).equals("all")),
+               "only supported UserGroup is 'all'");
    }
 
 }

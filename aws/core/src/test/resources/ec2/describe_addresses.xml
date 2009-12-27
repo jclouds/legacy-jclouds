@@ -1,4 +1,4 @@
-<DescribeAddressesResponse xmlns="http://ec2.amazonaws.com/doc/2009-08-15/">
+<DescribeAddressesResponse xmlns="http://ec2.amazonaws.com/doc/2009-11-30/">
     <addressesSet>
         <item>
             <instanceId>i-f15ebb98</instanceId>

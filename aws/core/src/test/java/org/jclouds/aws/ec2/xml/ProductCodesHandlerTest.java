@@ -21,29 +21,35 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.ec2.binders;
+package org.jclouds.aws.ec2.xml;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static org.testng.Assert.assertEquals;
 
-import org.jclouds.aws.ec2.util.EC2Utils;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.Binder;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
+import java.io.InputStream;
+import java.util.Set;
+
+import org.jclouds.http.functions.BaseHandlerTest;
+import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
- * Binds the String [] to query parameters named with KeyName.index
+ * Tests behavior of {@code ProductCodesHandler}
  * 
  * @author Adrian Cole
- * @since 4.0
  */
-public class BindKeyNameToIndexedFormParams implements Binder {
+@Test(groups = "unit", testName = "ec2.ProductCodesHandlerTest")
+public class ProductCodesHandlerTest extends BaseHandlerTest {
+   public void testApplyInputStream() {
 
-   @SuppressWarnings("unchecked")
-   public void bindToRequest(HttpRequest request, Object input) {
-      checkArgument(checkNotNull(request, "input") instanceof GeneratedHttpRequest,
-               "this binder is only valid for GeneratedHttpRequests!");
-      EC2Utils.indexStringArrayToFormValuesWithPrefix((GeneratedHttpRequest<?>) request, "KeyName", input);
+      InputStream is = getClass().getResourceAsStream(
+               "/ec2/describe_image_attribute_productCodes.xml");
+
+      Set<String> expected = ImmutableSet.of("774F4FF8");
+
+      Set<String> result = factory.create(injector.getInstance(ProductCodesHandler.class))
+               .parse(is);
+
+      assertEquals(result, expected);
    }
-
 }

@@ -23,68 +23,87 @@
  */
 package org.jclouds.aws.ec2.xml;
 
+import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 
 import javax.annotation.Resource;
 
 import org.jclouds.aws.ec2.domain.Image;
 import org.jclouds.aws.ec2.domain.Image.Architecture;
+import org.jclouds.aws.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.aws.ec2.domain.Image.ImageState;
 import org.jclouds.aws.ec2.domain.Image.ImageType;
+import org.jclouds.aws.ec2.domain.Image.RootDeviceType;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
 import org.xml.sax.Attributes;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.inject.internal.Nullable;
 
 /**
  * Parses the following XML document:
  * <p/>
- * DescribeImagesResponse xmlns="http://ec2.amazonaws.com/doc/2009-08-15/"
+ * DescribeImagesResponse xmlns="http://ec2.amazonaws.com/doc/2009-11-30/"
  * 
  * @author Adrian Cole
  * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeImages.html"
  *      />
  */
-public class DescribeImagesResponseHandler extends ParseSax.HandlerWithResult<SortedSet<Image>> {
+public class DescribeImagesResponseHandler extends ParseSax.HandlerWithResult<Set<Image>> {
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private SortedSet<Image> contents = Sets.newTreeSet();
+   private Set<Image> contents = Sets.newHashSet();
    private StringBuilder currentText = new StringBuilder();
 
    private Architecture architecture;
+   private String name;
+   private String description;
    private String imageId;
    private String imageLocation;
    private String imageOwnerId;
    private ImageState imageState;
    private ImageType imageType;
    private boolean isPublic;
-   private @Nullable
-   String kernelId;
+   private String kernelId;
    private String platform;
    private Set<String> productCodes = Sets.newHashSet();
-   private @Nullable
-   String ramdiskId;
+   private String ramdiskId;
    private boolean inProductCodes;
+   private boolean inBlockDeviceMapping;
+   private RootDeviceType rootDeviceType;
+   private Map<String, EbsBlockDevice> ebsBlockDevices = Maps.newHashMap();
+   private String deviceName;
+   private String snapshotId;
+   private int volumeSize;
+   private boolean deleteOnTermination = true;// correct default is true.
 
-   public SortedSet<Image> getResult() {
+   private String rootDeviceName;
+
+   public Set<Image> getResult() {
       return contents;
    }
 
    public void startElement(String uri, String name, String qName, Attributes attrs) {
-      if (qName.equals("productCodesSet")) {
+      if (qName.equals("productCodes")) {
          inProductCodes = true;
+      } else if (qName.equals("blockDeviceMapping")) {
+         inBlockDeviceMapping = true;
       }
    }
 
    public void endElement(String uri, String name, String qName) {
       if (qName.equals("architecture")) {
          architecture = Architecture.fromValue(currentText.toString().trim());
+      } else if (qName.equals("name")) {
+         this.name = currentText.toString().trim();
+      } else if (qName.equals("description")) {
+         description = currentText.toString().trim();
       } else if (qName.equals("imageId")) {
          imageId = currentText.toString().trim();
+      } else if (qName.equals("deviceName")) {
+         deviceName = currentText.toString().trim();
       } else if (qName.equals("imageLocation")) {
          imageLocation = currentText.toString().trim();
       } else if (qName.equals("imageOwnerId")) {
@@ -101,19 +120,39 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerWithResult<So
          platform = currentText.toString().trim();
       } else if (qName.equals("productCode")) {
          productCodes.add(currentText.toString().trim());
-      } else if (qName.equals("productCodesSet")) {
+      } else if (qName.equals("productCodes")) {
          inProductCodes = false;
+      } else if (qName.equals("blockDeviceMapping")) {
+         inBlockDeviceMapping = false;
+      } else if (qName.equals("snapshotId")) {
+         snapshotId = currentText.toString().trim();
+      } else if (qName.equals("volumeSize")) {
+         volumeSize = Integer.parseInt(currentText.toString().trim());
+      } else if (qName.equals("deleteOnTermination")) {
+         deleteOnTermination = Boolean.parseBoolean(currentText.toString().trim());
       } else if (qName.equals("ramdiskId")) {
          ramdiskId = currentText.toString().trim();
+      } else if (qName.equals("rootDeviceType")) {
+         rootDeviceType = RootDeviceType.fromValue(currentText.toString().trim());
+      } else if (qName.equals("rootDeviceName")) {
+         rootDeviceName = currentText.toString().trim();
       } else if (qName.equals("item")) {
-         if (!inProductCodes) {
+         if (inBlockDeviceMapping) {
+            ebsBlockDevices.put(deviceName, new Image.EbsBlockDevice(snapshotId, volumeSize,
+                     deleteOnTermination));
+            this.snapshotId = null;
+            this.volumeSize = 0;
+            this.deleteOnTermination = true;
+         } else if (!inProductCodes) {
             try {
-               contents.add(new Image(architecture, imageId, imageLocation, imageOwnerId,
-                        imageState, imageType, isPublic, kernelId, platform, productCodes,
-                        ramdiskId));
+               contents.add(new Image(architecture, this.name, description, imageId, imageLocation,
+                        imageOwnerId, imageState, imageType, isPublic, productCodes, kernelId,
+                        platform, ramdiskId, rootDeviceType, rootDeviceName, ebsBlockDevices));
             } catch (NullPointerException e) {
                logger.warn(e, "malformed image: %s", imageId);
             }
+            this.name = null;
+            this.description = null;
             this.architecture = null;
             this.imageId = null;
             this.imageLocation = null;
@@ -125,6 +164,9 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerWithResult<So
             this.platform = null;
             this.productCodes = Sets.newHashSet();
             this.ramdiskId = null;
+            this.rootDeviceType = null;
+            this.rootDeviceName = null;
+            this.ebsBlockDevices = Maps.newHashMap();
          }
 
       }

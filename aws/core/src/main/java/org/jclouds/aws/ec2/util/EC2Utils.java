@@ -33,13 +33,25 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
  * @author Adrian Cole
  */
 public class EC2Utils {
-   public static void indexFormValuesWithPrefix(GeneratedHttpRequest<?> request, String prefix,
-            Object input) {
+   public static void indexStringArrayToFormValuesWithPrefix(GeneratedHttpRequest<?> request,
+            String prefix, Object input) {
       checkArgument(checkNotNull(input, "input") instanceof String[],
                "this binder is only valid for String[] : " + input.getClass());
       String[] values = (String[]) input;
       for (int i = 0; i < values.length; i++) {
-         request.addFormParam(prefix + "." + (i + 1), checkNotNull(values[i], prefix
+         request.addFormParam(prefix + "." + (i + 1), checkNotNull(values[i], prefix.toLowerCase()
+                  + "s[" + i + "]"));
+      }
+   }
+
+   public static void indexIterableToFormValuesWithPrefix(GeneratedHttpRequest<?> request,
+            String prefix, Object input) {
+      checkArgument(checkNotNull(input, "input") instanceof Iterable<?>,
+               "this binder is only valid for Iterable<?>: " + input.getClass());
+      Iterable<?> values = (Iterable<?>) input;
+      int i = 0;
+      for (Object o : values) {
+         request.addFormParam(prefix + "." + (i++ + 1), checkNotNull(o.toString(), prefix
                   .toLowerCase()
                   + "s[" + i + "]"));
       }

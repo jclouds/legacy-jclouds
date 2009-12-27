@@ -1,4 +1,4 @@
-<DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2009-08-15/">
+<DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2009-11-30/">
   <reservationSet>
     <item>
       <reservationId>r-44a5402d</reservationId>
