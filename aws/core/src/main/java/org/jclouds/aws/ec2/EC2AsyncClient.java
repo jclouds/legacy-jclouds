@@ -28,6 +28,7 @@ import org.jclouds.aws.ec2.services.AMIAsyncClient;
 import org.jclouds.aws.ec2.services.ElasticIPAddressAsyncClient;
 import org.jclouds.aws.ec2.services.InstanceAsyncClient;
 import org.jclouds.aws.ec2.services.KeyPairAsyncClient;
+import org.jclouds.aws.ec2.services.MonitoringAsyncClient;
 import org.jclouds.aws.ec2.services.SecurityGroupAsyncClient;
 
 import com.google.inject.ImplementedBy;
@@ -63,5 +64,10 @@ public interface EC2AsyncClient {
     * Provides asynchronous access to SecurityGroup services.
     */
    SecurityGroupAsyncClient getSecurityGroupServices();
+
+   /**
+    * Provides asynchronous access to Monitoring services.
+    */
+   MonitoringAsyncClient getMonitoringServices();
 
 }

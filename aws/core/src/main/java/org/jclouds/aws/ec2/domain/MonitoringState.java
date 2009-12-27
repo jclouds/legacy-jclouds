@@ -21,52 +21,36 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.ec2;
+package org.jclouds.aws.ec2.domain;
 
-import org.jclouds.aws.ec2.internal.EC2ClientImpl;
-import org.jclouds.aws.ec2.services.AMIClient;
-import org.jclouds.aws.ec2.services.ElasticIPAddressClient;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.jclouds.aws.ec2.services.InstanceClient;
-import org.jclouds.aws.ec2.services.KeyPairClient;
 import org.jclouds.aws.ec2.services.MonitoringClient;
-import org.jclouds.aws.ec2.services.SecurityGroupClient;
-
-import com.google.inject.ImplementedBy;
 
 /**
- * Provides synchronous access to EC2 services.
+ * 
+ * State of monitoring for the instance.
  * 
  * @author Adrian Cole
+ * @see InstanceClient#runInstances
+ * @see MonitoringClient#monitorInstances
+ * @see MonitoringClient#UnmonitorInstances
  */
-@ImplementedBy(EC2ClientImpl.class)
-public interface EC2Client {
-   /**
-    * Provides synchronous access to AMI services.
-    */
-   AMIClient getAMIServices();
+public enum MonitoringState {
 
-   /**
-    * Provides synchronous access to Elastic IP Address services.
-    */
-   ElasticIPAddressClient getElasticIPAddressServices();
+   PENDING, ENABLED, DISABLING, DISABLED;
 
-   /**
-    * Provides synchronous access to Instance services.
-    */
-   InstanceClient getInstanceServices();
+   public String value() {
+      return name().toLowerCase();
+   }
 
-   /**
-    * Provides synchronous access to KeyPair services.
-    */
-   KeyPairClient getKeyPairServices();
+   @Override
+   public String toString() {
+      return value();
+   }
 
-   /**
-    * Provides synchronous access to SecurityGroup services.
-    */
-   SecurityGroupClient getSecurityGroupServices();
-
-   /**
-    * Provides synchronous access to Monitoring services.
-    */
-   MonitoringClient getMonitoringServices();
+   public static MonitoringState fromValue(String state) {
+      return valueOf(checkNotNull(state, "state").toUpperCase());
+   }
 }

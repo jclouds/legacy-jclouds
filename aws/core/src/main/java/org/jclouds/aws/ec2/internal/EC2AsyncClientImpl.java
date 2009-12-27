@@ -33,6 +33,7 @@ import org.jclouds.aws.ec2.services.AMIAsyncClient;
 import org.jclouds.aws.ec2.services.ElasticIPAddressAsyncClient;
 import org.jclouds.aws.ec2.services.InstanceAsyncClient;
 import org.jclouds.aws.ec2.services.KeyPairAsyncClient;
+import org.jclouds.aws.ec2.services.MonitoringAsyncClient;
 import org.jclouds.aws.ec2.services.SecurityGroupAsyncClient;
 
 /**
@@ -47,18 +48,20 @@ public class EC2AsyncClientImpl implements EC2AsyncClient {
    private final InstanceAsyncClient instanceServices;
    private final KeyPairAsyncClient keyPairServices;
    private final SecurityGroupAsyncClient securityGroupServices;
+   private final MonitoringAsyncClient monitoringServices;
 
    @Inject
    public EC2AsyncClientImpl(AMIAsyncClient AMIServices,
             ElasticIPAddressAsyncClient elasticIPAddressServices,
             InstanceAsyncClient instanceServices, KeyPairAsyncClient keyPairServices,
-            SecurityGroupAsyncClient securityGroupServices) {
+            SecurityGroupAsyncClient securityGroupServices, MonitoringAsyncClient monitoringServices) {
       this.AMIServices = checkNotNull(AMIServices, "AMIServices");
       this.elasticIPAddressServices = checkNotNull(elasticIPAddressServices,
                "elasticIPAddressServices");
       this.instanceServices = checkNotNull(instanceServices, "instanceServices");
       this.keyPairServices = checkNotNull(keyPairServices, "keyPairServices");
       this.securityGroupServices = checkNotNull(securityGroupServices, "securityGroupServices");
+      this.monitoringServices = checkNotNull(monitoringServices, "monitoringServices");
    }
 
    /**
@@ -94,6 +97,14 @@ public class EC2AsyncClientImpl implements EC2AsyncClient {
     */
    public SecurityGroupAsyncClient getSecurityGroupServices() {
       return securityGroupServices;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public MonitoringAsyncClient getMonitoringServices() {
+      return monitoringServices;
    }
 
 }

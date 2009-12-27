@@ -33,6 +33,7 @@ import org.jclouds.aws.ec2.services.AMIClient;
 import org.jclouds.aws.ec2.services.ElasticIPAddressClient;
 import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.aws.ec2.services.KeyPairClient;
+import org.jclouds.aws.ec2.services.MonitoringClient;
 import org.jclouds.aws.ec2.services.SecurityGroupClient;
 
 /**
@@ -47,17 +48,19 @@ public class EC2ClientImpl implements EC2Client {
    private final InstanceClient instanceServices;
    private final KeyPairClient keyPairServices;
    private final SecurityGroupClient securityGroupServices;
+   private final MonitoringClient monitoringServices;
 
    @Inject
    public EC2ClientImpl(AMIClient AMIServices, ElasticIPAddressClient elasticIPAddressServices,
             InstanceClient instanceServices, KeyPairClient keyPairServices,
-            SecurityGroupClient securityGroupServices) {
+            SecurityGroupClient securityGroupServices, MonitoringClient monitoringServices) {
       this.AMIServices = checkNotNull(AMIServices, "AMIServices");
       this.elasticIPAddressServices = checkNotNull(elasticIPAddressServices,
                "elasticIPAddressServices");
       this.instanceServices = checkNotNull(instanceServices, "instanceServices");
       this.keyPairServices = checkNotNull(keyPairServices, "keyPairServices");
       this.securityGroupServices = checkNotNull(securityGroupServices, "securityGroupServices");
+      this.monitoringServices = checkNotNull(monitoringServices, "monitoringServices");
    }
 
    /**
@@ -93,6 +96,13 @@ public class EC2ClientImpl implements EC2Client {
     */
    public SecurityGroupClient getSecurityGroupServices() {
       return securityGroupServices;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public MonitoringClient getMonitoringServices() {
+      return monitoringServices;
    }
 
 }
