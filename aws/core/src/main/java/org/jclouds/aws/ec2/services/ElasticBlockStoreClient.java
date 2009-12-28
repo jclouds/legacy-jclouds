@@ -26,9 +26,11 @@ package org.jclouds.aws.ec2.services;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.aws.ec2.domain.Attachment;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.Volume;
+import org.jclouds.aws.ec2.options.DetachVolumeOptions;
 import org.jclouds.concurrent.Timeout;
 
 /**
@@ -117,10 +119,10 @@ public interface ElasticBlockStoreClient {
     *           The ID of the volume to delete. The volume remains in the deleting state for several
     *           minutes after entering this command.
     * 
-    * @see #describeVolumes
-    * @see #createVolume
-    * @see #attachVolume
-    * @see #detachVolume
+    * @see #describeVolumesInRegion
+    * @see #createVolumeInRegion
+    * @see #attachVolumeInRegion
+    * @see #detachVolumeInRegion
     * 
     * @see <a href=
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DeleteVolume.html"
@@ -128,4 +130,67 @@ public interface ElasticBlockStoreClient {
     */
    void deleteVolumeInRegion(Region region, String volumeId);
 
+   /**
+    * Attaches an Amazon EBS volume to a running instance and exposes it as the specified device.
+    * <p/>
+    * 
+    * <h3>Note</h3>
+    * 
+    * Windows instances currently support devices xvda through xvdp. Devices xvda and xvdb are
+    * reserved by the operating system, xvdc is assigned to drive C:\, and, depending on the
+    * instance type, devices xvdd through xvde might be reserved by the instance stores. Any device
+    * that is not reserved can be attached to an Amazon EBS volume. For a list of devices that are
+    * reserved by the instance stores, go to the Amazon Elastic Compute Cloud Developer Guide or
+    * Amazon Elastic Compute Cloud User Guide.
+    * 
+    * @param region
+    *           region where the volume is defined
+    * @param volumeId
+    *           The ID of the volume to delete. The volume remains in the deleting state for several
+    *           minutes after entering this command.
+    * @param options
+    *           options like force()
+    * 
+    * @see #describeVolumesInRegion
+    * @see #createVolumeInRegion
+    * @see #attachVolumeInRegion
+    * @see #deleteVolumeInRegion
+    * 
+    * @see <a href=
+    *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DetachVolume.html"
+    *      />
+    */
+   Attachment detachVolumeInRegion(Region region, String volumeId, DetachVolumeOptions... options);
+
+   /**
+    * Attaches an Amazon EBS volume to a running instance and exposes it as the specified device.
+    * 
+    * <h3>Note</h3> Windows instances currently support devices xvda through xvdp. Devices xvda and
+    * xvdb are reserved by the operating system, xvdc is assigned to drive C:\, and, depending on
+    * the instance type, devices xvdd through xvde might be reserved by the instance stores. Any
+    * device that is not reserved can be attached to an Amazon EBS volume. For a list of devices
+    * that are reserved by the instance stores, go to the Amazon Elastic Compute Cloud Developer
+    * Guide or Amazon Elastic Compute Cloud User Guide.
+    * 
+    * @param region
+    *           region where the volume is defined
+    * @param volumeId
+    *           The ID of the Amazon EBS volume. The volume and instance must be within the same
+    *           Availability Zone and the instance must be running.
+    * @param instanceId
+    *           The ID of the instance to which the volume attaches. The volume and instance must be
+    *           within the same Availability Zone and the instance must be running.
+    * @param device
+    *           Specifies how the device is exposed to the instance (e.g., /dev/sdh).
+    * 
+    * @see #describeVolumesInRegion
+    * @see #createVolumeInRegion
+    * @see #detachVolumeInRegion
+    * @see #deleteVolumeInRegion
+    * 
+    * @see <a href=
+    *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-AttachVolume.html"
+    *      />
+    */
+   Attachment attachVolumeInRegion(Region region, String volumeId, String instanceId, String device);
 }

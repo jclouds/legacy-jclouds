@@ -35,11 +35,14 @@ import javax.ws.rs.Path;
 
 import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.binders.BindVolumeIdsToIndexedFormParams;
+import org.jclouds.aws.ec2.domain.Attachment;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.Volume;
 import org.jclouds.aws.ec2.filters.FormSigner;
 import org.jclouds.aws.ec2.functions.RegionToEndpoint;
+import org.jclouds.aws.ec2.options.DetachVolumeOptions;
+import org.jclouds.aws.ec2.xml.AttachmentHandler;
 import org.jclouds.aws.ec2.xml.CreateVolumeResponseHandler;
 import org.jclouds.aws.ec2.xml.DescribeVolumesResponseHandler;
 import org.jclouds.rest.annotations.BinderParam;
@@ -106,5 +109,28 @@ public interface ElasticBlockStoreAsyncClient {
    @FormParams(keys = ACTION, values = "DeleteVolume")
    Future<Void> deleteVolumeInRegion(@EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("VolumeId") String volumeId);
+
+   /**
+    * @see ElasticBlockStoreClient#detachVolumeInRegion
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "DetachVolume")
+   @XMLResponseParser(AttachmentHandler.class)
+   Future<Attachment> detachVolumeInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @FormParam("VolumeId") String volumeId, DetachVolumeOptions... options);
+
+   /**
+    * @see ElasticBlockStoreClient#attachVolumeInRegion
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "AttachVolume")
+   @XMLResponseParser(AttachmentHandler.class)
+   Future<Attachment> attachVolumeInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @FormParam("VolumeId") String volumeId, @FormParam("InstanceId") String instanceId,
+            @FormParam("Device") String device);
 
 }

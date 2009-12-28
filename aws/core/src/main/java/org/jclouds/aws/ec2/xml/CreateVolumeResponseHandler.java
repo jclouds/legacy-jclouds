@@ -29,9 +29,9 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
+import org.jclouds.aws.ec2.domain.Attachment;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.Volume;
-import org.jclouds.aws.ec2.domain.Volume.Attachment;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
@@ -62,7 +62,7 @@ public class CreateVolumeResponseHandler extends ParseSax.HandlerWithResult<Volu
    private String volumeId;
    private String instanceId;
    private String device;
-   private Volume.Attachment.Status attachmentStatus;
+   private Attachment.Status attachmentStatus;
    private Date attachTime;
 
    private boolean inAttachmentSet;
@@ -102,7 +102,7 @@ public class CreateVolumeResponseHandler extends ParseSax.HandlerWithResult<Volu
          }
       } else if (qName.equals("status")) {
          if (inAttachmentSet) {
-            attachmentStatus = Volume.Attachment.Status.fromValue(currentText.toString().trim());
+            attachmentStatus = Attachment.Status.fromValue(currentText.toString().trim());
          } else {
             volumeStatus = Volume.Status.fromValue(currentText.toString().trim());
          }

@@ -1,0 +1,7 @@
+<AttachVolumeResponse xmlns="http://ec2.amazonaws.com/doc/2009-11-30/">
+    <volumeId>vol-4d826724</volumeId>
+    <instanceId>i-6058a509</instanceId>
+    <device>/dev/sdh</device>
+    <status>attaching</status>
+    <attachTime>2008-05-07T11:51:50.000Z</attachTime>
+</AttachVolumeResponse>

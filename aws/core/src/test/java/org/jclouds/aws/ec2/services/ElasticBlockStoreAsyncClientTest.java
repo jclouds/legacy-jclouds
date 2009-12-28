@@ -23,6 +23,7 @@
  */
 package org.jclouds.aws.ec2.services;
 
+import static org.jclouds.aws.ec2.options.DetachVolumeOptions.Builder.fromInstance;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -37,6 +38,8 @@ import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.filters.FormSigner;
+import org.jclouds.aws.ec2.options.DetachVolumeOptions;
+import org.jclouds.aws.ec2.xml.AttachmentHandler;
 import org.jclouds.aws.ec2.xml.CreateVolumeResponseHandler;
 import org.jclouds.aws.ec2.xml.DescribeVolumesResponseHandler;
 import org.jclouds.aws.reference.AWSConstants;
@@ -155,6 +158,66 @@ public class ElasticBlockStoreAsyncClientTest extends RestClientTest<ElasticBloc
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeVolumesResponseHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testAttachVolume() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ElasticBlockStoreAsyncClient.class.getMethod("attachVolumeInRegion",
+               Region.class, String.class, String.class, String.class);
+      GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor.createRequest(
+               method, Region.DEFAULT, "id", "instanceId", "/device");
+
+      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 89\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertPayloadEquals(httpMethod, "Version=2009-11-30&Action=AttachVolume&InstanceId=instanceId&VolumeId=id&Device=%2Fdevice");
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, AttachmentHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testDetachVolume() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ElasticBlockStoreAsyncClient.class.getMethod("detachVolumeInRegion",
+               Region.class, String.class, Array.newInstance(DetachVolumeOptions.class, 0)
+                        .getClass());
+      GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor.createRequest(
+               method, Region.DEFAULT, "id");
+
+      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 50\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertPayloadEquals(httpMethod, "Version=2009-11-30&Action=DetachVolume&VolumeId=id");
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, AttachmentHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testDetachVolumeOptions() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = ElasticBlockStoreAsyncClient.class.getMethod("detachVolumeInRegion",
+               Region.class, String.class, Array.newInstance(DetachVolumeOptions.class, 0)
+                        .getClass());
+      GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor.createRequest(
+               method, Region.DEFAULT, "id", fromInstance("instanceId").fromDevice("/device")
+                        .force());
+
+      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 100\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertPayloadEquals(
+               httpMethod,
+               "Version=2009-11-30&Action=DetachVolume&VolumeId=id&InstanceId=instanceId&Device=%2Fdevice&Force=true");
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, AttachmentHandler.class);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpMethod);

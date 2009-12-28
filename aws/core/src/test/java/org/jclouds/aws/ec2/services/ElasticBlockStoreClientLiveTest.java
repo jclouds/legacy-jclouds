@@ -123,6 +123,16 @@ public class ElasticBlockStoreClientLiveTest {
       // assertEquals(volume, result);
    }
 
+   @Test
+   void testAttachVolumeInRegion() {
+      // TODO: need an instance
+   }
+
+   @Test
+   void testDetachVolumeInRegion() {
+      // TODO: need an instance
+   }
+
    @AfterTest
    public void shutdown() {
       context.close();

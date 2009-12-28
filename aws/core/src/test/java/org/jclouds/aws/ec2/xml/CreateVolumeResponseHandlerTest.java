@@ -27,9 +27,9 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 
+import org.jclouds.aws.ec2.domain.Attachment;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.Volume;
-import org.jclouds.aws.ec2.domain.Volume.Attachment;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.testng.annotations.Test;
