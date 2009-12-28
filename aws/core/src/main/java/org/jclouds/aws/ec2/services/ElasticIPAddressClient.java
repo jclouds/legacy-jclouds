@@ -24,11 +24,12 @@
 package org.jclouds.aws.ec2.services;
 
 import java.net.InetAddress;
-import java.util.SortedSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.ec2.domain.PublicIpInstanceIdPair;
+import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.concurrent.Timeout;
 
 /**
@@ -43,19 +44,23 @@ public interface ElasticIPAddressClient {
    /**
     * Acquires an elastic IP address for use with your account.
     * 
+    * @param region
+    *           Elastic IP addresses are tied to a Region and cannot be mapped across Regions.
     * @see #describeAddresses
     * @see #releaseAddress
     * @see #associateAddress
     * @see #disassociateAddress
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-AllocateAddress.html"
     */
-   InetAddress allocateAddress();
+   InetAddress allocateAddressInRegion(Region region);
 
    /**
     * Associates an elastic IP address with an instance. If the IP address is currently assigned to
     * another instance, the IP address is assigned to the new instance. This is an idempotent
     * operation. If you enter it more than once, Amazon EC2 does not return an error.
     * 
+    * @param region
+    *           Elastic IP addresses are tied to a Region and cannot be mapped across Regions.
     * @param publicIp
     *           IP address that you are assigning to the instance.
     * @param instanceId
@@ -67,13 +72,15 @@ public interface ElasticIPAddressClient {
     * @see #disassociateAddress
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/index.html?ApiReference-query-AssociateAddress.html"
     */
-   void associateAddress(InetAddress publicIp, String instanceId);
+   void associateAddressInRegion(Region region, InetAddress publicIp, String instanceId);
 
    /**
     * Disassociates the specified elastic IP address from the instance to which it is assigned. This
     * is an idempotent operation. If you enter it more than once, Amazon EC2 does not return an
     * error.
     * 
+    * @param region
+    *           Elastic IP addresses are tied to a Region and cannot be mapped across Regions.
     * @param publicIp
     *           IP address that you are assigning to the instance.
     * 
@@ -83,27 +90,33 @@ public interface ElasticIPAddressClient {
     * @see #associateAddress
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/index.html?ApiReference-query-DisdisassociateAddress.html"
     */
-   void disassociateAddress(InetAddress publicIp);
+   void disassociateAddressInRegion(Region region, InetAddress publicIp);
 
    /**
     * Releases an elastic IP address associated with your account.
     * 
+    * @param region
+    *           Elastic IP addresses are tied to a Region and cannot be mapped across Regions.
     * @param publicIp
     *           The IP address that you are releasing from your account.
+    * 
     * @see #allocateAddress
     * @see #describeAddresses
     * @see #associateAddress
     * @see #disassociateAddress
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/index.html?ApiReference-query-ReleaseAddress.html"
     */
-   void releaseAddress(InetAddress publicIp);
+   void releaseAddressInRegion(Region region, InetAddress publicIp);
 
    /**
     * Lists elastic IP addresses assigned to your account or provides information about a specific
     * address.
     * 
+    * @param region
+    *           Elastic IP addresses are tied to a Region and cannot be mapped across Regions.
     * @param publicIps
     *           Elastic IP address to describe.
+    * 
     * @throws AWSResponseException
     *            if the requested publicIp is not found
     * @see #allocateAddress
@@ -111,6 +124,7 @@ public interface ElasticIPAddressClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeAddresses.html"
     *      />
     */
-   SortedSet<PublicIpInstanceIdPair> describeAddresses(InetAddress... publicIps);
+   Set<PublicIpInstanceIdPair> describeAddressesInRegion(Region region,
+            InetAddress... publicIps);
 
 }

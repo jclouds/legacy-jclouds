@@ -756,7 +756,8 @@ public class RestAnnotationProcessor<T> {
          boolean shouldBreak = false;
          BinderParam payloadAnnotation = (BinderParam) entry.getValue().iterator().next();
          Binder binder = injector.getInstance(payloadAnnotation.value());
-         if (request.getArgs().length != 0) {
+         if (request.getArgs().length >= entry.getKey() + 1
+                  && request.getArgs()[entry.getKey()] != null) {
             Object input;
             Class<?> parameterType = request.getJavaMethod().getParameterTypes()[entry.getKey()];
             Class<? extends Object> argType = request.getArgs()[entry.getKey()].getClass();

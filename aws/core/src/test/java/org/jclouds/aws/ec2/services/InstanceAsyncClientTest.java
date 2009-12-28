@@ -29,8 +29,13 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.Map;
+
+import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.EC2;
+import org.jclouds.aws.ec2.domain.AvailabilityZone;
+import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.filters.FormSigner;
 import org.jclouds.aws.ec2.options.RunInstancesOptions;
 import org.jclouds.aws.ec2.xml.DescribeInstancesResponseHandler;
@@ -47,6 +52,7 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Jsr330;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Provides;
@@ -61,9 +67,10 @@ import com.google.inject.TypeLiteral;
 public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient> {
 
    public void testDescribeInstances() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = InstanceAsyncClient.class.getMethod("describeInstances", Array.newInstance(
-               String.class, 0).getClass());
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method);
+      Method method = InstanceAsyncClient.class.getMethod("describeInstancesInRegion",
+               Region.class, Array.newInstance(String.class, 0).getClass());
+      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
+               Region.DEFAULT);
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -79,10 +86,10 @@ public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient>
 
    public void testDescribeInstancesArgs() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = InstanceAsyncClient.class.getMethod("describeInstances", Array.newInstance(
-               String.class, 0).getClass());
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, "1",
-               "2");
+      Method method = InstanceAsyncClient.class.getMethod("describeInstancesInRegion",
+               Region.class, Array.newInstance(String.class, 0).getClass());
+      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
+               Region.DEFAULT, "1", "2");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -99,10 +106,10 @@ public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient>
 
    public void testTerminateInstances() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = InstanceAsyncClient.class.getMethod("terminateInstances", String.class, Array
-               .newInstance(String.class, 0).getClass());
-      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method, "1",
-               "2");
+      Method method = InstanceAsyncClient.class.getMethod("terminateInstancesInRegion",
+               Region.class, String.class, Array.newInstance(String.class, 0).getClass());
+      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
+               Region.DEFAULT, "1", "2");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -118,16 +125,17 @@ public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient>
    }
 
    public void testRunInstances() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = InstanceAsyncClient.class.getMethod("runInstances", String.class, int.class,
-               int.class, Array.newInstance(RunInstancesOptions.class, 0).getClass());
+      Method method = InstanceAsyncClient.class.getMethod("runInstancesInRegion", Region.class,
+               AvailabilityZone.class, String.class, int.class, int.class, Array.newInstance(
+                        RunInstancesOptions.class, 0).getClass());
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
-               "ami-voo", 1, 1);
+               Region.DEFAULT, null, "ami-voo", 1, 1);
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 76\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
       assertPayloadEquals(httpMethod,
-               "Version=2009-11-30&Action=RunInstances&ImageId=ami-voo&MaxCount=1&MinCount=1");
+               "Version=2009-11-30&Action=RunInstances&ImageId=ami-voo&MinCount=1&MaxCount=1");
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, RunInstancesResponseHandler.class);
@@ -138,18 +146,20 @@ public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient>
 
    public void testRunInstancesOptions() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = InstanceAsyncClient.class.getMethod("runInstances", String.class, int.class,
-               int.class, Array.newInstance(RunInstancesOptions.class, 0).getClass());
+      Method method = InstanceAsyncClient.class.getMethod("runInstancesInRegion", Region.class,
+               AvailabilityZone.class, String.class, int.class, int.class, Array.newInstance(
+                        RunInstancesOptions.class, 0).getClass());
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
-               "ami-voo", 1, 5, new RunInstancesOptions().withKernelId("kernelId")
-                        .enableMonitoring());
+               Region.EU_WEST_1, AvailabilityZone.EU_WEST_1A, "ami-voo", 1, 5,
+               new RunInstancesOptions().withKernelId("kernelId").enableMonitoring());
 
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 118\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertRequestLineEquals(httpMethod, "POST https://ec2.eu-west-1.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(
+               httpMethod,
+               "Content-Length: 118\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.eu-west-1.amazonaws.com\n");
       assertPayloadEquals(
                httpMethod,
-               "Version=2009-11-30&Action=RunInstances&ImageId=ami-voo&MaxCount=5&MinCount=1&KernelId=kernelId&Monitoring.Enabled=true");
+               "Version=2009-11-30&Action=RunInstances&ImageId=ami-voo&MinCount=1&MaxCount=5&KernelId=kernelId&Monitoring.Enabled=true&Placement.AvailabilityZone=eu-west-1a");
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, RunInstancesResponseHandler.class);
@@ -193,6 +203,16 @@ public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient>
          @TimeStamp
          String provide() {
             return "2009-11-08T15:54:08.897Z";
+         }
+
+         @SuppressWarnings("unused")
+         @Singleton
+         @Provides
+         Map<Region, URI> provideMap() {
+            return ImmutableMap.<Region, URI> of(Region.DEFAULT, URI.create("https://booya"),
+                     Region.EU_WEST_1, URI.create("https://ec2.eu-west-1.amazonaws.com"),
+                     Region.US_EAST_1, URI.create("https://ec2.us-east-1.amazonaws.com"),
+                     Region.US_WEST_1, URI.create("https://ec2.us-west-1.amazonaws.com"));
          }
       };
    }

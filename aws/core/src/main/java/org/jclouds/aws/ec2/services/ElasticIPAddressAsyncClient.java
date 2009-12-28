@@ -27,7 +27,7 @@ import static org.jclouds.aws.ec2.reference.EC2Parameters.ACTION;
 import static org.jclouds.aws.ec2.reference.EC2Parameters.VERSION;
 
 import java.net.InetAddress;
-import java.util.SortedSet;
+import java.util.Set;
 import java.util.concurrent.Future;
 
 import javax.ws.rs.FormParam;
@@ -37,11 +37,14 @@ import javax.ws.rs.Path;
 import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.binders.BindInetAddressesToIndexedFormParams;
 import org.jclouds.aws.ec2.domain.PublicIpInstanceIdPair;
+import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.filters.FormSigner;
+import org.jclouds.aws.ec2.functions.RegionToEndpoint;
 import org.jclouds.aws.ec2.xml.AllocateAddressResponseHandler;
 import org.jclouds.aws.ec2.xml.DescribeAddressesResponseHandler;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -62,50 +65,55 @@ import org.jclouds.rest.functions.InetAddressToHostAddress;
 public interface ElasticIPAddressAsyncClient {
 
    /**
-    * @see BaseEC2Client#allocateAddress
+    * @see BaseEC2Client#allocateAddressInRegion
     */
    @POST
    @Path("/")
    @XMLResponseParser(AllocateAddressResponseHandler.class)
    @FormParams(keys = ACTION, values = "AllocateAddress")
-   Future<InetAddress> allocateAddress();
+   Future<InetAddress> allocateAddressInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region);
 
    /**
-    * @see BaseEC2Client#associateAddress
+    * @see BaseEC2Client#associateAddressInRegion
     */
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "AssociateAddress")
-   Future<Void> associateAddress(
+   Future<Void> associateAddressInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("PublicIp") @ParamParser(InetAddressToHostAddress.class) InetAddress publicIp,
             @FormParam("InstanceId") String instanceId);
 
    /**
-    * @see BaseEC2Client#disassociateAddress
+    * @see BaseEC2Client#disassociateAddressInRegion
     */
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DisassociateAddress")
-   Future<Void> disassociateAddress(
+   Future<Void> disassociateAddressInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("PublicIp") @ParamParser(InetAddressToHostAddress.class) InetAddress publicIp);
 
    /**
-    * @see BaseEC2Client#releaseAddress
+    * @see BaseEC2Client#releaseAddressInRegion
     */
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "ReleaseAddress")
-   Future<Void> releaseAddress(
+   Future<Void> releaseAddressInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("PublicIp") @ParamParser(InetAddressToHostAddress.class) InetAddress publicIp);
 
    /**
-    * @see BaseEC2Client#describeAddresses
+    * @see BaseEC2Client#describeAddressesInRegion
     */
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeAddresses")
    @XMLResponseParser(DescribeAddressesResponseHandler.class)
-   Future<? extends SortedSet<PublicIpInstanceIdPair>> describeAddresses(
+   Future<? extends Set<PublicIpInstanceIdPair>> describeAddressesInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @BinderParam(BindInetAddressesToIndexedFormParams.class) InetAddress... publicIps);
 
 }

@@ -26,6 +26,10 @@ package org.jclouds.aws.ec2.services;
 import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nullable;
+
+import org.jclouds.aws.ec2.domain.AvailabilityZone;
+import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.TerminatedInstance;
 import org.jclouds.aws.ec2.options.RunInstancesOptions;
@@ -52,12 +56,16 @@ public interface InstanceClient {
     * Recently terminated instances might appear in the returned results.This interval is usually
     * less than one hour.
     * 
+    * @param region
+    *           Instances are tied to Availability Zones. However, the instance ID is tied to the
+    *           Region.
+    * 
     * @see #runInstances
     * @see #terminateInstances
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeInstances.html"
     *      />
     */
-   SortedSet<Reservation> describeInstances(String... instanceIds);
+   SortedSet<Reservation> describeInstancesInRegion(Region region, String... instanceIds);
 
    /**
     * Launches a specified number of instances of an AMI for which you have permissions.
@@ -100,6 +108,13 @@ public interface InstanceClient {
     * provide greater stability and performance for these instance types. For more information about
     * kernels, go the Amazon Elastic Compute Cloud Developer Guide.
     * 
+    * @param region
+    *           Instances are tied to Availability Zones. However, the instance ID is tied to the
+    *           Region.
+    * @param nullableAvailabilityZone
+    *           Specifies the placement constraints (Availability Zones) for launching the
+    *           instances. If null, Amazon will determine the best availability zone to place the
+    *           instance.
     * @param imageId
     *           Unique ID of a machine image, returned by a call to
     * @param minCount
@@ -123,8 +138,9 @@ public interface InstanceClient {
     *      />
     * @see RunInstancesOptions
     */
-   Reservation runInstances(String imageId, int minCount, int maxCount,
-            RunInstancesOptions... options);
+   Reservation runInstancesInRegion(Region region,
+            @Nullable AvailabilityZone nullableAvailabilityZone, String imageId, int minCount,
+            int maxCount, RunInstancesOptions... options);
 
    /**
     * Shuts down one or more instances. This operation is idempotent; if you terminate an instance
@@ -132,12 +148,17 @@ public interface InstanceClient {
     * <p/>
     * Terminated instances will remain visible after termination (approximately one hour).
     * 
+    * @param region
+    *           Instances are tied to Availability Zones. However, the instance ID is tied to the
+    *           Region.
+    * 
     * @param instanceIds
     *           Instance ID to terminate.
     * @see #describeInstances
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-TerminateInstances.html"
     *      />
     */
-   SortedSet<TerminatedInstance> terminateInstances(String instanceId, String... instanceIds);
+   SortedSet<TerminatedInstance> terminateInstancesInRegion(Region region, String instanceId,
+            String... instanceIds);
 
 }

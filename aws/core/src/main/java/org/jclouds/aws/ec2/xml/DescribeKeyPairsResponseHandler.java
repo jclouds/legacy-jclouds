@@ -23,7 +23,7 @@
  */
 package org.jclouds.aws.ec2.xml;
 
-import java.util.SortedSet;
+import java.util.Set;
 
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.http.functions.ParseSax;
@@ -37,14 +37,14 @@ import com.google.common.collect.Sets;
  *      />
  * @author Adrian Cole
  */
-public class DescribeKeyPairsResponseHandler extends ParseSax.HandlerWithResult<SortedSet<KeyPair>> {
+public class DescribeKeyPairsResponseHandler extends ParseSax.HandlerWithResult<Set<KeyPair>> {
 
    private StringBuilder currentText = new StringBuilder();
-   private SortedSet<KeyPair> keyPairs = Sets.newTreeSet();
+   private Set<KeyPair> keyPairs = Sets.newLinkedHashSet();
    private String keyFingerprint;
    private String keyName;
 
-   public SortedSet<KeyPair> getResult() {
+   public Set<KeyPair> getResult() {
       return keyPairs;
    }
 

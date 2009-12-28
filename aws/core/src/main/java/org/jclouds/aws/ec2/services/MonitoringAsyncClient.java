@@ -36,10 +36,13 @@ import javax.ws.rs.Path;
 import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.binders.BindInstanceIdsToIndexedFormParams;
 import org.jclouds.aws.ec2.domain.MonitoringState;
+import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.filters.FormSigner;
+import org.jclouds.aws.ec2.functions.RegionToEndpoint;
 import org.jclouds.aws.ec2.xml.MonitoringStateHandler;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
@@ -58,24 +61,26 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 public interface MonitoringAsyncClient {
 
    /**
-    * @see Monitoring#monitorInstances
+    * @see Monitoring#monitorInstancesInRegion
     */
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "MonitorInstances")
    @XMLResponseParser(MonitoringStateHandler.class)
-   Future<? extends Map<String, MonitoringState>> monitorInstances(
+   Future<? extends Map<String, MonitoringState>> monitorInstancesInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("InstanceId.0") String instanceId,
             @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
 
    /**
-    * @see Monitoring#monitorInstances
+    * @see Monitoring#monitorInstancesInRegion
     */
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "UnmonitorInstances")
    @XMLResponseParser(MonitoringStateHandler.class)
-   Future<? extends Map<String, MonitoringState>> unmonitorInstances(
+   Future<? extends Map<String, MonitoringState>> unmonitorInstancesInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("InstanceId.0") String instanceId,
             @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
 }

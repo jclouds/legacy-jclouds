@@ -29,21 +29,27 @@ import static org.jclouds.aws.ec2.reference.EC2Parameters.VERSION;
 import java.util.SortedSet;
 import java.util.concurrent.Future;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.binders.BindInstanceIdsToIndexedFormParams;
+import org.jclouds.aws.ec2.binders.IfNotNullBindAvailabilityZoneToFormParam;
+import org.jclouds.aws.ec2.domain.AvailabilityZone;
+import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.TerminatedInstance;
 import org.jclouds.aws.ec2.filters.FormSigner;
+import org.jclouds.aws.ec2.functions.RegionToEndpoint;
 import org.jclouds.aws.ec2.options.RunInstancesOptions;
 import org.jclouds.aws.ec2.xml.DescribeInstancesResponseHandler;
 import org.jclouds.aws.ec2.xml.RunInstancesResponseHandler;
 import org.jclouds.aws.ec2.xml.TerminateInstancesResponseHandler;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
@@ -62,34 +68,38 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 public interface InstanceAsyncClient {
 
    /**
-    * @see BaseEC2Client#describeInstances
+    * @see BaseEC2Client#describeInstancesInRegion
     */
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeInstances")
    @XMLResponseParser(DescribeInstancesResponseHandler.class)
-   Future<? extends SortedSet<Reservation>> describeInstances(
+   Future<? extends SortedSet<Reservation>> describeInstancesInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
 
    /**
-    * @see BaseEC2Client#runInstances
+    * @see BaseEC2Client#runInstancesInRegion
     */
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "RunInstances")
    @XMLResponseParser(RunInstancesResponseHandler.class)
-   Future<Reservation> runInstances(@FormParam("ImageId") String imageId,
-            @FormParam("MinCount") int minCount, @FormParam("MaxCount") int maxCount,
-            RunInstancesOptions... options);
+   Future<Reservation> runInstancesInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @Nullable @BinderParam(IfNotNullBindAvailabilityZoneToFormParam.class) AvailabilityZone nullableAvailabilityZone,
+            @FormParam("ImageId") String imageId, @FormParam("MinCount") int minCount,
+            @FormParam("MaxCount") int maxCount, RunInstancesOptions... options);
 
    /**
-    * @see BaseEC2Client#terminateInstances
+    * @see BaseEC2Client#terminateInstancesInRegion
     */
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "TerminateInstances")
    @XMLResponseParser(TerminateInstancesResponseHandler.class)
-   Future<? extends SortedSet<TerminatedInstance>> terminateInstances(
+   Future<? extends SortedSet<TerminatedInstance>> terminateInstancesInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("InstanceId.0") String instanceId,
             @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
 

@@ -42,6 +42,7 @@ import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.aws.ec2.domain.IpProtocol;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.PublicIpInstanceIdPair;
+import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.http.HttpResponseException;
@@ -56,6 +57,7 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.Iterables;
 import com.google.inject.Injector;
 
 /**
@@ -97,30 +99,32 @@ public class ExpensiveEC2ClientLiveTest {
       securityGroupName = serverPrefix + "ingress";
 
       try {
-         client.getSecurityGroupServices().deleteSecurityGroup(securityGroupName);
+         client.getSecurityGroupServices().deleteSecurityGroupInRegion(Region.DEFAULT,
+                  securityGroupName);
       } catch (Exception e) {
       }
 
-      client.getSecurityGroupServices().createSecurityGroup(securityGroupName, securityGroupName);
-      client.getSecurityGroupServices().authorizeSecurityGroupIngress(securityGroupName,
-               IpProtocol.TCP, 80, 80, "0.0.0.0/0");
-      client.getSecurityGroupServices().authorizeSecurityGroupIngress(securityGroupName,
-               IpProtocol.TCP, 443, 443, "0.0.0.0/0");
-      client.getSecurityGroupServices().authorizeSecurityGroupIngress(securityGroupName,
-               IpProtocol.TCP, 22, 22, "0.0.0.0/0");
+      client.getSecurityGroupServices().createSecurityGroupInRegion(Region.DEFAULT,
+               securityGroupName, securityGroupName);
+      client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(Region.DEFAULT,
+               securityGroupName, IpProtocol.TCP, 80, 80, "0.0.0.0/0");
+      client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(Region.DEFAULT,
+               securityGroupName, IpProtocol.TCP, 443, 443, "0.0.0.0/0");
+      client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(Region.DEFAULT,
+               securityGroupName, IpProtocol.TCP, 22, 22, "0.0.0.0/0");
    }
 
    @Test(enabled = true)
    void testCreateKeyPair() throws InterruptedException, ExecutionException, TimeoutException {
       String keyName = serverPrefix + "1";
       try {
-         client.getKeyPairServices().deleteKeyPair(keyName);
+         client.getKeyPairServices().deleteKeyPairInRegion(Region.DEFAULT, keyName);
       } catch (Exception e) {
 
       }
-      client.getKeyPairServices().deleteKeyPair(keyName);
+      client.getKeyPairServices().deleteKeyPairInRegion(Region.DEFAULT, keyName);
 
-      keyPair = client.getKeyPairServices().createKeyPair(keyName);
+      keyPair = client.getKeyPairServices().createKeyPairInRegion(Region.DEFAULT, keyName);
       assertNotNull(keyPair);
       assertNotNull(keyPair.getKeyMaterial());
       assertNotNull(keyPair.getKeyFingerprint());
@@ -135,7 +139,9 @@ public class ExpensiveEC2ClientLiveTest {
       while (server == null) {
          try {
             System.out.printf("%d: running instance%n", System.currentTimeMillis());
-            server = client.getInstanceServices().runInstances(
+            server = client.getInstanceServices().runInstancesInRegion(
+                     Region.DEFAULT,
+                     null,
                      imageId,
                      1,
                      1,
@@ -161,37 +167,42 @@ public class ExpensiveEC2ClientLiveTest {
    @Test(enabled = true, dependsOnMethods = "testCreateRunningInstance")
    void testElasticIpAddress() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
-      address = client.getElasticIPAddressServices().allocateAddress();
+      address = client.getElasticIPAddressServices().allocateAddressInRegion(Region.DEFAULT);
       assertNotNull(address);
 
-      PublicIpInstanceIdPair compare = client.getElasticIPAddressServices().describeAddresses(
-               address).last();
+      PublicIpInstanceIdPair compare = Iterables.getLast(client.getElasticIPAddressServices()
+               .describeAddressesInRegion(Region.DEFAULT, address));
 
       assertEquals(compare.getPublicIp(), address);
       assert compare.getInstanceId() == null;
 
-      client.getElasticIPAddressServices().associateAddress(address, serverId);
+      client.getElasticIPAddressServices().associateAddressInRegion(Region.DEFAULT, address,
+               serverId);
 
-      compare = client.getElasticIPAddressServices().describeAddresses(address).last();
+      compare = Iterables.getLast(client.getElasticIPAddressServices().describeAddressesInRegion(
+               Region.DEFAULT, address));
 
       assertEquals(compare.getPublicIp(), address);
       assertEquals(compare.getInstanceId(), serverId);
 
-      Reservation reservation = client.getInstanceServices().describeInstances(serverId).last();
+      Reservation reservation = client.getInstanceServices().describeInstancesInRegion(
+               Region.DEFAULT, serverId).last();
 
       assertNotNull(reservation.getRunningInstances().last().getIpAddress());
       assertFalse(reservation.getRunningInstances().last().getIpAddress().equals(address));
 
       doCheckKey(address);
 
-      client.getElasticIPAddressServices().disassociateAddress(address);
+      client.getElasticIPAddressServices().disassociateAddressInRegion(Region.DEFAULT, address);
 
-      compare = client.getElasticIPAddressServices().describeAddresses(address).last();
+      compare = Iterables.getLast(client.getElasticIPAddressServices().describeAddressesInRegion(
+               Region.DEFAULT, address));
 
       assertEquals(compare.getPublicIp(), address);
       assert compare.getInstanceId() == null;
 
-      reservation = client.getInstanceServices().describeInstances(serverId).last();
+      reservation = client.getInstanceServices()
+               .describeInstancesInRegion(Region.DEFAULT, serverId).last();
       // assert reservation.getRunningInstances().last().getIpAddress() == null; TODO
    }
 
@@ -247,19 +258,20 @@ public class ExpensiveEC2ClientLiveTest {
    @AfterTest
    void cleanup() throws InterruptedException, ExecutionException, TimeoutException {
       if (address != null)
-         client.getElasticIPAddressServices().releaseAddress(address);
+         client.getElasticIPAddressServices().releaseAddressInRegion(Region.DEFAULT, address);
       if (serverId != null)
-         client.getInstanceServices().terminateInstances(serverId);
+         client.getInstanceServices().terminateInstancesInRegion(Region.DEFAULT, serverId);
       if (keyPair != null)
-         client.getKeyPairServices().deleteKeyPair(keyPair.getKeyName());
+         client.getKeyPairServices().deleteKeyPairInRegion(Region.DEFAULT, keyPair.getKeyName());
       if (securityGroupName != null)
-         client.getSecurityGroupServices().deleteSecurityGroup(securityGroupName);
+         client.getSecurityGroupServices().deleteSecurityGroupInRegion(Region.DEFAULT,
+                  securityGroupName);
    }
 
    private RunningInstance getRunningInstance(String serverId) throws InterruptedException,
             ExecutionException, TimeoutException {
-      return client.getInstanceServices().describeInstances(serverId).first().getRunningInstances()
-               .first();
+      return client.getInstanceServices().describeInstancesInRegion(Region.DEFAULT, serverId)
+               .first().getRunningInstances().first();
    }
 
 }

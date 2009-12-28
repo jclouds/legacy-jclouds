@@ -27,6 +27,7 @@ import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.aws.ec2.domain.IpProtocol;
+import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.SecurityGroup;
 import org.jclouds.aws.ec2.domain.UserIdGroupPair;
 import org.jclouds.concurrent.Timeout;
@@ -43,6 +44,10 @@ public interface SecurityGroupClient {
    /**
     * Creates a new security group. Group names must be unique per account.
     * 
+    * @param region
+    *           Security groups are not copied across Regions. Instances within the Region cannot
+    *           communicate with instances outside the Region using group-based firewall rules.
+    *           Traffic from instances in another Region is seen as WAN bandwidth.
     * @param name
     *           Name of the security group. Accepts alphanumeric characters, spaces, dashes, and
     *           underscores.
@@ -59,11 +64,15 @@ public interface SecurityGroupClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateSecurityGroup.html"
     *      />
     */
-   void createSecurityGroup(String name, String description);
+   void createSecurityGroupInRegion(Region region, String name, String description);
 
    /**
     * Deletes a security group that you own.
     * 
+    * @param region
+    *           Security groups are not copied across Regions. Instances within the Region cannot
+    *           communicate with instances outside the Region using group-based firewall rules.
+    *           Traffic from instances in another Region is seen as WAN bandwidth.
     * @param name
     *           Name of the security group to delete.
     * 
@@ -75,11 +84,15 @@ public interface SecurityGroupClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DeleteSecurityGroup.html"
     *      />
     */
-   void deleteSecurityGroup(String name);
+   void deleteSecurityGroupInRegion(Region region, String name);
 
    /**
     * Returns information about security groups that you own.
     * 
+    * @param region
+    *           Security groups are not copied across Regions. Instances within the Region cannot
+    *           communicate with instances outside the Region using group-based firewall rules.
+    *           Traffic from instances in another Region is seen as WAN bandwidth.
     * @param securityGroupNames
     *           Name of the security groups
     * 
@@ -91,12 +104,17 @@ public interface SecurityGroupClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeSecurityGroups.html"
     *      />
     */
-   SortedSet<SecurityGroup> describeSecurityGroups(String... securityGroupNames);
+   SortedSet<SecurityGroup> describeSecurityGroupsInRegion(Region region,
+            String... securityGroupNames);
 
    /**
     * 
     * Adds permissions to a security group based on another group.
     * 
+    * @param region
+    *           Security groups are not copied across Regions. Instances within the Region cannot
+    *           communicate with instances outside the Region using group-based firewall rules.
+    *           Traffic from instances in another Region is seen as WAN bandwidth.
     * @param groupName
     *           Name of the group to modify. The name must be valid and belong to the account
     * @param sourceSecurityGroup
@@ -110,7 +128,8 @@ public interface SecurityGroupClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-AuthorizeSecurityGroupIngress.html"
     * 
     */
-   void authorizeSecurityGroupIngress(String groupName, UserIdGroupPair sourceSecurityGroup);
+   void authorizeSecurityGroupIngressInRegion(Region region, String groupName,
+            UserIdGroupPair sourceSecurityGroup);
 
    /**
     * 
@@ -123,6 +142,10 @@ public interface SecurityGroupClient {
     * the security group as quickly as possible. However, depending on the number of instances, a
     * small delay might occur.
     * 
+    * @param region
+    *           Security groups are not copied across Regions. Instances within the Region cannot
+    *           communicate with instances outside the Region using group-based firewall rules.
+    *           Traffic from instances in another Region is seen as WAN bandwidth.
     * @param groupName
     *           Name of the group to modify. The name must be valid and belong to the account
     * @param ipProtocol
@@ -144,14 +167,18 @@ public interface SecurityGroupClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-AuthorizeSecurityGroupIngress.html"
     * 
     */
-   void authorizeSecurityGroupIngress(String groupName, IpProtocol ipProtocol, int fromPort,
-            int toPort, String cidrIp);
+   void authorizeSecurityGroupIngressInRegion(Region region, String groupName,
+            IpProtocol ipProtocol, int fromPort, int toPort, String cidrIp);
 
    /**
     * 
     * Revokes permissions from a security group. The permissions used to revoke must be specified
     * using the same values used to grant the permissions.
     * 
+    * @param region
+    *           Security groups are not copied across Regions. Instances within the Region cannot
+    *           communicate with instances outside the Region using group-based firewall rules.
+    *           Traffic from instances in another Region is seen as WAN bandwidth.
     * @param groupName
     *           Name of the group to modify. The name must be valid and belong to the account
     * @param sourceSecurityGroup
@@ -165,7 +192,8 @@ public interface SecurityGroupClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-RevokeSecurityGroupIngress.html"
     * 
     */
-   void revokeSecurityGroupIngress(String groupName, UserIdGroupPair sourceSecurityGroup);
+   void revokeSecurityGroupIngressInRegion(Region region, String groupName,
+            UserIdGroupPair sourceSecurityGroup);
 
    /**
     * 
@@ -179,6 +207,10 @@ public interface SecurityGroupClient {
     * Permission changes are quickly propagated to instances within the security group. However,
     * depending on the number of instances in the group, a small delay is might occur.
     * 
+    * @param region
+    *           Security groups are not copied across Regions. Instances within the Region cannot
+    *           communicate with instances outside the Region using group-based firewall rules.
+    *           Traffic from instances in another Region is seen as WAN bandwidth.
     * @param groupName
     *           Name of the group to modify. The name must be valid and belong to the account
     * @param ipProtocol
@@ -200,6 +232,6 @@ public interface SecurityGroupClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-RevokeSecurityGroupIngress.html"
     * 
     */
-   void revokeSecurityGroupIngress(String groupName, IpProtocol ipProtocol, int fromPort,
-            int toPort, String cidrIp);
+   void revokeSecurityGroupIngressInRegion(Region region, String groupName, IpProtocol ipProtocol,
+            int fromPort, int toPort, String cidrIp);
 }

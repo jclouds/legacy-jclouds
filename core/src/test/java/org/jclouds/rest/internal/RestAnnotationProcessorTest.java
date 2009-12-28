@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.Future;
 
+import javax.annotation.Nullable;
 import javax.inject.Named;
 import javax.inject.Qualifier;
 import javax.ws.rs.Consumes;
@@ -339,7 +340,7 @@ public class RestAnnotationProcessorTest {
    @Endpoint(Localhost.class)
    public class TestPost {
       @POST
-      public void post(@BinderParam(BindToStringPayload.class) String content) {
+      public void post(@Nullable @BinderParam(BindToStringPayload.class) String content) {
       }
 
       @POST
@@ -361,8 +362,7 @@ public class RestAnnotationProcessorTest {
 
    public void testCreatePostRequest() throws SecurityException, NoSuchMethodException {
       Method method = TestPost.class.getMethod("post", String.class);
-      GeneratedHttpRequest<?> httpMethod = factory(TestPost.class).createRequest(method,
-               new Object[] { "data" });
+      GeneratedHttpRequest<?> httpMethod = factory(TestPost.class).createRequest(method, "data");
       assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
       assertEquals(httpMethod.getEndpoint().getPath(), "");
       assertEquals(httpMethod.getMethod(), HttpMethod.POST);
@@ -372,6 +372,19 @@ public class RestAnnotationProcessorTest {
       assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH), Collections
                .singletonList("data".getBytes().length + ""));
       assertEquals(httpMethod.getPayload().toString(), "data");
+   }
+
+   public void testCreatePostRequestNullOk() throws SecurityException, NoSuchMethodException {
+      Method method = TestPost.class.getMethod("post", String.class);
+      GeneratedHttpRequest<?> httpMethod = factory(TestPost.class).createRequest(method,
+               new Object[] { null });
+      assertEquals(httpMethod.getEndpoint().getHost(), "localhost");
+      assertEquals(httpMethod.getEndpoint().getPath(), "");
+      assertEquals(httpMethod.getMethod(), HttpMethod.POST);
+      assertEquals(httpMethod.getHeaders().size(), 0);
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_TYPE).size(), 0);
+      assertEquals(httpMethod.getHeaders().get(HttpHeaders.CONTENT_LENGTH).size(), 0);
+      assertEquals(httpMethod.getPayload(), null);
    }
 
    public void testCreatePostJsonRequest() throws SecurityException, NoSuchMethodException {

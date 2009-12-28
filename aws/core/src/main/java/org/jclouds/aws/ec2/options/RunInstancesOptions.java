@@ -110,19 +110,6 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
    }
 
    /**
-    * Specifies the placement constraints (Availability Zones) for launching the instances.
-    */
-   public RunInstancesOptions inAvailabilityZone(String availabilityZone) {
-      formParameters.put("Placement.AvailabilityZone", checkNotNull(availabilityZone,
-               "availabilityZone"));
-      return this;
-   }
-
-   String getAvailabilityZone() {
-      return getFirstFormOrNull("Placement.AvailabilityZone");
-   }
-
-   /**
     * The ID of the kernel with which to launch the instance.
     */
    public RunInstancesOptions withKernelId(String kernelId) {
@@ -238,14 +225,6 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
       public static RunInstancesOptions asType(InstanceType instanceType) {
          RunInstancesOptions options = new RunInstancesOptions();
          return options.asType(instanceType);
-      }
-
-      /**
-       * @see RunInstancesOptions#inAvailabilityZone(String)
-       */
-      public static RunInstancesOptions inAvailabilityZone(String availabilityZone) {
-         RunInstancesOptions options = new RunInstancesOptions();
-         return options.inAvailabilityZone(availabilityZone);
       }
 
       /**

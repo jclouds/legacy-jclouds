@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.aws.ec2.domain.Image;
 import org.jclouds.aws.ec2.domain.LaunchPermission;
+import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.aws.ec2.options.CreateImageOptions;
 import org.jclouds.aws.ec2.options.DescribeImagesOptions;
@@ -51,6 +52,8 @@ public interface AMIClient {
     * private images that you own, and private images owned by other users for which you have
     * explicit launch permissions.
     * 
+    * @param region
+    *           AMIs are tied to the Region where its files are located within Amazon S3.
     * @see InstanceClient#describeInstances
     * @see #describeImageAttribute
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeImages.html"
@@ -58,11 +61,13 @@ public interface AMIClient {
     * @see DescribeImagesOptions
     */
    @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-   Set<Image> describeImages(DescribeImagesOptions... options);
+   Set<Image> describeImagesInRegion(Region region, DescribeImagesOptions... options);
 
    /**
     * Returns the {@link LaunchPermission}s of an image.
     * 
+    * @param region
+    *           AMIs are tied to the Region where its files are located within Amazon S3.
     * @param imageId
     *           The ID of the AMI for which an attribute will be described
     * @see #describeImages
@@ -72,11 +77,13 @@ public interface AMIClient {
     *      />
     * @see DescribeImagesOptions
     */
-   LaunchPermission getLaunchPermissionForImage(String imageId);
+   LaunchPermission getLaunchPermissionForImageInRegion(Region region, String imageId);
 
    /**
     * Returns the Product Codes of an image.
     * 
+    * @param region
+    *           AMIs are tied to the Region where its files are located within Amazon S3.
     * @param imageId
     *           The ID of the AMI for which an attribute will be described
     * @see #describeImages
@@ -86,11 +93,13 @@ public interface AMIClient {
     *      />
     * @see DescribeImagesOptions
     */
-   Set<String> getProductCodesForImage(String imageId);
+   Set<String> getProductCodesForImageInRegion(Region region, String imageId);
 
    /**
     * Returns a map of device name to block device for the image.
     * 
+    * @param region
+    *           AMIs are tied to the Region where its files are located within Amazon S3.
     * @param imageId
     *           The ID of the AMI for which an attribute will be described
     * @see #describeImages
@@ -100,11 +109,13 @@ public interface AMIClient {
     *      />
     * @see DescribeImagesOptions
     */
-   Map<String, EbsBlockDevice> getBlockDeviceMappingsForImage(String imageId);
+   Map<String, EbsBlockDevice> getBlockDeviceMappingsForImageInRegion(Region region, String imageId);
 
    /**
     * Creates an AMI that uses an Amazon EBS root device from a "running" or "stopped" instance.
     * 
+    * @param region
+    *           AMIs are tied to the Region where its files are located within Amazon S3.
     * @param name
     *           The name of the AMI that was provided during image creation. 3-128 alphanumeric
     *           characters, parenthesis (()), commas (,), slashes (/), dashes (-), or underscores(_)
@@ -122,13 +133,16 @@ public interface AMIClient {
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateImage.html"
     *      />
     */
-   String createImage(String name, String instanceId, CreateImageOptions... options);
+   String createImageInRegion(Region region, String name, String instanceId,
+            CreateImageOptions... options);
 
    /**
     * 
     * Deregisters the specified AMI. Once deregistered, the AMI cannot be used to launch new
     * instances.
     * 
+    * @param region
+    *           AMIs are tied to the Region where its files are located within Amazon S3.
     * @param imageId
     *           Unique ID of the AMI which was assigned during registration. To register an AMI, use
     *           RegisterImage. To view the AMI IDs of AMIs that belong to your account. use
@@ -139,7 +153,7 @@ public interface AMIClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DeregisterImage.html"
     *      />
     */
-   void deregisterImage(String imageId);
+   void deregisterImageInRegion(Region region, String imageId);
 
    /**
     * Registers an AMI with Amazon EC2. Images must be registered before they can be launched. To
@@ -151,6 +165,8 @@ public interface AMIClient {
     * <h3>Note</h3> Any modifications to an AMI backed by Amazon S3 invalidates this registration.
     * If you make changes to an image, deregister the previous image and register the new image.
     * 
+    * @param region
+    *           AMIs are tied to the Region where its files are located within Amazon S3.
     * @param name
     *           The name of the AMI that was provided during image creation. 3-128 alphanumeric
     *           characters, parenthesis (()), commas (,), slashes (/), dashes (-), or underscores(_)
@@ -167,7 +183,7 @@ public interface AMIClient {
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-RegisterImage.html"
     *      />
     */
-   String registerImageFromManifest(String name, String pathToManifest,
+   String registerImageFromManifestInRegion(Region region, String name, String pathToManifest,
             RegisterImageOptions... options);
 
    /**
@@ -183,6 +199,8 @@ public interface AMIClient {
     * <p/>
     * Amazon EBS snapshots are not guaranteed to be bootable.
     * 
+    * @param region
+    *           AMIs are tied to the Region where its files are located within Amazon S3.
     * @param name
     *           The name of the AMI that was provided during image creation. 3-128 alphanumeric
     *           characters, parenthesis (()), commas (,), slashes (/), dashes (-), or underscores(_)
@@ -200,12 +218,14 @@ public interface AMIClient {
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-RegisterImage.html"
     *      />
     */
-   String registerImageBackedByEbs(String name, String ebsSnapshotId,
+   String registerImageBackedByEbsInRegion(Region region, String name, String ebsSnapshotId,
             RegisterImageBackedByEbsOptions... options);
 
    /**
     * Adds {@code launchPermission}s to an AMI.
     * 
+    * @param region
+    *           AMIs are tied to the Region where its files are located within Amazon S3.
     * @param userIds
     *           AWS Access Key ID.
     * @param userGroups
@@ -219,12 +239,14 @@ public interface AMIClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifyImageAttribute.html"
     *      />
     */
-   void addLaunchPermissionsToImage(Iterable<String> userIds, Iterable<String> userGroups,
-            String imageId);
+   void addLaunchPermissionsToImageInRegion(Region region, Iterable<String> userIds,
+            Iterable<String> userGroups, String imageId);
 
    /**
     * Resets the {@code launchPermission}s on an AMI.
     * 
+    * @param region
+    *           AMIs are tied to the Region where its files are located within Amazon S3.
     * @param imageId
     *           ID of the AMI on which the attribute will be reset.
     * 
@@ -234,11 +256,13 @@ public interface AMIClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ResetImageAttribute.html"
     *      />
     */
-   void resetLaunchPermissionsOnImage(String imageId);
+   void resetLaunchPermissionsOnImageInRegion(Region region, String imageId);
 
    /**
     * Removes {@code launchPermission}s from an AMI.
     * 
+    * @param region
+    *           AMIs are tied to the Region where its files are located within Amazon S3.
     * @param userIds
     *           AWS Access Key ID.
     * @param userGroups
@@ -252,12 +276,14 @@ public interface AMIClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifyImageAttribute.html"
     *      />
     */
-   void removeLaunchPermissionsFromImage(Iterable<String> userIds, Iterable<String> userGroups,
-            String imageId);
+   void removeLaunchPermissionsFromImageInRegion(Region region, Iterable<String> userIds,
+            Iterable<String> userGroups, String imageId);
 
    /**
     * Adds {@code productCode}s to an AMI.
     * 
+    * @param region
+    *           AMIs are tied to the Region where its files are located within Amazon S3.
     * @param productCodes
     *           Product Codes
     * @param imageId
@@ -269,11 +295,13 @@ public interface AMIClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifyImageAttribute.html"
     *      />
     */
-   void addProductCodesToImage(Iterable<String> productCodes, String imageId);
+   void addProductCodesToImageInRegion(Region region, Iterable<String> productCodes, String imageId);
 
    /**
     * Removes {@code productCode}s from an AMI.
     * 
+    * @param region
+    *           AMIs are tied to the Region where its files are located within Amazon S3.
     * @param productCodes
     *           Product Codes
     * @param imageId
@@ -285,5 +313,6 @@ public interface AMIClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifyImageAttribute.html"
     *      />
     */
-   void removeProductCodesFromImage(Iterable<String> productCodes, String imageId);
+   void removeProductCodesFromImageInRegion(Region region, Iterable<String> productCodes,
+            String imageId);
 }

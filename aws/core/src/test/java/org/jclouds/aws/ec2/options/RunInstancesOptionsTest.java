@@ -25,7 +25,6 @@ package org.jclouds.aws.ec2.options;
 
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.asType;
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.enableMonitoring;
-import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.inAvailabilityZone;
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withAdditionalInfo;
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withDeviceName;
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withKernelId;
@@ -136,8 +135,7 @@ public class RunInstancesOptionsTest {
    public void testWithUserData() {
       RunInstancesOptions options = new RunInstancesOptions();
       options.withUserData("test");
-      assertEquals(options.buildFormParameters().get("UserData"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("UserData"), Collections.singletonList("test"));
    }
 
    @Test
@@ -149,8 +147,7 @@ public class RunInstancesOptionsTest {
    @Test
    public void testWithUserDataStatic() {
       RunInstancesOptions options = withUserData("test");
-      assertEquals(options.buildFormParameters().get("UserData"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("UserData"), Collections.singletonList("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -185,38 +182,10 @@ public class RunInstancesOptionsTest {
    }
 
    @Test
-   public void testInAvailabilityZone() {
-      RunInstancesOptions options = new RunInstancesOptions();
-      options.inAvailabilityZone("test");
-      assertEquals(options.buildFormParameters().get("Placement.AvailabilityZone"), Collections
-               .singletonList("test"));
-   }
-
-   @Test
-   public void testNullAvailabilityZone() {
-      RunInstancesOptions options = new RunInstancesOptions();
-      assertEquals(options.buildFormParameters().get("Placement.AvailabilityZone"),
-               Collections.EMPTY_LIST);
-   }
-
-   @Test
-   public void testInAvailabilityZoneStatic() {
-      RunInstancesOptions options = inAvailabilityZone("test");
-      assertEquals(options.buildFormParameters().get("Placement.AvailabilityZone"), Collections
-               .singletonList("test"));
-   }
-
-   @Test(expectedExceptions = NullPointerException.class)
-   public void testInAvailabilityZoneNPE() {
-      inAvailabilityZone(null);
-   }
-
-   @Test
    public void testWithKernelId() {
       RunInstancesOptions options = new RunInstancesOptions();
       options.withKernelId("test");
-      assertEquals(options.buildFormParameters().get("KernelId"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("KernelId"), Collections.singletonList("test"));
    }
 
    @Test
@@ -228,8 +197,7 @@ public class RunInstancesOptionsTest {
    @Test
    public void testWithKernelIdStatic() {
       RunInstancesOptions options = withKernelId("test");
-      assertEquals(options.buildFormParameters().get("KernelId"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("KernelId"), Collections.singletonList("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -289,8 +257,7 @@ public class RunInstancesOptionsTest {
    public void testWithSubnetId() {
       RunInstancesOptions options = new RunInstancesOptions();
       options.withSubnetId("test");
-      assertEquals(options.buildFormParameters().get("SubnetId"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("SubnetId"), Collections.singletonList("test"));
    }
 
    @Test
@@ -302,8 +269,7 @@ public class RunInstancesOptionsTest {
    @Test
    public void testWithSubnetIdStatic() {
       RunInstancesOptions options = withSubnetId("test");
-      assertEquals(options.buildFormParameters().get("SubnetId"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("SubnetId"), Collections.singletonList("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -341,8 +307,8 @@ public class RunInstancesOptionsTest {
    public void testWithVirtualName() {
       RunInstancesOptions options = new RunInstancesOptions();
       options.withVirtualName("test");
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.VirtualName"),
-               Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.VirtualName"), Collections
+               .singletonList("test"));
    }
 
    @Test
@@ -355,8 +321,8 @@ public class RunInstancesOptionsTest {
    @Test
    public void testWithVirtualNameStatic() {
       RunInstancesOptions options = withVirtualName("test");
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.VirtualName"),
-               Collections.singletonList("test"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.VirtualName"), Collections
+               .singletonList("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)

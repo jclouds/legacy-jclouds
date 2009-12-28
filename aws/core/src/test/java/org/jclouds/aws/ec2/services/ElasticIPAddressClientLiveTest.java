@@ -25,29 +25,33 @@ package org.jclouds.aws.ec2.services;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
-import java.util.Map;
+import java.util.SortedSet;
 
 import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.EC2ContextFactory;
-import org.jclouds.aws.ec2.domain.MonitoringState;
+import org.jclouds.aws.ec2.domain.PublicIpInstanceIdPair;
 import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+
 /**
- * Tests behavior of {@code MonitoringClient}
+ * Tests behavior of {@code ElasticIPAddressClient}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "ec2.MonitoringClientLiveTest")
-public class MonitoringClientLiveTest {
+@Test(groups = "live", sequential = true, testName = "ec2.ElasticIPAddressClientLiveTest")
+public class ElasticIPAddressClientLiveTest {
 
-   private MonitoringClient client;
-   private static final String DEFAULT_INSTANCE = "i-TODO";
+   private ElasticIPAddressClient client;
    private RestContext<EC2AsyncClient, EC2Client> context;
 
    @BeforeGroups(groups = { "live" })
@@ -56,23 +60,29 @@ public class MonitoringClientLiveTest {
       String password = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
 
       context = EC2ContextFactory.createContext(user, password, new Log4JLoggingModule());
-      client = context.getApi().getMonitoringServices();
+      client = context.getApi().getElasticIPAddressServices();
    }
 
-   @Test(enabled = false)
-   // TODO get instance
-   public void testMonitorInstances() {
-      Map<String, MonitoringState> monitoringState = client.monitorInstancesInRegion(
-               Region.DEFAULT, DEFAULT_INSTANCE);
-      assertEquals(monitoringState.get(DEFAULT_INSTANCE), MonitoringState.PENDING);
+   @Test
+   void testDescribeAddresses() {
+      for (Region region : ImmutableSet.of(Region.DEFAULT, Region.EU_WEST_1, Region.US_EAST_1,
+               Region.US_WEST_1)) {
+         SortedSet<PublicIpInstanceIdPair> allResults = Sets.newTreeSet(client
+                  .describeAddressesInRegion(region));
+         assertNotNull(allResults);
+         if (allResults.size() >= 1) {
+            PublicIpInstanceIdPair pair = allResults.last();
+            SortedSet<PublicIpInstanceIdPair> result = Sets.newTreeSet(client
+                     .describeAddressesInRegion(region, pair.getPublicIp()));
+            assertNotNull(result);
+            PublicIpInstanceIdPair compare = result.last();
+            assertEquals(compare, pair);
+         }
+      }
    }
 
-   @Test(enabled = false)
-   // TODO get instance
-   public void testUnmonitorInstances() {
-      Map<String, MonitoringState> monitoringState = client.unmonitorInstancesInRegion(
-               Region.DEFAULT, DEFAULT_INSTANCE);
-      assertEquals(monitoringState.get(DEFAULT_INSTANCE), MonitoringState.PENDING);
+   @AfterTest
+   public void shutdown() {
+      context.close();
    }
-
 }

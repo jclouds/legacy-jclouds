@@ -23,10 +23,11 @@
  */
 package org.jclouds.aws.ec2.services;
 
-import java.util.SortedSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.aws.ec2.domain.KeyPair;
+import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.concurrent.Timeout;
 
 /**
@@ -44,6 +45,11 @@ public interface KeyPairClient {
     * unencrypted PEM encoded PKCS#8 private key. If a key with the specified name already exists,
     * Amazon EC2 returns an error.
     * 
+    * @param region
+    *           Key pairs (to connect to instances) are Region-specific.
+    * @param keyName
+    *           A unique name for the key pair.
+    * 
     * @see #runInstances
     * @see #describeKeyPairs
     * @see #deleteKeyPair
@@ -52,25 +58,33 @@ public interface KeyPairClient {
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateKeyPair.html"
     *      />
     */
-   KeyPair createKeyPair(String keyName);
+   KeyPair createKeyPairInRegion(Region region, String keyName);
 
    /**
     * Returns information about key pairs available to you. If you specify key pairs, information
     * about those key pairs is returned. Otherwise, information for all registered key pairs is
     * returned.
     * 
+    * @param region
+    *           Key pairs (to connect to instances) are Region-specific.
     * @param keyPairNames
     *           Key pairs to describe.
+    * 
     * @see #runInstances
     * @see #describeAvailabilityZones
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeKeyPairs.html"
     *      />
     */
-   SortedSet<KeyPair> describeKeyPairs(String... keyPairNames);
+   Set<KeyPair> describeKeyPairsInRegion(Region region, String... keyPairNames);
 
    /**
     * Deletes the specified key pair, by removing the public key from Amazon EC2. You must own the
     * key pair
+    * 
+    * @param region
+    *           Key pairs (to connect to instances) are Region-specific.
+    * @param keyName
+    *           Name of the key pair to delete
     * 
     * @see #describeKeyPairs
     * @see #createKeyPair
@@ -79,7 +93,6 @@ public interface KeyPairClient {
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DeleteKeyPair.html"
     *      />
     */
-
-   void deleteKeyPair(String keyName);
+   void deleteKeyPairInRegion(Region region, String keyName);
 
 }

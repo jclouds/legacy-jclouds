@@ -26,7 +26,7 @@ package org.jclouds.aws.ec2.services;
 import static org.jclouds.aws.ec2.reference.EC2Parameters.ACTION;
 import static org.jclouds.aws.ec2.reference.EC2Parameters.VERSION;
 
-import java.util.SortedSet;
+import java.util.Set;
 import java.util.concurrent.Future;
 
 import javax.ws.rs.FormParam;
@@ -36,11 +36,14 @@ import javax.ws.rs.Path;
 import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.binders.BindKeyNameToIndexedFormParams;
 import org.jclouds.aws.ec2.domain.KeyPair;
+import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.filters.FormSigner;
+import org.jclouds.aws.ec2.functions.RegionToEndpoint;
 import org.jclouds.aws.ec2.xml.DescribeKeyPairsResponseHandler;
 import org.jclouds.aws.ec2.xml.KeyPairResponseHandler;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
@@ -59,30 +62,35 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 public interface KeyPairAsyncClient {
 
    /**
-    * @see BaseEC2Client#createKeyPair
+    * @see BaseEC2Client#createKeyPairInRegion
     */
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "CreateKeyPair")
    @XMLResponseParser(KeyPairResponseHandler.class)
-   Future<KeyPair> createKeyPair(@FormParam("KeyName") String keyName);
+   Future<KeyPair> createKeyPairInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @FormParam("KeyName") String keyName);
 
    /**
-    * @see BaseEC2Client#describeKeyPairs
+    * @see BaseEC2Client#describeKeyPairsInRegion
     */
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeKeyPairs")
    @XMLResponseParser(DescribeKeyPairsResponseHandler.class)
-   Future<? extends SortedSet<KeyPair>> describeKeyPairs(
+   Future<? extends Set<KeyPair>> describeKeyPairsInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @BinderParam(BindKeyNameToIndexedFormParams.class) String... keyPairNames);
 
    /**
-    * @see BaseEC2Client#deleteKeyPair
+    * @see BaseEC2Client#deleteKeyPairInRegion
     */
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DeleteKeyPair")
-   Future<Void> deleteKeyPair(@FormParam("KeyName") String keyName);
+   Future<Void> deleteKeyPairInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @FormParam("KeyName") String keyName);
 
 }

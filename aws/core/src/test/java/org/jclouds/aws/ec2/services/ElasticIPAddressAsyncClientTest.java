@@ -30,8 +30,12 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.URI;
+import java.util.Map;
+
+import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.EC2;
+import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.filters.FormSigner;
 import org.jclouds.aws.ec2.xml.AllocateAddressResponseHandler;
 import org.jclouds.aws.ec2.xml.DescribeAddressesResponseHandler;
@@ -47,6 +51,7 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Jsr330;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Provides;
@@ -62,10 +67,10 @@ public class ElasticIPAddressAsyncClientTest extends RestClientTest<ElasticIPAdd
 
    public void testDisassociateAddress() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = ElasticIPAddressAsyncClient.class.getMethod("disassociateAddress",
-               InetAddress.class);
+      Method method = ElasticIPAddressAsyncClient.class.getMethod("disassociateAddressInRegion",
+               Region.class, InetAddress.class);
       GeneratedHttpRequest<ElasticIPAddressAsyncClient> httpMethod = processor.createRequest(
-               method, InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }));
+               method, Region.DEFAULT, InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }));
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -81,16 +86,16 @@ public class ElasticIPAddressAsyncClientTest extends RestClientTest<ElasticIPAdd
    }
 
    public void testAssociateAddress() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ElasticIPAddressAsyncClient.class.getMethod("associateAddress",
-               InetAddress.class, String.class);
+      Method method = ElasticIPAddressAsyncClient.class.getMethod("associateAddressInRegion",
+               Region.class, InetAddress.class, String.class);
       GeneratedHttpRequest<ElasticIPAddressAsyncClient> httpMethod = processor.createRequest(
-               method, InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }), "me");
+               method, Region.DEFAULT, InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }), "me");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 75\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
       assertPayloadEquals(httpMethod,
-               "Version=2009-11-30&Action=AssociateAddress&PublicIp=127.0.0.1&InstanceId=me");
+               "Version=2009-11-30&Action=AssociateAddress&InstanceId=me&PublicIp=127.0.0.1");
 
       assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -100,10 +105,10 @@ public class ElasticIPAddressAsyncClientTest extends RestClientTest<ElasticIPAdd
    }
 
    public void testReleaseAddress() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ElasticIPAddressAsyncClient.class.getMethod("releaseAddress",
-               InetAddress.class);
+      Method method = ElasticIPAddressAsyncClient.class.getMethod("releaseAddressInRegion",
+               Region.class, InetAddress.class);
       GeneratedHttpRequest<ElasticIPAddressAsyncClient> httpMethod = processor.createRequest(
-               method, InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }));
+               method, Region.DEFAULT, InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }));
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -118,10 +123,10 @@ public class ElasticIPAddressAsyncClientTest extends RestClientTest<ElasticIPAdd
    }
 
    public void testDescribeAddresses() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ElasticIPAddressAsyncClient.class.getMethod("describeAddresses", Array
-               .newInstance(InetAddress.class, 0).getClass());
+      Method method = ElasticIPAddressAsyncClient.class.getMethod("describeAddressesInRegion",
+               Region.class, Array.newInstance(InetAddress.class, 0).getClass());
       GeneratedHttpRequest<ElasticIPAddressAsyncClient> httpMethod = processor.createRequest(
-               method, InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }));
+               method, Region.DEFAULT, InetAddress.getByAddress(new byte[] { 127, 0, 0, 1 }));
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -137,9 +142,10 @@ public class ElasticIPAddressAsyncClientTest extends RestClientTest<ElasticIPAdd
    }
 
    public void testAllocateAddress() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ElasticIPAddressAsyncClient.class.getMethod("allocateAddress");
-      GeneratedHttpRequest<ElasticIPAddressAsyncClient> httpMethod = processor
-               .createRequest(method);
+      Method method = ElasticIPAddressAsyncClient.class.getMethod("allocateAddressInRegion",
+               Region.class);
+      GeneratedHttpRequest<ElasticIPAddressAsyncClient> httpMethod = processor.createRequest(
+               method, Region.DEFAULT);
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -188,6 +194,16 @@ public class ElasticIPAddressAsyncClientTest extends RestClientTest<ElasticIPAdd
          @TimeStamp
          String provide() {
             return "2009-11-08T15:54:08.897Z";
+         }
+
+         @SuppressWarnings("unused")
+         @Singleton
+         @Provides
+         Map<Region, URI> provideMap() {
+            return ImmutableMap.<Region, URI> of(Region.DEFAULT, URI.create("https://booya"),
+                     Region.EU_WEST_1, URI.create("https://ec2.eu-west-1.amazonaws.com"),
+                     Region.US_EAST_1, URI.create("https://ec2.us-east-1.amazonaws.com"),
+                     Region.US_WEST_1, URI.create("https://ec2.us-west-1.amazonaws.com"));
          }
       };
    }

@@ -28,13 +28,13 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.SortedSet;
+import java.util.Set;
 
 import org.jclouds.aws.ec2.domain.PublicIpInstanceIdPair;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Tests behavior of {@code DescribeAddressesResponseHandler}
@@ -47,11 +47,11 @@ public class DescribeAddressesResponseHandlerTest extends BaseHandlerTest {
 
       InputStream is = getClass().getResourceAsStream("/ec2/describe_addresses.xml");
 
-      SortedSet<PublicIpInstanceIdPair> result = factory.create(
+      Set<PublicIpInstanceIdPair> result = factory.create(
                injector.getInstance(DescribeAddressesResponseHandler.class)).parse(is);
 
-      assertEquals(result, ImmutableSortedSet.of(new PublicIpInstanceIdPair(InetAddress
-               .getByName("67.202.55.233"), null), new PublicIpInstanceIdPair(InetAddress
-               .getByName("67.202.55.255"), "i-f15ebb98")));
+      assertEquals(result, ImmutableList.of(new PublicIpInstanceIdPair(InetAddress
+               .getByName("67.202.55.255"), "i-f15ebb98"), new PublicIpInstanceIdPair(InetAddress
+               .getByName("67.202.55.233"), null)));
    }
 }

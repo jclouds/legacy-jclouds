@@ -25,7 +25,7 @@ package org.jclouds.aws.ec2.xml;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.SortedSet;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -40,11 +40,11 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 public class DescribeAddressesResponseHandler extends
-         HandlerWithResult<SortedSet<PublicIpInstanceIdPair>> {
+         HandlerWithResult<Set<PublicIpInstanceIdPair>> {
 
    @Resource
    protected Logger logger = Logger.NULL;
-   private SortedSet<PublicIpInstanceIdPair> pairs = Sets.newTreeSet();
+   private Set<PublicIpInstanceIdPair> pairs = Sets.newLinkedHashSet();
    private InetAddress ipAddress;
    private StringBuilder currentText = new StringBuilder();
 
@@ -87,7 +87,7 @@ public class DescribeAddressesResponseHandler extends
    }
 
    @Override
-   public SortedSet<PublicIpInstanceIdPair> getResult() {
+   public Set<PublicIpInstanceIdPair> getResult() {
       return pairs;
    }
 

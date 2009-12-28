@@ -29,8 +29,12 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.Map;
+
+import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.EC2;
+import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.filters.FormSigner;
 import org.jclouds.aws.ec2.xml.MonitoringStateHandler;
 import org.jclouds.aws.reference.AWSConstants;
@@ -44,6 +48,7 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Jsr330;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Provides;
@@ -59,10 +64,10 @@ public class MonitoringAsyncClientTest extends RestClientTest<MonitoringAsyncCli
 
    public void testUnmonitorInstances() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = MonitoringAsyncClient.class.getMethod("unmonitorInstances", String.class,
-               Array.newInstance(String.class, 0).getClass());
+      Method method = MonitoringAsyncClient.class.getMethod("unmonitorInstancesInRegion",
+               Region.class, String.class, Array.newInstance(String.class, 0).getClass());
       GeneratedHttpRequest<MonitoringAsyncClient> httpMethod = processor.createRequest(method,
-               "instance1", "instance2");
+               Region.DEFAULT, "instance1", "instance2");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -77,12 +82,11 @@ public class MonitoringAsyncClientTest extends RestClientTest<MonitoringAsyncCli
       checkFilters(httpMethod);
    }
 
-   public void testMonitorInstances() throws SecurityException, NoSuchMethodException,
-            IOException {
-      Method method = MonitoringAsyncClient.class.getMethod("monitorInstances", String.class,
-               Array.newInstance(String.class, 0).getClass());
+   public void testMonitorInstances() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = MonitoringAsyncClient.class.getMethod("monitorInstancesInRegion",
+               Region.class, String.class, Array.newInstance(String.class, 0).getClass());
       GeneratedHttpRequest<MonitoringAsyncClient> httpMethod = processor.createRequest(method,
-               "instance1", "instance2");
+               Region.DEFAULT, "instance1", "instance2");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
@@ -96,6 +100,7 @@ public class MonitoringAsyncClientTest extends RestClientTest<MonitoringAsyncCli
 
       checkFilters(httpMethod);
    }
+
    @Override
    protected void checkFilters(GeneratedHttpRequest<MonitoringAsyncClient> httpMethod) {
       assertEquals(httpMethod.getFilters().size(), 1);
@@ -131,6 +136,16 @@ public class MonitoringAsyncClientTest extends RestClientTest<MonitoringAsyncCli
          @TimeStamp
          String provide() {
             return "2009-11-08T15:54:08.897Z";
+         }
+
+         @SuppressWarnings("unused")
+         @Singleton
+         @Provides
+         Map<Region, URI> provideMap() {
+            return ImmutableMap.<Region, URI> of(Region.DEFAULT, URI.create("https://booya"),
+                     Region.EU_WEST_1, URI.create("https://ec2.eu-west-1.amazonaws.com"),
+                     Region.US_EAST_1, URI.create("https://ec2.us-east-1.amazonaws.com"),
+                     Region.US_WEST_1, URI.create("https://ec2.us-west-1.amazonaws.com"));
          }
       };
    }

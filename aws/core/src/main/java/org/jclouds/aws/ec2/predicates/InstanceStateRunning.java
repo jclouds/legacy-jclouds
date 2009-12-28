@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.domain.InstanceState;
+import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.logging.Logger;
@@ -41,7 +42,8 @@ public class InstanceStateRunning implements Predicate<RunningInstance> {
    }
 
    private RunningInstance refresh(String instanceId) {
-      return Iterables.getLast(Iterables.getLast(client.describeInstances(instanceId))
+      return Iterables.getLast(Iterables.getLast(client.describeInstancesInRegion(
+               Region.DEFAULT,instanceId))
                .getRunningInstances());
    }
 }

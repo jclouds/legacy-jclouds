@@ -40,8 +40,10 @@ import org.jclouds.aws.ec2.binders.BindUserGroupsToIndexedFormParams;
 import org.jclouds.aws.ec2.binders.BindUserIdsToIndexedFormParams;
 import org.jclouds.aws.ec2.domain.Image;
 import org.jclouds.aws.ec2.domain.LaunchPermission;
+import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.aws.ec2.filters.FormSigner;
+import org.jclouds.aws.ec2.functions.RegionToEndpoint;
 import org.jclouds.aws.ec2.options.CreateImageOptions;
 import org.jclouds.aws.ec2.options.DescribeImagesOptions;
 import org.jclouds.aws.ec2.options.RegisterImageBackedByEbsOptions;
@@ -53,6 +55,7 @@ import org.jclouds.aws.ec2.xml.LaunchPermissionHandler;
 import org.jclouds.aws.ec2.xml.ProductCodesHandler;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
@@ -71,135 +74,156 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 public interface AMIAsyncClient {
 
    /**
-    * @see AMIClient#describeImages
+    * @see AMIClient#describeImagesInRegion
     */
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeImages")
    @XMLResponseParser(DescribeImagesResponseHandler.class)
-   Future<? extends Set<Image>> describeImages(DescribeImagesOptions... options);
+   Future<? extends Set<Image>> describeImagesInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            DescribeImagesOptions... options);
 
    /**
-    * @see AMIClient#createImage
+    * @see AMIClient#createImageInRegion
     */
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "CreateImage")
    @XMLResponseParser(ImageIdHandler.class)
-   Future<String> createImage(@FormParam("Name") String name,
-            @FormParam("InstanceId") String instanceId, CreateImageOptions... options);
+   Future<String> createImageInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @FormParam("Name") String name, @FormParam("InstanceId") String instanceId,
+            CreateImageOptions... options);
 
    /**
-    * @see AMIClient#deregisterImage
+    * @see AMIClient#deregisterImageInRegion
     */
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DeregisterImage")
-   Future<Void> deregisterImage(@FormParam("ImageId") String imageId);
+   Future<Void> deregisterImageInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @FormParam("ImageId") String imageId);
 
    /**
-    * @see AMIClient#registerImageFromManifest
+    * @see AMIClient#registerImageFromManifestInRegion
     */
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "RegisterImage")
    @XMLResponseParser(ImageIdHandler.class)
-   Future<String> registerImageFromManifest(@FormParam("Name") String imageName,
-            @FormParam("ImageLocation") String pathToManifest, RegisterImageOptions... options);
+   Future<String> registerImageFromManifestInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @FormParam("Name") String imageName, @FormParam("ImageLocation") String pathToManifest,
+            RegisterImageOptions... options);
 
    /**
-    * @see AMIClient#registerImageBackedByEbs
+    * @see AMIClient#registerImageBackedByEbsInRegion
     */
    @POST
    @Path("/")
    @FormParams(keys = { ACTION, "RootDeviceName", "BlockDeviceMapping.0.DeviceName" }, values = {
             "RegisterImage", "/dev/sda1", "/dev/sda1" })
    @XMLResponseParser(ImageIdHandler.class)
-   Future<String> registerImageBackedByEbs(@FormParam("Name") String imageName,
+   Future<String> registerImageBackedByEbsInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @FormParam("Name") String imageName,
             @FormParam("BlockDeviceMapping.0.Ebs.SnapshotId") String ebsSnapshotId,
             RegisterImageBackedByEbsOptions... options);
 
    /**
-    * @see AMIClient#resetLaunchPermissionsOnImage
+    * @see AMIClient#resetLaunchPermissionsOnImageInRegion
     */
    @POST
    @Path("/")
    @FormParams(keys = { ACTION, "Attribute" }, values = { "ResetImageAttribute", "launchPermission" })
-   Future<Void> resetLaunchPermissionsOnImage(@FormParam("ImageId") String imageId);
+   Future<Void> resetLaunchPermissionsOnImageInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @FormParam("ImageId") String imageId);
 
    /**
-    * @see AMIClient#addLaunchPermissionsToImage
+    * @see AMIClient#addLaunchPermissionsToImageInRegion
     */
    @POST
    @Path("/")
    @FormParams(keys = { ACTION, "OperationType", "Attribute" }, values = { "ModifyImageAttribute",
             "add", "launchPermission" })
-   Future<Void> addLaunchPermissionsToImage(
+   Future<Void> addLaunchPermissionsToImageInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @BinderParam(BindUserIdsToIndexedFormParams.class) Iterable<String> userIds,
             @BinderParam(BindUserGroupsToIndexedFormParams.class) Iterable<String> userGroups,
             @FormParam("ImageId") String imageId);
 
    /**
-    * @see AMIClient#removeLaunchPermissionsToImage
+    * @see AMIClient#removeLaunchPermissionsToImageInRegion
     */
    @POST
    @Path("/")
    @FormParams(keys = { ACTION, "OperationType", "Attribute" }, values = { "ModifyImageAttribute",
             "remove", "launchPermission" })
-   Future<Void> removeLaunchPermissionsFromImage(
+   Future<Void> removeLaunchPermissionsFromImageInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @BinderParam(BindUserIdsToIndexedFormParams.class) Iterable<String> userIds,
             @BinderParam(BindUserGroupsToIndexedFormParams.class) Iterable<String> userGroups,
             @FormParam("ImageId") String imageId);
 
    /**
-    * @see AMIClient#getLaunchPermissionForImage
+    * @see AMIClient#getLaunchPermissionForImageInRegion
     */
    @POST
    @Path("/")
    @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeImageAttribute",
             "launchPermission" })
    @XMLResponseParser(LaunchPermissionHandler.class)
-   Future<LaunchPermission> getLaunchPermissionForImage(@FormParam("ImageId") String imageId);
+   Future<LaunchPermission> getLaunchPermissionForImageInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @FormParam("ImageId") String imageId);
 
    /**
-    * @see AMIClient#getProductCodesForImage
+    * @see AMIClient#getProductCodesForImageInRegion
     */
    @POST
    @Path("/")
    @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeImageAttribute", "productCodes" })
    @XMLResponseParser(ProductCodesHandler.class)
-   Future<? extends Set<String>> getProductCodesForImage(@FormParam("ImageId") String imageId);
+   Future<? extends Set<String>> getProductCodesForImageInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @FormParam("ImageId") String imageId);
 
    /**
-    * @see AMIClient#getBlockDeviceMappingsForImage
+    * @see AMIClient#getBlockDeviceMappingsForImageInRegion
     */
    @POST
    @Path("/")
    @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeImageAttribute",
             "blockDeviceMapping" })
    @XMLResponseParser(BlockDeviceMappingHandler.class)
-   Future<? extends Map<String, EbsBlockDevice>> getBlockDeviceMappingsForImage(
+   Future<? extends Map<String, EbsBlockDevice>> getBlockDeviceMappingsForImageInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("ImageId") String imageId);
 
    /**
-    * @see AMIClient#addProductCodesToImage
+    * @see AMIClient#addProductCodesToImageInRegion
     */
    @POST
    @Path("/")
    @FormParams(keys = { ACTION, "OperationType", "Attribute" }, values = { "ModifyImageAttribute",
             "add", "productCodes" })
-   Future<Void> addProductCodesToImage(
+   Future<Void> addProductCodesToImageInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @BinderParam(BindProductCodesToIndexedFormParams.class) Iterable<String> productCodes,
             @FormParam("ImageId") String imageId);
 
    /**
-    * @see AMIClient#removeProductCodesToImage
+    * @see AMIClient#removeProductCodesToImageInRegion
     */
    @POST
    @Path("/")
    @FormParams(keys = { ACTION, "OperationType", "Attribute" }, values = { "ModifyImageAttribute",
             "remove", "productCodes" })
-   Future<Void> removeProductCodesFromImage(
+   Future<Void> removeProductCodesFromImageInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @BinderParam(BindProductCodesToIndexedFormParams.class) Iterable<String> productCodes,
             @FormParam("ImageId") String imageId);
 }

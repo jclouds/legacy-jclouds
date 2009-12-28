@@ -41,6 +41,7 @@ import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.aws.ec2.domain.IpProtocol;
 import org.jclouds.aws.ec2.domain.KeyPair;
+import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.compute.ComputeService;
@@ -111,7 +112,9 @@ public class EC2ComputeService implements ComputeService {
                keyPair.getKeyName(), securityGroupName);
 
       RunningInstance runningInstance = Iterables
-               .getLast(ec2Client.getInstanceServices().runInstances(
+               .getLast(ec2Client.getInstanceServices().runInstancesInRegion(
+                        Region.DEFAULT,
+                        null,
                         ami,
                         1,
                         1,
@@ -139,12 +142,13 @@ public class EC2ComputeService implements ComputeService {
       logger.debug(">> creating keyPair name(%s)", name);
       KeyPair keyPair;
       try {
-         keyPair = ec2Client.getKeyPairServices().createKeyPair(name);
+         keyPair = ec2Client.getKeyPairServices().createKeyPairInRegion(Region.DEFAULT, name);
          logger.debug("<< created keyPair(%s)", keyPair.getKeyName());
 
       } catch (AWSResponseException e) {
          if (e.getError().getCode().equals("InvalidKeyPair.Duplicate")) {
-            keyPair = ec2Client.getKeyPairServices().describeKeyPairs(name).last();
+            keyPair = Iterables.getLast(ec2Client.getKeyPairServices().describeKeyPairsInRegion(
+                     Region.DEFAULT, name));
             logger.debug("<< reused keyPair(%s)", keyPair.getKeyName());
 
          } else {
@@ -158,13 +162,14 @@ public class EC2ComputeService implements ComputeService {
       logger.debug(">> creating securityGroup name(%s)", name);
 
       try {
-         ec2Client.getSecurityGroupServices().createSecurityGroup(name, name);
+         ec2Client.getSecurityGroupServices().createSecurityGroupInRegion(Region.DEFAULT, name,
+                  name);
          logger.debug("<< created securityGroup(%s)", name);
          logger.debug(">> authorizing securityGroup name(%s) ports(%s)", name, ImmutableSet
                   .of(ports));
          for (int port : ports) {
-            ec2Client.getSecurityGroupServices().authorizeSecurityGroupIngress(name,
-                     IpProtocol.TCP, port, port, "0.0.0.0/0");
+            ec2Client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(
+                     Region.DEFAULT, name, IpProtocol.TCP, port, port, "0.0.0.0/0");
          }
          logger.debug("<< authorized securityGroup(%s)", name);
       } catch (AWSResponseException e) {
@@ -205,7 +210,8 @@ public class EC2ComputeService implements ComputeService {
 
    private RunningInstance getRunningInstance(String id) {
       RunningInstance runningInstance = Iterables.getLast(Iterables.getLast(
-               ec2Client.getInstanceServices().describeInstances(id)).getRunningInstances());
+               ec2Client.getInstanceServices().describeInstancesInRegion(Region.DEFAULT, id))
+               .getRunningInstances());
       return runningInstance;
    }
 
@@ -227,7 +233,8 @@ public class EC2ComputeService implements ComputeService {
    public SortedSet<ServerIdentity> listServers() {
       logger.debug(">> listing servers");
       SortedSet<ServerIdentity> servers = Sets.newTreeSet();
-      for (Reservation reservation : ec2Client.getInstanceServices().describeInstances()) {
+      for (Reservation reservation : ec2Client.getInstanceServices().describeInstancesInRegion(
+               Region.DEFAULT)) {
          Iterables.addAll(servers, Iterables.transform(reservation.getRunningInstances(),
                   new Function<RunningInstance, ServerIdentity>() {
                      @Override
@@ -246,13 +253,13 @@ public class EC2ComputeService implements ComputeService {
       // grab the old keyname
       String name = runningInstance.getKeyName();
       logger.debug(">> terminating instance(%s)", runningInstance.getInstanceId());
-      ec2Client.getInstanceServices().terminateInstances(id);
+      ec2Client.getInstanceServices().terminateInstancesInRegion(Region.DEFAULT, id);
       logger.debug("<< terminated instance(%s)", runningInstance.getInstanceId());
       logger.debug(">> deleting keyPair(%s)", name);
-      ec2Client.getKeyPairServices().deleteKeyPair(name);
+      ec2Client.getKeyPairServices().deleteKeyPairInRegion(Region.DEFAULT, name);
       logger.debug("<< deleted keyPair(%s)", name);
       logger.debug(">> deleting securityGroup(%s)", name);
-      ec2Client.getSecurityGroupServices().deleteSecurityGroup(name);
+      ec2Client.getSecurityGroupServices().deleteSecurityGroupInRegion(Region.DEFAULT, name);
       logger.debug("<< deleted securityGroup(%s)", name);
    }
 }

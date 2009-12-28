@@ -27,10 +27,12 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.aws.ec2.domain.MonitoringState;
+import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.concurrent.Timeout;
 
 /**
- * Provides monitoring services for EC2. For more information, refer to the Amazon CloudWatch Developer Guide.
+ * Provides monitoring services for EC2. For more information, refer to the Amazon CloudWatch
+ * Developer Guide.
  * <p/>
  * 
  * @author Adrian Cole
@@ -39,26 +41,35 @@ import org.jclouds.concurrent.Timeout;
 public interface MonitoringClient {
 
    /**
-    * Enables monitoring for a running instance. For more information, refer to the Amazon CloudWatch Developer Guide.
+    * Enables monitoring for a running instance. For more information, refer to the Amazon
+    * CloudWatch Developer Guide.
     * 
+    * @param region
+    *           Instances are tied to Availability Zones. However, the instance ID is tied to the
+    *           Region.
     * @see InstanceClient#runInstances
     * @see #unmonitorInstances
     * 
-    * @see <a href=
-    *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-MonitorInstances.html"
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-MonitorInstances.html"
     *      />
     */
-   Map<String, MonitoringState> monitorInstances(String instanceId, String... instanceIds);
+   Map<String, MonitoringState> monitorInstancesInRegion(Region region, String instanceId,
+            String... instanceIds);
 
    /**
-    * Disables monitoring for a running instance. For more information, refer to the Amazon CloudWatch Developer Guide.
+    * Disables monitoring for a running instance. For more information, refer to the Amazon
+    * CloudWatch Developer Guide.
+    * 
+    * @param region
+    *           Instances are tied to Availability Zones. However, the instance ID is tied to the
+    *           Region.
     * 
     * @see InstanceClient#runInstances
     * @see #monitorInstances
     * 
-    * @see <a href=
-    *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-UnmonitorInstances.html"
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-UnmonitorInstances.html"
     *      />
     */
-   Map<String, MonitoringState> unmonitorInstances(String instanceId, String... instanceIds);
+   Map<String, MonitoringState> unmonitorInstancesInRegion(Region region, String instanceId,
+            String... instanceIds);
 }

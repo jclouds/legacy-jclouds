@@ -21,36 +21,33 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.ec2.xml;
+package org.jclouds.aws.ec2.binders;
 
-import static org.testng.Assert.assertEquals;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.InputStream;
-import java.util.Set;
-
-import org.jclouds.aws.ec2.domain.KeyPair;
-import org.jclouds.http.functions.BaseHandlerTest;
-import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableSet;
+import org.jclouds.aws.ec2.domain.AvailabilityZone;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.rest.Binder;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 /**
- * Tests behavior of {@code DescribeKeyPairsHandler}
+ * Binds the AvailabilityZone to a form parameter if set.
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.DescribeKeyPairsHandlerTest")
-public class DescribeKeyPairsResponseHandlerTest extends BaseHandlerTest {
-   public void testApplyInputStream() {
+public class IfNotNullBindAvailabilityZoneToFormParam implements Binder {
 
-      InputStream is = getClass().getResourceAsStream("/ec2/describe_keypairs.xml");
-
-      Set<KeyPair> expected = ImmutableSet.of(new KeyPair("gsg-keypair",
-               "1f:51:ae:28:bf:89:e9:d8:1f:25:5d:37:2d:7d:b8:ca:9f:f5:f1:6f", null));
-
-      Set<KeyPair> result = factory.create(
-               injector.getInstance(DescribeKeyPairsResponseHandler.class)).parse(is);
-
-      assertEquals(result, expected);
+   @SuppressWarnings("unchecked")
+   public void bindToRequest(HttpRequest request, Object input) {
+      if (input != null) {
+         checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
+                  "this binder is only valid for GeneratedHttpRequests!");
+         checkArgument(input instanceof AvailabilityZone,
+                  "this binder is only valid for AvailabilityZone!");
+         ((GeneratedHttpRequest<?>) request).addFormParam("Placement.AvailabilityZone",
+                  ((AvailabilityZone) input).value());
+      }
    }
+
 }
