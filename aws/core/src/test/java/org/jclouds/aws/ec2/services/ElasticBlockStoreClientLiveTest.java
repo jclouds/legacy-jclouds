@@ -24,13 +24,17 @@
 package org.jclouds.aws.ec2.services;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+
+import java.util.SortedSet;
 
 import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.EC2ContextFactory;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.Region;
+import org.jclouds.aws.ec2.domain.Volume;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.AfterTest;
@@ -38,6 +42,7 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Tests behavior of {@code ElasticBlockStoreClient}
@@ -49,6 +54,7 @@ public class ElasticBlockStoreClientLiveTest {
 
    private ElasticBlockStoreClient client;
    private RestContext<EC2AsyncClient, EC2Client> context;
+   private String volumeId;
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
@@ -63,32 +69,44 @@ public class ElasticBlockStoreClientLiveTest {
    void testDescribeVolumes() {
       for (Region region : ImmutableSet.of(Region.DEFAULT, Region.EU_WEST_1, Region.US_EAST_1,
                Region.US_WEST_1)) {
-         System.out.println(client.describeVolumesInRegion(region));
-         // SortedSet<Volume> allResults = Sets.newTreeSet(client.describeVolumesInRegion(region));
-         // assertNotNull(allResults);
-         // if (allResults.size() >= 1) {
-         // Volume volume = allResults.last();
-         // SortedSet<Volume> result = Sets.newTreeSet(client.describeVolumesInRegion(region,
-         // volume.getKeyName()));
-         // assertNotNull(result);
-         // Volume compare = result.last();
-         // assertEquals(compare, volume);
-         // }
+         SortedSet<Volume> allResults = Sets.newTreeSet(client.describeVolumesInRegion(region));
+         assertNotNull(allResults);
+         if (allResults.size() >= 1) {
+            Volume volume = allResults.last();
+            SortedSet<Volume> result = Sets.newTreeSet(client.describeVolumesInRegion(region,
+                     volume.getId()));
+            assertNotNull(result);
+            Volume compare = result.last();
+            assertEquals(compare, volume);
+         }
       }
    }
 
-   @Test(enabled = false)// pending functionality to delete
+   @Test
    void testCreateVolumeInAvailabilityZone() {
-      String result = client.createVolumeInAvailabilityZone(AvailabilityZone.US_EAST_1A, 1);
+      Volume expected = client.createVolumeInAvailabilityZone(AvailabilityZone.US_EAST_1B, 1);
+      assertNotNull(expected);
+      System.out.println(expected);
+      assertEquals(expected.getAvailabilityZone(), AvailabilityZone.US_EAST_1B);
+
+      this.volumeId = expected.getId();
+
+      SortedSet<Volume> result = Sets.newTreeSet(client.describeVolumesInRegion(Region.DEFAULT,
+               expected.getId()));
       assertNotNull(result);
-      System.out.println(result);
-      //      
-      // SortedSet<Volume> result = Sets.newTreeSet(client.describeVolumesInRegion(
-      // Region.DEFAULT, result.getId()));
-      // assertNotNull(result);
-      // assertEquals(result.size(), 1);
-      // Volume volume = result.iterator().next();
-      // assertEquals(volume, result);
+      assertEquals(result.size(), 1);
+      Volume volume = result.iterator().next();
+      assertEquals(volume.getId(), expected.getId());
+   }
+
+   @Test(dependsOnMethods = "testCreateVolumeInAvailabilityZone")
+   void testDeleteInRegion() {
+      client.deleteVolumeInRegion(Region.DEFAULT, volumeId);
+      SortedSet<Volume> result = Sets.newTreeSet(client.describeVolumesInRegion(Region.DEFAULT,
+               volumeId));
+      assertEquals(result.size(), 1);
+      Volume volume = result.iterator().next();
+      assertEquals(volume.getStatus(), Volume.Status.DELETING);
    }
 
    @Test

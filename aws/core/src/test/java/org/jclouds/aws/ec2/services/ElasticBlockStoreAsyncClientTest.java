@@ -37,9 +37,11 @@ import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.filters.FormSigner;
+import org.jclouds.aws.ec2.xml.CreateVolumeResponseHandler;
+import org.jclouds.aws.ec2.xml.DescribeVolumesResponseHandler;
 import org.jclouds.aws.reference.AWSConstants;
 import org.jclouds.date.TimeStamp;
-import org.jclouds.http.functions.ReturnStringIf200;
+import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReturnVoidIf2xx;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
@@ -75,8 +77,8 @@ public class ElasticBlockStoreAsyncClientTest extends RestClientTest<ElasticBloc
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=CreateVolume&AvailabilityZone=us-east-1a&Size=20");
 
-      assertResponseParserClassEquals(method, httpMethod, ReturnStringIf200.class);
-      assertSaxResponseParserClassEquals(method, null);
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, CreateVolumeResponseHandler.class);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpMethod);
@@ -95,8 +97,8 @@ public class ElasticBlockStoreAsyncClientTest extends RestClientTest<ElasticBloc
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=CreateVolume&AvailabilityZone=us-east-1a&SnapshotId=snapshotId");
 
-      assertResponseParserClassEquals(method, httpMethod, ReturnStringIf200.class);
-      assertSaxResponseParserClassEquals(method, null);
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, CreateVolumeResponseHandler.class);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpMethod);
@@ -131,10 +133,8 @@ public class ElasticBlockStoreAsyncClientTest extends RestClientTest<ElasticBloc
                "Content-Length: 41\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
       assertPayloadEquals(httpMethod, "Version=2009-11-30&Action=DescribeVolumes");
 
-      assertResponseParserClassEquals(method, httpMethod, ReturnStringIf200.class);
-      assertSaxResponseParserClassEquals(method, null);
-      // assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
-      // assertSaxResponseParserClassEquals(method, DescribeVolumesResponseHandler.class);
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, DescribeVolumesResponseHandler.class);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpMethod);
@@ -153,10 +153,8 @@ public class ElasticBlockStoreAsyncClientTest extends RestClientTest<ElasticBloc
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=DescribeVolumes&VolumeId.1=1&VolumeId.2=2");
 
-      assertResponseParserClassEquals(method, httpMethod, ReturnStringIf200.class);
-      assertSaxResponseParserClassEquals(method, null);
-      // assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
-      // assertSaxResponseParserClassEquals(method, DescribeVolumesResponseHandler.class);
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, DescribeVolumesResponseHandler.class);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpMethod);

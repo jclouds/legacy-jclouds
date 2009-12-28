@@ -23,10 +23,12 @@
  */
 package org.jclouds.aws.ec2.services;
 
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.Region;
+import org.jclouds.aws.ec2.domain.Volume;
 import org.jclouds.concurrent.Timeout;
 
 /**
@@ -60,7 +62,7 @@ public interface ElasticBlockStoreClient {
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateVolume.html"
     *      />
     */
-   String createVolumeFromSnapshotInAvailabilityZone(AvailabilityZone availabilityZone,
+   Volume createVolumeFromSnapshotInAvailabilityZone(AvailabilityZone availabilityZone,
             String snapshotId);
 
    /**
@@ -85,7 +87,7 @@ public interface ElasticBlockStoreClient {
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateVolume.html"
     *      />
     */
-   String createVolumeInAvailabilityZone(AvailabilityZone availabilityZone, int size);
+   Volume createVolumeInAvailabilityZone(AvailabilityZone availabilityZone, int size);
 
    /**
     * Describes the specified Amazon EBS volumes that you own. If you do not specify one or more
@@ -103,7 +105,7 @@ public interface ElasticBlockStoreClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeVolumes.html"
     *      />
     */
-   String describeVolumesInRegion(Region region, String... volumeIds);
+   Set<Volume> describeVolumesInRegion(Region region, String... volumeIds);
 
    /**
     * Deletes an Amazon EBS volume that you own. For more information about Amazon EBS, go to the

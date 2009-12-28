@@ -26,6 +26,7 @@ package org.jclouds.aws.ec2.services;
 import static org.jclouds.aws.ec2.reference.EC2Parameters.ACTION;
 import static org.jclouds.aws.ec2.reference.EC2Parameters.VERSION;
 
+import java.util.Set;
 import java.util.concurrent.Future;
 
 import javax.ws.rs.FormParam;
@@ -36,14 +37,18 @@ import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.binders.BindVolumeIdsToIndexedFormParams;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.Region;
+import org.jclouds.aws.ec2.domain.Volume;
 import org.jclouds.aws.ec2.filters.FormSigner;
 import org.jclouds.aws.ec2.functions.RegionToEndpoint;
+import org.jclouds.aws.ec2.xml.CreateVolumeResponseHandler;
+import org.jclouds.aws.ec2.xml.DescribeVolumesResponseHandler;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
+import org.jclouds.rest.annotations.XMLResponseParser;
 
 /**
  * Provides access to EC2 Elastic Block Store services via their REST API.
@@ -61,10 +66,11 @@ public interface ElasticBlockStoreAsyncClient {
     */
    @POST
    @Path("/")
-   @Endpoint(EC2.class) // TODO: remove
+   @Endpoint(EC2.class)
+   // TODO: remove
    @FormParams(keys = ACTION, values = "CreateVolume")
-  // @XMLResponseParser(VolumeResponseHandler.class)
-   Future<String> createVolumeFromSnapshotInAvailabilityZone(
+   @XMLResponseParser(CreateVolumeResponseHandler.class)
+   Future<Volume> createVolumeFromSnapshotInAvailabilityZone(
             @FormParam("AvailabilityZone") AvailabilityZone availabilityZone,
             @FormParam("SnapshotId") String snapshotId);
 
@@ -73,10 +79,11 @@ public interface ElasticBlockStoreAsyncClient {
     */
    @POST
    @Path("/")
-   @Endpoint(EC2.class) // TODO: remove
+   @Endpoint(EC2.class)
+   // TODO: remove
    @FormParams(keys = ACTION, values = "CreateVolume")
-   // @XMLResponseParser(VolumeResponseHandler.class)
-   Future<String> createVolumeInAvailabilityZone(
+   @XMLResponseParser(CreateVolumeResponseHandler.class)
+   Future<Volume> createVolumeInAvailabilityZone(
             @FormParam("AvailabilityZone") AvailabilityZone availabilityZone,
             @FormParam("Size") int size);
 
@@ -86,8 +93,8 @@ public interface ElasticBlockStoreAsyncClient {
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeVolumes")
-   // @XMLResponseParser(DescribeVolumesResponseHandler.class)
-   Future<String> describeVolumesInRegion(
+   @XMLResponseParser(DescribeVolumesResponseHandler.class)
+   Future<? extends Set<Volume>> describeVolumesInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @BinderParam(BindVolumeIdsToIndexedFormParams.class) String... volumeIds);
 

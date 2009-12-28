@@ -5,11 +5,28 @@
         <item>
             <volumeId>vol-2a21e543</volumeId>
             <size>1</size>
-            <snapshotId/>
+            <snapshotId />
             <availabilityZone>us-east-1a</availabilityZone>
             <status>available</status>
             <createTime>2009-12-28T05:42:53.000Z</createTime>
-            <attachmentSet/>
+            <attachmentSet />
+        </item>
+        <item>
+            <volumeId>vol-4282672b</volumeId>
+            <size>800</size>
+            <snapshotId />
+            <availabilityZone>us-east-1a</availabilityZone>
+            <status>in-use</status>
+            <createTime>2008-05-07T11:51:50.000Z</createTime>
+            <attachmentSet>
+                <item>
+                    <volumeId>vol-4282672b</volumeId>
+                    <instanceId>i-6058a509</instanceId>
+                    <device>/dev/sdh</device>
+                    <status>attached</status>
+                    <attachTime>2008-05-07T12:51:50.000Z</attachTime>
+                </item>
+            </attachmentSet>
         </item>
     </volumeSet>
 </DescribeVolumesResponse>
