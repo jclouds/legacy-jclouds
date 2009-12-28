@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<DescribeAvailabilityZonesResponse
+    xmlns="http://ec2.amazonaws.com/doc/2009-11-30/">
+    <requestId>ec786fbb-338a-4f6f-a479-293773911366</requestId>
+    <availabilityZoneInfo>
+        <item>
+            <zoneName>us-east-1a</zoneName>
+            <zoneState>available</zoneState>
+            <regionName>us-east-1</regionName>
+            <messageSet />
+        </item>
+        <item>
+            <zoneName>us-east-1b</zoneName>
+            <zoneState>available</zoneState>
+            <regionName>us-east-1</regionName>
+            <messageSet />
+        </item>
+        <item>
+            <zoneName>us-east-1c</zoneName>
+            <zoneState>available</zoneState>
+            <regionName>us-east-1</regionName>
+            <messageSet>
+                <item>
+                    <message>our service is awesome</message>
+                </item>
+            </messageSet>
+        </item>
+        <item>
+            <zoneName>us-east-1d</zoneName>
+            <zoneState>downlikeaclown</zoneState>
+            <regionName>us-east-1</regionName>
+            <messageSet />
+        </item>
+    </availabilityZoneInfo>
+</DescribeAvailabilityZonesResponse>

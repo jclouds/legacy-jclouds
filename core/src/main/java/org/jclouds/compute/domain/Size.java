@@ -21,23 +21,59 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rest.annotations;
+package org.jclouds.compute.domain;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Annotation;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import java.util.Map;
 
 /**
- * Designates that this Resource expects virtual host style requests
+ * Configured operating system used to start nodes.
  * 
  * @author Adrian Cole
  */
-@Target( { TYPE, METHOD })
-@Retention(RUNTIME)
-public @interface Endpoint {
-   Class<? extends Annotation> value();
+public interface Size {
+   /**
+    * Unique ID provided by the provider (m1.small, etc)
+    * 
+    */
+   String getId();
+
+   /**
+    * Name provided by the provider (Small CPU, etc)
+    * 
+    */
+   String getName();
+
+   /**
+    * Amount of virtual or physical cores provided
+    */
+   Integer getCores();
+
+   /**
+    * Amount of RAM provided in MB (256M, 1740)
+    */
+   Long getRam();
+
+   /**
+    * Amount of boot disk provided in GB (200)
+    */
+   Long getDisk();
+
+   /**
+    * Amount of total transfer bandwidth in GB
+    */
+   Long getBandwidth();
+
+   /**
+    * 
+    * Hourly price of this server in USD, estimated if monthly.
+    * 
+    * @return
+    */
+   Float getPrice();
+
+   /**
+    * Other variables present that the provider supports
+    */
+   Map<String, String> getExtra();
+
 }

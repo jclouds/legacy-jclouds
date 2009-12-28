@@ -25,18 +25,22 @@ package org.jclouds.aws.ec2.config;
 
 import java.net.URI;
 import java.util.Date;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.EC2;
+import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.filters.FormSigner;
 import org.jclouds.aws.ec2.predicates.InstanceStateRunning;
 import org.jclouds.aws.ec2.reference.EC2Constants;
 import org.jclouds.aws.ec2.services.AMIAsyncClient;
 import org.jclouds.aws.ec2.services.AMIClient;
+import org.jclouds.aws.ec2.services.AvailabilityZoneAndRegionAsyncClient;
+import org.jclouds.aws.ec2.services.AvailabilityZoneAndRegionClient;
 import org.jclouds.aws.ec2.services.ElasticIPAddressAsyncClient;
 import org.jclouds.aws.ec2.services.ElasticIPAddressClient;
 import org.jclouds.aws.ec2.services.InstanceAsyncClient;
@@ -86,6 +90,12 @@ public class EC2RestClientModule extends AbstractModule {
    protected void configure() {
       bindErrorHandlers();
       bindRetryHandlers();
+   }
+
+   @Provides
+   @Singleton
+   Map<Region, URI> provideRegions(AvailabilityZoneAndRegionClient client) {
+      return client.describeRegions();
    }
 
    @Provides
@@ -179,6 +189,21 @@ public class EC2RestClientModule extends AbstractModule {
    public MonitoringClient provideMonitoringClient(MonitoringAsyncClient client)
             throws IllegalArgumentException, SecurityException, NoSuchMethodException {
       return SyncProxy.create(MonitoringClient.class, client);
+   }
+
+   @Provides
+   @Singleton
+   protected AvailabilityZoneAndRegionAsyncClient provideAvailabilityZoneAndRegionAsyncClient(
+            RestClientFactory factory) {
+      return factory.create(AvailabilityZoneAndRegionAsyncClient.class);
+   }
+
+   @Provides
+   @Singleton
+   public AvailabilityZoneAndRegionClient provideAvailabilityZoneAndRegionClient(
+            AvailabilityZoneAndRegionAsyncClient client) throws IllegalArgumentException,
+            SecurityException, NoSuchMethodException {
+      return SyncProxy.create(AvailabilityZoneAndRegionClient.class, client);
    }
 
    @Provides

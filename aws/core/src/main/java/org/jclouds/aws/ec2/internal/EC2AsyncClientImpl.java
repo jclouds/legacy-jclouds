@@ -30,6 +30,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.services.AMIAsyncClient;
+import org.jclouds.aws.ec2.services.AvailabilityZoneAndRegionAsyncClient;
 import org.jclouds.aws.ec2.services.ElasticIPAddressAsyncClient;
 import org.jclouds.aws.ec2.services.InstanceAsyncClient;
 import org.jclouds.aws.ec2.services.KeyPairAsyncClient;
@@ -49,12 +50,15 @@ public class EC2AsyncClientImpl implements EC2AsyncClient {
    private final KeyPairAsyncClient keyPairServices;
    private final SecurityGroupAsyncClient securityGroupServices;
    private final MonitoringAsyncClient monitoringServices;
+   private final AvailabilityZoneAndRegionAsyncClient availabilityZoneAndRegionServices;
 
    @Inject
    public EC2AsyncClientImpl(AMIAsyncClient AMIServices,
             ElasticIPAddressAsyncClient elasticIPAddressServices,
             InstanceAsyncClient instanceServices, KeyPairAsyncClient keyPairServices,
-            SecurityGroupAsyncClient securityGroupServices, MonitoringAsyncClient monitoringServices) {
+            SecurityGroupAsyncClient securityGroupServices,
+            MonitoringAsyncClient monitoringServices,
+            AvailabilityZoneAndRegionAsyncClient availabilityZoneAndRegionServices) {
       this.AMIServices = checkNotNull(AMIServices, "AMIServices");
       this.elasticIPAddressServices = checkNotNull(elasticIPAddressServices,
                "elasticIPAddressServices");
@@ -62,6 +66,8 @@ public class EC2AsyncClientImpl implements EC2AsyncClient {
       this.keyPairServices = checkNotNull(keyPairServices, "keyPairServices");
       this.securityGroupServices = checkNotNull(securityGroupServices, "securityGroupServices");
       this.monitoringServices = checkNotNull(monitoringServices, "monitoringServices");
+      this.availabilityZoneAndRegionServices = checkNotNull(availabilityZoneAndRegionServices,
+               "availabilityZoneAndRegionServices");
    }
 
    /**
@@ -102,9 +108,15 @@ public class EC2AsyncClientImpl implements EC2AsyncClient {
    /**
     * {@inheritDoc}
     */
-   @Override
    public MonitoringAsyncClient getMonitoringServices() {
       return monitoringServices;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public AvailabilityZoneAndRegionAsyncClient getAvailabilityZoneAndRegionServices() {
+      return availabilityZoneAndRegionServices;
    }
 
 }

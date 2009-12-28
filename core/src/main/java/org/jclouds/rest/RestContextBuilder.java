@@ -141,7 +141,6 @@ public abstract class RestContextBuilder<A, S> {
          public boolean apply(Module input) {
             return input.getClass().isAnnotationPresent(RequiresHttp.class);
          }
-
       })) {
          modules.add(new RestModule());
       }

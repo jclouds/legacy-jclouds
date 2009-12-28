@@ -21,23 +21,33 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rest.annotations;
+package org.jclouds.aws.ec2.domain;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.lang.annotation.Annotation;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import com.google.common.base.CaseFormat;
 
 /**
- * Designates that this Resource expects virtual host style requests
+ * 
+ * Regions used for all ec2 commands.
  * 
  * @author Adrian Cole
  */
-@Target( { TYPE, METHOD })
-@Retention(RUNTIME)
-public @interface Endpoint {
-   Class<? extends Annotation> value();
+public enum Region {
+
+   DEFAULT, UNKNOWN, EU_WEST_1, US_EAST_1, US_WEST_1;
+
+   public String value() {
+      return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name());
+   }
+
+   @Override
+   public String toString() {
+      return value();
+   }
+
+   public static Region fromValue(String region) {
+      return valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(region,
+               "region")));
+   }
 }

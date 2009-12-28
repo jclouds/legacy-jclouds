@@ -43,7 +43,7 @@ public class EC2PropertiesBuilder extends HttpPropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_EC2_ENDPOINT, "http://ec2.amazonaws.com");
+      properties.setProperty(PROPERTY_EC2_ENDPOINT, "https://ec2.amazonaws.com");
       properties.setProperty(PROPERTY_EC2_EXPIREINTERVAL, "60");
       return properties;
    }

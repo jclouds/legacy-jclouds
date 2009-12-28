@@ -25,7 +25,6 @@ package org.jclouds.rest.internal;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
@@ -79,6 +78,7 @@ import org.jclouds.rest.Binder;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.Headers;
@@ -129,6 +129,7 @@ public class RestAnnotationProcessor<T> {
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToHeaderParamAnnotations = createMethodToIndexOfParamToAnnotation(HeaderParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToHostPrefixParamAnnotations = createMethodToIndexOfParamToAnnotation(HostPrefixParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToEndpointAnnotations = createMethodToIndexOfParamToAnnotation(Endpoint.class);
+   private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToEndpointParamAnnotations = createMethodToIndexOfParamToAnnotation(EndpointParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToMatrixParamAnnotations = createMethodToIndexOfParamToAnnotation(MatrixParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToFormParamAnnotations = createMethodToIndexOfParamToAnnotation(FormParam.class);
    private final Map<Method, Map<Integer, Set<Annotation>>> methodToIndexOfParamToQueryParamAnnotations = createMethodToIndexOfParamToAnnotation(QueryParam.class);
@@ -212,7 +213,8 @@ public class RestAnnotationProcessor<T> {
    }
 
    @VisibleForTesting
-   public Function<Exception, ?> createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(Method method) {
+   public Function<Exception, ?> createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(
+            Method method) {
       ExceptionParser annotation = method.getAnnotation(ExceptionParser.class);
       if (annotation != null) {
          return injector.getInstance(annotation.value());
@@ -252,6 +254,7 @@ public class RestAnnotationProcessor<T> {
                methodToIndexOfParamToFormParamAnnotations.get(method).get(index);
                methodToIndexOfParamToQueryParamAnnotations.get(method).get(index);
                methodToIndexOfParamToEndpointAnnotations.get(method).get(index);
+               methodToIndexOfParamToEndpointParamAnnotations.get(method).get(index);
                methodToIndexOfParamToPathParamAnnotations.get(method).get(index);
                methodToIndexOfParamToPostParamAnnotations.get(method).get(index);
                methodToIndexOfParamToParamParserAnnotations.get(method).get(index);
@@ -581,22 +584,16 @@ public class RestAnnotationProcessor<T> {
 
    @VisibleForTesting
    URI getEndpointInParametersOrNull(Method method, Object... args) {
-      Map<Integer, Set<Annotation>> map = indexWithOnlyOneAnnotation(method, "@Endpoint",
-               methodToIndexOfParamToEndpointAnnotations);
+      Map<Integer, Set<Annotation>> map = indexWithOnlyOneAnnotation(method, "@EndpointParam",
+               methodToIndexOfParamToEndpointParamAnnotations);
       if (map.size() == 1 && args.length > 0) {
-         Endpoint annotation = (Endpoint) map.values().iterator().next().iterator().next();
+         EndpointParam annotation = (EndpointParam) map.values().iterator().next().iterator()
+                  .next();
          int index = map.keySet().iterator().next();
-         checkState(
-                  annotation.value() == Endpoint.NONE.class,
-                  String
-                           .format(
-                                    "@Endpoint annotation at index %d on method %s should not have a value() except Endpoint.NONE ",
-                                    index, method));
+         Function<Object, URI> parser = injector.getInstance(annotation.parser());
          Object arg = checkNotNull(args[index], String.format("argument at index %d on method %s",
                   index, method));
-         checkArgument(arg instanceof URI, String.format(
-                  "argument at index %d must be a URI for method %s", index, method));
-         return (URI) arg;
+         return parser.apply(arg);
       }
       return null;
    }
@@ -1094,14 +1091,8 @@ public class RestAnnotationProcessor<T> {
          Endpoint annotation;
          if (method.isAnnotationPresent(Endpoint.class)) {
             annotation = method.getAnnotation(Endpoint.class);
-            checkState(annotation.value() != Endpoint.NONE.class, String.format(
-                     "@Endpoint annotation at method %s must have a value() of valid Qualifier",
-                     method));
          } else if (declaring.isAnnotationPresent(Endpoint.class)) {
             annotation = declaring.getAnnotation(Endpoint.class);
-            checkState(annotation.value() != Endpoint.NONE.class, String.format(
-                     "@Endpoint annotation at type %s must have a value() of valid Qualifier",
-                     declaring));
          } else {
             throw new IllegalStateException(
                      "There must be an @Endpoint annotation on parameter, method or type: "

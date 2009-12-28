@@ -30,6 +30,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.services.AMIClient;
+import org.jclouds.aws.ec2.services.AvailabilityZoneAndRegionClient;
 import org.jclouds.aws.ec2.services.ElasticIPAddressClient;
 import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.aws.ec2.services.KeyPairClient;
@@ -49,11 +50,13 @@ public class EC2ClientImpl implements EC2Client {
    private final KeyPairClient keyPairServices;
    private final SecurityGroupClient securityGroupServices;
    private final MonitoringClient monitoringServices;
+   private final AvailabilityZoneAndRegionClient availabilityZoneAndRegionServices;
 
    @Inject
    public EC2ClientImpl(AMIClient AMIServices, ElasticIPAddressClient elasticIPAddressServices,
             InstanceClient instanceServices, KeyPairClient keyPairServices,
-            SecurityGroupClient securityGroupServices, MonitoringClient monitoringServices) {
+            SecurityGroupClient securityGroupServices, MonitoringClient monitoringServices,
+            AvailabilityZoneAndRegionClient availabilityZoneAndRegionServices) {
       this.AMIServices = checkNotNull(AMIServices, "AMIServices");
       this.elasticIPAddressServices = checkNotNull(elasticIPAddressServices,
                "elasticIPAddressServices");
@@ -61,6 +64,8 @@ public class EC2ClientImpl implements EC2Client {
       this.keyPairServices = checkNotNull(keyPairServices, "keyPairServices");
       this.securityGroupServices = checkNotNull(securityGroupServices, "securityGroupServices");
       this.monitoringServices = checkNotNull(monitoringServices, "monitoringServices");
+      this.availabilityZoneAndRegionServices = checkNotNull(availabilityZoneAndRegionServices,
+               "availabilityZoneAndRegionServices");
    }
 
    /**
@@ -103,6 +108,13 @@ public class EC2ClientImpl implements EC2Client {
     */
    public MonitoringClient getMonitoringServices() {
       return monitoringServices;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public AvailabilityZoneAndRegionClient getAvailabilityZoneAndRegionServices() {
+      return availabilityZoneAndRegionServices;
    }
 
 }

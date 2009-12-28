@@ -83,6 +83,7 @@ import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.HostPrefixParam;
@@ -311,7 +312,7 @@ public class RestAnnotationProcessorTest {
       }
 
       @POST
-      public void foo(@Endpoint URI endpoint) {
+      public void foo(@EndpointParam URI endpoint) {
       }
    }
 

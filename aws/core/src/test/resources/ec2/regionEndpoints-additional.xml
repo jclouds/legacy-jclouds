@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<DescribeRegionsResponse xmlns="http://ec2.amazonaws.com/doc/2009-11-30/">
+    <requestId>2bffb2f8-3b03-4be9-92bd-a35b27a2f51a</requestId>
+    <regionInfo>
+        <item>
+            <regionName>eu-west-1</regionName>
+            <regionEndpoint>ec2.eu-west-1.amazonaws.com</regionEndpoint>
+        </item>
+        <item>
+            <regionName>us-east-1</regionName>
+            <regionEndpoint>ec2.us-east-1.amazonaws.com</regionEndpoint>
+        </item>
+        <item>
+            <regionName>us-west-1</regionName>
+            <regionEndpoint>ec2.us-west-1.amazonaws.com</regionEndpoint>
+        </item>
+        <item>
+            <regionName>jp-west-1</regionName>
+            <regionEndpoint>ec2.jp-west-1.amazonaws.com</regionEndpoint>
+        </item>
+    </regionInfo>
+</DescribeRegionsResponse>

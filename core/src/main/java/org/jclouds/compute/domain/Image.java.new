@@ -21,23 +21,31 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rest.annotations;
+package org.jclouds.compute.domain;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Annotation;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import java.util.Map;
 
 /**
- * Designates that this Resource expects virtual host style requests
+ * Configured operating system used to start nodes.
  * 
  * @author Adrian Cole
  */
-@Target( { TYPE, METHOD })
-@Retention(RUNTIME)
-public @interface Endpoint {
-   Class<? extends Annotation> value();
+public interface Image {
+   /**
+    * Unique ID provided by the provider (ami-abcd1234, etc)
+    * 
+    */
+   String getId();
+
+   /**
+    * Name provided by the provider (Ubuntu 8.1)
+    * 
+    */
+   String getName();
+
+   /**
+    * Other variables present that the provider supports
+    */
+   Map<String, String> getExtra();
+
 }

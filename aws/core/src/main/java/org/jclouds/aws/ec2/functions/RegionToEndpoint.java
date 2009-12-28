@@ -21,23 +21,36 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rest.annotations;
+package org.jclouds.aws.ec2.functions;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.net.URI;
+import java.util.Map;
 
-import java.lang.annotation.Annotation;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.jclouds.aws.ec2.EC2;
+import org.jclouds.aws.ec2.domain.Region;
+
+import com.google.common.base.Function;
 
 /**
- * Designates that this Resource expects virtual host style requests
  * 
  * @author Adrian Cole
  */
-@Target( { TYPE, METHOD })
-@Retention(RUNTIME)
-public @interface Endpoint {
-   Class<? extends Annotation> value();
+@Singleton
+public class RegionToEndpoint implements Function<Object, URI> {
+   private final Map<Region, URI> regionToEndpoint;
+   private final URI defaultUri;
+
+   @Inject
+   public RegionToEndpoint(Map<Region, URI> regionToEndpoint, @EC2 URI defaultUri) {
+      this.regionToEndpoint = regionToEndpoint;
+      this.defaultUri = defaultUri;
+   }
+
+   public URI apply(Object from) {
+      return from.equals(Region.DEFAULT) ? defaultUri : regionToEndpoint.get(from);
+   }
+
 }

@@ -21,23 +21,33 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.rest.annotations;
+package org.jclouds.aws.ec2.domain;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.lang.annotation.Annotation;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import com.google.common.base.CaseFormat;
 
 /**
- * Designates that this Resource expects virtual host style requests
+ * 
+ * Availability zones used for all ec2 instance commands.
  * 
  * @author Adrian Cole
  */
-@Target( { TYPE, METHOD })
-@Retention(RUNTIME)
-public @interface Endpoint {
-   Class<? extends Annotation> value();
+public enum AvailabilityZone {
+
+   UNKNOWN, EU_WEST_1A, EU_WEST_1B, US_EAST_1A, US_EAST_1B, US_EAST_1C, US_EAST_1D, US_WEST_1A, US_WEST_1B;
+
+   public String value() {
+      return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name());
+   }
+
+   @Override
+   public String toString() {
+      return value();
+   }
+
+   public static AvailabilityZone fromValue(String availablilityZone) {
+      return valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(
+               availablilityZone, "availablilityZone")));
+   }
 }

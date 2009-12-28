@@ -44,6 +44,7 @@ import org.jclouds.nirvanix.sdn.functions.ParseUploadInfoFromJsonResponse;
 import org.jclouds.nirvanix.sdn.reference.SDNQueryParams;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.OverrideRequestFilters;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -80,7 +81,7 @@ public interface SDNAsyncClient {
     */
    @POST
    @Path("/Upload.ashx")
-   Future<Void> upload(@Endpoint URI endpoint,
+   Future<Void> upload(@EndpointParam URI endpoint,
             @QueryParam(SDNQueryParams.UPLOADTOKEN) String uploadToken,
             @QueryParam(SDNQueryParams.DESTFOLDERPATH) String folderPath,
             @BinderParam(BindBlobToMultipartForm.class) Blob blob);

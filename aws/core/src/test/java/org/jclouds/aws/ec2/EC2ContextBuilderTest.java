@@ -54,7 +54,7 @@ public class EC2ContextBuilderTest {
    public void testNewBuilder() {
       EC2ContextBuilder builder = newBuilder();
       assertEquals(builder.getProperties().getProperty(EC2Constants.PROPERTY_EC2_ENDPOINT),
-               "http://ec2.amazonaws.com");
+               "https://ec2.amazonaws.com");
       assertEquals(builder.getProperties().getProperty(PROPERTY_AWS_ACCESSKEYID), "id");
       assertEquals(builder.getProperties().getProperty(PROPERTY_AWS_SECRETACCESSKEY), "secret");
    }
@@ -63,7 +63,7 @@ public class EC2ContextBuilderTest {
       RestContext<EC2AsyncClient, EC2Client> context = newBuilder().buildContext();
       assertEquals(context.getClass(), RestContextImpl.class);
       assertEquals(context.getAccount(), "id");
-      assertEquals(context.getEndPoint(), URI.create("http://ec2.amazonaws.com"));
+      assertEquals(context.getEndPoint(), URI.create("https://ec2.amazonaws.com"));
    }
 
    public void testBuildInjector() {

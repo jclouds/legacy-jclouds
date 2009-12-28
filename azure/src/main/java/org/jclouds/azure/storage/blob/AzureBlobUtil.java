@@ -33,7 +33,7 @@ import org.jclouds.azure.storage.filters.SharedKeyAuthentication;
 import org.jclouds.azure.storage.reference.AzureStorageHeaders;
 import org.jclouds.blobstore.functions.ThrowKeyNotFoundOn404;
 import org.jclouds.http.functions.ParseContentMD5FromHeaders;
-import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -58,6 +58,6 @@ public interface AzureBlobUtil {
    @ResponseParser(ParseContentMD5FromHeaders.class)
    @ExceptionParser(ThrowKeyNotFoundOn404.class)
    @Path("{key}")
-   byte[] getMD5(@Endpoint URI container, @PathParam("key") String key);
+   byte[] getMD5(@EndpointParam URI container, @PathParam("key") String key);
 
 }

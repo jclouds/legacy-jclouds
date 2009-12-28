@@ -23,21 +23,37 @@
  */
 package org.jclouds.rest.annotations;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
+import java.net.URI;
+
+import javax.inject.Singleton;
+import javax.ws.rs.PathParam;
+
+import com.google.common.base.Function;
 
 /**
- * Designates that this Resource expects virtual host style requests
+ * Extracts the endpoint of a parameter from an object.
  * 
+ * @see PathParam
  * @author Adrian Cole
  */
-@Target( { TYPE, METHOD })
+@Target(PARAMETER)
 @Retention(RUNTIME)
-public @interface Endpoint {
-   Class<? extends Annotation> value();
+public @interface EndpointParam {
+   @Singleton
+   public static class ReturnSame implements Function<Object, URI> {
+
+      @Override
+      public URI apply(Object from) {
+         // TODO check arg;
+         return (URI) from;
+      }
+
+   }
+
+   Class<? extends Function<Object, URI>> parser() default ReturnSame.class;
 }

@@ -25,6 +25,7 @@ package org.jclouds.aws.ec2;
 
 import org.jclouds.aws.ec2.internal.EC2ClientImpl;
 import org.jclouds.aws.ec2.services.AMIClient;
+import org.jclouds.aws.ec2.services.AvailabilityZoneAndRegionClient;
 import org.jclouds.aws.ec2.services.ElasticIPAddressClient;
 import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.aws.ec2.services.KeyPairClient;
@@ -69,4 +70,9 @@ public interface EC2Client {
     * Provides synchronous access to Monitoring services.
     */
    MonitoringClient getMonitoringServices();
+
+   /**
+    * Provides synchronous access to Availability Zones and Regions services.
+    */
+   AvailabilityZoneAndRegionClient getAvailabilityZoneAndRegionServices();
 }

@@ -52,6 +52,7 @@ import org.jclouds.mezeo.pcs2.xml.ContainerHandler;
 import org.jclouds.mezeo.pcs2.xml.FileHandler;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -90,7 +91,7 @@ public interface PCSAsyncClient {
    @GET
    @XMLResponseParser(ContainerHandler.class)
    @Headers(keys = "X-Cloud-Depth", values = "2")
-   Future<? extends ContainerList> list(@Endpoint URI container);
+   Future<? extends ContainerList> list(@EndpointParam URI container);
 
    /**
     * @see PCSAsyncClient#createContainer
@@ -105,7 +106,7 @@ public interface PCSAsyncClient {
     */
    @POST
    @Path("/contents")
-   Future<URI> createContainer(@Endpoint URI parent,
+   Future<URI> createContainer(@EndpointParam URI parent,
             @BinderParam(BindContainerNameToXmlPayload.class) String container);
 
    /**
@@ -113,14 +114,14 @@ public interface PCSAsyncClient {
     */
    @DELETE
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   Future<Void> deleteContainer(@Endpoint URI container);
+   Future<Void> deleteContainer(@EndpointParam URI container);
 
    /**
     * @see PCSAsyncClient#uploadFile
     */
    @POST
    @Path("/contents")
-   Future<URI> uploadFile(@Endpoint URI container,
+   Future<URI> uploadFile(@EndpointParam URI container,
             @BinderParam(BindPCSFileToMultipartForm.class) PCSFile object);
 
    /**
@@ -128,7 +129,7 @@ public interface PCSAsyncClient {
     */
    @POST
    @Path("/contents")
-   Future<URI> createFile(@Endpoint URI container,
+   Future<URI> createFile(@EndpointParam URI container,
             @BinderParam(BindFileInfoToXmlPayload.class) PCSFile object);
 
    /**
@@ -136,7 +137,7 @@ public interface PCSAsyncClient {
     */
    @PUT
    @Path("/content")
-   Future<Void> uploadBlock(@Endpoint URI file,
+   Future<Void> uploadBlock(@EndpointParam URI file,
             @BinderParam(BindDataToPayload.class) PCSFile object, PutBlockOptions... options);
 
    /**
@@ -144,7 +145,7 @@ public interface PCSAsyncClient {
     */
    @DELETE
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   Future<Void> deleteFile(@Endpoint URI file);
+   Future<Void> deleteFile(@EndpointParam URI file);
 
    /**
     * @see PCSAsyncClient#downloadFile
@@ -152,7 +153,7 @@ public interface PCSAsyncClient {
    @GET
    @ExceptionParser(ThrowKeyNotFoundOn404.class)
    @Path("/content")
-   Future<InputStream> downloadFile(@Endpoint URI file);
+   Future<InputStream> downloadFile(@EndpointParam URI file);
 
    /**
     * @see PCSAsyncClient#getFileInfo
@@ -161,14 +162,14 @@ public interface PCSAsyncClient {
    @ExceptionParser(ThrowKeyNotFoundOn404.class)
    @XMLResponseParser(FileHandler.class)
    @Headers(keys = "X-Cloud-Depth", values = "2")
-   Future<FileInfoWithMetadata> getFileInfo(@Endpoint URI file);
+   Future<FileInfoWithMetadata> getFileInfo(@EndpointParam URI file);
 
    /**
     * @see PCSAsyncClient#putMetadataItem
     */
    @PUT
    @Path("/metadata/{key}")
-   Future<Void> putMetadataItem(@Endpoint URI resource, @PathParam("key") String key,
+   Future<Void> putMetadataItem(@EndpointParam URI resource, @PathParam("key") String key,
             @BinderParam(BindToStringPayload.class) String value);
 
    /**
@@ -177,6 +178,6 @@ public interface PCSAsyncClient {
    @GET
    @ResponseParser(AddMetadataItemIntoMap.class)
    @Path("/metadata/{key}")
-   Future<Void> addMetadataItemToMap(@Endpoint URI resource, @PathParam("key") String key,
+   Future<Void> addMetadataItemToMap(@EndpointParam URI resource, @PathParam("key") String key,
             Map<String, String> map);
 }

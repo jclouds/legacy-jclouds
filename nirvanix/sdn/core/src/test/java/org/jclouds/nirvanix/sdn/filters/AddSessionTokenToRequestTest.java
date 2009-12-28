@@ -39,7 +39,7 @@ import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.nirvanix.sdn.SessionToken;
-import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.rest.internal.RuntimeDelegateImpl;
@@ -62,7 +62,7 @@ public class AddSessionTokenToRequestTest {
 
    private static interface TestService {
       @POST
-      public void foo(@Endpoint URI endpoint);
+      public void foo(@EndpointParam URI endpoint);
    }
 
    @DataProvider
