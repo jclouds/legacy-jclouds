@@ -26,6 +26,7 @@ package org.jclouds.aws.ec2;
 import org.jclouds.aws.ec2.internal.EC2AsyncClientImpl;
 import org.jclouds.aws.ec2.services.AMIAsyncClient;
 import org.jclouds.aws.ec2.services.AvailabilityZoneAndRegionAsyncClient;
+import org.jclouds.aws.ec2.services.ElasticBlockStoreAsyncClient;
 import org.jclouds.aws.ec2.services.ElasticIPAddressAsyncClient;
 import org.jclouds.aws.ec2.services.InstanceAsyncClient;
 import org.jclouds.aws.ec2.services.KeyPairAsyncClient;
@@ -75,4 +76,9 @@ public interface EC2AsyncClient {
     * Provides asynchronous access to Availability Zones and Regions services.
     */
    AvailabilityZoneAndRegionAsyncClient getAvailabilityZoneAndRegionServices();
+
+   /**
+    * Provides asynchronous access to Elastic Block Store services.
+    */
+   ElasticBlockStoreAsyncClient getElasticBlockStoreServices();
 }

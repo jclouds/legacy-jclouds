@@ -31,6 +31,7 @@ import javax.inject.Singleton;
 import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.services.AMIAsyncClient;
 import org.jclouds.aws.ec2.services.AvailabilityZoneAndRegionAsyncClient;
+import org.jclouds.aws.ec2.services.ElasticBlockStoreAsyncClient;
 import org.jclouds.aws.ec2.services.ElasticIPAddressAsyncClient;
 import org.jclouds.aws.ec2.services.InstanceAsyncClient;
 import org.jclouds.aws.ec2.services.KeyPairAsyncClient;
@@ -51,6 +52,7 @@ public class EC2AsyncClientImpl implements EC2AsyncClient {
    private final SecurityGroupAsyncClient securityGroupServices;
    private final MonitoringAsyncClient monitoringServices;
    private final AvailabilityZoneAndRegionAsyncClient availabilityZoneAndRegionServices;
+   private final ElasticBlockStoreAsyncClient elasticBlockStoreServices;
 
    @Inject
    public EC2AsyncClientImpl(AMIAsyncClient AMIServices,
@@ -58,7 +60,8 @@ public class EC2AsyncClientImpl implements EC2AsyncClient {
             InstanceAsyncClient instanceServices, KeyPairAsyncClient keyPairServices,
             SecurityGroupAsyncClient securityGroupServices,
             MonitoringAsyncClient monitoringServices,
-            AvailabilityZoneAndRegionAsyncClient availabilityZoneAndRegionServices) {
+            AvailabilityZoneAndRegionAsyncClient availabilityZoneAndRegionServices,
+            ElasticBlockStoreAsyncClient elasticBlockStoreServices) {
       this.AMIServices = checkNotNull(AMIServices, "AMIServices");
       this.elasticIPAddressServices = checkNotNull(elasticIPAddressServices,
                "elasticIPAddressServices");
@@ -68,6 +71,8 @@ public class EC2AsyncClientImpl implements EC2AsyncClient {
       this.monitoringServices = checkNotNull(monitoringServices, "monitoringServices");
       this.availabilityZoneAndRegionServices = checkNotNull(availabilityZoneAndRegionServices,
                "availabilityZoneAndRegionServices");
+      this.elasticBlockStoreServices = checkNotNull(elasticBlockStoreServices,
+               "elasticBlockStoreServices");
    }
 
    /**
@@ -117,6 +122,13 @@ public class EC2AsyncClientImpl implements EC2AsyncClient {
     */
    public AvailabilityZoneAndRegionAsyncClient getAvailabilityZoneAndRegionServices() {
       return availabilityZoneAndRegionServices;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public ElasticBlockStoreAsyncClient getElasticBlockStoreServices() {
+      return elasticBlockStoreServices;
    }
 
 }

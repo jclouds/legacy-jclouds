@@ -34,7 +34,6 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
-import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.binders.BindProductCodesToIndexedFormParams;
 import org.jclouds.aws.ec2.binders.BindUserGroupsToIndexedFormParams;
 import org.jclouds.aws.ec2.binders.BindUserIdsToIndexedFormParams;
@@ -54,7 +53,6 @@ import org.jclouds.aws.ec2.xml.ImageIdHandler;
 import org.jclouds.aws.ec2.xml.LaunchPermissionHandler;
 import org.jclouds.aws.ec2.xml.ProductCodesHandler;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -67,7 +65,6 @@ import org.jclouds.rest.annotations.XMLResponseParser;
  * 
  * @author Adrian Cole
  */
-@Endpoint(EC2.class)
 @RequestFilters(FormSigner.class)
 @FormParams(keys = VERSION, values = "2009-11-30")
 @VirtualHost

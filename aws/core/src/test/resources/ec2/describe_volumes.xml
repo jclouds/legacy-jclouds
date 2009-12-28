@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<DescribeVolumesResponse xmlns="http://ec2.amazonaws.com/doc/2009-11-30/">
+    <requestId>31ab5542-e479-44cb-aa94-c340c2481e0b</requestId>
+    <volumeSet>
+        <item>
+            <volumeId>vol-2a21e543</volumeId>
+            <size>1</size>
+            <snapshotId/>
+            <availabilityZone>us-east-1a</availabilityZone>
+            <status>available</status>
+            <createTime>2009-12-28T05:42:53.000Z</createTime>
+            <attachmentSet/>
+        </item>
+    </volumeSet>
+</DescribeVolumesResponse>

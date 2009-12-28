@@ -33,7 +33,6 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
-import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.binders.BindGroupNameToIndexedFormParams;
 import org.jclouds.aws.ec2.binders.BindUserIdGroupPairToSourceSecurityGroupFormParams;
 import org.jclouds.aws.ec2.domain.IpProtocol;
@@ -45,7 +44,6 @@ import org.jclouds.aws.ec2.functions.RegionToEndpoint;
 import org.jclouds.aws.ec2.functions.ReturnVoidOnGroupNotFound;
 import org.jclouds.aws.ec2.xml.DescribeSecurityGroupsResponseHandler;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.FormParams;
@@ -59,7 +57,6 @@ import org.jclouds.rest.annotations.XMLResponseParser;
  * 
  * @author Adrian Cole
  */
-@Endpoint(EC2.class)
 @RequestFilters(FormSigner.class)
 @FormParams(keys = VERSION, values = "2009-11-30")
 @VirtualHost

@@ -33,7 +33,6 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
-import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.binders.BindKeyNameToIndexedFormParams;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.Region;
@@ -42,7 +41,6 @@ import org.jclouds.aws.ec2.functions.RegionToEndpoint;
 import org.jclouds.aws.ec2.xml.DescribeKeyPairsResponseHandler;
 import org.jclouds.aws.ec2.xml.KeyPairResponseHandler;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -55,7 +53,6 @@ import org.jclouds.rest.annotations.XMLResponseParser;
  * 
  * @author Adrian Cole
  */
-@Endpoint(EC2.class)
 @RequestFilters(FormSigner.class)
 @FormParams(keys = VERSION, values = "2009-11-30")
 @VirtualHost

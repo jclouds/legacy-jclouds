@@ -41,6 +41,8 @@ import org.jclouds.aws.ec2.services.AMIAsyncClient;
 import org.jclouds.aws.ec2.services.AMIClient;
 import org.jclouds.aws.ec2.services.AvailabilityZoneAndRegionAsyncClient;
 import org.jclouds.aws.ec2.services.AvailabilityZoneAndRegionClient;
+import org.jclouds.aws.ec2.services.ElasticBlockStoreAsyncClient;
+import org.jclouds.aws.ec2.services.ElasticBlockStoreClient;
 import org.jclouds.aws.ec2.services.ElasticIPAddressAsyncClient;
 import org.jclouds.aws.ec2.services.ElasticIPAddressClient;
 import org.jclouds.aws.ec2.services.InstanceAsyncClient;
@@ -204,6 +206,20 @@ public class EC2RestClientModule extends AbstractModule {
             AvailabilityZoneAndRegionAsyncClient client) throws IllegalArgumentException,
             SecurityException, NoSuchMethodException {
       return SyncProxy.create(AvailabilityZoneAndRegionClient.class, client);
+   }
+
+   @Provides
+   @Singleton
+   protected ElasticBlockStoreAsyncClient provideElasticBlockStoreAsyncClient(
+            RestClientFactory factory) {
+      return factory.create(ElasticBlockStoreAsyncClient.class);
+   }
+
+   @Provides
+   @Singleton
+   public ElasticBlockStoreClient provideElasticBlockStoreClient(ElasticBlockStoreAsyncClient client)
+            throws IllegalArgumentException, SecurityException, NoSuchMethodException {
+      return SyncProxy.create(ElasticBlockStoreClient.class, client);
    }
 
    @Provides

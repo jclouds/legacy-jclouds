@@ -119,7 +119,8 @@ public class AMIAsyncClientTest extends RestClientTest<AMIAsyncClient> {
    public void testDescribeImages() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AMIAsyncClient.class.getMethod("describeImagesInRegion", Region.class, Array
                .newInstance(DescribeImagesOptions.class, 0).getClass());
-      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method);
+      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method,
+               Region.DEFAULT);
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,

@@ -34,7 +34,6 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
-import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.binders.BindInetAddressesToIndexedFormParams;
 import org.jclouds.aws.ec2.domain.PublicIpInstanceIdPair;
 import org.jclouds.aws.ec2.domain.Region;
@@ -43,7 +42,6 @@ import org.jclouds.aws.ec2.functions.RegionToEndpoint;
 import org.jclouds.aws.ec2.xml.AllocateAddressResponseHandler;
 import org.jclouds.aws.ec2.xml.DescribeAddressesResponseHandler;
 import org.jclouds.rest.annotations.BinderParam;
-import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.ParamParser;
@@ -58,7 +56,6 @@ import org.jclouds.rest.functions.InetAddressToHostAddress;
  * 
  * @author Adrian Cole
  */
-@Endpoint(EC2.class)
 @RequestFilters(FormSigner.class)
 @FormParams(keys = VERSION, values = "2009-11-30")
 @VirtualHost

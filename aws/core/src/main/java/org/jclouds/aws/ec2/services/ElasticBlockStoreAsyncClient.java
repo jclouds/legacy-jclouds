@@ -26,35 +26,27 @@ package org.jclouds.aws.ec2.services;
 import static org.jclouds.aws.ec2.reference.EC2Parameters.ACTION;
 import static org.jclouds.aws.ec2.reference.EC2Parameters.VERSION;
 
-import java.util.SortedSet;
 import java.util.concurrent.Future;
 
-import javax.annotation.Nullable;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
-import org.jclouds.aws.ec2.binders.BindInstanceIdsToIndexedFormParams;
-import org.jclouds.aws.ec2.binders.IfNotNullBindAvailabilityZoneToFormParam;
+import org.jclouds.aws.ec2.EC2;
+import org.jclouds.aws.ec2.binders.BindVolumeIdsToIndexedFormParams;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.Region;
-import org.jclouds.aws.ec2.domain.Reservation;
-import org.jclouds.aws.ec2.domain.TerminatedInstance;
 import org.jclouds.aws.ec2.filters.FormSigner;
 import org.jclouds.aws.ec2.functions.RegionToEndpoint;
-import org.jclouds.aws.ec2.options.RunInstancesOptions;
-import org.jclouds.aws.ec2.xml.DescribeInstancesResponseHandler;
-import org.jclouds.aws.ec2.xml.RunInstancesResponseHandler;
-import org.jclouds.aws.ec2.xml.TerminateInstancesResponseHandler;
 import org.jclouds.rest.annotations.BinderParam;
+import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
-import org.jclouds.rest.annotations.XMLResponseParser;
 
 /**
- * Provides access to EC2 via their REST API.
+ * Provides access to EC2 Elastic Block Store services via their REST API.
  * <p/>
  * 
  * @author Adrian Cole
@@ -62,42 +54,50 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 @RequestFilters(FormSigner.class)
 @FormParams(keys = VERSION, values = "2009-11-30")
 @VirtualHost
-public interface InstanceAsyncClient {
+public interface ElasticBlockStoreAsyncClient {
 
    /**
-    * @see BaseEC2Client#describeInstancesInRegion
+    * @see ElasticBlockStoreClient#createVolumeFromSnapshotInAvailabilityZone
     */
    @POST
    @Path("/")
-   @FormParams(keys = ACTION, values = "DescribeInstances")
-   @XMLResponseParser(DescribeInstancesResponseHandler.class)
-   Future<? extends SortedSet<Reservation>> describeInstancesInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) Region region,
-            @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
+   @Endpoint(EC2.class) // TODO: remove
+   @FormParams(keys = ACTION, values = "CreateVolume")
+  // @XMLResponseParser(VolumeResponseHandler.class)
+   Future<String> createVolumeFromSnapshotInAvailabilityZone(
+            @FormParam("AvailabilityZone") AvailabilityZone availabilityZone,
+            @FormParam("SnapshotId") String snapshotId);
 
    /**
-    * @see BaseEC2Client#runInstancesInRegion
+    * @see ElasticBlockStoreClient#createVolumeInAvailabilityZone
     */
    @POST
    @Path("/")
-   @FormParams(keys = ACTION, values = "RunInstances")
-   @XMLResponseParser(RunInstancesResponseHandler.class)
-   Future<Reservation> runInstancesInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) Region region,
-            @Nullable @BinderParam(IfNotNullBindAvailabilityZoneToFormParam.class) AvailabilityZone nullableAvailabilityZone,
-            @FormParam("ImageId") String imageId, @FormParam("MinCount") int minCount,
-            @FormParam("MaxCount") int maxCount, RunInstancesOptions... options);
+   @Endpoint(EC2.class) // TODO: remove
+   @FormParams(keys = ACTION, values = "CreateVolume")
+   // @XMLResponseParser(VolumeResponseHandler.class)
+   Future<String> createVolumeInAvailabilityZone(
+            @FormParam("AvailabilityZone") AvailabilityZone availabilityZone,
+            @FormParam("Size") int size);
 
    /**
-    * @see BaseEC2Client#terminateInstancesInRegion
+    * @see ElasticBlockStoreClient#describeVolumesInRegion
     */
    @POST
    @Path("/")
-   @FormParams(keys = ACTION, values = "TerminateInstances")
-   @XMLResponseParser(TerminateInstancesResponseHandler.class)
-   Future<? extends SortedSet<TerminatedInstance>> terminateInstancesInRegion(
+   @FormParams(keys = ACTION, values = "DescribeVolumes")
+   // @XMLResponseParser(DescribeVolumesResponseHandler.class)
+   Future<String> describeVolumesInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
-            @FormParam("InstanceId.0") String instanceId,
-            @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
+            @BinderParam(BindVolumeIdsToIndexedFormParams.class) String... volumeIds);
+
+   /**
+    * @see ElasticBlockStoreClient#deleteVolumeInRegion
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "DeleteVolume")
+   Future<Void> deleteVolumeInRegion(@EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @FormParam("VolumeId") String volumeId);
 
 }
