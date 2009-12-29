@@ -84,16 +84,11 @@ public class TweetStoreLiveTest {
       Properties props = new Properties();
       props.setProperty(PROPERTY_TWEETSTORE_CONTAINER, checkNotNull(System
                .getProperty(PROPERTY_TWEETSTORE_CONTAINER)));
-      props.setProperty(PROPERTY_BLOBSTORE_CONTEXTBUILDERS, String.format("%s,%s,%s", // WATCH
-               // THIS.. when
-               // adding a
-               // new
-               // context,
-               // you must
-               // update the
-               // string
-               S3BlobStoreContextBuilder.class.getName(), CloudFilesBlobStoreContextBuilder.class
-                        .getName(), AzureBlobStoreContextBuilder.class.getName()));
+      props.setProperty(PROPERTY_BLOBSTORE_CONTEXTBUILDERS,
+              // WATCH THIS.. when adding a new context, you must update the string
+              String.format("%s,%s,%s", S3BlobStoreContextBuilder.class.getName(), 
+                      CloudFilesBlobStoreContextBuilder.class.getName(), 
+                      AzureBlobStoreContextBuilder.class.getName()));
 
       props = new TwitterPropertiesBuilder(props).withCredentials(
                checkNotNull(System.getProperty(PROPERTY_TWITTER_USER), PROPERTY_TWITTER_USER),
