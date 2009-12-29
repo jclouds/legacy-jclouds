@@ -23,40 +23,32 @@
  */
 package org.jclouds.aws.ec2.xml;
 
-import java.util.Set;
+import static org.testng.Assert.assertEquals;
 
-import org.jclouds.aws.ec2.domain.LaunchPermission;
-import org.jclouds.http.functions.ParseSax;
+import java.io.InputStream;
+
+import org.jclouds.aws.ec2.domain.Permission;
+import org.jclouds.http.functions.BaseHandlerTest;
+import org.testng.annotations.Test;
 
 import com.google.common.collect.Sets;
 
 /**
+ * Tests behavior of {@code PermissionHandler}
  * 
- * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/index.html?ApiReference-query-DescribeImageAttribute.html"
- *      />
  * @author Adrian Cole
  */
-public class LaunchPermissionHandler extends ParseSax.HandlerWithResult<LaunchPermission> {
+@Test(groups = "unit", testName = "ec2.PermissionHandlerTest")
+public class PermissionHandlerTest extends BaseHandlerTest {
+   public void testApplyInputStream() {
 
-   private StringBuilder currentText = new StringBuilder();
-   private Set<String> userIds = Sets.newHashSet();
-   private Set<String> groups = Sets.newHashSet();
+      InputStream is = getClass().getResourceAsStream(
+               "/ec2/describe_image_attribute_launchPermission.xml");
 
-   public LaunchPermission getResult() {
-      return new LaunchPermission(userIds, groups);
-   }
+      Permission expected = new Permission(Sets.newHashSet("495219933132"), Sets.newHashSet("all"));
 
-   public void endElement(String uri, String name, String qName) {
+      Permission result = factory.create(injector.getInstance(PermissionHandler.class)).parse(is);
 
-      if (qName.equalsIgnoreCase("group")) {
-         groups.add(currentText.toString().trim());
-      } else if (qName.equalsIgnoreCase("userId")) {
-         userIds.add(currentText.toString().trim());
-      }
-      currentText = new StringBuilder();
-   }
-
-   public void characters(char ch[], int start, int length) {
-      currentText.append(ch, start, length);
+      assertEquals(result, expected);
    }
 }

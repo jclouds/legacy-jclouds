@@ -30,6 +30,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.jclouds.aws.ec2.domain.PublicIpInstanceIdPair;
+import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.logging.Logger;
 
@@ -61,7 +62,8 @@ public class DescribeAddressesResponseHandler extends
       } else if (qName.equals("instanceId")) {
          instanceId = currentOrNull();
       } else if (qName.equals("item")) {
-         pairs.add(new PublicIpInstanceIdPair(ipAddress, instanceId));
+         pairs.add(new PublicIpInstanceIdPair(EC2Utils.findRegionInArgsOrNull(request), ipAddress,
+                  instanceId));
          ipAddress = null;
          instanceId = null;
       }

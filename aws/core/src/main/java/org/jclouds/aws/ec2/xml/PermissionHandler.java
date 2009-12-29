@@ -25,41 +25,34 @@ package org.jclouds.aws.ec2.xml;
 
 import java.util.Set;
 
-import org.jclouds.aws.ec2.domain.KeyPair;
-import org.jclouds.aws.ec2.util.EC2Utils;
+import org.jclouds.aws.ec2.domain.Permission;
 import org.jclouds.http.functions.ParseSax;
 
 import com.google.common.collect.Sets;
 
 /**
- * Parses: DescribeKeyPairsResponse xmlns="http://ec2.amazonaws.com/doc/2009-11-30/"
  * 
- * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeKeyPairs.html"
+ * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/index.html?ApiReference-query-DescribeImageAttribute.html"
  *      />
  * @author Adrian Cole
  */
-public class DescribeKeyPairsResponseHandler extends ParseSax.HandlerWithResult<Set<KeyPair>> {
+public class PermissionHandler extends ParseSax.HandlerWithResult<Permission> {
 
    private StringBuilder currentText = new StringBuilder();
-   private Set<KeyPair> keyPairs = Sets.newLinkedHashSet();
-   private String keyFingerprint;
-   private String keyName;
+   private Set<String> userIds = Sets.newHashSet();
+   private Set<String> groups = Sets.newHashSet();
 
-   public Set<KeyPair> getResult() {
-      return keyPairs;
+   public Permission getResult() {
+      return new Permission(userIds, groups);
    }
 
    public void endElement(String uri, String name, String qName) {
 
-      if (qName.equals("keyFingerprint")) {
-         this.keyFingerprint = currentText.toString().trim();
-      } else if (qName.equals("item")) {
-         keyPairs.add(new KeyPair(EC2Utils.findRegionInArgsOrNull(request), keyName,
-                  keyFingerprint, null));
-      } else if (qName.equals("keyName")) {
-         this.keyName = currentText.toString().trim();
+      if (qName.equalsIgnoreCase("group")) {
+         groups.add(currentText.toString().trim());
+      } else if (qName.equalsIgnoreCase("userId")) {
+         userIds.add(currentText.toString().trim());
       }
-
       currentText = new StringBuilder();
    }
 

@@ -38,7 +38,7 @@ import org.jclouds.aws.ec2.binders.BindProductCodesToIndexedFormParams;
 import org.jclouds.aws.ec2.binders.BindUserGroupsToIndexedFormParams;
 import org.jclouds.aws.ec2.binders.BindUserIdsToIndexedFormParams;
 import org.jclouds.aws.ec2.domain.Image;
-import org.jclouds.aws.ec2.domain.LaunchPermission;
+import org.jclouds.aws.ec2.domain.Permission;
 import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.aws.ec2.filters.FormSigner;
@@ -50,7 +50,7 @@ import org.jclouds.aws.ec2.options.RegisterImageOptions;
 import org.jclouds.aws.ec2.xml.BlockDeviceMappingHandler;
 import org.jclouds.aws.ec2.xml.DescribeImagesResponseHandler;
 import org.jclouds.aws.ec2.xml.ImageIdHandler;
-import org.jclouds.aws.ec2.xml.LaunchPermissionHandler;
+import org.jclouds.aws.ec2.xml.PermissionHandler;
 import org.jclouds.aws.ec2.xml.ProductCodesHandler;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
@@ -172,8 +172,8 @@ public interface AMIAsyncClient {
    @Path("/")
    @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeImageAttribute",
             "launchPermission" })
-   @XMLResponseParser(LaunchPermissionHandler.class)
-   Future<LaunchPermission> getLaunchPermissionForImageInRegion(
+   @XMLResponseParser(PermissionHandler.class)
+   Future<Permission> getLaunchPermissionForImageInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("ImageId") String imageId);
 

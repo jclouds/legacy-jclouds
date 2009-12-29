@@ -26,7 +26,7 @@ package org.jclouds.aws.ec2.services;
 import static org.jclouds.aws.ec2.reference.EC2Parameters.ACTION;
 import static org.jclouds.aws.ec2.reference.EC2Parameters.VERSION;
 
-import java.util.SortedSet;
+import java.util.Set;
 import java.util.concurrent.Future;
 
 import javax.annotation.Nullable;
@@ -71,7 +71,7 @@ public interface InstanceAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeInstances")
    @XMLResponseParser(DescribeInstancesResponseHandler.class)
-   Future<? extends SortedSet<Reservation>> describeInstancesInRegion(
+   Future<? extends Set<Reservation>> describeInstancesInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
 
@@ -95,7 +95,7 @@ public interface InstanceAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "TerminateInstances")
    @XMLResponseParser(TerminateInstancesResponseHandler.class)
-   Future<? extends SortedSet<TerminatedInstance>> terminateInstancesInRegion(
+   Future<? extends Set<TerminatedInstance>> terminateInstancesInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("InstanceId.0") String instanceId,
             @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);

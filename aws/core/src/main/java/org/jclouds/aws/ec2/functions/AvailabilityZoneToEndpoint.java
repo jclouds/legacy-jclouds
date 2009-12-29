@@ -21,36 +21,37 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.aws.ec2.xml;
+package org.jclouds.aws.ec2.functions;
 
-import static org.testng.Assert.assertEquals;
+import java.net.URI;
+import java.util.Map;
 
-import java.io.InputStream;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
-import org.jclouds.aws.ec2.domain.LaunchPermission;
-import org.jclouds.http.functions.BaseHandlerTest;
-import org.testng.annotations.Test;
+import org.jclouds.aws.ec2.domain.AvailabilityZone;
+import org.jclouds.aws.ec2.domain.Region;
 
-import com.google.common.collect.Sets;
+import com.google.common.base.Function;
 
 /**
- * Tests behavior of {@code LaunchPermissionHandler}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.LaunchPermissionHandlerTest")
-public class LaunchPermissionHandlerTest extends BaseHandlerTest {
-   public void testApplyInputStream() {
+@Singleton
+public class AvailabilityZoneToEndpoint implements Function<Object, URI> {
+   private final Map<AvailabilityZone, Region> availabilityZoneToRegion;
+   private final Map<Region, URI> regionToEndpoint;
 
-      InputStream is = getClass().getResourceAsStream(
-               "/ec2/describe_image_attribute_launchPermission.xml");
-
-      LaunchPermission expected = new LaunchPermission(Sets.newHashSet("495219933132"), Sets
-               .newHashSet("all"));
-
-      LaunchPermission result = factory.create(injector.getInstance(LaunchPermissionHandler.class))
-               .parse(is);
-
-      assertEquals(result, expected);
+   @Inject
+   public AvailabilityZoneToEndpoint(Map<Region, URI> regionToEndpoint,
+            Map<AvailabilityZone, Region> availabilityZoneToRegion) {
+      this.regionToEndpoint = regionToEndpoint;
+      this.availabilityZoneToRegion = availabilityZoneToRegion;
    }
+
+   public URI apply(Object from) {
+      return regionToEndpoint.get(availabilityZoneToRegion.get(from));
+   }
+
 }

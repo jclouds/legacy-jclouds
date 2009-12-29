@@ -31,10 +31,12 @@ import java.util.SortedSet;
 
 import javax.annotation.Resource;
 
+import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RunningInstance;
+import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.logging.Logger;
@@ -69,7 +71,7 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
    private String keyName;
    private Date launchTime;
    private boolean monitoring;
-   private String availabilityZone;
+   private AvailabilityZone availabilityZone;
    private String platform;
    private String privateDnsName;
    private InetAddress privateIpAddress;
@@ -129,7 +131,7 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
       } else if (qName.equals("enabled")) {
          monitoring = Boolean.parseBoolean(currentOrNull());
       } else if (qName.equals("availabilityZone")) {
-         availabilityZone = currentOrNull();
+         availabilityZone = AvailabilityZone.fromValue(currentOrNull());
       } else if (qName.equals("platform")) {
          platform = currentOrNull();
       } else if (qName.equals("privateDnsName")) {
@@ -206,7 +208,8 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
    }
 
    protected Reservation newReservation() {
-      Reservation info = new Reservation(groupIds, instances, ownerId, requesterId, reservationId);
+      Reservation info = new Reservation(EC2Utils.findRegionInArgsOrNull(request), groupIds,
+               instances, ownerId, requesterId, reservationId);
       this.groupIds = Sets.newTreeSet();
       this.instances = Sets.newTreeSet();
       this.ownerId = null;

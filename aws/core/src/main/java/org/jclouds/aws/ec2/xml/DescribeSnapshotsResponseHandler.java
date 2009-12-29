@@ -27,7 +27,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.jclouds.aws.ec2.domain.Volume;
+import org.jclouds.aws.ec2.domain.Snapshot;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.xml.sax.Attributes;
@@ -38,48 +38,41 @@ import com.google.common.collect.Sets;
 /**
  * @author Adrian Cole
  */
-public class DescribeVolumesResponseHandler extends ParseSax.HandlerWithResult<Set<Volume>> {
+public class DescribeSnapshotsResponseHandler extends ParseSax.HandlerWithResult<Set<Snapshot>> {
 
-   private Set<Volume> volumes = Sets.newLinkedHashSet();
-   private final CreateVolumeResponseHandler volumeHandler;
-
-   private boolean inAttachmentSet;
+   private Set<Snapshot> snapshots = Sets.newLinkedHashSet();
+   private final SnapshotHandler snapshotHandler;
 
    @Inject
-   public DescribeVolumesResponseHandler(CreateVolumeResponseHandler volumeHandler) {
-      this.volumeHandler = volumeHandler;
+   public DescribeSnapshotsResponseHandler(SnapshotHandler snapshotHandler) {
+      this.snapshotHandler = snapshotHandler;
    }
 
-   public Set<Volume> getResult() {
-      return volumes;
+   public Set<Snapshot> getResult() {
+      return snapshots;
    }
 
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attributes)
             throws SAXException {
-      if (qName.equals("attachmentSet")) {
-         inAttachmentSet = true;
-      }
-      volumeHandler.startElement(uri, localName, qName, attributes);
+      snapshotHandler.startElement(uri, localName, qName, attributes);
    }
 
    @Override
    public void endElement(String uri, String localName, String qName) throws SAXException {
-      volumeHandler.endElement(uri, localName, qName);
-      if (qName.equals("attachmentSet")) {
-         inAttachmentSet = false;
-      } else if (qName.equals("item") && !inAttachmentSet) {
-         this.volumes.add(volumeHandler.getResult());
+      snapshotHandler.endElement(uri, localName, qName);
+      if (qName.equals("item")) {
+         this.snapshots.add(snapshotHandler.getResult());
       }
    }
 
    public void characters(char ch[], int start, int length) {
-      volumeHandler.characters(ch, start, length);
+      snapshotHandler.characters(ch, start, length);
    }
 
    @Override
    public void setContext(GeneratedHttpRequest<?> request) {
-      volumeHandler.setContext(request);
+      snapshotHandler.setContext(request);
       super.setContext(request);
    }
 }

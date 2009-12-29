@@ -27,6 +27,7 @@ import java.util.SortedSet;
 
 import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.TerminatedInstance;
+import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.xml.sax.Attributes;
 
@@ -82,7 +83,8 @@ public class TerminateInstancesResponseHandler extends
             previousState = InstanceState.fromValue(currentOrNull());
          }
       } else if (qName.equals("item")) {
-         instances.add(new TerminatedInstance(instanceId, shutdownState, previousState));
+         instances.add(new TerminatedInstance(EC2Utils.findRegionInArgsOrNull(request), instanceId,
+                  shutdownState, previousState));
          this.instanceId = null;
          this.shutdownState = null;
          this.previousState = null;

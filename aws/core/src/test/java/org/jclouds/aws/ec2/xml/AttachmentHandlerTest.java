@@ -23,13 +23,17 @@
  */
 package org.jclouds.aws.ec2.xml;
 
+import static org.easymock.classextension.EasyMock.*;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 
 import org.jclouds.aws.ec2.domain.Attachment;
+import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.BaseHandlerTest;
+import org.jclouds.http.functions.ParseSax;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 /**
@@ -43,11 +47,21 @@ public class AttachmentHandlerTest extends BaseHandlerTest {
       DateService dateService = injector.getInstance(DateService.class);
       InputStream is = getClass().getResourceAsStream("/ec2/attach.xml");
 
-      Attachment expected = new Attachment("vol-4d826724", "i-6058a509", "/dev/sdh",
-               Attachment.Status.ATTACHING, dateService
+      Attachment expected = new Attachment(Region.DEFAULT, "vol-4d826724", "i-6058a509",
+               "/dev/sdh", Attachment.Status.ATTACHING, dateService
                         .iso8601DateParse("2008-05-07T11:51:50.000Z"));
-      Attachment result = factory.create(injector.getInstance(AttachmentHandler.class)).parse(is);
+
+      AttachmentHandler handler = injector.getInstance(AttachmentHandler.class);
+      addDefaultRegionToHandler(handler);
+      Attachment result = factory.create(handler).parse(is);
 
       assertEquals(result, expected);
+   }
+
+   private void addDefaultRegionToHandler(ParseSax.HandlerWithResult<?> handler) {
+      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      expect(request.getArgs()).andReturn(new Object[] { Region.DEFAULT });
+      replay(request);
+      handler.setContext(request);
    }
 }

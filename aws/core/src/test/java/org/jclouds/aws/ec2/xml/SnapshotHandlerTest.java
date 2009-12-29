@@ -29,41 +29,39 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.util.Set;
 
-import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.Region;
+import org.jclouds.aws.ec2.domain.Snapshot;
+import org.jclouds.date.DateService;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
-
 /**
- * Tests behavior of {@code DescribeKeyPairsHandler}
+ * Tests behavior of {@code SnapshotHandler}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.DescribeKeyPairsHandlerTest")
-public class DescribeKeyPairsResponseHandlerTest extends BaseHandlerTest {
+@Test(groups = "unit", testName = "ec2.SnapshotHandlerTest")
+public class SnapshotHandlerTest extends BaseHandlerTest {
    public void testApplyInputStream() {
+      DateService dateService = injector.getInstance(DateService.class);
+      InputStream is = getClass().getResourceAsStream("/ec2/created_snapshot.xml");
 
-      InputStream is = getClass().getResourceAsStream("/ec2/describe_keypairs.xml");
+      Snapshot expected = new Snapshot(Region.DEFAULT, "snap-78a54011", "vol-4d826724", 10, Snapshot.Status.PENDING,
+               dateService.iso8601DateParse("2008-05-07T12:51:50.000Z"), 60, "213457642086",
+               "Daily Backup", null);
 
-      Set<KeyPair> expected = ImmutableSet.of(new KeyPair(Region.DEFAULT, "gsg-keypair",
-               "1f:51:ae:28:bf:89:e9:d8:1f:25:5d:37:2d:7d:b8:ca:9f:f5:f1:6f", null));
-
-      DescribeKeyPairsResponseHandler handler = injector
-               .getInstance(DescribeKeyPairsResponseHandler.class);
+      SnapshotHandler handler = injector.getInstance(SnapshotHandler.class);
       addDefaultRegionToHandler(handler);
-      Set<KeyPair> result = factory.create(handler).parse(is);
+      Snapshot result = factory.create(handler).parse(is);
       assertEquals(result, expected);
    }
 
    private void addDefaultRegionToHandler(ParseSax.HandlerWithResult<?> handler) {
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
-      expect(request.getArgs()).andReturn(new Object[] { Region.DEFAULT });
+      expect(request.getArgs()).andReturn(new Object[] { Region.DEFAULT }).atLeastOnce();
       replay(request);
       handler.setContext(request);
    }

@@ -23,24 +23,30 @@
  */
 package org.jclouds.aws.ec2.xml;
 
+import static org.easymock.EasyMock.expect;
+import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.SortedSet;
+import java.util.Set;
 
+import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.InstanceType;
+import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.BaseHandlerTest;
+import org.jclouds.http.functions.ParseSax;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Sets;
 
 /**
@@ -64,48 +70,60 @@ public class DescribeInstancesResponseHandlerTest extends BaseHandlerTest {
    public void testWhenRunning() throws UnknownHostException {
 
       InputStream is = getClass().getResourceAsStream("/ec2/describe_instances_running.xml");
-      SortedSet<Reservation> contents = Sets.newTreeSet();
+      Set<Reservation> contents = Sets.newTreeSet();
 
-      contents.add(new Reservation(ImmutableSortedSet.of("adriancole.ec2ingress"),
-               ImmutableSortedSet.of(new RunningInstance("0",
+      contents.add(new Reservation(Region.DEFAULT, ImmutableSet.of("adriancole.ec2ingress"),
+               ImmutableSet.of(new RunningInstance("0",
                         "ec2-174-129-81-68.compute-1.amazonaws.com", "ami-1fd73376", "i-0799056f",
                         InstanceState.RUNNING, InstanceType.M1_SMALL, InetAddress
                                  .getByName("174.129.81.68"), "aki-a71cf9ce", "adriancole.ec21",
                         dateService.iso8601DateParse("2009-11-09T03:00:34.000Z"), false,
-                        "us-east-1c", null, "ip-10-243-42-70.ec2.internal", InetAddress
-                                 .getByName("10.243.42.70"), ImmutableSet.<String> of(),
+                        AvailabilityZone.US_EAST_1C, null, "ip-10-243-42-70.ec2.internal",
+                        InetAddress.getByName("10.243.42.70"), ImmutableSet.<String> of(),
                         "ari-a51cf9cc", null, null, null)), "993194456877", null, "r-a3c508cb"));
 
-      SortedSet<Reservation> result = factory.create(
-               injector.getInstance(DescribeInstancesResponseHandler.class)).parse(is);
+      Set<Reservation> result = getReservations(is);
 
       assertEquals(result, contents);
-
    }
 
    public void testApplyInputStream() {
 
       InputStream is = getClass().getResourceAsStream("/ec2/describe_instances.xml");
-      SortedSet<Reservation> contents = Sets.newTreeSet();
+      Set<Reservation> contents = Sets.newTreeSet();
 
-      contents.add(new Reservation(ImmutableSortedSet.of("default"), ImmutableSortedSet.of(
+      contents.add(new Reservation(Region.DEFAULT, ImmutableSet.of("default"), ImmutableSet.of(
                new RunningInstance("23", "ec2-72-44-33-4.compute-1.amazonaws.com", "ami-6ea54007",
                         "i-28a64341", InstanceState.RUNNING, InstanceType.M1_LARGE,
                         (InetAddress) null, "aki-ba3adfd3", "example-key-name", dateService
                                  .iso8601DateParse("2007-08-07T11:54:42.000Z"), false,
-                        "us-east-1b", null, "10-251-50-132.ec2.internal", null, ImmutableSet
-                                 .of("774F4FF8"), "ari-badbad00", null, null, null),
+                        AvailabilityZone.US_EAST_1B, null, "10-251-50-132.ec2.internal", null,
+                        ImmutableSet.of("774F4FF8"), "ari-badbad00", null, null, null),
                new RunningInstance("23", "ec2-72-44-33-6.compute-1.amazonaws.com", "ami-6ea54007",
                         "i-28a64435", InstanceState.RUNNING, InstanceType.M1_LARGE,
                         (InetAddress) null, "aki-ba3adfd3", "example-key-name", dateService
                                  .iso8601DateParse("2007-08-07T11:54:42.000Z"), false,
-                        "us-east-1b", null, "10-251-50-134.ec2.internal", null, ImmutableSet
-                                 .of("774F4FF8"), "ari-badbad00", null, null, null)),
+                        AvailabilityZone.US_EAST_1B, null, "10-251-50-134.ec2.internal", null,
+                        ImmutableSet.of("774F4FF8"), "ari-badbad00", null, null, null)),
                "UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM", null, "r-44a5402d"));
 
-      SortedSet<Reservation> result = factory.create(
-               injector.getInstance(DescribeInstancesResponseHandler.class)).parse(is);
+      Set<Reservation> result = getReservations(is);
 
       assertEquals(result, contents);
+   }
+
+   private Set<Reservation> getReservations(InputStream is) {
+      DescribeInstancesResponseHandler handler = injector
+               .getInstance(DescribeInstancesResponseHandler.class);
+      addDefaultRegionToHandler(handler);
+      Set<Reservation> result = factory.create(handler).parse(is);
+      return result;
+   }
+
+   private void addDefaultRegionToHandler(ParseSax.HandlerWithResult<?> handler) {
+      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      expect(request.getArgs()).andReturn(new Object[] { Region.DEFAULT });
+      replay(request);
+      handler.setContext(request);
    }
 }

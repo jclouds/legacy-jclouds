@@ -29,6 +29,7 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 
 import org.jclouds.aws.ec2.domain.Attachment;
+import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
@@ -52,7 +53,8 @@ public class AttachmentHandler extends ParseSax.HandlerWithResult<Attachment> {
    private Date attachTime;
 
    public Attachment getResult() {
-      return new Attachment(volumeId, instanceId, device, attachmentStatus, attachTime);
+      return new Attachment(EC2Utils.findRegionInArgsOrNull(request), volumeId, instanceId, device,
+               attachmentStatus, attachTime);
    }
 
    public void endElement(String uri, String name, String qName) {

@@ -23,12 +23,18 @@
  */
 package org.jclouds.aws.ec2.xml;
 
+import static org.easymock.EasyMock.expect;
+import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 
 import org.jclouds.aws.ec2.domain.KeyPair;
+import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.http.functions.BaseHandlerTest;
+import org.jclouds.http.functions.ParseSax;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 /**
@@ -43,6 +49,7 @@ public class KeyPairResponseHandlerTest extends BaseHandlerTest {
       InputStream is = getClass().getResourceAsStream("/ec2/create_keypair.xml");
 
       KeyPair expected = new KeyPair(
+               Region.DEFAULT,
                "gsg-keypair",
                "1f:51:ae:28:bf:89:e9:d8:1f:25:5d:37:2d:7d:b8:ca:9f:f5:f1:6f",
                "-----BEGIN RSA PRIVATE KEY-----\n"
@@ -69,8 +76,17 @@ public class KeyPairResponseHandlerTest extends BaseHandlerTest {
                         + "2ERKKdwz0ZL9SWq6VTdhr/5G994CK72fy5WhyERbDjUIdHaK3M849JJuf8cSrvSb4g==\n"
                         + "-----END RSA PRIVATE KEY-----");
 
-      KeyPair result = factory.create(injector.getInstance(KeyPairResponseHandler.class)).parse(is);
+      KeyPairResponseHandler handler = injector.getInstance(KeyPairResponseHandler.class);
+      addDefaultRegionToHandler(handler);
+      KeyPair result = factory.create(handler).parse(is);
 
       assertEquals(result, expected);
+   }
+
+   private void addDefaultRegionToHandler(ParseSax.HandlerWithResult<?> handler) {
+      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      expect(request.getArgs()).andReturn(new Object[] { Region.DEFAULT }).atLeastOnce();
+      replay(request);
+      handler.setContext(request);
    }
 }

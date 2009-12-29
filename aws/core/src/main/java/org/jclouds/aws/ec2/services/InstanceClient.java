@@ -23,7 +23,7 @@
  */
 package org.jclouds.aws.ec2.services;
 
-import java.util.SortedSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
@@ -65,7 +65,7 @@ public interface InstanceClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeInstances.html"
     *      />
     */
-   SortedSet<Reservation> describeInstancesInRegion(Region region, String... instanceIds);
+   Set<Reservation> describeInstancesInRegion(Region region, String... instanceIds);
 
    /**
     * Launches a specified number of instances of an AMI for which you have permissions.
@@ -158,7 +158,7 @@ public interface InstanceClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-TerminateInstances.html"
     *      />
     */
-   SortedSet<TerminatedInstance> terminateInstancesInRegion(Region region, String instanceId,
+   Set<TerminatedInstance> terminateInstancesInRegion(Region region, String instanceId,
             String... instanceIds);
 
 }

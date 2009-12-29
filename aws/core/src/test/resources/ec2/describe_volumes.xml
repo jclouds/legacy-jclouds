@@ -14,7 +14,7 @@
         <item>
             <volumeId>vol-4282672b</volumeId>
             <size>800</size>
-            <snapshotId />
+            <snapshotId>snap-536d1b3a</snapshotId>
             <availabilityZone>us-east-1a</availabilityZone>
             <status>in-use</status>
             <createTime>2008-05-07T11:51:50.000Z</createTime>

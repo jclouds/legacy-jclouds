@@ -42,6 +42,7 @@ import com.google.inject.internal.Nullable;
  */
 public class Image implements Comparable<Image> {
 
+   private final Region region;
    private final Architecture architecture;
    @Nullable
    private final String name;
@@ -65,12 +66,13 @@ public class Image implements Comparable<Image> {
    private final String rootDeviceName;
    private final Map<String, EbsBlockDevice> ebsBlockDevices = Maps.newHashMap();
 
-   public Image(Architecture architecture, @Nullable String name, @Nullable String description,
-            String imageId, String imageLocation, String imageOwnerId, ImageState imageState,
-            ImageType imageType, boolean isPublic, Iterable<String> productCodes,
-            @Nullable String kernelId, @Nullable String platform, @Nullable String ramdiskId,
-            RootDeviceType rootDeviceType, String rootDeviceName,
+   public Image(Region region, Architecture architecture, @Nullable String name,
+            @Nullable String description, String imageId, String imageLocation,
+            String imageOwnerId, ImageState imageState, ImageType imageType, boolean isPublic,
+            Iterable<String> productCodes, @Nullable String kernelId, @Nullable String platform,
+            @Nullable String ramdiskId, RootDeviceType rootDeviceType, String rootDeviceName,
             Map<String, EbsBlockDevice> ebsBlockDevices) {
+      this.region = checkNotNull(region, "region");
       this.architecture = checkNotNull(architecture, "architecture");
       this.imageId = checkNotNull(imageId, "imageId");
       this.name = name;
@@ -218,6 +220,14 @@ public class Image implements Comparable<Image> {
    }
 
    /**
+    * AMIs are tied to the Region where its files are located within Amazon S3.
+    * 
+    */
+   public Region getRegion() {
+      return region;
+   }
+
+   /**
     * The architecture of the image (i386 or x86_64).
     */
    public Architecture getArchitecture() {
@@ -322,6 +332,7 @@ public class Image implements Comparable<Image> {
       result = prime * result + ((platform == null) ? 0 : platform.hashCode());
       result = prime * result + ((productCodes == null) ? 0 : productCodes.hashCode());
       result = prime * result + ((ramdiskId == null) ? 0 : ramdiskId.hashCode());
+      result = prime * result + ((region == null) ? 0 : region.hashCode());
       result = prime * result + ((rootDeviceName == null) ? 0 : rootDeviceName.hashCode());
       result = prime * result + ((rootDeviceType == null) ? 0 : rootDeviceType.hashCode());
       return result;
@@ -403,6 +414,11 @@ public class Image implements Comparable<Image> {
             return false;
       } else if (!ramdiskId.equals(other.ramdiskId))
          return false;
+      if (region == null) {
+         if (other.region != null)
+            return false;
+      } else if (!region.equals(other.region))
+         return false;
       if (rootDeviceName == null) {
          if (other.rootDeviceName != null)
             return false;
@@ -444,8 +460,9 @@ public class Image implements Comparable<Image> {
                + ", imageLocation=" + imageLocation + ", imageOwnerId=" + imageOwnerId
                + ", imageState=" + imageState + ", imageType=" + imageType + ", isPublic="
                + isPublic + ", kernelId=" + kernelId + ", name=" + name + ", platform=" + platform
-               + ", productCodes=" + productCodes + ", ramdiskId=" + ramdiskId
-               + ", rootDeviceName=" + rootDeviceName + ", rootDeviceType=" + rootDeviceType + "]";
+               + ", productCodes=" + productCodes + ", ramdiskId=" + ramdiskId + ", region="
+               + region + ", rootDeviceName=" + rootDeviceName + ", rootDeviceType="
+               + rootDeviceType + "]";
    }
 
    public Map<String, EbsBlockDevice> getEbsBlockDevices() {

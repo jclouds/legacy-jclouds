@@ -34,6 +34,7 @@ import org.jclouds.aws.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.aws.ec2.domain.Image.ImageState;
 import org.jclouds.aws.ec2.domain.Image.ImageType;
 import org.jclouds.aws.ec2.domain.Image.RootDeviceType;
+import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
 import org.xml.sax.Attributes;
@@ -145,9 +146,10 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerWithResult<Se
             this.deleteOnTermination = true;
          } else if (!inProductCodes) {
             try {
-               contents.add(new Image(architecture, this.name, description, imageId, imageLocation,
-                        imageOwnerId, imageState, imageType, isPublic, productCodes, kernelId,
-                        platform, ramdiskId, rootDeviceType, rootDeviceName, ebsBlockDevices));
+               contents.add(new Image(EC2Utils.findRegionInArgsOrNull(request), architecture,
+                        this.name, description, imageId, imageLocation, imageOwnerId, imageState,
+                        imageType, isPublic, productCodes, kernelId, platform, ramdiskId,
+                        rootDeviceType, rootDeviceName, ebsBlockDevices));
             } catch (NullPointerException e) {
                logger.warn(e, "malformed image: %s", imageId);
             }

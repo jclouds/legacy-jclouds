@@ -24,6 +24,7 @@
 package org.jclouds.aws.ec2.xml;
 
 import org.jclouds.aws.ec2.domain.KeyPair;
+import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.http.functions.ParseSax;
 
 /**
@@ -41,7 +42,8 @@ public class KeyPairResponseHandler extends ParseSax.HandlerWithResult<KeyPair> 
    private String keyName;
 
    public KeyPair getResult() {
-      return new KeyPair(keyName, keyFingerprint, keyMaterial);
+      return new KeyPair(EC2Utils.findRegionInArgsOrNull(request), keyName, keyFingerprint,
+               keyMaterial);
    }
 
    public void endElement(String uri, String name, String qName) {

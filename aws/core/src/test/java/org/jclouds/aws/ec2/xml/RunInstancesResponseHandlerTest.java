@@ -23,17 +23,24 @@
  */
 package org.jclouds.aws.ec2.xml;
 
+import static org.easymock.EasyMock.expect;
+import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.net.InetAddress;
 
+import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.InstanceType;
+import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.BaseHandlerTest;
+import org.jclouds.http.functions.ParseSax;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -62,30 +69,38 @@ public class RunInstancesResponseHandlerTest extends BaseHandlerTest {
 
       InputStream is = getClass().getResourceAsStream("/ec2/run_instances.xml");
 
-      Reservation expected = new Reservation(ImmutableSortedSet.of("default"), ImmutableSortedSet
-               .of(
-               new RunningInstance("0", null, "ami-60a54009", "i-2ba64342",
+      Reservation expected = new Reservation(Region.DEFAULT, ImmutableSortedSet.of("default"),
+               ImmutableSortedSet.of(new RunningInstance("0", null, "ami-60a54009", "i-2ba64342",
                         InstanceState.PENDING, InstanceType.M1_SMALL, (InetAddress) null, null,
                         "example-key-name", dateService
-                                 .iso8601DateParse("2007-08-07T11:51:50.000Z"), true, "us-east-1b",
-                        null, null, (InetAddress) null, Sets.<String> newTreeSet(), null, null,
-                        null, null), new RunningInstance("0", null, "ami-60a54009",
-                        "i-2bc64242", InstanceState.PENDING, InstanceType.M1_SMALL,
-                        (InetAddress) null, null, "example-key-name", dateService
-                                 .iso8601DateParse("2007-08-07T11:51:50.000Z"), true, "us-east-1b",
-                        null, null, (InetAddress) null, Sets.<String> newTreeSet(), null, null,
-                        null, null), new RunningInstance("0", null, "ami-60a54009",
-                        "i-2be64332", InstanceState.PENDING, InstanceType.M1_SMALL,
-                        (InetAddress) null, null, "example-key-name", dateService
-                                 .iso8601DateParse("2007-08-07T11:51:50.000Z"), true, "us-east-1b",
-                        null, null, (InetAddress) null, Sets.<String> newTreeSet(), null, null,
-                        null, null)
+                                 .iso8601DateParse("2007-08-07T11:51:50.000Z"), true,
+                        AvailabilityZone.US_EAST_1B, null, null, (InetAddress) null, Sets
+                                 .<String> newTreeSet(), null, null, null, null),
+                        new RunningInstance("0", null, "ami-60a54009", "i-2bc64242",
+                                 InstanceState.PENDING, InstanceType.M1_SMALL, (InetAddress) null,
+                                 null, "example-key-name", dateService
+                                          .iso8601DateParse("2007-08-07T11:51:50.000Z"), true,
+                                 AvailabilityZone.US_EAST_1B, null, null, (InetAddress) null, Sets
+                                          .<String> newTreeSet(), null, null, null, null),
+                        new RunningInstance("0", null, "ami-60a54009", "i-2be64332",
+                                 InstanceState.PENDING, InstanceType.M1_SMALL, (InetAddress) null,
+                                 null, "example-key-name", dateService
+                                          .iso8601DateParse("2007-08-07T11:51:50.000Z"), true,
+                                 AvailabilityZone.US_EAST_1B, null, null, (InetAddress) null, Sets
+                                          .<String> newTreeSet(), null, null, null, null)
 
                ), "AIDADH4IGTRXXKCD", null, "r-47a5402e");
 
-      Reservation result = factory.create(
-               injector.getInstance(RunInstancesResponseHandler.class)).parse(is);
-
+      RunInstancesResponseHandler handler = injector.getInstance(RunInstancesResponseHandler.class);
+      addDefaultRegionToHandler(handler);
+      Reservation result = factory.create(handler).parse(is);
       assertEquals(result, expected);
+   }
+
+   private void addDefaultRegionToHandler(ParseSax.HandlerWithResult<?> handler) {
+      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      expect(request.getArgs()).andReturn(new Object[] { Region.DEFAULT }).atLeastOnce();
+      replay(request);
+      handler.setContext(request);
    }
 }

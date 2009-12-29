@@ -36,11 +36,11 @@ import com.google.common.collect.Sets;
  *      />
  * @author Adrian Cole
  */
-public class LaunchPermission {
+public class Permission {
    private final Set<String> groups = Sets.newHashSet();
    private final Set<String> userIds = Sets.newHashSet();
 
-   public LaunchPermission(Iterable<String> userIds, Iterable<String> groups) {
+   public Permission(Iterable<String> userIds, Iterable<String> groups) {
       Iterables.addAll(this.userIds, checkNotNull(userIds, "userIds"));
       Iterables.addAll(this.groups, checkNotNull(groups, "groups"));
    }
@@ -62,7 +62,7 @@ public class LaunchPermission {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      LaunchPermission other = (LaunchPermission) obj;
+      Permission other = (Permission) obj;
       if (groups == null) {
          if (other.groups != null)
             return false;

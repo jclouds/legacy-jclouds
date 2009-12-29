@@ -23,6 +23,7 @@
  */
 package org.jclouds.aws.ec2.services;
 
+import static org.jclouds.aws.ec2.options.DescribeSnapshotsOptions.Builder.ownedBy;
 import static org.jclouds.aws.ec2.options.DetachVolumeOptions.Builder.fromInstance;
 import static org.testng.Assert.assertEquals;
 
@@ -38,10 +39,15 @@ import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.filters.FormSigner;
+import org.jclouds.aws.ec2.options.CreateSnapshotOptions;
+import org.jclouds.aws.ec2.options.DescribeSnapshotsOptions;
 import org.jclouds.aws.ec2.options.DetachVolumeOptions;
 import org.jclouds.aws.ec2.xml.AttachmentHandler;
 import org.jclouds.aws.ec2.xml.CreateVolumeResponseHandler;
+import org.jclouds.aws.ec2.xml.DescribeSnapshotsResponseHandler;
 import org.jclouds.aws.ec2.xml.DescribeVolumesResponseHandler;
+import org.jclouds.aws.ec2.xml.PermissionHandler;
+import org.jclouds.aws.ec2.xml.SnapshotHandler;
 import org.jclouds.aws.reference.AWSConstants;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.functions.ParseSax;
@@ -54,6 +60,7 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Jsr330;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
@@ -172,7 +179,8 @@ public class ElasticBlockStoreAsyncClientTest extends RestClientTest<ElasticBloc
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 89\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
-      assertPayloadEquals(httpMethod, "Version=2009-11-30&Action=AttachVolume&InstanceId=instanceId&VolumeId=id&Device=%2Fdevice");
+      assertPayloadEquals(httpMethod,
+               "Version=2009-11-30&Action=AttachVolume&InstanceId=instanceId&VolumeId=id&Device=%2Fdevice");
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, AttachmentHandler.class);
@@ -223,6 +231,173 @@ public class ElasticBlockStoreAsyncClientTest extends RestClientTest<ElasticBloc
       checkFilters(httpMethod);
    }
 
+   public void testCreateSnapshot() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ElasticBlockStoreAsyncClient.class.getMethod("createSnapshotInRegion",
+               Region.class, String.class, Array.newInstance(CreateSnapshotOptions.class, 0)
+                        .getClass());
+      GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor.createRequest(
+               method, Region.DEFAULT, "volumeId");
+
+      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 58\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertPayloadEquals(httpMethod, "Version=2009-11-30&Action=CreateSnapshot&VolumeId=volumeId");
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, SnapshotHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testCreateSnapshotOptions() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = ElasticBlockStoreAsyncClient.class.getMethod("createSnapshotInRegion",
+               Region.class, String.class, Array.newInstance(CreateSnapshotOptions.class, 0)
+                        .getClass());
+      GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor.createRequest(
+               method, Region.DEFAULT, "volumeId", CreateSnapshotOptions.Builder
+                        .withDescription("description"));
+
+      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 82\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertPayloadEquals(httpMethod,
+               "Version=2009-11-30&Action=CreateSnapshot&VolumeId=volumeId&Description=description");
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, SnapshotHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testDescribeSnapshots() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ElasticBlockStoreAsyncClient.class.getMethod("describeSnapshotsInRegion",
+               Region.class, Array.newInstance(DescribeSnapshotsOptions.class, 0).getClass());
+      GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor.createRequest(
+               method, Region.DEFAULT);
+
+      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 43\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertPayloadEquals(httpMethod, "Version=2009-11-30&Action=DescribeSnapshots");
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, DescribeSnapshotsResponseHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testDescribeSnapshotsArgs() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = ElasticBlockStoreAsyncClient.class.getMethod("describeSnapshotsInRegion",
+               Region.class, Array.newInstance(DescribeSnapshotsOptions.class, 0).getClass());
+      GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor.createRequest(
+               method, Region.DEFAULT, ownedBy("o1", "o2").restorableBy("r1", "r2").snapshotIds(
+                        "s1", "s2"));
+
+      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 133\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertPayloadEquals(
+               httpMethod,
+               "Version=2009-11-30&Action=DescribeSnapshots&Owner.1=o1&Owner.2=o2&RestorableBy.1=r1&RestorableBy.2=r2&SnapshotId.1=s1&SnapshotId.2=s2");
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, DescribeSnapshotsResponseHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testGetCreateVolumePermissionForSnapshot() throws SecurityException,
+            NoSuchMethodException, IOException {
+      Method method = ElasticBlockStoreAsyncClient.class.getMethod(
+               "getCreateVolumePermissionForSnapshotInRegion", Region.class, String.class);
+      GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor.createRequest(
+               method, Region.DEFAULT, "snapshotId");
+
+      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 106\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertPayloadEquals(
+               httpMethod,
+               "Version=2009-11-30&Action=DescribeSnapshotAttribute&Attribute=createVolumePermission&SnapshotId=snapshotId");
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, PermissionHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testAddCreateVolumePermissionsToSnapshot() throws SecurityException,
+            NoSuchMethodException, IOException {
+      Method method = ElasticBlockStoreAsyncClient.class.getMethod(
+               "addCreateVolumePermissionsToSnapshotInRegion", Region.class, Iterable.class,
+               Iterable.class, String.class);
+      GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor.createRequest(
+               method, Region.DEFAULT, ImmutableList.of("bob", "sue"), ImmutableList.of("all"),
+               "snapshotId");
+
+      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 122\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertPayloadEquals(
+               httpMethod,
+               "Version=2009-11-30&Action=ModifySnapshotAttribute&OperationType=add&Attribute=createVolumePermission&SnapshotId=snapshotId&UserGroup.1=all&UserId.1=bob&UserId.2=sue");
+
+      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testRemoveCreateVolumePermissionsFromSnapshot() throws SecurityException,
+            NoSuchMethodException, IOException {
+      Method method = ElasticBlockStoreAsyncClient.class.getMethod(
+               "removeCreateVolumePermissionsFromSnapshotInRegion", Region.class, Iterable.class,
+               Iterable.class, String.class);
+      GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor.createRequest(
+               method, Region.DEFAULT, ImmutableList.of("bob", "sue"), ImmutableList.of("all"),
+               "snapshotId");
+
+      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 125\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertPayloadEquals(
+               httpMethod,
+               "Version=2009-11-30&Action=ModifySnapshotAttribute&OperationType=remove&Attribute=createVolumePermission&SnapshotId=snapshotId&UserGroup.1=all&UserId.1=bob&UserId.2=sue");
+      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testResetCreateVolumePermissionsOnSnapshot() throws SecurityException,
+            NoSuchMethodException, IOException {
+      Method method = ElasticBlockStoreAsyncClient.class.getMethod(
+               "resetCreateVolumePermissionsOnSnapshotInRegion", Region.class, String.class);
+      GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor.createRequest(
+               method, Region.DEFAULT, "snapshotId");
+
+      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 103\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertPayloadEquals(
+               httpMethod,
+               "Version=2009-11-30&Action=ResetSnapshotAttribute&Attribute=createVolumePermission&SnapshotId=snapshotId");
+      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
    @Override
    protected void checkFilters(GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod) {
       assertEquals(httpMethod.getFilters().size(), 1);
@@ -264,10 +439,16 @@ public class ElasticBlockStoreAsyncClientTest extends RestClientTest<ElasticBloc
          @Singleton
          @Provides
          Map<Region, URI> provideMap() {
-            return ImmutableMap.<Region, URI> of(Region.DEFAULT, URI.create("https://booya"),
-                     Region.EU_WEST_1, URI.create("https://ec2.eu-west-1.amazonaws.com"),
-                     Region.US_EAST_1, URI.create("https://ec2.us-east-1.amazonaws.com"),
-                     Region.US_WEST_1, URI.create("https://ec2.us-west-1.amazonaws.com"));
+            return ImmutableMap.<Region, URI> of(Region.DEFAULT, URI
+                     .create("https://ec2.amazonaws.com"));
+         }
+
+         @SuppressWarnings("unused")
+         @Singleton
+         @Provides
+         Map<AvailabilityZone, Region> provideAvailabilityZoneRegionMap() {
+            return ImmutableMap.<AvailabilityZone, Region> of(AvailabilityZone.US_EAST_1A,
+                     Region.DEFAULT);
          }
       };
    }

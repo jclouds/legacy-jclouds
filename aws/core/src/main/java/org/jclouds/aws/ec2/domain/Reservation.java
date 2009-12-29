@@ -25,7 +25,7 @@ package org.jclouds.aws.ec2.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.SortedSet;
+import java.util.Set;
 
 import com.google.inject.internal.Nullable;
 
@@ -36,8 +36,20 @@ import com.google.inject.internal.Nullable;
  * @author Adrian Cole
  */
 public class Reservation implements Comparable<Reservation> {
-   public Reservation(SortedSet<String> groupIds, SortedSet<RunningInstance> instances,
+
+   private final Region region;
+   private final Set<String> groupIds;
+   private final Set<RunningInstance> instances;
+   private final @Nullable
+   String ownerId;
+   private final @Nullable
+   String requesterId;
+   private final @Nullable
+   String reservationId;
+
+   public Reservation(Region region, Set<String> groupIds, Set<RunningInstance> instances,
             @Nullable String ownerId, @Nullable String requesterId, @Nullable String reservationId) {
+      this.region = checkNotNull(region, "region");
       this.groupIds = checkNotNull(groupIds, "groupIds");
       this.instances = checkNotNull(instances, "instances");
       this.ownerId = ownerId;
@@ -45,14 +57,12 @@ public class Reservation implements Comparable<Reservation> {
       this.reservationId = reservationId;
    }
 
-   private final SortedSet<String> groupIds;
-   private final SortedSet<RunningInstance> instances;
-   private final @Nullable
-   String ownerId;
-   private final @Nullable
-   String requesterId;
-   private final @Nullable
-   String reservationId;
+   /**
+    * Instances are tied to Availability Zones. However, the instance ID is tied to the Region.
+    */
+   public Region getRegion() {
+      return region;
+   }
 
    public int compareTo(Reservation o) {
       return (this == o) ? 0 : getReservationId().compareTo(o.getReservationId());
@@ -61,11 +71,11 @@ public class Reservation implements Comparable<Reservation> {
    /**
     * Names of the security groups.
     */
-   public SortedSet<String> getGroupIds() {
+   public Set<String> getGroupIds() {
       return groupIds;
    }
 
-   public SortedSet<RunningInstance> getRunningInstances() {
+   public Set<RunningInstance> getRunningInstances() {
       return instances;
    }
 
@@ -97,6 +107,7 @@ public class Reservation implements Comparable<Reservation> {
       result = prime * result + ((groupIds == null) ? 0 : groupIds.hashCode());
       result = prime * result + ((instances == null) ? 0 : instances.hashCode());
       result = prime * result + ((ownerId == null) ? 0 : ownerId.hashCode());
+      result = prime * result + ((region == null) ? 0 : region.hashCode());
       result = prime * result + ((requesterId == null) ? 0 : requesterId.hashCode());
       result = prime * result + ((reservationId == null) ? 0 : reservationId.hashCode());
       return result;
@@ -125,6 +136,11 @@ public class Reservation implements Comparable<Reservation> {
          if (other.ownerId != null)
             return false;
       } else if (!ownerId.equals(other.ownerId))
+         return false;
+      if (region == null) {
+         if (other.region != null)
+            return false;
+      } else if (!region.equals(other.region))
          return false;
       if (requesterId == null) {
          if (other.requesterId != null)

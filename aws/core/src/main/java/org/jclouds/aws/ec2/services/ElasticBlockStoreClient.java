@@ -28,8 +28,12 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.aws.ec2.domain.Attachment;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
+import org.jclouds.aws.ec2.domain.Permission;
 import org.jclouds.aws.ec2.domain.Region;
+import org.jclouds.aws.ec2.domain.Snapshot;
 import org.jclouds.aws.ec2.domain.Volume;
+import org.jclouds.aws.ec2.options.CreateSnapshotOptions;
+import org.jclouds.aws.ec2.options.DescribeSnapshotsOptions;
 import org.jclouds.aws.ec2.options.DetachVolumeOptions;
 import org.jclouds.concurrent.Timeout;
 
@@ -193,4 +197,196 @@ public interface ElasticBlockStoreClient {
     *      />
     */
    Attachment attachVolumeInRegion(Region region, String volumeId, String instanceId, String device);
+
+   /**
+    * Creates a snapshot of an Amazon EBS volume and stores it in Amazon S3. You can use snapshots
+    * for backups, to make identical copies of instance devices, and to save data before shutting
+    * down an instance. For more information about Amazon EBS, go to the Amazon Elastic Compute
+    * Cloud Developer Guide or Amazon Elastic Compute Cloud User Guide.
+    * <p/>
+    * When taking a snapshot of a file system, we recommend unmounting it first. This ensures the
+    * file system metadata is in a consistent state, that the 'mounted indicator' is cleared, and
+    * that all applications using that file system are stopped and in a consistent state. Some file
+    * systems, such as xfs, can freeze and unfreeze activity so a snapshot can be made without
+    * unmounting.
+    * <p/>
+    * For Linux/UNIX, enter the following command from the command line.
+    * 
+    * <pre>
+    * umount - d / dev / sdh
+    * </pre>
+    * <p/>
+    * For Windows, open Disk Management, right-click the volume to unmount, and select Change Drive
+    * Letter and Path. Then, select the mount point to remove and click Remove.
+    * 
+    * @param region
+    *           Snapshots are tied to Regions and can only be used for volumes within the same
+    *           Region.
+    * @param volumeId
+    *           The ID of the Amazon EBS volume of which to take a snapshot.
+    * @param options
+    *           options like passing a description.
+    * @return the Snapshot in progress
+    * 
+    * @see #describeSnapshotsInRegion
+    * @see #deleteSnapshotInRegion
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-CreateSnapshot.html"
+    *      />
+    */
+   Snapshot createSnapshotInRegion(Region region, String volumeId, CreateSnapshotOptions... options);
+
+   /**
+    * Returns information about Amazon EBS snapshots available to the user. Information returned
+    * includes volume ID, status, start time, progress, owner ID, volume size, and description.
+    * Snapshots available to the user include public snapshots available for any user to
+    * createVolume, private snapshots owned by the user making the request, and private snapshots
+    * owned by other users for which the user granted explicit create volume permissions.
+    * <p/>
+    * The create volume permissions fall into 3 categories:
+    * <p/>
+    * <table>
+    * <tr>
+    * <td>Permission</td>
+    * <td>Description</td>
+    * </tr>
+    * <tr>
+    * <td>public</td>
+    * <td>The owner of the snapshot granted create volume permissions for the snapshot to the all
+    * group. All users have create volume permissions for these snapshots.</td>
+    * </tr>
+    * <tr>
+    * <td>explicit</td>
+    * <td>The owner of the snapshot granted create volume permissions to a specific user.</td>
+    * </tr>
+    * <tr>
+    * <td>implicit</td>
+    * <td>A user has implicit create volume permissions for all snapshots he or she owns.</td>
+    * </tr>
+    * </table>
+    * <p/>
+    * 
+    * The list of snapshots returned can be modified by specifying snapshot IDs, snapshot owners, or
+    * users with create volume permissions. If no options are specified, Amazon EC2 returns all
+    * snapshots for which the user has create volume permissions.
+    * <p/>
+    * If you specify one or more snapshot IDs, only snapshots that have the specified IDs are
+    * returned. If you specify an invalid snapshot ID, a fault is returned. If you specify a
+    * snapshot ID for which you do not have access, it will not be included in the returned results.
+    * <p/>
+    * If you specify one or more snapshot owners, only snapshots from the specified owners and for
+    * which you have access are returned. The results can include the AWS Account IDs of the
+    * specified owners, amazon for snapshots owned by Amazon or self for snapshots that you own.
+    * <p/>
+    * If you specify a list of restorable users, only users that have create snapshot permissions
+    * for the snapshots are returned. You can specify AWS Account IDs (if you own the snapshot(s)),
+    * self for snapshots for which you own or have explicit permissions, or all for public
+    * snapshots.
+    * 
+    * @param region
+    *           Snapshots are tied to Regions and can only be used for volumes within the same
+    *           Region.
+    * @param options
+    *           specify the snapshot ids or other parameters to clarify the list.
+    * @return matching snapshots.
+    * 
+    * @see #createSnapshotsInRegion
+    * @see #deleteSnapshotInRegion
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeSnapshots.html"
+    *      />
+    */
+   Set<Snapshot> describeSnapshotsInRegion(Region region, DescribeSnapshotsOptions... options);
+
+   /**
+    * Deletes a snapshot of an Amazon EBS volume that you own. For more information, go to the
+    * Amazon Elastic Compute Cloud Developer Guide or Amazon Elastic Compute Cloud User Guide.
+    * 
+    * @param region
+    *           Snapshots are tied to Regions and can only be used for volumes within the same
+    *           Region.
+    * @param snapshotId
+    *           The ID of the Amazon EBS snapshot to delete.
+    * 
+    * @see #createSnapshotInRegion
+    * @see #deleteSnapshotInRegion
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DeleteSnapshot.html"
+    *      />
+    */
+   void deleteSnapshotInRegion(Region region, String snapshotId);
+
+   /**
+    * Returns the {@link Permission}s of an snapshot.
+    * 
+    * @param region
+    *           AMIs are tied to the Region where its files are located within Amazon S3.
+    * @param snapshotId
+    *           The ID of the AMI for which an attribute will be described
+    * @see #describeSnapshots
+    * @see #modifySnapshotAttribute
+    * @see #resetSnapshotAttribute
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeSnapshotAttribute.html"
+    *      />
+    * @see DescribeSnapshotsOptions
+    */
+   Permission getCreateVolumePermissionForSnapshotInRegion(Region region, String snapshotId);
+
+   /**
+    * Adds {@code createVolumePermission}s to an EBS snapshot.
+    * 
+    * @param region
+    *           Snapshots are tied to Regions and can only be used for volumes within the same
+    *           Region.
+    * @param userIds
+    *           AWS Access Key ID.
+    * @param userGroups
+    *           Name of the groups. Currently supports \"all.\""
+    * @param snapshotId
+    *           The ID of the Amazon EBS snapshot.
+    * 
+    * @see #removeCreateVolumePermissionsFromSnapshot
+    * @see #describeSnapshotAttribute
+    * @see #resetSnapshotAttribute
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifySnapshotAttribute.html"
+    *      />
+    */
+   void addCreateVolumePermissionsToSnapshotInRegion(Region region, Iterable<String> userIds,
+            Iterable<String> userGroups, String snapshotId);
+
+   /**
+    * Resets the {@code createVolumePermission}s on an EBS snapshot.
+    * 
+    * @param region
+    *           Snapshots are tied to Regions and can only be used for volumes within the same
+    *           Region.
+    * @param snapshotId
+    *           The ID of the Amazon EBS snapshot.
+    * 
+    * @see #addCreateVolumePermissionsToSnapshot
+    * @see #describeSnapshotAttribute
+    * @see #removeProductCodesFromSnapshot
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ResetSnapshotAttribute.html"
+    *      />
+    */
+   void resetCreateVolumePermissionsOnSnapshotInRegion(Region region, String snapshotId);
+
+   /**
+    * Removes {@code createVolumePermission}s from an EBS snapshot.
+    * 
+    * @param region
+    *           Snapshots are tied to Regions and can only be used for volumes within the same
+    *           Region.
+    * @param userIds
+    *           AWS Access Key ID.
+    * @param userGroups
+    *           Name of the groups. Currently supports \"all.\""
+    * @param snapshotId
+    *           The ID of the Amazon EBS snapshot.
+    * 
+    * @see #addCreateVolumePermissionsToSnapshot
+    * @see #describeSnapshotAttribute
+    * @see #resetSnapshotAttribute
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifySnapshotAttribute.html"
+    *      />
+    */
+   void removeCreateVolumePermissionsFromSnapshotInRegion(Region region, Iterable<String> userIds,
+            Iterable<String> userGroups, String snapshotId);
 }

@@ -1,0 +1,14 @@
+<DescribeSnapshotsResponse xmlns="http://ec2.amazonaws.com/doc/2009-11-30/">
+    <snapshotSet>
+        <item>
+            <snapshotId>snap-78a54011</snapshotId>
+            <volumeId>vol-4d826724</volumeId>
+            <status>pending</status>
+            <startTime>2008-05-07T12:51:50.000Z</startTime>
+            <progress>80%</progress>
+            <ownerId>218213537122</ownerId>
+            <volumeSize>10</volumeSize>
+            <description>Daily Backup</description>
+        </item>
+    </snapshotSet>
+</DescribeSnapshotsResponse>

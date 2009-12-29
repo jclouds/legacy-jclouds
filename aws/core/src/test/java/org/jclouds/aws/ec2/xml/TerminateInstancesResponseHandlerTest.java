@@ -23,19 +23,25 @@
  */
 package org.jclouds.aws.ec2.xml;
 
+import static org.easymock.EasyMock.expect;
+import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.util.SortedSet;
+import java.util.Set;
 
 import org.jclouds.aws.ec2.domain.InstanceState;
+import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.TerminatedInstance;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.BaseHandlerTest;
+import org.jclouds.http.functions.ParseSax;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests behavior of {@code TerminateInstancesResponseHandler}
@@ -59,12 +65,20 @@ public class TerminateInstancesResponseHandlerTest extends BaseHandlerTest {
 
       InputStream is = getClass().getResourceAsStream("/ec2/terminate_instances.xml");
 
-      SortedSet<TerminatedInstance> expected = ImmutableSortedSet.of(new TerminatedInstance(
+      Set<TerminatedInstance> expected = ImmutableSet.of(new TerminatedInstance(Region.DEFAULT,
                "i-3ea74257", InstanceState.SHUTTING_DOWN, InstanceState.RUNNING));
 
-      SortedSet<TerminatedInstance> result = factory.create(
-               injector.getInstance(TerminateInstancesResponseHandler.class)).parse(is);
-
+      TerminateInstancesResponseHandler handler = injector
+               .getInstance(TerminateInstancesResponseHandler.class);
+      addDefaultRegionToHandler(handler);
+      Set<TerminatedInstance> result = factory.create(handler).parse(is);
       assertEquals(result, expected);
+   }
+
+   private void addDefaultRegionToHandler(ParseSax.HandlerWithResult<?> handler) {
+      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
+      expect(request.getArgs()).andReturn(new Object[] { Region.DEFAULT }).atLeastOnce();
+      replay(request);
+      handler.setContext(request);
    }
 }

@@ -23,8 +23,7 @@
  */
 package org.jclouds.aws.ec2.options;
 
-import static org.jclouds.aws.ec2.options.CreateImageOptions.Builder.noReboot;
-import static org.jclouds.aws.ec2.options.CreateImageOptions.Builder.withDescription;
+import static org.jclouds.aws.ec2.options.CreateSnapshotOptions.Builder.withDescription;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Collections;
@@ -33,21 +32,21 @@ import org.jclouds.http.options.HttpRequestOptions;
 import org.testng.annotations.Test;
 
 /**
- * Tests possible uses of CreateImageOptions and CreateImageOptions.Builder.*
+ * Tests possible uses of CreateSnapshotOptions and CreateSnapshotOptions.Builder.*
  * 
  * @author Adrian Cole
  */
-public class CreateImagesOptionsTest {
+public class CreateSnapshotOptionsTest {
 
    @Test
    public void testAssignability() {
-      assert HttpRequestOptions.class.isAssignableFrom(CreateImageOptions.class);
-      assert !String.class.isAssignableFrom(CreateImageOptions.class);
+      assert HttpRequestOptions.class.isAssignableFrom(CreateSnapshotOptions.class);
+      assert !String.class.isAssignableFrom(CreateSnapshotOptions.class);
    }
 
    @Test
    public void testWithDescription() {
-      CreateImageOptions options = new CreateImageOptions();
+      CreateSnapshotOptions options = new CreateSnapshotOptions();
       options.withDescription("test");
       assertEquals(options.buildFormParameters().get("Description"), Collections
                .singletonList("test"));
@@ -55,13 +54,13 @@ public class CreateImagesOptionsTest {
 
    @Test
    public void testNullWithDescription() {
-      CreateImageOptions options = new CreateImageOptions();
+      CreateSnapshotOptions options = new CreateSnapshotOptions();
       assertEquals(options.buildFormParameters().get("Description"), Collections.EMPTY_LIST);
    }
 
    @Test
    public void testWithDescriptionStatic() {
-      CreateImageOptions options = withDescription("test");
+      CreateSnapshotOptions options = withDescription("test");
       assertEquals(options.buildFormParameters().get("Description"), Collections
                .singletonList("test"));
    }
@@ -69,19 +68,6 @@ public class CreateImagesOptionsTest {
    @Test(expectedExceptions = NullPointerException.class)
    public void testWithDescriptionNPE() {
       withDescription(null);
-   }
-
-   @Test
-   public void testNoReboot() {
-      CreateImageOptions options = new CreateImageOptions();
-      options.noReboot();
-      assertEquals(options.buildFormParameters().get("NoReboot"), Collections.singletonList("true"));
-   }
-
-   @Test
-   public void testNoRebootStatic() {
-      CreateImageOptions options = noReboot();
-      assertEquals(options.buildFormParameters().get("NoReboot"), Collections.singletonList("true"));
    }
 
 }

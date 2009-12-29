@@ -53,8 +53,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
    private final String keyName;
    private final Date launchTime;
    private final boolean monitoring;
-   @Nullable
-   private final String availabilityZone;
+   private final AvailabilityZone availabilityZone;
    @Nullable
    private final String platform;
    @Nullable
@@ -78,7 +77,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
    public RunningInstance(String amiLaunchIndex, @Nullable String dnsName, String imageId,
             String instanceId, InstanceState instanceState, InstanceType instanceType,
             @Nullable InetAddress ipAddress, @Nullable String kernelId, @Nullable String keyName,
-            Date launchTime, boolean monitoring, @Nullable String availabilityZone,
+            Date launchTime, boolean monitoring, AvailabilityZone availabilityZone,
             @Nullable String platform, @Nullable String privateDnsName,
             @Nullable InetAddress privateIpAddress, Set<String> productCodes,
             @Nullable String ramdiskId, @Nullable String reason, @Nullable String subnetId,
@@ -94,7 +93,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
       this.keyName = keyName;
       this.launchTime = checkNotNull(launchTime, "launchTime");
       this.monitoring = checkNotNull(monitoring, "monitoring");
-      this.availabilityZone = availabilityZone;
+      this.availabilityZone = checkNotNull(availabilityZone, "availabilityZone");
       this.platform = platform;
       this.privateDnsName = privateDnsName; // nullable on runinstances.
       this.privateIpAddress = privateIpAddress;
@@ -190,7 +189,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
    /**
     * The location where the instance launched.
     */
-   public String getAvailabilityZone() {
+   public AvailabilityZone getAvailabilityZone() {
       return availabilityZone;
    }
 

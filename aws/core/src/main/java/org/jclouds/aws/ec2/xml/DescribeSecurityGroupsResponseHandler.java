@@ -29,6 +29,7 @@ import org.jclouds.aws.ec2.domain.IpPermission;
 import org.jclouds.aws.ec2.domain.IpProtocol;
 import org.jclouds.aws.ec2.domain.SecurityGroup;
 import org.jclouds.aws.ec2.domain.UserIdGroupPair;
+import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.http.functions.ParseSax;
 import org.xml.sax.Attributes;
 
@@ -115,8 +116,8 @@ public class DescribeSecurityGroupsResponseHandler extends
             this.userId = null;
             this.userIdGroupName = null;
          } else if (!inIpPermissions && !inIpRanges && !inGroups) {
-            securtyGroups
-                     .add(new SecurityGroup(groupName, ownerId, groupDescription, ipPermissions));
+            securtyGroups.add(new SecurityGroup(EC2Utils.findRegionInArgsOrNull(request),
+                     groupName, ownerId, groupDescription, ipPermissions));
             this.groupName = null;
             this.ownerId = null;
             this.groupDescription = null;

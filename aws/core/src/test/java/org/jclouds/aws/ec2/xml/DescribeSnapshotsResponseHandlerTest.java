@@ -31,33 +31,37 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.util.Set;
 
-import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.Region;
+import org.jclouds.aws.ec2.domain.Snapshot;
+import org.jclouds.date.DateService;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
- * Tests behavior of {@code DescribeKeyPairsHandler}
+ * Tests behavior of {@code DescribeSnapshotsResponseHandler}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.DescribeKeyPairsHandlerTest")
-public class DescribeKeyPairsResponseHandlerTest extends BaseHandlerTest {
+@Test(groups = "unit", testName = "ec2.DescribeSnapshotsResponseHandlerTest")
+public class DescribeSnapshotsResponseHandlerTest extends BaseHandlerTest {
    public void testApplyInputStream() {
+      DateService dateService = injector.getInstance(DateService.class);
+      InputStream is = getClass().getResourceAsStream("/ec2/describe_snapshots.xml");
 
-      InputStream is = getClass().getResourceAsStream("/ec2/describe_keypairs.xml");
+      Set<Snapshot> expected = Sets.newLinkedHashSet();
+      expected.add(new Snapshot(Region.DEFAULT, "snap-78a54011", "vol-4d826724", 10,
+               Snapshot.Status.PENDING, dateService.iso8601DateParse("2008-05-07T12:51:50.000Z"),
+               80, "218213537122", "Daily Backup", null));
 
-      Set<KeyPair> expected = ImmutableSet.of(new KeyPair(Region.DEFAULT, "gsg-keypair",
-               "1f:51:ae:28:bf:89:e9:d8:1f:25:5d:37:2d:7d:b8:ca:9f:f5:f1:6f", null));
-
-      DescribeKeyPairsResponseHandler handler = injector
-               .getInstance(DescribeKeyPairsResponseHandler.class);
+      DescribeSnapshotsResponseHandler handler = injector
+               .getInstance(DescribeSnapshotsResponseHandler.class);
       addDefaultRegionToHandler(handler);
-      Set<KeyPair> result = factory.create(handler).parse(is);
+      Set<Snapshot> result = factory.create(handler).parse(is);
+
       assertEquals(result, expected);
    }
 

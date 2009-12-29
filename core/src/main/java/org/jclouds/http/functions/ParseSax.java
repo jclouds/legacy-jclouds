@@ -33,6 +33,8 @@ import javax.inject.Inject;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.InvocationContext;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Utils;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -48,7 +50,7 @@ import com.google.common.io.Closeables;
  * 
  * @author Adrian Cole
  */
-public class ParseSax<T> implements Function<HttpResponse, T> {
+public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext {
 
    private final XMLReader parser;
    private final HandlerWithResult<T> handler;
@@ -112,7 +114,20 @@ public class ParseSax<T> implements Function<HttpResponse, T> {
     * 
     * @author Adrian Cole
     */
-   public abstract static class HandlerWithResult<T> extends DefaultHandler {
+   public abstract static class HandlerWithResult<T> extends DefaultHandler implements
+            InvocationContext {
+      protected GeneratedHttpRequest<?> request;
+
       public abstract T getResult();
+
+      @Override
+      public void setContext(GeneratedHttpRequest<?> request) {
+         this.request = request;
+      }
+   }
+
+   @Override
+   public void setContext(GeneratedHttpRequest<?> request) {
+      handler.setContext(request);
    }
 }

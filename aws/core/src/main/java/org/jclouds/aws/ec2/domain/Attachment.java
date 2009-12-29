@@ -51,14 +51,16 @@ public class Attachment {
       }
    }
 
+   private final Region region;
    private final String volumeId;
    private final String instanceId;
    private final String device;
    private final Status status;
    private final Date attachTime;
 
-   public Attachment(String volumeId, String instanceId, String device, Status status,
-            Date attachTime) {
+   public Attachment(Region region, String volumeId, String instanceId, String device,
+            Status status, Date attachTime) {
+      this.region = checkNotNull(region, "region");
       this.volumeId = volumeId;
       this.instanceId = instanceId;
       this.device = device;
@@ -66,22 +68,45 @@ public class Attachment {
       this.attachTime = attachTime;
    }
 
+   /**
+    * Snapshots are tied to Regions and can only be used for volumes within the same Region.
+    * 
+    */
+   public Region getRegion() {
+      return region;
+   }
+
+   /**
+    * The ID of the volume.
+    */
    public String getVolumeId() {
       return volumeId;
    }
 
+   /**
+    * The ID of the instance.
+    */
    public String getInstanceId() {
       return instanceId;
    }
 
+   /**
+    * The device as it is exposed to the instance.
+    */
    public String getDevice() {
       return device;
    }
 
+   /**
+    * Volume state.
+    */
    public Status getStatus() {
       return status;
    }
 
+   /**
+    * Time stamp when the attachment initiated.
+    */
    public Date getAttachTime() {
       return attachTime;
    }
@@ -93,6 +118,7 @@ public class Attachment {
       result = prime * result + ((attachTime == null) ? 0 : attachTime.hashCode());
       result = prime * result + ((device == null) ? 0 : device.hashCode());
       result = prime * result + ((instanceId == null) ? 0 : instanceId.hashCode());
+      result = prime * result + ((region == null) ? 0 : region.hashCode());
       result = prime * result + ((status == null) ? 0 : status.hashCode());
       result = prime * result + ((volumeId == null) ? 0 : volumeId.hashCode());
       return result;
@@ -122,6 +148,11 @@ public class Attachment {
             return false;
       } else if (!instanceId.equals(other.instanceId))
          return false;
+      if (region == null) {
+         if (other.region != null)
+            return false;
+      } else if (!region.equals(other.region))
+         return false;
       if (status == null) {
          if (other.status != null)
             return false;
@@ -137,8 +168,9 @@ public class Attachment {
 
    @Override
    public String toString() {
-      return "Attachment [attachTime=" + attachTime + ", device=" + device + ", instanceId="
-               + instanceId + ", status=" + status + ", volumeId=" + volumeId + "]";
+      return "Attachment [region=" + region + ", volumeId=" + volumeId + ", instanceId="
+               + instanceId + ", device=" + device + ", attachTime=" + attachTime + ", status="
+               + status + "]";
    }
 
 }

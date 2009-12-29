@@ -185,11 +185,12 @@ public class ExpensiveEC2ClientLiveTest {
       assertEquals(compare.getPublicIp(), address);
       assertEquals(compare.getInstanceId(), serverId);
 
-      Reservation reservation = client.getInstanceServices().describeInstancesInRegion(
-               Region.DEFAULT, serverId).last();
+      Reservation reservation = Iterables.getOnlyElement(client.getInstanceServices()
+               .describeInstancesInRegion(Region.DEFAULT, serverId));
 
-      assertNotNull(reservation.getRunningInstances().last().getIpAddress());
-      assertFalse(reservation.getRunningInstances().last().getIpAddress().equals(address));
+      assertNotNull(Iterables.getOnlyElement(reservation.getRunningInstances()).getIpAddress());
+      assertFalse(Iterables.getOnlyElement(reservation.getRunningInstances()).getIpAddress()
+               .equals(address));
 
       doCheckKey(address);
 
@@ -201,8 +202,8 @@ public class ExpensiveEC2ClientLiveTest {
       assertEquals(compare.getPublicIp(), address);
       assert compare.getInstanceId() == null;
 
-      reservation = client.getInstanceServices()
-               .describeInstancesInRegion(Region.DEFAULT, serverId).last();
+      reservation = Iterables.getOnlyElement(client.getInstanceServices()
+               .describeInstancesInRegion(Region.DEFAULT, serverId));
       // assert reservation.getRunningInstances().last().getIpAddress() == null; TODO
    }
 
@@ -270,8 +271,9 @@ public class ExpensiveEC2ClientLiveTest {
 
    private RunningInstance getRunningInstance(String serverId) throws InterruptedException,
             ExecutionException, TimeoutException {
-      return client.getInstanceServices().describeInstancesInRegion(Region.DEFAULT, serverId)
-               .first().getRunningInstances().first();
+      return Iterables.getOnlyElement(Iterables.getOnlyElement(
+               client.getInstanceServices().describeInstancesInRegion(Region.DEFAULT, serverId))
+               .getRunningInstances());
    }
 
 }

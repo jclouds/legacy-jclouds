@@ -32,6 +32,8 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.EC2;
+import org.jclouds.aws.ec2.domain.AvailabilityZone;
+import org.jclouds.aws.ec2.domain.AvailabilityZoneInfo;
 import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.filters.FormSigner;
@@ -71,6 +73,7 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientFactory;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
@@ -98,6 +101,19 @@ public class EC2RestClientModule extends AbstractModule {
    @Singleton
    Map<Region, URI> provideRegions(AvailabilityZoneAndRegionClient client) {
       return client.describeRegions();
+   }
+
+   @Provides
+   @Singleton
+   Map<AvailabilityZone, Region> provideAvailabilityZoneToRegions(
+            AvailabilityZoneAndRegionClient client, Map<Region, URI> regions) {
+      Map<AvailabilityZone, Region> map = Maps.newHashMap();
+      for (Region region : regions.keySet()) {
+         for (AvailabilityZoneInfo zoneInfo : client.describeAvailabilityZonesInRegion(region)) {
+            map.put(zoneInfo.getZone(), region);
+         }
+      }
+      return map;
    }
 
    @Provides

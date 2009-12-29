@@ -38,6 +38,7 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Tests behavior of {@code EC2Client}
@@ -64,19 +65,25 @@ public class InstanceClientLiveTest {
    void testDescribeInstances() {
       for (Region region : ImmutableSet.of(Region.DEFAULT, Region.EU_WEST_1, Region.US_EAST_1,
                Region.US_WEST_1)) {
-         SortedSet<Reservation> allResults = client.describeInstancesInRegion(region);
+         SortedSet<Reservation> allResults = Sets.newTreeSet(client
+                  .describeInstancesInRegion(region));
          assertNotNull(allResults);
          assert allResults.size() >= 0 : allResults.size();
          if (allResults.size() >= 2) {
             Iterator<Reservation> iterator = allResults.iterator();
-            String id1 = iterator.next().getRunningInstances().first().getInstanceId();
-            String id2 = iterator.next().getRunningInstances().first().getInstanceId();
-            SortedSet<Reservation> twoResults = client.describeInstancesInRegion(region, id1, id2);
+            String id1 = Sets.newTreeSet(iterator.next().getRunningInstances()).first()
+                     .getInstanceId();
+            String id2 = Sets.newTreeSet(iterator.next().getRunningInstances()).first()
+                     .getInstanceId();
+            SortedSet<Reservation> twoResults = Sets.newTreeSet(client.describeInstancesInRegion(
+                     region, id1, id2));
             assertNotNull(twoResults);
             assertEquals(twoResults.size(), 2);
             iterator = allResults.iterator();
-            assertEquals(iterator.next().getRunningInstances().first().getInstanceId(), id1);
-            assertEquals(iterator.next().getRunningInstances().first().getInstanceId(), id2);
+            assertEquals(Sets.newTreeSet(iterator.next().getRunningInstances()).first()
+                     .getInstanceId(), id1);
+            assertEquals(Sets.newTreeSet(iterator.next().getRunningInstances()).first()
+                     .getInstanceId(), id2);
          }
       }
    }

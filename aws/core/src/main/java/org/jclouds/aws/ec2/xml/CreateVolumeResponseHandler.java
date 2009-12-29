@@ -23,7 +23,11 @@
  */
 package org.jclouds.aws.ec2.xml;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -31,10 +35,13 @@ import javax.inject.Inject;
 
 import org.jclouds.aws.ec2.domain.Attachment;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
+import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.Volume;
+import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.Sets;
@@ -50,6 +57,8 @@ public class CreateVolumeResponseHandler extends ParseSax.HandlerWithResult<Volu
    protected Logger logger = Logger.NULL;
    @Inject
    protected DateService dateService;
+   @Inject
+   protected Map<AvailabilityZone, Region> availabilityZoneToRegion;
 
    private String id;
    private int size;
@@ -66,6 +75,8 @@ public class CreateVolumeResponseHandler extends ParseSax.HandlerWithResult<Volu
    private Date attachTime;
 
    private boolean inAttachmentSet;
+
+   private Region region;
 
    public Volume getResult() {
       return newVolume();
@@ -112,14 +123,18 @@ public class CreateVolumeResponseHandler extends ParseSax.HandlerWithResult<Volu
          inAttachmentSet = false;
       } else if (qName.equals("instanceId")) {
          instanceId = currentText.toString().trim();
+      } else if (qName.equals("snapshotId")) {
+         snapshotId = currentText.toString().trim();
+         if (snapshotId.equals(""))
+            snapshotId = null;
       } else if (qName.equals("device")) {
          device = currentText.toString().trim();
       } else if (qName.equals("attachTime")) {
          attachTime = dateService.iso8601DateParse(currentText.toString().trim());
       } else if (qName.equals("item")) {
          if (inAttachmentSet) {
-            attachments.add(new Attachment(volumeId, instanceId, device, attachmentStatus,
-                     attachTime));
+            attachments.add(new Attachment(EC2Utils.findRegionInArgsOrNull(request), volumeId,
+                     instanceId, device, attachmentStatus, attachTime));
             volumeId = null;
             instanceId = null;
             device = null;
@@ -132,8 +147,8 @@ public class CreateVolumeResponseHandler extends ParseSax.HandlerWithResult<Volu
    }
 
    private Volume newVolume() {
-      Volume volume = new Volume(id, size, snapshotId, availabilityZone, volumeStatus, createTime,
-               attachments);
+      Volume volume = new Volume(region, id, size, snapshotId, availabilityZone, volumeStatus,
+               createTime, attachments);
       id = null;
       size = 0;
       snapshotId = null;
@@ -146,5 +161,17 @@ public class CreateVolumeResponseHandler extends ParseSax.HandlerWithResult<Volu
 
    public void characters(char ch[], int start, int length) {
       currentText.append(ch, start, length);
+   }
+
+   @Override
+   public void setContext(GeneratedHttpRequest<?> request) {
+      super.setContext(request);
+      region = EC2Utils.findRegionInArgsOrNull(request);
+      if (region == null) {
+         AvailabilityZone zone = checkNotNull(EC2Utils.findAvailabilityZoneInArgsOrNull(request),
+                  "zone not in args: " + Arrays.asList(request.getArgs()));
+         region = checkNotNull(availabilityZoneToRegion.get(zone), String.format(
+                  "zone %s not in %s", zone, availabilityZoneToRegion));
+      }
    }
 }

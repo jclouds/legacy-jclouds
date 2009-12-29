@@ -164,14 +164,14 @@ public class AMIClientLiveTest {
    }
 
    @Test(enabled = false)
+   public void testAddProductCodesToImage() {
+      // TODO client.addProductCodesToImageInRegion(Region.DEFAULT, productCodes, imageId);
+   }
+   
+   @Test(enabled = false)
    public void testAddLaunchPermissionsToImage() {
       // TODO client.addLaunchPermissionsToImageInRegion(Region.DEFAULT, userIds, userGroups,
       // imageId);
-   }
-
-   @Test(enabled = false)
-   public void testAddProductCodesToImage() {
-      // TODO client.addProductCodesToImageInRegion(Region.DEFAULT, productCodes, imageId);
    }
 
    @Test(enabled = false)

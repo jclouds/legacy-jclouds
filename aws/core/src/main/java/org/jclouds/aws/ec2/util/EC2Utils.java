@@ -26,6 +26,8 @@ package org.jclouds.aws.ec2.util;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.jclouds.aws.ec2.domain.AvailabilityZone;
+import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 /**
@@ -55,5 +57,23 @@ public class EC2Utils {
                   .toLowerCase()
                   + "s[" + i + "]"));
       }
+   }
+
+   public static Region findRegionInArgsOrNull(GeneratedHttpRequest<?> gRequest) {
+      for (Object arg : gRequest.getArgs()) {
+         if (arg instanceof Region) {
+            return (Region) arg;
+         }
+      }
+      return null;
+   }
+   
+   public static AvailabilityZone findAvailabilityZoneInArgsOrNull(GeneratedHttpRequest<?> gRequest) {
+      for (Object arg : gRequest.getArgs()) {
+         if (arg instanceof AvailabilityZone) {
+            return (AvailabilityZone) arg;
+         }
+      }
+      return null;
    }
 }

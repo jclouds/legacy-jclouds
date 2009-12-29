@@ -28,7 +28,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.aws.ec2.domain.Image;
-import org.jclouds.aws.ec2.domain.LaunchPermission;
+import org.jclouds.aws.ec2.domain.Permission;
 import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.aws.ec2.options.CreateImageOptions;
@@ -62,22 +62,6 @@ public interface AMIClient {
     */
    @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
    Set<Image> describeImagesInRegion(Region region, DescribeImagesOptions... options);
-
-   /**
-    * Returns the {@link LaunchPermission}s of an image.
-    * 
-    * @param region
-    *           AMIs are tied to the Region where its files are located within Amazon S3.
-    * @param imageId
-    *           The ID of the AMI for which an attribute will be described
-    * @see #describeImages
-    * @see #modifyImageAttribute
-    * @see #resetImageAttribute
-    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeImageAttribute.html"
-    *      />
-    * @see DescribeImagesOptions
-    */
-   LaunchPermission getLaunchPermissionForImageInRegion(Region region, String imageId);
 
    /**
     * Returns the Product Codes of an image.
@@ -220,6 +204,22 @@ public interface AMIClient {
     */
    String registerImageBackedByEbsInRegion(Region region, String name, String ebsSnapshotId,
             RegisterImageBackedByEbsOptions... options);
+   
+   /**
+    * Returns the {@link Permission}s of an image.
+    * 
+    * @param region
+    *           AMIs are tied to the Region where its files are located within Amazon S3.
+    * @param imageId
+    *           The ID of the AMI for which an attribute will be described
+    * @see #describeImages
+    * @see #modifyImageAttribute
+    * @see #resetImageAttribute
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeImageAttribute.html"
+    *      />
+    * @see DescribeImagesOptions
+    */
+   Permission getLaunchPermissionForImageInRegion(Region region, String imageId);
 
    /**
     * Adds {@code launchPermission}s to an AMI.

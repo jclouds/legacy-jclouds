@@ -23,6 +23,8 @@
  */
 package org.jclouds.aws.ec2.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 
 /**
  * 
@@ -32,6 +34,7 @@ package org.jclouds.aws.ec2.domain;
  */
 public class TerminatedInstance implements Comparable<TerminatedInstance> {
 
+   private final Region region;
    private final String instanceId;
    private final InstanceState shutdownState;
    private final InstanceState previousState;
@@ -40,11 +43,19 @@ public class TerminatedInstance implements Comparable<TerminatedInstance> {
       return (this == o) ? 0 : getInstanceId().compareTo(o.getInstanceId());
    }
 
-   public TerminatedInstance(String instanceId, InstanceState shutdownState,
+   public TerminatedInstance(Region region, String instanceId, InstanceState shutdownState,
             InstanceState previousState) {
+      this.region = checkNotNull(region, "region");
       this.instanceId = instanceId;
       this.shutdownState = shutdownState;
       this.previousState = previousState;
+   }
+
+   /**
+    * Instances are tied to Availability Zones. However, the instance ID is tied to the Region.
+    */
+   public Region getRegion() {
+      return region;
    }
 
    public String getInstanceId() {
@@ -65,6 +76,7 @@ public class TerminatedInstance implements Comparable<TerminatedInstance> {
       int result = 1;
       result = prime * result + ((instanceId == null) ? 0 : instanceId.hashCode());
       result = prime * result + ((previousState == null) ? 0 : previousState.hashCode());
+      result = prime * result + ((region == null) ? 0 : region.hashCode());
       result = prime * result + ((shutdownState == null) ? 0 : shutdownState.hashCode());
       return result;
    }
@@ -87,6 +99,11 @@ public class TerminatedInstance implements Comparable<TerminatedInstance> {
          if (other.previousState != null)
             return false;
       } else if (!previousState.equals(other.previousState))
+         return false;
+      if (region == null) {
+         if (other.region != null)
+            return false;
+      } else if (!region.equals(other.region))
          return false;
       if (shutdownState == null) {
          if (other.shutdownState != null)

@@ -23,7 +23,9 @@
  */
 package org.jclouds.aws.ec2.domain;
 
-import java.util.SortedSet;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Set;
 
 /**
  * 
@@ -32,17 +34,29 @@ import java.util.SortedSet;
  * @author Adrian Cole
  */
 public class SecurityGroup implements Comparable<SecurityGroup> {
+
+   private final Region region;
    private final String name;
    private final String ownerId;
    private final String description;
-   private final SortedSet<IpPermission> ipPermissions;
+   private final Set<IpPermission> ipPermissions;
 
-   public SecurityGroup(String name, String ownerId, String description,
-            SortedSet<IpPermission> ipPermissions) {
+   public SecurityGroup(Region region, String name, String ownerId, String description,
+            Set<IpPermission> ipPermissions) {
+      this.region = checkNotNull(region, "region");
       this.name = name;
       this.ownerId = ownerId;
       this.description = description;
       this.ipPermissions = ipPermissions;
+   }
+
+   /**
+    * Security groups are not copied across Regions. Instances within the Region cannot communicate
+    * with instances outside the Region using group-based firewall rules. Traffic from instances in
+    * another Region is seen as WAN bandwidth.
+    */
+   public Region getRegion() {
+      return region;
    }
 
    /**
@@ -76,7 +90,7 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
    /**
     * Set of IP permissions associated with the security group.
     */
-   public SortedSet<IpPermission> getIpPermissions() {
+   public Set<IpPermission> getIpPermissions() {
       return ipPermissions;
    }
 
@@ -88,6 +102,7 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
       result = prime * result + ((ipPermissions == null) ? 0 : ipPermissions.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((ownerId == null) ? 0 : ownerId.hashCode());
+      result = prime * result + ((region == null) ? 0 : region.hashCode());
       return result;
    }
 
@@ -119,6 +134,11 @@ public class SecurityGroup implements Comparable<SecurityGroup> {
          if (other.ownerId != null)
             return false;
       } else if (!ownerId.equals(other.ownerId))
+         return false;
+      if (region == null) {
+         if (other.region != null)
+            return false;
+      } else if (!region.equals(other.region))
          return false;
       return true;
    }

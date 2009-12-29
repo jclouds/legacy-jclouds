@@ -60,6 +60,7 @@ public class Volume implements Comparable<Volume> {
       }
    }
 
+   private final Region region;
    private final String id;
    private final int size;
    @Nullable
@@ -69,9 +70,10 @@ public class Volume implements Comparable<Volume> {
    private final Date createTime;
    private final Set<Attachment> attachments = Sets.newLinkedHashSet();
 
-   public Volume(String id, int size, String snapshotId, AvailabilityZone availabilityZone,
-            org.jclouds.aws.ec2.domain.Volume.Status status, Date createTime,
+   public Volume(Region region, String id, int size, String snapshotId,
+            AvailabilityZone availabilityZone, Volume.Status status, Date createTime,
             Iterable<Attachment> attachments) {
+      this.region = checkNotNull(region, "region");
       this.id = id;
       this.size = size;
       this.snapshotId = snapshotId;
@@ -79,6 +81,14 @@ public class Volume implements Comparable<Volume> {
       this.status = status;
       this.createTime = createTime;
       Iterables.addAll(this.attachments, attachments);
+   }
+
+   /**
+    * An Amazon EBS volume must be located within the same Availability Zone as the instance to
+    * which it attaches.
+    */
+   public Region getRegion() {
+      return region;
    }
 
    public String getId() {
@@ -117,6 +127,7 @@ public class Volume implements Comparable<Volume> {
       result = prime * result + ((availabilityZone == null) ? 0 : availabilityZone.hashCode());
       result = prime * result + ((createTime == null) ? 0 : createTime.hashCode());
       result = prime * result + ((id == null) ? 0 : id.hashCode());
+      result = prime * result + ((region == null) ? 0 : region.hashCode());
       result = prime * result + size;
       result = prime * result + ((snapshotId == null) ? 0 : snapshotId.hashCode());
       result = prime * result + ((status == null) ? 0 : status.hashCode());
@@ -152,6 +163,11 @@ public class Volume implements Comparable<Volume> {
             return false;
       } else if (!id.equals(other.id))
          return false;
+      if (region == null) {
+         if (other.region != null)
+            return false;
+      } else if (!region.equals(other.region))
+         return false;
       if (size != other.size)
          return false;
       if (snapshotId == null) {
@@ -175,7 +191,7 @@ public class Volume implements Comparable<Volume> {
    @Override
    public String toString() {
       return "Volume [attachments=" + attachments + ", availabilityZone=" + availabilityZone
-               + ", createTime=" + createTime + ", id=" + id + ", size=" + size + ", snapshotId="
-               + snapshotId + ", status=" + status + "]";
+               + ", createTime=" + createTime + ", id=" + id + ", region=" + region + ", size="
+               + size + ", snapshotId=" + snapshotId + ", status=" + status + "]";
    }
 }

@@ -44,7 +44,7 @@ import org.jclouds.aws.ec2.options.RegisterImageOptions;
 import org.jclouds.aws.ec2.xml.BlockDeviceMappingHandler;
 import org.jclouds.aws.ec2.xml.DescribeImagesResponseHandler;
 import org.jclouds.aws.ec2.xml.ImageIdHandler;
-import org.jclouds.aws.ec2.xml.LaunchPermissionHandler;
+import org.jclouds.aws.ec2.xml.PermissionHandler;
 import org.jclouds.aws.ec2.xml.ProductCodesHandler;
 import org.jclouds.aws.reference.AWSConstants;
 import org.jclouds.date.TimeStamp;
@@ -266,26 +266,6 @@ public class AMIAsyncClientTest extends RestClientTest<AMIAsyncClient> {
       checkFilters(httpMethod);
    }
 
-   public void testGetLaunchPermissionForImage() throws SecurityException, NoSuchMethodException,
-            IOException {
-      Method method = AMIAsyncClient.class.getMethod("getLaunchPermissionForImageInRegion",
-               Region.class, String.class);
-      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method,
-               Region.DEFAULT, "imageId");
-
-      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
-      assertHeadersEqual(httpMethod,
-               "Content-Length: 91\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
-      assertPayloadEquals(httpMethod,
-               "Version=2009-11-30&Action=DescribeImageAttribute&Attribute=launchPermission&ImageId=imageId");
-
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, LaunchPermissionHandler.class);
-      assertExceptionParserClassEquals(method, null);
-
-      checkFilters(httpMethod);
-   }
-
    public void testGetProductCodesForImage() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = AMIAsyncClient.class.getMethod("getProductCodesForImageInRegion",
@@ -321,6 +301,26 @@ public class AMIAsyncClientTest extends RestClientTest<AMIAsyncClient> {
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, BlockDeviceMappingHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testGetLaunchPermissionForImage() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = AMIAsyncClient.class.getMethod("getLaunchPermissionForImageInRegion",
+               Region.class, String.class);
+      GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method,
+               Region.DEFAULT, "imageId");
+
+      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 91\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertPayloadEquals(httpMethod,
+               "Version=2009-11-30&Action=DescribeImageAttribute&Attribute=launchPermission&ImageId=imageId");
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, PermissionHandler.class);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpMethod);
