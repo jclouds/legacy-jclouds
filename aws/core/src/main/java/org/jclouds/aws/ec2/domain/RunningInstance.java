@@ -27,8 +27,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.InetAddress;
 import java.util.Date;
+import java.util.Map;
 import java.util.Set;
 
+import org.jclouds.aws.ec2.domain.Attachment.Status;
+
+import com.google.common.collect.Maps;
 import com.google.inject.internal.Nullable;
 
 /**
@@ -38,6 +42,81 @@ import com.google.inject.internal.Nullable;
  * @author Adrian Cole
  */
 public class RunningInstance implements Comparable<RunningInstance> {
+
+   public static class EbsBlockDevice {
+      private final String volumeId;
+      private final Attachment.Status attachmentStatus;
+      private final Date attachTime;
+      private final boolean deleteOnTermination;
+
+      public EbsBlockDevice(String volumeId, Status attachmentStatus, Date attachTime,
+               boolean deleteOnTermination) {
+         super();
+         this.volumeId = volumeId;
+         this.attachmentStatus = attachmentStatus;
+         this.attachTime = attachTime;
+         this.deleteOnTermination = deleteOnTermination;
+      }
+
+      @Override
+      public int hashCode() {
+         final int prime = 31;
+         int result = 1;
+         result = prime * result + ((attachTime == null) ? 0 : attachTime.hashCode());
+         result = prime * result + ((attachmentStatus == null) ? 0 : attachmentStatus.hashCode());
+         result = prime * result + (deleteOnTermination ? 1231 : 1237);
+         result = prime * result + ((volumeId == null) ? 0 : volumeId.hashCode());
+         return result;
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+         if (this == obj)
+            return true;
+         if (obj == null)
+            return false;
+         if (getClass() != obj.getClass())
+            return false;
+         EbsBlockDevice other = (EbsBlockDevice) obj;
+         if (attachTime == null) {
+            if (other.attachTime != null)
+               return false;
+         } else if (!attachTime.equals(other.attachTime))
+            return false;
+         if (attachmentStatus == null) {
+            if (other.attachmentStatus != null)
+               return false;
+         } else if (!attachmentStatus.equals(other.attachmentStatus))
+            return false;
+         if (deleteOnTermination != other.deleteOnTermination)
+            return false;
+         if (volumeId == null) {
+            if (other.volumeId != null)
+               return false;
+         } else if (!volumeId.equals(other.volumeId))
+            return false;
+         return true;
+      }
+
+      public String getVolumeId() {
+         return volumeId;
+      }
+
+      public Attachment.Status getAttachmentStatus() {
+         return attachmentStatus;
+      }
+
+      public Date getAttachTime() {
+         return attachTime;
+      }
+
+      public boolean isDeleteOnTermination() {
+         return deleteOnTermination;
+      }
+
+   }
+
+   private final Region region;
    private final String amiLaunchIndex;
    @Nullable
    private final String dnsName;
@@ -69,22 +148,28 @@ public class RunningInstance implements Comparable<RunningInstance> {
    private final String subnetId;
    @Nullable
    private final String vpcId;
+   private final RootDeviceType rootDeviceType;
+   @Nullable
+   private final String rootDeviceName;
+   private final Map<String, EbsBlockDevice> ebsBlockDevices = Maps.newHashMap();
 
    public int compareTo(RunningInstance o) {
-      return (this == o) ? 0 : getInstanceId().compareTo(o.getInstanceId());
+      return (this == o) ? 0 : getId().compareTo(o.getId());
    }
 
-   public RunningInstance(String amiLaunchIndex, @Nullable String dnsName, String imageId,
-            String instanceId, InstanceState instanceState, InstanceType instanceType,
-            @Nullable InetAddress ipAddress, @Nullable String kernelId, @Nullable String keyName,
-            Date launchTime, boolean monitoring, AvailabilityZone availabilityZone,
-            @Nullable String platform, @Nullable String privateDnsName,
-            @Nullable InetAddress privateIpAddress, Set<String> productCodes,
-            @Nullable String ramdiskId, @Nullable String reason, @Nullable String subnetId,
-            @Nullable String vpcId) {
-      this.amiLaunchIndex = checkNotNull(amiLaunchIndex, "amiLaunchIndex");
+   public RunningInstance(Region region, @Nullable String amiLaunchIndex, @Nullable String dnsName,
+            String imageId, String instanceId, InstanceState instanceState,
+            InstanceType instanceType, @Nullable InetAddress ipAddress, @Nullable String kernelId,
+            @Nullable String keyName, Date launchTime, boolean monitoring,
+            AvailabilityZone availabilityZone, @Nullable String platform,
+            @Nullable String privateDnsName, @Nullable InetAddress privateIpAddress,
+            Set<String> productCodes, @Nullable String ramdiskId, @Nullable String reason,
+            @Nullable String subnetId, @Nullable String vpcId, RootDeviceType rootDeviceType,
+            @Nullable String rootDeviceName, Map<String, EbsBlockDevice> ebsBlockDevices) {
+      this.region = checkNotNull(region, "region");
+      this.amiLaunchIndex = amiLaunchIndex; // nullable on runinstances.
       this.dnsName = dnsName; // nullable on runinstances.
-      this.imageId = checkNotNull(imageId, "imageId");
+      this.imageId = imageId; // nullable on runinstances.
       this.instanceId = checkNotNull(instanceId, "instanceId");
       this.instanceState = checkNotNull(instanceState, "instanceState");
       this.instanceType = checkNotNull(instanceType, "instanceType");
@@ -102,6 +187,16 @@ public class RunningInstance implements Comparable<RunningInstance> {
       this.reason = reason;
       this.subnetId = subnetId;
       this.vpcId = vpcId;
+      this.rootDeviceType = checkNotNull(rootDeviceType, "rootDeviceType");
+      this.rootDeviceName = rootDeviceName;
+      this.getEbsBlockDevices().putAll(checkNotNull(ebsBlockDevices, "ebsBlockDevices"));
+   }
+
+   /**
+    * Instance Ids are scoped to the region.
+    */
+   public Region getRegion() {
+      return region;
    }
 
    /**
@@ -133,7 +228,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
    /**
     * Unique ID of the instance launched.
     */
-   public String getInstanceId() {
+   public String getId() {
       return instanceId;
    }
 
@@ -250,6 +345,21 @@ public class RunningInstance implements Comparable<RunningInstance> {
       return vpcId;
    }
 
+   public RootDeviceType getRootDeviceType() {
+      return rootDeviceType;
+   }
+
+   public String getRootDeviceName() {
+      return rootDeviceName;
+   }
+   
+   /**
+    * EBS volumes associated with the instance.
+    */
+   public Map<String, EbsBlockDevice> getEbsBlockDevices() {
+      return ebsBlockDevices;
+   }
+
    @Override
    public int hashCode() {
       final int prime = 31;
@@ -257,6 +367,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
       result = prime * result + ((amiLaunchIndex == null) ? 0 : amiLaunchIndex.hashCode());
       result = prime * result + ((availabilityZone == null) ? 0 : availabilityZone.hashCode());
       result = prime * result + ((dnsName == null) ? 0 : dnsName.hashCode());
+      result = prime * result + ((ebsBlockDevices == null) ? 0 : ebsBlockDevices.hashCode());
       result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
       result = prime * result + ((instanceId == null) ? 0 : instanceId.hashCode());
       result = prime * result + ((instanceState == null) ? 0 : instanceState.hashCode());
@@ -272,6 +383,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
       result = prime * result + ((productCodes == null) ? 0 : productCodes.hashCode());
       result = prime * result + ((ramdiskId == null) ? 0 : ramdiskId.hashCode());
       result = prime * result + ((reason == null) ? 0 : reason.hashCode());
+      result = prime * result + ((region == null) ? 0 : region.hashCode());
       result = prime * result + ((subnetId == null) ? 0 : subnetId.hashCode());
       result = prime * result + ((vpcId == null) ? 0 : vpcId.hashCode());
       return result;
@@ -300,6 +412,11 @@ public class RunningInstance implements Comparable<RunningInstance> {
          if (other.dnsName != null)
             return false;
       } else if (!dnsName.equals(other.dnsName))
+         return false;
+      if (ebsBlockDevices == null) {
+         if (other.ebsBlockDevices != null)
+            return false;
+      } else if (!ebsBlockDevices.equals(other.ebsBlockDevices))
          return false;
       if (imageId == null) {
          if (other.imageId != null)
@@ -373,6 +490,11 @@ public class RunningInstance implements Comparable<RunningInstance> {
             return false;
       } else if (!reason.equals(other.reason))
          return false;
+      if (region == null) {
+         if (other.region != null)
+            return false;
+      } else if (!region.equals(other.region))
+         return false;
       if (subnetId == null) {
          if (other.subnetId != null)
             return false;
@@ -385,5 +507,6 @@ public class RunningInstance implements Comparable<RunningInstance> {
          return false;
       return true;
    }
+
 
 }

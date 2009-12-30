@@ -202,7 +202,7 @@ public interface AMIClient {
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-RegisterImage.html"
     *      />
     */
-   String registerImageBackedByEbsInRegion(Region region, String name, String ebsSnapshotId,
+   String registerUnixImageBackedByEbsInRegion(Region region, String name, String ebsSnapshotId,
             RegisterImageBackedByEbsOptions... options);
    
    /**

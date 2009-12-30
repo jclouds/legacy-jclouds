@@ -116,14 +116,14 @@ public interface AMIAsyncClient {
             RegisterImageOptions... options);
 
    /**
-    * @see AMIClient#registerImageBackedByEbsInRegion
+    * @see AMIClient#registerUnixImageBackedByEbsInRegion
     */
    @POST
    @Path("/")
    @FormParams(keys = { ACTION, "RootDeviceName", "BlockDeviceMapping.0.DeviceName" }, values = {
             "RegisterImage", "/dev/sda1", "/dev/sda1" })
    @XMLResponseParser(ImageIdHandler.class)
-   Future<String> registerImageBackedByEbsInRegion(
+   Future<String> registerUnixImageBackedByEbsInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("Name") String imageName,
             @FormParam("BlockDeviceMapping.0.Ebs.SnapshotId") String ebsSnapshotId,

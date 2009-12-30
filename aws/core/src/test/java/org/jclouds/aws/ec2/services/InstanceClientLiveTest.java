@@ -72,18 +72,18 @@ public class InstanceClientLiveTest {
          if (allResults.size() >= 2) {
             Iterator<Reservation> iterator = allResults.iterator();
             String id1 = Sets.newTreeSet(iterator.next().getRunningInstances()).first()
-                     .getInstanceId();
+                     .getId();
             String id2 = Sets.newTreeSet(iterator.next().getRunningInstances()).first()
-                     .getInstanceId();
+                     .getId();
             SortedSet<Reservation> twoResults = Sets.newTreeSet(client.describeInstancesInRegion(
                      region, id1, id2));
             assertNotNull(twoResults);
             assertEquals(twoResults.size(), 2);
             iterator = allResults.iterator();
             assertEquals(Sets.newTreeSet(iterator.next().getRunningInstances()).first()
-                     .getInstanceId(), id1);
+                     .getId(), id1);
             assertEquals(Sets.newTreeSet(iterator.next().getRunningInstances()).first()
-                     .getInstanceId(), id2);
+                     .getId(), id2);
          }
       }
    }

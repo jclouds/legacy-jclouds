@@ -41,26 +41,29 @@ import com.google.common.io.Resources;
 @Test(groups = "unit", testName = "scriptbuilder.CreateRunScriptTest")
 public class CreateRunScriptTest {
    Statement statement = createRunScript("yahooprod", ImmutableList.<String> of("javaHome"),
-            "{tmp}{fs}{uid}{fs}scripttest",
+            "{tmp}{fs}{uid}{fs}scripttest", "echo hello",
             "echo {varl}JAVA_HOME{varr}{fs}bin{fs}java -DinstanceName={varl}INSTANCE_NAME{varr} myServer.Main");
 
    public void testUNIX() throws IOException {
-      assertEquals(statement.render(OsFamily.UNIX),CharStreams.toString(Resources
+      assertEquals(statement.render(OsFamily.UNIX), CharStreams.toString(Resources
                .newReaderSupplier(Resources.getResource("test_runrun."
                         + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
    }
 
    public void testWINDOWS() throws IOException {
-      assertEquals(statement.render(OsFamily.WINDOWS),CharStreams.toString(Resources
+      assertEquals(statement.render(OsFamily.WINDOWS), CharStreams.toString(Resources
                .newReaderSupplier(Resources.getResource("test_runrun."
                         + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8)));
    }
-   
-   public void testRedirectGuard(){
-      assertEquals(CreateRunScript.addSpaceToEnsureWeDontAccidentallyRedirectFd("foo>>"),"foo>>");
-      assertEquals(CreateRunScript.addSpaceToEnsureWeDontAccidentallyRedirectFd("foo0>>"),"foo0 >>");
-      assertEquals(CreateRunScript.addSpaceToEnsureWeDontAccidentallyRedirectFd("foo1>>"),"foo1 >>");
-      assertEquals(CreateRunScript.addSpaceToEnsureWeDontAccidentallyRedirectFd("foo2>>"),"foo2 >>");
+
+   public void testRedirectGuard() {
+      assertEquals(CreateRunScript.addSpaceToEnsureWeDontAccidentallyRedirectFd("foo>>"), "foo>>");
+      assertEquals(CreateRunScript.addSpaceToEnsureWeDontAccidentallyRedirectFd("foo0>>"),
+               "foo0 >>");
+      assertEquals(CreateRunScript.addSpaceToEnsureWeDontAccidentallyRedirectFd("foo1>>"),
+               "foo1 >>");
+      assertEquals(CreateRunScript.addSpaceToEnsureWeDontAccidentallyRedirectFd("foo2>>"),
+               "foo2 >>");
    }
 
 }

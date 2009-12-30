@@ -32,22 +32,22 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *      />
  * @author Adrian Cole
  */
-public class TerminatedInstance implements Comparable<TerminatedInstance> {
+public class InstanceStateChange implements Comparable<InstanceStateChange> {
 
    private final Region region;
    private final String instanceId;
-   private final InstanceState shutdownState;
+   private final InstanceState currentState;
    private final InstanceState previousState;
 
-   public int compareTo(TerminatedInstance o) {
+   public int compareTo(InstanceStateChange o) {
       return (this == o) ? 0 : getInstanceId().compareTo(o.getInstanceId());
    }
 
-   public TerminatedInstance(Region region, String instanceId, InstanceState shutdownState,
+   public InstanceStateChange(Region region, String instanceId, InstanceState currentState,
             InstanceState previousState) {
       this.region = checkNotNull(region, "region");
       this.instanceId = instanceId;
-      this.shutdownState = shutdownState;
+      this.currentState = currentState;
       this.previousState = previousState;
    }
 
@@ -62,8 +62,8 @@ public class TerminatedInstance implements Comparable<TerminatedInstance> {
       return instanceId;
    }
 
-   public InstanceState getShutdownState() {
-      return shutdownState;
+   public InstanceState getCurrentState() {
+      return currentState;
    }
 
    public InstanceState getPreviousState() {
@@ -77,7 +77,7 @@ public class TerminatedInstance implements Comparable<TerminatedInstance> {
       result = prime * result + ((instanceId == null) ? 0 : instanceId.hashCode());
       result = prime * result + ((previousState == null) ? 0 : previousState.hashCode());
       result = prime * result + ((region == null) ? 0 : region.hashCode());
-      result = prime * result + ((shutdownState == null) ? 0 : shutdownState.hashCode());
+      result = prime * result + ((currentState == null) ? 0 : currentState.hashCode());
       return result;
    }
 
@@ -89,7 +89,7 @@ public class TerminatedInstance implements Comparable<TerminatedInstance> {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      TerminatedInstance other = (TerminatedInstance) obj;
+      InstanceStateChange other = (InstanceStateChange) obj;
       if (instanceId == null) {
          if (other.instanceId != null)
             return false;
@@ -105,12 +105,18 @@ public class TerminatedInstance implements Comparable<TerminatedInstance> {
             return false;
       } else if (!region.equals(other.region))
          return false;
-      if (shutdownState == null) {
-         if (other.shutdownState != null)
+      if (currentState == null) {
+         if (other.currentState != null)
             return false;
-      } else if (!shutdownState.equals(other.shutdownState))
+      } else if (!currentState.equals(other.currentState))
          return false;
       return true;
+   }
+
+   @Override
+   public String toString() {
+      return "InstanceStateChange [currentState=" + currentState + ", instanceId=" + instanceId
+               + ", previousState=" + previousState + ", region=" + region + "]";
    }
 
 }

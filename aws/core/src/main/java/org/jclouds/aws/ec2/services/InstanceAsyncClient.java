@@ -37,15 +37,15 @@ import javax.ws.rs.Path;
 import org.jclouds.aws.ec2.binders.BindInstanceIdsToIndexedFormParams;
 import org.jclouds.aws.ec2.binders.IfNotNullBindAvailabilityZoneToFormParam;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
+import org.jclouds.aws.ec2.domain.InstanceStateChange;
 import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.Reservation;
-import org.jclouds.aws.ec2.domain.TerminatedInstance;
 import org.jclouds.aws.ec2.filters.FormSigner;
 import org.jclouds.aws.ec2.functions.RegionToEndpoint;
 import org.jclouds.aws.ec2.options.RunInstancesOptions;
 import org.jclouds.aws.ec2.xml.DescribeInstancesResponseHandler;
+import org.jclouds.aws.ec2.xml.InstanceStateChangeHandler;
 import org.jclouds.aws.ec2.xml.RunInstancesResponseHandler;
-import org.jclouds.aws.ec2.xml.TerminateInstancesResponseHandler;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
@@ -54,7 +54,7 @@ import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 
 /**
- * Provides access to EC2 via their REST API.
+ * Provides access to EC2 Instance Services via their REST API.
  * <p/>
  * 
  * @author Adrian Cole
@@ -65,7 +65,7 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 public interface InstanceAsyncClient {
 
    /**
-    * @see BaseEC2Client#describeInstancesInRegion
+    * @see InstanceClient#describeInstancesInRegion
     */
    @POST
    @Path("/")
@@ -76,7 +76,7 @@ public interface InstanceAsyncClient {
             @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
 
    /**
-    * @see BaseEC2Client#runInstancesInRegion
+    * @see InstanceClient#runInstancesInRegion
     */
    @POST
    @Path("/")
@@ -89,15 +89,37 @@ public interface InstanceAsyncClient {
             @FormParam("MaxCount") int maxCount, RunInstancesOptions... options);
 
    /**
-    * @see BaseEC2Client#terminateInstancesInRegion
+    * @see InstanceClient#terminateInstancesInRegion
     */
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "TerminateInstances")
-   @XMLResponseParser(TerminateInstancesResponseHandler.class)
-   Future<? extends Set<TerminatedInstance>> terminateInstancesInRegion(
+   @XMLResponseParser(InstanceStateChangeHandler.class)
+   Future<? extends Set<InstanceStateChange>> terminateInstancesInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
-            @FormParam("InstanceId.0") String instanceId,
+            @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
+
+   /**
+    * @see InstanceClient#stopInstancesInRegion
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "StopInstances")
+   @XMLResponseParser(InstanceStateChangeHandler.class)
+   Future<? extends Set<InstanceStateChange>> stopInstancesInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @FormParam("Force") boolean force,
+            @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
+
+   /**
+    * @see InstanceClient#startInstancesInRegion
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "StartInstances")
+   @XMLResponseParser(InstanceStateChangeHandler.class)
+   Future<? extends Set<InstanceStateChange>> startInstancesInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
 
 }

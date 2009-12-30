@@ -45,6 +45,7 @@ import org.jclouds.aws.ec2.domain.Volume;
 import org.jclouds.aws.ec2.filters.FormSigner;
 import org.jclouds.aws.ec2.functions.AvailabilityZoneToEndpoint;
 import org.jclouds.aws.ec2.functions.RegionToEndpoint;
+import org.jclouds.aws.ec2.functions.ReturnVoidOnVolumeAvailable;
 import org.jclouds.aws.ec2.options.CreateSnapshotOptions;
 import org.jclouds.aws.ec2.options.DescribeSnapshotsOptions;
 import org.jclouds.aws.ec2.options.DetachVolumeOptions;
@@ -56,6 +57,7 @@ import org.jclouds.aws.ec2.xml.PermissionHandler;
 import org.jclouds.aws.ec2.xml.SnapshotHandler;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
+import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
@@ -120,10 +122,11 @@ public interface ElasticBlockStoreAsyncClient {
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DetachVolume")
-   @XMLResponseParser(AttachmentHandler.class)
-   Future<Attachment> detachVolumeInRegion(
+   @ExceptionParser(ReturnVoidOnVolumeAvailable.class)
+   Future<Void> detachVolumeInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
-            @FormParam("VolumeId") String volumeId, DetachVolumeOptions... options);
+            @FormParam("VolumeId") String volumeId, @FormParam("Force") boolean force,
+            DetachVolumeOptions... options);
 
    /**
     * @see ElasticBlockStoreClient#attachVolumeInRegion
@@ -212,7 +215,8 @@ public interface ElasticBlockStoreAsyncClient {
     */
    @POST
    @Path("/")
-   @FormParams(keys = { ACTION, "Attribute" }, values = { "ResetSnapshotAttribute", "createVolumePermission" })
+   @FormParams(keys = { ACTION, "Attribute" }, values = { "ResetSnapshotAttribute",
+            "createVolumePermission" })
    Future<Void> resetCreateVolumePermissionsOnSnapshotInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("SnapshotId") String snapshotId);

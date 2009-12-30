@@ -26,7 +26,7 @@ package org.jclouds.aws.ec2.xml;
 import java.util.SortedSet;
 
 import org.jclouds.aws.ec2.domain.InstanceState;
-import org.jclouds.aws.ec2.domain.TerminatedInstance;
+import org.jclouds.aws.ec2.domain.InstanceStateChange;
 import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.xml.sax.Attributes;
@@ -36,33 +36,38 @@ import com.google.common.collect.Sets;
 /**
  * Parses the following XML document:
  * <p/>
- * TerminateInstancesResponse xmlns="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-TerminateInstancesResponseInfoType.html"
+ * TerminateInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2009-11-30/"
+ * StartInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2009-11-30/" StopInstancesResponse
+ * xmlns="http://ec2.amazonaws.com/doc/2009-11-30/"
  * 
  * @author Adrian Cole
  * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-TerminateInstancesResponseInfoType.html"
  *      />
+ * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-StartInstancesResponseInfoType.html"
+ *      />
+ * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-ItemType-StopInstancesResponseInfoType.html"
+ *      />
  */
-public class TerminateInstancesResponseHandler extends
-         HandlerWithResult<SortedSet<TerminatedInstance>> {
+public class InstanceStateChangeHandler extends HandlerWithResult<SortedSet<InstanceStateChange>> {
    private StringBuilder currentText = new StringBuilder();
 
-   SortedSet<TerminatedInstance> instances = Sets.newTreeSet();
+   SortedSet<InstanceStateChange> instances = Sets.newTreeSet();
    private InstanceState shutdownState;
    private InstanceState previousState;
    private String instanceId;
 
-   private boolean inShutdownState;
+   private boolean inCurrentState;
 
    private boolean inPreviousState;
 
    @Override
-   public SortedSet<TerminatedInstance> getResult() {
+   public SortedSet<InstanceStateChange> getResult() {
       return instances;
    }
 
    public void startElement(String uri, String name, String qName, Attributes attrs) {
-      if (qName.equals("shutdownState")) {
-         inShutdownState = true;
+      if (qName.equals("shutdownState") || qName.equals("currentState")) {
+         inCurrentState = true;
       } else if (qName.equals("previousState")) {
          inPreviousState = true;
       }
@@ -72,19 +77,19 @@ public class TerminateInstancesResponseHandler extends
 
       if (qName.equals("instanceId")) {
          this.instanceId = currentOrNull();
-      } else if (qName.equals("shutdownState")) {
-         inShutdownState = false;
+      } else if (qName.equals("shutdownState") || qName.equals("currentState")) {
+         inCurrentState = false;
       } else if (qName.equals("previousState")) {
          inPreviousState = false;
       } else if (qName.equals("name")) {
-         if (inShutdownState) {
+         if (inCurrentState) {
             shutdownState = InstanceState.fromValue(currentOrNull());
          } else if (inPreviousState) {
             previousState = InstanceState.fromValue(currentOrNull());
          }
       } else if (qName.equals("item")) {
-         instances.add(new TerminatedInstance(EC2Utils.findRegionInArgsOrNull(request), instanceId,
-                  shutdownState, previousState));
+         instances.add(new InstanceStateChange(EC2Utils.findRegionInArgsOrNull(request),
+                  instanceId, shutdownState, previousState));
          this.instanceId = null;
          this.shutdownState = null;
          this.previousState = null;

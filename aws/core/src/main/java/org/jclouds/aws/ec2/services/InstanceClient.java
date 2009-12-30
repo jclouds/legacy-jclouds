@@ -29,9 +29,9 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nullable;
 
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
+import org.jclouds.aws.ec2.domain.InstanceStateChange;
 import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.Reservation;
-import org.jclouds.aws.ec2.domain.TerminatedInstance;
 import org.jclouds.aws.ec2.options.RunInstancesOptions;
 import org.jclouds.concurrent.Timeout;
 
@@ -60,8 +60,8 @@ public interface InstanceClient {
     *           Instances are tied to Availability Zones. However, the instance ID is tied to the
     *           Region.
     * 
-    * @see #runInstances
-    * @see #terminateInstances
+    * @see #runInstancesInRegion
+    * @see #terminateInstancesInRegion
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeInstances.html"
     *      />
     */
@@ -126,13 +126,13 @@ public interface InstanceClient {
     *           launch, the largest possible number above minCount will be launched instead.
     *           Constraints: Between 1 and the maximum number allowed for your account (default:
     *           20).
-    * @see #describeInstances
-    * @see #terminateInstances
-    * @see #authorizeSecurityGroupIngress
-    * @see #revokeSecurityGroupIngress
-    * @see #describeSecurityGroups
-    * @see #createSecurityGroup
-    * @see #createKeyPair
+    * @see #describeInstancesInRegion
+    * @see #terminateInstancesInRegion
+    * @see #authorizeSecurityGroupIngressInRegion
+    * @see #revokeSecurityGroupIngressInRegion
+    * @see #describeSecurityGroupsInRegion
+    * @see #createSecurityGroupInRegion
+    * @see #createKeyPairInRegion
     * @see <a href=
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-RunInstances.html"
     *      />
@@ -151,14 +151,78 @@ public interface InstanceClient {
     * @param region
     *           Instances are tied to Availability Zones. However, the instance ID is tied to the
     *           Region.
-    * 
     * @param instanceIds
     *           Instance ID to terminate.
-    * @see #describeInstances
+    * @see #describeInstancesInRegion
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-TerminateInstances.html"
     *      />
     */
-   Set<TerminatedInstance> terminateInstancesInRegion(Region region, String instanceId,
+   Set<InstanceStateChange> terminateInstancesInRegion(Region region, String... instanceIds);
+
+   /**
+    * Stops an instance that uses an Amazon EBS volume as its root device.
+    * <p/>
+    * Instances that use Amazon EBS volumes as their root devices can be quickly stopped and
+    * started. When an instance is stopped, the compute resources are released and you are not
+    * billed for hourly instance usage. However, your root partition Amazon EBS volume remains,
+    * continues to persist your data, and you are charged for Amazon EBS volume usage. You can
+    * restart your instance at any time.
+    * <h3>Note</h3>
+    * Before stopping an instance, make sure it is in a state from which it can be restarted.
+    * Stopping an instance does not preserve data stored in RAM.
+    * <p/>
+    * Performing this operation on an instance that uses an instance store as its root device
+    * returns an error.
+    * 
+    * @param region
+    *           Instances are tied to Availability Zones. However, the instance ID is tied to the
+    *           Region.
+    * @param force
+    *           Forces the instance to stop. The instance will not have an opportunity to flush file
+    *           system caches nor file system meta data. If you use this option, you must perform
+    *           file system check and repair procedures. This option is not recommended for Windows
+    *           instances.
+    * @param instanceIds
+    *           Instance ID to stop.
+    * 
+    * @see #startInstancesInRegion
+    * @see #runInstancesInRegion
+    * @see #describeInstancesInRegion
+    * @see #terminateeInstancesInRegion
+    * @see <a href=
+    *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-StopInstances.html"
+    *      />
+    */
+   Set<InstanceStateChange> stopInstancesInRegion(Region region, boolean force,
             String... instanceIds);
 
+   /**
+    * Starts an instance that uses an Amazon EBS volume as its root device.
+    * <p/>
+    * Instances that use Amazon EBS volumes as their root devices can be quickly stopped and
+    * started. When an instance is stopped, the compute resources are released and you are not
+    * billed for hourly instance usage. However, your root partition Amazon EBS volume remains,
+    * continues to persist your data, and you are charged for Amazon EBS volume usage. You can
+    * restart your instance at any time.
+    * <h3>Note</h3>
+    * Before stopping an instance, make sure it is in a state from which it can be restarted.
+    * Stopping an instance does not preserve data stored in RAM.
+    * <p/>
+    * Performing this operation on an instance that uses an instance store as its root device
+    * returns an error.
+    * 
+    * @param region
+    *           Instances are tied to Availability Zones. However, the instance ID is tied to the
+    *           Region.
+    * @param instanceIds
+    *           Instance ID to start.
+    * 
+    * @see #stopInstancesInRegion
+    * @see #runInstancesInRegion
+    * @see #describeInstancesInRegion
+    * @see #terminateeInstancesInRegion
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-StartInstances.html"
+    *      />
+    */
+   Set<InstanceStateChange> startInstancesInRegion(Region region, String... instanceIds);
 }

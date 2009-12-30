@@ -26,15 +26,18 @@ package org.jclouds.aws.ec2.xml;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 
 import javax.annotation.Resource;
 
+import org.jclouds.aws.ec2.domain.Attachment;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.aws.ec2.domain.Reservation;
+import org.jclouds.aws.ec2.domain.RootDeviceType;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.date.DateService;
@@ -42,6 +45,7 @@ import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.logging.Logger;
 import org.xml.sax.Attributes;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
@@ -83,6 +87,16 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
    protected boolean inInstances;
    protected boolean inProductCodes;
    protected boolean inGroups;
+   private boolean inBlockDeviceMapping;
+   private Map<String, RunningInstance.EbsBlockDevice> ebsBlockDevices = Maps.newHashMap();
+
+   private String volumeId;
+   private Attachment.Status attachmentStatus;
+   private Date attachTime;
+   private boolean deleteOnTermination;
+   private RootDeviceType rootDeviceType = RootDeviceType.INSTANCE_STORE;
+   private String deviceName;
+   private String rootDeviceName;
 
    public void startElement(String uri, String name, String qName, Attributes attrs) {
       if (qName.equals("instancesSet")) {
@@ -91,6 +105,8 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
          inProductCodes = true;
       } else if (qName.equals("groupSet")) {
          inGroups = true;
+      } else if (qName.equals("blockDeviceMapping")) {
+         inBlockDeviceMapping = true;
       }
    }
 
@@ -154,6 +170,22 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
          inInstances = false;
       } else if (qName.equals("groupSet")) {
          inGroups = false;
+      } else if (qName.equals("blockDeviceMapping")) {
+         inBlockDeviceMapping = false;
+      } else if (qName.equals("deviceName")) {
+         deviceName = currentOrNull();
+      } else if (qName.equals("rootDeviceType")) {
+         rootDeviceType = RootDeviceType.fromValue(currentOrNull());
+      } else if (qName.equals("volumeId")) {
+         volumeId = currentOrNull();
+      } else if (qName.equals("status")) {
+         attachmentStatus = Attachment.Status.fromValue(currentText.toString().trim());
+      } else if (qName.equals("attachTime")) {
+         attachTime = dateService.iso8601DateParse(currentText.toString().trim());
+      } else if (qName.equals("deleteOnTermination")) {
+         deleteOnTermination = Boolean.parseBoolean(currentText.toString().trim());
+      } else if (qName.equals("rootDeviceName")) {
+         rootDeviceName = currentOrNull();
       } else if (qName.equals("item")) {
          inItem();
       }
@@ -161,11 +193,20 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
    }
 
    protected void inItem() {
-      if (inInstances && !inProductCodes) {
-         instances.add(new RunningInstance(amiLaunchIndex, dnsName, imageId, instanceId,
-                  instanceState, instanceType, ipAddress, kernelId, keyName, launchTime,
-                  monitoring, availabilityZone, platform, privateDnsName, privateIpAddress,
-                  productCodes, ramdiskId, reason, subnetId, vpcId));
+      if (inBlockDeviceMapping) {
+         ebsBlockDevices.put(deviceName, new RunningInstance.EbsBlockDevice(volumeId,
+                  attachmentStatus, attachTime, deleteOnTermination));
+         this.deviceName = null;
+         this.volumeId = null;
+         this.attachmentStatus = null;
+         this.attachTime = null;
+         this.deleteOnTermination = true;
+      } else if (inInstances && !inProductCodes && !inBlockDeviceMapping) {
+         instances.add(new RunningInstance(EC2Utils.findRegionInArgsOrNull(request),
+                  amiLaunchIndex, dnsName, imageId, instanceId, instanceState, instanceType,
+                  ipAddress, kernelId, keyName, launchTime, monitoring, availabilityZone, platform,
+                  privateDnsName, privateIpAddress, productCodes, ramdiskId, reason, subnetId,
+                  vpcId, rootDeviceType, rootDeviceName, ebsBlockDevices));
          this.amiLaunchIndex = null;
          this.dnsName = null;
          this.imageId = null;
@@ -186,6 +227,9 @@ public abstract class BaseReservationHandler<T> extends HandlerWithResult<T> {
          this.reason = null;
          this.subnetId = null;
          this.vpcId = null;
+         this.rootDeviceType = RootDeviceType.INSTANCE_STORE;
+         this.rootDeviceName = null;
+         this.ebsBlockDevices = Maps.newHashMap();
       }
    }
 

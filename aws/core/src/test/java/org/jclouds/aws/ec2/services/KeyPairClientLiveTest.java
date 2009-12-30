@@ -64,9 +64,10 @@ public class KeyPairClientLiveTest {
    }
 
    @Test
-   void testDescribeAddresses() {
+   void testDescribeKeyPairs() {
       for (Region region : ImmutableSet.of(Region.DEFAULT, Region.EU_WEST_1, Region.US_EAST_1,
                Region.US_WEST_1)) {
+
          SortedSet<KeyPair> allResults = Sets.newTreeSet(client.describeKeyPairsInRegion(region));
          assertNotNull(allResults);
          if (allResults.size() >= 1) {

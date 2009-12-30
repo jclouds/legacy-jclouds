@@ -216,7 +216,7 @@ public class Utils {
 
    public static final Map<OsFamily, String> OS_TO_ZERO_PATH = ImmutableMap.of(OsFamily.WINDOWS,
             "set PATH=c:\\windows\\;C:\\windows\\system32;c:\\windows\\system32\\wbem\r\n",
-            OsFamily.UNIX, "export PATH=/usr/ucb/bin:/bin:/usr/bin:/usr/sbin\n");
+            OsFamily.UNIX, "export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin\n");
 
    /**
     * @return line used to zero out the path of the script such that basic commands such as unix ps

@@ -23,7 +23,6 @@
  */
 package org.jclouds.aws.ec2.options;
 
-import static org.jclouds.aws.ec2.options.DetachVolumeOptions.Builder.force;
 import static org.jclouds.aws.ec2.options.DetachVolumeOptions.Builder.fromDevice;
 import static org.jclouds.aws.ec2.options.DetachVolumeOptions.Builder.fromInstance;
 import static org.testng.Assert.assertEquals;
@@ -94,19 +93,6 @@ public class DetachVolumeOptionsTest {
    @Test(expectedExceptions = NullPointerException.class)
    public void testFromInstanceNPE() {
       fromInstance(null);
-   }
-
-   @Test
-   public void testForce() {
-      DetachVolumeOptions options = new DetachVolumeOptions();
-      options.force();
-      assertEquals(options.buildFormParameters().get("Force"), Collections.singletonList("true"));
-   }
-
-   @Test
-   public void testForceStatic() {
-      DetachVolumeOptions options = force();
-      assertEquals(options.buildFormParameters().get("Force"), Collections.singletonList("true"));
    }
 
 }

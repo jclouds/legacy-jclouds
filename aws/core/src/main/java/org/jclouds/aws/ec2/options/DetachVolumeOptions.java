@@ -72,23 +72,6 @@ public class DetachVolumeOptions extends BaseEC2RequestOptions {
 
    }
 
-   /**
-    * Forces detachment if the previous detachment attempt did not occur cleanly (logging into an
-    * instance, unmounting the volume, and detaching normally). This option can lead to data loss or
-    * a corrupted file system. Use this option only as a last resort to detach a volume from a
-    * failed instance. The instance will not have an opportunity to flush file system caches nor
-    * file system meta data. If you use this option, you must perform file system check and repair
-    * procedures.
-    */
-   public DetachVolumeOptions force() {
-      formParameters.put("Force", "true");
-      return this;
-   }
-
-   public boolean getForce() {
-      return getFirstFormOrNull("Force") != null;
-   }
-
    public static class Builder {
       /**
        * @see DetachVolumeOptions#fromInstance(String )
@@ -104,14 +87,6 @@ public class DetachVolumeOptions extends BaseEC2RequestOptions {
       public static DetachVolumeOptions fromDevice(String device) {
          DetachVolumeOptions options = new DetachVolumeOptions();
          return options.fromDevice(device);
-      }
-
-      /**
-       * @see DetachVolumeOptions#force()
-       */
-      public static DetachVolumeOptions force() {
-         DetachVolumeOptions options = new DetachVolumeOptions();
-         return options.force();
       }
 
    }

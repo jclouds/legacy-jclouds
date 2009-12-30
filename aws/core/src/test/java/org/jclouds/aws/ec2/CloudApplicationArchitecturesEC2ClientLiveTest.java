@@ -62,13 +62,14 @@ import com.google.inject.Injector;
 
 /**
  * Follows the book Cloud Application Architectures ISBN: 978-0-596-15636-7
+ * <p/>
  * 
  * Generally disabled, as it incurs higher fees.
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = true, sequential = true, testName = "ec2.ExpensiveEC2ClientLiveTest")
-public class ExpensiveEC2ClientLiveTest {
+@Test(groups = "live", enabled = true, sequential = true, testName = "ec2.CloudApplicationArchitecturesEC2ClientLiveTest")
+public class CloudApplicationArchitecturesEC2ClientLiveTest {
 
    private EC2Client client;
    protected SshClient.Factory sshFactory;
@@ -154,8 +155,8 @@ public class ExpensiveEC2ClientLiveTest {
             throw htpe;
          }
       }
-      assertNotNull(server.getInstanceId());
-      serverId = server.getInstanceId();
+      assertNotNull(server.getId());
+      serverId = server.getId();
       assertEquals(server.getInstanceState(), InstanceState.PENDING);
       server = blockUntilRunningInstanceActive(serverId);
 
@@ -244,7 +245,7 @@ public class ExpensiveEC2ClientLiveTest {
       RunningInstance currentDetails = null;
       for (currentDetails = getRunningInstance(serverId); currentDetails.getInstanceState() != InstanceState.RUNNING; currentDetails = getRunningInstance(serverId)) {
          System.out.printf("%s blocking on status active: currently: %s%n", currentDetails
-                  .getInstanceId(), currentDetails.getInstanceState());
+                  .getId(), currentDetails.getInstanceState());
          Thread.sleep(5 * 1000);
       }
 

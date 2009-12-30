@@ -47,15 +47,20 @@ import com.google.common.collect.Maps;
  */
 public class CreateRunScript implements Statement {
    final String instanceName;
-   final List<String> exports;
+   final Iterable<String> exports;
    final String pwd;
-   final String execLine;
+   final String[] execLines;
 
-   public CreateRunScript(String instanceName, List<String> exports, String pwd, String execLine) {
+   public CreateRunScript(String instanceName, Iterable<String> exports, String pwd,
+            String... execLines) {// TODO: convert so
+      // that
+      // createRunScript
+      // can take from a
+      // variable
       this.instanceName = checkNotNull(instanceName, "instanceName");
       this.exports = checkNotNull(exports, "exports");
       this.pwd = checkNotNull(pwd, "pwd").replaceAll("[/\\\\]", "{fs}");
-      this.execLine = checkNotNull(execLine, "execLine");
+      this.execLines = checkNotNull(execLines, "execLines");
    }
 
    public static class AddTitleToFile implements Statement {
@@ -148,6 +153,7 @@ public class CreateRunScript implements Statement {
             statements.add(appendToFile(line, runScript, family));
       }
       statements.add(new AddTitleToFile(instanceName, runScript));
+      statements.add(appendToFile(Utils.writeZeroPath(family), runScript, family));
       statements.add(new AddExportToFile("instanceName", instanceName, runScript));
       for (String export : exports) {
          statements.add(new AddExportToFile(export, Utils.replaceTokens("{varl}"
@@ -155,7 +161,9 @@ public class CreateRunScript implements Statement {
                   tokenMap), runScript));
       }
       statements.add(appendToFile("{cd} " + pwd, runScript, family));
-      statements.add(appendToFile(execLine, runScript, family));
+      for (String execLine : execLines) {
+         statements.add(appendToFile(execLine, runScript, family));
+      }
       for (String line : Splitter.on(ShellToken.LF.to(family)).split(
                ShellToken.END_SCRIPT.to(family))) {
          if (!line.equals(""))

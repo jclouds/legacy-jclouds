@@ -40,7 +40,7 @@ import org.jclouds.aws.ec2.filters.FormSigner;
 import org.jclouds.aws.ec2.options.RunInstancesOptions;
 import org.jclouds.aws.ec2.xml.DescribeInstancesResponseHandler;
 import org.jclouds.aws.ec2.xml.RunInstancesResponseHandler;
-import org.jclouds.aws.ec2.xml.TerminateInstancesResponseHandler;
+import org.jclouds.aws.ec2.xml.InstanceStateChangeHandler;
 import org.jclouds.aws.reference.AWSConstants;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.functions.ParseSax;
@@ -107,18 +107,18 @@ public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient>
    public void testTerminateInstances() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = InstanceAsyncClient.class.getMethod("terminateInstancesInRegion",
-               Region.class, String.class, Array.newInstance(String.class, 0).getClass());
+               Region.class, Array.newInstance(String.class, 0).getClass());
       GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
                Region.DEFAULT, "1", "2");
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
-               "Content-Length: 59\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+               "Content-Length: 44\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
       assertPayloadEquals(httpMethod,
-               "Version=2009-11-30&Action=TerminateInstances&InstanceId.0=1&InstanceId.1=2");
+               "Version=2009-11-30&Action=TerminateInstances&InstanceId.1=1&InstanceId.2=2");
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, TerminateInstancesResponseHandler.class);
+      assertSaxResponseParserClassEquals(method, InstanceStateChangeHandler.class);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpMethod);
@@ -163,6 +163,44 @@ public class InstanceAsyncClientTest extends RestClientTest<InstanceAsyncClient>
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, RunInstancesResponseHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testStopInstances() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = InstanceAsyncClient.class.getMethod("stopInstancesInRegion", Region.class,
+               boolean.class, Array.newInstance(String.class, 0).getClass());
+      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
+               Region.DEFAULT, true, "1", "2");
+
+      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 50\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertPayloadEquals(httpMethod,
+               "Version=2009-11-30&Action=StopInstances&Force=true&InstanceId.1=1&InstanceId.2=2");
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, InstanceStateChangeHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testStartInstances() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = InstanceAsyncClient.class.getMethod("startInstancesInRegion", Region.class,
+               Array.newInstance(String.class, 0).getClass());
+      GeneratedHttpRequest<InstanceAsyncClient> httpMethod = processor.createRequest(method,
+               Region.DEFAULT, "1", "2");
+
+      assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 40\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertPayloadEquals(httpMethod,
+               "Version=2009-11-30&Action=StartInstances&InstanceId.1=1&InstanceId.2=2");
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, InstanceStateChangeHandler.class);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpMethod);

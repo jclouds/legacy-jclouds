@@ -28,7 +28,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.base.CaseFormat;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -70,8 +69,8 @@ public class Image implements Comparable<Image> {
             @Nullable String description, String imageId, String imageLocation,
             String imageOwnerId, ImageState imageState, ImageType imageType, boolean isPublic,
             Iterable<String> productCodes, @Nullable String kernelId, @Nullable String platform,
-            @Nullable String ramdiskId, RootDeviceType rootDeviceType, String rootDeviceName,
-            Map<String, EbsBlockDevice> ebsBlockDevices) {
+            @Nullable String ramdiskId, RootDeviceType rootDeviceType,
+            @Nullable String rootDeviceName, Map<String, EbsBlockDevice> ebsBlockDevices) {
       this.region = checkNotNull(region, "region");
       this.architecture = checkNotNull(architecture, "architecture");
       this.imageId = checkNotNull(imageId, "imageId");
@@ -109,25 +108,6 @@ public class Image implements Comparable<Image> {
 
       public static ImageState fromValue(String v) {
          return valueOf(v.toUpperCase());
-      }
-   }
-
-   /**
-    * The root device type used by the AMI. The AMI can use an Amazon EBS or instance store root
-    * device.
-    */
-   public static enum RootDeviceType {
-
-      INSTANCE_STORE,
-
-      EBS;
-
-      public String value() {
-         return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name());
-      }
-
-      public static RootDeviceType fromValue(String v) {
-         return valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, v));
       }
    }
 
@@ -237,7 +217,7 @@ public class Image implements Comparable<Image> {
    /**
     * The ID of the AMI.
     */
-   public String getImageId() {
+   public String getId() {
       return imageId;
    }
 
@@ -311,7 +291,32 @@ public class Image implements Comparable<Image> {
     * {@inheritDoc}
     */
    public int compareTo(Image o) {
-      return (this == o) ? 0 : getImageId().compareTo(o.getImageId());
+      return (this == o) ? 0 : getId().compareTo(o.getId());
+   }
+
+   /**
+    * 
+    * @return The root device type used by the AMI. The AMI can use an Amazon EBS or instance store
+    *         root device.
+    */
+   public RootDeviceType getRootDeviceType() {
+      return rootDeviceType;
+   }
+
+   public String getName() {
+      return name;
+   }
+
+   public String getDescription() {
+      return description;
+   }
+
+   public String getRootDeviceName() {
+      return rootDeviceName;
+   }
+
+   public Map<String, EbsBlockDevice> getEbsBlockDevices() {
+      return ebsBlockDevices;
    }
 
    @Override
@@ -432,27 +437,6 @@ public class Image implements Comparable<Image> {
       return true;
    }
 
-   /**
-    * 
-    * @return The root device type used by the AMI. The AMI can use an Amazon EBS or instance store
-    *         root device.
-    */
-   public RootDeviceType getRootDeviceType() {
-      return rootDeviceType;
-   }
-
-   public String getName() {
-      return name;
-   }
-
-   public String getDescription() {
-      return description;
-   }
-
-   public String getRootDeviceName() {
-      return rootDeviceName;
-   }
-
    @Override
    public String toString() {
       return "Image [architecture=" + architecture + ", description=" + description
@@ -463,10 +447,6 @@ public class Image implements Comparable<Image> {
                + ", productCodes=" + productCodes + ", ramdiskId=" + ramdiskId + ", region="
                + region + ", rootDeviceName=" + rootDeviceName + ", rootDeviceType="
                + rootDeviceType + "]";
-   }
-
-   public Map<String, EbsBlockDevice> getEbsBlockDevices() {
-      return ebsBlockDevices;
    }
 
 }

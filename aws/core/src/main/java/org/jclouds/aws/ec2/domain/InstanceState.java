@@ -56,7 +56,15 @@ public enum InstanceState {
    /**
     * the instance terminated
     */
-   TERMINATED;
+   TERMINATED,
+   /**
+    * the instance is stopping
+    */
+   STOPPING,
+   /**
+    * the instance is stopped
+    */
+   STOPPED;
 
    public String value() {
       return name().toLowerCase().replaceAll("_", "-");
@@ -81,6 +89,10 @@ public enum InstanceState {
             return SHUTTING_DOWN;
          case 48:
             return TERMINATED;
+         case 64:
+            return STOPPING;
+         case 80:
+            return STOPPED;
          default:
             throw new IllegalArgumentException("invalid state:" + v);
       }

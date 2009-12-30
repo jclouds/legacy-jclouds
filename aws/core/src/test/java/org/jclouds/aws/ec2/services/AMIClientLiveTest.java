@@ -39,8 +39,8 @@ import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.EC2ContextFactory;
 import org.jclouds.aws.ec2.domain.Image;
 import org.jclouds.aws.ec2.domain.Region;
+import org.jclouds.aws.ec2.domain.RootDeviceType;
 import org.jclouds.aws.ec2.domain.Image.ImageType;
-import org.jclouds.aws.ec2.domain.Image.RootDeviceType;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.AfterTest;
@@ -85,15 +85,15 @@ public class AMIClientLiveTest {
          assertNotNull(allResults);
          assert allResults.size() >= 2 : allResults.size();
          Iterator<Image> iterator = allResults.iterator();
-         String id1 = iterator.next().getImageId();
-         String id2 = iterator.next().getImageId();
+         String id1 = iterator.next().getId();
+         String id2 = iterator.next().getId();
          SortedSet<Image> twoResults = Sets.newTreeSet(client.describeImagesInRegion(region,
                   imageIds(id1, id2)));
          assertNotNull(twoResults);
          assertEquals(twoResults.size(), 2);
          iterator = twoResults.iterator();
-         assertEquals(iterator.next().getImageId(), id1);
-         assertEquals(iterator.next().getImageId(), id2);
+         assertEquals(iterator.next().getId(), id1);
+         assertEquals(iterator.next().getId(), id2);
       }
    }
 
@@ -128,7 +128,7 @@ public class AMIClientLiveTest {
    @Test(enabled = false)
    // awaiting EBS functionality to be added to jclouds
    public void testRegisterImageBackedByEBS() {
-      String imageRegisteredId = client.registerImageBackedByEbsInRegion(Region.DEFAULT,
+      String imageRegisteredId = client.registerUnixImageBackedByEbsInRegion(Region.DEFAULT,
                "jcloudstest1", DEFAULT_MANIFEST);
       imagesToDeregister.add(imageRegisteredId);
       Image imageRegistered = Iterables.getOnlyElement(client.describeImagesInRegion(
@@ -142,7 +142,7 @@ public class AMIClientLiveTest {
    @Test(enabled = false)
    // awaiting EBS functionality to be added to jclouds
    public void testRegisterImageBackedByEBSOptions() {
-      String imageRegisteredWithOptionsId = client.registerImageBackedByEbsInRegion(Region.DEFAULT,
+      String imageRegisteredWithOptionsId = client.registerUnixImageBackedByEbsInRegion(Region.DEFAULT,
                "jcloudstest2", DEFAULT_SNAPSHOT, addNewBlockDevice("/dev/sda2", "myvirtual", 1)
                         .withDescription("adrian"));
       imagesToDeregister.add(imageRegisteredWithOptionsId);

@@ -36,7 +36,9 @@ import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.Reservation;
+import org.jclouds.aws.ec2.domain.RootDeviceType;
 import org.jclouds.aws.ec2.domain.RunningInstance;
+import org.jclouds.aws.ec2.domain.RunningInstance.EbsBlockDevice;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
@@ -44,6 +46,7 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Sets;
 
@@ -70,24 +73,30 @@ public class RunInstancesResponseHandlerTest extends BaseHandlerTest {
       InputStream is = getClass().getResourceAsStream("/ec2/run_instances.xml");
 
       Reservation expected = new Reservation(Region.DEFAULT, ImmutableSortedSet.of("default"),
-               ImmutableSortedSet.of(new RunningInstance("0", null, "ami-60a54009", "i-2ba64342",
+               ImmutableSortedSet.of(new RunningInstance(Region.DEFAULT, "0", null, "ami-60a54009",
+                        "i-2ba64342", InstanceState.PENDING, InstanceType.M1_SMALL,
+                        (InetAddress) null, null, "example-key-name", dateService
+                                 .iso8601DateParse("2007-08-07T11:51:50.000Z"), true,
+                        AvailabilityZone.US_EAST_1B, null, null, (InetAddress) null, Sets
+                                 .<String> newTreeSet(), null, null, null, null,
+                        RootDeviceType.INSTANCE_STORE, null, ImmutableMap
+                                 .<String, EbsBlockDevice> of()), new RunningInstance(
+                        Region.DEFAULT, "0", null, "ami-60a54009", "i-2bc64242",
                         InstanceState.PENDING, InstanceType.M1_SMALL, (InetAddress) null, null,
                         "example-key-name", dateService
                                  .iso8601DateParse("2007-08-07T11:51:50.000Z"), true,
                         AvailabilityZone.US_EAST_1B, null, null, (InetAddress) null, Sets
-                                 .<String> newTreeSet(), null, null, null, null),
-                        new RunningInstance("0", null, "ami-60a54009", "i-2bc64242",
-                                 InstanceState.PENDING, InstanceType.M1_SMALL, (InetAddress) null,
-                                 null, "example-key-name", dateService
-                                          .iso8601DateParse("2007-08-07T11:51:50.000Z"), true,
-                                 AvailabilityZone.US_EAST_1B, null, null, (InetAddress) null, Sets
-                                          .<String> newTreeSet(), null, null, null, null),
-                        new RunningInstance("0", null, "ami-60a54009", "i-2be64332",
-                                 InstanceState.PENDING, InstanceType.M1_SMALL, (InetAddress) null,
-                                 null, "example-key-name", dateService
-                                          .iso8601DateParse("2007-08-07T11:51:50.000Z"), true,
-                                 AvailabilityZone.US_EAST_1B, null, null, (InetAddress) null, Sets
-                                          .<String> newTreeSet(), null, null, null, null)
+                                 .<String> newTreeSet(), null, null, null, null,
+                        RootDeviceType.INSTANCE_STORE, null, ImmutableMap
+                                 .<String, EbsBlockDevice> of()), new RunningInstance(
+                        Region.DEFAULT, "0", null, "ami-60a54009", "i-2be64332",
+                        InstanceState.PENDING, InstanceType.M1_SMALL, (InetAddress) null, null,
+                        "example-key-name", dateService
+                                 .iso8601DateParse("2007-08-07T11:51:50.000Z"), true,
+                        AvailabilityZone.US_EAST_1B, null, null, (InetAddress) null, Sets
+                                 .<String> newTreeSet(), null, null, null, null,
+                        RootDeviceType.INSTANCE_STORE, null, ImmutableMap
+                                 .<String, EbsBlockDevice> of())
 
                ), "AIDADH4IGTRXXKCD", null, "r-47a5402e");
 

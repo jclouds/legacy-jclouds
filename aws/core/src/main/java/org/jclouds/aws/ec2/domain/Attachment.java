@@ -34,9 +34,9 @@ import java.util.Date;
  *      />
  * @author Adrian Cole
  */
-public class Attachment {
+public class Attachment implements Comparable<Attachment> {
    public static enum Status {
-      ATTACHING, ATTACHED, DETACHING, DETACHED;
+      ATTACHING, ATTACHED, DETACHING, DETACHED, BUSY;
       public String value() {
          return name().toLowerCase();
       }
@@ -86,7 +86,7 @@ public class Attachment {
    /**
     * The ID of the instance.
     */
-   public String getInstanceId() {
+   public String getId() {
       return instanceId;
    }
 
@@ -171,6 +171,11 @@ public class Attachment {
       return "Attachment [region=" + region + ", volumeId=" + volumeId + ", instanceId="
                + instanceId + ", device=" + device + ", attachTime=" + attachTime + ", status="
                + status + "]";
+   }
+
+   @Override
+   public int compareTo(Attachment o) {
+      return attachTime.compareTo(o.attachTime);
    }
 
 }

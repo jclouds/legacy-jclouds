@@ -29,11 +29,11 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.jclouds.aws.ec2.domain.Image;
+import org.jclouds.aws.ec2.domain.RootDeviceType;
 import org.jclouds.aws.ec2.domain.Image.Architecture;
 import org.jclouds.aws.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.aws.ec2.domain.Image.ImageState;
 import org.jclouds.aws.ec2.domain.Image.ImageType;
-import org.jclouds.aws.ec2.domain.Image.RootDeviceType;
 import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
@@ -141,6 +141,7 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerWithResult<Se
          if (inBlockDeviceMapping) {
             ebsBlockDevices.put(deviceName, new Image.EbsBlockDevice(snapshotId, volumeSize,
                      deleteOnTermination));
+            this.deviceName = null;
             this.snapshotId = null;
             this.volumeSize = 0;
             this.deleteOnTermination = true;

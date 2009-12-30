@@ -23,7 +23,6 @@
  */
 package org.jclouds.scriptbuilder.domain;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -46,9 +45,13 @@ public class Statements {
       return new Call(function, args);
    }
 
-   public static Statement createRunScript(String instanceName, List<String> exports, String pwd,
-            String execLine) {
-      return new CreateRunScript(instanceName, exports, pwd, execLine);
+   public static Statement createRunScript(String instanceName, Iterable<String> exports,
+            String pwd, String... execLines) {// TODO: convert so
+      // that
+      // createRunScript
+      // can take from a
+      // variable
+      return new CreateRunScript(instanceName, exports, pwd, execLines);
    }
 
    /**
@@ -59,6 +62,25 @@ public class Statements {
     */
    public static Statement findPid(String args) {
       return new Call("findPid", args);
+   }
+
+   /**
+    * 
+    * Runs the script in a way that it can be matched later with {@link findPid}
+    * 
+    * @param instanceName
+    *           - what to match the process on
+    * @param script
+    *           - what to run in the background
+    * @param logDir
+    *           - where to write the following logs:
+    *           <ol>
+    *           <li>stdout.log</li>
+    *           <li>stderr.log</li>
+    *           </ol>
+    */
+   public static Statement forget(String instanceName, String script, String logDir) {
+      return new Call("forget", instanceName, script, logDir);
    }
 
    /**

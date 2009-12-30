@@ -120,19 +120,19 @@ public class EC2ComputeService implements ComputeService {
                         1,
                         withKeyName(keyPair.getKeyName()).asType(type).withSecurityGroup(
                                  securityGroupName).withAdditionalInfo(name)).getRunningInstances());
-      logger.debug("<< started instance(%s)", runningInstance.getInstanceId());
+      logger.debug("<< started instance(%s)", runningInstance.getId());
       instanceStateRunning.apply(runningInstance);
-      logger.debug("<< running instance(%s)", runningInstance.getInstanceId());
+      logger.debug("<< running instance(%s)", runningInstance.getId());
 
       // refresh to get IP address
-      runningInstance = getRunningInstance(runningInstance.getInstanceId());
+      runningInstance = getRunningInstance(runningInstance.getId());
 
       Set<InetAddress> publicAddresses = runningInstance.getIpAddress() == null ? ImmutableSet
                .<InetAddress> of() : ImmutableSet.<InetAddress> of(runningInstance.getIpAddress());
       Set<InetAddress> privateAddresses = runningInstance.getPrivateIpAddress() == null ? ImmutableSet
                .<InetAddress> of()
                : ImmutableSet.<InetAddress> of(runningInstance.getPrivateIpAddress());
-      return new CreateServerResponseImpl(runningInstance.getInstanceId(), name,
+      return new CreateServerResponseImpl(runningInstance.getId(), name,
                instanceToServerState.get(runningInstance.getInstanceState()), publicAddresses,
                privateAddresses, 22, LoginType.SSH, new Credentials("root", keyPair
                         .getKeyMaterial()));
@@ -194,7 +194,7 @@ public class EC2ComputeService implements ComputeService {
 
       @Override
       public ServerMetadata apply(RunningInstance from) {
-         return new ServerMetadataImpl(from.getInstanceId(), from.getKeyName(),
+         return new ServerMetadataImpl(from.getId(), from.getKeyName(),
                   instanceToServerState.get(from.getInstanceState()), nullSafeSet(from
                            .getIpAddress()), nullSafeSet(from.getPrivateIpAddress()), 22,
                   LoginType.SSH);
@@ -239,7 +239,7 @@ public class EC2ComputeService implements ComputeService {
                   new Function<RunningInstance, ServerIdentity>() {
                      @Override
                      public ServerIdentity apply(RunningInstance from) {
-                        return new ServerIdentityImpl(from.getInstanceId(), from.getKeyName());
+                        return new ServerIdentityImpl(from.getId(), from.getKeyName());
                      }
                   }));
       }
@@ -252,9 +252,9 @@ public class EC2ComputeService implements ComputeService {
       RunningInstance runningInstance = getRunningInstance(id);
       // grab the old keyname
       String name = runningInstance.getKeyName();
-      logger.debug(">> terminating instance(%s)", runningInstance.getInstanceId());
+      logger.debug(">> terminating instance(%s)", runningInstance.getId());
       ec2Client.getInstanceServices().terminateInstancesInRegion(Region.DEFAULT, id);
-      logger.debug("<< terminated instance(%s)", runningInstance.getInstanceId());
+      logger.debug("<< terminated instance(%s)", runningInstance.getId());
       logger.debug(">> deleting keyPair(%s)", name);
       ec2Client.getKeyPairServices().deleteKeyPairInRegion(Region.DEFAULT, name);
       logger.debug("<< deleted keyPair(%s)", name);

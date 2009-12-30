@@ -191,15 +191,16 @@ public class ElasticBlockStoreAsyncClientTest extends RestClientTest<ElasticBloc
 
    public void testDetachVolume() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ElasticBlockStoreAsyncClient.class.getMethod("detachVolumeInRegion",
-               Region.class, String.class, Array.newInstance(DetachVolumeOptions.class, 0)
-                        .getClass());
+               Region.class, String.class, boolean.class, Array.newInstance(
+                        DetachVolumeOptions.class, 0).getClass());
       GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor.createRequest(
-               method, Region.DEFAULT, "id");
+               method, Region.DEFAULT, "id", false);
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
-               "Content-Length: 50\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
-      assertPayloadEquals(httpMethod, "Version=2009-11-30&Action=DetachVolume&VolumeId=id");
+               "Content-Length: 62\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
+      assertPayloadEquals(httpMethod,
+               "Version=2009-11-30&Action=DetachVolume&Force=false&VolumeId=id");
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, AttachmentHandler.class);
@@ -211,18 +212,18 @@ public class ElasticBlockStoreAsyncClientTest extends RestClientTest<ElasticBloc
    public void testDetachVolumeOptions() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = ElasticBlockStoreAsyncClient.class.getMethod("detachVolumeInRegion",
-               Region.class, String.class, Array.newInstance(DetachVolumeOptions.class, 0)
-                        .getClass());
-      GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor.createRequest(
-               method, Region.DEFAULT, "id", fromInstance("instanceId").fromDevice("/device")
-                        .force());
+               Region.class, String.class, boolean.class, Array.newInstance(
+                        DetachVolumeOptions.class, 0).getClass());
+      GeneratedHttpRequest<ElasticBlockStoreAsyncClient> httpMethod = processor
+               .createRequest(method, Region.DEFAULT, "id", true, fromInstance("instanceId")
+                        .fromDevice("/device"));
 
       assertRequestLineEquals(httpMethod, "POST https://ec2.amazonaws.com/ HTTP/1.1");
       assertHeadersEqual(httpMethod,
                "Content-Length: 100\nContent-Type: application/x-www-form-urlencoded\nHost: ec2.amazonaws.com\n");
       assertPayloadEquals(
                httpMethod,
-               "Version=2009-11-30&Action=DetachVolume&VolumeId=id&InstanceId=instanceId&Device=%2Fdevice&Force=true");
+               "Version=2009-11-30&Action=DetachVolume&Force=true&VolumeId=id&InstanceId=instanceId&Device=%2Fdevice");
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, AttachmentHandler.class);

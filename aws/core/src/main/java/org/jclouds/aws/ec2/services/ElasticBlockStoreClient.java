@@ -152,6 +152,14 @@ public interface ElasticBlockStoreClient {
     * @param volumeId
     *           The ID of the volume to delete. The volume remains in the deleting state for several
     *           minutes after entering this command.
+    * @param force
+    *           Forces detachment if the previous detachment attempt did not occur cleanly (logging
+    *           into an instance, unmounting the volume, and detaching normally). This option can
+    *           lead to data loss or a corrupted file system. Use this option only as a last resort
+    *           to detach a volume from a failed instance. The instance will not have an opportunity
+    *           to flush file system caches nor file system meta data. If you use this option, you
+    *           must perform file system check and repair procedures.
+    * 
     * @param options
     *           options like force()
     * 
@@ -164,7 +172,8 @@ public interface ElasticBlockStoreClient {
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DetachVolume.html"
     *      />
     */
-   Attachment detachVolumeInRegion(Region region, String volumeId, DetachVolumeOptions... options);
+   void detachVolumeInRegion(Region region, String volumeId, boolean force,
+            DetachVolumeOptions... options);
 
    /**
     * Attaches an Amazon EBS volume to a running instance and exposes it as the specified device.

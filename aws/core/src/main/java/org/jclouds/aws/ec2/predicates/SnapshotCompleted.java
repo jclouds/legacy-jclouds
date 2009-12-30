@@ -1,13 +1,10 @@
 package org.jclouds.aws.ec2.predicates;
 
-import java.util.Map;
+import static org.jclouds.aws.ec2.options.DescribeSnapshotsOptions.Builder.snapshotIds;
 
 import javax.annotation.Resource;
 import javax.inject.Singleton;
-import static org.jclouds.aws.ec2.options.DescribeSnapshotsOptions.Builder.snapshotIds;
 
-import org.jclouds.aws.ec2.domain.AvailabilityZone;
-import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.Snapshot;
 import org.jclouds.aws.ec2.services.ElasticBlockStoreClient;
 import org.jclouds.logging.Logger;
@@ -30,8 +27,7 @@ public class SnapshotCompleted implements Predicate<Snapshot> {
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public SnapshotCompleted(ElasticBlockStoreClient client,
-            Map<AvailabilityZone, Region> availabilityZoneToRegion) {
+   public SnapshotCompleted(ElasticBlockStoreClient client) {
       this.client = client;
    }
 

@@ -32,8 +32,8 @@ import java.io.InputStream;
 import java.util.Set;
 
 import org.jclouds.aws.ec2.domain.InstanceState;
+import org.jclouds.aws.ec2.domain.InstanceStateChange;
 import org.jclouds.aws.ec2.domain.Region;
-import org.jclouds.aws.ec2.domain.TerminatedInstance;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
@@ -44,12 +44,12 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Tests behavior of {@code TerminateInstancesResponseHandler}
+ * Tests behavior of {@code InstanceStateChangeHandler}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.TerminateInstancesResponseHandlerTest")
-public class TerminateInstancesResponseHandlerTest extends BaseHandlerTest {
+@Test(groups = "unit", testName = "ec2.InstanceStateChangeHandlerTest")
+public class InstanceStateChangeHandlerTest extends BaseHandlerTest {
 
    private DateService dateService;
 
@@ -61,17 +61,41 @@ public class TerminateInstancesResponseHandlerTest extends BaseHandlerTest {
       assert dateService != null;
    }
 
-   public void testApplyInputStream() {
+   public void testTerminate() {
 
       InputStream is = getClass().getResourceAsStream("/ec2/terminate_instances.xml");
 
-      Set<TerminatedInstance> expected = ImmutableSet.of(new TerminatedInstance(Region.DEFAULT,
+      Set<InstanceStateChange> expected = ImmutableSet.of(new InstanceStateChange(Region.DEFAULT,
                "i-3ea74257", InstanceState.SHUTTING_DOWN, InstanceState.RUNNING));
 
-      TerminateInstancesResponseHandler handler = injector
-               .getInstance(TerminateInstancesResponseHandler.class);
+      InstanceStateChangeHandler handler = injector.getInstance(InstanceStateChangeHandler.class);
       addDefaultRegionToHandler(handler);
-      Set<TerminatedInstance> result = factory.create(handler).parse(is);
+      Set<InstanceStateChange> result = factory.create(handler).parse(is);
+      assertEquals(result, expected);
+   }
+
+   public void testStart() {
+
+      InputStream is = getClass().getResourceAsStream("/ec2/start_instances.xml");
+
+      Set<InstanceStateChange> expected = ImmutableSet.of(new InstanceStateChange(Region.DEFAULT,
+               "i-10a64379", InstanceState.PENDING, InstanceState.STOPPED));
+      InstanceStateChangeHandler handler = injector.getInstance(InstanceStateChangeHandler.class);
+      addDefaultRegionToHandler(handler);
+      Set<InstanceStateChange> result = factory.create(handler).parse(is);
+      assertEquals(result, expected);
+   }
+
+   public void testStop() {
+
+      InputStream is = getClass().getResourceAsStream("/ec2/stop_instances.xml");
+
+      Set<InstanceStateChange> expected = ImmutableSet.of(new InstanceStateChange(Region.DEFAULT,
+               "i-10a64379", InstanceState.STOPPING, InstanceState.RUNNING));
+
+      InstanceStateChangeHandler handler = injector.getInstance(InstanceStateChangeHandler.class);
+      addDefaultRegionToHandler(handler);
+      Set<InstanceStateChange> result = factory.create(handler).parse(is);
       assertEquals(result, expected);
    }
 

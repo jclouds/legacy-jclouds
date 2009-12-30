@@ -28,8 +28,6 @@ import static org.jclouds.aws.ec2.options.DescribeSnapshotsOptions.Builder.snaps
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-import java.net.URI;
-import java.util.Map;
 import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
@@ -38,7 +36,6 @@ import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.EC2ContextFactory;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
-import org.jclouds.aws.ec2.domain.AvailabilityZoneInfo;
 import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.Snapshot;
 import org.jclouds.aws.ec2.domain.Volume;
@@ -54,7 +51,6 @@ import org.testng.annotations.Test;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -64,7 +60,6 @@ import com.google.common.collect.Sets;
  */
 @Test(groups = "live", sequential = true, testName = "ec2.ElasticBlockStoreClientLiveTest")
 public class ElasticBlockStoreClientLiveTest {
-   private AvailabilityZoneAndRegionClient aclient;
    private ElasticBlockStoreClient client;
    private RestContext<EC2AsyncClient, EC2Client> context;
    private String volumeId;
@@ -77,7 +72,6 @@ public class ElasticBlockStoreClientLiveTest {
 
       context = EC2ContextFactory.createContext(user, password, new Log4JLoggingModule());
       client = context.getApi().getElasticBlockStoreServices();
-      aclient = context.getApi().getAvailabilityZoneAndRegionServices();
    }
 
    @Test
@@ -114,27 +108,11 @@ public class ElasticBlockStoreClientLiveTest {
       assertEquals(volume.getId(), expected.getId());
    }
 
-   Map<Region, URI> provideRegions(AvailabilityZoneAndRegionClient client) {
-      return client.describeRegions();
-   }
-
-   Map<AvailabilityZone, Region> provideAvailabilityZoneToRegions(
-            AvailabilityZoneAndRegionClient client, Map<Region, URI> regions) {
-      Map<AvailabilityZone, Region> map = Maps.newHashMap();
-      for (Region region : regions.keySet()) {
-         for (AvailabilityZoneInfo zoneInfo : client.describeAvailabilityZonesInRegion(region)) {
-            map.put(zoneInfo.getZone(), region);
-         }
-      }
-      return map;
-   }
-
    @Test(dependsOnMethods = "testCreateVolumeInAvailabilityZone")
    void testCreateSnapshotInRegion() {
       Snapshot snapshot = client.createSnapshotInRegion(Region.DEFAULT, volumeId);
       Predicate<Snapshot> snapshotted = new RetryablePredicate<Snapshot>(new SnapshotCompleted(
-               client, provideAvailabilityZoneToRegions(aclient, aclient.describeRegions())), 600,
-               10, TimeUnit.SECONDS);
+               client), 600, 10, TimeUnit.SECONDS);
       assert snapshotted.apply(snapshot);
 
       Snapshot result = Iterables.getOnlyElement(client.describeSnapshotsInRegion(snapshot
@@ -150,9 +128,8 @@ public class ElasticBlockStoreClientLiveTest {
                AvailabilityZone.US_EAST_1A, snapshot.getId());
       assertNotNull(volume);
 
-      Predicate<Volume> availabile = new RetryablePredicate<Volume>(new VolumeAvailable(client,
-               provideAvailabilityZoneToRegions(aclient, aclient.describeRegions())), 600, 10,
-               TimeUnit.SECONDS);
+      Predicate<Volume> availabile = new RetryablePredicate<Volume>(new VolumeAvailable(client),
+               600, 10, TimeUnit.SECONDS);
       assert availabile.apply(volume);
 
       Volume result = Iterables.getOnlyElement(client.describeVolumesInRegion(snapshot.getRegion(),
