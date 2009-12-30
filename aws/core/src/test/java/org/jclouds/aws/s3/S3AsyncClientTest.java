@@ -33,9 +33,13 @@ import java.net.URI;
 import org.jclouds.aws.s3.blobstore.functions.BlobToObject;
 import org.jclouds.aws.s3.config.S3ObjectModule;
 import org.jclouds.aws.s3.domain.AccessControlList;
+import org.jclouds.aws.s3.domain.BucketLogging;
 import org.jclouds.aws.s3.domain.CannedAccessPolicy;
 import org.jclouds.aws.s3.domain.Payer;
 import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.s3.domain.AccessControlList.EmailAddressGrantee;
+import org.jclouds.aws.s3.domain.AccessControlList.Grant;
+import org.jclouds.aws.s3.domain.AccessControlList.Permission;
 import org.jclouds.aws.s3.filters.RequestAuthorizeSignature;
 import org.jclouds.aws.s3.functions.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.aws.s3.functions.ParseObjectMetadataFromHeaders;
@@ -47,6 +51,7 @@ import org.jclouds.aws.s3.options.PutBucketOptions;
 import org.jclouds.aws.s3.options.PutObjectOptions;
 import org.jclouds.aws.s3.reference.S3Constants;
 import org.jclouds.aws.s3.xml.AccessControlListHandler;
+import org.jclouds.aws.s3.xml.BucketLoggingHandler;
 import org.jclouds.aws.s3.xml.CopyObjectHandler;
 import org.jclouds.aws.s3.xml.ListAllMyBucketsHandler;
 import org.jclouds.aws.s3.xml.ListBucketHandler;
@@ -71,9 +76,11 @@ import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Jsr330;
+import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Provides;
@@ -401,6 +408,60 @@ public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
                "<AccessControlPolicy xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Owner><ID>1234</ID></Owner><AccessControlList><Grant><Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CanonicalUser\"><ID>1234</ID></Grantee><Permission>FULL_CONTROL</Permission></Grant></AccessControlList></AccessControlPolicy>");
 
       assertResponseParserClassEquals(method, httpMethod, ReturnTrueIf2xx.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testGetBucketLogging() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = S3AsyncClient.class.getMethod("getBucketLogging", String.class);
+      GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method, "bucket");
+
+      assertRequestLineEquals(httpMethod, "GET http://bucket.stub:8080/?logging HTTP/1.1");
+      assertHeadersEqual(httpMethod, "Host: bucket.stub\n");
+      assertPayloadEquals(httpMethod, null);
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, BucketLoggingHandler.class);
+      assertExceptionParserClassEquals(method, ThrowContainerNotFoundOn404.class);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testDisableBucketLogging() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = S3AsyncClient.class.getMethod("disableBucketLogging", String.class);
+      GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method, "bucket");
+
+      assertRequestLineEquals(httpMethod, "PUT http://bucket.stub:8080/?logging HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 70\nContent-Type: text/xml\nHost: bucket.stub\n");
+      assertPayloadEquals(httpMethod,
+               "<BucketLoggingStatus xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"/>");
+
+      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testEnableBucketLoggingOwner() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = S3AsyncClient.class.getMethod("enableBucketLogging", String.class,
+               BucketLogging.class);
+      GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method, "bucket",
+               new BucketLogging("mylogs", "access_log-", ImmutableSet.<Grant> of(new Grant(
+                        new EmailAddressGrantee("adrian@jclouds.org"), Permission.FULL_CONTROL))));
+
+      assertRequestLineEquals(httpMethod, "PUT http://bucket.stub:8080/?logging HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 433\nContent-Type: text/xml\nHost: bucket.stub\n");
+      assertPayloadEquals(httpMethod, Utils.toStringAndClose(getClass().getResourceAsStream(
+               "/s3/bucket_logging.xml")));
+
+      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 

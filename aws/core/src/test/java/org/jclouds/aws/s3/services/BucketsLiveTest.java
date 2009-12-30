@@ -30,7 +30,7 @@ import static org.jclouds.aws.s3.options.ListBucketOptions.Builder.withPrefix;
 import static org.jclouds.aws.s3.options.PutBucketOptions.Builder.createIn;
 import static org.jclouds.aws.s3.options.PutBucketOptions.Builder.withBucketAcl;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -43,6 +43,7 @@ import java.util.concurrent.TimeoutException;
 import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.domain.AccessControlList;
+import org.jclouds.aws.s3.domain.BucketLogging;
 import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.CannedAccessPolicy;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
@@ -50,6 +51,7 @@ import org.jclouds.aws.s3.domain.Payer;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.AccessControlList.CanonicalUserGrantee;
 import org.jclouds.aws.s3.domain.AccessControlList.EmailAddressGrantee;
+import org.jclouds.aws.s3.domain.AccessControlList.Grant;
 import org.jclouds.aws.s3.domain.AccessControlList.GroupGranteeURI;
 import org.jclouds.aws.s3.domain.AccessControlList.Permission;
 import org.jclouds.aws.s3.domain.BucketMetadata.LocationConstraint;
@@ -57,6 +59,8 @@ import org.jclouds.aws.s3.internal.StubS3AsyncClient;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 
@@ -211,6 +215,64 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
       } finally {
          destroyContainer(bucketName);
       }
+   }
+
+   public void testBucketLogging() throws Exception {
+      final String bucketName = getContainerName();
+      final String targetBucket = getContainerName();
+      try {
+         assertNull(context.getApi().getBucketLogging(bucketName));
+
+         setupAclForBucketLoggingTarget(targetBucket);
+         final BucketLogging logging = new BucketLogging(targetBucket, "access_log-", ImmutableSet
+                  .<Grant> of(new Grant(new EmailAddressGrantee(StubS3AsyncClient.TEST_ACL_EMAIL),
+                           Permission.FULL_CONTROL)));
+
+         context.getApi().enableBucketLogging(bucketName, logging);
+
+         assertConsistencyAware(new Runnable() {
+            public void run() {
+               try {
+                  BucketLogging newLogging = context.getApi().getBucketLogging(bucketName);
+                  AccessControlList acl = new AccessControlList();
+                  for (Grant grant : newLogging.getTargetGrants()) { // TODO: add permission
+                                                                     // checking features to
+                                                                     // bucketlogging
+                     acl.addPermission(grant.getGrantee(), grant.getPermission());
+                  }
+                  // EmailAddressGrantee is replaced by a CanonicalUserGrantee, so we cannot test by
+                  // email addr
+                  assertTrue(acl.hasPermission(StubS3AsyncClient.TEST_ACL_ID,
+                           Permission.FULL_CONTROL), acl.toString());
+                  assertEquals(logging.getTargetBucket(), newLogging.getTargetBucket());
+                  assertEquals(logging.getTargetPrefix(), newLogging.getTargetPrefix());
+               } catch (Exception e) {
+                  Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
+               }
+            }
+         });
+         context.getApi().disableBucketLogging(bucketName);
+         assertConsistencyAware(new Runnable() {
+            public void run() {
+               try {
+                  assertNull(context.getApi().getBucketLogging(bucketName));
+               } catch (Exception e) {
+                  Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
+               }
+            }
+         });
+      } finally {
+         destroyContainer(bucketName);
+         destroyContainer(targetBucket);
+      }
+   }
+
+   private void setupAclForBucketLoggingTarget(final String targetBucket) {
+      // http://docs.amazonwebservices.com/AmazonS3/latest/LoggingHowTo.html
+      AccessControlList acl = context.getApi().getBucketACL(targetBucket);
+      acl.addPermission(GroupGranteeURI.LOG_DELIVERY, Permission.WRITE);
+      acl.addPermission(GroupGranteeURI.LOG_DELIVERY, Permission.READ_ACP);
+      assertTrue(context.getApi().putBucketACL(targetBucket, acl));
    }
 
    /**

@@ -37,9 +37,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.jclouds.aws.s3.binders.BindACLToXMLPayload;
+import org.jclouds.aws.s3.binders.BindBucketLoggingToXmlPayload;
+import org.jclouds.aws.s3.binders.BindNoBucketLoggingToXmlPayload;
 import org.jclouds.aws.s3.binders.BindPayerToXmlPayload;
 import org.jclouds.aws.s3.binders.BindS3ObjectToPayload;
 import org.jclouds.aws.s3.domain.AccessControlList;
+import org.jclouds.aws.s3.domain.BucketLogging;
 import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
@@ -57,6 +60,7 @@ import org.jclouds.aws.s3.options.ListBucketOptions;
 import org.jclouds.aws.s3.options.PutBucketOptions;
 import org.jclouds.aws.s3.options.PutObjectOptions;
 import org.jclouds.aws.s3.xml.AccessControlListHandler;
+import org.jclouds.aws.s3.xml.BucketLoggingHandler;
 import org.jclouds.aws.s3.xml.CopyObjectHandler;
 import org.jclouds.aws.s3.xml.ListAllMyBucketsHandler;
 import org.jclouds.aws.s3.xml.ListBucketHandler;
@@ -267,5 +271,33 @@ public interface S3AsyncClient {
    @Path("{key}")
    Future<Boolean> putObjectACL(@HostPrefixParam String bucketName, @PathParam("key") String key,
             @BinderParam(BindACLToXMLPayload.class) AccessControlList acl);
+
+   /**
+    * @see S3Client#getBucketLogging
+    */
+   @GET
+   @QueryParams(keys = "logging")
+   @XMLResponseParser(BucketLoggingHandler.class)
+   @ExceptionParser(ThrowContainerNotFoundOn404.class)
+   @Path("/")
+   Future<BucketLogging> getBucketLogging(@HostPrefixParam String bucketName);
+
+   /**
+    * @see S3Client#enableBucketLogging
+    */
+   @PUT
+   @Path("/")
+   @QueryParams(keys = "logging")
+   Future<Void> enableBucketLogging(@HostPrefixParam String bucketName,
+            @BinderParam(BindBucketLoggingToXmlPayload.class) BucketLogging logging);
+
+   /**
+    * @see S3Client#putBucketLogging
+    */
+   @PUT
+   @Path("/")
+   @QueryParams(keys = "logging")
+   Future<Void> disableBucketLogging(
+            @BinderParam(BindNoBucketLoggingToXmlPayload.class) @HostPrefixParam String bucketName);
 
 }

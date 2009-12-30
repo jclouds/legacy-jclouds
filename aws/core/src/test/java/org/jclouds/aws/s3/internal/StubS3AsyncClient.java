@@ -43,6 +43,7 @@ import org.jclouds.aws.s3.blobstore.functions.BucketToContainerListOptions;
 import org.jclouds.aws.s3.blobstore.functions.ObjectToBlob;
 import org.jclouds.aws.s3.blobstore.functions.ResourceToBucketList;
 import org.jclouds.aws.s3.domain.AccessControlList;
+import org.jclouds.aws.s3.domain.BucketLogging;
 import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.CannedAccessPolicy;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
@@ -358,6 +359,33 @@ public class StubS3AsyncClient implements S3AsyncClient {
    public Future<Void> setBucketPayer(String bucketName, Payer payer) {
       return new FutureBase<Void>() {
          public Void get() throws InterruptedException, ExecutionException {
+            return null;
+         }
+      };
+   }
+
+   @Override
+   public Future<Void> disableBucketLogging(String bucketName) {
+      return new FutureBase<Void>() {
+         public Void get() throws InterruptedException, ExecutionException {
+            return null;
+         }
+      };
+   }
+
+   @Override
+   public Future<Void> enableBucketLogging(String bucketName, BucketLogging logging) {
+      return new FutureBase<Void>() {
+         public Void get() throws InterruptedException, ExecutionException {
+            return null;
+         }
+      };
+   }
+
+   @Override
+   public Future<BucketLogging> getBucketLogging(String bucketName) {
+      return new FutureBase<BucketLogging>() {
+         public BucketLogging get() throws InterruptedException, ExecutionException {
             return null;
          }
       };

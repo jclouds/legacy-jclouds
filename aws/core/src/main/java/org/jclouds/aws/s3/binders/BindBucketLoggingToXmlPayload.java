@@ -30,7 +30,7 @@ import javax.ws.rs.core.MediaType;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.jclouds.aws.s3.domain.AccessControlList;
+import org.jclouds.aws.s3.domain.BucketLogging;
 import org.jclouds.aws.s3.domain.AccessControlList.CanonicalUserGrantee;
 import org.jclouds.aws.s3.domain.AccessControlList.EmailAddressGrantee;
 import org.jclouds.aws.s3.domain.AccessControlList.Grant;
@@ -44,12 +44,12 @@ import com.jamesmurty.utils.XMLBuilder;
 
 /**
  * 
- * @author James Murty
+ * @author Adrian Cole
  */
-public class BindACLToXMLPayload implements Binder {
+public class BindBucketLoggingToXmlPayload implements Binder {
 
    public void bindToRequest(HttpRequest request, Object payload) {
-      AccessControlList from = (AccessControlList) payload;
+      BucketLogging from = (BucketLogging) payload;
       Properties outputProperties = new Properties();
       outputProperties.put(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
       try {
@@ -59,23 +59,18 @@ public class BindACLToXMLPayload implements Binder {
          request.setPayload(stringPayload);
       } catch (Exception e) {
          Utils.rethrowIfRuntime(e);
-         throw new RuntimeException("error transforming acl: " + from, e);
+         throw new RuntimeException("error transforming bucketLogging: " + from, e);
       }
    }
 
-   protected XMLBuilder generateBuilder(AccessControlList acl) throws ParserConfigurationException,
-            FactoryConfigurationError {
-      XMLBuilder rootBuilder = XMLBuilder.create("AccessControlPolicy").attr("xmlns",
-               S3Constants.S3_REST_API_XML_NAMESPACE);
-      if (acl.getOwner() != null) {
-         XMLBuilder ownerBuilder = rootBuilder.elem("Owner");
-         ownerBuilder.elem("ID").text(acl.getOwner().getId()).up();
-         if (acl.getOwner().getDisplayName() != null) {
-            ownerBuilder.elem("DisplayName").text(acl.getOwner().getDisplayName()).up();
-         }
-      }
-      XMLBuilder grantsBuilder = rootBuilder.elem("AccessControlList");
-      for (Grant grant : acl.getGrants()) {
+   protected XMLBuilder generateBuilder(BucketLogging bucketLogging)
+            throws ParserConfigurationException, FactoryConfigurationError {
+      XMLBuilder rootBuilder = XMLBuilder.create("BucketLoggingStatus").attr("xmlns",
+               S3Constants.S3_REST_API_XML_NAMESPACE).e("LoggingEnabled");
+      rootBuilder.e("TargetBucket").t(bucketLogging.getTargetBucket());
+      rootBuilder.e("TargetPrefix").t(bucketLogging.getTargetPrefix());
+      XMLBuilder grantsBuilder = rootBuilder.elem("TargetGrants");
+      for (Grant grant : bucketLogging.getTargetGrants()) {
          XMLBuilder grantBuilder = grantsBuilder.elem("Grant");
          XMLBuilder granteeBuilder = grantBuilder.elem("Grantee").attr("xmlns:xsi",
                   "http://www.w3.org/2001/XMLSchema-instance");

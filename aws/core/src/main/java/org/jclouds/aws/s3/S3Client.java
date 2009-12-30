@@ -29,6 +29,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.aws.s3.domain.AccessControlList;
+import org.jclouds.aws.s3.domain.BucketLogging;
 import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
@@ -388,4 +389,40 @@ public interface S3Client {
     *      />
     */
    void setBucketPayer(String bucketName, Payer payer);
+
+   /**
+    * Inspects the logging status for a bucket.
+    * 
+    * 
+    * @param bucketName
+    *           the bucket you wish to know the logging status
+    * @return bucketLogging configuration or null, if not configured
+    * 
+    * @see <a href= "http://docs.amazonwebservices.com/AmazonS3/latest/index.html?ServerLogs.html"
+    *      />
+    */
+   BucketLogging getBucketLogging(String bucketName);
+
+   /**
+    * Enables logging for a bucket.
+    * 
+    * @param bucketName
+    *           the bucket you wish to enable logging for
+    * @param logging
+    *           configuration including destination, prefix, and access rules
+    * @see <a href= "http://docs.amazonwebservices.com/AmazonS3/latest/index.html?ServerLogs.html"
+    *      />
+    */
+   void enableBucketLogging(String bucketName, BucketLogging logging);
+
+   /**
+    * Disables logging for a bucket.
+    * 
+    * @param bucketName
+    *           the bucket you wish to disable logging for
+    * 
+    * @see <a href= "http://docs.amazonwebservices.com/AmazonS3/latest/index.html?ServerLogs.html"
+    *      />
+    */
+   void disableBucketLogging(String bucketName);
 }

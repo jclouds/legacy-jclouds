@@ -302,6 +302,37 @@ public class AccessControlList {
             return myGranteeAndPermission.compareTo(otherGranteeAndPermission);
          }
       }
+
+      @Override
+      public int hashCode() {
+         final int prime = 31;
+         int result = 1;
+         result = prime * result + ((grantee == null) ? 0 : grantee.hashCode());
+         result = prime * result + ((permission == null) ? 0 : permission.hashCode());
+         return result;
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+         if (this == obj)
+            return true;
+         if (obj == null)
+            return false;
+         if (getClass() != obj.getClass())
+            return false;
+         Grant other = (Grant) obj;
+         if (grantee == null) {
+            if (other.grantee != null)
+               return false;
+         } else if (!grantee.equals(other.grantee))
+            return false;
+         if (permission == null) {
+            if (other.permission != null)
+               return false;
+         } else if (!permission.equals(other.permission))
+            return false;
+         return true;
+      }
    }
 
    public abstract static class Grantee implements Comparable<Grantee> {
@@ -326,6 +357,31 @@ public class AccessControlList {
 
       public int compareTo(org.jclouds.aws.s3.domain.AccessControlList.Grantee o) {
          return (this == o) ? 0 : getIdentifier().compareTo(o.getIdentifier());
+      }
+
+      @Override
+      public int hashCode() {
+         final int prime = 31;
+         int result = 1;
+         result = prime * result + ((identifier == null) ? 0 : identifier.hashCode());
+         return result;
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+         if (this == obj)
+            return true;
+         if (obj == null)
+            return false;
+         if (getClass() != obj.getClass())
+            return false;
+         Grantee other = (Grantee) obj;
+         if (identifier == null) {
+            if (other.identifier != null)
+               return false;
+         } else if (!identifier.equals(other.identifier))
+            return false;
+         return true;
       }
    }
 
