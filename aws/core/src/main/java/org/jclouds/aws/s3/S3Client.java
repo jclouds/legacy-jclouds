@@ -33,6 +33,7 @@ import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.s3.domain.BucketMetadata.LocationConstraint;
 import org.jclouds.aws.s3.options.CopyObjectOptions;
 import org.jclouds.aws.s3.options.ListBucketOptions;
 import org.jclouds.aws.s3.options.PutBucketOptions;
@@ -329,5 +330,22 @@ public interface S3Client {
     * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/RESTAccessPolicy.html"/>
     */
    boolean putObjectACL(String bucketName, String key, AccessControlList acl);
+
+   /**
+    * A GET location request operation using a bucket URI lists the location constraint of the
+    * bucket.
+    * <p/>
+    * To view the location constraint of a bucket, you must be the bucket owner.
+    * 
+    * @param bucket
+    *           the bucket you wish to know where exists
+    * 
+    * @return location of the bucket
+    * 
+    * @see <a href=
+    *      "http://docs.amazonwebservices.com/AmazonS3/latest/index.html?RESTBucketLocationGET.html"
+    *      />
+    */
+   LocationConstraint getBucketLocation(String bucketName);
 
 }

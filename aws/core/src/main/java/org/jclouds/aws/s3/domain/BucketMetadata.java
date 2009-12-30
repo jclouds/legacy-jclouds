@@ -43,9 +43,76 @@ public class BucketMetadata implements Comparable<BucketMetadata> {
     * @author Adrian Cole
     * @see <a href= "http://docs.amazonwebservices.com/AmazonS3/latest/RESTBucketLocationGET.html"
     *      />
+    * @see <a href=
+    *      "http://docs.amazonwebservices.com/AmazonS3/latest/dev/index.html?LocationSelection.html"
+    *      />
     */
    public static enum LocationConstraint {
-      EU
+      /**
+       * 
+       * US Standard—Uses Amazon S3 servers in the United States
+       * <p/>
+       * This is the default Region. All requests sent to s3.amazonaws.com go to this Region unless
+       * you specify a LocationConstraint on a bucket. The US Standard Region automatically places
+       * your data in either Amazon's east or west coast data centers depending on what will provide
+       * you with the lowest latency. To use this region, do not set the LocationConstraint bucket
+       * parameter. The US Standard Region provides eventual consistency for all requests.
+       */
+      US_STANDARD,
+
+      /**
+       * Uses Amazon S3 servers in Ireland.
+       * <p/>
+       * In Amazon S3, the EU (Ireland) Region provides read-after-write consistency for PUTS of new
+       * objects in your Amazon S3 bucket and eventual consistency for overwrite PUTS and DELETES.
+       */
+      EU,
+
+      /**
+       * US-West (Northern California)—Uses Amazon S3 servers in Northern California
+       * <p/>
+       * Optionally, use the endpoint s3-us-west-1.amazonaws.com on all requests to this bucket to
+       * reduce the latency you might experience after the first hour of creating a bucket in this
+       * Region.
+       * <p/>
+       * In Amazon S3, the US-West (Northern California) Region provides read-after-write
+       * consistency for PUTS of new objects in your Amazon S3 bucket and eventual consistency for
+       * overwrite PUTS and DELETES.
+       */
+      US_WEST;
+
+      /**
+       * returns the value expected in xml documents from the S3 service.
+       * <p/>
+       * {@code US_STANDARD} is returned as "" xml documents, so we return "".
+       */
+      public String value() {
+         switch (this) {
+            case US_STANDARD:
+               return "";
+            case EU:
+               return "EU";
+            case US_WEST:
+               return "us-west-1";
+            default:
+               throw new IllegalStateException("unimplemented location: " + this);
+         }
+      }
+
+      /**
+       * parses the value expected in xml documents from the S3 service.=
+       * <p/>
+       * {@code US_STANDARD} is returned as "" xml documents.
+       */
+      public static LocationConstraint fromValue(String v) {
+         if (v.equals(""))
+            return US_STANDARD;
+         if (v.equals("EU"))
+            return EU;
+         else if (v.equals("us-west-1"))
+            return US_WEST;
+         throw new IllegalStateException("unimplemented location: " + v);
+      }
    }
 
    public BucketMetadata(String name, Date creationDate, CanonicalUser owner) {

@@ -51,6 +51,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Signs the S3 request.
@@ -64,6 +65,8 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
    private final String[] firstHeadersToSign = new String[] { "Content-MD5",
             HttpHeaders.CONTENT_TYPE, HttpHeaders.DATE };
 
+   public static Set<String> SPECIAL_QUERIES = ImmutableSet.of("acl", "torrent", "logging",
+            "location", "requestPayment");
    private final SignatureWire signatureWire;
    private final String accessKey;
    private final String secretKey;
@@ -176,10 +179,9 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
          for (String param : params) {
             String[] paramNameAndValue = param.split("=");
 
-            if ("acl".equals(paramNameAndValue[0])) {
-               paramsToSign.append("acl");
+            if (SPECIAL_QUERIES.contains(paramNameAndValue[0])) {
+               paramsToSign.append(paramNameAndValue[0]);
             }
-            // TODO: Other special cases not yet handled: torrent, logging, location, requestPayment
          }
 
          if (paramsToSign.length() > 1) {

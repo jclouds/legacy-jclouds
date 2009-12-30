@@ -35,6 +35,7 @@ import java.io.ByteArrayInputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -47,6 +48,7 @@ import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.aws.ec2.domain.IpProtocol;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.Region;
+import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RootDeviceType;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.domain.Snapshot;
@@ -88,7 +90,7 @@ import com.google.inject.internal.ImmutableMap;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "ec2.EBSBootEC2ClientLiveTest")
+@Test(groups = "live", enabled = false, sequential = true, testName = "ec2.EBSBootEC2ClientLiveTest")
 public class EBSBootEC2ClientLiveTest {
    // don't need a lot of space. 2GB should be more than enough for testing
    private static final int VOLUME_SIZE = 2;
@@ -137,9 +139,8 @@ public class EBSBootEC2ClientLiveTest {
       VolumeAttached volumeAttached = injector.getInstance(VolumeAttached.class);
       attachTester = new RetryablePredicate<Attachment>(volumeAttached, 60, 1, TimeUnit.SECONDS);
 
-      InstanceStateRunning instanceStateRunning = injector.getInstance(InstanceStateRunning.class);
-      runningTester = new RetryablePredicate<RunningInstance>(instanceStateRunning, 180, 5,
-               TimeUnit.SECONDS);
+      runningTester = new RetryablePredicate<RunningInstance>(new InstanceStateRunning(client
+               .getInstanceServices()), 180, 5, TimeUnit.SECONDS);
 
       InstanceStateStopped instanceStateStopped = injector.getInstance(InstanceStateStopped.class);
       stoppedTester = new RetryablePredicate<RunningInstance>(instanceStateStopped, 60, 1,
@@ -153,7 +154,7 @@ public class EBSBootEC2ClientLiveTest {
       injector.injectMembers(socketOpen); // add logger
    }
 
-   @Test(enabled = true)
+   @Test(enabled = false)
    void testCreateSecurityGroupIngressCidr() throws InterruptedException, ExecutionException,
             TimeoutException {
       securityGroupName = INSTANCE_PREFIX + "ingress";
@@ -174,7 +175,7 @@ public class EBSBootEC2ClientLiveTest {
                securityGroupName, IpProtocol.TCP, 22, 22, "0.0.0.0/0");
    }
 
-   @Test(enabled = true)
+   @Test(enabled = false)
    void testCreateKeyPair() {
       String keyName = INSTANCE_PREFIX + "1";
       try {
@@ -190,7 +191,7 @@ public class EBSBootEC2ClientLiveTest {
       assertEquals(keyPair.getKeyName(), keyName);
    }
 
-   @Test(dependsOnMethods = { "testCreateKeyPair", "testCreateSecurityGroupIngressCidr" })
+   @Test(enabled = false, dependsOnMethods = { "testCreateKeyPair", "testCreateSecurityGroupIngressCidr" })
    public void testCreateRunningInstance() throws Exception {
       instance = createInstance(IMAGE_ID);
    }
@@ -221,7 +222,7 @@ public class EBSBootEC2ClientLiveTest {
       return instance;
    }
 
-   @Test(dependsOnMethods = "testCreateRunningInstance")
+   @Test(enabled = false, dependsOnMethods = "testCreateRunningInstance")
    void testCreateAndAttachVolume() {
       volume = client.getElasticBlockStoreServices().createVolumeInAvailabilityZone(
                instance.getAvailabilityZone(), VOLUME_SIZE);
@@ -267,10 +268,10 @@ public class EBSBootEC2ClientLiveTest {
                "umount {varl}EBS_MOUNT_POINT{varr}", "echo " + SCRIPT_END).build(OsFamily.UNIX);
    }
 
-   @Test(dependsOnMethods = "testCreateAndAttachVolume")
+   @Test(enabled = false, dependsOnMethods = "testCreateAndAttachVolume")
    void testBundleInstance() {
-      SshClient ssh = sshFactory.create(new InetSocketAddress(instance.getIpAddress(), 22), "ubuntu",
-               keyPair.getKeyMaterial().getBytes());
+      SshClient ssh = sshFactory.create(new InetSocketAddress(instance.getIpAddress(), 22),
+               "ubuntu", keyPair.getKeyMaterial().getBytes());
       try {
          ssh.connect();
       } catch (SshException e) {// try twice in case there is a network timeout
@@ -290,7 +291,7 @@ public class EBSBootEC2ClientLiveTest {
                   .getId());
          ssh.exec("chmod 755 " + script);
          ssh.exec(script + " init");
-         ExecResponse output = ssh.exec("sudo "+script + " start");
+         ExecResponse output = ssh.exec("sudo " + script + " start");
          System.out.println(output);
          output = ssh.exec(script + " status");
 
@@ -336,7 +337,7 @@ public class EBSBootEC2ClientLiveTest {
 
    }
 
-   @Test(dependsOnMethods = "testBundleInstance")
+   @Test(enabled = false, dependsOnMethods = "testBundleInstance")
    void testAMIFromBundle() {
       volume = Iterables.getOnlyElement(client.getElasticBlockStoreServices()
                .describeVolumesInRegion(volume.getRegion(), volume.getId()));
@@ -384,7 +385,7 @@ public class EBSBootEC2ClientLiveTest {
       verifyImage();
    }
 
-   @Test(dependsOnMethods = { "testAMIFromBundle" })
+   @Test(enabled = false, dependsOnMethods = { "testAMIFromBundle" })
    public void testInstanceFromEBS() throws Exception {
       System.out.printf("%d: %s creating instance from ebs-backed ami%n", System
                .currentTimeMillis(), ebsImage.getId());
@@ -453,9 +454,13 @@ public class EBSBootEC2ClientLiveTest {
       System.out.printf("%d: %s awaiting instance to run %n", System.currentTimeMillis(), instance
                .getId());
       assert runningTester.apply(instance);
-      instance = Iterables.getOnlyElement(Iterables.getOnlyElement(
-               client.getInstanceServices().describeInstancesInRegion(instance.getRegion(),
-                        instance.getId())).getRunningInstances());
+
+      // search my account for the instance I just created
+      Set<Reservation> reservations = client.getInstanceServices().describeInstancesInRegion(
+               instance.getRegion(), instance.getId()); // last parameter (ids) narrows the search
+
+      instance = Iterables.getOnlyElement(Iterables.getOnlyElement(reservations)
+               .getRunningInstances());
 
       System.out.printf("%d: %s awaiting ssh service to start%n", System.currentTimeMillis(),
                instance.getIpAddress());

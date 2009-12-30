@@ -43,6 +43,7 @@ import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.S3Object;
+import org.jclouds.aws.s3.domain.BucketMetadata.LocationConstraint;
 import org.jclouds.aws.s3.filters.RequestAuthorizeSignature;
 import org.jclouds.aws.s3.functions.ObjectKey;
 import org.jclouds.aws.s3.functions.ParseObjectFromHeadersAndHttpContent;
@@ -57,6 +58,7 @@ import org.jclouds.aws.s3.xml.AccessControlListHandler;
 import org.jclouds.aws.s3.xml.CopyObjectHandler;
 import org.jclouds.aws.s3.xml.ListAllMyBucketsHandler;
 import org.jclouds.aws.s3.xml.ListBucketHandler;
+import org.jclouds.aws.s3.xml.LocationConstraintHandler;
 import org.jclouds.blobstore.attr.BlobScope;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.attr.ConsistencyModels;
@@ -167,6 +169,15 @@ public interface S3AsyncClient {
    @QueryParams(keys = "max-keys", values = "0")
    @ExceptionParser(ReturnFalseOn404.class)
    Future<Boolean> bucketExists(@HostPrefixParam String bucketName);
+
+   /**
+    * @see S3Client#getBucketLocation
+    */
+   @GET
+   @QueryParams(keys = "location")
+   @Path("/")
+   @XMLResponseParser(LocationConstraintHandler.class)
+   Future<LocationConstraint> getBucketLocation(@HostPrefixParam String bucketName);
 
    /**
     * @see S3Client#listBucket

@@ -31,37 +31,26 @@ import static org.jclouds.aws.s3.options.CopyObjectOptions.Builder.ifSourceModif
 import static org.jclouds.aws.s3.options.CopyObjectOptions.Builder.ifSourceUnmodifiedSince;
 import static org.jclouds.aws.s3.options.CopyObjectOptions.Builder.overrideAcl;
 import static org.jclouds.aws.s3.options.CopyObjectOptions.Builder.overrideMetadataWith;
-import static org.jclouds.aws.s3.options.ListBucketOptions.Builder.afterMarker;
-import static org.jclouds.aws.s3.options.ListBucketOptions.Builder.delimiter;
-import static org.jclouds.aws.s3.options.ListBucketOptions.Builder.maxResults;
-import static org.jclouds.aws.s3.options.ListBucketOptions.Builder.withPrefix;
-import static org.jclouds.aws.s3.options.PutBucketOptions.Builder.createIn;
-import static org.jclouds.aws.s3.options.PutBucketOptions.Builder.withBucketAcl;
 import static org.jclouds.aws.s3.options.PutObjectOptions.Builder.withAcl;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.Date;
 import java.util.Map;
-import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.aws.s3.domain.AccessControlList;
-import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.CannedAccessPolicy;
-import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.AccessControlList.CanonicalUserGrantee;
 import org.jclouds.aws.s3.domain.AccessControlList.EmailAddressGrantee;
 import org.jclouds.aws.s3.domain.AccessControlList.GroupGranteeURI;
 import org.jclouds.aws.s3.domain.AccessControlList.Permission;
-import org.jclouds.aws.s3.domain.BucketMetadata.LocationConstraint;
 import org.jclouds.aws.s3.options.PutObjectOptions;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jclouds.http.HttpResponseException;
@@ -488,44 +477,6 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
       }
    }
 
-   public void testPrivateAclIsDefaultForContainer() throws InterruptedException,
-            ExecutionException, TimeoutException, IOException {
-      String containerName = getContainerName();
-      try {
-         AccessControlList acl = context.getApi().getBucketACL(containerName);
-         assertEquals(acl.getGrants().size(), 1);
-         assertTrue(acl.getOwner() != null);
-         String ownerId = acl.getOwner().getId();
-         assertTrue(acl.hasPermission(ownerId, Permission.FULL_CONTROL));
-      } finally {
-         returnContainer(containerName);
-      }
-
-   }
-
-   public void testUpdateContainerACL() throws InterruptedException, ExecutionException,
-            TimeoutException, IOException, Exception {
-      String containerName = getContainerName();
-      try {
-         // Confirm the container is private
-         AccessControlList acl = context.getApi().getBucketACL(containerName);
-         String ownerId = acl.getOwner().getId();
-         assertEquals(acl.getGrants().size(), 1);
-         assertTrue(acl.hasPermission(ownerId, Permission.FULL_CONTROL));
-
-         addGrantsToACL(acl);
-         assertEquals(acl.getGrants().size(), 4);
-         assertTrue(context.getApi().putBucketACL(containerName, acl));
-
-         // Confirm that the updated ACL has stuck.
-         acl = context.getApi().getBucketACL(containerName);
-         checkGrants(acl);
-      } finally {
-         destroyContainer(containerName);
-      }
-
-   }
-
    private void checkGrants(AccessControlList acl) {
       String ownerId = acl.getOwner().getId();
 
@@ -545,165 +496,4 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient
       acl.addPermission(new CanonicalUserGrantee(ownerId), Permission.WRITE_ACP);
    }
 
-   public void testPublicReadAccessPolicy() throws Exception {
-      String containerName = getScratchContainerName();
-      try {
-         context.getApi().putBucketIfNotExists(containerName,
-                  withBucketAcl(CannedAccessPolicy.PUBLIC_READ));
-         AccessControlList acl = context.getApi().getBucketACL(containerName);
-         assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ), acl.toString());
-         // TODO: I believe that the following should work based on the above acl assertion passing.
-         // However, it fails on 403
-         // URL url = new URL(String.format("http://%s.s3.amazonaws.com", containerName));
-         // Utils.toStringAndClose(url.openStream());
-      } finally {
-         destroyContainer(containerName);
-      }
-   }
-
-   @Test(expectedExceptions = IOException.class)
-   public void testDefaultAccessPolicy() throws Exception {
-      String containerName = getContainerName();
-      try {
-         URL url = new URL(String.format("https://%s.s3.amazonaws.com", containerName));
-         Utils.toStringAndClose(url.openStream());
-      } finally {
-         returnContainer(containerName);
-      }
-
-   }
-
-   /**
-    * using scratch containerName as we are changing location
-    */
-   public void testEu() throws Exception {
-      final String containerName = getScratchContainerName();
-      try {
-         context.getApi().putBucketIfNotExists(containerName + "eu",
-                  createIn(LocationConstraint.EU).withBucketAcl(CannedAccessPolicy.PUBLIC_READ));
-         assertConsistencyAware(new Runnable() {
-            public void run() {
-               try {
-                  AccessControlList acl = context.getApi().getBucketACL(containerName + "eu");
-                  assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ), acl
-                           .toString());
-               } catch (Exception e) {
-                  Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
-               }
-            }
-         });
-         // TODO: I believe that the following should work based on the above acl assertion passing.
-         // However, it fails on 403
-         // URL url = new URL(String.format("http://%s.s3.amazonaws.com", containerName));
-         // Utils.toStringAndClose(url.openStream());
-      } finally {
-         destroyContainer(containerName + "eu");
-      }
-   }
-
-   void containerExists() throws Exception {
-      String containerName = getContainerName();
-      try {
-         SortedSet<BucketMetadata> list = context.getApi().listOwnedBuckets();
-         BucketMetadata firstContainer = list.first();
-         BucketMetadata toMatch = new BucketMetadata(containerName, new Date(), firstContainer
-                  .getOwner());
-         assert list.contains(toMatch);
-      } finally {
-         returnContainer(containerName);
-      }
-   }
-
-   protected void addAlphabetUnderRoot(String containerName) {
-      for (char letter = 'a'; letter <= 'z'; letter++) {
-         S3Object blob = context.getApi().newS3Object();
-         blob.getMetadata().setKey(letter + "");
-         blob.setPayload(letter + "content");
-         context.getApi().putObject(containerName, blob);
-      }
-   }
-
-   public void testListContainerMarker() throws InterruptedException, ExecutionException,
-            TimeoutException {
-      String containerName = getContainerName();
-      try {
-         addAlphabetUnderRoot(containerName);
-         ListBucketResponse container = context.getApi()
-                  .listBucket(containerName, afterMarker("y"));
-         assertEquals(container.getMarker(), "y");
-         assert !container.isTruncated();
-         assertEquals(container.size(), 1);
-      } finally {
-         returnContainer(containerName);
-      }
-   }
-
-   public void testListContainerDelimiter() throws InterruptedException, ExecutionException,
-            TimeoutException, UnsupportedEncodingException {
-      String containerName = getContainerName();
-      try {
-         String prefix = "apps";
-         addTenObjectsUnderPrefix(containerName, prefix);
-         add15UnderRoot(containerName);
-         ListBucketResponse container = context.getApi().listBucket(containerName, delimiter("/"));
-         assertEquals(container.getDelimiter(), "/");
-         assert !container.isTruncated();
-         assertEquals(container.size(), 15);
-         assertEquals(container.getCommonPrefixes().size(), 1);
-      } finally {
-         returnContainer(containerName);
-      }
-
-   }
-
-   public void testListContainerPrefix() throws InterruptedException, ExecutionException,
-            TimeoutException, UnsupportedEncodingException {
-      String containerName = getContainerName();
-      try {
-         String prefix = "apps";
-         addTenObjectsUnderPrefix(containerName, prefix);
-         add15UnderRoot(containerName);
-
-         ListBucketResponse container = context.getApi().listBucket(containerName,
-                  withPrefix("apps/"));
-         assert !container.isTruncated();
-         assertEquals(container.size(), 10);
-         assertEquals(container.getPrefix(), "apps/");
-      } finally {
-         returnContainer(containerName);
-      }
-
-   }
-
-   public void testListContainerMaxResults() throws InterruptedException, ExecutionException,
-            TimeoutException, UnsupportedEncodingException {
-      String containerName = getContainerName();
-      try {
-         addAlphabetUnderRoot(containerName);
-         ListBucketResponse container = context.getApi().listBucket(containerName, maxResults(5));
-         assertEquals(container.getMaxKeys(), 5);
-         assert container.isTruncated();
-         assertEquals(container.size(), 5);
-      } finally {
-         returnContainer(containerName);
-      }
-   }
-
-   protected void add15UnderRoot(String containerName) {
-      for (int i = 0; i < 15; i++) {
-         S3Object blob = context.getApi().newS3Object();
-         blob.getMetadata().setKey(i + "");
-         blob.setPayload(i + "content");
-         context.getApi().putObject(containerName, blob);
-      }
-   }
-
-   protected void addTenObjectsUnderPrefix(String containerName, String prefix) {
-      for (int i = 0; i < 10; i++) {
-         S3Object blob = context.getApi().newS3Object();
-         blob.getMetadata().setKey(prefix + "/" + i);
-         blob.setPayload(i + "content");
-         context.getApi().putObject(containerName, blob);
-      }
-   }
 }

@@ -51,6 +51,7 @@ import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.AccessControlList.CanonicalUserGrantee;
 import org.jclouds.aws.s3.domain.AccessControlList.EmailAddressGrantee;
 import org.jclouds.aws.s3.domain.AccessControlList.Grant;
+import org.jclouds.aws.s3.domain.BucketMetadata.LocationConstraint;
 import org.jclouds.aws.s3.options.CopyObjectOptions;
 import org.jclouds.aws.s3.options.ListBucketOptions;
 import org.jclouds.aws.s3.options.PutBucketOptions;
@@ -332,6 +333,15 @@ public class StubS3AsyncClient implements S3AsyncClient {
 
    public S3Object newS3Object() {
       return objectProvider.create(null);
+   }
+
+   @Override
+   public Future<LocationConstraint> getBucketLocation(String bucketName) {
+      return new FutureBase<LocationConstraint>() {
+         public LocationConstraint get() throws InterruptedException, ExecutionException {
+            return LocationConstraint.US_STANDARD;
+         }
+      };
    }
 
 }

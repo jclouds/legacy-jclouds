@@ -49,6 +49,7 @@ import org.jclouds.aws.s3.xml.AccessControlListHandler;
 import org.jclouds.aws.s3.xml.CopyObjectHandler;
 import org.jclouds.aws.s3.xml.ListAllMyBucketsHandler;
 import org.jclouds.aws.s3.xml.ListBucketHandler;
+import org.jclouds.aws.s3.xml.LocationConstraintHandler;
 import org.jclouds.blobstore.binders.BindBlobToMultipartFormTest;
 import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
@@ -82,7 +83,22 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "s3.S3ClientTest")
-public class S3ClientTest extends RestClientTest<S3AsyncClient> {
+public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
+
+   public void testGetBucketLocation() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = S3AsyncClient.class.getMethod("getBucketLocation", String.class);
+      GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method, "bucket");
+
+      assertRequestLineEquals(httpMethod, "GET http://bucket.stub:8080/?location HTTP/1.1");
+      assertHeadersEqual(httpMethod, "Host: bucket.stub\n");
+      assertPayloadEquals(httpMethod, null);
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, LocationConstraintHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
 
    public void testListBucket() throws SecurityException, NoSuchMethodException, IOException {
       Method method = S3AsyncClient.class.getMethod("listBucket", String.class, Array.newInstance(
@@ -120,8 +136,8 @@ public class S3ClientTest extends RestClientTest<S3AsyncClient> {
       Method method = S3AsyncClient.class
                .getMethod("copyObject", String.class, String.class, String.class, String.class,
                         Array.newInstance(CopyObjectOptions.class, 0).getClass());
-      GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method, "sourceBucket",
-               "sourceObject", "destinationBucket", "destinationObject");
+      GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method,
+               "sourceBucket", "sourceObject", "destinationBucket", "destinationObject");
 
       assertRequestLineEquals(httpMethod,
                "PUT http://destinationBucket.stub:8080/destinationObject HTTP/1.1");
@@ -297,8 +313,8 @@ public class S3ClientTest extends RestClientTest<S3AsyncClient> {
    public void testPutObject() throws ArrayIndexOutOfBoundsException, SecurityException,
             IllegalArgumentException, NoSuchMethodException, IOException {
 
-      Method method = S3AsyncClient.class.getMethod("putObject", String.class, S3Object.class, Array
-               .newInstance(PutObjectOptions.class, 0).getClass());
+      Method method = S3AsyncClient.class.getMethod("putObject", String.class, S3Object.class,
+               Array.newInstance(PutObjectOptions.class, 0).getClass());
       GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method, "bucket",
                blobToS3Object.apply(BindBlobToMultipartFormTest.TEST_BLOB));
 
@@ -317,8 +333,8 @@ public class S3ClientTest extends RestClientTest<S3AsyncClient> {
    public void testPutObjectACL() throws SecurityException, NoSuchMethodException, IOException {
       Method method = S3AsyncClient.class.getMethod("putObjectACL", String.class, String.class,
                AccessControlList.class);
-      GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method, "bucket", "key",
-               AccessControlList.fromCannedAccessPolicy(CannedAccessPolicy.PRIVATE, "1234"));
+      GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method, "bucket",
+               "key", AccessControlList.fromCannedAccessPolicy(CannedAccessPolicy.PRIVATE, "1234"));
 
       assertRequestLineEquals(httpMethod, "PUT http://bucket.stub:8080/key?acl HTTP/1.1");
       assertHeadersEqual(httpMethod,

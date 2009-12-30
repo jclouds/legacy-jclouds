@@ -24,7 +24,7 @@
 package org.jclouds.aws.ec2;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withKeyName;
+import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.asType;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
@@ -68,7 +68,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = true, sequential = true, testName = "ec2.CloudApplicationArchitecturesEC2ClientLiveTest")
+@Test(groups = "live", enabled = false, sequential = true, testName = "ec2.CloudApplicationArchitecturesEC2ClientLiveTest")
 public class CloudApplicationArchitecturesEC2ClientLiveTest {
 
    private EC2Client client;
@@ -94,7 +94,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
       injector.injectMembers(socketOpen); // add logger
    }
 
-   @Test(enabled = true)
+   @Test(enabled = false)
    void testCreateSecurityGroupIngressCidr() throws InterruptedException, ExecutionException,
             TimeoutException {
       securityGroupName = serverPrefix + "ingress";
@@ -107,15 +107,13 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
 
       client.getSecurityGroupServices().createSecurityGroupInRegion(Region.DEFAULT,
                securityGroupName, securityGroupName);
-      client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(Region.DEFAULT,
-               securityGroupName, IpProtocol.TCP, 80, 80, "0.0.0.0/0");
-      client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(Region.DEFAULT,
-               securityGroupName, IpProtocol.TCP, 443, 443, "0.0.0.0/0");
-      client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(Region.DEFAULT,
-               securityGroupName, IpProtocol.TCP, 22, 22, "0.0.0.0/0");
+      for (int port : new int[] { 80, 443, 22 }) {
+         client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(Region.DEFAULT,
+                  securityGroupName, IpProtocol.TCP, port, port, "0.0.0.0/0");
+      }
    }
 
-   @Test(enabled = true)
+   @Test(enabled = false)
    void testCreateKeyPair() throws InterruptedException, ExecutionException, TimeoutException {
       String keyName = serverPrefix + "1";
       try {
@@ -132,23 +130,22 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
       assertEquals(keyPair.getKeyName(), keyName);
    }
 
-   @Test(enabled = true, dependsOnMethods = { "testCreateKeyPair",
+   @Test(enabled = false, dependsOnMethods = { "testCreateKeyPair",
             "testCreateSecurityGroupIngressCidr" })
    public void testCreateRunningInstance() throws Exception {
-      String imageId = "ami-1fd73376";
       RunningInstance server = null;
       while (server == null) {
          try {
             System.out.printf("%d: running instance%n", System.currentTimeMillis());
-            server = client.getInstanceServices().runInstancesInRegion(
-                     Region.DEFAULT,
-                     null,
-                     imageId,
-                     1,
-                     1,
-                     withKeyName(keyPair.getKeyName()).asType(InstanceType.M1_SMALL)
-                              .withSecurityGroup(securityGroupName)).getRunningInstances()
-                     .iterator().next();
+            Reservation reservation = client.getInstanceServices().runInstancesInRegion(
+                     Region.DEFAULT, null, // allow ec2 to chose an availability zone
+                     "ami-7e28ca17", // the ami I want
+                     1, // minimum instances
+                     1, // maximum instances
+                     asType(InstanceType.M1_SMALL) // smallest instance size
+                              .withKeyName(keyPair.getKeyName()) // key I created above
+                              .withSecurityGroup(securityGroupName)); // group I created above
+            server = Iterables.getOnlyElement(reservation.getRunningInstances());
          } catch (HttpResponseException htpe) {
             if (htpe.getResponse().getStatusCode() == 400)
                continue;
@@ -165,7 +162,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
 
    }
 
-   @Test(enabled = true, dependsOnMethods = "testCreateRunningInstance")
+   @Test(enabled = false, dependsOnMethods = "testCreateRunningInstance")
    void testElasticIpAddress() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
       address = client.getElasticIPAddressServices().allocateAddressInRegion(Region.DEFAULT);
@@ -244,8 +241,8 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
             throws InterruptedException, ExecutionException, TimeoutException {
       RunningInstance currentDetails = null;
       for (currentDetails = getRunningInstance(serverId); currentDetails.getInstanceState() != InstanceState.RUNNING; currentDetails = getRunningInstance(serverId)) {
-         System.out.printf("%s blocking on status active: currently: %s%n", currentDetails
-                  .getId(), currentDetails.getInstanceState());
+         System.out.printf("%s blocking on status active: currently: %s%n", currentDetails.getId(),
+                  currentDetails.getInstanceState());
          Thread.sleep(5 * 1000);
       }
 
