@@ -22,7 +22,7 @@ function findPid {
       return 1
    }
 }
-export PATH=/usr/ucb/bin:/bin:/usr/bin:/usr/sbin
+export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
 findPid $@ || exit 1
 echo $FOUND_PID
 exit 0

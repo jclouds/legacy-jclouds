@@ -76,7 +76,7 @@ public class InitBuilderTest {
                         "yes| mkfs -t ext3 {varl}EBS_DEVICE{varr} 2>&-",
                         "mount {varl}EBS_DEVICE{varr} {varl}EBS_MOUNT_POINT{varr}",
                         "echo making a local working copy of the boot disk",
-                        "rsync -ax --exclude=/mnt/* --exclude=/proc/* --exclude=/tmp/* --exclude=/dev/log / {varl}IMAGE_DIR{varr}",
+                        "rsync -ax --exclude /ubuntu/.bash_history --exclude /home/*/.bash_history --exclude /etc/ssh/ssh_host_* --exclude /etc/ssh/moduli --exclude /etc/udev/rules.d/*persistent-net.rules --exclude /var/lib/ec2/* --exclude=/mnt/* --exclude=/proc/* --exclude=/tmp/* --exclude=/dev/log / {varl}IMAGE_DIR{varr}",
                         "echo preparing the local working copy",
                         "touch {varl}IMAGE_DIR{varr}/etc/init.d/ec2-init-user-data",
                         "echo copying the local working copy to the ebs mount",

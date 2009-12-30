@@ -39,6 +39,7 @@ import org.jclouds.aws.ec2.EC2;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.filters.FormSigner;
+import org.jclouds.aws.ec2.functions.ReturnVoidOnVolumeAvailable;
 import org.jclouds.aws.ec2.options.CreateSnapshotOptions;
 import org.jclouds.aws.ec2.options.DescribeSnapshotsOptions;
 import org.jclouds.aws.ec2.options.DetachVolumeOptions;
@@ -202,9 +203,9 @@ public class ElasticBlockStoreAsyncClientTest extends RestClientTest<ElasticBloc
       assertPayloadEquals(httpMethod,
                "Version=2009-11-30&Action=DetachVolume&Force=false&VolumeId=id");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, AttachmentHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnVoidOnVolumeAvailable.class);
 
       checkFilters(httpMethod);
    }
@@ -225,9 +226,9 @@ public class ElasticBlockStoreAsyncClientTest extends RestClientTest<ElasticBloc
                httpMethod,
                "Version=2009-11-30&Action=DetachVolume&Force=true&VolumeId=id&InstanceId=instanceId&Device=%2Fdevice");
 
-      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, AttachmentHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnVoidOnVolumeAvailable.class);
 
       checkFilters(httpMethod);
    }

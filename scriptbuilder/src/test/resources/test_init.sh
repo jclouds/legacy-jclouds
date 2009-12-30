@@ -1,5 +1,5 @@
 #!/bin/bash
-set -u
+set +u
 shopt -s xpg_echo
 shopt -s expand_aliases
 unset PATH JAVA_HOME LD_LIBRARY_PATH
@@ -52,7 +52,7 @@ function forget {
    }
    return 0
 }
-export PATH=/usr/ucb/bin:/bin:/usr/bin:/usr/sbin
+export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
 case $1 in
 init)
    default || exit 1
@@ -60,10 +60,11 @@ init)
    mkdir -p $INSTANCE_HOME
    rm $INSTANCE_HOME/mkebsboot.sh 2>&-
    echo '#!/bin/bash'>>$INSTANCE_HOME/mkebsboot.sh
-   echo 'set -u'>>$INSTANCE_HOME/mkebsboot.sh
+   echo 'set +u'>>$INSTANCE_HOME/mkebsboot.sh
    echo 'shopt -s xpg_echo'>>$INSTANCE_HOME/mkebsboot.sh
    echo 'shopt -s expand_aliases'>>$INSTANCE_HOME/mkebsboot.sh
    echo "PROMPT_COMMAND='echo -ne \"\033]0;mkebsboot\007\"'">>$INSTANCE_HOME/mkebsboot.sh
+   echo 'export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin'>>$INSTANCE_HOME/mkebsboot.sh
    echo "export INSTANCE_NAME='mkebsboot'">>$INSTANCE_HOME/mkebsboot.sh
    echo "export TMP_DIR='$TMP_DIR'">>$INSTANCE_HOME/mkebsboot.sh
    echo "export INSTANCE_NAME='$INSTANCE_NAME'">>$INSTANCE_HOME/mkebsboot.sh

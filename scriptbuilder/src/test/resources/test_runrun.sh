@@ -5,6 +5,7 @@ echo 'set +u'>>/tmp/$USER/scripttest/yahooprod.sh
 echo 'shopt -s xpg_echo'>>/tmp/$USER/scripttest/yahooprod.sh
 echo 'shopt -s expand_aliases'>>/tmp/$USER/scripttest/yahooprod.sh
 echo "PROMPT_COMMAND='echo -ne \"\033]0;yahooprod\007\"'">>/tmp/$USER/scripttest/yahooprod.sh
+echo 'export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin'>>/tmp/$USER/scripttest/yahooprod.sh
 echo "export INSTANCE_NAME='yahooprod'">>/tmp/$USER/scripttest/yahooprod.sh
 echo "export JAVA_HOME='$JAVA_HOME'">>/tmp/$USER/scripttest/yahooprod.sh
 echo 'cd /tmp/$USER/scripttest'>>/tmp/$USER/scripttest/yahooprod.sh

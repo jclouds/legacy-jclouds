@@ -153,7 +153,9 @@ public class CreateRunScript implements Statement {
             statements.add(appendToFile(line, runScript, family));
       }
       statements.add(new AddTitleToFile(instanceName, runScript));
-      statements.add(appendToFile(Utils.writeZeroPath(family), runScript, family));
+      statements
+               .add(appendToFile(Utils.writeZeroPath(family).replace(ShellToken.LF.to(family), ""),
+                        runScript, family));
       statements.add(new AddExportToFile("instanceName", instanceName, runScript));
       for (String export : exports) {
          statements.add(new AddExportToFile(export, Utils.replaceTokens("{varl}"

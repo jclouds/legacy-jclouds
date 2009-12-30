@@ -222,7 +222,7 @@ public class AMIAsyncClientTest extends RestClientTest<AMIAsyncClient> {
 
    public void testRegisterImageBackedByEBS() throws SecurityException, NoSuchMethodException,
             IOException {
-      Method method = AMIAsyncClient.class.getMethod("registerImageBackedByEbsInRegion",
+      Method method = AMIAsyncClient.class.getMethod("registerUnixImageBackedByEbsInRegion",
                Region.class, String.class, String.class, Array.newInstance(
                         RegisterImageBackedByEbsOptions.class, 0).getClass());
       GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method,
@@ -243,7 +243,7 @@ public class AMIAsyncClientTest extends RestClientTest<AMIAsyncClient> {
 
    public void testRegisterImageBackedByEBSOptions() throws SecurityException,
             NoSuchMethodException, IOException {
-      Method method = AMIAsyncClient.class.getMethod("registerImageBackedByEbsInRegion",
+      Method method = AMIAsyncClient.class.getMethod("registerUnixImageBackedByEbsInRegion",
                Region.class, String.class, String.class, Array.newInstance(
                         RegisterImageBackedByEbsOptions.class, 0).getClass());
       GeneratedHttpRequest<AMIAsyncClient> httpMethod = processor.createRequest(method,

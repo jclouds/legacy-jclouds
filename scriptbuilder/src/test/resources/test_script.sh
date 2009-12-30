@@ -11,7 +11,7 @@ function default {
    export RUNTIME="Moo"
    return 0
 }
-export PATH=/usr/ucb/bin:/bin:/usr/bin:/usr/sbin
+export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
 case $1 in
 start)
    default || exit 1
