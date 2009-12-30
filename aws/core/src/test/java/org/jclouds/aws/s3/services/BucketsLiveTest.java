@@ -46,6 +46,7 @@ import org.jclouds.aws.s3.domain.AccessControlList;
 import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.CannedAccessPolicy;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
+import org.jclouds.aws.s3.domain.Payer;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.AccessControlList.CanonicalUserGrantee;
 import org.jclouds.aws.s3.domain.AccessControlList.EmailAddressGrantee;
@@ -179,7 +180,37 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest<S3AsyncClient,
       } finally {
          returnContainer(bucketName);
       }
+   }
 
+   public void testBucketPayer() throws Exception {
+      final String bucketName = getContainerName();
+      try {
+         assertEquals(Payer.BUCKET_OWNER, context.getApi().getBucketPayer(bucketName));
+         context.getApi().setBucketPayer(bucketName, Payer.REQUESTER);
+         assertConsistencyAware(new Runnable() {
+            public void run() {
+               try {
+                  assertEquals(Payer.REQUESTER, context.getApi().getBucketPayer(bucketName));
+
+               } catch (Exception e) {
+                  Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
+               }
+            }
+         });
+         context.getApi().setBucketPayer(bucketName, Payer.BUCKET_OWNER);
+         assertConsistencyAware(new Runnable() {
+            public void run() {
+               try {
+                  assertEquals(Payer.BUCKET_OWNER, context.getApi().getBucketPayer(bucketName));
+
+               } catch (Exception e) {
+                  Utils.<RuntimeException> rethrowIfRuntimeOrSameType(e);
+               }
+            }
+         });
+      } finally {
+         destroyContainer(bucketName);
+      }
    }
 
    /**

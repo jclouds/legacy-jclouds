@@ -47,6 +47,7 @@ import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.CannedAccessPolicy;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
+import org.jclouds.aws.s3.domain.Payer;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.AccessControlList.CanonicalUserGrantee;
 import org.jclouds.aws.s3.domain.AccessControlList.EmailAddressGrantee;
@@ -340,6 +341,24 @@ public class StubS3AsyncClient implements S3AsyncClient {
       return new FutureBase<LocationConstraint>() {
          public LocationConstraint get() throws InterruptedException, ExecutionException {
             return LocationConstraint.US_STANDARD;
+         }
+      };
+   }
+
+   @Override
+   public Future<Payer> getBucketPayer(String bucketName) {
+      return new FutureBase<Payer>() {
+         public Payer get() throws InterruptedException, ExecutionException {
+            return Payer.BUCKET_OWNER;
+         }
+      };
+   }
+
+   @Override
+   public Future<Void> setBucketPayer(String bucketName, Payer payer) {
+      return new FutureBase<Void>() {
+         public Void get() throws InterruptedException, ExecutionException {
+            return null;
          }
       };
    }

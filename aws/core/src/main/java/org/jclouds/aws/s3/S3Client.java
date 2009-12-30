@@ -32,6 +32,7 @@ import org.jclouds.aws.s3.domain.AccessControlList;
 import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
+import org.jclouds.aws.s3.domain.Payer;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.BucketMetadata.LocationConstraint;
 import org.jclouds.aws.s3.options.CopyObjectOptions;
@@ -348,4 +349,43 @@ public interface S3Client {
     */
    LocationConstraint getBucketLocation(String bucketName);
 
+   /**
+    * A GET request operation on a requestPayment resource returns the request payment configuration
+    * of a bucket.
+    * <p/>
+    * Only the bucket owner has permissions to get this value.
+    * 
+    * @param bucketName
+    *           the bucket you wish to know the payer status
+    * 
+    * @return {@link Payer.REQUESTER} for a Requester Pays bucket, and {@link Payer.BUCKET_OWNER},
+    *         for a normal bucket.
+    * 
+    * @see <a href=
+    *      "http://docs.amazonwebservices.com/AmazonS3/latest/index.html?RESTrequestPaymentGET.html"
+    *      />
+    */
+   Payer getBucketPayer(String bucketName);
+
+   /**
+    * The PUT request operation with a requestPayment URI configures an existing bucket to be
+    * Requester Pays or not. To make a bucket a Requester Pays bucket, make the Payer value
+    * Requester. Otherwise, make the value BucketOwner.
+    * <p/>
+    * Only a bucket owner is allowed to configure a bucket. As a result any requests for this
+    * resource should be signed with the bucket owner's credentials. Anonymous requests are never
+    * allowed to create Requester Pays buckets.
+    * 
+    * @param bucketName
+    *           the bucket you wish to know the payer status
+    * 
+    * @param payer
+    *           {@link Payer.REQUESTER} for a Requester Pays bucket, and {@link Payer.BUCKET_OWNER},
+    *           for a normal bucket.
+    * 
+    * @see <a href=
+    *      "http://docs.amazonwebservices.com/AmazonS3/latest/index.html?RESTrequestPaymentPUT.html"
+    *      />
+    */
+   void setBucketPayer(String bucketName, Payer payer);
 }

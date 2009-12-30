@@ -34,6 +34,7 @@ import org.jclouds.aws.s3.blobstore.functions.BlobToObject;
 import org.jclouds.aws.s3.config.S3ObjectModule;
 import org.jclouds.aws.s3.domain.AccessControlList;
 import org.jclouds.aws.s3.domain.CannedAccessPolicy;
+import org.jclouds.aws.s3.domain.Payer;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.filters.RequestAuthorizeSignature;
 import org.jclouds.aws.s3.functions.ParseObjectFromHeadersAndHttpContent;
@@ -50,6 +51,7 @@ import org.jclouds.aws.s3.xml.CopyObjectHandler;
 import org.jclouds.aws.s3.xml.ListAllMyBucketsHandler;
 import org.jclouds.aws.s3.xml.ListBucketHandler;
 import org.jclouds.aws.s3.xml.LocationConstraintHandler;
+import org.jclouds.aws.s3.xml.PayerHandler;
 import org.jclouds.blobstore.binders.BindBlobToMultipartFormTest;
 import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
@@ -95,6 +97,61 @@ public class S3AsyncClientTest extends RestClientTest<S3AsyncClient> {
 
       assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
       assertSaxResponseParserClassEquals(method, LocationConstraintHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testGetBucketPayer() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = S3AsyncClient.class.getMethod("getBucketPayer", String.class);
+      GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method, "bucket");
+
+      assertRequestLineEquals(httpMethod, "GET http://bucket.stub:8080/?requestPayment HTTP/1.1");
+      assertHeadersEqual(httpMethod, "Host: bucket.stub\n");
+      assertPayloadEquals(httpMethod, null);
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, PayerHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testSetBucketPayerOwner() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = S3AsyncClient.class.getMethod("setBucketPayer", String.class, Payer.class);
+      GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method, "bucket",
+               Payer.BUCKET_OWNER);
+
+      assertRequestLineEquals(httpMethod, "PUT http://bucket.stub:8080/?requestPayment HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 133\nContent-Type: text/xml\nHost: bucket.stub\n");
+      assertPayloadEquals(
+               httpMethod,
+               "<RequestPaymentConfiguration xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Payer>BucketOwner</Payer></RequestPaymentConfiguration>");
+
+      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+
+   public void testSetBucketPayerRequester() throws SecurityException, NoSuchMethodException,
+            IOException {
+      Method method = S3AsyncClient.class.getMethod("setBucketPayer", String.class, Payer.class);
+      GeneratedHttpRequest<S3AsyncClient> httpMethod = processor.createRequest(method, "bucket",
+               Payer.REQUESTER);
+
+      assertRequestLineEquals(httpMethod, "PUT http://bucket.stub:8080/?requestPayment HTTP/1.1");
+      assertHeadersEqual(httpMethod,
+               "Content-Length: 131\nContent-Type: text/xml\nHost: bucket.stub\n");
+      assertPayloadEquals(
+               httpMethod,
+               "<RequestPaymentConfiguration xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Payer>Requester</Payer></RequestPaymentConfiguration>");
+
+      assertResponseParserClassEquals(method, httpMethod, ReturnVoidIf2xx.class);
+      assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpMethod);

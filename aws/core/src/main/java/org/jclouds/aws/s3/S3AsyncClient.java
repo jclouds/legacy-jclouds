@@ -37,11 +37,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.jclouds.aws.s3.binders.BindACLToXMLPayload;
+import org.jclouds.aws.s3.binders.BindPayerToXmlPayload;
 import org.jclouds.aws.s3.binders.BindS3ObjectToPayload;
 import org.jclouds.aws.s3.domain.AccessControlList;
 import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
+import org.jclouds.aws.s3.domain.Payer;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.domain.BucketMetadata.LocationConstraint;
 import org.jclouds.aws.s3.filters.RequestAuthorizeSignature;
@@ -59,6 +61,7 @@ import org.jclouds.aws.s3.xml.CopyObjectHandler;
 import org.jclouds.aws.s3.xml.ListAllMyBucketsHandler;
 import org.jclouds.aws.s3.xml.ListBucketHandler;
 import org.jclouds.aws.s3.xml.LocationConstraintHandler;
+import org.jclouds.aws.s3.xml.PayerHandler;
 import org.jclouds.blobstore.attr.BlobScope;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.attr.ConsistencyModels;
@@ -178,6 +181,24 @@ public interface S3AsyncClient {
    @Path("/")
    @XMLResponseParser(LocationConstraintHandler.class)
    Future<LocationConstraint> getBucketLocation(@HostPrefixParam String bucketName);
+
+   /**
+    * @see S3Client#getBucketPayer
+    */
+   @GET
+   @QueryParams(keys = "requestPayment")
+   @Path("/")
+   @XMLResponseParser(PayerHandler.class)
+   Future<Payer> getBucketPayer(@HostPrefixParam String bucketName);
+
+   /**
+    * @see S3Client#setBucketPayer
+    */
+   @PUT
+   @QueryParams(keys = "requestPayment")
+   @Path("/")
+   Future<Void> setBucketPayer(@HostPrefixParam String bucketName,
+            @BinderParam(BindPayerToXmlPayload.class) Payer payer);
 
    /**
     * @see S3Client#listBucket
