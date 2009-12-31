@@ -39,6 +39,7 @@
         <!-- as this has a dependency on something you can't get from maven, excluding
                 <module>googleappengine</module>
         -->
+       <module>createlamp</module>
        <module>createandlistbuckets</module>
     </modules>
     <dependencies>
