@@ -45,7 +45,6 @@ import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.aws.ec2.domain.Volume.InstanceInitiatedShutdownBehavior;
 import org.jclouds.aws.ec2.predicates.InstanceStateRunning;
-import org.jclouds.encryption.internal.Base64;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
@@ -145,8 +144,6 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
                .addStatement(exec("runurl run.alestic.com/install/lamp"))//
                .build(OsFamily.UNIX);
 
-      // userData must be base 64 encoded
-      String encodedScript = Base64.encodeBytes(script.getBytes());
       RunningInstance instance = null;
       while (instance == null) {
          try {
@@ -160,7 +157,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
                      asType(InstanceType.M1_SMALL) // smallest instance size
                               .withKeyName(keyPair.getKeyName()) // key I created above
                               .withSecurityGroup(securityGroupName) // group I created above
-                              .withUserData(encodedScript)); // script to run as root
+                              .withUserData(script.getBytes())); // script to run as root
 
             instance = Iterables.getOnlyElement(reservation.getRunningInstances());
 

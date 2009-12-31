@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.aws.ec2.options.internal.BaseEC2RequestOptions;
+import org.jclouds.encryption.internal.Base64;
 
 /**
  * Contains options supported in the Form API for the RunInstances operation. <h2>
@@ -81,10 +82,10 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
    }
 
    /**
-    * MIME, Base64-encoded user data.
+    * Unencoded data
     */
-   public RunInstancesOptions withUserData(String data) {
-      formParameters.put("UserData", checkNotNull(data, "data"));
+   public RunInstancesOptions withUserData(byte[] data) {
+      formParameters.put("UserData", Base64.encodeBytes(checkNotNull(data, "data")));
       return this;
    }
 
@@ -207,9 +208,9 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
       }
 
       /**
-       * @see RunInstancesOptions#withUserData(String)
+       * @see RunInstancesOptions#withUserData(byte [])
        */
-      public static RunInstancesOptions withUserData(String userData) {
+      public static RunInstancesOptions withUserData(byte[] userData) {
          RunInstancesOptions options = new RunInstancesOptions();
          return options.withUserData(userData);
       }

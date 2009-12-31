@@ -38,7 +38,6 @@ import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.predicates.InstanceStateRunning;
-import org.jclouds.encryption.internal.Base64;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.RestContext;
@@ -160,12 +159,9 @@ public class MainApp {
    static RunningInstance runInstance(EC2Client client, String securityGroupName, String keyPairName) {
 
       String script = new ScriptBuilder() // lamp install script
-               .addStatement(exec("runurl run.alestic.com/apt/upgrade"))
-               .addStatement(exec("runurl run.alestic.com/install/lamp"))
+               .addStatement(exec("runurl run.alestic.com/apt/upgrade"))//
+               .addStatement(exec("runurl run.alestic.com/install/lamp"))//
                .build(OsFamily.UNIX);
-
-      // userData must be base 64 encoded
-      String encodedScript = Base64.encodeBytes(script.getBytes());
 
       System.out.printf("%d: running instance%n", System.currentTimeMillis());
       Reservation reservation = client.getInstanceServices().runInstancesInRegion(Region.DEFAULT,
@@ -176,7 +172,7 @@ public class MainApp {
                asType(InstanceType.M1_SMALL) // smallest instance size
                         .withKeyName(keyPairName) // key I created above
                         .withSecurityGroup(securityGroupName) // group I created above
-                        .withUserData(encodedScript)); // script to run as root
+                        .withUserData(script.getBytes())); // script to run as root
 
       return Iterables.getOnlyElement(reservation.getRunningInstances());
 
