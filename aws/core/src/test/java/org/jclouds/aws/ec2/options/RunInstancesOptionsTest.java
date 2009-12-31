@@ -129,8 +129,8 @@ public class RunInstancesOptionsTest {
    @Test
    public void testWithUserData() {
       RunInstancesOptions options = new RunInstancesOptions();
-      options.withUserData("test");
-      assertEquals(options.buildFormParameters().get("UserData"), Collections.singletonList("test"));
+      options.withUserData("test".getBytes());
+      assertEquals(options.buildFormParameters().get("UserData"), Collections.singletonList("dGVzdA=="));
    }
 
    @Test
@@ -141,8 +141,8 @@ public class RunInstancesOptionsTest {
 
    @Test
    public void testWithUserDataStatic() {
-      RunInstancesOptions options = withUserData("test");
-      assertEquals(options.buildFormParameters().get("UserData"), Collections.singletonList("test"));
+      RunInstancesOptions options = withUserData("test".getBytes());
+      assertEquals(options.buildFormParameters().get("UserData"), Collections.singletonList("dGVzdA=="));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
