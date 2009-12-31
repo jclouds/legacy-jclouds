@@ -65,10 +65,6 @@ import org.jclouds.rackspace.cloudservers.functions.ParseServerFromJsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseServerListFromJsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseSharedIpGroupFromJsonResponse;
 import org.jclouds.rackspace.cloudservers.functions.ParseSharedIpGroupListFromJsonResponse;
-import org.jclouds.rackspace.cloudservers.functions.ReturnFlavorNotFoundOn404;
-import org.jclouds.rackspace.cloudservers.functions.ReturnImageNotFoundOn404;
-import org.jclouds.rackspace.cloudservers.functions.ReturnServerNotFoundOn404;
-import org.jclouds.rackspace.cloudservers.functions.ReturnSharedIpGroupNotFoundOn404;
 import org.jclouds.rackspace.cloudservers.options.CreateServerOptions;
 import org.jclouds.rackspace.cloudservers.options.CreateSharedIpGroupOptions;
 import org.jclouds.rackspace.cloudservers.options.ListOptions;
@@ -116,7 +112,6 @@ public interface CloudServersAsyncClient {
    @GET
    @ResponseParser(ParseServerFromJsonResponse.class)
    @QueryParams(keys = "format", values = "json")
-   @ExceptionParser(ReturnServerNotFoundOn404.class)
    @Path("/servers/{id}")
    Future<Server> getServer(@PathParam("id") int id);
 
@@ -246,7 +241,6 @@ public interface CloudServersAsyncClient {
    @GET
    @ResponseParser(ParseFlavorFromJsonResponse.class)
    @QueryParams(keys = "format", values = "json")
-   @ExceptionParser(ReturnFlavorNotFoundOn404.class)
    @Path("/flavors/{id}")
    Future<Flavor> getFlavor(@PathParam("id") int id);
 
@@ -265,7 +259,6 @@ public interface CloudServersAsyncClient {
    @GET
    @ResponseParser(ParseImageFromJsonResponse.class)
    @QueryParams(keys = "format", values = "json")
-   @ExceptionParser(ReturnImageNotFoundOn404.class)
    @Path("/images/{id}")
    Future<Image> getImage(@PathParam("id") int id);
 
@@ -283,7 +276,6 @@ public interface CloudServersAsyncClient {
    @POST
    @ResponseParser(ParseImageFromJsonResponse.class)
    @QueryParams(keys = "format", values = "json")
-   @ExceptionParser(ReturnImageNotFoundOn404.class)
    @MapBinder(BindCreateImageToJsonPayload.class)
    @Path("/images")
    Future<Image> createImageFromServer(@MapPayloadParam("imageName") String imageName,
@@ -304,7 +296,6 @@ public interface CloudServersAsyncClient {
    @GET
    @ResponseParser(ParseSharedIpGroupFromJsonResponse.class)
    @QueryParams(keys = "format", values = "json")
-   @ExceptionParser(ReturnSharedIpGroupNotFoundOn404.class)
    @Path("/shared_ip_groups/{id}")
    Future<SharedIpGroup> getSharedIpGroup(@PathParam("id") int id);
 

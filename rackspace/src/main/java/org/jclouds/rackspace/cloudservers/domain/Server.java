@@ -35,7 +35,6 @@ import com.google.inject.internal.Maps;
  * @since 4.0
  */
 public class Server {
-   public static final Server NOT_FOUND = new Server(-1, "NOT_FOUND");
    private int id;
    private String name;
 

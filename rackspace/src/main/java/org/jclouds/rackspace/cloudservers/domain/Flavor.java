@@ -32,8 +32,6 @@ package org.jclouds.rackspace.cloudservers.domain;
  */
 public class Flavor {
 
-   public static final Flavor NOT_FOUND = new Flavor(-1, "NOT_FOUND");
-
    public Flavor() {
    }
 

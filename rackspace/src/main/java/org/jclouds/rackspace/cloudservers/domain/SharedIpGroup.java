@@ -37,8 +37,6 @@ import com.google.inject.internal.Lists;
  */
 public class SharedIpGroup {
 
-   public static final SharedIpGroup NOT_FOUND = new SharedIpGroup(-1, "NOT_FOUND");
-
    private int id;
    private String name;
 

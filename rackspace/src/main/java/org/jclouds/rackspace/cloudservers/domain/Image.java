@@ -35,8 +35,6 @@ import java.util.Date;
  */
 public class Image {
 
-   public static final Image NOT_FOUND = new Image(-1, "NOT_FOUND");
-
    private Date created;
    private int id;
    private String name;

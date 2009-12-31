@@ -57,6 +57,7 @@ import org.jclouds.rackspace.cloudservers.domain.ServerStatus;
 import org.jclouds.rackspace.cloudservers.domain.SharedIpGroup;
 import org.jclouds.rackspace.cloudservers.domain.WeeklyBackup;
 import org.jclouds.rackspace.cloudservers.options.RebuildServerOptions;
+import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
@@ -152,19 +153,19 @@ public class CloudServersClientLiveTest {
       }
    }
 
+   @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testGetImageDetailsNotFound() throws Exception {
       try {
-         Image newDetails = client.getImage(12312987);
-         assertEquals(Image.NOT_FOUND, newDetails);
+         client.getImage(12312987);
       } catch (HttpResponseException e) {// Ticket #9867
          if (e.getResponse().getStatusCode() != 400)
             throw e;
       }
    }
 
+   @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testGetServerDetailsNotFound() throws Exception {
-      Server newDetails = client.getServer(12312987);
-      assertEquals(Server.NOT_FOUND, newDetails);
+      client.getServer(12312987);
    }
 
    public void testGetServersDetail() throws Exception {
@@ -214,9 +215,9 @@ public class CloudServersClientLiveTest {
       }
    }
 
+   @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testGetFlavorDetailsNotFound() throws Exception {
-      Flavor newDetails = client.getFlavor(12312987);
-      assertEquals(Flavor.NOT_FOUND, newDetails);
+      client.getFlavor(12312987);
    }
 
    public void testListSharedIpGroups() throws Exception {
@@ -254,9 +255,9 @@ public class CloudServersClientLiveTest {
       }
    }
 
+   @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testGetSharedIpGroupDetailsNotFound() throws Exception {
-      SharedIpGroup newDetails = client.getSharedIpGroup(12312987);
-      assertEquals(SharedIpGroup.NOT_FOUND, newDetails);
+      client.getSharedIpGroup(12312987);
    }
 
    @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateServer")
@@ -571,39 +572,35 @@ public class CloudServersClientLiveTest {
    }
 
    @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = { "testRebootSoft", "testRevertResize",
-            "testConfirmResize" })
+            "testConfirmResize" }, expectedExceptions = ResourceNotFoundException.class)
    void deleteServer2() {
       if (serverId2 > 0) {
          client.deleteServer(serverId2);
-         Server server = client.getServer(serverId2);
-         assertEquals(server, Server.NOT_FOUND);
+         client.getServer(serverId2);
       }
    }
 
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "deleteServer2")
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "deleteServer2", expectedExceptions = ResourceNotFoundException.class)
    void testDeleteImage() {
       if (imageId > 0) {
          client.deleteImage(imageId);
-         Image image = client.getImage(imageId);
-         assertEquals(image, Image.NOT_FOUND);
+         client.getImage(imageId);
       }
    }
 
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testDeleteImage")
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = "testDeleteImage", expectedExceptions = ResourceNotFoundException.class)
    void deleteServer1() {
       if (serverId > 0) {
          client.deleteServer(serverId);
-         Server server = client.getServer(serverId);
-         assertEquals(server, Server.NOT_FOUND);
+         client.getServer(serverId);
       }
    }
 
-   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = { "deleteServer1" })
+   @Test(timeOut = 10 * 60 * 1000, dependsOnMethods = { "deleteServer1" }, expectedExceptions = ResourceNotFoundException.class)
    void testDeleteSharedIpGroup() {
       if (sharedIpGroupId > 0) {
          client.deleteSharedIpGroup(sharedIpGroupId);
-         SharedIpGroup server = client.getSharedIpGroup(sharedIpGroupId);
-         assertEquals(server, SharedIpGroup.NOT_FOUND);
+         client.getSharedIpGroup(sharedIpGroupId);
       }
    }
 

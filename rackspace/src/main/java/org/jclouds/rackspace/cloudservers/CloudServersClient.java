@@ -73,7 +73,7 @@ public interface CloudServersClient {
     * 
     * This operation returns details of the specified server.
     * 
-    * @return {@link Server#NOT_FOUND} if the server is not found
+    * @throws ResourceNotFoundException if the server is not found
     * @see Server
     */
    Server getServer(@PathParam("id") int id);
@@ -243,7 +243,7 @@ public interface CloudServersClient {
     * 
     * This operation returns details of the specified flavor.
     * 
-    * @return {@link Flavor#NOT_FOUND} if the flavor is not found
+    * @throws ResourceNotFoundException if the flavor is not found
     * @see Flavor
     */
    Flavor getFlavor(int id);
@@ -261,7 +261,7 @@ public interface CloudServersClient {
     * 
     * This operation returns details of the specified image.
     * 
-    * @return {@link Image#NOT_FOUND} if the image is not found
+    * @throws ResourceNotFoundException if the image is not found
     * @see Image
     */
    Image getImage(int id);
@@ -294,7 +294,7 @@ public interface CloudServersClient {
     * Note: At present, image creation is an asynchronous operation, so coordinating the creation
     * with data quiescence, etc. is currently not possible.
     * 
-    * @return {@link Image#NOT_FOUND} if the server is not found
+    * @throws ResourceNotFoundException if the server is not found
     * @see Image
     */
    Image createImageFromServer(String imageName, int serverId);
@@ -312,7 +312,7 @@ public interface CloudServersClient {
     * 
     * This operation returns details of the specified shared IP group.
     * 
-    * @return {@link SharedIpGroup#NOT_FOUND} if the shared IP group is not found
+    * @throws ResourceNotFoundException if the shared IP group is not found
     * @see SharedIpGroup
     */
    SharedIpGroup getSharedIpGroup(int id);
