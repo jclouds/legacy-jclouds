@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<DescribeInstanceAttributeResponse
+    xmlns="http://ec2.amazonaws.com/doc/2009-11-30/">
+    <requestId>947779ee-439a-46b5-82db-5f015f75b6d0</requestId>
+    <instanceId>i-7736101f</instanceId>
+    <instanceType>
+        <value>m1.small</value>
+    </instanceType>
+</DescribeInstanceAttributeResponse>

@@ -23,6 +23,7 @@
  */
 package org.jclouds.aws.ec2.services;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -30,8 +31,11 @@ import javax.annotation.Nullable;
 
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.InstanceStateChange;
+import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.Reservation;
+import org.jclouds.aws.ec2.domain.Image.EbsBlockDevice;
+import org.jclouds.aws.ec2.domain.Volume.InstanceInitiatedShutdownBehavior;
 import org.jclouds.aws.ec2.options.RunInstancesOptions;
 import org.jclouds.concurrent.Timeout;
 
@@ -226,21 +230,97 @@ public interface InstanceClient {
     */
    Set<InstanceStateChange> startInstancesInRegion(Region region, String... instanceIds);
 
-   String getUserDataForInstanceInRegion(Region region, String... instanceIds);
+   /**
+    * 
+    * @param region
+    *           Instances are tied to Availability Zones. However, the instance ID is tied to the
+    *           Region.
+    * @param instanceId
+    *           which instance to describe the attribute of
+    * @return unencoded user data
+    */
+   String getUserDataForInstanceInRegion(Region region, String instanceId);
 
-   String getRootDeviceNameForInstanceInRegion(Region region, String... instanceIds);
+   /**
+    * 
+    * @param region
+    *           Instances are tied to Availability Zones. However, the instance ID is tied to the
+    *           Region.
+    * @param instanceId
+    *           which instance to describe the attribute of
+    * @return The root device name (e.g., /dev/sda1).
+    */
+   String getRootDeviceNameForInstanceInRegion(Region region, String instanceId);
 
-   String getRamdiskForInstanceInRegion(Region region, String... instanceIds);
+   /**
+    * 
+    * @param region
+    *           Instances are tied to Availability Zones. However, the instance ID is tied to the
+    *           Region.
+    * @param instanceId
+    *           which instance to describe the attribute of
+    * @return the ID of the RAM disk associated with the AMI.
+    */
+   String getRamdiskForInstanceInRegion(Region region, String instanceId);
 
-   String getDisableApiTerminationForInstanceInRegion(Region region, String... instanceIds);
+   /**
+    * 
+    * @param region
+    *           Instances are tied to Availability Zones. However, the instance ID is tied to the
+    *           Region.
+    * @param instanceId
+    *           which instance to describe the attribute of
+    * @return Specifies whether the instance can be terminated using the APIs. You must modify this
+    *         attribute before you can terminate any "locked" instances from the APIs.
+    */
+   boolean getDisableApiTerminationForInstanceInRegion(Region region, String instanceId);
 
-   String getKernelForInstanceInRegion(Region region, String... instanceIds);
+   /**
+    * 
+    * @param region
+    *           Instances are tied to Availability Zones. However, the instance ID is tied to the
+    *           Region.
+    * @param instanceId
+    *           which instance to describe the attribute of
+    * @return the ID of the kernel associated with the AMI.
+    */
+   String getKernelForInstanceInRegion(Region region, String instanceId);
 
-   String getInstanceTypeForInstanceInRegion(Region region, String... instanceIds);
+   /**
+    * 
+    * @param region
+    *           Instances are tied to Availability Zones. However, the instance ID is tied to the
+    *           Region.
+    * @param instanceId
+    *           which instance to describe the attribute of
+    * @return The instance type of the instance.
+    */
+   InstanceType getInstanceTypeForInstanceInRegion(Region region, String instanceId);
 
-   String getInstanceInitiatedShutdownBehaviorForInstanceInRegion(Region region,
-            String... instanceIds);
+   /**
+    * 
+    * @param region
+    *           Instances are tied to Availability Zones. However, the instance ID is tied to the
+    *           Region.
+    * @param instanceId
+    *           which instance to describe the attribute of
+    * @return whether the instance's Amazon EBS volumes are stopped or terminated when the instance
+    *         is shut down.
+    */
+   InstanceInitiatedShutdownBehavior getInstanceInitiatedShutdownBehaviorForInstanceInRegion(
+            Region region, String instanceId);
 
-   String getBlockDeviceMappingForInstanceInRegion(Region region, String... instanceIds);
+   /**
+    * 
+    * @param region
+    *           Instances are tied to Availability Zones. However, the instance ID is tied to the
+    *           Region.
+    * @param instanceId
+    *           which instance to describe the attribute of
+    * @return Describes the mapping that defines native device names to use when exposing virtual
+    *         devices.
+    */
+   Map<String, EbsBlockDevice> getBlockDeviceMappingForInstanceInRegion(Region region,
+            String instanceId);
 
 }

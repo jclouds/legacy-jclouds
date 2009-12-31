@@ -43,6 +43,28 @@ import com.google.common.collect.Sets;
  */
 public class Volume implements Comparable<Volume> {
 
+   /**
+    * Specifies whether the instance's Amazon EBS volumes are stopped or terminated when the
+    * instance is shut down.
+    * 
+    * @author Adrian Cole
+    */
+   public static enum InstanceInitiatedShutdownBehavior {
+      STOP, TERMINATE;
+      public String value() {
+         return name().toLowerCase();
+      }
+
+      @Override
+      public String toString() {
+         return value();
+      }
+
+      public static InstanceInitiatedShutdownBehavior fromValue(String status) {
+         return valueOf(checkNotNull(status, "status").toUpperCase());
+      }
+   }
+
    public static enum Status {
       CREATING, AVAILABLE, IN_USE, DELETING;
       public String value() {

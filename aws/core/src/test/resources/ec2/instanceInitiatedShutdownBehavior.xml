@@ -1,0 +1,7 @@
+<DescribeInstanceAttributeResponse xmlns="http://ec2.amazonaws.com/doc/2009-11-30/">
+    <requestId>564827a8-c70d-4a76-bb9b-87fb5e5a6cee</requestId>
+    <instanceId>i-7736101f</instanceId>
+    <instanceInitiatedShutdownBehavior>
+        <value>stop</value>
+    </instanceInitiatedShutdownBehavior>
+</DescribeInstanceAttributeResponse>

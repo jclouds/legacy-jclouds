@@ -47,6 +47,8 @@ import org.jclouds.aws.ec2.domain.PublicIpInstanceIdPair;
 import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RunningInstance;
+import org.jclouds.aws.ec2.domain.Image.EbsBlockDevice;
+import org.jclouds.aws.ec2.domain.Volume.InstanceInitiatedShutdownBehavior;
 import org.jclouds.aws.ec2.predicates.InstanceStateRunning;
 import org.jclouds.encryption.internal.Base64;
 import org.jclouds.http.HttpResponseException;
@@ -63,6 +65,7 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.inject.Injector;
 
@@ -75,7 +78,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = false, sequential = true, testName = "ec2.CloudApplicationArchitecturesEC2ClientLiveTest")
+@Test(groups = "live", enabled = true, sequential = true, testName = "ec2.CloudApplicationArchitecturesEC2ClientLiveTest")
 public class CloudApplicationArchitecturesEC2ClientLiveTest {
 
    private EC2Client client;
@@ -103,7 +106,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
                TimeUnit.SECONDS);
    }
 
-   @Test(enabled = false)
+   @Test(enabled = true)
    void testCreateSecurityGroupIngressCidr() throws InterruptedException, ExecutionException,
             TimeoutException {
       securityGroupName = instancePrefix + "ingress";
@@ -122,7 +125,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
       }
    }
 
-   @Test(enabled = false)
+   @Test(enabled = true)
    void testCreateKeyPair() throws InterruptedException, ExecutionException, TimeoutException {
       String keyName = instancePrefix + "1";
       try {
@@ -139,19 +142,19 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
       assertEquals(keyPair.getKeyName(), keyName);
    }
 
-   @Test(enabled = false, dependsOnMethods = { "testCreateKeyPair",
+   @Test(enabled = true, dependsOnMethods = { "testCreateKeyPair",
             "testCreateSecurityGroupIngressCidr" })
    public void testCreateRunningInstance() throws Exception {
+      String script = new ScriptBuilder() // lamp install script
+               .addStatement(exec("runurl run.alestic.com/apt/upgrade"))//
+               .addStatement(exec("runurl run.alestic.com/install/lamp"))//
+               .build(OsFamily.UNIX);
+
+      // userData must be base 64 encoded
+      String encodedScript = Base64.encodeBytes(script.getBytes());
       RunningInstance instance = null;
       while (instance == null) {
          try {
-            String script = new ScriptBuilder() // lamp install script
-                     .addStatement(exec("runurl run.alestic.com/apt/upgrade"))//
-                     .addStatement(exec("runurl run.alestic.com/install/lamp"))//
-                     .build(OsFamily.UNIX);
-
-            // userData must be base 64 encoded
-            String encodedScript = Base64.encodeBytes(script.getBytes());
 
             System.out.printf("%d: running instance%n", System.currentTimeMillis());
             Reservation reservation = client.getInstanceServices().runInstancesInRegion(
@@ -176,12 +179,41 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
       instanceId = instance.getId();
       assertEquals(instance.getInstanceState(), InstanceState.PENDING);
       instance = blockUntilWeCanSshIntoInstance(instance);
+
+      verifyInstanceProperties(script);
+
       sshPing(instance);
       System.out.printf("%d: %s ssh connection made%n", System.currentTimeMillis(), instanceId);
 
    }
 
-   @Test(enabled = false, dependsOnMethods = "testCreateRunningInstance")
+   private void verifyInstanceProperties(String script) {
+      assertEquals(script, client.getInstanceServices().getUserDataForInstanceInRegion(
+               Region.DEFAULT, instanceId));
+
+      assertEquals(null, client.getInstanceServices().getRootDeviceNameForInstanceInRegion(
+               Region.DEFAULT, instanceId));
+
+      assert client.getInstanceServices().getRamdiskForInstanceInRegion(Region.DEFAULT, instanceId)
+               .startsWith("ari-");
+
+      assertEquals(false, client.getInstanceServices().getDisableApiTerminationForInstanceInRegion(
+               Region.DEFAULT, instanceId));
+
+      assert client.getInstanceServices().getKernelForInstanceInRegion(Region.DEFAULT, instanceId)
+               .startsWith("aki-");
+
+      assertEquals(InstanceType.M1_SMALL, client.getInstanceServices()
+               .getInstanceTypeForInstanceInRegion(Region.DEFAULT, instanceId));
+
+      assertEquals(InstanceInitiatedShutdownBehavior.TERMINATE, client.getInstanceServices()
+               .getInstanceInitiatedShutdownBehaviorForInstanceInRegion(Region.DEFAULT, instanceId));
+
+      assertEquals(ImmutableMap.<String, EbsBlockDevice> of(), client.getInstanceServices()
+               .getBlockDeviceMappingForInstanceInRegion(Region.DEFAULT, instanceId));
+   }
+
+   @Test(enabled = true, dependsOnMethods = "testCreateRunningInstance")
    void testElasticIpAddress() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
       address = client.getElasticIPAddressServices().allocateAddressInRegion(Region.DEFAULT);
