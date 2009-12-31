@@ -404,7 +404,6 @@ public class EBSBootEC2ClientLiveTest {
       client.getInstanceServices().startInstancesInRegion(ebsInstance.getRegion(),
                ebsInstance.getId());
       ebsInstance = blockUntilWeCanSshIntoInstance(ebsInstance);
-
    }
 
    private void verifyImage() {

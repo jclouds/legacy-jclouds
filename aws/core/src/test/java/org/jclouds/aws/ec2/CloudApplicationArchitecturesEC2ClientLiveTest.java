@@ -25,14 +25,16 @@ package org.jclouds.aws.ec2;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.asType;
+import static org.jclouds.scriptbuilder.domain.Statements.exec;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -45,14 +47,18 @@ import org.jclouds.aws.ec2.domain.PublicIpInstanceIdPair;
 import org.jclouds.aws.ec2.domain.Region;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RunningInstance;
+import org.jclouds.aws.ec2.predicates.InstanceStateRunning;
+import org.jclouds.encryption.internal.Base64;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
+import org.jclouds.scriptbuilder.ScriptBuilder;
+import org.jclouds.scriptbuilder.domain.OsFamily;
+import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
-import org.jclouds.util.Utils;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -63,7 +69,8 @@ import com.google.inject.Injector;
 /**
  * Follows the book Cloud Application Architectures ISBN: 978-0-596-15636-7
  * <p/>
- * 
+ * adds in functionality to boot a lamp instance: http://alestic.com/2009/06/ec2-user-data-scripts
+ * <p/>
  * Generally disabled, as it incurs higher fees.
  * 
  * @author Adrian Cole
@@ -73,13 +80,14 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
 
    private EC2Client client;
    protected SshClient.Factory sshFactory;
-   private String serverPrefix = System.getProperty("user.name") + ".ec2";
+   private String instancePrefix = System.getProperty("user.name") + ".ec2";
    private KeyPair keyPair;
    private String securityGroupName;
-   private String serverId;
+   private String instanceId;
    private InetAddress address;
 
    private RetryablePredicate<InetSocketAddress> socketTester;
+   private RetryablePredicate<RunningInstance> runningTester;
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException {
@@ -89,15 +97,16 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
                .withModules(new Log4JLoggingModule(), new JschSshClientModule()).buildInjector();
       client = injector.getInstance(EC2Client.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
-      SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
-      socketTester = new RetryablePredicate<InetSocketAddress>(socketOpen, 60, 1, TimeUnit.SECONDS);
-      injector.injectMembers(socketOpen); // add logger
+      runningTester = new RetryablePredicate<RunningInstance>(new InstanceStateRunning(client
+               .getInstanceServices()), 180, 5, TimeUnit.SECONDS);
+      socketTester = new RetryablePredicate<InetSocketAddress>(new SocketOpen(), 180, 1,
+               TimeUnit.SECONDS);
    }
 
    @Test(enabled = false)
    void testCreateSecurityGroupIngressCidr() throws InterruptedException, ExecutionException,
             TimeoutException {
-      securityGroupName = serverPrefix + "ingress";
+      securityGroupName = instancePrefix + "ingress";
 
       try {
          client.getSecurityGroupServices().deleteSecurityGroupInRegion(Region.DEFAULT,
@@ -115,7 +124,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
 
    @Test(enabled = false)
    void testCreateKeyPair() throws InterruptedException, ExecutionException, TimeoutException {
-      String keyName = serverPrefix + "1";
+      String keyName = instancePrefix + "1";
       try {
          client.getKeyPairServices().deleteKeyPairInRegion(Region.DEFAULT, keyName);
       } catch (Exception e) {
@@ -133,32 +142,42 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
    @Test(enabled = false, dependsOnMethods = { "testCreateKeyPair",
             "testCreateSecurityGroupIngressCidr" })
    public void testCreateRunningInstance() throws Exception {
-      RunningInstance server = null;
-      while (server == null) {
+      RunningInstance instance = null;
+      while (instance == null) {
          try {
+            String script = new ScriptBuilder() // lamp install script
+                     .addStatement(exec("runurl run.alestic.com/apt/upgrade"))//
+                     .addStatement(exec("runurl run.alestic.com/install/lamp"))//
+                     .build(OsFamily.UNIX);
+
+            // userData must be base 64 encoded
+            String encodedScript = Base64.encodeBytes(script.getBytes());
+
             System.out.printf("%d: running instance%n", System.currentTimeMillis());
             Reservation reservation = client.getInstanceServices().runInstancesInRegion(
                      Region.DEFAULT, null, // allow ec2 to chose an availability zone
-                     "ami-7e28ca17", // the ami I want
+                     "ami-ccf615a5", // alestic ami allows auto-invoke of user data scripts
                      1, // minimum instances
                      1, // maximum instances
                      asType(InstanceType.M1_SMALL) // smallest instance size
                               .withKeyName(keyPair.getKeyName()) // key I created above
-                              .withSecurityGroup(securityGroupName)); // group I created above
-            server = Iterables.getOnlyElement(reservation.getRunningInstances());
+                              .withSecurityGroup(securityGroupName) // group I created above
+                              .withUserData(encodedScript)); // script to run as root
+
+            instance = Iterables.getOnlyElement(reservation.getRunningInstances());
+
          } catch (HttpResponseException htpe) {
             if (htpe.getResponse().getStatusCode() == 400)
                continue;
             throw htpe;
          }
       }
-      assertNotNull(server.getId());
-      serverId = server.getId();
-      assertEquals(server.getInstanceState(), InstanceState.PENDING);
-      server = blockUntilRunningInstanceActive(serverId);
-
-      sshPing(server);
-      System.out.printf("%d: %s ssh connection made%n", System.currentTimeMillis(), serverId);
+      assertNotNull(instance.getId());
+      instanceId = instance.getId();
+      assertEquals(instance.getInstanceState(), InstanceState.PENDING);
+      instance = blockUntilWeCanSshIntoInstance(instance);
+      sshPing(instance);
+      System.out.printf("%d: %s ssh connection made%n", System.currentTimeMillis(), instanceId);
 
    }
 
@@ -175,16 +194,16 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
       assert compare.getInstanceId() == null;
 
       client.getElasticIPAddressServices().associateAddressInRegion(Region.DEFAULT, address,
-               serverId);
+               instanceId);
 
       compare = Iterables.getLast(client.getElasticIPAddressServices().describeAddressesInRegion(
                Region.DEFAULT, address));
 
       assertEquals(compare.getPublicIp(), address);
-      assertEquals(compare.getInstanceId(), serverId);
+      assertEquals(compare.getInstanceId(), instanceId);
 
       Reservation reservation = Iterables.getOnlyElement(client.getInstanceServices()
-               .describeInstancesInRegion(Region.DEFAULT, serverId));
+               .describeInstancesInRegion(Region.DEFAULT, instanceId));
 
       assertNotNull(Iterables.getOnlyElement(reservation.getRunningInstances()).getIpAddress());
       assertFalse(Iterables.getOnlyElement(reservation.getRunningInstances()).getIpAddress()
@@ -201,14 +220,47 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
       assert compare.getInstanceId() == null;
 
       reservation = Iterables.getOnlyElement(client.getInstanceServices()
-               .describeInstancesInRegion(Region.DEFAULT, serverId));
+               .describeInstancesInRegion(Region.DEFAULT, instanceId));
       // assert reservation.getRunningInstances().last().getIpAddress() == null; TODO
    }
 
+   private RunningInstance blockUntilWeCanSshIntoInstance(RunningInstance instance)
+            throws UnknownHostException {
+      System.out.printf("%d: %s awaiting instance to run %n", System.currentTimeMillis(), instance
+               .getId());
+      assert runningTester.apply(instance);
+
+      // search my account for the instance I just created
+      Set<Reservation> reservations = client.getInstanceServices().describeInstancesInRegion(
+               instance.getRegion(), instance.getId()); // last parameter (ids) narrows the search
+
+      instance = Iterables.getOnlyElement(Iterables.getOnlyElement(reservations)
+               .getRunningInstances());
+
+      System.out.printf("%d: %s awaiting ssh service to start%n", System.currentTimeMillis(),
+               instance.getIpAddress());
+      assert socketTester.apply(new InetSocketAddress(instance.getIpAddress(), 22));
+
+      System.out.printf("%d: %s ssh service started%n", System.currentTimeMillis(), instance
+               .getDnsName());
+      sshPing(instance);
+      System.out.printf("%d: %s ssh connection made%n", System.currentTimeMillis(), instance
+               .getId());
+
+      System.out.printf("%d: %s awaiting http service to start%n", System.currentTimeMillis(),
+               instance.getIpAddress());
+      assert socketTester.apply(new InetSocketAddress(instance.getIpAddress(), 80));
+      System.out.printf("%d: %s http service started%n", System.currentTimeMillis(), instance
+               .getDnsName());
+      return instance;
+   }
+
    /**
-    * this tests "personality" as the file looked up was sent during server creation
+    * this tests "personality" as the file looked up was sent during instance creation
+    * 
+    * @throws UnknownHostException
     */
-   private void sshPing(RunningInstance newDetails) throws IOException {
+   private void sshPing(RunningInstance newDetails) throws UnknownHostException {
       try {
          doCheckKey(newDetails);
       } catch (SshException e) {// try twice in case there is a network timeout
@@ -220,58 +272,34 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
       }
    }
 
-   private void doCheckKey(RunningInstance newDetails) throws IOException {
-      doCheckKey(InetAddress.getByName(newDetails.getDnsName()));
+   private void doCheckKey(RunningInstance newDetails) throws UnknownHostException {
+      doCheckKey(newDetails.getIpAddress());
    }
 
-   private void doCheckKey(InetAddress address) throws IOException {
-      SshClient connection = sshFactory.create(new InetSocketAddress(address, 22), "root", keyPair
+   private void doCheckKey(InetAddress address) {
+      SshClient ssh = sshFactory.create(new InetSocketAddress(address, 22), "root", keyPair
                .getKeyMaterial().getBytes());
       try {
-         connection.connect();
-         InputStream etcPasswd = connection.get("/etc/passwd");
-         Utils.toStringAndClose(etcPasswd);
+         ssh.connect();
+         ExecResponse hello = ssh.exec("echo hello");
+         assertEquals(hello.getOutput().trim(), "hello");
       } finally {
-         if (connection != null)
-            connection.disconnect();
+         if (ssh != null)
+            ssh.disconnect();
       }
-   }
-
-   private RunningInstance blockUntilRunningInstanceActive(String serverId)
-            throws InterruptedException, ExecutionException, TimeoutException {
-      RunningInstance currentDetails = null;
-      for (currentDetails = getRunningInstance(serverId); currentDetails.getInstanceState() != InstanceState.RUNNING; currentDetails = getRunningInstance(serverId)) {
-         System.out.printf("%s blocking on status active: currently: %s%n", currentDetails.getId(),
-                  currentDetails.getInstanceState());
-         Thread.sleep(5 * 1000);
-      }
-
-      System.out.printf("%d: %s awaiting ssh service to start%n", System.currentTimeMillis(),
-               currentDetails.getDnsName());
-      assert socketTester.apply(new InetSocketAddress(currentDetails.getDnsName(), 22));
-      System.out.printf("%d: %s ssh service started%n", System.currentTimeMillis(), currentDetails
-               .getDnsName());
-      return currentDetails;
    }
 
    @AfterTest
    void cleanup() throws InterruptedException, ExecutionException, TimeoutException {
       if (address != null)
          client.getElasticIPAddressServices().releaseAddressInRegion(Region.DEFAULT, address);
-      if (serverId != null)
-         client.getInstanceServices().terminateInstancesInRegion(Region.DEFAULT, serverId);
+      if (instanceId != null)
+         client.getInstanceServices().terminateInstancesInRegion(Region.DEFAULT, instanceId);
       if (keyPair != null)
          client.getKeyPairServices().deleteKeyPairInRegion(Region.DEFAULT, keyPair.getKeyName());
       if (securityGroupName != null)
          client.getSecurityGroupServices().deleteSecurityGroupInRegion(Region.DEFAULT,
                   securityGroupName);
-   }
-
-   private RunningInstance getRunningInstance(String serverId) throws InterruptedException,
-            ExecutionException, TimeoutException {
-      return Iterables.getOnlyElement(Iterables.getOnlyElement(
-               client.getInstanceServices().describeInstancesInRegion(Region.DEFAULT, serverId))
-               .getRunningInstances());
    }
 
 }

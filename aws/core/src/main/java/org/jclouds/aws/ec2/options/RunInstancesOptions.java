@@ -88,8 +88,8 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
    /**
     * MIME, Base64-encoded user data.
     */
-   public RunInstancesOptions withUserData(String info) {
-      formParameters.put("UserData", checkNotNull(info, "info"));
+   public RunInstancesOptions withUserData(String data) {
+      formParameters.put("UserData", checkNotNull(data, "data"));
       return this;
    }
 

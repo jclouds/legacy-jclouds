@@ -225,4 +225,22 @@ public interface InstanceClient {
     *      />
     */
    Set<InstanceStateChange> startInstancesInRegion(Region region, String... instanceIds);
+
+   String getUserDataForInstanceInRegion(Region region, String... instanceIds);
+
+   String getRootDeviceNameForInstanceInRegion(Region region, String... instanceIds);
+
+   String getRamdiskForInstanceInRegion(Region region, String... instanceIds);
+
+   String getDisableApiTerminationForInstanceInRegion(Region region, String... instanceIds);
+
+   String getKernelForInstanceInRegion(Region region, String... instanceIds);
+
+   String getInstanceTypeForInstanceInRegion(Region region, String... instanceIds);
+
+   String getInstanceInitiatedShutdownBehaviorForInstanceInRegion(Region region,
+            String... instanceIds);
+
+   String getBlockDeviceMappingForInstanceInRegion(Region region, String... instanceIds);
+
 }

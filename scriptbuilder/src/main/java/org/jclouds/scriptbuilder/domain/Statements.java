@@ -91,9 +91,20 @@ public class Statements {
    public static Statement kill() {
       return KILL;
    }
-
+   
+   /**
+    * statement can have multiple newlines, note you should use {@code {lf} } to be portable
+    * 
+    * @see ShellToken
+    */
    public static Statement interpret(String portableStatement) {
       return new InterpretableStatement(portableStatement);
    }
 
+   /**
+    * interprets and adds a newline to the statement
+    */
+   public static Statement exec(String portableStatement) {
+      return interpret(portableStatement+"{lf}");
+   }
 }

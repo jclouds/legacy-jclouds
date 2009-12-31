@@ -122,4 +122,89 @@ public interface InstanceAsyncClient {
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
 
+   /**
+    * @see AMIClient#getUserDataForInstanceInRegion
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeInstanceAttribute", "userData" })
+   Future<String> getUserDataForInstanceInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
+
+   /**
+    * @see AMIClient#getRootDeviceNameForInstanceInRegion
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeInstanceAttribute",
+            "rootDeviceName" })
+   Future<String> getRootDeviceNameForInstanceInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
+
+   /**
+    * @see AMIClient#getRamdiskForInstanceInRegion
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeInstanceAttribute", "ramdisk" })
+   Future<String> getRamdiskForInstanceInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
+
+   /**
+    * @see AMIClient#getDisableApiTerminationForInstanceInRegion
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeInstanceAttribute",
+            "disableApiTermination" })
+   Future<String> getDisableApiTerminationForInstanceInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
+
+   /**
+    * @see AMIClient#getKernelForInstanceInRegion
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeInstanceAttribute", "kernel" })
+   Future<String> getKernelForInstanceInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
+
+   /**
+    * @see AMIClient#getInstanceTypeForInstanceInRegion
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeInstanceAttribute",
+            "instanceType" })
+   Future<String> getInstanceTypeForInstanceInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
+
+   /**
+    * @see AMIClient#getInstanceInitiatedShutdownBehaviorForInstanceInRegion
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeInstanceAttribute",
+            "instanceInitiatedShutdownBehavior" })
+   Future<String> getInstanceInitiatedShutdownBehaviorForInstanceInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
+
+   /**
+    * @see AMIClient#getBlockDeviceMappingForInstanceInRegion
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeInstanceAttribute",
+            "blockDeviceMapping" })
+   Future<String> getBlockDeviceMappingForInstanceInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
+
 }
