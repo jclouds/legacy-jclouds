@@ -21,6 +21,8 @@ package org.jclouds.aws.ec2.binders;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import javax.inject.Singleton;
+
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
@@ -31,6 +33,7 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class IfNotNullBindAvailabilityZoneToFormParam implements Binder {
 
    @SuppressWarnings("unchecked")

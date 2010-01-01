@@ -34,6 +34,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.aws.ec2.domain.IpProtocol;
@@ -44,6 +45,7 @@ import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.aws.ec2.domain.Volume.InstanceInitiatedShutdownBehavior;
+import org.jclouds.aws.ec2.predicates.InstanceHasIpAddress;
 import org.jclouds.aws.ec2.predicates.InstanceStateRunning;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -72,7 +74,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = true, sequential = true, testName = "ec2.CloudApplicationArchitecturesEC2ClientLiveTest")
+@Test(groups = "live", enabled = false, sequential = true, testName = "ec2.CloudApplicationArchitecturesEC2ClientLiveTest")
 public class CloudApplicationArchitecturesEC2ClientLiveTest {
 
    private EC2Client client;
@@ -84,6 +86,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
    private InetAddress address;
 
    private RetryablePredicate<InetSocketAddress> socketTester;
+   private RetryablePredicate<RunningInstance> hasIpTester;
    private RetryablePredicate<RunningInstance> runningTester;
 
    @BeforeGroups(groups = { "live" })
@@ -96,11 +99,13 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
       sshFactory = injector.getInstance(SshClient.Factory.class);
       runningTester = new RetryablePredicate<RunningInstance>(new InstanceStateRunning(client
                .getInstanceServices()), 180, 5, TimeUnit.SECONDS);
+      hasIpTester = new RetryablePredicate<RunningInstance>(new InstanceHasIpAddress(client
+               .getInstanceServices()), 180, 5, TimeUnit.SECONDS);
       socketTester = new RetryablePredicate<InetSocketAddress>(new SocketOpen(), 180, 1,
                TimeUnit.SECONDS);
    }
 
-   @Test(enabled = true)
+   @Test(enabled = false)
    void testCreateSecurityGroupIngressCidr() throws InterruptedException, ExecutionException,
             TimeoutException {
       securityGroupName = instancePrefix + "ingress";
@@ -119,7 +124,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
       }
    }
 
-   @Test(enabled = true)
+   @Test(enabled = false)
    void testCreateKeyPair() throws InterruptedException, ExecutionException, TimeoutException {
       String keyName = instancePrefix + "1";
       try {
@@ -136,7 +141,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
       assertEquals(keyPair.getKeyName(), keyName);
    }
 
-   @Test(enabled = true, dependsOnMethods = { "testCreateKeyPair",
+   @Test(enabled = false, dependsOnMethods = { "testCreateKeyPair",
             "testCreateSecurityGroupIngressCidr" })
    public void testCreateRunningInstance() throws Exception {
       String script = new ScriptBuilder() // lamp install script
@@ -173,7 +178,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
       instance = blockUntilWeCanSshIntoInstance(instance);
 
       verifyInstanceProperties(script);
-
+      tryToChangeStuff();
       sshPing(instance);
       System.out.printf("%d: %s ssh connection made%n", System.currentTimeMillis(), instanceId);
 
@@ -189,7 +194,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
       assert client.getInstanceServices().getRamdiskForInstanceInRegion(Region.DEFAULT, instanceId)
                .startsWith("ari-");
 
-      assertEquals(false, client.getInstanceServices().getDisableApiTerminationForInstanceInRegion(
+      assertEquals(false, client.getInstanceServices().isApiTerminationDisabledForInstanceInRegion(
                Region.DEFAULT, instanceId));
 
       assert client.getInstanceServices().getKernelForInstanceInRegion(Region.DEFAULT, instanceId)
@@ -205,7 +210,112 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
                .getBlockDeviceMappingForInstanceInRegion(Region.DEFAULT, instanceId));
    }
 
-   @Test(enabled = true, dependsOnMethods = "testCreateRunningInstance")
+   private void setApiTerminationDisabledForInstanceInRegion() {
+      client.getInstanceServices().setApiTerminationDisabledForInstanceInRegion(Region.DEFAULT,
+               instanceId, true);
+      assertEquals(true, client.getInstanceServices().isApiTerminationDisabledForInstanceInRegion(
+               Region.DEFAULT, instanceId));
+      client.getInstanceServices().setApiTerminationDisabledForInstanceInRegion(Region.DEFAULT,
+               instanceId, false);
+      assertEquals(false, client.getInstanceServices().isApiTerminationDisabledForInstanceInRegion(
+               Region.DEFAULT, instanceId));
+   }
+
+   private void tryToChangeStuff() {
+      setApiTerminationDisabledForInstanceInRegion();
+      setUserDataForInstanceInRegion();
+      setRamdiskForInstanceInRegion();
+      setKernelForInstanceInRegion();
+      setInstanceTypeForInstanceInRegion();
+      setInstanceInitiatedShutdownBehaviorForInstanceInRegion();
+      setBlockDeviceMappingForInstanceInRegion();
+   }
+
+   private void setUserDataForInstanceInRegion() {
+      try {
+         client.getInstanceServices().setUserDataForInstanceInRegion(Region.DEFAULT, instanceId,
+                  "test".getBytes());
+         assert false : "shouldn't be allowed, as instance needs to be stopped";
+      } catch (AWSResponseException e) {
+         assertEquals("IncorrectInstanceState", e.getError().getCode());
+      }
+   }
+
+   private void setRamdiskForInstanceInRegion() {
+      try {
+         String ramdisk = client.getInstanceServices().getRamdiskForInstanceInRegion(
+                  Region.DEFAULT, instanceId);
+         client.getInstanceServices().setRamdiskForInstanceInRegion(Region.DEFAULT, instanceId,
+                  ramdisk);
+         assert false : "shouldn't be allowed, as instance needs to be stopped";
+      } catch (AWSResponseException e) {
+         assertEquals("IncorrectInstanceState", e.getError().getCode());
+      }
+   }
+
+   private void setKernelForInstanceInRegion() {
+      try {
+         String oldKernel = client.getInstanceServices().getKernelForInstanceInRegion(
+                  Region.DEFAULT, instanceId);
+         client.getInstanceServices().setKernelForInstanceInRegion(Region.DEFAULT, instanceId,
+                  oldKernel);
+         assert false : "shouldn't be allowed, as instance needs to be stopped";
+      } catch (AWSResponseException e) {
+         assertEquals("IncorrectInstanceState", e.getError().getCode());
+      }
+   }
+
+   private void setInstanceTypeForInstanceInRegion() {
+      try {
+         client.getInstanceServices().setInstanceTypeForInstanceInRegion(Region.DEFAULT,
+                  instanceId, InstanceType.C1_MEDIUM);
+         assert false : "shouldn't be allowed, as instance needs to be stopped";
+      } catch (AWSResponseException e) {
+         assertEquals("IncorrectInstanceState", e.getError().getCode());
+      }
+   }
+
+   private void setBlockDeviceMappingForInstanceInRegion() {
+      try {
+         client.getInstanceServices().setBlockDeviceMappingForInstanceInRegion(Region.DEFAULT,
+                  instanceId, "whoopie");
+         assert false : "shouldn't be allowed, as instance needs to be ebs based-ami";
+      } catch (AWSResponseException e) {
+         assertEquals("InvalidParameterCombination", e.getError().getCode());
+      }
+   }
+
+   private void setInstanceInitiatedShutdownBehaviorForInstanceInRegion() {
+      try {
+         client.getInstanceServices().setInstanceInitiatedShutdownBehaviorForInstanceInRegion(
+                  Region.DEFAULT, instanceId, InstanceInitiatedShutdownBehavior.STOP);
+         assert false : "shouldn't be allowed, as instance needs to be ebs based-ami";
+      } catch (AWSResponseException e) {
+         assertEquals("UnsupportedInstanceAttribute", e.getError().getCode());
+      }
+   }
+
+   @Test(enabled = false, dependsOnMethods = "testCreateRunningInstance")
+   void testReboot() throws InterruptedException, ExecutionException, TimeoutException, IOException {
+      RunningInstance instance = getInstance(instanceId);
+      System.out.printf("%d: %s rebooting instance %n", System.currentTimeMillis(), instanceId);
+      client.getInstanceServices().rebootInstancesInRegion(Region.DEFAULT, instanceId);
+      Thread.sleep(1000);
+      instance = getInstance(instanceId);
+      blockUntilWeCanSshIntoInstance(instance);
+      SshClient ssh = sshFactory.create(new InetSocketAddress(instance.getIpAddress(), 22), "root",
+               keyPair.getKeyMaterial().getBytes());
+      try {
+         ssh.connect();
+         ExecResponse uptime = ssh.exec("uptime");
+         assert uptime.getOutput().indexOf("0 min") != -1 : "reboot didn't work: " + uptime;
+      } finally {
+         if (ssh != null)
+            ssh.disconnect();
+      }
+   }
+
+   @Test(enabled = false, dependsOnMethods = "testReboot")
    void testElasticIpAddress() throws InterruptedException, ExecutionException, TimeoutException,
             IOException {
       address = client.getElasticIPAddressServices().allocateAddressInRegion(Region.DEFAULT);
@@ -254,12 +364,11 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
                .getId());
       assert runningTester.apply(instance);
 
-      // search my account for the instance I just created
-      Set<Reservation> reservations = client.getInstanceServices().describeInstancesInRegion(
-               instance.getRegion(), instance.getId()); // last parameter (ids) narrows the search
+      instance = getInstance(instance.getId());
 
-      instance = Iterables.getOnlyElement(Iterables.getOnlyElement(reservations)
-               .getRunningInstances());
+      System.out.printf("%d: %s awaiting instance to have ip assigned %n", System
+               .currentTimeMillis(), instance.getId());
+      assert hasIpTester.apply(instance);
 
       System.out.printf("%d: %s awaiting ssh service to start%n", System.currentTimeMillis(),
                instance.getIpAddress());
@@ -277,6 +386,14 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
       System.out.printf("%d: %s http service started%n", System.currentTimeMillis(), instance
                .getDnsName());
       return instance;
+   }
+
+   private RunningInstance getInstance(String instanceId) {
+      // search my account for the instance I just created
+      Set<Reservation> reservations = client.getInstanceServices().describeInstancesInRegion(
+               Region.DEFAULT, instanceId); // last parameter (ids) narrows the search
+
+      return Iterables.getOnlyElement(Iterables.getOnlyElement(reservations).getRunningInstances());
    }
 
    /**

@@ -49,7 +49,9 @@ import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.domain.Snapshot;
 import org.jclouds.aws.ec2.domain.Volume;
 import org.jclouds.aws.ec2.domain.Image.Architecture;
+import org.jclouds.aws.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.aws.ec2.domain.Image.ImageType;
+import org.jclouds.aws.ec2.domain.Volume.InstanceInitiatedShutdownBehavior;
 import org.jclouds.aws.ec2.predicates.InstanceStateRunning;
 import org.jclouds.aws.ec2.predicates.InstanceStateStopped;
 import org.jclouds.aws.ec2.predicates.InstanceStateTerminated;
@@ -186,7 +188,8 @@ public class EBSBootEC2ClientLiveTest {
       assertEquals(keyPair.getKeyName(), keyName);
    }
 
-   @Test(enabled = false, dependsOnMethods = { "testCreateKeyPair", "testCreateSecurityGroupIngressCidr" })
+   @Test(enabled = false, dependsOnMethods = { "testCreateKeyPair",
+            "testCreateSecurityGroupIngressCidr" })
    public void testCreateRunningInstance() throws Exception {
       instance = createInstance(IMAGE_ID);
    }
@@ -237,6 +240,7 @@ public class EBSBootEC2ClientLiveTest {
                .getId());
    }
 
+   // TODO use userData to do this, and make initbuilder an example for something else.
    @BeforeTest
    void makeScript() {
 
@@ -393,7 +397,7 @@ public class EBSBootEC2ClientLiveTest {
       System.out.printf("%d: %s awaiting instance to stop %n", System.currentTimeMillis(),
                ebsInstance.getId());
       stoppedTester.apply(ebsInstance);
-
+      tryToChangeStuff();
       System.out.printf("%d: %s awaiting instance to start %n", System.currentTimeMillis(),
                ebsInstance.getId());
       client.getInstanceServices().startInstancesInRegion(ebsInstance.getRegion(),
@@ -407,6 +411,90 @@ public class EBSBootEC2ClientLiveTest {
       assertEquals(ebsImage.getRootDeviceName(), "/dev/sda1");
       assertEquals(ebsImage.getEbsBlockDevices().entrySet(), ImmutableMap.of("/dev/sda1",
                new Image.EbsBlockDevice(snapshot.getId(), VOLUME_SIZE, true)).entrySet());
+   }
+
+   private void tryToChangeStuff() {
+      setUserDataForInstanceInRegion();
+      setRamdiskForInstanceInRegion();
+      setKernelForInstanceInRegion();
+      setInstanceTypeForInstanceInRegion();
+      setInstanceInitiatedShutdownBehaviorForInstanceInRegion();
+      setBlockDeviceMappingForInstanceInRegion();
+   }
+
+   private void setUserDataForInstanceInRegion() {
+      client.getInstanceServices().setUserDataForInstanceInRegion(Region.DEFAULT,
+               ebsInstance.getId(), "test".getBytes());
+      assertEquals("test", client.getInstanceServices().getUserDataForInstanceInRegion(
+               Region.DEFAULT, ebsInstance.getId()));
+   }
+
+   private void setRamdiskForInstanceInRegion() {
+      String ramdisk = client.getInstanceServices().getRamdiskForInstanceInRegion(Region.DEFAULT,
+               ebsInstance.getId());
+      client.getInstanceServices().setRamdiskForInstanceInRegion(Region.DEFAULT,
+               ebsInstance.getId(), ramdisk);
+      assertEquals(ramdisk, client.getInstanceServices().getRamdiskForInstanceInRegion(
+               Region.DEFAULT, ebsInstance.getId()));
+   }
+
+   private void setKernelForInstanceInRegion() {
+      String oldKernel = client.getInstanceServices().getKernelForInstanceInRegion(Region.DEFAULT,
+               ebsInstance.getId());
+      client.getInstanceServices().setKernelForInstanceInRegion(Region.DEFAULT,
+               ebsInstance.getId(), oldKernel);
+      assertEquals(oldKernel, client.getInstanceServices().getKernelForInstanceInRegion(
+               Region.DEFAULT, ebsInstance.getId()));
+   }
+
+   private void setInstanceTypeForInstanceInRegion() {
+      client.getInstanceServices().setInstanceTypeForInstanceInRegion(Region.DEFAULT,
+               ebsInstance.getId(), InstanceType.C1_MEDIUM);
+      assertEquals(InstanceType.C1_MEDIUM, client.getInstanceServices()
+               .getInstanceTypeForInstanceInRegion(Region.DEFAULT, ebsInstance.getId()));
+      client.getInstanceServices().setInstanceTypeForInstanceInRegion(Region.DEFAULT,
+               ebsInstance.getId(), InstanceType.M1_SMALL);
+      assertEquals(InstanceType.M1_SMALL, client.getInstanceServices()
+               .getInstanceTypeForInstanceInRegion(Region.DEFAULT, ebsInstance.getId()));
+   }
+
+   private void setBlockDeviceMappingForInstanceInRegion() { // TODO: determine the correct
+      // blockDeviceMapping format
+      try {
+         client.getInstanceServices().setBlockDeviceMappingForInstanceInRegion(Region.DEFAULT,
+                  ebsInstance.getId(), "whoopie");
+
+         assertEquals(ImmutableMap.<String, EbsBlockDevice> of("whoopie", null), client
+                  .getInstanceServices().getBlockDeviceMappingForInstanceInRegion(Region.DEFAULT,
+                           ebsInstance.getId()));
+         System.out.println("OK: setBlockDeviceMappingForInstanceInRegion");
+      } catch (Exception e) {
+         System.err.println("setBlockDeviceMappingForInstanceInRegion");
+
+         e.printStackTrace();
+      }
+   }
+
+   private void setInstanceInitiatedShutdownBehaviorForInstanceInRegion() {
+      try {
+
+         client.getInstanceServices().setInstanceInitiatedShutdownBehaviorForInstanceInRegion(
+                  Region.DEFAULT, ebsInstance.getId(), InstanceInitiatedShutdownBehavior.STOP);
+
+         assertEquals(InstanceInitiatedShutdownBehavior.STOP, client.getInstanceServices()
+                  .getInstanceInitiatedShutdownBehaviorForInstanceInRegion(Region.DEFAULT,
+                           ebsInstance.getId()));
+         client.getInstanceServices().setInstanceInitiatedShutdownBehaviorForInstanceInRegion(
+                  Region.DEFAULT, ebsInstance.getId(), InstanceInitiatedShutdownBehavior.TERMINATE);
+
+         assertEquals(InstanceInitiatedShutdownBehavior.TERMINATE, client.getInstanceServices()
+                  .getInstanceInitiatedShutdownBehaviorForInstanceInRegion(Region.DEFAULT,
+                           ebsInstance.getId()));
+         System.out.println("OK: setInstanceInitiatedShutdownBehaviorForInstanceInRegion");
+      } catch (Exception e) {
+         System.err.println("setInstanceInitiatedShutdownBehaviorForInstanceInRegion");
+         e.printStackTrace();
+      }
    }
 
    /**

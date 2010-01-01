@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nullable;
 
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
+import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.InstanceStateChange;
 import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.aws.ec2.domain.Region;
@@ -187,13 +188,37 @@ public interface InstanceClient {
     * @see #startInstancesInRegion
     * @see #runInstancesInRegion
     * @see #describeInstancesInRegion
-    * @see #terminateeInstancesInRegion
+    * @see #terminateInstancesInRegion
     * @see <a href=
     *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-StopInstances.html"
     *      />
     */
    Set<InstanceStateChange> stopInstancesInRegion(Region region, boolean force,
             String... instanceIds);
+
+   /**
+    * Requests a reboot of one or more instances. This operation is asynchronous; it only queues a
+    * request to reboot the specified instance(s). The operation will succeed if the instances are
+    * valid and belong to you. Requests to reboot terminated instances are ignored. <h3>Note</h3> If
+    * a Linux/UNIX instance does not cleanly shut down within four minutes, Amazon EC2 will perform
+    * a hard reboot.
+    * 
+    * @param region
+    *           Instances are tied to Availability Zones. However, the instance ID is tied to the
+    *           Region.
+    * 
+    * @param instanceIds
+    *           Instance ID to reboot.
+    * 
+    * @see #startInstancesInRegion
+    * @see #runInstancesInRegion
+    * @see #describeInstancesInRegion
+    * @see #terminateInstancesInRegion
+    * @see <a href=
+    *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-StopInstances.html"
+    *      />
+    */
+   void rebootInstancesInRegion(Region region, String... instanceIds);
 
    /**
     * Starts an instance that uses an Amazon EBS volume as its root device.
@@ -219,7 +244,7 @@ public interface InstanceClient {
     * @see #stopInstancesInRegion
     * @see #runInstancesInRegion
     * @see #describeInstancesInRegion
-    * @see #terminateeInstancesInRegion
+    * @see #terminateInstancesInRegion
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-StartInstances.html"
     *      />
     */
@@ -265,10 +290,9 @@ public interface InstanceClient {
     *           Region.
     * @param instanceId
     *           which instance to describe the attribute of
-    * @return Specifies whether the instance can be terminated using the APIs. You must modify this
-    *         attribute before you can terminate any "locked" instances from the APIs.
+    * @return the ID of the kernel associated with the AMI.
     */
-   boolean getDisableApiTerminationForInstanceInRegion(Region region, String instanceId);
+   String getKernelForInstanceInRegion(Region region, String instanceId);
 
    /**
     * 
@@ -277,9 +301,10 @@ public interface InstanceClient {
     *           Region.
     * @param instanceId
     *           which instance to describe the attribute of
-    * @return the ID of the kernel associated with the AMI.
+    * @return Specifies whether the instance can be terminated using the APIs. You must modify this
+    *         attribute before you can terminate any "locked" instances from the APIs.
     */
-   String getKernelForInstanceInRegion(Region region, String instanceId);
+   boolean isApiTerminationDisabledForInstanceInRegion(Region region, String instanceId);
 
    /**
     * 
@@ -318,4 +343,181 @@ public interface InstanceClient {
    Map<String, EbsBlockDevice> getBlockDeviceMappingForInstanceInRegion(Region region,
             String instanceId);
 
+   /**
+    * Resets an attribute of an instance to its default value.
+    * 
+    * @param region
+    *           Instances are tied to Availability Zones. However, the instance ID is tied to the
+    *           Region.
+    * @param instanceId
+    *           which instance to reset the attribute of
+    * @return the ID of the RAM disk associated with the AMI.
+    */
+   String resetRamdiskForInstanceInRegion(Region region, String instanceId);
+
+   /**
+    * Resets an attribute of an instance to its default value.
+    * 
+    * @param region
+    *           Instances are tied to Availability Zones. However, the instance ID is tied to the
+    *           Region.
+    * @param instanceId
+    *           which instance to reset the attribute of
+    * @return the ID of the kernel associated with the AMI.
+    */
+   String resetKernelForInstanceInRegion(Region region, String instanceId);
+
+   /**
+    * Sets the userData used for starting the instance.
+    * <p/>
+    * The instance needs to be in a {@link InstanceState#STOPPED} state, which implies two things:
+    * <ol>
+    * <li>The instance was launched from an EBS-backed AMI so that it can stop</li>
+    * <li>You have stopped and waited for the instance to transition from
+    * {@link InstanceState#STOPPING} to {@link InstanceState#STOPPED}</li>
+    * </ol>
+    * 
+    * @param region
+    *           Instances are tied to Availability Zones. However, the instance ID is tied to the
+    *           Region.
+    * @param instanceId
+    *           which instance to change the attribute of
+    * @param unencodedData
+    *           unencoded data to set as userData
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifyInstanceAttribute.html"
+    *      />
+    */
+   void setUserDataForInstanceInRegion(Region region, String instanceId, byte[] unencodedData);
+
+   /**
+    * Sets the ramdisk used for starting the instance.
+    * <p/>
+    * The instance needs to be in a {@link InstanceState#STOPPED} state, which implies two things:
+    * <ol>
+    * <li>The instance was launched from an EBS-backed AMI so that it can stop</li>
+    * <li>You have stopped and waited for the instance to transition from
+    * {@link InstanceState#STOPPING} to {@link InstanceState#STOPPED}</li>
+    * </ol>
+    * 
+    * @param region
+    *           Instances are tied to Availability Zones. However, the instance ID is tied to the
+    *           Region.
+    * @param instanceId
+    *           which instance to change the attribute of
+    * @param ramdisk
+    *           ramdisk used to start the instance
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifyInstanceAttribute.html"
+    *      />
+    */
+   void setRamdiskForInstanceInRegion(Region region, String instanceId, String ramdisk);
+
+   /**
+    * Sets the kernelId used for starting the instance.
+    * <p/>
+    * The instance needs to be in a {@link InstanceState#STOPPED} state, which implies two things:
+    * <ol>
+    * <li>The instance was launched from an EBS-backed AMI so that it can stop</li>
+    * <li>You have stopped and waited for the instance to transition from
+    * {@link InstanceState#STOPPING} to {@link InstanceState#STOPPED}</li>
+    * </ol>
+    * 
+    * @param region
+    *           Instances are tied to Availability Zones. However, the instance ID is tied to the
+    *           Region.
+    * @param instanceId
+    *           which instance to change the attribute of
+    * @param kernel
+    *           kernelId used to start the instance
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifyInstanceAttribute.html"
+    *      />
+    */
+   void setKernelForInstanceInRegion(Region region, String instanceId, String kernel);
+
+   /**
+    * This command works while the instance is running and controls whether or not the api can be
+    * used to terminate the instance.
+    * 
+    * @param region
+    *           Instances are tied to Availability Zones. However, the instance ID is tied to the
+    *           Region.
+    * @param instanceId
+    *           which instance to reset the attribute of
+    * @param apiTerminationDisabled
+    *           true to disable api termination
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifyInstanceAttribute.html"
+    *      />
+    */
+   void setApiTerminationDisabledForInstanceInRegion(Region region, String instanceId,
+            boolean apiTerminationDisabled);
+
+   /**
+    * Sets the instanceType used for starting the instance.
+    * <p/>
+    * The instance needs to be in a {@link InstanceState#STOPPED} state, which implies two things:
+    * <ol>
+    * <li>The instance was launched from an EBS-backed AMI so that it can stop</li>
+    * <li>You have stopped and waited for the instance to transition from
+    * {@link InstanceState#STOPPING} to {@link InstanceState#STOPPED}</li>
+    * </ol>
+    * 
+    * @param region
+    *           Instances are tied to Availability Zones. However, the instance ID is tied to the
+    *           Region.
+    * @param instanceId
+    *           which instance to change the attribute of
+    * @param instanceType
+    *           instanceType used to start the instance
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifyInstanceAttribute.html"
+    *      />
+    */
+   void setInstanceTypeForInstanceInRegion(Region region, String instanceId,
+            InstanceType instanceType);
+
+   /**
+    * Specifies whether the instance's Amazon EBS volumes are stopped or terminated when the
+    * instance is shut down.
+    * <p/>
+    * The instance needs to be in a {@link InstanceState#STOPPED} state, which implies two things:
+    * <ol>
+    * <li>The instance was launched from an EBS-backed AMI so that it can stop</li>
+    * <li>You have stopped and waited for the instance to transition from
+    * {@link InstanceState#STOPPING} to {@link InstanceState#STOPPED}</li>
+    * </ol>
+    * 
+    * @param region
+    *           Instances are tied to Availability Zones. However, the instance ID is tied to the
+    *           Region.
+    * @param instanceId
+    *           which instance to change the attribute of
+    * @param instanceInitiatedShutdownBehavior
+    *           whether the instance's Amazon EBS volumes are stopped or terminated when the
+    *           instance is shut down.
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifyInstanceAttribute.html"
+    *      />
+    */
+   void setInstanceInitiatedShutdownBehaviorForInstanceInRegion(Region region, String instanceId,
+            InstanceInitiatedShutdownBehavior instanceInitiatedShutdownBehavior);
+
+   /**
+    * Sets the blockDeviceMapping used for starting the instance.
+    * <p/>
+    * The instance needs to be in a {@link InstanceState#STOPPED} state, which implies two things:
+    * <ol>
+    * <li>The instance was launched from an EBS-backed AMI so that it can stop</li>
+    * <li>You have stopped and waited for the instance to transition from
+    * {@link InstanceState#STOPPING} to {@link InstanceState#STOPPED}</li>
+    * </ol>
+    * 
+    * @param region
+    *           Instances are tied to Availability Zones. However, the instance ID is tied to the
+    *           Region.
+    * @param instanceId
+    *           which instance to change the attribute of
+    * @param blockDeviceMapping
+    *           blockDeviceMapping used to start the instance
+    * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-ModifyInstanceAttribute.html"
+    *      />
+    */
+   void setBlockDeviceMappingForInstanceInRegion(Region region, String instanceId,
+            String blockDeviceMapping);
 }

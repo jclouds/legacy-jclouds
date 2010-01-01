@@ -108,6 +108,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -836,6 +837,19 @@ public class RestAnnotationProcessorTest {
       assertEquals(httpMethod.getRequestLine(),
                "POST http://localhost:8080/objects/robot/action/kill;death=slow HTTP/1.1");
       assertEquals(httpMethod.getHeaders().size(), 0);
+   }
+
+   public void testParseBase64InForm() {
+      Multimap<String, String> expects = LinkedListMultimap.create();
+      expects.put("Version", "2009-11-30");
+      expects.put("Action", "ModifyInstanceAttribute");
+      expects.put("Attribute", "userData");
+      expects.put("Value", "dGVzdA==");
+      expects.put("InstanceId", "1");
+      assertEquals(
+               expects,
+               RestAnnotationProcessor
+                        .parseQueryToMap("Version=2009-11-30&Action=ModifyInstanceAttribute&Attribute=userData&Value=dGVzdA%3D%3D&InstanceId=1"));
    }
 
    @Endpoint(Localhost.class)

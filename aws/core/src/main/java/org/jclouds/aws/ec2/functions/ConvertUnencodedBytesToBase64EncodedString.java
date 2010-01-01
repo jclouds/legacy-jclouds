@@ -16,32 +16,37 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.aws.ec2.binders;
+package org.jclouds.aws.ec2.functions;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.ec2.util.EC2Utils;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.Binder;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.jclouds.encryption.EncryptionService;
+
+import com.google.common.base.Function;
 
 /**
- * Binds the String [] to form parameters named with VolumeId.index
+ * Binds base64 encodes the byte [] input
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class BindVolumeIdsToIndexedFormParams implements Binder {
+public class ConvertUnencodedBytesToBase64EncodedString implements Function<Object, String> {
 
-   @SuppressWarnings("unchecked")
-   public void bindToRequest(HttpRequest request, Object input) {
-      checkArgument(checkNotNull(request, "input") instanceof GeneratedHttpRequest,
-               "this binder is only valid for GeneratedHttpRequests!");
-      EC2Utils.indexStringArrayToFormValuesWithPrefix((GeneratedHttpRequest<?>) request,
-               "VolumeId", input);
+   @Inject
+   EncryptionService encryptionService;
+
+   @Override
+   public String apply(Object from) {
+      checkArgument(checkNotNull(from, "input") instanceof byte[],
+               "this binder is only valid for byte []!");
+
+      byte[] unencodedData = (byte[]) from;
+      checkArgument(checkNotNull(unencodedData, "unencodedData").length <= 16 * 1024,
+               "userData cannot be larger than 16kb");
+      return encryptionService.toBase64String(unencodedData);
    }
-
 }

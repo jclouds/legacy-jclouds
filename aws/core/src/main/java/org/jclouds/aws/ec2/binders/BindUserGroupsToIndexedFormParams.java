@@ -21,6 +21,8 @@ package org.jclouds.aws.ec2.binders;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import javax.inject.Singleton;
+
 import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
@@ -33,6 +35,7 @@ import com.google.common.collect.Iterables;
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class BindUserGroupsToIndexedFormParams implements Binder {
 
    @SuppressWarnings("unchecked")

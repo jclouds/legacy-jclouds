@@ -431,8 +431,13 @@ public class RestAnnotationProcessor<T> {
       } else {
          String[] parts = HttpUtils.urlDecode(in).split("&");
          for (int partIndex = 0; partIndex < parts.length; partIndex++) {
-            String[] keyValue = parts[partIndex].split("=");
-            map.put(keyValue[0], keyValue.length == 2 ? keyValue[1] : null);
+            // note that '=' can be a valid part of the value
+            int indexOfFirstEquals = parts[partIndex].indexOf('=');
+            String key = indexOfFirstEquals == -1 ? parts[partIndex] : parts[partIndex].substring(
+                     0, indexOfFirstEquals);
+            String value = indexOfFirstEquals == -1 ? null : parts[partIndex]
+                     .substring(indexOfFirstEquals+1);
+            map.put(key, value);
          }
       }
       return map;

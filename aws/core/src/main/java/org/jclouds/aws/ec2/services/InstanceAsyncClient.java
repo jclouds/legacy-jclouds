@@ -40,6 +40,7 @@ import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.aws.ec2.domain.Volume.InstanceInitiatedShutdownBehavior;
 import org.jclouds.aws.ec2.filters.FormSigner;
+import org.jclouds.aws.ec2.functions.ConvertUnencodedBytesToBase64EncodedString;
 import org.jclouds.aws.ec2.functions.RegionToEndpoint;
 import org.jclouds.aws.ec2.options.RunInstancesOptions;
 import org.jclouds.aws.ec2.xml.BlockDeviceMappingHandler;
@@ -54,6 +55,7 @@ import org.jclouds.aws.ec2.xml.UnencodeStringValueHandler;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
+import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
@@ -92,6 +94,16 @@ public interface InstanceAsyncClient {
             @Nullable @BinderParam(IfNotNullBindAvailabilityZoneToFormParam.class) AvailabilityZone nullableAvailabilityZone,
             @FormParam("ImageId") String imageId, @FormParam("MinCount") int minCount,
             @FormParam("MaxCount") int maxCount, RunInstancesOptions... options);
+
+   /**
+    * @see InstanceClient#rebootInstancesInRegion
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "RebootInstances")
+   Future<Void> rebootInstancesInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
 
    /**
     * @see InstanceClient#terminateInstancesInRegion
@@ -162,18 +174,6 @@ public interface InstanceAsyncClient {
             @FormParam("InstanceId") String instanceId);
 
    /**
-    * @see AMIClient#getDisableApiTerminationForInstanceInRegion
-    */
-   @POST
-   @Path("/")
-   @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeInstanceAttribute",
-            "disableApiTermination" })
-   @XMLResponseParser(BooleanValueHandler.class)
-   Future<Boolean> getDisableApiTerminationForInstanceInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) Region region,
-            @FormParam("InstanceId") String instanceId);
-
-   /**
     * @see AMIClient#getKernelForInstanceInRegion
     */
    @POST
@@ -181,6 +181,18 @@ public interface InstanceAsyncClient {
    @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeInstanceAttribute", "kernel" })
    @XMLResponseParser(StringValueHandler.class)
    Future<String> getKernelForInstanceInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @FormParam("InstanceId") String instanceId);
+
+   /**
+    * @see AMIClient#isApiTerminationDisabledForInstanceInRegion
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeInstanceAttribute",
+            "disableApiTermination" })
+   @XMLResponseParser(BooleanValueHandler.class)
+   Future<Boolean> isApiTerminationDisabledForInstanceInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("InstanceId") String instanceId);
 
@@ -219,5 +231,103 @@ public interface InstanceAsyncClient {
    Future<? extends Map<String, EbsBlockDevice>> getBlockDeviceMappingForInstanceInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) Region region,
             @FormParam("InstanceId") String instanceId);
+
+   /**
+    * @see AMIClient#resetRamdiskForInstanceInRegion
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = { ACTION, "Attribute" }, values = { "ResetInstanceAttribute", "ramdisk" })
+   Future<Void> resetRamdiskForInstanceInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @FormParam("InstanceId") String instanceId);
+
+   /**
+    * @see AMIClient#resetKernelForInstanceInRegion
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = { ACTION, "Attribute" }, values = { "ResetInstanceAttribute", "kernel" })
+   Future<Void> resetKernelForInstanceInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @FormParam("InstanceId") String instanceId);
+
+   /**
+    * @see AMIClient#setUserDataForInstanceInRegion
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = { ACTION, "Attribute" }, values = { "ModifyInstanceAttribute", "userData" })
+   Future<Void> setUserDataForInstanceInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @FormParam("InstanceId") String instanceId,
+            @FormParam("Value") @ParamParser(ConvertUnencodedBytesToBase64EncodedString.class) byte[] unencodedData);
+
+   /**
+    * @see AMIClient#setRamdiskForInstanceInRegion
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = { ACTION, "Attribute" }, values = { "ModifyInstanceAttribute", "ramdisk" })
+   Future<Void> setRamdiskForInstanceInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @FormParam("InstanceId") String instanceId, @FormParam("Value") String ramdisk);
+
+   /**
+    * @see AMIClient#setKernelForInstanceInRegion
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = { ACTION, "Attribute" }, values = { "ModifyInstanceAttribute", "kernel" })
+   Future<Void> setKernelForInstanceInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @FormParam("InstanceId") String instanceId, @FormParam("Value") String kernel);
+
+   /**
+    * @see AMIClient#setApiTerminationDisabledForInstanceInRegion
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = { ACTION, "Attribute" }, values = { "ModifyInstanceAttribute",
+            "disableApiTermination" })
+   Future<Void> setApiTerminationDisabledForInstanceInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @FormParam("InstanceId") String instanceId,
+            @FormParam("Value") boolean apiTerminationDisabled);
+
+   /**
+    * @see AMIClient#setInstanceTypeForInstanceInRegion
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = { ACTION, "Attribute" }, values = { "ModifyInstanceAttribute", "instanceType" })
+   Future<Void> setInstanceTypeForInstanceInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @FormParam("InstanceId") String instanceId,
+            @FormParam("Value") InstanceType instanceType);
+
+   /**
+    * @see AMIClient#setInstanceInitiatedShutdownBehaviorForInstanceInRegion
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = { ACTION, "Attribute" }, values = { "ModifyInstanceAttribute",
+            "instanceInitiatedShutdownBehavior" })
+   Future<Void> setInstanceInitiatedShutdownBehaviorForInstanceInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @FormParam("InstanceId") String instanceId,
+            @FormParam("Value") InstanceInitiatedShutdownBehavior instanceInitiatedShutdownBehavior);
+
+   /**
+    * @see AMIClient#setBlockDeviceMappingForInstanceInRegion
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = { ACTION, "Attribute" }, values = { "ModifyInstanceAttribute",
+            "blockDeviceMapping" })
+   Future<Void> setBlockDeviceMappingForInstanceInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) Region region,
+            @FormParam("InstanceId") String instanceId,
+            @FormParam("Value") String blockDeviceMapping);
 
 }

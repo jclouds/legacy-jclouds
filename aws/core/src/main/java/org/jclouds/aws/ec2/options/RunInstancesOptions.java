@@ -18,6 +18,7 @@
  */
 package org.jclouds.aws.ec2.options;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.aws.ec2.domain.InstanceType;
@@ -84,8 +85,10 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
    /**
     * Unencoded data
     */
-   public RunInstancesOptions withUserData(byte[] data) {
-      formParameters.put("UserData", Base64.encodeBytes(checkNotNull(data, "data")));
+   public RunInstancesOptions withUserData(byte[] unencodedData) {
+      checkArgument(checkNotNull(unencodedData, "unencodedData").length <= 16 * 1024,
+               "userData cannot be larger than 16kb");
+      formParameters.put("UserData", Base64.encodeBytes(unencodedData));
       return this;
    }
 
@@ -210,9 +213,9 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
       /**
        * @see RunInstancesOptions#withUserData(byte [])
        */
-      public static RunInstancesOptions withUserData(byte[] userData) {
+      public static RunInstancesOptions withUserData(byte[] unencodedData) {
          RunInstancesOptions options = new RunInstancesOptions();
-         return options.withUserData(userData);
+         return options.withUserData(unencodedData);
       }
 
       /**

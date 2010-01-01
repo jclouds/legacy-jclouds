@@ -23,6 +23,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.InetAddress;
 
+import javax.inject.Singleton;
+
 import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
@@ -32,8 +34,8 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
  * Binds the String [] to form parameters named with InstanceId.index
  * 
  * @author Adrian Cole
- * @since 4.0
  */
+@Singleton
 public class BindInetAddressesToIndexedFormParams implements Binder {
 
    @SuppressWarnings("unchecked")

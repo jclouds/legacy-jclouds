@@ -503,5 +503,19 @@ public class RunningInstance implements Comparable<RunningInstance> {
       return true;
    }
 
+   @Override
+   public String toString() {
+      return "RunningInstance [amiLaunchIndex=" + amiLaunchIndex + ", availabilityZone="
+               + availabilityZone + ", dnsName=" + dnsName + ", ebsBlockDevices=" + ebsBlockDevices
+               + ", imageId=" + imageId + ", instanceId=" + instanceId + ", instanceState="
+               + instanceState + ", instanceType=" + instanceType + ", ipAddress=" + ipAddress
+               + ", kernelId=" + kernelId + ", keyName=" + keyName + ", launchTime=" + launchTime
+               + ", monitoring=" + monitoring + ", platform=" + platform + ", privateDnsName="
+               + privateDnsName + ", privateIpAddress=" + privateIpAddress + ", productCodes="
+               + productCodes + ", ramdiskId=" + ramdiskId + ", reason=" + reason + ", region="
+               + region + ", rootDeviceName=" + rootDeviceName + ", rootDeviceType="
+               + rootDeviceType + ", subnetId=" + subnetId + ", vpcId=" + vpcId + "]";
+   }
+
 
 }
