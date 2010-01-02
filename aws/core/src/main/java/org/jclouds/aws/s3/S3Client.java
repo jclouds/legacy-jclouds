@@ -207,7 +207,7 @@ public interface S3Client {
    boolean bucketExists(String bucketName);
 
    /**
-    * Retrieve a <code>S3Bucket</code listing. A GET request operation using a bucket URI lists
+    * Retrieve a {@code S3Bucket} listing. A GET request operation using a bucket URI lists
     * information about the objects in the bucket. You can use {@link ListBucketOptions} to control
     * the amount of S3Objects to return.
     * <p />
