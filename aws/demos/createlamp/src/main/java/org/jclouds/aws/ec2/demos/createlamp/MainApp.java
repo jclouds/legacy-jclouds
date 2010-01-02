@@ -157,10 +157,10 @@ public class MainApp {
    }
 
    static RunningInstance runInstance(EC2Client client, String securityGroupName, String keyPairName) {
-
       String script = new ScriptBuilder() // lamp install script
                .addStatement(exec("runurl run.alestic.com/apt/upgrade"))//
                .addStatement(exec("runurl run.alestic.com/install/lamp"))//
+               .addStatement(exec("apt-get -y install openjdk-6-jdk"))// no license agreement!
                .build(OsFamily.UNIX);
 
       System.out.printf("%d: running instance%n", System.currentTimeMillis());
@@ -183,8 +183,6 @@ public class MainApp {
       // create utilities that wait for the instance to finish
       RetryablePredicate<RunningInstance> runningTester = new RetryablePredicate<RunningInstance>(
                new InstanceStateRunning(client.getInstanceServices()), 180, 5, TimeUnit.SECONDS);
-      RetryablePredicate<InetSocketAddress> socketTester = new RetryablePredicate<InetSocketAddress>(
-               new SocketOpen(), 180, 1, TimeUnit.SECONDS);
 
       System.out.printf("%d: %s awaiting instance to run %n", System.currentTimeMillis(), instance
                .getId());
@@ -193,6 +191,8 @@ public class MainApp {
 
       instance = findInstanceById(client, instance.getId());
 
+      RetryablePredicate<InetSocketAddress> socketTester = new RetryablePredicate<InetSocketAddress>(
+               new SocketOpen(), 300, 1, TimeUnit.SECONDS);
       System.out.printf("%d: %s awaiting ssh service to start%n", System.currentTimeMillis(),
                instance.getIpAddress());
       if (!socketTester.apply(new InetSocketAddress(instance.getIpAddress(), 22)))
