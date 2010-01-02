@@ -1,0 +1,8 @@
+target
+.settings
+.classpath
+.project
+jclouds-gae-tweetstore-spring.iml
+jclouds-gae-tweetstore-spring.ipr
+jclouds-gae-tweetstore-spring.iws
+temp-testng-customsuite.xml
