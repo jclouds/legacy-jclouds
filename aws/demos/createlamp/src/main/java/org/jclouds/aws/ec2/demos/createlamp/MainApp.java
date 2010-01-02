@@ -145,7 +145,7 @@ public class MainApp {
    static void createSecurityGroupAndAuthorizePorts(EC2Client client, String name) {
       System.out.printf("%d: creating security group: %s%n", System.currentTimeMillis(), name);
       client.getSecurityGroupServices().createSecurityGroupInRegion(Region.DEFAULT, name, name);
-      for (int port : new int[] { 80, 443, 22 }) {
+      for (int port : new int[] { 80, 8080, 443, 22 }) {
          client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(Region.DEFAULT,
                   name, IpProtocol.TCP, port, port, "0.0.0.0/0");
       }
