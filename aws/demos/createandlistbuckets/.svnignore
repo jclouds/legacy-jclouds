@@ -2,6 +2,6 @@ target
 .settings
 .classpath
 .project
-jclouds-aws-sample-createandlistbuckets.iml
-jclouds-aws-sample-createandlistbuckets.ipr
-jclouds-aws-sample-createandlistbuckets.iws
+jclouds-aws-demo-createandlistbuckets.iml
+jclouds-aws-demo-createandlistbuckets.ipr
+jclouds-aws-demo-createandlistbuckets.iws
