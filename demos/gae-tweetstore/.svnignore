@@ -5,3 +5,4 @@ target
 jclouds-gae-tweetstore.iml
 jclouds-gae-tweetstore.ipr
 jclouds-gae-tweetstore.iws
+temp-testng-customsuite.xml
