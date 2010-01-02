@@ -38,10 +38,10 @@
             extraction of appengine-java-sdk
         -->
         <appengine.home>YOUR_APPENGINE_HOME</appengine.home>
-        <appengine.applicationid>jclouds-tweetstore</appengine.applicationid>
+        <appengine.applicationid>jclouds-tweetstore-spring</appengine.applicationid>
         <devappserver.address>localhost</devappserver.address>
         <devappserver.port>8088</devappserver.port>
-        <jclouds.tweetstore.container>jclouds-tweetstore</jclouds.tweetstore.container>
+        <jclouds.tweetstore.container>jclouds-tweetstore-spring</jclouds.tweetstore.container>
     </properties>
 
     <dependencies>
