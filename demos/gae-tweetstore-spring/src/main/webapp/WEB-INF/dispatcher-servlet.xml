@@ -5,7 +5,7 @@
     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
     
     <!-- the usual <context:annotation-config/> can't be used because the 
-      CommonAnnotationBeanPostProcessor caused a security exception in GAE when it
+      CommonAnnotationBeanPostProcessor causes a security exception in GAE when it
       tries to load javax.annotation.Resource -->
     <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
     <bean class="org.springframework.context.annotation.ConfigurationClassPostProcessor" />
