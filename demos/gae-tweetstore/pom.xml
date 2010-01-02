@@ -37,7 +37,7 @@
             note you must set the property ${appengine.home} to a valid
             extraction of appengine-java-sdk
         -->
-        <appengine.home>/Users/adriancole/Downloads/appengine-java-sdk-1.3.0</appengine.home>
+        <appengine.home>YOUR_APPENGINE_HOME</appengine.home>
         <appengine.applicationid>jclouds-tweetstore</appengine.applicationid>
         <devappserver.address>localhost</devappserver.address>
         <devappserver.port>8088</devappserver.port>
