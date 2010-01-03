@@ -31,7 +31,7 @@ import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
 
 /**
- * Reads properties and create resources for servlets.
+ * Reads properties and creates resources for servlets.
  * 
  * @author Andrew Phillips
  * @see SpringServletConfig

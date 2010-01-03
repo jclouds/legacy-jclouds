@@ -24,9 +24,10 @@ import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import com.google.common.collect.Maps;
 
 /**
- * Creates servlets,(using resources from the {@link SpringAppConfig}) and mappings.
+ * Creates servlets (using resources from the {@link SpringAppConfig}) and mappings.
  * 
  * @author Andrew Phillips
+ * @see SpringAppConfig
  */
 @Configuration
 public class SpringServletConfig implements ServletConfigAware {
