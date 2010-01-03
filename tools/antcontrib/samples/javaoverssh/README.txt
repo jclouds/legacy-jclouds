@@ -22,4 +22,4 @@
       - ex. curl http://jclouds.rimuhosting.com/maven2/snapshots/org/jclouds/jclouds-antcontrib/1.0-SNAPSHOT/jclouds-antcontrib-1.0-20091215.023231-1-jar-with-dependencies.jar >jclouds-antcontrib-all.jar
    2. invoke ant, adding the library above, and passing the properties 'host' 'username' 'keyfile' which corresponds to your remote credentials
       - ex. ant -lib ~/.m2/repository/org/jclouds/jclouds-antcontrib/1.0-SNAPSHOT/jclouds-antcontrib-1.0-SNAPSHOT-jar-with-dependencies.jar -Dhost=67.202.42.237 -Dusername=root -Dkeyfile=$HOME/.ssh/id_dsa
-      - ex. ant -lib jclouds-antcontrib-all.jar -Dhost=67.202.42.237 -Dusername=root -Dkeyfile=$HOME/.ssh/id_dsa
+      - ex. ant -lib ~/.m2/repository/org/jclouds/jclouds-antcontrib/1.0-SNAPSHOT/jclouds-antcontrib-1.0-SNAPSHOT-jar-with-dependencies.jar -Dhost=localhost -Dusername=$USER -Dkeyfile=$HOME/.ssh/id_dsa

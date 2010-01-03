@@ -24,33 +24,39 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Map.Entry;
 
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.taskdefs.Java;
 import org.apache.tools.ant.types.Environment;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.Environment.Variable;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.Iterables;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "jclouds.JavaOverSshTest")
 public class JavaOverSshTest {
+   public static final Entry<String, String> LAST_ENV = Iterables.getLast(System.getenv()
+            .entrySet());
 
+   // TODO, this test will break in windows
    public void testFull() throws SecurityException, NoSuchMethodException {
-      JavaOverSsh task = createTask();
-      assertEquals(
-               String
-                        .format(
-                                 "cd /tmp/foo\njar -xf cwd.zip\n%s -Xms256 -cp classpath.jar -Dfooble=baz -Dfoo=bar org.jclouds.tools.ant.TestClass hello world\n",
-                                 System.getProperty("java.home") + "/bin/java", System
-                                          .getProperty("user.dir")), task.convertJavaToScript(task
-                        .getCommandLine()));
+      JavaOverSsh task = makeJavaOverSsh();
+      String expected = String
+               .format(
+                        "export %s=\"%s\"%ncd /tmp/foo\n%s -Xms16m -Xmx32m -cp classpath -Dfooble=baz -Dfoo=bar org.jclouds.tools.ant.TestClass %s hello world\n",
+                        LAST_ENV.getKey(), LAST_ENV.getValue(), System.getProperty("java.home")
+                                 + "/bin/java", LAST_ENV.getKey());
+      assertEquals(task.convertJavaToScriptNormalizingPaths(task.getCommandLine()), expected);
    }
 
-   private JavaOverSsh createTask() {
+   private Java populateTask(Java task) {
       Project p = new Project();
-      JavaOverSsh task = new JavaOverSsh();
       task.setProject(p);
       task.setClassname(TestClass.class.getName());
       task.createClasspath().add(new Path(p, "target/test-classes"));
@@ -62,20 +68,43 @@ public class JavaOverSshTest {
       Variable prop2 = new Environment.Variable();
       prop2.setKey("foo");
       prop2.setValue("bar");
-
       task.addSysproperty(prop2);
-      task.createJvmarg().setValue("-Xms256");
+      task.createJvmarg().setValue("-Xms16m");
+      task.createJvmarg().setValue("-Xmx32m");
+      Variable env = new Environment.Variable();
+      env.setKey(LAST_ENV.getKey());
+      env.setValue(LAST_ENV.getValue());
+      task.addEnv(env);
+      task.createArg().setValue(env.getKey());
       task.createArg().setValue("hello");
       task.createArg().setValue("world");
       task.setDir(new File(System.getProperty("user.dir")));
-      task.setRemotedir(new File("/tmp/foo"));
       task.setFork(true);
       task.setJvm(System.getProperty("java.home") + "/bin/java");
+      task.setOutputproperty("out");
+      task.setErrorProperty("err");
+      task.setResultProperty("result");
       return task;
    }
 
    @Test(enabled = false, groups = { "live" })
    public void testSsh() throws NumberFormatException, FileNotFoundException, IOException {
+      Java java = makeJava();
+      java.execute();
+
+      JavaOverSsh javaOverSsh = makeJavaOverSsh();
+      addDestinationTo(javaOverSsh);
+      javaOverSsh.execute();
+
+      assertEquals(javaOverSsh.getProject().getProperty("out"), javaOverSsh.getProject()
+               .getProperty("out"));
+      assertEquals(javaOverSsh.getProject().getProperty("err"), javaOverSsh.getProject()
+               .getProperty("err"));
+      assertEquals(javaOverSsh.getProject().getProperty("result"), javaOverSsh.getProject()
+               .getProperty("result"));
+   }
+
+   private void addDestinationTo(JavaOverSsh javaOverSsh) throws UnknownHostException {
       String sshHost = System.getProperty("jclouds.test.ssh.host");
       String sshPort = System.getProperty("jclouds.test.ssh.port");
       String sshUser = System.getProperty("jclouds.test.ssh.username");
@@ -85,23 +114,26 @@ public class JavaOverSshTest {
       int port = (sshPort != null) ? Integer.parseInt(sshPort) : 22;
       InetAddress host = (sshHost != null) ? InetAddress.getByName(sshHost) : InetAddress
                .getLocalHost();
-
-      JavaOverSsh task = createTask();
-      task.setHost(host.getHostAddress());
-      task.setPort(port);
-      task.setTrust(true);
-      task.setUsername(sshUser);
+      javaOverSsh.setHost(host.getHostAddress());
+      javaOverSsh.setPort(port);
+      javaOverSsh.setUsername(sshUser);
       if (sshKeyFile != null && !sshKeyFile.trim().equals("")) {
-         task.setKeyfile(sshKeyFile);
+         javaOverSsh.setKeyfile(sshKeyFile);
       } else {
-         task.setPassword(sshPass);
+         javaOverSsh.setPassword(sshPass);
       }
-      task.setOutputproperty("out");
-      task.setErrorProperty("err");
-      task.setResultProperty("result");
-      task.execute();
-      assertEquals(task.getProject().getProperty("out"), "[hello, world]\n");
-      assertEquals(task.getProject().getProperty("err"), "err\n");
-      assertEquals(task.getProject().getProperty("result"), "3");
+   }
+
+   private JavaOverSsh makeJavaOverSsh() {
+      JavaOverSsh task = new JavaOverSsh();
+      populateTask(task);
+      task.setRemotedir(new File("/tmp/foo"));
+      task.setVerbose(true);
+      task.setTrust(true);
+      return task;
+   }
+
+   private Java makeJava() {
+      return populateTask(new Java());
    }
 }
