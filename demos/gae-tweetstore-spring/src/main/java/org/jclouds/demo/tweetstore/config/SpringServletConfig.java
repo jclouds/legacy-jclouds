@@ -1,14 +1,21 @@
 package org.jclouds.demo.tweetstore.config;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.servlet.Servlet;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
 
 import org.jclouds.demo.tweetstore.controller.AddTweetsController;
 import org.jclouds.demo.tweetstore.controller.StoreTweetsController;
 import org.jclouds.demo.tweetstore.functions.ServiceToStoredTweetStatuses;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.context.ServletConfigAware;
 import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.handler.SimpleServletHandlerAdapter;
@@ -22,20 +29,35 @@ import com.google.common.collect.Maps;
  * @author Andrew Phillips
  */
 @Configuration
-public class SpringServletConfig {
+public class SpringServletConfig implements ServletConfigAware {
+    private ServletConfig servletConfig;
+    
     @Inject
     private SpringAppConfig appConfig;
     
     @Bean
     public StoreTweetsController storeTweetsController() {
-        return new StoreTweetsController(appConfig.providerTypeToBlobStoreMap, 
+        StoreTweetsController controller = new StoreTweetsController(appConfig.providerTypeToBlobStoreMap, 
                 appConfig.container, appConfig.twitterClient);
+        injectServletConfig(controller);        
+        return controller;
     }
 
     @Bean
     public AddTweetsController addTweetsController() {
-        return new AddTweetsController(appConfig.providerTypeToBlobStoreMap,
+        AddTweetsController controller = new AddTweetsController(appConfig.providerTypeToBlobStoreMap,
                 serviceToStoredTweetStatuses());
+        injectServletConfig(controller);
+        return controller;
+    }
+    
+    private void injectServletConfig(Servlet servlet) {
+        checkNotNull(servletConfig);
+        try {
+            servlet.init(servletConfig);
+        } catch (ServletException exception) {
+            throw new BeanCreationException("Unable to instantiate " + servlet, exception);
+        }
     }
 
     @Bean
@@ -62,5 +84,13 @@ public class SpringServletConfig {
     @Bean
     public HandlerAdapter servletHandlerAdapter() {
         return new SimpleServletHandlerAdapter();
+    }
+
+    /* (non-Javadoc)
+     * @see org.springframework.web.context.ServletConfigAware#setServletConfig(javax.servlet.ServletConfig)
+     */
+    @Override
+    public void setServletConfig(ServletConfig servletConfig) {
+        this.servletConfig = servletConfig;
     }
 }
