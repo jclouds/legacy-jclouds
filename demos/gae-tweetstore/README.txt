@@ -16,7 +16,7 @@
     limitations under the License.
     ====================================================================
 ====
-This samples uses the Google App Engine for Java SDK located at http://googleappengine.googlecode.com/files/appengine-java-sdk-1.2.5.zip
+This sample uses the Google App Engine for Java SDK located at http://googleappengine.googlecode.com/files/appengine-java-sdk-1.2.5.zip
 
 Please unzip the above file and modify your maven settings.xml like below before attempting to run 'mvn -Plive install'
 
@@ -43,6 +43,8 @@ Please unzip the above file and modify your maven settings.xml like below before
         <jclouds.rackspace.key>YOUR_HEX_KEY</jclouds.rackspace.key>
         <jclouds.azure.storage.account>YOUR_ACCOUNT</jclouds.azure.storage.account>
         <jclouds.azure.storage.key>YOUR_BASE64_ENCODED_KEY</jclouds.azure.storage.key>
+        <jclouds.twitter.user>YOUR_TWITTER_USERNAME</jclouds.twitter.user>
+        <jclouds.twitter.password>YOUR_TWITTER_PASSWORD</jclouds.twitter.password>        
       </properties>
     </profile>
 
