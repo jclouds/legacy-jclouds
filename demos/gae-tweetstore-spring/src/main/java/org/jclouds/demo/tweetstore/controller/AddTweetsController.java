@@ -3,22 +3,25 @@
  * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  * ====================================================================
  */
 package org.jclouds.demo.tweetstore.controller;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,7 +34,6 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -41,7 +43,6 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.demo.tweetstore.domain.StoredTweetStatus;
 import org.jclouds.demo.tweetstore.functions.ServiceToStoredTweetStatuses;
 import org.jclouds.logging.Logger;
-import org.springframework.web.context.ServletContextAware;
 
 import com.google.appengine.repackaged.com.google.common.collect.Lists;
 import com.google.common.base.Function;
@@ -54,7 +55,7 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class AddTweetsController extends HttpServlet implements
-         Function<Set<String>, List<StoredTweetStatus>>, ServletContextAware {
+         Function<Set<String>, List<StoredTweetStatus>> {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 3888348023150822683L;
@@ -64,14 +65,11 @@ public class AddTweetsController extends HttpServlet implements
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private ServletContext servletContext;
-
    @Inject
    public AddTweetsController(Map<String, BlobStoreContext<?, ?>> contexts,
             ServiceToStoredTweetStatuses blobStoreContextToContainerResult) {
-      this.contexts = checkNotNull(contexts, "contexts");
-      this.blobStoreContextToContainerResult = checkNotNull(blobStoreContextToContainerResult,
-               "blobStoreContextToContainerResult");
+      this.contexts = contexts;
+      this.blobStoreContextToContainerResult = blobStoreContextToContainerResult;
    }
 
    @Override
@@ -99,16 +97,5 @@ public class AddTweetsController extends HttpServlet implements
          Iterables.addAll(statuses, list);
       }
       return statuses;
-   }
-
-   @Inject
-   @Override
-   public void setServletContext(ServletContext context) {
-      this.servletContext = context;
-   }
-
-   @Override
-   public ServletContext getServletContext() {
-      return (servletContext != null) ? servletContext : super.getServletContext();
    }
 }
