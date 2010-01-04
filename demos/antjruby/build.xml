@@ -109,16 +109,22 @@ class ShrinkBlob < Task
   end
 
   def execute
-    # correct the classloader so that extensions can be found
+    # correct the ant classloader so that extensions can be found
     java.lang.Thread.currentThread().setContextClassLoader(ServiceExtensionLoader.new().getClass().getClassLoader())
+
     print "creating the archive from ",@dir,"\n"
     zipStream = Archives.create(@zip, ZipExporter.java_class).as(ExplodedImporter.java_class).importDirectory(@dir).as(ZipExporter.java_class).exportZip()
+
     destination = HttpUtils.createUri(@blobstore)
     print "connecting to service ",destination.getHost(),"/",@container,"\n"
+    
+    # array thing is a weird hack since jruby doesn't understand varargs
     context = BlobStoreContextFactory.new().createContext(destination, java.lang.reflect.Array.newInstance(com.google.inject.Module.java_class,0))
     context.getBlobStore().createContainer(@container)
+
     print "uploading to ",destination.getHost(),"/",@container,"/",@zip,"\n"
     context.createInputStreamMap(@container).put(@zip,zipStream);
+
     context.close();
   end
 end
