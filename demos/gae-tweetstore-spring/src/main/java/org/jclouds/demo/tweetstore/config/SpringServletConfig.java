@@ -136,6 +136,7 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
         logger.trace("Properties successfully read.");
         return props;
     }
+    
     @Bean
     public StoreTweetsController storeTweetsController() {
         StoreTweetsController controller = new StoreTweetsController(providerTypeToBlobStoreMap, 
