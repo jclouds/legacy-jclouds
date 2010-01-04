@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.tools.ant;
+package org.jclouds.tools.ant.taskdefs.sshjava;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
@@ -51,7 +51,7 @@ import com.google.common.collect.Lists;
  * 
  * @author Adrian Cole
  */
-public class JavaOverSsh extends Java {
+public class SSHJava extends Java {
    private final SSHExec exec;
    private final Scp scp;
    private final SSHUserInfo userInfo;
@@ -68,7 +68,7 @@ public class JavaOverSsh extends Java {
    private String outputProperty;
    private boolean append;
 
-   public JavaOverSsh() {
+   public SSHJava() {
       super();
       setFork(true);
       exec = new SSHExec();
@@ -76,7 +76,7 @@ public class JavaOverSsh extends Java {
       userInfo = new SSHUserInfo();
    }
 
-   public JavaOverSsh(Task owner) {
+   public SSHJava(Task owner) {
       this();
       bindToOwner(owner);
    }
@@ -97,6 +97,7 @@ public class JavaOverSsh extends Java {
          copyPathTo(getCommandLine().getClasspath(), remoteDirectory.getAbsolutePath()
                   + "/classpath");
       }
+      
       if (getCommandLine().getBootclasspath() != null) {
          copyPathTo(getCommandLine().getBootclasspath(), remoteDirectory.getAbsolutePath()
                   + "/bootclasspath");

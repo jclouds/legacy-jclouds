@@ -20,6 +20,7 @@ package org.jclouds.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.Properties;
 
@@ -28,6 +29,7 @@ import javax.inject.Inject;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpPropertiesBuilder;
 
+import com.google.common.io.Resources;
 import com.google.inject.Module;
 
 /**
@@ -36,6 +38,17 @@ import com.google.inject.Module;
  */
 public class BlobStoreContextFactory {
    private final Properties properties;
+
+   public BlobStoreContextFactory() throws IOException {
+      this(init());
+   }
+
+   static Properties init() throws IOException {
+      Properties properties = new Properties();
+      properties.load(Resources.newInputStreamSupplier(
+               Resources.getResource("blobstore.properties")).getInput());
+      return properties;
+   }
 
    @Inject
    public BlobStoreContextFactory(Properties properties) {

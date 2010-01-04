@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.tools.ant;
+package org.jclouds.tools.ant.taskdefs.sshjava;
 
 import static org.testng.Assert.assertEquals;
 
@@ -32,6 +32,7 @@ import org.apache.tools.ant.taskdefs.Java;
 import org.apache.tools.ant.types.Environment;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.Environment.Variable;
+import org.jclouds.tools.ant.TestClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
@@ -39,14 +40,14 @@ import com.google.common.collect.Iterables;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "jclouds.JavaOverSshTest")
-public class JavaOverSshTest {
+@Test(groups = "unit", testName = "jclouds.SSHJavaTest")
+public class SSHJavaTest {
    public static final Entry<String, String> LAST_ENV = Iterables.getLast(System.getenv()
             .entrySet());
 
    // TODO, this test will break in windows
    public void testFull() throws SecurityException, NoSuchMethodException {
-      JavaOverSsh task = makeJavaOverSsh();
+      SSHJava task = makeSSHJava();
       String expected = String
                .format(
                         "export %s=\"%s\"%ncd /tmp/foo\n%s -Xms16m -Xmx32m -cp classpath -Dfooble=baz -Dfoo=bar org.jclouds.tools.ant.TestClass %s hello world\n",
@@ -92,7 +93,7 @@ public class JavaOverSshTest {
       Java java = makeJava();
       java.execute();
 
-      JavaOverSsh javaOverSsh = makeJavaOverSsh();
+      SSHJava javaOverSsh = makeSSHJava();
       addDestinationTo(javaOverSsh);
       javaOverSsh.execute();
 
@@ -104,7 +105,7 @@ public class JavaOverSshTest {
                .getProperty("result"));
    }
 
-   private void addDestinationTo(JavaOverSsh javaOverSsh) throws UnknownHostException {
+   private void addDestinationTo(SSHJava javaOverSsh) throws UnknownHostException {
       String sshHost = System.getProperty("jclouds.test.ssh.host");
       String sshPort = System.getProperty("jclouds.test.ssh.port");
       String sshUser = System.getProperty("jclouds.test.ssh.username");
@@ -124,8 +125,8 @@ public class JavaOverSshTest {
       }
    }
 
-   private JavaOverSsh makeJavaOverSsh() {
-      JavaOverSsh task = new JavaOverSsh();
+   private SSHJava makeSSHJava() {
+      SSHJava task = new SSHJava();
       populateTask(task);
       task.setRemotedir(new File("/tmp/foo"));
       task.setVerbose(true);

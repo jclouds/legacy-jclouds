@@ -23,7 +23,6 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Properties;
 
 import org.apache.commons.vfs.Capability;
 import org.apache.commons.vfs.FileName;
@@ -43,7 +42,6 @@ import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.io.Resources;
 import com.google.inject.Module;
 
 /**
@@ -80,12 +78,9 @@ public class BlobStoreFileProvider extends AbstractOriginatingFileProvider {
       try {
          String uriToParse = rootName.getFriendlyURI();
          authData = UserAuthenticatorUtils.authenticate(fileSystemOptions, AUTHENTICATOR_TYPES);
-         Properties properties = new Properties();
-         properties.load(Resources.newInputStreamSupplier(
-                  Resources.getResource("jclouds.properties")).getInput());
          URI location = HttpUtils.createUri(uriToParse);
 
-         blobStore = new BlobStoreContextFactory(properties).createContext(
+         blobStore = new BlobStoreContextFactory().createContext(
                   location,
                   new Credentials(UserAuthenticatorUtils.toString(UserAuthenticatorUtils.getData(
                            authData, UserAuthenticationData.USERNAME, UserAuthenticatorUtils

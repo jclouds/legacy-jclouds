@@ -44,7 +44,7 @@ public class PropertiesTest {
    @BeforeTest
    public void setUp() throws IOException {
       properties = new Properties();
-      properties.load(Resources.newInputStreamSupplier(Resources.getResource("jclouds.properties"))
+      properties.load(Resources.newInputStreamSupplier(Resources.getResource("blobstore.properties"))
                .getInput());
    }
 

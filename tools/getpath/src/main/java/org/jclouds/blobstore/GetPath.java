@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
-import java.util.Properties;
 import java.util.Map.Entry;
 
 import org.jclouds.blobstore.util.BlobStoreUtils;
@@ -36,7 +35,6 @@ import org.jclouds.http.HttpUtils;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
-import com.google.common.io.Resources;
 
 /**
  * 
@@ -51,10 +49,10 @@ public class GetPath {
    public static void main(String... args) throws IOException {
       if (args.length < 2)
          throw new IllegalArgumentException(INVALID_SYNTAX);
-      URI locationAndCredentials;
+      URI uri;
       try {
-         locationAndCredentials = HttpUtils.createUri(args[0]);
-         checkArgument(locationAndCredentials.getScheme().equals("blobstore"), "wrong scheme");
+         uri = HttpUtils.createUri(args[0]);
+         checkArgument(uri.getScheme().equals("blobstore"), "wrong scheme");
       } catch (IllegalArgumentException e) {
          throw new IllegalArgumentException(String.format("%s%n%s", e.getMessage(), INVALID_SYNTAX));
       }
@@ -64,8 +62,9 @@ public class GetPath {
       File destinationDir = new File(args[1]);
       destinationDir.mkdirs();
 
-      BlobStoreContext<?, ?> context = init(locationAndCredentials);
-      String path = locationAndCredentials.getPath();
+      BlobStoreContext<?, ?> context = new BlobStoreContextFactory()
+               .createContext(uri);
+      String path = uri.getPath();
       if (path.startsWith("/"))
          path = path.substring(1);
       String container = BlobStoreUtils.parseContainerFromPath(path);
@@ -103,10 +102,4 @@ public class GetPath {
       }
    }
 
-   private static BlobStoreContext<?, ?> init(URI locationAndCredentials) throws IOException {
-      Properties properties = new Properties();
-      properties.load(Resources.newInputStreamSupplier(Resources.getResource("jclouds.properties"))
-               .getInput());
-      return new BlobStoreContextFactory(properties).createContext(locationAndCredentials);
-   }
 }
