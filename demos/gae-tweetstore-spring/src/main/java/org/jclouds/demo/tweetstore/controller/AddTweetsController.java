@@ -69,8 +69,9 @@ public class AddTweetsController extends HttpServlet implements
    @Inject
    public AddTweetsController(Map<String, BlobStoreContext<?, ?>> contexts,
             ServiceToStoredTweetStatuses blobStoreContextToContainerResult) {
-      this.contexts = contexts;
-      this.blobStoreContextToContainerResult = blobStoreContextToContainerResult;
+      this.contexts = checkNotNull(contexts, "contexts");
+      this.blobStoreContextToContainerResult = checkNotNull(blobStoreContextToContainerResult,
+               "blobStoreContextToContainerResult");
    }
 
    @Override
@@ -100,6 +101,7 @@ public class AddTweetsController extends HttpServlet implements
       return statuses;
    }
 
+   @Inject
    @Override
    public void setServletContext(ServletContext context) {
       this.servletContext = context;
@@ -107,6 +109,6 @@ public class AddTweetsController extends HttpServlet implements
 
    @Override
    public ServletContext getServletContext() {
-      return checkNotNull(servletContext, "servletContext");
+      return (servletContext != null) ? servletContext : super.getServletContext();
    }
 }
