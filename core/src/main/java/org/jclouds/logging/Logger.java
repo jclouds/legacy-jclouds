@@ -79,6 +79,6 @@ public interface Logger {
      * 
      */
     public static interface LoggerFactory {
-	public Logger getLogger(String category);
+	Logger getLogger(String category);
     }
 }
