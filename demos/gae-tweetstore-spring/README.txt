@@ -24,9 +24,11 @@ It should not be regarded as a sample of how to write a web application using Sp
 however! The original jclouds-demo-gae-tweetstore has been modified in as few places as
 possible; it has not been rewritten in the style of a Spring MVC application.
 
-This sample uses the Google App Engine for Java SDK located at http://googleappengine.googlecode.com/files/appengine-java-sdk-1.2.5.zip
+This sample uses the Google App Engine for Java SDK located at 
+http://code.google.com/p/googleappengine/downloads/list
 
-Please unzip the above file and modify your maven settings.xml like below before attempting to run 'mvn -Plive install'
+Please unzip the above file and modify your maven settings.xml like below before
+attempting to run 'mvn -Plive install'
 
     <profile>
       <id>appengine</id>

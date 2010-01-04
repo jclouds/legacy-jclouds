@@ -9,6 +9,10 @@
       tries to load javax.annotation.Resource -->
     <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
     <bean class="org.springframework.context.annotation.ConfigurationClassPostProcessor" />
+    <bean class="org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor">
+        <property name="initAnnotationType" value="javax.annotation.PostConstruct" />
+        <property name="destroyAnnotationType" value="javax.annotation.PreDestroy" />
+    </bean>
     
     <bean class="org.jclouds.demo.tweetstore.config.SpringServletConfig" />
 </beans>

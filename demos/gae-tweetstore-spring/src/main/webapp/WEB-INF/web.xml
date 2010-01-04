@@ -22,21 +22,7 @@
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_5.xsd"
     version="2.5">
-    <display-name>jclouds-demo-gae-tweetstore-spring</display-name>
-  
-    <!-- use AnnotationConfigWebApplicationContext instead of the default XmlWebApplicationContext -->
-    <context-param>
-        <param-name>contextClass</param-name>
-        <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
-    </context-param>
-    <context-param>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>org.jclouds.demo.tweetstore.config.SpringAppConfig</param-value>
-    </context-param>
-
-    <listener>
-        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-    </listener>
+    <display-name>jclouds-tweetstore-spring</display-name>
 
     <!-- Servlets -->
     <servlet>
