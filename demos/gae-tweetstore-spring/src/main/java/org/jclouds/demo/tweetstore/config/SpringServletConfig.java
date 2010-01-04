@@ -22,12 +22,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.servlet.Servlet;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+
 import org.jclouds.demo.tweetstore.controller.AddTweetsController;
 import org.jclouds.demo.tweetstore.controller.StoreTweetsController;
 import org.jclouds.demo.tweetstore.functions.ServiceToStoredTweetStatuses;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.ServletConfigAware;
 import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.handler.SimpleServletHandlerAdapter;
@@ -36,54 +42,77 @@ import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import com.google.common.collect.Maps;
 
 /**
- * Creates servlets,(using resources from the {@link SpringAppConfig}) and mappings.
+ * Creates servlets (using resources from the {@link SpringAppConfig}) and mappings.
  * 
  * @author Andrew Phillips
+ * @see SpringAppConfig
  */
 @Configuration
-public class SpringServletConfig {
+public class SpringServletConfig extends LoggingConfig implements ServletConfigAware {
+    private ServletConfig servletConfig;
+    
+    @Inject
+    private SpringAppConfig appConfig;
+    
+    @Bean
+    public StoreTweetsController storeTweetsController() {
+        StoreTweetsController controller = new StoreTweetsController(appConfig.providerTypeToBlobStoreMap, 
+                appConfig.container, appConfig.twitterClient);
+        injectServletConfig(controller);        
+        return controller;
+    }
 
-   @Bean
-   public StoreTweetsController storeTweetsController(SpringAppConfig appConfig) {
-      return new StoreTweetsController(checkNotNull(appConfig.providerTypeToBlobStoreMap,
-               "contexts"), checkNotNull(appConfig.container, "container"), checkNotNull(
-               appConfig.twitterClient, "twitterClient"));
-   }
+    @Bean
+    public AddTweetsController addTweetsController() {
+        AddTweetsController controller = new AddTweetsController(appConfig.providerTypeToBlobStoreMap,
+                serviceToStoredTweetStatuses());
+        injectServletConfig(controller);
+        return controller;
+    }
+    
+    private void injectServletConfig(Servlet servlet) {
+        logger.trace("About to inject servlet config '%s'", servletConfig);
+        
+        try {
+            servlet.init(checkNotNull(servletConfig));
+        } catch (ServletException exception) {
+            throw new BeanCreationException("Unable to instantiate " + servlet, exception);
+        }
+        
+        logger.trace("Successfully injected servlet config.");
+    }
 
-   @Bean
-   public AddTweetsController addTweetsController(SpringAppConfig appConfig) {
-      return new AddTweetsController(
-               checkNotNull(appConfig.providerTypeToBlobStoreMap, "contexts"),
-               serviceToStoredTweetStatuses(appConfig));
-   }
+    @Bean
+    ServiceToStoredTweetStatuses serviceToStoredTweetStatuses() {
+        return new ServiceToStoredTweetStatuses(appConfig.providerTypeToBlobStoreMap,
+                appConfig.container);
+    }
+    
+    @Bean
+    public HandlerMapping handlerMapping() {
+        SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
+        Map<String, Object> urlMap = Maps.newHashMapWithExpectedSize(2);
+        urlMap.put("/store/*", storeTweetsController());
+        urlMap.put("/tweets/*", addTweetsController());
+        mapping.setUrlMap(urlMap);
+        /*
+         * "/store" and "/tweets" are part of the servlet mapping and thus stripped
+         * by the mapping if using default settings.
+         */
+        mapping.setAlwaysUseFullPath(true);
+        return mapping;
+    }
+    
+    @Bean
+    public HandlerAdapter servletHandlerAdapter() {
+        return new SimpleServletHandlerAdapter();
+    }
 
-   @Bean
-   ServiceToStoredTweetStatuses serviceToStoredTweetStatuses(SpringAppConfig appConfig) {
-      return new ServiceToStoredTweetStatuses(checkNotNull(appConfig.providerTypeToBlobStoreMap,
-               "contexts"), checkNotNull(appConfig.container, "container"));
-   }
-
-   @Bean
-   public HandlerMapping handlerMapping(AddTweetsController add, StoreTweetsController store,
-            WebApplicationContext context) {
-      SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
-      mapping.setServletContext(context.getServletContext());
-      Map<String, Object> urlMap = Maps.newHashMapWithExpectedSize(2);
-      urlMap.put("/store/*", checkNotNull(store, "store"));
-      add.setServletContext(checkNotNull(context.getServletContext(), "servletContext"));
-      urlMap.put("/tweets/*", checkNotNull(add, "add"));
-      mapping.setUrlMap(urlMap);
-      /*
-       * "/store" and "/tweets" are part of the servlet mapping and thus stripped by the mapping if
-       * using default settings.
-       */
-      mapping.setAlwaysUseFullPath(true);
-      return mapping;
-   }
-
-   @Bean
-   public HandlerAdapter servletHandlerAdapter() {
-      return new SimpleServletHandlerAdapter();
-   }
+    /* (non-Javadoc)
+     * @see org.springframework.web.context.ServletConfigAware#setServletConfig(javax.servlet.ServletConfig)
+     */
+    @Override
+    public void setServletConfig(ServletConfig servletConfig) {
+        this.servletConfig = servletConfig;
+    }
 }
-
