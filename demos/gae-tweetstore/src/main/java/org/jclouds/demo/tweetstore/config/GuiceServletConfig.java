@@ -128,13 +128,12 @@ public class GuiceServletConfig extends GuiceServletContextListener {
       return Guice.createInjector(new ServletModule() {
          @Override
          protected void configureServlets() {
-            bind(new TypeLiteral<Map<String, BlobStoreContext<?, ?>>>() {
-            }).toInstance(GuiceServletConfig.this.providerTypeToBlobStoreMap);
+            bind(new TypeLiteral<Map<String, BlobStoreContext<?, ?>>>() {})
+            .toInstance(providerTypeToBlobStoreMap);
             bind(TwitterClient.class).toInstance(twitterClient);
             bindConstant().annotatedWith(Jsr330.named(PROPERTY_TWEETSTORE_CONTAINER)).to(container);
             serve("/store/*").with(StoreTweetsController.class);
             serve("/tweets/*").with(AddTweetsController.class);
-            requestInjection(this);
          }
       });
    }
