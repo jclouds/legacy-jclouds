@@ -21,6 +21,7 @@ package org.jclouds.vcloud.terremark;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -65,21 +66,24 @@ public class InternetServiceLiveTest {
                .changeNameTo("test-33"));
       assertEquals(is.getName(), "test-33");
       services.add(is);
-      // PublicIpAddress ip = is.getPublicIpAddress();
-      // current bug in terremark
-      // for (int port : new int[] { 80, 8080 }) {
-      // services.add(tmClient.addInternetServiceToExistingIp(ip.getId(), "test-" + port,
-      // Protocol.HTTP, port));
-      // }
+      PublicIpAddress ip = is.getPublicIpAddress();
+      for (int port : new int[] { 80, 8080 }) {
+         services.add(tmClient.addInternetServiceToExistingIp(ip.getId(), "test-" + port,
+            Protocol.HTTP, port));
+      }
    }
 
    private void delete(SortedSet<InternetService> set) {
+	  Set<Integer> publicIps = Sets.newHashSet();
       for (InternetService service : set) {
          for (Node node : tmClient.getNodes(service.getId())) {
             tmClient.deleteNode(node.getId());
          }
          tmClient.deleteInternetService(service.getId());
-         tmClient.deletePublicIp(service.getPublicIpAddress().getId());
+         publicIps.add(service.getPublicIpAddress().getId());
+      }
+      for (int id : publicIps) {
+          tmClient.deletePublicIp(id);
       }
    }
 
