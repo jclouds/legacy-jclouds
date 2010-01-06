@@ -43,8 +43,9 @@ public class Credentials {
 
    public static Credentials parse(URI uri) {
       checkNotNull(uri, "uri");
-      List<String> userInfo = Lists.newArrayList(Splitter.on(':').split(uri.getUserInfo()));
-      String account = checkNotNull(userInfo.get(0));
+      List<String> userInfo = Lists.newArrayList(Splitter.on(':').split(
+               checkNotNull(uri.getUserInfo(), "no userInfo in " + uri)));
+      String account = checkNotNull(userInfo.get(0), "no username in " + uri.getUserInfo());
       if (HttpUtils.isUrlEncoded(account)) {
          account = HttpUtils.urlDecode(account);
       }

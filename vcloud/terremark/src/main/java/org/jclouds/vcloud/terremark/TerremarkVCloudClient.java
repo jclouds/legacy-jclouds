@@ -47,7 +47,7 @@ import org.jclouds.vcloud.terremark.options.AddNodeOptions;
  * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx" />
  * @author Adrian Cole
  */
-@Timeout(duration = 45, timeUnit = TimeUnit.SECONDS)
+@Timeout(duration = 90, timeUnit = TimeUnit.SECONDS)
 public interface TerremarkVCloudClient extends VCloudClient {
 
    @Override

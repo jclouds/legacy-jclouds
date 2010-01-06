@@ -65,6 +65,7 @@ import org.jclouds.vcloud.terremark.xml.NodeHandler;
 import org.jclouds.vcloud.terremark.xml.NodesHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkVAppHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkVDCHandler;
+import org.jclouds.vcloud.xml.CatalogHandler;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
@@ -79,6 +80,24 @@ import com.google.inject.TypeLiteral;
  */
 @Test(groups = "unit", sequential = true, testName = "vcloud.TerremarkVCloudAsyncClientTest")
 public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVCloudAsyncClient> {
+   /**
+    * ignore parameter of catalog id since this doesn't work
+    */
+   public void testCatalog() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TerremarkVCloudAsyncClient.class.getMethod("getCatalog", String.class);
+      GeneratedHttpRequest<TerremarkVCloudAsyncClient> httpMethod = processor.createRequest(method,
+               "1");
+
+      assertRequestLineEquals(httpMethod, "GET http://catalog HTTP/1.1");
+      assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.catalog+xml\n");
+      assertPayloadEquals(httpMethod, null);
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, CatalogHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
 
    public void testGetIpAddressesForNetwork() throws SecurityException, NoSuchMethodException,
             IOException {

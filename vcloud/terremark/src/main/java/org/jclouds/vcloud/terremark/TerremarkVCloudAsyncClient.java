@@ -19,6 +19,7 @@
 package org.jclouds.vcloud.terremark;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_XML;
+import static org.jclouds.vcloud.VCloudMediaType.CATALOG_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VAPP_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VDC_XML;
 
@@ -46,6 +47,7 @@ import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.InetAddressToHostAddress;
 import org.jclouds.vcloud.VCloudAsyncClient;
+import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
@@ -81,6 +83,7 @@ import org.jclouds.vcloud.terremark.xml.NodesHandler;
 import org.jclouds.vcloud.terremark.xml.PublicIpAddressesHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkVAppHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkVDCHandler;
+import org.jclouds.vcloud.xml.CatalogHandler;
 
 /**
  * Provides access to VCloud resources via their REST API.
@@ -91,7 +94,7 @@ import org.jclouds.vcloud.terremark.xml.TerremarkVDCHandler;
  */
 @RequestFilters(SetVCloudTokenCookie.class)
 public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
-   
+
    /**
     * @see TerremarkVCloudClient#getDefaultVDC
     */
@@ -101,6 +104,15 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    @Consumes(VDC_XML)
    @Override
    Future<? extends VDC> getDefaultVDC();
+
+   /**
+    * Terremark does not have multiple catalogs, so we ignore this parameter.
+    */
+   @GET
+   @Endpoint(org.jclouds.vcloud.endpoints.Catalog.class)
+   @XMLResponseParser(CatalogHandler.class)
+   @Consumes(CATALOG_XML)
+   Future<? extends Catalog> getCatalog(String catalogId);
 
    /**
     * @see TerremarkVCloudClient#getVDC
