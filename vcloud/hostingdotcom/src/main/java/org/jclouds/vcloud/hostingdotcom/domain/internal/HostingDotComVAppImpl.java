@@ -20,7 +20,7 @@ package org.jclouds.vcloud.hostingdotcom.domain.internal;
 
 import java.net.InetAddress;
 import java.net.URI;
-import java.util.SortedSet;
+import java.util.Set;
 
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.VAppStatus;
@@ -47,7 +47,7 @@ public class HostingDotComVAppImpl extends VAppImpl implements HostingDotComVApp
    public HostingDotComVAppImpl(String id, String name, URI location, VAppStatus status, Long size,
             ListMultimap<String, InetAddress> networkToAddresses,
             String operatingSystemDescription, VirtualSystem system,
-            SortedSet<ResourceAllocation> resourceAllocations, String username, String password) {
+            Set<ResourceAllocation> resourceAllocations, String username, String password) {
       super(id, name, location, status, size, networkToAddresses, operatingSystemDescription,
                system, resourceAllocations);
       this.username = username;

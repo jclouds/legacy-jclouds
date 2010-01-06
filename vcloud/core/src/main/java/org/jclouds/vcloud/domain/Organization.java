@@ -36,7 +36,7 @@ import com.google.inject.ImplementedBy;
 public interface Organization extends NamedResource {
 
    @Catalog
-   NamedResource getCatalog();
+   Map<String, NamedResource> getCatalogs();
 
    @VDC
    Map<String, NamedResource> getVDCs();

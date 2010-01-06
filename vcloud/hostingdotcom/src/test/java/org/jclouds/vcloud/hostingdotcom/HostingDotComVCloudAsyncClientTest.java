@@ -59,7 +59,7 @@ import com.google.inject.TypeLiteral;
 public class HostingDotComVCloudAsyncClientTest extends
          RestClientTest<HostingDotComVCloudAsyncClient> {
    public void testCatalog() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = HostingDotComVCloudAsyncClient.class.getMethod("getCatalog");
+      Method method = HostingDotComVCloudAsyncClient.class.getMethod("getDefaultCatalog");
       GeneratedHttpRequest<HostingDotComVCloudAsyncClient> httpMethod = processor
                .createRequest(method);
 

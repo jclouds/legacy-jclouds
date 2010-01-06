@@ -40,12 +40,12 @@ import com.google.common.collect.Maps;
  */
 public class OrgHandler extends ParseSax.HandlerWithResult<Organization> {
    private NamedResource org;
-   private Map<String, NamedResource> vdcs = Maps.newHashMap();
-   private Map<String, NamedResource> tasksLists = Maps.newHashMap();
-   private NamedResource catalog;
+   private Map<String, NamedResource> vdcs = Maps.newLinkedHashMap();
+   private Map<String, NamedResource> tasksLists = Maps.newLinkedHashMap();
+   private Map<String, NamedResource> catalogs = Maps.newLinkedHashMap();
 
    public Organization getResult() {
-      return new OrganizationImpl(org.getId(), org.getName(), org.getLocation(), catalog, vdcs,
+      return new OrganizationImpl(org.getId(), org.getName(), org.getLocation(), catalogs, vdcs,
                tasksLists);
    }
 
@@ -60,7 +60,7 @@ public class OrgHandler extends ParseSax.HandlerWithResult<Organization> {
             if (attributes.getValue(typeIndex).equals(VDC_XML)) {
                putNamedResource(vdcs, attributes);
             } else if (attributes.getValue(typeIndex).equals(CATALOG_XML)) {
-               catalog = newNamedResource(attributes);
+               putNamedResource(catalogs, attributes);
             } else if (attributes.getValue(typeIndex).equals(TASKSLIST_XML)) {
                putNamedResource(tasksLists, attributes);
             }

@@ -42,15 +42,15 @@ public class VirtualSystemHandler extends ParseSax.HandlerWithResult<VirtualSyst
    @Override
    public void endElement(String uri, String localName, String qName) throws SAXException {
 
-      if (qName.equals("ElementName")) {
+      if (qName.endsWith("ElementName")) {
          this.elementName = currentText.toString().trim();
-      } else if (qName.equals("InstanceID")) {
+      } else if (qName.endsWith("InstanceID")) {
          this.instanceID = Integer.parseInt(currentText.toString().trim());
-      } else if (qName.equals("VirtualSystemIdentifier")) {
+      } else if (qName.endsWith("VirtualSystemIdentifier")) {
          this.virtualSystemIdentifier = currentText.toString().trim();
-      } else if (qName.equals("VirtualSystemType")) {
+      } else if (qName.endsWith("VirtualSystemType")) {
          this.virtualSystemType = currentText.toString().trim();
-      } else if (qName.equals("System")) {
+      } else if (qName.endsWith("System")) {
          this.system = new org.jclouds.vcloud.domain.VirtualSystem(instanceID, elementName,
                   virtualSystemIdentifier, virtualSystemType);
          this.elementName = null;

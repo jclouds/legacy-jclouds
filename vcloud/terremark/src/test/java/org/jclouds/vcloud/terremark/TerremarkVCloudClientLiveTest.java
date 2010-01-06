@@ -130,7 +130,7 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
 
    @Test
    public void testGetConfigCustomizationOptions() throws Exception {
-      Catalog response = connection.getCatalog();
+      Catalog response = connection.getDefaultCatalog();
       for (NamedResource resource : response.values()) {
          if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
             CatalogItem item = connection.getCatalogItem(resource.getId());
@@ -168,7 +168,7 @@ public class TerremarkVCloudClientLiveTest extends VCloudClientLiveTest {
       String vDCId = tmClient.getDefaultVDC().getId();
 
       // lookup the id of the item in the catalog you wish to deploy by name
-      String itemId = tmClient.getCatalog().get("Ubuntu JeOS 9.04 (32-bit)").getId();
+      String itemId = tmClient.getDefaultCatalog().get("Ubuntu JeOS 9.04 (32-bit)").getId();
 
       // determine the cheapest configuration size
       SortedSet<ComputeOptions> sizeOptions = tmClient.getComputeOptionsOfCatalogItem(itemId);

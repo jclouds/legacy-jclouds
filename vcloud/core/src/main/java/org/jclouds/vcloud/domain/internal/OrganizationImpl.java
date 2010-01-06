@@ -38,16 +38,16 @@ public class OrganizationImpl implements Organization {
    private final String id;
    private final String name;
    private final URI location;
-   private final NamedResource catalog;
+   private final Map<String, NamedResource> catalogs;
    private final Map<String, NamedResource> vdcs;
    private final Map<String, NamedResource> tasksLists;
 
-   public OrganizationImpl(String id, String name, URI location, NamedResource catalog,
+   public OrganizationImpl(String id, String name, URI location, Map<String, NamedResource> catalogs,
             Map<String, NamedResource> vdcs, Map<String, NamedResource> tasksLists) {
       this.id = id;
       this.name = name;
       this.location = location;
-      this.catalog = catalog;
+      this.catalogs = catalogs;
       this.vdcs = vdcs;
       this.tasksLists = tasksLists;
    }
@@ -65,8 +65,8 @@ public class OrganizationImpl implements Organization {
    }
 
    @Catalog
-   public NamedResource getCatalog() {
-      return catalog;
+   public Map<String, NamedResource> getCatalogs() {
+      return catalogs;
    }
 
    @VDC
@@ -83,7 +83,7 @@ public class OrganizationImpl implements Organization {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((catalog == null) ? 0 : catalog.hashCode());
+      result = prime * result + ((catalogs == null) ? 0 : catalogs.hashCode());
       result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result + ((location == null) ? 0 : location.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
@@ -101,10 +101,10 @@ public class OrganizationImpl implements Organization {
       if (getClass() != obj.getClass())
          return false;
       OrganizationImpl other = (OrganizationImpl) obj;
-      if (catalog == null) {
-         if (other.catalog != null)
+      if (catalogs == null) {
+         if (other.catalogs != null)
             return false;
-      } else if (!catalog.equals(other.catalog))
+      } else if (!catalogs.equals(other.catalogs))
          return false;
       if (id == null) {
          if (other.id != null)

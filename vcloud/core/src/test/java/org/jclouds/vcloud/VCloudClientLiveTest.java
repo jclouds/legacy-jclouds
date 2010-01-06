@@ -49,23 +49,25 @@ public class VCloudClientLiveTest {
 
    @Test
    public void testOrganization() throws Exception {
-      Organization response = connection.getOrganization();
+      Organization response = connection.getDefaultOrganization();
       assertNotNull(response);
       assertNotNull(response.getId());
       assertNotNull(account);
-      assertNotNull(response.getCatalog());
-      assertEquals(response.getTasksLists().size(), 1);
-      assertEquals(response.getVDCs().size(), 1);
+      assert response.getCatalogs().size() >=1;
+      assert response.getTasksLists().size() >=1;
+      assert response.getVDCs().size() >=1;
+      assertEquals(connection.getOrganization(response.getId()), response);
    }
 
    @Test
    public void testCatalog() throws Exception {
-      Catalog response = connection.getCatalog();
+      Catalog response = connection.getDefaultCatalog();
       assertNotNull(response);
       assertNotNull(response.getId());
       assertNotNull(response.getName());
       assertNotNull(response.getLocation());
       assert response.size() > 0;
+      assertEquals(connection.getCatalog(response.getId()), response);
    }
 
    @Test
@@ -81,7 +83,7 @@ public class VCloudClientLiveTest {
 
    @Test
    public void testGetCatalogItem() throws Exception {
-      Catalog response = connection.getCatalog();
+      Catalog response = connection.getDefaultCatalog();
       for (NamedResource resource : response.values()) {
          if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
             CatalogItem item = connection.getCatalogItem(resource.getId());
@@ -97,7 +99,7 @@ public class VCloudClientLiveTest {
 
    @Test
    public void testGetVAppTemplate() throws Exception {
-      Catalog response = connection.getCatalog();
+      Catalog response = connection.getDefaultCatalog();
       for (NamedResource resource : response.values()) {
          if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
             CatalogItem item = connection.getCatalogItem(resource.getId());

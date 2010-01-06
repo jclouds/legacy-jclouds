@@ -63,7 +63,7 @@ public interface HostingDotComVCloudAsyncClient extends VCloudAsyncClient {
    // produces is incorrect, but required for hosting.com to operate
    @XMLResponseParser(CatalogHandler.class)
    @Override
-   Future<? extends Catalog> getCatalog();
+   Future<? extends Catalog> getDefaultCatalog();
 
    @GET
    @Consumes(VAPP_XML)

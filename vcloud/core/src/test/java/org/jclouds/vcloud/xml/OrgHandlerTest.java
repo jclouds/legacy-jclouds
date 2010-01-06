@@ -77,9 +77,9 @@ public class OrgHandlerTest {
       assertEquals(result.getId(), 48 + "");
       assertEquals(result.getLocation(), URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"));
-      assertEquals(result.getCatalog(), new NamedResourceImpl("catalog",
+      assertEquals(result.getCatalogs(),  ImmutableMap.of("Miami Environment 1 Catalog",new NamedResourceImpl("catalog",
                "Miami Environment 1 Catalog", CATALOG_XML,
-               URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32/catalog")));
+               URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32/catalog"))));
       assertEquals(result.getVDCs(), ImmutableMap.of("Miami Environment 1", new NamedResourceImpl(
                "32", "Miami Environment 1", VCloudMediaType.VDC_XML, URI
                         .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32"))));
@@ -121,8 +121,8 @@ public class OrgHandlerTest {
       assertEquals(result.getId(), 188849 + "");
       assertEquals(result.getLocation(), URI
                .create("https://vcloud.safesecureweb.com/api/v0.8/org/188849"));
-      assertEquals(result.getCatalog(), new NamedResourceImpl("1", "HMS Shared Catalog",
-               CATALOG_XML, URI.create("https://vcloud.safesecureweb.com/api/v0.8/catalog/1")));
+      assertEquals(result.getCatalogs(), ImmutableMap.of( "HMS Shared Catalog", new NamedResourceImpl("1", "HMS Shared Catalog",
+               CATALOG_XML, URI.create("https://vcloud.safesecureweb.com/api/v0.8/catalog/1"))));
       assertEquals(result.getVDCs(), ImmutableMap.of("188849 Virtual DataCenter",
                new NamedResourceImpl("188849", "188849 Virtual DataCenter",
                         VCloudMediaType.VDC_XML, URI

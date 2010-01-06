@@ -161,8 +161,8 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       checkFilters(httpMethod);
    }
 
-   public void testOrganization() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudAsyncClient.class.getMethod("getOrganization");
+   public void testDefaultOrganization() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudAsyncClient.class.getMethod("getDefaultOrganization");
       GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method);
 
       assertRequestLineEquals(httpMethod, "GET http://org HTTP/1.1");
@@ -175,12 +175,42 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       checkFilters(httpMethod);
    }
+   
+   public void testOrganization() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudAsyncClient.class.getMethod("getOrganization", String.class);
+      GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, "1");
 
-   public void testCatalog() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudAsyncClient.class.getMethod("getCatalog");
+      assertRequestLineEquals(httpMethod, "GET http://vcloud/org/1 HTTP/1.1");
+      assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.org+xml\n");
+      assertPayloadEquals(httpMethod, null);
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, OrgHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+  }
+
+   public void testDefaultCatalog() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudAsyncClient.class.getMethod("getDefaultCatalog");
       GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method);
 
       assertRequestLineEquals(httpMethod, "GET http://catalog HTTP/1.1");
+      assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.catalog+xml\n");
+      assertPayloadEquals(httpMethod, null);
+
+      assertResponseParserClassEquals(method, httpMethod, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, CatalogHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpMethod);
+   }
+   
+   public void testCatalog() throws SecurityException, NoSuchMethodException, IOException {
+	      Method method = VCloudAsyncClient.class.getMethod("getCatalog", String.class);
+	      GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, "1");
+
+      assertRequestLineEquals(httpMethod, "GET http://vcloud/catalog/1 HTTP/1.1");
       assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.catalog+xml\n");
       assertPayloadEquals(httpMethod, null);
 

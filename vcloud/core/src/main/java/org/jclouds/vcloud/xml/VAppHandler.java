@@ -21,18 +21,20 @@ package org.jclouds.vcloud.xml;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.UnknownHostException;
-import java.util.SortedSet;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
+import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.domain.VirtualSystem;
 import org.jclouds.vcloud.domain.internal.VAppImpl;
+import org.jclouds.vcloud.util.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -58,7 +60,7 @@ public class VAppHandler extends ParseSax.HandlerWithResult<VApp> {
    }
 
    protected VirtualSystem system;
-   protected SortedSet<ResourceAllocation> allocations = Sets.newTreeSet();
+   protected Set<ResourceAllocation> allocations = Sets.newLinkedHashSet();
    protected VAppStatus status;
    protected final ListMultimap<String, InetAddress> networkToAddresses = ArrayListMultimap
             .create();
@@ -79,8 +81,10 @@ public class VAppHandler extends ParseSax.HandlerWithResult<VApp> {
    public void startElement(String uri, String localName, String qName, Attributes attributes)
             throws SAXException {
       if (qName.equals("VApp")) {
-         name = id = attributes.getValue(attributes.getIndex("name"));
-         location = URI.create(attributes.getValue(attributes.getIndex("href")));
+    	 NamedResource resource = Utils.newNamedResource(attributes);
+         name = resource.getName();
+         id = resource.getId();
+         location = resource.getLocation();
          status = VAppStatus.fromValue(attributes.getValue(attributes.getIndex("status")));
          if (attributes.getIndex("size") != -1)
             size = new Long(attributes.getValue(attributes.getIndex("size")));

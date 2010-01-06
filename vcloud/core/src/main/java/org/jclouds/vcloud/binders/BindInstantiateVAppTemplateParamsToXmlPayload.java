@@ -181,7 +181,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
    }
 
    protected void addNetworkConfig(XMLBuilder instantiationParamsBuilder, String name,
-            String network) {
+           String network) {
       XMLBuilder networkConfigBuilder = instantiationParamsBuilder.e("NetworkConfigSection").e(
                "NetworkConfig").a("name", name);
       XMLBuilder featuresBuilder = networkConfigBuilder.e("Features");

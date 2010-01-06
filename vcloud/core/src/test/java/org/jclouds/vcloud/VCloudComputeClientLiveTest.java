@@ -47,7 +47,7 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.internal.ImmutableMap;
 
 /**
- * Tests behavior of {@code HostingDotComVCloudClient}
+ * Tests behavior of {@code VCloudComputeClientLiveTest}
  * 
  * @author Adrian Cole
  */

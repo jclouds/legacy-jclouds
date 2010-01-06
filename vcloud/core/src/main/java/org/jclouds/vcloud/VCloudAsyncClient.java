@@ -18,6 +18,7 @@
  */
 package org.jclouds.vcloud;
 
+import static org.jclouds.vcloud.VCloudMediaType.ORG_XML;
 import static org.jclouds.vcloud.VCloudMediaType.CATALOGITEM_XML;
 import static org.jclouds.vcloud.VCloudMediaType.CATALOG_XML;
 import static org.jclouds.vcloud.VCloudMediaType.NETWORK_XML;
@@ -82,16 +83,30 @@ public interface VCloudAsyncClient {
 
    @GET
    @Endpoint(Org.class)
-   @Consumes(VCloudMediaType.ORG_XML)
+   @Consumes(ORG_XML)
    @XMLResponseParser(OrgHandler.class)
-   Future<? extends Organization> getOrganization();
-
+   Future<? extends Organization> getDefaultOrganization();
+   
+   @GET
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
+   @Path("/org/{orgId}")
+   @XMLResponseParser(OrgHandler.class)
+   @Consumes(ORG_XML)
+   Future<? extends Organization> getOrganization(@PathParam("orgId") String orgId);
+   
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.Catalog.class)
    @Consumes(CATALOG_XML)
    @XMLResponseParser(CatalogHandler.class)
-   Future<? extends Catalog> getCatalog();
-
+   Future<? extends Catalog> getDefaultCatalog();
+   
+   @GET
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
+   @Path("/catalog/{catalogId}")
+   @XMLResponseParser(CatalogHandler.class)
+   @Consumes(CATALOG_XML)
+   Future<? extends Catalog> getCatalog(@PathParam("catalogId") String catalogId);
+   
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/vAppTemplate/{vAppTemplateId}")

@@ -49,4 +49,13 @@ public interface Task extends Comparable<Task> {
     * A link to the result of the task
     */
    NamedResource getResult();
+   
+   Error getError();
+   
+   @ImplementedBy(TaskImpl.ErrorImpl.class)
+   static interface Error {
+     String getMessage();
+     String getMajorErrorCode();
+     String getMinorErrorCode();
+   }
 }

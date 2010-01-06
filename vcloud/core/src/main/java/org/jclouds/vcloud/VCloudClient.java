@@ -46,9 +46,13 @@ public interface VCloudClient {
     * This call returns a list of all vCloud Data Centers (vdcs), catalogs, and task lists within
     * the organization.
     */
-   Organization getOrganization();
+   Organization getDefaultOrganization();
+   
+   Organization getOrganization(String orgId);
 
-   Catalog getCatalog();
+   Catalog getDefaultCatalog();
+   
+   Catalog getCatalog(String catalogId);
 
    CatalogItem getCatalogItem(String catalogItemId);
 

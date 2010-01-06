@@ -126,90 +126,96 @@ public class ResourceAllocation implements Comparable<ResourceAllocation> {
    }
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((address == null) ? 0 : address.hashCode());
-      result = prime * result + ((addressOnParent == null) ? 0 : addressOnParent.hashCode());
-      result = prime * result + ((connected == null) ? 0 : connected.hashCode());
-      result = prime * result + ((description == null) ? 0 : description.hashCode());
-      result = prime * result + ((hostResource == null) ? 0 : hostResource.hashCode());
-      result = prime * result + id;
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((parent == null) ? 0 : parent.hashCode());
-      result = prime * result + ((subType == null) ? 0 : subType.hashCode());
-      result = prime * result + ((type == null) ? 0 : type.hashCode());
-      result = prime * result + (int) (virtualQuantity ^ (virtualQuantity >>> 32));
-      result = prime * result
-               + ((virtualQuantityUnits == null) ? 0 : virtualQuantityUnits.hashCode());
-      return result;
-   }
+public int hashCode() {
+	final int prime = 31;
+	int result = 1;
+	result = prime * result + ((address == null) ? 0 : address.hashCode());
+	result = prime * result
+			+ ((addressOnParent == null) ? 0 : addressOnParent.hashCode());
+	result = prime * result + ((connected == null) ? 0 : connected.hashCode());
+	result = prime * result
+			+ ((description == null) ? 0 : description.hashCode());
+	result = prime * result
+			+ ((hostResource == null) ? 0 : hostResource.hashCode());
+	result = prime * result + id;
+	result = prime * result + ((name == null) ? 0 : name.hashCode());
+	result = prime * result + ((parent == null) ? 0 : parent.hashCode());
+	result = prime * result + ((subType == null) ? 0 : subType.hashCode());
+	result = prime * result + ((type == null) ? 0 : type.hashCode());
+	result = prime * result
+			+ (int) (virtualQuantity ^ (virtualQuantity >>> 32));
+	result = prime
+			* result
+			+ ((virtualQuantityUnits == null) ? 0 : virtualQuantityUnits
+					.hashCode());
+	return result;
+}
 
    @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      ResourceAllocation other = (ResourceAllocation) obj;
-      if (address == null) {
-         if (other.address != null)
-            return false;
-      } else if (!address.equals(other.address))
-         return false;
-      if (addressOnParent == null) {
-         if (other.addressOnParent != null)
-            return false;
-      } else if (!addressOnParent.equals(other.addressOnParent))
-         return false;
-      if (connected == null) {
-         if (other.connected != null)
-            return false;
-      } else if (!connected.equals(other.connected))
-         return false;
-      if (description == null) {
-         if (other.description != null)
-            return false;
-      } else if (!description.equals(other.description))
-         return false;
-      if (hostResource == null) {
-         if (other.hostResource != null)
-            return false;
-      } else if (!hostResource.equals(other.hostResource))
-         return false;
-      if (id != other.id)
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (parent == null) {
-         if (other.parent != null)
-            return false;
-      } else if (!parent.equals(other.parent))
-         return false;
-      if (subType == null) {
-         if (other.subType != null)
-            return false;
-      } else if (!subType.equals(other.subType))
-         return false;
-      if (type == null) {
-         if (other.type != null)
-            return false;
-      } else if (!type.equals(other.type))
-         return false;
-      if (virtualQuantity != other.virtualQuantity)
-         return false;
-      if (virtualQuantityUnits == null) {
-         if (other.virtualQuantityUnits != null)
-            return false;
-      } else if (!virtualQuantityUnits.equals(other.virtualQuantityUnits))
-         return false;
-      return true;
-   }
+public boolean equals(Object obj) {
+	if (this == obj)
+		return true;
+	if (obj == null)
+		return false;
+	if (getClass() != obj.getClass())
+		return false;
+	ResourceAllocation other = (ResourceAllocation) obj;
+	if (address == null) {
+		if (other.address != null)
+			return false;
+	} else if (!address.equals(other.address))
+		return false;
+	if (addressOnParent == null) {
+		if (other.addressOnParent != null)
+			return false;
+	} else if (!addressOnParent.equals(other.addressOnParent))
+		return false;
+	if (connected == null) {
+		if (other.connected != null)
+			return false;
+	} else if (!connected.equals(other.connected))
+		return false;
+	if (description == null) {
+		if (other.description != null)
+			return false;
+	} else if (!description.equals(other.description))
+		return false;
+	if (hostResource == null) {
+		if (other.hostResource != null)
+			return false;
+	} else if (!hostResource.equals(other.hostResource))
+		return false;
+	if (id != other.id)
+		return false;
+	if (name == null) {
+		if (other.name != null)
+			return false;
+	} else if (!name.equals(other.name))
+		return false;
+	if (parent == null) {
+		if (other.parent != null)
+			return false;
+	} else if (!parent.equals(other.parent))
+		return false;
+	if (subType == null) {
+		if (other.subType != null)
+			return false;
+	} else if (!subType.equals(other.subType))
+		return false;
+	if (type == null) {
+		if (other.type != null)
+			return false;
+	} else if (!type.equals(other.type))
+		return false;
+	if (virtualQuantity != other.virtualQuantity)
+		return false;
+	if (virtualQuantityUnits == null) {
+		if (other.virtualQuantityUnits != null)
+			return false;
+	} else if (!virtualQuantityUnits.equals(other.virtualQuantityUnits))
+		return false;
+	return true;
+}
 
    @Override
    public String toString() {

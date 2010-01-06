@@ -30,6 +30,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
+import org.jclouds.vcloud.domain.Task.Error;
 import org.jclouds.vcloud.domain.internal.TaskImpl;
 import org.jclouds.vcloud.util.Utils;
 import org.xml.sax.Attributes;
@@ -48,9 +49,11 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
    private Date startTime;
    private Date endTime;
    private Task task;
+   private Error error;
 
    @Resource
    protected Logger logger = Logger.NULL;
+
 
    @Inject
    public TaskHandler(DateService dateService) {
@@ -80,18 +83,21 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
          taskLink = Utils.newNamedResource(attributes);
       } else if (qName.equals("Result")) {
          result = Utils.newNamedResource(attributes);
+      } else if (qName.equals("Error")) {
+         error = Utils.newError(attributes);
       }
    }
 
    private Date parseDate(Attributes attributes, String attribute) {
+      String toParse =attributes.getValue(attributes.getIndex(attribute)); 
       try {
-         return dateService.iso8601DateParse(attributes.getValue(attributes.getIndex(attribute)));
-
+         return dateService.iso8601DateParse(toParse);
       } catch (RuntimeException e) {
          if (e.getCause() instanceof ParseException) {
             try {
-               return dateService.iso8601SecondsDateParse(attributes.getValue(attributes
-                        .getIndex(attribute)));
+               if (!toParse.endsWith("Z"))
+                  toParse+="Z";
+               return dateService.iso8601SecondsDateParse(toParse);
             } catch (RuntimeException ex) {
                logger.error(e, "error parsing date");
             }
@@ -105,13 +111,14 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
    @Override
    public void endElement(String uri, String localName, String qName) throws SAXException {
       if (qName.equalsIgnoreCase("Task")) {
-         this.task = new TaskImpl(taskLink.getId(), taskLink.getLocation(), status, startTime, endTime, owner, result);
+         this.task = new TaskImpl(taskLink.getId(), taskLink.getLocation(), status, startTime, endTime, owner, result, error);
          taskLink = null;
          status = null;
          startTime = null;
          endTime = null;
          owner = null;
          result = null;
+         error = null;
       }
    }
 

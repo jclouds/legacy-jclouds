@@ -54,7 +54,7 @@ public class ResourceAllocationHandler extends ParseSax.HandlerWithResult<Resour
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attributes)
             throws SAXException {
-      if (qName.equals("Connection")) {
+      if (qName.endsWith("Connection")) {
          connected = new Boolean(attributes.getValue(attributes.getIndex("connected")));
       }
    }
@@ -63,34 +63,34 @@ public class ResourceAllocationHandler extends ParseSax.HandlerWithResult<Resour
    public void endElement(String uri, String localName, String qName) throws SAXException {
       String current = currentOrNull();
       if (current != null) {
-         if (qName.equals("Address")) {
+         if (qName.endsWith("Address")) {
             address = Integer.parseInt(current);
-         } else if (qName.equals("AddressOnParent")) {
+         } else if (qName.endsWith("AddressOnParent")) {
             addressOnParent = Integer.parseInt(current);
-         } else if (qName.equals("AllocationUnits")) {
+         } else if (qName.endsWith("AllocationUnits")) {
             allocationUnits = current;
-         } else if (qName.equals("Description")) {
+         } else if (qName.endsWith("Description")) {
             description = current;
-         } else if (qName.equals("ElementName")) {
+         } else if (qName.endsWith("ElementName")) {
             elementName = current;
-         } else if (qName.equals("InstanceID")) {
+         } else if (qName.endsWith("InstanceID")) {
             instanceID = Integer.parseInt(current);
-         } else if (qName.equals("Parent")) {
+         } else if (qName.endsWith("Parent")) {
             parent = Integer.parseInt(current);
-         } else if (qName.equals("ResourceSubType")) {
+         } else if (qName.endsWith("ResourceSubType")) {
             resourceSubType = current;
-         } else if (qName.equals("ResourceType")) {
+         } else if (qName.endsWith("ResourceType")) {
             resourceType = ResourceType.fromValue(current);
-         } else if (qName.equals("VirtualQuantity")) {
+         } else if (qName.endsWith("VirtualQuantity")) {
             virtualQuantity = Long.parseLong(current);
-         } else if (qName.equals("VirtualQuantityUnits")) {
+         } else if (qName.endsWith("VirtualQuantityUnits")) {
             virtualQuantityUnits = current;
-         } else if (qName.equals("HostResource")) {
+         } else if (qName.endsWith("HostResource")) {
             hostResource = currentText.toString().trim();
             virtualQuantity = Long.parseLong(current);
             virtualQuantityUnits = "byte * 2^20";
          }
-      } else if (qName.equals("Item")) {
+      } else if (qName.endsWith("Item")) {
          if (allocationUnits != null)
             virtualQuantityUnits = allocationUnits;
          this.allocation = new ResourceAllocation(instanceID, elementName, description,

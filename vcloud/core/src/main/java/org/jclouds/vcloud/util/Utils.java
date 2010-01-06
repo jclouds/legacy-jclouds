@@ -22,7 +22,9 @@ import java.net.URI;
 import java.util.Map;
 
 import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
+import org.jclouds.vcloud.domain.internal.TaskImpl.ErrorImpl;
 import org.xml.sax.Attributes;
 
 /**
@@ -31,15 +33,28 @@ import org.xml.sax.Attributes;
  */
 public class Utils {
 
-
    public static NamedResource newNamedResource(Attributes attributes) {
       String uri = attributes.getValue(attributes.getIndex("href"));
       String id = uri.substring(uri.lastIndexOf('/') + 1);
-      return new NamedResourceImpl(id, attributes.getValue(attributes.getIndex("name")), attributes
-               .getValue(attributes.getIndex("type")), URI.create(uri));
+      return new NamedResourceImpl(id, attributes.getValue(attributes
+            .getIndex("name")), attributes
+            .getValue(attributes.getIndex("type")), URI.create(uri));
    }
 
-   public static void putNamedResource(Map<String, NamedResource> map, Attributes attributes) {
-      map.put(attributes.getValue(attributes.getIndex("name")), newNamedResource(attributes));
+   public static Task.Error newError(Attributes attributes) {
+      return new ErrorImpl(attrOrNull(attributes, "message"), attrOrNull(
+            attributes, "majorErrorCode"), attrOrNull(attributes,
+            "minorErrorCode"));
+   }
+
+   private static String attrOrNull(Attributes attributes, String attr) {
+      return attributes.getIndex(attr) >= 0 ? attributes.getValue(attributes
+            .getIndex(attr)) : null;
+   }
+
+   public static void putNamedResource(Map<String, NamedResource> map,
+         Attributes attributes) {
+      map.put(attributes.getValue(attributes.getIndex("name")),
+            newNamedResource(attributes));
    }
 }

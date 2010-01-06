@@ -19,7 +19,7 @@
 package org.jclouds.vcloud.domain;
 
 import java.net.InetAddress;
-import java.util.SortedSet;
+import java.util.Set;
 
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
@@ -43,7 +43,7 @@ public interface VApp extends NamedResource {
 
    VirtualSystem getSystem();
 
-   SortedSet<ResourceAllocation> getResourceAllocations();
+   Set<ResourceAllocation> getResourceAllocations();
 
    Multimap<ResourceType, ResourceAllocation> getResourceAllocationByType();
 

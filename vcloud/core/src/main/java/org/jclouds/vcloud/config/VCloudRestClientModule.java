@@ -33,6 +33,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -41,6 +42,7 @@ import org.jclouds.concurrent.internal.SyncProxy;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.logging.Logger;
 import org.jclouds.predicates.AddressReachable;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
@@ -81,7 +83,9 @@ import com.google.inject.Provides;
 @RequiresHttp
 @ConfiguresRestClient
 public class VCloudRestClientModule extends AbstractModule {
-
+   @Resource
+   protected Logger logger = Logger.NULL;
+	
    @Provides
    @Singleton
    protected Predicate<InetSocketAddress> socketTester(SocketOpen open) {
@@ -102,6 +106,7 @@ public class VCloudRestClientModule extends AbstractModule {
 
    @Override
    protected void configure() {
+      requestInjection(this);
    }
 
    @VCloudToken
@@ -217,21 +222,21 @@ public class VCloudRestClientModule extends AbstractModule {
    @Singleton
    protected Organization provideOrganization(VCloudClient discovery) throws ExecutionException,
             TimeoutException, InterruptedException {
-      return discovery.getOrganization();
+      return discovery.getDefaultOrganization();
    }
 
    @Provides
    @VDC
    @Singleton
    protected URI provideDefaultVDC(Organization org) {
-      return org.getVDCs().values().iterator().next().getLocation();
+      return Iterables.get(org.getVDCs().values(), 0).getLocation();
    }
 
    @Provides
    @Catalog
    @Singleton
    protected URI provideCatalog(Organization org) {
-      return org.getCatalog().getLocation();
+      return Iterables.get(org.getCatalogs().values(), 0).getLocation();
    }
 
    @Provides
@@ -239,8 +244,7 @@ public class VCloudRestClientModule extends AbstractModule {
    @Singleton
    protected URI provideDefaultNetwork(VCloudAsyncClient client) throws InterruptedException,
             ExecutionException, TimeoutException {
-      return client.getDefaultVDC().get(180, TimeUnit.SECONDS).getAvailableNetworks().values()
-               .iterator().next().getLocation();
+      return Iterables.get(client.getDefaultVDC().get(180, TimeUnit.SECONDS).getAvailableNetworks().values(), 0).getLocation();
    }
 
    @Provides

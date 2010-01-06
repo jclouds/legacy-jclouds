@@ -130,7 +130,7 @@ public class VCloudLoginLiveTest {
    @BeforeClass
    void setupFactory() {
       final String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"),
-               "jclouds.test.endpoint");
+               "jclouds.test.endpoint")+"/v0.8/login";
       final String account = checkNotNull(System.getProperty("jclouds.test.user"),
                "jclouds.test.user");
       final String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
