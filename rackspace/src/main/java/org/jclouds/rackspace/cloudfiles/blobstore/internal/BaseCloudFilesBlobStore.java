@@ -81,8 +81,7 @@ public class BaseCloudFilesBlobStore {
       this.container2ContainerListOptions = checkNotNull(container2ContainerListOptions,
                "container2ContainerListOptions");
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
-      this.getDirectoryStrategy = checkNotNull(getDirectoryStrategy,
-               "getDirectoryStrategy");
+      this.getDirectoryStrategy = checkNotNull(getDirectoryStrategy, "getDirectoryStrategy");
       this.mkdirStrategy = checkNotNull(mkdirStrategy, "mkdirStrategy");
       this.container2ResourceMd = checkNotNull(container2ResourceMd, "container2ResourceMd");
       this.container2ResourceList = checkNotNull(container2ResourceList, "container2ResourceList");
@@ -94,8 +93,10 @@ public class BaseCloudFilesBlobStore {
                .getClass().getName()));
    }
 
-   public Blob newBlob() {
-      return blobFactory.create(null);
+   public Blob newBlob(String name) {
+      Blob blob = blobFactory.create(null);
+      blob.getMetadata().setName(name);
+      return blob;
    }
 
 }

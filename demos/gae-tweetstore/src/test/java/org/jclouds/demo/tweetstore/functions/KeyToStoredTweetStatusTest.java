@@ -50,8 +50,7 @@ public class KeyToStoredTweetStatusTest {
 
    public void testStoreTweets() throws IOException, InterruptedException, ExecutionException {
       BlobMap map = createMap();
-      Blob blob = map.newBlob();
-      blob.getMetadata().setName("1");
+      Blob blob = map.newBlob("1");
       blob.getMetadata().getUserMetadata().put(TweetStoreConstants.SENDER_NAME, "frank");
       blob.setPayload("I love beans!");
       map.put("1", blob);

@@ -33,7 +33,7 @@ import org.jclouds.blobstore.options.ListContainerOptions;
  */
 public interface BlobStore {
 
-   Blob newBlob();
+   Blob newBlob(String name);
 
    /**
     * Lists all root-level resources available to the account.

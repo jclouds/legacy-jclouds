@@ -88,8 +88,10 @@ public class BaseAtmosBlobStore {
                .getClass().getName()));
    }
 
-   public Blob newBlob() {
-      return blobFactory.create(null);
+   public Blob newBlob(String name) {
+      Blob blob = blobFactory.create(null);
+      blob.getMetadata().setName(name);
+      return blob;
    }
 
 }

@@ -58,8 +58,7 @@ public class MarkerFileMkdirStrategy implements MkdirStrategy {
       try {
          if (!connection.directoryExists(containerName, directory).get(requestTimeoutMilliseconds,
                   TimeUnit.MILLISECONDS)) {
-            Blob blob = connection.newBlob();
-            blob.getMetadata().setName(directory + directorySuffix);
+            Blob blob = connection.newBlob(directory + directorySuffix);
             blob.setPayload("");
             blob.getMetadata().setContentType("application/directory");
             connection.putBlob(containerName, blob).get(requestTimeoutMilliseconds,

@@ -66,9 +66,8 @@ public class BaseAzureBlobStore {
             ClearListStrategy clearContainerStrategy, BlobPropertiesToBlobMetadata object2BlobMd,
             AzureBlobToBlob object2Blob, BlobToAzureBlob blob2Object,
             ListOptionsToListBlobsOptions container2ContainerListOptions,
-            BlobToHttpGetOptions blob2ObjectGetOptions,
-            GetDirectoryStrategy getDirectoryStrategy, MkdirStrategy mkdirStrategy,
-            ContainerToResourceMetadata container2ResourceMd,
+            BlobToHttpGetOptions blob2ObjectGetOptions, GetDirectoryStrategy getDirectoryStrategy,
+            MkdirStrategy mkdirStrategy, ContainerToResourceMetadata container2ResourceMd,
             ListBlobsResponseToResourceList container2ResourceList, ExecutorService service) {
       this.async = checkNotNull(async, "async");
       this.sync = checkNotNull(sync, "sync");
@@ -81,8 +80,7 @@ public class BaseAzureBlobStore {
       this.container2ContainerListOptions = checkNotNull(container2ContainerListOptions,
                "container2ContainerListOptions");
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
-      this.getDirectoryStrategy = checkNotNull(getDirectoryStrategy,
-               "getDirectoryStrategy");
+      this.getDirectoryStrategy = checkNotNull(getDirectoryStrategy, "getDirectoryStrategy");
       this.mkdirStrategy = checkNotNull(mkdirStrategy, "mkdirStrategy");
       this.container2ResourceMd = checkNotNull(container2ResourceMd, "container2ResourceMd");
       this.container2ResourceList = checkNotNull(container2ResourceList, "container2ResourceList");
@@ -94,8 +92,10 @@ public class BaseAzureBlobStore {
                .getClass().getName()));
    }
 
-   public Blob newBlob() {
-      return blobFactory.create(null);
+   public Blob newBlob(String name) {
+      Blob blob = blobFactory.create(null);
+      blob.getMetadata().setName(name);
+      return blob;
    }
 
 }

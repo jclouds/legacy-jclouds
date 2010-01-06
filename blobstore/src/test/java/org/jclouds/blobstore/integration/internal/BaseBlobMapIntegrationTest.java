@@ -129,7 +129,7 @@ public class BaseBlobMapIntegrationTest<A, S> extends BaseMapIntegrationTest<A, 
       try {
          Map<String, Blob> map = createMap(context, bucketName);
          putStringWithMD5(map, "one", "apple");
-         Blob object = newBlob("one");
+         Blob object = context.getBlobStore().newBlob("one");
          object.setPayload("apple");
          object.generateMD5();
          assertConsistencyAwareContainsValue(map, object);
@@ -157,7 +157,7 @@ public class BaseBlobMapIntegrationTest<A, S> extends BaseMapIntegrationTest<A, 
       String bucketName = getContainerName();
       try {
          Map<String, Blob> map = createMap(context, bucketName);
-         Blob object = newBlob("one");
+         Blob object = context.getBlobStore().newBlob("one");
          object.setPayload(Utils.toInputStream("apple"));
          object.generateMD5();
          Blob old = map.put(object.getMetadata().getName(), object);
@@ -178,7 +178,7 @@ public class BaseBlobMapIntegrationTest<A, S> extends BaseMapIntegrationTest<A, 
          Map<String, Blob> map = createMap(context, bucketName);
          Map<String, Blob> newMap = new HashMap<String, Blob>();
          for (String key : fiveInputs.keySet()) {
-            Blob object = newBlob(key);
+            Blob object = context.getBlobStore().newBlob(key);
             object.setPayload(fiveInputs.get(key));
             object.setContentLength(new Long(fiveBytes.get(key).length));
             newMap.put(key, object);
@@ -194,7 +194,7 @@ public class BaseBlobMapIntegrationTest<A, S> extends BaseMapIntegrationTest<A, 
 
    @Override
    protected void putStringWithMD5(Map<String, Blob> map, String key, String value) {
-      Blob object = newBlob(key);
+      Blob object = context.getBlobStore().newBlob(key);
       object.setPayload(value);
       object.generateMD5();
       map.put(key, object);
@@ -203,7 +203,7 @@ public class BaseBlobMapIntegrationTest<A, S> extends BaseMapIntegrationTest<A, 
    protected void putFiveStrings(Map<String, Blob> map) {
       Map<String, Blob> newMap = new HashMap<String, Blob>();
       for (Map.Entry<String, String> entry : fiveStrings.entrySet()) {
-         Blob object = newBlob(entry.getKey());
+         Blob object = context.getBlobStore().newBlob(entry.getKey());
          object.setPayload(entry.getValue());
          newMap.put(entry.getKey(), object);
       }
@@ -213,7 +213,7 @@ public class BaseBlobMapIntegrationTest<A, S> extends BaseMapIntegrationTest<A, 
    protected void putFiveStringsUnderPath(Map<String, Blob> map) {
       Map<String, Blob> newMap = new HashMap<String, Blob>();
       for (Map.Entry<String, String> entry : fiveStringsUnderPath.entrySet()) {
-         Blob object = newBlob(entry.getKey());
+         Blob object = context.getBlobStore().newBlob(entry.getKey());
          object.setPayload(entry.getValue());
          newMap.put(entry.getKey(), object);
       }

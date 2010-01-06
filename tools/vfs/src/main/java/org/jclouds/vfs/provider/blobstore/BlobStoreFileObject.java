@@ -246,8 +246,8 @@ public class BlobStoreFileObject extends AbstractFileObject {
          return new BlobStoreOutputStream(file, getBlobStore(), BlobStoreUtils.newBlob(
                   getBlobStore(), metadata));
       } else {
-         return new BlobStoreOutputStream(file, getBlobStore(), BlobStoreUtils.newBlob(
-                  getBlobStore(), getNameTrimLeadingSlashes()));
+         return new BlobStoreOutputStream(file, getBlobStore(), getBlobStore().newBlob(
+                  getNameTrimLeadingSlashes()));
       }
    }
 

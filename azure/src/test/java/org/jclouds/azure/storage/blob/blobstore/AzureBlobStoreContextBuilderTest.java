@@ -56,17 +56,16 @@ public class AzureBlobStoreContextBuilderTest {
 
    public void testNewBuilder() {
       AzureBlobStoreContextBuilder builder = newBuilder();
-      assertEquals(builder.getProperties().getProperty(PROPERTY_USER_METADATA_PREFIX),
-               "x-ms-meta-");
-      assertEquals(builder.getProperties().getProperty(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT),
-               "id");
-      assertEquals(builder.getProperties().getProperty(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY),
-               "secret");
+      assertEquals(builder.getProperties().getProperty(PROPERTY_USER_METADATA_PREFIX), "x-ms-meta-");
+      assertEquals(builder.getProperties().getProperty(
+               AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT), "id");
+      assertEquals(builder.getProperties().getProperty(
+               AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY), "secret");
    }
 
    private AzureBlobStoreContextBuilder newBuilder() {
-      return new AzureBlobStoreContextBuilder(new AzureBlobPropertiesBuilder("id",
-               "secret").build()).withModules(new AzureBlobStubClientModule());
+      return new AzureBlobStoreContextBuilder(new AzureBlobPropertiesBuilder("id", "secret")
+               .build()).withModules(new AzureBlobStubClientModule());
    }
 
    public void testBuildContext() {
@@ -75,15 +74,16 @@ public class AzureBlobStoreContextBuilderTest {
       assertEquals(context.getAsyncApi().getClass(), StubAzureBlobAsyncClient.class);
       assertEquals(context.getAsyncBlobStore().getClass(), AzureAsyncBlobStore.class);
       assertEquals(context.getAsyncApi().newBlob().getClass(), AzureBlobImpl.class);
-      assertEquals(context.getAsyncBlobStore().newBlob().getClass(), BlobImpl.class);
+      assertEquals(context.getAsyncBlobStore().newBlob(null).getClass(), BlobImpl.class);
       assertEquals(context.getAccount(), "id");
       assertEquals(context.getEndPoint(), URI.create("https://localhost/azurestub"));
    }
 
    public void testBuildInjector() {
       Injector i = newBuilder().buildInjector();
-      assert i.getInstance(Key.get(new TypeLiteral<BlobStoreContext<AzureBlobAsyncClient, AzureBlobClient>>() {
-      })) != null;
+      assert i.getInstance(Key
+               .get(new TypeLiteral<BlobStoreContext<AzureBlobAsyncClient, AzureBlobClient>>() {
+               })) != null;
       assert i.getInstance(AzureBlob.class) != null;
       assert i.getInstance(Blob.class) != null;
    }

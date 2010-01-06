@@ -127,8 +127,7 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest<S3Asy
       try {
          String objectKey = "key-testDeleteObjectImpl";
          String objectValue = "test";
-         Blob blob = context.getAsyncBlobStore().newBlob();
-         blob.getMetadata().setName(objectKey);
+         Blob blob = context.getAsyncBlobStore().newBlob(objectKey);
          blob.setPayload(objectValue);
          addBlobToContainer(bucketName, blob);
 
@@ -148,8 +147,7 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest<S3Asy
          String metadataName = "metadata-name-1";
          String metadataValue = "metadata-value-1";
 
-         Blob blob = context.getAsyncBlobStore().newBlob();
-         blob.getMetadata().setName(objectKey);
+         Blob blob = context.getAsyncBlobStore().newBlob(objectKey);
          blob.setPayload(objectValue);
          blob.getMetadata().getUserMetadata().put(metadataName, metadataValue);
          addBlobToContainer(bucketName, blob);
@@ -175,8 +173,7 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest<S3Asy
          String metadataName = "metadata-name-2";
          String metadataValue = "metadata-value-2";
 
-         Blob blob = context.getAsyncBlobStore().newBlob();
-         blob.getMetadata().setName(objectKey);
+         Blob blob = context.getAsyncBlobStore().newBlob(objectKey);
          blob.setPayload(objectValue);
          blob.getMetadata().getUserMetadata().put(metadataName, metadataValue);
          addBlobToContainer(bucketName, blob);
@@ -434,8 +431,7 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest<S3Asy
          String sourceMetadataValue = "souce-metadata-value";
          String destinationMetadataValue = "destination-metadata-value";
 
-         Blob blob = context.getAsyncBlobStore().newBlob();
-         blob.getMetadata().setName(sourceObjectKey);
+         Blob blob = context.getAsyncBlobStore().newBlob(sourceObjectKey);
          blob.setPayload(data);
          blob.getMetadata().getUserMetadata().put(metadataName, sourceMetadataValue);
          addBlobToContainer(bucketName, blob);

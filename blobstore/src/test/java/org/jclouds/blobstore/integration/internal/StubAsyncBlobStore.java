@@ -681,8 +681,10 @@ public class StubAsyncBlobStore implements AsyncBlobStore {
       });
    }
 
-   public Blob newBlob() {
-      return blobProvider.create(null);
+   public Blob newBlob(String name) {
+      Blob blob = blobProvider.create(null);
+      blob.getMetadata().setName(name);
+      return blob;
    }
 
 }

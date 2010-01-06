@@ -78,7 +78,7 @@ public class CloudFilesBlobStoreContextBuilderTest {
       assertEquals(context.getAsyncApi().getClass(), StubCloudFilesAsyncClient.class);
       assertEquals(context.getAsyncBlobStore().getClass(), CloudFilesAsyncBlobStore.class);
       assertEquals(context.getAsyncApi().newCFObject().getClass(), CFObjectImpl.class);
-      assertEquals(context.getAsyncBlobStore().newBlob().getClass(), BlobImpl.class);
+      assertEquals(context.getAsyncBlobStore().newBlob(null).getClass(), BlobImpl.class);
       assertEquals(context.getAccount(), "id");
       assertEquals(context.getEndPoint(), URI.create("http://localhost/rackspacestub/cloudfiles"));
    }

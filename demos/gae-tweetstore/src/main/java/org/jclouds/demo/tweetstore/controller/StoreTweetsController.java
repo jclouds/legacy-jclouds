@@ -61,9 +61,8 @@ public class StoreTweetsController extends HttpServlet {
       }
 
       public Blob apply(Status from) {
-         Blob to = map.newBlob();
+         Blob to = map.newBlob(from.getId() + "");
          to.getMetadata().setContentType(MediaType.TEXT_PLAIN);
-         to.getMetadata().setName(from.getId() + "");
          to.setPayload(from.getText());
          to.getMetadata().getUserMetadata().put(TweetStoreConstants.SENDER_NAME,
                   from.getUser().getScreenName());

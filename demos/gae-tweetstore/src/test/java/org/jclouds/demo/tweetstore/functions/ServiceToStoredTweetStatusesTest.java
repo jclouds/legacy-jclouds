@@ -51,8 +51,7 @@ public class ServiceToStoredTweetStatusesTest {
          BlobStoreContext<AsyncBlobStore, BlobStore> context = new StubBlobStoreContextBuilder()
                   .buildContext();
          context.getAsyncBlobStore().createContainer(container).get();
-         Blob blob = context.getAsyncBlobStore().newBlob();
-         blob.getMetadata().setName("1");
+         Blob blob = context.getAsyncBlobStore().newBlob("1");
          blob.getMetadata().getUserMetadata().put(TweetStoreConstants.SENDER_NAME, "frank");
          blob.setPayload("I love beans!");
          context.getAsyncBlobStore().putBlob(container, blob).get();

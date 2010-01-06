@@ -72,7 +72,7 @@ public class S3BlobStoreContextBuilderTest {
       assertEquals(context.getAsyncApi().getClass(), StubS3AsyncClient.class);
       assertEquals(context.getAsyncBlobStore().getClass(), S3AsyncBlobStore.class);
       assertEquals(context.getAsyncApi().newS3Object().getClass(), S3ObjectImpl.class);
-      assertEquals(context.getAsyncBlobStore().newBlob().getClass(), BlobImpl.class);
+      assertEquals(context.getAsyncBlobStore().newBlob(null).getClass(), BlobImpl.class);
       assertEquals(context.getAccount(), "id");
       assertEquals(context.getEndPoint(), URI.create("https://localhost/s3stub"));
    }

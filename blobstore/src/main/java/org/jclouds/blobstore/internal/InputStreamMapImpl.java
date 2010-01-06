@@ -225,8 +225,7 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
       try {
          Set<Future<String>> puts = Sets.newHashSet();
          for (Map.Entry<? extends String, ? extends Object> entry : map.entrySet()) {
-            Blob object = connection.newBlob();
-            object.getMetadata().setName(prefixer.apply(entry.getKey()));
+            Blob object = connection.newBlob(prefixer.apply(entry.getKey()));
             object.setPayload(Payloads.newPayload(entry.getValue()));
             object.generateMD5();
             puts.add(connection.putBlob(containerName, object));
@@ -286,11 +285,10 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
     * @see S3Client#put(String, Blob)
     */
    @VisibleForTesting
-   InputStream putInternal(String s, Payload payload) {
-      Blob object = connection.newBlob();
-      object.getMetadata().setName(prefixer.apply(s));
+   InputStream putInternal(String name, Payload payload) {
+      Blob object = connection.newBlob(prefixer.apply(name));
       try {
-         InputStream returnVal = containsKey(s) ? get(s) : null;
+         InputStream returnVal = containsKey(name) ? get(name) : null;
          object.setPayload(payload);
          object.generateMD5();
          connection.putBlob(containerName, object).get(requestTimeoutMilliseconds,

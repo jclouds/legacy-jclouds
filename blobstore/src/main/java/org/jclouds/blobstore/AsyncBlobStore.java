@@ -35,7 +35,7 @@ import org.jclouds.blobstore.options.ListContainerOptions;
  */
 public interface AsyncBlobStore {
 
-   Blob newBlob();
+   Blob newBlob(String name);
 
    /**
     * Lists all root-level resources available to the account.

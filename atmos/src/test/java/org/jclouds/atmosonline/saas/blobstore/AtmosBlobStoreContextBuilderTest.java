@@ -75,7 +75,7 @@ public class AtmosBlobStoreContextBuilderTest {
       assertEquals(context.getAsyncApi().getClass(), StubAtmosStorageAsyncClient.class);
       assertEquals(context.getAsyncBlobStore().getClass(), AtmosAsyncBlobStore.class);
       assertEquals(context.getAsyncApi().newObject().getClass(), AtmosObjectImpl.class);
-      assertEquals(context.getAsyncBlobStore().newBlob().getClass(), BlobImpl.class);
+      assertEquals(context.getAsyncBlobStore().newBlob(null).getClass(), BlobImpl.class);
       assertEquals(context.getAccount(), "id");
       assertEquals(context.getEndPoint(), URI.create("https://localhost/azurestub"));
    }

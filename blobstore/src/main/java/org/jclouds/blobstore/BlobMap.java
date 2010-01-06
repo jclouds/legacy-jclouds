@@ -34,7 +34,7 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(BlobMapImpl.class)
 public interface BlobMap extends ListableMap<String, Blob> {
    
-   Blob newBlob();
+   Blob newBlob(String name);
    
    public static interface Factory {
       BlobMap create(String containerName, ListContainerOptions listOptions);

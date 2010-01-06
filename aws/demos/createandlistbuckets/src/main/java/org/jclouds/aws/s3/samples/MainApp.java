@@ -58,8 +58,7 @@ public class MainApp {
          BlobStore blobStore = context.getBlobStore();
          blobStore.createContainer(containerName);
 
-         Blob blob = blobStore.newBlob();
-         blob.getMetadata().setName("test");
+         Blob blob = blobStore.newBlob("test");
          blob.setPayload("testdata");
          blobStore.putBlob(containerName, blob);
 

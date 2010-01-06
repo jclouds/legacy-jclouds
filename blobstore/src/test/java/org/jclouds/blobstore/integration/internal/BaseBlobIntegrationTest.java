@@ -296,7 +296,7 @@ public class BaseBlobIntegrationTest<A, S> extends BaseBlobStoreIntegrationTest<
    @Test(groups = { "integration", "live" }, dataProvider = "putTests")
    public void testPutObject(String key, String type, Object content, Object realObject)
             throws InterruptedException, IOException {
-      Blob object = newBlob(key);
+      Blob object = context.getBlobStore().newBlob(key);
       object.getMetadata().setContentType(type);
       object.setPayload(Payloads.newPayload(content));
       if (content instanceof InputStream) {
@@ -318,7 +318,7 @@ public class BaseBlobIntegrationTest<A, S> extends BaseBlobStoreIntegrationTest<
    public void testMetadata() throws InterruptedException {
       String key = "hello";
 
-      Blob object = newBlob(key);
+      Blob object = context.getBlobStore().newBlob(key);
       object.setPayload(TEST_STRING);
       object.getMetadata().setContentType("text/plain");
       object.getMetadata().setSize(new Long(TEST_STRING.length()));

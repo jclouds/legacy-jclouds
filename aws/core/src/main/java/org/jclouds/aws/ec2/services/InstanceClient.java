@@ -508,6 +508,55 @@ public interface InstanceClient {
     * {@link InstanceState#STOPPING} to {@link InstanceState#STOPPED}</li>
     * </ol>
     * 
+    * The {@code blockDeviceMapping} option takes a value in the following format:
+    * <device-name>=<snapshot-id>[:<volume-size>[:<deleteOnTermination>]]
+    * <ol>
+    * <li>device-name - this is the device name as it should be exposed to the instance, for example
+    * /dev/sdb. This is the same as the device field specified in the AttachVolume call today. This
+    * field also serves as the key for the structure.</li>
+    * <li>snapshot-id - the ID of the EBS snapshot to be used when creating the volume. This field
+    * is optional. If it is not specified, the volume-size field must be present to create a blank
+    * volume of the specified size.</li>
+    * <li>volume-size - the size (GiBs) of the volume. This field is optional unless no snapshot-id
+    * is present. If a snapshot-id is present, the size must be equal to or larger than the
+    * snapshot's volume size.</li>
+    * <li>delete-on-termination - this indicates whether the volume should be deleted on
+    * termination. It defaults to ' true '.</li>
+    * </ol>
+    * <p/>
+    * Note that the device names between Linux and Windows differ. For Linux, ensure that your
+    * device name is in the form /dev/sd[a-z] . For example, /dev/sda , /dev/sdb and /dev/sdh are
+    * all valid device names.
+    * <p/>
+    * For Windows, the root device is still referred to as /dev/sda1 . For other devices, ensure
+    * that they are in the form /xvd[c-p] . For example, /xvde , /xvdf and /xvdp are all valid
+    * Windows device names.
+    * <p/>
+    * Here are a few extra examples on how this functionality can be used.
+    * 
+    * <ol>
+    * <li>
+    * resize the root volume: @{code /dev/sda1=:100}</li>
+    * <li>
+    * don't delete the root volume: {@code /dev/sda1=:100:false}</li>
+    * <li>
+    * TODO: unverified: create and attach an additional volume at launch: {@code
+    * /dev/sdb=snap-e8a23d81,/dev/sdc=:200}
+    * <p/>
+    * The above example will create and attach the following EBS volumes at launch time:
+    * <ol>
+    * <li>
+    * /dev/sdb - a 10 GiBs EBS volume containing an ext3 file system; this is an Amazon shared
+    * snapshot.</li>
+    * <li>
+    * /dev/sdc - an empty 200 GiB EBS volume.</li>
+    * </ol>
+    * </li>
+    * <li>
+    * TODO: unverified: cresize the root partition of a Windows 2008 image and add an additional 100
+    * GiB device: {@code /dev/sda1=:100,/dev/xvdc=:100}</li>
+    * </ol>
+    * 
     * @param region
     *           Instances are tied to Availability Zones. However, the instance ID is tied to the
     *           Region.

@@ -125,12 +125,6 @@ public class BaseBlobStoreIntegrationTest<A, S> {
 
    private static volatile boolean initialized = false;
 
-   protected Blob newBlob(String key) {
-      Blob object = context.getBlobStore().newBlob();
-      object.getMetadata().setName(key);
-      return object;
-   }
-
    protected void createContainersSharedByAllThreads(BlobStoreContext<A, S> context,
             ITestContext testContext) throws Exception {
       while (!initialized) {
@@ -256,7 +250,7 @@ public class BaseBlobStoreIntegrationTest<A, S> {
    }
 
    protected String addBlobToContainer(String sourceContainer, String key) {
-      Blob sourceObject = newBlob(key);
+      Blob sourceObject = context.getBlobStore().newBlob(key);
       sourceObject.getMetadata().setContentType("text/xml");
       sourceObject.setPayload(TEST_STRING);
       return addBlobToContainer(sourceContainer, sourceObject);
@@ -265,7 +259,7 @@ public class BaseBlobStoreIntegrationTest<A, S> {
    protected void add5BlobsUnderPathAnd5UnderRootToContainer(String sourceContainer) {
       for (Entry<String, String> entry : Iterables.concat(fiveStrings.entrySet(),
                fiveStringsUnderPath.entrySet())) {
-         Blob sourceObject = newBlob(entry.getKey());
+         Blob sourceObject = context.getBlobStore().newBlob(entry.getKey());
          sourceObject.getMetadata().setContentType("text/xml");
          sourceObject.setPayload(entry.getValue());
          addBlobToContainer(sourceContainer, sourceObject);
