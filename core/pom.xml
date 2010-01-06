@@ -69,11 +69,6 @@
             <version>1.0</version>
         </dependency>
         <dependency>
-            <groupId>com.google.collections</groupId>
-            <artifactId>google-collections</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
             <groupId>javax.annotation</groupId>
             <artifactId>jsr250-api</artifactId>
             <version>1.0</version>
@@ -97,6 +92,12 @@
             <groupId>com.google.common</groupId>
             <artifactId>google-guava</artifactId>
             <version>1.0-SNAPSHOT</version>
+            <exclusions>
+               <exclusion>
+                  <groupId>com.google.collections</groupId>
+                  <artifactId>google-collections</artifactId>
+               </exclusion>
+            </exclusions> 
         </dependency>
     </dependencies>
     
