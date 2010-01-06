@@ -19,6 +19,7 @@
 package org.jclouds.rackspace;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertNotNull;
 
 import java.net.URI;
@@ -29,7 +30,6 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.lifecycle.Closer;
@@ -131,7 +131,7 @@ public class RackspaceAuthenticationLiveTest {
          public void addContextModule(List<Module> modules) {
             modules.add(new RackspaceAuthenticationContextModule());
          }
-      }.withModules(new Log4JLoggingModule(),
-               new ExecutorServiceModule(new WithinThreadExecutorService())).buildContext();
+      }.withModules(new Log4JLoggingModule(), new ExecutorServiceModule(sameThreadExecutor()))
+               .buildContext();
    }
 }

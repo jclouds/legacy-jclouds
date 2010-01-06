@@ -18,6 +18,7 @@
  */
 package org.jclouds.azure.storage.blob;
 
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.jclouds.azure.storage.blob.options.CreateContainerOptions.Builder.withPublicAcl;
 import static org.jclouds.azure.storage.options.ListOptions.Builder.maxResults;
 import static org.testng.Assert.assertEquals;
@@ -42,7 +43,6 @@ import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
 import org.jclouds.blobstore.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
-import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.encryption.internal.Base64;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
@@ -91,7 +91,9 @@ public class AzureBlobClientTest {
                .singletonList("2009-07-17"));
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(), ParseSax.class);
       // TODO check generic type of response parser
-      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(), ThrowResourceNotFoundOn404.class);
+      assertEquals(processor
+               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
+               ThrowResourceNotFoundOn404.class);
    }
 
    public void testListContainersOptions() throws SecurityException, NoSuchMethodException {
@@ -112,7 +114,9 @@ public class AzureBlobClientTest {
                .singletonList("2009-07-17"));
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(), ParseSax.class);
       // TODO check generic type of response parser
-      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(), ThrowResourceNotFoundOn404.class);
+      assertEquals(processor
+               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
+               ThrowResourceNotFoundOn404.class);
    }
 
    public void testCreateContainer() throws SecurityException, NoSuchMethodException {
@@ -132,7 +136,8 @@ public class AzureBlobClientTest {
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
       // TODO check generic type of response parser
-      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
+      assertEquals(processor
+               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
                ReturnTrueIfContainerAlreadyExists.class);
    }
 
@@ -151,7 +156,8 @@ public class AzureBlobClientTest {
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnVoidIf2xx.class);
       // TODO check generic type of response parser
-      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
+      assertEquals(processor
+               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
                ReturnVoidOnNotFoundOr404.class);
    }
 
@@ -176,7 +182,8 @@ public class AzureBlobClientTest {
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
       // TODO check generic type of response parser
-      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
+      assertEquals(processor
+               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
                ReturnTrueIfContainerAlreadyExists.class);
    }
 
@@ -197,7 +204,8 @@ public class AzureBlobClientTest {
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
       // TODO check generic type of response parser
-      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
+      assertEquals(processor
+               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
                ReturnTrueIfContainerAlreadyExists.class);
    }
 
@@ -216,7 +224,8 @@ public class AzureBlobClientTest {
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
       // TODO check generic type of response parser
-      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
+      assertEquals(processor
+               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
                ReturnTrueOn404.class);
    }
 
@@ -240,7 +249,8 @@ public class AzureBlobClientTest {
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
       // TODO check generic type of response parser
-      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
+      assertEquals(processor
+               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
                ReturnTrueIfContainerAlreadyExists.class);
    }
 
@@ -259,7 +269,9 @@ public class AzureBlobClientTest {
                .singletonList("2009-07-17"));
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(), ParseSax.class);
       // TODO check generic type of response parser
-      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(), ThrowResourceNotFoundOn404.class);
+      assertEquals(processor
+               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
+               ThrowResourceNotFoundOn404.class);
    }
 
    public void testListRootBlobs() throws SecurityException, NoSuchMethodException {
@@ -277,7 +289,9 @@ public class AzureBlobClientTest {
                .singletonList("2009-07-17"));
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(), ParseSax.class);
       // TODO check generic type of response parser
-      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(), ThrowResourceNotFoundOn404.class);
+      assertEquals(processor
+               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
+               ThrowResourceNotFoundOn404.class);
    }
 
    public void testContainerProperties() throws SecurityException, NoSuchMethodException {
@@ -294,7 +308,9 @@ public class AzureBlobClientTest {
                .singletonList("2009-07-17"));
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ParseContainerPropertiesFromHeaders.class);
-      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(), ThrowResourceNotFoundOn404.class);
+      assertEquals(processor
+               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
+               ThrowResourceNotFoundOn404.class);
    }
 
    public void testSetResourceMetadata() throws SecurityException, NoSuchMethodException {
@@ -316,7 +332,9 @@ public class AzureBlobClientTest {
 
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnVoidIf2xx.class);
-      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(), ThrowResourceNotFoundOn404.class);
+      assertEquals(processor
+               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
+               ThrowResourceNotFoundOn404.class);
    }
 
    public void testSetBlobMetadata() throws SecurityException, NoSuchMethodException {
@@ -337,7 +355,9 @@ public class AzureBlobClientTest {
 
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnVoidIf2xx.class);
-      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(), ThrowResourceNotFoundOn404.class);
+      assertEquals(processor
+               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
+               ThrowResourceNotFoundOn404.class);
    }
 
    @BeforeClass
@@ -369,7 +389,7 @@ public class AzureBlobClientTest {
                      1l);
          }
       }, new AzureStorageRestClientModule(), new RestModule(), new ExecutorServiceModule(
-               new WithinThreadExecutorService()), new JavaUrlHttpCommandExecutorServiceModule());
+               sameThreadExecutor()), new JavaUrlHttpCommandExecutorServiceModule());
       processor = injector.getInstance(Key
                .get(new TypeLiteral<RestAnnotationProcessor<AzureBlobAsyncClient>>() {
                }));

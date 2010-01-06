@@ -18,12 +18,13 @@
  */
 package org.jclouds.concurrent;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -36,7 +37,6 @@ import java.util.concurrent.TimeoutException;
  * 
  * @author Adrian Cole
  */
-@SingleThreadCompatible
 public class RunnableFutureTask<V> implements Future<V> {
    private ExecutionException executionException;
    private InterruptedException interruptedException;

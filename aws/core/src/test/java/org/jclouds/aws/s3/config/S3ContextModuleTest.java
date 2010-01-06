@@ -18,12 +18,12 @@
  */
 package org.jclouds.aws.s3.config;
 
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.reference.S3Constants;
-import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.rest.RestContext;
@@ -43,7 +43,7 @@ import com.google.inject.TypeLiteral;
 public class S3ContextModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new ExecutorServiceModule(new WithinThreadExecutorService()),
+      return Guice.createInjector(new ExecutorServiceModule(sameThreadExecutor()),
                new S3StubClientModule(), new JDKLoggingModule(), new S3ContextModule() {
                   @Override
                   protected void configure() {

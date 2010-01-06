@@ -18,6 +18,7 @@
  */
 package org.jclouds.azure.storage.queue;
 
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.jclouds.azure.storage.options.CreateOptions.Builder.withMetadata;
 import static org.jclouds.azure.storage.options.ListOptions.Builder.maxResults;
 import static org.testng.Assert.assertEquals;
@@ -33,7 +34,6 @@ import org.jclouds.azure.storage.config.AzureStorageRestClientModule;
 import org.jclouds.azure.storage.options.CreateOptions;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
-import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.encryption.internal.Base64;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
@@ -82,7 +82,9 @@ public class AzureQueueClientTest {
                .singletonList("2009-07-17"));
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(), ParseSax.class);
       // TODO check generic type of response parser
-      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(), ThrowResourceNotFoundOn404.class);
+      assertEquals(processor
+               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
+               ThrowResourceNotFoundOn404.class);
    }
 
    public void testListQueuesOptions() throws SecurityException, NoSuchMethodException {
@@ -102,7 +104,9 @@ public class AzureQueueClientTest {
                .singletonList("2009-07-17"));
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(), ParseSax.class);
       // TODO check generic type of response parser
-      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(), ThrowResourceNotFoundOn404.class);
+      assertEquals(processor
+               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
+               ThrowResourceNotFoundOn404.class);
    }
 
    public void testCreateQueue() throws SecurityException, NoSuchMethodException {
@@ -122,7 +126,9 @@ public class AzureQueueClientTest {
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
       // TODO check generic type of response parser
-      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(), ThrowResourceNotFoundOn404.class);
+      assertEquals(processor
+               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
+               ThrowResourceNotFoundOn404.class);
    }
 
    public void testDeleteQueue() throws SecurityException, NoSuchMethodException {
@@ -140,7 +146,9 @@ public class AzureQueueClientTest {
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
       // TODO check generic type of response parser
-      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(), ThrowResourceNotFoundOn404.class);
+      assertEquals(processor
+               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
+               ThrowResourceNotFoundOn404.class);
    }
 
    public void testCreateQueueOptions() throws SecurityException, NoSuchMethodException {
@@ -161,7 +169,9 @@ public class AzureQueueClientTest {
       assertEquals(processor.createResponseParser(method, httpMethod).getClass(),
                ReturnTrueIf2xx.class);
       // TODO check generic type of response parser
-      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(), ThrowResourceNotFoundOn404.class);
+      assertEquals(processor
+               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
+               ThrowResourceNotFoundOn404.class);
    }
 
    @BeforeClass
@@ -186,7 +196,7 @@ public class AzureQueueClientTest {
                      1l);
          }
       }, new AzureStorageRestClientModule(), new RestModule(), new ExecutorServiceModule(
-               new WithinThreadExecutorService()), new JavaUrlHttpCommandExecutorServiceModule());
+               sameThreadExecutor()), new JavaUrlHttpCommandExecutorServiceModule());
       processor = injector.getInstance(Key
                .get(new TypeLiteral<RestAnnotationProcessor<AzureQueueAsyncClient>>() {
                }));

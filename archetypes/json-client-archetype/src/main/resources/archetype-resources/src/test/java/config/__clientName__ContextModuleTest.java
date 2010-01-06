@@ -92,7 +92,7 @@ public class ${clientName}ContextModuleTest {
             super.configure();
          }
       }, new ParserModule(), new JavaUrlHttpCommandExecutorServiceModule(),
-               new ExecutorServiceModule(new WithinThreadExecutorService()));
+               new ExecutorServiceModule(Executors.sameThreadExecutor()));
    }
 
    @Test

@@ -18,6 +18,7 @@
  */
 package org.jclouds.nirvanix.sdn;
 
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
 import java.lang.reflect.Method;
@@ -25,7 +26,6 @@ import java.net.URI;
 
 import javax.ws.rs.HttpMethod;
 
-import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
@@ -81,7 +81,7 @@ public class SDNAuthenticationTest {
                }
             });
          }
-      }, new RestModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
+      }, new RestModule(), new ExecutorServiceModule(sameThreadExecutor()),
                new JavaUrlHttpCommandExecutorServiceModule());
       processor = injector.getInstance(Key
                .get(new TypeLiteral<RestAnnotationProcessor<SDNAuthentication>>() {

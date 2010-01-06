@@ -18,11 +18,11 @@
  */
 package org.jclouds.aws.ec2.filters;
 
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.aws.ec2.config.EC2RestClientModule;
 import org.jclouds.aws.ec2.reference.EC2Constants;
-import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.util.Jsr330;
@@ -44,10 +44,10 @@ public class FormSignerTest {
    void testBuildCanonicalizedString() {
       assertEquals(
                filter.buildCanonicalizedString(new ImmutableMultimap.Builder<String, String>().put(
-                        "AWSAccessKeyId", "foo").put( "Action","DescribeImages").put(
-                        "Expires","2008-02-10T12:00:00Z").put("ImageId.1", "ami-2bb65342").put(
-                        "SignatureMethod", "HmacSHA256").put("SignatureVersion", "2").put("Version",
-                        "2009-11-30").build()),
+                        "AWSAccessKeyId", "foo").put("Action", "DescribeImages").put("Expires",
+                        "2008-02-10T12:00:00Z").put("ImageId.1", "ami-2bb65342").put(
+                        "SignatureMethod", "HmacSHA256").put("SignatureVersion", "2").put(
+                        "Version", "2009-11-30").build()),
                "AWSAccessKeyId=foo&Action=DescribeImages&Expires=2008-02-10T12%3A00%3A00Z&ImageId.1=ami-2bb65342&SignatureMethod=HmacSHA256&SignatureVersion=2&Version=2009-11-30");
    }
 
@@ -58,7 +58,7 @@ public class FormSignerTest {
    @BeforeClass
    protected void createFilter() {
       injector = Guice.createInjector(new EC2RestClientModule(), new ExecutorServiceModule(
-               new WithinThreadExecutorService()), new ParserModule(), new AbstractModule() {
+               sameThreadExecutor()), new ParserModule(), new AbstractModule() {
 
          protected void configure() {
             bindConstant().annotatedWith(Jsr330.named(EC2Constants.PROPERTY_AWS_ACCESSKEYID)).to(

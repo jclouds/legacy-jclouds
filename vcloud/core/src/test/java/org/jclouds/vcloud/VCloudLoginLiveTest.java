@@ -17,8 +17,8 @@
  * ====================================================================
  */
 package org.jclouds.vcloud;
-
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_KEY;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_SESSIONINTERVAL;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_USER;
@@ -34,7 +34,6 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.RequiresHttp;
@@ -57,6 +56,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
+
 
 /**
  * Tests behavior of {@code VCloudLogin}
@@ -130,7 +130,8 @@ public class VCloudLoginLiveTest {
    @BeforeClass
    void setupFactory() {
       final String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"),
-               "jclouds.test.endpoint")+"/v0.8/login";
+               "jclouds.test.endpoint")
+               + "/v0.8/login";
       final String account = checkNotNull(System.getProperty("jclouds.test.user"),
                "jclouds.test.user");
       final String key = checkNotNull(System.getProperty("jclouds.test.key"), "jclouds.test.key");
@@ -156,7 +157,7 @@ public class VCloudLoginLiveTest {
             modules.add(new VCloudLoginRestClientModule(endpoint));
          }
 
-      }.withModules(new Log4JLoggingModule(),
-               new ExecutorServiceModule(new WithinThreadExecutorService())).buildContext();
+      }.withModules(new Log4JLoggingModule(), new ExecutorServiceModule(sameThreadExecutor()))
+               .buildContext();
    }
 }

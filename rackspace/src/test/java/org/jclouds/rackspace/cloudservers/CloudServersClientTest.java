@@ -18,6 +18,7 @@
  */
 package org.jclouds.rackspace.cloudservers;
 
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.jclouds.rackspace.cloudservers.options.CreateServerOptions.Builder.withFile;
 import static org.jclouds.rackspace.cloudservers.options.CreateServerOptions.Builder.withMetadata;
 import static org.jclouds.rackspace.cloudservers.options.CreateServerOptions.Builder.withSharedIpGroup;
@@ -39,7 +40,6 @@ import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.functions.ReturnFalseOn404;
@@ -1010,7 +1010,7 @@ public class CloudServersClientTest {
          public String getAuthToken() {
             return "testtoken";
          }
-      }, new RestModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
+      }, new RestModule(), new ExecutorServiceModule(sameThreadExecutor()),
                new JavaUrlHttpCommandExecutorServiceModule());
       processor = injector.getInstance(Key
                .get(new TypeLiteral<RestAnnotationProcessor<CloudServersAsyncClient>>() {

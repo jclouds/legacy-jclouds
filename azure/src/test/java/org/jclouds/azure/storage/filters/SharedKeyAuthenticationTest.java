@@ -18,6 +18,7 @@
  */
 package org.jclouds.azure.storage.filters;
 
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY_AZURESTORAGE_SESSIONINTERVAL;
 import static org.testng.Assert.assertEquals;
 
@@ -28,7 +29,6 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.azure.storage.config.AzureStorageRestClientModule;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
-import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.encryption.internal.Base64;
 import org.jclouds.http.HttpRequest;
@@ -133,21 +133,18 @@ public class SharedKeyAuthenticationTest {
    @BeforeClass
    protected void createFilter() {
       injector = Guice.createInjector(new ParserModule(), new ExecutorServiceModule(
-               new WithinThreadExecutorService()), new AzureStorageRestClientModule(),
-               new AbstractModule() {
+               sameThreadExecutor()), new AzureStorageRestClientModule(), new AbstractModule() {
 
-                  protected void configure() {
-                     bindConstant().annotatedWith(
-                              Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT))
-                              .to(ACCOUNT);
-                     bindConstant().annotatedWith(
-                              Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY))
-                              .to(KEY);
-                     bindConstant().annotatedWith(
-                              Jsr330.named(PROPERTY_AZURESTORAGE_SESSIONINTERVAL)).to("1");
-                  }
+         protected void configure() {
+            bindConstant().annotatedWith(
+                     Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT)).to(ACCOUNT);
+            bindConstant().annotatedWith(
+                     Jsr330.named(AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY)).to(KEY);
+            bindConstant().annotatedWith(Jsr330.named(PROPERTY_AZURESTORAGE_SESSIONINTERVAL)).to(
+                     "1");
+         }
 
-               });
+      });
       filter = injector.getInstance(SharedKeyAuthentication.class);
    }
 

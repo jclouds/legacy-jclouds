@@ -18,6 +18,7 @@
  */
 package org.jclouds.azure.storage.config;
 
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY_AZURESTORAGE_ACCOUNT;
 import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY_AZURESTORAGE_KEY;
 import static org.jclouds.azure.storage.reference.AzureStorageConstants.PROPERTY_AZURESTORAGE_SESSIONINTERVAL;
@@ -25,7 +26,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
 import org.jclouds.azure.storage.handlers.ParseAzureStorageErrorFromXmlContent;
-import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpRetryHandler;
@@ -49,7 +49,7 @@ public class AzureStorageRestClientModuleTest {
 
    Injector createInjector() {
       return Guice.createInjector(new AzureStorageRestClientModule(), new ExecutorServiceModule(
-               new WithinThreadExecutorService()), new ParserModule(), new AbstractModule() {
+               sameThreadExecutor()), new ParserModule(), new AbstractModule() {
          @Override
          protected void configure() {
             bindConstant().annotatedWith(Jsr330.named(PROPERTY_AZURESTORAGE_ACCOUNT)).to("user");

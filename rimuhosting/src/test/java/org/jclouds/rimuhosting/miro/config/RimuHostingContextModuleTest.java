@@ -18,9 +18,9 @@
  */
 package org.jclouds.rimuhosting.miro.config;
 
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
@@ -65,7 +65,7 @@ public class RimuHostingContextModuleTest {
                      super.configure();
                   }
                }, new ParserModule(), new JavaUrlHttpCommandExecutorServiceModule(),
-               new ExecutorServiceModule(new WithinThreadExecutorService()));
+               new ExecutorServiceModule(sameThreadExecutor()));
    }
 
    @Test

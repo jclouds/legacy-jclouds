@@ -18,6 +18,7 @@
  */
 package org.jclouds.http.internal;
 
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
@@ -25,8 +26,6 @@ import java.io.InputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.jclouds.concurrent.WithinThreadExecutorService;
-import org.jclouds.http.internal.HttpWire;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
@@ -98,7 +97,7 @@ public class WireTest {
    }
 
    public HttpWire setUpSynch() throws Exception {
-      ExecutorService service = new WithinThreadExecutorService();
+      ExecutorService service = sameThreadExecutor();
       BufferLogger bufferLogger = new BufferLogger();
       HttpWire wire = new HttpWire(service);
       wire.wireLog = (bufferLogger);

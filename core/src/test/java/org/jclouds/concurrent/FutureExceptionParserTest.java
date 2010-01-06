@@ -30,6 +30,7 @@ import java.util.concurrent.TimeoutException;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
+import com.google.common.util.concurrent.Executors;
 
 /**
  * Tests behavior of FutureExceptionParser
@@ -38,7 +39,7 @@ import com.google.common.base.Function;
  */
 @Test(groups = "unit", testName = "concurrent.FutureExceptionParserTest")
 public class FutureExceptionParserTest {
-   ExecutorService executorService = new WithinThreadExecutorService();
+   ExecutorService executorService = Executors.sameThreadExecutor();
 
    @Test
    public void testGet() throws InterruptedException, ExecutionException {

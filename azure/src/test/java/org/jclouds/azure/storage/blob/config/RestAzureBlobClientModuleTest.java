@@ -18,13 +18,13 @@
  */
 package org.jclouds.azure.storage.blob.config;
 
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.azure.storage.blob.handlers.AzureBlobClientErrorRetryHandler;
 import org.jclouds.azure.storage.blob.reference.AzureBlobConstants;
 import org.jclouds.azure.storage.handlers.ParseAzureStorageErrorFromXmlContent;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
-import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.encryption.internal.Base64;
 import org.jclouds.http.functions.config.ParserModule;
@@ -46,7 +46,7 @@ public class RestAzureBlobClientModuleTest {
 
    Injector createInjector() {
       return Guice.createInjector(new AzureBlobRestClientModule(), new ExecutorServiceModule(
-               new WithinThreadExecutorService()), new ParserModule(), new AbstractModule() {
+               sameThreadExecutor()), new ParserModule(), new AbstractModule() {
          @Override
          protected void configure() {
             bindConstant().annotatedWith(

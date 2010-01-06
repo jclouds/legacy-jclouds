@@ -18,13 +18,13 @@
  */
 package org.jclouds.rest;
 
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
 
-import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
@@ -57,7 +57,7 @@ public abstract class RestClientTest<T> {
    protected void setupFactory() {
 
       injector = Guice.createInjector(createModule(), new RestModule(), new ExecutorServiceModule(
-               new WithinThreadExecutorService()), new JavaUrlHttpCommandExecutorServiceModule());
+               sameThreadExecutor()), new JavaUrlHttpCommandExecutorServiceModule());
 
       processor = injector.getInstance(Key.get(createTypeLiteral()));
    }
@@ -82,10 +82,11 @@ public abstract class RestClientTest<T> {
 
    protected void assertExceptionParserClassEquals(Method method, @Nullable Class<?> parserClass) {
       if (parserClass == null)
-         assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(), ThrowResourceNotFoundOn404.class);
+         assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(
+                  method).getClass(), ThrowResourceNotFoundOn404.class);
       else
-         assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
-                  parserClass);
+         assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(
+                  method).getClass(), parserClass);
    }
 
    protected void assertSaxResponseParserClassEquals(Method method, @Nullable Class<?> parserClass) {

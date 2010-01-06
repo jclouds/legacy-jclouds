@@ -19,6 +19,7 @@
 package org.jclouds.azure.storage.filters;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
@@ -31,7 +32,6 @@ import javax.ws.rs.Path;
 import org.jclouds.azure.storage.AzureBlob;
 import org.jclouds.azure.storage.config.AzureStorageRestClientModule;
 import org.jclouds.azure.storage.reference.AzureStorageConstants;
-import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -47,7 +47,6 @@ import org.testng.annotations.Test;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-
 /**
  * Tests behavior of {@code JaxrsAnnotationProcessor}
  * 
@@ -103,7 +102,7 @@ public class SharedKeyAuthenticationLiveTest {
                   }
 
                }, new AzureStorageRestClientModule(), new RestModule(), new Log4JLoggingModule(),
-               new ExecutorServiceModule(new WithinThreadExecutorService()),
+               new ExecutorServiceModule(sameThreadExecutor()),
                new JavaUrlHttpCommandExecutorServiceModule());
       RestClientFactory factory = injector.getInstance(RestClientFactory.class);
       client = factory.create(IntegrationTestClient.class);

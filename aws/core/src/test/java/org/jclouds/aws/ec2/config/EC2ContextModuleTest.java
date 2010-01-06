@@ -18,12 +18,12 @@
  */
 package org.jclouds.aws.ec2.config;
 
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.reference.EC2Constants;
-import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
@@ -45,7 +45,7 @@ import com.google.inject.TypeLiteral;
 public class EC2ContextModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new ExecutorServiceModule(new WithinThreadExecutorService()),
+      return Guice.createInjector(new ExecutorServiceModule(sameThreadExecutor()),
                new EC2RestClientModule(), new RestModule(),
                new JavaUrlHttpCommandExecutorServiceModule(), new JDKLoggingModule(),
                new EC2ContextModule() {

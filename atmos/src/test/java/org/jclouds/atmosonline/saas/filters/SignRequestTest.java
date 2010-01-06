@@ -18,6 +18,7 @@
  */
 package org.jclouds.atmosonline.saas.filters;
 
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -30,7 +31,6 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.atmosonline.saas.reference.AtmosStorageConstants;
 import org.jclouds.atmosonline.saas.reference.AtmosStorageHeaders;
-import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpRequest;
@@ -79,7 +79,7 @@ public class SignRequestTest {
 
    @BeforeClass
    protected void createFilter() {
-      injector = Guice.createInjector(new ExecutorServiceModule(new WithinThreadExecutorService()),
+      injector = Guice.createInjector(new ExecutorServiceModule(sameThreadExecutor()),
                new AbstractModule() {
 
                   protected void configure() {

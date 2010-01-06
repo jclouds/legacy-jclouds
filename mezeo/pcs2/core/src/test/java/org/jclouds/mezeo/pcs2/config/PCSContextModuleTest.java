@@ -18,9 +18,9 @@
  */
 package org.jclouds.mezeo.pcs2.config;
 
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.http.functions.config.ParserModule;
@@ -61,7 +61,7 @@ public class PCSContextModuleTest {
             super.configure();
          }
       }, new ParserModule(), new JavaUrlHttpCommandExecutorServiceModule(),
-               new ExecutorServiceModule(new WithinThreadExecutorService()));
+               new ExecutorServiceModule(sameThreadExecutor()));
    }
 
    @Test

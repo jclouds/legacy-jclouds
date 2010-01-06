@@ -18,6 +18,7 @@
  */
 package org.jclouds.nirvanix.sdn.filters;
 
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
@@ -29,7 +30,6 @@ import java.net.URI;
 import javax.ws.rs.POST;
 import javax.ws.rs.ext.RuntimeDelegate;
 
-import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.Logger;
@@ -92,7 +92,7 @@ public class InsertUserContextIntoPathTest {
    @BeforeClass
    protected void createFilter() throws SecurityException, NoSuchMethodException {
       injector = Guice.createInjector(new RestModule(), new ExecutorServiceModule(
-               new WithinThreadExecutorService()), new JavaUrlHttpCommandExecutorServiceModule(),
+               sameThreadExecutor()), new JavaUrlHttpCommandExecutorServiceModule(),
                new AbstractModule() {
 
                   protected void configure() {

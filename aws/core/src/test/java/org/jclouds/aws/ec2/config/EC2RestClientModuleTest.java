@@ -18,13 +18,13 @@
  */
 package org.jclouds.aws.ec2.config;
 
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.aws.ec2.reference.EC2Constants;
 import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.handlers.AWSRedirectionRetryHandler;
 import org.jclouds.aws.handlers.ParseAWSErrorFromXmlContent;
-import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
@@ -44,7 +44,7 @@ public class EC2RestClientModuleTest {
 
    Injector createInjector() {
       return Guice.createInjector(new EC2RestClientModule(), new ExecutorServiceModule(
-               new WithinThreadExecutorService()), new ParserModule(), new AbstractModule() {
+               sameThreadExecutor()), new ParserModule(), new AbstractModule() {
          @Override
          protected void configure() {
             bindConstant().annotatedWith(Jsr330.named(EC2Constants.PROPERTY_AWS_ACCESSKEYID)).to(

@@ -19,6 +19,7 @@
 package org.jclouds.vcloud;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertNotNull;
 
 import java.net.URI;
@@ -29,7 +30,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
-import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.lifecycle.Closer;
@@ -56,7 +56,7 @@ import com.google.inject.TypeLiteral;
  */
 @Test(groups = "live", testName = "vcloud.VCloudVersionsLiveTest")
 public class VCloudVersionsLiveTest {
-  
+
    @RequiresHttp
    @ConfiguresRestClient
    private static final class VCloudVersionsRestClientModule extends AbstractModule {
@@ -78,9 +78,10 @@ public class VCloudVersionsLiveTest {
       @SuppressWarnings( { "unused" })
       @Provides
       @Singleton
-      RestContext<VCloudVersionsAsyncClient, VCloudVersionsAsyncClient> provideContext(Closer closer, VCloudVersionsAsyncClient api,
-               @VCloud URI endPoint) {
-         return new RestContextImpl<VCloudVersionsAsyncClient, VCloudVersionsAsyncClient>(closer, api, api, endPoint, "");
+      RestContext<VCloudVersionsAsyncClient, VCloudVersionsAsyncClient> provideContext(
+               Closer closer, VCloudVersionsAsyncClient api, @VCloud URI endPoint) {
+         return new RestContextImpl<VCloudVersionsAsyncClient, VCloudVersionsAsyncClient>(closer,
+                  api, api, endPoint, "");
       }
 
       @Override
@@ -122,7 +123,7 @@ public class VCloudVersionsLiveTest {
             modules.add(new VCloudVersionsRestClientModule());
          }
 
-      }.withModules(new Log4JLoggingModule(),
-               new ExecutorServiceModule(new WithinThreadExecutorService())).buildContext();
+      }.withModules(new Log4JLoggingModule(), new ExecutorServiceModule(sameThreadExecutor()))
+               .buildContext();
    }
 }

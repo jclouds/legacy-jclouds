@@ -110,7 +110,7 @@ public class AddMetadataAndReturnIdTest {
 //   @BeforeClass
 //   protected void createFilter() throws SecurityException, NoSuchMethodException {
 //      Injector injector = Guice.createInjector(new RestModule(), new ExecutorServiceModule(
-//               new WithinThreadExecutorService()), new JavaUrlHttpCommandExecutorServiceModule(),
+//               Executors.sameThreadExecutor()), new JavaUrlHttpCommandExecutorServiceModule(),
 //               new AbstractModule() {
 //
 //                  protected void configure() {

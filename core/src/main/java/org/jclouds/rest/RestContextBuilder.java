@@ -19,16 +19,16 @@
 package org.jclouds.rest;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
+import static java.util.concurrent.Executors.newCachedThreadPool;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.jclouds.concurrent.SingleThreaded;
-import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.RequiresHttp;
@@ -169,9 +169,9 @@ public abstract class RestContextBuilder<A, S> {
                return input.getClass().isAnnotationPresent(SingleThreaded.class);
             }
          })) {
-            modules.add(new ExecutorServiceModule(new WithinThreadExecutorService()));
+            modules.add(new ExecutorServiceModule(sameThreadExecutor()));
          } else {
-            modules.add(new ExecutorServiceModule(Executors.newCachedThreadPool()));
+            modules.add(new ExecutorServiceModule(newCachedThreadPool()));
          }
       }
    }

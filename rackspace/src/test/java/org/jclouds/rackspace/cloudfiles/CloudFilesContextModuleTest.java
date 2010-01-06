@@ -18,9 +18,9 @@
  */
 package org.jclouds.rackspace.cloudfiles;
 
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.rackspace.StubRackspaceAuthenticationModule;
@@ -44,7 +44,7 @@ import com.google.inject.TypeLiteral;
 public class CloudFilesContextModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new ExecutorServiceModule(new WithinThreadExecutorService()),
+      return Guice.createInjector(new ExecutorServiceModule(sameThreadExecutor()),
                new CloudFilesStubClientModule(), new JDKLoggingModule(),
                new StubRackspaceAuthenticationModule(), new CloudFilesContextModule() {
                   @Override

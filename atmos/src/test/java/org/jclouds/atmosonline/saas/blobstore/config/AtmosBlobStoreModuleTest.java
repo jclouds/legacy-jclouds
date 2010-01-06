@@ -18,6 +18,7 @@
  */
 package org.jclouds.atmosonline.saas.blobstore.config;
 
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
@@ -28,7 +29,6 @@ import org.jclouds.atmosonline.saas.reference.AtmosStorageConstants;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
-import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.util.Jsr330;
@@ -46,7 +46,7 @@ import com.google.inject.TypeLiteral;
 public class AtmosBlobStoreModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new ExecutorServiceModule(new WithinThreadExecutorService()),
+      return Guice.createInjector(new ExecutorServiceModule(sameThreadExecutor()),
                new JDKLoggingModule(), new AtmosStorageStubClientModule(),
                new AtmosBlobStoreContextModule() {
                   @Override

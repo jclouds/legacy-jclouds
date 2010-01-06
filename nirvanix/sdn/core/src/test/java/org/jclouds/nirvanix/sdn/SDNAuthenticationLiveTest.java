@@ -19,6 +19,7 @@
 package org.jclouds.nirvanix.sdn;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertNotNull;
 
 import java.net.URI;
@@ -26,7 +27,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
-import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -77,7 +77,8 @@ public class SDNAuthenticationLiveTest {
          protected SDNAuthentication provideCloud(RestClientFactory factory) {
             return factory.create(SDNAuthentication.class);
          }
-      }, new RestModule(), new Log4JLoggingModule(), new ExecutorServiceModule(
-               new WithinThreadExecutorService()), new JavaUrlHttpCommandExecutorServiceModule());
+      }, new RestModule(), new Log4JLoggingModule(),
+               new ExecutorServiceModule(sameThreadExecutor()),
+               new JavaUrlHttpCommandExecutorServiceModule());
    }
 }

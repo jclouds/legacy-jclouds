@@ -19,6 +19,7 @@
 package org.jclouds.mezeo.pcs2;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertNotNull;
 
 import java.io.UnsupportedEncodingException;
@@ -27,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
-import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
@@ -101,7 +101,7 @@ public class PCSCloudLiveTest {
          protected PCSCloud provideCloud(RestClientFactory factory) {
             return factory.create(PCSCloud.class);
          }
-      }, new RestModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
+      }, new RestModule(), new ExecutorServiceModule(sameThreadExecutor()),
                new JavaUrlHttpCommandExecutorServiceModule());
    }
 }

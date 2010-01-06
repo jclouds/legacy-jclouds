@@ -18,6 +18,7 @@
  */
 package org.jclouds.mezeo.pcs2;
 
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
@@ -26,7 +27,6 @@ import java.net.URI;
 
 import javax.inject.Singleton;
 
-import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
@@ -67,7 +67,9 @@ public class PCSCloudTest {
                CloudXlinkHandler.class);
       assertEquals(httpMethod.getFilters().size(), 1);
       assertEquals(httpMethod.getFilters().get(0).getClass(), BasicAuthentication.class);
-      assertEquals(processor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(), ThrowResourceNotFoundOn404.class);
+      assertEquals(processor
+               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method).getClass(),
+               ThrowResourceNotFoundOn404.class);
    }
 
    private RestAnnotationProcessor<PCSCloud> processor;
@@ -94,7 +96,7 @@ public class PCSCloudTest {
                   throws UnsupportedEncodingException {
             return new BasicAuthentication("foo", "bar", encryptionService);
          }
-      }, new RestModule(), new ExecutorServiceModule(new WithinThreadExecutorService()),
+      }, new RestModule(), new ExecutorServiceModule(sameThreadExecutor()),
                new JavaUrlHttpCommandExecutorServiceModule());
 
       processor = injector.getInstance(Key

@@ -19,6 +19,8 @@
 package org.jclouds.http.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
+import static java.util.concurrent.Executors.newCachedThreadPool;
 import static org.testng.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
@@ -28,11 +30,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.logging.Logger;
@@ -62,7 +62,7 @@ public class WireLiveTest {
       public Void call() throws Exception {
          HttpWire wire = setUp();
          InputStream in = wire.input(fromServer);
-         ByteArrayOutputStream out = new ByteArrayOutputStream();//TODO
+         ByteArrayOutputStream out = new ByteArrayOutputStream();// TODO
          ByteStreams.copy(in, out);
          byte[] compare = encryptionService.md5(new ByteArrayInputStream(out.toByteArray()));
          Thread.sleep(100);
@@ -125,7 +125,7 @@ public class WireLiveTest {
    }
 
    public static HttpWire setUp() throws Exception {
-      ExecutorService service = Executors.newCachedThreadPool();
+      ExecutorService service = newCachedThreadPool();
       BufferLogger bufferLogger = new BufferLogger();
       HttpWire wire = new HttpWire(service);
       wire.wireLog = (bufferLogger);
@@ -133,7 +133,7 @@ public class WireLiveTest {
    }
 
    public HttpWire setUpSynch() throws Exception {
-      ExecutorService service = new WithinThreadExecutorService();
+      ExecutorService service = sameThreadExecutor();
       BufferLogger bufferLogger = new BufferLogger();
       HttpWire wire = new HttpWire(service);
       wire.wireLog = (bufferLogger);
@@ -158,7 +158,7 @@ public class WireLiveTest {
       URL url = new URL(checkNotNull(sysHttpStreamUrl, "sysHttpStreamUrl"));
       URLConnection connection = url.openConnection();
       Callable<Void> callable = new ConnectionTester(connection.getInputStream());
-      Future<Void> result = Executors.newCachedThreadPool().submit(callable);
+      Future<Void> result = newCachedThreadPool().submit(callable);
       result.get(30, TimeUnit.SECONDS);
    }
 

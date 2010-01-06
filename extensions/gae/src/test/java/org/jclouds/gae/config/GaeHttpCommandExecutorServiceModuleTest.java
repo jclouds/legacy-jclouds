@@ -18,12 +18,10 @@
  */
 package org.jclouds.gae.config;
 
-import java.util.Arrays;
-import java.util.Properties;
-import java.util.concurrent.ExecutorService;
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 
-import org.jclouds.concurrent.SingleThreadCompatible;
-import org.jclouds.concurrent.WithinThreadExecutorService;
+import java.util.Properties;
+
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.gae.GaeHttpCommandExecutorService;
 import org.jclouds.http.HttpCommandExecutorService;
@@ -46,8 +44,7 @@ public class GaeHttpCommandExecutorServiceModuleTest {
    public void testConfigureBindsClient() {
       final Properties properties = new Properties();
 
-      Injector i = Guice.createInjector(
-               new ExecutorServiceModule(new WithinThreadExecutorService()),
+      Injector i = Guice.createInjector(new ExecutorServiceModule(sameThreadExecutor()),
                new GaeHttpCommandExecutorServiceModule() {
                   @Override
                   protected void configure() {
@@ -62,8 +59,5 @@ public class GaeHttpCommandExecutorServiceModuleTest {
                });
       HttpCommandExecutorService client = i.getInstance(HttpCommandExecutorService.class);
       assert client instanceof GaeHttpCommandExecutorService;
-      ExecutorService executorService = i.getInstance(ExecutorService.class);
-      assert executorService.getClass().isAnnotationPresent(SingleThreadCompatible.class) : Arrays
-               .asList(executorService.getClass().getAnnotations());
    }
 }

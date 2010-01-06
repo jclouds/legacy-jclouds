@@ -18,11 +18,11 @@
  */
 package org.jclouds.rackspace.cloudfiles.blobstore.config;
 
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
-import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.rackspace.StubRackspaceAuthenticationModule;
@@ -45,7 +45,7 @@ import com.google.inject.TypeLiteral;
 public class CloudFilesBlobStoreModuleTest {
 
    Injector createInjector() {
-      return Guice.createInjector(new ExecutorServiceModule(new WithinThreadExecutorService()),
+      return Guice.createInjector(new ExecutorServiceModule(sameThreadExecutor()),
                new JDKLoggingModule(), new CloudFilesStubClientModule(),
                new StubRackspaceAuthenticationModule(), new CloudFilesBlobStoreContextModule() {
                   @Override

@@ -18,6 +18,7 @@
  */
 package org.jclouds.aws.s3.config;
 
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
@@ -25,7 +26,6 @@ import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.handlers.AWSRedirectionRetryHandler;
 import org.jclouds.aws.handlers.ParseAWSErrorFromXmlContent;
 import org.jclouds.aws.s3.reference.S3Constants;
-import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.functions.config.ParserModule;
@@ -47,7 +47,7 @@ public class S3RestClientModuleTest {
 
    Injector createInjector() {
       return Guice.createInjector(new S3RestClientModule(), new ExecutorServiceModule(
-               new WithinThreadExecutorService()), new ParserModule(), new AbstractModule() {
+               sameThreadExecutor()), new ParserModule(), new AbstractModule() {
          @Override
          protected void configure() {
             bindConstant().annotatedWith(Jsr330.named(S3Constants.PROPERTY_AWS_ACCESSKEYID)).to(

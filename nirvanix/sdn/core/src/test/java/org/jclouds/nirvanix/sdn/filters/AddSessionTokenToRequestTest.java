@@ -18,6 +18,7 @@
  */
 package org.jclouds.nirvanix.sdn.filters;
 
+import static com.google.common.util.concurrent.Executors.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
 import java.lang.reflect.Method;
@@ -26,7 +27,6 @@ import java.net.URI;
 import javax.ws.rs.POST;
 import javax.ws.rs.ext.RuntimeDelegate;
 
-import org.jclouds.concurrent.WithinThreadExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpRequest;
@@ -101,7 +101,7 @@ public class AddSessionTokenToRequestTest {
    @BeforeClass
    protected void createFilter() {
       injector = Guice.createInjector(new RestModule(), new ExecutorServiceModule(
-               new WithinThreadExecutorService()), new JavaUrlHttpCommandExecutorServiceModule(),
+               sameThreadExecutor()), new JavaUrlHttpCommandExecutorServiceModule(),
                new AbstractModule() {
 
                   protected void configure() {
