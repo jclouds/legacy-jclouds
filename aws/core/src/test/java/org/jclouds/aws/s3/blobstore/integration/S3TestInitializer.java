@@ -41,7 +41,7 @@ public class S3TestInitializer extends BaseTestInitializer<S3AsyncClient, S3Clie
    protected BlobStoreContext<S3AsyncClient, S3Client> createLiveContext(
             Module configurationModule, String url, String app, String account, String key) {
       BaseBlobStoreIntegrationTest.SANITY_CHECK_RETURNED_BUCKET_NAME = true;
-      return new S3BlobStoreContextBuilder(new S3PropertiesBuilder(account, key).relaxSSLHostname()
+      return new S3BlobStoreContextBuilder(new S3PropertiesBuilder(account, key)
                .build()).withModules(configurationModule, new Log4JLoggingModule()).buildContext();
    }
 
