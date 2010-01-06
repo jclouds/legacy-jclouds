@@ -113,7 +113,7 @@ class ShrinkBlob < Task
     java.lang.Thread.currentThread().setContextClassLoader(ServiceExtensionLoader.new().getClass().getClassLoader())
 
     print "creating the archive from ",@dir,"\n"
-    zipStream = Archives.create(@zip, ZipExporter.java_class).as(ExplodedImporter.java_class).importDirectory(@dir).as(ZipExporter.java_class).exportZip()
+    zipStream = Archives.create(@zip, ExplodedImporter.java_class).importDirectory(@dir).as(ZipExporter.java_class).exportZip()
 
     destination = HttpUtils.createUri(@blobstore)
     print "connecting to service ",destination.getHost(),"/",@container,"\n"
