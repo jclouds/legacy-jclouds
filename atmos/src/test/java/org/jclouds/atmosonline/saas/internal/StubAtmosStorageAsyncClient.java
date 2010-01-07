@@ -19,6 +19,8 @@
 package org.jclouds.atmosonline.saas.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.util.concurrent.Futures.immediateFailedFuture;
+import static com.google.common.util.concurrent.Futures.immediateFuture;
 
 import java.net.URI;
 import java.util.concurrent.ExecutionException;
@@ -45,13 +47,13 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
 import org.jclouds.blobstore.integration.internal.StubAsyncBlobStore;
-import org.jclouds.blobstore.integration.internal.StubAsyncBlobStore.FutureBase;
-import org.jclouds.concurrent.FutureFunctionWrapper;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.logging.Logger.LoggerFactory;
-import org.jclouds.util.Utils;
+import org.jclouds.rest.ResourceNotFoundException;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
+import com.google.common.collect.Iterables;
+import com.google.common.util.concurrent.Futures;
 
 /**
  * Implementation of {@link AtmosStorageAsyncClient} which keeps all data in a local Map object.
@@ -62,7 +64,6 @@ import com.google.common.base.Function;
 public class StubAtmosStorageAsyncClient implements AtmosStorageAsyncClient {
    private final HttpGetOptionsListToGetOptions httpGetOptionsConverter;
    private final StubAsyncBlobStore blobStore;
-   private final LoggerFactory logFactory;
    private final AtmosObject.Factory objectProvider;
    private final ObjectToBlob object2Blob;
    private final BlobToObject blob2Object;
@@ -71,13 +72,12 @@ public class StubAtmosStorageAsyncClient implements AtmosStorageAsyncClient {
    private final ResourceMetadataListToDirectoryEntryList resource2ObjectList;
 
    @Inject
-   private StubAtmosStorageAsyncClient(StubAsyncBlobStore blobStore, LoggerFactory logFactory,
+   private StubAtmosStorageAsyncClient(StubAsyncBlobStore blobStore,
             AtmosObject.Factory objectProvider,
             HttpGetOptionsListToGetOptions httpGetOptionsConverter, ObjectToBlob object2Blob,
             BlobToObject blob2Object, BlobMetadataToObject blob2ObjectInfo,
             ListOptionsToBlobStoreListOptions container2ContainerListOptions,
             ResourceMetadataListToDirectoryEntryList resource2ContainerList) {
-      this.logFactory = logFactory;
       this.blobStore = blobStore;
       this.objectProvider = objectProvider;
       this.httpGetOptionsConverter = httpGetOptionsConverter;
@@ -89,24 +89,20 @@ public class StubAtmosStorageAsyncClient implements AtmosStorageAsyncClient {
       this.resource2ObjectList = checkNotNull(resource2ContainerList, "resource2ContainerList");
    }
 
-   protected <F, T> Future<T> wrapFuture(Future<? extends F> future, Function<F, T> function) {
-      return new FutureFunctionWrapper<F, T>(future, function, logFactory.getLogger(function
-               .getClass().getName()));
-   }
-
    public Future<URI> createDirectory(String directoryName) {
       final String container;
       if (directoryName.indexOf('/') != -1)
          container = directoryName.substring(0, directoryName.indexOf('/'));
       else
          container = directoryName;
-      return wrapFuture(blobStore.createContainer(container), new Function<Boolean, URI>() {
+      return Futures.compose(Futures.makeListenable(blobStore.createContainer(container)),
+               new Function<Boolean, URI>() {
 
-         public URI apply(Boolean from) {
-            return URI.create("http://stub/containers/" + container);
-         }
+                  public URI apply(Boolean from) {
+                     return URI.create("http://stub/containers/" + container);
+                  }
 
-      });
+               });
    }
 
    public Future<URI> createFile(String parent, AtmosObject object) {
@@ -121,24 +117,26 @@ public class StubAtmosStorageAsyncClient implements AtmosStorageAsyncClient {
             object.getContentMetadata().setName(path + "/" + file);
       }
       Blob blob = object2Blob.apply(object);
-      return wrapFuture(blobStore.putBlob(container, blob), new Function<String, URI>() {
+      return Futures.compose(Futures.makeListenable(blobStore.putBlob(container, blob)),
+               new Function<String, URI>() {
 
-         public URI apply(String from) {
-            return URI.create(uri);
-         }
+                  public URI apply(String from) {
+                     return URI.create(uri);
+                  }
 
-      });
+               });
    }
 
    public Future<Void> deletePath(String path) {
       if (path.indexOf('/') == -1)
-         return wrapFuture(blobStore.deleteContainerImpl(path), new Function<Boolean, Void>() {
+         return Futures.compose(Futures.makeListenable(blobStore.deleteContainerImpl(path)),
+                  new Function<Boolean, Void>() {
 
-            public Void apply(Boolean from) {
-               return null;
-            }
+                     public Void apply(Boolean from) {
+                        return null;
+                     }
 
-         });
+                  });
       else {
          String container = path.substring(0, path.indexOf('/'));
          path = path.substring(path.indexOf('/') + 1);
@@ -156,7 +154,7 @@ public class StubAtmosStorageAsyncClient implements AtmosStorageAsyncClient {
       else {
          String container = path.substring(0, path.indexOf('/'));
          path = path.substring(path.indexOf('/') + 1);
-         return wrapFuture(blobStore.blobMetadata(container, path),
+         return Futures.compose(Futures.makeListenable(blobStore.blobMetadata(container, path)),
                   new Function<BlobMetadata, UserMetadata>() {
                      public UserMetadata apply(BlobMetadata from) {
                         return blob2ObjectInfo.apply(from).getUserMetadata();
@@ -169,10 +167,10 @@ public class StubAtmosStorageAsyncClient implements AtmosStorageAsyncClient {
       String container = path.substring(0, path.indexOf('/'));
       path = path.substring(path.indexOf('/') + 1);
       try {
-         return wrapFuture(blobStore.getBlob(container, path), blob2Object);
+         return Futures.compose(Futures.makeListenable(blobStore.getBlob(container, path)),
+                  blob2Object);
       } catch (Exception e) {
-         Utils.<KeyNotFoundException> rethrowIfRuntimeOrSameType(e);
-         throw new RuntimeException(e);
+         return immediateFailedFuture(Throwables.getRootCause(e));
       }
    }
 
@@ -180,7 +178,7 @@ public class StubAtmosStorageAsyncClient implements AtmosStorageAsyncClient {
             ListOptions... optionsList) {
       // org.jclouds.blobstore.options.ListOptions options = container2ContainerListOptions
       // .apply(optionsList);
-      return wrapFuture(blobStore.list(), resource2ObjectList);
+      return Futures.compose(Futures.makeListenable(blobStore.list()), resource2ObjectList);
    }
 
    public Future<? extends BoundedSortedSet<? extends DirectoryEntry>> listDirectory(
@@ -194,7 +192,8 @@ public class StubAtmosStorageAsyncClient implements AtmosStorageAsyncClient {
          if (!path.equals(""))
             options.inDirectory(path);
       }
-      return wrapFuture(blobStore.list(container, options), resource2ObjectList);
+      return Futures.compose(Futures.makeListenable(blobStore.list(container, options)),
+               resource2ObjectList);
    }
 
    public AtmosObject newObject() {
@@ -205,19 +204,21 @@ public class StubAtmosStorageAsyncClient implements AtmosStorageAsyncClient {
       if (path.indexOf('/') == -1 || (path.endsWith("/")))
          return blobStore.containerExists(path);
       else {
-         return new FutureBase<Boolean>() {
-            public Boolean get() throws InterruptedException, ExecutionException {
-               String container = path.substring(0, path.indexOf('/'));
-               String blobName = path.substring(path.indexOf('/') + 1);
-               try {
-                  blobStore.blobMetadata(container, blobName).get();
-                  return true;
-               } catch (KeyNotFoundException e) {
-                  return false;
-               }
-            }
-         };
-
+         String container = path.substring(0, path.indexOf('/'));
+         String blobName = path.substring(path.indexOf('/') + 1);
+         try {
+            blobStore.blobMetadata(container, blobName).get();
+            return immediateFuture(true);
+         } catch (KeyNotFoundException e) {
+            return immediateFuture(false);
+         } catch (InterruptedException e) {
+            return immediateFuture(false);
+         } catch (ExecutionException e) {
+            if (Iterables.size(Iterables.filter(Throwables.getCausalChain(e),
+                     ResourceNotFoundException.class)) >= 1)
+               return immediateFuture(false);
+            return immediateFailedFuture(e);
+         }
       }
    }
 
@@ -225,7 +226,8 @@ public class StubAtmosStorageAsyncClient implements AtmosStorageAsyncClient {
       String container = path.substring(0, path.indexOf('/'));
       String blobName = path.substring(path.indexOf('/') + 1);
       org.jclouds.blobstore.options.GetOptions getOptions = httpGetOptionsConverter.apply(options);
-      return wrapFuture(blobStore.getBlob(container, blobName, getOptions), blob2Object);
+      return Futures.compose(Futures.makeListenable(blobStore.getBlob(container, blobName,
+               getOptions)), blob2Object);
    }
 
    public Future<Void> updateFile(String parent, AtmosObject object) {

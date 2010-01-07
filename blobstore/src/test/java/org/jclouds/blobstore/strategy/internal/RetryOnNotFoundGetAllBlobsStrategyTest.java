@@ -57,7 +57,8 @@ public class RetryOnNotFoundGetAllBlobsStrategyTest {
 
    @BeforeTest
    void setUp() {
-      blobProvider = Guice.createInjector(new BlobStoreObjectModule()).getInstance(Blob.Factory.class);
+      blobProvider = Guice.createInjector(new BlobStoreObjectModule()).getInstance(
+               Blob.Factory.class);
    }
 
    @SuppressWarnings("unchecked")
@@ -81,7 +82,8 @@ public class RetryOnNotFoundGetAllBlobsStrategyTest {
       map.ifNotFoundRetryOtherwiseAddToSet("container", "key", futureObject, objects);
       // should have retried once
       assert System.currentTimeMillis() >= time + map.requestRetryMilliseconds;
-      assertEquals(Utils.toStringAndClose((InputStream) objects.iterator().next().getContent()), "goo");
+      assertEquals(Utils.toStringAndClose((InputStream) objects.iterator().next().getContent()),
+               "goo");
       assert !objects.contains(null);
    }
 

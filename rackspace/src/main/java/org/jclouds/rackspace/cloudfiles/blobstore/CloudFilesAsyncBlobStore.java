@@ -18,6 +18,8 @@
  */
 package org.jclouds.rackspace.cloudfiles.blobstore;
 
+import static com.google.common.util.concurrent.Futures.compose;
+import static com.google.common.util.concurrent.Futures.makeListenable;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
 
 import java.util.SortedSet;
@@ -83,7 +85,7 @@ public class CloudFilesAsyncBlobStore extends BaseCloudFilesBlobStore implements
     */
    public Future<BlobMetadata> blobMetadata(String container, String key) {
 
-      return wrapFuture(async.getObjectInfo(container, key),
+      return compose(makeListenable(async.getObjectInfo(container, key)),
                new Function<MutableObjectInfoWithMetadata, BlobMetadata>() {
 
                   @Override
@@ -91,7 +93,7 @@ public class CloudFilesAsyncBlobStore extends BaseCloudFilesBlobStore implements
                      return object2BlobMd.apply(from);
                   }
 
-               });
+               }, service);
    }
 
    public Future<Void> clearContainer(final String container) {
@@ -129,19 +131,19 @@ public class CloudFilesAsyncBlobStore extends BaseCloudFilesBlobStore implements
             org.jclouds.blobstore.options.GetOptions... optionsList) {
       GetOptions httpOptions = blob2ObjectGetOptions.apply(optionsList);
       Future<CFObject> returnVal = async.getObject(container, key, httpOptions);
-      return wrapFuture(returnVal, object2Blob);
+      return compose(makeListenable(returnVal), object2Blob, service);
    }
 
    public Future<? extends ListResponse<? extends ResourceMetadata>> list() {
-      return wrapFuture(
-               async.listContainers(),
+      return compose(
+               makeListenable(async.listContainers()),
                new Function<SortedSet<ContainerMetadata>, org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata>>() {
                   public org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata> apply(
                            SortedSet<ContainerMetadata> from) {
                      return new ListResponseImpl<ResourceMetadata>(Iterables.transform(from,
                               container2ResourceMd), null, null, false);
                   }
-               });
+               }, service);
    }
 
    public Future<? extends ListContainerResponse<? extends ResourceMetadata>> list(
@@ -150,7 +152,7 @@ public class CloudFilesAsyncBlobStore extends BaseCloudFilesBlobStore implements
                .apply(optionsList);
       Future<ListContainerResponse<ObjectInfo>> returnVal = async.listObjects(container,
                httpOptions);
-      return wrapFuture(returnVal, container2ResourceList);
+      return compose(makeListenable(returnVal), container2ResourceList, service);
    }
 
    public Future<String> putBlob(String container, Blob blob) {
@@ -174,7 +176,6 @@ public class CloudFilesAsyncBlobStore extends BaseCloudFilesBlobStore implements
 
    public Future<Boolean> directoryExists(final String container, final String directory) {
       return service.submit(new Callable<Boolean>() {
-
          public Boolean call() throws Exception {
             try {
                getDirectoryStrategy.execute(CloudFilesAsyncBlobStore.this, container, directory);

@@ -19,12 +19,12 @@
 package org.jclouds.azure.storage.blob.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.util.concurrent.Futures.immediateFuture;
 
 import java.net.URI;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.inject.Inject;
@@ -51,13 +51,11 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
 import org.jclouds.blobstore.integration.internal.StubAsyncBlobStore;
-import org.jclouds.blobstore.integration.internal.StubAsyncBlobStore.FutureBase;
-import org.jclouds.concurrent.FutureFunctionWrapper;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.logging.Logger.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+import com.google.common.util.concurrent.Futures;
 
 /**
  * Implementation of {@link AzureBlobAsyncClient} which keeps all data in a local Map object.
@@ -68,7 +66,6 @@ import com.google.common.collect.Iterables;
 public class StubAzureBlobAsyncClient implements AzureBlobAsyncClient {
    private final HttpGetOptionsListToGetOptions httpGetOptionsConverter;
    private final StubAsyncBlobStore blobStore;
-   private final LoggerFactory logFactory;
    private final AzureBlob.Factory objectProvider;
    private final AzureBlobToBlob object2Blob;
    private final BlobToAzureBlob blob2Object;
@@ -78,14 +75,13 @@ public class StubAzureBlobAsyncClient implements AzureBlobAsyncClient {
    private final ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs;
 
    @Inject
-   private StubAzureBlobAsyncClient(StubAsyncBlobStore blobStore, LoggerFactory logFactory,
+   private StubAzureBlobAsyncClient(StubAsyncBlobStore blobStore,
             ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs,
             AzureBlob.Factory objectProvider,
             HttpGetOptionsListToGetOptions httpGetOptionsConverter, AzureBlobToBlob object2Blob,
             BlobToAzureBlob blob2Object, BlobMetadataToBlobProperties blob2ObjectInfo,
             ListBlobsOptionsToListOptions container2ContainerListOptions,
             ResourceToListBlobsResponse resource2ContainerList) {
-      this.logFactory = logFactory;
       this.containerToBlobs = containerToBlobs;
       this.blobStore = blobStore;
       this.objectProvider = objectProvider;
@@ -96,11 +92,6 @@ public class StubAzureBlobAsyncClient implements AzureBlobAsyncClient {
       this.container2ContainerListOptions = checkNotNull(container2ContainerListOptions,
                "container2ContainerListOptions");
       this.resource2ObjectList = checkNotNull(resource2ContainerList, "resource2ContainerList");
-   }
-
-   protected <F, T> Future<T> wrapFuture(Future<? extends F> future, Function<F, T> function) {
-      return new FutureFunctionWrapper<F, T>(future, function, logFactory.getLogger(function
-               .getClass().getName()));
    }
 
    public Future<Boolean> createContainer(String container, CreateContainerOptions... options) {
@@ -116,12 +107,8 @@ public class StubAzureBlobAsyncClient implements AzureBlobAsyncClient {
    }
 
    public Future<Void> deleteContainer(final String container) {
-      return new FutureBase<Void>() {
-         public Void get() throws InterruptedException, ExecutionException {
-            StubAzureBlobAsyncClient.this.containerToBlobs.remove(container);
-            return null;
-         }
-      };
+      StubAzureBlobAsyncClient.this.containerToBlobs.remove(container);
+      return immediateFuture(null);
    }
 
    public Future<Boolean> deleteRootContainer() {
@@ -130,11 +117,12 @@ public class StubAzureBlobAsyncClient implements AzureBlobAsyncClient {
 
    public Future<AzureBlob> getBlob(String container, String key, GetOptions... options) {
       org.jclouds.blobstore.options.GetOptions getOptions = httpGetOptionsConverter.apply(options);
-      return wrapFuture(blobStore.getBlob(container, key, getOptions), blob2Object);
+      return Futures.compose(Futures.makeListenable(blobStore.getBlob(container, key, getOptions)),
+               blob2Object);
    }
 
    public Future<BlobProperties> getBlobProperties(String container, String key) {
-      return wrapFuture(blobStore.blobMetadata(container, key),
+      return Futures.compose(Futures.makeListenable(blobStore.blobMetadata(container, key)),
                new Function<BlobMetadata, BlobProperties>() {
 
                   @Override
@@ -153,7 +141,8 @@ public class StubAzureBlobAsyncClient implements AzureBlobAsyncClient {
    public Future<ListBlobsResponse> listBlobs(String container, ListBlobsOptions... optionsList) {
       org.jclouds.blobstore.options.ListContainerOptions options = container2ContainerListOptions
                .apply(optionsList);
-      return wrapFuture(blobStore.list(container, options), resource2ObjectList);
+      return Futures.compose(Futures.makeListenable(blobStore.list(container, options)),
+               resource2ObjectList);
    }
 
    public Future<ListBlobsResponse> listBlobs(ListBlobsOptions... options) {
@@ -162,21 +151,15 @@ public class StubAzureBlobAsyncClient implements AzureBlobAsyncClient {
 
    public Future<? extends BoundedSortedSet<ListableContainerProperties>> listContainers(
             ListOptions... listOptions) {
-      return new FutureBase<BoundedSortedSet<ListableContainerProperties>>() {
+      return immediateFuture(new BoundedTreeSet<ListableContainerProperties>(Iterables.transform(
+               blobStore.getContainerToBlobs().keySet(),
+               new Function<String, ListableContainerProperties>() {
+                  public ListableContainerProperties apply(String name) {
+                     return new ListableContainerPropertiesImpl(URI.create("http://stub/" + name),
+                              new Date(), "");
+                  }
 
-         public BoundedSortedSet<ListableContainerProperties> get() throws InterruptedException,
-                  ExecutionException {
-            return new BoundedTreeSet<ListableContainerProperties>(Iterables.transform(blobStore
-                     .getContainerToBlobs().keySet(),
-                     new Function<String, ListableContainerProperties>() {
-                        public ListableContainerProperties apply(String name) {
-                           return new ListableContainerPropertiesImpl(URI.create("http://stub/"
-                                    + name), new Date(), "");
-                        }
-
-                     }), null, null, null, null, null);
-         }
-      };
+               }), null, null, null, null, null));
    }
 
    public AzureBlob newBlob() {
@@ -196,11 +179,7 @@ public class StubAzureBlobAsyncClient implements AzureBlobAsyncClient {
    }
 
    public Future<Boolean> containerExists(final String container) {
-      return new FutureBase<Boolean>() {
-         public Boolean get() throws InterruptedException, ExecutionException {
-            return blobStore.getContainerToBlobs().containsKey(container);
-         }
-      };
+      return immediateFuture(blobStore.getContainerToBlobs().containsKey(container));
    }
 
 }

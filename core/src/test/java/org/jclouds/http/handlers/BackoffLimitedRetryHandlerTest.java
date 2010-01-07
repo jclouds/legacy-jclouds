@@ -37,13 +37,10 @@ import org.jclouds.http.TransformingHttpCommandImpl;
 import org.jclouds.http.functions.ReturnStringIf200;
 import org.jclouds.http.internal.HttpWire;
 import org.jclouds.http.internal.JavaUrlHttpCommandExecutorService;
-import org.jclouds.logging.Logger;
-import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Function;
 import com.google.inject.AbstractModule;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
@@ -60,25 +57,25 @@ public class BackoffLimitedRetryHandlerTest {
       long startTime = System.nanoTime();
       handler.imposeBackoffExponentialDelay(1, "TEST FAILURE: 1");
       long elapsedTime = (System.nanoTime() - startTime) / 1000000;
-      assert(elapsedTime >= 49) : elapsedTime;
+      assert (elapsedTime >= 49) : elapsedTime;
       assertTrue(elapsedTime < 50 + acceptableDelay);
 
       startTime = System.nanoTime();
       handler.imposeBackoffExponentialDelay(2, "TEST FAILURE: 2");
       elapsedTime = (System.nanoTime() - startTime) / 1000000;
-      assert(elapsedTime >= 199) : elapsedTime;
+      assert (elapsedTime >= 199) : elapsedTime;
       assertTrue(elapsedTime < 200 + acceptableDelay);
 
       startTime = System.nanoTime();
       handler.imposeBackoffExponentialDelay(3, "TEST FAILURE: 3");
       elapsedTime = (System.nanoTime() - startTime) / 1000000;
-      assert(elapsedTime >= 449) : elapsedTime;
+      assert (elapsedTime >= 449) : elapsedTime;
       assertTrue(elapsedTime < 450 + acceptableDelay);
 
       startTime = System.nanoTime();
       handler.imposeBackoffExponentialDelay(4, "TEST FAILURE: 4");
       elapsedTime = (System.nanoTime() - startTime) / 1000000;
-      assert(elapsedTime >= 799) : elapsedTime;
+      assert (elapsedTime >= 799) : elapsedTime;
       assertTrue(elapsedTime < 800 + acceptableDelay);
 
       startTime = System.nanoTime();
@@ -96,14 +93,7 @@ public class BackoffLimitedRetryHandlerTest {
       JavaUrlHttpCommandExecutorService httpService = new JavaUrlHttpCommandExecutorService(
                execService, new DelegatingRetryHandler(), new DelegatingErrorHandler(),
                new HttpWire(Executors.newCachedThreadPool()));
-      executorService = new TransformingHttpCommandExecutorServiceImpl(httpService, execService,
-               new LoggerFactory() {
-
-                  public Logger getLogger(String category) {
-                     return Logger.NULL;
-                  }
-
-               });
+      executorService = new TransformingHttpCommandExecutorServiceImpl(httpService, execService);
    }
 
    @Test
@@ -164,14 +154,8 @@ public class BackoffLimitedRetryHandlerTest {
    private HttpCommand createCommand() throws SecurityException, NoSuchMethodException {
       Method method = IntegrationTestAsyncClient.class.getMethod("download", String.class);
 
-      HttpCommand command = new TransformingHttpCommandImpl<String>(executorService, processor
-               .createRequest(method, "1"), new ReturnStringIf200(),
-               new Function<Exception, String>() {
-                  public String apply(Exception from) {
-                     return null;
-                  }
-               });
-      return command;
+      return new TransformingHttpCommandImpl<String>(executorService, processor.createRequest(
+               method, "1"), new ReturnStringIf200());
    }
 
    @Test

@@ -40,7 +40,6 @@ import org.jclouds.aws.s3.blobstore.internal.BaseS3BlobStore;
 import org.jclouds.aws.s3.domain.BucketMetadata;
 import org.jclouds.aws.s3.domain.ListBucketResponse;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
-import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.options.ListBucketOptions;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.KeyNotFoundException;
@@ -60,6 +59,7 @@ import org.jclouds.logging.Logger.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+import static com.google.common.util.concurrent.Futures.*;
 
 public class S3AsyncBlobStore extends BaseS3BlobStore implements AsyncBlobStore {
 
@@ -74,15 +74,14 @@ public class S3AsyncBlobStore extends BaseS3BlobStore implements AsyncBlobStore 
             ExecutorService service) {
       super(async, sync, blobFactory, logFactory, clearContainerStrategy, object2BlobMd,
                object2Blob, blob2Object, container2BucketListOptions, blob2ObjectGetOptions,
-               getDirectoryStrategy, mkdirStrategy, bucket2ResourceMd, bucket2ResourceList,
-               service);
+               getDirectoryStrategy, mkdirStrategy, bucket2ResourceMd, bucket2ResourceList, service);
    }
 
    /**
     * This implementation uses the S3 HEAD Object command to return the result
     */
    public Future<BlobMetadata> blobMetadata(String container, String key) {
-      return wrapFuture(async.headObject(container, key),
+      return compose(makeListenable(async.headObject(container, key)),
                new Function<ObjectMetadata, BlobMetadata>() {
 
                   @Override
@@ -90,7 +89,7 @@ public class S3AsyncBlobStore extends BaseS3BlobStore implements AsyncBlobStore 
                      return object2BlobMd.apply(from);
                   }
 
-               });
+               }, service);
    }
 
    public Future<Void> clearContainer(final String container) {
@@ -153,27 +152,27 @@ public class S3AsyncBlobStore extends BaseS3BlobStore implements AsyncBlobStore 
    public Future<Blob> getBlob(String container, String key,
             org.jclouds.blobstore.options.GetOptions... optionsList) {
       GetOptions httpOptions = blob2ObjectGetOptions.apply(optionsList);
-      Future<S3Object> returnVal = async.getObject(container, key, httpOptions);
-      return wrapFuture(returnVal, object2Blob);
+      return compose(makeListenable(async.getObject(container, key, httpOptions)), object2Blob,
+               service);
    }
 
    public Future<? extends ListResponse<? extends ResourceMetadata>> list() {
-      return wrapFuture(
-               async.listOwnedBuckets(),
+      return compose(
+               makeListenable(async.listOwnedBuckets()),
                new Function<SortedSet<BucketMetadata>, org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata>>() {
                   public org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata> apply(
                            SortedSet<BucketMetadata> from) {
                      return new ListResponseImpl<ResourceMetadata>(Iterables.transform(from,
                               bucket2ResourceMd), null, null, false);
                   }
-               });
+               }, service);
    }
 
    public Future<? extends ListContainerResponse<? extends ResourceMetadata>> list(
             String container, ListContainerOptions... optionsList) {
       ListBucketOptions httpOptions = container2BucketListOptions.apply(optionsList);
       Future<ListBucketResponse> returnVal = async.listBucket(container, httpOptions);
-      return wrapFuture(returnVal, bucket2ResourceList);
+      return compose(makeListenable(returnVal), bucket2ResourceList, service);
    }
 
    public Future<String> putBlob(String container, Blob blob) {

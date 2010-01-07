@@ -19,13 +19,14 @@
 package org.jclouds.aws.s3.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.util.concurrent.Futures.immediateFailedFuture;
+import static com.google.common.util.concurrent.Futures.immediateFuture;
 
 import java.util.Date;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.inject.Inject;
@@ -61,16 +62,14 @@ import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
 import org.jclouds.blobstore.integration.internal.StubAsyncBlobStore;
-import org.jclouds.blobstore.integration.internal.StubAsyncBlobStore.FutureBase;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.concurrent.FutureFunctionWrapper;
 import org.jclouds.date.DateService;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.logging.Logger.LoggerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.Futures;
 
 /**
  * Implementation of {@link S3AsyncBlobStore} which keeps all data in a local Map object.
@@ -83,7 +82,6 @@ public class StubS3AsyncClient implements S3AsyncClient {
    private final DateService dateService;
    private final HttpGetOptionsListToGetOptions httpGetOptionsConverter;
    private final StubAsyncBlobStore blobStore;
-   private final LoggerFactory logFactory;
    private final S3Object.Factory objectProvider;
    private final Blob.Factory blobProvider;
    private final ObjectToBlob object2Blob;
@@ -93,7 +91,7 @@ public class StubS3AsyncClient implements S3AsyncClient {
    private final ResourceToBucketList resource2BucketList;
 
    @Inject
-   private StubS3AsyncClient(StubAsyncBlobStore blobStore, LoggerFactory logFactory,
+   private StubS3AsyncClient(StubAsyncBlobStore blobStore,
             ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs,
             DateService dateService, S3Object.Factory objectProvider, Blob.Factory blobProvider,
             HttpGetOptionsListToGetOptions httpGetOptionsConverter, ObjectToBlob object2Blob,
@@ -101,7 +99,6 @@ public class StubS3AsyncClient implements S3AsyncClient {
             BucketToContainerListOptions bucket2ContainerListOptions,
             ResourceToBucketList resource2BucketList) {
       this.blobStore = blobStore;
-      this.logFactory = logFactory;
       this.objectProvider = objectProvider;
       this.blobProvider = blobProvider;
       this.dateService = dateService;
@@ -125,11 +122,6 @@ public class StubS3AsyncClient implements S3AsyncClient {
 
    public static final String DEFAULT_OWNER_ID = "abc123";
 
-   protected <F, T> Future<T> wrapFuture(Future<? extends F> future, Function<F, T> function) {
-      return new FutureFunctionWrapper<F, T>(future, function, logFactory.getLogger(function
-               .getClass().getName()));
-   }
-
    public Future<Boolean> putBucketIfNotExists(String name, PutBucketOptions... optionsList) {
       final PutBucketOptions options = (optionsList.length == 0) ? new PutBucketOptions()
                : optionsList[0];
@@ -141,7 +133,8 @@ public class StubS3AsyncClient implements S3AsyncClient {
 
    public Future<ListBucketResponse> listBucket(final String name, ListBucketOptions... optionsList) {
       ListContainerOptions options = bucket2ContainerListOptions.apply(optionsList);
-      return wrapFuture(blobStore.list(name, options), resource2BucketList);
+      return Futures.compose(Futures.makeListenable(blobStore.list(name, options)),
+               resource2BucketList);
    }
 
    public Future<ObjectMetadata> copyObject(final String sourceBucket, final String sourceObject,
@@ -149,49 +142,41 @@ public class StubS3AsyncClient implements S3AsyncClient {
             CopyObjectOptions... nullableOptions) {
       final CopyObjectOptions options = (nullableOptions.length == 0) ? new CopyObjectOptions()
                : nullableOptions[0];
-      return new FutureBase<ObjectMetadata>() {
-         public ObjectMetadata get() throws InterruptedException, ExecutionException {
-            ConcurrentMap<String, Blob> source = blobStore.getContainerToBlobs().get(sourceBucket);
-            ConcurrentMap<String, Blob> dest = blobStore.getContainerToBlobs().get(
-                     destinationBucket);
-            if (source.containsKey(sourceObject)) {
-               Blob object = source.get(sourceObject);
-               if (options.getIfMatch() != null) {
-                  if (!object.getMetadata().getETag().equals(options.getIfMatch()))
-                     blobStore.throwResponseException(412);
-
-               }
-               if (options.getIfNoneMatch() != null) {
-                  if (object.getMetadata().getETag().equals(options.getIfNoneMatch()))
-                     blobStore.throwResponseException(412);
-               }
-               if (options.getIfModifiedSince() != null) {
-                  Date modifiedSince = dateService.rfc822DateParse(options.getIfModifiedSince());
-                  if (modifiedSince.after(object.getMetadata().getLastModified()))
-                     blobStore.throwResponseException(412);
-
-               }
-               if (options.getIfUnmodifiedSince() != null) {
-                  Date unmodifiedSince = dateService
-                           .rfc822DateParse(options.getIfUnmodifiedSince());
-                  if (unmodifiedSince.before(object.getMetadata().getLastModified()))
-                     blobStore.throwResponseException(412);
-               }
-               Blob sourceS3 = source.get(sourceObject);
-               MutableBlobMetadata newMd = blobStore
-                        .copy(sourceS3.getMetadata(), destinationObject);
-               if (options.getAcl() != null)
-                  keyToAcl.put(destinationBucket + "/" + destinationObject, options.getAcl());
-
-               newMd.setLastModified(new Date());
-               Blob newBlob = blobProvider.create(newMd);
-               newBlob.setPayload(sourceS3.getContent());
-               dest.put(destinationObject, newBlob);
-               return blob2ObjectMetadata.apply(blobStore.copy(newMd));
-            }
-            throw new KeyNotFoundException(sourceBucket, sourceObject);
+      ConcurrentMap<String, Blob> source = blobStore.getContainerToBlobs().get(sourceBucket);
+      ConcurrentMap<String, Blob> dest = blobStore.getContainerToBlobs().get(destinationBucket);
+      if (source.containsKey(sourceObject)) {
+         Blob object = source.get(sourceObject);
+         if (options.getIfMatch() != null) {
+            if (!object.getMetadata().getETag().equals(options.getIfMatch()))
+               return immediateFailedFuture(blobStore.returnResponseException(412));
          }
-      };
+         if (options.getIfNoneMatch() != null) {
+            if (object.getMetadata().getETag().equals(options.getIfNoneMatch()))
+               return immediateFailedFuture(blobStore.returnResponseException(412));
+         }
+         if (options.getIfModifiedSince() != null) {
+            Date modifiedSince = dateService.rfc822DateParse(options.getIfModifiedSince());
+            if (modifiedSince.after(object.getMetadata().getLastModified()))
+               return immediateFailedFuture(blobStore.returnResponseException(412));
+
+         }
+         if (options.getIfUnmodifiedSince() != null) {
+            Date unmodifiedSince = dateService.rfc822DateParse(options.getIfUnmodifiedSince());
+            if (unmodifiedSince.before(object.getMetadata().getLastModified()))
+               return immediateFailedFuture(blobStore.returnResponseException(412));
+         }
+         Blob sourceS3 = source.get(sourceObject);
+         MutableBlobMetadata newMd = blobStore.copy(sourceS3.getMetadata(), destinationObject);
+         if (options.getAcl() != null)
+            keyToAcl.put(destinationBucket + "/" + destinationObject, options.getAcl());
+
+         newMd.setLastModified(new Date());
+         Blob newBlob = blobProvider.create(newMd);
+         newBlob.setPayload(sourceS3.getContent());
+         dest.put(destinationObject, newBlob);
+         return immediateFuture((ObjectMetadata) blob2ObjectMetadata.apply(blobStore.copy(newMd)));
+      }
+      return immediateFailedFuture(new KeyNotFoundException(sourceBucket, sourceObject));
    }
 
    public Future<String> putObject(final String bucketName, final S3Object object,
@@ -220,19 +205,11 @@ public class StubS3AsyncClient implements S3AsyncClient {
    }
 
    public Future<AccessControlList> getBucketACL(final String bucket) {
-      return new FutureBase<AccessControlList>() {
-         public AccessControlList get() throws InterruptedException, ExecutionException {
-            return getACLforS3Item(bucket);
-         }
-      };
+      return immediateFuture(getACLforS3Item(bucket));
    }
 
    public Future<AccessControlList> getObjectACL(final String bucket, final String objectKey) {
-      return new FutureBase<AccessControlList>() {
-         public AccessControlList get() throws InterruptedException, ExecutionException {
-            return getACLforS3Item(bucket + "/" + objectKey);
-         }
-      };
+      return immediateFuture(getACLforS3Item(bucket + "/" + objectKey));
    }
 
    /**
@@ -259,30 +236,18 @@ public class StubS3AsyncClient implements S3AsyncClient {
    }
 
    public Future<Boolean> putBucketACL(final String bucket, final AccessControlList acl) {
-      return new FutureBase<Boolean>() {
-         public Boolean get() throws InterruptedException, ExecutionException {
-            keyToAcl.put(bucket, sanitizeUploadedACL(acl));
-            return true;
-         }
-      };
+      keyToAcl.put(bucket, sanitizeUploadedACL(acl));
+      return immediateFuture(true);
    }
 
    public Future<Boolean> putObjectACL(final String bucket, final String objectKey,
             final AccessControlList acl) {
-      return new FutureBase<Boolean>() {
-         public Boolean get() throws InterruptedException, ExecutionException {
-            keyToAcl.put(bucket + "/" + objectKey, sanitizeUploadedACL(acl));
-            return true;
-         }
-      };
+      keyToAcl.put(bucket + "/" + objectKey, sanitizeUploadedACL(acl));
+      return immediateFuture(true);
    }
 
    public Future<Boolean> bucketExists(final String bucketName) {
-      return new FutureBase<Boolean>() {
-         public Boolean get() throws InterruptedException, ExecutionException {
-            return blobStore.getContainerToBlobs().containsKey(bucketName);
-         }
-      };
+      return immediateFuture(blobStore.getContainerToBlobs().containsKey(bucketName));
    }
 
    public Future<Boolean> deleteBucketIfEmpty(String bucketName) {
@@ -296,36 +261,28 @@ public class StubS3AsyncClient implements S3AsyncClient {
    public Future<S3Object> getObject(final String bucketName, final String key,
             final GetOptions... options) {
       org.jclouds.blobstore.options.GetOptions getOptions = httpGetOptionsConverter.apply(options);
-      return wrapFuture(blobStore.getBlob(bucketName, key, getOptions), blob2Object);
+      return Futures.compose(
+               Futures.makeListenable(blobStore.getBlob(bucketName, key, getOptions)), blob2Object);
    }
 
    public Future<ObjectMetadata> headObject(String bucketName, String key) {
-      return wrapFuture(blobStore.blobMetadata(bucketName, key),
+      return Futures.compose(Futures.makeListenable(blobStore.blobMetadata(bucketName, key)),
                new Function<BlobMetadata, ObjectMetadata>() {
-
                   @Override
                   public ObjectMetadata apply(BlobMetadata from) {
-
                      return blob2ObjectMetadata.apply(from);
                   }
-
                });
    }
 
    public Future<? extends SortedSet<BucketMetadata>> listOwnedBuckets() {
-      return new FutureBase<SortedSet<BucketMetadata>>() {
-
-         public SortedSet<BucketMetadata> get() throws InterruptedException, ExecutionException {
-            return Sets.newTreeSet(Iterables.transform(blobStore.getContainerToBlobs().keySet(),
-                     new Function<String, BucketMetadata>() {
-                        public BucketMetadata apply(String name) {
-                           return new BucketMetadata(name, null, null);
-                        }
-
-                     }));
+      return immediateFuture(Sets.newTreeSet(Iterables.transform(blobStore.getContainerToBlobs()
+               .keySet(), new Function<String, BucketMetadata>() {
+         public BucketMetadata apply(String name) {
+            return new BucketMetadata(name, null, null);
          }
-      };
 
+      })));
    }
 
    public S3Object newS3Object() {
@@ -334,56 +291,33 @@ public class StubS3AsyncClient implements S3AsyncClient {
 
    @Override
    public Future<LocationConstraint> getBucketLocation(String bucketName) {
-      return new FutureBase<LocationConstraint>() {
-         public LocationConstraint get() throws InterruptedException, ExecutionException {
-            return LocationConstraint.US_STANDARD;
-         }
-      };
+      return immediateFuture(LocationConstraint.US_STANDARD);
    }
 
    @Override
    public Future<Payer> getBucketPayer(String bucketName) {
-      return new FutureBase<Payer>() {
-         public Payer get() throws InterruptedException, ExecutionException {
-            return Payer.BUCKET_OWNER;
-         }
-      };
+      return immediateFuture(Payer.BUCKET_OWNER);
    }
 
    @Override
    public Future<Void> setBucketPayer(String bucketName, Payer payer) {
-      return new FutureBase<Void>() {
-         public Void get() throws InterruptedException, ExecutionException {
-            return null;
-         }
-      };
+      return immediateFuture(null);
+
    }
 
    @Override
    public Future<Void> disableBucketLogging(String bucketName) {
-      return new FutureBase<Void>() {
-         public Void get() throws InterruptedException, ExecutionException {
-            return null;
-         }
-      };
+      return immediateFuture(null);
    }
 
    @Override
    public Future<Void> enableBucketLogging(String bucketName, BucketLogging logging) {
-      return new FutureBase<Void>() {
-         public Void get() throws InterruptedException, ExecutionException {
-            return null;
-         }
-      };
+      return immediateFuture(null);
    }
 
    @Override
    public Future<BucketLogging> getBucketLogging(String bucketName) {
-      return new FutureBase<BucketLogging>() {
-         public BucketLogging get() throws InterruptedException, ExecutionException {
-            return null;
-         }
-      };
+      return immediateFuture(null);
    }
 
 }

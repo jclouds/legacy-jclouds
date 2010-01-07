@@ -18,8 +18,9 @@
  */
 package org.jclouds.http;
 
-import java.util.concurrent.Future;
 import java.util.concurrent.SynchronousQueue;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Used for passing objects for response processing
@@ -31,10 +32,11 @@ public class HttpCommandRendezvous<T> {
    private final HttpCommand command;
    @SuppressWarnings("unchecked")
    private final SynchronousQueue rendezvous;
-   private final Future<T> future;
+   private final ListenableFuture<T> future;
 
    @SuppressWarnings("unchecked")
-   public HttpCommandRendezvous(HttpCommand command, SynchronousQueue rendezvous, Future<T> future) {
+   public HttpCommandRendezvous(HttpCommand command, SynchronousQueue rendezvous,
+            ListenableFuture<T> future) {
       this.command = command;
       this.rendezvous = rendezvous;
       this.future = future;
@@ -58,7 +60,7 @@ public class HttpCommandRendezvous<T> {
       return command;
    }
 
-   public Future<T> getFuture() {
+   public ListenableFuture<T> getFuture() {
       return future;
    }
 

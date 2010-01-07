@@ -21,7 +21,6 @@ package org.jclouds.aws.s3.blobstore.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 
@@ -38,10 +37,7 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
 import org.jclouds.blobstore.strategy.GetDirectoryStrategy;
 import org.jclouds.blobstore.strategy.MkdirStrategy;
-import org.jclouds.concurrent.FutureFunctionWrapper;
 import org.jclouds.logging.Logger.LoggerFactory;
-
-import com.google.common.base.Function;
 
 public class BaseS3BlobStore {
    protected final S3AsyncClient async;
@@ -80,17 +76,11 @@ public class BaseS3BlobStore {
       this.container2BucketListOptions = checkNotNull(container2BucketListOptions,
                "container2BucketListOptions");
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
-      this.getDirectoryStrategy = checkNotNull(getDirectoryStrategy,
-               "getDirectoryStrategy");
+      this.getDirectoryStrategy = checkNotNull(getDirectoryStrategy, "getDirectoryStrategy");
       this.mkdirStrategy = checkNotNull(mkdirStrategy, "mkdirStrategy");
       this.bucket2ResourceMd = checkNotNull(bucket2ResourceMd, "bucket2ResourceMd");
       this.bucket2ResourceList = checkNotNull(bucket2ResourceList, "bucket2ResourceList");
       this.service = checkNotNull(service, "service");
-   }
-
-   protected <F, T> Future<T> wrapFuture(Future<? extends F> future, Function<F, T> function) {
-      return new FutureFunctionWrapper<F, T>(future, function, logFactory.getLogger(function
-               .getClass().getName()));
    }
 
    public Blob newBlob(String name) {

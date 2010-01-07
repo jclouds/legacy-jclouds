@@ -53,9 +53,8 @@ public class RestModule extends AbstractModule {
 
       @SuppressWarnings("unchecked")
       public TransformingHttpCommand<?> create(GeneratedHttpRequest<?> request,
-               Function<HttpResponse, ?> transformer, Function<Exception, ?> exceptionTransformer) {
-         return new TransformingHttpCommandImpl(executorService, request, transformer,
-                  exceptionTransformer);
+               Function<HttpResponse, ?> transformer) {
+         return new TransformingHttpCommandImpl(executorService, request, transformer);
       }
 
    }

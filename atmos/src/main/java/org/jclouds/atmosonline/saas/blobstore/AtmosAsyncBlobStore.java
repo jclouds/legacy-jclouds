@@ -18,6 +18,8 @@
  */
 package org.jclouds.atmosonline.saas.blobstore;
 
+import static com.google.common.util.concurrent.Futures.compose;
+import static com.google.common.util.concurrent.Futures.makeListenable;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
 
 import java.net.URI;
@@ -46,7 +48,6 @@ import org.jclouds.blobstore.domain.ResourceMetadata;
 import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
-import org.jclouds.concurrent.FutureFunctionCallable;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.logging.Logger.LoggerFactory;
@@ -77,15 +78,13 @@ public class AtmosAsyncBlobStore extends BaseAtmosBlobStore implements AsyncBlob
     * This implementation uses the AtmosStorage HEAD Object command to return the result
     */
    public Future<BlobMetadata> blobMetadata(String container, String key) {
-      return wrapFuture(async.headFile(container + "/" + key),
+      return compose(makeListenable(async.headFile(container + "/" + key)),
                new Function<AtmosObject, BlobMetadata>() {
-
                   @Override
                   public BlobMetadata apply(AtmosObject from) {
                      return object2BlobMd.apply(from);
                   }
-
-               });
+               }, service);
    }
 
    public Future<Void> clearContainer(final String container) {
@@ -100,17 +99,18 @@ public class AtmosAsyncBlobStore extends BaseAtmosBlobStore implements AsyncBlob
    }
 
    public Future<Boolean> createContainer(String container) {
-      return wrapFuture(async.createDirectory(container), new Function<URI, Boolean>() {
+      return compose(makeListenable(async.createDirectory(container)),
+               new Function<URI, Boolean>() {
 
-         public Boolean apply(URI from) {
-            return true;// no etag
-         }
+                  public Boolean apply(URI from) {
+                     return true;// no etag
+                  }
 
-      });
+               });
    }
 
    public Future<Void> createDirectory(String container, String directory) {
-      return wrapFuture(async.createDirectory(container + "/" + directory),
+      return compose(makeListenable(async.createDirectory(container + "/" + directory)),
                new Function<URI, Void>() {
 
                   public Void apply(URI from) {
@@ -151,11 +151,11 @@ public class AtmosAsyncBlobStore extends BaseAtmosBlobStore implements AsyncBlob
             org.jclouds.blobstore.options.GetOptions... optionsList) {
       GetOptions httpOptions = blob2ObjectGetOptions.apply(optionsList);
       Future<AtmosObject> returnVal = async.readFile(container + "/" + key, httpOptions);
-      return wrapFuture(returnVal, object2Blob);
+      return compose(makeListenable(returnVal), object2Blob, service);
    }
 
    public Future<? extends ListResponse<? extends ResourceMetadata>> list() {
-      return wrapFuture(async.listDirectories(), container2ResourceList);
+      return compose(makeListenable(async.listDirectories()), container2ResourceList, service);
    }
 
    public Future<? extends ListContainerResponse<? extends ResourceMetadata>> list(
@@ -169,7 +169,8 @@ public class AtmosAsyncBlobStore extends BaseAtmosBlobStore implements AsyncBlob
          }
       }
       ListOptions nativeOptions = container2ContainerListOptions.apply(optionsList);
-      return wrapFuture(async.listDirectory(container, nativeOptions), container2ResourceList);
+      return compose(makeListenable(async.listDirectory(container, nativeOptions)),
+               container2ResourceList, service);
    }
 
    /**
@@ -177,9 +178,7 @@ public class AtmosAsyncBlobStore extends BaseAtmosBlobStore implements AsyncBlob
     */
    public Future<String> putBlob(final String container, final Blob blob) {
       final String path = container + "/" + blob.getMetadata().getName();
-
-      Callable<String> valueCallable = new FutureFunctionCallable<Void, String>(async
-               .deletePath(path), new Function<Void, String>() {
+      return compose(makeListenable(async.deletePath(path)), new Function<Void, String>() {
 
          public String apply(Void from) {
             try {
@@ -200,8 +199,7 @@ public class AtmosAsyncBlobStore extends BaseAtmosBlobStore implements AsyncBlob
             }
          }
 
-      });
-      return service.submit(valueCallable);
+      }, service);
 
    }
 

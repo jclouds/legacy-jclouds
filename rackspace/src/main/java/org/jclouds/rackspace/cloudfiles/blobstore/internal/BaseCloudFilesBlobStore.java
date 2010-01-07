@@ -21,7 +21,6 @@ package org.jclouds.rackspace.cloudfiles.blobstore.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 
@@ -29,7 +28,6 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
 import org.jclouds.blobstore.strategy.GetDirectoryStrategy;
 import org.jclouds.blobstore.strategy.MkdirStrategy;
-import org.jclouds.concurrent.FutureFunctionWrapper;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
 import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
@@ -40,8 +38,6 @@ import org.jclouds.rackspace.cloudfiles.blobstore.functions.ContainerToResourceL
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.ContainerToResourceMetadata;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.ObjectToBlob;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.ObjectToBlobMetadata;
-
-import com.google.common.base.Function;
 
 public class BaseCloudFilesBlobStore {
    protected final CloudFilesAsyncClient async;
@@ -86,11 +82,6 @@ public class BaseCloudFilesBlobStore {
       this.container2ResourceMd = checkNotNull(container2ResourceMd, "container2ResourceMd");
       this.container2ResourceList = checkNotNull(container2ResourceList, "container2ResourceList");
       this.service = checkNotNull(service, "service");
-   }
-
-   protected <F, T> Future<T> wrapFuture(Future<? extends F> future, Function<F, T> function) {
-      return new FutureFunctionWrapper<F, T>(future, function, logFactory.getLogger(function
-               .getClass().getName()));
    }
 
    public Blob newBlob(String name) {

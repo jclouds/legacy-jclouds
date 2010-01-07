@@ -42,6 +42,7 @@ import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
 import org.jclouds.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
@@ -107,11 +108,15 @@ public class GetAllBlobsInListAndRetryOnFailure implements GetBlobsInListStrateg
             object.getMetadata().setName(key);
             objects.add(object);
             return;
-         } catch (KeyNotFoundException e) {
-            Thread.sleep(requestRetryMilliseconds);
-            value = connection.getBlob(container, key);
+         } catch (Exception e) {
+            Throwable cause = Throwables.getRootCause(e);
+            if (cause instanceof KeyNotFoundException) {
+               Thread.sleep(requestRetryMilliseconds);
+               value = connection.getBlob(container, key);
+            } else {
+               Throwables.propagate(e);
+            }
          }
       }
    }
-
 }

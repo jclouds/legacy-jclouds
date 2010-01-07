@@ -37,13 +37,13 @@ import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.ClearContainerStrategy;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
-import org.jclouds.concurrent.FutureFunctionWrapper;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.Futures;
 import com.google.inject.Inject;
 
 /**
@@ -88,7 +88,7 @@ public class RecursiveRemove implements ClearListStrategy, ClearContainerStrateg
       for (Future<Void> isdeleted : deletes) {
          isdeleted.get(requestTimeoutMilliseconds, TimeUnit.MILLISECONDS);
       }
-      return new FutureFunctionWrapper<Void, Void>(async.deletePath(fullPath),
+      return Futures.compose(async.deletePath(fullPath),
                new Function<Void, Void>() {
 
                   public Void apply(Void from) {

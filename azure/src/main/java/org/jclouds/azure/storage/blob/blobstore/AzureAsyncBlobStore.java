@@ -18,6 +18,8 @@
  */
 package org.jclouds.azure.storage.blob.blobstore;
 
+import static com.google.common.util.concurrent.Futures.compose;
+import static com.google.common.util.concurrent.Futures.makeListenable;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
 
 import java.util.SortedSet;
@@ -81,7 +83,7 @@ public class AzureAsyncBlobStore extends BaseAzureBlobStore implements AsyncBlob
     * This implementation uses the AzureBlob HEAD Object command to return the result
     */
    public Future<BlobMetadata> blobMetadata(String container, String key) {
-      return wrapFuture(async.getBlobProperties(container, key),
+      return compose(makeListenable(async.getBlobProperties(container, key)),
                new Function<BlobProperties, BlobMetadata>() {
 
                   @Override
@@ -89,7 +91,7 @@ public class AzureAsyncBlobStore extends BaseAzureBlobStore implements AsyncBlob
                      return object2BlobMd.apply(from);
                   }
 
-               });
+               }, service);
    }
 
    public Future<Void> clearContainer(final String container) {
@@ -120,26 +122,26 @@ public class AzureAsyncBlobStore extends BaseAzureBlobStore implements AsyncBlob
             org.jclouds.blobstore.options.GetOptions... optionsList) {
       GetOptions httpOptions = blob2ObjectGetOptions.apply(optionsList);
       Future<AzureBlob> returnVal = async.getBlob(container, key, httpOptions);
-      return wrapFuture(returnVal, object2Blob);
+      return compose(makeListenable(returnVal), object2Blob, service);
    }
 
    public Future<? extends org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata>> list() {
-      return wrapFuture(
-               async.listContainers(),
+      return compose(
+               makeListenable(async.listContainers()),
                new Function<SortedSet<ListableContainerProperties>, org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata>>() {
                   public org.jclouds.blobstore.domain.ListResponse<? extends ResourceMetadata> apply(
                            SortedSet<ListableContainerProperties> from) {
                      return new ListResponseImpl<ResourceMetadata>(Iterables.transform(from,
                               container2ResourceMd), null, null, false);
                   }
-               });
+               }, service);
    }
 
    public Future<? extends ListContainerResponse<? extends ResourceMetadata>> list(
             String container, ListContainerOptions... optionsList) {
       ListBlobsOptions httpOptions = container2ContainerListOptions.apply(optionsList);
       Future<ListBlobsResponse> returnVal = async.listBlobs(container, httpOptions);
-      return wrapFuture(returnVal, container2ResourceList);
+      return compose(makeListenable(returnVal), container2ResourceList, service);
    }
 
    public Future<String> putBlob(String container, Blob blob) {

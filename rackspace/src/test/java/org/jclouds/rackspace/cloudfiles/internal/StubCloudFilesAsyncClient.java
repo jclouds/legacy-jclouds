@@ -19,12 +19,12 @@
 package org.jclouds.rackspace.cloudfiles.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.util.concurrent.Futures.immediateFuture;
 
 import java.net.URI;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.inject.Inject;
@@ -34,11 +34,8 @@ import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ListContainerResponse;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
 import org.jclouds.blobstore.integration.internal.StubAsyncBlobStore;
-import org.jclouds.blobstore.integration.internal.StubAsyncBlobStore.FutureBase;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.concurrent.FutureFunctionWrapper;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.BlobToObject;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.ListContainerOptionsToBlobStoreListContainerOptions;
@@ -56,6 +53,7 @@ import org.jclouds.rackspace.cloudfiles.options.ListCdnContainerOptions;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.Futures;
 
 /**
  * Implementation of {@link CloudFilesAsyncClient} which keeps all data in a local Map object.
@@ -65,7 +63,6 @@ import com.google.common.collect.Sets;
 public class StubCloudFilesAsyncClient implements CloudFilesAsyncClient {
    private final HttpGetOptionsListToGetOptions httpGetOptionsConverter;
    private final StubAsyncBlobStore blobStore;
-   private final LoggerFactory logFactory;
    private final CFObject.Factory objectProvider;
    private final ObjectToBlob object2Blob;
    private final BlobToObject blob2Object;
@@ -74,7 +71,7 @@ public class StubCloudFilesAsyncClient implements CloudFilesAsyncClient {
    private final ResourceToObjectList resource2ObjectList;
 
    @Inject
-   private StubCloudFilesAsyncClient(StubAsyncBlobStore blobStore, LoggerFactory logFactory,
+   private StubCloudFilesAsyncClient(StubAsyncBlobStore blobStore,
             ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs,
             CFObject.Factory objectProvider,
             HttpGetOptionsListToGetOptions httpGetOptionsConverter, ObjectToBlob object2Blob,
@@ -82,7 +79,6 @@ public class StubCloudFilesAsyncClient implements CloudFilesAsyncClient {
             ListContainerOptionsToBlobStoreListContainerOptions container2ContainerListOptions,
             ResourceToObjectList resource2ContainerList) {
       this.blobStore = blobStore;
-      this.logFactory = logFactory;
       this.objectProvider = objectProvider;
       this.httpGetOptionsConverter = httpGetOptionsConverter;
       this.object2Blob = checkNotNull(object2Blob, "object2Blob");
@@ -93,17 +89,8 @@ public class StubCloudFilesAsyncClient implements CloudFilesAsyncClient {
       this.resource2ObjectList = checkNotNull(resource2ContainerList, "resource2ContainerList");
    }
 
-   protected <F, T> Future<T> wrapFuture(Future<? extends F> future, Function<F, T> function) {
-      return new FutureFunctionWrapper<F, T>(future, function, logFactory.getLogger(function
-               .getClass().getName()));
-   }
-
    public Future<Boolean> containerExists(final String container) {
-      return new FutureBase<Boolean>() {
-         public Boolean get() throws InterruptedException, ExecutionException {
-            return blobStore.getContainerToBlobs().containsKey(container);
-         }
-      };
+      return immediateFuture(blobStore.getContainerToBlobs().containsKey(container));
    }
 
    public Future<Boolean> createContainer(String container) {
@@ -136,11 +123,12 @@ public class StubCloudFilesAsyncClient implements CloudFilesAsyncClient {
 
    public Future<CFObject> getObject(String container, String key, GetOptions... options) {
       org.jclouds.blobstore.options.GetOptions getOptions = httpGetOptionsConverter.apply(options);
-      return wrapFuture(blobStore.getBlob(container, key, getOptions), blob2Object);
+      return Futures.compose(Futures.makeListenable(blobStore.getBlob(container, key, getOptions)),
+               blob2Object);
    }
 
    public Future<MutableObjectInfoWithMetadata> getObjectInfo(String container, String key) {
-      return wrapFuture(blobStore.blobMetadata(container, key),
+      return Futures.compose(Futures.makeListenable(blobStore.blobMetadata(container, key)),
                new Function<BlobMetadata, MutableObjectInfoWithMetadata>() {
 
                   @Override
@@ -159,24 +147,19 @@ public class StubCloudFilesAsyncClient implements CloudFilesAsyncClient {
 
    public Future<? extends SortedSet<ContainerMetadata>> listContainers(
             org.jclouds.rackspace.cloudfiles.options.ListContainerOptions... options) {
-      return new FutureBase<SortedSet<ContainerMetadata>>() {
-
-         public SortedSet<ContainerMetadata> get() throws InterruptedException, ExecutionException {
-            return Sets.newTreeSet(Iterables.transform(blobStore.getContainerToBlobs().keySet(),
-                     new Function<String, ContainerMetadata>() {
-                        public ContainerMetadata apply(String name) {
-                           return new ContainerMetadata(name, -1, -1);
-                        }
-
-                     }));
+      return immediateFuture(Sets.newTreeSet(Iterables.transform(blobStore.getContainerToBlobs()
+               .keySet(), new Function<String, ContainerMetadata>() {
+         public ContainerMetadata apply(String name) {
+            return new ContainerMetadata(name, -1, -1);
          }
-      };
+      })));
    }
 
    public Future<ListContainerResponse<ObjectInfo>> listObjects(String container,
             org.jclouds.rackspace.cloudfiles.options.ListContainerOptions... optionsList) {
       ListContainerOptions options = container2ContainerListOptions.apply(optionsList);
-      return wrapFuture(blobStore.list(container, options), resource2ObjectList);
+      return Futures.compose(Futures.makeListenable(blobStore.list(container, options)),
+               resource2ObjectList);
    }
 
    public Future<String> putObject(String container, CFObject object) {

@@ -21,7 +21,7 @@ package org.jclouds.http;
 import java.util.concurrent.Future;
 
 import com.google.common.base.Function;
-import com.google.inject.internal.Nullable;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Executor which will invoke and transform the response of an {@code EndpointCommand} into generic
@@ -40,11 +40,8 @@ public interface TransformingHttpCommandExecutorService {
     *           what to execute
     * @param responseTransformer
     *           how to transform the response from the above command
-    * @param exceptionTransformer
-    *           maps any non-critical exceptions to the return type {@code <T>}
     * @return value of the intended response.
     */
-   public <T> Future<T> submit(HttpCommand command, Function<HttpResponse, T> responseTransformer,
-            @Nullable Function<Exception, T> exceptionTransformer);
+   public <T> ListenableFuture<T> submit(HttpCommand command, Function<HttpResponse, T> responseTransformer);
 
 }

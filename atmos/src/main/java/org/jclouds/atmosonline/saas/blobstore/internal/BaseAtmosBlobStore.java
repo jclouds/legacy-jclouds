@@ -21,7 +21,6 @@ package org.jclouds.atmosonline.saas.blobstore.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
 
 import javax.inject.Named;
 
@@ -36,10 +35,8 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.ClearListStrategy;
-import org.jclouds.concurrent.FutureFunctionWrapper;
 import org.jclouds.logging.Logger.LoggerFactory;
 
-import com.google.common.base.Function;
 import com.google.inject.Inject;
 
 public class BaseAtmosBlobStore {
@@ -81,11 +78,6 @@ public class BaseAtmosBlobStore {
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
       this.container2ResourceList = checkNotNull(container2ResourceList, "container2ResourceList");
       this.service = checkNotNull(service, "service");
-   }
-
-   protected <F, T> Future<T> wrapFuture(Future<? extends F> future, Function<F, T> function) {
-      return new FutureFunctionWrapper<F, T>(future, function, logFactory.getLogger(function
-               .getClass().getName()));
    }
 
    public Blob newBlob(String name) {

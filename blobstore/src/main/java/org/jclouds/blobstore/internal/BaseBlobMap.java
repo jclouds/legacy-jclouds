@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Named;
 
 import org.jclouds.blobstore.AsyncBlobStore;
-import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.ListResponse;
@@ -43,9 +42,11 @@ import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.blobstore.strategy.CountListStrategy;
 import org.jclouds.blobstore.strategy.GetBlobsInListStrategy;
 import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
+import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
@@ -204,9 +205,10 @@ public abstract class BaseBlobMap<V> {
       try {
          return connection.blobMetadata(containerName, realKey).get(requestTimeoutMilliseconds,
                   TimeUnit.MILLISECONDS) != null;
-      } catch (KeyNotFoundException e) {
-         return false;
       } catch (Exception e) {
+         if (Iterables.size(Iterables.filter(Throwables.getCausalChain(e),
+                  ResourceNotFoundException.class)) >= 1)
+            return false;
          Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
          throw new BlobRuntimeException(String.format("Error searching for %1$s:%2$s",
                   containerName, realKey), e);

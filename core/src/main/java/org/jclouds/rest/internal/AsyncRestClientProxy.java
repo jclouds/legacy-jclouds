@@ -42,10 +42,10 @@ import org.jclouds.logging.Logger;
 import org.jclouds.rest.InvocationContext;
 
 import com.google.common.base.Function;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.TypeLiteral;
-import com.google.inject.internal.Nullable;
 
 @Singleton
 public class AsyncRestClientProxy<T> implements InvocationHandler {
@@ -142,7 +142,7 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
                   .getName(), transformer.getClass().getSimpleName());
 
          logger.debug("Invoking %s.%s", declaring.getSimpleName(), method.getName());
-         Future<?> result = commandFactory.create(request, transformer, exceptionParser).execute();
+         ListenableFuture<?> result = commandFactory.create(request, transformer).execute();
 
          if (exceptionParser != null) {
             logger.trace("Exceptions from %s.%s are parsed by %s", declaring.getSimpleName(),
@@ -164,8 +164,7 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
 
    public static interface Factory {
       public TransformingHttpCommand<?> create(GeneratedHttpRequest<?> request,
-               Function<HttpResponse, ?> transformer,
-               @Nullable Function<Exception, ?> exceptionTransformer);
+               Function<HttpResponse, ?> transformer);
    }
 
    @Override

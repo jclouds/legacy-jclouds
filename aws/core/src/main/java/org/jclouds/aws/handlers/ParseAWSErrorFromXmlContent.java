@@ -66,7 +66,7 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
                command.setException(new HttpResponseException(command, response, content));
                Utils.rethrowIfRuntime(he);
             }
-         } else {
+         } else if (response.getStatusCode() == 404){
             command.setException(new HttpResponseException(command, response));
          }
       } catch (Exception e) {

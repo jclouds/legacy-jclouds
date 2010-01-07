@@ -19,6 +19,7 @@
 package org.jclouds.http.pool;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.util.concurrent.Futures.makeListenable;
 
 import java.net.URI;
 import java.util.concurrent.BlockingQueue;
@@ -33,7 +34,6 @@ import java.util.concurrent.TimeoutException;
 
 import javax.inject.Inject;
 
-import org.jclouds.concurrent.FutureExceptionParser;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpCommandRendezvous;
 import org.jclouds.http.HttpResponse;
@@ -45,6 +45,7 @@ import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
 import com.google.common.collect.MapMaker;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * // TODO: Adrian: Document this!
@@ -130,9 +131,8 @@ public class ConnectionPoolTransformingHttpCommandExecutorService<C> extends Bas
     * will be processed via the {@link #invoke(TransformingHttpCommandExecutorService) invoke}
     * method.
     */
-   public <T> Future<T> submit(HttpCommand command,
-            final Function<HttpResponse, T> responseTransformer,
-            Function<Exception, T> exceptionTransformer) {
+   public <T> ListenableFuture<T> submit(HttpCommand command,
+            final Function<HttpResponse, T> responseTransformer) {
       exceptionIfNotActive();
       final SynchronousQueue<?> channel = new SynchronousQueue<Object>();
       // should block and immediately parse the response on exit.
@@ -151,11 +151,9 @@ public class ConnectionPoolTransformingHttpCommandExecutorService<C> extends Bas
          }
       });
 
-      HttpCommandRendezvous<T> rendezvous = new HttpCommandRendezvous<T>(command, channel, future);
+      HttpCommandRendezvous<T> rendezvous = new HttpCommandRendezvous<T>(command, channel,
+               makeListenable(future));
       commandQueue.add(rendezvous);
-      if (exceptionTransformer != null) {
-         return new FutureExceptionParser<T>(rendezvous.getFuture(), exceptionTransformer);
-      }
       return rendezvous.getFuture();
    }
 
@@ -227,4 +225,5 @@ public class ConnectionPoolTransformingHttpCommandExecutorService<C> extends Bas
                   endpoint.getPort()));
       }
    }
+
 }

@@ -19,30 +19,35 @@
 package org.jclouds.concurrent;
 
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Transforms the result of a future as soon as it is available.
  * 
+ * Temporarily here until the following is resolved: <a
+ * href="http://code.google.com/p/guava-libraries/issues/detail?id=310"> guava issue 310</a>
+ * 
  * @author Adrian Cole
  */
-public class FutureExceptionParser<T> implements Future<T> {
+public class FutureExceptionParser<T> implements ListenableFuture<T> {
 
-   private final Future<T> delegate;
+   private final ListenableFuture<T> delegate;
    private final Function<Exception, T> function;
    private final Logger logger;
 
-   public FutureExceptionParser(Future<T> delegate, Function<Exception, T> function) {
+   public FutureExceptionParser(ListenableFuture<T> delegate, Function<Exception, T> function) {
       this(delegate, function, Logger.NULL);
    }
 
-   public FutureExceptionParser(Future<T> delegate, Function<Exception, T> function, Logger logger) {
+   public FutureExceptionParser(ListenableFuture<T> delegate, Function<Exception, T> function,
+            Logger logger) {
       this.delegate = delegate;
       this.function = function;
       this.logger = logger;
@@ -87,6 +92,11 @@ public class FutureExceptionParser<T> implements Future<T> {
 
    public boolean isDone() {
       return delegate.isDone();
+   }
+
+   @Override
+   public void addListener(Runnable listener, Executor exec) {
+      delegate.addListener(listener, exec);
    }
 
 }

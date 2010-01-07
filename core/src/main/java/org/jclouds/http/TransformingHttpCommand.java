@@ -19,7 +19,8 @@
 package org.jclouds.http;
 
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Command that utilizes RESTFul apis and extracts <code>T</code> from the HttpResponse.
@@ -36,5 +37,5 @@ public interface TransformingHttpCommand<T> extends HttpCommand {
     * @throws ExecutionException
     *            if there is a fatal error preventing the command from invoking
     */
-   Future<T> execute() throws ExecutionException;
+   ListenableFuture<T> execute() throws ExecutionException;
 }

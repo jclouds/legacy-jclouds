@@ -27,8 +27,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.AsyncBlobStore;
+import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.options.ListContainerOptions;
@@ -40,6 +40,7 @@ import org.jclouds.blobstore.strategy.ListBlobMetadataStrategy;
 import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 
@@ -118,15 +119,13 @@ public class BlobMapImpl extends BaseBlobMap<Blob> implements BlobMap {
          return stripPrefix(connection.getBlob(containerName, realKey).get(
                   requestTimeoutMilliseconds, TimeUnit.MILLISECONDS));
       } catch (Exception e) {
-         if (e instanceof KeyNotFoundException)
+         Throwable cause = Throwables.getRootCause(e);
+         if (cause instanceof KeyNotFoundException) {
             return null;
-         // the following will unwrap any exceptions, so we should double-check that it
-         // wasn't unwrapped to a KNFE
-         e = Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
-         if (e instanceof KeyNotFoundException)
-            return null;
-         throw new BlobRuntimeException(String.format("Error geting object %1$s:%2$s",
-                  containerName, realKey), e);
+         } else {
+            throw new BlobRuntimeException(String.format("Error geting object %1$s:%2$s",
+                     containerName, realKey), cause);
+         }
       }
    }
 

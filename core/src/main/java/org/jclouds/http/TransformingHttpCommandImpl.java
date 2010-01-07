@@ -20,7 +20,6 @@ package org.jclouds.http;
 
 import java.util.Collections;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -32,7 +31,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.base.Function;
-import com.google.inject.internal.Nullable;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Executor which will invoke and transform the response of an {@code EndpointCommand} into generic
@@ -46,7 +45,6 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
 
    private final TransformingHttpCommandExecutorService executorService;
    private final Function<HttpResponse, T> transformer;
-   private final Function<Exception, T> exceptionTransformer;
 
    private GeneratedHttpRequest<?> request;
    private volatile int failureCount;
@@ -59,19 +57,17 @@ public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T
 
    @Inject
    public TransformingHttpCommandImpl(TransformingHttpCommandExecutorService executorService,
-            GeneratedHttpRequest<?> request, Function<HttpResponse, T> transformer,
-            @Nullable Function<Exception, T> exceptionTransformer) {
+            GeneratedHttpRequest<?> request, Function<HttpResponse, T> transformer) {
       this.request = request;
       this.executorService = executorService;
       this.transformer = transformer;
-      this.exceptionTransformer = exceptionTransformer;
       this.failureCount = 0;
    }
 
-   public Future<T> execute() throws ExecutionException {
+   public ListenableFuture<T> execute() throws ExecutionException {
       if (exception != null)
          throw new ExecutionException(exception);
-      return executorService.submit(this, transformer, exceptionTransformer);
+      return executorService.submit(this, transformer);
    }
 
    public int getFailureCount() {

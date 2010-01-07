@@ -49,6 +49,7 @@ import org.jclouds.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 
@@ -86,7 +87,10 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
       } catch (KeyNotFoundException e) {
          return null;
       } catch (Exception e) {
-         Utils.<BlobRuntimeException> rethrowIfRuntimeOrSameType(e);
+         Throwable cause = Throwables.getRootCause(e);
+         if (cause instanceof KeyNotFoundException)
+            return null;
+         Throwables.propagateIfInstanceOf(e, BlobRuntimeException.class);
          throw new BlobRuntimeException(String.format("Error geting object %1$s:%2$s",
                   containerName, realKey), e);
       }

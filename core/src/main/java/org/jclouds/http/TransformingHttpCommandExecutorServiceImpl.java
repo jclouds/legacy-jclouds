@@ -18,15 +18,16 @@
  */
 package org.jclouds.http;
 
-import java.util.concurrent.Callable;
+import static com.google.common.util.concurrent.Futures.compose;
+import static com.google.common.util.concurrent.Futures.makeListenable;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import org.jclouds.concurrent.FutureFunctionCallable;
-import org.jclouds.logging.Logger.LoggerFactory;
+import javax.inject.Inject;
 
 import com.google.common.base.Function;
-import javax.inject.Inject;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Executor which will invoke and transform the response of an {@code EndpointCommand} into generic
@@ -38,25 +39,20 @@ public class TransformingHttpCommandExecutorServiceImpl implements
          TransformingHttpCommandExecutorService {
    private final HttpCommandExecutorService client;
    private final ExecutorService executorService;
-   private final LoggerFactory logFactory;
 
    @Inject
    public TransformingHttpCommandExecutorServiceImpl(HttpCommandExecutorService client,
-            ExecutorService executorService, LoggerFactory logFactory) {
+            ExecutorService executorService) {
       this.client = client;
       this.executorService = executorService;
-      this.logFactory = logFactory;
    }
 
    /**
     * {@inheritDoc}
     */
-   public <T> Future<T> submit(HttpCommand command, Function<HttpResponse, T> responseTransformer,
-            Function<Exception, T> exceptionTransformer) {
+   public <T> ListenableFuture<T> submit(HttpCommand command, Function<HttpResponse, T> responseTransformer) {
       Future<HttpResponse> responseFuture = client.submit(command);
-      Callable<T> valueCallable = new FutureFunctionCallable<HttpResponse, T>(responseFuture,
-               responseTransformer, logFactory.getLogger(responseTransformer.getClass().getName()));
-      return executorService.submit(valueCallable);
+      return compose(makeListenable(responseFuture), responseTransformer, executorService);
    }
 
 }
