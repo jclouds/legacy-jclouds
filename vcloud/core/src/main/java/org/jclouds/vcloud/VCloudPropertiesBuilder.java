@@ -43,7 +43,7 @@ public class VCloudPropertiesBuilder extends HttpPropertiesBuilder {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_VCLOUD_VERSION, "0.8");
       properties.setProperty(PROPERTY_VCLOUD_SESSIONINTERVAL, 9 * 60 + "");
-      properties.setProperty(PROPERTY_VCLOUD_XML_NAMESPACE, "http://www.vmware.com/vcloud/0.8");
+      properties.setProperty(PROPERTY_VCLOUD_XML_NAMESPACE, "http://www.vmware.com/vcloud/v0.8");
       properties.setProperty(PROPERTY_VCLOUD_XML_SCHEMA, "http://vcloud.safesecureweb.com/ns/vcloud.xsd");
       return properties;
    }

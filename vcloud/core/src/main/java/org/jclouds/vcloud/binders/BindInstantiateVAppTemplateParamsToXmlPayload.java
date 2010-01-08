@@ -170,8 +170,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
             Map<String, String> properties) {
       if (properties.size() > 0) {
          XMLBuilder productSectionBuilder = instantiationParamsBuilder.e("ProductSection").a(
-                  "xmlns:q1", "http://www.vmware.com/vcloud/v1").a("xmlns:ovf",
-                  "http://schemas.dmtf.org/ovf/envelope/1");
+                  "xmlns:q1", ns).a("xmlns:ovf", "http://schemas.dmtf.org/ovf/envelope/1");
          for (Entry<String, String> entry : properties.entrySet()) {
             productSectionBuilder.e("Property")
                      .a("xmlns", "http://schemas.dmtf.org/ovf/envelope/1").a("ovf:key",
@@ -181,7 +180,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
    }
 
    protected void addNetworkConfig(XMLBuilder instantiationParamsBuilder, String name,
-           String network) {
+            String network) {
       XMLBuilder networkConfigBuilder = instantiationParamsBuilder.e("NetworkConfigSection").e(
                "NetworkConfig").a("name", name);
       XMLBuilder featuresBuilder = networkConfigBuilder.e("Features");
@@ -194,7 +193,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
             SortedMap<ResourceType, String> virtualHardwareQuantity) {
       if (virtualHardwareQuantity.size() > 0) {
          XMLBuilder virtualHardwareSectionBuilder = instantiationParamsBuilder.e(
-                  "VirtualHardwareSection").a("xmlns:q1", "http://www.vmware.com/vcloud/v1");
+                  "VirtualHardwareSection").a("xmlns:q1", ns);
          for (Entry<ResourceType, String> entry : virtualHardwareQuantity.entrySet()) {
             XMLBuilder itemBuilder = virtualHardwareSectionBuilder.e("Item").a("xmlns",
                      "http://schemas.dmtf.org/ovf/envelope/1");

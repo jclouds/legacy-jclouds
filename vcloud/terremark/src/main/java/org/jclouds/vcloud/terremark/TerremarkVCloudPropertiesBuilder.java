@@ -21,7 +21,6 @@ package org.jclouds.vcloud.terremark;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_CPUCOUNT;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_MEMORY;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_ENDPOINT;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_NAMESPACE;
 
 import java.net.URI;
 import java.util.Properties;
@@ -39,7 +38,6 @@ public class TerremarkVCloudPropertiesBuilder extends VCloudPropertiesBuilder {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_VCLOUD_DEFAULT_CPUCOUNT, "1");
       properties.setProperty(PROPERTY_VCLOUD_DEFAULT_MEMORY, "512");
-      properties.setProperty(PROPERTY_VCLOUD_XML_NAMESPACE, "http://www.vmware.com/vcloud/v1");
       properties.setProperty(PROPERTY_VCLOUD_ENDPOINT,
                "https://services.vcloudexpress.terremark.com/api");
       return properties;

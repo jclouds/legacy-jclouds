@@ -85,7 +85,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
                "POST http://vcloud/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
       assertHeadersEqual(
                httpMethod,
-               "Accept: application/vnd.vmware.vcloud.vApp+xml\nContent-Length: 636\nContent-Type: application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml\n");
+               "Accept: application/vnd.vmware.vcloud.vApp+xml\nContent-Length: 638\nContent-Type: application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml\n");
       assertPayloadEquals(httpMethod, Utils.toStringAndClose(getClass().getResourceAsStream(
                "/newvapp-hosting.xml")));
 
@@ -109,7 +109,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
                "POST http://vcloud/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
       assertHeadersEqual(
                httpMethod,
-               "Accept: application/vnd.vmware.vcloud.vApp+xml\nContent-Length: 2018\nContent-Type: application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml\n");
+               "Accept: application/vnd.vmware.vcloud.vApp+xml\nContent-Length: 2022\nContent-Type: application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml\n");
       assertPayloadEquals(httpMethod, Utils.toStringAndClose(getClass().getResourceAsStream(
                "/newvapp-hostingcpumemdisk.xml")));
 
@@ -129,7 +129,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       assertRequestLineEquals(httpMethod, "POST http://vcloud/vdc/1/action/cloneVApp HTTP/1.1");
       assertHeadersEqual(
                httpMethod,
-               "Accept: application/vnd.vmware.vcloud.task+xml\nContent-Length: 396\nContent-Type: application/vnd.vmware.vcloud.cloneVAppParams+xml\n");
+               "Accept: application/vnd.vmware.vcloud.task+xml\nContent-Length: 398\nContent-Type: application/vnd.vmware.vcloud.cloneVAppParams+xml\n");
       assertPayloadEquals(httpMethod, Utils.toStringAndClose(getClass().getResourceAsStream(
                "/cloneVApp-default.xml")));
 
@@ -150,7 +150,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       assertRequestLineEquals(httpMethod, "POST http://vcloud/vdc/1/action/cloneVApp HTTP/1.1");
       assertHeadersEqual(
                httpMethod,
-               "Accept: application/vnd.vmware.vcloud.task+xml\nContent-Length: 459\nContent-Type: application/vnd.vmware.vcloud.cloneVAppParams+xml\n");
+               "Accept: application/vnd.vmware.vcloud.task+xml\nContent-Length: 461\nContent-Type: application/vnd.vmware.vcloud.cloneVAppParams+xml\n");
       assertPayloadEquals(httpMethod, Utils.toStringAndClose(getClass().getResourceAsStream(
                "/cloneVApp.xml")));
 
@@ -161,7 +161,8 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       checkFilters(httpMethod);
    }
 
-   public void testDefaultOrganization() throws SecurityException, NoSuchMethodException, IOException {
+   public void testDefaultOrganization() throws SecurityException, NoSuchMethodException,
+            IOException {
       Method method = VCloudAsyncClient.class.getMethod("getDefaultOrganization");
       GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method);
 
@@ -175,7 +176,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       checkFilters(httpMethod);
    }
-   
+
    public void testOrganization() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VCloudAsyncClient.class.getMethod("getOrganization", String.class);
       GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, "1");
@@ -189,7 +190,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpMethod);
-  }
+   }
 
    public void testDefaultCatalog() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VCloudAsyncClient.class.getMethod("getDefaultCatalog");
@@ -205,10 +206,10 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       checkFilters(httpMethod);
    }
-   
+
    public void testCatalog() throws SecurityException, NoSuchMethodException, IOException {
-	      Method method = VCloudAsyncClient.class.getMethod("getCatalog", String.class);
-	      GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, "1");
+      Method method = VCloudAsyncClient.class.getMethod("getCatalog", String.class);
+      GeneratedHttpRequest<VCloudAsyncClient> httpMethod = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpMethod, "GET http://vcloud/catalog/1 HTTP/1.1");
       assertHeadersEqual(httpMethod, "Accept: application/vnd.vmware.vcloud.catalog+xml\n");

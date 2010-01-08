@@ -160,7 +160,7 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
                "POST http://vcloud/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
       assertHeadersEqual(
                httpMethod,
-               "Accept: application/vnd.vmware.vcloud.vApp+xml\nContent-Length: 1649\nContent-Type: application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml\n");
+               "Accept: application/vnd.vmware.vcloud.vApp+xml\nContent-Length: 1657\nContent-Type: application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml\n");
       assertPayloadEquals(httpMethod, Utils.toStringAndClose(getClass().getResourceAsStream(
                "/terremark/InstantiateVAppTemplateParams-test.xml")));
 
@@ -185,7 +185,7 @@ public class TerremarkVCloudAsyncClientTest extends RestClientTest<TerremarkVClo
                "POST http://vcloud/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
       assertHeadersEqual(
                httpMethod,
-               "Accept: application/vnd.vmware.vcloud.vApp+xml\nContent-Length: 1912\nContent-Type: application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml\n");
+               "Accept: application/vnd.vmware.vcloud.vApp+xml\nContent-Length: 1920\nContent-Type: application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml\n");
       assertPayloadEquals(httpMethod, Utils.toStringAndClose(getClass().getResourceAsStream(
                "/terremark/InstantiateVAppTemplateParams-options-test.xml")));
 

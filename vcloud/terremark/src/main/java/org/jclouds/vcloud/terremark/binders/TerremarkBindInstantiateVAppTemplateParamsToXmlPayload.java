@@ -75,8 +75,7 @@ public class TerremarkBindInstantiateVAppTemplateParamsToXmlPayload extends
    protected void addPropertiesifPresent(XMLBuilder instantiationParamsBuilder,
             Map<String, String> properties) {
       if (properties.size() == 0) { // terremark requires the product section.
-         instantiationParamsBuilder.e("ProductSection").a("xmlns:q1",
-                  "http://www.vmware.com/vcloud/v1").a("xmlns:ovf",
+         instantiationParamsBuilder.e("ProductSection").a("xmlns:q1", ns).a("xmlns:ovf",
                   "http://schemas.dmtf.org/ovf/envelope/1");
       } else {
          super.addPropertiesifPresent(instantiationParamsBuilder, properties);
