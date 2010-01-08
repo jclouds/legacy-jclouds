@@ -128,7 +128,7 @@ public class VirtualSystemHandler extends
             this.virtualSystemIdentifier = currentText.toString().trim();
          } else if (qName.equals("VirtualSystemType")) {
             this.virtualSystemType = currentText.toString().trim();
-         } else if (qName.equals("q2:System")) {
+         } else if (qName.equals("System")) {
             this.system = new org.jclouds.vcloud.terremark.domain.TerremarkVirtualSystem(
                      automaticRecoveryAction, automaticShutdownAction, automaticStartupAction,
                      automaticStartupActionDelay, automaticStartupActionSequenceNumber, caption,

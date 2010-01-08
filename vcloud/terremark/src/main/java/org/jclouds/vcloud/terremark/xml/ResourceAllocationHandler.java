@@ -103,7 +103,7 @@ public class ResourceAllocationHandler extends ParseSax.HandlerWithResult<Resour
                virtualQuantity = Long.parseLong(quantity);
          } else if (qName.equals("VirtualQuantityUnits")) {
             virtualQuantityUnits = currentText.toString().trim();
-         } else if (qName.equals("q2:Item")) {
+         } else if (qName.equals("Item")) {
             item = new ResourceAllocation(instanceID, elementName, description, resourceType,
                      resourceSubType, hostResource, address, addressOnParent, parent, null, virtualQuantity,
                      allocationUnits != null ? allocationUnits : virtualQuantityUnits);

@@ -1,5 +1,5 @@
 
-<q2:Item>
+<Item>
     <Address
         xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">0</Address>
     <AddressOnParent xsi:nil="true"
@@ -42,4 +42,4 @@
         xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
     <Weight xsi:nil="true"
         xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
-</q2:Item>
+</Item>

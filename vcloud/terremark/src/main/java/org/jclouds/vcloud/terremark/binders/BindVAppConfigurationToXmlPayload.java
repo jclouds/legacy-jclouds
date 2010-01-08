@@ -100,7 +100,7 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder {
       XMLBuilder rootBuilder = buildRoot(vApp, name);
 
       XMLBuilder sectionBuilder = rootBuilder.e("Section").a("xsi:type",
-               "q2:VirtualHardwareSection_Type").a("xmlns",
+               "VirtualHardwareSection_Type").a("xmlns",
                "http://schemas.dmtf.org/ovf/envelope/1").a("xmlns:q2",
                "http://www.vmware.com/vcloud/v1");
       sectionBuilder.e("Info").t("Virtual Hardware");
@@ -148,7 +148,7 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder {
 
    private XMLBuilder addResourceWithQuantity(XMLBuilder sectionBuilder,
             ResourceAllocation resource, long quantity) {
-      XMLBuilder itemBuilder = sectionBuilder.e("q2:Item");
+      XMLBuilder itemBuilder = sectionBuilder.e("Item");
       addCommonElements(itemBuilder, resource, quantity);
       return itemBuilder;
    }
@@ -161,7 +161,7 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder {
    }
 
    private XMLBuilder addDiskWithQuantity(XMLBuilder sectionBuilder, ResourceAllocation disk) {
-      XMLBuilder itemBuilder = sectionBuilder.e("q2:Item");
+      XMLBuilder itemBuilder = sectionBuilder.e("Item");
       itemBuilder.e("AddressOnParent").a("xmlns", RESOURCE_ALLOCATION_NS).t(
                disk.getAddressOnParent() + "");
       itemBuilder.e("HostResource").a("xmlns", RESOURCE_ALLOCATION_NS).t(disk.getHostResource());

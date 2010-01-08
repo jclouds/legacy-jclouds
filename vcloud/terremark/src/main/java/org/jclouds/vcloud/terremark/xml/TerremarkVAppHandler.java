@@ -113,10 +113,10 @@ public class TerremarkVAppHandler extends ParseSax.HandlerWithResult<TerremarkVA
          operatingSystemDescription = currentText.toString().trim();
       } else if (qName.equals("q1:IpAddress")) {
          networkToAddresses.put(networkName, parseInetAddress(currentText.toString().trim()));
-      } else if (qName.equals("q2:System")) {
+      } else if (qName.equals("System")) {
          systemHandler.endElement(uri, localName, qName);
          system = systemHandler.getResult();
-      } else if (qName.equals("q2:Item")) {
+      } else if (qName.equals("Item")) {
          allocationHandler.endElement(uri, localName, qName);
          allocations.add(allocationHandler.getResult());
       } else if (!skip) {

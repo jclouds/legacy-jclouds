@@ -22,10 +22,10 @@
         <Info>The kind of installed guest operating system</Info>
         <Description>Ubuntu Linux (32-bit)</Description>
     </OperatingSystemSection>
-    <Section xsi:type="q2:VirtualHardwareSection_Type" xmlns="http://schemas.dmtf.org/ovf/envelope/1"
+    <Section xsi:type="VirtualHardwareSection_Type" xmlns="http://schemas.dmtf.org/ovf/envelope/1"
         xmlns:q2="http://www.vmware.com/vcloud/v1">
         <Info>Virtual Hardware</Info>
-        <q2:System>
+        <System>
             <AutomaticRecoveryAction xsi:nil="true"
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" />
             <AutomaticShutdownAction xsi:nil="true"
@@ -68,8 +68,8 @@
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData">eduardo</VirtualSystemIdentifier>
             <VirtualSystemType
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData">vmx-07</VirtualSystemType>
-        </q2:System>
-        <q2:Item>
+        </System>
+        <Item>
             <Address xsi:nil="true"
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
             <AddressOnParent xsi:nil="true"
@@ -112,8 +112,8 @@
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">count</VirtualQuantityUnits>
             <Weight xsi:nil="true"
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
-        </q2:Item>
-        <q2:Item>
+        </Item>
+        <Item>
             <Address xsi:nil="true"
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
             <AddressOnParent xsi:nil="true"
@@ -156,8 +156,8 @@
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">byte * 2^20</VirtualQuantityUnits>
             <Weight xsi:nil="true"
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
-        </q2:Item>
-        <q2:Item>
+        </Item>
+        <Item>
             <Address
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">0</Address>
             <AddressOnParent xsi:nil="true"
@@ -200,8 +200,8 @@
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
             <Weight xsi:nil="true"
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
-        </q2:Item>
-        <q2:Item>
+        </Item>
+        <Item>
             <Address xsi:nil="true"
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
             <AddressOnParent
@@ -246,8 +246,8 @@
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
             <Weight xsi:nil="true"
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
-        </q2:Item>
-        <q2:Item>
+        </Item>
+        <Item>
             <Address xsi:nil="true"
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
             <AddressOnParent
@@ -292,6 +292,6 @@
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
             <Weight xsi:nil="true"
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
-        </q2:Item>
+        </Item>
     </Section>
 </VApp>

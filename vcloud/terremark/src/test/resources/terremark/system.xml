@@ -1,4 +1,4 @@
-<q2:System>
+<System>
     <AutomaticRecoveryAction xsi:nil="true"
         xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" />
     <AutomaticShutdownAction xsi:nil="true"
@@ -40,4 +40,4 @@
         xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData">adriantest1</VirtualSystemIdentifier>
     <VirtualSystemType
         xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData">vmx-07</VirtualSystemType>
-</q2:System>
+</System>

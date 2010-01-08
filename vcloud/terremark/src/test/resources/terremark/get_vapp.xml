@@ -1,31 +1,28 @@
-<VApp href="https://services.vcloudexpress.terremark.com/api/v0.8/vapp/13850"
-    type="application/vnd.vmware.vcloud.vApp+xml" name="adriantest1"
-    status="2" size="4194304" xmlns="http://www.vmware.com/vcloud/v1"
+<VApp href="https://services.vcloudexpress.terremark.com/api/v0.8/vapp/16161"
+    type="application/vnd.vmware.vcloud.vApp+xml" name="centos-53"
+    status="4" size="10485760" xmlns="http://www.vmware.com/vcloud/v0.8"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
     <Link rel="up"
         href="https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32"
         type="application/vnd.vmware.vcloud.vdc+xml" />
     <Link rel="down"
-        href="https://services.vcloudexpress.terremark.com/api/v0.8/vapp/13850/options/compute"
+        href="https://services.vcloudexpress.terremark.com/api/v0.8/vapp/16161/options/compute"
         type="application/xml" name="Compute Options" />
     <Link rel="down"
-        href="https://services.vcloudexpress.terremark.com/api/v0.8/vapp/13850/options/customization"
+        href="https://services.vcloudexpress.terremark.com/api/v0.8/vapp/16161/options/customization"
         type="application/xml" name="Customization Options" />
-    <Section xsi:type="q1:NetworkConnectionSectionType" xmlns="http://schemas.dmtf.org/ovf/envelope/1"
-        xmlns:q1="http://www.vmware.com/vcloud/v1">
-        <q1:NetworkConnection Network="Internal">
-            <q1:IpAddress>10.114.34.132</q1:IpAddress>
-        </q1:NetworkConnection>
-    </Section>
-    <OperatingSystemSection d2p1:id="45"
+    <NetworkConnectionSection xmlns="http://schemas.dmtf.org/ovf/envelope/1">
+        <NetworkConnection Network="Internal"
+            xmlns="http://www.vmware.com/vcloud/v0.8" />
+    </NetworkConnectionSection>
+    <OperatingSystemSection d2p1:id="26"
         xmlns="http://schemas.dmtf.org/ovf/envelope/1" xmlns:d2p1="http://schemas.dmtf.org/ovf/envelope/1">
         <Info>The kind of installed guest operating system</Info>
-        <Description>Ubuntu Linux (32-bit)</Description>
+        <Description>Red Hat Enterprise Linux 5 (64-bit)</Description>
     </OperatingSystemSection>
-    <Section xsi:type="q2:VirtualHardwareSection_Type" xmlns="http://schemas.dmtf.org/ovf/envelope/1"
-        xmlns:q2="http://www.vmware.com/vcloud/v1">
+    <VirtualHardwareSection xmlns="http://schemas.dmtf.org/ovf/envelope/1">
         <Info>Virtual Hardware</Info>
-        <q2:System>
+        <System>
             <AutomaticRecoveryAction xsi:nil="true"
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" />
             <AutomaticShutdownAction xsi:nil="true"
@@ -65,11 +62,11 @@
             <SwapFileDataRoot xsi:nil="true"
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" />
             <VirtualSystemIdentifier
-                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData">adriantest1</VirtualSystemIdentifier>
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData">centos-53</VirtualSystemIdentifier>
             <VirtualSystemType
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData">vmx-07</VirtualSystemType>
-        </q2:System>
-        <q2:Item>
+        </System>
+        <Item>
             <Address xsi:nil="true"
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
             <AddressOnParent xsi:nil="true"
@@ -112,8 +109,8 @@
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">count</VirtualQuantityUnits>
             <Weight xsi:nil="true"
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
-        </q2:Item>
-        <q2:Item>
+        </Item>
+        <Item>
             <Address xsi:nil="true"
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
             <AddressOnParent xsi:nil="true"
@@ -156,8 +153,8 @@
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">byte * 2^20</VirtualQuantityUnits>
             <Weight xsi:nil="true"
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
-        </q2:Item>
-        <q2:Item>
+        </Item>
+        <Item>
             <Address
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">0</Address>
             <AddressOnParent xsi:nil="true"
@@ -200,8 +197,8 @@
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
             <Weight xsi:nil="true"
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
-        </q2:Item>
-        <q2:Item>
+        </Item>
+        <Item>
             <Address xsi:nil="true"
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
             <AddressOnParent
@@ -221,7 +218,7 @@
             <ElementName
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">Hard Disk 1</ElementName>
             <HostResource
-                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">4194304</HostResource>
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">10485760</HostResource>
             <InstanceID
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">9</InstanceID>
             <Limit xsi:nil="true"
@@ -241,11 +238,11 @@
             <ResourceType
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">17</ResourceType>
             <VirtualQuantity
-                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">4194304</VirtualQuantity>
+                xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData">10485760</VirtualQuantity>
             <VirtualQuantityUnits xsi:nil="true"
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
             <Weight xsi:nil="true"
                 xmlns="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" />
-        </q2:Item>
-    </Section>
+        </Item>
+    </VirtualHardwareSection>
 </VApp>
