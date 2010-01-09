@@ -96,7 +96,7 @@ public class TerremarkVAppHandler extends ParseSax.HandlerWithResult<TerremarkVA
          size = Integer.parseInt(attributes.getValue(attributes.getIndex("size")));
       } else if (qName.equals("OperatingSystemSection")) {
          inOs = true;
-      } else if (qName.equals("q1:NetworkConnection")) {
+      } else if (qName.equals("NetworkConnection")) {
          networkName = attributes.getValue(attributes.getIndex("Network"));
       } else {
          systemHandler.startElement(uri, localName, qName, attributes);
@@ -111,7 +111,7 @@ public class TerremarkVAppHandler extends ParseSax.HandlerWithResult<TerremarkVA
          inOs = false;
       } else if (inOs && qName.equals("Description")) {
          operatingSystemDescription = currentText.toString().trim();
-      } else if (qName.equals("q1:IpAddress")) {
+      } else if (qName.equals("IpAddress")) {
          networkToAddresses.put(networkName, parseInetAddress(currentText.toString().trim()));
       } else if (qName.equals("System")) {
          systemHandler.endElement(uri, localName, qName);

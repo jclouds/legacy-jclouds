@@ -11,11 +11,11 @@
     <Link rel="down"
         href="https://services.vcloudexpress.terremark.com/api/v0.8/vapp/15639/options/customization"
         type="application/xml" name="Customization Options" />
-    <Section xsi:type="q1:NetworkConnectionSectionType" xmlns="http://schemas.dmtf.org/ovf/envelope/1"
+    <Section xsi:type="NetworkConnectionSectionType" xmlns="http://schemas.dmtf.org/ovf/envelope/1"
         xmlns:q1="http://www.vmware.com/vcloud/v1">
-        <q1:NetworkConnection Network="Internal">
-            <q1:IpAddress>10.114.34.131</q1:IpAddress>
-        </q1:NetworkConnection>
+        <NetworkConnection Network="Internal">
+            <IpAddress>10.114.34.131</IpAddress>
+        </NetworkConnection>
     </Section>
     <OperatingSystemSection d2p1:id="45"
         xmlns="http://schemas.dmtf.org/ovf/envelope/1" xmlns:d2p1="http://schemas.dmtf.org/ovf/envelope/1">

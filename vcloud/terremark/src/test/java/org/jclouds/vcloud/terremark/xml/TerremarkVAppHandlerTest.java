@@ -101,23 +101,23 @@ public class TerremarkVAppHandlerTest extends BaseHandlerTest {
 
       TerremarkVApp result = (TerremarkVApp) factory.create(
                injector.getInstance(TerremarkVAppHandler.class)).parse(is);
-      assertEquals(result.getId(), 16161 + "");
+      assertEquals(result.getId(), 16238 + "");
 
       assertEquals(result.getName(), "centos-53");
-      assertEquals(result.getStatus(), VAppStatus.ON);
+      assertEquals(result.getStatus(), VAppStatus.OFF);
 
       assertEquals(result.getSize().longValue(), 10485760);
       assertEquals(result.getOperatingSystemDescription(), "Red Hat Enterprise Linux 5 (64-bit)");
 
       assertEquals(result.getLocation(), URI
-               .create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/16161"));
+               .create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/16238"));
       assertEquals(result.getVDC(), new NamedResourceImpl("32", null, VCloudMediaType.VDC_XML, URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32")));
 
       assertEquals(result.getSystem(), new TerremarkVirtualSystem(null, null, null, null, null,
                null, null, null, null, null, null, "Virtual Hardware Family", 0, null, null, null,
                null, null, "centos-53", "vmx-07"));
-      assertEquals(result.getNetworkToAddresses().get("Internal"), ImmutableList.<InetAddress>of());
+      assertEquals(result.getNetworkToAddresses().get("Internal"), ImmutableList.<InetAddress>of(InetAddress.getByName("10.114.34.132")));
 
       ResourceAllocation cpu = new ResourceAllocation(1, "1 virtual CPU(s)",
                "Number of Virtual CPUs", ResourceType.PROCESSOR, null, null, null, null, null,

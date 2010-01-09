@@ -1,19 +1,21 @@
-<VApp href="https://services.vcloudexpress.terremark.com/api/v0.8/vapp/16161"
+<VApp href="https://services.vcloudexpress.terremark.com/api/v0.8/vapp/16238"
     type="application/vnd.vmware.vcloud.vApp+xml" name="centos-53"
-    status="4" size="10485760" xmlns="http://www.vmware.com/vcloud/v0.8"
+    status="2" size="10485760" xmlns="http://www.vmware.com/vcloud/v0.8"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
     <Link rel="up"
         href="https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32"
         type="application/vnd.vmware.vcloud.vdc+xml" />
     <Link rel="down"
-        href="https://services.vcloudexpress.terremark.com/api/v0.8/vapp/16161/options/compute"
+        href="https://services.vcloudexpress.terremark.com/api/v0.8/vapp/16238/options/compute"
         type="application/xml" name="Compute Options" />
     <Link rel="down"
-        href="https://services.vcloudexpress.terremark.com/api/v0.8/vapp/16161/options/customization"
+        href="https://services.vcloudexpress.terremark.com/api/v0.8/vapp/16238/options/customization"
         type="application/xml" name="Customization Options" />
     <NetworkConnectionSection xmlns="http://schemas.dmtf.org/ovf/envelope/1">
         <NetworkConnection Network="Internal"
-            xmlns="http://www.vmware.com/vcloud/v0.8" />
+            xmlns="http://www.vmware.com/vcloud/v0.8">
+            <IpAddress>10.114.34.132</IpAddress>
+        </NetworkConnection>
     </NetworkConnectionSection>
     <OperatingSystemSection d2p1:id="26"
         xmlns="http://schemas.dmtf.org/ovf/envelope/1" xmlns:d2p1="http://schemas.dmtf.org/ovf/envelope/1">
