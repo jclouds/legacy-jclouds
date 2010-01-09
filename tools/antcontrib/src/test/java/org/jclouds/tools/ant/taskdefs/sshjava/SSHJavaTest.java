@@ -35,6 +35,7 @@ import org.apache.tools.ant.types.Environment.Variable;
 import org.jclouds.tools.ant.TestClass;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
 /**
@@ -46,6 +47,7 @@ public class SSHJavaTest {
             .entrySet());
 
    // TODO, this test will break in windows
+   @Test(enabled = false)
    public void testFull() throws SecurityException, NoSuchMethodException {
       SSHJava task = makeSSHJava();
       String expected = String
@@ -56,6 +58,21 @@ public class SSHJavaTest {
       assertEquals(task.convertJavaToScriptNormalizingPaths(task.getCommandLine()), expected);
    }
 
+   // TODO, this test will break in windows
+   @Test(enabled = false)
+   public void testFullShift() throws SecurityException, NoSuchMethodException {
+      SSHJava task = makeSSHJava();
+      task = directoryShift(task);
+      String expected = String
+               .format(
+                        "export %s=\"%s\"%ncd /tmp/foo\n%s -Xms16m -Xmx32m -cp classpath -Dfooble=baz -Dfoo=bar -Dsettingsfile=/tmp/foo/maven/conf/settings.xml -DappHome=/tmp/foo/maven org.jclouds.tools.ant.TestClass %s hello world\n",
+                        LAST_ENV.getKey(), LAST_ENV.getValue(), System.getProperty("java.home")
+                                 + "/bin/java", LAST_ENV.getKey());
+      assertEquals(task.convertJavaToScriptNormalizingPaths(task.getCommandLine()), expected);
+      assertEquals(task.shiftMap, ImmutableMap.<String, String> of(System.getProperty("user.home")
+               + "/apache-maven-2.2.1", "maven"));
+   }
+
    private Java populateTask(Java task) {
       Project p = new Project();
       task.setProject(p);
@@ -64,7 +81,6 @@ public class SSHJavaTest {
       Variable prop1 = new Environment.Variable();
       prop1.setKey("fooble");
       prop1.setValue("baz");
-
       task.addSysproperty(prop1);
       Variable prop2 = new Environment.Variable();
       prop2.setKey("foo");
@@ -105,6 +121,25 @@ public class SSHJavaTest {
                .getProperty("result"));
    }
 
+   @Test(enabled = false, groups = { "live" })
+   public void testSshShift() throws NumberFormatException, FileNotFoundException, IOException {
+      Java java = makeJava();
+      directoryShift(java);
+      java.execute();
+
+      SSHJava javaOverSsh = makeSSHJava();
+      addDestinationTo(javaOverSsh);
+      directoryShift(javaOverSsh);
+      javaOverSsh.execute();
+
+      assertEquals(javaOverSsh.getProject().getProperty("out"), javaOverSsh.getProject()
+               .getProperty("out"));
+      assertEquals(javaOverSsh.getProject().getProperty("err"), javaOverSsh.getProject()
+               .getProperty("err"));
+      assertEquals(javaOverSsh.getProject().getProperty("result"), javaOverSsh.getProject()
+               .getProperty("result"));
+   }
+
    private void addDestinationTo(SSHJava javaOverSsh) throws UnknownHostException {
       String sshHost = System.getProperty("jclouds.test.ssh.host");
       String sshPort = System.getProperty("jclouds.test.ssh.port");
@@ -125,10 +160,19 @@ public class SSHJavaTest {
       }
    }
 
+   public void testSSHJavaPropertyOverride() {
+      SSHJava task = new SSHJava();
+      Project p = new Project();
+      task.setProject(p);
+      p.setProperty("foo", "bar");
+      task.getProjectProperties().remove("foo");
+      assertEquals(p.getProperty("foo"), null);
+   }
+
    private SSHJava makeSSHJava() {
       SSHJava task = new SSHJava();
       populateTask(task);
-      task.setRemotedir(new File("/tmp/foo"));
+      task.setRemotebase(new File("/tmp/foo"));
       task.setVerbose(true);
       task.setTrust(true);
       return task;
@@ -136,5 +180,21 @@ public class SSHJavaTest {
 
    private Java makeJava() {
       return populateTask(new Java());
+   }
+
+   private <T extends Java> T directoryShift(T java) {
+      Variable prop1 = new Environment.Variable();
+      prop1.setKey("sshjava.map." + System.getProperty("user.home") + "/apache-maven-2.2.1");
+      prop1.setValue("maven");
+      java.addSysproperty(prop1);
+      Variable prop2 = new Environment.Variable();
+      prop2.setKey("settingsfile");
+      prop2.setValue(System.getProperty("user.home") + "/apache-maven-2.2.1/conf/settings.xml");
+      java.addSysproperty(prop2);
+      Variable prop3 = new Environment.Variable();
+      prop3.setKey("appHome");
+      prop3.setValue(System.getProperty("user.home") + "/apache-maven-2.2.1");
+      java.addSysproperty(prop3);
+      return java;
    }
 }
