@@ -19,7 +19,7 @@
     ====================================================================
 
 -->
-<project name="javassh" default="javassh" basedir=".">
+<project name="sshjava" default="sshjava" basedir=".">
   <description>
         simple example build file
   </description>
@@ -67,17 +67,17 @@
     <delete dir="${dist}"/>
   </target>
 
-  <taskdef name="javassh" classname="org.jclouds.tools.ant.JavaOverSsh"/>
+  <taskdef name="sshjava" classname="org.jclouds.tools.ant.taskdefs.sshjava.SSHJava" />
 
-  <target name="javassh" depends="compile" description="remote execute the java command">
+  <target name="sshjava" depends="compile" description="remote execute the java command">
     <echo message="normal java task"/>
     <java classname="TestClass" classpath="${build}" dir="${user.dir}" >
       <arg line="${line}"/>
     </java>
     <echo message="java task over ssh"/>
-    <javassh classname="TestClass" classpath="${build}" dir="${user.dir}" host="${host}" username="${username}" keyfile="${keyfile}" trust="true" remotedir="/tmp/test" >
+    <sshjava classname="TestClass" classpath="${build}" dir="${user.dir}" host="${host}" username="${username}" keyfile="${keyfile}" trust="true" remotebase="/tmp/test" >
       <arg line="${line}"/>
-    </javassh>
+    </sshjava>
   </target>
 
 </project>

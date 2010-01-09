@@ -25,22 +25,18 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.security.SecureRandom;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Location;
-import org.apache.tools.ant.MagicNames;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.PropertyHelper;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.Java;
-import org.apache.tools.ant.taskdefs.optional.ssh.SSHExec;
 import org.apache.tools.ant.taskdefs.optional.ssh.SSHUserInfo;
 import org.apache.tools.ant.taskdefs.optional.ssh.Scp;
 import org.apache.tools.ant.types.CommandlineJava;
@@ -60,6 +56,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.jcraft.jsch.JSchException;
 
 /**
  * Version of the Java task that executes over ssh.
@@ -67,11 +64,9 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  */
 public class SSHJava extends Java {
-   private final SSHExec exec;
+   private final SSHExecute exec;
    private final Scp scp;
    private final SSHUserInfo userInfo;
-
-   private String jvm = "/usr/bin/java";
    private File localDirectory;
    private File remotebase;
    private File remotedir;
@@ -91,7 +86,8 @@ public class SSHJava extends Java {
    public SSHJava() {
       super();
       setFork(true);
-      exec = new SSHExec();
+      exec = new SSHExecute();
+      exec.setProject(getProject());
       scp = new Scp();
       userInfo = new SSHUserInfo();
    }
@@ -107,7 +103,6 @@ public class SSHJava extends Java {
 
    @Override
    public int executeJava() throws BuildException {
-      checkNotNull(jvm, "jvm must be set");
       checkNotNull(remotebase, "remotebase must be set");
 
       if (localDirectory == null) {
@@ -124,13 +119,13 @@ public class SSHJava extends Java {
 
       if (osFamily == OsFamily.UNIX) {
          log("removing old contents: " + remotedir.getAbsolutePath(), Project.MSG_VERBOSE);
-         exec.setCommand(exec("rm -rf " + remotedir.getAbsolutePath()).render(osFamily));
-         exec.execute();
+         sshexec(exec("rm -rf " + remotedir.getAbsolutePath()).render(osFamily));
       } else {
          // TODO need recursive remove on windows
       }
       // must copy the files over first as we are changing the system properties based on this.
-      String command = convertJavaToScriptNormalizingPaths(getCommandLine());
+      String command = createInitScript(osFamily, id, remotedir.getAbsolutePath(), env,
+               getCommandLine());
 
       try {
          BufferedWriter out = new BufferedWriter(new FileWriter(new File(localDirectory, "init."
@@ -162,27 +157,43 @@ public class SSHJava extends Java {
       }
 
       if (osFamily == OsFamily.UNIX) {
-         exec.setCommand(exec("chmod 755 " + remotedir.getAbsolutePath() + "{fs}init.{sh}").render(
-                  osFamily));
-         exec.execute();
+         sshexec(exec("chmod 755 " + remotedir.getAbsolutePath() + "{fs}init.{sh}")
+                  .render(osFamily));
       }
 
       Statement statement = new StatementList(exec("{cd} " + remotedir.getAbsolutePath()),
                exec(remotedir.getAbsolutePath() + "{fs}init.{sh} init"), exec(remotedir
                         .getAbsolutePath()
                         + "{fs}init.{sh} run"));
-      getProjectProperties().remove(id);
-      exec.setResultProperty(id);
-      exec.setFailonerror(false);
-      exec.setCommand(statement.render(osFamily));
-      exec.setError(errorFile);
-      exec.setErrorproperty(errorProperty);
-      exec.setOutput(outputFile);
-      exec.setOutputproperty(outputProperty);
-      exec.setAppend(append);
+      try {
+         return sshexecRedirectStreams(statement);
+      } catch (IOException e) {
+         throw new BuildException(e, getLocation());
+      }
+   }
+
+   private int sshexec(String command) {
+      try {
+         return exec.execute(command);
+      } catch (JSchException e) {
+         throw new BuildException(e, getLocation());
+      } catch (IOException e) {
+         throw new BuildException(e, getLocation());
+      } catch (TimeoutException e) {
+         throw new BuildException(e, getLocation());
+      }
+   }
+
+   private int sshexecRedirectStreams(Statement statement) throws IOException {
+      exec.setStreamHandler(redirector.createHandler());
       log("starting java as:\n" + statement.render(osFamily), Project.MSG_VERBOSE);
-      exec.execute();
-      return Integer.parseInt(getProject().getProperty(id));
+      int rc;
+      try {
+         rc = sshexec(statement.render(osFamily));
+      } finally {
+         redirector.complete();
+      }
+      return rc;
    }
 
    private void mkdirAndCopyTo(String destination, Iterable<FileSet> sets) {
@@ -190,19 +201,11 @@ public class SSHJava extends Java {
          log("no content: " + destination, Project.MSG_DEBUG);
          return;
       }
-      exec.setCommand(exec("test -d " + destination).render(osFamily)); // TODO windows
-      getProjectProperties().remove(id);
-      exec.setResultProperty(id);
-      exec.setFailonerror(false);
-      exec.execute();
-      if (getProject().getProperty(id).equals("0")) {
+      if (sshexec(exec("test -d " + destination).render(osFamily)) == 0) {// TODO windows
          log("already created: " + destination, Project.MSG_VERBOSE);
          return;
       }
-      getProjectProperties().remove(id);
-      exec.setCommand(exec("{md} " + destination).render(osFamily));
-      exec.setFailonerror(true);
-      exec.execute();
+      sshexec(exec("{md} " + destination).render(osFamily));
       scp.init();
       String scpDestination = getScpDir(destination);
       log("staging: " + scpDestination, Project.MSG_VERBOSE);
@@ -271,20 +274,21 @@ public class SSHJava extends Java {
       return in;
    }
 
-   String convertJavaToScriptNormalizingPaths(CommandlineJava commandLine) {
+   String createInitScript(OsFamily osFamily, String id, String basedir, Environment env,
+            CommandlineJava commandLine) {
 
       Map<String, String> envVariables = Maps.newHashMap();
       String[] environment = env.getVariables();
       if (environment != null) {
          for (int i = 0; i < environment.length; i++) {
-            log("Setting environment variable: " + environment[i], Project.MSG_VERBOSE);
+            log("Setting environment variable: " + environment[i], Project.MSG_DEBUG);
             String[] keyValue = environment[i].split("=");
             envVariables.put(keyValue[0], keyValue[1]);
          }
       }
 
-      StringBuilder commandBuilder = new StringBuilder(jvm);
-      if (getCommandLine().getBootclasspath() != null) {
+      StringBuilder commandBuilder = new StringBuilder(commandLine.getVmCommand().getExecutable());
+      if (commandLine.getBootclasspath() != null) {
          commandBuilder.append(" -Xbootclasspath:bootclasspath");
          resetPathToUnderPrefixIfExistsAndIsFileIfNotExistsAddAsIs(commandLine.getBootclasspath(),
                   "bootclasspath", commandBuilder);
@@ -314,8 +318,8 @@ public class SSHJava extends Java {
                   Joiner.on(' ').join(commandLine.getJavaCommand().getArguments()));
       }
 
-      InitBuilder testInitBuilder = new InitBuilder(id, remotedir.getAbsolutePath(), remotedir
-               .getAbsolutePath(), envVariables, commandBuilder.toString());
+      InitBuilder testInitBuilder = new InitBuilder(id, basedir, basedir, envVariables,
+               commandBuilder.toString());
       String script = testInitBuilder.build(osFamily);
       return reprefix(script);
    }
@@ -348,11 +352,6 @@ public class SSHJava extends Java {
          throw new IllegalArgumentException("this only operates when fork is set");
    }
 
-   @Override
-   public void setJvm(String jvm) {
-      this.jvm = checkNotNull(jvm, "jvm");
-   }
-
    /**
     * Remote host, either DNS name or IP.
     * 
@@ -362,15 +361,6 @@ public class SSHJava extends Java {
    public void setHost(String host) {
       exec.setHost(host);
       scp.setHost(host);
-   }
-
-   /**
-    * Get the host.
-    * 
-    * @return the host
-    */
-   public String getHost() {
-      return exec.getHost();
    }
 
    /**
@@ -460,27 +450,6 @@ public class SSHJava extends Java {
    }
 
    /**
-    * Get the port attribute.
-    * 
-    * @return the port
-    */
-   public int getPort() {
-      return exec.getPort();
-   }
-
-   /**
-    * Initialize the task. This initializizs the known hosts and sets the default port.
-    * 
-    * @throws BuildException
-    *            on error
-    */
-   public void init() throws BuildException {
-      super.init();
-      exec.init();
-      scp.init();
-   }
-
-   /**
     * The connection can be dropped after a specified number of milliseconds. This is sometimes
     * useful when a connection may be flaky. Default is 0, which means &quot;wait forever&quot;.
     * 
@@ -489,43 +458,6 @@ public class SSHJava extends Java {
     */
    public void setTimeout(long timeout) {
       exec.setTimeout(timeout);
-   }
-
-   /**
-    * Set the verbose flag.
-    * 
-    * @param verbose
-    *           if true output more verbose logging
-    * @since Ant 1.6.2
-    */
-   public void setVerbose(boolean verbose) {
-      exec.setVerbose(verbose);
-      scp.setVerbose(verbose);
-   }
-
-   @Override
-   public void setError(File error) {
-      this.errorFile = error;
-   }
-
-   @Override
-   public void setErrorProperty(String property) {
-      errorProperty = property;
-   }
-
-   @Override
-   public void setOutput(File out) {
-      outputFile = out;
-   }
-
-   @Override
-   public void setOutputproperty(String outputProp) {
-      outputProperty = outputProp;
-   }
-
-   @Override
-   public void setAppend(boolean append) {
-      this.append = append;
    }
 
    @Override
@@ -538,45 +470,40 @@ public class SSHJava extends Java {
    @Override
    public void setOwningTarget(Target target) {
       super.setOwningTarget(target);
-      exec.setOwningTarget(target);
       scp.setOwningTarget(target);
    }
 
    @Override
    public void setTaskName(String taskName) {
       super.setTaskName(taskName);
-      exec.setTaskName(taskName);
       scp.setTaskName(taskName);
    }
 
    @Override
    public void setDescription(String description) {
       super.setDescription(description);
-      exec.setDescription(description);
       scp.setDescription(description);
    }
 
    @Override
    public void setLocation(Location location) {
       super.setLocation(location);
-      exec.setLocation(location);
       scp.setLocation(location);
    }
 
    @Override
    public void setTaskType(String type) {
       super.setTaskType(type);
-      exec.setTaskType(type);
       scp.setTaskType(type);
    }
 
    @Override
    public String toString() {
       return "SSHJava [append=" + append + ", env=" + env + ", errorFile=" + errorFile
-               + ", errorProperty=" + errorProperty + ", jvm=" + jvm + ", localDirectory="
-               + localDirectory + ", osFamily=" + osFamily + ", outputFile=" + outputFile
-               + ", outputProperty=" + outputProperty + ", remoteDirectory=" + remotebase
-               + ", userInfo=" + userInfo + "]";
+               + ", errorProperty=" + errorProperty + ", localDirectory=" + localDirectory
+               + ", osFamily=" + osFamily + ", outputFile=" + outputFile + ", outputProperty="
+               + outputProperty + ", remoteDirectory=" + remotebase + ", userInfo=" + userInfo
+               + "]";
    }
 
    @Override
@@ -592,17 +519,4 @@ public class SSHJava extends Java {
       }
    }
 
-   @SuppressWarnings("unchecked")
-   Hashtable<String, String> getProjectProperties() {
-      PropertyHelper helper = (PropertyHelper) getProject().getReference(
-               MagicNames.REFID_PROPERTY_HELPER);
-      Field field;
-      try {
-         field = PropertyHelper.class.getDeclaredField("properties");
-         field.setAccessible(true);
-         return (Hashtable<String, String>) field.get(helper);
-      } catch (Exception e) {
-         throw new BuildException(e);
-      }
-   }
 }

@@ -47,28 +47,9 @@ public class SSHJavaTest {
             .entrySet());
 
    // TODO, this test will break in windows
-   @Test(enabled = false)
-   public void testFull() throws SecurityException, NoSuchMethodException {
-      SSHJava task = makeSSHJava();
-      String expected = String
-               .format(
-                        "export %s=\"%s\"%ncd /tmp/foo\n%s -Xms16m -Xmx32m -cp classpath -Dfooble=baz -Dfoo=bar org.jclouds.tools.ant.TestClass %s hello world\n",
-                        LAST_ENV.getKey(), LAST_ENV.getValue(), System.getProperty("java.home")
-                                 + "/bin/java", LAST_ENV.getKey());
-      assertEquals(task.convertJavaToScriptNormalizingPaths(task.getCommandLine()), expected);
-   }
-
-   // TODO, this test will break in windows
-   @Test(enabled = false)
-   public void testFullShift() throws SecurityException, NoSuchMethodException {
+   public void testShift() throws SecurityException, NoSuchMethodException {
       SSHJava task = makeSSHJava();
       task = directoryShift(task);
-      String expected = String
-               .format(
-                        "export %s=\"%s\"%ncd /tmp/foo\n%s -Xms16m -Xmx32m -cp classpath -Dfooble=baz -Dfoo=bar -Dsettingsfile=/tmp/foo/maven/conf/settings.xml -DappHome=/tmp/foo/maven org.jclouds.tools.ant.TestClass %s hello world\n",
-                        LAST_ENV.getKey(), LAST_ENV.getValue(), System.getProperty("java.home")
-                                 + "/bin/java", LAST_ENV.getKey());
-      assertEquals(task.convertJavaToScriptNormalizingPaths(task.getCommandLine()), expected);
       assertEquals(task.shiftMap, ImmutableMap.<String, String> of(System.getProperty("user.home")
                + "/apache-maven-2.2.1", "maven"));
    }
@@ -160,20 +141,10 @@ public class SSHJavaTest {
       }
    }
 
-   public void testSSHJavaPropertyOverride() {
-      SSHJava task = new SSHJava();
-      Project p = new Project();
-      task.setProject(p);
-      p.setProperty("foo", "bar");
-      task.getProjectProperties().remove("foo");
-      assertEquals(p.getProperty("foo"), null);
-   }
-
    private SSHJava makeSSHJava() {
       SSHJava task = new SSHJava();
       populateTask(task);
       task.setRemotebase(new File("/tmp/foo"));
-      task.setVerbose(true);
       task.setTrust(true);
       return task;
    }
