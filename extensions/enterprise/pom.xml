@@ -23,35 +23,30 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>jclouds-project</artifactId>
         <groupId>org.jclouds</groupId>
+        <artifactId>jclouds-extensions-project</artifactId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../project/pom.xml</relativePath>
     </parent>
-    <artifactId>jclouds-extensions-project</artifactId>
-    <packaging>pom</packaging>
-    <name>jclouds extensions project</name>
-    <modules>
-        <module>gae</module>
-        <module>httpnio</module>
-        <module>joda</module>
-        <module>bouncycastle</module>
-        <module>log4j</module>
-        <module>ssh</module>
-        <module>enterprise</module>
-    </modules>
+    <artifactId>jclouds-enterprise</artifactId>
+    <name>jclouds enterprise Module</name>
+    <description>jclouds enterprise configuration</description>
+
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-core</artifactId>
+            <artifactId>jclouds-joda</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId> 
+            <artifactId>jclouds-bouncycastle</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-core</artifactId>
+            <artifactId>jclouds-httpnio</artifactId>
             <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
         </dependency>
     </dependencies>
+    
 </project>
